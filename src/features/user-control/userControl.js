@@ -63,6 +63,29 @@ const moduleMeta = (moduleKey) => {
 }
 
 const validValues = { trade: ['profit', 'loss'], finance: ['highYield', 'lowYield'] }
+
+export function isUserControlSimulationValue(moduleKey, value) {
+  const module = USER_CONTROL_MODULES.find((item) => item.key === moduleKey)
+  return Boolean(module && validValues[module.family].includes(value))
+}
+
+export function getUserControlSimulationValues(moduleKey, preferredAfterValue = '') {
+  const module = moduleMeta(moduleKey)
+  const values = validValues[module.family]
+  const afterValue = values.includes(preferredAfterValue) ? preferredAfterValue : values[0]
+  const beforeValue = values.find((value) => value !== afterValue) || values[0]
+  return { beforeValue, afterValue }
+}
+
+const firstQueryValue = (value) => String(Array.isArray(value) ? value[0] || '' : value || '')
+
+export function normalizeUserControlLogQuery(query = {}) {
+  const userId = firstQueryValue(query.userId)
+  const requestedModule = firstQueryValue(query.module)
+  const module = USER_CONTROL_MODULES.some((item) => item.key === requestedModule) ? requestedModule : ''
+  return { userId, module }
+}
+
 const cloneRules = (state, userId) => ({ ...(state.rules[userId] || {}) })
 
 export function applyModuleControl(state, input) {

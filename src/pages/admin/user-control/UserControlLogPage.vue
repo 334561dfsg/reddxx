@@ -1,6 +1,6 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { usersList } from '../../../admin/mock/user.js'
 import {
   resetUserControlDemo,
@@ -10,27 +10,27 @@ import {
   userControlState
 } from '../../../admin/state/userControlState.js'
 import {
+  getUserControlSimulationValues,
+  isUserControlSimulationValue,
+  normalizeUserControlLogQuery,
   snapshotUserControlRules,
   USER_CONTROL_MODULES
 } from '../../../features/user-control/userControl.js'
 
 const route = useRoute()
-const moduleKeys = new Set(USER_CONTROL_MODULES.map((module) => module.key))
-const requestedModule = String(route.query.module || '')
-const requestedUserId = String(route.query.userId || '')
+const router = useRouter()
 
 const activeTab = ref('operation')
 const filters = reactive({
-  userId: requestedUserId,
-  module: moduleKeys.has(requestedModule) ? requestedModule : '',
+  userId: '',
+  module: '',
   source: '',
   action: ''
 })
 const simulation = reactive({
-  userId: requestedUserId,
-  moduleKey: moduleKeys.has(requestedModule) ? requestedModule : 'delivery',
-  beforeValue: 'loss',
-  afterValue: 'profit'
+  userId: '',
+  moduleKey: 'delivery',
+  ...getUserControlSimulationValues('delivery')
 })
 const simulationMessage = ref('')
 const failureMessage = ref('')
@@ -47,14 +47,16 @@ const userMap = computed(() => {
 const userOptions = computed(() => [...userMap.value.entries()]
   .map(([userId, user]) => ({ userId, label: `${user.username} · UID ${userId}` })))
 
-if (!simulation.userId || !userControlState.value.rules[simulation.userId]) {
-  simulation.userId = Object.keys(userControlState.value.rules)[0] || ''
-}
-
 const moduleMeta = (moduleKey) => USER_CONTROL_MODULES.find((module) => module.key === moduleKey)
 const selectedModule = computed(() => moduleMeta(simulation.moduleKey) || USER_CONTROL_MODULES[0])
 const selectedRule = computed(() => userControlState.value.rules[simulation.userId]?.[simulation.moduleKey] || null)
-const canSimulate = computed(() => selectedRule.value?.status === 'active' && selectedRule.value?.duration === 'once')
+const simulationValuesValid = computed(() => (
+  isUserControlSimulationValue(simulation.moduleKey, simulation.beforeValue)
+  && isUserControlSimulationValue(simulation.moduleKey, simulation.afterValue)
+))
+const canSimulate = computed(() => simulationValuesValid.value
+  && selectedRule.value?.status === 'active'
+  && selectedRule.value?.duration === 'once')
 const hasSixModuleSnapshot = computed(() => USER_CONTROL_MODULES.every((module) => (
   userControlState.value.rules[simulation.userId]?.[module.key]
 )))
@@ -64,14 +66,28 @@ const resultOptions = computed(() => selectedModule.value.family === 'finance'
   : [{ value: 'profit', label: '盈利' }, { value: 'loss', label: '亏损' }])
 
 watch(() => [simulation.userId, simulation.moduleKey], () => {
-  const options = resultOptions.value.map((option) => option.value)
-  const ruleValue = selectedRule.value?.value
-  simulation.afterValue = options.includes(ruleValue) ? ruleValue : options[0]
-  simulation.beforeValue = options.find((value) => value !== simulation.afterValue) || options[0]
+  Object.assign(simulation, getUserControlSimulationValues(simulation.moduleKey, selectedRule.value?.value))
   simulationMessage.value = ''
   failureMessage.value = ''
   atomicProof.value = ''
-})
+}, { immediate: true })
+
+const syncRouteQuery = () => {
+  const normalized = normalizeUserControlLogQuery({
+    userId: route.query.userId,
+    module: route.query.module
+  })
+  filters.userId = normalized.userId
+  filters.module = normalized.module
+  simulation.userId = normalized.userId
+  simulation.moduleKey = normalized.module || 'delivery'
+}
+
+watch(
+  () => [route.query.userId, route.query.module],
+  syncRouteQuery,
+  { immediate: true }
+)
 
 const operationLogs = computed(() => userControlState.value.operationLogs.filter((log) => (
   (!filters.userId || log.userId === filters.userId)
@@ -128,6 +144,10 @@ const formatTime = (date = new Date()) => {
 }
 
 const simulateOnce = () => {
+  if (!simulationValuesValid.value) {
+    simulationMessage.value = '模拟结果与所选模块类型不匹配，未写入执行日志。'
+    return
+  }
   if (!canSimulate.value) {
     simulationMessage.value = '仅可模拟当前有效且尚未消费的一次性规则。'
     return
@@ -182,22 +202,18 @@ const clearFailure = () => {
 const restoreDemo = () => {
   if (!window.confirm('确认恢复用户控制演示数据？当前前端 Demo 改动将被覆盖。')) return
   resetUserControlDemo()
-  filters.userId = ''
-  filters.module = ''
   filters.source = ''
   filters.action = ''
-  simulation.userId = Object.keys(userControlState.value.rules)[0] || ''
-  simulation.moduleKey = 'delivery'
+  syncRouteQuery()
   simulationMessage.value = '演示数据已恢复。'
   failureMessage.value = ''
   atomicProof.value = ''
 }
 
-const clearFilters = () => {
-  filters.userId = ''
-  filters.module = ''
+const clearFilters = async () => {
   filters.source = ''
   filters.action = ''
+  await router.replace({ name: route.name, query: {} })
 }
 </script>
 
@@ -216,9 +232,9 @@ const clearFilters = () => {
     </header>
 
     <article class="rounded-xl border border-slate-200 bg-white p-5">
-      <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-4">
-        <button type="button" class="rounded-lg px-4 py-2 text-sm font-medium" :class="activeTab === 'operation' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'" @click="activeTab = 'operation'">操作日志</button>
-        <button type="button" class="rounded-lg px-4 py-2 text-sm font-medium" :class="activeTab === 'execution' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'" @click="activeTab = 'execution'">执行日志</button>
+      <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-4" role="tablist" aria-label="用户控制日志类型">
+        <button id="user-control-operation-tab" type="button" role="tab" :aria-selected="activeTab === 'operation'" aria-controls="user-control-operation-panel" class="rounded-lg px-4 py-2 text-sm font-medium" :class="activeTab === 'operation' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'" @click="activeTab = 'operation'">操作日志</button>
+        <button id="user-control-execution-tab" type="button" role="tab" :aria-selected="activeTab === 'execution'" aria-controls="user-control-execution-panel" class="rounded-lg px-4 py-2 text-sm font-medium" :class="activeTab === 'execution' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'" @click="activeTab = 'execution'">执行日志</button>
       </div>
       <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
         <label class="space-y-1 text-xs font-medium text-slate-600">
@@ -256,7 +272,7 @@ const clearFilters = () => {
     </article>
 
     <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <div v-if="activeTab === 'operation'" class="overflow-x-auto">
+      <div v-if="activeTab === 'operation'" id="user-control-operation-panel" role="tabpanel" aria-labelledby="user-control-operation-tab" tabindex="0" class="overflow-x-auto">
         <table class="w-full min-w-[1180px] text-left text-sm">
           <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600">
             <tr>
@@ -279,7 +295,7 @@ const clearFilters = () => {
         <p v-if="operationLogs.length === 0" class="px-6 py-14 text-center text-sm text-slate-500">没有符合筛选条件的操作日志</p>
       </div>
 
-      <div v-else class="overflow-x-auto">
+      <div v-else id="user-control-execution-panel" role="tabpanel" aria-labelledby="user-control-execution-tab" tabindex="0" class="overflow-x-auto">
         <table class="w-full min-w-[1080px] text-left text-sm">
           <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600">
             <tr>
@@ -313,7 +329,7 @@ const clearFilters = () => {
       </div>
 
       <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <label class="space-y-1 text-xs font-medium text-amber-900"><span>演示用户</span><select v-model="simulation.userId" class="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-normal text-slate-900"><option v-for="user in userOptions" :key="user.userId" :value="user.userId">{{ user.label }}</option></select></label>
+        <label class="space-y-1 text-xs font-medium text-amber-900"><span>演示用户</span><select v-model="simulation.userId" class="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-normal text-slate-900"><option value="">请选择演示用户</option><option v-for="user in userOptions" :key="user.userId" :value="user.userId">{{ user.label }}</option></select></label>
         <label class="space-y-1 text-xs font-medium text-amber-900"><span>演示模块</span><select v-model="simulation.moduleKey" class="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-normal text-slate-900"><option v-for="module in USER_CONTROL_MODULES" :key="module.key" :value="module.key">{{ module.label }}</option></select></label>
         <label class="space-y-1 text-xs font-medium text-amber-900"><span>{{ selectedModule.family === 'finance' ? '基础收益档位' : '自然/全局结果' }}</span><select v-model="simulation.beforeValue" class="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-normal text-slate-900"><option v-for="option in resultOptions" :key="option.value" :value="option.value">{{ option.label }}</option></select></label>
         <label class="space-y-1 text-xs font-medium text-amber-900"><span>{{ selectedModule.family === 'finance' ? '用户收益档位' : '用户最终结果' }}</span><select v-model="simulation.afterValue" class="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-normal text-slate-900"><option v-for="option in resultOptions" :key="option.value" :value="option.value">{{ option.label }}</option></select></label>
@@ -332,8 +348,8 @@ const clearFilters = () => {
       </div>
 
       <div class="mt-4 grid gap-3 md:grid-cols-2">
-        <p v-if="simulationMessage" class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800">{{ simulationMessage }}</p>
-        <div class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+        <p v-if="simulationMessage" role="status" aria-live="polite" class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800">{{ simulationMessage }}</p>
+        <div role="status" aria-live="polite" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
           <p>失败开关：<span class="font-semibold">{{ userControlState.failureModule || '未开启' }}</span></p>
           <p v-if="failureMessage" class="mt-1">{{ failureMessage }}</p>
           <p v-if="atomicProof" class="mt-1 font-medium">{{ atomicProof }}</p>

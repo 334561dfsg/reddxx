@@ -274,6 +274,36 @@ test('reactive six-module rules can be snapshotted as detached cloneable values'
   assert.equal(snapshot.spot.status, priorStatus)
 })
 
+test('simulation values reset to valid outcomes for the selected module family', () => {
+  assert.equal(typeof userControlHelpers.getUserControlSimulationValues, 'function')
+  assert.equal(typeof userControlHelpers.isUserControlSimulationValue, 'function')
+
+  const trade = userControlHelpers.getUserControlSimulationValues('delivery', 'loss')
+  assert.deepEqual(trade, { beforeValue: 'profit', afterValue: 'loss' })
+  assert.equal(userControlHelpers.isUserControlSimulationValue('delivery', trade.beforeValue), true)
+  assert.equal(userControlHelpers.isUserControlSimulationValue('delivery', trade.afterValue), true)
+
+  const finance = userControlHelpers.getUserControlSimulationValues('aiQuant', trade.afterValue)
+  assert.deepEqual(finance, { beforeValue: 'lowYield', afterValue: 'highYield' })
+  assert.equal(userControlHelpers.isUserControlSimulationValue('aiQuant', finance.beforeValue), true)
+  assert.equal(userControlHelpers.isUserControlSimulationValue('aiQuant', finance.afterValue), true)
+  assert.equal(userControlHelpers.isUserControlSimulationValue('aiQuant', 'loss'), false)
+})
+
+test('log query normalization follows changed, array, invalid, and cleared route values', () => {
+  assert.equal(typeof userControlHelpers.normalizeUserControlLogQuery, 'function')
+  assert.deepEqual(userControlHelpers.normalizeUserControlLogQuery({ userId: '159', module: 'aiQuant' }), {
+    userId: '159', module: 'aiQuant'
+  })
+  assert.deepEqual(userControlHelpers.normalizeUserControlLogQuery({ userId: ['158'], module: ['spot'] }), {
+    userId: '158', module: 'spot'
+  })
+  assert.deepEqual(userControlHelpers.normalizeUserControlLogQuery({ userId: undefined, module: 'unknown' }), {
+    userId: '', module: ''
+  })
+  assert.deepEqual(userControlHelpers.normalizeUserControlLogQuery({}), { userId: '', module: '' })
+})
+
 test('demo state actions consume once, retain failure toggle, and restore the seed', () => {
   resetUserControlDemo()
   try {

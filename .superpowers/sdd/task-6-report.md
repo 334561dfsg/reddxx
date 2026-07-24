@@ -46,3 +46,71 @@ GREEN:
 ## Concerns
 
 None blocking. This remains an in-memory frontend demonstration by design; refresh/reset restores seed state and no production-side write occurs.
+
+## Formal review follow-up
+
+Status: PASS after addressing all two Important and two Minor review items plus the follow-up keyboard finding.
+
+Changes:
+
+- Added `getUserControlSimulationValues()` and an immediate user/module watcher so direct finance-module entry and every later module switch reset both results to family-valid values.
+- Added `isUserControlSimulationValue()` and a guard immediately before simulation submission, preventing invalid trade values from being written to finance execution logs (and vice versa).
+- Added `normalizeUserControlLogQuery()` and a route-query watcher for `userId` / `module`. Changed and cleared queries now update both filters and simulation targets; the watcher never writes to the router. The clear button performs one explicit `router.replace`, avoiding a two-way watch loop.
+- Added `tablist`, `tab`, `aria-selected`, `aria-controls`, `tabpanel`, and labelling relationships. Both native tab buttons remain in the keyboard tab order; no incomplete roving-tabindex pattern remains.
+- Added polite live status regions for simulated execution, failure-toggle messages, and atomic validation feedback.
+- Added executable helper tests for trade-to-finance value normalization, family validation, route query arrays/changes/invalid/cleared values, plus source contract tests for watchers and accessibility semantics.
+
+Formal review RED evidence:
+
+```text
+node --test test/userControlDomain.test.js test/userControlUi.test.js
+1..32
+# pass 28
+# fail 4
+```
+
+The failures were the missing family helpers, missing query normalizer/watcher contract, and missing ARIA/live-region contract. The follow-up keyboard test then failed once while dynamic `:tabindex` was still present, before it was removed.
+
+Final focused output:
+
+```text
+node --test test/userControlUi.test.js test/userControlNavigation.test.js test/userControlDomain.test.js
+1..35
+# tests 35
+# pass 35
+# fail 0
+```
+
+Final SFC output:
+
+```text
+SFC compile OK: 3 files
+exit=0
+```
+
+Final full-suite output (`dot` reporter; 154 dots):
+
+```text
+npm test -- --test-reporter=dot
+....................
+....................
+....................
+....................
+....................
+....................
+....................
+..............
+exit=0
+```
+
+Final production build output summary:
+
+```text
+vite v5.4.21 building for production...
+✓ 365 modules transformed.
+dist/assets/UserControlLogPage-Dor7iZ1T.js  15.65 kB | gzip: 5.50 kB
+✓ built in 3.54s
+exit=0
+```
+
+Final formal reviewer verdict: Ready; remaining issues: none.

@@ -121,6 +121,28 @@ test('log page exposes audit fields and calls the shared demo state actions', ()
   assert.match(source, /executionStatusClasses/)
 })
 
+test('log page immediately normalizes module values and follows route query changes', () => {
+  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+  assert.match(source, /getUserControlSimulationValues/)
+  assert.match(source, /isUserControlSimulationValue/)
+  assert.match(source, /normalizeUserControlLogQuery/)
+  assert.match(source, /route\.query\.userId/)
+  assert.match(source, /route\.query\.module/)
+  assert.match(source, /immediate:\s*true/)
+})
+
+test('log tabs and live demo results expose accessible state semantics', () => {
+  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+  assert.match(source, /role="tablist"/)
+  assert.equal(source.match(/role="tab"/g)?.length, 2)
+  assert.match(source, /:aria-selected=/)
+  assert.match(source, /aria-controls=/)
+  assert.equal(source.match(/role="tabpanel"/g)?.length, 2)
+  assert.doesNotMatch(source, /:tabindex=/)
+  assert.match(source, /role="status"/)
+  assert.match(source, /aria-live="polite"/)
+})
+
 test('user and module rows link to the named log route with query filters', () => {
   const userSource = read('../src/pages/admin/user/UserListPage.vue')
   const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
