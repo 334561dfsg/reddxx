@@ -3,6 +3,15 @@ import { ref, computed, onMounted, reactive, watch } from 'vue'
 import { getUsers, usersList } from '../../../admin/mock/user'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../../admin/constants/user'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
+import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
+import UserControlDetailDrawer from '../../../admin/components/user-control/UserControlDetailDrawer.vue'
+import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
+import {
+  cancelUnifiedUserControl,
+  setUnifiedUserControl,
+  userControlState
+} from '../../../admin/state/userControlState.js'
+import { summarizeUserControl } from '../../../features/user-control/userControl.js'
 
 // 搜索关键词
 const searchKeyword = ref('')
@@ -54,6 +63,151 @@ onMounted(fetchUsers)
 // 模态弹窗状态
 const showDetailDrawer = ref(false)
 const selectedUser = ref(null)
+const controlUser = ref(null)
+const controlModalOpen = ref(false)
+const controlDetailOpen = ref(false)
+const cancelControlOpen = ref(false)
+const cancelNote = ref('')
+const mfaOpen = ref(false)
+const mfaLoading = ref(false)
+const pendingMfaAction = ref(null)
+
+const userIdOf = (user) => String(user?.userId ?? user?.id ?? '')
+const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
+const controlSummary = (user) => summarizeUserControl(userControlState.value, userIdOf(user))
+const hasRules = (user) => Object.keys(rulesOf(user)).length > 0
+const hasEffectiveRules = (user) => Object.values(rulesOf(user)).some((rule) => ['active', 'processing'].includes(rule.status))
+
+const strategyLabel = (user) => {
+  const rules = Object.values(rulesOf(user))
+  const globalRule = rules.find((rule) => rule.source === 'global')
+  if (globalRule?.strategy === 'positive') return '正向控制'
+  if (globalRule?.strategy === 'negative') return '负向控制'
+  return rules.length ? '模块独立设置' : '未设置'
+}
+
+const durationLabel = (user) => {
+  const durations = [...new Set(Object.values(rulesOf(user)).map((rule) => rule.duration).filter(Boolean))]
+  if (!durations.length) return '—'
+  if (durations.length > 1) return '混合'
+  return durations[0] === 'permanent' ? '永久' : '一次性'
+}
+
+const controlUpdatedAt = (user) => Object.values(rulesOf(user))
+  .map((rule) => rule.updatedAt)
+  .filter(Boolean)
+  .sort()
+  .at(-1) || '—'
+
+const summaryClasses = (user) => ({
+  none: 'bg-slate-100 text-slate-600',
+  synced: 'bg-emerald-100 text-emerald-700',
+  progress: 'bg-blue-100 text-blue-700',
+  divergent: 'bg-amber-100 text-amber-700'
+})[controlSummary(user).kind]
+
+const formatTime = (date = new Date()) => {
+  const pad = (value) => String(value).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+}
+
+const nextSequence = () => String(userControlState.value.operationLogs.length + 1).padStart(4, '0')
+
+const openControlSetting = (user) => {
+  controlUser.value = user
+  controlModalOpen.value = true
+}
+
+const closeControlSetting = () => {
+  controlModalOpen.value = false
+  if (!mfaOpen.value) controlUser.value = null
+}
+
+const openControlDetail = (user) => {
+  controlUser.value = user
+  controlDetailOpen.value = true
+}
+
+const closeControlDetail = () => {
+  controlDetailOpen.value = false
+  controlUser.value = null
+}
+
+const applyControl = (payload) => {
+  setUnifiedUserControl({
+    ...payload,
+    now: formatTime(),
+    batchId: `demo-global-${nextSequence()}`
+  })
+  controlModalOpen.value = false
+  controlUser.value = null
+}
+
+const requestMfa = (action) => {
+  pendingMfaAction.value = action
+  mfaOpen.value = true
+}
+
+const submitControlSetting = (payload) => {
+  const overwritesExistingRules = controlUser.value && hasRules(controlUser.value)
+  controlModalOpen.value = false
+  if (payload.duration === 'permanent' || overwritesExistingRules) {
+    requestMfa({ type: 'apply', payload })
+    return
+  }
+  applyControl(payload)
+}
+
+const openControlCancel = (user) => {
+  controlUser.value = user
+  cancelNote.value = ''
+  cancelControlOpen.value = true
+}
+
+const closeControlCancel = () => {
+  cancelControlOpen.value = false
+  cancelNote.value = ''
+  controlUser.value = null
+}
+
+const confirmControlCancel = () => {
+  if (!controlUser.value || !cancelNote.value.trim()) return
+  const payload = {
+    userId: userIdOf(controlUser.value),
+    note: cancelNote.value.trim(),
+    now: formatTime(),
+    operationId: `demo-global-cancel-${nextSequence()}`
+  }
+  cancelControlOpen.value = false
+  requestMfa({ type: 'cancel', payload })
+}
+
+const handleMfaVerify = () => {
+  mfaLoading.value = true
+  const action = pendingMfaAction.value
+  if (action?.type === 'apply') applyControl(action.payload)
+  if (action?.type === 'cancel') {
+    cancelUnifiedUserControl(action.payload)
+    controlUser.value = null
+  }
+  pendingMfaAction.value = null
+  mfaLoading.value = false
+  mfaOpen.value = false
+  cancelNote.value = ''
+}
+
+const handleMfaCancel = () => {
+  pendingMfaAction.value = null
+  mfaOpen.value = false
+  mfaLoading.value = false
+  controlUser.value = null
+  cancelNote.value = ''
+}
+
+const mfaTitle = computed(() => pendingMfaAction.value?.type === 'cancel' ? '取消统一控制安全验证' : '统一控制安全验证')
+const mfaDescription = computed(() => pendingMfaAction.value?.type === 'cancel'
+  ? '取消六个模块的生效规则属于敏感操作，请输入 MFA 验证码'
+  : '永久或覆盖统一控制属于敏感操作，请输入 MFA 验证码')
 
 // 统计信息
 const statistics = computed(() => {
@@ -190,7 +344,7 @@ const closeDetailDrawer = () => {
     <!-- 用户表格 -->
     <div v-else-if="!loading && users.length > 0" class="rounded-xl border border-slate-200 bg-white overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="w-full">
+        <table class="w-full min-w-[1760px]">
           <thead class="bg-slate-50 border-b border-slate-200">
             <tr>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
@@ -202,6 +356,10 @@ const closeDetailDrawer = () => {
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">状态</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">上级</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">统一控制</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">生效方式</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">模块状态</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">更新时间</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
             </tr>
           </thead>
@@ -287,14 +445,37 @@ const closeDetailDrawer = () => {
                 <span v-else class="text-xs text-slate-400">-</span>
               </td>
 
+              <!-- 统一用户控制 -->
+              <td class="px-4 py-3">
+                <span class="text-sm font-medium" :class="hasRules(user) ? 'text-slate-900' : 'text-slate-400'">
+                  {{ strategyLabel(user) }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-sm text-slate-600">{{ durationLabel(user) }}</td>
+              <td class="px-4 py-3">
+                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="summaryClasses(user)">
+                  {{ controlSummary(user).label }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-xs text-slate-500">{{ controlUpdatedAt(user) }}</td>
+
               <!-- 操作按钮 -->
               <td class="px-4 py-3">
-                <button
-                  @click.stop="openUserDetail(user)"
-                  class="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  查看详情
-                </button>
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 whitespace-nowrap text-sm font-medium">
+                  <button type="button" class="text-slate-600 hover:text-slate-900" @click.stop="openUserDetail(user)">用户资料</button>
+                  <button type="button" class="text-blue-600 hover:text-blue-800" @click.stop="openControlDetail(user)">控制详情</button>
+                  <button type="button" class="text-blue-600 hover:text-blue-800" @click.stop="openControlSetting(user)">
+                    {{ hasRules(user) ? '修改控制' : '设置控制' }}
+                  </button>
+                  <button
+                    type="button"
+                    :disabled="!hasEffectiveRules(user)"
+                    class="text-rose-600 hover:text-rose-800 disabled:cursor-not-allowed disabled:text-slate-300"
+                    @click.stop="openControlCancel(user)"
+                  >
+                    取消控制
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -345,6 +526,62 @@ const closeDetailDrawer = () => {
       :visible="showDetailDrawer"
       :user="selectedUser"
       @close="closeDetailDrawer"
+    />
+
+    <UserControlModal
+      :open="controlModalOpen"
+      scope="global"
+      :user="controlUser"
+      :existing-rules="controlUser ? rulesOf(controlUser) : {}"
+      @close="closeControlSetting"
+      @submit="submitControlSetting"
+    />
+
+    <UserControlDetailDrawer
+      :open="controlDetailOpen"
+      :user="controlUser"
+      :rules="controlUser ? rulesOf(controlUser) : {}"
+      :operation-logs="userControlState.operationLogs"
+      :execution-logs="userControlState.executionLogs"
+      @close="closeControlDetail"
+    />
+
+    <Teleport to="body">
+      <div v-if="cancelControlOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" @mousedown.self="closeControlCancel">
+        <section class="w-full max-w-md rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="取消统一用户控制">
+          <header class="border-b border-slate-200 px-6 py-5">
+            <h2 class="text-lg font-semibold text-slate-900">取消统一控制</h2>
+            <p class="mt-1 text-sm text-slate-500">{{ controlUser?.username }} · UID {{ userIdOf(controlUser) }}</p>
+          </header>
+          <div class="space-y-4 px-6 py-5">
+            <p class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-800">
+              将取消六个模块中当前有效或处理中的规则；已执行的一次性记录会保留。
+            </p>
+            <label class="block">
+              <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
+              <textarea v-model="cancelNote" rows="3" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+              <span class="mt-1 block text-xs" :class="cancelNote.trim() ? 'text-slate-500' : 'text-rose-600'">
+                {{ cancelNote.trim() ? '确认后还需完成 MFA 验证' : '取消备注必填' }}
+              </span>
+            </label>
+          </div>
+          <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+            <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeControlCancel">返回</button>
+            <button type="button" :disabled="!cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmControlCancel">
+              继续 MFA 验证
+            </button>
+          </footer>
+        </section>
+      </div>
+    </Teleport>
+
+    <MfaVerificationModal
+      v-model:open="mfaOpen"
+      :loading="mfaLoading"
+      :title="mfaTitle"
+      :description="mfaDescription"
+      @verify="handleMfaVerify"
+      @cancel="handleMfaCancel"
     />
   </section>
 </template>

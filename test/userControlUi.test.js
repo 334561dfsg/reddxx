@@ -61,3 +61,21 @@ test('module page explains settlement-only perpetual control and module-only sco
   assert.match(source, /本次操作只影响当前模块/)
   assert.match(source, /规则来源/)
 })
+
+test('user list exposes unified status and scoped actions', () => {
+  const source = read('../src/pages/admin/user/UserListPage.vue')
+  assert.match(source, /统一控制/)
+  assert.match(source, /模块状态/)
+  assert.match(source, /设置控制/)
+  assert.match(source, /取消控制/)
+  assert.match(source, /UserControlDetailDrawer/)
+  assert.match(source, /MfaVerificationModal/)
+})
+
+test('detail drawer distinguishes progress from configuration divergence', () => {
+  const source = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
+  assert.match(source, /已执行/)
+  assert.match(source, /存在差异/)
+  assert.match(source, /规则来源/)
+  assert.match(source, /最近执行/)
+})
