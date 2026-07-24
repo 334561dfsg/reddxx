@@ -8,6 +8,10 @@ import {
 } from '../src/features/user-control/userControlForm.js'
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
+const openingTag = (source, testId) => source.match(new RegExp(`<[^>]+data-testid="${testId}"[^>]*>`))?.[0] || ''
+const elementByTestId = (source, testId) => source.match(
+  new RegExp(`<([a-z]+)[^>]*data-testid="${testId}"[^>]*>[\\s\\S]*?<\\/\\1>`)
+)?.[0] || ''
 
 test('form helper exposes only trading outcomes for trade modules', () => {
   assert.deepEqual(getModuleControlOptions('trade').map((option) => option.value), ['profit', 'loss'])
@@ -65,6 +69,15 @@ test('shared modal keeps the atomic failure warning inside the global-only summa
   assert.match(globalWarning, /任一模块设置失败，六个模块全部保持原状态/)
 })
 
+test('shared modal renders the target email in the read-only user identity block', () => {
+  const source = read('../src/admin/components/user-control/UserControlModal.vue')
+  const targetUser = elementByTestId(source, 'user-control-target-user')
+
+  assert.notEqual(targetUser, '')
+  assert.match(targetUser, /selectedUserId/)
+  assert.match(targetUser, /selectedUserEmail/)
+})
+
 test('module page explains settlement-only perpetual control and module-only scope', () => {
   const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   assert.match(source, /不改变K线/)
@@ -98,6 +111,19 @@ test('detail drawer distinguishes progress from configuration divergence', () =>
   assert.match(source, /businessId/)
   assert.match(source, /getUserControlDivergenceKeys/)
   assert.match(source, /配置差异/)
+})
+
+test('detail drawer receives and renders superseded rule history with its timestamp', () => {
+  const drawerSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
+  const listSource = read('../src/pages/admin/user/UserListPage.vue')
+  const history = elementByTestId(drawerSource, 'user-control-superseded-history')
+  const drawerUsage = listSource.match(/<UserControlDetailDrawer[\s\S]*?\/>/)?.[0] || ''
+
+  assert.notEqual(history, '')
+  assert.match(history, /supersededRules/)
+  assert.match(history, /supersededAt/)
+  assert.match(history, /已覆盖/)
+  assert.match(drawerUsage, /:rule-history="userControlState\.ruleHistory"/)
 })
 
 test('log page exposes operation, execution, filtering, and demo simulation', () => {
@@ -134,6 +160,21 @@ test('log page exposes audit fields and calls the shared demo state actions', ()
   assert.match(source, /executionStatusClasses/)
 })
 
+test('log page binds date filters and audit columns to their actual values', () => {
+  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+  const dateFrom = openingTag(source, 'user-control-log-date-from')
+  const dateTo = openingTag(source, 'user-control-log-date-to')
+
+  assert.match(dateFrom, /type="date"/)
+  assert.match(dateFrom, /v-model="filters\.dateFrom"/)
+  assert.match(dateTo, /type="date"/)
+  assert.match(dateTo, /v-model="filters\.dateTo"/)
+  assert.match(elementByTestId(source, 'user-control-operation-operator-value'), /log\.operator/)
+  assert.match(elementByTestId(source, 'user-control-operation-batch-value'), /log\.batchId/)
+  assert.match(elementByTestId(source, 'user-control-execution-rule-value'), /log\.value/)
+  assert.match(elementByTestId(source, 'user-control-execution-duration-value'), /log\.duration/)
+})
+
 test('log page immediately normalizes module values and follows route query changes', () => {
   const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
   assert.match(source, /getUserControlSimulationValues/)
@@ -142,6 +183,16 @@ test('log page immediately normalizes module values and follows route query chan
   assert.match(source, /route\.query\.userId/)
   assert.match(source, /route\.query\.module/)
   assert.match(source, /immediate:\s*true/)
+})
+
+test('simulation locks the final outcome to the selected active rule', () => {
+  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+  const afterValue = openingTag(source, 'user-control-simulation-after-value')
+
+  assert.match(afterValue, /v-model="simulation\.afterValue"/)
+  assert.match(afterValue, /:disabled="Boolean\(selectedRule\)"/)
+  assert.match(source, /simulation\.afterValue === selectedRule\.value\?\.value/)
+  assert.match(source, /最终结果由当前规则锁定/)
 })
 
 test('log tabs and live demo results expose accessible state semantics', () => {

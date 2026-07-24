@@ -22,7 +22,26 @@ const requireText = (value, name) => {
   return text
 }
 
-export const createUserControlState = () => ({ rules: {}, operationLogs: [], executionLogs: [], failureModule: '' })
+const operatorOf = (input) => String(input.operator || 'admin_demo')
+
+const rulesDuration = (rules = {}) => {
+  const durations = [...new Set(Object.values(rules).map((rule) => rule?.duration).filter(Boolean))]
+  return durations.length > 1 ? 'mixed' : durations[0] || ''
+}
+
+export const createUserControlState = () => ({
+  rules: {},
+  ruleHistory: [],
+  operationLogs: [],
+  executionLogs: [],
+  failureModule: ''
+})
+
+const supersedeRules = (rules, now) => Object.values(rules || {}).map((rule) => ({
+  ...rule,
+  status: 'superseded',
+  supersededAt: now
+}))
 
 export function snapshotUserControlRules(state, userId) {
   const rules = state.rules[String(userId)] || {}
@@ -49,9 +68,11 @@ export function applyUnifiedControl(state, input) {
   return {
     ...state,
     rules: { ...state.rules, [userId]: rules },
+    ruleHistory: [...supersedeRules(before, input.now), ...(state.ruleHistory || [])],
     operationLogs: [{ id: `op-${input.batchId}`, userId, scope: 'global', action: 'apply',
       modules: USER_CONTROL_MODULES.map((item) => item.key), strategy: input.strategy,
-      duration: input.duration, before, note, createdAt: input.now }, ...state.operationLogs],
+      duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
+      before, note, createdAt: input.now }, ...state.operationLogs],
     lastError: ''
   }
 }
@@ -86,6 +107,19 @@ export function normalizeUserControlLogQuery(query = {}) {
   return { userId, module }
 }
 
+export function filterUserControlLogsByDate(logs = [], filters = {}) {
+  const dateFrom = String(filters.dateFrom || '')
+  const dateTo = String(filters.dateTo || '')
+  const from = dateFrom ? `${dateFrom} 00:00:00` : ''
+  const to = dateTo ? `${dateTo} 23:59:59` : ''
+
+  return logs.filter((log) => {
+    const createdAt = String(log.createdAt || '')
+    if ((from || to) && !createdAt) return false
+    return (!from || createdAt >= from) && (!to || createdAt <= to)
+  })
+}
+
 const cloneRules = (state, userId) => ({ ...(state.rules[userId] || {}) })
 
 export function applyModuleControl(state, input) {
@@ -100,10 +134,17 @@ export function applyModuleControl(state, input) {
     family: module.family, value: input.value, strategy: '', duration: input.duration,
     status: 'active', source: 'module', note, updatedAt: input.now,
     consumedAt: '', supersededAt: '', cancelledAt: '' }
-  return { ...state, rules: { ...state.rules, [userId]: userRules }, operationLogs: [{
+  return {
+    ...state,
+    rules: { ...state.rules, [userId]: userRules },
+    ruleHistory: [...supersedeRules(before ? { [module.key]: before } : {}, input.now), ...(state.ruleHistory || [])],
+    operationLogs: [{
     id: `op-${input.ruleId}`, userId, scope: 'module', action: 'apply', modules: [module.key],
+    duration: input.duration, operator: operatorOf(input), batchId: input.batchId || input.ruleId,
     before, after: userRules[module.key], note, createdAt: input.now
-  }, ...state.operationLogs], lastError: '' }
+    }, ...state.operationLogs],
+    lastError: ''
+  }
 }
 
 export function cancelUnifiedControl(state, input) {
@@ -115,7 +156,9 @@ export function cancelUnifiedControl(state, input) {
   ]))
   return { ...state, rules: { ...state.rules, [userId]: cancelled }, operationLogs: [{
     id: input.operationId, userId, scope: 'global', action: 'cancel',
-    modules: USER_CONTROL_MODULES.map((item) => item.key), before, note, createdAt: input.now
+    modules: USER_CONTROL_MODULES.map((item) => item.key), duration: rulesDuration(before),
+    operator: operatorOf(input), batchId: input.batchId || input.operationId,
+    before, note, createdAt: input.now
   }, ...state.operationLogs] }
 }
 
@@ -130,7 +173,8 @@ export function cancelModuleControl(state, input) {
   }
   return { ...state, rules: { ...state.rules, [userId]: userRules }, operationLogs: [{
     id: input.operationId, userId, scope: 'module', action: 'cancel', modules: [input.moduleKey],
-    before, note, createdAt: input.now
+    duration: before?.duration || '', operator: operatorOf(input),
+    batchId: input.batchId || input.operationId, before, note, createdAt: input.now
   }, ...state.operationLogs] }
 }
 
@@ -139,10 +183,11 @@ export function consumeModuleControl(state, input) {
   const userRules = cloneRules(state, userId)
   const rule = userRules[input.moduleKey]
   if (!rule || rule.status !== 'active' || rule.duration !== 'once') return state
+  if (input.afterValue !== rule.value) return state
   userRules[input.moduleKey] = { ...rule, status: 'consumed', consumedAt: input.now }
   return { ...state, rules: { ...state.rules, [userId]: userRules }, executionLogs: [{
     id: `exec-${input.businessId}`, userId, moduleKey: input.moduleKey, ruleId: rule.id,
-    source: rule.source, duration: rule.duration, businessId: input.businessId,
+    source: rule.source, value: rule.value, duration: rule.duration, businessId: input.businessId,
     beforeValue: input.beforeValue, afterValue: input.afterValue,
     status: 'success', createdAt: input.now
   }, ...state.executionLogs] }

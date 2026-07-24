@@ -32,6 +32,7 @@ const noteTouched = ref(false)
 const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key === props.moduleKey) || null)
 const selectedUserId = computed(() => String(props.user?.userId ?? props.user?.id ?? ''))
 const selectedUserName = computed(() => props.user?.username || props.user?.name || '未选择用户')
+const selectedUserEmail = computed(() => props.user?.email || '邮箱未提供')
 const currentModuleRule = computed(() => props.existingRules?.[props.moduleKey] || null)
 
 const moduleOptions = computed(() => getModuleControlOptions(moduleMeta.value?.family))
@@ -129,7 +130,11 @@ const submit = () => {
             <h2 class="mt-1 text-xl font-semibold text-slate-900">
               {{ scope === 'global' ? '设置用户统一控制' : moduleMeta?.actionLabel }}
             </h2>
-            <p class="mt-1 text-sm text-slate-500">{{ selectedUserName }} · UID {{ selectedUserId || '—' }}</p>
+            <div data-testid="user-control-target-user" class="mt-1 flex flex-wrap gap-x-2 text-sm text-slate-500">
+              <span>{{ selectedUserName }}</span>
+              <span>UID {{ selectedUserId || '—' }}</span>
+              <span>{{ selectedUserEmail }}</span>
+            </div>
           </div>
           <button type="button" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="关闭" @click="close">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

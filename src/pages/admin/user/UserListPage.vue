@@ -553,6 +553,7 @@ const closeDetailDrawer = () => {
       :open="controlDetailOpen"
       :user="controlUser"
       :rules="controlUser ? rulesOf(controlUser) : {}"
+      :rule-history="userControlState.ruleHistory"
       :operation-logs="userControlState.operationLogs"
       :execution-logs="userControlState.executionLogs"
       @close="closeControlDetail"

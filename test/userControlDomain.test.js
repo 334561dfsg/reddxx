@@ -35,6 +35,44 @@ test('demo seed includes synchronized, divergent, and consumed examples', () => 
   assert.ok(seed.executionLogs.length >= 1)
 })
 
+test('log date filtering is inclusive and leaves source rows unchanged', () => {
+  assert.equal(typeof userControlHelpers.filterUserControlLogsByDate, 'function')
+  const rows = [
+    { id: 'before', createdAt: '2026-07-24 23:59:59' },
+    { id: 'start', createdAt: '2026-07-25 00:00:00' },
+    { id: 'end', createdAt: '2026-07-26 23:59:59' },
+    { id: 'after', createdAt: '2026-07-27 00:00:00' }
+  ]
+
+  assert.deepEqual(
+    userControlHelpers.filterUserControlLogsByDate(rows, { dateFrom: '2026-07-25', dateTo: '2026-07-26' }).map((row) => row.id),
+    ['start', 'end']
+  )
+  assert.deepEqual(userControlHelpers.filterUserControlLogsByDate(rows, {}), rows)
+  assert.equal(rows.length, 4)
+})
+
+test('operation and execution logs retain frontend audit display fields', () => {
+  const applied = applyUnifiedControl(createUserControlState(), {
+    userId: 'audit-user', strategy: 'positive', duration: 'once', note: '审计字段',
+    now: '2026-07-25 12:00:00', batchId: 'audit-batch-1', operator: 'risk_admin'
+  })
+  assert.deepEqual({
+    operator: applied.operationLogs[0].operator,
+    batchId: applied.operationLogs[0].batchId,
+    duration: applied.operationLogs[0].duration
+  }, { operator: 'risk_admin', batchId: 'audit-batch-1', duration: 'once' })
+
+  const executed = consumeModuleControl(applied, {
+    userId: 'audit-user', moduleKey: 'delivery', businessId: 'audit-order-1',
+    beforeValue: 'loss', afterValue: 'profit', now: '2026-07-25 12:05:00'
+  })
+  assert.deepEqual({
+    value: executed.executionLogs[0].value,
+    duration: executed.executionLogs[0].duration
+  }, { value: 'profit', duration: 'once' })
+})
+
 test('list metadata only reflects active and processing rules', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
     userId: 'user_1001', strategy: 'positive', duration: 'permanent', note: '统一带盈',
@@ -61,7 +99,9 @@ test('list metadata only reflects active and processing rules', () => {
 
   const consumed = USER_CONTROL_MODULES.reduce((state, module, index) => consumeModuleControl(state, {
     userId: 'user_1004', moduleKey: module.key, businessId: `consumed-${index}`,
-    beforeValue: 'natural', afterValue: 'controlled', now: `2026-07-25 16:${30 + index}:00`
+    beforeValue: module.family === 'trade' ? 'profit' : 'highYield',
+    afterValue: state.rules['user_1004'][module.key].value,
+    now: `2026-07-25 16:${30 + index}:00`
   }), applyUnifiedControl(createUserControlState(), {
     userId: 'user_1004', strategy: 'negative', duration: 'once', note: '全部执行',
     now: '2026-07-25 16:30:00', batchId: 'consumed-all-b1'
@@ -195,6 +235,37 @@ test('a second unified write replaces a module override and restores six-module 
   assert.deepEqual(summarizeUserControl(replaced, '159'), { kind: 'synced', aligned: 6, total: 6, label: '6/6 已同步' })
 })
 
+test('overwrites retain superseded rules as displayable history without changing current rules', () => {
+  const first = applyUnifiedControl(createUserControlState(), {
+    userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈',
+    now: '2026-07-25 14:30:00', batchId: 'history-b1'
+  })
+  const overridden = applyModuleControl(first, {
+    userId: '159', moduleKey: 'perpetual', value: 'loss', duration: 'permanent',
+    note: '永续单独控亏', now: '2026-07-25 15:10:00', ruleId: 'history-perpetual-2'
+  })
+
+  assert.equal(overridden.rules['159'].perpetual.id, 'history-perpetual-2')
+  assert.equal(overridden.rules['159'].perpetual.status, 'active')
+  assert.deepEqual(overridden.ruleHistory, [{
+    ...first.rules['159'].perpetual,
+    status: 'superseded',
+    supersededAt: '2026-07-25 15:10:00'
+  }])
+
+  const replaced = applyUnifiedControl(overridden, {
+    userId: '159', strategy: 'negative', duration: 'once', note: '统一控亏',
+    now: '2026-07-25 16:00:00', batchId: 'history-b2'
+  })
+  assert.equal(replaced.ruleHistory.length, USER_CONTROL_MODULES.length + 1)
+  assert.ok(replaced.ruleHistory.slice(0, USER_CONTROL_MODULES.length).every((rule) => (
+    rule.status === 'superseded' && rule.supersededAt === '2026-07-25 16:00:00'
+  )))
+  assert.ok(Object.values(replaced.rules['159']).every((rule) => (
+    rule.batchId === 'history-b2' && rule.status === 'active' && rule.supersededAt === ''
+  )))
+})
+
 test('unified apply operation log retains a snapshot of the prior six-module rules', () => {
   const first = applyUnifiedControl(createUserControlState(), {
     userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
@@ -222,6 +293,28 @@ test('once consumption updates one module without creating a configuration diffe
   })
   assert.equal(consumed.rules['159'].delivery.status, 'consumed')
   assert.deepEqual(summarizeUserControl(consumed, '159'), { kind: 'progress', consumed: 1, total: 6, label: '已执行 1/6' })
+})
+
+test('once consumption rejects a simulated outcome that differs from the active rule', () => {
+  const configured = applyUnifiedControl(createUserControlState(), {
+    userId: '159', strategy: 'positive', duration: 'once', note: '统一带盈',
+    now: '2026-07-25 14:30:00', batchId: 'locked-outcome-b1'
+  })
+  const rejected = consumeModuleControl(configured, {
+    userId: '159', moduleKey: 'delivery', businessId: 'delivery-wrong-result',
+    beforeValue: 'profit', afterValue: 'loss', now: '2026-07-25 14:40:00'
+  })
+
+  assert.strictEqual(rejected, configured)
+  assert.equal(rejected.rules['159'].delivery.status, 'active')
+  assert.equal(rejected.executionLogs.length, 0)
+
+  const accepted = consumeModuleControl(configured, {
+    userId: '159', moduleKey: 'delivery', businessId: 'delivery-rule-result',
+    beforeValue: 'loss', afterValue: 'profit', now: '2026-07-25 14:41:00'
+  })
+  assert.equal(accepted.rules['159'].delivery.status, 'consumed')
+  assert.equal(accepted.executionLogs[0].afterValue, configured.rules['159'].delivery.value)
 })
 
 test('unified cancellation only cancels active or processing rules and records the prior rules', () => {
@@ -259,6 +352,7 @@ test('a unified write failure rolls back all module changes', () => {
     assert.deepEqual(next.rules['159'][module.key], initial.rules['159'][module.key])
   }
   assert.deepEqual(next.operationLogs, initial.operationLogs)
+  assert.deepEqual(next.ruleHistory, initial.ruleHistory)
   assert.equal(next.lastError, '模块 spot 写入失败，六个模块均未更新')
 })
 

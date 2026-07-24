@@ -10,6 +10,7 @@ const props = defineProps({
   open: { type: Boolean, default: false },
   user: { type: Object, default: null },
   rules: { type: Object, default: () => ({}) },
+  ruleHistory: { type: Array, default: () => [] },
   operationLogs: { type: Array, default: () => [] },
   executionLogs: { type: Array, default: () => [] }
 })
@@ -54,6 +55,12 @@ const lastExecution = (moduleKey) => props.executionLogs.find((log) => (
 const userOperations = computed(() => props.operationLogs
   .filter((log) => String(log.userId) === userId.value)
   .slice(0, 3))
+
+const supersededRules = computed(() => props.ruleHistory
+  .filter((rule) => String(rule.userId) === userId.value && rule.status === 'superseded')
+  .slice(0, 12))
+
+const moduleLabel = (moduleKey) => USER_CONTROL_MODULES.find((module) => module.key === moduleKey)?.label || moduleKey
 
 const summaryMeta = computed(() => {
   if (summary.value.kind === 'divergent') {
@@ -145,6 +152,22 @@ const summaryMeta = computed(() => {
                 </tbody>
               </table>
             </div>
+          </section>
+
+          <section data-testid="user-control-superseded-history">
+            <h3 class="text-sm font-semibold text-slate-900">已覆盖规则历史</h3>
+            <div v-if="supersededRules.length" class="mt-2 overflow-hidden rounded-xl border border-slate-200">
+              <div v-for="rule in supersededRules" :key="`${rule.id}-${rule.supersededAt}`" class="grid gap-2 border-b border-slate-100 px-4 py-3 text-sm last:border-b-0 md:grid-cols-[1fr_1fr_1fr_auto] md:items-center">
+                <div>
+                  <p class="font-medium text-slate-800">{{ moduleLabel(rule.moduleKey) }}</p>
+                  <p class="mt-0.5 text-xs text-slate-500">{{ sourceLabel(rule.source) }}</p>
+                </div>
+                <p class="text-slate-600">{{ valueLabel(rule.value) }} · {{ durationLabel(rule.duration) }}</p>
+                <time class="text-xs text-slate-500">覆盖时间 {{ rule.supersededAt || '—' }}</time>
+                <span class="w-fit rounded-full bg-violet-100 px-2.5 py-1 text-xs font-medium text-violet-700">已覆盖</span>
+              </div>
+            </div>
+            <p v-else class="mt-2 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400">暂无已覆盖规则</p>
           </section>
 
           <section>
