@@ -1,4 +1,6 @@
 dist/
 /dist
+.worktrees/
+.superpowers/
 dist/index.html
 /dist
