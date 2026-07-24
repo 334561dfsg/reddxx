@@ -42,10 +42,12 @@ export const resetUserControlDemo = () => {
 }
 
 export const watchUserControlSimulationRule = (simulation) => watch(
-  () => {
-    const rule = userControlState.value.rules[simulation.userId]?.[simulation.moduleKey]
-    return [simulation.userId, simulation.moduleKey, rule?.value, rule?.status]
-  },
+  [
+    () => simulation.userId,
+    () => simulation.moduleKey,
+    () => userControlState.value.rules[simulation.userId]?.[simulation.moduleKey]?.value,
+    () => userControlState.value.rules[simulation.userId]?.[simulation.moduleKey]?.status
+  ],
   () => {
     const moduleExists = USER_CONTROL_MODULES.some((module) => module.key === simulation.moduleKey)
     if (!moduleExists) {

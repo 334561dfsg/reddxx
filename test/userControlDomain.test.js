@@ -430,6 +430,37 @@ test('simulation rule binding follows state replacement and clears an inactive r
   }
 })
 
+test('simulation rule binding preserves beforeValue across unrelated state replacements', async () => {
+  resetUserControlDemo()
+  const simulation = reactive({
+    userId: '159',
+    moduleKey: 'spot',
+    beforeValue: '',
+    afterValue: ''
+  })
+  const stop = userControlStateHelpers.watchUserControlSimulationRule(simulation)
+
+  try {
+    await nextTick()
+    simulation.beforeValue = 'profit'
+
+    setUserControlFailureModule('delivery')
+    await nextTick()
+    assert.equal(simulation.beforeValue, 'profit')
+
+    setUserControlFailureModule('')
+    setUnifiedUserControl({
+      userId: 'unrelated-user', strategy: 'negative', duration: 'permanent', note: '无关用户操作日志',
+      now: '2026-07-25 18:20:00', batchId: 'unrelated-state-b1'
+    })
+    await nextTick()
+    assert.equal(simulation.beforeValue, 'profit')
+  } finally {
+    stop()
+    resetUserControlDemo()
+  }
+})
+
 test('log query normalization follows changed, array, invalid, and cleared route values', () => {
   assert.equal(typeof userControlHelpers.normalizeUserControlLogQuery, 'function')
   assert.deepEqual(userControlHelpers.normalizeUserControlLogQuery({ userId: '159', module: 'aiQuant' }), {
