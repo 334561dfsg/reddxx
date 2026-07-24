@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { createUserControlDemoSeed } from '../src/admin/mock/userControl.js'
 import {
   USER_CONTROL_MODULES,
   applyModuleControl,
@@ -11,6 +12,15 @@ import {
   filterUserControlRows,
   summarizeUserControl
 } from '../src/features/user-control/userControl.js'
+
+test('demo seed includes synchronized, divergent, and consumed examples', () => {
+  const seed = createUserControlDemoSeed()
+
+  assert.equal(summarizeUserControl(seed, '159').kind, 'progress')
+  assert.equal(summarizeUserControl(seed, '158').kind, 'divergent')
+  assert.ok(seed.operationLogs.length >= 2)
+  assert.ok(seed.executionLogs.length >= 1)
+})
 
 test('unified positive maps trading to profit and finance to high yield', () => {
   const initial = createUserControlState()
