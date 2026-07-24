@@ -24,6 +24,14 @@ const requireText = (value, name) => {
 
 export const createUserControlState = () => ({ rules: {}, operationLogs: [], executionLogs: [], failureModule: '' })
 
+export function snapshotUserControlRules(state, userId) {
+  const rules = state.rules[String(userId)] || {}
+  return Object.fromEntries(USER_CONTROL_MODULES.map((module) => [
+    module.key,
+    rules[module.key] ? { ...rules[module.key] } : undefined
+  ]))
+}
+
 export function applyUnifiedControl(state, input) {
   const userId = requireText(input.userId, 'userId')
   const note = requireText(input.note, 'note')

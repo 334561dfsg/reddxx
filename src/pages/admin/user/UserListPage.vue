@@ -475,6 +475,13 @@ const closeDetailDrawer = () => {
                   >
                     取消控制
                   </button>
+                  <RouterLink
+                    :to="{ name: 'users-control-log', query: { userId: userIdOf(user) } }"
+                    class="text-slate-600 hover:text-slate-900"
+                    @click.stop
+                  >
+                    控制日志
+                  </RouterLink>
                 </div>
               </td>
             </tr>

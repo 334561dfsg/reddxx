@@ -284,7 +284,7 @@ const resetFilters = () => {
                     取消
                   </button>
                   <RouterLink
-                    :to="{ path: '/admin/users/control-log', query: { uid: row.userId, module: moduleKey } }"
+                    :to="{ name: 'users-control-log', query: { userId: row.userId, module: moduleKey } }"
                     class="text-slate-600 hover:text-slate-900"
                   >
                     日志

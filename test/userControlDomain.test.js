@@ -1,6 +1,14 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { reactive } from 'vue'
 import { createUserControlDemoSeed } from '../src/admin/mock/userControl.js'
+import {
+  resetUserControlDemo,
+  setUnifiedUserControl,
+  setUserControlFailureModule,
+  simulateUserControlExecution,
+  userControlState
+} from '../src/admin/state/userControlState.js'
 import * as userControlHelpers from '../src/features/user-control/userControl.js'
 import {
   USER_CONTROL_MODULES,
@@ -238,16 +246,66 @@ test('module cancellation preserves an absent child and records null before valu
 })
 
 test('a unified write failure rolls back all module changes', () => {
-  const initial = {
-    ...createUserControlState(),
-    failureModule: 'spot',
-    rules: { '159': { spot: { id: 'existing' } } }
-  }
+  const configured = applyUnifiedControl(createUserControlState(), {
+    userId: '159', strategy: 'negative', duration: 'permanent', note: '旧的六模块配置',
+    now: '2026-07-25 14:00:00', batchId: 'old-batch'
+  })
+  const initial = { ...configured, failureModule: 'spot' }
   const next = applyUnifiedControl(initial, {
     userId: '159', strategy: 'positive', duration: 'once', note: '客户带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
-  assert.deepEqual(next.rules, initial.rules)
+  assert.equal(Object.keys(initial.rules['159']).length, USER_CONTROL_MODULES.length)
+  for (const module of USER_CONTROL_MODULES) {
+    assert.deepEqual(next.rules['159'][module.key], initial.rules['159'][module.key])
+  }
+  assert.deepEqual(next.operationLogs, initial.operationLogs)
   assert.equal(next.lastError, '模块 spot 写入失败，六个模块均未更新')
+})
+
+test('reactive six-module rules can be snapshotted as detached cloneable values', () => {
+  assert.equal(typeof userControlHelpers.snapshotUserControlRules, 'function')
+  const state = reactive(createUserControlDemoSeed())
+  const snapshot = userControlHelpers.snapshotUserControlRules(state, '159')
+
+  assert.deepEqual(Object.keys(snapshot).sort(), USER_CONTROL_MODULES.map((module) => module.key).sort())
+  assert.doesNotThrow(() => structuredClone(snapshot))
+  const priorStatus = snapshot.spot.status
+  state.rules['159'].spot.status = 'cancelled'
+  assert.equal(snapshot.spot.status, priorStatus)
+})
+
+test('demo state actions consume once, retain failure toggle, and restore the seed', () => {
+  resetUserControlDemo()
+  try {
+    const executionCount = userControlState.value.executionLogs.length
+    const payload = {
+      userId: '159', moduleKey: 'spot', beforeValue: 'loss', afterValue: 'profit',
+      businessId: 'state-demo-spot-001', now: '2026-07-25 17:00:00'
+    }
+    simulateUserControlExecution(payload)
+    simulateUserControlExecution({ ...payload, businessId: 'state-demo-spot-002' })
+    assert.equal(userControlState.value.executionLogs.length, executionCount + 1)
+    assert.equal(userControlState.value.rules['159'].spot.status, 'consumed')
+
+    const before = Object.fromEntries(Object.entries(userControlState.value.rules['159']).map(([key, rule]) => [key, { ...rule }]))
+    setUserControlFailureModule('spot')
+    setUnifiedUserControl({
+      userId: '159', strategy: 'negative', duration: 'once', note: '状态层原子失败测试',
+      now: '2026-07-25 17:10:00', batchId: 'state-failure-001'
+    })
+    assert.equal(userControlState.value.failureModule, 'spot')
+    assert.equal(userControlState.value.lastError, '模块 spot 写入失败，六个模块均未更新')
+    for (const module of USER_CONTROL_MODULES) {
+      assert.deepEqual(userControlState.value.rules['159'][module.key], before[module.key])
+    }
+
+    setUserControlFailureModule('')
+    assert.equal(userControlState.value.failureModule, '')
+  } finally {
+    resetUserControlDemo()
+  }
+  assert.equal(userControlState.value.failureModule, '')
+  assert.equal(userControlState.value.rules['159'].spot.status, 'active')
 })
 
 test('filtering matches user details and rule fields', () => {
