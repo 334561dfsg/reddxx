@@ -1,0 +1,340 @@
+<script setup>
+import { computed, ref } from 'vue'
+import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
+import { usersList } from '../../../admin/mock/user.js'
+import {
+  cancelSingleModuleControl,
+  setModuleUserControl,
+  userControlState
+} from '../../../admin/state/userControlState.js'
+import {
+  filterUserControlRows,
+  USER_CONTROL_MODULES
+} from '../../../features/user-control/userControl.js'
+
+const props = defineProps({
+  moduleKey: { type: String, required: true }
+})
+
+const query = ref('')
+const valueFilter = ref('')
+const statusFilter = ref('')
+const sourceFilter = ref('')
+const modalOpen = ref(false)
+const cancelOpen = ref(false)
+const selectedUser = ref(null)
+const cancelNote = ref('')
+
+const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key === props.moduleKey) || {
+  key: props.moduleKey,
+  label: '未知模块',
+  family: 'trade',
+  actionLabel: '用户控盘'
+})
+
+const valueOptions = computed(() => moduleMeta.value.family === 'finance'
+  ? [{ value: 'highYield', label: '高收益' }, { value: 'lowYield', label: '低收益' }]
+  : [{ value: 'profit', label: '盈利' }, { value: 'loss', label: '亏损' }])
+
+const userIdOf = (user) => String(user?.userId ?? user?.id ?? '')
+const currentRule = (user) => userControlState.value.rules[userIdOf(user)]?.[props.moduleKey] || null
+
+const allUsers = computed(() => {
+  const userMap = new Map(usersList.map((user) => [String(user.id), user]))
+
+  Object.keys(userControlState.value.rules).forEach((userId) => {
+    if (!userMap.has(userId)) {
+      userMap.set(userId, {
+        id: userId,
+        username: `demo_user_${userId}`,
+        email: `demo_${userId}@example.com`
+      })
+    }
+  })
+
+  return [...userMap.values()]
+})
+
+const rows = computed(() => allUsers.value.map((user) => ({
+  ...user,
+  userId: userIdOf(user),
+  rule: currentRule(user)
+})))
+
+const filteredRows = computed(() => filterUserControlRows(rows.value, {
+  query: query.value,
+  value: valueFilter.value,
+  status: statusFilter.value,
+  source: sourceFilter.value
+}))
+
+const effectiveRules = computed(() => rows.value
+  .map((row) => row.rule)
+  .filter((rule) => rule && ['active', 'processing'].includes(rule.status)))
+
+const summaryCards = computed(() => [
+  { label: '用户总数', value: rows.value.length, hint: '来自现有用户 Mock' },
+  { label: '当前有效', value: effectiveRules.value.length, hint: `${moduleMeta.value.actionLabel}规则` },
+  { label: '一次性待执行', value: effectiveRules.value.filter((rule) => rule.duration === 'once').length, hint: '等待下一次有效结算' },
+  { label: '永久生效中', value: effectiveRules.value.filter((rule) => rule.duration === 'permanent').length, hint: '直至取消或覆盖' }
+])
+
+const valueLabel = (value) => ({
+  profit: '盈利',
+  loss: '亏损',
+  highYield: '高收益',
+  lowYield: '低收益'
+})[value] || '未设置'
+
+const durationLabel = (duration) => ({ once: '一次性', permanent: '永久' })[duration] || '—'
+
+const statusMeta = (rule) => {
+  if (!rule) return { label: '未设置', classes: 'bg-slate-100 text-slate-600' }
+  if (rule.status === 'active' && rule.duration === 'once') return { label: '待执行', classes: 'bg-amber-100 text-amber-700' }
+  if (rule.status === 'active') return { label: '生效中', classes: 'bg-emerald-100 text-emerald-700' }
+  return ({
+    processing: { label: '处理中', classes: 'bg-blue-100 text-blue-700' },
+    consumed: { label: '已执行', classes: 'bg-slate-100 text-slate-600' },
+    cancelled: { label: '已取消', classes: 'bg-rose-100 text-rose-700' },
+    superseded: { label: '已覆盖', classes: 'bg-purple-100 text-purple-700' }
+  })[rule.status] || { label: rule.status, classes: 'bg-slate-100 text-slate-600' }
+}
+
+const sourceMeta = (source) => source === 'global'
+  ? { label: '用户管理统一设置', classes: 'bg-violet-100 text-violet-700' }
+  : source === 'module'
+    ? { label: '当前模块独立设置', classes: 'bg-blue-100 text-blue-700' }
+    : { label: '—', classes: 'bg-slate-100 text-slate-500' }
+
+const formatTime = (date = new Date()) => {
+  const pad = (value) => String(value).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+}
+
+const nextSequence = () => String(userControlState.value.operationLogs.length + 1).padStart(4, '0')
+
+const openSetting = (user) => {
+  selectedUser.value = user
+  modalOpen.value = true
+}
+
+const closeSetting = () => {
+  modalOpen.value = false
+  selectedUser.value = null
+}
+
+const submitSetting = (payload) => {
+  const sequence = nextSequence()
+  setModuleUserControl({
+    ...payload,
+    moduleKey: props.moduleKey,
+    ruleId: `demo-rule-${props.moduleKey}-${sequence}`,
+    now: formatTime()
+  })
+  closeSetting()
+}
+
+const openCancel = (user) => {
+  selectedUser.value = user
+  cancelNote.value = ''
+  cancelOpen.value = true
+}
+
+const closeCancel = () => {
+  cancelOpen.value = false
+  cancelNote.value = ''
+  selectedUser.value = null
+}
+
+const confirmCancel = () => {
+  if (!selectedUser.value || !cancelNote.value.trim()) return
+  const sequence = nextSequence()
+  cancelSingleModuleControl({
+    userId: userIdOf(selectedUser.value),
+    moduleKey: props.moduleKey,
+    note: cancelNote.value.trim(),
+    now: formatTime(),
+    operationId: `demo-cancel-${props.moduleKey}-${sequence}`
+  })
+  closeCancel()
+}
+
+const resetFilters = () => {
+  query.value = ''
+  valueFilter.value = ''
+  statusFilter.value = ''
+  sourceFilter.value = ''
+}
+</script>
+
+<template>
+  <section class="space-y-6">
+    <header class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div>
+        <p class="text-sm font-medium text-blue-600">{{ moduleMeta.label }}</p>
+        <h1 class="mt-1 text-3xl font-semibold text-slate-900">{{ moduleMeta.actionLabel }}</h1>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
+          {{ moduleMeta.family === 'trade'
+            ? '针对单个用户设置最终结算盈亏方向，不改变其他用户的自然结果。'
+            : '针对单个用户设置实际入账或最终结算的收益档位，不直接输入金额或收益率。' }}
+        </p>
+      </div>
+      <div class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+        <span class="font-medium text-slate-900">Demo 模式</span>
+        <span class="ml-2">仅更新前端 Mock，不接入真实结算</span>
+      </div>
+    </header>
+
+    <div v-if="moduleKey === 'perpetual'" class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-800">
+      用户级控盘不改变K线、标记价格和实时浮盈亏，只在目标用户最终平仓结算时决定盈亏方向。
+      优先级：单笔/持仓控制 &gt; 用户级控制 &gt; 全局场控 &gt; 自然结果。
+    </div>
+    <div v-else-if="moduleMeta.family === 'trade'" class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-800">
+      用户级控盘只作用于目标用户的最终结算，不改变全局行情、K线或实时浮盈亏。
+      单笔订单或持仓控制优先于用户级控制。
+    </div>
+    <div v-else class="rounded-lg border border-cyan-200 bg-cyan-50 p-4 text-sm leading-6 text-cyan-800">
+      用户收益调节只在目标用户实际收益入账或最终结算时生效；预估收益变化不会消费一次性规则。
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <article v-for="card in summaryCards" :key="card.label" class="rounded-xl border border-slate-200 bg-white p-5">
+        <p class="text-sm text-slate-500">{{ card.label }}</p>
+        <p class="mt-2 text-2xl font-semibold text-slate-900">{{ card.value }}</p>
+        <p class="mt-1 text-xs text-slate-400">{{ card.hint }}</p>
+      </article>
+    </div>
+
+    <article class="rounded-xl border border-slate-200 bg-white p-5">
+      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <label class="relative xl:col-span-2">
+          <span class="sr-only">搜索用户</span>
+          <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input v-model="query" type="search" placeholder="搜索 UID、用户名或邮箱" class="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+        </label>
+        <select v-model="valueFilter" class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500">
+          <option value="">全部控制内容</option>
+          <option v-for="option in valueOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+        </select>
+        <select v-model="statusFilter" class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500">
+          <option value="">全部状态</option>
+          <option value="active">当前有效</option>
+          <option value="processing">处理中</option>
+          <option value="consumed">已执行</option>
+          <option value="cancelled">已取消</option>
+        </select>
+        <select v-model="sourceFilter" class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500">
+          <option value="">全部规则来源</option>
+          <option value="global">用户管理统一设置</option>
+          <option value="module">当前模块独立设置</option>
+        </select>
+      </div>
+      <div class="mt-3 flex items-center justify-between text-xs text-slate-500">
+        <span>共 {{ filteredRows.length }} 位用户</span>
+        <button type="button" class="font-medium text-blue-600 hover:text-blue-700" @click="resetFilters">重置筛选</button>
+      </div>
+    </article>
+
+    <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[1120px] text-left text-sm">
+          <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600">
+            <tr>
+              <th class="px-4 py-3">用户</th>
+              <th class="px-4 py-3">当前控制</th>
+              <th class="px-4 py-3">生效方式</th>
+              <th class="px-4 py-3">当前状态</th>
+              <th class="px-4 py-3">规则来源</th>
+              <th class="px-4 py-3">更新时间</th>
+              <th class="px-4 py-3 text-right">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr v-for="row in filteredRows" :key="row.userId" class="hover:bg-slate-50">
+              <td class="px-4 py-4">
+                <p class="font-medium text-slate-900">{{ row.username }}</p>
+                <p class="mt-0.5 text-xs text-slate-500">UID {{ row.userId }} · {{ row.email }}</p>
+              </td>
+              <td class="px-4 py-4 font-medium" :class="row.rule ? 'text-slate-900' : 'text-slate-400'">{{ valueLabel(row.rule?.value) }}</td>
+              <td class="px-4 py-4 text-slate-600">{{ durationLabel(row.rule?.duration) }}</td>
+              <td class="px-4 py-4">
+                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="statusMeta(row.rule).classes">
+                  {{ statusMeta(row.rule).label }}
+                </span>
+              </td>
+              <td class="px-4 py-4">
+                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="sourceMeta(row.rule?.source).classes">
+                  {{ sourceMeta(row.rule?.source).label }}
+                </span>
+              </td>
+              <td class="px-4 py-4 text-slate-500">{{ row.rule?.updatedAt || '—' }}</td>
+              <td class="px-4 py-4">
+                <div class="flex items-center justify-end gap-3 whitespace-nowrap text-sm font-medium">
+                  <button type="button" class="text-blue-600 hover:text-blue-800" @click="openSetting(row)">
+                    {{ row.rule ? '修改' : '设置' }}
+                  </button>
+                  <button
+                    type="button"
+                    :disabled="!row.rule || !['active', 'processing'].includes(row.rule.status)"
+                    class="text-rose-600 hover:text-rose-800 disabled:cursor-not-allowed disabled:text-slate-300"
+                    @click="openCancel(row)"
+                  >
+                    取消
+                  </button>
+                  <RouterLink
+                    :to="{ path: '/admin/users/control-log', query: { uid: row.userId, module: moduleKey } }"
+                    class="text-slate-600 hover:text-slate-900"
+                  >
+                    日志
+                  </RouterLink>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-if="filteredRows.length === 0" class="px-6 py-14 text-center">
+        <p class="text-sm font-medium text-slate-700">没有符合筛选条件的用户</p>
+        <button type="button" class="mt-2 text-sm font-medium text-blue-600" @click="resetFilters">清除筛选条件</button>
+      </div>
+    </article>
+
+    <UserControlModal
+      :open="modalOpen"
+      scope="module"
+      :module-key="moduleKey"
+      :user="selectedUser"
+      :existing-rules="selectedUser ? (userControlState.rules[userIdOf(selectedUser)] || {}) : {}"
+      @close="closeSetting"
+      @submit="submitSetting"
+    />
+
+    <Teleport to="body">
+      <div v-if="cancelOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" @mousedown.self="closeCancel">
+        <section class="w-full max-w-md rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="取消当前模块用户规则">
+          <header class="border-b border-slate-200 px-6 py-5">
+            <h2 class="text-lg font-semibold text-slate-900">取消{{ moduleMeta.label }}用户规则</h2>
+            <p class="mt-1 text-sm text-slate-500">{{ selectedUser?.username }} · UID {{ userIdOf(selectedUser) }}</p>
+          </header>
+          <div class="space-y-4 px-6 py-5">
+            <p class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              本次操作只影响当前模块，其他模块规则继续生效。
+            </p>
+            <label class="block">
+              <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
+              <textarea v-model="cancelNote" rows="3" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+            </label>
+          </div>
+          <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+            <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeCancel">返回</button>
+            <button type="button" :disabled="!cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmCancel">
+              确认取消
+            </button>
+          </footer>
+        </section>
+      </div>
+    </Teleport>
+  </section>
+</template>
