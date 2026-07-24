@@ -11,7 +11,11 @@ import {
   setUnifiedUserControl,
   userControlState
 } from '../../../admin/state/userControlState.js'
-import { summarizeUserControl } from '../../../features/user-control/userControl.js'
+import {
+  getUnifiedControlCancelItems,
+  getUserControlListMeta,
+  summarizeUserControl
+} from '../../../features/user-control/userControl.js'
 
 // 搜索关键词
 const searchKeyword = ref('')
@@ -75,23 +79,19 @@ const pendingMfaAction = ref(null)
 const userIdOf = (user) => String(user?.userId ?? user?.id ?? '')
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
 const controlSummary = (user) => summarizeUserControl(userControlState.value, userIdOf(user))
-const hasRules = (user) => Object.keys(rulesOf(user)).length > 0
-const hasEffectiveRules = (user) => Object.values(rulesOf(user)).some((rule) => ['active', 'processing'].includes(rule.status))
+const controlListMeta = (user) => getUserControlListMeta(userControlState.value, userIdOf(user))
+const hasRules = (user) => controlListMeta(user).hasCurrent
+const cancelControlItems = computed(() => getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}))
 
-const strategyLabel = (user) => {
-  const rules = Object.values(rulesOf(user))
-  const globalRule = rules.find((rule) => rule.source === 'global')
-  if (globalRule?.strategy === 'positive') return '正向控制'
-  if (globalRule?.strategy === 'negative') return '负向控制'
-  return rules.length ? '模块独立设置' : '未设置'
-}
+const controlValueLabel = (value) => ({
+  profit: '盈利',
+  loss: '亏损',
+  highYield: '高收益',
+  lowYield: '低收益'
+})[value] || '未设置'
 
-const durationLabel = (user) => {
-  const durations = [...new Set(Object.values(rulesOf(user)).map((rule) => rule.duration).filter(Boolean))]
-  if (!durations.length) return '—'
-  if (durations.length > 1) return '混合'
-  return durations[0] === 'permanent' ? '永久' : '一次性'
-}
+const controlDurationLabel = (duration) => ({ once: '一次性', permanent: '永久' })[duration] || '—'
+const controlRuleStatusLabel = (status) => ({ active: '当前有效', processing: '处理中' })[status] || status
 
 const controlUpdatedAt = (user) => Object.values(rulesOf(user))
   .map((rule) => rule.updatedAt)
@@ -149,9 +149,9 @@ const requestMfa = (action) => {
 }
 
 const submitControlSetting = (payload) => {
-  const overwritesExistingRules = controlUser.value && hasRules(controlUser.value)
+  const overwritesCurrentRules = controlUser.value && hasRules(controlUser.value)
   controlModalOpen.value = false
-  if (payload.duration === 'permanent' || overwritesExistingRules) {
+  if (payload.duration === 'permanent' || overwritesCurrentRules) {
     requestMfa({ type: 'apply', payload })
     return
   }
@@ -448,10 +448,10 @@ const closeDetailDrawer = () => {
               <!-- 统一用户控制 -->
               <td class="px-4 py-3">
                 <span class="text-sm font-medium" :class="hasRules(user) ? 'text-slate-900' : 'text-slate-400'">
-                  {{ strategyLabel(user) }}
+                  {{ controlListMeta(user).controlLabel }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-sm text-slate-600">{{ durationLabel(user) }}</td>
+              <td class="px-4 py-3 text-sm text-slate-600">{{ controlListMeta(user).durationLabel }}</td>
               <td class="px-4 py-3">
                 <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="summaryClasses(user)">
                   {{ controlSummary(user).label }}
@@ -469,7 +469,7 @@ const closeDetailDrawer = () => {
                   </button>
                   <button
                     type="button"
-                    :disabled="!hasEffectiveRules(user)"
+                    :disabled="!hasRules(user)"
                     class="text-rose-600 hover:text-rose-800 disabled:cursor-not-allowed disabled:text-slate-300"
                     @click.stop="openControlCancel(user)"
                   >
@@ -554,9 +554,18 @@ const closeDetailDrawer = () => {
             <p class="mt-1 text-sm text-slate-500">{{ controlUser?.username }} · UID {{ userIdOf(controlUser) }}</p>
           </header>
           <div class="space-y-4 px-6 py-5">
-            <p class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-800">
-              将取消六个模块中当前有效或处理中的规则；已执行的一次性记录会保留。
-            </p>
+            <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
+              <p class="font-medium">将取消以下 {{ cancelControlItems.length }} 个当前有效模块</p>
+              <ul class="mt-2 space-y-2" aria-label="待取消模块规则">
+                <li v-for="item in cancelControlItems" :key="item.moduleKey" class="flex items-center justify-between gap-3 rounded-md bg-white/70 px-3 py-2">
+                  <span class="font-medium">{{ item.moduleLabel }}</span>
+                  <span class="text-right text-xs text-amber-800">
+                    {{ controlValueLabel(item.value) }} · {{ controlDurationLabel(item.duration) }} · {{ controlRuleStatusLabel(item.status) }}
+                  </span>
+                </li>
+              </ul>
+              <p class="mt-2 text-xs text-amber-700">已执行、已取消和已覆盖的历史记录会保留。</p>
+            </div>
             <label class="block">
               <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
               <textarea v-model="cancelNote" rows="3" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />

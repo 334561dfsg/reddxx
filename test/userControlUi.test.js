@@ -70,6 +70,10 @@ test('user list exposes unified status and scoped actions', () => {
   assert.match(source, /取消控制/)
   assert.match(source, /UserControlDetailDrawer/)
   assert.match(source, /MfaVerificationModal/)
+  assert.equal(source.match(/@click\.stop=/g)?.length, 4)
+  assert.match(source, /getUserControlListMeta/)
+  assert.match(source, /getUnifiedControlCancelItems/)
+  assert.match(source, /v-for="item in cancelControlItems"/)
 })
 
 test('detail drawer distinguishes progress from configuration divergence', () => {
@@ -78,4 +82,7 @@ test('detail drawer distinguishes progress from configuration divergence', () =>
   assert.match(source, /存在差异/)
   assert.match(source, /规则来源/)
   assert.match(source, /最近执行/)
+  assert.match(source, /businessId/)
+  assert.match(source, /getUserControlDivergenceKeys/)
+  assert.match(source, /配置差异/)
 })

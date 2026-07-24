@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import {
+  getUserControlDivergenceKeys,
   summarizeUserControl,
   USER_CONTROL_MODULES
 } from '../../../features/user-control/userControl.js'
@@ -17,6 +18,8 @@ const emit = defineEmits(['close'])
 
 const userId = computed(() => String(props.user?.userId ?? props.user?.id ?? ''))
 const summary = computed(() => summarizeUserControl({ rules: { [userId.value]: props.rules } }, userId.value))
+const divergenceKeys = computed(() => getUserControlDivergenceKeys(props.rules))
+const isDivergentModule = (moduleKey) => summary.value.kind === 'divergent' && divergenceKeys.value.includes(moduleKey)
 
 const valueLabel = (value) => ({
   profit: '盈利',
@@ -109,9 +112,16 @@ const summaryMeta = computed(() => {
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                  <tr v-for="module in USER_CONTROL_MODULES" :key="module.key">
+                  <tr
+                    v-for="module in USER_CONTROL_MODULES"
+                    :key="module.key"
+                    :class="isDivergentModule(module.key) ? 'bg-amber-50/80' : ''"
+                  >
                     <td class="px-4 py-4">
-                      <p class="font-medium text-slate-900">{{ module.label }}</p>
+                      <div class="flex items-center gap-2">
+                        <p class="font-medium text-slate-900">{{ module.label }}</p>
+                        <span v-if="isDivergentModule(module.key)" class="rounded-full bg-amber-200 px-2 py-0.5 text-[11px] font-semibold text-amber-900">配置差异</span>
+                      </div>
                       <p class="mt-0.5 text-xs text-slate-400">{{ module.actionLabel }}</p>
                     </td>
                     <td class="px-4 py-4 font-medium" :class="rules[module.key] ? 'text-slate-900' : 'text-slate-400'">{{ valueLabel(rules[module.key]?.value) }}</td>
@@ -126,6 +136,7 @@ const summaryMeta = computed(() => {
                     <td class="px-4 py-4 text-slate-500">
                       <template v-if="lastExecution(module.key)">
                         <p class="font-medium text-slate-700">{{ valueLabel(lastExecution(module.key).afterValue) }}</p>
+                        <p class="mt-0.5 text-xs font-mono text-slate-500">业务单号 {{ lastExecution(module.key).businessId }}</p>
                         <p class="mt-0.5 text-xs">{{ lastExecution(module.key).createdAt }}</p>
                       </template>
                       <span v-else>暂无执行记录</span>

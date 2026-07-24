@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createUserControlDemoSeed } from '../src/admin/mock/userControl.js'
+import * as userControlHelpers from '../src/features/user-control/userControl.js'
 import {
   USER_CONTROL_MODULES,
   applyModuleControl,
@@ -18,8 +19,111 @@ test('demo seed includes synchronized, divergent, and consumed examples', () => 
 
   assert.equal(summarizeUserControl(seed, '159').kind, 'progress')
   assert.equal(summarizeUserControl(seed, '158').kind, 'divergent')
+  assert.equal(summarizeUserControl(seed, '153').kind, 'synced')
+  assert.equal(summarizeUserControl(seed, 'user_1001').kind, 'synced')
+  assert.equal(summarizeUserControl(seed, 'user_1002').kind, 'progress')
+  assert.equal(summarizeUserControl(seed, 'user_1003').kind, 'divergent')
   assert.ok(seed.operationLogs.length >= 2)
   assert.ok(seed.executionLogs.length >= 1)
+})
+
+test('list metadata only reflects active and processing rules', () => {
+  const unified = applyUnifiedControl(createUserControlState(), {
+    userId: 'user_1001', strategy: 'positive', duration: 'permanent', note: '统一带盈',
+    now: '2026-07-25 16:00:00', batchId: 'list-b1'
+  })
+  const divergent = applyModuleControl(unified, {
+    userId: 'user_1001', moduleKey: 'perpetual', value: 'loss', duration: 'permanent',
+    note: '永续独立控亏', now: '2026-07-25 16:10:00', ruleId: 'list-perpetual-1'
+  })
+  assert.deepEqual(userControlHelpers.getUserControlListMeta(divergent, 'user_1001'), {
+    hasCurrent: true,
+    controlLabel: '存在模块差异',
+    durationLabel: '永久'
+  })
+
+  const cancelled = cancelUnifiedControl(unified, {
+    userId: 'user_1001', note: '取消', now: '2026-07-25 16:20:00', operationId: 'cancel-list-b1'
+  })
+  assert.deepEqual(userControlHelpers.getUserControlListMeta(cancelled, 'user_1001'), {
+    hasCurrent: false,
+    controlLabel: '未设置',
+    durationLabel: '—'
+  })
+
+  const consumed = USER_CONTROL_MODULES.reduce((state, module, index) => consumeModuleControl(state, {
+    userId: 'user_1004', moduleKey: module.key, businessId: `consumed-${index}`,
+    beforeValue: 'natural', afterValue: 'controlled', now: `2026-07-25 16:${30 + index}:00`
+  }), applyUnifiedControl(createUserControlState(), {
+    userId: 'user_1004', strategy: 'negative', duration: 'once', note: '全部执行',
+    now: '2026-07-25 16:30:00', batchId: 'consumed-all-b1'
+  }))
+  assert.deepEqual(userControlHelpers.getUserControlListMeta(consumed, 'user_1004'), {
+    hasCurrent: false,
+    controlLabel: '未设置',
+    durationLabel: '—'
+  })
+})
+
+test('cancel items include only effective modules with their current rule content', () => {
+  const unified = applyUnifiedControl(createUserControlState(), {
+    userId: 'user_1002', strategy: 'negative', duration: 'once', note: '统一控亏',
+    now: '2026-07-25 17:00:00', batchId: 'cancel-items-b1'
+  })
+  const progressed = consumeModuleControl(unified, {
+    userId: 'user_1002', moduleKey: 'delivery', businessId: 'delivery-progress-1',
+    beforeValue: 'profit', afterValue: 'loss', now: '2026-07-25 17:10:00'
+  })
+  const items = userControlHelpers.getUnifiedControlCancelItems(progressed.rules['user_1002'])
+
+  assert.equal(items.length, 5)
+  assert.equal(items.some((item) => item.moduleKey === 'delivery'), false)
+  assert.deepEqual(items.find((item) => item.moduleKey === 'perpetual'), {
+    moduleKey: 'perpetual', moduleLabel: '永续', value: 'loss', duration: 'once', status: 'active'
+  })
+  assert.deepEqual(items.find((item) => item.moduleKey === 'aiQuant'), {
+    moduleKey: 'aiQuant', moduleLabel: 'AI量化', value: 'lowYield', duration: 'once', status: 'active'
+  })
+})
+
+test('divergence keys identify the overridden module without flagging consumed progress', () => {
+  const unified = applyUnifiedControl(createUserControlState(), {
+    userId: 'user_1003', strategy: 'positive', duration: 'once', note: '统一带盈',
+    now: '2026-07-25 18:00:00', batchId: 'difference-b1'
+  })
+  const progressed = consumeModuleControl(unified, {
+    userId: 'user_1003', moduleKey: 'delivery', businessId: 'delivery-difference-1',
+    beforeValue: 'loss', afterValue: 'profit', now: '2026-07-25 18:10:00'
+  })
+  assert.deepEqual(userControlHelpers.getUserControlDivergenceKeys(progressed.rules['user_1003']), [])
+
+  const divergent = applyModuleControl(progressed, {
+    userId: 'user_1003', moduleKey: 'perpetual', value: 'loss', duration: 'once',
+    note: '永续独立控亏', now: '2026-07-25 18:20:00', ruleId: 'difference-perpetual-1'
+  })
+  assert.deepEqual(userControlHelpers.getUserControlDivergenceKeys(divergent.rules['user_1003']), ['perpetual'])
+
+  const mixedDifferenceRules = {
+    ...unified.rules['user_1003'],
+    spot: { ...unified.rules['user_1003'].spot, status: 'cancelled' },
+    aiQuant: { ...unified.rules['user_1003'].aiQuant, batchId: 'different-batch' },
+    portfolio: { ...unified.rules['user_1003'].portfolio, status: 'superseded' }
+  }
+  assert.deepEqual(userControlHelpers.getUserControlDivergenceKeys(mixedDifferenceRules), ['spot', 'aiQuant', 'portfolio'])
+
+  const splitBatchRules = {
+    ...unified.rules['user_1003'],
+    portfolio: { ...unified.rules['user_1003'].portfolio, batchId: 'different-batch' }
+  }
+  const splitBatchState = {
+    ...unified,
+    rules: { ...unified.rules, user_1003: splitBatchRules }
+  }
+  assert.deepEqual(summarizeUserControl(splitBatchState, 'user_1003'), {
+    kind: 'divergent', aligned: 5, total: 6, label: '5/6 存在差异'
+  })
+  assert.equal(userControlHelpers.getUserControlListMeta(splitBatchState, 'user_1003').controlLabel, '存在模块差异')
+  assert.deepEqual(userControlHelpers.getUserControlDivergenceKeys(splitBatchRules), ['portfolio'])
 })
 
 test('unified positive maps trading to profit and finance to high yield', () => {
