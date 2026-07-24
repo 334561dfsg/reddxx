@@ -1,8 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { reactive } from 'vue'
+import { nextTick, reactive } from 'vue'
 import { createUserControlDemoSeed } from '../src/admin/mock/userControl.js'
+import * as userControlStateHelpers from '../src/admin/state/userControlState.js'
 import {
+  cancelSingleModuleControl,
   resetUserControlDemo,
   setUnifiedUserControl,
   setUserControlFailureModule,
@@ -382,6 +384,50 @@ test('simulation values reset to valid outcomes for the selected module family',
   assert.equal(userControlHelpers.isUserControlSimulationValue('aiQuant', finance.beforeValue), true)
   assert.equal(userControlHelpers.isUserControlSimulationValue('aiQuant', finance.afterValue), true)
   assert.equal(userControlHelpers.isUserControlSimulationValue('aiQuant', 'loss'), false)
+})
+
+test('simulation rule binding follows state replacement and clears an inactive rule', async () => {
+  assert.equal(typeof userControlStateHelpers.watchUserControlSimulationRule, 'function')
+  resetUserControlDemo()
+  const simulation = reactive({
+    userId: '159',
+    moduleKey: 'spot',
+    beforeValue: '',
+    afterValue: ''
+  })
+  const stop = userControlStateHelpers.watchUserControlSimulationRule(simulation)
+
+  try {
+    await nextTick()
+    assert.deepEqual({
+      beforeValue: simulation.beforeValue,
+      afterValue: simulation.afterValue
+    }, { beforeValue: 'loss', afterValue: 'profit' })
+
+    setUnifiedUserControl({
+      userId: '159', strategy: 'negative', duration: 'once', note: '替换为控亏规则',
+      now: '2026-07-25 18:00:00', batchId: 'reactive-replacement-b1'
+    })
+    await nextTick()
+    assert.deepEqual({
+      beforeValue: simulation.beforeValue,
+      afterValue: simulation.afterValue
+    }, { beforeValue: 'profit', afterValue: 'loss' })
+
+    resetUserControlDemo()
+    await nextTick()
+    assert.equal(simulation.afterValue, 'profit')
+
+    cancelSingleModuleControl({
+      userId: '159', moduleKey: 'spot', note: '取消以验证清理',
+      now: '2026-07-25 18:10:00', operationId: 'reactive-cancel-spot'
+    })
+    await nextTick()
+    assert.equal(simulation.afterValue, '')
+  } finally {
+    stop()
+    resetUserControlDemo()
+  }
 })
 
 test('log query normalization follows changed, array, invalid, and cleared route values', () => {

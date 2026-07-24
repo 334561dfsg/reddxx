@@ -1,11 +1,14 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { createUserControlDemoSeed } from '../mock/userControl.js'
 import {
   applyModuleControl,
   applyUnifiedControl,
   cancelModuleControl,
   cancelUnifiedControl,
-  consumeModuleControl
+  consumeModuleControl,
+  getUserControlSimulationValues,
+  isUserControlSimulationValue,
+  USER_CONTROL_MODULES
 } from '../../features/user-control/userControl.js'
 
 export const userControlState = ref(createUserControlDemoSeed())
@@ -37,3 +40,28 @@ export const setUserControlFailureModule = (moduleKey = '') => {
 export const resetUserControlDemo = () => {
   userControlState.value = createUserControlDemoSeed()
 }
+
+export const watchUserControlSimulationRule = (simulation) => watch(
+  () => {
+    const rule = userControlState.value.rules[simulation.userId]?.[simulation.moduleKey]
+    return [simulation.userId, simulation.moduleKey, rule?.value, rule?.status]
+  },
+  () => {
+    const moduleExists = USER_CONTROL_MODULES.some((module) => module.key === simulation.moduleKey)
+    if (!moduleExists) {
+      simulation.beforeValue = ''
+      simulation.afterValue = ''
+      return
+    }
+
+    const rule = userControlState.value.rules[simulation.userId]?.[simulation.moduleKey]
+    const activeRuleValue = rule?.status === 'active'
+      && isUserControlSimulationValue(simulation.moduleKey, rule.value)
+      ? rule.value
+      : ''
+    const values = getUserControlSimulationValues(simulation.moduleKey, activeRuleValue)
+    simulation.beforeValue = values.beforeValue
+    simulation.afterValue = activeRuleValue
+  },
+  { immediate: true }
+)

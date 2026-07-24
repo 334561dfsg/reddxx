@@ -7,7 +7,8 @@ import {
   setUnifiedUserControl,
   setUserControlFailureModule,
   simulateUserControlExecution,
-  userControlState
+  userControlState,
+  watchUserControlSimulationRule
 } from '../../../admin/state/userControlState.js'
 import {
   filterUserControlLogsByDate,
@@ -69,8 +70,9 @@ const resultOptions = computed(() => selectedModule.value.family === 'finance'
   ? [{ value: 'highYield', label: '高收益' }, { value: 'lowYield', label: '低收益' }]
   : [{ value: 'profit', label: '盈利' }, { value: 'loss', label: '亏损' }])
 
+watchUserControlSimulationRule(simulation)
+
 watch(() => [simulation.userId, simulation.moduleKey], () => {
-  Object.assign(simulation, getUserControlSimulationValues(simulation.moduleKey, selectedRule.value?.value))
   simulationMessage.value = ''
   failureMessage.value = ''
   atomicProof.value = ''
