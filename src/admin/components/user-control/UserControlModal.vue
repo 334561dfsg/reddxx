@@ -1,6 +1,11 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
 import { USER_CONTROL_MODULES } from '../../../features/user-control/userControl.js'
+import {
+  buildUserControlPayload,
+  getModuleControlOptions,
+  isUserControlFormComplete
+} from '../../../features/user-control/userControlForm.js'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -22,22 +27,14 @@ const form = reactive({
   duration: '',
   note: ''
 })
-const attempted = ref(false)
+const noteTouched = ref(false)
 
 const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key === props.moduleKey) || null)
 const selectedUserId = computed(() => String(props.user?.userId ?? props.user?.id ?? ''))
 const selectedUserName = computed(() => props.user?.username || props.user?.name || '未选择用户')
 const currentModuleRule = computed(() => props.existingRules?.[props.moduleKey] || null)
 
-const moduleOptions = computed(() => moduleMeta.value?.family === 'finance'
-  ? [
-      { value: 'highYield', label: '高收益', description: '使用产品允许范围内的较高收益档位' },
-      { value: 'lowYield', label: '低收益', description: '使用产品允许范围内的较低收益档位' }
-    ]
-  : [
-      { value: 'profit', label: '盈利', description: '最终结算后的已实现净收益为正' },
-      { value: 'loss', label: '亏损', description: '最终结算后的已实现净收益为负' }
-    ])
+const moduleOptions = computed(() => getModuleControlOptions(moduleMeta.value?.family))
 
 const affectedModules = computed(() => props.scope === 'global'
   ? USER_CONTROL_MODULES
@@ -70,12 +67,17 @@ const existingSummary = computed(() => {
   return activeCount ? `六个模块中有 ${activeCount} 个当前有效规则，新设置将统一覆盖` : '该用户当前没有生效中的统一规则'
 })
 
-const isComplete = computed(() => Boolean(
-  selectedUserId.value
-  && (props.scope === 'global' ? form.strategy : form.value)
-  && form.duration
-  && form.note.trim()
-))
+const formInput = computed(() => ({
+  scope: props.scope,
+  family: moduleMeta.value?.family,
+  userId: selectedUserId.value,
+  strategy: form.strategy,
+  value: form.value,
+  duration: form.duration,
+  note: form.note
+}))
+
+const isComplete = computed(() => isUserControlFormComplete(formInput.value))
 
 const resetForm = () => {
   const existing = props.scope === 'module'
@@ -86,7 +88,7 @@ const resetForm = () => {
   form.value = existing?.value || moduleOptions.value[0]?.value || ''
   form.duration = existing?.duration || 'once'
   form.note = ''
-  attempted.value = false
+  noteTouched.value = false
 }
 
 watch(
@@ -100,15 +102,8 @@ watch(
 const close = () => emit('close')
 
 const submit = () => {
-  attempted.value = true
   if (!isComplete.value) return
-
-  emit('submit', {
-    userId: selectedUserId.value,
-    ...(props.scope === 'global' ? { strategy: form.strategy } : { value: form.value }),
-    duration: form.duration,
-    note: form.note.trim()
-  })
+  emit('submit', buildUserControlPayload(formInput.value))
 }
 </script>
 
@@ -237,19 +232,19 @@ const submit = () => {
               rows="3"
               maxlength="200"
               placeholder="请说明设置原因，便于后续审计"
-              class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              class="mt-2 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
+              :class="noteTouched && !form.note.trim() ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100'"
+              :aria-invalid="noteTouched && !form.note.trim()"
+              aria-describedby="user-control-note-help"
+              @blur="noteTouched = true"
             />
-            <span class="mt-1 flex justify-between text-xs">
-              <span :class="attempted && !form.note.trim() ? 'text-rose-600' : 'text-slate-500'">
-                {{ attempted && !form.note.trim() ? '请填写操作备注后再确认' : '必填，最多 200 字' }}
+            <span id="user-control-note-help" class="mt-1 flex justify-between text-xs">
+              <span :class="noteTouched && !form.note.trim() ? 'text-rose-600' : 'text-slate-500'">
+                {{ noteTouched && !form.note.trim() ? '请填写操作备注后再确认' : '必填，最多 200 字' }}
               </span>
               <span class="text-slate-400">{{ form.note.length }}/200</span>
             </span>
           </label>
-
-          <p v-if="attempted && !isComplete" class="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">
-            请选择完整的控制内容、生效方式并填写操作备注。
-          </p>
         </div>
 
         <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
