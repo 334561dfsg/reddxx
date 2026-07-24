@@ -65,6 +65,8 @@ test('module page explains settlement-only perpetual control and module-only sco
 test('user list exposes unified status and scoped actions', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
   assert.match(source, /统一控制/)
+  assert.match(source, /正向：交易盈利、理财高收益/)
+  assert.match(source, /负向：交易亏损、理财低收益/)
   assert.match(source, /模块状态/)
   assert.match(source, /设置控制/)
   assert.match(source, /取消控制/)

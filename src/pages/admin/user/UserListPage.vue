@@ -356,7 +356,12 @@ const closeDetailDrawer = () => {
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">状态</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">上级</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">统一控制</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600">
+                <span class="uppercase tracking-wider">统一控制</span>
+                <span class="mt-1 block whitespace-nowrap text-[11px] font-normal text-slate-400">
+                  正向：交易盈利、理财高收益<br />负向：交易亏损、理财低收益
+                </span>
+              </th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">生效方式</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">模块状态</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">更新时间</th>
