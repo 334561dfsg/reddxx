@@ -146,6 +146,13 @@ const submit = () => {
           <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <p class="text-xs font-medium text-slate-500">现有规则</p>
             <p class="mt-1 text-sm font-medium text-slate-800">{{ existingSummary }}</p>
+            <p
+              v-if="scope === 'global'"
+              data-testid="user-control-global-atomic-warning"
+              class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800"
+            >
+              保存会覆盖该用户在六个模块中的现有规则；任一模块设置失败，六个模块全部保持原状态。
+            </p>
           </div>
 
           <fieldset>
