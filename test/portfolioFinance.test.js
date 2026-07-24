@@ -716,6 +716,7 @@ test('registers portfolio admin navigation and routes', () => {
       '/admin/portfolio/yield-control',
       '/admin/portfolio/yield-adjustment-log',
       '/admin/portfolio/orders',
+      '/admin/portfolio/user-yield-control',
       '/admin/portfolio/yield-records',
       '/admin/portfolio/operation-log',
       '/admin/portfolio/rules'

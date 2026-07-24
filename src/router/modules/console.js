@@ -47,6 +47,14 @@ export const consoleRoutes = [
     }
   },
   {
+    path: 'users/control-log',
+    name: 'users-control-log',
+    component: () => import('../../pages/admin/user-control/UserControlLogPage.vue'),
+    meta: {
+      title: '用户管理 / 用户控制日志'
+    }
+  },
+  {
     path: 'contracts/panel',
     name: 'contracts-panel',
     component: () => import('../../pages/admin/contracts/ContractsPanelPage.vue')
@@ -95,6 +103,13 @@ export const consoleRoutes = [
     path: 'perpetual/orders',
     name: 'perpetual-orders',
     component: () => import('../../pages/admin/perpetual/PerpetualOrderPage.vue')
+  },
+  {
+    path: 'perpetual/user-control',
+    name: 'perpetual-user-control',
+    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
+    props: { moduleKey: 'perpetual' },
+    meta: { title: '永续合约 / 用户控盘', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
   },
   {
     path: 'delivery',
@@ -157,6 +172,13 @@ export const consoleRoutes = [
     path: 'delivery/orders',
     name: 'delivery-orders',
     component: () => import('../../pages/admin/delivery/DeliveryOrderPage.vue')
+  },
+  {
+    path: 'delivery/user-control',
+    name: 'delivery-user-control',
+    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
+    props: { moduleKey: 'delivery' },
+    meta: { title: '交割合约 / 用户控盘', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
   },
   {
     path: 'delivery/overview',
@@ -254,6 +276,13 @@ export const consoleRoutes = [
     component: () => import('../../pages/admin/liquidity/LiquidityLockedOrdersPage.vue')
   },
   {
+    path: 'liquidity/locked/user-yield-control',
+    name: 'liquidity-user-yield-control',
+    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
+    props: { moduleKey: 'liquidity' },
+    meta: { title: '流动性挖矿 / 用户收益调节', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
+  },
+  {
     path: 'liquidity/locked/yield-control',
     name: 'liquidity-locked-yield-control',
     component: () => import('../../pages/admin/liquidity/LiquidityLockedYieldControlPage.vue')
@@ -346,6 +375,13 @@ export const consoleRoutes = [
     component: () => import('../../pages/admin/aiQuant/AiQuantOrderPage.vue')
   },
   {
+    path: 'ai-quant/user-yield-control',
+    name: 'ai-quant-user-yield-control',
+    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
+    props: { moduleKey: 'aiQuant' },
+    meta: { title: 'AI量化交易 / 用户收益调节', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
+  },
+  {
     path: 'ai-quant/yield-records',
     name: 'ai-quant-yield-records',
     component: () => import('../../pages/admin/aiQuant/AiQuantYieldAdjustmentRecordsPage.vue')
@@ -397,6 +433,13 @@ export const consoleRoutes = [
     component: () => import('../../pages/admin/portfolio/PortfolioOrderPage.vue')
   },
   {
+    path: 'portfolio/user-yield-control',
+    name: 'portfolio-user-yield-control',
+    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
+    props: { moduleKey: 'portfolio' },
+    meta: { title: '投资组合 / 用户收益调节', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
+  },
+  {
     path: 'portfolio/yield-records',
     name: 'portfolio-yield-records',
     component: () => import('../../pages/admin/portfolio/PortfolioYieldRecordsPage.vue')
@@ -433,6 +476,13 @@ export const consoleRoutes = [
     path: 'spot/orders',
     name: 'spot-orders',
     component: () => import('../../pages/admin/spot/SpotOrderPage.vue')
+  },
+  {
+    path: 'spot/user-control',
+    name: 'spot-user-control',
+    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
+    props: { moduleKey: 'spot' },
+    meta: { title: '现货交易 / 用户控盘', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
   },
   {
     path: 'users/tag-rules',

@@ -15,7 +15,8 @@ export const navTree = [
       { title: '用户列表', path: '/admin/users/list' },
       { title: '出金审核', path: '/admin/users/withdraw-audit' },
       { title: '入金审核', path: '/admin/users/deposit-orders' },
-      { title: '用户标签规则', path: '/admin/users/tag-rules' }
+      { title: '用户标签规则', path: '/admin/users/tag-rules' },
+      { title: '用户控制日志', path: '/admin/users/control-log' }
     ]
   },
   {
@@ -53,6 +54,7 @@ export const navTree = [
       { title: '合约产品', path: '/admin/perpetual/overview' },
       { title: '杠杆模板', path: '/admin/perpetual/leverage-template' },
       { title: '订单管理', path: '/admin/perpetual/orders' },
+      { title: '用户控盘', path: '/admin/perpetual/user-control' },
       { title: '合约线控', path: '/admin/perpetual/contract-monitor' },
       { title: '手动插线', path: '/admin/perpetual/manual-line' },
       { title: '合约线控日志', path: '/admin/perpetual/contract-log' },
@@ -67,6 +69,7 @@ export const navTree = [
       { title: '合约产品', path: '/admin/delivery/contracts' },
       { title: '周期模板', path: '/admin/delivery/templates' },
       { title: '订单管理', path: '/admin/delivery/orders' },
+      { title: '用户控盘', path: '/admin/delivery/user-control' },
       { title: '自动化场控', path: '/admin/delivery/auto-rules' },
       { title: '手动场控', path: '/admin/delivery/control' },
       { title: '手动场控（Radar）', path: '/admin/delivery/harvest-control' },
@@ -81,7 +84,8 @@ export const navTree = [
     icon: 'exchange',
     children: [
       { title: '产品管理', path: '/admin/spot/products' },
-      { title: '订单管理', path: '/admin/spot/orders' }
+      { title: '订单管理', path: '/admin/spot/orders' },
+      { title: '用户控盘', path: '/admin/spot/user-control' }
     ]
   },
   {
@@ -108,6 +112,7 @@ export const navTree = [
       { title: '收益调整日志', path: '/admin/liquidity/locked/yield-adjustment-log' },
       { title: '操作日志', path: '/admin/liquidity/locked/operation-log' },
       { title: '订单管理', path: '/admin/liquidity/locked/orders' },
+      { title: '用户收益调节', path: '/admin/liquidity/locked/user-yield-control' },
       { title: '规则说明', path: '/admin/liquidity/locked/rules' }
     ]
   },
@@ -134,6 +139,7 @@ export const navTree = [
     children: [
       { title: '产品管理', path: '/admin/ai-quant/products' },
       { title: '订单管理', path: '/admin/ai-quant/orders' },
+      { title: '用户收益调节', path: '/admin/ai-quant/user-yield-control' },
       { title: '收益调整记录', path: '/admin/ai-quant/yield-records' },
       { title: '操作日志', path: '/admin/ai-quant/operation-log' },
       { title: '规则说明', path: '/admin/ai-quant/rules' }
@@ -147,6 +153,7 @@ export const navTree = [
       { title: '收益调控', path: '/admin/portfolio/yield-control' },
       { title: '收益调整日志', path: '/admin/portfolio/yield-adjustment-log' },
       { title: '订单管理', path: '/admin/portfolio/orders' },
+      { title: '用户收益调节', path: '/admin/portfolio/user-yield-control' },
       { title: '收益记录', path: '/admin/portfolio/yield-records' },
       { title: '操作日志', path: '/admin/portfolio/operation-log' },
       { title: '规则说明', path: '/admin/portfolio/rules' }
