@@ -30,6 +30,7 @@ export function applyUnifiedControl(state, input) {
   if (!['once', 'permanent'].includes(input.duration)) throw new TypeError('duration must be once or permanent')
   if (state.failureModule) return { ...state, lastError: `模块 ${state.failureModule} 写入失败，六个模块均未更新` }
 
+  const before = Object.fromEntries(Object.entries(state.rules[userId] || {}).map(([key, rule]) => [key, { ...rule }]))
   const rules = Object.fromEntries(USER_CONTROL_MODULES.map((module) => [module.key, {
     id: `${input.batchId}-${module.key}`, batchId: input.batchId, userId, moduleKey: module.key,
     family: module.family, value: strategyValue(input.strategy, module.family), strategy: input.strategy,
@@ -42,7 +43,7 @@ export function applyUnifiedControl(state, input) {
     rules: { ...state.rules, [userId]: rules },
     operationLogs: [{ id: `op-${input.batchId}`, userId, scope: 'global', action: 'apply',
       modules: USER_CONTROL_MODULES.map((item) => item.key), strategy: input.strategy,
-      duration: input.duration, note, createdAt: input.now }, ...state.operationLogs],
+      duration: input.duration, before, note, createdAt: input.now }, ...state.operationLogs],
     lastError: ''
   }
 }

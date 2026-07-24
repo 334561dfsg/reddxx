@@ -29,6 +29,20 @@ test('unified positive maps trading to profit and finance to high yield', () => 
   assert.ok(Object.values(next.rules['159']).every((rule) => rule.source === 'global' && rule.status === 'active'))
 })
 
+test('unified negative maps trading to loss and finance to low yield', () => {
+  const next = applyUnifiedControl(createUserControlState(), {
+    userId: '159', strategy: 'negative', duration: 'permanent', note: '客户控亏',
+    now: '2026-07-25 14:30:00', batchId: 'batch-negative'
+  })
+
+  assert.equal(next.rules['159'].perpetual.value, 'loss')
+  assert.equal(next.rules['159'].delivery.value, 'loss')
+  assert.equal(next.rules['159'].spot.value, 'loss')
+  assert.equal(next.rules['159'].aiQuant.value, 'lowYield')
+  assert.equal(next.rules['159'].liquidity.value, 'lowYield')
+  assert.equal(next.rules['159'].portfolio.value, 'lowYield')
+})
+
 test('module override changes one child and marks the unified summary divergent', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
     userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
@@ -40,6 +54,40 @@ test('module override changes one child and marks the unified summary divergent'
   assert.equal(changed.rules['159'].perpetual.source, 'module')
   assert.equal(changed.rules['159'].delivery.value, 'profit')
   assert.deepEqual(summarizeUserControl(changed, '159'), { kind: 'divergent', aligned: 5, total: 6, label: '5/6 存在差异' })
+})
+
+test('a second unified write replaces a module override and restores six-module alignment', () => {
+  const unified = applyUnifiedControl(createUserControlState(), {
+    userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
+  })
+  const overridden = applyModuleControl(unified, {
+    userId: '159', moduleKey: 'perpetual', value: 'loss', duration: 'permanent',
+    note: '永续单独控亏', now: '2026-07-25 15:10:00', ruleId: 'r-perp-2'
+  })
+  const replaced = applyUnifiedControl(overridden, {
+    userId: '159', strategy: 'negative', duration: 'once', note: '统一控亏', now: '2026-07-25 16:00:00', batchId: 'b2'
+  })
+
+  assert.equal(replaced.rules['159'].perpetual.source, 'global')
+  assert.equal(replaced.rules['159'].perpetual.value, 'loss')
+  assert.deepEqual(summarizeUserControl(replaced, '159'), { kind: 'synced', aligned: 6, total: 6, label: '6/6 已同步' })
+})
+
+test('unified apply operation log retains a snapshot of the prior six-module rules', () => {
+  const first = applyUnifiedControl(createUserControlState(), {
+    userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
+  })
+  const overridden = applyModuleControl(first, {
+    userId: '159', moduleKey: 'perpetual', value: 'loss', duration: 'permanent',
+    note: '永续单独控亏', now: '2026-07-25 15:10:00', ruleId: 'r-perp-2'
+  })
+  const replaced = applyUnifiedControl(overridden, {
+    userId: '159', strategy: 'negative', duration: 'once', note: '统一控亏', now: '2026-07-25 16:00:00', batchId: 'b2'
+  })
+
+  assert.deepEqual(replaced.operationLogs[0].before, overridden.rules['159'])
+  assert.notEqual(replaced.operationLogs[0].before, overridden.rules['159'])
+  assert.equal(replaced.operationLogs[0].before.perpetual.source, 'module')
 })
 
 test('once consumption updates one module without creating a configuration difference', () => {
