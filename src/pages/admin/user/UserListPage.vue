@@ -11,6 +11,8 @@ import UserProfileEditDialog from '../../../admin/components/user/UserProfileEdi
 import UserParentResetDialog from '../../../admin/components/user/UserParentResetDialog.vue'
 import UserAgentRoleDialog from '../../../admin/components/user/UserAgentRoleDialog.vue'
 import UserTeamReportDrawer from '../../../admin/components/user/UserTeamReportDrawer.vue'
+import UserFundsMutationDialog from '../../../admin/components/user/UserFundsMutationDialog.vue'
+import UserWithdrawFlowLimitDialog from '../../../admin/components/user/UserWithdrawFlowLimitDialog.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -23,6 +25,15 @@ import {
 import { createDialogCloseAction, useDialogContentSnapshot, useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
 import { useMfaActionFlow } from '../../../admin/composables/useMfaActionFlow.js'
 import { resolveUserOperationReturnFocus } from '../../../admin/config/userOperations.js'
+import {
+  deductAvailableFunds,
+  freezeAllAvailable,
+  getFundsSnapshot,
+  getWithdrawFlowLimit,
+  removeWithdrawFlowLimit,
+  setWithdrawFlowLimit,
+  unfreezeAdminFunds
+} from '../../../admin/repositories/userFundsRepository.js'
 
 const appRouter = getCurrentInstance()?.appContext.config.globalProperties.$router
 
@@ -103,6 +114,18 @@ const agentRoleReturnFocus = ref(null)
 const teamReportOpen = ref(false)
 const teamReportUser = ref(null)
 const teamReportReturnFocus = ref(null)
+const fundsMutationOpen = ref(false)
+const fundsMutationUser = ref(null)
+const fundsMutationMode = ref('freeze')
+const fundsMutationSnapshot = ref(null)
+const fundsMutationReturnFocus = ref(null)
+const withdrawFlowOpen = ref(false)
+const withdrawFlowUser = ref(null)
+const withdrawFlowLimit = ref(null)
+const withdrawFlowReturnFocus = ref(null)
+const fundsMfaReturnFocus = ref(null)
+const lastFundsResult = ref(null)
+const lastFundsUserId = ref('')
 const cancelNote = ref('')
 const {
   open: mfaOpen,
@@ -124,6 +147,34 @@ const {
     }
   },
   onSuccess: () => { cancelNote.value = '' }
+})
+const {
+  open: fundsMfaOpen,
+  loading: fundsMfaLoading,
+  error: fundsMfaError,
+  errorAttempt: fundsMfaErrorAttempt,
+  pendingAction: pendingFundsMfaAction,
+  request: requestFundsMfa,
+  verify: verifyFundsMfa,
+  cancel: cancelFundsMfa
+} = useMfaActionFlow({
+  execute: async (action) => {
+    const input = { ...action.payload, operatorId: 'admin_current' }
+    lastFundsUserId.value = String(action.payload?.userId || '')
+    if (action.type === 'freeze-funds') lastFundsResult.value = freezeAllAvailable(input)
+    if (action.type === 'unfreeze-funds') lastFundsResult.value = unfreezeAdminFunds(input)
+    if (action.type === 'deduct-funds') lastFundsResult.value = deductAvailableFunds(input)
+    if (action.type === 'flow-limit-set') lastFundsResult.value = setWithdrawFlowLimit(input)
+    if (action.type === 'flow-limit-remove') lastFundsResult.value = removeWithdrawFlowLimit(input)
+  },
+  onSuccess: () => {
+    const userId = lastFundsUserId.value
+    if (userId) refreshFundsUser(userId)
+    fundsMutationOpen.value = false
+    withdrawFlowOpen.value = false
+    lastFundsResult.value = null
+    lastFundsUserId.value = ''
+  }
 })
 const unifiedCancelDialogRef = ref(null)
 const unifiedCancelReturnRef = ref(null)
@@ -243,6 +294,23 @@ const closeOperationDrawer = () => {
 const handleOperationDrawerAction = async ({ id, user, trigger }) => {
   operationActionReturnFocus.value = trigger || (typeof document === 'undefined' ? null : document.activeElement)
   controlReturnUserId.value = userIdOf(user)
+
+  if (['freeze-funds', 'unfreeze-funds', 'deduct-funds'].includes(id)) {
+    fundsMutationUser.value = user
+    fundsMutationMode.value = id.replace('-funds', '')
+    fundsMutationSnapshot.value = getFundsSnapshot(userIdOf(user))
+    fundsMutationReturnFocus.value = trigger
+    fundsMutationOpen.value = true
+    return
+  }
+
+  if (id === 'withdraw-flow-limit') {
+    withdrawFlowUser.value = user
+    withdrawFlowLimit.value = getWithdrawFlowLimit(userIdOf(user))
+    withdrawFlowReturnFocus.value = trigger
+    withdrawFlowOpen.value = true
+    return
+  }
 
   if (id === 'edit-profile') {
     profileEditUser.value = user
@@ -372,6 +440,43 @@ const clearTeamReport = () => {
   teamReportUser.value = null
   teamReportReturnFocus.value = null
 }
+
+const refreshFundsUser = (userId) => {
+  const snapshot = getFundsSnapshot(userId)
+  const updated = snapshot.user
+  users.value = users.value.map((user) => userIdOf(user) === String(userId) ? { ...updated } : user)
+  if (userIdOf(operationDrawerUser.value) === String(userId)) operationDrawerUser.value = { ...updated }
+  if (userIdOf(fundsMutationUser.value) === String(userId)) fundsMutationUser.value = { ...updated }
+  fundsMutationSnapshot.value = snapshot
+  withdrawFlowLimit.value = getWithdrawFlowLimit(userId)
+}
+
+const requestFundsVerification = (request) => {
+  fundsMfaReturnFocus.value = request.returnFocus
+  requestFundsMfa({ type: request.type, payload: request.payload })
+}
+const closeFundsMutation = () => { if (!fundsMfaOpen.value && !fundsMfaLoading.value) fundsMutationOpen.value = false }
+const clearFundsMutation = () => {
+  fundsMutationUser.value = null
+  fundsMutationSnapshot.value = null
+  fundsMutationReturnFocus.value = null
+}
+const closeWithdrawFlow = () => { if (!fundsMfaOpen.value && !fundsMfaLoading.value) withdrawFlowOpen.value = false }
+const clearWithdrawFlow = () => {
+  withdrawFlowUser.value = null
+  withdrawFlowLimit.value = null
+  withdrawFlowReturnFocus.value = null
+}
+const handleFundsMfaCancel = () => {
+  cancelFundsMfa()
+}
+const fundsMfaTitle = computed(() => ({
+  'freeze-funds': '冻结资金安全验证',
+  'unfreeze-funds': '解冻资金安全验证',
+  'deduct-funds': '划扣资金安全验证',
+  'flow-limit-set': '设置流水限制安全验证',
+  'flow-limit-remove': '解除流水限制安全验证'
+}[pendingFundsMfaAction.value?.type] || '资金操作安全验证'))
 
 const executeDeferredDrawerAction = async () => {
   const action = deferredDrawerAction.value
@@ -831,6 +936,29 @@ const clearDetailDrawer = () => {
       @action="handleOperationDrawerAction"
     />
 
+    <UserFundsMutationDialog
+      :visible="fundsMutationOpen"
+      :user="fundsMutationUser"
+      :mode="fundsMutationMode"
+      :snapshot="fundsMutationSnapshot"
+      :busy="fundsMfaOpen || fundsMfaLoading"
+      :return-focus="fundsMutationReturnFocus"
+      @close="closeFundsMutation"
+      @closed="clearFundsMutation"
+      @request-mfa="requestFundsVerification"
+    />
+
+    <UserWithdrawFlowLimitDialog
+      :visible="withdrawFlowOpen"
+      :user="withdrawFlowUser"
+      :limit="withdrawFlowLimit"
+      :busy="fundsMfaOpen || fundsMfaLoading"
+      :return-focus="withdrawFlowReturnFocus"
+      @close="closeWithdrawFlow"
+      @closed="clearWithdrawFlow"
+      @request-mfa="requestFundsVerification"
+    />
+
     <UserRelationshipDrawer
       :visible="relationshipDrawerOpen"
       :user="relationshipDrawerUser"
@@ -931,6 +1059,18 @@ const clearDetailDrawer = () => {
       :return-focus="resolveControlReturnFocus"
       @verify="handleMfaVerify"
       @cancel="handleMfaCancel"
+    />
+
+    <MfaVerificationModal
+      v-model:open="fundsMfaOpen"
+      :loading="fundsMfaLoading"
+      :title="fundsMfaTitle"
+      description="资金控制属于敏感操作，请输入 MFA 验证码"
+      :error="fundsMfaError"
+      :error-attempt="fundsMfaErrorAttempt"
+      :return-focus="fundsMfaReturnFocus"
+      @verify="verifyFundsMfa"
+      @cancel="handleFundsMfaCancel"
     />
   </section>
 </template>

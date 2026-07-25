@@ -71,10 +71,29 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
 test('operation catalog distinguishes implemented and planned actions', () => {
   assert.equal(getUserOperationEntry('deposit', { status: 'active' }).status, 'available')
   assert.equal(getUserOperationEntry('adjust', { status: 'active' }), null)
-  assert.equal(getUserOperationEntry('freeze-funds', { status: 'active' }).status, 'planned')
+  assert.equal(getUserOperationEntry('freeze-funds', { status: 'active' }).status, 'available')
+  assert.equal(getUserOperationEntry('unfreeze-funds', { status: 'active' }).handler, 'unfreeze-funds')
+  assert.equal(getUserOperationEntry('deduct-funds', { status: 'active' }).handler, 'deduct-funds')
+  assert.equal(getUserOperationEntry('withdraw-flow-limit', { status: 'active' }).handler, 'withdraw-flow-limit')
   assert.equal(getUserOperationEntry('deduct-funds', { status: 'active' }).risk, 'danger')
   assert.equal(getUserOperationEntry('vip-level', { status: 'active' }).status, 'planned')
   assert.equal(getUserOperationEntry('credit-adjust', { status: 'active' }).status, 'planned')
+})
+
+test('funds controls keep the operation drawer open and use a separate MFA layer', () => {
+  const source = read('../src/pages/admin/user/UserListPage.vue')
+
+  assert.match(source, /UserFundsMutationDialog/)
+  assert.match(source, /UserWithdrawFlowLimitDialog/)
+  assert.match(source, /getFundsSnapshot/)
+  assert.match(source, /getWithdrawFlowLimit/)
+  assert.match(source, /requestFundsMfa/)
+  assert.match(source, /verifyFundsMfa/)
+  assert.match(source, /fundsMfaOpen/)
+  assert.match(source, /\['freeze-funds', 'unfreeze-funds', 'deduct-funds'\]\.includes\(id\)/)
+  assert.match(source, /if \(id === 'withdraw-flow-limit'\)/)
+  assert.match(source, /operationDrawerUser\.value = \{ \.\.\.updated \}/)
+  assert.doesNotMatch(source, /freeze-funds[\s\S]{0,400}closeOperationDrawer\(\)/)
 })
 
 test('combined VIP and credit adjustment is removed from active operation paths', () => {
