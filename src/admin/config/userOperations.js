@@ -30,11 +30,11 @@ export const USER_OPERATION_ENTRIES = Object.freeze([
   { id: 'deduct-funds', title: '划扣可用资金', description: '永久减少用户可用资产并生成划扣记录', group: 'funds', status: 'available', risk: 'danger', handler: 'deduct-funds' },
   { id: 'withdraw-flow-limit', title: '出金流水限制', description: '管理用户出金所需流水条件', group: 'funds', status: 'available', risk: 'sensitive', handler: 'withdraw-flow-limit' },
 
-  { id: 'credit-review', title: '信用分审核', description: '审核用户信用分人工调整申请', group: 'membership', status: 'planned', risk: 'sensitive', handler: 'planned' },
-  { id: 'credit-adjust', title: '修改信用分', description: '人工调整用户当前信用分', group: 'membership', status: 'planned', risk: 'danger', handler: 'planned' },
-  { id: 'vip-level', title: '编辑会员等级', description: '调整用户会员等级', group: 'membership', status: 'planned', risk: 'sensitive', handler: 'planned' },
-  { id: 'vip-deposit-total', title: '会员累计充值', description: '查看会员等级累计充值 USDT', group: 'membership', status: 'planned', risk: 'normal', handler: 'planned' },
-  { id: 'rebate-reward', title: '添加返利奖励', description: '为用户发放人工返利奖励', group: 'membership', status: 'planned', risk: 'danger', handler: 'planned' },
+  { id: 'credit-review', title: '信用分审核', description: '审核用户信用分人工调整申请', group: 'membership', status: 'available', risk: 'sensitive', handler: 'credit-review' },
+  { id: 'credit-adjust', title: '修改信用分', description: '人工调整用户当前信用分', group: 'membership', status: 'available', risk: 'danger', handler: 'credit-adjust' },
+  { id: 'vip-level', title: '编辑会员等级', description: '调整用户会员等级', group: 'membership', status: 'available', risk: 'sensitive', handler: 'vip-level' },
+  { id: 'vip-deposit-total', title: '会员累计充值', description: '查看会员等级累计充值 USDT', group: 'membership', status: 'available', risk: 'normal', handler: 'vip-deposit-total' },
+  { id: 'rebate-reward', title: '添加返利奖励', description: '为用户发放人工返利奖励', group: 'membership', status: 'available', risk: 'danger', handler: 'rebate-reward' },
 
   { id: 'freeze-account', title: '封户', description: '限制用户登录及账户操作', group: 'risk', status: 'available', risk: 'danger', handler: 'freeze' },
   { id: 'point-control', title: '统一点控', description: '设置用户各业务模块的统一控制', group: 'risk', status: 'available', risk: 'sensitive', handler: 'point-control' },

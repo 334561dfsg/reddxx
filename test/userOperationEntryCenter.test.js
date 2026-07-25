@@ -76,8 +76,11 @@ test('operation catalog distinguishes implemented and planned actions', () => {
   assert.equal(getUserOperationEntry('deduct-funds', { status: 'active' }).handler, 'deduct-funds')
   assert.equal(getUserOperationEntry('withdraw-flow-limit', { status: 'active' }).handler, 'withdraw-flow-limit')
   assert.equal(getUserOperationEntry('deduct-funds', { status: 'active' }).risk, 'danger')
-  assert.equal(getUserOperationEntry('vip-level', { status: 'active' }).status, 'planned')
-  assert.equal(getUserOperationEntry('credit-adjust', { status: 'active' }).status, 'planned')
+  assert.equal(getUserOperationEntry('credit-review', { status: 'active' }).status, 'available')
+  assert.equal(getUserOperationEntry('credit-adjust', { status: 'active' }).handler, 'credit-adjust')
+  assert.equal(getUserOperationEntry('vip-level', { status: 'active' }).handler, 'vip-level')
+  assert.equal(getUserOperationEntry('vip-deposit-total', { status: 'active' }).handler, 'vip-deposit-total')
+  assert.equal(getUserOperationEntry('rebate-reward', { status: 'active' }).handler, 'rebate-reward')
 })
 
 test('funds controls keep the operation drawer open and use a separate MFA layer', () => {

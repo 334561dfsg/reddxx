@@ -13,6 +13,10 @@ import UserAgentRoleDialog from '../../../admin/components/user/UserAgentRoleDia
 import UserTeamReportDrawer from '../../../admin/components/user/UserTeamReportDrawer.vue'
 import UserFundsMutationDialog from '../../../admin/components/user/UserFundsMutationDialog.vue'
 import UserWithdrawFlowLimitDialog from '../../../admin/components/user/UserWithdrawFlowLimitDialog.vue'
+import UserCreditReviewDrawer from '../../../admin/components/user/UserCreditReviewDrawer.vue'
+import UserCreditReviewDecisionDialog from '../../../admin/components/user/UserCreditReviewDecisionDialog.vue'
+import UserMembershipMutationDialog from '../../../admin/components/user/UserMembershipMutationDialog.vue'
+import UserRechargeSummaryDrawer from '../../../admin/components/user/UserRechargeSummaryDrawer.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -34,6 +38,15 @@ import {
   setWithdrawFlowLimit,
   unfreezeAdminFunds
 } from '../../../admin/repositories/userFundsRepository.js'
+import {
+  adjustUserCredit,
+  decideUserCreditReview,
+  getCreditMembershipSnapshot,
+  getUserCreditReviews,
+  getUserRechargeSummary,
+  grantUserRebate,
+  setUserVipLevel
+} from '../../../admin/repositories/userCreditMembershipRepository.js'
 
 const appRouter = getCurrentInstance()?.appContext.config.globalProperties.$router
 
@@ -126,6 +139,26 @@ const withdrawFlowReturnFocus = ref(null)
 const fundsMfaReturnFocus = ref(null)
 const lastFundsResult = ref(null)
 const lastFundsUserId = ref('')
+const membershipMutationOpen = ref(false)
+const membershipMutationUser = ref(null)
+const membershipMutationMode = ref('credit')
+const membershipMutationSnapshot = ref(null)
+const membershipMutationReturnFocus = ref(null)
+const creditReviewOpen = ref(false)
+const creditReviewUser = ref(null)
+const creditReviewRows = ref([])
+const creditReviewReturnFocus = ref(null)
+const reviewDecisionOpen = ref(false)
+const reviewDecisionUser = ref(null)
+const reviewDecisionReview = ref(null)
+const reviewDecisionReturnFocus = ref(null)
+const rechargeSummaryOpen = ref(false)
+const rechargeSummaryUser = ref(null)
+const rechargeSummary = ref(null)
+const rechargeSummaryReturnFocus = ref(null)
+const membershipMfaReturnFocus = ref(null)
+const lastMembershipUserId = ref('')
+const lastMembershipActionType = ref('')
 const cancelNote = ref('')
 const {
   open: mfaOpen,
@@ -147,6 +180,34 @@ const {
     }
   },
   onSuccess: () => { cancelNote.value = '' }
+})
+const {
+  open: membershipMfaOpen,
+  loading: membershipMfaLoading,
+  error: membershipMfaError,
+  errorAttempt: membershipMfaErrorAttempt,
+  pendingAction: pendingMembershipMfaAction,
+  request: requestMembershipMfa,
+  verify: verifyMembershipMfa,
+  cancel: cancelMembershipMfa
+} = useMfaActionFlow({
+  execute: async (action) => {
+    const input = { ...action.payload, operatorId: 'admin_current' }
+    lastMembershipUserId.value = String(action.payload?.userId || '')
+    lastMembershipActionType.value = action.type
+    if (action.type === 'credit-adjust') adjustUserCredit(input)
+    if (action.type === 'vip-level-set') setUserVipLevel(input)
+    if (action.type === 'rebate-grant') grantUserRebate(input)
+    if (action.type === 'credit-review-decide') decideUserCreditReview(input)
+  },
+  onSuccess: () => {
+    const userId = lastMembershipUserId.value
+    if (userId) refreshMembershipUser(userId)
+    if (lastMembershipActionType.value === 'credit-review-decide') reviewDecisionOpen.value = false
+    else membershipMutationOpen.value = false
+    lastMembershipUserId.value = ''
+    lastMembershipActionType.value = ''
+  }
 })
 const {
   open: fundsMfaOpen,
@@ -294,6 +355,31 @@ const closeOperationDrawer = () => {
 const handleOperationDrawerAction = async ({ id, user, trigger }) => {
   operationActionReturnFocus.value = trigger || (typeof document === 'undefined' ? null : document.activeElement)
   controlReturnUserId.value = userIdOf(user)
+
+  if (id === 'credit-review') {
+    creditReviewUser.value = user
+    creditReviewRows.value = getUserCreditReviews(userIdOf(user))
+    creditReviewReturnFocus.value = trigger
+    creditReviewOpen.value = true
+    return
+  }
+
+  if (id === 'credit-adjust' || id === 'vip-level' || id === 'rebate-reward') {
+    membershipMutationUser.value = user
+    membershipMutationMode.value = { 'credit-adjust': 'credit', 'vip-level': 'vip', 'rebate-reward': 'rebate' }[id]
+    membershipMutationSnapshot.value = getCreditMembershipSnapshot(userIdOf(user))
+    membershipMutationReturnFocus.value = trigger
+    membershipMutationOpen.value = true
+    return
+  }
+
+  if (id === 'vip-deposit-total') {
+    rechargeSummaryUser.value = user
+    rechargeSummary.value = getUserRechargeSummary(userIdOf(user))
+    rechargeSummaryReturnFocus.value = trigger
+    rechargeSummaryOpen.value = true
+    return
+  }
 
   if (['freeze-funds', 'unfreeze-funds', 'deduct-funds'].includes(id)) {
     fundsMutationUser.value = user
@@ -477,6 +563,71 @@ const fundsMfaTitle = computed(() => ({
   'flow-limit-set': '设置流水限制安全验证',
   'flow-limit-remove': '解除流水限制安全验证'
 }[pendingFundsMfaAction.value?.type] || '资金操作安全验证'))
+
+const refreshMembershipUser = (userId) => {
+  const snapshot = getCreditMembershipSnapshot(userId)
+  const updated = snapshot.user
+  users.value = users.value.map((user) => userIdOf(user) === String(userId) ? { ...updated } : user)
+  if (userIdOf(operationDrawerUser.value) === String(userId)) operationDrawerUser.value = { ...updated }
+  if (userIdOf(membershipMutationUser.value) === String(userId)) membershipMutationUser.value = { ...updated }
+  if (userIdOf(creditReviewUser.value) === String(userId)) creditReviewUser.value = { ...updated }
+  if (userIdOf(reviewDecisionUser.value) === String(userId)) reviewDecisionUser.value = { ...updated }
+  if (userIdOf(rechargeSummaryUser.value) === String(userId)) rechargeSummaryUser.value = { ...updated }
+  membershipMutationSnapshot.value = snapshot
+  creditReviewRows.value = getUserCreditReviews(userId)
+  rechargeSummary.value = getUserRechargeSummary(userId)
+  if (reviewDecisionReview.value) {
+    reviewDecisionReview.value = creditReviewRows.value.find((review) => review.id === reviewDecisionReview.value.id) || reviewDecisionReview.value
+  }
+}
+
+const openReviewDecision = ({ review, returnFocus }) => {
+  reviewDecisionUser.value = creditReviewUser.value
+  reviewDecisionReview.value = { ...review }
+  reviewDecisionReturnFocus.value = returnFocus
+  reviewDecisionOpen.value = true
+}
+const requestMembershipVerification = (request) => {
+  membershipMfaReturnFocus.value = request.returnFocus
+  requestMembershipMfa({ type: request.type, payload: request.payload })
+}
+const closeMembershipMutation = () => {
+  if (!membershipMfaOpen.value && !membershipMfaLoading.value) membershipMutationOpen.value = false
+}
+const clearMembershipMutation = () => {
+  membershipMutationUser.value = null
+  membershipMutationSnapshot.value = null
+  membershipMutationReturnFocus.value = null
+}
+const closeCreditReview = () => {
+  if (!membershipMfaOpen.value && !membershipMfaLoading.value && !reviewDecisionOpen.value) creditReviewOpen.value = false
+}
+const clearCreditReview = () => {
+  creditReviewUser.value = null
+  creditReviewRows.value = []
+  creditReviewReturnFocus.value = null
+}
+const closeReviewDecision = () => {
+  if (!membershipMfaOpen.value && !membershipMfaLoading.value) reviewDecisionOpen.value = false
+}
+const clearReviewDecision = () => {
+  reviewDecisionUser.value = null
+  reviewDecisionReview.value = null
+  reviewDecisionReturnFocus.value = null
+}
+const closeRechargeSummary = () => { rechargeSummaryOpen.value = false }
+const clearRechargeSummary = () => {
+  rechargeSummaryUser.value = null
+  rechargeSummary.value = null
+  rechargeSummaryReturnFocus.value = null
+}
+const handleMembershipMfaCancel = () => { cancelMembershipMfa() }
+const membershipMfaTitle = computed(() => ({
+  'credit-adjust': '修改信用分安全验证',
+  'vip-level-set': '编辑会员等级安全验证',
+  'rebate-grant': '添加返利奖励安全验证',
+  'credit-review-decide': '信用分审核安全验证'
+}[pendingMembershipMfaAction.value?.type] || '信用与会员操作安全验证'))
 
 const executeDeferredDrawerAction = async () => {
   const action = deferredDrawerAction.value
@@ -936,6 +1087,49 @@ const clearDetailDrawer = () => {
       @action="handleOperationDrawerAction"
     />
 
+    <UserCreditReviewDrawer
+      :visible="creditReviewOpen"
+      :user="creditReviewUser"
+      :reviews="creditReviewRows"
+      :busy="membershipMfaOpen || membershipMfaLoading || reviewDecisionOpen"
+      :return-focus="creditReviewReturnFocus"
+      @close="closeCreditReview"
+      @closed="clearCreditReview"
+      @select-review="openReviewDecision"
+    />
+
+    <UserRechargeSummaryDrawer
+      :visible="rechargeSummaryOpen"
+      :user="rechargeSummaryUser"
+      :summary="rechargeSummary"
+      :return-focus="rechargeSummaryReturnFocus"
+      @close="closeRechargeSummary"
+      @closed="clearRechargeSummary"
+    />
+
+    <UserMembershipMutationDialog
+      :visible="membershipMutationOpen"
+      :user="membershipMutationUser"
+      :mode="membershipMutationMode"
+      :snapshot="membershipMutationSnapshot"
+      :busy="membershipMfaOpen || membershipMfaLoading"
+      :return-focus="membershipMutationReturnFocus"
+      @close="closeMembershipMutation"
+      @closed="clearMembershipMutation"
+      @request-mfa="requestMembershipVerification"
+    />
+
+    <UserCreditReviewDecisionDialog
+      :visible="reviewDecisionOpen"
+      :user="reviewDecisionUser"
+      :review="reviewDecisionReview"
+      :busy="membershipMfaOpen || membershipMfaLoading"
+      :return-focus="reviewDecisionReturnFocus"
+      @close="closeReviewDecision"
+      @closed="clearReviewDecision"
+      @request-mfa="requestMembershipVerification"
+    />
+
     <UserFundsMutationDialog
       :visible="fundsMutationOpen"
       :user="fundsMutationUser"
@@ -1071,6 +1265,18 @@ const clearDetailDrawer = () => {
       :return-focus="fundsMfaReturnFocus"
       @verify="verifyFundsMfa"
       @cancel="handleFundsMfaCancel"
+    />
+
+    <MfaVerificationModal
+      v-model:open="membershipMfaOpen"
+      :loading="membershipMfaLoading"
+      :title="membershipMfaTitle"
+      description="信用与会员操作属于敏感操作，请输入 MFA 验证码"
+      :error="membershipMfaError"
+      :error-attempt="membershipMfaErrorAttempt"
+      :return-focus="membershipMfaReturnFocus"
+      @verify="verifyMembershipMfa"
+      @cancel="handleMembershipMfaCancel"
     />
   </section>
 </template>
