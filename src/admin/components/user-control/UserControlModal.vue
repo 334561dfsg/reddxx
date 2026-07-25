@@ -112,17 +112,17 @@ const submit = () => {
   <Teleport to="body">
     <div
       v-if="open"
-      class="fixed inset-0 z-50 flex items-start justify-center overflow-auto bg-slate-950/50 p-3 sm:items-center"
+      class="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/50 p-3 sm:items-center"
       role="presentation"
-      @mousedown.self="close"
     >
       <section
-        class="w-full max-w-[680px] rounded-2xl bg-white shadow-2xl"
+        data-testid="user-control-dialog-frame"
+        class="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[680px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
         role="dialog"
         aria-modal="true"
         :aria-label="scope === 'global' ? '统一用户控制设置' : `${moduleMeta?.label || ''}用户控制设置`"
       >
-        <header class="flex items-start justify-between border-b border-slate-200 px-5 py-3">
+        <header class="flex shrink-0 items-start justify-between border-b border-slate-200 px-5 py-3">
           <div>
             <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">
               {{ scope === 'global' ? '六模块统一设置' : `${moduleMeta?.label || '当前模块'}独立设置` }}
@@ -143,7 +143,7 @@ const submit = () => {
           </button>
         </header>
 
-        <div class="space-y-2.5 px-5 py-3">
+        <div data-testid="user-control-dialog-body" class="min-h-0 flex-1 overflow-y-auto space-y-2.5 px-5 py-3">
           <div class="rounded-xl border border-slate-200 bg-slate-50 p-2.5">
             <p class="text-xs font-medium text-slate-500">现有规则</p>
             <p class="mt-0.5 text-sm font-medium text-slate-800">{{ existingSummary }}</p>
@@ -244,7 +244,7 @@ const submit = () => {
           </label>
         </div>
 
-        <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
+        <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
           <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" @click="close">
             取消
           </button>

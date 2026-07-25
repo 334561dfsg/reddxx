@@ -74,13 +74,16 @@ const close = () => {
     <Transition name="modal">
       <div
         v-show="open"
-        class="fixed inset-0 z-[9999] flex min-h-[100dvh] w-full items-center justify-center overflow-y-auto bg-black/50 p-4 sm:p-6"
+        class="fixed inset-0 z-[9999] flex min-h-[100dvh] w-full items-center justify-center bg-black/50 p-4 sm:p-6"
         role="dialog"
         aria-modal="true"
       >
-      <section class="w-full max-w-md overflow-hidden rounded-xl bg-white shadow-2xl">
+      <section
+        data-testid="mfa-dialog-frame"
+        class="flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-2xl"
+      >
         <!-- 头部 -->
-        <header class="border-b border-slate-200 bg-gradient-to-r from-blue-50 to-violet-50 px-6 py-4">
+        <header class="shrink-0 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-violet-50 px-6 py-4">
           <div class="flex items-center justify-between">
             <div>
               <h2 class="text-xl font-semibold text-slate-900">{{ modalTitle }}</h2>
@@ -97,7 +100,7 @@ const close = () => {
         </header>
 
         <!-- 内容 -->
-        <div class="px-6 py-5">
+        <div data-testid="mfa-dialog-body" class="min-h-0 flex-1 overflow-y-auto px-6 py-5">
           <!-- 图标 -->
           <div class="mb-4 flex justify-center">
             <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
@@ -133,7 +136,7 @@ const close = () => {
         </div>
 
         <!-- 底部按钮 -->
-        <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+        <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
           <button
             type="button"
             class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50"

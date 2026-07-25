@@ -287,10 +287,15 @@ test('user and module rows link to the named log route with query filters', () =
   assert.match(moduleSource, /name:\s*'users-control-log'[\s\S]*query:\s*\{\s*userId:[\s\S]*module:/)
 })
 
-test('shared setting modal fits without internal scrolling and keeps result copy compact', () => {
+test('shared setting modal keeps only its body scrollable and keeps result copy compact', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
   assert.match(source, /max-w-\[680px\]/)
-  assert.doesNotMatch(source, /overflow-y-auto/)
+  assert.match(source, /<Teleport to="body">/)
+  assert.match(source, /fixed inset-0/)
+  assert.doesNotMatch(source, /@mousedown\.self|@click\.self/)
+  assert.doesNotMatch(source, /fixed inset-0[^"\n]*overflow-auto/)
+  assert.match(source, /data-testid="user-control-dialog-frame"[^>]*max-h-\[calc\(100dvh-1\.5rem\)\][^>]*overflow-hidden/)
+  assert.match(source, /data-testid="user-control-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.match(source, /space-y-2\.5 px-5 py-3/)
   assert.match(source, /rows="2"/)
   assert.match(source, /交易盈利、理财高收益/)
@@ -298,6 +303,14 @@ test('shared setting modal fits without internal scrolling and keeps result copy
   assert.doesNotMatch(source, />交易类效果</)
   assert.doesNotMatch(source, />理财类效果</)
   assert.doesNotMatch(source, /本次操作只影响当前模块，其他五个模块的用户规则保持不变。/)
+})
+
+test('MFA modal keeps only its body scrollable', () => {
+  const mfaSource = read('../src/admin/components/MfaVerificationModal.vue')
+
+  assert.doesNotMatch(mfaSource, /fixed inset-0[^"\n]*overflow-y-auto/)
+  assert.match(mfaSource, /data-testid="mfa-dialog-frame"[^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
+  assert.match(mfaSource, /data-testid="mfa-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
 })
 
 test('module and unified cancel dialogs use compact spacing', () => {
