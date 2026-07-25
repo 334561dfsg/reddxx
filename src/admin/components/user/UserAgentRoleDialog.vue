@@ -1,5 +1,6 @@
 <script setup>
 import { computed, nextTick, reactive, ref, watch } from 'vue'
+import PanelSingleSelect from '../form/PanelSingleSelect.vue'
 import { USER_ROLE } from '../../constants/user.js'
 import { getDirectReferrals, getParentCandidates, getUserById, updateAgentRole } from '../../repositories/userRelationshipRepository.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
@@ -17,13 +18,26 @@ const errorRef = ref(null)
 const phaseName = ref('form')
 const submitting = ref(false)
 const errorMessage = ref('')
-const form = reactive({ successorParentId: '', reason: '' })
+const form = reactive({ successorParentId: null, reason: '' })
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const isAgent = computed(() => props.user?.role === USER_ROLE.AGENT)
 const directChildren = computed(() => userId.value ? getDirectReferrals(userId.value) : [])
 const needsSuccessor = computed(() => isAgent.value && directChildren.value.length > 0)
-const candidates = computed(() => userId.value ? getParentCandidates(userId.value) : [])
-const successor = computed(() => form.successorParentId && form.successorParentId !== '__choose__'
+const successorOptions = computed(() => [
+  { value: '', label: '全部设为无上级', searchText: '无上级', disabled: false },
+  ...(userId.value ? getParentCandidates(userId.value) : []).map((candidate) => ({
+    value: candidate.id,
+    label: `${candidate.username} · UID ${candidate.id}`,
+    searchText: [candidate.username, candidate.email, candidate.id].join(' '),
+    disabled: Boolean(candidate.disabled)
+  }))
+])
+const successorSelectionInvalid = computed(() => needsSuccessor.value && (
+  form.successorParentId === null || !successorOptions.value.some((option) => (
+    option.value === form.successorParentId && !option.disabled
+  ))
+))
+const successor = computed(() => form.successorParentId
   ? getUserById(form.successorParentId)
   : null)
 const targetRole = computed(() => isAgent.value ? USER_ROLE.USER : USER_ROLE.AGENT)
@@ -33,7 +47,7 @@ const resetForm = () => {
   phaseName.value = 'form'
   submitting.value = false
   errorMessage.value = ''
-  form.successorParentId = needsSuccessor.value ? '__choose__' : ''
+  form.successorParentId = needsSuccessor.value ? null : ''
   form.reason = ''
 }
 
@@ -68,7 +82,7 @@ const startConfirm = async () => {
   errorMessage.value = ''
   if (!form.reason.trim()) return showError('变更原因必填')
   if (form.reason.trim().length > 200) return showError('变更原因不能超过 200 字')
-  if (needsSuccessor.value && form.successorParentId === '__choose__') return showError('存在直属下级时必须选择承接上级')
+  if (successorSelectionInvalid.value) return showError('存在直属下级时必须选择承接上级')
   phaseName.value = 'confirm'
   await nextTick()
   backRef.value?.focus?.()
@@ -131,15 +145,19 @@ watch(() => [props.visible, userId.value, props.user?.role], ([visible]) => {
                 <div class="mt-2 flex justify-between gap-3"><span class="text-slate-500">直属下级</span><span class="font-medium text-slate-900">{{ directChildren.length }} 人</span></div>
               </div>
 
-              <label v-if="needsSuccessor" class="block">
-                <span class="text-sm font-medium text-slate-800">承接上级 <span class="text-rose-500">*</span></span>
-                <select v-model="form.successorParentId" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
-                  <option disabled value="__choose__">请选择承接上级</option>
-                  <option value="">全部设为无上级</option>
-                  <option v-for="candidate in candidates" :key="candidate.id" :value="candidate.id">{{ candidate.username }} · UID {{ candidate.id }}</option>
-                </select>
+              <div v-if="needsSuccessor" class="block">
+                <PanelSingleSelect
+                  v-model="form.successorParentId"
+                  :options="successorOptions"
+                  label="承接上级"
+                  placeholder="请选择承接上级"
+                  search-label="搜索承接上级用户"
+                  required
+                  :invalid="successorSelectionInvalid"
+                  id-base="agent-role-successor-parent"
+                />
                 <span class="mt-1 block text-xs text-slate-500">取消代理后，{{ directChildren.length }} 个直属下级将统一转移到此上级。</span>
-              </label>
+              </div>
 
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">变更原因 <span class="text-rose-500">*</span></span>

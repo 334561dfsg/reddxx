@@ -1,5 +1,6 @@
 <script setup>
 import { computed, nextTick, reactive, ref, watch } from 'vue'
+import PanelSingleSelect from '../form/PanelSingleSelect.vue'
 import { getDescendants, getParentCandidates, getUserById, resetParent } from '../../repositories/userRelationshipRepository.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
@@ -10,31 +11,36 @@ const props = defineProps({
 })
 const emit = defineEmits(['close', 'closed', 'saved'])
 const dialogRef = ref(null)
-const searchRef = ref(null)
+const reasonRef = ref(null)
 const backRef = ref(null)
 const errorRef = ref(null)
 const phaseName = ref('form')
 const submitting = ref(false)
 const errorMessage = ref('')
-const form = reactive({ search: '', parentId: '', reason: '' })
+const form = reactive({ parentId: '', reason: '' })
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const descendantsCount = computed(() => userId.value ? getDescendants(userId.value).length : 0)
 const currentParent = computed(() => props.user?.parentId ? getUserById(props.user.parentId) : null)
-const candidates = computed(() => {
-  if (!userId.value) return []
-  const search = form.search.trim().toLowerCase()
-  return getParentCandidates(userId.value).filter((candidate) => (
-    !search || [candidate.id, candidate.username, candidate.email]
-      .some((value) => String(value ?? '').toLowerCase().includes(search))
+const parentOptions = computed(() => [
+  { value: '', label: '设为无上级', searchText: '无上级', disabled: false },
+  ...(userId.value ? getParentCandidates(userId.value) : []).map((candidate) => ({
+    value: candidate.id,
+    label: `${candidate.username} · UID ${candidate.id}`,
+    searchText: [candidate.username, candidate.email, candidate.id].join(' '),
+    disabled: Boolean(candidate.disabled)
+  }))
+])
+const parentSelectionInvalid = computed(() => (
+  form.parentId !== '' && !parentOptions.value.some((option) => (
+    option.value === form.parentId && !option.disabled
   ))
-})
+))
 const nextParent = computed(() => form.parentId ? getUserById(form.parentId) : null)
 
 const resetForm = () => {
   phaseName.value = 'form'
   submitting.value = false
   errorMessage.value = ''
-  form.search = ''
   form.parentId = props.user?.parentId || ''
   form.reason = ''
 }
@@ -49,7 +55,7 @@ const {
 } = useDialogLifecycle({
   open: computed(() => props.visible),
   dialogRef,
-  initialFocusRef: searchRef,
+  initialFocusRef: reasonRef,
   returnFocusRef: computed(() => props.returnFocus),
   requestClose: () => emit('close'),
   closeDisabled: submitting
@@ -71,6 +77,7 @@ const startConfirm = async () => {
   errorMessage.value = ''
   if (!form.reason.trim()) return showError('变更原因必填')
   if (form.reason.trim().length > 200) return showError('变更原因不能超过 200 字')
+  if (parentSelectionInvalid.value) return showError('请选择有效的新上级')
   if (String(props.user?.parentId ?? '') === String(form.parentId ?? '')) return showError('新上级不能与当前上级相同')
   phaseName.value = 'confirm'
   await nextTick()
@@ -81,7 +88,7 @@ const backToForm = async () => {
   phaseName.value = 'form'
   errorMessage.value = ''
   await nextTick()
-  searchRef.value?.focus?.()
+  reasonRef.value?.focus?.()
 }
 
 const confirmReset = async () => {
@@ -131,23 +138,23 @@ watch(() => [props.visible, userId.value], ([visible]) => {
                 <p class="mt-1 text-sm font-medium text-slate-900">{{ currentParent?.username || '无上级' }}<span v-if="currentParent" class="ml-2 font-normal text-slate-500">UID {{ currentParent.id }}</span></p>
               </div>
 
-              <label class="block">
-                <span class="text-sm font-medium text-slate-800">搜索新上级</span>
-                <input ref="searchRef" v-model="form.search" type="search" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="用户名、邮箱或 UID" />
-              </label>
-
-              <label class="block">
-                <span class="text-sm font-medium text-slate-800">新上级 <span class="text-rose-500">*</span></span>
-                <select v-model="form.parentId" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
-                  <option value="">设为无上级</option>
-                  <option v-for="candidate in candidates" :key="candidate.id" :value="candidate.id">{{ candidate.username }} · UID {{ candidate.id }}</option>
-                </select>
+              <div class="block">
+                <PanelSingleSelect
+                  v-model="form.parentId"
+                  :options="parentOptions"
+                  label="新上级"
+                  placeholder="请选择新上级"
+                  search-label="搜索新上级用户"
+                  required
+                  :invalid="parentSelectionInvalid"
+                  id-base="parent-reset-parent"
+                />
                 <span class="mt-1 block text-xs text-slate-500">已排除本人、当前上级、自己的下级和封禁用户。</span>
-              </label>
+              </div>
 
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">变更原因 <span class="text-rose-500">*</span></span>
-                <textarea v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请说明重设上级的原因" />
+                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请说明重设上级的原因" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>
