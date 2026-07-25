@@ -7,7 +7,9 @@ import {
   getFocusableElements,
   isTopDialogLayer,
   registerDialogLayer,
+  registerDialogPopupHost,
   unregisterDialogLayer,
+  unregisterDialogPopupHost,
   useDialogContentSnapshot,
   useDialogLifecycle
 } from '../src/admin/composables/useDialogLifecycle.js'
@@ -147,6 +149,32 @@ test('dialog layers only expose the most recently registered layer as topmost', 
   assert.equal(isTopDialogLayer(second), true)
   unregisterDialogLayer(second)
   assert.equal(isTopDialogLayer(first), true)
+})
+
+test('a registered popup host follows its dialog through nested layer isolation', async (t) => {
+  const document = installFakeDocument(t)
+  const popupHost = createFakeElement(document)
+  const lower = await mountLifecycle({ document })
+  const popupRegistration = registerDialogPopupHost(lower.dialog, popupHost)
+
+  assert.ok(popupRegistration)
+  assert.equal(popupHost.inert, false)
+
+  const upper = await mountLifecycle({ document })
+  assert.equal(lower.dialog.inert, true)
+  assert.equal(popupHost.inert, true)
+  assert.equal(popupHost.getAttribute('aria-hidden'), 'true')
+
+  upper.open.value = false
+  await flushLifecycle()
+  upper.lifecycle.onAfterLeave()
+  assert.equal(lower.dialog.inert, false)
+  assert.equal(popupHost.inert, false)
+  assert.equal(popupHost.getAttribute('aria-hidden'), null)
+
+  unregisterDialogPopupHost(popupRegistration)
+  lower.app.unmount()
+  upper.app.unmount()
 })
 
 test('focus candidates exclude disabled, hidden, and negative-tabindex controls', () => {

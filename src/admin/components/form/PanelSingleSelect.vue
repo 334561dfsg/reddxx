@@ -4,11 +4,15 @@ let panelSingleSelectSequence = 0
 
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
+import {
+  registerDialogPopupHost,
+  unregisterDialogPopupHost
+} from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   modelValue: {
     type: [String, Number],
-    default: ''
+    default: null
   },
   options: {
     type: Array,
@@ -60,7 +64,9 @@ const labelId = `${stableIdBase}-label`
 const panelId = `${stableIdBase}-panel`
 const searchId = `${stableIdBase}-search`
 const listboxId = `${stableIdBase}-listbox`
+const requiredId = `${stableIdBase}-required`
 const orphanedId = `${stableIdBase}-orphaned`
+const configErrorId = `${stableIdBase}-config-error`
 
 const rootRef = shallowRef(null)
 const triggerRef = shallowRef(null)
@@ -79,12 +85,25 @@ const resolvedPlacement = ref('bottom')
 const panelStyle = ref({ position: 'fixed' })
 const sessionSnapshot = ref(null)
 const cachedCommitted = ref({ value: undefined, label: '' })
+let popupHostRegistration = null
 
 const valuesEqual = (left, right) => Object.is(left, right)
 
 const hasCommittedValue = computed(() => (
-  props.modelValue !== '' && props.modelValue !== null && props.modelValue !== undefined
+  props.modelValue !== null && props.modelValue !== undefined
 ))
+
+const duplicateOption = computed(() => {
+  const seenValues = []
+  for (const option of props.options) {
+    if (seenValues.some((value) => valuesEqual(value, option.value))) return option
+    seenValues.push(option.value)
+  }
+  return null
+})
+
+const hasDuplicateOptions = computed(() => Boolean(duplicateOption.value))
+const duplicateOptionText = computed(() => String(duplicateOption.value?.value))
 
 const selectedOption = computed(() => (
   props.options.find((option) => valuesEqual(option.value, props.modelValue)) ?? null
@@ -109,7 +128,7 @@ watch(
 )
 
 const orphaned = computed(() => hasCommittedValue.value && !selectedOption.value)
-const effectiveInvalid = computed(() => props.invalid || orphaned.value)
+const effectiveInvalid = computed(() => props.invalid || orphaned.value || hasDuplicateOptions.value)
 
 const displayText = computed(() => {
   if (selectedOption.value) return String(selectedOption.value.label)
@@ -121,14 +140,17 @@ const displayText = computed(() => {
 
 const describedBy = computed(() => {
   const ids = []
+  if (props.required) ids.push(requiredId)
   if (effectiveInvalid.value && props.errorId) ids.push(props.errorId)
   if (orphaned.value) ids.push(orphanedId)
+  if (hasDuplicateOptions.value) ids.push(configErrorId)
   return ids.join(' ') || null
 })
 
 const triggerLabel = computed(() => {
+  const requiredState = props.required ? '必填。' : ''
   const state = props.readonly ? '只读。' : '更改选择。'
-  return `${props.label}。当前选择：${displayText.value}。${state}`
+  return `${props.label}。${requiredState}当前选择：${displayText.value}。${state}`
 })
 
 const resolvedSearchLabel = computed(() => props.searchLabel || `搜索${props.label}`)
@@ -139,6 +161,7 @@ const normalizeSearchText = (value) => String(value ?? '')
   .trim()
 
 const filteredOptions = computed(() => {
+  if (hasDuplicateOptions.value) return []
   const normalizedQuery = normalizeSearchText(query.value)
   if (!normalizedQuery) return props.options
   return props.options.filter((option) => (
@@ -146,12 +169,20 @@ const filteredOptions = computed(() => {
   ))
 })
 
-const optionKey = (option) => `${typeof option.value}:${String(option.value)}`
-const optionId = (option) => {
-  const encodedValue = Array.from(String(option.value))
+const encodedOptionValue = (value) => {
+  if (typeof value === 'number') {
+    if (Number.isNaN(value)) return 'nan'
+    if (Object.is(value, -0)) return 'negative-zero'
+    return String(value)
+  }
+  return Array.from(String(value))
     .map((character) => character.codePointAt(0).toString(16))
     .join('-') || 'empty'
-  return `${stableIdBase}-option-${typeof option.value}-${encodedValue}`
+}
+
+const optionKey = (option) => `${typeof option.value}:${encodedOptionValue(option.value)}`
+const optionId = (option) => {
+  return `${stableIdBase}-option-${typeof option.value}-${encodedOptionValue(option.value)}`
 }
 
 const optionIsActive = (option) => valuesEqual(option.value, activeValue.value)
@@ -245,18 +276,58 @@ function reconcileActive() {
   scrollActiveIntoView()
 }
 
-function resolvePortalTarget() {
-  let current = triggerRef.value?.parentElement ?? triggerRef.value?.parent ?? null
+function resolvedStyleValue(element, property) {
+  const inlineValue = element?.style?.[property]
+  if (inlineValue !== undefined && inlineValue !== '') return String(inlineValue)
+  return String(window.getComputedStyle?.(element)?.[property] ?? '')
+}
+
+function isZeroInset(value) {
+  return /^0(?:px)?(?:\s+0(?:px)?){0,3}$/.test(String(value).trim())
+}
+
+function isViewportPopupHost(element) {
+  if (resolvedStyleValue(element, 'position') !== 'fixed') return false
+
+  const inset = resolvedStyleValue(element, 'inset')
+  if (!isZeroInset(inset)) {
+    const edges = ['top', 'right', 'bottom', 'left']
+      .map((property) => resolvedStyleValue(element, property))
+    if (!edges.every(isZeroInset)) return false
+  }
+
+  const overflow = resolvedStyleValue(element, 'overflow') || 'visible'
+  const overflowX = resolvedStyleValue(element, 'overflowX') || overflow
+  const overflowY = resolvedStyleValue(element, 'overflowY') || overflow
+  if (overflowX !== 'visible' || overflowY !== 'visible') return false
+
+  const containingBlockProperties = ['transform', 'perspective', 'filter', 'backdropFilter']
+  if (containingBlockProperties.some((property) => {
+    const value = resolvedStyleValue(element, property)
+    return value && value !== 'none'
+  })) return false
+
+  const contain = resolvedStyleValue(element, 'contain')
+  if (/(?:layout|paint|strict|content)/.test(contain)) return false
+  const willChange = resolvedStyleValue(element, 'willChange')
+  if (/(?:transform|perspective|filter)/.test(willChange)) return false
+  return true
+}
+
+function resolvePortalTarget(modal = findOwningModal()) {
+  if (!modal) return document.body
+
+  let current = parentOf(modal)
   while (current && current !== document.body) {
-    if (
-      current.getAttribute?.('role') === 'dialog' &&
-      current.getAttribute?.('aria-modal') === 'true'
-    ) {
-      return current
-    }
-    current = current.parentElement ?? current.parent ?? null
+    if (isViewportPopupHost(current)) return current
+    current = parentOf(current)
   }
   return document.body
+}
+
+function releasePopupHostRegistration() {
+  unregisterDialogPopupHost(popupHostRegistration)
+  popupHostRegistration = null
 }
 
 watch(
@@ -269,7 +340,10 @@ watch(
 )
 
 function openSelect() {
-  if (props.disabled || props.readonly || expanded.value || motionState.value !== 'closed') return
+  if (
+    props.disabled || props.readonly || hasDuplicateOptions.value ||
+    expanded.value || motionState.value !== 'closed'
+  ) return
   sessionSnapshot.value = {
     selectedValue: props.modelValue,
     cachedLabel: displayText.value,
@@ -279,7 +353,13 @@ function openSelect() {
   query.value = ''
   activeValue.value = null
   commitPending.value = false
-  portalTarget.value = resolvePortalTarget()
+  const modal = findOwningModal()
+  const target = resolvePortalTarget(modal)
+  portalTarget.value = target
+  releasePopupHostRegistration()
+  if (modal && target !== document.body) {
+    popupHostRegistration = registerDialogPopupHost(modal, target)
+  }
   expanded.value = true
   open.value = true
   motionState.value = 'opening'
@@ -297,6 +377,10 @@ function requestClose(reason = 'intentional') {
   open.value = false
 }
 
+watch(hasDuplicateOptions, (duplicated) => {
+  if (duplicated && expanded.value) requestClose('configuration')
+})
+
 function handleTriggerClick() {
   if (motionState.value === 'opening' || motionState.value === 'closing') return
   if (open.value) requestClose('trigger')
@@ -308,6 +392,7 @@ function handleAfterEnter() {
 }
 
 function handleAfterLeave() {
+  const skipFocusRestore = closeReason.value === 'tab-native'
   const requestedFocusTarget = closeReason.value === 'tab'
     ? tabFocusTarget.value
     : triggerRef.value
@@ -317,10 +402,12 @@ function handleAfterLeave() {
   activeValue.value = null
   resolvedPlacement.value = 'bottom'
   panelStyle.value = { position: 'fixed' }
+  releasePopupHostRegistration()
   portalTarget.value = document.body
   sessionSnapshot.value = null
   tabFocusTarget.value = null
   nextTick(() => {
+    if (skipFocusRestore) return
     const fallbackTarget = !props.disabled ? triggerRef.value : null
     const focusTarget = requestedFocusTarget?.isConnected ? requestedFocusTarget : fallbackTarget
     focusTarget?.focus?.()
@@ -352,14 +439,40 @@ function moveActive(direction) {
   scrollActiveIntoView()
 }
 
-function isAvailableTabTarget(element) {
-  if (!element || element.disabled || element.hidden || element.tabIndex < 0) return false
-  if (element.getAttribute?.('aria-hidden') === 'true') return false
-  const styles = window.getComputedStyle?.(element)
-  return styles?.display !== 'none' && styles?.visibility !== 'hidden'
+function parentOf(element) {
+  return element?.parentElement ?? element?.parent ?? null
 }
 
-function findNextPageTabTarget() {
+function findOwningModal() {
+  let current = parentOf(triggerRef.value)
+  while (current && current !== document.body) {
+    if (
+      current.getAttribute?.('role') === 'dialog' &&
+      current.getAttribute?.('aria-modal') === 'true'
+    ) {
+      return current
+    }
+    current = parentOf(current)
+  }
+  return null
+}
+
+function isAvailableTabTarget(element, scope) {
+  if (!element || element.disabled || element.hidden || element.tabIndex < 0) return false
+  if (element.getAttribute?.('tabindex') === '-1') return false
+  if (element.getAttribute?.('aria-hidden') === 'true') return false
+  let current = element
+  while (current) {
+    if (current.hidden || current.inert || current.getAttribute?.('aria-hidden') === 'true') return false
+    const styles = window.getComputedStyle?.(current)
+    if (styles?.display === 'none' || styles?.visibility === 'hidden') return false
+    if (current === scope) break
+    current = parentOf(current)
+  }
+  return Boolean(current)
+}
+
+function getFocusScopeCandidates(scope) {
   const selector = [
     'a[href]',
     'button:not([disabled])',
@@ -368,19 +481,33 @@ function findNextPageTabTarget() {
     'textarea:not([disabled])',
     '[tabindex]:not([tabindex="-1"])'
   ].join(',')
-  const candidates = Array.from(
-    document.querySelectorAll?.(selector) ?? document.body?.querySelectorAll?.() ?? []
-  ).filter(isAvailableTabTarget)
+  return Array.from(scope?.querySelectorAll?.(selector) ?? [])
+    .filter((candidate) => isAvailableTabTarget(candidate, scope))
+    .filter((candidate) => !panelRef.value?.contains(candidate))
+}
+
+function findCompositeTabTarget(backward) {
+  if (backward) return triggerRef.value
+  const modal = findOwningModal()
+  const scope = modal ?? document.body
+  const candidates = getFocusScopeCandidates(scope)
   const triggerIndex = candidates.indexOf(triggerRef.value)
   if (triggerIndex < 0) return null
-  return candidates
-    .slice(triggerIndex + 1)
-    .find((candidate) => !panelRef.value?.contains(candidate)) ?? null
+  const nextTarget = candidates[triggerIndex + 1]
+  if (nextTarget) return nextTarget
+  return modal ? candidates[0] ?? null : null
 }
 
 function handleCompositeTab(event) {
+  const target = findCompositeTabTarget(event.shiftKey)
+  event.stopPropagation()
+  if (!target) {
+    tabFocusTarget.value = null
+    requestClose('tab-native')
+    return
+  }
   event.preventDefault()
-  tabFocusTarget.value = event.shiftKey ? triggerRef.value : findNextPageTabTarget()
+  tabFocusTarget.value = target
   requestClose('tab')
 }
 
@@ -408,6 +535,7 @@ function handleSearchKeydown(event) {
   }
   if (event.key === 'Escape') {
     event.preventDefault()
+    event.stopPropagation()
     requestClose('escape')
     return
   }
@@ -444,6 +572,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  releasePopupHostRegistration()
   document.removeEventListener('pointerdown', handleDocumentPointerDown, true)
   window.removeEventListener?.('resize', handleViewportChange)
   window.removeEventListener?.('scroll', handleViewportChange, true)
@@ -461,7 +590,12 @@ onUnmounted(() => {
   >
     <span :id="labelId" class="mb-1 block text-sm font-medium text-gray-700">
       {{ label }}
-      <span v-if="required" aria-hidden="true" class="text-red-600">*</span>
+      <span
+        v-if="required"
+        :id="requiredId"
+        data-testid="panel-single-select-required"
+        class="text-red-700"
+      >（必填）</span>
     </span>
 
     <button
@@ -474,8 +608,6 @@ onUnmounted(() => {
       :aria-expanded="expanded ? 'true' : 'false'"
       :aria-controls="panelId"
       :aria-disabled="disabled ? 'true' : 'false'"
-      :aria-readonly="readonly ? 'true' : 'false'"
-      :aria-required="required ? 'true' : 'false'"
       :aria-invalid="effectiveInvalid ? 'true' : 'false'"
       :aria-describedby="describedBy"
       @click="handleTriggerClick"
@@ -494,6 +626,16 @@ onUnmounted(() => {
       class="mt-1 text-sm text-red-700"
     >
       所选项“{{ displayText }}”已失效，请重新选择。
+    </p>
+
+    <p
+      v-if="hasDuplicateOptions"
+      :id="configErrorId"
+      data-testid="panel-single-select-config-error"
+      role="alert"
+      class="mt-1 text-sm text-red-700"
+    >
+      选择控件配置无效：选项值“{{ duplicateOptionText }}”重复，请联系管理员。
     </p>
 
     <Teleport :to="portalTarget">

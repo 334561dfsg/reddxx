@@ -58,7 +58,9 @@ const syncPageIsolation = () => {
     return
   }
 
-  const dialogElements = dialogLayers.map(({ element }) => element).filter(Boolean)
+  const dialogElements = dialogLayers.flatMap(({ element, popupHosts }) => (
+    [element, ...popupHosts.keys()].filter(Boolean)
+  ))
   const backgrounds = [...document.body.children].filter((element) => (
     !dialogElements.some((dialog) => element === dialog || element.contains?.(dialog))
   ))
@@ -85,7 +87,9 @@ const syncPageIsolation = () => {
 const syncLayerIsolation = () => {
   const topLayer = dialogLayers.at(-1)
   for (const layer of dialogLayers) {
-    setElementInert(layer.element, layer !== topLayer)
+    const inert = layer !== topLayer
+    setElementInert(layer.element, inert)
+    for (const popupHost of layer.popupHosts.keys()) setElementInert(popupHost, inert)
   }
   syncPageIsolation()
   syncScrollLock()
@@ -93,15 +97,42 @@ const syncLayerIsolation = () => {
 }
 
 export const registerDialogLayer = (element) => {
-  const layer = { id: Symbol('dialog-layer'), element }
+  const layer = { id: Symbol('dialog-layer'), element, popupHosts: new Map() }
   dialogLayers.push(layer)
   syncLayerIsolation()
   return layer
 }
 
+export const registerDialogPopupHost = (dialogElement, popupHost) => {
+  const layer = dialogLayers.find(({ element }) => element === dialogElement)
+  if (!layer || !popupHost) return null
+
+  layer.popupHosts.set(popupHost, (layer.popupHosts.get(popupHost) || 0) + 1)
+  const registration = { layer, popupHost, active: true }
+  syncLayerIsolation()
+  return registration
+}
+
+export const unregisterDialogPopupHost = (registration) => {
+  if (!registration?.active) return
+  registration.active = false
+  const { layer, popupHost } = registration
+  const count = layer.popupHosts.get(popupHost) || 0
+  if (count > 1) layer.popupHosts.set(popupHost, count - 1)
+  else {
+    layer.popupHosts.delete(popupHost)
+    setElementInert(popupHost, false)
+  }
+  if (dialogLayers.includes(layer)) syncLayerIsolation()
+}
+
 export const unregisterDialogLayer = (layer) => {
   const index = dialogLayers.indexOf(layer)
-  if (index >= 0) dialogLayers.splice(index, 1)
+  if (index >= 0) {
+    setElementInert(layer.element, false)
+    for (const popupHost of layer.popupHosts.keys()) setElementInert(popupHost, false)
+    dialogLayers.splice(index, 1)
+  }
   syncLayerIsolation()
 }
 
@@ -142,6 +173,10 @@ export const useDialogContentSnapshot = ({ open, phase, source, clone = (value) 
 }
 
 export const __resetDialogLayersForTests = () => {
+  for (const layer of dialogLayers) {
+    setElementInert(layer.element, false)
+    for (const popupHost of layer.popupHosts.keys()) setElementInert(popupHost, false)
+  }
   dialogLayers.splice(0)
   syncLayerIsolation()
 }

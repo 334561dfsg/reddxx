@@ -2,6 +2,11 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import test from 'node:test'
+import { computed, h, ref, shallowRef, Transition } from 'vue'
+import {
+  __resetDialogLayersForTests,
+  useDialogLifecycle
+} from '../src/admin/composables/useDialogLifecycle.js'
 import { createSfcHarness, loadVueSfc } from './helpers/vueSfcHarness.js'
 
 const componentFile = resolve(process.cwd(), 'src/admin/components/form/PanelSingleSelect.vue')
@@ -40,6 +45,120 @@ const dispatchKey = async (harness, node, key, modifiers = {}) => {
   await harness.flush()
   return event
 }
+
+const dispatchBubblingKey = async (harness, node, key, modifiers = {}) => {
+  const event = await dispatchKey(harness, node, key, modifiers)
+  if (!event.propagationStopped) {
+    harness.document.dispatchEvent(event)
+    await harness.flush()
+  }
+  return event
+}
+
+const createModalSelectHost = (selectComponent, state) => ({
+  name: 'PanelSingleSelectModalHost',
+  setup() {
+    const visible = ref(true)
+    const dialogRef = shallowRef(null)
+    const initialFocusRef = shallowRef(null)
+    const lowerLifecycle = useDialogLifecycle({
+      open: computed(() => visible.value),
+      dialogRef,
+      initialFocusRef,
+      returnFocusRef: shallowRef(null),
+      requestClose: () => {
+        state.closeCount += 1
+        visible.value = false
+      }
+    })
+    const upperVisible = ref(false)
+    const upperDialogRef = shallowRef(null)
+    const upperInitialFocusRef = shallowRef(null)
+    const upperLifecycle = useDialogLifecycle({
+      open: computed(() => upperVisible.value),
+      dialogRef: upperDialogRef,
+      initialFocusRef: upperInitialFocusRef,
+      returnFocusRef: shallowRef(null),
+      requestClose: () => { upperVisible.value = false }
+    })
+
+    state.visible = visible
+    state.phase = lowerLifecycle.phase
+    state.upperPhase = upperLifecycle.phase
+    state.openUpper = () => { upperVisible.value = true }
+    state.closeUpper = () => { upperVisible.value = false }
+
+    return () => h('div', [
+      h(Transition, {
+        name: 'panel-select-modal-test',
+        appear: true,
+        onAfterEnter: lowerLifecycle.onAfterEnter,
+        onAfterLeave: lowerLifecycle.onAfterLeave
+      }, {
+        default: () => lowerLifecycle.rendered.value
+          ? h('div', {
+              'data-testid': 'modal-popup-layer',
+              style: {
+                position: 'fixed',
+                inset: '0',
+                overflow: 'visible',
+                transform: 'none',
+                ...lowerLifecycle.layerStyle.value
+              }
+            }, [
+              h('section', {
+                ref: dialogRef,
+                role: 'dialog',
+                'aria-modal': 'true',
+                'aria-label': 'Edit account',
+                'data-testid': 'modal-frame',
+                style: {
+                  overflow: 'hidden',
+                  transform: 'translateX(40px) scale(0.96)'
+                }
+              }, [
+                h('button', { ref: initialFocusRef, 'data-testid': 'modal-before' }, 'Before'),
+                h(selectComponent, baseProps),
+                h('button', { 'data-testid': 'modal-after' }, 'After')
+              ])
+            ])
+          : null
+      }),
+      h(Transition, {
+        name: 'panel-select-upper-modal-test',
+        onAfterEnter: upperLifecycle.onAfterEnter,
+        onAfterLeave: upperLifecycle.onAfterLeave
+      }, {
+        default: () => upperLifecycle.rendered.value && upperLifecycle.phase.value !== 'closing'
+          ? h('div', {
+              'data-testid': 'upper-modal-popup-layer',
+              style: {
+                position: 'fixed',
+                inset: '0',
+                overflow: 'visible',
+                transform: 'none',
+                ...upperLifecycle.layerStyle.value
+              }
+            }, [
+              h('section', {
+                ref: upperDialogRef,
+                role: 'dialog',
+                'aria-modal': 'true',
+                'aria-label': 'Confirm account',
+                'data-testid': 'upper-modal-frame',
+                style: {
+                  overflow: 'hidden',
+                  transform: 'scale(0.96)'
+                }
+              }, [
+                h('button', { ref: upperInitialFocusRef, 'data-testid': 'upper-modal-action' }, 'Confirm')
+              ])
+            ])
+          : null
+      })
+    ])
+  }
+})
 
 const setQuery = async (harness, value) => {
   const input = harness.findByTestId('panel-single-select-search')
@@ -198,6 +317,59 @@ test('option IDs remain unique for values whose URL encodings could otherwise co
   assert.equal(new Set(ids).size, 2)
 })
 
+test('an empty-string option remains a committed cached value and becomes orphan-invalid when removed', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const harness = await createSfcHarness(component, {
+    ...baseProps,
+    modelValue: '',
+    options: [
+      { value: '', label: 'No parent' },
+      { value: 'root', label: 'Root account' }
+    ]
+  })
+  t.after(harness.cleanup)
+
+  const trigger = harness.findByTestId('panel-single-select-trigger')
+  assert.match(trigger.textContent, /No parent/)
+  assert.equal(trigger.getAttribute('aria-invalid'), 'false')
+
+  harness.props.options = [{ value: 'root', label: 'Root account' }]
+  await harness.flush()
+
+  assert.match(trigger.textContent, /No parent/, 'the cached empty-string option label is retained')
+  assert.equal(trigger.getAttribute('aria-invalid'), 'true')
+  assert.match(trigger.getAttribute('aria-describedby'), /account-state-orphaned/)
+  assert.match(harness.findByTestId('panel-single-select-orphaned').textContent, /已失效/)
+  assert.equal(harness.props.modelValue, '')
+  assert.equal(harness.emitted.length, 0)
+})
+
+test('duplicate option values are rejected deterministically and exposed as a configuration error', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const harness = await createSfcHarness(component, {
+    ...baseProps,
+    options: [
+      { value: 'review', label: 'Review queue A' },
+      { value: 'review', label: 'Review queue B' }
+    ]
+  })
+  t.after(harness.cleanup)
+
+  const trigger = harness.findByTestId('panel-single-select-trigger')
+  const configError = harness.findByTestId('panel-single-select-config-error')
+  assert.equal(trigger.getAttribute('aria-invalid'), 'true')
+  assert.match(trigger.getAttribute('aria-describedby'), /account-state-config-error/)
+  assert.equal(configError.getAttribute('role'), 'alert')
+  assert.match(configError.textContent, /重复/)
+
+  trigger.click()
+  await harness.flush()
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false')
+  assert.equal(harness.findByTestId('panel-single-select-panel'), undefined)
+  assert.equal(renderedOptions(harness).length, 0)
+  assert.equal(harness.emitted.length, 0)
+})
+
 test('panel is portaled to the application root and flips within the viewport', async (t) => {
   const component = await loadVueSfc(componentFile)
   const harness = await createSfcHarness(component, baseProps)
@@ -272,19 +444,160 @@ test('panel positioning uses the visual viewport when a virtual keyboard constra
   assert.match(panel.style.maxHeight, /216px/)
 })
 
-test('panel remains inside the nearest modal accessibility subtree', async (t) => {
+test('panel uses a modal-owned viewport host outside a transformed overflow-hidden modal frame', async (t) => {
   const component = await loadVueSfc(componentFile)
-  const harness = await createSfcHarness(component, baseProps)
-  t.after(harness.cleanup)
+  const state = { closeCount: 0 }
+  const harness = await createSfcHarness(createModalSelectHost(component, state), {})
+  t.after(() => {
+    harness.cleanup()
+    __resetDialogLayersForTests()
+  })
+  await harness.finishTransitions()
 
   const trigger = harness.findByTestId('panel-single-select-trigger')
-  const modalRoot = trigger.parent
-  modalRoot.setAttribute('role', 'dialog')
-  modalRoot.setAttribute('aria-modal', 'true')
+  const modalFrame = harness.findByTestId('modal-frame')
+  const modalPopupLayer = harness.findByTestId('modal-popup-layer')
+  globalThis.window.innerWidth = 1024
+  globalThis.window.innerHeight = 640
+  trigger.getBoundingClientRect = () => ({
+    top: 100,
+    right: 500,
+    bottom: 140,
+    left: 200,
+    width: 300,
+    height: 40
+  })
   trigger.click()
   await harness.flush()
 
-  assert.equal(harness.findByTestId('panel-single-select-panel').parent, modalRoot)
+  const panel = harness.findByTestId('panel-single-select-panel')
+  assert.equal(modalFrame.style.overflow, 'hidden')
+  assert.match(modalFrame.style.transform, /scale/)
+  assert.equal(modalPopupLayer.style.position, 'fixed')
+  assert.equal(modalPopupLayer.style.overflow, 'visible')
+  assert.equal(modalPopupLayer.style.transform, 'none')
+  assert.equal(panel.parent, modalPopupLayer)
+  assert.equal(modalFrame.contains(panel), false)
+  assert.equal(modalPopupLayer.contains(panel), true)
+  assert.equal(panel.style.position, 'fixed')
+  assert.match(panel.style.left, /200px/)
+  assert.match(panel.style.top, /146px/)
+})
+
+test('a modal-owned panel follows its lower dialog through nested lifecycle isolation', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const state = { closeCount: 0 }
+  const harness = await createSfcHarness(createModalSelectHost(component, state), {})
+  t.after(() => {
+    harness.cleanup()
+    __resetDialogLayersForTests()
+  })
+  await harness.finishTransitions()
+
+  const trigger = harness.findByTestId('panel-single-select-trigger')
+  trigger.click()
+  await harness.flush()
+  await harness.finishTransitions()
+  const lowerLayer = harness.findByTestId('modal-popup-layer')
+  const lowerFrame = harness.findByTestId('modal-frame')
+  const panel = harness.findByTestId('panel-single-select-panel')
+  assert.equal(panel.parent, lowerLayer)
+  assert.equal(lowerLayer.inert, false)
+
+  state.openUpper()
+  await harness.flush()
+  await harness.finishTransitions()
+  assert.equal(state.upperPhase.value, 'open')
+  assert.equal(lowerFrame.inert, true)
+  assert.equal(lowerLayer.inert, true)
+  assert.equal(lowerLayer.getAttribute('aria-hidden'), 'true')
+  assert.equal(harness.findByTestId('upper-modal-popup-layer').inert, false)
+
+  state.closeUpper()
+  await harness.flush()
+  await harness.finishTransitions()
+  assert.equal(lowerFrame.inert, false)
+  assert.equal(lowerLayer.inert, false)
+  assert.equal(lowerLayer.getAttribute('aria-hidden'), null)
+  assert.equal(trigger.getAttribute('aria-expanded'), 'true')
+  assert.equal(harness.document.activeElement, harness.findByTestId('panel-single-select-search'))
+})
+
+test('Escape in an open panel is owned by the panel and does not close its parent modal', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const state = { closeCount: 0 }
+  const harness = await createSfcHarness(createModalSelectHost(component, state), {})
+  t.after(() => {
+    harness.cleanup()
+    __resetDialogLayersForTests()
+  })
+  await harness.finishTransitions()
+  assert.equal(state.phase.value, 'open')
+
+  const trigger = harness.findByTestId('panel-single-select-trigger')
+  trigger.click()
+  await harness.flush()
+  await harness.finishTransitions()
+  const search = harness.findByTestId('panel-single-select-search')
+  const escape = await dispatchBubblingKey(harness, search, 'Escape')
+
+  assert.equal(escape.defaultPrevented, true)
+  assert.equal(escape.propagationStopped, true)
+  assert.equal(state.closeCount, 0)
+  assert.ok(harness.findByTestId('modal-frame'))
+  await harness.finishTransitions()
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false')
+  assert.equal(harness.document.activeElement, trigger)
+})
+
+test('Tab from an open panel moves focus exactly once within the real parent modal', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const state = { closeCount: 0 }
+  const harness = await createSfcHarness(createModalSelectHost(component, state), {})
+  t.after(() => {
+    harness.cleanup()
+    __resetDialogLayersForTests()
+  })
+  await harness.finishTransitions()
+
+  const trigger = harness.findByTestId('panel-single-select-trigger')
+  const after = harness.findByTestId('modal-after')
+  const originalAfterFocus = after.focus
+  let afterFocusCount = 0
+  after.focus = () => {
+    afterFocusCount += 1
+    originalAfterFocus()
+  }
+
+  trigger.click()
+  await harness.flush()
+  await harness.finishTransitions()
+  let search = harness.findByTestId('panel-single-select-search')
+  const forwardTab = await dispatchBubblingKey(harness, search, 'Tab')
+  assert.equal(forwardTab.defaultPrevented, true)
+  assert.equal(forwardTab.propagationStopped, true)
+  await harness.finishTransitions()
+  assert.equal(afterFocusCount, 1)
+  assert.equal(harness.document.activeElement, after)
+  assert.equal(state.closeCount, 0)
+
+  const originalTriggerFocus = trigger.focus
+  let triggerFocusCount = 0
+  trigger.focus = () => {
+    triggerFocusCount += 1
+    originalTriggerFocus()
+  }
+  trigger.click()
+  await harness.flush()
+  await harness.finishTransitions()
+  search = harness.findByTestId('panel-single-select-search')
+  const backwardTab = await dispatchBubblingKey(harness, search, 'Tab', { shiftKey: true })
+  assert.equal(backwardTab.defaultPrevented, true)
+  assert.equal(backwardTab.propagationStopped, true)
+  await harness.finishTransitions()
+  assert.equal(triggerFocusCount, 1)
+  assert.equal(harness.document.activeElement, trigger)
+  assert.equal(state.closeCount, 0)
 })
 
 test('outside and Tab close discard the query while focus returns only for the intentional focus-return path', async (t) => {
@@ -355,7 +668,10 @@ test('disabled, readonly, required, and orphaned states preserve the committed b
   const trigger = harness.findByTestId('panel-single-select-trigger')
   assert.equal(trigger.disabled, true)
   assert.equal(trigger.getAttribute('aria-disabled'), 'true')
-  assert.equal(trigger.getAttribute('aria-required'), 'true')
+  assert.equal(trigger.getAttribute('aria-required'), null)
+  assert.match(trigger.getAttribute('aria-label'), /必填/)
+  assert.match(trigger.getAttribute('aria-describedby'), /account-state-required/)
+  assert.match(harness.findByTestId('panel-single-select-required').textContent, /必填/)
   trigger.click()
   await harness.flush()
   assert.equal(harness.findByTestId('panel-single-select-panel'), undefined)
@@ -364,12 +680,13 @@ test('disabled, readonly, required, and orphaned states preserve the committed b
   harness.props.readonly = true
   await harness.flush()
   assert.equal(trigger.disabled, false)
-  assert.equal(trigger.getAttribute('aria-readonly'), 'true')
+  assert.equal(trigger.getAttribute('aria-readonly'), null)
   trigger.click()
   await harness.flush()
   assert.equal(harness.findByTestId('panel-single-select-panel'), undefined)
   assert.match(trigger.textContent, /Needs review/)
   assert.match(trigger.textContent, /只读/)
+  assert.match(trigger.getAttribute('aria-label'), /只读/)
 
   harness.props.readonly = false
   harness.props.options = options.filter((option) => option.value !== 'review')
