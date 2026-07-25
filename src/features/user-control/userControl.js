@@ -1,7 +1,7 @@
 export const USER_CONTROL_MODULES = Object.freeze([
-  { key: 'delivery', label: '交割', family: 'trade', actionLabel: '用户控盘' },
-  { key: 'perpetual', label: '永续', family: 'trade', actionLabel: '用户控盘' },
-  { key: 'spot', label: '现货', family: 'trade', actionLabel: '用户控盘' },
+  { key: 'delivery', label: '交割', family: 'trade', actionLabel: '用户点控' },
+  { key: 'perpetual', label: '永续', family: 'trade', actionLabel: '用户点控' },
+  { key: 'spot', label: '现货', family: 'trade', actionLabel: '用户点控' },
   { key: 'aiQuant', label: 'AI量化', family: 'finance', actionLabel: '用户收益调节' },
   { key: 'liquidity', label: '流动性挖矿', family: 'finance', actionLabel: '用户收益调节' },
   { key: 'portfolio', label: '投资组合', family: 'finance', actionLabel: '用户收益调节' }

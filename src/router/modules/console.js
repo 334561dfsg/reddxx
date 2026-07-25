@@ -109,7 +109,7 @@ export const consoleRoutes = [
     name: 'perpetual-user-control',
     component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
     props: { moduleKey: 'perpetual' },
-    meta: { title: '永续合约 / 用户控盘', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
+    meta: { title: '永续合约 / 用户点控', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
   },
   {
     path: 'delivery',
@@ -178,7 +178,7 @@ export const consoleRoutes = [
     name: 'delivery-user-control',
     component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
     props: { moduleKey: 'delivery' },
-    meta: { title: '交割合约 / 用户控盘', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
+    meta: { title: '交割合约 / 用户点控', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
   },
   {
     path: 'delivery/overview',
@@ -482,7 +482,7 @@ export const consoleRoutes = [
     name: 'spot-user-control',
     component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
     props: { moduleKey: 'spot' },
-    meta: { title: '现货交易 / 用户控盘', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
+    meta: { title: '现货交易 / 用户点控', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
   },
   {
     path: 'users/tag-rules',

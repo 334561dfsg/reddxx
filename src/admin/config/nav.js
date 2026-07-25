@@ -54,7 +54,7 @@ export const navTree = [
       { title: '合约产品', path: '/admin/perpetual/overview' },
       { title: '杠杆模板', path: '/admin/perpetual/leverage-template' },
       { title: '订单管理', path: '/admin/perpetual/orders' },
-      { title: '用户控盘', path: '/admin/perpetual/user-control' },
+      { title: '用户点控', path: '/admin/perpetual/user-control' },
       { title: '合约线控', path: '/admin/perpetual/contract-monitor' },
       { title: '手动插线', path: '/admin/perpetual/manual-line' },
       { title: '合约线控日志', path: '/admin/perpetual/contract-log' },
@@ -69,7 +69,7 @@ export const navTree = [
       { title: '合约产品', path: '/admin/delivery/contracts' },
       { title: '周期模板', path: '/admin/delivery/templates' },
       { title: '订单管理', path: '/admin/delivery/orders' },
-      { title: '用户控盘', path: '/admin/delivery/user-control' },
+      { title: '用户点控', path: '/admin/delivery/user-control' },
       { title: '自动化场控', path: '/admin/delivery/auto-rules' },
       { title: '手动场控', path: '/admin/delivery/control' },
       { title: '手动场控（Radar）', path: '/admin/delivery/harvest-control' },
@@ -85,7 +85,7 @@ export const navTree = [
     children: [
       { title: '产品管理', path: '/admin/spot/products' },
       { title: '订单管理', path: '/admin/spot/orders' },
-      { title: '用户控盘', path: '/admin/spot/user-control' }
+      { title: '用户点控', path: '/admin/spot/user-control' }
     ]
   },
   {

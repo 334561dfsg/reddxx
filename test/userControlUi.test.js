@@ -86,6 +86,14 @@ test('module page explains settlement-only perpetual control and module-only sco
   assert.match(source, /规则来源/)
 })
 
+test('module metadata and fallback use the unified point-control label', () => {
+  const moduleSource = read('../src/features/user-control/userControl.js')
+  const pageSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
+
+  assert.doesNotMatch(moduleSource, /用户控盘/)
+  assert.doesNotMatch(pageSource, /用户控盘/)
+})
+
 test('module page omits rejected demo and finance helper copy', () => {
   const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   assert.doesNotMatch(source, /Demo 模式/)

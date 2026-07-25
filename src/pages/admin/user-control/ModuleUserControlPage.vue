@@ -29,7 +29,7 @@ const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key =
   key: props.moduleKey,
   label: '未知模块',
   family: 'trade',
-  actionLabel: '用户控盘'
+  actionLabel: '用户点控'
 })
 
 const valueOptions = computed(() => moduleMeta.value.family === 'finance'
