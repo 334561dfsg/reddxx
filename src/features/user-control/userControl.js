@@ -164,6 +164,7 @@ export function cancelUnifiedControl(state, input) {
   const userId = requireText(input.userId, 'userId')
   const note = requireText(input.note, 'note')
   const before = cloneRules(state, userId)
+  if (!Object.values(before).some((rule) => ['active', 'processing'].includes(rule.status))) return state
   const cancelled = Object.fromEntries(Object.entries(before).map(([key, rule]) => [key,
     ['active', 'processing'].includes(rule.status) ? { ...rule, status: 'cancelled', cancelledAt: input.now } : rule
   ]))

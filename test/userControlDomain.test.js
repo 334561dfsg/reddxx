@@ -155,6 +155,31 @@ test('cancel items include only effective modules with their current rule conten
   })
 })
 
+test('unified cancellation leaves zero-effective-rule state and logs unchanged', () => {
+  const active = applyUnifiedControl(createUserControlState(), {
+    userId: 'stale-cancel-user', strategy: 'positive', duration: 'once', note: '初始规则',
+    now: '2026-07-25 17:20:00', batchId: 'stale-cancel-b1'
+  })
+  const stale = {
+    ...active,
+    rules: {
+      ...active.rules,
+      'stale-cancel-user': Object.fromEntries(Object.entries(active.rules['stale-cancel-user']).map(([key, rule], index) => [key, {
+        ...rule,
+        status: index % 2 === 0 ? 'consumed' : 'cancelled'
+      }]))
+    }
+  }
+
+  const next = cancelUnifiedControl(stale, {
+    userId: 'stale-cancel-user', note: 'MFA 完成时规则已失效', now: '2026-07-25 17:25:00', operationId: 'stale-cancel-op'
+  })
+
+  assert.equal(next, stale)
+  assert.equal(next.operationLogs.length, active.operationLogs.length)
+  assert.deepEqual(next.rules, stale.rules)
+})
+
 test('divergence keys identify the overridden module without flagging consumed progress', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
     userId: 'user_1003', strategy: 'positive', duration: 'once', note: '统一带盈',

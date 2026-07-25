@@ -148,6 +148,20 @@ test('user list keeps both point-control shortcuts available and safeguards empt
   assert.doesNotMatch(productDocument, /互斥展示/)
 })
 
+test('MFA completion rechecks cancellation items before it writes a unified cancellation', () => {
+  const source = read('../src/pages/admin/user/UserListPage.vue')
+  const mfaVerify = source.slice(
+    source.indexOf('const handleMfaVerify = () => {'),
+    source.indexOf('const handleMfaCancel = () => {')
+  )
+
+  assert.match(mfaVerify, /const cancelItems = getUnifiedControlCancelItems\(rulesOf\(controlUser\.value\)\)/)
+  assert.match(mfaVerify, /if \(cancelItems\.length\) \{\s*cancelUnifiedUserControl\(action\.payload\)\s*\}/)
+  assert.match(mfaVerify, /cancelUnifiedUserControl\(action\.payload\)[\s\S]*?\}\s*controlUser\.value = null/)
+  assert.match(mfaVerify, /pendingMfaAction\.value = null/)
+  assert.match(mfaVerify, /mfaOpen\.value = false/)
+})
+
 test('user operation components expose their existing dialogs to an external unified menu', () => {
   const actionFiles = ['UserFreezeAction', 'UserAdjustAction', 'UserDepositAction', 'UserTransferAction']
   actionFiles.forEach((name) => {

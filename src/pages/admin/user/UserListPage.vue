@@ -202,7 +202,10 @@ const handleMfaVerify = () => {
   const action = pendingMfaAction.value
   if (action?.type === 'apply') applyControl(action.payload)
   if (action?.type === 'cancel') {
-    cancelUnifiedUserControl(action.payload)
+    const cancelItems = getUnifiedControlCancelItems(rulesOf(controlUser.value))
+    if (cancelItems.length) {
+      cancelUnifiedUserControl(action.payload)
+    }
     controlUser.value = null
   }
   pendingMfaAction.value = null
