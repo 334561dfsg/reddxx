@@ -6,7 +6,7 @@ import {
   getModuleControlOptions,
   isUserControlFormComplete
 } from '../../../features/user-control/userControlForm.js'
-import { useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import { useDialogContentSnapshot, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -41,6 +41,36 @@ const {
   requestClose: () => emit('close')
 })
 
+const dialogData = computed(() => ({
+  scope: props.scope,
+  moduleKey: props.moduleKey,
+  user: props.user,
+  existingRules: props.existingRules
+}))
+const cloneDialogData = (data) => ({
+  scope: data.scope,
+  moduleKey: data.moduleKey,
+  user: data.user ? { ...data.user } : null,
+  existingRules: Object.fromEntries(Object.entries(data.existingRules || {}).map(([key, rule]) => [
+    key,
+    rule ? { ...rule } : rule
+  ]))
+})
+const { content: displayedDialogData, clear: clearDialogSnapshot } = useDialogContentSnapshot({
+  open: computed(() => props.open),
+  phase,
+  source: dialogData,
+  clone: cloneDialogData
+})
+const displayScope = computed(() => displayedDialogData.value.scope)
+const displayModuleKey = computed(() => displayedDialogData.value.moduleKey)
+const displayUser = computed(() => displayedDialogData.value.user)
+const displayExistingRules = computed(() => displayedDialogData.value.existingRules)
+const handleAfterLeave = () => {
+  onAfterLeave()
+  if (phase.value === 'closed') clearDialogSnapshot()
+}
+
 const form = reactive({
   strategy: '',
   value: '',
@@ -49,15 +79,15 @@ const form = reactive({
 })
 const noteTouched = ref(false)
 
-const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key === props.moduleKey) || null)
-const selectedUserId = computed(() => String(props.user?.userId ?? props.user?.id ?? ''))
-const selectedUserName = computed(() => props.user?.username || props.user?.name || '未选择用户')
-const selectedUserEmail = computed(() => props.user?.email || '邮箱未提供')
-const currentModuleRule = computed(() => props.existingRules?.[props.moduleKey] || null)
+const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key === displayModuleKey.value) || null)
+const selectedUserId = computed(() => String(displayUser.value?.userId ?? displayUser.value?.id ?? ''))
+const selectedUserName = computed(() => displayUser.value?.username || displayUser.value?.name || '未选择用户')
+const selectedUserEmail = computed(() => displayUser.value?.email || '邮箱未提供')
+const currentModuleRule = computed(() => displayExistingRules.value?.[displayModuleKey.value] || null)
 
 const moduleOptions = computed(() => getModuleControlOptions(moduleMeta.value?.family))
 
-const affectedModules = computed(() => props.scope === 'global'
+const affectedModules = computed(() => displayScope.value === 'global'
   ? USER_CONTROL_MODULES
   : moduleMeta.value ? [moduleMeta.value] : [])
 
@@ -77,19 +107,19 @@ const statusLabels = {
 }
 
 const existingSummary = computed(() => {
-  if (props.scope === 'module') {
+  if (displayScope.value === 'module') {
     const rule = currentModuleRule.value
     if (!rule) return '当前模块尚未设置用户规则'
     return `${valueLabels[rule.value] || '已设置'} · ${durationLabels[rule.duration] || '—'} · ${statusLabels[rule.status] || rule.status}`
   }
 
-  const rules = Object.values(props.existingRules || {})
+  const rules = Object.values(displayExistingRules.value || {})
   const activeCount = rules.filter((rule) => ['active', 'processing'].includes(rule.status)).length
   return activeCount ? `六个模块中有 ${activeCount} 个当前有效规则，新设置将统一覆盖` : '该用户当前没有生效中的统一规则'
 })
 
 const formInput = computed(() => ({
-  scope: props.scope,
+  scope: displayScope.value,
   family: moduleMeta.value?.family,
   userId: selectedUserId.value,
   strategy: form.strategy,
@@ -138,7 +168,7 @@ const submit = () => {
         role="presentation"
         :style="layerStyle"
       >
-        <Transition name="dialog-panel" @after-enter="onAfterEnter" @after-leave="onAfterLeave">
+        <Transition name="dialog-panel" @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
           <section
             v-show="phase !== 'closing'"
             ref="dialogRef"
@@ -151,10 +181,10 @@ const submit = () => {
         <header class="flex shrink-0 items-start justify-between border-b border-slate-200 px-5 py-3">
           <div>
             <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">
-              {{ scope === 'global' ? '六模块统一设置' : `${moduleMeta?.label || '当前模块'}独立设置` }}
+              {{ displayScope === 'global' ? '六模块统一设置' : `${moduleMeta?.label || '当前模块'}独立设置` }}
             </p>
             <h2 id="user-control-dialog-title" class="mt-0.5 text-lg font-semibold text-slate-900">
-              {{ scope === 'global' ? '设置用户统一控制' : moduleMeta?.actionLabel }}
+              {{ displayScope === 'global' ? '设置用户统一控制' : moduleMeta?.actionLabel }}
             </h2>
             <div data-testid="user-control-target-user" class="mt-0.5 flex flex-wrap gap-x-2 text-sm text-slate-500">
               <span>{{ selectedUserName }}</span>
@@ -174,7 +204,7 @@ const submit = () => {
             <p class="text-xs font-medium text-slate-500">现有规则</p>
             <p class="mt-0.5 text-sm font-medium text-slate-800">{{ existingSummary }}</p>
             <p
-              v-if="scope === 'global'"
+              v-if="displayScope === 'global'"
               data-testid="user-control-global-atomic-warning"
               class="mt-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs leading-4 text-amber-800"
             >
@@ -184,7 +214,7 @@ const submit = () => {
 
           <fieldset>
             <legend class="text-sm font-semibold text-slate-900">控制方向</legend>
-            <div v-if="scope === 'global'" class="mt-1.5 grid gap-2 sm:grid-cols-2">
+            <div v-if="displayScope === 'global'" class="mt-1.5 grid gap-2 sm:grid-cols-2">
               <label
                 v-for="(option, index) in [
                   { value: 'positive', label: '正向控制', desc: '交易盈利、理财高收益' },

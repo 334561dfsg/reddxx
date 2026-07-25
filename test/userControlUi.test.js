@@ -61,7 +61,7 @@ test('shared modal exposes note validation on blur while submit stays disabled',
 test('shared modal keeps the atomic failure warning inside the global-only summary', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
   const globalWarning = source.match(
-    /<p\s+v-if="scope === 'global'"\s+data-testid="user-control-global-atomic-warning"[\s\S]*?<\/p>/
+    /<p\s+v-if="displayScope === 'global'"\s+data-testid="user-control-global-atomic-warning"[\s\S]*?<\/p>/
   )?.[0] || ''
 
   assert.notEqual(globalWarning, '')
@@ -341,6 +341,7 @@ test('point-control setting and detail surfaces use the shared dialog lifecycle 
   const detailSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
 
   assert.match(settingSource, /useDialogLifecycle/)
+  assert.match(settingSource, /useDialogContentSnapshot/)
   assert.match(settingSource, /aria-labelledby="user-control-dialog-title"/)
   assert.match(settingSource, /id="user-control-dialog-title"/)
   assert.match(settingSource, /ref="firstControlOption"/)

@@ -114,6 +114,30 @@ export const getFocusableElements = (root) => [...(root?.querySelectorAll(
   element.getAttribute?.('aria-hidden') !== 'true'
 ))
 
+export const useDialogContentSnapshot = ({ open, phase, source, clone = (value) => value }) => {
+  const snapshot = ref(null)
+  const sourceValue = () => unref(source)
+  const isOpen = () => Boolean(unref(open))
+
+  const capture = () => {
+    snapshot.value = clone(sourceValue())
+  }
+
+  watch([isOpen, sourceValue], ([nextOpen]) => {
+    if (nextOpen) capture()
+  }, { immediate: true, deep: true })
+
+  const content = computed(() => (
+    unref(phase) === 'closing' && snapshot.value ? snapshot.value : sourceValue()
+  ))
+
+  const clear = () => {
+    snapshot.value = null
+  }
+
+  return { content, clear }
+}
+
 export const __resetDialogLayersForTests = () => {
   dialogLayers.splice(0)
   syncLayerIsolation()
@@ -195,10 +219,15 @@ export const useDialogLifecycle = ({
 
     const first = focusable[0]
     const last = focusable.at(-1)
-    if (event.shiftKey && document.activeElement === first) {
+    const activeElement = document.activeElement
+    if (dialog?.contains?.(activeElement) && !focusable.includes(activeElement)) {
+      event.preventDefault()
+      const wrapTarget = event.shiftKey ? last : first
+      wrapTarget.focus()
+    } else if (event.shiftKey && activeElement === first) {
       event.preventDefault()
       last.focus()
-    } else if (!event.shiftKey && document.activeElement === last) {
+    } else if (!event.shiftKey && activeElement === last) {
       event.preventDefault()
       first.focus()
     }

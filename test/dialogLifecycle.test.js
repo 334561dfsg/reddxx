@@ -7,6 +7,7 @@ import {
   isTopDialogLayer,
   registerDialogLayer,
   unregisterDialogLayer,
+  useDialogContentSnapshot,
   useDialogLifecycle
 } from '../src/admin/composables/useDialogLifecycle.js'
 
@@ -69,7 +70,7 @@ const createFakeDocument = () => {
   return document
 }
 
-const createFakeElement = (document, { focusable = false, focusables = [] } = {}) => {
+const createFakeElement = (document, { focusable = false, focusables = [], containedElements = [] } = {}) => {
   const attributes = new Map()
   const element = {
     disabled: false,
@@ -78,7 +79,7 @@ const createFakeElement = (document, { focusable = false, focusables = [] } = {}
     tabIndex: focusable ? 0 : -1,
     focus() { document.activeElement = element },
     querySelectorAll: () => focusables,
-    contains(target) { return target === element },
+    contains(target) { return target === element || focusables.includes(target) || containedElements.includes(target) },
     getAttribute(name) { return attributes.get(name) ?? null },
     hasAttribute(name) { return attributes.has(name) },
     setAttribute(name, value) { attributes.set(name, String(value)) },
@@ -98,9 +99,9 @@ const installFakeDocument = (t) => {
   return document
 }
 
-const mountLifecycle = async ({ document, requestClose, focusables = [] }) => {
+const mountLifecycle = async ({ document, requestClose, focusables = [], containedElements = [] }) => {
   const open = ref(true)
-  const dialog = createFakeElement(document, { focusables })
+  const dialog = createFakeElement(document, { focusables, containedElements })
   const dialogRef = shallowRef(dialog)
   let lifecycle
   const app = renderer.createApp({
@@ -142,6 +143,75 @@ test('focus candidates exclude disabled, hidden, and negative-tabindex controls'
   const negative = { ...enabled, tabIndex: -1 }
   const root = { querySelectorAll: () => [enabled, disabled, hidden, negative] }
   assert.deepEqual(getFocusableElements(root), [enabled])
+})
+
+test('wraps Shift+Tab from a focused static dialog title to the last control', async (t) => {
+  const document = installFakeDocument(t)
+  const first = createFakeElement(document, { focusable: true })
+  const last = createFakeElement(document, { focusable: true })
+  const title = createFakeElement(document)
+  const { app } = await mountLifecycle({ document, focusables: [first, last], containedElements: [title] })
+
+  document.activeElement = title
+  const shiftTab = keyEvent('Tab', true)
+  document.dispatch(shiftTab)
+
+  assert.equal(shiftTab.defaultPrevented, true)
+  assert.equal(document.activeElement, last)
+  app.unmount()
+})
+
+test('wraps Tab from a focused static dialog title to the first control', async (t) => {
+  const document = installFakeDocument(t)
+  const first = createFakeElement(document, { focusable: true })
+  const last = createFakeElement(document, { focusable: true })
+  const title = createFakeElement(document)
+  const { app } = await mountLifecycle({ document, focusables: [first, last], containedElements: [title] })
+
+  document.activeElement = title
+  const tab = keyEvent('Tab')
+  document.dispatch(tab)
+
+  assert.equal(tab.defaultPrevented, true)
+  assert.equal(document.activeElement, first)
+  app.unmount()
+})
+
+test('preserves an opened dialog content snapshot while the parent clears closing props', async () => {
+  const open = ref(true)
+  const phase = ref('open')
+  const source = shallowRef({
+    user: { username: 'Ada', email: 'ada@example.test' },
+    rules: { spot: { value: 'profit', duration: 'permanent' } }
+  })
+  let snapshot
+  const app = renderer.createApp({
+    setup() {
+      snapshot = useDialogContentSnapshot({
+        open,
+        phase,
+        source,
+        clone: (value) => ({
+          user: value.user ? { ...value.user } : null,
+          rules: Object.fromEntries(Object.entries(value.rules).map(([key, rule]) => [key, { ...rule }]))
+        })
+      })
+      return () => h('div')
+    }
+  })
+
+  app.mount({ children: [] })
+  await flushLifecycle()
+  phase.value = 'closing'
+  open.value = false
+  source.value = { user: null, rules: {} }
+  await flushLifecycle()
+
+  assert.deepEqual(snapshot.content.value, {
+    user: { username: 'Ada', email: 'ada@example.test' },
+    rules: { spot: { value: 'profit', duration: 'permanent' } }
+  })
+  app.unmount()
 })
 
 test('keeps the closing phase and original trigger when reopened before leave completes', async (t) => {
