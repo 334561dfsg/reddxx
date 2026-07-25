@@ -179,7 +179,11 @@ const confirm = () => {
                   class="min-h-11 cursor-pointer rounded-xl border px-3 py-2 text-center text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
                   :class="form.fromAccountKey === opt.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300'"
                 >
-                  {{ opt.label }}
+                  <span>{{ opt.label }}</span>
+                  <span
+                    v-if="form.fromAccountKey === opt.key"
+                    class="ml-1 rounded-full bg-blue-100 px-1.5 py-0.5 text-xs font-semibold text-blue-800"
+                  >已选择</span>
                   <input
                     v-model="form.fromAccountKey"
                     type="radio"
@@ -191,7 +195,7 @@ const confirm = () => {
               </div>
             </fieldset>
 
-            <fieldset class="m-0 min-w-0 border-0 p-0">
+            <fieldset class="m-0 min-w-0 border-0 p-0" aria-describedby="transfer-destination-status">
               <legend class="mb-2 text-sm font-medium text-slate-700">到</legend>
               <div class="grid grid-cols-2 gap-2">
                 <label
@@ -199,12 +203,19 @@ const confirm = () => {
                   :key="opt.key"
                   class="min-h-11 rounded-xl border px-3 py-2 text-center text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
                   :class="opt.key === form.fromAccountKey
-                    ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400'
+                    ? form.toAccountKey === opt.key
+                      ? 'cursor-not-allowed border-amber-400 bg-amber-50 text-amber-950'
+                      : 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400'
                     : form.toAccountKey === opt.key
                       ? 'cursor-pointer border-blue-600 bg-blue-50 text-blue-900'
                       : 'cursor-pointer border-slate-200 bg-white text-slate-700 hover:border-blue-300'"
                 >
-                  {{ opt.label }}
+                  <span>{{ opt.label }}</span>
+                  <span
+                    v-if="form.toAccountKey === opt.key"
+                    class="ml-1 rounded-full px-1.5 py-0.5 text-xs font-semibold"
+                    :class="opt.key === form.fromAccountKey ? 'bg-amber-200 text-amber-950' : 'bg-blue-100 text-blue-800'"
+                  >{{ opt.key === form.fromAccountKey ? '已选择，需重新选择' : '已选择' }}</span>
                   <input
                     v-model="form.toAccountKey"
                     type="radio"
@@ -215,7 +226,10 @@ const confirm = () => {
                   />
                 </label>
               </div>
-              <p class="mt-2 text-sm text-slate-600">当前“从”账户不能作为“到”账户，请选择其他账户。</p>
+              <p id="transfer-destination-status" class="mt-2 text-sm text-slate-600" role="status">
+                当前“从”账户不能作为“到”账户，请选择其他账户。
+                <span v-if="form.fromAccountKey === form.toAccountKey">当前已选择的“到”账户不可用，请重新选择。</span>
+              </p>
             </fieldset>
 
             <fieldset class="m-0 min-w-0 border-0 p-0">
@@ -227,7 +241,11 @@ const confirm = () => {
                   class="min-h-11 cursor-pointer rounded-xl border px-3 py-2 text-center text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
                   :class="form.coinKey === coin.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300'"
                 >
-                  {{ coin.label }}
+                  <span>{{ coin.label }}</span>
+                  <span
+                    v-if="form.coinKey === coin.key"
+                    class="ml-1 rounded-full bg-blue-100 px-1.5 py-0.5 text-xs font-semibold text-blue-800"
+                  >已选择</span>
                   <input
                     v-model="form.coinKey"
                     type="radio"

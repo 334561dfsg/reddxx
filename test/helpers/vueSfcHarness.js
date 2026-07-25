@@ -92,6 +92,37 @@ const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
       event.target ||= node
       event.currentTarget = node
       for (const listener of [...(listeners.get(event.type) || [])]) listener(event)
+      if (
+        event.type === 'keydown' &&
+        !event.defaultPrevented &&
+        node.tag === 'input' &&
+        node.getAttribute('type') === 'radio' &&
+        ['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(event.key)
+      ) {
+        const groupName = node.getAttribute('name')
+        const radios = []
+        walk(document.body, (candidate) => {
+          if (
+            candidate.tag === 'input' &&
+            candidate.getAttribute?.('type') === 'radio' &&
+            candidate.getAttribute('name') === groupName &&
+            !candidate.disabled
+          ) radios.push(candidate)
+        })
+        const direction = ['ArrowDown', 'ArrowRight'].includes(event.key) ? 1 : -1
+        const next = radios[(radios.indexOf(node) + direction + radios.length) % radios.length]
+        if (next) {
+          next.checked = true
+          next.focus()
+          next.dispatchEvent({
+            type: 'change',
+            target: next,
+            currentTarget: next,
+            defaultPrevented: false,
+            preventDefault() { this.defaultPrevented = true }
+          })
+        }
+      }
       return !event.defaultPrevented
     },
     click() {

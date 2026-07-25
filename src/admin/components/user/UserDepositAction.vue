@@ -190,7 +190,13 @@ const confirm = () => {
                   :class="form.depositAccountKey === opt.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 text-slate-700 hover:border-blue-300'"
                 >
                   <span class="font-medium">{{ opt.label }}</span>
-                  <span class="text-xs tabular-nums text-slate-500">{{ formatMoney(opt.value, { min: 2, max: 2 }) }}</span>
+                  <span class="flex items-center gap-2">
+                    <span class="text-xs tabular-nums text-slate-500">{{ formatMoney(opt.value, { min: 2, max: 2 }) }}</span>
+                    <span
+                      v-if="form.depositAccountKey === opt.key"
+                      class="rounded-full bg-blue-100 px-1.5 py-0.5 text-xs font-semibold text-blue-800"
+                    >已选择</span>
+                  </span>
                   <input
                     v-model="form.depositAccountKey"
                     type="radio"
