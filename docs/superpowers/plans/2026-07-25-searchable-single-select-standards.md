@@ -4,7 +4,7 @@
 
 **Goal:** 在前端产品交互规范 Skill 中新增自绘、可搜索、值必须来自已有选项的单选 Select 规则，并同步项目级 Agent 约束。
 
-**Architecture:** 使用 `references/selects-comboboxes.md` 作为状态、搜索、键盘、ARIA、PC 浮层、移动端 Drawer 和验收规则的唯一事实来源；`SKILL.md` 负责自动路由，README 提供摘要，跨端与 Drawer 规范声明组合关系，项目 `AGENTS.md` 保留可独立执行的关键要求。本次不修改现有 Select 组件或页面。
+**Architecture:** 使用 `references/selects-comboboxes.md` 作为状态、搜索位置策略、键盘、ARIA、PC 浮层、移动端 Drawer 和验收规则的唯一事实来源；`SKILL.md` 负责自动路由，README 提供摘要，跨端与 Drawer 规范声明组合关系，项目 `AGENTS.md` 保留可独立执行的关键要求。本次不修改现有 Select 组件或页面。
 
 **Tech Stack:** Markdown、YAML Frontmatter、WAI-ARIA Combobox/Listbox Pattern、Git、Ruby 内置 YAML 解析器
 
@@ -12,7 +12,8 @@
 
 - 仅覆盖单选，值必须来自已有选项；不允许把任意搜索文本作为业务值。
 - `selectedValue`、`query`、`activeOption` 和 `open` 状态必须分离。
-- PC 使用 Editable Combobox + Listbox；移动端必要时转换为底部 Drawer。
+- 搜索位置支持 `auto`、`inline`、`panel`、`drawer`、`none`；每种模式分别使用正确的触发器、Combobox 与 Listbox 语义。
+- PC 按最终模式使用 Editable Combobox 或触发按钮 + 弹层搜索 Combobox；移动端必要时使用 Drawer 搜索 Combobox 或 `none` 的 type-ahead。
 - 搜索、键盘高亮、Hover 和异步刷新不得隐式改变已选值。
 - 必须支持完整键盘、ARIA、本地/远程搜索、请求竞态、错误和跨端验收。
 - 多选、标签输入、自由文本创建、树选择和级联选择不在范围内。
@@ -41,14 +42,14 @@ Expected: exit 0。
 
 - [ ] **Step 2: 编写完整规范**
 
-规范必须包含：适用范围与排除项、状态模型、打开/关闭/提交、搜索、键盘、ARIA、选项数据一致性、PC 弹层、移动端 Drawer、动画、清空、异步竞态、大数据量、错误及验收清单。
+规范必须包含：适用范围与排除项、`auto`/`inline`/`panel`/`drawer`/`none` 搜索位置策略及各自 ARIA、状态模型、打开/关闭/提交、搜索、键盘、选项数据一致性、PC 弹层、移动端 Drawer、动画、清空、异步竞态、大数据量、错误及验收清单。
 
 - [ ] **Step 3: 验证关键规则存在**
 
 Run:
 
 ```sh
-rg -n 'selectedValue|query|activeOption|role="combobox"|aria-activedescendant|role="listbox"|role="option"|250ms|过期结果|Escape|移动端.*Drawer|虚拟列表|未验证' /Users/evanqi/.codex/skills/frontend-product-interaction-standards/references/selects-comboboxes.md
+rg -n 'selectedValue|query|activeOption|searchPlacement|auto|inline|panel|drawer|none|type-ahead|触发按钮|role="combobox"|aria-activedescendant|role="listbox"|role="option"|250ms|过期结果|Escape|移动端.*Drawer|虚拟列表|未验证' /Users/evanqi/.codex/skills/frontend-product-interaction-standards/references/selects-comboboxes.md
 ```
 
 Expected: 每类规则均至少一处匹配。
@@ -97,7 +98,7 @@ Expected: 三个文件均明确包含适用关系，且动画和状态归属无�
 
 - [ ] **Step 1: 添加摘要**
 
-摘要包含：自绘可搜索单选、值必须来自已有选项、完整键盘/ARIA、PC 浮层和移动端 Drawer；链接完整规范但不复制全部细则。
+摘要包含：自绘可搜索单选、值必须来自已有选项、按场景选择 `auto`/`inline`/`panel`/`drawer`/`none` 搜索位置、完整键盘/ARIA、PC 浮层和移动端 Drawer；链接完整规范但不复制全部细则。
 
 - [ ] **Step 2: 更新目录树**
 
@@ -116,26 +117,32 @@ Expected: 摘要、链接和目录项均存在。
 ### Task 4: 同步项目级 Select 约束
 
 **Files:**
+- Modify: `/Users/evanqi/code/fex-admin/docs/superpowers/specs/2026-07-25-searchable-single-select-standards-design.md`
+- Modify: `/Users/evanqi/code/fex-admin/docs/superpowers/plans/2026-07-25-searchable-single-select-standards.md`
 - Modify: `/Users/evanqi/code/fex-admin/AGENTS.md`
 
 **Interfaces:**
 - Consumes: `references/selects-comboboxes.md` 的关键硬性规则
 - Produces: 即使未加载 Skill 也可独立执行的项目 Select 约束
 
-- [ ] **Step 1: 新增 Searchable single-select constraints**
+- [ ] **Step 1: 同步搜索位置设计与计划**
 
-章节至少包含：单选与已有值范围、状态分离、提交边界、外部关闭/Escape、键盘、ARIA、本地/异步搜索竞态、错误、失效值、PC 定位、移动端 Drawer、虚拟列表和未验证项报告。
+设计与本计划必须记录 `auto`、`inline`、`panel`、`drawer`、`none` 的场景选择、触发器/Combobox 语义、状态延续、关闭与验收要求。
 
-- [ ] **Step 2: 链接完整规范**
+- [ ] **Step 2: 新增 Searchable single-select constraints**
+
+章节至少包含：单选与已有值范围、`auto`/`inline`/`panel`/`drawer`/`none` 策略、状态分离、提交边界、外部关闭/Escape/Drawer 关闭、键盘与 type-ahead、按模式的 ARIA、本地/异步搜索竞态、错误、失效值、PC 定位、移动端 Drawer、虚拟列表和未验证项报告。
+
+- [ ] **Step 3: 链接完整规范**
 
 链接 GitHub `references/selects-comboboxes.md`，但项目章节本身必须可独立执行。
 
-- [ ] **Step 3: 验证项目覆盖范围**
+- [ ] **Step 4: 验证项目覆盖范围**
 
 Run:
 
 ```sh
-rg -n 'Searchable single-select constraints|selectedValue|query|activeOption|combobox|listbox|aria-activedescendant|Escape|stale|Drawer|virtual|unverified' /Users/evanqi/code/fex-admin/AGENTS.md
+rg -n 'Searchable single-select constraints|selectedValue|query|activeOption|searchPlacement|auto|inline|panel|drawer|none|type-ahead|combobox|listbox|aria-activedescendant|Escape|stale|Drawer|virtual|unverified' /Users/evanqi/code/fex-admin/AGENTS.md
 ```
 
 Expected: 所有关键类别均明确出现。
@@ -148,6 +155,8 @@ Expected: 所有关键类别均明确出现。
 - Verify: `/Users/evanqi/.codex/skills/frontend-product-interaction-standards/references/selects-comboboxes.md`
 - Verify: `/Users/evanqi/.codex/skills/frontend-product-interaction-standards/references/responsive-adaptive.md`
 - Verify: `/Users/evanqi/.codex/skills/frontend-product-interaction-standards/references/drawers.md`
+- Verify: `/Users/evanqi/code/fex-admin/docs/superpowers/specs/2026-07-25-searchable-single-select-standards-design.md`
+- Verify: `/Users/evanqi/code/fex-admin/docs/superpowers/plans/2026-07-25-searchable-single-select-standards.md`
 - Verify: `/Users/evanqi/code/fex-admin/AGENTS.md`
 
 **Interfaces:**
@@ -176,7 +185,7 @@ git diff --check
 git status --short
 ```
 
-Expected: 本任务在项目仓库只修改 `AGENTS.md`；其他 Agent 的业务代码和测试改动不得暂存。
+Expected: 本任务在项目仓库只修改搜索位置策略的设计、计划与 `AGENTS.md`；其他 Agent 的业务代码和测试改动不得暂存。
 
 - [ ] **Step 3: 提交 Skill 仓库**
 
@@ -188,7 +197,7 @@ git -C /Users/evanqi/.codex/skills/frontend-product-interaction-standards commit
 - [ ] **Step 4: 提交项目仓库**
 
 ```sh
-git -C /Users/evanqi/code/fex-admin add AGENTS.md
+git -C /Users/evanqi/code/fex-admin add docs/superpowers/specs/2026-07-25-searchable-single-select-standards-design.md docs/superpowers/plans/2026-07-25-searchable-single-select-standards.md AGENTS.md
 git -C /Users/evanqi/code/fex-admin commit -m "docs: 添加可搜索单选 Select 约束"
 ```
 
