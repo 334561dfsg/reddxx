@@ -16,7 +16,7 @@ export const navTree = [
       { title: '出金审核', path: '/admin/users/withdraw-audit' },
       { title: '入金审核', path: '/admin/users/deposit-orders' },
       { title: '用户标签规则', path: '/admin/users/tag-rules' },
-      { title: '用户控制日志', path: '/admin/users/control-log' }
+      { title: '用户点控日志', path: '/admin/users/control-log' }
     ]
   },
   {

@@ -1,6 +1,8 @@
 <script setup>
 import { computed, reactive, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
+import { useAdminListPagination } from '../../../admin/composables/useAdminListPagination.js'
 import { userControlState } from '../../../admin/state/userControlState.js'
 import {
   filterUserControlLogsByDate,
@@ -118,6 +120,24 @@ const unifiedLogs = computed(() => {
     .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
 })
 
+const {
+  currentPage,
+  pageSize,
+  totalPages,
+  pagedRows: pagedLogs,
+  onPageSizeChange
+} = useAdminListPagination(unifiedLogs, {
+  pageSize: 10,
+  resetSources: [
+    () => filters.userId,
+    () => filters.module,
+    () => filters.source,
+    () => filters.action,
+    () => filters.dateFrom,
+    () => filters.dateTo
+  ]
+})
+
 const clearFilters = async () => {
   filters.source = ''
   filters.action = ''
@@ -190,7 +210,7 @@ const clearFilters = async () => {
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
-            <tr v-for="log in unifiedLogs" :key="log.id" class="align-top hover:bg-slate-50">
+            <tr v-for="log in pagedLogs" :key="log.id" class="align-top hover:bg-slate-50">
               <td class="whitespace-nowrap px-4 py-4 text-slate-500">{{ log.createdAt }}</td>
               <td data-testid="user-control-unified-operator-value" class="whitespace-nowrap px-4 py-4 text-slate-700">{{ log.operator }}</td>
               <td class="px-4 py-4 font-mono text-xs text-slate-700">{{ log.userId }}</td>
@@ -211,6 +231,14 @@ const clearFilters = async () => {
         </table>
         <p v-if="unifiedLogs.length === 0" class="px-6 py-14 text-center text-sm text-slate-500">没有符合筛选条件的日志</p>
       </div>
+      <AdminListPaginationBar
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        :total-count="unifiedLogs.length"
+        :page-size="pageSize"
+        @update:current-page="currentPage = $event"
+        @update:page-size="onPageSizeChange"
+      />
     </article>
 
   </section>

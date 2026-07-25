@@ -168,6 +168,20 @@ test('log page presents operation and execution records in one point-control lis
   assert.doesNotMatch(source, /恢复演示数据/)
 })
 
+test('user management menu names the unified log as user point-control log', () => {
+  const source = read('../src/admin/config/nav.js')
+  assert.match(source, /title:\s*'用户点控日志',\s*path:\s*'\/admin\/users\/control-log'/)
+  assert.doesNotMatch(source, /title:\s*'用户控制日志',\s*path:\s*'\/admin\/users\/control-log'/)
+})
+
+test('log page paginates filtered rows and resets from every filter', () => {
+  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+  assert.match(source, /useAdminListPagination\(unifiedLogs,\s*\{[\s\S]*pageSize:\s*10/)
+  assert.match(source, /resetSources:\s*\[[\s\S]*filters\.userId[\s\S]*filters\.module[\s\S]*filters\.source[\s\S]*filters\.action[\s\S]*filters\.dateFrom[\s\S]*filters\.dateTo/)
+  assert.match(source, /v-for="log in pagedLogs"/)
+  assert.match(source, /<AdminListPaginationBar[\s\S]*:total-count="unifiedLogs\.length"[\s\S]*@update:page-size="onPageSizeChange"/)
+})
+
 test('log page exposes audit fields without demo state actions', () => {
   const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
   assert.match(source, /UID/)
