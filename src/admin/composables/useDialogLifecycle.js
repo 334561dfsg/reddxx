@@ -219,7 +219,7 @@ export const useDialogLifecycle = ({
   }
 
   const startOpening = () => {
-    if (phase.value === 'opening' || phase.value === 'open') return
+    if (phase.value === 'opening' || phase.value === 'open' || phase.value === 'closing') return
     if (typeof document !== 'undefined') triggerElement = document.activeElement
     rendered.value = true
     phase.value = 'opening'
