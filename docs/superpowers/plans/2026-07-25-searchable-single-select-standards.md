@@ -13,6 +13,8 @@
 - 仅覆盖单选，值必须来自已有选项；不允许把任意搜索文本作为业务值。
 - `selectedValue`、`query`、`activeOption` 和 `open` 状态必须分离。
 - 搜索位置支持 `auto`、`inline`、`panel`、`drawer`、`none`；每种模式分别使用正确的触发器、Combobox 与 Listbox 语义。
+- `auto` 使用已声明、稳定且未过滤的元数据按固定顺序解析；显式配置优先，会话内冻结，过滤结果数不得触发模式切换。
+- `none` 只使用 WAI-ARIA Select-only Combobox；`panel`/`drawer` 的外层 trigger 与内层搜索 Combobox 分别承担字段与搜索语义。
 - PC 按最终模式使用 Editable Combobox 或触发按钮 + 弹层搜索 Combobox；移动端必要时使用 Drawer 搜索 Combobox 或 `none` 的 type-ahead。
 - 搜索、键盘高亮、Hover 和异步刷新不得隐式改变已选值。
 - 必须支持完整键盘、ARIA、本地/远程搜索、请求竞态、错误和跨端验收。
@@ -42,14 +44,14 @@ Expected: exit 0。
 
 - [ ] **Step 2: 编写完整规范**
 
-规范必须包含：适用范围与排除项、`auto`/`inline`/`panel`/`drawer`/`none` 搜索位置策略及各自 ARIA、状态模型、打开/关闭/提交、搜索、键盘、选项数据一致性、PC 弹层、移动端 Drawer、动画、清空、异步竞态、大数据量、错误及验收清单。
+规范必须包含：适用范围与排除项、确定性的 `auto` 决策与会话冻结、`inline` displayText/会话快照、`panel`/`drawer` outer/inner ARIA 合约、唯一的 Select-only `none`、active/`aria-selected` 对账、按模式校验归属、Tab/重试与 editable caret 优先级、none 查询暂停、orphaned invalid、disabled 语义，以及 `auto`/`inline`/`panel`/`drawer`/`none` 的完整状态、关闭、异步、布局、Drawer 和验收规则。
 
 - [ ] **Step 3: 验证关键规则存在**
 
 Run:
 
 ```sh
-rg -n 'selectedValue|query|activeOption|searchPlacement|auto|inline|panel|drawer|none|type-ahead|触发按钮|role="combobox"|aria-activedescendant|role="listbox"|role="option"|250ms|过期结果|Escape|移动端.*Drawer|虚拟列表|未验证' /Users/evanqi/.codex/skills/frontend-product-interaction-standards/references/selects-comboboxes.md
+rg -n 'selectedValue|displayText|orphaned invalid|resolvedPlacement|未过滤|会话|Select-only|aria-haspopup|aria-selected|aria-activedescendant|Tab|Home|End|aria-disabled|aria-readonly|250ms|过期结果|未验证' /Users/evanqi/.codex/skills/frontend-product-interaction-standards/references/selects-comboboxes.md
 ```
 
 Expected: 每类规则均至少一处匹配。
@@ -127,11 +129,11 @@ Expected: 摘要、链接和目录项均存在。
 
 - [ ] **Step 1: 同步搜索位置设计与计划**
 
-设计与本计划必须记录 `auto`、`inline`、`panel`、`drawer`、`none` 的场景选择、触发器/Combobox 语义、状态延续、关闭与验收要求。
+设计与本计划必须记录有序的 `auto`、`inline`、`panel`、`drawer`、`none` 解析，外层 trigger/内层 Combobox、Select-only none、displayText 草稿恢复、ARIA active 对账、校验归属、Tab/键盘、无效值、disabled 与验收要求。
 
 - [ ] **Step 2: 新增 Searchable single-select constraints**
 
-章节至少包含：单选与已有值范围、`auto`/`inline`/`panel`/`drawer`/`none` 策略、状态分离、提交边界、外部关闭/Escape/Drawer 关闭、键盘与 type-ahead、按模式的 ARIA、本地/异步搜索竞态、错误、失效值、PC 定位、移动端 Drawer、虚拟列表和未验证项报告。
+章节至少包含：单选与已有值范围、确定性 `auto`、五种模式、状态/会话、提交边界、外部关闭/Escape/Drawer 关闭、displayText、Select-only type-ahead、按模式 ARIA/校验、active 对账、Tab/重试/caret、查询暂停、本地/异步竞态、orphaned invalid、disabled、PC/Drawer/虚拟列表和未验证项报告。
 
 - [ ] **Step 3: 链接完整规范**
 
@@ -142,7 +144,7 @@ Expected: 摘要、链接和目录项均存在。
 Run:
 
 ```sh
-rg -n 'Searchable single-select constraints|selectedValue|query|activeOption|searchPlacement|auto|inline|panel|drawer|none|type-ahead|combobox|listbox|aria-activedescendant|Escape|stale|Drawer|virtual|unverified' /Users/evanqi/code/fex-admin/AGENTS.md
+rg -n 'Searchable single-select constraints|displayText|orphaned invalid|resolvedPlacement|auto|inline|panel|drawer|none|Select-only|aria-haspopup|aria-selected|aria-activedescendant|Tab|aria-disabled|aria-readonly|stale|Drawer|virtual|unverified' /Users/evanqi/code/fex-admin/AGENTS.md
 ```
 
 Expected: 所有关键类别均明确出现。
