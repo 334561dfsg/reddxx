@@ -133,10 +133,15 @@ test('detail drawer receives and renders superseded rule history with its timest
   assert.match(drawerUsage, /:rule-history="userControlState\.ruleHistory"/)
 })
 
-test('log page exposes operation, execution, and filtering without demo simulation tools', () => {
+test('log page presents operation and execution records in one point-control list', () => {
   const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
-  assert.match(source, /操作日志/)
-  assert.match(source, /执行日志/)
+  assert.match(source, /用户点控日志/)
+  assert.match(source, /unifiedLogs/)
+  assert.equal(source.match(/<table/g)?.length, 1)
+  assert.doesNotMatch(source, /Demo 演示页/)
+  assert.doesNotMatch(source, /所有模拟只在当前浏览器内存中生效/)
+  assert.doesNotMatch(source, /role="tablist"/)
+  assert.doesNotMatch(source, /activeTab/)
   assert.doesNotMatch(source, /Demo 模拟工具/)
   assert.doesNotMatch(source, /模拟一次性执行/)
   assert.doesNotMatch(source, /模拟写入失败/)
@@ -151,11 +156,11 @@ test('log page exposes audit fields without demo state actions', () => {
   assert.match(source, /规则来源/)
   assert.match(source, /操作类型/)
   assert.match(source, /操作时间/)
-  assert.match(source, /操作备注/)
+  assert.match(source, /备注/)
   assert.match(source, /变更前/)
   assert.match(source, /变更后/)
-  assert.match(source, /业务单号/)
-  assert.match(source, /执行状态/)
+  assert.match(source, /业务\/批次号/)
+  assert.match(source, /状态/)
   assert.doesNotMatch(source, /simulateUserControlExecution/)
   assert.doesNotMatch(source, /setUserControlFailureModule/)
   assert.doesNotMatch(source, /resetUserControlDemo/)
@@ -171,10 +176,9 @@ test('log page binds date filters and audit columns to their actual values', () 
   assert.match(dateFrom, /v-model="filters\.dateFrom"/)
   assert.match(dateTo, /type="date"/)
   assert.match(dateTo, /v-model="filters\.dateTo"/)
-  assert.match(elementByTestId(source, 'user-control-operation-operator-value'), /log\.operator/)
-  assert.match(elementByTestId(source, 'user-control-operation-batch-value'), /log\.batchId/)
-  assert.match(elementByTestId(source, 'user-control-execution-rule-value'), /log\.value/)
-  assert.match(elementByTestId(source, 'user-control-execution-duration-value'), /log\.duration/)
+  assert.match(elementByTestId(source, 'user-control-unified-operator-value'), /log\.operator/)
+  assert.match(elementByTestId(source, 'user-control-unified-reference-value'), /log\.referenceId/)
+  assert.match(elementByTestId(source, 'user-control-unified-duration-value'), /log\.duration/)
 })
 
 test('log page immediately normalizes module values and follows route query changes', () => {
@@ -185,14 +189,11 @@ test('log page immediately normalizes module values and follows route query chan
   assert.match(source, /immediate:\s*true/)
 })
 
-test('log tabs expose accessible state semantics', () => {
+test('log page omits the former tab interface', () => {
   const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
-  assert.match(source, /role="tablist"/)
-  assert.equal(source.match(/role="tab"/g)?.length, 2)
-  assert.match(source, /:aria-selected=/)
-  assert.match(source, /aria-controls=/)
-  assert.equal(source.match(/role="tabpanel"/g)?.length, 2)
-  assert.doesNotMatch(source, /:tabindex=/)
+  assert.doesNotMatch(source, /role="tablist"/)
+  assert.doesNotMatch(source, /role="tab"/)
+  assert.doesNotMatch(source, /role="tabpanel"/)
 })
 
 test('user and module rows link to the named log route with query filters', () => {
