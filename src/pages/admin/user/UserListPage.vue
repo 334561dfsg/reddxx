@@ -8,6 +8,7 @@ import UserOperations from '../../../admin/components/user/UserOperations.vue'
 import UserOperationDrawer from '../../../admin/components/user/UserOperationDrawer.vue'
 import UserRelationshipDrawer from '../../../admin/components/user/UserRelationshipDrawer.vue'
 import UserProfileEditDialog from '../../../admin/components/user/UserProfileEditDialog.vue'
+import UserParentResetDialog from '../../../admin/components/user/UserParentResetDialog.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -89,6 +90,9 @@ const relationshipReturnFocus = ref(null)
 const profileEditOpen = ref(false)
 const profileEditUser = ref(null)
 const profileEditReturnFocus = ref(null)
+const parentResetOpen = ref(false)
+const parentResetUser = ref(null)
+const parentResetReturnFocus = ref(null)
 const cancelNote = ref('')
 const {
   open: mfaOpen,
@@ -206,6 +210,13 @@ const selectControlSetting = (user) => {
     profileEditOpen.value = true
     return
   }
+
+  if (id === 'reset-parent') {
+    parentResetUser.value = user
+    parentResetReturnFocus.value = trigger
+    parentResetOpen.value = true
+    return
+  }
   openControlSetting(user)
 }
 
@@ -290,6 +301,22 @@ const handleProfileSaved = (updatedUser) => {
   users.value = users.value.map((user) => userIdOf(user) === updatedId ? { ...updatedUser } : user)
   operationDrawerUser.value = { ...updatedUser }
   profileEditUser.value = { ...updatedUser }
+}
+
+const closeParentReset = () => {
+  parentResetOpen.value = false
+}
+
+const clearParentReset = () => {
+  parentResetUser.value = null
+  parentResetReturnFocus.value = null
+}
+
+const handleParentResetSaved = (updatedUser) => {
+  const updatedId = userIdOf(updatedUser)
+  users.value = users.value.map((user) => userIdOf(user) === updatedId ? { ...updatedUser } : user)
+  operationDrawerUser.value = { ...updatedUser }
+  parentResetUser.value = { ...updatedUser }
 }
 
 const executeDeferredDrawerAction = async () => {
@@ -752,6 +779,15 @@ const closeDetailDrawer = () => {
       @close="closeProfileEdit"
       @closed="clearProfileEdit"
       @saved="handleProfileSaved"
+    />
+
+    <UserParentResetDialog
+      :visible="parentResetOpen"
+      :user="parentResetUser"
+      :return-focus="parentResetReturnFocus"
+      @close="closeParentReset"
+      @closed="clearParentReset"
+      @saved="handleParentResetSaved"
     />
 
     <Teleport to="body">

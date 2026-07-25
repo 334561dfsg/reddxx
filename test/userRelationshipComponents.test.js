@@ -66,3 +66,28 @@ test('user list keeps the operation Drawer mounted while editing profile', () =>
   assert.match(source, /profileEditReturnFocus/)
   assert.match(source, /handleProfileSaved/)
 })
+
+test('reset parent entry uses a two-phase validated child Dialog', () => {
+  const entry = getUserOperationEntry('reset-parent')
+  const source = read('src/admin/components/user/UserParentResetDialog.vue')
+  assert.equal(entry.status, 'available')
+  assert.equal(entry.handler, 'reset-parent')
+  assert.match(source, /当前上级/)
+  assert.match(source, /新上级/)
+  assert.match(source, /变更原因/)
+  assert.match(source, /预计影响.*下级/)
+  assert.match(source, /确认重设上级/)
+  assert.match(source, /getParentCandidates/)
+  assert.match(source, /getDescendants/)
+  assert.match(source, /resetParent/)
+  assert.match(source, /phaseName/)
+  assert.match(source, /useDialogLifecycle/)
+})
+
+test('user list orchestrates parent reset above the operation Drawer', () => {
+  const source = read('src/pages/admin/user/UserListPage.vue')
+  assert.match(source, /UserParentResetDialog/)
+  assert.match(source, /parentResetOpen/)
+  assert.match(source, /parentResetReturnFocus/)
+  assert.match(source, /handleParentResetSaved/)
+})
