@@ -37,6 +37,12 @@ const successorSelectionInvalid = computed(() => needsSuccessor.value && (
     option.value === form.successorParentId && !option.disabled
   ))
 ))
+const successorSelectionError = computed(() => {
+  if (!successorSelectionInvalid.value) return ''
+  return form.successorParentId === null
+    ? '请选择承接上级。'
+    : '所选承接上级不可用，请重新选择。'
+})
 const successor = computed(() => form.successorParentId
   ? getUserById(form.successorParentId)
   : null)
@@ -82,7 +88,7 @@ const startConfirm = async () => {
   errorMessage.value = ''
   if (!form.reason.trim()) return showError('变更原因必填')
   if (form.reason.trim().length > 200) return showError('变更原因不能超过 200 字')
-  if (successorSelectionInvalid.value) return showError('存在直属下级时必须选择承接上级')
+  if (successorSelectionInvalid.value) return showError(successorSelectionError.value)
   phaseName.value = 'confirm'
   await nextTick()
   backRef.value?.focus?.()
@@ -146,6 +152,13 @@ watch(() => [props.visible, userId.value, props.user?.role], ([visible]) => {
               </div>
 
               <div v-if="needsSuccessor" class="block">
+                <p
+                  v-if="successorSelectionError"
+                  id="agent-role-successor-parent-error"
+                  data-testid="agent-role-successor-parent-error"
+                  role="alert"
+                  class="mb-1 text-sm text-rose-700"
+                >{{ successorSelectionError }}</p>
                 <PanelSingleSelect
                   v-model="form.successorParentId"
                   :options="successorOptions"
@@ -154,6 +167,7 @@ watch(() => [props.visible, userId.value, props.user?.role], ([visible]) => {
                   search-label="搜索承接上级用户"
                   required
                   :invalid="successorSelectionInvalid"
+                  error-id="agent-role-successor-parent-error"
                   id-base="agent-role-successor-parent"
                 />
                 <span class="mt-1 block text-xs text-slate-500">取消代理后，{{ directChildren.length }} 个直属下级将统一转移到此上级。</span>

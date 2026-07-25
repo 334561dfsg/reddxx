@@ -87,6 +87,12 @@ const sessionSnapshot = ref(null)
 const cachedCommitted = ref({ value: undefined, label: '' })
 let popupHostRegistration = null
 
+const focus = () => {
+  triggerRef.value?.focus?.()
+}
+
+defineExpose({ focus })
+
 const valuesEqual = (left, right) => Object.is(left, right)
 
 const hasCommittedValue = computed(() => (

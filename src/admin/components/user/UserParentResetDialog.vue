@@ -11,6 +11,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['close', 'closed', 'saved'])
 const dialogRef = ref(null)
+const parentSelectRef = ref(null)
 const reasonRef = ref(null)
 const backRef = ref(null)
 const errorRef = ref(null)
@@ -35,6 +36,9 @@ const parentSelectionInvalid = computed(() => (
     option.value === form.parentId && !option.disabled
   ))
 ))
+const parentSelectionError = computed(() => (
+  parentSelectionInvalid.value ? '所选新上级不可用，请重新选择。' : ''
+))
 const nextParent = computed(() => form.parentId ? getUserById(form.parentId) : null)
 
 const resetForm = () => {
@@ -55,7 +59,7 @@ const {
 } = useDialogLifecycle({
   open: computed(() => props.visible),
   dialogRef,
-  initialFocusRef: reasonRef,
+  initialFocusRef: parentSelectRef,
   returnFocusRef: computed(() => props.returnFocus),
   requestClose: () => emit('close'),
   closeDisabled: submitting
@@ -77,7 +81,7 @@ const startConfirm = async () => {
   errorMessage.value = ''
   if (!form.reason.trim()) return showError('变更原因必填')
   if (form.reason.trim().length > 200) return showError('变更原因不能超过 200 字')
-  if (parentSelectionInvalid.value) return showError('请选择有效的新上级')
+  if (parentSelectionInvalid.value) return showError(parentSelectionError.value)
   if (String(props.user?.parentId ?? '') === String(form.parentId ?? '')) return showError('新上级不能与当前上级相同')
   phaseName.value = 'confirm'
   await nextTick()
@@ -88,7 +92,7 @@ const backToForm = async () => {
   phaseName.value = 'form'
   errorMessage.value = ''
   await nextTick()
-  reasonRef.value?.focus?.()
+  parentSelectRef.value?.focus?.()
 }
 
 const confirmReset = async () => {
@@ -139,7 +143,15 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               </div>
 
               <div class="block">
+                <p
+                  v-if="parentSelectionError"
+                  id="parent-reset-parent-error"
+                  data-testid="parent-reset-parent-error"
+                  role="alert"
+                  class="mb-1 text-sm text-rose-700"
+                >{{ parentSelectionError }}</p>
                 <PanelSingleSelect
+                  ref="parentSelectRef"
                   v-model="form.parentId"
                   :options="parentOptions"
                   label="新上级"
@@ -147,6 +159,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
                   search-label="搜索新上级用户"
                   required
                   :invalid="parentSelectionInvalid"
+                  error-id="parent-reset-parent-error"
                   id-base="parent-reset-parent"
                 />
                 <span class="mt-1 block text-xs text-slate-500">已排除本人、当前上级、自己的下级和封禁用户。</span>

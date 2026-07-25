@@ -8,18 +8,18 @@ const stubComponentUrl = 'data:text/javascript;base64,' + Buffer.from(
   'export default { name: "SfcHarnessStub", render() { return null } }'
 ).toString('base64')
 
-const resolveImport = (specifier, filename) => {
+const resolveImport = (specifier, filename, vueImports) => {
   if (!specifier.startsWith('.')) return import.meta.resolve(specifier)
 
   const resolved = resolve(dirname(filename), specifier)
-  if (extname(resolved) === '.vue') return stubComponentUrl
+  if (extname(resolved) === '.vue') return vueImports[resolved] || stubComponentUrl
   if (!extname(resolved) && existsSync(`${resolved}.js`)) {
     return pathToFileURL(`${resolved}.js`).href
   }
   return pathToFileURL(resolved).href
 }
 
-export const loadVueSfc = async (filename) => {
+export const loadVueSfcModuleUrl = (filename, { vueImports = {} } = {}) => {
   const absoluteFilename = resolve(filename)
   const source = readFileSync(absoluteFilename, 'utf8')
   const { descriptor, errors } = parse(source, { filename: absoluteFilename })
@@ -32,11 +32,14 @@ export const loadVueSfc = async (filename) => {
 
   code = code.replace(
     /(from\s+)(['"])([^'"]+)(\2)/g,
-    (_, prefix, quote, specifier) => `${prefix}${quote}${resolveImport(specifier, absoluteFilename)}${quote}`
+    (_, prefix, quote, specifier) => `${prefix}${quote}${resolveImport(specifier, absoluteFilename, vueImports)}${quote}`
   )
 
-  const moduleUrl = `data:text/javascript;base64,${Buffer.from(code).toString('base64')}`
-  return (await import(moduleUrl)).default
+  return `data:text/javascript;base64,${Buffer.from(code).toString('base64')}`
+}
+
+export const loadVueSfc = async (filename, options) => {
+  return (await import(loadVueSfcModuleUrl(filename, options))).default
 }
 
 const walk = (node, visit) => {
