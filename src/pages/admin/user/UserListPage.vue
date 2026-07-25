@@ -10,6 +10,7 @@ import UserRelationshipDrawer from '../../../admin/components/user/UserRelations
 import UserProfileEditDialog from '../../../admin/components/user/UserProfileEditDialog.vue'
 import UserParentResetDialog from '../../../admin/components/user/UserParentResetDialog.vue'
 import UserAgentRoleDialog from '../../../admin/components/user/UserAgentRoleDialog.vue'
+import UserTeamReportDrawer from '../../../admin/components/user/UserTeamReportDrawer.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -97,6 +98,9 @@ const parentResetReturnFocus = ref(null)
 const agentRoleOpen = ref(false)
 const agentRoleUser = ref(null)
 const agentRoleReturnFocus = ref(null)
+const teamReportOpen = ref(false)
+const teamReportUser = ref(null)
+const teamReportReturnFocus = ref(null)
 const cancelNote = ref('')
 const {
   open: mfaOpen,
@@ -207,27 +211,6 @@ const closeControlSetting = () => {
 
 const selectControlSetting = (user) => {
   controlReturnUserId.value = userIdOf(user)
-
-  if (id === 'edit-profile') {
-    profileEditUser.value = user
-    profileEditReturnFocus.value = trigger
-    profileEditOpen.value = true
-    return
-  }
-
-  if (id === 'reset-parent') {
-    parentResetUser.value = user
-    parentResetReturnFocus.value = trigger
-    parentResetOpen.value = true
-    return
-  }
-
-  if (id === 'reset-agent') {
-    agentRoleUser.value = user
-    agentRoleReturnFocus.value = trigger
-    agentRoleOpen.value = true
-    return
-  }
   openControlSetting(user)
 }
 
@@ -254,6 +237,34 @@ const closeOperationDrawer = () => {
 const handleOperationDrawerAction = async ({ id, user, trigger }) => {
   operationActionReturnFocus.value = trigger || (typeof document === 'undefined' ? null : document.activeElement)
   controlReturnUserId.value = userIdOf(user)
+
+  if (id === 'edit-profile') {
+    profileEditUser.value = user
+    profileEditReturnFocus.value = trigger
+    profileEditOpen.value = true
+    return
+  }
+
+  if (id === 'reset-parent') {
+    parentResetUser.value = user
+    parentResetReturnFocus.value = trigger
+    parentResetOpen.value = true
+    return
+  }
+
+  if (id === 'reset-agent') {
+    agentRoleUser.value = user
+    agentRoleReturnFocus.value = trigger
+    agentRoleOpen.value = true
+    return
+  }
+
+  if (id === 'team-report') {
+    teamReportUser.value = user
+    teamReportReturnFocus.value = trigger
+    teamReportOpen.value = true
+    return
+  }
 
   if (['direct-referrals', 'all-referrals'].includes(id)) {
     relationshipDrawerUser.value = user
@@ -346,6 +357,15 @@ const handleAgentRoleSaved = ({ user: updatedUser }) => {
   })
   operationDrawerUser.value = { ...updatedUser }
   agentRoleUser.value = { ...updatedUser }
+}
+
+const closeTeamReport = () => {
+  teamReportOpen.value = false
+}
+
+const clearTeamReport = () => {
+  teamReportUser.value = null
+  teamReportReturnFocus.value = null
 }
 
 const executeDeferredDrawerAction = async () => {
@@ -826,6 +846,14 @@ const closeDetailDrawer = () => {
       @close="closeAgentRole"
       @closed="clearAgentRole"
       @saved="handleAgentRoleSaved"
+    />
+
+    <UserTeamReportDrawer
+      :visible="teamReportOpen"
+      :user="teamReportUser"
+      :return-focus="teamReportReturnFocus"
+      @close="closeTeamReport"
+      @closed="clearTeamReport"
     />
 
     <Teleport to="body">

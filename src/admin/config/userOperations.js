@@ -20,7 +20,7 @@ export const USER_OPERATION_ENTRIES = Object.freeze([
   { id: 'all-referrals', title: '查看全部下级', description: '查看用户团队内的全部层级成员', group: 'relationship', status: 'available', risk: 'normal', handler: 'all-referrals' },
   { id: 'reset-parent', title: '重设上级', description: '调整用户所属的上级关系', group: 'relationship', status: 'available', risk: 'sensitive', handler: 'reset-parent' },
   { id: 'reset-agent', title: '设置／重设代理', description: '设置或调整用户代理身份', group: 'relationship', status: 'available', risk: 'sensitive', handler: 'reset-agent' },
-  { id: 'team-report', title: '查看团队报表', description: '查看该用户团队的业务汇总', group: 'relationship', status: 'planned', risk: 'normal', handler: 'planned' },
+  { id: 'team-report', title: '查看团队报表', description: '查看该用户团队的业务汇总', group: 'relationship', status: 'available', risk: 'normal', handler: 'team-report' },
 
   { id: 'assets', title: '资金概况', description: '查看各账户资产、余额与冻结金额', group: 'funds', status: 'available', risk: 'normal', handler: 'detail' },
   { id: 'onchain-wallet', title: '链上钱包', description: '查看用户链上钱包与地址信息', group: 'funds', status: 'planned', risk: 'normal', handler: 'planned' },

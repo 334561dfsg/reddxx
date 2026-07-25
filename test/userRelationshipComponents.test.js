@@ -116,3 +116,48 @@ test('user list orchestrates agent role changes above the operation Drawer', () 
   assert.match(source, /agentRoleReturnFocus/)
   assert.match(source, /handleAgentRoleSaved/)
 })
+
+test('team report entry renders approved metrics and branch details in a child Drawer', () => {
+  const entry = getUserOperationEntry('team-report')
+  const source = read('src/admin/components/user/UserTeamReportDrawer.vue')
+  assert.equal(entry.status, 'available')
+  assert.equal(entry.handler, 'team-report')
+  for (const label of ['团队总人数', '直属人数', '代理人数', '活跃人数', '总可用余额', '总冻结余额', '总交易量', '团队累计盈亏']) {
+    assert.match(source, new RegExp(label))
+  }
+  assert.match(source, /分支明细/)
+  assert.match(source, /getTeamReport/)
+  assert.match(source, /data-testid="team-report-drawer-body"[^>]*class="[^"]*overflow-y-auto/)
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /:style="layerStyle"/)
+})
+
+test('all six relationship entries are available after the first batch', () => {
+  for (const id of ['edit-profile', 'direct-referrals', 'all-referrals', 'reset-parent', 'reset-agent', 'team-report']) {
+    const entry = getUserOperationEntry(id)
+    assert.equal(entry.status, 'available', `${id} should be available`)
+    assert.notEqual(entry.handler, 'planned', `${id} should have a real handler`)
+  }
+})
+
+test('user list orchestrates team report above the operation Drawer', () => {
+  const source = read('src/pages/admin/user/UserListPage.vue')
+  assert.match(source, /UserTeamReportDrawer/)
+  assert.match(source, /teamReportOpen/)
+  assert.match(source, /teamReportReturnFocus/)
+})
+
+test('relationship action branches live inside the operation Drawer handler', () => {
+  const source = read('src/pages/admin/user/UserListPage.vue')
+  const handlerStart = source.indexOf('const handleOperationDrawerAction')
+  const handlerEnd = source.indexOf('const closeRelationshipDrawer', handlerStart)
+  const handler = source.slice(handlerStart, handlerEnd)
+  for (const id of ['edit-profile', 'reset-parent', 'reset-agent', 'team-report']) {
+    assert.match(handler, new RegExp(`id === '${id}'`), `${id} must be handled by handleOperationDrawerAction`)
+  }
+
+  const controlStart = source.indexOf('const selectControlSetting')
+  const controlEnd = source.indexOf('const selectControlCancel', controlStart)
+  const controlSelector = source.slice(controlStart, controlEnd)
+  assert.doesNotMatch(controlSelector, /id ===|\btrigger\b/)
+})
