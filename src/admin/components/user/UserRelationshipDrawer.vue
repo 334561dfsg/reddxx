@@ -109,30 +109,48 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
             <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
           </header>
 
-          <div class="shrink-0 border-b border-slate-200 bg-slate-50 px-4 py-3 sm:px-5">
-            <div class="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_9rem_9rem]">
-              <label>
-                <span class="sr-only">搜索下级</span>
-                <input v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="搜索用户名、邮箱或 UID" />
-              </label>
-              <label>
-                <span class="sr-only">账户状态</span>
-                <select v-model="status" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-2 text-sm outline-none focus:border-blue-500">
-                  <option value="all">全部状态</option>
-                  <option v-for="item in USER_STATUS_OPTIONS" :key="item.value" :value="item.value">{{ item.label }}</option>
-                </select>
-              </label>
-              <label>
-                <span class="sr-only">用户角色</span>
-                <select v-model="role" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-2 text-sm outline-none focus:border-blue-500">
-                  <option value="all">全部角色</option>
-                  <option v-for="item in USER_ROLE_OPTIONS" :key="item.value" :value="item.value">{{ item.label }}</option>
-                </select>
-              </label>
-            </div>
-          </div>
-
           <div data-testid="relationship-drawer-body" class="min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
+            <div class="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label class="sm:col-span-2">
+                  <span class="sr-only">搜索下级</span>
+                  <input v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="搜索用户名、邮箱或 UID" />
+                </label>
+                <fieldset class="min-w-0">
+                  <legend class="text-xs font-medium text-slate-600">账户状态</legend>
+                  <div class="mt-1 flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
+                    <button
+                      v-for="item in [{ value: 'all', label: '全部状态' }, ...USER_STATUS_OPTIONS]"
+                      :key="item.value"
+                      type="button"
+                      class="min-h-9 flex-1 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
+                      :class="status === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
+                      :aria-pressed="status === item.value ? 'true' : 'false'"
+                      @click="status = item.value"
+                    >
+                      {{ item.label }}
+                    </button>
+                  </div>
+                </fieldset>
+                <fieldset class="min-w-0">
+                  <legend class="text-xs font-medium text-slate-600">用户角色</legend>
+                  <div class="mt-1 flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
+                    <button
+                      v-for="item in [{ value: 'all', label: '全部角色' }, ...USER_ROLE_OPTIONS]"
+                      :key="item.value"
+                      type="button"
+                      class="min-h-9 flex-1 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
+                      :class="role === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
+                      :aria-pressed="role === item.value ? 'true' : 'false'"
+                      @click="role = item.value"
+                    >
+                      {{ item.label }}
+                    </button>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+
             <div v-if="selectedMember" class="mb-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-900">
               已选择 {{ selectedMember.username }} · UID {{ selectedMember.id || selectedMember.userId }} · {{ roleLabel(selectedMember.role) }}
             </div>

@@ -1,9 +1,10 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { vipLevels } from '../../mock/vip'
 import { getAllCreditScoreConfig } from '../../mock/creditScore'
 import { CREDIT_SCORE_CONFIG_KEYS, CREDIT_SCORE_CHANGE_TYPE } from '../../constants/creditScore'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import PanelSingleSelect from '../form/PanelSingleSelect.vue'
 
 const props = defineProps({
   user: { type: Object, required: true },
@@ -26,6 +27,18 @@ const deductionCustomRules = computed(() => {
 const earnCustomRules = computed(() => {
   return config.value[CREDIT_SCORE_CONFIG_KEYS.EARN_CUSTOM_RULES] || []
 })
+
+const earnRuleOptions = computed(() => earnCustomRules.value.map((rule) => ({
+  value: rule.id,
+  label: `${rule.name}（+${rule.score}）`,
+  searchText: [rule.name, rule.id, `+${rule.score}`, '增加 加分'].join(' ')
+})))
+
+const deductionRuleOptions = computed(() => deductionCustomRules.value.map((rule) => ({
+  value: rule.id,
+  label: `${rule.name}（-${rule.score}）`,
+  searchText: [rule.name, rule.id, `-${rule.score}`, '扣减 扣分'].join(' ')
+})))
 
 const activeVipOptions = computed(() => {
   return [...vipLevels]
@@ -98,24 +111,6 @@ const open = (returnFocus = null) => {
 defineExpose({ open })
 
 const close = createDialogCloseAction(requestDialogClose)
-
-const ensureRuleSelection = () => {
-  if (form.value.scoreDirection === 'increase') {
-    const exists = earnCustomRules.value.some((r) => r.id === form.value.earnRuleId)
-    if (!exists) form.value.earnRuleId = earnCustomRules.value?.[0]?.id || ''
-  } else {
-    const exists = deductionCustomRules.value.some((r) => r.id === form.value.deductionRuleId)
-    if (!exists) form.value.deductionRuleId = deductionCustomRules.value?.[0]?.id || ''
-  }
-}
-
-watch(
-  () => [showModal.value, form.value.scoreDirection, earnCustomRules.value.length, deductionCustomRules.value.length],
-  () => {
-    if (!showModal.value) return
-    ensureRuleSelection()
-  }
-)
 
 const parsedDelta = computed(() => {
   if (form.value.scoreDirection === 'increase') {
@@ -261,17 +256,25 @@ const confirm = () => {
                     {{ currentVipLevel === 0 ? '普通用户' : `VIP${currentVipLevel}` }}
                   </div>
                 </div>
-                <div>
-                  <div class="text-sm font-medium text-slate-700 mb-2">调整为</div>
-                  <select
-                    v-model.number="form.vipTargetLevel"
-                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
-                  >
-                    <option v-for="o in activeVipOptions" :key="o.level" :value="o.level">
-                      {{ o.label }}
-                    </option>
-                  </select>
-                </div>
+                <fieldset class="min-w-0">
+                  <legend class="mb-2 text-sm font-medium text-slate-700">调整为</legend>
+                  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <label
+                      v-for="o in activeVipOptions"
+                      :key="o.level"
+                      class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-500"
+                    >
+                      <input
+                        v-model="form.vipTargetLevel"
+                        type="radio"
+                        name="vip-target-level"
+                        :value="o.level"
+                        class="h-4 w-4 shrink-0"
+                      />
+                      <span class="min-w-0 break-words">{{ o.label }}</span>
+                    </label>
+                  </div>
+                </fieldset>
               </div>
               <div v-if="willChangeVip" class="mt-3 text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
                 将从 {{ currentVipLevel === 0 ? '普通用户' : `VIP${currentVipLevel}` }} 调整为 {{ form.vipTargetLevel === 0 ? '普通用户' : `VIP${form.vipTargetLevel}` }}
@@ -291,44 +294,41 @@ const confirm = () => {
                   </div>
                 </div>
 
-                <div>
-                  <div class="text-sm font-medium text-slate-700 mb-2">类型</div>
-                  <div class="flex items-center gap-2">
+                <fieldset class="min-w-0">
+                  <legend class="mb-2 text-sm font-medium text-slate-700">类型</legend>
+                  <div class="flex flex-wrap items-center gap-2">
                     <label class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm cursor-pointer">
-                      <input v-model="form.scoreDirection" type="radio" value="increase" />
+                      <input v-model="form.scoreDirection" type="radio" name="credit-score-direction" value="increase" />
                       增加
                     </label>
                     <label class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm cursor-pointer">
-                      <input v-model="form.scoreDirection" type="radio" value="decrease" />
+                      <input v-model="form.scoreDirection" type="radio" name="credit-score-direction" value="decrease" />
                       扣减
                     </label>
                   </div>
-                </div>
+                </fieldset>
 
-                <div>
-                  <div class="text-sm font-medium text-slate-700 mb-2">数量</div>
+                <div class="min-w-0">
                   <div v-if="form.scoreDirection === 'increase'">
-                    <select
+                    <PanelSingleSelect
                       v-model="form.earnRuleId"
-                      class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
-                    >
-                      <option disabled value="">请选择加分行为</option>
-                      <option v-for="r in earnCustomRules" :key="r.id" :value="r.id">
-                        {{ r.name }}（+{{ r.score }}）
-                      </option>
-                    </select>
+                      :options="earnRuleOptions"
+                      label="加分行为"
+                      placeholder="请选择加分行为"
+                      search-label="搜索加分行为"
+                      id-base="user-adjust-earn-rule"
+                    />
                   </div>
 
                   <div v-else>
-                    <select
+                    <PanelSingleSelect
                       v-model="form.deductionRuleId"
-                      class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
-                    >
-                      <option disabled value="">请选择扣分行为</option>
-                      <option v-for="r in deductionCustomRules" :key="r.id" :value="r.id">
-                        {{ r.name }}（-{{ r.score }}）
-                      </option>
-                    </select>
+                      :options="deductionRuleOptions"
+                      label="扣分行为"
+                      placeholder="请选择扣分行为"
+                      search-label="搜索扣分行为"
+                      id-base="user-adjust-deduction-rule"
+                    />
                   </div>
                 </div>
               </div>

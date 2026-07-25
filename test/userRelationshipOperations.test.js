@@ -16,6 +16,7 @@ const agentRoleSource = () => read('src/admin/components/user/UserAgentRoleDialo
 const panelFile = resolve(process.cwd(), 'src/admin/components/form/PanelSingleSelect.vue')
 const parentResetFile = resolve(process.cwd(), 'src/admin/components/user/UserParentResetDialog.vue')
 const agentRoleFile = resolve(process.cwd(), 'src/admin/components/user/UserAgentRoleDialog.vue')
+const relationshipDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserRelationshipDrawer.vue')
 
 const userById = (id) => usersList.find((user) => user.id === id)
 const snapshot = (user) => ({ ...user })
@@ -44,6 +45,69 @@ const inputValue = async (harness, node, value) => {
 const selectOptions = (harness) => harness.allNodes().filter((node) => (
   node.getAttribute?.('role') === 'option'
 ))
+
+const fieldsetWithLegend = (harness, legendText) => harness.allNodes().find((node) => (
+  node.tag === 'fieldset' &&
+  harness.allNodes().some((candidate) => (
+    candidate.tag === 'legend' &&
+    node.contains(candidate) &&
+    candidate.textContent.trim() === legendText
+  ))
+))
+
+const memberButtons = (harness) => harness.allNodes().filter((node) => (
+  node.tag === 'button' && /UID user_/.test(node.textContent)
+))
+
+test('relationship filters are labelled wrapping segments that preserve exact status and role filtering', async (t) => {
+  const agentChildBefore = snapshot(userById('user_1004'))
+  userById('user_1004').role = 'agent'
+  const component = await loadVueSfc(relationshipDrawerFile)
+  const harness = await createSfcHarness(component, {
+    visible: true,
+    user: userById('user_1003'),
+    mode: 'direct'
+  })
+  t.after(() => {
+    harness.cleanup()
+    restore(agentChildBefore)
+  })
+  await harness.finishTransitions()
+
+  const statusGroup = fieldsetWithLegend(harness, '账户状态')
+  const roleGroup = fieldsetWithLegend(harness, '用户角色')
+  assert.ok(statusGroup)
+  assert.ok(roleGroup)
+  const scrollBody = harness.findByTestId('relationship-drawer-body')
+  assert.equal(scrollBody.contains(statusGroup), true)
+  assert.equal(scrollBody.contains(roleGroup), true)
+
+  for (const group of [statusGroup, roleGroup]) {
+    const segmentContainer = group.children.find((node) => node.tag === 'div')
+    assert.ok(segmentContainer.classList.contains('flex'))
+    assert.ok(segmentContainer.classList.contains('flex-wrap'))
+    const segments = harness.allNodes().filter((node) => node.tag === 'button' && group.contains(node))
+    assert.ok(segments.length > 1)
+    assert.ok(segments.every((button) => button.hasAttribute('aria-pressed')))
+  }
+
+  const allStatus = harness.findByText('全部状态', 'button')
+  const bannedStatus = harness.findByText('禁用', 'button')
+  assert.equal(allStatus.getAttribute('aria-pressed'), 'true')
+  bannedStatus.click()
+  await harness.flush()
+  assert.equal(allStatus.getAttribute('aria-pressed'), 'false')
+  assert.equal(bannedStatus.getAttribute('aria-pressed'), 'true')
+  assert.deepEqual(memberButtons(harness).map((button) => button.textContent.match(/banned_user/)?.[0]), ['banned_user'])
+
+  allStatus.click()
+  await harness.flush()
+  const agentRole = harness.findByText('代理', 'button')
+  agentRole.click()
+  await harness.flush()
+  assert.equal(agentRole.getAttribute('aria-pressed'), 'true')
+  assert.deepEqual(memberButtons(harness).map((button) => button.textContent.match(/user_chen/)?.[0]), ['user_chen'])
+})
 
 test('parent and successor selectors use the shared committed-value combobox rather than native selects', () => {
   for (const source of [parentResetSource(), agentRoleSource()]) {
