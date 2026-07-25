@@ -55,7 +55,7 @@ test('shared modal exposes note validation on blur while submit stays disabled',
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
   assert.match(source, /@blur="noteTouched = true"/)
   assert.match(source, /noteTouched && !form\.note\.trim\(\)/)
-  assert.match(source, /:disabled="!isComplete"/)
+  assert.match(source, /:disabled="phase !== 'open' \|\| !isComplete"/)
 })
 
 test('shared modal keeps the atomic failure warning inside the global-only summary', () => {
@@ -284,12 +284,15 @@ test('user and module rows link to the named log route with query filters', () =
 
 test('shared setting modal keeps only its body scrollable and keeps result copy compact', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
+  const frame = openingTag(source, 'user-control-dialog-frame')
   assert.match(source, /max-w-\[680px\]/)
   assert.match(source, /<Teleport to="body">/)
   assert.match(source, /fixed inset-0/)
   assert.doesNotMatch(source, /@mousedown\.self|@click\.self/)
   assert.doesNotMatch(source, /fixed inset-0[^"\n]*overflow-auto/)
-  assert.match(source, /data-testid="user-control-dialog-frame"[^>]*max-h-\[calc\(100vh-1\.5rem\)\][^>]*max-h-\[calc\(100dvh-1\.5rem\)\][^>]*overflow-hidden/)
+  assert.match(frame, /max-h-\[calc\(100vh-1\.5rem\)\]/)
+  assert.match(frame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-1\.5rem\)\]/)
+  assert.match(frame, /overflow-hidden/)
   assert.match(source, /data-testid="user-control-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.match(source, /space-y-2\.5 px-5 py-3/)
   assert.match(source, /rows="2"/)
@@ -302,9 +305,12 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
 
 test('MFA modal keeps only its body scrollable', () => {
   const mfaSource = read('../src/admin/components/MfaVerificationModal.vue')
+  const frame = openingTag(mfaSource, 'mfa-dialog-frame')
 
   assert.doesNotMatch(mfaSource, /fixed inset-0[^"\n]*overflow-y-auto/)
-  assert.match(mfaSource, /data-testid="mfa-dialog-frame"[^>]*max-h-\[calc\(100vh-2rem\)\][^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
+  assert.match(frame, /max-h-\[calc\(100vh-2rem\)\]/)
+  assert.match(frame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-2rem\)\]/)
+  assert.match(frame, /overflow-hidden/)
   assert.match(mfaSource, /data-testid="mfa-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
 })
 
@@ -346,9 +352,12 @@ test('point-control cancellation dialogs and detail drawer keep overlays open an
   const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   const userListSource = read('../src/pages/admin/user/UserListPage.vue')
   const detailSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
+  const moduleFrame = openingTag(moduleSource, 'module-user-control-cancel-dialog')
 
   assert.doesNotMatch(moduleSource, /@mousedown\.self="closeCancel"|@click\.self="closeCancel"/)
-  assert.match(moduleSource, /data-testid="module-user-control-cancel-dialog"[^>]*max-h-\[calc\(100vh-2rem\)\][^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
+  assert.match(moduleFrame, /max-h-\[calc\(100vh-2rem\)\]/)
+  assert.match(moduleFrame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-2rem\)\]/)
+  assert.match(moduleFrame, /overflow-hidden/)
   assert.match(moduleSource, /data-testid="module-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.doesNotMatch(userListSource, /@mousedown\.self="closeControlCancel"|@click\.self="closeControlCancel"/)
   assert.match(userListSource, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
@@ -409,9 +418,15 @@ test('point-control cancellation dialogs retain their layer, focus target, and c
     assert.doesNotMatch(source, /@mousedown\.self="(?:closeCancel|closeControlCancel)"|@click\.self="(?:closeCancel|closeControlCancel)"/)
   }
 
-  assert.match(moduleSource, /data-testid="module-user-control-cancel-dialog"[^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
+  const moduleFrame = openingTag(moduleSource, 'module-user-control-cancel-dialog')
+  const unifiedFrame = openingTag(unifiedSource, 'unified-user-control-cancel-dialog')
+  assert.match(moduleFrame, /max-h-\[calc\(100vh-2rem\)\]/)
+  assert.match(moduleFrame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-2rem\)\]/)
+  assert.match(moduleFrame, /overflow-hidden/)
   assert.match(moduleSource, /data-testid="module-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
-  assert.match(unifiedSource, /data-testid="unified-user-control-cancel-dialog"[^>]*max-h-\[calc\(100vh-2rem\)\][^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
+  assert.match(unifiedFrame, /max-h-\[calc\(100vh-2rem\)\]/)
+  assert.match(unifiedFrame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-2rem\)\]/)
+  assert.match(unifiedFrame, /overflow-hidden/)
   assert.match(unifiedSource, /data-testid="unified-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
 })
 

@@ -339,14 +339,14 @@ const resetFilters = () => {
     />
 
     <Teleport to="body">
-      <Transition name="dialog-overlay" @after-enter="onModuleCancelAfterEnter" @after-leave="handleModuleCancelAfterLeave">
+      <Transition name="dialog-overlay" appear @after-enter="onModuleCancelAfterEnter" @after-leave="handleModuleCancelAfterLeave">
         <div v-if="moduleCancelRendered" v-show="moduleCancelPhase !== 'closing'" class="fixed inset-0 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" :style="moduleCancelLayerStyle">
-          <Transition name="dialog-panel">
-            <section v-show="moduleCancelPhase !== 'closing'" ref="moduleCancelDialogRef" data-testid="module-user-control-cancel-dialog" class="flex max-h-[calc(100vh-2rem)] max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="module-user-control-cancel-title">
-              <header class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
-                <div>
-                  <h2 id="module-user-control-cancel-title" class="text-lg font-semibold text-slate-900">取消{{ displayedModuleCancelData.moduleLabel }}用户规则</h2>
-                  <p class="mt-1 text-sm text-slate-500">{{ displayedModuleCancelData.user?.username }} · UID {{ userIdOf(displayedModuleCancelData.user) }}</p>
+          <Transition name="dialog-panel" appear>
+            <section v-show="moduleCancelPhase !== 'closing'" ref="moduleCancelDialogRef" data-testid="module-user-control-cancel-dialog" class="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="module-user-control-cancel-title">
+              <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+                <div class="min-w-0 flex-1">
+                  <h2 id="module-user-control-cancel-title" class="break-words text-lg font-semibold text-slate-900">取消{{ displayedModuleCancelData.moduleLabel }}用户规则</h2>
+                  <p class="mt-1 break-words text-sm text-slate-500">{{ displayedModuleCancelData.user?.username }} · UID {{ userIdOf(displayedModuleCancelData.user) }}</p>
                 </div>
                 <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeCancel">×</button>
               </header>

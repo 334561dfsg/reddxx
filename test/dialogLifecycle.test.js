@@ -71,12 +71,18 @@ const createFakeDocument = () => {
   return document
 }
 
-const createFakeElement = (document, { focusable = false, focusables = [], containedElements = [] } = {}) => {
+const createFakeElement = (document, {
+  focusable = false,
+  focusables = [],
+  containedElements = [],
+  isConnected = true
+} = {}) => {
   const attributes = new Map()
   const element = {
     disabled: false,
     hidden: false,
     inert: false,
+    isConnected,
     tabIndex: focusable ? 0 : -1,
     focus() { document.activeElement = element },
     querySelectorAll: () => focusables,
@@ -100,14 +106,20 @@ const installFakeDocument = (t) => {
   return document
 }
 
-const mountLifecycle = async ({ document, requestClose, focusables = [], containedElements = [] }) => {
+const mountLifecycle = async ({
+  document,
+  requestClose,
+  focusables = [],
+  containedElements = [],
+  returnFocusRef
+}) => {
   const open = ref(true)
   const dialog = createFakeElement(document, { focusables, containedElements })
   const dialogRef = shallowRef(dialog)
   let lifecycle
   const app = renderer.createApp({
     setup() {
-      lifecycle = useDialogLifecycle({ open, dialogRef, requestClose })
+      lifecycle = useDialogLifecycle({ open, dialogRef, requestClose, returnFocusRef })
       return () => h('div')
     }
   })
@@ -355,6 +367,42 @@ test('unmount releases the dialog layer, document listener, scroll lock, and foc
   assert.equal(document.body.style.overflow, '')
   assert.equal(background.inert, false)
   assert.equal(document.activeElement, trigger)
+})
+
+test('uses a connected logical return target when the captured trigger was removed', async (t) => {
+  const document = installFakeDocument(t)
+  const removedTrigger = createFakeElement(document, { focusable: true })
+  const stableAction = createFakeElement(document, { focusable: true })
+  document.activeElement = removedTrigger
+  const { lifecycle, open } = await mountLifecycle({
+    document,
+    returnFocusRef: () => stableAction
+  })
+
+  removedTrigger.isConnected = false
+  open.value = false
+  await flushLifecycle()
+  lifecycle.onAfterLeave()
+
+  assert.equal(document.activeElement, stableAction)
+})
+
+test('a lower layer finishing first never steals focus from the active top dialog', async (t) => {
+  const document = installFakeDocument(t)
+  const lowerTrigger = createFakeElement(document, { focusable: true })
+  document.activeElement = lowerTrigger
+  const lower = await mountLifecycle({ document })
+  const topControl = createFakeElement(document, { focusable: true })
+  const upper = await mountLifecycle({ document, focusables: [topControl] })
+  topControl.focus()
+
+  lower.open.value = false
+  await flushLifecycle()
+  lower.lifecycle.onAfterLeave()
+
+  assert.equal(document.activeElement, topControl)
+  upper.app.unmount()
+  lower.app.unmount()
 })
 
 test('disabled close predicate rejects closing without invoking the callback', async (t) => {

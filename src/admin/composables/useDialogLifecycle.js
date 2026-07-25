@@ -107,7 +107,7 @@ export const unregisterDialogLayer = (layer) => {
 
 export const isTopDialogLayer = (layer) => dialogLayers.at(-1) === layer
 
-export const getFocusableElements = (root) => [...(root?.querySelectorAll(
+export const getFocusableElements = (root) => [...(root?.querySelectorAll?.(
   'a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])'
 ) || [])].filter((element) => (
   !element.disabled && !element.hidden && element.tabIndex >= 0 &&
@@ -150,6 +150,7 @@ export const useDialogLifecycle = ({
   open,
   dialogRef,
   initialFocusRef,
+  returnFocusRef,
   requestClose,
   closeDisabled = false
 }) => {
@@ -168,8 +169,31 @@ export const useDialogLifecycle = ({
     return index < 0 ? {} : { zIndex: 1000 + index * 10 }
   })
 
+  const isConnectedFocusTarget = (target) => (
+    Boolean(target)
+    && target.isConnected !== false
+    && typeof target.focus === 'function'
+  )
+
+  const resolveReturnFocusTarget = () => {
+    const configured = unref(returnFocusRef)
+    const configuredTarget = typeof configured === 'function' ? configured() : configured
+    if (isConnectedFocusTarget(configuredTarget)) return configuredTarget
+    if (isConnectedFocusTarget(triggerElement)) return triggerElement
+
+    if (typeof document === 'undefined') return null
+    const dialog = dialogRef?.value
+    return getFocusableElements(document.body).find((element) => (
+      !dialog?.contains?.(element) && isConnectedFocusTarget(element)
+    )) || null
+  }
+
   const restoreFocus = () => {
-    triggerElement?.focus?.()
+    resolveReturnFocusTarget()?.focus()
+    triggerElement = null
+  }
+
+  const discardFocusReturn = () => {
     triggerElement = null
   }
 
@@ -268,10 +292,12 @@ export const useDialogLifecycle = ({
   }
 
   const onAfterLeave = () => {
+    const shouldRestoreFocus = Boolean(layer && isTopDialogLayer(layer))
     releaseLayer()
     rendered.value = false
     phase.value = 'closed'
-    restoreFocus()
+    if (shouldRestoreFocus) restoreFocus()
+    else discardFocusReturn()
     if (isOpen()) startOpening()
   }
 
@@ -281,10 +307,12 @@ export const useDialogLifecycle = ({
   }, { immediate: true })
 
   onBeforeUnmount(() => {
+    const shouldRestoreFocus = Boolean(layer && isTopDialogLayer(layer))
     releaseLayer()
     rendered.value = false
     phase.value = 'closed'
-    restoreFocus()
+    if (shouldRestoreFocus) restoreFocus()
+    else discardFocusReturn()
   })
 
   return {

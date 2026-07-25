@@ -22,6 +22,7 @@ export const useMfaVerification = (props, emit) => {
     open: computed(() => props.open),
     dialogRef,
     initialFocusRef: verificationInput,
+    returnFocusRef: computed(() => props.returnFocus),
     closeDisabled,
     requestClose: () => {
       emit('cancel')

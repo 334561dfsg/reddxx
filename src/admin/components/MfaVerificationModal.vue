@@ -25,6 +25,10 @@ const props = defineProps({
   errorAttempt: {
     type: Number,
     default: 0
+  },
+  returnFocus: {
+    type: [Object, Function],
+    default: null
   }
 })
 
@@ -48,20 +52,20 @@ const {
 
 <template>
   <Teleport to="body">
-    <Transition name="dialog-overlay" @after-enter="onAfterEnter" @after-leave="onAfterLeave">
+    <Transition name="dialog-overlay" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
       <div
         v-if="rendered"
         v-show="phase !== 'closing'"
-        class="fixed inset-0 flex min-h-[100vh] min-h-[100dvh] w-full items-center justify-center bg-black/50 p-4 sm:p-6"
+        class="fixed inset-0 flex min-h-[100vh] w-full items-center justify-center bg-black/50 p-4 supports-[height:100dvh]:min-h-[100dvh] sm:p-6"
         role="presentation"
         :style="layerStyle"
       >
-        <Transition name="dialog-panel">
+        <Transition name="dialog-panel" appear>
           <section
             v-show="phase !== 'closing'"
             ref="dialogRef"
             data-testid="mfa-dialog-frame"
-            class="flex max-h-[calc(100vh-2rem)] max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-2xl"
+            class="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
             role="dialog"
             aria-modal="true"
             aria-labelledby="mfa-dialog-title"
@@ -69,9 +73,9 @@ const {
           >
             <header class="shrink-0 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-violet-50 px-6 py-4">
               <div class="flex items-center justify-between gap-4">
-                <div>
-                  <h2 id="mfa-dialog-title" class="text-xl font-semibold text-slate-900">{{ displayedDialog.title }}</h2>
-                  <p class="mt-0.5 text-xs text-slate-500">{{ displayedDialog.description }}</p>
+                <div class="min-w-0 flex-1">
+                  <h2 id="mfa-dialog-title" class="break-words text-xl font-semibold text-slate-900">{{ displayedDialog.title }}</h2>
+                  <p class="mt-0.5 break-words text-xs text-slate-500">{{ displayedDialog.description }}</p>
                 </div>
                 <button
                   type="button"

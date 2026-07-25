@@ -17,7 +17,8 @@ const props = defineProps({
   },
   moduleKey: { type: String, default: '' },
   user: { type: Object, default: null },
-  existingRules: { type: Object, default: () => ({}) }
+  existingRules: { type: Object, default: () => ({}) },
+  returnFocus: { type: [Object, Function], default: null }
 })
 
 const emit = defineEmits(['close', 'submit'])
@@ -38,6 +39,7 @@ const {
   open: computed(() => props.open),
   dialogRef,
   initialFocusRef: initialFocusTarget,
+  returnFocusRef: computed(() => props.returnFocus),
   requestClose: () => emit('close')
 })
 
@@ -130,22 +132,24 @@ const formInput = computed(() => ({
 
 const isComplete = computed(() => isUserControlFormComplete(formInput.value))
 
-const resetForm = () => {
-  const existing = props.scope === 'module'
-    ? currentModuleRule.value
-    : Object.values(props.existingRules || {}).find((rule) => rule.strategy)
+const resetForm = (data) => {
+  const openingModule = USER_CONTROL_MODULES.find((item) => item.key === data.moduleKey) || null
+  const openingOptions = getModuleControlOptions(openingModule?.family)
+  const existing = data.scope === 'module'
+    ? data.existingRules?.[data.moduleKey]
+    : Object.values(data.existingRules || {}).find((rule) => rule?.strategy)
 
   form.strategy = existing?.strategy || 'positive'
-  form.value = existing?.value || moduleOptions.value[0]?.value || ''
+  form.value = existing?.value || openingOptions[0]?.value || ''
   form.duration = existing?.duration || 'once'
   form.note = ''
   noteTouched.value = false
 }
 
 watch(
-  () => [props.open, props.scope, props.moduleKey, props.user, props.existingRules],
-  ([open]) => {
-    if (open) resetForm()
+  [() => props.open, dialogData],
+  ([open, data]) => {
+    if (open) resetForm(data)
   },
   { immediate: true, deep: true }
 )
@@ -153,14 +157,14 @@ watch(
 const close = () => requestDialogClose()
 
 const submit = () => {
-  if (!isComplete.value) return
+  if (phase.value !== 'open' || !isComplete.value) return
   emit('submit', buildUserControlPayload(formInput.value))
 }
 </script>
 
 <template>
   <Teleport to="body">
-    <Transition name="dialog-overlay">
+    <Transition name="dialog-overlay" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
       <div
         v-if="rendered"
         v-show="phase !== 'closing'"
@@ -168,31 +172,31 @@ const submit = () => {
         role="presentation"
         :style="layerStyle"
       >
-        <Transition name="dialog-panel" @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
+        <Transition name="dialog-panel" appear>
           <section
             v-show="phase !== 'closing'"
             ref="dialogRef"
             data-testid="user-control-dialog-frame"
-            class="flex max-h-[calc(100vh-1.5rem)] max-h-[calc(100dvh-1.5rem)] w-full max-w-[680px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+            class="flex max-h-[calc(100vh-1.5rem)] w-full max-w-[680px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-1.5rem)]"
             role="dialog"
             aria-modal="true"
             aria-labelledby="user-control-dialog-title"
           >
         <header class="flex shrink-0 items-start justify-between border-b border-slate-200 px-5 py-3">
-          <div>
+          <div class="min-w-0 flex-1">
             <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">
               {{ displayScope === 'global' ? '六模块统一设置' : `${moduleMeta?.label || '当前模块'}独立设置` }}
             </p>
-            <h2 id="user-control-dialog-title" class="mt-0.5 text-lg font-semibold text-slate-900">
+            <h2 id="user-control-dialog-title" class="mt-0.5 break-words text-lg font-semibold text-slate-900">
               {{ displayScope === 'global' ? '设置用户统一控制' : moduleMeta?.actionLabel }}
             </h2>
-            <div data-testid="user-control-target-user" class="mt-0.5 flex flex-wrap gap-x-2 text-sm text-slate-500">
+            <div data-testid="user-control-target-user" class="mt-0.5 flex min-w-0 flex-wrap gap-x-2 break-words text-sm text-slate-500">
               <span>{{ selectedUserName }}</span>
               <span>UID {{ selectedUserId || '—' }}</span>
-              <span>{{ selectedUserEmail }}</span>
+              <span class="break-all">{{ selectedUserEmail }}</span>
             </div>
           </div>
-          <button type="button" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="关闭" @click="close">
+          <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="关闭" @click="close">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -308,7 +312,7 @@ const submit = () => {
           </button>
           <button
             type="button"
-            :disabled="!isComplete"
+            :disabled="phase !== 'open' || !isComplete"
             class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             @click="submit"
           >

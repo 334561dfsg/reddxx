@@ -97,8 +97,16 @@ const {
 })
 const unifiedCancelDialogRef = ref(null)
 const unifiedCancelReturnRef = ref(null)
+const actionMenuTriggerRefs = new Map()
+const controlReturnUserId = ref('')
 
 const userIdOf = (user) => String(user?.userId ?? user?.id ?? '')
+const setActionMenuTriggerRef = (user, element) => {
+  const userId = userIdOf(user)
+  if (element) actionMenuTriggerRefs.set(userId, element)
+  else actionMenuTriggerRefs.delete(userId)
+}
+const resolveControlReturnFocus = () => actionMenuTriggerRefs.get(controlReturnUserId.value) || null
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
 const hasRules = (user) => Object.values(rulesOf(user)).some((rule) => ['active', 'processing'].includes(rule.status))
 const isLocked = (user) => [USER_STATUS.SUSPENDED, USER_STATUS.BANNED].includes(user?.status)
@@ -114,6 +122,7 @@ const {
   open: cancelControlOpen,
   dialogRef: unifiedCancelDialogRef,
   initialFocusRef: unifiedCancelReturnRef,
+  returnFocusRef: resolveControlReturnFocus,
   requestClose: () => { cancelControlOpen.value = false }
 })
 const unifiedCancelDialogData = computed(() => ({
@@ -173,11 +182,13 @@ const toggleActionMenu = (user) => {
 }
 
 const selectControlSetting = (user) => {
+  controlReturnUserId.value = userIdOf(user)
   openActionUserId.value = ''
   openControlSetting(user)
 }
 
 const selectControlCancel = (user) => {
+  controlReturnUserId.value = userIdOf(user)
   openActionUserId.value = ''
   openControlCancel(user)
 }
@@ -506,6 +517,7 @@ const closeDetailDrawer = () => {
               <td class="relative px-4 py-3">
                 <div data-testid="user-point-control-action-menu" class="relative inline-block text-left" @click.stop>
                   <button
+                    :ref="(element) => setActionMenuTriggerRef(user, element)"
                     type="button"
                     class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
                     :aria-expanded="openActionUserId === userIdOf(user)"
@@ -583,6 +595,7 @@ const closeDetailDrawer = () => {
       scope="global"
       :user="controlUser"
       :existing-rules="controlUser ? rulesOf(controlUser) : {}"
+      :return-focus="resolveControlReturnFocus"
       @close="closeControlSetting"
       @submit="submitControlSetting"
     />
@@ -596,14 +609,14 @@ const closeDetailDrawer = () => {
     />
 
     <Teleport to="body">
-      <Transition name="dialog-overlay" @after-enter="onUnifiedCancelAfterEnter" @after-leave="handleUnifiedCancelAfterLeave">
+      <Transition name="dialog-overlay" appear @after-enter="onUnifiedCancelAfterEnter" @after-leave="handleUnifiedCancelAfterLeave">
         <div v-if="unifiedCancelRendered" v-show="unifiedCancelPhase !== 'closing'" class="fixed inset-0 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" :style="unifiedCancelLayerStyle">
-          <Transition name="dialog-panel">
-            <section v-show="unifiedCancelPhase !== 'closing'" ref="unifiedCancelDialogRef" data-testid="unified-user-control-cancel-dialog" class="flex max-h-[calc(100vh-2rem)] max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="unified-user-control-cancel-title">
-              <header class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
-                <div>
-                  <h2 id="unified-user-control-cancel-title" class="text-lg font-semibold text-slate-900">取消统一控制</h2>
-                  <p class="mt-1 text-sm text-slate-500">{{ displayedUnifiedCancelData.user?.username }} · UID {{ userIdOf(displayedUnifiedCancelData.user) }}</p>
+          <Transition name="dialog-panel" appear>
+            <section v-show="unifiedCancelPhase !== 'closing'" ref="unifiedCancelDialogRef" data-testid="unified-user-control-cancel-dialog" class="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="unified-user-control-cancel-title">
+              <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+                <div class="min-w-0 flex-1">
+                  <h2 id="unified-user-control-cancel-title" class="break-words text-lg font-semibold text-slate-900">取消统一控制</h2>
+                  <p class="mt-1 break-words text-sm text-slate-500">{{ displayedUnifiedCancelData.user?.username }} · UID {{ userIdOf(displayedUnifiedCancelData.user) }}</p>
                 </div>
                 <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeControlCancel">×</button>
               </header>
@@ -648,6 +661,7 @@ const closeDetailDrawer = () => {
       :description="mfaDescription"
       :error="mfaError"
       :error-attempt="mfaErrorAttempt"
+      :return-focus="resolveControlReturnFocus"
       @verify="handleMfaVerify"
       @cancel="handleMfaCancel"
     />

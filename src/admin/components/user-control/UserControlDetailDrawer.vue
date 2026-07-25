@@ -13,7 +13,8 @@ const props = defineProps({
   rules: { type: Object, default: () => ({}) },
   ruleHistory: { type: Array, default: () => [] },
   operationLogs: { type: Array, default: () => [] },
-  executionLogs: { type: Array, default: () => [] }
+  executionLogs: { type: Array, default: () => [] },
+  returnFocus: { type: [Object, Function], default: null }
 })
 
 const emit = defineEmits(['close'])
@@ -31,6 +32,7 @@ const {
   open: computed(() => props.open),
   dialogRef,
   initialFocusRef: titleRef,
+  returnFocusRef: computed(() => props.returnFocus),
   requestClose: () => emit('close')
 })
 
@@ -102,17 +104,17 @@ const summaryMeta = computed(() => {
 
 <template>
   <Teleport to="body">
-    <Transition name="dialog-overlay">
+    <Transition name="dialog-overlay" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
       <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 flex justify-end bg-slate-950/40" role="presentation" :style="layerStyle">
-        <Transition name="dialog-drawer" @after-enter="onAfterEnter" @after-leave="onAfterLeave">
+        <Transition name="dialog-drawer" appear>
           <aside v-show="phase !== 'closing'" ref="dialogRef" class="flex h-full w-full max-w-5xl flex-col overflow-hidden bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="user-control-detail-title">
-        <header class="flex items-start justify-between border-b border-slate-200 px-6 py-5">
-          <div>
+        <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-6 py-5">
+          <div class="min-w-0 flex-1">
             <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">六模块统一控制详情</p>
-            <h2 id="user-control-detail-title" ref="titleRef" tabindex="-1" class="mt-1 text-xl font-semibold text-slate-900">{{ user?.username || '用户' }}</h2>
-            <p class="mt-1 text-sm text-slate-500">UID {{ userId || '—' }} · {{ user?.email || '—' }}</p>
+            <h2 id="user-control-detail-title" ref="titleRef" tabindex="-1" class="mt-1 break-words text-xl font-semibold text-slate-900">{{ user?.username || '用户' }}</h2>
+            <p class="mt-1 break-all text-sm text-slate-500">UID {{ userId || '—' }} · {{ user?.email || '—' }}</p>
           </div>
-          <button type="button" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="close">×</button>
+          <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="close">×</button>
         </header>
 
         <div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
