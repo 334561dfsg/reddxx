@@ -2,6 +2,20 @@
 
 These instructions apply to every agent and every change in this repository.
 
+## Responsive and adaptive interaction constraints
+
+All responsive and adaptive work must preserve the same core business capabilities, data results, authorization, validation, error handling, safety confirmations, and status feedback across PC, tablet, and mobile. A low-frequency or secondary capability may be collapsed, collected, or converted into another component, but it must not be removed and must remain discoverable and accessible; do not use `display: none` to hide a capability users still need.
+
+1. Adapt according to available space, content, input capability, and user preference, not device names or User-Agent alone. Choose a breakpoint when content can no longer remain usable, rather than tying it mechanically to a device model. Component form may change without changing business semantics, submission result, default value, or risk level.
+2. A desktop Dialog may become a bottom or full-screen Drawer, and a side Drawer may become a full-width or bottom Drawer. Preserve the title, intentional close path, focus, backdrop, scroll, submission, and error semantics, and apply the applicable Dialog and Drawer constraints. Hover-only information must have click and keyboard access; drag, swipe, long-press, and precision-pointer interactions need a simple click or keyboard alternative.
+3. A breakpoint change, window resize, or orientation change must retain unsubmitted form data, filters, searches, pagination, selections, expanded items, upload progress, and business context. When an open overlay changes form, retain exactly one active instance: no duplicate backdrops, requests, callbacks, focus traps, or scroll locks. Move focus to equivalent content or action, or a reasonable title/first action when no equivalent target remains. Never interrupt a submission, upload, or uninterruptible operation.
+4. Support desktop, laptop, tablet, narrow and landscape phones, low-height viewports, 200% browser zoom, system text enlargement, dynamic browser chrome, virtual keyboard, and all `safe-area-inset-*` directions. Core content and actions must remain reachable without a key flow requiring two-dimensional scrolling. Fixed headers, footers, and floating actions must not fully obscure the focused element, error message, or primary action; dynamic viewport units need a reasonable fallback and scrolling must remain clear and predictable.
+5. Do not assume desktop means mouse-only or mobile means touch-only. Core actions must work with keyboard, mouse, and touch, retain a visible focus indicator, and be usable without precision tapping. Keyboard Focus must expose hover-supplemented information; an interactive floating surface must remain usable when the pointer moves into it.
+6. Prioritize titles, amounts, states, errors, and primary actions. Support long headings, words, translated text, and enlarged fonts without losing meaning or access to an action. Do not convey important information only by icon, placement, color, or hover; use descriptive names for collapsed entries.
+7. For each change, verify the applicable viewport, input, orientation, zoom, virtual keyboard, safe-area, reduced-motion/high-contrast, long-text, and active-state breakpoint cases. Any interaction, input method, or viewport not actually checked must be reported as unverified with the required check; never state that an unperformed check passed.
+
+The full cross-platform standard is [responsive-adaptive.md](https://github.com/gloopai/frontend-product-interaction-standards/blob/main/references/responsive-adaptive.md). Apply it together with the component-specific rules; where compatible rules differ in strictness, follow the stricter rule.
+
 ## Dialog interaction constraints
 
 All dialogs, modals, and dialog-like popups must meet these required acceptance criteria. Preserve them during refactors and verify relevant interactions and viewport sizes; any interaction or viewport behavior not actually tested must be reported as unverified with the required check.
