@@ -118,7 +118,7 @@ test('operation drawer renders grouped actions and explains planned entries with
   assert.match(source, /sm:grid-cols-2/)
 })
 
-test('user list exposes a compact menu and coordinates the complete operation drawer', () => {
+test('user list exposes one-click row actions and coordinates the complete operation drawer', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
 
   assert.match(source, /import UserOperationDrawer/)
@@ -129,8 +129,23 @@ test('user list exposes a compact menu and coordinates the complete operation dr
   assert.match(source, /<UserOperationDrawer/)
   assert.match(source, /@action="handleOperationDrawerAction"/)
   assert.match(source, /@closed="executeDeferredDrawerAction"/)
-  assert.match(source, />资金概况</)
-  assert.match(source, />客服入金</)
-  assert.match(source, />全部操作…</)
-  assert.doesNotMatch(source, /data-testid="user-point-control-action-menu"[\s\S]*?>点控<\/button>/)
+  assert.match(source, /data-testid="user-row-action-bar"/)
+  assert.match(source, />\s*详情<\/button>/)
+  assert.match(source, />\s*资金<\/button>/)
+  assert.match(source, />\s*入金<\/button>/)
+  assert.match(source, />\s*更多\s*<\/button>/)
+  assert.match(source, /data-testid="user-row-action-bar"[^>]*gap-1\.5/)
+  assert.equal((source.match(/class="inline-flex h-8 items-center justify-center rounded-md px-2\.5 text-xs/g) || []).length, 4)
+  assert.doesNotMatch(source, /data-testid="user-point-control-action-menu"/)
+  assert.doesNotMatch(source, /toggleActionMenu/)
+})
+
+test('operation drawer uses compact spacing without shrinking action targets below 44px', () => {
+  const source = read('../src/admin/components/user/UserOperationDrawer.vue')
+
+  assert.match(source, /data-testid="user-operation-drawer-body"[^>]*space-y-5[^>]*px-4[^>]*py-4/)
+  assert.match(source, /class="mb-2 text-sm font-semibold/)
+  assert.match(source, /grid grid-cols-1 gap-2 sm:grid-cols-2/)
+  assert.match(source, /min-h-20[^"\n]*p-3/)
+  assert.match(source, /min-h-11 min-w-11/)
 })

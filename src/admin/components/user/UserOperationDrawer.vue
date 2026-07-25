@@ -81,7 +81,7 @@ const entryClasses = (entry) => ({
             aria-modal="true"
             aria-labelledby="user-operation-drawer-title"
           >
-            <header class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-200 bg-white px-5 pb-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6">
+            <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 bg-white px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5">
               <div class="min-w-0 flex-1">
                 <h2
                   id="user-operation-drawer-title"
@@ -107,7 +107,7 @@ const entryClasses = (entry) => ({
 
             <div
               data-testid="user-operation-drawer-body"
-              class="min-h-0 flex-1 space-y-7 overflow-y-auto px-5 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6"
+              class="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5"
             >
               <p
                 v-if="plannedMessage"
@@ -118,15 +118,15 @@ const entryClasses = (entry) => ({
               </p>
 
               <section v-for="group in operationGroups" :key="group.id" :aria-labelledby="`operation-group-${group.id}`">
-                <h3 :id="`operation-group-${group.id}`" class="mb-3 text-sm font-semibold text-slate-900">
+                <h3 :id="`operation-group-${group.id}`" class="mb-2 text-sm font-semibold text-slate-900">
                   {{ group.label }}
                 </h3>
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <button
                     v-for="entry in group.entries"
                     :key="entry.id"
                     type="button"
-                    class="min-h-24 rounded-xl border p-4 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    class="min-h-20 rounded-lg border p-3 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     :class="entryClasses(entry)"
                     @click="selectEntry(entry)"
                   >

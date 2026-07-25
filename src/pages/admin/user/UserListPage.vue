@@ -74,7 +74,6 @@ const selectedUser = ref(null)
 const controlUser = ref(null)
 const controlModalOpen = ref(false)
 const cancelControlOpen = ref(false)
-const openActionUserId = ref('')
 const operationUser = ref(null)
 const userOperations = ref(null)
 const operationDrawerOpen = ref(false)
@@ -189,31 +188,22 @@ const closeControlSetting = () => {
   if (!mfaOpen.value) controlUser.value = null
 }
 
-const toggleActionMenu = (user) => {
-  const userId = userIdOf(user)
-  openActionUserId.value = openActionUserId.value === userId ? '' : userId
-}
-
 const selectControlSetting = (user) => {
   controlReturnUserId.value = userIdOf(user)
-  openActionUserId.value = ''
   openControlSetting(user)
 }
 
 const selectControlCancel = (user) => {
   controlReturnUserId.value = userIdOf(user)
-  openActionUserId.value = ''
   openControlCancel(user)
 }
 
 const selectUserDetail = (user) => {
-  openActionUserId.value = ''
   openUserDetail(user)
 }
 
 const openOperationDrawer = (user) => {
   controlReturnUserId.value = userIdOf(user)
-  openActionUserId.value = ''
   deferredDrawerAction.value = null
   operationDrawerUser.value = user
   operationDrawerOpen.value = true
@@ -270,7 +260,6 @@ const executeDeferredDrawerAction = async () => {
 }
 
 const openRegularAction = async (user, action) => {
-  openActionUserId.value = ''
   operationUser.value = user
   await nextTick()
   userOperations.value?.open(action)
@@ -584,28 +573,39 @@ const closeDetailDrawer = () => {
                 </span>
               </td>
 
-              <!-- 点控操作下拉菜单 -->
-              <td class="relative px-4 py-3">
-                <div data-testid="user-point-control-action-menu" class="relative inline-block text-left" @click.stop>
+              <!-- 用户快捷操作 -->
+              <td class="px-4 py-3">
+                <div data-testid="user-row-action-bar" class="flex items-center gap-1.5 whitespace-nowrap" @click.stop>
+                  <button
+                    type="button"
+                    class="inline-flex h-8 items-center justify-center rounded-md px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="查看用户详情"
+                    @click="selectUserDetail(user)"
+                  >
+                    详情</button>
+                  <button
+                    type="button"
+                    class="inline-flex h-8 items-center justify-center rounded-md px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="查看资金概况"
+                    @click="selectUserDetail(user)"
+                  >
+                    资金</button>
+                  <button
+                    type="button"
+                    class="inline-flex h-8 items-center justify-center rounded-md px-2.5 text-xs bg-blue-50/70 font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="客服入金"
+                    @click="openRegularAction(user, 'deposit')"
+                  >
+                    入金</button>
                   <button
                     :ref="(element) => setActionMenuTriggerRef(user, element)"
                     type="button"
-                    class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
-                    :aria-expanded="openActionUserId === userIdOf(user)"
-                    @click="toggleActionMenu(user)"
+                    class="inline-flex h-8 items-center justify-center rounded-md px-2.5 text-xs border border-slate-300 bg-white font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="更多用户操作"
+                    @click="openOperationDrawer(user)"
                   >
-                    操作
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" /></svg>
+                    更多
                   </button>
-                  <div v-if="openActionUserId === userIdOf(user)" class="absolute right-0 z-20 mt-2 w-40 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="selectUserDetail(user)">用户详情</button>
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="selectUserDetail(user)">资金概况</button>
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'deposit')">客服入金</button>
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'adjust')">调账</button>
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'freeze')">{{ isLocked(user) ? '解封' : '封户' }}</button>
-                    <div class="my-1 border-t border-slate-100" />
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm font-medium text-blue-600 hover:bg-blue-50" @click="openOperationDrawer(user)">全部操作…</button>
-                  </div>
                 </div>
               </td>
             </tr>
