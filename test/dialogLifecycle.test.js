@@ -177,7 +177,7 @@ test('wraps Tab from a focused static dialog title to the first control', async 
   app.unmount()
 })
 
-test('preserves an opened dialog content snapshot while the parent clears closing props', async () => {
+test('defers a reopened dialog snapshot until the leaving dialog has finished', async () => {
   const open = ref(true)
   const phase = ref('open')
   const source = shallowRef({
@@ -210,6 +210,30 @@ test('preserves an opened dialog content snapshot while the parent clears closin
   assert.deepEqual(snapshot.content.value, {
     user: { username: 'Ada', email: 'ada@example.test' },
     rules: { spot: { value: 'profit', duration: 'permanent' } }
+  })
+
+  open.value = true
+  source.value = {
+    user: { username: 'Bea', email: 'bea@example.test' },
+    rules: { spot: { value: 'loss', duration: 'once' } }
+  }
+  await flushLifecycle()
+
+  assert.deepEqual(snapshot.content.value, {
+    user: { username: 'Ada', email: 'ada@example.test' },
+    rules: { spot: { value: 'profit', duration: 'permanent' } }
+  })
+
+  phase.value = 'opening'
+  await flushLifecycle()
+  phase.value = 'closing'
+  open.value = false
+  source.value = { user: null, rules: {} }
+  await flushLifecycle()
+
+  assert.deepEqual(snapshot.content.value, {
+    user: { username: 'Bea', email: 'bea@example.test' },
+    rules: { spot: { value: 'loss', duration: 'once' } }
   })
   app.unmount()
 })

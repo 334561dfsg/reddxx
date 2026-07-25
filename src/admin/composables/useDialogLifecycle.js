@@ -118,13 +118,14 @@ export const useDialogContentSnapshot = ({ open, phase, source, clone = (value) 
   const snapshot = ref(null)
   const sourceValue = () => unref(source)
   const isOpen = () => Boolean(unref(open))
+  const phaseValue = () => unref(phase)
 
   const capture = () => {
     snapshot.value = clone(sourceValue())
   }
 
-  watch([isOpen, sourceValue], ([nextOpen]) => {
-    if (nextOpen) capture()
+  watch([isOpen, phaseValue, sourceValue], ([nextOpen, nextPhase]) => {
+    if (nextOpen && nextPhase !== 'closing') capture()
   }, { immediate: true, deep: true })
 
   const content = computed(() => (

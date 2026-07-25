@@ -342,6 +342,7 @@ test('point-control setting and detail surfaces use the shared dialog lifecycle 
 
   assert.match(settingSource, /useDialogLifecycle/)
   assert.match(settingSource, /useDialogContentSnapshot/)
+  assert.match(settingSource, /handleAfterLeave/)
   assert.match(settingSource, /aria-labelledby="user-control-dialog-title"/)
   assert.match(settingSource, /id="user-control-dialog-title"/)
   assert.match(settingSource, /ref="firstControlOption"/)
