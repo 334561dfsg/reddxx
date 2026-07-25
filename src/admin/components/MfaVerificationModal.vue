@@ -75,6 +75,7 @@ watch(() => props.loading, (loading, wasLoading) => {
 
 watch(errorMessage, async (message) => {
   if (!message || !props.open) return
+  if (!props.loading) verifyRequested.value = false
   await nextTick()
   errorSummary.value?.focus()
 })

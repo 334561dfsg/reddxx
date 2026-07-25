@@ -324,6 +324,7 @@ test('MFA modal prevents duplicate verification and exposes loading and errors a
   assert.match(mfaSource, /role="alert"/)
   assert.match(mfaSource, /aria-live="assertive"/)
   assert.match(mfaSource, /if \(props\.loading \|\| verifyRequested\.value\) return/)
+  assert.match(mfaSource, /if \(!props\.loading\) verifyRequested\.value = false/)
   assert.match(mfaSource, /:aria-label="loading \? '验证并继续，验证中' : '验证并继续'"/)
   assert.match(mfaSource, /name="dialog-overlay"/)
   assert.match(mfaSource, /name="dialog-panel"/)
