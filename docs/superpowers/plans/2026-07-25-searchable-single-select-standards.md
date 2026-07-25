@@ -44,14 +44,14 @@ Expected: exit 0。
 
 - [ ] **Step 2: 编写完整规范**
 
-规范必须包含：适用范围与排除项、确定性的 `auto` 决策与会话冻结、`inline` displayText/会话快照、`panel`/`drawer` outer/inner ARIA 合约、唯一的 Select-only `none`、active/`aria-selected` 对账、按模式校验归属、Tab/重试与 editable caret 优先级、none 查询暂停、orphaned invalid、disabled 语义，以及 `auto`/`inline`/`panel`/`drawer`/`none` 的完整状态、关闭、异步、布局、Drawer 和验收规则。
+规范必须包含：适用范围与排除项、确定性的 `auto` 决策与会话冻结、`inline` displayText/任意编辑意图/会话快照、`panel`/`drawer` inner `aria-autocomplete="list"` 合约、唯一的 Select-only `none` Space/Enter 提交、active/`aria-selected` 对账、按模式校验归属、Tab/重试与 editable caret 优先级、none 查询暂停、orphaned invalid、disabled 语义、本地即时过滤和可访问 Loading/结果数量/空/错误状态，以及完整验收规则。
 
 - [ ] **Step 3: 验证关键规则存在**
 
 Run:
 
 ```sh
-rg -n 'selectedValue|displayText|orphaned invalid|resolvedPlacement|未过滤|会话|Select-only|aria-haspopup|aria-selected|aria-activedescendant|Tab|Home|End|aria-disabled|aria-readonly|250ms|过期结果|未验证' /Users/evanqi/.codex/skills/frontend-product-interaction-standards/references/selects-comboboxes.md
+rg -n 'displayText|paste|cut|aria-autocomplete="list"|Space.*Enter|本地搜索|Loading|结果数量|空结果|错误|aria-selected|未验证' /Users/evanqi/.codex/skills/frontend-product-interaction-standards/references/selects-comboboxes.md
 ```
 
 Expected: 每类规则均至少一处匹配。
@@ -133,7 +133,7 @@ Expected: 摘要、链接和目录项均存在。
 
 - [ ] **Step 2: 新增 Searchable single-select constraints**
 
-章节至少包含：单选与已有值范围、确定性 `auto`、五种模式、状态/会话、提交边界、外部关闭/Escape/Drawer 关闭、displayText、Select-only type-ahead、按模式 ARIA/校验、active 对账、Tab/重试/caret、查询暂停、本地/异步竞态、orphaned invalid、disabled、PC/Drawer/虚拟列表和未验证项报告。
+章节至少包含：单选与已有值范围、确定性 `auto`、五种模式、状态/会话、提交边界、外部关闭/Escape/Drawer 关闭、displayText 与任意编辑意图、Select-only Space/Enter/type-ahead、按模式 `aria-autocomplete`/校验、active 对账、Tab/重试/caret、查询暂停、本地即时过滤及可访问状态、异步竞态、orphaned invalid、disabled、PC/Drawer/虚拟列表和未验证项报告。
 
 - [ ] **Step 3: 链接完整规范**
 

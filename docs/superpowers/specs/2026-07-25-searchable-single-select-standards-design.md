@@ -10,7 +10,7 @@
 
 此前合法提交值可在刷新后成为 orphaned invalid：保留 raw value 与缓存标签，显示失效；按风险阻止表单提交或要求重选，不得静默清除/替换。重选有效 option 后恢复。
 
-每次打开保存会话快照。`inline` 关闭时显示已提交标签/允许空展示；打开初始化空草稿查询，首次编辑替换标签，后续编辑仅改草稿；提交后显示新标签。外部关闭、Escape、Tab 离开和允许的 Drawer 关闭均丢弃 query/active 草稿、恢复标签，且不触发值变化。
+每次打开保存会话快照。`inline` 关闭时可见输入为已提交标签/允许空展示；打开初始化空草稿查询。可打印、Backspace/Delete、paste/cut 等任意编辑意图都切入 draft query，首次编辑替换标签；草稿期间 selectedValue/displayText 仍为 committed，提交后才更新新标签。外部关闭、Escape、Tab 离开和允许的 Drawer 关闭均丢弃 query/active 草稿、恢复标签，且不触发值变化。
 
 ## 确定性位置解析
 
@@ -27,8 +27,8 @@
 ## 模式、ARIA 与校验归属
 
 - `inline`：主输入为 Editable Combobox，带字段标签、`role="combobox"`、`aria-expanded`、稳定 Listbox `aria-controls`、`aria-autocomplete="list"`、仅 active 已渲染时的 `aria-activedescendant`；必填/失效时分别设置 `aria-required="true"`/`aria-invalid="true"` 并关联选择错误。它承担业务校验。
-- `panel`：外层 disclosure button 展示场景化字段名、当前值和动作名，`aria-expanded`/`aria-controls` 指向 panel container；未直接控制 Listbox 不得写 `aria-haspopup="listbox"`。打开聚焦顶部内层搜索 Combobox；内层在列表可见时 expanded、controls 稳定 Listbox、active descendant 只指 DOM option。外层字段包装/trigger 承担值、必填和选择错误，内层仅承担搜索错误；动画后 collapsed 并返回外层焦点。
-- `drawer`：外层 button 有 `aria-haspopup="dialog"`、`aria-controls` Drawer dialog、`aria-expanded`；打开聚焦固定标题下的内层搜索 Combobox。内层和 panel 相同；外层承担业务校验。Drawer 关闭动画后 collapsed 并返回焦点，执行完整 Drawer 焦点陷阱/滚动/遮罩规则。
+- `panel`：外层 disclosure button 展示场景化字段名、当前值和动作名，`aria-expanded`/`aria-controls` 指向 panel container；未直接控制 Listbox 不得写 `aria-haspopup="listbox"`。打开聚焦顶部内层搜索 Combobox；内层使用 `aria-autocomplete="list"`，在列表可见时 expanded、controls 稳定 Listbox、active descendant 只指 DOM option。外层字段包装/trigger 承担值、必填和选择错误，内层仅承担搜索错误；动画后 collapsed 并返回外层焦点。
+- `drawer`：外层 button 有 `aria-haspopup="dialog"`、`aria-controls` Drawer dialog、`aria-expanded`；打开聚焦固定标题下使用 `aria-autocomplete="list"` 的内层搜索 Combobox。其余内层契约和 panel 相同；外层承担业务校验。Drawer 关闭动画后 collapsed 并返回焦点，执行完整 Drawer 焦点陷阱/滚动/遮罩规则。
 - `none`：只使用 WAI-ARIA Select-only Combobox，不允许 button + Listbox 替代。主 Combobox 有字段标签/值、`role="combobox"`、expanded、controls、隐含或显式 `aria-haspopup="listbox"`、`aria-required="true"`/`aria-invalid="true"` 与关联错误；焦点留在主控件，active descendant 只指 DOM option。
 
 每个搜索输入有场景化可访问名称，不能只靠无上下文占位符。原生元素优先 `disabled`/`readonly`；自绘使用 `aria-disabled`/`aria-readonly` 并阻止交互。disabled option 必须 `aria-disabled="true"` 且导航跳过。
@@ -39,14 +39,14 @@ Listbox 为 `role="listbox"`；options 有稳定 ID、`role="option"`。打开�
 
 query、结果、虚拟渲染或模式变更时按顺序对账 active：仍启用且渲染的 active；否则启用且渲染的 committed；否则首个启用且渲染项；否则 null。切入 `none` 保留查询草稿但暂停过滤、显示全部；同一会话离开 `none` 恢复过滤，关闭会话丢弃草稿。
 
-Editable 模式 Arrow 导航、Enter 提交；Home/End、左右、Backspace/Delete 和平台修饰键保持原生 caret 语义。`none` 可用 Arrow、Home/End 和 type-ahead 移动 active；关闭时 Space/Enter 打开，打开时 Enter 提交（Space 仅在明确定义为同等激活时提交）；Escape 放弃草稿并关闭，Tab 关闭并继续页面顺序。
+Editable 模式 Arrow 导航、Enter 提交；Home/End、左右、Backspace/Delete 和平台修饰键保持原生 caret 语义。`none` 可用 Arrow、Home/End 和 type-ahead 移动 active；关闭时 Space/Enter 打开，打开时 Space/Enter 都提交 active 并关闭；Escape 放弃草稿并关闭，Tab 关闭并继续页面顺序。
 
 ## 关闭、Tab、错误与布局
 
 PC inline 无其他 popup 控件时 Tab 关闭；其重试是输入后相邻、可 Tab 的 composite 按钮，离开整个复合区才关闭。panel Tab 可在搜索、状态、重试间移动，离开复合区才关闭；重试绝不放入 option。Drawer Tab/Shift+Tab 始终在焦点陷阱内，不关闭 Drawer。
 
-PC 弹层锚定 inline Combobox、panel trigger 或 select-only Combobox；非模态、可翻转/Portal、搜索与状态固定、仅 options 滚动。Drawer 搜索位于固定标题下、仅 options 滚动。PC 初开 `150ms ease-out`，关闭 `100ms ease-in`；reduced motion 最多 50ms 无位移。远程搜索约 250ms 防抖，取消/忽略过期结果；失败保持打开、文本错误和可达重试。
+PC 弹层锚定 inline Combobox、panel trigger 或 select-only Combobox；非模态、可翻转/Portal、搜索与状态固定、仅 options 滚动。Drawer 搜索位于固定标题下、仅 options 滚动。PC 初开 `150ms ease-out`，关闭 `100ms ease-in`；reduced motion 最多 50ms 无位移。本地搜索随 query 即时过滤、清空恢复完整结果；Loading、结果数、空结果和错误可访问播报。远程搜索约 250ms 防抖，取消/忽略过期结果；失败保持打开、文本错误和可达重试。
 
 ## 验收
 
-验证显式五模式与 auto 决策记录/冻结/允许转换；inline 文本恢复；panel/drawer outer/inner ARIA、ID、焦点和动画后返回；none select-only 键盘；唯一 aria-selected、active 对账、query 暂停；校验归属；各模式 Tab/重试；editable caret；orphaned invalid；disabled/read-only；本地/远程竞态、虚拟列表、Portal、缩放、虚拟键盘、断点与 reduced motion。未执行项必须标记未验证并说明检查。
+验证显式五模式与 auto 决策记录/冻结/允许转换；inline 任意编辑意图与文本恢复；panel/drawer 内层 `aria-autocomplete="list"`、outer/inner ARIA、ID、焦点和动画后返回；none Space/Enter 提交；唯一 aria-selected、active 对账、query 暂停；校验归属；本地即时过滤和 Loading/结果数/空/错误播报；各模式 Tab/重试；editable caret；orphaned invalid；disabled/read-only；远程竞态、虚拟列表、Portal、缩放、虚拟键盘、断点与 reduced motion。未执行项必须标记未验证并说明检查。
