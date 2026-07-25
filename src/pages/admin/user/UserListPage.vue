@@ -4,7 +4,6 @@ import { getUsers, usersList } from '../../../admin/mock/user'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../../admin/constants/user'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
-import UserControlDetailDrawer from '../../../admin/components/user-control/UserControlDetailDrawer.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -12,9 +11,7 @@ import {
   userControlState
 } from '../../../admin/state/userControlState.js'
 import {
-  getUnifiedControlCancelItems,
-  getUserControlListMeta,
-  summarizeUserControl
+  getUnifiedControlCancelItems
 } from '../../../features/user-control/userControl.js'
 
 // 搜索关键词
@@ -69,8 +66,8 @@ const showDetailDrawer = ref(false)
 const selectedUser = ref(null)
 const controlUser = ref(null)
 const controlModalOpen = ref(false)
-const controlDetailOpen = ref(false)
 const cancelControlOpen = ref(false)
+const openActionUserId = ref('')
 const cancelNote = ref('')
 const mfaOpen = ref(false)
 const mfaLoading = ref(false)
@@ -78,9 +75,7 @@ const pendingMfaAction = ref(null)
 
 const userIdOf = (user) => String(user?.userId ?? user?.id ?? '')
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
-const controlSummary = (user) => summarizeUserControl(userControlState.value, userIdOf(user))
-const controlListMeta = (user) => getUserControlListMeta(userControlState.value, userIdOf(user))
-const hasRules = (user) => controlListMeta(user).hasCurrent
+const hasRules = (user) => Object.values(rulesOf(user)).some((rule) => ['active', 'processing'].includes(rule.status))
 const cancelControlItems = computed(() => getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}))
 
 const controlValueLabel = (value) => ({
@@ -92,19 +87,6 @@ const controlValueLabel = (value) => ({
 
 const controlDurationLabel = (duration) => ({ once: '一次性', permanent: '永久' })[duration] || '—'
 const controlRuleStatusLabel = (status) => ({ active: '当前有效', processing: '处理中' })[status] || status
-
-const controlUpdatedAt = (user) => Object.values(rulesOf(user))
-  .map((rule) => rule.updatedAt)
-  .filter(Boolean)
-  .sort()
-  .at(-1) || '—'
-
-const summaryClasses = (user) => ({
-  none: 'bg-slate-100 text-slate-600',
-  synced: 'bg-emerald-100 text-emerald-700',
-  progress: 'bg-blue-100 text-blue-700',
-  divergent: 'bg-amber-100 text-amber-700'
-})[controlSummary(user).kind]
 
 const formatTime = (date = new Date()) => {
   const pad = (value) => String(value).padStart(2, '0')
@@ -123,14 +105,19 @@ const closeControlSetting = () => {
   if (!mfaOpen.value) controlUser.value = null
 }
 
-const openControlDetail = (user) => {
-  controlUser.value = user
-  controlDetailOpen.value = true
+const toggleActionMenu = (user) => {
+  const userId = userIdOf(user)
+  openActionUserId.value = openActionUserId.value === userId ? '' : userId
 }
 
-const closeControlDetail = () => {
-  controlDetailOpen.value = false
-  controlUser.value = null
+const selectControlSetting = (user) => {
+  openActionUserId.value = ''
+  openControlSetting(user)
+}
+
+const selectControlCancel = (user) => {
+  openActionUserId.value = ''
+  openControlCancel(user)
 }
 
 const applyControl = (payload) => {
@@ -344,7 +331,7 @@ const closeDetailDrawer = () => {
     <!-- 用户表格 -->
     <div v-else-if="!loading && users.length > 0" class="rounded-xl border border-slate-200 bg-white overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[1760px]">
+        <table class="w-full min-w-[1320px]">
           <thead class="bg-slate-50 border-b border-slate-200">
             <tr>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
@@ -356,15 +343,7 @@ const closeDetailDrawer = () => {
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">状态</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">上级</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600">
-                <span class="uppercase tracking-wider">统一控制</span>
-                <span class="mt-1 block whitespace-nowrap text-[11px] font-normal text-slate-400">
-                  正向：交易盈利、理财高收益<br />负向：交易亏损、理财低收益
-                </span>
-              </th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">生效方式</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">模块状态</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">更新时间</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">是否点控中</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
             </tr>
           </thead>
@@ -450,43 +429,30 @@ const closeDetailDrawer = () => {
                 <span v-else class="text-xs text-slate-400">-</span>
               </td>
 
-              <!-- 统一用户控制 -->
+              <!-- 用户点控状态 -->
               <td class="px-4 py-3">
-                <span class="text-sm font-medium" :class="hasRules(user) ? 'text-slate-900' : 'text-slate-400'">
-                  {{ controlListMeta(user).controlLabel }}
+                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="hasRules(user) ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'">
+                  {{ hasRules(user) ? '是' : '否' }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-sm text-slate-600">{{ controlListMeta(user).durationLabel }}</td>
-              <td class="px-4 py-3">
-                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="summaryClasses(user)">
-                  {{ controlSummary(user).label }}
-                </span>
-              </td>
-              <td class="px-4 py-3 text-xs text-slate-500">{{ controlUpdatedAt(user) }}</td>
 
-              <!-- 操作按钮 -->
-              <td class="px-4 py-3">
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 whitespace-nowrap text-sm font-medium">
-                  <button type="button" class="text-slate-600 hover:text-slate-900" @click.stop="openUserDetail(user)">用户资料</button>
-                  <button type="button" class="text-blue-600 hover:text-blue-800" @click.stop="openControlDetail(user)">控制详情</button>
-                  <button type="button" class="text-blue-600 hover:text-blue-800" @click.stop="openControlSetting(user)">
-                    {{ hasRules(user) ? '修改控制' : '设置控制' }}
-                  </button>
+              <!-- 点控操作下拉菜单 -->
+              <td class="relative px-4 py-3">
+                <div data-testid="user-point-control-action-menu" class="relative inline-block text-left" @click.stop>
                   <button
                     type="button"
-                    :disabled="!hasRules(user)"
-                    class="text-rose-600 hover:text-rose-800 disabled:cursor-not-allowed disabled:text-slate-300"
-                    @click.stop="openControlCancel(user)"
+                    class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    :aria-expanded="openActionUserId === userIdOf(user)"
+                    @click="toggleActionMenu(user)"
                   >
-                    取消控制
+                    操作
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" /></svg>
                   </button>
-                  <RouterLink
-                    :to="{ name: 'users-control-log', query: { userId: userIdOf(user) } }"
-                    class="text-slate-600 hover:text-slate-900"
-                    @click.stop
-                  >
-                    控制日志
-                  </RouterLink>
+                  <div v-if="openActionUserId === userIdOf(user)" class="absolute right-0 z-20 mt-2 w-32 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
+                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="selectControlSetting(user)">点控</button>
+                    <button type="button" :disabled="!hasRules(user)" class="block w-full px-3 py-2 text-left text-sm text-rose-600 hover:bg-rose-50 disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:bg-white" @click="selectControlCancel(user)">取消点控</button>
+                    <RouterLink :to="{ name: 'users-control-log', query: { userId: userIdOf(user) } }" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="openActionUserId = ''">点控日志</RouterLink>
+                  </div>
                 </div>
               </td>
             </tr>
@@ -547,16 +513,6 @@ const closeDetailDrawer = () => {
       :existing-rules="controlUser ? rulesOf(controlUser) : {}"
       @close="closeControlSetting"
       @submit="submitControlSetting"
-    />
-
-    <UserControlDetailDrawer
-      :open="controlDetailOpen"
-      :user="controlUser"
-      :rules="controlUser ? rulesOf(controlUser) : {}"
-      :rule-history="userControlState.ruleHistory"
-      :operation-logs="userControlState.operationLogs"
-      :execution-logs="userControlState.executionLogs"
-      @close="closeControlDetail"
     />
 
     <Teleport to="body">

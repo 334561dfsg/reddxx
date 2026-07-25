@@ -93,18 +93,21 @@ test('module page omits rejected demo and finance helper copy', () => {
   assert.doesNotMatch(source, /用户收益调节只在目标用户实际收益入账或最终结算时生效；预估收益变化不会消费一次性规则。/)
 })
 
-test('user list exposes unified status and scoped actions', () => {
+test('user list reduces point control to one status column and one three-item menu', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
-  assert.match(source, /统一控制/)
-  assert.match(source, /正向：交易盈利、理财高收益/)
-  assert.match(source, /负向：交易亏损、理财低收益/)
-  assert.match(source, /模块状态/)
-  assert.match(source, /设置控制/)
-  assert.match(source, /取消控制/)
-  assert.match(source, /UserControlDetailDrawer/)
+  const menu = elementByTestId(source, 'user-point-control-action-menu')
+
+  assert.match(source, /是否点控中/)
+  assert.match(source, /hasRules\(user\) \? '是' : '否'/)
+  assert.doesNotMatch(source, />统一控制</)
+  assert.doesNotMatch(source, />生效方式</)
+  assert.doesNotMatch(source, />模块状态</)
+  assert.doesNotMatch(source, />更新时间</)
+  assert.match(menu, />点控</)
+  assert.match(menu, />取消点控</)
+  assert.match(menu, />点控日志</)
+  assert.doesNotMatch(menu, /用户资料|控制详情|设置控制|修改控制|取消控制|控制日志/)
   assert.match(source, /MfaVerificationModal/)
-  assert.equal(source.match(/@click\.stop=/g)?.length, 4)
-  assert.match(source, /getUserControlListMeta/)
   assert.match(source, /getUnifiedControlCancelItems/)
   assert.match(source, /v-for="item in cancelControlItems"/)
 })
@@ -122,15 +125,12 @@ test('detail drawer distinguishes progress from configuration divergence', () =>
 
 test('detail drawer receives and renders superseded rule history with its timestamp', () => {
   const drawerSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
-  const listSource = read('../src/pages/admin/user/UserListPage.vue')
   const history = elementByTestId(drawerSource, 'user-control-superseded-history')
-  const drawerUsage = listSource.match(/<UserControlDetailDrawer[\s\S]*?\/>/)?.[0] || ''
 
   assert.notEqual(history, '')
   assert.match(history, /supersededRules/)
   assert.match(history, /supersededAt/)
   assert.match(history, /已覆盖/)
-  assert.match(drawerUsage, /:rule-history="userControlState\.ruleHistory"/)
 })
 
 test('log page presents operation and execution records in one point-control list', () => {
