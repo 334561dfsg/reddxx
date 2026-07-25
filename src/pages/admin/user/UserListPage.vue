@@ -561,15 +561,15 @@ const closeDetailDrawer = () => {
 
     <Teleport to="body">
       <div v-if="cancelControlOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" @mousedown.self="closeControlCancel">
-        <section class="w-full max-w-md rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="取消统一用户控制">
-          <header class="border-b border-slate-200 px-6 py-5">
+        <section data-testid="unified-user-control-cancel-dialog" class="w-full max-w-md rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="取消统一用户控制">
+          <header class="border-b border-slate-200 px-5 py-4">
             <h2 class="text-lg font-semibold text-slate-900">取消统一控制</h2>
             <p class="mt-1 text-sm text-slate-500">{{ controlUser?.username }} · UID {{ userIdOf(controlUser) }}</p>
           </header>
-          <div class="space-y-4 px-6 py-5">
+          <div class="space-y-3 px-5 py-4">
             <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
               <p class="font-medium">将取消以下 {{ cancelControlItems.length }} 个当前有效模块</p>
-              <ul class="mt-2 space-y-2" aria-label="待取消模块规则">
+              <ul class="mt-2 space-y-1" aria-label="待取消模块规则">
                 <li v-for="item in cancelControlItems" :key="item.moduleKey" class="flex items-center justify-between gap-3 rounded-md bg-white/70 px-3 py-2">
                   <span class="font-medium">{{ item.moduleLabel }}</span>
                   <span class="text-right text-xs text-amber-800">
@@ -581,13 +581,13 @@ const closeDetailDrawer = () => {
             </div>
             <label class="block">
               <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
-              <textarea v-model="cancelNote" rows="3" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+              <textarea v-model="cancelNote" rows="2" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
               <span class="mt-1 block text-xs" :class="cancelNote.trim() ? 'text-slate-500' : 'text-rose-600'">
                 {{ cancelNote.trim() ? '确认后还需完成 MFA 验证' : '取消备注必填' }}
               </span>
             </label>
           </div>
-          <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+          <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
             <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeControlCancel">返回</button>
             <button type="button" :disabled="!cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmControlCancel">
               继续 MFA 验证

@@ -25,12 +25,12 @@ test('registers the unified user-control log route', () => {
   assert.equal(route.path, 'users/control-log')
 })
 
-test('adds trading control and finance yield-control labels to module menus', () => {
+test('adds trading control and finance point-control labels to module menus', () => {
   const byTitle = Object.fromEntries(navTree.map((item) => [item.title, item]))
   assert.ok(byTitle['永续合约'].children.some((item) => item.title === '用户控盘'))
   assert.ok(byTitle['交割合约'].children.some((item) => item.title === '用户控盘'))
   assert.ok(byTitle['现货交易'].children.some((item) => item.title === '用户控盘'))
-  assert.ok(byTitle['AI量化交易'].children.some((item) => item.title === '用户收益调节'))
-  assert.ok(byTitle['流动性挖矿'].children.some((item) => item.title === '用户收益调节'))
-  assert.ok(byTitle['投资组合'].children.some((item) => item.title === '用户收益调节'))
+  assert.ok(byTitle['AI量化交易'].children.some((item) => item.title === '用户点控'))
+  assert.ok(byTitle['流动性挖矿'].children.some((item) => item.title === '用户点控'))
+  assert.ok(byTitle['投资组合'].children.some((item) => item.title === '用户点控'))
 })

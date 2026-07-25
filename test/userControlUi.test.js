@@ -213,3 +213,17 @@ test('user and module rows link to the named log route with query filters', () =
   assert.match(userSource, /name:\s*'users-control-log'[\s\S]*query:\s*\{\s*userId:/)
   assert.match(moduleSource, /name:\s*'users-control-log'[\s\S]*query:\s*\{\s*userId:[\s\S]*module:/)
 })
+
+test('shared setting modal uses compact spacing and omits the rejected module helper', () => {
+  const source = read('../src/admin/components/user-control/UserControlModal.vue')
+  assert.match(source, /max-w-xl/)
+  assert.match(source, /space-y-3 px-5 py-4/)
+  assert.doesNotMatch(source, /本次操作只影响当前模块，其他五个模块的用户规则保持不变。/)
+})
+
+test('module and unified cancel dialogs use compact spacing', () => {
+  const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
+  const userSource = read('../src/pages/admin/user/UserListPage.vue')
+  assert.match(moduleSource, /data-testid="module-user-control-cancel-dialog"[\s\S]*?px-5 py-4/)
+  assert.match(userSource, /data-testid="unified-user-control-cancel-dialog"[\s\S]*?px-5 py-4/)
+})

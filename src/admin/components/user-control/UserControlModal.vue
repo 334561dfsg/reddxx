@@ -117,12 +117,12 @@ const submit = () => {
       @mousedown.self="close"
     >
       <section
-        class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+        class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
         role="dialog"
         aria-modal="true"
         :aria-label="scope === 'global' ? '统一用户控制设置' : `${moduleMeta?.label || ''}用户控制设置`"
       >
-        <header class="flex items-start justify-between border-b border-slate-200 px-6 py-5">
+        <header class="flex items-start justify-between border-b border-slate-200 px-5 py-4">
           <div>
             <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">
               {{ scope === 'global' ? '六模块统一设置' : `${moduleMeta?.label || '当前模块'}独立设置` }}
@@ -143,18 +143,14 @@ const submit = () => {
           </button>
         </header>
 
-        <div class="space-y-5 px-6 py-5">
-          <div v-if="scope === 'module'" class="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-            本次操作只影响当前模块，其他五个模块的用户规则保持不变。
-          </div>
-
-          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div class="space-y-3 px-5 py-4">
+          <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
             <p class="text-xs font-medium text-slate-500">现有规则</p>
             <p class="mt-1 text-sm font-medium text-slate-800">{{ existingSummary }}</p>
             <p
               v-if="scope === 'global'"
               data-testid="user-control-global-atomic-warning"
-              class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800"
+              class="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800"
             >
               保存会覆盖该用户在六个模块中的现有规则；任一模块设置失败，六个模块全部保持原状态。
             </p>
@@ -162,14 +158,14 @@ const submit = () => {
 
           <fieldset>
             <legend class="text-sm font-semibold text-slate-900">控制方向</legend>
-            <div v-if="scope === 'global'" class="mt-3 grid gap-3 sm:grid-cols-2">
+            <div v-if="scope === 'global'" class="mt-2 grid gap-2 sm:grid-cols-2">
               <label
                 v-for="option in [
                   { value: 'positive', label: '正向控制', desc: '交易盈利、理财高收益' },
                   { value: 'negative', label: '负向控制', desc: '交易亏损、理财低收益' }
                 ]"
                 :key="option.value"
-                class="cursor-pointer rounded-xl border p-4 transition"
+                class="cursor-pointer rounded-xl border p-3 transition"
                 :class="form.strategy === option.value ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500' : 'border-slate-200 hover:border-slate-300'"
               >
                 <span class="flex items-center gap-2">
@@ -180,11 +176,11 @@ const submit = () => {
               </label>
             </div>
 
-            <div v-else class="mt-3 grid gap-3 sm:grid-cols-2">
+            <div v-else class="mt-2 grid gap-2 sm:grid-cols-2">
               <label
                 v-for="option in moduleOptions"
                 :key="option.value"
-                class="cursor-pointer rounded-xl border p-4 transition"
+                class="cursor-pointer rounded-xl border p-3 transition"
                 :class="form.value === option.value ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500' : 'border-slate-200 hover:border-slate-300'"
               >
                 <span class="flex items-center gap-2">
@@ -196,12 +192,12 @@ const submit = () => {
             </div>
           </fieldset>
 
-          <div v-if="scope === 'global'" class="grid gap-3 md:grid-cols-2">
-            <div class="rounded-lg border border-slate-200 p-3">
+          <div v-if="scope === 'global'" class="grid gap-2 sm:grid-cols-2">
+            <div class="rounded-lg border border-slate-200 p-2">
               <p class="text-xs text-slate-500">交易类效果</p>
               <p class="font-medium text-slate-900">{{ form.strategy === 'positive' ? '盈利' : '亏损' }}</p>
             </div>
-            <div class="rounded-lg border border-slate-200 p-3">
+            <div class="rounded-lg border border-slate-200 p-2">
               <p class="text-xs text-slate-500">理财类效果</p>
               <p class="font-medium text-slate-900">{{ form.strategy === 'positive' ? '高收益' : '低收益' }}</p>
             </div>
@@ -209,14 +205,14 @@ const submit = () => {
 
           <fieldset>
             <legend class="text-sm font-semibold text-slate-900">生效方式</legend>
-            <div class="mt-3 grid gap-3 sm:grid-cols-2">
+            <div class="mt-2 grid gap-2 sm:grid-cols-2">
               <label
                 v-for="option in [
                   { value: 'once', label: '一次性', desc: '下一次符合条件的结算成功后自动结束' },
                   { value: 'permanent', label: '永久', desc: '持续作用于后续有效结算，直至取消或覆盖' }
                 ]"
                 :key="option.value"
-                class="cursor-pointer rounded-xl border p-4 transition"
+                class="cursor-pointer rounded-xl border p-3 transition"
                 :class="form.duration === option.value ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500' : 'border-slate-200 hover:border-slate-300'"
               >
                 <span class="flex items-center gap-2">
@@ -230,7 +226,7 @@ const submit = () => {
 
           <div>
             <p class="text-sm font-semibold text-slate-900">影响模块</p>
-            <div class="mt-2 flex flex-wrap gap-2">
+            <div class="mt-1 flex flex-wrap gap-2">
               <span v-for="item in affectedModules" :key="item.key" class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
                 {{ item.label }}
               </span>
@@ -259,7 +255,7 @@ const submit = () => {
           </label>
         </div>
 
-        <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+        <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-4">
           <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" @click="close">
             取消
           </button>

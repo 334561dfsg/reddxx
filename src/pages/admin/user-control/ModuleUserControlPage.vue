@@ -313,21 +313,21 @@ const resetFilters = () => {
 
     <Teleport to="body">
       <div v-if="cancelOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" @mousedown.self="closeCancel">
-        <section class="w-full max-w-md rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="取消当前模块用户规则">
-          <header class="border-b border-slate-200 px-6 py-5">
+        <section data-testid="module-user-control-cancel-dialog" class="w-full max-w-md rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="取消当前模块用户规则">
+          <header class="border-b border-slate-200 px-5 py-4">
             <h2 class="text-lg font-semibold text-slate-900">取消{{ moduleMeta.label }}用户规则</h2>
             <p class="mt-1 text-sm text-slate-500">{{ selectedUser?.username }} · UID {{ userIdOf(selectedUser) }}</p>
           </header>
-          <div class="space-y-4 px-6 py-5">
+          <div class="space-y-3 px-5 py-4">
             <p class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               本次操作只影响当前模块，其他模块规则继续生效。
             </p>
             <label class="block">
               <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
-              <textarea v-model="cancelNote" rows="3" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+              <textarea v-model="cancelNote" rows="2" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
             </label>
           </div>
-          <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+          <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
             <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeCancel">返回</button>
             <button type="button" :disabled="!cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmCancel">
               确认取消
