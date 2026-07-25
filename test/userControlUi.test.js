@@ -335,3 +335,23 @@ test('module and unified cancel dialogs use compact spacing', () => {
   assert.match(moduleSource, /data-testid="module-user-control-cancel-dialog"[\s\S]*?px-5 py-4/)
   assert.match(userSource, /data-testid="unified-user-control-cancel-dialog"[\s\S]*?px-5 py-4/)
 })
+
+test('point-control setting and detail surfaces use the shared dialog lifecycle contracts', () => {
+  const settingSource = read('../src/admin/components/user-control/UserControlModal.vue')
+  const detailSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
+
+  assert.match(settingSource, /useDialogLifecycle/)
+  assert.match(settingSource, /aria-labelledby="user-control-dialog-title"/)
+  assert.match(settingSource, /id="user-control-dialog-title"/)
+  assert.match(settingSource, /ref="firstControlOption"/)
+  assert.match(settingSource, /v-if="rendered"/)
+  assert.match(settingSource, /name="dialog-overlay"/)
+  assert.match(settingSource, /name="dialog-panel"/)
+  assert.doesNotMatch(settingSource, /@click\.self|@mousedown\.self|backdrop-click/)
+
+  assert.match(detailSource, /useDialogLifecycle/)
+  assert.match(detailSource, /aria-labelledby="user-control-detail-title"/)
+  assert.match(detailSource, /id="user-control-detail-title"[^>]*tabindex="-1"/)
+  assert.match(detailSource, /name="dialog-drawer"/)
+  assert.doesNotMatch(detailSource, /@click\.self|@mousedown\.self|backdrop-click/)
+})

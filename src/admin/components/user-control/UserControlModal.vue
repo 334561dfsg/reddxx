@@ -6,6 +6,7 @@ import {
   getModuleControlOptions,
   isUserControlFormComplete
 } from '../../../features/user-control/userControlForm.js'
+import { useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -20,6 +21,25 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'submit'])
+
+const dialogRef = ref(null)
+const firstControlOption = ref(null)
+const initialFocusTarget = computed(() => Array.isArray(firstControlOption.value)
+  ? firstControlOption.value[0]
+  : firstControlOption.value)
+const {
+  rendered,
+  phase,
+  layerStyle,
+  requestDialogClose,
+  onAfterEnter,
+  onAfterLeave
+} = useDialogLifecycle({
+  open: computed(() => props.open),
+  dialogRef,
+  initialFocusRef: initialFocusTarget,
+  requestClose: () => emit('close')
+})
 
 const form = reactive({
   strategy: '',
@@ -100,7 +120,7 @@ watch(
   { immediate: true, deep: true }
 )
 
-const close = () => emit('close')
+const close = () => requestDialogClose()
 
 const submit = () => {
   if (!isComplete.value) return
@@ -110,24 +130,30 @@ const submit = () => {
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="open"
-      class="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/50 p-3 sm:items-center"
-      role="presentation"
-    >
-      <section
-        data-testid="user-control-dialog-frame"
-        class="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[680px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
-        role="dialog"
-        aria-modal="true"
-        :aria-label="scope === 'global' ? '统一用户控制设置' : `${moduleMeta?.label || ''}用户控制设置`"
+    <Transition name="dialog-overlay">
+      <div
+        v-if="rendered"
+        v-show="phase !== 'closing'"
+        class="fixed inset-0 flex items-start justify-center bg-slate-950/50 p-3 sm:items-center"
+        role="presentation"
+        :style="layerStyle"
       >
+        <Transition name="dialog-panel" @after-enter="onAfterEnter" @after-leave="onAfterLeave">
+          <section
+            v-show="phase !== 'closing'"
+            ref="dialogRef"
+            data-testid="user-control-dialog-frame"
+            class="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[680px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="user-control-dialog-title"
+          >
         <header class="flex shrink-0 items-start justify-between border-b border-slate-200 px-5 py-3">
           <div>
             <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">
               {{ scope === 'global' ? '六模块统一设置' : `${moduleMeta?.label || '当前模块'}独立设置` }}
             </p>
-            <h2 class="mt-0.5 text-lg font-semibold text-slate-900">
+            <h2 id="user-control-dialog-title" class="mt-0.5 text-lg font-semibold text-slate-900">
               {{ scope === 'global' ? '设置用户统一控制' : moduleMeta?.actionLabel }}
             </h2>
             <div data-testid="user-control-target-user" class="mt-0.5 flex flex-wrap gap-x-2 text-sm text-slate-500">
@@ -160,7 +186,7 @@ const submit = () => {
             <legend class="text-sm font-semibold text-slate-900">控制方向</legend>
             <div v-if="scope === 'global'" class="mt-1.5 grid gap-2 sm:grid-cols-2">
               <label
-                v-for="option in [
+                v-for="(option, index) in [
                   { value: 'positive', label: '正向控制', desc: '交易盈利、理财高收益' },
                   { value: 'negative', label: '负向控制', desc: '交易亏损、理财低收益' }
                 ]"
@@ -169,7 +195,8 @@ const submit = () => {
                 :class="form.strategy === option.value ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500' : 'border-slate-200 hover:border-slate-300'"
               >
                 <span class="flex items-center gap-2">
-                  <input v-model="form.strategy" type="radio" name="strategy" :value="option.value" class="text-blue-600 focus:ring-blue-500" />
+                  <input v-if="index === 0" ref="firstControlOption" v-model="form.strategy" type="radio" name="strategy" :value="option.value" class="text-blue-600 focus:ring-blue-500" />
+                  <input v-else v-model="form.strategy" type="radio" name="strategy" :value="option.value" class="text-blue-600 focus:ring-blue-500" />
                   <span class="font-medium text-slate-900">{{ option.label }}</span>
                 </span>
                 <span class="mt-0.5 block pl-6 text-xs text-slate-500">{{ option.desc }}</span>
@@ -178,13 +205,14 @@ const submit = () => {
 
             <div v-else class="mt-1.5 grid gap-2 sm:grid-cols-2">
               <label
-                v-for="option in moduleOptions"
+                v-for="(option, index) in moduleOptions"
                 :key="option.value"
                 class="cursor-pointer rounded-xl border p-2.5 transition"
                 :class="form.value === option.value ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500' : 'border-slate-200 hover:border-slate-300'"
               >
                 <span class="flex items-center gap-2">
-                  <input v-model="form.value" type="radio" name="value" :value="option.value" class="text-blue-600 focus:ring-blue-500" />
+                  <input v-if="index === 0" ref="firstControlOption" v-model="form.value" type="radio" name="value" :value="option.value" class="text-blue-600 focus:ring-blue-500" />
+                  <input v-else v-model="form.value" type="radio" name="value" :value="option.value" class="text-blue-600 focus:ring-blue-500" />
                   <span class="font-medium text-slate-900">{{ option.label }}</span>
                 </span>
                 <span class="mt-0.5 block pl-6 text-xs text-slate-500">{{ option.description }}</span>
@@ -257,7 +285,9 @@ const submit = () => {
             确认设置
           </button>
         </footer>
-      </section>
-    </div>
+          </section>
+        </Transition>
+      </div>
+    </Transition>
   </Teleport>
 </template>

@@ -1,10 +1,11 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import {
   getUserControlDivergenceKeys,
   summarizeUserControl,
   USER_CONTROL_MODULES
 } from '../../../features/user-control/userControl.js'
+import { useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -16,6 +17,24 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
+
+const dialogRef = ref(null)
+const titleRef = ref(null)
+const {
+  rendered,
+  phase,
+  layerStyle,
+  requestDialogClose,
+  onAfterEnter,
+  onAfterLeave
+} = useDialogLifecycle({
+  open: computed(() => props.open),
+  dialogRef,
+  initialFocusRef: titleRef,
+  requestClose: () => emit('close')
+})
+
+const close = () => requestDialogClose()
 
 const userId = computed(() => String(props.user?.userId ?? props.user?.id ?? ''))
 const summary = computed(() => summarizeUserControl({ rules: { [userId.value]: props.rules } }, userId.value))
@@ -83,18 +102,20 @@ const summaryMeta = computed(() => {
 
 <template>
   <Teleport to="body">
-    <div v-if="open" class="fixed inset-0 z-50 flex justify-end bg-slate-950/40">
-      <aside class="flex h-full w-full max-w-5xl flex-col overflow-hidden bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="用户控制详情">
+    <Transition name="dialog-overlay">
+      <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 flex justify-end bg-slate-950/40" role="presentation" :style="layerStyle">
+        <Transition name="dialog-drawer" @after-enter="onAfterEnter" @after-leave="onAfterLeave">
+          <aside v-show="phase !== 'closing'" ref="dialogRef" class="flex h-full w-full max-w-5xl flex-col overflow-hidden bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="user-control-detail-title">
         <header class="flex items-start justify-between border-b border-slate-200 px-6 py-5">
           <div>
             <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">六模块统一控制详情</p>
-            <h2 class="mt-1 text-xl font-semibold text-slate-900">{{ user?.username || '用户' }}</h2>
+            <h2 id="user-control-detail-title" ref="titleRef" tabindex="-1" class="mt-1 text-xl font-semibold text-slate-900">{{ user?.username || '用户' }}</h2>
             <p class="mt-1 text-sm text-slate-500">UID {{ userId || '—' }} · {{ user?.email || '—' }}</p>
           </div>
-          <button type="button" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="emit('close')">×</button>
+          <button type="button" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="close">×</button>
         </header>
 
-        <div class="flex-1 space-y-5 overflow-y-auto px-6 py-5">
+        <div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
           <section class="rounded-xl border p-4" :class="summaryMeta.classes">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <p class="font-semibold">模块状态：{{ summary.label }}</p>
@@ -183,7 +204,9 @@ const summaryMeta = computed(() => {
             <p v-else class="mt-2 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400">暂无操作记录</p>
           </section>
         </div>
-      </aside>
-    </div>
+          </aside>
+        </Transition>
+      </div>
+    </Transition>
   </Teleport>
 </template>
