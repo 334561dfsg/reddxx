@@ -7,6 +7,7 @@ import { createSfcHarness, loadVueSfc } from './helpers/vueSfcHarness.js'
 const projectFile = (path) => resolve(process.cwd(), path)
 const rechargeDrawerFile = projectFile('src/admin/components/user/UserRechargeSummaryDrawer.vue')
 const mutationDialogFile = projectFile('src/admin/components/user/UserMembershipMutationDialog.vue')
+const reviewDrawerFile = projectFile('src/admin/components/user/UserCreditReviewDrawer.vue')
 
 const user = { id: 'user_1004', username: 'user_chen', vipLevel: 1 }
 const summary = {
@@ -176,4 +177,57 @@ test('membership mutation Dialog follows modal, select-choice, and responsive co
   assert.match(source, /prefers-reduced-motion: reduce/)
   assert.match(source, /transition-duration: 50ms/)
   assert.match(source, /transform: none/)
+})
+
+const reviews = [
+  { id: 'r-pending', userId: user.id, beforeScore: 680, proposedScore: 695, delta: 15, reason: '补充核验完成', applicantName: '风控专员', appliedAt: '2026-07-23T09:20:00.000Z', status: 'pending' },
+  { id: 'r-approved', userId: user.id, beforeScore: 650, proposedScore: 680, delta: 30, reason: '历史恢复', applicantName: '审核员', appliedAt: '2026-06-01T09:20:00.000Z', status: 'approved', decisionNote: '通过' }
+]
+
+test('credit review Drawer keeps pending first and emits the selected review with its trigger', async (t) => {
+  const component = await loadVueSfc(reviewDrawerFile)
+  const selections = []
+  const harness = await createSfcHarness(component, { visible: true, user, reviews: [...reviews].reverse(), busy: false }, {
+    onSelectReview: (selection) => selections.push(selection)
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const frame = harness.findByTestId('user-credit-review-drawer')
+  assert.ok(frame)
+  assert.equal(frame.getAttribute('aria-modal'), 'true')
+  assert.match(frame.textContent, /待审核 1/)
+  assert.ok(frame.textContent.indexOf('补充核验完成') < frame.textContent.indexOf('历史恢复'))
+
+  const action = harness.findByText('处理审核', 'button')
+  assert.ok(action)
+  action.click()
+  assert.equal(selections.length, 1)
+  assert.equal(selections[0].review.id, 'r-pending')
+  assert.equal(selections[0].returnFocus, action)
+})
+
+test('credit review Drawer filters status without mutating input and follows Drawer safeguards', async (t) => {
+  const component = await loadVueSfc(reviewDrawerFile)
+  const input = [...reviews]
+  const harness = await createSfcHarness(component, { visible: true, user, reviews: input, busy: false })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  harness.findByText('已处理', 'button').click()
+  await harness.flush()
+  const frame = harness.findByTestId('user-credit-review-drawer')
+  assert.doesNotMatch(frame.textContent, /补充核验完成/)
+  assert.match(frame.textContent, /历史恢复/)
+  assert.deepEqual(input, reviews)
+
+  const source = await readFile(reviewDrawerFile, 'utf8')
+  assert.match(source, /data-testid="user-credit-review-body"[^>]*overflow-y-auto/)
+  assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
+  assert.match(source, /closeDisabled/)
+  assert.match(source, /translateX\(100%\)/)
+  assert.match(source, /200ms ease-out/)
+  assert.match(source, /150ms ease-in/)
+  assert.match(source, /prefers-reduced-motion: reduce/)
+  assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
 })
