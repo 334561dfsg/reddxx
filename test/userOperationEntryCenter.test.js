@@ -73,6 +73,17 @@ test('operation catalog distinguishes implemented and planned actions', () => {
   assert.equal(getUserOperationEntry('adjust', { status: 'active' }), null)
   assert.equal(getUserOperationEntry('freeze-funds', { status: 'active' }).status, 'planned')
   assert.equal(getUserOperationEntry('deduct-funds', { status: 'active' }).risk, 'danger')
+  assert.equal(getUserOperationEntry('vip-level', { status: 'active' }).status, 'planned')
+  assert.equal(getUserOperationEntry('credit-adjust', { status: 'active' }).status, 'planned')
+})
+
+test('combined VIP and credit adjustment is removed from active operation paths', () => {
+  const operationsSource = read('../src/admin/components/user/UserOperations.vue')
+  const listSource = read('../src/pages/admin/user/UserListPage.vue')
+
+  assert.doesNotMatch(operationsSource, /UserAdjustAction/)
+  assert.doesNotMatch(operationsSource, /adjustAction/)
+  assert.doesNotMatch(listSource, /adjust:\s*'adjust'/)
 })
 
 test('account lock wording changes without moving the action', () => {

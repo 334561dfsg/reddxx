@@ -292,7 +292,6 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
 
   const regularActions = {
     'freeze-account': 'freeze',
-    adjust: 'adjust',
     deposit: 'deposit',
     transfer: 'transfer'
   }
