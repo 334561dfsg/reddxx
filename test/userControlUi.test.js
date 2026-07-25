@@ -357,3 +357,41 @@ test('point-control setting and detail surfaces use the shared dialog lifecycle 
   assert.match(detailSource, /name="dialog-drawer"/)
   assert.doesNotMatch(detailSource, /@click\.self|@mousedown\.self|backdrop-click/)
 })
+
+test('point-control cancellation dialogs retain their layer, focus target, and closing content', () => {
+  const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
+  const unifiedSource = read('../src/pages/admin/user/UserListPage.vue')
+
+  for (const [source, rendered, dialogRef, returnRef, title] of [
+    [moduleSource, 'moduleCancelRendered', 'moduleCancelDialogRef', 'moduleCancelReturnRef', 'module-user-control-cancel-title'],
+    [unifiedSource, 'unifiedCancelRendered', 'unifiedCancelDialogRef', 'unifiedCancelReturnRef', 'unified-user-control-cancel-title']
+  ]) {
+    assert.match(source, /useDialogLifecycle/)
+    assert.match(source, /useDialogContentSnapshot/)
+    assert.match(source, new RegExp(`v-if="${rendered}"`))
+    assert.match(source, /name="dialog-overlay"/)
+    assert.match(source, /name="dialog-panel"/)
+    assert.match(source, new RegExp(`ref="${dialogRef}"`))
+    assert.match(source, new RegExp(`aria-labelledby="${title}"`))
+    assert.match(source, new RegExp(`id="${title}"`))
+    assert.match(source, new RegExp(`ref="${returnRef}"`))
+    assert.doesNotMatch(source, /@mousedown\.self="(?:closeCancel|closeControlCancel)"|@click\.self="(?:closeCancel|closeControlCancel)"/)
+  }
+
+  assert.match(moduleSource, /data-testid="module-user-control-cancel-dialog"[^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
+  assert.match(moduleSource, /data-testid="module-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
+  assert.match(unifiedSource, /data-testid="unified-user-control-cancel-dialog"[^>]*max-h-\[calc\(100vh-2rem\)\][^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
+  assert.match(unifiedSource, /data-testid="unified-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
+})
+
+test('unified cancellation waits for leave before it opens MFA', () => {
+  const source = read('../src/pages/admin/user/UserListPage.vue')
+  const confirm = source.slice(
+    source.indexOf('const confirmControlCancel = () => {'),
+    source.indexOf('const handleMfaVerify = () => {')
+  )
+
+  assert.match(confirm, /pendingMfaAction\.value = \{ type: 'cancel', payload \}/)
+  assert.doesNotMatch(confirm, /requestMfa\(\{ type: 'cancel', payload \}\)/)
+  assert.match(confirm, /const handleUnifiedCancelAfterLeave = \(\) => \{[\s\S]*?onUnifiedCancelAfterLeave\(\)[\s\S]*?mfaOpen\.value = true/)
+})

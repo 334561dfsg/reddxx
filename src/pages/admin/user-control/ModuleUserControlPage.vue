@@ -11,6 +11,7 @@ import {
   filterUserControlRows,
   USER_CONTROL_MODULES
 } from '../../../features/user-control/userControl.js'
+import { useDialogContentSnapshot, useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
 
 const props = defineProps({
   moduleKey: { type: String, required: true }
@@ -24,12 +25,42 @@ const modalOpen = ref(false)
 const cancelOpen = ref(false)
 const selectedUser = ref(null)
 const cancelNote = ref('')
+const moduleCancelDialogRef = ref(null)
+const moduleCancelReturnRef = ref(null)
 
 const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key === props.moduleKey) || {
   key: props.moduleKey,
   label: '未知模块',
   family: 'trade',
   actionLabel: '用户点控'
+})
+
+const {
+  rendered: moduleCancelRendered,
+  phase: moduleCancelPhase,
+  layerStyle: moduleCancelLayerStyle,
+  requestDialogClose: requestModuleCancelClose,
+  onAfterEnter: onModuleCancelAfterEnter,
+  onAfterLeave: onModuleCancelAfterLeave
+} = useDialogLifecycle({
+  open: cancelOpen,
+  dialogRef: moduleCancelDialogRef,
+  initialFocusRef: moduleCancelReturnRef,
+  requestClose: () => { cancelOpen.value = false }
+})
+
+const moduleCancelDialogData = computed(() => ({
+  user: selectedUser.value ? { ...selectedUser.value } : null,
+  moduleLabel: moduleMeta.value.label
+}))
+const { content: displayedModuleCancelData, clear: clearModuleCancelSnapshot } = useDialogContentSnapshot({
+  open: cancelOpen,
+  phase: moduleCancelPhase,
+  source: moduleCancelDialogData,
+  clone: (data) => ({
+    user: data.user ? { ...data.user } : null,
+    moduleLabel: data.moduleLabel
+  })
 })
 
 const valueOptions = computed(() => moduleMeta.value.family === 'finance'
@@ -134,19 +165,18 @@ const submitSetting = (payload) => {
 }
 
 const openCancel = (user) => {
+  if (moduleCancelPhase.value !== 'closed') return
   selectedUser.value = user
   cancelNote.value = ''
   cancelOpen.value = true
 }
 
 const closeCancel = () => {
-  cancelOpen.value = false
-  cancelNote.value = ''
-  selectedUser.value = null
+  requestModuleCancelClose()
 }
 
 const confirmCancel = () => {
-  if (!selectedUser.value || !cancelNote.value.trim()) return
+  if (moduleCancelPhase.value !== 'open' || !selectedUser.value || !cancelNote.value.trim()) return
   const sequence = nextSequence()
   cancelSingleModuleControl({
     userId: userIdOf(selectedUser.value),
@@ -156,6 +186,15 @@ const confirmCancel = () => {
     operationId: `demo-cancel-${props.moduleKey}-${sequence}`
   })
   closeCancel()
+}
+
+const handleModuleCancelAfterLeave = () => {
+  onModuleCancelAfterLeave()
+  if (moduleCancelPhase.value === 'closed') {
+    cancelNote.value = ''
+    selectedUser.value = null
+    clearModuleCancelSnapshot()
+  }
 }
 
 const resetFilters = () => {
@@ -302,29 +341,55 @@ const resetFilters = () => {
     />
 
     <Teleport to="body">
-      <div v-if="cancelOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
-        <section data-testid="module-user-control-cancel-dialog" class="flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="取消当前模块用户规则">
-          <header class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-lg font-semibold text-slate-900">取消{{ moduleMeta.label }}用户规则</h2>
-            <p class="mt-1 text-sm text-slate-500">{{ selectedUser?.username }} · UID {{ userIdOf(selectedUser) }}</p>
-          </header>
-          <div data-testid="module-user-control-cancel-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
-            <p class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-              本次操作只影响当前模块，其他模块规则继续生效。
-            </p>
-            <label class="block">
-              <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
-              <textarea v-model="cancelNote" rows="2" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
-            </label>
-          </div>
-          <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-            <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeCancel">返回</button>
-            <button type="button" :disabled="!cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmCancel">
-              确认取消
-            </button>
-          </footer>
-        </section>
-      </div>
+      <Transition name="dialog-overlay" @after-enter="onModuleCancelAfterEnter" @after-leave="handleModuleCancelAfterLeave">
+        <div v-if="moduleCancelRendered" v-show="moduleCancelPhase !== 'closing'" class="fixed inset-0 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" :style="moduleCancelLayerStyle">
+          <Transition name="dialog-panel">
+            <section v-show="moduleCancelPhase !== 'closing'" ref="moduleCancelDialogRef" data-testid="module-user-control-cancel-dialog" class="flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="module-user-control-cancel-title">
+              <header class="border-b border-slate-200 px-5 py-4">
+                <h2 id="module-user-control-cancel-title" class="text-lg font-semibold text-slate-900">取消{{ displayedModuleCancelData.moduleLabel }}用户规则</h2>
+                <p class="mt-1 text-sm text-slate-500">{{ displayedModuleCancelData.user?.username }} · UID {{ userIdOf(displayedModuleCancelData.user) }}</p>
+              </header>
+              <div data-testid="module-user-control-cancel-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+                <p class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  本次操作只影响当前模块，其他模块规则继续生效。
+                </p>
+                <label class="block">
+                  <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
+                  <textarea v-model="cancelNote" rows="2" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                </label>
+              </div>
+              <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
+                <button ref="moduleCancelReturnRef" type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeCancel">返回</button>
+                <button type="button" :disabled="moduleCancelPhase !== 'open' || !cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmCancel">
+                  确认取消
+                </button>
+              </footer>
+            </section>
+          </Transition>
+        </div>
+      </Transition>
     </Teleport>
   </section>
 </template>
+
+<style scoped>
+.dialog-overlay-enter-active { transition: opacity 200ms ease-out; }
+.dialog-overlay-leave-active { transition: opacity 150ms ease-in; }
+.dialog-panel-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.dialog-panel-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.dialog-overlay-enter-from,
+.dialog-overlay-leave-to,
+.dialog-panel-enter-from,
+.dialog-panel-leave-to { opacity: 0; }
+.dialog-panel-enter-from,
+.dialog-panel-leave-to { transform: scale(0.96); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog-overlay-enter-active,
+  .dialog-overlay-leave-active,
+  .dialog-panel-enter-active,
+  .dialog-panel-leave-active { transition-duration: 50ms; }
+  .dialog-panel-enter-from,
+  .dialog-panel-leave-to { transform: none; }
+}
+</style>

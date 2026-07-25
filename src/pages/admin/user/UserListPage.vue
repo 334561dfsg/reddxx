@@ -14,6 +14,7 @@ import {
 import {
   getUnifiedControlCancelItems
 } from '../../../features/user-control/userControl.js'
+import { useDialogContentSnapshot, useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
 
 // 搜索关键词
 const searchKeyword = ref('')
@@ -75,12 +76,38 @@ const cancelNote = ref('')
 const mfaOpen = ref(false)
 const mfaLoading = ref(false)
 const pendingMfaAction = ref(null)
+const unifiedCancelDialogRef = ref(null)
+const unifiedCancelReturnRef = ref(null)
 
 const userIdOf = (user) => String(user?.userId ?? user?.id ?? '')
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
 const hasRules = (user) => Object.values(rulesOf(user)).some((rule) => ['active', 'processing'].includes(rule.status))
 const isLocked = (user) => [USER_STATUS.SUSPENDED, USER_STATUS.BANNED].includes(user?.status)
 const cancelControlItems = computed(() => getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}))
+const {
+  rendered: unifiedCancelRendered,
+  phase: unifiedCancelPhase,
+  layerStyle: unifiedCancelLayerStyle,
+  requestDialogClose: requestUnifiedCancelClose,
+  onAfterEnter: onUnifiedCancelAfterEnter,
+  onAfterLeave: onUnifiedCancelAfterLeave
+} = useDialogLifecycle({
+  open: cancelControlOpen,
+  dialogRef: unifiedCancelDialogRef,
+  initialFocusRef: unifiedCancelReturnRef,
+  requestClose: () => { cancelControlOpen.value = false }
+})
+const unifiedCancelDialogData = computed(() => ({
+  user: controlUser.value ? { ...controlUser.value } : null
+}))
+const { content: displayedUnifiedCancelData, clear: clearUnifiedCancelSnapshot } = useDialogContentSnapshot({
+  open: cancelControlOpen,
+  phase: unifiedCancelPhase,
+  source: unifiedCancelDialogData,
+  clone: (data) => ({
+    user: data.user ? { ...data.user } : null
+  })
+})
 const operationAssets = computed(() => {
   const user = operationUser.value
   if (!user) return null
@@ -174,27 +201,40 @@ const submitControlSetting = (payload) => {
 }
 
 const openControlCancel = (user) => {
+  if (unifiedCancelPhase.value !== 'closed') return
   controlUser.value = user
   cancelNote.value = ''
   cancelControlOpen.value = true
 }
 
 const closeControlCancel = () => {
-  cancelControlOpen.value = false
-  cancelNote.value = ''
-  controlUser.value = null
+  requestUnifiedCancelClose()
 }
 
 const confirmControlCancel = () => {
-  if (!controlUser.value || !cancelControlItems.value.length || !cancelNote.value.trim()) return
+  if (unifiedCancelPhase.value !== 'open' || !controlUser.value || !cancelControlItems.value.length || !cancelNote.value.trim()) return
   const payload = {
     userId: userIdOf(controlUser.value),
     note: cancelNote.value.trim(),
     now: formatTime(),
     operationId: `demo-global-cancel-${nextSequence()}`
   }
-  cancelControlOpen.value = false
-  requestMfa({ type: 'cancel', payload })
+  pendingMfaAction.value = { type: 'cancel', payload }
+  closeControlCancel()
+}
+
+const handleUnifiedCancelAfterLeave = () => {
+  const shouldOpenMfa = pendingMfaAction.value?.type === 'cancel'
+  onUnifiedCancelAfterLeave()
+  if (unifiedCancelPhase.value === 'closed') {
+    cancelNote.value = ''
+    clearUnifiedCancelSnapshot()
+    if (shouldOpenMfa) {
+      mfaOpen.value = true
+    } else {
+      controlUser.value = null
+    }
+  }
 }
 
 const handleMfaVerify = () => {
@@ -561,42 +601,46 @@ const closeDetailDrawer = () => {
     />
 
     <Teleport to="body">
-      <div v-if="cancelControlOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
-        <section data-testid="unified-user-control-cancel-dialog" class="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="取消统一用户控制">
-          <header class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-lg font-semibold text-slate-900">取消统一控制</h2>
-            <p class="mt-1 text-sm text-slate-500">{{ controlUser?.username }} · UID {{ userIdOf(controlUser) }}</p>
-          </header>
-          <div data-testid="unified-user-control-cancel-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
-            <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
-              <p class="font-medium">将取消以下 {{ cancelControlItems.length }} 个当前有效模块</p>
-              <ul v-if="cancelControlItems.length" class="mt-2 space-y-1" aria-label="待取消模块规则">
-                <li v-for="item in cancelControlItems" :key="item.moduleKey" class="flex items-center justify-between gap-3 rounded-md bg-white/70 px-3 py-2">
-                  <span class="font-medium">{{ item.moduleLabel }}</span>
-                  <span class="text-right text-xs text-amber-800">
-                    {{ controlValueLabel(item.value) }} · {{ controlDurationLabel(item.duration) }} · {{ controlRuleStatusLabel(item.status) }}
+      <Transition name="dialog-overlay" @after-enter="onUnifiedCancelAfterEnter" @after-leave="handleUnifiedCancelAfterLeave">
+        <div v-if="unifiedCancelRendered" v-show="unifiedCancelPhase !== 'closing'" class="fixed inset-0 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" :style="unifiedCancelLayerStyle">
+          <Transition name="dialog-panel">
+            <section v-show="unifiedCancelPhase !== 'closing'" ref="unifiedCancelDialogRef" data-testid="unified-user-control-cancel-dialog" class="flex max-h-[calc(100vh-2rem)] max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="unified-user-control-cancel-title">
+              <header class="border-b border-slate-200 px-5 py-4">
+                <h2 id="unified-user-control-cancel-title" class="text-lg font-semibold text-slate-900">取消统一控制</h2>
+                <p class="mt-1 text-sm text-slate-500">{{ displayedUnifiedCancelData.user?.username }} · UID {{ userIdOf(displayedUnifiedCancelData.user) }}</p>
+              </header>
+              <div data-testid="unified-user-control-cancel-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+                <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
+                  <p class="font-medium">将取消以下 {{ cancelControlItems.length }} 个当前有效模块</p>
+                  <ul v-if="cancelControlItems.length" class="mt-2 space-y-1" aria-label="待取消模块规则">
+                    <li v-for="item in cancelControlItems" :key="item.moduleKey" class="flex items-center justify-between gap-3 rounded-md bg-white/70 px-3 py-2">
+                      <span class="font-medium">{{ item.moduleLabel }}</span>
+                      <span class="text-right text-xs text-amber-800">
+                        {{ controlValueLabel(item.value) }} · {{ controlDurationLabel(item.duration) }} · {{ controlRuleStatusLabel(item.status) }}
+                      </span>
+                    </li>
+                  </ul>
+                  <p v-else class="mt-2 text-sm text-amber-800">当前没有可取消的模块</p>
+                  <p v-if="cancelControlItems.length" class="mt-2 text-xs text-amber-700">已执行、已取消和已覆盖的历史记录会保留。</p>
+                </div>
+                <label class="block">
+                  <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
+                  <textarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100" />
+                  <span class="mt-1 block text-xs" :class="cancelNote.trim() ? 'text-slate-500' : 'text-rose-600'">
+                    {{ cancelNote.trim() ? '确认后还需完成 MFA 验证' : '取消备注必填' }}
                   </span>
-                </li>
-              </ul>
-              <p v-else class="mt-2 text-sm text-amber-800">当前没有可取消的模块</p>
-              <p v-if="cancelControlItems.length" class="mt-2 text-xs text-amber-700">已执行、已取消和已覆盖的历史记录会保留。</p>
-            </div>
-            <label class="block">
-              <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
-              <textarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100" />
-              <span class="mt-1 block text-xs" :class="cancelNote.trim() ? 'text-slate-500' : 'text-rose-600'">
-                {{ cancelNote.trim() ? '确认后还需完成 MFA 验证' : '取消备注必填' }}
-              </span>
-            </label>
-          </div>
-          <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-            <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeControlCancel">返回</button>
-            <button type="button" :disabled="!cancelControlItems.length || !cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmControlCancel">
-              继续 MFA 验证
-            </button>
-          </footer>
-        </section>
-      </div>
+                </label>
+              </div>
+              <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
+                <button ref="unifiedCancelReturnRef" type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeControlCancel">返回</button>
+                <button type="button" :disabled="unifiedCancelPhase !== 'open' || !cancelControlItems.length || !cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmControlCancel">
+                  继续 MFA 验证
+                </button>
+              </footer>
+            </section>
+          </Transition>
+        </div>
+      </Transition>
     </Teleport>
 
     <MfaVerificationModal
@@ -609,3 +653,25 @@ const closeDetailDrawer = () => {
     />
   </section>
 </template>
+
+<style scoped>
+.dialog-overlay-enter-active { transition: opacity 200ms ease-out; }
+.dialog-overlay-leave-active { transition: opacity 150ms ease-in; }
+.dialog-panel-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.dialog-panel-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.dialog-overlay-enter-from,
+.dialog-overlay-leave-to,
+.dialog-panel-enter-from,
+.dialog-panel-leave-to { opacity: 0; }
+.dialog-panel-enter-from,
+.dialog-panel-leave-to { transform: scale(0.96); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog-overlay-enter-active,
+  .dialog-overlay-leave-active,
+  .dialog-panel-enter-active,
+  .dialog-panel-leave-active { transition-duration: 50ms; }
+  .dialog-panel-enter-from,
+  .dialog-panel-leave-to { transform: none; }
+}
+</style>
