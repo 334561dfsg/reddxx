@@ -112,25 +112,25 @@ const submit = () => {
   <Teleport to="body">
     <div
       v-if="open"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4"
+      class="fixed inset-0 z-50 flex items-start justify-center overflow-auto bg-slate-950/50 p-3 sm:items-center"
       role="presentation"
       @mousedown.self="close"
     >
       <section
-        class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+        class="w-full max-w-[680px] rounded-2xl bg-white shadow-2xl"
         role="dialog"
         aria-modal="true"
         :aria-label="scope === 'global' ? '统一用户控制设置' : `${moduleMeta?.label || ''}用户控制设置`"
       >
-        <header class="flex items-start justify-between border-b border-slate-200 px-5 py-4">
+        <header class="flex items-start justify-between border-b border-slate-200 px-5 py-3">
           <div>
             <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">
               {{ scope === 'global' ? '六模块统一设置' : `${moduleMeta?.label || '当前模块'}独立设置` }}
             </p>
-            <h2 class="mt-1 text-xl font-semibold text-slate-900">
+            <h2 class="mt-0.5 text-lg font-semibold text-slate-900">
               {{ scope === 'global' ? '设置用户统一控制' : moduleMeta?.actionLabel }}
             </h2>
-            <div data-testid="user-control-target-user" class="mt-1 flex flex-wrap gap-x-2 text-sm text-slate-500">
+            <div data-testid="user-control-target-user" class="mt-0.5 flex flex-wrap gap-x-2 text-sm text-slate-500">
               <span>{{ selectedUserName }}</span>
               <span>UID {{ selectedUserId || '—' }}</span>
               <span>{{ selectedUserEmail }}</span>
@@ -143,14 +143,14 @@ const submit = () => {
           </button>
         </header>
 
-        <div class="space-y-3 px-5 py-4">
-          <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <div class="space-y-2.5 px-5 py-3">
+          <div class="rounded-xl border border-slate-200 bg-slate-50 p-2.5">
             <p class="text-xs font-medium text-slate-500">现有规则</p>
-            <p class="mt-1 text-sm font-medium text-slate-800">{{ existingSummary }}</p>
+            <p class="mt-0.5 text-sm font-medium text-slate-800">{{ existingSummary }}</p>
             <p
               v-if="scope === 'global'"
               data-testid="user-control-global-atomic-warning"
-              class="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800"
+              class="mt-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs leading-4 text-amber-800"
             >
               保存会覆盖该用户在六个模块中的现有规则；任一模块设置失败，六个模块全部保持原状态。
             </p>
@@ -158,76 +158,65 @@ const submit = () => {
 
           <fieldset>
             <legend class="text-sm font-semibold text-slate-900">控制方向</legend>
-            <div v-if="scope === 'global'" class="mt-2 grid gap-2 sm:grid-cols-2">
+            <div v-if="scope === 'global'" class="mt-1.5 grid gap-2 sm:grid-cols-2">
               <label
                 v-for="option in [
                   { value: 'positive', label: '正向控制', desc: '交易盈利、理财高收益' },
                   { value: 'negative', label: '负向控制', desc: '交易亏损、理财低收益' }
                 ]"
                 :key="option.value"
-                class="cursor-pointer rounded-xl border p-3 transition"
+                class="cursor-pointer rounded-xl border p-2.5 transition"
                 :class="form.strategy === option.value ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500' : 'border-slate-200 hover:border-slate-300'"
               >
                 <span class="flex items-center gap-2">
                   <input v-model="form.strategy" type="radio" name="strategy" :value="option.value" class="text-blue-600 focus:ring-blue-500" />
                   <span class="font-medium text-slate-900">{{ option.label }}</span>
                 </span>
-                <span class="mt-1 block pl-6 text-xs text-slate-500">{{ option.desc }}</span>
+                <span class="mt-0.5 block pl-6 text-xs text-slate-500">{{ option.desc }}</span>
               </label>
             </div>
 
-            <div v-else class="mt-2 grid gap-2 sm:grid-cols-2">
+            <div v-else class="mt-1.5 grid gap-2 sm:grid-cols-2">
               <label
                 v-for="option in moduleOptions"
                 :key="option.value"
-                class="cursor-pointer rounded-xl border p-3 transition"
+                class="cursor-pointer rounded-xl border p-2.5 transition"
                 :class="form.value === option.value ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500' : 'border-slate-200 hover:border-slate-300'"
               >
                 <span class="flex items-center gap-2">
                   <input v-model="form.value" type="radio" name="value" :value="option.value" class="text-blue-600 focus:ring-blue-500" />
                   <span class="font-medium text-slate-900">{{ option.label }}</span>
                 </span>
-                <span class="mt-1 block pl-6 text-xs text-slate-500">{{ option.description }}</span>
+                <span class="mt-0.5 block pl-6 text-xs text-slate-500">{{ option.description }}</span>
               </label>
             </div>
           </fieldset>
 
-          <div v-if="scope === 'global'" class="grid gap-2 sm:grid-cols-2">
-            <div class="rounded-lg border border-slate-200 p-2">
-              <p class="text-xs text-slate-500">交易类效果</p>
-              <p class="font-medium text-slate-900">{{ form.strategy === 'positive' ? '盈利' : '亏损' }}</p>
-            </div>
-            <div class="rounded-lg border border-slate-200 p-2">
-              <p class="text-xs text-slate-500">理财类效果</p>
-              <p class="font-medium text-slate-900">{{ form.strategy === 'positive' ? '高收益' : '低收益' }}</p>
-            </div>
-          </div>
-
           <fieldset>
             <legend class="text-sm font-semibold text-slate-900">生效方式</legend>
-            <div class="mt-2 grid gap-2 sm:grid-cols-2">
+            <div class="mt-1.5 grid gap-2 sm:grid-cols-2">
               <label
                 v-for="option in [
                   { value: 'once', label: '一次性', desc: '下一次符合条件的结算成功后自动结束' },
                   { value: 'permanent', label: '永久', desc: '持续作用于后续有效结算，直至取消或覆盖' }
                 ]"
                 :key="option.value"
-                class="cursor-pointer rounded-xl border p-3 transition"
+                class="cursor-pointer rounded-xl border p-2.5 transition"
                 :class="form.duration === option.value ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500' : 'border-slate-200 hover:border-slate-300'"
               >
                 <span class="flex items-center gap-2">
                   <input v-model="form.duration" type="radio" name="duration" :value="option.value" class="text-blue-600 focus:ring-blue-500" />
                   <span class="font-medium text-slate-900">{{ option.label }}</span>
                 </span>
-                <span class="mt-1 block pl-6 text-xs text-slate-500">{{ option.desc }}</span>
+                <span class="mt-0.5 block pl-6 text-xs text-slate-500">{{ option.desc }}</span>
               </label>
             </div>
           </fieldset>
 
           <div>
             <p class="text-sm font-semibold text-slate-900">影响模块</p>
-            <div class="mt-1 flex flex-wrap gap-2">
-              <span v-for="item in affectedModules" :key="item.key" class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+            <div class="mt-1 flex flex-wrap gap-1.5">
+              <span v-for="item in affectedModules" :key="item.key" class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
                 {{ item.label }}
               </span>
             </div>
@@ -237,10 +226,10 @@ const submit = () => {
             <span class="text-sm font-semibold text-slate-900">操作备注 <span class="text-rose-500">*</span></span>
             <textarea
               v-model="form.note"
-              rows="3"
+              rows="2"
               maxlength="200"
               placeholder="请说明设置原因，便于后续审计"
-              class="mt-2 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
+              class="mt-1.5 w-full rounded-lg border px-3 py-1.5 text-sm outline-none focus:ring-2"
               :class="noteTouched && !form.note.trim() ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100'"
               :aria-invalid="noteTouched && !form.note.trim()"
               aria-describedby="user-control-note-help"
@@ -255,7 +244,7 @@ const submit = () => {
           </label>
         </div>
 
-        <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-4">
+        <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
           <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" @click="close">
             取消
           </button>

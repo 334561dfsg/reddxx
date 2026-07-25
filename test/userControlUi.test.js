@@ -222,10 +222,16 @@ test('user and module rows link to the named log route with query filters', () =
   assert.match(moduleSource, /name:\s*'users-control-log'[\s\S]*query:\s*\{\s*userId:[\s\S]*module:/)
 })
 
-test('shared setting modal uses compact spacing and omits the rejected module helper', () => {
+test('shared setting modal fits without internal scrolling and keeps result copy compact', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
-  assert.match(source, /max-w-xl/)
-  assert.match(source, /space-y-3 px-5 py-4/)
+  assert.match(source, /max-w-\[680px\]/)
+  assert.doesNotMatch(source, /overflow-y-auto/)
+  assert.match(source, /space-y-2\.5 px-5 py-3/)
+  assert.match(source, /rows="2"/)
+  assert.match(source, /交易盈利、理财高收益/)
+  assert.match(source, /交易亏损、理财低收益/)
+  assert.doesNotMatch(source, />交易类效果</)
+  assert.doesNotMatch(source, />理财类效果</)
   assert.doesNotMatch(source, /本次操作只影响当前模块，其他五个模块的用户规则保持不变。/)
 })
 
