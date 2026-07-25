@@ -62,11 +62,11 @@ Selecting a pending record opens a decision Dialog above the Drawer. The Dialog 
 
 ### Credit adjustment Dialog
 
-Stage one contains increase/decrease, positive integer points, and a required reason. Stage two previews current score, exact delta, and resulting score. The least destructive action receives focus on confirmation. “提交并验证” opens a dedicated MFA layer; success refreshes the list row, operation Drawer user, and active snapshot before closing the business Dialog.
+Stage one contains increase/decrease, positive integer points, and a required reason. Increase/decrease is a two-option native radio group with a visible group label; it is not represented as a Select. Stage two previews current score, exact delta, and resulting score. The least destructive action receives focus on confirmation. “提交并验证” opens a dedicated MFA layer; success refreshes the list row, operation Drawer user, and active snapshot before closing the business Dialog.
 
 ### VIP level Dialog
 
-Stage one shows the current level and enabled target levels with names and concise benefits. The current level cannot be selected as a change. Stage two states whether this is an upgrade or downgrade, displays changed benefits, and repeats the required reason. MFA success refreshes `vipLevel`, `isVip`, and every active user snapshot.
+Stage one shows the current level and enabled target levels with names and concise benefits. Because the enabled set is small, stable, and does not need search, targets use a visible native radio-card group rather than an old native `<select>` or a searchable Combobox. The group has a visible label, native disabled/current states, keyboard access, and a textual validation message. If the product later exceeds the small stable option set or requires search, it must migrate to the current Select/Combobox standard with deterministic `searchPlacement`; it must not grow an ad-hoc search field. The current level cannot be selected as a change. Stage two states whether this is an upgrade or downgrade, displays changed benefits, and repeats the required reason. MFA success refreshes `vipLevel`, `isVip`, and every active user snapshot.
 
 ### Cumulative recharge Drawer
 
@@ -90,6 +90,7 @@ The MFA flow dispatches exactly one repository command by action type. During MF
 - Dialogs open with overlay fade plus `scale(0.96)` over `200ms ease-out` and close over `150ms ease-in`. Right Drawers use the matching right-edge translation. Reduced motion removes scale/translation and uses at most `50ms` fades.
 - Use `role="dialog"`, `aria-modal="true"`, visible titles with `aria-labelledby`, initial focus, focus trap, top-layer Escape, focus return after leave, background inertness, and scroll locking through close animation.
 - Use dynamic viewport units with `vh` fallbacks and safe-area padding. At narrow widths, forms become one column without removing fields or actions. At 200% zoom, low-height viewports, and with a virtual keyboard, the body remains scrollable and focused controls remain reachable.
+- Do not use legacy native `<select>` elements or ad-hoc searchable dropdowns for this batch. The two small stable choices are native radio groups. Any future Select/Combobox must implement the latest `selectedValue`/`query`/`activeOption` state separation, deterministic placement, stable ARIA IDs, committed-value preservation, keyboard behavior, and orphaned-invalid handling.
 
 ## Testing and acceptance
 

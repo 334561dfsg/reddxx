@@ -19,6 +19,7 @@
 - Preserve focus trap, topmost-only Escape, inert lower layers, scroll lock, and return focus until the closing animation completes.
 - Write operations validate before mutation, are atomic, require MFA, prevent duplicate execution, and append an audit row. Failures keep the active surface open and focus a textual error.
 - Support `vh` fallback plus dynamic viewport units, safe-area padding, narrow single-column forms, low-height viewports, virtual keyboards, and 200% zoom.
+- Credit direction and the six small stable VIP targets use visible native radio groups, not legacy `<select>` elements or ad-hoc searchable dropdowns. Any later Select/Combobox must follow the latest deterministic placement and committed-value/draft/active-state standard.
 - Use test-first RED → GREEN cycles. Do not modify production files before the corresponding failing test is observed.
 
 ---
@@ -135,7 +136,7 @@ git commit -m "feat: add user recharge summary drawer"
 
 - [ ] **Step 1: Write failing two-stage Dialog tests**
 
-Assert the SFC uses the shared lifecycle and dynamic layer, fixed-frame semantics, accessible title/close/error, required animation/reduced-motion rules, `stage = ref('edit')`, “下一步”, “返回修改”, and “提交并验证”. Assert credit mode uses direction and integer points and previews `creditScore`; VIP mode lists enabled levels, rejects the current level, displays benefits, and previews upgrade/downgrade; rebate mode uses a two-decimal amount and previews `balance`. Assert emitted payloads trim reasons and return `submitButtonRef.value` for MFA focus restoration.
+Assert the SFC uses the shared lifecycle and dynamic layer, fixed-frame semantics, accessible title/close/error, required animation/reduced-motion rules, `stage = ref('edit')`, “下一步”, “返回修改”, and “提交并验证”. Assert credit mode uses a visibly labelled native radio group for direction plus integer points and previews `creditScore`; VIP mode uses a visibly labelled native radio-card group, lists enabled levels, rejects/disables the current level, displays benefits, and previews upgrade/downgrade. Assert no `<select>` or ad-hoc `role="combobox"` is introduced for these small stable choices. Rebate mode uses a two-decimal amount and previews `balance`. Assert emitted payloads trim reasons and return `submitButtonRef.value` for MFA focus restoration.
 
 - [ ] **Step 2: Run the component test and verify RED**
 
@@ -144,7 +145,7 @@ Expected: FAIL on the missing mutation Dialog assertions.
 
 - [ ] **Step 3: Implement the mode-driven Dialog**
 
-Keep form reset, validation, preview calculation, and mode copy in small computed helpers. Use `closeDisabled = computed(() => props.busy)`. Initial focus is direction for credit, the target-level control for VIP, and amount for rebate. Confirmation focuses the non-destructive “返回修改” control. Do not import or call the repository from the component.
+Keep form reset, validation, preview calculation, and mode copy in small computed helpers. Use `closeDisabled = computed(() => props.busy)`. Implement credit direction and VIP target choices as native `<input type="radio">` controls inside labelled groups; the current VIP level is disabled and all benefits remain readable. Initial focus is the first direction radio for credit, the first enabled non-current target radio for VIP, and amount for rebate. Confirmation focuses the non-destructive “返回修改” control. Do not import or call the repository from the component.
 
 - [ ] **Step 4: Run component tests and verify GREEN**
 
