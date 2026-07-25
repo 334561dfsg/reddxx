@@ -1,9 +1,10 @@
 <script setup>
-import { ref, computed, onMounted, reactive, watch } from 'vue'
+import { ref, computed, nextTick, onMounted, reactive, watch } from 'vue'
 import { getUsers, usersList } from '../../../admin/mock/user'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../../admin/constants/user'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
+import UserOperations from '../../../admin/components/user/UserOperations.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -68,6 +69,8 @@ const controlUser = ref(null)
 const controlModalOpen = ref(false)
 const cancelControlOpen = ref(false)
 const openActionUserId = ref('')
+const operationUser = ref(null)
+const userOperations = ref(null)
 const cancelNote = ref('')
 const mfaOpen = ref(false)
 const mfaLoading = ref(false)
@@ -76,7 +79,20 @@ const pendingMfaAction = ref(null)
 const userIdOf = (user) => String(user?.userId ?? user?.id ?? '')
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
 const hasRules = (user) => Object.values(rulesOf(user)).some((rule) => ['active', 'processing'].includes(rule.status))
+const isLocked = (user) => [USER_STATUS.SUSPENDED, USER_STATUS.BANNED].includes(user?.status)
 const cancelControlItems = computed(() => getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}))
+const operationAssets = computed(() => {
+  const user = operationUser.value
+  if (!user) return null
+  const balance = Number(user.balance || 0)
+  const frozen = Number(user.frozenBalance || 0)
+  return {
+    marketAccount: balance + frozen * 0.15,
+    wealthAccount: frozen * 2.5,
+    tradingContract: balance * 0.16,
+    perpetualContract: balance * 0.52
+  }
+})
 
 const controlValueLabel = (value) => ({
   profit: '盈利',
@@ -118,6 +134,18 @@ const selectControlSetting = (user) => {
 const selectControlCancel = (user) => {
   openActionUserId.value = ''
   openControlCancel(user)
+}
+
+const selectUserDetail = (user) => {
+  openActionUserId.value = ''
+  openUserDetail(user)
+}
+
+const openRegularAction = async (user, action) => {
+  openActionUserId.value = ''
+  operationUser.value = user
+  await nextTick()
+  userOperations.value?.open(action)
 }
 
 const applyControl = (payload) => {
@@ -448,9 +476,15 @@ const closeDetailDrawer = () => {
                     操作
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" /></svg>
                   </button>
-                  <div v-if="openActionUserId === userIdOf(user)" class="absolute right-0 z-20 mt-2 w-32 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="selectControlSetting(user)">点控</button>
-                    <button type="button" :disabled="!hasRules(user)" class="block w-full px-3 py-2 text-left text-sm text-rose-600 hover:bg-rose-50 disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:bg-white" @click="selectControlCancel(user)">取消点控</button>
+                  <div v-if="openActionUserId === userIdOf(user)" class="absolute right-0 z-20 mt-2 w-36 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
+                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="selectUserDetail(user)">用户详情</button>
+                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'freeze')">{{ isLocked(user) ? '解封' : '封户' }}</button>
+                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'adjust')">调账</button>
+                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'deposit')">入金</button>
+                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'transfer')">划转</button>
+                    <div class="my-1 border-t border-slate-100" />
+                    <button v-if="!hasRules(user)" type="button" class="block w-full px-3 py-2 text-left text-sm text-blue-600 hover:bg-blue-50" @click="selectControlSetting(user)">点控</button>
+                    <button v-else type="button" class="block w-full px-3 py-2 text-left text-sm text-rose-600 hover:bg-rose-50" @click="selectControlCancel(user)">取消点控</button>
                     <RouterLink :to="{ name: 'users-control-log', query: { userId: userIdOf(user) } }" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="openActionUserId = ''">点控日志</RouterLink>
                   </div>
                 </div>
@@ -513,6 +547,14 @@ const closeDetailDrawer = () => {
       :existing-rules="controlUser ? rulesOf(controlUser) : {}"
       @close="closeControlSetting"
       @submit="submitControlSetting"
+    />
+
+    <UserOperations
+      v-if="operationUser"
+      ref="userOperations"
+      :user="operationUser"
+      :assets="operationAssets"
+      :show-triggers="false"
     />
 
     <Teleport to="body">

@@ -93,7 +93,7 @@ test('module page omits rejected demo and finance helper copy', () => {
   assert.doesNotMatch(source, /用户收益调节只在目标用户实际收益入账或最终结算时生效；预估收益变化不会消费一次性规则。/)
 })
 
-test('user list reduces point control to one status column and one three-item menu', () => {
+test('user list combines regular actions with status-dependent point control actions', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
   const menu = elementByTestId(source, 'user-point-control-action-menu')
 
@@ -103,13 +103,32 @@ test('user list reduces point control to one status column and one three-item me
   assert.doesNotMatch(source, />生效方式</)
   assert.doesNotMatch(source, />模块状态</)
   assert.doesNotMatch(source, />更新时间</)
-  assert.match(menu, />点控</)
-  assert.match(menu, />取消点控</)
+  assert.match(menu, />用户详情</)
+  assert.match(menu, /封户.*解封|解封.*封户/)
+  assert.match(menu, />调账</)
+  assert.match(menu, />入金</)
+  assert.match(menu, />划转</)
+  assert.match(menu, /v-if="!hasRules\(user\)"[\s\S]*?>点控</)
+  assert.match(menu, /v-else[\s\S]*?>取消点控</)
   assert.match(menu, />点控日志</)
-  assert.doesNotMatch(menu, /用户资料|控制详情|设置控制|修改控制|取消控制|控制日志/)
+  assert.doesNotMatch(menu, /控制详情|设置控制|修改控制|取消控制|控制日志/)
   assert.match(source, /MfaVerificationModal/)
   assert.match(source, /getUnifiedControlCancelItems/)
   assert.match(source, /v-for="item in cancelControlItems"/)
+})
+
+test('user operation components expose their existing dialogs to an external unified menu', () => {
+  const actionFiles = ['UserFreezeAction', 'UserAdjustAction', 'UserDepositAction', 'UserTransferAction']
+  actionFiles.forEach((name) => {
+    const source = read(`../src/admin/components/user/${name}.vue`)
+    assert.match(source, /showTrigger/)
+    assert.match(source, /defineExpose\(\{ open \}\)/)
+    assert.match(source, /v-if="showTrigger"/)
+  })
+
+  const operations = read('../src/admin/components/user/UserOperations.vue')
+  assert.match(operations, /defineExpose\(\{ open \}\)/)
+  assert.match(operations, /showTriggers/)
 })
 
 test('detail drawer distinguishes progress from configuration divergence', () => {

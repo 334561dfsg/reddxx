@@ -3,7 +3,8 @@ import { computed, ref } from 'vue'
 
 const props = defineProps({
   user: { type: Object, required: true },
-  assets: { type: Object, default: null }
+  assets: { type: Object, default: null },
+  showTrigger: { type: Boolean, default: true }
 })
 
 const emit = defineEmits(['submit'])
@@ -56,6 +57,8 @@ const open = () => {
   showModal.value = true
 }
 
+defineExpose({ open })
+
 const close = () => {
   showModal.value = false
 }
@@ -83,6 +86,7 @@ const confirm = () => {
 
 <template>
   <button
+    v-if="showTrigger"
     type="button"
     class="inline-flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg ring-1 ring-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-colors"
     @click="open"
@@ -221,4 +225,3 @@ const confirm = () => {
     </div>
   </Teleport>
 </template>
-

@@ -3,7 +3,8 @@ import { computed, ref } from 'vue'
 import { USER_STATUS } from '../../constants/user'
 
 const props = defineProps({
-  user: { type: Object, required: true }
+  user: { type: Object, required: true },
+  showTrigger: { type: Boolean, default: true }
 })
 
 const emit = defineEmits(['submit'])
@@ -50,6 +51,8 @@ const open = () => {
   showModal.value = true
 }
 
+defineExpose({ open })
+
 const close = () => {
   showModal.value = false
 }
@@ -63,6 +66,7 @@ const confirm = () => {
 
 <template>
   <button
+    v-if="showTrigger"
     type="button"
     class="inline-flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg ring-1 bg-white transition-colors"
     :class="freezeDialog.isUnfreeze ? 'ring-emerald-200 text-emerald-700 hover:bg-emerald-50' : 'ring-rose-200 text-rose-700 hover:bg-rose-50'"
@@ -152,4 +156,3 @@ const confirm = () => {
     </div>
   </Teleport>
 </template>
-
