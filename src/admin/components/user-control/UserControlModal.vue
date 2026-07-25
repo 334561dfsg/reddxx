@@ -67,7 +67,6 @@ const { content: displayedDialogData, clear: clearDialogSnapshot } = useDialogCo
 const displayScope = computed(() => displayedDialogData.value.scope)
 const displayModuleKey = computed(() => displayedDialogData.value.moduleKey)
 const displayUser = computed(() => displayedDialogData.value.user)
-const displayExistingRules = computed(() => displayedDialogData.value.existingRules)
 const handleAfterLeave = () => {
   onAfterLeave()
   if (phase.value === 'closed') clearDialogSnapshot()
@@ -85,40 +84,12 @@ const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key =
 const selectedUserId = computed(() => String(displayUser.value?.userId ?? displayUser.value?.id ?? ''))
 const selectedUserName = computed(() => displayUser.value?.username || displayUser.value?.name || '未选择用户')
 const selectedUserEmail = computed(() => displayUser.value?.email || '邮箱未提供')
-const currentModuleRule = computed(() => displayExistingRules.value?.[displayModuleKey.value] || null)
 
 const moduleOptions = computed(() => getModuleControlOptions(moduleMeta.value?.family))
 
 const affectedModules = computed(() => displayScope.value === 'global'
   ? USER_CONTROL_MODULES
   : moduleMeta.value ? [moduleMeta.value] : [])
-
-const valueLabels = {
-  profit: '盈利',
-  loss: '亏损',
-  highYield: '高收益',
-  lowYield: '低收益'
-}
-const durationLabels = { once: '一次性', permanent: '永久' }
-const statusLabels = {
-  active: '当前有效',
-  processing: '处理中',
-  consumed: '已执行',
-  cancelled: '已取消',
-  superseded: '已覆盖'
-}
-
-const existingSummary = computed(() => {
-  if (displayScope.value === 'module') {
-    const rule = currentModuleRule.value
-    if (!rule) return '当前模块尚未设置用户规则'
-    return `${valueLabels[rule.value] || '已设置'} · ${durationLabels[rule.duration] || '—'} · ${statusLabels[rule.status] || rule.status}`
-  }
-
-  const rules = Object.values(displayExistingRules.value || {})
-  const activeCount = rules.filter((rule) => ['active', 'processing'].includes(rule.status)).length
-  return activeCount ? `六个模块中有 ${activeCount} 个当前有效规则，新设置将统一覆盖` : '该用户当前没有生效中的统一规则'
-})
 
 const formInput = computed(() => ({
   scope: displayScope.value,
@@ -204,18 +175,6 @@ const submit = () => {
         </header>
 
         <div data-testid="user-control-dialog-body" class="min-h-0 flex-1 overflow-y-auto space-y-2.5 px-5 py-3">
-          <div class="rounded-xl border border-slate-200 bg-slate-50 p-2.5">
-            <p class="text-xs font-medium text-slate-500">现有规则</p>
-            <p class="mt-0.5 text-sm font-medium text-slate-800">{{ existingSummary }}</p>
-            <p
-              v-if="displayScope === 'global'"
-              data-testid="user-control-global-atomic-warning"
-              class="mt-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs leading-4 text-amber-800"
-            >
-              保存会覆盖该用户在六个模块中的现有规则；任一模块设置失败，六个模块全部保持原状态。
-            </p>
-          </div>
-
           <fieldset>
             <legend class="text-sm font-semibold text-slate-900">控制方向</legend>
             <div v-if="displayScope === 'global'" class="mt-1.5 grid gap-2 sm:grid-cols-2">

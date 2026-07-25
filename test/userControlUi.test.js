@@ -58,15 +58,12 @@ test('shared modal exposes note validation on blur while submit stays disabled',
   assert.match(source, /:disabled="phase !== 'open' \|\| !isComplete"/)
 })
 
-test('shared modal keeps the atomic failure warning inside the global-only summary', () => {
+test('shared modal omits the existing-rule summary and atomic overwrite copy', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
-  const globalWarning = source.match(
-    /<p\s+v-if="displayScope === 'global'"\s+data-testid="user-control-global-atomic-warning"[\s\S]*?<\/p>/
-  )?.[0] || ''
-
-  assert.notEqual(globalWarning, '')
-  assert.match(globalWarning, /保存会覆盖该用户在六个模块中的现有规则/)
-  assert.match(globalWarning, /任一模块设置失败，六个模块全部保持原状态/)
+  assert.doesNotMatch(source, /现有规则/)
+  assert.doesNotMatch(source, /六个模块中有.*个当前有效规则/)
+  assert.doesNotMatch(source, /保存会覆盖该用户在六个模块中的现有规则/)
+  assert.doesNotMatch(source, /任一模块设置失败，六个模块全部保持原状态/)
 })
 
 test('shared modal renders the target email in the read-only user identity block', () => {
