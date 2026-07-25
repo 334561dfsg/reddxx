@@ -1,21 +1,10 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { usersList } from '../../../admin/mock/user.js'
-import {
-  resetUserControlDemo,
-  setUnifiedUserControl,
-  setUserControlFailureModule,
-  simulateUserControlExecution,
-  userControlState,
-  watchUserControlSimulationRule
-} from '../../../admin/state/userControlState.js'
+import { userControlState } from '../../../admin/state/userControlState.js'
 import {
   filterUserControlLogsByDate,
-  getUserControlSimulationValues,
-  isUserControlSimulationValue,
   normalizeUserControlLogQuery,
-  snapshotUserControlRules,
   USER_CONTROL_MODULES
 } from '../../../features/user-control/userControl.js'
 
@@ -31,52 +20,8 @@ const filters = reactive({
   dateFrom: '',
   dateTo: ''
 })
-const simulation = reactive({
-  userId: '',
-  moduleKey: 'delivery',
-  ...getUserControlSimulationValues('delivery')
-})
-const simulationMessage = ref('')
-const failureMessage = ref('')
-const atomicProof = ref('')
-
-const userMap = computed(() => {
-  const map = new Map(usersList.map((user) => [String(user.id), user]))
-  Object.keys(userControlState.value.rules).forEach((userId) => {
-    if (!map.has(userId)) map.set(userId, { id: userId, username: `demo_user_${userId}` })
-  })
-  return map
-})
-
-const userOptions = computed(() => [...userMap.value.entries()]
-  .map(([userId, user]) => ({ userId, label: `${user.username} · UID ${userId}` })))
 
 const moduleMeta = (moduleKey) => USER_CONTROL_MODULES.find((module) => module.key === moduleKey)
-const selectedModule = computed(() => moduleMeta(simulation.moduleKey) || USER_CONTROL_MODULES[0])
-const selectedRule = computed(() => userControlState.value.rules[simulation.userId]?.[simulation.moduleKey] || null)
-const simulationValuesValid = computed(() => (
-  isUserControlSimulationValue(simulation.moduleKey, simulation.beforeValue)
-  && isUserControlSimulationValue(simulation.moduleKey, simulation.afterValue)
-))
-const canSimulate = computed(() => simulationValuesValid.value
-  && selectedRule.value?.status === 'active'
-  && selectedRule.value?.duration === 'once'
-  && simulation.afterValue === selectedRule.value?.value)
-const hasSixModuleSnapshot = computed(() => USER_CONTROL_MODULES.every((module) => (
-  userControlState.value.rules[simulation.userId]?.[module.key]
-)))
-
-const resultOptions = computed(() => selectedModule.value.family === 'finance'
-  ? [{ value: 'highYield', label: '高收益' }, { value: 'lowYield', label: '低收益' }]
-  : [{ value: 'profit', label: '盈利' }, { value: 'loss', label: '亏损' }])
-
-watchUserControlSimulationRule(simulation)
-
-watch(() => [simulation.userId, simulation.moduleKey], () => {
-  simulationMessage.value = ''
-  failureMessage.value = ''
-  atomicProof.value = ''
-}, { immediate: true })
 
 const syncRouteQuery = () => {
   const normalized = normalizeUserControlLogQuery({
@@ -85,8 +30,6 @@ const syncRouteQuery = () => {
   })
   filters.userId = normalized.userId
   filters.module = normalized.module
-  simulation.userId = normalized.userId
-  simulation.moduleKey = normalized.module || 'delivery'
 }
 
 watch(
@@ -143,84 +86,6 @@ const formatOperationAfter = (log) => {
   if (log.strategy === 'positive') return '交易盈利；理财高收益'
   if (log.strategy === 'negative') return '交易亏损；理财低收益'
   return '—'
-}
-
-const formatTime = (date = new Date()) => {
-  const pad = (value) => String(value).padStart(2, '0')
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
-}
-
-const simulateOnce = () => {
-  if (!simulationValuesValid.value) {
-    simulationMessage.value = '模拟结果与所选模块类型不匹配，未写入执行日志。'
-    return
-  }
-  if (selectedRule.value && simulation.afterValue !== selectedRule.value.value) {
-    simulationMessage.value = '用户最终结果必须与当前生效规则一致，未写入执行日志。'
-    return
-  }
-  if (!canSimulate.value) {
-    simulationMessage.value = '仅可模拟当前有效且尚未消费的一次性规则。'
-    return
-  }
-  const businessId = `demo-${simulation.moduleKey}-${Date.now()}`
-  simulateUserControlExecution({
-    userId: simulation.userId,
-    moduleKey: simulation.moduleKey,
-    beforeValue: simulation.beforeValue,
-    afterValue: simulation.afterValue,
-    businessId,
-    now: formatTime()
-  })
-  simulationMessage.value = `已生成执行日志 ${businessId}；该一次性规则已消费，不能重复执行。`
-}
-
-const cloneModuleRules = () => snapshotUserControlRules(userControlState.value, simulation.userId)
-
-const simulateFailure = () => {
-  if (!hasSixModuleSnapshot.value) {
-    failureMessage.value = '所选用户没有完整六模块旧状态，无法执行原子失败演示。'
-    atomicProof.value = ''
-    return
-  }
-
-  const before = cloneModuleRules()
-  setUserControlFailureModule(simulation.moduleKey)
-  setUnifiedUserControl({
-    userId: simulation.userId,
-    strategy: 'positive',
-    duration: 'once',
-    note: 'Demo 原子写入失败演示',
-    now: formatTime(),
-    batchId: `demo-failure-${Date.now()}`
-  })
-  const after = cloneModuleRules()
-  const unchanged = USER_CONTROL_MODULES.every((module) => (
-    JSON.stringify(before[module.key]) === JSON.stringify(after[module.key])
-  ))
-  failureMessage.value = userControlState.value.lastError
-    || `模块 ${simulation.moduleKey} 写入失败，六个模块均未更新`
-  atomicProof.value = unchanged
-    ? '原子性校验通过：失败前后六个模块旧状态完全一致。'
-    : '原子性校验失败：检测到模块状态发生变化。'
-}
-
-const clearFailure = () => {
-  setUserControlFailureModule('')
-  failureMessage.value = '失败开关已清除，可再次进行普通 Demo 操作。'
-}
-
-const restoreDemo = () => {
-  if (!window.confirm('确认恢复用户控制演示数据？当前前端 Demo 改动将被覆盖。')) return
-  resetUserControlDemo()
-  filters.source = ''
-  filters.action = ''
-  filters.dateFrom = ''
-  filters.dateTo = ''
-  syncRouteQuery()
-  simulationMessage.value = '演示数据已恢复。'
-  failureMessage.value = ''
-  atomicProof.value = ''
 }
 
 const clearFilters = async () => {
@@ -347,42 +212,5 @@ const clearFilters = async () => {
       </div>
     </article>
 
-    <article class="rounded-xl border-2 border-dashed border-amber-300 bg-amber-50/60 p-5">
-      <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 class="text-lg font-semibold text-amber-950">Demo 模拟工具</h2>
-          <p class="mt-1 text-sm text-amber-800">仅用于演示一次性消费和原子失败；不发送请求，也不会触发真实订单、收益或结算。</p>
-        </div>
-        <span class="rounded-full bg-amber-200 px-3 py-1 text-xs font-semibold text-amber-900">非生产操作</span>
-      </div>
-
-      <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <label class="space-y-1 text-xs font-medium text-amber-900"><span>演示用户</span><select v-model="simulation.userId" class="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-normal text-slate-900"><option value="">请选择演示用户</option><option v-for="user in userOptions" :key="user.userId" :value="user.userId">{{ user.label }}</option></select></label>
-        <label class="space-y-1 text-xs font-medium text-amber-900"><span>演示模块</span><select v-model="simulation.moduleKey" class="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-normal text-slate-900"><option v-for="module in USER_CONTROL_MODULES" :key="module.key" :value="module.key">{{ module.label }}</option></select></label>
-        <label class="space-y-1 text-xs font-medium text-amber-900"><span>{{ selectedModule.family === 'finance' ? '基础收益档位' : '自然/全局结果' }}</span><select v-model="simulation.beforeValue" class="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-normal text-slate-900"><option v-for="option in resultOptions" :key="option.value" :value="option.value">{{ option.label }}</option></select></label>
-        <label class="space-y-1 text-xs font-medium text-amber-900"><span>{{ selectedModule.family === 'finance' ? '用户收益档位' : '用户最终结果' }}</span><select v-model="simulation.afterValue" data-testid="user-control-simulation-after-value" :disabled="Boolean(selectedRule)" class="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm font-normal text-slate-900 disabled:cursor-not-allowed disabled:bg-slate-100"><option v-for="option in resultOptions" :key="option.value" :value="option.value">{{ option.label }}</option></select><span class="block text-[11px] font-normal text-amber-700">最终结果由当前规则锁定</span></label>
-      </div>
-
-      <div class="mt-4 rounded-lg border border-amber-200 bg-white/80 p-4 text-sm text-slate-700">
-        <p>当前规则：<span class="font-medium">{{ selectedRule ? `${valueLabel(selectedRule.value)} · ${selectedRule.duration === 'once' ? '一次性' : '永久'} · ${selectedRule.status}` : '未设置' }}</span></p>
-        <p class="mt-1 text-xs text-slate-500">一次性执行按钮仅在规则状态为 active 且 duration 为 once 时可用。</p>
-      </div>
-
-      <div class="mt-4 flex flex-wrap gap-3">
-        <button type="button" :disabled="!canSimulate" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40" @click="simulateOnce">模拟一次性执行</button>
-        <button type="button" :disabled="!hasSixModuleSnapshot" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-40" @click="simulateFailure">模拟写入失败</button>
-        <button type="button" :disabled="!userControlState.failureModule" class="rounded-lg border border-rose-300 bg-white px-4 py-2 text-sm font-medium text-rose-700 disabled:cursor-not-allowed disabled:opacity-40" @click="clearFailure">清除失败开关</button>
-        <button type="button" class="rounded-lg border border-amber-400 bg-white px-4 py-2 text-sm font-medium text-amber-900 hover:bg-amber-100" @click="restoreDemo">恢复演示数据</button>
-      </div>
-
-      <div class="mt-4 grid gap-3 md:grid-cols-2">
-        <p v-if="simulationMessage" role="status" aria-live="polite" class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800">{{ simulationMessage }}</p>
-        <div role="status" aria-live="polite" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
-          <p>失败开关：<span class="font-semibold">{{ userControlState.failureModule || '未开启' }}</span></p>
-          <p v-if="failureMessage" class="mt-1">{{ failureMessage }}</p>
-          <p v-if="atomicProof" class="mt-1 font-medium">{{ atomicProof }}</p>
-        </div>
-      </div>
-    </article>
   </section>
 </template>
