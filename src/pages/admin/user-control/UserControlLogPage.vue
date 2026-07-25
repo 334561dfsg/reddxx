@@ -89,8 +89,8 @@ const unifiedLogs = computed(() => {
     referenceId: log.batchId || '—',
     before: formatRule(log.before),
     after: formatOperationAfter(log),
-    status: '',
-    note: log.note || '—'
+    status: log.status || '',
+    note: log.errorMessage || log.note || '—'
   }))
   const executionRows = userControlState.value.executionLogs.map((log) => ({
     id: `execution-${log.id}`,
@@ -106,7 +106,7 @@ const unifiedLogs = computed(() => {
     before: valueLabel(log.beforeValue),
     after: valueLabel(log.afterValue),
     status: log.status,
-    note: '—'
+    note: log.errorMessage || '—'
   }))
 
   const matchedRows = [...operationRows, ...executionRows].filter((log) => (

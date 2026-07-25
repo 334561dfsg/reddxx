@@ -36,7 +36,6 @@ const statusMeta = (rule) => {
   if (rule.status === 'active' && rule.duration === 'once') return { label: '待执行', classes: 'bg-amber-100 text-amber-700' }
   if (rule.status === 'active') return { label: '生效中', classes: 'bg-emerald-100 text-emerald-700' }
   return ({
-    processing: { label: '处理中', classes: 'bg-blue-100 text-blue-700' },
     consumed: { label: '已执行', classes: 'bg-slate-100 text-slate-600' },
     cancelled: { label: '已取消', classes: 'bg-rose-100 text-rose-700' },
     superseded: { label: '已覆盖', classes: 'bg-violet-100 text-violet-700' }
@@ -84,8 +83,8 @@ const summaryMeta = computed(() => {
 
 <template>
   <Teleport to="body">
-    <div v-if="open" class="fixed inset-0 z-50 flex justify-end bg-slate-950/40" @mousedown.self="emit('close')">
-      <aside class="flex h-full w-full max-w-5xl flex-col bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="用户控制详情">
+    <div v-if="open" class="fixed inset-0 z-50 flex justify-end bg-slate-950/40">
+      <aside class="flex h-full w-full max-w-5xl flex-col overflow-hidden bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="用户控制详情">
         <header class="flex items-start justify-between border-b border-slate-200 px-6 py-5">
           <div>
             <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">六模块统一控制详情</p>

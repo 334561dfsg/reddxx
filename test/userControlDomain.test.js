@@ -37,6 +37,24 @@ test('demo seed includes synchronized, divergent, and consumed examples', () => 
   assert.ok(seed.executionLogs.length >= 1)
 })
 
+test('demo seed covers every simplified current and historical state', () => {
+  const seed = createUserControlDemoSeed()
+  const allRules = Object.values(seed.rules).flatMap((rules) => Object.values(rules))
+
+  assert.ok(allRules.some((rule) => rule.status === 'active' && rule.duration === 'once'))
+  assert.ok(allRules.some((rule) => rule.status === 'active' && rule.duration === 'permanent'))
+  assert.ok(allRules.some((rule) => rule.status === 'consumed'))
+  assert.ok(allRules.some((rule) => rule.status === 'cancelled'))
+  assert.ok(seed.ruleHistory.some((rule) => rule.status === 'superseded'))
+  assert.ok(seed.operationLogs.some((log) => log.status === 'failed'))
+  assert.ok(seed.executionLogs.some((log) => log.status === 'failed'))
+  assert.ok(Object.values(seed.rules.user_1005).every((rule) => (
+    rule.batchId === 'demo-batch-user-1005-original' && rule.status === 'active'
+  )))
+  assert.equal(seed.rules.user_1006.delivery.status, 'active')
+  assert.equal(seed.rules.user_1007, undefined)
+})
+
 test('log date filtering is inclusive and leaves source rows unchanged', () => {
   assert.equal(typeof userControlHelpers.filterUserControlLogsByDate, 'function')
   const rows = [
@@ -62,8 +80,9 @@ test('operation and execution logs retain frontend audit display fields', () => 
   assert.deepEqual({
     operator: applied.operationLogs[0].operator,
     batchId: applied.operationLogs[0].batchId,
-    duration: applied.operationLogs[0].duration
-  }, { operator: 'risk_admin', batchId: 'audit-batch-1', duration: 'once' })
+    duration: applied.operationLogs[0].duration,
+    status: applied.operationLogs[0].status
+  }, { operator: 'risk_admin', batchId: 'audit-batch-1', duration: 'once', status: 'success' })
 
   const executed = consumeModuleControl(applied, {
     userId: 'audit-user', moduleKey: 'delivery', businessId: 'audit-order-1',
@@ -319,6 +338,22 @@ test('once consumption rejects a simulated outcome that differs from the active 
   assert.equal(accepted.executionLogs[0].afterValue, configured.rules['159'].delivery.value)
 })
 
+test('failed once execution keeps the rule active and records a failed execution log', () => {
+  const configured = applyUnifiedControl(createUserControlState(), {
+    userId: '159', strategy: 'positive', duration: 'once', note: '统一带盈',
+    now: '2026-07-25 14:30:00', batchId: 'failed-execution-b1'
+  })
+  const failed = consumeModuleControl(configured, {
+    userId: '159', moduleKey: 'delivery', businessId: 'delivery-failed-1',
+    beforeValue: 'loss', afterValue: 'profit', status: 'failed',
+    errorMessage: '最终结算写入失败', now: '2026-07-25 14:40:00'
+  })
+
+  assert.equal(failed.rules['159'].delivery.status, 'active')
+  assert.equal(failed.executionLogs[0].status, 'failed')
+  assert.equal(failed.executionLogs[0].errorMessage, '最终结算写入失败')
+})
+
 test('unified cancellation only cancels active or processing rules and records the prior rules', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
     userId: '159', strategy: 'negative', duration: 'permanent', note: '统一控亏', now: '2026-07-25 14:30:00', batchId: 'b1'
@@ -353,7 +388,10 @@ test('a unified write failure rolls back all module changes', () => {
   for (const module of USER_CONTROL_MODULES) {
     assert.deepEqual(next.rules['159'][module.key], initial.rules['159'][module.key])
   }
-  assert.deepEqual(next.operationLogs, initial.operationLogs)
+  assert.equal(next.operationLogs.length, initial.operationLogs.length + 1)
+  assert.equal(next.operationLogs[0].status, 'failed')
+  assert.equal(next.operationLogs[0].failedModule, 'spot')
+  assert.deepEqual(next.operationLogs[0].before, initial.rules['159'])
   assert.deepEqual(next.ruleHistory, initial.ruleHistory)
   assert.equal(next.lastError, '模块 spot 写入失败，六个模块均未更新')
 })

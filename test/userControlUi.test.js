@@ -93,6 +93,18 @@ test('module page omits rejected demo and finance helper copy', () => {
   assert.doesNotMatch(source, /用户收益调节只在目标用户实际收益入账或最终结算时生效；预估收益变化不会消费一次性规则。/)
 })
 
+test('module page uses the simplified current-state vocabulary', () => {
+  const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
+  const detailSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
+  assert.match(source, /rule\.status === 'active' && rule\.duration === 'once'[\s\S]*待执行/)
+  assert.match(source, /rule\.status === 'active'[\s\S]*生效中/)
+  assert.doesNotMatch(source, /<option value="processing">/)
+  assert.doesNotMatch(source, /processing:\s*\{\s*label:\s*'处理中'/)
+  assert.doesNotMatch(detailSource, /processing:\s*\{\s*label:\s*'处理中'/)
+  assert.doesNotMatch(detailSource, /@mousedown\.self="emit\('close'\)"/)
+  assert.match(detailSource, /max-w-5xl[^"\n]*overflow-hidden/)
+})
+
 test('user list combines regular actions with status-dependent point control actions', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
   const menu = elementByTestId(source, 'user-point-control-action-menu')
@@ -180,6 +192,12 @@ test('log page paginates filtered rows and resets from every filter', () => {
   assert.match(source, /resetSources:\s*\[[\s\S]*filters\.userId[\s\S]*filters\.module[\s\S]*filters\.source[\s\S]*filters\.action[\s\S]*filters\.dateFrom[\s\S]*filters\.dateTo/)
   assert.match(source, /v-for="log in pagedLogs"/)
   assert.match(source, /<AdminListPaginationBar[\s\S]*:total-count="unifiedLogs\.length"[\s\S]*@update:page-size="onPageSizeChange"/)
+})
+
+test('log page displays success and failure status for operation records', () => {
+  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+  assert.match(source, /status:\s*log\.status \|\| ''/)
+  assert.match(source, /statusLabel\(log\.status\)/)
 })
 
 test('log page exposes audit fields without demo state actions', () => {

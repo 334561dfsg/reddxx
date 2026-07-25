@@ -70,7 +70,7 @@ const filteredRows = computed(() => filterUserControlRows(rows.value, {
 
 const effectiveRules = computed(() => rows.value
   .map((row) => row.rule)
-  .filter((rule) => rule && ['active', 'processing'].includes(rule.status)))
+  .filter((rule) => rule?.status === 'active'))
 
 const summaryCards = computed(() => [
   { label: '用户总数', value: rows.value.length, hint: '来自现有用户 Mock' },
@@ -93,7 +93,6 @@ const statusMeta = (rule) => {
   if (rule.status === 'active' && rule.duration === 'once') return { label: '待执行', classes: 'bg-amber-100 text-amber-700' }
   if (rule.status === 'active') return { label: '生效中', classes: 'bg-emerald-100 text-emerald-700' }
   return ({
-    processing: { label: '处理中', classes: 'bg-blue-100 text-blue-700' },
     consumed: { label: '已执行', classes: 'bg-slate-100 text-slate-600' },
     cancelled: { label: '已取消', classes: 'bg-rose-100 text-rose-700' },
     superseded: { label: '已覆盖', classes: 'bg-purple-100 text-purple-700' }
@@ -213,7 +212,6 @@ const resetFilters = () => {
         <select v-model="statusFilter" class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500">
           <option value="">全部状态</option>
           <option value="active">当前有效</option>
-          <option value="processing">处理中</option>
           <option value="consumed">已执行</option>
           <option value="cancelled">已取消</option>
         </select>
@@ -269,7 +267,7 @@ const resetFilters = () => {
                   </button>
                   <button
                     type="button"
-                    :disabled="!row.rule || !['active', 'processing'].includes(row.rule.status)"
+                    :disabled="row.rule?.status !== 'active'"
                     class="text-rose-600 hover:text-rose-800 disabled:cursor-not-allowed disabled:text-slate-300"
                     @click="openCancel(row)"
                   >

@@ -55,7 +55,20 @@ export function applyUnifiedControl(state, input) {
   const userId = requireText(input.userId, 'userId')
   const note = requireText(input.note, 'note')
   if (!['once', 'permanent'].includes(input.duration)) throw new TypeError('duration must be once or permanent')
-  if (state.failureModule) return { ...state, lastError: `模块 ${state.failureModule} 写入失败，六个模块均未更新` }
+  if (state.failureModule) {
+    const before = Object.fromEntries(Object.entries(state.rules[userId] || {}).map(([key, rule]) => [key, { ...rule }]))
+    return {
+      ...state,
+      operationLogs: [{
+        id: `op-${input.batchId}-failed`, userId, scope: 'global', action: 'apply',
+        modules: USER_CONTROL_MODULES.map((item) => item.key), strategy: input.strategy,
+        duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
+        before, note, status: 'failed', failedModule: state.failureModule,
+        errorMessage: `模块 ${state.failureModule} 写入失败，六个模块均未更新`, createdAt: input.now
+      }, ...state.operationLogs],
+      lastError: `模块 ${state.failureModule} 写入失败，六个模块均未更新`
+    }
+  }
 
   const before = Object.fromEntries(Object.entries(state.rules[userId] || {}).map(([key, rule]) => [key, { ...rule }]))
   const rules = Object.fromEntries(USER_CONTROL_MODULES.map((module) => [module.key, {
@@ -72,7 +85,7 @@ export function applyUnifiedControl(state, input) {
     operationLogs: [{ id: `op-${input.batchId}`, userId, scope: 'global', action: 'apply',
       modules: USER_CONTROL_MODULES.map((item) => item.key), strategy: input.strategy,
       duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
-      before, note, createdAt: input.now }, ...state.operationLogs],
+      before, note, status: 'success', createdAt: input.now }, ...state.operationLogs],
     lastError: ''
   }
 }
@@ -141,7 +154,7 @@ export function applyModuleControl(state, input) {
     operationLogs: [{
     id: `op-${input.ruleId}`, userId, scope: 'module', action: 'apply', modules: [module.key],
     duration: input.duration, operator: operatorOf(input), batchId: input.batchId || input.ruleId,
-    before, after: userRules[module.key], note, createdAt: input.now
+    before, after: userRules[module.key], note, status: 'success', createdAt: input.now
     }, ...state.operationLogs],
     lastError: ''
   }
@@ -158,7 +171,7 @@ export function cancelUnifiedControl(state, input) {
     id: input.operationId, userId, scope: 'global', action: 'cancel',
     modules: USER_CONTROL_MODULES.map((item) => item.key), duration: rulesDuration(before),
     operator: operatorOf(input), batchId: input.batchId || input.operationId,
-    before, note, createdAt: input.now
+    before, note, status: 'success', createdAt: input.now
   }, ...state.operationLogs] }
 }
 
@@ -174,7 +187,7 @@ export function cancelModuleControl(state, input) {
   return { ...state, rules: { ...state.rules, [userId]: userRules }, operationLogs: [{
     id: input.operationId, userId, scope: 'module', action: 'cancel', modules: [input.moduleKey],
     duration: before?.duration || '', operator: operatorOf(input),
-    batchId: input.batchId || input.operationId, before, note, createdAt: input.now
+    batchId: input.batchId || input.operationId, before, note, status: 'success', createdAt: input.now
   }, ...state.operationLogs] }
 }
 
@@ -183,6 +196,14 @@ export function consumeModuleControl(state, input) {
   const userRules = cloneRules(state, userId)
   const rule = userRules[input.moduleKey]
   if (!rule || rule.status !== 'active' || rule.duration !== 'once') return state
+  if (input.status === 'failed') {
+    return { ...state, executionLogs: [{
+      id: `exec-${input.businessId}`, userId, moduleKey: input.moduleKey, ruleId: rule.id,
+      source: rule.source, value: rule.value, duration: rule.duration, businessId: input.businessId,
+      beforeValue: input.beforeValue, afterValue: input.afterValue,
+      status: 'failed', errorMessage: input.errorMessage || '执行失败', createdAt: input.now
+    }, ...state.executionLogs] }
+  }
   if (input.afterValue !== rule.value) return state
   userRules[input.moduleKey] = { ...rule, status: 'consumed', consumedAt: input.now }
   return { ...state, rules: { ...state.rules, [userId]: userRules }, executionLogs: [{

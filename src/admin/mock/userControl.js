@@ -1,6 +1,7 @@
 import {
   applyModuleControl,
   applyUnifiedControl,
+  cancelUnifiedControl,
   consumeModuleControl,
   createUserControlState
 } from '../../features/user-control/userControl.js'
@@ -15,7 +16,13 @@ const TIMESTAMPS = Object.freeze({
   unified1002: '2026-07-25 16:10:00',
   consumed1002: '2026-07-25 16:20:00',
   unified1003: '2026-07-25 16:30:00',
-  override1003: '2026-07-25 16:40:00'
+  override1003: '2026-07-25 16:40:00',
+  unified1004: '2026-07-25 16:50:00',
+  cancelled1004: '2026-07-25 17:00:00',
+  unified1005: '2026-07-25 17:10:00',
+  failedWrite1005: '2026-07-25 17:20:00',
+  unified1006: '2026-07-25 17:30:00',
+  failedExecution1006: '2026-07-25 17:40:00'
 })
 
 export function createUserControlDemoSeed() {
@@ -95,7 +102,7 @@ export function createUserControlDemoSeed() {
     batchId: 'demo-batch-user-1003'
   })
 
-  return applyModuleControl(unified1003, {
+  const divergent1003 = applyModuleControl(unified1003, {
     userId: 'user_1003',
     moduleKey: 'perpetual',
     value: 'profit',
@@ -103,5 +110,55 @@ export function createUserControlDemoSeed() {
     note: '演示：列表用户永续单独控盈',
     now: TIMESTAMPS.override1003,
     ruleId: 'demo-rule-user-1003-perpetual'
+  })
+
+  const unified1004 = applyUnifiedControl(divergent1003, {
+    userId: 'user_1004',
+    strategy: 'negative',
+    duration: 'permanent',
+    note: '演示：统一永久规则后主动取消',
+    now: TIMESTAMPS.unified1004,
+    batchId: 'demo-batch-user-1004'
+  })
+  const cancelled1004 = cancelUnifiedControl(unified1004, {
+    userId: 'user_1004',
+    note: '演示：取消六模块永久规则',
+    now: TIMESTAMPS.cancelled1004,
+    operationId: 'demo-cancel-user-1004'
+  })
+  const unified1005 = applyUnifiedControl(cancelled1004, {
+    userId: 'user_1005',
+    strategy: 'negative',
+    duration: 'permanent',
+    note: '演示：失败前保持的六模块规则',
+    now: TIMESTAMPS.unified1005,
+    batchId: 'demo-batch-user-1005-original'
+  })
+  const failedWrite1005 = applyUnifiedControl({ ...unified1005, failureModule: 'spot' }, {
+    userId: 'user_1005',
+    strategy: 'positive',
+    duration: 'once',
+    note: '演示：现货写入失败后六模块全部回滚',
+    now: TIMESTAMPS.failedWrite1005,
+    batchId: 'demo-batch-user-1005-failed'
+  })
+  const unified1006 = applyUnifiedControl({ ...failedWrite1005, failureModule: '' }, {
+    userId: 'user_1006',
+    strategy: 'positive',
+    duration: 'once',
+    note: '演示：一次性规则执行失败后继续待执行',
+    now: TIMESTAMPS.unified1006,
+    batchId: 'demo-batch-user-1006'
+  })
+
+  return consumeModuleControl(unified1006, {
+    userId: 'user_1006',
+    moduleKey: 'delivery',
+    businessId: 'demo-delivery-user-1006-failed',
+    beforeValue: 'loss',
+    afterValue: 'profit',
+    status: 'failed',
+    errorMessage: '最终结算写入失败，规则继续待执行',
+    now: TIMESTAMPS.failedExecution1006
   })
 }
