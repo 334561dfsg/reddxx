@@ -8,6 +8,7 @@ const projectFile = (path) => resolve(process.cwd(), path)
 const rechargeDrawerFile = projectFile('src/admin/components/user/UserRechargeSummaryDrawer.vue')
 const mutationDialogFile = projectFile('src/admin/components/user/UserMembershipMutationDialog.vue')
 const reviewDrawerFile = projectFile('src/admin/components/user/UserCreditReviewDrawer.vue')
+const reviewDecisionFile = projectFile('src/admin/components/user/UserCreditReviewDecisionDialog.vue')
 
 const user = { id: 'user_1004', username: 'user_chen', vipLevel: 1 }
 const summary = {
@@ -230,4 +231,52 @@ test('credit review Drawer filters status without mutating input and follows Dra
   assert.match(source, /150ms ease-in/)
   assert.match(source, /prefers-reduced-motion: reduce/)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
+})
+
+test('credit review decision requires an explicit choice and emits exact MFA intent', async (t) => {
+  const component = await loadVueSfc(reviewDecisionFile)
+  const requests = []
+  const harness = await createSfcHarness(component, { visible: true, user, review: reviews[0], busy: false }, {
+    onRequestMfa: (request) => requests.push(request)
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  harness.findByText('下一步', 'button').click()
+  await harness.flush()
+  assert.match(harness.findByTestId('user-credit-review-decision-dialog').textContent, /请选择审核决定/)
+  assert.equal(requests.length, 0)
+
+  const approve = harness.allNodes().find((node) => node.tag === 'input' && node.getAttribute?.('name') === 'review-decision' && node.value === 'approve')
+  assert.ok(approve)
+  approve.checked = true
+  approve.dispatchEvent({ type: 'change', target: approve })
+  await setInput(harness, 'credit-review-decision-note', ' 材料有效 ')
+  harness.findByText('下一步', 'button').click()
+  await harness.flush()
+  assert.match(harness.findByTestId('user-credit-review-decision-dialog').textContent, /信用分将从 680 调整为 695/)
+  harness.findByText('提交并验证', 'button').click()
+
+  assert.equal(requests.length, 1)
+  assert.equal(requests[0].type, 'credit-review-decide')
+  assert.deepEqual(requests[0].payload, { userId: user.id, reviewId: 'r-pending', decision: 'approve', note: '材料有效' })
+  assert.equal(requests[0].returnFocus.tag, 'button')
+})
+
+test('credit review decision Dialog is a guarded third layer with accessible motion', async () => {
+  const source = await readFile(reviewDecisionFile, 'utf8')
+
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /:style="layerStyle"/)
+  assert.match(source, /aria-labelledby="review-decision-label"/)
+  assert.match(source, /type="radio"/)
+  assert.doesNotMatch(source, /<select\b|role="combobox"/)
+  assert.match(source, /data-testid="user-credit-review-decision-body"[^>]*overflow-y-auto/)
+  assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
+  assert.match(source, /closeDisabled/)
+  assert.match(source, /role="alert"/)
+  assert.match(source, /200ms ease-out/)
+  assert.match(source, /150ms ease-in/)
+  assert.match(source, /prefers-reduced-motion: reduce/)
+  assert.match(source, /transform: none/)
 })
