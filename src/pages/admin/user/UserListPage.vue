@@ -76,6 +76,8 @@ onMounted(fetchUsers)
 // 模态弹窗状态
 const showDetailDrawer = ref(false)
 const selectedUser = ref(null)
+const detailInitialTab = ref('overview')
+const detailReturnFocus = ref(null)
 const controlUser = ref(null)
 const controlModalOpen = ref(false)
 const cancelControlOpen = ref(false)
@@ -219,8 +221,12 @@ const selectControlCancel = (user) => {
   openControlCancel(user)
 }
 
-const selectUserDetail = (user) => {
-  openUserDetail(user)
+const selectUserDetail = (user, returnFocus = null) => {
+  openUserDetail(user, 'overview', returnFocus)
+}
+
+const selectUserAssets = (user, returnFocus = null) => {
+  openUserDetail(user, 'assets', returnFocus)
 }
 
 const openOperationDrawer = (user) => {
@@ -375,7 +381,11 @@ const executeDeferredDrawerAction = async () => {
   if (!action) return
 
   if (action.id === 'detail' || action.id === 'assets') {
-    openUserDetail(action.user)
+    openUserDetail(
+      action.user,
+      action.id === 'assets' ? 'assets' : 'overview',
+      actionMenuTriggerRefs.get(userIdOf(action.user)) || null
+    )
     return
   }
 
@@ -533,15 +543,22 @@ const formatDate = (dateString) => {
 }
 
 // 打开用户详情
-const openUserDetail = (user) => {
+const openUserDetail = (user, initialTab = 'overview', returnFocus = null) => {
   selectedUser.value = user
+  detailInitialTab.value = initialTab
+  detailReturnFocus.value = returnFocus
   showDetailDrawer.value = true
 }
 
 // 关闭弹窗
 const closeDetailDrawer = () => {
   showDetailDrawer.value = false
+}
+
+const clearDetailDrawer = () => {
   selectedUser.value = null
+  detailInitialTab.value = 'overview'
+  detailReturnFocus.value = null
 }
 </script>
 
@@ -614,7 +631,7 @@ const closeDetailDrawer = () => {
               v-for="user in users" 
               :key="user.id"
               class="hover:bg-slate-50 transition-colors cursor-pointer"
-              @click="openUserDetail(user)"
+              @click="openUserDetail(user, 'overview', $event.currentTarget)"
             >
               <!-- ID -->
               <td class="px-4 py-3">
@@ -705,14 +722,14 @@ const closeDetailDrawer = () => {
                     type="button"
                     class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="查看用户详情"
-                    @click="selectUserDetail(user)"
+                    @click="selectUserDetail(user, $event.currentTarget)"
                   >
                     详情</button>
                   <button
                     type="button"
                     class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="查看资金概况"
-                    @click="selectUserDetail(user)"
+                    @click="selectUserAssets(user, $event.currentTarget)"
                   >
                     资金</button>
                   <button
@@ -781,7 +798,10 @@ const closeDetailDrawer = () => {
     <UserDetailDrawer
       :visible="showDetailDrawer"
       :user="selectedUser"
+      :initial-tab="detailInitialTab"
+      :return-focus="detailReturnFocus"
       @close="closeDetailDrawer"
+      @closed="clearDetailDrawer"
     />
 
     <UserControlModal

@@ -43,3 +43,23 @@ test('operation orchestrator forwards the originating card as child return focus
   assert.match(operations, /open\(returnFocus\)/)
   assert.match(list, /openRegularAction\(user, regularActions\[id\], trigger\)/)
 })
+
+test('user detail drawer uses the shared layer stack and a fixed scrolling frame', () => {
+  const source = readFileSync(new URL('src/admin/components/user/UserDetailDrawer.vue', root), 'utf8')
+
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /:style="layerStyle"/)
+  assert.match(source, /v-if="rendered"/)
+  assert.match(source, /@after-enter="onAfterEnter"/)
+  assert.match(source, /@after-leave="handleAfterLeave"/)
+  assert.match(source, /role="dialog"/)
+  assert.match(source, /aria-modal="true"/)
+  assert.match(source, /aria-labelledby="user-detail-drawer-title"/)
+  assert.match(source, /data-testid="user-detail-drawer"[^>]*overflow-hidden/)
+  assert.match(source, /data-testid="user-detail-drawer-body"[^>]*overflow-y-auto/)
+  assert.match(source, /aria-label="关闭"/)
+  assert.doesNotMatch(source, /fixed inset-0 z-50/)
+  assert.match(source, /200ms ease-out/)
+  assert.match(source, /150ms ease-in/)
+  assert.match(source, /prefers-reduced-motion: reduce/)
+})

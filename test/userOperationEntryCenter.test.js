@@ -86,6 +86,18 @@ test('combined VIP and credit adjustment is removed from active operation paths'
   assert.doesNotMatch(listSource, /adjust:\s*'adjust'/)
 })
 
+test('detail and funds shortcuts target explicit overview and assets views', () => {
+  const detailSource = read('../src/admin/components/user/UserDetailDrawer.vue')
+  const listSource = read('../src/pages/admin/user/UserListPage.vue')
+
+  assert.match(detailSource, /initialTab:\s*\{[^}]*default:\s*'overview'/s)
+  assert.match(detailSource, /\{ id: 'overview', label: '概览' \}/)
+  assert.match(detailSource, /activeTab === 'overview'/)
+  assert.match(listSource, /openUserDetail\(user, 'overview'/)
+  assert.match(listSource, /openUserDetail\(user, 'assets'/)
+  assert.match(listSource, /:initial-tab="detailInitialTab"/)
+})
+
 test('account lock wording changes without moving the action', () => {
   const activeGroups = getUserOperationGroups({ status: 'active' })
   const lockedGroups = getUserOperationGroups({ status: 'suspended' })

@@ -1,16 +1,40 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../constants/user'
+import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import UserOperations from './UserOperations.vue'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
-  user: { type: Object, default: null }
+  user: { type: Object, default: null },
+  initialTab: { type: String, default: 'overview' },
+  returnFocus: { type: [Object, Function], default: null }
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'closed'])
+const drawerRef = ref(null)
+const titleRef = ref(null)
 
-const close = () => emit('close')
+const {
+  rendered,
+  phase,
+  layerStyle,
+  requestDialogClose,
+  onAfterEnter,
+  onAfterLeave
+} = useDialogLifecycle({
+  open: computed(() => props.visible && Boolean(props.user)),
+  dialogRef: drawerRef,
+  initialFocusRef: titleRef,
+  returnFocusRef: computed(() => props.returnFocus),
+  requestClose: () => emit('close')
+})
+
+const close = createDialogCloseAction(requestDialogClose)
+const handleAfterLeave = () => {
+  onAfterLeave()
+  emit('closed')
+}
 
 const statusConfig = {
   [USER_STATUS.ACTIVE]: { text: '正常', class: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' },
@@ -145,6 +169,7 @@ const incomeList = computed(() => {
 })
 
 const tabs = [
+  { id: 'overview', label: '概览' },
   { id: 'assets', label: '资产' },
   { id: 'favorites', label: '自选' },
   { id: 'withdrawAddress', label: '出金地址' },
@@ -158,12 +183,13 @@ const tabs = [
   { id: 'spot', label: '现货' }
 ]
 
-const activeTab = ref('assets')
+const normalizeInitialTab = (value) => tabs.some((tab) => tab.id === value) ? value : 'overview'
+const activeTab = ref('overview')
 
 watch(
-  () => [props.visible, props.user?.id],
+  () => [props.visible, props.user?.id, props.initialTab],
   () => {
-    if (props.visible) activeTab.value = 'assets'
+    if (props.visible) activeTab.value = normalizeInitialTab(props.initialTab)
   }
 )
 
@@ -208,19 +234,32 @@ const tabButtonClass = (id) => {
 
 <template>
   <Teleport to="body">
-    <Transition name="user-detail-drawer">
+    <Transition name="drawer-detail-overlay" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
       <div
-        v-if="visible && user"
-        class="fixed inset-0 z-50 bg-black/40"
+        v-if="rendered"
+        v-show="phase !== 'closing'"
+        class="fixed inset-0 flex items-start bg-black/40"
+        role="presentation"
+        :style="layerStyle"
       >
-        <section
-          class="user-detail-drawer-panel absolute left-0 right-0 top-0 flex h-[92vh] w-full flex-col overflow-hidden rounded-b-2xl border-b border-slate-200 bg-slate-50 shadow-2xl"
-        >
+        <Transition name="drawer-detail-panel" appear>
+          <section
+            v-show="phase !== 'closing'"
+            ref="drawerRef"
+            data-testid="user-detail-drawer"
+            class="flex h-[92vh] max-h-[92vh] w-full flex-col overflow-hidden rounded-b-2xl border-b border-slate-200 bg-slate-50 shadow-2xl supports-[height:100dvh]:h-[92dvh] supports-[height:100dvh]:max-h-[92dvh]"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="user-detail-drawer-title"
+          >
           <!-- Header -->
-          <div class="border-b border-slate-200 bg-white px-6 py-4 relative">
+          <header class="relative shrink-0 border-b border-slate-200 bg-white px-4 pb-3 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6">
+            <h2 id="user-detail-drawer-title" ref="titleRef" tabindex="-1" class="mb-3 text-lg font-semibold text-slate-900 outline-none">
+              用户详情
+            </h2>
             <button
               type="button"
-              class="absolute right-6 top-4 z-10 p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              class="absolute right-4 top-[max(0.75rem,env(safe-area-inset-top))] z-10 flex min-h-11 min-w-11 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:right-6"
               @click="close"
               aria-label="关闭"
             >
@@ -228,8 +267,8 @@ const tabButtonClass = (id) => {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-              <div class="flex items-start justify-between gap-6 w-full pr-16">
-              <div class="flex items-start gap-4 pr-4">
+              <div class="flex w-full flex-col gap-4 pr-0 lg:flex-row lg:items-start lg:justify-between lg:gap-6 lg:pr-16">
+              <div class="flex min-w-0 items-start gap-4 pr-4">
                 <div class="shrink-0 h-16 w-16 rounded-full overflow-hidden bg-slate-200">
                   <div
                     class="h-full w-full flex items-center justify-center text-white font-semibold bg-gradient-to-br from-slate-900 to-indigo-700"
@@ -262,7 +301,7 @@ const tabButtonClass = (id) => {
                 </div>
               </div>
 
-              <div class="space-y-1 pt-1 flex-shrink-0">
+              <div class="min-w-0 space-y-1 pt-1 lg:flex-shrink-0">
                 <div class="flex items-center gap-3">
                   <span class="w-[140px] text-xs text-slate-500 font-medium">最后登录时间:</span>
                   <span class="text-sm font-semibold text-slate-900">{{ formatDateTime(user.lastLoginTime) }}</span>
@@ -294,12 +333,37 @@ const tabButtonClass = (id) => {
                 {{ t.label }}
               </button>
             </nav>
-          </div>
+          </header>
 
           <!-- Body -->
-          <div class="min-h-0 flex-1 overflow-y-auto p-6">
+          <div data-testid="user-detail-drawer-body" class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain p-4 sm:p-6">
+            <template v-if="activeTab === 'overview'">
+              <div class="grid gap-4 lg:grid-cols-3">
+                <section class="rounded-xl border border-slate-200 bg-white p-4 lg:col-span-2 sm:p-5">
+                  <h3 class="text-sm font-semibold text-slate-900">账户信息</h3>
+                  <dl class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">用户名</dt><dd class="mt-1 break-all text-sm font-medium text-slate-900">{{ user?.username || '—' }}</dd></div>
+                    <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">邮箱</dt><dd class="mt-1 break-all text-sm font-medium text-slate-900">{{ user?.email || '—' }}</dd></div>
+                    <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">角色</dt><dd class="mt-1 text-sm font-medium text-slate-900">{{ roleConfig[user?.role]?.text || user?.role || '—' }}</dd></div>
+                    <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">上级</dt><dd class="mt-1 text-sm font-medium text-slate-900">{{ user?.parentUsername || '无' }}</dd></div>
+                    <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">注册时间</dt><dd class="mt-1 text-sm font-medium text-slate-900">{{ formatDateTime(user?.createdAt) }}</dd></div>
+                    <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">最后登录</dt><dd class="mt-1 text-sm font-medium text-slate-900">{{ formatDateTime(user?.lastLoginTime) }}</dd></div>
+                  </dl>
+                </section>
+                <section class="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+                  <h3 class="text-sm font-semibold text-slate-900">账户状态</h3>
+                  <dl class="mt-4 space-y-3">
+                    <div class="flex items-center justify-between gap-3"><dt class="text-sm text-slate-500">状态</dt><dd class="text-sm font-medium text-slate-900">{{ statusConfig[user?.status]?.text || user?.status || '—' }}</dd></div>
+                    <div class="flex items-center justify-between gap-3"><dt class="text-sm text-slate-500">KYC</dt><dd class="text-sm font-medium text-slate-900">{{ kycConfig[user?.kycStatus]?.text || user?.kycStatus || '—' }}</dd></div>
+                    <div class="flex items-center justify-between gap-3"><dt class="text-sm text-slate-500">会员等级</dt><dd class="text-sm font-medium text-slate-900">{{ vipLabel }}</dd></div>
+                    <div class="flex items-center justify-between gap-3"><dt class="text-sm text-slate-500">信用分</dt><dd class="text-sm font-medium text-slate-900">{{ user?.creditScore ?? '—' }}</dd></div>
+                    <div class="flex items-center justify-between gap-3"><dt class="text-sm text-slate-500">代理身份</dt><dd class="text-sm font-medium text-slate-900">{{ user?.isAgent ? '是' : '否' }}</dd></div>
+                  </dl>
+                </section>
+              </div>
+            </template>
             <!-- Account assets -->
-            <template v-if="activeTab === 'assets'">
+            <template v-else-if="activeTab === 'assets'">
               <div class="grid gap-4 lg:grid-cols-3">
                 <!-- 大框：盈利 + 账户余额 -->
                 <section class="rounded-xl border border-slate-200 bg-white p-5 lg:col-span-2">
@@ -722,7 +786,7 @@ const tabButtonClass = (id) => {
           </Teleport> -->
 
           <!-- Footer -->
-          <div class="shrink-0 border-t border-slate-200 bg-white px-6 py-4">
+          <footer class="shrink-0 border-t border-slate-200 bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 sm:px-6">
             <div class="flex justify-end gap-2">
               <button
                 type="button"
@@ -732,38 +796,32 @@ const tabButtonClass = (id) => {
                 关闭
               </button>
             </div>
-          </div>
-        </section>
+          </footer>
+          </section>
+        </Transition>
       </div>
     </Transition>
   </Teleport>
 </template>
 
 <style scoped>
-.user-detail-drawer-enter-active,
-.user-detail-drawer-leave-active {
-  transition: opacity 0.25s ease;
-}
+.drawer-detail-overlay-enter-active { transition: opacity 200ms ease-out; }
+.drawer-detail-overlay-leave-active { transition: opacity 150ms ease-in; }
+.drawer-detail-panel-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.drawer-detail-panel-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.drawer-detail-overlay-enter-from,
+.drawer-detail-overlay-leave-to,
+.drawer-detail-panel-enter-from,
+.drawer-detail-panel-leave-to { opacity: 0; }
+.drawer-detail-panel-enter-from,
+.drawer-detail-panel-leave-to { transform: translateY(-100%); }
 
-.user-detail-drawer-enter-from,
-.user-detail-drawer-leave-to {
-  opacity: 0;
-}
-
-.user-detail-drawer-enter-to,
-.user-detail-drawer-leave-from {
-  opacity: 1;
-}
-
-.user-detail-drawer-enter-from > section,
-.user-detail-drawer-leave-to > section {
-  transform: translateY(-100%);
-}
-
-.user-detail-drawer-enter-active > section,
-.user-detail-drawer-leave-active > section {
-  transition: transform 0.25s ease;
-  transform: translateY(0);
+@media (prefers-reduced-motion: reduce) {
+  .drawer-detail-overlay-enter-active,
+  .drawer-detail-overlay-leave-active,
+  .drawer-detail-panel-enter-active,
+  .drawer-detail-panel-leave-active { transition-duration: 50ms; }
+  .drawer-detail-panel-enter-from,
+  .drawer-detail-panel-leave-to { transform: none; }
 }
 </style>
-

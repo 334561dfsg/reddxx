@@ -250,6 +250,47 @@ test('user operation Drawer returns focus to the stable row action after close',
   assert.equal(harness.document.activeElement, operation)
 })
 
+test('user detail Drawer reopens on the requested overview or assets tab', async (t) => {
+  const component = await loadVueSfc(projectFile('src/admin/components/user/UserDetailDrawer.vue'))
+  let harness
+  harness = await createSfcHarness(component, {
+    visible: true,
+    initialTab: 'overview',
+    user: {
+      id: 'user-159',
+      username: 'Alpha',
+      email: 'alpha@example.test',
+      role: 'user',
+      status: 'active',
+      kycStatus: 'verified',
+      vipLevel: 2,
+      creditScore: 680,
+      balance: 1200,
+      frozenBalance: 80
+    }
+  }, {
+    onClose: () => { harness.props.visible = false }
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  assert.ok(harness.findByText('账户信息'))
+  const frame = harness.findByTestId('user-detail-drawer')
+  const close = harness.allNodes().find((node) => (
+    node.getAttribute?.('aria-label') === '关闭' && frame.contains(node)
+  ))
+  close.click()
+  await harness.flush()
+  await harness.finishTransitions()
+
+  harness.props.initialTab = 'assets'
+  harness.props.visible = true
+  await harness.flush()
+  await harness.finishTransitions()
+
+  assert.ok(harness.findByText('账户资产'))
+})
+
 for (const surface of [
   {
     label: 'setting dialog',
