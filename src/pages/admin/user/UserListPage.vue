@@ -6,6 +6,7 @@ import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vu
 import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
 import UserOperations from '../../../admin/components/user/UserOperations.vue'
 import UserOperationDrawer from '../../../admin/components/user/UserOperationDrawer.vue'
+import UserRelationshipDrawer from '../../../admin/components/user/UserRelationshipDrawer.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -80,6 +81,10 @@ const operationDrawerOpen = ref(false)
 const operationDrawerUser = ref(null)
 const deferredDrawerAction = ref(null)
 const operationActionReturnFocus = ref(null)
+const relationshipDrawerOpen = ref(false)
+const relationshipDrawerUser = ref(null)
+const relationshipDrawerMode = ref('direct')
+const relationshipReturnFocus = ref(null)
 const cancelNote = ref('')
 const {
   open: mfaOpen,
@@ -217,6 +222,14 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
   operationActionReturnFocus.value = trigger || (typeof document === 'undefined' ? null : document.activeElement)
   controlReturnUserId.value = userIdOf(user)
 
+  if (['direct-referrals', 'all-referrals'].includes(id)) {
+    relationshipDrawerUser.value = user
+    relationshipDrawerMode.value = id === 'all-referrals' ? 'all' : 'direct'
+    relationshipReturnFocus.value = trigger
+    relationshipDrawerOpen.value = true
+    return
+  }
+
   if (['detail', 'assets', 'point-control-log'].includes(id)) {
     deferredDrawerAction.value = { id, user }
     closeOperationDrawer()
@@ -240,6 +253,16 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
     transfer: 'transfer'
   }
   if (regularActions[id]) await openRegularAction(user, regularActions[id], trigger)
+}
+
+const closeRelationshipDrawer = () => {
+  relationshipDrawerOpen.value = false
+}
+
+const clearRelationshipDrawer = () => {
+  relationshipDrawerUser.value = null
+  relationshipReturnFocus.value = null
+  relationshipDrawerMode.value = 'direct'
 }
 
 const executeDeferredDrawerAction = async () => {
@@ -684,6 +707,15 @@ const closeDetailDrawer = () => {
       @close="closeOperationDrawer"
       @closed="executeDeferredDrawerAction"
       @action="handleOperationDrawerAction"
+    />
+
+    <UserRelationshipDrawer
+      :visible="relationshipDrawerOpen"
+      :user="relationshipDrawerUser"
+      :mode="relationshipDrawerMode"
+      :return-focus="relationshipReturnFocus"
+      @close="closeRelationshipDrawer"
+      @closed="clearRelationshipDrawer"
     />
 
     <Teleport to="body">

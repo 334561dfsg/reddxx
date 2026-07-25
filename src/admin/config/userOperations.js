@@ -16,8 +16,8 @@ export const USER_OPERATION_GROUPS = Object.freeze([
 
 export const USER_OPERATION_ENTRIES = Object.freeze([
   { id: 'edit-profile', title: '编辑资料', description: '维护用户基础资料与账户信息', group: 'relationship', status: 'planned', risk: 'normal', handler: 'planned' },
-  { id: 'direct-referrals', title: '查看直属下级', description: '查看用户直接邀请的下级成员', group: 'relationship', status: 'planned', risk: 'normal', handler: 'planned' },
-  { id: 'all-referrals', title: '查看全部下级', description: '查看用户团队内的全部层级成员', group: 'relationship', status: 'planned', risk: 'normal', handler: 'planned' },
+  { id: 'direct-referrals', title: '查看直属下级', description: '查看用户直接邀请的下级成员', group: 'relationship', status: 'available', risk: 'normal', handler: 'direct-referrals' },
+  { id: 'all-referrals', title: '查看全部下级', description: '查看用户团队内的全部层级成员', group: 'relationship', status: 'available', risk: 'normal', handler: 'all-referrals' },
   { id: 'reset-parent', title: '重设上级', description: '调整用户所属的上级关系', group: 'relationship', status: 'planned', risk: 'sensitive', handler: 'planned' },
   { id: 'reset-agent', title: '设置／重设代理', description: '设置或调整用户代理身份', group: 'relationship', status: 'planned', risk: 'sensitive', handler: 'planned' },
   { id: 'team-report', title: '查看团队报表', description: '查看该用户团队的业务汇总', group: 'relationship', status: 'planned', risk: 'normal', handler: 'planned' },
