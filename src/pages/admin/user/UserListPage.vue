@@ -6,6 +6,7 @@ import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vu
 import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
 import UserOperations from '../../../admin/components/user/UserOperations.vue'
 import UserOperationDrawer from '../../../admin/components/user/UserOperationDrawer.vue'
+import UserOnchainWalletDrawer from '../../../admin/components/user/UserOnchainWalletDrawer.vue'
 import UserRelationshipDrawer from '../../../admin/components/user/UserRelationshipDrawer.vue'
 import UserProfileEditDialog from '../../../admin/components/user/UserProfileEditDialog.vue'
 import UserParentResetDialog from '../../../admin/components/user/UserParentResetDialog.vue'
@@ -38,6 +39,7 @@ import {
   setWithdrawFlowLimit,
   unfreezeAdminFunds
 } from '../../../admin/repositories/userFundsRepository.js'
+import { getUserOnchainWallet } from '../../../admin/repositories/userOnchainWalletRepository.js'
 import {
   adjustUserCredit,
   decideUserCreditReview,
@@ -111,6 +113,10 @@ const operationDrawerOpen = ref(false)
 const operationDrawerUser = ref(null)
 const deferredDrawerAction = ref(null)
 const operationActionReturnFocus = ref(null)
+const onchainWalletOpen = ref(false)
+const onchainWalletUser = ref(null)
+const onchainWalletData = ref(null)
+const onchainWalletReturnFocus = ref(null)
 const relationshipDrawerOpen = ref(false)
 const relationshipDrawerUser = ref(null)
 const relationshipDrawerMode = ref('direct')
@@ -356,6 +362,14 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
   operationActionReturnFocus.value = trigger || (typeof document === 'undefined' ? null : document.activeElement)
   controlReturnUserId.value = userIdOf(user)
 
+  if (id === 'onchain-wallet') {
+    onchainWalletUser.value = user
+    onchainWalletData.value = getUserOnchainWallet(userIdOf(user))
+    onchainWalletReturnFocus.value = trigger
+    onchainWalletOpen.value = true
+    return
+  }
+
   if (id === 'credit-review') {
     creditReviewUser.value = user
     creditReviewRows.value = getUserCreditReviews(userIdOf(user))
@@ -456,6 +470,16 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
     transfer: 'transfer'
   }
   if (regularActions[id]) await openRegularAction(user, regularActions[id], trigger)
+}
+
+const closeOnchainWallet = () => {
+  onchainWalletOpen.value = false
+}
+
+const clearOnchainWallet = () => {
+  onchainWalletUser.value = null
+  onchainWalletData.value = null
+  onchainWalletReturnFocus.value = null
 }
 
 const closeRelationshipDrawer = () => {
@@ -1085,6 +1109,15 @@ const clearDetailDrawer = () => {
       @close="closeOperationDrawer"
       @closed="executeDeferredDrawerAction"
       @action="handleOperationDrawerAction"
+    />
+
+    <UserOnchainWalletDrawer
+      :visible="onchainWalletOpen"
+      :user="onchainWalletUser"
+      :wallet="onchainWalletData"
+      :return-focus="onchainWalletReturnFocus"
+      @close="closeOnchainWallet"
+      @closed="clearOnchainWallet"
     />
 
     <UserCreditReviewDrawer

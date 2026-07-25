@@ -70,6 +70,8 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
 
 test('operation catalog distinguishes implemented and planned actions', () => {
   assert.equal(getUserOperationEntry('deposit', { status: 'active' }).status, 'available')
+  assert.equal(getUserOperationEntry('onchain-wallet', { status: 'active' }).status, 'available')
+  assert.equal(getUserOperationEntry('onchain-wallet', { status: 'active' }).handler, 'onchain-wallet')
   assert.equal(getUserOperationEntry('adjust', { status: 'active' }), null)
   assert.equal(getUserOperationEntry('freeze-funds', { status: 'active' }).status, 'available')
   assert.equal(getUserOperationEntry('unfreeze-funds', { status: 'active' }).handler, 'unfreeze-funds')

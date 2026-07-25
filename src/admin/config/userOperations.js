@@ -22,7 +22,7 @@ export const USER_OPERATION_ENTRIES = Object.freeze([
   { id: 'team-report', title: '查看团队报表', description: '查看该用户团队的业务汇总', group: 'relationship', status: 'available', risk: 'normal', handler: 'team-report' },
 
   { id: 'assets', title: '资金概况', description: '查看各账户资产、余额与冻结金额', group: 'funds', status: 'available', risk: 'normal', handler: 'detail' },
-  { id: 'onchain-wallet', title: '链上钱包', description: '查看用户链上钱包与地址信息', group: 'funds', status: 'planned', risk: 'normal', handler: 'planned' },
+  { id: 'onchain-wallet', title: '链上钱包', description: '查看用户链上钱包与地址信息', group: 'funds', status: 'available', risk: 'normal', handler: 'onchain-wallet' },
   { id: 'deposit', title: '客服入金', description: '由客服为当前用户发起人工入金', group: 'funds', status: 'available', risk: 'sensitive', handler: 'deposit' },
   { id: 'transfer', title: '账户间划转', description: '在用户内部账户之间移动资产，总资产不变', group: 'funds', status: 'available', risk: 'sensitive', handler: 'transfer' },
   { id: 'freeze-funds', title: '冻结全部资金', description: '冻结用户全部账户内的可用资金', group: 'funds', status: 'available', risk: 'danger', handler: 'freeze-funds' },
