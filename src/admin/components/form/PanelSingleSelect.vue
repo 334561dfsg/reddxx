@@ -86,6 +86,20 @@ const panelStyle = ref({ position: 'fixed' })
 const sessionSnapshot = ref(null)
 const cachedCommitted = ref({ value: undefined, label: '' })
 let popupHostRegistration = null
+let lifecycleGeneration = 0
+let disposed = false
+
+const isCurrentLifecycleGeneration = (generation) => (
+  !disposed && generation === lifecycleGeneration
+)
+
+function queueInstanceTick(callback) {
+  const generation = lifecycleGeneration
+  nextTick(() => {
+    if (!isCurrentLifecycleGeneration(generation)) return
+    callback()
+  })
+}
 
 const focus = () => {
   triggerRef.value?.focus?.()
@@ -197,6 +211,10 @@ const renderedActiveOption = computed(() => (
   filteredOptions.value.find((option) => !option.disabled && optionIsActive(option)) ?? null
 ))
 
+const optionIsExposedActive = (option) => (
+  Boolean(renderedActiveOption.value) && valuesEqual(option.value, renderedActiveOption.value.value)
+)
+
 const activeDescendant = computed(() => (
   renderedActiveOption.value ? optionId(renderedActiveOption.value) : null
 ))
@@ -207,14 +225,14 @@ const resultStatus = computed(() => {
 })
 
 function scrollActiveIntoView() {
-  nextTick(() => {
+  queueInstanceTick(() => {
     if (!activeDescendant.value || typeof document === 'undefined') return
     document.getElementById?.(activeDescendant.value)?.scrollIntoView?.({ block: 'nearest' })
   })
 }
 
 function positionPanel() {
-  if (!open.value || typeof window === 'undefined') return
+  if (disposed || !open.value || typeof window === 'undefined') return
   const anchor = triggerRef.value
   if (!anchor?.getBoundingClientRect) return
 
@@ -264,11 +282,16 @@ function positionPanel() {
 let positionFrame = 0
 
 function schedulePanelPosition() {
-  if (!open.value) return
+  if (disposed || !open.value) return
   positionPanel()
   if (typeof requestAnimationFrame !== 'function') return
   cancelAnimationFrame(positionFrame)
-  positionFrame = requestAnimationFrame(positionPanel)
+  const generation = lifecycleGeneration
+  positionFrame = requestAnimationFrame(() => {
+    if (!isCurrentLifecycleGeneration(generation)) return
+    positionFrame = 0
+    positionPanel()
+  })
 }
 
 function reconcileActive() {
@@ -340,7 +363,7 @@ watch(
   [filteredOptions, () => props.modelValue],
   () => {
     reconcileActive()
-    nextTick(schedulePanelPosition)
+    queueInstanceTick(schedulePanelPosition)
   },
   { deep: true, flush: 'post' }
 )
@@ -370,7 +393,7 @@ function openSelect() {
   open.value = true
   motionState.value = 'opening'
   reconcileActive()
-  nextTick(() => {
+  queueInstanceTick(() => {
     schedulePanelPosition()
     searchRef.value?.focus()
   })
@@ -412,10 +435,9 @@ function handleAfterLeave() {
   portalTarget.value = document.body
   sessionSnapshot.value = null
   tabFocusTarget.value = null
-  nextTick(() => {
+  queueInstanceTick(() => {
     if (skipFocusRestore) return
-    const fallbackTarget = !props.disabled ? triggerRef.value : null
-    const focusTarget = requestedFocusTarget?.isConnected ? requestedFocusTarget : fallbackTarget
+    const focusTarget = resolvePostCloseFocusTarget(requestedFocusTarget)
     focusTarget?.focus?.()
   })
 }
@@ -427,7 +449,7 @@ function commitOption(option) {
   activeValue.value = option.value
   emit('update:modelValue', option.value)
   emit('change', option.value, option)
-  nextTick(() => requestClose('commit'))
+  queueInstanceTick(() => requestClose('commit'))
 }
 
 function moveActive(direction) {
@@ -478,18 +500,44 @@ function isAvailableTabTarget(element, scope) {
   return Boolean(current)
 }
 
-function getFocusScopeCandidates(scope) {
+function getFocusScopeElements(scope) {
   const selector = [
     'a[href]',
-    'button:not([disabled])',
-    'input:not([disabled])',
-    'select:not([disabled])',
-    'textarea:not([disabled])',
-    '[tabindex]:not([tabindex="-1"])'
+    'button',
+    'input',
+    'select',
+    'textarea',
+    '[tabindex]'
   ].join(',')
   return Array.from(scope?.querySelectorAll?.(selector) ?? [])
-    .filter((candidate) => isAvailableTabTarget(candidate, scope))
     .filter((candidate) => !panelRef.value?.contains(candidate))
+}
+
+function getFocusScopeCandidates(scope) {
+  return getFocusScopeElements(scope)
+    .filter((candidate) => isAvailableTabTarget(candidate, scope))
+}
+
+// If the disclosure cannot receive restored focus, advance in DOM/tab order.
+// Modal scopes wrap to preserve their focus boundary; page scopes stop at the end.
+function findLogicalNextFocusTarget(origin) {
+  const modal = findOwningModal()
+  const scope = modal ?? document.body
+  const elements = getFocusScopeElements(scope)
+  const originIndex = elements.indexOf(origin)
+  if (originIndex < 0) return getFocusScopeCandidates(scope)[0] ?? null
+
+  const afterOrigin = elements.slice(originIndex + 1)
+  const wrapped = modal ? elements.slice(0, originIndex) : []
+  return [...afterOrigin, ...wrapped]
+    .find((candidate) => isAvailableTabTarget(candidate, scope)) ?? null
+}
+
+function resolvePostCloseFocusTarget(requestedTarget) {
+  const modal = findOwningModal()
+  const scope = modal ?? document.body
+  if (isAvailableTabTarget(requestedTarget, scope)) return requestedTarget
+  return findLogicalNextFocusTarget(triggerRef.value)
 }
 
 function findCompositeTabTarget(backward) {
@@ -578,6 +626,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  disposed = true
+  lifecycleGeneration += 1
   releasePopupHostRegistration()
   document.removeEventListener('pointerdown', handleDocumentPointerDown, true)
   window.removeEventListener?.('resize', handleViewportChange)
@@ -585,6 +635,7 @@ onUnmounted(() => {
   window.visualViewport?.removeEventListener?.('resize', handleViewportChange)
   window.visualViewport?.removeEventListener?.('scroll', handleViewportChange)
   cancelAnimationFrame(positionFrame)
+  positionFrame = 0
 })
 </script>
 
@@ -718,11 +769,11 @@ onUnmounted(() => {
                 tabindex="-1"
                 :disabled="Boolean(option.disabled)"
                 :aria-disabled="option.disabled ? 'true' : 'false'"
-                :aria-selected="optionIsActive(option) ? 'true' : 'false'"
+                :aria-selected="optionIsExposedActive(option) ? 'true' : 'false'"
                 :data-committed="valuesEqual(option.value, modelValue) ? 'true' : null"
                 class="flex min-h-10 w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-800 outline-none hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:text-gray-400"
                 :class="[
-                  optionIsActive(option) ? 'bg-blue-50 text-blue-900' : '',
+                  optionIsExposedActive(option) ? 'bg-blue-50 text-blue-900' : '',
                   valuesEqual(option.value, modelValue) ? 'font-semibold' : ''
                 ]"
                 @mouseenter="activateOption(option)"

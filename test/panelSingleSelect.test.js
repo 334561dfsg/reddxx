@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import test from 'node:test'
-import { computed, h, ref, shallowRef, Transition } from 'vue'
+import { computed, h, onMounted, ref, shallowRef, Transition, watch } from 'vue'
 import {
   __resetDialogLayersForTests,
   useDialogLifecycle
@@ -59,6 +59,7 @@ const createModalSelectHost = (selectComponent, state) => ({
   name: 'PanelSingleSelectModalHost',
   setup() {
     const visible = ref(true)
+    const selectDisabled = ref(false)
     const dialogRef = shallowRef(null)
     const initialFocusRef = shallowRef(null)
     const lowerLifecycle = useDialogLifecycle({
@@ -83,6 +84,7 @@ const createModalSelectHost = (selectComponent, state) => ({
     })
 
     state.visible = visible
+    state.selectDisabled = selectDisabled
     state.phase = lowerLifecycle.phase
     state.upperPhase = upperLifecycle.phase
     state.openUpper = () => { upperVisible.value = true }
@@ -118,7 +120,7 @@ const createModalSelectHost = (selectComponent, state) => ({
                 }
               }, [
                 h('button', { ref: initialFocusRef, 'data-testid': 'modal-before' }, 'Before'),
-                h(selectComponent, baseProps),
+                h(selectComponent, { ...baseProps, disabled: selectDisabled.value }),
                 h('button', { 'data-testid': 'modal-after' }, 'After')
               ])
             ])
@@ -170,6 +172,15 @@ const setQuery = async (harness, value) => {
 }
 
 const renderedOptions = (harness) => harness.allNodes().filter((node) => node.getAttribute?.('role') === 'option')
+
+const findHostNode = (root, predicate) => {
+  if (predicate(root)) return root
+  for (const child of root?.children ?? []) {
+    const match = findHostNode(child, predicate)
+    if (match) return match
+  }
+  return undefined
+}
 
 test('draft filtering, hover, and Arrow navigation never commit and non-submit close restores the selection', async (t) => {
   const component = await loadVueSfc(componentFile)
@@ -297,6 +308,152 @@ test('panel disclosure and inner combobox expose stable ARIA and caret-safe keyb
   const stableZeroId = movedActive.getAttribute('id')
   await setQuery(harness, 'starter')
   assert.equal(renderedOptions(harness)[0].getAttribute('id'), stableZeroId)
+})
+
+test('an active option disabled by refresh is never exposed as selected or actively styled', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const state = { committedRenders: [] }
+  const host = {
+    name: 'DynamicOptionsSelectHost',
+    setup() {
+      const currentOptions = ref(options)
+      state.currentOptions = currentOptions
+      watch(currentOptions, () => {
+        const disabledActive = findHostNode(globalThis.document.body, (node) => (
+          node.getAttribute?.('role') === 'option' && node.textContent === 'Needs review'
+        ))
+        state.committedRenders.push({
+          disabled: disabledActive?.disabled,
+          selected: disabledActive?.getAttribute?.('aria-selected'),
+          activelyStyled: disabledActive?.classList?.contains('bg-blue-50') ?? false
+        })
+      }, { flush: 'post' })
+
+      return () => h(component, {
+        ...baseProps,
+        options: currentOptions.value
+      })
+    }
+  }
+  const harness = await createSfcHarness(host)
+  t.after(harness.cleanup)
+
+  harness.findByTestId('panel-single-select-trigger').click()
+  await harness.flush()
+  state.currentOptions.value = options.map((option) => (
+    option.value === 'review' ? { ...option, disabled: true } : option
+  ))
+  await harness.flush()
+
+  assert.deepEqual(state.committedRenders, [{
+    disabled: true,
+    selected: 'false',
+    activelyStyled: false
+  }])
+  const disabledOption = renderedOptions(harness).find((option) => option.textContent === 'Needs review')
+  assert.equal(disabledOption.getAttribute('aria-selected'), 'false')
+  assert.equal(disabledOption.classList.contains('bg-blue-50'), false)
+  assert.equal(harness.findByTestId('panel-single-select-search').getAttribute('aria-activedescendant'), 'account-state-option-string-61-63-74-69-76-65')
+  assert.equal(harness.emitted.length, 0)
+})
+
+test('unmount invalidates pending selector DOM lookups and animation frames', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const state = {}
+  const host = {
+    name: 'UnmountableSelectHost',
+    setup() {
+      const visible = ref(true)
+      state.visible = visible
+      return () => visible.value
+        ? h(component, {
+            ...baseProps,
+            modelValue: 'active',
+            idBase: 'reused-selector'
+          })
+        : h('p', { 'data-testid': 'replacement-content' }, 'Replacement content')
+    }
+  }
+  const harness = await createSfcHarness(host)
+  t.after(harness.cleanup)
+
+  const staleIdLookups = []
+  harness.document.getElementById = (id) => {
+    staleIdLookups.push(id)
+    return undefined
+  }
+  const harnessRequestAnimationFrame = globalThis.requestAnimationFrame
+  let queuedFrames = 0
+  globalThis.requestAnimationFrame = (callback) => {
+    queuedFrames += 1
+    return harnessRequestAnimationFrame(callback)
+  }
+
+  harness.findByTestId('panel-single-select-trigger').click()
+  state.visible.value = false
+  await harness.flush()
+
+  assert.ok(harness.findByTestId('replacement-content'))
+  assert.equal(harness.findByTestId('panel-single-select-panel'), undefined)
+  assert.deepEqual(staleIdLookups, [])
+  assert.equal(queuedFrames, 0)
+})
+
+test('a replacement reusing idBase receives only its own queued DOM work', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const state = {}
+  const autoOpeningSelect = {
+    name: 'AutoOpeningReplacementSelect',
+    props: {
+      autoOpen: Boolean,
+      modelValue: [String, Number]
+    },
+    setup(props) {
+      onMounted(() => {
+        if (!props.autoOpen) return
+        findHostNode(globalThis.document.body, (node) => (
+          node.getAttribute?.('data-testid') === 'panel-single-select-trigger'
+        ))?.click()
+      })
+      return () => h(component, {
+        ...baseProps,
+        idBase: 'reused-selector',
+        modelValue: props.modelValue
+      })
+    }
+  }
+  const host = {
+    name: 'ReplacingSelectHost',
+    setup() {
+      const generation = ref(0)
+      state.generation = generation
+      return () => h(autoOpeningSelect, {
+        key: generation.value,
+        autoOpen: generation.value > 0,
+        modelValue: generation.value > 0 ? 'active' : 'review'
+      })
+    }
+  }
+  const harness = await createSfcHarness(host)
+  t.after(harness.cleanup)
+
+  const scrolledIds = []
+  harness.document.getElementById = (id) => {
+    const node = findHostNode(harness.document.body, (candidate) => candidate.getAttribute?.('id') === id)
+    if (node) node.scrollIntoView = () => { scrolledIds.push(id) }
+    return node
+  }
+
+  harness.findByTestId('panel-single-select-trigger').click()
+  state.generation.value += 1
+  await harness.flush()
+
+  const replacementSearch = harness.findByTestId('panel-single-select-search')
+  const replacementActiveId = 'reused-selector-option-string-61-63-74-69-76-65'
+  assert.equal(replacementSearch.getAttribute('aria-activedescendant'), replacementActiveId)
+  assert.equal(harness.document.activeElement, replacementSearch)
+  assert.deepEqual(scrolledIds, [replacementActiveId])
+  assert.equal(harness.emitted.length, 0)
 })
 
 test('option IDs remain unique for values whose URL encodings could otherwise collide', async (t) => {
@@ -597,6 +754,43 @@ test('Tab from an open panel moves focus exactly once within the real parent mod
   await harness.finishTransitions()
   assert.equal(triggerFocusCount, 1)
   assert.equal(harness.document.activeElement, trigger)
+  assert.equal(state.closeCount, 0)
+})
+
+test('state close moves focus to the logical next control when the trigger becomes disabled during leave', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const state = { closeCount: 0 }
+  const harness = await createSfcHarness(createModalSelectHost(component, state), {})
+  t.after(() => {
+    harness.cleanup()
+    __resetDialogLayersForTests()
+  })
+  await harness.finishTransitions()
+
+  const trigger = harness.findByTestId('panel-single-select-trigger')
+  const after = harness.findByTestId('modal-after')
+  const originalAfterFocus = after.focus
+  let afterFocusCount = 0
+  after.focus = () => {
+    afterFocusCount += 1
+    originalAfterFocus()
+  }
+
+  trigger.click()
+  await harness.flush()
+  await harness.finishTransitions()
+  assert.equal(harness.document.activeElement, harness.findByTestId('panel-single-select-search'))
+
+  state.selectDisabled.value = true
+  await harness.flush()
+  assert.equal(trigger.disabled, true)
+  assert.equal(trigger.getAttribute('aria-expanded'), 'true', 'the trigger remains expanded through leave')
+  await harness.finishTransitions()
+
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false')
+  assert.equal(harness.findByTestId('panel-single-select-panel'), undefined)
+  assert.equal(afterFocusCount, 1)
+  assert.equal(harness.document.activeElement, after)
   assert.equal(state.closeCount, 0)
 })
 
