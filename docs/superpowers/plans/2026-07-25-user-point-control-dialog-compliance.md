@@ -2,182 +2,376 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Bring all five user point-control dialogs and drawers into compliance with the project’s current overlay, close, frame, and scrolling rules without changing business behavior.
+**Goal:** Make all five point-control dialog types comply with the complete project Dialog standard without changing point-control or MFA business behavior.
 
-**Architecture:** Preserve every existing component and event interface. Normalize each component in place to a fixed root-level overlay, non-scrolling bounded frame, fixed header/footer, and single scrolling body, then protect the pattern with source-contract tests and actual browser interaction checks.
+**Architecture:** Add one focused Vue composable that owns the shared modal lifecycle: delayed unmount, top-layer registration, focus containment/restoration, Escape handling, background isolation, scroll locking, and cleanup. Keep each dialog's markup and business events local, and connect the existing setting, cancel, detail, and MFA surfaces to the common lifecycle plus shared transition CSS.
 
-**Tech Stack:** Vue 3, JavaScript, Node test runner, Tailwind CSS, Vite.
+**Tech Stack:** Vue 3 Composition API, Vue Teleport/Transition, Tailwind CSS, scoped CSS, Node.js built-in test runner, Vite.
 
 ## Global Constraints
 
-- All five user point-control Dialog/drawer types are in scope.
-- Every overlay must use `Teleport to="body"` and `fixed inset-0`.
-- Clicking an overlay must never close its Dialog or drawer.
-- A Dialog frame must be height-bounded and `overflow-hidden`; the frame must never scroll.
-- Only the middle body may use `min-h-0 flex-1 overflow-y-auto`.
-- Headers and footers/actions must remain outside the scrolling body.
-- The detail drawer remains a full-height right-side drawer with only its content scrolling.
-- Preserve all fields, button labels, emitted events, MFA behavior, point-control behavior, routes, logs, and Mock data.
-- Do not create a new shared Dialog component.
+- Cover `UserControlModal.vue`, the unified cancel dialog in `UserListPage.vue`, the module cancel dialog in `ModuleUserControlPage.vue`, `UserControlDetailDrawer.vue`, and `MfaVerificationModal.vue`.
+- Do not change point-control direction, duration, status, precedence, six-module atomic writes, cancellation semantics, logs, routes, MFA code rules, or success callback meaning.
+- Backdrop clicks never close or start closing a dialog.
+- Opening is overlay fade plus dialog fade/`scale(0.96)` to `scale(1)` over `200ms ease-out`; closing reverses over `150ms ease-in` and unmounts afterward.
+- Under `prefers-reduced-motion: reduce`, omit scaling and keep fades at or below `50ms`.
+- Keep the outer frame non-scrolling; only the body uses `min-h-0 flex-1 overflow-y-auto`.
+- Use `role="dialog"`, `aria-modal="true"`, a visible title with `aria-labelledby`, and a visible named internal action.
+- Trap focus within the top dialog, restore focus after closing, isolate the background and lower layers, and let Escape close only the top layer unless work is uninterruptible.
+- Prevent duplicate MFA verification, closing, and callback execution during loading; keep failures readable in the open dialog.
+- Clear locks, `inert`, listeners, layer state, animation state, loading/error residue, and focus state on close, route change, unmount, and reopen.
+- Preserve unrelated working-tree changes, including `docs/superpowers/plans/2026-07-25-user-point-control-module-rule-docs.md` if present.
 
 ---
 
-### Task 1: Normalize the shared setting and MFA dialogs
+### Task 1: Shared Dialog Lifecycle
 
 **Files:**
-- Modify: `test/userControlUi.test.js`
-- Modify: `src/admin/components/user-control/UserControlModal.vue`
-- Modify: `src/admin/components/MfaVerificationModal.vue`
+- Create: `src/admin/composables/useDialogLifecycle.js`
+- Create: `src/admin/styles/dialogMotion.css`
+- Create: `test/dialogLifecycle.test.js`
+- Modify: `src/main.js`
 
 **Interfaces:**
-- Consumes: existing `open`, `close`, `submit`, `verify`, and `cancel` component contracts.
-- Produces: unchanged business interfaces with compliant overlay/frame/body structure.
+- Produces: `useDialogLifecycle({ open, dialogRef, initialFocusRef, requestClose, closeDisabled? })`.
+- Returns: `{ rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave }` where `rendered` remains true through closing, `phase` is `opening | open | closing | closed`, and `requestDialogClose()` returns `false` when the layer is not topmost, is moving, or closing is disabled.
+- Produces: global `.dialog-overlay-*`, `.dialog-panel-*`, and `.dialog-drawer-*` Vue transition classes.
+- Later tasks consume the returned refs and callbacks directly in templates.
 
-- [x] **Step 1: Add failing setting-dialog and MFA structure tests**
+- [ ] **Step 1: Write failing lifecycle tests**
 
-Add focused source assertions for `UserControlModal.vue`:
-
-```js
-assert.match(source, /<Teleport to="body">/)
-assert.match(source, /fixed inset-0/)
-assert.doesNotMatch(source, /@mousedown\.self|@click\.self/)
-assert.doesNotMatch(source, /fixed inset-0[^"\n]*overflow-auto/)
-assert.match(source, /data-testid="user-control-dialog-frame"[^>]*max-h-\[calc\(100dvh-1\.5rem\)\][^>]*overflow-hidden/)
-assert.match(source, /data-testid="user-control-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
-```
-
-Add equivalent assertions for `MfaVerificationModal.vue`:
+Create `test/dialogLifecycle.test.js` with a minimal fake document/element harness and assertions for the exported testable helpers:
 
 ```js
-assert.doesNotMatch(mfaSource, /fixed inset-0[^"\n]*overflow-y-auto/)
-assert.match(mfaSource, /data-testid="mfa-dialog-frame"[^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
-assert.match(mfaSource, /data-testid="mfa-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import {
+  __resetDialogLayersForTests,
+  getFocusableElements,
+  isTopDialogLayer,
+  registerDialogLayer,
+  unregisterDialogLayer
+} from '../src/admin/composables/useDialogLifecycle.js'
+
+test('dialog layers only expose the most recently registered layer as topmost', () => {
+  __resetDialogLayersForTests()
+  const first = registerDialogLayer({ setAttribute() {}, removeAttribute() {} })
+  const second = registerDialogLayer({ setAttribute() {}, removeAttribute() {} })
+  assert.equal(isTopDialogLayer(first), false)
+  assert.equal(isTopDialogLayer(second), true)
+  unregisterDialogLayer(second)
+  assert.equal(isTopDialogLayer(first), true)
+})
+
+test('focus candidates exclude disabled, hidden, and negative-tabindex controls', () => {
+  const enabled = { disabled: false, hidden: false, tabIndex: 0, getAttribute: () => null }
+  const disabled = { ...enabled, disabled: true }
+  const hidden = { ...enabled, hidden: true }
+  const negative = { ...enabled, tabIndex: -1 }
+  const root = { querySelectorAll: () => [enabled, disabled, hidden, negative] }
+  assert.deepEqual(getFocusableElements(root), [enabled])
+})
 ```
 
-- [x] **Step 2: Run focused tests and verify RED**
+- [ ] **Step 2: Run the lifecycle test and verify RED**
 
-Run: `node --test test/userControlUi.test.js`
+Run: `node --test test/dialogLifecycle.test.js`
 
-Expected: FAIL because the setting overlay closes on backdrop and scrolls at the overlay, while MFA scrolls at its overlay and has no independently scrolling body.
+Expected: FAIL because `src/admin/composables/useDialogLifecycle.js` does not exist.
 
-- [x] **Step 3: Normalize `UserControlModal.vue`**
+- [ ] **Step 3: Implement layer and focus helpers**
 
-- Remove overlay `overflow-auto` and `@mousedown.self="close"`.
-- Keep `Teleport to="body"` and `fixed inset-0`.
-- Add `data-testid="user-control-dialog-frame"`, `flex max-h-[calc(100dvh-1.5rem)] flex-col overflow-hidden` to the frame.
-- Keep the existing header and footer outside the body.
-- Add `data-testid="user-control-dialog-body"`, `min-h-0 flex-1 overflow-y-auto` to the form body.
-- Preserve close and submit buttons, emitted events, validation, fields, and compact spacing.
-
-- [x] **Step 4: Normalize `MfaVerificationModal.vue`**
-
-- Remove `overflow-y-auto` from the overlay.
-- Add `data-testid="mfa-dialog-frame"`, `flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden` to the frame.
-- Add `data-testid="mfa-dialog-body"`, `min-h-0 flex-1 overflow-y-auto` around the verification instructions, input, and error content.
-- Keep the footer outside the scrolling body.
-- Preserve all close, cancel, verify, loading, validation, focus, and transition behavior.
-
-- [x] **Step 5: Run focused tests and verify GREEN**
-
-Run: `node --test test/userControlUi.test.js`
-
-Expected: all UI tests pass.
-
-- [x] **Step 6: Commit Task 1**
-
-```bash
-git add test/userControlUi.test.js src/admin/components/user-control/UserControlModal.vue src/admin/components/MfaVerificationModal.vue
-git commit -m "fix: normalize point-control setting dialogs"
-```
-
----
-
-### Task 2: Normalize cancel dialogs and lock the five-component contract
-
-**Files:**
-- Modify: `test/userControlUi.test.js`
-- Modify: `src/pages/admin/user-control/ModuleUserControlPage.vue`
-- Verify without behavior changes: `src/pages/admin/user/UserListPage.vue`
-- Verify without behavior changes: `src/admin/components/user-control/UserControlDetailDrawer.vue`
-- Modify: `docs/superpowers/plans/2026-07-25-user-point-control-dialog-compliance.md`
-
-**Interfaces:**
-- Consumes: Task 1’s compliant setting/MFA structures and existing module cancellation events.
-- Produces: a compliant module cancellation Dialog plus automated coverage across all five Dialog/drawer types.
-
-- [x] **Step 1: Add a failing module-cancel test and complete contract assertions**
-
-Add module cancellation assertions:
+Create `useDialogLifecycle.js` with module-scoped layer state and these exact exports:
 
 ```js
-assert.doesNotMatch(moduleSource, /@mousedown\.self="closeCancel"|@click\.self="closeCancel"/)
-assert.match(moduleSource, /data-testid="module-user-control-cancel-dialog"[^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
-assert.match(moduleSource, /data-testid="module-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
+const dialogLayers = []
+
+export const registerDialogLayer = (element) => {
+  const layer = { id: Symbol('dialog-layer'), element }
+  dialogLayers.push(layer)
+  syncLayerIsolation()
+  return layer
+}
+
+export const unregisterDialogLayer = (layer) => {
+  const index = dialogLayers.indexOf(layer)
+  if (index >= 0) dialogLayers.splice(index, 1)
+  syncLayerIsolation()
+}
+
+export const isTopDialogLayer = (layer) => dialogLayers.at(-1) === layer
+
+export const getFocusableElements = (root) => [...(root?.querySelectorAll(
+  'a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])'
+) || [])].filter((element) => (
+  !element.disabled && !element.hidden && element.tabIndex >= 0 &&
+  element.getAttribute?.('aria-hidden') !== 'true'
+))
+
+export const __resetDialogLayersForTests = () => {
+  dialogLayers.splice(0)
+}
 ```
 
-Add or retain contract assertions for the already-compliant unified cancellation Dialog and detail drawer:
+Implement `syncLayerIsolation()` so every lower registered dialog element receives `inert` and `aria-hidden="true"`, while the top element has both removed. Keep page-background isolation and scroll-lock reference-counted so closing one of two layers does not unlock the page.
 
-```js
-assert.doesNotMatch(userListSource, /@mousedown\.self="closeControlCancel"|@click\.self="closeControlCancel"/)
-assert.match(userListSource, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
-assert.match(userListSource, /data-testid="unified-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
-assert.doesNotMatch(detailSource, /@mousedown\.self|@click\.self/)
-assert.match(detailSource, /max-w-5xl[^>]*overflow-hidden/)
-assert.match(detailSource, /flex-1[^>]*overflow-y-auto/)
+- [ ] **Step 4: Implement the Vue lifecycle composable**
+
+Use `watch`, `nextTick`, and `onBeforeUnmount` to implement the documented interface. On open, capture `document.activeElement`, set `rendered`, register after the teleported element exists, lock `document.documentElement` and `document.body`, make non-dialog body children inert, add one document `keydown` listener, and focus `initialFocusRef` or the first candidate. On `Tab`, wrap first/last focus within the top layer; on `Escape`, call `requestDialogClose()` only for the top layer. On close request, set `phase = 'closing'` but defer unregister, unlock, cleanup, and focus restoration until `onAfterLeave`.
+
+- [ ] **Step 5: Add exact shared transition CSS**
+
+Create `src/admin/styles/dialogMotion.css`:
+
+```css
+.dialog-overlay-enter-active { transition: opacity 200ms ease-out; }
+.dialog-overlay-leave-active { transition: opacity 150ms ease-in; }
+.dialog-overlay-enter-from,
+.dialog-overlay-leave-to { opacity: 0; }
+.dialog-panel-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.dialog-panel-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.dialog-panel-enter-from,
+.dialog-panel-leave-to { opacity: 0; transform: scale(0.96); }
+.dialog-drawer-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.dialog-drawer-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.dialog-drawer-enter-from,
+.dialog-drawer-leave-to { opacity: 0; transform: translateX(1rem) scale(0.96); }
+@media (prefers-reduced-motion: reduce) {
+  .dialog-overlay-enter-active,
+  .dialog-overlay-leave-active,
+  .dialog-panel-enter-active,
+  .dialog-panel-leave-active,
+  .dialog-drawer-enter-active,
+  .dialog-drawer-leave-active { transition-duration: 50ms; }
+  .dialog-panel-enter-from,
+  .dialog-panel-leave-to,
+  .dialog-drawer-enter-from,
+  .dialog-drawer-leave-to { transform: none; }
+}
 ```
 
-- [x] **Step 2: Run focused tests and verify RED**
+Import it once from `src/main.js`.
 
-Run: `node --test test/userControlUi.test.js`
+- [ ] **Step 6: Run focused and full tests**
 
-Expected: FAIL because the module cancellation overlay closes on backdrop and its frame/body do not implement the required scroll structure.
+Run: `node --test test/dialogLifecycle.test.js`
 
-- [x] **Step 3: Normalize the module cancellation Dialog**
-
-- Remove `@mousedown.self="closeCancel"` from the overlay.
-- Keep `Teleport to="body"` and `fixed inset-0`.
-- Add `flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden` to `module-user-control-cancel-dialog`.
-- Add `data-testid="module-user-control-cancel-body"`, `min-h-0 flex-1 overflow-y-auto` to its body.
-- Keep header and footer outside the body.
-- Preserve note validation, cancel/confirm handlers, rule details, MFA flow, and button text.
-
-- [x] **Step 4: Run focused tests and verify GREEN**
-
-Run: `node --test test/userControlUi.test.js`
-
-Expected: all UI tests pass.
-
-- [x] **Step 5: Verify the full project**
+Expected: PASS for top-layer and focus-candidate behavior.
 
 Run: `npm test`
 
-Expected: all tests pass with zero failures.
+Expected: all existing tests PASS.
+
+- [ ] **Step 7: Commit Task 1**
+
+```bash
+git add src/admin/composables/useDialogLifecycle.js src/admin/styles/dialogMotion.css src/main.js test/dialogLifecycle.test.js
+git commit -m "feat: add accessible dialog lifecycle"
+```
+
+---
+
+### Task 2: Point-Control Setting Dialog and Detail Drawer
+
+**Files:**
+- Modify: `src/admin/components/user-control/UserControlModal.vue`
+- Modify: `src/admin/components/user-control/UserControlDetailDrawer.vue`
+- Modify: `test/userControlUi.test.js`
+
+**Interfaces:**
+- Consumes: `useDialogLifecycle()` and global `dialog-overlay`, `dialog-panel`, and `dialog-drawer` transition classes from Task 1.
+- Produces: setting and detail surfaces with delayed unmount, semantic titles, initial focus, focus containment, Escape, restoration, and cleanup.
+
+- [ ] **Step 1: Add failing component contract tests**
+
+Append assertions to `test/userControlUi.test.js` that require:
+
+```js
+assert.match(settingSource, /useDialogLifecycle/)
+assert.match(settingSource, /aria-labelledby="user-control-dialog-title"/)
+assert.match(settingSource, /id="user-control-dialog-title"/)
+assert.match(settingSource, /ref="firstControlOption"/)
+assert.match(settingSource, /v-if="rendered"/)
+assert.match(settingSource, /name="dialog-overlay"/)
+assert.match(settingSource, /name="dialog-panel"/)
+
+assert.match(detailSource, /useDialogLifecycle/)
+assert.match(detailSource, /aria-labelledby="user-control-detail-title"/)
+assert.match(detailSource, /id="user-control-detail-title"[^>]*tabindex="-1"/)
+assert.match(detailSource, /name="dialog-drawer"/)
+```
+
+Also assert both overlay templates have no `@click.self`, `@mousedown.self`, or `backdrop-click` binding.
+
+- [ ] **Step 2: Run the UI contract test and verify RED**
+
+Run: `node --test test/userControlUi.test.js`
+
+Expected: FAIL on missing lifecycle, semantic-title, and transition contracts.
+
+- [ ] **Step 3: Integrate the setting dialog**
+
+In `UserControlModal.vue`, add `dialogRef` and `firstControlOption` refs. Connect `props.open` to `useDialogLifecycle` and route internal close buttons through `requestDialogClose`; keep successful submit controlled by the parent. Wrap the overlay and panel in nested transitions, render with `v-if="rendered"`, bind `ref="dialogRef"`, use `aria-labelledby="user-control-dialog-title"`, and place `id="user-control-dialog-title"` on the visible `h2`. Bind `ref="firstControlOption"` to the first enabled radio using the loop index.
+
+- [ ] **Step 4: Integrate the detail drawer**
+
+In `UserControlDetailDrawer.vue`, add `dialogRef` and `titleRef`, connect `props.open` and `emit('close')` to the lifecycle, render through nested overlay/drawer transitions, and put `id="user-control-detail-title" tabindex="-1" ref="titleRef"` on the visible heading. Preserve the full-height `overflow-hidden` frame and add `min-h-0` to the existing scroll body.
+
+- [ ] **Step 5: Run focused tests and build**
+
+Run: `node --test test/userControlUi.test.js test/dialogLifecycle.test.js`
+
+Expected: PASS.
 
 Run: `npm run build`
 
-Expected: Vite production build exits with code 0.
+Expected: Vite production build succeeds without Vue template warnings.
 
-Run: `git diff --check`
-
-Expected: no output and exit code 0.
-
-- [ ] **Step 6: Verify actual interactions**
-
-> Unverified in this environment: the local Vite app started successfully, but no browser was available and no Playwright/Puppeteer dependency is installed. Desktop and narrow-viewport click, computed-style, and long-content scroll checks require a browser-enabled follow-up.
-
-In the local app, verify the setting Dialog, unified cancel Dialog, module cancel Dialog, detail drawer, and MFA Dialog where reachable:
-
-1. Clicking each overlay leaves the Dialog/drawer open.
-2. Explicit close/cancel/return controls still close it.
-3. Overlay bounds equal viewport bounds.
-4. Frame computed overflow is `hidden`.
-5. Body computed vertical overflow is `auto`.
-6. Long content remains reachable through the body without scrolling the frame.
-7. Verify desktop viewport. If the available browser cannot switch to a true narrow viewport, record narrow-viewport interaction as unverified instead of claiming success.
-
-- [x] **Step 7: Commit Task 2**
+- [ ] **Step 6: Commit Task 2**
 
 ```bash
-git add test/userControlUi.test.js src/pages/admin/user-control/ModuleUserControlPage.vue docs/superpowers/plans/2026-07-25-user-point-control-dialog-compliance.md
-git commit -m "fix: normalize point-control cancel dialogs"
+git add src/admin/components/user-control/UserControlModal.vue src/admin/components/user-control/UserControlDetailDrawer.vue test/userControlUi.test.js
+git commit -m "fix: upgrade point-control dialogs"
 ```
+
+---
+
+### Task 3: Unified and Module Cancellation Dialogs
+
+**Files:**
+- Modify: `src/pages/admin/user/UserListPage.vue`
+- Modify: `src/pages/admin/user-control/ModuleUserControlPage.vue`
+- Modify: `test/userControlUi.test.js`
+
+**Interfaces:**
+- Consumes: `useDialogLifecycle()` from Task 1.
+- Produces: both cancel dialogs with safe initial focus and consistent lifecycle behavior.
+
+- [ ] **Step 1: Add failing cancellation tests**
+
+Add source-contract assertions requiring each page to import/use `useDialogLifecycle`, render from the lifecycle `rendered` ref, use overlay/panel transitions, bind a dialog ref, label the dialog from a visible heading, and bind an initial-focus ref to the “返回” button. Preserve assertions for `max-h`, `overflow-hidden`, `min-h-0 flex-1 overflow-y-auto`, and absence of backdrop close handlers.
+
+- [ ] **Step 2: Run the cancellation contracts and verify RED**
+
+Run: `node --test test/userControlUi.test.js`
+
+Expected: FAIL because the page-local cancel dialogs are still immediate `v-if` overlays.
+
+- [ ] **Step 3: Upgrade the module cancellation dialog**
+
+Create `moduleCancelDialogRef` and `moduleCancelReturnRef`. Connect `cancelOpen`, `closeCancel`, and lifecycle callbacks. Replace the direct overlay `v-if` with delayed rendering and nested transitions. Use `aria-labelledby="module-user-control-cancel-title"`, add that ID to the heading, and focus the return button. Keep the cancel note reset after the close animation so its content does not disappear during closing.
+
+- [ ] **Step 4: Upgrade the unified cancellation dialog**
+
+Create `unifiedCancelDialogRef` and `unifiedCancelReturnRef`. Connect `cancelControlOpen`, `closeControlCancel`, and lifecycle callbacks. Use `aria-labelledby="unified-user-control-cancel-title"`, add the heading ID, focus the return button, and use `100vh` plus `100dvh` maximum-height classes. When continuing to MFA, finish the cancel Dialog's close transition before opening MFA so layer registration, background isolation, and focus restoration remain deterministic.
+
+- [ ] **Step 5: Run focused tests and build**
+
+Run: `node --test test/userControlUi.test.js test/dialogLifecycle.test.js`
+
+Expected: PASS.
+
+Run: `npm run build`
+
+Expected: PASS.
+
+- [ ] **Step 6: Commit Task 3**
+
+```bash
+git add src/pages/admin/user/UserListPage.vue src/pages/admin/user-control/ModuleUserControlPage.vue test/userControlUi.test.js
+git commit -m "fix: harden point-control cancellation dialogs"
+```
+
+---
+
+### Task 4: MFA Async Safety, Errors, and Full Verification
+
+**Files:**
+- Modify: `src/admin/components/MfaVerificationModal.vue`
+- Modify: `src/pages/admin/user/UserListPage.vue`
+- Modify: `test/userControlUi.test.js`
+- Modify: `test/dialogLifecycle.test.js`
+
+**Interfaces:**
+- Consumes: `useDialogLifecycle({ closeDisabled: computed(() => props.loading) })`.
+- Produces: MFA dialog that emits `verify` at most once per loading cycle, exposes `aria-busy`, focuses validation errors, and cannot close while loading.
+
+- [ ] **Step 1: Add failing MFA safety tests**
+
+Add contract assertions requiring:
+
+```js
+assert.match(mfaSource, /useDialogLifecycle/)
+assert.match(mfaSource, /aria-labelledby="mfa-dialog-title"/)
+assert.match(mfaSource, /:aria-busy="loading"/)
+assert.match(mfaSource, /ref="verificationInput"/)
+assert.match(mfaSource, /ref="errorSummary"/)
+assert.match(mfaSource, /role="alert"/)
+assert.match(mfaSource, /aria-live="assertive"/)
+assert.match(mfaSource, /if \(props\.loading \|\| verifyRequested\.value\) return/)
+assert.match(mfaSource, /:aria-label="loading \? '验证并继续，验证中' : '验证并继续'"/)
+```
+
+Extend `dialogLifecycle.test.js` with a test proving a disabled close predicate makes `requestDialogClose()` return `false` without invoking its callback.
+
+- [ ] **Step 2: Run MFA/lifecycle tests and verify RED**
+
+Run: `node --test test/userControlUi.test.js test/dialogLifecycle.test.js`
+
+Expected: FAIL on missing async guard, accessible error, and loading-close behavior.
+
+- [ ] **Step 3: Integrate MFA lifecycle and semantics**
+
+Replace `v-show` with lifecycle-delayed `v-if`, nested overlay/panel transitions, `aria-labelledby="mfa-dialog-title"`, and `:aria-busy="loading"`. Add `verificationInput`, `errorSummary`, and `verifyRequested` refs. Focus the input on open, reset code/error/request state on each reopen, and block `handleCancel`, close, Escape, and `handleVerify` while loading or already requested.
+
+- [ ] **Step 4: Keep validation errors readable**
+
+Render the error as:
+
+```vue
+<p
+  v-if="errorMessage"
+  ref="errorSummary"
+  tabindex="-1"
+  role="alert"
+  aria-live="assertive"
+  class="mt-2 text-center text-sm text-rose-600"
+>
+  {{ errorMessage }}
+</p>
+```
+
+After setting an error, await `nextTick()` and focus `errorSummary`. Add `aria-describedby` from the input only to the short error/help IDs, not the full body.
+
+- [ ] **Step 5: Preserve failure state in the parent flow**
+
+In `UserListPage.vue`, keep `mfaOpen` true when verification rejects, set a textual error prop on `MfaVerificationModal`, and only clear it on reopen or successful completion. Do not auto-close before the error is readable.
+
+- [ ] **Step 6: Run all automated verification**
+
+Run: `npm test`
+
+Expected: all tests PASS.
+
+Run: `npm run build`
+
+Expected: production build PASS.
+
+Run: `rg -n "@click\\.self|@mousedown\\.self|backdrop-click" src/admin/components/user-control src/admin/components/MfaVerificationModal.vue src/pages/admin/user/UserListPage.vue src/pages/admin/user-control/ModuleUserControlPage.vue`
+
+Expected: no matches in the five target surfaces.
+
+- [ ] **Step 7: Perform browser interaction and viewport checks**
+
+Start the app with `npm run dev`, then use the in-app browser to verify the checklist from the design in user management and one module page: backdrop, internal close, delayed unmount, initial focus, Tab/Shift+Tab wrap, Escape top-layer behavior, focus restoration, background isolation, body-only scrolling, rapid actions, MFA loading/error, repeated reopen, desktop, 390px mobile, low-height, 200% zoom, reduced motion, and the closest available virtual-keyboard emulation. Record any unavailable check as unverified in the final response.
+
+- [ ] **Step 8: Commit Task 4**
+
+```bash
+git add src/admin/components/MfaVerificationModal.vue src/pages/admin/user/UserListPage.vue test/userControlUi.test.js test/dialogLifecycle.test.js
+git commit -m "fix: complete point-control dialog accessibility"
+```
+
+- [ ] **Step 9: Final requirement audit**
+
+Read `AGENTS.md`, `frontend-product-interaction-standards/references/dialogs.md`, the design spec, and the final diff. Map every one of the 27 Dialog rules to code, automated-test, build, or browser evidence. If any item lacks direct evidence, implement or verify it before declaring completion; otherwise report it explicitly as unverified where the project instructions permit a manual check to remain unavailable.
