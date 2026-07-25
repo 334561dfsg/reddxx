@@ -201,46 +201,44 @@ test('module cancellation SFC runs both enter transitions for its local dialog',
   assert.equal(frame.classList.contains('dialog-panel-enter-from'), true)
 })
 
-test('unified cancellation SFC runs both enter transitions for its local dialog', async (t) => {
-  const component = await loadVueSfc(projectFile('src/pages/admin/user/UserListPage.vue'))
-  const harness = await createSfcHarness(component)
+test('user operation Drawer runs both right-edge enter transitions', async (t) => {
+  const component = await loadVueSfc(projectFile('src/admin/components/user/UserOperationDrawer.vue'))
+  const harness = await createSfcHarness(component, {
+    visible: false,
+    user: { id: 'user-a', username: 'Alpha', status: 'active' }
+  }, {
+    onClose: () => { harness.props.visible = false }
+  })
   t.after(harness.cleanup)
-  await new Promise((resolvePromise) => setTimeout(resolvePromise, 320))
-  await harness.flush()
 
-  const operation = harness.findByText('操作', 'button')
-  assert.ok(operation)
-  operation.click()
+  harness.props.visible = true
   await harness.flush()
-  const cancel = harness.findByText('取消点控', 'button')
-  assert.ok(cancel)
-  cancel.click()
-  await harness.flush()
-
-  const frame = harness.findByTestId('unified-user-control-cancel-dialog')
+  const frame = harness.findByTestId('user-operation-drawer')
   assert.ok(frame)
-  assert.equal(frame.parent.classList.contains('dialog-overlay-enter-from'), true)
-  assert.equal(frame.classList.contains('dialog-panel-enter-from'), true)
+  assert.equal(frame.parent.classList.contains('drawer-overlay-enter-from'), true)
+  assert.equal(frame.classList.contains('drawer-panel-enter-from'), true)
 })
 
-test('unified cancellation returns focus to the stable row action after its menu item unmounts', async (t) => {
-  const component = await loadVueSfc(projectFile('src/pages/admin/user/UserListPage.vue'))
-  const harness = await createSfcHarness(component)
+test('user operation Drawer returns focus to the stable row action after close', async (t) => {
+  const component = await loadVueSfc(projectFile('src/admin/components/user/UserOperationDrawer.vue'))
+  let harness
+  harness = await createSfcHarness(component, {
+    visible: false,
+    user: { id: 'user-a', username: 'Alpha', status: 'active' },
+    returnFocus: null
+  }, {
+    onClose: () => { harness.props.visible = false }
+  })
   t.after(harness.cleanup)
-  await new Promise((resolvePromise) => setTimeout(resolvePromise, 320))
-  await harness.flush()
 
-  const operation = harness.findByText('操作', 'button')
+  const operation = harness.allNodes().find((node) => node.tag === 'main')
   operation.focus()
-  operation.click()
-  await harness.flush()
-  const cancel = harness.findByText('取消点控', 'button')
-  cancel.focus()
-  cancel.click()
+  harness.props.returnFocus = operation
+  harness.props.visible = true
   await harness.flush()
   await harness.finishTransitions()
 
-  const frame = harness.findByTestId('unified-user-control-cancel-dialog')
+  const frame = harness.findByTestId('user-operation-drawer')
   const close = harness.allNodes().find((node) => (
     node.getAttribute?.('aria-label') === '关闭' && frame.contains(node)
   ))

@@ -1,10 +1,11 @@
 <script setup>
-import { ref, computed, nextTick, onMounted, reactive, watch } from 'vue'
+import { ref, computed, getCurrentInstance, nextTick, onMounted, reactive, watch } from 'vue'
 import { getUsers, usersList } from '../../../admin/mock/user'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../../admin/constants/user'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
 import UserOperations from '../../../admin/components/user/UserOperations.vue'
+import UserOperationDrawer from '../../../admin/components/user/UserOperationDrawer.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -16,6 +17,9 @@ import {
 } from '../../../features/user-control/userControl.js'
 import { createDialogCloseAction, useDialogContentSnapshot, useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
 import { useMfaActionFlow } from '../../../admin/composables/useMfaActionFlow.js'
+import { resolveUserOperationReturnFocus } from '../../../admin/config/userOperations.js'
+
+const appRouter = getCurrentInstance()?.appContext.config.globalProperties.$router
 
 // 搜索关键词
 const searchKeyword = ref('')
@@ -73,6 +77,10 @@ const cancelControlOpen = ref(false)
 const openActionUserId = ref('')
 const operationUser = ref(null)
 const userOperations = ref(null)
+const operationDrawerOpen = ref(false)
+const operationDrawerUser = ref(null)
+const deferredDrawerAction = ref(null)
+const operationActionReturnFocus = ref(null)
 const cancelNote = ref('')
 const {
   open: mfaOpen,
@@ -106,7 +114,12 @@ const setActionMenuTriggerRef = (user, element) => {
   if (element) actionMenuTriggerRefs.set(userId, element)
   else actionMenuTriggerRefs.delete(userId)
 }
-const resolveControlReturnFocus = () => actionMenuTriggerRefs.get(controlReturnUserId.value) || null
+const resolveControlReturnFocus = () => {
+  return resolveUserOperationReturnFocus(
+    operationActionReturnFocus.value,
+    actionMenuTriggerRefs.get(controlReturnUserId.value) || null
+  )
+}
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
 const hasRules = (user) => Object.values(rulesOf(user)).some((rule) => ['active', 'processing'].includes(rule.status))
 const isLocked = (user) => [USER_STATUS.SUSPENDED, USER_STATUS.BANNED].includes(user?.status)
@@ -196,6 +209,64 @@ const selectControlCancel = (user) => {
 const selectUserDetail = (user) => {
   openActionUserId.value = ''
   openUserDetail(user)
+}
+
+const openOperationDrawer = (user) => {
+  controlReturnUserId.value = userIdOf(user)
+  openActionUserId.value = ''
+  deferredDrawerAction.value = null
+  operationDrawerUser.value = user
+  operationDrawerOpen.value = true
+}
+
+const closeOperationDrawer = () => {
+  operationDrawerOpen.value = false
+}
+
+const handleOperationDrawerAction = async ({ id, user }) => {
+  operationActionReturnFocus.value = typeof document === 'undefined' ? null : document.activeElement
+  controlReturnUserId.value = userIdOf(user)
+
+  if (['detail', 'assets', 'point-control-log'].includes(id)) {
+    deferredDrawerAction.value = { id, user }
+    closeOperationDrawer()
+    return
+  }
+
+  if (id === 'point-control') {
+    selectControlSetting(user)
+    return
+  }
+
+  if (id === 'cancel-point-control') {
+    selectControlCancel(user)
+    return
+  }
+
+  const regularActions = {
+    'freeze-account': 'freeze',
+    adjust: 'adjust',
+    deposit: 'deposit',
+    transfer: 'transfer'
+  }
+  if (regularActions[id]) await openRegularAction(user, regularActions[id])
+}
+
+const executeDeferredDrawerAction = async () => {
+  const action = deferredDrawerAction.value
+  deferredDrawerAction.value = null
+  operationActionReturnFocus.value = null
+  operationDrawerUser.value = null
+  if (!action) return
+
+  if (action.id === 'detail' || action.id === 'assets') {
+    openUserDetail(action.user)
+    return
+  }
+
+  if (action.id === 'point-control-log') {
+    await appRouter?.push({ name: 'users-control-log', query: { userId: userIdOf(action.user) } })
+  }
 }
 
 const openRegularAction = async (user, action) => {
@@ -526,16 +597,14 @@ const closeDetailDrawer = () => {
                     操作
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" /></svg>
                   </button>
-                  <div v-if="openActionUserId === userIdOf(user)" class="absolute right-0 z-20 mt-2 w-36 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
+                  <div v-if="openActionUserId === userIdOf(user)" class="absolute right-0 z-20 mt-2 w-40 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
                     <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="selectUserDetail(user)">用户详情</button>
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'freeze')">{{ isLocked(user) ? '解封' : '封户' }}</button>
+                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="selectUserDetail(user)">资金概况</button>
+                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'deposit')">客服入金</button>
                     <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'adjust')">调账</button>
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'deposit')">入金</button>
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'transfer')">划转</button>
+                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50" @click="openRegularAction(user, 'freeze')">{{ isLocked(user) ? '解封' : '封户' }}</button>
                     <div class="my-1 border-t border-slate-100" />
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-blue-600 hover:bg-blue-50" @click="selectControlSetting(user)">点控</button>
-                    <button type="button" class="block w-full px-3 py-2 text-left text-sm text-rose-600 hover:bg-rose-50" @click="selectControlCancel(user)">取消点控</button>
-                    <RouterLink :to="{ name: 'users-control-log', query: { userId: userIdOf(user) } }" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="openActionUserId = ''">点控日志</RouterLink>
+                    <button type="button" class="block w-full px-3 py-2 text-left text-sm font-medium text-blue-600 hover:bg-blue-50" @click="openOperationDrawer(user)">全部操作…</button>
                   </div>
                 </div>
               </td>
@@ -606,6 +675,15 @@ const closeDetailDrawer = () => {
       :user="operationUser"
       :assets="operationAssets"
       :show-triggers="false"
+    />
+
+    <UserOperationDrawer
+      :visible="operationDrawerOpen"
+      :user="operationDrawerUser"
+      :return-focus="resolveControlReturnFocus"
+      @close="closeOperationDrawer"
+      @closed="executeDeferredDrawerAction"
+      @action="handleOperationDrawerAction"
     />
 
     <Teleport to="body">
