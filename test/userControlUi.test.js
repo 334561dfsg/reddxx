@@ -114,9 +114,10 @@ test('module page uses the simplified current-state vocabulary', () => {
   assert.match(detailSource, /max-w-5xl[^"\n]*overflow-hidden/)
 })
 
-test('user list combines regular actions with status-dependent point control actions', () => {
+test('user list keeps both point-control shortcuts available and safeguards empty cancellation', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
   const menu = elementByTestId(source, 'user-point-control-action-menu')
+  const productDocument = read('../docs/user-point-control-product-requirements.md')
 
   assert.match(source, /是否点控中/)
   assert.match(source, /hasRules\(user\) \? '是' : '否'/)
@@ -129,13 +130,22 @@ test('user list combines regular actions with status-dependent point control act
   assert.match(menu, />调账</)
   assert.match(menu, />入金</)
   assert.match(menu, />划转</)
-  assert.match(menu, /v-if="!hasRules\(user\)"[\s\S]*?>点控</)
-  assert.match(menu, /v-else[\s\S]*?>取消点控</)
+  assert.match(menu, /@click="selectControlSetting\(user\)"[^>]*>点控<\/button>/)
+  assert.match(menu, /@click="selectControlCancel\(user\)"[^>]*>取消点控<\/button>/)
+  assert.doesNotMatch(menu, /v-if="!hasRules\(user\)"/)
+  assert.doesNotMatch(menu, /v-else/)
   assert.match(menu, />点控日志</)
   assert.doesNotMatch(menu, /控制详情|设置控制|修改控制|取消控制|控制日志/)
   assert.match(source, /MfaVerificationModal/)
   assert.match(source, /getUnifiedControlCancelItems/)
   assert.match(source, /v-for="item in cancelControlItems"/)
+  assert.match(source, /当前没有可取消的模块/)
+  assert.match(source, /:disabled="!cancelControlItems\.length"/)
+  assert.doesNotMatch(source, /@mousedown\.self="closeControlCancel"/)
+  assert.match(source, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
+  assert.match(source, /data-testid="unified-user-control-cancel-body"[^>]*overflow-y-auto/)
+  assert.match(productDocument, /始终同时展示/)
+  assert.doesNotMatch(productDocument, /互斥展示/)
 })
 
 test('user operation components expose their existing dialogs to an external unified menu', () => {
