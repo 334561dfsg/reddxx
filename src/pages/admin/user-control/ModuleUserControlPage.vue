@@ -169,7 +169,7 @@ const resetFilters = () => {
 
 <template>
   <section class="space-y-6">
-    <header class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <header>
       <div>
         <p class="text-sm font-medium text-blue-600">{{ moduleMeta.label }}</p>
         <h1 class="mt-1 text-3xl font-semibold text-slate-900">{{ moduleMeta.actionLabel }}</h1>
@@ -178,10 +178,6 @@ const resetFilters = () => {
             ? '针对单个用户设置最终结算盈亏方向，不改变其他用户的自然结果。'
             : '针对单个用户设置实际入账或最终结算的收益档位，不直接输入金额或收益率。' }}
         </p>
-      </div>
-      <div class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
-        <span class="font-medium text-slate-900">Demo 模式</span>
-        <span class="ml-2">仅更新前端 Mock，不接入真实结算</span>
       </div>
     </header>
 
@@ -193,10 +189,6 @@ const resetFilters = () => {
       用户级控盘只作用于目标用户的最终结算，不改变全局行情、K线或实时浮盈亏。
       单笔订单或持仓控制优先于用户级控制。
     </div>
-    <div v-else class="rounded-lg border border-cyan-200 bg-cyan-50 p-4 text-sm leading-6 text-cyan-800">
-      用户收益调节只在目标用户实际收益入账或最终结算时生效；预估收益变化不会消费一次性规则。
-    </div>
-
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <article v-for="card in summaryCards" :key="card.label" class="rounded-xl border border-slate-200 bg-white p-5">
         <p class="text-sm text-slate-500">{{ card.label }}</p>

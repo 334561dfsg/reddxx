@@ -86,6 +86,13 @@ test('module page explains settlement-only perpetual control and module-only sco
   assert.match(source, /规则来源/)
 })
 
+test('module page omits rejected demo and finance helper copy', () => {
+  const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
+  assert.doesNotMatch(source, /Demo 模式/)
+  assert.doesNotMatch(source, /仅更新前端 Mock，不接入真实结算/)
+  assert.doesNotMatch(source, /用户收益调节只在目标用户实际收益入账或最终结算时生效；预估收益变化不会消费一次性规则。/)
+})
+
 test('user list exposes unified status and scoped actions', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
   assert.match(source, /统一控制/)
