@@ -9,6 +9,7 @@ import UserOperationDrawer from '../../../admin/components/user/UserOperationDra
 import UserRelationshipDrawer from '../../../admin/components/user/UserRelationshipDrawer.vue'
 import UserProfileEditDialog from '../../../admin/components/user/UserProfileEditDialog.vue'
 import UserParentResetDialog from '../../../admin/components/user/UserParentResetDialog.vue'
+import UserAgentRoleDialog from '../../../admin/components/user/UserAgentRoleDialog.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -93,6 +94,9 @@ const profileEditReturnFocus = ref(null)
 const parentResetOpen = ref(false)
 const parentResetUser = ref(null)
 const parentResetReturnFocus = ref(null)
+const agentRoleOpen = ref(false)
+const agentRoleUser = ref(null)
+const agentRoleReturnFocus = ref(null)
 const cancelNote = ref('')
 const {
   open: mfaOpen,
@@ -217,6 +221,13 @@ const selectControlSetting = (user) => {
     parentResetOpen.value = true
     return
   }
+
+  if (id === 'reset-agent') {
+    agentRoleUser.value = user
+    agentRoleReturnFocus.value = trigger
+    agentRoleOpen.value = true
+    return
+  }
   openControlSetting(user)
 }
 
@@ -317,6 +328,24 @@ const handleParentResetSaved = (updatedUser) => {
   users.value = users.value.map((user) => userIdOf(user) === updatedId ? { ...updatedUser } : user)
   operationDrawerUser.value = { ...updatedUser }
   parentResetUser.value = { ...updatedUser }
+}
+
+const closeAgentRole = () => {
+  agentRoleOpen.value = false
+}
+
+const clearAgentRole = () => {
+  agentRoleUser.value = null
+  agentRoleReturnFocus.value = null
+}
+
+const handleAgentRoleSaved = ({ user: updatedUser }) => {
+  users.value = users.value.map((row) => {
+    const current = usersList.find((candidate) => userIdOf(candidate) === userIdOf(row))
+    return current ? { ...current } : row
+  })
+  operationDrawerUser.value = { ...updatedUser }
+  agentRoleUser.value = { ...updatedUser }
 }
 
 const executeDeferredDrawerAction = async () => {
@@ -788,6 +817,15 @@ const closeDetailDrawer = () => {
       @close="closeParentReset"
       @closed="clearParentReset"
       @saved="handleParentResetSaved"
+    />
+
+    <UserAgentRoleDialog
+      :visible="agentRoleOpen"
+      :user="agentRoleUser"
+      :return-focus="agentRoleReturnFocus"
+      @close="closeAgentRole"
+      @closed="clearAgentRole"
+      @saved="handleAgentRoleSaved"
     />
 
     <Teleport to="body">

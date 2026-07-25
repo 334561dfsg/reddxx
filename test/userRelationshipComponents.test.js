@@ -91,3 +91,28 @@ test('user list orchestrates parent reset above the operation Drawer', () => {
   assert.match(source, /parentResetReturnFocus/)
   assert.match(source, /handleParentResetSaved/)
 })
+
+test('agent role entry handles promotion and safe demotion in a child Dialog', () => {
+  const entry = getUserOperationEntry('reset-agent')
+  const source = read('src/admin/components/user/UserAgentRoleDialog.vue')
+  assert.equal(entry.status, 'available')
+  assert.equal(entry.handler, 'reset-agent')
+  assert.match(source, /设置为代理/)
+  assert.match(source, /取消代理身份/)
+  assert.match(source, /承接上级/)
+  assert.match(source, /直属下级/)
+  assert.match(source, /变更原因/)
+  assert.match(source, /getDirectReferrals/)
+  assert.match(source, /getParentCandidates/)
+  assert.match(source, /updateAgentRole/)
+  assert.match(source, /phaseName/)
+  assert.match(source, /useDialogLifecycle/)
+})
+
+test('user list orchestrates agent role changes above the operation Drawer', () => {
+  const source = read('src/pages/admin/user/UserListPage.vue')
+  assert.match(source, /UserAgentRoleDialog/)
+  assert.match(source, /agentRoleOpen/)
+  assert.match(source, /agentRoleReturnFocus/)
+  assert.match(source, /handleAgentRoleSaved/)
+})
