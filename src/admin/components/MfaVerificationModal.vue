@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import { useDialogContentSnapshot, useDialogLifecycle } from '../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   open: {
@@ -17,171 +18,213 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  error: {
+    type: String,
+    default: ''
   }
 })
 
 const emit = defineEmits(['update:open', 'verify', 'cancel'])
-
-// 验证码输入
 const verificationCode = ref('')
+const localError = ref('')
+const verifyRequested = ref(false)
+const dialogRef = ref(null)
+const verificationInput = ref(null)
+const errorSummary = ref(null)
+const errorMessage = computed(() => localError.value || props.error)
+const closeDisabled = computed(() => props.loading || verifyRequested.value)
+const dialogSource = computed(() => ({ title: props.title, description: props.description }))
 
-// 错误信息
-const errorMessage = ref('')
-
-// 计算标题
-const modalTitle = computed(() => props.title)
-
-// 监听打开状态，重置表单
-watch(() => props.open, (newVal) => {
-  if (newVal) {
-    verificationCode.value = ''
-    errorMessage.value = ''
+const {
+  rendered,
+  phase,
+  layerStyle,
+  requestDialogClose,
+  onAfterEnter,
+  onAfterLeave
+} = useDialogLifecycle({
+  open: computed(() => props.open),
+  dialogRef,
+  initialFocusRef: verificationInput,
+  closeDisabled,
+  requestClose: () => {
+    emit('cancel')
+    emit('update:open', false)
   }
 })
 
-// 处理验证
-const handleVerify = () => {
+const { content: displayedDialog } = useDialogContentSnapshot({
+  open: computed(() => props.open),
+  phase,
+  source: dialogSource,
+  clone: (content) => ({ ...content })
+})
+
+watch(() => props.open, (isOpen) => {
+  if (isOpen) {
+    verificationCode.value = ''
+    localError.value = ''
+    verifyRequested.value = false
+  }
+})
+
+watch(() => props.loading, (loading, wasLoading) => {
+  if (wasLoading && !loading) verifyRequested.value = false
+})
+
+watch(errorMessage, async (message) => {
+  if (!message || !props.open) return
+  await nextTick()
+  errorSummary.value?.focus()
+})
+
+const showValidationError = async (message) => {
+  localError.value = message
+  await nextTick()
+  errorSummary.value?.focus()
+}
+
+const handleVerify = async () => {
+  if (props.loading || verifyRequested.value) return
+  if (phase.value !== 'open') return
+
   if (!verificationCode.value) {
-    errorMessage.value = '请输入验证码'
+    await showValidationError('请输入验证码')
     return
   }
 
   if (verificationCode.value.length !== 6) {
-    errorMessage.value = '验证码必须是 6 位数字'
+    await showValidationError('验证码必须是 6 位数字')
     return
   }
 
-  errorMessage.value = ''
+  localError.value = ''
+  verifyRequested.value = true
   emit('verify', verificationCode.value)
 }
 
-// 处理取消
 const handleCancel = () => {
-  verificationCode.value = ''
-  errorMessage.value = ''
-  emit('cancel')
-  emit('update:open', false)
+  if (props.loading || verifyRequested.value) return
+  requestDialogClose()
 }
 
-// 关闭弹窗
-const close = () => {
-  handleCancel()
-}
+const close = () => handleCancel()
 </script>
 
 <template>
   <Teleport to="body">
-    <Transition name="modal">
+    <Transition name="dialog-overlay" @after-enter="onAfterEnter" @after-leave="onAfterLeave">
       <div
-        v-show="open"
-        class="fixed inset-0 z-[9999] flex min-h-[100dvh] w-full items-center justify-center bg-black/50 p-4 sm:p-6"
-        role="dialog"
-        aria-modal="true"
+        v-if="rendered"
+        v-show="phase !== 'closing'"
+        class="fixed inset-0 flex min-h-[100vh] min-h-[100dvh] w-full items-center justify-center bg-black/50 p-4 sm:p-6"
+        role="presentation"
+        :style="layerStyle"
       >
-      <section
-        data-testid="mfa-dialog-frame"
-        class="flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-2xl"
-      >
-        <!-- 头部 -->
-        <header class="shrink-0 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-violet-50 px-6 py-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-xl font-semibold text-slate-900">{{ modalTitle }}</h2>
-              <p class="mt-0.5 text-xs text-slate-500">{{ description }}</p>
-            </div>
-            <button
-              type="button"
-              class="text-2xl text-slate-400 hover:text-slate-600 transition-colors"
-              @click="close"
-            >
-              ×
-            </button>
-          </div>
-        </header>
-
-        <!-- 内容 -->
-        <div data-testid="mfa-dialog-body" class="min-h-0 flex-1 overflow-y-auto px-6 py-5">
-          <!-- 图标 -->
-          <div class="mb-4 flex justify-center">
-            <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-              <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-          </div>
-
-          <!-- 验证码输入框 -->
-          <label class="block space-y-2">
-            <span class="text-sm font-medium text-slate-700">验证码</span>
-            <input
-              v-model="verificationCode"
-              type="text"
-              maxlength="6"
-              placeholder="请输入 6 位验证码"
-              class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-center text-lg tracking-widest outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              :disabled="loading"
-              @keyup.enter="handleVerify"
-            />
-          </label>
-
-          <!-- 错误提示 -->
-          <p v-if="errorMessage" class="mt-2 text-center text-sm text-rose-600">
-            {{ errorMessage }}
-          </p>
-
-          <!-- 说明文字 -->
-          <p class="mt-3 text-center text-xs text-slate-500">
-            请输入您的 Google Authenticator 或其他验证器应用生成的 6 位验证码
-          </p>
-        </div>
-
-        <!-- 底部按钮 -->
-        <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-          <button
-            type="button"
-            class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50"
-            :disabled="loading"
-            @click="handleCancel"
+        <Transition name="dialog-panel">
+          <section
+            v-show="phase !== 'closing'"
+            ref="dialogRef"
+            data-testid="mfa-dialog-frame"
+            class="flex max-h-[calc(100vh-2rem)] max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mfa-dialog-title"
+            :aria-busy="loading"
           >
-            取消
-          </button>
-          <button
-            type="button"
-            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-            :disabled="loading || !verificationCode"
-            @click="handleVerify"
-          >
-            <span v-if="!loading">验证并继续</span>
-            <span v-else class="flex items-center justify-center gap-2">
-              <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              验证中...
-            </span>
-          </button>
-        </footer>
-      </section>
+            <header class="shrink-0 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-violet-50 px-6 py-4">
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <h2 id="mfa-dialog-title" class="text-xl font-semibold text-slate-900">{{ displayedDialog.title }}</h2>
+                  <p class="mt-0.5 text-xs text-slate-500">{{ displayedDialog.description }}</p>
+                </div>
+                <button
+                  type="button"
+                  class="shrink-0 text-2xl text-slate-400 transition-colors hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-label="关闭 MFA 验证"
+                  :disabled="loading || verifyRequested"
+                  @click="close"
+                >
+                  ×
+                </button>
+              </div>
+            </header>
+
+            <div data-testid="mfa-dialog-body" class="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+              <div class="mb-4 flex justify-center" aria-hidden="true">
+                <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+                  <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+              </div>
+
+              <label class="block space-y-2">
+                <span class="text-sm font-medium text-slate-700">验证码</span>
+                <input
+                  ref="verificationInput"
+                  v-model="verificationCode"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="one-time-code"
+                  maxlength="6"
+                  placeholder="请输入 6 位验证码"
+                  class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-center text-lg tracking-widest outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  :disabled="loading"
+                  :aria-invalid="Boolean(errorMessage)"
+                  :aria-describedby="errorMessage ? 'mfa-error mfa-help' : 'mfa-help'"
+                  @keyup.enter="handleVerify"
+                />
+              </label>
+
+              <p
+                v-if="errorMessage"
+                id="mfa-error"
+                ref="errorSummary"
+                tabindex="-1"
+                role="alert"
+                aria-live="assertive"
+                class="mt-2 text-center text-sm text-rose-600"
+              >
+                {{ errorMessage }}
+              </p>
+
+              <p id="mfa-help" class="mt-3 text-center text-xs text-slate-500">
+                请输入您的 Google Authenticator 或其他验证器应用生成的 6 位验证码
+              </p>
+            </div>
+
+            <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+              <button
+                type="button"
+                class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                :disabled="loading || verifyRequested"
+                :aria-label="loading ? '取消，验证中不可用' : '取消 MFA 验证'"
+                @click="handleCancel"
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                :disabled="loading || verifyRequested || !verificationCode"
+                :aria-label="loading ? '验证并继续，验证中' : '验证并继续'"
+                @click="handleVerify"
+              >
+                <span v-if="!loading">验证并继续</span>
+                <span v-else class="flex items-center justify-center gap-2">
+                  <svg class="h-4 w-4 animate-spin" aria-hidden="true" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  验证中...
+                </span>
+              </button>
+            </footer>
+          </section>
+        </Transition>
       </div>
     </Transition>
   </Teleport>
 </template>
-
-<style scoped>
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.2s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-  transform: scale(0.95);
-}
-
-.modal-enter-to,
-.modal-leave-from {
-  opacity: 1;
-  transform: scale(1);
-}
-</style>

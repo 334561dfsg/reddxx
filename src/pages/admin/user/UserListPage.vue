@@ -75,6 +75,7 @@ const userOperations = ref(null)
 const cancelNote = ref('')
 const mfaOpen = ref(false)
 const mfaLoading = ref(false)
+const mfaError = ref('')
 const pendingMfaAction = ref(null)
 const unifiedCancelDialogRef = ref(null)
 const unifiedCancelReturnRef = ref(null)
@@ -187,6 +188,7 @@ const applyControl = (payload) => {
 
 const requestMfa = (action) => {
   pendingMfaAction.value = action
+  mfaError.value = ''
   mfaOpen.value = true
 }
 
@@ -230,6 +232,7 @@ const handleUnifiedCancelAfterLeave = () => {
     cancelNote.value = ''
     clearUnifiedCancelSnapshot()
     if (shouldOpenMfa) {
+      mfaError.value = ''
       mfaOpen.value = true
     } else {
       controlUser.value = null
@@ -237,21 +240,28 @@ const handleUnifiedCancelAfterLeave = () => {
   }
 }
 
-const handleMfaVerify = () => {
+const handleMfaVerify = async () => {
+  if (mfaLoading.value) return
   mfaLoading.value = true
   const action = pendingMfaAction.value
-  if (action?.type === 'apply') applyControl(action.payload)
-  if (action?.type === 'cancel') {
-    const cancelItems = getUnifiedControlCancelItems(rulesOf(controlUser.value))
-    if (cancelItems.length) {
-      cancelUnifiedUserControl(action.payload)
+  try {
+    if (action?.type === 'apply') await applyControl(action.payload)
+    if (action?.type === 'cancel') {
+      const cancelItems = getUnifiedControlCancelItems(rulesOf(controlUser.value))
+      if (cancelItems.length) {
+        await cancelUnifiedUserControl(action.payload)
+      }
+      controlUser.value = null
     }
-    controlUser.value = null
+    mfaOpen.value = false
+    pendingMfaAction.value = null
+    mfaError.value = ''
+    cancelNote.value = ''
+  } catch (error) {
+    mfaError.value = `验证失败：${error?.message || '操作未完成，请重试'}`
+  } finally {
+    mfaLoading.value = false
   }
-  pendingMfaAction.value = null
-  mfaLoading.value = false
-  mfaOpen.value = false
-  cancelNote.value = ''
 }
 
 const handleMfaCancel = () => {
@@ -648,6 +658,7 @@ const closeDetailDrawer = () => {
       :loading="mfaLoading"
       :title="mfaTitle"
       :description="mfaDescription"
+      :error="mfaError"
       @verify="handleMfaVerify"
       @cancel="handleMfaCancel"
     />

@@ -355,3 +355,38 @@ test('unmount releases the dialog layer, document listener, scroll lock, and foc
   assert.equal(background.inert, false)
   assert.equal(document.activeElement, trigger)
 })
+
+test('disabled close predicate rejects closing without invoking the callback', async (t) => {
+  const document = installFakeDocument(t)
+  const closeDisabled = ref(true)
+  let closeCount = 0
+  const open = ref(true)
+  const dialog = createFakeElement(document)
+  const dialogRef = shallowRef(dialog)
+  let lifecycle
+  const app = renderer.createApp({
+    setup() {
+      lifecycle = useDialogLifecycle({
+        open,
+        dialogRef,
+        closeDisabled,
+        requestClose: () => { closeCount += 1 }
+      })
+      return () => h('div')
+    }
+  })
+
+  document.body.children.push(dialog)
+  app.mount({ children: [] })
+  await flushLifecycle()
+  lifecycle.onAfterEnter()
+
+  assert.equal(lifecycle.requestDialogClose(), false)
+  assert.equal(closeCount, 0)
+  assert.equal(lifecycle.phase.value, 'open')
+
+  closeDisabled.value = false
+  assert.equal(lifecycle.requestDialogClose(), true)
+  assert.equal(closeCount, 1)
+  app.unmount()
+})
