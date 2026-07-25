@@ -8,7 +8,7 @@ export const useMfaVerification = (props, emit) => {
   const dialogRef = ref(null)
   const verificationInput = ref(null)
   const errorSummary = ref(null)
-  const errorMessage = computed(() => props.error || localError.value)
+  const errorMessage = computed(() => localError.value || props.error)
   const closeDisabled = computed(() => props.loading || verifyRequested.value)
 
   const {

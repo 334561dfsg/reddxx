@@ -175,6 +175,38 @@ test('MFA local and repeated identical external errors focus the real error summ
   assert.equal(error.focusCount, firstFailureFocusCount + 1)
 })
 
+test('MFA local validation replaces a stale external failure until a valid retry receives a new result', async (t) => {
+  const { controller, document, emitted, error, input, props } = await mountMfa(t)
+
+  props.error = '验证码无效'
+  props.errorAttempt = 1
+  await flush()
+  assert.equal(controller.errorMessage.value, '验证码无效')
+
+  input.focus()
+  controller.verificationCode.value = ''
+  assert.equal(await controller.handleVerify(), false)
+  assert.equal(controller.errorMessage.value, '请输入验证码')
+  assert.equal(document.activeElement, error)
+
+  input.focus()
+  controller.verificationCode.value = '12345'
+  assert.equal(await controller.handleVerify(), false)
+  assert.equal(controller.errorMessage.value, '验证码必须是 6 位数字')
+  assert.equal(document.activeElement, error)
+
+  controller.verificationCode.value = '654321'
+  assert.equal(await controller.handleVerify(), true)
+  assert.equal(controller.localError.value, '')
+  assert.deepEqual(emitted, [['verify', '654321']])
+
+  props.error = '验证码已过期'
+  props.errorAttempt = 2
+  await flush()
+  assert.equal(controller.errorMessage.value, '验证码已过期')
+  assert.equal(document.activeElement, error)
+})
+
 test('MFA request state blocks verify, cancel, header close, Escape, and callbacks', async (t) => {
   const { controller, document, emitted } = await mountMfa(t)
   controller.verificationCode.value = '123456'
