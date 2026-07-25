@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
 const mutationPath = new URL('../src/admin/components/user/UserFundsMutationDialog.vue', import.meta.url)
+const flowLimitPath = new URL('../src/admin/components/user/UserWithdrawFlowLimitDialog.vue', import.meta.url)
 
 test('funds mutation dialog follows the shared layered dialog contract', async () => {
   const source = await readFile(mutationPath, 'utf8')
@@ -40,6 +41,39 @@ test('funds mutation dialog previews and confirms all three operation modes', as
 test('funds mutation dialog uses required open, close, and reduced-motion timings', async () => {
   const source = await readFile(mutationPath, 'utf8')
 
+  assert.match(source, /200ms ease-out/)
+  assert.match(source, /150ms ease-in/)
+  assert.match(source, /prefers-reduced-motion: reduce/)
+  assert.match(source, /transition-duration: 50ms/)
+  assert.match(source, /transform: none/)
+})
+
+test('withdraw flow limit dialog supports setting and removing a layered rule', async () => {
+  const source = await readFile(flowLimitPath, 'utf8')
+
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /v-if="rendered"/)
+  assert.match(source, /:style="layerStyle"/)
+  assert.match(source, /role="dialog"/)
+  assert.match(source, /aria-modal="true"/)
+  assert.match(source, /aria-labelledby="user-withdraw-flow-limit-title"/)
+  assert.match(source, /aria-label="关闭"/)
+  assert.match(source, /data-testid="user-withdraw-flow-limit-body"[^>]*overflow-y-auto/)
+  assert.match(source, /flow-limit-set/)
+  assert.match(source, /flow-limit-remove/)
+  assert.match(source, /requiredTurnover/)
+  assert.match(source, /completedTurnover/)
+  assert.match(source, /expiresAt/)
+  assert.match(source, /提交并验证/)
+  assert.match(source, /解除限制/)
+  assert.match(source, /role="alert"/)
+})
+
+test('withdraw flow limit dialog preserves fixed-frame and motion requirements', async () => {
+  const source = await readFile(flowLimitPath, 'utf8')
+
+  assert.match(source, /overflow-hidden/)
+  assert.match(source, /closeDisabled/)
   assert.match(source, /200ms ease-out/)
   assert.match(source, /150ms ease-in/)
   assert.match(source, /prefers-reduced-motion: reduce/)
