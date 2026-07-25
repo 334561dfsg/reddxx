@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   user: { type: Object, required: true },
@@ -19,6 +20,9 @@ const formatMoney = (value, opts = {}) => {
 }
 
 const showModal = ref(false)
+const dialogRef = ref(null)
+const titleRef = ref(null)
+const returnFocusRef = ref(null)
 const form = ref({
   depositAccountKey: 'market',
   depositAmount: '',
@@ -48,20 +52,36 @@ const showToast = (message) => {
   }, 2500)
 }
 
-const open = () => {
+const {
+  rendered,
+  phase,
+  layerStyle,
+  requestDialogClose,
+  onAfterEnter,
+  onAfterLeave
+} = useDialogLifecycle({
+  open: showModal,
+  dialogRef,
+  initialFocusRef: titleRef,
+  returnFocusRef,
+  requestClose: () => { showModal.value = false }
+})
+
+const open = (returnFocus = null) => {
+  if (phase.value !== 'closed') return false
   form.value = {
     depositAccountKey: 'market',
     depositAmount: '',
     remark: ''
   }
+  returnFocusRef.value = returnFocus
   showModal.value = true
+  return true
 }
 
 defineExpose({ open })
 
-const close = () => {
-  showModal.value = false
-}
+const close = createDialogCloseAction(requestDialogClose)
 
 const confirm = () => {
   const amount = String(form.value.depositAmount || '').trim()
@@ -89,7 +109,7 @@ const confirm = () => {
     v-if="showTrigger"
     type="button"
     class="inline-flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg ring-1 ring-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-colors"
-    @click="open"
+    @click="open($event.currentTarget)"
   >
     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 1v22" />
@@ -100,30 +120,25 @@ const confirm = () => {
   </button>
 
   <Teleport to="body">
-    <Transition
-      enter-active-class="transition ease-out duration-200"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition ease-in duration-150"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
+    <Transition name="user-action-dialog" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
       <div
-        v-if="showModal"
-        class="fixed inset-0 z-[60] bg-black/40 grid place-items-center p-4"
+        v-if="rendered"
+        v-show="phase !== 'closing'"
+        class="fixed inset-0 grid place-items-center bg-black/40 p-4"
+        :style="layerStyle"
       >
-        <section class="w-full max-w-xl rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
+        <section ref="dialogRef" class="user-action-dialog-panel flex max-h-[calc(100vh-2rem)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="user-deposit-title">
           <header class="border-b border-slate-200 bg-slate-50 px-5 py-4">
             <div class="flex items-start justify-between gap-4">
               <div>
                 <div class="text-xs font-medium tracking-wide text-slate-500">操作</div>
-                <div class="mt-1 text-lg font-semibold text-slate-900">入金</div>
+                <div id="user-deposit-title" ref="titleRef" tabindex="-1" class="mt-1 text-lg font-semibold text-slate-900 outline-none">入金</div>
               </div>
               <button
                 type="button"
                 class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-white transition-colors"
                 @click="close"
-                aria-label="关闭弹窗"
+                aria-label="关闭"
               >
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -132,7 +147,7 @@ const confirm = () => {
             </div>
           </header>
 
-          <div class="px-5 py-4 space-y-3">
+          <div class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
             <section class="rounded-xl bg-slate-100 p-5">
               <div class="text-base font-semibold text-slate-900">
                 {{ user.username }} 账户资产
@@ -214,7 +229,8 @@ const confirm = () => {
 
     <div
       v-if="toast.visible"
-      class="fixed top-4 right-4 z-[70] bg-white border border-blue-200 rounded-lg shadow-lg px-4 py-3 flex items-center gap-3"
+      class="fixed right-4 top-4 flex items-center gap-3 rounded-lg border border-blue-200 bg-white px-4 py-3 shadow-lg"
+      :style="{ zIndex: Number(layerStyle.zIndex || 1000) + 1 }"
     >
       <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
         <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,3 +241,22 @@ const confirm = () => {
     </div>
   </Teleport>
 </template>
+
+<style scoped>
+.user-action-dialog-enter-active { transition: opacity 200ms ease-out; }
+.user-action-dialog-leave-active { transition: opacity 150ms ease-in; }
+.user-action-dialog-enter-active .user-action-dialog-panel { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.user-action-dialog-leave-active .user-action-dialog-panel { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.user-action-dialog-enter-from,
+.user-action-dialog-leave-to { opacity: 0; }
+.user-action-dialog-enter-from .user-action-dialog-panel,
+.user-action-dialog-leave-to .user-action-dialog-panel { opacity: 0; transform: scale(0.96); }
+@media (prefers-reduced-motion: reduce) {
+  .user-action-dialog-enter-active,
+  .user-action-dialog-leave-active,
+  .user-action-dialog-enter-active .user-action-dialog-panel,
+  .user-action-dialog-leave-active .user-action-dialog-panel { transition-duration: 50ms; }
+  .user-action-dialog-enter-from .user-action-dialog-panel,
+  .user-action-dialog-leave-to .user-action-dialog-panel { transform: none; }
+}
+</style>

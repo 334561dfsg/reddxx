@@ -34,14 +34,14 @@ const {
 
 const close = createDialogCloseAction(requestDialogClose)
 
-const selectEntry = (entry) => {
+const selectEntry = (entry, event) => {
   if (phase.value !== 'open') return
   if (entry.status === 'planned') {
     plannedMessage.value = `${entry.title}：该功能入口已预留，业务能力待接入`
     return
   }
   plannedMessage.value = ''
-  emit('action', { id: entry.id, user: props.user })
+  emit('action', { id: entry.id, user: props.user, trigger: event?.currentTarget || null })
 }
 
 const handleAfterLeave = () => {
@@ -128,7 +128,7 @@ const entryClasses = (entry) => ({
                     type="button"
                     class="min-h-20 rounded-lg border p-3 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     :class="entryClasses(entry)"
-                    @click="selectEntry(entry)"
+                    @click="selectEntry(entry, $event)"
                   >
                     <span class="flex items-start justify-between gap-2">
                       <span class="font-medium text-slate-900">{{ entry.title }}</span>

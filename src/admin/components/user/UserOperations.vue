@@ -17,12 +17,12 @@ const adjustAction = ref(null)
 const depositAction = ref(null)
 const transferAction = ref(null)
 
-const open = (action) => ({
+const open = (action, returnFocus = null) => ({
   freeze: freezeAction,
   adjust: adjustAction,
   deposit: depositAction,
   transfer: transferAction
-})[action]?.value?.open()
+})[action]?.value?.open(returnFocus)
 
 defineExpose({ open })
 </script>

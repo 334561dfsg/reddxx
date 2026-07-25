@@ -213,8 +213,8 @@ const closeOperationDrawer = () => {
   operationDrawerOpen.value = false
 }
 
-const handleOperationDrawerAction = async ({ id, user }) => {
-  operationActionReturnFocus.value = typeof document === 'undefined' ? null : document.activeElement
+const handleOperationDrawerAction = async ({ id, user, trigger }) => {
+  operationActionReturnFocus.value = trigger || (typeof document === 'undefined' ? null : document.activeElement)
   controlReturnUserId.value = userIdOf(user)
 
   if (['detail', 'assets', 'point-control-log'].includes(id)) {
@@ -239,7 +239,7 @@ const handleOperationDrawerAction = async ({ id, user }) => {
     deposit: 'deposit',
     transfer: 'transfer'
   }
-  if (regularActions[id]) await openRegularAction(user, regularActions[id])
+  if (regularActions[id]) await openRegularAction(user, regularActions[id], trigger)
 }
 
 const executeDeferredDrawerAction = async () => {
@@ -259,10 +259,10 @@ const executeDeferredDrawerAction = async () => {
   }
 }
 
-const openRegularAction = async (user, action) => {
+const openRegularAction = async (user, action, returnFocus = null) => {
   operationUser.value = user
   await nextTick()
-  userOperations.value?.open(action)
+  userOperations.value?.open(action, returnFocus)
 }
 
 const applyControl = (payload) => {
