@@ -173,7 +173,7 @@ const submit = () => {
             v-show="phase !== 'closing'"
             ref="dialogRef"
             data-testid="user-control-dialog-frame"
-            class="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[680px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+            class="flex max-h-[calc(100vh-1.5rem)] max-h-[calc(100dvh-1.5rem)] w-full max-w-[680px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="user-control-dialog-title"

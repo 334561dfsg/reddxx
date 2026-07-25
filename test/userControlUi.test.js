@@ -294,7 +294,7 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   assert.match(source, /fixed inset-0/)
   assert.doesNotMatch(source, /@mousedown\.self|@click\.self/)
   assert.doesNotMatch(source, /fixed inset-0[^"\n]*overflow-auto/)
-  assert.match(source, /data-testid="user-control-dialog-frame"[^>]*max-h-\[calc\(100dvh-1\.5rem\)\][^>]*overflow-hidden/)
+  assert.match(source, /data-testid="user-control-dialog-frame"[^>]*max-h-\[calc\(100vh-1\.5rem\)\][^>]*max-h-\[calc\(100dvh-1\.5rem\)\][^>]*overflow-hidden/)
   assert.match(source, /data-testid="user-control-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.match(source, /space-y-2\.5 px-5 py-3/)
   assert.match(source, /rows="2"/)
@@ -309,7 +309,7 @@ test('MFA modal keeps only its body scrollable', () => {
   const mfaSource = read('../src/admin/components/MfaVerificationModal.vue')
 
   assert.doesNotMatch(mfaSource, /fixed inset-0[^"\n]*overflow-y-auto/)
-  assert.match(mfaSource, /data-testid="mfa-dialog-frame"[^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
+  assert.match(mfaSource, /data-testid="mfa-dialog-frame"[^>]*max-h-\[calc\(100vh-2rem\)\][^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
   assert.match(mfaSource, /data-testid="mfa-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
 })
 
@@ -358,6 +358,8 @@ test('point-control cancellation dialogs and detail drawer keep overlays open an
   assert.match(userListSource, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
   assert.match(userListSource, /data-testid="unified-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.doesNotMatch(detailSource, /@mousedown\.self|@click\.self/)
+  assert.match(detailSource, /fixed inset-0/)
+  assert.match(detailSource, /<aside[^>]*h-full[^>]*overflow-hidden/)
   assert.match(detailSource, /max-w-5xl[^>]*overflow-hidden/)
   assert.match(detailSource, /flex-1[^>]*overflow-y-auto/)
 })
