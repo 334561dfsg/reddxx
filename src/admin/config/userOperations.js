@@ -15,7 +15,7 @@ export const USER_OPERATION_GROUPS = Object.freeze([
 ])
 
 export const USER_OPERATION_ENTRIES = Object.freeze([
-  { id: 'edit-profile', title: '编辑资料', description: '维护用户基础资料与账户信息', group: 'relationship', status: 'planned', risk: 'normal', handler: 'planned' },
+  { id: 'edit-profile', title: '编辑资料', description: '维护用户基础资料与账户信息', group: 'relationship', status: 'available', risk: 'normal', handler: 'edit-profile' },
   { id: 'direct-referrals', title: '查看直属下级', description: '查看用户直接邀请的下级成员', group: 'relationship', status: 'available', risk: 'normal', handler: 'direct-referrals' },
   { id: 'all-referrals', title: '查看全部下级', description: '查看用户团队内的全部层级成员', group: 'relationship', status: 'available', risk: 'normal', handler: 'all-referrals' },
   { id: 'reset-parent', title: '重设上级', description: '调整用户所属的上级关系', group: 'relationship', status: 'planned', risk: 'sensitive', handler: 'planned' },

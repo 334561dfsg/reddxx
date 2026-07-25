@@ -7,6 +7,7 @@ import UserControlModal from '../../../admin/components/user-control/UserControl
 import UserOperations from '../../../admin/components/user/UserOperations.vue'
 import UserOperationDrawer from '../../../admin/components/user/UserOperationDrawer.vue'
 import UserRelationshipDrawer from '../../../admin/components/user/UserRelationshipDrawer.vue'
+import UserProfileEditDialog from '../../../admin/components/user/UserProfileEditDialog.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -85,6 +86,9 @@ const relationshipDrawerOpen = ref(false)
 const relationshipDrawerUser = ref(null)
 const relationshipDrawerMode = ref('direct')
 const relationshipReturnFocus = ref(null)
+const profileEditOpen = ref(false)
+const profileEditUser = ref(null)
+const profileEditReturnFocus = ref(null)
 const cancelNote = ref('')
 const {
   open: mfaOpen,
@@ -195,6 +199,13 @@ const closeControlSetting = () => {
 
 const selectControlSetting = (user) => {
   controlReturnUserId.value = userIdOf(user)
+
+  if (id === 'edit-profile') {
+    profileEditUser.value = user
+    profileEditReturnFocus.value = trigger
+    profileEditOpen.value = true
+    return
+  }
   openControlSetting(user)
 }
 
@@ -263,6 +274,22 @@ const clearRelationshipDrawer = () => {
   relationshipDrawerUser.value = null
   relationshipReturnFocus.value = null
   relationshipDrawerMode.value = 'direct'
+}
+
+const closeProfileEdit = () => {
+  profileEditOpen.value = false
+}
+
+const clearProfileEdit = () => {
+  profileEditUser.value = null
+  profileEditReturnFocus.value = null
+}
+
+const handleProfileSaved = (updatedUser) => {
+  const updatedId = userIdOf(updatedUser)
+  users.value = users.value.map((user) => userIdOf(user) === updatedId ? { ...updatedUser } : user)
+  operationDrawerUser.value = { ...updatedUser }
+  profileEditUser.value = { ...updatedUser }
 }
 
 const executeDeferredDrawerAction = async () => {
@@ -716,6 +743,15 @@ const closeDetailDrawer = () => {
       :return-focus="relationshipReturnFocus"
       @close="closeRelationshipDrawer"
       @closed="clearRelationshipDrawer"
+    />
+
+    <UserProfileEditDialog
+      :visible="profileEditOpen"
+      :user="profileEditUser"
+      :return-focus="profileEditReturnFocus"
+      @close="closeProfileEdit"
+      @closed="clearProfileEdit"
+      @saved="handleProfileSaved"
     />
 
     <Teleport to="body">

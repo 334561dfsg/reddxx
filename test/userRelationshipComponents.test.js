@@ -40,3 +40,29 @@ test('user list orchestrates both relationship modes above the operation Drawer'
   assert.match(source, /\['direct-referrals', 'all-referrals'\]/)
   assert.match(source, /:return-focus="relationshipReturnFocus"/)
 })
+
+test('edit profile entry opens an accessible validated child Dialog', () => {
+  const entry = getUserOperationEntry('edit-profile')
+  const source = read('src/admin/components/user/UserProfileEditDialog.vue')
+  assert.equal(entry.status, 'available')
+  assert.equal(entry.handler, 'edit-profile')
+  assert.match(source, /编辑用户资料/)
+  for (const model of ['username', 'email', 'phone', 'remark']) {
+    assert.match(source, new RegExp(`v-model="form\\.${model}"`))
+  }
+  assert.match(source, /validateProfile/)
+  assert.match(source, /updateProfile/)
+  assert.match(source, /role="alert"/)
+  assert.match(source, /:aria-busy="submitting"/)
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /:style="layerStyle"/)
+  assert.match(source, /aria-label="关闭"/)
+})
+
+test('user list keeps the operation Drawer mounted while editing profile', () => {
+  const source = read('src/pages/admin/user/UserListPage.vue')
+  assert.match(source, /UserProfileEditDialog/)
+  assert.match(source, /profileEditOpen/)
+  assert.match(source, /profileEditReturnFocus/)
+  assert.match(source, /handleProfileSaved/)
+})
