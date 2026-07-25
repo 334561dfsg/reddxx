@@ -344,7 +344,7 @@ const resetFilters = () => {
       <Transition name="dialog-overlay" @after-enter="onModuleCancelAfterEnter" @after-leave="handleModuleCancelAfterLeave">
         <div v-if="moduleCancelRendered" v-show="moduleCancelPhase !== 'closing'" class="fixed inset-0 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" :style="moduleCancelLayerStyle">
           <Transition name="dialog-panel">
-            <section v-show="moduleCancelPhase !== 'closing'" ref="moduleCancelDialogRef" data-testid="module-user-control-cancel-dialog" class="flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="module-user-control-cancel-title">
+            <section v-show="moduleCancelPhase !== 'closing'" ref="moduleCancelDialogRef" data-testid="module-user-control-cancel-dialog" class="flex max-h-[calc(100vh-2rem)] max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="module-user-control-cancel-title">
               <header class="border-b border-slate-200 px-5 py-4">
                 <h2 id="module-user-control-cancel-title" class="text-lg font-semibold text-slate-900">取消{{ displayedModuleCancelData.moduleLabel }}用户规则</h2>
                 <p class="mt-1 text-sm text-slate-500">{{ displayedModuleCancelData.user?.username }} · UID {{ userIdOf(displayedModuleCancelData.user) }}</p>

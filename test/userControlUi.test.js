@@ -319,7 +319,7 @@ test('point-control cancellation dialogs and detail drawer keep overlays open an
   const detailSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
 
   assert.doesNotMatch(moduleSource, /@mousedown\.self="closeCancel"|@click\.self="closeCancel"/)
-  assert.match(moduleSource, /data-testid="module-user-control-cancel-dialog"[^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
+  assert.match(moduleSource, /data-testid="module-user-control-cancel-dialog"[^>]*max-h-\[calc\(100vh-2rem\)\][^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
   assert.match(moduleSource, /data-testid="module-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.doesNotMatch(userListSource, /@mousedown\.self="closeControlCancel"|@click\.self="closeControlCancel"/)
   assert.match(userListSource, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
