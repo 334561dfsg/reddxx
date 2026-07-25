@@ -313,6 +313,22 @@ test('MFA modal keeps only its body scrollable', () => {
   assert.match(mfaSource, /data-testid="mfa-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
 })
 
+test('point-control cancellation dialogs and detail drawer keep overlays open and only bodies scrollable', () => {
+  const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
+  const userListSource = read('../src/pages/admin/user/UserListPage.vue')
+  const detailSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
+
+  assert.doesNotMatch(moduleSource, /@mousedown\.self="closeCancel"|@click\.self="closeCancel"/)
+  assert.match(moduleSource, /data-testid="module-user-control-cancel-dialog"[^>]*max-h-\[calc\(100dvh-2rem\)\][^>]*overflow-hidden/)
+  assert.match(moduleSource, /data-testid="module-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
+  assert.doesNotMatch(userListSource, /@mousedown\.self="closeControlCancel"|@click\.self="closeControlCancel"/)
+  assert.match(userListSource, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
+  assert.match(userListSource, /data-testid="unified-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
+  assert.doesNotMatch(detailSource, /@mousedown\.self|@click\.self/)
+  assert.match(detailSource, /max-w-5xl[^>]*overflow-hidden/)
+  assert.match(detailSource, /flex-1[^>]*overflow-y-auto/)
+})
+
 test('module and unified cancel dialogs use compact spacing', () => {
   const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   const userSource = read('../src/pages/admin/user/UserListPage.vue')

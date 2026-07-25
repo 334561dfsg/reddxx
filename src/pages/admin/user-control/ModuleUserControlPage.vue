@@ -302,13 +302,13 @@ const resetFilters = () => {
     />
 
     <Teleport to="body">
-      <div v-if="cancelOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" @mousedown.self="closeCancel">
-        <section data-testid="module-user-control-cancel-dialog" class="w-full max-w-md rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="取消当前模块用户规则">
+      <div v-if="cancelOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
+        <section data-testid="module-user-control-cancel-dialog" class="flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-label="取消当前模块用户规则">
           <header class="border-b border-slate-200 px-5 py-4">
             <h2 class="text-lg font-semibold text-slate-900">取消{{ moduleMeta.label }}用户规则</h2>
             <p class="mt-1 text-sm text-slate-500">{{ selectedUser?.username }} · UID {{ userIdOf(selectedUser) }}</p>
           </header>
-          <div class="space-y-3 px-5 py-4">
+          <div data-testid="module-user-control-cancel-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
             <p class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               本次操作只影响当前模块，其他模块规则继续生效。
             </p>

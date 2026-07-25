@@ -567,7 +567,7 @@ const closeDetailDrawer = () => {
             <h2 class="text-lg font-semibold text-slate-900">取消统一控制</h2>
             <p class="mt-1 text-sm text-slate-500">{{ controlUser?.username }} · UID {{ userIdOf(controlUser) }}</p>
           </header>
-          <div data-testid="unified-user-control-cancel-body" class="min-h-0 space-y-3 overflow-y-auto px-5 py-4">
+          <div data-testid="unified-user-control-cancel-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
             <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
               <p class="font-medium">将取消以下 {{ cancelControlItems.length }} 个当前有效模块</p>
               <ul v-if="cancelControlItems.length" class="mt-2 space-y-1" aria-label="待取消模块规则">
