@@ -113,6 +113,7 @@ const confirm = () => {
   const amount = String(form.value.amount || '').trim()
   if (!form.value.fromAccountKey) return showToast('请选择“从”账户')
   if (!form.value.toAccountKey) return showToast('请选择“到”账户')
+  if (form.value.fromAccountKey === form.value.toAccountKey) return showToast('“从”账户和“到”账户不能相同，请重新选择“到”账户')
   if (!form.value.coinKey) return showToast('请选择币种')
   if (!amount || Number.isNaN(Number(amount))) return showToast('请输入有效的划转数量')
 
@@ -169,42 +170,74 @@ const confirm = () => {
           </header>
 
           <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 pb-5">
-            <div>
-              <div class="text-sm font-medium text-slate-700 mb-2">从</div>
-              <select
-                v-model="form.fromAccountKey"
-                class="w-full rounded-xl border-2 border-blue-600 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-100"
-              >
-                <option v-for="opt in transferAccountOptions" :key="opt.key" :value="opt.key">
+            <fieldset class="m-0 min-w-0 border-0 p-0">
+              <legend class="mb-2 text-sm font-medium text-slate-700">从</legend>
+              <div class="grid grid-cols-2 gap-2">
+                <label
+                  v-for="opt in transferAccountOptions"
+                  :key="opt.key"
+                  class="min-h-11 cursor-pointer rounded-xl border px-3 py-2 text-center text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
+                  :class="form.fromAccountKey === opt.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300'"
+                >
                   {{ opt.label }}
-                </option>
-              </select>
-            </div>
+                  <input
+                    v-model="form.fromAccountKey"
+                    type="radio"
+                    name="transfer-from-account"
+                    :value="opt.key"
+                    class="sr-only"
+                  />
+                </label>
+              </div>
+            </fieldset>
 
-            <div>
-              <div class="text-sm font-medium text-slate-700 mb-2">到</div>
-              <select
-                v-model="form.toAccountKey"
-                class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm outline-none"
-              >
-                <option v-for="opt in transferAccountOptions" :key="opt.key" :value="opt.key">
+            <fieldset class="m-0 min-w-0 border-0 p-0">
+              <legend class="mb-2 text-sm font-medium text-slate-700">到</legend>
+              <div class="grid grid-cols-2 gap-2">
+                <label
+                  v-for="opt in transferAccountOptions"
+                  :key="opt.key"
+                  class="min-h-11 rounded-xl border px-3 py-2 text-center text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
+                  :class="opt.key === form.fromAccountKey
+                    ? 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400'
+                    : form.toAccountKey === opt.key
+                      ? 'cursor-pointer border-blue-600 bg-blue-50 text-blue-900'
+                      : 'cursor-pointer border-slate-200 bg-white text-slate-700 hover:border-blue-300'"
+                >
                   {{ opt.label }}
-                </option>
-              </select>
-            </div>
+                  <input
+                    v-model="form.toAccountKey"
+                    type="radio"
+                    name="transfer-to-account"
+                    :value="opt.key"
+                    :disabled="opt.key === form.fromAccountKey"
+                    class="sr-only"
+                  />
+                </label>
+              </div>
+              <p class="mt-2 text-sm text-slate-600">当前“从”账户不能作为“到”账户，请选择其他账户。</p>
+            </fieldset>
 
-            <div>
-              <div class="text-sm font-medium text-slate-700 mb-2">币种</div>
-              <select
-                v-model="form.coinKey"
-                class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm outline-none"
-              >
-                <option disabled value="">请选择</option>
-                <option v-for="c in coinOptions" :key="c.key" :value="c.key">
-                  {{ c.label }}
-                </option>
-              </select>
-            </div>
+            <fieldset class="m-0 min-w-0 border-0 p-0">
+              <legend class="mb-2 text-sm font-medium text-slate-700">币种</legend>
+              <div class="grid grid-cols-3 gap-2">
+                <label
+                  v-for="coin in coinOptions"
+                  :key="coin.key"
+                  class="min-h-11 cursor-pointer rounded-xl border px-3 py-2 text-center text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
+                  :class="form.coinKey === coin.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300'"
+                >
+                  {{ coin.label }}
+                  <input
+                    v-model="form.coinKey"
+                    type="radio"
+                    name="transfer-coin"
+                    :value="coin.key"
+                    class="sr-only"
+                  />
+                </label>
+              </div>
+            </fieldset>
 
             <div>
               <div class="text-sm font-medium text-slate-700 mb-2">划转数量</div>

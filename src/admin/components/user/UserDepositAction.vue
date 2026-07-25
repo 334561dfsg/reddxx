@@ -180,17 +180,27 @@ const confirm = () => {
               </div>
             </section>
 
-            <div>
-              <div class="text-sm font-medium text-slate-700 mb-2">选择入金账户：</div>
-              <select
-                v-model="form.depositAccountKey"
-                class="w-full rounded-xl border-2 border-blue-600 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-100"
-              >
-                <option v-for="opt in depositAccountOptions" :key="opt.key" :value="opt.key">
-                  {{ opt.label }}
-                </option>
-              </select>
-            </div>
+            <fieldset class="m-0 min-w-0 border-0 p-0">
+              <legend class="mb-2 text-sm font-medium text-slate-700">选择入金账户</legend>
+              <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <label
+                  v-for="opt in depositAccountOptions"
+                  :key="opt.key"
+                  class="flex min-h-12 cursor-pointer items-center justify-between gap-3 rounded-xl border bg-white px-3 py-2 text-sm transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
+                  :class="form.depositAccountKey === opt.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 text-slate-700 hover:border-blue-300'"
+                >
+                  <span class="font-medium">{{ opt.label }}</span>
+                  <span class="text-xs tabular-nums text-slate-500">{{ formatMoney(opt.value, { min: 2, max: 2 }) }}</span>
+                  <input
+                    v-model="form.depositAccountKey"
+                    type="radio"
+                    name="deposit-account"
+                    :value="opt.key"
+                    class="sr-only"
+                  />
+                </label>
+              </div>
+            </fieldset>
 
             <div>
               <div class="text-sm font-medium text-slate-700 mb-2">操作入金数量：</div>
