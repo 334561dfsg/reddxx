@@ -1,12 +1,16 @@
-# Frontend Product Interaction Standards Skill Design
+# 前端产品交互规范 Skill 设计
 
-## Goal
+## 目标
 
-Create a personal, framework-independent Codex skill that automatically applies the user's frontend product interaction standards across projects. The standards are mandatory by default and may be bypassed only when the user explicitly authorizes an exception for a defined scope.
+创建一个框架无关的个人 Codex Skill，在不同项目中自动应用用户的前端产品交互规范。规范默认为强制要求，只有用户针对明确范围授权时才允许例外。
 
-The public Git repository `git@github.com:gloopai/frontend-product-interaction-standards.git` is the canonical source and version history. The skill is installed locally at `~/.codex/skills/frontend-product-interaction-standards/` for automatic discovery.
+公开 Git 仓库 `git@github.com:gloopai/frontend-product-interaction-standards.git` 是规范的唯一源文件和版本历史。本地安装位置为 `~/.codex/skills/frontend-product-interaction-standards/`，供 Codex 自动发现。
 
-## Skill structure
+## 语言约束
+
+Skill 的说明、规则、验收标准、展示信息和默认提示全部使用中文。受 Skill 命名及工具兼容性约束，Skill 技术标识 `frontend-product-interaction-standards`、目录名和分类文件名保留英文。
+
+## Skill 结构
 
 ```text
 frontend-product-interaction-standards/
@@ -17,85 +21,86 @@ frontend-product-interaction-standards/
     └── dialogs.md
 ```
 
-`SKILL.md` remains concise. It defines the automatic trigger conditions, mandatory workflow, exception policy, and reference routing. Detailed product rules live in category-specific files under `references/` so agents load only the standards relevant to a task.
+`SKILL.md` 保持精简，只定义自动触发条件、强制执行流程、例外政策和参考文件路由。详细产品规则存放在 `references/` 下的分类文件中，使 Agent 只加载当前任务相关的规范。
 
-The first release contains the Dialog category. Future categories may include forms, tables, navigation, feedback, and drawers. New categories are added only when the user provides relevant standards.
+首个版本只包含 Dialog 分类。未来可按用户提供的新规范增加表单、表格、导航、反馈和抽屉等分类，不预先创建空分类。
 
-## Triggering and scope
+## 触发范围
 
-The skill automatically triggers whenever an agent creates, modifies, refactors, reviews, or tests frontend pages, components, layouts, or interactive behavior.
+当 Agent 创建、修改、重构、评审或测试任何前端页面、组件、布局或交互行为时，Skill 自动触发。
 
-The core standards are framework-independent and apply to Vue, React, and other frontend stacks. Framework- or library-specific implementation details may be added later as examples or separate references, but they must not replace or weaken the product-level requirements.
+核心规范与框架无关，适用于 Vue、React 及其他前端技术栈。以后可以增加框架或组件库相关的示例或独立参考，但实现细节不能替代或弱化产品层要求。
 
-Rules are mandatory. A framework limitation, component-library default, or existing implementation is not sufficient justification for violating them. Only an explicit user instruction may authorize an exception, and that exception applies only to the scope the user identifies.
+所有规则均为强制要求。框架限制、组件库默认行为或现有实现不能作为违反规则的理由。只有用户明确指示时才允许例外，而且例外仅适用于用户指定的范围。
 
-## Agent workflow
+## Agent 执行流程
 
-For every applicable frontend task, the agent must:
+对于每个适用的前端任务，Agent 必须：
 
-1. Identify the interaction categories involved.
-2. Load the relevant files from `references/` before making changes.
-3. Check the proposed design and implementation against the loaded standards.
-4. Prefer configuration, wrapping, or replacement when a third-party component conflicts with a standard.
-5. Inspect the implementation and perform relevant interaction and viewport verification after changes.
-6. State which standards were verified in the final response. If verification was not possible, state that explicitly rather than treating the requirement as satisfied.
+1. 判断任务涉及的交互分类。
+2. 修改前加载 `references/` 中相关的规范文件。
+3. 根据已加载规范检查设计和实现方案。
+4. 第三方组件与规范冲突时，优先通过配置、封装或替换解决。
+5. 修改后检查代码，并执行相关交互和视口验证。
+6. 在最终回复中说明已验证的规范；无法验证时必须明确说明，不能默认视为通过。
 
-## Dialog standards
+## Dialog 规范
 
-`references/dialogs.md` initially defines these mandatory requirements:
+`references/dialogs.md` 首先定义以下强制要求：
 
-1. Clicking a backdrop or overlay must never close a dialog. Dialogs close only through explicit in-dialog actions such as close, cancel, or confirm.
-2. The dialog frame must not scroll. When content exceeds the available height, the frame remains non-scrolling and only the content/body region scrolls; headers, footers, and actions remain within the fixed frame.
-3. The backdrop or overlay must cover the entire viewport. It must not be constrained by a page section, panel, transformed ancestor, or other partial-screen container. Root-level rendering or teleporting and viewport-fixed positioning are used when necessary.
+1. 点击遮罩层不得关闭 Dialog。Dialog 只能通过明确的弹窗内操作关闭，例如关闭、取消或确认。
+2. Dialog 外框不得滚动。当内容超过可用高度时，外框保持不可滚动，仅内容区域滚动；标题、底部和操作区域保持在固定外框内。
+3. 遮罩层必须覆盖整个视口，不能受页面区块、面板、带变换的祖先元素或其他局部容器限制。必要时挂载或传送到应用根节点，并使用相对于视口的固定定位。
 
-The reference includes implementation-neutral acceptance criteria and may include concise framework examples when those examples become useful.
+参考文件包含与实现框架无关的验收标准；只有在确有帮助时才加入简洁的框架示例。
 
-## Relationship with project instructions
+## 与项目级指令的关系
 
-Project-level `AGENTS.md` files remain in place because they are durable repository constraints visible to all agents working in that project.
+项目中的 `AGENTS.md` 继续保留，因为它是对该仓库所有 Agent 可见的持久项目约束。
 
-When both the personal skill and project instructions apply:
+个人 Skill 与项目指令同时适用时：
 
-- Compatible requirements are all enforced.
-- If one requirement is stricter without contradicting the other, the stricter requirement is enforced.
-- If requirements conflict, the agent stops the affected implementation and asks the user to resolve the conflict. The agent must not silently choose the more permissive rule.
+- 兼容的要求全部执行。
+- 一方更严格但不冲突时，执行更严格的要求。
+- 要求发生冲突时，Agent 停止受影响的实现并请用户裁决，不能自行选择更宽松的规则。
 
-## Updating and publishing
+## 更新与发布
 
-The GitHub repository is the canonical editable copy. To update the standards:
+GitHub 仓库是可编辑的标准版本。更新规范时：
 
-1. Classify a new rule under an existing reference or create a focused new category.
-2. Express the rule in framework-independent product language.
-3. Update routing or trigger keywords in `SKILL.md` only when necessary.
-4. Validate skill structure, metadata, trigger behavior, and the changed rules.
-5. Commit the change with a focused Git commit and push it to the public repository.
-6. Synchronize the validated repository version to the local skills directory.
+1. 将新规则归入已有参考文件，或创建职责单一的新分类。
+2. 使用框架无关的产品语言表达规则。
+3. 仅在必要时更新 `SKILL.md` 的路由或触发关键词。
+4. 验证 Skill 结构、元数据、触发行为和变更后的规则。
+5. 创建范围明确的 Git 提交并推送到公开仓库。
+6. 将已验证的仓库版本同步到本地 Skills 目录。
 
-If a push fails, the local skill may still be used, but the agent must report that local and remote versions are not synchronized.
+如果推送失败，本地 Skill 仍可使用，但 Agent 必须报告本地和远程版本尚未同步。
 
-## Validation strategy
+## 验证策略
 
-Skill validation follows a documentation-focused test cycle:
+Skill 使用面向流程文档的测试周期：
 
-- Establish baseline agent behavior on representative frontend prompts without the skill.
-- Test the same prompts with the skill available and verify that the relevant references are loaded and enforced.
-- Add or refine wording when an agent finds a loophole or misses a trigger.
-- Run the skill package validator after structural or metadata changes.
+- 在未加载 Skill 时，用代表性前端任务记录 Agent 的基线行为。
+- 加载 Skill 后运行相同任务，确认 Agent 会读取并执行相关参考规范。
+- Agent 找到漏洞或未能触发时，补充或精炼规则措辞。
+- 结构或元数据变化后运行 Skill 包校验工具。
 
-Initial scenarios cover creating a dialog, modifying an existing dialog, reviewing dialog code, and handling a third-party dialog whose defaults violate the standards.
+首批场景覆盖：创建 Dialog、修改现有 Dialog、评审 Dialog 代码，以及处理默认行为违反规范的第三方 Dialog。
 
-## First-release acceptance criteria
+## 首版验收标准
 
-- The skill automatically triggers for frontend creation, modification, refactoring, review, and testing tasks.
-- Dialog-related tasks route to and load `references/dialogs.md`.
-- All three approved Dialog requirements are present without weakening their meaning.
-- `SKILL.md` and `agents/openai.yaml` pass the available skill validators.
-- Representative trigger and compliance scenarios pass.
-- The skill is installed and discoverable at `~/.codex/skills/frontend-product-interaction-standards/`.
-- The initial version is committed and pushed to `git@github.com:gloopai/frontend-product-interaction-standards.git`.
+- 创建、修改、重构、评审或测试前端内容时能够自动触发 Skill。
+- Dialog 相关任务会路由并加载 `references/dialogs.md`。
+- 三条已确认的 Dialog 规则完整保留且含义没有弱化。
+- 除必要的技术标识和文件名外，Skill 内容全部使用中文。
+- `SKILL.md` 和 `agents/openai.yaml` 通过可用的 Skill 校验工具。
+- 代表性的触发与合规场景通过。
+- Skill 安装在 `~/.codex/skills/frontend-product-interaction-standards/` 并可被发现。
+- 初始版本成功提交并推送至 `git@github.com:gloopai/frontend-product-interaction-standards.git`。
 
-## Out of scope for the first release
+## 首版不包含
 
-- Automated source-code linting or framework-specific scanners.
-- Product interaction categories for which the user has not yet defined standards.
-- Packaging the skill as a public Codex plugin or marketplace artifact.
+- 自动扫描源代码的 Lint 工具或框架专用扫描器。
+- 用户尚未定义规范的其他产品交互分类。
+- 将 Skill 打包成公开 Codex Plugin 或市场制品。
