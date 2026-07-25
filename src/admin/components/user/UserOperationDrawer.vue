@@ -107,36 +107,36 @@ const entryClasses = (entry) => ({
 
             <div
               data-testid="user-operation-drawer-body"
-              class="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5"
+              class="min-h-0 flex-1 space-y-4 overflow-y-auto px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-4"
             >
               <p
                 v-if="plannedMessage"
-                class="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800"
+                class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800"
                 aria-live="polite"
               >
                 {{ plannedMessage }}
               </p>
 
               <section v-for="group in operationGroups" :key="group.id" :aria-labelledby="`operation-group-${group.id}`">
-                <h3 :id="`operation-group-${group.id}`" class="mb-2 text-sm font-semibold text-slate-900">
+                <h3 :id="`operation-group-${group.id}`" class="mb-1.5 text-xs font-semibold tracking-wide text-slate-600">
                   {{ group.label }}
                 </h3>
-                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                   <button
                     v-for="entry in group.entries"
                     :key="entry.id"
                     type="button"
-                    class="min-h-20 rounded-lg border p-3 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    class="min-h-16 rounded-lg border p-2.5 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     :class="entryClasses(entry)"
                     @click="selectEntry(entry, $event)"
                   >
                     <span class="flex items-start justify-between gap-2">
-                      <span class="font-medium text-slate-900">{{ entry.title }}</span>
-                      <span v-if="entry.status === 'planned'" class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+                      <span class="text-sm font-medium text-slate-900">{{ entry.title }}</span>
+                      <span v-if="entry.status === 'planned'" class="shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium leading-4 text-slate-600">
                         待接入
                       </span>
                     </span>
-                    <span class="mt-1.5 block text-xs leading-5 text-slate-500">{{ entry.description }}</span>
+                    <span class="mt-1 block text-xs leading-4 text-slate-500">{{ entry.description }}</span>
                   </button>
                 </div>
               </section>

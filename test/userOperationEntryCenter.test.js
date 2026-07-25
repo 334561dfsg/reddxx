@@ -15,7 +15,6 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     'detail',
     'assets',
     'deposit',
-    'adjust',
     'freeze-account',
     'all'
   ])
@@ -27,6 +26,21 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '信用与会员',
     '风控与控制'
   ])
+  const funds = groups.find((group) => group.id === 'funds')
+  assert.deepEqual(funds.entries.map((entry) => entry.title), [
+    '资金概况',
+    '链上钱包',
+    '客服入金',
+    '账户间划转',
+    '冻结全部资金',
+    '解冻后台冻结',
+    '划扣可用资金',
+    '出金流水限制'
+  ])
+  assert.doesNotMatch(JSON.stringify(funds.entries), /调账|后台划扣记录|手动上分地址/)
+  assert.match(getUserOperationEntry('transfer', {}).description, /总资产不变/)
+  assert.match(getUserOperationEntry('deduct-funds', {}).description, /减少用户可用资产/)
+
   assert.deepEqual(groups.flatMap((group) => group.entries.map((entry) => entry.title)), [
     '编辑资料',
     '查看直属下级',
@@ -37,14 +51,11 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '资金概况',
     '链上钱包',
     '客服入金',
-    '调账',
-    '账户划转',
+    '账户间划转',
     '冻结全部资金',
-    '解冻全部资金',
+    '解冻后台冻结',
     '划扣可用资金',
     '出金流水限制',
-    '后台划扣记录',
-    '手动上分地址',
     '信用分审核',
     '修改信用分',
     '编辑会员等级',
@@ -59,7 +70,7 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
 
 test('operation catalog distinguishes implemented and planned actions', () => {
   assert.equal(getUserOperationEntry('deposit', { status: 'active' }).status, 'available')
-  assert.equal(getUserOperationEntry('adjust', { status: 'active' }).handler, 'adjust')
+  assert.equal(getUserOperationEntry('adjust', { status: 'active' }), null)
   assert.equal(getUserOperationEntry('freeze-funds', { status: 'active' }).status, 'planned')
   assert.equal(getUserOperationEntry('deduct-funds', { status: 'active' }).risk, 'danger')
 })
@@ -134,18 +145,20 @@ test('user list exposes one-click row actions and coordinates the complete opera
   assert.match(source, />\s*资金<\/button>/)
   assert.match(source, />\s*入金<\/button>/)
   assert.match(source, />\s*更多\s*<\/button>/)
-  assert.match(source, /data-testid="user-row-action-bar"[^>]*gap-1\.5/)
-  assert.equal((source.match(/class="inline-flex h-8 items-center justify-center rounded-md px-2\.5 text-xs/g) || []).length, 4)
+  assert.match(source, /data-testid="user-row-action-bar"[^>]*gap-2/)
+  assert.equal((source.match(/class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm/g) || []).length, 4)
   assert.doesNotMatch(source, /data-testid="user-point-control-action-menu"/)
   assert.doesNotMatch(source, /toggleActionMenu/)
 })
 
-test('operation drawer uses compact spacing without shrinking action targets below 44px', () => {
+test('operation drawer uses compact, balanced action tiles without shrinking close target', () => {
   const source = read('../src/admin/components/user/UserOperationDrawer.vue')
 
-  assert.match(source, /data-testid="user-operation-drawer-body"[^>]*space-y-5[^>]*px-4[^>]*py-4/)
-  assert.match(source, /class="mb-2 text-sm font-semibold/)
-  assert.match(source, /grid grid-cols-1 gap-2 sm:grid-cols-2/)
-  assert.match(source, /min-h-20[^"\n]*p-3/)
+  assert.match(source, /data-testid="user-operation-drawer-body"[^>]*space-y-4[^>]*px-3[^>]*py-3[^>]*sm:px-4/)
+  assert.match(source, /class="mb-1\.5 text-xs font-semibold/)
+  assert.match(source, /grid grid-cols-1 gap-1\.5 sm:grid-cols-2/)
+  assert.match(source, /min-h-16[^"\n]*p-2\.5/)
+  assert.match(source, /text-sm font-medium text-slate-900/)
+  assert.match(source, /mt-1 block text-xs leading-4/)
   assert.match(source, /min-h-11 min-w-11/)
 })

@@ -701,24 +701,24 @@ const closeDetailDrawer = () => {
 
               <!-- 用户快捷操作 -->
               <td class="px-4 py-3">
-                <div data-testid="user-row-action-bar" class="flex items-center gap-1.5 whitespace-nowrap" @click.stop>
+                <div data-testid="user-row-action-bar" class="flex items-center gap-2 whitespace-nowrap" @click.stop>
                   <button
                     type="button"
-                    class="inline-flex h-8 items-center justify-center rounded-md px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="查看用户详情"
                     @click="selectUserDetail(user)"
                   >
                     详情</button>
                   <button
                     type="button"
-                    class="inline-flex h-8 items-center justify-center rounded-md px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="查看资金概况"
                     @click="selectUserDetail(user)"
                   >
                     资金</button>
                   <button
                     type="button"
-                    class="inline-flex h-8 items-center justify-center rounded-md px-2.5 text-xs bg-blue-50/70 font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm bg-blue-50/70 font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="客服入金"
                     @click="openRegularAction(user, 'deposit')"
                   >
@@ -726,7 +726,7 @@ const closeDetailDrawer = () => {
                   <button
                     :ref="(element) => setActionMenuTriggerRef(user, element)"
                     type="button"
-                    class="inline-flex h-8 items-center justify-center rounded-md px-2.5 text-xs border border-slate-300 bg-white font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm border border-slate-300 bg-white font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="更多用户操作"
                     @click="openOperationDrawer(user)"
                   >
