@@ -181,11 +181,11 @@ const resetFilters = () => {
     </header>
 
     <div v-if="moduleKey === 'perpetual'" class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-800">
-      用户级控盘不改变K线、标记价格和实时浮盈亏，只在目标用户最终平仓结算时决定盈亏方向。
+      用户点控不改变K线、标记价格和实时浮盈亏，只在目标用户最终平仓结算时决定盈亏方向。
       优先级：单笔/持仓控制 &gt; 用户级控制 &gt; 全局场控 &gt; 自然结果。
     </div>
     <div v-else-if="moduleMeta.family === 'trade'" class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-800">
-      用户级控盘只作用于目标用户的最终结算，不改变全局行情、K线或实时浮盈亏。
+      用户点控只作用于目标用户的最终结算，不改变全局行情、K线或实时浮盈亏。
       单笔订单或持仓控制优先于用户级控制。
     </div>
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

@@ -92,6 +92,7 @@ test('module metadata and fallback use the unified point-control label', () => {
 
   assert.doesNotMatch(moduleSource, /用户控盘/)
   assert.doesNotMatch(pageSource, /用户控盘/)
+  assert.doesNotMatch(pageSource, /用户级控盘/)
 })
 
 test('module page omits rejected demo and finance helper copy', () => {

@@ -20,6 +20,19 @@ test('registers all six module user-control routes with module props', () => {
   }
 })
 
+test('uses exact user point-control titles for the three trading routes', () => {
+  const expectedTitles = {
+    'perpetual-user-control': '永续合约 / 用户点控',
+    'delivery-user-control': '交割合约 / 用户点控',
+    'spot-user-control': '现货交易 / 用户点控'
+  }
+
+  Object.entries(expectedTitles).forEach(([name, title]) => {
+    const route = consoleRoutes.find((item) => item.name === name)
+    assert.equal(route.meta.title, title)
+  })
+})
+
 test('registers the unified user-control log route', () => {
   const route = consoleRoutes.find((item) => item.name === 'users-control-log')
   assert.equal(route.path, 'users/control-log')
