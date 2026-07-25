@@ -37,7 +37,7 @@ Drawer 不从 `UserDetailDrawer` 的组件内部抓取数据；两者使用相�
 - 取消代理身份时的承接上级候选用户。
 - 旧版信用分行为规则选择；规则数量可能扩展，并需要按名称查找。
 
-用户候选属于高频按用户名或 UID 搜索，显式采用 `panel`：外层 disclosure 显示已提交值，打开后内层搜索 Combobox 只维护查询草稿，点击可用 option 或对 active option 按 Enter 才提交。规则选择同样使用 `panel`，避免在 Dialog 内再增加一个全屏 Drawer 层。
+用户候选属于高频按用户名或 UID 搜索，显式采用 `panel`：外层 disclosure 显示已提交值，打开后内层搜索 Combobox 只维护查询草稿，点击可用 option 或对 active option 按 Enter 才提交。“重设上级”原有的独立“搜索新上级”输入框删除，邮箱仍合并进 Combobox 的 `searchText`，避免同一字段出现两个搜索入口。规则选择同样使用 `panel`，避免在 Dialog 内再增加一个全屏 Drawer 层。
 
 统一组件必须维护 committed value、query、active option 与会话快照；非提交关闭恢复 committed value。Listbox/option 使用稳定 ID，唯一 active option 设置 `aria-selected="true"`，键盘、错误、disabled/orphaned invalid 和动画遵循最新版规范。
 
