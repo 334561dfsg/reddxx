@@ -122,6 +122,53 @@ test('wallet drawer keeps a failed copy error visible as an alert', async (t) =>
   assert.match(alert.textContent, /复制失败，请手动复制地址/)
 })
 
+test('wallet drawer blocks closing during copy and ignores a stale completion after reopening', async (t) => {
+  const previousNavigator = globalThis.navigator
+  let resolveCopy
+  globalThis.navigator = {
+    clipboard: {
+      writeText: () => new Promise((resolvePromise) => { resolveCopy = resolvePromise })
+    }
+  }
+  const harness = await mount()
+  t.after(() => {
+    harness.cleanup()
+    globalThis.navigator = previousNavigator
+  })
+
+  let frame = harness.findByTestId('user-onchain-wallet-drawer')
+  const addressCard = findIn(harness, frame, (node) => node.getAttribute?.('data-testid') === 'wallet-address-wallet_user_1004_deposit_usdt_trc20')
+  findIn(harness, addressCard, (node) => node.tag === 'button' && node.textContent.trim() === '显示地址').click()
+  await harness.flush()
+  findIn(harness, addressCard, (node) => node.tag === 'button' && node.textContent.trim() === '复制地址').click()
+  await harness.flush()
+
+  const close = findIn(harness, frame, (node) => node.getAttribute?.('aria-label') === '关闭')
+  assert.equal(close.disabled, true)
+  assert.match(findIn(harness, frame, (node) => node.getAttribute?.('role') === 'status').textContent, /地址复制中，请等待复制完成后再关闭/)
+  close.click()
+  const escape = harness.keydown('Escape')
+  await harness.flush()
+  assert.equal(harness.emitted.filter(([name]) => name === 'onClose').length, 0)
+  assert.equal(escape.defaultPrevented, false)
+
+  harness.props.visible = false
+  await harness.flush()
+  frame.parent.dispatchEvent({ type: 'transitionend', target: frame.parent })
+  await harness.flush()
+  await harness.finishTransitions()
+
+  harness.props.visible = true
+  await harness.flush()
+  await harness.finishTransitions()
+  resolveCopy()
+  await harness.flush()
+
+  frame = harness.findByTestId('user-onchain-wallet-drawer')
+  assert.equal(findIn(harness, frame, (node) => node.getAttribute?.('aria-label') === '关闭').disabled, false)
+  assert.doesNotMatch(frame.textContent, /地址已复制|复制失败，请手动复制地址|地址复制中/)
+})
+
 test('wallet drawer switches to withdrawal records and gives an empty state', async (t) => {
   const harness = await mount()
   t.after(harness.cleanup)
@@ -173,6 +220,9 @@ test('wallet drawer source maintains the modal drawer contract', () => {
   assert.match(source, /h-\[100dvh\]/)
   assert.match(source, /safe-area-inset-top/)
   assert.match(source, /safe-area-inset-bottom/)
+  assert.match(source, /<header[^>]*safe-area-inset-left/)
+  assert.match(source, /<nav[^>]*safe-area-inset-left/)
+  assert.match(source, /data-testid="user-onchain-wallet-body"[^>]*safe-area-inset-left/)
   assert.match(source, /200ms ease-out/)
   assert.match(source, /150ms ease-in/)
   assert.match(source, /transition-duration: 50ms/)

@@ -16,10 +16,12 @@ const revealedIds = ref(new Set())
 const copyingIds = ref(new Set())
 const copyMessage = ref('')
 const copyError = ref('')
+let openingVersion = 0
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? props.wallet?.userId ?? ''))
 const addresses = computed(() => (Array.isArray(props.wallet?.addresses) ? props.wallet.addresses : []))
 const segmentAddresses = computed(() => addresses.value.filter((address) => address.kind === activeSegment.value))
 const segmentLabel = computed(() => activeSegment.value === 'deposit' ? '入金' : '提现')
+const copyInProgress = computed(() => copyingIds.value.size > 0)
 
 const {
   rendered,
@@ -33,11 +35,13 @@ const {
   dialogRef: drawerRef,
   initialFocusRef: titleRef,
   returnFocusRef: computed(() => props.returnFocus),
-  requestClose: () => emit('close')
+  requestClose: () => emit('close'),
+  closeDisabled: copyInProgress
 })
 
 const close = createDialogCloseAction(requestDialogClose)
 const resetLocalState = () => {
+  openingVersion += 1
   activeSegment.value = 'deposit'
   revealedIds.value = new Set()
   copyingIds.value = new Set()
@@ -58,16 +62,20 @@ const revealAddress = (id) => {
 const isCopying = (id) => copyingIds.value.has(id)
 const copyAddress = async (address) => {
   if (!isRevealed(address.id) || isCopying(address.id)) return
+  const requestVersion = openingVersion
   copyMessage.value = ''
   copyError.value = ''
   copyingIds.value = new Set([...copyingIds.value, address.id])
   try {
     if (!globalThis.navigator?.clipboard?.writeText) throw new Error('clipboard-unavailable')
     await globalThis.navigator.clipboard.writeText(address.address)
+    if (requestVersion !== openingVersion || !props.visible || phase.value === 'closing') return
     copyMessage.value = '地址已复制'
   } catch {
+    if (requestVersion !== openingVersion || !props.visible || phase.value === 'closing') return
     copyError.value = '复制失败，请手动复制地址'
   } finally {
+    if (requestVersion !== openingVersion || !props.visible || phase.value === 'closing') return
     const next = new Set(copyingIds.value)
     next.delete(address.id)
     copyingIds.value = next
@@ -100,8 +108,9 @@ watch(() => props.visible, (visible) => {
           role="dialog"
           aria-modal="true"
           aria-labelledby="user-onchain-wallet-title"
+          :aria-busy="copyInProgress"
         >
-          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right));">
+          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <div class="min-w-0 flex-1">
               <h2 id="user-onchain-wallet-title" ref="titleRef" tabindex="-1" class="break-words text-xl font-semibold text-slate-900 outline-none">
                 链上钱包
@@ -112,6 +121,7 @@ watch(() => props.visible, (visible) => {
             </div>
             <button
               type="button"
+              :disabled="copyInProgress"
               class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-label="关闭"
               @click="close"
@@ -120,7 +130,7 @@ watch(() => props.visible, (visible) => {
             </button>
           </header>
 
-          <nav class="flex shrink-0 gap-1 border-b border-slate-200 bg-slate-50 px-4 py-2 sm:px-5" aria-label="链上钱包地址类型">
+          <nav class="flex shrink-0 gap-1 border-b border-slate-200 bg-slate-50 px-4 py-2 sm:px-5" aria-label="链上钱包地址类型" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <button
               v-for="segment in [{ id: 'deposit', label: '入金地址' }, { id: 'withdrawal', label: '提现地址' }]"
               :key="segment.id"
@@ -137,8 +147,11 @@ watch(() => props.visible, (visible) => {
           <div
             data-testid="user-onchain-wallet-body"
             class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 sm:px-5"
-            style="padding-bottom: max(1rem, env(safe-area-inset-bottom)); padding-right: max(1rem, env(safe-area-inset-right));"
+            style="padding-bottom: max(1rem, env(safe-area-inset-bottom)); padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));"
           >
+            <p v-if="copyInProgress" class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800" role="status">
+              地址复制中，请等待复制完成后再关闭
+            </p>
             <p v-if="copyMessage" class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800" aria-live="polite">
               {{ copyMessage }}
             </p>
