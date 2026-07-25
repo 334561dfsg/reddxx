@@ -13,7 +13,7 @@ const drawerRef = ref(null)
 const titleRef = ref(null)
 const activeSegment = ref('deposit')
 const revealedIds = ref(new Set())
-const copyingIds = ref(new Set())
+const copyingId = ref(null)
 const copyMessage = ref('')
 const copyError = ref('')
 let openingVersion = 0
@@ -21,7 +21,7 @@ const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? pro
 const addresses = computed(() => (Array.isArray(props.wallet?.addresses) ? props.wallet.addresses : []))
 const segmentAddresses = computed(() => addresses.value.filter((address) => address.kind === activeSegment.value))
 const segmentLabel = computed(() => activeSegment.value === 'deposit' ? '入金' : '提现')
-const copyInProgress = computed(() => copyingIds.value.size > 0)
+const copyInProgress = computed(() => copyingId.value !== null)
 
 const {
   rendered,
@@ -44,28 +44,50 @@ const resetLocalState = () => {
   openingVersion += 1
   activeSegment.value = 'deposit'
   revealedIds.value = new Set()
-  copyingIds.value = new Set()
+  copyingId.value = null
   copyMessage.value = ''
   copyError.value = ''
 }
 const maskAddress = (address) => {
   const value = String(address || '')
-  if (value.length <= 14) return value
+  if (!value) return '—'
+  if (value.length <= 2) return '…'
+  if (value.length <= 14) {
+    const visibleLength = Math.min(4, Math.max(1, value.length - 2))
+    return `${value.slice(0, visibleLength)}…${value.slice(-1)}`
+  }
   return `${value.slice(0, 8)}…${value.slice(-6)}`
 }
+const formatTimestamp = (value) => {
+  if (!value) return '—'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return '—'
+  return date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  })
+}
 const isRevealed = (id) => revealedIds.value.has(id)
-const revealAddress = (id) => {
-  revealedIds.value = new Set([...revealedIds.value, id])
+const toggleAddressReveal = (id) => {
+  const next = new Set(revealedIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  revealedIds.value = next
   copyMessage.value = ''
   copyError.value = ''
 }
-const isCopying = (id) => copyingIds.value.has(id)
+const isCopying = (id) => copyingId.value === id
 const copyAddress = async (address) => {
-  if (!isRevealed(address.id) || isCopying(address.id)) return
+  if (!isRevealed(address.id) || copyInProgress.value) return
   const requestVersion = openingVersion
   copyMessage.value = ''
   copyError.value = ''
-  copyingIds.value = new Set([...copyingIds.value, address.id])
+  copyingId.value = address.id
   try {
     if (!globalThis.navigator?.clipboard?.writeText) throw new Error('clipboard-unavailable')
     await globalThis.navigator.clipboard.writeText(address.address)
@@ -76,9 +98,7 @@ const copyAddress = async (address) => {
     copyError.value = '复制失败，请手动复制地址'
   } finally {
     if (requestVersion !== openingVersion || !props.visible || phase.value === 'closing') return
-    const next = new Set(copyingIds.value)
-    next.delete(address.id)
-    copyingIds.value = next
+    copyingId.value = null
   }
 }
 const handleAfterLeave = () => {
@@ -112,7 +132,7 @@ watch(() => props.visible, (visible) => {
         >
           <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <div class="min-w-0 flex-1">
-              <h2 id="user-onchain-wallet-title" ref="titleRef" tabindex="-1" class="break-words text-xl font-semibold text-slate-900 outline-none">
+              <h2 id="user-onchain-wallet-title" ref="titleRef" tabindex="-1" class="onchain-wallet-drawer-title break-words rounded-sm text-xl font-semibold text-slate-900">
                 链上钱包
               </h2>
               <p class="mt-1 break-words text-sm text-slate-500">
@@ -135,7 +155,8 @@ watch(() => props.visible, (visible) => {
               v-for="segment in [{ id: 'deposit', label: '入金地址' }, { id: 'withdrawal', label: '提现地址' }]"
               :key="segment.id"
               type="button"
-              class="min-h-10 rounded-lg px-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+              :disabled="copyInProgress"
+              class="min-h-10 rounded-lg px-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
               :class="activeSegment === segment.id ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:bg-white'"
               :aria-pressed="activeSegment === segment.id"
               @click="activeSegment = segment.id; copyMessage = ''; copyError = ''"
@@ -150,7 +171,7 @@ watch(() => props.visible, (visible) => {
             style="padding-bottom: max(1rem, env(safe-area-inset-bottom)); padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));"
           >
             <p v-if="copyInProgress" class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800" role="status">
-              地址复制中，请等待复制完成后再关闭
+              地址复制中，其他复制、分组和关闭操作暂不可用
             </p>
             <p v-if="copyMessage" class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800" aria-live="polite">
               {{ copyMessage }}
@@ -172,21 +193,43 @@ watch(() => props.visible, (visible) => {
                 </div>
                 <span class="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">{{ address.status === 'active' ? '启用' : address.status || '未知' }}</span>
               </div>
-              <p class="mt-3 break-all rounded-lg bg-slate-50 px-3 py-2 font-mono text-sm text-slate-800">
+              <p :id="`wallet-address-${address.id}-value`" class="mt-3 break-all rounded-lg bg-slate-50 px-3 py-2 font-mono text-sm text-slate-800">
                 {{ isRevealed(address.id) ? address.address : maskAddress(address.address) }}
               </p>
+              <dl class="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+                <div class="min-w-0 rounded-lg bg-slate-50 px-3 py-2">
+                  <dt class="text-slate-500">首次使用</dt>
+                  <dd
+                    :data-testid="`wallet-address-${address.id}-first-used-at`"
+                    class="mt-1 break-words font-medium text-slate-800"
+                  >
+                    {{ formatTimestamp(address.firstUsedAt) }}
+                  </dd>
+                </div>
+                <div class="min-w-0 rounded-lg bg-slate-50 px-3 py-2">
+                  <dt class="text-slate-500">最后使用</dt>
+                  <dd
+                    :data-testid="`wallet-address-${address.id}-last-used-at`"
+                    class="mt-1 break-words font-medium text-slate-800"
+                  >
+                    {{ formatTimestamp(address.lastUsedAt) }}
+                  </dd>
+                </div>
+              </dl>
               <div class="mt-3 flex flex-wrap gap-2">
                 <button
-                  v-if="!isRevealed(address.id)"
                   type="button"
+                  :data-testid="`wallet-address-${address.id}-reveal-toggle`"
+                  :aria-controls="`wallet-address-${address.id}-value`"
+                  :aria-pressed="isRevealed(address.id) ? 'true' : 'false'"
                   class="min-h-10 rounded-lg border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  @click="revealAddress(address.id)"
+                  @click="toggleAddressReveal(address.id)"
                 >
-                  显示地址
+                  {{ isRevealed(address.id) ? '隐藏完整地址' : '查看完整地址' }}
                 </button>
                 <button
                   type="button"
-                  :disabled="!isRevealed(address.id) || isCopying(address.id)"
+                  :disabled="!isRevealed(address.id) || copyInProgress"
                   class="min-h-10 rounded-lg bg-blue-600 px-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                   @click="copyAddress(address)"
                 >
@@ -207,6 +250,11 @@ watch(() => props.visible, (visible) => {
 </template>
 
 <style scoped>
+.onchain-wallet-drawer-title:focus {
+  outline: 3px solid #1d4ed8;
+  outline-offset: 4px;
+}
+
 .onchain-wallet-drawer-enter-active { transition: opacity 200ms ease-out; }
 .onchain-wallet-drawer-leave-active { transition: opacity 150ms ease-in; }
 .onchain-wallet-drawer-enter-active .onchain-wallet-drawer-panel { transition: transform 200ms ease-out; }
@@ -223,5 +271,11 @@ watch(() => props.visible, (visible) => {
   .onchain-wallet-drawer-leave-active .onchain-wallet-drawer-panel { transition-duration: 50ms; }
   .onchain-wallet-drawer-enter-from .onchain-wallet-drawer-panel,
   .onchain-wallet-drawer-leave-to .onchain-wallet-drawer-panel { transform: none; }
+}
+
+@media (forced-colors: active) {
+  .onchain-wallet-drawer-title:focus {
+    outline-color: Highlight;
+  }
 }
 </style>
