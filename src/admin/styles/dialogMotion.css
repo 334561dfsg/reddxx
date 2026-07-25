@@ -1,0 +1,24 @@
+.dialog-overlay-enter-active { transition: opacity 200ms ease-out; }
+.dialog-overlay-leave-active { transition: opacity 150ms ease-in; }
+.dialog-overlay-enter-from,
+.dialog-overlay-leave-to { opacity: 0; }
+.dialog-panel-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.dialog-panel-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.dialog-panel-enter-from,
+.dialog-panel-leave-to { opacity: 0; transform: scale(0.96); }
+.dialog-drawer-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.dialog-drawer-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.dialog-drawer-enter-from,
+.dialog-drawer-leave-to { opacity: 0; transform: translateX(1rem) scale(0.96); }
+@media (prefers-reduced-motion: reduce) {
+  .dialog-overlay-enter-active,
+  .dialog-overlay-leave-active,
+  .dialog-panel-enter-active,
+  .dialog-panel-leave-active,
+  .dialog-drawer-enter-active,
+  .dialog-drawer-leave-active { transition-duration: 50ms; }
+  .dialog-panel-enter-from,
+  .dialog-panel-leave-to,
+  .dialog-drawer-enter-from,
+  .dialog-drawer-leave-to { transform: none; }
+}
