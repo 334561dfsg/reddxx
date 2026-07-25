@@ -14,7 +14,8 @@ import {
 import {
   getUnifiedControlCancelItems
 } from '../../../features/user-control/userControl.js'
-import { useDialogContentSnapshot, useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
+import { createDialogCloseAction, useDialogContentSnapshot, useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
+import { useMfaActionFlow } from '../../../admin/composables/useMfaActionFlow.js'
 
 // 搜索关键词
 const searchKeyword = ref('')
@@ -73,10 +74,27 @@ const openActionUserId = ref('')
 const operationUser = ref(null)
 const userOperations = ref(null)
 const cancelNote = ref('')
-const mfaOpen = ref(false)
-const mfaLoading = ref(false)
-const mfaError = ref('')
-const pendingMfaAction = ref(null)
+const {
+  open: mfaOpen,
+  loading: mfaLoading,
+  error: mfaError,
+  errorAttempt: mfaErrorAttempt,
+  pendingAction: pendingMfaAction,
+  request: requestMfa,
+  openPending: openPendingMfa,
+  verify: verifyMfa,
+  cancel: cancelMfa
+} = useMfaActionFlow({
+  execute: async (action) => {
+    if (action?.type === 'apply') await applyControl(action.payload)
+    if (action?.type === 'cancel') {
+      const cancelItems = getUnifiedControlCancelItems(rulesOf(controlUser.value))
+      if (cancelItems.length) await cancelUnifiedUserControl(action.payload)
+      controlUser.value = null
+    }
+  },
+  onSuccess: () => { cancelNote.value = '' }
+})
 const unifiedCancelDialogRef = ref(null)
 const unifiedCancelReturnRef = ref(null)
 
@@ -186,12 +204,6 @@ const applyControl = (payload) => {
   controlUser.value = null
 }
 
-const requestMfa = (action) => {
-  pendingMfaAction.value = action
-  mfaError.value = ''
-  mfaOpen.value = true
-}
-
 const submitControlSetting = (payload) => {
   const overwritesCurrentRules = controlUser.value && hasRules(controlUser.value)
   controlModalOpen.value = false
@@ -209,9 +221,7 @@ const openControlCancel = (user) => {
   cancelControlOpen.value = true
 }
 
-const closeControlCancel = () => {
-  requestUnifiedCancelClose()
-}
+const closeControlCancel = createDialogCloseAction(requestUnifiedCancelClose)
 
 const confirmControlCancel = () => {
   if (unifiedCancelPhase.value !== 'open' || !controlUser.value || !cancelControlItems.value.length || !cancelNote.value.trim()) return
@@ -232,42 +242,17 @@ const handleUnifiedCancelAfterLeave = () => {
     cancelNote.value = ''
     clearUnifiedCancelSnapshot()
     if (shouldOpenMfa) {
-      mfaError.value = ''
-      mfaOpen.value = true
+      openPendingMfa()
     } else {
       controlUser.value = null
     }
   }
 }
 
-const handleMfaVerify = async () => {
-  if (mfaLoading.value) return
-  mfaLoading.value = true
-  const action = pendingMfaAction.value
-  try {
-    if (action?.type === 'apply') await applyControl(action.payload)
-    if (action?.type === 'cancel') {
-      const cancelItems = getUnifiedControlCancelItems(rulesOf(controlUser.value))
-      if (cancelItems.length) {
-        await cancelUnifiedUserControl(action.payload)
-      }
-      controlUser.value = null
-    }
-    mfaOpen.value = false
-    pendingMfaAction.value = null
-    mfaError.value = ''
-    cancelNote.value = ''
-  } catch (error) {
-    mfaError.value = `验证失败：${error?.message || '操作未完成，请重试'}`
-  } finally {
-    mfaLoading.value = false
-  }
-}
+const handleMfaVerify = (code) => verifyMfa(code)
 
 const handleMfaCancel = () => {
-  pendingMfaAction.value = null
-  mfaOpen.value = false
-  mfaLoading.value = false
+  if (!cancelMfa()) return
   controlUser.value = null
   cancelNote.value = ''
 }
@@ -615,9 +600,12 @@ const closeDetailDrawer = () => {
         <div v-if="unifiedCancelRendered" v-show="unifiedCancelPhase !== 'closing'" class="fixed inset-0 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" :style="unifiedCancelLayerStyle">
           <Transition name="dialog-panel">
             <section v-show="unifiedCancelPhase !== 'closing'" ref="unifiedCancelDialogRef" data-testid="unified-user-control-cancel-dialog" class="flex max-h-[calc(100vh-2rem)] max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="unified-user-control-cancel-title">
-              <header class="border-b border-slate-200 px-5 py-4">
-                <h2 id="unified-user-control-cancel-title" class="text-lg font-semibold text-slate-900">取消统一控制</h2>
-                <p class="mt-1 text-sm text-slate-500">{{ displayedUnifiedCancelData.user?.username }} · UID {{ userIdOf(displayedUnifiedCancelData.user) }}</p>
+              <header class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+                <div>
+                  <h2 id="unified-user-control-cancel-title" class="text-lg font-semibold text-slate-900">取消统一控制</h2>
+                  <p class="mt-1 text-sm text-slate-500">{{ displayedUnifiedCancelData.user?.username }} · UID {{ userIdOf(displayedUnifiedCancelData.user) }}</p>
+                </div>
+                <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeControlCancel">×</button>
               </header>
               <div data-testid="unified-user-control-cancel-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
                 <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
@@ -659,6 +647,7 @@ const closeDetailDrawer = () => {
       :title="mfaTitle"
       :description="mfaDescription"
       :error="mfaError"
+      :error-attempt="mfaErrorAttempt"
       @verify="handleMfaVerify"
       @cancel="handleMfaCancel"
     />

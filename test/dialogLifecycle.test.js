@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { createRenderer, h, nextTick, ref, shallowRef } from 'vue'
 import {
   __resetDialogLayersForTests,
+  createDialogCloseAction,
   getFocusableElements,
   isTopDialogLayer,
   registerDialogLayer,
@@ -389,4 +390,17 @@ test('disabled close predicate rejects closing without invoking the callback', a
   assert.equal(lifecycle.requestDialogClose(), true)
   assert.equal(closeCount, 1)
   app.unmount()
+})
+
+test('shared header and footer close action forwards each activation to the safe lifecycle path once', () => {
+  let closeCount = 0
+  const close = createDialogCloseAction(() => {
+    closeCount += 1
+    return closeCount === 1
+  })
+
+  assert.equal(close(), true)
+  assert.equal(closeCount, 1)
+  assert.equal(close(), false)
+  assert.equal(closeCount, 2)
 })

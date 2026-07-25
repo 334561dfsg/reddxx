@@ -150,16 +150,11 @@ test('user list keeps both point-control shortcuts available and safeguards empt
 
 test('MFA completion rechecks cancellation items before it writes a unified cancellation', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
-  const mfaVerify = source.slice(
-    source.indexOf('const handleMfaVerify ='),
-    source.indexOf('const handleMfaCancel = () => {')
-  )
 
-  assert.match(mfaVerify, /const cancelItems = getUnifiedControlCancelItems\(rulesOf\(controlUser\.value\)\)/)
-  assert.match(mfaVerify, /if \(cancelItems\.length\) \{\s*await cancelUnifiedUserControl\(action\.payload\)\s*\}/)
-  assert.match(mfaVerify, /cancelUnifiedUserControl\(action\.payload\)[\s\S]*?\}\s*controlUser\.value = null/)
-  assert.match(mfaVerify, /pendingMfaAction\.value = null/)
-  assert.match(mfaVerify, /mfaOpen\.value = false/)
+  assert.match(source, /useMfaActionFlow\(\{[\s\S]*?const cancelItems = getUnifiedControlCancelItems\(rulesOf\(controlUser\.value\)\)/)
+  assert.match(source, /if \(cancelItems\.length\) await cancelUnifiedUserControl\(action\.payload\)/)
+  assert.match(source, /cancelUnifiedUserControl\(action\.payload\)[\s\S]*?controlUser\.value = null/)
+  assert.match(source, /const handleMfaVerify = \(code\) => verifyMfa\(code\)/)
 })
 
 test('user operation components expose their existing dialogs to an external unified menu', () => {
@@ -315,17 +310,20 @@ test('MFA modal keeps only its body scrollable', () => {
 
 test('MFA modal prevents duplicate verification and exposes loading and errors accessibly', () => {
   const mfaSource = read('../src/admin/components/MfaVerificationModal.vue')
+  const mfaController = read('../src/admin/composables/useMfaVerification.js')
 
-  assert.match(mfaSource, /useDialogLifecycle/)
+  assert.match(mfaSource, /useMfaVerification/)
+  assert.match(mfaController, /useDialogLifecycle/)
   assert.match(mfaSource, /aria-labelledby="mfa-dialog-title"/)
-  assert.match(mfaSource, /:aria-busy="loading"/)
+  assert.match(mfaSource, /:aria-busy="displayedDialog\.loading"/)
   assert.match(mfaSource, /ref="verificationInput"/)
   assert.match(mfaSource, /ref="errorSummary"/)
   assert.match(mfaSource, /role="alert"/)
   assert.match(mfaSource, /aria-live="assertive"/)
-  assert.match(mfaSource, /if \(props\.loading \|\| verifyRequested\.value\) return/)
-  assert.match(mfaSource, /if \(!props\.loading\) verifyRequested\.value = false/)
-  assert.match(mfaSource, /:aria-label="loading \? '验证并继续，验证中' : '验证并继续'"/)
+  assert.match(mfaController, /if \(props\.loading \|\| verifyRequested\.value\) return false/)
+  assert.match(mfaController, /if \(!props\.loading\) verifyRequested\.value = false/)
+  assert.match(mfaController, /props\.errorAttempt/)
+  assert.match(mfaSource, /:aria-label="displayedDialog\.loading \? '验证并继续，验证中' : '验证并继续'"/)
   assert.match(mfaSource, /name="dialog-overlay"/)
   assert.match(mfaSource, /name="dialog-panel"/)
   assert.match(mfaSource, /v-if="rendered"/)
@@ -335,15 +333,13 @@ test('MFA modal prevents duplicate verification and exposes loading and errors a
 
 test('user management preserves an MFA failure for the open modal to announce', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
-  const mfaVerify = source.slice(
-    source.indexOf('const handleMfaVerify ='),
-    source.indexOf('const handleMfaCancel =')
-  )
+  const flow = read('../src/admin/composables/useMfaActionFlow.js')
 
-  assert.match(source, /const mfaError = ref\(''\)/)
+  assert.match(source, /useMfaActionFlow/)
   assert.match(source, /:error="mfaError"/)
-  assert.match(mfaVerify, /try \{[\s\S]*?mfaOpen\.value = false[\s\S]*?\} catch \(error\) \{[\s\S]*?mfaError\.value =/)
-  assert.doesNotMatch(mfaVerify, /catch \(error\) \{[\s\S]*?mfaOpen\.value = false/)
+  assert.match(source, /:error-attempt="mfaErrorAttempt"/)
+  assert.match(flow, /catch \(failure\) \{[\s\S]*?error\.value =/)
+  assert.match(flow, /errorAttempt\.value \+= 1/)
 })
 
 test('point-control cancellation dialogs and detail drawer keep overlays open and only bodies scrollable', () => {
@@ -419,6 +415,16 @@ test('point-control cancellation dialogs retain their layer, focus target, and c
   assert.match(unifiedSource, /data-testid="unified-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
 })
 
+test('ordinary point-control dialogs keep a safe close button in the fixed header', () => {
+  const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
+  const unifiedSource = read('../src/pages/admin/user/UserListPage.vue')
+  const mfaSource = read('../src/admin/components/MfaVerificationModal.vue')
+
+  assert.match(moduleSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*@click="closeCancel"/)
+  assert.match(unifiedSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*@click="closeControlCancel"/)
+  assert.match(mfaSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*:disabled="displayedDialog\.loading \|\| displayedDialog\.verifyRequested"[^>]*@click="close"/)
+})
+
 test('unified cancellation waits for leave before it opens MFA', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
   const confirm = source.slice(
@@ -428,5 +434,5 @@ test('unified cancellation waits for leave before it opens MFA', () => {
 
   assert.match(confirm, /pendingMfaAction\.value = \{ type: 'cancel', payload \}/)
   assert.doesNotMatch(confirm, /requestMfa\(\{ type: 'cancel', payload \}\)/)
-  assert.match(confirm, /const handleUnifiedCancelAfterLeave = \(\) => \{[\s\S]*?onUnifiedCancelAfterLeave\(\)[\s\S]*?mfaOpen\.value = true/)
+  assert.match(confirm, /const handleUnifiedCancelAfterLeave = \(\) => \{[\s\S]*?onUnifiedCancelAfterLeave\(\)[\s\S]*?openPendingMfa\(\)/)
 })

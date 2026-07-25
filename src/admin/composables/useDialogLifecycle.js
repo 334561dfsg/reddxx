@@ -114,6 +114,8 @@ export const getFocusableElements = (root) => [...(root?.querySelectorAll(
   element.getAttribute?.('aria-hidden') !== 'true'
 ))
 
+export const createDialogCloseAction = (requestClose) => () => requestClose()
+
 export const useDialogContentSnapshot = ({ open, phase, source, clone = (value) => value }) => {
   const snapshot = ref(null)
   const sourceValue = () => unref(source)

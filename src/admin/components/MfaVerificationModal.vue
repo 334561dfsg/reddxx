@@ -1,6 +1,5 @@
 <script setup>
-import { computed, nextTick, ref, watch } from 'vue'
-import { useDialogContentSnapshot, useDialogLifecycle } from '../composables/useDialogLifecycle.js'
+import { useMfaVerification } from '../composables/useMfaVerification.js'
 
 const props = defineProps({
   open: {
@@ -22,95 +21,29 @@ const props = defineProps({
   error: {
     type: String,
     default: ''
+  },
+  errorAttempt: {
+    type: Number,
+    default: 0
   }
 })
 
 const emit = defineEmits(['update:open', 'verify', 'cancel'])
-const verificationCode = ref('')
-const localError = ref('')
-const verifyRequested = ref(false)
-const dialogRef = ref(null)
-const verificationInput = ref(null)
-const errorSummary = ref(null)
-const errorMessage = computed(() => localError.value || props.error)
-const closeDisabled = computed(() => props.loading || verifyRequested.value)
-const dialogSource = computed(() => ({ title: props.title, description: props.description }))
-
 const {
-  rendered,
-  phase,
-  layerStyle,
-  requestDialogClose,
-  onAfterEnter,
-  onAfterLeave
-} = useDialogLifecycle({
-  open: computed(() => props.open),
+  close,
+  displayedDialog,
   dialogRef,
-  initialFocusRef: verificationInput,
-  closeDisabled,
-  requestClose: () => {
-    emit('cancel')
-    emit('update:open', false)
-  }
-})
-
-const { content: displayedDialog } = useDialogContentSnapshot({
-  open: computed(() => props.open),
+  errorSummary,
+  handleCancel,
+  handleVerify,
+  layerStyle,
+  onAfterEnter,
+  onAfterLeave,
   phase,
-  source: dialogSource,
-  clone: (content) => ({ ...content })
-})
-
-watch(() => props.open, (isOpen) => {
-  if (isOpen) {
-    verificationCode.value = ''
-    localError.value = ''
-    verifyRequested.value = false
-  }
-})
-
-watch(() => props.loading, (loading, wasLoading) => {
-  if (wasLoading && !loading) verifyRequested.value = false
-})
-
-watch(errorMessage, async (message) => {
-  if (!message || !props.open) return
-  if (!props.loading) verifyRequested.value = false
-  await nextTick()
-  errorSummary.value?.focus()
-})
-
-const showValidationError = async (message) => {
-  localError.value = message
-  await nextTick()
-  errorSummary.value?.focus()
-}
-
-const handleVerify = async () => {
-  if (props.loading || verifyRequested.value) return
-  if (phase.value !== 'open') return
-
-  if (!verificationCode.value) {
-    await showValidationError('请输入验证码')
-    return
-  }
-
-  if (verificationCode.value.length !== 6) {
-    await showValidationError('验证码必须是 6 位数字')
-    return
-  }
-
-  localError.value = ''
-  verifyRequested.value = true
-  emit('verify', verificationCode.value)
-}
-
-const handleCancel = () => {
-  if (props.loading || verifyRequested.value) return
-  requestDialogClose()
-}
-
-const close = () => handleCancel()
+  rendered,
+  verificationCode,
+  verificationInput
+} = useMfaVerification(props, emit)
 </script>
 
 <template>
@@ -132,7 +65,7 @@ const close = () => handleCancel()
             role="dialog"
             aria-modal="true"
             aria-labelledby="mfa-dialog-title"
-            :aria-busy="loading"
+            :aria-busy="displayedDialog.loading"
           >
             <header class="shrink-0 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-violet-50 px-6 py-4">
               <div class="flex items-center justify-between gap-4">
@@ -142,9 +75,11 @@ const close = () => handleCancel()
                 </div>
                 <button
                   type="button"
-                  class="shrink-0 text-2xl text-slate-400 transition-colors hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
-                  aria-label="关闭 MFA 验证"
-                  :disabled="loading || verifyRequested"
+                  class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-label="关闭"
+                  :disabled="displayedDialog.loading || displayedDialog.verifyRequested"
+                  :aria-disabled="displayedDialog.loading || displayedDialog.verifyRequested"
+                  :title="displayedDialog.loading || displayedDialog.verifyRequested ? '验证进行中，暂时无法关闭' : '关闭'"
                   @click="close"
                 >
                   ×
@@ -172,15 +107,15 @@ const close = () => handleCancel()
                   maxlength="6"
                   placeholder="请输入 6 位验证码"
                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-center text-lg tracking-widest outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                  :disabled="loading"
-                  :aria-invalid="Boolean(errorMessage)"
-                  :aria-describedby="errorMessage ? 'mfa-error mfa-help' : 'mfa-help'"
+                  :disabled="displayedDialog.loading"
+                  :aria-invalid="Boolean(displayedDialog.errorMessage)"
+                  :aria-describedby="displayedDialog.errorMessage ? 'mfa-error mfa-help' : 'mfa-help'"
                   @keyup.enter="handleVerify"
                 />
               </label>
 
               <p
-                v-if="errorMessage"
+                v-if="displayedDialog.errorMessage"
                 id="mfa-error"
                 ref="errorSummary"
                 tabindex="-1"
@@ -188,7 +123,7 @@ const close = () => handleCancel()
                 aria-live="assertive"
                 class="mt-2 text-center text-sm text-rose-600"
               >
-                {{ errorMessage }}
+                {{ displayedDialog.errorMessage }}
               </p>
 
               <p id="mfa-help" class="mt-3 text-center text-xs text-slate-500">
@@ -200,8 +135,8 @@ const close = () => handleCancel()
               <button
                 type="button"
                 class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
-                :disabled="loading || verifyRequested"
-                :aria-label="loading ? '取消，验证中不可用' : '取消 MFA 验证'"
+                :disabled="displayedDialog.loading || displayedDialog.verifyRequested"
+                :aria-label="displayedDialog.loading ? '取消，验证中不可用' : '取消 MFA 验证'"
                 @click="handleCancel"
               >
                 取消
@@ -209,11 +144,11 @@ const close = () => handleCancel()
               <button
                 type="button"
                 class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                :disabled="loading || verifyRequested || !verificationCode"
-                :aria-label="loading ? '验证并继续，验证中' : '验证并继续'"
+                :disabled="displayedDialog.loading || displayedDialog.verifyRequested || !verificationCode"
+                :aria-label="displayedDialog.loading ? '验证并继续，验证中' : '验证并继续'"
                 @click="handleVerify"
               >
-                <span v-if="!loading">验证并继续</span>
+                <span v-if="!displayedDialog.loading">验证并继续</span>
                 <span v-else class="flex items-center justify-center gap-2">
                   <svg class="h-4 w-4 animate-spin" aria-hidden="true" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
