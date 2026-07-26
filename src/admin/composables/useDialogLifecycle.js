@@ -194,6 +194,7 @@ export const useDialogLifecycle = ({
   let layer = null
   let triggerElement = null
   let keydownListener = null
+  let disposed = false
 
   const isOpen = () => Boolean(unref(open))
   const isCloseDisabled = () => Boolean(unref(closeDisabled))
@@ -253,7 +254,7 @@ export const useDialogLifecycle = ({
   }
 
   const requestDialogClose = () => {
-    if (!layer || !isTopDialogLayer(layer) || phase.value !== 'open' || isCloseDisabled()) {
+    if (disposed || !layer || !isTopDialogLayer(layer) || phase.value !== 'open' || isCloseDisabled()) {
       return false
     }
 
@@ -263,7 +264,7 @@ export const useDialogLifecycle = ({
   }
 
   const handleKeydown = (event) => {
-    if (!layer || !isTopDialogLayer(layer)) return
+    if (disposed || !layer || !isTopDialogLayer(layer)) return
 
     if (event.key === 'Escape') {
       if (requestDialogClose()) event.preventDefault()
@@ -297,7 +298,7 @@ export const useDialogLifecycle = ({
 
   const registerLayerAfterRender = async () => {
     await nextTick()
-    if (!isOpen() || !rendered.value || layer) return
+    if (disposed || !isOpen() || !rendered.value || layer) return
 
     const dialog = dialogRef?.value
     if (!dialog) return
@@ -310,7 +311,7 @@ export const useDialogLifecycle = ({
   }
 
   const startOpening = () => {
-    if (phase.value === 'opening' || phase.value === 'open' || phase.value === 'closing') return
+    if (disposed || phase.value === 'opening' || phase.value === 'open' || phase.value === 'closing') return
     if (typeof document !== 'undefined') triggerElement = document.activeElement
     rendered.value = true
     phase.value = 'opening'
@@ -318,22 +319,31 @@ export const useDialogLifecycle = ({
   }
 
   const startClosing = () => {
-    if (phase.value === 'closed' || phase.value === 'closing') return
+    if (disposed || phase.value === 'closed' || phase.value === 'closing') return
     phase.value = 'closing'
   }
 
   const onAfterEnter = () => {
+    if (disposed) return false
     if (phase.value === 'opening' && isOpen()) phase.value = 'open'
+    return true
   }
 
   const onAfterLeave = () => {
-    const shouldRestoreFocus = Boolean(layer && isTopDialogLayer(layer))
+    if (disposed) return false
+    const shouldReopen = isOpen()
+    const shouldRestoreFocus = Boolean(!shouldReopen && layer && isTopDialogLayer(layer))
     releaseLayer()
     rendered.value = false
     phase.value = 'closed'
+    if (shouldReopen) {
+      discardFocusReturn()
+      startOpening()
+      return false
+    }
     if (shouldRestoreFocus) restoreFocus()
     else discardFocusReturn()
-    if (isOpen()) startOpening()
+    return true
   }
 
   watch(isOpen, (nextOpen) => {
@@ -342,12 +352,12 @@ export const useDialogLifecycle = ({
   }, { immediate: true })
 
   onBeforeUnmount(() => {
-    const shouldRestoreFocus = Boolean(layer && isTopDialogLayer(layer))
+    if (disposed) return
+    disposed = true
     releaseLayer()
     rendered.value = false
     phase.value = 'closed'
-    if (shouldRestoreFocus) restoreFocus()
-    else discardFocusReturn()
+    discardFocusReturn()
   })
 
   return {

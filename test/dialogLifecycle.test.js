@@ -86,7 +86,8 @@ const createFakeElement = (document, {
     inert: false,
     isConnected,
     tabIndex: focusable ? 0 : -1,
-    focus() { document.activeElement = element },
+    focusCount: 0,
+    focus() { element.focusCount += 1; document.activeElement = element },
     querySelectorAll: () => focusables,
     contains(target) { return target === element || focusables.includes(target) || containedElements.includes(target) },
     getAttribute(name) { return attributes.get(name) ?? null },
@@ -279,25 +280,39 @@ test('defers a reopened dialog snapshot until the leaving dialog has finished', 
   app.unmount()
 })
 
-test('keeps the closing phase and original trigger when reopened before leave completes', async (t) => {
+test('queued reopen skips stale focus return and restores only the new trigger after its final leave', async (t) => {
   const document = installFakeDocument(t)
   const trigger = createFakeElement(document, { focusable: true })
-  const alternateTrigger = createFakeElement(document, { focusable: true })
+  const nextTrigger = createFakeElement(document, { focusable: true })
+  const returnFocusRef = shallowRef(trigger)
   document.activeElement = trigger
-  const { lifecycle, open } = await mountLifecycle({ document })
+  const { lifecycle, open } = await mountLifecycle({ document, returnFocusRef })
 
   open.value = false
   await flushLifecycle()
   assert.equal(lifecycle.phase.value, 'closing')
 
-  document.activeElement = alternateTrigger
+  returnFocusRef.value = nextTrigger
   open.value = true
   await flushLifecycle()
   assert.equal(lifecycle.phase.value, 'closing')
 
   lifecycle.onAfterLeave()
-  assert.equal(document.activeElement, trigger)
-  assert.equal(lifecycle.phase.value, 'opening')
+  await flushLifecycle()
+  lifecycle.onAfterEnter()
+  assert.equal(trigger.focusCount, 0)
+  assert.equal(nextTrigger.focusCount, 0)
+  assert.equal(document.body.style.overflow, 'hidden')
+  assert.equal(document.listenerCount('keydown'), 1)
+  assert.equal(lifecycle.phase.value, 'open')
+
+  open.value = false
+  await flushLifecycle()
+  lifecycle.onAfterLeave()
+  assert.equal(trigger.focusCount, 0)
+  assert.equal(nextTrigger.focusCount, 1)
+  assert.equal(document.activeElement, nextTrigger)
+  assert.equal(document.body.style.overflow, '')
 })
 
 test('defers layer cleanup, scroll unlock, and focus return until leave completes', async (t) => {
@@ -381,20 +396,63 @@ test('limits keyboard controls to the top layer and retains nested isolation unt
   assert.equal(background.inert, false)
 })
 
-test('unmount releases the dialog layer, document listener, scroll lock, and focus', async (t) => {
+test('owner unmount while open disposes its layer without restoring focus or accepting stale leave work', async (t) => {
   const document = installFakeDocument(t)
   const trigger = createFakeElement(document, { focusable: true })
   const background = createFakeElement(document)
   document.body.children.push(background)
   document.activeElement = trigger
-  const { app } = await mountLifecycle({ document })
+  const { app, lifecycle } = await mountLifecycle({ document })
 
   assert.equal(document.listenerCount('keydown'), 1)
   app.unmount()
   assert.equal(document.listenerCount('keydown'), 0)
   assert.equal(document.body.style.overflow, '')
   assert.equal(background.inert, false)
-  assert.equal(document.activeElement, trigger)
+  assert.equal(trigger.focusCount, 0)
+  assert.notEqual(document.activeElement, trigger)
+
+  assert.equal(lifecycle.onAfterLeave(), false)
+  await flushLifecycle()
+  assert.equal(document.listenerCount('keydown'), 0)
+  assert.equal(document.body.style.overflow, '')
+  assert.equal(background.inert, false)
+  assert.equal(trigger.focusCount, 0)
+})
+
+test('owner unmount with leave pending releases only its layer once and never focuses the old trigger', async (t) => {
+  const document = installFakeDocument(t)
+  const background = createFakeElement(document)
+  document.body.children.push(background)
+  const lower = await mountLifecycle({ document })
+  const upperTrigger = createFakeElement(document, { focusable: true })
+  document.activeElement = upperTrigger
+  const upper = await mountLifecycle({ document })
+
+  upper.open.value = false
+  await flushLifecycle()
+  assert.equal(upper.lifecycle.phase.value, 'closing')
+  assert.equal(document.listenerCount('keydown'), 2)
+
+  upper.app.unmount()
+  assert.equal(document.listenerCount('keydown'), 1)
+  assert.equal(document.body.style.overflow, 'hidden')
+  assert.equal(background.inert, true)
+  assert.equal(lower.dialog.inert, false)
+  assert.equal(upperTrigger.focusCount, 0)
+
+  assert.equal(upper.lifecycle.onAfterLeave(), false)
+  assert.equal(upper.lifecycle.onAfterLeave(), false)
+  await flushLifecycle()
+  assert.equal(document.listenerCount('keydown'), 1)
+  assert.equal(document.body.style.overflow, 'hidden')
+  assert.equal(lower.dialog.inert, false)
+  assert.equal(upperTrigger.focusCount, 0)
+
+  lower.app.unmount()
+  assert.equal(document.listenerCount('keydown'), 0)
+  assert.equal(document.body.style.overflow, '')
+  assert.equal(background.inert, false)
 })
 
 test('uses a connected logical return target when the captured trigger was removed', async (t) => {

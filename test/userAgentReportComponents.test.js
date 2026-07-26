@@ -50,7 +50,7 @@ test('agent report Drawer renders four summary cards, every product line, and te
   assert.ok(drawer)
   assert.equal(drawer.getAttribute('role'), 'dialog')
   assert.equal(drawer.getAttribute('aria-modal'), 'true')
-  for (const label of ['直属客户数', '活跃客户数', '累计交易量', '累计佣金']) {
+  for (const label of ['直属客户数', '活跃客户数', '累计业务量', '累计佣金']) {
     assert.match(drawer.textContent, new RegExp(label))
   }
   assert.equal(harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-summary-card').length, 4)
@@ -60,7 +60,10 @@ test('agent report Drawer renders four summary cards, every product line, and te
       .map((node) => productLines.find((line) => node.textContent.includes(line.label))?.key),
     ['deposit', 'perpetual']
   )
+  assert.match(harness.allNodes().find((node) => node.getAttribute?.('data-testid') === 'agent-report-product-row').textContent, /业务量/)
   assert.deepEqual(dailyDates(harness), dailyRows.slice(0, 10).map((row) => row.date))
+  assert.match(harness.allNodes().find((node) => node.getAttribute?.('data-testid') === 'agent-report-daily-row').textContent, /业务量/)
+  assert.match(drawer.textContent, /代理业绩明细/)
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 21 条 · 第 1 / 3 页')
 
   harness.findByText('下一页', 'button').click()
@@ -72,6 +75,22 @@ test('agent report Drawer renders four summary cards, every product line, and te
   await harness.flush()
   assert.deepEqual(dailyDates(harness), dailyRows.slice(0, 3).map((row) => row.date))
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 3 条 · 第 1 / 1 页')
+})
+
+test('agent report Drawer uses approved empty copy for each report section', async (t) => {
+  const component = await loadDrawer()
+  const harness = await createSfcHarness(component, {
+    visible: true,
+    user,
+    report: { ...report, productLines: [], dailyRows: [] },
+    error: ''
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const drawer = harness.findByTestId('user-agent-report-drawer')
+  assert.match(drawer.textContent, /暂无产品线汇总/)
+  assert.match(drawer.textContent, /暂无代理业绩明细/)
 })
 
 test('agent report Drawer keeps agent-specific empty and loading-error feedback inside the open layer', async (t) => {
@@ -117,6 +136,63 @@ test('agent report Drawer resists backdrop clicks, closes intentionally, and res
   assert.equal(drawer.isConnected, true)
   await harness.finishTransitions()
   assert.equal(trigger.focused, true)
+})
+
+test('agent report Drawer preserves a newer context through an older leave callback and returns focus once', async (t) => {
+  const component = await loadDrawer()
+  const nextUser = { id: 'user_agent_2', username: 'agent_beta', role: 'agent' }
+  const nextReport = {
+    userId: nextUser.id,
+    summary: { directClientCount: 92, activeClientCount: 73, totalVolume: 910000, totalCommission: 28000 },
+    productLines: [{ key: 'borrowing', label: '借贷产品', volume: 910000, commission: 28000, orderCount: 77 }],
+    dailyRows: [{ date: '2026-07-26', volume: 910000, activeClients: 73, newClients: 8, orderCount: 77, commission: 28000 }]
+  }
+  const firstTrigger = { isConnected: true, focusCount: 0, focus() { this.focusCount += 1 } }
+  const nextTrigger = { isConnected: true, focusCount: 0, focus() { this.focusCount += 1 } }
+  let closedCount = 0
+  let harness
+  harness = await createSfcHarness(component, { visible: true, user, report, error: '', returnFocus: firstTrigger }, {
+    onClose: () => { harness.props.visible = false },
+    onClosed: () => {
+      closedCount += 1
+      harness.props.user = null
+      harness.props.report = null
+      harness.props.error = ''
+      harness.props.returnFocus = null
+    }
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const firstDrawer = harness.findByTestId('user-agent-report-drawer')
+  harness.allNodes().find((node) => firstDrawer.contains(node) && node.getAttribute?.('aria-label') === '关闭').click()
+  await harness.flush()
+
+  harness.props.user = nextUser
+  harness.props.report = nextReport
+  harness.props.error = '新代理上下文提示'
+  harness.props.returnFocus = nextTrigger
+  harness.props.visible = true
+  await harness.flush()
+  await harness.finishTransitions()
+  await harness.finishTransitions()
+
+  const survivingDrawers = harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'user-agent-report-drawer')
+  assert.equal(survivingDrawers.length, 1)
+  assert.match(survivingDrawers[0].textContent, /agent_beta/)
+  assert.match(survivingDrawers[0].textContent, /借贷产品/)
+  assert.match(survivingDrawers[0].textContent, /新代理上下文提示/)
+  assert.equal(harness.document.body.style.overflow, 'hidden')
+  assert.equal(firstTrigger.focusCount, 0)
+  assert.equal(nextTrigger.focusCount, 0)
+  assert.equal(closedCount, 0)
+
+  harness.allNodes().find((node) => survivingDrawers[0].contains(node) && node.getAttribute?.('aria-label') === '关闭').click()
+  await harness.flush()
+  await harness.finishTransitions()
+  assert.equal(closedCount, 1)
+  assert.equal(firstTrigger.focusCount, 0)
+  assert.equal(nextTrigger.focusCount, 1)
 })
 
 test('agent report Drawer uses the shared fixed layer, one body scroller, and required motion safeguards', async () => {

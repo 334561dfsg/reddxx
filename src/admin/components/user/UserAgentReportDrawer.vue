@@ -33,7 +33,7 @@ const formatMoney = (value) => `${formatNumber(value, 2)} USDT`
 const summaryCards = computed(() => [
   { label: '直属客户数', value: `${formatNumber(props.report?.summary?.directClientCount)} 人` },
   { label: '活跃客户数', value: `${formatNumber(props.report?.summary?.activeClientCount)} 人` },
-  { label: '累计交易量', value: formatMoney(props.report?.summary?.totalVolume) },
+  { label: '累计业务量', value: formatMoney(props.report?.summary?.totalVolume) },
   { label: '累计佣金', value: formatMoney(props.report?.summary?.totalCommission) }
 ])
 
@@ -46,8 +46,7 @@ const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLe
 })
 const close = createDialogCloseAction(requestDialogClose)
 const handleAfterLeave = () => {
-  onAfterLeave()
-  emit('closed')
+  if (onAfterLeave()) emit('closed')
 }
 
 watch(() => [props.visible, userId.value, props.report], ([visible]) => {
@@ -107,17 +106,17 @@ watch(totalPages, (nextTotalPages) => {
                       <span class="rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">{{ formatNumber(line.orderCount) }} 笔订单</span>
                     </div>
                     <dl class="mt-3 grid grid-cols-1 gap-3 text-sm min-[420px]:grid-cols-2">
-                      <div><dt class="text-xs text-slate-500">交易量</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(line.volume) }}</dd></div>
+                      <div><dt class="text-xs text-slate-500">业务量</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(line.volume) }}</dd></div>
                       <div><dt class="text-xs text-slate-500">佣金</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(line.commission) }}</dd></div>
                     </dl>
                   </article>
                 </div>
-                <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无产品线统计</p>
+                <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无产品线汇总</p>
               </section>
 
               <section aria-labelledby="agent-report-daily-title">
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                  <h3 id="agent-report-daily-title" class="text-sm font-semibold text-slate-900">每日业务明细</h3>
+                  <h3 id="agent-report-daily-title" class="text-sm font-semibold text-slate-900">代理业绩明细</h3>
                   <span class="text-xs text-slate-500">按日期倒序</span>
                 </div>
                 <div v-if="dailyRows.length" class="mt-2 space-y-2">
@@ -127,7 +126,7 @@ watch(totalPages, (nextTotalPages) => {
                       <span class="text-xs text-slate-500">{{ formatNumber(row.orderCount) }} 笔订单</span>
                     </div>
                     <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-sm lg:grid-cols-5">
-                      <div><dt class="text-xs text-slate-500">交易量</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.volume) }}</dd></div>
+                      <div><dt class="text-xs text-slate-500">业务量</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.volume) }}</dd></div>
                       <div><dt class="text-xs text-slate-500">佣金</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.commission) }}</dd></div>
                       <div><dt class="text-xs text-slate-500">活跃客户</dt><dd class="mt-0.5 font-medium text-slate-800">{{ formatNumber(row.activeClients) }} 人</dd></div>
                       <div><dt class="text-xs text-slate-500">新增客户</dt><dd class="mt-0.5 font-medium text-slate-800">{{ formatNumber(row.newClients) }} 人</dd></div>
@@ -136,7 +135,7 @@ watch(totalPages, (nextTotalPages) => {
                   </article>
                   <CompactPagination v-model:current-page="currentPage" :total-count="dailyRows.length" :page-size="PAGE_SIZE" />
                 </div>
-                <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无每日业务明细</p>
+                <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无代理业绩明细</p>
               </section>
             </template>
 
