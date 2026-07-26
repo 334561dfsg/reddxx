@@ -22,6 +22,7 @@ const addresses = computed(() => (Array.isArray(props.wallet?.addresses) ? props
 const segmentAddresses = computed(() => addresses.value.filter((address) => address.kind === activeSegment.value))
 const segmentLabel = computed(() => activeSegment.value === 'deposit' ? '入金' : '提现')
 const copyInProgress = computed(() => copyingId.value !== null)
+const statusLabel = (status) => ({ active: '启用', inactive: '停用' })[status] || status || '未知'
 
 const {
   rendered,
@@ -191,7 +192,7 @@ watch(() => props.visible, (visible) => {
                   <h3 class="break-words text-sm font-semibold text-slate-900">{{ address.label || `${segmentLabel}地址` }}</h3>
                   <p class="mt-1 text-xs text-slate-500">{{ address.coin }} · {{ address.network }}</p>
                 </div>
-                <span class="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">{{ address.status === 'active' ? '启用' : address.status || '未知' }}</span>
+                <span class="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">{{ statusLabel(address.status) }}</span>
               </div>
               <p :id="`wallet-address-${address.id}-value`" class="mt-3 break-all rounded-lg bg-slate-50 px-3 py-2 font-mono text-sm text-slate-800">
                 {{ isRevealed(address.id) ? address.address : maskAddress(address.address) }}
