@@ -215,6 +215,11 @@ test('operation drawer renders grouped actions and explains planned entries with
   assert.match(source, /该功能入口已预留，业务能力待接入/)
   assert.match(source, /aria-live="polite"/)
   assert.match(source, /sm:grid-cols-2/)
+  assert.match(source, /riskBadgeLabel/)
+  assert.match(source, /高风险/)
+  assert.match(source, /敏感/)
+  assert.match(source, /group\.entries\.length/)
+  assert.doesNotMatch(source, /quickOperationEntries|normalOperationGroups|dangerOperationEntries/)
 })
 
 test('user list exposes one-click row actions and coordinates the complete operation drawer', () => {
@@ -243,9 +248,12 @@ test('operation drawer uses compact, balanced action tiles without shrinking clo
   const source = read('../src/admin/components/user/UserOperationDrawer.vue')
 
   assert.match(source, /data-testid="user-operation-drawer-body"[^>]*space-y-4[^>]*px-3[^>]*py-3[^>]*sm:px-4/)
-  assert.match(source, /class="mb-1\.5 text-xs font-semibold/)
+  assert.match(source, /rounded-xl border border-slate-100 bg-slate-50\/50 p-2/)
+  assert.match(source, /class="text-xs font-semibold/)
+  assert.match(source, /ring-1 ring-slate-200/)
   assert.match(source, /grid grid-cols-1 gap-1\.5 sm:grid-cols-2/)
   assert.match(source, /min-h-16[^"\n]*p-2\.5/)
+  assert.match(source, /rounded-full border px-1\.5 py-0\.5 text-\[10px\]/)
   assert.match(source, /text-sm font-medium text-slate-900/)
   assert.match(source, /mt-1 block text-xs leading-4/)
   assert.match(source, /min-h-11 min-w-11/)

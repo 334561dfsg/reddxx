@@ -59,6 +59,17 @@ const entryClasses = (entry) => ({
   'border-amber-200 bg-amber-50/40 hover:border-amber-300 hover:bg-amber-50': entry.risk === 'sensitive',
   'border-rose-200 bg-rose-50/40 hover:border-rose-300 hover:bg-rose-50': entry.risk === 'danger'
 })
+
+const riskBadgeLabel = (entry) => {
+  if (entry.risk === 'danger') return '高风险'
+  if (entry.risk === 'sensitive') return '敏感'
+  return ''
+}
+
+const riskBadgeClasses = (entry) => ({
+  'border-amber-200 bg-amber-100 text-amber-700': entry.risk === 'sensitive',
+  'border-rose-200 bg-rose-100 text-rose-700': entry.risk === 'danger'
+})
 </script>
 
 <template>
@@ -118,10 +129,15 @@ const entryClasses = (entry) => ({
                 {{ plannedMessage }}
               </p>
 
-              <section v-for="group in operationGroups" :key="group.id" :aria-labelledby="`operation-group-${group.id}`">
-                <h3 :id="`operation-group-${group.id}`" class="mb-1.5 text-xs font-semibold tracking-wide text-slate-600">
-                  {{ group.label }}
-                </h3>
+              <section v-for="group in operationGroups" :key="group.id" class="rounded-xl border border-slate-100 bg-slate-50/50 p-2" :aria-labelledby="`operation-group-${group.id}`">
+                <div class="mb-2 flex items-center justify-between gap-2">
+                  <h3 :id="`operation-group-${group.id}`" class="text-xs font-semibold tracking-wide text-slate-700">
+                    {{ group.label }}
+                  </h3>
+                  <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-slate-500 ring-1 ring-slate-200">
+                    {{ group.entries.length }} 项
+                  </span>
+                </div>
                 <div class="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                   <button
                     v-for="entry in group.entries"
@@ -133,6 +149,9 @@ const entryClasses = (entry) => ({
                   >
                     <span class="flex items-start justify-between gap-2">
                       <span class="text-sm font-medium text-slate-900">{{ entry.title }}</span>
+                      <span v-if="riskBadgeLabel(entry)" class="shrink-0 rounded-full border px-1.5 py-0.5 text-[10px] font-medium leading-4" :class="riskBadgeClasses(entry)">
+                        {{ riskBadgeLabel(entry) }}
+                      </span>
                       <span v-if="entry.status === 'planned'" class="shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium leading-4 text-slate-600">
                         待接入
                       </span>
