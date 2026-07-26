@@ -36,6 +36,26 @@ test('keeps the count visible but hides navigation for one page of results', asy
   harness.cleanup()
 })
 
+test('always shows disabled navigation for an opted-in empty result set', async () => {
+  const harness = await createSfcHarness(await loadVueSfc(componentFile), {
+    currentPage: 1,
+    totalCount: 0,
+    pageSize: 5,
+    alwaysShowNavigation: true
+  })
+
+  assert.equal(harness.findByTestId('compact-pagination-summary').textContent.trim(), '共 0 条 · 第 1 / 1 页')
+  assert.deepEqual(
+    buttons(harness).map((button) => button.textContent.trim()),
+    ['上一页', '1', '下一页']
+  )
+  assert.equal(harness.findByText('上一页', 'button').disabled, true)
+  assert.equal(harness.findByText('下一页', 'button').disabled, true)
+  assert.equal(harness.findByText('1', 'button').getAttribute('aria-current'), 'page')
+
+  harness.cleanup()
+})
+
 test('clamps requested page changes before emitting them', async () => {
   const harness = await createSfcHarness(await loadVueSfc(componentFile), {
     currentPage: 99,

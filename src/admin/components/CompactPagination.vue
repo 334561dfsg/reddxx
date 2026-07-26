@@ -4,7 +4,8 @@ import { computed } from 'vue'
 const props = defineProps({
   currentPage: { type: Number, required: true },
   totalCount: { type: Number, required: true },
-  pageSize: { type: Number, default: 10 }
+  pageSize: { type: Number, default: 10 },
+  alwaysShowNavigation: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['update:currentPage'])
@@ -42,7 +43,7 @@ const goToPage = (requestedPage) => {
       共 {{ totalCount }} 条 · 第 {{ page }} / {{ totalPages }} 页
     </span>
 
-    <nav v-if="totalPages > 1" class="flex w-full min-w-0 flex-wrap items-center justify-center gap-1 sm:w-auto sm:justify-end" aria-label="分页导航">
+    <nav v-if="alwaysShowNavigation || totalPages > 1" class="flex w-full min-w-0 flex-wrap items-center justify-center gap-1 sm:w-auto sm:justify-end" aria-label="分页导航">
       <button
         type="button"
         class="min-h-10 rounded-lg border border-slate-200 px-2 py-1.5 font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3"
