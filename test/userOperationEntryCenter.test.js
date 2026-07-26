@@ -44,8 +44,8 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '链上钱包',
     '客服入金',
     '账户间划转',
-    '冻结全部资金',
-    '解冻人工冻结资金',
+    '冻结资金',
+    '解冻资金',
     '划扣可用资金',
     '出金流水限制'
   ])
@@ -64,8 +64,8 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '链上钱包',
     '客服入金',
     '账户间划转',
-    '冻结全部资金',
-    '解冻人工冻结资金',
+    '冻结资金',
+    '解冻资金',
     '划扣可用资金',
     '出金流水限制',
     '信用分审核',
@@ -110,6 +110,11 @@ test('operation catalog distinguishes implemented and planned actions', () => {
   assert.equal(getUserOperationEntry('vip-level', { status: 'active' }).handler, 'vip-level')
   assert.equal(getUserOperationEntry('vip-deposit-total', { status: 'active' }).handler, 'vip-deposit-total')
   assert.equal(getUserOperationEntry('rebate-reward', { status: 'active' }).handler, 'rebate-reward')
+})
+
+test('fund freeze entries use concise one-line summaries', () => {
+  assert.equal(getUserOperationEntry('freeze-funds', {}).description, '冻结用户全部可用资金')
+  assert.equal(getUserOperationEntry('unfreeze-funds', {}).description, '解冻管理员人工冻结资金')
 })
 
 test('funds controls keep the operation drawer open and use a separate MFA layer', () => {
