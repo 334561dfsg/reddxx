@@ -189,8 +189,8 @@ test('detail drawer receives and renders superseded rule history with its timest
   assert.match(history, /已覆盖/)
 })
 
-test('log page presents operation and execution records in one point-control list', () => {
-  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+test('log content presents operation and execution records in one point-control list', () => {
+  const source = read('../src/admin/components/user-control/UserControlLogContent.vue')
   assert.match(source, /用户点控日志/)
   assert.match(source, /unifiedLogs/)
   assert.equal(source.match(/<table/g)?.length, 1)
@@ -211,22 +211,22 @@ test('user management menu names the unified log as user point-control log', () 
   assert.doesNotMatch(source, /title:\s*'用户控制日志',\s*path:\s*'\/admin\/users\/control-log'/)
 })
 
-test('log page paginates filtered rows and resets from every filter', () => {
-  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+test('log content paginates filtered rows and resets from every filter', () => {
+  const source = read('../src/admin/components/user-control/UserControlLogContent.vue')
   assert.match(source, /useAdminListPagination\(unifiedLogs,\s*\{[\s\S]*pageSize:\s*10/)
   assert.match(source, /resetSources:\s*\[[\s\S]*filters\.userId[\s\S]*filters\.module[\s\S]*filters\.source[\s\S]*filters\.action[\s\S]*filters\.dateFrom[\s\S]*filters\.dateTo/)
   assert.match(source, /v-for="log in pagedLogs"/)
   assert.match(source, /<AdminListPaginationBar[\s\S]*:total-count="unifiedLogs\.length"[\s\S]*@update:page-size="onPageSizeChange"/)
 })
 
-test('log page displays success and failure status for operation records', () => {
-  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+test('log content displays success and failure status for operation records', () => {
+  const source = read('../src/admin/components/user-control/UserControlLogContent.vue')
   assert.match(source, /status:\s*log\.status \|\| ''/)
   assert.match(source, /statusLabel\(log\.status\)/)
 })
 
-test('log page exposes audit fields without demo state actions', () => {
-  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+test('log content exposes audit fields without demo state actions', () => {
+  const source = read('../src/admin/components/user-control/UserControlLogContent.vue')
   assert.match(source, /UID/)
   assert.match(source, /模块/)
   assert.match(source, /规则来源/)
@@ -243,8 +243,8 @@ test('log page exposes audit fields without demo state actions', () => {
   assert.match(source, /executionStatusClasses/)
 })
 
-test('log page binds date filters and audit columns to their actual values', () => {
-  const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
+test('log content binds date filters and audit columns to their actual values', () => {
+  const source = read('../src/admin/components/user-control/UserControlLogContent.vue')
   const dateFrom = openingTag(source, 'user-control-log-date-from')
   const dateTo = openingTag(source, 'user-control-log-date-to')
 
@@ -257,12 +257,15 @@ test('log page binds date filters and audit columns to their actual values', () 
   assert.match(elementByTestId(source, 'user-control-unified-duration-value'), /log\.duration/)
 })
 
-test('log page immediately normalizes module values and follows route query changes', () => {
+test('log page wrapper normalizes and forwards route query values to shared content', () => {
   const source = read('../src/pages/admin/user-control/UserControlLogPage.vue')
   assert.match(source, /normalizeUserControlLogQuery/)
   assert.match(source, /route\.query\.userId/)
   assert.match(source, /route\.query\.module/)
-  assert.match(source, /immediate:\s*true/)
+  assert.match(source, /UserControlLogContent/)
+  assert.match(source, /:initial-user-id="normalizedQuery\.userId"/)
+  assert.match(source, /:initial-module="normalizedQuery\.module"/)
+  assert.match(source, /@clear-route-filters="router\.replace\(\{ name: route\.name, query: \{\} \}\)"/)
 })
 
 test('log page omits the former tab interface', () => {
