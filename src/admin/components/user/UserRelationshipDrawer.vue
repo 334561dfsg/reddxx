@@ -17,13 +17,14 @@ const props = defineProps({
 const emit = defineEmits(['close', 'closed'])
 const drawerRef = ref(null)
 const titleRef = ref(null)
-const filterToggleRef = ref(null)
+const statusFilterToggleRef = ref(null)
+const roleFilterToggleRef = ref(null)
 const keyword = ref('')
 const status = ref('all')
 const role = ref('all')
 const selectedMember = ref(null)
 const currentPage = ref(1)
-const filtersOpen = ref(false)
+const openFilter = ref(null)
 
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const isAllMode = computed(() => props.mode === 'all')
@@ -79,10 +80,23 @@ const {
 
 const close = createDialogCloseAction(requestDialogClose)
 const closeFilters = async () => {
-  if (!filtersOpen.value) return
-  filtersOpen.value = false
+  const closingFilter = openFilter.value
+  if (!closingFilter) return
+  openFilter.value = null
   await nextTick()
-  filterToggleRef.value?.focus()
+  const trigger = closingFilter === 'status' ? statusFilterToggleRef : roleFilterToggleRef
+  trigger.value?.focus()
+}
+const toggleFilter = (filter) => {
+  openFilter.value = openFilter.value === filter ? null : filter
+}
+const selectStatus = async (value) => {
+  status.value = value
+  await closeFilters()
+}
+const selectRole = async (value) => {
+  role.value = value
+  await closeFilters()
 }
 const handleAfterLeave = async () => {
   if (!await onAfterLeave()) return
@@ -96,7 +110,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
   role.value = 'all'
   selectedMember.value = null
   currentPage.value = 1
-  filtersOpen.value = false
+  openFilter.value = null
 })
 
 watch(() => [keyword.value, status.value, role.value], () => {
@@ -149,60 +163,81 @@ watch(totalPages, (nextTotalPages) => {
                   <span class="sr-only">搜索裂变下级</span>
                   <input v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
                 </label>
-                <button
-                  ref="filterToggleRef"
-                  data-testid="relationship-drawer-filter-toggle"
-                  type="button"
-                  class="mt-3 flex min-h-11 w-full items-center rounded-lg px-2 text-left text-sm font-medium text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                  :aria-expanded="filtersOpen ? 'true' : 'false'"
-                  aria-controls="relationship-drawer-filter-panel"
-                  @click="filtersOpen = !filtersOpen"
-                >
-                  筛选条件
-                </button>
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                  <button
+                    ref="statusFilterToggleRef"
+                    data-testid="relationship-drawer-status-filter-toggle"
+                    type="button"
+                    class="flex min-h-11 items-center rounded-lg px-2 text-left text-sm font-medium text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    :aria-expanded="openFilter === 'status' ? 'true' : 'false'"
+                    aria-controls="relationship-drawer-status-filter-panel"
+                    @click="toggleFilter('status')"
+                  >
+                    账户状态
+                  </button>
+                  <button
+                    ref="roleFilterToggleRef"
+                    data-testid="relationship-drawer-role-filter-toggle"
+                    type="button"
+                    class="flex min-h-11 items-center rounded-lg px-2 text-left text-sm font-medium text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    :aria-expanded="openFilter === 'role' ? 'true' : 'false'"
+                    aria-controls="relationship-drawer-role-filter-panel"
+                    @click="toggleFilter('role')"
+                  >
+                    用户角色
+                  </button>
+                </div>
                 <div
-                  v-if="filtersOpen"
-                  id="relationship-drawer-filter-panel"
-                  data-testid="relationship-drawer-filter-panel"
+                  v-if="openFilter === 'status'"
+                  id="relationship-drawer-status-filter-panel"
+                  data-testid="relationship-drawer-status-filter-panel"
                   class="absolute inset-x-0 top-full z-20 mt-2 rounded-xl border border-slate-200 bg-white p-3 shadow-lg"
                   role="group"
-                  aria-label="裂变下级筛选条件"
+                  aria-label="账户状态筛选"
                   @keydown.esc.stop.prevent="closeFilters"
                 >
-                  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <fieldset class="min-w-0">
-                      <legend class="text-xs font-medium text-slate-600">账户状态</legend>
-                      <div class="mt-1 flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
-                        <button
-                          v-for="item in [{ value: 'all', label: '全部状态' }, ...USER_STATUS_OPTIONS]"
-                          :key="item.value"
-                          type="button"
-                          class="min-h-9 flex-1 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
-                          :class="status === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
-                          :aria-pressed="status === item.value ? 'true' : 'false'"
-                          @click="status = item.value"
-                        >
-                          {{ item.label }}
-                        </button>
-                      </div>
-                    </fieldset>
-                    <fieldset class="min-w-0">
-                      <legend class="text-xs font-medium text-slate-600">用户角色</legend>
-                      <div class="mt-1 flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
-                        <button
-                          v-for="item in [{ value: 'all', label: '全部角色' }, ...USER_ROLE_OPTIONS]"
-                          :key="item.value"
-                          type="button"
-                          class="min-h-9 flex-1 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
-                          :class="role === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
-                          :aria-pressed="role === item.value ? 'true' : 'false'"
-                          @click="role = item.value"
-                        >
-                          {{ item.label }}
-                        </button>
-                      </div>
-                    </fieldset>
-                  </div>
+                  <fieldset>
+                    <legend class="sr-only">账户状态</legend>
+                    <div class="grid grid-cols-2 gap-1">
+                      <button
+                        v-for="item in [{ value: 'all', label: '全部状态' }, ...USER_STATUS_OPTIONS]"
+                        :key="item.value"
+                        type="button"
+                        class="min-h-9 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
+                        :class="status === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
+                        :aria-pressed="status === item.value ? 'true' : 'false'"
+                        @click="selectStatus(item.value)"
+                      >
+                        {{ item.label }}
+                      </button>
+                    </div>
+                  </fieldset>
+                </div>
+                <div
+                  v-if="openFilter === 'role'"
+                  id="relationship-drawer-role-filter-panel"
+                  data-testid="relationship-drawer-role-filter-panel"
+                  class="absolute inset-x-0 top-full z-20 mt-2 rounded-xl border border-slate-200 bg-white p-3 shadow-lg"
+                  role="group"
+                  aria-label="用户角色筛选"
+                  @keydown.esc.stop.prevent="closeFilters"
+                >
+                  <fieldset>
+                    <legend class="sr-only">用户角色</legend>
+                    <div class="grid grid-cols-2 gap-1">
+                      <button
+                        v-for="item in [{ value: 'all', label: '全部角色' }, ...USER_ROLE_OPTIONS]"
+                        :key="item.value"
+                        type="button"
+                        class="min-h-9 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
+                        :class="role === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
+                        :aria-pressed="role === item.value ? 'true' : 'false'"
+                        @click="selectRole(item.value)"
+                      >
+                        {{ item.label }}
+                      </button>
+                    </div>
+                  </fieldset>
                 </div>
               </div>
             </div>

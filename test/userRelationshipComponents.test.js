@@ -26,10 +26,13 @@ test('relationship member Drawer uses shared layering with a fixed control and p
   assert.doesNotMatch(source, /data-testid="relationship-drawer-body"[^>]*class="[^"]*overflow-y-auto/)
   assert.match(source, /data-testid="relationship-drawer-body"[^>]*class="[^"]*min-h-0[^"]*flex[^"]*flex-1[^"]*flex-col[^"]*overflow-hidden/)
   assert.match(source, /data-testid="relationship-member-scroll"[^>]*class="[^"]*min-h-20[^"]*flex-1[^"]*overflow-y-auto[^"]*overscroll-y-contain[^"]*pb-\[max\(1rem,env\(safe-area-inset-bottom\)\)\]/)
-  assert.match(source, /data-testid="relationship-drawer-filter-toggle"/)
-  assert.match(source, /aria-controls="relationship-drawer-filter-panel"/)
-  assert.match(source, /data-testid="relationship-drawer-filter-panel"[^>]*class="[^"]*absolute[^"]*z-20/)
-  assert.doesNotMatch(source, /data-testid="relationship-drawer-filter-panel"[^>]*class="[^"]*overflow-y-auto/)
+  for (const filter of ['status', 'role']) {
+    assert.match(source, new RegExp(`data-testid="relationship-drawer-${filter}-filter-toggle"`))
+    assert.match(source, new RegExp(`aria-controls="relationship-drawer-${filter}-filter-panel"`))
+    assert.match(source, new RegExp(`data-testid="relationship-drawer-${filter}-filter-panel"[^>]*class="[^"]*absolute[^"]*z-20`))
+    assert.doesNotMatch(source, new RegExp(`data-testid="relationship-drawer-${filter}-filter-panel"[^>]*class="[^"]*overflow-y-auto`))
+  }
+  assert.match(source, /grid-cols-2 gap-1/)
   assert.match(source, /@keydown\.esc\.stop\.prevent="closeFilters"/)
   assert.doesNotMatch(source, /data-testid="relationship-drawer-controls"[^>]*class="[^"]*overflow-y-auto/)
   assert.match(source, /role="dialog"/)
