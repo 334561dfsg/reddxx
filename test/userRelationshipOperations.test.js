@@ -183,6 +183,7 @@ test('relationship drawer paginates members and resets selection and page for ch
   await harness.flush()
   harness.props.user = tree.members[0]
   await harness.flush()
+  assert.equal(list.classList.contains('pb-[max(1rem,env(safe-area-inset-bottom))]'), true)
   assert.equal(list.contains(harness.findByText('当前没有裂变下级')), true)
   assert.equal(harness.findByTestId('compact-pagination-summary'), undefined)
   harness.props.user = tree.root

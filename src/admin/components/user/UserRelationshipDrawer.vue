@@ -136,48 +136,51 @@ watch(totalPages, (nextTotalPages) => {
           <div data-testid="relationship-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <div data-testid="relationship-drawer-controls" class="shrink-0 px-4 pt-4 sm:px-5">
               <div class="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <label class="sm:col-span-2">
-                    <span class="sr-only">搜索裂变下级</span>
-                    <input v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
-                  </label>
-                  <fieldset class="min-w-0">
-                    <legend class="text-xs font-medium text-slate-600">账户状态</legend>
-                    <div class="mt-1 flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
-                      <button
-                        v-for="item in [{ value: 'all', label: '全部状态' }, ...USER_STATUS_OPTIONS]"
-                        :key="item.value"
-                        type="button"
-                        class="min-h-9 flex-1 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
-                        :class="status === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
-                        :aria-pressed="status === item.value ? 'true' : 'false'"
-                        @click="status = item.value"
-                      >
-                        {{ item.label }}
-                      </button>
-                    </div>
-                  </fieldset>
-                  <fieldset class="min-w-0">
-                    <legend class="text-xs font-medium text-slate-600">用户角色</legend>
-                    <div class="mt-1 flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
-                      <button
-                        v-for="item in [{ value: 'all', label: '全部角色' }, ...USER_ROLE_OPTIONS]"
-                        :key="item.value"
-                        type="button"
-                        class="min-h-9 flex-1 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
-                        :class="role === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
-                        :aria-pressed="role === item.value ? 'true' : 'false'"
-                        @click="role = item.value"
-                      >
-                        {{ item.label }}
-                      </button>
-                    </div>
-                  </fieldset>
-                </div>
+                <label>
+                  <span class="sr-only">搜索裂变下级</span>
+                  <input v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
+                </label>
+                <details data-testid="relationship-drawer-filters" class="mt-3">
+                  <summary class="flex min-h-11 cursor-pointer items-center rounded-lg px-2 text-sm font-medium text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-blue-500">筛选条件</summary>
+                  <div class="grid grid-cols-1 gap-3 pt-3 sm:grid-cols-2">
+                    <fieldset class="min-w-0">
+                      <legend class="text-xs font-medium text-slate-600">账户状态</legend>
+                      <div class="mt-1 flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
+                        <button
+                          v-for="item in [{ value: 'all', label: '全部状态' }, ...USER_STATUS_OPTIONS]"
+                          :key="item.value"
+                          type="button"
+                          class="min-h-9 flex-1 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
+                          :class="status === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
+                          :aria-pressed="status === item.value ? 'true' : 'false'"
+                          @click="status = item.value"
+                        >
+                          {{ item.label }}
+                        </button>
+                      </div>
+                    </fieldset>
+                    <fieldset class="min-w-0">
+                      <legend class="text-xs font-medium text-slate-600">用户角色</legend>
+                      <div class="mt-1 flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
+                        <button
+                          v-for="item in [{ value: 'all', label: '全部角色' }, ...USER_ROLE_OPTIONS]"
+                          :key="item.value"
+                          type="button"
+                          class="min-h-9 flex-1 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
+                          :class="role === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
+                          :aria-pressed="role === item.value ? 'true' : 'false'"
+                          @click="role = item.value"
+                        >
+                          {{ item.label }}
+                        </button>
+                      </div>
+                    </fieldset>
+                  </div>
+                </details>
               </div>
             </div>
 
-            <div data-testid="relationship-member-scroll" class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 pb-4 sm:px-5">
+            <div data-testid="relationship-member-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
               <div v-if="selectedMember" class="mb-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-900">
                 已选择裂变下级 {{ selectedMember.username }} · UID {{ selectedMember.id || selectedMember.userId }} · {{ roleLabel(selectedMember.role) }}
               </div>
