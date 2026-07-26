@@ -17,6 +17,7 @@ const drawerRef = ref(null)
 const titleRef = ref(null)
 const errorRef = ref(null)
 const currentPage = ref(1)
+const activeTab = ref('daily')
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const productLines = computed(() => props.report?.productLines || [])
 const dailyRows = computed(() => props.report?.dailyRows || [])
@@ -51,7 +52,10 @@ const handleAfterLeave = async () => {
 }
 
 watch(() => [props.visible, userId.value], ([visible]) => {
-  if (visible) currentPage.value = 1
+  if (visible) {
+    currentPage.value = 1
+    activeTab.value = 'daily'
+  }
 })
 
 watch(totalPages, (nextTotalPages) => {
@@ -85,53 +89,89 @@ watch(totalPages, (nextTotalPages) => {
             </p>
 
             <template v-if="report">
-              <div data-testid="agent-report-content-scroll" class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" :class="dailyRows.length ? '' : 'pb-[max(1rem,env(safe-area-inset-bottom))]'" role="region" tabindex="0" aria-labelledby="agent-report-content-title">
-                <h3 id="agent-report-content-title" class="sr-only">代理业务报表内容</h3>
-
-                <section data-testid="agent-report-overview" aria-labelledby="agent-report-summary-title">
-                  <h3 id="agent-report-summary-title" class="text-sm font-semibold text-slate-900">业务概览</h3>
-                  <dl class="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-4">
-                    <div v-for="card in summaryCards" :key="card.label" data-testid="agent-report-summary-card" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
-                      <dt class="text-xs text-slate-500">{{ card.label }}</dt>
-                      <dd class="mt-1 break-words text-sm font-semibold text-slate-900">{{ card.value }}</dd>
-                    </div>
-                  </dl>
-                </section>
-
-                <section class="mt-4" aria-labelledby="agent-report-product-title">
-                  <div class="flex flex-wrap items-center justify-between gap-2">
-                    <h3 id="agent-report-product-title" class="text-sm font-semibold text-slate-900">产品线汇总</h3>
-                    <span class="text-xs text-slate-500">共 {{ productLines.length }} 个产品线</span>
+              <section data-testid="agent-report-overview" class="shrink-0" aria-labelledby="agent-report-summary-title">
+                <h3 id="agent-report-summary-title" class="text-sm font-semibold text-slate-900">业务概览</h3>
+                <dl class="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-4">
+                  <div v-for="card in summaryCards" :key="card.label" data-testid="agent-report-summary-card" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+                    <dt class="text-xs text-slate-500">{{ card.label }}</dt>
+                    <dd class="mt-1 break-words text-sm font-semibold text-slate-900">{{ card.value }}</dd>
                   </div>
-                  <div v-if="productLines.length" class="mt-2 overflow-hidden rounded-xl border border-slate-200">
-                    <table data-testid="agent-report-product-table" class="w-full divide-y divide-slate-200 text-left text-sm">
-                      <thead class="bg-slate-50 text-xs text-slate-500">
-                        <tr>
-                          <th scope="col" class="px-3 py-2 font-medium">产品线</th>
-                          <th scope="col" class="px-3 py-2 font-medium">业务量</th>
-                          <th scope="col" class="px-3 py-2 font-medium">佣金</th>
-                          <th scope="col" class="px-3 py-2 text-right font-medium">订单</th>
-                        </tr>
-                      </thead>
-                      <tbody class="divide-y divide-slate-100 bg-white">
-                        <tr v-for="line in productLines" :key="line.key" data-testid="agent-report-product-row" class="align-top">
-                          <th scope="row" class="px-3 py-2 font-medium text-slate-900">{{ line.label }}</th>
-                          <td class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.volume) }}</td>
-                          <td class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.commission) }}</td>
-                          <td class="px-3 py-2 text-right text-slate-600">{{ formatNumber(line.orderCount) }} 笔</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无产品线汇总</p>
-                </section>
+                </dl>
+              </section>
 
-                <section data-testid="agent-report-daily-header" class="mt-4" aria-labelledby="agent-report-daily-title">
-                  <div class="flex flex-wrap items-center justify-between gap-2">
-                    <h3 id="agent-report-daily-title" class="text-sm font-semibold text-slate-900">代理业绩明细</h3>
-                    <span class="text-xs text-slate-500">按日期倒序</span>
-                  </div>
-                </section>
+              <div data-testid="agent-report-tablist" class="mt-4 grid shrink-0 grid-cols-2 rounded-xl bg-slate-100 p-1 text-sm font-medium" role="tablist" aria-label="代理业务报表视图">
+                <button
+                  id="agent-report-products-tab"
+                  type="button"
+                  class="min-h-10 rounded-lg px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  :class="activeTab === 'products' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
+                  role="tab"
+                  :aria-selected="activeTab === 'products' ? 'true' : 'false'"
+                  aria-controls="agent-report-products-panel"
+                  @click="activeTab = 'products'"
+                >产品线汇总</button>
+                <button
+                  id="agent-report-daily-tab"
+                  type="button"
+                  class="min-h-10 rounded-lg px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  :class="activeTab === 'daily' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
+                  role="tab"
+                  :aria-selected="activeTab === 'daily' ? 'true' : 'false'"
+                  aria-controls="agent-report-daily-panel"
+                  @click="activeTab = 'daily'"
+                >业绩明细</button>
+              </div>
+
+              <section
+                v-if="activeTab === 'products'"
+                id="agent-report-products-panel"
+                data-testid="agent-report-products-panel"
+                class="mt-3 min-h-0 flex-1 overflow-y-auto overscroll-y-contain pb-[max(1rem,env(safe-area-inset-bottom))] outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset"
+                role="tabpanel"
+                tabindex="0"
+                aria-labelledby="agent-report-products-tab"
+              >
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <h3 class="text-sm font-semibold text-slate-900">产品线汇总</h3>
+                  <span class="text-xs text-slate-500">共 {{ productLines.length }} 个产品线</span>
+                </div>
+                <div v-if="productLines.length" class="mt-2 overflow-hidden rounded-xl border border-slate-200">
+                  <table data-testid="agent-report-product-table" class="w-full divide-y divide-slate-200 text-left text-sm">
+                    <thead class="bg-slate-50 text-xs text-slate-500">
+                      <tr>
+                        <th scope="col" class="px-3 py-2 font-medium">产品线</th>
+                        <th scope="col" class="px-3 py-2 font-medium">业务量</th>
+                        <th scope="col" class="px-3 py-2 font-medium">佣金</th>
+                        <th scope="col" class="px-3 py-2 text-right font-medium">订单</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white">
+                      <tr v-for="line in productLines" :key="line.key" data-testid="agent-report-product-row" class="align-top">
+                        <th scope="row" class="px-3 py-2 font-medium text-slate-900">{{ line.label }}</th>
+                        <td class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.volume) }}</td>
+                        <td class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.commission) }}</td>
+                        <td class="px-3 py-2 text-right text-slate-600">{{ formatNumber(line.orderCount) }} 笔</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无产品线汇总</p>
+              </section>
+
+              <section
+                v-else
+                id="agent-report-daily-panel"
+                data-testid="agent-report-daily-panel"
+                class="mt-3 min-h-0 flex-1 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset"
+                :class="dailyRows.length ? '' : 'pb-[max(1rem,env(safe-area-inset-bottom))]'"
+                role="tabpanel"
+                tabindex="0"
+                aria-labelledby="agent-report-daily-tab"
+              >
+                <div data-testid="agent-report-daily-header" class="flex flex-wrap items-center justify-between gap-2">
+                  <h3 class="text-sm font-semibold text-slate-900">代理业绩明细</h3>
+                  <span class="text-xs text-slate-500">按日期倒序</span>
+                </div>
                 <div v-if="dailyRows.length" class="mt-2 space-y-2">
                   <article v-for="row in pagedDailyRows" :key="row.date" data-testid="agent-report-daily-row" class="rounded-xl border border-slate-200 bg-white p-3">
                     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -148,8 +188,9 @@ watch(totalPages, (nextTotalPages) => {
                   </article>
                 </div>
                 <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无代理业绩明细</p>
-              </div>
-              <footer v-if="dailyRows.length" data-testid="agent-report-pagination" class="shrink-0 border-t border-slate-200 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+              </section>
+
+              <footer v-if="activeTab === 'daily' && dailyRows.length" data-testid="agent-report-pagination" class="shrink-0 border-t border-slate-200 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
                 <CompactPagination v-model:current-page="currentPage" :total-count="dailyRows.length" :page-size="PAGE_SIZE" />
               </footer>
             </template>
