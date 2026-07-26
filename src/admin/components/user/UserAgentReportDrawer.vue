@@ -80,55 +80,65 @@ watch(totalPages, (nextTotalPages) => {
           </header>
 
           <div data-testid="user-agent-report-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
-            <p v-if="error" ref="errorRef" data-testid="agent-report-error-state" tabindex="-1" class="min-h-0 overflow-y-auto rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" :class="report ? 'max-h-[min(8rem,20vh)] shrink' : 'flex-1 pb-[max(1rem,env(safe-area-inset-bottom))]'" role="alert">
+            <p v-if="error" ref="errorRef" data-testid="agent-report-error-state" tabindex="-1" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" :class="report ? 'shrink-0' : 'min-h-0 flex-1 overflow-y-auto pb-[max(1rem,env(safe-area-inset-bottom))]'" role="alert">
               <span class="font-semibold">代理报表加载失败</span><span class="mt-1 block break-words">{{ error }}</span>
             </p>
 
             <template v-if="report">
-              <section data-testid="agent-report-overview-scroll" class="min-h-0 max-h-[min(22rem,42vh)] shrink overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" role="region" tabindex="0" aria-labelledby="agent-report-summary-title">
-                <h3 id="agent-report-summary-title" class="text-sm font-semibold text-slate-900">业务概览</h3>
-                <dl class="mt-2 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-4">
-                  <div v-for="card in summaryCards" :key="card.label" data-testid="agent-report-summary-card" class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <dt class="text-xs text-slate-500">{{ card.label }}</dt>
-                    <dd class="mt-1 break-words text-base font-semibold text-slate-900">{{ card.value }}</dd>
+              <div data-testid="agent-report-content-scroll" class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" :class="dailyRows.length ? '' : 'pb-[max(1rem,env(safe-area-inset-bottom))]'" role="region" tabindex="0" aria-labelledby="agent-report-content-title">
+                <h3 id="agent-report-content-title" class="sr-only">代理业务报表内容</h3>
+
+                <section data-testid="agent-report-overview" aria-labelledby="agent-report-summary-title">
+                  <h3 id="agent-report-summary-title" class="text-sm font-semibold text-slate-900">业务概览</h3>
+                  <dl class="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-4">
+                    <div v-for="card in summaryCards" :key="card.label" data-testid="agent-report-summary-card" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+                      <dt class="text-xs text-slate-500">{{ card.label }}</dt>
+                      <dd class="mt-1 break-words text-sm font-semibold text-slate-900">{{ card.value }}</dd>
+                    </div>
+                  </dl>
+                </section>
+
+                <section class="mt-4" aria-labelledby="agent-report-product-title">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 id="agent-report-product-title" class="text-sm font-semibold text-slate-900">产品线汇总</h3>
+                    <span class="text-xs text-slate-500">共 {{ productLines.length }} 个产品线</span>
                   </div>
-                </dl>
-              <section aria-labelledby="agent-report-product-title">
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <h3 id="agent-report-product-title" class="text-sm font-semibold text-slate-900">产品线汇总</h3>
-                  <span class="text-xs text-slate-500">共 {{ productLines.length }} 个产品线</span>
-                </div>
-                <div v-if="productLines.length" class="mt-2 space-y-2">
-                  <article v-for="line in productLines" :key="line.key" data-testid="agent-report-product-row" class="rounded-xl border border-slate-200 p-3">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                      <h4 class="font-medium text-slate-900">{{ line.label }}</h4>
-                      <span class="rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">{{ formatNumber(line.orderCount) }} 笔订单</span>
-                    </div>
-                    <dl class="mt-3 grid grid-cols-1 gap-3 text-sm min-[420px]:grid-cols-2">
-                      <div><dt class="text-xs text-slate-500">业务量</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(line.volume) }}</dd></div>
-                      <div><dt class="text-xs text-slate-500">佣金</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(line.commission) }}</dd></div>
-                    </dl>
-                  </article>
-                </div>
-                <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无产品线汇总</p>
-              </section>
+                  <div v-if="productLines.length" class="mt-2 overflow-hidden rounded-xl border border-slate-200">
+                    <table data-testid="agent-report-product-table" class="w-full divide-y divide-slate-200 text-left text-sm">
+                      <thead class="bg-slate-50 text-xs text-slate-500">
+                        <tr>
+                          <th scope="col" class="px-3 py-2 font-medium">产品线</th>
+                          <th scope="col" class="px-3 py-2 font-medium">业务量</th>
+                          <th scope="col" class="px-3 py-2 font-medium">佣金</th>
+                          <th scope="col" class="px-3 py-2 text-right font-medium">订单</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-slate-100 bg-white">
+                        <tr v-for="line in productLines" :key="line.key" data-testid="agent-report-product-row" class="align-top">
+                          <th scope="row" class="px-3 py-2 font-medium text-slate-900">{{ line.label }}</th>
+                          <td class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.volume) }}</td>
+                          <td class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.commission) }}</td>
+                          <td class="px-3 py-2 text-right text-slate-600">{{ formatNumber(line.orderCount) }} 笔</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无产品线汇总</p>
+                </section>
 
-              </section>
-
-              <section data-testid="agent-report-daily-header" class="mt-5 shrink-0" aria-labelledby="agent-report-daily-title">
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <h3 id="agent-report-daily-title" class="text-sm font-semibold text-slate-900">代理业绩明细</h3>
-                  <span class="text-xs text-slate-500">按日期倒序</span>
-                </div>
-              </section>
-              <div data-testid="agent-report-daily-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" :class="dailyRows.length ? '' : 'pb-[max(1rem,env(safe-area-inset-bottom))]'" role="region" :tabindex="dailyRows.length ? 0 : undefined" aria-labelledby="agent-report-daily-title">
+                <section data-testid="agent-report-daily-header" class="mt-4" aria-labelledby="agent-report-daily-title">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 id="agent-report-daily-title" class="text-sm font-semibold text-slate-900">代理业绩明细</h3>
+                    <span class="text-xs text-slate-500">按日期倒序</span>
+                  </div>
+                </section>
                 <div v-if="dailyRows.length" class="mt-2 space-y-2">
-                  <article v-for="row in pagedDailyRows" :key="row.date" data-testid="agent-report-daily-row" class="rounded-xl border border-slate-200 p-3">
+                  <article v-for="row in pagedDailyRows" :key="row.date" data-testid="agent-report-daily-row" class="rounded-xl border border-slate-200 bg-white p-3">
                     <div class="flex flex-wrap items-center justify-between gap-2">
-                      <time :datetime="row.date" class="font-medium text-slate-900">{{ row.date }}</time>
-                      <span class="text-xs text-slate-500">{{ formatNumber(row.orderCount) }} 笔订单</span>
+                      <time :datetime="row.date" class="text-base font-semibold text-slate-900">{{ row.date }}</time>
+                      <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{{ formatNumber(row.orderCount) }} 笔订单</span>
                     </div>
-                    <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-sm lg:grid-cols-5">
+                    <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-sm min-[560px]:grid-cols-5">
                       <div><dt class="text-xs text-slate-500">业务量</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.volume) }}</dd></div>
                       <div><dt class="text-xs text-slate-500">佣金</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.commission) }}</dd></div>
                       <div><dt class="text-xs text-slate-500">活跃客户</dt><dd class="mt-0.5 font-medium text-slate-800">{{ formatNumber(row.activeClients) }} 人</dd></div>
