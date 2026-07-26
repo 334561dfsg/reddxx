@@ -71,6 +71,26 @@ test('wallet drawer presents the user and deposit addresses by default', async (
   assert.match(addressCard.textContent, /2026/)
 })
 
+test('wallet drawer renders inactive status with a Chinese label', async (t) => {
+  const inactiveWallet = {
+    userId: 'user_1004',
+    addresses: [
+      {
+        ...wallet.addresses[0],
+        id: 'inactive-wallet-address',
+        status: 'inactive',
+        label: '历史地址',
+      },
+    ],
+  }
+  const harness = await mount({ wallet: inactiveWallet })
+  t.after(harness.cleanup)
+
+  const card = harness.findByTestId('wallet-address-inactive-wallet-address')
+  assert.match(card.textContent, /停用/)
+  assert.doesNotMatch(card.textContent, /inactive/)
+})
+
 test('wallet drawer ignores backdrop, pointer, touch, drag, and swipe closing attempts', async (t) => {
   const harness = await mount()
   t.after(harness.cleanup)
