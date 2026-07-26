@@ -31,8 +31,8 @@ const {
 })
 
 const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = () => {
-  if (!onAfterLeave()) return
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   emit('closed')
 }
 
@@ -345,7 +345,7 @@ const tabButtonClass = (id) => {
                     <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">用户名</dt><dd class="mt-1 break-all text-sm font-medium text-slate-900">{{ user?.username || '—' }}</dd></div>
                     <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">邮箱</dt><dd class="mt-1 break-all text-sm font-medium text-slate-900">{{ user?.email || '—' }}</dd></div>
                     <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">角色</dt><dd class="mt-1 text-sm font-medium text-slate-900">{{ roleConfig[user?.role]?.text || user?.role || '—' }}</dd></div>
-                    <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">上级</dt><dd class="mt-1 text-sm font-medium text-slate-900">{{ user?.parentUsername || '无' }}</dd></div>
+                    <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">裂变上级</dt><dd class="mt-1 text-sm font-medium text-slate-900">{{ user?.parentUsername || '无裂变上级' }}</dd></div>
                     <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">注册时间</dt><dd class="mt-1 text-sm font-medium text-slate-900">{{ formatDateTime(user?.createdAt) }}</dd></div>
                     <div class="rounded-lg bg-slate-50 px-3 py-2"><dt class="text-xs text-slate-500">最后登录</dt><dd class="mt-1 text-sm font-medium text-slate-900">{{ formatDateTime(user?.lastLoginTime) }}</dd></div>
                   </dl>

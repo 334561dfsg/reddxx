@@ -89,6 +89,7 @@ test('operation catalog exposes agent-only reporting and contextual agent action
   assert.equal(agent.entries.find((entry) => entry.id === 'agent-report').handler, 'agent-report')
   assert.equal(getUserOperationEntry('reset-agent', { role: 'user' }).title, '设置为代理')
   assert.equal(getUserOperationEntry('reset-agent', { isAgent: true }).title, '取消代理身份')
+  assert.equal(getUserOperationEntry('reset-agent', { isAgent: true }).description, '取消用户代理身份并处理其裂变下级关系')
   assert.equal(getUserOperationEntry('reset-agent', { role: 'user', isAgent: true }).title, '设置为代理')
 })
 

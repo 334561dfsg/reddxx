@@ -67,8 +67,8 @@ const { content: displayedDialogData, clear: clearDialogSnapshot } = useDialogCo
 const displayScope = computed(() => displayedDialogData.value.scope)
 const displayModuleKey = computed(() => displayedDialogData.value.moduleKey)
 const displayUser = computed(() => displayedDialogData.value.user)
-const handleAfterLeave = () => {
-  if (!onAfterLeave()) return
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   clearDialogSnapshot()
 }
 

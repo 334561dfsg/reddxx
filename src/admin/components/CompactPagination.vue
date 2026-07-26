@@ -37,15 +37,15 @@ const goToPage = (requestedPage) => {
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
-    <span data-testid="compact-pagination-summary" class="tabular-nums text-slate-700">
+  <div class="flex min-w-0 flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-white px-3 py-3 text-sm text-slate-600 sm:px-4">
+    <span data-testid="compact-pagination-summary" class="min-w-0 break-words tabular-nums text-slate-700">
       共 {{ totalCount }} 条 · 第 {{ page }} / {{ totalPages }} 页
     </span>
 
-    <nav v-if="totalPages > 1" class="flex items-center gap-1" aria-label="分页导航">
+    <nav v-if="totalPages > 1" class="flex w-full min-w-0 flex-wrap items-center justify-center gap-1 sm:w-auto sm:justify-end" aria-label="分页导航">
       <button
         type="button"
-        class="rounded-lg border border-slate-200 px-3 py-1.5 font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40"
+        class="min-h-10 rounded-lg border border-slate-200 px-2 py-1.5 font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3"
         :disabled="page <= 1"
         @click="goToPage(page - 1)"
       >
@@ -55,7 +55,7 @@ const goToPage = (requestedPage) => {
         v-for="pageNumber in pageButtons"
         :key="pageNumber"
         type="button"
-        class="min-w-9 rounded-lg border px-3 py-1.5 font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        class="min-h-10 min-w-9 rounded-lg border px-2 py-1.5 font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:px-3"
         :class="pageNumber === page ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 text-slate-700 hover:bg-slate-50'"
         :aria-current="pageNumber === page ? 'page' : undefined"
         :aria-label="`第 ${pageNumber} 页`"
@@ -65,7 +65,7 @@ const goToPage = (requestedPage) => {
       </button>
       <button
         type="button"
-        class="rounded-lg border border-slate-200 px-3 py-1.5 font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40"
+        class="min-h-10 rounded-lg border border-slate-200 px-2 py-1.5 font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3"
         :disabled="page >= totalPages"
         @click="goToPage(page + 1)"
       >

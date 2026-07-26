@@ -262,7 +262,7 @@ test('MFA keeps visible loading, error, request and title state stable until lea
 
   assert.equal(controller.phase.value, 'closing')
   assert.deepEqual(controller.displayedDialog.value, openState)
-  controller.onAfterLeave()
+  await controller.onAfterLeave()
   assert.equal(controller.rendered.value, false)
   assert.equal(controller.displayedDialog.value.loading, false)
   assert.equal(controller.displayedDialog.value.errorMessage, '')

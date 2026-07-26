@@ -45,14 +45,14 @@ const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLe
   requestClose: () => emit('close')
 })
 const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = () => {
-  if (!onAfterLeave()) return
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   emit('closed')
 }
 
-watch(() => [props.visible, userId.value, props.report], ([visible]) => {
+watch(() => [props.visible, userId.value], ([visible]) => {
   if (visible) currentPage.value = 1
-}, { deep: true })
+})
 
 watch(totalPages, (nextTotalPages) => {
   currentPage.value = Math.min(Math.max(1, currentPage.value), nextTotalPages)

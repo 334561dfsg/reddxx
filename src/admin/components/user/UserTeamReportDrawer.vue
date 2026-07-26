@@ -59,8 +59,8 @@ const {
   requestClose: () => emit('close')
 })
 const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = () => {
-  if (!onAfterLeave()) return
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   emit('closed')
 }
 
@@ -78,7 +78,7 @@ watch(totalPages, (nextTotalPages) => {
     <Transition name="team-report-overlay" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
       <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 flex justify-end bg-slate-950/50" :style="layerStyle" role="presentation">
         <section ref="drawerRef" class="team-report-panel flex h-screen max-h-screen w-full max-w-3xl flex-col overflow-hidden bg-white shadow-2xl supports-[height:100dvh]:h-dvh supports-[height:100dvh]:max-h-dvh" role="dialog" aria-modal="true" aria-labelledby="team-report-title">
-          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5">
+          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <div class="min-w-0 flex-1">
               <h2 id="team-report-title" ref="titleRef" tabindex="-1" class="text-xl font-semibold text-slate-900 outline-none">裂变团队报表</h2>
               <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · 裂变统计范围不包含本人</p>
@@ -86,7 +86,7 @@ watch(totalPages, (nextTotalPages) => {
             <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
           </header>
 
-          <div data-testid="team-report-drawer-body" class="min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
+          <div data-testid="team-report-drawer-body" class="min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <template v-if="hasMembers">
               <section aria-labelledby="team-report-overview-title">
                 <h3 id="team-report-overview-title" class="text-sm font-semibold text-slate-900">裂变团队概览</h3>

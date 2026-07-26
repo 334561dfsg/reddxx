@@ -101,8 +101,8 @@ const copyAddress = async (address) => {
     copyingId.value = null
   }
 }
-const handleAfterLeave = () => {
-  if (!onAfterLeave()) return
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   resetLocalState()
   emit('closed')
 }

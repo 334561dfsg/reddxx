@@ -753,9 +753,9 @@ const confirmControlCancel = () => {
   closeControlCancel()
 }
 
-const handleUnifiedCancelAfterLeave = () => {
+const handleUnifiedCancelAfterLeave = async () => {
   const shouldOpenMfa = pendingMfaAction.value?.type === 'cancel'
-  if (!onUnifiedCancelAfterLeave()) return
+  if (!await onUnifiedCancelAfterLeave()) return
   cancelNote.value = ''
   clearUnifiedCancelSnapshot()
   if (shouldOpenMfa) {
@@ -931,7 +931,7 @@ const clearDetailDrawer = () => {
               <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">信用分</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">状态</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">上级</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">裂变上级</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">是否点控中</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
             </tr>
@@ -1010,7 +1010,7 @@ const clearDetailDrawer = () => {
                 </span>
               </td>
 
-              <!-- 上级 -->
+              <!-- 裂变上级 -->
               <td class="px-4 py-3">
                 <span v-if="user.parentUsername" class="text-sm text-slate-600">
                   {{ user.parentUsername }}

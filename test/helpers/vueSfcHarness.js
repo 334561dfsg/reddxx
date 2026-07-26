@@ -60,7 +60,7 @@ const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
     style: {},
     disabled: false,
     hidden: false,
-    inert: false,
+    _inert: false,
     multiple: false,
     selected: false,
     selectedIndex: -1,
@@ -142,6 +142,7 @@ const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
     },
     focus() {
       if (node.disabled || !node.isConnected) return
+      document.eventLog?.push({ type: 'focus', node })
       document.activeElement = node
     },
     contains(target) {
@@ -182,6 +183,13 @@ const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
   }
 
   Object.defineProperties(node, {
+    inert: {
+      get() { return node._inert },
+      set(value) {
+        node._inert = Boolean(value)
+        document.eventLog?.push({ type: 'inert', node, value: Boolean(value) })
+      }
+    },
     options: {
       get() {
         if (node.tag !== 'select') return undefined
@@ -222,6 +230,7 @@ const createDocument = () => {
   const document = {
     activeElement: null,
     body: null,
+    eventLog: [],
     documentElement: { style: { overflow: '' } },
     addEventListener(type, listener) {
       const handlers = listeners.get(type) || new Set()
@@ -230,6 +239,7 @@ const createDocument = () => {
     },
     removeEventListener(type, listener) {
       listeners.get(type)?.delete(listener)
+      document.eventLog.push({ type: 'listener-removed', listenerType: type })
     },
     dispatchEvent(event) {
       event.target ||= document
@@ -242,7 +252,26 @@ const createDocument = () => {
     }
   }
   document.body = createHostNode(document, 'body', { connectedRoot: true })
-  document.body.style.overflow = ''
+  let bodyOverflow = ''
+  let documentOverflow = ''
+  Object.defineProperty(document.body.style, 'overflow', {
+    configurable: true,
+    enumerable: true,
+    get: () => bodyOverflow,
+    set(value) {
+      bodyOverflow = value
+      document.eventLog.push({ type: 'scroll-lock', target: 'body', value })
+    }
+  })
+  Object.defineProperty(document.documentElement.style, 'overflow', {
+    configurable: true,
+    enumerable: true,
+    get: () => documentOverflow,
+    set(value) {
+      documentOverflow = value
+      document.eventLog.push({ type: 'scroll-lock', target: 'document', value })
+    }
+  })
   document.body.offsetHeight = 900
   return document
 }
@@ -284,6 +313,7 @@ const createHostRenderer = (document) => createRenderer({
     else parent.children.push(child)
   },
   remove(child) {
+    document.eventLog.push({ type: 'dom-remove', node: child })
     const siblings = child.parent?.children || []
     const index = siblings.indexOf(child)
     if (index >= 0) siblings.splice(index, 1)

@@ -93,6 +93,81 @@ test('agent report Drawer uses approved empty copy for each report section', asy
   assert.match(drawer.textContent, /暂无代理业绩明细/)
 })
 
+test('agent report Drawer clamps same-user data shrink but resets page for a new context', async (t) => {
+  const component = await loadDrawer()
+  const harness = await createSfcHarness(component, { visible: true, user, report, error: '' })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 21 条 · 第 3 / 3 页')
+
+  harness.props.report = { ...report, dailyRows: dailyRows.slice(0, 15) }
+  await harness.flush()
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 15 条 · 第 2 / 2 页')
+  assert.deepEqual(dailyDates(harness), dailyRows.slice(10, 15).map((row) => row.date))
+
+  harness.props.user = { id: 'user_agent_2', username: 'agent_beta', role: 'agent' }
+  await harness.flush()
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 15 条 · 第 1 / 2 页')
+})
+
+test('stable agent report close removes its DOM before releasing protections and returning focus once', async (t) => {
+  const component = await loadDrawer()
+  let harness
+  const trigger = {
+    isConnected: true,
+    focusCount: 0,
+    focus() {
+      this.focusCount += 1
+      harness.document.eventLog.push({ type: 'return-focus' })
+    }
+  }
+  let closedCount = 0
+  harness = await createSfcHarness(component, { visible: true, user, report, error: '', returnFocus: trigger }, {
+    onClose: () => { harness.props.visible = false },
+    onClosed: () => {
+      closedCount += 1
+      harness.document.eventLog.push({ type: 'closed' })
+    }
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const drawer = harness.findByTestId('user-agent-report-drawer')
+  harness.document.eventLog.length = 0
+  harness.allNodes().find((node) => drawer.contains(node) && node.getAttribute?.('aria-label') === '关闭').click()
+  await harness.flush()
+  await harness.finishTransitions()
+
+  const events = harness.document.eventLog
+  const removalIndex = events.findIndex((event) => event.type === 'dom-remove' && event.node.contains?.(drawer))
+  const trapReleaseIndex = events.findIndex((event) => event.type === 'listener-removed' && event.listenerType === 'keydown')
+  const backgroundReleaseIndex = events.findIndex((event) => event.type === 'inert' && event.node === harness.root && event.value === false)
+  const scrollReleaseIndex = events.findIndex((event) => event.type === 'scroll-lock' && event.target === 'body' && event.value === '')
+  const focusIndex = events.findIndex((event) => event.type === 'return-focus')
+  const closedIndex = events.findIndex((event) => event.type === 'closed')
+
+  assert.ok(removalIndex >= 0, JSON.stringify(events.map((event) => ({
+    type: event.type,
+    listenerType: event.listenerType,
+    target: event.target,
+    value: event.value,
+    tag: event.node?.tag,
+    testId: event.node?.getAttribute?.('data-testid')
+  }))))
+  assert.ok(trapReleaseIndex > removalIndex)
+  assert.ok(backgroundReleaseIndex > trapReleaseIndex)
+  assert.ok(scrollReleaseIndex > backgroundReleaseIndex)
+  assert.ok(focusIndex > scrollReleaseIndex)
+  assert.ok(closedIndex > focusIndex)
+  assert.equal(events.filter((event) => event.type === 'return-focus').length, 1)
+  assert.equal(closedCount, 1)
+})
+
 test('agent report Drawer keeps agent-specific empty and loading-error feedback inside the open layer', async (t) => {
   const component = await loadDrawer()
   const harness = await createSfcHarness(component, { visible: true, user, report: null, error: '' })

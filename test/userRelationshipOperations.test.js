@@ -18,6 +18,7 @@ const parentResetFile = resolve(process.cwd(), 'src/admin/components/user/UserPa
 const agentRoleFile = resolve(process.cwd(), 'src/admin/components/user/UserAgentRoleDialog.vue')
 const relationshipDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserRelationshipDrawer.vue')
 const teamReportDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserTeamReportDrawer.vue')
+const operationDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserOperationDrawer.vue')
 const compactPaginationFile = resolve(process.cwd(), 'src/admin/components/CompactPagination.vue')
 
 const userById = (id) => usersList.find((user) => user.id === id)
@@ -125,6 +126,10 @@ test('relationship drawer paginates members and resets selection and page for ch
   ])
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
 
+  memberButtons(harness)[0].click()
+  await harness.flush()
+  assert.ok(harness.allNodes().some((node) => node.textContent.includes('已选择裂变下级 pagination_member_01')))
+
   const nextPage = harness.findByText('下一页', 'button')
   assert.ok(nextPage, 'pagination exposes a next-page control when more members exist')
   nextPage.click()
@@ -133,6 +138,7 @@ test('relationship drawer paginates members and resets selection and page for ch
     'user_pagination_11', 'user_pagination_12', 'user_pagination_13', 'user_pagination_14', 'user_pagination_15',
     'user_pagination_16', 'user_pagination_17', 'user_pagination_18', 'user_pagination_19', 'user_pagination_20'
   ])
+  assert.equal(harness.allNodes().some((node) => node.textContent.includes('已选择裂变下级')), false)
 
   memberButtons(harness)[0].click()
   await harness.flush()
@@ -158,6 +164,15 @@ test('relationship drawer paginates members and resets selection and page for ch
   harness.findByText('下一页', 'button').click()
   await harness.flush()
   harness.props.mode = 'all'
+  await harness.flush()
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
+
+  harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  harness.props.user = tree.members[0]
+  await harness.flush()
+  assert.equal(harness.findByTestId('compact-pagination-summary'), undefined)
+  harness.props.user = tree.root
   await harness.flush()
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
 
@@ -195,6 +210,28 @@ test('team report drawer paginates direct fission branches', async (t) => {
     'pagination_member_11', 'pagination_member_12', 'pagination_member_13', 'pagination_member_14', 'pagination_member_15',
     'pagination_member_16', 'pagination_member_17', 'pagination_member_18', 'pagination_member_19', 'pagination_member_20'
   ])
+
+  harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  assert.deepEqual(visibleBranches(), ['pagination_member_21', 'pagination_member_22'])
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 3 / 3 页')
+
+  harness.props.user = tree.members[0]
+  await harness.flush()
+  assert.equal(harness.findByTestId('compact-pagination-summary'), undefined)
+  harness.props.user = tree.root
+  await harness.flush()
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
+})
+
+test('operation and paginated fission Drawers protect both landscape safe-area edges', () => {
+  for (const file of [operationDrawerFile, relationshipDrawerFile, teamReportDrawerFile]) {
+    const source = readFileSync(file, 'utf8')
+    assert.match(source, /<header[^>]*safe-area-inset-left/)
+    assert.match(source, /<header[^>]*safe-area-inset-right/)
+    assert.match(source, /data-testid="[^"]*(?:drawer-body|report-drawer-body)"[^>]*safe-area-inset-left/)
+    assert.match(source, /data-testid="[^"]*(?:drawer-body|report-drawer-body)"[^>]*safe-area-inset-right/)
+  }
 })
 
 test('relationship filters are labelled wrapping segments that preserve exact status and role filtering', async (t) => {

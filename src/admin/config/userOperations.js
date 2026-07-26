@@ -63,7 +63,7 @@ const resolveEntry = (entry, user) => {
     return {
       ...entry,
       title: '取消代理身份',
-      description: '取消用户代理身份并处理其直属客户关系'
+      description: '取消用户代理身份并处理其裂变下级关系'
     }
   }
   return { ...entry }

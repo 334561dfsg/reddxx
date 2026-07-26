@@ -140,11 +140,11 @@ const profitClass = computed(() => {
     <!-- 其他信息 -->
     <div class="space-y-3">
       <div class="flex items-center justify-between">
-        <span class="text-xs text-slate-500">上级</span>
+        <span class="text-xs text-slate-500">裂变上级</span>
         <span v-if="user.parentUsername" class="text-sm font-medium text-slate-700">
           {{ user.parentUsername }}
         </span>
-        <span v-else class="text-xs text-slate-400">无</span>
+        <span v-else class="text-xs text-slate-400">无裂变上级</span>
       </div>
 
       <div class="flex items-center justify-between">

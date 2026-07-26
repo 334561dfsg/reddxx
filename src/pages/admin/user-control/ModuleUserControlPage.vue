@@ -186,8 +186,8 @@ const confirmCancel = () => {
   closeCancel()
 }
 
-const handleModuleCancelAfterLeave = () => {
-  if (!onModuleCancelAfterLeave()) return
+const handleModuleCancelAfterLeave = async () => {
+  if (!await onModuleCancelAfterLeave()) return
   cancelNote.value = ''
   selectedUser.value = null
   clearModuleCancelSnapshot()

@@ -65,8 +65,8 @@ const {
   closeDisabled: submitting
 })
 const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = () => {
-  if (!onAfterLeave()) return
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   resetForm()
   emit('closed')
 }

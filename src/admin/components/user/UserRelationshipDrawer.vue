@@ -76,8 +76,8 @@ const {
 })
 
 const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = () => {
-  if (!onAfterLeave()) return
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   emit('closed')
 }
 
@@ -92,6 +92,10 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
 
 watch(() => [keyword.value, status.value, role.value], () => {
   currentPage.value = 1
+  selectedMember.value = null
+})
+
+watch(currentPage, () => {
   selectedMember.value = null
 })
 
@@ -117,7 +121,7 @@ watch(totalPages, (nextTotalPages) => {
           aria-modal="true"
           aria-labelledby="relationship-drawer-title"
         >
-          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5">
+          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <div class="min-w-0 flex-1">
               <h2 id="relationship-drawer-title" ref="titleRef" tabindex="-1" class="text-xl font-semibold text-slate-900 outline-none">
                 {{ title }}
@@ -129,7 +133,7 @@ watch(totalPages, (nextTotalPages) => {
             <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
           </header>
 
-          <div data-testid="relationship-drawer-body" class="min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
+          <div data-testid="relationship-drawer-body" class="min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <div class="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
               <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label class="sm:col-span-2">

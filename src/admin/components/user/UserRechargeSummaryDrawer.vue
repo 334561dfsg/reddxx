@@ -25,8 +25,8 @@ const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLe
   requestClose: () => emit('close')
 })
 const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = () => {
-  if (!onAfterLeave()) return
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   displaySummary.value = null
   emit('closed')
 }

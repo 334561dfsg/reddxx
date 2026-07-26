@@ -202,6 +202,7 @@ export const useDialogLifecycle = ({
   let triggerElement = null
   let keydownListener = null
   let disposed = false
+  let closeFinalizationVersion = 0
 
   const isOpen = () => Boolean(unref(open))
   const isCloseDisabled = () => Boolean(unref(closeDisabled))
@@ -266,6 +267,7 @@ export const useDialogLifecycle = ({
     }
 
     phase.value = 'closing'
+    rendered.value = false
     requestClose?.()
     return true
   }
@@ -333,6 +335,7 @@ export const useDialogLifecycle = ({
   const startClosing = () => {
     if (disposed || phase.value === 'closed' || phase.value === 'closing') return
     phase.value = 'closing'
+    rendered.value = false
   }
 
   const onAfterEnter = () => {
@@ -341,18 +344,27 @@ export const useDialogLifecycle = ({
     return true
   }
 
-  const onAfterLeave = () => {
-    if (disposed) return false
+  const onAfterLeave = async () => {
+    if (disposed || phase.value !== 'closing') return false
+    const finalizationVersion = ++closeFinalizationVersion
     const shouldReopen = isOpen()
-    if (shouldReopen && phase.value !== 'closing') return false
-    const shouldRestoreFocus = Boolean(!shouldReopen && layer && isTopDialogLayer(layer))
-    rendered.value = false
-    phase.value = 'closed'
     if (shouldReopen) {
+      phase.value = 'closed'
       startOpening({ captureTrigger: false })
       return false
     }
+
+    await nextTick()
+    if (disposed || finalizationVersion !== closeFinalizationVersion) return false
+    if (isOpen()) {
+      phase.value = 'closed'
+      startOpening({ captureTrigger: false })
+      return false
+    }
+
+    const shouldRestoreFocus = Boolean(layer && isTopDialogLayer(layer))
     releaseLayer()
+    phase.value = 'closed'
     if (shouldRestoreFocus) restoreFocus()
     else discardFocusReturn()
     return true
@@ -366,6 +378,7 @@ export const useDialogLifecycle = ({
   onBeforeUnmount(() => {
     if (disposed) return
     disposed = true
+    closeFinalizationVersion += 1
     releaseLayer()
     rendered.value = false
     phase.value = 'closed'

@@ -48,3 +48,28 @@ test('clamps requested page changes before emitting them', async () => {
 
   harness.cleanup()
 })
+
+test('normalizes fractional and lower-bound requests and keeps narrow navigation reflowable', async () => {
+  const harness = await createSfcHarness(await loadVueSfc(componentFile), {
+    currentPage: 3,
+    totalCount: 95
+  }, { 'onUpdate:currentPage': () => {} })
+
+  const navigation = harness.allNodes().find((node) => node.tag === 'nav' && node.getAttribute('aria-label') === '分页导航')
+  assert.ok(navigation.classList.contains('flex-wrap'))
+  assert.ok(navigation.classList.contains('w-full'))
+  assert.ok(buttons(harness).every((button) => button.classList.contains('min-h-10')))
+
+  harness.props.currentPage = 2.8
+  await harness.flush()
+  harness.findByText('上一页', 'button').click()
+  harness.props.currentPage = -4
+  await harness.flush()
+  harness.findByText('下一页', 'button').click()
+  assert.deepEqual(harness.emitted, [
+    ['onUpdate:currentPage', 1],
+    ['onUpdate:currentPage', 2]
+  ])
+
+  harness.cleanup()
+})

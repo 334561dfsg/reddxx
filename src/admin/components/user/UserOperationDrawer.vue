@@ -44,8 +44,8 @@ const selectEntry = (entry, event) => {
   emit('action', { id: entry.id, user: props.user, trigger: event?.currentTarget || null })
 }
 
-const handleAfterLeave = () => {
-  if (!onAfterLeave()) return
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   plannedMessage.value = ''
   emit('closed')
 }
@@ -81,7 +81,7 @@ const entryClasses = (entry) => ({
             aria-modal="true"
             aria-labelledby="user-operation-drawer-title"
           >
-            <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 bg-white px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5">
+            <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 bg-white px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
               <div class="min-w-0 flex-1">
                 <h2
                   id="user-operation-drawer-title"
@@ -108,6 +108,7 @@ const entryClasses = (entry) => ({
             <div
               data-testid="user-operation-drawer-body"
               class="min-h-0 flex-1 space-y-4 overflow-y-auto px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-4"
+              style="padding-left: max(0.75rem, env(safe-area-inset-left)); padding-right: max(0.75rem, env(safe-area-inset-right));"
             >
               <p
                 v-if="plannedMessage"

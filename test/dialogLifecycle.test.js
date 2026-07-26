@@ -168,7 +168,7 @@ test('a registered popup host follows its dialog through nested layer isolation'
 
   upper.open.value = false
   await flushLifecycle()
-  upper.lifecycle.onAfterLeave()
+  await upper.lifecycle.onAfterLeave()
   assert.equal(lower.dialog.inert, false)
   assert.equal(popupHost.inert, false)
   assert.equal(popupHost.getAttribute('aria-hidden'), null)
@@ -299,7 +299,7 @@ test('queued reopen skips stale focus return and restores only the new trigger a
   await flushLifecycle()
   assert.equal(lifecycle.phase.value, 'closing')
 
-  assert.equal(lifecycle.onAfterLeave(), false)
+  assert.equal(await lifecycle.onAfterLeave(), false)
   assert.equal(document.body.style.overflow, 'hidden')
   assert.equal(background.inert, true)
   assert.equal(document.listenerCount('keydown'), 1)
@@ -313,7 +313,7 @@ test('queued reopen skips stale focus return and restores only the new trigger a
 
   open.value = false
   await flushLifecycle()
-  lifecycle.onAfterLeave()
+  await lifecycle.onAfterLeave()
   assert.equal(trigger.focusCount, 0)
   assert.equal(nextTrigger.focusCount, 1)
   assert.equal(document.activeElement, nextTrigger)
@@ -337,7 +337,7 @@ test('queued reopen retains top-layer ownership and keeps every lower layer isol
   upper.open.value = true
   await flushLifecycle()
 
-  assert.equal(upper.lifecycle.onAfterLeave(), false)
+  assert.equal(await upper.lifecycle.onAfterLeave(), false)
   assert.equal(document.listenerCount('keydown'), 2)
   assert.equal(document.body.style.overflow, 'hidden')
   assert.equal(background.inert, true)
@@ -354,7 +354,7 @@ test('queued reopen retains top-layer ownership and keeps every lower layer isol
 
   upper.open.value = false
   await flushLifecycle()
-  assert.equal(upper.lifecycle.onAfterLeave(), true)
+  assert.equal(await upper.lifecycle.onAfterLeave(), true)
   assert.equal(upperNextTrigger.focusCount, 1)
   assert.equal(lower.dialog.inert, false)
   assert.equal(document.body.style.overflow, 'hidden')
@@ -376,12 +376,12 @@ test('defers layer cleanup, scroll unlock, and focus return until leave complete
   open.value = false
   await flushLifecycle()
 
-  assert.equal(lifecycle.rendered.value, true)
+  assert.equal(lifecycle.rendered.value, false)
   assert.equal(lifecycle.phase.value, 'closing')
   assert.equal(document.body.style.overflow, 'hidden')
   assert.equal(background.inert, true)
 
-  lifecycle.onAfterLeave()
+  await lifecycle.onAfterLeave()
   assert.equal(lifecycle.rendered.value, false)
   assert.equal(lifecycle.phase.value, 'closed')
   assert.equal(document.body.style.overflow, '')
@@ -431,14 +431,14 @@ test('limits keyboard controls to the top layer and retains nested isolation unt
 
   second.open.value = false
   await flushLifecycle()
-  second.lifecycle.onAfterLeave()
+  await second.lifecycle.onAfterLeave()
   assert.equal(document.body.style.overflow, 'hidden')
   assert.equal(background.inert, true)
   assert.equal(first.dialog.inert, false)
 
   first.open.value = false
   await flushLifecycle()
-  first.lifecycle.onAfterLeave()
+  await first.lifecycle.onAfterLeave()
   assert.equal(document.body.style.overflow, '')
   assert.equal(background.inert, false)
 })
@@ -459,7 +459,7 @@ test('owner unmount while open disposes its layer without restoring focus or acc
   assert.equal(trigger.focusCount, 0)
   assert.notEqual(document.activeElement, trigger)
 
-  assert.equal(lifecycle.onAfterLeave(), false)
+  assert.equal(await lifecycle.onAfterLeave(), false)
   await flushLifecycle()
   assert.equal(document.listenerCount('keydown'), 0)
   assert.equal(document.body.style.overflow, '')
@@ -488,8 +488,8 @@ test('owner unmount with leave pending releases only its layer once and never fo
   assert.equal(lower.dialog.inert, false)
   assert.equal(upperTrigger.focusCount, 0)
 
-  assert.equal(upper.lifecycle.onAfterLeave(), false)
-  assert.equal(upper.lifecycle.onAfterLeave(), false)
+  assert.equal(await upper.lifecycle.onAfterLeave(), false)
+  assert.equal(await upper.lifecycle.onAfterLeave(), false)
   await flushLifecycle()
   assert.equal(document.listenerCount('keydown'), 1)
   assert.equal(document.body.style.overflow, 'hidden')
@@ -515,7 +515,7 @@ test('uses a connected logical return target when the captured trigger was remov
   removedTrigger.isConnected = false
   open.value = false
   await flushLifecycle()
-  lifecycle.onAfterLeave()
+  await lifecycle.onAfterLeave()
 
   assert.equal(document.activeElement, stableAction)
 })
@@ -531,7 +531,7 @@ test('a lower layer finishing first never steals focus from the active top dialo
 
   lower.open.value = false
   await flushLifecycle()
-  lower.lifecycle.onAfterLeave()
+  await lower.lifecycle.onAfterLeave()
 
   assert.equal(document.activeElement, topControl)
   upper.app.unmount()

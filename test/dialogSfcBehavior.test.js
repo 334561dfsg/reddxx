@@ -265,6 +265,7 @@ test('user detail Drawer reopens on the requested overview or assets tab', async
       kycStatus: 'verified',
       vipLevel: 2,
       creditScore: 680,
+      parentUsername: 'Fission Parent',
       balance: 1200,
       frozenBalance: 80
     }
@@ -275,6 +276,8 @@ test('user detail Drawer reopens on the requested overview or assets tab', async
   await harness.finishTransitions()
 
   assert.ok(harness.findByText('账户信息'))
+  assert.ok(harness.findByText('裂变上级'))
+  assert.ok(harness.findByText('Fission Parent'))
   const frame = harness.findByTestId('user-detail-drawer')
   const close = harness.allNodes().find((node) => (
     node.getAttribute?.('aria-label') === '关闭' && frame.contains(node)
@@ -289,6 +292,34 @@ test('user detail Drawer reopens on the requested overview or assets tab', async
   await harness.finishTransitions()
 
   assert.ok(harness.findByText('账户资产'))
+})
+
+test('user card exposes its parent as a fission relationship', async (t) => {
+  const component = await loadVueSfc(projectFile('src/admin/components/UserCard.vue'))
+  const harness = await createSfcHarness(component, {
+    user: {
+      id: 'user-card-child',
+      username: 'Child',
+      email: 'child@example.test',
+      status: 'active',
+      role: 'user',
+      kycStatus: 'verified',
+      creditScore: 680,
+      balance: 100,
+      frozenBalance: 0,
+      totalProfit: 0,
+      tradingVolume: 0,
+      parentUsername: 'Fission Parent',
+      phone: '13000000000',
+      registerTime: '2026-01-01T00:00:00.000Z',
+      lastLoginTime: '2026-01-02T00:00:00.000Z',
+      lastLoginIp: '127.0.0.1'
+    }
+  })
+  t.after(harness.cleanup)
+
+  assert.ok(harness.findByText('裂变上级'))
+  assert.ok(harness.findByText('Fission Parent'))
 })
 
 for (const surface of [

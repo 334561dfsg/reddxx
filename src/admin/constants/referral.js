@@ -38,8 +38,8 @@ export const REFERRAL_LEVEL = {
 // 分佣记录表格列（裂变邀请链；字段名 agent* 为历史兼容，语义为邀请链上级）
 export const COMMISSION_TABLE_COLUMNS = [
   { key: 'id', label: '记录ID', width: 120 },
-  { key: 'agentUid', label: '上级UID', width: 120 },
-  { key: 'agentUsername', label: '上级用户名', width: 150 },
+  { key: 'agentUid', label: '裂变上级 UID', width: 120 },
+  { key: 'agentUsername', label: '裂变上级用户名', width: 150 },
   { key: 'referralUid', label: '被邀请人UID', width: 120 },
   { key: 'referralUsername', label: '被邀请人', width: 150 },
   { key: 'type', label: '分销类型', width: 120 },
@@ -103,7 +103,7 @@ export const REFERRAL_COMMISSION_CREDIT_TO_OPTIONS = [
   {
     value: REFERRAL_COMMISSION_CREDIT_TO.SPOT_AVAILABLE,
     label: '币币账户',
-    hint: '记入上级用户币币账户余额。'
+    hint: '记入裂变上级用户币币账户余额。'
   }
 ]
 

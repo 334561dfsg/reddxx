@@ -446,5 +446,5 @@ test('unified cancellation waits for leave before it opens MFA', () => {
 
   assert.match(confirm, /pendingMfaAction\.value = \{ type: 'cancel', payload \}/)
   assert.doesNotMatch(confirm, /requestMfa\(\{ type: 'cancel', payload \}\)/)
-  assert.match(confirm, /const handleUnifiedCancelAfterLeave = \(\) => \{[\s\S]*?onUnifiedCancelAfterLeave\(\)[\s\S]*?openPendingMfa\(\)/)
+  assert.match(confirm, /const handleUnifiedCancelAfterLeave = async \(\) => \{[\s\S]*?await onUnifiedCancelAfterLeave\(\)[\s\S]*?openPendingMfa\(\)/)
 })
