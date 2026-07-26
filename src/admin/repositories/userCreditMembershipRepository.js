@@ -59,6 +59,17 @@ const appendAudit = ({ type, userId, before, after, reason, operatorId, transact
 
 const makeRechargeRecords = () => usersList.flatMap((user, index) => {
   const userId = userIdOf(user)
+  if (userId === 'user_1001') {
+    return [
+      { id: 'RCG-user_1001-001', userId, amount: 10000, qualifyingAmount: 10000, source: '链上充值', transactionId: 'DEP-user_1001-001', createdAt: '2026-07-21T09:30:00.000Z' },
+      { id: 'RCG-user_1001-002', userId, amount: 9000, qualifyingAmount: 8500, source: '人工入金', transactionId: 'DEP-user_1001-002', createdAt: '2026-07-12T14:15:00.000Z' },
+      { id: 'RCG-user_1001-003', userId, amount: 8000, qualifyingAmount: 7500, source: '链上充值', transactionId: 'DEP-user_1001-003', createdAt: '2026-06-28T10:45:00.000Z' },
+      { id: 'RCG-user_1001-004', userId, amount: 7000, qualifyingAmount: 6500, source: '人工入金', transactionId: 'DEP-user_1001-004', createdAt: '2026-06-16T08:20:00.000Z' },
+      { id: 'RCG-user_1001-005', userId, amount: 6000, qualifyingAmount: 5500, source: '链上充值', transactionId: 'DEP-user_1001-005', createdAt: '2026-05-30T16:00:00.000Z' },
+      { id: 'RCG-user_1001-006', userId, amount: 5000, qualifyingAmount: 5000, source: '人工入金', transactionId: 'DEP-user_1001-006', createdAt: '2026-05-11T11:35:00.000Z' },
+      { id: 'RCG-user_1001-007', userId, amount: 5000, qualifyingAmount: 5000, source: '链上充值', transactionId: 'DEP-user_1001-007', createdAt: '2026-04-24T07:50:00.000Z' }
+    ]
+  }
   if (userId === 'user_1004') {
     return [
       { id: 'RCG-user_1004-001', userId, amount: 125000, qualifyingAmount: 120000, source: '链上充值', transactionId: 'DEP-1004-001', createdAt: '2026-06-18T08:30:00.000Z' },

@@ -146,3 +146,17 @@ test('recharge and membership snapshots return deterministic detached progress',
   snapshot.user.username = 'tampered'
   assert.notEqual(getCreditMembershipSnapshot(user.id).user.username, 'tampered')
 })
+
+test('user_1001 exposes enough recharge records for pagination', () => {
+  const summary = getUserRechargeSummary('user_1001')
+
+  assert.equal(summary.records.length, 7)
+  assert.equal(new Set(summary.records.map((row) => row.id)).size, 7)
+  assert.equal(new Set(summary.records.map((row) => row.transactionId)).size, 7)
+  assert.deepEqual(
+    summary.records.map((row) => row.createdAt),
+    [...summary.records.map((row) => row.createdAt)].sort((a, b) => new Date(b) - new Date(a))
+  )
+  assert.equal(summary.cumulativeRecharge, 50000)
+  assert.equal(summary.qualifyingRecharge, 48000)
+})
