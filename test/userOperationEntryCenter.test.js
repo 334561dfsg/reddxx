@@ -19,13 +19,25 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     'all'
   ])
 
-  const groups = getUserOperationGroups({ status: 'active' })
+  const groups = getUserOperationGroups({ status: 'active', role: 'user' })
   assert.deepEqual(groups.map((group) => group.label), [
-    '用户与关系',
+    '用户资料',
+    '裂变关系',
+    '代理管理',
     '资金与钱包',
     '信用与会员',
     '风控与控制'
   ])
+  const fission = groups.find((group) => group.id === 'fission')
+  const agent = groups.find((group) => group.id === 'agent')
+  assert.deepEqual(fission.entries.map((entry) => entry.title), [
+    '查看直属裂变下级',
+    '查看全部裂变下级',
+    '重设裂变上级',
+    '查看裂变团队报表'
+  ])
+  assert.deepEqual(agent.entries.map((entry) => entry.title), ['设置为代理'])
+  assert.equal(agent.entries.some((entry) => entry.id === 'agent-report'), false)
   const funds = groups.find((group) => group.id === 'funds')
   assert.deepEqual(funds.entries.map((entry) => entry.title), [
     '资金概况',
@@ -43,11 +55,11 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
 
   assert.deepEqual(groups.flatMap((group) => group.entries.map((entry) => entry.title)), [
     '编辑资料',
-    '查看直属下级',
-    '查看全部下级',
-    '重设上级',
-    '设置／重设代理',
-    '查看团队报表',
+    '查看直属裂变下级',
+    '查看全部裂变下级',
+    '重设裂变上级',
+    '查看裂变团队报表',
+    '设置为代理',
     '资金概况',
     '链上钱包',
     '客服入金',
@@ -66,6 +78,18 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '取消点控',
     '点控日志'
   ])
+})
+
+test('operation catalog exposes agent-only reporting and contextual agent actions', () => {
+  const agentGroups = getUserOperationGroups({ status: 'active', role: 'agent' })
+  const agent = agentGroups.find((group) => group.id === 'agent')
+
+  assert.deepEqual(agent.entries.map((entry) => entry.id), ['reset-agent', 'agent-report'])
+  assert.deepEqual(agent.entries.map((entry) => entry.title), ['取消代理身份', '查看代理报表'])
+  assert.equal(agent.entries.find((entry) => entry.id === 'agent-report').handler, 'agent-report')
+  assert.equal(getUserOperationEntry('reset-agent', { role: 'user' }).title, '设置为代理')
+  assert.equal(getUserOperationEntry('reset-agent', { isAgent: true }).title, '取消代理身份')
+  assert.equal(getUserOperationEntry('reset-agent', { role: 'user', isAgent: true }).title, '设置为代理')
 })
 
 test('operation catalog distinguishes implemented and planned actions', () => {

@@ -23,7 +23,7 @@ const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? '')
 const descendantsCount = computed(() => userId.value ? getDescendants(userId.value).length : 0)
 const currentParent = computed(() => props.user?.parentId ? getUserById(props.user.parentId) : null)
 const parentOptions = computed(() => [
-  { value: '', label: '设为无上级', searchText: '无上级', disabled: false },
+  { value: '', label: '设为无裂变上级', searchText: '无裂变上级', disabled: false },
   ...(userId.value ? getParentCandidates(userId.value) : []).map((candidate) => ({
     value: candidate.id,
     label: `${candidate.username} · UID ${candidate.id}`,
@@ -37,7 +37,7 @@ const parentSelectionInvalid = computed(() => (
   ))
 ))
 const parentSelectionError = computed(() => (
-  parentSelectionInvalid.value ? '所选新上级不可用，请重新选择。' : ''
+  parentSelectionInvalid.value ? '所选新裂变上级不可用，请重新选择。' : ''
 ))
 const nextParent = computed(() => form.parentId ? getUserById(form.parentId) : null)
 
@@ -82,7 +82,7 @@ const startConfirm = async () => {
   if (!form.reason.trim()) return showError('变更原因必填')
   if (form.reason.trim().length > 200) return showError('变更原因不能超过 200 字')
   if (parentSelectionInvalid.value) return showError(parentSelectionError.value)
-  if (String(props.user?.parentId ?? '') === String(form.parentId ?? '')) return showError('新上级不能与当前上级相同')
+  if (String(props.user?.parentId ?? '') === String(form.parentId ?? '')) return showError('新裂变上级不能与当前裂变上级相同')
   phaseName.value = 'confirm'
   await nextTick()
   backRef.value?.focus?.()
@@ -111,7 +111,7 @@ const confirmReset = async () => {
   } catch (error) {
     submitting.value = false
     phaseName.value = 'form'
-    await showError(error?.message || '重设上级失败，请稍后重试')
+    await showError(error?.message || '重设裂变上级失败，请稍后重试')
   }
 }
 
@@ -127,7 +127,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
         <section ref="dialogRef" class="parent-dialog-panel flex max-h-[calc(100vh-2rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="parent-reset-title" :aria-busy="submitting">
           <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
             <div class="min-w-0 flex-1">
-              <h2 id="parent-reset-title" class="text-lg font-semibold text-slate-900">重设上级</h2>
+              <h2 id="parent-reset-title" class="text-lg font-semibold text-slate-900">重设裂变上级</h2>
               <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p>
             </div>
             <button type="button" :disabled="submitting" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40" aria-label="关闭" @click="close">×</button>
@@ -138,8 +138,8 @@ watch(() => [props.visible, userId.value], ([visible]) => {
 
             <template v-if="phaseName === 'form'">
               <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
-                <p class="text-xs text-slate-500">当前上级</p>
-                <p class="mt-1 text-sm font-medium text-slate-900">{{ currentParent?.username || '无上级' }}<span v-if="currentParent" class="ml-2 font-normal text-slate-500">UID {{ currentParent.id }}</span></p>
+                <p class="text-xs text-slate-500">当前裂变上级</p>
+                <p class="mt-1 text-sm font-medium text-slate-900">{{ currentParent?.username || '无裂变上级' }}<span v-if="currentParent" class="ml-2 font-normal text-slate-500">UID {{ currentParent.id }}</span></p>
               </div>
 
               <div class="block">
@@ -154,31 +154,31 @@ watch(() => [props.visible, userId.value], ([visible]) => {
                   ref="parentSelectRef"
                   v-model="form.parentId"
                   :options="parentOptions"
-                  label="新上级"
-                  placeholder="请选择新上级"
-                  search-label="搜索新上级用户"
+                  label="新裂变上级"
+                  placeholder="请选择新裂变上级"
+                  search-label="搜索新裂变上级用户"
                   required
                   :invalid="parentSelectionInvalid"
                   error-id="parent-reset-parent-error"
                   id-base="parent-reset-parent"
                 />
-                <span class="mt-1 block text-xs text-slate-500">已排除本人、当前上级、自己的下级和封禁用户。</span>
+                <span class="mt-1 block text-xs text-slate-500">已排除本人、当前裂变上级、自己的裂变下级和封禁用户。</span>
               </div>
 
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">变更原因 <span class="text-rose-500">*</span></span>
-                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请说明重设上级的原因" />
+                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请说明重设裂变上级的原因" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>
 
             <template v-else>
               <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
-                <h3 class="font-semibold">确认重设上级</h3>
+                <h3 class="font-semibold">确认重设裂变上级</h3>
                 <dl class="mt-3 grid grid-cols-[6rem_1fr] gap-y-2">
-                  <dt class="text-amber-800">原上级</dt><dd>{{ currentParent?.username || '无上级' }}</dd>
-                  <dt class="text-amber-800">新上级</dt><dd>{{ nextParent?.username || '无上级' }}</dd>
-                  <dt class="text-amber-800">预计影响</dt><dd>当前用户及关系链中的 {{ descendantsCount }} 个下级</dd>
+                  <dt class="text-amber-800">原裂变上级</dt><dd>{{ currentParent?.username || '无裂变上级' }}</dd>
+                  <dt class="text-amber-800">新裂变上级</dt><dd>{{ nextParent?.username || '无裂变上级' }}</dd>
+                  <dt class="text-amber-800">预计影响</dt><dd>当前用户及裂变关系链中的 {{ descendantsCount }} 个裂变下级</dd>
                   <dt class="text-amber-800">变更原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd>
                 </dl>
               </div>
@@ -192,7 +192,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
             </template>
             <template v-else>
               <button ref="backRef" type="button" :disabled="submitting" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40" @click="backToForm">返回修改</button>
-              <button type="button" :disabled="submitting" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50" @click="confirmReset">{{ submitting ? '提交中…' : '确认重设上级' }}</button>
+              <button type="button" :disabled="submitting" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50" @click="confirmReset">{{ submitting ? '提交中…' : '确认重设裂变上级' }}</button>
             </template>
           </footer>
         </section>

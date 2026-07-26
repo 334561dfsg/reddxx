@@ -24,14 +24,14 @@ const signedProfit = (value) => {
 }
 const profitLabel = (value) => Number(value || 0) >= 0 ? '盈利' : '亏损'
 const metricCards = computed(() => report.value ? [
-  { label: '团队总人数', value: formatNumber(report.value.memberCount, 0) },
-  { label: '直属人数', value: formatNumber(report.value.directCount, 0) },
-  { label: '代理人数', value: formatNumber(report.value.agentCount, 0) },
-  { label: '活跃人数', value: formatNumber(report.value.activeCount, 0) },
-  { label: '总可用余额', value: `${formatNumber(report.value.availableBalance)} USDT` },
-  { label: '总冻结余额', value: `${formatNumber(report.value.frozenBalance)} USDT` },
-  { label: '总交易量', value: `${formatNumber(report.value.tradingVolume)} USDT` },
-  { label: '团队累计盈亏', value: `${profitLabel(report.value.totalProfit)} ${signedProfit(report.value.totalProfit)} USDT`, profit: true, positive: report.value.totalProfit >= 0 }
+  { label: '裂变团队总人数', value: formatNumber(report.value.memberCount, 0) },
+  { label: '直属裂变下级人数', value: formatNumber(report.value.directCount, 0) },
+  { label: '裂变代理人数', value: formatNumber(report.value.agentCount, 0) },
+  { label: '裂变活跃人数', value: formatNumber(report.value.activeCount, 0) },
+  { label: '裂变总可用余额', value: `${formatNumber(report.value.availableBalance)} USDT` },
+  { label: '裂变总冻结余额', value: `${formatNumber(report.value.frozenBalance)} USDT` },
+  { label: '裂变总交易量', value: `${formatNumber(report.value.tradingVolume)} USDT` },
+  { label: '裂变团队累计盈亏', value: `${profitLabel(report.value.totalProfit)} ${signedProfit(report.value.totalProfit)} USDT`, profit: true, positive: report.value.totalProfit >= 0 }
 ] : [])
 
 const {
@@ -62,8 +62,8 @@ const handleAfterLeave = () => {
         <section ref="drawerRef" class="team-report-panel flex h-screen max-h-screen w-full max-w-3xl flex-col overflow-hidden bg-white shadow-2xl supports-[height:100dvh]:h-dvh supports-[height:100dvh]:max-h-dvh" role="dialog" aria-modal="true" aria-labelledby="team-report-title">
           <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5">
             <div class="min-w-0 flex-1">
-              <h2 id="team-report-title" ref="titleRef" tabindex="-1" class="text-xl font-semibold text-slate-900 outline-none">团队报表</h2>
-              <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · 统计范围不包含本人</p>
+              <h2 id="team-report-title" ref="titleRef" tabindex="-1" class="text-xl font-semibold text-slate-900 outline-none">裂变团队报表</h2>
+              <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · 裂变统计范围不包含本人</p>
             </div>
             <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
           </header>
@@ -71,7 +71,7 @@ const handleAfterLeave = () => {
           <div data-testid="team-report-drawer-body" class="min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
             <template v-if="hasMembers">
               <section aria-labelledby="team-report-overview-title">
-                <h3 id="team-report-overview-title" class="text-sm font-semibold text-slate-900">团队概览</h3>
+                <h3 id="team-report-overview-title" class="text-sm font-semibold text-slate-900">裂变团队概览</h3>
                 <div class="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                   <div v-for="metric in metricCards" :key="metric.label" class="rounded-xl border border-slate-200 bg-slate-50 p-3">
                     <p class="text-xs text-slate-500">{{ metric.label }}</p>
@@ -81,7 +81,7 @@ const handleAfterLeave = () => {
               </section>
 
               <section class="mt-5" aria-labelledby="team-report-branch-title">
-                <h3 id="team-report-branch-title" class="text-sm font-semibold text-slate-900">分支明细</h3>
+                <h3 id="team-report-branch-title" class="text-sm font-semibold text-slate-900">直属裂变分支明细</h3>
                 <div class="mt-2 space-y-2">
                   <article v-for="branch in report.branches" :key="branch.user.id" class="rounded-xl border border-slate-200 bg-white p-3">
                     <div class="flex flex-wrap items-start justify-between gap-2">
@@ -100,7 +100,7 @@ const handleAfterLeave = () => {
             </template>
 
             <div v-else class="grid min-h-64 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
-              <div><p class="font-medium text-slate-700">当前没有团队成员</p><p class="mt-1 text-sm text-slate-500">该用户尚无可统计的下级关系。</p></div>
+              <div><p class="font-medium text-slate-700">当前没有裂变团队成员</p><p class="mt-1 text-sm text-slate-500">该用户尚无可统计的裂变下级关系。</p></div>
             </div>
           </div>
         </section>

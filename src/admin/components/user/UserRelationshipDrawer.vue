@@ -21,7 +21,7 @@ const selectedMember = ref(null)
 
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const isAllMode = computed(() => props.mode === 'all')
-const title = computed(() => isAllMode.value ? '查看全部下级' : '查看直属下级')
+const title = computed(() => isAllMode.value ? '查看全部裂变下级' : '查看直属裂变下级')
 const allMembers = computed(() => {
   if (!userId.value) return []
   if (isAllMode.value) return getDescendants(userId.value)
@@ -113,8 +113,8 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
             <div class="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
               <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label class="sm:col-span-2">
-                  <span class="sr-only">搜索下级</span>
-                  <input v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="搜索用户名、邮箱或 UID" />
+                  <span class="sr-only">搜索裂变下级</span>
+                  <input v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
                 </label>
                 <fieldset class="min-w-0">
                   <legend class="text-xs font-medium text-slate-600">账户状态</legend>
@@ -152,7 +152,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
             </div>
 
             <div v-if="selectedMember" class="mb-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-900">
-              已选择 {{ selectedMember.username }} · UID {{ selectedMember.id || selectedMember.userId }} · {{ roleLabel(selectedMember.role) }}
+              已选择裂变下级 {{ selectedMember.username }} · UID {{ selectedMember.id || selectedMember.userId }} · {{ roleLabel(selectedMember.role) }}
             </div>
 
             <div v-if="filteredMembers.length" class="space-y-2">
@@ -175,18 +175,18 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
                 </span>
                 <span class="mt-2 grid grid-cols-1 gap-1 text-xs text-slate-600 sm:grid-cols-3">
                   <span>层级：第 {{ member.depth || 1 }} 层</span>
-                  <span>直属上级：{{ member.parentUsername || '无' }}</span>
+                  <span>直属裂变上级：{{ member.parentUsername || '无' }}</span>
                   <span>余额：{{ formatMoney(member.balance) }}</span>
                 </span>
-                <span v-if="isAllMode" class="mt-1.5 block break-words text-xs text-slate-500">关系路径：{{ pathLabel(member) }}</span>
+                <span v-if="isAllMode" class="mt-1.5 block break-words text-xs text-slate-500">裂变关系路径：{{ pathLabel(member) }}</span>
                 <span class="mt-1.5 block text-xs text-slate-500">注册时间：{{ formatTime(member.registerTime) }}</span>
               </button>
             </div>
 
             <div v-else class="grid min-h-52 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
               <div>
-                <p class="font-medium text-slate-700">{{ hasFilters ? '筛选后没有结果' : '当前没有下级' }}</p>
-                <p class="mt-1 text-sm text-slate-500">{{ hasFilters ? '请调整搜索关键词或筛选条件' : '该用户目前没有符合此范围的下级成员' }}</p>
+                <p class="font-medium text-slate-700">{{ hasFilters ? '筛选后没有裂变下级' : '当前没有裂变下级' }}</p>
+                <p class="mt-1 text-sm text-slate-500">{{ hasFilters ? '请调整裂变下级搜索关键词或筛选条件' : '该用户目前没有符合此范围的裂变下级成员' }}</p>
               </div>
             </div>
           </div>

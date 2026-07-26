@@ -7,19 +7,22 @@ export const USER_OPERATION_QUICK_IDS = Object.freeze([
 ])
 
 export const USER_OPERATION_GROUPS = Object.freeze([
-  { id: 'relationship', label: '用户与关系' },
+  { id: 'profile', label: '用户资料' },
+  { id: 'fission', label: '裂变关系' },
+  { id: 'agent', label: '代理管理' },
   { id: 'funds', label: '资金与钱包' },
   { id: 'membership', label: '信用与会员' },
   { id: 'risk', label: '风控与控制' }
 ])
 
 export const USER_OPERATION_ENTRIES = Object.freeze([
-  { id: 'edit-profile', title: '编辑资料', description: '维护用户基础资料与账户信息', group: 'relationship', status: 'available', risk: 'normal', handler: 'edit-profile' },
-  { id: 'direct-referrals', title: '查看直属下级', description: '查看用户直接邀请的下级成员', group: 'relationship', status: 'available', risk: 'normal', handler: 'direct-referrals' },
-  { id: 'all-referrals', title: '查看全部下级', description: '查看用户团队内的全部层级成员', group: 'relationship', status: 'available', risk: 'normal', handler: 'all-referrals' },
-  { id: 'reset-parent', title: '重设上级', description: '调整用户所属的上级关系', group: 'relationship', status: 'available', risk: 'sensitive', handler: 'reset-parent' },
-  { id: 'reset-agent', title: '设置／重设代理', description: '设置或调整用户代理身份', group: 'relationship', status: 'available', risk: 'sensitive', handler: 'reset-agent' },
-  { id: 'team-report', title: '查看团队报表', description: '查看该用户团队的业务汇总', group: 'relationship', status: 'available', risk: 'normal', handler: 'team-report' },
+  { id: 'edit-profile', title: '编辑资料', description: '维护用户基础资料与账户信息', group: 'profile', status: 'available', risk: 'normal', handler: 'edit-profile' },
+  { id: 'direct-referrals', title: '查看直属裂变下级', description: '查看用户直接邀请的裂变下级成员', group: 'fission', status: 'available', risk: 'normal', handler: 'direct-referrals' },
+  { id: 'all-referrals', title: '查看全部裂变下级', description: '查看用户裂变团队内的全部层级成员', group: 'fission', status: 'available', risk: 'normal', handler: 'all-referrals' },
+  { id: 'reset-parent', title: '重设裂变上级', description: '调整用户所属的裂变上级关系', group: 'fission', status: 'available', risk: 'sensitive', handler: 'reset-parent' },
+  { id: 'team-report', title: '查看裂变团队报表', description: '查看该用户裂变团队的业务汇总', group: 'fission', status: 'available', risk: 'normal', handler: 'team-report' },
+  { id: 'reset-agent', title: '设置为代理', description: '设置用户代理身份', group: 'agent', status: 'available', risk: 'sensitive', handler: 'reset-agent' },
+  { id: 'agent-report', title: '查看代理报表', description: '查看该代理的业务与佣金汇总', group: 'agent', status: 'available', risk: 'normal', handler: 'agent-report' },
 
   { id: 'assets', title: '资金概况', description: '查看各账户资产、余额与冻结金额', group: 'funds', status: 'available', risk: 'normal', handler: 'detail' },
   { id: 'onchain-wallet', title: '链上钱包', description: '查看用户链上钱包与地址信息', group: 'funds', status: 'available', risk: 'normal', handler: 'onchain-wallet' },
@@ -43,15 +46,27 @@ export const USER_OPERATION_ENTRIES = Object.freeze([
 ])
 
 const LOCKED_STATUSES = new Set(['suspended', 'banned'])
+const isAgentUser = (user) => (
+  user?.role !== undefined ? user.role === 'agent' : user?.isAgent === true
+)
 
 const resolveEntry = (entry, user) => {
-  if (entry.id !== 'freeze-account') return { ...entry }
-  const unlock = LOCKED_STATUSES.has(user?.status)
-  return {
-    ...entry,
-    title: unlock ? '解封' : '封户',
-    description: unlock ? '恢复用户登录及账户操作' : entry.description
+  if (entry.id === 'freeze-account') {
+    const unlock = LOCKED_STATUSES.has(user?.status)
+    return {
+      ...entry,
+      title: unlock ? '解封' : '封户',
+      description: unlock ? '恢复用户登录及账户操作' : entry.description
+    }
   }
+  if (entry.id === 'reset-agent' && isAgentUser(user)) {
+    return {
+      ...entry,
+      title: '取消代理身份',
+      description: '取消用户代理身份并处理其直属客户关系'
+    }
+  }
+  return { ...entry }
 }
 
 export const getUserOperationEntry = (id, user) => {
@@ -62,7 +77,7 @@ export const getUserOperationEntry = (id, user) => {
 export const getUserOperationGroups = (user) => USER_OPERATION_GROUPS.map((group) => ({
   ...group,
   entries: USER_OPERATION_ENTRIES
-    .filter((entry) => entry.group === group.id)
+    .filter((entry) => entry.group === group.id && (entry.id !== 'agent-report' || isAgentUser(user)))
     .map((entry) => resolveEntry(entry, user))
 }))
 

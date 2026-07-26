@@ -126,10 +126,35 @@ test('parent reset keeps search inside the combobox and indexes candidate userna
   assert.doesNotMatch(source, /form\.search/)
   assert.doesNotMatch(source, /searchRef/)
   assert.doesNotMatch(source, /搜索新上级<\/span>/)
-  assert.match(source, /search-label="搜索新上级用户"/)
+  assert.match(source, /search-label="搜索新裂变上级用户"/)
   assert.match(source, /searchText:\s*\[candidate\.username, candidate\.email, candidate\.id\]\.join\(' '\)/)
   assert.match(source, /label:\s*`\$\{candidate\.username\} · UID \$\{candidate\.id\}`/)
-  assert.match(source, /value:\s*''[\s\S]*label:\s*'设为无上级'/)
+  assert.match(source, /value:\s*''[\s\S]*label:\s*'设为无裂变上级'/)
+})
+
+test('relationship surfaces consistently identify fission relationships without changing their data contracts', () => {
+  const relationshipSource = read('src/admin/components/user/UserRelationshipDrawer.vue')
+  const parentReset = parentResetSource()
+  const teamReport = read('src/admin/components/user/UserTeamReportDrawer.vue')
+
+  assert.match(relationshipSource, /查看直属裂变下级/)
+  assert.match(relationshipSource, /查看全部裂变下级/)
+  assert.match(relationshipSource, /搜索裂变下级/)
+  assert.match(relationshipSource, /直属裂变上级/)
+  assert.match(relationshipSource, /当前没有裂变下级/)
+
+  assert.match(parentReset, /重设裂变上级/)
+  assert.match(parentReset, /当前裂变上级/)
+  assert.match(parentReset, /新裂变上级/)
+  assert.match(parentReset, /搜索新裂变上级用户/)
+  assert.match(parentReset, /确认重设裂变上级/)
+  assert.match(parentReset, /重设裂变上级失败/)
+  assert.match(parentReset, /parentId: form\.parentId \|\| null/)
+
+  assert.match(teamReport, />裂变团队报表</)
+  assert.match(teamReport, /裂变团队概览/)
+  assert.match(teamReport, /直属裂变分支明细/)
+  assert.match(teamReport, /当前没有裂变团队成员/)
 })
 
 test('successor selector indexes candidate username, email, and UID while retaining the enabled no-parent option', () => {
