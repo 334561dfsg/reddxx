@@ -74,13 +74,13 @@ watch(() => [props.visible, props.summary, userId.value], ([visible]) => { if (v
             <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
           </header>
 
-          <div data-testid="user-recharge-summary-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right));">
-            <section data-testid="user-recharge-summary-overview" class="grid shrink-0 grid-cols-1 gap-3 min-[520px]:grid-cols-[220px_minmax(0,1fr)]" aria-label="累计充值概况">
-              <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <div data-testid="user-recharge-summary-body" class="recharge-drawer-body min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right));">
+            <section data-testid="user-recharge-summary-overview" class="recharge-drawer-fixed-overview grid shrink-0 grid-cols-1 gap-3 min-[520px]:grid-cols-[220px_minmax(0,1fr)]" aria-label="累计充值概况">
+              <div class="recharge-drawer-overview-card rounded-xl border border-slate-200 bg-slate-50 p-4">
                 <p class="text-xs text-slate-500">累计充值</p>
                 <p class="mt-1 text-xl font-semibold text-slate-900">{{ money(displaySummary?.cumulativeRecharge) }} <span class="text-xs font-normal text-slate-500">USDT</span></p>
               </div>
-              <section v-if="displaySummary?.nextLevel" class="rounded-xl border border-blue-200 bg-blue-50 p-4" aria-labelledby="next-vip-progress-title">
+              <section v-if="displaySummary?.nextLevel" class="recharge-drawer-overview-card rounded-xl border border-blue-200 bg-blue-50 p-4" aria-labelledby="next-vip-progress-title">
                 <div class="flex items-start justify-between gap-3">
                   <div><h3 id="next-vip-progress-title" class="text-sm font-semibold text-blue-950">距离 {{ displaySummary.nextLevel.name }} · {{ displaySummary.nextLevel.displayName }}</h3><p class="mt-1 text-xs text-blue-700">还需 {{ money(displaySummary.nextLevel.remainingRecharge) }} USDT</p></div>
                   <span class="shrink-0 text-sm font-semibold text-blue-800">{{ displaySummary.nextLevel.progressPercent }}%</span>
@@ -90,12 +90,12 @@ watch(() => [props.visible, props.summary, userId.value], ([visible]) => { if (v
                 </div>
                 <p class="mt-2 text-xs text-blue-700">目标累计计入金额 {{ money(displaySummary.nextLevel.targetRecharge) }} USDT</p>
               </section>
-              <p v-else class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">当前计入金额已达到最高启用会员等级门槛。</p>
+              <p v-else class="recharge-drawer-overview-card rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">当前计入金额已达到最高启用会员等级门槛。</p>
             </section>
 
-            <section class="mt-4 min-h-0 flex flex-1 flex-col" aria-labelledby="recharge-records-title">
+            <section class="recharge-drawer-records-section mt-4 min-h-0 flex flex-1 flex-col" aria-labelledby="recharge-records-title">
               <div class="flex shrink-0 items-center justify-between"><h3 id="recharge-records-title" class="text-sm font-semibold text-slate-900">充值记录</h3><span class="text-xs text-slate-500">共 {{ displaySummary?.records?.length || 0 }} 笔</span></div>
-              <div ref="recordListRef" data-testid="user-recharge-record-list" class="min-h-0 flex flex-1 flex-col gap-2 overflow-y-auto pt-2">
+              <div ref="recordListRef" data-testid="user-recharge-record-list" tabindex="0" aria-labelledby="recharge-records-title" class="recharge-drawer-record-list min-h-0 flex flex-1 flex-col gap-2 overflow-y-auto pt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600">
                 <template v-if="records.length">
                   <article v-for="record in pagedRecords" :key="record.id" class="rounded-xl border border-slate-200 p-3 text-sm">
                     <div class="flex flex-wrap items-start justify-between gap-2"><div><p class="font-semibold text-slate-900">{{ money(record.amount) }} USDT</p><p class="mt-0.5 text-xs text-slate-500">计入等级 {{ money(record.qualifyingAmount) }} USDT</p></div><span class="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">{{ record.source }}</span></div>
@@ -104,9 +104,9 @@ watch(() => [props.visible, props.summary, userId.value], ([visible]) => { if (v
                 </template>
                 <p v-else class="rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center text-sm text-slate-500">暂无计入会员等级的充值记录</p>
               </div>
-              <div data-testid="user-recharge-pagination" class="shrink-0 pt-3" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+              <div data-testid="user-recharge-pagination" class="recharge-drawer-fixed-pagination shrink-0 pt-3" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
                 <CompactPagination
-                  class="rounded-xl border border-slate-200"
+                  class="recharge-drawer-pagination-control rounded-xl border border-slate-200"
                   :current-page="currentPage"
                   :total-count="records.length"
                   :page-size="PAGE_SIZE"
@@ -138,5 +138,23 @@ watch(() => [props.visible, props.summary, userId.value], ([visible]) => { if (v
   .recharge-drawer-leave-active .recharge-drawer-panel { transition-duration: 50ms; }
   .recharge-drawer-enter-from .recharge-drawer-panel,
   .recharge-drawer-leave-to .recharge-drawer-panel { transform: none; }
+}
+
+@media (max-height: 44rem) {
+  .recharge-drawer-body { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+  .recharge-drawer-fixed-overview { gap: 0.5rem; }
+  .recharge-drawer-overview-card { padding: 0.75rem; }
+  .recharge-drawer-records-section { margin-top: 0.75rem; }
+  .recharge-drawer-record-list { gap: 0.5rem; padding-top: 0.5rem; }
+  .recharge-drawer-fixed-pagination { padding-top: 0.5rem; }
+  .recharge-drawer-fixed-pagination :deep(.recharge-drawer-pagination-control) { gap: 0.5rem; padding: 0.5rem 0.75rem; }
+}
+
+@media (max-height: 32rem) {
+  .recharge-drawer-body { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .recharge-drawer-overview-card { padding: 0.5rem; }
+  .recharge-drawer-records-section { margin-top: 0.5rem; }
+  .recharge-drawer-record-list { min-height: 2.5rem; }
+  .recharge-drawer-fixed-pagination :deep(.recharge-drawer-pagination-control) { padding: 0.375rem 0.5rem; }
 }
 </style>

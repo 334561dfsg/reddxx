@@ -97,10 +97,13 @@ test('recharge Drawer removes the duplicate summary card and paginates records f
   assert.match(drawer.textContent, /DEP-006/)
   assert.match(drawer.textContent, /DEP-007/)
 
+  const recordList = harness.findByTestId('user-recharge-record-list')
+  recordList.scrollTop = 180
   harness.props.summary = { ...summary, records: records.slice(0, 6) }
   await harness.flush()
   assert.match(drawer.textContent, /DEP-001/)
   assert.doesNotMatch(drawer.textContent, /DEP-006/)
+  assert.equal(recordList.scrollTop, 0)
 })
 
 test('recharge Drawer returns to page one when the open Drawer switches users with the same summary', async (t) => {
@@ -125,10 +128,13 @@ test('recharge Drawer returns to page one when the open Drawer switches users wi
   assert.match(drawer.textContent, /DEP-006/)
   assert.doesNotMatch(drawer.textContent, /DEP-001/)
 
+  const recordList = harness.findByTestId('user-recharge-record-list')
+  recordList.scrollTop = 180
   harness.props.user = { id: 'user_2008', username: 'user_beta', vipLevel: 2 }
   await harness.flush()
   assert.match(drawer.textContent, /DEP-001/)
   assert.doesNotMatch(drawer.textContent, /DEP-006/)
+  assert.equal(recordList.scrollTop, 0)
 })
 
 test('recharge Drawer keeps its fixed overview in a content-driven two-column layout', async () => {
@@ -138,12 +144,21 @@ test('recharge Drawer keeps its fixed overview in a content-driven two-column la
   assert.match(source, /data-testid="user-recharge-summary-overview"[^>]*grid-cols-1[^>]*min-\[520px\]:grid-cols-\[220px_minmax\(0,1fr\)\]/)
 })
 
-test('recharge Drawer scrolls only records and retains responsive motion safeguards', async () => {
+test('recharge Drawer keeps its record scroller keyboard-accessible and compacts fixed regions by height', async () => {
   const source = await readFile(rechargeDrawerFile, 'utf8')
 
-  assert.match(source, /data-testid="user-recharge-record-list"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
+  assert.match(source, /data-testid="user-recharge-record-list"[^>]*tabindex="0"[^>]*aria-labelledby="recharge-records-title"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto[^>]*focus-visible:ring-2/)
   assert.doesNotMatch(source, /data-testid="user-recharge-summary-body"[^>]*overflow-y-auto/)
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
+  assert.match(source, /@media \(max-height: 44rem\)/)
+  assert.match(source, /\.recharge-drawer-fixed-overview/)
+  assert.match(source, /\.recharge-drawer-fixed-pagination/)
+  assert.match(source, /\.recharge-drawer-record-list/)
+})
+
+test('recharge Drawer retains responsive motion safeguards', async () => {
+  const source = await readFile(rechargeDrawerFile, 'utf8')
+
   assert.match(source, /overflow-hidden/)
   assert.match(source, /200ms ease-out/)
   assert.match(source, /150ms ease-in/)
