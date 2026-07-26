@@ -407,11 +407,16 @@ test('membership mutation Dialog retains a refresh-invalid VIP error when the op
   assert.equal(trigger.getAttribute('aria-invalid'), 'true')
   assert.match(trigger.getAttribute('aria-describedby'), /membership-vip-level-error/)
 
+  harness.findByText('下一步', 'button').click()
+  await harness.flush()
+  assert.match(dialog.textContent, /目标会员等级已不可用，请重新选择/)
+  assert.equal(trigger.getAttribute('aria-invalid'), 'true')
+
   const refreshedTrigger = harness.findByTestId('panel-single-select-trigger')
   refreshedTrigger.click()
   await harness.flush()
   const replacementOption = harness.allNodes().find((node) => (
-    node.getAttribute?.('role') === 'option' && node.textContent.includes('十四级会员')
+    node.getAttribute?.('role') === 'option' && node.textContent.includes('皇冠会员')
   ))
   assert.ok(replacementOption, `available options: ${harness.allNodes()
     .filter((node) => node.getAttribute?.('role') === 'option')
@@ -426,7 +431,7 @@ test('membership mutation Dialog retains a refresh-invalid VIP error when the op
   assert.doesNotMatch(trigger.getAttribute('aria-describedby'), /membership-vip-level-error/)
   assert.equal(reason.value, ' 保留刷新原因 ')
   assert.equal(harness.document.activeElement?.getAttribute?.('data-testid'), 'panel-single-select-trigger')
-  assert.match(harness.findByTestId('panel-single-select-trigger').textContent, /十四级会员/)
+  assert.match(harness.findByTestId('panel-single-select-trigger').textContent, /皇冠会员/)
 })
 
 test('membership mutation Dialog retains a required-empty VIP error through option refresh until explicit valid reselection', async (t) => {

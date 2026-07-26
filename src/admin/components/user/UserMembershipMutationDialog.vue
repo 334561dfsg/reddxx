@@ -123,6 +123,10 @@ const showVipSelectionError = ({ focus = false } = {}) => {
   if (focus) nextTick(() => vipSelectRef.value?.focus?.())
 }
 const validateLatestVipSelection = () => {
+  if (vipSelectionError.value) {
+    showVipSelectionError({ focus: true })
+    return null
+  }
   const option = latestVipOption()
   if (option) return option
   showVipSelectionError({ focus: true })
@@ -130,8 +134,10 @@ const validateLatestVipSelection = () => {
 }
 
 const startConfirm = async () => {
-  errorMessage.value = ''
-  vipSelectionError.value = ''
+  if (props.mode !== 'vip') {
+    errorMessage.value = ''
+    vipSelectionError.value = ''
+  }
   if (props.mode === 'credit') {
     if (!/^\d+$/.test(String(form.points).trim()) || parsedPoints.value <= 0) return showError('信用分值必须为正整数')
     if (resultingScore.value < 0 || resultingScore.value > 1000) return showError('调整后信用分必须在 0 至 1000 之间')
@@ -148,6 +154,9 @@ const startConfirm = async () => {
   stage.value = 'confirm'
   await nextTick()
   backRef.value?.focus?.()
+}
+const handleVipSelectionCommit = () => {
+  if (latestVipOption()) clearVipSelectionError()
 }
 const backToEdit = async () => {
   stage.value = 'edit'
@@ -174,10 +183,7 @@ watch(
   ([visible, mode, vipLevel]) => {
     if (!visible || mode !== 'vip') return
     if (vipLevel === null) return
-    if (latestVipOption()) {
-      clearVipSelectionError()
-      return
-    }
+    if (latestVipOption()) return
     const returnToEdit = stage.value === 'confirm'
     showVipSelectionError({ focus: returnToEdit })
   },
@@ -235,6 +241,7 @@ watch(
                   :invalid="vipSelectionInvalid"
                   error-id="membership-vip-level-error"
                   id-base="membership-vip-level"
+                  @change="handleVipSelectionCommit"
                 />
               </template>
 
