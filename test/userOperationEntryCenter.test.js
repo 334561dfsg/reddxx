@@ -154,6 +154,15 @@ test('detail and funds shortcuts target explicit overview and assets views', () 
   assert.match(listSource, /:initial-tab="detailInitialTab"/)
 })
 
+test('funds overview opens the assets detail layer without closing the operation drawer', () => {
+  const source = read('../src/pages/admin/user/UserListPage.vue')
+  const assetsBranch = source.match(/if \(id === 'assets'\) \{([\s\S]*?)\n  \}/)?.[1] || ''
+
+  assert.match(assetsBranch, /openUserDetail\(user, 'assets', trigger\)/)
+  assert.doesNotMatch(assetsBranch, /closeOperationDrawer\(\)/)
+  assert.doesNotMatch(assetsBranch, /deferredDrawerAction/)
+})
+
 test('account lock wording changes without moving the action', () => {
   const activeGroups = getUserOperationGroups({ status: 'active' })
   const lockedGroups = getUserOperationGroups({ status: 'suspended' })

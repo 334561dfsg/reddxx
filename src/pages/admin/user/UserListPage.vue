@@ -496,7 +496,12 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
     return
   }
 
-  if (['detail', 'assets'].includes(id)) {
+  if (id === 'assets') {
+    openUserDetail(user, 'assets', trigger)
+    return
+  }
+
+  if (id === 'detail') {
     deferredDrawerAction.value = { id, user }
     closeOperationDrawer()
     return
