@@ -252,6 +252,21 @@ test('team report drawer paginates direct fission branches', async (t) => {
   assert.ok(branchHeader, 'team branch title remains in a fixed header region')
   assert.ok(branchScroll, 'team branches have an independent scrolling region')
   assert.ok(pagination, 'team pagination remains in a fixed footer region')
+  assert.equal(overview.getAttribute('role'), 'region')
+  assert.equal(overview.getAttribute('aria-labelledby'), 'team-report-overview-title')
+  assert.equal(overview.getAttribute('tabindex'), '0')
+  assert.equal(branchScroll.getAttribute('role'), 'region')
+  assert.equal(branchScroll.getAttribute('aria-labelledby'), 'team-report-branch-title')
+  assert.equal(branchScroll.getAttribute('tabindex'), '0')
+  assert.equal(overview.classList.contains('min-h-0'), true)
+  assert.equal(overview.classList.contains('shrink'), true)
+  assert.equal(overview.classList.contains('shrink-0'), false)
+  assert.equal(branchScroll.classList.contains('min-h-20'), true)
+  for (const region of [overview, branchScroll]) {
+    assert.equal(region.classList.contains('outline-none'), true)
+    assert.equal(region.classList.contains('focus-visible:ring-2'), true)
+    assert.equal(region.classList.contains('focus-visible:ring-blue-500'), true)
+  }
   const overviewMetrics = harness.allNodes().filter((node) => (
     overview.contains(node) && node.getAttribute?.('data-testid') === 'team-report-metric'
   ))
@@ -296,6 +311,26 @@ test('team report drawer paginates direct fission branches', async (t) => {
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
 })
 
+test('team report Drawer pads the whole-report empty region for the bottom safe area exactly once', async (t) => {
+  const tree = addPaginationFissionTree()
+  const component = await loadTeamReportDrawer()
+  const harness = await createSfcHarness(component, { visible: true, user: tree.members[0] })
+  t.after(() => {
+    harness.cleanup()
+    tree.remove()
+  })
+  await harness.finishTransitions()
+
+  const body = harness.findByTestId('team-report-drawer-body')
+  const emptyState = harness.findByTestId('team-report-empty-state')
+  const safeBottomClass = 'pb-[max(1rem,env(safe-area-inset-bottom))]'
+  assert.ok(emptyState)
+  assert.equal(emptyState.classList.contains(safeBottomClass), true)
+  assert.equal(body.classList.contains(safeBottomClass), false)
+  assert.equal(emptyState.getAttribute('tabindex'), null)
+  assert.equal(harness.findByTestId('team-report-pagination'), undefined)
+})
+
 test('operation and paginated fission Drawers protect both landscape safe-area edges', () => {
   for (const file of [operationDrawerFile, relationshipDrawerFile, teamReportDrawerFile]) {
     const source = readFileSync(file, 'utf8')
@@ -313,9 +348,19 @@ test('relationship filter popup escapes the clipped Drawer and stays reachable i
     user: userById('user_1003'),
     mode: 'direct'
   })
+  const originalViewportProperties = Object.fromEntries(
+    ['innerWidth', 'innerHeight', 'visualViewport'].map((property) => [
+      property,
+      Object.getOwnPropertyDescriptor(globalThis.window, property)
+    ])
+  )
   let upperLayer = null
   t.after(() => {
     if (upperLayer) unregisterDialogLayer(upperLayer)
+    for (const [property, descriptor] of Object.entries(originalViewportProperties)) {
+      if (descriptor) Object.defineProperty(globalThis.window, property, descriptor)
+      else delete globalThis.window[property]
+    }
     harness.cleanup()
     __resetDialogLayersForTests()
   })

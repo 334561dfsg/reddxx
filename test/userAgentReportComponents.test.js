@@ -66,6 +66,17 @@ test('agent report Drawer renders four summary cards, every product line, and te
   assert.ok(dailyHeader)
   assert.ok(dailyScroll)
   assert.ok(pagination)
+  assert.equal(overview.getAttribute('role'), 'region')
+  assert.equal(overview.getAttribute('aria-labelledby'), 'agent-report-summary-title')
+  assert.equal(overview.getAttribute('tabindex'), '0')
+  assert.equal(dailyScroll.getAttribute('role'), 'region')
+  assert.equal(dailyScroll.getAttribute('aria-labelledby'), 'agent-report-daily-title')
+  assert.equal(dailyScroll.getAttribute('tabindex'), '0')
+  for (const region of [overview, dailyScroll]) {
+    assert.equal(region.classList.contains('outline-none'), true)
+    assert.equal(region.classList.contains('focus-visible:ring-2'), true)
+    assert.equal(region.classList.contains('focus-visible:ring-blue-500'), true)
+  }
   assert.equal(overview.contains(summaryCards[0]), true)
   assert.equal(overview.contains(productRows[0]), true)
   assert.equal(dailyScroll.contains(dailyHeader), false)
@@ -113,7 +124,36 @@ test('agent report Drawer uses approved empty copy for each report section', asy
   assert.ok(overview)
   assert.ok(dailyScroll)
   assert.match(dailyScroll.textContent, /暂无代理业绩明细/)
+  assert.equal(dailyScroll.getAttribute('tabindex'), null)
   assert.equal(harness.findByTestId('agent-report-pagination'), undefined)
+})
+
+test('agent report Drawer lets bounded overview and report errors shrink before the detail scroller at low heights', async (t) => {
+  const component = await loadDrawer()
+  const harness = await createSfcHarness(component, {
+    visible: true,
+    user,
+    report,
+    error: '代理报表请求失败，错误详情在浏览器缩放和窄视口下可能换行。'.repeat(8)
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const errorState = harness.findByTestId('agent-report-error-state')
+  const overview = harness.findByTestId('agent-report-overview-scroll')
+  const dailyScroll = harness.findByTestId('agent-report-daily-scroll')
+  const pagination = harness.findByTestId('agent-report-pagination')
+  assert.ok(errorState)
+  assert.ok(pagination, 'the wrapped-error path retains its fixed pagination footer')
+  assert.equal(errorState.classList.contains('min-h-0'), true)
+  assert.equal(errorState.classList.contains('max-h-[min(8rem,20vh)]'), true)
+  assert.equal(errorState.classList.contains('shrink'), true)
+  assert.equal(errorState.classList.contains('shrink-0'), false)
+  assert.equal(errorState.classList.contains('overflow-y-auto'), true)
+  assert.equal(overview.classList.contains('min-h-0'), true)
+  assert.equal(overview.classList.contains('shrink'), true)
+  assert.equal(overview.classList.contains('shrink-0'), false)
+  assert.equal(dailyScroll.classList.contains('min-h-20'), true)
 })
 
 test('agent report Drawer assigns bottom safe-area padding only to the flexible region without a footer', async (t) => {
@@ -138,6 +178,7 @@ test('agent report Drawer assigns bottom safe-area padding only to the flexible 
   const emptyState = emptyHarness.findByTestId('agent-report-empty-state')
   assert.ok(emptyState)
   assert.match(emptyState.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
+  assert.equal(emptyState.getAttribute('tabindex'), null)
   assert.equal(emptyHarness.findByTestId('agent-report-pagination'), undefined)
 
   emptyHarness.props.error = '报表服务暂时不可用'
@@ -145,6 +186,7 @@ test('agent report Drawer assigns bottom safe-area padding only to the flexible 
   const errorState = emptyHarness.findByTestId('agent-report-error-state')
   assert.ok(errorState)
   assert.match(errorState.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
+  assert.equal(errorState.getAttribute('tabindex'), '-1')
   assert.equal(emptyHarness.findByTestId('agent-report-pagination'), undefined)
 
   const dailyEmptyScroll = dailyEmptyHarness.findByTestId('agent-report-daily-scroll')
@@ -347,8 +389,8 @@ test('agent report Drawer uses the shared fixed layer, fixed report regions, and
   assert.match(source, /data-testid="agent-report-daily-header"/)
   assert.match(source, /data-testid="agent-report-daily-scroll"/)
   assert.match(source, /data-testid="agent-report-pagination"/)
-  assert.match(source, /agent-report-overview-scroll" class="max-h-\[min\(22rem,42vh\)\] shrink-0 overflow-y-auto/)
-  assert.match(source, /agent-report-daily-scroll" class="min-h-0 flex-1 overflow-y-auto/)
+  assert.match(source, /agent-report-overview-scroll" class="min-h-0 max-h-\[min\(22rem,42vh\)\] shrink overflow-y-auto/)
+  assert.match(source, /agent-report-daily-scroll" class="min-h-20 flex-1 overflow-y-auto/)
   assert.match(source, /overflow-hidden/)
   assert.match(source, /aria-label="关闭"/)
   assert.match(source, /200ms ease-out/)

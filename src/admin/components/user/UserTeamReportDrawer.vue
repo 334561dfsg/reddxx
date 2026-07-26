@@ -88,7 +88,7 @@ watch(totalPages, (nextTotalPages) => {
 
           <div data-testid="team-report-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <template v-if="hasMembers">
-              <section data-testid="team-report-overview-scroll" class="max-h-[min(18rem,38vh)] shrink-0 overflow-y-auto overscroll-y-contain" aria-labelledby="team-report-overview-title">
+              <section data-testid="team-report-overview-scroll" class="min-h-0 max-h-[min(18rem,38vh)] shrink overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" role="region" tabindex="0" aria-labelledby="team-report-overview-title">
                 <h3 id="team-report-overview-title" class="text-sm font-semibold text-slate-900">裂变团队概览</h3>
                 <div class="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                   <div v-for="metric in metricCards" :key="metric.label" data-testid="team-report-metric" class="rounded-xl border border-slate-200 bg-slate-50 p-3">
@@ -101,7 +101,7 @@ watch(totalPages, (nextTotalPages) => {
               <section data-testid="team-report-branch-header" class="mt-5 shrink-0" aria-labelledby="team-report-branch-title">
                 <h3 id="team-report-branch-title" class="text-sm font-semibold text-slate-900">直属裂变分支明细</h3>
               </section>
-              <div data-testid="team-report-branch-scroll" class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
+              <div data-testid="team-report-branch-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" role="region" :tabindex="branches.length ? 0 : undefined" aria-labelledby="team-report-branch-title">
                 <div class="mt-2 space-y-2">
                   <article v-for="branch in pagedBranches" :key="branch.user.id" class="rounded-xl border border-slate-200 bg-white p-3">
                     <div class="flex flex-wrap items-start justify-between gap-2">
@@ -123,7 +123,7 @@ watch(totalPages, (nextTotalPages) => {
               </footer>
             </template>
 
-            <div v-else class="grid min-h-0 flex-1 place-items-center overflow-y-auto rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
+            <div v-else data-testid="team-report-empty-state" class="grid min-h-0 flex-1 place-items-center overflow-y-auto rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 pb-[max(1rem,env(safe-area-inset-bottom))] text-center">
               <div><p class="font-medium text-slate-700">当前没有裂变团队成员</p><p class="mt-1 text-sm text-slate-500">该用户尚无可统计的裂变下级关系。</p></div>
             </div>
           </div>

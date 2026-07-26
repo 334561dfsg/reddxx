@@ -80,12 +80,12 @@ watch(totalPages, (nextTotalPages) => {
           </header>
 
           <div data-testid="user-agent-report-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
-            <p v-if="error" ref="errorRef" data-testid="agent-report-error-state" tabindex="-1" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" :class="report ? 'shrink-0' : 'min-h-0 flex-1 overflow-y-auto pb-[max(1rem,env(safe-area-inset-bottom))]'" role="alert">
+            <p v-if="error" ref="errorRef" data-testid="agent-report-error-state" tabindex="-1" class="min-h-0 overflow-y-auto rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" :class="report ? 'max-h-[min(8rem,20vh)] shrink' : 'flex-1 pb-[max(1rem,env(safe-area-inset-bottom))]'" role="alert">
               <span class="font-semibold">代理报表加载失败</span><span class="mt-1 block break-words">{{ error }}</span>
             </p>
 
             <template v-if="report">
-              <section data-testid="agent-report-overview-scroll" class="max-h-[min(22rem,42vh)] shrink-0 overflow-y-auto overscroll-y-contain" aria-labelledby="agent-report-summary-title">
+              <section data-testid="agent-report-overview-scroll" class="min-h-0 max-h-[min(22rem,42vh)] shrink overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" role="region" tabindex="0" aria-labelledby="agent-report-summary-title">
                 <h3 id="agent-report-summary-title" class="text-sm font-semibold text-slate-900">业务概览</h3>
                 <dl class="mt-2 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-4">
                   <div v-for="card in summaryCards" :key="card.label" data-testid="agent-report-summary-card" class="rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -121,7 +121,7 @@ watch(totalPages, (nextTotalPages) => {
                   <span class="text-xs text-slate-500">按日期倒序</span>
                 </div>
               </section>
-              <div data-testid="agent-report-daily-scroll" class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain" :class="dailyRows.length ? '' : 'pb-[max(1rem,env(safe-area-inset-bottom))]'">
+              <div data-testid="agent-report-daily-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" :class="dailyRows.length ? '' : 'pb-[max(1rem,env(safe-area-inset-bottom))]'" role="region" :tabindex="dailyRows.length ? 0 : undefined" aria-labelledby="agent-report-daily-title">
                 <div v-if="dailyRows.length" class="mt-2 space-y-2">
                   <article v-for="row in pagedDailyRows" :key="row.date" data-testid="agent-report-daily-row" class="rounded-xl border border-slate-200 p-3">
                     <div class="flex flex-wrap items-center justify-between gap-2">
