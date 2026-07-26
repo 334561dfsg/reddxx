@@ -49,7 +49,9 @@ let lifecycleGeneration = 0
 let disposed = false
 
 const valuesEqual = (left, right) => Object.is(left, right)
-const hasCommittedValue = computed(() => props.modelValue !== null && props.modelValue !== undefined)
+const hasCommittedValue = computed(() => (
+  props.modelValue !== null && props.modelValue !== undefined && props.modelValue !== ''
+))
 const duplicateOption = computed(() => {
   const seen = []
   for (const option of props.options) {
@@ -73,7 +75,6 @@ const displayText = computed(() => {
 })
 const describedBy = computed(() => {
   const ids = []
-  if (props.required) ids.push(requiredId)
   if (effectiveInvalid.value && props.errorId) ids.push(props.errorId)
   if (orphaned.value) ids.push(orphanedId)
   if (hasDuplicateOptions.value) ids.push(configErrorId)

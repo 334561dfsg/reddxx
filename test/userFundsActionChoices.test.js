@@ -2,10 +2,11 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import test from 'node:test'
-import { createSfcHarness, loadVueSfc } from './helpers/vueSfcHarness.js'
+import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
 
 const depositFile = resolve(process.cwd(), 'src/admin/components/user/UserDepositAction.vue')
 const transferFile = resolve(process.cwd(), 'src/admin/components/user/UserTransferAction.vue')
+const selectOnlyComboboxFile = resolve(process.cwd(), 'src/admin/components/form/SelectOnlyCombobox.vue')
 const read = (file) => readFileSync(file, 'utf8')
 
 const user = { id: 'user_1001', username: '选择测试用户' }
@@ -58,6 +59,69 @@ const fieldsetSummary = (harness) => harness.allNodes()
 
 const radioCard = (harness, radio) => harness.allNodes().find((node) => node.tag === 'label' && node.contains(radio))
 
+const loadTransfer = async () => loadVueSfc(transferFile, {
+  vueImports: { [selectOnlyComboboxFile]: loadVueSfcModuleUrl(selectOnlyComboboxFile) }
+})
+
+const findCombobox = (harness, idBase) => {
+  const combobox = harness.allNodes().find((node) => (
+    node.getAttribute?.('role') === 'combobox' &&
+    node.getAttribute('aria-controls') === `${idBase}-listbox`
+  ))
+  assert.ok(combobox, `expected ${idBase} combobox`)
+  return combobox
+}
+
+const comboboxDisplay = (harness, idBase) => {
+  const display = findCombobox(harness, idBase).children[0]
+  assert.ok(display, `expected ${idBase} combobox display`)
+  return display
+}
+
+const dispatchKey = async (harness, node, key) => {
+  const event = {
+    type: 'keydown',
+    key,
+    defaultPrevented: false,
+    preventDefault() { this.defaultPrevented = true }
+  }
+  node.dispatchEvent(event)
+  await harness.flush()
+  return event
+}
+
+const selectComboboxWithKeyboard = async (harness, idBase, arrowDownCount) => {
+  const trigger = findCombobox(harness, idBase)
+  trigger.focus()
+  await dispatchKey(harness, trigger, 'Enter')
+  for (let index = 0; index < arrowDownCount; index += 1) {
+    await dispatchKey(harness, trigger, 'ArrowDown')
+  }
+  await dispatchKey(harness, trigger, 'Enter')
+  await harness.finishTransitions()
+  return trigger
+}
+
+const selectComboboxOption = async (harness, idBase, label) => {
+  const trigger = findCombobox(harness, idBase)
+  trigger.click()
+  await harness.flush()
+  const option = harness.allNodes().find((node) => (
+    node.getAttribute?.('role') === 'option' && node.textContent.trim() === label
+  ))
+  assert.ok(option, `expected ${label} option in ${idBase}`)
+  option.dispatchEvent({
+    type: 'pointerdown',
+    target: option,
+    defaultPrevented: false,
+    preventDefault() { this.defaultPrevented = true }
+  })
+  option.click()
+  await harness.flush()
+  await harness.finishTransitions()
+  return trigger
+}
+
 const setInput = async (harness, placeholder, value) => {
   const input = harness.allNodes().find((node) => node.getAttribute?.('placeholder') === placeholder)
   assert.ok(input, `expected input with placeholder ${placeholder}`)
@@ -72,31 +136,48 @@ const openDialog = async (harness, label) => {
   await harness.finishTransitions()
 }
 
-test('funds action sources remove native selects and retain native radios', () => {
-  for (const source of [read(depositFile), read(transferFile)]) {
-    assert.doesNotMatch(source, /<select\b/)
-    assert.match(source, /type="radio"/)
-  }
+test('deposit retains native radios while transfer uses select-only comboboxes', () => {
+  const depositSource = read(depositFile)
+  const transferSource = read(transferFile)
+
+  assert.doesNotMatch(depositSource, /<select\b/)
+  assert.match(depositSource, /type="radio"/)
+  assert.doesNotMatch(transferSource, /<select\b/)
+  assert.doesNotMatch(transferSource, /type="radio"/)
+  assert.match(transferSource, /SelectOnlyCombobox/)
 })
 
-test('every mounted funds choice fieldset has its visible legend and native radio group', async (t) => {
+test('deposit keeps its fieldset radio group while transfer renders compact comboboxes', async (t) => {
   const deposit = await createSfcHarness(await loadVueSfc(depositFile), { user, assets })
-  const transfer = await createSfcHarness(await loadVueSfc(transferFile), { user, assets })
-  t.after(deposit.cleanup)
-  t.after(transfer.cleanup)
+  try {
+    await openDialog(deposit, '入金')
 
-  await openDialog(deposit, '入金')
+    assert.deepEqual(fieldsetSummary(deposit), [{
+      legend: '选择入金账户',
+      radioNames: ['deposit-account', 'deposit-account', 'deposit-account', 'deposit-account']
+    }])
+  } finally {
+    deposit.cleanup()
+  }
+
+  const transfer = await createSfcHarness(await loadTransfer(), { user, assets })
+  t.after(transfer.cleanup)
   await openDialog(transfer, '划转')
 
-  assert.deepEqual(fieldsetSummary(deposit), [{
-    legend: '选择入金账户',
-    radioNames: ['deposit-account', 'deposit-account', 'deposit-account', 'deposit-account']
-  }])
-  assert.deepEqual(fieldsetSummary(transfer), [
-    { legend: '从', radioNames: ['transfer-from-account', 'transfer-from-account', 'transfer-from-account', 'transfer-from-account'] },
-    { legend: '到', radioNames: ['transfer-to-account', 'transfer-to-account', 'transfer-to-account', 'transfer-to-account'] },
-    { legend: '币种', radioNames: ['transfer-coin', 'transfer-coin', 'transfer-coin'] }
-  ])
+  const transferDialog = transfer.allNodes().find((node) => node.getAttribute?.('role') === 'dialog')
+  const fromTrigger = comboboxDisplay(transfer, 'transfer-from')
+  const toTrigger = comboboxDisplay(transfer, 'transfer-to')
+  const coinTrigger = comboboxDisplay(transfer, 'transfer-coin')
+  assert.equal(fromTrigger.textContent.trim(), '市币')
+  assert.equal(toTrigger.textContent.trim(), '交易合约')
+  assert.equal(coinTrigger.textContent.trim(), '请选择')
+  assert.ok(transferDialog)
+  assert.equal(transfer.allNodes().filter((node) => (
+    node.tag === 'select' && transferDialog.contains(node)
+  )).length, 0)
+  assert.equal(transfer.allNodes().filter((node) => (
+    node.tag === 'input' && node.getAttribute?.('type') === 'radio' && transferDialog.contains(node)
+  )).length, 0)
 })
 
 test('deposit radio choice emits the existing deposit payload', async (t) => {
@@ -120,29 +201,23 @@ test('deposit radio choice emits the existing deposit payload', async (t) => {
   ]])
 })
 
-test('transfer keyboard radio choices emit the existing transfer payload', async (t) => {
-  const component = await loadVueSfc(transferFile)
+test('transfer keyboard combobox choices emit the existing transfer payload', async (t) => {
+  const component = await loadTransfer()
   const harness = await createSfcHarness(component, { user, assets }, { onSubmit: () => {} })
   t.after(harness.cleanup)
 
   await openDialog(harness, '划转')
-  await selectWithArrow(harness, findRadio(harness, 'transfer-from-account', 'market'))
-  const wealthSource = findRadio(harness, 'transfer-from-account', 'wealth')
+  const wealthSource = await selectComboboxWithKeyboard(harness, 'transfer-from', 1)
   assert.equal(harness.document.activeElement, wealthSource)
-  assert.equal(wealthSource.checked, true)
-  assert.match(radioCard(harness, wealthSource).textContent, /已选择/)
+  assert.match(wealthSource.textContent, /理财/)
 
-  await selectWithArrow(harness, findRadio(harness, 'transfer-to-account', 'trading'))
-  const perpDestination = findRadio(harness, 'transfer-to-account', 'perp')
+  const perpDestination = await selectComboboxWithKeyboard(harness, 'transfer-to', 1)
   assert.equal(harness.document.activeElement, perpDestination)
-  assert.equal(perpDestination.checked, true)
-  assert.match(radioCard(harness, perpDestination).textContent, /已选择/)
+  assert.match(perpDestination.textContent, /永续合约/)
 
-  await selectWithArrow(harness, findRadio(harness, 'transfer-coin', 'USDT'))
-  const usdcCoin = findRadio(harness, 'transfer-coin', 'USDC')
+  const usdcCoin = await selectComboboxWithKeyboard(harness, 'transfer-coin', 1)
   assert.equal(harness.document.activeElement, usdcCoin)
-  assert.equal(usdcCoin.checked, true)
-  assert.match(radioCard(harness, usdcCoin).textContent, /已选择/)
+  assert.match(usdcCoin.textContent, /USDC/)
 
   await setInput(harness, '请输入划转的数量', ' 10.25 ')
   harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
@@ -153,35 +228,28 @@ test('transfer keyboard radio choices emit the existing transfer payload', async
   ]])
 })
 
-test('transfer preserves and explains the selected disabled destination until the operator replaces it', async (t) => {
-  const component = await loadVueSfc(transferFile)
+test('transfer preserves the destination conflict until the operator selects a different account', async (t) => {
+  const component = await loadTransfer()
   const harness = await createSfcHarness(component, { user, assets }, { onSubmit: () => {} })
   t.after(harness.cleanup)
 
   await openDialog(harness, '划转')
-  await selectRadio(harness, 'transfer-from-account', 'trading')
-
-  const source = findRadio(harness, 'transfer-from-account', 'trading')
-  const tradingDestination = findRadio(harness, 'transfer-to-account', 'trading')
-  const sameDestination = findRadio(harness, 'transfer-to-account', 'trading')
-  assert.equal(source.checked, true)
-  assert.equal(tradingDestination.checked, true)
-  assert.equal(sameDestination.disabled, true)
-  assert.match(radioCard(harness, sameDestination).textContent, /已选择，需重新选择/)
-  const destinationFieldset = harness.allNodes().find((node) => node.tag === 'fieldset' && node.textContent.includes('当前“从”账户不能作为“到”账户'))
-  const explanation = harness.allNodes().find((node) => node.tag === 'p' && node.textContent.includes('当前“从”账户不能作为“到”账户'))
-  assert.equal(destinationFieldset.getAttribute('aria-describedby'), explanation.getAttribute('id'))
-  assert.match(explanation.textContent, /当前“从”账户不能作为“到”账户/)
-  assert.match(explanation.textContent, /当前已选择的“到”账户不可用，请重新选择/)
+  const source = await selectComboboxWithKeyboard(harness, 'transfer-from', 2)
+  const destination = findCombobox(harness, 'transfer-to')
+  assert.match(source.textContent, /交易合约/)
+  assert.match(destination.textContent, /交易合约/)
+  assert.equal(destination.getAttribute('aria-invalid'), 'true')
+  assert.equal(destination.getAttribute('aria-describedby'), 'transfer-to-error')
+  const explanation = harness.allNodes().find((node) => node.getAttribute?.('id') === 'transfer-to-error')
+  assert.ok(explanation)
+  assert.match(explanation.textContent, /“从”账户和“到”账户不能相同，请重新选择“到”账户。/)
 
   await setInput(harness, '请输入划转的数量', ' 10.25 ')
   harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
   await harness.flush()
   assert.deepEqual(harness.emitted, [])
-  assert.match(explanation.textContent, /当前已选择的“到”账户不可用，请重新选择/)
-
-  await selectRadio(harness, 'transfer-to-account', 'perp')
-  await selectRadio(harness, 'transfer-coin', 'USDC')
+  await selectComboboxOption(harness, 'transfer-to', '永续合约')
+  await selectComboboxWithKeyboard(harness, 'transfer-coin', 1)
   harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
 
   assert.deepEqual(harness.emitted, [[
