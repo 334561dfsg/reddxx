@@ -131,10 +131,18 @@ test('recharge Drawer returns to page one when the open Drawer switches users wi
   assert.doesNotMatch(drawer.textContent, /DEP-006/)
 })
 
-test('recharge Drawer has one body scroller and responsive motion safeguards', async () => {
+test('recharge Drawer keeps its fixed overview in a content-driven two-column layout', async () => {
   const source = await readFile(rechargeDrawerFile, 'utf8')
 
-  assert.match(source, /data-testid="user-recharge-summary-body"[^>]*overflow-y-auto/)
+  assert.match(source, /max-w-2xl/)
+  assert.match(source, /data-testid="user-recharge-summary-overview"[^>]*grid-cols-1[^>]*min-\[520px\]:grid-cols-\[220px_minmax\(0,1fr\)\]/)
+})
+
+test('recharge Drawer scrolls only records and retains responsive motion safeguards', async () => {
+  const source = await readFile(rechargeDrawerFile, 'utf8')
+
+  assert.match(source, /data-testid="user-recharge-record-list"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
+  assert.doesNotMatch(source, /data-testid="user-recharge-summary-body"[^>]*overflow-y-auto/)
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
   assert.match(source, /overflow-hidden/)
   assert.match(source, /200ms ease-out/)
@@ -146,6 +154,47 @@ test('recharge Drawer has one body scroller and responsive motion safeguards', a
   assert.match(source, /100dvh/)
   assert.match(source, /safe-area-inset-right/)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
+})
+
+test('recharge Drawer keeps fixed pagination visible outside its record list for one record', async (t) => {
+  const component = await loadVueSfc(rechargeDrawerFile, {
+    vueImports: { [compactPaginationFile]: loadVueSfcModuleUrl(compactPaginationFile) }
+  })
+  const harness = await createSfcHarness(component, { visible: true, user, summary })
+  t.after(harness.cleanup)
+
+  const recordList = harness.findByTestId('user-recharge-record-list')
+  const pagination = harness.findByTestId('user-recharge-pagination')
+  assert.ok(recordList)
+  assert.ok(pagination)
+  assert.equal(recordList.contains(pagination), false)
+
+  const buttons = harness.allNodes().filter((node) => pagination.contains(node) && node.tag === 'button')
+  assert.deepEqual(buttons.map((button) => button.textContent.trim()), ['上一页', '1', '下一页'])
+  assert.equal(buttons[0].disabled, true)
+  assert.equal(buttons[2].disabled, true)
+})
+
+test('recharge Drawer resets its record list scroll when pagination changes', async (t) => {
+  const component = await loadVueSfc(rechargeDrawerFile, {
+    vueImports: { [compactPaginationFile]: loadVueSfcModuleUrl(compactPaginationFile) }
+  })
+  const records = Array.from({ length: 7 }, (_, index) => ({
+    id: `scroll-${index + 1}`,
+    amount: 100 + index,
+    qualifyingAmount: 100 + index,
+    source: '链上充值',
+    transactionId: `DEP-00${index + 1}`,
+    createdAt: `2026-07-${String(20 - index).padStart(2, '0')}T08:00:00.000Z`
+  }))
+  const harness = await createSfcHarness(component, { visible: true, user, summary: { ...summary, records } })
+  t.after(harness.cleanup)
+
+  const recordList = harness.findByTestId('user-recharge-record-list')
+  recordList.scrollTop = 180
+  harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  assert.equal(recordList.scrollTop, 0)
 })
 
 test('recharge Drawer preserves a newer stateful summary through an older leave callback', async (t) => {
