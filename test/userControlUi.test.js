@@ -275,10 +275,15 @@ test('log page omits the former tab interface', () => {
   assert.doesNotMatch(source, /role="tabpanel"/)
 })
 
-test('user and module rows link to the named log route with query filters', () => {
+test('user operations open point-control logs in a child Drawer while module rows retain route filters', () => {
   const userSource = read('../src/pages/admin/user/UserListPage.vue')
   const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
-  assert.match(userSource, /name:\s*'users-control-log'[\s\S]*query:\s*\{\s*userId:/)
+
+  assert.match(userSource, /import UserControlLogDrawer/)
+  assert.match(userSource, /const controlLogOpen = ref\(false\)/)
+  assert.match(userSource, /if \(id === 'point-control-log'\) \{[\s\S]*?controlLogUser\.value = user[\s\S]*?controlLogReturnFocus\.value = trigger[\s\S]*?controlLogOpen\.value = true[\s\S]*?return/)
+  assert.match(userSource, /<UserControlLogDrawer[\s\S]*?:visible="controlLogOpen"[\s\S]*?:return-focus="controlLogReturnFocus"[\s\S]*?@closed="clearControlLog"/)
+  assert.doesNotMatch(userSource, /appRouter|users-control-log/)
   assert.match(moduleSource, /name:\s*'users-control-log'[\s\S]*query:\s*\{\s*userId:[\s\S]*module:/)
 })
 

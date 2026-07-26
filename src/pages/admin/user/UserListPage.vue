@@ -1,11 +1,12 @@
 <script setup>
-import { ref, computed, getCurrentInstance, nextTick, onMounted, reactive, watch } from 'vue'
+import { ref, computed, nextTick, onMounted, reactive, watch } from 'vue'
 import { getUsers, usersList } from '../../../admin/mock/user'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../../admin/constants/user'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
 import UserOperations from '../../../admin/components/user/UserOperations.vue'
 import UserOperationDrawer from '../../../admin/components/user/UserOperationDrawer.vue'
+import UserControlLogDrawer from '../../../admin/components/user-control/UserControlLogDrawer.vue'
 import UserOnchainWalletDrawer from '../../../admin/components/user/UserOnchainWalletDrawer.vue'
 import UserRelationshipDrawer from '../../../admin/components/user/UserRelationshipDrawer.vue'
 import UserProfileEditDialog from '../../../admin/components/user/UserProfileEditDialog.vue'
@@ -53,8 +54,6 @@ import {
   grantUserRebate,
   setUserVipLevel
 } from '../../../admin/repositories/userCreditMembershipRepository.js'
-
-const appRouter = getCurrentInstance()?.appContext.config.globalProperties.$router
 
 // 搜索关键词
 const searchKeyword = ref('')
@@ -117,6 +116,9 @@ const operationDrawerOpen = ref(false)
 const operationDrawerUser = ref(null)
 const deferredDrawerAction = ref(null)
 const operationActionReturnFocus = ref(null)
+const controlLogOpen = ref(false)
+const controlLogUser = ref(null)
+const controlLogReturnFocus = ref(null)
 const onchainWalletOpen = ref(false)
 const onchainWalletUser = ref(null)
 const onchainWalletData = ref(null)
@@ -487,7 +489,14 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
     return
   }
 
-  if (['detail', 'assets', 'point-control-log'].includes(id)) {
+  if (id === 'point-control-log') {
+    controlLogUser.value = user
+    controlLogReturnFocus.value = trigger
+    controlLogOpen.value = true
+    return
+  }
+
+  if (['detail', 'assets'].includes(id)) {
     deferredDrawerAction.value = { id, user }
     closeOperationDrawer()
     return
@@ -542,6 +551,15 @@ const clearAgentSubordinates = () => {
 
 const closeOnchainWallet = () => {
   onchainWalletOpen.value = false
+}
+
+const closeControlLog = () => {
+  controlLogOpen.value = false
+}
+
+const clearControlLog = () => {
+  controlLogUser.value = null
+  controlLogReturnFocus.value = null
 }
 
 const closeAgentReport = () => {
@@ -748,9 +766,6 @@ const executeDeferredDrawerAction = async () => {
     return
   }
 
-  if (action.id === 'point-control-log') {
-    await appRouter?.push({ name: 'users-control-log', query: { userId: userIdOf(action.user) } })
-  }
 }
 
 const openRegularAction = async (user, action, returnFocus = null) => {
@@ -1186,6 +1201,14 @@ const clearDetailDrawer = () => {
       @close="closeOperationDrawer"
       @closed="executeDeferredDrawerAction"
       @action="handleOperationDrawerAction"
+    />
+
+    <UserControlLogDrawer
+      :visible="controlLogOpen"
+      :user="controlLogUser"
+      :return-focus="controlLogReturnFocus"
+      @close="closeControlLog"
+      @closed="clearControlLog"
     />
 
     <UserAgentReportDrawer
