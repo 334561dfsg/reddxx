@@ -103,6 +103,34 @@ test('recharge Drawer removes the duplicate summary card and paginates records f
   assert.doesNotMatch(drawer.textContent, /DEP-006/)
 })
 
+test('recharge Drawer returns to page one when the open Drawer switches users with the same summary', async (t) => {
+  const component = await loadVueSfc(rechargeDrawerFile, {
+    vueImports: { [compactPaginationFile]: loadVueSfcModuleUrl(compactPaginationFile) }
+  })
+  const records = Array.from({ length: 7 }, (_, index) => ({
+    id: `switch-${index + 1}`,
+    amount: 100 + index,
+    qualifyingAmount: 100 + index,
+    source: '链上充值',
+    transactionId: `DEP-00${index + 1}`,
+    createdAt: `2026-07-${String(20 - index).padStart(2, '0')}T08:00:00.000Z`
+  }))
+  const sharedSummary = { ...summary, records }
+  const harness = await createSfcHarness(component, { visible: true, user, summary: sharedSummary })
+  t.after(harness.cleanup)
+
+  const drawer = harness.findByTestId('user-recharge-summary-drawer')
+  harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  assert.match(drawer.textContent, /DEP-006/)
+  assert.doesNotMatch(drawer.textContent, /DEP-001/)
+
+  harness.props.user = { id: 'user_2008', username: 'user_beta', vipLevel: 2 }
+  await harness.flush()
+  assert.match(drawer.textContent, /DEP-001/)
+  assert.doesNotMatch(drawer.textContent, /DEP-006/)
+})
+
 test('recharge Drawer has one body scroller and responsive motion safeguards', async () => {
   const source = await readFile(rechargeDrawerFile, 'utf8')
 

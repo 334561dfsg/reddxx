@@ -42,7 +42,7 @@ const handleAfterLeave = async () => {
   displaySummary.value = null
   emit('closed')
 }
-watch(() => [props.visible, props.summary], ([visible]) => { if (visible) captureSummary() }, { immediate: true, deep: true })
+watch(() => [props.visible, props.summary, userId.value], ([visible]) => { if (visible) captureSummary() }, { immediate: true, deep: true })
 </script>
 
 <template>
