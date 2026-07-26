@@ -1,7 +1,10 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { getTeamReport } from '../../repositories/userRelationshipRepository.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import CompactPagination from '../CompactPagination.vue'
+
+const PAGE_SIZE = 10
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -11,12 +14,19 @@ const props = defineProps({
 const emit = defineEmits(['close', 'closed'])
 const drawerRef = ref(null)
 const titleRef = ref(null)
+const currentPage = ref(1)
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const report = computed(() => {
   props.visible
   return userId.value ? getTeamReport(userId.value) : null
 })
 const hasMembers = computed(() => Number(report.value?.memberCount || 0) > 0)
+const branches = computed(() => report.value?.branches || [])
+const totalPages = computed(() => Math.max(1, Math.ceil(branches.value.length / PAGE_SIZE)))
+const pagedBranches = computed(() => {
+  const start = (currentPage.value - 1) * PAGE_SIZE
+  return branches.value.slice(start, start + PAGE_SIZE)
+})
 const formatNumber = (value, maximumFractionDigits = 2) => new Intl.NumberFormat('en-US', { maximumFractionDigits }).format(Number(value || 0))
 const signedProfit = (value) => {
   const number = Number(value || 0)
@@ -53,6 +63,14 @@ const handleAfterLeave = () => {
   onAfterLeave()
   emit('closed')
 }
+
+watch(() => [props.visible, userId.value], ([visible]) => {
+  if (visible) currentPage.value = 1
+})
+
+watch(totalPages, (nextTotalPages) => {
+  currentPage.value = Math.min(currentPage.value, nextTotalPages)
+})
 </script>
 
 <template>
@@ -83,7 +101,7 @@ const handleAfterLeave = () => {
               <section class="mt-5" aria-labelledby="team-report-branch-title">
                 <h3 id="team-report-branch-title" class="text-sm font-semibold text-slate-900">直属裂变分支明细</h3>
                 <div class="mt-2 space-y-2">
-                  <article v-for="branch in report.branches" :key="branch.user.id" class="rounded-xl border border-slate-200 bg-white p-3">
+                  <article v-for="branch in pagedBranches" :key="branch.user.id" class="rounded-xl border border-slate-200 bg-white p-3">
                     <div class="flex flex-wrap items-start justify-between gap-2">
                       <p class="font-medium text-slate-900">{{ branch.user.username }} <span class="ml-1 text-xs font-normal text-slate-500">UID {{ branch.user.id }}</span></p>
                       <span class="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">{{ branch.memberCount }} 人</span>
@@ -95,6 +113,7 @@ const handleAfterLeave = () => {
                       <div><dt class="text-slate-500">累计盈亏</dt><dd class="mt-0.5 font-medium" :class="branch.totalProfit >= 0 ? 'text-emerald-700' : 'text-rose-700'">{{ profitLabel(branch.totalProfit) }} {{ signedProfit(branch.totalProfit) }} USDT</dd></div>
                     </dl>
                   </article>
+                  <CompactPagination v-model:current-page="currentPage" :total-count="branches.length" :page-size="PAGE_SIZE" />
                 </div>
               </section>
             </template>

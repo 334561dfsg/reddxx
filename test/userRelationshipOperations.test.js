@@ -17,6 +17,8 @@ const panelFile = resolve(process.cwd(), 'src/admin/components/form/PanelSingleS
 const parentResetFile = resolve(process.cwd(), 'src/admin/components/user/UserParentResetDialog.vue')
 const agentRoleFile = resolve(process.cwd(), 'src/admin/components/user/UserAgentRoleDialog.vue')
 const relationshipDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserRelationshipDrawer.vue')
+const teamReportDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserTeamReportDrawer.vue')
+const compactPaginationFile = resolve(process.cwd(), 'src/admin/components/CompactPagination.vue')
 
 const userById = (id) => usersList.find((user) => user.id === id)
 const snapshot = (user) => ({ ...user })
@@ -58,6 +60,142 @@ const fieldsetWithLegend = (harness, legendText) => harness.allNodes().find((nod
 const memberButtons = (harness) => harness.allNodes().filter((node) => (
   node.tag === 'button' && /UID user_/.test(node.textContent)
 ))
+
+const loadRelationshipDrawer = async () => {
+  const compactPaginationModuleUrl = loadVueSfcModuleUrl(compactPaginationFile)
+  return loadVueSfc(relationshipDrawerFile, { vueImports: { [compactPaginationFile]: compactPaginationModuleUrl } })
+}
+
+const loadTeamReportDrawer = async () => {
+  const compactPaginationModuleUrl = loadVueSfcModuleUrl(compactPaginationFile)
+  return loadVueSfc(teamReportDrawerFile, { vueImports: { [compactPaginationFile]: compactPaginationModuleUrl } })
+}
+
+const addPaginationFissionTree = () => {
+  const startIndex = usersList.length
+  const root = {
+    id: 'user_pagination_root',
+    username: 'pagination_root',
+    email: 'pagination-root@example.com',
+    role: 'agent',
+    status: 'active',
+    balance: 0,
+    frozenBalance: 0,
+    totalProfit: 0,
+    tradingVolume: 0,
+    parentId: null,
+    parentUsername: null,
+    registerTime: '2026-01-01T00:00:00.000Z'
+  }
+  const members = Array.from({ length: 22 }, (_, index) => ({
+    id: `user_pagination_${String(index + 1).padStart(2, '0')}`,
+    username: `pagination_member_${String(index + 1).padStart(2, '0')}`,
+    email: `pagination-member-${index + 1}@example.com`,
+    role: 'user',
+    status: 'active',
+    balance: index + 1,
+    frozenBalance: 0,
+    totalProfit: 0,
+    tradingVolume: 0,
+    parentId: root.id,
+    parentUsername: root.username,
+    registerTime: '2026-01-01T00:00:00.000Z'
+  }))
+  usersList.push(root, ...members)
+  return { root, members, remove: () => usersList.splice(startIndex) }
+}
+
+const visiblePaginationMemberIds = (harness) => memberButtons(harness)
+  .map((button) => button.textContent.match(/UID (user_pagination_\d+)/)?.[1])
+  .filter(Boolean)
+
+test('relationship drawer paginates members and resets selection and page for changed list contexts', async (t) => {
+  const tree = addPaginationFissionTree()
+  const component = await loadRelationshipDrawer()
+  const harness = await createSfcHarness(component, { visible: true, user: tree.root, mode: 'direct' })
+  t.after(() => {
+    harness.cleanup()
+    tree.remove()
+  })
+  await harness.finishTransitions()
+
+  assert.deepEqual(visiblePaginationMemberIds(harness), [
+    'user_pagination_01', 'user_pagination_02', 'user_pagination_03', 'user_pagination_04', 'user_pagination_05',
+    'user_pagination_06', 'user_pagination_07', 'user_pagination_08', 'user_pagination_09', 'user_pagination_10'
+  ])
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
+
+  const nextPage = harness.findByText('下一页', 'button')
+  assert.ok(nextPage, 'pagination exposes a next-page control when more members exist')
+  nextPage.click()
+  await harness.flush()
+  assert.deepEqual(visiblePaginationMemberIds(harness), [
+    'user_pagination_11', 'user_pagination_12', 'user_pagination_13', 'user_pagination_14', 'user_pagination_15',
+    'user_pagination_16', 'user_pagination_17', 'user_pagination_18', 'user_pagination_19', 'user_pagination_20'
+  ])
+
+  memberButtons(harness)[0].click()
+  await harness.flush()
+  assert.ok(harness.allNodes().some((node) => node.textContent.includes('已选择裂变下级 pagination_member_11')))
+
+  const search = harness.allNodes().find((node) => node.tag === 'input' && node.getAttribute('type') === 'search')
+  await inputValue(harness, search, 'pagination_member')
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
+  assert.equal(harness.allNodes().some((node) => node.textContent.includes('已选择裂变下级')), false)
+
+  harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  harness.findByText('活跃', 'button').click()
+  await harness.flush()
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
+
+  harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  harness.findByText('普通用户', 'button').click()
+  await harness.flush()
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
+
+  harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  harness.props.mode = 'all'
+  await harness.flush()
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
+
+  harness.props.visible = false
+  await harness.finishTransitions()
+  harness.props.visible = true
+  await harness.finishTransitions()
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
+})
+
+test('team report drawer paginates direct fission branches', async (t) => {
+  const tree = addPaginationFissionTree()
+  const component = await loadTeamReportDrawer()
+  const harness = await createSfcHarness(component, { visible: true, user: tree.root })
+  t.after(() => {
+    harness.cleanup()
+    tree.remove()
+  })
+  await harness.finishTransitions()
+
+  const visibleBranches = () => harness.allNodes()
+    .filter((node) => node.tag === 'article')
+    .map((branch) => branch.textContent.match(/pagination_member_\d+/)?.[0])
+  assert.deepEqual(visibleBranches(), [
+    'pagination_member_01', 'pagination_member_02', 'pagination_member_03', 'pagination_member_04', 'pagination_member_05',
+    'pagination_member_06', 'pagination_member_07', 'pagination_member_08', 'pagination_member_09', 'pagination_member_10'
+  ])
+  assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
+
+  const nextPage = harness.findByText('下一页', 'button')
+  assert.ok(nextPage, 'pagination exposes a next-page control when more branches exist')
+  nextPage.click()
+  await harness.flush()
+  assert.deepEqual(visibleBranches(), [
+    'pagination_member_11', 'pagination_member_12', 'pagination_member_13', 'pagination_member_14', 'pagination_member_15',
+    'pagination_member_16', 'pagination_member_17', 'pagination_member_18', 'pagination_member_19', 'pagination_member_20'
+  ])
+})
 
 test('relationship filters are labelled wrapping segments that preserve exact status and role filtering', async (t) => {
   const agentChildBefore = snapshot(userById('user_1004'))

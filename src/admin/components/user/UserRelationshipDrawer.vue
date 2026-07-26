@@ -3,6 +3,9 @@ import { computed, ref, watch } from 'vue'
 import { USER_ROLE_OPTIONS, USER_STATUS_OPTIONS } from '../../constants/user.js'
 import { getDescendants, getDirectReferrals } from '../../repositories/userRelationshipRepository.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import CompactPagination from '../CompactPagination.vue'
+
+const PAGE_SIZE = 10
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -18,6 +21,7 @@ const keyword = ref('')
 const status = ref('all')
 const role = ref('all')
 const selectedMember = ref(null)
+const currentPage = ref(1)
 
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const isAllMode = computed(() => props.mode === 'all')
@@ -41,6 +45,12 @@ const filteredMembers = computed(() => {
     const matchesRole = role.value === 'all' || member.role === role.value
     return matchesSearch && matchesStatus && matchesRole
   })
+})
+
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredMembers.value.length / PAGE_SIZE)))
+const pagedMembers = computed(() => {
+  const start = (currentPage.value - 1) * PAGE_SIZE
+  return filteredMembers.value.slice(start, start + PAGE_SIZE)
 })
 
 const hasFilters = computed(() => Boolean(keyword.value.trim()) || status.value !== 'all' || role.value !== 'all')
@@ -77,6 +87,16 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
   status.value = 'all'
   role.value = 'all'
   selectedMember.value = null
+  currentPage.value = 1
+})
+
+watch(() => [keyword.value, status.value, role.value], () => {
+  currentPage.value = 1
+  selectedMember.value = null
+})
+
+watch(totalPages, (nextTotalPages) => {
+  currentPage.value = Math.min(currentPage.value, nextTotalPages)
 })
 </script>
 
@@ -157,7 +177,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
 
             <div v-if="filteredMembers.length" class="space-y-2">
               <button
-                v-for="member in filteredMembers"
+                v-for="member in pagedMembers"
                 :key="member.id || member.userId"
                 type="button"
                 class="w-full rounded-xl border border-slate-200 bg-white p-3 text-left transition hover:border-blue-300 hover:bg-blue-50/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -181,6 +201,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
                 <span v-if="isAllMode" class="mt-1.5 block break-words text-xs text-slate-500">裂变关系路径：{{ pathLabel(member) }}</span>
                 <span class="mt-1.5 block text-xs text-slate-500">注册时间：{{ formatTime(member.registerTime) }}</span>
               </button>
+              <CompactPagination v-model:current-page="currentPage" :total-count="filteredMembers.length" :page-size="PAGE_SIZE" />
             </div>
 
             <div v-else class="grid min-h-52 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
