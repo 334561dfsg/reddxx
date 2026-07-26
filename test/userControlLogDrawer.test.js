@@ -93,6 +93,21 @@ test('intentional close unmounts before cleanup and returns focus once', async (
   assert.equal(closedCount, 1)
 })
 
+test('root leave transition keeps the log panel mounted while applying its right-edge exit state', async (t) => {
+  const harness = await mountDrawer()
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const drawer = harness.findByTestId('user-control-log-drawer')
+  closeButton(harness, drawer).click()
+  await harness.flush()
+
+  const overlay = drawer.parent
+  assert.equal(drawer.isConnected, true)
+  assert.equal(overlay.classList.contains('user-control-log-drawer-leave-active'), true)
+  assert.equal(overlay.contains(drawer), true)
+})
+
 test('Escape closes only after entry and Tab remains trapped in the open Drawer', async (t) => {
   let closeCount = 0
   const harness = await mountDrawer({}, { onClose: () => { closeCount += 1 } })
@@ -163,6 +178,9 @@ test('log Drawer keeps a fixed frame, one body scroller, safe areas, and complia
   assert.match(source, /safe-area-inset-left/)
   assert.match(source, /200ms ease-out/)
   assert.match(source, /150ms ease-in/)
+  assert.match(source, /\.user-control-log-drawer-leave-active \.user-control-log-drawer-panel/)
+  assert.match(source, /\.user-control-log-drawer-leave-to \.user-control-log-drawer-panel/)
+  assert.doesNotMatch(source, /Transition name="user-control-log-drawer-panel"/)
   assert.match(source, /prefers-reduced-motion: reduce/)
   assert.match(source, /transition-duration: 50ms/)
   assert.match(source, /transform: none/)
