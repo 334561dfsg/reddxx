@@ -66,7 +66,7 @@ const loadTransfer = async () => loadVueSfc(transferFile, {
 const findCombobox = (harness, idBase) => {
   const combobox = harness.allNodes().find((node) => (
     node.getAttribute?.('role') === 'combobox' &&
-    node.getAttribute('aria-controls') === `${idBase}-listbox`
+    node.getAttribute('aria-labelledby') === `${idBase}-label`
   ))
   assert.ok(combobox, `expected ${idBase} combobox`)
   return combobox

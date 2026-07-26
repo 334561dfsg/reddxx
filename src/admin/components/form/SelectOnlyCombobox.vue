@@ -37,6 +37,7 @@ const triggerRef = shallowRef(null)
 const popupRef = shallowRef(null)
 const open = ref(false)
 const rendered = ref(false)
+const closing = ref(false)
 const activeValue = ref(null)
 const popupStyle = ref({ position: 'fixed' })
 const portalTarget = shallowRef('body')
@@ -45,6 +46,7 @@ const typeAhead = ref('')
 let typeAheadTimer = null
 let positionFrame = 0
 let popupHostRegistration = null
+let ownedBodyPopupHost = null
 let lifecycleGeneration = 0
 let disposed = false
 
@@ -73,7 +75,7 @@ const displayText = computed(() => {
 })
 const describedBy = computed(() => {
   const ids = []
-  if (effectiveInvalid.value && props.errorId) ids.push(props.errorId)
+  if (props.invalid && props.errorId) ids.push(props.errorId)
   if (orphaned.value) ids.push(orphanedId)
   if (hasDuplicateOptions.value) ids.push(configErrorId)
   return ids.join(' ') || null
@@ -161,12 +163,20 @@ function normalizeTypeAhead(value) {
 
 function moveByTypeAhead(key) {
   if (!open.value || !key) return
-  typeAhead.value += key
+  const normalizedKey = normalizeTypeAhead(key)
+  if (!normalizedKey) return
+  const previousQuery = normalizeTypeAhead(typeAhead.value)
+  const repeatedCharacterCycle = previousQuery.length > 0 && Array.from(previousQuery).every((character) => (
+    character === normalizedKey
+  ))
+  typeAhead.value = repeatedCharacterCycle ? normalizedKey : `${previousQuery}${normalizedKey}`
   if (typeAheadTimer) clearTimeout(typeAheadTimer)
   typeAheadTimer = setTimeout(() => { typeAhead.value = '' }, 500)
-  const query = normalizeTypeAhead(typeAhead.value)
   const options = enabledOptions.value
-  const match = options.find((option) => normalizeTypeAhead(option.label).startsWith(query))
+  const currentIndex = options.findIndex((option) => valuesEqual(option.value, activeValue.value))
+  const match = Array.from({ length: options.length }, (_, index) => (
+    options[(Math.max(currentIndex, -1) + index + 1) % options.length]
+  )).find((option) => normalizeTypeAhead(option.label).startsWith(typeAhead.value))
   if (match) {
     activeValue.value = match.value
     scrollActiveIntoView()
@@ -219,9 +229,37 @@ function resolvePortalTarget(modal) {
   return document.body
 }
 
+function createOwnedBodyPopupHost(modal) {
+  if (!modal || typeof document === 'undefined') return document.body
+  if (ownedBodyPopupHost?.isConnected) return ownedBodyPopupHost
+  const host = document.createElement('div')
+  host.setAttribute('data-testid', 'select-only-combobox-portal-host')
+  host.setAttribute('data-select-only-combobox-owner', stableIdBase)
+  host.style.position = 'fixed'
+  host.style.inset = '0'
+  host.style.overflow = 'visible'
+  host.style.pointerEvents = 'none'
+  document.body.appendChild(host)
+  ownedBodyPopupHost = host
+  popupHostRegistration = registerDialogPopupHost(modal, host, { manageLayerStyle: true })
+  return host
+}
+
+function removeOwnedBodyPopupHost() {
+  if (!ownedBodyPopupHost) return
+  const host = ownedBodyPopupHost
+  ownedBodyPopupHost = null
+  host.remove?.()
+}
+
 function releasePopupHostRegistration() {
   unregisterDialogPopupHost(popupHostRegistration)
   popupHostRegistration = null
+}
+
+function releasePopupResources() {
+  releasePopupHostRegistration()
+  removeOwnedBodyPopupHost()
 }
 
 function positionPopup() {
@@ -245,12 +283,15 @@ function positionPopup() {
   const top = placeAbove ? Math.max(topOffset + margin, rect.top - gap - renderedHeight) : rect.bottom + gap
   const renderedWidth = Math.min(Math.max(rect.width, 1), Math.max(1, width - margin * 2))
   const left = Math.min(Math.max(rect.left, leftOffset + margin), leftOffset + width - margin - renderedWidth)
+  const safeWidth = `min(${Math.round(renderedWidth)}px, calc(100vw - max(${margin}px, env(safe-area-inset-left, 0px)) - max(${margin}px, env(safe-area-inset-right, 0px))))`
+  const safeHeight = `min(${Math.floor(availableHeight)}px, calc(100vh - max(${margin}px, env(safe-area-inset-top, 0px)) - max(${margin}px, env(safe-area-inset-bottom, 0px))), calc(100dvh - max(${margin}px, env(safe-area-inset-top, 0px)) - max(${margin}px, env(safe-area-inset-bottom, 0px))))`
   popupStyle.value = {
     position: 'fixed',
-    top: `max(${Math.round(top)}px, env(safe-area-inset-top, 0px))`,
-    left: `max(${Math.round(left)}px, env(safe-area-inset-left, 0px))`,
-    width: `min(${Math.round(renderedWidth)}px, calc(100vw - max(8px, env(safe-area-inset-left, 0px)) - max(8px, env(safe-area-inset-right, 0px))))`,
-    maxHeight: `min(${Math.floor(availableHeight)}px, calc(100vh - max(16px, env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))), calc(100dvh - max(16px, env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)))`
+    top: `clamp(calc(${Math.round(topOffset)}px + max(${margin}px, env(safe-area-inset-top, 0px))), ${Math.round(top)}px, calc(${Math.round(topOffset + height)}px - max(${margin}px, env(safe-area-inset-bottom, 0px)) - ${safeHeight}))`,
+    left: `clamp(calc(${Math.round(leftOffset)}px + max(${margin}px, env(safe-area-inset-left, 0px))), ${Math.round(left)}px, calc(${Math.round(leftOffset + width)}px - max(${margin}px, env(safe-area-inset-right, 0px)) - ${safeWidth}))`,
+    width: safeWidth,
+    maxHeight: safeHeight,
+    pointerEvents: 'auto'
   }
 }
 
@@ -267,13 +308,17 @@ function schedulePopupPosition() {
 }
 
 function openPopup(event) {
-  if (props.disabled || props.readonly || hasDuplicateOptions.value || open.value) return
+  if (props.disabled || props.readonly || hasDuplicateOptions.value || open.value || closing.value) return
   event?.preventDefault?.()
   const modal = findOwningModal()
-  const target = resolvePortalTarget(modal)
-  portalTarget.value = target
-  releasePopupHostRegistration()
-  if (modal && target !== document.body) popupHostRegistration = registerDialogPopupHost(modal, target)
+  const resolvedTarget = resolvePortalTarget(modal)
+  releasePopupResources()
+  if (modal && resolvedTarget === document.body) {
+    portalTarget.value = createOwnedBodyPopupHost(modal)
+  } else {
+    portalTarget.value = resolvedTarget
+    if (modal) popupHostRegistration = registerDialogPopupHost(modal, resolvedTarget)
+  }
   activeValue.value = null
   reconcileActive()
   rendered.value = true
@@ -282,9 +327,10 @@ function openPopup(event) {
 }
 
 function closePopup(reason, event) {
-  if (!open.value) return
+  if (!open.value || closing.value) return
   if (reason !== 'tab') event?.preventDefault?.()
   open.value = false
+  closing.value = true
   activeValue.value = null
   typeAhead.value = ''
   if (typeAheadTimer) clearTimeout(typeAheadTimer)
@@ -295,6 +341,7 @@ function closePopup(reason, event) {
 }
 
 function commitActive(event) {
+  if (!open.value || closing.value) return
   event?.preventDefault?.()
   const option = props.options.find((candidate) => (
     !candidate.disabled && valuesEqual(candidate.value, activeValue.value)
@@ -318,11 +365,14 @@ function handleKeydown(event) {
     closePopup('escape', event)
   }
   else if (open.value && event.key === 'Tab') closePopup('tab')
-  else if (open.value && !event.altKey && !event.ctrlKey && !event.metaKey && event.key.length === 1) moveByTypeAhead(event.key)
+  else if (!event.altKey && !event.ctrlKey && !event.metaKey && event.key.length === 1) {
+    if (!open.value) openPopup(event)
+    if (open.value) moveByTypeAhead(event.key)
+  }
 }
 
 function handleOptionClick(option) {
-  if (option.disabled || props.disabled || props.readonly || hasDuplicateOptions.value) return
+  if (!open.value || closing.value || option.disabled || props.disabled || props.readonly || hasDuplicateOptions.value) return
   activeValue.value = option.value
   commitActive()
 }
@@ -338,7 +388,8 @@ function handleDocumentPointerDown(event) {
 }
 
 function handleAfterLeave() {
-  releasePopupHostRegistration()
+  closing.value = false
+  releasePopupResources()
 }
 
 watch([() => props.options, () => props.modelValue], () => {
@@ -369,7 +420,7 @@ onMounted(() => {
 onUnmounted(() => {
   disposed = true
   lifecycleGeneration += 1
-  releasePopupHostRegistration()
+  releasePopupResources()
   document.removeEventListener('pointerdown', handleDocumentPointerDown, true)
   window.removeEventListener?.('resize', handleViewportChange)
   window.removeEventListener?.('scroll', handleViewportChange, true)
@@ -394,7 +445,7 @@ onUnmounted(() => {
       :tabindex="disabled ? -1 : 0"
       :aria-labelledby="labelId"
       aria-haspopup="listbox"
-      :aria-controls="listboxId"
+      :aria-controls="open ? listboxId : null"
       :aria-expanded="open ? 'true' : 'false'"
       :aria-activedescendant="activeDescendant"
       :aria-required="required ? 'true' : null"
@@ -421,20 +472,27 @@ onUnmounted(() => {
     <Teleport :to="portalTarget">
       <Transition name="select-only-combobox" @after-leave="handleAfterLeave">
         <div v-if="rendered" ref="popupRef" data-testid="select-only-combobox-popup" :style="popupStyle" class="select-only-combobox__popup z-50 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl">
-          <ul v-if="open" :id="listboxId" role="listbox" :aria-labelledby="labelId" class="max-h-inherit overflow-y-auto overscroll-contain p-1">
+          <ul
+            :id="open ? listboxId : null"
+            :role="open ? 'listbox' : null"
+            :aria-labelledby="open ? labelId : null"
+            :aria-hidden="open ? null : 'true'"
+            :inert="open ? null : ''"
+            class="max-h-inherit overflow-y-auto overscroll-contain p-1"
+          >
             <li v-for="option in options" :key="`${typeof option.value}:${encodedOptionValue(option.value)}`" role="none">
               <button
                 :id="optionId(option)"
                 type="button"
-                role="option"
+                :role="open ? 'option' : null"
                 tabindex="-1"
                 :disabled="Boolean(option.disabled)"
-                :aria-disabled="option.disabled ? 'true' : 'false'"
-                :aria-selected="!option.disabled && valuesEqual(option.value, activeValue) ? 'true' : 'false'"
+                :aria-disabled="open ? (option.disabled ? 'true' : 'false') : null"
+                :aria-selected="open ? (!option.disabled && valuesEqual(option.value, activeValue) ? 'true' : 'false') : null"
                 :data-committed="valuesEqual(option.value, modelValue) ? 'true' : null"
                 class="flex min-h-10 w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-800 outline-none hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:text-gray-400"
                 :class="valuesEqual(option.value, activeValue) ? 'bg-blue-50 text-blue-900' : ''"
-                @mouseenter="!option.disabled && (activeValue = option.value)"
+                @mouseenter="open && !option.disabled && (activeValue = option.value)"
                 @pointerdown="handleOptionPointerDown"
                 @click="handleOptionClick(option)"
               >

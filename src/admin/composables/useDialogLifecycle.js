@@ -28,6 +28,11 @@ const restoreBackground = (element, state) => {
   else element.setAttribute?.('aria-hidden', state.ariaHidden)
 }
 
+const restorePopupHostLayerStyle = (popupHost, hostState) => {
+  if (!popupHost?.style || !hostState) return
+  popupHost.style.zIndex = hostState.originalZIndex
+}
+
 const syncScrollLock = () => {
   if (typeof document === 'undefined') return
 
@@ -86,10 +91,15 @@ const syncPageIsolation = () => {
 
 const syncLayerIsolation = () => {
   const topLayer = dialogLayers.at(-1)
-  for (const layer of dialogLayers) {
+  for (const [index, layer] of dialogLayers.entries()) {
     const inert = layer !== topLayer
     setElementInert(layer.element, inert)
-    for (const popupHost of layer.popupHosts.keys()) setElementInert(popupHost, inert)
+    for (const [popupHost, hostState] of layer.popupHosts) {
+      setElementInert(popupHost, inert)
+      if (hostState.managedLayerStyleCount > 0 && popupHost.style) {
+        popupHost.style.zIndex = String(1001 + index * 10)
+      }
+    }
   }
   syncPageIsolation()
   syncScrollLock()
@@ -103,12 +113,19 @@ export const registerDialogLayer = (element) => {
   return layer
 }
 
-export const registerDialogPopupHost = (dialogElement, popupHost) => {
+export const registerDialogPopupHost = (dialogElement, popupHost, { manageLayerStyle = false } = {}) => {
   const layer = dialogLayers.find(({ element }) => element === dialogElement)
   if (!layer || !popupHost) return null
 
-  layer.popupHosts.set(popupHost, (layer.popupHosts.get(popupHost) || 0) + 1)
-  const registration = { layer, popupHost, active: true }
+  const hostState = layer.popupHosts.get(popupHost) || {
+    count: 0,
+    managedLayerStyleCount: 0,
+    originalZIndex: popupHost.style?.zIndex ?? ''
+  }
+  hostState.count += 1
+  if (manageLayerStyle) hostState.managedLayerStyleCount += 1
+  layer.popupHosts.set(popupHost, hostState)
+  const registration = { layer, popupHost, manageLayerStyle, active: true }
   syncLayerIsolation()
   return registration
 }
@@ -116,12 +133,19 @@ export const registerDialogPopupHost = (dialogElement, popupHost) => {
 export const unregisterDialogPopupHost = (registration) => {
   if (!registration?.active) return
   registration.active = false
-  const { layer, popupHost } = registration
-  const count = layer.popupHosts.get(popupHost) || 0
-  if (count > 1) layer.popupHosts.set(popupHost, count - 1)
+  const { layer, popupHost, manageLayerStyle } = registration
+  const hostState = layer.popupHosts.get(popupHost)
+  if (!hostState) return
+  hostState.count = Math.max(0, hostState.count - 1)
+  if (manageLayerStyle) {
+    hostState.managedLayerStyleCount = Math.max(0, hostState.managedLayerStyleCount - 1)
+    if (hostState.managedLayerStyleCount === 0) restorePopupHostLayerStyle(popupHost, hostState)
+  }
+  if (hostState.count > 0) layer.popupHosts.set(popupHost, hostState)
   else {
     layer.popupHosts.delete(popupHost)
     setElementInert(popupHost, false)
+    restorePopupHostLayerStyle(popupHost, hostState)
   }
   if (dialogLayers.includes(layer)) syncLayerIsolation()
 }
@@ -130,7 +154,10 @@ export const unregisterDialogLayer = (layer) => {
   const index = dialogLayers.indexOf(layer)
   if (index >= 0) {
     setElementInert(layer.element, false)
-    for (const popupHost of layer.popupHosts.keys()) setElementInert(popupHost, false)
+    for (const [popupHost, hostState] of layer.popupHosts) {
+      setElementInert(popupHost, false)
+      restorePopupHostLayerStyle(popupHost, hostState)
+    }
     dialogLayers.splice(index, 1)
   }
   syncLayerIsolation()
@@ -182,7 +209,10 @@ export const useDialogContentSnapshot = ({ open, phase, source, clone = (value) 
 export const __resetDialogLayersForTests = () => {
   for (const layer of dialogLayers) {
     setElementInert(layer.element, false)
-    for (const popupHost of layer.popupHosts.keys()) setElementInert(popupHost, false)
+    for (const [popupHost, hostState] of layer.popupHosts) {
+      setElementInert(popupHost, false)
+      restorePopupHostLayerStyle(popupHost, hostState)
+    }
   }
   dialogLayers.splice(0)
   syncLayerIsolation()

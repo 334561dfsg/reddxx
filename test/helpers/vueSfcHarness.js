@@ -47,6 +47,29 @@ const walk = (node, visit) => {
   for (const child of node.children || []) walk(child, visit)
 }
 
+const createEventTarget = (initial = {}) => {
+  const listeners = new Map()
+  return {
+    ...initial,
+    addEventListener(type, listener) {
+      const handlers = listeners.get(type) || new Set()
+      handlers.add(listener)
+      listeners.set(type, handlers)
+    },
+    removeEventListener(type, listener) {
+      listeners.get(type)?.delete(listener)
+    },
+    dispatchEvent(event) {
+      event.target ||= this
+      for (const listener of [...(listeners.get(event.type) || [])]) listener(event)
+      return !event.defaultPrevented
+    },
+    listenerCount(type) {
+      return listeners.get(type)?.size || 0
+    }
+  }
+}
+
 const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
   const attributes = new Map()
   const listeners = new Map()
@@ -79,6 +102,22 @@ const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
       values() {
         return classes.values()
       }
+    },
+    appendChild(child) {
+      if (child.parent) child.parent.removeChild?.(child)
+      child.parent = node
+      node.children.push(child)
+      return child
+    },
+    removeChild(child) {
+      const index = node.children.indexOf(child)
+      if (index >= 0) node.children.splice(index, 1)
+      document.eventLog?.push({ type: 'dom-remove', node: child })
+      child.parent = null
+      return child
+    },
+    remove() {
+      node.parent?.removeChild?.(node)
     },
     addEventListener(type, listener) {
       const handlers = listeners.get(type) || new Set()
@@ -249,6 +288,19 @@ const createDocument = () => {
     querySelector(selector) {
       if (selector === 'body') return document.body
       return null
+    },
+    createElement(tag) {
+      return createHostNode(document, tag)
+    },
+    getElementById(id) {
+      let match = null
+      walk(document.body, (candidate) => {
+        if (!match && candidate.getAttribute?.('id') === id) match = candidate
+      })
+      return match
+    },
+    listenerCount(type) {
+      return listeners.get(type)?.size || 0
     }
   }
   document.body = createHostNode(document, 'body', { connectedRoot: true })
@@ -368,7 +420,7 @@ const flushVue = async () => {
   await nextTick()
 }
 
-export const createSfcHarness = async (component, initialProps = {}, listeners = {}) => {
+export const createSfcHarness = async (component, initialProps = {}, listeners = {}, environment = {}) => {
   const previousGlobals = {
     document: globalThis.document,
     window: globalThis.window,
@@ -376,9 +428,16 @@ export const createSfcHarness = async (component, initialProps = {}, listeners =
     cancelAnimationFrame: globalThis.cancelAnimationFrame
   }
   const document = createDocument()
-  const animationFrames = []
+  const animationFrames = new Map()
+  let animationFrameSequence = 0
   globalThis.document = document
-  globalThis.window = {
+  const visualViewport = environment.visualViewport
+    ? createEventTarget(environment.visualViewport)
+    : undefined
+  const harnessWindow = createEventTarget({
+    innerWidth: environment.innerWidth,
+    innerHeight: environment.innerHeight,
+    visualViewport,
     getComputedStyle: () => ({
       transitionDelay: '0s',
       transitionDuration: '0.001s',
@@ -386,13 +445,20 @@ export const createSfcHarness = async (component, initialProps = {}, listeners =
       animationDelay: '0s',
       animationDuration: '0s',
       animationName: 'none'
-    })
-  }
+    }),
+    ...environment.window
+  })
+  globalThis.window = harnessWindow
   globalThis.requestAnimationFrame = (callback) => {
-    animationFrames.push(callback)
-    return animationFrames.length
+    animationFrameSequence += 1
+    animationFrames.set(animationFrameSequence, callback)
+    return animationFrameSequence
   }
-  globalThis.cancelAnimationFrame = () => {}
+  globalThis.cancelAnimationFrame = (id) => {
+    if (animationFrames.delete(id)) {
+      document.eventLog.push({ type: 'animation-frame-cancelled', id })
+    }
+  }
 
   const renderer = createHostRenderer(document)
   const root = createHostNode(document, 'main', { connectedRoot: true })
@@ -443,13 +509,17 @@ export const createSfcHarness = async (component, initialProps = {}, listeners =
   }
   const finishTransitions = async () => {
     for (let pass = 0; pass < 2; pass += 1) {
-      const callbacks = animationFrames.splice(0)
+      const callbacks = [...animationFrames.values()]
+      animationFrames.clear()
       callbacks.forEach((callback) => callback())
     }
     await new Promise((resolvePromise) => setTimeout(resolvePromise, 5))
     await flushVue()
   }
+  let cleanedUp = false
   const cleanup = () => {
+    if (cleanedUp) return
+    cleanedUp = true
     app.unmount()
     globalThis.document = previousGlobals.document
     globalThis.window = previousGlobals.window
@@ -468,7 +538,9 @@ export const createSfcHarness = async (component, initialProps = {}, listeners =
     finishTransitions,
     flush: flushVue,
     keydown,
+    pendingAnimationFrameCount: () => animationFrames.size,
     props,
-    root
+    root,
+    window: harnessWindow
   }
 }
