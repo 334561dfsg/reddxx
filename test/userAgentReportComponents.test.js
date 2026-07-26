@@ -116,6 +116,47 @@ test('agent report Drawer uses approved empty copy for each report section', asy
   assert.equal(harness.findByTestId('agent-report-pagination'), undefined)
 })
 
+test('agent report Drawer assigns bottom safe-area padding only to the flexible region without a footer', async (t) => {
+  const component = await loadDrawer()
+  const emptyHarness = await createSfcHarness(component, { visible: true, user, report: null, error: '' })
+  const dailyEmptyHarness = await createSfcHarness(component, {
+    visible: true,
+    user,
+    report: { ...report, dailyRows: [] },
+    error: ''
+  })
+  const pagedHarness = await createSfcHarness(component, { visible: true, user, report, error: '' })
+  t.after(emptyHarness.cleanup)
+  t.after(dailyEmptyHarness.cleanup)
+  t.after(pagedHarness.cleanup)
+  await emptyHarness.finishTransitions()
+  await dailyEmptyHarness.finishTransitions()
+  await pagedHarness.finishTransitions()
+
+  const safeBottomClass = 'pb-[max(1rem,env(safe-area-inset-bottom))]'
+  const footerSafeBottomClass = 'pb-[max(0.75rem,env(safe-area-inset-bottom))]'
+  const emptyState = emptyHarness.findByTestId('agent-report-empty-state')
+  assert.ok(emptyState)
+  assert.match(emptyState.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
+  assert.equal(emptyHarness.findByTestId('agent-report-pagination'), undefined)
+
+  emptyHarness.props.error = '报表服务暂时不可用'
+  await emptyHarness.flush()
+  const errorState = emptyHarness.findByTestId('agent-report-error-state')
+  assert.ok(errorState)
+  assert.match(errorState.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
+  assert.equal(emptyHarness.findByTestId('agent-report-pagination'), undefined)
+
+  const dailyEmptyScroll = dailyEmptyHarness.findByTestId('agent-report-daily-scroll')
+  assert.match(dailyEmptyScroll.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
+  assert.equal(dailyEmptyHarness.findByTestId('agent-report-pagination'), undefined)
+
+  const pagedScroll = pagedHarness.findByTestId('agent-report-daily-scroll')
+  const pagination = pagedHarness.findByTestId('agent-report-pagination')
+  assert.doesNotMatch(pagedScroll.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
+  assert.match(pagination.getAttribute('class'), new RegExp(footerSafeBottomClass.replace(/[()[\]]/g, '\\$&')))
+})
+
 test('agent report Drawer clamps same-user data shrink but resets page for a new context', async (t) => {
   const component = await loadDrawer()
   const harness = await createSfcHarness(component, { visible: true, user, report, error: '' })

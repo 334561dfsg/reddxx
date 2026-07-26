@@ -80,7 +80,7 @@ watch(totalPages, (nextTotalPages) => {
           </header>
 
           <div data-testid="user-agent-report-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
-            <p v-if="error" ref="errorRef" tabindex="-1" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" :class="report ? 'shrink-0' : 'min-h-0 flex-1 overflow-y-auto'" role="alert">
+            <p v-if="error" ref="errorRef" data-testid="agent-report-error-state" tabindex="-1" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" :class="report ? 'shrink-0' : 'min-h-0 flex-1 overflow-y-auto pb-[max(1rem,env(safe-area-inset-bottom))]'" role="alert">
               <span class="font-semibold">代理报表加载失败</span><span class="mt-1 block break-words">{{ error }}</span>
             </p>
 
@@ -121,7 +121,7 @@ watch(totalPages, (nextTotalPages) => {
                   <span class="text-xs text-slate-500">按日期倒序</span>
                 </div>
               </section>
-              <div data-testid="agent-report-daily-scroll" class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
+              <div data-testid="agent-report-daily-scroll" class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain" :class="dailyRows.length ? '' : 'pb-[max(1rem,env(safe-area-inset-bottom))]'">
                 <div v-if="dailyRows.length" class="mt-2 space-y-2">
                   <article v-for="row in pagedDailyRows" :key="row.date" data-testid="agent-report-daily-row" class="rounded-xl border border-slate-200 p-3">
                     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -144,7 +144,7 @@ watch(totalPages, (nextTotalPages) => {
               </footer>
             </template>
 
-            <div v-else-if="!error" class="grid min-h-0 flex-1 place-items-center overflow-y-auto rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
+            <div v-else-if="!error" data-testid="agent-report-empty-state" class="grid min-h-0 flex-1 place-items-center overflow-y-auto rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 pb-[max(1rem,env(safe-area-inset-bottom))] text-center">
               <div><p class="font-medium text-slate-700">当前代理暂无业务报表数据</p><p class="mt-1 text-sm text-slate-500">该代理尚无可统计的客户与佣金记录。</p></div>
             </div>
           </div>
