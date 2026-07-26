@@ -12,6 +12,7 @@ import UserProfileEditDialog from '../../../admin/components/user/UserProfileEdi
 import UserParentResetDialog from '../../../admin/components/user/UserParentResetDialog.vue'
 import UserAgentRoleDialog from '../../../admin/components/user/UserAgentRoleDialog.vue'
 import UserTeamReportDrawer from '../../../admin/components/user/UserTeamReportDrawer.vue'
+import UserAgentSubordinateDrawer from '../../../admin/components/user/UserAgentSubordinateDrawer.vue'
 import UserAgentReportDrawer from '../../../admin/components/user/UserAgentReportDrawer.vue'
 import UserFundsMutationDialog from '../../../admin/components/user/UserFundsMutationDialog.vue'
 import UserWithdrawFlowLimitDialog from '../../../admin/components/user/UserWithdrawFlowLimitDialog.vue'
@@ -41,6 +42,7 @@ import {
   unfreezeAdminFunds
 } from '../../../admin/repositories/userFundsRepository.js'
 import { getUserOnchainWallet } from '../../../admin/repositories/userOnchainWalletRepository.js'
+import { getUserAgentSubordinates } from '../../../admin/repositories/userAgentSubordinateRepository.js'
 import { getUserAgentReport } from '../../../admin/repositories/userAgentReportRepository.js'
 import {
   adjustUserCredit,
@@ -135,6 +137,12 @@ const agentRoleReturnFocus = ref(null)
 const teamReportOpen = ref(false)
 const teamReportUser = ref(null)
 const teamReportReturnFocus = ref(null)
+const agentSubordinateOpen = ref(false)
+const agentSubordinateUser = ref(null)
+const agentSubordinateRows = ref([])
+const agentSubordinateError = ref('')
+const agentSubordinateLoading = ref(false)
+const agentSubordinateReturnFocus = ref(null)
 const agentReportOpen = ref(false)
 const agentReportUser = ref(null)
 const agentReportData = ref(null)
@@ -447,6 +455,16 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
     return
   }
 
+  if (id === 'agent-subordinates') {
+    agentSubordinateUser.value = user
+    agentSubordinateRows.value = []
+    agentSubordinateError.value = ''
+    agentSubordinateReturnFocus.value = trigger
+    agentSubordinateOpen.value = true
+    await loadAgentSubordinates()
+    return
+  }
+
   if (id === 'agent-report') {
     agentReportUser.value = user
     agentReportData.value = null
@@ -491,6 +509,35 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
     transfer: 'transfer'
   }
   if (regularActions[id]) await openRegularAction(user, regularActions[id], trigger)
+}
+
+const loadAgentSubordinates = async () => {
+  const user = agentSubordinateUser.value
+  if (!user || agentSubordinateLoading.value) return
+  agentSubordinateLoading.value = true
+  agentSubordinateError.value = ''
+  try {
+    agentSubordinateRows.value = await Promise.resolve(getUserAgentSubordinates(userIdOf(user)))
+  } catch (error) {
+    agentSubordinateRows.value = []
+    agentSubordinateError.value = error instanceof Error
+      ? error.message
+      : '代理下级用户加载失败，请稍后重试'
+  } finally {
+    agentSubordinateLoading.value = false
+  }
+}
+
+const closeAgentSubordinates = () => {
+  agentSubordinateOpen.value = false
+}
+
+const clearAgentSubordinates = () => {
+  agentSubordinateUser.value = null
+  agentSubordinateRows.value = []
+  agentSubordinateError.value = ''
+  agentSubordinateLoading.value = false
+  agentSubordinateReturnFocus.value = null
 }
 
 const closeOnchainWallet = () => {
@@ -1149,6 +1196,18 @@ const clearDetailDrawer = () => {
       :return-focus="agentReportReturnFocus"
       @close="closeAgentReport"
       @closed="clearAgentReport"
+    />
+
+    <UserAgentSubordinateDrawer
+      :visible="agentSubordinateOpen"
+      :user="agentSubordinateUser"
+      :rows="agentSubordinateRows"
+      :error="agentSubordinateError"
+      :loading="agentSubordinateLoading"
+      :return-focus="agentSubordinateReturnFocus"
+      @retry="loadAgentSubordinates"
+      @close="closeAgentSubordinates"
+      @closed="clearAgentSubordinates"
     />
 
     <UserOnchainWalletDrawer

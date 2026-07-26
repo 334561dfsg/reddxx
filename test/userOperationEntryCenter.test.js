@@ -84,8 +84,10 @@ test('operation catalog exposes agent-only reporting and contextual agent action
   const agentGroups = getUserOperationGroups({ status: 'active', role: 'agent' })
   const agent = agentGroups.find((group) => group.id === 'agent')
 
-  assert.deepEqual(agent.entries.map((entry) => entry.id), ['reset-agent', 'agent-report'])
-  assert.deepEqual(agent.entries.map((entry) => entry.title), ['取消代理身份', '查看代理报表'])
+  assert.deepEqual(agent.entries.map((entry) => entry.id), ['reset-agent', 'agent-subordinates', 'agent-report'])
+  assert.deepEqual(agent.entries.map((entry) => entry.title), ['取消代理身份', '查看下级用户', '查看代理报表'])
+  assert.equal(agent.entries.find((entry) => entry.id === 'agent-subordinates').handler, 'agent-subordinates')
+  assert.equal(agent.entries.find((entry) => entry.id === 'agent-subordinates').description, '查看归属于该代理的直属客户')
   assert.equal(agent.entries.find((entry) => entry.id === 'agent-report').handler, 'agent-report')
   assert.equal(getUserOperationEntry('reset-agent', { role: 'user' }).title, '设置为代理')
   assert.equal(getUserOperationEntry('reset-agent', { isAgent: true }).title, '取消代理身份')
