@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { USER_ROLE_OPTIONS, USER_STATUS_OPTIONS } from '../../constants/user.js'
 import { getDescendants, getDirectReferrals } from '../../repositories/userRelationshipRepository.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
@@ -17,11 +17,13 @@ const props = defineProps({
 const emit = defineEmits(['close', 'closed'])
 const drawerRef = ref(null)
 const titleRef = ref(null)
+const filterToggleRef = ref(null)
 const keyword = ref('')
 const status = ref('all')
 const role = ref('all')
 const selectedMember = ref(null)
 const currentPage = ref(1)
+const filtersOpen = ref(false)
 
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const isAllMode = computed(() => props.mode === 'all')
@@ -76,6 +78,12 @@ const {
 })
 
 const close = createDialogCloseAction(requestDialogClose)
+const closeFilters = async () => {
+  if (!filtersOpen.value) return
+  filtersOpen.value = false
+  await nextTick()
+  filterToggleRef.value?.focus()
+}
 const handleAfterLeave = async () => {
   if (!await onAfterLeave()) return
   emit('closed')
@@ -88,6 +96,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
   role.value = 'all'
   selectedMember.value = null
   currentPage.value = 1
+  filtersOpen.value = false
 })
 
 watch(() => [keyword.value, status.value, role.value], () => {
@@ -135,14 +144,32 @@ watch(totalPages, (nextTotalPages) => {
 
           <div data-testid="relationship-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <div data-testid="relationship-drawer-controls" class="shrink-0 px-4 pt-4 sm:px-5">
-              <div class="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div class="relative mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
                 <label>
                   <span class="sr-only">搜索裂变下级</span>
                   <input v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
                 </label>
-                <details data-testid="relationship-drawer-filters" class="mt-3">
-                  <summary class="flex min-h-11 cursor-pointer items-center rounded-lg px-2 text-sm font-medium text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-blue-500">筛选条件</summary>
-                  <div class="grid grid-cols-1 gap-3 pt-3 sm:grid-cols-2">
+                <button
+                  ref="filterToggleRef"
+                  data-testid="relationship-drawer-filter-toggle"
+                  type="button"
+                  class="mt-3 flex min-h-11 w-full items-center rounded-lg px-2 text-left text-sm font-medium text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  :aria-expanded="filtersOpen ? 'true' : 'false'"
+                  aria-controls="relationship-drawer-filter-panel"
+                  @click="filtersOpen = !filtersOpen"
+                >
+                  筛选条件
+                </button>
+                <div
+                  v-if="filtersOpen"
+                  id="relationship-drawer-filter-panel"
+                  data-testid="relationship-drawer-filter-panel"
+                  class="absolute inset-x-0 top-full z-20 mt-2 rounded-xl border border-slate-200 bg-white p-3 shadow-lg"
+                  role="group"
+                  aria-label="裂变下级筛选条件"
+                  @keydown.esc.stop.prevent="closeFilters"
+                >
+                  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <fieldset class="min-w-0">
                       <legend class="text-xs font-medium text-slate-600">账户状态</legend>
                       <div class="mt-1 flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1">
@@ -176,7 +203,7 @@ watch(totalPages, (nextTotalPages) => {
                       </div>
                     </fieldset>
                   </div>
-                </details>
+                </div>
               </div>
             </div>
 
