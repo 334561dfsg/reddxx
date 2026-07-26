@@ -13,9 +13,9 @@ const props = defineProps({
 const emit = defineEmits(['close', 'closed', 'request-mfa'])
 const modeToType = { freeze: 'freeze-funds', unfreeze: 'unfreeze-funds', deduct: 'deduct-funds' }
 const configs = {
-  freeze: { title: '冻结资金', action: '冻结', tone: 'bg-rose-600 hover:bg-rose-700', hint: '把当前全部可用资金转为冻结资金，用户总资产不变。' },
-  unfreeze: { title: '解冻资金', action: '解冻', tone: 'bg-amber-600 hover:bg-amber-700', hint: '仅解冻由管理员冻结的资金，不影响订单、风控等业务冻结资金。' },
-  deduct: { title: '划扣可用资金', action: '划扣', tone: 'bg-rose-600 hover:bg-rose-700', hint: '永久减少可用资金并生成独立资金记录。' }
+  freeze: { title: '冻结资金', action: '冻结', amountLabel: '冻结金额', tone: 'bg-rose-600 hover:bg-rose-700', hint: '将指定可用资金转为冻结资金，用户总资产不变。' },
+  unfreeze: { title: '解冻资金', action: '解冻', amountLabel: '解冻金额', tone: 'bg-amber-600 hover:bg-amber-700', hint: '仅解冻由管理员冻结的资金，不影响订单、风控等业务冻结资金。' },
+  deduct: { title: '划扣可用资金', action: '划扣', amountLabel: '划扣金额', tone: 'bg-rose-600 hover:bg-rose-700', hint: '永久减少可用资金并生成独立资金记录。' }
 }
 const dialogRef = ref(null)
 const amountRef = ref(null)
@@ -32,11 +32,10 @@ const balance = computed(() => Number(props.snapshot?.balance ?? props.user?.bal
 const frozenBalance = computed(() => Number(props.snapshot?.frozenBalance ?? props.user?.frozenBalance ?? 0))
 const adminFrozenAmount = computed(() => Number(props.snapshot?.adminFrozenAmount ?? 0))
 const parsedAmount = computed(() => Number(form.amount))
-const operationAmount = computed(() => {
-  if (props.mode === 'freeze') return balance.value
-  if (props.mode === 'unfreeze') return Math.min(adminFrozenAmount.value, frozenBalance.value)
-  return Number.isFinite(parsedAmount.value) ? parsedAmount.value : 0
-})
+const maximumAmount = computed(() => props.mode === 'unfreeze'
+  ? Math.min(adminFrozenAmount.value, frozenBalance.value)
+  : balance.value)
+const operationAmount = computed(() => Number.isFinite(parsedAmount.value) ? parsedAmount.value : 0)
 const after = computed(() => {
   const amount = operationAmount.value
   if (props.mode === 'freeze') return { balance: balance.value - amount, frozen: frozenBalance.value + amount }
@@ -44,6 +43,10 @@ const after = computed(() => {
   return { balance: balance.value - amount, frozen: frozenBalance.value }
 })
 const money = (value) => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const fillMaximum = () => {
+  form.amount = maximumAmount.value > 0 ? String(Number(maximumAmount.value.toFixed(2))) : ''
+  amountRef.value?.focus?.()
+}
 
 const resetForm = () => {
   stage.value = 'edit'
@@ -55,7 +58,7 @@ const closeDisabled = computed(() => props.busy)
 const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
   open: computed(() => props.visible),
   dialogRef,
-  initialFocusRef: computed(() => props.mode === 'deduct' ? amountRef.value : reasonRef.value),
+  initialFocusRef: amountRef,
   returnFocusRef: computed(() => props.returnFocus),
   requestClose: () => emit('close'),
   closeDisabled
@@ -76,9 +79,8 @@ const startConfirm = async () => {
   const reason = form.reason.trim()
   if (!reason) return showError('操作原因必填')
   if (reason.length > 200) return showError('操作原因不能超过 200 字')
-  if (operationAmount.value <= 0) return showError(props.mode === 'unfreeze' ? '当前没有可解冻的资金' : '当前没有可操作的可用资金')
-  if (props.mode === 'deduct' && (!/^\d+(\.\d{1,2})?$/.test(form.amount.trim()) || parsedAmount.value > balance.value)) {
-    return showError('请输入不超过可用资金且最多两位小数的划扣金额')
+  if (!/^\d+(\.\d{1,2})?$/.test(form.amount.trim()) || operationAmount.value <= 0 || operationAmount.value > maximumAmount.value) {
+    return showError(`请输入不超过${props.mode === 'unfreeze' ? '可解冻资金' : '可用资金'}且最多两位小数的${config.value.amountLabel}`)
   }
   stage.value = 'confirm'
   await nextTick()
@@ -88,12 +90,12 @@ const backToEdit = async () => {
   stage.value = 'edit'
   errorMessage.value = ''
   await nextTick()
-  ;(props.mode === 'deduct' ? amountRef.value : reasonRef.value)?.focus?.()
+  amountRef.value?.focus?.()
 }
 const requestMfa = () => {
   if (phase.value !== 'open' || props.busy) return
   const payload = { userId: userId.value, reason: form.reason.trim() }
-  if (props.mode === 'deduct') payload.amount = parsedAmount.value
+  payload.amount = parsedAmount.value
   emit('request-mfa', { type: modeToType[props.mode], payload, returnFocus: submitButtonRef.value })
 }
 watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visible) resetForm() })
@@ -121,10 +123,14 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
                 <div class="rounded-lg border border-slate-200 p-3"><dt class="text-xs text-slate-500">可用资金</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(balance) }}</dd></div>
                 <div class="rounded-lg border border-slate-200 p-3"><dt class="text-xs text-slate-500">冻结资金</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(frozenBalance) }}</dd></div>
               </dl>
-              <label v-if="mode === 'deduct'" class="block">
-                <span class="text-sm font-medium text-slate-800">划扣金额 <span class="text-rose-500">*</span></span>
-                <input ref="amountRef" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="最多两位小数" />
-              </label>
+              <div>
+                <label for="user-funds-operation-amount" class="text-sm font-medium text-slate-800">{{ config.amountLabel }} <span class="text-rose-500">*</span></label>
+                <div class="mt-1.5 flex gap-2">
+                  <input id="user-funds-operation-amount" ref="amountRef" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="最多两位小数" />
+                  <button type="button" class="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" @click="fillMaximum">全部</button>
+                </div>
+                <p class="mt-1 text-xs text-slate-500">最多可操作 {{ money(maximumAmount) }}</p>
+              </div>
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">操作原因 <span class="text-rose-500">*</span></span>
                 <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" :placeholder="`请说明${config.action}原因`" />

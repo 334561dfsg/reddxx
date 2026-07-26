@@ -31,25 +31,57 @@ afterEach(() => {
 test('freeze and admin unfreeze preserve pre-existing business frozen funds', () => {
   const frozen = freezeAllAvailable({
     userId: user.id,
+    amount: '250.25',
     reason: ' 风险排查 ',
     operatorId: 'admin_current'
   })
 
-  assert.equal(frozen.balance, 0)
-  assert.equal(frozen.frozenBalance, 1331)
-  assert.equal(frozen.adminFrozenAmount, 1250.75)
+  assert.equal(frozen.balance, 1000.5)
+  assert.equal(frozen.frozenBalance, 330.5)
+  assert.equal(frozen.adminFrozenAmount, 250.25)
   assert.equal(frozen.totalBalance, 1331)
 
   const unfrozen = unfreezeAdminFunds({
     userId: user.id,
+    amount: '100',
     reason: '排查完成',
     operatorId: 'admin_current'
   })
 
-  assert.equal(unfrozen.balance, 1250.75)
-  assert.equal(unfrozen.frozenBalance, 80.25)
-  assert.equal(unfrozen.adminFrozenAmount, 0)
+  assert.equal(unfrozen.balance, 1100.5)
+  assert.equal(unfrozen.frozenBalance, 230.5)
+  assert.equal(unfrozen.adminFrozenAmount, 150.25)
   assert.equal(getFundsAuditLog({ userId: user.id }).length, 2)
+
+  const fullyUnfrozen = unfreezeAdminFunds({
+    userId: user.id,
+    amount: '150.25',
+    reason: '全部解冻',
+    operatorId: 'admin_current'
+  })
+  assert.equal(fullyUnfrozen.balance, 1250.75)
+  assert.equal(fullyUnfrozen.frozenBalance, 80.25)
+  assert.equal(fullyUnfrozen.adminFrozenAmount, 0)
+  assert.equal(getFundsAuditLog({ userId: user.id }).length, 3)
+})
+
+test('freeze and unfreeze validate entered amounts without partial writes', () => {
+  for (const amount of ['0', '-1', '1.234', '999999']) {
+    const before = getFundsSnapshot(user.id)
+    const auditCount = getFundsAuditLog({ userId: user.id }).length
+    assert.throws(() => freezeAllAvailable({ userId: user.id, amount, reason: '测试', operatorId: 'admin_current' }))
+    assert.deepEqual(getFundsSnapshot(user.id), before)
+    assert.equal(getFundsAuditLog({ userId: user.id }).length, auditCount)
+  }
+
+  freezeAllAvailable({ userId: user.id, amount: '200', reason: '测试冻结', operatorId: 'admin_current' })
+  for (const amount of ['0', '-1', '1.234', '200.01']) {
+    const before = getFundsSnapshot(user.id)
+    const auditCount = getFundsAuditLog({ userId: user.id }).length
+    assert.throws(() => unfreezeAdminFunds({ userId: user.id, amount, reason: '测试', operatorId: 'admin_current' }))
+    assert.deepEqual(getFundsSnapshot(user.id), before)
+    assert.equal(getFundsAuditLog({ userId: user.id }).length, auditCount)
+  }
 })
 
 test('deduction creates one transaction and failed commands are atomic', () => {
@@ -82,8 +114,8 @@ test('deduction creates one transaction and failed commands are atomic', () => {
 test('freeze and unfreeze reject unavailable operations without side effects', () => {
   user.balance = 0
   const before = getFundsSnapshot(user.id)
-  assert.throws(() => freezeAllAvailable({ userId: user.id, reason: '测试', operatorId: 'admin_current' }), /没有可冻结/)
-  assert.throws(() => unfreezeAdminFunds({ userId: user.id, reason: '测试', operatorId: 'admin_current' }), /没有可解冻的资金/)
+  assert.throws(() => freezeAllAvailable({ userId: user.id, amount: '1', reason: '测试', operatorId: 'admin_current' }), /不能超过可用余额/)
+  assert.throws(() => unfreezeAdminFunds({ userId: user.id, amount: '1', reason: '测试', operatorId: 'admin_current' }), /没有可解冻的资金/)
   assert.deepEqual(getFundsSnapshot(user.id), before)
   assert.equal(getFundsAuditLog({ userId: user.id }).length, 0)
 })

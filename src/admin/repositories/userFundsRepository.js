@@ -78,35 +78,37 @@ const appendAudit = ({ type, userId, before, after, amount = null, reason, opera
 
 export const getFundsSnapshot = (userId) => snapshotFor(requireUser(userId))
 
-export const freezeAllAvailable = ({ userId, reason, operatorId }) => {
+export const freezeAllAvailable = ({ userId, amount, reason, operatorId }) => {
   const user = requireUser(userId)
+  const parsedAmount = parseMoney(amount, '冻结金额')
   const cleanReason = requireText(reason)
   const before = snapshotFor(user)
-  const amount = before.balance
-  if (amount <= 0) throw new Error('当前没有可冻结的可用资金')
+  if (parsedAmount > before.balance) throw new Error('冻结金额不能超过可用余额')
 
-  const nextAdminFrozen = roundMoney(before.adminFrozenAmount + amount)
-  user.balance = 0
-  user.frozenBalance = roundMoney(before.frozenBalance + amount)
+  const nextAdminFrozen = roundMoney(before.adminFrozenAmount + parsedAmount)
+  user.balance = roundMoney(before.balance - parsedAmount)
+  user.frozenBalance = roundMoney(before.frozenBalance + parsedAmount)
   adminFrozenByUser.set(before.userId, nextAdminFrozen)
   const after = snapshotFor(user)
-  const transactionId = appendAudit({ type: 'freeze', userId: before.userId, before, after, amount, reason: cleanReason, operatorId })
+  const transactionId = appendAudit({ type: 'freeze', userId: before.userId, before, after, amount: parsedAmount, reason: cleanReason, operatorId })
   return { ...after, transactionId }
 }
 
-export const unfreezeAdminFunds = ({ userId, reason, operatorId }) => {
+export const unfreezeAdminFunds = ({ userId, amount, reason, operatorId }) => {
   const user = requireUser(userId)
+  const parsedAmount = parseMoney(amount, '解冻金额')
   const cleanReason = requireText(reason)
   const before = snapshotFor(user)
   if (before.adminFrozenAmount <= 0) throw new Error('当前没有可解冻的资金')
-  const amount = roundMoney(Math.min(before.adminFrozenAmount, before.frozenBalance))
-  if (amount <= 0) throw new Error('当前没有可释放的资金')
+  const releasableAmount = roundMoney(Math.min(before.adminFrozenAmount, before.frozenBalance))
+  if (releasableAmount <= 0) throw new Error('当前没有可释放的资金')
+  if (parsedAmount > releasableAmount) throw new Error('解冻金额不能超过可解冻余额')
 
-  user.balance = roundMoney(before.balance + amount)
-  user.frozenBalance = roundMoney(before.frozenBalance - amount)
-  adminFrozenByUser.set(before.userId, 0)
+  user.balance = roundMoney(before.balance + parsedAmount)
+  user.frozenBalance = roundMoney(before.frozenBalance - parsedAmount)
+  adminFrozenByUser.set(before.userId, roundMoney(before.adminFrozenAmount - parsedAmount))
   const after = snapshotFor(user)
-  const transactionId = appendAudit({ type: 'unfreeze', userId: before.userId, before, after, amount, reason: cleanReason, operatorId })
+  const transactionId = appendAudit({ type: 'unfreeze', userId: before.userId, before, after, amount: parsedAmount, reason: cleanReason, operatorId })
   return { ...after, transactionId }
 }
 
