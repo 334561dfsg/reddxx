@@ -12,6 +12,7 @@ const resolveImport = (specifier, filename, vueImports) => {
   if (!specifier.startsWith('.')) return import.meta.resolve(specifier)
 
   const resolved = resolve(dirname(filename), specifier)
+  if (vueImports[resolved]) return vueImports[resolved]
   if (extname(resolved) === '.vue') return vueImports[resolved] || stubComponentUrl
   if (!extname(resolved) && existsSync(`${resolved}.js`)) {
     return pathToFileURL(`${resolved}.js`).href
@@ -368,7 +369,7 @@ const flushVue = async () => {
   await nextTick()
 }
 
-export const createSfcHarness = async (component, initialProps = {}, listeners = {}) => {
+export const createSfcHarness = async (component, initialProps = {}, listeners = {}, options = {}) => {
   const previousGlobals = {
     document: globalThis.document,
     window: globalThis.window,
@@ -412,12 +413,15 @@ export const createSfcHarness = async (component, initialProps = {}, listeners =
       return () => h(component, { ...props, ...eventListeners })
     }
   })
-  app.component('RouterLink', {
-    name: 'RouterLink',
-    render() {
-      return h('a', this.$attrs, this.$slots.default?.())
-    }
-  })
+  for (const plugin of options.plugins || []) app.use(plugin)
+  if (!app.component('RouterLink')) {
+    app.component('RouterLink', {
+      name: 'RouterLink',
+      render() {
+        return h('a', this.$attrs, this.$slots.default?.())
+      }
+    })
+  }
   app.mount(root)
   await flushVue()
 

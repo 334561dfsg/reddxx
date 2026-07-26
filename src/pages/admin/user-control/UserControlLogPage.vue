@@ -14,7 +14,6 @@ const normalizedQuery = computed(() => normalizeUserControlLogQuery({
 
 <template>
   <UserControlLogContent
-    :key="`${route.query.userId || ''}:${route.query.module || ''}`"
     :initial-user-id="normalizedQuery.userId"
     :initial-module="normalizedQuery.module"
     show-user-filter

@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import UserControlLogContent from './UserControlLogContent.vue'
-import { useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import { useDialogContentSnapshot, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -12,7 +12,6 @@ const props = defineProps({
 const emit = defineEmits(['close', 'closed'])
 const drawerRef = ref(null)
 const titleRef = ref(null)
-const userId = computed(() => String(props.user?.userId ?? props.user?.id ?? ''))
 
 const {
   rendered,
@@ -29,8 +28,18 @@ const {
   requestClose: () => emit('close')
 })
 
+const { content: displayedUser, clear: clearUserSnapshot } = useDialogContentSnapshot({
+  open: computed(() => props.visible),
+  phase,
+  source: computed(() => props.user),
+  clone: (user) => user ? { ...user } : null
+})
+const userId = computed(() => String(displayedUser.value?.userId ?? displayedUser.value?.id ?? ''))
+
 const handleAfterLeave = async () => {
-  if (await onAfterLeave()) emit('closed')
+  if (!await onAfterLeave()) return
+  clearUserSnapshot()
+  emit('closed')
 }
 </script>
 
@@ -62,7 +71,7 @@ const handleAfterLeave = async () => {
                 用户点控日志
               </h2>
               <p class="mt-1 break-all text-sm text-slate-500">
-                {{ user?.username || '未知用户' }} · UID {{ userId || '—' }}
+                {{ displayedUser?.username || '未知用户' }} · UID {{ userId || '—' }}
               </p>
             </div>
             <button
@@ -80,7 +89,7 @@ const handleAfterLeave = async () => {
             class="min-h-0 flex-1 overflow-y-auto px-3 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6"
             style="padding-left: max(0.75rem, env(safe-area-inset-left)); padding-right: max(0.75rem, env(safe-area-inset-right));"
           >
-            <UserControlLogContent :fixed-user-id="userId" :show-user-filter="false" />
+            <UserControlLogContent :fixed-user-id="userId" :show-header="false" :show-user-filter="false" />
           </div>
         </aside>
       </div>

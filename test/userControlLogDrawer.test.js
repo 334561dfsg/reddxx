@@ -1,17 +1,24 @@
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
+import { pathToFileURL } from 'node:url'
 import { resolve } from 'node:path'
 import test from 'node:test'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
+import { getLatestDialogLifecycle } from './helpers/userControlLogDrawerLifecycleHarness.js'
 
 const drawerFile = resolve(process.cwd(), 'src/admin/components/user-control/UserControlLogDrawer.vue')
 const contentFile = resolve(process.cwd(), 'src/admin/components/user-control/UserControlLogContent.vue')
+const lifecycleFile = resolve(process.cwd(), 'src/admin/composables/useDialogLifecycle.js')
+const lifecycleHarnessFile = resolve(process.cwd(), 'test/helpers/userControlLogDrawerLifecycleHarness.js')
 const user = { id: 'user_1001', username: 'agent_wang' }
 
 const loadDrawer = async () => {
   assert.equal(existsSync(drawerFile), true, 'UserControlLogDrawer.vue must exist')
   return loadVueSfc(drawerFile, {
-    vueImports: { [contentFile]: loadVueSfcModuleUrl(contentFile) }
+    vueImports: {
+      [contentFile]: loadVueSfcModuleUrl(contentFile),
+      [lifecycleFile]: pathToFileURL(lifecycleHarnessFile).href
+    }
   })
 }
 
@@ -42,6 +49,7 @@ test('log Drawer identifies the selected user and ignores backdrop clicks', asyn
   assert.equal(drawer.getAttribute('role'), 'dialog')
   assert.equal(drawer.getAttribute('aria-modal'), 'true')
   assert.match(drawer.textContent, /agent_wang · UID user_1001/)
+  assert.equal((drawer.textContent.match(/用户点控日志/g) || []).length, 1)
   assert.ok(harness.findByTestId('user-control-log-content'), 'the real log content is rendered')
   drawer.parent.click()
   await harness.flush()
@@ -132,20 +140,59 @@ test('Escape closes only after entry and Tab remains trapped in the open Drawer'
   assert.equal(closeCount, 1)
 })
 
+test('closing frame keeps its cloned user identity and fixed UID until the next opening phase', async (t) => {
+  const userA = { ...user }
+  const userB = { id: 'user_2002', username: 'agent_li' }
+  const harness = await mountDrawer({ user: userA })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const drawer = harness.findByTestId('user-control-log-drawer')
+  assert.match(drawer.textContent, /agent_wang · UID user_1001/)
+  assert.match(drawer.textContent, /demo-batch-user-1001/)
+
+  getLatestDialogLifecycle().phase.value = 'closing'
+  await harness.flush()
+  harness.props.user.id = userB.id
+  harness.props.user.username = userB.username
+  await harness.flush()
+
+  assert.match(drawer.textContent, /agent_wang · UID user_1001/)
+  assert.doesNotMatch(drawer.textContent, /agent_li · UID user_2002/)
+  assert.match(drawer.textContent, /demo-batch-user-1001/)
+
+  getLatestDialogLifecycle().phase.value = 'opening'
+  await harness.flush()
+  assert.match(drawer.textContent, /agent_li · UID user_2002/)
+  assert.doesNotMatch(drawer.textContent, /demo-batch-user-1001/)
+})
+
 test('a newer user context survives an older leave callback without stale cleanup', async (t) => {
+  const userA = { ...user }
   const userB = { id: 'user_2002', username: 'agent_li' }
   const firstTrigger = { isConnected: true, focusCount: 0, focus() { this.focusCount += 1 } }
   const nextTrigger = { isConnected: true, focusCount: 0, focus() { this.focusCount += 1 } }
   let closedCount = 0
-  const harness = await mountDrawer({ returnFocus: firstTrigger }, {
+  const harness = await mountDrawer({ user: userA, returnFocus: firstTrigger }, {
     onClosed: () => { closedCount += 1 }
   })
   t.after(harness.cleanup)
   await harness.finishTransitions()
 
   const firstDrawer = harness.findByTestId('user-control-log-drawer')
+  assert.match(firstDrawer.textContent, /agent_wang · UID user_1001/)
+  assert.match(firstDrawer.textContent, /demo-batch-user-1001/)
   closeButton(harness, firstDrawer).click()
   await harness.flush()
+  harness.props.user.id = userB.id
+  harness.props.user.username = userB.username
+  await harness.flush()
+
+  assert.equal(firstDrawer.isConnected, true, 'user A remains mounted through its leave motion')
+  assert.match(firstDrawer.textContent, /agent_wang · UID user_1001/)
+  assert.doesNotMatch(firstDrawer.textContent, /agent_li · UID user_2002/)
+  assert.match(firstDrawer.textContent, /demo-batch-user-1001/)
+
   harness.props.user = userB
   harness.props.returnFocus = nextTrigger
   harness.props.visible = true

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import AdminListPaginationBar from '../AdminListPaginationBar.vue'
 import { useAdminListPagination } from '../../composables/useAdminListPagination.js'
 import { userControlState } from '../../state/userControlState.js'
@@ -13,6 +13,7 @@ const props = defineProps({
   fixedUserId: { type: String, default: '' },
   initialUserId: { type: String, default: '' },
   initialModule: { type: String, default: '' },
+  showHeader: { type: Boolean, default: true },
   showUserFilter: { type: Boolean, default: false }
 })
 
@@ -30,6 +31,15 @@ const filters = reactive({
   dateFrom: '',
   dateTo: ''
 })
+
+watch(
+  [() => props.initialUserId, () => props.initialModule],
+  ([userId, module]) => {
+    const nextQuery = normalizeUserControlLogQuery({ userId, module })
+    filters.userId = nextQuery.userId
+    filters.module = nextQuery.module
+  }
+)
 
 const moduleMeta = (moduleKey) => USER_CONTROL_MODULES.find((module) => module.key === moduleKey)
 const effectiveUserId = computed(() => props.fixedUserId || filters.userId)
@@ -146,7 +156,7 @@ const clearFilters = () => {
 
 <template>
   <section data-testid="user-control-log-content" class="space-y-6">
-    <header>
+    <header v-if="showHeader">
       <div>
         <p class="text-sm font-medium text-blue-600">用户管理</p>
         <h1 class="mt-1 text-3xl font-semibold text-slate-900">用户点控日志</h1>
