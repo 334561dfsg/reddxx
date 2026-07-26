@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
 
 const props = defineProps({
   user: { type: Object, required: true },
@@ -27,26 +28,43 @@ const returnFocusRef = ref(null)
 const form = ref({
   fromAccountKey: 'market',
   toAccountKey: 'trading',
-  coinKey: '',
+  coinKey: null,
   amount: ''
 })
 
-const transferAccountOptions = computed(() => {
-  const a = props.assets
-  if (!a) return []
-  return [
-    { key: 'market', label: '市币' },
-    { key: 'wealth', label: '理财' },
-    { key: 'trading', label: '交易合约' },
-    { key: 'perp', label: '永续合约' }
-  ]
-})
+const transferAccountOptions = computed(() => props.assets ? [
+  { value: 'market', label: '市币' },
+  { value: 'wealth', label: '理财' },
+  { value: 'trading', label: '交易合约' },
+  { value: 'perp', label: '永续合约' }
+] : [])
+
+const destinationOptions = computed(() => transferAccountOptions.value.map((option) => ({
+  ...option,
+  disabled: option.value === form.value.fromAccountKey
+})))
+
+const destinationConflict = computed(() => (
+  Boolean(form.value.toAccountKey) && form.value.fromAccountKey === form.value.toAccountKey
+))
 
 const coinOptions = [
-  { key: 'USDT', label: 'USDT' },
-  { key: 'USDC', label: 'USDC' },
-  { key: 'ETH', label: 'ETH' }
+  { value: 'USDT', label: 'USDT' },
+  { value: 'USDC', label: 'USDC' },
+  { value: 'ETH', label: 'ETH' }
 ]
+
+const coinSubmissionAttempted = ref(false)
+const coinError = computed(() => coinSubmissionAttempted.value && !form.value.coinKey)
+
+const updateCoin = (value) => {
+  form.value.coinKey = value
+  if (coinOptions.some((option) => option.value === value && !option.disabled)) coinSubmissionAttempted.value = false
+}
+
+const isEnabledOption = (options, value) => options.some((option) => (
+  option.value === value && !option.disabled
+))
 
 const fromBalance = computed(() => {
   const a = props.assets
@@ -97,9 +115,10 @@ const open = (returnFocus = null) => {
   form.value = {
     fromAccountKey: 'market',
     toAccountKey: 'trading',
-    coinKey: '',
+    coinKey: null,
     amount: ''
   }
+  coinSubmissionAttempted.value = false
   returnFocusRef.value = returnFocus
   showModal.value = true
   return true
@@ -114,7 +133,13 @@ const confirm = () => {
   if (!form.value.fromAccountKey) return showToast('请选择“从”账户')
   if (!form.value.toAccountKey) return showToast('请选择“到”账户')
   if (form.value.fromAccountKey === form.value.toAccountKey) return showToast('“从”账户和“到”账户不能相同，请重新选择“到”账户')
-  if (!form.value.coinKey) return showToast('请选择币种')
+  if (!isEnabledOption(transferAccountOptions.value, form.value.fromAccountKey) || !isEnabledOption(destinationOptions.value, form.value.toAccountKey)) {
+    return showToast('所选账户已失效，请重新选择账户')
+  }
+  if (!form.value.coinKey) {
+    coinSubmissionAttempted.value = true
+    return showToast('请选择币种')
+  }
   if (!amount || Number.isNaN(Number(amount))) return showToast('请输入有效的划转数量')
 
   emit('submit', {
@@ -125,7 +150,7 @@ const confirm = () => {
     coinKey: form.value.coinKey
   })
 
-  showToast(`已提交划转：${amount} ${coinOptions.find((c) => c.key === form.value.coinKey)?.label || form.value.coinKey}`)
+  showToast(`已提交划转：${amount} ${coinOptions.find((c) => c.value === form.value.coinKey)?.label || form.value.coinKey}`)
   close()
 }
 </script>
@@ -170,92 +195,43 @@ const confirm = () => {
           </header>
 
           <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 pb-5">
-            <fieldset class="m-0 min-w-0 border-0 p-0">
-              <legend class="mb-2 text-sm font-medium text-slate-700">从</legend>
-              <div class="grid grid-cols-2 gap-2">
-                <label
-                  v-for="opt in transferAccountOptions"
-                  :key="opt.key"
-                  class="min-h-11 cursor-pointer rounded-xl border px-3 py-2 text-center text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
-                  :class="form.fromAccountKey === opt.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300'"
-                >
-                  <span>{{ opt.label }}</span>
-                  <span
-                    v-if="form.fromAccountKey === opt.key"
-                    class="ml-1 rounded-full bg-blue-100 px-1.5 py-0.5 text-xs font-semibold text-blue-800"
-                  >已选择</span>
-                  <input
-                    v-model="form.fromAccountKey"
-                    type="radio"
-                    name="transfer-from-account"
-                    :value="opt.key"
-                    class="sr-only"
-                  />
-                </label>
-              </div>
-            </fieldset>
-
-            <fieldset class="m-0 min-w-0 border-0 p-0" aria-describedby="transfer-destination-status">
-              <legend class="mb-2 text-sm font-medium text-slate-700">到</legend>
-              <div class="grid grid-cols-2 gap-2">
-                <label
-                  v-for="opt in transferAccountOptions"
-                  :key="opt.key"
-                  class="min-h-11 rounded-xl border px-3 py-2 text-center text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
-                  :class="opt.key === form.fromAccountKey
-                    ? form.toAccountKey === opt.key
-                      ? 'cursor-not-allowed border-amber-400 bg-amber-50 text-amber-950'
-                      : 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400'
-                    : form.toAccountKey === opt.key
-                      ? 'cursor-pointer border-blue-600 bg-blue-50 text-blue-900'
-                      : 'cursor-pointer border-slate-200 bg-white text-slate-700 hover:border-blue-300'"
-                >
-                  <span>{{ opt.label }}</span>
-                  <span
-                    v-if="form.toAccountKey === opt.key"
-                    class="ml-1 rounded-full px-1.5 py-0.5 text-xs font-semibold"
-                    :class="opt.key === form.fromAccountKey ? 'bg-amber-200 text-amber-950' : 'bg-blue-100 text-blue-800'"
-                  >{{ opt.key === form.fromAccountKey ? '已选择，需重新选择' : '已选择' }}</span>
-                  <input
-                    v-model="form.toAccountKey"
-                    type="radio"
-                    name="transfer-to-account"
-                    :value="opt.key"
-                    :disabled="opt.key === form.fromAccountKey"
-                    class="sr-only"
-                  />
-                </label>
-              </div>
-              <p id="transfer-destination-status" class="mt-2 text-sm text-slate-600" role="status">
-                当前“从”账户不能作为“到”账户，请选择其他账户。
-                <span v-if="form.fromAccountKey === form.toAccountKey">当前已选择的“到”账户不可用，请重新选择。</span>
+            <SelectOnlyCombobox
+              v-model="form.fromAccountKey"
+              :options="transferAccountOptions"
+              label="从"
+              required
+              id-base="transfer-from"
+            />
+            <div>
+              <SelectOnlyCombobox
+                v-model="form.toAccountKey"
+                :options="destinationOptions"
+                label="到"
+                required
+                :invalid="destinationConflict"
+                :error-id="destinationConflict ? 'transfer-to-error' : ''"
+                id-base="transfer-to"
+              />
+              <p v-if="destinationConflict" id="transfer-to-error" class="mt-1 text-sm text-red-700" role="alert">
+                “从”账户和“到”账户不能相同，请重新选择“到”账户。
               </p>
-            </fieldset>
-
-            <fieldset class="m-0 min-w-0 border-0 p-0">
-              <legend class="mb-2 text-sm font-medium text-slate-700">币种</legend>
-              <div class="grid grid-cols-3 gap-2">
-                <label
-                  v-for="coin in coinOptions"
-                  :key="coin.key"
-                  class="min-h-11 cursor-pointer rounded-xl border px-3 py-2 text-center text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
-                  :class="form.coinKey === coin.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300'"
-                >
-                  <span>{{ coin.label }}</span>
-                  <span
-                    v-if="form.coinKey === coin.key"
-                    class="ml-1 rounded-full bg-blue-100 px-1.5 py-0.5 text-xs font-semibold text-blue-800"
-                  >已选择</span>
-                  <input
-                    v-model="form.coinKey"
-                    type="radio"
-                    name="transfer-coin"
-                    :value="coin.key"
-                    class="sr-only"
-                  />
-                </label>
-              </div>
-            </fieldset>
+            </div>
+            <div>
+              <SelectOnlyCombobox
+                :model-value="form.coinKey"
+                :options="coinOptions"
+                label="币种"
+                placeholder="请选择"
+                required
+                :invalid="coinError"
+                error-id="transfer-coin-error"
+                id-base="transfer-coin"
+                @update:model-value="updateCoin"
+              />
+              <p v-if="coinError" id="transfer-coin-error" class="mt-1 text-sm text-red-700" role="alert">
+                请选择币种。
+              </p>
+            </div>
 
             <div>
               <div class="text-sm font-medium text-slate-700 mb-2">划转数量</div>
