@@ -185,7 +185,7 @@ const filteredOptions = computed(() => {
   const normalizedQuery = normalizeSearchText(query.value)
   if (!normalizedQuery) return props.options
   return props.options.filter((option) => (
-    normalizeSearchText(`${option.label} ${option.searchText ?? ''}`).includes(normalizedQuery)
+    normalizeSearchText(`${option.label} ${option.description ?? ''} ${option.searchText ?? ''}`).includes(normalizedQuery)
   ))
 })
 
@@ -779,7 +779,12 @@ onUnmounted(() => {
                 @mouseenter="activateOption(option)"
                 @click="commitOption(option)"
               >
-                <span class="min-w-0 flex-1 truncate">{{ option.label }}</span>
+                <span class="min-w-0 flex-1">
+                  <span class="block truncate">{{ option.label }}</span>
+                  <span v-if="String(option.description || '').trim()" class="mt-0.5 block truncate text-xs text-gray-500">
+                    {{ option.description }}
+                  </span>
+                </span>
               </button>
             </li>
           </ul>

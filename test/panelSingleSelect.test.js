@@ -172,6 +172,7 @@ const setQuery = async (harness, value) => {
 }
 
 const renderedOptions = (harness) => harness.allNodes().filter((node) => node.getAttribute?.('role') === 'option')
+const optionLabel = (option) => option.children[0]?.children[0]?.textContent
 
 const findHostNode = (root, predicate) => {
   if (predicate(root)) return root
@@ -181,6 +182,53 @@ const findHostNode = (root, predicate) => {
   }
   return undefined
 }
+
+test('options render an optional subtitle without adding one to options that omit it', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const harness = await createSfcHarness(component, {
+    ...baseProps,
+    modelValue: 1,
+    options: [
+      { value: 1, label: '青铜会员', description: 'VIP1' },
+      { value: 2, label: '白银会员' }
+    ]
+  })
+  t.after(harness.cleanup)
+
+  harness.findByTestId('panel-single-select-trigger').click()
+  await harness.flush()
+
+  const subtitleNodes = harness.allNodes().filter((node) => (
+    node.classList?.contains('text-xs') && node.textContent === 'VIP1'
+  ))
+  const whiteSilverOption = renderedOptions(harness).find((option) => optionLabel(option) === '白银会员')
+  assert.equal(subtitleNodes.length, 1)
+  assert.equal(
+    findHostNode(whiteSilverOption, (node) => node.classList?.contains('text-xs')),
+    undefined
+  )
+})
+
+test('search matches an option subtitle without committing a new value', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const harness = await createSfcHarness(component, {
+    ...baseProps,
+    modelValue: 2,
+    options: [
+      { value: 1, label: '青铜会员', description: 'VIP1' },
+      { value: 2, label: '白银会员' }
+    ]
+  })
+  t.after(harness.cleanup)
+
+  harness.findByTestId('panel-single-select-trigger').click()
+  await harness.flush()
+  await setQuery(harness, 'vip1')
+
+  assert.deepEqual(renderedOptions(harness).map(optionLabel), ['青铜会员'])
+  assert.equal(harness.props.modelValue, 2)
+  assert.equal(harness.emitted.length, 0)
+})
 
 test('draft filtering, hover, and Arrow navigation never commit and non-submit close restores the selection', async (t) => {
   const component = await loadVueSfc(componentFile)
@@ -196,10 +244,10 @@ test('draft filtering, hover, and Arrow navigation never commit and non-submit c
   const search = harness.findByTestId('panel-single-select-search')
   assert.equal(trigger.getAttribute('aria-expanded'), 'true')
   assert.equal(search.value, '')
-  assert.equal(renderedOptions(harness).find((option) => option.textContent === 'Needs review').getAttribute('aria-selected'), 'true')
+  assert.equal(renderedOptions(harness).find((option) => optionLabel(option) === 'Needs review').getAttribute('aria-selected'), 'true')
 
   await setQuery(harness, 'ENABLED ACCOUNTS')
-  assert.deepEqual(renderedOptions(harness).map((option) => option.textContent), ['Active users'])
+  assert.deepEqual(renderedOptions(harness).map(optionLabel), ['Active users'])
   assert.equal(harness.emitted.length, 0)
   assert.match(trigger.textContent, /Needs review/)
 
@@ -236,13 +284,13 @@ test('click and Enter are the only paths that commit an enabled option', async (
   const trigger = harness.findByTestId('panel-single-select-trigger')
   trigger.click()
   await harness.flush()
-  renderedOptions(harness).find((option) => option.textContent === 'Active users').click()
+  renderedOptions(harness).find((option) => optionLabel(option) === 'Active users').click()
   await harness.flush()
 
   assert.equal(harness.props.modelValue, 'active')
   assert.deepEqual(changes, [{ value: 'active', label: 'Active users' }])
   assert.equal(
-    renderedOptions(harness).find((option) => option.textContent === 'Active users').getAttribute('aria-selected'),
+    renderedOptions(harness).find((option) => optionLabel(option) === 'Active users').getAttribute('aria-selected'),
     'true'
   )
   assert.equal(trigger.getAttribute('aria-expanded'), 'true')
@@ -285,7 +333,7 @@ test('panel disclosure and inner combobox expose stable ARIA and caret-safe keyb
 
   const initialActiveId = search.getAttribute('aria-activedescendant')
   const initialActive = renderedOptions(harness).find((option) => option.getAttribute('id') === initialActiveId)
-  assert.equal(initialActive.textContent, 'Needs review')
+  assert.equal(optionLabel(initialActive), 'Needs review')
   assert.equal(renderedOptions(harness).filter((option) => option.getAttribute('aria-selected') === 'true').length, 1)
 
   for (const key of ['Home', 'End', 'ArrowLeft', 'ArrowRight']) {
@@ -300,8 +348,8 @@ test('panel disclosure and inner combobox expose stable ARIA and caret-safe keyb
   const arrow = await dispatchKey(harness, search, 'ArrowDown')
   assert.equal(arrow.defaultPrevented, true)
   const movedActive = renderedOptions(harness).find((option) => option.getAttribute('aria-selected') === 'true')
-  assert.equal(movedActive.textContent, 'Zero level', 'disabled options are skipped')
-  const disabledOption = renderedOptions(harness).find((option) => option.textContent === 'Blocked')
+  assert.equal(optionLabel(movedActive), 'Zero level', 'disabled options are skipped')
+  const disabledOption = renderedOptions(harness).find((option) => optionLabel(option) === 'Blocked')
   assert.equal(disabledOption.getAttribute('aria-disabled'), 'true')
   assert.equal(disabledOption.disabled, true)
 
@@ -320,7 +368,7 @@ test('an active option disabled by refresh is never exposed as selected or activ
       state.currentOptions = currentOptions
       watch(currentOptions, () => {
         const disabledActive = findHostNode(globalThis.document.body, (node) => (
-          node.getAttribute?.('role') === 'option' && node.textContent === 'Needs review'
+          node.getAttribute?.('role') === 'option' && optionLabel(node) === 'Needs review'
         ))
         state.committedRenders.push({
           disabled: disabledActive?.disabled,
@@ -350,7 +398,7 @@ test('an active option disabled by refresh is never exposed as selected or activ
     selected: 'false',
     activelyStyled: false
   }])
-  const disabledOption = renderedOptions(harness).find((option) => option.textContent === 'Needs review')
+  const disabledOption = renderedOptions(harness).find((option) => optionLabel(option) === 'Needs review')
   assert.equal(disabledOption.getAttribute('aria-selected'), 'false')
   assert.equal(disabledOption.classList.contains('bg-blue-50'), false)
   assert.equal(harness.findByTestId('panel-single-select-search').getAttribute('aria-activedescendant'), 'account-state-option-string-61-63-74-69-76-65')
@@ -896,7 +944,7 @@ test('disabled, readonly, required, and orphaned states preserve the committed b
   trigger.click()
   await harness.flush()
   const active = renderedOptions(harness).find((option) => option.getAttribute('aria-selected') === 'true')
-  assert.equal(active.textContent, 'Active users')
+  assert.equal(optionLabel(active), 'Active users')
 })
 
 test('empty and refreshed results are announced without selecting or replacing the committed option', async (t) => {
@@ -921,7 +969,7 @@ test('empty and refreshed results are announced without selecting or replacing t
   await harness.flush()
   status = harness.findByTestId('panel-single-select-status')
   assert.match(status.textContent, /1 个结果/)
-  assert.deepEqual(renderedOptions(harness).map((option) => option.textContent), ['Pending verification'])
+  assert.deepEqual(renderedOptions(harness).map(optionLabel), ['Pending verification'])
   assert.equal(renderedOptions(harness)[0].getAttribute('aria-selected'), 'true')
   assert.equal(harness.props.modelValue, 'review')
   assert.equal(harness.emitted.length, 0)
