@@ -8,6 +8,11 @@ import {
   getParentCandidates,
   getRelationshipAuditLog
 } from '../src/admin/repositories/userRelationshipRepository.js'
+import {
+  __resetDialogLayersForTests,
+  registerDialogLayer,
+  unregisterDialogLayer
+} from '../src/admin/composables/useDialogLifecycle.js'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
 
 const read = (path) => readFileSync(resolve(process.cwd(), path), 'utf8')
@@ -120,6 +125,47 @@ test('relationship drawer paginates members and resets selection and page for ch
   })
   await harness.finishTransitions()
 
+  const controls = harness.findByTestId('relationship-drawer-controls')
+  const list = harness.findByTestId('relationship-member-scroll')
+  const pagination = harness.findByTestId('relationship-drawer-pagination')
+  const search = harness.allNodes().find((node) => node.tag === 'input' && node.getAttribute('type') === 'search')
+  const statusFilterToggle = harness.findByTestId('relationship-drawer-status-filter-toggle')
+  const roleFilterToggle = harness.findByTestId('relationship-drawer-role-filter-toggle')
+  assert.equal(controls.contains(search), true)
+  assert.equal(statusFilterToggle.getAttribute('aria-expanded'), 'false')
+  assert.equal(roleFilterToggle.getAttribute('aria-expanded'), 'false')
+  statusFilterToggle.click()
+  await harness.flush()
+  const statusFilterPanel = harness.findByTestId('relationship-drawer-status-filter-panel')
+  const statusGroup = fieldsetWithLegend(harness, '账户状态')
+  assert.equal(statusFilterToggle.getAttribute('aria-expanded'), 'true')
+  assert.equal(roleFilterToggle.getAttribute('aria-expanded'), 'false')
+  assert.equal(statusFilterPanel.classList.contains('fixed'), true)
+  assert.equal(statusFilterPanel.classList.contains('z-20'), true)
+  assert.equal(controls.contains(statusFilterPanel), false)
+  assert.equal(controls.contains(statusGroup), false)
+  assert.equal(list.contains(statusFilterPanel), false)
+  assert.equal(pagination.contains(statusFilterPanel), false)
+
+  roleFilterToggle.click()
+  await harness.flush()
+  const roleFilterPanel = harness.findByTestId('relationship-drawer-role-filter-panel')
+  const roleGroup = fieldsetWithLegend(harness, '用户角色')
+  assert.equal(Boolean(harness.findByTestId('relationship-drawer-status-filter-panel')), false)
+  assert.equal(statusFilterToggle.getAttribute('aria-expanded'), 'false')
+  assert.equal(roleFilterToggle.getAttribute('aria-expanded'), 'true')
+  assert.equal(roleFilterPanel.classList.contains('fixed'), true)
+  assert.equal(roleFilterPanel.classList.contains('z-20'), true)
+  assert.equal(controls.contains(roleFilterPanel), false)
+  assert.equal(controls.contains(roleGroup), false)
+  assert.equal(list.contains(roleFilterPanel), false)
+  assert.equal(pagination.contains(roleFilterPanel), false)
+  roleFilterToggle.click()
+  await harness.flush()
+  assert.equal(list.contains(memberButtons(harness)[0]), true)
+  assert.equal(pagination.contains(harness.findByTestId('compact-pagination-summary')), true)
+  assert.equal(list.contains(harness.findByTestId('compact-pagination-summary')), false)
+
   assert.deepEqual(visiblePaginationMemberIds(harness), [
     'user_pagination_01', 'user_pagination_02', 'user_pagination_03', 'user_pagination_04', 'user_pagination_05',
     'user_pagination_06', 'user_pagination_07', 'user_pagination_08', 'user_pagination_09', 'user_pagination_10'
@@ -144,18 +190,21 @@ test('relationship drawer paginates members and resets selection and page for ch
   await harness.flush()
   assert.ok(harness.allNodes().some((node) => node.textContent.includes('已选择裂变下级 pagination_member_11')))
 
-  const search = harness.allNodes().find((node) => node.tag === 'input' && node.getAttribute('type') === 'search')
   await inputValue(harness, search, 'pagination_member')
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
   assert.equal(harness.allNodes().some((node) => node.textContent.includes('已选择裂变下级')), false)
 
   harness.findByText('下一页', 'button').click()
   await harness.flush()
+  statusFilterToggle.click()
+  await harness.flush()
   harness.findByText('活跃', 'button').click()
   await harness.flush()
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
 
   harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  roleFilterToggle.click()
   await harness.flush()
   harness.findByText('普通用户', 'button').click()
   await harness.flush()
@@ -171,6 +220,8 @@ test('relationship drawer paginates members and resets selection and page for ch
   await harness.flush()
   harness.props.user = tree.members[0]
   await harness.flush()
+  assert.equal(list.classList.contains('pb-[max(1rem,env(safe-area-inset-bottom))]'), true)
+  assert.equal(list.contains(harness.findByText('当前没有裂变下级')), true)
   assert.equal(harness.findByTestId('compact-pagination-summary'), undefined)
   harness.props.user = tree.root
   await harness.flush()
@@ -192,6 +243,42 @@ test('team report drawer paginates direct fission branches', async (t) => {
     tree.remove()
   })
   await harness.finishTransitions()
+
+  const overview = harness.findByTestId('team-report-overview-scroll')
+  const branchHeader = harness.findByTestId('team-report-branch-header')
+  const branchScroll = harness.findByTestId('team-report-branch-scroll')
+  const pagination = harness.findByTestId('team-report-pagination')
+  assert.ok(overview, 'team overview has a bounded scrolling region')
+  assert.ok(branchHeader, 'team branch title remains in a fixed header region')
+  assert.ok(branchScroll, 'team branches have an independent scrolling region')
+  assert.ok(pagination, 'team pagination remains in a fixed footer region')
+  assert.equal(overview.getAttribute('role'), 'region')
+  assert.equal(overview.getAttribute('aria-labelledby'), 'team-report-overview-title')
+  assert.equal(overview.getAttribute('tabindex'), '0')
+  assert.equal(branchScroll.getAttribute('role'), 'region')
+  assert.equal(branchScroll.getAttribute('aria-labelledby'), 'team-report-branch-title')
+  assert.equal(branchScroll.getAttribute('tabindex'), '0')
+  assert.equal(overview.classList.contains('min-h-0'), true)
+  assert.equal(overview.classList.contains('shrink'), true)
+  assert.equal(overview.classList.contains('shrink-0'), false)
+  assert.equal(branchScroll.classList.contains('min-h-20'), true)
+  for (const region of [overview, branchScroll]) {
+    assert.equal(region.classList.contains('outline-none'), true)
+    assert.equal(region.classList.contains('focus-visible:ring-2'), true)
+    assert.equal(region.classList.contains('focus-visible:ring-blue-500'), true)
+  }
+  const overviewMetrics = harness.allNodes().filter((node) => (
+    overview.contains(node) && node.getAttribute?.('data-testid') === 'team-report-metric'
+  ))
+  const visibleBranchArticles = harness.allNodes().filter((node) => node.tag === 'article')
+  const paginationSummary = harness.findByTestId('compact-pagination-summary')
+  assert.equal(overviewMetrics.length, 8)
+  assert.equal(branchScroll.contains(visibleBranchArticles[0]), true)
+  assert.equal(branchScroll.contains(branchHeader), false)
+  assert.equal(branchScroll.contains(paginationSummary), false)
+  assert.equal(overview.contains(visibleBranchArticles[0]), false)
+  assert.equal(pagination.contains(paginationSummary), true)
+  assert.equal(overview.contains(paginationSummary), false)
 
   const visibleBranches = () => harness.allNodes()
     .filter((node) => node.tag === 'article')
@@ -224,6 +311,26 @@ test('team report drawer paginates direct fission branches', async (t) => {
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
 })
 
+test('team report Drawer pads the whole-report empty region for the bottom safe area exactly once', async (t) => {
+  const tree = addPaginationFissionTree()
+  const component = await loadTeamReportDrawer()
+  const harness = await createSfcHarness(component, { visible: true, user: tree.members[0] })
+  t.after(() => {
+    harness.cleanup()
+    tree.remove()
+  })
+  await harness.finishTransitions()
+
+  const body = harness.findByTestId('team-report-drawer-body')
+  const emptyState = harness.findByTestId('team-report-empty-state')
+  const safeBottomClass = 'pb-[max(1rem,env(safe-area-inset-bottom))]'
+  assert.ok(emptyState)
+  assert.equal(emptyState.classList.contains(safeBottomClass), true)
+  assert.equal(body.classList.contains(safeBottomClass), false)
+  assert.equal(emptyState.getAttribute('tabindex'), null)
+  assert.equal(harness.findByTestId('team-report-pagination'), undefined)
+})
+
 test('operation and paginated fission Drawers protect both landscape safe-area edges', () => {
   for (const file of [operationDrawerFile, relationshipDrawerFile, teamReportDrawerFile]) {
     const source = readFileSync(file, 'utf8')
@@ -234,7 +341,107 @@ test('operation and paginated fission Drawers protect both landscape safe-area e
   }
 })
 
-test('relationship filters are labelled wrapping segments that preserve exact status and role filtering', async (t) => {
+test('relationship filter popup escapes the clipped Drawer and stays reachable in the visual viewport', async (t) => {
+  const component = await loadRelationshipDrawer()
+  const harness = await createSfcHarness(component, {
+    visible: true,
+    user: userById('user_1003'),
+    mode: 'direct'
+  })
+  const originalViewportProperties = Object.fromEntries(
+    ['innerWidth', 'innerHeight', 'visualViewport'].map((property) => [
+      property,
+      Object.getOwnPropertyDescriptor(globalThis.window, property)
+    ])
+  )
+  let upperLayer = null
+  t.after(() => {
+    if (upperLayer) unregisterDialogLayer(upperLayer)
+    for (const [property, descriptor] of Object.entries(originalViewportProperties)) {
+      if (descriptor) Object.defineProperty(globalThis.window, property, descriptor)
+      else delete globalThis.window[property]
+    }
+    harness.cleanup()
+    __resetDialogLayersForTests()
+  })
+  await harness.finishTransitions()
+
+  globalThis.window.innerWidth = 1024
+  globalThis.window.innerHeight = 720
+  globalThis.window.visualViewport = {
+    width: 320,
+    height: 170,
+    offsetLeft: 20,
+    offsetTop: 160
+  }
+  const trigger = harness.findByTestId('relationship-drawer-status-filter-toggle')
+  trigger.getBoundingClientRect = () => ({
+    top: 250,
+    right: 460,
+    bottom: 294,
+    left: 280,
+    width: 180,
+    height: 44
+  })
+  trigger.click()
+  await harness.flush()
+
+  const popupLayer = harness.findByTestId('relationship-drawer-popup-layer')
+  const drawerBody = harness.findByTestId('relationship-drawer-body')
+  const panel = harness.findByTestId('relationship-drawer-status-filter-panel')
+  assert.ok(popupLayer, 'Drawer exposes its viewport-fixed popup layer')
+  assert.equal(panel.parent, popupLayer)
+  assert.equal(popupLayer.contains(panel), true)
+  assert.equal(drawerBody.contains(panel), false)
+  assert.equal(panel.getAttribute('data-placement'), 'top')
+  assert.equal(panel.style.position, 'fixed')
+  assert.match(panel.style.left, /44px/)
+  assert.match(panel.style.top, /168px/)
+  assert.match(panel.style.width, /288px/)
+  assert.match(panel.style.maxHeight, /76px/)
+  assert.equal(panel.style.overflowY, 'auto')
+
+  upperLayer = registerDialogLayer(harness.root)
+  assert.equal(popupLayer.inert, true, 'popup follows its owning Drawer when a higher modal layer opens')
+  unregisterDialogLayer(upperLayer)
+  upperLayer = null
+  assert.equal(popupLayer.inert, false)
+
+  const popupOptions = harness.allNodes().filter((node) => node.tag === 'button' && panel.contains(node))
+  const roleTrigger = harness.findByTestId('relationship-drawer-role-filter-toggle')
+  roleTrigger.focus()
+  const tabIntoPopup = {
+    type: 'keydown',
+    key: 'Tab',
+    shiftKey: false,
+    defaultPrevented: false,
+    propagationStopped: false,
+    preventDefault() { this.defaultPrevented = true },
+    stopPropagation() { this.propagationStopped = true }
+  }
+  roleTrigger.dispatchEvent(tabIntoPopup)
+  assert.equal(tabIntoPopup.defaultPrevented, true)
+  assert.equal(tabIntoPopup.propagationStopped, true)
+  assert.equal(harness.document.activeElement, popupOptions[0])
+
+  const escapePopup = {
+    type: 'keydown',
+    key: 'Escape',
+    target: popupOptions[0],
+    defaultPrevented: false,
+    propagationStopped: false,
+    preventDefault() { this.defaultPrevented = true },
+    stopPropagation() { this.propagationStopped = true }
+  }
+  panel.dispatchEvent(escapePopup)
+  await harness.flush()
+  assert.equal(escapePopup.defaultPrevented, true)
+  assert.equal(escapePopup.propagationStopped, true)
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false')
+  assert.equal(harness.document.activeElement, trigger)
+})
+
+test('relationship filters are compact two-column menus that preserve exact status and role filtering', async (t) => {
   const agentChildBefore = snapshot(userById('user_1004'))
   userById('user_1004').role = 'agent'
   const component = await loadVueSfc(relationshipDrawerFile)
@@ -249,38 +456,49 @@ test('relationship filters are labelled wrapping segments that preserve exact st
   })
   await harness.finishTransitions()
 
+  const statusFilterToggle = harness.findByTestId('relationship-drawer-status-filter-toggle')
+  const roleFilterToggle = harness.findByTestId('relationship-drawer-role-filter-toggle')
+  statusFilterToggle.click()
+  await harness.flush()
   const statusGroup = fieldsetWithLegend(harness, '账户状态')
-  const roleGroup = fieldsetWithLegend(harness, '用户角色')
   assert.ok(statusGroup)
-  assert.ok(roleGroup)
   const scrollBody = harness.findByTestId('relationship-drawer-body')
-  assert.equal(scrollBody.contains(statusGroup), true)
-  assert.equal(scrollBody.contains(roleGroup), true)
+  assert.equal(scrollBody.contains(statusGroup), false)
+  assert.equal(harness.findByTestId('relationship-drawer-popup-layer').contains(statusGroup), true)
 
-  for (const group of [statusGroup, roleGroup]) {
-    const segmentContainer = group.children.find((node) => node.tag === 'div')
-    assert.ok(segmentContainer.classList.contains('flex'))
-    assert.ok(segmentContainer.classList.contains('flex-wrap'))
-    const segments = harness.allNodes().filter((node) => node.tag === 'button' && group.contains(node))
-    assert.ok(segments.length > 1)
-    assert.ok(segments.every((button) => button.hasAttribute('aria-pressed')))
-  }
+  const statusOptions = statusGroup.children.find((node) => node.tag === 'div')
+  assert.ok(statusOptions.classList.contains('grid'))
+  assert.ok(statusOptions.classList.contains('grid-cols-2'))
+  assert.ok(harness.allNodes().filter((node) => node.tag === 'button' && statusGroup.contains(node)).every((button) => button.hasAttribute('aria-pressed')))
 
   const allStatus = harness.findByText('全部状态', 'button')
   const bannedStatus = harness.findByText('禁用', 'button')
   assert.equal(allStatus.getAttribute('aria-pressed'), 'true')
   bannedStatus.click()
   await harness.flush()
-  assert.equal(allStatus.getAttribute('aria-pressed'), 'false')
-  assert.equal(bannedStatus.getAttribute('aria-pressed'), 'true')
   assert.deepEqual(memberButtons(harness).map((button) => button.textContent.match(/banned_user/)?.[0]), ['banned_user'])
 
-  allStatus.click()
+  statusFilterToggle.click()
   await harness.flush()
+  const allStatusAgain = harness.findByText('全部状态', 'button')
+  assert.equal(allStatusAgain.getAttribute('aria-pressed'), 'false')
+  allStatusAgain.click()
+  await harness.flush()
+  roleFilterToggle.click()
+  await harness.flush()
+  const roleGroup = fieldsetWithLegend(harness, '用户角色')
+  assert.ok(roleGroup)
+  const roleOptions = roleGroup.children.find((node) => node.tag === 'div')
+  assert.ok(roleOptions.classList.contains('grid'))
+  assert.ok(roleOptions.classList.contains('grid-cols-2'))
+  assert.ok(harness.allNodes().filter((node) => node.tag === 'button' && roleGroup.contains(node)).every((button) => button.hasAttribute('aria-pressed')))
+
   const agentRole = harness.findByText('代理', 'button')
   agentRole.click()
   await harness.flush()
-  assert.equal(agentRole.getAttribute('aria-pressed'), 'true')
+  roleFilterToggle.click()
+  await harness.flush()
+  assert.equal(harness.findByText('代理', 'button').getAttribute('aria-pressed'), 'true')
   assert.deepEqual(memberButtons(harness).map((button) => button.textContent.match(/user_chen/)?.[0]), ['user_chen'])
 })
 

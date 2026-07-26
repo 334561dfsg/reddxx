@@ -79,13 +79,13 @@ watch(totalPages, (nextTotalPages) => {
             <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
           </header>
 
-          <div data-testid="user-agent-report-body" class="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-bottom: max(1rem, env(safe-area-inset-bottom)); padding-left: max(1rem, env(safe-area-inset-left));">
-            <p v-if="error" ref="errorRef" tabindex="-1" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" role="alert">
+          <div data-testid="user-agent-report-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
+            <p v-if="error" ref="errorRef" data-testid="agent-report-error-state" tabindex="-1" class="min-h-0 overflow-y-auto rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" :class="report ? 'max-h-[min(8rem,20vh)] shrink' : 'flex-1 pb-[max(1rem,env(safe-area-inset-bottom))]'" role="alert">
               <span class="font-semibold">代理报表加载失败</span><span class="mt-1 block break-words">{{ error }}</span>
             </p>
 
             <template v-if="report">
-              <section aria-labelledby="agent-report-summary-title">
+              <section data-testid="agent-report-overview-scroll" class="min-h-0 max-h-[min(22rem,42vh)] shrink overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" role="region" tabindex="0" aria-labelledby="agent-report-summary-title">
                 <h3 id="agent-report-summary-title" class="text-sm font-semibold text-slate-900">业务概览</h3>
                 <dl class="mt-2 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-4">
                   <div v-for="card in summaryCards" :key="card.label" data-testid="agent-report-summary-card" class="rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -93,8 +93,6 @@ watch(totalPages, (nextTotalPages) => {
                     <dd class="mt-1 break-words text-base font-semibold text-slate-900">{{ card.value }}</dd>
                   </div>
                 </dl>
-              </section>
-
               <section aria-labelledby="agent-report-product-title">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                   <h3 id="agent-report-product-title" class="text-sm font-semibold text-slate-900">产品线汇总</h3>
@@ -115,11 +113,15 @@ watch(totalPages, (nextTotalPages) => {
                 <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无产品线汇总</p>
               </section>
 
-              <section aria-labelledby="agent-report-daily-title">
+              </section>
+
+              <section data-testid="agent-report-daily-header" class="mt-5 shrink-0" aria-labelledby="agent-report-daily-title">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                   <h3 id="agent-report-daily-title" class="text-sm font-semibold text-slate-900">代理业绩明细</h3>
                   <span class="text-xs text-slate-500">按日期倒序</span>
                 </div>
+              </section>
+              <div data-testid="agent-report-daily-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" :class="dailyRows.length ? '' : 'pb-[max(1rem,env(safe-area-inset-bottom))]'" role="region" :tabindex="dailyRows.length ? 0 : undefined" aria-labelledby="agent-report-daily-title">
                 <div v-if="dailyRows.length" class="mt-2 space-y-2">
                   <article v-for="row in pagedDailyRows" :key="row.date" data-testid="agent-report-daily-row" class="rounded-xl border border-slate-200 p-3">
                     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -134,13 +136,15 @@ watch(totalPages, (nextTotalPages) => {
                       <div><dt class="text-xs text-slate-500">订单数</dt><dd class="mt-0.5 font-medium text-slate-800">{{ formatNumber(row.orderCount) }} 笔</dd></div>
                     </dl>
                   </article>
-                  <CompactPagination v-model:current-page="currentPage" :total-count="dailyRows.length" :page-size="PAGE_SIZE" />
                 </div>
                 <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无代理业绩明细</p>
-              </section>
+              </div>
+              <footer v-if="dailyRows.length" data-testid="agent-report-pagination" class="shrink-0 border-t border-slate-200 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+                <CompactPagination v-model:current-page="currentPage" :total-count="dailyRows.length" :page-size="PAGE_SIZE" />
+              </footer>
             </template>
 
-            <div v-else-if="!error" class="grid min-h-64 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
+            <div v-else-if="!error" data-testid="agent-report-empty-state" class="grid min-h-0 flex-1 place-items-center overflow-y-auto rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 pb-[max(1rem,env(safe-area-inset-bottom))] text-center">
               <div><p class="font-medium text-slate-700">当前代理暂无业务报表数据</p><p class="mt-1 text-sm text-slate-500">该代理尚无可统计的客户与佣金记录。</p></div>
             </div>
           </div>

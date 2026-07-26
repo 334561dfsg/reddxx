@@ -54,9 +54,37 @@ test('agent report Drawer renders four summary cards, every product line, and te
     assert.match(drawer.textContent, new RegExp(label))
   }
   assert.equal(harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-summary-card').length, 4)
+  const overview = harness.findByTestId('agent-report-overview-scroll')
+  const dailyHeader = harness.findByTestId('agent-report-daily-header')
+  const dailyScroll = harness.findByTestId('agent-report-daily-scroll')
+  const pagination = harness.findByTestId('agent-report-pagination')
+  const summaryCards = harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-summary-card')
+  const productRows = harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-product-row')
+  const renderedDailyRows = harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-daily-row')
+  const paginationSummary = harness.findByTestId('compact-pagination-summary')
+  assert.ok(overview)
+  assert.ok(dailyHeader)
+  assert.ok(dailyScroll)
+  assert.ok(pagination)
+  assert.equal(overview.getAttribute('role'), 'region')
+  assert.equal(overview.getAttribute('aria-labelledby'), 'agent-report-summary-title')
+  assert.equal(overview.getAttribute('tabindex'), '0')
+  assert.equal(dailyScroll.getAttribute('role'), 'region')
+  assert.equal(dailyScroll.getAttribute('aria-labelledby'), 'agent-report-daily-title')
+  assert.equal(dailyScroll.getAttribute('tabindex'), '0')
+  for (const region of [overview, dailyScroll]) {
+    assert.equal(region.classList.contains('outline-none'), true)
+    assert.equal(region.classList.contains('focus-visible:ring-2'), true)
+    assert.equal(region.classList.contains('focus-visible:ring-blue-500'), true)
+  }
+  assert.equal(overview.contains(summaryCards[0]), true)
+  assert.equal(overview.contains(productRows[0]), true)
+  assert.equal(dailyScroll.contains(dailyHeader), false)
+  assert.equal(dailyScroll.contains(renderedDailyRows[0]), true)
+  assert.equal(dailyScroll.contains(paginationSummary), false)
+  assert.equal(pagination.contains(paginationSummary), true)
   assert.deepEqual(
-    harness.allNodes()
-      .filter((node) => node.getAttribute?.('data-testid') === 'agent-report-product-row')
+    productRows
       .map((node) => productLines.find((line) => node.textContent.includes(line.label))?.key),
     ['deposit', 'perpetual']
   )
@@ -91,6 +119,84 @@ test('agent report Drawer uses approved empty copy for each report section', asy
   const drawer = harness.findByTestId('user-agent-report-drawer')
   assert.match(drawer.textContent, /暂无产品线汇总/)
   assert.match(drawer.textContent, /暂无代理业绩明细/)
+  const overview = harness.findByTestId('agent-report-overview-scroll')
+  const dailyScroll = harness.findByTestId('agent-report-daily-scroll')
+  assert.ok(overview)
+  assert.ok(dailyScroll)
+  assert.match(dailyScroll.textContent, /暂无代理业绩明细/)
+  assert.equal(dailyScroll.getAttribute('tabindex'), null)
+  assert.equal(harness.findByTestId('agent-report-pagination'), undefined)
+})
+
+test('agent report Drawer lets bounded overview and report errors shrink before the detail scroller at low heights', async (t) => {
+  const component = await loadDrawer()
+  const harness = await createSfcHarness(component, {
+    visible: true,
+    user,
+    report,
+    error: '代理报表请求失败，错误详情在浏览器缩放和窄视口下可能换行。'.repeat(8)
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const errorState = harness.findByTestId('agent-report-error-state')
+  const overview = harness.findByTestId('agent-report-overview-scroll')
+  const dailyScroll = harness.findByTestId('agent-report-daily-scroll')
+  const pagination = harness.findByTestId('agent-report-pagination')
+  assert.ok(errorState)
+  assert.ok(pagination, 'the wrapped-error path retains its fixed pagination footer')
+  assert.equal(errorState.classList.contains('min-h-0'), true)
+  assert.equal(errorState.classList.contains('max-h-[min(8rem,20vh)]'), true)
+  assert.equal(errorState.classList.contains('shrink'), true)
+  assert.equal(errorState.classList.contains('shrink-0'), false)
+  assert.equal(errorState.classList.contains('overflow-y-auto'), true)
+  assert.equal(overview.classList.contains('min-h-0'), true)
+  assert.equal(overview.classList.contains('shrink'), true)
+  assert.equal(overview.classList.contains('shrink-0'), false)
+  assert.equal(dailyScroll.classList.contains('min-h-20'), true)
+})
+
+test('agent report Drawer assigns bottom safe-area padding only to the flexible region without a footer', async (t) => {
+  const component = await loadDrawer()
+  const emptyHarness = await createSfcHarness(component, { visible: true, user, report: null, error: '' })
+  const dailyEmptyHarness = await createSfcHarness(component, {
+    visible: true,
+    user,
+    report: { ...report, dailyRows: [] },
+    error: ''
+  })
+  const pagedHarness = await createSfcHarness(component, { visible: true, user, report, error: '' })
+  t.after(emptyHarness.cleanup)
+  t.after(dailyEmptyHarness.cleanup)
+  t.after(pagedHarness.cleanup)
+  await emptyHarness.finishTransitions()
+  await dailyEmptyHarness.finishTransitions()
+  await pagedHarness.finishTransitions()
+
+  const safeBottomClass = 'pb-[max(1rem,env(safe-area-inset-bottom))]'
+  const footerSafeBottomClass = 'pb-[max(0.75rem,env(safe-area-inset-bottom))]'
+  const emptyState = emptyHarness.findByTestId('agent-report-empty-state')
+  assert.ok(emptyState)
+  assert.match(emptyState.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
+  assert.equal(emptyState.getAttribute('tabindex'), null)
+  assert.equal(emptyHarness.findByTestId('agent-report-pagination'), undefined)
+
+  emptyHarness.props.error = '报表服务暂时不可用'
+  await emptyHarness.flush()
+  const errorState = emptyHarness.findByTestId('agent-report-error-state')
+  assert.ok(errorState)
+  assert.match(errorState.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
+  assert.equal(errorState.getAttribute('tabindex'), '-1')
+  assert.equal(emptyHarness.findByTestId('agent-report-pagination'), undefined)
+
+  const dailyEmptyScroll = dailyEmptyHarness.findByTestId('agent-report-daily-scroll')
+  assert.match(dailyEmptyScroll.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
+  assert.equal(dailyEmptyHarness.findByTestId('agent-report-pagination'), undefined)
+
+  const pagedScroll = pagedHarness.findByTestId('agent-report-daily-scroll')
+  const pagination = pagedHarness.findByTestId('agent-report-pagination')
+  assert.doesNotMatch(pagedScroll.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
+  assert.match(pagination.getAttribute('class'), new RegExp(footerSafeBottomClass.replace(/[()[\]]/g, '\\$&')))
 })
 
 test('agent report Drawer clamps same-user data shrink but resets page for a new context', async (t) => {
@@ -177,6 +283,7 @@ test('agent report Drawer keeps agent-specific empty and loading-error feedback 
   const drawer = harness.findByTestId('user-agent-report-drawer')
   assert.match(drawer.textContent, /当前代理暂无业务报表数据/)
   assert.match(drawer.textContent, /该代理尚无可统计的客户与佣金记录/)
+  assert.equal(harness.findByTestId('agent-report-pagination'), undefined)
 
   harness.props.error = '报表服务暂时不可用'
   await harness.flush()
@@ -184,6 +291,7 @@ test('agent report Drawer keeps agent-specific empty and loading-error feedback 
   assert.ok(alert)
   assert.match(alert.textContent, /代理报表加载失败/)
   assert.match(alert.textContent, /报表服务暂时不可用/)
+  assert.equal(harness.findByTestId('agent-report-pagination'), undefined)
   assert.equal(drawer.isConnected, true)
 })
 
@@ -270,14 +378,19 @@ test('agent report Drawer preserves a newer context through an older leave callb
   assert.equal(nextTrigger.focusCount, 1)
 })
 
-test('agent report Drawer uses the shared fixed layer, one body scroller, and required motion safeguards', async () => {
+test('agent report Drawer uses the shared fixed layer, fixed report regions, and required motion safeguards', async () => {
   const source = await readFile(drawerFile, 'utf8')
 
   assert.match(source, /useDialogLifecycle/)
   assert.match(source, /:style="layerStyle"/)
   assert.match(source, /class="fixed inset-0/)
-  assert.match(source, /data-testid="user-agent-report-body"[^>]*overflow-y-auto/)
-  assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
+  assert.match(source, /data-testid="user-agent-report-body"[^>]*flex-col[^>]*overflow-hidden/)
+  assert.match(source, /data-testid="agent-report-overview-scroll"/)
+  assert.match(source, /data-testid="agent-report-daily-header"/)
+  assert.match(source, /data-testid="agent-report-daily-scroll"/)
+  assert.match(source, /data-testid="agent-report-pagination"/)
+  assert.match(source, /agent-report-overview-scroll" class="min-h-0 max-h-\[min\(22rem,42vh\)\] shrink overflow-y-auto/)
+  assert.match(source, /agent-report-daily-scroll" class="min-h-20 flex-1 overflow-y-auto/)
   assert.match(source, /overflow-hidden/)
   assert.match(source, /aria-label="关闭"/)
   assert.match(source, /200ms ease-out/)
