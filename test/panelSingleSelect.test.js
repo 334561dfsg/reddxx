@@ -230,6 +230,33 @@ test('search matches an option subtitle without committing a new value', async (
   assert.equal(harness.emitted.length, 0)
 })
 
+test('a rendered enabled option cannot commit after the current option refresh marks it disabled', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const commits = []
+  const harness = await createSfcHarness(component, {
+    ...baseProps,
+    modelValue: 'review'
+  }, { 'onUpdate:modelValue': (value) => commits.push(value) })
+  t.after(harness.cleanup)
+
+  harness.findByTestId('panel-single-select-trigger').click()
+  await harness.flush()
+  const staleEnabledOption = renderedOptions(harness).find((option) => optionLabel(option) === 'Active users')
+  assert.ok(staleEnabledOption)
+  const staleCommit = staleEnabledOption.getEventListeners('click')[0]
+  assert.ok(staleCommit)
+
+  harness.props.options = options.map((option) => (
+    option.value === 'active' ? { ...option, disabled: true } : option
+  ))
+  await harness.flush()
+  staleCommit({ type: 'click', target: staleEnabledOption, currentTarget: staleEnabledOption })
+  await harness.flush()
+
+  assert.equal(harness.props.modelValue, 'review')
+  assert.deepEqual(commits, [])
+})
+
 test('draft filtering, hover, and Arrow navigation never commit and non-submit close restores the selection', async (t) => {
   const component = await loadVueSfc(componentFile)
   const harness = await createSfcHarness(component, baseProps)

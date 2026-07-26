@@ -27,6 +27,7 @@ const submitButtonRef = ref(null)
 const errorRef = ref(null)
 const stage = ref('edit')
 const errorMessage = ref('')
+const vipSelectionError = ref('')
 const form = reactive({ direction: 'increase', points: '', vipLevel: null, amount: '', reason: '' })
 const config = computed(() => configs[props.mode] || configs.credit)
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
@@ -52,9 +53,15 @@ const selectedVip = computed(() => (
     ? null
     : enabledVipLevels.value.find((level) => Number(level.level) === form.vipLevel) || null
 ))
-const currentVip = computed(() => enabledVipLevels.value.find((level) => level.level === currentVipLevel.value) || null)
+const currentVip = computed(() => enabledVipLevels.value.find((level) => Number(level.level) === currentVipLevel.value) || null)
 const selectedVipBenefits = computed(() => (selectedVip.value?.benefits || []).map(clean).filter(Boolean))
-const vipSelectionInvalid = computed(() => props.mode === 'vip' && errorMessage.value === '请选择目标会员等级')
+const targetVipPrimaryLabel = computed(() => (
+  selectedVip.value ? vipPrimaryLabel(selectedVip.value) : `VIP${form.vipLevel}`
+))
+const targetVipSecondaryLabel = computed(() => (
+  selectedVip.value ? vipSecondaryLabel(selectedVip.value) : ''
+))
+const vipSelectionInvalid = computed(() => props.mode === 'vip' && Boolean(vipSelectionError.value))
 const parsedPoints = computed(() => Number(form.points))
 const parsedAmount = computed(() => Number(form.amount))
 const creditDelta = computed(() => (form.direction === 'decrease' ? -1 : 1) * (Number.isFinite(parsedPoints.value) ? parsedPoints.value : 0))
@@ -69,6 +76,7 @@ const setDirectionRef = (element, index) => {
 const resetForm = () => {
   stage.value = 'edit'
   errorMessage.value = ''
+  vipSelectionError.value = ''
   form.direction = 'increase'
   form.points = ''
   form.vipLevel = null
@@ -92,16 +100,31 @@ const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLe
 const close = createDialogCloseAction(requestDialogClose)
 const handleAfterLeave = () => { onAfterLeave(); resetForm(); emit('closed') }
 const showError = async (message) => { errorMessage.value = message; await nextTick(); errorRef.value?.focus?.() }
+const validateLatestVipSelection = () => {
+  const option = vipOptions.value.find((candidate) => (
+    candidate.value === form.vipLevel && !candidate.disabled
+  )) || null
+  if (option) return option
+
+  const message = form.vipLevel === null
+    ? '请选择目标会员等级'
+    : '目标会员等级已不可用，请重新选择'
+  vipSelectionError.value = message
+  errorMessage.value = message
+  stage.value = 'edit'
+  nextTick(() => vipSelectRef.value?.focus?.())
+  return null
+}
 
 const startConfirm = async () => {
   errorMessage.value = ''
+  vipSelectionError.value = ''
   if (props.mode === 'credit') {
     if (!/^\d+$/.test(String(form.points).trim()) || parsedPoints.value <= 0) return showError('信用分值必须为正整数')
     if (resultingScore.value < 0 || resultingScore.value > 1000) return showError('调整后信用分必须在 0 至 1000 之间')
   }
   if (props.mode === 'vip') {
-    if (!selectedVip.value) return showError('请选择目标会员等级')
-    if (Number(form.vipLevel) === currentVipLevel.value) return showError('目标等级不能与当前等级相同')
+    if (!validateLatestVipSelection()) return
   }
   if (props.mode === 'rebate' && (!/^\d+(\.\d{1,2})?$/.test(String(form.amount).trim()) || parsedAmount.value <= 0)) {
     return showError('返利金额必须大于 0 且最多两位小数')
@@ -116,14 +139,17 @@ const startConfirm = async () => {
 const backToEdit = async () => {
   stage.value = 'edit'
   errorMessage.value = ''
+  vipSelectionError.value = ''
   await nextTick()
   initialFocusRef.value?.focus?.()
 }
 const requestMfa = () => {
   if (phase.value !== 'open' || props.busy) return
+  const vipOption = props.mode === 'vip' ? validateLatestVipSelection() : null
+  if (props.mode === 'vip' && !vipOption) return
   const payload = { userId: userId.value }
   if (props.mode === 'credit') Object.assign(payload, { direction: form.direction, points: parsedPoints.value })
-  if (props.mode === 'vip') Object.assign(payload, { vipLevel: Number(form.vipLevel) })
+  if (props.mode === 'vip') Object.assign(payload, { vipLevel: vipOption.value })
   if (props.mode === 'rebate') Object.assign(payload, { amount: parsedAmount.value })
   payload.reason = form.reason.trim()
   emit('request-mfa', { type: config.value.type, payload, returnFocus: submitButtonRef.value })
@@ -189,7 +215,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
               <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
                 <h3 class="font-semibold">确认{{ config.action }}</h3>
                 <dl v-if="mode === 'credit'" class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>当前信用分</dt><dd>{{ currentScore }}</dd><dt>调整幅度</dt><dd>{{ creditDelta > 0 ? '+' : '' }}{{ creditDelta }}</dd><dt>调整后</dt><dd class="font-semibold">{{ resultingScore }}</dd><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
-                <dl v-else-if="mode === 'vip'" class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>变更方向</dt><dd>{{ vipDirection }}</dd><dt>当前等级</dt><dd>{{ currentVip ? vipPrimaryLabel(currentVip) : `VIP${currentVipLevel}` }}</dd><dt>目标等级</dt><dd class="font-semibold">{{ vipPrimaryLabel(selectedVip) }}<span v-if="vipSecondaryLabel(selectedVip)"> · {{ vipSecondaryLabel(selectedVip) }}</span></dd><template v-if="selectedVipBenefits.length"><dt>目标权益</dt><dd>{{ selectedVipBenefits.join('、') }}</dd></template><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
+                <dl v-else-if="mode === 'vip'" class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>变更方向</dt><dd>{{ vipDirection }}</dd><dt>当前等级</dt><dd>{{ currentVip ? vipPrimaryLabel(currentVip) : `VIP${currentVipLevel}` }}</dd><dt>目标等级</dt><dd class="font-semibold">{{ targetVipPrimaryLabel }}<span v-if="targetVipSecondaryLabel"> · {{ targetVipSecondaryLabel }}</span></dd><template v-if="selectedVipBenefits.length"><dt>目标权益</dt><dd>{{ selectedVipBenefits.join('、') }}</dd></template><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
                 <dl v-else class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>返利金额</dt><dd>{{ money(parsedAmount) }} USDT</dd><dt>入账前</dt><dd>{{ money(currentBalance) }} USDT</dd><dt>入账后</dt><dd class="font-semibold">{{ money(resultingBalance) }} USDT</dd><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
               </div>
               <p class="text-xs text-slate-500">提交后还需通过 MFA 验证，验证成功才会执行。</p>

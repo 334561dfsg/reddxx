@@ -443,12 +443,13 @@ function handleAfterLeave() {
 }
 
 function commitOption(option) {
-  if (!option || option.disabled || commitPending.value || motionState.value === 'closing') return
-  if (!filteredOptions.value.some((candidate) => valuesEqual(candidate.value, option.value))) return
+  if (!option || commitPending.value || motionState.value === 'closing') return
+  const currentOption = filteredOptions.value.find((candidate) => valuesEqual(candidate.value, option.value))
+  if (!currentOption || currentOption.disabled) return
   commitPending.value = true
-  activeValue.value = option.value
-  emit('update:modelValue', option.value)
-  emit('change', option.value, option)
+  activeValue.value = currentOption.value
+  emit('update:modelValue', currentOption.value)
+  emit('change', currentOption.value, currentOption)
   queueInstanceTick(() => requestClose('commit'))
 }
 

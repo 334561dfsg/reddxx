@@ -88,6 +88,9 @@ const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
     removeEventListener(type, listener) {
       listeners.get(type)?.delete(listener)
     },
+    getEventListeners(type) {
+      return [...(listeners.get(type) || [])]
+    },
     dispatchEvent(event) {
       event.target ||= node
       event.currentTarget = node
@@ -294,9 +297,9 @@ const createHostRenderer = (document) => createRenderer({
     node.text = text
     return node
   },
-  createComment(text) {
+  createComment() {
     const node = createHostNode(document, '#comment')
-    node.text = text
+    node.text = ''
     return node
   },
   setText(node, text) {

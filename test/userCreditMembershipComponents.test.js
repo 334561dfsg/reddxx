@@ -89,8 +89,8 @@ const membershipSnapshot = {
     { level: 3, name: 'VIP3', displayName: ' ', benefits: [] },
     { level: 4, name: '钻石会员', displayName: '钻石会员', benefits: [] },
     { level: 5, name: ' ', displayName: '翡翠会员', benefits: ['成长礼包'] },
-    { level: 6, name: 'VIP6', displayName: '六级会员', benefits: ['优先客服'] },
-    { level: 7, name: 'VIP7', displayName: '七级会员', benefits: ['优先客服'] },
+    { level: 6, name: 'VIP6', benefits: ['优先客服'] },
+    { level: 7, displayName: '七级会员', benefits: ['优先客服'] },
     { level: 8, name: 'VIP8', displayName: '八级会员', benefits: ['优先客服'] },
     { level: 9, name: 'VIP9', displayName: '九级会员', benefits: ['优先客服'] },
     { level: 10, name: 'VIP10', displayName: '十级会员', benefits: ['优先客服'] },
@@ -104,6 +104,14 @@ const membershipSnapshot = {
 
 const loadMembershipMutationDialog = async () => loadVueSfc(mutationDialogFile, {
   vueImports: { [panelSingleSelectFile]: loadVueSfcModuleUrl(panelSingleSelectFile) }
+})
+
+const membershipSnapshotCopy = () => ({
+  ...membershipSnapshot,
+  enabledVipLevels: membershipSnapshot.enabledVipLevels.map((level) => ({
+    ...level,
+    benefits: level.benefits ? [...level.benefits] : level.benefits
+  }))
 })
 
 const setInput = async (harness, testId, value) => {
@@ -182,13 +190,15 @@ test('membership mutation Dialog keeps credit radios and commits searchable VIP 
   ))
   assert.ok(currentLevel)
   assert.equal(currentLevel.getAttribute('aria-disabled'), 'true')
-  const duplicateLabelLevel = harness.allNodes().find((node) => (
-    node.getAttribute?.('role') === 'option' && node.textContent.includes('钻石会员')
-  ))
-  assert.ok(duplicateLabelLevel)
-  assert.equal(harness.allNodes().filter((node) => (
-    duplicateLabelLevel.contains(node) && node.classList?.contains('text-xs')
-  )).length, 0)
+  for (const label of ['VIP3', '钻石会员', 'VIP6', '七级会员']) {
+    const levelWithoutDistinctSubtitle = harness.allNodes().find((node) => (
+      node.getAttribute?.('role') === 'option' && node.textContent.includes(label)
+    ))
+    assert.ok(levelWithoutDistinctSubtitle)
+    assert.equal(harness.allNodes().filter((node) => (
+      levelWithoutDistinctSubtitle.contains(node) && node.classList?.contains('text-xs')
+    )).length, 0)
+  }
 
   const vipSearch = harness.findByTestId('panel-single-select-search')
   vipSearch.value = 'VIP15'
@@ -209,6 +219,73 @@ test('membership mutation Dialog keeps credit radios and commits searchable VIP 
   harness.findByText('提交并验证', 'button').click()
   assert.equal(requests[1].type, 'vip-level-set')
   assert.deepEqual(requests[1].payload, { userId: user.id, vipLevel: 15, reason: '运营升级' })
+})
+
+test('membership mutation Dialog rejects VIP selections invalidated by refresh before confirmation and MFA submission', async () => {
+  const component = await loadMembershipMutationDialog()
+  const scenarios = [
+    {
+      name: 'removed level',
+      refresh(harness) {
+        harness.props.snapshot = {
+          ...membershipSnapshotCopy(),
+          enabledVipLevels: membershipSnapshot.enabledVipLevels.filter((level) => level.level !== 15)
+        }
+      }
+    },
+    {
+      name: 'level that became current',
+      refresh(harness) {
+        harness.props.user = { ...user, vipLevel: 15 }
+      }
+    }
+  ]
+
+  for (const stage of ['before confirmation', 'during confirmation']) {
+    for (const scenario of scenarios) {
+      const requests = []
+      const harness = await createSfcHarness(component, {
+        visible: true,
+        user: { ...user, vipLevel: 1 },
+        mode: 'vip',
+        snapshot: membershipSnapshotCopy(),
+        busy: false
+      }, { onRequestMfa: (request) => requests.push(request) })
+      await harness.finishTransitions()
+
+      harness.findByTestId('panel-single-select-trigger').click()
+      await harness.flush()
+      const search = harness.findByTestId('panel-single-select-search')
+      search.value = 'VIP15'
+      search.dispatchEvent({ type: 'input', target: search })
+      await harness.flush()
+      harness.allNodes().find((node) => (
+        node.getAttribute?.('role') === 'option' && node.textContent.includes('皇冠会员')
+      )).click()
+      await harness.finishTransitions()
+      await setInput(harness, 'membership-mutation-reason', ' 刷新后重选 ')
+
+      if (stage === 'during confirmation') {
+        harness.findByText('下一步', 'button').click()
+        await harness.flush()
+        assert.ok(harness.findByText('提交并验证', 'button'))
+      }
+
+      scenario.refresh(harness)
+      await harness.flush()
+      harness.findByText(stage === 'during confirmation' ? '提交并验证' : '下一步', 'button').click()
+      await harness.flush()
+
+      const trigger = harness.findByTestId('panel-single-select-trigger')
+      assert.equal(requests.length, 0, `${scenario.name} must not emit during ${stage}`)
+      assert.match(harness.findByTestId('user-membership-mutation-dialog').textContent, /目标会员等级已不可用，请重新选择/)
+      assert.equal(trigger.getAttribute('aria-invalid'), 'true')
+      assert.match(trigger.getAttribute('aria-describedby'), /membership-vip-level-error/)
+      assert.equal(harness.document.activeElement, trigger)
+      assert.match(trigger.textContent, /(?:15|皇冠会员)/)
+      harness.cleanup()
+    }
+  }
 })
 
 test('membership mutation Dialog follows modal, select-choice, and responsive contracts', async () => {
