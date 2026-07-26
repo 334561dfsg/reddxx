@@ -209,7 +209,7 @@ const confirm = () => {
                 label="到"
                 required
                 :invalid="destinationConflict"
-                error-id="transfer-to-error"
+                :error-id="destinationConflict ? 'transfer-to-error' : ''"
                 id-base="transfer-to"
               />
               <p v-if="destinationConflict" id="transfer-to-error" class="mt-1 text-sm text-red-700" role="alert">

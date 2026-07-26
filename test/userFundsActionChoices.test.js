@@ -273,6 +273,14 @@ test('transfer blocks unavailable committed accounts without replacing their val
   assert.match(destination.textContent, /trading/)
   assert.equal(source.getAttribute('aria-invalid'), 'true')
   assert.equal(destination.getAttribute('aria-invalid'), 'true')
+  const destinationDescriptionIds = destination.getAttribute('aria-describedby').split(/\s+/).filter(Boolean)
+  assert.ok(destinationDescriptionIds.includes('transfer-to-orphaned'))
+  for (const descriptionId of destinationDescriptionIds) {
+    assert.ok(
+      harness.allNodes().some((node) => node.getAttribute?.('id') === descriptionId),
+      `expected destination description ${descriptionId} to resolve to a mounted element`
+    )
+  }
 
   await selectComboboxWithKeyboard(harness, 'transfer-coin', 1)
   await setInput(harness, '请输入划转的数量', '10.25')
