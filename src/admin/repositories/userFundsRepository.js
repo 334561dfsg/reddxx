@@ -114,10 +114,10 @@ export const unfreezeAdminFunds = ({ userId, amount, reason, operatorId }) => {
 
 export const deductAvailableFunds = ({ userId, amount, reason, operatorId }) => {
   const user = requireUser(userId)
-  const parsedAmount = parseMoney(amount, '划扣金额')
+  const parsedAmount = parseMoney(amount, '扣减金额')
   const cleanReason = requireText(reason)
   const before = snapshotFor(user)
-  if (parsedAmount > before.balance) throw new Error('划扣金额不能超过可用余额')
+  if (parsedAmount > before.balance) throw new Error('扣减金额不能超过可用余额')
 
   user.balance = roundMoney(before.balance - parsedAmount)
   const after = snapshotFor(user)

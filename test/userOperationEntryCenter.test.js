@@ -46,12 +46,12 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '账户间划转',
     '冻结资金',
     '解冻资金',
-    '划扣可用资金',
+    '扣减资金',
     '出金流水限制'
   ])
   assert.doesNotMatch(JSON.stringify(funds.entries), /调账|后台划扣记录|手动上分地址/)
   assert.match(getUserOperationEntry('transfer', {}).description, /总资产不变/)
-  assert.match(getUserOperationEntry('deduct-funds', {}).description, /减少用户可用资产/)
+  assert.equal(getUserOperationEntry('deduct-funds', {}).description, '永久扣减用户可用资金')
 
   assert.deepEqual(groups.flatMap((group) => group.entries.map((entry) => entry.title)), [
     '编辑资料',
@@ -66,7 +66,7 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '账户间划转',
     '冻结资金',
     '解冻资金',
-    '划扣可用资金',
+    '扣减资金',
     '出金流水限制',
     '信用分审核',
     '修改信用分',

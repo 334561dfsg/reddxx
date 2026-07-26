@@ -15,7 +15,7 @@ const modeToType = { freeze: 'freeze-funds', unfreeze: 'unfreeze-funds', deduct:
 const configs = {
   freeze: { title: '冻结资金', action: '冻结', amountLabel: '冻结金额', tone: 'bg-rose-600 hover:bg-rose-700', hint: '将指定可用资金转为冻结资金，用户总资产不变。' },
   unfreeze: { title: '解冻资金', action: '解冻', amountLabel: '解冻金额', tone: 'bg-amber-600 hover:bg-amber-700', hint: '仅解冻由管理员冻结的资金，不影响订单、风控等业务冻结资金。' },
-  deduct: { title: '划扣可用资金', action: '划扣', amountLabel: '划扣金额', tone: 'bg-rose-600 hover:bg-rose-700', hint: '永久减少可用资金并生成独立资金记录。' }
+  deduct: { title: '扣减资金', action: '扣减', amountLabel: '扣减金额', tone: 'bg-rose-600 hover:bg-rose-700', hint: '操作成功后用户总资产将减少，不能通过解冻恢复。' }
 }
 const dialogRef = ref(null)
 const amountRef = ref(null)

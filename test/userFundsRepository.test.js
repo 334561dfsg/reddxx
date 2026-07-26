@@ -109,6 +109,13 @@ test('deduction creates one transaction and failed commands are atomic', () => {
     assert.deepEqual(getFundsSnapshot(user.id), beforeFailure)
     assert.equal(getFundsAuditLog({ userId: user.id }).length, auditCount)
   }
+
+  assert.throws(() => deductAvailableFunds({
+    userId: user.id,
+    amount: '999999',
+    reason: '测试提示',
+    operatorId: 'admin_current'
+  }), /扣减金额不能超过可用余额/)
 })
 
 test('freeze and unfreeze reject unavailable operations without side effects', () => {
