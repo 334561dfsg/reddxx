@@ -1,6 +1,7 @@
 <script setup>
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import PanelSingleSelect from '../form/PanelSingleSelect.vue'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -18,7 +19,7 @@ const configs = {
 }
 const dialogRef = ref(null)
 const directionFirstRef = ref(null)
-const vipFirstRef = ref(null)
+const vipSelectRef = ref(null)
 const amountRef = ref(null)
 const reasonRef = ref(null)
 const backRef = ref(null)
@@ -26,15 +27,34 @@ const submitButtonRef = ref(null)
 const errorRef = ref(null)
 const stage = ref('edit')
 const errorMessage = ref('')
-const form = reactive({ direction: 'increase', points: '', vipLevel: '', amount: '', reason: '' })
+const form = reactive({ direction: 'increase', points: '', vipLevel: null, amount: '', reason: '' })
 const config = computed(() => configs[props.mode] || configs.credit)
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const currentScore = computed(() => Number(props.user?.creditScore ?? props.snapshot?.user?.creditScore ?? 0))
 const currentVipLevel = computed(() => Number(props.user?.vipLevel ?? props.snapshot?.user?.vipLevel ?? 0))
 const currentBalance = computed(() => Number(props.user?.balance ?? props.snapshot?.user?.balance ?? 0))
 const enabledVipLevels = computed(() => props.snapshot?.enabledVipLevels || [])
-const selectedVip = computed(() => enabledVipLevels.value.find((level) => level.level === Number(form.vipLevel)) || null)
+const clean = (value) => String(value ?? '').trim()
+const vipPrimaryLabel = (level) => clean(level.displayName) || clean(level.name) || `VIP${level.level}`
+const vipSecondaryLabel = (level) => {
+  const secondary = clean(level.name)
+  return secondary && secondary !== vipPrimaryLabel(level) ? secondary : ''
+}
+const vipOptions = computed(() => enabledVipLevels.value.map((level) => ({
+  value: Number(level.level),
+  label: vipPrimaryLabel(level),
+  description: vipSecondaryLabel(level),
+  searchText: `${level.level} ${clean(level.name)} ${clean(level.displayName)}`,
+  disabled: Number(level.level) === currentVipLevel.value
+})))
+const selectedVip = computed(() => (
+  form.vipLevel === null
+    ? null
+    : enabledVipLevels.value.find((level) => Number(level.level) === form.vipLevel) || null
+))
 const currentVip = computed(() => enabledVipLevels.value.find((level) => level.level === currentVipLevel.value) || null)
+const selectedVipBenefits = computed(() => (selectedVip.value?.benefits || []).map(clean).filter(Boolean))
+const vipSelectionInvalid = computed(() => props.mode === 'vip' && errorMessage.value === '请选择目标会员等级')
 const parsedPoints = computed(() => Number(form.points))
 const parsedAmount = computed(() => Number(form.amount))
 const creditDelta = computed(() => (form.direction === 'decrease' ? -1 : 1) * (Number.isFinite(parsedPoints.value) ? parsedPoints.value : 0))
@@ -46,21 +66,17 @@ const money = (value) => Number(value || 0).toLocaleString('zh-CN', { minimumFra
 const setDirectionRef = (element, index) => {
   if (element && index === 0) directionFirstRef.value = element
 }
-const setVipOptionRef = (element, level) => {
-  if (element && !vipFirstRef.value && level !== currentVipLevel.value) vipFirstRef.value = element
-}
 const resetForm = () => {
   stage.value = 'edit'
   errorMessage.value = ''
   form.direction = 'increase'
   form.points = ''
-  form.vipLevel = ''
+  form.vipLevel = null
   form.amount = ''
   form.reason = ''
-  vipFirstRef.value = null
 }
 const initialFocusRef = computed(() => {
-  if (props.mode === 'vip') return vipFirstRef.value || reasonRef.value
+  if (props.mode === 'vip') return vipSelectRef.value || reasonRef.value
   if (props.mode === 'rebate') return amountRef.value
   return directionFirstRef.value
 })
@@ -127,7 +143,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
           </header>
 
           <div data-testid="user-membership-mutation-body" class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5">
-            <p v-if="errorMessage" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ errorMessage }}</p>
+            <p v-if="errorMessage" :id="vipSelectionInvalid ? 'membership-vip-level-error' : null" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ errorMessage }}</p>
 
             <template v-if="stage === 'edit'">
               <template v-if="mode === 'credit'">
@@ -144,16 +160,20 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
               </template>
 
               <template v-else-if="mode === 'vip'">
-                <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">当前等级</span><strong class="float-right text-slate-900">{{ currentVip?.name || `VIP${currentVipLevel}` }}</strong></div>
-                <fieldset aria-labelledby="vip-target-label">
-                  <legend id="vip-target-label" class="text-sm font-medium text-slate-800">目标会员等级 <span class="text-rose-500">*</span></legend>
-                  <div class="mt-2 grid gap-2 sm:grid-cols-2">
-                    <label v-for="level in enabledVipLevels" :key="level.level" class="flex min-h-16 gap-3 rounded-lg border border-slate-300 p-3 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 has-[:disabled]:cursor-not-allowed has-[:disabled]:bg-slate-100 has-[:disabled]:opacity-60">
-                      <input :ref="(element) => setVipOptionRef(element, level.level)" v-model="form.vipLevel" type="radio" name="vip-target" :value="level.level" :disabled="level.level === currentVipLevel" class="mt-0.5 h-4 w-4 shrink-0" />
-                      <span><span class="font-semibold text-slate-900">{{ level.name }} · {{ level.displayName }}</span><span class="mt-1 block text-xs text-slate-500">{{ level.level === currentVipLevel ? '当前等级' : (level.benefits || []).slice(0, 2).join('、') || '标准会员权益' }}</span></span>
-                    </label>
-                  </div>
-                </fieldset>
+                <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">当前等级</span><strong class="float-right text-slate-900">{{ currentVip ? vipPrimaryLabel(currentVip) : `VIP${currentVipLevel}` }}</strong></div>
+                <PanelSingleSelect
+                  ref="vipSelectRef"
+                  v-model="form.vipLevel"
+                  data-testid="membership-vip-level-select"
+                  :options="vipOptions"
+                  label="目标会员等级"
+                  placeholder="请选择目标会员等级"
+                  search-label="搜索目标会员等级"
+                  required
+                  :invalid="vipSelectionInvalid"
+                  error-id="membership-vip-level-error"
+                  id-base="membership-vip-level"
+                />
               </template>
 
               <template v-else>
@@ -169,7 +189,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
               <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
                 <h3 class="font-semibold">确认{{ config.action }}</h3>
                 <dl v-if="mode === 'credit'" class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>当前信用分</dt><dd>{{ currentScore }}</dd><dt>调整幅度</dt><dd>{{ creditDelta > 0 ? '+' : '' }}{{ creditDelta }}</dd><dt>调整后</dt><dd class="font-semibold">{{ resultingScore }}</dd><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
-                <dl v-else-if="mode === 'vip'" class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>变更方向</dt><dd>{{ vipDirection }}</dd><dt>当前等级</dt><dd>{{ currentVip?.name || `VIP${currentVipLevel}` }}</dd><dt>目标等级</dt><dd class="font-semibold">{{ selectedVip?.name }} · {{ selectedVip?.displayName }}</dd><dt>目标权益</dt><dd>{{ (selectedVip?.benefits || []).join('、') || '标准会员权益' }}</dd><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
+                <dl v-else-if="mode === 'vip'" class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>变更方向</dt><dd>{{ vipDirection }}</dd><dt>当前等级</dt><dd>{{ currentVip ? vipPrimaryLabel(currentVip) : `VIP${currentVipLevel}` }}</dd><dt>目标等级</dt><dd class="font-semibold">{{ vipPrimaryLabel(selectedVip) }}<span v-if="vipSecondaryLabel(selectedVip)"> · {{ vipSecondaryLabel(selectedVip) }}</span></dd><template v-if="selectedVipBenefits.length"><dt>目标权益</dt><dd>{{ selectedVipBenefits.join('、') }}</dd></template><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
                 <dl v-else class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>返利金额</dt><dd>{{ money(parsedAmount) }} USDT</dd><dt>入账前</dt><dd>{{ money(currentBalance) }} USDT</dd><dt>入账后</dt><dd class="font-semibold">{{ money(resultingBalance) }} USDT</dd><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
               </div>
               <p class="text-xs text-slate-500">提交后还需通过 MFA 验证，验证成功才会执行。</p>

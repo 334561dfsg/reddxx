@@ -2,11 +2,12 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import test from 'node:test'
-import { createSfcHarness, loadVueSfc } from './helpers/vueSfcHarness.js'
+import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
 
 const projectFile = (path) => resolve(process.cwd(), path)
 const rechargeDrawerFile = projectFile('src/admin/components/user/UserRechargeSummaryDrawer.vue')
 const mutationDialogFile = projectFile('src/admin/components/user/UserMembershipMutationDialog.vue')
+const panelSingleSelectFile = projectFile('src/admin/components/form/PanelSingleSelect.vue')
 const reviewDrawerFile = projectFile('src/admin/components/user/UserCreditReviewDrawer.vue')
 const reviewDecisionFile = projectFile('src/admin/components/user/UserCreditReviewDecisionDialog.vue')
 
@@ -84,9 +85,26 @@ const membershipSnapshot = {
   enabledVipLevels: [
     { level: 0, name: '普通用户', displayName: '普通用户', benefits: ['基础交易'] },
     { level: 1, name: 'VIP1', displayName: '青铜会员', benefits: ['优先客服'] },
-    { level: 2, name: 'VIP2', displayName: '白银会员', benefits: ['专属客服', '高级数据分析'] }
+    { level: 2, name: 'VIP2', displayName: '白银会员', benefits: ['专属客服', '高级数据分析'] },
+    { level: 3, name: 'VIP3', displayName: ' ', benefits: [] },
+    { level: 4, name: '钻石会员', displayName: '钻石会员', benefits: [] },
+    { level: 5, name: ' ', displayName: '翡翠会员', benefits: ['成长礼包'] },
+    { level: 6, name: 'VIP6', displayName: '六级会员', benefits: ['优先客服'] },
+    { level: 7, name: 'VIP7', displayName: '七级会员', benefits: ['优先客服'] },
+    { level: 8, name: 'VIP8', displayName: '八级会员', benefits: ['优先客服'] },
+    { level: 9, name: 'VIP9', displayName: '九级会员', benefits: ['优先客服'] },
+    { level: 10, name: 'VIP10', displayName: '十级会员', benefits: ['优先客服'] },
+    { level: 11, name: 'VIP11', displayName: '十一级会员', benefits: ['优先客服'] },
+    { level: 12, name: 'VIP12', displayName: '十二级会员', benefits: ['优先客服'] },
+    { level: 13, name: 'VIP13', displayName: '十三级会员', benefits: ['优先客服'] },
+    { level: 14, name: 'VIP14', displayName: '十四级会员', benefits: ['优先客服'] },
+    { level: 15, name: 'VIP15', displayName: '皇冠会员', benefits: [] }
   ]
 }
+
+const loadMembershipMutationDialog = async () => loadVueSfc(mutationDialogFile, {
+  vueImports: { [panelSingleSelectFile]: loadVueSfcModuleUrl(panelSingleSelectFile) }
+})
 
 const setInput = async (harness, testId, value) => {
   const input = harness.findByTestId(testId)
@@ -124,8 +142,8 @@ test('membership mutation Dialog validates rebate and emits an exact MFA payload
   assert.equal(requests[0].returnFocus.tag, 'button')
 })
 
-test('membership mutation Dialog uses labelled radio groups for credit and VIP payloads', async (t) => {
-  const component = await loadVueSfc(mutationDialogFile)
+test('membership mutation Dialog keeps credit radios and commits searchable VIP levels with the exact MFA payload', async (t) => {
+  const component = await loadMembershipMutationDialog()
   const requests = []
   const harness = await createSfcHarness(component, {
     visible: true,
@@ -150,16 +168,47 @@ test('membership mutation Dialog uses labelled radio groups for credit and VIP p
 
   harness.props.mode = 'vip'
   await harness.flush()
-  const vip2 = harness.allNodes().find((node) => node.tag === 'input' && node.getAttribute?.('name') === 'vip-target' && Number(node.value) === 2)
-  assert.ok(vip2)
-  vip2.checked = true
-  vip2.dispatchEvent({ type: 'change', target: vip2 })
+  const dialog = harness.findByTestId('user-membership-mutation-dialog')
+  const vipSelect = harness.findByTestId('membership-vip-level-select')
+  assert.ok(vipSelect)
+  assert.equal(harness.allNodes().filter((node) => node.getAttribute?.('name') === 'vip-target').length, 0)
+  assert.doesNotMatch(dialog.textContent, /标准会员权益/)
+
+  const vipTrigger = harness.findByTestId('panel-single-select-trigger')
+  vipTrigger.click()
+  await harness.flush()
+  const currentLevel = harness.allNodes().find((node) => (
+    node.getAttribute?.('role') === 'option' && node.textContent.includes('青铜会员')
+  ))
+  assert.ok(currentLevel)
+  assert.equal(currentLevel.getAttribute('aria-disabled'), 'true')
+  const duplicateLabelLevel = harness.allNodes().find((node) => (
+    node.getAttribute?.('role') === 'option' && node.textContent.includes('钻石会员')
+  ))
+  assert.ok(duplicateLabelLevel)
+  assert.equal(harness.allNodes().filter((node) => (
+    duplicateLabelLevel.contains(node) && node.classList?.contains('text-xs')
+  )).length, 0)
+
+  const vipSearch = harness.findByTestId('panel-single-select-search')
+  vipSearch.value = 'VIP15'
+  vipSearch.dispatchEvent({ type: 'input', target: vipSearch })
+  await harness.flush()
+  const vip15 = harness.allNodes().find((node) => (
+    node.getAttribute?.('role') === 'option' && node.textContent.includes('皇冠会员')
+  ))
+  assert.ok(vip15)
+  vip15.click()
+  await harness.finishTransitions()
   await setInput(harness, 'membership-mutation-reason', ' 运营升级 ')
   harness.findByText('下一步', 'button').click()
   await harness.flush()
+  assert.match(dialog.textContent, /皇冠会员/)
+  assert.match(dialog.textContent, /VIP15/)
+  assert.doesNotMatch(dialog.textContent, /目标权益/)
   harness.findByText('提交并验证', 'button').click()
   assert.equal(requests[1].type, 'vip-level-set')
-  assert.deepEqual(requests[1].payload, { userId: user.id, vipLevel: 2, reason: '运营升级' })
+  assert.deepEqual(requests[1].payload, { userId: user.id, vipLevel: 15, reason: '运营升级' })
 })
 
 test('membership mutation Dialog follows modal, select-choice, and responsive contracts', async () => {
@@ -167,7 +216,9 @@ test('membership mutation Dialog follows modal, select-choice, and responsive co
 
   assert.doesNotMatch(source, /<select\b|role="combobox"/)
   assert.match(source, /aria-labelledby="credit-direction-label"/)
-  assert.match(source, /aria-labelledby="vip-target-label"/)
+  assert.match(source, /import PanelSingleSelect from '\.\.\/form\/PanelSingleSelect\.vue'/)
+  assert.match(source, /data-testid="membership-vip-level-select"/)
+  assert.doesNotMatch(source, /name="vip-target"/)
   assert.match(source, /type="radio"/)
   assert.match(source, /data-testid="user-membership-mutation-body"[^>]*overflow-y-auto/)
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
