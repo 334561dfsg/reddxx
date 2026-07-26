@@ -83,7 +83,7 @@ test('freeze and unfreeze reject unavailable operations without side effects', (
   user.balance = 0
   const before = getFundsSnapshot(user.id)
   assert.throws(() => freezeAllAvailable({ userId: user.id, reason: '测试', operatorId: 'admin_current' }), /没有可冻结/)
-  assert.throws(() => unfreezeAdminFunds({ userId: user.id, reason: '测试', operatorId: 'admin_current' }), /没有后台冻结/)
+  assert.throws(() => unfreezeAdminFunds({ userId: user.id, reason: '测试', operatorId: 'admin_current' }), /没有人工冻结资金/)
   assert.deepEqual(getFundsSnapshot(user.id), before)
   assert.equal(getFundsAuditLog({ userId: user.id }).length, 0)
 })

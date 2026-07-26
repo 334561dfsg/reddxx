@@ -30,7 +30,7 @@ export const USER_OPERATION_ENTRIES = Object.freeze([
   { id: 'deposit', title: '客服入金', description: '由客服为当前用户发起人工入金', group: 'funds', status: 'available', risk: 'sensitive', handler: 'deposit' },
   { id: 'transfer', title: '账户间划转', description: '在用户内部账户之间移动资产，总资产不变', group: 'funds', status: 'available', risk: 'sensitive', handler: 'transfer' },
   { id: 'freeze-funds', title: '冻结全部资金', description: '冻结用户全部账户内的可用资金', group: 'funds', status: 'available', risk: 'danger', handler: 'freeze-funds' },
-  { id: 'unfreeze-funds', title: '解冻后台冻结', description: '仅解除由后台资金冻结操作产生的冻结金额', group: 'funds', status: 'available', risk: 'danger', handler: 'unfreeze-funds' },
+  { id: 'unfreeze-funds', title: '解冻人工冻结资金', description: '仅解除管理员人工冻结的金额，不影响订单、风控等业务冻结资金', group: 'funds', status: 'available', risk: 'danger', handler: 'unfreeze-funds' },
   { id: 'deduct-funds', title: '划扣可用资金', description: '永久减少用户可用资产并生成划扣记录', group: 'funds', status: 'available', risk: 'danger', handler: 'deduct-funds' },
   { id: 'withdraw-flow-limit', title: '出金流水限制', description: '管理用户出金所需流水条件', group: 'funds', status: 'available', risk: 'sensitive', handler: 'withdraw-flow-limit' },
 

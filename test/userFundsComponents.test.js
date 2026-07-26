@@ -25,7 +25,10 @@ test('funds mutation dialog previews and confirms all three operation modes', as
   const source = await readFile(mutationPath, 'utf8')
 
   assert.match(source, /冻结全部资金/)
-  assert.match(source, /解冻后台冻结/)
+  assert.match(source, /解冻人工冻结资金/)
+  assert.match(source, /其中：人工冻结/)
+  assert.match(source, /不影响订单、风控等业务冻结资金/)
+  assert.doesNotMatch(source, /解冻后台冻结/)
   assert.match(source, /划扣可用资金/)
   assert.match(source, /stage\.value = 'confirm'/)
   assert.match(source, /返回修改/)

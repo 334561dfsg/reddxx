@@ -106,9 +106,9 @@ export const unfreezeAdminFunds = ({ userId, reason, operatorId }) => {
   const user = requireUser(userId)
   const cleanReason = requireText(reason)
   const before = snapshotFor(user)
-  if (before.adminFrozenAmount <= 0) throw new Error('当前没有后台冻结资金')
+  if (before.adminFrozenAmount <= 0) throw new Error('当前没有人工冻结资金')
   const amount = roundMoney(Math.min(before.adminFrozenAmount, before.frozenBalance))
-  if (amount <= 0) throw new Error('当前没有可释放的后台冻结资金')
+  if (amount <= 0) throw new Error('当前没有可释放的人工冻结资金')
 
   user.balance = roundMoney(before.balance + amount)
   user.frozenBalance = roundMoney(before.frozenBalance - amount)

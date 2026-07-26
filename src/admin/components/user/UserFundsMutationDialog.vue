@@ -13,8 +13,8 @@ const props = defineProps({
 const emit = defineEmits(['close', 'closed', 'request-mfa'])
 const modeToType = { freeze: 'freeze-funds', unfreeze: 'unfreeze-funds', deduct: 'deduct-funds' }
 const configs = {
-  freeze: { title: '冻结全部资金', action: '冻结', tone: 'bg-rose-600 hover:bg-rose-700', hint: '把当前全部可用资金转为后台冻结，用户总资产不变。' },
-  unfreeze: { title: '解冻后台冻结', action: '解冻', tone: 'bg-amber-600 hover:bg-amber-700', hint: '仅解冻由后台操作冻结的资金，不影响业务冻结金额。' },
+  freeze: { title: '冻结全部资金', action: '冻结', tone: 'bg-rose-600 hover:bg-rose-700', hint: '把当前全部可用资金转为人工冻结资金，用户总资产不变。' },
+  unfreeze: { title: '解冻人工冻结资金', action: '解冻', tone: 'bg-amber-600 hover:bg-amber-700', hint: '仅解冻管理员人工冻结的资金，不影响订单、风控等业务冻结资金。' },
   deduct: { title: '划扣可用资金', action: '划扣', tone: 'bg-rose-600 hover:bg-rose-700', hint: '永久减少可用资金并生成独立资金记录。' }
 }
 const dialogRef = ref(null)
@@ -76,7 +76,7 @@ const startConfirm = async () => {
   const reason = form.reason.trim()
   if (!reason) return showError('操作原因必填')
   if (reason.length > 200) return showError('操作原因不能超过 200 字')
-  if (operationAmount.value <= 0) return showError(props.mode === 'unfreeze' ? '当前没有可解冻的后台冻结资金' : '当前没有可操作的可用资金')
+  if (operationAmount.value <= 0) return showError(props.mode === 'unfreeze' ? '当前没有可解冻的人工冻结资金' : '当前没有可操作的可用资金')
   if (props.mode === 'deduct' && (!/^\d+(\.\d{1,2})?$/.test(form.amount.trim()) || parsedAmount.value > balance.value)) {
     return showError('请输入不超过可用资金且最多两位小数的划扣金额')
   }
@@ -120,7 +120,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
               <dl class="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
                 <div class="rounded-lg border border-slate-200 p-3"><dt class="text-xs text-slate-500">可用资金</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(balance) }}</dd></div>
                 <div class="rounded-lg border border-slate-200 p-3"><dt class="text-xs text-slate-500">冻结资金</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(frozenBalance) }}</dd></div>
-                <div class="rounded-lg border border-slate-200 p-3"><dt class="text-xs text-slate-500">后台冻结</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(adminFrozenAmount) }}</dd></div>
+                <div class="rounded-lg border border-slate-200 p-3"><dt class="text-xs text-slate-500">其中：人工冻结</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(adminFrozenAmount) }}</dd></div>
               </dl>
               <label v-if="mode === 'deduct'" class="block">
                 <span class="text-sm font-medium text-slate-800">划扣金额 <span class="text-rose-500">*</span></span>

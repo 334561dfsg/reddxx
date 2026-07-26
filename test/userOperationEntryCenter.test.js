@@ -45,7 +45,7 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '客服入金',
     '账户间划转',
     '冻结全部资金',
-    '解冻后台冻结',
+    '解冻人工冻结资金',
     '划扣可用资金',
     '出金流水限制'
   ])
@@ -65,7 +65,7 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '客服入金',
     '账户间划转',
     '冻结全部资金',
-    '解冻后台冻结',
+    '解冻人工冻结资金',
     '划扣可用资金',
     '出金流水限制',
     '信用分审核',
