@@ -54,9 +54,26 @@ test('agent report Drawer renders four summary cards, every product line, and te
     assert.match(drawer.textContent, new RegExp(label))
   }
   assert.equal(harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-summary-card').length, 4)
+  const overview = harness.findByTestId('agent-report-overview-scroll')
+  const dailyHeader = harness.findByTestId('agent-report-daily-header')
+  const dailyScroll = harness.findByTestId('agent-report-daily-scroll')
+  const pagination = harness.findByTestId('agent-report-pagination')
+  const summaryCards = harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-summary-card')
+  const productRows = harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-product-row')
+  const renderedDailyRows = harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-daily-row')
+  const paginationSummary = harness.findByTestId('compact-pagination-summary')
+  assert.ok(overview)
+  assert.ok(dailyHeader)
+  assert.ok(dailyScroll)
+  assert.ok(pagination)
+  assert.equal(overview.contains(summaryCards[0]), true)
+  assert.equal(overview.contains(productRows[0]), true)
+  assert.equal(dailyScroll.contains(dailyHeader), false)
+  assert.equal(dailyScroll.contains(renderedDailyRows[0]), true)
+  assert.equal(dailyScroll.contains(paginationSummary), false)
+  assert.equal(pagination.contains(paginationSummary), true)
   assert.deepEqual(
-    harness.allNodes()
-      .filter((node) => node.getAttribute?.('data-testid') === 'agent-report-product-row')
+    productRows
       .map((node) => productLines.find((line) => node.textContent.includes(line.label))?.key),
     ['deposit', 'perpetual']
   )
@@ -91,6 +108,12 @@ test('agent report Drawer uses approved empty copy for each report section', asy
   const drawer = harness.findByTestId('user-agent-report-drawer')
   assert.match(drawer.textContent, /暂无产品线汇总/)
   assert.match(drawer.textContent, /暂无代理业绩明细/)
+  const overview = harness.findByTestId('agent-report-overview-scroll')
+  const dailyScroll = harness.findByTestId('agent-report-daily-scroll')
+  assert.ok(overview)
+  assert.ok(dailyScroll)
+  assert.match(dailyScroll.textContent, /暂无代理业绩明细/)
+  assert.equal(harness.findByTestId('agent-report-pagination'), undefined)
 })
 
 test('agent report Drawer clamps same-user data shrink but resets page for a new context', async (t) => {
@@ -177,6 +200,7 @@ test('agent report Drawer keeps agent-specific empty and loading-error feedback 
   const drawer = harness.findByTestId('user-agent-report-drawer')
   assert.match(drawer.textContent, /当前代理暂无业务报表数据/)
   assert.match(drawer.textContent, /该代理尚无可统计的客户与佣金记录/)
+  assert.equal(harness.findByTestId('agent-report-pagination'), undefined)
 
   harness.props.error = '报表服务暂时不可用'
   await harness.flush()
@@ -184,6 +208,7 @@ test('agent report Drawer keeps agent-specific empty and loading-error feedback 
   assert.ok(alert)
   assert.match(alert.textContent, /代理报表加载失败/)
   assert.match(alert.textContent, /报表服务暂时不可用/)
+  assert.equal(harness.findByTestId('agent-report-pagination'), undefined)
   assert.equal(drawer.isConnected, true)
 })
 
@@ -270,14 +295,19 @@ test('agent report Drawer preserves a newer context through an older leave callb
   assert.equal(nextTrigger.focusCount, 1)
 })
 
-test('agent report Drawer uses the shared fixed layer, one body scroller, and required motion safeguards', async () => {
+test('agent report Drawer uses the shared fixed layer, fixed report regions, and required motion safeguards', async () => {
   const source = await readFile(drawerFile, 'utf8')
 
   assert.match(source, /useDialogLifecycle/)
   assert.match(source, /:style="layerStyle"/)
   assert.match(source, /class="fixed inset-0/)
-  assert.match(source, /data-testid="user-agent-report-body"[^>]*overflow-y-auto/)
-  assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
+  assert.match(source, /data-testid="user-agent-report-body"[^>]*flex-col[^>]*overflow-hidden/)
+  assert.match(source, /data-testid="agent-report-overview-scroll"/)
+  assert.match(source, /data-testid="agent-report-daily-header"/)
+  assert.match(source, /data-testid="agent-report-daily-scroll"/)
+  assert.match(source, /data-testid="agent-report-pagination"/)
+  assert.match(source, /agent-report-overview-scroll" class="max-h-\[min\(22rem,42vh\)\] shrink-0 overflow-y-auto/)
+  assert.match(source, /agent-report-daily-scroll" class="min-h-0 flex-1 overflow-y-auto/)
   assert.match(source, /overflow-hidden/)
   assert.match(source, /aria-label="关闭"/)
   assert.match(source, /200ms ease-out/)
