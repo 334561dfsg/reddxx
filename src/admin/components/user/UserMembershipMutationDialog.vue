@@ -45,6 +45,7 @@ const vipOptions = computed(() => enabledVipLevels.value.map((level) => ({
   value: Number(level.level),
   label: vipPrimaryLabel(level),
   description: vipSecondaryLabel(level),
+  status: Number(level.level) === currentVipLevel.value ? '当前等级' : '',
   searchText: `${level.level} ${clean(level.name)} ${clean(level.displayName)}`,
   disabled: Number(level.level) === currentVipLevel.value
 })))
@@ -100,19 +101,27 @@ const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLe
 const close = createDialogCloseAction(requestDialogClose)
 const handleAfterLeave = () => { onAfterLeave(); resetForm(); emit('closed') }
 const showError = async (message) => { errorMessage.value = message; await nextTick(); errorRef.value?.focus?.() }
-const validateLatestVipSelection = () => {
-  const option = vipOptions.value.find((candidate) => (
-    candidate.value === form.vipLevel && !candidate.disabled
-  )) || null
-  if (option) return option
-
+const latestVipOption = () => vipOptions.value.find((candidate) => (
+  candidate.value === form.vipLevel && !candidate.disabled
+)) || null
+const clearVipSelectionError = () => {
+  const previousSelectionError = vipSelectionError.value
+  vipSelectionError.value = ''
+  if (previousSelectionError && errorMessage.value === previousSelectionError) errorMessage.value = ''
+}
+const showVipSelectionError = ({ focus = false } = {}) => {
   const message = form.vipLevel === null
     ? '请选择目标会员等级'
     : '目标会员等级已不可用，请重新选择'
   vipSelectionError.value = message
   errorMessage.value = message
-  stage.value = 'edit'
-  nextTick(() => vipSelectRef.value?.focus?.())
+  if (stage.value === 'confirm') stage.value = 'edit'
+  if (focus) nextTick(() => vipSelectRef.value?.focus?.())
+}
+const validateLatestVipSelection = () => {
+  const option = latestVipOption()
+  if (option) return option
+  showVipSelectionError({ focus: true })
   return null
 }
 
@@ -156,6 +165,19 @@ const requestMfa = () => {
 }
 
 watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visible) resetForm() }, { immediate: true })
+watch(
+  [() => props.visible, () => props.mode, () => form.vipLevel, vipOptions],
+  ([visible, mode, vipLevel]) => {
+    if (!visible || mode !== 'vip') return
+    if (vipLevel === null || latestVipOption()) {
+      clearVipSelectionError()
+      return
+    }
+    const returnToEdit = stage.value === 'confirm'
+    showVipSelectionError({ focus: returnToEdit })
+  },
+  { deep: true, flush: 'post' }
+)
 </script>
 
 <template>

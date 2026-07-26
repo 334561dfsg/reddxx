@@ -190,6 +190,13 @@ test('membership mutation Dialog keeps credit radios and commits searchable VIP 
   ))
   assert.ok(currentLevel)
   assert.equal(currentLevel.getAttribute('aria-disabled'), 'true')
+  assert.match(currentLevel.textContent, /当前等级/)
+  const currentLevelMarker = harness.allNodes().find((node) => (
+    currentLevel.contains(node) &&
+    node.getAttribute?.('data-testid') === 'panel-single-select-option-status' &&
+    node.textContent.trim() === '当前等级'
+  ))
+  assert.ok(currentLevelMarker)
   for (const label of ['VIP3', '钻石会员', 'VIP6', '七级会员']) {
     const levelWithoutDistinctSubtitle = harness.allNodes().find((node) => (
       node.getAttribute?.('role') === 'option' && node.textContent.includes(label)
@@ -265,15 +272,19 @@ test('membership mutation Dialog rejects VIP selections invalidated by refresh b
       await harness.finishTransitions()
       await setInput(harness, 'membership-mutation-reason', ' 刷新后重选 ')
 
+      let guardedAction
       if (stage === 'during confirmation') {
         harness.findByText('下一步', 'button').click()
         await harness.flush()
-        assert.ok(harness.findByText('提交并验证', 'button'))
+        guardedAction = harness.findByText('提交并验证', 'button')
+        assert.ok(guardedAction)
+      } else {
+        guardedAction = harness.findByText('下一步', 'button')
       }
 
       scenario.refresh(harness)
       await harness.flush()
-      harness.findByText(stage === 'during confirmation' ? '提交并验证' : '下一步', 'button').click()
+      guardedAction.click()
       await harness.flush()
 
       const trigger = harness.findByTestId('panel-single-select-trigger')
@@ -286,6 +297,66 @@ test('membership mutation Dialog rejects VIP selections invalidated by refresh b
       harness.cleanup()
     }
   }
+})
+
+test('membership mutation Dialog immediately reconciles a refresh-invalid VIP selection and clears its field error after reselection', async (t) => {
+  const component = await loadMembershipMutationDialog()
+  const harness = await createSfcHarness(component, {
+    visible: true,
+    user: { ...user, vipLevel: 1 },
+    mode: 'vip',
+    snapshot: membershipSnapshotCopy(),
+    busy: false
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const trigger = harness.findByTestId('panel-single-select-trigger')
+  trigger.click()
+  await harness.flush()
+  const search = harness.findByTestId('panel-single-select-search')
+  search.value = 'VIP15'
+  search.dispatchEvent({ type: 'input', target: search })
+  await harness.flush()
+  harness.allNodes().find((node) => (
+    node.getAttribute?.('role') === 'option' && node.textContent.includes('皇冠会员')
+  )).click()
+  await harness.flush()
+  await harness.finishTransitions()
+  const reason = await setInput(harness, 'membership-mutation-reason', ' 保留刷新原因 ')
+
+  harness.props.snapshot = {
+    ...membershipSnapshotCopy(),
+    enabledVipLevels: membershipSnapshot.enabledVipLevels.filter((level) => level.level !== 15)
+  }
+  await harness.flush()
+
+  const dialog = harness.findByTestId('user-membership-mutation-dialog')
+  assert.match(dialog.textContent, /目标会员等级已不可用，请重新选择/)
+  assert.equal(trigger.getAttribute('aria-invalid'), 'true')
+  assert.match(trigger.getAttribute('aria-describedby'), /membership-vip-level-error/)
+  assert.equal(reason.value, ' 保留刷新原因 ')
+
+  const refreshedTrigger = harness.findByTestId('panel-single-select-trigger')
+  refreshedTrigger.click()
+  await harness.flush()
+  const replacementOption = harness.allNodes().find((node) => (
+    node.getAttribute?.('role') === 'option' && node.textContent.includes('十四级会员')
+  ))
+  assert.ok(replacementOption, `available options: ${harness.allNodes()
+    .filter((node) => node.getAttribute?.('role') === 'option')
+    .map((node) => node.textContent)
+    .join(', ')}`)
+  replacementOption.click()
+  await harness.flush()
+  await harness.finishTransitions()
+
+  assert.doesNotMatch(dialog.textContent, /目标会员等级已不可用，请重新选择/)
+  assert.equal(trigger.getAttribute('aria-invalid'), 'false')
+  assert.doesNotMatch(trigger.getAttribute('aria-describedby'), /membership-vip-level-error/)
+  assert.equal(reason.value, ' 保留刷新原因 ')
+  assert.equal(harness.document.activeElement?.getAttribute?.('data-testid'), 'panel-single-select-trigger')
+  assert.match(harness.findByTestId('panel-single-select-trigger').textContent, /十四级会员/)
 })
 
 test('membership mutation Dialog follows modal, select-choice, and responsive contracts', async () => {

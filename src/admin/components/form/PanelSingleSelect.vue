@@ -786,6 +786,13 @@ onUnmounted(() => {
                     {{ option.description }}
                   </span>
                 </span>
+                <span
+                  v-if="String(option.status || '').trim()"
+                  data-testid="panel-single-select-option-status"
+                  class="ml-2 shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600"
+                >
+                  {{ option.status }}
+                </span>
               </button>
             </li>
           </ul>
