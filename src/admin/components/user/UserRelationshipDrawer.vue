@@ -1,11 +1,18 @@
 <script setup>
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { USER_ROLE_OPTIONS, USER_STATUS_OPTIONS } from '../../constants/user.js'
 import { getDescendants, getDirectReferrals } from '../../repositories/userRelationshipRepository.js'
-import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import {
+  createDialogCloseAction,
+  getFocusableElements,
+  registerDialogPopupHost,
+  unregisterDialogPopupHost,
+  useDialogLifecycle
+} from '../../composables/useDialogLifecycle.js'
 import CompactPagination from '../CompactPagination.vue'
 
 const PAGE_SIZE = 10
+const FILTER_PANEL_FALLBACK_HEIGHT = { status: 142, role: 102 }
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -15,16 +22,26 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'closed'])
-const drawerRef = ref(null)
-const titleRef = ref(null)
-const statusFilterToggleRef = ref(null)
-const roleFilterToggleRef = ref(null)
+const popupLayerRef = shallowRef(null)
+const drawerRef = shallowRef(null)
+const titleRef = shallowRef(null)
+const statusFilterToggleRef = shallowRef(null)
+const roleFilterToggleRef = shallowRef(null)
+const filterPanelRef = shallowRef(null)
+const filterPortalTarget = shallowRef('body')
+const filterPanelStyle = ref({ position: 'fixed' })
+const filterPlacement = ref('bottom')
 const keyword = ref('')
 const status = ref('all')
 const role = ref('all')
 const selectedMember = ref(null)
 const currentPage = ref(1)
 const openFilter = ref(null)
+let filterPopupHostRegistration = null
+let filterPositionFrame = 0
+let filterVisualViewport = null
+let filterSessionVersion = 0
+let disposed = false
 
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const isAllMode = computed(() => props.mode === 'all')
@@ -57,6 +74,13 @@ const pagedMembers = computed(() => {
 })
 
 const hasFilters = computed(() => Boolean(keyword.value.trim()) || status.value !== 'all' || role.value !== 'all')
+const filterPanelId = computed(() => `relationship-drawer-${openFilter.value}-filter-panel`)
+const filterPanelLabel = computed(() => openFilter.value === 'status' ? '账户状态筛选' : '用户角色筛选')
+const filterLegend = computed(() => openFilter.value === 'status' ? '账户状态' : '用户角色')
+const filterItems = computed(() => openFilter.value === 'status'
+  ? [{ value: 'all', label: '全部状态' }, ...USER_STATUS_OPTIONS]
+  : [{ value: 'all', label: '全部角色' }, ...USER_ROLE_OPTIONS])
+const selectedFilterValue = computed(() => openFilter.value === 'status' ? status.value : role.value)
 const statusLabel = (value) => USER_STATUS_OPTIONS.find((item) => item.value === value)?.label || value || '—'
 const roleLabel = (value) => USER_ROLE_OPTIONS.find((item) => item.value === value)?.label || value || '—'
 const formatMoney = (value) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(Number(value || 0))
@@ -79,23 +103,177 @@ const {
 })
 
 const close = createDialogCloseAction(requestDialogClose)
-const closeFilters = async () => {
+
+const filterTriggerRef = (filter = openFilter.value) => (
+  filter === 'status' ? statusFilterToggleRef : roleFilterToggleRef
+)
+
+const cancelFilterPositionFrame = () => {
+  if (filterPositionFrame && typeof cancelAnimationFrame === 'function') {
+    cancelAnimationFrame(filterPositionFrame)
+  }
+  filterPositionFrame = 0
+}
+
+const releaseFilterPopupHost = () => {
+  unregisterDialogPopupHost(filterPopupHostRegistration)
+  filterPopupHostRegistration = null
+}
+
+const resetFilterPopup = () => {
+  cancelFilterPositionFrame()
+  releaseFilterPopupHost()
+  filterPlacement.value = 'bottom'
+  filterPanelStyle.value = { position: 'fixed' }
+}
+
+const ensureFilterPopupHost = () => {
+  const popupLayer = popupLayerRef.value
+  if (!popupLayer || !drawerRef.value) return false
+  filterPortalTarget.value = popupLayer
+  if (!filterPopupHostRegistration) {
+    filterPopupHostRegistration = registerDialogPopupHost(drawerRef.value, popupLayer)
+  }
+  return Boolean(filterPopupHostRegistration)
+}
+
+const positionFilterPanel = () => {
+  if (disposed || !openFilter.value || typeof window === 'undefined' || typeof document === 'undefined') return
+  const trigger = filterTriggerRef().value
+  if (!trigger?.getBoundingClientRect) return
+
+  const rect = trigger.getBoundingClientRect()
+  const visualViewport = window.visualViewport
+  const viewportWidth = visualViewport?.width || window.innerWidth || document.documentElement?.clientWidth || 0
+  const viewportHeight = visualViewport?.height || window.innerHeight || document.documentElement?.clientHeight || 0
+  const viewportLeft = visualViewport?.offsetLeft || 0
+  const viewportTop = visualViewport?.offsetTop || 0
+  if (!viewportWidth || !viewportHeight) return
+
+  const viewportRight = viewportLeft + viewportWidth
+  const viewportBottom = viewportTop + viewportHeight
+  const margin = 8
+  const gap = 6
+  const minimumWidth = 288
+  const maximumPanelHeight = 240
+  const width = Math.min(
+    Math.max(rect.width, minimumWidth),
+    Math.max(1, viewportWidth - (margin * 2))
+  )
+  const left = Math.min(
+    Math.max(rect.left, viewportLeft + margin),
+    Math.max(viewportLeft + margin, viewportRight - margin - width)
+  )
+  const fallbackHeight = FILTER_PANEL_FALLBACK_HEIGHT[openFilter.value] || maximumPanelHeight
+  const measuredHeight = filterPanelRef.value?.scrollHeight || filterPanelRef.value?.offsetHeight || fallbackHeight
+  const preferredHeight = Math.min(measuredHeight, maximumPanelHeight)
+  const availableBelow = Math.max(0, viewportBottom - rect.bottom - gap - margin)
+  const availableAbove = Math.max(0, rect.top - viewportTop - gap - margin)
+  const placeAbove = availableBelow < preferredHeight && availableAbove > availableBelow
+  const availableHeight = Math.max(1, placeAbove ? availableAbove : availableBelow)
+  const renderedHeight = Math.min(preferredHeight, availableHeight)
+  const top = placeAbove
+    ? Math.max(viewportTop + margin, rect.top - gap - renderedHeight)
+    : Math.min(viewportBottom - margin, rect.bottom + gap)
+
+  filterPlacement.value = placeAbove ? 'top' : 'bottom'
+  filterPanelStyle.value = {
+    position: 'fixed',
+    top: `max(${Math.round(top)}px, env(safe-area-inset-top, 0px))`,
+    left: `max(${Math.round(left)}px, env(safe-area-inset-left, 0px))`,
+    width: `min(${Math.round(width)}px, calc(100vw - max(8px, env(safe-area-inset-left, 0px)) - max(8px, env(safe-area-inset-right, 0px))))`,
+    maxHeight: `min(${Math.floor(availableHeight)}px, calc(100vh - max(8px, env(safe-area-inset-top, 0px)) - max(8px, env(safe-area-inset-bottom, 0px))))`,
+    overflowX: 'hidden',
+    overflowY: preferredHeight > availableHeight ? 'auto' : 'visible',
+    overscrollBehaviorY: 'contain'
+  }
+}
+
+const scheduleFilterPanelPosition = () => {
+  if (disposed || !openFilter.value) return
+  positionFilterPanel()
+  if (typeof requestAnimationFrame !== 'function') return
+  cancelFilterPositionFrame()
+  const version = filterSessionVersion
+  filterPositionFrame = requestAnimationFrame(() => {
+    filterPositionFrame = 0
+    if (disposed || version !== filterSessionVersion || !openFilter.value) return
+    positionFilterPanel()
+  })
+}
+
+const closeFilters = async ({ restoreFocus = true } = {}) => {
   const closingFilter = openFilter.value
   if (!closingFilter) return
+  const version = ++filterSessionVersion
   openFilter.value = null
+  cancelFilterPositionFrame()
   await nextTick()
-  const trigger = closingFilter === 'status' ? statusFilterToggleRef : roleFilterToggleRef
-  trigger.value?.focus()
+  if (disposed || version !== filterSessionVersion || openFilter.value) return
+  resetFilterPopup()
+  if (restoreFocus) filterTriggerRef(closingFilter).value?.focus()
 }
-const toggleFilter = (filter) => {
-  openFilter.value = openFilter.value === filter ? null : filter
+
+const toggleFilter = async (filter) => {
+  if (openFilter.value === filter) {
+    await closeFilters()
+    return
+  }
+  const version = ++filterSessionVersion
+  ensureFilterPopupHost()
+  openFilter.value = filter
+  await nextTick()
+  if (disposed || version !== filterSessionVersion || openFilter.value !== filter) return
+  ensureFilterPopupHost()
+  scheduleFilterPanelPosition()
 }
-const selectStatus = async (value) => {
-  status.value = value
-  await closeFilters()
+
+const handleFilterTriggerKeydown = (event) => {
+  if (!openFilter.value) return
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    event.stopPropagation()
+    closeFilters()
+    return
+  }
+  if (event.key !== 'Tab' || event.shiftKey || event.currentTarget !== roleFilterToggleRef.value) return
+  const firstOption = getFocusableElements(filterPanelRef.value)[0]
+  if (!firstOption) return
+  event.preventDefault()
+  event.stopPropagation()
+  firstOption.focus()
 }
-const selectRole = async (value) => {
-  role.value = value
+
+const handleFilterPanelKeydown = (event) => {
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    event.stopPropagation()
+    closeFilters()
+    return
+  }
+  if (event.key !== 'Tab') return
+
+  const popupFocusable = getFocusableElements(filterPanelRef.value)
+  const target = event.target || document.activeElement
+  if (event.shiftKey && target === popupFocusable[0]) {
+    event.preventDefault()
+    event.stopPropagation()
+    roleFilterToggleRef.value?.focus()
+    return
+  }
+  if (!event.shiftKey && target === popupFocusable.at(-1)) {
+    const drawerFocusable = getFocusableElements(drawerRef.value)
+    const roleTriggerIndex = drawerFocusable.indexOf(roleFilterToggleRef.value)
+    const nextTarget = drawerFocusable[roleTriggerIndex + 1] || drawerFocusable[0]
+    if (!nextTarget) return
+    event.preventDefault()
+    event.stopPropagation()
+    nextTarget.focus()
+  }
+}
+const selectFilter = async (value) => {
+  if (openFilter.value === 'status') status.value = value
+  else if (openFilter.value === 'role') role.value = value
   await closeFilters()
 }
 const handleAfterLeave = async () => {
@@ -104,13 +282,15 @@ const handleAfterLeave = async () => {
 }
 
 watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
+  filterSessionVersion += 1
+  openFilter.value = null
+  resetFilterPopup()
   if (!visible) return
   keyword.value = ''
   status.value = 'all'
   role.value = 'all'
   selectedMember.value = null
   currentPage.value = 1
-  openFilter.value = null
 })
 
 watch(() => [keyword.value, status.value, role.value], () => {
@@ -125,6 +305,30 @@ watch(currentPage, () => {
 watch(totalPages, (nextTotalPages) => {
   currentPage.value = Math.min(currentPage.value, nextTotalPages)
 })
+
+const handleFilterViewportChange = () => {
+  scheduleFilterPanelPosition()
+}
+
+onMounted(() => {
+  window.addEventListener?.('resize', handleFilterViewportChange)
+  window.addEventListener?.('scroll', handleFilterViewportChange, true)
+  filterVisualViewport = window.visualViewport
+  filterVisualViewport?.addEventListener?.('resize', handleFilterViewportChange)
+  filterVisualViewport?.addEventListener?.('scroll', handleFilterViewportChange)
+})
+
+onBeforeUnmount(() => {
+  disposed = true
+  filterSessionVersion += 1
+  openFilter.value = null
+  resetFilterPopup()
+  window.removeEventListener?.('resize', handleFilterViewportChange)
+  window.removeEventListener?.('scroll', handleFilterViewportChange, true)
+  filterVisualViewport?.removeEventListener?.('resize', handleFilterViewportChange)
+  filterVisualViewport?.removeEventListener?.('scroll', handleFilterViewportChange)
+  filterVisualViewport = null
+})
 </script>
 
 <template>
@@ -134,6 +338,7 @@ watch(totalPages, (nextTotalPages) => {
         v-if="rendered"
         v-show="phase !== 'closing'"
         class="fixed inset-0 flex justify-end bg-slate-950/50"
+        style="position: fixed; inset: 0; overflow: visible; transform: none;"
         :style="layerStyle"
         role="presentation"
       >
@@ -172,6 +377,7 @@ watch(totalPages, (nextTotalPages) => {
                     :aria-expanded="openFilter === 'status' ? 'true' : 'false'"
                     aria-controls="relationship-drawer-status-filter-panel"
                     @click="toggleFilter('status')"
+                    @keydown="handleFilterTriggerKeydown"
                   >
                     账户状态
                   </button>
@@ -183,61 +389,10 @@ watch(totalPages, (nextTotalPages) => {
                     :aria-expanded="openFilter === 'role' ? 'true' : 'false'"
                     aria-controls="relationship-drawer-role-filter-panel"
                     @click="toggleFilter('role')"
+                    @keydown="handleFilterTriggerKeydown"
                   >
                     用户角色
                   </button>
-                </div>
-                <div
-                  v-if="openFilter === 'status'"
-                  id="relationship-drawer-status-filter-panel"
-                  data-testid="relationship-drawer-status-filter-panel"
-                  class="absolute inset-x-0 top-full z-20 mt-2 rounded-xl border border-slate-200 bg-white p-3 shadow-lg"
-                  role="group"
-                  aria-label="账户状态筛选"
-                  @keydown.esc.stop.prevent="closeFilters"
-                >
-                  <fieldset>
-                    <legend class="sr-only">账户状态</legend>
-                    <div class="grid grid-cols-2 gap-1">
-                      <button
-                        v-for="item in [{ value: 'all', label: '全部状态' }, ...USER_STATUS_OPTIONS]"
-                        :key="item.value"
-                        type="button"
-                        class="min-h-9 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
-                        :class="status === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
-                        :aria-pressed="status === item.value ? 'true' : 'false'"
-                        @click="selectStatus(item.value)"
-                      >
-                        {{ item.label }}
-                      </button>
-                    </div>
-                  </fieldset>
-                </div>
-                <div
-                  v-if="openFilter === 'role'"
-                  id="relationship-drawer-role-filter-panel"
-                  data-testid="relationship-drawer-role-filter-panel"
-                  class="absolute inset-x-0 top-full z-20 mt-2 rounded-xl border border-slate-200 bg-white p-3 shadow-lg"
-                  role="group"
-                  aria-label="用户角色筛选"
-                  @keydown.esc.stop.prevent="closeFilters"
-                >
-                  <fieldset>
-                    <legend class="sr-only">用户角色</legend>
-                    <div class="grid grid-cols-2 gap-1">
-                      <button
-                        v-for="item in [{ value: 'all', label: '全部角色' }, ...USER_ROLE_OPTIONS]"
-                        :key="item.value"
-                        type="button"
-                        class="min-h-9 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
-                        :class="role === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
-                        :aria-pressed="role === item.value ? 'true' : 'false'"
-                        @click="selectRole(item.value)"
-                      >
-                        {{ item.label }}
-                      </button>
-                    </div>
-                  </fieldset>
                 </div>
               </div>
             </div>
@@ -287,7 +442,46 @@ watch(totalPages, (nextTotalPages) => {
               <CompactPagination v-model:current-page="currentPage" :total-count="filteredMembers.length" :page-size="PAGE_SIZE" />
             </footer>
           </div>
+
+          <Teleport :to="filterPortalTarget">
+            <div
+              v-if="openFilter"
+              :id="filterPanelId"
+              ref="filterPanelRef"
+              :data-testid="filterPanelId"
+              :data-placement="filterPlacement"
+              :style="filterPanelStyle"
+              class="pointer-events-auto fixed z-20 rounded-xl border border-slate-200 bg-white p-3 shadow-lg"
+              role="group"
+              :aria-label="filterPanelLabel"
+              @keydown="handleFilterPanelKeydown"
+            >
+              <fieldset>
+                <legend class="sr-only">{{ filterLegend }}</legend>
+                <div class="grid grid-cols-2 gap-1">
+                  <button
+                    v-for="item in filterItems"
+                    :key="item.value"
+                    type="button"
+                    class="min-h-9 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
+                    :class="selectedFilterValue === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
+                    :aria-pressed="selectedFilterValue === item.value ? 'true' : 'false'"
+                    @click="selectFilter(item.value)"
+                  >
+                    {{ item.label }}
+                  </button>
+                </div>
+              </fieldset>
+            </div>
+          </Teleport>
         </section>
+        <div
+          ref="popupLayerRef"
+          data-testid="relationship-drawer-popup-layer"
+          class="pointer-events-none fixed inset-0"
+          style="position: fixed; inset: 0; overflow: visible; transform: none;"
+          role="presentation"
+        ></div>
       </div>
     </Transition>
   </Teleport>

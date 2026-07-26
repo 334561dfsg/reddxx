@@ -8,6 +8,11 @@ import {
   getParentCandidates,
   getRelationshipAuditLog
 } from '../src/admin/repositories/userRelationshipRepository.js'
+import {
+  __resetDialogLayersForTests,
+  registerDialogLayer,
+  unregisterDialogLayer
+} from '../src/admin/composables/useDialogLifecycle.js'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
 
 const read = (path) => readFileSync(resolve(process.cwd(), path), 'utf8')
@@ -135,10 +140,10 @@ test('relationship drawer paginates members and resets selection and page for ch
   const statusGroup = fieldsetWithLegend(harness, '账户状态')
   assert.equal(statusFilterToggle.getAttribute('aria-expanded'), 'true')
   assert.equal(roleFilterToggle.getAttribute('aria-expanded'), 'false')
-  assert.equal(statusFilterPanel.classList.contains('absolute'), true)
+  assert.equal(statusFilterPanel.classList.contains('fixed'), true)
   assert.equal(statusFilterPanel.classList.contains('z-20'), true)
-  assert.equal(controls.contains(statusFilterPanel), true)
-  assert.equal(controls.contains(statusGroup), true)
+  assert.equal(controls.contains(statusFilterPanel), false)
+  assert.equal(controls.contains(statusGroup), false)
   assert.equal(list.contains(statusFilterPanel), false)
   assert.equal(pagination.contains(statusFilterPanel), false)
 
@@ -146,13 +151,13 @@ test('relationship drawer paginates members and resets selection and page for ch
   await harness.flush()
   const roleFilterPanel = harness.findByTestId('relationship-drawer-role-filter-panel')
   const roleGroup = fieldsetWithLegend(harness, '用户角色')
-  assert.equal(harness.findByTestId('relationship-drawer-status-filter-panel'), undefined)
+  assert.equal(Boolean(harness.findByTestId('relationship-drawer-status-filter-panel')), false)
   assert.equal(statusFilterToggle.getAttribute('aria-expanded'), 'false')
   assert.equal(roleFilterToggle.getAttribute('aria-expanded'), 'true')
-  assert.equal(roleFilterPanel.classList.contains('absolute'), true)
+  assert.equal(roleFilterPanel.classList.contains('fixed'), true)
   assert.equal(roleFilterPanel.classList.contains('z-20'), true)
-  assert.equal(controls.contains(roleFilterPanel), true)
-  assert.equal(controls.contains(roleGroup), true)
+  assert.equal(controls.contains(roleFilterPanel), false)
+  assert.equal(controls.contains(roleGroup), false)
   assert.equal(list.contains(roleFilterPanel), false)
   assert.equal(pagination.contains(roleFilterPanel), false)
   roleFilterToggle.click()
@@ -280,6 +285,96 @@ test('operation and paginated fission Drawers protect both landscape safe-area e
   }
 })
 
+test('relationship filter popup escapes the clipped Drawer and stays reachable in the visual viewport', async (t) => {
+  const component = await loadRelationshipDrawer()
+  const harness = await createSfcHarness(component, {
+    visible: true,
+    user: userById('user_1003'),
+    mode: 'direct'
+  })
+  let upperLayer = null
+  t.after(() => {
+    if (upperLayer) unregisterDialogLayer(upperLayer)
+    harness.cleanup()
+    __resetDialogLayersForTests()
+  })
+  await harness.finishTransitions()
+
+  globalThis.window.innerWidth = 1024
+  globalThis.window.innerHeight = 720
+  globalThis.window.visualViewport = {
+    width: 320,
+    height: 170,
+    offsetLeft: 20,
+    offsetTop: 160
+  }
+  const trigger = harness.findByTestId('relationship-drawer-status-filter-toggle')
+  trigger.getBoundingClientRect = () => ({
+    top: 250,
+    right: 460,
+    bottom: 294,
+    left: 280,
+    width: 180,
+    height: 44
+  })
+  trigger.click()
+  await harness.flush()
+
+  const popupLayer = harness.findByTestId('relationship-drawer-popup-layer')
+  const drawerBody = harness.findByTestId('relationship-drawer-body')
+  const panel = harness.findByTestId('relationship-drawer-status-filter-panel')
+  assert.ok(popupLayer, 'Drawer exposes its viewport-fixed popup layer')
+  assert.equal(panel.parent, popupLayer)
+  assert.equal(popupLayer.contains(panel), true)
+  assert.equal(drawerBody.contains(panel), false)
+  assert.equal(panel.getAttribute('data-placement'), 'top')
+  assert.equal(panel.style.position, 'fixed')
+  assert.match(panel.style.left, /44px/)
+  assert.match(panel.style.top, /168px/)
+  assert.match(panel.style.width, /288px/)
+  assert.match(panel.style.maxHeight, /76px/)
+  assert.equal(panel.style.overflowY, 'auto')
+
+  upperLayer = registerDialogLayer(harness.root)
+  assert.equal(popupLayer.inert, true, 'popup follows its owning Drawer when a higher modal layer opens')
+  unregisterDialogLayer(upperLayer)
+  upperLayer = null
+  assert.equal(popupLayer.inert, false)
+
+  const popupOptions = harness.allNodes().filter((node) => node.tag === 'button' && panel.contains(node))
+  const roleTrigger = harness.findByTestId('relationship-drawer-role-filter-toggle')
+  roleTrigger.focus()
+  const tabIntoPopup = {
+    type: 'keydown',
+    key: 'Tab',
+    shiftKey: false,
+    defaultPrevented: false,
+    propagationStopped: false,
+    preventDefault() { this.defaultPrevented = true },
+    stopPropagation() { this.propagationStopped = true }
+  }
+  roleTrigger.dispatchEvent(tabIntoPopup)
+  assert.equal(tabIntoPopup.defaultPrevented, true)
+  assert.equal(tabIntoPopup.propagationStopped, true)
+  assert.equal(harness.document.activeElement, popupOptions[0])
+
+  const escapePopup = {
+    type: 'keydown',
+    key: 'Escape',
+    target: popupOptions[0],
+    defaultPrevented: false,
+    propagationStopped: false,
+    preventDefault() { this.defaultPrevented = true },
+    stopPropagation() { this.propagationStopped = true }
+  }
+  panel.dispatchEvent(escapePopup)
+  await harness.flush()
+  assert.equal(escapePopup.defaultPrevented, true)
+  assert.equal(escapePopup.propagationStopped, true)
+  assert.equal(trigger.getAttribute('aria-expanded'), 'false')
+  assert.equal(harness.document.activeElement, trigger)
+})
+
 test('relationship filters are compact two-column menus that preserve exact status and role filtering', async (t) => {
   const agentChildBefore = snapshot(userById('user_1004'))
   userById('user_1004').role = 'agent'
@@ -302,7 +397,8 @@ test('relationship filters are compact two-column menus that preserve exact stat
   const statusGroup = fieldsetWithLegend(harness, '账户状态')
   assert.ok(statusGroup)
   const scrollBody = harness.findByTestId('relationship-drawer-body')
-  assert.equal(scrollBody.contains(statusGroup), true)
+  assert.equal(scrollBody.contains(statusGroup), false)
+  assert.equal(harness.findByTestId('relationship-drawer-popup-layer').contains(statusGroup), true)
 
   const statusOptions = statusGroup.children.find((node) => node.tag === 'div')
   assert.ok(statusOptions.classList.contains('grid'))
