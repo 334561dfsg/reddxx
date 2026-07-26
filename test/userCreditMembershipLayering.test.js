@@ -47,3 +47,27 @@ test('four-layer review path renders in deterministic order and preserves lower 
   assert.match(source, /reviewDecisionOpen\.value = false/)
   assert.doesNotMatch(source, /onSuccess:[\s\S]{0,500}creditReviewOpen\.value = false/)
 })
+
+test('agent report opens above the operation Drawer with the originating trigger and deferred cleanup', () => {
+  assert.match(source, /import UserAgentReportDrawer/)
+  assert.match(source, /import \{ getUserAgentReport \} from/)
+  assert.match(source, /id === 'agent-report'/)
+  assert.match(source, /getUserAgentReport\(userIdOf\(user\)\)/)
+  assert.match(source, /agentReportReturnFocus\.value = trigger/)
+  assert.match(source, /agentReportOpen\.value = true/)
+  assert.match(source, /try\s*\{[\s\S]*getUserAgentReport[\s\S]*\}\s*catch/)
+  assert.match(source, /agentReportError\.value = error instanceof Error \? error\.message/)
+
+  const operationIndex = source.indexOf('<UserOperationDrawer')
+  const agentReportIndex = source.indexOf('<UserAgentReportDrawer')
+  assert.ok(operationIndex >= 0)
+  assert.ok(agentReportIndex > operationIndex)
+  assert.match(source, /<UserAgentReportDrawer[\s\S]*:return-focus="agentReportReturnFocus"/)
+  assert.match(source, /<UserAgentReportDrawer[\s\S]*@closed="clearAgentReport"/)
+  assert.match(source, /const clearAgentReport = \(\) => \{[\s\S]*agentReportData\.value = null[\s\S]*agentReportError\.value = ''/)
+
+  const handlerStart = source.indexOf('const handleOperationDrawerAction')
+  const handlerEnd = source.indexOf('const closeOnchainWallet', handlerStart)
+  const handler = source.slice(handlerStart, handlerEnd)
+  assert.doesNotMatch(handler.match(/if \(id === 'agent-report'\)[\s\S]*?\n  \}/)?.[0] || '', /closeOperationDrawer\(\)/)
+})

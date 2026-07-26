@@ -12,6 +12,7 @@ import UserProfileEditDialog from '../../../admin/components/user/UserProfileEdi
 import UserParentResetDialog from '../../../admin/components/user/UserParentResetDialog.vue'
 import UserAgentRoleDialog from '../../../admin/components/user/UserAgentRoleDialog.vue'
 import UserTeamReportDrawer from '../../../admin/components/user/UserTeamReportDrawer.vue'
+import UserAgentReportDrawer from '../../../admin/components/user/UserAgentReportDrawer.vue'
 import UserFundsMutationDialog from '../../../admin/components/user/UserFundsMutationDialog.vue'
 import UserWithdrawFlowLimitDialog from '../../../admin/components/user/UserWithdrawFlowLimitDialog.vue'
 import UserCreditReviewDrawer from '../../../admin/components/user/UserCreditReviewDrawer.vue'
@@ -40,6 +41,7 @@ import {
   unfreezeAdminFunds
 } from '../../../admin/repositories/userFundsRepository.js'
 import { getUserOnchainWallet } from '../../../admin/repositories/userOnchainWalletRepository.js'
+import { getUserAgentReport } from '../../../admin/repositories/userAgentReportRepository.js'
 import {
   adjustUserCredit,
   decideUserCreditReview,
@@ -133,6 +135,11 @@ const agentRoleReturnFocus = ref(null)
 const teamReportOpen = ref(false)
 const teamReportUser = ref(null)
 const teamReportReturnFocus = ref(null)
+const agentReportOpen = ref(false)
+const agentReportUser = ref(null)
+const agentReportData = ref(null)
+const agentReportError = ref('')
+const agentReportReturnFocus = ref(null)
 const fundsMutationOpen = ref(false)
 const fundsMutationUser = ref(null)
 const fundsMutationMode = ref('freeze')
@@ -440,6 +447,20 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
     return
   }
 
+  if (id === 'agent-report') {
+    agentReportUser.value = user
+    agentReportData.value = null
+    agentReportError.value = ''
+    agentReportReturnFocus.value = trigger
+    try {
+      agentReportData.value = getUserAgentReport(userIdOf(user))
+    } catch (error) {
+      agentReportError.value = error instanceof Error ? error.message : '代理报表加载失败，请稍后重试'
+    }
+    agentReportOpen.value = true
+    return
+  }
+
   if (['direct-referrals', 'all-referrals'].includes(id)) {
     relationshipDrawerUser.value = user
     relationshipDrawerMode.value = id === 'all-referrals' ? 'all' : 'direct'
@@ -474,6 +495,17 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
 
 const closeOnchainWallet = () => {
   onchainWalletOpen.value = false
+}
+
+const closeAgentReport = () => {
+  agentReportOpen.value = false
+}
+
+const clearAgentReport = () => {
+  agentReportUser.value = null
+  agentReportData.value = null
+  agentReportError.value = ''
+  agentReportReturnFocus.value = null
 }
 
 const clearOnchainWallet = () => {
@@ -1109,6 +1141,16 @@ const clearDetailDrawer = () => {
       @close="closeOperationDrawer"
       @closed="executeDeferredDrawerAction"
       @action="handleOperationDrawerAction"
+    />
+
+    <UserAgentReportDrawer
+      :visible="agentReportOpen"
+      :user="agentReportUser"
+      :report="agentReportData"
+      :error="agentReportError"
+      :return-focus="agentReportReturnFocus"
+      @close="closeAgentReport"
+      @closed="clearAgentReport"
     />
 
     <UserOnchainWalletDrawer
