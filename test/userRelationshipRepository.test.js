@@ -38,11 +38,35 @@ test('parent candidates exclude self, descendants, current parent and banned use
   assert.equal(ids.includes('user_1008'), false)
 })
 
+test('profile phone accepts optional 7 to 30 continuous digits', () => {
+  for (const phone of ['', '13800001001', '8613800001001', '1234567', '1'.repeat(30)]) {
+    const errors = validateProfile({
+      username: 'unique_phone_user',
+      email: 'unique.phone@example.com',
+      phone,
+      remark: ''
+    }, phone === '8613800001001' ? 'user_1001' : 'user_1004')
+    assert.equal(errors.phone, undefined)
+  }
+})
+
+test('profile phone rejects non-digits and out-of-range lengths', () => {
+  for (const phone of ['+8613800001001', '86 13800001001', '(86)13800001001', '86-13800001001', '123456', '1'.repeat(31)]) {
+    const errors = validateProfile({
+      username: 'unique_phone_user',
+      email: 'unique.phone@example.com',
+      phone,
+      remark: ''
+    }, 'user_1004')
+    assert.equal(errors.phone, '手机号格式不正确')
+  }
+})
+
 test('profile validation reports duplicate and malformed fields', () => {
   const errors = validateProfile({
     username: 'vip_zhang',
     email: 'bad',
-    phone: '+86 13800001001',
+    phone: '8613800001002',
     remark: ''
   }, 'user_1004')
   assert.equal(errors.username, '用户名已存在')
@@ -57,7 +81,7 @@ test('profile update trims fields and appends one audit record', () => {
     const updated = updateProfile('user_1004', {
       username: ' user_chen_updated ',
       email: ' chen.updated@example.com ',
-      phone: ' +86 13900001004 ',
+      phone: ' 8613900001004 ',
       remark: ' 已核实 '
     })
     assert.equal(updated.username, 'user_chen_updated')

@@ -4,7 +4,7 @@ const generateUser = (id, overrides = {}) => ({
   id: `user_${id}`,
   username: `user${id}`,
   email: `user${id}@example.com`,
-  phone: `+86 138${String(id).padStart(8, '0')}`,
+  phone: `86138${String(id).padStart(8, '0')}`,
   role: USER_ROLE.USER,
   status: USER_STATUS.ACTIVE,
   kycStatus: USER_KYC_STATUS.VERIFIED,
