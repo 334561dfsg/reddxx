@@ -249,6 +249,9 @@ test('transfer preserves the destination conflict until the operator selects a d
   await harness.flush()
   assert.deepEqual(harness.emitted, [])
   await selectComboboxOption(harness, 'transfer-to', '永续合约')
+  assert.equal(destination.getAttribute('aria-invalid'), 'false')
+  assert.equal(destination.getAttribute('aria-describedby'), null)
+  assert.equal(harness.allNodes().some((node) => node.getAttribute?.('id') === 'transfer-to-error'), false)
   await selectComboboxWithKeyboard(harness, 'transfer-coin', 1)
   harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
 
@@ -256,4 +259,63 @@ test('transfer preserves the destination conflict until the operator selects a d
     'onSubmit',
     { type: 'transfer', amount: '10.25', fromAccountKey: 'trading', toAccountKey: 'perp', coinKey: 'USDC' }
   ]])
+})
+
+test('transfer blocks unavailable committed accounts without replacing their values', async (t) => {
+  const component = await loadTransfer()
+  const harness = await createSfcHarness(component, { user, assets: null }, { onSubmit: () => {} })
+  t.after(harness.cleanup)
+
+  await openDialog(harness, '划转')
+  const source = findCombobox(harness, 'transfer-from')
+  const destination = findCombobox(harness, 'transfer-to')
+  assert.match(source.textContent, /market/)
+  assert.match(destination.textContent, /trading/)
+  assert.equal(source.getAttribute('aria-invalid'), 'true')
+  assert.equal(destination.getAttribute('aria-invalid'), 'true')
+
+  await selectComboboxWithKeyboard(harness, 'transfer-coin', 1)
+  await setInput(harness, '请输入划转的数量', '10.25')
+  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
+  await harness.flush()
+
+  assert.deepEqual(harness.emitted, [])
+  assert.match(source.textContent, /market/)
+  assert.match(destination.textContent, /trading/)
+})
+
+test('transfer gives the required coin a field-owned error after submit and clears it on selection or reopen', async (t) => {
+  const component = await loadTransfer()
+  const harness = await createSfcHarness(component, { user, assets }, { onSubmit: () => {} })
+  t.after(harness.cleanup)
+
+  await openDialog(harness, '划转')
+  await setInput(harness, '请输入划转的数量', '10.25')
+  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
+  await harness.flush()
+
+  const coin = findCombobox(harness, 'transfer-coin')
+  const coinError = harness.allNodes().find((node) => node.getAttribute?.('id') === 'transfer-coin-error')
+  assert.deepEqual(harness.emitted, [])
+  assert.equal(coin.getAttribute('aria-invalid'), 'true')
+  assert.equal(coin.getAttribute('aria-describedby'), 'transfer-coin-error')
+  assert.ok(coinError)
+  assert.match(coinError.textContent, /请选择币种/)
+
+  await selectComboboxWithKeyboard(harness, 'transfer-coin', 0)
+  assert.equal(coin.getAttribute('aria-invalid'), 'false')
+  assert.equal(coin.getAttribute('aria-describedby'), null)
+  assert.equal(harness.allNodes().some((node) => node.getAttribute?.('id') === 'transfer-coin-error'), false)
+
+  const closeButton = harness.allNodes().find((node) => node.tag === 'button' && node.getAttribute?.('aria-label') === '关闭')
+  closeButton.click()
+  await harness.flush()
+  const closingOverlay = harness.allNodes().find((node) => (
+    node.tag === 'div' && node.getAttribute?.('class').includes('fixed inset-0 grid place-items-center')
+  ))
+  closingOverlay.dispatchEvent({ type: 'transitionend', target: closingOverlay })
+  await harness.finishTransitions()
+  await openDialog(harness, '划转')
+  assert.equal(findCombobox(harness, 'transfer-coin').getAttribute('aria-invalid'), 'false')
+  assert.equal(harness.allNodes().some((node) => node.getAttribute?.('id') === 'transfer-coin-error'), false)
 })

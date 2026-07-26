@@ -208,3 +208,29 @@ test('blocks disabled readonly duplicate and orphaned states without replacing v
   assert.ok(harness.findByTestId('select-only-combobox-orphaned'))
   assert.equal(harness.props.modelValue, 'trading')
 })
+
+test('retains a legal empty-string selection when it becomes orphaned', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const harness = await createSfcHarness(component, {
+    ...baseProps,
+    idBase: 'empty-string-value',
+    modelValue: '',
+    options: [
+      { value: '', label: '未分配' },
+      { value: 'market', label: '市币' }
+    ]
+  })
+  t.after(harness.cleanup)
+
+  const combobox = harness.findByTestId('select-only-combobox')
+  assert.match(combobox.textContent, /未分配/)
+  assert.equal(combobox.getAttribute('aria-invalid'), 'false')
+
+  harness.props.options = [{ value: 'market', label: '市币' }]
+  await harness.flush()
+
+  assert.match(combobox.textContent, /未分配/)
+  assert.equal(combobox.getAttribute('aria-invalid'), 'true')
+  assert.ok(harness.findByTestId('select-only-combobox-orphaned'))
+  assert.equal(harness.props.modelValue, '')
+})

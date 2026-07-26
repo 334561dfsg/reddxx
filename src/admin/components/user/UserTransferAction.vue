@@ -28,7 +28,7 @@ const returnFocusRef = ref(null)
 const form = ref({
   fromAccountKey: 'market',
   toAccountKey: 'trading',
-  coinKey: '',
+  coinKey: null,
   amount: ''
 })
 
@@ -53,6 +53,18 @@ const coinOptions = [
   { value: 'USDC', label: 'USDC' },
   { value: 'ETH', label: 'ETH' }
 ]
+
+const coinSubmissionAttempted = ref(false)
+const coinError = computed(() => coinSubmissionAttempted.value && !form.value.coinKey)
+
+const updateCoin = (value) => {
+  form.value.coinKey = value
+  if (coinOptions.some((option) => option.value === value && !option.disabled)) coinSubmissionAttempted.value = false
+}
+
+const isEnabledOption = (options, value) => options.some((option) => (
+  option.value === value && !option.disabled
+))
 
 const fromBalance = computed(() => {
   const a = props.assets
@@ -103,9 +115,10 @@ const open = (returnFocus = null) => {
   form.value = {
     fromAccountKey: 'market',
     toAccountKey: 'trading',
-    coinKey: '',
+    coinKey: null,
     amount: ''
   }
+  coinSubmissionAttempted.value = false
   returnFocusRef.value = returnFocus
   showModal.value = true
   return true
@@ -120,7 +133,13 @@ const confirm = () => {
   if (!form.value.fromAccountKey) return showToast('请选择“从”账户')
   if (!form.value.toAccountKey) return showToast('请选择“到”账户')
   if (form.value.fromAccountKey === form.value.toAccountKey) return showToast('“从”账户和“到”账户不能相同，请重新选择“到”账户')
-  if (!form.value.coinKey) return showToast('请选择币种')
+  if (!isEnabledOption(transferAccountOptions.value, form.value.fromAccountKey) || !isEnabledOption(destinationOptions.value, form.value.toAccountKey)) {
+    return showToast('所选账户已失效，请重新选择账户')
+  }
+  if (!form.value.coinKey) {
+    coinSubmissionAttempted.value = true
+    return showToast('请选择币种')
+  }
   if (!amount || Number.isNaN(Number(amount))) return showToast('请输入有效的划转数量')
 
   emit('submit', {
@@ -197,14 +216,22 @@ const confirm = () => {
                 “从”账户和“到”账户不能相同，请重新选择“到”账户。
               </p>
             </div>
-            <SelectOnlyCombobox
-              v-model="form.coinKey"
-              :options="coinOptions"
-              label="币种"
-              placeholder="请选择"
-              required
-              id-base="transfer-coin"
-            />
+            <div>
+              <SelectOnlyCombobox
+                :model-value="form.coinKey"
+                :options="coinOptions"
+                label="币种"
+                placeholder="请选择"
+                required
+                :invalid="coinError"
+                error-id="transfer-coin-error"
+                id-base="transfer-coin"
+                @update:model-value="updateCoin"
+              />
+              <p v-if="coinError" id="transfer-coin-error" class="mt-1 text-sm text-red-700" role="alert">
+                请选择币种。
+              </p>
+            </div>
 
             <div>
               <div class="text-sm font-medium text-slate-700 mb-2">划转数量</div>
