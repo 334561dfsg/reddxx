@@ -103,6 +103,25 @@ test('review rejection preserves the score and invalid decisions are atomic', ()
   assert.equal(result.review.status, 'rejected')
 })
 
+test('credit review demo data covers pending increase and decrease plus processed history', () => {
+  const reviews = getUserCreditReviews(user.id)
+
+  assert.equal(reviews.length, 4)
+  assert.deepEqual(reviews.map((row) => row.status), ['pending', 'pending', 'approved', 'rejected'])
+  assert.equal(reviews.filter((row) => row.status === 'pending' && row.delta > 0).length, 1)
+  assert.equal(reviews.filter((row) => row.status === 'pending' && row.delta < 0).length, 1)
+  assert.equal(new Set(reviews.map((row) => row.id)).size, 4)
+  assert.ok(reviews.every((row) => row.delta === row.proposedScore - row.beforeScore))
+
+  const pendingTimes = reviews.filter((row) => row.status === 'pending').map((row) => row.appliedAt)
+  const processedTimes = reviews.filter((row) => row.status !== 'pending').map((row) => row.appliedAt)
+  assert.deepEqual(pendingTimes, [...pendingTimes].sort((a, b) => new Date(b) - new Date(a)))
+  assert.deepEqual(processedTimes, [...processedTimes].sort((a, b) => new Date(b) - new Date(a)))
+
+  reviews[0].reason = 'tampered'
+  assert.notEqual(getUserCreditReviews(user.id)[0].reason, 'tampered')
+})
+
 test('VIP changes keep vipLevel and isVip coherent and reject unavailable targets', () => {
   const result = setUserVipLevel({ userId: user.id, vipLevel: 2, reason: ' 运营调整 ', operatorId: 'admin_current' })
   assert.equal(result.user.vipLevel, 2)

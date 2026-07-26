@@ -83,21 +83,68 @@ const makeRechargeRecords = () => usersList.flatMap((user, index) => {
   }]
 })
 
-const makeCreditReviews = () => [{
-  id: 'CR-user_1004-001',
-  userId: 'user_1004',
-  beforeScore: 680,
-  proposedScore: 695,
-  delta: 15,
-  reason: '完成补充身份核验，申请恢复信用分',
-  applicantId: 'risk_operator_01',
-  applicantName: '风控专员',
-  appliedAt: '2026-07-23T09:20:00.000Z',
-  status: 'pending',
-  decisionNote: null,
-  decidedAt: null,
-  operatorId: null
-}]
+const makeCreditReviews = () => [
+  {
+    id: 'CR-user_1004-001',
+    userId: 'user_1004',
+    beforeScore: 680,
+    proposedScore: 695,
+    delta: 15,
+    reason: '完成补充身份核验，申请恢复信用分',
+    applicantId: 'risk_operator_01',
+    applicantName: '风控专员',
+    appliedAt: '2026-07-23T09:20:00.000Z',
+    status: 'pending',
+    decisionNote: null,
+    decidedAt: null,
+    operatorId: null
+  },
+  {
+    id: 'CR-user_1004-002',
+    userId: 'user_1004',
+    beforeScore: 680,
+    proposedScore: 660,
+    delta: -20,
+    reason: '近期多次触发异常交易风控，申请扣减信用分',
+    applicantId: 'risk_operator_02',
+    applicantName: '风控审核员',
+    appliedAt: '2026-07-22T14:10:00.000Z',
+    status: 'pending',
+    decisionNote: null,
+    decidedAt: null,
+    operatorId: null
+  },
+  {
+    id: 'CR-user_1004-003',
+    userId: 'user_1004',
+    beforeScore: 650,
+    proposedScore: 680,
+    delta: 30,
+    reason: '历史风险事项已解除，申请恢复信用分',
+    applicantId: 'risk_operator_01',
+    applicantName: '风控专员',
+    appliedAt: '2026-07-18T08:40:00.000Z',
+    status: 'approved',
+    decisionNote: '复核材料完整，符合信用分恢复规则',
+    decidedAt: '2026-07-18T10:15:00.000Z',
+    operatorId: 'admin_auditor_01'
+  },
+  {
+    id: 'CR-user_1004-004',
+    userId: 'user_1004',
+    beforeScore: 680,
+    proposedScore: 640,
+    delta: -40,
+    reason: '疑似异常登录行为，申请扣减信用分',
+    applicantId: 'risk_operator_03',
+    applicantName: '安全运营',
+    appliedAt: '2026-07-12T16:25:00.000Z',
+    status: 'rejected',
+    decisionNote: '登录行为已由用户本人确认，证据不足，拒绝扣分',
+    decidedAt: '2026-07-12T18:05:00.000Z',
+    operatorId: 'admin_auditor_02'
+  }
+]
 
 const resetSupportingState = () => {
   creditReviews = makeCreditReviews()
