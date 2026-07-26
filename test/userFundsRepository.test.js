@@ -83,12 +83,12 @@ test('freeze and unfreeze reject unavailable operations without side effects', (
   user.balance = 0
   const before = getFundsSnapshot(user.id)
   assert.throws(() => freezeAllAvailable({ userId: user.id, reason: '测试', operatorId: 'admin_current' }), /没有可冻结/)
-  assert.throws(() => unfreezeAdminFunds({ userId: user.id, reason: '测试', operatorId: 'admin_current' }), /没有人工冻结资金/)
+  assert.throws(() => unfreezeAdminFunds({ userId: user.id, reason: '测试', operatorId: 'admin_current' }), /没有可解冻的资金/)
   assert.deepEqual(getFundsSnapshot(user.id), before)
   assert.equal(getFundsAuditLog({ userId: user.id }).length, 0)
 })
 
-test('withdraw flow limits expose active, completed, expired and none states', () => {
+test('withdraw flow limits derive progress instead of accepting operator input', () => {
   const future = '2030-01-02T00:00:00.000Z'
   const active = setWithdrawFlowLimit({
     userId: user.id,
@@ -100,24 +100,26 @@ test('withdraw flow limits expose active, completed, expired and none states', (
     now: '2030-01-01T00:00:00.000Z'
   })
   assert.equal(active.status, 'active')
-  assert.equal(active.remainingTurnover, 749.5)
+  assert.equal(active.completedTurnover, 0)
+  assert.equal(active.remainingTurnover, 1000)
   assert.equal(active.canWithdraw, false)
 
   const expired = getWithdrawFlowLimit(user.id, '2030-01-03T00:00:00.000Z')
   assert.equal(expired.status, 'expired')
   assert.equal(expired.canWithdraw, true)
 
-  const completed = setWithdrawFlowLimit({
+  const updated = setWithdrawFlowLimit({
     userId: user.id,
-    requiredTurnover: '1000',
-    completedTurnover: '1000',
+    requiredTurnover: '1200',
+    completedTurnover: '1200',
     expiresAt: null,
-    reason: '流水已完成',
+    reason: '调整目标',
     operatorId: 'admin_current'
   })
-  assert.equal(completed.status, 'completed')
-  assert.equal(completed.remainingTurnover, 0)
-  assert.equal(completed.canWithdraw, true)
+  assert.equal(updated.status, 'active')
+  assert.equal(updated.completedTurnover, 0)
+  assert.equal(updated.remainingTurnover, 1200)
+  assert.equal(updated.canWithdraw, false)
 
   const removed = removeWithdrawFlowLimit({
     userId: user.id,
@@ -133,7 +135,6 @@ test('withdraw flow validation leaves the prior rule and audit unchanged', () =>
   setWithdrawFlowLimit({
     userId: user.id,
     requiredTurnover: '500',
-    completedTurnover: '100',
     expiresAt: null,
     reason: '初始规则',
     operatorId: 'admin_current'
@@ -143,12 +144,11 @@ test('withdraw flow validation leaves the prior rule and audit unchanged', () =>
 
   assert.throws(() => setWithdrawFlowLimit({
     userId: user.id,
-    requiredTurnover: '100',
-    completedTurnover: '101',
+    requiredTurnover: '0',
     expiresAt: null,
     reason: '错误规则',
     operatorId: 'admin_current'
-  }), /不能大于要求流水/)
+  }), /必须大于 0/)
   assert.throws(() => setWithdrawFlowLimit({
     userId: user.id,
     requiredTurnover: '100',

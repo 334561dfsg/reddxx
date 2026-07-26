@@ -30,14 +30,6 @@ const parseMoney = (value, label) => {
   return roundMoney(amount)
 }
 
-const parseNonNegativeMoney = (value, label) => {
-  const raw = String(value ?? '').trim()
-  if (!/^\d+(?:\.\d{1,2})?$/.test(raw)) throw new Error(`${label}最多保留两位小数`)
-  const amount = Number(raw)
-  if (!Number.isFinite(amount) || amount < 0) throw new Error(`${label}不能小于 0`)
-  return roundMoney(amount)
-}
-
 const toNow = (value) => {
   const date = value ? new Date(value) : new Date()
   if (Number.isNaN(date.getTime())) throw new Error('当前时间无效')
@@ -106,9 +98,9 @@ export const unfreezeAdminFunds = ({ userId, reason, operatorId }) => {
   const user = requireUser(userId)
   const cleanReason = requireText(reason)
   const before = snapshotFor(user)
-  if (before.adminFrozenAmount <= 0) throw new Error('当前没有人工冻结资金')
+  if (before.adminFrozenAmount <= 0) throw new Error('当前没有可解冻的资金')
   const amount = roundMoney(Math.min(before.adminFrozenAmount, before.frozenBalance))
-  if (amount <= 0) throw new Error('当前没有可释放的人工冻结资金')
+  if (amount <= 0) throw new Error('当前没有可释放的资金')
 
   user.balance = roundMoney(before.balance + amount)
   user.frozenBalance = roundMoney(before.frozenBalance - amount)
@@ -165,7 +157,6 @@ export const getWithdrawFlowLimit = (userId, now) => {
 export const setWithdrawFlowLimit = ({
   userId,
   requiredTurnover,
-  completedTurnover,
   expiresAt,
   reason,
   operatorId,
@@ -174,9 +165,10 @@ export const setWithdrawFlowLimit = ({
   const user = requireUser(userId)
   const id = userIdOf(user)
   const required = parseMoney(requiredTurnover, '要求流水')
-  const completed = parseNonNegativeMoney(completedTurnover, '已完成流水')
   const cleanReason = requireText(reason)
-  if (completed > required) throw new Error('已完成流水不能大于要求流水')
+  const before = withdrawFlowLimits.get(id) || null
+  const completed = before?.completedTurnover ?? 0
+  if (required <= completed) throw new Error('要求流水必须大于当前已完成流水')
 
   const currentTime = toNow(now)
   let normalizedExpiry = null
@@ -187,7 +179,6 @@ export const setWithdrawFlowLimit = ({
     normalizedExpiry = expiry.toISOString()
   }
 
-  const before = withdrawFlowLimits.get(id) || null
   const next = {
     requiredTurnover: required,
     completedTurnover: completed,

@@ -17,9 +17,14 @@ const errorRef = ref(null)
 const submitButtonRef = ref(null)
 const stage = ref('edit')
 const errorMessage = ref('')
-const form = reactive({ requiredTurnover: '', completedTurnover: '0', expiresAt: '', reason: '', removeReason: '' })
+const form = reactive({ requiredTurnover: '', expiresAt: '', reason: '', removeReason: '' })
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const hasLimit = computed(() => Boolean(props.limit && props.limit.status !== 'none'))
+const completedTurnover = computed(() => Number(props.limit?.completedTurnover || 0))
+const remainingTurnover = computed(() => {
+  const required = Number(form.requiredTurnover)
+  return Number.isFinite(required) ? Math.max(0, required - completedTurnover.value) : 0
+})
 const statusText = computed(() => ({ active: '生效中', completed: '已完成', expired: '已过期' }[props.limit?.status] || '未设置'))
 const money = (value) => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const toLocalDateTime = (value) => {
@@ -33,7 +38,6 @@ const resetForm = () => {
   stage.value = 'edit'
   errorMessage.value = ''
   form.requiredTurnover = props.limit?.requiredTurnover ?? ''
-  form.completedTurnover = props.limit?.completedTurnover ?? '0'
   form.expiresAt = toLocalDateTime(props.limit?.expiresAt)
   form.reason = ''
   form.removeReason = ''
@@ -54,9 +58,8 @@ const validMoney = (value) => /^\d+(\.\d{1,2})?$/.test(String(value).trim())
 const startSetConfirm = async () => {
   errorMessage.value = ''
   const required = Number(form.requiredTurnover)
-  const completed = Number(form.completedTurnover)
   if (!validMoney(form.requiredTurnover) || required <= 0) return showError('所需流水必须为大于 0 且最多两位小数的金额')
-  if (!validMoney(form.completedTurnover) || completed < 0 || completed > required) return showError('已完成流水不能小于 0 或超过所需流水')
+  if (required <= completedTurnover.value) return showError('所需流水必须大于当前已完成流水')
   if (form.expiresAt && new Date(form.expiresAt).getTime() <= Date.now()) return showError('到期时间必须晚于当前时间')
   if (!form.reason.trim()) return showError('设置原因必填')
   if (form.reason.trim().length > 200) return showError('设置原因不能超过 200 字')
@@ -80,7 +83,6 @@ const requestMfa = () => {
     payload: {
       userId: userId.value,
       requiredTurnover: Number(form.requiredTurnover),
-      completedTurnover: Number(form.completedTurnover),
       expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
       reason: form.reason.trim()
     },
@@ -105,9 +107,13 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
             <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">当前状态</span><strong class="text-slate-900">{{ statusText }}</strong></div>
 
             <template v-if="stage === 'edit'">
-              <div class="grid gap-3 sm:grid-cols-2">
-                <label class="block"><span class="text-sm font-medium text-slate-800">所需流水 <span class="text-rose-500">*</span></span><input ref="requiredRef" v-model="form.requiredTurnover" type="text" inputmode="decimal" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /></label>
-                <label class="block"><span class="text-sm font-medium text-slate-800">已完成流水 <span class="text-rose-500">*</span></span><input v-model="form.completedTurnover" type="text" inputmode="decimal" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /></label>
+              <label class="block"><span class="text-sm font-medium text-slate-800">流水要求金额 <span class="text-rose-500">*</span></span><div class="relative mt-1.5"><input ref="requiredRef" v-model="form.requiredTurnover" type="text" inputmode="decimal" class="h-10 w-full rounded-lg border border-slate-300 px-3 pr-16 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /><span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-slate-500">USDT</span></div></label>
+              <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+                <dl class="grid grid-cols-2 gap-3 text-sm">
+                  <div><dt class="text-xs text-slate-500">已完成有效流水</dt><dd class="mt-0.5 font-semibold text-slate-900">{{ money(completedTurnover) }} <span class="text-xs font-normal text-slate-500">USDT</span></dd></div>
+                  <div><dt class="text-xs text-slate-500">剩余所需流水</dt><dd class="mt-0.5 font-semibold text-slate-900">{{ money(remainingTurnover) }} <span class="text-xs font-normal text-slate-500">USDT</span></dd></div>
+                </dl>
+                <p class="mt-2 border-t border-slate-200 pt-2 text-xs text-slate-500">已完成有效流水由系统自动累计，不可人工修改。</p>
               </div>
               <label class="block"><span class="text-sm font-medium text-slate-800">到期时间 <span class="font-normal text-slate-400">（可选）</span></span><input v-model="form.expiresAt" type="datetime-local" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /></label>
               <label class="block"><span class="text-sm font-medium text-slate-800">设置原因 <span class="text-rose-500">*</span></span><textarea v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /></label>
@@ -121,7 +127,7 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
             <template v-else>
               <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
                 <h3 class="font-semibold">{{ stage === 'confirm-remove' ? '确认解除出金流水限制' : '确认设置出金流水限制' }}</h3>
-                <dl v-if="stage === 'confirm-set'" class="mt-3 grid grid-cols-[6rem_1fr] gap-y-2"><dt>所需流水</dt><dd>{{ money(form.requiredTurnover) }}</dd><dt>已完成</dt><dd>{{ money(form.completedTurnover) }}</dd><dt>到期时间</dt><dd>{{ form.expiresAt || '长期有效' }}</dd><dt>设置原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
+                <dl v-if="stage === 'confirm-set'" class="mt-3 grid grid-cols-[7rem_1fr] gap-y-2"><dt>流水要求金额</dt><dd>{{ money(form.requiredTurnover) }} USDT</dd><dt>已完成有效流水</dt><dd>{{ money(completedTurnover) }} USDT</dd><dt>剩余所需流水</dt><dd>{{ money(remainingTurnover) }} USDT</dd><dt>到期时间</dt><dd>{{ form.expiresAt || '长期有效' }}</dd><dt>设置原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
                 <p v-else class="mt-3 break-words">解除原因：{{ form.removeReason.trim() }}</p>
               </div>
               <p class="text-xs text-slate-500">提交后还需通过 MFA 验证，验证成功才会执行。</p>
