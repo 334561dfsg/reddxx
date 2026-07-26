@@ -120,6 +120,19 @@ test('relationship drawer paginates members and resets selection and page for ch
   })
   await harness.finishTransitions()
 
+  const controls = harness.findByTestId('relationship-drawer-controls')
+  const list = harness.findByTestId('relationship-member-scroll')
+  const pagination = harness.findByTestId('relationship-drawer-pagination')
+  const search = harness.allNodes().find((node) => node.tag === 'input' && node.getAttribute('type') === 'search')
+  const statusGroup = fieldsetWithLegend(harness, '账户状态')
+  const roleGroup = fieldsetWithLegend(harness, '用户角色')
+  assert.equal(controls.contains(search), true)
+  assert.equal(controls.contains(statusGroup), true)
+  assert.equal(controls.contains(roleGroup), true)
+  assert.equal(list.contains(memberButtons(harness)[0]), true)
+  assert.equal(pagination.contains(harness.findByTestId('compact-pagination-summary')), true)
+  assert.equal(list.contains(harness.findByTestId('compact-pagination-summary')), false)
+
   assert.deepEqual(visiblePaginationMemberIds(harness), [
     'user_pagination_01', 'user_pagination_02', 'user_pagination_03', 'user_pagination_04', 'user_pagination_05',
     'user_pagination_06', 'user_pagination_07', 'user_pagination_08', 'user_pagination_09', 'user_pagination_10'
@@ -144,7 +157,6 @@ test('relationship drawer paginates members and resets selection and page for ch
   await harness.flush()
   assert.ok(harness.allNodes().some((node) => node.textContent.includes('已选择裂变下级 pagination_member_11')))
 
-  const search = harness.allNodes().find((node) => node.tag === 'input' && node.getAttribute('type') === 'search')
   await inputValue(harness, search, 'pagination_member')
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
   assert.equal(harness.allNodes().some((node) => node.textContent.includes('已选择裂变下级')), false)
@@ -171,6 +183,7 @@ test('relationship drawer paginates members and resets selection and page for ch
   await harness.flush()
   harness.props.user = tree.members[0]
   await harness.flush()
+  assert.equal(list.contains(harness.findByText('当前没有裂变下级')), true)
   assert.equal(harness.findByTestId('compact-pagination-summary'), undefined)
   harness.props.user = tree.root
   await harness.flush()
