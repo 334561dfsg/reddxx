@@ -24,7 +24,7 @@ const isAgent = computed(() => props.user?.role === USER_ROLE.AGENT)
 const directChildren = computed(() => userId.value ? getDirectReferrals(userId.value) : [])
 const needsSuccessor = computed(() => isAgent.value && directChildren.value.length > 0)
 const successorOptions = computed(() => [
-  { value: '', label: '全部设为无上级', searchText: '无上级', disabled: false },
+  { value: '', label: '全部设为无裂变上级', searchText: '无裂变上级', disabled: false },
   ...(userId.value ? getParentCandidates(userId.value) : []).map((candidate) => ({
     value: candidate.id,
     label: `${candidate.username} · UID ${candidate.id}`,
@@ -40,8 +40,8 @@ const successorSelectionInvalid = computed(() => needsSuccessor.value && (
 const successorSelectionError = computed(() => {
   if (!successorSelectionInvalid.value) return ''
   return form.successorParentId === null
-    ? '请选择承接上级。'
-    : '所选承接上级不可用，请重新选择。'
+    ? '请选择承接裂变上级。'
+    : '所选承接裂变上级不可用，请重新选择。'
 })
 const successor = computed(() => form.successorParentId
   ? getUserById(form.successorParentId)
@@ -148,7 +148,7 @@ watch(() => [props.visible, userId.value, props.user?.role], ([visible]) => {
               <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-sm">
                 <div class="flex justify-between gap-3"><span class="text-slate-500">当前身份</span><span class="font-medium text-slate-900">{{ isAgent ? '代理' : '普通用户' }}</span></div>
                 <div class="mt-2 flex justify-between gap-3"><span class="text-slate-500">目标身份</span><span class="font-medium" :class="isAgent ? 'text-rose-700' : 'text-blue-700'">{{ isAgent ? '普通用户' : '代理' }}</span></div>
-                <div class="mt-2 flex justify-between gap-3"><span class="text-slate-500">直属下级</span><span class="font-medium text-slate-900">{{ directChildren.length }} 人</span></div>
+                <div class="mt-2 flex justify-between gap-3"><span class="text-slate-500">直属裂变下级</span><span class="font-medium text-slate-900">{{ directChildren.length }} 人</span></div>
               </div>
 
               <div v-if="needsSuccessor" class="block">
@@ -162,15 +162,15 @@ watch(() => [props.visible, userId.value, props.user?.role], ([visible]) => {
                 <PanelSingleSelect
                   v-model="form.successorParentId"
                   :options="successorOptions"
-                  label="承接上级"
-                  placeholder="请选择承接上级"
-                  search-label="搜索承接上级用户"
+                  label="承接裂变上级"
+                  placeholder="请选择承接裂变上级"
+                  search-label="搜索承接裂变上级用户"
                   required
                   :invalid="successorSelectionInvalid"
                   error-id="agent-role-successor-parent-error"
                   id-base="agent-role-successor-parent"
                 />
-                <span class="mt-1 block text-xs text-slate-500">取消代理后，{{ directChildren.length }} 个直属下级将统一转移到此上级。</span>
+                <span class="mt-1 block text-xs text-slate-500">取消代理后，{{ directChildren.length }} 个直属裂变下级将统一转移到此裂变上级。</span>
               </div>
 
               <label class="block">
@@ -186,8 +186,8 @@ watch(() => [props.visible, userId.value, props.user?.role], ([visible]) => {
                 <dl class="mt-3 grid grid-cols-[6rem_1fr] gap-y-2">
                   <dt class="text-amber-800">身份变化</dt><dd>{{ isAgent ? '代理 → 普通用户' : '普通用户 → 代理' }}</dd>
                   <template v-if="needsSuccessor">
-                    <dt class="text-amber-800">影响成员</dt><dd>{{ directChildren.length }} 个直属下级</dd>
-                    <dt class="text-amber-800">承接上级</dt><dd>{{ successor?.username || '无上级' }}</dd>
+                    <dt class="text-amber-800">影响成员</dt><dd>{{ directChildren.length }} 个直属裂变下级</dd>
+                    <dt class="text-amber-800">承接裂变上级</dt><dd>{{ successor?.username || '无裂变上级' }}</dd>
                   </template>
                   <dt class="text-amber-800">变更原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd>
                 </dl>

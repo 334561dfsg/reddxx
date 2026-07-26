@@ -157,12 +157,17 @@ test('relationship surfaces consistently identify fission relationships without 
   assert.match(teamReport, /当前没有裂变团队成员/)
 })
 
-test('successor selector indexes candidate username, email, and UID while retaining the enabled no-parent option', () => {
+test('successor selector uses explicit fission relationship terms while retaining the enabled no-parent option', () => {
   const source = agentRoleSource()
 
-  assert.match(source, /search-label="搜索承接上级用户"/)
+  assert.match(source, /直属裂变下级/)
+  assert.match(source, /label="承接裂变上级"/)
+  assert.match(source, /search-label="搜索承接裂变上级用户"/)
+  assert.match(source, /取消代理后，{{ directChildren\.length }} 个直属裂变下级将统一转移到此裂变上级。/)
+  assert.match(source, /影响成员.*直属裂变下级/)
+  assert.match(source, /承接裂变上级.*无裂变上级/)
   assert.match(source, /searchText:\s*\[candidate\.username, candidate\.email, candidate\.id\]\.join\(' '\)/)
-  assert.match(source, /value:\s*''[\s\S]*label:\s*'全部设为无上级'[\s\S]*disabled:\s*false/)
+  assert.match(source, /value:\s*''[\s\S]*label:\s*'全部设为无裂变上级'[\s\S]*disabled:\s*false/)
   assert.match(source, /required/)
   assert.match(source, /invalid=/)
 })
@@ -269,7 +274,7 @@ test('agent-role blocks null and disabled successors until the enabled no-parent
   assert.equal(getRelationshipAuditLog().length, 0)
   assert.equal(trigger.getAttribute('aria-invalid'), 'true')
 
-  selectOptions(harness).find((option) => option.textContent.includes('全部设为无上级')).click()
+  selectOptions(harness).find((option) => option.textContent.includes('全部设为无裂变上级')).click()
   await harness.finishTransitions()
   assert.equal(trigger.getAttribute('aria-invalid'), 'false')
   harness.findByText('下一步', 'button').click()

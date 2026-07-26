@@ -76,7 +76,7 @@ test('parent mutation rejects cycles without partial writes and records success'
   try {
     assert.throws(
       () => resetParent({ userId: 'user_1003', parentId: 'user_1004', reason: '无效调整' }),
-      /不能选择自己的下级/
+      /不能选择自己的裂变下级作为裂变上级/
     )
     assert.deepEqual(getUser('user_1003'), before)
     assert.equal(getRelationshipAuditLog().length, 0)
@@ -87,6 +87,32 @@ test('parent mutation rejects cycles without partial writes and records success'
     assert.equal(getRelationshipAuditLog()[0].type, 'parent-reset')
   } finally {
     restoreUser(before)
+    __resetRelationshipAuditLogForTests()
+  }
+})
+
+test('parent reset reports rejected fission relationships with explicit terminology', () => {
+  const before = snapshotUser('user_1003')
+  const candidateBefore = snapshotUser('user_1009')
+  __resetRelationshipAuditLogForTests()
+  try {
+    getUser('user_1009').status = 'banned'
+    for (const [parentId, message] of [
+      ['user_1003', '不能选择用户本人作为裂变上级'],
+      ['user_1004', '不能选择自己的裂变下级作为裂变上级'],
+      ['user_1009', '不能选择已封禁用户作为裂变上级'],
+      ['user_1001', '新裂变上级不能与当前裂变上级相同']
+    ]) {
+      assert.throws(
+        () => resetParent({ userId: 'user_1003', parentId, reason: '无效调整' }),
+        new RegExp(message)
+      )
+    }
+    assert.deepEqual(getUser('user_1003'), before)
+    assert.equal(getRelationshipAuditLog().length, 0)
+  } finally {
+    restoreUser(before)
+    restoreUser(candidateBefore)
     __resetRelationshipAuditLogForTests()
   }
 })

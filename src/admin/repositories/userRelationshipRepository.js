@@ -145,14 +145,14 @@ export const resetParent = ({ userId, parentId = null, reason }) => {
   const nextParentId = parentId ? String(parentId) : null
   const cleanReason = requireReason(reason)
 
-  if (nextParentId === idOf(user)) throw new Error('不能选择用户本人作为上级')
+  if (nextParentId === idOf(user)) throw new Error('不能选择用户本人作为裂变上级')
   if (nextParentId && getDescendants(userId).some((row) => idOf(row) === nextParentId)) {
-    throw new Error('不能选择自己的下级作为上级')
+    throw new Error('不能选择自己的裂变下级作为裂变上级')
   }
 
   const parent = nextParentId ? requireUser(nextParentId) : null
-  if (parent?.status === USER_STATUS.BANNED) throw new Error('不能选择已封禁用户作为上级')
-  if (String(user.parentId ?? '') === String(nextParentId ?? '')) throw new Error('新上级不能与当前上级相同')
+  if (parent?.status === USER_STATUS.BANNED) throw new Error('不能选择已封禁用户作为裂变上级')
+  if (String(user.parentId ?? '') === String(nextParentId ?? '')) throw new Error('新裂变上级不能与当前裂变上级相同')
 
   const before = { parentId: user.parentId ?? null, parentUsername: user.parentUsername ?? null }
   const after = { parentId: nextParentId, parentUsername: parent?.username ?? null }
@@ -177,15 +177,15 @@ export const updateAgentRole = ({ userId, role, reason, successorParentId }) => 
   const directChildren = getDirectReferrals(userId)
   let successor = null
   if (role === USER_ROLE.USER && directChildren.length) {
-    if (successorParentId === undefined) throw new Error('存在直属下级时必须选择承接上级')
+    if (successorParentId === undefined) throw new Error('存在直属裂变下级时必须选择承接裂变上级')
     if (successorParentId) {
       const successorId = String(successorParentId)
-      if (successorId === idOf(user)) throw new Error('不能选择用户本人作为承接上级')
+      if (successorId === idOf(user)) throw new Error('不能选择用户本人作为承接裂变上级')
       if (getDescendants(userId).some((row) => idOf(row) === successorId)) {
-        throw new Error('不能选择自己的下级作为承接上级')
+        throw new Error('不能选择自己的裂变下级作为承接裂变上级')
       }
       successor = requireUser(successorId)
-      if (successor.status === USER_STATUS.BANNED) throw new Error('不能选择已封禁用户作为承接上级')
+      if (successor.status === USER_STATUS.BANNED) throw new Error('不能选择已封禁用户作为承接裂变上级')
     }
   }
 
