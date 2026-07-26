@@ -71,3 +71,26 @@ test('agent report opens above the operation Drawer with the originating trigger
   const handler = source.slice(handlerStart, handlerEnd)
   assert.doesNotMatch(handler.match(/if \(id === 'agent-report'\)[\s\S]*?\n  \}/)?.[0] || '', /closeOperationDrawer\(\)/)
 })
+
+test('agent subordinate list opens above the operation Drawer and keeps retryable state isolated', () => {
+  assert.match(source, /import UserAgentSubordinateDrawer/)
+  assert.match(source, /import \{ getUserAgentSubordinates \} from/)
+  assert.match(source, /id === 'agent-subordinates'/)
+  assert.match(source, /getUserAgentSubordinates\(userIdOf\(user\)\)/)
+  assert.match(source, /agentSubordinateReturnFocus\.value = trigger/)
+  assert.match(source, /agentSubordinateOpen\.value = true/)
+  assert.match(source, /<UserAgentSubordinateDrawer[\s\S]*@retry="loadAgentSubordinates"/)
+  assert.match(source, /<UserAgentSubordinateDrawer[\s\S]*:return-focus="agentSubordinateReturnFocus"/)
+  assert.match(source, /<UserAgentSubordinateDrawer[\s\S]*@closed="clearAgentSubordinates"/)
+  assert.match(source, /const clearAgentSubordinates = \(\) => \{[\s\S]*agentSubordinateRows\.value = \[\][\s\S]*agentSubordinateError\.value = ''/)
+
+  const operationIndex = source.indexOf('<UserOperationDrawer')
+  const subordinateIndex = source.indexOf('<UserAgentSubordinateDrawer')
+  assert.ok(operationIndex >= 0)
+  assert.ok(subordinateIndex > operationIndex)
+
+  const handlerStart = source.indexOf('const handleOperationDrawerAction')
+  const handlerEnd = source.indexOf('const closeOnchainWallet', handlerStart)
+  const handler = source.slice(handlerStart, handlerEnd)
+  assert.doesNotMatch(handler.match(/if \(id === 'agent-subordinates'\)[\s\S]*?\n  \}/)?.[0] || '', /closeOperationDrawer\(\)/)
+})
