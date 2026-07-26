@@ -96,61 +96,68 @@ watch(() => props.error, async (error) => {
             <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
           </header>
 
-          <div data-testid="user-agent-subordinate-body" class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-bottom: max(1rem, env(safe-area-inset-bottom)); padding-left: max(1rem, env(safe-area-inset-left));">
-            <div class="grid grid-cols-1 gap-3 min-[520px]:grid-cols-[minmax(0,1fr)_10rem]">
-              <label class="block min-w-0 text-xs font-medium text-slate-600">
-                搜索下级用户
-                <input v-model="query" type="search" aria-label="搜索下级用户" placeholder="搜索 UID 或用户名" class="ant-input mt-1 w-full" />
-              </label>
-              <label class="block text-xs font-medium text-slate-600">
-                用户状态
-                <select v-model="status" aria-label="用户状态" class="ant-select mt-1 w-full">
-                  <option value="all">全部</option>
-                  <option value="active">活跃</option>
-                  <option value="suspended">暂停</option>
-                  <option value="banned">禁用</option>
-                </select>
-              </label>
-            </div>
-
-            <p v-if="error" ref="errorRef" data-testid="agent-subordinate-error" tabindex="-1" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" role="alert">
-              <span class="font-semibold">代理下级用户加载失败</span>
-              <span class="mt-1 block break-words">{{ error }}</span>
-              <button data-testid="agent-subordinate-retry" type="button" class="ant-btn mt-3" :disabled="loading" @click="emit('retry')">{{ loading ? '重试中…' : '重试' }}</button>
-            </p>
-
-            <div v-if="loading && !error" class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50" role="status">
-              <p class="text-sm text-slate-600">正在加载代理下级用户…</p>
-            </div>
-
-            <template v-else-if="rows.length">
+          <div data-testid="user-agent-subordinate-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
+            <div data-testid="agent-subordinate-controls" class="shrink-0 space-y-3 px-4 pt-4 sm:px-5">
+              <div class="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 min-[520px]:grid-cols-[minmax(0,1fr)_10rem]">
+                <label class="block min-w-0 text-xs font-medium text-slate-600">
+                  搜索下级用户
+                  <input v-model="query" type="search" aria-label="搜索下级用户" placeholder="搜索 UID 或用户名" class="ant-input mt-1 w-full" />
+                </label>
+                <label class="block text-xs font-medium text-slate-600">
+                  用户状态
+                  <select v-model="status" aria-label="用户状态" class="ant-select mt-1 w-full">
+                    <option value="all">全部</option>
+                    <option value="active">活跃</option>
+                    <option value="suspended">暂停</option>
+                    <option value="banned">禁用</option>
+                  </select>
+                </label>
+              </div>
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <h3 class="text-sm font-semibold text-slate-900">直属客户</h3>
-                <span class="text-xs text-slate-500">共 {{ filteredRows.length }} 人</span>
+                <span v-if="rows.length && !error" class="text-xs text-slate-500">共 {{ filteredRows.length }} 人</span>
               </div>
-              <div v-if="pagedRows.length" class="space-y-2">
-                <article v-for="row in pagedRows" :key="row.id" data-testid="agent-subordinate-row" class="rounded-xl border border-slate-200 p-3 sm:p-4">
-                  <div class="flex flex-wrap items-start justify-between gap-2">
-                    <div class="min-w-0">
-                      <h4 class="break-words font-medium text-slate-900">{{ row.username }}</h4>
-                      <p class="mt-0.5 break-all font-mono text-xs text-slate-500">UID {{ row.uid }}</p>
-                    </div>
-                    <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">{{ STATUS_LABELS[row.status] || row.status }}</span>
-                  </div>
-                  <dl class="mt-3 grid grid-cols-1 gap-3 text-sm min-[420px]:grid-cols-3">
-                    <div><dt class="text-xs text-slate-500">注册时间</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ row.registeredAt }}</dd></div>
-                    <div><dt class="text-xs text-slate-500">累计业务量</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.totalVolume) }}</dd></div>
-                    <div><dt class="text-xs text-slate-500">佣金贡献</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.commissionContribution) }}</dd></div>
-                  </dl>
-                </article>
-                <CompactPagination v-model:current-page="currentPage" :total-count="filteredRows.length" :page-size="PAGE_SIZE" />
-              </div>
-              <p v-else class="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">没有符合当前条件的下级用户</p>
-            </template>
-
-            <div v-else-if="!error" class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
-              <div><p class="font-medium text-slate-700">该代理暂无下级用户</p><p class="mt-1 text-sm text-slate-500">当前没有归属于该代理的直属客户。</p></div>
             </div>
+
+            <div data-testid="agent-subordinate-list-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:px-5" role="region" aria-label="代理直属客户列表" tabindex="0">
+              <p v-if="error" ref="errorRef" data-testid="agent-subordinate-error" tabindex="-1" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" role="alert">
+                <span class="font-semibold">代理下级用户加载失败</span>
+                <span class="mt-1 block break-words">{{ error }}</span>
+                <button data-testid="agent-subordinate-retry" type="button" class="ant-btn mt-3" :disabled="loading" @click="emit('retry')">{{ loading ? '重试中…' : '重试' }}</button>
+              </p>
+
+              <div v-else-if="loading" class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50" role="status">
+                <p class="text-sm text-slate-600">正在加载代理下级用户…</p>
+              </div>
+
+              <template v-else-if="rows.length">
+                <div v-if="pagedRows.length" class="space-y-2">
+                  <article v-for="row in pagedRows" :key="row.id" data-testid="agent-subordinate-row" class="rounded-xl border border-slate-200 p-3 sm:p-4">
+                    <div class="flex flex-wrap items-start justify-between gap-2">
+                      <div class="min-w-0">
+                        <h4 class="break-words font-medium text-slate-900">{{ row.username }}</h4>
+                        <p class="mt-0.5 break-all font-mono text-xs text-slate-500">UID {{ row.uid }}</p>
+                      </div>
+                      <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">{{ STATUS_LABELS[row.status] || row.status }}</span>
+                    </div>
+                    <dl class="mt-3 grid grid-cols-1 gap-3 text-sm min-[420px]:grid-cols-3">
+                      <div><dt class="text-xs text-slate-500">注册时间</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ row.registeredAt }}</dd></div>
+                      <div><dt class="text-xs text-slate-500">累计业务量</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.totalVolume) }}</dd></div>
+                      <div><dt class="text-xs text-slate-500">佣金贡献</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.commissionContribution) }}</dd></div>
+                    </dl>
+                  </article>
+                </div>
+                <p v-else class="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">没有符合当前条件的下级用户</p>
+              </template>
+
+              <div v-else class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
+                <div><p class="font-medium text-slate-700">该代理暂无下级用户</p><p class="mt-1 text-sm text-slate-500">当前没有归属于该代理的直属客户。</p></div>
+              </div>
+            </div>
+
+            <footer v-if="!error && rows.length && filteredRows.length" data-testid="agent-subordinate-pagination" class="shrink-0 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-5">
+              <CompactPagination v-model:current-page="currentPage" :total-count="filteredRows.length" :page-size="PAGE_SIZE" />
+            </footer>
           </div>
         </aside>
       </div>
