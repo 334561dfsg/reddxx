@@ -1,6 +1,9 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import CompactPagination from '../CompactPagination.vue'
+
+const PAGE_SIZE = 5
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -12,10 +15,19 @@ const emit = defineEmits(['close', 'closed'])
 const drawerRef = ref(null)
 const titleRef = ref(null)
 const displaySummary = ref(null)
+const currentPage = ref(1)
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
+const records = computed(() => displaySummary.value?.records || [])
+const pagedRecords = computed(() => {
+  const start = (currentPage.value - 1) * PAGE_SIZE
+  return records.value.slice(start, start + PAGE_SIZE)
+})
 const money = (value) => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const formatTime = (value) => value ? new Date(value).toLocaleString('zh-CN', { hour12: false }) : '—'
-const captureSummary = () => { displaySummary.value = props.summary ? JSON.parse(JSON.stringify(props.summary)) : null }
+const captureSummary = () => {
+  displaySummary.value = props.summary ? JSON.parse(JSON.stringify(props.summary)) : null
+  currentPage.value = 1
+}
 
 const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
   open: computed(() => props.visible),
@@ -54,14 +66,10 @@ watch(() => [props.visible, props.summary], ([visible]) => { if (visible) captur
           </header>
 
           <div data-testid="user-recharge-summary-body" class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5" style="padding-bottom: max(1rem, env(safe-area-inset-bottom)); padding-right: max(1rem, env(safe-area-inset-right));">
-            <section class="grid grid-cols-1 gap-3 sm:grid-cols-2" aria-label="累计充值概况">
+            <section class="w-full" aria-label="累计充值概况">
               <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
                 <p class="text-xs text-slate-500">累计充值</p>
                 <p class="mt-1 text-xl font-semibold text-slate-900">{{ money(displaySummary?.cumulativeRecharge) }} <span class="text-xs font-normal text-slate-500">USDT</span></p>
-              </div>
-              <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p class="text-xs text-slate-500">计入会员等级</p>
-                <p class="mt-1 text-xl font-semibold text-slate-900">{{ money(displaySummary?.qualifyingRecharge) }} <span class="text-xs font-normal text-slate-500">USDT</span></p>
               </div>
             </section>
 
@@ -79,11 +87,18 @@ watch(() => [props.visible, props.summary], ([visible]) => { if (visible) captur
 
             <section aria-labelledby="recharge-records-title">
               <div class="flex items-center justify-between"><h3 id="recharge-records-title" class="text-sm font-semibold text-slate-900">充值记录</h3><span class="text-xs text-slate-500">共 {{ displaySummary?.records?.length || 0 }} 笔</span></div>
-              <div v-if="displaySummary?.records?.length" class="mt-2 space-y-2">
-                <article v-for="record in displaySummary.records" :key="record.id" class="rounded-xl border border-slate-200 p-3 text-sm">
+              <div v-if="records.length" class="mt-2 space-y-2">
+                <article v-for="record in pagedRecords" :key="record.id" class="rounded-xl border border-slate-200 p-3 text-sm">
                   <div class="flex flex-wrap items-start justify-between gap-2"><div><p class="font-semibold text-slate-900">{{ money(record.amount) }} USDT</p><p class="mt-0.5 text-xs text-slate-500">计入等级 {{ money(record.qualifyingAmount) }} USDT</p></div><span class="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">{{ record.source }}</span></div>
                   <dl class="mt-3 grid grid-cols-[4.5rem_1fr] gap-y-1 text-xs"><dt class="text-slate-500">流水号</dt><dd class="break-all text-slate-700">{{ record.transactionId }}</dd><dt class="text-slate-500">充值时间</dt><dd class="text-slate-700">{{ formatTime(record.createdAt) }}</dd></dl>
                 </article>
+                <CompactPagination
+                  v-if="records.length > PAGE_SIZE"
+                  v-model:current-page="currentPage"
+                  class="mt-3 rounded-xl border border-slate-200"
+                  :total-count="records.length"
+                  :page-size="PAGE_SIZE"
+                />
               </div>
               <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center text-sm text-slate-500">暂无计入会员等级的充值记录</p>
             </section>

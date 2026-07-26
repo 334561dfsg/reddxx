@@ -7,6 +7,7 @@ import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vue
 
 const projectFile = (path) => resolve(process.cwd(), path)
 const rechargeDrawerFile = projectFile('src/admin/components/user/UserRechargeSummaryDrawer.vue')
+const compactPaginationFile = projectFile('src/admin/components/CompactPagination.vue')
 const mutationDialogFile = projectFile('src/admin/components/user/UserMembershipMutationDialog.vue')
 const panelSingleSelectFile = projectFile('src/admin/components/form/PanelSingleSelect.vue')
 const reviewDrawerFile = projectFile('src/admin/components/user/UserCreditReviewDrawer.vue')
@@ -45,7 +46,6 @@ test('recharge Drawer opens above its trigger, exposes the complete summary, and
   assert.equal(frame.getAttribute('role'), 'dialog')
   assert.equal(frame.getAttribute('aria-modal'), 'true')
   assert.match(frame.textContent, /170,000\.00/)
-  assert.match(frame.textContent, /160,000\.00/)
   assert.match(frame.textContent, /VIP2/)
   assert.match(frame.textContent, /DEP-001/)
   assert.equal(frame.parent.classList.contains('recharge-drawer-enter-from'), true)
@@ -63,6 +63,44 @@ test('recharge Drawer opens above its trigger, exposes the complete summary, and
   assert.equal(frame.isConnected, true)
   await harness.finishTransitions()
   assert.equal(trigger.focused, true)
+})
+
+test('recharge Drawer removes the duplicate summary card and paginates records five at a time', async (t) => {
+  const component = await loadVueSfc(rechargeDrawerFile, {
+    vueImports: { [compactPaginationFile]: loadVueSfcModuleUrl(compactPaginationFile) }
+  })
+  const records = Array.from({ length: 7 }, (_, index) => ({
+    id: `r${index + 1}`,
+    amount: 100 + index,
+    qualifyingAmount: 100 + index,
+    source: '链上充值',
+    transactionId: `DEP-00${index + 1}`,
+    createdAt: `2026-07-${String(20 - index).padStart(2, '0')}T08:00:00.000Z`
+  }))
+  const harness = await createSfcHarness(component, {
+    visible: true,
+    user,
+    summary: { ...summary, records }
+  })
+  t.after(harness.cleanup)
+
+  const drawer = harness.findByTestId('user-recharge-summary-drawer')
+  assert.doesNotMatch(drawer.textContent, /计入会员等级/)
+  assert.match(drawer.textContent, /共 7 笔/)
+  assert.match(drawer.textContent, /DEP-001/)
+  assert.match(drawer.textContent, /DEP-005/)
+  assert.doesNotMatch(drawer.textContent, /DEP-006/)
+
+  harness.findByText('下一页', 'button').click()
+  await harness.flush()
+  assert.doesNotMatch(drawer.textContent, /DEP-001/)
+  assert.match(drawer.textContent, /DEP-006/)
+  assert.match(drawer.textContent, /DEP-007/)
+
+  harness.props.summary = { ...summary, records: records.slice(0, 6) }
+  await harness.flush()
+  assert.match(drawer.textContent, /DEP-001/)
+  assert.doesNotMatch(drawer.textContent, /DEP-006/)
 })
 
 test('recharge Drawer has one body scroller and responsive motion safeguards', async () => {
