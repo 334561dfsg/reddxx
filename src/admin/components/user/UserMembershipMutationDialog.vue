@@ -170,13 +170,23 @@ const requestMfa = () => {
 
 watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visible) resetForm() }, { immediate: true })
 watch(
-  [() => props.visible, () => props.mode, () => form.vipLevel, vipOptions],
+  [() => props.visible, () => props.mode, () => form.vipLevel],
   ([visible, mode, vipLevel]) => {
     if (!visible || mode !== 'vip') return
-    if (vipLevel === null || latestVipOption()) {
+    if (vipLevel === null) return
+    if (latestVipOption()) {
       clearVipSelectionError()
       return
     }
+    const returnToEdit = stage.value === 'confirm'
+    showVipSelectionError({ focus: returnToEdit })
+  },
+  { flush: 'post' }
+)
+watch(
+  [() => props.visible, () => props.mode, vipOptions],
+  ([visible, mode]) => {
+    if (!visible || mode !== 'vip' || form.vipLevel === null || latestVipOption()) return
     const returnToEdit = stage.value === 'confirm'
     showVipSelectionError({ focus: returnToEdit })
   },
