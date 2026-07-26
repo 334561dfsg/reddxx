@@ -102,7 +102,7 @@ const copyAddress = async (address) => {
   }
 }
 const handleAfterLeave = () => {
-  onAfterLeave()
+  if (!onAfterLeave()) return
   resetLocalState()
   emit('closed')
 }

@@ -284,6 +284,8 @@ test('queued reopen skips stale focus return and restores only the new trigger a
   const document = installFakeDocument(t)
   const trigger = createFakeElement(document, { focusable: true })
   const nextTrigger = createFakeElement(document, { focusable: true })
+  const background = createFakeElement(document)
+  document.body.children.push(background)
   const returnFocusRef = shallowRef(trigger)
   document.activeElement = trigger
   const { lifecycle, open } = await mountLifecycle({ document, returnFocusRef })
@@ -297,7 +299,10 @@ test('queued reopen skips stale focus return and restores only the new trigger a
   await flushLifecycle()
   assert.equal(lifecycle.phase.value, 'closing')
 
-  lifecycle.onAfterLeave()
+  assert.equal(lifecycle.onAfterLeave(), false)
+  assert.equal(document.body.style.overflow, 'hidden')
+  assert.equal(background.inert, true)
+  assert.equal(document.listenerCount('keydown'), 1)
   await flushLifecycle()
   lifecycle.onAfterEnter()
   assert.equal(trigger.focusCount, 0)
@@ -313,6 +318,48 @@ test('queued reopen skips stale focus return and restores only the new trigger a
   assert.equal(nextTrigger.focusCount, 1)
   assert.equal(document.activeElement, nextTrigger)
   assert.equal(document.body.style.overflow, '')
+})
+
+test('queued reopen retains top-layer ownership and keeps every lower layer isolated without a gap', async (t) => {
+  const document = installFakeDocument(t)
+  const background = createFakeElement(document)
+  document.body.children.push(background)
+  const lower = await mountLifecycle({ document })
+  const upperTrigger = createFakeElement(document, { focusable: true })
+  const upperNextTrigger = createFakeElement(document, { focusable: true })
+  const upperReturnFocus = shallowRef(upperTrigger)
+  document.activeElement = upperTrigger
+  const upper = await mountLifecycle({ document, returnFocusRef: upperReturnFocus })
+
+  upper.open.value = false
+  await flushLifecycle()
+  upperReturnFocus.value = upperNextTrigger
+  upper.open.value = true
+  await flushLifecycle()
+
+  assert.equal(upper.lifecycle.onAfterLeave(), false)
+  assert.equal(document.listenerCount('keydown'), 2)
+  assert.equal(document.body.style.overflow, 'hidden')
+  assert.equal(background.inert, true)
+  assert.equal(lower.dialog.inert, true)
+  assert.equal(lower.dialog.getAttribute('aria-hidden'), 'true')
+  assert.equal(upper.dialog.inert, false)
+  assert.equal(upperTrigger.focusCount, 0)
+  assert.equal(upperNextTrigger.focusCount, 0)
+
+  await flushLifecycle()
+  upper.lifecycle.onAfterEnter()
+  assert.equal(document.listenerCount('keydown'), 2)
+  assert.equal(lower.dialog.inert, true)
+
+  upper.open.value = false
+  await flushLifecycle()
+  assert.equal(upper.lifecycle.onAfterLeave(), true)
+  assert.equal(upperNextTrigger.focusCount, 1)
+  assert.equal(lower.dialog.inert, false)
+  assert.equal(document.body.style.overflow, 'hidden')
+
+  lower.app.unmount()
 })
 
 test('defers layer cleanup, scroll unlock, and focus return until leave completes', async (t) => {

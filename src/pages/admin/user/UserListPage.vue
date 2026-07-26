@@ -755,15 +755,13 @@ const confirmControlCancel = () => {
 
 const handleUnifiedCancelAfterLeave = () => {
   const shouldOpenMfa = pendingMfaAction.value?.type === 'cancel'
-  onUnifiedCancelAfterLeave()
-  if (unifiedCancelPhase.value === 'closed') {
-    cancelNote.value = ''
-    clearUnifiedCancelSnapshot()
-    if (shouldOpenMfa) {
-      openPendingMfa()
-    } else {
-      controlUser.value = null
-    }
+  if (!onUnifiedCancelAfterLeave()) return
+  cancelNote.value = ''
+  clearUnifiedCancelSnapshot()
+  if (shouldOpenMfa) {
+    openPendingMfa()
+  } else {
+    controlUser.value = null
   }
 }
 

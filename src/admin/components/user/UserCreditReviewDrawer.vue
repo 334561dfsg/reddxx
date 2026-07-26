@@ -31,7 +31,11 @@ const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLe
   returnFocusRef: computed(() => props.returnFocus), requestClose: () => emit('close'), closeDisabled
 })
 const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = () => { onAfterLeave(); filter.value = 'all'; emit('closed') }
+const handleAfterLeave = () => {
+  if (!onAfterLeave()) return
+  filter.value = 'all'
+  emit('closed')
+}
 const selectReview = (review, event) => {
   if (props.busy || review.status !== 'pending') return
   emit('select-review', { review, returnFocus: event.currentTarget })

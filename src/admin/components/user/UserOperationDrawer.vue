@@ -45,7 +45,7 @@ const selectEntry = (entry, event) => {
 }
 
 const handleAfterLeave = () => {
-  onAfterLeave()
+  if (!onAfterLeave()) return
   plannedMessage.value = ''
   emit('closed')
 }

@@ -136,6 +136,13 @@ export const unregisterDialogLayer = (layer) => {
   syncLayerIsolation()
 }
 
+const replaceDialogLayerElement = (layer, element) => {
+  if (!layer || !element || !dialogLayers.includes(layer) || layer.element === element) return
+  setElementInert(layer.element, false)
+  layer.element = element
+  syncLayerIsolation()
+}
+
 export const isTopDialogLayer = (layer) => dialogLayers.at(-1) === layer
 
 export const getFocusableElements = (root) => [...(root?.querySelectorAll?.(
@@ -298,10 +305,15 @@ export const useDialogLifecycle = ({
 
   const registerLayerAfterRender = async () => {
     await nextTick()
-    if (disposed || !isOpen() || !rendered.value || layer) return
+    if (disposed || !isOpen() || !rendered.value) return
 
     const dialog = dialogRef?.value
     if (!dialog) return
+    if (layer) {
+      replaceDialogLayerElement(layer, dialog)
+      focusInitialTarget()
+      return
+    }
     layer = registerDialogLayer(dialog)
     keydownListener = handleKeydown
     if (typeof document !== 'undefined') {
@@ -310,9 +322,9 @@ export const useDialogLifecycle = ({
     focusInitialTarget()
   }
 
-  const startOpening = () => {
+  const startOpening = ({ captureTrigger = true } = {}) => {
     if (disposed || phase.value === 'opening' || phase.value === 'open' || phase.value === 'closing') return
-    if (typeof document !== 'undefined') triggerElement = document.activeElement
+    if (captureTrigger && typeof document !== 'undefined') triggerElement = document.activeElement
     rendered.value = true
     phase.value = 'opening'
     registerLayerAfterRender()
@@ -332,15 +344,15 @@ export const useDialogLifecycle = ({
   const onAfterLeave = () => {
     if (disposed) return false
     const shouldReopen = isOpen()
+    if (shouldReopen && phase.value !== 'closing') return false
     const shouldRestoreFocus = Boolean(!shouldReopen && layer && isTopDialogLayer(layer))
-    releaseLayer()
     rendered.value = false
     phase.value = 'closed'
     if (shouldReopen) {
-      discardFocusReturn()
-      startOpening()
+      startOpening({ captureTrigger: false })
       return false
     }
+    releaseLayer()
     if (shouldRestoreFocus) restoreFocus()
     else discardFocusReturn()
     return true

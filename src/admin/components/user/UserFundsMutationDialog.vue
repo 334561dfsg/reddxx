@@ -62,7 +62,7 @@ const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLe
 })
 const close = createDialogCloseAction(requestDialogClose)
 const handleAfterLeave = () => {
-  onAfterLeave()
+  if (!onAfterLeave()) return
   resetForm()
   emit('closed')
 }

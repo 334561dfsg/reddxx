@@ -66,7 +66,7 @@ const {
 })
 const close = createDialogCloseAction(requestDialogClose)
 const handleAfterLeave = () => {
-  onAfterLeave()
+  if (!onAfterLeave()) return
   resetForm()
   emit('closed')
 }

@@ -27,7 +27,11 @@ const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLe
   returnFocusRef: computed(() => props.returnFocus), requestClose: () => emit('close'), closeDisabled
 })
 const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = () => { onAfterLeave(); resetForm(); emit('closed') }
+const handleAfterLeave = () => {
+  if (!onAfterLeave()) return
+  resetForm()
+  emit('closed')
+}
 const showError = async (message) => { errorMessage.value = message; await nextTick(); errorRef.value?.focus?.() }
 const startConfirm = async () => {
   errorMessage.value = ''

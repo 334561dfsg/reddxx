@@ -32,7 +32,7 @@ const {
 
 const close = createDialogCloseAction(requestDialogClose)
 const handleAfterLeave = () => {
-  onAfterLeave()
+  if (!onAfterLeave()) return
   emit('closed')
 }
 

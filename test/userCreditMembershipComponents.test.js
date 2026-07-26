@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import test from 'node:test'
+import { h } from 'vue'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
 
 const projectFile = (path) => resolve(process.cwd(), path)
@@ -10,6 +11,7 @@ const mutationDialogFile = projectFile('src/admin/components/user/UserMembership
 const panelSingleSelectFile = projectFile('src/admin/components/form/PanelSingleSelect.vue')
 const reviewDrawerFile = projectFile('src/admin/components/user/UserCreditReviewDrawer.vue')
 const reviewDecisionFile = projectFile('src/admin/components/user/UserCreditReviewDecisionDialog.vue')
+const operationDrawerFile = projectFile('src/admin/components/user/UserOperationDrawer.vue')
 
 const user = { id: 'user_1004', username: 'user_chen', vipLevel: 1 }
 const summary = {
@@ -78,6 +80,67 @@ test('recharge Drawer has one body scroller and responsive motion safeguards', a
   assert.match(source, /100dvh/)
   assert.match(source, /safe-area-inset-right/)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
+})
+
+test('recharge Drawer preserves a newer stateful summary through an older leave callback', async (t) => {
+  const component = await loadVueSfc(rechargeDrawerFile)
+  const nextUser = { id: 'user_2008', username: 'user_beta', vipLevel: 2 }
+  const nextSummary = {
+    ...summary,
+    cumulativeRecharge: 999999,
+    qualifyingRecharge: 888888,
+    currentVipLevel: 2,
+    records: [{ ...summary.records[0], id: 'r-next', transactionId: 'DEP-NEXT' }]
+  }
+  const firstTrigger = { isConnected: true, focusCount: 0, focus() { this.focusCount += 1 } }
+  const nextTrigger = { isConnected: true, focusCount: 0, focus() { this.focusCount += 1 } }
+  let closedCount = 0
+  let harness
+  harness = await createSfcHarness(component, {
+    visible: true,
+    user,
+    summary,
+    returnFocus: firstTrigger
+  }, {
+    onClose: () => { harness.props.visible = false },
+    onClosed: () => {
+      closedCount += 1
+      harness.props.user = null
+      harness.props.summary = null
+      harness.props.returnFocus = null
+    }
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const firstDrawer = harness.findByTestId('user-recharge-summary-drawer')
+  harness.allNodes().find((node) => firstDrawer.contains(node) && node.getAttribute?.('aria-label') === '关闭').click()
+  await harness.flush()
+
+  harness.props.user = nextUser
+  harness.props.summary = nextSummary
+  harness.props.returnFocus = nextTrigger
+  harness.props.visible = true
+  await harness.flush()
+  await harness.finishTransitions()
+  await harness.finishTransitions()
+
+  const survivingDrawers = harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'user-recharge-summary-drawer')
+  assert.equal(survivingDrawers.length, 1)
+  assert.match(survivingDrawers[0].textContent, /user_beta/)
+  assert.match(survivingDrawers[0].textContent, /999,999\.00/)
+  assert.match(survivingDrawers[0].textContent, /DEP-NEXT/)
+  assert.equal(closedCount, 0)
+  assert.equal(harness.document.body.style.overflow, 'hidden')
+  assert.equal(firstTrigger.focusCount, 0)
+  assert.equal(nextTrigger.focusCount, 0)
+
+  harness.allNodes().find((node) => survivingDrawers[0].contains(node) && node.getAttribute?.('aria-label') === '关闭').click()
+  await harness.flush()
+  await harness.finishTransitions()
+  assert.equal(closedCount, 1)
+  assert.equal(firstTrigger.focusCount, 0)
+  assert.equal(nextTrigger.focusCount, 1)
 })
 
 const membershipSnapshot = {
@@ -430,6 +493,103 @@ test('credit review Drawer filters status without mutating input and follows Dra
   assert.match(source, /150ms ease-in/)
   assert.match(source, /prefers-reduced-motion: reduce/)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
+})
+
+test('credit review Drawer keeps top-layer ownership and new context through a queued reopen', async (t) => {
+  const [operationDrawer, reviewDrawer] = await Promise.all([
+    loadVueSfc(operationDrawerFile),
+    loadVueSfc(reviewDrawerFile)
+  ])
+  const lowerUser = { id: 'user_lower', username: 'lower_agent', role: 'agent' }
+  const nextUser = { id: 'user_review_2', username: 'review_beta', vipLevel: 1 }
+  const nextReviews = [{
+    ...reviews[0],
+    id: 'r-next',
+    userId: nextUser.id,
+    reason: '新审核上下文'
+  }]
+  const firstTrigger = { isConnected: true, focusCount: 0, focus() { this.focusCount += 1 } }
+  const nextTrigger = { isConnected: true, focusCount: 0, focus() { this.focusCount += 1 } }
+  const layeredHarness = {
+    props: [
+      'reviewVisible',
+      'reviewUser',
+      'reviews',
+      'reviewReturnFocus'
+    ],
+    emits: ['review-close', 'review-closed'],
+    setup(props, { emit }) {
+      return () => [
+        h(operationDrawer, {
+          visible: true,
+          user: lowerUser
+        }),
+        h(reviewDrawer, {
+          visible: props.reviewVisible,
+          user: props.reviewUser,
+          reviews: props.reviews,
+          busy: false,
+          returnFocus: props.reviewReturnFocus,
+          onClose: () => emit('review-close'),
+          onClosed: () => emit('review-closed')
+        })
+      ]
+    }
+  }
+  let closedCount = 0
+  let harness
+  harness = await createSfcHarness(layeredHarness, {
+    reviewVisible: true,
+    reviewUser: user,
+    reviews,
+    reviewReturnFocus: firstTrigger
+  }, {
+    onReviewClose: () => { harness.props.reviewVisible = false },
+    onReviewClosed: () => {
+      closedCount += 1
+      harness.props.reviewUser = null
+      harness.props.reviews = []
+      harness.props.reviewReturnFocus = null
+    }
+  })
+  t.after(harness.cleanup)
+  await harness.finishTransitions()
+
+  const lowerDrawer = harness.findByTestId('user-operation-drawer')
+  const firstReviewDrawer = harness.findByTestId('user-credit-review-drawer')
+  assert.equal(lowerDrawer.inert, true)
+  assert.equal(firstReviewDrawer.inert, false)
+  harness.allNodes().find((node) => firstReviewDrawer.contains(node) && node.getAttribute?.('aria-label') === '关闭').click()
+  await harness.flush()
+
+  harness.props.reviewUser = nextUser
+  harness.props.reviews = nextReviews
+  harness.props.reviewReturnFocus = nextTrigger
+  harness.props.reviewVisible = true
+  await harness.flush()
+  await harness.finishTransitions()
+  await harness.finishTransitions()
+
+  const reviewDrawers = harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'user-credit-review-drawer')
+  assert.equal(reviewDrawers.length, 1)
+  assert.match(reviewDrawers[0].textContent, /review_beta/)
+  assert.match(reviewDrawers[0].textContent, /新审核上下文/)
+  assert.equal(lowerDrawer.inert, true)
+  assert.equal(lowerDrawer.getAttribute('aria-hidden'), 'true')
+  assert.equal(reviewDrawers[0].inert, false)
+  assert.equal(harness.document.body.style.overflow, 'hidden')
+  assert.equal(closedCount, 0)
+  assert.equal(firstTrigger.focusCount, 0)
+  assert.equal(nextTrigger.focusCount, 0)
+
+  harness.allNodes().find((node) => reviewDrawers[0].contains(node) && node.getAttribute?.('aria-label') === '关闭').click()
+  await harness.flush()
+  await harness.finishTransitions()
+  assert.equal(closedCount, 1)
+  assert.equal(firstTrigger.focusCount, 0)
+  assert.equal(nextTrigger.focusCount, 1)
+  assert.equal(lowerDrawer.inert, false)
+  assert.equal(harness.document.body.style.overflow, 'hidden')
 })
 
 test('credit review decision requires an explicit choice and emits exact MFA intent', async (t) => {

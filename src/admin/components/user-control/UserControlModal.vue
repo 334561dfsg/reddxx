@@ -68,8 +68,8 @@ const displayScope = computed(() => displayedDialogData.value.scope)
 const displayModuleKey = computed(() => displayedDialogData.value.moduleKey)
 const displayUser = computed(() => displayedDialogData.value.user)
 const handleAfterLeave = () => {
-  onAfterLeave()
-  if (phase.value === 'closed') clearDialogSnapshot()
+  if (!onAfterLeave()) return
+  clearDialogSnapshot()
 }
 
 const form = reactive({

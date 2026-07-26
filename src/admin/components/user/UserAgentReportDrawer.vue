@@ -46,7 +46,8 @@ const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLe
 })
 const close = createDialogCloseAction(requestDialogClose)
 const handleAfterLeave = () => {
-  if (onAfterLeave()) emit('closed')
+  if (!onAfterLeave()) return
+  emit('closed')
 }
 
 watch(() => [props.visible, userId.value, props.report], ([visible]) => {

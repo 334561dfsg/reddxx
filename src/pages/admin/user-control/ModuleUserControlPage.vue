@@ -187,12 +187,10 @@ const confirmCancel = () => {
 }
 
 const handleModuleCancelAfterLeave = () => {
-  onModuleCancelAfterLeave()
-  if (moduleCancelPhase.value === 'closed') {
-    cancelNote.value = ''
-    selectedUser.value = null
-    clearModuleCancelSnapshot()
-  }
+  if (!onModuleCancelAfterLeave()) return
+  cancelNote.value = ''
+  selectedUser.value = null
+  clearModuleCancelSnapshot()
 }
 
 const resetFilters = () => {
