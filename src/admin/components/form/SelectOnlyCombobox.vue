@@ -328,6 +328,10 @@ function handleOptionClick(option) {
   commitActive()
 }
 
+function handleOptionPointerDown(event) {
+  event.preventDefault()
+}
+
 function handleDocumentPointerDown(event) {
   if (!open.value) return
   if (rootRef.value?.contains(event.target) || popupRef.value?.contains(event.target)) return
@@ -432,6 +436,7 @@ onUnmounted(() => {
                 class="flex min-h-10 w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-800 outline-none hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:text-gray-400"
                 :class="valuesEqual(option.value, activeValue) ? 'bg-blue-50 text-blue-900' : ''"
                 @mouseenter="!option.disabled && (activeValue = option.value)"
+                @pointerdown="handleOptionPointerDown"
                 @click="handleOptionClick(option)"
               >
                 {{ option.label }}

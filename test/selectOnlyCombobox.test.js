@@ -36,11 +36,23 @@ const dispatchKey = async (harness, node, key, modifiers = {}) => {
   return event
 }
 
+const dispatchPointerDown = async (harness, node) => {
+  const event = {
+    type: 'pointerdown',
+    defaultPrevented: false,
+    preventDefault() { this.defaultPrevented = true }
+  }
+  node.dispatchEvent(event)
+  if (!event.defaultPrevented) node.focus()
+  await harness.flush()
+  return event
+}
+
 const renderedOptions = (harness) => harness.allNodes().filter((node) => (
   node.getAttribute?.('role') === 'option'
 ))
 
-test('keeps focus on the combobox and commits only with Enter or Space', async (t) => {
+test('keeps focus on the combobox and commits with Enter', async (t) => {
   const component = await loadVueSfc(componentFile)
   const changes = []
   const harness = await createSfcHarness(component, baseProps, {
@@ -66,6 +78,50 @@ test('keeps focus on the combobox and commits only with Enter or Space', async (
   ])
   assert.equal(changes[0][1].label, '市币')
   assert.equal(combobox.getAttribute('aria-expanded'), 'false')
+  assert.equal(harness.document.activeElement, combobox)
+})
+
+test('commits with Space exactly once while retaining combobox focus', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const harness = await createSfcHarness(component, baseProps, {
+    'onUpdate:modelValue': (value) => { harness.props.modelValue = value },
+    onChange: () => {}
+  })
+  t.after(harness.cleanup)
+
+  const combobox = harness.findByTestId('select-only-combobox')
+  combobox.focus()
+  await dispatchKey(harness, combobox, 'Enter')
+  await dispatchKey(harness, combobox, 'ArrowDown')
+  await dispatchKey(harness, combobox, ' ')
+
+  assert.deepEqual(harness.emitted.map(([name, value]) => [name, value]), [
+    ['onUpdate:modelValue', 'market'],
+    ['onChange', 'market']
+  ])
+  assert.equal(combobox.getAttribute('aria-expanded'), 'false')
+  assert.equal(harness.document.activeElement, combobox)
+})
+
+test('pointer selection prevents option focus and retains main combobox focus after commit', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const harness = await createSfcHarness(component, baseProps, {
+    'onUpdate:modelValue': (value) => { harness.props.modelValue = value }
+  })
+  t.after(harness.cleanup)
+
+  const combobox = harness.findByTestId('select-only-combobox')
+  combobox.focus()
+  await dispatchKey(harness, combobox, 'Enter')
+  const option = renderedOptions(harness).find((node) => node.textContent === '市币')
+  assert.ok(option)
+
+  const pointerDown = await dispatchPointerDown(harness, option)
+  option.click()
+  await harness.flush()
+
+  assert.equal(pointerDown.defaultPrevented, true)
+  assert.equal(harness.props.modelValue, 'market')
   assert.equal(harness.document.activeElement, combobox)
 })
 
