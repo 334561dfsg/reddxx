@@ -100,7 +100,7 @@ export const validateProfile = (input, userId) => {
     errors.email = '邮箱已存在'
   }
 
-  if (phone && !/^[+()\d\s-]{7,30}$/.test(phone)) errors.phone = '手机号格式不正确'
+  if (phone && !/^\d{7,30}$/.test(phone)) errors.phone = '手机号格式不正确'
   else if (phone && otherUsers.some((user) => normalized(user.phone) === phone)) errors.phone = '手机号已存在'
 
   if (remark.length > 200) errors.remark = '备注不能超过 200 字'

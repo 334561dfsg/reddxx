@@ -118,7 +118,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
 
             <label class="block">
               <span class="text-sm font-medium text-slate-800">手机号</span>
-              <input v-model="form.phone" :disabled="submitting" type="tel" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" />
+              <input v-model="form.phone" :disabled="submitting" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="30" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" />
               <span v-if="errors.phone" class="mt-1 block text-xs text-rose-600">{{ errors.phone }}</span>
             </label>
 
