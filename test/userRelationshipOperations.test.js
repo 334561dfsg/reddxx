@@ -244,6 +244,27 @@ test('team report drawer paginates direct fission branches', async (t) => {
   })
   await harness.finishTransitions()
 
+  const overview = harness.findByTestId('team-report-overview-scroll')
+  const branchHeader = harness.findByTestId('team-report-branch-header')
+  const branchScroll = harness.findByTestId('team-report-branch-scroll')
+  const pagination = harness.findByTestId('team-report-pagination')
+  assert.ok(overview, 'team overview has a bounded scrolling region')
+  assert.ok(branchHeader, 'team branch title remains in a fixed header region')
+  assert.ok(branchScroll, 'team branches have an independent scrolling region')
+  assert.ok(pagination, 'team pagination remains in a fixed footer region')
+  const overviewMetrics = harness.allNodes().filter((node) => (
+    overview.contains(node) && node.getAttribute?.('data-testid') === 'team-report-metric'
+  ))
+  const visibleBranchArticles = harness.allNodes().filter((node) => node.tag === 'article')
+  const paginationSummary = harness.findByTestId('compact-pagination-summary')
+  assert.equal(overviewMetrics.length, 8)
+  assert.equal(branchScroll.contains(visibleBranchArticles[0]), true)
+  assert.equal(branchScroll.contains(branchHeader), false)
+  assert.equal(branchScroll.contains(paginationSummary), false)
+  assert.equal(overview.contains(visibleBranchArticles[0]), false)
+  assert.equal(pagination.contains(paginationSummary), true)
+  assert.equal(overview.contains(paginationSummary), false)
+
   const visibleBranches = () => harness.allNodes()
     .filter((node) => node.tag === 'article')
     .map((branch) => branch.textContent.match(/pagination_member_\d+/)?.[0])
