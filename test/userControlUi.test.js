@@ -29,19 +29,21 @@ test('form helper exposes customer control methods by control type', () => {
 
 test('form helper rejects incomplete values used by the disabled state', () => {
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'profit', duration: 'once', note: '   ' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: '', method: 'profit', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highLoss', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: '', method: 'profit', duration: 'once', targetRanges: { trade: { min: 1, max: 3 } }, note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highLoss', duration: 'once', targetRanges: { trade: { min: 1, max: 3 } }, note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '', strategy: 'positive', method: 'highProfit', duration: 'once', targetRanges: { trade: { min: 1, max: 3 }, finance: { min: 8, max: 12 } }, note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', duration: 'once', targetRanges: { trade: { min: 1, max: 3 } }, note: '审计备注' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', duration: 'once', targetRanges: { trade: { min: 5, max: 3 } }, note: '审计备注' }), false)
 })
 
 test('form helper trims notes and builds scope-specific payloads', () => {
   assert.deepEqual(buildUserControlPayload({
-    scope: 'module', family: 'trade', userId: '159', strategy: 'negative', method: 'highLoss', duration: 'permanent', note: '  模块备注  '
-  }), { userId: '159', strategy: 'negative', method: 'highLoss', value: 'loss', duration: 'permanent', note: '模块备注' })
+    scope: 'module', family: 'trade', userId: '159', strategy: 'negative', method: 'highLoss', duration: 'permanent', targetRanges: { trade: { min: '2', max: '6' } }, note: '  模块备注  '
+  }), { userId: '159', strategy: 'negative', method: 'highLoss', value: 'loss', targetRanges: { tradePnl: { min: 2, max: 6, unit: 'percent' } }, duration: 'permanent', note: '模块备注' })
   assert.deepEqual(buildUserControlPayload({
-    scope: 'global', userId: '158', strategy: 'positive', method: 'lowProfit', duration: 'once', note: '  统一备注  '
-  }), { userId: '158', strategy: 'positive', method: 'lowProfit', duration: 'once', note: '统一备注' })
+    scope: 'global', userId: '158', strategy: 'positive', method: 'lowProfit', duration: 'once', targetRanges: { trade: { min: '1', max: '2.5' }, finance: { min: '7', max: '9' } }, note: '  统一备注  '
+  }), { userId: '158', strategy: 'positive', method: 'lowProfit', targetRanges: { tradePnl: { min: 1, max: 2.5, unit: 'percent' }, financeYield: { min: 7, max: 9, unit: 'percent' } }, duration: 'once', note: '统一备注' })
 })
 
 test('shared modal separates trading outcome from finance yield wording', () => {
@@ -60,6 +62,16 @@ test('shared modal separates trading outcome from finance yield wording', () => 
   assert.match(source, /持续生效/)
   assert.match(source, /所有模块只对用户的第一单生效/)
   assert.match(source, /点控开始后，后续所有模块订单持续生效/)
+  assert.match(source, /点控目标范围/)
+  assert.match(source, /按当前控盘类型填写正数范围，系统自动处理为盈利、亏损或低收益结果。/)
+  assert.match(helperSource, /交易目标盈利范围/)
+  assert.match(helperSource, /交易目标亏损范围/)
+  assert.match(helperSource, /理财目标收益范围/)
+  assert.match(helperSource, /理财目标低收益范围/)
+  assert.match(helperSource, /不要填负数/)
+  assert.match(source, /交易模块规则/)
+  assert.match(source, /理财模块规则/)
+  assert.match(source, /只对点控开始之后产生的订单生效；点控前订单和已完成历史订单不受影响。/)
   assert.match(source, /点控备注/)
 })
 
@@ -305,7 +317,7 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
   const helperSource = read('../src/features/user-control/userControlForm.js')
   const frame = openingTag(source, 'user-control-dialog-frame')
-  assert.match(source, /max-w-\[920px\]/)
+  assert.match(source, /max-w-\[1080px\]/)
   assert.match(source, /<Teleport to="body">/)
   assert.match(source, /fixed inset-0/)
   assert.doesNotMatch(source, /@mousedown\.self|@click\.self/)
@@ -316,7 +328,7 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   assert.match(source, /data-testid="user-control-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto[^>]*lg:flex-none[^>]*lg:overflow-hidden/)
   assert.match(source, /px-5 py-3/)
   assert.match(source, /rows="2"/)
-  assert.match(source, /grid items-start gap-4 lg:grid-cols-\[minmax\(0,1fr\)_360px\]/)
+  assert.match(source, /grid items-start gap-4 lg:grid-cols-\[minmax\(0,1fr\)_400px\]/)
   assert.match(source, /<div ref="leftPanelRef" class="min-w-0 space-y-2\.5">[\s\S]*id-base="user-control-strategy"[\s\S]*id-base="user-control-method"[\s\S]*id-base="user-control-duration"/)
   assert.match(source, /data-testid="user-control-help-panel"[^>]*overflow-y-auto/)
   assert.match(source, /:style="\{ maxHeight: helpPanelMaxHeight \|\| undefined \}"/)

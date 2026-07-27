@@ -52,6 +52,11 @@ const requireText = (value, name) => {
 }
 
 const operatorOf = (input) => String(input.operator || 'admin_demo')
+const cloneTargetRanges = (targetRanges = {}) => Object.fromEntries(Object.entries(targetRanges || {}).map(([key, range]) => [
+  key,
+  range ? { ...range } : range
+]))
+const cloneRule = (rule) => (rule ? { ...rule, targetRanges: cloneTargetRanges(rule.targetRanges) } : rule)
 
 const appendUnifiedUserControlAudit = ({ userId, action, operator, note, before, after, result = 'success', businessId, occurredAt }) => {
   appendUserAuditLog({
@@ -95,7 +100,7 @@ export function snapshotUserControlRules(state, userId) {
   const rules = state.rules[String(userId)] || {}
   return Object.fromEntries(USER_CONTROL_MODULES.map((module) => [
     module.key,
-    rules[module.key] ? { ...rules[module.key] } : undefined
+    cloneRule(rules[module.key]) || undefined
   ]))
 }
 
@@ -112,6 +117,7 @@ export function applyUnifiedControl(state, input) {
       operationLogs: [{
         id: `op-${input.batchId}-failed`, userId, scope: 'global', action: 'apply',
         modules: USER_CONTROL_MODULES.map((item) => item.key), strategy, method,
+        targetRanges: cloneTargetRanges(input.targetRanges),
         duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
         before, note, status: 'failed', failedModule: state.failureModule,
         errorMessage: `模块 ${state.failureModule} 写入失败，六个模块均未更新`, createdAt: input.now
@@ -124,6 +130,7 @@ export function applyUnifiedControl(state, input) {
   const rules = Object.fromEntries(USER_CONTROL_MODULES.map((module) => [module.key, {
     id: `${input.batchId}-${module.key}`, batchId: input.batchId, userId, moduleKey: module.key,
     family: module.family, value: strategyValue(strategy, module.family), strategy, method,
+    targetRanges: cloneTargetRanges(input.targetRanges),
     duration: input.duration, status: 'active', source: 'global', note, updatedAt: input.now,
     consumedAt: '', supersededAt: '', cancelledAt: ''
   }]))
@@ -144,6 +151,7 @@ export function applyUnifiedControl(state, input) {
     ruleHistory: [...supersedeRules(before, input.now), ...(state.ruleHistory || [])],
     operationLogs: [{ id: `op-${input.batchId}`, userId, scope: 'global', action: 'apply',
       modules: USER_CONTROL_MODULES.map((item) => item.key), strategy, method,
+      targetRanges: cloneTargetRanges(input.targetRanges),
       duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
       before, note, status: 'success', createdAt: input.now }, ...state.operationLogs],
     lastError: ''
@@ -207,7 +215,7 @@ export function applyModuleControl(state, input) {
   const userRules = cloneRules(state, userId)
   const before = userRules[module.key] || null
   userRules[module.key] = { id: input.ruleId, batchId: '', userId, moduleKey: module.key,
-    family: module.family, value, strategy, method, duration: input.duration,
+    family: module.family, value, strategy, method, targetRanges: cloneTargetRanges(input.targetRanges), duration: input.duration,
     status: 'active', source: 'module', note, updatedAt: input.now,
     consumedAt: '', supersededAt: '', cancelledAt: '' }
   appendUnifiedUserControlAudit({
@@ -226,7 +234,7 @@ export function applyModuleControl(state, input) {
     ruleHistory: [...supersedeRules(before ? { [module.key]: before } : {}, input.now), ...(state.ruleHistory || [])],
     operationLogs: [{
     id: `op-${input.ruleId}`, userId, scope: 'module', action: 'apply', modules: [module.key],
-    strategy, method, duration: input.duration, operator: operatorOf(input), batchId: input.batchId || input.ruleId,
+    strategy, method, targetRanges: cloneTargetRanges(input.targetRanges), duration: input.duration, operator: operatorOf(input), batchId: input.batchId || input.ruleId,
     before, after: userRules[module.key], note, status: 'success', createdAt: input.now
     }, ...state.operationLogs],
     lastError: ''
