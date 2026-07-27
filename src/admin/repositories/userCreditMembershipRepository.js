@@ -1,5 +1,6 @@
 import { usersList } from '../mock/user.js'
 import { getActiveVipLevels } from '../mock/vip.js'
+import { appendUserAuditLog } from './userAuditLogRepository.js'
 
 const SCORE_MIN = 0
 const SCORE_MAX = 1000
@@ -54,6 +55,29 @@ const appendAudit = ({ type, userId, before, after, reason, operatorId, transact
     createdAt: new Date().toISOString()
   }
   auditLog.push(row)
+  const user = usersList.find((item) => userIdOf(item) === String(userId))
+  const actionByType = {
+    'credit-adjust': 'membership.credit.adjust',
+    'vip-level-set': 'membership.vip.set',
+    'credit-review-approve': 'membership.credit-review.approve',
+    'credit-review-reject': 'membership.credit-review.reject',
+    'rebate-grant': 'funds.rebate.grant'
+  }
+  appendUserAuditLog({
+    targetUser: { uid: String(userId), name: user?.username, email: user?.email, phone: user?.phone },
+    source: 'admin',
+    operator: { id: row.operatorId, name: row.operatorId === 'admin_current' ? '当前管理员' : row.operatorId },
+    category: type === 'rebate-grant' ? 'funds' : type.startsWith('credit-review') ? 'risk' : 'membership',
+    action: actionByType[type],
+    result: 'success',
+    reason,
+    before,
+    after,
+    related: {
+      businessId: transactionId || metadata?.reviewId || `MEM-${type}-${userId}`,
+      auditReceiptId: row.id
+    }
+  })
   return row
 }
 

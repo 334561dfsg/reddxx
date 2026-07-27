@@ -16,7 +16,7 @@ const errorRef = ref(null)
 const submitting = ref(false)
 const submitError = ref('')
 const errors = reactive({})
-const form = reactive({ username: '', email: '', phone: '', remark: '' })
+const form = reactive({ username: '', email: '', phone: '', remark: '', reason: '' })
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 
 const resetForm = () => {
@@ -24,6 +24,7 @@ const resetForm = () => {
   form.email = props.user?.email || ''
   form.phone = props.user?.phone || ''
   form.remark = props.user?.remark || ''
+  form.reason = ''
   for (const key of Object.keys(errors)) delete errors[key]
   submitError.value = ''
   submitting.value = false
@@ -62,6 +63,8 @@ const submit = async () => {
   for (const key of Object.keys(errors)) delete errors[key]
   submitError.value = ''
   Object.assign(errors, validateProfile(form, userId.value))
+  if (!form.reason.trim()) errors.reason = '操作原因必填'
+  else if (form.reason.trim().length > 200) errors.reason = '操作原因不能超过 200 字'
   if (Object.keys(errors).length) {
     submitError.value = '请检查并修正表单中的错误'
     await focusError()
@@ -126,6 +129,12 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               <span class="text-sm font-medium text-slate-800">备注</span>
               <textarea v-model="form.remark" :disabled="submitting" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" />
               <span class="mt-1 flex justify-between gap-3 text-xs"><span class="text-rose-600">{{ errors.remark || '' }}</span><span class="text-slate-500">{{ form.remark.length }}/200</span></span>
+            </label>
+
+            <label class="block">
+              <span class="text-sm font-medium text-slate-800">操作原因 <span class="text-rose-500">*</span></span>
+              <textarea v-model="form.reason" :disabled="submitting" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" placeholder="请填写为什么编辑用户资料" />
+              <span class="mt-1 flex justify-between gap-3 text-xs"><span class="text-rose-600">{{ errors.reason || '' }}</span><span class="text-slate-500">{{ form.reason.length }}/200</span></span>
             </label>
           </div>
 

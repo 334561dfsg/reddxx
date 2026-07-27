@@ -1,10 +1,12 @@
+import { appendUserAuditLog } from '../../admin/repositories/userAuditLogRepository.js'
+
 export const USER_CONTROL_MODULES = Object.freeze([
   { key: 'delivery', label: '交割', family: 'trade', actionLabel: '用户点控' },
   { key: 'perpetual', label: '永续', family: 'trade', actionLabel: '用户点控' },
   { key: 'spot', label: '现货', family: 'trade', actionLabel: '用户点控' },
-  { key: 'aiQuant', label: 'AI量化', family: 'finance', actionLabel: '用户收益调节' },
-  { key: 'liquidity', label: '流动性挖矿', family: 'finance', actionLabel: '用户收益调节' },
-  { key: 'portfolio', label: '投资组合', family: 'finance', actionLabel: '用户收益调节' }
+  { key: 'aiQuant', label: 'AI量化', family: 'finance', actionLabel: '用户点控' },
+  { key: 'liquidity', label: '流动性挖矿', family: 'finance', actionLabel: '用户点控' },
+  { key: 'portfolio', label: '投资组合', family: 'finance', actionLabel: '用户点控' }
 ])
 
 export const USER_CONTROL_STRATEGY = Object.freeze({ POSITIVE: 'positive', NEGATIVE: 'negative' })
@@ -23,6 +25,25 @@ const requireText = (value, name) => {
 }
 
 const operatorOf = (input) => String(input.operator || 'admin_demo')
+
+const appendUnifiedUserControlAudit = ({ userId, action, operator, note, before, after, result = 'success', businessId, occurredAt }) => {
+  appendUserAuditLog({
+    targetUser: { uid: userId },
+    source: 'admin',
+    operator: { id: operator, name: operator },
+    category: 'risk',
+    action,
+    result,
+    reason: note,
+    before,
+    after,
+    related: {
+      businessId,
+      requestId: businessId
+    },
+    occurredAt
+  })
+}
 
 const rulesDuration = (rules = {}) => {
   const durations = [...new Set(Object.values(rules).map((rule) => rule?.duration).filter(Boolean))]
@@ -77,6 +98,16 @@ export function applyUnifiedControl(state, input) {
     duration: input.duration, status: 'active', source: 'global', note, updatedAt: input.now,
     consumedAt: '', supersededAt: '', cancelledAt: ''
   }]))
+  appendUnifiedUserControlAudit({
+    userId,
+    action: 'risk.control.apply',
+    operator: operatorOf(input),
+    note,
+    before,
+    after: rules,
+    businessId: input.batchId,
+    occurredAt: input.now
+  })
 
   return {
     ...state,
@@ -147,6 +178,16 @@ export function applyModuleControl(state, input) {
     family: module.family, value: input.value, strategy: '', duration: input.duration,
     status: 'active', source: 'module', note, updatedAt: input.now,
     consumedAt: '', supersededAt: '', cancelledAt: '' }
+  appendUnifiedUserControlAudit({
+    userId,
+    action: 'risk.control.apply',
+    operator: operatorOf(input),
+    note,
+    before,
+    after: userRules[module.key],
+    businessId: input.batchId || input.ruleId,
+    occurredAt: input.now
+  })
   return {
     ...state,
     rules: { ...state.rules, [userId]: userRules },
@@ -168,6 +209,16 @@ export function cancelUnifiedControl(state, input) {
   const cancelled = Object.fromEntries(Object.entries(before).map(([key, rule]) => [key,
     ['active', 'processing'].includes(rule.status) ? { ...rule, status: 'cancelled', cancelledAt: input.now } : rule
   ]))
+  appendUnifiedUserControlAudit({
+    userId,
+    action: 'risk.control.cancel',
+    operator: operatorOf(input),
+    note,
+    before,
+    after: cancelled,
+    businessId: input.batchId || input.operationId,
+    occurredAt: input.now
+  })
   return { ...state, rules: { ...state.rules, [userId]: cancelled }, operationLogs: [{
     id: input.operationId, userId, scope: 'global', action: 'cancel',
     modules: USER_CONTROL_MODULES.map((item) => item.key), duration: rulesDuration(before),
@@ -184,6 +235,16 @@ export function cancelModuleControl(state, input) {
   const before = userRules[input.moduleKey]
   if (before && ['active', 'processing'].includes(before.status)) {
     userRules[input.moduleKey] = { ...before, status: 'cancelled', cancelledAt: input.now }
+    appendUnifiedUserControlAudit({
+      userId,
+      action: 'risk.control.cancel',
+      operator: operatorOf(input),
+      note,
+      before,
+      after: userRules[input.moduleKey],
+      businessId: input.batchId || input.operationId,
+      occurredAt: input.now
+    })
   }
   return { ...state, rules: { ...state.rules, [userId]: userRules }, operationLogs: [{
     id: input.operationId, userId, scope: 'module', action: 'cancel', modules: [input.moduleKey],
@@ -207,6 +268,16 @@ export function consumeModuleControl(state, input) {
   }
   if (input.afterValue !== rule.value) return state
   userRules[input.moduleKey] = { ...rule, status: 'consumed', consumedAt: input.now }
+  appendUnifiedUserControlAudit({
+    userId,
+    action: 'risk.control.consume',
+    operator: 'system',
+    note: rule.note,
+    before: rule,
+    after: userRules[input.moduleKey],
+    businessId: input.businessId,
+    occurredAt: input.now
+  })
   return { ...state, rules: { ...state.rules, [userId]: userRules }, executionLogs: [{
     id: `exec-${input.businessId}`, userId, moduleKey: input.moduleKey, ruleId: rule.id,
     source: rule.source, value: rule.value, duration: rule.duration, businessId: input.businessId,
@@ -255,15 +326,15 @@ export function getUserControlListMeta(state, userId) {
   const controlLabel = summary.kind === 'divergent'
     ? '存在模块差异'
     : globalRule?.strategy === 'positive'
-      ? '正向控制'
+      ? '盈利'
       : globalRule?.strategy === 'negative'
-        ? '负向控制'
+        ? '亏损'
         : '模块独立设置'
 
   return {
     hasCurrent: true,
     controlLabel,
-    durationLabel: durations.length > 1 ? '混合' : durations[0] === 'permanent' ? '永久' : '一次性'
+    durationLabel: durations.length > 1 ? '混合' : durations[0] === 'permanent' ? '长期生效' : '单次生效'
   }
 }
 

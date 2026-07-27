@@ -1,5 +1,6 @@
 import { usersList } from '../mock/user.js'
 import { USER_ROLE, USER_STATUS } from '../constants/user.js'
+import { appendUserAuditLog } from './userAuditLogRepository.js'
 
 const relationshipAuditLog = []
 const idOf = (user) => String(user?.id ?? user?.userId ?? '')
@@ -32,6 +33,29 @@ const appendAudit = ({ type, userId, before, after, reason, affectedUserIds }) =
     reason,
     affectedUserIds: [...affectedUserIds],
     createdAt: new Date().toISOString()
+  })
+}
+
+const appendUnifiedRelationshipAudit = ({ type, user, before, after, reason, affectedUserIds }) => {
+  const actionByType = {
+    profile: 'profile.update',
+    'parent-reset': 'relationship.parent.reset',
+    'agent-role': 'permission.agent-role.update'
+  }
+  appendUserAuditLog({
+    targetUser: { uid: idOf(user), name: user?.username, email: user?.email, phone: user?.phone },
+    source: 'admin',
+    operator: { id: 'admin_current', name: '当前管理员' },
+    category: type === 'profile' ? 'profile' : 'permission',
+    action: actionByType[type],
+    result: 'success',
+    reason,
+    before,
+    after,
+    related: {
+      businessId: `REL-${type}-${idOf(user)}`,
+      requestId: affectedUserIds?.length > 1 ? `REL-AFFECTED-${affectedUserIds.length}` : ''
+    }
   })
 }
 
@@ -109,6 +133,7 @@ export const validateProfile = (input, userId) => {
 
 export const updateProfile = (userId, patch) => {
   const user = requireUser(userId)
+  const cleanReason = requireReason(patch?.reason)
   const errors = validateProfile(patch, userId)
   if (Object.keys(errors).length) {
     const error = new Error(Object.values(errors)[0])
@@ -134,7 +159,15 @@ export const updateProfile = (userId, patch) => {
     userId: idOf(user),
     before,
     after,
-    reason: '编辑用户资料',
+    reason: cleanReason,
+    affectedUserIds: [idOf(user)]
+  })
+  appendUnifiedRelationshipAudit({
+    type: 'profile',
+    user,
+    before,
+    after,
+    reason: cleanReason,
     affectedUserIds: [idOf(user)]
   })
   return user
@@ -160,6 +193,14 @@ export const resetParent = ({ userId, parentId = null, reason }) => {
   appendAudit({
     type: 'parent-reset',
     userId: idOf(user),
+    before,
+    after,
+    reason: cleanReason,
+    affectedUserIds: [idOf(user)]
+  })
+  appendUnifiedRelationshipAudit({
+    type: 'parent-reset',
+    user,
     before,
     after,
     reason: cleanReason,
@@ -217,6 +258,14 @@ export const updateAgentRole = ({ userId, role, reason, successorParentId }) => 
     }
   }
   appendAudit({ type: 'agent-role', userId: idOf(user), before, after, reason: cleanReason, affectedUserIds })
+  appendUnifiedRelationshipAudit({
+    type: 'agent-role',
+    user,
+    before,
+    after,
+    reason: cleanReason,
+    affectedUserIds
+  })
   return user
 }
 

@@ -1,4 +1,5 @@
 import { usersList } from '../mock/user.js'
+import { appendUserAuditLog } from './userAuditLogRepository.js'
 
 const adminFrozenByUser = new Map()
 const withdrawFlowLimits = new Map()
@@ -30,6 +31,33 @@ const parseMoney = (value, label) => {
   return roundMoney(amount)
 }
 
+const ACCOUNT_LABELS = Object.freeze({
+  market: '市币账户',
+  wealth: '理财账户',
+  trading: '交易合约账户',
+  perp: '永续合约账户'
+})
+
+const COIN_LABELS = Object.freeze({
+  USDT: 'USDT',
+  USDC: 'USDC',
+  ETH: 'ETH'
+})
+
+const FLOW_SCOPE_LABELS = Object.freeze({
+  all: '全部交易',
+  spot: '现货交易',
+  contract: '合约交易',
+  finance: '理财收益'
+})
+
+const requireChoice = (value, options, label) => {
+  const key = String(value ?? '').trim()
+  if (!key) throw new Error(`${label}必填`)
+  if (!Object.hasOwn(options, key)) throw new Error(`${label}无效`)
+  return key
+}
+
 const toNow = (value) => {
   const date = value ? new Date(value) : new Date()
   if (Number.isNaN(date.getTime())) throw new Error('当前时间无效')
@@ -59,9 +87,9 @@ const snapshotFor = (user) => {
   }
 }
 
-const appendAudit = ({ type, userId, before, after, amount = null, reason, operatorId, transactionId }) => {
+const appendAudit = ({ type, userId, before, after, amount = null, reason, operatorId, transactionId, accountKey = '', coinKey = '' }) => {
   const ids = transactionId ? { transactionId, auditId: `funds-${Date.now()}-${auditLog.length + 1}` } : nextIds()
-  auditLog.push({
+  const row = {
     id: ids.auditId,
     transactionId: ids.transactionId,
     type,
@@ -69,17 +97,47 @@ const appendAudit = ({ type, userId, before, after, amount = null, reason, opera
     before: clone(before),
     after: clone(after),
     amount: amount === null ? null : roundMoney(amount),
+    accountKey,
+    accountLabel: accountKey ? ACCOUNT_LABELS[accountKey] : '',
+    coinKey,
+    coinLabel: coinKey ? COIN_LABELS[coinKey] : '',
     reason,
     operatorId: String(operatorId || 'admin_current'),
     createdAt: new Date().toISOString()
+  }
+  auditLog.push(row)
+  const user = usersList.find((item) => userIdOf(item) === String(userId))
+  const actionByType = {
+    freeze: 'funds.freeze',
+    unfreeze: 'funds.unfreeze',
+    deduct: 'funds.deduct',
+    'flow-limit-set': 'funds.flow-limit.set',
+    'flow-limit-remove': 'funds.flow-limit.remove'
+  }
+  appendUserAuditLog({
+    targetUser: { uid: String(userId), name: user?.username, email: user?.email, phone: user?.phone },
+    source: 'admin',
+    operator: { id: row.operatorId, name: row.operatorId === 'admin_current' ? '当前管理员' : row.operatorId },
+    category: 'funds',
+    action: actionByType[type],
+    result: 'success',
+    reason,
+    before,
+    after,
+    related: {
+      businessId: ids.transactionId,
+      auditReceiptId: ids.auditId
+    }
   })
   return ids.transactionId
 }
 
 export const getFundsSnapshot = (userId) => snapshotFor(requireUser(userId))
 
-export const freezeAllAvailable = ({ userId, amount, reason, operatorId }) => {
+export const freezeAllAvailable = ({ userId, accountKey, coinKey, amount, reason, operatorId }) => {
   const user = requireUser(userId)
+  const cleanAccountKey = requireChoice(accountKey, ACCOUNT_LABELS, '操作账户')
+  const cleanCoinKey = requireChoice(coinKey, COIN_LABELS, '操作币种')
   const parsedAmount = parseMoney(amount, '冻结金额')
   const cleanReason = requireText(reason)
   const before = snapshotFor(user)
@@ -90,12 +148,14 @@ export const freezeAllAvailable = ({ userId, amount, reason, operatorId }) => {
   user.frozenBalance = roundMoney(before.frozenBalance + parsedAmount)
   adminFrozenByUser.set(before.userId, nextAdminFrozen)
   const after = snapshotFor(user)
-  const transactionId = appendAudit({ type: 'freeze', userId: before.userId, before, after, amount: parsedAmount, reason: cleanReason, operatorId })
-  return { ...after, transactionId }
+  const transactionId = appendAudit({ type: 'freeze', userId: before.userId, before, after, amount: parsedAmount, reason: cleanReason, operatorId, accountKey: cleanAccountKey, coinKey: cleanCoinKey })
+  return { ...after, transactionId, accountKey: cleanAccountKey, accountLabel: ACCOUNT_LABELS[cleanAccountKey], coinKey: cleanCoinKey, coinLabel: COIN_LABELS[cleanCoinKey] }
 }
 
-export const unfreezeAdminFunds = ({ userId, amount, reason, operatorId }) => {
+export const unfreezeAdminFunds = ({ userId, accountKey, coinKey, amount, reason, operatorId }) => {
   const user = requireUser(userId)
+  const cleanAccountKey = requireChoice(accountKey, ACCOUNT_LABELS, '操作账户')
+  const cleanCoinKey = requireChoice(coinKey, COIN_LABELS, '操作币种')
   const parsedAmount = parseMoney(amount, '解冻金额')
   const cleanReason = requireText(reason)
   const before = snapshotFor(user)
@@ -108,12 +168,14 @@ export const unfreezeAdminFunds = ({ userId, amount, reason, operatorId }) => {
   user.frozenBalance = roundMoney(before.frozenBalance - parsedAmount)
   adminFrozenByUser.set(before.userId, roundMoney(before.adminFrozenAmount - parsedAmount))
   const after = snapshotFor(user)
-  const transactionId = appendAudit({ type: 'unfreeze', userId: before.userId, before, after, amount: parsedAmount, reason: cleanReason, operatorId })
-  return { ...after, transactionId }
+  const transactionId = appendAudit({ type: 'unfreeze', userId: before.userId, before, after, amount: parsedAmount, reason: cleanReason, operatorId, accountKey: cleanAccountKey, coinKey: cleanCoinKey })
+  return { ...after, transactionId, accountKey: cleanAccountKey, accountLabel: ACCOUNT_LABELS[cleanAccountKey], coinKey: cleanCoinKey, coinLabel: COIN_LABELS[cleanCoinKey] }
 }
 
-export const deductAvailableFunds = ({ userId, amount, reason, operatorId }) => {
+export const deductAvailableFunds = ({ userId, accountKey, coinKey, amount, reason, operatorId }) => {
   const user = requireUser(userId)
+  const cleanAccountKey = requireChoice(accountKey, ACCOUNT_LABELS, '操作账户')
+  const cleanCoinKey = requireChoice(coinKey, COIN_LABELS, '操作币种')
   const parsedAmount = parseMoney(amount, '扣减金额')
   const cleanReason = requireText(reason)
   const before = snapshotFor(user)
@@ -121,8 +183,8 @@ export const deductAvailableFunds = ({ userId, amount, reason, operatorId }) => 
 
   user.balance = roundMoney(before.balance - parsedAmount)
   const after = snapshotFor(user)
-  const transactionId = appendAudit({ type: 'deduct', userId: before.userId, before, after, amount: parsedAmount, reason: cleanReason, operatorId })
-  return { ...after, transactionId }
+  const transactionId = appendAudit({ type: 'deduct', userId: before.userId, before, after, amount: parsedAmount, reason: cleanReason, operatorId, accountKey: cleanAccountKey, coinKey: cleanCoinKey })
+  return { ...after, transactionId, accountKey: cleanAccountKey, accountLabel: ACCOUNT_LABELS[cleanAccountKey], coinKey: cleanCoinKey, coinLabel: COIN_LABELS[cleanCoinKey] }
 }
 
 const evaluateLimit = (raw, nowValue) => {
@@ -135,6 +197,8 @@ const evaluateLimit = (raw, nowValue) => {
       remainingTurnover: 0,
       expiresAt: null,
       reason: '',
+      flowScope: 'all',
+      flowScopeLabel: FLOW_SCOPE_LABELS.all,
       updatedAt: null
     }
   }
@@ -145,6 +209,8 @@ const evaluateLimit = (raw, nowValue) => {
   const status = completed ? 'completed' : expired ? 'expired' : 'active'
   return {
     ...clone(raw),
+    flowScope: raw.flowScope || 'all',
+    flowScopeLabel: FLOW_SCOPE_LABELS[raw.flowScope || 'all'],
     remainingTurnover,
     status,
     canWithdraw: status !== 'active'
@@ -158,6 +224,7 @@ export const getWithdrawFlowLimit = (userId, now) => {
 
 export const setWithdrawFlowLimit = ({
   userId,
+  flowScope,
   requiredTurnover,
   expiresAt,
   reason,
@@ -166,6 +233,7 @@ export const setWithdrawFlowLimit = ({
 }) => {
   const user = requireUser(userId)
   const id = userIdOf(user)
+  const cleanFlowScope = requireChoice(flowScope || 'all', FLOW_SCOPE_LABELS, '流水范围')
   const required = parseMoney(requiredTurnover, '要求流水')
   const cleanReason = requireText(reason)
   const before = withdrawFlowLimits.get(id) || null
@@ -182,6 +250,8 @@ export const setWithdrawFlowLimit = ({
   }
 
   const next = {
+    flowScope: cleanFlowScope,
+    flowScopeLabel: FLOW_SCOPE_LABELS[cleanFlowScope],
     requiredTurnover: required,
     completedTurnover: completed,
     expiresAt: normalizedExpiry,

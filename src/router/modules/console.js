@@ -29,6 +29,15 @@ export const consoleRoutes = [
     component: () => import('../../pages/admin/user/UserListPage.vue')
   },
   {
+    path: 'users/operation-logs',
+    name: 'users-operation-logs',
+    component: () => import('../../pages/admin/user/UserOperationLogPage.vue'),
+    meta: {
+      title: '用户管理 / 用户操作日志',
+      desc: '查询所有会改变用户资料、权限、资金、等级、状态或风控结果的审计日志。'
+    }
+  },
+  {
     path: 'users/withdraw-audit',
     name: 'users-withdraw-audit',
     component: () => import('../../pages/admin/user/WithdrawAuditPage.vue'),
@@ -280,7 +289,7 @@ export const consoleRoutes = [
     name: 'liquidity-user-yield-control',
     component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
     props: { moduleKey: 'liquidity' },
-    meta: { title: '流动性挖矿 / 用户收益调节', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
+    meta: { title: '流动性挖矿 / 用户点控', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
   },
   {
     path: 'liquidity/locked/yield-control',
@@ -379,7 +388,7 @@ export const consoleRoutes = [
     name: 'ai-quant-user-yield-control',
     component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
     props: { moduleKey: 'aiQuant' },
-    meta: { title: 'AI量化交易 / 用户收益调节', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
+    meta: { title: 'AI量化交易 / 用户点控', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
   },
   {
     path: 'ai-quant/yield-records',
@@ -437,7 +446,7 @@ export const consoleRoutes = [
     name: 'portfolio-user-yield-control',
     component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
     props: { moduleKey: 'portfolio' },
-    meta: { title: '投资组合 / 用户收益调节', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
+    meta: { title: '投资组合 / 用户点控', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
   },
   {
     path: 'portfolio/yield-records',

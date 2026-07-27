@@ -82,7 +82,8 @@ test('profile update trims fields and appends one audit record', () => {
       username: ' user_chen_updated ',
       email: ' chen.updated@example.com ',
       phone: ' 8613900001004 ',
-      remark: ' 已核实 '
+      remark: ' 已核实 ',
+      reason: '资料复核通过'
     })
     assert.equal(updated.username, 'user_chen_updated')
     assert.equal(updated.remark, '已核实')
