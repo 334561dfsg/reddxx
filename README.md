@@ -2,6 +2,10 @@
 
 A starter scaffold for a management console using Vue 3, Vite, Vue Router, Pinia, and Tailwind CSS.
 
+## Repository
+
+[github.com/ImEvanQi/fex-admin](https://github.com/ImEvanQi/fex-admin)
+
 ## Quick Start
 
 ```bash
