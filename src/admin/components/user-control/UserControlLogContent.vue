@@ -51,13 +51,22 @@ const valueLabel = (value) => ({
   lowYield: '低收益'
 })[value] || value || '—'
 
+const methodLabel = (method, fallbackValue) => ({
+  profit: '盈利',
+  highProfit: '做高盈利',
+  lowProfit: '做低盈利',
+  loss: '亏损',
+  highLoss: '做高亏损',
+  lowLoss: '做低亏损'
+})[method] || valueLabel(fallbackValue)
+
 const sourceLabel = (source) => ({
   global: '用户管理统一设置',
   module: '当前模块独立设置'
 })[source] || '—'
 
 const actionLabel = (action) => ({ apply: '设置控制', cancel: '取消控制', execute: '执行规则' })[action] || action
-const durationLabel = (duration) => ({ once: '一次性', permanent: '永久', mixed: '混合' })[duration] || '—'
+const durationLabel = (duration) => ({ once: '一次性控制', permanent: '永久控制', mixed: '混合' })[duration] || '—'
 const statusLabel = (status) => ({ success: '成功', failed: '失败' })[status] || status || '—'
 const executionStatusClasses = (status) => status === 'failed'
   ? 'bg-rose-100 text-rose-700'
@@ -65,18 +74,18 @@ const executionStatusClasses = (status) => status === 'failed'
 
 const formatRule = (rule) => {
   if (!rule) return '—'
-  if (rule.value) return `${valueLabel(rule.value)} · ${rule.duration === 'once' ? '一次性' : '永久'}`
+  if (rule.value) return `${methodLabel(rule.method, rule.value)} · ${durationLabel(rule.duration)}`
   const entries = USER_CONTROL_MODULES
     .filter((module) => rule[module.key])
-    .map((module) => `${module.label} ${valueLabel(rule[module.key].value)}`)
+    .map((module) => `${module.label} ${methodLabel(rule[module.key].method, rule[module.key].value)}`)
   return entries.join('；') || '—'
 }
 
 const formatOperationAfter = (log) => {
   if (log.after) return formatRule(log.after)
   if (log.action === 'cancel') return '当前有效规则已取消'
-  if (log.strategy === 'positive') return '交易盈利；理财高收益'
-  if (log.strategy === 'negative') return '交易亏损；理财低收益'
+  if (log.strategy === 'positive') return methodLabel(log.method, 'profit')
+  if (log.strategy === 'negative') return methodLabel(log.method, 'loss')
   return '—'
 }
 
@@ -109,7 +118,7 @@ const unifiedLogs = computed(() => {
     duration: log.duration,
     referenceId: log.businessId || '—',
     before: valueLabel(log.beforeValue),
-    after: valueLabel(log.afterValue),
+    after: methodLabel(log.method, log.afterValue),
     status: log.status,
     note: log.errorMessage || '—'
   }))
@@ -213,7 +222,7 @@ const clearFilters = () => {
         <table class="w-full min-w-[1680px] text-left text-sm">
           <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600">
             <tr>
-              <th class="px-4 py-3">操作时间</th><th class="px-4 py-3">操作人</th><th class="px-4 py-3">UID</th><th class="px-4 py-3">模块</th><th class="px-4 py-3">日志类型</th><th class="px-4 py-3">规则来源</th><th class="px-4 py-3">生效方式</th><th class="px-4 py-3">业务/批次号</th><th class="px-4 py-3">变更前</th><th class="px-4 py-3">变更后</th><th class="px-4 py-3">状态</th><th class="px-4 py-3">备注</th>
+              <th class="px-4 py-3">操作时间</th><th class="px-4 py-3">操作人</th><th class="px-4 py-3">UID</th><th class="px-4 py-3">模块</th><th class="px-4 py-3">日志类型</th><th class="px-4 py-3">规则来源</th><th class="px-4 py-3">控制周期</th><th class="px-4 py-3">业务/批次号</th><th class="px-4 py-3">变更前</th><th class="px-4 py-3">变更后</th><th class="px-4 py-3">状态</th><th class="px-4 py-3">备注</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">

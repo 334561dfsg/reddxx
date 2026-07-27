@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import {
   buildUserControlPayload,
+  getControlMethodOptions,
   getModuleControlOptions,
   isUserControlFormComplete
 } from '../src/features/user-control/userControlForm.js'
@@ -21,34 +22,43 @@ test('form helper exposes only yield outcomes for finance modules', () => {
   assert.deepEqual(getModuleControlOptions('finance').map((option) => option.value), ['highYield', 'lowYield'])
 })
 
+test('form helper exposes customer control methods by control type', () => {
+  assert.deepEqual(getControlMethodOptions('positive').map((option) => option.label), ['盈利', '做高盈利', '做低盈利'])
+  assert.deepEqual(getControlMethodOptions('negative').map((option) => option.label), ['亏损', '做高亏损', '做低亏损'])
+})
+
 test('form helper rejects incomplete values used by the disabled state', () => {
-  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', value: 'profit', duration: 'once', note: '   ' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', value: '', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', value: 'highYield', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '', strategy: 'positive', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', value: 'profit', duration: 'once', note: '审计备注' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'profit', duration: 'once', note: '   ' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: '', method: 'profit', duration: 'once', note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highLoss', duration: 'once', note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), true)
 })
 
 test('form helper trims notes and builds scope-specific payloads', () => {
   assert.deepEqual(buildUserControlPayload({
-    scope: 'module', family: 'trade', userId: '159', strategy: 'negative', value: 'loss', duration: 'permanent', note: '  模块备注  '
-  }), { userId: '159', value: 'loss', duration: 'permanent', note: '模块备注' })
+    scope: 'module', family: 'trade', userId: '159', strategy: 'negative', method: 'highLoss', duration: 'permanent', note: '  模块备注  '
+  }), { userId: '159', strategy: 'negative', method: 'highLoss', value: 'loss', duration: 'permanent', note: '模块备注' })
   assert.deepEqual(buildUserControlPayload({
-    scope: 'global', userId: '158', strategy: 'positive', value: 'lowYield', duration: 'once', note: '  统一备注  '
-  }), { userId: '158', strategy: 'positive', duration: 'once', note: '统一备注' })
+    scope: 'global', userId: '158', strategy: 'positive', method: 'lowProfit', duration: 'once', note: '  统一备注  '
+  }), { userId: '158', strategy: 'positive', method: 'lowProfit', duration: 'once', note: '统一备注' })
 })
 
 test('shared modal separates trading outcome from finance yield wording', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
-  assert.match(source, /正向控制/)
-  assert.match(source, /负向控制/)
+  const helperSource = read('../src/features/user-control/userControlForm.js')
   assert.match(source, /盈利/)
   assert.match(source, /亏损/)
-  assert.match(source, /高收益/)
-  assert.match(source, /低收益/)
-  assert.match(source, /一次性/)
-  assert.match(source, /永久/)
-  assert.match(source, /操作备注/)
+  assert.match(source, /控盘方式/)
+  assert.match(helperSource, /做高盈利/)
+  assert.match(helperSource, /做低盈利/)
+  assert.match(helperSource, /做高亏损/)
+  assert.match(helperSource, /做低亏损/)
+  assert.match(source, /高\/默认\/低收益/)
+  assert.match(source, /低收益或最低收益/)
+  assert.match(source, /一次性控制/)
+  assert.match(source, /永久控制/)
+  assert.match(source, /点控备注/)
 })
 
 test('shared modal exposes note validation on blur while submit stays disabled', () => {
@@ -87,7 +97,9 @@ test('module metadata and fallback use the unified point-control label', () => {
   const moduleSource = read('../src/features/user-control/userControl.js')
   const pageSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
 
+  assert.match(moduleSource, /actionLabel:\s*'用户点控'/)
   assert.doesNotMatch(moduleSource, /用户控盘/)
+  assert.doesNotMatch(moduleSource, /用户收益调节/)
   assert.doesNotMatch(pageSource, /用户控盘/)
   assert.doesNotMatch(pageSource, /用户级控盘/)
 })
@@ -289,8 +301,9 @@ test('user operations open point-control logs in a child Drawer while module row
 
 test('shared setting modal keeps only its body scrollable and keeps result copy compact', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
+  const helperSource = read('../src/features/user-control/userControlForm.js')
   const frame = openingTag(source, 'user-control-dialog-frame')
-  assert.match(source, /max-w-\[680px\]/)
+  assert.match(source, /max-w-\[920px\]/)
   assert.match(source, /<Teleport to="body">/)
   assert.match(source, /fixed inset-0/)
   assert.doesNotMatch(source, /@mousedown\.self|@click\.self/)
@@ -298,11 +311,35 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   assert.match(frame, /max-h-\[calc\(100vh-1\.5rem\)\]/)
   assert.match(frame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-1\.5rem\)\]/)
   assert.match(frame, /overflow-hidden/)
-  assert.match(source, /data-testid="user-control-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
-  assert.match(source, /space-y-2\.5 px-5 py-3/)
+  assert.match(source, /data-testid="user-control-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto[^>]*lg:flex-none[^>]*lg:overflow-hidden/)
+  assert.match(source, /px-5 py-3/)
   assert.match(source, /rows="2"/)
-  assert.match(source, /交易盈利、理财高收益/)
-  assert.match(source, /交易亏损、理财低收益/)
+  assert.match(source, /grid items-start gap-4 lg:grid-cols-\[minmax\(0,1fr\)_360px\]/)
+  assert.match(source, /<div ref="leftPanelRef" class="min-w-0 space-y-2\.5">[\s\S]*id-base="user-control-strategy"[\s\S]*id-base="user-control-method"[\s\S]*id-base="user-control-duration"/)
+  assert.match(source, /data-testid="user-control-help-panel"[^>]*overflow-y-auto/)
+  assert.match(source, /:style="\{ maxHeight: helpPanelMaxHeight \|\| undefined \}"/)
+  assert.match(source, /getBoundingClientRect\?\.\(\)\.height/)
+  assert.match(source, /matchMedia\('\(min-width: 1024px\)'\)/)
+  assert.match(source, /<aside[^>]*aria-label="点控说明备注"[\s\S]*selectedModuleRule\.title[\s\S]*当前选择说明[\s\S]*控盘类型[\s\S]*控盘方式[\s\S]*控制周期[\s\S]*通用结算说明/)
+  assert.match(source, /v-if="isGlobalScope"[^>]*>[\s\S]*当前选择说明/)
+  assert.match(source, /v-else class="sr-only"[\s\S]*id="user-control-strategy-help"[\s\S]*id="user-control-method-help"[\s\S]*id="user-control-duration-help"/)
+  assert.match(source, /v-if="isGlobalScope"[^>]*>[\s\S]*通用结算说明/)
+  assert.match(source, /v-if="isGlobalScope && financeRuleHint"/)
+  assert.match(source, /v-if="isGlobalScope"[^>]*>[\s\S]*状态规则/)
+  assert.match(source, /selectedModuleRule\.title/)
+  assert.match(source, /selectedModuleRule\.items/)
+  assert.match(source, /六模块统一规则/)
+  assert.match(source, /交割点控规则/)
+  assert.match(source, /永续点控规则/)
+  assert.match(source, /现货点控规则/)
+  assert.match(source, /AI量化点控规则/)
+  assert.match(source, /流动性挖矿点控规则/)
+  assert.match(source, /投资组合点控规则/)
+  assert.match(source, /不针对单个用户修改K线或行情/)
+  assert.match(source, /不改变大盘行情、盘口价格和真实成交撮合记录/)
+  assert.doesNotMatch(source, /grid gap-3 sm:grid-cols-3/)
+  assert.match(helperSource, /交易模块盈利；理财模块按收益提高处理/)
+  assert.match(helperSource, /交易模块亏损；理财模块按低收益或最低收益处理/)
   assert.doesNotMatch(source, />交易类效果</)
   assert.doesNotMatch(source, />理财类效果</)
   assert.doesNotMatch(source, /本次操作只影响当前模块，其他五个模块的用户规则保持不变。/)
@@ -390,7 +427,12 @@ test('point-control setting and detail surfaces use the shared dialog lifecycle 
   assert.match(settingSource, /handleAfterLeave/)
   assert.match(settingSource, /aria-labelledby="user-control-dialog-title"/)
   assert.match(settingSource, /id="user-control-dialog-title"/)
-  assert.match(settingSource, /ref="firstControlOption"/)
+  assert.match(settingSource, /SelectOnlyCombobox/)
+  assert.match(settingSource, /ref="firstControlSelect"/)
+  assert.match(settingSource, /id-base="user-control-strategy"/)
+  assert.match(settingSource, /id-base="user-control-method"/)
+  assert.match(settingSource, /id-base="user-control-duration"/)
+  assert.doesNotMatch(settingSource, /type="radio" name="strategy"|type="radio" name="method"|type="radio" name="duration"/)
   assert.match(settingSource, /v-if="rendered"/)
   assert.match(settingSource, /name="dialog-overlay"/)
   assert.match(settingSource, /name="dialog-panel"/)

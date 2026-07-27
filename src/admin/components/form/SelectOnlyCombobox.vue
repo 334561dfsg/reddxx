@@ -19,6 +19,7 @@ const props = defineProps({
   readonly: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   errorId: { type: String, default: '' },
+  describedBy: { type: [String, Array], default: '' },
   idBase: { type: String, default: '' }
 })
 
@@ -75,6 +76,8 @@ const displayText = computed(() => {
 })
 const describedBy = computed(() => {
   const ids = []
+  if (Array.isArray(props.describedBy)) ids.push(...props.describedBy.filter(Boolean))
+  else if (props.describedBy) ids.push(props.describedBy)
   if (props.invalid && props.errorId) ids.push(props.errorId)
   if (orphaned.value) ids.push(orphanedId)
   if (hasDuplicateOptions.value) ids.push(configErrorId)

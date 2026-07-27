@@ -326,7 +326,7 @@ const controlValueLabel = (value) => ({
   lowYield: '低收益'
 })[value] || '未设置'
 
-const controlDurationLabel = (duration) => ({ once: '一次性', permanent: '永久' })[duration] || '—'
+const controlDurationLabel = (duration) => ({ once: '单次生效', permanent: '长期生效' })[duration] || '—'
 const controlRuleStatusLabel = (status) => ({ active: '当前有效', processing: '处理中' })[status] || status
 
 const formatTime = (date = new Date()) => {
@@ -843,7 +843,7 @@ const handleMfaCancel = () => {
 const mfaTitle = computed(() => pendingMfaAction.value?.type === 'cancel' ? '取消统一控制安全验证' : '统一控制安全验证')
 const mfaDescription = computed(() => pendingMfaAction.value?.type === 'cancel'
   ? '取消六个模块的生效规则属于敏感操作，请输入 MFA 验证码'
-  : '永久或覆盖统一控制属于敏感操作，请输入 MFA 验证码')
+  : '长期生效或覆盖统一控制属于敏感操作，请输入 MFA 验证码')
 
 // 统计信息
 const statistics = computed(() => {
@@ -1384,10 +1384,10 @@ const clearDetailDrawer = () => {
                   <p v-if="cancelControlItems.length" class="mt-2 text-xs text-amber-700">已执行、已取消和已覆盖的历史记录会保留。</p>
                 </div>
                 <label class="block">
-                  <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
-                  <textarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100" />
+                  <span class="text-sm font-medium text-slate-800">取消点控备注 <span class="text-rose-500">*</span></span>
+                  <textarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100" />
                   <span class="mt-1 block text-xs" :class="cancelNote.trim() ? 'text-slate-500' : 'text-rose-600'">
-                    {{ cancelNote.trim() ? '确认后还需完成 MFA 验证' : '取消备注必填' }}
+                    {{ cancelNote.trim() ? '确认后还需完成 MFA 验证' : '取消点控备注必填' }}
                   </span>
                 </label>
               </div>

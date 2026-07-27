@@ -11,15 +11,24 @@ const props = defineProps({
 })
 const emit = defineEmits(['close', 'closed', 'request-mfa'])
 const dialogRef = ref(null)
+const scopeRef = ref(null)
 const requiredRef = ref(null)
 const backRef = ref(null)
 const errorRef = ref(null)
 const submitButtonRef = ref(null)
 const stage = ref('edit')
 const errorMessage = ref('')
-const form = reactive({ requiredTurnover: '', expiryMode: 'unlimited', expiresAt: '', reason: '', removeReason: '' })
+const form = reactive({ flowScope: 'all', requiredTurnover: '', expiryMode: 'unlimited', expiresAt: '', reason: '', removeReason: '' })
+const flowScopeOptions = Object.freeze([
+  { value: 'all', label: '全部交易' },
+  { value: 'spot', label: '现货交易' },
+  { value: 'contract', label: '合约交易' },
+  { value: 'finance', label: '理财收益' }
+])
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const hasLimit = computed(() => Boolean(props.limit && props.limit.status !== 'none'))
+const currentFlowScopeLabel = computed(() => props.limit?.flowScopeLabel || flowScopeOptions.find((option) => option.value === props.limit?.flowScope)?.label || '全部交易')
+const selectedFlowScopeLabel = computed(() => flowScopeOptions.find((option) => option.value === form.flowScope)?.label || '—')
 const completedTurnover = computed(() => Number(props.limit?.completedTurnover || 0))
 const remainingTurnover = computed(() => {
   const required = Number(form.requiredTurnover)
@@ -37,6 +46,7 @@ const toLocalDateTime = (value) => {
 const resetForm = () => {
   stage.value = 'edit'
   errorMessage.value = ''
+  form.flowScope = props.limit?.flowScope || 'all'
   form.requiredTurnover = props.limit?.requiredTurnover ?? ''
   form.expiresAt = toLocalDateTime(props.limit?.expiresAt)
   form.expiryMode = form.expiresAt ? 'scheduled' : 'unlimited'
@@ -49,7 +59,7 @@ const selectExpiryMode = (mode) => {
 }
 const closeDisabled = computed(() => props.busy)
 const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
-  open: computed(() => props.visible), dialogRef, initialFocusRef: requiredRef,
+  open: computed(() => props.visible), dialogRef, initialFocusRef: scopeRef,
   returnFocusRef: computed(() => props.returnFocus), requestClose: () => emit('close'), closeDisabled
 })
 const close = createDialogCloseAction(requestDialogClose)
@@ -63,6 +73,7 @@ const validMoney = (value) => /^\d+(\.\d{1,2})?$/.test(String(value).trim())
 const startSetConfirm = async () => {
   errorMessage.value = ''
   const required = Number(form.requiredTurnover)
+  if (!form.flowScope) return showError('请选择流水范围')
   if (!validMoney(form.requiredTurnover) || required <= 0) return showError('所需流水必须为大于 0 且最多两位小数的金额')
   if (required <= completedTurnover.value) return showError('所需流水必须大于当前已完成流水')
   if (form.expiryMode === 'scheduled' && !form.expiresAt) return showError('请选择到期时间')
@@ -77,7 +88,7 @@ const startRemoveConfirm = async () => {
   if (form.removeReason.trim().length > 200) return showError('解除原因不能超过 200 字')
   stage.value = 'confirm-remove'; await nextTick(); backRef.value?.focus?.()
 }
-const backToEdit = async () => { stage.value = 'edit'; errorMessage.value = ''; await nextTick(); requiredRef.value?.focus?.() }
+const backToEdit = async () => { stage.value = 'edit'; errorMessage.value = ''; await nextTick(); scopeRef.value?.focus?.() }
 const requestMfa = () => {
   if (phase.value !== 'open' || props.busy) return
   if (stage.value === 'confirm-remove') {
@@ -88,6 +99,7 @@ const requestMfa = () => {
     type: 'flow-limit-set',
     payload: {
       userId: userId.value,
+      flowScope: form.flowScope,
       requiredTurnover: Number(form.requiredTurnover),
       expiresAt: form.expiryMode === 'scheduled' ? new Date(form.expiresAt).toISOString() : null,
       reason: form.reason.trim()
@@ -110,9 +122,19 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
 
           <div data-testid="user-withdraw-flow-limit-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
             <p v-if="errorMessage" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ errorMessage }}</p>
-            <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">当前状态</span><strong class="text-slate-900">{{ statusText }}</strong></div>
+            <div class="grid gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm sm:grid-cols-2">
+              <div class="flex items-center justify-between gap-3"><span class="text-slate-500">当前状态</span><strong class="text-slate-900">{{ statusText }}</strong></div>
+              <div class="flex items-center justify-between gap-3"><span class="text-slate-500">流水范围</span><strong class="text-slate-900">{{ currentFlowScopeLabel }}</strong></div>
+            </div>
 
             <template v-if="stage === 'edit'">
+              <label class="block">
+                <span class="text-sm font-medium text-slate-800">流水范围 <span class="text-rose-500">*</span></span>
+                <select id="user-withdraw-flow-scope" ref="scopeRef" v-model="form.flowScope" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+                  <option v-for="option in flowScopeOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+                </select>
+                <span class="mt-1 block text-xs text-slate-500">仅统计所选范围内产生的有效流水。</span>
+              </label>
               <label class="block"><span class="text-sm font-medium text-slate-800">流水要求金额 <span class="text-rose-500">*</span></span><div class="relative mt-1.5"><input ref="requiredRef" v-model="form.requiredTurnover" type="text" inputmode="decimal" class="h-10 w-full rounded-lg border border-slate-300 px-3 pr-16 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /><span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-slate-500">USDT</span></div></label>
               <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
                 <dl class="grid grid-cols-2 gap-3 text-sm">
@@ -146,7 +168,7 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
             <template v-else>
               <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
                 <h3 class="font-semibold">{{ stage === 'confirm-remove' ? '确认解除出金流水限制' : '确认设置出金流水限制' }}</h3>
-                <dl v-if="stage === 'confirm-set'" class="mt-3 grid grid-cols-[7rem_1fr] gap-y-2"><dt>流水要求金额</dt><dd>{{ money(form.requiredTurnover) }} USDT</dd><dt>已完成有效流水</dt><dd>{{ money(completedTurnover) }} USDT</dd><dt>剩余所需流水</dt><dd>{{ money(remainingTurnover) }} USDT</dd><dt>有效期</dt><dd>{{ form.expiryMode === 'unlimited' ? '无限期' : form.expiresAt }}</dd><dt>设置原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
+                <dl v-if="stage === 'confirm-set'" class="mt-3 grid grid-cols-[7rem_1fr] gap-y-2"><dt>流水范围</dt><dd>{{ selectedFlowScopeLabel }}</dd><dt>流水要求金额</dt><dd>{{ money(form.requiredTurnover) }} USDT</dd><dt>已完成有效流水</dt><dd>{{ money(completedTurnover) }} USDT</dd><dt>剩余所需流水</dt><dd>{{ money(remainingTurnover) }} USDT</dd><dt>有效期</dt><dd>{{ form.expiryMode === 'unlimited' ? '无限期' : form.expiresAt }}</dd><dt>设置原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
                 <p v-else class="mt-3 break-words">解除原因：{{ form.removeReason.trim() }}</p>
               </div>
               <p class="text-xs text-slate-500">提交后还需通过 MFA 验证，验证成功才会执行。</p>

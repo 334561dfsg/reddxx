@@ -106,8 +106,8 @@ const effectiveRules = computed(() => rows.value
 const summaryCards = computed(() => [
   { label: '用户总数', value: rows.value.length, hint: '来自现有用户 Mock' },
   { label: '当前有效', value: effectiveRules.value.length, hint: `${moduleMeta.value.actionLabel}规则` },
-  { label: '一次性待执行', value: effectiveRules.value.filter((rule) => rule.duration === 'once').length, hint: '等待下一次有效结算' },
-  { label: '永久生效中', value: effectiveRules.value.filter((rule) => rule.duration === 'permanent').length, hint: '直至取消或覆盖' }
+  { label: '单次待执行', value: effectiveRules.value.filter((rule) => rule.duration === 'once').length, hint: '每个模块各执行 1 次' },
+  { label: '长期生效中', value: effectiveRules.value.filter((rule) => rule.duration === 'permanent').length, hint: '直到取消或覆盖' }
 ])
 
 const valueLabel = (value) => ({
@@ -117,7 +117,7 @@ const valueLabel = (value) => ({
   lowYield: '低收益'
 })[value] || '未设置'
 
-const durationLabel = (duration) => ({ once: '一次性', permanent: '永久' })[duration] || '—'
+const durationLabel = (duration) => ({ once: '单次生效', permanent: '长期生效' })[duration] || '—'
 
 const statusMeta = (rule) => {
   if (!rule) return { label: '未设置', classes: 'bg-slate-100 text-slate-600' }
@@ -353,8 +353,8 @@ const resetFilters = () => {
                   本次操作只影响当前模块，其他模块规则继续生效。
                 </p>
                 <label class="block">
-                  <span class="text-sm font-medium text-slate-800">取消备注 <span class="text-rose-500">*</span></span>
-                  <textarea v-model="cancelNote" rows="2" maxlength="200" placeholder="请说明取消原因" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                  <span class="text-sm font-medium text-slate-800">取消点控备注 <span class="text-rose-500">*</span></span>
+                  <textarea v-model="cancelNote" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
                 </label>
               </div>
               <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">

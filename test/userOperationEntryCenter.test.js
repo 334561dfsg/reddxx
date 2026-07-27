@@ -51,7 +51,7 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
   ])
   assert.doesNotMatch(JSON.stringify(funds.entries), /调账|后台划扣记录|手动上分地址/)
   assert.match(getUserOperationEntry('transfer', {}).description, /总资产不变/)
-  assert.equal(getUserOperationEntry('deduct-funds', {}).description, '永久扣减用户可用资金')
+  assert.equal(getUserOperationEntry('deduct-funds', {}).description, '永久扣减指定账户币种的可用资金')
 
   assert.deepEqual(groups.flatMap((group) => group.entries.map((entry) => entry.title)), [
     '编辑资料',
@@ -113,8 +113,9 @@ test('operation catalog distinguishes implemented and planned actions', () => {
 })
 
 test('fund freeze entries use concise one-line summaries', () => {
-  assert.equal(getUserOperationEntry('freeze-funds', {}).description, '冻结用户全部可用资金')
-  assert.equal(getUserOperationEntry('unfreeze-funds', {}).description, '解冻管理员人工冻结资金')
+  assert.equal(getUserOperationEntry('freeze-funds', {}).description, '冻结指定账户币种的可用资金')
+  assert.equal(getUserOperationEntry('unfreeze-funds', {}).description, '解冻指定账户币种的人工冻结资金')
+  assert.equal(getUserOperationEntry('deduct-funds', {}).description, '永久扣减指定账户币种的可用资金')
 })
 
 test('funds controls keep the operation drawer open and use a separate MFA layer', () => {

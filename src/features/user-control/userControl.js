@@ -11,11 +11,38 @@ export const USER_CONTROL_MODULES = Object.freeze([
 
 export const USER_CONTROL_STRATEGY = Object.freeze({ POSITIVE: 'positive', NEGATIVE: 'negative' })
 export const USER_CONTROL_DURATION = Object.freeze({ ONCE: 'once', PERMANENT: 'permanent' })
+export const USER_CONTROL_METHOD = Object.freeze({
+  PROFIT: 'profit',
+  HIGH_PROFIT: 'highProfit',
+  LOW_PROFIT: 'lowProfit',
+  LOSS: 'loss',
+  HIGH_LOSS: 'highLoss',
+  LOW_LOSS: 'lowLoss'
+})
+
+const controlMethods = {
+  positive: ['profit', 'highProfit', 'lowProfit'],
+  negative: ['loss', 'highLoss', 'lowLoss']
+}
 
 const strategyValue = (strategy, family) => {
   if (strategy === 'positive') return family === 'trade' ? 'profit' : 'highYield'
   if (strategy === 'negative') return family === 'trade' ? 'loss' : 'lowYield'
   throw new TypeError('strategy must be positive or negative')
+}
+
+const strategyFromValue = (value) => (['loss', 'lowYield'].includes(value) ? 'negative' : 'positive')
+
+const normalizeStrategy = (input = {}) => {
+  if (input.strategy === 'positive' || input.strategy === 'negative') return input.strategy
+  if (input.value) return strategyFromValue(input.value)
+  throw new TypeError('strategy must be positive or negative')
+}
+
+const normalizeMethod = (input = {}) => {
+  const strategy = normalizeStrategy(input)
+  if (controlMethods[strategy].includes(input.method)) return input.method
+  return strategy === 'positive' ? 'profit' : 'loss'
 }
 
 const requireText = (value, name) => {
@@ -75,6 +102,8 @@ export function snapshotUserControlRules(state, userId) {
 export function applyUnifiedControl(state, input) {
   const userId = requireText(input.userId, 'userId')
   const note = requireText(input.note, 'note')
+  const strategy = normalizeStrategy(input)
+  const method = normalizeMethod({ ...input, strategy })
   if (!['once', 'permanent'].includes(input.duration)) throw new TypeError('duration must be once or permanent')
   if (state.failureModule) {
     const before = Object.fromEntries(Object.entries(state.rules[userId] || {}).map(([key, rule]) => [key, { ...rule }]))
@@ -82,7 +111,7 @@ export function applyUnifiedControl(state, input) {
       ...state,
       operationLogs: [{
         id: `op-${input.batchId}-failed`, userId, scope: 'global', action: 'apply',
-        modules: USER_CONTROL_MODULES.map((item) => item.key), strategy: input.strategy,
+        modules: USER_CONTROL_MODULES.map((item) => item.key), strategy, method,
         duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
         before, note, status: 'failed', failedModule: state.failureModule,
         errorMessage: `模块 ${state.failureModule} 写入失败，六个模块均未更新`, createdAt: input.now
@@ -94,7 +123,7 @@ export function applyUnifiedControl(state, input) {
   const before = Object.fromEntries(Object.entries(state.rules[userId] || {}).map(([key, rule]) => [key, { ...rule }]))
   const rules = Object.fromEntries(USER_CONTROL_MODULES.map((module) => [module.key, {
     id: `${input.batchId}-${module.key}`, batchId: input.batchId, userId, moduleKey: module.key,
-    family: module.family, value: strategyValue(input.strategy, module.family), strategy: input.strategy,
+    family: module.family, value: strategyValue(strategy, module.family), strategy, method,
     duration: input.duration, status: 'active', source: 'global', note, updatedAt: input.now,
     consumedAt: '', supersededAt: '', cancelledAt: ''
   }]))
@@ -114,7 +143,7 @@ export function applyUnifiedControl(state, input) {
     rules: { ...state.rules, [userId]: rules },
     ruleHistory: [...supersedeRules(before, input.now), ...(state.ruleHistory || [])],
     operationLogs: [{ id: `op-${input.batchId}`, userId, scope: 'global', action: 'apply',
-      modules: USER_CONTROL_MODULES.map((item) => item.key), strategy: input.strategy,
+      modules: USER_CONTROL_MODULES.map((item) => item.key), strategy, method,
       duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
       before, note, status: 'success', createdAt: input.now }, ...state.operationLogs],
     lastError: ''
@@ -170,12 +199,15 @@ export function applyModuleControl(state, input) {
   const userId = requireText(input.userId, 'userId')
   const note = requireText(input.note, 'note')
   const module = moduleMeta(input.moduleKey)
-  if (!validValues[module.family].includes(input.value)) throw new TypeError('value does not match module family')
+  const strategy = normalizeStrategy(input)
+  const method = normalizeMethod({ ...input, strategy })
+  const value = input.value || strategyValue(strategy, module.family)
+  if (!validValues[module.family].includes(value)) throw new TypeError('value does not match module family')
   if (!['once', 'permanent'].includes(input.duration)) throw new TypeError('duration must be once or permanent')
   const userRules = cloneRules(state, userId)
   const before = userRules[module.key] || null
   userRules[module.key] = { id: input.ruleId, batchId: '', userId, moduleKey: module.key,
-    family: module.family, value: input.value, strategy: '', duration: input.duration,
+    family: module.family, value, strategy, method, duration: input.duration,
     status: 'active', source: 'module', note, updatedAt: input.now,
     consumedAt: '', supersededAt: '', cancelledAt: '' }
   appendUnifiedUserControlAudit({
@@ -194,7 +226,7 @@ export function applyModuleControl(state, input) {
     ruleHistory: [...supersedeRules(before ? { [module.key]: before } : {}, input.now), ...(state.ruleHistory || [])],
     operationLogs: [{
     id: `op-${input.ruleId}`, userId, scope: 'module', action: 'apply', modules: [module.key],
-    duration: input.duration, operator: operatorOf(input), batchId: input.batchId || input.ruleId,
+    strategy, method, duration: input.duration, operator: operatorOf(input), batchId: input.batchId || input.ruleId,
     before, after: userRules[module.key], note, status: 'success', createdAt: input.now
     }, ...state.operationLogs],
     lastError: ''
@@ -261,7 +293,8 @@ export function consumeModuleControl(state, input) {
   if (input.status === 'failed') {
     return { ...state, executionLogs: [{
       id: `exec-${input.businessId}`, userId, moduleKey: input.moduleKey, ruleId: rule.id,
-      source: rule.source, value: rule.value, duration: rule.duration, businessId: input.businessId,
+      source: rule.source, value: rule.value, strategy: rule.strategy, method: rule.method,
+      duration: rule.duration, businessId: input.businessId,
       beforeValue: input.beforeValue, afterValue: input.afterValue,
       status: 'failed', errorMessage: input.errorMessage || '执行失败', createdAt: input.now
     }, ...state.executionLogs] }
@@ -280,7 +313,8 @@ export function consumeModuleControl(state, input) {
   })
   return { ...state, rules: { ...state.rules, [userId]: userRules }, executionLogs: [{
     id: `exec-${input.businessId}`, userId, moduleKey: input.moduleKey, ruleId: rule.id,
-    source: rule.source, value: rule.value, duration: rule.duration, businessId: input.businessId,
+    source: rule.source, value: rule.value, strategy: rule.strategy, method: rule.method,
+    duration: rule.duration, businessId: input.businessId,
     beforeValue: input.beforeValue, afterValue: input.afterValue,
     status: 'success', createdAt: input.now
   }, ...state.executionLogs] }
@@ -334,7 +368,7 @@ export function getUserControlListMeta(state, userId) {
   return {
     hasCurrent: true,
     controlLabel,
-    durationLabel: durations.length > 1 ? '混合' : durations[0] === 'permanent' ? '长期生效' : '单次生效'
+    durationLabel: durations.length > 1 ? '混合' : durations[0] === 'permanent' ? '永久控制' : '一次性控制'
   }
 }
 
@@ -346,6 +380,7 @@ export function getUnifiedControlCancelItems(rules = {}) {
       moduleKey: module.key,
       moduleLabel: module.label,
       value: effectiveRules[module.key].value,
+      method: effectiveRules[module.key].method,
       duration: effectiveRules[module.key].duration,
       status: effectiveRules[module.key].status
     }))

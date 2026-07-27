@@ -50,7 +50,16 @@ const valueLabel = (value) => ({
   lowYield: '低收益'
 })[value] || '未设置'
 
-const durationLabel = (duration) => ({ once: '一次性', permanent: '永久' })[duration] || '—'
+const methodLabel = (method, fallbackValue) => ({
+  profit: '盈利',
+  highProfit: '做高盈利',
+  lowProfit: '做低盈利',
+  loss: '亏损',
+  highLoss: '做高亏损',
+  lowLoss: '做低亏损'
+})[method] || valueLabel(fallbackValue)
+
+const durationLabel = (duration) => ({ once: '一次性控制', permanent: '永久控制' })[duration] || '—'
 
 const statusMeta = (rule) => {
   if (!rule) return { label: '未设置', classes: 'bg-slate-100 text-slate-600' }
@@ -92,7 +101,7 @@ const summaryMeta = computed(() => {
   if (summary.value.kind === 'progress') {
     return {
       classes: 'border-slate-200 bg-slate-50 text-slate-700',
-      description: '一次性规则正按模块陆续完成；已执行属于正常进度，不代表配置存在差异。'
+      description: '一次性控制规则正按模块陆续完成；已执行属于正常进度，不代表配置存在差异。'
     }
   }
   return {
@@ -133,7 +142,7 @@ const summaryMeta = computed(() => {
                   <tr>
                     <th class="px-4 py-3">模块</th>
                     <th class="px-4 py-3">当前控制</th>
-                    <th class="px-4 py-3">生效方式</th>
+                    <th class="px-4 py-3">控制周期</th>
                     <th class="px-4 py-3">状态</th>
                     <th class="px-4 py-3">规则来源</th>
                     <th class="px-4 py-3">更新时间</th>
@@ -153,7 +162,7 @@ const summaryMeta = computed(() => {
                       </div>
                       <p class="mt-0.5 text-xs text-slate-400">{{ module.actionLabel }}</p>
                     </td>
-                    <td class="px-4 py-4 font-medium" :class="rules[module.key] ? 'text-slate-900' : 'text-slate-400'">{{ valueLabel(rules[module.key]?.value) }}</td>
+                    <td class="px-4 py-4 font-medium" :class="rules[module.key] ? 'text-slate-900' : 'text-slate-400'">{{ methodLabel(rules[module.key]?.method, rules[module.key]?.value) }}</td>
                     <td class="px-4 py-4 text-slate-600">{{ durationLabel(rules[module.key]?.duration) }}</td>
                     <td class="px-4 py-4">
                       <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="statusMeta(rules[module.key]).classes">
@@ -164,7 +173,7 @@ const summaryMeta = computed(() => {
                     <td class="px-4 py-4 text-slate-500">{{ rules[module.key]?.updatedAt || '—' }}</td>
                     <td class="px-4 py-4 text-slate-500">
                       <template v-if="lastExecution(module.key)">
-                        <p class="font-medium text-slate-700">{{ valueLabel(lastExecution(module.key).afterValue) }}</p>
+                        <p class="font-medium text-slate-700">{{ methodLabel(lastExecution(module.key).method, lastExecution(module.key).afterValue) }}</p>
                         <p class="mt-0.5 text-xs font-mono text-slate-500">业务单号 {{ lastExecution(module.key).businessId }}</p>
                         <p class="mt-0.5 text-xs">{{ lastExecution(module.key).createdAt }}</p>
                       </template>
@@ -184,7 +193,7 @@ const summaryMeta = computed(() => {
                   <p class="font-medium text-slate-800">{{ moduleLabel(rule.moduleKey) }}</p>
                   <p class="mt-0.5 text-xs text-slate-500">{{ sourceLabel(rule.source) }}</p>
                 </div>
-                <p class="text-slate-600">{{ valueLabel(rule.value) }} · {{ durationLabel(rule.duration) }}</p>
+                <p class="text-slate-600">{{ methodLabel(rule.method, rule.value) }} · {{ durationLabel(rule.duration) }}</p>
                 <time class="text-xs text-slate-500">覆盖时间 {{ rule.supersededAt || '—' }}</time>
                 <span class="w-fit rounded-full bg-violet-100 px-2.5 py-1 text-xs font-medium text-violet-700">已覆盖</span>
               </div>

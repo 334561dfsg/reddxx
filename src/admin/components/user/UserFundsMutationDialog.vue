@@ -1,6 +1,7 @@
 <script setup>
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -18,6 +19,7 @@ const configs = {
   deduct: { title: '扣减资金', action: '扣减', amountLabel: '扣减金额', tone: 'bg-rose-600 hover:bg-rose-700', hint: '操作成功后用户总资产将减少，不能通过解冻恢复。' }
 }
 const dialogRef = ref(null)
+const accountRef = ref(null)
 const amountRef = ref(null)
 const reasonRef = ref(null)
 const backRef = ref(null)
@@ -25,12 +27,40 @@ const errorRef = ref(null)
 const submitButtonRef = ref(null)
 const stage = ref('edit')
 const errorMessage = ref('')
-const form = reactive({ amount: '', reason: '' })
+const form = reactive({ accountKey: 'market', coinKey: 'USDT', amount: '', reason: '' })
 const config = computed(() => configs[props.mode] || configs.freeze)
+const accountBaseOptions = Object.freeze([
+  { value: 'market', name: '市币账户' },
+  { value: 'wealth', name: '理财账户' },
+  { value: 'trading', name: '交易合约账户' },
+  { value: 'perp', name: '永续合约账户' }
+])
+const coinBaseOptions = Object.freeze([
+  { value: 'USDT', label: 'USDT' },
+  { value: 'USDC', label: 'USDC' },
+  { value: 'ETH', label: 'ETH' }
+])
+const money = (value) => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const balance = computed(() => Number(props.snapshot?.balance ?? props.user?.balance ?? 0))
 const frozenBalance = computed(() => Number(props.snapshot?.frozenBalance ?? props.user?.frozenBalance ?? 0))
 const adminFrozenAmount = computed(() => Number(props.snapshot?.adminFrozenAmount ?? 0))
+const showFrozenBalance = computed(() => props.mode !== 'deduct')
+const selectedAccountLabel = computed(() => accountBaseOptions.find((option) => option.value === form.accountKey)?.name || '—')
+const selectedCoinLabel = computed(() => coinBaseOptions.find((option) => option.value === form.coinKey)?.label || '—')
+const accountOptions = computed(() => accountBaseOptions.map((option) => ({
+  value: option.value,
+  label: showFrozenBalance.value
+    ? `${option.name} · 可用 ${money(balance.value)} ${selectedCoinLabel.value} · 冻结 ${money(frozenBalance.value)} ${selectedCoinLabel.value}`
+    : `${option.name} · 可用 ${money(balance.value)} ${selectedCoinLabel.value}`
+})))
+const coinOptions = computed(() => coinBaseOptions.map((option) => ({
+  value: option.value,
+  label: showFrozenBalance.value
+    ? `${option.label} · ${selectedAccountLabel.value} · 可用 ${money(balance.value)} · 冻结 ${money(frozenBalance.value)}`
+    : `${option.label} · ${selectedAccountLabel.value} · 可用 ${money(balance.value)}`
+})))
+const currentAccountBalanceTitle = computed(() => `${selectedAccountLabel.value} · ${selectedCoinLabel.value}`)
 const parsedAmount = computed(() => Number(form.amount))
 const maximumAmount = computed(() => props.mode === 'unfreeze'
   ? Math.min(adminFrozenAmount.value, frozenBalance.value)
@@ -42,7 +72,6 @@ const after = computed(() => {
   if (props.mode === 'unfreeze') return { balance: balance.value + amount, frozen: frozenBalance.value - amount }
   return { balance: balance.value - amount, frozen: frozenBalance.value }
 })
-const money = (value) => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const fillMaximum = () => {
   form.amount = maximumAmount.value > 0 ? String(Number(maximumAmount.value.toFixed(2))) : ''
   amountRef.value?.focus?.()
@@ -51,6 +80,8 @@ const fillMaximum = () => {
 const resetForm = () => {
   stage.value = 'edit'
   errorMessage.value = ''
+  form.accountKey = 'market'
+  form.coinKey = 'USDT'
   form.amount = ''
   form.reason = ''
 }
@@ -58,7 +89,7 @@ const closeDisabled = computed(() => props.busy)
 const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
   open: computed(() => props.visible),
   dialogRef,
-  initialFocusRef: amountRef,
+  initialFocusRef: accountRef,
   returnFocusRef: computed(() => props.returnFocus),
   requestClose: () => emit('close'),
   closeDisabled
@@ -77,6 +108,8 @@ const showError = async (message) => {
 const startConfirm = async () => {
   errorMessage.value = ''
   const reason = form.reason.trim()
+  if (!form.accountKey) return showError('请选择操作账户')
+  if (!form.coinKey) return showError('请选择操作币种')
   if (!reason) return showError('操作原因必填')
   if (reason.length > 200) return showError('操作原因不能超过 200 字')
   if (!/^\d+(\.\d{1,2})?$/.test(form.amount.trim()) || operationAmount.value <= 0 || operationAmount.value > maximumAmount.value) {
@@ -90,11 +123,13 @@ const backToEdit = async () => {
   stage.value = 'edit'
   errorMessage.value = ''
   await nextTick()
-  amountRef.value?.focus?.()
+  accountRef.value?.focus?.()
 }
 const requestMfa = () => {
   if (phase.value !== 'open' || props.busy) return
   const payload = { userId: userId.value, reason: form.reason.trim() }
+  payload.accountKey = form.accountKey
+  payload.coinKey = form.coinKey
   payload.amount = parsedAmount.value
   emit('request-mfa', { type: modeToType[props.mode], payload, returnFocus: submitButtonRef.value })
 }
@@ -119,10 +154,34 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
             <p class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">{{ config.hint }}</p>
 
             <template v-if="stage === 'edit'">
-              <dl class="grid grid-cols-2 gap-2 text-sm">
-                <div class="rounded-lg border border-slate-200 p-3"><dt class="text-xs text-slate-500">可用资金</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(balance) }}</dd></div>
-                <div class="rounded-lg border border-slate-200 p-3"><dt class="text-xs text-slate-500">冻结资金</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(frozenBalance) }}</dd></div>
-              </dl>
+              <div class="grid gap-3 sm:grid-cols-2">
+                <SelectOnlyCombobox
+                  ref="accountRef"
+                  v-model="form.accountKey"
+                  :options="accountOptions"
+                  label="操作账户"
+                  required
+                  id-base="user-funds-operation-account"
+                />
+                <SelectOnlyCombobox
+                  v-model="form.coinKey"
+                  :options="coinOptions"
+                  label="操作币种"
+                  required
+                  id-base="user-funds-operation-coin"
+                />
+              </div>
+              <section class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2.5 text-sm" aria-label="当前账户余额">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="text-xs font-medium text-blue-700">当前账户余额</span>
+                  <strong class="text-slate-900">{{ currentAccountBalanceTitle }}</strong>
+                </div>
+                <dl class="mt-2 grid gap-2" :class="showFrozenBalance ? 'grid-cols-2' : 'grid-cols-1'">
+                  <div class="rounded-lg bg-white/80 p-2"><dt class="text-xs text-slate-500">可用资金</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(balance) }}</dd></div>
+                  <div v-if="showFrozenBalance" class="rounded-lg bg-white/80 p-2"><dt class="text-xs text-slate-500">冻结资金</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(frozenBalance) }}</dd></div>
+                  <div v-if="mode === 'unfreeze'" class="col-span-2 rounded-lg bg-white/80 p-2"><dt class="text-xs text-slate-500">可解冻资金</dt><dd class="mt-1 font-semibold text-slate-900">{{ money(maximumAmount) }}</dd></div>
+                </dl>
+              </section>
               <div>
                 <label for="user-funds-operation-amount" class="text-sm font-medium text-slate-800">{{ config.amountLabel }} <span class="text-rose-500">*</span></label>
                 <div class="mt-1.5 flex gap-2">
@@ -142,9 +201,11 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
               <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
                 <h3 class="font-semibold">确认{{ config.title }}</h3>
                 <dl class="mt-3 grid grid-cols-[5rem_1fr] gap-y-2">
+                  <dt class="text-amber-800">操作账户</dt><dd>{{ selectedAccountLabel }}</dd>
+                  <dt class="text-amber-800">操作币种</dt><dd>{{ selectedCoinLabel }}</dd>
                   <dt class="text-amber-800">操作金额</dt><dd>{{ money(operationAmount) }}</dd>
                   <dt class="text-amber-800">可用资金</dt><dd>{{ money(balance) }} → <strong>{{ money(after.balance) }}</strong></dd>
-                  <dt class="text-amber-800">冻结资金</dt><dd>{{ money(frozenBalance) }} → <strong>{{ money(after.frozen) }}</strong></dd>
+                  <template v-if="showFrozenBalance"><dt class="text-amber-800">冻结资金</dt><dd>{{ money(frozenBalance) }} → <strong>{{ money(after.frozen) }}</strong></dd></template>
                   <dt class="text-amber-800">操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd>
                 </dl>
               </div>

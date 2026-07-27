@@ -106,7 +106,7 @@ test('list metadata only reflects active and processing rules', () => {
   assert.deepEqual(userControlHelpers.getUserControlListMeta(divergent, 'user_1001'), {
     hasCurrent: true,
     controlLabel: '存在模块差异',
-    durationLabel: '永久'
+    durationLabel: '永久控制'
   })
 
   const cancelled = cancelUnifiedControl(unified, {
@@ -148,10 +148,10 @@ test('cancel items include only effective modules with their current rule conten
   assert.equal(items.length, 5)
   assert.equal(items.some((item) => item.moduleKey === 'delivery'), false)
   assert.deepEqual(items.find((item) => item.moduleKey === 'perpetual'), {
-    moduleKey: 'perpetual', moduleLabel: '永续', value: 'loss', duration: 'once', status: 'active'
+    moduleKey: 'perpetual', moduleLabel: '永续', value: 'loss', method: 'loss', duration: 'once', status: 'active'
   })
   assert.deepEqual(items.find((item) => item.moduleKey === 'aiQuant'), {
-    moduleKey: 'aiQuant', moduleLabel: 'AI量化', value: 'lowYield', duration: 'once', status: 'active'
+    moduleKey: 'aiQuant', moduleLabel: 'AI量化', value: 'lowYield', method: 'loss', duration: 'once', status: 'active'
   })
 })
 

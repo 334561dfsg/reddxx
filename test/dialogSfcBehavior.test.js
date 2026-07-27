@@ -138,10 +138,10 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
   const userA = { id: 'user-a', username: 'Alpha', email: 'alpha@example.test' }
   const userB = { id: 'user-b', username: 'Beta', email: 'beta@example.test' }
   const rulesA = {
-    spot: { strategy: 'positive', value: 'profit', duration: 'permanent', status: 'active' }
+    spot: { strategy: 'positive', method: 'profit', value: 'profit', duration: 'permanent', status: 'active' }
   }
   const rulesB = {
-    portfolio: { strategy: 'negative', value: 'lowYield', duration: 'once', status: 'active' }
+    portfolio: { strategy: 'negative', method: 'lowLoss', value: 'lowYield', duration: 'once', status: 'active' }
   }
   let harness
   harness = await createSfcHarness(component, {
@@ -170,16 +170,11 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
   await harness.finishTransitions()
   await harness.finishTransitions()
 
-  const lowYield = harness.allNodes().find((node) => (
-    node.tag === 'input' && node.getAttribute?.('name') === 'value' && node.value === 'lowYield'
-  ))
-  const once = harness.allNodes().find((node) => (
-    node.tag === 'input' && node.getAttribute?.('name') === 'duration' && node.value === 'once'
-  ))
-
-  assert.ok(lowYield)
-  assert.equal(lowYield.checked, true)
-  assert.equal(once.checked, true)
+  const body = harness.findByTestId('user-control-dialog-body')
+  assert.match(body.textContent, /投资组合点控规则/)
+  assert.doesNotMatch(body.textContent, /当前选择：做低亏损/)
+  assert.doesNotMatch(body.textContent, /当前选择说明/)
+  assert.match(body.textContent, /当前模块首次有效结算或实际入账成功后/)
   assert.match(harness.findByTestId('user-control-target-user').textContent, /Beta/)
 })
 
