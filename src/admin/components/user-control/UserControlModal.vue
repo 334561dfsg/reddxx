@@ -3,7 +3,6 @@ import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } 
 import { USER_CONTROL_MODULES } from '../../../features/user-control/userControl.js'
 import {
   buildUserControlPayload,
-  controlMethodLabel,
   defaultControlMethod,
   getControlMethodOptions,
   getControlTypeOptions,
@@ -96,7 +95,6 @@ const controlTypeOptions = computed(() => getControlTypeOptions())
 const controlMethodOptions = computed(() => getControlMethodOptions(form.strategy))
 const selectedControlType = computed(() => controlTypeOptions.value.find((option) => option.value === form.strategy) || null)
 const selectedControlMethod = computed(() => controlMethodOptions.value.find((option) => option.value === form.method) || null)
-const selectedMethodLabel = computed(() => selectedControlMethod.value?.label || controlMethodLabel(form.method) || '—')
 
 const affectedModules = computed(() => isGlobalScope.value
   ? USER_CONTROL_MODULES
@@ -123,76 +121,60 @@ const durationRuleHint = computed(() => form.duration === 'once'
   : '后续每次有效结算或实际入账都会使用当前规则，直到管理员取消或新规则覆盖。')
 
 const moduleRuleCatalog = Object.freeze({
-  global: {
-    title: '六模块统一规则',
-    items: [
-      '从用户管理设置时，会一次性写入交割、永续、现货、AI量化、流动性挖矿、投资组合六个模块。',
-      '统一设置只统一方向、方式和周期；具体金额、收益或亏损由各模块在最终结算时处理。',
-      '后续如果在单个模块里修改，只覆盖该模块，其他模块保留原规则。'
-    ]
-  },
   delivery: {
     title: '交割点控规则',
-    items: [
-      '只在交割合约订单到期并完成最终结算时生效。',
-      '未到期、未结算、撤销或失败订单不触发点控，也不消耗一次性控制。',
-      '盈利、亏损及高低档位由交割模块按结算规则计算具体结果。'
-    ]
+    scope: '影响当前用户的交割合约订单最终结算结果，不影响交割合约产品配置、行情和其他用户订单。',
+    effect: '交割订单到期并完成最终结算时读取当前点控规则；未到期、未结算、撤销或失败订单不触发，也不消耗一次性控制。',
+    example: '示例：用户持有 BTC 周期交割合约，到期结算时命中“盈利 / 做高盈利”，交割模块按结算规则给该用户生成偏高盈利结果。'
   },
   perpetual: {
     title: '永续点控规则',
-    items: [
-      '不针对单个用户修改K线或行情，不影响实时浮盈亏展示。',
-      '在用户平仓、强平或最终结算确认时按点控规则处理盈亏方向。',
-      '未平仓持仓、预估盈亏和行情波动不消耗一次性控制。'
-    ]
+    scope: '影响当前用户永续合约仓位的最终平仓、强平或结算盈亏，不单独修改K线、盘口行情和实时浮盈亏。',
+    effect: '用户平仓、强平或最终结算确认时读取当前点控规则；未平仓持仓、预估盈亏和行情波动不触发，也不消耗一次性控制。',
+    example: '示例：用户平仓 ETH 永续仓位时命中“亏损 / 做低亏损”，永续模块在最终结算中给该用户生成较低亏损结果。'
   },
   spot: {
     title: '现货点控规则',
-    items: [
-      '不改变大盘行情、盘口价格和真实成交撮合记录。',
-      '订单成交并形成该用户最终交易结果时，按点控规则处理收益或亏损表现。',
-      '未成交、部分未完成、撤单或失败订单不消耗一次性控制。'
-    ]
+    scope: '影响当前用户现货订单成交后的最终收益或损益表现，不改变大盘行情、盘口价格和真实成交撮合记录。',
+    effect: '现货订单成交并形成该用户最终交易结果时读取当前点控规则；未成交、撤单、失败订单不触发，未完成部分不消耗一次性控制。',
+    example: '示例：用户买入后卖出 BTC 形成结算结果时命中“盈利 / 做低盈利”，现货模块给该用户生成较低盈利表现。'
   },
   aiQuant: {
     title: 'AI量化点控规则',
-    items: [
-      '在量化订单完成或周期收益实际入账时生效。',
-      '预估收益、运行中收益和未完成策略不触发点控。',
-      '盈利类方式对应收益提高处理，亏损类方式按低收益或最低收益处理。'
-    ]
+    scope: '影响当前用户 AI 量化订单或策略周期的实际收益入账结果，不影响产品收益规则和其他用户收益。',
+    effect: '量化订单完成或周期收益实际入账时读取当前点控规则；预估收益、运行中收益和未完成策略不触发，也不消耗一次性控制。',
+    example: '示例：用户 AI 量化周期结算时命中“盈利 / 做高盈利”，AI量化模块按产品规则给该用户生成偏高收益。'
   },
   liquidity: {
     title: '流动性挖矿点控规则',
-    items: [
-      '在挖矿收益发放或订单结算入账时生效。',
-      '未到发放周期、预估收益和未确认收益不触发点控。',
-      '盈利类方式对应高/默认/低收益，亏损类方式按低收益或最低收益处理。'
-    ]
+    scope: '影响当前用户流动性挖矿订单的收益发放或结算入账结果，不影响矿池产品规则和全局收益配置。',
+    effect: '挖矿收益发放或订单结算入账时读取当前点控规则；未到发放周期、预估收益和未确认收益不触发，也不消耗一次性控制。',
+    example: '示例：用户流动性挖矿收益发放时命中“亏损 / 做低亏损”，模块按低收益或最低收益规则处理该用户入账结果。'
   },
   portfolio: {
     title: '投资组合点控规则',
-    items: [
-      '在组合订单结算或收益实际入账时生效。',
-      '持仓中的浮动收益、预估收益和未完成订单不触发点控。',
-      '盈利类方式对应高/默认/低收益，亏损类方式按低收益或最低收益处理。'
-    ]
+    scope: '影响当前用户投资组合订单的最终结算或实际收益入账结果，不影响组合产品配置、持仓展示和其他用户收益。',
+    effect: '组合订单结算或收益实际入账时读取当前点控规则；持仓中的浮动收益、预估收益和未完成订单不触发，也不消耗一次性控制。',
+    example: '示例：用户投资组合到期结算时命中“盈利 / 做低盈利”，投资组合模块按产品规则给该用户生成较低收益。'
   }
 })
 
-const selectedModuleRule = computed(() => moduleRuleCatalog[
-  isGlobalScope.value ? 'global' : displayModuleKey.value
-] || {
+const fallbackModuleRule = Object.freeze({
   title: '当前模块规则',
-  items: ['当前模块在最终结算或实际入账时执行点控规则。']
+  scope: '影响当前用户在当前模块的最终结算或实际入账结果。',
+  effect: '当前模块在最终结算或实际入账时读取点控规则；未完成、失败或预估数据不触发。',
+  example: '示例：用户产生最终结算时，模块按当前选择的盈利或亏损方向生成结果。'
 })
 
-const financeRuleHint = computed(() => {
-  const hasFinanceModule = affectedModules.value.some((item) => item.family === 'finance')
-  if (!hasFinanceModule) return ''
-  return '理财模块按产品规则解释控盘方式：盈利类方式对应高/默认/低收益；亏损类方式默认按低收益或最低收益处理，不直接填写收益率或金额。'
-})
+const ruleModules = computed(() => isGlobalScope.value
+  ? USER_CONTROL_MODULES
+  : moduleMeta.value ? [moduleMeta.value] : [])
+
+const displayedModuleRules = computed(() => ruleModules.value.map((module) => ({
+  key: module.key,
+  label: module.label,
+  ...(moduleRuleCatalog[module.key] || fallbackModuleRule)
+})))
 
 const formInput = computed(() => ({
   scope: displayScope.value,
@@ -274,7 +256,7 @@ watch(rendered, (isRendered) => {
 })
 
 watch(
-  [() => form.strategy, () => form.method, () => form.duration, () => form.note, affectedModules, financeRuleHint, selectedModuleRule],
+  [() => form.strategy, () => form.method, () => form.duration, () => form.note, affectedModules, displayedModuleRules],
   queueHelpPanelHeightSync
 )
 
@@ -406,53 +388,32 @@ const submit = () => {
               :style="{ maxHeight: helpPanelMaxHeight || undefined }"
               aria-label="点控说明备注"
             >
-              <div class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs leading-5 text-blue-800">
-                <p class="font-semibold">{{ selectedModuleRule.title }}</p>
-                <ul class="mt-1 list-disc space-y-1 pl-4">
-                  <li v-for="item in selectedModuleRule.items" :key="item">
-                    {{ item }}
-                  </li>
-                </ul>
-              </div>
-
-              <div v-if="isGlobalScope" class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <p class="text-xs font-semibold text-slate-800">当前选择说明</p>
-                <dl class="mt-2 space-y-2 text-xs leading-5 text-slate-600">
+              <div
+                v-for="rule in displayedModuleRules"
+                :key="rule.key"
+                class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs leading-5 text-blue-800"
+              >
+                <p class="font-semibold">{{ rule.title }}</p>
+                <dl class="mt-1 space-y-1">
                   <div>
-                    <dt class="font-semibold text-slate-700">控盘类型</dt>
-                    <dd id="user-control-strategy-help">{{ selectedControlType?.description || '请选择盈利或亏损' }}</dd>
+                    <dt class="font-semibold">影响范围</dt>
+                    <dd>{{ rule.scope }}</dd>
                   </div>
                   <div>
-                    <dt class="font-semibold text-slate-700">控盘方式</dt>
-                    <dd id="user-control-method-help">{{ selectedControlMethod?.description || '请选择控盘方式' }}</dd>
-                    <dd>当前选择：{{ selectedMethodLabel }}</dd>
+                    <dt class="font-semibold">生效方式</dt>
+                    <dd>{{ rule.effect }}</dd>
                   </div>
                   <div>
-                    <dt class="font-semibold text-slate-700">控制周期</dt>
-                    <dd id="user-control-duration-help">{{ selectedDuration?.desc || '请选择控制周期' }}</dd>
-                    <dd>{{ durationRuleHint }}</dd>
+                    <dt class="font-semibold">示例</dt>
+                    <dd>{{ rule.example }}</dd>
                   </div>
                 </dl>
               </div>
 
-              <div v-else class="sr-only">
+              <div class="sr-only">
                 <p id="user-control-strategy-help">{{ selectedControlType?.description || '请选择盈利或亏损' }}</p>
                 <p id="user-control-method-help">{{ selectedControlMethod?.description || '请选择控盘方式' }}</p>
                 <p id="user-control-duration-help">{{ selectedDuration?.desc || '请选择控制周期' }}。{{ durationRuleHint }}</p>
-              </div>
-
-              <div v-if="isGlobalScope" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs leading-5 text-slate-600">
-                <p class="font-semibold text-slate-800">通用结算说明</p>
-                <p class="mt-0.5">具体盈利金额、亏损金额或理财收益由各模块在最终结算时计算。</p>
-                <p class="mt-0.5">失败、预估收益、浮动盈亏、未完成订单和重复通知不消耗一次性控制规则。</p>
-              </div>
-
-              <div v-if="isGlobalScope && financeRuleHint" class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs leading-5 text-emerald-800">
-                {{ financeRuleHint }}
-              </div>
-
-              <div v-if="isGlobalScope" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs leading-5 text-slate-600">
-                状态规则：一次性控制显示“待执行”，成功后显示“已执行”；永久控制显示“生效中”，取消或被新规则覆盖后结束。
               </div>
             </aside>
           </div>
