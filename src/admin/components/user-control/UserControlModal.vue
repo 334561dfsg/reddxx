@@ -103,58 +103,52 @@ const affectedModules = computed(() => isGlobalScope.value
 const durationOptions = computed(() => [
   {
     value: 'once',
-    label: '一次性控制',
-    desc: isGlobalScope.value ? '每个模块各控制 1 次' : '当前模块控制 1 次'
+    label: '只生效一次',
+    desc: isGlobalScope.value ? '所有模块只对用户的第一单生效' : '当前模块只对用户的第一单生效'
   },
   {
     value: 'permanent',
-    label: '永久控制',
-    desc: '后续有效结算持续控制'
+    label: '持续生效',
+    desc: isGlobalScope.value ? '点控开始后，后续所有模块订单持续生效' : '点控开始后，当前模块后续订单持续生效'
   }
 ])
 const selectedDuration = computed(() => durationOptions.value.find((option) => option.value === form.duration) || null)
-
-const durationRuleHint = computed(() => form.duration === 'once'
-  ? (isGlobalScope.value
-    ? '六个模块分别等待自己的首次有效结算或实际入账；某个模块成功后仅该模块结束，其他模块继续等待。'
-    : '当前模块首次有效结算或实际入账成功后，本次控制自动结束。')
-  : '后续每次有效结算或实际入账都会使用当前规则，直到管理员取消或新规则覆盖。')
 
 const moduleRuleCatalog = Object.freeze({
   delivery: {
     title: '交割点控规则',
     scope: '影响当前用户的交割合约订单最终结算结果，不影响交割合约产品配置、行情和其他用户订单。',
-    effect: '交割订单到期并完成最终结算时读取当前点控规则；未到期、未结算、撤销或失败订单不触发，也不消耗一次性控制。',
+    effect: '交割订单到期并完成最终结算时读取当前点控规则；未到期、未结算、撤销或失败订单不触发，也不消耗“只生效一次”规则。',
     example: '示例：用户持有 BTC 周期交割合约，到期结算时命中“盈利 / 做高盈利”，交割模块按结算规则给该用户生成偏高盈利结果。'
   },
   perpetual: {
     title: '永续点控规则',
     scope: '影响当前用户永续合约仓位的最终平仓、强平或结算盈亏，不单独修改K线、盘口行情和实时浮盈亏。',
-    effect: '用户平仓、强平或最终结算确认时读取当前点控规则；未平仓持仓、预估盈亏和行情波动不触发，也不消耗一次性控制。',
+    effect: '用户平仓、强平或最终结算确认时读取当前点控规则；未平仓持仓、预估盈亏和行情波动不触发，也不消耗“只生效一次”规则。',
     example: '示例：用户平仓 ETH 永续仓位时命中“亏损 / 做低亏损”，永续模块在最终结算中给该用户生成较低亏损结果。'
   },
   spot: {
     title: '现货点控规则',
     scope: '影响当前用户现货订单成交后的最终收益或损益表现，不改变大盘行情、盘口价格和真实成交撮合记录。',
-    effect: '现货订单成交并形成该用户最终交易结果时读取当前点控规则；未成交、撤单、失败订单不触发，未完成部分不消耗一次性控制。',
+    effect: '现货订单成交并形成该用户最终交易结果时读取当前点控规则；未成交、撤单、失败订单不触发，未完成部分不消耗“只生效一次”规则。',
     example: '示例：用户买入后卖出 BTC 形成结算结果时命中“盈利 / 做低盈利”，现货模块给该用户生成较低盈利表现。'
   },
   aiQuant: {
     title: 'AI量化点控规则',
     scope: '影响当前用户 AI 量化订单或策略周期的实际收益入账结果，不影响产品收益规则和其他用户收益。',
-    effect: '量化订单完成或周期收益实际入账时读取当前点控规则；预估收益、运行中收益和未完成策略不触发，也不消耗一次性控制。',
+    effect: '量化订单完成或周期收益实际入账时读取当前点控规则；预估收益、运行中收益和未完成策略不触发，也不消耗“只生效一次”规则。',
     example: '示例：用户 AI 量化周期结算时命中“盈利 / 做高盈利”，AI量化模块按产品规则给该用户生成偏高收益。'
   },
   liquidity: {
     title: '流动性挖矿点控规则',
     scope: '影响当前用户流动性挖矿订单的收益发放或结算入账结果，不影响矿池产品规则和全局收益配置。',
-    effect: '挖矿收益发放或订单结算入账时读取当前点控规则；未到发放周期、预估收益和未确认收益不触发，也不消耗一次性控制。',
+    effect: '挖矿收益发放或订单结算入账时读取当前点控规则；未到发放周期、预估收益和未确认收益不触发，也不消耗“只生效一次”规则。',
     example: '示例：用户流动性挖矿收益发放时命中“亏损 / 做低亏损”，模块按低收益或最低收益规则处理该用户入账结果。'
   },
   portfolio: {
     title: '投资组合点控规则',
     scope: '影响当前用户投资组合订单的最终结算或实际收益入账结果，不影响组合产品配置、持仓展示和其他用户收益。',
-    effect: '组合订单结算或收益实际入账时读取当前点控规则；持仓中的浮动收益、预估收益和未完成订单不触发，也不消耗一次性控制。',
+    effect: '组合订单结算或收益实际入账时读取当前点控规则；持仓中的浮动收益、预估收益和未完成订单不触发，也不消耗“只生效一次”规则。',
     example: '示例：用户投资组合到期结算时命中“盈利 / 做低盈利”，投资组合模块按产品规则给该用户生成较低收益。'
   }
 })
@@ -323,33 +317,33 @@ const submit = () => {
         <div data-testid="user-control-dialog-body" class="min-h-0 flex-1 overflow-y-auto px-5 py-3 lg:flex-none lg:overflow-hidden">
           <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
             <div ref="leftPanelRef" class="min-w-0 space-y-2.5">
-              <SelectOnlyCombobox
-                ref="firstControlSelect"
-                v-model="form.strategy"
-                :options="controlTypeOptions"
-                label="控盘类型"
-                required
-                described-by="user-control-strategy-help"
-                id-base="user-control-strategy"
-              />
+                  <SelectOnlyCombobox
+                    ref="firstControlSelect"
+                    v-model="form.strategy"
+                    :options="controlTypeOptions"
+                    label="控盘类型"
+                    required
+                    :hint="selectedControlType?.description || '请选择盈利或亏损的控制方向'"
+                    id-base="user-control-strategy"
+                  />
 
-              <SelectOnlyCombobox
-                v-model="form.method"
-                :options="controlMethodOptions"
-                label="控盘方式"
-                required
-                described-by="user-control-method-help"
-                id-base="user-control-method"
-              />
+                  <SelectOnlyCombobox
+                    v-model="form.method"
+                    :options="controlMethodOptions"
+                    label="控盘方式"
+                    required
+                    :hint="selectedControlMethod?.description || '请选择默认、做高或做低的处理方式'"
+                    id-base="user-control-method"
+                  />
 
-              <SelectOnlyCombobox
-                v-model="form.duration"
-                :options="durationOptions"
-                label="控制周期"
-                required
-                described-by="user-control-duration-help"
-                id-base="user-control-duration"
-              />
+                  <SelectOnlyCombobox
+                    v-model="form.duration"
+                    :options="durationOptions"
+                    label="控制周期"
+                    required
+                    :hint="selectedDuration?.desc || '请选择本次点控生效的订单范围'"
+                    id-base="user-control-duration"
+                  />
 
               <div>
                 <p class="text-sm font-semibold text-slate-900">影响模块</p>
@@ -410,11 +404,6 @@ const submit = () => {
                 </dl>
               </div>
 
-              <div class="sr-only">
-                <p id="user-control-strategy-help">{{ selectedControlType?.description || '请选择盈利或亏损' }}</p>
-                <p id="user-control-method-help">{{ selectedControlMethod?.description || '请选择控盘方式' }}</p>
-                <p id="user-control-duration-help">{{ selectedDuration?.desc || '请选择控制周期' }}。{{ durationRuleHint }}</p>
-              </div>
             </aside>
           </div>
         </div>

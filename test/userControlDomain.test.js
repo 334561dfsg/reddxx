@@ -106,7 +106,7 @@ test('list metadata only reflects active and processing rules', () => {
   assert.deepEqual(userControlHelpers.getUserControlListMeta(divergent, 'user_1001'), {
     hasCurrent: true,
     controlLabel: '存在模块差异',
-    durationLabel: '永久控制'
+    durationLabel: '持续生效'
   })
 
   const cancelled = cancelUnifiedControl(unified, {

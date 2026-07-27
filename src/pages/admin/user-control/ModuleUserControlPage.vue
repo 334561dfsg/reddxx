@@ -107,7 +107,7 @@ const summaryCards = computed(() => [
   { label: '用户总数', value: rows.value.length, hint: '来自现有用户 Mock' },
   { label: '当前有效', value: effectiveRules.value.length, hint: `${moduleMeta.value.actionLabel}规则` },
   { label: '单次待执行', value: effectiveRules.value.filter((rule) => rule.duration === 'once').length, hint: '每个模块各执行 1 次' },
-  { label: '长期生效中', value: effectiveRules.value.filter((rule) => rule.duration === 'permanent').length, hint: '直到取消或覆盖' }
+  { label: '持续生效中', value: effectiveRules.value.filter((rule) => rule.duration === 'permanent').length, hint: '直到取消或覆盖' }
 ])
 
 const valueLabel = (value) => ({
@@ -117,7 +117,7 @@ const valueLabel = (value) => ({
   lowYield: '低收益'
 })[value] || '未设置'
 
-const durationLabel = (duration) => ({ once: '单次生效', permanent: '长期生效' })[duration] || '—'
+const durationLabel = (duration) => ({ once: '只生效一次', permanent: '持续生效' })[duration] || '—'
 
 const statusMeta = (rule) => {
   if (!rule) return { label: '未设置', classes: 'bg-slate-100 text-slate-600' }

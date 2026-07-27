@@ -59,7 +59,7 @@ const methodLabel = (method, fallbackValue) => ({
   lowLoss: '做低亏损'
 })[method] || valueLabel(fallbackValue)
 
-const durationLabel = (duration) => ({ once: '一次性控制', permanent: '永久控制' })[duration] || '—'
+const durationLabel = (duration) => ({ once: '只生效一次', permanent: '持续生效' })[duration] || '—'
 
 const statusMeta = (rule) => {
   if (!rule) return { label: '未设置', classes: 'bg-slate-100 text-slate-600' }
@@ -101,7 +101,7 @@ const summaryMeta = computed(() => {
   if (summary.value.kind === 'progress') {
     return {
       classes: 'border-slate-200 bg-slate-50 text-slate-700',
-      description: '一次性控制规则正按模块陆续完成；已执行属于正常进度，不代表配置存在差异。'
+      description: '只生效一次规则正按模块陆续完成；已执行属于正常进度，不代表配置存在差异。'
     }
   }
   return {

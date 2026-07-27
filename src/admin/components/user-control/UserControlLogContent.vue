@@ -66,7 +66,7 @@ const sourceLabel = (source) => ({
 })[source] || '—'
 
 const actionLabel = (action) => ({ apply: '设置控制', cancel: '取消控制', execute: '执行规则' })[action] || action
-const durationLabel = (duration) => ({ once: '一次性控制', permanent: '永久控制', mixed: '混合' })[duration] || '—'
+const durationLabel = (duration) => ({ once: '只生效一次', permanent: '持续生效', mixed: '混合' })[duration] || '—'
 const statusLabel = (status) => ({ success: '成功', failed: '失败' })[status] || status || '—'
 const executionStatusClasses = (status) => status === 'failed'
   ? 'bg-rose-100 text-rose-700'

@@ -172,9 +172,9 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
 
   const body = harness.findByTestId('user-control-dialog-body')
   assert.match(body.textContent, /投资组合点控规则/)
+  assert.doesNotMatch(body.textContent, /现货点控规则/)
   assert.doesNotMatch(body.textContent, /当前选择：做低亏损/)
   assert.doesNotMatch(body.textContent, /当前选择说明/)
-  assert.match(body.textContent, /当前模块首次有效结算或实际入账成功后/)
   assert.match(harness.findByTestId('user-control-target-user').textContent, /Beta/)
 })
 

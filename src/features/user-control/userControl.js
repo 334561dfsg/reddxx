@@ -368,7 +368,7 @@ export function getUserControlListMeta(state, userId) {
   return {
     hasCurrent: true,
     controlLabel,
-    durationLabel: durations.length > 1 ? '混合' : durations[0] === 'permanent' ? '永久控制' : '一次性控制'
+    durationLabel: durations.length > 1 ? '混合' : durations[0] === 'permanent' ? '持续生效' : '只生效一次'
   }
 }
 

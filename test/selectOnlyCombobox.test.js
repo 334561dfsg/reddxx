@@ -409,6 +409,21 @@ test('associates only mounted component and consumer-owned error descriptions', 
   assertDescriptionsAreLive(['consumer-error', 'transfer-to-config-error'])
 })
 
+test('renders a visible hint and associates it with the combobox description', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const harness = await createSfcHarness(component, {
+    ...baseProps,
+    hint: '所有模块只对用户的第一单生效'
+  })
+  t.after(harness.cleanup)
+
+  const combobox = harness.findByTestId('select-only-combobox')
+  const hint = harness.document.getElementById('transfer-to-hint')
+  assert.deepEqual(describedIds(combobox), ['transfer-to-hint'])
+  assert.equal(hint?.textContent, '所有模块只对用户的第一单生效')
+  assert.equal(combobox.contains(hint), true)
+})
+
 test('a printable key opens a closed combobox and moves active without committing', async (t) => {
   const component = await loadVueSfc(componentFile)
   const harness = await createSfcHarness(component, {

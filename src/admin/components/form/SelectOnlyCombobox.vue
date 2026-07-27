@@ -19,6 +19,7 @@ const props = defineProps({
   readonly: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   errorId: { type: String, default: '' },
+  hint: { type: String, default: '' },
   describedBy: { type: [String, Array], default: '' },
   idBase: { type: String, default: '' }
 })
@@ -30,6 +31,7 @@ const stableIdBase = props.idBase.trim() || fallbackId
 const labelId = `${stableIdBase}-label`
 const listboxId = `${stableIdBase}-listbox`
 const requiredId = `${stableIdBase}-required`
+const hintId = `${stableIdBase}-hint`
 const orphanedId = `${stableIdBase}-orphaned`
 const configErrorId = `${stableIdBase}-config-error`
 
@@ -78,6 +80,7 @@ const describedBy = computed(() => {
   const ids = []
   if (Array.isArray(props.describedBy)) ids.push(...props.describedBy.filter(Boolean))
   else if (props.describedBy) ids.push(props.describedBy)
+  if (props.hint) ids.push(hintId)
   if (props.invalid && props.errorId) ids.push(props.errorId)
   if (orphaned.value) ids.push(orphanedId)
   if (hasDuplicateOptions.value) ids.push(configErrorId)
@@ -461,7 +464,12 @@ onUnmounted(() => {
       @click="open ? closePopup('trigger') : openPopup()"
       @keydown="handleKeydown"
     >
-      <span class="min-w-0 flex-1 truncate">{{ displayText }}</span>
+      <span class="min-w-0 flex-1">
+        <span class="block truncate">{{ displayText }}</span>
+        <span v-if="hint" :id="hintId" class="mt-0.5 block truncate text-xs leading-5 text-slate-500">
+          {{ hint }}
+        </span>
+      </span>
       <span class="shrink-0 text-xs text-gray-500">{{ readonly ? '只读' : '选择' }}</span>
     </div>
 
