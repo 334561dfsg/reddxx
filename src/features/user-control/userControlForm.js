@@ -10,8 +10,8 @@ const MODULE_CONTROL_OPTIONS = Object.freeze({
 })
 
 const CONTROL_TYPE_OPTIONS = Object.freeze([
-  Object.freeze({ value: 'positive', label: '盈利', description: '交易模块盈利；理财模块按收益提高处理' }),
-  Object.freeze({ value: 'negative', label: '亏损', description: '交易模块亏损；理财模块按低收益或最低收益处理' })
+  Object.freeze({ value: 'positive', label: '控赢', description: '交易模块按有利价格偏移；理财模块按收益率提升处理' }),
+  Object.freeze({ value: 'negative', label: '控输', description: '交易模块按不利价格偏移；理财模块按收益率降低处理' })
 ])
 
 const CONTROL_METHOD_OPTIONS = Object.freeze({
@@ -30,39 +30,6 @@ const CONTROL_METHOD_OPTIONS = Object.freeze({
 const VALID_STRATEGIES = new Set(['positive', 'negative'])
 const VALID_DURATIONS = new Set(['once', 'permanent'])
 const text = (value) => String(value ?? '').trim()
-const numberText = (value) => text(value)
-const isValidPercentRange = (range = {}) => {
-  const minText = numberText(range.min)
-  const maxText = numberText(range.max)
-  if (!minText || !maxText) return false
-  const min = Number(minText)
-  const max = Number(maxText)
-  return Number.isFinite(min) && Number.isFinite(max) && min >= 0 && max >= min
-}
-
-const normalizePercentRange = (range = {}) => ({
-  min: Number(numberText(range.min)),
-  max: Number(numberText(range.max))
-})
-
-const requiredRangeFamilies = (input = {}) => {
-  if (input.scope === 'global') return ['trade', 'finance']
-  return input.family ? [input.family] : []
-}
-
-export const targetRangeLabel = (family, strategy = 'positive') => {
-  if (family === 'finance') return strategy === 'negative' ? '理财目标低收益范围' : '理财目标收益范围'
-  return strategy === 'negative' ? '交易目标亏损范围' : '交易目标盈利范围'
-}
-export const targetRangeUnitLabel = (family, strategy = 'positive') => {
-  if (family === 'finance') return strategy === 'negative'
-    ? '填最终低收益率，如 0 - 2；表示最终收益率降到 0% - 2%。'
-    : '填最终收益率，如 8 - 12；表示最终收益率为 8% - 12%。'
-  return strategy === 'negative'
-    ? '填正数，如 2 - 4；表示最终亏损为订单本金的 2% - 4%，不要填负数。'
-    : '填正数，如 3 - 5；表示最终盈利为订单本金的 3% - 5%。'
-}
-export const targetRangePayloadKey = (family) => (family === 'finance' ? 'financeYield' : 'tradePnl')
 
 export const getModuleControlOptions = (family) => MODULE_CONTROL_OPTIONS[family] || []
 export const getControlTypeOptions = () => CONTROL_TYPE_OPTIONS
@@ -79,7 +46,6 @@ export const moduleValueForStrategy = (strategy, family) => {
 
 export function isUserControlFormComplete(input = {}) {
   if (!text(input.userId) || !text(input.note) || !VALID_DURATIONS.has(input.duration)) return false
-  if (!requiredRangeFamilies(input).every((family) => isValidPercentRange(input.targetRanges?.[family]))) return false
   if (input.scope === 'global') return VALID_STRATEGIES.has(input.strategy) && isControlMethodForStrategy(input.strategy, input.method)
   if (input.scope !== 'module') return false
   return VALID_STRATEGIES.has(input.strategy)
@@ -89,16 +55,11 @@ export function isUserControlFormComplete(input = {}) {
 
 export function buildUserControlPayload(input = {}) {
   if (!isUserControlFormComplete(input)) throw new TypeError('user control form is incomplete')
-  const targetRanges = Object.fromEntries(requiredRangeFamilies(input).map((family) => [targetRangePayloadKey(family), {
-    ...normalizePercentRange(input.targetRanges?.[family]),
-    unit: 'percent'
-  }]))
   return {
     userId: text(input.userId),
     strategy: input.strategy,
     method: input.method,
     ...(input.scope === 'module' ? { value: moduleValueForStrategy(input.strategy, input.family) } : {}),
-    targetRanges,
     duration: input.duration,
     note: text(input.note)
   }

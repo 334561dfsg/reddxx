@@ -7,9 +7,7 @@ import {
   getControlMethodOptions,
   getControlTypeOptions,
   isControlMethodForStrategy,
-  isUserControlFormComplete,
-  targetRangeLabel,
-  targetRangeUnitLabel
+  isUserControlFormComplete
 } from '../../../features/user-control/userControlForm.js'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
 import { useDialogContentSnapshot, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
@@ -84,14 +82,9 @@ const form = reactive({
   strategy: '',
   method: '',
   duration: '',
-  targetRanges: {
-    trade: { min: '', max: '' },
-    finance: { min: '', max: '' }
-  },
   note: ''
 })
 const noteTouched = ref(false)
-const rangeTouched = reactive({ trade: false, finance: false })
 
 const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key === displayModuleKey.value) || null)
 const selectedUserId = computed(() => String(displayUser.value?.userId ?? displayUser.value?.id ?? ''))
@@ -121,63 +114,49 @@ const durationOptions = computed(() => [
 ])
 const selectedDuration = computed(() => durationOptions.value.find((option) => option.value === form.duration) || null)
 const effectiveOrderNotice = '只对点控开始之后产生的订单生效；点控前订单和已完成历史订单不受影响。'
-const activeRangeFamilies = computed(() => {
-  const families = [...new Set(affectedModules.value.map((module) => module.family).filter(Boolean))]
-  return families.map((family) => ({
-    family,
-    label: targetRangeLabel(family, form.strategy),
-    unit: targetRangeUnitLabel(family, form.strategy),
-    modules: affectedModules.value.filter((module) => module.family === family).map((module) => module.label).join('、')
-  }))
-})
-const isRangeInvalid = (family) => {
-  const range = form.targetRanges[family] || {}
-  const min = Number(String(range.min ?? '').trim())
-  const max = Number(String(range.max ?? '').trim())
-  return !String(range.min ?? '').trim()
-    || !String(range.max ?? '').trim()
-    || !Number.isFinite(min)
-    || !Number.isFinite(max)
-    || min < 0
-    || max < min
-}
 
 const moduleRuleCatalog = Object.freeze({
   delivery: {
     title: '交割点控规则',
-    scope: '影响当前用户的交割合约订单最终结算结果，不影响交割合约产品配置、行情和其他用户订单。',
-    effect: '交割订单到期并完成最终结算时读取当前点控规则；模块按目标盈亏范围生成该用户最终结果，内部可通过结算价修正实现。',
-    example: '示例：用户自然结果为亏损，命中“盈利 / 做高盈利”且目标盈亏范围为 3% - 5%，最终结算结果应落入该盈利范围。'
+    scope: '影响当前用户交割合约订单的最终结算价格，不影响公共行情、产品配置和其他用户订单。',
+    pointMethod: '通过结算价偏移处理：买涨控赢向上偏移、控输向下偏移；买跌控赢向下偏移、控输向上偏移。',
+    effect: '控赢时：买涨结算价向上偏移，买跌结算价向下偏移；控输时：买涨结算价向下偏移，买跌结算价向上偏移。',
+    example: '说明：控盘方式只作为操作标记，不参与结算逻辑；实际按控赢或控输方向在结算时处理价格偏移。'
   },
   perpetual: {
     title: '永续点控规则',
-    scope: '影响当前用户永续合约仓位的最终平仓、强平或结算盈亏，不单独修改K线、盘口行情和实时浮盈亏。',
-    effect: '用户平仓、强平或最终结算确认时读取当前点控规则；模块按目标盈亏范围修正该用户已实现盈亏，未平仓浮盈亏不触发。',
-    example: '示例：用户平仓 ETH 永续仓位时命中“亏损 / 做低亏损”，最终已实现亏损应落入填写的目标范围。'
+    scope: '影响当前用户永续合约仓位的最终平仓或结算价格，不单独修改K线、盘口行情和实时浮盈亏。',
+    pointMethod: '通过平仓价或结算价偏移处理：做多控赢价格更高、控输价格更低；做空控赢价格更低、控输价格更高。',
+    effect: '控赢时：做多结算价更高，做空结算价更低；控输时：做多结算价更低，做空结算价更高。',
+    example: '说明：控盘方式只作为操作标记，不参与结算逻辑；未平仓浮盈亏不触发点控。'
   },
   spot: {
     title: '现货点控规则',
-    scope: '影响当前用户现货订单成交后的最终收益或损益表现，不改变大盘行情、盘口价格和真实成交撮合记录。',
-    effect: '现货订单成交并形成该用户最终交易结果时读取当前点控规则；模块按目标盈亏范围处理用户结果，不改变公共成交数据。',
-    example: '示例：用户买入后卖出 BTC 形成结算结果时命中“盈利 / 做低盈利”，最终收益应落入填写的低盈利范围。'
+    scope: '影响当前用户现货下单成交价格；现货订单成交即结束，不再做后续盈亏结算。',
+    pointMethod: '通过成交价偏移处理：买单控赢用更低成交价、控输用更高成交价；卖单控赢用更高成交价、控输用更低成交价。',
+    effect: '控赢时：买单以更低价格成交，卖单以更高价格成交；控输时：买单以更高价格成交，卖单以更低价格成交。',
+    example: '说明：现货点控只控制本次下单成交价格，控盘方式不参与逻辑运算。'
   },
   aiQuant: {
     title: 'AI量化点控规则',
-    scope: '影响当前用户 AI 量化订单或策略周期的实际收益入账结果，不影响产品收益规则和其他用户收益。',
-    effect: '量化订单完成或周期收益实际入账时读取当前点控规则；模块按目标收益范围计算该用户最终入账收益。',
-    example: '示例：用户 AI 量化周期结算时命中“盈利 / 做高盈利”且目标收益范围为 10% - 15%，最终入账收益率应落入该范围。'
+    scope: '影响当前用户 AI 量化订单最终收益率调整，不影响产品基础收益率和其他用户收益。',
+    pointMethod: '通过收益率调整处理：控赢使用点控收益率提升数值，控输使用点控收益率降低数值。',
+    effect: '控赢时替换为点控收益率提升数值；控输时替换为点控收益率降低数值。',
+    example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
   },
   liquidity: {
     title: '流动性挖矿点控规则',
-    scope: '影响当前用户流动性挖矿订单的收益发放或结算入账结果，不影响矿池产品规则和全局收益配置。',
-    effect: '挖矿收益发放或订单结算入账时读取当前点控规则；模块按目标收益范围处理最终入账收益。',
-    example: '示例：用户流动性挖矿收益发放时命中“亏损 / 做低亏损”，最终入账收益按填写的低收益或最低收益范围处理。'
+    scope: '影响当前用户流动性挖矿订单收益率调整，不影响矿池基础收益规则和其他用户收益。',
+    pointMethod: '通过收益率调整处理：控赢使用点控收益率提升数值，控输使用点控收益率降低数值。',
+    effect: '控赢时替换为点控收益率提升数值；控输时替换为点控收益率降低数值。',
+    example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
   },
   portfolio: {
     title: '投资组合点控规则',
-    scope: '影响当前用户投资组合订单的最终结算或实际收益入账结果，不影响组合产品配置、持仓展示和其他用户收益。',
-    effect: '组合订单结算或收益实际入账时读取当前点控规则；模块按目标收益范围处理最终收益，持仓浮动展示不触发。',
-    example: '示例：用户投资组合到期结算时命中“盈利 / 做低盈利”，最终入账收益应落入填写的低盈利收益范围。'
+    scope: '影响当前用户投资组合订单最终收益率调整，不影响组合产品基础规则、持仓展示和其他用户收益。',
+    pointMethod: '通过收益率调整处理：控赢使用点控收益率提升数值，控输使用点控收益率降低数值。',
+    effect: '控赢时替换为点控收益率提升数值；控输时替换为点控收益率降低数值。',
+    example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
   }
 })
 
@@ -186,23 +165,26 @@ const globalRuleCatalog = Object.freeze([
     key: 'trade',
     label: '交割、永续、现货',
     title: '交易模块规则',
-    scope: '影响目标用户交易订单的最终成交、平仓或结算结果，不改变公共行情、K线、盘口和其他用户订单。',
-    effect: '按填写的目标盈亏范围处理最终已实现盈亏；价格修正、结算价修正等属于模块内部实现。',
-    example: '示例：命中“盈利 / 做高盈利”且目标盈亏范围为 3% - 5%，最终交易结果应落入该盈利范围。'
+    scope: '只影响目标用户订单价格，不改变公共行情、K线、盘口和其他用户订单。',
+    pointMethod: '交易类统一通过价格偏移处理：现货控制成交价，交割和永续控制最终结算价。',
+    effect: '现货在成交时控制成交价；交割和永续在结算时按方向控制结算价。',
+    example: '说明：控盘方式只作为操作标记，不参与价格偏移逻辑。'
   },
   {
     key: 'finance',
     label: 'AI量化、流动性挖矿、投资组合',
     title: '理财模块规则',
-    scope: '影响目标用户理财订单的实际收益入账或最终结算结果，不影响产品基础收益规则和其他用户收益。',
-    effect: '按填写的目标收益范围处理最终入账收益；预估收益、运行中收益和未完成订单不触发。',
-    example: '示例：命中“亏损 / 做低亏损”时，最终入账收益按填写的低收益或最低收益范围处理。'
+    scope: '只影响目标用户理财订单收益率调整，不改变产品基础收益率和其他用户收益。',
+    pointMethod: '理财类统一通过收益率调整处理：控赢提升收益率，控输降低收益率。',
+    effect: '控赢使用点控收益率提升数值；控输使用点控收益率降低数值。',
+    example: '说明：控盘方式只作为操作标记，不参与收益率计算逻辑。'
   }
 ])
 
 const fallbackModuleRule = Object.freeze({
   title: '当前模块规则',
   scope: '影响当前用户在当前模块的最终结算或实际入账结果。',
+  pointMethod: '当前模块在最终结算或实际入账时读取点控规则，并按模块自身规则处理。',
   effect: '当前模块在最终结算或实际入账时读取点控规则；未完成、失败或预估数据不触发。',
   example: '示例：用户产生最终结算时，模块按当前选择的盈利或亏损方向生成结果。'
 })
@@ -227,7 +209,6 @@ const formInput = computed(() => ({
   strategy: form.strategy,
   method: form.method,
   duration: form.duration,
-  targetRanges: form.targetRanges,
   note: form.note
 }))
 
@@ -243,14 +224,8 @@ const resetForm = (data) => {
     ? existing.method
     : defaultControlMethod(form.strategy)
   form.duration = existing?.duration || 'once'
-  form.targetRanges.trade.min = existing?.targetRanges?.tradePnl?.min ?? ''
-  form.targetRanges.trade.max = existing?.targetRanges?.tradePnl?.max ?? ''
-  form.targetRanges.finance.min = existing?.targetRanges?.financeYield?.min ?? ''
-  form.targetRanges.finance.max = existing?.targetRanges?.financeYield?.max ?? ''
   form.note = ''
   noteTouched.value = false
-  rangeTouched.trade = false
-  rangeTouched.finance = false
 }
 
 const syncHelpPanelHeight = () => {
@@ -307,7 +282,7 @@ watch(rendered, (isRendered) => {
 })
 
 watch(
-  [() => form.strategy, () => form.method, () => form.duration, () => form.note, () => form.targetRanges.trade.min, () => form.targetRanges.trade.max, () => form.targetRanges.finance.min, () => form.targetRanges.finance.max, affectedModules, displayedModuleRules],
+  [() => form.strategy, () => form.method, () => form.duration, () => form.note, affectedModules, displayedModuleRules],
   queueHelpPanelHeightSync
 )
 
@@ -402,65 +377,6 @@ const submit = () => {
                     id-base="user-control-duration"
                   />
 
-              <section class="rounded-lg border border-slate-200 px-3 py-2" aria-labelledby="user-control-target-range-title">
-                <div class="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 id="user-control-target-range-title" class="text-sm font-semibold text-slate-900">点控目标范围 <span class="text-rose-500">*</span></h3>
-                  <p class="text-xs text-slate-500">按当前控盘类型填写正数范围，系统自动处理为盈利、亏损或低收益结果。</p>
-                </div>
-
-                <div class="mt-2 space-y-1.5">
-                  <div v-for="item in activeRangeFamilies" :key="item.family">
-                    <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                      <p class="text-sm font-medium text-slate-800">{{ item.label }}</p>
-                      <p class="text-xs text-slate-400">{{ item.modules }}</p>
-                    </div>
-                    <div class="mt-1 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto] items-center gap-2">
-                      <label class="block">
-                        <span class="sr-only">{{ item.label }}最小值</span>
-                        <input
-                          v-model="form.targetRanges[item.family].min"
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          inputmode="decimal"
-                          placeholder="最小值"
-                          class="w-full rounded-lg border px-3 py-1.5 text-sm outline-none focus:ring-2"
-                          :class="rangeTouched[item.family] && isRangeInvalid(item.family) ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100'"
-                          :aria-invalid="rangeTouched[item.family] && isRangeInvalid(item.family)"
-                          :aria-describedby="`user-control-${item.family}-range-help`"
-                          @blur="rangeTouched[item.family] = true"
-                        />
-                      </label>
-                      <span class="text-sm text-slate-400">至</span>
-                      <label class="block">
-                        <span class="sr-only">{{ item.label }}最大值</span>
-                        <input
-                          v-model="form.targetRanges[item.family].max"
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          inputmode="decimal"
-                          placeholder="最大值"
-                          class="w-full rounded-lg border px-3 py-1.5 text-sm outline-none focus:ring-2"
-                          :class="rangeTouched[item.family] && isRangeInvalid(item.family) ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100'"
-                          :aria-invalid="rangeTouched[item.family] && isRangeInvalid(item.family)"
-                          :aria-describedby="`user-control-${item.family}-range-help`"
-                          @blur="rangeTouched[item.family] = true"
-                        />
-                      </label>
-                      <span class="whitespace-nowrap text-xs text-slate-400">%</span>
-                    </div>
-                    <p
-                      :id="`user-control-${item.family}-range-help`"
-                      class="mt-0.5 text-xs"
-                      :class="rangeTouched[item.family] && isRangeInvalid(item.family) ? 'text-rose-600' : 'text-slate-500'"
-                    >
-                      {{ rangeTouched[item.family] && isRangeInvalid(item.family) ? `请填写有效的${item.label}，最大值不能小于最小值` : item.unit }}
-                    </p>
-                  </div>
-                </div>
-              </section>
-
               <div>
                 <p class="text-sm font-semibold text-slate-900">影响模块</p>
                 <div class="mt-1 flex flex-wrap gap-1.5">
@@ -508,6 +424,10 @@ const submit = () => {
                   <div>
                     <dt class="font-semibold">影响范围</dt>
                     <dd>{{ rule.scope }}</dd>
+                  </div>
+                  <div>
+                    <dt class="font-semibold">点控方式</dt>
+                    <dd>{{ rule.pointMethod }}</dd>
                   </div>
                   <div>
                     <dt class="font-semibold">生效方式</dt>

@@ -119,11 +119,6 @@ test('setting SFC blocks a second submit while its 150ms close transition is sti
   await harness.finishTransitions()
 
   const note = harness.allNodes().find((node) => node.tag === 'textarea')
-  const numberInputs = harness.allNodes().filter((node) => node.tag === 'input' && node.getAttribute?.('type') === 'number')
-  for (const [index, input] of numberInputs.entries()) {
-    input.value = index % 2 === 0 ? '1' : '3'
-    input.dispatchEvent({ type: 'input', target: input })
-  }
   note.value = 'closing duplicate guard'
   note.dispatchEvent({ type: 'input', target: note })
   await harness.flush()
