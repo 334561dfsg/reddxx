@@ -1,0 +1,118 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "FEX Admin：AI Agent 机会地图",
+    "description": "基于当前前台、运营后台与代理系统代码能力整理的 Agent 落地建议。",
+    "generatedAt": "2026-07-27T00:00:00+08:00",
+    "charts": [
+      {
+        "id": "risk_distribution",
+        "title": "候选 Agent 能力的风险分布",
+        "subtitle": "9 类候选能力；风险为本次静态盘点后的方向性分级",
+        "type": "bar",
+        "dataset": "risk_distribution",
+        "source": {
+          "id": "risk_classification",
+          "label": "Agent 候选能力风险分级汇总",
+          "query": {
+            "engine": "static-review",
+            "language": "sql",
+            "description": "对仓库功能盘点形成的 9 类候选 Agent 能力按风险等级计数。",
+            "sql": "SELECT risk, COUNT(*) AS count FROM agent_opportunity_review GROUP BY risk",
+            "tables_used": ["agent_opportunity_review"]
+          }
+        },
+        "encodings": {
+          "x": { "field": "risk", "type": "ordinal", "label": "风险等级" },
+          "y": { "field": "count", "type": "quantitative", "label": "候选能力数", "format": "number" }
+        },
+        "yAxisTitle": "候选能力数",
+        "valueFormat": "number",
+        "layout": "full"
+      }
+    ],
+    "tables": [
+      {
+        "id": "opportunity_map",
+        "title": "Agent 能力候选清单",
+        "description": "优先级综合考虑业务价值、数据可得性、动作风险与当前系统成熟度。",
+        "dataset": "opportunities",
+        "source": {
+          "id": "opportunity_classification",
+          "label": "Agent 候选能力分类表",
+          "query": {
+            "engine": "static-review",
+            "language": "sql",
+            "description": "基于仓库页面、路由与 mock 数据模型整理并排序的候选能力。",
+            "sql": "SELECT rank, domain, agent, mode, priority, risk FROM agent_opportunity_review ORDER BY rank",
+            "tables_used": ["agent_opportunity_review"]
+          }
+        },
+        "defaultSort": { "field": "rank", "direction": "asc" },
+        "columns": [
+          { "field": "rank", "label": "顺序", "type": "number" },
+          { "field": "domain", "label": "业务域", "type": "text" },
+          { "field": "agent", "label": "Agent 能力", "type": "text" },
+          { "field": "mode", "label": "建议模式", "type": "text" },
+          { "field": "priority", "label": "优先级", "type": "text" },
+          { "field": "risk", "label": "风险", "type": "text" }
+        ]
+      }
+    ],
+    "sources": [
+      { "id": "repo_inventory", "label": "FEX Admin 路由、页面与 mock 模块盘点", "path": "src/router/modules/console.js" },
+      { "id": "front_routes", "label": "用户前台功能路由", "path": "src/router/modules/front.js" },
+      { "id": "agent_routes", "label": "代理系统功能路由", "path": "src/router/modules/agentSystem.js" },
+      { "id": "readme", "label": "仓库实现状态说明", "path": "README.md" }
+    ],
+    "blocks": [
+      { "id": "title", "type": "markdown", "body": "# FEX Admin：AI Agent 机会地图" },
+      { "id": "summary", "type": "markdown", "body": "## Executive Summary\n\n- **最适合先做的是“读数据、找异常、生成建议”的 Copilot。** 当前系统已经有订单、报表、日志、审核、客服、代理与配置页面，Agent 可以先统一检索、解释和生成待办，不直接改资金或交易结果。\n- **第二阶段再做带审批的执行 Agent。** 配置草稿、批量提醒、报表导出、工单流转、结算试算等动作可由 Agent 准备，但提交必须复用现有权限、MFA、确认和审计链路。\n- **资金、出入金、KYC 终审、收益/盈亏控制不可全自动。** 这些操作影响资产、合规或交易公平性，只能由 Agent 提供证据、风险提示和操作草案，由授权人员确认。\n- **当前最大的工程前置条件是后端工具化。** 仓库有 113 个后台路由、92 个后台页面、35 个 mock 模块，且至少 90 个页面或 store 依赖 mock/localStorage；因此现阶段能验证的是产品流程，不是生产级 Agent 执行能力。", "sourceId": "repo_inventory" },
+      { "id": "scope", "type": "markdown", "body": "## 现有系统已经给 Agent 提供了足够宽的业务入口\n\n代码体现了三类角色界面：平台运营后台、代理/分销端、用户前台。业务域覆盖用户与 KYC、入出金、币种和地址、现货/永续/交割合约、流动性挖矿、信用借贷、AI 量化、投资组合、客服、代理佣金、内容与通知配置。\n\n这意味着 Agent 不必从一个孤立聊天框开始设计，而可以成为跨模块的工作入口：先理解用户意图和权限，再调用查询、计算、草拟、审批与执行工具。真正的约束是数据与动作接口是否已服务化，而不是页面数量。", "sourceId": "repo_inventory" },
+      { "id": "tier1", "type": "markdown", "body": "## 第一优先级：先上线只读分析与工作辅助\n\n**1. 运营数据问答与日报 Agent。** 汇总仪表盘、订单、收益、规则命中、代理和裂变数据，回答“今天异常在哪里”“哪个产品需要关注”，自动生成日报、周报和行动清单。\n\n**2. 风险与异常巡检 Agent。** 关联登录/操作日志、地址日志、入出金、订单、信用分、KYC 和规则命中，发现重复地址、异常金额、频繁失败、规则效果偏离等信号，输出可解释的告警。\n\n**3. 客服 Copilot。** 根据用户账户状态、订单、充值提现、认证和产品规则生成回复建议，自动总结会话、分类问题、推荐下一步；客服确认后发送。\n\n**4. 审核 Copilot。** 为 KYC、入金、出金和信用分审核汇总证据、检查缺项、指出冲突、生成通过/驳回理由。它负责“查与建议”，不替代最终责任人。\n\n这四类能力价值高、可逆性强，也最容易通过人工抽检衡量准确率。" },
+      { "id": "tier2", "type": "markdown", "body": "## 第二优先级：把重复操作变成有审批的工作流\n\n**5. 配置与产品运营 Agent。** 从自然语言生成币种、交易对、产品、费率、VIP、提现、借贷、量化、组合、佣金、语言和内容页的配置草稿；执行前做字段校验、冲突检查和影响预览。\n\n**6. 代理运营与佣金 Agent。** 查询团队结构和业绩，生成代理日报、结算试算、异常佣金清单、激励建议与通知草稿；财务或运营确认后结算。\n\n**7. 资金运营 Agent。** 汇总热钱包和收款地址状态、提出归集计划、估算手续费、检查币种/网络/地址匹配；实际归集、地址变更和费率变更必须经过授权、MFA 与二次确认。\n\n**8. 用户自助 Agent。** 在前台解释行情、资产、订单、理财、借贷、费率、认证和安全设置，帮助用户导航与填写，但不能绕过认证、额度、风险披露或安全验证。" },
+      { "id": "risk_intro", "type": "markdown", "body": "## 大多数机会不能按“全自动”来设计\n\n9 类候选能力中，5 类被评为中高风险及以上，原因是它们会接触身份、资产、交易、配置或结算。图中的分级不是生产事故概率，而是决定自动化权限边界的产品判断：风险越高，Agent 越应停留在检索、解释、试算和草拟层。" },
+      { "id": "risk_chart", "type": "chart", "chartId": "risk_distribution", "layout": "full" },
+      { "id": "table_intro", "type": "markdown", "body": "## 优先级与控制模式\n\n下表把候选能力按建议落地顺序排列。“只读”表示 Agent 不改变业务状态；“草拟+审批”表示 Agent 可以准备动作，但必须由有权限的人确认；“人工决策”表示 Agent 只能辅助判断。" },
+      { "id": "opportunities", "type": "table", "tableId": "opportunity_map", "layout": "full" },
+      { "id": "guardrails", "type": "markdown", "body": "## 高风险边界必须先于自动化设计\n\n以下动作不建议交给 Agent 自主决定或静默执行：资金归集和转账、入出金放行、KYC/信用终审、收益和盈亏方向控制、交易规则启停、佣金入账、币种与链地址变更、短信/邮件通道凭据修改。\n\n落地时应把每个 Agent 工具分成 `read`、`draft`、`approve`、`execute` 四级，并强制执行最小权限、参数白名单、幂等键、MFA/双人复核、不可篡改审计日志、失败回滚和紧急停用。Agent 的解释或建议不能提高用户权限，也不能改变既有风控与验证结果。" },
+      { "id": "architecture", "type": "markdown", "body": "## 推荐的产品形态是一套总控 Agent 加多个领域技能\n\n总控 Agent 负责身份、权限、意图识别、任务规划和跨模块编排；领域技能分别负责用户审核、客服、资金、交易监控、理财产品、代理结算和系统配置。所有写操作先生成结构化变更预览，再进入现有确认/MFA/审批界面。\n\n建议先不要做会自主操作页面的浏览器机器人。更稳妥的路径是把现有 mock API 替换成受权限控制的后端 Tool/API，让 Agent 和页面调用同一业务服务、同一校验规则与同一审计系统。" },
+      { "id": "roadmap", "type": "markdown", "body": "## 建议按 90 天三阶段推进\n\n1. **0–30 天：统一只读查询。** 建立用户、订单、资金、产品、日志、代理的只读工具；上线运营问答、日报和客服摘要；用历史案例评测准确率与越权率。\n2. **31–60 天：上线草拟与审批。** 增加审核建议、配置草稿、结算试算、异常处置建议；所有提交复用现有权限、确认、MFA 与审计。\n3. **61–90 天：开放低风险执行。** 仅对可逆、可幂等、影响范围小的动作开放审批后执行，例如生成导出、创建内部待办、发送经确认的通知、保存非敏感草稿。\n\n首个 MVP 建议选“运营问答 + 异常巡检 + 客服 Copilot”，它能跨模块产生价值，同时避免直接触碰资金和交易结果。" },
+      { "id": "questions", "type": "markdown", "body": "## 进一步需要确认的问题\n\n- 生产后端目前有哪些真实 API、数据库、消息队列和审计服务？\n- 用户、资金、订单、KYC、代理结算分别由哪个系统作为唯一事实源？\n- 哪些动作已有 RBAC、MFA、双人复核、幂等和回滚能力？\n- 首批用户是平台运营、客服、审核员、代理，还是终端用户？\n- 是否允许模型接触身份证明、地址、资产和交易等敏感数据，保留策略是什么？" },
+      { "id": "caveats", "type": "markdown", "body": "## 假设与限制\n\n本结论基于 2026 年 7 月 27 日对前端仓库的静态盘点。代码能证明界面、流程和 mock 数据模型存在，但无法证明对应生产后端、数据质量、权限系统或实际业务量已经就绪。优先级是产品与技术可行性的方向性判断，尚未结合真实工时、调用量、误判成本和合规意见；在获得生产架构与业务数据后应再次排序。" }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-07-27T00:00:00+08:00",
+    "status": "ready",
+    "datasets": {
+      "risk_distribution": [
+        { "risk": "低", "count": 1 },
+        { "risk": "中", "count": 3 },
+        { "risk": "中高", "count": 2 },
+        { "risk": "高", "count": 1 },
+        { "risk": "极高", "count": 2 }
+      ],
+      "opportunities": [
+        { "rank": 1, "domain": "经营分析", "agent": "跨模块问答、日报、指标解释、异常摘要", "mode": "只读", "priority": "P0", "risk": "低", "current_basis": "仪表盘、订单、报表、日志、规则统计" },
+        { "rank": 2, "domain": "风险巡检", "agent": "用户/订单/地址/资金/规则异常发现与证据汇总", "mode": "只读+建单", "priority": "P0", "risk": "中", "current_basis": "操作日志、地址日志、审核与控制日志" },
+        { "rank": 3, "domain": "客服", "agent": "会话总结、意图分类、账户核查、回复建议", "mode": "草拟+人工发送", "priority": "P0", "risk": "中", "current_basis": "前台客服与后台客服工作台" },
+        { "rank": 4, "domain": "审核", "agent": "KYC/入金/出金/信用审核材料检查与建议", "mode": "人工决策", "priority": "P0", "risk": "高", "current_basis": "认证、入金、出金、信用分审核" },
+        { "rank": 5, "domain": "产品配置", "agent": "产品、费率、规则、内容与通知配置草稿及影响检查", "mode": "草拟+审批", "priority": "P1", "risk": "中高", "current_basis": "币种、产品、VIP、规则、内容与通道配置" },
+        { "rank": 6, "domain": "代理运营", "agent": "团队分析、日报、佣金试算、异常清单与通知", "mode": "草拟+审批", "priority": "P1", "risk": "中高", "current_basis": "代理报表、团队、记佣、结算、裂变统计" },
+        { "rank": 7, "domain": "资金运营", "agent": "钱包监控、归集计划、手续费与地址匹配检查", "mode": "人工审批执行", "priority": "P1", "risk": "极高", "current_basis": "币种、收款地址、归集、地址日志、费率" },
+        { "rank": 8, "domain": "交易与场控", "agent": "盘口/仓位/规则效果监控、处置建议与变更预览", "mode": "人工决策", "priority": "P1", "risk": "极高", "current_basis": "现货、永续、交割、点控、收益调控与日志" },
+        { "rank": 9, "domain": "用户自助", "agent": "资产、订单、理财、借贷、认证和安全设置导航解释", "mode": "只读+引导", "priority": "P2", "risk": "中", "current_basis": "用户前台交易、金融、资产与个人中心" }
+      ]
+    }
+  },
+  "sources": [
+    { "id": "repo_inventory", "label": "FEX Admin 路由、页面与 mock 模块盘点", "path": "src/router/modules/console.js" },
+    { "id": "front_routes", "label": "用户前台功能路由", "path": "src/router/modules/front.js" },
+    { "id": "agent_routes", "label": "代理系统功能路由", "path": "src/router/modules/agentSystem.js" },
+    { "id": "readme", "label": "仓库实现状态说明", "path": "README.md" }
+  ]
+}

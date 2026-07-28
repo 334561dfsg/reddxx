@@ -272,6 +272,12 @@ function canApplyEarlyRedeemAiOrder(o) {
   return true
 }
 
+function formatAiQuantOrderEndLabel(o) {
+  if (!o) return '—'
+  if (Number(o.totalDays) === 0 || o.endDate == null || o.endDate === '') return '无限期'
+  return o.endDate
+}
+
 function formatTierAmountPlain(min, max, productCurrency) {
   const cur = displayAssetCurrency(productCurrency)
   const a = Number(min)
@@ -808,7 +814,7 @@ const rentSubmitValid = computed(() => {
                     <span class="text-white/35">购买</span>
                     <span class="text-right tabular-nums text-white/70">{{ o.startDate }}</span>
                     <span class="text-white/35">结束</span>
-                    <span class="text-right tabular-nums text-white/70">{{ o.endDate }}</span>
+                    <span class="text-right tabular-nums text-white/70">{{ formatAiQuantOrderEndLabel(o) }}</span>
                     <span class="text-white/35">支付</span>
                     <span class="text-right tabular-nums text-white/80">{{ o.principal }} {{ o.currency }}</span>
                     <span class="text-white/35">累计收益</span>
@@ -831,7 +837,7 @@ const rentSubmitValid = computed(() => {
                   </div>
                 </td>
                 <td class="hidden tabular-nums text-white/55 md:table-cell md:px-5 md:py-3">{{ o.startDate }}</td>
-                <td class="hidden tabular-nums text-white/55 lg:table-cell lg:px-5 lg:py-3">{{ o.endDate }}</td>
+                <td class="hidden tabular-nums text-white/55 lg:table-cell lg:px-5 lg:py-3">{{ formatAiQuantOrderEndLabel(o) }}</td>
                 <td class="hidden tabular-nums md:table-cell md:px-5 md:py-3">
                   {{ o.principal }} {{ o.currency }}
                 </td>

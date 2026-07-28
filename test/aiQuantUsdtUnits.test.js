@@ -7,6 +7,10 @@ const adminProductSource = readFileSync(
   new URL('../src/pages/admin/aiQuant/AiQuantProductPage.vue', import.meta.url),
   'utf8'
 )
+const adminOrderSource = readFileSync(
+  new URL('../src/pages/admin/aiQuant/AiQuantOrderPage.vue', import.meta.url),
+  'utf8'
+)
 const frontListSource = readFileSync(
   new URL('../src/pages/front/finance/aiQuant/FinanceAiQuantListPage.vue', import.meta.url),
   'utf8'
@@ -91,4 +95,24 @@ test('AI quant product editor includes a product currency select', () => {
   assert.match(adminProductSource, />产品品种<\/label>/)
   assert.match(adminProductSource, /v-model="productForm\.productCurrency"/)
   assert.match(adminProductSource, /v-model="productForm\.productCurrency"[\s\S]*v-for="currency in SUPPORTED_CURRENCIES"/)
+})
+
+test('AI quant list mock covers unlimited-term orders across visible states', () => {
+  const orderBlocks = [...mockCatalogSource.matchAll(/(\{\s*id: '(aiq-ord-\d+)'[\s\S]*?status: ORDER_STATUS\.([A-Z_]+),[\s\S]*?\n\s*\})/g)]
+  const unlimitedBlocks = orderBlocks.filter(([, block]) =>
+    /productId: 'aiq-prod-001'/.test(block) && /endDate: null/.test(block) && /totalDays: 0/.test(block)
+  )
+
+  assert.ok(unlimitedBlocks.some(([, , , status]) => status === 'RUNNING'))
+  assert.ok(unlimitedBlocks.some(([, , , status]) => status === 'SETTLED'))
+  assert.ok(unlimitedBlocks.some(([, , , status]) => status === 'EARLY_REDEEMED'))
+  assert.match(frontListSource, /formatAiQuantOrderEndLabel\(o\)/)
+})
+
+test('AI quant admin order page formats unlimited-term cycle fields safely', () => {
+  assert.match(adminOrderSource, /formatAiQuantOrderCycleLabel\(order\)/)
+  assert.match(adminOrderSource, /formatAiQuantOrderEndLabel\(selectedOrder\)/)
+  assert.match(adminOrderSource, /aiQuantOrderProgressPercent\(selectedOrder\)/)
+  assert.match(adminOrderSource, /formatAiQuantOrderRemainingYield\(selectedOrder\)/)
+  assert.doesNotMatch(adminOrderSource, /selectedOrder\.daysElapsed \/ selectedOrder\.totalDays/)
 })

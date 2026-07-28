@@ -143,7 +143,7 @@
 							<td class="px-4 py-3 text-slate-700">{{ order.productName }}</td>
 							<td class="px-4 py-3 font-medium text-slate-900">{{ fmtCurrency(order.principal, order.currency) }}</td>
 							<td class="px-4 py-3 font-medium text-emerald-600">{{ order.dailyRate.toFixed(2) }}%</td>
-							<td class="px-4 py-3 text-slate-700">{{ order.daysElapsed }}/{{ order.totalDays }} 天</td>
+							<td class="px-4 py-3 text-slate-700">{{ formatAiQuantOrderCycleLabel(order) }}</td>
 							<td class="px-4 py-3 font-medium text-blue-600">{{ fmtCurrency(order.accumulatedYield, order.currency) }}</td>
 							<td class="px-4 py-3"><span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="orderStatusMeta[order.status].class">{{ orderStatusMeta[order.status].label }}</span></td>
 							<td class="px-4 py-3">
@@ -284,21 +284,21 @@
 									</div>
 									<div class="flex justify-between items-center">
 										<span class="text-sm text-slate-600">结束日期</span>
-										<span class="text-sm font-medium text-slate-900">{{ selectedOrder.endDate }}</span>
+										<span class="text-sm font-medium text-slate-900">{{ formatAiQuantOrderEndLabel(selectedOrder) }}</span>
 									</div>
 									<div class="flex justify-between items-center">
 										<span class="text-sm text-slate-600">总周期</span>
-										<span class="text-sm font-medium text-slate-900">{{ selectedOrder.totalDays }} 天</span>
+										<span class="text-sm font-medium text-slate-900">{{ formatAiQuantOrderTotalDaysLabel(selectedOrder) }}</span>
 									</div>
 									<div class="pt-2 border-t border-slate-200">
 										<div class="flex justify-between items-center mb-2">
 											<span class="text-sm text-slate-600">进度</span>
-											<span class="text-sm font-medium text-blue-600">{{ selectedOrder.daysElapsed }} / {{ selectedOrder.totalDays }} 天</span>
+											<span class="text-sm font-medium text-blue-600">{{ formatAiQuantOrderProgressLabel(selectedOrder) }}</span>
 										</div>
 										<div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-											<div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300" :style="{ width: `${(selectedOrder.daysElapsed / selectedOrder.totalDays * 100).toFixed(1)}%` }"></div>
+											<div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300" :style="{ width: `${aiQuantOrderProgressPercent(selectedOrder)}%` }"></div>
 										</div>
-										<div class="text-xs text-slate-500 mt-1 text-right">{{ (selectedOrder.daysElapsed / selectedOrder.totalDays * 100).toFixed(1) }}% 完成</div>
+										<div class="text-xs text-slate-500 mt-1 text-right">{{ formatAiQuantOrderProgressCaption(selectedOrder) }}</div>
 									</div>
 								</div>
 							</div>
@@ -357,11 +357,11 @@
 										</div>
 										<div class="flex justify-between items-center text-xs">
 											<span class="text-slate-600">预期总收益</span>
-											<span class="font-semibold text-slate-900">{{ fmtCurrency(selectedOrder.expectedDailyYield * selectedOrder.totalDays, selectedOrder.currency) }}</span>
+											<span class="font-semibold text-slate-900">{{ formatAiQuantOrderExpectedTotalYield(selectedOrder) }}</span>
 										</div>
 										<div class="flex justify-between items-center text-xs pt-2 border-t border-slate-200">
 											<span class="text-slate-600">剩余预期</span>
-											<span class="font-semibold text-blue-600">{{ fmtCurrency(selectedOrder.expectedDailyYield * (selectedOrder.totalDays - selectedOrder.daysElapsed), selectedOrder.currency) }}</span>
+											<span class="font-semibold text-blue-600">{{ formatAiQuantOrderRemainingYield(selectedOrder) }}</span>
 										</div>
 									</div>
 								</div>
@@ -406,7 +406,7 @@
 								</h3>
 								<div class="bg-white rounded-lg p-4 border border-slate-200">
 									<div class="h-32 flex items-end gap-1">
-										<div v-for="i in 15" :key="i" class="flex-1 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t opacity-80 hover:opacity-100 transition-opacity" :style="{ height: `${Math.min(100, (i / 15 * selectedOrder.daysElapsed / selectedOrder.totalDays * 100))}%` }"></div>
+										<div v-for="i in 15" :key="i" class="flex-1 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t opacity-80 hover:opacity-100 transition-opacity" :style="{ height: `${aiQuantOrderTrendHeight(selectedOrder, i)}%` }"></div>
 									</div>
 									<div class="flex justify-between items-center mt-3 text-xs text-slate-500">
 										<span>起始</span>
@@ -439,7 +439,7 @@
 									</div>
 									<div class="flex justify-between items-center">
 										<span class="text-slate-600">剩余天数</span>
-										<span class="font-semibold text-orange-600">{{ selectedOrder.totalDays - selectedOrder.daysElapsed }} 天</span>
+										<span class="font-semibold text-orange-600">{{ formatAiQuantOrderRemainingDays(selectedOrder) }}</span>
 									</div>
 								</div>
 							</div>
@@ -617,6 +617,63 @@ const fmtNumber = (val, decimals = 2) => Number(val).toFixed(decimals)
 const fmtCurrency = (val, currency, decimals = 2) => {
 	if (currency === 'BTC' || currency === 'ETH') return `${fmtNumber(val, decimals === 2 ? 4 : decimals)} ${currency}`
 	return `${Number(val).toLocaleString()} ${currency}`
+}
+
+const hasFixedAiQuantTerm = (order) => Number(order?.totalDays) > 0
+
+const formatAiQuantOrderEndLabel = (order) => {
+	if (!order) return '—'
+	if (!hasFixedAiQuantTerm(order) || order.endDate == null || order.endDate === '') return '无限期'
+	return order.endDate
+}
+
+const formatAiQuantOrderTotalDaysLabel = (order) => (hasFixedAiQuantTerm(order) ? `${order.totalDays} 天` : '无限期')
+
+const formatAiQuantOrderProgressLabel = (order) => {
+	const elapsed = Number(order?.daysElapsed) || 0
+	if (!hasFixedAiQuantTerm(order)) return `已运行 ${elapsed} 天`
+	return `${elapsed} / ${order.totalDays} 天`
+}
+
+const formatAiQuantOrderCycleLabel = (order) => {
+	if (!order) return '—'
+	if (!hasFixedAiQuantTerm(order)) return `${formatAiQuantOrderProgressLabel(order)} / 无限期`
+	return formatAiQuantOrderProgressLabel(order)
+}
+
+const aiQuantOrderProgressPercent = (order) => {
+	if (!hasFixedAiQuantTerm(order)) return 100
+	const elapsed = Number(order?.daysElapsed) || 0
+	const total = Number(order.totalDays)
+	return Math.min(100, Math.max(0, Number(((elapsed / total) * 100).toFixed(1))))
+}
+
+const formatAiQuantOrderProgressCaption = (order) => {
+	if (!hasFixedAiQuantTerm(order)) return '无限期持续运行'
+	return `${aiQuantOrderProgressPercent(order).toFixed(1)}% 完成`
+}
+
+const formatAiQuantOrderExpectedTotalYield = (order) => {
+	if (!order) return '—'
+	if (!hasFixedAiQuantTerm(order)) return '按每日收益持续累计'
+	return fmtCurrency(order.expectedDailyYield * order.totalDays, order.currency)
+}
+
+const formatAiQuantOrderRemainingYield = (order) => {
+	if (!order) return '—'
+	if (!hasFixedAiQuantTerm(order)) return '无限期持续派息'
+	return fmtCurrency(order.expectedDailyYield * Math.max(0, order.totalDays - order.daysElapsed), order.currency)
+}
+
+const formatAiQuantOrderRemainingDays = (order) => {
+	if (!order) return '—'
+	if (!hasFixedAiQuantTerm(order)) return '无限期'
+	return `${Math.max(0, Number(order.totalDays) - (Number(order.daysElapsed) || 0))} 天`
+}
+
+const aiQuantOrderTrendHeight = (order, index) => {
+	if (!hasFixedAiQuantTerm(order)) return Math.min(100, 28 + index * 4)
+	return Math.min(100, (index / 15) * aiQuantOrderProgressPercent(order))
 }
 
 // 根据起始日期和天数偏移计算日期
