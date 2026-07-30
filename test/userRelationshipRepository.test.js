@@ -13,6 +13,10 @@ import {
   getRelationshipAuditLog,
   __resetRelationshipAuditLogForTests
 } from '../src/admin/repositories/userRelationshipRepository.js'
+import {
+  getAllowedPhoneDialOptions,
+  getPhoneDialTextLabel
+} from '../src/admin/utils/phoneDialOptions.js'
 
 const getUser = (id) => usersList.find((user) => user.id === id)
 const snapshotUser = (id) => ({ ...getUser(id) })
@@ -60,6 +64,15 @@ test('profile phone accepts separated configured dial code and national digits',
   }, 'user_1004')
   assert.equal(errors.phoneDial, undefined)
   assert.equal(errors.phone, undefined)
+})
+
+test('profile phone dial labels omit image data URLs from select text', () => {
+  const options = getAllowedPhoneDialOptions()
+  const china = options.find((option) => option.dial === '+86')
+  const vietnam = options.find((option) => option.dial === '+84')
+  assert.equal(getPhoneDialTextLabel(china), '🇨🇳 中国 +86')
+  assert.match(vietnam.icon, /^data:image\/svg\+xml/)
+  assert.equal(getPhoneDialTextLabel(vietnam), '越南 +84')
 })
 
 test('profile phone rejects non-digits and out-of-range lengths', () => {

@@ -9,6 +9,14 @@ const normalizeDial = (value) => {
 }
 
 const dialDigits = (value) => normalizeDial(value).replace(/\D/g, '')
+const isImageIcon = (icon) => {
+  const value = String(icon || '').trim()
+  return /^(https?:\/\/|data:image\/|\/)/i.test(value) || /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(value)
+}
+const isTextIcon = (icon) => {
+  const value = String(icon || '').trim()
+  return Boolean(value) && !isImageIcon(value) && Array.from(value).length <= 4
+}
 
 const dialCatalog = (siteConfig) => [
   ...PHONE_DIAL_PRESETS,
@@ -51,6 +59,12 @@ export function getAllowedPhoneDialOptions(siteConfig = getSiteConfigSnapshot())
       return (leftIndex < 0 ? 999999 : leftIndex) - (rightIndex < 0 ? 999999 : rightIndex)
     })
     .map((dial) => resolveDialMeta(siteConfig, dial))
+}
+
+export function getPhoneDialTextLabel(option) {
+  const label = option?.label || option?.dial || ''
+  const icon = String(option?.icon || '').trim()
+  return isTextIcon(icon) ? `${icon} ${label}` : label
 }
 
 export function splitPhoneByDial(phone, dialOptions = getAllowedPhoneDialOptions()) {

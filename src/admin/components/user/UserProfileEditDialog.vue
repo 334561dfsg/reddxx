@@ -3,7 +3,7 @@ import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { updateProfile, validateProfile } from '../../repositories/userRelationshipRepository.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
-import { getAllowedPhoneDialOptions, splitPhoneByDial } from '../../utils/phoneDialOptions.js'
+import { getAllowedPhoneDialOptions, getPhoneDialTextLabel, splitPhoneByDial } from '../../utils/phoneDialOptions.js'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -22,7 +22,7 @@ const form = reactive({ username: '', email: '', phoneDial: '+86', phoneNational
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const dialOptions = computed(() => getAllowedPhoneDialOptions().map((item) => ({
   value: item.dial,
-  label: item.icon ? `${item.icon} ${item.label}` : item.label
+  label: getPhoneDialTextLabel(item)
 })))
 const phoneErrorId = 'profile-edit-phone-error'
 const phoneDialErrorId = 'profile-edit-phone-dial-error'
