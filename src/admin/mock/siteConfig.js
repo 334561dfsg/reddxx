@@ -2,7 +2,7 @@ import {
   DEFAULT_I18N_BLOCK,
   FRONT_LOCALE_CATALOG,
   PHONE_DIAL_PRESETS
-} from '../constants/i18nCatalog'
+} from '../constants/i18nCatalog.js'
 import { FRONT_WALLET_LOGIN_PROVIDERS } from '../../stores/frontAuth.js'
 
 const WALLET_PROVIDER_KEYS = new Set(FRONT_WALLET_LOGIN_PROVIDERS.map((p) => p.key))

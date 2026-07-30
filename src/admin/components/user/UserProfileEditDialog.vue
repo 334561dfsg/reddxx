@@ -2,6 +2,8 @@
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { updateProfile, validateProfile } from '../../repositories/userRelationshipRepository.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
+import { getAllowedPhoneDialOptions, splitPhoneByDial } from '../../utils/phoneDialOptions.js'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -16,13 +18,24 @@ const errorRef = ref(null)
 const submitting = ref(false)
 const submitError = ref('')
 const errors = reactive({})
-const form = reactive({ username: '', email: '', phone: '', remark: '', reason: '' })
+const form = reactive({ username: '', email: '', phoneDial: '+86', phoneNational: '', remark: '', reason: '' })
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
+const dialOptions = computed(() => getAllowedPhoneDialOptions().map((item) => ({
+  value: item.dial,
+  label: item.icon ? `${item.icon} ${item.label}` : item.label
+})))
+const phoneErrorId = 'profile-edit-phone-error'
+const phoneDialErrorId = 'profile-edit-phone-dial-error'
 
 const resetForm = () => {
+  const phoneParts = splitPhoneByDial(props.user?.phone || '', dialOptions.value.map((item) => ({
+    dial: item.value,
+    label: item.label
+  })))
   form.username = props.user?.username || ''
   form.email = props.user?.email || ''
-  form.phone = props.user?.phone || ''
+  form.phoneDial = phoneParts.dial
+  form.phoneNational = phoneParts.nationalDigits
   form.remark = props.user?.remark || ''
   form.reason = ''
   for (const key of Object.keys(errors)) delete errors[key]
@@ -74,7 +87,7 @@ const submit = async () => {
   submitting.value = true
   try {
     await Promise.resolve()
-    const updated = updateProfile(userId.value, form)
+    const updated = updateProfile(userId.value, { ...form })
     emit('saved', updated)
     submitting.value = false
     close()
@@ -119,17 +132,38 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               <span v-if="errors.email" class="mt-1 block text-xs text-rose-600">{{ errors.email }}</span>
             </label>
 
-            <label class="block">
-              <span class="text-sm font-medium text-slate-800">手机号</span>
-              <input v-model="form.phone" :disabled="submitting" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="30" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" />
-              <span v-if="errors.phone" class="mt-1 block text-xs text-rose-600">{{ errors.phone }}</span>
-            </label>
-
-            <label class="block">
-              <span class="text-sm font-medium text-slate-800">备注</span>
-              <textarea v-model="form.remark" :disabled="submitting" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" />
-              <span class="mt-1 flex justify-between gap-3 text-xs"><span class="text-rose-600">{{ errors.remark || '' }}</span><span class="text-slate-500">{{ form.remark.length }}/200</span></span>
-            </label>
+            <fieldset class="min-w-0">
+              <legend class="text-sm font-medium text-slate-800">手机号</legend>
+              <div class="mt-1.5 grid grid-cols-[minmax(8rem,10rem)_minmax(0,1fr)] gap-3 max-sm:grid-cols-1">
+                <SelectOnlyCombobox
+                  v-model="form.phoneDial"
+                  :options="dialOptions"
+                  label="区号"
+                  :disabled="submitting || !dialOptions.length"
+                  :invalid="Boolean(errors.phoneDial)"
+                  :error-id="phoneDialErrorId"
+                  id-base="profile-edit-phone-dial"
+                />
+                <label class="block min-w-0">
+                  <span class="mb-1 block text-sm font-medium text-slate-700">手机号码</span>
+                  <input
+                    v-model="form.phoneNational"
+                    :disabled="submitting"
+                    type="tel"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    maxlength="24"
+                    autocomplete="off"
+                    placeholder="不含区号"
+                    class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100"
+                    :aria-invalid="Boolean(errors.phone)"
+                    :aria-describedby="errors.phone ? phoneErrorId : null"
+                  />
+                </label>
+              </div>
+              <span v-if="errors.phoneDial" :id="phoneDialErrorId" class="mt-1 block text-xs text-rose-600">{{ errors.phoneDial }}</span>
+              <span v-if="errors.phone" :id="phoneErrorId" class="mt-1 block text-xs text-rose-600">{{ errors.phone }}</span>
+            </fieldset>
 
             <label class="block">
               <span class="text-sm font-medium text-slate-800">操作原因 <span class="text-rose-500">*</span></span>

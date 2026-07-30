@@ -64,12 +64,15 @@ test('edit profile entry opens an accessible validated child Dialog', () => {
   assert.equal(entry.status, 'available')
   assert.equal(entry.handler, 'edit-profile')
   assert.match(source, /编辑用户资料/)
-  for (const model of ['username', 'email', 'phone', 'remark']) {
+  for (const model of ['username', 'email', 'phoneDial', 'phoneNational']) {
     assert.match(source, new RegExp(`v-model="form\\.${model}"`))
   }
+  assert.doesNotMatch(source, /v-model="form\.remark"/)
+  assert.match(source, /SelectOnlyCombobox/)
+  assert.match(source, /getAllowedPhoneDialOptions/)
   assert.match(source, /validateProfile/)
   assert.match(source, /updateProfile/)
-  assert.match(source, /type="tel"[^>]*inputmode="numeric"[^>]*pattern="\[0-9\]\*"[^>]*maxlength="30"/)
+  assert.match(source, /type="tel"[\s\S]*inputmode="numeric"[\s\S]*pattern="\[0-9\]\*"[\s\S]*maxlength="24"/)
   assert.match(source, /role="alert"/)
   assert.match(source, /:aria-busy="submitting"/)
   assert.match(source, /useDialogLifecycle/)

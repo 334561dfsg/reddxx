@@ -50,6 +50,18 @@ test('profile phone accepts optional 7 to 30 continuous digits', () => {
   }
 })
 
+test('profile phone accepts separated configured dial code and national digits', () => {
+  const errors = validateProfile({
+    username: 'unique_phone_user',
+    email: 'unique.phone@example.com',
+    phoneDial: '+86',
+    phoneNational: '13900001004',
+    remark: ''
+  }, 'user_1004')
+  assert.equal(errors.phoneDial, undefined)
+  assert.equal(errors.phone, undefined)
+})
+
 test('profile phone rejects non-digits and out-of-range lengths', () => {
   for (const phone of ['+8613800001001', '86 13800001001', '(86)13800001001', '86-13800001001', '123456', '1'.repeat(31)]) {
     const errors = validateProfile({
@@ -60,6 +72,17 @@ test('profile phone rejects non-digits and out-of-range lengths', () => {
     }, 'user_1004')
     assert.equal(errors.phone, '手机号格式不正确')
   }
+})
+
+test('profile phone rejects separated phone dial outside configured options', () => {
+  const errors = validateProfile({
+    username: 'unique_phone_user',
+    email: 'unique.phone@example.com',
+    phoneDial: '+999',
+    phoneNational: '13900001004',
+    remark: ''
+  }, 'user_1004')
+  assert.equal(errors.phoneDial, '区号不在后台配置范围内')
 })
 
 test('profile validation reports duplicate and malformed fields', () => {
@@ -89,6 +112,26 @@ test('profile update trims fields and appends one audit record', () => {
     assert.equal(updated.remark, '已核实')
     assert.equal(getRelationshipAuditLog().length, 1)
     assert.equal(getRelationshipAuditLog()[0].type, 'profile')
+  } finally {
+    restoreUser(before)
+    __resetRelationshipAuditLogForTests()
+  }
+})
+
+test('profile update composes separated phone fields for storage and audit', () => {
+  const before = snapshotUser('user_1004')
+  __resetRelationshipAuditLogForTests()
+  try {
+    const updated = updateProfile('user_1004', {
+      username: 'user_chen',
+      email: 'chen@example.com',
+      phoneDial: '+86',
+      phoneNational: '13900001004',
+      remark: '',
+      reason: '资料复核通过'
+    })
+    assert.equal(updated.phone, '8613900001004')
+    assert.equal(getRelationshipAuditLog()[0].after.phone, '8613900001004')
   } finally {
     restoreUser(before)
     __resetRelationshipAuditLogForTests()

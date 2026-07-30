@@ -1,12 +1,21 @@
 import { usersList } from '../mock/user.js'
 import { USER_ROLE, USER_STATUS } from '../constants/user.js'
 import { appendUserAuditLog } from './userAuditLogRepository.js'
+import { composePhoneFromDial, getAllowedPhoneDialOptions } from '../utils/phoneDialOptions.js'
 
 const relationshipAuditLog = []
 const idOf = (user) => String(user?.id ?? user?.userId ?? '')
 const normalized = (value) => String(value ?? '').trim()
 const normalizedLower = (value) => normalized(value).toLowerCase()
 const numberOf = (value) => Number(value || 0)
+const hasSeparatedPhoneFields = (input) => (
+  Object.prototype.hasOwnProperty.call(input || {}, 'phoneDial') ||
+  Object.prototype.hasOwnProperty.call(input || {}, 'phoneNational')
+)
+const normalizedProfilePhone = (input) => {
+  if (!hasSeparatedPhoneFields(input)) return normalized(input?.phone)
+  return composePhoneFromDial(input?.phoneDial, input?.phoneNational)
+}
 
 const requireUser = (id) => {
   const user = getUserById(id)
@@ -109,7 +118,8 @@ export const validateProfile = (input, userId) => {
   const errors = {}
   const username = normalized(input?.username)
   const email = normalized(input?.email)
-  const phone = normalized(input?.phone)
+  const phone = normalizedProfilePhone(input)
+  const phoneNational = normalized(input?.phoneNational)
   const remark = normalized(input?.remark)
   const otherUsers = usersList.filter((user) => idOf(user) !== String(userId ?? ''))
 
@@ -124,7 +134,15 @@ export const validateProfile = (input, userId) => {
     errors.email = '邮箱已存在'
   }
 
-  if (phone && !/^\d{7,30}$/.test(phone)) errors.phone = '手机号格式不正确'
+  if (hasSeparatedPhoneFields(input)) {
+    const allowedDials = getAllowedPhoneDialOptions().map((option) => option.dial)
+    if (phoneNational && !allowedDials.includes(normalized(input?.phoneDial))) {
+      errors.phoneDial = '区号不在后台配置范围内'
+    }
+    if (phoneNational && !/^\d+$/.test(phoneNational)) errors.phone = '手机号码只能填写数字'
+  }
+
+  if (phone && !/^\d{7,30}$/.test(phone)) errors.phone = errors.phone || '手机号格式不正确'
   else if (phone && otherUsers.some((user) => normalized(user.phone) === phone)) errors.phone = '手机号已存在'
 
   if (remark.length > 200) errors.remark = '备注不能超过 200 字'
@@ -150,7 +168,7 @@ export const updateProfile = (userId, patch) => {
   const after = {
     username: normalized(patch.username),
     email: normalized(patch.email),
-    phone: normalized(patch.phone),
+    phone: normalizedProfilePhone(patch),
     remark: normalized(patch.remark)
   }
   Object.assign(user, after)
