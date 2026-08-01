@@ -267,12 +267,18 @@ test('unified negative maps trading to loss and finance to low yield', () => {
   assert.equal(next.rules['159'].portfolio.value, 'lowYield')
 })
 
-test('advanced profit and loss methods only persist for delivery and perpetual module settings', () => {
+test('advanced profit and loss methods only persist for delivery and perpetual rules', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
     userId: 'method-user', strategy: 'positive', method: 'highProfit', duration: 'permanent',
-    note: '统一入口不支持做高', now: '2026-08-01 10:00:00', batchId: 'method-global'
+    note: '统一入口同步做高', now: '2026-08-01 10:00:00', batchId: 'method-global'
   })
-  assert.ok(Object.values(unified.rules['method-user']).every((rule) => rule.method === 'profit'))
+  assert.equal(unified.operationLogs[0].method, 'highProfit')
+  assert.equal(unified.rules['method-user'].delivery.method, 'highProfit')
+  assert.equal(unified.rules['method-user'].perpetual.method, 'highProfit')
+  assert.equal(unified.rules['method-user'].spot.method, 'profit')
+  assert.equal(unified.rules['method-user'].aiQuant.method, 'profit')
+  assert.equal(unified.rules['method-user'].liquidity.method, 'profit')
+  assert.equal(unified.rules['method-user'].portfolio.method, 'profit')
 
   const spot = applyModuleControl(unified, {
     userId: 'method-user', moduleKey: 'spot', strategy: 'positive', method: 'lowProfit',

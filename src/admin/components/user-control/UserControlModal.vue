@@ -101,25 +101,9 @@ const controlMethodContext = computed(() => ({
   scope: displayScope.value,
   moduleKey: displayModuleKey.value
 }))
-const controlIntentOptions = computed(() => controlTypeOptions.value.flatMap((typeOption) => (
-  getControlMethodOptions(typeOption.value, controlMethodContext.value).map((methodOption) => ({
-    value: `${typeOption.value}:${methodOption.value}`,
-    label: methodOption.label,
-    description: `${typeOption.label}：${typeOption.description}；${methodOption.description}`,
-    strategy: typeOption.value,
-    method: methodOption.value
-  }))
-)))
-const controlIntentValue = computed({
-  get: () => (form.strategy && form.method ? `${form.strategy}:${form.method}` : ''),
-  set: (value) => {
-    const option = controlIntentOptions.value.find((item) => item.value === value)
-    if (!option) return
-    form.strategy = option.strategy
-    form.method = option.method
-  }
-})
-const selectedControlIntent = computed(() => controlIntentOptions.value.find((option) => option.value === controlIntentValue.value) || null)
+const controlMethodOptions = computed(() => getControlMethodOptions(form.strategy, controlMethodContext.value))
+const selectedControlType = computed(() => controlTypeOptions.value.find((option) => option.value === form.strategy) || null)
+const selectedControlMethod = computed(() => controlMethodOptions.value.find((option) => option.value === form.method) || null)
 const intensityFields = computed(() => {
   if (isGlobalScope.value) {
     return [
@@ -196,43 +180,43 @@ const moduleRuleCatalog = Object.freeze({
   delivery: {
     title: '交割点控规则',
     scope: '影响当前用户交割合约订单的最终结算价格，不影响公共行情、产品配置和其他用户订单。',
-    pointMethod: '通过结算价偏移处理：买涨控赢向上偏移、控输向下偏移；买跌控赢向下偏移、控输向上偏移。',
-    effect: '控赢时：买涨结算价向上偏移，买跌结算价向下偏移；控输时：买涨结算价向下偏移，买跌结算价向上偏移。',
-    example: '说明：控盘方式只作为操作标记，不参与结算逻辑；实际按控赢或控输方向在结算时处理价格偏移。'
+    pointMethod: '通过结算价偏移处理：买涨盈利向上偏移、亏损向下偏移；买跌盈利向下偏移、亏损向上偏移。',
+    effect: '盈利时：买涨结算价向上偏移，买跌结算价向下偏移；亏损时：买涨结算价向下偏移，买跌结算价向上偏移。',
+    example: '说明：控盘方式只作为操作标记，不参与结算逻辑；实际按盈利或亏损方向在结算时处理价格偏移。'
   },
   perpetual: {
     title: '永续点控规则',
     scope: '影响当前用户永续合约仓位的最终平仓或结算价格，不单独修改K线、盘口行情和实时浮盈亏。',
-    pointMethod: '通过平仓价或结算价偏移处理：做多控赢价格更高、控输价格更低；做空控赢价格更低、控输价格更高。',
-    effect: '控赢时：做多结算价更高，做空结算价更低；控输时：做多结算价更低，做空结算价更高。',
+    pointMethod: '通过平仓价或结算价偏移处理：做多盈利价格更高、亏损价格更低；做空盈利价格更低、亏损价格更高。',
+    effect: '盈利时：做多结算价更高，做空结算价更低；亏损时：做多结算价更低，做空结算价更高。',
     example: '说明：控盘方式只作为操作标记，不参与结算逻辑；未平仓浮盈亏不触发点控。'
   },
   spot: {
     title: '现货点控规则',
     scope: '影响当前用户现货下单成交价格；现货订单成交即结束，不再做后续盈亏结算。',
-    pointMethod: '通过成交价偏移处理：买单控赢用更低成交价、控输用更高成交价；卖单控赢用更高成交价、控输用更低成交价。',
-    effect: '控赢时：买单以更低价格成交，卖单以更高价格成交；控输时：买单以更高价格成交，卖单以更低价格成交。',
+    pointMethod: '通过成交价偏移处理：买单盈利用更低成交价、亏损用更高成交价；卖单盈利用更高成交价、亏损用更低成交价。',
+    effect: '盈利时：买单以更低价格成交，卖单以更高价格成交；亏损时：买单以更高价格成交，卖单以更低价格成交。',
     example: '说明：现货点控只控制本次下单成交价格，控盘方式不参与逻辑运算。'
   },
   aiQuant: {
     title: 'AI量化点控规则',
     scope: '影响当前用户 AI 量化订单最终收益率调整，不影响产品基础收益率和其他用户收益。',
-    pointMethod: '通过收益率调整处理：控赢使用点控收益率提升数值，控输使用点控收益率降低数值。',
-    effect: '控赢时替换为点控收益率提升数值；控输时替换为点控收益率降低数值。',
+    pointMethod: '通过收益率调整处理：盈利使用点控收益率提升数值，亏损使用点控收益率降低数值。',
+    effect: '盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
     example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
   },
   liquidity: {
     title: '流动性挖矿点控规则',
     scope: '影响当前用户流动性挖矿订单收益率调整，不影响矿池基础收益规则和其他用户收益。',
-    pointMethod: '通过收益率调整处理：控赢使用点控收益率提升数值，控输使用点控收益率降低数值。',
-    effect: '控赢时替换为点控收益率提升数值；控输时替换为点控收益率降低数值。',
+    pointMethod: '通过收益率调整处理：盈利使用点控收益率提升数值，亏损使用点控收益率降低数值。',
+    effect: '盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
     example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
   },
   portfolio: {
     title: '投资组合点控规则',
     scope: '影响当前用户投资组合订单最终收益率调整，不影响组合产品基础规则、持仓展示和其他用户收益。',
-    pointMethod: '通过收益率调整处理：控赢使用点控收益率提升数值，控输使用点控收益率降低数值。',
-    effect: '控赢时替换为点控收益率提升数值；控输时替换为点控收益率降低数值。',
+    pointMethod: '通过收益率调整处理：盈利使用点控收益率提升数值，亏损使用点控收益率降低数值。',
+    effect: '盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
     example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
   }
 })
@@ -243,7 +227,7 @@ const globalRuleCatalog = Object.freeze([
     label: '交割、永续、现货',
     title: '交易模块规则',
     scope: '只影响目标用户订单价格，不改变公共行情、K线、盘口和其他用户订单。',
-    pointMethod: '交易类统一通过价格偏移处理：现货控制成交价，交割和永续控制最终结算价；做高/做低仅在交割、永续模块单独设置时可选。',
+    pointMethod: '交易类统一通过价格偏移处理：现货控制成交价，交割和永续控制最终结算价；做高/做低仅针对交割、永续生效，现货按默认方式处理。',
     effect: '现货在成交时控制成交价；交割和永续在结算时按方向控制结算价。',
     example: '说明：控盘方式只作为操作标记，不参与价格偏移逻辑。'
   },
@@ -252,8 +236,8 @@ const globalRuleCatalog = Object.freeze([
     label: 'AI量化、流动性挖矿、投资组合',
     title: '理财模块规则',
     scope: '只影响目标用户理财订单收益率调整，不改变产品基础收益率和其他用户收益。',
-    pointMethod: '理财类统一通过收益率调整处理：控赢提升收益率，控输降低收益率；不使用做高/做低档位。',
-    effect: '控赢使用点控收益率提升数值；控输使用点控收益率降低数值。',
+    pointMethod: '理财类统一通过收益率调整处理：盈利提升收益率，亏损降低收益率；不使用做高/做低方式。',
+    effect: '盈利使用点控收益率提升数值；亏损使用点控收益率降低数值。',
     example: '说明：控盘方式只作为操作标记，不参与收益率计算逻辑。'
   }
 ])
@@ -350,8 +334,8 @@ watch(
   }
 )
 
-watch(controlIntentOptions, (options) => {
-  if (!options.some((option) => option.strategy === form.strategy && option.method === form.method)) {
+watch(controlMethodOptions, (options) => {
+  if (!options.some((option) => option.value === form.method)) {
     form.method = defaultControlMethod(form.strategy, controlMethodContext.value)
   }
 })
@@ -457,12 +441,21 @@ const submit = () => {
             <div ref="leftPanelRef" class="min-w-0 space-y-2.5">
                   <SelectOnlyCombobox
                     ref="firstControlSelect"
-                    v-model="controlIntentValue"
-                    :options="controlIntentOptions"
-                    label="控盘类型与方式"
+                    v-model="form.strategy"
+                    :options="controlTypeOptions"
+                    label="控盘类型"
                     required
-                    :hint="selectedControlIntent?.description || '请选择盈利或亏损意图及具体处理方式'"
-                    id-base="user-control-intent"
+                    :hint="selectedControlType?.description || '请选择盈利或亏损'"
+                    id-base="user-control-strategy"
+                  />
+
+                  <SelectOnlyCombobox
+                    v-model="form.method"
+                    :options="controlMethodOptions"
+                    label="控盘方式"
+                    required
+                    :hint="selectedControlMethod?.description || '请选择默认、做高或做低方式'"
+                    id-base="user-control-method"
                   />
 
                   <section class="rounded-lg border border-slate-200 bg-slate-50 p-3" aria-labelledby="user-control-intensity-title">

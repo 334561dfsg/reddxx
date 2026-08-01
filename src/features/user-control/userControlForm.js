@@ -10,18 +10,18 @@ const MODULE_CONTROL_OPTIONS = Object.freeze({
 })
 
 const CONTROL_TYPE_OPTIONS = Object.freeze([
-  Object.freeze({ value: 'positive', label: '控赢', description: '交易模块按有利价格偏移；理财模块按收益率提升处理' }),
-  Object.freeze({ value: 'negative', label: '控输', description: '交易模块按不利价格偏移；理财模块按收益率降低处理' })
+  Object.freeze({ value: 'positive', label: '盈利', description: '交易模块按有利价格偏移；理财模块按收益率提升处理' }),
+  Object.freeze({ value: 'negative', label: '亏损', description: '交易模块按不利价格偏移；理财模块按收益率降低处理' })
 ])
 
 const CONTROL_METHOD_OPTIONS = Object.freeze({
   positive: Object.freeze([
-    Object.freeze({ value: 'profit', label: '盈利', description: '按模块默认盈利规则处理' }),
+    Object.freeze({ value: 'profit', label: '默认盈利', description: '按模块默认盈利规则处理' }),
     Object.freeze({ value: 'highProfit', label: '做高盈利', description: '盈利金额按较高盈利区间处理' }),
     Object.freeze({ value: 'lowProfit', label: '做低盈利', description: '盈利金额按较低盈利区间处理' })
   ]),
   negative: Object.freeze([
-    Object.freeze({ value: 'loss', label: '亏损', description: '按模块默认亏损规则处理' }),
+    Object.freeze({ value: 'loss', label: '默认亏损', description: '按模块默认亏损规则处理' }),
     Object.freeze({ value: 'highLoss', label: '做高亏损', description: '亏损金额按较高亏损区间处理' }),
     Object.freeze({ value: 'lowLoss', label: '做低亏损', description: '亏损金额按较低亏损区间处理' })
   ])
@@ -29,6 +29,7 @@ const CONTROL_METHOD_OPTIONS = Object.freeze({
 
 const ADVANCED_CONTROL_METHODS = new Set(['highProfit', 'lowProfit', 'highLoss', 'lowLoss'])
 const ADVANCED_CONTROL_MODULES = new Set(['delivery', 'perpetual'])
+const GLOBAL_ADVANCED_METHOD_NOTE = '仅针对交割合约、永续合约生效，其他模块按默认方式处理'
 const VALID_STRATEGIES = new Set(['positive', 'negative'])
 const VALID_DURATIONS = new Set(['once', 'permanent'])
 const text = (value) => String(value ?? '').trim()
@@ -39,10 +40,16 @@ const DEFAULT_INTENSITY = Object.freeze({
 
 export const getModuleControlOptions = (family) => MODULE_CONTROL_OPTIONS[family] || []
 export const getControlTypeOptions = () => CONTROL_TYPE_OPTIONS
-export const supportsAdvancedControlMethod = (input = {}) => input.scope === 'module' && ADVANCED_CONTROL_MODULES.has(input.moduleKey)
+export const supportsAdvancedControlMethod = (input = {}) => input.scope === 'global'
+  || (input.scope === 'module' && ADVANCED_CONTROL_MODULES.has(input.moduleKey))
 export const getControlMethodOptions = (strategy, input) => {
   const options = CONTROL_METHOD_OPTIONS[strategy] || []
   if (!input) return options
+  if (input.scope === 'global') {
+    return options.map((option) => ADVANCED_CONTROL_METHODS.has(option.value)
+      ? { ...option, description: `${option.description}；${GLOBAL_ADVANCED_METHOD_NOTE}` }
+      : option)
+  }
   if (supportsAdvancedControlMethod(input)) return options
   return options.filter((option) => !ADVANCED_CONTROL_METHODS.has(option.value))
 }

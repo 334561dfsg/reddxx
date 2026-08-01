@@ -44,7 +44,8 @@ const normalizeStrategy = (input = {}) => {
 const normalizeMethod = (input = {}) => {
   const strategy = normalizeStrategy(input)
   const moduleKey = String(input.moduleKey || '')
-  const allowsAdvancedMethod = input.scope === 'module' && advancedControlModules.has(moduleKey)
+  const allowsAdvancedMethod = input.scope === 'global'
+    || (input.scope === 'module' && advancedControlModules.has(moduleKey))
   if (controlMethods[strategy].includes(input.method) && (allowsAdvancedMethod || !advancedControlMethods.has(input.method))) return input.method
   return strategy === 'positive' ? 'profit' : 'loss'
 }
@@ -135,13 +136,16 @@ export function applyUnifiedControl(state, input) {
   }
 
   const before = Object.fromEntries(Object.entries(state.rules[userId] || {}).map(([key, rule]) => [key, { ...rule }]))
-  const rules = Object.fromEntries(USER_CONTROL_MODULES.map((module) => [module.key, {
-    id: `${input.batchId}-${module.key}`, batchId: input.batchId, userId, moduleKey: module.key,
-    family: module.family, value: strategyValue(strategy, module.family), strategy, method,
-    ...(intensity?.[module.family] ? { intensity: { [module.family]: { ...intensity[module.family] } } } : {}),
-    duration: input.duration, status: 'active', source: 'global', note, updatedAt: input.now,
-    consumedAt: '', supersededAt: '', cancelledAt: ''
-  }]))
+  const rules = Object.fromEntries(USER_CONTROL_MODULES.map((module) => {
+    const moduleMethod = normalizeMethod({ ...input, strategy, method, scope: 'module', moduleKey: module.key })
+    return [module.key, {
+      id: `${input.batchId}-${module.key}`, batchId: input.batchId, userId, moduleKey: module.key,
+      family: module.family, value: strategyValue(strategy, module.family), strategy, method: moduleMethod,
+      ...(intensity?.[module.family] ? { intensity: { [module.family]: { ...intensity[module.family] } } } : {}),
+      duration: input.duration, status: 'active', source: 'global', note, updatedAt: input.now,
+      consumedAt: '', supersededAt: '', cancelledAt: ''
+    }]
+  }))
   appendUnifiedUserControlAudit({
     userId,
     action: 'risk.control.apply',
