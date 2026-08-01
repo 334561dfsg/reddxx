@@ -92,9 +92,25 @@ const selectedUserName = computed(() => displayUser.value?.username || displayUs
 const selectedUserEmail = computed(() => displayUser.value?.email || '邮箱未提供')
 
 const controlTypeOptions = computed(() => getControlTypeOptions())
-const controlMethodOptions = computed(() => getControlMethodOptions(form.strategy))
-const selectedControlType = computed(() => controlTypeOptions.value.find((option) => option.value === form.strategy) || null)
-const selectedControlMethod = computed(() => controlMethodOptions.value.find((option) => option.value === form.method) || null)
+const controlIntentOptions = computed(() => controlTypeOptions.value.flatMap((typeOption) => (
+  getControlMethodOptions(typeOption.value).map((methodOption) => ({
+    value: `${typeOption.value}:${methodOption.value}`,
+    label: methodOption.label,
+    description: `${typeOption.label}：${typeOption.description}；${methodOption.description}`,
+    strategy: typeOption.value,
+    method: methodOption.value
+  }))
+)))
+const controlIntentValue = computed({
+  get: () => (form.strategy && form.method ? `${form.strategy}:${form.method}` : ''),
+  set: (value) => {
+    const option = controlIntentOptions.value.find((item) => item.value === value)
+    if (!option) return
+    form.strategy = option.strategy
+    form.method = option.method
+  }
+})
+const selectedControlIntent = computed(() => controlIntentOptions.value.find((option) => option.value === controlIntentValue.value) || null)
 
 const affectedModules = computed(() => isGlobalScope.value
   ? USER_CONTROL_MODULES
@@ -351,21 +367,12 @@ const submit = () => {
             <div ref="leftPanelRef" class="min-w-0 space-y-2.5">
                   <SelectOnlyCombobox
                     ref="firstControlSelect"
-                    v-model="form.strategy"
-                    :options="controlTypeOptions"
-                    label="控盘类型"
+                    v-model="controlIntentValue"
+                    :options="controlIntentOptions"
+                    label="控盘类型与方式"
                     required
-                    :hint="selectedControlType?.description || '请选择盈利或亏损的控制方向'"
-                    id-base="user-control-strategy"
-                  />
-
-                  <SelectOnlyCombobox
-                    v-model="form.method"
-                    :options="controlMethodOptions"
-                    label="控盘方式"
-                    required
-                    :hint="selectedControlMethod?.description || '请选择默认、做高或做低的处理方式'"
-                    id-base="user-control-method"
+                    :hint="selectedControlIntent?.description || '请选择盈利或亏损意图及具体处理方式'"
+                    id-base="user-control-intent"
                   />
 
                   <SelectOnlyCombobox

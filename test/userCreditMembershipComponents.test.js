@@ -86,6 +86,7 @@ test('recharge Drawer removes the duplicate summary card and paginates records f
 
   const drawer = harness.findByTestId('user-recharge-summary-drawer')
   assert.doesNotMatch(drawer.textContent, /计入会员等级/)
+  assert.doesNotMatch(drawer.textContent, /计入等级/)
   assert.match(drawer.textContent, /共 7 笔/)
   assert.match(drawer.textContent, /DEP-001/)
   assert.match(drawer.textContent, /DEP-005/)

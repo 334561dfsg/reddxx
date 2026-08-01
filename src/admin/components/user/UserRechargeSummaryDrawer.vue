@@ -98,7 +98,7 @@ watch(() => [props.visible, props.summary, userId.value], ([visible]) => { if (v
               <div ref="recordListRef" data-testid="user-recharge-record-list" tabindex="0" aria-labelledby="recharge-records-title" class="recharge-drawer-record-list min-h-0 flex flex-1 flex-col gap-2 overflow-y-auto pt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600">
                 <template v-if="records.length">
                   <article v-for="record in pagedRecords" :key="record.id" class="rounded-xl border border-slate-200 p-3 text-sm">
-                    <div class="flex flex-wrap items-start justify-between gap-2"><div><p class="font-semibold text-slate-900">{{ money(record.amount) }} USDT</p><p class="mt-0.5 text-xs text-slate-500">计入等级 {{ money(record.qualifyingAmount) }} USDT</p></div><span class="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">{{ record.source }}</span></div>
+                    <div class="flex flex-wrap items-start justify-between gap-2"><div><p class="font-semibold text-slate-900">{{ money(record.amount) }} USDT</p></div><span class="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">{{ record.source }}</span></div>
                     <dl class="mt-3 grid grid-cols-[4.5rem_1fr] gap-y-1 text-xs"><dt class="text-slate-500">流水号</dt><dd class="break-all text-slate-700">{{ record.transactionId }}</dd><dt class="text-slate-500">充值时间</dt><dd class="text-slate-700">{{ formatTime(record.createdAt) }}</dd></dl>
                   </article>
                 </template>
