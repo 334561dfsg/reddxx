@@ -27,6 +27,8 @@ const CONTROL_METHOD_OPTIONS = Object.freeze({
   ])
 })
 
+const ADVANCED_CONTROL_METHODS = new Set(['highProfit', 'lowProfit', 'highLoss', 'lowLoss'])
+const ADVANCED_CONTROL_MODULES = new Set(['delivery', 'perpetual'])
 const VALID_STRATEGIES = new Set(['positive', 'negative'])
 const VALID_DURATIONS = new Set(['once', 'permanent'])
 const text = (value) => String(value ?? '').trim()
@@ -37,9 +39,15 @@ const DEFAULT_INTENSITY = Object.freeze({
 
 export const getModuleControlOptions = (family) => MODULE_CONTROL_OPTIONS[family] || []
 export const getControlTypeOptions = () => CONTROL_TYPE_OPTIONS
-export const getControlMethodOptions = (strategy) => CONTROL_METHOD_OPTIONS[strategy] || []
-export const isControlMethodForStrategy = (strategy, method) => getControlMethodOptions(strategy).some((option) => option.value === method)
-export const defaultControlMethod = (strategy) => getControlMethodOptions(strategy)[0]?.value || ''
+export const supportsAdvancedControlMethod = (input = {}) => input.scope === 'module' && ADVANCED_CONTROL_MODULES.has(input.moduleKey)
+export const getControlMethodOptions = (strategy, input) => {
+  const options = CONTROL_METHOD_OPTIONS[strategy] || []
+  if (!input) return options
+  if (supportsAdvancedControlMethod(input)) return options
+  return options.filter((option) => !ADVANCED_CONTROL_METHODS.has(option.value))
+}
+export const isControlMethodForStrategy = (strategy, method, input) => getControlMethodOptions(strategy, input).some((option) => option.value === method)
+export const defaultControlMethod = (strategy, input) => getControlMethodOptions(strategy, input)[0]?.value || ''
 export const controlMethodLabel = (method) => [...CONTROL_METHOD_OPTIONS.positive, ...CONTROL_METHOD_OPTIONS.negative]
   .find((option) => option.value === method)?.label || ''
 export const defaultControlIntensity = (family) => ({ ...DEFAULT_INTENSITY[family] })
@@ -82,10 +90,10 @@ const hasRequiredIntensity = (input = {}) => {
 
 export function isUserControlFormComplete(input = {}) {
   if (!text(input.userId) || !text(input.note) || !VALID_DURATIONS.has(input.duration)) return false
-  if (input.scope === 'global') return VALID_STRATEGIES.has(input.strategy) && isControlMethodForStrategy(input.strategy, input.method) && hasRequiredIntensity(input)
+  if (input.scope === 'global') return VALID_STRATEGIES.has(input.strategy) && isControlMethodForStrategy(input.strategy, input.method, input) && hasRequiredIntensity(input)
   if (input.scope !== 'module') return false
   return VALID_STRATEGIES.has(input.strategy)
-    && isControlMethodForStrategy(input.strategy, input.method)
+    && isControlMethodForStrategy(input.strategy, input.method, input)
     && getModuleControlOptions(input.family).some((option) => option.value === moduleValueForStrategy(input.strategy, input.family))
     && hasRequiredIntensity(input)
 }

@@ -97,8 +97,12 @@ const selectedUserName = computed(() => displayUser.value?.username || displayUs
 const selectedUserEmail = computed(() => displayUser.value?.email || '邮箱未提供')
 
 const controlTypeOptions = computed(() => getControlTypeOptions())
+const controlMethodContext = computed(() => ({
+  scope: displayScope.value,
+  moduleKey: displayModuleKey.value
+}))
 const controlIntentOptions = computed(() => controlTypeOptions.value.flatMap((typeOption) => (
-  getControlMethodOptions(typeOption.value).map((methodOption) => ({
+  getControlMethodOptions(typeOption.value, controlMethodContext.value).map((methodOption) => ({
     value: `${typeOption.value}:${methodOption.value}`,
     label: methodOption.label,
     description: `${typeOption.label}：${typeOption.description}；${methodOption.description}`,
@@ -239,7 +243,7 @@ const globalRuleCatalog = Object.freeze([
     label: '交割、永续、现货',
     title: '交易模块规则',
     scope: '只影响目标用户订单价格，不改变公共行情、K线、盘口和其他用户订单。',
-    pointMethod: '交易类统一通过价格偏移处理：现货控制成交价，交割和永续控制最终结算价。',
+    pointMethod: '交易类统一通过价格偏移处理：现货控制成交价，交割和永续控制最终结算价；做高/做低仅在交割、永续模块单独设置时可选。',
     effect: '现货在成交时控制成交价；交割和永续在结算时按方向控制结算价。',
     example: '说明：控盘方式只作为操作标记，不参与价格偏移逻辑。'
   },
@@ -248,7 +252,7 @@ const globalRuleCatalog = Object.freeze([
     label: 'AI量化、流动性挖矿、投资组合',
     title: '理财模块规则',
     scope: '只影响目标用户理财订单收益率调整，不改变产品基础收益率和其他用户收益。',
-    pointMethod: '理财类统一通过收益率调整处理：控赢提升收益率，控输降低收益率。',
+    pointMethod: '理财类统一通过收益率调整处理：控赢提升收益率，控输降低收益率；不使用做高/做低档位。',
     effect: '控赢使用点控收益率提升数值；控输使用点控收益率降低数值。',
     example: '说明：控盘方式只作为操作标记，不参与收益率计算逻辑。'
   }
@@ -277,6 +281,7 @@ const displayedModuleRules = computed(() => {
 
 const formInput = computed(() => ({
   scope: displayScope.value,
+  moduleKey: displayModuleKey.value,
   family: moduleMeta.value?.family,
   userId: selectedUserId.value,
   strategy: form.strategy,
@@ -297,9 +302,10 @@ const resetForm = (data) => {
     : Object.values(data.existingRules || {}).find((rule) => rule?.strategy)
 
   form.strategy = existing?.strategy || (['loss', 'lowYield'].includes(existing?.value) ? 'negative' : 'positive')
-  form.method = existing?.method && isControlMethodForStrategy(form.strategy, existing.method)
+  const methodContext = { scope: data.scope, moduleKey: data.moduleKey }
+  form.method = existing?.method && isControlMethodForStrategy(form.strategy, existing.method, methodContext)
     ? existing.method
-    : defaultControlMethod(form.strategy)
+    : defaultControlMethod(form.strategy, methodContext)
   const tradeDefault = defaultControlIntensity('trade')
   const financeDefault = defaultControlIntensity('finance')
   form.tradeIntensityMin = String(existing?.intensity?.trade?.min ?? existing?.intensity?.trade?.value ?? tradeDefault.min)
@@ -340,9 +346,15 @@ const observeLeftPanelHeight = () => {
 watch(
   () => form.strategy,
   (strategy) => {
-    if (!isControlMethodForStrategy(strategy, form.method)) form.method = defaultControlMethod(strategy)
+    if (!isControlMethodForStrategy(strategy, form.method, controlMethodContext.value)) form.method = defaultControlMethod(strategy, controlMethodContext.value)
   }
 )
+
+watch(controlIntentOptions, (options) => {
+  if (!options.some((option) => option.strategy === form.strategy && option.method === form.method)) {
+    form.method = defaultControlMethod(form.strategy, controlMethodContext.value)
+  }
+})
 
 watch(
   [() => props.open, dialogData],

@@ -267,6 +267,32 @@ test('unified negative maps trading to loss and finance to low yield', () => {
   assert.equal(next.rules['159'].portfolio.value, 'lowYield')
 })
 
+test('advanced profit and loss methods only persist for delivery and perpetual module settings', () => {
+  const unified = applyUnifiedControl(createUserControlState(), {
+    userId: 'method-user', strategy: 'positive', method: 'highProfit', duration: 'permanent',
+    note: '统一入口不支持做高', now: '2026-08-01 10:00:00', batchId: 'method-global'
+  })
+  assert.ok(Object.values(unified.rules['method-user']).every((rule) => rule.method === 'profit'))
+
+  const spot = applyModuleControl(unified, {
+    userId: 'method-user', moduleKey: 'spot', strategy: 'positive', method: 'lowProfit',
+    duration: 'permanent', note: '现货不支持做低', now: '2026-08-01 10:05:00', ruleId: 'method-spot'
+  })
+  assert.equal(spot.rules['method-user'].spot.method, 'profit')
+
+  const aiQuant = applyModuleControl(spot, {
+    userId: 'method-user', moduleKey: 'aiQuant', strategy: 'negative', method: 'lowLoss',
+    duration: 'permanent', note: '理财不支持做低亏损', now: '2026-08-01 10:10:00', ruleId: 'method-ai'
+  })
+  assert.equal(aiQuant.rules['method-user'].aiQuant.method, 'loss')
+
+  const perpetual = applyModuleControl(aiQuant, {
+    userId: 'method-user', moduleKey: 'perpetual', strategy: 'negative', method: 'highLoss',
+    duration: 'permanent', note: '永续支持做高亏损', now: '2026-08-01 10:15:00', ruleId: 'method-perp'
+  })
+  assert.equal(perpetual.rules['method-user'].perpetual.method, 'highLoss')
+})
+
 test('module override changes one child and marks the unified summary divergent', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
     userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'

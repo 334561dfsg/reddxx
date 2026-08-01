@@ -24,6 +24,8 @@ const controlMethods = {
   positive: ['profit', 'highProfit', 'lowProfit'],
   negative: ['loss', 'highLoss', 'lowLoss']
 }
+const advancedControlMethods = new Set(['highProfit', 'lowProfit', 'highLoss', 'lowLoss'])
+const advancedControlModules = new Set(['delivery', 'perpetual'])
 
 const strategyValue = (strategy, family) => {
   if (strategy === 'positive') return family === 'trade' ? 'profit' : 'highYield'
@@ -41,7 +43,9 @@ const normalizeStrategy = (input = {}) => {
 
 const normalizeMethod = (input = {}) => {
   const strategy = normalizeStrategy(input)
-  if (controlMethods[strategy].includes(input.method)) return input.method
+  const moduleKey = String(input.moduleKey || '')
+  const allowsAdvancedMethod = input.scope === 'module' && advancedControlModules.has(moduleKey)
+  if (controlMethods[strategy].includes(input.method) && (allowsAdvancedMethod || !advancedControlMethods.has(input.method))) return input.method
   return strategy === 'positive' ? 'profit' : 'loss'
 }
 
@@ -111,7 +115,7 @@ export function applyUnifiedControl(state, input) {
   const userId = requireText(input.userId, 'userId')
   const note = requireText(input.note, 'note')
   const strategy = normalizeStrategy(input)
-  const method = normalizeMethod({ ...input, strategy })
+  const method = normalizeMethod({ ...input, strategy, scope: 'global' })
   const intensity = cloneIntensity(input.intensity)
   if (!['once', 'permanent'].includes(input.duration)) throw new TypeError('duration must be once or permanent')
   if (state.failureModule) {
@@ -212,7 +216,7 @@ export function applyModuleControl(state, input) {
   const note = requireText(input.note, 'note')
   const module = moduleMeta(input.moduleKey)
   const strategy = normalizeStrategy(input)
-  const method = normalizeMethod({ ...input, strategy })
+  const method = normalizeMethod({ ...input, strategy, scope: 'module', moduleKey: module.key })
   const value = input.value || strategyValue(strategy, module.family)
   const intensity = cloneIntensity(input.intensity)
   if (!validValues[module.family].includes(value)) throw new TypeError('value does not match module family')
