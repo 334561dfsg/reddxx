@@ -27,7 +27,6 @@ const metricLabel = {
   SHORT: '空头持仓',
   NET: '净持仓',
   RATIO: '多空比',
-  USERS: '活跃用户',
   VOLUME: '24h交易量',
   PLATFORM_PNL: '平台盈亏',
   USER_PNL: '用户盈亏'
@@ -116,7 +115,6 @@ const ensureMetrics = (contract) => {
     .split('')
     .reduce((sum, ch) => sum + ch.charCodeAt(0), 0)
   const baseVol = 8_000_000 + (seed % 45) * 900_000
-  const baseUsers = 320 + (seed % 900)
   const baseLong = 650_000 + (seed % 30) * 85_000
   const baseShort = 600_000 + (seed % 28) * 80_000
   const net = baseLong - baseShort
@@ -136,7 +134,6 @@ const ensureMetrics = (contract) => {
     getOr(metricLabel.SHORT, { label: metricLabel.SHORT, value: formatCompactUsd(baseShort), tone: 'down' }),
     getOr(metricLabel.NET, { label: metricLabel.NET, value: formatCompactUsd(net, { withSign: true }), tone: net >= 0 ? 'up' : 'down' }),
     getOr(metricLabel.RATIO, { label: metricLabel.RATIO, value: ratio.toFixed(2), tone: 'neutral' }),
-    getOr(metricLabel.USERS, { label: metricLabel.USERS, value: String(baseUsers), tone: 'neutral' }),
     getOr(metricLabel.VOLUME, { label: metricLabel.VOLUME, value: formatCompactUsd(baseVol), tone: 'neutral' }),
     getOr(metricLabel.PLATFORM_PNL, {
       label: metricLabel.PLATFORM_PNL,
@@ -230,7 +227,6 @@ const refreshBoard = () => {
     const short = jitter(parseCompactUsd(getMetric({ metrics }, metricLabel.SHORT)?.value), 0.012)
     const net = long - short
     const ratio = short > 0 ? long / short : 1
-    const users = Math.max(0, Math.round(jitter(Number(getMetric({ metrics }, metricLabel.USERS)?.value || 0), 0.02)))
     const volume = jitter(parseCompactUsd(getMetric({ metrics }, metricLabel.VOLUME)?.value), 0.03)
     const platformPnl = ensureNonZeroSigned(
       jitter(parseCompactUsd(getMetric({ metrics }, metricLabel.PLATFORM_PNL)?.value), 0.06) * (Math.random() > 0.52 ? 1 : -1),
@@ -246,7 +242,6 @@ const refreshBoard = () => {
     updated = upsertMetric({ metrics: updated }, metricLabel.SHORT, { value: formatCompactUsd(short), tone: 'down' })
     updated = upsertMetric({ metrics: updated }, metricLabel.NET, { value: formatCompactUsd(net, { withSign: true }), tone: net >= 0 ? 'up' : 'down' })
     updated = upsertMetric({ metrics: updated }, metricLabel.RATIO, { value: ratio.toFixed(2), tone: 'neutral' })
-    updated = upsertMetric({ metrics: updated }, metricLabel.USERS, { value: String(users), tone: 'neutral' })
     updated = upsertMetric({ metrics: updated }, metricLabel.VOLUME, { value: formatCompactUsd(volume), tone: 'neutral' })
     updated = upsertMetric({ metrics: updated }, metricLabel.PLATFORM_PNL, { value: formatCompactUsd(platformPnl, { withSign: true }), tone: platformPnl >= 0 ? 'up' : 'down' })
     updated = upsertMetric({ metrics: updated }, metricLabel.USER_PNL, { value: formatCompactUsd(userPnl, { withSign: true }), tone: userPnl >= 0 ? 'up' : 'down' })
@@ -395,7 +390,6 @@ const manualContractMetrics = computed(() => {
   const c = manualContract.value
   return {
     volume: getMetric(c || {}, metricLabel.VOLUME)?.value || '-',
-    users: getMetric(c || {}, metricLabel.USERS)?.value || '-',
     long: getMetric(c || {}, metricLabel.LONG)?.value || '-',
     short: getMetric(c || {}, metricLabel.SHORT)?.value || '-',
     net: getMetric(c || {}, metricLabel.NET)?.value || '-',
@@ -544,7 +538,6 @@ const handleMfaVerify = async (code) => {
                 <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">24h交易量</th>
                 <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">持仓(多/空/净)</th>
                 <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">多空比</th>
-                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">活跃用户</th>
                 <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">平台盈亏</th>
                 <!-- <th class="px-5 py-3 text-left text-xs font-semibold text-slate-900 uppercase">手动配置</th> -->
                 <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">操作</th>
@@ -573,7 +566,6 @@ const handleMfaVerify = async (code) => {
                   </p>
                 </td>
                 <td class="px-5 py-4 text-right text-sm font-semibold text-slate-900">{{ getMetric(contract, metricLabel.RATIO)?.value || '-' }}</td>
-                <td class="px-5 py-4 text-right text-sm font-semibold text-slate-900">{{ getMetric(contract, metricLabel.USERS)?.value || '-' }}</td>
                 <td class="px-5 py-4 text-right text-sm font-semibold">
                   <span :class="parseCompactUsd(getMetric(contract, metricLabel.PLATFORM_PNL)?.value) >= 0 ? 'text-emerald-600' : 'text-rose-600'">
                     {{ getMetric(contract, metricLabel.PLATFORM_PNL)?.value || '-' }}

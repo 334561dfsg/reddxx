@@ -848,7 +848,6 @@ const mfaDescription = computed(() => pendingMfaAction.value?.type === 'cancel'
 // 统计信息
 const statistics = computed(() => {
   const total = usersList.length
-  const active = usersList.filter(u => u.status === USER_STATUS.ACTIVE).length
   const vip = usersList.filter(u => u.isVip).length
   const agents = usersList.filter(u => u.role === USER_ROLE.AGENT).length
   
@@ -857,12 +856,6 @@ const statistics = computed(() => {
       label: '总用户数',
       value: total.toLocaleString(),
       trend: '+8.2% 较上月',
-      good: true
-    },
-    {
-      label: '活跃用户',
-      value: active.toLocaleString(),
-      trend: `${((active / total) * 100).toFixed(1)}% 占比`,
       good: true
     },
     {

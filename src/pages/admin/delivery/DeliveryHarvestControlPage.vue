@@ -297,7 +297,6 @@ const deltaTone = (delta) => {
               <th class="px-5 py-3 font-medium">24h成交量</th>
               <th class="px-5 py-3 font-medium">总持仓</th>
               <th class="px-5 py-3 font-medium">多空比</th>
-              <th class="px-5 py-3 font-medium">活跃用户</th>
               <th class="px-5 py-3 font-medium">平台预估亏损额</th>
               <th class="px-5 py-3 font-medium">平台净头寸 (Delta)</th>
               <th class="px-5 py-3 font-medium">实时盈亏 (PnL)</th>
@@ -334,9 +333,6 @@ const deltaTone = (delta) => {
               </td>
               <td class="px-5 py-3">
                 <div class="font-mono text-slate-700">{{ Number(row.longShortRatio || 0).toFixed(2) }}</div>
-              </td>
-              <td class="px-5 py-3">
-                <div class="font-mono text-slate-700">{{ row.activeUsers }}</div>
               </td>
               <td class="px-5 py-3">
                 <div class="font-mono text-rose-700">{{ formatCompactUsd(row.estimatedLoss) }}</div>

@@ -143,9 +143,10 @@ test('team report entry renders approved metrics and branch details in a child D
   const source = read('src/admin/components/user/UserTeamReportDrawer.vue')
   assert.equal(entry.status, 'available')
   assert.equal(entry.handler, 'team-report')
-  for (const label of ['裂变团队总人数', '直属裂变下级人数', '裂变代理人数', '裂变活跃人数', '裂变总可用余额', '裂变总冻结余额', '裂变总交易量', '裂变团队累计盈亏']) {
+  for (const label of ['裂变团队总人数', '直属裂变下级人数', '裂变代理人数', '裂变总可用余额', '裂变总冻结余额', '裂变总交易量', '裂变团队累计盈亏']) {
     assert.match(source, new RegExp(label))
   }
+  assert.doesNotMatch(source, /裂变活跃人数/)
   assert.match(source, /直属裂变分支明细/)
   assert.match(source, /getTeamReport/)
   assert.match(source, /data-testid="team-report-drawer-body"[^>]*class="[^"]*flex[^"]*flex-col[^"]*overflow-hidden/)

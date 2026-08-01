@@ -16,7 +16,6 @@ const marketPrices = ref({})
 
 const metricLabel = {
   VOLUME: '24h交易量',
-  USERS: '活跃用户',
   LONG: '多头持仓',
   SHORT: '空头持仓',
   NET: '净持仓',
@@ -100,7 +99,6 @@ const ensurePerpMetrics = (contract) => {
     .split('')
     .reduce((sum, ch) => sum + ch.charCodeAt(0), 0)
   const baseVol = 8_000_000 + (seed % 45) * 900_000
-  const baseUsers = 320 + (seed % 900)
   const baseLong = 650_000 + (seed % 30) * 85_000
   const baseShort = 600_000 + (seed % 28) * 80_000
   const net = baseLong - baseShort
@@ -121,7 +119,6 @@ const ensurePerpMetrics = (contract) => {
     getOr(metricLabel.SHORT, { label: metricLabel.SHORT, value: formatCompactUsd(baseShort) }),
     getOr(metricLabel.NET, { label: metricLabel.NET, value: formatCompactUsd(net, true) }),
     getOr(metricLabel.RATIO, { label: metricLabel.RATIO, value: ratio.toFixed(2) }),
-    getOr(metricLabel.USERS, { label: metricLabel.USERS, value: String(baseUsers) }),
     getOr(metricLabel.VOLUME, { label: metricLabel.VOLUME, value: formatCompactUsd(baseVol) }),
     getOr(metricLabel.LONG_PNL, { label: metricLabel.LONG_PNL, value: formatCompactUsd(longPnl, true) }),
     getOr(metricLabel.SHORT_PNL, { label: metricLabel.SHORT_PNL, value: formatCompactUsd(shortPnl, true) }),
@@ -195,7 +192,6 @@ const manualContractMetrics = computed(() => {
   const c = manualContract.value
   return {
     volume: getMetric(c || {}, metricLabel.VOLUME)?.value || '-',
-    users: getMetric(c || {}, metricLabel.USERS)?.value || '-',
     long: getMetric(c || {}, metricLabel.LONG)?.value || '-',
     short: getMetric(c || {}, metricLabel.SHORT)?.value || '-',
     net: getMetric(c || {}, metricLabel.NET)?.value || '-',
@@ -282,7 +278,6 @@ const refreshData = () => {
     const short = jitter(parseCompactUsd(getMetric({ metrics }, metricLabel.SHORT)?.value), 0.012)
     const net = long - short
     const ratio = short > 0 ? long / short : 1
-    const users = Math.max(0, Math.round(jitter(Number(getMetric({ metrics }, metricLabel.USERS)?.value || 0), 0.02)))
     const volume = jitter(parseCompactUsd(getMetric({ metrics }, metricLabel.VOLUME)?.value), 0.03)
     const longPnl = ensureNonZeroSigned(jitter(parseCompactUsd(getMetric({ metrics }, metricLabel.LONG_PNL)?.value), 0.08), 500)
     const shortPnl = ensureNonZeroSigned(jitter(parseCompactUsd(getMetric({ metrics }, metricLabel.SHORT_PNL)?.value), 0.08), 500)
@@ -293,7 +288,6 @@ const refreshData = () => {
     updated = upsertMetric({ metrics: updated }, metricLabel.SHORT, { value: formatCompactUsd(short) })
     updated = upsertMetric({ metrics: updated }, metricLabel.NET, { value: formatCompactUsd(net, true) })
     updated = upsertMetric({ metrics: updated }, metricLabel.RATIO, { value: ratio.toFixed(2) })
-    updated = upsertMetric({ metrics: updated }, metricLabel.USERS, { value: String(users) })
     updated = upsertMetric({ metrics: updated }, metricLabel.VOLUME, { value: formatCompactUsd(volume) })
     updated = upsertMetric({ metrics: updated }, metricLabel.LONG_PNL, { value: formatCompactUsd(longPnl, true) })
     updated = upsertMetric({ metrics: updated }, metricLabel.SHORT_PNL, { value: formatCompactUsd(shortPnl, true) })
@@ -356,26 +350,19 @@ const perpVolume24h = computed(() => {
   return perpContracts.value.reduce((sum, c) => sum + parseCompactUsd(getMetric(c, metricLabel.VOLUME)?.value), 0)
 })
 
-const perpActiveUsers = computed(() => {
-  return perpContracts.value.reduce((sum, c) => sum + Number(getMetric(c, metricLabel.USERS)?.value || 0), 0)
-})
-
 const deliveryPlatformPnl = computed(() => deliveryOverview.value.platformPnl24h || 0)
 const deliveryLongPnl = computed(() => deliveryOverview.value.longPnl24h || 0)
 const deliveryShortPnl = computed(() => deliveryOverview.value.shortPnl24h || 0)
 const deliveryVolume24h = computed(() => deliveryOverview.value.totalVolume24h || 0)
-const deliveryActiveUsers = computed(() => deliveryOverview.value.activeUsers24h || 0)
 
 const totalPlatformPnl = computed(() => perpPlatformPnl.value + deliveryPlatformPnl.value)
 const totalLongPnl = computed(() => perpLongPnl.value + deliveryLongPnl.value)
 const totalShortPnl = computed(() => perpShortPnl.value + deliveryShortPnl.value)
 const totalVolume = computed(() => perpVolume24h.value + deliveryVolume24h.value)
-const totalActiveUsers = computed(() => perpActiveUsers.value + deliveryActiveUsers.value)
 
 const activeFilterLabel = computed(() => (activeTab.value === 'perpetual' ? '永续' : activeTab.value === 'delivery' ? '交割' : '综合概览'))
 const selectedPlatformPnl = computed(() => (activeTab.value === 'perpetual' ? perpPlatformPnl.value : activeTab.value === 'delivery' ? deliveryPlatformPnl.value : totalPlatformPnl.value))
 const selectedVolume = computed(() => (activeTab.value === 'perpetual' ? perpVolume24h.value : activeTab.value === 'delivery' ? deliveryVolume24h.value : totalVolume.value))
-const selectedActiveUsers = computed(() => (activeTab.value === 'perpetual' ? perpActiveUsers.value : activeTab.value === 'delivery' ? deliveryActiveUsers.value : totalActiveUsers.value))
 
 const unifiedContracts = computed(() => {
   const perps = perpContracts.value.map((c) => ({
@@ -385,7 +372,6 @@ const unifiedContracts = computed(() => {
     symbol: c.symbol,
     name: c.alias,
     volume: parseCompactUsd(getMetric(c, metricLabel.VOLUME)?.value),
-    users: Number(getMetric(c, metricLabel.USERS)?.value || 0),
     platformPnl: parseCompactUsd(getMetric(c, metricLabel.PLATFORM_PNL)?.value),
     longAmount: parseCompactUsd(getMetric(c, metricLabel.LONG)?.value),
     shortAmount: parseCompactUsd(getMetric(c, metricLabel.SHORT)?.value),
@@ -397,7 +383,6 @@ const unifiedContracts = computed(() => {
     symbol: c.symbol,
     name: c.name,
     volume: Number(c.volume24h || 0),
-    users: Number(c.activeUsers || 0),
     platformPnl: Number(c.platformPnl24h || 0),
     longAmount: Number(c.longPosition || 0),
     shortAmount: Number(c.shortPosition || 0),
@@ -527,9 +512,8 @@ const onLockDeliveryHarvest = (payload) => {
       </article>
 
       <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-slate-500">当前筛选交易量 / 活跃用户</p>
+        <p class="text-sm text-slate-500">当前筛选交易量</p>
         <p class="mt-2 text-2xl font-bold font-mono text-slate-900">${{ formatNumber(Math.round(selectedVolume)) }}</p>
-        <p class="mt-2 text-sm font-semibold text-slate-700">{{ formatNumber(Math.round(selectedActiveUsers)) }} users</p>
       </article>
     </div>
 
@@ -553,7 +537,6 @@ const onLockDeliveryHarvest = (payload) => {
               <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">24h交易量</th>
               <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">做多总额</th>
               <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">做空总额</th>
-              <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">活跃用户</th>
               <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">平台盈亏</th>
               <th class="px-5 py-3 text-left text-xs font-semibold text-slate-900 uppercase">风险摘要</th>
               <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">操作</th>
@@ -569,7 +552,6 @@ const onLockDeliveryHarvest = (payload) => {
               <td class="px-5 py-4 text-right text-sm font-semibold text-slate-900">${{ formatNumber(Math.round(row.volume)) }}</td>
               <td class="px-5 py-4 text-right text-sm font-semibold text-emerald-700">${{ formatNumber(Math.round(row.longAmount || 0)) }}</td>
               <td class="px-5 py-4 text-right text-sm font-semibold text-rose-700">${{ formatNumber(Math.round(row.shortAmount || 0)) }}</td>
-              <td class="px-5 py-4 text-right text-sm font-semibold text-slate-900">{{ formatNumber(Math.round(row.users)) }}</td>
               <td class="px-5 py-4 text-right text-sm font-semibold">
                 <span :class="row.platformPnl >= 0 ? 'text-emerald-600' : 'text-rose-600'">{{ formatCompactUsd(row.platformPnl, true) }}</span>
               </td>

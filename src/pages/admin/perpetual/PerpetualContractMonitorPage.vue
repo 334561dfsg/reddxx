@@ -41,7 +41,6 @@ const metricLabel = {
   SHORT: '空头持仓',
   NET: '净持仓',
   RATIO: '多空比',
-  USERS: '活跃用户',
   VOLUME: '24h交易量',
   PLATFORM_PNL: '平台盈亏',
   USER_PNL: '用户盈亏'
@@ -130,7 +129,6 @@ const ensureMetrics = (contract) => {
     .split('')
     .reduce((sum, ch) => sum + ch.charCodeAt(0), 0)
   const baseVol = 8_000_000 + (seed % 45) * 900_000
-  const baseUsers = 320 + (seed % 900)
   const baseLong = 650_000 + (seed % 30) * 85_000
   const baseShort = 600_000 + (seed % 28) * 80_000
   const net = baseLong - baseShort
@@ -150,7 +148,6 @@ const ensureMetrics = (contract) => {
     getOr(metricLabel.SHORT, { label: metricLabel.SHORT, value: formatCompactUsd(baseShort), tone: 'down' }),
     getOr(metricLabel.NET, { label: metricLabel.NET, value: formatCompactUsd(net, { withSign: true }), tone: net >= 0 ? 'up' : 'down' }),
     getOr(metricLabel.RATIO, { label: metricLabel.RATIO, value: ratio.toFixed(2), tone: 'neutral' }),
-    getOr(metricLabel.USERS, { label: metricLabel.USERS, value: String(baseUsers), tone: 'neutral' }),
     getOr(metricLabel.VOLUME, { label: metricLabel.VOLUME, value: formatCompactUsd(baseVol), tone: 'neutral' }),
     getOr(metricLabel.PLATFORM_PNL, {
       label: metricLabel.PLATFORM_PNL,

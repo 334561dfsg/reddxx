@@ -566,11 +566,6 @@ const emitSave = () =>
               </div>
 
               <div class="flex items-baseline gap-2 shrink-0">
-                <span class="text-slate-500">活跃用户</span>
-                <span class="font-mono text-slate-900">{{ metrics.users }}</span>
-              </div>
-
-              <div class="flex items-baseline gap-2 shrink-0">
                 <span class="text-slate-500">持仓(多/空/净)</span>
                 <span class="font-mono text-slate-900">{{ metrics.long }} / {{ metrics.short }} / {{ metrics.net }}</span>
               </div>

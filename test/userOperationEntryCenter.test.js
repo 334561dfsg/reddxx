@@ -72,7 +72,6 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '修改信用分',
     '编辑会员等级',
     '会员累计充值',
-    '添加返利奖励',
     '封户',
     '统一点控',
     '取消点控',
@@ -109,7 +108,7 @@ test('operation catalog distinguishes implemented and planned actions', () => {
   assert.equal(getUserOperationEntry('credit-adjust', { status: 'active' }).handler, 'credit-adjust')
   assert.equal(getUserOperationEntry('vip-level', { status: 'active' }).handler, 'vip-level')
   assert.equal(getUserOperationEntry('vip-deposit-total', { status: 'active' }).handler, 'vip-deposit-total')
-  assert.equal(getUserOperationEntry('rebate-reward', { status: 'active' }).handler, 'rebate-reward')
+  assert.equal(getUserOperationEntry('rebate-reward', { status: 'active' }), null)
 })
 
 test('fund freeze entries use concise one-line summaries', () => {

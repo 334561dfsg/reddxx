@@ -40,7 +40,6 @@ const queryRows = computed(() => {
         tradeVolume,
         estCommission,
         newInvites: day.newInvites,
-        activeUsers: day.activeUsers
       })
     }
   }
@@ -158,7 +157,6 @@ function openDatePicker(event) {
               <th class="px-4 py-3 text-right font-medium">交易额（USDT）</th>
               <th class="px-4 py-3 text-right font-medium">预估佣金（USDT）</th>
               <th class="px-4 py-3 text-right font-medium">当日新增直邀</th>
-              <th class="px-4 py-3 text-right font-medium">当日活跃用户</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-white/[0.05]">
@@ -172,7 +170,6 @@ function openDatePicker(event) {
                 {{ r.estCommission.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
               </td>
               <td class="px-4 py-3 text-right tabular-nums text-white/70">{{ r.newInvites }}</td>
-              <td class="px-4 py-3 text-right tabular-nums text-white/70">{{ r.activeUsers }}</td>
             </tr>
           </tbody>
         </table>

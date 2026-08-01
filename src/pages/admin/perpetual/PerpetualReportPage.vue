@@ -288,7 +288,6 @@ const reportModuleKeyPoints = {
   ],
   overviewSecondary: [
     '总持仓：盘子越大，调同样幅度对盈亏影响越大，也更敏感',
-    '活跃用户：看线控是否把用户“劝退”了，摩擦太大可能会掉活跃',
     '多空比：看是否一边倒，决定价格应该往哪边偏移更合适',
     '平均杠杆：杠杆越高越容易连环爆仓，需要更保守的策略'
   ],
@@ -577,18 +576,13 @@ const openRiskHelpModal = () => {
           <!--
             次要指标用于“解释原因 + 校准参数”的辅助判断：
             - 总持仓：决定风险敞口规模；持仓越大，偏移/滑点同等幅度带来的盈亏影响越大。
-            - 活跃用户：衡量线控对交易活跃度的影响；活跃度下滑可能意味着摩擦过强或行情低迷。
             - 多空比：判断单边风险；多头过重/空头过重时，优先使用“逆势偏移”引导对手盘、降低净敞口。
             - 平均杠杆：判断爆仓链式风险与平台穿仓风险；杠杆偏高时可下调最大杠杆、增加延迟/滑点抑制冲动交易。
           -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div class="bg-white border border-slate-200 rounded-lg p-4">
               <p class="text-sm text-slate-600 mb-1">总持仓</p>
               <p class="text-xl font-bold text-slate-900">${{ formatAmount(filteredOverview.totalPosition) }}</p>
-            </div>
-            <div class="bg-white border border-slate-200 rounded-lg p-4">
-              <p class="text-sm text-slate-600 mb-1">活跃用户</p>
-              <p class="text-xl font-bold text-slate-900">{{ filteredOverview.activeUsers24h.toLocaleString() }}</p>
             </div>
             <div class="bg-white border border-slate-200 rounded-lg p-4">
               <p class="text-sm text-slate-600 mb-1">多空比</p>
@@ -619,7 +613,7 @@ const openRiskHelpModal = () => {
             </div>
             <!--
               这张表用于“找出需要优先调控的合约 + 复核线控是否已覆盖”：
-              - 24h交易量/活跃用户：判断该合约的业务重要性与可接受摩擦上限。
+              - 24h交易量：判断该合约的业务重要性与可接受摩擦上限。
               - 持仓(多/空)/多空比：决定偏移方向（逆势）与净敞口止损优先级。
               - 平台盈亏：决定线控强度；持续亏损合约优先加大滑点/偏移或降低最大杠杆。
               - 线控状态/自动触发/规则数：确认“可执行性”，避免只看风控侧指标却未落地到线控配置。
@@ -634,7 +628,6 @@ const openRiskHelpModal = () => {
                     <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">持仓</th>
                     <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">多空比</th>
                     <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">平台盈亏</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">活跃用户</th>
                     <th class="px-6 py-3 text-center text-xs font-semibold text-slate-900 uppercase">线控</th>
                     <!-- <th class="px-6 py-3 text-center text-xs font-semibold text-slate-900 uppercase">风险</th> -->
                   </tr>
@@ -664,9 +657,6 @@ const openRiskHelpModal = () => {
                       <p :class="contract.platformPnl24h >= 0 ? 'text-emerald-600' : 'text-rose-600'" class="text-sm font-medium">
                         {{ formatCurrency(contract.platformPnl24h) }}
                       </p>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                      <p class="text-sm font-medium text-slate-900">{{ contract.activeUsers }}</p>
                     </td>
                     <td class="px-6 py-4 text-center">
                       <div class="flex flex-col items-center gap-1">

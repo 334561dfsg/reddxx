@@ -225,9 +225,8 @@ const exportReport = () => {
             </div>
           </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-2 gap-4">
               <div class="bg-white p-4 rounded border border-black/[0.06]"><p class="text-[11px] text-black/45 mb-1 uppercase">当前总持仓</p><p class="text-lg font-bold text-black/85 font-mono">${{ formatAmount(filteredOverview.totalPosition) }}</p></div>
-              <div class="bg-white p-4 rounded border border-black/[0.06]"><p class="text-[11px] text-black/45 mb-1 uppercase">24h 活跃用户</p><p class="text-lg font-bold text-black/85 font-mono">{{ filteredOverview.activeUsers24h.toLocaleString() }}</p></div>
               <div class="bg-white p-4 rounded border border-black/[0.06]"><p class="text-[11px] text-black/45 mb-1 uppercase">全场多空比</p><p class="text-lg font-bold text-black/85 font-mono">{{ filteredOverview.longShortRatio.toFixed(2) }}</p></div>
             </div>
 

@@ -88,7 +88,7 @@ const { pageSize, currentPage, totalCount, totalPages, pagedList } = useAgentPag
 
     <div class="overflow-hidden rounded-xl border border-white/[0.06]">
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[76rem] border-collapse text-left text-sm">
+        <table class="w-full min-w-[72rem] border-collapse text-left text-sm">
           <thead class="bg-white/[0.04] text-[11px] text-white/50">
             <tr>
               <th class="sticky left-0 z-10 bg-[#0f141c] px-3 py-3 font-medium backdrop-blur-sm">日期</th>
@@ -101,7 +101,6 @@ const { pageSize, currentPage, totalCount, totalPages, pagedList } = useAgentPag
               </th>
               <th class="px-2 py-3 text-right font-medium whitespace-nowrap">当日合计</th>
               <th class="px-2 py-3 text-right font-medium whitespace-nowrap">新增</th>
-              <th class="px-2 py-3 text-right font-medium whitespace-nowrap">活跃</th>
               <th class="px-3 py-3 text-right font-medium whitespace-nowrap">预估佣金</th>
             </tr>
           </thead>
@@ -121,7 +120,6 @@ const { pageSize, currentPage, totalCount, totalPages, pagedList } = useAgentPag
                 {{ r.tradeVolume.toLocaleString('zh-CN') }}
               </td>
               <td class="px-2 py-2.5 text-right tabular-nums text-emerald-200/90">{{ r.newInvites }}</td>
-              <td class="px-2 py-2.5 text-right tabular-nums text-white/75">{{ r.activeUsers }}</td>
               <td class="px-3 py-2.5 text-right tabular-nums text-emerald-300/95">
                 {{ r.estCommission.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
               </td>

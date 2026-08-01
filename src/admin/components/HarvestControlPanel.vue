@@ -102,7 +102,6 @@ const marketPrice = computed(() => Number(props.row?.marketPrice || 0))
 const tickSize = computed(() => tickSizeFor(asset.value, marketPrice.value))
 
 const volume24h = computed(() => Number(props.row?.volume24h || 0))
-const activeUsers = computed(() => Number(props.row?.activeUsers || 0))
 
 const positionsByKey = ref({})
 const selectedUids = ref([])
@@ -896,13 +895,6 @@ const klineSvg = computed(() => {
                 <span class="text-slate-500">24h交易量</span>
                 <span class="font-mono text-slate-900">{{ volume24h > 0 ? formatCompactUsd(volume24h) : '-' }}</span>
               </div>
-
-              <div class="flex items-baseline gap-2 shrink-0">
-                <span class="text-slate-500">活跃用户</span>
-                <span class="font-mono text-slate-900">{{ activeUsers > 0 ? Math.round(activeUsers) : '-' }}</span>
-              </div>
-
-              <span class="h-4 w-px bg-slate-200 shrink-0"></span>
 
               <div class="flex items-baseline gap-2 shrink-0">
                 <span class="text-slate-500">平台盈亏</span>

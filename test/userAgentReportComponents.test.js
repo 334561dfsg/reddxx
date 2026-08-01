@@ -50,10 +50,11 @@ test('agent report Drawer keeps overview outside tabs and separates products fro
   assert.ok(drawer)
   assert.equal(drawer.getAttribute('role'), 'dialog')
   assert.equal(drawer.getAttribute('aria-modal'), 'true')
-  for (const label of ['直属客户数', '活跃客户数', '累计业务量', '累计佣金']) {
+  for (const label of ['直属客户数', '累计业务量', '累计佣金']) {
     assert.match(drawer.textContent, new RegExp(label))
   }
-  assert.equal(harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-summary-card').length, 4)
+  assert.doesNotMatch(drawer.textContent, /活跃客户/)
+  assert.equal(harness.allNodes().filter((node) => node.getAttribute?.('data-testid') === 'agent-report-summary-card').length, 3)
   const overview = harness.findByTestId('agent-report-overview')
   const tablist = harness.findByTestId('agent-report-tablist')
   const productTab = harness.findByText('产品线汇总', 'button')

@@ -37,7 +37,6 @@ const metricCards = computed(() => report.value ? [
   { label: '裂变团队总人数', value: formatNumber(report.value.memberCount, 0) },
   { label: '直属裂变下级人数', value: formatNumber(report.value.directCount, 0) },
   { label: '裂变代理人数', value: formatNumber(report.value.agentCount, 0) },
-  { label: '裂变活跃人数', value: formatNumber(report.value.activeCount, 0) },
   { label: '裂变总可用余额', value: `${formatNumber(report.value.availableBalance)} USDT` },
   { label: '裂变总冻结余额', value: `${formatNumber(report.value.frozenBalance)} USDT` },
   { label: '裂变总交易量', value: `${formatNumber(report.value.tradingVolume)} USDT` },

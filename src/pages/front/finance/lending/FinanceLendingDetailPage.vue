@@ -202,10 +202,8 @@ const collateralWarningThreshold = computed(() => {
               </dd>
             </div>
             <div class="flex justify-between gap-4">
-              <dt class="text-white/45">在贷用户 / 订单</dt>
-              <dd class="tabular-nums text-white/80">
-                {{ product.activeUsers?.toLocaleString() ?? '—' }} 人 · {{ product.activeOrders?.toLocaleString() ?? '—' }} 单
-              </dd>
+              <dt class="text-white/45">在贷订单</dt>
+              <dd class="tabular-nums text-white/80">{{ product.activeOrders?.toLocaleString() ?? '—' }} 单</dd>
             </div>
           </dl>
           <p

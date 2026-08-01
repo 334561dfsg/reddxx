@@ -50,7 +50,7 @@ const settlementSubline = computed(() => {
         </div>
       </header>
       <div class="space-y-6 p-5">
-        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <div class="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 transition hover:border-white/[0.1]">
             <p class="text-[11px] font-medium uppercase tracking-wider text-white/38">本月预估佣金</p>
             <p class="mt-2 text-2xl font-semibold tabular-nums text-emerald-300">
@@ -64,13 +64,6 @@ const settlementSubline = computed(() => {
             <p class="mt-2 text-2xl font-semibold tabular-nums text-white">
               {{ s.monthVolume.toLocaleString('zh-CN') }}
               <span class="text-sm font-normal text-white/40">{{ s.monthVolumeUnit }}</span>
-            </p>
-          </div>
-          <div class="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 transition hover:border-white/[0.1]">
-            <p class="text-[11px] font-medium uppercase tracking-wider text-white/38">直邀活跃 / 本月新增</p>
-            <p class="mt-2 text-2xl font-semibold tabular-nums text-white">
-              {{ s.activeClients }}
-              <span class="text-base font-normal text-white/40">/ +{{ s.newClientsThisMonth }}</span>
             </p>
           </div>
           <div class="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 transition hover:border-white/[0.1]">

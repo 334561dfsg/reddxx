@@ -33,7 +33,6 @@ const formatNumber = (value, digits = 0) => Number(value || 0).toLocaleString('z
 const formatMoney = (value) => `${formatNumber(value, 2)} USDT`
 const summaryCards = computed(() => [
   { label: '直属客户数', value: `${formatNumber(props.report?.summary?.directClientCount)} 人` },
-  { label: '活跃客户数', value: `${formatNumber(props.report?.summary?.activeClientCount)} 人` },
   { label: '累计业务量', value: formatMoney(props.report?.summary?.totalVolume) },
   { label: '累计佣金', value: formatMoney(props.report?.summary?.totalCommission) }
 ])
@@ -91,7 +90,7 @@ watch(totalPages, (nextTotalPages) => {
             <template v-if="report">
               <section data-testid="agent-report-overview" class="shrink-0" aria-labelledby="agent-report-summary-title">
                 <h3 id="agent-report-summary-title" class="text-sm font-semibold text-slate-900">业务概览</h3>
-                <dl class="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-4">
+                <dl class="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-3">
                   <div v-for="card in summaryCards" :key="card.label" data-testid="agent-report-summary-card" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
                     <dt class="text-xs text-slate-500">{{ card.label }}</dt>
                     <dd class="mt-1 break-words text-sm font-semibold text-slate-900">{{ card.value }}</dd>
@@ -178,10 +177,9 @@ watch(totalPages, (nextTotalPages) => {
                       <time :datetime="row.date" class="text-base font-semibold text-slate-900">{{ row.date }}</time>
                       <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">{{ formatNumber(row.orderCount) }} 笔订单</span>
                     </div>
-                    <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-sm min-[560px]:grid-cols-5">
+                    <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-sm min-[560px]:grid-cols-4">
                       <div><dt class="text-xs text-slate-500">业务量</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.volume) }}</dd></div>
                       <div><dt class="text-xs text-slate-500">佣金</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ formatMoney(row.commission) }}</dd></div>
-                      <div><dt class="text-xs text-slate-500">活跃客户</dt><dd class="mt-0.5 font-medium text-slate-800">{{ formatNumber(row.activeClients) }} 人</dd></div>
                       <div><dt class="text-xs text-slate-500">新增客户</dt><dd class="mt-0.5 font-medium text-slate-800">{{ formatNumber(row.newClients) }} 人</dd></div>
                       <div><dt class="text-xs text-slate-500">订单数</dt><dd class="mt-0.5 font-medium text-slate-800">{{ formatNumber(row.orderCount) }} 笔</dd></div>
                     </dl>
