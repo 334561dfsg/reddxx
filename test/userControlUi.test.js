@@ -32,16 +32,38 @@ test('form helper rejects incomplete values used by the disabled state', () => {
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: '', method: 'profit', duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highLoss', duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'global', userId: '', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 3, max: 8 } }, duration: 'once', note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 8, max: 3 } }, duration: 'once', note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 3, max: 8 } }, duration: 'once', note: '审计备注' }), true)
 })
 
 test('form helper trims notes and builds scope-specific payloads', () => {
   assert.deepEqual(buildUserControlPayload({
-    scope: 'module', family: 'trade', userId: '159', strategy: 'negative', method: 'highLoss', duration: 'permanent', note: '  模块备注  '
-  }), { userId: '159', strategy: 'negative', method: 'highLoss', value: 'loss', duration: 'permanent', note: '模块备注' })
+    scope: 'module', family: 'trade', userId: '159', strategy: 'negative', method: 'highLoss',
+    intensity: { trade: { min: '3%', max: '8%' } }, duration: 'permanent', note: '  模块备注  '
+  }), {
+    userId: '159',
+    strategy: 'negative',
+    method: 'highLoss',
+    value: 'loss',
+    intensity: { trade: { mode: 'percentRange', min: 3, max: 8, unit: '%' } },
+    duration: 'permanent',
+    note: '模块备注'
+  })
   assert.deepEqual(buildUserControlPayload({
-    scope: 'global', userId: '158', strategy: 'positive', method: 'lowProfit', duration: 'once', note: '  统一备注  '
-  }), { userId: '158', strategy: 'positive', method: 'lowProfit', duration: 'once', note: '统一备注' })
+    scope: 'global', userId: '158', strategy: 'positive', method: 'lowProfit',
+    intensity: { trade: { min: 3, max: 8 }, finance: { min: '1', max: '5' } }, duration: 'once', note: '  统一备注  '
+  }), {
+    userId: '158',
+    strategy: 'positive',
+    method: 'lowProfit',
+    intensity: {
+      trade: { mode: 'percentRange', min: 3, max: 8, unit: '%' },
+      finance: { mode: 'percentRange', min: 1, max: 5, unit: '%' }
+    },
+    duration: 'once',
+    note: '统一备注'
+  })
 })
 
 test('shared modal separates trading outcome from finance yield wording', () => {
@@ -50,6 +72,11 @@ test('shared modal separates trading outcome from finance yield wording', () => 
   assert.match(source, /盈利/)
   assert.match(source, /亏损/)
   assert.match(source, /控盘类型与方式/)
+  assert.match(source, /控盘力度/)
+  assert.match(source, /交易类控盘力度范围/)
+  assert.match(source, /理财类控盘力度范围/)
+  assert.match(source, /按订单保证金或成交额/)
+  assert.match(source, /按订单本金/)
   assert.match(source, /点控方式/)
   assert.match(helperSource, /做高盈利/)
   assert.match(helperSource, /做低盈利/)
@@ -76,6 +103,23 @@ test('shared modal exposes note validation on blur while submit stays disabled',
   assert.match(source, /@blur="noteTouched = true"/)
   assert.match(source, /noteTouched && !form\.note\.trim\(\)/)
   assert.match(source, /:disabled="phase !== 'open' \|\| !isComplete"/)
+})
+
+test('shared modal renders percent range controls for scoped point-control strength', () => {
+  const source = read('../src/admin/components/user-control/UserControlModal.vue')
+
+  assert.match(source, /defaultControlIntensity\('trade'\)/)
+  assert.match(source, /defaultControlIntensity\('finance'\)/)
+  assert.match(source, /v-for="field in intensityFields"/)
+  assert.match(source, /v-model\.trim="form\[field\.minModel\]"/)
+  assert.match(source, /v-model\.trim="form\[field\.maxModel\]"/)
+  assert.match(source, /最小比例/)
+  assert.match(source, /最大比例/)
+  assert.match(source, />~<\/span>/)
+  assert.match(source, /inputmode="decimal"/)
+  assert.match(source, /user-control-\$\{field\.key\}-intensity-help/)
+  assert.match(source, /intensity:\s*\{[\s\S]*trade:\s*\{ mode:\s*'percentRange', min:\s*form\.tradeIntensityMin, max:\s*form\.tradeIntensityMax, unit:\s*'%'/)
+  assert.match(source, /finance:\s*\{ mode:\s*'percentRange', min:\s*form\.financeIntensityMin, max:\s*form\.financeIntensityMax, unit:\s*'%'/)
 })
 
 test('shared modal omits the existing-rule summary and atomic overwrite copy', () => {

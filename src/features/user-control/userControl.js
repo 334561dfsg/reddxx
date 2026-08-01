@@ -53,6 +53,13 @@ const requireText = (value, name) => {
 
 const operatorOf = (input) => String(input.operator || 'admin_demo')
 const cloneRule = (rule) => (rule ? { ...rule } : rule)
+const cloneIntensity = (intensity) => {
+  if (!intensity || typeof intensity !== 'object') return undefined
+  return Object.fromEntries(Object.entries(intensity).map(([key, value]) => [
+    key,
+    value && typeof value === 'object' ? { ...value } : value
+  ]))
+}
 
 const appendUnifiedUserControlAudit = ({ userId, action, operator, note, before, after, result = 'success', businessId, occurredAt }) => {
   appendUserAuditLog({
@@ -105,6 +112,7 @@ export function applyUnifiedControl(state, input) {
   const note = requireText(input.note, 'note')
   const strategy = normalizeStrategy(input)
   const method = normalizeMethod({ ...input, strategy })
+  const intensity = cloneIntensity(input.intensity)
   if (!['once', 'permanent'].includes(input.duration)) throw new TypeError('duration must be once or permanent')
   if (state.failureModule) {
     const before = Object.fromEntries(Object.entries(state.rules[userId] || {}).map(([key, rule]) => [key, { ...rule }]))
@@ -113,6 +121,7 @@ export function applyUnifiedControl(state, input) {
       operationLogs: [{
         id: `op-${input.batchId}-failed`, userId, scope: 'global', action: 'apply',
         modules: USER_CONTROL_MODULES.map((item) => item.key), strategy, method,
+        ...(intensity ? { intensity } : {}),
         duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
         before, note, status: 'failed', failedModule: state.failureModule,
         errorMessage: `模块 ${state.failureModule} 写入失败，六个模块均未更新`, createdAt: input.now
@@ -125,6 +134,7 @@ export function applyUnifiedControl(state, input) {
   const rules = Object.fromEntries(USER_CONTROL_MODULES.map((module) => [module.key, {
     id: `${input.batchId}-${module.key}`, batchId: input.batchId, userId, moduleKey: module.key,
     family: module.family, value: strategyValue(strategy, module.family), strategy, method,
+    ...(intensity?.[module.family] ? { intensity: { [module.family]: { ...intensity[module.family] } } } : {}),
     duration: input.duration, status: 'active', source: 'global', note, updatedAt: input.now,
     consumedAt: '', supersededAt: '', cancelledAt: ''
   }]))
@@ -145,6 +155,7 @@ export function applyUnifiedControl(state, input) {
     ruleHistory: [...supersedeRules(before, input.now), ...(state.ruleHistory || [])],
     operationLogs: [{ id: `op-${input.batchId}`, userId, scope: 'global', action: 'apply',
       modules: USER_CONTROL_MODULES.map((item) => item.key), strategy, method,
+      ...(intensity ? { intensity } : {}),
       duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
       before, note, status: 'success', createdAt: input.now }, ...state.operationLogs],
     lastError: ''
@@ -203,12 +214,14 @@ export function applyModuleControl(state, input) {
   const strategy = normalizeStrategy(input)
   const method = normalizeMethod({ ...input, strategy })
   const value = input.value || strategyValue(strategy, module.family)
+  const intensity = cloneIntensity(input.intensity)
   if (!validValues[module.family].includes(value)) throw new TypeError('value does not match module family')
   if (!['once', 'permanent'].includes(input.duration)) throw new TypeError('duration must be once or permanent')
   const userRules = cloneRules(state, userId)
   const before = userRules[module.key] || null
   userRules[module.key] = { id: input.ruleId, batchId: '', userId, moduleKey: module.key,
     family: module.family, value, strategy, method, duration: input.duration,
+    ...(intensity?.[module.family] ? { intensity: { [module.family]: { ...intensity[module.family] } } } : {}),
     status: 'active', source: 'module', note, updatedAt: input.now,
     consumedAt: '', supersededAt: '', cancelledAt: '' }
   appendUnifiedUserControlAudit({
@@ -227,7 +240,7 @@ export function applyModuleControl(state, input) {
     ruleHistory: [...supersedeRules(before ? { [module.key]: before } : {}, input.now), ...(state.ruleHistory || [])],
     operationLogs: [{
     id: `op-${input.ruleId}`, userId, scope: 'module', action: 'apply', modules: [module.key],
-    strategy, method, duration: input.duration, operator: operatorOf(input), batchId: input.batchId || input.ruleId,
+    strategy, method, ...(intensity ? { intensity } : {}), duration: input.duration, operator: operatorOf(input), batchId: input.batchId || input.ruleId,
     before, after: userRules[module.key], note, status: 'success', createdAt: input.now
     }, ...state.operationLogs],
     lastError: ''

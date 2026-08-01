@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } 
 import { USER_CONTROL_MODULES } from '../../../features/user-control/userControl.js'
 import {
   buildUserControlPayload,
+  defaultControlIntensity,
   defaultControlMethod,
   getControlMethodOptions,
   getControlTypeOptions,
@@ -81,6 +82,10 @@ const handleAfterLeave = async () => {
 const form = reactive({
   strategy: '',
   method: '',
+  tradeIntensityMin: '',
+  tradeIntensityMax: '',
+  financeIntensityMin: '',
+  financeIntensityMax: '',
   duration: '',
   note: ''
 })
@@ -111,6 +116,58 @@ const controlIntentValue = computed({
   }
 })
 const selectedControlIntent = computed(() => controlIntentOptions.value.find((option) => option.value === controlIntentValue.value) || null)
+const intensityFields = computed(() => {
+  if (isGlobalScope.value) {
+    return [
+      {
+        key: 'trade',
+        minModel: 'tradeIntensityMin',
+        maxModel: 'tradeIntensityMax',
+        label: '交易类控盘力度范围',
+        modules: '永续、交割、现货',
+        hint: form.strategy === 'negative'
+          ? '按订单保证金或成交额在范围内生成目标亏损比例'
+          : '按订单保证金或成交额在范围内生成目标盈利比例'
+      },
+      {
+        key: 'finance',
+        minModel: 'financeIntensityMin',
+        maxModel: 'financeIntensityMax',
+        label: '理财类控盘力度范围',
+        modules: 'AI量化、流动性挖矿、投资组合',
+        hint: form.strategy === 'negative'
+          ? '按订单本金在范围内生成目标低收益率'
+          : '按订单本金在范围内生成目标收益率'
+      }
+    ]
+  }
+  const family = moduleMeta.value?.family
+  if (family === 'trade') {
+    return [{
+      key: 'trade',
+      minModel: 'tradeIntensityMin',
+      maxModel: 'tradeIntensityMax',
+      label: '控盘力度范围',
+      modules: moduleMeta.value?.label || '当前交易模块',
+      hint: form.strategy === 'negative'
+        ? '按本单保证金或成交额在范围内生成目标亏损比例'
+        : '按本单保证金或成交额在范围内生成目标盈利比例'
+    }]
+  }
+  if (family === 'finance') {
+    return [{
+      key: 'finance',
+      minModel: 'financeIntensityMin',
+      maxModel: 'financeIntensityMax',
+      label: '控盘力度范围',
+      modules: moduleMeta.value?.label || '当前理财模块',
+      hint: form.strategy === 'negative'
+        ? '按订单本金在范围内生成目标低收益率'
+        : '按订单本金在范围内生成目标收益率'
+    }]
+  }
+  return []
+})
 
 const affectedModules = computed(() => isGlobalScope.value
   ? USER_CONTROL_MODULES
@@ -224,6 +281,10 @@ const formInput = computed(() => ({
   userId: selectedUserId.value,
   strategy: form.strategy,
   method: form.method,
+  intensity: {
+    trade: { mode: 'percentRange', min: form.tradeIntensityMin, max: form.tradeIntensityMax, unit: '%' },
+    finance: { mode: 'percentRange', min: form.financeIntensityMin, max: form.financeIntensityMax, unit: '%' }
+  },
   duration: form.duration,
   note: form.note
 }))
@@ -239,6 +300,12 @@ const resetForm = (data) => {
   form.method = existing?.method && isControlMethodForStrategy(form.strategy, existing.method)
     ? existing.method
     : defaultControlMethod(form.strategy)
+  const tradeDefault = defaultControlIntensity('trade')
+  const financeDefault = defaultControlIntensity('finance')
+  form.tradeIntensityMin = String(existing?.intensity?.trade?.min ?? existing?.intensity?.trade?.value ?? tradeDefault.min)
+  form.tradeIntensityMax = String(existing?.intensity?.trade?.max ?? existing?.intensity?.trade?.value ?? tradeDefault.max)
+  form.financeIntensityMin = String(existing?.intensity?.finance?.min ?? existing?.intensity?.finance?.value ?? financeDefault.min)
+  form.financeIntensityMax = String(existing?.intensity?.finance?.max ?? existing?.intensity?.finance?.value ?? financeDefault.max)
   form.duration = existing?.duration || 'once'
   form.note = ''
   noteTouched.value = false
@@ -298,7 +365,18 @@ watch(rendered, (isRendered) => {
 })
 
 watch(
-  [() => form.strategy, () => form.method, () => form.duration, () => form.note, affectedModules, displayedModuleRules],
+  [
+    () => form.strategy,
+    () => form.method,
+    () => form.tradeIntensityMin,
+    () => form.tradeIntensityMax,
+    () => form.financeIntensityMin,
+    () => form.financeIntensityMax,
+    () => form.duration,
+    () => form.note,
+    affectedModules,
+    displayedModuleRules
+  ],
   queueHelpPanelHeightSync
 )
 
@@ -374,6 +452,66 @@ const submit = () => {
                     :hint="selectedControlIntent?.description || '请选择盈利或亏损意图及具体处理方式'"
                     id-base="user-control-intent"
                   />
+
+                  <section class="rounded-lg border border-slate-200 bg-slate-50 p-3" aria-labelledby="user-control-intensity-title">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="min-w-0">
+                        <h3 id="user-control-intensity-title" class="text-sm font-semibold text-slate-900">
+                          控盘力度
+                        </h3>
+                        <p class="mt-0.5 text-xs leading-5 text-slate-500">
+                          交易类和理财类统一按百分比设置，系统按各模块口径结算。
+                        </p>
+                      </div>
+                      <span class="shrink-0 rounded-full bg-white px-2 py-1 text-xs font-medium text-slate-600">%</span>
+                    </div>
+                    <div class="mt-3 grid gap-3" :class="intensityFields.length > 1 ? 'sm:grid-cols-2' : ''">
+                      <div v-for="field in intensityFields" :key="field.key">
+                        <p :id="`user-control-${field.key}-intensity-label`" class="text-sm font-semibold text-slate-900">
+                          {{ field.label }} <span class="text-rose-500">*</span>
+                        </p>
+                        <span class="mt-0.5 block text-xs leading-5 text-slate-500">适用于 {{ field.modules }}</span>
+                        <div class="mt-1.5 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
+                          <span class="block">
+                            <label class="sr-only" :for="`user-control-${field.key}-intensity-min`">{{ field.label }}最小比例</label>
+                            <div class="flex rounded-lg border border-slate-300 bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100">
+                              <input
+                                :id="`user-control-${field.key}-intensity-min`"
+                                v-model.trim="form[field.minModel]"
+                                type="text"
+                                inputmode="decimal"
+                                autocomplete="off"
+                                placeholder="最小比例"
+                                class="min-w-0 flex-1 rounded-l-lg px-3 py-2 text-sm outline-none"
+                                :aria-describedby="`user-control-${field.key}-intensity-help`"
+                              />
+                              <span class="flex min-w-12 items-center justify-center rounded-r-lg border-l border-slate-200 bg-slate-50 text-sm font-semibold text-slate-500">%</span>
+                            </div>
+                          </span>
+                          <span class="text-sm font-semibold text-slate-400" aria-hidden="true">~</span>
+                          <span class="block">
+                            <label class="sr-only" :for="`user-control-${field.key}-intensity-max`">{{ field.label }}最大比例</label>
+                            <div class="flex rounded-lg border border-slate-300 bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100">
+                              <input
+                                :id="`user-control-${field.key}-intensity-max`"
+                                v-model.trim="form[field.maxModel]"
+                                type="text"
+                                inputmode="decimal"
+                                autocomplete="off"
+                                placeholder="最大比例"
+                                class="min-w-0 flex-1 rounded-l-lg px-3 py-2 text-sm outline-none"
+                                :aria-describedby="`user-control-${field.key}-intensity-help`"
+                              />
+                              <span class="flex min-w-12 items-center justify-center rounded-r-lg border-l border-slate-200 bg-slate-50 text-sm font-semibold text-slate-500">%</span>
+                            </div>
+                          </span>
+                        </div>
+                        <span :id="`user-control-${field.key}-intensity-help`" class="mt-1 block text-xs leading-5 text-slate-500">
+                          {{ field.hint }}
+                        </span>
+                      </div>
+                    </div>
+                  </section>
 
                   <SelectOnlyCombobox
                     v-model="form.duration"

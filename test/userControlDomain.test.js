@@ -237,6 +237,22 @@ test('unified positive maps trading to profit and finance to high yield', () => 
   assert.ok(Object.values(next.rules['159']).every((rule) => rule.source === 'global' && rule.status === 'active'))
 })
 
+test('unified control persists trade and finance intensity by module family', () => {
+  const intensity = {
+    trade: { mode: 'percentRange', min: 3, max: 8, unit: '%' },
+    finance: { mode: 'percentRange', min: 1, max: 5, unit: '%' }
+  }
+  const next = applyUnifiedControl(createUserControlState(), {
+    userId: '159', strategy: 'positive', intensity, duration: 'once', note: '客户带盈',
+    now: '2026-07-25 14:35:00', batchId: 'batch-intensity'
+  })
+
+  assert.deepEqual(next.rules['159'].perpetual.intensity, { trade: intensity.trade })
+  assert.deepEqual(next.rules['159'].spot.intensity, { trade: intensity.trade })
+  assert.deepEqual(next.rules['159'].aiQuant.intensity, { finance: intensity.finance })
+  assert.deepEqual(next.operationLogs[0].intensity, intensity)
+})
+
 test('unified negative maps trading to loss and finance to low yield', () => {
   const next = applyUnifiedControl(createUserControlState(), {
     userId: '159', strategy: 'negative', duration: 'permanent', note: '客户控亏',
