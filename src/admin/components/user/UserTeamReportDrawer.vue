@@ -103,9 +103,8 @@ watch(totalPages, (nextTotalPages) => {
               <div data-testid="team-report-branch-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" role="region" :tabindex="branches.length ? 0 : undefined" aria-labelledby="team-report-branch-title">
                 <div class="mt-2 space-y-2">
                   <article v-for="branch in pagedBranches" :key="branch.user.id" class="rounded-xl border border-slate-200 bg-white p-3">
-                    <div class="flex flex-wrap items-start justify-between gap-2">
+                    <div class="flex flex-wrap items-start gap-2">
                       <p class="font-medium text-slate-900">{{ branch.user.username }} <span class="ml-1 text-xs font-normal text-slate-500">UID {{ branch.user.id }}</span></p>
-                      <span class="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">{{ branch.memberCount }} 人</span>
                     </div>
                     <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs sm:grid-cols-4">
                       <div><dt class="text-slate-500">可用余额</dt><dd class="mt-0.5 font-medium text-slate-800">{{ formatNumber(branch.availableBalance) }} USDT</dd></div>

@@ -417,7 +417,6 @@ onBeforeUnmount(() => {
                     </span>
                     <span class="flex gap-1.5 text-xs">
                       <span class="rounded-full bg-slate-100 px-2 py-0.5 text-slate-700">{{ roleLabel(member.role) }}</span>
-                      <span class="rounded-full bg-slate-100 px-2 py-0.5 text-slate-700">{{ statusLabel(member.status) }}</span>
                     </span>
                   </span>
                   <span class="mt-2 grid grid-cols-1 gap-1 text-xs text-slate-600 sm:grid-cols-3">

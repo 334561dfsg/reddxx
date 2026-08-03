@@ -4,11 +4,6 @@ import { createDialogCloseAction, useDialogLifecycle } from '../../composables/u
 import CompactPagination from '../CompactPagination.vue'
 
 const PAGE_SIZE = 10
-const STATUS_LABELS = {
-  active: '活跃',
-  suspended: '暂停',
-  banned: '禁用'
-}
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -133,12 +128,11 @@ watch(() => props.error, async (error) => {
               <template v-else-if="rows.length">
                 <div v-if="pagedRows.length" class="space-y-2">
                   <article v-for="row in pagedRows" :key="row.id" data-testid="agent-subordinate-row" class="rounded-xl border border-slate-200 p-3 sm:p-4">
-                    <div class="flex flex-wrap items-start justify-between gap-2">
+                    <div class="flex flex-wrap items-start gap-2">
                       <div class="min-w-0">
                         <h4 class="break-words font-medium text-slate-900">{{ row.username }}</h4>
                         <p class="mt-0.5 break-all font-mono text-xs text-slate-500">UID {{ row.uid }}</p>
                       </div>
-                      <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">{{ STATUS_LABELS[row.status] || row.status }}</span>
                     </div>
                     <dl class="mt-3 grid grid-cols-1 gap-3 text-sm min-[420px]:grid-cols-3">
                       <div><dt class="text-xs text-slate-500">注册时间</dt><dd class="mt-0.5 break-words font-medium text-slate-800">{{ row.registeredAt }}</dd></div>
