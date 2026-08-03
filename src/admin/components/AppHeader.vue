@@ -1,16 +1,29 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import AdminChangePasswordDialog from './AdminChangePasswordDialog.vue'
+import MfaVerificationModal from './MfaVerificationModal.vue'
+import { useAdminAccountStore } from '../stores/adminAccount'
 import { useAdminNotificationsStore } from '../stores/adminNotifications'
 
 const emit = defineEmits(['toggle-menu'])
 
 const route = useRoute()
 const router = useRouter()
+const adminAccount = useAdminAccountStore()
 const notifications = useAdminNotificationsStore()
 const triggerRef = ref(null)
 const menuRef = ref(null)
 const menuOpen = ref(false)
+const accountTriggerRef = ref(null)
+const accountMenuRef = ref(null)
+const accountMenuOpen = ref(false)
+const changePasswordOpen = ref(false)
+const pendingPasswordChange = ref(null)
+const passwordMfaOpen = ref(false)
+const passwordMfaLoading = ref(false)
+const passwordMfaError = ref('')
+const passwordMfaErrorAttempt = ref(0)
 
 const totalUnreadLabel = computed(() => {
   if (notifications.totalUnread > 99) return '99+'
@@ -27,8 +40,16 @@ const closeMenu = ({ returnFocus = false } = {}) => {
   if (returnFocus) triggerRef.value?.focus()
 }
 
+const closeAccountMenu = ({ returnFocus = false } = {}) => {
+  if (!accountMenuOpen.value) return
+  accountMenuOpen.value = false
+  if (returnFocus) accountTriggerRef.value?.focus()
+}
+
 const toggleMenu = () => {
-  menuOpen.value = !menuOpen.value
+  const next = !menuOpen.value
+  closeAccountMenu()
+  menuOpen.value = next
 }
 
 const openCategory = async (category) => {
@@ -37,20 +58,90 @@ const openCategory = async (category) => {
   if (route.path !== category.route) await router.push(category.route)
 }
 
+const toggleAccountMenu = () => {
+  const next = !accountMenuOpen.value
+  closeMenu()
+  accountMenuOpen.value = next
+}
+
+const openChangePasswordDialog = () => {
+  closeAccountMenu()
+  passwordMfaError.value = ''
+  pendingPasswordChange.value = null
+  changePasswordOpen.value = true
+}
+
+const logout = async () => {
+  closeAccountMenu()
+  await router.push('/')
+}
+
+const resolveAccountReturnFocus = () => accountTriggerRef.value
+
+const resolvePasswordMfaReturnFocus = () => pendingPasswordChange.value?.returnFocus || accountTriggerRef.value
+
+const requestPasswordMfa = (payload) => {
+  pendingPasswordChange.value = payload
+  passwordMfaError.value = ''
+  passwordMfaOpen.value = true
+}
+
+const verifyPasswordMfa = async (code) => {
+  if (!pendingPasswordChange.value || passwordMfaLoading.value) return
+  passwordMfaLoading.value = true
+  passwordMfaError.value = ''
+
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 400))
+    adminAccount.changePassword({
+      currentPassword: pendingPasswordChange.value.currentPassword,
+      newPassword: pendingPasswordChange.value.newPassword,
+      mfaCode: code
+    })
+    passwordMfaOpen.value = false
+    changePasswordOpen.value = false
+    pendingPasswordChange.value = null
+  } catch (error) {
+    passwordMfaError.value = error instanceof Error ? error.message : '修改密码失败，请稍后重试'
+    passwordMfaErrorAttempt.value += 1
+  } finally {
+    passwordMfaLoading.value = false
+  }
+}
+
+const cancelPasswordMfa = () => {
+  if (passwordMfaLoading.value) return
+  passwordMfaOpen.value = false
+  passwordMfaError.value = ''
+  pendingPasswordChange.value = null
+}
+
 const onSoundChange = (event) => {
   notifications.setSoundEnabled(event.target.checked)
 }
 
 const onDocumentPointerDown = (event) => {
-  if (!menuOpen.value) return
   const target = event.target
-  if (triggerRef.value?.contains(target) || menuRef.value?.contains(target)) return
-  closeMenu()
+  if (
+    menuOpen.value &&
+    !triggerRef.value?.contains(target) &&
+    !menuRef.value?.contains(target)
+  ) {
+    closeMenu()
+  }
+  if (
+    accountMenuOpen.value &&
+    !accountTriggerRef.value?.contains(target) &&
+    !accountMenuRef.value?.contains(target)
+  ) {
+    closeAccountMenu()
+  }
 }
 
 const onDocumentKeydown = (event) => {
   if (event.key !== 'Escape') return
   closeMenu({ returnFocus: true })
+  closeAccountMenu({ returnFocus: true })
 }
 
 const onIncomingNotification = (event) => {
@@ -59,7 +150,13 @@ const onIncomingNotification = (event) => {
 
 watch(
   () => route.fullPath,
-  () => closeMenu()
+  () => {
+    closeMenu()
+    closeAccountMenu()
+    changePasswordOpen.value = false
+    passwordMfaOpen.value = false
+    pendingPasswordChange.value = null
+  }
 )
 
 onMounted(() => {
@@ -169,22 +266,99 @@ onUnmounted(() => {
               <span class="block font-medium text-slate-900">消息提示音</span>
               <span class="mt-0.5 block text-xs text-slate-500">新消息到达时播放对应提示音</span>
             </span>
-            <input
-              type="checkbox"
-              class="h-5 w-5 shrink-0 accent-antd-primary focus:outline-none focus:ring-2 focus:ring-antd-primary/30"
-              :checked="notifications.soundEnabled"
-              aria-label="消息提示音"
-              @change="onSoundChange"
-            />
+            <span class="relative inline-flex h-7 w-12 shrink-0 items-center">
+              <input
+                type="checkbox"
+                role="switch"
+                class="peer sr-only"
+                :checked="notifications.soundEnabled"
+                aria-label="消息提示音"
+                @change="onSoundChange"
+              />
+              <span
+                aria-hidden="true"
+                class="h-6 w-11 rounded-full bg-slate-200 transition-colors peer-checked:bg-antd-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-antd-primary/40"
+              ></span>
+              <span
+                aria-hidden="true"
+                class="pointer-events-none absolute left-0.5 top-1 h-5 w-5 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5"
+              ></span>
+            </span>
           </label>
         </div>
       </div>
-      <div class="flex items-center gap-2 px-2 py-1 cursor-pointer rounded-md hover:bg-black/5 transition-colors">
-        <div class="h-6 w-6 rounded-full bg-antd-primary/10 text-antd-primary grid place-items-center text-xs font-bold">
-          AD
+      <div class="relative">
+        <button
+          ref="accountTriggerRef"
+          type="button"
+          class="flex items-center gap-2 rounded-md px-2 py-1 text-left transition-colors hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-antd-primary/30"
+          aria-label="Admin 账号菜单"
+          aria-haspopup="menu"
+          aria-controls="admin-account-menu"
+          :aria-expanded="accountMenuOpen ? 'true' : 'false'"
+          @click="toggleAccountMenu"
+        >
+          <span class="grid h-6 w-6 place-items-center rounded-full bg-antd-primary/10 text-xs font-bold text-antd-primary">
+            AD
+          </span>
+          <span class="text-sm text-black/65">Admin</span>
+          <svg viewBox="0 0 20 20" class="h-4 w-4 text-black/35" fill="none" aria-hidden="true">
+            <path d="M6 8L10 12L14 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <div
+          v-if="accountMenuOpen"
+          id="admin-account-menu"
+          ref="accountMenuRef"
+          role="menu"
+          aria-label="Admin 账号操作"
+          class="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-48 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 text-slate-700 shadow-xl"
+        >
+          <button
+            type="button"
+            role="menuitem"
+            class="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
+            @click="openChangePasswordDialog"
+          >
+            <svg viewBox="0 0 20 20" class="h-4 w-4 text-slate-400" fill="none" aria-hidden="true">
+              <path d="M6.5 8V6.8C6.5 4.9 8 3.5 10 3.5C12 3.5 13.5 4.9 13.5 6.8V8M5.5 8H14.5V15.5H5.5V8ZM10 11V12.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span>修改密码</span>
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            class="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-rose-600 transition hover:bg-rose-50 focus:bg-rose-50 focus:outline-none"
+            @click="logout"
+          >
+            <svg viewBox="0 0 20 20" class="h-4 w-4 text-rose-400" fill="none" aria-hidden="true">
+              <path d="M8 4.5H5.5V15.5H8M11 7L14 10M14 10L11 13M14 10H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span>退出登录</span>
+          </button>
         </div>
-        <span class="text-sm text-black/65">Admin</span>
       </div>
     </div>
   </header>
+
+  <AdminChangePasswordDialog
+    v-model:open="changePasswordOpen"
+    :saving="passwordMfaLoading"
+    :submit-error="passwordMfaError"
+    :return-focus="resolveAccountReturnFocus"
+    @request-mfa="requestPasswordMfa"
+  />
+
+  <MfaVerificationModal
+    v-model:open="passwordMfaOpen"
+    :loading="passwordMfaLoading"
+    :error="passwordMfaError"
+    :error-attempt="passwordMfaErrorAttempt"
+    :return-focus="resolvePasswordMfaReturnFocus"
+    title="修改登录密码安全验证"
+    description="修改后台登录密码属于敏感操作，请输入 MFA 验证码"
+    @verify="verifyPasswordMfa"
+    @cancel="cancelPasswordMfa"
+  />
 </template>

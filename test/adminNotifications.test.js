@@ -6,6 +6,10 @@ import {
   NOTIFICATION_CATEGORIES,
   useAdminNotificationsStore
 } from '../src/admin/stores/adminNotifications.js'
+import {
+  ADMIN_DEFAULT_PASSWORD,
+  useAdminAccountStore
+} from '../src/admin/stores/adminAccount.js'
 
 const headerSource = readFileSync(
   new URL('../src/admin/components/AppHeader.vue', import.meta.url),
@@ -59,7 +63,7 @@ test('admin notification store tracks unread counts and safe sound preference', 
   assert.equal(store.notificationCenterState.preferenceState.soundEnabled, false)
 })
 
-test('app header exposes accessible notification menu, badge, routing, and sound switch', () => {
+test('app header exposes accessible notification, account, and MFA password flows', () => {
   assert.match(headerSource, /aria-haspopup="menu"/)
   assert.match(headerSource, /aria-controls="admin-notification-menu"/)
   assert.match(headerSource, /role="menu"/)
@@ -68,5 +72,60 @@ test('app header exposes accessible notification menu, badge, routing, and sound
   assert.match(headerSource, /openCategory\(category\)/)
   assert.match(headerSource, /消息提示音/)
   assert.match(headerSource, /type="checkbox"/)
+  assert.match(headerSource, /role="switch"/)
+  assert.match(headerSource, /peer-checked:bg-antd-primary/)
   assert.match(headerSource, /admin-notification-received/)
+  assert.match(headerSource, /aria-controls="admin-account-menu"/)
+  assert.match(headerSource, /Admin 账号菜单/)
+  assert.match(headerSource, /修改密码/)
+  assert.match(headerSource, /退出登录/)
+  assert.match(headerSource, /AdminChangePasswordDialog/)
+  assert.match(headerSource, /MfaVerificationModal/)
+  assert.match(headerSource, /openChangePasswordDialog/)
+  assert.match(headerSource, /requestPasswordMfa/)
+  assert.match(headerSource, /verifyPasswordMfa/)
+  assert.match(headerSource, /adminAccount\.changePassword/)
+  assert.match(headerSource, /修改登录密码安全验证/)
+  assert.match(headerSource, /router\.push\('\/'\)/)
+})
+
+test('admin account store changes password only after current password and MFA pass', () => {
+  setActivePinia(createPinia())
+  const store = useAdminAccountStore()
+
+  assert.equal(store.validateCurrentPassword(ADMIN_DEFAULT_PASSWORD), true)
+  assert.throws(() => {
+    store.changePassword({
+      currentPassword: 'wrong-password',
+      newPassword: 'newAdmin123',
+      mfaCode: '123456'
+    })
+  }, /当前密码不正确/)
+
+  assert.throws(() => {
+    store.changePassword({
+      currentPassword: ADMIN_DEFAULT_PASSWORD,
+      newPassword: 'short1',
+      mfaCode: '123456'
+    })
+  }, /新密码长度/)
+
+  assert.throws(() => {
+    store.changePassword({
+      currentPassword: ADMIN_DEFAULT_PASSWORD,
+      newPassword: 'newAdmin123',
+      mfaCode: '12345'
+    })
+  }, /MFA 验证码/)
+
+  const result = store.changePassword({
+    currentPassword: ADMIN_DEFAULT_PASSWORD,
+    newPassword: 'newAdmin123',
+    mfaCode: '123456'
+  })
+
+  assert.equal(result.ok, true)
+  assert.equal(store.validateCurrentPassword('newAdmin123'), true)
+  assert.equal(store.validateCurrentPassword(ADMIN_DEFAULT_PASSWORD), false)
+  assert.ok(store.passwordLastChangedAt)
 })
