@@ -11,6 +11,15 @@ export const consoleRoutes = [
     }
   },
   {
+    path: 'platform-report',
+    name: 'platform-report',
+    component: () => import('../../pages/admin/system/PlatformReportPage.vue'),
+    meta: {
+      title: '平台报表',
+      desc: '查看平台资金、用户、充值提现、差额与周期交易的只读快照。'
+    }
+  },
+  {
     path: 'customer-service/workbench',
     name: 'customer-service-workbench',
     component: () => import('../../pages/admin/customer-service/CustomerServiceWorkbenchPage.vue'),

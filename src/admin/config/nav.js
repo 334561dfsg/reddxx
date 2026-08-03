@@ -6,6 +6,11 @@ export const navTree = [
     icon: 'dashboard',
     path: '/admin'
   },
+  {
+    title: '平台报表',
+    icon: 'dashboard',
+    path: '/admin/platform-report'
+  },
   { title: '客服管理', icon: 'customer-service', path: '/admin/customer-service/workbench' },
   { title: '合约场控面板', icon: 'contract', path: '/admin/contracts/panel' },
   {
