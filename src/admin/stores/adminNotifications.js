@@ -141,7 +141,7 @@ function getAudioContext() {
 
 function playTone(frequencies = [880, 1175]) {
   const ctx = getAudioContext()
-  if (!ctx) return
+  if (!ctx || ctx.state === 'suspended') return false
 
   const now = ctx.currentTime
   frequencies.slice(0, 2).forEach((frequency, index) => {
@@ -157,12 +157,14 @@ function playTone(frequencies = [880, 1175]) {
     oscillator.start(now + index * 0.11)
     oscillator.stop(now + index * 0.11 + 0.11)
   })
+  return true
 }
 
 export const useAdminNotificationsStore = defineStore('adminNotifications', {
   state: () => ({
     categories: makeInitialCategories(),
     soundEnabled: readSoundPreference(),
+    soundGuideNeeded: false,
     notificationCenterState: {
       notificationOwnerId: 'admin-shell-notification-center',
       deliveryChannelState: 'in-app',
@@ -193,6 +195,7 @@ export const useAdminNotificationsStore = defineStore('adminNotifications', {
   actions: {
     setSoundEnabled(next) {
       this.soundEnabled = Boolean(next)
+      if (!this.soundEnabled) this.soundGuideNeeded = false
       this.notificationCenterState.preferenceState = {
         ...this.notificationCenterState.preferenceState,
         soundEnabled: this.soundEnabled,
@@ -221,7 +224,16 @@ export const useAdminNotificationsStore = defineStore('adminNotifications', {
         ...this.notificationCenterState.badgeState,
         refreshedAt: category.lastEventAt
       }
-      if (this.soundEnabled) playTone(category.tone)
+      if (this.soundEnabled) {
+        this.soundGuideNeeded = !playTone(category.tone)
+      }
+    },
+    playRefreshTestSound() {
+      if (!this.soundEnabled) return
+      this.soundGuideNeeded = !playTone([880, 1175])
+    },
+    dismissSoundGuideNotice() {
+      this.soundGuideNeeded = false
     }
   }
 })

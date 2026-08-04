@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AdminChangePasswordDialog from './AdminChangePasswordDialog.vue'
+import AdminSoundGuideDialog from './AdminSoundGuideDialog.vue'
 import MfaVerificationModal from './MfaVerificationModal.vue'
 import { useAdminAccountStore } from '../stores/adminAccount'
 import { useAdminNotificationsStore } from '../stores/adminNotifications'
@@ -19,11 +20,14 @@ const accountTriggerRef = ref(null)
 const accountMenuRef = ref(null)
 const accountMenuOpen = ref(false)
 const changePasswordOpen = ref(false)
+const soundGuideOpen = ref(false)
+const soundGuideTriggerRef = ref(null)
 const pendingPasswordChange = ref(null)
 const passwordMfaOpen = ref(false)
 const passwordMfaLoading = ref(false)
 const passwordMfaError = ref('')
 const passwordMfaErrorAttempt = ref(0)
+let refreshSoundTimer = null
 
 const totalUnreadLabel = computed(() => {
   if (notifications.totalUnread > 99) return '99+'
@@ -120,6 +124,14 @@ const onSoundChange = (event) => {
   notifications.setSoundEnabled(event.target.checked)
 }
 
+const openSoundGuide = () => {
+  notifications.dismissSoundGuideNotice()
+  closeMenu()
+  soundGuideOpen.value = true
+}
+
+const resolveSoundGuideReturnFocus = () => soundGuideTriggerRef.value || triggerRef.value
+
 const onDocumentPointerDown = (event) => {
   const target = event.target
   if (
@@ -148,12 +160,31 @@ const onIncomingNotification = (event) => {
   notifications.receiveNotification(event.detail?.key, event.detail?.count)
 }
 
+const clearRefreshSoundTimer = () => {
+  if (!refreshSoundTimer) return
+  window.clearTimeout(refreshSoundTimer)
+  refreshSoundTimer = null
+}
+
+const scheduleRefreshSoundTest = () => {
+  clearRefreshSoundTimer()
+  refreshSoundTimer = window.setTimeout(() => {
+    refreshSoundTimer = null
+    notifications.playRefreshTestSound()
+  }, 1500)
+}
+
+const onWindowLoad = () => {
+  scheduleRefreshSoundTest()
+}
+
 watch(
   () => route.fullPath,
   () => {
     closeMenu()
     closeAccountMenu()
     changePasswordOpen.value = false
+    soundGuideOpen.value = false
     passwordMfaOpen.value = false
     pendingPasswordChange.value = null
   }
@@ -163,12 +194,16 @@ onMounted(() => {
   document.addEventListener('pointerdown', onDocumentPointerDown)
   document.addEventListener('keydown', onDocumentKeydown)
   window.addEventListener('admin-notification-received', onIncomingNotification)
+  if (document.readyState === 'complete') scheduleRefreshSoundTest()
+  else window.addEventListener('load', onWindowLoad, { once: true })
 })
 
 onUnmounted(() => {
+  clearRefreshSoundTimer()
   document.removeEventListener('pointerdown', onDocumentPointerDown)
   document.removeEventListener('keydown', onDocumentKeydown)
   window.removeEventListener('admin-notification-received', onIncomingNotification)
+  window.removeEventListener('load', onWindowLoad)
 })
 </script>
 
@@ -285,6 +320,31 @@ onUnmounted(() => {
               ></span>
             </span>
           </label>
+
+          <div class="border-t border-slate-100 px-4 py-3">
+            <div
+              v-if="notifications.soundGuideNeeded"
+              class="mb-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800"
+              role="status"
+            >
+              本次提示音可能被浏览器拦截，请按引导允许当前站点播放声音。
+            </div>
+            <button
+              ref="soundGuideTriggerRef"
+              type="button"
+              role="menuitem"
+              class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
+              @click="openSoundGuide"
+            >
+              <span class="min-w-0">
+                <span class="block font-medium text-slate-900">刷新后没有声音？</span>
+                <span class="mt-0.5 block break-words text-xs text-slate-500">查看 Chrome 允许播放声音设置</span>
+              </span>
+              <svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0 text-slate-400" fill="none" aria-hidden="true">
+                <path d="M7.5 4.5L12.5 10L7.5 15.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
       <div class="relative">
@@ -348,6 +408,11 @@ onUnmounted(() => {
     :submit-error="passwordMfaError"
     :return-focus="resolveAccountReturnFocus"
     @request-mfa="requestPasswordMfa"
+  />
+
+  <AdminSoundGuideDialog
+    v-model:open="soundGuideOpen"
+    :return-focus="resolveSoundGuideReturnFocus"
   />
 
   <MfaVerificationModal

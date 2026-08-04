@@ -15,6 +15,10 @@ const headerSource = readFileSync(
   new URL('../src/admin/components/AppHeader.vue', import.meta.url),
   'utf8'
 )
+const soundGuideDialogSource = readFileSync(
+  new URL('../src/admin/components/AdminSoundGuideDialog.vue', import.meta.url),
+  'utf8'
+)
 
 test('admin notification categories cover requested alert types and routes', () => {
   const labels = NOTIFICATION_CATEGORIES.map((item) => item.label)
@@ -57,9 +61,18 @@ test('admin notification store tracks unread counts and safe sound preference', 
   store.receiveNotification('deposit', 2)
   assert.equal(store.categories.find((item) => item.key === 'deposit').unreadCount, 2)
   assert.equal(store.totalUnread, initialTotal - 1)
+  assert.equal(store.soundGuideNeeded, true)
+
+  store.dismissSoundGuideNotice()
+  assert.equal(store.soundGuideNeeded, false)
+
+  store.playRefreshTestSound()
+  assert.equal(store.soundEnabled, true)
+  assert.equal(store.soundGuideNeeded, true)
 
   store.setSoundEnabled(false)
   assert.equal(store.soundEnabled, false)
+  assert.equal(store.soundGuideNeeded, false)
   assert.equal(store.notificationCenterState.preferenceState.soundEnabled, false)
 })
 
@@ -74,6 +87,14 @@ test('app header exposes accessible notification, account, and MFA password flow
   assert.match(headerSource, /type="checkbox"/)
   assert.match(headerSource, /role="switch"/)
   assert.match(headerSource, /peer-checked:bg-antd-primary/)
+  assert.match(headerSource, /AdminSoundGuideDialog/)
+  assert.match(headerSource, /刷新后没有声音？/)
+  assert.match(headerSource, /openSoundGuide/)
+  assert.match(headerSource, /playRefreshTestSound/)
+  assert.match(headerSource, /scheduleRefreshSoundTest/)
+  assert.doesNotMatch(headerSource, /测试提示音/)
+  assert.doesNotMatch(headerSource, /播放一段消息测试提示音/)
+  assert.match(headerSource, /soundGuideNeeded/)
   assert.match(headerSource, /admin-notification-received/)
   assert.match(headerSource, /aria-controls="admin-account-menu"/)
   assert.match(headerSource, /Admin 账号菜单/)
@@ -87,6 +108,22 @@ test('app header exposes accessible notification, account, and MFA password flow
   assert.match(headerSource, /adminAccount\.changePassword/)
   assert.match(headerSource, /修改登录密码安全验证/)
   assert.match(headerSource, /router\.push\('\/'\)/)
+})
+
+test('admin sound guide dialog provides Chrome sound allow-list copy guidance', () => {
+  assert.match(soundGuideDialogSource, /useDialogLifecycle/)
+  assert.match(soundGuideDialogSource, /role="dialog"/)
+  assert.match(soundGuideDialogSource, /aria-modal="true"/)
+  assert.match(soundGuideDialogSource, /aria-labelledby="admin-sound-guide-title"/)
+  assert.match(soundGuideDialogSource, /aria-label="关闭"/)
+  assert.doesNotMatch(soundGuideDialogSource, /@click="close"[^>]*role="presentation"/)
+  assert.match(soundGuideDialogSource, /chrome:\/\/settings\/content\/sound/)
+  assert.match(soundGuideDialogSource, /window\.location\.host/)
+  assert.match(soundGuideDialogSource, /复制 Chrome 声音设置地址/)
+  assert.match(soundGuideDialogSource, /复制当前后台域名/)
+  assert.match(soundGuideDialogSource, /navigator\?\.clipboard\?\.writeText/)
+  assert.match(soundGuideDialogSource, /role="status"/)
+  assert.match(soundGuideDialogSource, /请手动选中文本复制/)
 })
 
 test('admin account store changes password only after current password and MFA pass', () => {
