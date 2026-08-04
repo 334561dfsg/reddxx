@@ -127,7 +127,13 @@ const onSoundChange = (event) => {
 const openSoundGuide = () => {
   notifications.dismissSoundGuideNotice()
   closeMenu()
+  closeAccountMenu()
   soundGuideOpen.value = true
+}
+
+const handleSoundGuideOpenChange = (nextOpen) => {
+  soundGuideOpen.value = nextOpen
+  if (!nextOpen) notifications.dismissSoundGuideNotice()
 }
 
 const resolveSoundGuideReturnFocus = () => soundGuideTriggerRef.value || triggerRef.value
@@ -185,8 +191,19 @@ watch(
     closeAccountMenu()
     changePasswordOpen.value = false
     soundGuideOpen.value = false
+    notifications.dismissSoundGuideNotice()
     passwordMfaOpen.value = false
     pendingPasswordChange.value = null
+  }
+)
+
+watch(
+  () => notifications.soundGuideNeeded,
+  (needed) => {
+    if (!needed || soundGuideOpen.value) return
+    closeMenu()
+    closeAccountMenu()
+    soundGuideOpen.value = true
   }
 )
 
@@ -322,13 +339,6 @@ onUnmounted(() => {
           </label>
 
           <div class="border-t border-slate-100 px-4 py-3">
-            <div
-              v-if="notifications.soundGuideNeeded"
-              class="mb-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-800"
-              role="status"
-            >
-              本次提示音可能被浏览器拦截，请按引导允许当前站点播放声音。
-            </div>
             <button
               ref="soundGuideTriggerRef"
               type="button"
@@ -411,8 +421,9 @@ onUnmounted(() => {
   />
 
   <AdminSoundGuideDialog
-    v-model:open="soundGuideOpen"
+    :open="soundGuideOpen"
     :return-focus="resolveSoundGuideReturnFocus"
+    @update:open="handleSoundGuideOpenChange"
   />
 
   <MfaVerificationModal
