@@ -1,6 +1,7 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
+import { useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
 import {
   PUBLIC_DEPOSIT_COINS,
   PUBLIC_DEPOSIT_NETWORKS,
@@ -26,13 +27,16 @@ const logDialogOpen = ref(false)
 const logRow = ref(null)
 const addressLogs = ref([])
 const logPage = ref(1)
+const addressDialogRef = ref(null)
+const addressInitialFocusRef = ref(null)
+const logDialogRef = ref(null)
+const logInitialFocusRef = ref(null)
 let copiedTimer = null
 
 const LOG_PAGE_SIZE = 5
 
 const LOG_FIELD_LABELS = {
-  coin: '币种', network: '网络', address: '收款地址', scope: '作用范围',
-  confirmations: '最低确认数', enabled: '启用状态', remark: '备注'
+  coin: '币种', network: '网络', address: '收款地址', enabled: '启用状态', remark: '备注'
 }
 
 const LOG_ACTION_LABELS = {
@@ -51,8 +55,6 @@ const emptyForm = () => ({
   coin: 'USDT',
   network: 'TRC20',
   address: '',
-  confirmations: 20,
-  chainWide: false,
   enabled: true,
   remark: ''
 })
@@ -71,12 +73,48 @@ const filteredRows = computed(() => {
 })
 
 const enabledCount = computed(() => rows.value.filter((row) => row.enabled).length)
-const chainWideCount = computed(
-  () => rows.value.filter((row) => row.enabled && row.scope === 'chain').length
-)
 const coveredNetworkCount = computed(
   () => new Set(rows.value.filter((row) => row.enabled).map((row) => row.network)).size
 )
+const coveredPairCount = computed(
+  () => new Set(rows.value.filter((row) => row.enabled).map((row) => `${row.coin}:${row.network}`)).size
+)
+
+const {
+  rendered: addressDialogRendered,
+  phase: addressDialogPhase,
+  layerStyle: addressDialogLayerStyle,
+  requestDialogClose: requestAddressDialogClose,
+  onAfterEnter: onAddressDialogAfterEnter,
+  onAfterLeave: onAddressDialogAfterLeave
+} = useDialogLifecycle({
+  open: modalOpen,
+  dialogRef: addressDialogRef,
+  initialFocusRef: addressInitialFocusRef,
+  requestClose: () => {
+    modalOpen.value = false
+    formError.value = ''
+  }
+})
+
+const {
+  rendered: logDialogRendered,
+  phase: logDialogPhase,
+  layerStyle: logDialogLayerStyle,
+  requestDialogClose: requestLogDialogClose,
+  onAfterEnter: onLogDialogAfterEnter,
+  onAfterLeave: onLogDialogAfterLeave
+} = useDialogLifecycle({
+  open: logDialogOpen,
+  dialogRef: logDialogRef,
+  initialFocusRef: logInitialFocusRef,
+  requestClose: () => {
+    logDialogOpen.value = false
+    logRow.value = null
+    addressLogs.value = []
+    logPage.value = 1
+  }
+})
 
 function refreshRows() {
   rows.value = repository.list().sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')))
@@ -99,8 +137,6 @@ function openEdit(row) {
     coin: row.coin,
     network: row.network,
     address: row.address,
-    confirmations: row.confirmations,
-    chainWide: row.scope === 'chain',
     enabled: row.enabled,
     remark: row.remark || ''
   })
@@ -110,8 +146,7 @@ function openEdit(row) {
 }
 
 function closeModal() {
-  modalOpen.value = false
-  formError.value = ''
+  requestAddressDialogClose()
 }
 
 function openLogDialog(row) {
@@ -122,10 +157,7 @@ function openLogDialog(row) {
 }
 
 function closeLogDialog() {
-  logDialogOpen.value = false
-  logRow.value = null
-  addressLogs.value = []
-  logPage.value = 1
+  requestLogDialogClose()
 }
 
 function changedLogFields(log) {
@@ -137,7 +169,6 @@ function changedLogFields(log) {
 
 function formatLogValue(field, value) {
   if (value === undefined || value === null || value === '') return '—'
-  if (field === 'scope') return value === 'chain' ? '整链公共' : '币种专用'
   if (field === 'enabled') return value ? '已启用' : '已停用'
   return value
 }
@@ -159,7 +190,10 @@ async function handleMfaVerify() {
     await new Promise((resolve) => setTimeout(resolve, 600))
     repository.save(pendingMutation.value.payload)
     refreshRows()
-    if (pendingMutation.value.type === 'save') closeModal()
+    if (pendingMutation.value.type === 'save') {
+      modalOpen.value = false
+      formError.value = ''
+    }
     pendingMutation.value = null
     showMfaModal.value = false
   } finally {
@@ -173,17 +207,6 @@ function saveAddress() {
     formError.value = '请完整填写币种、网络和收款地址。'
     return
   }
-  if (!Number.isInteger(Number(form.confirmations)) || Number(form.confirmations) < 1) {
-    formError.value = '最低确认数必须是大于 0 的整数。'
-    return
-  }
-
-  const conflict = form.chainWide && form.enabled
-    ? rows.value.find((row) => row.id !== form.id && row.network === form.network && row.scope === 'chain' && row.enabled)
-    : null
-  if (conflict && !window.confirm(`${form.network} 已有整链公共地址，保存后原地址将停用并保留历史记录。是否继续？`)) {
-    return
-  }
 
   requestMfa({
     type: 'save',
@@ -192,8 +215,6 @@ function saveAddress() {
       coin: form.coin,
       network: form.network,
       address,
-      scope: form.chainWide ? 'chain' : 'coin',
-      confirmations: Number(form.confirmations),
       enabled: form.enabled,
       remark: form.remark.trim(),
       operator: 'admin_current',
@@ -241,7 +262,7 @@ async function copyAddress(row) {
         <p class="text-sm font-medium text-slate-500">资产管理</p>
         <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">公共收款地址</h1>
         <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
-          维护用户充值时展示的平台地址。币种专用地址优先于整链公共地址，未命中任何地址的网络应暂停充值。
+          按币种与网络维护用户充值时展示的平台地址。同一币种和网络只能启用一个地址，未配置地址的充值入口应暂停展示。
         </p>
       </div>
       <button
@@ -260,14 +281,14 @@ async function copyAddress(row) {
         <p class="mt-1 text-xs text-emerald-600">可用于前台充值展示</p>
       </article>
       <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-slate-500">整链公共地址</p>
-        <p class="mt-2 text-2xl font-bold text-slate-900">{{ chainWideCount }}</p>
-        <p class="mt-1 text-xs text-slate-500">每条链最多启用一个</p>
+        <p class="text-sm text-slate-500">已覆盖币种网络</p>
+        <p class="mt-2 text-2xl font-bold text-slate-900">{{ coveredPairCount }}</p>
+        <p class="mt-1 text-xs text-slate-500">按币种与网络精确匹配</p>
       </article>
       <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <p class="text-sm text-slate-500">已覆盖网络</p>
         <p class="mt-2 text-2xl font-bold text-slate-900">{{ coveredNetworkCount }}</p>
-        <p class="mt-1 text-xs text-slate-500">包含专用与整链配置</p>
+        <p class="mt-1 text-xs text-slate-500">至少一个启用地址的网络</p>
       </article>
     </section>
 
@@ -293,13 +314,11 @@ async function copyAddress(row) {
       </div>
 
       <div class="overflow-x-auto">
-        <table class="min-w-[1050px] w-full text-left text-sm">
+        <table class="min-w-[920px] w-full text-left text-sm">
           <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
             <tr>
               <th class="px-5 py-3">币种 / 网络</th>
               <th class="px-5 py-3">收款地址</th>
-              <th class="px-5 py-3">作用范围</th>
-              <th class="px-5 py-3">最低确认数</th>
               <th class="px-5 py-3">状态</th>
               <th class="px-5 py-3">更新信息</th>
               <th class="px-5 py-3 text-right">操作</th>
@@ -323,15 +342,6 @@ async function copyAddress(row) {
                 </div>
               </td>
               <td class="px-5 py-4">
-                <span
-                  class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
-                  :class="row.scope === 'chain' ? 'bg-violet-50 text-violet-700 ring-1 ring-violet-200' : 'bg-blue-50 text-blue-700 ring-1 ring-blue-200'"
-                >
-                  {{ row.scope === 'chain' ? '整链公共' : '币种专用' }}
-                </span>
-              </td>
-              <td class="px-5 py-4 font-medium text-slate-700">{{ row.confirmations }}</td>
-              <td class="px-5 py-4">
                 <span class="inline-flex items-center gap-1.5 text-xs font-semibold" :class="row.enabled ? 'text-emerald-700' : 'text-slate-400'">
                   <span class="h-2 w-2 rounded-full" :class="row.enabled ? 'bg-emerald-500' : 'bg-slate-300'" />
                   {{ row.enabled ? '已启用' : '已停用' }}
@@ -352,7 +362,7 @@ async function copyAddress(row) {
               </td>
             </tr>
             <tr v-if="filteredRows.length === 0">
-              <td colspan="7" class="px-5 py-14 text-center text-sm text-slate-400">没有匹配的地址配置</td>
+              <td colspan="5" class="px-5 py-14 text-center text-sm text-slate-400">没有匹配的地址配置</td>
             </tr>
           </tbody>
         </table>
@@ -362,21 +372,40 @@ async function copyAddress(row) {
       </div>
     </section>
 
-    <div v-if="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4" @click.self="closeModal">
-      <section class="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
-        <header class="flex items-start justify-between border-b border-slate-200 px-6 py-5">
+    <Teleport to="body">
+      <Transition name="dialog-overlay" appear @after-enter="onAddressDialogAfterEnter" @after-leave="onAddressDialogAfterLeave">
+        <div
+          v-if="addressDialogRendered"
+          v-show="addressDialogPhase !== 'closing'"
+          class="fixed inset-0 z-50 flex min-h-[100vh] w-full items-center justify-center bg-slate-950/45 p-4 supports-[height:100dvh]:min-h-[100dvh]"
+          role="presentation"
+          :style="addressDialogLayerStyle"
+        >
+      <Transition name="dialog-panel" appear>
+      <section
+        v-show="addressDialogPhase !== 'closing'"
+        ref="addressDialogRef"
+        class="flex max-h-[calc(100vh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="public-deposit-address-dialog-title"
+      >
+        <header class="shrink-0 border-b border-slate-200 px-6 py-5">
+          <div class="flex items-start justify-between gap-4">
           <div>
-            <h2 class="text-lg font-bold text-slate-900">{{ form.id ? '编辑收款地址' : '新增收款地址' }}</h2>
+            <h2 id="public-deposit-address-dialog-title" class="text-lg font-bold text-slate-900">{{ form.id ? '编辑收款地址' : '新增收款地址' }}</h2>
             <p class="mt-1 text-xs text-slate-500">更换地址会生成新记录，原地址自动停用并保留。</p>
           </div>
-          <button type="button" class="rounded-lg p-1 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" @click="closeModal">×</button>
+          <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeModal">×</button>
+          </div>
         </header>
 
-        <form class="space-y-5 p-6" @submit.prevent="saveAddress">
+        <form class="flex min-h-0 flex-1 flex-col" @submit.prevent="saveAddress">
+          <div class="min-h-0 flex-1 space-y-5 overflow-y-auto p-6">
           <div class="grid gap-4 sm:grid-cols-2">
             <label class="space-y-2 text-sm font-medium text-slate-700">
               <span>币种</span>
-              <select v-model="form.coin" class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 outline-none focus:border-slate-400">
+              <select ref="addressInitialFocusRef" v-model="form.coin" class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 outline-none focus:border-slate-400">
                 <option v-for="coin in PUBLIC_DEPOSIT_COINS" :key="coin" :value="coin">{{ coin }}</option>
               </select>
             </label>
@@ -395,19 +424,6 @@ async function copyAddress(row) {
           </label>
 
           <label class="block space-y-2 text-sm font-medium text-slate-700">
-            <span>最低确认数</span>
-            <input v-model.number="form.confirmations" type="number" min="1" step="1" class="h-10 w-full rounded-lg border border-slate-200 px-3 outline-none focus:border-slate-400" />
-          </label>
-
-          <label class="flex cursor-pointer gap-3 rounded-xl border p-4 transition" :class="form.chainWide ? 'border-violet-300 bg-violet-50/70' : 'border-slate-200 hover:bg-slate-50'">
-            <input v-model="form.chainWide" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
-            <span>
-              <span class="block text-sm font-semibold text-slate-900">设为整条链的公共收款地址</span>
-              <span class="mt-1 block text-xs leading-5 text-slate-500">勾选后，该地址将作为 {{ form.network }} 上所有未配置币种专用地址的默认收款地址；同一条链只能启用一个。</span>
-            </span>
-          </label>
-
-          <label class="block space-y-2 text-sm font-medium text-slate-700">
             <span>备注</span>
             <textarea v-model="form.remark" rows="3" placeholder="填写地址用途或更换原因" class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2 outline-none focus:border-slate-400" />
           </label>
@@ -421,25 +437,47 @@ async function copyAddress(row) {
           </label>
 
           <p v-if="formError" class="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{{ formError }}</p>
+          </div>
 
-          <footer class="flex justify-end gap-3 border-t border-slate-100 pt-5">
+          <footer class="shrink-0 flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
             <button type="button" class="h-10 rounded-lg border border-slate-200 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-50" @click="closeModal">取消</button>
             <button type="submit" class="h-10 rounded-lg bg-slate-900 px-5 text-sm font-semibold text-white hover:bg-slate-800">保存配置</button>
           </footer>
         </form>
       </section>
-    </div>
+      </Transition>
+        </div>
+      </Transition>
+    </Teleport>
 
-    <div v-if="logDialogOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4" @click.self="closeLogDialog">
-      <section class="flex max-h-[88vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
-        <header class="flex items-start justify-between border-b border-slate-200 px-6 py-5">
+    <Teleport to="body">
+      <Transition name="dialog-overlay" appear @after-enter="onLogDialogAfterEnter" @after-leave="onLogDialogAfterLeave">
+        <div
+          v-if="logDialogRendered"
+          v-show="logDialogPhase !== 'closing'"
+          class="fixed inset-0 z-50 flex min-h-[100vh] w-full items-center justify-center bg-slate-950/45 p-4 supports-[height:100dvh]:min-h-[100dvh]"
+          role="presentation"
+          :style="logDialogLayerStyle"
+        >
+      <Transition name="dialog-panel" appear>
+      <section
+        v-show="logDialogPhase !== 'closing'"
+        ref="logDialogRef"
+        class="flex max-h-[calc(100vh-2rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="public-deposit-address-log-title"
+      >
+        <header class="shrink-0 border-b border-slate-200 px-6 py-5">
+          <div class="flex items-start justify-between gap-4">
           <div>
-            <h2 class="text-lg font-bold text-slate-900">修改日志</h2>
+            <h2 id="public-deposit-address-log-title" ref="logInitialFocusRef" tabindex="-1" class="text-lg font-bold text-slate-900">修改日志</h2>
             <p v-if="logRow" class="mt-1 text-xs text-slate-500">
               {{ logRow.coin }} · {{ logRow.network }} · {{ logRow.id }}
             </p>
           </div>
-          <button type="button" class="rounded-lg p-1 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" @click="closeLogDialog">×</button>
+          <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeLogDialog">×</button>
+          </div>
         </header>
 
         <div class="overflow-y-auto p-6">
@@ -511,7 +549,10 @@ async function copyAddress(row) {
           </div>
         </div>
       </section>
-    </div>
+      </Transition>
+        </div>
+      </Transition>
+    </Teleport>
 
     <MfaVerificationModal
       v-model:open="showMfaModal"

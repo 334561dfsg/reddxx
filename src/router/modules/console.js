@@ -225,7 +225,7 @@ export const consoleRoutes = [
     component: () => import('../../pages/admin/assets/AssetsPublicDepositAddressPage.vue'),
     meta: {
       title: '资产管理 / 公共收款地址',
-      desc: '按币种与网络维护充值收款地址，并可设置整条链的公共收款地址。'
+      desc: '按币种与网络维护充值收款地址。'
     }
   },
   {
