@@ -34,17 +34,20 @@ test('platform report renders asset metrics as currency rows with metric columns
   assert.doesNotMatch(source, /划扣/)
 })
 
-test('platform report total overview matches current data snapshot', () => {
+test('platform report total overview renders all values as zero', () => {
   const source = read('../src/pages/admin/system/PlatformReportPage.vue')
 
   assert.match(source, /'USDT',\n  'BTC',\n  'ETH',\n  'TRX',\n  'LTC',\n  'PEPE'/)
   assert.match(source, /'TRUMP'/)
   assert.match(source, /'DOGE'/)
-  assert.match(source, /200\.000000000000000000/)
-  assert.match(source, /1\.000000000000000000/)
-  assert.match(source, /label: '用户统计', value: '31'/)
-  assert.match(source, /label: '代理数量', value: '6'/)
+  assert.match(source, /label: '用户统计', value: '0'/)
+  assert.match(source, /label: '代理数量', value: '0'/)
   assert.match(source, /label: '提现笔数', value: '0'/)
+  assert.match(source, /value: '0'/)
+  assert.doesNotMatch(source, /200\.000000000000000000/)
+  assert.doesNotMatch(source, /1\.000000000000000000/)
+  assert.doesNotMatch(source, /value: '31'/)
+  assert.doesNotMatch(source, /value: '6'/)
   assert.doesNotMatch(source, /15min/)
   assert.match(source, /title: '充值数据-总'/)
   assert.doesNotMatch(source, /充值数据-总（/)

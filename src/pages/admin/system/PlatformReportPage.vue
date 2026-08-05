@@ -111,7 +111,7 @@ const platformBalanceItems = [
   ...reportAssets.map((asset) => ({
     label: asset,
     badge: asset,
-    value: asset === 'USDT' ? '200.000000000000000000' : asset === 'BTC' ? '1.000000000000000000' : '0',
+    value: '0',
     tone: assetTones[asset]
   }))
 ]
@@ -126,8 +126,8 @@ const sections = [
     title: '用户数据-总',
     columns: 'small',
     items: [
-      { label: '用户统计', value: '31', tone: 'blue' },
-      { label: '代理数量', value: '6', tone: 'green' }
+      { label: '用户统计', value: '0', tone: 'blue' },
+      { label: '代理数量', value: '0', tone: 'green' }
     ]
   },
   {
@@ -135,10 +135,7 @@ const sections = [
     kind: 'assetTable',
     tableLabel: '充值数据总览',
     tableColumns: rechargeColumns,
-    rows: buildZeroRechargeRows({
-      USDT: { userDeposit: '200.000000000000000000', walletAmount: '200.000000000000000000' },
-      BTC: { userDeposit: '1.000000000000000000', walletAmount: '1.000000000000000000' }
-    })
+    rows: buildZeroRechargeRows()
   },
   {
     title: '提现数据-总',
