@@ -29,22 +29,6 @@ const sections = [
     ]
   },
   {
-    title: '差额数据-总',
-    columns: 'asset',
-    items: [
-      { label: '差额-人民币', badge: 'CNY', value: '-61892.24', tone: 'black' },
-      { label: '差额-USDT', badge: 'USDT', value: '-513769.32', tone: 'black' },
-      { label: '差额-DAI', badge: 'DAI', value: '0', tone: 'red' },
-      { label: '差额-SHIB', badge: 'SHIB', value: '0', tone: 'orange' },
-      { label: '差额-BUSD', badge: 'BUSD', value: '0', tone: 'orange' },
-      { label: '差额-MATIC', badge: 'MATIC', value: '0', tone: 'orange' },
-      { label: '差额-SOL', badge: 'SOL', value: '0', tone: 'orange' },
-      { label: '差额-BNB', badge: 'BNB', value: '0', tone: 'orange' },
-      { label: '差额-BTC', badge: 'BTC', value: '0', tone: 'green' },
-      { label: '差额-ETH', badge: 'ETH', value: '45.3141', tone: 'gray' }
-    ]
-  },
-  {
     title: '充值数据-总（18）',
     columns: 'asset',
     items: [
@@ -105,22 +89,6 @@ const sections = [
       { label: '代理数量', badge: '15min', value: '0', tone: 'green' }
     ]
   },
-  {
-    title: '差额数据-月',
-    columns: 'asset',
-    items: [
-      { label: '差额-人民币', badge: 'CNY', value: '0.00', tone: 'black' },
-      { label: '差额-USDT', badge: 'USDT', value: '0', tone: 'black' },
-      { label: '差额-DAI', badge: 'DAI', value: '0', tone: 'red' },
-      { label: '差额-SHIB', badge: 'SHIB', value: '0', tone: 'orange' },
-      { label: '差额-BUSD', badge: 'BUSD', value: '0', tone: 'orange' },
-      { label: '差额-MATIC', badge: 'MATIC', value: '0', tone: 'orange' },
-      { label: '差额-SOL', badge: 'SOL', value: '0', tone: 'orange' },
-      { label: '差额-BNB', badge: 'BNB', value: '0', tone: 'orange' },
-      { label: '差额-BTC', badge: 'BTC', value: '0', tone: 'green' },
-      { label: '差额-ETH', badge: 'ETH', value: '0', tone: 'gray' }
-    ]
-  }
 ]
 
 const rechargeMonthItems = [
@@ -169,8 +137,6 @@ const withdrawZeroItems = [
   ['ETH-提币(实际到账)', 'ETH', '0', 'gray']
 ].map(([label, badge, value, tone]) => ({ label, badge, value, tone }))
 
-const zeroDiffItems = sections.find((section) => section.title === '差额数据-月').items
-
 sections.push(
   { title: '充值数据-本月（0）', columns: 'asset', items: rechargeMonthItems },
   { title: '提现数据-本月', columns: 'asset', items: withdrawZeroItems },
@@ -183,7 +149,6 @@ sections.push(
       { label: '待审核提现', badge: '15min', value: '0', tone: 'green' }
     ]
   },
-  { title: '差额数据-今日', columns: 'asset', items: zeroDiffItems },
   { title: '充值数据-今日（0）', columns: 'asset', items: rechargeMonthItems },
   { title: '提现数据-今日', columns: 'asset', items: withdrawZeroItems }
 )
@@ -203,19 +168,19 @@ const dataRuleSections = [
       {
         label: '总览数据范围',
         badge: '总',
-        value: '总览展示平台累计数据，包括平台用户账上资金、用户数据、差额数据、充值数据、提现数据。',
+        value: '总览展示平台累计数据，包括平台用户账上资金、用户数据、充值数据、提现数据。',
         tone: 'black'
       },
       {
         label: '本月数据范围',
         badge: '本月',
-        value: '本月展示当前自然月内产生的数据，包括用户数据、差额数据、充值数据、提现数据。',
+        value: '本月展示当前自然月内产生的数据，包括用户数据、充值数据、提现数据。',
         tone: 'cyan'
       },
       {
         label: '今日数据范围',
         badge: '今日',
-        value: '今日展示当天产生的数据，包括今日新增用户、待审核充值、待审核提现、差额数据、充值数据、提现数据。',
+        value: '今日展示当天产生的数据，包括今日新增用户、待审核充值、待审核提现、充值数据、提现数据。',
         tone: 'green'
       }
     ]
@@ -236,12 +201,6 @@ const dataRuleSections = [
         badge: '提现',
         value: '提现数据展示提现笔数，以及每个可提现币种的提币实际到账金额；USDT 额外展示提币手续费、划扣、后台提现。',
         tone: 'cyan'
-      },
-      {
-        label: '差额数据',
-        badge: '差额',
-        value: '差额数据按人民币和各币种分别展示，用于对比平台入账、出账、钱包变动后的余额差异。',
-        tone: 'orange'
       },
       {
         label: '用户数据',

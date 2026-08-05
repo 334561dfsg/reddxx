@@ -16,7 +16,7 @@ export const consoleRoutes = [
     component: () => import('../../pages/admin/system/PlatformReportPage.vue'),
     meta: {
       title: '平台报表',
-      desc: '查看平台资金、用户、充值提现、差额与周期交易的只读快照。'
+      desc: '查看平台资金、用户、充值提现与周期交易的只读快照。'
     }
   },
   {
