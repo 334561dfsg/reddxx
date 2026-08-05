@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref, watch, onMounted } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import {
   COMMON_FILTER_ALL,
   DELIVERY_CONTRACT_TAB,
@@ -111,6 +111,11 @@ const productTradeLimitUnlimited = (product) => templateById.value[product.templ
 const showContractModal = ref(false)
 const editingContractId = ref('')
 const contractTab = ref(DELIVERY_CONTRACT_TAB.BASIC)
+const contractDialogRef = ref(null)
+const contractDialogTitleRef = ref(null)
+const contractErrorSummaryRef = ref(null)
+const lastContractTrigger = ref(null)
+const contractDialogClosing = ref(false)
 
 const contractForm = reactive({
   name: '',
@@ -128,11 +133,140 @@ const contractForm = reactive({
   sellFee: '0.2'
 })
 
+const contractErrors = reactive({
+  name: '',
+  code: '',
+  spotSymbol: '',
+  templateId: '',
+  sortOrder: '',
+  minBuy: '',
+  maxBuy: '',
+  maxHold: '',
+  sellFee: ''
+})
+
 const selectedTemplate = computed(() => templates.value.find((t) => t.id === contractForm.templateId) || null)
 const selectedTemplateCycles = computed(() => selectedTemplate.value?.cycles || [])
 const selectedTemplateTradeLimitUnlimited = computed(() => selectedTemplate.value?.tradeLimitUnlimited === true)
 
-const openCreateContract = () => {
+const clearContractErrors = () => {
+  Object.keys(contractErrors).forEach((key) => {
+    contractErrors[key] = ''
+  })
+}
+
+const contractErrorItems = computed(() => Object.entries(contractErrors)
+  .filter(([, message]) => Boolean(message))
+  .map(([field, message]) => ({ field, message })))
+
+const contractDialogTitleId = 'delivery-contract-dialog-title'
+const contractErrorSummaryId = 'delivery-contract-error-summary'
+const contractFieldId = (field) => `delivery-contract-${field}`
+const contractFieldErrorId = (field) => `delivery-contract-${field}-error`
+const contractFieldDescribedBy = (field, helpId = '') => {
+  const ids = []
+  if (helpId) ids.push(helpId)
+  if (contractErrors[field]) ids.push(contractFieldErrorId(field))
+  return ids.length ? ids.join(' ') : undefined
+}
+
+const validatePositiveNumber = (value) => Number.isFinite(Number(value)) && Number(value) > 0
+const validateNonNegativeNumber = (value) => Number.isFinite(Number(value)) && Number(value) >= 0
+
+const validateContractForm = () => {
+  clearContractErrors()
+
+  if (!contractForm.name.trim()) contractErrors.name = '请输入合约名称'
+  if (!contractForm.code.trim()) contractErrors.code = '请输入合约代码'
+  if (!contractForm.spotSymbol) contractErrors.spotSymbol = '请选择交易对'
+  if (!contractForm.templateId) contractErrors.templateId = '请选择周期模板'
+  if (!validateNonNegativeNumber(contractForm.sortOrder)) contractErrors.sortOrder = '产品排序必须是大于等于 0 的数字'
+
+  if (!selectedTemplateTradeLimitUnlimited.value) {
+    if (!validatePositiveNumber(contractForm.minBuy)) contractErrors.minBuy = '最低买入额必须大于 0'
+    if (!validatePositiveNumber(contractForm.maxBuy)) contractErrors.maxBuy = '最高买入额必须大于 0'
+    if (!validatePositiveNumber(contractForm.maxHold)) contractErrors.maxHold = '最大持仓额必须大于 0'
+    if (!contractErrors.minBuy && !contractErrors.maxBuy && Number(contractForm.maxBuy) < Number(contractForm.minBuy)) {
+      contractErrors.maxBuy = '最高买入额不能小于最低买入额'
+    }
+    if (!contractErrors.maxBuy && !contractErrors.maxHold && Number(contractForm.maxHold) < Number(contractForm.maxBuy)) {
+      contractErrors.maxHold = '最大持仓额不能小于最高买入额'
+    }
+  }
+
+  if (!validateNonNegativeNumber(contractForm.sellFee) || Number(contractForm.sellFee) > 100) {
+    contractErrors.sellFee = '交割手续费率必须在 0 到 100 之间'
+  }
+
+  return contractErrorItems.value.length === 0
+}
+
+const focusFirstContractError = async () => {
+  await nextTick()
+  contractErrorSummaryRef.value?.focus()
+}
+
+const focusContractField = async (field) => {
+  contractTab.value = field === 'templateId' ? DELIVERY_CONTRACT_TAB.CYCLE
+    : ['minBuy', 'maxBuy', 'maxHold'].includes(field) ? DELIVERY_CONTRACT_TAB.LIMIT
+      : field === 'sellFee' ? DELIVERY_CONTRACT_TAB.FEE
+        : DELIVERY_CONTRACT_TAB.BASIC
+  await nextTick()
+  document.getElementById(contractFieldId(field))?.focus()
+}
+
+const closeContractModal = () => {
+  if (contractDialogClosing.value) return
+  contractDialogClosing.value = true
+  showContractModal.value = false
+}
+
+const openContractModal = async (event) => {
+  if (contractDialogClosing.value) return
+  lastContractTrigger.value = event?.currentTarget || document.activeElement
+  clearContractErrors()
+  contractDialogClosing.value = false
+  showContractModal.value = true
+  await nextTick()
+  contractDialogTitleRef.value?.focus()
+}
+
+const handleContractModalAfterLeave = () => {
+  contractDialogClosing.value = false
+  document.body.style.overflow = ''
+  lastContractTrigger.value?.focus?.()
+  lastContractTrigger.value = null
+}
+
+const getContractFocusableElements = () => {
+  const dialog = contractDialogRef.value
+  if (!dialog) return []
+  return Array.from(dialog.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+    .filter((element) => !element.hasAttribute('disabled') && element.offsetParent !== null)
+}
+
+const handleContractDialogKeydown = (event) => {
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    closeContractModal()
+    return
+  }
+  if (event.key !== 'Tab') return
+
+  const focusable = getContractFocusableElements()
+  if (!focusable.length) return
+  const first = focusable[0]
+  const last = focusable[focusable.length - 1]
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault()
+    first.focus()
+  }
+}
+
+const openCreateContract = (event) => {
   editingContractId.value = ''
   contractTab.value = DELIVERY_CONTRACT_TAB.BASIC
   contractForm.name = ''
@@ -148,10 +282,10 @@ const openCreateContract = () => {
   contractForm.maxHold = '50000'
   contractForm.buyFee = '0'
   contractForm.sellFee = '0.2'
-  showContractModal.value = true
+  openContractModal(event)
 }
 
-const openEditContract = (item) => {
+const openEditContract = (item, event) => {
   editingContractId.value = item.id
   contractTab.value = DELIVERY_CONTRACT_TAB.BASIC
   contractForm.name = item.name
@@ -168,10 +302,15 @@ const openEditContract = (item) => {
   contractForm.maxHold = item.maxHold
   contractForm.buyFee = '0'
   contractForm.sellFee = item.sellFee ?? item.deliveryFee ?? '0'
-  showContractModal.value = true
+  openContractModal(event)
 }
 
-const saveContract = () => {
+const saveContract = async () => {
+  if (!validateContractForm()) {
+    await focusFirstContractError()
+    return
+  }
+
   const payload = {
     name: contractForm.name.trim(),
     code: contractForm.code.trim().toUpperCase(),
@@ -195,7 +334,7 @@ const saveContract = () => {
     products.value.unshift({ id: `prod-${Date.now()}`, ...payload })
   }
 
-  showContractModal.value = false
+  closeContractModal()
 }
 
 const statusClass = (status) =>
@@ -247,8 +386,18 @@ watch(
   }
 )
 
+watch(showContractModal, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  }
+})
+
 onMounted(() => {
   loadSpotSymbols()
+})
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = ''
 })
 </script>
 
@@ -274,10 +423,12 @@ onMounted(() => {
             <span class="text-sm text-slate-600 whitespace-nowrap">产品名称</span>
             <div class="relative w-full sm:w-80">
               <input
+                id="delivery-contract-search"
                 v-model="searchDraft"
                 type="text"
                 class="ant-input w-full pl-9 !h-8"
                 placeholder="搜索产品名称或代码..."
+                aria-label="搜索交割合约产品名称或代码"
                 @keyup.enter="applySearch"
               />
               <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2 h-4 w-4 text-slate-400" fill="none">
@@ -301,9 +452,11 @@ onMounted(() => {
 
     <article class="rounded-xl border border-slate-200 bg-white">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
-        <div class="inline-flex items-center gap-6 text-sm">
+        <div class="inline-flex items-center gap-6 text-sm" role="tablist" aria-label="交割合约产品状态筛选">
           <button
             type="button"
+            role="tab"
+            :aria-selected="statusTab === COMMON_FILTER_ALL"
             class="relative py-2 font-medium transition-colors"
             :class="statusTab === COMMON_FILTER_ALL ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
             @click="statusTab = COMMON_FILTER_ALL"
@@ -312,6 +465,8 @@ onMounted(() => {
           </button>
           <button
             type="button"
+            role="tab"
+            :aria-selected="statusTab === DELIVERY_STATUS.ENABLED"
             class="relative py-2 font-medium transition-colors"
             :class="statusTab === DELIVERY_STATUS.ENABLED ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
             @click="statusTab = DELIVERY_STATUS.ENABLED"
@@ -320,6 +475,8 @@ onMounted(() => {
           </button>
           <button
             type="button"
+            role="tab"
+            :aria-selected="statusTab === DELIVERY_STATUS.DISABLED"
             class="relative py-2 font-medium transition-colors"
             :class="statusTab === DELIVERY_STATUS.DISABLED ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
             @click="statusTab = DELIVERY_STATUS.DISABLED"
@@ -330,7 +487,7 @@ onMounted(() => {
           <span class="text-slate-500">共 <span class="font-medium text-slate-700">{{ allFilteredProducts.length }}</span> 个</span>
         </div>
 
-        <button type="button" class="ant-btn ant-btn-primary !h-8 shrink-0" @click="openCreateContract()">
+        <button type="button" class="ant-btn ant-btn-primary !h-8 shrink-0" @click="openCreateContract($event)">
           <span>+ 新增合约</span>
         </button>
       </div>
@@ -386,7 +543,7 @@ onMounted(() => {
               <button
                 type="button"
                 class="ant-btn "
-                @click="openEditContract(item)"
+                @click="openEditContract(item, $event)"
               >
                 编辑
               </button>
@@ -467,29 +624,42 @@ onMounted(() => {
     </article>
 
     <!-- 编辑模态框 -->
-    <Transition name="modal">
+    <Transition name="modal" @after-leave="handleContractModalAfterLeave">
       <div
         v-if="showContractModal"
         class="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
       >
         <section
-          class="flex flex-col w-full max-w-3xl h-[30rem] overflow-hidden rounded-lg bg-white shadow-xl"
+          ref="contractDialogRef"
+          role="dialog"
+          aria-modal="true"
+          :aria-labelledby="contractDialogTitleId"
+          class="flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white shadow-xl sm:max-h-[calc(100dvh-2rem)]"
+          @keydown="handleContractDialogKeydown"
         >
           <header class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
             <div>
-              <h2 class="text-lg font-semibold text-slate-900">{{ editingContractId ? '编辑交割合约' : '新增交割合约' }}</h2>
+              <h2
+                :id="contractDialogTitleId"
+                ref="contractDialogTitleRef"
+                tabindex="-1"
+                class="text-lg font-semibold text-slate-900 outline-none"
+              >
+                {{ editingContractId ? '编辑交割合约' : '新增交割合约' }}
+              </h2>
             </div>
             <button
               type="button"
-              class="text-slate-400 hover:text-slate-600 transition-colors text-2xl leading-none"
-              @click="showContractModal = false"
+              class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="关闭"
+              @click="closeContractModal"
             >
               ×
             </button>
           </header>
 
           <div class="px-6 border-b border-slate-100 bg-white">
-            <div class="flex gap-8">
+            <div class="flex gap-8 overflow-x-auto" role="tablist" aria-label="交割合约编辑步骤">
               <button
                 v-for="(label, key) in {
                   [DELIVERY_CONTRACT_TAB.BASIC]: '基本信息',
@@ -499,6 +669,10 @@ onMounted(() => {
                 }"
                 :key="key"
                 type="button"
+                role="tab"
+                :id="`delivery-contract-tab-${key}`"
+                :aria-selected="contractTab === key"
+                :aria-controls="`delivery-contract-panel-${key}`"
                 class="relative py-3 text-sm transition-all"
                 :class="
                   contractTab === key
@@ -513,40 +687,77 @@ onMounted(() => {
           </div>
 
           <div class="flex-1 overflow-y-auto bg-white p-6 space-y-6">
+            <div
+              v-if="contractErrorItems.length"
+              :id="contractErrorSummaryId"
+              ref="contractErrorSummaryRef"
+              tabindex="-1"
+              class="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 outline-none focus:ring-2 focus:ring-rose-400"
+            >
+              <p class="font-medium">请修复以下 {{ contractErrorItems.length }} 项后再保存</p>
+              <ul class="mt-2 list-disc space-y-1 pl-5">
+                <li v-for="error in contractErrorItems" :key="error.field">
+                  <button type="button" class="text-left underline underline-offset-2" @click="focusContractField(error.field)">
+                    {{ error.message }}
+                  </button>
+                </li>
+              </ul>
+            </div>
+
             <div class="space-y-6">
-              <div v-if="contractTab === DELIVERY_CONTRACT_TAB.BASIC" class="grid gap-6 md:grid-cols-2">
+              <div
+                v-if="contractTab === DELIVERY_CONTRACT_TAB.BASIC"
+                :id="`delivery-contract-panel-${DELIVERY_CONTRACT_TAB.BASIC}`"
+                role="tabpanel"
+                :aria-labelledby="`delivery-contract-tab-${DELIVERY_CONTRACT_TAB.BASIC}`"
+                class="grid gap-6 md:grid-cols-2"
+              >
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900">合约名称 <span class="text-rose-500">*</span></label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('name')">合约名称 <span class="text-rose-500">*</span></label>
                   <input
+                    :id="contractFieldId('name')"
                     v-model="contractForm.name"
                     type="text"
                     class="ant-input"
                     placeholder="如：BTC 周期合约"
+                    :aria-invalid="Boolean(contractErrors.name)"
+                    :aria-describedby="contractFieldDescribedBy('name')"
                   />
+                  <p v-if="contractErrors.name" :id="contractFieldErrorId('name')" class="text-xs text-rose-600">{{ contractErrors.name }}</p>
                 </div>
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900">合约代码 <span class="text-rose-500">*</span></label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('code')">合约代码 <span class="text-rose-500">*</span></label>
                   <input
+                    :id="contractFieldId('code')"
                     v-model="contractForm.code"
                     type="text"
                     class="ant-input uppercase"
                     placeholder="如：BTC_DELIVERY"
+                    :aria-invalid="Boolean(contractErrors.code)"
+                    :aria-describedby="contractFieldDescribedBy('code')"
                   />
+                  <p v-if="contractErrors.code" :id="contractFieldErrorId('code')" class="text-xs text-rose-600">{{ contractErrors.code }}</p>
                 </div>
                 <div class="space-y-1.5 md:col-span-2">
-                  <label class="text-sm text-slate-900">选择交易对 <span class="text-rose-500">*</span></label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('spotSymbol')">选择交易对 <span class="text-rose-500">*</span></label>
                   <select
+                    :id="contractFieldId('spotSymbol')"
                     v-model="contractForm.spotSymbol"
                     class="ant-select w-full"
+                    :aria-invalid="Boolean(contractErrors.spotSymbol)"
+                    :aria-describedby="contractFieldDescribedBy('spotSymbol')"
                   >
                     <option v-for="opt in pairOptions" :key="`pair-${opt}`" :value="opt">{{ opt }}</option>
                   </select>
+                  <p v-if="contractErrors.spotSymbol" :id="contractFieldErrorId('spotSymbol')" class="text-xs text-rose-600">{{ contractErrors.spotSymbol }}</p>
                 </div>
                 <div class="space-y-1.5">
-                  <label class="block text-sm text-slate-900">产品状态</label>
-                  <div class="inline-flex rounded border border-slate-200 p-0.5 bg-slate-50 mt-1">
+                  <span id="delivery-contract-status-label" class="block text-sm text-slate-900">产品状态</span>
+                  <div class="inline-flex rounded border border-slate-200 p-0.5 bg-slate-50 mt-1" role="radiogroup" aria-labelledby="delivery-contract-status-label">
                     <button
                       type="button"
+                      role="radio"
+                      :aria-checked="contractForm.status === DELIVERY_STATUS.ENABLED"
                       class="px-4 py-1 text-xs rounded transition-all"
                       :class="
                         contractForm.status === DELIVERY_STATUS.ENABLED
@@ -559,6 +770,8 @@ onMounted(() => {
                     </button>
                     <button
                       type="button"
+                      role="radio"
+                      :aria-checked="contractForm.status === DELIVERY_STATUS.DISABLED"
                       class="px-4 py-1 text-xs rounded transition-all"
                       :class="
                         contractForm.status === DELIVERY_STATUS.DISABLED
@@ -572,26 +785,42 @@ onMounted(() => {
                   </div>
                 </div>
                 <div class="space-y-1.5">
-                  <label class="block text-sm text-slate-900">产品排序</label>
+                  <label class="block text-sm text-slate-900" :for="contractFieldId('sortOrder')">产品排序</label>
                   <input
+                    :id="contractFieldId('sortOrder')"
                     v-model.number="contractForm.sortOrder"
                     type="number"
+                    min="0"
+                    inputmode="numeric"
                     class="ant-input font-mono"
                     placeholder="数字越大越靠前"
+                    :aria-invalid="Boolean(contractErrors.sortOrder)"
+                    :aria-describedby="contractFieldDescribedBy('sortOrder', 'delivery-contract-sort-help')"
                   />
-                  <p class="text-xs text-slate-400">数字越大越靠前</p>
+                  <p id="delivery-contract-sort-help" class="text-xs text-slate-400">数字越大越靠前，必须为大于等于 0 的数字。</p>
+                  <p v-if="contractErrors.sortOrder" :id="contractFieldErrorId('sortOrder')" class="text-xs text-rose-600">{{ contractErrors.sortOrder }}</p>
                 </div>
               </div>
 
-              <div v-if="contractTab === DELIVERY_CONTRACT_TAB.CYCLE" class="space-y-6">
+              <div
+                v-if="contractTab === DELIVERY_CONTRACT_TAB.CYCLE"
+                :id="`delivery-contract-panel-${DELIVERY_CONTRACT_TAB.CYCLE}`"
+                role="tabpanel"
+                :aria-labelledby="`delivery-contract-tab-${DELIVERY_CONTRACT_TAB.CYCLE}`"
+                class="space-y-6"
+              >
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900">选择周期模板 <span class="text-rose-500">*</span></label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('templateId')">选择周期模板 <span class="text-rose-500">*</span></label>
                   <select
+                    :id="contractFieldId('templateId')"
                     v-model="contractForm.templateId"
                     class="ant-select"
+                    :aria-invalid="Boolean(contractErrors.templateId)"
+                    :aria-describedby="contractFieldDescribedBy('templateId')"
                   >
                     <option v-for="tpl in templates" :key="tpl.id" :value="tpl.id">{{ tpl.name }}</option>
                   </select>
+                  <p v-if="contractErrors.templateId" :id="contractFieldErrorId('templateId')" class="text-xs text-rose-600">{{ contractErrors.templateId }}</p>
                 </div>
                 <article v-if="selectedTemplate" class="rounded border border-blue-100 bg-blue-50/30 p-4 space-y-4">
                   <div class="flex items-center justify-between">
@@ -614,7 +843,13 @@ onMounted(() => {
                 </article>
               </div>
 
-              <div v-if="contractTab === DELIVERY_CONTRACT_TAB.LIMIT" class="space-y-6">
+              <div
+                v-if="contractTab === DELIVERY_CONTRACT_TAB.LIMIT"
+                :id="`delivery-contract-panel-${DELIVERY_CONTRACT_TAB.LIMIT}`"
+                role="tabpanel"
+                :aria-labelledby="`delivery-contract-tab-${DELIVERY_CONTRACT_TAB.LIMIT}`"
+                class="space-y-6"
+              >
                 <article
                   v-if="selectedTemplateTradeLimitUnlimited"
                   class="rounded-lg border border-blue-100 bg-blue-50 p-4"
@@ -626,44 +861,80 @@ onMounted(() => {
                 </article>
                 <div v-else class="grid gap-6 md:grid-cols-3">
                   <div class="space-y-1.5">
-                    <label class="text-sm text-slate-900">最低买入额 (USDT)</label>
+                    <label class="text-sm text-slate-900" :for="contractFieldId('minBuy')">最低买入额 (USDT)</label>
                     <input
+                      :id="contractFieldId('minBuy')"
                       v-model="contractForm.minBuy"
                       type="number"
+                      min="0"
+                      step="0.000001"
+                      inputmode="decimal"
                       class="ant-input font-mono"
+                      :aria-invalid="Boolean(contractErrors.minBuy)"
+                      :aria-describedby="contractFieldDescribedBy('minBuy', 'delivery-contract-limit-help')"
                     />
+                    <p v-if="contractErrors.minBuy" :id="contractFieldErrorId('minBuy')" class="text-xs text-rose-600">{{ contractErrors.minBuy }}</p>
                   </div>
                   <div class="space-y-1.5">
-                    <label class="text-sm text-slate-900">最高买入额 (USDT)</label>
+                    <label class="text-sm text-slate-900" :for="contractFieldId('maxBuy')">最高买入额 (USDT)</label>
                     <input
+                      :id="contractFieldId('maxBuy')"
                       v-model="contractForm.maxBuy"
                       type="number"
+                      min="0"
+                      step="0.000001"
+                      inputmode="decimal"
                       class="ant-input font-mono"
+                      :aria-invalid="Boolean(contractErrors.maxBuy)"
+                      :aria-describedby="contractFieldDescribedBy('maxBuy', 'delivery-contract-limit-help')"
                     />
+                    <p v-if="contractErrors.maxBuy" :id="contractFieldErrorId('maxBuy')" class="text-xs text-rose-600">{{ contractErrors.maxBuy }}</p>
                   </div>
                   <div class="space-y-1.5">
-                    <label class="text-sm text-slate-900">最大持仓额 (USDT)</label>
+                    <label class="text-sm text-slate-900" :for="contractFieldId('maxHold')">最大持仓额 (USDT)</label>
                     <input
+                      :id="contractFieldId('maxHold')"
                       v-model="contractForm.maxHold"
                       type="number"
+                      min="0"
+                      step="0.000001"
+                      inputmode="decimal"
                       class="ant-input font-mono"
+                      :aria-invalid="Boolean(contractErrors.maxHold)"
+                      :aria-describedby="contractFieldDescribedBy('maxHold', 'delivery-contract-limit-help')"
                     />
+                    <p v-if="contractErrors.maxHold" :id="contractFieldErrorId('maxHold')" class="text-xs text-rose-600">{{ contractErrors.maxHold }}</p>
                   </div>
+                  <p id="delivery-contract-limit-help" class="text-xs text-slate-400 md:col-span-3">金额单位为 USDT；最高买入额不能小于最低买入额，最大持仓额不能小于最高买入额。</p>
                 </div>
               </div>
 
-              <div v-if="contractTab === DELIVERY_CONTRACT_TAB.FEE" class="grid gap-6 md:grid-cols-1">
+              <div
+                v-if="contractTab === DELIVERY_CONTRACT_TAB.FEE"
+                :id="`delivery-contract-panel-${DELIVERY_CONTRACT_TAB.FEE}`"
+                role="tabpanel"
+                :aria-labelledby="`delivery-contract-tab-${DELIVERY_CONTRACT_TAB.FEE}`"
+                class="grid gap-6 md:grid-cols-1"
+              >
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900">交割手续费率 (%)</label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('sellFee')">交割手续费率 (%)</label>
                   <div class="relative">
                     <input
+                      :id="contractFieldId('sellFee')"
                       v-model="contractForm.sellFee"
                       type="number"
+                      min="0"
+                      max="100"
                       step="0.01"
+                      inputmode="decimal"
                       class="ant-input font-mono pr-8"
+                      :aria-invalid="Boolean(contractErrors.sellFee)"
+                      :aria-describedby="contractFieldDescribedBy('sellFee', 'delivery-contract-fee-help')"
                     />
                     <span class="absolute right-3 top-1.5 text-slate-400 text-sm">%</span>
                   </div>
+                  <p id="delivery-contract-fee-help" class="text-xs text-slate-400">费率单位为百分比，允许 0 到 100。</p>
+                  <p v-if="contractErrors.sellFee" :id="contractFieldErrorId('sellFee')" class="text-xs text-rose-600">{{ contractErrors.sellFee }}</p>
                 </div>
               </div>
             </div>
@@ -673,7 +944,7 @@ onMounted(() => {
             <button
               type="button"
               class="ant-btn"
-              @click="showContractModal = false"
+              @click="closeContractModal"
             >
               取消
             </button>
@@ -694,10 +965,39 @@ onMounted(() => {
 <style scoped>
 .modal-enter-active,
 .modal-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 200ms ease-out;
+}
+.modal-leave-active {
+  transition-duration: 150ms;
+  transition-timing-function: ease-in;
 }
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
+}
+.modal-enter-active > section,
+.modal-leave-active > section {
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+.modal-leave-active > section {
+  transition-duration: 150ms;
+  transition-timing-function: ease-in;
+}
+.modal-enter-from > section,
+.modal-leave-to > section {
+  opacity: 0;
+  transform: scale(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal-enter-active,
+  .modal-leave-active,
+  .modal-enter-active > section,
+  .modal-leave-active > section {
+    transition-duration: 50ms;
+  }
+  .modal-enter-from > section,
+  .modal-leave-to > section {
+    transform: none;
+  }
 }
 </style>
