@@ -30,7 +30,24 @@ test('platform report renders asset metrics as currency rows with metric columns
   assert.match(source, /v-for="row in section\.rows"/)
   assert.match(source, /提币实际到账/)
   assert.match(source, /提币手续费/)
-  assert.match(source, /后台提现/)
+  assert.doesNotMatch(source, /后台提现/)
+  assert.doesNotMatch(source, /划扣/)
+})
+
+test('platform report total overview matches current data snapshot', () => {
+  const source = read('../src/pages/admin/system/PlatformReportPage.vue')
+
+  assert.match(source, /'USDT',\n  'BTC',\n  'ETH',\n  'TRX',\n  'LTC',\n  'PEPE'/)
+  assert.match(source, /'TRUMP'/)
+  assert.match(source, /'DOGE'/)
+  assert.match(source, /200\.000000000000000000/)
+  assert.match(source, /1\.000000000000000000/)
+  assert.match(source, /label: '用户统计', value: '31'/)
+  assert.match(source, /label: '代理数量', value: '6'/)
+  assert.match(source, /label: '提现笔数', value: '0'/)
+  assert.doesNotMatch(source, /15min/)
+  assert.match(source, /title: '充值数据-总'/)
+  assert.doesNotMatch(source, /充值数据-总（/)
 })
 
 test('platform report only shows user account balance cards in total overview', () => {

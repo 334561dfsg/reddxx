@@ -14,15 +14,59 @@ const getCurrentMonthValue = () => getTodayValue().slice(0, 7)
 
 const assetTones = {
   USDT: 'black',
-  DAI: 'red',
-  SHIB: 'orange',
-  BUSD: 'orange',
-  MATIC: 'orange',
-  SOL: 'orange',
-  BNB: 'orange',
   BTC: 'green',
-  ETH: 'gray'
+  ETH: 'gray',
+  TRX: 'gray',
+  LTC: 'gray',
+  PEPE: 'gray',
+  DAI: 'red',
+  TRUMP: 'gray',
+  YFI: 'gray',
+  DOT: 'gray',
+  TON: 'gray',
+  BCH: 'gray',
+  FIL: 'gray',
+  XRP: 'gray',
+  DASH: 'gray',
+  LINK: 'gray',
+  ADA: 'gray',
+  BNB: 'orange',
+  MATIC: 'orange',
+  EOS: 'gray',
+  XMR: 'gray',
+  ZEC: 'gray',
+  SHIB: 'orange',
+  DOGE: 'gray',
+  SOL: 'orange'
 }
+
+const reportAssets = [
+  'USDT',
+  'BTC',
+  'ETH',
+  'TRX',
+  'LTC',
+  'PEPE',
+  'DAI',
+  'TRUMP',
+  'YFI',
+  'DOT',
+  'TON',
+  'BCH',
+  'FIL',
+  'XRP',
+  'DASH',
+  'LINK',
+  'ADA',
+  'BNB',
+  'MATIC',
+  'EOS',
+  'XMR',
+  'ZEC',
+  'SHIB',
+  'DOGE',
+  'SOL'
+]
 
 const rechargeColumns = [
   { key: 'userDeposit', label: '用户入金' },
@@ -32,9 +76,7 @@ const rechargeColumns = [
 
 const withdrawColumns = [
   { key: 'actualAmount', label: '提币实际到账' },
-  { key: 'fee', label: '提币手续费' },
-  { key: 'deduction', label: '划扣' },
-  { key: 'backendWithdraw', label: '后台提现' }
+  { key: 'fee', label: '提币手续费' }
 ]
 
 const buildAssetRow = (asset, values) => ({
@@ -43,48 +85,35 @@ const buildAssetRow = (asset, values) => ({
   ...values
 })
 
-const buildZeroRechargeRows = () => [
-  buildAssetRow('USDT', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-  buildAssetRow('DAI', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-  buildAssetRow('SHIB', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-  buildAssetRow('BUSD', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-  buildAssetRow('MATIC', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-  buildAssetRow('SOL', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-  buildAssetRow('BNB', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-  buildAssetRow('BTC', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.000000' }),
-  buildAssetRow('ETH', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.0000' })
-]
+const buildZeroRechargeRows = (overrides = {}) =>
+  reportAssets.map((asset) =>
+    buildAssetRow(asset, {
+      userDeposit: '0',
+      serviceDeposit: '0',
+      walletAmount: '0',
+      ...(overrides[asset] || {})
+    })
+  )
 
-const buildWithdrawRows = (usdtValues = {}) => [
-  buildAssetRow('USDT', {
-    actualAmount: usdtValues.actualAmount || '0',
-    fee: usdtValues.fee || '0',
-    deduction: usdtValues.deduction || '0',
-    backendWithdraw: usdtValues.backendWithdraw || '0'
-  }),
-  buildAssetRow('DAI', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
-  buildAssetRow('SHIB', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
-  buildAssetRow('BUSD', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
-  buildAssetRow('MATIC', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
-  buildAssetRow('SOL', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
-  buildAssetRow('BNB', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
-  buildAssetRow('BTC', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
-  buildAssetRow('ETH', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' })
-]
+const buildWithdrawRows = (overrides = {}) =>
+  reportAssets.map((asset) =>
+    buildAssetRow(asset, {
+      actualAmount: '0',
+      fee: '0',
+      ...(overrides[asset] || {})
+    })
+  )
 
 const rechargeMonthRows = buildZeroRechargeRows()
 const withdrawZeroRows = buildWithdrawRows()
 
 const platformBalanceItems = [
-  { label: 'USDT', badge: 'USDT', value: '39271589.38', tone: 'black' },
-  { label: 'DAI', badge: 'DAI', value: '0', tone: 'red' },
-  { label: 'SHIB', badge: 'SHIB', value: '0', tone: 'orange' },
-  { label: 'BUSD', badge: 'BUSD', value: '0', tone: 'orange' },
-  { label: 'MATIC', badge: 'MATIC', value: '0', tone: 'orange' },
-  { label: 'SOL', badge: 'SOL', value: '0', tone: 'orange' },
-  { label: 'BNB', badge: 'BNB', value: '0', tone: 'orange' },
-  { label: 'BTC', badge: 'BTC', value: '30.624848', tone: 'green' },
-  { label: 'ETH', badge: 'ETH', value: '620.9318', tone: 'gray' }
+  ...reportAssets.map((asset) => ({
+    label: asset,
+    badge: asset,
+    value: asset === 'USDT' ? '200.000000000000000000' : asset === 'BTC' ? '1.000000000000000000' : '0',
+    tone: assetTones[asset]
+  }))
 ]
 
 const sections = [
@@ -97,26 +126,19 @@ const sections = [
     title: '用户数据-总',
     columns: 'small',
     items: [
-      { label: '用户统计', badge: '15min', value: '22', tone: 'blue' },
-      { label: '代理数量', badge: '15min', value: '0', tone: 'green' }
+      { label: '用户统计', value: '31', tone: 'blue' },
+      { label: '代理数量', value: '6', tone: 'green' }
     ]
   },
   {
-    title: '充值数据-总（18）',
+    title: '充值数据-总',
     kind: 'assetTable',
     tableLabel: '充值数据总览',
     tableColumns: rechargeColumns,
-    rows: [
-      buildAssetRow('USDT', { userDeposit: '0', serviceDeposit: '48200531.91', walletAmount: '48200531.91' }),
-      buildAssetRow('DAI', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-      buildAssetRow('SHIB', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-      buildAssetRow('BUSD', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-      buildAssetRow('MATIC', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-      buildAssetRow('SOL', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-      buildAssetRow('BNB', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
-      buildAssetRow('BTC', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.000000' }),
-      buildAssetRow('ETH', { userDeposit: '45.3141', serviceDeposit: '0', walletAmount: '45.3141' })
-    ]
+    rows: buildZeroRechargeRows({
+      USDT: { userDeposit: '200.000000000000000000', walletAmount: '200.000000000000000000' },
+      BTC: { userDeposit: '1.000000000000000000', walletAmount: '1.000000000000000000' }
+    })
   },
   {
     title: '提现数据-总',
@@ -124,23 +146,23 @@ const sections = [
     tableLabel: '提现数据总览',
     tableColumns: withdrawColumns,
     summaryItems: [
-      { label: '提现笔数', badge: '15min', value: '6', tone: 'blue' }
+      { label: '提现笔数', value: '0', tone: 'blue' }
     ],
-    rows: buildWithdrawRows({ actualAmount: '513769.32', fee: '29.00', deduction: '0', backendWithdraw: '0' })
+    rows: buildWithdrawRows()
   },
   {
     title: '用户数据-本月',
     columns: 'small',
     items: [
-      { label: '用户统计', badge: '15min', value: '0', tone: 'blue' },
-      { label: '代理数量', badge: '15min', value: '0', tone: 'green' }
+      { label: '用户统计', value: '0', tone: 'blue' },
+      { label: '代理数量', value: '0', tone: 'green' }
     ]
   },
 ]
 
 sections.push(
   {
-    title: '充值数据-本月（0）',
+    title: '充值数据-本月',
     kind: 'assetTable',
     tableLabel: '充值数据本月',
     tableColumns: rechargeColumns,
@@ -152,7 +174,7 @@ sections.push(
     tableLabel: '提现数据本月',
     tableColumns: withdrawColumns,
     summaryItems: [
-      { label: '提现笔数', badge: '15min', value: '0', tone: 'blue' }
+      { label: '提现笔数', value: '0', tone: 'blue' }
     ],
     rows: withdrawZeroRows
   },
@@ -160,13 +182,13 @@ sections.push(
     title: '用户数据-今日',
     columns: 'small',
     items: [
-      { label: '今日新增用户', badge: '15min', value: '0', tone: 'blue' },
-      { label: '待审核充值', badge: '15min', value: '0', tone: 'cyan' },
-      { label: '待审核提现', badge: '15min', value: '0', tone: 'green' }
+      { label: '今日新增用户', value: '0', tone: 'blue' },
+      { label: '待审核充值', value: '0', tone: 'cyan' },
+      { label: '待审核提现', value: '0', tone: 'green' }
     ]
   },
   {
-    title: '充值数据-今日（0）',
+    title: '充值数据-今日',
     kind: 'assetTable',
     tableLabel: '充值数据今日',
     tableColumns: rechargeColumns,
@@ -178,7 +200,7 @@ sections.push(
     tableLabel: '提现数据今日',
     tableColumns: withdrawColumns,
     summaryItems: [
-      { label: '提现笔数', badge: '15min', value: '0', tone: 'blue' }
+      { label: '提现笔数', value: '0', tone: 'blue' }
     ],
     rows: withdrawZeroRows
   }
@@ -230,7 +252,7 @@ const dataRuleSections = [
       {
         label: '提现数据',
         badge: '提现',
-        value: '提现数据按币种逐行展示提币实际到账金额；USDT 额外展示提币手续费、划扣、后台提现。',
+        value: '提现数据按币种逐行展示提币实际到账金额和提币手续费。',
         tone: 'cyan'
       },
       {
@@ -462,12 +484,13 @@ const resetPeriodFilter = () => {
           >
             <article
               v-for="item in section.summaryItems"
-              :key="`${section.title}-${item.label}-${item.badge}`"
+              :key="`${section.title}-${item.label}-${item.badge || 'no-badge'}`"
               class="rounded-md border border-slate-200 bg-slate-50 p-4"
             >
               <div class="flex items-start justify-between gap-3">
                 <h3 class="min-w-0 break-words text-sm font-medium text-slate-700">{{ item.label }}</h3>
                 <span
+                  v-if="item.badge"
                   class="shrink-0 rounded px-2 py-0.5 text-xs font-medium"
                   :class="badgeClassByTone[item.tone]"
                 >
@@ -534,12 +557,13 @@ const resetPeriodFilter = () => {
           >
             <article
               v-for="item in section.items"
-              :key="`${section.title}-${item.label}-${item.badge}`"
+              :key="`${section.title}-${item.label}-${item.badge || 'no-badge'}`"
               class="rounded-md border border-slate-200 bg-slate-50 p-4"
             >
               <div class="flex items-start justify-between gap-3">
                 <h3 class="min-w-0 break-words text-sm font-medium text-slate-700">{{ item.label }}</h3>
                 <span
+                  v-if="item.badge"
                   class="shrink-0 rounded px-2 py-0.5 text-xs font-medium"
                   :class="badgeClassByTone[item.tone]"
                 >
