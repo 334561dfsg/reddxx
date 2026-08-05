@@ -32,3 +32,16 @@ test('front withdraw page hides withdrawable line when no restriction is enabled
   assert.match(source, /v-if="!shouldHideWithdrawableLine"/)
   assert.match(source, /{{ withdrawableLine }}/)
 })
+
+test('withdraw policy limit inputs explain zero as unlimited and preview treats zero daily cap as unlimited', () => {
+  const pageSource = read('../src/pages/admin/user/WithdrawPolicyPage.vue')
+  const mockSource = read('../src/admin/mock/withdrawPolicy.js')
+
+  assert.match(pageSource, /输入 0 表示不限制单笔最低出金/)
+  assert.match(pageSource, /输入 0 表示不限制每日出金上限/)
+  assert.ok((pageSource.match(/输入 0 表示不限制/g) || []).length >= 8)
+  assert.match(mockSource, /Number\.isFinite\(n\) && n > 0 \? n : null/)
+  assert.match(mockSource, /Number\.isFinite\(n\) && n === 0\) return '无限制'/)
+  assert.match(mockSource, /const defDaily = effectiveDailyCap\(def\.dailyCapUsdt\)/)
+  assert.ok((mockSource.match(/dailyCapUsdt: effectiveDailyCap/g) || []).length >= 4)
+})

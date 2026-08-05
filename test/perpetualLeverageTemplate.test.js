@@ -39,25 +39,21 @@ test('perpetual leverage template editor includes contract template settings', (
   assert.match(mockSource, /liquidationFeeRate: 0/)
 })
 
-test('perpetual leverage template editor includes trade unlimited switch', () => {
+test('perpetual leverage template editor keeps trade limits out of templates', () => {
   const source = readFileSync(
     new URL('../src/pages/admin/perpetual/PerpetualLeverageTemplatePage.vue', import.meta.url),
     'utf8'
   )
   const mockSource = readFileSync(new URL('../src/admin/mock/perpetual.js', import.meta.url), 'utf8')
 
-  assert.match(source, /'contract', '合约模板'[\s\S]*\['trade', '交易'\]/)
-  assert.match(source, /templateTradeLimitUnlimited/)
+  assert.match(source, /'leverage', '杠杆档位'[\s\S]*\['contract', '合约模板'\]/)
+  assert.doesNotMatch(source, /\['trade', '交易'\]/)
+  assert.doesNotMatch(source, /templateTradeLimitUnlimited/)
   assert.match(source, /savePerpetualTemplatesMock/)
-  assert.match(source, /templateTradeLimitUnlimited\.value = template\.tradeLimitUnlimited === true/)
-  assert.match(source, /tradeLimitUnlimited: templateTradeLimitUnlimited\.value === true/)
+  assert.doesNotMatch(source, /tradeLimitUnlimited/)
   assert.match(source, /templates\.value = savePerpetualTemplatesMock\(templates\.value\)/)
-  assert.match(source, /role="switch"/)
-  assert.match(source, /不限交易额度/)
-  assert.match(source, /使用此杠杆模板的永续合约/)
-  assert.match(source, /最低买入量、最大买入量和最大持仓量/)
-  assert.match(source, /不影响杠杆档位、下单模式、手续费、维持保证金率和强平手续费率/)
-  assert.match(mockSource, /tradeLimitUnlimited: false/)
+  assert.doesNotMatch(source, /不限交易额度/)
+  assert.doesNotMatch(mockSource, /tradeLimitUnlimited/)
   assert.match(mockSource, /let perpetualTemplatesState = clone\(perpetualTemplates\)/)
   assert.match(mockSource, /export const savePerpetualTemplatesMock = \(nextTemplates = \[\]\) =>/)
 })

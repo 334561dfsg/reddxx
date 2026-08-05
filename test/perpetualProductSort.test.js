@@ -34,20 +34,24 @@ test('perpetual product editor places numeric sort input beside status and saves
   assert.match(pageSource, /sortPerpetualProducts/)
 })
 
-test('perpetual product editor hides trade limits when selected leverage template is unlimited', () => {
-  assert.match(pageSource, /const selectedTemplateTradeLimitUnlimited = computed/)
-  assert.match(pageSource, /selectedTemplate\.value\?\.tradeLimitUnlimited === true/)
-  assert.match(pageSource, /const limitOk = selectedTemplateTradeLimitUnlimited\.value/)
-  assert.match(pageSource, /v-if="selectedTemplateTradeLimitUnlimited"/)
-  assert.match(pageSource, /不限交易额度已经打开/)
-  assert.match(pageSource, /如需调整，在杠杆模版中进行处理/)
-  assert.match(pageSource, /<template v-else>[\s\S]*最低买入量 \(USDT\)[\s\S]*最大买入量 \(USDT\)[\s\S]*最大持仓量 \(USDT\)/)
+test('perpetual product editor keeps trade limits editable and uses zero as unlimited', () => {
+  assert.doesNotMatch(pageSource, /selectedTemplateTradeLimitUnlimited/)
+  assert.doesNotMatch(pageSource, /不限交易额度已经打开/)
+  assert.match(pageSource, /最低买入量 \(USDT\)[\s\S]*最大买入量 \(USDT\)[\s\S]*最大持仓量 \(USDT\)/)
+  assert.match(pageSource, /输入 0 表示最低买入量不限制/)
+  assert.match(pageSource, /输入 0 表示最大买入量不限制/)
+  assert.match(pageSource, /输入 0 表示最大持仓量不限制/)
+  assert.match(pageSource, /上述限制输入 0 表示不限制/)
+  assert.match(pageSource, /const tradeLimitValuesValid = computed/)
+  assert.match(pageSource, /minBuy > 0 && maxBuy > 0 && maxBuy < minBuy/)
+  assert.match(pageSource, /maxBuy > 0 && maxPosition > 0 && maxPosition < maxBuy/)
 })
 
-test('perpetual product cards show unlimited trade limits from leverage template', () => {
-  assert.match(pageSource, /tradeLimitUnlimited: template\.tradeLimitUnlimited === true/)
-  assert.match(pageSource, /tradeLimitUnlimited: selectedTemplate\.value\.tradeLimitUnlimited === true/)
-  assert.match(pageSource, /<template v-if="item\.tradeLimitUnlimited">[\s\S]*交易限制:[\s\S]*不限制/)
-  assert.match(pageSource, /v-if="item\.tradeLimitUnlimited"[\s\S]*由杠杆模版统一声明为不限额/)
-  assert.match(pageSource, /<ul v-else[\s\S]*最低买入:[\s\S]*最大买入:[\s\S]*最大持仓:/)
+test('perpetual product cards show trade limits from product fields only', () => {
+  assert.doesNotMatch(pageSource, /tradeLimitUnlimited/)
+  assert.match(pageSource, /buyRange: tradeLimitRangeText\(contractForm\.minBuy, contractForm\.maxBuy\)/)
+  assert.match(pageSource, /maxPosition: tradeLimitUsdtText\(contractForm\.maxPosition\)/)
+  assert.match(pageSource, /minBuy: tradeLimitUsdtText\(contractForm\.minBuy\)/)
+  assert.match(pageSource, /maxBuy: tradeLimitUsdtText\(contractForm\.maxBuy\)/)
+  assert.match(pageSource, /<ul class="mt-2 space-y-1 text-sm text-slate-700">[\s\S]*最低买入:[\s\S]*最大买入:[\s\S]*最大持仓:/)
 })

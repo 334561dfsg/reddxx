@@ -2,10 +2,7 @@ import { DELIVERY_CONTROL_STATUS, DELIVERY_LOG_STATUS, DELIVERY_STATUS } from '.
 
 const clone = (value) => JSON.parse(JSON.stringify(value))
 
-const withDeliveryTemplateDefaults = (template) => ({
-  tradeLimitUnlimited: false,
-  ...template
-})
+const withDeliveryTemplateDefaults = (template) => ({ ...template })
 
 const deliveryTemplates = [
   {
@@ -67,11 +64,11 @@ const deliveryProducts = [
     status: DELIVERY_STATUS.ENABLED,
     templateId: 'tpl-fast',
     templateName: '快速周期',
-    buyRange: '5 - 5,000 USDT',
-    maxPosition: '30,000 USDT',
-    minBuy: '5',
-    maxBuy: '5000',
-    maxHold: '30000',
+    buyRange: '不限制',
+    maxPosition: '不限制',
+    minBuy: '0',
+    maxBuy: '0',
+    maxHold: '0',
     buyFee: '0',
     sellFee: '0.2'
   },

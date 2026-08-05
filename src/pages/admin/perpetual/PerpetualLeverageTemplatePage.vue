@@ -91,7 +91,6 @@ const templateOrderMode = ref('cost')
 const templateContractFaceValueUsdt = ref(1000)
 const templateMaintenanceMarginRate = ref(0.5)
 const templateLiquidationFeeRate = ref(0)
-const templateTradeLimitUnlimited = ref(false)
 
 const toggleLeverage = (value) => {
   if (selectedLeverages.value.includes(value)) {
@@ -141,7 +140,6 @@ const openCreateTemplate = () => {
   templateContractFaceValueUsdt.value = 1000
   templateMaintenanceMarginRate.value = 0.5
   templateLiquidationFeeRate.value = 0
-  templateTradeLimitUnlimited.value = false
   showTemplateModal.value = true
 }
 
@@ -156,7 +154,6 @@ const openEditTemplate = (template) => {
   templateContractFaceValueUsdt.value = Number(template.contractFaceValueUsdt ?? 1000)
   templateMaintenanceMarginRate.value = Number(template.maintenanceMarginRate ?? 0.5)
   templateLiquidationFeeRate.value = Number(template.liquidationFeeRate ?? 0)
-  templateTradeLimitUnlimited.value = template.tradeLimitUnlimited === true
   showTemplateModal.value = true
 }
 
@@ -171,8 +168,7 @@ const submitTemplate = () => {
     orderMode: templateOrderMode.value,
     contractFaceValueUsdt: Number(templateContractFaceValueUsdt.value) || 1000,
     maintenanceMarginRate: Number(templateMaintenanceMarginRate.value) || 0.5,
-    liquidationFeeRate: Number(templateLiquidationFeeRate.value) || 0,
-    tradeLimitUnlimited: templateTradeLimitUnlimited.value === true
+    liquidationFeeRate: Number(templateLiquidationFeeRate.value) || 0
   }
   if (editingTemplateId.value) {
     templates.value = templates.value.map((item) => (item.id === editingTemplateId.value ? { ...item, ...payload } : item))
@@ -198,7 +194,6 @@ const submitTemplate = () => {
   templateContractFaceValueUsdt.value = 1000
   templateMaintenanceMarginRate.value = 0.5
   templateLiquidationFeeRate.value = 0
-  templateTradeLimitUnlimited.value = false
 }
 </script>
 
@@ -346,8 +341,7 @@ const submitTemplate = () => {
           <button
             v-for="tab in [
               ['leverage', '杠杆档位'],
-              ['contract', '合约模板'],
-              ['trade', '交易']
+              ['contract', '合约模板']
             ]"
             :key="tab[0]"
             type="button"
@@ -514,39 +508,6 @@ const submitTemplate = () => {
           </div>
         </div>
 
-        <div v-show="activeTemplateTab === 'trade'" class="space-y-4">
-          <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div class="min-w-0">
-                <p class="text-sm font-medium text-slate-800">不限交易额度</p>
-                <p class="mt-1 text-sm leading-6 text-slate-500">
-                  开启后，使用此杠杆模板的永续合约在产品编辑的交易限制中不再展示最低买入量、最大买入量和最大持仓量配置。
-                </p>
-              </div>
-              <button
-                type="button"
-                role="switch"
-                :aria-checked="templateTradeLimitUnlimited"
-                :aria-label="`不限交易额度：${templateTradeLimitUnlimited ? '已开启' : '已关闭'}`"
-                class="relative h-6 w-11 shrink-0 cursor-pointer rounded-full border transition-colors duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1"
-                :class="templateTradeLimitUnlimited ? 'border-blue-600 bg-blue-600' : 'border-slate-300 bg-slate-200'"
-                @click="templateTradeLimitUnlimited = !templateTradeLimitUnlimited"
-              >
-                <span
-                  class="pointer-events-none absolute left-0.5 top-0.5 block h-5 w-5 rounded-full bg-white shadow-sm ring-1 ring-slate-900/10 transition-transform duration-200 ease-out"
-                  :class="templateTradeLimitUnlimited ? 'translate-x-5' : 'translate-x-0'"
-                />
-              </button>
-            </div>
-          </div>
-
-          <div class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-800">
-            <p class="font-medium text-slate-800">交易额度说明</p>
-            <p class="mt-2">- 关闭时：永续合约产品编辑中继续配置最低买入量、最大买入量和最大持仓量。</p>
-            <p>- 开启时：上述交易限额由模板统一声明为不限额，产品编辑页仅展示覆盖提示。</p>
-            <p>- 该开关不影响杠杆档位、下单模式、手续费、维持保证金率和强平手续费率。</p>
-          </div>
-        </div>
       </div>
 
       <footer class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">

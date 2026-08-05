@@ -17,8 +17,7 @@ export const createDefaultPerpetualTemplateContractConfig = () => ({
   orderMode: 'cost',
   contractFaceValueUsdt: 1000,
   maintenanceMarginRate: 0.5,
-  liquidationFeeRate: 0,
-  tradeLimitUnlimited: false
+  liquidationFeeRate: 0
 })
 
 const perpetualTemplates = [

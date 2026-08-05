@@ -573,6 +573,26 @@ test('disabled close predicate rejects closing without invoking the callback', a
   app.unmount()
 })
 
+test('requestClose can reject closing and keep the dialog open', async (t) => {
+  const document = installFakeDocument(t)
+  let closeCount = 0
+  const { app, lifecycle } = await mountLifecycle({
+    document,
+    requestClose: () => {
+      closeCount += 1
+      return false
+    }
+  })
+
+  assert.equal(lifecycle.phase.value, 'open')
+  assert.equal(lifecycle.requestDialogClose(), false)
+  assert.equal(closeCount, 1)
+  assert.equal(lifecycle.phase.value, 'open')
+  assert.equal(lifecycle.rendered.value, true)
+
+  app.unmount()
+})
+
 test('shared header and footer close action forwards each activation to the safe lifecycle path once', () => {
   let closeCount = 0
   const close = createDialogCloseAction(() => {

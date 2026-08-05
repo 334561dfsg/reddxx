@@ -191,7 +191,7 @@ export function createEmptyCreditScoreRule() {
 function effectiveDailyCap(value) {
   if (value === null || value === undefined) return null
   const n = Number(value)
-  return Number.isFinite(n) ? n : null
+  return Number.isFinite(n) && n > 0 ? n : null
 }
 
 function num(v, fallback = 0) {
@@ -202,6 +202,7 @@ function num(v, fallback = 0) {
 function formatCapText(v) {
   if (v === null || v === undefined) return '无限制'
   const n = Number(v)
+  if (Number.isFinite(n) && n === 0) return '无限制'
   return Number.isFinite(n) ? `${n} USDT` : '—'
 }
 
@@ -235,9 +236,7 @@ export function computeEffectiveWithdrawPolicy(user, policy) {
 
   const def = policy.defaultPolicy
   const defMin = num(def.minWithdrawUsdt, 0)
-  const defDaily = def.dailyCapUsdt === null || def.dailyCapUsdt === undefined || def.dailyCapUsdt === ''
-    ? null
-    : num(def.dailyCapUsdt, 0)
+  const defDaily = effectiveDailyCap(def.dailyCapUsdt)
 
   if (policy.noRestrictionEnabled !== false) {
     return {
@@ -259,7 +258,7 @@ export function computeEffectiveWithdrawPolicy(user, policy) {
     return {
       ...row,
       minWithdrawUsdt: num(row.minWithdrawUsdt, 0),
-      dailyCapUsdt: row.dailyCapUsdt === null || row.dailyCapUsdt === '' ? null : num(row.dailyCapUsdt, 0)
+      dailyCapUsdt: effectiveDailyCap(row.dailyCapUsdt)
     }
   }
 
@@ -269,7 +268,7 @@ export function computeEffectiveWithdrawPolicy(user, policy) {
     return {
       ...row,
       minWithdrawUsdt: num(row.minWithdrawUsdt, 0),
-      dailyCapUsdt: row.dailyCapUsdt === null || row.dailyCapUsdt === '' ? null : num(row.dailyCapUsdt, 0)
+      dailyCapUsdt: effectiveDailyCap(row.dailyCapUsdt)
     }
   }
 
@@ -278,7 +277,7 @@ export function computeEffectiveWithdrawPolicy(user, policy) {
     return {
       ...agentRule,
       minWithdrawUsdt: num(agentRule.minWithdrawUsdt, 0),
-      dailyCapUsdt: agentRule.dailyCapUsdt === null || agentRule.dailyCapUsdt === '' ? null : num(agentRule.dailyCapUsdt, 0)
+      dailyCapUsdt: effectiveDailyCap(agentRule.dailyCapUsdt)
     }
   }
 
@@ -289,7 +288,7 @@ export function computeEffectiveWithdrawPolicy(user, policy) {
         minScore: num(r.minScore, 0),
         maxScore: num(r.maxScore, 100),
         minWithdrawUsdt: num(r.minWithdrawUsdt, 0),
-        dailyCapUsdt: r.dailyCapUsdt === null || r.dailyCapUsdt === '' ? null : num(r.dailyCapUsdt, 0)
+        dailyCapUsdt: effectiveDailyCap(r.dailyCapUsdt)
       }))
       .sort((a, b) => a.minScore - b.minScore)
     return sorted.find((r) => creditScore >= r.minScore && creditScore <= r.maxScore) ?? null

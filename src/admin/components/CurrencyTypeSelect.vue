@@ -3,6 +3,10 @@ import { computed } from 'vue'
 import { ASSET_CURRENCY_TYPE } from '../constants/assets'
 
 const props = defineProps({
+  id: {
+    type: String,
+    default: undefined
+  },
   modelValue: {
     type: String,
     default: 'all'
@@ -30,7 +34,7 @@ const valueProxy = computed({
 </script>
 
 <template>
-  <select v-model="valueProxy" class="ant-select !w-32 !h-8">
+  <select :id="id" v-model="valueProxy" class="ant-select !w-32 !h-8">
     <option v-if="includeAll" :value="allValue">{{ allLabel }}</option>
     <option :value="ASSET_CURRENCY_TYPE.VIRTUAL">虚拟币</option>
     <option :value="ASSET_CURRENCY_TYPE.FIAT">法币</option>

@@ -56,7 +56,6 @@ const durationLabel = (sec) => {
 
 const showTemplateModal = ref(false)
 const editingTemplateId = ref('')
-const templateTab = ref('cycle')
 const templateDialogTitleRef = ref(null)
 const templateDialogPanelRef = ref(null)
 const templateUnsavedDialogTitleRef = ref(null)
@@ -68,22 +67,9 @@ const showTemplateUnsavedConfirm = ref(false)
 const isTemplateClosing = ref(false)
 const previousBodyOverflow = ref('')
 const previousAppAriaHidden = ref(null)
-const templateTabIds = {
-  cycle: 'delivery-template-tab-cycle',
-  trade: 'delivery-template-tab-trade'
-}
-const templatePanelIds = {
-  cycle: 'delivery-template-panel-cycle',
-  trade: 'delivery-template-panel-trade'
-}
-const templateTabs = [
-  ['cycle', '周期配置'],
-  ['trade', '交易']
-]
 const templateForm = reactive({
   name: '',
   status: DELIVERY_STATUS.ENABLED,
-  tradeLimitUnlimited: false,
   cycles: []
 })
 
@@ -91,7 +77,6 @@ const normalizeTemplateSnapshot = () =>
   JSON.stringify({
     name: templateForm.name.trim(),
     status: templateForm.status,
-    tradeLimitUnlimited: templateForm.tradeLimitUnlimited === true,
     cycles: templateForm.cycles.map((cycle) => ({
       id: cycle.id,
       durationSec: String(cycle.durationSec ?? ''),
@@ -141,9 +126,6 @@ const getTemplateFieldDescribedBy = (...ids) => ids.filter(Boolean).join(' ') ||
 
 const focusTemplateErrorTarget = (error) => {
   if (!error) return
-  if (error.tab) {
-    templateTab.value = error.tab
-  }
   nextTick(() => {
     document.getElementById(error.id)?.focus()
   })
@@ -291,29 +273,6 @@ const handleTemplateDialogKeydown = (event) => {
   trapFocus(event, getTemplateFocusableElements(), templateDialogTitleRef.value)
 }
 
-const setTemplateTab = (tabId) => {
-  templateTab.value = tabId
-}
-
-const handleTemplateTabKeydown = (event, tabId) => {
-  const currentIndex = templateTabs.findIndex(([id]) => id === tabId)
-  const lastIndex = templateTabs.length - 1
-  let nextIndex = currentIndex
-
-  if (event.key === 'ArrowRight') nextIndex = currentIndex === lastIndex ? 0 : currentIndex + 1
-  if (event.key === 'ArrowLeft') nextIndex = currentIndex === 0 ? lastIndex : currentIndex - 1
-  if (event.key === 'Home') nextIndex = 0
-  if (event.key === 'End') nextIndex = lastIndex
-  if (nextIndex === currentIndex) return
-
-  event.preventDefault()
-  const nextTab = templateTabs[nextIndex][0]
-  setTemplateTab(nextTab)
-  nextTick(() => {
-    document.getElementById(templateTabIds[nextTab])?.focus()
-  })
-}
-
 watch(showTemplateModal, (visible) => {
   if (visible) {
     lockPageScroll()
@@ -332,11 +291,9 @@ onBeforeUnmount(() => {
 const openCreateTemplate = () => {
   rememberTemplateTrigger()
   editingTemplateId.value = ''
-  templateTab.value = 'cycle'
   templateHasSubmitted.value = false
   templateForm.name = ''
   templateForm.status = DELIVERY_STATUS.ENABLED
-  templateForm.tradeLimitUnlimited = false
   templateForm.cycles = [{ id: `cy-${Date.now()}`, durationSec: 30, payoutPct: 7, actualPayoutPct: 0.49119369 }]
   templateInitialSnapshot.value = normalizeTemplateSnapshot()
   showTemplateModal.value = true
@@ -345,11 +302,9 @@ const openCreateTemplate = () => {
 const openEditTemplate = (tpl) => {
   rememberTemplateTrigger()
   editingTemplateId.value = tpl.id
-  templateTab.value = 'cycle'
   templateHasSubmitted.value = false
   templateForm.name = tpl.name
   templateForm.status = tpl.status
-  templateForm.tradeLimitUnlimited = tpl.tradeLimitUnlimited === true
   templateForm.cycles = tpl.cycles.map((item) => ({ ...item }))
   templateInitialSnapshot.value = normalizeTemplateSnapshot()
   showTemplateModal.value = true
@@ -380,7 +335,6 @@ const saveTemplate = () => {
   const payload = {
     name: templateForm.name.trim(),
     status: templateForm.status,
-    tradeLimitUnlimited: templateForm.tradeLimitUnlimited === true,
     cycles: templateForm.cycles.map((c) => ({
       ...c,
       durationSec: Number(c.durationSec),
@@ -489,12 +443,6 @@ const statusClass = (status) =>
                 {{ tpl.status === DELIVERY_STATUS.ENABLED ? '已启用' : '已禁用' }}
               </span>
               <span class="text-xs text-slate-500">{{ tpl.cycles.length }} 个预设周期</span>
-              <span
-                v-if="tpl.tradeLimitUnlimited"
-                class="inline-flex items-center rounded border border-blue-100 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-600"
-              >
-                不限交易额度
-              </span>
             </div>
             <div class="flex items-center gap-2">
               <button
@@ -674,36 +622,8 @@ const statusClass = (status) =>
                 </div>
               </div>
 
-              <div class="border-b border-slate-100">
-                <div role="tablist" aria-label="周期模板配置" class="flex gap-8 overflow-x-auto">
-                  <button
-                    v-for="tab in templateTabs"
-                    :key="tab[0]"
-                    :id="templateTabIds[tab[0]]"
-                    type="button"
-                    role="tab"
-                    :aria-selected="templateTab === tab[0]"
-                    :aria-controls="templatePanelIds[tab[0]]"
-                    :tabindex="templateTab === tab[0] ? 0 : -1"
-                    class="relative py-3 text-sm transition-all"
-                    :class="
-                      templateTab === tab[0]
-                        ? 'font-medium text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600'
-                        : 'text-slate-500 hover:text-slate-700'
-                    "
-                    @click="setTemplateTab(tab[0])"
-                    @keydown="handleTemplateTabKeydown($event, tab[0])"
-                  >
-                    {{ tab[1] }}
-                  </button>
-                </div>
-              </div>
-
               <div
-                v-if="templateTab === 'cycle'"
-                :id="templatePanelIds.cycle"
-                role="tabpanel"
-                :aria-labelledby="templateTabIds.cycle"
+                id="delivery-template-cycle-section"
                 tabindex="0"
                 class="space-y-3 outline-none"
               >
@@ -821,43 +741,6 @@ const statusClass = (status) =>
                 </div>
               </div>
 
-              <div
-                v-if="templateTab === 'trade'"
-                :id="templatePanelIds.trade"
-                role="tabpanel"
-                :aria-labelledby="templateTabIds.trade"
-                tabindex="0"
-                class="space-y-4 outline-none"
-              >
-                <article class="overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-4">
-                  <div class="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
-                    <div class="min-w-0">
-                      <h3 class="text-sm font-semibold text-slate-900">不限交易额度</h3>
-                      <p id="delivery-template-trade-limit-help" class="mt-1 text-xs leading-5 text-slate-500">
-                        开启后，使用此周期模板的交割合约在产品编辑的交易限制中不再展示最低买入额、最高买入额和最大持仓额配置。
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      :aria-checked="templateForm.tradeLimitUnlimited"
-                      aria-label="不限交易额度"
-                      aria-describedby="delivery-template-trade-limit-help delivery-template-trade-limit-status"
-                      class="relative inline-flex h-7 w-12 shrink-0 overflow-hidden rounded-full p-0.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:justify-self-end"
-                      :class="templateForm.tradeLimitUnlimited ? 'bg-blue-600' : 'bg-slate-300'"
-                      @click="templateForm.tradeLimitUnlimited = !templateForm.tradeLimitUnlimited"
-                    >
-                      <span
-                        class="h-6 w-6 rounded-full bg-white shadow transition-transform duration-200 ease-out"
-                        :class="templateForm.tradeLimitUnlimited ? 'translate-x-5' : 'translate-x-0'"
-                      ></span>
-                    </button>
-                  </div>
-                  <div id="delivery-template-trade-limit-status" class="mt-4 rounded border border-blue-100 bg-white px-3 py-2 text-xs text-blue-600" aria-live="polite">
-                    当前状态：{{ templateForm.tradeLimitUnlimited ? '已开启，交易限额不生效' : '已关闭，产品交易限额正常生效' }}
-                  </div>
-                </article>
-              </div>
             </div>
           </div>
 

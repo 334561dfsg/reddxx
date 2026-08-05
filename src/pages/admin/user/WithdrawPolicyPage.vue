@@ -34,7 +34,7 @@ function verificationRowLabel(level) {
 }
 
 function formatDailyCap(v) {
-  if (v === null || v === undefined) return '无限制'
+  if (v === null || v === undefined || Number(v) === 0) return '无限制'
   return `${v} USDT`
 }
 
@@ -211,6 +211,7 @@ function toggleDimensionEnabled(dim) {
             step="0.01"
             class="ant-input w-full !py-2"
           />
+          <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制单笔最低出金。</p>
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1.5">每日出金上限（USDT）</label>
@@ -221,6 +222,7 @@ function toggleDimensionEnabled(dim) {
             step="1"
             class="ant-input w-full !py-2"
           />
+          <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制每日出金上限。</p>
         </div>
       </div>
     </div>
@@ -300,9 +302,11 @@ function toggleDimensionEnabled(dim) {
               <td class="px-4 py-2 text-slate-900 font-medium">{{ vipRowLabel(row.vipLevel) }}</td>
               <td class="px-4 py-2">
                 <input v-model.number="row.minWithdrawUsdt" type="number" min="0" step="0.01" class="ant-input !py-1.5 w-32" />
+                <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </td>
               <td class="px-4 py-2">
                 <input v-model.number="row.dailyCapUsdt" type="number" min="0" step="1" class="ant-input !py-1.5 w-36" />
+                <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </td>
             </tr>
           </tbody>
@@ -330,9 +334,11 @@ function toggleDimensionEnabled(dim) {
               <td class="px-4 py-2 text-slate-900 font-medium">代理</td>
               <td class="px-4 py-2">
                 <input v-model.number="policy.agentRule.minWithdrawUsdt" type="number" min="0" step="0.01" class="ant-input !py-1.5 w-32" />
+                <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </td>
               <td class="px-4 py-2">
                 <input v-model.number="policy.agentRule.dailyCapUsdt" type="number" min="0" step="1" class="ant-input !py-1.5 w-36" />
+                <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </td>
             </tr>
           </tbody>
@@ -360,6 +366,7 @@ function toggleDimensionEnabled(dim) {
               <td class="px-4 py-2 text-slate-900 font-medium">{{ verificationRowLabel(row.verificationLevel) }}</td>
               <td class="px-4 py-2">
                 <input v-model.number="row.minWithdrawUsdt" type="number" min="0" step="0.01" class="ant-input !py-1.5 w-32" />
+                <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </td>
               <td class="px-4 py-2">
                 <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -380,6 +387,7 @@ function toggleDimensionEnabled(dim) {
                     class="ant-input !py-1.5 w-36"
                   />
                 </div>
+                <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </td>
             </tr>
           </tbody>
@@ -417,9 +425,11 @@ function toggleDimensionEnabled(dim) {
               </td>
               <td class="px-4 py-2">
                 <input v-model.number="row.minWithdrawUsdt" type="number" min="0" step="0.01" class="ant-input !py-1.5 w-32" />
+                <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </td>
               <td class="px-4 py-2">
                 <input v-model.number="row.dailyCapUsdt" type="number" min="0" step="1" class="ant-input !py-1.5 w-36" />
+                <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </td>
               <td class="px-4 py-2">
                 <button type="button" class="text-rose-600 text-xs font-medium hover:underline" @click="removeCreditRule(row.id)">

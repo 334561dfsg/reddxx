@@ -298,7 +298,11 @@ export const useDialogLifecycle = ({
 
     phase.value = 'closing'
     rendered.value = false
-    requestClose?.()
+    if (requestClose?.() === false) {
+      rendered.value = true
+      phase.value = 'open'
+      return false
+    }
     return true
   }
 

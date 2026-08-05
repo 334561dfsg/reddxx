@@ -134,6 +134,10 @@ export const consoleRoutes = [
     redirect: '/admin/delivery/contracts'
   },
   {
+    path: 'delivery/contract',
+    redirect: '/admin/delivery/contracts'
+  },
+  {
     path: 'delivery/contracts',
     name: 'delivery-contracts',
     component: () => import('../../pages/admin/delivery/DeliveryManagementPage.vue')
