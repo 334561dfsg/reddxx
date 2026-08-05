@@ -3,143 +3,169 @@ import { computed, ref } from 'vue'
 
 const pageVersion = '1.0.0.2.1'
 
+const padDatePart = (value) => String(value).padStart(2, '0')
+
+const getTodayValue = () => {
+  const today = new Date()
+  return `${today.getFullYear()}-${padDatePart(today.getMonth() + 1)}-${padDatePart(today.getDate())}`
+}
+
+const getCurrentMonthValue = () => getTodayValue().slice(0, 7)
+
+const assetTones = {
+  USDT: 'black',
+  DAI: 'red',
+  SHIB: 'orange',
+  BUSD: 'orange',
+  MATIC: 'orange',
+  SOL: 'orange',
+  BNB: 'orange',
+  BTC: 'green',
+  ETH: 'gray'
+}
+
+const rechargeColumns = [
+  { key: 'userDeposit', label: '用户入金' },
+  { key: 'serviceDeposit', label: '客服入金' },
+  { key: 'walletAmount', label: '到钱包金额' }
+]
+
+const withdrawColumns = [
+  { key: 'actualAmount', label: '提币实际到账' },
+  { key: 'fee', label: '提币手续费' },
+  { key: 'deduction', label: '划扣' },
+  { key: 'backendWithdraw', label: '后台提现' }
+]
+
+const buildAssetRow = (asset, values) => ({
+  asset,
+  tone: assetTones[asset],
+  ...values
+})
+
+const buildZeroRechargeRows = () => [
+  buildAssetRow('USDT', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+  buildAssetRow('DAI', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+  buildAssetRow('SHIB', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+  buildAssetRow('BUSD', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+  buildAssetRow('MATIC', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+  buildAssetRow('SOL', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+  buildAssetRow('BNB', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+  buildAssetRow('BTC', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.000000' }),
+  buildAssetRow('ETH', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.0000' })
+]
+
+const buildWithdrawRows = (usdtValues = {}) => [
+  buildAssetRow('USDT', {
+    actualAmount: usdtValues.actualAmount || '0',
+    fee: usdtValues.fee || '0',
+    deduction: usdtValues.deduction || '0',
+    backendWithdraw: usdtValues.backendWithdraw || '0'
+  }),
+  buildAssetRow('DAI', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
+  buildAssetRow('SHIB', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
+  buildAssetRow('BUSD', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
+  buildAssetRow('MATIC', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
+  buildAssetRow('SOL', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
+  buildAssetRow('BNB', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
+  buildAssetRow('BTC', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' }),
+  buildAssetRow('ETH', { actualAmount: '0', fee: '0', deduction: '0', backendWithdraw: '0' })
+]
+
+const rechargeMonthRows = buildZeroRechargeRows()
+const withdrawZeroRows = buildWithdrawRows()
+
+const platformBalanceItems = [
+  { label: 'USDT', badge: 'USDT', value: '39271589.38', tone: 'black' },
+  { label: 'DAI', badge: 'DAI', value: '0', tone: 'red' },
+  { label: 'SHIB', badge: 'SHIB', value: '0', tone: 'orange' },
+  { label: 'BUSD', badge: 'BUSD', value: '0', tone: 'orange' },
+  { label: 'MATIC', badge: 'MATIC', value: '0', tone: 'orange' },
+  { label: 'SOL', badge: 'SOL', value: '0', tone: 'orange' },
+  { label: 'BNB', badge: 'BNB', value: '0', tone: 'orange' },
+  { label: 'BTC', badge: 'BTC', value: '30.624848', tone: 'green' },
+  { label: 'ETH', badge: 'ETH', value: '620.9318', tone: 'gray' }
+]
+
 const sections = [
   {
     title: '平台用户账上资金-总',
     columns: 'asset',
-    items: [
-      { label: 'USDT', badge: 'USDT', value: '39271589.38', tone: 'black' },
-      { label: 'DAI', badge: 'DAI', value: '0', tone: 'red' },
-      { label: 'SHIB', badge: 'SHIB', value: '0', tone: 'orange' },
-      { label: 'BUSD', badge: 'BUSD', value: '0', tone: 'orange' },
-      { label: 'MATIC', badge: 'MATIC', value: '0', tone: 'orange' },
-      { label: 'SOL', badge: 'SOL', value: '0', tone: 'orange' },
-      { label: 'SOL', badge: 'BNB', value: '0', tone: 'orange' },
-      { label: 'BTC', badge: 'BTC', value: '30.624848', tone: 'green' },
-      { label: 'ETH', badge: 'ETH', value: '620.9318', tone: 'gray' }
-    ]
+    items: platformBalanceItems
   },
   {
     title: '用户数据-总',
     columns: 'small',
     items: [
       { label: '用户统计', badge: '15min', value: '22', tone: 'blue' },
-      { label: '业务员数量', badge: '15min', value: '42', tone: 'cyan' },
       { label: '代理数量', badge: '15min', value: '0', tone: 'green' }
     ]
   },
   {
     title: '充值数据-总（18）',
-    columns: 'asset',
-    items: [
-      { label: 'USDT-充值-充值', badge: 'USDT', value: '0', tone: 'black' },
-      { label: 'USDT-充值-彩金', badge: 'USDT', value: '48200531.91', tone: 'black' },
-      { label: 'USDT-充值-到钱包金额', badge: 'USDT', value: '48200531.91', tone: 'black' },
-      { label: 'DAI-充值-充值', badge: 'DAI', value: '0', tone: 'red' },
-      { label: 'DAI-充值-彩金', badge: 'DAI', value: '0', tone: 'red' },
-      { label: 'DAI-充值-到钱包金额', badge: 'DAI', value: '0.00', tone: 'red' },
-      { label: 'SHIB-充值-充值', badge: 'SHIB', value: '0', tone: 'orange' },
-      { label: 'SHIB-充值-彩金', badge: 'SHIB', value: '0', tone: 'orange' },
-      { label: 'SHIB-充值-到钱包金额', badge: 'SHIB', value: '0.00', tone: 'orange' },
-      { label: 'BUSD-充值-充值', badge: 'BUSD', value: '0', tone: 'orange' },
-      { label: 'BUSD-充值-彩金', badge: 'BUSD', value: '0', tone: 'orange' },
-      { label: 'busd-充值-到钱包金额', badge: 'BUSD', value: '0.00', tone: 'orange' },
-      { label: 'MATIC-充值-充值', badge: 'MATIC', value: '0', tone: 'orange' },
-      { label: 'MATIC-充值-彩金', badge: 'MATIC', value: '0', tone: 'orange' },
-      { label: 'MATIC-充值-到钱包金额', badge: 'MATIC', value: '0.00', tone: 'orange' },
-      { label: 'SOL充值-充值', badge: 'SOL', value: '0', tone: 'orange' },
-      { label: 'SOL-充值-彩金', badge: 'SOL', value: '0', tone: 'orange' },
-      { label: 'SOL-充值-到钱包金额', badge: 'SOL', value: '0.00', tone: 'orange' },
-      { label: 'BNB充值-充值', badge: 'BNB', value: '0', tone: 'orange' },
-      { label: 'BNB-充值-彩金', badge: 'BNB', value: '0', tone: 'orange' },
-      { label: 'BNB-充值-到钱包金额', badge: 'BNB', value: '0.00', tone: 'orange' },
-      { label: 'BTC-充值-充值', badge: 'BTC', value: '0', tone: 'green' },
-      { label: 'BTC-充值-彩金', badge: 'BTC', value: '0', tone: 'green' },
-      { label: 'BTC-充值-到钱包金额', badge: 'BTC', value: '0.000000', tone: 'green' },
-      { label: 'ETH-充值-充值', badge: 'ETH', value: '45.3141', tone: 'gray' },
-      { label: 'ETH-充值-彩金', badge: 'ETH', value: '0', tone: 'gray' },
-      { label: 'ETH-充值-到钱包金额', badge: 'ETH', value: '45.3141', tone: 'gray' }
+    kind: 'assetTable',
+    tableLabel: '充值数据总览',
+    tableColumns: rechargeColumns,
+    rows: [
+      buildAssetRow('USDT', { userDeposit: '0', serviceDeposit: '48200531.91', walletAmount: '48200531.91' }),
+      buildAssetRow('DAI', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+      buildAssetRow('SHIB', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+      buildAssetRow('BUSD', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+      buildAssetRow('MATIC', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+      buildAssetRow('SOL', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+      buildAssetRow('BNB', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.00' }),
+      buildAssetRow('BTC', { userDeposit: '0', serviceDeposit: '0', walletAmount: '0.000000' }),
+      buildAssetRow('ETH', { userDeposit: '45.3141', serviceDeposit: '0', walletAmount: '45.3141' })
     ]
   },
   {
     title: '提现数据-总',
+    kind: 'assetTable',
+    tableLabel: '提现数据总览',
+    tableColumns: withdrawColumns,
+    summaryItems: [
+      { label: '提现笔数', badge: '15min', value: '6', tone: 'blue' }
+    ],
+    rows: buildWithdrawRows({ actualAmount: '513769.32', fee: '29.00', deduction: '0', backendWithdraw: '0' })
+  },
+  {
+    title: '平台用户账上资金-本月',
     columns: 'asset',
-    items: [
-      { label: '提现笔数', badge: '15min', value: '6', tone: 'blue' },
-      { label: 'USDT-提币(实际到账)', badge: 'USDT', value: '513769.32', tone: 'black' },
-      { label: 'USDT-提币手续费', badge: 'USDT', value: '29.00', tone: 'black' },
-      { label: 'USDT-划扣', badge: 'USDT', value: '0', tone: 'black' },
-      { label: 'USDT-后台提现', badge: 'USDT', value: '0', tone: 'black' },
-      { label: 'DAI-提币(实际到账)', badge: 'DAI', value: '0', tone: 'red' },
-      { label: 'SHIB-提币(实际到账)', badge: 'SHIB', value: '0', tone: 'orange' },
-      { label: 'BUSD-提币(实际到账)', badge: 'BUSD', value: '0', tone: 'orange' },
-      { label: 'MATIC-提币(实际到账)', badge: 'MATIC', value: '0', tone: 'orange' },
-      { label: 'SOL-提币(实际到账)', badge: 'SOL', value: '0', tone: 'orange' },
-      { label: 'BNB-提币(实际到账)', badge: 'BNB', value: '0', tone: 'orange' },
-      { label: 'BTC-提币(实际到账)', badge: 'BTC', value: '0', tone: 'green' },
-      { label: 'ETH-提币(实际到账)', badge: 'ETH', value: '0', tone: 'gray' }
-    ]
+    items: platformBalanceItems
   },
   {
     title: '用户数据-本月',
     columns: 'small',
     items: [
       { label: '用户统计', badge: '15min', value: '0', tone: 'blue' },
-      { label: '业务员数量', badge: '15min', value: '42', tone: 'cyan' },
       { label: '代理数量', badge: '15min', value: '0', tone: 'green' }
     ]
   },
 ]
 
-const rechargeMonthItems = [
-  ['USDT-充值-充值', 'USDT', '0', 'black'],
-  ['USDT-充值-彩金', 'USDT', '0', 'black'],
-  ['USDT-充值-到钱包金额', 'USDT', '0.00', 'black'],
-  ['DAI-充值-充值', 'DAI', '0', 'red'],
-  ['DAI-充值-彩金', 'DAI', '0', 'red'],
-  ['DAI-充值-到钱包金额', 'DAI', '0.00', 'red'],
-  ['SHIB-充值-充值', 'SHIB', '0', 'orange'],
-  ['SHIB-充值-彩金', 'SHIB', '0', 'orange'],
-  ['SHIB-充值-到钱包金额', 'SHIB', '0.00', 'orange'],
-  ['BUSD-充值-充值', 'BUSD', '0', 'orange'],
-  ['BUSD-充值-彩金', 'BUSD', '0', 'orange'],
-  ['BUSD-充值-到钱包金额', 'BUSD', '0.00', 'orange'],
-  ['MATIC-充值-充值', 'MATIC', '0', 'orange'],
-  ['MATIC-充值-彩金', 'MATIC', '0', 'orange'],
-  ['MATIC-充值-到钱包金额', 'MATIC', '0.00', 'orange'],
-  ['SOL-充值-充值', 'SOL', '0', 'orange'],
-  ['SOL-充值-彩金', 'SOL', '0', 'orange'],
-  ['SOL-充值-到钱包金额', 'SOL', '0.00', 'orange'],
-  ['BNB-充值-充值', 'BNB', '0', 'orange'],
-  ['BNB-充值-彩金', 'BNB', '0', 'orange'],
-  ['BNB-充值-到钱包金额', 'BNB', '0.00', 'orange'],
-  ['BTC-充值-充值', 'BTC', '0', 'green'],
-  ['BTC-充值-彩金', 'BTC', '0', 'green'],
-  ['BTC-充值-到钱包金额', 'BTC', '0.000000', 'green'],
-  ['ETH-充值-充值', 'ETH', '0', 'gray'],
-  ['ETH-充值-彩金', 'ETH', '0', 'gray'],
-  ['ETH-充值-到钱包金额', 'ETH', '0.0000', 'gray']
-].map(([label, badge, value, tone]) => ({ label, badge, value, tone }))
-
-const withdrawZeroItems = [
-  ['提现笔数', '15min', '0', 'blue'],
-  ['USDT-提币(实际到账)', 'USDT', '0', 'black'],
-  ['USDT-提币手续费', 'USDT', '0', 'black'],
-  ['USDT-划扣', 'USDT', '0', 'black'],
-  ['USDT-后台提现', 'USDT', '0', 'black'],
-  ['DAI-提币(实际到账)', 'DAI', '0', 'red'],
-  ['SHIB-提币(实际到账)', 'SHIB', '0', 'orange'],
-  ['BUSD-提币(实际到账)', 'BUSD', '0', 'orange'],
-  ['MATIC-提币(实际到账)', 'MATIC', '0', 'orange'],
-  ['SOL-提币(实际到账)', 'SOL', '0', 'orange'],
-  ['BNB-提币(实际到账)', 'BNB', '0', 'orange'],
-  ['BTC-提币(实际到账)', 'BTC', '0', 'green'],
-  ['ETH-提币(实际到账)', 'ETH', '0', 'gray']
-].map(([label, badge, value, tone]) => ({ label, badge, value, tone }))
-
 sections.push(
-  { title: '充值数据-本月（0）', columns: 'asset', items: rechargeMonthItems },
-  { title: '提现数据-本月', columns: 'asset', items: withdrawZeroItems },
+  {
+    title: '充值数据-本月（0）',
+    kind: 'assetTable',
+    tableLabel: '充值数据本月',
+    tableColumns: rechargeColumns,
+    rows: rechargeMonthRows
+  },
+  {
+    title: '提现数据-本月',
+    kind: 'assetTable',
+    tableLabel: '提现数据本月',
+    tableColumns: withdrawColumns,
+    summaryItems: [
+      { label: '提现笔数', badge: '15min', value: '0', tone: 'blue' }
+    ],
+    rows: withdrawZeroRows
+  },
+  {
+    title: '平台用户账上资金-今日',
+    columns: 'asset',
+    items: platformBalanceItems
+  },
   {
     title: '用户数据-今日',
     columns: 'small',
@@ -149,8 +175,23 @@ sections.push(
       { label: '待审核提现', badge: '15min', value: '0', tone: 'green' }
     ]
   },
-  { title: '充值数据-今日（0）', columns: 'asset', items: rechargeMonthItems },
-  { title: '提现数据-今日', columns: 'asset', items: withdrawZeroItems }
+  {
+    title: '充值数据-今日（0）',
+    kind: 'assetTable',
+    tableLabel: '充值数据今日',
+    tableColumns: rechargeColumns,
+    rows: rechargeMonthRows
+  },
+  {
+    title: '提现数据-今日',
+    kind: 'assetTable',
+    tableLabel: '提现数据今日',
+    tableColumns: withdrawColumns,
+    summaryItems: [
+      { label: '提现笔数', badge: '15min', value: '0', tone: 'blue' }
+    ],
+    rows: withdrawZeroRows
+  }
 )
 
 const dataRuleSections = [
@@ -174,13 +215,13 @@ const dataRuleSections = [
       {
         label: '本月数据范围',
         badge: '本月',
-        value: '本月展示当前自然月内产生的数据，包括用户数据、充值数据、提现数据。',
+        value: '本月展示当前自然月维度的数据，包括平台用户账上资金、用户数据、充值数据、提现数据。',
         tone: 'cyan'
       },
       {
         label: '今日数据范围',
         badge: '今日',
-        value: '今日展示当天产生的数据，包括今日新增用户、待审核充值、待审核提现、充值数据、提现数据。',
+        value: '今日展示当天维度的数据，包括平台用户账上资金、今日新增用户、待审核充值、待审核提现、充值数据、提现数据。',
         tone: 'green'
       }
     ]
@@ -193,19 +234,19 @@ const dataRuleSections = [
       {
         label: '充值数据',
         badge: '充值',
-        value: '每个可提现币种分别展示充值、彩金、到钱包金额；到钱包金额按该币种最终进入用户钱包的金额展示。',
+        value: '每个可提现币种一行，分别展示用户入金、客服入金、到钱包金额；到钱包金额按该币种最终进入用户钱包的金额展示。',
         tone: 'blue'
       },
       {
         label: '提现数据',
         badge: '提现',
-        value: '提现数据展示提现笔数，以及每个可提现币种的提币实际到账金额；USDT 额外展示提币手续费、划扣、后台提现。',
+        value: '提现数据按币种逐行展示提币实际到账金额；USDT 额外展示提币手续费、划扣、后台提现。',
         tone: 'cyan'
       },
       {
         label: '用户数据',
         badge: '用户',
-        value: '用户数据展示用户统计、业务员数量、代理数量；今日页展示今日新增用户和待审核充值/提现数量。',
+        value: '用户数据展示用户统计、代理数量；今日页展示今日新增用户和待审核充值/提现数量。',
         tone: 'green'
       }
     ]
@@ -262,6 +303,8 @@ const reportTabs = [
 ]
 
 const activeTabId = ref(reportTabs[0].id)
+const selectedMonth = ref(getCurrentMonthValue())
+const selectedDate = ref(getTodayValue())
 
 const activeTab = computed(() => {
   return reportTabs.find((tab) => tab.id === activeTabId.value) || reportTabs[0]
@@ -277,6 +320,53 @@ const selectAdjacentTab = (event, direction) => {
   activeTabId.value = reportTabs[nextIndex].id
   event.preventDefault()
 }
+
+const appliedPeriodLabel = computed(() => {
+  if (activeTabId.value === 'month') {
+    return selectedMonth.value
+  }
+
+  if (activeTabId.value === 'today') {
+    return selectedDate.value
+  }
+
+  return ''
+})
+
+const periodFilterDescription = computed(() => {
+  if (activeTabId.value === 'month') {
+    return `当前查询月份：${selectedMonth.value}`
+  }
+
+  if (activeTabId.value === 'today') {
+    return `当前查询日期：${selectedDate.value}`
+  }
+
+  return ''
+})
+
+const displaySectionTitle = (title) => {
+  if (activeTabId.value === 'month') {
+    return title.replace('本月', appliedPeriodLabel.value)
+  }
+
+  if (activeTabId.value === 'today') {
+    return title.replace('今日', appliedPeriodLabel.value)
+  }
+
+  return title
+}
+
+const resetPeriodFilter = () => {
+  if (activeTabId.value === 'month') {
+    selectedMonth.value = getCurrentMonthValue()
+    return
+  }
+
+  if (activeTabId.value === 'today') {
+    selectedDate.value = getTodayValue()
+  }
+}
 </script>
 
 <template>
@@ -284,24 +374,71 @@ const selectAdjacentTab = (event, direction) => {
     <h1 id="platform-report-title" class="sr-only">平台报表</h1>
     <span class="sr-only">当前版本号：{{ pageVersion }}</span>
 
-    <div class="overflow-x-auto rounded-md border border-slate-200 bg-white p-2 shadow-sm">
-      <div class="flex min-w-max gap-2" role="tablist" aria-label="平台报表周期">
-        <button
-          v-for="tab in reportTabs"
-          :id="tab.tabId"
-          :key="tab.id"
-          type="button"
-          role="tab"
-          :aria-selected="activeTabId === tab.id"
-          :aria-controls="tab.panelId"
-          class="rounded px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          :class="activeTabId === tab.id ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'"
-          @click="selectTab(tab.id)"
-          @keydown.left="selectAdjacentTab($event, -1)"
-          @keydown.right="selectAdjacentTab($event, 1)"
+    <div class="rounded-md border border-slate-200 bg-white p-2 shadow-sm">
+      <div class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+        <div class="overflow-x-auto">
+          <div class="flex min-w-max gap-2" role="tablist" aria-label="平台报表周期">
+            <button
+              v-for="tab in reportTabs"
+              :id="tab.tabId"
+              :key="tab.id"
+              type="button"
+              role="tab"
+              :aria-selected="activeTabId === tab.id"
+              :aria-controls="tab.panelId"
+              class="rounded px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              :class="activeTabId === tab.id ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'"
+              @click="selectTab(tab.id)"
+              @keydown.left="selectAdjacentTab($event, -1)"
+              @keydown.right="selectAdjacentTab($event, 1)"
+            >
+              {{ tab.label }}
+            </button>
+          </div>
+        </div>
+
+        <div
+          v-if="activeTabId === 'month' || activeTabId === 'today'"
+          class="flex flex-col gap-2 border-t border-slate-200 pt-2 sm:flex-row sm:items-center lg:border-t-0 lg:pt-0"
+          aria-labelledby="platform-report-period-filter-title"
         >
-          {{ tab.label }}
-        </button>
+          <span id="platform-report-period-filter-title" class="sr-only">时间筛选</span>
+          <span class="text-sm text-slate-500">{{ periodFilterDescription }}</span>
+
+          <label
+            v-if="activeTabId === 'month'"
+            class="flex items-center gap-2 text-sm font-medium text-slate-700"
+          >
+            <span class="whitespace-nowrap">查询月份</span>
+            <input
+              v-model="selectedMonth"
+              type="month"
+              class="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              aria-describedby="platform-report-period-filter-title"
+            />
+          </label>
+
+          <label
+            v-if="activeTabId === 'today'"
+            class="flex items-center gap-2 text-sm font-medium text-slate-700"
+          >
+            <span class="whitespace-nowrap">查询日期</span>
+            <input
+              v-model="selectedDate"
+              type="date"
+              class="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              aria-describedby="platform-report-period-filter-title"
+            />
+          </label>
+
+          <button
+            type="button"
+            class="h-10 rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            @click="resetPeriodFilter"
+          >
+            恢复当前时间
+          </button>
+        </div>
       </div>
     </div>
 
@@ -312,51 +449,123 @@ const selectAdjacentTab = (event, direction) => {
       class="space-y-4"
       tabindex="0"
     >
-    <section
-      v-for="section in activeTab.sections"
-      :key="section.title"
-      class="overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm"
-      :aria-labelledby="`${section.title}-title`"
-    >
-      <div class="border-b border-slate-200 bg-white px-4 py-3">
-        <h2
-          :id="`${section.title}-title`"
-          class="text-base font-semibold text-slate-800"
-        >
-          <span class="mr-2 text-amber-500">!</span>{{ section.title }}
-        </h2>
-      </div>
-
-      <div class="p-4">
-        <div
-          v-if="section.items.length"
-          class="grid gap-3"
-          :class="gridClassByColumns[section.columns]"
-        >
-          <article
-            v-for="item in section.items"
-            :key="`${section.title}-${item.label}-${item.badge}`"
-            class="rounded-md border border-slate-200 bg-slate-50 p-4"
+      <section
+        v-for="section in activeTab.sections"
+        :key="section.title"
+        class="overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm"
+        :aria-labelledby="`${section.title}-title`"
+      >
+        <div class="border-b border-slate-200 bg-white px-4 py-3">
+          <h2
+            :id="`${section.title}-title`"
+            class="text-base font-semibold text-slate-800"
           >
-            <div class="flex items-start justify-between gap-3">
-              <h3 class="min-w-0 break-words text-sm font-medium text-slate-700">{{ item.label }}</h3>
-              <span
-                class="shrink-0 rounded px-2 py-0.5 text-xs font-medium"
-                :class="badgeClassByTone[item.tone]"
-              >
-                {{ item.badge }}
-              </span>
-            </div>
-            <p
-              class="mt-3 break-words leading-relaxed text-slate-950"
-              :class="section.kind === 'rule' ? 'text-sm' : 'font-mono text-2xl font-semibold leading-tight'"
-            >
-              {{ item.value }}
-            </p>
-          </article>
+            <span class="mr-2 text-amber-500">!</span>{{ displaySectionTitle(section.title) }}
+          </h2>
         </div>
-      </div>
-    </section>
+
+        <div class="space-y-4 p-4">
+          <div
+            v-if="section.summaryItems?.length"
+            class="grid gap-3"
+            :class="gridClassByColumns.small"
+          >
+            <article
+              v-for="item in section.summaryItems"
+              :key="`${section.title}-${item.label}-${item.badge}`"
+              class="rounded-md border border-slate-200 bg-slate-50 p-4"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="min-w-0 break-words text-sm font-medium text-slate-700">{{ item.label }}</h3>
+                <span
+                  class="shrink-0 rounded px-2 py-0.5 text-xs font-medium"
+                  :class="badgeClassByTone[item.tone]"
+                >
+                  {{ item.badge }}
+                </span>
+              </div>
+              <p class="mt-3 break-words font-mono text-2xl font-semibold leading-tight text-slate-950">
+                {{ item.value }}
+              </p>
+            </article>
+          </div>
+
+          <div
+            v-if="section.kind === 'assetTable'"
+            class="overflow-x-auto rounded-md border border-slate-200"
+            tabindex="0"
+            :aria-label="`${section.tableLabel}，可横向滚动查看全部列`"
+          >
+            <table class="min-w-[720px] w-full border-collapse text-sm">
+              <caption class="sr-only">{{ section.tableLabel }}</caption>
+              <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+                <tr>
+                  <th scope="col" class="w-32 whitespace-nowrap px-4 py-3">币种</th>
+                  <th
+                    v-for="column in section.tableColumns"
+                    :key="`${section.title}-${column.key}`"
+                    scope="col"
+                    class="whitespace-nowrap px-4 py-3 text-right"
+                  >
+                    {{ column.label }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 bg-white">
+                <tr
+                  v-for="row in section.rows"
+                  :key="`${section.title}-${row.asset}`"
+                  class="hover:bg-slate-50"
+                >
+                  <th scope="row" class="whitespace-nowrap px-4 py-3 text-left font-medium text-slate-700">
+                    <span
+                      class="inline-flex rounded px-2 py-0.5 text-xs font-medium"
+                      :class="badgeClassByTone[row.tone]"
+                    >
+                      {{ row.asset }}
+                    </span>
+                  </th>
+                  <td
+                    v-for="column in section.tableColumns"
+                    :key="`${section.title}-${row.asset}-${column.key}`"
+                    class="whitespace-nowrap px-4 py-3 text-right font-mono text-sm font-semibold text-slate-950"
+                  >
+                    {{ row[column.key] }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            v-else-if="section.items.length"
+            class="grid gap-3"
+            :class="gridClassByColumns[section.columns]"
+          >
+            <article
+              v-for="item in section.items"
+              :key="`${section.title}-${item.label}-${item.badge}`"
+              class="rounded-md border border-slate-200 bg-slate-50 p-4"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="min-w-0 break-words text-sm font-medium text-slate-700">{{ item.label }}</h3>
+                <span
+                  class="shrink-0 rounded px-2 py-0.5 text-xs font-medium"
+                  :class="badgeClassByTone[item.tone]"
+                >
+                  {{ item.badge }}
+                </span>
+              </div>
+              <p
+                class="mt-3 break-words leading-relaxed text-slate-950"
+                :class="section.kind === 'rule' ? 'text-sm' : 'font-mono text-2xl font-semibold leading-tight'"
+              >
+                {{ item.value }}
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </template>
