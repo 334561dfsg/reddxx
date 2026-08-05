@@ -59,6 +59,7 @@ const policyFormSignature = computed(() => {
   const p = policy.value
   if (!p) return ''
   return JSON.stringify({
+    noRestrictionEnabled: p.noRestrictionEnabled,
     defaultPolicy: p.defaultPolicy,
     dimensionPriority: p.dimensionPriority,
     dimensionEnabled: p.dimensionEnabled,
@@ -147,7 +148,7 @@ function toggleDimensionEnabled(dim) {
       <div>
         <h1 class="text-2xl font-bold text-slate-900">出金策略</h1>
         <p class="mt-1 text-sm text-slate-500">
-          配置 U 本位单笔最低出金与每日出金上限。VIP 等级与
+          配置 U 本位单笔最低出金与每日出金上限。开启「不做任何限制」时，所有细分规则仅保留配置，不参与实际限制。VIP 等级与
           <span class="text-slate-700">VIP 等级配置</span>
           mock 同步；按认证等级的出金规则与
           <span class="text-slate-700">认证等级配置</span>
@@ -165,6 +166,35 @@ function toggleDimensionEnabled(dim) {
     <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-8">
       <!-- 左侧：配置 -->
       <div class="min-w-0 flex-1 space-y-6">
+    <!-- 全局总开关 -->
+    <div class="rounded-xl border border-blue-200 bg-blue-50/70 shadow-sm overflow-hidden">
+      <div class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="min-w-0">
+          <h2 class="text-base font-semibold text-slate-900">全局总开关</h2>
+          <p class="mt-0.5 text-xs leading-relaxed text-slate-600">
+            默认开启「不做任何限制」。开启后不校验单笔最低出金与每日出金上限；关闭后按下方全局默认和各维度规则试算、保存。
+          </p>
+        </div>
+        <div class="flex min-h-11 shrink-0 items-center justify-between gap-3 rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm font-medium text-slate-800 sm:min-w-[12rem]">
+          <span>不做任何限制</span>
+          <button
+            type="button"
+            role="switch"
+            :aria-checked="policy.noRestrictionEnabled !== false"
+            :aria-label="`不做任何限制：${policy.noRestrictionEnabled !== false ? '已开启' : '已关闭'}`"
+            class="relative h-6 w-11 shrink-0 cursor-pointer rounded-full border transition-colors duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1"
+            :class="policy.noRestrictionEnabled !== false ? 'border-blue-600 bg-blue-600' : 'border-slate-300/90 bg-slate-200'"
+            @click="policy.noRestrictionEnabled = policy.noRestrictionEnabled === false"
+          >
+            <span
+              class="pointer-events-none absolute left-0.5 top-0.5 block h-5 w-5 rounded-full bg-white shadow-sm ring-1 ring-slate-900/10 transition-transform duration-200 ease-out"
+              :class="policy.noRestrictionEnabled !== false ? 'translate-x-5' : 'translate-x-0'"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- 全局默认 -->
     <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
       <div class="border-b border-slate-100 bg-slate-50/80 px-4 py-3">
@@ -409,7 +439,7 @@ function toggleDimensionEnabled(dim) {
           <div class="border-b border-blue-100/80 px-4 py-3">
             <h2 class="text-base font-semibold text-slate-900">策略试算</h2>
             <p class="text-xs text-slate-500 mt-0.5">
-              按左侧当前表单实时试算（无需先保存）；多维度命中时以最严格模式合并，见页顶说明。
+              按左侧当前表单实时试算（无需先保存）；开启「不做任何限制」时直接显示无限制结果。
             </p>
           </div>
           <div class="p-4 flex flex-col gap-5">

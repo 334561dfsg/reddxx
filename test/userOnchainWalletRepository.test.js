@@ -1,6 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { getUserOnchainWallet } from '../src/admin/repositories/userOnchainWalletRepository.js'
+import {
+  findUserIdsByWalletAddress,
+  getUserOnchainWallet
+} from '../src/admin/repositories/userOnchainWalletRepository.js'
 
 const REQUIRED_FIELDS = [
   'id',
@@ -58,4 +61,10 @@ test('returns isolated copies of wallet data', () => {
   const second = getUserOnchainWallet('user_1004')
   assert.equal(second.addresses[0].label, '主入金地址')
   assert.equal(second.addresses.length, 8)
+})
+
+test('finds user IDs by exact or partial wallet address without case sensitivity', () => {
+  assert.deepEqual(findUserIdsByWalletAddress('0x7a4e9c2d5f18b6a3'), ['user_1004'])
+  assert.deepEqual(findUserIdsByWalletAddress('  TRxKJ8TmqVe9Hv7uL6VJ  '), ['user_1004'])
+  assert.deepEqual(findUserIdsByWalletAddress('missing-wallet-address'), [])
 })

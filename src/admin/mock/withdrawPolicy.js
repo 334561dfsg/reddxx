@@ -112,8 +112,15 @@ function ensureAgentRule(policy) {
   }
 }
 
+function ensureNoRestrictionEnabled(policy) {
+  if (policy.noRestrictionEnabled === undefined) {
+    policy.noRestrictionEnabled = true
+  }
+}
+
 /** 可编辑的出金策略（U 本位）；多维度仅采用「按优先级首条命中」 */
 export let withdrawPolicyState = {
+  noRestrictionEnabled: true,
   dimensionPriority: [
     WITHDRAW_POLICY_DIMENSION.VIP,
     WITHDRAW_POLICY_DIMENSION.AGENT,
@@ -145,6 +152,7 @@ export function getWithdrawPolicy() {
   syncVerificationRulesFromVerificationConfig(p)
   ensureDimensionEnabled(p)
   ensureAgentRule(p)
+  ensureNoRestrictionEnabled(p)
   if (p.mergeMode !== undefined) delete p.mergeMode
   if (p.enabled !== undefined) delete p.enabled
   return p
@@ -156,6 +164,7 @@ export function saveWithdrawPolicy(next) {
   if (raw.enabled !== undefined) delete raw.enabled
   ensureDimensionEnabled(raw)
   ensureAgentRule(raw)
+  ensureNoRestrictionEnabled(raw)
   withdrawPolicyState = raw
   return getWithdrawPolicy()
 }
@@ -229,6 +238,15 @@ export function computeEffectiveWithdrawPolicy(user, policy) {
   const defDaily = def.dailyCapUsdt === null || def.dailyCapUsdt === undefined || def.dailyCapUsdt === ''
     ? null
     : num(def.dailyCapUsdt, 0)
+
+  if (policy.noRestrictionEnabled !== false) {
+    return {
+      minWithdrawUsdt: 0,
+      dailyCapUsdt: null,
+      mode: 'no_restriction',
+      explain: '已开启「不做任何限制」，当前用户不受单笔最低出金与每日出金上限限制。'
+    }
+  }
 
   const vipRules = policy.vipRules ?? []
   const agentRule = policy.agentRule ?? null

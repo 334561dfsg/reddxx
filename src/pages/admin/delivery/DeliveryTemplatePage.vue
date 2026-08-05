@@ -1,7 +1,7 @@
 <script setup>
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { COMMON_FILTER_ALL, DELIVERY_STATUS } from '../../../admin/constants/delivery'
-import { createDeliveryTemplatesMock } from '../../../admin/mock/delivery'
+import { createDeliveryTemplatesMock, saveDeliveryTemplatesMock } from '../../../admin/mock/delivery'
 
 const statusTab = ref(COMMON_FILTER_ALL)
 const search = ref('')
@@ -56,40 +56,331 @@ const durationLabel = (sec) => {
 
 const showTemplateModal = ref(false)
 const editingTemplateId = ref('')
+const templateTab = ref('cycle')
+const templateDialogTitleRef = ref(null)
+const templateDialogPanelRef = ref(null)
+const templateUnsavedDialogTitleRef = ref(null)
+const templateUnsavedDialogPanelRef = ref(null)
+const templateTriggerRef = ref(null)
+const templateInitialSnapshot = ref('')
+const templateHasSubmitted = ref(false)
+const showTemplateUnsavedConfirm = ref(false)
+const isTemplateClosing = ref(false)
+const previousBodyOverflow = ref('')
+const previousAppAriaHidden = ref(null)
+const templateTabIds = {
+  cycle: 'delivery-template-tab-cycle',
+  trade: 'delivery-template-tab-trade'
+}
+const templatePanelIds = {
+  cycle: 'delivery-template-panel-cycle',
+  trade: 'delivery-template-panel-trade'
+}
+const templateTabs = [
+  ['cycle', '周期配置'],
+  ['trade', '交易']
+]
 const templateForm = reactive({
   name: '',
   status: DELIVERY_STATUS.ENABLED,
+  tradeLimitUnlimited: false,
   cycles: []
 })
 
+const normalizeTemplateSnapshot = () =>
+  JSON.stringify({
+    name: templateForm.name.trim(),
+    status: templateForm.status,
+    tradeLimitUnlimited: templateForm.tradeLimitUnlimited === true,
+    cycles: templateForm.cycles.map((cycle) => ({
+      id: cycle.id,
+      durationSec: String(cycle.durationSec ?? ''),
+      payoutPct: String(cycle.payoutPct ?? ''),
+      actualPayoutPct: String(cycle.actualPayoutPct ?? '')
+    }))
+  })
+
+const isTemplateDirty = computed(() => templateInitialSnapshot.value !== normalizeTemplateSnapshot())
+
+const isValidNumber = (value) => value !== '' && value !== null && value !== undefined && Number.isFinite(Number(value))
+
+const templateErrors = computed(() => {
+  const errors = []
+  if (!templateForm.name.trim()) {
+    errors.push({ id: 'template-name', message: '请输入模板名称。' })
+  }
+  if (templateForm.cycles.length === 0) {
+    errors.push({ id: 'template-cycles-empty', message: '请至少添加一个周期。', tab: 'cycle' })
+  }
+
+  templateForm.cycles.forEach((cycle, index) => {
+    const prefix = `周期${index + 1}`
+    if (!isValidNumber(cycle.durationSec) || Number(cycle.durationSec) <= 0) {
+      errors.push({ id: `cycle-${cycle.id}-durationSec`, message: `${prefix}的周期时长必须大于 0 秒。`, tab: 'cycle' })
+    }
+    if (!isValidNumber(cycle.payoutPct) || Number(cycle.payoutPct) < 0) {
+      errors.push({ id: `cycle-${cycle.id}-payoutPct`, message: `${prefix}的收益率不能小于 0。`, tab: 'cycle' })
+    }
+    if (!isValidNumber(cycle.actualPayoutPct) || Number(cycle.actualPayoutPct) < 0) {
+      errors.push({ id: `cycle-${cycle.id}-actualPayoutPct`, message: `${prefix}的实际收益率不能小于 0。`, tab: 'cycle' })
+    }
+  })
+
+  return errors
+})
+
+const templateErrorMap = computed(() =>
+  Object.fromEntries(templateErrors.value.map((error) => [error.id, error.message]))
+)
+
+const visibleTemplateErrors = computed(() => (templateHasSubmitted.value ? templateErrors.value : []))
+
+const getTemplateFieldError = (fieldId) => (templateHasSubmitted.value ? templateErrorMap.value[fieldId] : '')
+
+const getTemplateFieldDescribedBy = (...ids) => ids.filter(Boolean).join(' ') || undefined
+
+const focusTemplateErrorTarget = (error) => {
+  if (!error) return
+  if (error.tab) {
+    templateTab.value = error.tab
+  }
+  nextTick(() => {
+    document.getElementById(error.id)?.focus()
+  })
+}
+
+const lockPageScroll = () => {
+  if (typeof document === 'undefined') return
+  previousBodyOverflow.value = document.body.style.overflow
+  document.body.style.overflow = 'hidden'
+}
+
+const unlockPageScroll = () => {
+  if (typeof document === 'undefined') return
+  document.body.style.overflow = previousBodyOverflow.value
+}
+
+const isolateTemplateDialogBackground = () => {
+  if (typeof document === 'undefined') return
+  const appRoot = document.getElementById('app')
+  if (!appRoot) return
+  previousAppAriaHidden.value = appRoot.getAttribute('aria-hidden')
+  appRoot.setAttribute('aria-hidden', 'true')
+  appRoot.inert = true
+}
+
+const releaseTemplateDialogBackground = () => {
+  if (typeof document === 'undefined') return
+  const appRoot = document.getElementById('app')
+  if (!appRoot) return
+  if (previousAppAriaHidden.value === null) {
+    appRoot.removeAttribute('aria-hidden')
+  } else {
+    appRoot.setAttribute('aria-hidden', previousAppAriaHidden.value)
+  }
+  appRoot.inert = false
+  previousAppAriaHidden.value = null
+}
+
+const rememberTemplateTrigger = () => {
+  if (typeof document === 'undefined') return
+  const activeElement = document.activeElement
+  templateTriggerRef.value = activeElement instanceof HTMLElement ? activeElement : null
+}
+
+const focusTemplateDialogTitle = () => {
+  nextTick(() => {
+    templateDialogTitleRef.value?.focus()
+  })
+}
+
+const focusTemplateUnsavedDialogTitle = () => {
+  nextTick(() => {
+    templateUnsavedDialogTitleRef.value?.focus()
+  })
+}
+
+const performTemplateClose = () => {
+  if (isTemplateClosing.value) return
+  isTemplateClosing.value = true
+  showTemplateModal.value = false
+}
+
+const requestTemplateClose = ({ force = false } = {}) => {
+  if (isTemplateClosing.value) return
+  if (!force && isTemplateDirty.value) {
+    showTemplateUnsavedConfirm.value = true
+    focusTemplateUnsavedDialogTitle()
+    return
+  }
+  performTemplateClose()
+}
+
+const cancelTemplateUnsavedClose = () => {
+  showTemplateUnsavedConfirm.value = false
+  nextTick(() => {
+    templateDialogTitleRef.value?.focus()
+  })
+}
+
+const confirmTemplateUnsavedClose = () => {
+  showTemplateUnsavedConfirm.value = false
+  performTemplateClose()
+}
+
+const handleTemplateAfterLeave = () => {
+  unlockPageScroll()
+  releaseTemplateDialogBackground()
+  isTemplateClosing.value = false
+  showTemplateUnsavedConfirm.value = false
+  templateTriggerRef.value?.focus?.()
+  templateTriggerRef.value = null
+}
+
+const getFocusableElements = (panel) => {
+  if (!panel) return []
+  return Array.from(
+    panel.querySelectorAll(
+      'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+  ).filter((el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true')
+}
+
+const getTemplateFocusableElements = () => getFocusableElements(templateDialogPanelRef.value)
+
+const getTemplateUnsavedFocusableElements = () => getFocusableElements(templateUnsavedDialogPanelRef.value)
+
+const trapFocus = (event, focusableElements, fallback) => {
+  if (focusableElements.length === 0) {
+    event.preventDefault()
+    fallback?.focus()
+    return
+  }
+
+  const first = focusableElements[0]
+  const last = focusableElements[focusableElements.length - 1]
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault()
+    first.focus()
+  }
+}
+
+const handleTemplateDialogKeydown = (event) => {
+  if (showTemplateUnsavedConfirm.value) {
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      cancelTemplateUnsavedClose()
+      return
+    }
+    if (event.key === 'Tab') {
+      trapFocus(event, getTemplateUnsavedFocusableElements(), templateUnsavedDialogTitleRef.value)
+    }
+    return
+  }
+
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    requestTemplateClose()
+    return
+  }
+  if (event.key !== 'Tab') return
+
+  trapFocus(event, getTemplateFocusableElements(), templateDialogTitleRef.value)
+}
+
+const setTemplateTab = (tabId) => {
+  templateTab.value = tabId
+}
+
+const handleTemplateTabKeydown = (event, tabId) => {
+  const currentIndex = templateTabs.findIndex(([id]) => id === tabId)
+  const lastIndex = templateTabs.length - 1
+  let nextIndex = currentIndex
+
+  if (event.key === 'ArrowRight') nextIndex = currentIndex === lastIndex ? 0 : currentIndex + 1
+  if (event.key === 'ArrowLeft') nextIndex = currentIndex === 0 ? lastIndex : currentIndex - 1
+  if (event.key === 'Home') nextIndex = 0
+  if (event.key === 'End') nextIndex = lastIndex
+  if (nextIndex === currentIndex) return
+
+  event.preventDefault()
+  const nextTab = templateTabs[nextIndex][0]
+  setTemplateTab(nextTab)
+  nextTick(() => {
+    document.getElementById(templateTabIds[nextTab])?.focus()
+  })
+}
+
+watch(showTemplateModal, (visible) => {
+  if (visible) {
+    lockPageScroll()
+    isolateTemplateDialogBackground()
+    isTemplateClosing.value = false
+    showTemplateUnsavedConfirm.value = false
+    focusTemplateDialogTitle()
+  }
+})
+
+onBeforeUnmount(() => {
+  unlockPageScroll()
+  releaseTemplateDialogBackground()
+})
+
 const openCreateTemplate = () => {
+  rememberTemplateTrigger()
   editingTemplateId.value = ''
+  templateTab.value = 'cycle'
+  templateHasSubmitted.value = false
   templateForm.name = ''
   templateForm.status = DELIVERY_STATUS.ENABLED
+  templateForm.tradeLimitUnlimited = false
   templateForm.cycles = [{ id: `cy-${Date.now()}`, durationSec: 30, payoutPct: 7, actualPayoutPct: 0.49119369 }]
+  templateInitialSnapshot.value = normalizeTemplateSnapshot()
   showTemplateModal.value = true
 }
 
 const openEditTemplate = (tpl) => {
+  rememberTemplateTrigger()
   editingTemplateId.value = tpl.id
+  templateTab.value = 'cycle'
+  templateHasSubmitted.value = false
   templateForm.name = tpl.name
   templateForm.status = tpl.status
+  templateForm.tradeLimitUnlimited = tpl.tradeLimitUnlimited === true
   templateForm.cycles = tpl.cycles.map((item) => ({ ...item }))
+  templateInitialSnapshot.value = normalizeTemplateSnapshot()
   showTemplateModal.value = true
 }
 
 const addCycle = () => {
-  templateForm.cycles.push({ id: `cy-${Date.now()}`, durationSec: 60, payoutPct: 10, actualPayoutPct: 0.70170527 })
+  const id = `cy-${Date.now()}`
+  templateForm.cycles.push({ id, durationSec: 60, payoutPct: 10, actualPayoutPct: 0.70170527 })
+  nextTick(() => {
+    document.getElementById(`cycle-${id}-durationSec`)?.focus()
+  })
 }
 
 const removeCycle = (id) => {
   templateForm.cycles = templateForm.cycles.filter((c) => c.id !== id)
+  nextTick(() => {
+    document.getElementById('delivery-template-add-cycle')?.focus()
+  })
 }
 
 const saveTemplate = () => {
+  templateHasSubmitted.value = true
+  if (templateErrors.value.length > 0) {
+    focusTemplateErrorTarget(templateErrors.value[0])
+    return
+  }
+
   const payload = {
     name: templateForm.name.trim(),
     status: templateForm.status,
+    tradeLimitUnlimited: templateForm.tradeLimitUnlimited === true,
     cycles: templateForm.cycles.map((c) => ({
       ...c,
       durationSec: Number(c.durationSec),
@@ -104,7 +395,9 @@ const saveTemplate = () => {
     templates.value.unshift({ id: `tpl-${Date.now()}`, ...payload })
   }
 
-  showTemplateModal.value = false
+  templates.value = saveDeliveryTemplatesMock(templates.value)
+  templateInitialSnapshot.value = normalizeTemplateSnapshot()
+  requestTemplateClose({ force: true })
 }
 
 const statusClass = (status) =>
@@ -196,6 +489,12 @@ const statusClass = (status) =>
                 {{ tpl.status === DELIVERY_STATUS.ENABLED ? '已启用' : '已禁用' }}
               </span>
               <span class="text-xs text-slate-500">{{ tpl.cycles.length }} 个预设周期</span>
+              <span
+                v-if="tpl.tradeLimitUnlimited"
+                class="inline-flex items-center rounded border border-blue-100 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-600"
+              >
+                不限交易额度
+              </span>
             </div>
             <div class="flex items-center gap-2">
               <button
@@ -287,23 +586,39 @@ const statusClass = (status) =>
       </div>
     </article>
 
-    <!-- 编辑模态框 -->
-    <Transition name="modal">
-      <div
-        v-if="showTemplateModal"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
-      >
-        <section
-          class="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl bg-white shadow-xl"
+    <Teleport to="body">
+      <!-- 编辑模态框 -->
+      <Transition name="modal" @after-leave="handleTemplateAfterLeave">
+        <div
+          v-if="showTemplateModal"
+          class="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
+          @keydown="handleTemplateDialogKeydown"
         >
+          <section
+            ref="templateDialogPanelRef"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delivery-template-dialog-title"
+            :aria-hidden="showTemplateUnsavedConfirm ? 'true' : undefined"
+            :inert="showTemplateUnsavedConfirm ? true : undefined"
+            class="modal-panel flex max-h-[min(90vh,calc(100dvh-2rem))] w-full max-w-3xl flex-col overflow-hidden rounded-xl bg-white shadow-xl"
+          >
           <header class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
             <div>
-              <h2 class="text-lg font-semibold text-slate-900">{{ editingTemplateId ? '编辑周期模板' : '新增周期模板' }}</h2>
+              <h2
+                id="delivery-template-dialog-title"
+                ref="templateDialogTitleRef"
+                tabindex="-1"
+                class="text-lg font-semibold text-slate-900 outline-none"
+              >
+                {{ editingTemplateId ? '编辑周期模板' : '新增周期模板' }}
+              </h2>
             </div>
             <button
               type="button"
-              class="text-slate-400 hover:text-slate-600 transition-colors text-2xl leading-none"
-              @click="showTemplateModal = false"
+              class="inline-flex h-9 w-9 items-center justify-center rounded text-2xl leading-none text-slate-400 transition-colors hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              aria-label="关闭"
+              @click="requestTemplateClose"
             >
               ×
             </button>
@@ -311,32 +626,95 @@ const statusClass = (status) =>
 
           <div class="flex-1 overflow-y-auto bg-white p-6 space-y-6">
             <div class="space-y-6">
+              <div
+                v-if="visibleTemplateErrors.length > 0"
+                class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
+                role="alert"
+                tabindex="-1"
+              >
+                <p class="font-medium">请修正以下内容后再保存模板</p>
+                <ul class="mt-2 list-disc space-y-1 pl-5">
+                  <li v-for="error in visibleTemplateErrors" :key="error.id">
+                    <button
+                      type="button"
+                      class="text-left underline underline-offset-2"
+                      @click="focusTemplateErrorTarget(error)"
+                    >
+                      {{ error.message }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
               <div class="grid gap-6 md:grid-cols-2">
                 <div class="space-y-1.5">
-                  <label class="text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 模板名称</label>
+                  <label for="template-name" class="text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 模板名称</label>
                   <input
+                    id="template-name"
                     v-model="templateForm.name"
                     type="text"
                     class="ant-input"
+                    :class="getTemplateFieldError('template-name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : ''"
                     placeholder="如：标准收益模板"
+                    :aria-invalid="!!getTemplateFieldError('template-name')"
+                    :aria-describedby="getTemplateFieldDescribedBy('template-name-help', getTemplateFieldError('template-name') ? 'template-name-error' : '')"
                   />
+                  <p id="template-name-help" class="text-xs text-slate-400">用于后台识别该交割周期模板，保存后会显示在模板列表和产品配置中。</p>
+                  <p v-if="getTemplateFieldError('template-name')" id="template-name-error" class="text-xs text-rose-600">
+                    {{ getTemplateFieldError('template-name') }}
+                  </p>
                 </div>
                 <div class="space-y-1.5">
-                  <label class="block text-sm font-medium text-slate-900">状态</label>
-                  <select v-model="templateForm.status" class="ant-select w-full">
+                  <label for="template-status" class="block text-sm font-medium text-slate-900">状态</label>
+                  <select id="template-status" v-model="templateForm.status" class="ant-select w-full">
                     <option :value="DELIVERY_STATUS.ENABLED">已启用</option>
                     <option :value="DELIVERY_STATUS.DISABLED">已禁用</option>
                   </select>
+                  <p class="text-xs text-slate-400">禁用后不会影响已保存的产品展示，但不建议用于新产品选择。</p>
                 </div>
               </div>
 
-              <div class="space-y-3">
+              <div class="border-b border-slate-100">
+                <div role="tablist" aria-label="周期模板配置" class="flex gap-8 overflow-x-auto">
+                  <button
+                    v-for="tab in templateTabs"
+                    :key="tab[0]"
+                    :id="templateTabIds[tab[0]]"
+                    type="button"
+                    role="tab"
+                    :aria-selected="templateTab === tab[0]"
+                    :aria-controls="templatePanelIds[tab[0]]"
+                    :tabindex="templateTab === tab[0] ? 0 : -1"
+                    class="relative py-3 text-sm transition-all"
+                    :class="
+                      templateTab === tab[0]
+                        ? 'font-medium text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600'
+                        : 'text-slate-500 hover:text-slate-700'
+                    "
+                    @click="setTemplateTab(tab[0])"
+                    @keydown="handleTemplateTabKeydown($event, tab[0])"
+                  >
+                    {{ tab[1] }}
+                  </button>
+                </div>
+              </div>
+
+              <div
+                v-if="templateTab === 'cycle'"
+                :id="templatePanelIds.cycle"
+                role="tabpanel"
+                :aria-labelledby="templateTabIds.cycle"
+                tabindex="0"
+                class="space-y-3 outline-none"
+              >
                 <div class="flex items-center justify-between">
                   <h3 class="text-sm font-semibold text-slate-900">周期配置 <span class="text-rose-500">*</span></h3>
                   <button
+                    id="delivery-template-add-cycle"
                     type="button"
                     class="ant-btn ant-btn-sm ant-btn-primary inline-flex items-center gap-1"
                     @click="addCycle"
+                    aria-label="添加周期配置"
                   >
                     <span>+</span>
                     <span>添加周期</span>
@@ -356,8 +734,8 @@ const statusClass = (status) =>
                       </div>
                       <button
                         type="button"
-                        class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-slate-300 text-xs leading-none text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500"
-                        aria-label="删除周期"
+                        class="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-300 text-xs leading-none text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+                        :aria-label="`删除周期${index + 1}`"
                         @click="removeCycle(cycle.id)"
                       >
                         −
@@ -368,19 +746,62 @@ const statusClass = (status) =>
                       <label class="space-y-1.5">
                         <span class="block text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 周期时长（秒）</span>
                           <input
+                            :id="`cycle-${cycle.id}-durationSec`"
                             v-model.number="cycle.durationSec"
                             type="number"
+                            inputmode="numeric"
                             min="1"
+                            step="1"
                             class="ant-input w-full"
+                            :class="getTemplateFieldError(`cycle-${cycle.id}-durationSec`) ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : ''"
+                            :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-durationSec`)"
+                            :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-durationSec-help`, getTemplateFieldError(`cycle-${cycle.id}-durationSec`) ? `cycle-${cycle.id}-durationSec-error` : '')"
+                            @wheel.prevent
                           />
+                        <span :id="`cycle-${cycle.id}-durationSec-help`" class="block text-xs text-slate-400">单位为秒，必须大于 0。</span>
+                        <span v-if="getTemplateFieldError(`cycle-${cycle.id}-durationSec`)" :id="`cycle-${cycle.id}-durationSec-error`" class="block text-xs text-rose-600">
+                          {{ getTemplateFieldError(`cycle-${cycle.id}-durationSec`) }}
+                        </span>
                       </label>
                       <label class="space-y-1.5">
                         <span class="block text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 收益率</span>
-                        <input v-model.number="cycle.payoutPct" type="number" min="0" step="0.01" class="ant-input w-full" />
+                        <input
+                          :id="`cycle-${cycle.id}-payoutPct`"
+                          v-model.number="cycle.payoutPct"
+                          type="number"
+                          inputmode="decimal"
+                          min="0"
+                          step="0.01"
+                          class="ant-input w-full"
+                          :class="getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : ''"
+                          :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-payoutPct`)"
+                          :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-payoutPct-help`, getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) ? `cycle-${cycle.id}-payoutPct-error` : '')"
+                          @wheel.prevent
+                        />
+                        <span :id="`cycle-${cycle.id}-payoutPct-help`" class="block text-xs text-slate-400">展示给用户的收益率，单位为 %。</span>
+                        <span v-if="getTemplateFieldError(`cycle-${cycle.id}-payoutPct`)" :id="`cycle-${cycle.id}-payoutPct-error`" class="block text-xs text-rose-600">
+                          {{ getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) }}
+                        </span>
                       </label>
                       <label class="space-y-1.5">
                         <span class="block text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 实际收益率</span>
-                        <input v-model.number="cycle.actualPayoutPct" type="number" min="0" step="0.00000001" class="ant-input w-full" />
+                        <input
+                          :id="`cycle-${cycle.id}-actualPayoutPct`"
+                          v-model.number="cycle.actualPayoutPct"
+                          type="number"
+                          inputmode="decimal"
+                          min="0"
+                          step="0.00000001"
+                          class="ant-input w-full"
+                          :class="getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : ''"
+                          :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`)"
+                          :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-actualPayoutPct-help`, getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) ? `cycle-${cycle.id}-actualPayoutPct-error` : '')"
+                          @wheel.prevent
+                        />
+                        <span :id="`cycle-${cycle.id}-actualPayoutPct-help`" class="block text-xs text-slate-400">实际结算使用的收益率，支持 8 位小数。</span>
+                        <span v-if="getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`)" :id="`cycle-${cycle.id}-actualPayoutPct-error`" class="block text-xs text-rose-600">
+                          {{ getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) }}
+                        </span>
                       </label>
                     </div>
 
@@ -389,10 +810,53 @@ const statusClass = (status) =>
                       <span>实际：{{ Number(cycle.actualPayoutPct || 0).toFixed(4) }}%</span>
                     </div>
                   </article>
-                  <div v-if="templateForm.cycles.length === 0" class="rounded-xl bg-slate-50 p-8 text-center text-xs italic text-slate-400">
+                  <div
+                    v-if="templateForm.cycles.length === 0"
+                    id="template-cycles-empty"
+                    tabindex="-1"
+                    class="rounded-xl bg-slate-50 p-8 text-center text-xs italic text-slate-400 outline-none"
+                  >
                     暂无配置，请点击上方按钮添加周期
                   </div>
                 </div>
+              </div>
+
+              <div
+                v-if="templateTab === 'trade'"
+                :id="templatePanelIds.trade"
+                role="tabpanel"
+                :aria-labelledby="templateTabIds.trade"
+                tabindex="0"
+                class="space-y-4 outline-none"
+              >
+                <article class="overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <div class="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+                    <div class="min-w-0">
+                      <h3 class="text-sm font-semibold text-slate-900">不限交易额度</h3>
+                      <p id="delivery-template-trade-limit-help" class="mt-1 text-xs leading-5 text-slate-500">
+                        开启后，使用此周期模板的交割合约在产品编辑的交易限制中不再展示最低买入额、最高买入额和最大持仓额配置。
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      :aria-checked="templateForm.tradeLimitUnlimited"
+                      aria-label="不限交易额度"
+                      aria-describedby="delivery-template-trade-limit-help delivery-template-trade-limit-status"
+                      class="relative inline-flex h-7 w-12 shrink-0 overflow-hidden rounded-full p-0.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:justify-self-end"
+                      :class="templateForm.tradeLimitUnlimited ? 'bg-blue-600' : 'bg-slate-300'"
+                      @click="templateForm.tradeLimitUnlimited = !templateForm.tradeLimitUnlimited"
+                    >
+                      <span
+                        class="h-6 w-6 rounded-full bg-white shadow transition-transform duration-200 ease-out"
+                        :class="templateForm.tradeLimitUnlimited ? 'translate-x-5' : 'translate-x-0'"
+                      ></span>
+                    </button>
+                  </div>
+                  <div id="delivery-template-trade-limit-status" class="mt-4 rounded border border-blue-100 bg-white px-3 py-2 text-xs text-blue-600" aria-live="polite">
+                    当前状态：{{ templateForm.tradeLimitUnlimited ? '已开启，交易限额不生效' : '已关闭，产品交易限额正常生效' }}
+                  </div>
+                </article>
               </div>
             </div>
           </div>
@@ -401,31 +865,103 @@ const statusClass = (status) =>
             <button
               type="button"
               class="ant-btn"
-              @click="showTemplateModal = false"
+              @click="requestTemplateClose"
             >
               取消
             </button>
             <button
               type="button"
               class="ant-btn ant-btn-primary"
+              aria-label="保存周期模板"
               @click="saveTemplate"
             >
               保存模板
             </button>
           </footer>
-        </section>
-      </div>
-    </Transition>
+          </section>
+
+          <Transition name="modal">
+            <div
+              v-if="showTemplateUnsavedConfirm"
+              class="fixed inset-0 z-[110] flex items-center justify-center bg-black/35 p-4"
+            >
+              <section
+                ref="templateUnsavedDialogPanelRef"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="delivery-template-unsaved-title"
+                class="modal-panel flex w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-xl"
+              >
+                <header class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+                  <h3
+                    id="delivery-template-unsaved-title"
+                    ref="templateUnsavedDialogTitleRef"
+                    tabindex="-1"
+                    class="text-base font-semibold text-slate-900 outline-none"
+                  >
+                    关闭周期模板编辑？
+                  </h3>
+                  <button
+                    type="button"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded text-2xl leading-none text-slate-400 transition-colors hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    aria-label="关闭未保存确认"
+                    @click="cancelTemplateUnsavedClose"
+                  >
+                    ×
+                  </button>
+                </header>
+                <div class="px-5 py-4 text-sm leading-6 text-slate-600">
+                  当前周期模板有未保存的修改，关闭后这些修改不会保存。
+                </div>
+                <footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4">
+                  <button type="button" class="ant-btn" @click="cancelTemplateUnsavedClose">
+                    继续编辑
+                  </button>
+                  <button type="button" class="ant-btn ant-btn-primary" @click="confirmTemplateUnsavedClose">
+                    确认关闭
+                  </button>
+                </footer>
+              </section>
+            </div>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
   </section>
 </template>
 
 <style scoped>
 .modal-enter-active,
 .modal-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease-out;
 }
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
+}
+.modal-enter-active .modal-panel {
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+.modal-leave-active .modal-panel {
+  transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+}
+.modal-enter-from .modal-panel,
+.modal-leave-to .modal-panel {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-enter-active,
+  .modal-leave-active,
+  .modal-enter-active .modal-panel,
+  .modal-leave-active .modal-panel {
+    transition-duration: 0.05s;
+  }
+
+  .modal-enter-from .modal-panel,
+  .modal-leave-to .modal-panel {
+    transform: none;
+  }
 }
 </style>

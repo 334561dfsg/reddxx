@@ -17,7 +17,8 @@ export const createDefaultPerpetualTemplateContractConfig = () => ({
   orderMode: 'cost',
   contractFaceValueUsdt: 1000,
   maintenanceMarginRate: 0.5,
-  liquidationFeeRate: 0
+  liquidationFeeRate: 0,
+  tradeLimitUnlimited: false
 })
 
 const perpetualTemplates = [
@@ -242,6 +243,8 @@ const perpetualControlConfigs = {
   }
 }
 
+let perpetualTemplatesState = clone(perpetualTemplates)
+
 export const perpetualProductStatusMeta = {
   [PERPETUAL_STATUS.ENABLED]: {
     text: '已启用',
@@ -254,9 +257,15 @@ export const perpetualProductStatusMeta = {
 }
 
 export const createPerpetualTemplatesMock = () =>
-  clone(perpetualTemplates).map((template) => ({
+  clone(perpetualTemplatesState).map((template) => ({
     ...createDefaultPerpetualTemplateContractConfig(),
     ...template
   }))
+
+export const savePerpetualTemplatesMock = (nextTemplates = []) => {
+  perpetualTemplatesState = clone(nextTemplates)
+  return createPerpetualTemplatesMock()
+}
+
 export const createPerpetualProductsMock = () => clone(perpetualProducts)
 export const createPerpetualControlConfigsMock = () => clone(perpetualControlConfigs)

@@ -150,6 +150,7 @@ const syncProductsWithTemplates = () => {
       templateId: template.id,
       templateName: template.name,
       leverageRange: template.leverageRange,
+      tradeLimitUnlimited: template.tradeLimitUnlimited === true,
       leverageBadges: buildLeverageBadges(template.levels)
     }
   })
@@ -236,12 +237,14 @@ const steps = [
 ]
 
 const selectedTemplate = computed(() => templates.value.find((item) => item.id === contractForm.templateId) || null)
+const selectedTemplateTradeLimitUnlimited = computed(() => selectedTemplate.value?.tradeLimitUnlimited === true)
 
 const limitValid = computed(() => Number(contractForm.maxBuy) <= Number(contractForm.maxPosition))
 
 const isContractValid = computed(() => {
   const requiredOk = contractForm.productName.trim() && contractForm.productCode.trim() && selectedTemplate.value
-  const limitOk = Number(contractForm.minBuy) > 0 && Number(contractForm.maxBuy) >= Number(contractForm.minBuy) && limitValid.value
+  const limitOk = selectedTemplateTradeLimitUnlimited.value
+    || (Number(contractForm.minBuy) > 0 && Number(contractForm.maxBuy) >= Number(contractForm.minBuy) && limitValid.value)
   const feeOk = Number(contractForm.buyFee) >= 0 && Number(contractForm.sellFee) >= 0
   return Boolean(requiredOk && limitOk && feeOk)
 })
@@ -284,6 +287,7 @@ const submitContract = () => {
     templateId: selectedTemplate.value.id,
     templateName: selectedTemplate.value.name,
     leverageRange: selectedTemplate.value.leverageRange,
+    tradeLimitUnlimited: selectedTemplate.value.tradeLimitUnlimited === true,
     buyRange: `${Number(contractForm.minBuy).toLocaleString()} - ${Number(contractForm.maxBuy).toLocaleString()} USDT`,
     maxPosition: fmtUsdt(contractForm.maxPosition),
     minBuy: fmtUsdt(contractForm.minBuy),
@@ -456,10 +460,16 @@ onMounted(() => {
                 交易对: {{ item.pair }}
                 <span class="mx-3 text-slate-300">|</span>
                 杠杆范围: {{ item.leverageRange }}
-                <span class="mx-3 text-slate-300">|</span>
-                买入范围: {{ item.buyRange }}
-                <span class="mx-3 text-slate-300">|</span>
-                最大持仓: {{ item.maxPosition }}
+                <template v-if="item.tradeLimitUnlimited">
+                  <span class="mx-3 text-slate-300">|</span>
+                  交易限制: <span class="font-medium text-blue-600">不限制</span>
+                </template>
+                <template v-else>
+                  <span class="mx-3 text-slate-300">|</span>
+                  买入范围: {{ item.buyRange }}
+                  <span class="mx-3 text-slate-300">|</span>
+                  最大持仓: {{ item.maxPosition }}
+                </template>
               </p>
             </div>
             <div class="flex items-center gap-2">
@@ -504,7 +514,11 @@ onMounted(() => {
             </div>
             <div class="border-b border-slate-200 p-4 md:border-b-0 md:border-r">
               <p class="text-sm text-slate-500">交易限制</p>
-              <ul class="mt-2 space-y-1 text-sm text-slate-700">
+              <div v-if="item.tradeLimitUnlimited" class="mt-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-sm text-blue-700">
+                <p class="font-medium">不限制</p>
+                <p class="mt-1 text-xs text-blue-600">由杠杆模版统一声明为不限额。</p>
+              </div>
+              <ul v-else class="mt-2 space-y-1 text-sm text-slate-700">
                 <li><span class="font-medium">最低买入:</span> {{ item.minBuy }}</li>
                 <li><span class="font-medium">最大买入:</span> {{ item.maxBuy }}</li>
                 <li><span class="font-medium">最大持仓:</span> {{ item.maxPosition }}</li>
@@ -642,6 +656,15 @@ onMounted(() => {
         </div>
 
         <div v-if="contractStep === PERPETUAL_CONTRACT_STEP.LIMIT" class="space-y-4">
+          <div
+            v-if="selectedTemplateTradeLimitUnlimited"
+            class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-800"
+          >
+            <p class="font-medium text-slate-900">不限交易额度已经打开</p>
+            <p class="mt-1">如需调整，在杠杆模版中进行处理。</p>
+          </div>
+
+          <template v-else>
           <div class="grid gap-4 md:grid-cols-3">
             <label class="space-y-2">
               <span class="text-sm font-medium">最低买入量 (USDT) <span class="text-rose-500">*</span></span>
@@ -663,6 +686,7 @@ onMounted(() => {
             <p>- 最大持仓: {{ Number(contractForm.maxPosition).toLocaleString() }} USDT</p>
             <p class="mt-1" :class="limitValid ? 'text-slate-500' : 'font-medium text-rose-500'">注意: 最大买入量不能超过最大持仓量</p>
           </div>
+          </template>
         </div>
 
         <div v-if="contractStep === PERPETUAL_CONTRACT_STEP.FEE" class="space-y-4">

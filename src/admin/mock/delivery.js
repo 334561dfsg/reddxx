@@ -2,6 +2,11 @@ import { DELIVERY_CONTROL_STATUS, DELIVERY_LOG_STATUS, DELIVERY_STATUS } from '.
 
 const clone = (value) => JSON.parse(JSON.stringify(value))
 
+const withDeliveryTemplateDefaults = (template) => ({
+  tradeLimitUnlimited: false,
+  ...template
+})
+
 const deliveryTemplates = [
   {
     id: 'tpl-standard',
@@ -230,8 +235,8 @@ const deliveryOperationLogs = [
   }
 ]
 
-export const createDeliveryTemplatesMock = () => {
-  const templates = clone(deliveryTemplates)
+const buildDeliveryTemplatesSeed = () => {
+  const templates = clone(deliveryTemplates).map(withDeliveryTemplateDefaults)
   // 生成更多模板数据用于测试分页
   for (let i = 1; i <= 10; i++) {
     templates.push({
@@ -243,6 +248,16 @@ export const createDeliveryTemplatesMock = () => {
   }
   return templates
 }
+
+let deliveryTemplatesState = buildDeliveryTemplatesSeed()
+
+export const createDeliveryTemplatesMock = () => clone(deliveryTemplatesState).map(withDeliveryTemplateDefaults)
+
+export const saveDeliveryTemplatesMock = (nextTemplates = []) => {
+  deliveryTemplatesState = clone(nextTemplates).map(withDeliveryTemplateDefaults)
+  return createDeliveryTemplatesMock()
+}
+
 export const createDeliveryProductsMock = () => {
   const products = clone(deliveryProducts)
   // 生成更多数据用于测试分页

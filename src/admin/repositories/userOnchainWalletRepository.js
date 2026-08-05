@@ -118,3 +118,17 @@ export const getUserOnchainWallet = (userId) => {
   const normalizedUserId = normalizeUserId(userId)
   return clone(walletByUserId.get(normalizedUserId) || fallbackWallet(normalizedUserId))
 }
+
+export const findUserIdsByWalletAddress = (addressKeyword) => {
+  const normalizedKeyword = String(addressKeyword ?? '').trim().toLowerCase()
+  if (!normalizedKeyword) return []
+
+  const matchedUserIds = []
+  for (const wallet of walletByUserId.values()) {
+    const hasMatch = wallet.addresses.some((address) =>
+      String(address.address).toLowerCase().includes(normalizedKeyword)
+    )
+    if (hasMatch) matchedUserIds.push(wallet.userId)
+  }
+  return matchedUserIds
+}

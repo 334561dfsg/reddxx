@@ -584,3 +584,39 @@ test('unified cancellation waits for leave before it opens MFA', () => {
   assert.doesNotMatch(confirm, /requestMfa\(\{ type: 'cancel', payload \}\)/)
   assert.match(confirm, /const handleUnifiedCancelAfterLeave = async \(\) => \{[\s\S]*?await onUnifiedCancelAfterLeave\(\)[\s\S]*?openPendingMfa\(\)/)
 })
+
+test('user list exposes wallet address search as a distinct applied query field', () => {
+  const source = read('../src/pages/admin/user/UserListPage.vue')
+
+  assert.match(source, /const walletAddressKeyword = ref\(''\)/)
+  assert.match(source, /walletAddressKeyword:\s*walletAddressKeyword\.value/)
+  assert.match(source, /placeholder="搜索钱包地址"/)
+  assert.match(source, /watch\(\[userIdKeyword,\s*phoneKeyword,\s*emailKeyword,\s*walletAddressKeyword,\s*\(\) => pagination\.currentPage\]/)
+})
+
+test('user list splits id, phone, email, and wallet filters into standalone field components', () => {
+  const source = read('../src/pages/admin/user/UserListPage.vue')
+
+  assert.match(source, /import UserListSearchField from/)
+  assert.match(source, /const userIdKeyword = ref\(''\)/)
+  assert.match(source, /const phoneKeyword = ref\(''\)/)
+  assert.match(source, /const emailKeyword = ref\(''\)/)
+  assert.match(source, /userIdKeyword:\s*userIdKeyword\.value/)
+  assert.match(source, /phoneKeyword:\s*phoneKeyword\.value/)
+  assert.match(source, /emailKeyword:\s*emailKeyword\.value/)
+  assert.equal((source.match(/<UserListSearchField/g) || []).length, 4)
+  assert.match(source, /label="用户 ID"/)
+  assert.match(source, /label="手机号"/)
+  assert.match(source, /label="邮箱"/)
+  assert.match(source, /label="钱包地址"/)
+})
+
+test('user list omits the top statistics cards', () => {
+  const source = read('../src/pages/admin/user/UserListPage.vue')
+
+  assert.doesNotMatch(source, /const statistics = computed/)
+  assert.doesNotMatch(source, /v-for="stat in statistics"/)
+  assert.doesNotMatch(source, /总用户数/)
+  assert.doesNotMatch(source, /VIP用户/)
+  assert.doesNotMatch(source, /代理用户/)
+})

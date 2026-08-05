@@ -1,4 +1,5 @@
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../constants/user.js'
+import { findUserIdsByWalletAddress } from '../repositories/userOnchainWalletRepository.js'
 
 const generateUser = (id, overrides = {}) => ({
   id: `user_${id}`,
@@ -333,7 +334,15 @@ export const searchUsers = (keyword) => {
   )
 }
 
-export const getUsers = ({ page, pageSize, searchKeyword }) => {
+export const getUsers = ({
+  page,
+  pageSize,
+  searchKeyword,
+  userIdKeyword,
+  phoneKeyword,
+  emailKeyword,
+  walletAddressKeyword
+}) => {
   let filteredUsers = [...usersList]
 
   if (searchKeyword && searchKeyword.trim()) {
@@ -345,6 +354,26 @@ export const getUsers = ({ page, pageSize, searchKeyword }) => {
         user.phone.includes(keyword) ||
         user.id.toLowerCase().includes(keyword)
     )
+  }
+
+  if (userIdKeyword && userIdKeyword.trim()) {
+    const keyword = userIdKeyword.trim().toLowerCase()
+    filteredUsers = filteredUsers.filter((user) => user.id.toLowerCase().includes(keyword))
+  }
+
+  if (phoneKeyword && phoneKeyword.trim()) {
+    const keyword = phoneKeyword.trim()
+    filteredUsers = filteredUsers.filter((user) => user.phone.includes(keyword))
+  }
+
+  if (emailKeyword && emailKeyword.trim()) {
+    const keyword = emailKeyword.trim().toLowerCase()
+    filteredUsers = filteredUsers.filter((user) => user.email.toLowerCase().includes(keyword))
+  }
+
+  if (walletAddressKeyword && walletAddressKeyword.trim()) {
+    const matchedUserIds = new Set(findUserIdsByWalletAddress(walletAddressKeyword))
+    filteredUsers = filteredUsers.filter((user) => matchedUserIds.has(user.id))
   }
 
   const total = filteredUsers.length

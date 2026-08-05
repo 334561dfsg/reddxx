@@ -9,6 +9,7 @@ import {
   FRONT_WITHDRAW_NETWORKS,
   networkHintWithdraw
 } from '../../../constants/frontAssetCenterDemo'
+import { getWithdrawPolicy } from '../../../admin/mock/withdrawPolicy'
 import { useFrontAuthStore } from '../../../stores/frontAuth'
 import { useFrontSecurityStore } from '../../../stores/frontSecurity'
 
@@ -60,6 +61,10 @@ const networkKey = ref(FRONT_WITHDRAW_NETWORKS[0].key)
 const address = ref('')
 const amount = ref('')
 const feeDisplay = ref('0')
+const withdrawPolicy = ref(getWithdrawPolicy())
+const shouldHideWithdrawableLine = computed(
+  () => withdrawPolicy.value?.noRestrictionEnabled !== false
+)
 
 const selectedAsset = computed(
   () => FRONT_WITHDRAW_ASSETS.find((a) => a.symbol === assetSymbol.value) || FRONT_WITHDRAW_ASSETS[0]
@@ -296,7 +301,12 @@ const labelBase =
                 class="mt-1.5 flex flex-nowrap items-center justify-between gap-2 text-[11px] leading-snug text-white/38 sm:text-xs lg:text-[13px] lg:text-white/42"
               >
                 <span class="min-w-0 truncate">{{ balanceLine }}</span>
-                <span class="shrink-0 font-medium text-lime-300/85">{{ withdrawableLine }}</span>
+                <span
+                  v-if="!shouldHideWithdrawableLine"
+                  class="shrink-0 font-medium text-lime-300/85"
+                >
+                  {{ withdrawableLine }}
+                </span>
               </p>
             </div>
 

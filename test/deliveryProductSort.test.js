@@ -33,3 +33,18 @@ test('delivery contract editor places numeric sort input beside status and saves
   assert.match(pageSource, /contractForm\.sortOrder = Number\(item\.sortOrder/)
   assert.match(pageSource, /sortDeliveryProducts/)
 })
+
+test('delivery contract editor hides trade limits when selected period template is unlimited', () => {
+  assert.match(pageSource, /selectedTemplateTradeLimitUnlimited/)
+  assert.match(pageSource, /v-if="selectedTemplateTradeLimitUnlimited"/)
+  assert.match(pageSource, /不限交易额度已经打开/)
+  assert.match(pageSource, /如需调整，在周期模版中进行处理/)
+  assert.match(pageSource, /v-else class="grid gap-6 md:grid-cols-3"/)
+})
+
+test('delivery contract cards show unlimited trade limits from period template', () => {
+  assert.match(pageSource, /const productTradeLimitUnlimited = \(product\) => templateById\.value\[product\.templateId\]\?\.tradeLimitUnlimited === true/)
+  assert.match(pageSource, /<template v-if="productTradeLimitUnlimited\(item\)">[\s\S]*交易限制:[\s\S]*不限制/)
+  assert.match(pageSource, /v-if="productTradeLimitUnlimited\(item\)"[\s\S]*由周期模版统一声明为不限额/)
+  assert.match(pageSource, /<ul v-else class="mt-3 grid grid-cols-3 gap-4 text-sm">[\s\S]*最低买入[\s\S]*最大买入[\s\S]*最大持仓/)
+})

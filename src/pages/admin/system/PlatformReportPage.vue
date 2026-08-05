@@ -129,11 +129,6 @@ const sections = [
     rows: buildWithdrawRows({ actualAmount: '513769.32', fee: '29.00', deduction: '0', backendWithdraw: '0' })
   },
   {
-    title: '平台用户账上资金-本月',
-    columns: 'asset',
-    items: platformBalanceItems
-  },
-  {
     title: '用户数据-本月',
     columns: 'small',
     items: [
@@ -160,11 +155,6 @@ sections.push(
       { label: '提现笔数', badge: '15min', value: '0', tone: 'blue' }
     ],
     rows: withdrawZeroRows
-  },
-  {
-    title: '平台用户账上资金-今日',
-    columns: 'asset',
-    items: platformBalanceItems
   },
   {
     title: '用户数据-今日',
@@ -215,13 +205,13 @@ const dataRuleSections = [
       {
         label: '本月数据范围',
         badge: '本月',
-        value: '本月展示当前自然月维度的数据，包括平台用户账上资金、用户数据、充值数据、提现数据。',
+        value: '本月展示当前自然月维度的数据，包括用户数据、充值数据、提现数据。',
         tone: 'cyan'
       },
       {
         label: '今日数据范围',
         badge: '今日',
-        value: '今日展示当天维度的数据，包括平台用户账上资金、今日新增用户、待审核充值、待审核提现、充值数据、提现数据。',
+        value: '今日展示当天维度的数据，包括今日新增用户、待审核充值、待审核提现、充值数据、提现数据。',
         tone: 'green'
       }
     ]

@@ -106,6 +106,7 @@ const durationLabel = (sec) => {
 
 const templateById = computed(() => Object.fromEntries(templates.value.map((t) => [t.id, t])))
 const productCycles = (product) => templateById.value[product.templateId]?.cycles || []
+const productTradeLimitUnlimited = (product) => templateById.value[product.templateId]?.tradeLimitUnlimited === true
 
 const showContractModal = ref(false)
 const editingContractId = ref('')
@@ -129,6 +130,7 @@ const contractForm = reactive({
 
 const selectedTemplate = computed(() => templates.value.find((t) => t.id === contractForm.templateId) || null)
 const selectedTemplateCycles = computed(() => selectedTemplate.value?.cycles || [])
+const selectedTemplateTradeLimitUnlimited = computed(() => selectedTemplate.value?.tradeLimitUnlimited === true)
 
 const openCreateContract = () => {
   editingContractId.value = ''
@@ -360,9 +362,14 @@ onMounted(() => {
               <p class="mt-2 text-sm text-slate-600">
                 交易对: <span class="text-slate-900 font-medium">{{ item.pair }}</span>
                 <span class="mx-3 text-slate-200">|</span>
-                买入范围: <span class="text-slate-900 font-medium">{{ item.buyRange }}</span>
-                <span class="mx-3 text-slate-200">|</span>
-                最大持仓: <span class="text-slate-900 font-medium">{{ item.maxPosition }}</span>
+                <template v-if="productTradeLimitUnlimited(item)">
+                  交易限制: <span class="font-medium text-blue-600">不限制</span>
+                </template>
+                <template v-else>
+                  买入范围: <span class="text-slate-900 font-medium">{{ item.buyRange }}</span>
+                  <span class="mx-3 text-slate-200">|</span>
+                  最大持仓: <span class="text-slate-900 font-medium">{{ item.maxPosition }}</span>
+                </template>
               </p>
               <div class="mt-3 flex flex-wrap items-center gap-2">
                 <span class="text-xs text-slate-400">可选周期:</span>
@@ -389,7 +396,11 @@ onMounted(() => {
           <div class="grid gap-0 md:grid-cols-2 bg-slate-50/30">
             <div class="border-b border-slate-100 p-4 md:border-b-0 md:border-r">
               <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">交易限制</p>
-              <ul class="mt-3 grid grid-cols-3 gap-4 text-sm">
+              <div v-if="productTradeLimitUnlimited(item)" class="mt-3 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-sm text-blue-700">
+                <p class="font-medium">不限制</p>
+                <p class="mt-1 text-xs text-blue-600">由周期模版统一声明为不限额。</p>
+              </div>
+              <ul v-else class="mt-3 grid grid-cols-3 gap-4 text-sm">
                 <li class="flex flex-col gap-1">
                   <span class="text-slate-500 text-xs">最低买入</span>
                   <span class="text-slate-900 font-semibold font-mono">{{ Number(item.minBuy).toLocaleString() }}</span>
@@ -603,30 +614,41 @@ onMounted(() => {
                 </article>
               </div>
 
-              <div v-if="contractTab === DELIVERY_CONTRACT_TAB.LIMIT" class="grid gap-6 md:grid-cols-3">
-                <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900">最低买入额 (USDT)</label>
-                  <input
-                    v-model="contractForm.minBuy"
-                    type="number"
-                    class="ant-input font-mono"
-                  />
-                </div>
-                <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900">最高买入额 (USDT)</label>
-                  <input
-                    v-model="contractForm.maxBuy"
-                    type="number"
-                    class="ant-input font-mono"
-                  />
-                </div>
-                <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900">最大持仓额 (USDT)</label>
-                  <input
-                    v-model="contractForm.maxHold"
-                    type="number"
-                    class="ant-input font-mono"
-                  />
+              <div v-if="contractTab === DELIVERY_CONTRACT_TAB.LIMIT" class="space-y-6">
+                <article
+                  v-if="selectedTemplateTradeLimitUnlimited"
+                  class="rounded-lg border border-blue-100 bg-blue-50 p-4"
+                >
+                  <h3 class="text-sm font-semibold text-blue-700">不限交易额度已经打开</h3>
+                  <p class="mt-1 text-xs leading-5 text-blue-600">
+                    如需调整，在周期模版中进行处理。
+                  </p>
+                </article>
+                <div v-else class="grid gap-6 md:grid-cols-3">
+                  <div class="space-y-1.5">
+                    <label class="text-sm text-slate-900">最低买入额 (USDT)</label>
+                    <input
+                      v-model="contractForm.minBuy"
+                      type="number"
+                      class="ant-input font-mono"
+                    />
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="text-sm text-slate-900">最高买入额 (USDT)</label>
+                    <input
+                      v-model="contractForm.maxBuy"
+                      type="number"
+                      class="ant-input font-mono"
+                    />
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="text-sm text-slate-900">最大持仓额 (USDT)</label>
+                    <input
+                      v-model="contractForm.maxHold"
+                      type="number"
+                      class="ant-input font-mono"
+                    />
+                  </div>
                 </div>
               </div>
 

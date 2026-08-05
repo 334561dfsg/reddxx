@@ -21,6 +21,7 @@ import UserCreditReviewDrawer from '../../../admin/components/user/UserCreditRev
 import UserCreditReviewDecisionDialog from '../../../admin/components/user/UserCreditReviewDecisionDialog.vue'
 import UserMembershipMutationDialog from '../../../admin/components/user/UserMembershipMutationDialog.vue'
 import UserRechargeSummaryDrawer from '../../../admin/components/user/UserRechargeSummaryDrawer.vue'
+import UserListSearchField from '../../../admin/components/user/UserListSearchField.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -56,7 +57,13 @@ import {
 } from '../../../admin/repositories/userCreditMembershipRepository.js'
 
 // 搜索关键词
-const searchKeyword = ref('')
+const userIdKeyword = ref('')
+const phoneKeyword = ref('')
+const emailKeyword = ref('')
+const walletAddressKeyword = ref('')
+const hasSearchFilters = computed(() =>
+  [userIdKeyword, phoneKeyword, emailKeyword, walletAddressKeyword].some((item) => item.value.trim())
+)
 
 // 用户数据
 const users = ref([])
@@ -78,7 +85,10 @@ const fetchUsers = async () => {
     const { list, total } = await getUsers({
       page: pagination.currentPage,
       pageSize: pagination.pageSize,
-      searchKeyword: searchKeyword.value
+      userIdKeyword: userIdKeyword.value,
+      phoneKeyword: phoneKeyword.value,
+      emailKeyword: emailKeyword.value,
+      walletAddressKeyword: walletAddressKeyword.value
     })
     users.value = list
     pagination.total = total
@@ -91,8 +101,8 @@ const fetchUsers = async () => {
 }
 
 // 监听搜索和分页变化
-watch([searchKeyword, () => pagination.currentPage], () => {
-  if (searchKeyword.value && pagination.currentPage !== 1) {
+watch([userIdKeyword, phoneKeyword, emailKeyword, walletAddressKeyword, () => pagination.currentPage], () => {
+  if (hasSearchFilters.value && pagination.currentPage !== 1) {
     pagination.currentPage = 1
   } else {
     fetchUsers()
@@ -845,34 +855,6 @@ const mfaDescription = computed(() => pendingMfaAction.value?.type === 'cancel'
   ? '取消六个模块的生效规则属于敏感操作，请输入 MFA 验证码'
   : '长期生效或覆盖统一控制属于敏感操作，请输入 MFA 验证码')
 
-// 统计信息
-const statistics = computed(() => {
-  const total = usersList.length
-  const vip = usersList.filter(u => u.isVip).length
-  const agents = usersList.filter(u => u.role === USER_ROLE.AGENT).length
-  
-  return [
-    {
-      label: '总用户数',
-      value: total.toLocaleString(),
-      trend: '+8.2% 较上月',
-      good: true
-    },
-    {
-      label: 'VIP用户',
-      value: vip.toLocaleString(),
-      trend: '+12 本月新增',
-      good: true
-    },
-    {
-      label: '代理用户',
-      value: agents.toLocaleString(),
-      trend: `${((agents / total) * 100).toFixed(1)}% 占比`,
-      good: true
-    }
-  ]
-})
-
 // 状态配置
 const statusConfig = {
   [USER_STATUS.ACTIVE]: { text: '活跃', class: 'bg-emerald-100 text-emerald-700' },
@@ -937,37 +919,41 @@ const clearDetailDrawer = () => {
     <!-- 页面标题 -->
     <div>
       <h1 class="text-2xl font-bold text-slate-900">用户管理</h1>
-      <p class="text-sm text-slate-500 mt-1">管理系统用户、查看用户信息和统计数据</p>
-    </div>
-
-    <!-- 统计卡片 -->
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <article
-        v-for="stat in statistics"
-        :key="stat.label"
-        class="rounded-xl border border-slate-200 bg-white p-4"
-      >
-        <p class="text-sm text-slate-500">{{ stat.label }}</p>
-        <p class="mt-2 text-2xl font-semibold text-slate-900">{{ stat.value }}</p>
-        <p class="mt-2 text-sm font-medium" :class="stat.good ? 'text-emerald-600' : 'text-rose-600'">
-          {{ stat.trend }}
-        </p>
-      </article>
+      <p class="text-sm text-slate-500 mt-1">管理系统用户、查看用户信息和操作记录</p>
     </div>
 
     <!-- 筛选和搜索区域 -->
     <div class="rounded-xl border border-slate-200 bg-white p-5">
       <!-- 搜索框 -->
-      <div class="relative">
-        <input
-          v-model="searchKeyword"
-          type="text"
-          placeholder="搜索用户名、邮箱、手机号或ID..."
-          class="w-full px-4 py-2 pl-10 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <UserListSearchField
+          v-model="userIdKeyword"
+          label="用户 ID"
+          placeholder="搜索用户 ID"
+          icon-path="M15 7a3 3 0 11-6 0 3 3 0 016 0zM5 19a7 7 0 0114 0"
         />
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
+        <UserListSearchField
+          v-model="phoneKeyword"
+          label="手机号"
+          placeholder="搜索手机号"
+          input-mode="tel"
+          autocomplete="tel"
+          icon-path="M3 5.5A2.5 2.5 0 015.5 3h1A1.5 1.5 0 018 4.2l.6 2.4a1.5 1.5 0 01-.4 1.4l-.7.7a11 11 0 005.8 5.8l.7-.7a1.5 1.5 0 011.4-.4l2.4.6a1.5 1.5 0 011.2 1.5v1A2.5 2.5 0 0116.5 19h-1C8.6 19 3 13.4 3 6.5v-1z"
+        />
+        <UserListSearchField
+          v-model="emailKeyword"
+          label="邮箱"
+          placeholder="搜索邮箱"
+          input-mode="email"
+          autocomplete="email"
+          icon-path="M4 6h16v12H4V6zm0 0l8 7 8-7"
+        />
+        <UserListSearchField
+          v-model="walletAddressKeyword"
+          label="钱包地址"
+          placeholder="搜索钱包地址"
+          icon-path="M17 9V7a5 5 0 00-10 0v2M5 9h14v10H5V9z"
+        />
       </div>
     </div>
 
@@ -1154,10 +1140,10 @@ const clearDetailDrawer = () => {
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
       </svg>
       <h3 class="mt-4 text-lg font-semibold text-slate-900">未找到用户</h3>
-      <p class="mt-2 text-sm text-slate-500">请尝试调整搜索关键词</p>
+      <p class="mt-2 text-sm text-slate-500">请尝试调整用户 ID、手机号、邮箱或钱包地址</p>
       <button
-        v-if="searchKeyword"
-        @click="searchKeyword = ''"
+        v-if="hasSearchFilters"
+        @click="userIdKeyword = ''; phoneKeyword = ''; emailKeyword = ''; walletAddressKeyword = ''"
         class="mt-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
       >
         清空搜索

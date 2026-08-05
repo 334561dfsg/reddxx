@@ -33,14 +33,17 @@ test('platform report renders asset metrics as currency rows with metric columns
   assert.match(source, /后台提现/)
 })
 
-test('platform report keeps user account balance cards in all period tabs', () => {
+test('platform report only shows user account balance cards in total overview', () => {
   const source = read('../src/pages/admin/system/PlatformReportPage.vue')
 
   assert.match(source, /平台用户账上资金-总/)
-  assert.match(source, /平台用户账上资金-本月/)
-  assert.match(source, /平台用户账上资金-今日/)
-  assert.match(source, /本月展示当前自然月维度的数据，包括平台用户账上资金/)
-  assert.match(source, /今日展示当天维度的数据，包括平台用户账上资金/)
+  assert.doesNotMatch(source, /平台用户账上资金-本月/)
+  assert.doesNotMatch(source, /平台用户账上资金-今日/)
+  assert.match(source, /总览展示平台累计数据，包括平台用户账上资金、用户数据、充值数据、提现数据。/)
+  assert.match(source, /本月展示当前自然月维度的数据，包括用户数据、充值数据、提现数据。/)
+  assert.match(source, /今日展示当天维度的数据，包括今日新增用户、待审核充值、待审核提现、充值数据、提现数据。/)
+  assert.doesNotMatch(source, /本月展示当前自然月维度的数据，包括平台用户账上资金/)
+  assert.doesNotMatch(source, /今日展示当天维度的数据，包括平台用户账上资金/)
 })
 
 test('platform report exposes month and day period filters', () => {
