@@ -7,27 +7,27 @@ export const publicDepositAddressMock = [
   {
     id: 'pda_0001', coin: 'USDT', network: 'TRC20',
     address: 'TXj6P3QhY9rK7aM2wV8sN4cD1fG5uL0bEe',
-    enabled: true, remark: 'TRON 网络默认收款地址', operator: 'admin_01', updatedAt: '2026-07-20 10:32:18'
+    enabled: true, sortOrder: 100, remark: 'TRON 网络默认收款地址', operator: 'admin_01', updatedAt: '2026-07-20 10:32:18'
   },
   {
     id: 'pda_0002', coin: 'USDT', network: 'ERC20',
     address: '0x7B4d8aE91F3cC5bA26e10d4E8a97fA72B19D63c1',
-    enabled: true, remark: 'Ethereum 网络默认收款地址', operator: 'admin_02', updatedAt: '2026-07-19 16:08:42'
+    enabled: true, sortOrder: 90, remark: 'Ethereum 网络默认收款地址', operator: 'admin_02', updatedAt: '2026-07-19 16:08:42'
   },
   {
     id: 'pda_0003', coin: 'USDC', network: 'ERC20',
     address: '0x4dA3F1e90aB6c27853D4f2C38d90aA4Ef8125Bc7',
-    enabled: true, remark: 'USDC 独立收款地址', operator: 'admin_02', updatedAt: '2026-07-18 09:21:06'
+    enabled: true, sortOrder: 80, remark: 'USDC 独立收款地址', operator: 'admin_02', updatedAt: '2026-07-18 09:21:06'
   },
   {
     id: 'pda_0004', coin: 'BTC', network: 'Bitcoin',
     address: 'bc1q9m0w7j6s4l2f8x3a5d1k7n6e2c9p4h8u3v5z0r',
-    enabled: true, remark: 'BTC 主网充值', operator: 'admin_01', updatedAt: '2026-07-17 14:55:31'
+    enabled: true, sortOrder: 70, remark: 'BTC 主网充值', operator: 'admin_01', updatedAt: '2026-07-17 14:55:31'
   },
   {
     id: 'pda_0005', coin: 'USDT', network: 'TRC20',
     address: 'TOld8uV2nP5yQ1cK6sM9dR4xL7aE3gF0wH',
-    enabled: false, remark: '历史公共地址', operator: 'admin_03', updatedAt: '2026-06-28 11:12:09'
+    enabled: false, sortOrder: 10, remark: '历史公共地址', operator: 'admin_03', updatedAt: '2026-06-28 11:12:09'
   }
 ]
 
@@ -100,7 +100,27 @@ export const publicDepositAddressLogMock = [
   }
 ]
 
-const comparableFields = ['coin', 'network', 'address', 'enabled', 'remark']
+const comparableFields = ['coin', 'network', 'address', 'enabled', 'sortOrder', 'remark']
+
+function normalizeSortOrder(value) {
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed)) return 0
+  return Math.max(0, Math.trunc(parsed))
+}
+
+function withDefaults(row) {
+  return {
+    sortOrder: 0,
+    ...row,
+    sortOrder: normalizeSortOrder(row?.sortOrder)
+  }
+}
+
+function sortPublicDepositAddresses(a, b) {
+  return normalizeSortOrder(b.sortOrder) - normalizeSortOrder(a.sortOrder)
+    || String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''))
+    || String(a.id || '').localeCompare(String(b.id || ''))
+}
 
 function logSnapshot(row) {
   if (!row) return null
@@ -116,7 +136,7 @@ function isStatusOnlyChange(before, after) {
 export function createPublicDepositAddressRepository(initialRows = [], initialLogs = []) {
   let sequence = initialRows.length
   let logSequence = initialLogs.length
-  let rows = clone(initialRows)
+  let rows = clone(initialRows).map(withDefaults)
   let logs = clone(initialLogs)
 
   function appendLog(addressId, action, before, after, source) {
@@ -134,7 +154,7 @@ export function createPublicDepositAddressRepository(initialRows = [], initialLo
 
   return {
     list() {
-      return clone(rows)
+      return clone(rows).sort(sortPublicDepositAddresses)
     },
 
     listLogs(addressId) {
@@ -144,7 +164,7 @@ export function createPublicDepositAddressRepository(initialRows = [], initialLo
     },
 
     save(payload) {
-      const next = clone(payload)
+      const next = withDefaults(clone(payload))
       let currentIndex = next.id ? rows.findIndex((row) => row.id === next.id) : -1
       const current = currentIndex >= 0 ? clone(rows[currentIndex]) : null
       const addressChanged = currentIndex >= 0 && rows[currentIndex].address !== next.address

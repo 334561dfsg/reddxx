@@ -36,7 +36,7 @@ let copiedTimer = null
 const LOG_PAGE_SIZE = 5
 
 const LOG_FIELD_LABELS = {
-  coin: '币种', network: '网络', address: '收款地址', enabled: '启用状态', remark: '备注'
+  coin: '币种', network: '网络', address: '收款地址', enabled: '启用状态', sortOrder: '排序', remark: '备注'
 }
 
 const LOG_ACTION_LABELS = {
@@ -56,6 +56,7 @@ const emptyForm = () => ({
   network: 'TRC20',
   address: '',
   enabled: true,
+  sortOrder: 0,
   remark: ''
 })
 
@@ -117,7 +118,13 @@ const {
 })
 
 function refreshRows() {
-  rows.value = repository.list().sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')))
+  rows.value = repository.list()
+}
+
+function normalizeSortOrder(value) {
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed)) return null
+  return Math.max(0, Math.trunc(parsed))
 }
 
 function nowText() {
@@ -138,6 +145,7 @@ function openEdit(row) {
     network: row.network,
     address: row.address,
     enabled: row.enabled,
+    sortOrder: row.sortOrder ?? 0,
     remark: row.remark || ''
   })
   editingAddress.value = row.address
@@ -203,8 +211,13 @@ async function handleMfaVerify() {
 
 function saveAddress() {
   const address = form.address.trim()
+  const sortOrder = normalizeSortOrder(form.sortOrder)
   if (!form.coin || !form.network || !address) {
     formError.value = '请完整填写币种、网络和收款地址。'
+    return
+  }
+  if (sortOrder === null) {
+    formError.value = '排序必须填写数字，数值越大展示越靠前。'
     return
   }
 
@@ -216,6 +229,7 @@ function saveAddress() {
       network: form.network,
       address,
       enabled: form.enabled,
+      sortOrder,
       remark: form.remark.trim(),
       operator: 'admin_current',
       updatedAt: nowText()
@@ -314,12 +328,13 @@ async function copyAddress(row) {
       </div>
 
       <div class="overflow-x-auto">
-        <table class="min-w-[920px] w-full text-left text-sm">
+        <table class="min-w-[980px] w-full text-left text-sm">
           <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
             <tr>
               <th class="px-5 py-3">币种 / 网络</th>
               <th class="px-5 py-3">收款地址</th>
               <th class="px-5 py-3">状态</th>
+              <th class="px-5 py-3">排序</th>
               <th class="px-5 py-3">更新信息</th>
               <th class="px-5 py-3 text-right">操作</th>
             </tr>
@@ -347,6 +362,9 @@ async function copyAddress(row) {
                   {{ row.enabled ? '已启用' : '已停用' }}
                 </span>
               </td>
+              <td class="px-5 py-4 text-sm font-semibold text-slate-700">
+                {{ row.sortOrder ?? 0 }}
+              </td>
               <td class="px-5 py-4 text-xs text-slate-500">
                 <p>{{ row.updatedAt || '—' }}</p>
                 <p class="mt-1">{{ row.operator || '—' }}</p>
@@ -362,7 +380,7 @@ async function copyAddress(row) {
               </td>
             </tr>
             <tr v-if="filteredRows.length === 0">
-              <td colspan="5" class="px-5 py-14 text-center text-sm text-slate-400">没有匹配的地址配置</td>
+              <td colspan="6" class="px-5 py-14 text-center text-sm text-slate-400">没有匹配的地址配置</td>
             </tr>
           </tbody>
         </table>
@@ -421,6 +439,20 @@ async function copyAddress(row) {
             <span>收款地址</span>
             <input v-model="form.address" type="text" spellcheck="false" placeholder="请输入完整链上地址" class="h-11 w-full rounded-lg border border-slate-200 px-3 font-mono text-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100" />
             <span v-if="form.id && editingAddress !== form.address" class="block text-xs font-normal text-amber-600">检测到地址变更：保存后将新建记录并停用原地址。</span>
+          </label>
+
+          <label class="block space-y-2 text-sm font-medium text-slate-700">
+            <span>排序</span>
+            <input
+              v-model="form.sortOrder"
+              type="number"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              placeholder="数值越大展示越靠前"
+              class="h-11 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+            />
+            <span class="block text-xs font-normal text-slate-500">列表按排序值从大到小展示，相同排序按更新时间降序。</span>
           </label>
 
           <label class="block space-y-2 text-sm font-medium text-slate-700">

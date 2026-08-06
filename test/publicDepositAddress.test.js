@@ -36,6 +36,28 @@ test('provides enough modification-log mock records to exercise pagination', () 
   assert.ok(Math.max(...Object.values(counts)) > 5)
 })
 
+test('public deposit address records are listed by sort order descending', () => {
+  const repository = publicDepositAddressDomain.createPublicDepositAddressRepository([
+    { id: 'low', coin: 'USDT', network: 'TRC20', address: 'TLow', enabled: true, sortOrder: 10 },
+    { id: 'high', coin: 'USDC', network: 'ERC20', address: '0xHigh', enabled: true, sortOrder: 90 },
+    { id: 'middle', coin: 'BTC', network: 'Bitcoin', address: 'bc1middle', enabled: true, sortOrder: 50 }
+  ])
+
+  assert.deepEqual(repository.list().map((row) => row.id), ['high', 'middle', 'low'])
+
+  repository.save({
+    id: 'low',
+    coin: 'USDT',
+    network: 'TRC20',
+    address: 'TLow',
+    enabled: true,
+    sortOrder: 120,
+    updatedAt: '2026-07-21 12:00:00'
+  })
+
+  assert.deepEqual(repository.list().map((row) => row.id), ['low', 'high', 'middle'])
+})
+
 test('provides the public deposit address management page', () => {
   assert.equal(
     existsSync(new URL('../src/pages/admin/assets/AssetsPublicDepositAddressPage.vue', import.meta.url)),
@@ -60,6 +82,19 @@ test('page exposes filtering, address fields and history-safe actions without ob
   assert.doesNotMatch(source, /form\.chainWide/)
   assert.match(source, /停用后仍保留历史记录/)
   assert.match(source, /createPublicDepositAddressRepository/)
+})
+
+test('page exposes editable sort order for public deposit addresses', () => {
+  const source = readFileSync(
+    new URL('../src/pages/admin/assets/AssetsPublicDepositAddressPage.vue', import.meta.url),
+    'utf8'
+  )
+
+  assert.match(source, /排序/)
+  assert.match(source, /form\.sortOrder/)
+  assert.match(source, /type="number"/)
+  assert.match(source, /const sortOrder = normalizeSortOrder\(form\.sortOrder\)/)
+  assert.match(source, /sortOrder,/)
 })
 
 test('public deposit address writes are gated by the shared MFA verification modal', () => {
@@ -155,8 +190,8 @@ test('records address-scoped modification logs with before and after snapshots',
   assert.equal(logs[0].action, 'edit')
   assert.equal(logs[0].operator, 'admin_current')
   assert.equal('mfaVerified' in logs[0], false)
-  assert.deepEqual(Object.keys(logs[0].before).sort(), ['address', 'coin', 'enabled', 'network', 'remark'].sort())
-  assert.deepEqual(Object.keys(logs[0].after).sort(), ['address', 'coin', 'enabled', 'network', 'remark'].sort())
+  assert.deepEqual(Object.keys(logs[0].before).sort(), ['address', 'coin', 'enabled', 'network', 'remark', 'sortOrder'].sort())
+  assert.deepEqual(Object.keys(logs[0].after).sort(), ['address', 'coin', 'enabled', 'network', 'remark', 'sortOrder'].sort())
   assert.equal(logs[0].before.remark, '旧备注')
   assert.equal(logs[0].after.remark, '新备注')
 })
