@@ -1,5 +1,6 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
+import PanelSingleSelect from '../../../admin/components/form/PanelSingleSelect.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import { useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
 import {
@@ -61,6 +62,18 @@ const emptyForm = () => ({
 })
 
 const form = reactive(emptyForm())
+
+const coinOptions = computed(() => PUBLIC_DEPOSIT_COINS.map((coin) => ({
+  value: coin,
+  label: coin,
+  searchText: coin
+})))
+
+const networkOptions = computed(() => PUBLIC_DEPOSIT_NETWORKS.map((network) => ({
+  value: network,
+  label: network,
+  searchText: network
+})))
 
 const filteredRows = computed(() => {
   const search = keyword.value.trim().toLowerCase()
@@ -421,18 +434,25 @@ async function copyAddress(row) {
         <form class="flex min-h-0 flex-1 flex-col" @submit.prevent="saveAddress">
           <div class="min-h-0 flex-1 space-y-5 overflow-y-auto p-6">
           <div class="grid gap-4 sm:grid-cols-2">
-            <label class="space-y-2 text-sm font-medium text-slate-700">
-              <span>币种</span>
-              <select ref="addressInitialFocusRef" v-model="form.coin" class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 outline-none focus:border-slate-400">
-                <option v-for="coin in PUBLIC_DEPOSIT_COINS" :key="coin" :value="coin">{{ coin }}</option>
-              </select>
-            </label>
-            <label class="space-y-2 text-sm font-medium text-slate-700">
-              <span>网络</span>
-              <select v-model="form.network" class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 outline-none focus:border-slate-400">
-                <option v-for="network in PUBLIC_DEPOSIT_NETWORKS" :key="network" :value="network">{{ network }}</option>
-              </select>
-            </label>
+            <PanelSingleSelect
+              ref="addressInitialFocusRef"
+              v-model="form.coin"
+              label="币种"
+              search-label="搜索币种"
+              placeholder="请选择币种"
+              id-base="public-deposit-address-coin"
+              required
+              :options="coinOptions"
+            />
+            <PanelSingleSelect
+              v-model="form.network"
+              label="网络"
+              search-label="搜索网络"
+              placeholder="请选择网络"
+              id-base="public-deposit-address-network"
+              required
+              :options="networkOptions"
+            />
           </div>
 
           <label class="block space-y-2 text-sm font-medium text-slate-700">

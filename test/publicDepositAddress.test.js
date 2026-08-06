@@ -97,6 +97,21 @@ test('page exposes editable sort order for public deposit addresses', () => {
   assert.match(source, /sortOrder,/)
 })
 
+test('address editor uses custom single-select controls for coin and network fields', () => {
+  const source = readFileSync(
+    new URL('../src/pages/admin/assets/AssetsPublicDepositAddressPage.vue', import.meta.url),
+    'utf8'
+  )
+
+  assert.match(source, /import PanelSingleSelect from/)
+  assert.match(source, /const coinOptions = computed/)
+  assert.match(source, /const networkOptions = computed/)
+  assert.match(source, /<PanelSingleSelect[\s\S]*v-model="form\.coin"[\s\S]*label="币种"/)
+  assert.match(source, /<PanelSingleSelect[\s\S]*v-model="form\.network"[\s\S]*label="网络"/)
+  assert.doesNotMatch(source, /<select[^>]*ref="addressInitialFocusRef"/)
+  assert.doesNotMatch(source, /<select[^>]*v-model="form\.network"/)
+})
+
 test('public deposit address writes are gated by the shared MFA verification modal', () => {
   const source = readFileSync(
     new URL('../src/pages/admin/assets/AssetsPublicDepositAddressPage.vue', import.meta.url),
