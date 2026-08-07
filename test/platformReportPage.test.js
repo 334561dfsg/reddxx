@@ -15,7 +15,10 @@ test('platform report names recharge metrics as user and customer-service deposi
 
   assert.match(source, /label: '用户入金'/)
   assert.match(source, /label: '客服入金'/)
-  assert.match(source, /每个可提现币种一行，分别展示用户入金、客服入金、到钱包金额/)
+  assert.match(source, /每个可提现币种一行，分别展示用户入金、客服入金/)
+  assert.doesNotMatch(source, /label: '到钱包金额'/)
+  assert.doesNotMatch(source, /walletAmount/)
+  assert.doesNotMatch(source, /到钱包金额/)
   assert.doesNotMatch(source, /充值-充值/)
   assert.doesNotMatch(source, /充值-彩金/)
   assert.doesNotMatch(source, /彩金/)

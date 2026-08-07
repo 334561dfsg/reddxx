@@ -70,8 +70,7 @@ const reportAssets = [
 
 const rechargeColumns = [
   { key: 'userDeposit', label: '用户入金' },
-  { key: 'serviceDeposit', label: '客服入金' },
-  { key: 'walletAmount', label: '到钱包金额' }
+  { key: 'serviceDeposit', label: '客服入金' }
 ]
 
 const withdrawColumns = [
@@ -90,7 +89,6 @@ const buildZeroRechargeRows = (overrides = {}) =>
     buildAssetRow(asset, {
       userDeposit: '0',
       serviceDeposit: '0',
-      walletAmount: '0',
       ...(overrides[asset] || {})
     })
   )
@@ -243,7 +241,7 @@ const dataRuleSections = [
       {
         label: '充值数据',
         badge: '充值',
-        value: '每个可提现币种一行，分别展示用户入金、客服入金、到钱包金额；到钱包金额按该币种最终进入用户钱包的金额展示。',
+        value: '每个可提现币种一行，分别展示用户入金、客服入金。',
         tone: 'blue'
       },
       {
