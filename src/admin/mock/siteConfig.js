@@ -268,6 +268,45 @@ const DEFAULT_SMS_CHANNELS_DEMO = normalizeSmsChannelsList(
   undefined
 )
 
+export const DEFAULT_VOICE_ALERT_EVENTS = [
+  { key: 'customerService', label: '客服提示音' },
+  { key: 'deposit', label: '充值' },
+  { key: 'withdraw', label: '提现' },
+  { key: 'depositSuccess', label: '充值成功' },
+  { key: 'mtNewTradeOrder', label: 'MT新交易订单（外汇，贵金属）' },
+  { key: 'mtNewPosition', label: 'MT 新增持仓（外汇，贵金属）' },
+  { key: 'mtClosePosition', label: 'MT 平仓（外汇，贵金属）' },
+  { key: 'mtUserLogin', label: 'MT 用户登陆（外汇，贵金属）' },
+  { key: 'perpetualNewTradeOrder', label: '永续合约新交易订单' },
+  { key: 'deliveryNewTradeOrder', label: '交割合约新交易订单' },
+  { key: 'verification', label: '认证' },
+  { key: 'lendingApplication', label: '借贷申请' },
+  { key: 'lendingRepayment', label: '借贷还款' }
+]
+
+const DEFAULT_VOICE_ALERTS = {
+  enabled: true,
+  events: Object.fromEntries(DEFAULT_VOICE_ALERT_EVENTS.map((item) => [item.key, true]))
+}
+
+export function normalizeVoiceAlerts(raw) {
+  const base = {
+    enabled: DEFAULT_VOICE_ALERTS.enabled,
+    events: { ...DEFAULT_VOICE_ALERTS.events }
+  }
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return base
+
+  return {
+    enabled: typeof raw.enabled === 'boolean' ? raw.enabled : base.enabled,
+    events: Object.fromEntries(
+      DEFAULT_VOICE_ALERT_EVENTS.map((item) => [
+        item.key,
+        typeof raw.events?.[item.key] === 'boolean' ? raw.events[item.key] : base.events[item.key]
+      ])
+    )
+  }
+}
+
 export const SITE_CONFIG_STORAGE_KEY = 'fex-admin-site-config'
 
 const STORAGE_KEY = SITE_CONFIG_STORAGE_KEY
@@ -941,6 +980,8 @@ export const DEFAULT_SITE_CONFIG = {
   },
   /** 短信通道列表（同一国际区号可配置多条；演示存本地，生产应由后端保管密钥） */
   smsChannels: DEFAULT_SMS_CHANNELS_DEMO,
+  /** 管理台语音提醒配置 */
+  voiceAlerts: normalizeVoiceAlerts(),
   /** 社媒链接（前台首页页脚展示启用项） */
   socialLinks: DEFAULT_SOCIAL_LINKS_DEMO,
   /** 前台公开内容页：关于、资质、白皮书 */
@@ -1109,6 +1150,7 @@ export function normalizeSiteConfig(raw) {
     merged.smsChannelsByDial
   )
   if ('smsChannelsByDial' in merged) delete merged.smsChannelsByDial
+  merged.voiceAlerts = normalizeVoiceAlerts(merged.voiceAlerts)
   merged.socialLinks = normalizeSocialLinksList(merged.socialLinks)
   merged.contentPages = normalizeContentPages(merged.contentPages)
   const legacy = merged.logoUrl
@@ -1156,6 +1198,8 @@ export const siteConfigApi = {
           config.socialLinks !== undefined ? normalizeSocialLinksList(config.socialLinks) : prev.socialLinks
         const contentPagesPayload =
           config.contentPages !== undefined ? normalizeContentPages(config.contentPages) : prev.contentPages
+        const voiceAlertsPayload =
+          config.voiceAlerts !== undefined ? normalizeVoiceAlerts(config.voiceAlerts) : prev.voiceAlerts
         memory = normalizeSiteConfig({
           ...DEFAULT_SITE_CONFIG,
           siteName: String(config.siteName ?? '').trim() || DEFAULT_SITE_CONFIG.siteName,
@@ -1208,6 +1252,7 @@ export const siteConfigApi = {
           smtpAccounts: smtpAccountsPayload,
           i18n: normalizeI18n(config.i18n !== undefined ? config.i18n : prev.i18n, normalizeCustomLocales(config.customLocales)),
           smsChannels: smsChannelsPayload,
+          voiceAlerts: voiceAlertsPayload,
           socialLinks: socialLinksPayload,
           contentPages: contentPagesPayload
         })

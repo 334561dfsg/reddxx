@@ -673,6 +673,15 @@ export const consoleRoutes = [
     }
   },
   {
+    path: 'system/voice-alerts',
+    name: 'system-voice-alerts',
+    component: () => import('../../pages/admin/system/VoiceAlertSettingsPage.vue'),
+    meta: {
+      title: '系统设置 / 语音提醒',
+      desc: '配置后台提示音总开关与各业务事件声音开关。'
+    }
+  },
+  {
     path: 'system/locale-settings',
     name: 'system-locale-settings',
     component: () => import('../../pages/admin/system/LocaleSettingsPage.vue'),
