@@ -23,7 +23,8 @@ const statusFilter = ref('')
 const sourceFilter = ref('')
 const addOpen = ref(false)
 const addUserId = ref('')
-const addUserTouched = ref(false)
+const addSearchAttempted = ref(false)
+const addSearchResult = ref(null)
 const addedUserIds = ref([])
 const modalOpen = ref(false)
 const cancelOpen = ref(false)
@@ -82,14 +83,13 @@ const userMatchesAddQuery = (user, keyword) => {
   const phone = String(user?.phone ?? '')
   return id.toLowerCase() === keyword || id.replace(/^user_/, '').toLowerCase() === keyword || email === keyword || phone === keyword
 }
-const matchedAddUser = computed(() => usersList.find((user) => userMatchesAddQuery(user, normalizedAddUserKeyword.value)) || null)
-const addUserEffectiveId = computed(() => userIdOf(matchedAddUser.value))
+const addUserEffectiveId = computed(() => userIdOf(addSearchResult.value))
 const listedUserIds = computed(() => new Set([
   ...Object.keys(userControlState.value.rules),
   ...addedUserIds.value
 ]))
 const addUserAlreadyListed = computed(() => addUserEffectiveId.value && listedUserIds.value.has(addUserEffectiveId.value))
-const canConfirmAddUser = computed(() => addDialogPhase.value === 'open' && Boolean(matchedAddUser.value))
+const canConfirmAddUser = computed(() => addDialogPhase.value === 'open' && Boolean(normalizedAddUserKeyword.value))
 
 const {
   rendered: addDialogRendered,
@@ -191,15 +191,25 @@ const nextSequence = () => String(userControlState.value.operationLogs.length + 
 const openAddUser = () => {
   if (addDialogPhase.value !== 'closed') return
   addUserId.value = ''
-  addUserTouched.value = false
+  addSearchAttempted.value = false
+  addSearchResult.value = null
   addOpen.value = true
 }
 
 const closeAddUser = createDialogCloseAction(requestAddDialogClose)
 
+const clearAddSearchResult = () => {
+  addSearchAttempted.value = false
+  addSearchResult.value = null
+}
+
 const confirmAddUser = () => {
-  addUserTouched.value = true
   if (!canConfirmAddUser.value) return
+
+  addSearchAttempted.value = true
+  const matchedUser = usersList.find((user) => userMatchesAddQuery(user, normalizedAddUserKeyword.value)) || null
+  addSearchResult.value = matchedUser
+  if (!matchedUser) return
 
   const userId = addUserEffectiveId.value
   if (!addUserAlreadyListed.value) {
@@ -215,7 +225,8 @@ const confirmAddUser = () => {
 const handleAddDialogAfterLeave = async () => {
   if (!await onAddDialogAfterLeave()) return
   addUserId.value = ''
-  addUserTouched.value = false
+  addSearchAttempted.value = false
+  addSearchResult.value = null
 }
 
 const openSetting = (user) => {
@@ -436,28 +447,25 @@ const resetFilters = () => {
                     type="search"
                     autocomplete="off"
                     placeholder="输入 UID、邮箱或手机号"
-                    :aria-invalid="addUserTouched && (!normalizedAddUserKeyword || !matchedAddUser) ? 'true' : 'false'"
+                    :aria-invalid="addSearchAttempted && normalizedAddUserKeyword && !addSearchResult ? 'true' : 'false'"
                     aria-describedby="module-user-control-add-help"
                     class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                    @blur="addUserTouched = true"
+                    @input="clearAddSearchResult"
                     @keydown.enter.prevent="confirmAddUser"
                   />
                 </label>
                 <p id="module-user-control-add-help" class="text-xs leading-5 text-slate-500">
                   命中用户后点击确定会把用户加入当前列表并定位到该行，不会创建点控规则。
                 </p>
-                <p v-if="addUserTouched && !normalizedAddUserKeyword" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
-                  请先输入 UID、邮箱或手机号。
-                </p>
-                <p v-else-if="addUserTouched && !matchedAddUser" class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                <p v-if="addSearchAttempted && normalizedAddUserKeyword && !addSearchResult" class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
                   没有搜索到匹配用户，请检查输入内容。
                 </p>
-                <div v-else-if="matchedAddUser" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
+                <div v-else-if="addSearchResult" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
                   <p class="text-sm font-medium text-slate-900">
-                    {{ matchedAddUser.username }}
+                    {{ addSearchResult.username }}
                   </p>
                   <p class="mt-1 break-words text-xs text-slate-500">
-                    UID {{ addUserEffectiveId }} · {{ matchedAddUser.email }} · {{ matchedAddUser.phone }}
+                    UID {{ addUserEffectiveId }} · {{ addSearchResult.email }} · {{ addSearchResult.phone }}
                   </p>
                   <p v-if="addUserAlreadyListed" class="mt-2 text-xs text-amber-700">
                     该 UID 已在列表中，确认后将清空其他筛选并定位到该用户。
