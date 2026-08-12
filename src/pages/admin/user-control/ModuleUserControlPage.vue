@@ -21,10 +21,16 @@ const query = ref('')
 const valueFilter = ref('')
 const statusFilter = ref('')
 const sourceFilter = ref('')
+const addOpen = ref(false)
+const addUserId = ref('')
+const addUserTouched = ref(false)
+const addedUserIds = ref([])
 const modalOpen = ref(false)
 const cancelOpen = ref(false)
 const selectedUser = ref(null)
 const cancelNote = ref('')
+const addDialogRef = ref(null)
+const addInputRef = ref(null)
 const moduleCancelDialogRef = ref(null)
 const moduleCancelReturnRef = ref(null)
 
@@ -69,11 +75,47 @@ const valueOptions = computed(() => moduleMeta.value.family === 'finance'
 
 const userIdOf = (user) => String(user?.userId ?? user?.id ?? '')
 const currentRule = (user) => userControlState.value.rules[userIdOf(user)]?.[props.moduleKey] || null
+const normalizedAddUserKeyword = computed(() => addUserId.value.trim().toLowerCase())
+const userMatchesAddQuery = (user, keyword) => {
+  const id = String(user?.id ?? '')
+  const email = String(user?.email ?? '').toLowerCase()
+  const phone = String(user?.phone ?? '')
+  return id.toLowerCase() === keyword || id.replace(/^user_/, '').toLowerCase() === keyword || email === keyword || phone === keyword
+}
+const matchedAddUser = computed(() => usersList.find((user) => userMatchesAddQuery(user, normalizedAddUserKeyword.value)) || null)
+const addUserEffectiveId = computed(() => userIdOf(matchedAddUser.value))
+const listedUserIds = computed(() => new Set([
+  ...Object.keys(userControlState.value.rules),
+  ...addedUserIds.value
+]))
+const addUserAlreadyListed = computed(() => addUserEffectiveId.value && listedUserIds.value.has(addUserEffectiveId.value))
+const canConfirmAddUser = computed(() => addDialogPhase.value === 'open' && Boolean(matchedAddUser.value))
+
+const {
+  rendered: addDialogRendered,
+  phase: addDialogPhase,
+  layerStyle: addDialogLayerStyle,
+  requestDialogClose: requestAddDialogClose,
+  onAfterEnter: onAddDialogAfterEnter,
+  onAfterLeave: onAddDialogAfterLeave
+} = useDialogLifecycle({
+  open: addOpen,
+  dialogRef: addDialogRef,
+  initialFocusRef: addInputRef,
+  requestClose: () => { addOpen.value = false }
+})
 
 const allUsers = computed(() => {
-  const userMap = new Map(usersList.map((user) => [String(user.id), user]))
+  const mockUserMap = new Map(usersList.map((user) => [String(user.id), user]))
+  const userMap = new Map()
 
-  Object.keys(userControlState.value.rules).forEach((userId) => {
+  const addUserToMap = (userId) => {
+    if (userMap.has(userId)) return
+    const mockUser = mockUserMap.get(userId)
+    if (mockUser) {
+      userMap.set(userId, mockUser)
+      return
+    }
     if (!userMap.has(userId)) {
       userMap.set(userId, {
         id: userId,
@@ -81,7 +123,10 @@ const allUsers = computed(() => {
         email: `demo_${userId}@example.com`
       })
     }
-  })
+  }
+
+  Object.keys(userControlState.value.rules).forEach(addUserToMap)
+  addedUserIds.value.forEach(addUserToMap)
 
   return [...userMap.values()]
 })
@@ -104,7 +149,7 @@ const effectiveRules = computed(() => rows.value
   .filter((rule) => rule?.status === 'active'))
 
 const summaryCards = computed(() => [
-  { label: '用户总数', value: rows.value.length, hint: '来自现有用户 Mock' },
+  { label: '用户总数', value: rows.value.length, hint: '点控记录和手动添加' },
   { label: '当前有效', value: effectiveRules.value.length, hint: `${moduleMeta.value.actionLabel}规则` },
   { label: '单次待执行', value: effectiveRules.value.filter((rule) => rule.duration === 'once').length, hint: '每个模块各执行 1 次' },
   { label: '持续生效中', value: effectiveRules.value.filter((rule) => rule.duration === 'permanent').length, hint: '直到取消或覆盖' }
@@ -142,6 +187,36 @@ const formatTime = (date = new Date()) => {
 }
 
 const nextSequence = () => String(userControlState.value.operationLogs.length + 1).padStart(4, '0')
+
+const openAddUser = () => {
+  if (addDialogPhase.value !== 'closed') return
+  addUserId.value = ''
+  addUserTouched.value = false
+  addOpen.value = true
+}
+
+const closeAddUser = createDialogCloseAction(requestAddDialogClose)
+
+const confirmAddUser = () => {
+  addUserTouched.value = true
+  if (!canConfirmAddUser.value) return
+
+  const userId = addUserEffectiveId.value
+  if (!addUserAlreadyListed.value) {
+    addedUserIds.value = [userId, ...addedUserIds.value]
+  }
+  query.value = userId
+  valueFilter.value = ''
+  statusFilter.value = ''
+  sourceFilter.value = ''
+  closeAddUser()
+}
+
+const handleAddDialogAfterLeave = async () => {
+  if (!await onAddDialogAfterLeave()) return
+  addUserId.value = ''
+  addUserTouched.value = false
+}
 
 const openSetting = (user) => {
   selectedUser.value = user
@@ -238,7 +313,7 @@ const resetFilters = () => {
           <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          <input v-model="query" type="search" placeholder="搜索 UID、用户名或邮箱" class="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+          <input v-model="query" type="search" placeholder="搜索 UID、用户名、邮箱或手机号" class="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
         </label>
         <select v-model="valueFilter" class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500">
           <option value="">全部控制内容</option>
@@ -256,9 +331,12 @@ const resetFilters = () => {
           <option value="module">当前模块独立设置</option>
         </select>
       </div>
-      <div class="mt-3 flex items-center justify-between text-xs text-slate-500">
+      <div class="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
         <span>共 {{ filteredRows.length }} 位用户</span>
-        <button type="button" class="font-medium text-blue-600 hover:text-blue-700" @click="resetFilters">重置筛选</button>
+        <div class="flex items-center gap-4">
+          <button type="button" class="font-medium text-blue-600 hover:text-blue-700" @click="resetFilters">重置筛选</button>
+          <button type="button" class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="openAddUser">添加用户</button>
+        </div>
       </div>
     </article>
 
@@ -280,7 +358,7 @@ const resetFilters = () => {
             <tr v-for="row in filteredRows" :key="row.userId" class="hover:bg-slate-50">
               <td class="px-4 py-4">
                 <p class="font-medium text-slate-900">{{ row.username }}</p>
-                <p class="mt-0.5 text-xs text-slate-500">UID {{ row.userId }} · {{ row.email }}</p>
+                <p class="mt-0.5 text-xs text-slate-500">UID {{ row.userId }} · {{ row.email }} · {{ row.phone || '未留手机号' }}</p>
               </td>
               <td class="px-4 py-4 font-medium" :class="row.rule ? 'text-slate-900' : 'text-slate-400'">{{ valueLabel(row.rule?.value) }}</td>
               <td class="px-4 py-4 text-slate-600">{{ durationLabel(row.rule?.duration) }}</td>
@@ -335,6 +413,68 @@ const resetFilters = () => {
       @close="closeSetting"
       @submit="submitSetting"
     />
+
+    <Teleport to="body">
+      <Transition name="dialog-overlay" appear @after-enter="onAddDialogAfterEnter" @after-leave="handleAddDialogAfterLeave">
+        <div v-if="addDialogRendered" v-show="addDialogPhase !== 'closing'" class="fixed inset-0 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" :style="addDialogLayerStyle">
+          <Transition name="dialog-panel" appear>
+            <section v-show="addDialogPhase !== 'closing'" ref="addDialogRef" data-testid="module-user-control-add-dialog" class="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="module-user-control-add-title">
+              <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+                <div class="min-w-0 flex-1">
+                  <h2 id="module-user-control-add-title" class="break-words text-lg font-semibold text-slate-900">添加{{ moduleMeta.label }}点控用户</h2>
+                  <p class="mt-1 break-words text-sm text-slate-500">按 UID、邮箱或手机号搜索并加入当前用户点控列表。</p>
+                </div>
+                <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeAddUser">×</button>
+              </header>
+              <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+                <label class="block" for="module-user-control-add-user-id">
+                  <span class="text-sm font-medium text-slate-800">用户 UID <span class="text-rose-500">*</span></span>
+                  <input
+                    id="module-user-control-add-user-id"
+                    ref="addInputRef"
+                    v-model.trim="addUserId"
+                    type="search"
+                    autocomplete="off"
+                    placeholder="输入 UID、邮箱或手机号"
+                    :aria-invalid="addUserTouched && (!normalizedAddUserKeyword || !matchedAddUser) ? 'true' : 'false'"
+                    aria-describedby="module-user-control-add-help"
+                    class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    @blur="addUserTouched = true"
+                    @keydown.enter.prevent="confirmAddUser"
+                  />
+                </label>
+                <p id="module-user-control-add-help" class="text-xs leading-5 text-slate-500">
+                  命中用户后点击确定会把用户加入当前列表并定位到该行，不会创建点控规则。
+                </p>
+                <p v-if="addUserTouched && !normalizedAddUserKeyword" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+                  请先输入 UID、邮箱或手机号。
+                </p>
+                <p v-else-if="addUserTouched && !matchedAddUser" class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  没有搜索到匹配用户，请检查输入内容。
+                </p>
+                <div v-else-if="matchedAddUser" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
+                  <p class="text-sm font-medium text-slate-900">
+                    {{ matchedAddUser.username }}
+                  </p>
+                  <p class="mt-1 break-words text-xs text-slate-500">
+                    UID {{ addUserEffectiveId }} · {{ matchedAddUser.email }} · {{ matchedAddUser.phone }}
+                  </p>
+                  <p v-if="addUserAlreadyListed" class="mt-2 text-xs text-amber-700">
+                    该 UID 已在列表中，确认后将清空其他筛选并定位到该用户。
+                  </p>
+                </div>
+              </div>
+              <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
+                <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeAddUser">取消</button>
+                <button type="button" :disabled="!canConfirmAddUser" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmAddUser">
+                  确定
+                </button>
+              </footer>
+            </section>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
 
     <Teleport to="body">
       <Transition name="dialog-overlay" appear @after-enter="onModuleCancelAfterEnter" @after-leave="handleModuleCancelAfterLeave">

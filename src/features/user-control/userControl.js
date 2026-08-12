@@ -424,7 +424,7 @@ export function getUserControlDivergenceKeys(rules = {}) {
 
 export function filterUserControlRows(rows, filters = {}) {
   const query = String(filters.query || '').trim().toLowerCase()
-  return rows.filter((row) => (!query || `${row.userId} ${row.username} ${row.email}`.toLowerCase().includes(query))
+  return rows.filter((row) => (!query || `${row.userId} ${row.username} ${row.email} ${row.phone || ''}`.toLowerCase().includes(query))
     && (!filters.value || row.rule?.value === filters.value)
     && (!filters.status || row.rule?.status === filters.status)
     && (!filters.source || row.rule?.source === filters.source))

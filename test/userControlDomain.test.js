@@ -72,6 +72,15 @@ test('log date filtering is inclusive and leaves source rows unchanged', () => {
   assert.equal(rows.length, 4)
 })
 
+test('module user rows can be filtered by phone number', () => {
+  const rows = [
+    { userId: 'user_1004', username: 'user_chen', email: 'chen@example.com', phone: '8613800001004' },
+    { userId: 'user_1007', username: 'suspended_user', email: 'suspended@example.com', phone: '8613800001007' }
+  ]
+
+  assert.deepEqual(filterUserControlRows(rows, { query: '8613800001007' }).map((row) => row.userId), ['user_1007'])
+})
+
 test('operation and execution logs retain frontend audit display fields', () => {
   const applied = applyUnifiedControl(createUserControlState(), {
     userId: 'audit-user', strategy: 'positive', duration: 'once', note: '审计字段',

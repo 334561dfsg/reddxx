@@ -159,6 +159,25 @@ test('module page explains settlement-only perpetual control and module-only sco
   assert.match(source, /规则来源/)
 })
 
+test('module page can add a user by UID email or phone search', () => {
+  const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
+  const addDialog = elementByTestId(source, 'module-user-control-add-dialog')
+
+  assert.match(source, />添加用户<\/button>/)
+  assert.notEqual(addDialog, '')
+  assert.match(source, /点控记录和手动添加/)
+  assert.match(source, /搜索 UID、用户名、邮箱或手机号/)
+  assert.match(addDialog, /UID、邮箱或手机号/)
+  assert.match(addDialog, /placeholder="输入 UID、邮箱或手机号"/)
+  assert.match(source, /userMatchesAddQuery/)
+  assert.match(source, /email === keyword/)
+  assert.match(source, /phone === keyword/)
+  assert.match(source, /没有搜索到匹配用户/)
+  assert.match(source, /addedUserIds\.value = \[userId, \.\.\.addedUserIds\.value\]/)
+  assert.match(source, /query\.value = userId/)
+  assert.doesNotMatch(source, /demo_user_\$\{addUserEffectiveId\}/)
+})
+
 test('module metadata and fallback use the unified point-control label', () => {
   const moduleSource = read('../src/features/user-control/userControl.js')
   const pageSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
