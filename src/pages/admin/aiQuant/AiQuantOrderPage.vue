@@ -148,7 +148,16 @@
 							<td class="px-4 py-3"><span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="orderStatusMeta[order.status].class">{{ orderStatusMeta[order.status].label }}</span></td>
 							<td class="px-4 py-3">
 								<button type="button" @click="viewOrderDetail(order)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</button>
-								<template v-if="canYieldAdjust(order)">
+								<template v-if="isAiQuantUserPointControlled(order)">
+									<span class="text-slate-300 mx-1.5">|</span>
+									<span
+										class="inline-flex rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700"
+										aria-label="用户点控中，订单收益调整不可用"
+									>
+										点控中
+									</span>
+								</template>
+								<template v-else-if="canYieldAdjust(order)">
 									<span class="text-slate-300 mx-1.5">|</span>
 									<button
 										type="button"
@@ -450,7 +459,16 @@
 				<!-- 底部操作栏 -->
 				<div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 flex-shrink-0 bg-slate-50">
 					<button
-						v-if="selectedOrder && canYieldAdjust(selectedOrder)"
+						v-if="selectedOrder && isAiQuantUserPointControlled(selectedOrder)"
+						type="button"
+						disabled
+						class="cursor-not-allowed rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700"
+						aria-label="用户点控中，订单收益调整不可用"
+					>
+						点控中
+					</button>
+					<button
+						v-else-if="selectedOrder && canYieldAdjust(selectedOrder)"
 						type="button"
 						@click="openYieldAdjustForOrder(selectedOrder); showDetailModal = false"
 						class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-800 transition hover:bg-emerald-100"
@@ -468,6 +486,7 @@
 import { ref, shallowRef, reactive, computed, nextTick, onMounted } from 'vue'
 import { ORDER_STATUS, orderStatusMeta, vipLevelMeta, VIP_LEVEL } from '../../../admin/constants/aiQuant'
 import { getAiQuantAdminOrdersSnapshot } from '../../../admin/state/aiQuantOrders'
+import { userControlState } from '../../../admin/state/userControlState.js'
 import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
 import { useAgentPagedList } from '../../../composables/useAgentListPagination'
 import AiQuantYieldAdjustmentModal from './AiQuantYieldAdjustmentModal.vue'
@@ -520,8 +539,23 @@ const orderStatusSelectValues = [
 
 /** 仅运行中可发起收益调整；已完成/已结算/提前赎回等为终态，不可调 */
 const YIELD_ADJUST_ALLOWED_STATUSES = new Set([ORDER_STATUS.RUNNING])
+const ACTIVE_USER_CONTROL_STATUSES = new Set(['active', 'processing'])
 
-const canYieldAdjust = (order) => Boolean(order?.status && YIELD_ADJUST_ALLOWED_STATUSES.has(order.status))
+const userControlLookupKeys = (userId) => {
+	const raw = String(userId ?? '').trim()
+	return [...new Set([raw, raw.replace(/-/g, '_'), raw.replace(/_/g, '-')].filter(Boolean))]
+}
+
+const aiQuantPointControlRule = (order) => {
+	for (const key of userControlLookupKeys(order?.userId)) {
+		const rule = userControlState.value.rules[key]?.aiQuant
+		if (rule && ACTIVE_USER_CONTROL_STATUSES.has(rule.status)) return rule
+	}
+	return null
+}
+
+const isAiQuantUserPointControlled = (order) => Boolean(aiQuantPointControlRule(order))
+const canYieldAdjust = (order) => Boolean(order?.status && YIELD_ADJUST_ALLOWED_STATUSES.has(order.status) && !isAiQuantUserPointControlled(order))
 
 const vipSelectLevels = [VIP_LEVEL.VIP0, VIP_LEVEL.VIP1, VIP_LEVEL.VIP2, VIP_LEVEL.VIP3, VIP_LEVEL.VIP4, VIP_LEVEL.VIP5]
 

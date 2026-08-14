@@ -14,8 +14,10 @@ import { appendLiquidityLockedOperationLog } from '../../../admin/state/liquidit
 const products = ref([
 	{
 		id: 'prod-001',
-		name: 'USDT活期宝',
+		ruleId: 'USDT-7D',
+		name: 'USDT锁仓宝',
 		currency: 'USDT',
+		lockDays: 7,
 		baseRate: 11,
 		currentMultiplier: 1.0,
 		adjustmentRate: 0,
@@ -25,8 +27,10 @@ const products = ref([
 	},
 	{
 		id: 'prod-002',
-		name: 'BTC定期宝',
-		currency: 'BTC',
+		ruleId: 'USDT-30D',
+		name: 'USDT锁仓宝',
+		currency: 'USDT',
+		lockDays: 30,
 		baseRate: 9.13,
 		currentMultiplier: 1.2,
 		adjustmentRate: 20,
@@ -36,8 +40,10 @@ const products = ref([
 	},
 	{
 		id: 'prod-003',
-		name: 'ETH增益计划',
-		currency: 'ETH',
+		ruleId: 'USDT-90D',
+		name: 'USDT锁仓宝',
+		currency: 'USDT',
+		lockDays: 90,
 		baseRate: 10.22,
 		currentMultiplier: 0.9,
 		adjustmentRate: -10,
@@ -53,7 +59,7 @@ const filteredProducts = computed(() => {
   const kw = keyword.value.trim().toLowerCase()
   if (!kw) return products.value
   return products.value.filter((item) => 
-    `${item.name} ${item.currency}`.toLowerCase().includes(kw)
+    `${item.name} ${item.currency} ${productRuleLabel(item)} ${item.ruleId} ${fmtApr(item.baseRate)}`.toLowerCase().includes(kw)
   )
 })
 
@@ -78,6 +84,16 @@ const activeProductId = ref('')
 const activeProduct = computed(() => 
   products.value.find((item) => item.id === activeProductId.value)
 )
+
+const productRuleLabel = (product) => {
+	const days = Number(product?.lockDays)
+	return days > 0 ? `${days}天规则` : '—'
+}
+
+const productControlIdentity = (product) => {
+	if (!product) return '—'
+	return `${product.name} · ${productRuleLabel(product)} · ${product.currency}`
+}
 
 const controlForm = ref({
 	adjustmentRate: 0,
@@ -123,7 +139,7 @@ const saveControl = () => {
 
 	appendLockedYieldAdjustmentLog({
 		productId: product.id,
-		productName: product.name,
+		productName: productControlIdentity(product),
 		currency: product.currency,
 		beforeRate: product.adjustmentRate,
 		afterRate,
@@ -143,7 +159,7 @@ const saveControl = () => {
 		module: LIQUIDITY_LOCKED_OP_MODULE.YIELD_CONTROL,
 		action: LIQUIDITY_LOCKED_OP_ACTION.YIELD_ADJUST,
 		refId: product.id,
-		targetLabel: product.name,
+		targetLabel: productControlIdentity(product),
 		summary: `调整收益：加成 ${product.adjustmentRate}% → ${afterRate}%；倍数 ${Number(product.currentMultiplier).toFixed(2)} → ${afterMultiplier.toFixed(2)}；${durationLabel}；${reasonShort}`
 	})
 
@@ -166,7 +182,7 @@ const resetControl = (productId) => {
 
 	appendLockedYieldAdjustmentLog({
 		productId: product.id,
-		productName: product.name,
+		productName: productControlIdentity(product),
 		currency: product.currency,
 		beforeRate: product.adjustmentRate,
 		afterRate: 0,
@@ -183,7 +199,7 @@ const resetControl = (productId) => {
 		module: LIQUIDITY_LOCKED_OP_MODULE.YIELD_CONTROL,
 		action: LIQUIDITY_LOCKED_OP_ACTION.YIELD_RESET,
 		refId: product.id,
-		targetLabel: product.name,
+		targetLabel: productControlIdentity(product),
 		summary: `重置为基准：加成 ${product.adjustmentRate}% → 0%；倍数 ${Number(product.currentMultiplier).toFixed(2)} → 1.00`
 	})
 
@@ -229,7 +245,7 @@ const getRateColor = (rate) => {
 
 const YEAR_DAYS = 365
 
-/** 年化基准利率 × 倍数 → 展示用有效年化（%） */
+/** 收益率 × 倍数 → 展示用有效年化（%） */
 function effectiveAnnualPct(baseAnnual, mult) {
 	const b = Number(baseAnnual)
 	const m = Number(mult)
@@ -248,6 +264,10 @@ function simpleInterestForDays(principal, annualPct, mult, days) {
 }
 
 const fmtApr = (v) => (v == null || Number.isNaN(Number(v)) ? '—' : `${Number(v).toFixed(2)}%`)
+const previewDays = (product) => {
+	const days = Number(product?.lockDays)
+	return days > 0 ? days : 30
+}
 
 /** 日期选择器最小可选日（本地自然日） */
 const validUntilMin = computed(() => {
@@ -338,7 +358,7 @@ const validUntilMin = computed(() => {
 				<input
 					v-model="keyword"
 					type="search"
-					placeholder="搜索产品名称或币种…"
+					placeholder="搜索产品名称、币种、天数或规则ID…"
 					class="h-10 w-full max-w-sm rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none ring-blue-500/20 transition-shadow focus:border-blue-500 focus:ring-2"
 				/>
 				<div class="flex shrink-0 flex-wrap items-center gap-2">
@@ -378,7 +398,12 @@ const validUntilMin = computed(() => {
 						>
 							<td class="whitespace-nowrap px-4 py-3.5">
 								<div class="font-medium text-slate-900">{{ product.name }}</div>
-								<div class="text-xs text-slate-500">{{ product.currency }}</div>
+								<div class="mt-1 flex max-w-[24rem] flex-wrap gap-1.5 text-xs">
+									<span class="rounded-md bg-slate-100 px-2 py-0.5 font-medium text-slate-600">{{ product.currency }}</span>
+									<span class="rounded-md bg-blue-50 px-2 py-0.5 font-medium text-blue-700">{{ productRuleLabel(product) }}</span>
+									<span class="rounded-md bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">收益率 {{ fmtApr(product.baseRate) }}</span>
+									<span class="rounded-md bg-slate-50 px-2 py-0.5 font-mono text-slate-500">ID {{ product.ruleId }}</span>
+								</div>
 							</td>
 							<td class="whitespace-nowrap px-4 py-3.5">
 								<span :class="['font-medium tabular-nums', getRateColor(product.adjustmentRate)]">
@@ -434,7 +459,7 @@ const validUntilMin = computed(() => {
 					<div class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 bg-slate-50/90 px-5 py-4">
 						<div>
 							<h3 class="text-lg font-semibold text-slate-900">收益倍数调整</h3>
-							<p class="mt-0.5 text-sm text-slate-500">{{ activeProduct?.name }} · {{ activeProduct?.currency }}</p>
+							<p class="mt-0.5 text-sm text-slate-500">{{ productControlIdentity(activeProduct) }} · ID {{ activeProduct?.ruleId || '—' }}</p>
 						</div>
 						<button
 							type="button"
@@ -570,7 +595,7 @@ const validUntilMin = computed(() => {
 									</div>
 									<p class="mt-1.5 text-xs text-slate-500">
 										倍数约 {{ (1 + controlForm.adjustmentRate / 100).toFixed(2) }}×；展示年化约
-										{{ effectiveAnnualPct(activeProduct?.baseRate, 1 + controlForm.adjustmentRate / 100).toFixed(2) }}%（年化基准 × 倍数）
+										{{ effectiveAnnualPct(activeProduct?.baseRate, 1 + controlForm.adjustmentRate / 100).toFixed(2) }}%（收益率 × 倍数）
 									</p>
 
 									<div class="mt-5 space-y-1.5">
@@ -664,7 +689,11 @@ const validUntilMin = computed(() => {
 									<h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">当前生效</h4>
 									<div class="mt-2 space-y-0 rounded-xl border border-slate-200/80 bg-white p-3 shadow-sm">
 										<div class="flex items-center justify-between border-b border-slate-100 py-2 text-sm">
-											<span class="text-slate-500">基础利率（年化）</span>
+											<span class="text-slate-500">周期规则</span>
+											<span class="font-semibold text-slate-900">{{ productRuleLabel(activeProduct) }}</span>
+										</div>
+										<div class="flex items-center justify-between border-b border-slate-100 py-2 text-sm">
+											<span class="text-slate-500">收益率（年化）</span>
 											<span class="font-semibold tabular-nums text-slate-900">{{ fmtApr(activeProduct?.baseRate) }}</span>
 										</div>
 										<div class="flex items-center justify-between border-b border-slate-100 py-2 text-sm">
@@ -694,14 +723,14 @@ const validUntilMin = computed(() => {
 												</span>
 											</div>
 											<div class="mt-1 flex justify-between text-sm">
-												<span class="text-slate-500">30 天估算（1 万本金，单利）</span>
+												<span class="text-slate-500">{{ productRuleLabel(activeProduct) }}估算（1 万本金，单利）</span>
 												<span class="font-semibold tabular-nums text-slate-900">
 													{{
 														simpleInterestForDays(
 															10000,
 															activeProduct?.baseRate,
 															activeProduct?.currentMultiplier,
-															30
+															previewDays(activeProduct)
 														).toFixed(2)
 													}}
 												</span>
@@ -755,7 +784,7 @@ const validUntilMin = computed(() => {
 												</span>
 											</div>
 											<div class="mt-1 flex justify-between text-sm">
-												<span class="text-slate-600">30 天估算（单利）</span>
+												<span class="text-slate-600">{{ productRuleLabel(activeProduct) }}估算（单利）</span>
 												<span
 													class="font-bold tabular-nums"
 													:class="
@@ -771,7 +800,7 @@ const validUntilMin = computed(() => {
 															10000,
 															activeProduct?.baseRate,
 															1 + controlForm.adjustmentRate / 100,
-															30
+															previewDays(activeProduct)
 														).toFixed(2)
 													}}
 												</span>
@@ -781,7 +810,7 @@ const validUntilMin = computed(() => {
 									<div
 										class="mt-3 rounded-xl border border-blue-200/80 bg-gradient-to-br from-slate-50 to-blue-50/40 p-3"
 									>
-										<div class="text-[11px] text-slate-500">差额（10,000 {{ activeProduct?.currency }} × 30 天）</div>
+										<div class="text-[11px] text-slate-500">差额（10,000 {{ activeProduct?.currency }} × {{ previewDays(activeProduct) }} 天）</div>
 										<div
 											class="mt-1 text-base font-bold tabular-nums"
 											:class="
@@ -799,13 +828,13 @@ const validUntilMin = computed(() => {
 														10000,
 														activeProduct?.baseRate,
 														1 + controlForm.adjustmentRate / 100,
-														30
+														previewDays(activeProduct)
 													) -
 													simpleInterestForDays(
 														10000,
 														activeProduct?.baseRate,
 														activeProduct?.currentMultiplier,
-														30
+														previewDays(activeProduct)
 													)
 												).toFixed(2)
 											}}
