@@ -370,10 +370,6 @@ const selectUserDetail = (user, returnFocus = null) => {
   openUserDetail(user, 'overview', returnFocus)
 }
 
-const selectUserAssets = (user, returnFocus = null) => {
-  openUserDetail(user, 'assets', returnFocus)
-}
-
 const openOperationDrawer = (user) => {
   controlReturnUserId.value = userIdOf(user)
   deferredDrawerAction.value = null
@@ -1073,32 +1069,66 @@ const clearDetailDrawer = () => {
 
               <!-- 用户快捷操作 -->
               <td class="px-4 py-3">
-                <div data-testid="user-row-action-bar" class="flex items-center gap-2 whitespace-nowrap" @click.stop>
+                <div data-testid="user-row-action-bar" class="flex flex-wrap items-center gap-2" @click.stop>
                   <button
                     type="button"
-                    class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="查看用户详情"
                     @click="selectUserDetail(user, $event.currentTarget)"
                   >
                     详情</button>
                   <button
                     type="button"
-                    class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    aria-label="查看资金概况"
-                    @click="selectUserAssets(user, $event.currentTarget)"
+                    class="inline-flex h-8 min-w-16 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="编辑用户资料"
+                    @click="handleOperationDrawerAction({ id: 'edit-profile', user, trigger: $event.currentTarget })"
                   >
-                    资金</button>
+                    编辑资料</button>
                   <button
                     type="button"
-                    class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm bg-blue-50/70 font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs bg-blue-50/70 font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="客服入金"
-                    @click="openRegularAction(user, 'deposit')"
+                    @click="openRegularAction(user, 'deposit', $event.currentTarget)"
                   >
                     入金</button>
                   <button
+                    type="button"
+                    class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg px-2.5 text-xs font-medium focus:outline-none focus:ring-2"
+                    :class="isLocked(user)
+                      ? 'bg-emerald-50/80 text-emerald-700 hover:bg-emerald-100 focus:ring-emerald-500'
+                      : 'bg-rose-50/80 text-rose-700 hover:bg-rose-100 focus:ring-rose-500'"
+                    :aria-label="isLocked(user) ? '解封用户' : '封禁用户'"
+                    @click="handleOperationDrawerAction({ id: 'freeze-account', user, trigger: $event.currentTarget })"
+                  >
+                    {{ isLocked(user) ? '解封' : '封户' }}</button>
+                  <button
+                    type="button"
+                    class="inline-flex h-8 min-w-16 items-center justify-center rounded-lg px-2.5 text-xs font-medium focus:outline-none focus:ring-2"
+                    :class="hasRules(user)
+                      ? 'bg-rose-50/80 text-rose-700 hover:bg-rose-100 focus:ring-rose-500'
+                      : 'bg-amber-50/80 text-amber-700 hover:bg-amber-100 focus:ring-amber-500'"
+                    :aria-label="hasRules(user) ? '取消用户点控' : '设置用户点控'"
+                    @click="handleOperationDrawerAction({ id: hasRules(user) ? 'cancel-point-control' : 'point-control', user, trigger: $event.currentTarget })"
+                  >
+                    {{ hasRules(user) ? '取消点控' : '点控' }}</button>
+                  <button
+                    type="button"
+                    class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-rose-50/80 font-medium text-rose-700 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    aria-label="修改用户信用分"
+                    @click="handleOperationDrawerAction({ id: 'credit-adjust', user, trigger: $event.currentTarget })"
+                  >
+                    修改信用分</button>
+                  <button
+                    type="button"
+                    class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-violet-50/80 font-medium text-violet-700 hover:bg-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    aria-label="查看用户信用分审核"
+                    @click="handleOperationDrawerAction({ id: 'credit-review', user, trigger: $event.currentTarget })"
+                  >
+                    信用分审核</button>
+                  <button
                     :ref="(element) => setActionMenuTriggerRef(user, element)"
                     type="button"
-                    class="inline-flex h-9 min-w-12 items-center justify-center rounded-lg px-3 text-sm border border-slate-300 bg-white font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="更多用户操作"
                     @click="openOperationDrawer(user)"
                   >
