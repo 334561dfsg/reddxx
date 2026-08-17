@@ -846,10 +846,10 @@ const handleMfaCancel = () => {
   cancelNote.value = ''
 }
 
-const mfaTitle = computed(() => pendingMfaAction.value?.type === 'cancel' ? '取消统一控制安全验证' : '统一控制安全验证')
+const mfaTitle = computed(() => pendingMfaAction.value?.type === 'cancel' ? '取消用户点控安全验证' : '用户点控安全验证')
 const mfaDescription = computed(() => pendingMfaAction.value?.type === 'cancel'
   ? '取消六个模块的生效规则属于敏感操作，请输入 MFA 验证码'
-  : '长期生效或覆盖统一控制属于敏感操作，请输入 MFA 验证码')
+  : '长期生效或覆盖用户点控属于敏感操作，请输入 MFA 验证码')
 
 // 状态配置
 const statusConfig = {
@@ -1373,7 +1373,7 @@ const clearDetailDrawer = () => {
             <section v-show="unifiedCancelPhase !== 'closing'" ref="unifiedCancelDialogRef" data-testid="unified-user-control-cancel-dialog" class="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="unified-user-control-cancel-title">
               <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
                 <div class="min-w-0 flex-1">
-                  <h2 id="unified-user-control-cancel-title" class="break-words text-lg font-semibold text-slate-900">取消统一控制</h2>
+                  <h2 id="unified-user-control-cancel-title" class="break-words text-lg font-semibold text-slate-900">取消用户点控</h2>
                   <p class="mt-1 break-words text-sm text-slate-500">{{ displayedUnifiedCancelData.user?.username }} · UID {{ userIdOf(displayedUnifiedCancelData.user) }}</p>
                 </div>
                 <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeControlCancel">×</button>

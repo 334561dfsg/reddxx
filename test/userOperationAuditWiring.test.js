@@ -100,7 +100,7 @@ test('user control mutations append unified risk result logs', () => {
     userId: 'user_1001',
     strategy: 'positive',
     duration: 'once',
-    note: '复核符合，统一带盈',
+    note: '复核符合，批次带盈',
     now: '2026-07-27 12:00:00',
     batchId: 'audit-control-b1',
     operator: 'risk_admin'
@@ -112,7 +112,7 @@ test('user control mutations append unified risk result logs', () => {
     log.action === 'risk.control.apply' &&
     log.targetUser.uid === 'user_1001' &&
     log.operator.id === 'risk_admin' &&
-    log.reason === '复核符合，统一带盈' &&
+    log.reason === '复核符合，批次带盈' &&
     log.related.businessId === 'audit-control-b1'
   )))
 })

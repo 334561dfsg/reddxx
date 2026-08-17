@@ -61,8 +61,8 @@ const methodLabel = (method, fallbackValue) => ({
 })[method] || valueLabel(fallbackValue)
 
 const sourceLabel = (source) => ({
-  global: '用户管理统一设置',
-  module: '当前模块独立设置'
+  global: '用户点控设置',
+  module: '当前模块点控'
 })[source] || '—'
 
 const actionLabel = (action) => ({ apply: '设置控制', cancel: '取消控制', execute: '执行规则' })[action] || action
@@ -190,8 +190,8 @@ const clearFilters = () => {
           <span>规则来源</span>
           <select v-model="filters.source" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500">
             <option value="">全部来源</option>
-            <option value="global">用户管理统一设置</option>
-            <option value="module">当前模块独立设置</option>
+            <option value="global">用户点控设置</option>
+            <option value="module">当前模块点控</option>
           </select>
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">

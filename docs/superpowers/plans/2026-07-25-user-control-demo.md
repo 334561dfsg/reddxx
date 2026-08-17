@@ -145,7 +145,7 @@ export function applyUnifiedControl(state, input) {
 ```js
 test('module override changes one child and marks the unified summary divergent', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
+    userId: '159', strategy: 'positive', duration: 'permanent', note: '批次带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
   const changed = applyModuleControl(unified, {
     userId: '159', moduleKey: 'perpetual', value: 'loss', duration: 'permanent',
@@ -158,7 +158,7 @@ test('module override changes one child and marks the unified summary divergent'
 
 test('once consumption updates one module without creating a configuration difference', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'positive', duration: 'once', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
+    userId: '159', strategy: 'positive', duration: 'once', note: '批次带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
   const consumed = consumeModuleControl(unified, {
     userId: '159', moduleKey: 'delivery', businessId: 'delivery-1001',
@@ -546,7 +546,7 @@ git commit -m "feat: add module user control pages"
 ```js
 test('user list exposes unified status and scoped actions', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
-  assert.match(source, /统一控制/)
+  assert.match(source, /用户点控/)
   assert.match(source, /模块状态/)
   assert.match(source, /设置控制/)
   assert.match(source, /取消控制/)

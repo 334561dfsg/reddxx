@@ -105,7 +105,7 @@ test('operation and execution logs retain frontend audit display fields', () => 
 
 test('list metadata only reflects active and processing rules', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
-    userId: 'user_1001', strategy: 'positive', duration: 'permanent', note: '统一带盈',
+    userId: 'user_1001', strategy: 'positive', duration: 'permanent', note: '批次带盈',
     now: '2026-07-25 16:00:00', batchId: 'list-b1'
   })
   const divergent = applyModuleControl(unified, {
@@ -145,7 +145,7 @@ test('list metadata only reflects active and processing rules', () => {
 
 test('cancel items include only effective modules with their current rule content', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
-    userId: 'user_1002', strategy: 'negative', duration: 'once', note: '统一控亏',
+    userId: 'user_1002', strategy: 'negative', duration: 'once', note: '点控控亏',
     now: '2026-07-25 17:00:00', batchId: 'cancel-items-b1'
   })
   const progressed = consumeModuleControl(unified, {
@@ -191,7 +191,7 @@ test('unified cancellation leaves zero-effective-rule state and logs unchanged',
 
 test('divergence keys identify the overridden module without flagging consumed progress', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
-    userId: 'user_1003', strategy: 'positive', duration: 'once', note: '统一带盈',
+    userId: 'user_1003', strategy: 'positive', duration: 'once', note: '批次带盈',
     now: '2026-07-25 18:00:00', batchId: 'difference-b1'
   })
   const progressed = consumeModuleControl(unified, {
@@ -279,7 +279,7 @@ test('unified negative maps trading to loss and finance to low yield', () => {
 test('advanced profit and loss methods only persist for delivery and perpetual rules', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
     userId: 'method-user', strategy: 'positive', method: 'highProfit', duration: 'permanent',
-    note: '统一入口同步做高', now: '2026-08-01 10:00:00', batchId: 'method-global'
+    note: '用户点控入口同步做高', now: '2026-08-01 10:00:00', batchId: 'method-global'
   })
   assert.equal(unified.operationLogs[0].method, 'highProfit')
   assert.equal(unified.rules['method-user'].delivery.method, 'highProfit')
@@ -310,7 +310,7 @@ test('advanced profit and loss methods only persist for delivery and perpetual r
 
 test('module override changes one child and marks the unified summary divergent', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
+    userId: '159', strategy: 'positive', duration: 'permanent', note: '批次带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
   const changed = applyModuleControl(unified, {
     userId: '159', moduleKey: 'perpetual', value: 'loss', duration: 'permanent',
@@ -323,14 +323,14 @@ test('module override changes one child and marks the unified summary divergent'
 
 test('a second unified write replaces a module override and restores six-module alignment', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
+    userId: '159', strategy: 'positive', duration: 'permanent', note: '批次带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
   const overridden = applyModuleControl(unified, {
     userId: '159', moduleKey: 'perpetual', value: 'loss', duration: 'permanent',
     note: '永续单独控亏', now: '2026-07-25 15:10:00', ruleId: 'r-perp-2'
   })
   const replaced = applyUnifiedControl(overridden, {
-    userId: '159', strategy: 'negative', duration: 'once', note: '统一控亏', now: '2026-07-25 16:00:00', batchId: 'b2'
+    userId: '159', strategy: 'negative', duration: 'once', note: '点控控亏', now: '2026-07-25 16:00:00', batchId: 'b2'
   })
 
   assert.equal(replaced.rules['159'].perpetual.source, 'global')
@@ -340,7 +340,7 @@ test('a second unified write replaces a module override and restores six-module 
 
 test('overwrites retain superseded rules as displayable history without changing current rules', () => {
   const first = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈',
+    userId: '159', strategy: 'positive', duration: 'permanent', note: '批次带盈',
     now: '2026-07-25 14:30:00', batchId: 'history-b1'
   })
   const overridden = applyModuleControl(first, {
@@ -357,7 +357,7 @@ test('overwrites retain superseded rules as displayable history without changing
   }])
 
   const replaced = applyUnifiedControl(overridden, {
-    userId: '159', strategy: 'negative', duration: 'once', note: '统一控亏',
+    userId: '159', strategy: 'negative', duration: 'once', note: '点控控亏',
     now: '2026-07-25 16:00:00', batchId: 'history-b2'
   })
   assert.equal(replaced.ruleHistory.length, USER_CONTROL_MODULES.length + 1)
@@ -371,14 +371,14 @@ test('overwrites retain superseded rules as displayable history without changing
 
 test('unified apply operation log retains a snapshot of the prior six-module rules', () => {
   const first = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'positive', duration: 'permanent', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
+    userId: '159', strategy: 'positive', duration: 'permanent', note: '批次带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
   const overridden = applyModuleControl(first, {
     userId: '159', moduleKey: 'perpetual', value: 'loss', duration: 'permanent',
     note: '永续单独控亏', now: '2026-07-25 15:10:00', ruleId: 'r-perp-2'
   })
   const replaced = applyUnifiedControl(overridden, {
-    userId: '159', strategy: 'negative', duration: 'once', note: '统一控亏', now: '2026-07-25 16:00:00', batchId: 'b2'
+    userId: '159', strategy: 'negative', duration: 'once', note: '点控控亏', now: '2026-07-25 16:00:00', batchId: 'b2'
   })
 
   assert.deepEqual(replaced.operationLogs[0].before, overridden.rules['159'])
@@ -388,7 +388,7 @@ test('unified apply operation log retains a snapshot of the prior six-module rul
 
 test('once consumption updates one module without creating a configuration difference', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'positive', duration: 'once', note: '统一带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
+    userId: '159', strategy: 'positive', duration: 'once', note: '批次带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
   const consumed = consumeModuleControl(unified, {
     userId: '159', moduleKey: 'delivery', businessId: 'delivery-1001',
@@ -400,7 +400,7 @@ test('once consumption updates one module without creating a configuration diffe
 
 test('once consumption rejects a simulated outcome that differs from the active rule', () => {
   const configured = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'positive', duration: 'once', note: '统一带盈',
+    userId: '159', strategy: 'positive', duration: 'once', note: '批次带盈',
     now: '2026-07-25 14:30:00', batchId: 'locked-outcome-b1'
   })
   const rejected = consumeModuleControl(configured, {
@@ -422,7 +422,7 @@ test('once consumption rejects a simulated outcome that differs from the active 
 
 test('failed once execution keeps the rule active and records a failed execution log', () => {
   const configured = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'positive', duration: 'once', note: '统一带盈',
+    userId: '159', strategy: 'positive', duration: 'once', note: '批次带盈',
     now: '2026-07-25 14:30:00', batchId: 'failed-execution-b1'
   })
   const failed = consumeModuleControl(configured, {
@@ -438,10 +438,10 @@ test('failed once execution keeps the rule active and records a failed execution
 
 test('unified cancellation only cancels active or processing rules and records the prior rules', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'negative', duration: 'permanent', note: '统一控亏', now: '2026-07-25 14:30:00', batchId: 'b1'
+    userId: '159', strategy: 'negative', duration: 'permanent', note: '点控控亏', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
   const cancelled = cancelUnifiedControl(unified, {
-    userId: '159', note: '撤销统一控盘', now: '2026-07-25 15:00:00', operationId: 'cancel-b1'
+    userId: '159', note: '撤销点控', now: '2026-07-25 15:00:00', operationId: 'cancel-b1'
   })
   assert.ok(Object.values(cancelled.rules['159']).every((rule) => rule.status === 'cancelled'))
   assert.equal(cancelled.operationLogs[0].before.delivery.status, 'active')

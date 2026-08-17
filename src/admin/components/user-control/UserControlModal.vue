@@ -95,6 +95,17 @@ const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key =
 const selectedUserId = computed(() => String(displayUser.value?.userId ?? displayUser.value?.id ?? ''))
 const selectedUserName = computed(() => displayUser.value?.username || displayUser.value?.name || '未选择用户')
 const selectedUserEmail = computed(() => displayUser.value?.email || '邮箱未提供')
+const activeExistingRules = computed(() => Object.entries(displayedDialogData.value.existingRules || {})
+  .filter(([, rule]) => ['active', 'processing'].includes(rule?.status))
+  .map(([key, rule]) => {
+    const module = USER_CONTROL_MODULES.find((item) => item.key === (rule?.moduleKey || key))
+    return {
+      key,
+      label: module?.label || key,
+      status: rule.status
+    }
+  }))
+const hasActiveExistingRules = computed(() => activeExistingRules.value.length > 0)
 
 const controlTypeOptions = computed(() => getControlTypeOptions())
 const controlMethodContext = computed(() => ({
@@ -227,7 +238,7 @@ const globalRuleCatalog = Object.freeze([
     label: '交割、永续、现货',
     title: '交易模块规则',
     scope: '只影响目标用户订单价格，不改变公共行情、K线、盘口和其他用户订单。',
-    pointMethod: '交易类统一通过价格偏移处理：现货控制成交价，交割和永续控制最终结算价；做高/做低仅针对交割、永续生效，现货按默认方式处理。',
+    pointMethod: '交易类通过价格偏移处理：现货控制成交价，交割和永续控制最终结算价；做高/做低仅针对交割、永续生效，现货按默认方式处理。',
     effect: '现货在成交时控制成交价；交割和永续在结算时按方向控制结算价。',
     example: '说明：控盘方式只作为操作标记，不参与价格偏移逻辑。'
   },
@@ -236,7 +247,7 @@ const globalRuleCatalog = Object.freeze([
     label: 'AI量化、流动性挖矿、投资组合',
     title: '理财模块规则',
     scope: '只影响目标用户理财订单收益率调整，不改变产品基础收益率和其他用户收益。',
-    pointMethod: '理财类统一通过收益率调整处理：盈利提升收益率，亏损降低收益率；不使用做高/做低方式。',
+    pointMethod: '理财类通过收益率调整处理：盈利提升收益率，亏损降低收益率；不使用做高/做低方式。',
     effect: '盈利使用点控收益率提升数值；亏损使用点控收益率降低数值。',
     example: '说明：控盘方式只作为操作标记，不参与收益率计算逻辑。'
   }
@@ -418,10 +429,10 @@ const submit = () => {
         <header class="flex shrink-0 items-start justify-between border-b border-slate-200 px-5 py-3">
           <div class="min-w-0 flex-1">
             <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">
-              {{ displayScope === 'global' ? '六模块统一设置' : `${moduleMeta?.label || '当前模块'}独立设置` }}
+              {{ displayScope === 'global' ? '用户点控设置' : `${moduleMeta?.label || '当前模块'}点控` }}
             </p>
             <h2 id="user-control-dialog-title" class="mt-0.5 break-words text-lg font-semibold text-slate-900">
-              {{ displayScope === 'global' ? '设置用户统一控制' : moduleMeta?.actionLabel }}
+              {{ displayScope === 'global' ? '设置用户点控' : moduleMeta?.actionLabel }}
             </h2>
             <div data-testid="user-control-target-user" class="mt-0.5 flex min-w-0 flex-wrap gap-x-2 break-words text-sm text-slate-500">
               <span>{{ selectedUserName }}</span>
@@ -439,6 +450,39 @@ const submit = () => {
         <div data-testid="user-control-dialog-body" class="min-h-0 flex-1 overflow-y-auto px-5 py-3 lg:flex-none lg:overflow-hidden">
           <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
             <div ref="leftPanelRef" class="min-w-0 space-y-2.5">
+                  <section
+                    data-testid="user-control-current-status"
+                    class="rounded-lg border px-3.5 py-3 shadow-sm"
+                    :class="hasActiveExistingRules ? 'border-amber-300 bg-amber-50 ring-1 ring-amber-100' : 'border-sky-200 bg-sky-50 ring-1 ring-sky-100'"
+                    aria-labelledby="user-control-current-status-title"
+                  >
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h3
+                        id="user-control-current-status-title"
+                        class="text-sm font-semibold"
+                        :class="hasActiveExistingRules ? 'text-amber-950' : 'text-sky-950'"
+                      >当前点控状态</h3>
+                      <span
+                        class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
+                        :class="hasActiveExistingRules ? 'bg-amber-200 text-amber-900' : 'bg-sky-200 text-sky-900'"
+                      >
+                        {{ hasActiveExistingRules ? '已开启点控' : '未开启点控' }}
+                      </span>
+                    </div>
+                    <p class="mt-1.5 text-xs font-medium leading-5" :class="hasActiveExistingRules ? 'text-amber-800' : 'text-sky-700'">
+                      {{ hasActiveExistingRules ? '当前用户已有生效点控模块，再次确认会覆盖对应点控设置。' : '当前选择的用户暂未开启点控。' }}
+                    </p>
+                    <div v-if="hasActiveExistingRules" class="mt-2 flex flex-wrap gap-1.5" aria-label="已开启点控模块">
+                      <span
+                        v-for="rule in activeExistingRules"
+                        :key="rule.key"
+                        class="rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-amber-800 ring-1 ring-amber-300"
+                      >
+                        {{ rule.label }}
+                      </span>
+                    </div>
+                  </section>
+
                   <SelectOnlyCombobox
                     ref="firstControlSelect"
                     v-model="form.strategy"
@@ -465,7 +509,7 @@ const submit = () => {
                           控盘力度
                         </h3>
                         <p class="mt-0.5 text-xs leading-5 text-slate-500">
-                          交易类和理财类统一按百分比设置，系统按各模块口径结算。
+                          交易类和理财类按百分比设置，系统按各模块口径结算。
                         </p>
                       </div>
                       <span class="shrink-0 rounded-full bg-white px-2 py-1 text-xs font-medium text-slate-600">%</span>

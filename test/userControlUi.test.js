@@ -62,7 +62,7 @@ test('form helper trims notes and builds scope-specific payloads', () => {
   })
   assert.deepEqual(buildUserControlPayload({
     scope: 'global', userId: '158', strategy: 'positive', method: 'lowProfit',
-    intensity: { trade: { min: 3, max: 8 }, finance: { min: '1', max: '5' } }, duration: 'once', note: '  统一备注  '
+    intensity: { trade: { min: 3, max: 8 }, finance: { min: '1', max: '5' } }, duration: 'once', note: '  用户点控备注  '
   }), {
     userId: '158',
     strategy: 'positive',
@@ -72,7 +72,7 @@ test('form helper trims notes and builds scope-specific payloads', () => {
       finance: { mode: 'percentRange', min: 1, max: 5, unit: '%' }
     },
     duration: 'once',
-    note: '统一备注'
+    note: '用户点控备注'
   })
 })
 
@@ -151,6 +151,24 @@ test('shared modal renders the target email in the read-only user identity block
   assert.match(targetUser, /selectedUserEmail/)
 })
 
+test('shared modal shows the selected user current point-control status', () => {
+  const source = read('../src/admin/components/user-control/UserControlModal.vue')
+  const currentStatus = elementByTestId(source, 'user-control-current-status')
+
+  assert.notEqual(currentStatus, '')
+  assert.match(source, /activeExistingRules/)
+  assert.match(source, /\['active', 'processing'\]\.includes\(rule\?\.status\)/)
+  assert.match(currentStatus, /当前点控状态/)
+  assert.match(currentStatus, /已开启点控/)
+  assert.match(currentStatus, /未开启点控/)
+  assert.match(currentStatus, /border-amber-300 bg-amber-50 ring-1 ring-amber-100/)
+  assert.match(currentStatus, /border-sky-200 bg-sky-50 ring-1 ring-sky-100/)
+  assert.match(currentStatus, /bg-amber-200 text-amber-900/)
+  assert.match(currentStatus, /bg-sky-200 text-sky-900/)
+  assert.match(currentStatus, /已开启点控模块/)
+  assert.match(currentStatus, /再次确认会覆盖对应点控设置/)
+})
+
 test('module page explains settlement-only perpetual control and module-only scope', () => {
   const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   assert.match(source, /不改变K线/)
@@ -223,7 +241,7 @@ test('user list moves point-control actions into the complete operation drawer a
 
   assert.match(source, /是否点控中/)
   assert.match(source, /hasRules\(user\) \? '是' : '否'/)
-  assert.doesNotMatch(source, />统一控制</)
+  assert.doesNotMatch(source, />用户点控</)
   assert.doesNotMatch(source, />生效方式</)
   assert.doesNotMatch(source, />模块状态</)
   assert.doesNotMatch(source, />更新时间</)
@@ -246,7 +264,7 @@ test('user list moves point-control actions into the complete operation drawer a
   assert.match(actionBar, /bg-amber-50\/80 text-amber-700/)
   assert.match(actionBar, /bg-emerald-50\/80 text-emerald-700/)
   assert.match(actionBar, /bg-violet-50\/80 font-medium text-violet-700/)
-  assert.match(operationCatalog, /title: '统一点控'/)
+  assert.match(operationCatalog, /title: '用户点控'/)
   assert.match(operationCatalog, /title: '取消点控'/)
   assert.match(operationCatalog, /title: '点控日志'/)
   assert.doesNotMatch(actionBar, /控制详情|设置控制|修改控制|取消控制|控制日志/)
@@ -444,7 +462,7 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   assert.doesNotMatch(source, />当前选择说明</)
   assert.doesNotMatch(source, />通用结算说明</)
   assert.doesNotMatch(source, /状态规则：/)
-  assert.doesNotMatch(source, /六模块统一规则/)
+  assert.doesNotMatch(source, /六模块用户点控批次说明/)
   assert.match(source, /交割点控规则/)
   assert.match(source, /永续点控规则/)
   assert.match(source, /现货点控规则/)
@@ -453,8 +471,8 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   assert.match(source, /投资组合点控规则/)
   assert.match(source, /不单独修改K线、盘口行情和实时浮盈亏/)
   assert.match(source, /只影响目标用户订单价格，不改变公共行情、K线、盘口和其他用户订单/)
-  assert.match(source, /交易类统一通过价格偏移处理/)
-  assert.match(source, /理财类统一通过收益率调整处理/)
+  assert.match(source, /交易类通过价格偏移处理/)
+  assert.match(source, /理财类通过收益率调整处理/)
   assert.match(source, /做高\/做低仅针对交割、永续生效，现货按默认方式处理/)
   assert.match(source, /不使用做高\/做低方式/)
   assert.match(source, /通过成交价偏移处理/)

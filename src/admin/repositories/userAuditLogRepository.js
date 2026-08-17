@@ -433,7 +433,7 @@ const seedAuditLogs = () => {
       category: 'risk',
       action: 'risk.control.apply',
       result: 'partial',
-      reason: '统一点控提交后，交易模块生效，理财模块因已有规则待人工处理',
+      reason: '用户点控提交后，交易模块生效，理财模块因已有规则待人工处理',
       before: { delivery: 'none', perpetual: 'none', spot: 'none', aiQuant: 'lowYield' },
       after: { delivery: 'loss', perpetual: 'loss', spot: 'loss', aiQuant: 'lowYield', pendingModules: ['liquidity', 'portfolio'] },
       related: { businessId: 'CTRL-APPLY-user_1005-partial' }
@@ -559,7 +559,7 @@ const seedAuditLogs = () => {
       category: 'risk',
       action: 'risk.control.cancel',
       result: 'success',
-      reason: '复核符合，取消当前统一点控',
+      reason: '复核符合，取消当前用户点控',
       before: { delivery: 'loss', perpetual: 'loss', spot: 'loss', aiQuant: 'lowYield', liquidity: 'lowYield', portfolio: 'lowYield' },
       after: { delivery: 'cancelled', perpetual: 'cancelled', spot: 'cancelled', aiQuant: 'cancelled', liquidity: 'cancelled', portfolio: 'cancelled' },
       related: { businessId: 'CTRL-CANCEL-user_1001-001' }
@@ -587,7 +587,7 @@ const seedAuditLogs = () => {
       category: 'risk',
       action: 'risk.control.apply',
       result: 'success',
-      reason: '复核符合，统一设置六个模块控亏',
+      reason: '复核符合，用户点控设置六个模块控亏',
       before: { activeModules: [] },
       after: { delivery: 'loss', perpetual: 'loss', spot: 'loss', aiQuant: 'lowYield', liquidity: 'lowYield', portfolio: 'lowYield', duration: 'once' },
       related: { businessId: 'CTRL-APPLY-user_1004-001' }

@@ -385,7 +385,7 @@ export function getUserControlListMeta(state, userId) {
       ? '盈利'
       : globalRule?.strategy === 'negative'
         ? '亏损'
-        : '模块独立设置'
+        : '当前模块点控'
 
   return {
     hasCurrent: true,

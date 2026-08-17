@@ -30,7 +30,7 @@ export function createUserControlDemoSeed() {
     userId: '159',
     strategy: 'positive',
     duration: 'once',
-    note: '演示：统一带盈后交割已执行',
+    note: '演示：批次带盈后交割已执行',
     now: TIMESTAMPS.unified159,
     batchId: 'demo-batch-159'
   })
@@ -46,7 +46,7 @@ export function createUserControlDemoSeed() {
     userId: '158',
     strategy: 'positive',
     duration: 'permanent',
-    note: '演示：统一带盈后单模块覆盖',
+    note: '演示：批次带盈后单模块覆盖',
     now: TIMESTAMPS.unified158,
     batchId: 'demo-batch-158'
   })
@@ -81,7 +81,7 @@ export function createUserControlDemoSeed() {
     userId: 'user_1002',
     strategy: 'positive',
     duration: 'once',
-    note: '演示：列表用户统一带盈后交割已执行',
+    note: '演示：列表用户批次带盈后交割已执行',
     now: TIMESTAMPS.unified1002,
     batchId: 'demo-batch-user-1002'
   })
@@ -97,7 +97,7 @@ export function createUserControlDemoSeed() {
     userId: 'user_1003',
     strategy: 'negative',
     duration: 'permanent',
-    note: '演示：列表用户统一控亏后单模块覆盖',
+    note: '演示：列表用户点控控亏后单模块覆盖',
     now: TIMESTAMPS.unified1003,
     batchId: 'demo-batch-user-1003'
   })
@@ -116,7 +116,7 @@ export function createUserControlDemoSeed() {
     userId: 'user_1004',
     strategy: 'negative',
     duration: 'permanent',
-    note: '演示：统一永久规则后主动取消',
+    note: '演示：长期规则后主动取消',
     now: TIMESTAMPS.unified1004,
     batchId: 'demo-batch-user-1004'
   })

@@ -73,7 +73,7 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '编辑会员等级',
     '会员累计充值',
     '封户',
-    '统一点控',
+    '用户点控',
     '取消点控',
     '点控日志'
   ])

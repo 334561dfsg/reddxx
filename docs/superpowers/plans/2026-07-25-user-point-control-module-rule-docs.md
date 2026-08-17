@@ -15,8 +15,8 @@
 - 文档只描述产品规则，不包含 API、数据库、事务或结算服务实现。
 - 管理员只设置方向和生效方式，不填写具体金额、价格或收益率。
 - 一次性规则执行失败不消费，永久规则持续到取消或覆盖。
-- 模块独立设置只影响当前模块；用户管理统一设置覆盖六个模块。
-- 优先级固定为：单笔订单或持仓控制 > 当前模块用户点控 > 用户管理统一点控 > 模块全局场控 > 自然结果。
+- 模块点控只影响当前模块；用户点控设置覆盖六个模块。
+- 优先级固定为：单笔订单或持仓控制 > 当前模块用户点控 > 用户管理用户点控 > 模块全局场控 > 自然结果。
 
 ---
 
@@ -28,7 +28,7 @@
 - Create: `docs/user-point-control-modules/spot-user-point-control.md`
 
 **Interfaces:**
-- Consumes: `docs/superpowers/specs/2026-07-25-user-point-control-module-rule-docs-design.md` 的统一结构和通用规则。
+- Consumes: `docs/superpowers/specs/2026-07-25-user-point-control-module-rule-docs-design.md` 的一致结构和通用规则。
 - Produces: 三份可独立复制到交割、永续和现货产品文档中的规则说明。
 
 - [ ] **Step 1: 编写交割用户点控规则**
@@ -74,7 +74,7 @@ git commit -m "docs: add trade module point-control rules"
 - Create: `docs/user-point-control-modules/portfolio-user-point-control.md`
 
 **Interfaces:**
-- Consumes: `docs/superpowers/specs/2026-07-25-user-point-control-module-rule-docs-design.md` 的统一结构和通用规则。
+- Consumes: `docs/superpowers/specs/2026-07-25-user-point-control-module-rule-docs-design.md` 的一致结构和通用规则。
 - Produces: 三份可独立复制到 AI量化、流动性挖矿和投资组合产品文档中的规则说明。
 
 - [ ] **Step 1: 编写 AI量化用户点控规则**

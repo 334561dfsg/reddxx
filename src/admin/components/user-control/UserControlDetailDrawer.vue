@@ -73,8 +73,8 @@ const statusMeta = (rule) => {
 }
 
 const sourceLabel = (source) => ({
-  global: '用户管理统一设置',
-  module: '模块独立设置'
+  global: '用户点控设置',
+  module: '模块点控'
 })[source] || '—'
 
 const lastExecution = (moduleKey) => props.executionLogs.find((log) => (
@@ -95,7 +95,7 @@ const summaryMeta = computed(() => {
   if (summary.value.kind === 'divergent') {
     return {
       classes: 'border-amber-200 bg-amber-50 text-amber-800',
-      description: '存在差异：模块独立设置、取消或覆盖使当前六模块配置不再完全一致。'
+      description: '存在差异：模块点控、取消或覆盖使当前六模块配置不再完全一致。'
     }
   }
   if (summary.value.kind === 'progress') {
@@ -106,7 +106,7 @@ const summaryMeta = computed(() => {
   }
   return {
     classes: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-    description: summary.value.kind === 'synced' ? '六个模块沿用同一批统一配置。' : '当前没有生效中的统一控制。'
+    description: summary.value.kind === 'synced' ? '六个模块沿用同一批用户点控配置。' : '当前没有生效中的用户点控。'
   }
 })
 </script>
@@ -119,7 +119,7 @@ const summaryMeta = computed(() => {
           <aside v-show="phase !== 'closing'" ref="dialogRef" class="flex h-full w-full max-w-5xl flex-col overflow-hidden bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="user-control-detail-title">
         <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-6 py-5">
           <div class="min-w-0 flex-1">
-            <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">六模块统一控制详情</p>
+            <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">用户点控详情</p>
             <h2 id="user-control-detail-title" ref="titleRef" tabindex="-1" class="mt-1 break-words text-xl font-semibold text-slate-900">{{ user?.username || '用户' }}</h2>
             <p class="mt-1 break-all text-sm text-slate-500">UID {{ userId || '—' }} · {{ user?.email || '—' }}</p>
           </div>
