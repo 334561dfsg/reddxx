@@ -4,7 +4,6 @@ import { vipLevels } from '../../mock/vip'
 import { getAllCreditScoreConfig } from '../../mock/creditScore'
 import { CREDIT_SCORE_CONFIG_KEYS, CREDIT_SCORE_CHANGE_TYPE } from '../../constants/creditScore'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
-import PanelSingleSelect from '../form/PanelSingleSelect.vue'
 
 const props = defineProps({
   user: { type: Object, required: true },
@@ -19,26 +18,6 @@ const maxScore = computed(() => Number(config.value[CREDIT_SCORE_CONFIG_KEYS.MAX
 const manualAuditEnabled = computed(() => Boolean(config.value[CREDIT_SCORE_CONFIG_KEYS.MANUAL_AUDIT_ENABLED]))
 const manualAuditThreshold = computed(() => Number(config.value[CREDIT_SCORE_CONFIG_KEYS.MANUAL_AUDIT_THRESHOLD] ?? 10))
 const manualAuditTypes = computed(() => config.value[CREDIT_SCORE_CONFIG_KEYS.MANUAL_AUDIT_TYPES] || [])
-
-const deductionCustomRules = computed(() => {
-  return config.value[CREDIT_SCORE_CONFIG_KEYS.DEDUCTION_CUSTOM_RULES] || []
-})
-
-const earnCustomRules = computed(() => {
-  return config.value[CREDIT_SCORE_CONFIG_KEYS.EARN_CUSTOM_RULES] || []
-})
-
-const earnRuleOptions = computed(() => earnCustomRules.value.map((rule) => ({
-  value: rule.id,
-  label: `${rule.name}（+${rule.score}）`,
-  searchText: [rule.name, rule.id, `+${rule.score}`, '增加 加分'].join(' ')
-})))
-
-const deductionRuleOptions = computed(() => deductionCustomRules.value.map((rule) => ({
-  value: rule.id,
-  label: `${rule.name}（-${rule.score}）`,
-  searchText: [rule.name, rule.id, `-${rule.score}`, '扣减 扣分'].join(' ')
-})))
 
 const activeVipOptions = computed(() => {
   return [...vipLevels]
@@ -62,8 +41,7 @@ const returnFocusRef = ref(null)
 const form = ref({
   vipTargetLevel: null,
   scoreDirection: 'increase', // increase | decrease
-  earnRuleId: '',
-  deductionRuleId: '',
+  scorePoints: '',
   remark: ''
 })
 
@@ -99,8 +77,7 @@ const open = (returnFocus = null) => {
   form.value = {
     vipTargetLevel: currentVipLevel.value,
     scoreDirection: 'increase',
-    earnRuleId: earnCustomRules.value?.[0]?.id || '',
-    deductionRuleId: deductionCustomRules.value?.[0]?.id || '',
+    scorePoints: '',
     remark: ''
   }
   returnFocusRef.value = returnFocus
@@ -113,23 +90,17 @@ defineExpose({ open })
 const close = createDialogCloseAction(requestDialogClose)
 
 const parsedDelta = computed(() => {
-  if (form.value.scoreDirection === 'increase') {
-    const rule = earnCustomRules.value.find((r) => r.id === form.value.earnRuleId)
-    const s = Number(rule?.score)
-    if (!Number.isFinite(s)) return null
-    if (s <= 0) return null
-    return Math.floor(s)
-  }
-
-  // decrease：从自定义扣分项选择
-  const rule = deductionCustomRules.value.find((r) => r.id === form.value.deductionRuleId)
-  const s = Number(rule?.score)
+  const raw = String(form.value.scorePoints ?? '').trim()
+  if (!raw) return null
+  if (!/^\d+$/.test(raw)) return null
+  const s = Number(raw)
   if (!Number.isFinite(s)) return null
   if (s <= 0) return null
   return Math.floor(s)
 })
 
 const scoreBefore = computed(() => Number(props.user?.creditScore ?? 0))
+const hasScoreInput = computed(() => String(form.value.scorePoints ?? '').trim() !== '')
 const scoreDeltaSigned = computed(() => {
   const d = parsedDelta.value
   if (d === null) return null
@@ -159,22 +130,15 @@ const auditHint = computed(() => {
 })
 
 const confirm = () => {
+  if (hasScoreInput.value && parsedDelta.value === null) {
+    showToast('请输入正整数信用分')
+    return
+  }
+
   if (!willChangeVip.value && !willChangeScore.value) {
     showToast('没有可提交的变更')
     return
   }
-
-  if (willChangeScore.value && parsedDelta.value === null) {
-    if (form.value.scoreDirection === 'decrease') {
-      showToast('请选择要扣分的行为')
-    } else {
-      showToast('请选择要加分的行为')
-    }
-    return
-  }
-
-  const earnRule = earnCustomRules.value.find((r) => r.id === form.value.earnRuleId) || null
-  const deductionRule = deductionCustomRules.value.find((r) => r.id === form.value.deductionRuleId) || null
 
   const payload = {
     type: 'adjust',
@@ -188,9 +152,7 @@ const confirm = () => {
           before: scoreBefore.value,
           delta: scoreDeltaSigned.value ?? 0,
           after: scoreAfter.value,
-          rule: form.value.scoreDirection === 'increase'
-            ? (earnRule ? { id: earnRule.id, name: earnRule.name, score: earnRule.score } : null)
-            : (deductionRule ? { id: deductionRule.id, name: deductionRule.name, score: deductionRule.score } : null)
+          rule: null
         }
       : null,
     remark: String(form.value.remark || '').trim()
@@ -308,34 +270,23 @@ const confirm = () => {
                   </div>
                 </fieldset>
 
-                <div class="min-w-0">
-                  <div v-if="form.scoreDirection === 'increase'">
-                    <PanelSingleSelect
-                      v-model="form.earnRuleId"
-                      :options="earnRuleOptions"
-                      label="加分行为"
-                      placeholder="请选择加分行为"
-                      search-label="搜索加分行为"
-                      id-base="user-adjust-earn-rule"
-                    />
-                  </div>
-
-                  <div v-else>
-                    <PanelSingleSelect
-                      v-model="form.deductionRuleId"
-                      :options="deductionRuleOptions"
-                      label="扣分行为"
-                      placeholder="请选择扣分行为"
-                      search-label="搜索扣分行为"
-                      id-base="user-adjust-deduction-rule"
-                    />
-                  </div>
-                </div>
+                <label class="min-w-0">
+                  <span class="mb-2 block text-sm font-medium text-slate-700">调整分数</span>
+                  <input
+                    v-model="form.scorePoints"
+                    data-testid="user-adjust-score-points"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    class="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    placeholder="请输入分数"
+                  />
+                </label>
               </div>
 
               <div class="mt-3 rounded-lg bg-white border border-slate-200 px-3 py-2 text-sm text-slate-700">
                 <template v-if="scoreDeltaSigned === null">
-                  预览：请选择规则
+                  预览：请输入分数
                 </template>
                 <template v-else>
                   预览：{{ scoreBefore }} {{ scoreDeltaSigned >= 0 ? '+' : '' }}{{ scoreDeltaSigned }} = <span class="font-semibold text-slate-900">{{ scoreAfter }}</span>

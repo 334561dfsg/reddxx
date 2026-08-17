@@ -5,10 +5,9 @@ import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import test from 'node:test'
 import { compileScript, parse } from '@vue/compiler-sfc'
-import { createSfcHarness, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
+import { createSfcHarness } from './helpers/vueSfcHarness.js'
 
 const adjustFile = resolve(process.cwd(), 'src/admin/components/user/UserAdjustAction.vue')
-const panelFile = resolve(process.cwd(), 'src/admin/components/form/PanelSingleSelect.vue')
 const creditScoreMockFile = resolve(process.cwd(), 'src/admin/mock/creditScore.js')
 const creditScoreConstantsFile = resolve(process.cwd(), 'src/admin/constants/creditScore.js')
 const source = () => readFileSync(adjustFile, 'utf8')
@@ -21,7 +20,6 @@ const user = {
 }
 
 const loadAdjustAction = async () => {
-  const panelModuleUrl = loadVueSfcModuleUrl(panelFile)
   const creditScoreModuleUrl = `data:text/javascript;base64,${Buffer.from(
     readFileSync(creditScoreMockFile, 'utf8').replace(
       "from '../constants/creditScore'",
@@ -39,8 +37,7 @@ const loadAdjustAction = async () => {
     ['../../mock/vip', pathToFileURL(resolve(dirname(adjustFile), '../../mock/vip.js')).href],
     ['../../mock/creditScore', creditScoreModuleUrl],
     ['../../constants/creditScore', pathToFileURL(creditScoreConstantsFile).href],
-    ['../../composables/useDialogLifecycle.js', pathToFileURL(resolve(dirname(adjustFile), '../../composables/useDialogLifecycle.js')).href],
-    ['../form/PanelSingleSelect.vue', panelModuleUrl]
+    ['../../composables/useDialogLifecycle.js', pathToFileURL(resolve(dirname(adjustFile), '../../composables/useDialogLifecycle.js')).href]
   ])
   code = code.replace(
     /(from\s+)(['"])([^'"]+)(\2)/g,
@@ -59,17 +56,13 @@ const openDialog = async (harness) => {
   await harness.finishTransitions()
 }
 
-const setQuery = async (harness, value) => {
-  const input = harness.findByTestId('panel-single-select-search')
+const setScorePoints = async (harness, value) => {
+  const input = harness.findByTestId('user-adjust-score-points')
   assert.ok(input)
   input.value = value
   input.dispatchEvent({ type: 'input', target: input })
   await harness.flush()
 }
-
-const options = (harness) => harness.allNodes().filter((node) => (
-  node.getAttribute?.('role') === 'option'
-))
 
 const selectRadio = async (harness, name, value) => {
   const radio = harness.allNodes().find((node) => (
@@ -110,31 +103,22 @@ test('VIP choices are a labelled native radio-card group with numeric levels', a
     harness.allNodes().some((node) => node.tag === 'label' && node.contains(radio))
   )))
 
-  const ruleTrigger = harness.findByTestId('panel-single-select-trigger')
-  assert.equal(harness.findByTestId('panel-single-select-required'), undefined)
-  assert.equal(ruleTrigger.getAttribute('aria-describedby'), null)
+  const pointsInput = harness.findByTestId('user-adjust-score-points')
+  assert.ok(pointsInput)
+  assert.equal(pointsInput.getAttribute('inputmode'), 'numeric')
+  assert.ok(harness.allNodes().some((node) => (
+    node.tag === 'label' && node.contains(pointsInput) && node.textContent.includes('调整分数')
+  )))
 })
 
-test('earn rule search stays draft until commit and preserves the exact adjustment payload', async (t) => {
+test('manual score input preserves the exact increase adjustment payload', async (t) => {
   const component = await loadAdjustAction()
   const harness = await createSfcHarness(component, { user }, { onSubmit: () => {} })
   t.after(harness.cleanup)
   await openDialog(harness)
 
   await selectRadio(harness, 'vip-target-level', 2)
-  const trigger = harness.findByTestId('panel-single-select-trigger')
-  assert.match(trigger.textContent, /活动奖励（\+3）/)
-  trigger.click()
-  await harness.flush()
-
-  await setQuery(harness, '推荐奖励')
-  assert.deepEqual(options(harness).map((option) => option.textContent), ['推荐奖励（+5）'])
-  assert.match(trigger.textContent, /活动奖励（\+3）/)
-  assert.deepEqual(harness.emitted, [])
-
-  options(harness)[0].click()
-  await harness.finishTransitions()
-  assert.match(trigger.textContent, /推荐奖励（\+5）/)
+  await setScorePoints(harness, '5')
 
   const remark = harness.allNodes().find((node) => node.tag === 'textarea')
   remark.value = ' 运营调整 '
@@ -153,32 +137,21 @@ test('earn rule search stays draft until commit and preserves the exact adjustme
         before: 100,
         delta: 5,
         after: 105,
-        rule: { id: 'earn_referral', name: '推荐奖励', score: 5 }
+        rule: null
       },
       remark: '运营调整'
     }
   ]])
 })
 
-test('deduction rule search uses direction metadata and preserves the deduction payload', async (t) => {
+test('manual score input preserves the exact deduction payload', async (t) => {
   const component = await loadAdjustAction()
   const harness = await createSfcHarness(component, { user }, { onSubmit: () => {} })
   t.after(harness.cleanup)
   await openDialog(harness)
 
   await selectRadio(harness, 'credit-score-direction', 'decrease')
-  const trigger = harness.findByTestId('panel-single-select-trigger')
-  assert.match(trigger.textContent, /违规行为（-10）/)
-  trigger.click()
-  await harness.flush()
-  await setQuery(harness, '扣分')
-  assert.equal(options(harness).length, 7)
-  await setQuery(harness, '风控')
-  assert.deepEqual(options(harness).map((option) => option.textContent), ['风控预警（-5）'])
-  assert.match(trigger.textContent, /违规行为（-10）/)
-
-  options(harness)[0].click()
-  await harness.finishTransitions()
+  await setScorePoints(harness, '5')
   harness.findByText('确认调整', 'button').click()
 
   assert.deepEqual(harness.emitted, [[
@@ -192,18 +165,20 @@ test('deduction rule search uses direction metadata and preserves the deduction 
         before: 100,
         delta: -5,
         after: 95,
-        rule: { id: 'risk_alert', name: '风控预警', score: 5 }
+        rule: null
       },
       remark: ''
     }
   ]])
 })
 
-test('adjustment source removes legacy selects and maps both rule lists to the shared panel selector', () => {
+test('adjustment source removes legacy score selects and uses a manual score input', () => {
   assert.doesNotMatch(source(), /<select\b/)
-  assert.match(source(), /import PanelSingleSelect from '\.\.\/form\/PanelSingleSelect\.vue'/)
-  assert.match(source(), /v-model="form\.earnRuleId"/)
-  assert.match(source(), /v-model="form\.deductionRuleId"/)
-  assert.match(source(), /searchText:/)
+  assert.doesNotMatch(source(), /PanelSingleSelect/)
+  assert.doesNotMatch(source(), /v-model="form\.earnRuleId"/)
+  assert.doesNotMatch(source(), /v-model="form\.deductionRuleId"/)
+  assert.match(source(), /data-testid="user-adjust-score-points"/)
+  assert.match(source(), /v-model="form\.scorePoints"/)
+  assert.match(source(), /inputmode="numeric"/)
   assert.doesNotMatch(source(), /ensureRuleSelection/)
 })
