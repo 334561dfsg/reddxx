@@ -34,11 +34,14 @@ export const PAIRS_BY_CLASS = {
   forex: [
     { base: 'EUR', quote: 'USD' },
     { base: 'GBP', quote: 'USD' },
-    { base: 'USD', quote: 'JPY' }
+    { base: 'USD', quote: 'JPY' },
+    { base: 'AUD', quote: 'USD' },
+    { base: 'USD', quote: 'CNH' }
   ],
   metal: [
     { base: 'XAU', quote: 'USD' },
     { base: 'XAG', quote: 'USD' },
-    { base: 'XPT', quote: 'USD' }
+    { base: 'XPT', quote: 'USD' },
+    { base: 'XPD', quote: 'USD' }
   ]
 }

@@ -119,9 +119,12 @@ const PAIR_MARKET_TABLE = {
   'EUR-USD': [1.0856, 0.042],
   'GBP-USD': [1.265, -0.08],
   'USD-JPY': [149.82, 0.15],
+  'AUD-USD': [0.6234, -0.08],
+  'USD-CNH': [7.2486, 0.04],
   'XAU-USD': [2658.2, 0.45],
   'XAG-USD': [31.42, -0.72],
-  'XPT-USD': [985.3, 0.19]
+  'XPT-USD': [985.3, 0.19],
+  'XPD-USD': [1042, -1.21]
 }
 
 const pairs = computed(() => PAIRS_BY_CLASS[tradeAssetClass.value] || PAIRS_BY_CLASS.crypto)
