@@ -95,7 +95,7 @@ const summaryMeta = computed(() => {
   if (summary.value.kind === 'divergent') {
     return {
       classes: 'border-amber-200 bg-amber-50 text-amber-800',
-      description: '存在差异：模块点控、取消或覆盖使当前六模块配置不再完全一致。'
+      description: '存在差异：模块点控、取消或覆盖使当前交易模块配置不再完全一致。'
     }
   }
   if (summary.value.kind === 'progress') {
@@ -106,7 +106,7 @@ const summaryMeta = computed(() => {
   }
   return {
     classes: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-    description: summary.value.kind === 'synced' ? '六个模块沿用同一批用户点控配置。' : '当前没有生效中的用户点控。'
+    description: summary.value.kind === 'synced' ? '三个交易模块沿用同一批用户点控配置。' : '当前没有生效中的用户点控。'
   }
 })
 </script>

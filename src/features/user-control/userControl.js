@@ -8,6 +8,10 @@ export const USER_CONTROL_MODULES = Object.freeze([
   { key: 'liquidity', label: '流动性挖矿', family: 'finance', actionLabel: '用户点控' },
   { key: 'portfolio', label: '投资组合', family: 'finance', actionLabel: '用户点控' }
 ])
+export const USER_CONTROL_UNIFIED_MODULES = Object.freeze(
+  USER_CONTROL_MODULES.filter((module) => module.family === 'trade')
+)
+const USER_CONTROL_UNIFIED_MODULE_KEYS = new Set(USER_CONTROL_UNIFIED_MODULES.map((module) => module.key))
 
 export const USER_CONTROL_STRATEGY = Object.freeze({ POSITIVE: 'positive', NEGATIVE: 'negative' })
 export const USER_CONTROL_DURATION = Object.freeze({ ONCE: 'once', PERMANENT: 'permanent' })
@@ -86,7 +90,10 @@ const appendUnifiedUserControlAudit = ({ userId, action, operator, note, before,
 }
 
 const rulesDuration = (rules = {}) => {
-  const durations = [...new Set(Object.values(rules).map((rule) => rule?.duration).filter(Boolean))]
+  const durations = [...new Set(Object.entries(rules)
+    .filter(([key]) => USER_CONTROL_UNIFIED_MODULE_KEYS.has(key))
+    .map(([, rule]) => rule?.duration)
+    .filter(Boolean))]
   return durations.length > 1 ? 'mixed' : durations[0] || ''
 }
 
@@ -98,11 +105,13 @@ export const createUserControlState = () => ({
   failureModule: ''
 })
 
-const supersedeRules = (rules, now) => Object.values(rules || {}).map((rule) => ({
-  ...rule,
-  status: 'superseded',
-  supersededAt: now
-}))
+const supersedeRules = (rules, now) => Object.values(rules || {})
+  .filter(Boolean)
+  .map((rule) => ({
+    ...rule,
+    status: 'superseded',
+    supersededAt: now
+  }))
 
 export function snapshotUserControlRules(state, userId) {
   const rules = state.rules[String(userId)] || {}
@@ -125,44 +134,47 @@ export function applyUnifiedControl(state, input) {
       ...state,
       operationLogs: [{
         id: `op-${input.batchId}-failed`, userId, scope: 'global', action: 'apply',
-        modules: USER_CONTROL_MODULES.map((item) => item.key), strategy, method,
+        modules: USER_CONTROL_UNIFIED_MODULES.map((item) => item.key), strategy, method,
         ...(intensity ? { intensity } : {}),
         duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
         before, note, status: 'failed', failedModule: state.failureModule,
-        errorMessage: `模块 ${state.failureModule} 写入失败，六个模块均未更新`, createdAt: input.now
+        errorMessage: `模块 ${state.failureModule} 写入失败，交易模块均未更新`, createdAt: input.now
       }, ...state.operationLogs],
-      lastError: `模块 ${state.failureModule} 写入失败，六个模块均未更新`
+      lastError: `模块 ${state.failureModule} 写入失败，交易模块均未更新`
     }
   }
 
   const before = Object.fromEntries(Object.entries(state.rules[userId] || {}).map(([key, rule]) => [key, { ...rule }]))
-  const rules = Object.fromEntries(USER_CONTROL_MODULES.map((module) => {
+  const nextRules = cloneRules(state, userId)
+  const overwrittenRules = {}
+  USER_CONTROL_UNIFIED_MODULES.forEach((module) => {
     const moduleMethod = normalizeMethod({ ...input, strategy, method, scope: 'module', moduleKey: module.key })
-    return [module.key, {
+    overwrittenRules[module.key] = nextRules[module.key]
+    nextRules[module.key] = {
       id: `${input.batchId}-${module.key}`, batchId: input.batchId, userId, moduleKey: module.key,
       family: module.family, value: strategyValue(strategy, module.family), strategy, method: moduleMethod,
       ...(intensity?.[module.family] ? { intensity: { [module.family]: { ...intensity[module.family] } } } : {}),
       duration: input.duration, status: 'active', source: 'global', note, updatedAt: input.now,
       consumedAt: '', supersededAt: '', cancelledAt: ''
-    }]
-  }))
+    }
+  })
   appendUnifiedUserControlAudit({
     userId,
     action: 'risk.control.apply',
     operator: operatorOf(input),
     note,
     before,
-    after: rules,
+    after: nextRules,
     businessId: input.batchId,
     occurredAt: input.now
   })
 
   return {
     ...state,
-    rules: { ...state.rules, [userId]: rules },
-    ruleHistory: [...supersedeRules(before, input.now), ...(state.ruleHistory || [])],
+    rules: { ...state.rules, [userId]: nextRules },
+    ruleHistory: [...supersedeRules(overwrittenRules, input.now), ...(state.ruleHistory || [])],
     operationLogs: [{ id: `op-${input.batchId}`, userId, scope: 'global', action: 'apply',
-      modules: USER_CONTROL_MODULES.map((item) => item.key), strategy, method,
+      modules: USER_CONTROL_UNIFIED_MODULES.map((item) => item.key), strategy, method,
       ...(intensity ? { intensity } : {}),
       duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
       before, note, status: 'success', createdAt: input.now }, ...state.operationLogs],
@@ -259,9 +271,11 @@ export function cancelUnifiedControl(state, input) {
   const userId = requireText(input.userId, 'userId')
   const note = requireText(input.note, 'note')
   const before = cloneRules(state, userId)
-  if (!Object.values(before).some((rule) => ['active', 'processing'].includes(rule.status))) return state
+  if (!USER_CONTROL_UNIFIED_MODULES.some((module) => ['active', 'processing'].includes(before[module.key]?.status))) return state
   const cancelled = Object.fromEntries(Object.entries(before).map(([key, rule]) => [key,
-    ['active', 'processing'].includes(rule.status) ? { ...rule, status: 'cancelled', cancelledAt: input.now } : rule
+    USER_CONTROL_UNIFIED_MODULE_KEYS.has(key) && ['active', 'processing'].includes(rule.status)
+      ? { ...rule, status: 'cancelled', cancelledAt: input.now }
+      : rule
   ]))
   appendUnifiedUserControlAudit({
     userId,
@@ -275,7 +289,7 @@ export function cancelUnifiedControl(state, input) {
   })
   return { ...state, rules: { ...state.rules, [userId]: cancelled }, operationLogs: [{
     id: input.operationId, userId, scope: 'global', action: 'cancel',
-    modules: USER_CONTROL_MODULES.map((item) => item.key), duration: rulesDuration(before),
+    modules: USER_CONTROL_UNIFIED_MODULES.map((item) => item.key), duration: rulesDuration(before),
     operator: operatorOf(input), batchId: input.batchId || input.operationId,
     before, note, status: 'success', createdAt: input.now
   }, ...state.operationLogs] }
@@ -351,17 +365,20 @@ const dominantUnifiedBatch = (rules) => {
 }
 
 export function summarizeUserControl(state, userId) {
-  const rules = Object.values(state.rules[String(userId)] || {})
+  const rules = USER_CONTROL_UNIFIED_MODULES
+    .map((module) => state.rules[String(userId)]?.[module.key])
+    .filter(Boolean)
   const effective = rules.filter((rule) => ['active', 'processing'].includes(rule.status))
   const consumed = rules.filter((rule) => rule.status === 'consumed')
-  if (!effective.length) return { kind: 'none', label: '未设置', total: 6 }
+  const total = USER_CONTROL_UNIFIED_MODULES.length
+  if (!effective.length) return { kind: 'none', label: '未设置', total }
   const globalBatch = dominantUnifiedBatch(rules)
   const aligned = rules.filter((rule) => rule.batchId === globalBatch
     && ['active', 'processing', 'consumed'].includes(rule.status)).length
   const divergent = getUserControlDivergenceKeys(state.rules[String(userId)] || {}).length > 0
-  if (divergent) return { kind: 'divergent', aligned, total: 6, label: `${aligned}/6 存在差异` }
-  if (consumed.length) return { kind: 'progress', consumed: consumed.length, total: 6, label: `已执行 ${consumed.length}/6` }
-  return { kind: 'synced', aligned: 6, total: 6, label: '6/6 已同步' }
+  if (divergent) return { kind: 'divergent', aligned, total, label: `${aligned}/${total} 存在差异` }
+  if (consumed.length) return { kind: 'progress', consumed: consumed.length, total, label: `已执行 ${consumed.length}/${total}` }
+  return { kind: 'synced', aligned: total, total, label: `${total}/${total} 已同步` }
 }
 
 export function getEffectiveUserControlRules(rules = {}) {
@@ -396,7 +413,7 @@ export function getUserControlListMeta(state, userId) {
 
 export function getUnifiedControlCancelItems(rules = {}) {
   const effectiveRules = getEffectiveUserControlRules(rules)
-  return USER_CONTROL_MODULES
+  return USER_CONTROL_UNIFIED_MODULES
     .filter((module) => effectiveRules[module.key])
     .map((module) => ({
       moduleKey: module.key,
@@ -411,7 +428,7 @@ export function getUnifiedControlCancelItems(rules = {}) {
 export function getUserControlDivergenceKeys(rules = {}) {
   const unifiedBatch = dominantUnifiedBatch(rules)
 
-  return USER_CONTROL_MODULES
+  return USER_CONTROL_UNIFIED_MODULES
     .filter((module) => {
       const rule = rules[module.key]
       if (!rule) return false

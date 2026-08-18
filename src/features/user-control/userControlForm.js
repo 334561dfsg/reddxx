@@ -10,8 +10,8 @@ const MODULE_CONTROL_OPTIONS = Object.freeze({
 })
 
 const CONTROL_TYPE_OPTIONS = Object.freeze([
-  Object.freeze({ value: 'positive', label: '盈利', description: '交易模块按有利价格偏移；理财模块按收益率提升处理' }),
-  Object.freeze({ value: 'negative', label: '亏损', description: '交易模块按不利价格偏移；理财模块按收益率降低处理' })
+  Object.freeze({ value: 'positive', label: '盈利', description: '交易模块按有利价格偏移处理' }),
+  Object.freeze({ value: 'negative', label: '亏损', description: '交易模块按不利价格偏移处理' })
 ])
 
 const CONTROL_METHOD_OPTIONS = Object.freeze({
@@ -29,13 +29,14 @@ const CONTROL_METHOD_OPTIONS = Object.freeze({
 
 const ADVANCED_CONTROL_METHODS = new Set(['highProfit', 'lowProfit', 'highLoss', 'lowLoss'])
 const ADVANCED_CONTROL_MODULES = new Set(['delivery', 'perpetual'])
-const GLOBAL_ADVANCED_METHOD_NOTE = '仅针对交割合约、永续合约生效，其他模块按默认方式处理'
+const GLOBAL_ADVANCED_METHOD_NOTE = '仅针对交割合约、永续合约生效，现货按默认方式处理'
 const VALID_STRATEGIES = new Set(['positive', 'negative'])
 const VALID_DURATIONS = new Set(['once', 'permanent'])
+const DEFAULT_DURATION = 'permanent'
 const text = (value) => String(value ?? '').trim()
 const DEFAULT_INTENSITY = Object.freeze({
-  trade: Object.freeze({ mode: 'percentRange', min: 3, max: 8, unit: '%' }),
-  finance: Object.freeze({ mode: 'percentRange', min: 1, max: 5, unit: '%' })
+  trade: Object.freeze({ mode: 'percentRange', min: 1, max: 10, unit: '%' }),
+  finance: Object.freeze({ mode: 'percentRange', min: 1, max: 10, unit: '%' })
 })
 
 export const getModuleControlOptions = (family) => MODULE_CONTROL_OPTIONS[family] || []
@@ -91,12 +92,14 @@ const normalizeIntensity = (input = {}) => {
 
 const hasRequiredIntensity = (input = {}) => {
   const intensity = normalizeIntensity(input)
-  if (input.scope === 'global') return Boolean(intensity.trade && intensity.finance)
+  if (input.scope === 'global') return Boolean(intensity.trade)
   return Boolean(intensity[input.family])
 }
 
+const normalizeDuration = (duration) => VALID_DURATIONS.has(duration) ? duration : DEFAULT_DURATION
+
 export function isUserControlFormComplete(input = {}) {
-  if (!text(input.userId) || !text(input.note) || !VALID_DURATIONS.has(input.duration)) return false
+  if (!text(input.userId) || !text(input.note) || !VALID_DURATIONS.has(normalizeDuration(input.duration))) return false
   if (input.scope === 'global') return VALID_STRATEGIES.has(input.strategy) && isControlMethodForStrategy(input.strategy, input.method, input) && hasRequiredIntensity(input)
   if (input.scope !== 'module') return false
   return VALID_STRATEGIES.has(input.strategy)
@@ -113,7 +116,7 @@ export function buildUserControlPayload(input = {}) {
     method: input.method,
     ...(input.scope === 'module' ? { value: moduleValueForStrategy(input.strategy, input.family) } : {}),
     intensity: normalizeIntensity(input),
-    duration: input.duration,
+    duration: normalizeDuration(input.duration),
     note: text(input.note)
   }
 }

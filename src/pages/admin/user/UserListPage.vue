@@ -366,6 +366,14 @@ const selectControlCancel = (user) => {
   openControlCancel(user)
 }
 
+const requestControlCancelFromSetting = async () => {
+  const user = controlUser.value
+  if (!user) return
+  controlModalOpen.value = false
+  await nextTick()
+  openControlCancel(user)
+}
+
 const selectUserDetail = (user, returnFocus = null) => {
   openUserDetail(user, 'overview', returnFocus)
 }
@@ -848,7 +856,7 @@ const handleMfaCancel = () => {
 
 const mfaTitle = computed(() => pendingMfaAction.value?.type === 'cancel' ? '取消用户点控安全验证' : '用户点控安全验证')
 const mfaDescription = computed(() => pendingMfaAction.value?.type === 'cancel'
-  ? '取消六个模块的生效规则属于敏感操作，请输入 MFA 验证码'
+  ? '取消交易模块的生效规则属于敏感操作，请输入 MFA 验证码'
   : '长期生效或覆盖用户点控属于敏感操作，请输入 MFA 验证码')
 
 // 状态配置
@@ -1103,14 +1111,11 @@ const clearDetailDrawer = () => {
                     {{ isLocked(user) ? '解封' : '封户' }}</button>
                   <button
                     type="button"
-                    class="inline-flex h-8 min-w-16 items-center justify-center rounded-lg px-2.5 text-xs font-medium focus:outline-none focus:ring-2"
-                    :class="hasRules(user)
-                      ? 'bg-rose-50/80 text-rose-700 hover:bg-rose-100 focus:ring-rose-500'
-                      : 'bg-amber-50/80 text-amber-700 hover:bg-amber-100 focus:ring-amber-500'"
-                    :aria-label="hasRules(user) ? '取消用户点控' : '设置用户点控'"
-                    @click="handleOperationDrawerAction({ id: hasRules(user) ? 'cancel-point-control' : 'point-control', user, trigger: $event.currentTarget })"
+                    class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg bg-amber-50/80 px-2.5 text-xs font-medium text-amber-700 hover:bg-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    aria-label="设置用户点控"
+                    @click="handleOperationDrawerAction({ id: 'point-control', user, trigger: $event.currentTarget })"
                   >
-                    {{ hasRules(user) ? '取消点控' : '点控' }}</button>
+                    点控</button>
                   <button
                     type="button"
                     class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-rose-50/80 font-medium text-rose-700 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
@@ -1198,6 +1203,7 @@ const clearDetailDrawer = () => {
       :return-focus="resolveControlReturnFocus"
       @close="closeControlSetting"
       @submit="submitControlSetting"
+      @request-cancel="requestControlCancelFromSetting"
     />
 
     <UserOperations

@@ -14,6 +14,7 @@ import {
 import * as userControlHelpers from '../src/features/user-control/userControl.js'
 import {
   USER_CONTROL_MODULES,
+  USER_CONTROL_UNIFIED_MODULES,
   applyModuleControl,
   applyUnifiedControl,
   cancelModuleControl,
@@ -31,6 +32,8 @@ test('demo seed includes synchronized, divergent, and consumed examples', () => 
   assert.equal(summarizeUserControl(seed, '158').kind, 'divergent')
   assert.equal(summarizeUserControl(seed, '153').kind, 'synced')
   assert.equal(summarizeUserControl(seed, 'user_1001').kind, 'synced')
+  assert.equal(userControlHelpers.getUserControlListMeta(seed, 'user_1001').controlLabel, '亏损')
+  assert.ok(Object.values(seed.rules.user_1001).every((rule) => rule.strategy === 'negative' && rule.value === 'loss'))
   assert.equal(summarizeUserControl(seed, 'user_1002').kind, 'progress')
   assert.equal(summarizeUserControl(seed, 'user_1003').kind, 'divergent')
   assert.ok(seed.operationLogs.length >= 2)
@@ -127,7 +130,7 @@ test('list metadata only reflects active and processing rules', () => {
     durationLabel: '—'
   })
 
-  const consumed = USER_CONTROL_MODULES.reduce((state, module, index) => consumeModuleControl(state, {
+  const consumed = USER_CONTROL_UNIFIED_MODULES.reduce((state, module, index) => consumeModuleControl(state, {
     userId: 'user_1004', moduleKey: module.key, businessId: `consumed-${index}`,
     beforeValue: module.family === 'trade' ? 'profit' : 'highYield',
     afterValue: state.rules['user_1004'][module.key].value,
@@ -154,14 +157,12 @@ test('cancel items include only effective modules with their current rule conten
   })
   const items = userControlHelpers.getUnifiedControlCancelItems(progressed.rules['user_1002'])
 
-  assert.equal(items.length, 5)
+  assert.equal(items.length, 2)
   assert.equal(items.some((item) => item.moduleKey === 'delivery'), false)
   assert.deepEqual(items.find((item) => item.moduleKey === 'perpetual'), {
     moduleKey: 'perpetual', moduleLabel: '永续', value: 'loss', method: 'loss', duration: 'once', status: 'active'
   })
-  assert.deepEqual(items.find((item) => item.moduleKey === 'aiQuant'), {
-    moduleKey: 'aiQuant', moduleLabel: 'AI量化', value: 'lowYield', method: 'loss', duration: 'once', status: 'active'
-  })
+  assert.equal(items.some((item) => ['aiQuant', 'liquidity', 'portfolio'].includes(item.moduleKey)), false)
 })
 
 test('unified cancellation leaves zero-effective-rule state and logs unchanged', () => {
@@ -209,44 +210,44 @@ test('divergence keys identify the overridden module without flagging consumed p
   const mixedDifferenceRules = {
     ...unified.rules['user_1003'],
     spot: { ...unified.rules['user_1003'].spot, status: 'cancelled' },
-    aiQuant: { ...unified.rules['user_1003'].aiQuant, batchId: 'different-batch' },
-    portfolio: { ...unified.rules['user_1003'].portfolio, status: 'superseded' }
+    aiQuant: { moduleKey: 'aiQuant', batchId: 'different-batch', status: 'active' },
+    portfolio: { moduleKey: 'portfolio', batchId: 'different-batch', status: 'superseded' }
   }
-  assert.deepEqual(userControlHelpers.getUserControlDivergenceKeys(mixedDifferenceRules), ['spot', 'aiQuant', 'portfolio'])
+  assert.deepEqual(userControlHelpers.getUserControlDivergenceKeys(mixedDifferenceRules), ['spot'])
 
   const splitBatchRules = {
     ...unified.rules['user_1003'],
-    portfolio: { ...unified.rules['user_1003'].portfolio, batchId: 'different-batch' }
+    perpetual: { ...unified.rules['user_1003'].perpetual, batchId: 'different-batch' }
   }
   const splitBatchState = {
     ...unified,
     rules: { ...unified.rules, user_1003: splitBatchRules }
   }
   assert.deepEqual(summarizeUserControl(splitBatchState, 'user_1003'), {
-    kind: 'divergent', aligned: 5, total: 6, label: '5/6 存在差异'
+    kind: 'divergent', aligned: 2, total: 3, label: '2/3 存在差异'
   })
   assert.equal(userControlHelpers.getUserControlListMeta(splitBatchState, 'user_1003').controlLabel, '存在模块差异')
-  assert.deepEqual(userControlHelpers.getUserControlDivergenceKeys(splitBatchRules), ['portfolio'])
+  assert.deepEqual(userControlHelpers.getUserControlDivergenceKeys(splitBatchRules), ['perpetual'])
 })
 
-test('unified positive maps trading to profit and finance to high yield', () => {
+test('unified positive maps only trading modules to profit', () => {
   const initial = createUserControlState()
   const next = applyUnifiedControl(initial, {
     userId: '159', strategy: 'positive', duration: 'once', note: '客户带盈',
     now: '2026-07-25 14:30:00', batchId: 'batch-1'
   })
 
-  assert.deepEqual(Object.keys(next.rules['159']).sort(), USER_CONTROL_MODULES.map((item) => item.key).sort())
+  assert.deepEqual(Object.keys(next.rules['159']).sort(), USER_CONTROL_UNIFIED_MODULES.map((item) => item.key).sort())
   assert.equal(next.rules['159'].perpetual.value, 'profit')
   assert.equal(next.rules['159'].delivery.value, 'profit')
   assert.equal(next.rules['159'].spot.value, 'profit')
-  assert.equal(next.rules['159'].aiQuant.value, 'highYield')
-  assert.equal(next.rules['159'].liquidity.value, 'highYield')
-  assert.equal(next.rules['159'].portfolio.value, 'highYield')
+  assert.equal(next.rules['159'].aiQuant, undefined)
+  assert.equal(next.rules['159'].liquidity, undefined)
+  assert.equal(next.rules['159'].portfolio, undefined)
   assert.ok(Object.values(next.rules['159']).every((rule) => rule.source === 'global' && rule.status === 'active'))
 })
 
-test('unified control persists trade and finance intensity by module family', () => {
+test('unified control persists only trade intensity for trading modules', () => {
   const intensity = {
     trade: { mode: 'percentRange', min: 3, max: 8, unit: '%' },
     finance: { mode: 'percentRange', min: 1, max: 5, unit: '%' }
@@ -258,11 +259,11 @@ test('unified control persists trade and finance intensity by module family', ()
 
   assert.deepEqual(next.rules['159'].perpetual.intensity, { trade: intensity.trade })
   assert.deepEqual(next.rules['159'].spot.intensity, { trade: intensity.trade })
-  assert.deepEqual(next.rules['159'].aiQuant.intensity, { finance: intensity.finance })
+  assert.equal(next.rules['159'].aiQuant, undefined)
   assert.deepEqual(next.operationLogs[0].intensity, intensity)
 })
 
-test('unified negative maps trading to loss and finance to low yield', () => {
+test('unified negative maps only trading modules to loss', () => {
   const next = applyUnifiedControl(createUserControlState(), {
     userId: '159', strategy: 'negative', duration: 'permanent', note: '客户控亏',
     now: '2026-07-25 14:30:00', batchId: 'batch-negative'
@@ -271,9 +272,9 @@ test('unified negative maps trading to loss and finance to low yield', () => {
   assert.equal(next.rules['159'].perpetual.value, 'loss')
   assert.equal(next.rules['159'].delivery.value, 'loss')
   assert.equal(next.rules['159'].spot.value, 'loss')
-  assert.equal(next.rules['159'].aiQuant.value, 'lowYield')
-  assert.equal(next.rules['159'].liquidity.value, 'lowYield')
-  assert.equal(next.rules['159'].portfolio.value, 'lowYield')
+  assert.equal(next.rules['159'].aiQuant, undefined)
+  assert.equal(next.rules['159'].liquidity, undefined)
+  assert.equal(next.rules['159'].portfolio, undefined)
 })
 
 test('advanced profit and loss methods only persist for delivery and perpetual rules', () => {
@@ -285,9 +286,9 @@ test('advanced profit and loss methods only persist for delivery and perpetual r
   assert.equal(unified.rules['method-user'].delivery.method, 'highProfit')
   assert.equal(unified.rules['method-user'].perpetual.method, 'highProfit')
   assert.equal(unified.rules['method-user'].spot.method, 'profit')
-  assert.equal(unified.rules['method-user'].aiQuant.method, 'profit')
-  assert.equal(unified.rules['method-user'].liquidity.method, 'profit')
-  assert.equal(unified.rules['method-user'].portfolio.method, 'profit')
+  assert.equal(unified.rules['method-user'].aiQuant, undefined)
+  assert.equal(unified.rules['method-user'].liquidity, undefined)
+  assert.equal(unified.rules['method-user'].portfolio, undefined)
 
   const spot = applyModuleControl(unified, {
     userId: 'method-user', moduleKey: 'spot', strategy: 'positive', method: 'lowProfit',
@@ -318,10 +319,10 @@ test('module override changes one child and marks the unified summary divergent'
   })
   assert.equal(changed.rules['159'].perpetual.source, 'module')
   assert.equal(changed.rules['159'].delivery.value, 'profit')
-  assert.deepEqual(summarizeUserControl(changed, '159'), { kind: 'divergent', aligned: 5, total: 6, label: '5/6 存在差异' })
+  assert.deepEqual(summarizeUserControl(changed, '159'), { kind: 'divergent', aligned: 2, total: 3, label: '2/3 存在差异' })
 })
 
-test('a second unified write replaces a module override and restores six-module alignment', () => {
+test('a second unified write replaces a module override and restores trade-module alignment', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
     userId: '159', strategy: 'positive', duration: 'permanent', note: '批次带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
@@ -335,7 +336,7 @@ test('a second unified write replaces a module override and restores six-module 
 
   assert.equal(replaced.rules['159'].perpetual.source, 'global')
   assert.equal(replaced.rules['159'].perpetual.value, 'loss')
-  assert.deepEqual(summarizeUserControl(replaced, '159'), { kind: 'synced', aligned: 6, total: 6, label: '6/6 已同步' })
+  assert.deepEqual(summarizeUserControl(replaced, '159'), { kind: 'synced', aligned: 3, total: 3, label: '3/3 已同步' })
 })
 
 test('overwrites retain superseded rules as displayable history without changing current rules', () => {
@@ -360,16 +361,17 @@ test('overwrites retain superseded rules as displayable history without changing
     userId: '159', strategy: 'negative', duration: 'once', note: '点控控亏',
     now: '2026-07-25 16:00:00', batchId: 'history-b2'
   })
-  assert.equal(replaced.ruleHistory.length, USER_CONTROL_MODULES.length + 1)
-  assert.ok(replaced.ruleHistory.slice(0, USER_CONTROL_MODULES.length).every((rule) => (
+  assert.equal(replaced.ruleHistory.length, USER_CONTROL_UNIFIED_MODULES.length + 1)
+  assert.ok(replaced.ruleHistory.slice(0, USER_CONTROL_UNIFIED_MODULES.length).every((rule) => (
     rule.status === 'superseded' && rule.supersededAt === '2026-07-25 16:00:00'
   )))
-  assert.ok(Object.values(replaced.rules['159']).every((rule) => (
-    rule.batchId === 'history-b2' && rule.status === 'active' && rule.supersededAt === ''
-  )))
+  assert.ok(USER_CONTROL_UNIFIED_MODULES.every((module) => {
+    const rule = replaced.rules['159'][module.key]
+    return rule.batchId === 'history-b2' && rule.status === 'active' && rule.supersededAt === ''
+  }))
 })
 
-test('unified apply operation log retains a snapshot of the prior six-module rules', () => {
+test('unified apply operation log retains a snapshot of the prior trade rules', () => {
   const first = applyUnifiedControl(createUserControlState(), {
     userId: '159', strategy: 'positive', duration: 'permanent', note: '批次带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
@@ -395,7 +397,7 @@ test('once consumption updates one module without creating a configuration diffe
     beforeValue: 'loss', afterValue: 'profit', now: '2026-07-25 14:40:00'
   })
   assert.equal(consumed.rules['159'].delivery.status, 'consumed')
-  assert.deepEqual(summarizeUserControl(consumed, '159'), { kind: 'progress', consumed: 1, total: 6, label: '已执行 1/6' })
+  assert.deepEqual(summarizeUserControl(consumed, '159'), { kind: 'progress', consumed: 1, total: 3, label: '已执行 1/3' })
 })
 
 test('once consumption rejects a simulated outcome that differs from the active rule', () => {
@@ -457,17 +459,17 @@ test('module cancellation preserves an absent child and records null before valu
   assert.equal(cancelled.operationLogs[0].before, undefined)
 })
 
-test('a unified write failure rolls back all module changes', () => {
+test('a unified write failure rolls back all trade module changes', () => {
   const configured = applyUnifiedControl(createUserControlState(), {
-    userId: '159', strategy: 'negative', duration: 'permanent', note: '旧的六模块配置',
+    userId: '159', strategy: 'negative', duration: 'permanent', note: '旧的交易模块配置',
     now: '2026-07-25 14:00:00', batchId: 'old-batch'
   })
   const initial = { ...configured, failureModule: 'spot' }
   const next = applyUnifiedControl(initial, {
     userId: '159', strategy: 'positive', duration: 'once', note: '客户带盈', now: '2026-07-25 14:30:00', batchId: 'b1'
   })
-  assert.equal(Object.keys(initial.rules['159']).length, USER_CONTROL_MODULES.length)
-  for (const module of USER_CONTROL_MODULES) {
+  assert.equal(Object.keys(initial.rules['159']).length, USER_CONTROL_UNIFIED_MODULES.length)
+  for (const module of USER_CONTROL_UNIFIED_MODULES) {
     assert.deepEqual(next.rules['159'][module.key], initial.rules['159'][module.key])
   }
   assert.equal(next.operationLogs.length, initial.operationLogs.length + 1)
@@ -475,10 +477,10 @@ test('a unified write failure rolls back all module changes', () => {
   assert.equal(next.operationLogs[0].failedModule, 'spot')
   assert.deepEqual(next.operationLogs[0].before, initial.rules['159'])
   assert.deepEqual(next.ruleHistory, initial.ruleHistory)
-  assert.equal(next.lastError, '模块 spot 写入失败，六个模块均未更新')
+  assert.equal(next.lastError, '模块 spot 写入失败，交易模块均未更新')
 })
 
-test('reactive six-module rules can be snapshotted as detached cloneable values', () => {
+test('reactive all-module rules can be snapshotted as detached cloneable values', () => {
   assert.equal(typeof userControlHelpers.snapshotUserControlRules, 'function')
   const state = reactive(createUserControlDemoSeed())
   const snapshot = userControlHelpers.snapshotUserControlRules(state, '159')
@@ -615,8 +617,8 @@ test('demo state actions consume once, retain failure toggle, and restore the se
       now: '2026-07-25 17:10:00', batchId: 'state-failure-001'
     })
     assert.equal(userControlState.value.failureModule, 'spot')
-    assert.equal(userControlState.value.lastError, '模块 spot 写入失败，六个模块均未更新')
-    for (const module of USER_CONTROL_MODULES) {
+    assert.equal(userControlState.value.lastError, '模块 spot 写入失败，交易模块均未更新')
+    for (const module of USER_CONTROL_UNIFIED_MODULES) {
       assert.deepEqual(userControlState.value.rules['159'][module.key], before[module.key])
     }
 

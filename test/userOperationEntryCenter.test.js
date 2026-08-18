@@ -9,6 +9,9 @@ import {
 } from '../src/admin/config/userOperations.js'
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
+const elementByTestId = (source, testId) => source.match(
+  new RegExp(`<([a-z]+)[^>]*data-testid="${testId}"[^>]*>[\\s\\S]*?<\\/\\1>`)
+)?.[0] || ''
 
 test('operation catalog keeps the approved quick actions and grouped entries', () => {
   assert.deepEqual(USER_OPERATION_QUICK_IDS, [
@@ -74,7 +77,6 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '会员累计充值',
     '封户',
     '用户点控',
-    '取消点控',
     '点控日志'
   ])
 })
@@ -224,6 +226,7 @@ test('operation drawer renders grouped actions and explains planned entries with
 
 test('user list exposes one-click row actions and coordinates the complete operation drawer', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
+  const actionBar = elementByTestId(source, 'user-row-action-bar')
 
   assert.match(source, /import UserOperationDrawer/)
   assert.doesNotMatch(source, /useRouter/)
@@ -238,19 +241,20 @@ test('user list exposes one-click row actions and coordinates the complete opera
   assert.match(source, />\s*编辑资料<\/button>/)
   assert.match(source, />\s*入金<\/button>/)
   assert.match(source, /isLocked\(user\) \? '解封' : '封户'/)
-  assert.match(source, /hasRules\(user\) \? '取消点控' : '点控'/)
-  assert.match(source, /hasRules\(user\) \? 'cancel-point-control' : 'point-control'/)
+  assert.match(source, />\s*点控<\/button>/)
+  assert.doesNotMatch(source, /hasRules\(user\) \? '取消点控' : '点控'/)
+  assert.doesNotMatch(source, /hasRules\(user\) \? 'cancel-point-control' : 'point-control'/)
+  assert.match(source, /@request-cancel="requestControlCancelFromSetting"/)
   assert.match(source, />\s*修改信用分<\/button>/)
   assert.match(source, />\s*信用分审核<\/button>/)
   assert.match(source, />\s*更多\s*<\/button>/)
   assert.match(source, /data-testid="user-row-action-bar"[^>]*flex-wrap[^>]*gap-2/)
   assert.doesNotMatch(source, /whitespace-nowrap/)
-  assert.equal((source.match(/class="inline-flex h-8 min-w-/g) || []).length, 8)
+  assert.equal((actionBar.match(/class="inline-flex h-8 min-w-/g) || []).length, 8)
   assert.match(source, /id: 'edit-profile'/)
   assert.match(source, /id: 'freeze-account'/)
   assert.match(source, /id: 'credit-review'/)
   assert.match(source, /bg-rose-50\/80 text-rose-700/)
-  assert.match(source, /bg-amber-50\/80 text-amber-700/)
   assert.match(source, /bg-emerald-50\/80 text-emerald-700/)
   assert.match(source, /bg-violet-50\/80 font-medium text-violet-700/)
   assert.doesNotMatch(source, /data-testid="user-point-control-action-menu"/)

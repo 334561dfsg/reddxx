@@ -40,8 +40,7 @@ export const USER_OPERATION_ENTRIES = Object.freeze([
   { id: 'vip-deposit-total', title: '会员累计充值', description: '查看会员等级累计充值 USDT', group: 'membership', status: 'available', risk: 'normal', handler: 'vip-deposit-total' },
 
   { id: 'freeze-account', title: '封户', description: '限制用户登录及账户操作', group: 'risk', status: 'available', risk: 'danger', handler: 'freeze' },
-  { id: 'point-control', title: '用户点控', description: '设置用户各业务模块的用户点控', group: 'risk', status: 'available', risk: 'sensitive', handler: 'point-control' },
-  { id: 'cancel-point-control', title: '取消点控', description: '取消用户当前生效的用户点控', group: 'risk', status: 'available', risk: 'danger', handler: 'cancel-point-control' },
+  { id: 'point-control', title: '用户点控', description: '设置用户交易模块的用户点控', group: 'risk', status: 'available', risk: 'sensitive', handler: 'point-control' },
   { id: 'point-control-log', title: '点控日志', description: '查看用户点控操作与执行记录', group: 'risk', status: 'available', risk: 'normal', handler: 'point-control-log' }
 ])
 

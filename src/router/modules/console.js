@@ -298,13 +298,6 @@ export const consoleRoutes = [
     component: () => import('../../pages/admin/liquidity/LiquidityLockedOrdersPage.vue')
   },
   {
-    path: 'liquidity/locked/user-yield-control',
-    name: 'liquidity-user-yield-control',
-    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
-    props: { moduleKey: 'liquidity' },
-    meta: { title: '流动性挖矿 / 用户点控', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
-  },
-  {
     path: 'liquidity/locked/yield-control',
     name: 'liquidity-locked-yield-control',
     component: () => import('../../pages/admin/liquidity/LiquidityLockedYieldControlPage.vue')
@@ -397,13 +390,6 @@ export const consoleRoutes = [
     component: () => import('../../pages/admin/aiQuant/AiQuantOrderPage.vue')
   },
   {
-    path: 'ai-quant/user-yield-control',
-    name: 'ai-quant-user-yield-control',
-    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
-    props: { moduleKey: 'aiQuant' },
-    meta: { title: 'AI量化交易 / 用户点控', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
-  },
-  {
     path: 'ai-quant/yield-records',
     name: 'ai-quant-yield-records',
     component: () => import('../../pages/admin/aiQuant/AiQuantYieldAdjustmentRecordsPage.vue')
@@ -453,13 +439,6 @@ export const consoleRoutes = [
     path: 'portfolio/orders',
     name: 'portfolio-orders',
     component: () => import('../../pages/admin/portfolio/PortfolioOrderPage.vue')
-  },
-  {
-    path: 'portfolio/user-yield-control',
-    name: 'portfolio-user-yield-control',
-    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
-    props: { moduleKey: 'portfolio' },
-    meta: { title: '投资组合 / 用户点控', desc: '仅在目标用户最终结算时控制高收益/低收益方向。' }
   },
   {
     path: 'portfolio/yield-records',

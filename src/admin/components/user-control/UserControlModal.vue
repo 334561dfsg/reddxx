@@ -1,6 +1,9 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
-import { USER_CONTROL_MODULES } from '../../../features/user-control/userControl.js'
+import {
+  USER_CONTROL_MODULES,
+  USER_CONTROL_UNIFIED_MODULES
+} from '../../../features/user-control/userControl.js'
 import {
   buildUserControlPayload,
   defaultControlIntensity,
@@ -26,7 +29,7 @@ const props = defineProps({
   returnFocus: { type: [Object, Function], default: null }
 })
 
-const emit = defineEmits(['close', 'submit'])
+const emit = defineEmits(['close', 'submit', 'request-cancel'])
 
 const dialogRef = ref(null)
 const firstControlSelect = ref(null)
@@ -86,17 +89,21 @@ const form = reactive({
   tradeIntensityMax: '',
   financeIntensityMin: '',
   financeIntensityMax: '',
-  duration: '',
+  duration: 'permanent',
   note: ''
 })
 const noteTouched = ref(false)
+const DEFAULT_CONTROL_STRATEGY = 'negative'
 
 const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key === displayModuleKey.value) || null)
 const selectedUserId = computed(() => String(displayUser.value?.userId ?? displayUser.value?.id ?? ''))
 const selectedUserName = computed(() => displayUser.value?.username || displayUser.value?.name || '未选择用户')
 const selectedUserEmail = computed(() => displayUser.value?.email || '邮箱未提供')
 const activeExistingRules = computed(() => Object.entries(displayedDialogData.value.existingRules || {})
-  .filter(([, rule]) => ['active', 'processing'].includes(rule?.status))
+  .filter(([key, rule]) => {
+    if (!['active', 'processing'].includes(rule?.status)) return false
+    return !isGlobalScope.value || USER_CONTROL_UNIFIED_MODULES.some((module) => module.key === (rule?.moduleKey || key))
+  })
   .map(([key, rule]) => {
     const module = USER_CONTROL_MODULES.find((item) => item.key === (rule?.moduleKey || key))
     return {
@@ -122,21 +129,11 @@ const intensityFields = computed(() => {
         key: 'trade',
         minModel: 'tradeIntensityMin',
         maxModel: 'tradeIntensityMax',
-        label: '交易类控盘力度范围',
+        label: '控盘力度范围',
         modules: '永续、交割、现货',
         hint: form.strategy === 'negative'
           ? '按订单保证金或成交额在范围内生成目标亏损比例'
           : '按订单保证金或成交额在范围内生成目标盈利比例'
-      },
-      {
-        key: 'finance',
-        minModel: 'financeIntensityMin',
-        maxModel: 'financeIntensityMax',
-        label: '理财类控盘力度范围',
-        modules: 'AI量化、流动性挖矿、投资组合',
-        hint: form.strategy === 'negative'
-          ? '按订单本金在范围内生成目标低收益率'
-          : '按订单本金在范围内生成目标收益率'
       }
     ]
   }
@@ -169,22 +166,9 @@ const intensityFields = computed(() => {
 })
 
 const affectedModules = computed(() => isGlobalScope.value
-  ? USER_CONTROL_MODULES
+  ? USER_CONTROL_UNIFIED_MODULES
   : moduleMeta.value ? [moduleMeta.value] : [])
 
-const durationOptions = computed(() => [
-  {
-    value: 'once',
-    label: '只生效一次',
-    desc: isGlobalScope.value ? '所有模块只对用户的第一单生效' : '当前模块只对用户的第一单生效'
-  },
-  {
-    value: 'permanent',
-    label: '持续生效',
-    desc: isGlobalScope.value ? '点控开始后，后续所有模块订单持续生效' : '点控开始后，当前模块后续订单持续生效'
-  }
-])
-const selectedDuration = computed(() => durationOptions.value.find((option) => option.value === form.duration) || null)
 const effectiveOrderNotice = '只对点控开始之后产生的订单生效；点控前订单和已完成历史订单不受影响。'
 
 const moduleRuleCatalog = Object.freeze({
@@ -192,42 +176,42 @@ const moduleRuleCatalog = Object.freeze({
     title: '交割点控规则',
     scope: '影响当前用户交割合约订单的最终结算价格，不影响公共行情、产品配置和其他用户订单。',
     pointMethod: '通过结算价偏移处理：买涨盈利向上偏移、亏损向下偏移；买跌盈利向下偏移、亏损向上偏移。',
-    effect: '盈利时：买涨结算价向上偏移，买跌结算价向下偏移；亏损时：买涨结算价向下偏移，买跌结算价向上偏移。',
+    effect: '默认长期生效。盈利时：买涨结算价向上偏移，买跌结算价向下偏移；亏损时：买涨结算价向下偏移，买跌结算价向上偏移。',
     example: '说明：控盘方式只作为操作标记，不参与结算逻辑；实际按盈利或亏损方向在结算时处理价格偏移。'
   },
   perpetual: {
     title: '永续点控规则',
     scope: '影响当前用户永续合约仓位的最终平仓或结算价格，不单独修改K线、盘口行情和实时浮盈亏。',
     pointMethod: '通过平仓价或结算价偏移处理：做多盈利价格更高、亏损价格更低；做空盈利价格更低、亏损价格更高。',
-    effect: '盈利时：做多结算价更高，做空结算价更低；亏损时：做多结算价更低，做空结算价更高。',
+    effect: '默认长期生效。盈利时：做多结算价更高，做空结算价更低；亏损时：做多结算价更低，做空结算价更高。',
     example: '说明：控盘方式只作为操作标记，不参与结算逻辑；未平仓浮盈亏不触发点控。'
   },
   spot: {
     title: '现货点控规则',
     scope: '影响当前用户现货下单成交价格；现货订单成交即结束，不再做后续盈亏结算。',
     pointMethod: '通过成交价偏移处理：买单盈利用更低成交价、亏损用更高成交价；卖单盈利用更高成交价、亏损用更低成交价。',
-    effect: '盈利时：买单以更低价格成交，卖单以更高价格成交；亏损时：买单以更高价格成交，卖单以更低价格成交。',
+    effect: '默认长期生效。盈利时：买单以更低价格成交，卖单以更高价格成交；亏损时：买单以更高价格成交，卖单以更低价格成交。',
     example: '说明：现货点控只控制本次下单成交价格，控盘方式不参与逻辑运算。'
   },
   aiQuant: {
     title: 'AI量化点控规则',
     scope: '影响当前用户 AI 量化订单最终收益率调整，不影响产品基础收益率和其他用户收益。',
     pointMethod: '通过收益率调整处理：盈利使用点控收益率提升数值，亏损使用点控收益率降低数值。',
-    effect: '盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
+    effect: '默认长期生效。盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
     example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
   },
   liquidity: {
     title: '流动性挖矿点控规则',
     scope: '影响当前用户流动性挖矿订单收益率调整，不影响矿池基础收益规则和其他用户收益。',
     pointMethod: '通过收益率调整处理：盈利使用点控收益率提升数值，亏损使用点控收益率降低数值。',
-    effect: '盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
+    effect: '默认长期生效。盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
     example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
   },
   portfolio: {
     title: '投资组合点控规则',
     scope: '影响当前用户投资组合订单最终收益率调整，不影响组合产品基础规则、持仓展示和其他用户收益。',
     pointMethod: '通过收益率调整处理：盈利使用点控收益率提升数值，亏损使用点控收益率降低数值。',
-    effect: '盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
+    effect: '默认长期生效。盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
     example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
   }
 })
@@ -239,17 +223,8 @@ const globalRuleCatalog = Object.freeze([
     title: '交易模块规则',
     scope: '只影响目标用户订单价格，不改变公共行情、K线、盘口和其他用户订单。',
     pointMethod: '交易类通过价格偏移处理：现货控制成交价，交割和永续控制最终结算价；做高/做低仅针对交割、永续生效，现货按默认方式处理。',
-    effect: '现货在成交时控制成交价；交割和永续在结算时按方向控制结算价。',
+    effect: '默认长期生效。现货在成交时控制成交价；交割和永续在结算时按方向控制结算价。',
     example: '说明：控盘方式只作为操作标记，不参与价格偏移逻辑。'
-  },
-  {
-    key: 'finance',
-    label: 'AI量化、流动性挖矿、投资组合',
-    title: '理财模块规则',
-    scope: '只影响目标用户理财订单收益率调整，不改变产品基础收益率和其他用户收益。',
-    pointMethod: '理财类通过收益率调整处理：盈利提升收益率，亏损降低收益率；不使用做高/做低方式。',
-    effect: '盈利使用点控收益率提升数值；亏损使用点控收益率降低数值。',
-    example: '说明：控盘方式只作为操作标记，不参与收益率计算逻辑。'
   }
 ])
 
@@ -257,12 +232,12 @@ const fallbackModuleRule = Object.freeze({
   title: '当前模块规则',
   scope: '影响当前用户在当前模块的最终结算或实际入账结果。',
   pointMethod: '当前模块在最终结算或实际入账时读取点控规则，并按模块自身规则处理。',
-  effect: '当前模块在最终结算或实际入账时读取点控规则；未完成、失败或预估数据不触发。',
+  effect: '默认长期生效。当前模块在最终结算或实际入账时读取点控规则；未完成、失败或预估数据不触发。',
   example: '示例：用户产生最终结算时，模块按当前选择的盈利或亏损方向生成结果。'
 })
 
 const ruleModules = computed(() => isGlobalScope.value
-  ? USER_CONTROL_MODULES
+  ? USER_CONTROL_UNIFIED_MODULES
   : moduleMeta.value ? [moduleMeta.value] : [])
 
 const displayedModuleRules = computed(() => {
@@ -296,7 +271,10 @@ const resetForm = (data) => {
     ? data.existingRules?.[data.moduleKey]
     : Object.values(data.existingRules || {}).find((rule) => rule?.strategy)
 
-  form.strategy = existing?.strategy || (['loss', 'lowYield'].includes(existing?.value) ? 'negative' : 'positive')
+  const inferredStrategy = ['loss', 'lowYield'].includes(existing?.value)
+    ? 'negative'
+    : DEFAULT_CONTROL_STRATEGY
+  form.strategy = existing?.strategy || inferredStrategy
   const methodContext = { scope: data.scope, moduleKey: data.moduleKey }
   form.method = existing?.method && isControlMethodForStrategy(form.strategy, existing.method, methodContext)
     ? existing.method
@@ -307,7 +285,7 @@ const resetForm = (data) => {
   form.tradeIntensityMax = String(existing?.intensity?.trade?.max ?? existing?.intensity?.trade?.value ?? tradeDefault.max)
   form.financeIntensityMin = String(existing?.intensity?.finance?.min ?? existing?.intensity?.finance?.value ?? financeDefault.min)
   form.financeIntensityMax = String(existing?.intensity?.finance?.max ?? existing?.intensity?.finance?.value ?? financeDefault.max)
-  form.duration = existing?.duration || 'once'
+  form.duration = 'permanent'
   form.note = ''
   noteTouched.value = false
 }
@@ -379,7 +357,6 @@ watch(
     () => form.tradeIntensityMax,
     () => form.financeIntensityMin,
     () => form.financeIntensityMax,
-    () => form.duration,
     () => form.note,
     affectedModules,
     displayedModuleRules
@@ -456,18 +433,30 @@ const submit = () => {
                     :class="hasActiveExistingRules ? 'border-amber-300 bg-amber-50 ring-1 ring-amber-100' : 'border-sky-200 bg-sky-50 ring-1 ring-sky-100'"
                     aria-labelledby="user-control-current-status-title"
                   >
-                    <div class="flex flex-wrap items-center gap-2">
-                      <h3
-                        id="user-control-current-status-title"
-                        class="text-sm font-semibold"
-                        :class="hasActiveExistingRules ? 'text-amber-950' : 'text-sky-950'"
-                      >当前点控状态</h3>
-                      <span
-                        class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
-                        :class="hasActiveExistingRules ? 'bg-amber-200 text-amber-900' : 'bg-sky-200 text-sky-900'"
+                    <div class="flex flex-wrap items-start justify-between gap-2">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <h3
+                          id="user-control-current-status-title"
+                          class="text-sm font-semibold"
+                          :class="hasActiveExistingRules ? 'text-amber-950' : 'text-sky-950'"
+                        >当前点控状态</h3>
+                        <span
+                          class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
+                          :class="hasActiveExistingRules ? 'bg-amber-200 text-amber-900' : 'bg-sky-200 text-sky-900'"
+                        >
+                          {{ hasActiveExistingRules ? '已开启点控' : '未开启点控' }}
+                        </span>
+                      </div>
+                      <button
+                        v-if="hasActiveExistingRules"
+                        type="button"
+                        :disabled="phase !== 'open'"
+                        class="inline-flex min-h-8 shrink-0 items-center justify-center rounded-lg bg-rose-600 px-3 text-xs font-semibold text-white hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        aria-label="取消用户点控"
+                        @click="emit('request-cancel')"
                       >
-                        {{ hasActiveExistingRules ? '已开启点控' : '未开启点控' }}
-                      </span>
+                        取消点控
+                      </button>
                     </div>
                     <p class="mt-1.5 text-xs font-medium leading-5" :class="hasActiveExistingRules ? 'text-amber-800' : 'text-sky-700'">
                       {{ hasActiveExistingRules ? '当前用户已有生效点控模块，再次确认会覆盖对应点控设置。' : '当前选择的用户暂未开启点控。' }}
@@ -509,7 +498,7 @@ const submit = () => {
                           控盘力度
                         </h3>
                         <p class="mt-0.5 text-xs leading-5 text-slate-500">
-                          交易类和理财类按百分比设置，系统按各模块口径结算。
+                          交易类按百分比设置，系统按各模块口径结算。
                         </p>
                       </div>
                       <span class="shrink-0 rounded-full bg-white px-2 py-1 text-xs font-medium text-slate-600">%</span>
@@ -561,15 +550,6 @@ const submit = () => {
                       </div>
                     </div>
                   </section>
-
-                  <SelectOnlyCombobox
-                    v-model="form.duration"
-                    :options="durationOptions"
-                    label="控制周期"
-                    required
-                    :hint="selectedDuration?.desc || '请选择本次点控生效的订单范围'"
-                    id-base="user-control-duration"
-                  />
 
               <div>
                 <p class="text-sm font-semibold text-slate-900">影响模块</p>

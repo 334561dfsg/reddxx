@@ -64,16 +64,16 @@ export function createUserControlDemoSeed() {
     userId: '153',
     strategy: 'negative',
     duration: 'permanent',
-    note: '演示：六模块已同步',
+    note: '演示：交易三模块已同步',
     now: TIMESTAMPS.unified153,
     batchId: 'demo-batch-153'
   })
 
   const unified1001 = applyUnifiedControl(unified153, {
     userId: 'user_1001',
-    strategy: 'positive',
+    strategy: 'negative',
     duration: 'permanent',
-    note: '演示：列表用户六模块已同步',
+    note: '演示：列表用户交易三模块默认控亏',
     now: TIMESTAMPS.unified1001,
     batchId: 'demo-batch-user-1001'
   })
@@ -122,7 +122,7 @@ export function createUserControlDemoSeed() {
   })
   const cancelled1004 = cancelUnifiedControl(unified1004, {
     userId: 'user_1004',
-    note: '演示：取消六模块永久规则',
+    note: '演示：取消交易三模块永久规则',
     now: TIMESTAMPS.cancelled1004,
     operationId: 'demo-cancel-user-1004'
   })
@@ -130,7 +130,7 @@ export function createUserControlDemoSeed() {
     userId: 'user_1005',
     strategy: 'negative',
     duration: 'permanent',
-    note: '演示：失败前保持的六模块规则',
+    note: '演示：失败前保持的交易三模块规则',
     now: TIMESTAMPS.unified1005,
     batchId: 'demo-batch-user-1005-original'
   })
@@ -138,7 +138,7 @@ export function createUserControlDemoSeed() {
     userId: 'user_1005',
     strategy: 'positive',
     duration: 'once',
-    note: '演示：现货写入失败后六模块全部回滚',
+    note: '演示：现货写入失败后交易三模块全部回滚',
     now: TIMESTAMPS.failedWrite1005,
     batchId: 'demo-batch-user-1005-failed'
   })
