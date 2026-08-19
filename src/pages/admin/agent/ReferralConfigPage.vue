@@ -34,7 +34,7 @@ const PRODUCT_LINES = [
     ratesKey: 'depositCommissionRates',
     title: '充值',
     baseDesc:
-      '计佣基数 A = 被邀请用户该笔充值业务向用户实收并记入「充值手续费」的 USDT 金额；本笔无手续费则 A = 0。',
+      '计佣基数 A = 被邀请用户该笔充值成功后的实际到账 USDT 金额（与充值入账流水中的到账金额相同）。',
     formula: '佣金ᵢ = A × rᵢ',
     firstDepositExtra: true,
     theme: 'blue'

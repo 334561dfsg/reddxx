@@ -35,7 +35,7 @@ const PRODUCT_LINES = [
     rateKey: 'agentDepositCommissionRate',
     title: '充值',
     baseDesc:
-      '计佣基数 A = 代理名下客户该笔充值业务向客户实收并记入「充值手续费」的 USDT 金额；本笔无手续费则 A = 0。',
+      '计佣基数 A = 代理名下客户该笔充值成功后的实际到账 USDT 金额（与充值入账流水中的到账金额相同）。',
     formula: '佣金 = A × r',
     firstDepositExtra: true,
     theme: 'blue'
