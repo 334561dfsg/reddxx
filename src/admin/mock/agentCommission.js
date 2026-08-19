@@ -7,7 +7,7 @@ import {
   normalizeAgentSettlementMonthDay,
   normalizeAgentSettlementTimeLocal,
   normalizeAgentCommissionCreditTo
-} from '../constants/agentCommission'
+} from '../constants/agentCommission.js'
 
 const GLOBAL_BOOL_KEYS = ['agentCommissionAutoExecute', 'agentCommissionDepositFirstOnly']
 

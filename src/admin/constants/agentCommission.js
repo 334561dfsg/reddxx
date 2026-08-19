@@ -1,4 +1,4 @@
-import { REFERRAL_COMMISSION_CREDIT_TO } from './referral'
+import { REFERRAL_COMMISSION_CREDIT_TO } from './referral.js'
 
 /**
  * 代理产品线记佣字段（与裂变多级无关：代理线仅一级比例）

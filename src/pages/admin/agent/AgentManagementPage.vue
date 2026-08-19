@@ -1,8 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, reactive, watch } from 'vue'
-import { agentApi, normalizeAgentProductCommission } from '../../../admin/mock/agent'
-import { AGENT_STATUS, AGENT_STATUS_OPTIONS, AGENT_ROLE_LABEL } from '../../../admin/constants/agent'
-import { AGENT_PRODUCT_LINE_DEFS, AGENT_PRODUCT_GROUPS, normalizeAgentLineRate } from '../../../admin/constants/agentCommission'
+import { agentApi, normalizeAgentProductCommission } from '../../../admin/mock/agent.js'
+import { AGENT_STATUS, AGENT_STATUS_OPTIONS, AGENT_ROLE_LABEL } from '../../../admin/constants/agent.js'
+import { AGENT_PRODUCT_LINE_DEFS, AGENT_PRODUCT_GROUPS, normalizeAgentLineRate } from '../../../admin/constants/agentCommission.js'
+import AgentDeliveryCard from '../../../admin/components/agent/AgentDeliveryCard.vue'
+import AgentUpgradeDialog from '../../../admin/components/agent/AgentUpgradeDialog.vue'
 
 const searchKeyword = ref('')
 const statusFilter = ref('all')
@@ -20,9 +22,18 @@ const showUpgradeModal = ref(false)
 const showDetailModal = ref(false)
 const showCommissionModal = ref(false)
 const selectedAgent = ref(null)
-const upgradeForm = ref({
-  uid: ''
+const showAccountModal = ref(false)
+const accountTarget = ref(null)
+const accountForm = ref({
+  loginAccount: '',
+  resetPassword: false,
+  passwordMode: 'auto',
+  password: '',
+  confirmPassword: ''
 })
+const accountSaving = ref(false)
+const accountError = ref('')
+const accountDelivery = ref(null)
 
 const commissionDraft = ref(null)
 const commissionTargetUid = ref(null)
@@ -136,22 +147,90 @@ const getStatusConfig = (status) => {
 }
 
 const openUpgradeModal = () => {
-  upgradeForm.value = {
-    uid: ''
-  }
   showUpgradeModal.value = true
 }
 
-const handleUpgrade = async () => {
+const closeUpgradeModal = () => {
+  showUpgradeModal.value = false
+}
+
+const validateCredentialFields = ({ selectedUser, loginAccount, password, confirmPassword, requirePassword = true }) => {
+  if (selectedUser === null) return '请选择要开通的用户'
+  if (!String(loginAccount || '').trim()) return '登录账号必填'
+  if (requirePassword) {
+    if (!String(password || '').trim()) return '登录密码必填'
+    if (String(password).length < 6) return '登录密码至少 6 位'
+    if (password !== confirmPassword) return '两次输入的密码不一致'
+  }
+  return ''
+}
+
+const handleUpgradeSaved = () => {
+  loadAgentList()
+}
+
+const openAccountSettings = (agent) => {
+  accountTarget.value = agent
+  accountForm.value = {
+    loginAccount: agent.loginAccount || agent.email || '',
+    resetPassword: false,
+    passwordMode: 'auto',
+    password: '',
+    confirmPassword: ''
+  }
+  accountError.value = ''
+  accountDelivery.value = null
+  showAccountModal.value = true
+}
+
+const setAccountPasswordMode = (mode) => {
+  accountForm.value.passwordMode = mode
+  if (mode === 'auto') {
+    const password = agentApi.generateAgentPassword()
+    accountForm.value.password = password
+    accountForm.value.confirmPassword = password
+  } else {
+    accountForm.value.password = ''
+    accountForm.value.confirmPassword = ''
+  }
+}
+
+const closeAccountModal = () => {
+  if (accountSaving.value) return
+  showAccountModal.value = false
+}
+
+const saveAccountSettings = async () => {
+  const error = validateCredentialFields({
+    selectedUser: accountTarget.value,
+    loginAccount: accountForm.value.loginAccount,
+    password: accountForm.value.password,
+    confirmPassword: accountForm.value.confirmPassword,
+    requirePassword: accountForm.value.resetPassword
+  })
+  if (error) {
+    accountError.value = error
+    return
+  }
+  accountSaving.value = true
+  accountError.value = ''
   try {
-    const result = await agentApi.upgradeToAgent(upgradeForm.value.uid)
-    if (result.success) {
-      alert(result.message)
-      showUpgradeModal.value = false
+    const res = await agentApi.updateAgentLoginCredential(accountTarget.value.uid, {
+      loginAccount: accountForm.value.loginAccount,
+      resetPassword: accountForm.value.resetPassword,
+      password: accountForm.value.password,
+      passwordMode: accountForm.value.passwordMode
+    })
+    if (res.success) {
+      accountDelivery.value = res.data.delivery
+      const row = agentList.value.find((a) => a.uid === accountTarget.value.uid)
+      if (row) row.loginAccount = res.data.credential.loginAccount
       loadAgentList()
     }
   } catch (error) {
-    alert('升级失败：' + error.message)
+    accountError.value = error.message || '保存失败'
+  } finally {
+    accountSaving.value = false
   }
 }
 
@@ -343,6 +422,7 @@ const formatDate = (dateString) => {
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-medium text-gray-900">{{ agent.username }}</div>
                 <div class="text-sm text-gray-500">{{ agent.email }}</div>
+                <div class="mt-0.5 text-xs text-slate-400">登录账号：{{ agent.loginAccount || agent.email }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
@@ -363,6 +443,7 @@ const formatDate = (dateString) => {
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                 <button type="button" class="text-blue-600 hover:text-blue-900" @click="viewDetail(agent)">详情</button>
+                <button type="button" class="text-emerald-600 hover:text-emerald-900" @click="openAccountSettings(agent)">账号设置</button>
                 <button type="button" class="text-violet-600 hover:text-violet-900" @click="openCommissionConfig(agent)">
                   记佣配置
                 </button>
@@ -447,30 +528,79 @@ const formatDate = (dateString) => {
       </div>
     </div>
 
-    <!-- 添加代理（Teleport：避免遮罩被 main 滚动区裁成仅内容区） -->
+    <AgentUpgradeDialog
+      :visible="showUpgradeModal"
+      @close="closeUpgradeModal"
+      @saved="handleUpgradeSaved"
+    />
+
+    <!-- 代理登录账号设置 -->
     <Teleport to="body">
       <div
-        v-if="showUpgradeModal"
+        v-if="showAccountModal && accountTarget"
         class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
       >
-      <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
-        <h3 class="text-lg font-semibold text-slate-900 mb-5">添加代理</h3>
+        <div
+          class="flex max-h-[calc(100vh-2rem)] w-full max-w-xl flex-col overflow-hidden rounded-xl bg-white shadow-xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="agent-account-title"
+        >
+          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+            <div class="min-w-0">
+              <h3 id="agent-account-title" class="text-lg font-semibold text-slate-900">代理登录账号设置</h3>
+              <p class="mt-1 break-words text-sm text-slate-500">{{ accountTarget.username }} · UID {{ accountTarget.uid }}</p>
+            </div>
+            <button type="button" class="flex min-h-10 min-w-10 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100" aria-label="关闭" @click="closeAccountModal">×</button>
+          </header>
 
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">用户 UID</label>
-            <input v-model="upgradeForm.uid" type="text" placeholder="请输入用户 UID" class="ant-input" />
+          <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+            <p v-if="accountError" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">{{ accountError }}</p>
+
+            <AgentDeliveryCard
+              v-if="accountDelivery"
+              :delivery="accountDelivery"
+              title="账号设置已保存，以下信息可发送给代理"
+            />
+
+            <template v-else>
+              <label class="block">
+                <span class="text-sm font-medium text-slate-700">登录账号 <span class="text-rose-500">*</span></span>
+                <input v-model="accountForm.loginAccount" type="text" autocomplete="off" class="ant-input mt-1.5" />
+              </label>
+
+              <label class="flex items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+                <input v-model="accountForm.resetPassword" type="checkbox" class="mt-1" @change="accountForm.resetPassword && setAccountPasswordMode('auto')" />
+                <span>
+                  <span class="block font-medium text-slate-900">重置登录密码</span>
+                  <span class="mt-0.5 block text-xs text-slate-500">不会展示旧密码；重置后只在本次结果中展示新密码。</span>
+                </span>
+              </label>
+
+              <div v-if="accountForm.resetPassword" class="grid gap-4 sm:grid-cols-2">
+                <div class="sm:col-span-2 flex flex-wrap gap-2">
+                  <button type="button" class="ant-btn" :class="accountForm.passwordMode === 'auto' ? 'ant-btn-primary' : ''" @click="setAccountPasswordMode('auto')">自动生成</button>
+                  <button type="button" class="ant-btn" :class="accountForm.passwordMode === 'manual' ? 'ant-btn-primary' : ''" @click="setAccountPasswordMode('manual')">手动输入</button>
+                </div>
+                <label class="block">
+                  <span class="text-sm font-medium text-slate-700">新密码</span>
+                  <input v-model="accountForm.password" type="password" autocomplete="new-password" class="ant-input mt-1.5" />
+                </label>
+                <label class="block">
+                  <span class="text-sm font-medium text-slate-700">确认新密码</span>
+                  <input v-model="accountForm.confirmPassword" type="password" autocomplete="new-password" class="ant-input mt-1.5" />
+                </label>
+              </div>
+            </template>
           </div>
-          <p class="text-xs text-slate-500 leading-relaxed">
-            添加后可在列表中打开「记佣配置」调整该代理各产品线比例；未单独配置时使用代理记佣全局默认。
-          </p>
-        </div>
 
-        <div class="mt-8 flex justify-end space-x-3">
-          <button type="button" class="ant-btn" @click="showUpgradeModal = false">取消</button>
-          <button type="button" class="ant-btn ant-btn-primary" @click="handleUpgrade">确认添加</button>
+          <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
+            <button type="button" class="ant-btn" @click="closeAccountModal">{{ accountDelivery ? '关闭' : '取消' }}</button>
+            <button v-if="!accountDelivery" type="button" class="ant-btn ant-btn-primary" :disabled="accountSaving" @click="saveAccountSettings">
+              {{ accountSaving ? '保存中…' : '保存设置' }}
+            </button>
+          </footer>
         </div>
-      </div>
       </div>
     </Teleport>
 

@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia'
-import { mockAgentList } from '../admin/mock/agent'
+import {
+  DEFAULT_AGENT_LOGIN_PASSWORD,
+  getAgentCredentialByLogin,
+  mockAgentList,
+  setAgentCredentialMfaBound
+} from '../admin/mock/agent.js'
 
 const SESSION_KEY = 'fex-agent-session-v1'
 const PROFILES_KEY = 'fex-agent-profiles-v1'
@@ -30,36 +35,47 @@ function saveProfiles(profiles) {
   localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles))
 }
 
-function getProfile(email) {
-  if (!email) return null
-  const e = normalizeEmail(email)
+function normalizeLoginAccount(account) {
+  return String(account ?? '').trim().toLowerCase()
+}
+
+function getProfile(account) {
+  if (!account) return null
+  const e = normalizeLoginAccount(account)
   const all = loadProfiles()
   return all[e] || null
 }
 
-function setProfile(email, patch) {
-  const e = normalizeEmail(email)
+function setProfile(account, patch) {
+  const e = normalizeLoginAccount(account)
   const all = loadProfiles()
   all[e] = { ...(all[e] || {}), ...patch }
   saveProfiles(all)
 }
 
-function getEffectivePassword(email) {
-  const p = getProfile(email)
+function getEffectivePassword(account) {
+  const p = getProfile(account)
   if (p?.password && String(p.password).length >= 6) return String(p.password)
-  return AGENT_DEFAULT_LOGIN_PASSWORD
+  return getAgentCredentialByLogin(account)?.password || DEFAULT_AGENT_LOGIN_PASSWORD
 }
 
 /** 与 mockAgentList 对齐的可登录代理 */
-function resolveAgentAccountByEmail(email) {
-  const e = normalizeEmail(email)
-  const row = mockAgentList.find((a) => normalizeEmail(a.email) === e)
+function resolveAgentAccountByLogin(loginAccount) {
+  const login = normalizeLoginAccount(loginAccount)
+  const credential = getAgentCredentialByLogin(login)
+  const row = credential
+    ? mockAgentList.find((a) => Number(a.uid) === Number(credential.uid))
+    : mockAgentList.find((a) => normalizeEmail(a.email) === login || normalizeLoginAccount(a.loginAccount) === login)
   if (!row) return null
+  const resolvedLogin = credential?.loginAccount || normalizeLoginAccount(row.loginAccount || row.email)
   return {
-    email: e,
+    loginAccount: resolvedLogin,
+    email: normalizeEmail(row.email),
     nickname: row.username,
     uid: row.uid,
-    inviteCode: row.inviteCode || `AG${row.uid}`
+    inviteCode: row.inviteCode || `AG${row.uid}`,
+    mfaRequired: credential?.mfaRequired !== false,
+    mfaBound: credential?.mfaBound === true
   }
 }
 
@@ -73,6 +89,7 @@ export function formatAgentPhoneMask(dial, nationalDigits) {
 export const useAgentAuthStore = defineStore('agentAuth', {
   state: () => ({
     email: null,
+    loginAccount: null,
     nickname: null,
     uid: null,
     inviteCode: null,
@@ -82,15 +99,15 @@ export const useAgentAuthStore = defineStore('agentAuth', {
   getters: {
     isLoggedIn: (s) => Boolean(s.token),
     securityProfile(state) {
-      if (!state.email) return null
-      return getProfile(state.email)
+      if (!state.loginAccount && !state.email) return null
+      return getProfile(state.loginAccount || state.email)
     },
     isPhoneBound(state) {
-      const p = getProfile(state.email)
+      const p = getProfile(state.loginAccount || state.email)
       return Boolean(p?.phone?.dial && p?.phone?.nationalDigits)
     },
     phoneDisplay(state) {
-      const p = getProfile(state.email)?.phone
+      const p = getProfile(state.loginAccount || state.email)?.phone
       if (!p?.nationalDigits) return ''
       return formatAgentPhoneMask(p.dial || '+86', p.nationalDigits)
     }
@@ -103,9 +120,10 @@ export const useAgentAuthStore = defineStore('agentAuth', {
         this.email = data.email
         this.nickname = data.nickname ?? null
         this.token = data.token
-        const acc = resolveAgentAccountByEmail(data.email)
+        const acc = resolveAgentAccountByLogin(data.loginAccount || data.email)
         this.uid = data.uid ?? acc?.uid ?? null
         this.inviteCode = data.inviteCode ?? acc?.inviteCode ?? null
+        this.loginAccount = data.loginAccount ?? acc?.loginAccount ?? data.email
         if (acc && !this.nickname) this.nickname = acc.nickname
       }
       this._ready = true
@@ -116,6 +134,7 @@ export const useAgentAuthStore = defineStore('agentAuth', {
         SESSION_KEY,
         JSON.stringify({
           email: this.email,
+          loginAccount: this.loginAccount,
           nickname: this.nickname,
           uid: this.uid,
           inviteCode: this.inviteCode,
@@ -123,35 +142,46 @@ export const useAgentAuthStore = defineStore('agentAuth', {
         })
       )
     },
-    login(email, password) {
-      const e = normalizeEmail(email)
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) {
-        return { ok: false, message: '请输入有效邮箱' }
+    login(loginAccount, password, options = {}) {
+      const login = normalizeLoginAccount(loginAccount)
+      if (login.length < 4) {
+        return { ok: false, message: '请输入有效登录账号' }
       }
       if (!password || String(password).length < 6) {
         return { ok: false, message: '密码至少 6 位' }
       }
-      const account = resolveAgentAccountByEmail(e)
+      const account = resolveAgentAccountByLogin(login)
       if (!account) {
         return {
           ok: false,
-          message: '该邮箱尚未开通代理。请先在平台完成注册，并由运营在管理后台「代理管理」中将您升级为代理。'
+          message: '该账号尚未开通代理。请先在平台完成注册，并由运营在管理后台「代理管理」中将您升级为代理。'
         }
       }
-      const expected = getEffectivePassword(e)
+      const expected = getEffectivePassword(account.loginAccount)
       if (String(password) !== expected) {
         return { ok: false, message: '账号或密码错误' }
       }
+      const profile = getProfile(account.loginAccount)
+      const mfaBound = account.mfaBound || Boolean(profile?.phone)
+      if (account.mfaRequired && mfaBound && !/^\d{6}$/.test(String(options.mfaCode || ''))) {
+        return { ok: false, requiresMfa: true, message: '请输入 6 位安全验证码' }
+      }
       this.email = account.email
+      this.loginAccount = account.loginAccount
       this.nickname = account.nickname
       this.uid = account.uid
       this.inviteCode = account.inviteCode
       this.token = `agent_${Date.now()}`
       this.persistSession()
-      return { ok: true }
+      return {
+        ok: true,
+        mfaVerified: account.mfaRequired && mfaBound,
+        mfaSetupRequired: account.mfaRequired && !mfaBound
+      }
     },
     logout() {
       this.email = null
+      this.loginAccount = null
       this.nickname = null
       this.uid = null
       this.inviteCode = null
@@ -165,11 +195,11 @@ export const useAgentAuthStore = defineStore('agentAuth', {
      */
     changePassword({ oldPassword, newPassword, confirmPassword }) {
       if (!this.email) return { ok: false, message: '未登录' }
-      const e = normalizeEmail(this.email)
+      const login = normalizeLoginAccount(this.loginAccount || this.email)
       const old = String(oldPassword ?? '')
       const next = String(newPassword ?? '')
       const c = String(confirmPassword ?? '')
-      if (old !== getEffectivePassword(e)) {
+      if (old !== getEffectivePassword(login)) {
         return { ok: false, message: '当前密码不正确' }
       }
       if (next.length < 6) {
@@ -181,7 +211,7 @@ export const useAgentAuthStore = defineStore('agentAuth', {
       if (next === old) {
         return { ok: false, message: '新密码不能与当前密码相同' }
       }
-      setProfile(e, { password: next })
+      setProfile(login, { password: next })
       return { ok: true, message: '登录密码已更新，下次请使用新密码登录。' }
     },
     /**
@@ -191,7 +221,7 @@ export const useAgentAuthStore = defineStore('agentAuth', {
     sendPhoneBindSms() {
       if (!this.email) return { ok: false, message: '未登录' }
       const code = String(Math.floor(100000 + Math.random() * 900000))
-      const key = `fex-agent-sms-${normalizeEmail(this.email)}`
+      const key = `fex-agent-sms-${normalizeLoginAccount(this.loginAccount || this.email)}`
       if (typeof sessionStorage !== 'undefined') {
         sessionStorage.setItem(
           key,
@@ -205,7 +235,7 @@ export const useAgentAuthStore = defineStore('agentAuth', {
      */
     bindPhone({ dial, nationalDigits, smsCode }) {
       if (!this.email) return { ok: false, message: '未登录' }
-      const e = normalizeEmail(this.email)
+      const e = normalizeLoginAccount(this.loginAccount || this.email)
       const dc = String(dial || '+86').trim() || '+86'
       const digits = String(nationalDigits).replace(/\D/g, '')
       if (digits.length < 5 || digits.length > 15) {
@@ -238,6 +268,7 @@ export const useAgentAuthStore = defineStore('agentAuth', {
           verifiedAt: new Date().toISOString()
         }
       })
+      setAgentCredentialMfaBound(e, true)
       sessionStorage.removeItem(key)
       return { ok: true, message: '手机号已绑定' }
     }

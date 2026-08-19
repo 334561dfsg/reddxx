@@ -12,6 +12,7 @@ import UserRelationshipDrawer from '../../../admin/components/user/UserRelations
 import UserProfileEditDialog from '../../../admin/components/user/UserProfileEditDialog.vue'
 import UserParentResetDialog from '../../../admin/components/user/UserParentResetDialog.vue'
 import UserAgentRoleDialog from '../../../admin/components/user/UserAgentRoleDialog.vue'
+import AgentUpgradeDialog from '../../../admin/components/agent/AgentUpgradeDialog.vue'
 import UserTeamReportDrawer from '../../../admin/components/user/UserTeamReportDrawer.vue'
 import UserAgentSubordinateDrawer from '../../../admin/components/user/UserAgentSubordinateDrawer.vue'
 import UserAgentReportDrawer from '../../../admin/components/user/UserAgentReportDrawer.vue'
@@ -146,6 +147,9 @@ const parentResetReturnFocus = ref(null)
 const agentRoleOpen = ref(false)
 const agentRoleUser = ref(null)
 const agentRoleReturnFocus = ref(null)
+const agentUpgradeOpen = ref(false)
+const agentUpgradeUser = ref(null)
+const agentUpgradeReturnFocus = ref(null)
 const teamReportOpen = ref(false)
 const teamReportUser = ref(null)
 const teamReportReturnFocus = ref(null)
@@ -290,6 +294,7 @@ const resolveControlReturnFocus = () => {
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
 const hasRules = (user) => Object.values(rulesOf(user)).some((rule) => ['active', 'processing'].includes(rule.status))
 const isLocked = (user) => [USER_STATUS.SUSPENDED, USER_STATUS.BANNED].includes(user?.status)
+const isAgentUser = (user) => user?.role === USER_ROLE.AGENT
 const cancelControlItems = computed(() => getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}))
 const {
   rendered: unifiedCancelRendered,
@@ -458,9 +463,15 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
   }
 
   if (id === 'reset-agent') {
-    agentRoleUser.value = user
-    agentRoleReturnFocus.value = trigger
-    agentRoleOpen.value = true
+    if (!isAgentUser(user)) {
+      agentUpgradeUser.value = user
+      agentUpgradeReturnFocus.value = trigger
+      agentUpgradeOpen.value = true
+    } else {
+      agentRoleUser.value = user
+      agentRoleReturnFocus.value = trigger
+      agentRoleOpen.value = true
+    }
     return
   }
 
@@ -656,6 +667,28 @@ const handleAgentRoleSaved = ({ user: updatedUser }) => {
   })
   operationDrawerUser.value = { ...updatedUser }
   agentRoleUser.value = { ...updatedUser }
+}
+
+const closeAgentUpgrade = () => {
+  agentUpgradeOpen.value = false
+}
+
+const clearAgentUpgrade = () => {
+  agentUpgradeUser.value = null
+  agentUpgradeReturnFocus.value = null
+}
+
+const handleAgentUpgradeSaved = () => {
+  const upgradedId = userIdOf(agentUpgradeUser.value)
+  users.value = users.value.map((row) => {
+    const current = usersList.find((candidate) => userIdOf(candidate) === userIdOf(row))
+    return current ? { ...current } : row
+  })
+  const updatedUser = usersList.find((candidate) => userIdOf(candidate) === upgradedId)
+  if (updatedUser) {
+    operationDrawerUser.value = { ...updatedUser }
+    agentUpgradeUser.value = { ...updatedUser }
+  }
 }
 
 const closeTeamReport = () => {
@@ -1131,6 +1164,14 @@ const clearDetailDrawer = () => {
                   >
                     信用分审核</button>
                   <button
+                    v-if="!isAgentUser(user)"
+                    type="button"
+                    class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-emerald-50/80 px-2.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    aria-label="设置用户为代理"
+                    @click="handleOperationDrawerAction({ id: 'reset-agent', user, trigger: $event.currentTarget })"
+                  >
+                    设为代理</button>
+                  <button
                     :ref="(element) => setActionMenuTriggerRef(user, element)"
                     type="button"
                     class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1362,6 +1403,15 @@ const clearDetailDrawer = () => {
       @close="closeAgentRole"
       @closed="clearAgentRole"
       @saved="handleAgentRoleSaved"
+    />
+
+    <AgentUpgradeDialog
+      :visible="agentUpgradeOpen"
+      :initial-user-id="userIdOf(agentUpgradeUser)"
+      :return-focus="agentUpgradeReturnFocus"
+      @close="closeAgentUpgrade"
+      @closed="clearAgentUpgrade"
+      @saved="handleAgentUpgradeSaved"
     />
 
     <UserTeamReportDrawer

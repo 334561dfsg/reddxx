@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import test from 'node:test'
 import { usersList } from '../src/admin/mock/user.js'
+import { __resetAgentCredentialsForTests } from '../src/admin/mock/agent.js'
 import {
   __resetRelationshipAuditLogForTests,
   getParentCandidates,
@@ -18,7 +19,12 @@ import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vue
 const read = (path) => readFileSync(resolve(process.cwd(), path), 'utf8')
 const parentResetSource = () => read('src/admin/components/user/UserParentResetDialog.vue')
 const agentRoleSource = () => read('src/admin/components/user/UserAgentRoleDialog.vue')
+const userListPageSource = () => read('src/pages/admin/user/UserListPage.vue')
+const agentManagementSource = () => read('src/pages/admin/agent/AgentManagementPage.vue')
+const agentUpgradeSource = () => read('src/admin/components/agent/AgentUpgradeDialog.vue')
 const panelFile = resolve(process.cwd(), 'src/admin/components/form/PanelSingleSelect.vue')
+const agentDeliveryCardFile = resolve(process.cwd(), 'src/admin/components/agent/AgentDeliveryCard.vue')
+const agentUpgradeFile = resolve(process.cwd(), 'src/admin/components/agent/AgentUpgradeDialog.vue')
 const parentResetFile = resolve(process.cwd(), 'src/admin/components/user/UserParentResetDialog.vue')
 const agentRoleFile = resolve(process.cwd(), 'src/admin/components/user/UserAgentRoleDialog.vue')
 const relationshipDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserRelationshipDrawer.vue')
@@ -32,7 +38,13 @@ const restore = (before) => Object.assign(userById(before.id), before)
 
 const loadDialog = async (dialogFile) => {
   const panelModuleUrl = loadVueSfcModuleUrl(panelFile)
-  return loadVueSfc(dialogFile, { vueImports: { [panelFile]: panelModuleUrl } })
+  const agentDeliveryCardModuleUrl = loadVueSfcModuleUrl(agentDeliveryCardFile)
+  return loadVueSfc(dialogFile, { vueImports: { [panelFile]: panelModuleUrl, [agentDeliveryCardFile]: agentDeliveryCardModuleUrl } })
+}
+
+const loadAgentUpgradeDialog = async () => {
+  const agentDeliveryCardModuleUrl = loadVueSfcModuleUrl(agentDeliveryCardFile)
+  return loadVueSfc(agentUpgradeFile, { vueImports: { [agentDeliveryCardFile]: agentDeliveryCardModuleUrl } })
 }
 
 const reopen = async (harness) => {
@@ -571,6 +583,20 @@ test('selector changes preserve the exact parent-reset and agent-role payload fi
   assert.match(agentRoleSource(), /if \(needsSuccessor\.value\) payload\.successorParentId = form\.successorParentId \|\| null/)
 })
 
+test('agent creation entries reuse the shared upgrade dialog and delivery card', () => {
+  assert.match(userListPageSource(), /import AgentUpgradeDialog/)
+  assert.match(userListPageSource(), /<AgentUpgradeDialog[\s\S]*:initial-user-id="userIdOf\(agentUpgradeUser\)"/)
+  assert.match(userListPageSource(), /if \(!isAgentUser\(user\)\)[\s\S]*agentUpgradeOpen\.value = true/)
+  assert.match(agentManagementSource(), /import AgentUpgradeDialog/)
+  assert.match(agentManagementSource(), /<AgentUpgradeDialog/)
+  assert.match(agentUpgradeSource(), /useDialogLifecycle/)
+  assert.match(agentUpgradeSource(), /:style="layerStyle"/)
+  assert.doesNotMatch(agentUpgradeSource(), /z-\[100\]/)
+  assert.doesNotMatch(agentRoleSource(), /import AgentDeliveryCard/)
+  assert.doesNotMatch(agentRoleSource(), /<AgentDeliveryCard/)
+  assert.doesNotMatch(agentRoleSource(), /agentApi\.upgradeToAgent/)
+})
+
 test('parent-reset mounts the real combobox, preserves drafts, and returns focus to its trigger', async (t) => {
   const userBefore = snapshot(userById('user_1003'))
   const component = await loadDialog(parentResetFile)
@@ -608,6 +634,44 @@ test('parent-reset mounts the real combobox, preserves drafts, and returns focus
   await harness.flush()
   assert.equal(harness.document.activeElement, harness.findByTestId('panel-single-select-trigger'))
   assert.equal(getRelationshipAuditLog().length, 0)
+})
+
+test('shared agent upgrade dialog shows copyable delivery after initial UID creation', async (t) => {
+  const userBefore = snapshot(userById('user_1002'))
+  const component = await loadAgentUpgradeDialog()
+  let savedPayload = null
+  const harness = await createSfcHarness(component, {
+    visible: true,
+    initialUserId: 'user_1002'
+  }, {
+    onSaved: (payload) => { savedPayload = payload }
+  })
+  t.after(() => {
+    harness.cleanup()
+    restore(userBefore)
+    __resetAgentCredentialsForTests()
+  })
+  __resetAgentCredentialsForTests()
+  await harness.finishTransitions()
+  await new Promise((resolvePromise) => setTimeout(resolvePromise, 230))
+  await harness.flush()
+
+  assert.match(harness.document.body.textContent, /已选中：vip_zhang · UID 1002/)
+  harness.findByText('确认添加', 'button').click()
+  await new Promise((resolvePromise) => setTimeout(resolvePromise, 560))
+  await harness.flush()
+
+  assert.equal(savedPayload?.delivery?.loginAccount, 'zhang@vip.com')
+  assert.match(harness.document.body.textContent, /代理创建成功，以下信息可发送给代理/)
+  assert.ok(harness.findByText('复制通知内容', 'button'))
+  assert.match(harness.document.body.textContent, /登录账号：zhang@vip.com/)
+  assert.match(harness.document.body.textContent, /初始密码：/)
+  assert.match(harness.document.body.textContent, /MFA 绑定二维码/)
+  assert.match(harness.document.body.textContent, /截图发送给代理/)
+  assert.doesNotMatch(harness.document.body.textContent, /登录入口/)
+  assert.doesNotMatch(harness.document.body.textContent, /\/agent-system\/login/)
+  const qrImage = harness.allNodes().find((node) => node.tag === 'img' && node.getAttribute('alt') === 'MFA 绑定二维码')
+  assert.match(qrImage?.getAttribute('src') || '', /^https:\/\/api\.qrserver\.com\/v1\/create-qr-code\//)
 })
 
 test('parent-reset associates orphaned selection errors with the trigger without linking reason errors', async (t) => {

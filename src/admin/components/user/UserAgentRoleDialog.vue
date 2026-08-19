@@ -18,7 +18,10 @@ const errorRef = ref(null)
 const phaseName = ref('form')
 const submitting = ref(false)
 const errorMessage = ref('')
-const form = reactive({ successorParentId: null, reason: '' })
+const form = reactive({
+  successorParentId: null,
+  reason: ''
+})
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const isAgent = computed(() => props.user?.role === USER_ROLE.AGENT)
 const directChildren = computed(() => userId.value ? getDirectReferrals(userId.value) : [])
@@ -46,8 +49,7 @@ const successorSelectionError = computed(() => {
 const successor = computed(() => form.successorParentId
   ? getUserById(form.successorParentId)
   : null)
-const targetRole = computed(() => isAgent.value ? USER_ROLE.USER : USER_ROLE.AGENT)
-const actionTitle = computed(() => isAgent.value ? '取消代理身份' : '设置为代理')
+const actionTitle = '取消代理身份'
 
 const resetForm = () => {
   phaseName.value = 'form'
@@ -86,6 +88,7 @@ const showError = async (message) => {
 
 const startConfirm = async () => {
   errorMessage.value = ''
+  if (!isAgent.value) return showError('设置代理请使用添加代理流程。')
   if (!form.reason.trim()) return showError('变更原因必填')
   if (form.reason.trim().length > 200) return showError('变更原因不能超过 200 字')
   if (successorSelectionInvalid.value) return showError(successorSelectionError.value)
@@ -105,15 +108,16 @@ const confirmChange = async () => {
   if (phase.value !== 'open' || submitting.value) return
   submitting.value = true
   try {
-    await Promise.resolve()
+    let updated
+    const affectedUserIds = [userId.value, ...directChildren.value.map((row) => row.id)]
     const payload = {
       userId: userId.value,
-      role: targetRole.value,
+      role: USER_ROLE.USER,
       reason: form.reason
     }
     if (needsSuccessor.value) payload.successorParentId = form.successorParentId || null
-    const updated = updateAgentRole(payload)
-    emit('saved', { user: updated, affectedUserIds: [userId.value, ...directChildren.value.map((row) => row.id)] })
+    updated = updateAgentRole(payload)
+    emit('saved', { user: updated, affectedUserIds })
     submitting.value = false
     close()
   } catch (error) {
@@ -147,7 +151,7 @@ watch(() => [props.visible, userId.value, props.user?.role], ([visible]) => {
             <template v-if="phaseName === 'form'">
               <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-sm">
                 <div class="flex justify-between gap-3"><span class="text-slate-500">当前身份</span><span class="font-medium text-slate-900">{{ isAgent ? '代理' : '普通用户' }}</span></div>
-                <div class="mt-2 flex justify-between gap-3"><span class="text-slate-500">目标身份</span><span class="font-medium" :class="isAgent ? 'text-rose-700' : 'text-blue-700'">{{ isAgent ? '普通用户' : '代理' }}</span></div>
+                <div class="mt-2 flex justify-between gap-3"><span class="text-slate-500">目标身份</span><span class="font-medium text-rose-700">普通用户</span></div>
                 <div class="mt-2 flex justify-between gap-3"><span class="text-slate-500">直属裂变下级</span><span class="font-medium text-slate-900">{{ directChildren.length }} 人</span></div>
               </div>
 
@@ -175,16 +179,16 @@ watch(() => [props.visible, userId.value, props.user?.role], ([visible]) => {
 
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">变更原因 <span class="text-rose-500">*</span></span>
-                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" :placeholder="isAgent ? '请说明取消代理身份的原因' : '请说明设置为代理的原因'" />
+                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请说明取消代理身份的原因" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>
 
             <template v-else>
-              <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+              <div v-if="phaseName === 'confirm'" class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
                 <h3 class="font-semibold">确认{{ actionTitle }}</h3>
                 <dl class="mt-3 grid grid-cols-[6rem_1fr] gap-y-2">
-                  <dt class="text-amber-800">身份变化</dt><dd>{{ isAgent ? '代理 → 普通用户' : '普通用户 → 代理' }}</dd>
+                  <dt class="text-amber-800">身份变化</dt><dd>代理 → 普通用户</dd>
                   <template v-if="needsSuccessor">
                     <dt class="text-amber-800">影响成员</dt><dd>{{ directChildren.length }} 个直属裂变下级</dd>
                     <dt class="text-amber-800">承接裂变上级</dt><dd>{{ successor?.username || '无裂变上级' }}</dd>
