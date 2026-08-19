@@ -76,8 +76,9 @@ export const NOTIFICATION_CATEGORIES = Object.freeze([
     key: 'mt-login',
     label: 'MT 用户登录',
     section: '用户管理 / 用户操作日志',
-    route: '/admin/users/operation-logs',
-    count: 3,
+    displayMode: 'dot',
+    drawer: 'user-detail',
+    userId: 'user_1004',
     tone: [523, 698]
   },
   {
@@ -103,29 +104,16 @@ export const NOTIFICATION_CATEGORIES = Object.freeze([
     route: '/admin/users/verification-audit',
     count: 2,
     tone: [831, 1109]
-  },
-  {
-    key: 'lending-application',
-    label: '借贷申请',
-    section: '信用借贷 / 订单管理',
-    route: '/admin/lending/orders',
-    count: 3,
-    tone: [740, 1047]
-  },
-  {
-    key: 'lending-repayment',
-    label: '借贷还款',
-    section: '信用借贷 / 还款记录',
-    route: '/admin/lending/repayment',
-    count: 1,
-    tone: [659, 988]
   }
 ])
+
+const getInitialUnreadCount = (item) => (item.displayMode === 'dot' ? 1 : item.count)
+const getUnreadWeight = (item) => (item.displayMode === 'dot' ? Math.min(item.unreadCount, 1) : item.unreadCount)
 
 const makeInitialCategories = () =>
   NOTIFICATION_CATEGORIES.map((item) => ({
     ...item,
-    unreadCount: item.count,
+    unreadCount: getInitialUnreadCount(item),
     lastEventAt: '2026-08-04 09:30'
   }))
 
@@ -183,7 +171,7 @@ export const useAdminNotificationsStore = defineStore('adminNotifications', {
   }),
   getters: {
     totalUnread(state) {
-      return state.categories.reduce((sum, item) => sum + item.unreadCount, 0)
+      return state.categories.reduce((sum, item) => sum + getUnreadWeight(item), 0)
     },
     hasUnread() {
       return this.totalUnread > 0
@@ -218,7 +206,11 @@ export const useAdminNotificationsStore = defineStore('adminNotifications', {
     receiveNotification(key, count = 1) {
       const category = this.categories.find((item) => item.key === key)
       if (!category) return
-      category.unreadCount += Number.isFinite(Number(count)) ? Math.max(1, Number(count)) : 1
+      if (category.displayMode === 'dot') {
+        category.unreadCount = 1
+      } else {
+        category.unreadCount += Number.isFinite(Number(count)) ? Math.max(1, Number(count)) : 1
+      }
       category.lastEventAt = '2026-08-04 09:30'
       this.notificationCenterState.badgeState = {
         ...this.notificationCenterState.badgeState,

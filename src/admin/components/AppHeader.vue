@@ -4,8 +4,10 @@ import { useRoute, useRouter } from 'vue-router'
 import AdminChangePasswordDialog from './AdminChangePasswordDialog.vue'
 import AdminSoundGuideDialog from './AdminSoundGuideDialog.vue'
 import MfaVerificationModal from './MfaVerificationModal.vue'
+import UserDetailDrawer from './user/UserDetailDrawer.vue'
 import { useAdminAccountStore } from '../stores/adminAccount'
 import { useAdminNotificationsStore } from '../stores/adminNotifications'
+import { usersList } from '../mock/user'
 
 const emit = defineEmits(['toggle-menu'])
 
@@ -22,6 +24,8 @@ const accountMenuOpen = ref(false)
 const changePasswordOpen = ref(false)
 const soundGuideOpen = ref(false)
 const soundGuideTriggerRef = ref(null)
+const notificationUserDrawerOpen = ref(false)
+const notificationUser = ref(null)
 const pendingPasswordChange = ref(null)
 const passwordMfaOpen = ref(false)
 const passwordMfaLoading = ref(false)
@@ -56,8 +60,33 @@ const toggleMenu = () => {
   menuOpen.value = next
 }
 
+const resolveNotificationUser = (category) =>
+  usersList.find((user) => user.id === category.userId) || usersList[0] || null
+
+const openUserNotificationDrawer = (category) => {
+  notificationUser.value = resolveNotificationUser(category)
+  if (!notificationUser.value) return
+  closeAccountMenu()
+  closeMenu()
+  notificationUserDrawerOpen.value = true
+}
+
+const closeNotificationUserDrawer = () => {
+  notificationUserDrawerOpen.value = false
+}
+
+const handleNotificationUserDrawerClosed = () => {
+  notificationUser.value = null
+}
+
+const resolveNotificationUserReturnFocus = () => triggerRef.value
+
 const openCategory = async (category) => {
   notifications.markCategoryRead(category.key)
+  if (category.drawer === 'user-detail') {
+    openUserNotificationDrawer(category)
+    return
+  }
   closeMenu()
   if (route.path !== category.route) await router.push(category.route)
 }
@@ -194,6 +223,8 @@ watch(
     notifications.dismissSoundGuideNotice()
     passwordMfaOpen.value = false
     pendingPasswordChange.value = null
+    notificationUserDrawerOpen.value = false
+    notificationUser.value = null
   }
 )
 
@@ -296,6 +327,7 @@ onUnmounted(() => {
               :key="category.key"
               type="button"
               role="menuitem"
+              :aria-label="category.displayMode === 'dot' ? `${category.label}，有未读消息，查看用户信息` : `${category.label}，${category.unreadCount} 条未读`"
               class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
               @click="openCategory(category)"
             >
@@ -303,7 +335,15 @@ onUnmounted(() => {
                 <span class="block truncate text-sm font-medium text-slate-900">{{ category.label }}</span>
                 <span class="mt-0.5 block truncate text-xs text-slate-500">{{ category.section }}</span>
               </span>
-              <span class="shrink-0 rounded-full bg-rose-50 px-2 py-0.5 text-xs font-semibold tabular-nums text-rose-600">
+              <span
+                v-if="category.displayMode === 'dot'"
+                class="h-2.5 w-2.5 shrink-0 rounded-full bg-rose-500 ring-4 ring-rose-50"
+                aria-hidden="true"
+              ></span>
+              <span
+                v-if="category.displayMode !== 'dot'"
+                class="shrink-0 rounded-full bg-rose-50 px-2 py-0.5 text-xs font-semibold tabular-nums text-rose-600"
+              >
                 {{ category.unreadCount }}
               </span>
             </button>
@@ -424,6 +464,15 @@ onUnmounted(() => {
     :open="soundGuideOpen"
     :return-focus="resolveSoundGuideReturnFocus"
     @update:open="handleSoundGuideOpenChange"
+  />
+
+  <UserDetailDrawer
+    :visible="notificationUserDrawerOpen"
+    :user="notificationUser"
+    initial-tab="overview"
+    :return-focus="resolveNotificationUserReturnFocus"
+    @close="closeNotificationUserDrawer"
+    @closed="handleNotificationUserDrawerClosed"
   />
 
   <MfaVerificationModal

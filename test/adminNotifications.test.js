@@ -33,26 +33,37 @@ test('admin notification categories cover requested alert types and routes', () 
     'MT 用户登录',
     '永续合约新交易订单',
     '交割合约新交易订单',
-    '认证',
-    '借贷申请',
-    '借贷还款'
+    '认证'
   ])
 
   for (const item of NOTIFICATION_CATEGORIES) {
-    assert.match(item.route, /^\/admin\//)
     assert.equal(typeof item.section, 'string')
     assert.ok(item.section.length > 0)
-    assert.ok(item.count > 0)
+    assert.ok(item.count === undefined || item.count > 0)
+    if (item.displayMode !== 'dot') assert.match(item.route, /^\/admin\//)
   }
+
+  const mtLogin = NOTIFICATION_CATEGORIES.find((item) => item.key === 'mt-login')
+  assert.equal(mtLogin.displayMode, 'dot')
+  assert.equal(mtLogin.drawer, 'user-detail')
+  assert.equal(mtLogin.userId, 'user_1004')
+  assert.equal(mtLogin.count, undefined)
+  assert.equal(mtLogin.route, undefined)
+  assert.equal(labels.includes('借贷申请'), false)
+  assert.equal(labels.includes('借贷还款'), false)
 })
 
 test('admin notification store tracks unread counts and safe sound preference', () => {
   setActivePinia(createPinia())
   const store = useAdminNotificationsStore()
 
-  const initialTotal = NOTIFICATION_CATEGORIES.reduce((sum, item) => sum + item.count, 0)
+  const initialTotal = NOTIFICATION_CATEGORIES.reduce(
+    (sum, item) => sum + (item.displayMode === 'dot' ? 1 : item.count),
+    0
+  )
   assert.equal(store.totalUnread, initialTotal)
   assert.equal(store.hasUnread, true)
+  assert.equal(store.categories.find((item) => item.key === 'mt-login').unreadCount, 1)
 
   store.markCategoryRead('deposit')
   assert.equal(store.categories.find((item) => item.key === 'deposit').unreadCount, 0)
@@ -76,6 +87,20 @@ test('admin notification store tracks unread counts and safe sound preference', 
   assert.equal(store.notificationCenterState.preferenceState.soundEnabled, false)
 })
 
+test('dot-only MT login notifications stay countless and mark unread by presence', () => {
+  setActivePinia(createPinia())
+  const store = useAdminNotificationsStore()
+
+  const initialTotal = store.totalUnread
+  store.markCategoryRead('mt-login')
+  assert.equal(store.categories.find((item) => item.key === 'mt-login').unreadCount, 0)
+  assert.equal(store.totalUnread, initialTotal - 1)
+
+  store.receiveNotification('mt-login', 5)
+  assert.equal(store.categories.find((item) => item.key === 'mt-login').unreadCount, 1)
+  assert.equal(store.totalUnread, initialTotal)
+})
+
 test('app header exposes accessible notification, account, and MFA password flows', () => {
   assert.match(headerSource, /aria-haspopup="menu"/)
   assert.match(headerSource, /aria-controls="admin-notification-menu"/)
@@ -83,6 +108,12 @@ test('app header exposes accessible notification, account, and MFA password flow
   assert.match(headerSource, /role="menuitem"/)
   assert.match(headerSource, /notifications\.hasUnread/)
   assert.match(headerSource, /openCategory\(category\)/)
+  assert.match(headerSource, /UserDetailDrawer/)
+  assert.match(headerSource, /usersList/)
+  assert.match(headerSource, /category\.displayMode === 'dot'/)
+  assert.match(headerSource, /category\.displayMode !== 'dot'/)
+  assert.match(headerSource, /openUserNotificationDrawer/)
+  assert.match(headerSource, /notificationUserDrawerOpen/)
   assert.match(headerSource, /消息提示音/)
   assert.match(headerSource, /type="checkbox"/)
   assert.match(headerSource, /role="switch"/)
