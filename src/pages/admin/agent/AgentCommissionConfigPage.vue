@@ -35,7 +35,7 @@ const PRODUCT_LINES = [
     rateKey: 'agentDepositCommissionRate',
     title: '充值',
     baseDesc:
-      '计佣基数 A = 代理名下客户该笔充值成功后的实际到账 USDT 金额（与充值入账流水中的到账金额相同）。',
+      '计佣基数 A = 代理名下客户该笔充值业务向客户实收并记入「充值手续费」的 USDT 金额；本笔无手续费则 A = 0。',
     formula: '佣金 = A × r',
     firstDepositExtra: true,
     theme: 'blue'
@@ -46,7 +46,7 @@ const PRODUCT_LINES = [
     rateKey: 'agentPerpetualCommissionRate',
     title: '永续合约',
     baseDesc:
-      '计佣基数 A = 代理名下客户该笔永续订单在成交结算中向客户收取并记入「交易手续费」的 USDT 金额（单笔订单一个数值；本笔无手续费则 A = 0）。',
+      '计佣基数 A = 代理名下客户该笔永续订单实收的交易手续费 USDT 金额；交易类产品按该笔订单实收的交易手续费记佣，本笔无手续费则 A = 0。',
     formula: '佣金 = A × r',
     theme: 'indigo'
   },
@@ -56,7 +56,7 @@ const PRODUCT_LINES = [
     rateKey: 'agentDeliveryCommissionRate',
     title: '交割合约',
     baseDesc:
-      '计佣基数 A = 代理名下客户该笔交割合约订单自开仓至持仓全部了结并完成交割结算期间，每一笔成交向客户实收并记入「手续费」科目的 USDT 金额之总和；不包含已实现盈亏、保证金利息及其它非手续费科目；该笔订单无手续费则 A = 0。',
+      '计佣基数 A = 代理名下客户该笔交割合约订单自开仓至持仓全部了结并完成交割结算期间实收的交易手续费 USDT 金额之总和；不包含已实现盈亏、保证金及其它非手续费科目；无手续费则 A = 0。',
     formula: '佣金 = A × r',
     theme: 'violet'
   },
@@ -66,7 +66,7 @@ const PRODUCT_LINES = [
     rateKey: 'agentSpotCommissionRate',
     title: '现货',
     baseDesc:
-      '计佣基数 A = 代理名下客户该笔现货订单在成交结算中向客户收取并记入「交易手续费」的 USDT 金额（单笔订单一个数值；本笔无手续费则 A = 0）。',
+      '计佣基数 A = 代理名下客户该笔现货订单实收的交易手续费 USDT 金额；交易类产品按该笔订单实收的交易手续费记佣，本笔无手续费则 A = 0。',
     formula: '佣金 = A × r',
     theme: 'orange'
   },
@@ -76,7 +76,7 @@ const PRODUCT_LINES = [
     rateKey: 'agentAiQuantCommissionRate',
     title: 'AI 量化',
     baseDesc:
-      '计佣基数 A = 代理名下客户该笔 AI 量化策略订单在结息入账时，账务系统为该笔订单写入的 USDT 计佣金额（单笔订单一个数值）。',
+      '计佣基数 A = 代理名下客户该笔 AI 量化订单实收的认购手续费、违约手续费等 USDT 手续费金额之和；理财类及产品策略按认购手续费、违约手续费记佣。',
     formula: '佣金 = A × r',
     theme: 'amber'
   },
@@ -86,7 +86,7 @@ const PRODUCT_LINES = [
     rateKey: 'agentPortfolioCommissionRate',
     title: '投资组合',
     baseDesc:
-      '计佣基数 A = 代理名下客户该笔投资组合订单在计佣结算时点，账务系统为该笔订单写入的 USDT 计佣基数（单笔订单一个数值）。',
+      '计佣基数 A = 代理名下客户该笔投资组合订单实收的认购手续费、提前赎回违约手续费等 USDT 手续费金额之和；无手续费则 A = 0。',
     formula: '佣金 = A × r',
     theme: 'cyan'
   },
@@ -96,7 +96,7 @@ const PRODUCT_LINES = [
     rateKey: 'agentLendingCommissionRate',
     title: '理财产品',
     baseDesc:
-      '计佣基数 A = 代理名下客户该笔理财订单在计佣结算时点，账务系统为该笔订单写入的 USDT 计佣本金（单笔订单一个数值）。',
+      '计佣基数 A = 代理名下客户该笔理财订单实收的认购手续费、提前退出或违约手续费等 USDT 手续费金额之和；理财类产品不按本金记佣。',
     formula: '佣金 = A × r',
     theme: 'emerald'
   },
@@ -106,7 +106,7 @@ const PRODUCT_LINES = [
     rateKey: 'agentBorrowingCommissionRate',
     title: '借贷产品',
     baseDesc:
-      '计佣基数 A = 代理名下客户该笔信用借贷订单在计佣结算时点，账务系统为该笔订单写入的 USDT 计佣基数（单笔订单一个数值）。',
+      '计佣基数 A = 代理名下客户该笔借贷订单实收的认购手续费、违约手续费、逾期违约金等 USDT 手续费金额之和；无手续费则 A = 0。',
     formula: '佣金 = A × r',
     theme: 'rose'
   }
@@ -300,7 +300,7 @@ onMounted(() => {
             <span class="text-emerald-600">r</span>
           </p>
           <p class="mt-3 text-xs leading-relaxed text-slate-600">
-            <strong class="text-slate-700">A</strong>：本条业务单的计佣基数，币种为 USDT；各产品线对 A 的取值定义见下方对应卡片，每条订单对应一个 A。<br />
+            <strong class="text-slate-700">A</strong>：本条业务单实收手续费形成的计佣基数，币种为 USDT；各产品线对 A 的取值定义见下方对应卡片，每条订单对应一个 A。<br />
             <strong class="text-slate-700">r</strong>：该产品线下代理的一级分佣比例，取值范围为闭区间 [0, 1]；例如 0.1 表示 10%。
           </p>
         </div>
@@ -316,7 +316,7 @@ onMounted(() => {
               <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-300" />
               <span>
                 下方示例使用统一的假设基数，仅用于核对「A × r」的乘法关系；线上环境每一条真实订单单独计算，其 A
-                取自账务系统为该笔订单写入的计佣金额。
+                取自账务系统为该笔订单记录的实收手续费。
               </span>
             </li>
           </ul>
@@ -366,7 +366,7 @@ onMounted(() => {
         </div>
         <div class="flex flex-col gap-1 sm:items-end">
           <label class="flex items-center gap-2 text-sm text-slate-600">
-            <span class="whitespace-nowrap">示例基数（USDT）</span>
+            <span class="whitespace-nowrap">示例手续费基数（USDT）</span>
             <input
               v-model.number="demoBaseAmount"
               type="number"

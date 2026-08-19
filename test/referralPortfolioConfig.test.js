@@ -21,3 +21,12 @@ test('referral config includes portfolio commission line and default rates', () 
   assert.match(page, /投资组合订单/)
   assert.match(page, /lineKeys: \['aiQuant', 'portfolio', 'lending', 'borrowing'\]/)
 })
+
+test('referral config explains fee-based commission bases', () => {
+  const page = readFileSync(new URL('../src/pages/admin/agent/ReferralConfigPage.vue', import.meta.url), 'utf8')
+
+  assert.match(page, /交易类产品按该笔订单实收的交易手续费记佣/)
+  assert.match(page, /理财类及产品策略按认购手续费、违约手续费记佣/)
+  assert.match(page, /认购手续费.*违约手续费/)
+  assert.doesNotMatch(page, /计佣本金/)
+})
