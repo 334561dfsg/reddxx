@@ -94,9 +94,9 @@ const PRODUCT_LINES = [
     key: 'lending',
     enabledKey: 'agentLendingCommissionEnabled',
     rateKey: 'agentLendingCommissionRate',
-    title: '理财产品',
+    title: '流动性挖矿',
     baseDesc:
-      '计佣基数 A = 代理名下客户该笔理财订单实收的认购手续费、提前退出或违约手续费等 USDT 手续费金额之和；理财类产品不按本金记佣。',
+      '计佣基数 A = 代理名下客户该笔流动性挖矿订单实收的认购手续费、提前退出或违约手续费等 USDT 手续费金额之和；流动性挖矿产品不按本金记佣。',
     formula: '佣金 = A × r',
     theme: 'emerald'
   },

@@ -25,6 +25,8 @@ test('agent commission config page renders portfolio product strategy card', () 
   assert.match(source, /agentPortfolioCommissionEnabled/)
   assert.match(source, /agentPortfolioCommissionRate/)
   assert.match(source, /title: '投资组合'/)
+  assert.match(source, /title: '流动性挖矿'/)
+  assert.doesNotMatch(source, /title: '理财产品'/)
   assert.match(source, /投资组合订单/)
 })
 
