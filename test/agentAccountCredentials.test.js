@@ -110,6 +110,32 @@ test('agent account settings rejects duplicate login account and returns reset d
   assert.doesNotMatch(updated.data.delivery.message, /\/agent-system\/login/)
 })
 
+test('agent account settings can reset MFA without resetting password', async () => {
+  __resetAgentCredentialsForTests()
+  const created = await agentApi.upgradeToAgent({
+    userId: 'user_1006',
+    loginAccount: 'mfa-reset-agent',
+    password: 'Agent!444444',
+    passwordMode: 'manual'
+  })
+  const before = getAgentCredentialByLogin('mfa-reset-agent')
+
+  const updated = await agentApi.updateAgentLoginCredential(created.data.agent.uid, {
+    loginAccount: 'mfa-reset-agent',
+    resetMfa: true
+  })
+
+  const after = getAgentCredentialByLogin('mfa-reset-agent')
+  assert.equal(updated.success, true)
+  assert.equal(updated.data.delivery.initialPassword, '')
+  assert.notEqual(after.mfaSecret, before.mfaSecret)
+  assert.equal(after.mfaBound, false)
+  assert.equal(updated.data.delivery.mfaSetup.secret, after.mfaSecret)
+  assert.match(updated.data.delivery.message, /MFA 密钥：/)
+  assert.match(updated.data.delivery.message, /MFA 二维码：见下方截图区域/)
+  assert.doesNotMatch(updated.data.delivery.message, /https:\/\/api\.qrserver\.com/)
+})
+
 test('agent user lookup matches only exact user id and returns a single candidate', async () => {
   __resetAgentCredentialsForTests()
 

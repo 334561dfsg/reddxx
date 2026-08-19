@@ -215,6 +215,20 @@ const seedAuditLogs = () => {
   sequence = 0
   const seedRows = [
     {
+      id: 'UAUD-SEED-046',
+      occurredAt: '2026-07-28T00:05:00.000Z',
+      targetUser: { uid: 'user_1004', name: 'user_chen', email: 'chen@example.com', phone: '8613910001004' },
+      source: 'admin',
+      operator: { id: 'admin_current', name: '当前管理员' },
+      category: 'permission',
+      action: 'relationship.agent-parent.set',
+      result: 'success',
+      reason: '客服调整用户所属代理',
+      before: { agentParentId: null, agentParentUsername: null },
+      after: { agentParentId: 'user_1001', agentParentUsername: 'agent_wang' },
+      related: { businessId: 'REL-agent-parent-user_1004', requestId: 'REQ-AGENT-PARENT-user_1004' }
+    },
+    {
       id: 'UAUD-SEED-045',
       occurredAt: '2026-07-27T23:50:00.000Z',
       targetUser: { uid: 'user_1001', name: 'agent_wang', email: 'wang@agent.com', phone: '13800138001' },

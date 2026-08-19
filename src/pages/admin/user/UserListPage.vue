@@ -11,6 +11,7 @@ import UserOnchainWalletDrawer from '../../../admin/components/user/UserOnchainW
 import UserRelationshipDrawer from '../../../admin/components/user/UserRelationshipDrawer.vue'
 import UserProfileEditDialog from '../../../admin/components/user/UserProfileEditDialog.vue'
 import UserParentResetDialog from '../../../admin/components/user/UserParentResetDialog.vue'
+import UserAgentParentDialog from '../../../admin/components/user/UserAgentParentDialog.vue'
 import UserAgentRoleDialog from '../../../admin/components/user/UserAgentRoleDialog.vue'
 import AgentUpgradeDialog from '../../../admin/components/agent/AgentUpgradeDialog.vue'
 import UserTeamReportDrawer from '../../../admin/components/user/UserTeamReportDrawer.vue'
@@ -144,6 +145,9 @@ const profileEditReturnFocus = ref(null)
 const parentResetOpen = ref(false)
 const parentResetUser = ref(null)
 const parentResetReturnFocus = ref(null)
+const agentParentOpen = ref(false)
+const agentParentUser = ref(null)
+const agentParentReturnFocus = ref(null)
 const agentRoleOpen = ref(false)
 const agentRoleUser = ref(null)
 const agentRoleReturnFocus = ref(null)
@@ -462,6 +466,13 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
     return
   }
 
+  if (id === 'set-agent-parent') {
+    agentParentUser.value = user
+    agentParentReturnFocus.value = trigger
+    agentParentOpen.value = true
+    return
+  }
+
   if (id === 'reset-agent') {
     if (!isAgentUser(user)) {
       agentUpgradeUser.value = user
@@ -649,6 +660,22 @@ const handleParentResetSaved = (updatedUser) => {
   users.value = users.value.map((user) => userIdOf(user) === updatedId ? { ...updatedUser } : user)
   operationDrawerUser.value = { ...updatedUser }
   parentResetUser.value = { ...updatedUser }
+}
+
+const closeAgentParent = () => {
+  agentParentOpen.value = false
+}
+
+const clearAgentParent = () => {
+  agentParentUser.value = null
+  agentParentReturnFocus.value = null
+}
+
+const handleAgentParentSaved = (updatedUser) => {
+  const updatedId = userIdOf(updatedUser)
+  users.value = users.value.map((user) => userIdOf(user) === updatedId ? { ...updatedUser } : user)
+  operationDrawerUser.value = { ...updatedUser }
+  agentParentUser.value = { ...updatedUser }
 }
 
 const closeAgentRole = () => {
@@ -1172,6 +1199,13 @@ const clearDetailDrawer = () => {
                   >
                     设为代理</button>
                   <button
+                    type="button"
+                    class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-cyan-50/80 px-2.5 text-xs font-medium text-cyan-700 hover:bg-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    aria-label="设置用户所属代理"
+                    @click="handleOperationDrawerAction({ id: 'set-agent-parent', user, trigger: $event.currentTarget })"
+                  >
+                    设所属代理</button>
+                  <button
                     :ref="(element) => setActionMenuTriggerRef(user, element)"
                     type="button"
                     class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1394,6 +1428,15 @@ const clearDetailDrawer = () => {
       @close="closeParentReset"
       @closed="clearParentReset"
       @saved="handleParentResetSaved"
+    />
+
+    <UserAgentParentDialog
+      :visible="agentParentOpen"
+      :user="agentParentUser"
+      :return-focus="agentParentReturnFocus"
+      @close="closeAgentParent"
+      @closed="clearAgentParent"
+      @saved="handleAgentParentSaved"
     />
 
     <UserAgentRoleDialog

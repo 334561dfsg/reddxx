@@ -27,6 +27,7 @@ const accountTarget = ref(null)
 const accountForm = ref({
   loginAccount: '',
   resetPassword: false,
+  resetMfa: false,
   passwordMode: 'auto',
   password: '',
   confirmPassword: ''
@@ -174,6 +175,7 @@ const openAccountSettings = (agent) => {
   accountForm.value = {
     loginAccount: agent.loginAccount || agent.email || '',
     resetPassword: false,
+    resetMfa: false,
     passwordMode: 'auto',
     password: '',
     confirmPassword: ''
@@ -218,6 +220,7 @@ const saveAccountSettings = async () => {
     const res = await agentApi.updateAgentLoginCredential(accountTarget.value.uid, {
       loginAccount: accountForm.value.loginAccount,
       resetPassword: accountForm.value.resetPassword,
+      resetMfa: accountForm.value.resetMfa,
       password: accountForm.value.password,
       passwordMode: accountForm.value.passwordMode
     })
@@ -541,7 +544,7 @@ const formatDate = (dateString) => {
         class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
       >
         <div
-          class="flex max-h-[calc(100vh-2rem)] w-full max-w-xl flex-col overflow-hidden rounded-xl bg-white shadow-xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
+          class="flex max-h-[calc(100vh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
           role="dialog"
           aria-modal="true"
           aria-labelledby="agent-account-title"
@@ -574,6 +577,14 @@ const formatDate = (dateString) => {
                 <span>
                   <span class="block font-medium text-slate-900">重置登录密码</span>
                   <span class="mt-0.5 block text-xs text-slate-500">不会展示旧密码；重置后只在本次结果中展示新密码。</span>
+                </span>
+              </label>
+
+              <label class="flex items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+                <input v-model="accountForm.resetMfa" type="checkbox" class="mt-1" />
+                <span>
+                  <span class="block font-medium text-slate-900">重设 MFA</span>
+                  <span class="mt-0.5 block text-xs text-slate-500">生成新的 MFA 密钥和二维码；代理需重新绑定安全验证。</span>
                 </span>
               </label>
 

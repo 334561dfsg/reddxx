@@ -49,6 +49,7 @@ const appendUnifiedRelationshipAudit = ({ type, user, before, after, reason, aff
   const actionByType = {
     profile: 'profile.update',
     'parent-reset': 'relationship.parent.reset',
+    'agent-parent': 'relationship.agent-parent.set',
     'agent-role': 'permission.agent-role.update'
   }
   appendUserAuditLog({
@@ -111,6 +112,19 @@ export const getParentCandidates = (userId) => {
   ])
   return usersList.filter((candidate) => (
     !excludedIds.has(idOf(candidate)) && candidate.status !== USER_STATUS.BANNED
+  ))
+}
+
+export const getAgentParentCandidates = (userId) => {
+  const user = requireUser(userId)
+  const excludedIds = new Set([
+    idOf(user),
+    String(user.agentParentId ?? '')
+  ])
+  return usersList.filter((candidate) => (
+    candidate.role === USER_ROLE.AGENT &&
+    candidate.status !== USER_STATUS.BANNED &&
+    !excludedIds.has(idOf(candidate))
   ))
 }
 
@@ -218,6 +232,45 @@ export const resetParent = ({ userId, parentId = null, reason }) => {
   })
   appendUnifiedRelationshipAudit({
     type: 'parent-reset',
+    user,
+    before,
+    after,
+    reason: cleanReason,
+    affectedUserIds: [idOf(user)]
+  })
+  return user
+}
+
+export const setAgentParent = ({ userId, agentParentId = null, reason }) => {
+  const user = requireUser(userId)
+  const nextAgentParentId = agentParentId ? String(agentParentId) : null
+  const cleanReason = requireReason(reason)
+
+  if (nextAgentParentId === idOf(user)) throw new Error('不能选择用户本人作为所属代理')
+  const agentParent = nextAgentParentId ? requireUser(nextAgentParentId) : null
+  if (agentParent && agentParent.role !== USER_ROLE.AGENT) throw new Error('所属代理必须选择代理用户')
+  if (agentParent?.status === USER_STATUS.BANNED) throw new Error('不能选择已封禁代理作为所属代理')
+  if (String(user.agentParentId ?? '') === String(nextAgentParentId ?? '')) throw new Error('新所属代理不能与当前所属代理相同')
+
+  const before = {
+    agentParentId: user.agentParentId ?? null,
+    agentParentUsername: user.agentParentUsername ?? null
+  }
+  const after = {
+    agentParentId: nextAgentParentId,
+    agentParentUsername: agentParent?.username ?? null
+  }
+  Object.assign(user, after)
+  appendAudit({
+    type: 'agent-parent',
+    userId: idOf(user),
+    before,
+    after,
+    reason: cleanReason,
+    affectedUserIds: [idOf(user)]
+  })
+  appendUnifiedRelationshipAudit({
+    type: 'agent-parent',
     user,
     before,
     after,

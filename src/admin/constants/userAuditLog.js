@@ -23,6 +23,7 @@ export const USER_AUDIT_RESULTS = Object.freeze([
 export const USER_AUDIT_ACTIONS = Object.freeze([
   { value: 'profile.update', label: '编辑用户资料', category: 'profile' },
   { value: 'relationship.parent.reset', label: '重置裂变上级', category: 'permission' },
+  { value: 'relationship.agent-parent.set', label: '设置所属代理', category: 'permission' },
   { value: 'permission.agent-role.update', label: '调整代理身份', category: 'permission' },
   { value: 'funds.deposit.manual-credit', label: '客服入金', category: 'funds' },
   { value: 'funds.transfer.internal', label: '账户间划转', category: 'funds' },

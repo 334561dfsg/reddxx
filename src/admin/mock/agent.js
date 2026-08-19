@@ -283,12 +283,13 @@ function buildAgentDelivery({ agent, loginAccount, password, changed = false, mf
   }
 }
 
-function upsertCredential({ agent, loginAccount, password }) {
+function upsertCredential({ agent, loginAccount, password, resetMfa = false }) {
   ensureAgentCredentialsSeeded()
   const previous = findCredentialByUid(agent.uid)
   if (previous?.loginAccount && previous.loginAccount !== loginAccount) {
     agentCredentials.delete(previous.loginAccount)
   }
+  const mfaSecret = resetMfa ? createMfaSecret() : previous?.mfaSecret || createMfaSecret()
   const credential = {
     ...(previous || {}),
     uid: Number(agent.uid),
@@ -297,8 +298,8 @@ function upsertCredential({ agent, loginAccount, password }) {
     loginAccount,
     password: password || previous?.password || DEFAULT_AGENT_LOGIN_PASSWORD,
     mfaRequired: true,
-    mfaBound: previous?.mfaBound === true,
-    mfaSecret: previous?.mfaSecret || createMfaSecret(),
+    mfaBound: resetMfa ? false : previous?.mfaBound === true,
+    mfaSecret,
     updatedAt: new Date().toISOString()
   }
   agentCredentials.set(loginAccount, credential)
@@ -492,7 +493,12 @@ export const agentApi = {
           const nextPassword = payload?.resetPassword
             ? assertPassword(payload?.password || createAgentPassword())
             : current?.password
-          const credential = upsertCredential({ agent, loginAccount, password: nextPassword })
+          const credential = upsertCredential({
+            agent,
+            loginAccount,
+            password: nextPassword,
+            resetMfa: payload?.resetMfa === true
+          })
           const delivery = buildAgentDelivery({
             agent,
             loginAccount,

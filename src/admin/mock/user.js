@@ -18,6 +18,8 @@ const generateUser = (id, overrides = {}) => ({
   tradingVolume: Math.floor(Math.random() * 1000000),
   parentId: null,
   parentUsername: null,
+  agentParentId: null,
+  agentParentUsername: null,
   registerTime: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
   lastLoginTime: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
   lastLoginIp: `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,

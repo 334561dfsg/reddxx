@@ -6,8 +6,10 @@ import { usersList } from '../src/admin/mock/user.js'
 import { __resetAgentCredentialsForTests } from '../src/admin/mock/agent.js'
 import {
   __resetRelationshipAuditLogForTests,
+  getAgentParentCandidates,
   getParentCandidates,
-  getRelationshipAuditLog
+  getRelationshipAuditLog,
+  setAgentParent
 } from '../src/admin/repositories/userRelationshipRepository.js'
 import {
   __resetDialogLayersForTests,
@@ -19,6 +21,7 @@ import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vue
 const read = (path) => readFileSync(resolve(process.cwd(), path), 'utf8')
 const parentResetSource = () => read('src/admin/components/user/UserParentResetDialog.vue')
 const agentRoleSource = () => read('src/admin/components/user/UserAgentRoleDialog.vue')
+const agentParentSource = () => read('src/admin/components/user/UserAgentParentDialog.vue')
 const userListPageSource = () => read('src/pages/admin/user/UserListPage.vue')
 const agentManagementSource = () => read('src/pages/admin/agent/AgentManagementPage.vue')
 const agentUpgradeSource = () => read('src/admin/components/agent/AgentUpgradeDialog.vue')
@@ -27,6 +30,7 @@ const agentDeliveryCardFile = resolve(process.cwd(), 'src/admin/components/agent
 const agentUpgradeFile = resolve(process.cwd(), 'src/admin/components/agent/AgentUpgradeDialog.vue')
 const parentResetFile = resolve(process.cwd(), 'src/admin/components/user/UserParentResetDialog.vue')
 const agentRoleFile = resolve(process.cwd(), 'src/admin/components/user/UserAgentRoleDialog.vue')
+const agentParentFile = resolve(process.cwd(), 'src/admin/components/user/UserAgentParentDialog.vue')
 const relationshipDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserRelationshipDrawer.vue')
 const teamReportDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserTeamReportDrawer.vue')
 const operationDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserOperationDrawer.vue')
@@ -595,6 +599,51 @@ test('agent creation entries reuse the shared upgrade dialog and delivery card',
   assert.doesNotMatch(agentRoleSource(), /import AgentDeliveryCard/)
   assert.doesNotMatch(agentRoleSource(), /<AgentDeliveryCard/)
   assert.doesNotMatch(agentRoleSource(), /agentApi\.upgradeToAgent/)
+})
+
+test('agent parent ownership uses only agent candidates and does not mutate fission parent', () => {
+  const before = snapshot(userById('user_1004'))
+  try {
+    const candidates = getAgentParentCandidates('user_1004')
+    assert.deepEqual(candidates.map((candidate) => candidate.role), candidates.map(() => 'agent'))
+    assert.equal(candidates.some((candidate) => candidate.id === 'user_1004'), false)
+    assert.equal(candidates.some((candidate) => candidate.id === before.parentId), true)
+
+    const updated = setAgentParent({
+      userId: 'user_1004',
+      agentParentId: 'user_1001',
+      reason: '客服调整所属代理'
+    })
+
+    assert.equal(updated.agentParentId, 'user_1001')
+    assert.equal(updated.agentParentUsername, 'agent_wang')
+    assert.equal(updated.parentId, before.parentId)
+    assert.equal(updated.parentUsername, before.parentUsername)
+  } finally {
+    restore(before)
+    __resetRelationshipAuditLogForTests()
+  }
+})
+
+test('agent parent Dialog keeps agent ownership separate from fission wording', () => {
+  const source = agentParentSource()
+  assert.match(source, /设置所属代理/)
+  assert.match(source, /当前所属代理/)
+  assert.match(source, /新所属代理/)
+  assert.match(source, /getAgentParentCandidates/)
+  assert.match(source, /setAgentParent/)
+  assert.doesNotMatch(source, /裂变/)
+  assert.doesNotMatch(source, /resetParent/)
+})
+
+test('agent account settings exposes MFA reset and submits it with the shared delivery result', () => {
+  const source = agentManagementSource()
+  assert.match(source, /resetMfa: false/)
+  assert.match(source, /重设 MFA/)
+  assert.match(source, /v-model="accountForm\.resetMfa"/)
+  assert.match(source, /resetMfa: accountForm\.value\.resetMfa/)
+  assert.match(source, /代理登录账号设置[\s\S]*max-w-2xl/)
+  assert.match(source, /<AgentDeliveryCard[\s\S]*title="账号设置已保存，以下信息可发送给代理"/)
 })
 
 test('parent-reset mounts the real combobox, preserves drafts, and returns focus to its trigger', async (t) => {

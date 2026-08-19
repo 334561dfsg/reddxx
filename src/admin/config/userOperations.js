@@ -22,6 +22,7 @@ export const USER_OPERATION_ENTRIES = Object.freeze([
   { id: 'reset-parent', title: '重设裂变上级', description: '调整用户所属的裂变上级关系', group: 'fission', status: 'available', risk: 'sensitive', handler: 'reset-parent' },
   { id: 'team-report', title: '查看裂变团队报表', description: '查看该用户裂变团队的业务汇总', group: 'fission', status: 'available', risk: 'normal', handler: 'team-report' },
   { id: 'reset-agent', title: '设置为代理', description: '设置用户代理身份', group: 'agent', status: 'available', risk: 'sensitive', handler: 'reset-agent' },
+  { id: 'set-agent-parent', title: '设置所属代理', description: '设置用户归属的代理账号', group: 'agent', status: 'available', risk: 'sensitive', handler: 'set-agent-parent' },
   { id: 'agent-subordinates', title: '查看下级用户', description: '查看归属于该代理的直属客户', group: 'agent', status: 'available', risk: 'normal', handler: 'agent-subordinates' },
   { id: 'agent-report', title: '查看代理报表', description: '查看该代理的业务与佣金汇总', group: 'agent', status: 'available', risk: 'normal', handler: 'agent-report' },
 

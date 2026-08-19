@@ -114,12 +114,11 @@ test('user list orchestrates parent reset above the operation Drawer', () => {
   assert.match(source, /handleParentResetSaved/)
 })
 
-test('agent role entry handles promotion and safe demotion in a child Dialog', () => {
+test('agent role entry handles safe demotion in a child Dialog', () => {
   const entry = getUserOperationEntry('reset-agent')
   const source = read('src/admin/components/user/UserAgentRoleDialog.vue')
   assert.equal(entry.status, 'available')
   assert.equal(entry.handler, 'reset-agent')
-  assert.match(source, /设置为代理/)
   assert.match(source, /取消代理身份/)
   assert.match(source, /承接裂变上级/)
   assert.match(source, /直属裂变下级/)
@@ -137,6 +136,24 @@ test('user list orchestrates agent role changes above the operation Drawer', () 
   assert.match(source, /agentRoleOpen/)
   assert.match(source, /agentRoleReturnFocus/)
   assert.match(source, /handleAgentRoleSaved/)
+})
+
+test('agent parent entry opens an independent agent ownership Dialog', () => {
+  const entry = getUserOperationEntry('set-agent-parent')
+  const source = read('src/admin/components/user/UserAgentParentDialog.vue')
+  const listSource = read('src/pages/admin/user/UserListPage.vue')
+  assert.equal(entry.status, 'available')
+  assert.equal(entry.handler, 'set-agent-parent')
+  assert.match(source, /设置所属代理/)
+  assert.match(source, /当前所属代理/)
+  assert.match(source, /新所属代理/)
+  assert.match(source, /getAgentParentCandidates/)
+  assert.match(source, /setAgentParent/)
+  assert.doesNotMatch(source, /resetParent/)
+  assert.match(listSource, /UserAgentParentDialog/)
+  assert.match(listSource, /agentParentOpen/)
+  assert.match(listSource, /id === 'set-agent-parent'/)
+  assert.match(listSource, /aria-label="设置用户所属代理"/)
 })
 
 test('team report entry renders approved metrics and branch details in a child Drawer', () => {
@@ -180,7 +197,7 @@ test('relationship action branches live inside the operation Drawer handler', ()
   const handlerStart = source.indexOf('const handleOperationDrawerAction')
   const handlerEnd = source.indexOf('const closeRelationshipDrawer', handlerStart)
   const handler = source.slice(handlerStart, handlerEnd)
-  for (const id of ['edit-profile', 'reset-parent', 'reset-agent', 'team-report']) {
+  for (const id of ['edit-profile', 'reset-parent', 'set-agent-parent', 'reset-agent', 'team-report']) {
     assert.match(handler, new RegExp(`id === '${id}'`), `${id} must be handled by handleOperationDrawerAction`)
   }
 
