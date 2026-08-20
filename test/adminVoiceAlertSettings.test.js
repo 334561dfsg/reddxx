@@ -20,15 +20,12 @@ const requestedLabels = [
   '充值',
   '提现',
   '充值成功',
-  'MT新交易订单（外汇，贵金属）',
-  'MT 新增持仓（外汇，贵金属）',
-  'MT 平仓（外汇，贵金属）',
-  'MT 用户登陆（外汇，贵金属）',
+  'MT新交易订单（现货）',
+  'MT 新增持仓（现货）',
+  'MT 平仓（现货）',
   '永续合约新交易订单',
   '交割合约新交易订单',
-  '认证',
-  '借贷申请',
-  '借贷还款'
+  '认证'
 ]
 
 test('voice alert defaults include every requested event and keep sound enabled', () => {
@@ -63,12 +60,16 @@ test('voice alert normalization preserves valid choices and repairs unsafe value
     voiceAlerts: {
       enabled: 'bad',
       events: {
+        mtUserLogin: false,
+        lendingApplication: false,
         lendingRepayment: false
       }
     }
   })
   assert.equal(fromSiteConfig.voiceAlerts.enabled, true)
-  assert.equal(fromSiteConfig.voiceAlerts.events.lendingRepayment, false)
+  assert.equal(Object.hasOwn(fromSiteConfig.voiceAlerts.events, 'mtUserLogin'), false)
+  assert.equal(Object.hasOwn(fromSiteConfig.voiceAlerts.events, 'lendingApplication'), false)
+  assert.equal(Object.hasOwn(fromSiteConfig.voiceAlerts.events, 'lendingRepayment'), false)
   assert.equal(fromSiteConfig.voiceAlerts.events.customerService, true)
 })
 

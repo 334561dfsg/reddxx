@@ -273,15 +273,12 @@ export const DEFAULT_VOICE_ALERT_EVENTS = [
   { key: 'deposit', label: '充值' },
   { key: 'withdraw', label: '提现' },
   { key: 'depositSuccess', label: '充值成功' },
-  { key: 'mtNewTradeOrder', label: 'MT新交易订单（外汇，贵金属）' },
-  { key: 'mtNewPosition', label: 'MT 新增持仓（外汇，贵金属）' },
-  { key: 'mtClosePosition', label: 'MT 平仓（外汇，贵金属）' },
-  { key: 'mtUserLogin', label: 'MT 用户登陆（外汇，贵金属）' },
+  { key: 'mtNewTradeOrder', label: 'MT新交易订单（现货）' },
+  { key: 'mtNewPosition', label: 'MT 新增持仓（现货）' },
+  { key: 'mtClosePosition', label: 'MT 平仓（现货）' },
   { key: 'perpetualNewTradeOrder', label: '永续合约新交易订单' },
   { key: 'deliveryNewTradeOrder', label: '交割合约新交易订单' },
-  { key: 'verification', label: '认证' },
-  { key: 'lendingApplication', label: '借贷申请' },
-  { key: 'lendingRepayment', label: '借贷还款' }
+  { key: 'verification', label: '认证' }
 ]
 
 const DEFAULT_VOICE_ALERTS = {
