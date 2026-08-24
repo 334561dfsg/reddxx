@@ -643,6 +643,15 @@ export const consoleRoutes = [
     }
   },
   {
+    path: 'system/news',
+    name: 'system-front-news',
+    component: () => import('../../pages/admin/system/NewsManagementPage.vue'),
+    meta: {
+      title: '系统设置 / 新闻资讯',
+      desc: '维护前台首页底部新闻模块与新闻资讯页面内容。'
+    }
+  },
+  {
     path: 'system/sms-channels',
     name: 'system-sms-channels',
     component: () => import('../../pages/admin/system/SmsChannelsPage.vue'),

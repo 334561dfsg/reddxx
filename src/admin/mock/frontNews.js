@@ -4,6 +4,8 @@ export const DEFAULT_FRONT_NEWS = [
     tag: '平台动态',
     date: '2026.08.24',
     publishedAt: '2026-08-24 10:00',
+    enabled: true,
+    sort: 0,
     title: '安全风控系统完成新一轮升级',
     summary: '账户登录、资金划转与合约委托链路已接入更细粒度的风险校验，帮助用户更早识别异常操作。',
     html: `
@@ -17,6 +19,8 @@ export const DEFAULT_FRONT_NEWS = [
     tag: '产品更新',
     date: '2026.08.21',
     publishedAt: '2026-08-21 12:00',
+    enabled: true,
+    sort: 10,
     title: '现货与合约手续费展示优化',
     summary: '交易前可更清晰查看预计手续费、VIP 折扣与成交后费用明细。',
     html: `
@@ -30,6 +34,8 @@ export const DEFAULT_FRONT_NEWS = [
     tag: '市场服务',
     date: '2026.08.18',
     publishedAt: '2026-08-18 09:30',
+    enabled: true,
+    sort: 20,
     title: '多品种行情深度展示持续迭代',
     summary: '主流资产盘口、涨跌幅与成交摘要在移动端首页获得更紧凑的呈现。',
     html: `
@@ -43,6 +49,8 @@ export const DEFAULT_FRONT_NEWS = [
     tag: '资产安全',
     date: '2026.08.15',
     publishedAt: '2026-08-15 16:00',
+    enabled: true,
+    sort: 30,
     title: '资产中心新增风险提示与操作确认',
     summary: '提现、划转与安全设置变更流程增加更明确的状态提示。',
     html: `
@@ -60,12 +68,52 @@ function toDateValue(row) {
   return Number.isFinite(value) ? value : 0
 }
 
-export function getFrontNewsList() {
-  return [...DEFAULT_FRONT_NEWS].sort((a, b) => toDateValue(b) - toDateValue(a))
+function createFrontNewsId() {
+  return `news_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
 }
 
-export function getFrontNewsById(id) {
+function normalizeDateText(row) {
+  const date = String(row?.date || '').trim()
+  if (date) return date
+  const publishedAt = String(row?.publishedAt || '').trim()
+  return publishedAt.slice(0, 10).replaceAll('-', '.') || ''
+}
+
+export function normalizeFrontNews(raw = DEFAULT_FRONT_NEWS) {
+  const source = Array.isArray(raw) ? raw : DEFAULT_FRONT_NEWS
+  return source
+    .map((row, index) => {
+      if (!row || typeof row !== 'object') return null
+      const title = String(row.title || '').trim()
+      if (!title) return null
+      const date = normalizeDateText(row)
+      const publishedAt = String(row.publishedAt || '').trim() || date.replaceAll('.', '-') || ''
+      return {
+        id: String(row.id || '').trim() || createFrontNewsId(),
+        tag: String(row.tag || '平台动态').trim() || '平台动态',
+        date,
+        publishedAt,
+        enabled: row.enabled !== false,
+        sort: Number.isFinite(Number(row.sort)) ? Math.round(Number(row.sort)) : index * 10,
+        title,
+        summary: String(row.summary || '').trim(),
+        html: String(row.html || '').trim() || '<p></p>'
+      }
+    })
+    .filter(Boolean)
+    .sort((a, b) => {
+      const sa = Number(a.sort) || 0
+      const sb = Number(b.sort) || 0
+      if (sa !== sb) return sa - sb
+      return toDateValue(b) - toDateValue(a)
+    })
+}
+
+export function getFrontNewsList(source = DEFAULT_FRONT_NEWS) {
+  return normalizeFrontNews(source).filter((row) => row.enabled)
+}
+
+export function getFrontNewsById(id, source = DEFAULT_FRONT_NEWS) {
   const newsId = String(id || '')
-  return getFrontNewsList().find((row) => row.id === newsId) || null
+  return getFrontNewsList(source).find((row) => row.id === newsId) || null
 }
-

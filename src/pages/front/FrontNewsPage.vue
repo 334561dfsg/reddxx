@@ -1,15 +1,25 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getFrontNewsList } from '../../admin/mock/frontNews'
+import { getSiteConfigSnapshot, SITE_CONFIG_STORAGE_KEY } from '../../admin/mock/siteConfig'
 import FrontTopNav from '../../components/FrontTopNav.vue'
 
 const router = useRouter()
 const navMenuOpen = ref(false)
+const siteConfig = ref(getSiteConfigSnapshot())
 
-const newsRows = computed(() => getFrontNewsList())
+const newsRows = computed(() => getFrontNewsList(siteConfig.value.frontNews))
 const featuredNews = computed(() => newsRows.value[0] || null)
 const listRows = computed(() => newsRows.value.slice(1))
+
+function refreshSiteConfig() {
+  siteConfig.value = getSiteConfigSnapshot()
+}
+
+function handleStorage(event) {
+  if (!event || event.key === SITE_CONFIG_STORAGE_KEY) refreshSiteConfig()
+}
 
 function toNewsDetail(row) {
   router.push({
@@ -21,6 +31,16 @@ function toNewsDetail(row) {
 function openNavigationMenu() {
   navMenuOpen.value = true
 }
+
+onMounted(() => {
+  window.addEventListener('admin-site-config-updated', refreshSiteConfig)
+  window.addEventListener('storage', handleStorage)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('admin-site-config-updated', refreshSiteConfig)
+  window.removeEventListener('storage', handleStorage)
+})
 </script>
 
 <template>
@@ -103,4 +123,3 @@ function openNavigationMenu() {
     </section>
   </main>
 </template>
-

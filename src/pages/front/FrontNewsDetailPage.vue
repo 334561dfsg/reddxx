@@ -1,17 +1,37 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getFrontNewsById } from '../../admin/mock/frontNews'
+import { getSiteConfigSnapshot, SITE_CONFIG_STORAGE_KEY } from '../../admin/mock/siteConfig'
 
 const route = useRoute()
 const router = useRouter()
+const siteConfig = ref(getSiteConfigSnapshot())
 
 const newsId = computed(() => String(route.params.newsId || ''))
-const detail = computed(() => getFrontNewsById(newsId.value))
+const detail = computed(() => getFrontNewsById(newsId.value, siteConfig.value.frontNews))
+
+function refreshSiteConfig() {
+  siteConfig.value = getSiteConfigSnapshot()
+}
+
+function handleStorage(event) {
+  if (!event || event.key === SITE_CONFIG_STORAGE_KEY) refreshSiteConfig()
+}
 
 function backToList() {
   router.push({ name: 'front-news' })
 }
+
+onMounted(() => {
+  window.addEventListener('admin-site-config-updated', refreshSiteConfig)
+  window.addEventListener('storage', handleStorage)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('admin-site-config-updated', refreshSiteConfig)
+  window.removeEventListener('storage', handleStorage)
+})
 </script>
 
 <template>
@@ -91,4 +111,3 @@ function backToList() {
   list-style: decimal;
 }
 </style>
-

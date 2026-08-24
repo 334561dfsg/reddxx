@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { existsSync, readFileSync } from 'node:fs'
-import { DEFAULT_FRONT_NEWS, getFrontNewsById, getFrontNewsList } from '../src/admin/mock/frontNews.js'
+import {
+  DEFAULT_FRONT_NEWS,
+  getFrontNewsById,
+  getFrontNewsList,
+  normalizeFrontNews
+} from '../src/admin/mock/frontNews.js'
+import { DEFAULT_SITE_CONFIG, normalizeSiteConfig } from '../src/admin/mock/siteConfig.js'
+import { navTree } from '../src/admin/config/nav.js'
+import { consoleRoutes } from '../src/router/modules/console.js'
 import { frontDesktopRoutes } from '../src/router/modules/front.js'
 
 const frontHomeSource = readFileSync(
@@ -10,6 +18,7 @@ const frontHomeSource = readFileSync(
 )
 const frontNewsPageUrl = new URL('../src/pages/front/FrontNewsPage.vue', import.meta.url)
 const frontNewsDetailPageUrl = new URL('../src/pages/front/FrontNewsDetailPage.vue', import.meta.url)
+const adminNewsPageUrl = new URL('../src/pages/admin/system/NewsManagementPage.vue', import.meta.url)
 
 function readOptionalSource(url) {
   return existsSync(url) ? readFileSync(url, 'utf8') : ''
@@ -18,6 +27,8 @@ function readOptionalSource(url) {
 test('front home renders a bottom news module before the footer', () => {
   assert.match(frontHomeSource, /getFrontNewsList/)
   assert.match(frontHomeSource, /const homeNewsArchiveTo = `\$\{prefix\}\/news`/)
+  assert.match(frontHomeSource, /const homeNewsItems = computed/)
+  assert.match(frontHomeSource, /getFrontNewsList\(siteConfig\.value\.frontNews\)/)
   assert.match(frontHomeSource, /const featuredNews = computed/)
   assert.match(frontHomeSource, /const secondaryNews = computed/)
   assert.match(frontHomeSource, /aria-labelledby="home-news"/)
@@ -41,6 +52,7 @@ test('front news module has independent data and routes', () => {
   assert.equal(DEFAULT_FRONT_NEWS.length >= 4, true)
   assert.equal(getFrontNewsList()[0].id, 'security-risk-upgrade')
   assert.equal(getFrontNewsById('fee-display-update')?.title, '现货与合约手续费展示优化')
+  assert.equal(DEFAULT_SITE_CONFIG.frontNews.length >= 4, true)
 
   const listRoute = frontDesktopRoutes.find((entry) => entry.name === 'front-news')
   assert.equal(listRoute?.path, 'news')
@@ -62,6 +74,8 @@ test('front news pages render list and detail independently from announcements',
   const detailSource = readOptionalSource(frontNewsDetailPageUrl)
 
   assert.match(listSource, /getFrontNewsList/)
+  assert.match(listSource, /getSiteConfigSnapshot/)
+  assert.match(listSource, /siteConfig\.value\.frontNews/)
   assert.match(listSource, /front-news-title/)
   assert.match(listSource, /新闻资讯列表/)
   assert.match(listSource, /toNewsDetail/)
@@ -70,6 +84,8 @@ test('front news pages render list and detail independently from announcements',
   assert.match(listSource, /absolute -left-\[18px\] inline-flex h-9 w-9/)
 
   assert.match(detailSource, /getFrontNewsById/)
+  assert.match(detailSource, /getSiteConfigSnapshot/)
+  assert.match(detailSource, /siteConfig\.value\.frontNews/)
   assert.match(detailSource, /front-news-detail-page-title/)
   assert.match(detailSource, />\s*新闻详情\s*</)
   assert.match(detailSource, /aria-label="返回新闻列表"/)
@@ -77,4 +93,75 @@ test('front news pages render list and detail independently from announcements',
   assert.match(detailSource, /news-detail-body/)
   assert.doesNotMatch(listSource + detailSource, /front-announcements/)
   assert.doesNotMatch(listSource + detailSource, /front-announcement-detail/)
+})
+
+test('front news config normalizes editable admin records for the public module', () => {
+  const normalized = normalizeSiteConfig({
+    frontNews: [
+      {
+        id: 'custom-news',
+        tag: '  行业观察  ',
+        title: '  新资产专区上线  ',
+        summary: '  用户可在首页读取最新资讯。  ',
+        html: '<p>详情正文</p>',
+        publishedAt: '2026-08-24 11:30',
+        enabled: true,
+        sort: '3'
+      },
+      {
+        id: 'disabled-news',
+        tag: '平台动态',
+        title: '暂停展示的新闻',
+        enabled: false,
+        sort: '1'
+      },
+      {
+        id: 'empty-title',
+        title: '   '
+      }
+    ]
+  })
+
+  assert.deepEqual(
+    normalized.frontNews.map((row) => row.id),
+    ['disabled-news', 'custom-news']
+  )
+  assert.equal(normalized.frontNews[1].tag, '行业观察')
+  assert.equal(normalized.frontNews[1].title, '新资产专区上线')
+  assert.equal(normalized.frontNews[1].sort, 3)
+  assert.equal(getFrontNewsList(normalized.frontNews).length, 1)
+  assert.equal(getFrontNewsList(normalized.frontNews)[0].id, 'custom-news')
+  assert.equal(normalizeFrontNews([{ title: '无时间新闻' }])[0].publishedAt, '')
+})
+
+test('front news admin route and system menu entry are registered', () => {
+  const route = consoleRoutes.find((entry) => entry.name === 'system-front-news')
+  assert.equal(route?.path, 'system/news')
+  assert.match(String(route?.component), /NewsManagementPage/)
+  assert.equal(route?.meta?.title, '系统设置 / 新闻资讯')
+
+  const systemNav = navTree.find((entry) => entry.title === '系统设置')
+  assert.ok(systemNav)
+  assert.ok(
+    systemNav.children.some(
+      (entry) => entry.title === '新闻资讯' && entry.path === '/admin/system/news'
+    )
+  )
+})
+
+test('front news admin page uses custom selects and edits independent news content', () => {
+  const source = readOptionalSource(adminNewsPageUrl)
+  assert.match(source, /frontNews/)
+  assert.match(source, /发布新闻/)
+  assert.match(source, /新闻资讯列表/)
+  assert.match(source, /新闻标题/)
+  assert.match(source, /新闻分类/)
+  assert.match(source, /新闻内容/)
+  assert.match(source, /role="combobox"/)
+  assert.match(source, /aria-haspopup="listbox"/)
+  assert.match(source, /admin-select-trigger/)
+  assert.match(source, /news-select-popup/)
+  assert.match(source, /siteConfigApi\.updateSiteConfig/)
+  assert.doesNotMatch(source, /<select[\s>]/)
+  assert.doesNotMatch(source, /announcements/)
 })

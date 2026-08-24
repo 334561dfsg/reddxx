@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { getFrontNewsList } from '../../admin/mock/frontNews'
-import { getSiteConfigSnapshot } from '../../admin/mock/siteConfig'
+import { getSiteConfigSnapshot, SITE_CONFIG_STORAGE_KEY } from '../../admin/mock/siteConfig'
 import { getFrontTradeDefaultPath } from '../../constants/frontNav'
 
 const prefix = '/front'
@@ -23,12 +23,18 @@ function refreshSiteConfig() {
   siteConfig.value = getSiteConfigSnapshot()
 }
 
+function handleStorage(event) {
+  if (!event || event.key === SITE_CONFIG_STORAGE_KEY) refreshSiteConfig()
+}
+
 onMounted(() => {
   window.addEventListener('admin-site-config-updated', refreshSiteConfig)
+  window.addEventListener('storage', handleStorage)
 })
 
 onUnmounted(() => {
   window.removeEventListener('admin-site-config-updated', refreshSiteConfig)
+  window.removeEventListener('storage', handleStorage)
 })
 
 const brandValues = ['安全稳定', '专业撮合', '快捷下单', '透明费率']
@@ -106,15 +112,17 @@ const tradeModes = [
 
 const homeNewsArchiveTo = `${prefix}/news`
 
-const homeNewsItems = getFrontNewsList()
-  .slice(0, 4)
-  .map((row) => ({
-    ...row,
-    to: { name: 'front-news-detail', params: { newsId: row.id } }
-  }))
+const homeNewsItems = computed(() =>
+  getFrontNewsList(siteConfig.value.frontNews)
+    .slice(0, 4)
+    .map((row) => ({
+      ...row,
+      to: { name: 'front-news-detail', params: { newsId: row.id } }
+    }))
+)
 
-const featuredNews = computed(() => homeNewsItems[0])
-const secondaryNews = computed(() => homeNewsItems.slice(1))
+const featuredNews = computed(() => homeNewsItems.value[0] || null)
+const secondaryNews = computed(() => homeNewsItems.value.slice(1))
 
 const footerYear = new Date().getFullYear()
 
@@ -569,7 +577,7 @@ const footerColumns = [
           </RouterLink>
         </div>
 
-        <div class="grid gap-4 lg:grid-cols-[1.02fr_1fr] lg:gap-5">
+        <div v-if="featuredNews" class="grid gap-4 lg:grid-cols-[1.02fr_1fr] lg:gap-5">
           <RouterLink
             :to="featuredNews.to"
             class="group flex min-h-[17rem] flex-col justify-between overflow-hidden rounded-xl border border-white/[0.07] bg-[#0b0e11] p-6 transition hover:border-lime-400/24 hover:bg-[#10151a] sm:p-7 md:p-8"
@@ -602,7 +610,7 @@ const footerColumns = [
             </span>
           </RouterLink>
 
-          <ul class="rounded-xl border border-white/[0.07] bg-[#080a0c] px-5 sm:px-6">
+          <ul v-if="secondaryNews.length" class="rounded-xl border border-white/[0.07] bg-[#080a0c] px-5 sm:px-6">
             <li v-for="item in secondaryNews" :key="item.id" class="border-b border-white/[0.08] last:border-b-0">
               <RouterLink
                 :to="item.to"

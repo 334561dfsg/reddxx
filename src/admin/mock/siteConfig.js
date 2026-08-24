@@ -3,6 +3,7 @@ import {
   FRONT_LOCALE_CATALOG,
   PHONE_DIAL_PRESETS
 } from '../constants/i18nCatalog.js'
+import { DEFAULT_FRONT_NEWS, normalizeFrontNews } from './frontNews.js'
 import { FRONT_WALLET_LOGIN_PROVIDERS } from '../../stores/frontAuth.js'
 
 const WALLET_PROVIDER_KEYS = new Set(FRONT_WALLET_LOGIN_PROVIDERS.map((p) => p.key))
@@ -1209,7 +1210,9 @@ export const DEFAULT_SITE_CONFIG = {
   /** 前台公开内容页：关于、资质、白皮书 */
   contentPages: normalizeContentPages(),
   /** 前台公开站内公告 */
-  announcements: normalizeSiteAnnouncements()
+  announcements: normalizeSiteAnnouncements(),
+  /** 前台首页与新闻资讯路由展示的新闻 */
+  frontNews: normalizeFrontNews(DEFAULT_FRONT_NEWS)
 }
 
 function readStored() {
@@ -1378,6 +1381,7 @@ export function normalizeSiteConfig(raw) {
   merged.socialLinks = normalizeSocialLinksList(merged.socialLinks)
   merged.contentPages = normalizeContentPages(merged.contentPages, merged.i18n?.defaultLocale || 'zh-CN')
   merged.announcements = normalizeSiteAnnouncements(merged.announcements, merged.i18n?.defaultLocale || 'zh-CN')
+  merged.frontNews = normalizeFrontNews(merged.frontNews)
   const legacy = merged.logoUrl
   if (typeof legacy === 'string' && legacy && !merged.logoUrlPc && !merged.logoUrlMobile) {
     merged.logoUrlPc = legacy
@@ -1434,6 +1438,8 @@ export const siteConfigApi = {
           config.announcements !== undefined
             ? normalizeSiteAnnouncements(config.announcements, i18nPayload.defaultLocale)
             : prev.announcements
+        const frontNewsPayload =
+          config.frontNews !== undefined ? normalizeFrontNews(config.frontNews) : prev.frontNews
         const voiceAlertsPayload =
           config.voiceAlerts !== undefined ? normalizeVoiceAlerts(config.voiceAlerts) : prev.voiceAlerts
         memory = normalizeSiteConfig({
@@ -1491,7 +1497,8 @@ export const siteConfigApi = {
           voiceAlerts: voiceAlertsPayload,
           socialLinks: socialLinksPayload,
           contentPages: contentPagesPayload,
-          announcements: announcementsPayload
+          announcements: announcementsPayload,
+          frontNews: frontNewsPayload
         })
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(memory))
