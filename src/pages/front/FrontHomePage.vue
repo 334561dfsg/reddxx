@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { getFrontNewsList } from '../../admin/mock/frontNews'
 import { getSiteConfigSnapshot } from '../../admin/mock/siteConfig'
 import { getFrontTradeDefaultPath } from '../../constants/frontNav'
 
@@ -103,42 +104,14 @@ const tradeModes = [
   }
 ]
 
-const homeNewsArchiveTo = `${prefix}/announcements`
+const homeNewsArchiveTo = `${prefix}/news`
 
-const homeNewsItems = [
-  {
-    id: 'news-security-upgrade',
-    tag: '平台动态',
-    date: '2026.08.24',
-    title: '安全风控系统完成新一轮升级',
-    summary: '账户登录、资金划转与合约委托链路已接入更细粒度的风险校验，帮助用户更早识别异常操作。',
-    to: homeNewsArchiveTo
-  },
-  {
-    id: 'news-fee-display',
-    tag: '产品更新',
-    date: '2026.08.21',
-    title: '现货与合约手续费展示优化',
-    summary: '交易前可更清晰查看预计手续费、VIP 折扣与成交后费用明细。',
-    to: homeNewsArchiveTo
-  },
-  {
-    id: 'news-market-depth',
-    tag: '市场服务',
-    date: '2026.08.18',
-    title: '多品种行情深度展示持续迭代',
-    summary: '主流资产盘口、涨跌幅与成交摘要在移动端首页获得更紧凑的呈现。',
-    to: homeNewsArchiveTo
-  },
-  {
-    id: 'news-custody',
-    tag: '资产安全',
-    date: '2026.08.15',
-    title: '资产中心新增风险提示与操作确认',
-    summary: '提现、划转与安全设置变更流程增加更明确的状态提示。',
-    to: homeNewsArchiveTo
-  }
-]
+const homeNewsItems = getFrontNewsList()
+  .slice(0, 4)
+  .map((row) => ({
+    ...row,
+    to: { name: 'front-news-detail', params: { newsId: row.id } }
+  }))
 
 const featuredNews = computed(() => homeNewsItems[0])
 const secondaryNews = computed(() => homeNewsItems.slice(1))

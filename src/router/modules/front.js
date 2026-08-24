@@ -35,6 +35,18 @@ export const frontDesktopRoutes = [
     meta: { title: '公告详情', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
   },
   {
+    path: 'news',
+    name: 'front-news',
+    component: () => import('../../pages/front/FrontNewsPage.vue'),
+    meta: { title: '新闻资讯', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
+  },
+  {
+    path: 'news/:newsId',
+    name: 'front-news-detail',
+    component: () => import('../../pages/front/FrontNewsDetailPage.vue'),
+    meta: { title: '新闻详情', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
+  },
+  {
     path: 'customer-service',
     name: 'front-customer-service',
     component: () => import('../../pages/front/FrontCustomerServicePage.vue'),
