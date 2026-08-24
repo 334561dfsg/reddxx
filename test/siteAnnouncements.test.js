@@ -227,6 +227,8 @@ test('front announcement detail uses a compact route page header and reader layo
   assert.match(detailSource, /M15 5 8 12l7 7/)
   assert.match(detailSource, /pt-\[env\(safe-area-inset-top,0px\)\]/)
   assert.match(detailSource, /grid h-12 grid-cols-\[2\.5rem_minmax\(0,1fr\)_2\.5rem\] items-center/)
+  assert.match(detailSource, /-ml-5 inline-flex h-10 w-10/)
+  assert.match(detailSource, /md:ml-0/)
   assert.match(detailSource, /justify-self-center/)
   assert.match(detailSource, /<span class="h-10 w-10" aria-hidden="true" \/>/)
   assert.doesNotMatch(detailSource, /absolute left-0/)
