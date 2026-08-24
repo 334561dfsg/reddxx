@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import {
   DEFAULT_FRONT_NEWS,
   getFrontNewsById,
+  getLocalizedFrontNewsList,
   getFrontNewsList,
   normalizeFrontNews
 } from '../src/admin/mock/frontNews.js'
@@ -25,10 +26,11 @@ function readOptionalSource(url) {
 }
 
 test('front home renders a bottom news module before the footer', () => {
-  assert.match(frontHomeSource, /getFrontNewsList/)
+  assert.match(frontHomeSource, /getLocalizedFrontNewsList/)
   assert.match(frontHomeSource, /const homeNewsArchiveTo = `\$\{prefix\}\/news`/)
   assert.match(frontHomeSource, /const homeNewsItems = computed/)
-  assert.match(frontHomeSource, /getFrontNewsList\(siteConfig\.value\.frontNews\)/)
+  assert.match(frontHomeSource, /getLocalizedFrontNewsList\(siteConfig\.value\.frontNews/)
+  assert.match(frontHomeSource, /resolveFrontLocalePreference/)
   assert.match(frontHomeSource, /const featuredNews = computed/)
   assert.match(frontHomeSource, /const secondaryNews = computed/)
   assert.match(frontHomeSource, /aria-labelledby="home-news"/)
@@ -52,6 +54,7 @@ test('front news module has independent data and routes', () => {
   assert.equal(DEFAULT_FRONT_NEWS.length >= 4, true)
   assert.equal(getFrontNewsList()[0].id, 'security-risk-upgrade')
   assert.equal(getFrontNewsById('fee-display-update')?.title, '现货与合约手续费展示优化')
+  assert.equal(getLocalizedFrontNewsList(DEFAULT_FRONT_NEWS, 'en', 'zh-CN')[0].locale, 'en')
   assert.equal(DEFAULT_SITE_CONFIG.frontNews.length >= 4, true)
 
   const listRoute = frontDesktopRoutes.find((entry) => entry.name === 'front-news')
@@ -73,7 +76,8 @@ test('front news pages render list and detail independently from announcements',
   const listSource = readOptionalSource(frontNewsPageUrl)
   const detailSource = readOptionalSource(frontNewsDetailPageUrl)
 
-  assert.match(listSource, /getFrontNewsList/)
+  assert.match(listSource, /getLocalizedFrontNewsList/)
+  assert.match(listSource, /resolveFrontLocalePreference/)
   assert.match(listSource, /getSiteConfigSnapshot/)
   assert.match(listSource, /siteConfig\.value\.frontNews/)
   assert.match(listSource, /front-news-title/)
@@ -84,6 +88,7 @@ test('front news pages render list and detail independently from announcements',
   assert.match(listSource, /absolute -left-\[18px\] inline-flex h-9 w-9/)
 
   assert.match(detailSource, /getFrontNewsById/)
+  assert.match(detailSource, /resolveFrontLocalePreference/)
   assert.match(detailSource, /getSiteConfigSnapshot/)
   assert.match(detailSource, /siteConfig\.value\.frontNews/)
   assert.match(detailSource, /front-news-detail-page-title/)
@@ -100,7 +105,7 @@ test('front news config normalizes editable admin records for the public module'
     frontNews: [
       {
         id: 'custom-news',
-        tag: '  行业观察  ',
+        locale: 'en',
         title: '  新资产专区上线  ',
         summary: '  用户可在首页读取最新资讯。  ',
         html: '<p>详情正文</p>',
@@ -110,7 +115,7 @@ test('front news config normalizes editable admin records for the public module'
       },
       {
         id: 'disabled-news',
-        tag: '平台动态',
+        locale: 'zh-CN',
         title: '暂停展示的新闻',
         enabled: false,
         sort: '1'
@@ -126,12 +131,14 @@ test('front news config normalizes editable admin records for the public module'
     normalized.frontNews.map((row) => row.id),
     ['disabled-news', 'custom-news']
   )
-  assert.equal(normalized.frontNews[1].tag, '行业观察')
+  assert.equal(normalized.frontNews[1].locale, 'en')
   assert.equal(normalized.frontNews[1].title, '新资产专区上线')
   assert.equal(normalized.frontNews[1].sort, 3)
   assert.equal(getFrontNewsList(normalized.frontNews).length, 1)
   assert.equal(getFrontNewsList(normalized.frontNews)[0].id, 'custom-news')
+  assert.equal(getLocalizedFrontNewsList(normalized.frontNews, 'vi', 'en')[0].id, 'custom-news')
   assert.equal(normalizeFrontNews([{ title: '无时间新闻' }])[0].publishedAt, '')
+  assert.equal(normalizeFrontNews([{ title: '无时间新闻' }])[0].locale, 'zh-CN')
 })
 
 test('front news admin route and system menu entry are registered', () => {
@@ -155,7 +162,10 @@ test('front news admin page uses custom selects and edits independent news conte
   assert.match(source, /发布新闻/)
   assert.match(source, /新闻资讯列表/)
   assert.match(source, /新闻标题/)
-  assert.match(source, /新闻分类/)
+  assert.match(source, /新闻语言/)
+  assert.match(source, /全部语言/)
+  assert.match(source, /languageFilter/)
+  assert.match(source, /formLocale/)
   assert.match(source, /新闻内容/)
   assert.match(source, /role="combobox"/)
   assert.match(source, /aria-haspopup="listbox"/)
@@ -164,4 +174,7 @@ test('front news admin page uses custom selects and edits independent news conte
   assert.match(source, /siteConfigApi\.updateSiteConfig/)
   assert.doesNotMatch(source, /<select[\s>]/)
   assert.doesNotMatch(source, /announcements/)
+  assert.doesNotMatch(source, /新闻分类/)
+  assert.doesNotMatch(source, /tagFilter/)
+  assert.doesNotMatch(source, /formTag/)
 })

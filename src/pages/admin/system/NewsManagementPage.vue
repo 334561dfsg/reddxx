@@ -5,6 +5,7 @@ import {
   siteConfigApi
 } from '../../../admin/mock/siteConfig'
 import { normalizeFrontNews } from '../../../admin/mock/frontNews'
+import { FRONT_LOCALE_CATALOG } from '../../../admin/constants/i18nCatalog'
 
 const config = ref({ ...DEFAULT_SITE_CONFIG })
 const loading = ref(false)
@@ -12,7 +13,7 @@ const isSaving = ref(false)
 const resultMessage = ref('')
 const keyword = ref('')
 const statusFilter = ref('all')
-const tagFilter = ref('all')
+const languageFilter = ref('')
 const currentPage = ref(1)
 const pageSize = 10
 const modalOpen = ref(false)
@@ -23,7 +24,7 @@ const editorRef = ref(null)
 
 const formTitle = ref('')
 const formSummary = ref('')
-const formTag = ref('平台动态')
+const formLocale = ref('zh-CN')
 const formHtml = ref('<p></p>')
 const formEnabled = ref(true)
 const formPublishedAt = ref('')
@@ -42,23 +43,54 @@ const enabledOptions = [
 
 const rows = computed(() => config.value.frontNews || [])
 const enabledCount = computed(() => rows.value.filter((row) => row.enabled).length)
-const tagOptions = computed(() => {
-  const tags = [...new Set(rows.value.map((row) => row.tag).filter(Boolean))]
-  return [
-    { value: 'all', label: '全部分类' },
-    ...tags.map((tag) => ({ value: tag, label: tag }))
-  ]
+const localeOptions = computed(() => {
+  const custom = Array.isArray(config.value.customLocales) ? config.value.customLocales : []
+  const catalog = [...FRONT_LOCALE_CATALOG, ...custom]
+  const enabled = config.value.i18n?.enabledLocales?.length ? config.value.i18n.enabledLocales : ['zh-CN']
+  const order = config.value.i18n?.localeSortOrder || {}
+  return [...enabled]
+    .sort((a, b) => {
+      const da = Number.isFinite(order[a]) ? order[a] : 999999
+      const db = Number.isFinite(order[b]) ? order[b] : 999999
+      if (da !== db) return da - db
+      return catalog.findIndex((x) => x.code === a) - catalog.findIndex((x) => x.code === b)
+    })
+    .map((code) => {
+      const base = catalog.find((x) => x.code === code) || { code, label: code, short: code }
+      const override = config.value.i18n?.localeMetaOverrides?.[code] || {}
+      return {
+        code,
+        label: override.label || base.label || code,
+        short: override.short || base.short || code
+      }
+    })
 })
+const defaultLocale = computed(() => {
+  const code = config.value.i18n?.defaultLocale
+  return localeOptions.value.some((item) => item.code === code) ? code : localeOptions.value[0]?.code || 'zh-CN'
+})
+const languageFilterOptions = computed(() => [
+  { value: '', label: '全部语言' },
+  ...localeOptions.value.map((loc) => ({
+    value: loc.code,
+    label: `${loc.label}（${loc.short || loc.code}）`
+  }))
+])
 
 const selectOptionMap = computed(() => ({
   statusFilter: statusFilterOptions,
-  tagFilter: tagOptions.value,
+  languageFilter: languageFilterOptions.value,
+  formLocale: localeOptions.value.map((loc) => ({
+    value: loc.code,
+    label: `${loc.label}（${loc.short || loc.code}）`
+  })),
   enabled: enabledOptions
 }))
 
 const selectValueMap = computed(() => ({
   statusFilter: statusFilter.value,
-  tagFilter: tagFilter.value,
+  languageFilter: languageFilter.value,
+  formLocale: formLocale.value,
   enabled: formEnabled.value
 }))
 
@@ -69,9 +101,9 @@ const filteredRows = computed(() => {
       statusFilter.value === 'all' ||
       (statusFilter.value === 'enabled' && row.enabled) ||
       (statusFilter.value === 'disabled' && !row.enabled)
-    const tagOk = tagFilter.value === 'all' || row.tag === tagFilter.value
-    const content = [row.title, row.summary, row.tag, row.publishedAt].join(' ').toLowerCase()
-    return statusOk && tagOk && (!text || content.includes(text))
+    const localeOk = !languageFilter.value || row.locale === languageFilter.value
+    const content = [row.title, row.summary, row.locale, localeLabel(row.locale), row.publishedAt].join(' ').toLowerCase()
+    return statusOk && localeOk && (!text || content.includes(text))
   })
 })
 
@@ -145,7 +177,8 @@ function toggleCustomSelect(key) {
 
 function commitCustomSelect(key, value) {
   if (key === 'statusFilter') statusFilter.value = value
-  if (key === 'tagFilter') tagFilter.value = value
+  if (key === 'languageFilter') languageFilter.value = value
+  if (key === 'formLocale') formLocale.value = value || defaultLocale.value
   if (key === 'enabled') formEnabled.value = value
   resetListPage()
   closeCustomSelect(key)
@@ -216,7 +249,7 @@ function resetForm() {
   editingId.value = ''
   formTitle.value = ''
   formSummary.value = ''
-  formTag.value = '平台动态'
+  formLocale.value = defaultLocale.value
   formHtml.value = '<p></p>'
   formEnabled.value = true
   formPublishedAt.value = nowText()
@@ -234,7 +267,7 @@ async function openEdit(row) {
   editingId.value = row.id
   formTitle.value = row.title || ''
   formSummary.value = row.summary || ''
-  formTag.value = row.tag || '平台动态'
+  formLocale.value = row.locale || defaultLocale.value
   formHtml.value = row.html || '<p></p>'
   formEnabled.value = row.enabled !== false
   formPublishedAt.value = row.publishedAt || nowText()
@@ -257,7 +290,7 @@ async function load() {
     const result = await siteConfigApi.getSiteConfig()
     if (result.success) {
       config.value = { ...DEFAULT_SITE_CONFIG, ...result.data }
-      config.value.frontNews = normalizeFrontNews(config.value.frontNews)
+      config.value.frontNews = normalizeFrontNews(config.value.frontNews, config.value.i18n?.defaultLocale || 'zh-CN')
       clampPage()
     }
   } catch (error) {
@@ -292,12 +325,22 @@ async function submitModal() {
     return
   }
   const id = editingId.value || `news_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+  const locale = formLocale.value || defaultLocale.value
+  const summary = formSummary.value.trim()
+  const html = formHtml.value || '<p></p>'
   const row = {
     id,
+    locale,
     title,
-    tag: formTag.value.trim() || '平台动态',
-    summary: formSummary.value.trim(),
-    html: formHtml.value || '<p></p>',
+    summary,
+    html,
+    locales: {
+      [locale]: {
+        title,
+        summary,
+        html
+      }
+    },
     enabled: formEnabled.value,
     publishedAt: formPublishedAt.value.trim() || nowText(),
     sort: Number(formSort.value) || 0
@@ -305,15 +348,20 @@ async function submitModal() {
   const list = editingId.value
     ? rows.value.map((item) => (item.id === editingId.value ? row : item))
     : [...rows.value, row]
-  config.value.frontNews = normalizeFrontNews(list)
+  config.value.frontNews = normalizeFrontNews(list, defaultLocale.value)
   await persist(editingId.value ? '新闻已更新' : '新闻已发布')
   closeModal()
 }
 
 async function removeRow(row) {
   if (!confirm(`确定删除该新闻？（${row.title}）`)) return
-  config.value.frontNews = normalizeFrontNews(rows.value.filter((item) => item.id !== row.id))
+  config.value.frontNews = normalizeFrontNews(rows.value.filter((item) => item.id !== row.id), defaultLocale.value)
   await persist('新闻已删除')
+}
+
+function localeLabel(code) {
+  const option = localeOptions.value.find((item) => item.code === code)
+  return option ? `${option.label} (${option.short || option.code})` : code || '未设置'
 }
 
 onMounted(load)
@@ -363,7 +411,7 @@ onMounted(load)
             v-model="keyword"
             type="search"
             class="ant-input w-full sm:max-w-xs"
-            placeholder="搜索标题、摘要、分类、发布时间"
+            placeholder="搜索标题、摘要、语言、发布时间"
             aria-label="搜索新闻"
             @input="resetListPage"
           />
@@ -418,48 +466,48 @@ onMounted(load)
           </div>
           <div class="relative w-full sm:max-w-xs">
             <div
-              id="front-news-tag-filter-combobox"
+              id="front-news-language-filter-combobox"
               role="combobox"
               tabindex="0"
               aria-haspopup="listbox"
-              aria-controls="front-news-tag-filter-listbox"
-              aria-label="按新闻分类筛选"
-              :aria-expanded="customSelectOpen === 'tagFilter' ? 'true' : 'false'"
+              aria-controls="front-news-language-filter-listbox"
+              aria-label="按新闻语言筛选"
+              :aria-expanded="customSelectOpen === 'languageFilter' ? 'true' : 'false'"
               :aria-activedescendant="
-                customSelectOpen === 'tagFilter'
-                  ? `front-news-tag-filter-option-${getCustomActiveIndex('tagFilter')}`
+                customSelectOpen === 'languageFilter'
+                  ? `front-news-language-filter-option-${getCustomActiveIndex('languageFilter')}`
                   : undefined
               "
               class="ant-input admin-select-trigger w-full cursor-pointer gap-3"
-              @click="toggleCustomSelect('tagFilter')"
-              @keydown="onCustomSelectKeydown('tagFilter', $event)"
-              @blur="closeCustomSelect('tagFilter')"
+              @click="toggleCustomSelect('languageFilter')"
+              @keydown="onCustomSelectKeydown('languageFilter', $event)"
+              @blur="closeCustomSelect('languageFilter')"
             >
-              <span class="min-w-0 truncate">{{ getCustomSelectedOption('tagFilter')?.label }}</span>
-              <span aria-hidden="true" class="admin-select-chevron" :class="customSelectOpen === 'tagFilter' ? 'rotate-180' : ''">
+              <span class="min-w-0 truncate">{{ getCustomSelectedOption('languageFilter')?.label }}</span>
+              <span aria-hidden="true" class="admin-select-chevron" :class="customSelectOpen === 'languageFilter' ? 'rotate-180' : ''">
                 <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none">
                   <path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
               </span>
             </div>
             <ul
-              v-if="customSelectOpen === 'tagFilter'"
-              id="front-news-tag-filter-listbox"
+              v-if="customSelectOpen === 'languageFilter'"
+              id="front-news-language-filter-listbox"
               role="listbox"
-              aria-label="按新闻分类筛选"
+              aria-label="按新闻语言筛选"
               class="news-select-popup max-h-64 overflow-y-auto"
             >
               <li
-                v-for="(option, index) in tagOptions"
-                :id="`front-news-tag-filter-option-${index}`"
+                v-for="(option, index) in languageFilterOptions"
+                :id="`front-news-language-filter-option-${index}`"
                 :key="String(option.value)"
                 role="option"
-                :aria-selected="index === getCustomActiveIndex('tagFilter') ? 'true' : 'false'"
+                :aria-selected="index === getCustomActiveIndex('languageFilter') ? 'true' : 'false'"
                 class="news-select-option"
-                :class="index === getCustomActiveIndex('tagFilter') ? 'bg-blue-50 text-blue-700' : 'hover:bg-slate-50'"
+                :class="index === getCustomActiveIndex('languageFilter') ? 'bg-blue-50 text-blue-700' : 'hover:bg-slate-50'"
                 @mousedown.prevent
-                @mouseenter="setCustomActiveIndex('tagFilter', index)"
-                @click="commitCustomSelect('tagFilter', option.value)"
+                @mouseenter="setCustomActiveIndex('languageFilter', index)"
+                @click="commitCustomSelect('languageFilter', option.value)"
               >
                 {{ option.label }}
               </li>
@@ -476,7 +524,7 @@ onMounted(load)
           <thead class="bg-slate-50/80">
             <tr>
               <th class="px-4 py-3 text-left font-medium text-slate-700">新闻</th>
-              <th class="px-4 py-3 text-left font-medium text-slate-700">分类</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">语言</th>
               <th class="px-4 py-3 text-left font-medium text-slate-700">发布时间</th>
               <th class="px-4 py-3 text-left font-medium text-slate-700">状态</th>
               <th class="px-4 py-3 text-left font-medium text-slate-700">排序</th>
@@ -489,7 +537,7 @@ onMounted(load)
                 <div class="font-medium text-slate-900">{{ row.title }}</div>
                 <div class="mt-1 max-w-xl truncate text-xs text-slate-500">{{ row.summary || '-' }}</div>
               </td>
-              <td class="px-4 py-3 text-xs text-slate-600">{{ row.tag }}</td>
+              <td class="px-4 py-3 text-xs text-slate-600">{{ localeLabel(row.locale) }}</td>
               <td class="px-4 py-3 font-mono text-xs text-slate-600">{{ row.publishedAt }}</td>
               <td class="px-4 py-3">
                 <span :class="row.enabled ? 'rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800' : 'text-slate-500'">
@@ -588,14 +636,59 @@ onMounted(load)
 
               <aside class="space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
                 <div>
-                  <label for="front-news-tag-input" class="mb-1.5 block text-sm font-medium text-slate-700">新闻分类</label>
-                  <input
-                    id="front-news-tag-input"
-                    v-model="formTag"
-                    class="ant-input w-full"
-                    type="text"
-                    placeholder="例如：平台动态"
-                  />
+                  <label id="front-news-locale-label" class="mb-1.5 block text-sm font-medium text-slate-700">新闻语言</label>
+                  <div class="relative">
+                    <div
+                      id="front-news-locale-combobox"
+                      role="combobox"
+                      tabindex="0"
+                      aria-haspopup="listbox"
+                      aria-controls="front-news-locale-listbox"
+                      aria-labelledby="front-news-locale-label"
+                      :aria-expanded="customSelectOpen === 'formLocale' ? 'true' : 'false'"
+                      :aria-activedescendant="
+                        customSelectOpen === 'formLocale'
+                          ? `front-news-locale-option-${getCustomActiveIndex('formLocale')}`
+                          : undefined
+                      "
+                      class="ant-input admin-select-trigger w-full cursor-pointer gap-3"
+                      @click="toggleCustomSelect('formLocale')"
+                      @keydown="onCustomSelectKeydown('formLocale', $event)"
+                      @blur="closeCustomSelect('formLocale')"
+                    >
+                      <span class="min-w-0 truncate">{{ getCustomSelectedOption('formLocale')?.label }}</span>
+                      <span aria-hidden="true" class="admin-select-chevron" :class="customSelectOpen === 'formLocale' ? 'rotate-180' : ''">
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none">
+                          <path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                    </div>
+                    <ul
+                      v-if="customSelectOpen === 'formLocale'"
+                      id="front-news-locale-listbox"
+                      role="listbox"
+                      aria-labelledby="front-news-locale-label"
+                      class="news-select-popup max-h-64 overflow-y-auto"
+                    >
+                      <li
+                        v-for="(option, index) in selectOptionMap.formLocale"
+                        :id="`front-news-locale-option-${index}`"
+                        :key="String(option.value)"
+                        role="option"
+                        :aria-selected="index === getCustomActiveIndex('formLocale') ? 'true' : 'false'"
+                        class="news-select-option"
+                        :class="index === getCustomActiveIndex('formLocale') ? 'bg-blue-50 text-blue-700' : 'hover:bg-slate-50'"
+                        @mousedown.prevent
+                        @mouseenter="setCustomActiveIndex('formLocale', index)"
+                        @click="commitCustomSelect('formLocale', option.value)"
+                      >
+                        {{ option.label }}
+                      </li>
+                    </ul>
+                  </div>
+                  <p class="mt-2 text-xs leading-5 text-slate-500">
+                    每次发布只保存当前选择语言的一条新闻。
+                  </p>
                 </div>
                 <div>
                   <label id="front-news-enabled-label" class="mb-1.5 block text-sm font-medium text-slate-700">状态</label>

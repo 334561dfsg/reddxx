@@ -1,12 +1,15 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { getFrontNewsList } from '../../admin/mock/frontNews'
+import { getLocalizedFrontNewsList } from '../../admin/mock/frontNews'
 import { getSiteConfigSnapshot, SITE_CONFIG_STORAGE_KEY } from '../../admin/mock/siteConfig'
+import { resolveFrontLocalePreference, useFrontSiteI18n } from '../../composables/useFrontSiteI18n'
 import { getFrontTradeDefaultPath } from '../../constants/frontNav'
 
 const prefix = '/front'
 const tradeDefault = getFrontTradeDefaultPath(prefix)
 const siteConfig = ref(getSiteConfigSnapshot())
+const currentLocale = ref(resolveFrontLocalePreference())
+const { defaultLocale } = useFrontSiteI18n()
 
 const socialLinks = computed(() =>
   (siteConfig.value.socialLinks || [])
@@ -21,6 +24,11 @@ const socialLinks = computed(() =>
 
 function refreshSiteConfig() {
   siteConfig.value = getSiteConfigSnapshot()
+  currentLocale.value = resolveFrontLocalePreference()
+}
+
+function refreshLocale() {
+  currentLocale.value = resolveFrontLocalePreference()
 }
 
 function handleStorage(event) {
@@ -30,11 +38,13 @@ function handleStorage(event) {
 onMounted(() => {
   window.addEventListener('admin-site-config-updated', refreshSiteConfig)
   window.addEventListener('storage', handleStorage)
+  window.addEventListener('front-locale-change', refreshLocale)
 })
 
 onUnmounted(() => {
   window.removeEventListener('admin-site-config-updated', refreshSiteConfig)
   window.removeEventListener('storage', handleStorage)
+  window.removeEventListener('front-locale-change', refreshLocale)
 })
 
 const brandValues = ['安全稳定', '专业撮合', '快捷下单', '透明费率']
@@ -113,7 +123,7 @@ const tradeModes = [
 const homeNewsArchiveTo = `${prefix}/news`
 
 const homeNewsItems = computed(() =>
-  getFrontNewsList(siteConfig.value.frontNews)
+  getLocalizedFrontNewsList(siteConfig.value.frontNews, currentLocale.value, defaultLocale.value)
     .slice(0, 4)
     .map((row) => ({
       ...row,
@@ -584,9 +594,6 @@ const footerColumns = [
           >
             <div>
               <div class="flex items-center justify-between gap-4">
-                <span class="rounded-md border border-lime-400/20 bg-lime-400/[0.08] px-2.5 py-1 text-[11px] font-semibold text-lime-300">
-                  {{ featuredNews.tag }}
-                </span>
                 <time class="font-mono text-xs text-white/38">{{ featuredNews.date }}</time>
               </div>
               <h3 class="mt-7 max-w-xl text-2xl font-bold leading-tight text-white text-balance sm:text-3xl">
@@ -616,11 +623,8 @@ const footerColumns = [
                 :to="item.to"
                 class="group grid gap-3 py-5 text-left transition sm:grid-cols-[7.25rem_minmax(0,1fr)_1.5rem] sm:items-center sm:py-6"
               >
-                <div class="flex items-center gap-2 sm:block">
+                <div>
                   <time class="font-mono text-[13px] text-white/48 sm:text-sm">{{ item.date }}</time>
-                  <span class="rounded border border-white/[0.08] px-1.5 py-0.5 text-[10px] font-semibold text-white/40 sm:mt-2 sm:inline-block">
-                    {{ item.tag }}
-                  </span>
                 </div>
                 <div class="min-w-0">
                   <h3 class="truncate text-[15px] font-semibold leading-snug text-white transition group-hover:text-lime-200 sm:text-base">

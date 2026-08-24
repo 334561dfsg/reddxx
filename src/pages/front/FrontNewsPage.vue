@@ -1,20 +1,30 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { getFrontNewsList } from '../../admin/mock/frontNews'
+import { getLocalizedFrontNewsList } from '../../admin/mock/frontNews'
 import { getSiteConfigSnapshot, SITE_CONFIG_STORAGE_KEY } from '../../admin/mock/siteConfig'
 import FrontTopNav from '../../components/FrontTopNav.vue'
+import { resolveFrontLocalePreference, useFrontSiteI18n } from '../../composables/useFrontSiteI18n'
 
 const router = useRouter()
 const navMenuOpen = ref(false)
 const siteConfig = ref(getSiteConfigSnapshot())
+const currentLocale = ref(resolveFrontLocalePreference())
+const { defaultLocale } = useFrontSiteI18n()
 
-const newsRows = computed(() => getFrontNewsList(siteConfig.value.frontNews))
+const newsRows = computed(() =>
+  getLocalizedFrontNewsList(siteConfig.value.frontNews, currentLocale.value, defaultLocale.value)
+)
 const featuredNews = computed(() => newsRows.value[0] || null)
 const listRows = computed(() => newsRows.value.slice(1))
 
 function refreshSiteConfig() {
   siteConfig.value = getSiteConfigSnapshot()
+  currentLocale.value = resolveFrontLocalePreference()
+}
+
+function refreshLocale() {
+  currentLocale.value = resolveFrontLocalePreference()
 }
 
 function handleStorage(event) {
@@ -35,11 +45,13 @@ function openNavigationMenu() {
 onMounted(() => {
   window.addEventListener('admin-site-config-updated', refreshSiteConfig)
   window.addEventListener('storage', handleStorage)
+  window.addEventListener('front-locale-change', refreshLocale)
 })
 
 onUnmounted(() => {
   window.removeEventListener('admin-site-config-updated', refreshSiteConfig)
   window.removeEventListener('storage', handleStorage)
+  window.removeEventListener('front-locale-change', refreshLocale)
 })
 </script>
 
@@ -78,12 +90,7 @@ onUnmounted(() => {
           class="group mb-5 flex w-full flex-col rounded-xl border border-white/[0.08] bg-[#0b0e11] p-5 text-left transition hover:border-lime-400/24 hover:bg-[#10151a] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 sm:p-6 md:mb-6 md:p-8"
           @click="toNewsDetail(featuredNews)"
         >
-          <div class="flex items-center justify-between gap-4">
-            <span class="rounded-md border border-lime-400/20 bg-lime-400/[0.08] px-2.5 py-1 text-[11px] font-semibold text-lime-300">
-              {{ featuredNews.tag }}
-            </span>
-            <time class="font-mono text-xs text-white/38">{{ featuredNews.date }}</time>
-          </div>
+          <time class="font-mono text-xs text-white/38">{{ featuredNews.date }}</time>
           <h2 class="mt-5 text-xl font-bold leading-tight text-white transition group-hover:text-lime-100 sm:text-2xl">
             {{ featuredNews.title }}
           </h2>
@@ -100,11 +107,8 @@ onUnmounted(() => {
             class="group grid w-full gap-2 py-4 text-left transition hover:text-lime-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 sm:grid-cols-[7.25rem_minmax(0,1fr)_1.5rem] sm:items-center md:py-[1.0625rem]"
             @click="toNewsDetail(row)"
           >
-            <div class="flex items-center gap-2 sm:block">
+            <div>
               <time class="font-mono text-[13px] text-white/48 sm:text-sm">{{ row.date }}</time>
-              <span class="rounded border border-white/[0.08] px-1.5 py-0.5 text-[10px] font-semibold text-white/40 sm:mt-2 sm:inline-block">
-                {{ row.tag }}
-              </span>
             </div>
             <span class="min-w-0 truncate text-[15px] font-semibold text-white transition group-hover:text-lime-200">
               {{ row.title }}

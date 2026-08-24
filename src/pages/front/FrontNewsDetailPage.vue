@@ -3,16 +3,26 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getFrontNewsById } from '../../admin/mock/frontNews'
 import { getSiteConfigSnapshot, SITE_CONFIG_STORAGE_KEY } from '../../admin/mock/siteConfig'
+import { resolveFrontLocalePreference, useFrontSiteI18n } from '../../composables/useFrontSiteI18n'
 
 const route = useRoute()
 const router = useRouter()
 const siteConfig = ref(getSiteConfigSnapshot())
+const currentLocale = ref(resolveFrontLocalePreference())
+const { defaultLocale } = useFrontSiteI18n()
 
 const newsId = computed(() => String(route.params.newsId || ''))
-const detail = computed(() => getFrontNewsById(newsId.value, siteConfig.value.frontNews))
+const detail = computed(() =>
+  getFrontNewsById(newsId.value, siteConfig.value.frontNews, currentLocale.value, defaultLocale.value)
+)
 
 function refreshSiteConfig() {
   siteConfig.value = getSiteConfigSnapshot()
+  currentLocale.value = resolveFrontLocalePreference()
+}
+
+function refreshLocale() {
+  currentLocale.value = resolveFrontLocalePreference()
 }
 
 function handleStorage(event) {
@@ -26,11 +36,13 @@ function backToList() {
 onMounted(() => {
   window.addEventListener('admin-site-config-updated', refreshSiteConfig)
   window.addEventListener('storage', handleStorage)
+  window.addEventListener('front-locale-change', refreshLocale)
 })
 
 onUnmounted(() => {
   window.removeEventListener('admin-site-config-updated', refreshSiteConfig)
   window.removeEventListener('storage', handleStorage)
+  window.removeEventListener('front-locale-change', refreshLocale)
 })
 </script>
 
@@ -54,12 +66,7 @@ onUnmounted(() => {
       </header>
 
       <article v-if="detail" class="py-5 md:rounded-xl md:border md:border-white/[0.10] md:px-9 md:py-10">
-        <div class="flex items-center gap-2">
-          <span class="rounded-md border border-lime-400/20 bg-lime-400/[0.08] px-2.5 py-1 text-[11px] font-semibold text-lime-300">
-            {{ detail.tag }}
-          </span>
-          <time class="font-mono text-xs text-white/38">{{ detail.publishedAt }}</time>
-        </div>
+        <time class="font-mono text-xs text-white/38">{{ detail.publishedAt }}</time>
         <h2 id="front-news-detail-title" class="mt-4 text-base font-bold leading-snug text-white md:text-2xl">
           {{ detail.title }}
         </h2>

@@ -1212,7 +1212,7 @@ export const DEFAULT_SITE_CONFIG = {
   /** 前台公开站内公告 */
   announcements: normalizeSiteAnnouncements(),
   /** 前台首页与新闻资讯路由展示的新闻 */
-  frontNews: normalizeFrontNews(DEFAULT_FRONT_NEWS)
+  frontNews: normalizeFrontNews(DEFAULT_FRONT_NEWS, DEFAULT_I18N_BLOCK.defaultLocale)
 }
 
 function readStored() {
@@ -1381,7 +1381,7 @@ export function normalizeSiteConfig(raw) {
   merged.socialLinks = normalizeSocialLinksList(merged.socialLinks)
   merged.contentPages = normalizeContentPages(merged.contentPages, merged.i18n?.defaultLocale || 'zh-CN')
   merged.announcements = normalizeSiteAnnouncements(merged.announcements, merged.i18n?.defaultLocale || 'zh-CN')
-  merged.frontNews = normalizeFrontNews(merged.frontNews)
+  merged.frontNews = normalizeFrontNews(merged.frontNews, merged.i18n?.defaultLocale || 'zh-CN')
   const legacy = merged.logoUrl
   if (typeof legacy === 'string' && legacy && !merged.logoUrlPc && !merged.logoUrlMobile) {
     merged.logoUrlPc = legacy
@@ -1439,7 +1439,9 @@ export const siteConfigApi = {
             ? normalizeSiteAnnouncements(config.announcements, i18nPayload.defaultLocale)
             : prev.announcements
         const frontNewsPayload =
-          config.frontNews !== undefined ? normalizeFrontNews(config.frontNews) : prev.frontNews
+          config.frontNews !== undefined
+            ? normalizeFrontNews(config.frontNews, i18nPayload.defaultLocale)
+            : prev.frontNews
         const voiceAlertsPayload =
           config.voiceAlerts !== undefined ? normalizeVoiceAlerts(config.voiceAlerts) : prev.voiceAlerts
         memory = normalizeSiteConfig({
