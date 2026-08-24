@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { existsSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import {
   DEFAULT_FRONT_NEWS,
   getFrontNewsById,
@@ -17,17 +17,11 @@ const frontHomeSource = readFileSync(
   new URL('../src/pages/front/FrontHomePage.vue', import.meta.url),
   'utf8'
 )
-const frontNewsPageUrl = new URL('../src/pages/front/FrontNewsPage.vue', import.meta.url)
 const frontNewsDetailPageUrl = new URL('../src/pages/front/FrontNewsDetailPage.vue', import.meta.url)
 const adminNewsPageUrl = new URL('../src/pages/admin/system/NewsManagementPage.vue', import.meta.url)
 
-function readOptionalSource(url) {
-  return existsSync(url) ? readFileSync(url, 'utf8') : ''
-}
-
 test('front home renders a bottom news module before the footer', () => {
   assert.match(frontHomeSource, /getLocalizedFrontNewsList/)
-  assert.match(frontHomeSource, /const homeNewsArchiveTo = `\$\{prefix\}\/news`/)
   assert.match(frontHomeSource, /const homeNewsItems = computed/)
   assert.match(frontHomeSource, /getLocalizedFrontNewsList\(siteConfig\.value\.frontNews/)
   assert.match(frontHomeSource, /resolveFrontLocalePreference/)
@@ -38,10 +32,11 @@ test('front home renders a bottom news module before the footer', () => {
   assert.match(frontHomeSource, /aria-labelledby="home-news"/)
   assert.match(frontHomeSource, /id="home-news"/)
   assert.match(frontHomeSource, /新闻资讯/)
-  assert.match(frontHomeSource, /更多新闻/)
   assert.match(frontHomeSource, /v-for="item in secondaryNews"/)
   assert.match(frontHomeSource, /name: 'front-news-detail'/)
   assert.match(frontHomeSource, /line-clamp-2/)
+  assert.doesNotMatch(frontHomeSource, /homeNewsArchiveTo/)
+  assert.doesNotMatch(frontHomeSource, /更多新闻/)
   assert.doesNotMatch(frontHomeSource, /const homeNewsArchiveTo = `\$\{prefix\}\/announcements`/)
 
   const riskIndex = frontHomeSource.indexOf('风险提示：')
@@ -61,11 +56,7 @@ test('front news module has independent data and routes', () => {
   assert.equal(DEFAULT_SITE_CONFIG.frontNews.length >= 4, true)
 
   const listRoute = frontDesktopRoutes.find((entry) => entry.name === 'front-news')
-  assert.equal(listRoute?.path, 'news')
-  assert.equal(listRoute?.meta?.title, '新闻资讯')
-  assert.equal(listRoute?.meta?.hideFrontChromeOnMobile, true)
-  assert.equal(listRoute?.meta?.hideFrontFloatingOnMobile, true)
-  assert.match(String(listRoute?.component), /FrontNewsPage/)
+  assert.equal(listRoute, undefined)
 
   const detailRoute = frontDesktopRoutes.find((entry) => entry.name === 'front-news-detail')
   assert.equal(detailRoute?.path, 'news/:newsId')
@@ -75,20 +66,8 @@ test('front news module has independent data and routes', () => {
   assert.match(String(detailRoute?.component), /FrontNewsDetailPage/)
 })
 
-test('front news pages render list and detail independently from announcements', () => {
-  const listSource = readOptionalSource(frontNewsPageUrl)
-  const detailSource = readOptionalSource(frontNewsDetailPageUrl)
-
-  assert.match(listSource, /getLocalizedFrontNewsList/)
-  assert.match(listSource, /resolveFrontLocalePreference/)
-  assert.match(listSource, /getSiteConfigSnapshot/)
-  assert.match(listSource, /siteConfig\.value\.frontNews/)
-  assert.match(listSource, /front-news-title/)
-  assert.match(listSource, /新闻资讯列表/)
-  assert.match(listSource, /toNewsDetail/)
-  assert.match(listSource, /name: 'front-news-detail'/)
-  assert.match(listSource, /drawer-only/)
-  assert.match(listSource, /absolute -left-\[18px\] inline-flex h-9 w-9/)
+test('front news detail returns to home and stays independent from announcements', () => {
+  const detailSource = readFileSync(frontNewsDetailPageUrl, 'utf8')
 
   assert.match(detailSource, /getFrontNewsById/)
   assert.match(detailSource, /resolveFrontLocalePreference/)
@@ -96,11 +75,12 @@ test('front news pages render list and detail independently from announcements',
   assert.match(detailSource, /siteConfig\.value\.frontNews/)
   assert.match(detailSource, /front-news-detail-page-title/)
   assert.match(detailSource, />\s*新闻详情\s*</)
-  assert.match(detailSource, /aria-label="返回新闻列表"/)
-  assert.match(detailSource, /router\.push\(\{ name: 'front-news' \}\)/)
+  assert.match(detailSource, /aria-label="返回首页"/)
+  assert.match(detailSource, /router\.push\(\{ name: 'front-home-desktop' \}\)/)
   assert.match(detailSource, /news-detail-body/)
-  assert.doesNotMatch(listSource + detailSource, /front-announcements/)
-  assert.doesNotMatch(listSource + detailSource, /front-announcement-detail/)
+  assert.doesNotMatch(detailSource, /front-news'\s*\}/)
+  assert.doesNotMatch(detailSource, /front-announcements/)
+  assert.doesNotMatch(detailSource, /front-announcement-detail/)
 })
 
 test('front news config normalizes editable admin records for the public module', () => {
@@ -163,7 +143,7 @@ test('front news admin route and system menu entry are registered', () => {
 })
 
 test('front news admin page uses custom selects and edits independent news content', () => {
-  const source = readOptionalSource(adminNewsPageUrl)
+  const source = readFileSync(adminNewsPageUrl, 'utf8')
   assert.match(source, /frontNews/)
   assert.match(source, /发布新闻/)
   assert.match(source, /新闻资讯列表/)

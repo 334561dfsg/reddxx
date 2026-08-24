@@ -29,8 +29,8 @@ function handleStorage(event) {
   if (!event || event.key === SITE_CONFIG_STORAGE_KEY) refreshSiteConfig()
 }
 
-function backToList() {
-  router.push({ name: 'front-news' })
+function backToHome() {
+  router.push({ name: 'front-home-desktop' })
 }
 
 onMounted(() => {
@@ -53,8 +53,8 @@ onUnmounted(() => {
         <button
           type="button"
           class="absolute -left-[18px] inline-flex h-9 w-9 items-center justify-center rounded-md text-white/88 transition hover:bg-white/[0.06] hover:text-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 md:left-0"
-          aria-label="返回新闻列表"
-          @click="backToList"
+          aria-label="返回首页"
+          @click="backToHome"
         >
           <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />

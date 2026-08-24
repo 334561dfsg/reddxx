@@ -120,8 +120,6 @@ const tradeModes = [
   }
 ]
 
-const homeNewsArchiveTo = `${prefix}/news`
-
 const homeNewsItems = computed(() =>
   getLocalizedFrontNewsList(siteConfig.value.frontNews, currentLocale.value, defaultLocale.value)
     .slice(0, 4)
@@ -560,7 +558,7 @@ const footerColumns = [
         class="mt-12 border-t border-white/[0.06] pt-10 sm:mt-14 sm:pt-12 md:mt-16 md:pt-14"
         aria-labelledby="home-news"
       >
-        <div class="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+        <div class="mb-6 sm:mb-8">
           <div>
             <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-lime-400/75">News</p>
             <h2
@@ -570,21 +568,6 @@ const footerColumns = [
               新闻资讯
             </h2>
           </div>
-          <RouterLink
-            :to="homeNewsArchiveTo"
-            class="inline-flex h-10 w-max items-center gap-2 rounded-md border border-white/[0.10] px-4 text-[13px] font-semibold text-white/72 transition hover:border-lime-400/30 hover:text-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
-          >
-            更多新闻
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M5 12h14M12 5l7 7-7 7"
-                stroke="currentColor"
-                stroke-width="1.75"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </RouterLink>
         </div>
 
         <div v-if="featuredNews" class="grid gap-4 lg:grid-cols-[1.02fr_1fr] lg:gap-5">
