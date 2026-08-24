@@ -257,6 +257,10 @@ test('admin announcement editor uses a custom language select for one-language p
   assert.match(adminAnnouncementsPageSource, /\.admin-select-trigger[\s\S]{0,180}justify-content: space-between/)
   assert.match(adminAnnouncementsPageSource, /<div class="relative">\s*<div\s+id="announcement-locale-combobox"/)
   assert.match(adminAnnouncementsPageSource, /announcement-locale-listbox[\s\S]{0,220}top-\[calc\(100%\+0\.25rem\)\]/)
+  assert.ok(
+    adminAnnouncementsPageSource.indexOf('<aside class="h-fit space-y-4') <
+      adminAnnouncementsPageSource.indexOf('id="announcement-locale-combobox"')
+  )
   assert.match(adminAnnouncementsPageSource, /onCustomSelectKeydown/)
   assert.match(adminAnnouncementsPageSource, /commitCustomSelect/)
   assert.match(adminAnnouncementsPageSource, /inline-flex h-4 w-4 shrink-0/)

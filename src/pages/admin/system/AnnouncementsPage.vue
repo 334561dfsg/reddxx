@@ -703,6 +703,38 @@ onMounted(load)
             <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
               <div class="space-y-4">
                 <div>
+                  <label class="mb-1.5 block text-sm font-medium text-slate-700" for="announcement-title">公告标题</label>
+                  <input id="announcement-title" v-model="formTitle" class="ant-input w-full" placeholder="例如：系统维护公告" />
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-sm font-medium text-slate-700" for="announcement-summary">摘要</label>
+                  <textarea id="announcement-summary" v-model="formSummary" class="ant-input min-h-16 w-full" placeholder="用于前台公告列表展示" />
+                </div>
+                <div class="flex min-h-[20rem] flex-col">
+                  <label class="mb-1.5 block text-sm font-medium text-slate-700">公告内容</label>
+                  <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
+                    <div class="shrink-0 flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 px-3 py-2">
+                      <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="setBlock('h2')">H2</button>
+                      <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="setBlock('p')">正文</button>
+                      <button type="button" class="ant-btn !px-2 !py-1 text-xs font-bold" @click="exec('bold')">B</button>
+                      <button type="button" class="ant-btn !px-2 !py-1 text-xs italic" @click="exec('italic')">I</button>
+                      <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="exec('insertUnorderedList')">列表</button>
+                    </div>
+                    <div
+                      ref="editorRef"
+                      class="announcement-editor min-h-0 flex-1 overflow-y-auto px-4 py-3 text-sm leading-relaxed text-slate-800 outline-none"
+                      contenteditable="true"
+                      role="textbox"
+                      aria-label="公告内容"
+                      @input="pullEditorHtml"
+                      @blur="pullEditorHtml"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <aside class="h-fit space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4 lg:sticky lg:top-0">
+                <div>
                   <label id="announcement-locale-label" class="mb-1.5 block text-sm font-medium text-slate-700">
                     公告语言
                   </label>
@@ -765,38 +797,6 @@ onMounted(load)
                   </div>
                   <p class="mt-1.5 text-xs text-slate-500">选择公告语言后，本次只发布该语言的一条公告。</p>
                 </div>
-                <div>
-                  <label class="mb-1.5 block text-sm font-medium text-slate-700" for="announcement-title">公告标题</label>
-                  <input id="announcement-title" v-model="formTitle" class="ant-input w-full" placeholder="例如：系统维护公告" />
-                </div>
-                <div>
-                  <label class="mb-1.5 block text-sm font-medium text-slate-700" for="announcement-summary">摘要</label>
-                  <textarea id="announcement-summary" v-model="formSummary" class="ant-input min-h-16 w-full" placeholder="用于前台公告列表展示" />
-                </div>
-                <div class="flex min-h-[20rem] flex-col">
-                  <label class="mb-1.5 block text-sm font-medium text-slate-700">公告内容</label>
-                  <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
-                    <div class="shrink-0 flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 px-3 py-2">
-                      <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="setBlock('h2')">H2</button>
-                      <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="setBlock('p')">正文</button>
-                      <button type="button" class="ant-btn !px-2 !py-1 text-xs font-bold" @click="exec('bold')">B</button>
-                      <button type="button" class="ant-btn !px-2 !py-1 text-xs italic" @click="exec('italic')">I</button>
-                      <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="exec('insertUnorderedList')">列表</button>
-                    </div>
-                    <div
-                      ref="editorRef"
-                      class="announcement-editor min-h-0 flex-1 overflow-y-auto px-4 py-3 text-sm leading-relaxed text-slate-800 outline-none"
-                      contenteditable="true"
-                      role="textbox"
-                      aria-label="公告内容"
-                      @input="pullEditorHtml"
-                      @blur="pullEditorHtml"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <aside class="h-fit space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4 lg:sticky lg:top-0">
                 <div class="relative">
                   <label id="announcement-status-label" class="mb-1.5 block text-sm font-medium text-slate-700">
                     状态
