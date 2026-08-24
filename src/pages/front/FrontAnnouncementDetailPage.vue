@@ -64,10 +64,10 @@ function backToList() {
 <template>
   <main class="min-h-screen min-h-[100dvh] bg-black text-white" aria-labelledby="front-announcement-detail-page-title">
     <section class="mx-auto w-full max-w-[56.5rem] px-5 pb-[calc(3rem+env(safe-area-inset-bottom,0px))] pt-[env(safe-area-inset-top,0px)] sm:px-8 md:pt-16 lg:px-10">
-      <header class="grid h-12 grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-center md:mb-10 md:h-auto md:min-h-10">
+      <header class="relative flex h-12 items-center justify-center md:mb-10 md:h-auto md:min-h-10">
         <button
           type="button"
-          class="-ml-5 inline-flex h-10 w-10 items-center justify-center justify-self-start rounded-md text-white/88 transition hover:bg-white/[0.06] hover:text-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 md:ml-0"
+          class="absolute left-0 inline-flex h-9 w-9 items-center justify-center rounded-md text-white/88 transition hover:bg-white/[0.06] hover:text-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
           aria-label="返回公告列表"
           @click="backToList"
         >
@@ -75,10 +75,9 @@ function backToList() {
             <path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
-        <h1 id="front-announcement-detail-page-title" class="justify-self-center text-base font-bold tracking-tight text-white md:text-3xl">
+        <h1 id="front-announcement-detail-page-title" class="text-base font-bold tracking-tight text-white md:text-3xl">
           详情
         </h1>
-        <span class="h-10 w-10" aria-hidden="true" />
       </header>
 
       <article v-if="detail" class="py-5 md:rounded-xl md:border md:border-white/[0.10] md:px-9 md:py-10">
