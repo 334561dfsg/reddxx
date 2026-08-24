@@ -16,10 +16,6 @@ import { PAIRS_BY_CLASS } from '../constants/frontTradePairs'
 import { getPersonalCenterShellMobileNavItems } from '../constants/personalCenterNav'
 import { FRONT_LOCALE_CATALOG } from '../admin/constants/i18nCatalog'
 import {
-  getSiteConfigSnapshot,
-  SITE_CONFIG_STORAGE_KEY
-} from '../admin/mock/siteConfig'
-import {
   FRONT_LANG_STORAGE_KEY,
   resolveFrontLocalePreference,
   useFrontSiteI18n
@@ -76,7 +72,6 @@ const mobileLangSheetRef = ref(null)
 const searchOpen = ref(false)
 const searchQuery = ref('')
 const searchPanelRef = ref(null)
-const siteAnnouncements = ref(getSiteConfigSnapshot().announcements || [])
 
 function isImageIcon(icon) {
   const s = String(icon || '').trim()
@@ -434,28 +429,9 @@ const accountInfoItems = [
   { key: 'regulatory', label: '监管文件' }
 ]
 
-const publicAnnouncements = computed(() =>
-  (siteAnnouncements.value || []).filter((row) => row.enabled !== false)
-)
-
-const announcementBadgeText = computed(() => {
-  const count = publicAnnouncements.value.length
-  if (count > 9) return '9+'
-  return count > 0 ? String(count) : ''
-})
-
 const announcementRoute = computed(() => `${props.prefix}/announcements`)
 
-function refreshSiteAnnouncements() {
-  siteAnnouncements.value = getSiteConfigSnapshot().announcements || []
-}
-
-function onSiteConfigStorage(e) {
-  if (e.key === SITE_CONFIG_STORAGE_KEY) refreshSiteAnnouncements()
-}
-
 function goAnnouncementCenter() {
-  refreshSiteAnnouncements()
   tradeOpen.value = false
   financeOpen.value = false
   langOpen.value = false
@@ -653,13 +629,10 @@ watch(languageSwitcherEnabled, (on) => {
 
 onMounted(() => {
   localeCode.value = resolveFrontLocalePreference()
-  refreshSiteAnnouncements()
   const mq = window.matchMedia('(min-width: 1024px)')
   const onChange = () => closeIfDesktopBreakpoint()
   mq.addEventListener('change', onChange)
   removeMediaListener = () => mq.removeEventListener('change', onChange)
-  window.addEventListener('storage', onSiteConfigStorage)
-  window.addEventListener('admin-site-config-updated', refreshSiteAnnouncements)
 })
 
 function onDocPointerDown(ev) {
@@ -746,8 +719,6 @@ onUnmounted(() => {
   removeMediaListener()
   document.removeEventListener('pointerdown', onDocPointerDown, true)
   window.removeEventListener('keydown', onEscape)
-  window.removeEventListener('storage', onSiteConfigStorage)
-  window.removeEventListener('admin-site-config-updated', refreshSiteAnnouncements)
   document.body.style.overflow = ''
 })
 
@@ -1061,12 +1032,6 @@ function drawerRowClass(item) {
               stroke-linejoin="round"
             />
           </svg>
-          <span
-            v-if="announcementBadgeText"
-            class="absolute -right-1 -top-1 min-w-4 rounded-full bg-lime-400 px-1 text-[10px] font-bold leading-4 text-[#0b0e11]"
-          >
-            {{ announcementBadgeText }}
-          </span>
         </button>
         <div
           class="relative hidden lg:block"
@@ -1446,12 +1411,6 @@ function drawerRowClass(item) {
               stroke-linejoin="round"
             />
           </svg>
-          <span
-            v-if="announcementBadgeText"
-            class="absolute -right-1 -top-1 min-w-4 rounded-full bg-lime-400 px-1 text-[10px] font-bold leading-4 text-[#0b0e11]"
-          >
-            {{ announcementBadgeText }}
-          </span>
         </button>
         <button
           type="button"
