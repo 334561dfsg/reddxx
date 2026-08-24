@@ -71,10 +71,18 @@ const NEWS_MOCK_LOCALES = {
   ]
 }
 
+const DEFAULT_NEWS_IMAGE_URLS = [
+  'https://images.unsplash.com/photo-1640161704729-cbe966a08476?auto=format&fit=crop&w=1200&q=82',
+  'https://images.unsplash.com/photo-1621504450181-5d356f61d307?auto=format&fit=crop&w=1200&q=82',
+  'https://images.unsplash.com/photo-1642790106117-e829e14a795f?auto=format&fit=crop&w=1200&q=82',
+  'https://images.unsplash.com/photo-1639762681057-408e52192e55?auto=format&fit=crop&w=1200&q=82'
+]
+
 export const DEFAULT_FRONT_NEWS = Object.entries(NEWS_MOCK_LOCALES).flatMap(([locale, items]) =>
   items.map((item, index) => ({
     ...item,
     locale,
+    imageUrl: item.imageUrl || DEFAULT_NEWS_IMAGE_URLS[index % DEFAULT_NEWS_IMAGE_URLS.length],
     date: index === 0 ? '2026.08.24' : '2026.08.21',
     publishedAt: index === 0 ? '2026-08-24 10:00' : '2026-08-21 12:00',
     enabled: true,
@@ -105,6 +113,7 @@ function normalizeNewsPayload(raw) {
   return {
     title: String(source.title || '').trim(),
     summary: String(source.summary || '').trim(),
+    imageUrl: String(source.imageUrl || '').trim(),
     html: String(source.html || '').trim()
   }
 }
@@ -145,6 +154,7 @@ function normalizeNewsRow(row, index, defaultLocale, forcedLocale, forcedPayload
   const locale = String(forcedLocale || row.locale || defaultLocale || 'zh-CN').trim() || 'zh-CN'
   const payload = forcedPayload || normalizeNewsPayload(row)
   if (!payload.title) return null
+  const imageUrl = payload.imageUrl || String(row.imageUrl || '').trim() || DEFAULT_NEWS_IMAGE_URLS[index % DEFAULT_NEWS_IMAGE_URLS.length]
   const rawId = String(row.id || '').trim() || createFrontNewsId()
   const id =
     !row.locale && forcedLocale && forcedLocale !== defaultLocale && !rawId.endsWith(`-${forcedLocale}`)
@@ -161,11 +171,13 @@ function normalizeNewsRow(row, index, defaultLocale, forcedLocale, forcedPayload
     sort: Number.isFinite(Number(row.sort)) ? Math.round(Number(row.sort)) : index * 10,
     title: payload.title,
     summary: payload.summary,
+    imageUrl,
     html: payload.html || '<p></p>',
     locales: {
       [locale]: {
         title: payload.title,
         summary: payload.summary,
+        imageUrl,
         html: payload.html || '<p></p>'
       }
     }

@@ -33,6 +33,8 @@ test('front home renders a bottom news module before the footer', () => {
   assert.match(frontHomeSource, /resolveFrontLocalePreference/)
   assert.match(frontHomeSource, /const featuredNews = computed/)
   assert.match(frontHomeSource, /const secondaryNews = computed/)
+  assert.match(frontHomeSource, /:src="featuredNews\.imageUrl"/)
+  assert.match(frontHomeSource, /:alt="featuredNews\.title"/)
   assert.match(frontHomeSource, /aria-labelledby="home-news"/)
   assert.match(frontHomeSource, /id="home-news"/)
   assert.match(frontHomeSource, /新闻资讯/)
@@ -53,6 +55,7 @@ test('front home renders a bottom news module before the footer', () => {
 test('front news module has independent data and routes', () => {
   assert.equal(DEFAULT_FRONT_NEWS.length >= 4, true)
   assert.equal(getFrontNewsList()[0].id, 'security-risk-upgrade')
+  assert.match(getFrontNewsList()[0].imageUrl, /^https:\/\/images\.unsplash\.com\//)
   assert.equal(getFrontNewsById('fee-display-update')?.title, '现货与合约手续费展示优化')
   assert.equal(getLocalizedFrontNewsList(DEFAULT_FRONT_NEWS, 'en', 'zh-CN')[0].locale, 'en')
   assert.equal(DEFAULT_SITE_CONFIG.frontNews.length >= 4, true)
@@ -108,6 +111,7 @@ test('front news config normalizes editable admin records for the public module'
         locale: 'en',
         title: '  新资产专区上线  ',
         summary: '  用户可在首页读取最新资讯。  ',
+        imageUrl: '  https://cdn.example.com/news/custom.jpg  ',
         html: '<p>详情正文</p>',
         publishedAt: '2026-08-24 11:30',
         enabled: true,
@@ -133,12 +137,14 @@ test('front news config normalizes editable admin records for the public module'
   )
   assert.equal(normalized.frontNews[1].locale, 'en')
   assert.equal(normalized.frontNews[1].title, '新资产专区上线')
+  assert.equal(normalized.frontNews[1].imageUrl, 'https://cdn.example.com/news/custom.jpg')
   assert.equal(normalized.frontNews[1].sort, 3)
   assert.equal(getFrontNewsList(normalized.frontNews).length, 1)
   assert.equal(getFrontNewsList(normalized.frontNews)[0].id, 'custom-news')
   assert.equal(getLocalizedFrontNewsList(normalized.frontNews, 'vi', 'en')[0].id, 'custom-news')
   assert.equal(normalizeFrontNews([{ title: '无时间新闻' }])[0].publishedAt, '')
   assert.equal(normalizeFrontNews([{ title: '无时间新闻' }])[0].locale, 'zh-CN')
+  assert.match(normalizeFrontNews([{ title: '无图片新闻' }])[0].imageUrl, /^https:\/\/images\.unsplash\.com\//)
 })
 
 test('front news admin route and system menu entry are registered', () => {
@@ -163,6 +169,9 @@ test('front news admin page uses custom selects and edits independent news conte
   assert.match(source, /新闻资讯列表/)
   assert.match(source, /新闻标题/)
   assert.match(source, /新闻语言/)
+  assert.match(source, /新闻图片/)
+  assert.match(source, /formImageUrl/)
+  assert.match(source, /front-news-image-url-input/)
   assert.match(source, /全部语言/)
   assert.match(source, /languageFilter/)
   assert.match(source, /formLocale/)

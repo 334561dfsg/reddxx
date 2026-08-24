@@ -590,31 +590,42 @@ const footerColumns = [
         <div v-if="featuredNews" class="grid gap-4 lg:grid-cols-[1.02fr_1fr] lg:gap-5">
           <RouterLink
             :to="featuredNews.to"
-            class="group flex min-h-[17rem] flex-col justify-between overflow-hidden rounded-xl border border-white/[0.07] bg-[#0b0e11] p-6 transition hover:border-lime-400/24 hover:bg-[#10151a] sm:p-7 md:p-8"
+            class="group grid min-h-[17rem] overflow-hidden rounded-xl border border-white/[0.07] bg-[#0b0e11] transition hover:border-lime-400/24 hover:bg-[#10151a]"
           >
-            <div>
-              <div class="flex items-center justify-between gap-4">
-                <time class="font-mono text-xs text-white/38">{{ featuredNews.date }}</time>
-              </div>
-              <h3 class="mt-7 max-w-xl text-2xl font-bold leading-tight text-white text-balance sm:text-3xl">
-                {{ featuredNews.title }}
-              </h3>
-              <p class="mt-4 max-w-xl text-sm leading-[1.8] text-white/52 sm:text-[15px]">
-                {{ featuredNews.summary }}
-              </p>
+            <div class="relative min-h-48 overflow-hidden bg-[#12161b] sm:min-h-56">
+              <img
+                :src="featuredNews.imageUrl"
+                :alt="featuredNews.title"
+                class="absolute inset-0 h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-[1.03] group-hover:opacity-95"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0b0e11] via-[#0b0e11]/28 to-transparent" aria-hidden="true" />
             </div>
-            <span class="mt-8 inline-flex items-center text-sm font-semibold text-lime-400">
-              查看详情
-              <svg class="ml-1.5 h-4 w-4 transition group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M5 12h14M12 5l7 7-7 7"
-                  stroke="currentColor"
-                  stroke-width="1.75"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
+            <div class="flex flex-col justify-between p-6 sm:p-7 md:p-8">
+              <div>
+                <div class="flex items-center justify-between gap-4">
+                  <time class="font-mono text-xs text-white/38">{{ featuredNews.date }}</time>
+                </div>
+                <h3 class="mt-5 max-w-xl text-2xl font-bold leading-tight text-white text-balance sm:text-3xl">
+                  {{ featuredNews.title }}
+                </h3>
+                <p class="mt-4 max-w-xl text-sm leading-[1.8] text-white/52 sm:text-[15px]">
+                  {{ featuredNews.summary }}
+                </p>
+              </div>
+              <span class="mt-8 inline-flex items-center text-sm font-semibold text-lime-400">
+                查看详情
+                <svg class="ml-1.5 h-4 w-4 transition group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M5 12h14M12 5l7 7-7 7"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+            </div>
           </RouterLink>
 
           <ul v-if="secondaryNews.length" class="rounded-xl border border-white/[0.07] bg-[#080a0c] px-5 sm:px-6">

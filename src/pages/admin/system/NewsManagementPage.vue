@@ -24,6 +24,7 @@ const editorRef = ref(null)
 
 const formTitle = ref('')
 const formSummary = ref('')
+const formImageUrl = ref('')
 const formLocale = ref('zh-CN')
 const formHtml = ref('<p></p>')
 const formEnabled = ref(true)
@@ -249,6 +250,7 @@ function resetForm() {
   editingId.value = ''
   formTitle.value = ''
   formSummary.value = ''
+  formImageUrl.value = ''
   formLocale.value = defaultLocale.value
   formHtml.value = '<p></p>'
   formEnabled.value = true
@@ -267,6 +269,7 @@ async function openEdit(row) {
   editingId.value = row.id
   formTitle.value = row.title || ''
   formSummary.value = row.summary || ''
+  formImageUrl.value = row.imageUrl || ''
   formLocale.value = row.locale || defaultLocale.value
   formHtml.value = row.html || '<p></p>'
   formEnabled.value = row.enabled !== false
@@ -327,17 +330,20 @@ async function submitModal() {
   const id = editingId.value || `news_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
   const locale = formLocale.value || defaultLocale.value
   const summary = formSummary.value.trim()
+  const imageUrl = formImageUrl.value.trim()
   const html = formHtml.value || '<p></p>'
   const row = {
     id,
     locale,
     title,
     summary,
+    imageUrl,
     html,
     locales: {
       [locale]: {
         title,
         summary,
+        imageUrl,
         html
       }
     },
@@ -688,6 +694,30 @@ onMounted(load)
                   </div>
                   <p class="mt-2 text-xs leading-5 text-slate-500">
                     每次发布只保存当前选择语言的一条新闻。
+                  </p>
+                </div>
+                <div>
+                  <label for="front-news-image-url-input" class="mb-1.5 block text-sm font-medium text-slate-700">新闻图片</label>
+                  <input
+                    id="front-news-image-url-input"
+                    v-model="formImageUrl"
+                    class="ant-input w-full"
+                    type="url"
+                    placeholder="https://example.com/news-cover.jpg"
+                  />
+                  <div
+                    v-if="formImageUrl"
+                    class="mt-2 aspect-[16/9] overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
+                  >
+                    <img
+                      :src="formImageUrl"
+                      alt=""
+                      class="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <p class="mt-2 text-xs leading-5 text-slate-500">
+                    用于首页首条新闻卡片展示，建议使用 16:9 横图。
                   </p>
                 </div>
                 <div>
