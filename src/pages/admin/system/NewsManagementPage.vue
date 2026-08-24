@@ -21,15 +21,22 @@ const editingId = ref('')
 const customSelectOpen = ref('')
 const customActiveIndex = ref({})
 const editorRef = ref(null)
+const imageInputRef = ref(null)
 
 const formTitle = ref('')
 const formSummary = ref('')
 const formImageUrl = ref('')
+const formImageFileName = ref('')
+const formImageError = ref('')
+const imageUploadSession = ref(0)
 const formLocale = ref('zh-CN')
 const formHtml = ref('<p></p>')
 const formEnabled = ref(true)
 const formPublishedAt = ref('')
 const formSort = ref(0)
+
+const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp'
+const IMAGE_MAX_SIZE = 2 * 1024 * 1024
 
 const statusFilterOptions = [
   { value: 'all', label: '全部状态' },
@@ -118,6 +125,78 @@ function nowText() {
   const d = new Date()
   const pad = (n) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+function formatFileSize(size) {
+  if (!Number.isFinite(size)) return ''
+  if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))}KB`
+  return `${(size / 1024 / 1024).toFixed(1)}MB`
+}
+
+function clearImageInputValue() {
+  if (imageInputRef.value) imageInputRef.value.value = ''
+}
+
+function openImagePicker() {
+  formImageError.value = ''
+  imageInputRef.value?.click()
+}
+
+function onImageUrlInput() {
+  formImageError.value = ''
+  formImageFileName.value = ''
+}
+
+function onImageSelected(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  const sessionId = imageUploadSession.value + 1
+  imageUploadSession.value = sessionId
+  formImageError.value = ''
+  const lowerName = file.name.toLowerCase()
+  const extensionOk = /\.(jpe?g|png|webp)$/.test(lowerName)
+  const mimeOk = ['image/jpeg', 'image/png', 'image/webp'].includes(file.type)
+  if (!extensionOk || !mimeOk) {
+    formImageError.value = '请上传 JPG、PNG 或 WebP 格式的图片'
+    clearImageInputValue()
+    return
+  }
+  if (!file.size) {
+    formImageError.value = '图片文件为空，请重新选择'
+    clearImageInputValue()
+    return
+  }
+  if (file.size > IMAGE_MAX_SIZE) {
+    formImageError.value = `图片不能超过 2MB，当前文件约 ${formatFileSize(file.size)}`
+    clearImageInputValue()
+    return
+  }
+  const reader = new FileReader()
+  reader.onload = () => {
+    if (imageUploadSession.value !== sessionId) return
+    const result = typeof reader.result === 'string' ? reader.result : ''
+    if (!result) {
+      formImageError.value = '图片读取失败，请重新选择'
+      return
+    }
+    formImageUrl.value = result
+    formImageFileName.value = file.name
+    clearImageInputValue()
+  }
+  reader.onerror = () => {
+    if (imageUploadSession.value !== sessionId) return
+    formImageError.value = '图片读取失败，请重新选择'
+    clearImageInputValue()
+  }
+  reader.readAsDataURL(file)
+}
+
+function removeImage() {
+  imageUploadSession.value += 1
+  formImageUrl.value = ''
+  formImageFileName.value = ''
+  formImageError.value = ''
+  clearImageInputValue()
 }
 
 function resetListPage() {
@@ -251,6 +330,10 @@ function resetForm() {
   formTitle.value = ''
   formSummary.value = ''
   formImageUrl.value = ''
+  formImageFileName.value = ''
+  formImageError.value = ''
+  imageUploadSession.value += 1
+  clearImageInputValue()
   formLocale.value = defaultLocale.value
   formHtml.value = '<p></p>'
   formEnabled.value = true
@@ -270,6 +353,10 @@ async function openEdit(row) {
   formTitle.value = row.title || ''
   formSummary.value = row.summary || ''
   formImageUrl.value = row.imageUrl || ''
+  formImageFileName.value = ''
+  formImageError.value = ''
+  imageUploadSession.value += 1
+  clearImageInputValue()
   formLocale.value = row.locale || defaultLocale.value
   formHtml.value = row.html || '<p></p>'
   formEnabled.value = row.enabled !== false
@@ -698,12 +785,37 @@ onMounted(load)
                 </div>
                 <div>
                   <label for="front-news-image-url-input" class="mb-1.5 block text-sm font-medium text-slate-700">新闻图片</label>
+                  <div class="mb-2 flex flex-wrap items-center gap-2">
+                    <button type="button" class="ant-btn ant-btn-sm" @click="openImagePicker">上传图片</button>
+                    <button
+                      v-if="formImageUrl"
+                      type="button"
+                      class="ant-btn ant-btn-sm"
+                      @click="removeImage"
+                    >
+                      移除图片
+                    </button>
+                    <span v-if="formImageFileName" class="max-w-full truncate text-xs text-slate-500">
+                      {{ formImageFileName }}
+                    </span>
+                  </div>
+                  <input
+                    ref="imageInputRef"
+                    class="sr-only"
+                    type="file"
+                    :accept="IMAGE_ACCEPT"
+                    :aria-describedby="formImageError ? 'front-news-image-help front-news-image-error' : 'front-news-image-help'"
+                    @change="onImageSelected"
+                  />
                   <input
                     id="front-news-image-url-input"
                     v-model="formImageUrl"
                     class="ant-input w-full"
-                    type="url"
-                    placeholder="https://example.com/news-cover.jpg"
+                    type="text"
+                    placeholder="上传图片后自动填入，也可粘贴 https:// 或 data:image 地址"
+                    :aria-describedby="formImageError ? 'front-news-image-help front-news-image-error' : 'front-news-image-help'"
+                    :aria-invalid="formImageError ? 'true' : 'false'"
+                    @input="onImageUrlInput"
                   />
                   <div
                     v-if="formImageUrl"
@@ -716,8 +828,11 @@ onMounted(load)
                       loading="lazy"
                     />
                   </div>
-                  <p class="mt-2 text-xs leading-5 text-slate-500">
-                    用于首页首条新闻卡片展示，建议使用 16:9 横图。
+                  <p id="front-news-image-help" class="mt-2 text-xs leading-5 text-slate-500">
+                    用于首页首条新闻卡片展示，支持 JPG、PNG、WebP，建议 16:9 横图，单张不超过 2MB。
+                  </p>
+                  <p v-if="formImageError" id="front-news-image-error" class="mt-1 text-xs leading-5 text-red-600" role="alert">
+                    {{ formImageError }}
                   </p>
                 </div>
                 <div>
