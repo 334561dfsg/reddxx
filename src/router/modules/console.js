@@ -634,6 +634,15 @@ export const consoleRoutes = [
     }
   },
   {
+    path: 'system/announcements',
+    name: 'system-announcements',
+    component: () => import('../../pages/admin/system/AnnouncementsPage.vue'),
+    meta: {
+      title: '系统设置 / 站内公告',
+      desc: '发布前台右上角公告中心展示的系统公告。'
+    }
+  },
+  {
     path: 'system/sms-channels',
     name: 'system-sms-channels',
     component: () => import('../../pages/admin/system/SmsChannelsPage.vue'),

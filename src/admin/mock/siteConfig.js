@@ -272,10 +272,8 @@ export const DEFAULT_VOICE_ALERT_EVENTS = [
   { key: 'customerService', label: '客服提示音' },
   { key: 'deposit', label: '充值' },
   { key: 'withdraw', label: '提现' },
-  { key: 'depositSuccess', label: '充值成功' },
   { key: 'mtNewTradeOrder', label: 'MT新交易订单（现货）' },
   { key: 'mtNewPosition', label: 'MT 新增持仓（现货）' },
-  { key: 'mtClosePosition', label: 'MT 平仓（现货）' },
   { key: 'perpetualNewTradeOrder', label: '永续合约新交易订单' },
   { key: 'deliveryNewTradeOrder', label: '交割合约新交易订单' },
   { key: 'verification', label: '认证' }
@@ -716,7 +714,6 @@ const DEFAULT_RICH_CONTENT_PAGES = [
 ]
 
 const CONTENT_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
-
 function normalizeContentPageLocalePayload(raw) {
   const source = raw && typeof raw === 'object' ? raw : {}
   return {
@@ -803,6 +800,234 @@ function normalizeRichContentPages(raw, defaultLocale = 'zh-CN') {
     if (a.parentId !== b.parentId) return a.parentId.localeCompare(b.parentId)
     if (a.sort !== b.sort) return a.sort - b.sort
     return a.slug.localeCompare(b.slug)
+  })
+}
+
+const ANNOUNCEMENT_MOCK_LOCALES = {
+  'zh-CN': {
+    maintenance: {
+      title: '系统维护公告',
+      summary: '平台将在低峰时段进行例行维护，维护期间部分交易与资产服务可能短暂不可用。',
+      html:
+        '<p>为提升系统稳定性，平台将在低峰时段进行例行维护。请提前管理持仓、挂单与资金操作，维护完成后服务将自动恢复。</p>'
+    },
+    fee: {
+      title: '现货手续费展示更新',
+      summary: '前台费率说明已更新展示口径，实际费率以账户等级与产品规则为准。',
+      html:
+        '<p>现货手续费说明已优化展示口径。不同 VIP 等级、活动权益和交易产品可能适用不同费率，请以订单确认页为准。</p>'
+    }
+  },
+  'zh-TW': {
+    maintenance: {
+      title: '系統維護公告',
+      summary: '平台將於離峰時段進行例行維護，維護期間部分交易與資產服務可能短暫不可用。',
+      html:
+        '<p>為提升系統穩定性，平台將於離峰時段進行例行維護。請提前管理持倉、掛單與資金操作，維護完成後服務將自動恢復。</p>'
+    },
+    fee: {
+      title: '現貨手續費展示更新',
+      summary: '前台費率說明已更新展示口徑，實際費率以帳戶等級與產品規則為準。',
+      html:
+        '<p>現貨手續費說明已優化展示口徑。不同 VIP 等級、活動權益和交易產品可能適用不同費率，請以訂單確認頁為準。</p>'
+    }
+  },
+  en: {
+    maintenance: {
+      title: 'Scheduled System Maintenance',
+      summary: 'Routine maintenance will run during off-peak hours. Some trading and asset services may be briefly unavailable.',
+      html:
+        '<p>To improve platform stability, routine maintenance will run during off-peak hours. Please manage positions, open orders, and fund operations in advance. Services will resume automatically after maintenance is complete.</p>'
+    },
+    fee: {
+      title: 'Spot Fee Display Update',
+      summary: 'The fee description on the front site has been updated. Actual fees depend on account tier and product rules.',
+      html:
+        '<p>The spot trading fee display has been optimized. Different VIP tiers, campaign benefits, and trading products may use different rates. Please refer to the order confirmation page for the final fee.</p>'
+    }
+  },
+  ja: {
+    maintenance: {
+      title: 'システムメンテナンスのお知らせ',
+      summary: 'プラットフォームは低利用時間帯に定期メンテナンスを実施します。一部の取引および資産サービスが一時的に利用できない場合があります。',
+      html:
+        '<p>システムの安定性向上のため、低利用時間帯に定期メンテナンスを実施します。ポジション、未約定注文、資金操作を事前にご確認ください。メンテナンス完了後、サービスは自動的に再開されます。</p>'
+    },
+    fee: {
+      title: '現物手数料表示の更新',
+      summary: 'フロントサイトの手数料説明を更新しました。実際の手数料はアカウントランクと商品ルールに基づきます。',
+      html:
+        '<p>現物取引手数料の表示内容を最適化しました。VIP ランク、キャンペーン特典、取引商品によって適用される手数料が異なる場合があります。最終的な手数料は注文確認ページをご確認ください。</p>'
+    }
+  },
+  ko: {
+    maintenance: {
+      title: '시스템 점검 안내',
+      summary: '플랫폼은 이용량이 적은 시간대에 정기 점검을 진행합니다. 일부 거래 및 자산 서비스가 일시적으로 중단될 수 있습니다.',
+      html:
+        '<p>시스템 안정성 향상을 위해 이용량이 적은 시간대에 정기 점검을 진행합니다. 포지션, 미체결 주문, 자금 작업을 미리 확인해 주세요. 점검 완료 후 서비스는 자동으로 복구됩니다.</p>'
+    },
+    fee: {
+      title: '현물 수수료 표시 업데이트',
+      summary: '프런트 사이트의 수수료 안내 표시 기준이 업데이트되었습니다. 실제 수수료는 계정 등급과 상품 규칙을 따릅니다.',
+      html:
+        '<p>현물 거래 수수료 안내 표시가 최적화되었습니다. VIP 등급, 이벤트 혜택, 거래 상품에 따라 다른 수수료가 적용될 수 있으므로 최종 수수료는 주문 확인 페이지를 기준으로 확인해 주세요.</p>'
+    }
+  }
+}
+
+const DEFAULT_SITE_ANNOUNCEMENTS = FRONT_LOCALE_CATALOG.flatMap((localeMeta, localeIndex) => {
+  const copy = ANNOUNCEMENT_MOCK_LOCALES[localeMeta.code] || ANNOUNCEMENT_MOCK_LOCALES.en
+  return [
+    {
+      id: `ann-maintenance-demo-${localeMeta.code}`,
+      locale: localeMeta.code,
+      ...copy.maintenance,
+      enabled: true,
+      publishedAt: '2026-08-24 10:00',
+      sort: localeIndex
+    },
+    {
+      id: `ann-fee-demo-${localeMeta.code}`,
+      locale: localeMeta.code,
+      ...copy.fee,
+      enabled: true,
+      publishedAt: '2026-08-20 18:30',
+      sort: 100 + localeIndex
+    }
+  ]
+})
+
+function normalizeAnnouncementLocalePayload(raw) {
+  const source = raw && typeof raw === 'object' ? raw : {}
+  return {
+    title: typeof source.title === 'string' ? source.title.trim() : '',
+    summary: typeof source.summary === 'string' ? source.summary.trim() : '',
+    html: typeof source.html === 'string' ? source.html.trim() : ''
+  }
+}
+
+function hasAnnouncementLocalePayload(payload) {
+  const text = String(payload?.html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim()
+  return Boolean(payload?.title || payload?.summary || text)
+}
+
+function normalizeAnnouncementLocales(row, defaultLocale) {
+  const locales = {}
+  if (row?.locales && typeof row.locales === 'object' && !Array.isArray(row.locales)) {
+    Object.entries(row.locales).forEach(([code, value]) => {
+      const localeCode = String(code || '').trim()
+      if (!localeCode) return
+      const payload = normalizeAnnouncementLocalePayload(value)
+      if (hasAnnouncementLocalePayload(payload)) {
+        locales[localeCode] = {
+          ...payload,
+          html: payload.html || '<p></p>'
+        }
+      }
+    })
+  }
+  const legacyPayload = normalizeAnnouncementLocalePayload(row)
+  if (hasAnnouncementLocalePayload(legacyPayload)) {
+    locales[defaultLocale] = {
+      ...legacyPayload,
+      html: legacyPayload.html || '<p></p>',
+      ...(locales[defaultLocale] || {})
+    }
+  }
+  return locales
+}
+
+function resolveAnnouncementLocale(locales, preferredLocale) {
+  const preferred = locales?.[preferredLocale]
+  const first = Object.values(locales || {}).find((item) => item?.title || item?.html)
+  const payload = preferred || first || {}
+  return {
+    title: payload.title || '',
+    summary: payload.summary || '',
+    html: payload.html || '<p></p>'
+  }
+}
+
+function normalizeAnnouncementRow(row, index, defaultLocale, forcedLocale, forcedPayload) {
+  const locale = String(forcedLocale || row.locale || defaultLocale || 'zh-CN').trim() || 'zh-CN'
+  const payload = forcedPayload || normalizeAnnouncementLocalePayload(row)
+  const title = payload.title
+  if (!title) return null
+  const rawId =
+    typeof row.id === 'string' && row.id.trim()
+      ? row.id.trim()
+      : newContentRowId('announcement')
+  const id = !row.locale && forcedLocale && forcedLocale !== defaultLocale && !String(rawId).endsWith(`-${forcedLocale}`)
+    ? `${rawId}-${forcedLocale}`
+    : rawId
+  return {
+    id,
+    locale,
+    title,
+    summary: payload.summary,
+    html: payload.html || '<p></p>',
+    locales: {
+      [locale]: {
+        title,
+        summary: payload.summary,
+        html: payload.html || '<p></p>'
+      }
+    },
+    enabled: typeof row.enabled === 'boolean' ? row.enabled : true,
+    publishedAt:
+      typeof row.publishedAt === 'string' && row.publishedAt.trim()
+        ? row.publishedAt.trim()
+        : '2026-08-24 00:00',
+    sort: Number.isFinite(Number(row.sort)) ? Math.round(Number(row.sort)) : index * 10
+  }
+}
+
+export function normalizeSiteAnnouncements(raw, defaultLocale = 'zh-CN') {
+  const source = Array.isArray(raw) ? raw : DEFAULT_SITE_ANNOUNCEMENTS
+  const seen = new Set()
+  const rows = []
+  source.forEach((row, index) => {
+    if (!row || typeof row !== 'object') return
+    if (typeof row.locale === 'string' && row.locale.trim()) {
+      const localeCode = row.locale.trim()
+      const locales = normalizeAnnouncementLocales(row, localeCode)
+      const display = resolveAnnouncementLocale(locales, localeCode)
+      const normalized = normalizeAnnouncementRow(row, index, defaultLocale, localeCode, display)
+      if (normalized && !seen.has(normalized.id)) {
+        seen.add(normalized.id)
+        rows.push(normalized)
+      }
+      return
+    }
+    const locales = normalizeAnnouncementLocales(row, defaultLocale)
+    const entries = Object.entries(locales)
+    if (entries.length > 1) {
+      entries.forEach(([localeCode, payload], localeIndex) => {
+        const normalized = normalizeAnnouncementRow(
+          row,
+          index + localeIndex,
+          defaultLocale,
+          localeCode,
+          payload
+        )
+        if (normalized && !seen.has(normalized.id)) {
+          seen.add(normalized.id)
+          rows.push(normalized)
+        }
+      })
+      return
+    }
+    const display = resolveAnnouncementLocale(locales, defaultLocale)
+    const normalized = normalizeAnnouncementRow(row, index, defaultLocale, defaultLocale, display)
+    if (normalized && !seen.has(normalized.id)) {
+      seen.add(normalized.id)
+      rows.push(normalized)
+    }
+  })
+  return rows.sort((a, b) => {
+    if (a.sort !== b.sort) return a.sort - b.sort
+    return String(b.publishedAt).localeCompare(String(a.publishedAt))
   })
 }
 
@@ -982,7 +1207,9 @@ export const DEFAULT_SITE_CONFIG = {
   /** 社媒链接（前台首页页脚展示启用项） */
   socialLinks: DEFAULT_SOCIAL_LINKS_DEMO,
   /** 前台公开内容页：关于、资质、白皮书 */
-  contentPages: normalizeContentPages()
+  contentPages: normalizeContentPages(),
+  /** 前台公开站内公告 */
+  announcements: normalizeSiteAnnouncements()
 }
 
 function readStored() {
@@ -1149,7 +1376,8 @@ export function normalizeSiteConfig(raw) {
   if ('smsChannelsByDial' in merged) delete merged.smsChannelsByDial
   merged.voiceAlerts = normalizeVoiceAlerts(merged.voiceAlerts)
   merged.socialLinks = normalizeSocialLinksList(merged.socialLinks)
-  merged.contentPages = normalizeContentPages(merged.contentPages)
+  merged.contentPages = normalizeContentPages(merged.contentPages, merged.i18n?.defaultLocale || 'zh-CN')
+  merged.announcements = normalizeSiteAnnouncements(merged.announcements, merged.i18n?.defaultLocale || 'zh-CN')
   const legacy = merged.logoUrl
   if (typeof legacy === 'string' && legacy && !merged.logoUrlPc && !merged.logoUrlMobile) {
     merged.logoUrlPc = legacy
@@ -1193,8 +1421,19 @@ export const siteConfigApi = {
             : prev.smtpAccounts
         const socialLinksPayload =
           config.socialLinks !== undefined ? normalizeSocialLinksList(config.socialLinks) : prev.socialLinks
+        const customLocalesPayload = normalizeCustomLocales(config.customLocales)
+        const i18nPayload = normalizeI18n(
+          config.i18n !== undefined ? config.i18n : prev.i18n,
+          customLocalesPayload
+        )
         const contentPagesPayload =
-          config.contentPages !== undefined ? normalizeContentPages(config.contentPages) : prev.contentPages
+          config.contentPages !== undefined
+            ? normalizeContentPages(config.contentPages, i18nPayload.defaultLocale)
+            : prev.contentPages
+        const announcementsPayload =
+          config.announcements !== undefined
+            ? normalizeSiteAnnouncements(config.announcements, i18nPayload.defaultLocale)
+            : prev.announcements
         const voiceAlertsPayload =
           config.voiceAlerts !== undefined ? normalizeVoiceAlerts(config.voiceAlerts) : prev.voiceAlerts
         memory = normalizeSiteConfig({
@@ -1232,7 +1471,7 @@ export const siteConfigApi = {
             typeof config.languageSettingsEnabled === 'boolean'
               ? config.languageSettingsEnabled
               : DEFAULT_SITE_CONFIG.languageSettingsEnabled,
-          customLocales: normalizeCustomLocales(config.customLocales),
+          customLocales: customLocalesPayload,
           allowedDialCodes:
             Array.isArray(config.allowedDialCodes) && config.allowedDialCodes.length
               ? [...config.allowedDialCodes]
@@ -1247,11 +1486,12 @@ export const siteConfigApi = {
               ? { ...config.dialSortOrder }
               : prev.dialSortOrder,
           smtpAccounts: smtpAccountsPayload,
-          i18n: normalizeI18n(config.i18n !== undefined ? config.i18n : prev.i18n, normalizeCustomLocales(config.customLocales)),
+          i18n: i18nPayload,
           smsChannels: smsChannelsPayload,
           voiceAlerts: voiceAlertsPayload,
           socialLinks: socialLinksPayload,
-          contentPages: contentPagesPayload
+          contentPages: contentPagesPayload,
+          announcements: announcementsPayload
         })
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(memory))

@@ -16,15 +16,28 @@ import { PAIRS_BY_CLASS } from '../constants/frontTradePairs'
 import { getPersonalCenterShellMobileNavItems } from '../constants/personalCenterNav'
 import { FRONT_LOCALE_CATALOG } from '../admin/constants/i18nCatalog'
 import {
+  getSiteConfigSnapshot,
+  SITE_CONFIG_STORAGE_KEY
+} from '../admin/mock/siteConfig'
+import {
   FRONT_LANG_STORAGE_KEY,
   resolveFrontLocalePreference,
   useFrontSiteI18n
 } from '../composables/useFrontSiteI18n'
 
+defineOptions({
+  inheritAttrs: false
+})
+
 const props = defineProps({
   /** 固定为 `/front`（旧 /m 会重定向至 /front） */
-  prefix: { type: String, required: true }
+  prefix: { type: String, required: true },
+  /** 仅挂载移动端抽屉能力，由页面内自定义按钮触发，不渲染顶部栏。 */
+  drawerOnly: { type: Boolean, default: false },
+  /** 受控移动端抽屉开关；null 表示组件内部自控。 */
+  mobileDrawerOpen: { type: Boolean, default: null }
 })
+const emit = defineEmits(['mobile-open-change', 'update:mobileDrawerOpen'])
 
 const route = useRoute()
 const router = useRouter()
@@ -63,6 +76,7 @@ const mobileLangSheetRef = ref(null)
 const searchOpen = ref(false)
 const searchQuery = ref('')
 const searchPanelRef = ref(null)
+const siteAnnouncements = ref(getSiteConfigSnapshot().announcements || [])
 
 function isImageIcon(icon) {
   const s = String(icon || '').trim()
@@ -420,6 +434,39 @@ const accountInfoItems = [
   { key: 'regulatory', label: '监管文件' }
 ]
 
+const publicAnnouncements = computed(() =>
+  (siteAnnouncements.value || []).filter((row) => row.enabled !== false)
+)
+
+const announcementBadgeText = computed(() => {
+  const count = publicAnnouncements.value.length
+  if (count > 9) return '9+'
+  return count > 0 ? String(count) : ''
+})
+
+const announcementRoute = computed(() => `${props.prefix}/announcements`)
+
+function refreshSiteAnnouncements() {
+  siteAnnouncements.value = getSiteConfigSnapshot().announcements || []
+}
+
+function onSiteConfigStorage(e) {
+  if (e.key === SITE_CONFIG_STORAGE_KEY) refreshSiteAnnouncements()
+}
+
+function goAnnouncementCenter() {
+  refreshSiteAnnouncements()
+  tradeOpen.value = false
+  financeOpen.value = false
+  langOpen.value = false
+  downloadOpen.value = false
+  accountOpen.value = false
+  searchOpen.value = false
+  mobileOpen.value = false
+  mobileLangSheetOpen.value = false
+  router.push(announcementRoute.value)
+}
+
 function clearFrontCache() {
   try {
     sessionStorage.clear()
@@ -538,7 +585,29 @@ function closeOverlays() {
   mobileLangSheetOpen.value = false
 }
 
+function openMobileDrawer() {
+  mobileOpen.value = true
+}
+
+function closeMobileDrawer() {
+  mobileOpen.value = false
+}
+
+defineExpose({
+  openMobileDrawer,
+  closeMobileDrawer
+})
+
 watch(() => route.fullPath, closeOverlays)
+
+watch(
+  () => props.mobileDrawerOpen,
+  (open) => {
+    if (open === null) return
+    mobileOpen.value = open
+  },
+  { immediate: true }
+)
 
 function closeIfDesktopBreakpoint() {
   if (typeof window === 'undefined') return
@@ -584,10 +653,13 @@ watch(languageSwitcherEnabled, (on) => {
 
 onMounted(() => {
   localeCode.value = resolveFrontLocalePreference()
+  refreshSiteAnnouncements()
   const mq = window.matchMedia('(min-width: 1024px)')
   const onChange = () => closeIfDesktopBreakpoint()
   mq.addEventListener('change', onChange)
   removeMediaListener = () => mq.removeEventListener('change', onChange)
+  window.addEventListener('storage', onSiteConfigStorage)
+  window.addEventListener('admin-site-config-updated', refreshSiteAnnouncements)
 })
 
 function onDocPointerDown(ev) {
@@ -595,6 +667,8 @@ function onDocPointerDown(ev) {
   if (mobileDrawerRef.value?.contains(ev.target)) return
   if (mobileLangSheetRef.value?.contains(ev.target)) return
   if (searchPanelRef.value?.contains(ev.target)) return
+  if (ev.target?.closest?.('#front-nav-drawer')) return
+  if (ev.target?.closest?.('#front-mobile-lang-sheet')) return
   closeOverlays()
 }
 
@@ -643,6 +717,8 @@ watch(anyPanelOpen, (open) => {
 
 watch(mobileOpen, (open) => {
   if (typeof document === 'undefined') return
+  emit('mobile-open-change', open)
+  emit('update:mobileDrawerOpen', open)
   document.body.style.overflow = open ? 'hidden' : ''
   if (open) {
     tradeOpen.value = false
@@ -653,6 +729,7 @@ watch(mobileOpen, (open) => {
     searchOpen.value = false
   } else {
     mobileLangSheetOpen.value = false
+    if (!searchOpen.value) document.body.style.overflow = ''
   }
 })
 
@@ -669,6 +746,8 @@ onUnmounted(() => {
   removeMediaListener()
   document.removeEventListener('pointerdown', onDocPointerDown, true)
   window.removeEventListener('keydown', onEscape)
+  window.removeEventListener('storage', onSiteConfigStorage)
+  window.removeEventListener('admin-site-config-updated', refreshSiteAnnouncements)
   document.body.style.overflow = ''
 })
 
@@ -710,8 +789,13 @@ function drawerRowClass(item) {
 </script>
 
 <template>
-  <div ref="navRoot" class="sticky top-0 z-20 w-full border-b border-[#1f2429] bg-[#0b0e11]">
+  <div
+    ref="navRoot"
+    v-bind="drawerOnly ? {} : $attrs"
+    :class="drawerOnly ? 'contents' : 'sticky top-0 z-20 w-full border-b border-[#1f2429] bg-[#0b0e11]'"
+  >
     <div
+      v-if="!drawerOnly"
       class="mx-auto flex min-h-[3.5rem] w-full items-center justify-between gap-2.5 px-3 sm:min-h-14 sm:gap-3 sm:px-4 lg:gap-6 lg:px-6 xl:px-8"
     >
       <!-- 左：品牌 + 大屏主导航 -->
@@ -953,6 +1037,36 @@ function drawerRowClass(item) {
               stroke-linecap="round"
             />
           </svg>
+        </button>
+        <button
+          type="button"
+          class="relative rounded-md p-2 text-[#eaecef] transition hover:bg-[#1f2429] hover:text-lime-300"
+          :class="route.path.startsWith(announcementRoute) ? 'bg-[#1f2429] text-lime-300' : ''"
+          aria-label="查看站内公告"
+          @click="goAnnouncementCenter"
+        >
+          <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M6 9.5v5M10 8l7-3v14l-7-3H6a3 3 0 0 1 0-6h4Z"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M5.5 14.5 7 21h3l-1.6-6.5"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span
+            v-if="announcementBadgeText"
+            class="absolute -right-1 -top-1 min-w-4 rounded-full bg-lime-400 px-1 text-[10px] font-bold leading-4 text-[#0b0e11]"
+          >
+            {{ announcementBadgeText }}
+          </span>
         </button>
         <div
           class="relative hidden lg:block"
@@ -1311,6 +1425,36 @@ function drawerRowClass(item) {
       <div class="flex shrink-0 items-center gap-2 lg:hidden">
         <button
           type="button"
+          class="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#1f2429] text-[#eaecef] transition hover:bg-[#3f4652] hover:text-lime-300"
+          :class="route.path.startsWith(announcementRoute) ? 'bg-[#3f4652] text-lime-300' : ''"
+          aria-label="查看站内公告"
+          @click="goAnnouncementCenter"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M6 9.5v5M10 8l7-3v14l-7-3H6a3 3 0 0 1 0-6h4Z"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M5.5 14.5 7 21h3l-1.6-6.5"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span
+            v-if="announcementBadgeText"
+            class="absolute -right-1 -top-1 min-w-4 rounded-full bg-lime-400 px-1 text-[10px] font-bold leading-4 text-[#0b0e11]"
+          >
+            {{ announcementBadgeText }}
+          </span>
+        </button>
+        <button
+          type="button"
           class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#1f2429] text-[#eaecef] transition hover:bg-[#3f4652]"
           :aria-expanded="mobileOpen"
           aria-haspopup="dialog"
@@ -1350,7 +1494,6 @@ function drawerRowClass(item) {
           <div
             class="absolute inset-0 bg-black/55 backdrop-blur-[1px]"
             aria-hidden="true"
-            @click="mobileOpen = false"
           />
           <aside
             role="dialog"
@@ -1668,7 +1811,6 @@ function drawerRowClass(item) {
           <div
             class="absolute inset-0 bg-black/50 backdrop-blur-[1px]"
             aria-hidden="true"
-            @click="mobileLangSheetOpen = false"
           />
           <div
             role="dialog"

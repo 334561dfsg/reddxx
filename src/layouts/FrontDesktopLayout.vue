@@ -19,6 +19,11 @@ const showFrontChrome = computed(() => !isCustomerService.value && !hideFrontChr
 const frontTopNavClass = computed(() => (hideFrontChromeOnMobile.value ? 'hidden lg:block' : ''))
 const frontBottomTabClass = computed(() => (hideFrontChromeOnMobile.value ? 'hidden' : ''))
 const frontFloatingClass = computed(() => (hideFrontFloatingOnMobile.value ? 'hidden lg:inline-flex' : ''))
+const frontShellClass = computed(() => {
+  if (!showFrontChrome.value) return 'pb-0'
+  if (hideFrontChromeOnMobile.value) return 'pb-0 lg:pb-0'
+  return 'pb-[calc(0.5rem+3.5rem+0.6rem+env(safe-area-inset-bottom,0px))] lg:pb-0'
+})
 const crossPlatformNavClass = computed(() => {
   if (hideFrontChromeOnMobile.value || hideFrontFloatingOnMobile.value) return 'hidden lg:block'
   return ''
@@ -49,7 +54,7 @@ onUnmounted(() => {
 <template>
   <div
     class="min-h-screen min-h-[100dvh] w-full max-w-[100vw] bg-[#050505] text-white"
-    :class="showFrontChrome ? 'pb-[calc(0.5rem+3.5rem+0.6rem+env(safe-area-inset-bottom,0px))] lg:pb-0' : 'pb-0'"
+    :class="frontShellClass"
   >
     <FrontTopNav v-if="showFrontChrome" :class="frontTopNavClass" prefix="/front" />
     <!--

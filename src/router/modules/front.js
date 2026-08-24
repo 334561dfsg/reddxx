@@ -23,6 +23,18 @@ export const frontDesktopRoutes = [
     meta: { title: '行情' }
   },
   {
+    path: 'announcements',
+    name: 'front-announcements',
+    component: () => import('../../pages/front/FrontAnnouncementsPage.vue'),
+    meta: { title: '站内公告', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
+  },
+  {
+    path: 'announcements/:announcementId',
+    name: 'front-announcement-detail',
+    component: () => import('../../pages/front/FrontAnnouncementDetailPage.vue'),
+    meta: { title: '公告详情', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
+  },
+  {
     path: 'customer-service',
     name: 'front-customer-service',
     component: () => import('../../pages/front/FrontCustomerServicePage.vue'),
