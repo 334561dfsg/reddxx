@@ -67,7 +67,7 @@ function backToList() {
       <header class="relative flex h-12 items-center justify-center md:mb-10 md:h-auto md:min-h-10">
         <button
           type="button"
-          class="absolute left-0 inline-flex h-9 w-9 items-center justify-center rounded-md text-white/88 transition hover:bg-white/[0.06] hover:text-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+          class="absolute -left-[18px] inline-flex h-9 w-9 items-center justify-center rounded-md text-white/88 transition hover:bg-white/[0.06] hover:text-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 md:left-0"
           aria-label="返回公告列表"
           @click="backToList"
         >

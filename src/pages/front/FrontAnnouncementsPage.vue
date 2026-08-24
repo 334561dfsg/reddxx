@@ -79,7 +79,7 @@ function openNavigationMenu() {
       <header class="relative mb-0 flex h-12 items-center justify-center border-b border-white/[0.08] md:mb-12 md:h-auto md:min-h-10 md:border-b-0">
         <button
           type="button"
-          class="absolute left-0 inline-flex h-9 w-9 items-center justify-center rounded-md text-white/86 transition hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 lg:hidden"
+          class="absolute -left-[18px] inline-flex h-9 w-9 items-center justify-center rounded-md text-white/86 transition hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 lg:hidden"
           aria-haspopup="dialog"
           aria-controls="front-nav-drawer"
           :aria-expanded="navMenuOpen"
