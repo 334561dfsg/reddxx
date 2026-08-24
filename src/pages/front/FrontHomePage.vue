@@ -103,6 +103,46 @@ const tradeModes = [
   }
 ]
 
+const homeNewsArchiveTo = `${prefix}/announcements`
+
+const homeNewsItems = [
+  {
+    id: 'news-security-upgrade',
+    tag: '平台动态',
+    date: '2026.08.24',
+    title: '安全风控系统完成新一轮升级',
+    summary: '账户登录、资金划转与合约委托链路已接入更细粒度的风险校验，帮助用户更早识别异常操作。',
+    to: homeNewsArchiveTo
+  },
+  {
+    id: 'news-fee-display',
+    tag: '产品更新',
+    date: '2026.08.21',
+    title: '现货与合约手续费展示优化',
+    summary: '交易前可更清晰查看预计手续费、VIP 折扣与成交后费用明细。',
+    to: homeNewsArchiveTo
+  },
+  {
+    id: 'news-market-depth',
+    tag: '市场服务',
+    date: '2026.08.18',
+    title: '多品种行情深度展示持续迭代',
+    summary: '主流资产盘口、涨跌幅与成交摘要在移动端首页获得更紧凑的呈现。',
+    to: homeNewsArchiveTo
+  },
+  {
+    id: 'news-custody',
+    tag: '资产安全',
+    date: '2026.08.15',
+    title: '资产中心新增风险提示与操作确认',
+    summary: '提现、划转与安全设置变更流程增加更明确的状态提示。',
+    to: homeNewsArchiveTo
+  }
+]
+
+const featuredNews = computed(() => homeNewsItems[0])
+const secondaryNews = computed(() => homeNewsItems.slice(1))
+
 const footerYear = new Date().getFullYear()
 
 const footerColumns = [
@@ -523,6 +563,100 @@ const footerColumns = [
           数字资产及衍生品交易风险极高，可能导致本金全部损失。本页市场摘要仅供教育参考，不构成投资建议。
         </p>
       </div>
+
+      <!-- 新闻资讯：置于首页内容区最下方，延续参考站的新闻列表信息层级 -->
+      <section
+        class="mt-12 border-t border-white/[0.06] pt-10 sm:mt-14 sm:pt-12 md:mt-16 md:pt-14"
+        aria-labelledby="home-news"
+      >
+        <div class="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-lime-400/75">News</p>
+            <h2
+              id="home-news"
+              class="mt-2 text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl md:text-4xl"
+            >
+              新闻资讯
+            </h2>
+          </div>
+          <RouterLink
+            :to="homeNewsArchiveTo"
+            class="inline-flex h-10 w-max items-center gap-2 rounded-md border border-white/[0.10] px-4 text-[13px] font-semibold text-white/72 transition hover:border-lime-400/30 hover:text-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+          >
+            更多新闻
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M5 12h14M12 5l7 7-7 7"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </RouterLink>
+        </div>
+
+        <div class="grid gap-4 lg:grid-cols-[1.02fr_1fr] lg:gap-5">
+          <RouterLink
+            :to="featuredNews.to"
+            class="group flex min-h-[17rem] flex-col justify-between overflow-hidden rounded-xl border border-white/[0.07] bg-[#0b0e11] p-6 transition hover:border-lime-400/24 hover:bg-[#10151a] sm:p-7 md:p-8"
+          >
+            <div>
+              <div class="flex items-center justify-between gap-4">
+                <span class="rounded-md border border-lime-400/20 bg-lime-400/[0.08] px-2.5 py-1 text-[11px] font-semibold text-lime-300">
+                  {{ featuredNews.tag }}
+                </span>
+                <time class="font-mono text-xs text-white/38">{{ featuredNews.date }}</time>
+              </div>
+              <h3 class="mt-7 max-w-xl text-2xl font-bold leading-tight text-white text-balance sm:text-3xl">
+                {{ featuredNews.title }}
+              </h3>
+              <p class="mt-4 max-w-xl text-sm leading-[1.8] text-white/52 sm:text-[15px]">
+                {{ featuredNews.summary }}
+              </p>
+            </div>
+            <span class="mt-8 inline-flex items-center text-sm font-semibold text-lime-400">
+              查看详情
+              <svg class="ml-1.5 h-4 w-4 transition group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M5 12h14M12 5l7 7-7 7"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </RouterLink>
+
+          <ul class="rounded-xl border border-white/[0.07] bg-[#080a0c] px-5 sm:px-6">
+            <li v-for="item in secondaryNews" :key="item.id" class="border-b border-white/[0.08] last:border-b-0">
+              <RouterLink
+                :to="item.to"
+                class="group grid gap-3 py-5 text-left transition sm:grid-cols-[7.25rem_minmax(0,1fr)_1.5rem] sm:items-center sm:py-6"
+              >
+                <div class="flex items-center gap-2 sm:block">
+                  <time class="font-mono text-[13px] text-white/48 sm:text-sm">{{ item.date }}</time>
+                  <span class="rounded border border-white/[0.08] px-1.5 py-0.5 text-[10px] font-semibold text-white/40 sm:mt-2 sm:inline-block">
+                    {{ item.tag }}
+                  </span>
+                </div>
+                <div class="min-w-0">
+                  <h3 class="truncate text-[15px] font-semibold leading-snug text-white transition group-hover:text-lime-200 sm:text-base">
+                    {{ item.title }}
+                  </h3>
+                  <p class="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-white/45">
+                    {{ item.summary }}
+                  </p>
+                </div>
+                <svg class="hidden h-4 w-4 justify-self-end text-white/34 transition group-hover:translate-x-0.5 group-hover:text-lime-300 sm:block" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
+      </section>
     </div>
 
     <footer
