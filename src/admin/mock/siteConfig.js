@@ -5,6 +5,12 @@ import {
 } from '../constants/i18nCatalog.js'
 import { DEFAULT_FRONT_NEWS, normalizeFrontNews } from './frontNews.js'
 import { FRONT_WALLET_LOGIN_PROVIDERS } from '../../stores/frontAuth.js'
+import {
+  FRONT_DEMO_ACCOUNT_ASSET_CONFIG,
+  normalizeFrontDemoAccountAssetConfig
+} from '../../constants/frontAssetCenterDemo.js'
+
+export { normalizeFrontDemoAccountAssetConfig }
 
 const WALLET_PROVIDER_KEYS = new Set(FRONT_WALLET_LOGIN_PROVIDERS.map((p) => p.key))
 
@@ -1205,6 +1211,8 @@ export const DEFAULT_SITE_CONFIG = {
   smsChannels: DEFAULT_SMS_CHANNELS_DEMO,
   /** 管理台语音提醒配置 */
   voiceAlerts: normalizeVoiceAlerts(),
+  /** 模拟账户资产领取配置 */
+  demoAccountAsset: normalizeFrontDemoAccountAssetConfig(FRONT_DEMO_ACCOUNT_ASSET_CONFIG),
   /** 社媒链接（前台首页页脚展示启用项） */
   socialLinks: DEFAULT_SOCIAL_LINKS_DEMO,
   /** 前台公开内容页：关于、资质、白皮书 */
@@ -1378,6 +1386,7 @@ export function normalizeSiteConfig(raw) {
   )
   if ('smsChannelsByDial' in merged) delete merged.smsChannelsByDial
   merged.voiceAlerts = normalizeVoiceAlerts(merged.voiceAlerts)
+  merged.demoAccountAsset = normalizeFrontDemoAccountAssetConfig(merged.demoAccountAsset)
   merged.socialLinks = normalizeSocialLinksList(merged.socialLinks)
   merged.contentPages = normalizeContentPages(merged.contentPages, merged.i18n?.defaultLocale || 'zh-CN')
   merged.announcements = normalizeSiteAnnouncements(merged.announcements, merged.i18n?.defaultLocale || 'zh-CN')
@@ -1444,6 +1453,10 @@ export const siteConfigApi = {
             : prev.frontNews
         const voiceAlertsPayload =
           config.voiceAlerts !== undefined ? normalizeVoiceAlerts(config.voiceAlerts) : prev.voiceAlerts
+        const demoAccountAssetPayload =
+          config.demoAccountAsset !== undefined
+            ? normalizeFrontDemoAccountAssetConfig(config.demoAccountAsset)
+            : prev.demoAccountAsset
         memory = normalizeSiteConfig({
           ...DEFAULT_SITE_CONFIG,
           siteName: String(config.siteName ?? '').trim() || DEFAULT_SITE_CONFIG.siteName,
@@ -1497,6 +1510,7 @@ export const siteConfigApi = {
           i18n: i18nPayload,
           smsChannels: smsChannelsPayload,
           voiceAlerts: voiceAlertsPayload,
+          demoAccountAsset: demoAccountAssetPayload,
           socialLinks: socialLinksPayload,
           contentPages: contentPagesPayload,
           announcements: announcementsPayload,

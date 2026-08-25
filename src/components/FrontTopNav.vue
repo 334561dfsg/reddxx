@@ -96,6 +96,7 @@ const mainLinks = computed(() => getFrontMainNavLinks(props.prefix))
 /** 主导航中位于「交易 / 金融」之前的链接（首页、行情） */
 const mainLinksLead = computed(() => mainLinks.value.filter((i) => i.key !== 'assets'))
 const mainLinkAssets = computed(() => mainLinks.value.find((i) => i.key === 'assets'))
+const showFinanceEntry = computed(() => !isLoggedIn.value || accountMode.value !== 'demo')
 const tradeMenuGroups = computed(() => getFrontTradeMenuGroups(props.prefix))
 const financeChannels = computed(() => getFrontFinanceChannelEntries(props.prefix))
 const financeHubPath = computed(() => getFrontFinanceHubPath(props.prefix))
@@ -804,6 +805,12 @@ watch(accountSwitchDialogOpen, (open) => {
   if (!open && !mobileOpen.value && !searchOpen.value) document.body.style.overflow = ''
 })
 
+watch(showFinanceEntry, (visible) => {
+  if (!visible) {
+    financeOpen.value = false
+  }
+})
+
 onUnmounted(() => {
   if (downloadLeaveTimer) clearTimeout(downloadLeaveTimer)
   removeMediaListener()
@@ -959,7 +966,7 @@ function drawerRowClass(item) {
             </Transition>
           </div>
 
-          <div class="relative">
+          <div v-if="showFinanceEntry" class="relative">
             <button
               type="button"
               class="inline-flex items-center gap-1"
@@ -1080,6 +1087,13 @@ function drawerRowClass(item) {
 
       <!-- 右：大屏工具 + 账户 -->
       <div class="hidden shrink-0 items-center gap-2 sm:gap-3 lg:flex">
+        <span
+          v-if="isLoggedIn && accountMode === 'demo'"
+          class="inline-flex h-7 items-center rounded-md border border-amber-300/35 bg-amber-300/10 px-3 text-xs font-semibold leading-none text-amber-100 shadow-[0_0_0_1px_rgba(251,191,36,0.08)]"
+          aria-label="当前账户类型：模拟账户"
+        >
+          模拟账户
+        </span>
         <button
           type="button"
           class="rounded-md p-2 text-[#eaecef] transition hover:bg-[#1f2429] hover:text-lime-300"
@@ -1730,42 +1744,44 @@ function drawerRowClass(item) {
                 </RouterLink>
               </div>
 
-              <div
-                class="mx-3 mb-0.5 mt-5 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent"
-                aria-hidden="true"
-              />
-              <p class="mb-2 mt-5 px-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#b0b8c1] sm:tracking-wider">
-                金融
-              </p>
-              <div class="space-y-0.5">
-                <RouterLink
-                  v-for="item in drawerFinanceNavResolved"
-                  :key="item.key"
-                  :to="item.linkTo"
-                  role="menuitem"
-                  :class="drawerRowClass(item)"
-                  @click="mobileOpen = false"
-                >
-                  <span
-                    class="drawer-nav-icon flex h-7 w-7 shrink-0 items-center justify-center"
-                    :class="drawerRowActive(item) ? 'text-lime-300/95' : 'text-lime-400/65'"
-                    aria-hidden="true"
+              <template v-if="showFinanceEntry">
+                <div
+                  class="mx-3 mb-0.5 mt-5 h-px bg-gradient-to-r from-transparent via-white/[0.07] to-transparent"
+                  aria-hidden="true"
+                />
+                <p class="mb-2 mt-5 px-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#b0b8c1] sm:tracking-wider">
+                  金融
+                </p>
+                <div class="space-y-0.5">
+                  <RouterLink
+                    v-for="item in drawerFinanceNavResolved"
+                    :key="item.key"
+                    :to="item.linkTo"
+                    role="menuitem"
+                    :class="drawerRowClass(item)"
+                    @click="mobileOpen = false"
                   >
-                    <svg
-                      class="h-4 w-4"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.65"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                    <span
+                      class="drawer-nav-icon flex h-7 w-7 shrink-0 items-center justify-center"
+                      :class="drawerRowActive(item) ? 'text-lime-300/95' : 'text-lime-400/65'"
+                      aria-hidden="true"
                     >
-                      <path v-for="(d, i) in drawerIconPaths(item.icon)" :key="i" :d="d" />
-                    </svg>
-                  </span>
-                  <span class="min-w-0 truncate text-current">{{ item.label }}</span>
-                </RouterLink>
-              </div>
+                      <svg
+                        class="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.65"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path v-for="(d, i) in drawerIconPaths(item.icon)" :key="i" :d="d" />
+                      </svg>
+                    </span>
+                    <span class="min-w-0 truncate text-current">{{ item.label }}</span>
+                  </RouterLink>
+                </div>
+              </template>
 
               <template v-if="isLoggedIn">
                 <div

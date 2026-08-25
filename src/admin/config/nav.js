@@ -164,18 +164,25 @@ export const navTree = [
   },
 
   {
-    title: '系统设置',
+    title: '平台配置',
     icon: 'spark',
     children: [
+      { title: '模拟账户配置', path: '/admin/platform/demo-account-config' },
       { title: '站点配置', path: '/admin/system/site-config' },
       { title: '社媒配置', path: '/admin/system/social-links' },
       { title: '内容页配置', path: '/admin/system/content-pages' },
       { title: '站内公告', path: '/admin/system/announcements' },
       { title: '新闻资讯', path: '/admin/system/news' },
+      { title: '语音提醒', path: '/admin/system/voice-alerts' },
+      { title: '语言与区号', path: '/admin/system/locale-settings' }
+    ]
+  },
+  {
+    title: '系统设置',
+    icon: 'spark',
+    children: [
       { title: '短信通道', path: '/admin/system/sms-channels' },
       { title: '邮件服务 (SMTP)', path: '/admin/system/smtp-settings' },
-      { title: '语音提醒', path: '/admin/system/voice-alerts' },
-      { title: '语言与区号', path: '/admin/system/locale-settings' },
       { title: '错误码管理', path: '/admin/system/error-codes' }
     ]
   },

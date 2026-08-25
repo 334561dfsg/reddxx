@@ -1,15 +1,21 @@
 <script setup>
 import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { getFrontBottomTabs, getFrontFinanceHubPath } from '../constants/frontNav'
+import { useFrontAuthStore } from '../stores/frontAuth'
 
 const props = defineProps({
   prefix: { type: String, required: true }
 })
 
 const route = useRoute()
+const frontAuth = useFrontAuthStore()
+const { isLoggedIn, accountMode } = storeToRefs(frontAuth)
 
-const tabs = computed(() => getFrontBottomTabs(props.prefix))
+const tabs = computed(() => (
+  getFrontBottomTabs(props.prefix).filter((tab) => !isLoggedIn.value || accountMode.value !== 'demo' || tab.key !== 'finance')
+))
 
 const pcRoot = computed(() => `${props.prefix}/personal-center`)
 const tradePath = computed(() => `${props.prefix}/trade`)

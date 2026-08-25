@@ -187,9 +187,30 @@ export function demoTransferAvailable(accountValue, symbol) {
 
 /** 模拟账户领取资产配置；当前为后台配置 mock，对接后替换为接口返回 */
 export const FRONT_DEMO_ACCOUNT_ASSET_CONFIG = {
-  monthlyClaimLimit: 3,
+  monthlyClaimLimit: 1,
   claimAmountUsd: 500000,
   currency: 'USDT'
+}
+
+export function normalizeFrontDemoAccountAssetConfig(raw) {
+  const base = FRONT_DEMO_ACCOUNT_ASSET_CONFIG
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { ...base }
+
+  const monthlyClaimLimit = Number(raw.monthlyClaimLimit)
+  const claimAmountUsd = Number(raw.claimAmountUsd)
+  return {
+    monthlyClaimLimit:
+      Number.isFinite(monthlyClaimLimit) && monthlyClaimLimit >= 0
+        ? Math.floor(monthlyClaimLimit)
+        : base.monthlyClaimLimit,
+    claimAmountUsd:
+      Number.isFinite(claimAmountUsd) && claimAmountUsd > 0
+        ? Math.round(claimAmountUsd * 100) / 100
+        : base.claimAmountUsd,
+    currency: typeof raw.currency === 'string' && raw.currency.trim()
+      ? raw.currency.trim().toUpperCase()
+      : base.currency
+  }
 }
 
 export function frontDemoAssetClaimMonthKey(date = new Date()) {

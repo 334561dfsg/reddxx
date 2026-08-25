@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
+import { SITE_CONFIG_STORAGE_KEY, siteConfigApi } from '../../admin/mock/siteConfig'
 import FrontStrokeIcon from '../../components/front/FrontStrokeIcon.vue'
 import {
   FRONT_DEMO_ACCOUNT_ASSET_CONFIG,
@@ -10,7 +11,8 @@ import {
   formatFrontAssetAmount,
   formatFrontUsdAmount,
   frontAssetCoinMeta,
-  frontDemoAssetClaimMonthKey
+  frontDemoAssetClaimMonthKey,
+  normalizeFrontDemoAccountAssetConfig
 } from '../../constants/frontAssetCenterDemo'
 import { useFrontAuthStore } from '../../stores/frontAuth'
 
@@ -26,6 +28,7 @@ const convertPath = `${prefix}/personal-center/assets/convert`
 const hideBalance = ref(false)
 const baseTotalUsd = FRONT_ASSET_OVERVIEW.totalUsd
 const todayPnl = FRONT_ASSET_OVERVIEW.todayPnl
+const demoAssetConfig = ref(normalizeFrontDemoAccountAssetConfig(FRONT_DEMO_ACCOUNT_ASSET_CONFIG))
 const assetToast = ref({
   visible: false,
   message: '',
@@ -108,11 +111,11 @@ function actionActive(a) {
 const subAccounts = FRONT_ASSET_OVERVIEW.subAccounts
 
 const masked = computed(() => hideBalance.value)
-const demoAssetClaimLimit = computed(() => FRONT_DEMO_ACCOUNT_ASSET_CONFIG.monthlyClaimLimit)
+const demoAssetClaimLimit = computed(() => demoAssetConfig.value.monthlyClaimLimit)
 const demoAssetClaimedCount = ref(0)
-const demoClaimedUsd = computed(() => demoAssetClaimedCount.value * FRONT_DEMO_ACCOUNT_ASSET_CONFIG.claimAmountUsd)
+const demoClaimedUsd = computed(() => demoAssetClaimedCount.value * demoAssetConfig.value.claimAmountUsd)
 const demoClaimAmountText = computed(() => (
-  `${formatFrontUsdAmount(FRONT_DEMO_ACCOUNT_ASSET_CONFIG.claimAmountUsd)} ${FRONT_DEMO_ACCOUNT_ASSET_CONFIG.currency}`
+  `${formatFrontUsdAmount(demoAssetConfig.value.claimAmountUsd)} ${demoAssetConfig.value.currency}`
 ))
 const accountModeBadgeClass = computed(() => (
   accountMode.value === 'demo'
@@ -146,6 +149,23 @@ function readDemoAssetClaimedCount() {
 function writeDemoAssetClaimedCount(value) {
   if (typeof localStorage === 'undefined') return
   localStorage.setItem(demoAssetClaimStorageKey(), String(value))
+}
+
+async function loadDemoAssetConfig() {
+  try {
+    const result = await siteConfigApi.getSiteConfig()
+    if (result.success) {
+      demoAssetConfig.value = normalizeFrontDemoAccountAssetConfig(result.data?.demoAccountAsset)
+    }
+  } catch {
+    demoAssetConfig.value = normalizeFrontDemoAccountAssetConfig(FRONT_DEMO_ACCOUNT_ASSET_CONFIG)
+  }
+}
+
+function refreshDemoAssetConfigFromStorage(event) {
+  if (!event || event.key === SITE_CONFIG_STORAGE_KEY) {
+    loadDemoAssetConfig()
+  }
 }
 
 function showAssetToast(message, severity = 'success') {
@@ -196,13 +216,18 @@ function runAssetAction(action) {
 }
 
 onMounted(() => {
+  loadDemoAssetConfig()
   demoAssetClaimedCount.value = readDemoAssetClaimedCount()
+  window.addEventListener('admin-site-config-updated', loadDemoAssetConfig)
+  window.addEventListener('storage', refreshDemoAssetConfigFromStorage)
 })
 
 onUnmounted(() => {
   if (assetToastTimer) {
     clearTimeout(assetToastTimer)
   }
+  window.removeEventListener('admin-site-config-updated', loadDemoAssetConfig)
+  window.removeEventListener('storage', refreshDemoAssetConfigFromStorage)
 })
 
 function toggleEye() {
@@ -254,7 +279,7 @@ const actionPillOff =
               :class="accountModeBadgeClass"
               aria-label="当前账户类型"
             >
-              当前：{{ accountModeLabel }}
+              {{ accountModeLabel }}
             </span>
           </div>
           <p class="mt-3 font-mono text-[1.625rem] font-medium leading-none tracking-tight text-white">
@@ -340,7 +365,7 @@ const actionPillOff =
                 :class="accountModeBadgeClass"
                 aria-label="当前账户类型"
               >
-                当前：{{ accountModeLabel }}
+                {{ accountModeLabel }}
               </span>
             </div>
             <p class="mt-3 font-mono text-2xl font-medium tracking-tight text-white md:text-3xl">

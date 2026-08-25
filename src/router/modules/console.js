@@ -20,6 +20,15 @@ export const consoleRoutes = [
     }
   },
   {
+    path: 'platform/demo-account-config',
+    name: 'platform-demo-account-config',
+    component: () => import('../../pages/admin/platform/DemoAccountConfigPage.vue'),
+    meta: {
+      title: '平台配置 / 模拟账户配置',
+      desc: '配置前台模拟账户获取资金金额与月度次数限制。'
+    }
+  },
+  {
     path: 'customer-service/workbench',
     name: 'customer-service-workbench',
     component: () => import('../../pages/admin/customer-service/CustomerServiceWorkbenchPage.vue'),
@@ -611,7 +620,7 @@ export const consoleRoutes = [
     name: 'system-site-config',
     component: () => import('../../pages/admin/system/SiteConfigPage.vue'),
     meta: {
-      title: '系统设置 / 站点配置',
+      title: '平台配置 / 站点配置',
       desc: '维护站点名称、Logo 等品牌展示信息。'
     }
   },
@@ -620,7 +629,7 @@ export const consoleRoutes = [
     name: 'system-social-links',
     component: () => import('../../pages/admin/system/SocialLinksPage.vue'),
     meta: {
-      title: '系统设置 / 社媒配置',
+      title: '平台配置 / 社媒配置',
       desc: '维护前台展示的国内外社媒链接。'
     }
   },
@@ -629,7 +638,7 @@ export const consoleRoutes = [
     name: 'system-content-pages',
     component: () => import('../../pages/admin/system/ContentPagesPage.vue'),
     meta: {
-      title: '系统设置 / 内容页配置',
+      title: '平台配置 / 内容页配置',
       desc: '维护前台关于、公司资质与白皮书页面内容。'
     }
   },
@@ -638,7 +647,7 @@ export const consoleRoutes = [
     name: 'system-announcements',
     component: () => import('../../pages/admin/system/AnnouncementsPage.vue'),
     meta: {
-      title: '系统设置 / 站内公告',
+      title: '平台配置 / 站内公告',
       desc: '发布前台右上角公告中心展示的系统公告。'
     }
   },
@@ -647,7 +656,7 @@ export const consoleRoutes = [
     name: 'system-front-news',
     component: () => import('../../pages/admin/system/NewsManagementPage.vue'),
     meta: {
-      title: '系统设置 / 新闻资讯',
+      title: '平台配置 / 新闻资讯',
       desc: '维护前台首页底部新闻模块与新闻资讯页面内容。'
     }
   },
@@ -674,7 +683,7 @@ export const consoleRoutes = [
     name: 'system-voice-alerts',
     component: () => import('../../pages/admin/system/VoiceAlertSettingsPage.vue'),
     meta: {
-      title: '系统设置 / 语音提醒',
+      title: '平台配置 / 语音提醒',
       desc: '配置后台提示音总开关与各业务事件声音开关。'
     }
   },
@@ -683,7 +692,7 @@ export const consoleRoutes = [
     name: 'system-locale-settings',
     component: () => import('../../pages/admin/system/LocaleSettingsPage.vue'),
     meta: {
-      title: '系统设置 / 语言与区号',
+      title: '平台配置 / 语言与区号',
       desc: '配置前台可选语言、默认语言与手机国际区号。'
     }
   },

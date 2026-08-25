@@ -1,15 +1,20 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { getLocalizedFrontNewsList } from '../../admin/mock/frontNews'
 import { getSiteConfigSnapshot, SITE_CONFIG_STORAGE_KEY } from '../../admin/mock/siteConfig'
 import { resolveFrontLocalePreference, useFrontSiteI18n } from '../../composables/useFrontSiteI18n'
 import { getFrontTradeDefaultPath } from '../../constants/frontNav'
+import { useFrontAuthStore } from '../../stores/frontAuth'
 
 const prefix = '/front'
 const tradeDefault = getFrontTradeDefaultPath(prefix)
+const frontAuth = useFrontAuthStore()
+const { isLoggedIn, accountMode } = storeToRefs(frontAuth)
 const siteConfig = ref(getSiteConfigSnapshot())
 const currentLocale = ref(resolveFrontLocalePreference())
 const { defaultLocale } = useFrontSiteI18n()
+const showFinanceEntry = computed(() => !isLoggedIn.value || accountMode.value !== 'demo')
 
 const socialLinks = computed(() =>
   (siteConfig.value.socialLinks || [])
@@ -50,7 +55,7 @@ onUnmounted(() => {
 const brandValues = ['安全稳定', '专业撮合', '快捷下单', '透明费率']
 
 /** 双入口：深色面板 + 青柠点缀 */
-const controlCards = [
+const allControlCards = [
   {
     title: '高效交易执行',
     desc: '全链路加密传输与风控校验，委托与成交状态实时可查，降低异常滑点担忧。',
@@ -70,6 +75,9 @@ const controlCards = [
     icon: 'chart'
   }
 ]
+const controlCards = computed(() => (
+  allControlCards.filter((card) => showFinanceEntry.value || card.to !== `${prefix}/finance`)
+))
 
 /** 交易优势：深底 + 淡化序号 */
 const advantageCards = [
@@ -134,7 +142,7 @@ const secondaryNews = computed(() => homeNewsItems.value.slice(1))
 
 const footerYear = new Date().getFullYear()
 
-const footerColumns = [
+const allFooterColumns = [
   {
     title: '交易',
     links: [
@@ -180,6 +188,9 @@ const footerColumns = [
     ]
   }
 ]
+const footerColumns = computed(() => (
+  allFooterColumns.filter((col) => showFinanceEntry.value || col.title !== '金融')
+))
 </script>
 
 <template>
