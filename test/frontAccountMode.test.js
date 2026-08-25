@@ -2,6 +2,10 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createPinia, setActivePinia } from 'pinia'
 import { useFrontAuthStore } from '../src/stores/frontAuth.js'
+import {
+  FRONT_DEMO_ACCOUNT_ASSET_CONFIG,
+  frontDemoAssetClaimMonthKey
+} from '../src/constants/frontAssetCenterDemo.js'
 
 function installStorage(name) {
   const data = new Map()
@@ -39,4 +43,11 @@ test('front account mode defaults to demo and persists confirmed switches', () =
   assert.equal(JSON.parse(localData.get('fex-front-session-v1')).accountMode, 'real')
 
   assert.throws(() => restored.setAccountMode('paper'), /账户模式无效/)
+})
+
+test('front demo account asset claim mock exposes monthly limit config', () => {
+  assert.equal(FRONT_DEMO_ACCOUNT_ASSET_CONFIG.monthlyClaimLimit, 3)
+  assert.equal(FRONT_DEMO_ACCOUNT_ASSET_CONFIG.claimAmountUsd, 500000)
+  assert.equal(FRONT_DEMO_ACCOUNT_ASSET_CONFIG.currency, 'USDT')
+  assert.equal(frontDemoAssetClaimMonthKey(new Date('2026-08-25T00:00:00Z')), '2026-08')
 })

@@ -185,6 +185,19 @@ export function demoTransferAvailable(accountValue, symbol) {
   return formatFrontAssetAmount(bucket[symbol] ?? '0', symbol)
 }
 
+/** 模拟账户领取资产配置；当前为后台配置 mock，对接后替换为接口返回 */
+export const FRONT_DEMO_ACCOUNT_ASSET_CONFIG = {
+  monthlyClaimLimit: 3,
+  claimAmountUsd: 500000,
+  currency: 'USDT'
+}
+
+export function frontDemoAssetClaimMonthKey(date = new Date()) {
+  const d = date instanceof Date ? date : new Date(date)
+  if (Number.isNaN(d.getTime())) return 'unknown-month'
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
 function sumUsdForAccount(accountValue) {
   const bucket = TRANSFER_BALANCE_DEMO[accountValue] || {}
   return FRONT_ASSET_COIN_META.reduce(
