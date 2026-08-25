@@ -3,6 +3,22 @@ import { defineStore } from 'pinia'
 const SESSION_KEY = 'fex-front-session-v1'
 const USERS_KEY = 'fex-front-users-v1'
 
+export const FRONT_ACCOUNT_MODE = {
+  DEMO: 'demo',
+  REAL: 'real'
+}
+
+export const FRONT_ACCOUNT_MODE_LABELS = {
+  [FRONT_ACCOUNT_MODE.DEMO]: '模拟账户',
+  [FRONT_ACCOUNT_MODE.REAL]: '正式账户'
+}
+
+function normalizeAccountMode(value) {
+  return Object.hasOwn(FRONT_ACCOUNT_MODE_LABELS, value)
+    ? value
+    : FRONT_ACCOUNT_MODE.DEMO
+}
+
 /**
  * 内置演示账号（仅本地 mock）。每次恢复会话前会合并进用户表，无需先注册即可登录。
  * 对接真实接口后可整段删除。
@@ -128,10 +144,16 @@ export const useFrontAuthStore = defineStore('frontAuth', {
     email: null,
     nickname: null,
     token: null,
+    accountMode: FRONT_ACCOUNT_MODE.DEMO,
     _ready: false
   }),
   getters: {
-    isLoggedIn: (s) => Boolean(s.token)
+    isLoggedIn: (s) => Boolean(s.token),
+    accountModeLabel: (s) => FRONT_ACCOUNT_MODE_LABELS[s.accountMode] || FRONT_ACCOUNT_MODE_LABELS[FRONT_ACCOUNT_MODE.DEMO],
+    nextAccountMode: (s) => s.accountMode === FRONT_ACCOUNT_MODE.DEMO ? FRONT_ACCOUNT_MODE.REAL : FRONT_ACCOUNT_MODE.DEMO,
+    nextAccountModeLabel() {
+      return FRONT_ACCOUNT_MODE_LABELS[this.nextAccountMode]
+    }
   },
   actions: {
     ensureHydrated() {
@@ -142,6 +164,7 @@ export const useFrontAuthStore = defineStore('frontAuth', {
         this.email = data.email
         this.nickname = data.nickname ?? null
         this.token = data.token
+        this.accountMode = normalizeAccountMode(data.accountMode)
       }
       this._ready = true
     },
@@ -152,9 +175,17 @@ export const useFrontAuthStore = defineStore('frontAuth', {
         JSON.stringify({
           email: this.email,
           nickname: this.nickname,
-          token: this.token
+          token: this.token,
+          accountMode: normalizeAccountMode(this.accountMode)
         })
       )
+    },
+    setAccountMode(mode) {
+      if (!Object.hasOwn(FRONT_ACCOUNT_MODE_LABELS, mode)) {
+        throw new Error('账户模式无效')
+      }
+      this.accountMode = mode
+      this.persistSession()
     },
     login(email, password) {
       mergeDemoUsersIntoStorage()
@@ -309,6 +340,7 @@ export const useFrontAuthStore = defineStore('frontAuth', {
       this.email = null
       this.nickname = null
       this.token = null
+      this.accountMode = FRONT_ACCOUNT_MODE.DEMO
       if (typeof localStorage !== 'undefined') {
         localStorage.removeItem(SESSION_KEY)
       }

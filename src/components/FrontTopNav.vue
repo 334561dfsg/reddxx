@@ -38,7 +38,15 @@ const emit = defineEmits(['mobile-open-change', 'update:mobileDrawerOpen'])
 const route = useRoute()
 const router = useRouter()
 const frontAuth = useFrontAuthStore()
-const { isLoggedIn, email: authEmail, nickname: authNickname } = storeToRefs(frontAuth)
+const {
+  isLoggedIn,
+  email: authEmail,
+  nickname: authNickname,
+  accountMode,
+  accountModeLabel,
+  nextAccountMode,
+  nextAccountModeLabel
+} = storeToRefs(frontAuth)
 
 const authDisplay = computed(() => {
   const n = authNickname.value
@@ -61,6 +69,7 @@ const financeOpen = ref(false)
 const langOpen = ref(false)
 const downloadOpen = ref(false)
 const accountOpen = ref(false)
+const accountSwitchDialogOpen = ref(false)
 const mobileOpen = ref(false)
 /** 移动端：主抽屉内点「语言」后从底部弹出的语言选择层 */
 const mobileLangSheetOpen = ref(false)
@@ -72,6 +81,9 @@ const mobileLangSheetRef = ref(null)
 const searchOpen = ref(false)
 const searchQuery = ref('')
 const searchPanelRef = ref(null)
+const accountSwitchDialogRef = ref(null)
+const accountSwitchCancelRef = ref(null)
+const accountSwitchTriggerRef = ref(null)
 
 function isImageIcon(icon) {
   const s = String(icon || '').trim()
@@ -79,7 +91,6 @@ function isImageIcon(icon) {
 }
 
 let downloadLeaveTimer = null
-let accountLeaveTimer = null
 
 const mainLinks = computed(() => getFrontMainNavLinks(props.prefix))
 /** 主导航中位于「交易 / 金融」之前的链接（首页、行情） */
@@ -386,36 +397,35 @@ function onDownloadMouseLeave() {
   }, 200)
 }
 
-function onAccountMouseEnter() {
-  if (accountLeaveTimer) {
-    clearTimeout(accountLeaveTimer)
-    accountLeaveTimer = null
-  }
-  accountOpen.value = true
-  tradeOpen.value = false
-  financeOpen.value = false
-  langOpen.value = false
-  downloadOpen.value = false
-  searchOpen.value = false
-}
-
-function onAccountMouseLeave() {
-  accountLeaveTimer = setTimeout(() => {
-    accountOpen.value = false
-    accountLeaveTimer = null
-  }, 180)
-}
-
-const accountName = computed(() => authDisplay.value || 'wallet_lee48cql')
+const accountName = computed(() => authDisplay.value || 'wallet_1ee48ca1')
 const accountId = computed(() => {
   const raw = authEmail.value || authNickname.value || 'front-demo-user'
   let hash = 0
   for (let i = 0; i < raw.length; i += 1) {
     hash = (hash * 31 + raw.charCodeAt(i)) >>> 0
   }
-  return `ID:${String(hash % 100000).padStart(5, '0')}`
+  return `ID:${hash % 1000}`
 })
-const accountTotalAssets = computed(() => '0.00 USDT')
+const accountCreditScore = computed(() => '2100')
+const accountAssetSummary = [
+  { key: 'spot', label: '币币', value: '167.03' },
+  { key: 'perpetual', label: '永续合约', value: '93295.75' },
+  { key: 'delivery', label: '交割合约', value: '460.29' },
+  { key: 'finance', label: '理财', value: '0.00' }
+]
+const accountTotalAssets = computed(() => '93923.07 USDT')
+const accountModeToneClass = computed(() => (
+  accountMode.value === 'demo'
+    ? 'border-amber-300/35 bg-amber-300/10 text-amber-100'
+    : 'border-lime-300/35 bg-lime-300/10 text-lime-100'
+))
+const accountSwitchTitle = computed(() => `切换为${nextAccountModeLabel.value}？`)
+const accountSwitchDescription = computed(() => (
+  nextAccountMode.value === 'real'
+    ? '切换后资产、订单、持仓和交易页面将按正式账户展示，请确认后再进行真实资金操作。'
+    : '切换后资产、订单、持仓和交易页面将按模拟账户展示，可用于虚拟资金演练。'
+))
+const accountSwitchActionLabel = computed(() => `确认切换为${nextAccountModeLabel.value}`)
 
 const accountPrimaryLinks = computed(() => [
   { key: 'personal', label: '个人中心', to: `${props.prefix}/personal-center` },
@@ -453,6 +463,72 @@ function clearFrontCache() {
     caches.keys().then((keys) => keys.forEach((key) => caches.delete(key))).catch(() => {})
   }
   closeOverlays()
+}
+
+function openAccountSwitchDialog(ev) {
+  accountSwitchTriggerRef.value = ev?.currentTarget || null
+  accountOpen.value = false
+  mobileOpen.value = false
+  accountSwitchDialogOpen.value = true
+  nextTick(() => {
+    accountSwitchCancelRef.value?.focus?.()
+  })
+}
+
+function toggleAccountMenu() {
+  const next = !accountOpen.value
+  accountOpen.value = next
+  if (next) {
+    tradeOpen.value = false
+    financeOpen.value = false
+    langOpen.value = false
+    downloadOpen.value = false
+    searchOpen.value = false
+  }
+}
+
+function closeAccountSwitchDialog() {
+  accountSwitchDialogOpen.value = false
+  nextTick(() => {
+    const target = accountSwitchTriggerRef.value
+    if (target && target.isConnected !== false && typeof target.focus === 'function') {
+      target.focus()
+    }
+    accountSwitchTriggerRef.value = null
+  })
+}
+
+function confirmAccountSwitch() {
+  frontAuth.setAccountMode(nextAccountMode.value)
+  closeAccountSwitchDialog()
+}
+
+function focusableAccountSwitchControls() {
+  const root = accountSwitchDialogRef.value
+  if (!root) return []
+  return Array.from(root.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+    .filter((node) => !node.disabled && !node.hidden && node.getAttribute('aria-hidden') !== 'true')
+}
+
+function onAccountSwitchDialogKeydown(ev) {
+  if (ev.key === 'Escape') {
+    ev.preventDefault()
+    ev.stopPropagation()
+    closeAccountSwitchDialog()
+    return
+  }
+  if (ev.key !== 'Tab') return
+  const controls = focusableAccountSwitchControls()
+  if (!controls.length) return
+  const first = controls[0]
+  const last = controls[controls.length - 1]
+  if (ev.shiftKey && document.activeElement === first) {
+    ev.preventDefault()
+    last.focus()
+  } else if (!ev.shiftKey && document.activeElement === last) {
+    ev.preventDefault()
+    first.focus()
+  }
 }
 
 /** 演示：App 下载页链接（二维码内容） */
@@ -556,6 +632,7 @@ function closeOverlays() {
   langOpen.value = false
   downloadOpen.value = false
   accountOpen.value = false
+  accountSwitchDialogOpen.value = false
   searchOpen.value = false
   mobileOpen.value = false
   mobileLangSheetOpen.value = false
@@ -595,6 +672,7 @@ function closeIfDesktopBreakpoint() {
     langOpen.value = false
     downloadOpen.value = false
     accountOpen.value = false
+    accountSwitchDialogOpen.value = false
     searchOpen.value = false
   }
 }
@@ -636,6 +714,7 @@ onMounted(() => {
 })
 
 function onDocPointerDown(ev) {
+  if (accountSwitchDialogOpen.value) return
   if (navRoot.value?.contains(ev.target)) return
   if (mobileDrawerRef.value?.contains(ev.target)) return
   if (mobileLangSheetRef.value?.contains(ev.target)) return
@@ -660,6 +739,7 @@ const anyPanelOpen = computed(
     langOpen.value ||
     downloadOpen.value ||
     accountOpen.value ||
+    accountSwitchDialogOpen.value ||
     searchOpen.value ||
     mobileOpen.value ||
     mobileLangSheetOpen.value
@@ -667,6 +747,11 @@ const anyPanelOpen = computed(
 
 function onEscape(ev) {
   if (ev.key !== 'Escape') return
+  if (accountSwitchDialogOpen.value) {
+    ev.preventDefault()
+    closeAccountSwitchDialog()
+    return
+  }
   if (mobileLangSheetOpen.value) {
     mobileLangSheetOpen.value = false
     return
@@ -702,20 +787,25 @@ watch(mobileOpen, (open) => {
     searchOpen.value = false
   } else {
     mobileLangSheetOpen.value = false
-    if (!searchOpen.value) document.body.style.overflow = ''
+    if (!searchOpen.value && !accountSwitchDialogOpen.value) document.body.style.overflow = ''
   }
 })
 
 watch(searchOpen, (open) => {
   if (typeof document === 'undefined') return
   if (open && !mobileOpen.value) document.body.style.overflow = 'hidden'
-  if (!open && !mobileOpen.value) document.body.style.overflow = ''
+  if (!open && !mobileOpen.value && !accountSwitchDialogOpen.value) document.body.style.overflow = ''
   if (!open) searchQuery.value = ''
+})
+
+watch(accountSwitchDialogOpen, (open) => {
+  if (typeof document === 'undefined') return
+  if (open) document.body.style.overflow = 'hidden'
+  if (!open && !mobileOpen.value && !searchOpen.value) document.body.style.overflow = ''
 })
 
 onUnmounted(() => {
   if (downloadLeaveTimer) clearTimeout(downloadLeaveTimer)
-  if (accountLeaveTimer) clearTimeout(accountLeaveTimer)
   removeMediaListener()
   document.removeEventListener('pointerdown', onDocPointerDown, true)
   window.removeEventListener('keydown', onEscape)
@@ -1236,18 +1326,17 @@ function drawerRowClass(item) {
           </RouterLink>
           <div
             class="relative hidden lg:block"
-            @mouseenter="onAccountMouseEnter"
-            @mouseleave="onAccountMouseLeave"
           >
             <button
               type="button"
-              class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#1f2429] text-[#eaecef] transition hover:bg-[#3f4652] hover:text-lime-300"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#1f2429] text-[#eaecef] transition hover:bg-[#3f4652] hover:text-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/45"
               :class="accountOpen || isPersonalCenterNavActive() ? 'bg-[#3f4652] text-white' : ''"
               :title="authEmail || undefined"
               aria-label="账户菜单"
               aria-haspopup="true"
               :aria-expanded="accountOpen"
               aria-controls="front-account-panel"
+              @click="toggleAccountMenu"
             >
               <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path
@@ -1274,68 +1363,79 @@ function drawerRowClass(item) {
               <div
                 v-show="accountOpen"
                 id="front-account-panel"
-                class="absolute right-0 top-full z-40 w-[13.75rem] pt-2"
+                class="absolute right-0 top-full z-40 w-[19rem] max-w-[calc(100vw-1rem)] pt-2"
                 role="menu"
-                @mouseenter="onAccountMouseEnter"
-                @mouseleave="onAccountMouseLeave"
               >
-                <div class="overflow-hidden rounded-xl border border-white/[0.08] bg-[#24242e] py-3 shadow-2xl shadow-black/55">
-                  <div class="flex items-center gap-3 px-4">
-                    <div class="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-orange-300 to-orange-600 text-sm font-bold text-white">
-                      {{ accountName.slice(0, 1).toUpperCase() }}
-                    </div>
-                    <div class="min-w-0">
-                      <p class="truncate text-sm font-semibold text-white" :title="accountName">{{ accountName }}</p>
-                      <div class="mt-0.5 flex items-center gap-1.5 text-xs text-white/55">
-                        <span>{{ accountId }}</span>
-                        <svg class="h-3.5 w-3.5 text-cyan-300" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path
-                            d="M9 9h10v10H9V9Z"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                          />
-                          <path
-                            d="M5 15V5h10"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
+                <div class="max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain rounded-xl border border-white/[0.08] bg-[#24242e] shadow-2xl shadow-black/55">
+                  <div class="px-5 pb-4 pt-5">
+                    <div class="flex items-center gap-3">
+                      <div class="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full border border-white/20 bg-gradient-to-br from-lime-200 via-cyan-200 to-violet-300 text-[16px] font-bold text-[#252733]">
+                        {{ accountName.slice(0, 1).toUpperCase() }}
+                      </div>
+                      <div class="min-w-0">
+                        <div class="flex min-w-0 items-center gap-2">
+                          <p class="truncate text-[16px] font-semibold leading-tight text-white" :title="accountName">{{ accountName }}</p>
+                          <span
+                            class="inline-flex shrink-0 rounded-md border px-1.5 py-0.5 text-[11px] font-semibold leading-4"
+                            :class="accountModeToneClass"
+                          >
+                            {{ accountModeLabel }}
+                          </span>
+                        </div>
+                        <div class="mt-1.5 flex items-center gap-1.5 text-[13px] leading-none text-white/55">
+                          <span>{{ accountId }}</span>
+                          <svg class="h-4 w-4 text-cyan-300" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path
+                              d="M9 9h10v10H9V9Z"
+                              stroke="currentColor"
+                              stroke-width="1.7"
+                            />
+                            <path
+                              d="M5 15V5h10"
+                              stroke="currentColor"
+                              stroke-width="1.7"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div class="mx-4 mt-3 rounded-md border border-indigo-400/30 bg-[#27243a] py-1.5 text-center text-xs font-medium text-white/85">
-                    信用分 10
-                  </div>
-                  <div class="mx-4 mt-2 rounded-md border border-white/[0.08] bg-black/15 px-3 py-2">
-                    <div class="flex items-center justify-between gap-3">
-                      <span class="text-xs text-white/50">资产总额</span>
-                      <span class="font-mono text-xs font-semibold text-lime-200">{{ accountTotalAssets }}</span>
+                    <div class="mt-4 rounded-lg border border-indigo-400/30 bg-[#27243a] py-2 text-center text-[16px] font-medium leading-none text-white/90">
+                      信用分&nbsp;&nbsp;{{ accountCreditScore }}
                     </div>
                   </div>
 
-                  <div class="mt-3 py-1">
+                  <div class="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-white/[0.06] px-5 py-5">
+                    <div v-for="item in accountAssetSummary" :key="item.key" class="min-w-0">
+                      <p class="text-[13px] leading-none text-white/45">{{ item.label }}</p>
+                      <p class="mt-2 truncate font-mono text-[18px] font-medium leading-none text-white">
+                        {{ item.value }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="border-t border-white/[0.06] py-2">
                     <RouterLink
                       v-for="item in accountPrimaryLinks"
                       :key="item.key"
                       :to="item.to"
                       role="menuitem"
-                      class="block px-4 py-2.5 text-sm text-white/85 transition hover:bg-white/[0.06] hover:text-white"
+                      class="block px-5 py-2.5 text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
                       @click="accountOpen = false"
                     >
                       {{ item.label }}
                     </RouterLink>
                   </div>
 
-                  <div class="border-t border-white/[0.06] py-1">
+                  <div class="border-t border-white/[0.06] py-2">
                     <button
                       v-for="item in accountInfoItems"
                       :key="item.key"
                       type="button"
                       role="menuitem"
-                      class="block w-full px-4 py-2.5 text-left text-sm text-white/85 transition hover:bg-white/[0.06] hover:text-white"
+                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
                       @click="accountOpen = false"
                     >
                       {{ item.label }}
@@ -1346,18 +1446,26 @@ function drawerRowClass(item) {
                     <button
                       type="button"
                       role="menuitem"
-                      class="block w-full px-4 py-2.5 text-left text-sm text-white/85 transition hover:bg-white/[0.06] hover:text-white"
+                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                      @click="openAccountSwitchDialog"
+                    >
+                      切换为{{ nextAccountModeLabel }}
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
                       @click="clearFrontCache"
                     >
                       清除缓存
                     </button>
                   </div>
 
-                  <div class="border-t border-white/[0.06] pt-1">
+                  <div class="border-t border-white/[0.06] py-1">
                     <button
                       type="button"
                       role="menuitem"
-                      class="block w-full px-4 py-2.5 text-left text-sm text-white/85 transition hover:bg-white/[0.06] hover:text-white"
+                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
                       @click="logoutFront"
                     >
                       退出登录
@@ -1486,9 +1594,17 @@ function drawerRowClass(item) {
                 class="mt-1 space-y-2 rounded-xl border border-white/[0.06] bg-black/25 px-3 py-2.5"
               >
                 <template v-if="isLoggedIn">
-                  <p class="text-[10px] font-medium uppercase tracking-wider text-lime-400/75">
-                    当前账号
-                  </p>
+                  <div class="flex items-center justify-between gap-2">
+                    <p class="text-[10px] font-medium uppercase tracking-wider text-lime-400/75">
+                      当前账号
+                    </p>
+                    <span
+                      class="inline-flex min-w-0 shrink-0 items-center rounded-md border px-2 py-0.5 text-[11px] font-semibold leading-5"
+                      :class="accountModeToneClass"
+                    >
+                      当前：{{ accountModeLabel }}
+                    </span>
+                  </div>
                   <p
                     class="mt-0.5 truncate text-sm font-medium text-white/90"
                     :title="authEmail || undefined"
@@ -1687,6 +1803,32 @@ function drawerRowClass(item) {
                     </span>
                     <span class="min-w-0 truncate text-current">{{ item.label }}</span>
                   </RouterLink>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    :class="drawerRowClass({ key: 'account-switch', to: '' })"
+                    @click="openAccountSwitchDialog"
+                  >
+                    <span
+                      class="drawer-nav-icon flex h-7 w-7 shrink-0 items-center justify-center text-lime-400/65"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        class="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.65"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M7 7h10l-2.6-2.6" />
+                        <path d="M17 17H7l2.6 2.6" />
+                        <path d="M17 7 7 17" />
+                      </svg>
+                    </span>
+                    <span class="min-w-0 truncate text-current">切换为{{ nextAccountModeLabel }}</span>
+                  </button>
                 </div>
               </template>
             </nav>
@@ -1853,6 +1995,77 @@ function drawerRowClass(item) {
     </Teleport>
 
     <Teleport to="body">
+      <Transition name="front-account-switch-dialog">
+        <div
+          v-if="accountSwitchDialogOpen"
+          class="front-account-switch-overlay fixed inset-0 z-[120] flex items-start justify-center overflow-hidden bg-black/60 p-4 pt-[max(4rem,env(safe-area-inset-top))] backdrop-blur-[1px] sm:items-center sm:pt-4"
+          role="presentation"
+        >
+          <div
+            ref="accountSwitchDialogRef"
+            class="front-account-switch-panel relative flex max-h-[min(88vh,28rem)] w-full max-w-sm flex-col overflow-hidden rounded-xl border border-white/[0.1] bg-[#181923] shadow-2xl shadow-black/65"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="front-account-switch-title"
+            @click.stop
+            @keydown="onAccountSwitchDialogKeydown"
+          >
+            <div class="shrink-0 border-b border-white/[0.06] px-5 py-4 pr-14">
+              <h2 id="front-account-switch-title" class="text-base font-semibold leading-snug text-white">
+                {{ accountSwitchTitle }}
+              </h2>
+              <button
+                type="button"
+                class="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-lg text-white/50 transition hover:bg-white/[0.07] hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                aria-label="关闭"
+                @click="closeAccountSwitchDialog"
+              >
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="m6 6 12 12M18 6 6 18"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+              <div
+                class="mb-3 inline-flex rounded-md border px-2.5 py-1 text-xs font-semibold"
+                :class="accountModeToneClass"
+              >
+                当前：{{ accountModeLabel }}
+              </div>
+              <p class="text-sm leading-6 text-white/75">
+                {{ accountSwitchDescription }}
+              </p>
+            </div>
+
+            <div class="flex shrink-0 justify-end gap-2 border-t border-white/[0.06] px-5 py-4">
+              <button
+                ref="accountSwitchCancelRef"
+                type="button"
+                class="inline-flex min-h-[2.5rem] items-center justify-center rounded-lg border border-white/[0.12] px-4 text-sm font-medium text-white/75 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                @click="closeAccountSwitchDialog"
+              >
+                取消切换
+              </button>
+              <button
+                type="button"
+                class="inline-flex min-h-[2.5rem] items-center justify-center rounded-lg bg-lime-400 px-4 text-sm font-semibold text-[#11150d] transition hover:bg-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-200 focus-visible:ring-offset-2 focus-visible:ring-offset-[#181923]"
+                @click="confirmAccountSwitch"
+              >
+                {{ accountSwitchActionLabel }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <Teleport to="body">
       <Transition name="front-search-modal">
         <div
           v-if="searchOpen"
@@ -1983,6 +2196,10 @@ function drawerRowClass(item) {
   .front-lang-sheet-leave-active,
   .front-lang-sheet-enter-active .front-lang-sheet-panel,
   .front-lang-sheet-leave-active .front-lang-sheet-panel,
+  .front-account-switch-dialog-enter-active,
+  .front-account-switch-dialog-leave-active,
+  .front-account-switch-dialog-enter-active .front-account-switch-panel,
+  .front-account-switch-dialog-leave-active .front-account-switch-panel,
   .front-search-modal-enter-active,
   .front-search-modal-leave-active,
   .front-search-modal-enter-active .front-search-modal-panel,
@@ -2019,6 +2236,37 @@ function drawerRowClass(item) {
 .front-lang-sheet-enter-from .front-lang-sheet-panel,
 .front-lang-sheet-leave-to .front-lang-sheet-panel {
   transform: translateY(100%);
+}
+
+.front-account-switch-dialog-enter-active {
+  transition: opacity 0.2s ease-out;
+}
+
+.front-account-switch-dialog-leave-active {
+  transition: opacity 0.15s ease-in;
+}
+
+.front-account-switch-dialog-enter-active .front-account-switch-panel {
+  transition:
+    transform 0.2s ease-out,
+    opacity 0.2s ease-out;
+}
+
+.front-account-switch-dialog-leave-active .front-account-switch-panel {
+  transition:
+    transform 0.15s ease-in,
+    opacity 0.15s ease-in;
+}
+
+.front-account-switch-dialog-enter-from,
+.front-account-switch-dialog-leave-to {
+  opacity: 0;
+}
+
+.front-account-switch-dialog-enter-from .front-account-switch-panel,
+.front-account-switch-dialog-leave-to .front-account-switch-panel {
+  opacity: 0;
+  transform: scale(0.96);
 }
 
 .front-search-modal-enter-active,
@@ -2093,5 +2341,19 @@ function drawerRowClass(item) {
 
 .front-nav-scroll-pill::-webkit-scrollbar-thumb:active {
   background-color: rgba(163, 230, 53, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .front-account-switch-dialog-enter-active,
+  .front-account-switch-dialog-leave-active,
+  .front-account-switch-dialog-enter-active .front-account-switch-panel,
+  .front-account-switch-dialog-leave-active .front-account-switch-panel {
+    transition: none;
+  }
+
+  .front-account-switch-dialog-enter-from .front-account-switch-panel,
+  .front-account-switch-dialog-leave-to .front-account-switch-panel {
+    transform: none;
+  }
 }
 </style>
