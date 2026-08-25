@@ -1,5 +1,6 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import {
   TRADE_ASSET_CLASS_KEYS,
@@ -20,10 +21,14 @@ import {
   frontSheetPanelShellClass
 } from '../../constants/frontBottomSheet'
 import { useRequireFrontAuth } from '../../composables/useRequireFrontAuth'
+import { useFrontAuthStore } from '../../stores/frontAuth'
 
 const route = useRoute()
 const router = useRouter()
 const { requireAuth } = useRequireFrontAuth()
+const frontAuth = useFrontAuthStore()
+const { accountMode, accountModeLabel } = storeToRefs(frontAuth)
+const showDemoAccountBadge = computed(() => accountMode.value === 'demo')
 
 const prefix = computed(() => {
   const p = route.path
@@ -2692,6 +2697,13 @@ onUnmounted(() => {
       <div
         class="sticky top-14 z-20 border-b border-white/[0.04] bg-black/95 px-2.5 py-2 backdrop-blur-sm supports-[backdrop-filter]:bg-black/90"
       >
+        <div
+          v-if="showDemoAccountBadge"
+          class="mb-2 flex h-10 items-center justify-center rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 text-sm font-semibold leading-none text-amber-100"
+          aria-label="当前账户类型：模拟账户"
+        >
+          {{ accountModeLabel }}
+        </div>
         <div class="flex items-stretch gap-2">
           <button
             type="button"

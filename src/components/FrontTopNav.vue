@@ -2014,7 +2014,7 @@ function drawerRowClass(item) {
       <Transition name="front-account-switch-dialog">
         <div
           v-if="accountSwitchDialogOpen"
-          class="front-account-switch-overlay fixed inset-0 z-[120] flex items-start justify-center overflow-hidden bg-black/60 p-4 pt-[max(4rem,env(safe-area-inset-top))] backdrop-blur-[1px] sm:items-center sm:pt-4"
+          class="front-account-switch-overlay fixed inset-0 z-[120] flex items-end justify-center overflow-hidden bg-black/60 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur-[1px] sm:items-center sm:pb-4"
           role="presentation"
         >
           <div
@@ -2282,7 +2282,14 @@ function drawerRowClass(item) {
 .front-account-switch-dialog-enter-from .front-account-switch-panel,
 .front-account-switch-dialog-leave-to .front-account-switch-panel {
   opacity: 0;
-  transform: scale(0.96);
+  transform: translateY(100%);
+}
+
+@media (min-width: 640px) {
+  .front-account-switch-dialog-enter-from .front-account-switch-panel,
+  .front-account-switch-dialog-leave-to .front-account-switch-panel {
+    transform: scale(0.96);
+  }
 }
 
 .front-search-modal-enter-active,
