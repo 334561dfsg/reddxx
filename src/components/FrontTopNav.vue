@@ -1089,7 +1089,7 @@ function drawerRowClass(item) {
       <div class="hidden shrink-0 items-center gap-2 sm:gap-3 lg:flex">
         <span
           v-if="isLoggedIn && accountMode === 'demo'"
-          class="inline-flex h-7 items-center rounded-md border border-amber-300/35 bg-amber-300/10 px-3 text-xs font-semibold leading-none text-amber-100 shadow-[0_0_0_1px_rgba(251,191,36,0.08)]"
+          class="inline-flex h-8 min-w-[8.5rem] items-center justify-center rounded-md bg-[#043f08] px-5 text-sm font-medium leading-none text-[#16f33b]"
           aria-label="当前账户类型：模拟账户"
         >
           模拟账户
@@ -1387,15 +1387,7 @@ function drawerRowClass(item) {
                         {{ accountName.slice(0, 1).toUpperCase() }}
                       </div>
                       <div class="min-w-0">
-                        <div class="flex min-w-0 items-center gap-2">
-                          <p class="truncate text-[16px] font-semibold leading-tight text-white" :title="accountName">{{ accountName }}</p>
-                          <span
-                            class="inline-flex shrink-0 rounded-md border px-1.5 py-0.5 text-[11px] font-semibold leading-4"
-                            :class="accountModeToneClass"
-                          >
-                            {{ accountModeLabel }}
-                          </span>
-                        </div>
+                        <p class="truncate text-[16px] font-semibold leading-tight text-white" :title="accountName">{{ accountName }}</p>
                         <div class="mt-1.5 flex items-center gap-1.5 text-[13px] leading-none text-white/55">
                           <span>{{ accountId }}</span>
                           <svg class="h-4 w-4 text-cyan-300" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1608,17 +1600,9 @@ function drawerRowClass(item) {
                 class="mt-1 space-y-2 rounded-xl border border-white/[0.06] bg-black/25 px-3 py-2.5"
               >
                 <template v-if="isLoggedIn">
-                  <div class="flex items-center justify-between gap-2">
-                    <p class="text-[10px] font-medium uppercase tracking-wider text-lime-400/75">
-                      当前账号
-                    </p>
-                    <span
-                      class="inline-flex min-w-0 shrink-0 items-center rounded-md border px-2 py-0.5 text-[11px] font-semibold leading-5"
-                      :class="accountModeToneClass"
-                    >
-                      当前：{{ accountModeLabel }}
-                    </span>
-                  </div>
+                  <p class="text-[10px] font-medium uppercase tracking-wider text-lime-400/75">
+                    当前账号
+                  </p>
                   <p
                     class="mt-0.5 truncate text-sm font-medium text-white/90"
                     :title="authEmail || undefined"

@@ -117,11 +117,6 @@ const demoClaimedUsd = computed(() => demoAssetClaimedCount.value * demoAssetCon
 const demoClaimAmountText = computed(() => (
   `${formatFrontUsdAmount(demoAssetConfig.value.claimAmountUsd)} ${demoAssetConfig.value.currency}`
 ))
-const accountModeBadgeClass = computed(() => (
-  accountMode.value === 'demo'
-    ? 'border-amber-300/35 bg-amber-300/10 text-amber-100'
-    : 'border-lime-300/35 bg-lime-300/10 text-lime-100'
-))
 const assetToastClass = computed(() => (
   assetToast.value.severity === 'warning'
     ? 'border-amber-300/25 text-amber-100'
@@ -259,6 +254,14 @@ const actionPillOff =
     </header>
 
     <div class="flex flex-col gap-4 md:gap-5">
+      <div
+        v-if="accountMode === 'demo'"
+        class="flex h-10 items-center justify-center rounded-lg bg-[#043f08] px-3 text-sm font-medium leading-none text-[#16f33b] md:hidden"
+        aria-label="当前账户类型：模拟账户"
+      >
+        {{ accountModeLabel }}
+      </div>
+
       <div class="flex flex-col gap-4 md:hidden">
         <section :class="`${card} px-4 py-4`" aria-label="账户总资产">
           <div class="flex flex-wrap items-center gap-2">
@@ -274,13 +277,6 @@ const actionPillOff =
                 size-class="h-4 w-4"
               />
             </button>
-            <span
-              class="inline-flex min-h-6 items-center rounded-md border px-2 text-xs font-medium leading-none"
-              :class="accountModeBadgeClass"
-              aria-label="当前账户类型"
-            >
-              {{ accountModeLabel }}
-            </span>
           </div>
           <p class="mt-3 font-mono text-[1.625rem] font-medium leading-none tracking-tight text-white">
             $ {{ displayVal(totalUsd) }}
@@ -360,13 +356,6 @@ const actionPillOff =
               >
                 <FrontStrokeIcon :name="masked ? 'eye-off' : 'eye'" size-class="h-[18px] w-[18px]" />
               </button>
-              <span
-                class="inline-flex min-h-6 items-center rounded-md border px-2 text-xs font-medium leading-none"
-                :class="accountModeBadgeClass"
-                aria-label="当前账户类型"
-              >
-                {{ accountModeLabel }}
-              </span>
             </div>
             <p class="mt-3 font-mono text-2xl font-medium tracking-tight text-white md:text-3xl">
               $ {{ displayVal(totalUsd) }}

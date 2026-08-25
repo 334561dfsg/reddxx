@@ -2699,7 +2699,7 @@ onUnmounted(() => {
       >
         <div
           v-if="showDemoAccountBadge"
-          class="mb-2 flex h-10 items-center justify-center rounded-lg border border-amber-300/35 bg-amber-300/10 px-3 text-sm font-semibold leading-none text-amber-100"
+          class="mb-2 flex h-10 items-center justify-center rounded-lg bg-[#043f08] px-3 text-sm font-medium leading-none text-[#16f33b]"
           aria-label="当前账户类型：模拟账户"
         >
           {{ accountModeLabel }}
