@@ -29,6 +29,15 @@ export const consoleRoutes = [
     }
   },
   {
+    path: 'platform/point-control-config',
+    name: 'platform-point-control-config',
+    component: () => import('../../pages/admin/platform/PointControlConfigPage.vue'),
+    meta: {
+      title: '平台配置 / 点控配置',
+      desc: '配置交割、永续与现货用户点控的输赢比例。'
+    }
+  },
+  {
     path: 'customer-service/workbench',
     name: 'customer-service-workbench',
     component: () => import('../../pages/admin/customer-service/CustomerServiceWorkbenchPage.vue'),

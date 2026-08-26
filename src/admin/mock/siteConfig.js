@@ -309,6 +309,29 @@ export function normalizeVoiceAlerts(raw) {
   }
 }
 
+export const DEFAULT_POINT_CONTROL_RATIOS = {
+  delivery: 50,
+  perpetual: 50,
+  spot: 50
+}
+
+function normalizePointControlRatioValue(value, fallback) {
+  const normalized = String(value ?? '').replace(/,/g, '').replace(/%/g, '').trim()
+  if (!normalized) return fallback
+  const parsed = Number(normalized)
+  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 100) return fallback
+  return Math.round(parsed * 100) / 100
+}
+
+export function normalizePointControlRatios(raw) {
+  const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {}
+  return {
+    delivery: normalizePointControlRatioValue(source.delivery, DEFAULT_POINT_CONTROL_RATIOS.delivery),
+    perpetual: normalizePointControlRatioValue(source.perpetual, DEFAULT_POINT_CONTROL_RATIOS.perpetual),
+    spot: normalizePointControlRatioValue(source.spot, DEFAULT_POINT_CONTROL_RATIOS.spot)
+  }
+}
+
 export const SITE_CONFIG_STORAGE_KEY = 'fex-admin-site-config'
 
 const STORAGE_KEY = SITE_CONFIG_STORAGE_KEY
@@ -1211,6 +1234,8 @@ export const DEFAULT_SITE_CONFIG = {
   smsChannels: DEFAULT_SMS_CHANNELS_DEMO,
   /** 管理台语音提醒配置 */
   voiceAlerts: normalizeVoiceAlerts(),
+  /** 点控控制力度：输赢比例，数值按百分比 0-100 保存 */
+  pointControlRatios: normalizePointControlRatios(),
   /** 模拟账户资产领取配置 */
   demoAccountAsset: normalizeFrontDemoAccountAssetConfig(FRONT_DEMO_ACCOUNT_ASSET_CONFIG),
   /** 社媒链接（前台首页页脚展示启用项） */
@@ -1386,6 +1411,7 @@ export function normalizeSiteConfig(raw) {
   )
   if ('smsChannelsByDial' in merged) delete merged.smsChannelsByDial
   merged.voiceAlerts = normalizeVoiceAlerts(merged.voiceAlerts)
+  merged.pointControlRatios = normalizePointControlRatios(merged.pointControlRatios)
   merged.demoAccountAsset = normalizeFrontDemoAccountAssetConfig(merged.demoAccountAsset)
   merged.socialLinks = normalizeSocialLinksList(merged.socialLinks)
   merged.contentPages = normalizeContentPages(merged.contentPages, merged.i18n?.defaultLocale || 'zh-CN')
@@ -1453,6 +1479,10 @@ export const siteConfigApi = {
             : prev.frontNews
         const voiceAlertsPayload =
           config.voiceAlerts !== undefined ? normalizeVoiceAlerts(config.voiceAlerts) : prev.voiceAlerts
+        const pointControlRatiosPayload =
+          config.pointControlRatios !== undefined
+            ? normalizePointControlRatios(config.pointControlRatios)
+            : prev.pointControlRatios
         const demoAccountAssetPayload =
           config.demoAccountAsset !== undefined
             ? normalizeFrontDemoAccountAssetConfig(config.demoAccountAsset)
@@ -1510,6 +1540,7 @@ export const siteConfigApi = {
           i18n: i18nPayload,
           smsChannels: smsChannelsPayload,
           voiceAlerts: voiceAlertsPayload,
+          pointControlRatios: pointControlRatiosPayload,
           demoAccountAsset: demoAccountAssetPayload,
           socialLinks: socialLinksPayload,
           contentPages: contentPagesPayload,

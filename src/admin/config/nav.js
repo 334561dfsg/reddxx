@@ -168,6 +168,7 @@ export const navTree = [
     icon: 'spark',
     children: [
       { title: '模拟账户配置', path: '/admin/platform/demo-account-config' },
+      { title: '点控配置', path: '/admin/platform/point-control-config' },
       { title: '站点配置', path: '/admin/system/site-config' },
       { title: '社媒配置', path: '/admin/system/social-links' },
       { title: '内容页配置', path: '/admin/system/content-pages' },
