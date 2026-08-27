@@ -109,6 +109,11 @@ function actionActive(a) {
 }
 
 const subAccounts = FRONT_ASSET_OVERVIEW.subAccounts
+const visibleSubAccounts = computed(() => (
+  accountMode.value === 'demo'
+    ? subAccounts.filter((account) => account.key !== 'earn')
+    : subAccounts
+))
 
 const masked = computed(() => hideBalance.value)
 const demoAssetClaimLimit = computed(() => demoAssetConfig.value.monthlyClaimLimit)
@@ -418,14 +423,26 @@ const actionPillOff =
       <div class="flex flex-col gap-3">
         <h2 :class="label">账户分布</h2>
         <div class="grid gap-3 sm:grid-cols-2">
-          <article v-for="acc in subAccounts" :key="acc.key" :class="`${card} p-4 md:p-5`">
+          <RouterLink
+            v-for="acc in visibleSubAccounts"
+            :key="acc.key"
+            :to="`${prefix}/personal-center/assets/account/${acc.key}`"
+            :class="`${card} group block p-4 transition hover:border-white/[0.12] hover:bg-white/[0.045] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 md:p-5`"
+            :aria-label="`查看${acc.title}持有币种`"
+          >
             <p class="text-sm font-medium text-white/72">{{ acc.title }}</p>
             <p class="mt-3 font-mono text-xl font-medium tabular-nums text-white md:text-2xl">
               $ {{ displayVal(acc.usd) }}
             </p>
             <p class="mt-1 text-xs text-white/40">≈ {{ displayVal(acc.btc) }}</p>
-            <p class="mt-3 text-xs text-white/38">今日收益 {{ displayVal(acc.dayPnl) }}</p>
-          </article>
+            <div class="mt-3 flex items-center justify-between gap-3 text-xs text-white/38">
+              <span>今日收益 {{ displayVal(acc.dayPnl) }}</span>
+              <span class="inline-flex items-center gap-1 text-white/42 transition group-hover:text-lime-200/80">
+                持有币种
+                <FrontStrokeIcon name="chevron-right" size-class="h-3.5 w-3.5" />
+              </span>
+            </div>
+          </RouterLink>
         </div>
       </div>
     </div>

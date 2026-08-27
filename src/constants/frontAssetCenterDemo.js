@@ -110,10 +110,9 @@ export function networkHintDeposit(networkLabel) {
 /** 站内划转：子账户 + 资金账户（演示） */
 export const FRONT_TRANSFER_ACCOUNT_OPTIONS = [
   { value: 'spot', label: '币币账户' },
-  { value: 'perpetual', label: '永续合约账户' },
   { value: 'delivery', label: '交割合约账户' },
-  { value: 'earn', label: '理财账户' },
-  { value: 'funding', label: '资金账户' }
+  { value: 'perpetual', label: '永续合约账户' },
+  { value: 'earn', label: '理财账户' }
 ]
 
 const TRANSFER_BALANCE_DEMO = {
@@ -185,6 +184,163 @@ export function demoTransferAvailable(accountValue, symbol) {
   return formatFrontAssetAmount(bucket[symbol] ?? '0', symbol)
 }
 
+export const FRONT_ASSET_ACCOUNT_DETAIL_META = {
+  spot: { key: 'spot', title: '币币账户资产', shortTitle: '币币账户' },
+  perpetual: { key: 'perpetual', title: '永续合约账户资产', shortTitle: '永续合约' },
+  delivery: { key: 'delivery', title: '交割合约账户资产', shortTitle: '交割合约' },
+  earn: { key: 'earn', title: '理财账户资产', shortTitle: '理财账户' },
+  funding: { key: 'funding', title: '资金账户资产', shortTitle: '资金账户' }
+}
+
+const HOLDING_COIN_MARKET = {
+  ...FRONT_ASSET_COIN_META.reduce((acc, coin) => {
+    acc[coin.symbol] = { name: coin.name, precision: coin.precision, usdPrice: coin.usdPrice }
+    return acc
+  }, {}),
+  USDT: { name: 'Tether', precision: 6, usdPrice: 1 },
+  LTC: { name: 'Litecoin', precision: 6, usdPrice: 49.63 },
+  PEPE: { name: 'Pepe', precision: 8, usdPrice: 0.00000377 },
+  TRUMP: { name: 'Official Trump', precision: 6, usdPrice: 2.238 },
+  YFI: { name: 'yearn.finance', precision: 8, usdPrice: 2297 },
+  DOT: { name: 'Polkadot', precision: 6, usdPrice: 0.873 },
+  TON: { name: 'Toncoin', precision: 6, usdPrice: 1.6 },
+  BCH: { name: 'Bitcoin Cash', precision: 6, usdPrice: 266.5 }
+}
+
+const HOLDING_SYMBOLS = [
+  'USDT',
+  'BTC',
+  'ETH',
+  'TRX',
+  'LTC',
+  'USDC',
+  'DAI',
+  'XRP',
+  'SOL',
+  'BNB',
+  'DOGE',
+  'PEPE',
+  'TRUMP',
+  'YFI',
+  'DOT',
+  'TON',
+  'BCH'
+]
+
+const EXTRA_HOLDING_BALANCE_DEMO = {
+  spot: {
+    USDT: '87472.38',
+    LTC: '0',
+    PEPE: '0',
+    TRUMP: '0',
+    YFI: '0',
+    DOT: '0',
+    TON: '0',
+    BCH: '0'
+  },
+  perpetual: {
+    USDT: '18350.00',
+    LTC: '0',
+    PEPE: '1280000',
+    TRUMP: '0',
+    YFI: '0',
+    DOT: '0',
+    TON: '0',
+    BCH: '0'
+  },
+  delivery: {
+    USDT: '9980.00',
+    LTC: '0',
+    PEPE: '0',
+    TRUMP: '0',
+    YFI: '0',
+    DOT: '0',
+    TON: '0',
+    BCH: '0'
+  },
+  earn: {
+    USDT: '120000.00',
+    LTC: '18.5',
+    PEPE: '3312234847.480106',
+    TRUMP: '0',
+    YFI: '0',
+    DOT: '0',
+    TON: '0',
+    BCH: '0'
+  },
+  funding: {
+    USDT: '5000.00',
+    LTC: '0',
+    PEPE: '0',
+    TRUMP: '0',
+    YFI: '0',
+    DOT: '0',
+    TON: '0',
+    BCH: '0'
+  }
+}
+
+const HOLDING_FROZEN_BALANCE_DEMO = {
+  spot: {
+    PEPE: '3312234847.480106'
+  },
+  perpetual: {
+    USDC: '20.000000',
+    BTC: '0.00010000'
+  },
+  earn: {
+    USDC: '5000.000000',
+    BTC: '0.05000000',
+    ETH: '1.20000000',
+    PEPE: '3312234847.480106'
+  }
+}
+
+export function frontAssetHoldingCoinMarket(symbol) {
+  return HOLDING_COIN_MARKET[String(symbol || '').toUpperCase()]
+}
+
+function holdingAmount(accountValue, symbol) {
+  return (
+    EXTRA_HOLDING_BALANCE_DEMO[accountValue]?.[symbol] ??
+    TRANSFER_BALANCE_DEMO[accountValue]?.[symbol] ??
+    '0'
+  )
+}
+
+function holdingFrozen(accountValue, symbol) {
+  return HOLDING_FROZEN_BALANCE_DEMO[accountValue]?.[symbol] ?? '0'
+}
+
+function holdingRow(accountValue, symbol) {
+  const market = frontAssetHoldingCoinMarket(symbol) || {}
+  return {
+    symbol,
+    name: market.name || symbol,
+    amount: holdingAmount(accountValue, symbol),
+    frozen: holdingFrozen(accountValue, symbol),
+    latestPrice: market.usdPrice ?? 0,
+    precision: market.precision ?? 8
+  }
+}
+
+export const FRONT_ASSET_ACCOUNT_HOLDINGS = Object.keys(FRONT_ASSET_ACCOUNT_DETAIL_META).reduce(
+  (acc, accountKey) => {
+    acc[accountKey] = HOLDING_SYMBOLS.map((symbol) => holdingRow(accountKey, symbol))
+    return acc
+  },
+  {}
+)
+
+export function frontAssetAccountDetail(accountKey) {
+  const key = FRONT_ASSET_ACCOUNT_DETAIL_META[accountKey] ? accountKey : 'spot'
+  return {
+    meta: FRONT_ASSET_ACCOUNT_DETAIL_META[key],
+    summary: FRONT_ASSET_OVERVIEW.subAccounts.find((account) => account.key === key),
+    holdings: FRONT_ASSET_ACCOUNT_HOLDINGS[key]
+  }
+}
+
 /** 模拟账户领取资产配置；当前为后台配置 mock，对接后替换为接口返回 */
 export const FRONT_DEMO_ACCOUNT_ASSET_CONFIG = {
   monthlyClaimLimit: 1,
@@ -243,10 +399,9 @@ function overviewAccount(key, title, dayPnlUsd) {
 export const FRONT_ASSET_OVERVIEW = (() => {
   const accounts = [
     overviewAccount('spot', '币币账户资产', 125.36),
-    overviewAccount('perpetual', '永续合约账户资产', -18.92),
     overviewAccount('delivery', '交割合约账户资产', 6.18),
-    overviewAccount('earn', '理财账户资产', 78.45),
-    overviewAccount('funding', '资金账户资产', 0.86)
+    overviewAccount('perpetual', '永续合约账户资产', -18.92),
+    overviewAccount('earn', '理财账户资产', 78.45)
   ]
   const totalUsd = accounts.reduce((sum, account) => sum + amountNumber(account.usd), 0)
   const totalPnl = accounts.reduce((sum, account) => {

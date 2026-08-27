@@ -1,17 +1,26 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 import FrontSearchablePopoverPicker from '../../../components/front/FrontSearchablePopoverPicker.vue'
 import {
   FRONT_DEPOSIT_COINS,
   FRONT_TRANSFER_ACCOUNT_OPTIONS,
   demoTransferAvailable
 } from '../../../constants/frontAssetCenterDemo'
+import { useFrontAuthStore } from '../../../stores/frontAuth'
 
+const frontAuth = useFrontAuthStore()
+const { accountMode } = storeToRefs(frontAuth)
 const fromAccount = ref('spot')
 const toAccount = ref('perpetual')
 const assetSymbol = ref(FRONT_DEPOSIT_COINS[0].symbol)
 const amount = ref('')
 const remark = ref('')
+const visibleTransferAccountOptions = computed(() => (
+  accountMode.value === 'demo'
+    ? FRONT_TRANSFER_ACCOUNT_OPTIONS.filter((option) => option.value !== 'earn')
+    : FRONT_TRANSFER_ACCOUNT_OPTIONS
+))
 
 const coinOptions = computed(() =>
   FRONT_DEPOSIT_COINS.map((c) => ({
@@ -28,10 +37,24 @@ const availableLine = computed(
 
 watch([fromAccount, toAccount], () => {
   if (fromAccount.value === toAccount.value) {
-    const alt = FRONT_TRANSFER_ACCOUNT_OPTIONS.find((o) => o.value !== fromAccount.value)
+    const alt = visibleTransferAccountOptions.value.find((o) => o.value !== fromAccount.value)
     if (alt) toAccount.value = alt.value
   }
 })
+
+watch(
+  visibleTransferAccountOptions,
+  (options) => {
+    const values = options.map((option) => option.value)
+    if (!values.includes(fromAccount.value)) {
+      fromAccount.value = options[0]?.value || 'spot'
+    }
+    if (!values.includes(toAccount.value) || toAccount.value === fromAccount.value) {
+      toAccount.value = options.find((option) => option.value !== fromAccount.value)?.value || fromAccount.value
+    }
+  },
+  { immediate: true }
+)
 
 watch(assetSymbol, () => {
   amount.value = ''
@@ -73,7 +96,7 @@ const labelBase =
     <header class="mb-4 hidden md:mb-5 md:block lg:mb-6">
       <h1 class="text-xl font-bold tracking-tight text-white md:text-2xl lg:text-3xl">划转</h1>
       <p class="mt-1 text-sm text-white/55">
-        在子账户与资金账户之间调拨资产；实时到账，无链上网络费。演示数据，对接接口后替换。
+        在账户之间调拨资产；实时到账，无链上网络费。演示数据，对接接口后替换。
       </p>
     </header>
 
@@ -91,7 +114,7 @@ const labelBase =
                 sheet-title="转出账户"
                 aria-label="转出账户"
                 :searchable="false"
-                :options="FRONT_TRANSFER_ACCOUNT_OPTIONS"
+                :options="visibleTransferAccountOptions"
                 panel-hint="选择扣减余额的账户"
               />
             </div>
@@ -103,7 +126,7 @@ const labelBase =
                 sheet-title="转入账户"
                 aria-label="转入账户"
                 :searchable="false"
-                :options="FRONT_TRANSFER_ACCOUNT_OPTIONS"
+                :options="visibleTransferAccountOptions"
                 panel-hint="选择增加余额的账户，不能与转出相同"
               />
             </div>

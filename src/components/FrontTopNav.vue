@@ -415,18 +415,7 @@ const accountAssetSummary = [
   { key: 'finance', label: '理财', value: '0.00' }
 ]
 const accountTotalAssets = computed(() => '93923.07 USDT')
-const accountModeToneClass = computed(() => (
-  accountMode.value === 'demo'
-    ? 'border-amber-300/35 bg-amber-300/10 text-amber-100'
-    : 'border-lime-300/35 bg-lime-300/10 text-lime-100'
-))
-const accountSwitchTitle = computed(() => `切换为${nextAccountModeLabel.value}？`)
-const accountSwitchDescription = computed(() => (
-  nextAccountMode.value === 'real'
-    ? '切换后资产、订单、持仓和交易页面将按正式账户展示，请确认后再进行真实资金操作。'
-    : '切换后资产、订单、持仓和交易页面将按模拟账户展示，可用于虚拟资金演练。'
-))
-const accountSwitchActionLabel = computed(() => `确认切换为${nextAccountModeLabel.value}`)
+const accountSwitchMessage = computed(() => `您将切换到 ${nextAccountModeLabel.value}`)
 
 const accountPrimaryLinks = computed(() => [
   { key: 'personal', label: '个人中心', to: `${props.prefix}/personal-center` },
@@ -2003,16 +1992,16 @@ function drawerRowClass(item) {
         >
           <div
             ref="accountSwitchDialogRef"
-            class="front-account-switch-panel relative flex max-h-[min(88vh,28rem)] w-full max-w-sm flex-col overflow-hidden rounded-xl border border-white/[0.1] bg-[#181923] shadow-2xl shadow-black/65"
+            class="front-account-switch-panel relative flex max-h-[min(88vh,24rem)] w-full max-w-sm flex-col overflow-hidden rounded-xl border border-white/[0.1] bg-[#181923] shadow-2xl shadow-black/65"
             role="dialog"
             aria-modal="true"
             aria-labelledby="front-account-switch-title"
             @click.stop
             @keydown="onAccountSwitchDialogKeydown"
           >
-            <div class="shrink-0 border-b border-white/[0.06] px-5 py-4 pr-14">
-              <h2 id="front-account-switch-title" class="text-base font-semibold leading-snug text-white">
-                {{ accountSwitchTitle }}
+            <div class="shrink-0 border-b border-white/[0.06] px-5 py-4 pr-14 text-center">
+              <h2 id="front-account-switch-title" class="text-lg font-semibold leading-snug text-white">
+                账户角色
               </h2>
               <button
                 type="button"
@@ -2031,33 +2020,27 @@ function drawerRowClass(item) {
               </button>
             </div>
 
-            <div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
-              <div
-                class="mb-3 inline-flex rounded-md border px-2.5 py-1 text-xs font-semibold"
-                :class="accountModeToneClass"
-              >
-                当前：{{ accountModeLabel }}
-              </div>
-              <p class="text-sm leading-6 text-white/75">
-                {{ accountSwitchDescription }}
+            <div class="min-h-0 flex-1 overflow-y-auto px-5 py-8 text-center">
+              <p class="text-base font-medium leading-7 text-white">
+                {{ accountSwitchMessage }}
               </p>
             </div>
 
-            <div class="flex shrink-0 justify-end gap-2 border-t border-white/[0.06] px-5 py-4">
+            <div class="flex shrink-0 justify-center gap-3 border-t border-white/[0.06] px-5 py-4">
               <button
                 ref="accountSwitchCancelRef"
                 type="button"
-                class="inline-flex min-h-[2.5rem] items-center justify-center rounded-lg border border-white/[0.12] px-4 text-sm font-medium text-white/75 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                class="inline-flex min-h-[2.5rem] min-w-[6.25rem] items-center justify-center rounded-lg border border-white/[0.12] px-4 text-sm font-medium text-white/75 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
                 @click="closeAccountSwitchDialog"
               >
-                取消切换
+                取消
               </button>
               <button
                 type="button"
-                class="inline-flex min-h-[2.5rem] items-center justify-center rounded-lg bg-lime-400 px-4 text-sm font-semibold text-[#11150d] transition hover:bg-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-200 focus-visible:ring-offset-2 focus-visible:ring-offset-[#181923]"
+                class="inline-flex min-h-[2.5rem] min-w-[6.25rem] items-center justify-center rounded-lg bg-lime-400 px-4 text-sm font-semibold text-[#11150d] transition hover:bg-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-200 focus-visible:ring-offset-2 focus-visible:ring-offset-[#181923]"
                 @click="confirmAccountSwitch"
               >
-                {{ accountSwitchActionLabel }}
+                确定
               </button>
             </div>
           </div>

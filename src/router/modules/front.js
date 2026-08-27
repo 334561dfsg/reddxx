@@ -235,6 +235,12 @@ export const frontDesktopRoutes = [
         meta: { title: '资产' }
       },
       {
+        path: 'assets/account/:accountKey',
+        name: 'front-personal-assets-account-detail',
+        component: () => import('../../pages/front/personal-center/AssetsAccountDetailPage.vue'),
+        meta: { title: '账户资产' }
+      },
+      {
         path: 'assets/withdraw',
         name: 'front-personal-assets-withdraw',
         component: () => import('../../pages/front/personal-center/AssetsWithdrawPage.vue'),

@@ -4,7 +4,11 @@ import { createPinia, setActivePinia } from 'pinia'
 import { normalizeSiteConfig } from '../src/admin/mock/siteConfig.js'
 import { useFrontAuthStore } from '../src/stores/frontAuth.js'
 import {
+  FRONT_ASSET_ACCOUNT_DETAIL_META,
+  FRONT_ASSET_ACCOUNT_HOLDINGS,
+  FRONT_ASSET_OVERVIEW,
   FRONT_DEMO_ACCOUNT_ASSET_CONFIG,
+  FRONT_TRANSFER_ACCOUNT_OPTIONS,
   frontDemoAssetClaimMonthKey
 } from '../src/constants/frontAssetCenterDemo.js'
 
@@ -51,6 +55,23 @@ test('front demo account asset claim mock exposes monthly limit config', () => {
   assert.equal(FRONT_DEMO_ACCOUNT_ASSET_CONFIG.claimAmountUsd, 500000)
   assert.equal(FRONT_DEMO_ACCOUNT_ASSET_CONFIG.currency, 'USDT')
   assert.equal(frontDemoAssetClaimMonthKey(new Date('2026-08-25T00:00:00Z')), '2026-08')
+})
+
+test('front asset account details expose holdings for every wallet type', () => {
+  assert.deepEqual(
+    FRONT_ASSET_OVERVIEW.subAccounts.map((account) => account.key),
+    ['spot', 'delivery', 'perpetual', 'earn']
+  )
+  assert.deepEqual(
+    FRONT_TRANSFER_ACCOUNT_OPTIONS.map((account) => account.value),
+    ['spot', 'delivery', 'perpetual', 'earn']
+  )
+  for (const account of FRONT_ASSET_OVERVIEW.subAccounts) {
+    assert.equal(FRONT_ASSET_ACCOUNT_DETAIL_META[account.key].title, account.title)
+    assert.ok(Array.isArray(FRONT_ASSET_ACCOUNT_HOLDINGS[account.key]))
+    assert.ok(FRONT_ASSET_ACCOUNT_HOLDINGS[account.key].length >= 10)
+    assert.ok(FRONT_ASSET_ACCOUNT_HOLDINGS[account.key].some((row) => row.symbol === 'USDT'))
+  }
 })
 
 test('site config normalizes demo account asset claim settings', () => {
