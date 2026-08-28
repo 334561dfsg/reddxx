@@ -283,6 +283,8 @@ test('user list moves point-control actions into the complete operation drawer a
 
   assert.match(source, /是否点控中/)
   assert.match(source, /hasRules\(user\) \? '是' : '否'/)
+  assert.doesNotMatch(source, /<th[^>]*>\s*状态\s*<\/th>/)
+  assert.doesNotMatch(source, /statusConfig\[user\.status\]/)
   assert.doesNotMatch(source, />用户点控</)
   assert.doesNotMatch(source, />生效方式</)
   assert.doesNotMatch(source, />模块状态</)

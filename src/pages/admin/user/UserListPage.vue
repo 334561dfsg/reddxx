@@ -919,14 +919,6 @@ const mfaDescription = computed(() => pendingMfaAction.value?.type === 'cancel'
   ? '取消交易模块的生效规则属于敏感操作，请输入 MFA 验证码'
   : '长期生效或覆盖用户点控属于敏感操作，请输入 MFA 验证码')
 
-// 状态配置
-const statusConfig = {
-  [USER_STATUS.ACTIVE]: { text: '活跃', class: 'bg-emerald-100 text-emerald-700' },
-  [USER_STATUS.INACTIVE]: { text: '不活跃', class: 'bg-gray-100 text-gray-700' },
-  [USER_STATUS.SUSPENDED]: { text: '暂停', class: 'bg-amber-100 text-amber-700' },
-  [USER_STATUS.BANNED]: { text: '禁用', class: 'bg-rose-100 text-rose-700' }
-}
-
 const roleConfig = {
   [USER_ROLE.USER]: { text: '普通用户', class: 'bg-blue-100 text-blue-700' },
   [USER_ROLE.AGENT]: { text: '代理', class: 'bg-purple-100 text-purple-700' }
@@ -1030,7 +1022,7 @@ const clearDetailDrawer = () => {
     <!-- 用户表格 -->
     <div v-else-if="!loading && users.length > 0" class="rounded-xl border border-slate-200 bg-white overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[1320px]">
+        <table class="w-full min-w-[1220px]">
           <thead class="bg-slate-50 border-b border-slate-200">
             <tr>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
@@ -1039,7 +1031,6 @@ const clearDetailDrawer = () => {
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">角色</th>
               <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">VIP</th>
               <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">信用分</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">状态</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">裂变上级</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">是否点控中</th>
@@ -1100,16 +1091,6 @@ const clearDetailDrawer = () => {
                   }"
                 >
                   {{ user.creditScore }}
-                </span>
-              </td>
-
-              <!-- 状态 -->
-              <td class="px-4 py-3">
-                <span 
-                  :class="statusConfig[user.status].class"
-                  class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
-                >
-                  {{ statusConfig[user.status].text }}
                 </span>
               </td>
 
