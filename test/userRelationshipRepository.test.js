@@ -204,6 +204,14 @@ test('agent demotion reassigns direct children atomically and records affected u
   const childSnapshots = childIds.map(snapshotUser)
   __resetRelationshipAuditLogForTests()
   try {
+    let missingSuccessorError = null
+    try {
+      updateAgentRole({ userId: 'user_1003', role: 'user', reason: '代理关系调整' })
+    } catch (error) {
+      missingSuccessorError = error
+    }
+    assert.match(missingSuccessorError?.message || '', /存在直属下级时必须选择承接上级/)
+    assert.doesNotMatch(missingSuccessorError?.message || '', /裂变/)
     const updated = updateAgentRole({
       userId: 'user_1003',
       role: 'user',

@@ -289,15 +289,15 @@ export const updateAgentRole = ({ userId, role, reason, successorParentId }) => 
   const directChildren = getDirectReferrals(userId)
   let successor = null
   if (role === USER_ROLE.USER && directChildren.length) {
-    if (successorParentId === undefined) throw new Error('存在直属裂变下级时必须选择承接裂变上级')
+    if (successorParentId === undefined) throw new Error('存在直属下级时必须选择承接上级')
     if (successorParentId) {
       const successorId = String(successorParentId)
-      if (successorId === idOf(user)) throw new Error('不能选择用户本人作为承接裂变上级')
+      if (successorId === idOf(user)) throw new Error('不能选择用户本人作为承接上级')
       if (getDescendants(userId).some((row) => idOf(row) === successorId)) {
-        throw new Error('不能选择自己的裂变下级作为承接裂变上级')
+        throw new Error('不能选择自己的下级作为承接上级')
       }
       successor = requireUser(successorId)
-      if (successor.status === USER_STATUS.BANNED) throw new Error('不能选择已封禁用户作为承接裂变上级')
+      if (successor.status === USER_STATUS.BANNED) throw new Error('不能选择已封禁用户作为承接上级')
     }
   }
 
