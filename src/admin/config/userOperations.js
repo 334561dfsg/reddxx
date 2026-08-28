@@ -22,7 +22,7 @@ export const USER_OPERATION_ENTRIES = Object.freeze([
   { id: 'reset-parent', title: '重设裂变上级', description: '调整用户所属的裂变上级关系', group: 'fission', status: 'available', risk: 'sensitive', handler: 'reset-parent' },
   { id: 'team-report', title: '查看裂变团队报表', description: '查看该用户裂变团队的业务汇总', group: 'fission', status: 'available', risk: 'normal', handler: 'team-report' },
   { id: 'reset-agent', title: '设置为代理', description: '设置用户代理身份', group: 'agent', status: 'available', risk: 'sensitive', handler: 'reset-agent' },
-  { id: 'set-agent-parent', title: '设置所属代理', description: '设置用户归属的代理账号', group: 'agent', status: 'available', risk: 'sensitive', handler: 'set-agent-parent' },
+  { id: 'set-agent-parent', title: '设置上级代理', description: '设置用户归属的上级代理账号', group: 'agent', status: 'available', risk: 'sensitive', handler: 'set-agent-parent' },
   { id: 'agent-subordinates', title: '查看下级用户', description: '查看归属于该代理的直属客户', group: 'agent', status: 'available', risk: 'normal', handler: 'agent-subordinates' },
   { id: 'agent-report', title: '查看代理报表', description: '查看该代理的业务与佣金汇总', group: 'agent', status: 'available', risk: 'normal', handler: 'agent-report' },
 
@@ -47,6 +47,7 @@ export const USER_OPERATION_ENTRIES = Object.freeze([
 
 const LOCKED_STATUSES = new Set(['suspended', 'banned'])
 const AGENT_ONLY_ENTRY_IDS = new Set(['agent-subordinates', 'agent-report'])
+const DRAWER_HIDDEN_ENTRY_IDS = new Set(['reset-parent', 'reset-agent'])
 const isAgentUser = (user) => (
   user?.role !== undefined ? user.role === 'agent' : user?.isAgent === true
 )
@@ -78,7 +79,7 @@ export const getUserOperationEntry = (id, user) => {
 export const getUserOperationGroups = (user) => USER_OPERATION_GROUPS.map((group) => ({
   ...group,
   entries: USER_OPERATION_ENTRIES
-    .filter((entry) => entry.group === group.id && (
+    .filter((entry) => !DRAWER_HIDDEN_ENTRY_IDS.has(entry.id) && entry.group === group.id && (
       !AGENT_ONLY_ENTRY_IDS.has(entry.id) || isAgentUser(user)
     ))
     .map((entry) => resolveEntry(entry, user))

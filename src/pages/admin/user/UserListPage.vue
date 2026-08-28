@@ -1201,10 +1201,10 @@ const clearDetailDrawer = () => {
                   <button
                     type="button"
                     class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-cyan-50/80 px-2.5 text-xs font-medium text-cyan-700 hover:bg-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                    aria-label="设置用户所属代理"
+                    aria-label="设置用户上级代理"
                     @click="handleOperationDrawerAction({ id: 'set-agent-parent', user, trigger: $event.currentTarget })"
                   >
-                    设所属代理</button>
+                    设置上级代理</button>
                   <button
                     :ref="(element) => setActionMenuTriggerRef(user, element)"
                     type="button"

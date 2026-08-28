@@ -223,7 +223,7 @@ const seedAuditLogs = () => {
       category: 'permission',
       action: 'relationship.agent-parent.set',
       result: 'success',
-      reason: '客服调整用户所属代理',
+      reason: '客服调整用户上级代理',
       before: { agentParentId: null, agentParentUsername: null },
       after: { agentParentId: 'user_1001', agentParentUsername: 'agent_wang' },
       related: { businessId: 'REL-agent-parent-user_1004', requestId: 'REQ-AGENT-PARENT-user_1004' }

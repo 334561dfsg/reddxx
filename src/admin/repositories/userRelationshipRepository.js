@@ -246,11 +246,11 @@ export const setAgentParent = ({ userId, agentParentId = null, reason }) => {
   const nextAgentParentId = agentParentId ? String(agentParentId) : null
   const cleanReason = requireReason(reason)
 
-  if (nextAgentParentId === idOf(user)) throw new Error('不能选择用户本人作为所属代理')
+  if (nextAgentParentId === idOf(user)) throw new Error('不能选择用户本人作为上级代理')
   const agentParent = nextAgentParentId ? requireUser(nextAgentParentId) : null
-  if (agentParent && agentParent.role !== USER_ROLE.AGENT) throw new Error('所属代理必须选择代理用户')
-  if (agentParent?.status === USER_STATUS.BANNED) throw new Error('不能选择已封禁代理作为所属代理')
-  if (String(user.agentParentId ?? '') === String(nextAgentParentId ?? '')) throw new Error('新所属代理不能与当前所属代理相同')
+  if (agentParent && agentParent.role !== USER_ROLE.AGENT) throw new Error('上级代理必须选择代理用户')
+  if (agentParent?.status === USER_STATUS.BANNED) throw new Error('不能选择已封禁代理作为上级代理')
+  if (String(user.agentParentId ?? '') === String(nextAgentParentId ?? '')) throw new Error('新上级代理不能与当前上级代理相同')
 
   const before = {
     agentParentId: user.agentParentId ?? null,

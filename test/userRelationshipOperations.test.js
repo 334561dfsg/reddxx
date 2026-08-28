@@ -614,7 +614,7 @@ test('agent parent ownership uses only agent candidates and does not mutate fiss
     const updated = setAgentParent({
       userId: 'user_1004',
       agentParentId: 'user_1001',
-      reason: '客服调整所属代理'
+      reason: '客服调整上级代理'
     })
 
     assert.equal(updated.agentParentId, 'user_1001')
@@ -629,9 +629,9 @@ test('agent parent ownership uses only agent candidates and does not mutate fiss
 
 test('agent parent Dialog keeps agent ownership separate from fission wording', () => {
   const source = agentParentSource()
-  assert.match(source, /设置所属代理/)
-  assert.match(source, /当前所属代理/)
-  assert.match(source, /新所属代理/)
+  assert.match(source, /设置上级代理/)
+  assert.match(source, /当前上级代理/)
+  assert.match(source, /新上级代理/)
   assert.match(source, /getAgentParentCandidates/)
   assert.match(source, /setAgentParent/)
   assert.doesNotMatch(source, /裂变/)

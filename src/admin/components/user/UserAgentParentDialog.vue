@@ -24,7 +24,7 @@ const form = reactive({ agentParentId: '', reason: '' })
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const currentAgentParent = computed(() => props.user?.agentParentId ? getUserById(props.user.agentParentId) : null)
 const agentOptions = computed(() => [
-  { value: '', label: '无所属代理', searchText: '无所属代理', disabled: false },
+  { value: '', label: '无上级代理', searchText: '无上级代理', disabled: false },
   ...(userId.value ? getAgentParentCandidates(userId.value) : []).map((candidate) => ({
     value: candidate.id,
     label: `${candidate.username} · UID ${candidate.id}`,
@@ -38,7 +38,7 @@ const agentSelectionInvalid = computed(() => (
   ))
 ))
 const agentSelectionError = computed(() => (
-  agentSelectionInvalid.value ? '所选所属代理不可用，请重新选择。' : ''
+  agentSelectionInvalid.value ? '所选上级代理不可用，请重新选择。' : ''
 ))
 const nextAgentParent = computed(() => form.agentParentId ? getUserById(form.agentParentId) : null)
 
@@ -84,7 +84,7 @@ const startConfirm = async () => {
   if (!form.reason.trim()) return showError('变更原因必填')
   if (form.reason.trim().length > 200) return showError('变更原因不能超过 200 字')
   if (agentSelectionInvalid.value) return showError(agentSelectionError.value)
-  if (String(props.user?.agentParentId ?? '') === String(form.agentParentId ?? '')) return showError('新所属代理不能与当前所属代理相同')
+  if (String(props.user?.agentParentId ?? '') === String(form.agentParentId ?? '')) return showError('新上级代理不能与当前上级代理相同')
   phaseName.value = 'confirm'
   await nextTick()
   backRef.value?.focus?.()
@@ -112,7 +112,7 @@ const confirmSet = async () => {
   } catch (error) {
     submitting.value = false
     phaseName.value = 'form'
-    await showError(error?.message || '设置所属代理失败，请稍后重试')
+    await showError(error?.message || '设置上级代理失败，请稍后重试')
   }
 }
 
@@ -128,7 +128,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
         <section ref="dialogRef" class="agent-parent-dialog-panel flex max-h-[calc(100vh-2rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="agent-parent-title" :aria-busy="submitting">
           <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
             <div class="min-w-0 flex-1">
-              <h2 id="agent-parent-title" class="text-lg font-semibold text-slate-900">设置所属代理</h2>
+              <h2 id="agent-parent-title" class="text-lg font-semibold text-slate-900">设置上级代理</h2>
               <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '-' }}</p>
             </div>
             <button type="button" :disabled="submitting" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40" aria-label="关闭" @click="close">×</button>
@@ -139,8 +139,8 @@ watch(() => [props.visible, userId.value], ([visible]) => {
 
             <template v-if="phaseName === 'form'">
               <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
-                <p class="text-xs text-slate-500">当前所属代理</p>
-                <p class="mt-1 text-sm font-medium text-slate-900">{{ currentAgentParent?.username || '无所属代理' }}<span v-if="currentAgentParent" class="ml-2 font-normal text-slate-500">UID {{ currentAgentParent.id }}</span></p>
+                <p class="text-xs text-slate-500">当前上级代理</p>
+                <p class="mt-1 text-sm font-medium text-slate-900">{{ currentAgentParent?.username || '无上级代理' }}<span v-if="currentAgentParent" class="ml-2 font-normal text-slate-500">UID {{ currentAgentParent.id }}</span></p>
               </div>
 
               <div class="block">
@@ -155,8 +155,8 @@ watch(() => [props.visible, userId.value], ([visible]) => {
                   ref="agentSelectRef"
                   v-model="form.agentParentId"
                   :options="agentOptions"
-                  label="新所属代理"
-                  placeholder="请选择所属代理"
+                  label="新上级代理"
+                  placeholder="请选择上级代理"
                   search-label="搜索代理用户"
                   required
                   :invalid="agentSelectionInvalid"
@@ -168,17 +168,17 @@ watch(() => [props.visible, userId.value], ([visible]) => {
 
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">变更原因 <span class="text-rose-500">*</span></span>
-                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请说明设置所属代理的原因" />
+                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请说明设置上级代理的原因" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>
 
             <template v-else>
               <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
-                <h3 class="font-semibold">确认设置所属代理</h3>
+                <h3 class="font-semibold">确认设置上级代理</h3>
                 <dl class="mt-3 grid grid-cols-[6rem_1fr] gap-y-2">
-                  <dt class="text-amber-800">原所属代理</dt><dd>{{ currentAgentParent?.username || '无所属代理' }}</dd>
-                  <dt class="text-amber-800">新所属代理</dt><dd>{{ nextAgentParent?.username || '无所属代理' }}</dd>
+                  <dt class="text-amber-800">原上级代理</dt><dd>{{ currentAgentParent?.username || '无上级代理' }}</dd>
+                  <dt class="text-amber-800">新上级代理</dt><dd>{{ nextAgentParent?.username || '无上级代理' }}</dd>
                   <dt class="text-amber-800">变更原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd>
                 </dl>
               </div>
@@ -192,7 +192,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
             </template>
             <template v-else>
               <button ref="backRef" type="button" :disabled="submitting" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40" @click="backToForm">返回修改</button>
-              <button type="button" :disabled="submitting" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50" @click="confirmSet">{{ submitting ? '提交中...' : '确认设置所属代理' }}</button>
+              <button type="button" :disabled="submitting" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50" @click="confirmSet">{{ submitting ? '提交中...' : '确认设置上级代理' }}</button>
             </template>
           </footer>
         </section>
