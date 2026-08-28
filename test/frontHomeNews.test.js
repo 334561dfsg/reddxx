@@ -127,16 +127,16 @@ test('front news config normalizes editable admin records for the public module'
   assert.match(normalizeFrontNews([{ title: '无图片新闻' }])[0].imageUrl, /^https:\/\/images\.unsplash\.com\//)
 })
 
-test('front news admin route and system menu entry are registered', () => {
+test('front news admin route and platform config menu entry are registered', () => {
   const route = consoleRoutes.find((entry) => entry.name === 'system-front-news')
   assert.equal(route?.path, 'system/news')
   assert.match(String(route?.component), /NewsManagementPage/)
-  assert.equal(route?.meta?.title, '系统设置 / 新闻资讯')
+  assert.equal(route?.meta?.title, '平台配置 / 新闻资讯')
 
-  const systemNav = navTree.find((entry) => entry.title === '系统设置')
-  assert.ok(systemNav)
+  const platformNav = navTree.find((entry) => entry.title === '平台配置')
+  assert.ok(platformNav)
   assert.ok(
-    systemNav.children.some(
+    platformNav.children.some(
       (entry) => entry.title === '新闻资讯' && entry.path === '/admin/system/news'
     )
   )

@@ -19,10 +19,8 @@ const requestedLabels = [
   '客服提示音',
   '充值',
   '提现',
-  '充值成功',
   'MT新交易订单（现货）',
   'MT 新增持仓（现货）',
-  'MT 平仓（现货）',
   '永续合约新交易订单',
   '交割合约新交易订单',
   '认证'
@@ -60,6 +58,8 @@ test('voice alert normalization preserves valid choices and repairs unsafe value
     voiceAlerts: {
       enabled: 'bad',
       events: {
+        depositSuccess: false,
+        mtClosePosition: false,
         mtUserLogin: false,
         lendingApplication: false,
         lendingRepayment: false
@@ -67,22 +67,24 @@ test('voice alert normalization preserves valid choices and repairs unsafe value
     }
   })
   assert.equal(fromSiteConfig.voiceAlerts.enabled, true)
+  assert.equal(Object.hasOwn(fromSiteConfig.voiceAlerts.events, 'depositSuccess'), false)
+  assert.equal(Object.hasOwn(fromSiteConfig.voiceAlerts.events, 'mtClosePosition'), false)
   assert.equal(Object.hasOwn(fromSiteConfig.voiceAlerts.events, 'mtUserLogin'), false)
   assert.equal(Object.hasOwn(fromSiteConfig.voiceAlerts.events, 'lendingApplication'), false)
   assert.equal(Object.hasOwn(fromSiteConfig.voiceAlerts.events, 'lendingRepayment'), false)
   assert.equal(fromSiteConfig.voiceAlerts.events.customerService, true)
 })
 
-test('voice alert settings route and system menu entry are registered', () => {
+test('voice alert settings route and platform config menu entry are registered', () => {
   const route = consoleRoutes.find((entry) => entry.name === 'system-voice-alerts')
   assert.equal(route?.path, 'system/voice-alerts')
   assert.match(String(route?.component), /VoiceAlertSettingsPage/)
-  assert.equal(route?.meta?.title, '系统设置 / 语音提醒')
+  assert.equal(route?.meta?.title, '平台配置 / 语音提醒')
 
-  const systemNav = navTree.find((entry) => entry.title === '系统设置')
-  assert.ok(systemNav)
+  const platformNav = navTree.find((entry) => entry.title === '平台配置')
+  assert.ok(platformNav)
   assert.ok(
-    systemNav.children.some(
+    platformNav.children.some(
       (entry) => entry.title === '语音提醒' && entry.path === '/admin/system/voice-alerts'
     )
   )

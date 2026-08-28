@@ -129,16 +129,16 @@ test('default site announcement mocks cover every configured front locale', () =
   )
 })
 
-test('site announcement admin route and system menu entry are registered', () => {
+test('site announcement admin route and platform config menu entry are registered', () => {
   const route = consoleRoutes.find((entry) => entry.name === 'system-announcements')
   assert.equal(route?.path, 'system/announcements')
   assert.match(String(route?.component), /AnnouncementsPage/)
-  assert.equal(route?.meta?.title, '系统设置 / 站内公告')
+  assert.equal(route?.meta?.title, '平台配置 / 站内公告')
 
-  const systemNav = navTree.find((entry) => entry.title === '系统设置')
-  assert.ok(systemNav)
+  const platformNav = navTree.find((entry) => entry.title === '平台配置')
+  assert.ok(platformNav)
   assert.ok(
-    systemNav.children.some(
+    platformNav.children.some(
       (entry) => entry.title === '站内公告' && entry.path === '/admin/system/announcements'
     )
   )
