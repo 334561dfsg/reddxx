@@ -108,8 +108,7 @@ export const appendUserAuditLog = (input = {}) => {
   const action = requireOption(input.action, validActions, '操作类型')
   const result = requireOption(input.result || 'success', validResults, '操作结果')
   const reason = compactText(input.reason)
-  if (source === 'admin' && !reason) throw new Error('操作原因必填')
-  if (source !== 'admin' && !reason) throw new Error('规则或任务原因必填')
+  if (reason.length > 200) throw new Error('操作原因不能超过 200 字')
 
   const targetUser = normalizeTargetUser(input.targetUser)
   const operator = normalizeOperator(input.operator, source)

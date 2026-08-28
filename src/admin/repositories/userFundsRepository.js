@@ -16,9 +16,8 @@ const requireUser = (userId) => {
   return user
 }
 
-const requireText = (value, label = '操作原因') => {
+const normalizeOptionalText = (value, label = '操作原因') => {
   const text = String(value ?? '').trim()
-  if (!text) throw new Error(`${label}必填`)
   if (text.length > 200) throw new Error(`${label}不能超过 200 字`)
   return text
 }
@@ -139,7 +138,7 @@ export const freezeAllAvailable = ({ userId, accountKey, coinKey, amount, reason
   const cleanAccountKey = requireChoice(accountKey, ACCOUNT_LABELS, '操作账户')
   const cleanCoinKey = requireChoice(coinKey, COIN_LABELS, '操作币种')
   const parsedAmount = parseMoney(amount, '冻结金额')
-  const cleanReason = requireText(reason)
+  const cleanReason = normalizeOptionalText(reason)
   const before = snapshotFor(user)
   if (parsedAmount > before.balance) throw new Error('冻结金额不能超过可用余额')
 
@@ -157,7 +156,7 @@ export const unfreezeAdminFunds = ({ userId, accountKey, coinKey, amount, reason
   const cleanAccountKey = requireChoice(accountKey, ACCOUNT_LABELS, '操作账户')
   const cleanCoinKey = requireChoice(coinKey, COIN_LABELS, '操作币种')
   const parsedAmount = parseMoney(amount, '解冻金额')
-  const cleanReason = requireText(reason)
+  const cleanReason = normalizeOptionalText(reason)
   const before = snapshotFor(user)
   if (before.adminFrozenAmount <= 0) throw new Error('当前没有可解冻的资金')
   const releasableAmount = roundMoney(Math.min(before.adminFrozenAmount, before.frozenBalance))
@@ -177,7 +176,7 @@ export const deductAvailableFunds = ({ userId, accountKey, coinKey, amount, reas
   const cleanAccountKey = requireChoice(accountKey, ACCOUNT_LABELS, '操作账户')
   const cleanCoinKey = requireChoice(coinKey, COIN_LABELS, '操作币种')
   const parsedAmount = parseMoney(amount, '扣减金额')
-  const cleanReason = requireText(reason)
+  const cleanReason = normalizeOptionalText(reason)
   const before = snapshotFor(user)
   if (parsedAmount > before.balance) throw new Error('扣减金额不能超过可用余额')
 
@@ -235,7 +234,7 @@ export const setWithdrawFlowLimit = ({
   const id = userIdOf(user)
   const cleanFlowScope = requireChoice(flowScope || 'all', FLOW_SCOPE_LABELS, '流水范围')
   const required = parseMoney(requiredTurnover, '要求流水')
-  const cleanReason = requireText(reason)
+  const cleanReason = normalizeOptionalText(reason)
   const before = withdrawFlowLimits.get(id) || null
   const completed = before?.completedTurnover ?? 0
   if (required <= completed) throw new Error('要求流水必须大于当前已完成流水')
@@ -267,7 +266,7 @@ export const setWithdrawFlowLimit = ({
 export const removeWithdrawFlowLimit = ({ userId, reason, operatorId }) => {
   const user = requireUser(userId)
   const id = userIdOf(user)
-  const cleanReason = requireText(reason, '解除原因')
+  const cleanReason = normalizeOptionalText(reason, '解除原因')
   const before = withdrawFlowLimits.get(id) || null
   if (!before) throw new Error('当前没有出金流水限制')
 

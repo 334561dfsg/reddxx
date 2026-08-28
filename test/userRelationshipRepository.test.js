@@ -8,6 +8,7 @@ import {
   validateProfile,
   updateProfile,
   resetParent,
+  setAgentParent,
   updateAgentRole,
   getTeamReport,
   getRelationshipAuditLog,
@@ -127,6 +128,42 @@ test('profile update trims fields and appends one audit record', () => {
     assert.equal(getRelationshipAuditLog()[0].type, 'profile')
   } finally {
     restoreUser(before)
+    __resetRelationshipAuditLogForTests()
+  }
+})
+
+test('relationship operation reasons are optional but still length-limited', () => {
+  const profileBefore = snapshotUser('user_1004')
+  const parentBefore = snapshotUser('user_1003')
+  const agentParentBefore = snapshotUser('user_1004')
+  const roleBefore = snapshotUser('user_1002')
+  __resetRelationshipAuditLogForTests()
+  try {
+    updateProfile('user_1004', {
+      username: ' user_chen_optional_reason ',
+      email: ' optional.reason@example.com ',
+      phone: ' 8613900001004 ',
+      remark: '',
+      reason: '   '
+    })
+    assert.equal(getRelationshipAuditLog()[0].reason, '')
+
+    resetParent({ userId: 'user_1003', parentId: 'user_1009', reason: '' })
+    assert.equal(getRelationshipAuditLog()[1].reason, '')
+
+    setAgentParent({ userId: 'user_1004', agentParentId: 'user_1003', reason: '   ' })
+    assert.equal(getRelationshipAuditLog()[2].reason, '')
+
+    updateAgentRole({ userId: 'user_1002', role: 'agent', reason: '' })
+    assert.equal(getRelationshipAuditLog()[3].reason, '')
+
+    const tooLong = '测'.repeat(201)
+    assert.throws(() => resetParent({ userId: 'user_1003', parentId: 'user_1005', reason: tooLong }), /变更原因不能超过 200 字/)
+  } finally {
+    restoreUser(profileBefore)
+    restoreUser(parentBefore)
+    restoreUser(agentParentBefore)
+    restoreUser(roleBefore)
     __resetRelationshipAuditLogForTests()
   }
 })

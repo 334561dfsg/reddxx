@@ -72,6 +72,7 @@ const after = computed(() => {
   if (props.mode === 'unfreeze') return { balance: balance.value + amount, frozen: frozenBalance.value - amount }
   return { balance: balance.value - amount, frozen: frozenBalance.value }
 })
+const reasonPreview = computed(() => form.reason.trim() || '未填写')
 const fillMaximum = () => {
   form.amount = maximumAmount.value > 0 ? String(Number(maximumAmount.value.toFixed(2))) : ''
   amountRef.value?.focus?.()
@@ -110,7 +111,6 @@ const startConfirm = async () => {
   const reason = form.reason.trim()
   if (!form.accountKey) return showError('请选择操作账户')
   if (!form.coinKey) return showError('请选择操作币种')
-  if (!reason) return showError('操作原因必填')
   if (reason.length > 200) return showError('操作原因不能超过 200 字')
   if (!/^\d+(\.\d{1,2})?$/.test(form.amount.trim()) || operationAmount.value <= 0 || operationAmount.value > maximumAmount.value) {
     return showError(`请输入不超过${props.mode === 'unfreeze' ? '可解冻资金' : '可用资金'}且最多两位小数的${config.value.amountLabel}`)
@@ -191,8 +191,8 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
                 <p class="mt-1 text-xs text-slate-500">最多可操作 {{ money(maximumAmount) }}</p>
               </div>
               <label class="block">
-                <span class="text-sm font-medium text-slate-800">操作原因 <span class="text-rose-500">*</span></span>
-                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" :placeholder="`请说明${config.action}原因`" />
+                <span class="text-sm font-medium text-slate-800">操作原因（可选）</span>
+                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" :placeholder="`可填写${config.action}原因`" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>
@@ -206,7 +206,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
                   <dt class="text-amber-800">操作金额</dt><dd>{{ money(operationAmount) }}</dd>
                   <dt class="text-amber-800">可用资金</dt><dd>{{ money(balance) }} → <strong>{{ money(after.balance) }}</strong></dd>
                   <template v-if="showFrozenBalance"><dt class="text-amber-800">冻结资金</dt><dd>{{ money(frozenBalance) }} → <strong>{{ money(after.frozen) }}</strong></dd></template>
-                  <dt class="text-amber-800">操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd>
+                  <dt class="text-amber-800">操作原因</dt><dd class="break-words">{{ reasonPreview }}</dd>
                 </dl>
               </div>
               <p class="text-xs text-slate-500">提交后还需通过 MFA 验证，验证成功才会执行本次操作。</p>

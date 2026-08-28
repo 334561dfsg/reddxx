@@ -69,6 +69,7 @@ const creditDelta = computed(() => (form.direction === 'decrease' ? -1 : 1) * (N
 const resultingScore = computed(() => currentScore.value + creditDelta.value)
 const resultingBalance = computed(() => currentBalance.value + (Number.isFinite(parsedAmount.value) ? parsedAmount.value : 0))
 const vipDirection = computed(() => Number(form.vipLevel) > currentVipLevel.value ? '升级' : '降级')
+const reasonPreview = computed(() => form.reason.trim() || '未填写')
 const money = (value) => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 const setDirectionRef = (element, index) => {
@@ -149,7 +150,6 @@ const startConfirm = async () => {
     return showError('返利金额必须大于 0 且最多两位小数')
   }
   const reason = form.reason.trim()
-  if (!reason) return showError('操作原因必填')
   if (reason.length > 200) return showError('操作原因不能超过 200 字')
   stage.value = 'confirm'
   await nextTick()
@@ -251,15 +251,15 @@ watch(
                 <label class="block"><span class="text-sm font-medium text-slate-800">返利金额 <span class="text-rose-500">*</span></span><input ref="amountRef" data-testid="membership-mutation-amount" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="最多两位小数" /></label>
               </template>
 
-              <label class="block"><span class="text-sm font-medium text-slate-800">操作原因 <span class="text-rose-500">*</span></span><textarea ref="reasonRef" data-testid="membership-mutation-reason" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" :placeholder="`请说明${config.action}原因`" /><span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span></label>
+              <label class="block"><span class="text-sm font-medium text-slate-800">操作原因（可选）</span><textarea ref="reasonRef" data-testid="membership-mutation-reason" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" :placeholder="`可填写${config.action}原因`" /><span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span></label>
             </template>
 
             <template v-else>
               <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
                 <h3 class="font-semibold">确认{{ config.action }}</h3>
-                <dl v-if="mode === 'credit'" class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>当前信用分</dt><dd>{{ currentScore }}</dd><dt>调整幅度</dt><dd>{{ creditDelta > 0 ? '+' : '' }}{{ creditDelta }}</dd><dt>调整后</dt><dd class="font-semibold">{{ resultingScore }}</dd><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
-                <dl v-else-if="mode === 'vip'" class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>变更方向</dt><dd>{{ vipDirection }}</dd><dt>当前等级</dt><dd>{{ currentVip ? vipPrimaryLabel(currentVip) : `VIP${currentVipLevel}` }}</dd><dt>目标等级</dt><dd class="font-semibold">{{ targetVipPrimaryLabel }}<span v-if="targetVipSecondaryLabel"> · {{ targetVipSecondaryLabel }}</span></dd><template v-if="selectedVipBenefits.length"><dt>目标权益</dt><dd>{{ selectedVipBenefits.join('、') }}</dd></template><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
-                <dl v-else class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>返利金额</dt><dd>{{ money(parsedAmount) }} USDT</dd><dt>入账前</dt><dd>{{ money(currentBalance) }} USDT</dd><dt>入账后</dt><dd class="font-semibold">{{ money(resultingBalance) }} USDT</dd><dt>操作原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
+                <dl v-if="mode === 'credit'" class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>当前信用分</dt><dd>{{ currentScore }}</dd><dt>调整幅度</dt><dd>{{ creditDelta > 0 ? '+' : '' }}{{ creditDelta }}</dd><dt>调整后</dt><dd class="font-semibold">{{ resultingScore }}</dd><dt>操作原因</dt><dd class="break-words">{{ reasonPreview }}</dd></dl>
+                <dl v-else-if="mode === 'vip'" class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>变更方向</dt><dd>{{ vipDirection }}</dd><dt>当前等级</dt><dd>{{ currentVip ? vipPrimaryLabel(currentVip) : `VIP${currentVipLevel}` }}</dd><dt>目标等级</dt><dd class="font-semibold">{{ targetVipPrimaryLabel }}<span v-if="targetVipSecondaryLabel"> · {{ targetVipSecondaryLabel }}</span></dd><template v-if="selectedVipBenefits.length"><dt>目标权益</dt><dd>{{ selectedVipBenefits.join('、') }}</dd></template><dt>操作原因</dt><dd class="break-words">{{ reasonPreview }}</dd></dl>
+                <dl v-else class="mt-3 grid grid-cols-[5.5rem_1fr] gap-y-2"><dt>返利金额</dt><dd>{{ money(parsedAmount) }} USDT</dd><dt>入账前</dt><dd>{{ money(currentBalance) }} USDT</dd><dt>入账后</dt><dd class="font-semibold">{{ money(resultingBalance) }} USDT</dd><dt>操作原因</dt><dd class="break-words">{{ reasonPreview }}</dd></dl>
               </div>
               <p class="text-xs text-slate-500">提交后还需通过 MFA 验证，验证成功才会执行。</p>
             </template>

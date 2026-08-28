@@ -49,14 +49,52 @@ test('credit adjustment applies an integer delta and records one detached audit'
   assert.equal(getUserMembershipAuditLog({ userId: user.id })[0].reason, '风险复核完成')
 })
 
+test('operation reasons and review notes are optional but still length-limited', () => {
+  const credited = adjustUserCredit({
+    userId: user.id,
+    direction: 'increase',
+    points: 1,
+    reason: '   ',
+    operatorId: 'admin_current'
+  })
+  assert.equal(credited.user.creditScore, original.creditScore + 1)
+  assert.equal(getUserMembershipAuditLog({ userId: user.id, type: 'credit-adjust' })[0].reason, '')
+
+  const vip = setUserVipLevel({ userId: user.id, vipLevel: 2, reason: '', operatorId: 'admin_current' })
+  assert.equal(vip.user.vipLevel, 2)
+  assert.equal(getUserMembershipAuditLog({ userId: user.id, type: 'vip-level-set' })[0].reason, '')
+
+  const rebate = grantUserRebate({ userId: user.id, amount: '1', reason: '', operatorId: 'admin_current' })
+  assert.equal(rebate.amount, 1)
+  assert.equal(getUserMembershipAuditLog({ userId: user.id, type: 'rebate-grant' })[0].reason, '')
+
+  const review = getUserCreditReviews(user.id).find((row) => row.status === 'pending')
+  const decision = decideUserCreditReview({
+    userId: user.id,
+    reviewId: review.id,
+    decision: 'reject',
+    note: '   ',
+    operatorId: 'admin_current'
+  })
+  assert.equal(decision.review.decisionNote, '')
+
+  const tooLong = '测'.repeat(201)
+  assert.throws(() => adjustUserCredit({ userId: user.id, direction: 'increase', points: 1, reason: tooLong }), /操作原因不能超过 200 字/)
+  assert.throws(() => decideUserCreditReview({
+    userId: user.id,
+    reviewId: getUserCreditReviews(user.id).find((row) => row.status === 'pending').id,
+    decision: 'approve',
+    note: tooLong
+  }), /审核备注不能超过 200 字/)
+})
+
 test('credit validation rejects invalid or out-of-range results without partial writes', () => {
   const before = getCreditMembershipSnapshot(user.id)
   const invalidInputs = [
     { direction: 'increase', points: 0, reason: '测试' },
     { direction: 'increase', points: 1.5, reason: '测试' },
     { direction: 'sideways', points: 1, reason: '测试' },
-    { direction: 'decrease', points: original.creditScore + 1, reason: '测试' },
-    { direction: 'increase', points: 1, reason: '   ' }
+    { direction: 'decrease', points: original.creditScore + 1, reason: '测试' }
   ]
 
   for (const input of invalidInputs) {

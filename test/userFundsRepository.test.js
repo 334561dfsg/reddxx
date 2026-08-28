@@ -151,6 +151,34 @@ test('funds operations require account and coin before mutating balances', () =>
   }
 })
 
+test('funds operation reasons are optional but still length-limited', () => {
+  const frozen = freezeAllAvailable(fundsInput({
+    userId: user.id,
+    amount: '10',
+    reason: '   ',
+    operatorId: 'admin_current'
+  }))
+  assert.equal(frozen.adminFrozenAmount, 10)
+  assert.equal(getFundsAuditLog({ userId: user.id, type: 'freeze' })[0].reason, '')
+
+  const deducted = deductAvailableFunds(fundsInput({
+    userId: user.id,
+    amount: '1',
+    reason: '',
+    operatorId: 'admin_current'
+  }))
+  assert.equal(deducted.balance, 1239.75)
+  assert.equal(getFundsAuditLog({ userId: user.id, type: 'deduct' })[0].reason, '')
+
+  const tooLong = '测'.repeat(201)
+  assert.throws(() => freezeAllAvailable(fundsInput({
+    userId: user.id,
+    amount: '1',
+    reason: tooLong,
+    operatorId: 'admin_current'
+  })), /操作原因不能超过 200 字/)
+})
+
 test('freeze and unfreeze reject unavailable operations without side effects', () => {
   user.balance = 0
   const before = getFundsSnapshot(user.id)
@@ -207,6 +235,37 @@ test('withdraw flow limits derive progress instead of accepting operator input',
   assert.equal(removed.status, 'none')
   assert.equal(removed.canWithdraw, true)
   assert.equal(getFundsAuditLog({ userId: user.id }).length, 3)
+})
+
+test('withdraw flow limit reasons are optional but still length-limited', () => {
+  const active = setWithdrawFlowLimit({
+    userId: user.id,
+    flowScope: 'all',
+    requiredTurnover: '500',
+    expiresAt: null,
+    reason: '   ',
+    operatorId: 'admin_current'
+  })
+  assert.equal(active.reason, '')
+  assert.equal(getFundsAuditLog({ userId: user.id, type: 'flow-limit-set' })[0].reason, '')
+
+  const removed = removeWithdrawFlowLimit({
+    userId: user.id,
+    reason: '',
+    operatorId: 'admin_current'
+  })
+  assert.equal(removed.status, 'none')
+  assert.equal(getFundsAuditLog({ userId: user.id, type: 'flow-limit-remove' })[0].reason, '')
+
+  const tooLong = '测'.repeat(201)
+  assert.throws(() => setWithdrawFlowLimit({
+    userId: user.id,
+    flowScope: 'all',
+    requiredTurnover: '500',
+    expiresAt: null,
+    reason: tooLong,
+    operatorId: 'admin_current'
+  }), /操作原因不能超过 200 字/)
 })
 
 test('withdraw flow validation leaves the prior rule and audit unchanged', () => {

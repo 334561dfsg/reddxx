@@ -16,8 +16,8 @@ import {
 describe('user operation audit log repository', () => {
   beforeEach(() => resetUserAuditLogsForTests())
 
-  it('requires a reason for manual admin changes', () => {
-    assert.throws(() => appendUserAuditLog({
+  it('allows an optional reason for manual admin changes', () => {
+    const record = appendUserAuditLog({
       targetUser: { uid: 'user_1001', name: 'Alice' },
       source: 'admin',
       operator: { id: 'admin_current', name: '当前管理员' },
@@ -26,7 +26,9 @@ describe('user operation audit log repository', () => {
       result: 'success',
       before: { nickname: 'A' },
       after: { nickname: 'B' }
-    }), /操作原因/)
+    })
+
+    assert.equal(record.reason, '')
   })
 
   it('creates normalized append-only records with changed-field diffs', () => {

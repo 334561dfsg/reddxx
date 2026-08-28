@@ -21,9 +21,8 @@ const requireUser = (userId) => {
   return user
 }
 
-const requireText = (value, label = '操作原因') => {
+const normalizeOptionalText = (value, label = '操作原因') => {
   const text = String(value ?? '').trim()
-  if (!text) throw new Error(`${label}必填`)
   if (text.length > 200) throw new Error(`${label}不能超过 200 字`)
   return text
 }
@@ -246,7 +245,7 @@ export const adjustUserCredit = ({ userId, direction, points, reason, operatorId
   if (!['increase', 'decrease'].includes(direction)) throw new Error('信用分调整方向无效')
   const parsedPoints = Number(points)
   if (!Number.isInteger(parsedPoints) || parsedPoints <= 0) throw new Error('信用分值必须为正整数')
-  const cleanReason = requireText(reason)
+  const cleanReason = normalizeOptionalText(reason)
   const beforeScore = Number(user.creditScore || 0)
   const delta = direction === 'increase' ? parsedPoints : -parsedPoints
   const afterScore = beforeScore + delta
@@ -262,7 +261,7 @@ export const setUserVipLevel = ({ userId, vipLevel, reason, operatorId }) => {
   const targetLevel = Number(vipLevel)
   const target = getActiveVipLevels().find((level) => level.level === targetLevel)
   if (!target) throw new Error('目标会员等级不存在或未启用')
-  const cleanReason = requireText(reason)
+  const cleanReason = normalizeOptionalText(reason)
   const beforeLevel = Number(user.vipLevel || 0)
   if (beforeLevel === targetLevel) throw new Error('目标等级与当前等级相同')
   const direction = targetLevel > beforeLevel ? 'upgrade' : 'downgrade'
@@ -280,7 +279,7 @@ export const decideUserCreditReview = ({ userId, reviewId, decision, note, opera
   if (review.userId !== userIdOf(user)) throw new Error('审核记录不属于当前用户')
   if (review.status !== 'pending') throw new Error('该审核记录已处理')
   if (!['approve', 'reject'].includes(decision)) throw new Error('审核决定无效')
-  const cleanNote = requireText(note, '审核备注')
+  const cleanNote = normalizeOptionalText(note, '审核备注')
   const beforeScore = Number(user.creditScore || 0)
   const afterScore = decision === 'approve' ? Number(review.proposedScore) : beforeScore
   if (!Number.isInteger(afterScore) || afterScore < SCORE_MIN || afterScore > SCORE_MAX) throw new Error('审核后的信用分超出允许范围')
@@ -299,7 +298,7 @@ export const decideUserCreditReview = ({ userId, reviewId, decision, note, opera
 export const grantUserRebate = ({ userId, amount, reason, operatorId }) => {
   const user = requireUser(userId)
   const parsedAmount = requireMoney(amount, '返利金额')
-  const cleanReason = requireText(reason)
+  const cleanReason = normalizeOptionalText(reason)
   const beforeBalance = roundMoney(user.balance || 0)
   const afterBalance = roundMoney(beforeBalance + parsedAmount)
   const transactionId = nextId('REB')

@@ -40,6 +40,7 @@ const parentSelectionError = computed(() => (
   parentSelectionInvalid.value ? '所选新裂变上级不可用，请重新选择。' : ''
 ))
 const nextParent = computed(() => form.parentId ? getUserById(form.parentId) : null)
+const reasonPreview = computed(() => form.reason.trim() || '未填写')
 
 const resetForm = () => {
   phaseName.value = 'form'
@@ -79,7 +80,6 @@ const showError = async (message) => {
 
 const startConfirm = async () => {
   errorMessage.value = ''
-  if (!form.reason.trim()) return showError('变更原因必填')
   if (form.reason.trim().length > 200) return showError('变更原因不能超过 200 字')
   if (parentSelectionInvalid.value) return showError(parentSelectionError.value)
   if (String(props.user?.parentId ?? '') === String(form.parentId ?? '')) return showError('新裂变上级不能与当前裂变上级相同')
@@ -103,7 +103,7 @@ const confirmReset = async () => {
     const updated = resetParent({
       userId: userId.value,
       parentId: form.parentId || null,
-      reason: form.reason
+      reason: form.reason.trim()
     })
     emit('saved', updated)
     submitting.value = false
@@ -166,8 +166,8 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               </div>
 
               <label class="block">
-                <span class="text-sm font-medium text-slate-800">变更原因 <span class="text-rose-500">*</span></span>
-                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请说明重设裂变上级的原因" />
+                <span class="text-sm font-medium text-slate-800">变更原因（可选）</span>
+                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="可填写重设裂变上级的原因" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>
@@ -179,7 +179,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
                   <dt class="text-amber-800">原裂变上级</dt><dd>{{ currentParent?.username || '无裂变上级' }}</dd>
                   <dt class="text-amber-800">新裂变上级</dt><dd>{{ nextParent?.username || '无裂变上级' }}</dd>
                   <dt class="text-amber-800">预计影响</dt><dd>当前用户及裂变关系链中的 {{ descendantsCount }} 个裂变下级</dd>
-                  <dt class="text-amber-800">变更原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd>
+                  <dt class="text-amber-800">变更原因</dt><dd class="break-words">{{ reasonPreview }}</dd>
                 </dl>
               </div>
             </template>

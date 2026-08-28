@@ -19,6 +19,7 @@ const stage = ref('edit')
 const errorMessage = ref('')
 const form = reactive({ decision: '', note: '' })
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
+const notePreview = computed(() => form.note.trim() || '未填写')
 const formatTime = (value) => value ? new Date(value).toLocaleString('zh-CN', { hour12: false }) : '—'
 const resetForm = () => { stage.value = 'edit'; errorMessage.value = ''; form.decision = ''; form.note = '' }
 const closeDisabled = computed(() => props.busy)
@@ -36,7 +37,6 @@ const showError = async (message) => { errorMessage.value = message; await nextT
 const startConfirm = async () => {
   errorMessage.value = ''
   if (!['approve', 'reject'].includes(form.decision)) return showError('请选择审核决定')
-  if (!form.note.trim()) return showError('审核备注必填')
   if (form.note.trim().length > 200) return showError('审核备注不能超过 200 字')
   stage.value = 'confirm'; await nextTick(); backRef.value?.focus?.()
 }
@@ -76,7 +76,7 @@ watch(() => [props.visible, props.review?.id], ([visible]) => { if (visible) res
                   <label class="flex min-h-12 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50"><input v-model="form.decision" type="radio" name="review-decision" value="reject" class="h-4 w-4" />审核拒绝</label>
                 </div>
               </fieldset>
-              <label class="block"><span class="text-sm font-medium text-slate-800">审核备注 <span class="text-rose-500">*</span></span><textarea data-testid="credit-review-decision-note" v-model="form.note" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请说明审核依据" /><span class="mt-1 block text-right text-xs text-slate-500">{{ form.note.length }}/200</span></label>
+              <label class="block"><span class="text-sm font-medium text-slate-800">审核备注（可选）</span><textarea data-testid="credit-review-decision-note" v-model="form.note" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="可填写审核依据" /><span class="mt-1 block text-right text-xs text-slate-500">{{ form.note.length }}/200</span></label>
             </template>
 
             <template v-else>
@@ -84,7 +84,7 @@ watch(() => [props.visible, props.review?.id], ([visible]) => { if (visible) res
                 <h3 class="font-semibold">确认{{ form.decision === 'approve' ? '通过' : '拒绝' }}本次审核</h3>
                 <p v-if="form.decision === 'approve'" class="mt-2">通过后，信用分将从 {{ review?.beforeScore }} 调整为 {{ review?.proposedScore }}。</p>
                 <p v-else class="mt-2">拒绝后，当前信用分保持不变，该申请将不能再次处理。</p>
-                <p class="mt-2 break-words">审核备注：{{ form.note.trim() }}</p>
+                <p class="mt-2 break-words">审核备注：{{ notePreview }}</p>
               </div>
               <p class="text-xs text-slate-500">审核决定不可撤回，提交后还需完成 MFA 验证。</p>
             </template>

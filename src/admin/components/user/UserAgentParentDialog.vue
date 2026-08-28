@@ -41,6 +41,7 @@ const agentSelectionError = computed(() => (
   agentSelectionInvalid.value ? '所选上级代理不可用，请重新选择。' : ''
 ))
 const nextAgentParent = computed(() => form.agentParentId ? getUserById(form.agentParentId) : null)
+const reasonPreview = computed(() => form.reason.trim() || '未填写')
 
 const resetForm = () => {
   phaseName.value = 'form'
@@ -81,7 +82,6 @@ const showError = async (message) => {
 
 const startConfirm = async () => {
   errorMessage.value = ''
-  if (!form.reason.trim()) return showError('变更原因必填')
   if (form.reason.trim().length > 200) return showError('变更原因不能超过 200 字')
   if (agentSelectionInvalid.value) return showError(agentSelectionError.value)
   if (String(props.user?.agentParentId ?? '') === String(form.agentParentId ?? '')) return showError('新上级代理不能与当前上级代理相同')
@@ -104,7 +104,7 @@ const confirmSet = async () => {
     const updated = setAgentParent({
       userId: userId.value,
       agentParentId: form.agentParentId || null,
-      reason: form.reason
+      reason: form.reason.trim()
     })
     emit('saved', updated)
     submitting.value = false
@@ -167,8 +167,8 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               </div>
 
               <label class="block">
-                <span class="text-sm font-medium text-slate-800">变更原因 <span class="text-rose-500">*</span></span>
-                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请说明设置上级代理的原因" />
+                <span class="text-sm font-medium text-slate-800">变更原因（可选）</span>
+                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="可填写设置上级代理的原因" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>
@@ -179,7 +179,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
                 <dl class="mt-3 grid grid-cols-[6rem_1fr] gap-y-2">
                   <dt class="text-amber-800">原上级代理</dt><dd>{{ currentAgentParent?.username || '无上级代理' }}</dd>
                   <dt class="text-amber-800">新上级代理</dt><dd>{{ nextAgentParent?.username || '无上级代理' }}</dd>
-                  <dt class="text-amber-800">变更原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd>
+                  <dt class="text-amber-800">变更原因</dt><dd class="break-words">{{ reasonPreview }}</dd>
                 </dl>
               </div>
             </template>

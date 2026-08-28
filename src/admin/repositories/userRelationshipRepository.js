@@ -23,9 +23,8 @@ const requireUser = (id) => {
   return user
 }
 
-const requireReason = (reason) => {
+const normalizeOptionalReason = (reason) => {
   const value = normalized(reason)
-  if (!value) throw new Error('变更原因必填')
   if (value.length > 200) throw new Error('变更原因不能超过 200 字')
   return value
 }
@@ -165,7 +164,7 @@ export const validateProfile = (input, userId) => {
 
 export const updateProfile = (userId, patch) => {
   const user = requireUser(userId)
-  const cleanReason = requireReason(patch?.reason)
+  const cleanReason = normalizeOptionalReason(patch?.reason)
   const errors = validateProfile(patch, userId)
   if (Object.keys(errors).length) {
     const error = new Error(Object.values(errors)[0])
@@ -208,7 +207,7 @@ export const updateProfile = (userId, patch) => {
 export const resetParent = ({ userId, parentId = null, reason }) => {
   const user = requireUser(userId)
   const nextParentId = parentId ? String(parentId) : null
-  const cleanReason = requireReason(reason)
+  const cleanReason = normalizeOptionalReason(reason)
 
   if (nextParentId === idOf(user)) throw new Error('不能选择用户本人作为裂变上级')
   if (nextParentId && getDescendants(userId).some((row) => idOf(row) === nextParentId)) {
@@ -244,7 +243,7 @@ export const resetParent = ({ userId, parentId = null, reason }) => {
 export const setAgentParent = ({ userId, agentParentId = null, reason }) => {
   const user = requireUser(userId)
   const nextAgentParentId = agentParentId ? String(agentParentId) : null
-  const cleanReason = requireReason(reason)
+  const cleanReason = normalizeOptionalReason(reason)
 
   if (nextAgentParentId === idOf(user)) throw new Error('不能选择用户本人作为上级代理')
   const agentParent = nextAgentParentId ? requireUser(nextAgentParentId) : null
@@ -282,7 +281,7 @@ export const setAgentParent = ({ userId, agentParentId = null, reason }) => {
 
 export const updateAgentRole = ({ userId, role, reason, successorParentId }) => {
   const user = requireUser(userId)
-  const cleanReason = requireReason(reason)
+  const cleanReason = normalizeOptionalReason(reason)
   if (![USER_ROLE.USER, USER_ROLE.AGENT].includes(role)) throw new Error('目标身份不正确')
   if (user.role === role) throw new Error('目标身份与当前身份相同')
 

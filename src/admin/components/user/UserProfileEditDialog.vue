@@ -76,8 +76,7 @@ const submit = async () => {
   for (const key of Object.keys(errors)) delete errors[key]
   submitError.value = ''
   Object.assign(errors, validateProfile(form, userId.value))
-  if (!form.reason.trim()) errors.reason = '操作原因必填'
-  else if (form.reason.trim().length > 200) errors.reason = '操作原因不能超过 200 字'
+  if (form.reason.trim().length > 200) errors.reason = '操作原因不能超过 200 字'
   if (Object.keys(errors).length) {
     submitError.value = '请检查并修正表单中的错误'
     await focusError()
@@ -166,7 +165,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
             </fieldset>
 
             <label class="block">
-              <span class="text-sm font-medium text-slate-800">操作原因 <span class="text-rose-500">*</span></span>
+              <span class="text-sm font-medium text-slate-800">操作原因（可选）</span>
               <textarea v-model="form.reason" :disabled="submitting" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" placeholder="请填写为什么编辑用户资料" />
               <span class="mt-1 flex justify-between gap-3 text-xs"><span class="text-rose-600">{{ errors.reason || '' }}</span><span class="text-slate-500">{{ form.reason.length }}/200</span></span>
             </label>

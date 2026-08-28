@@ -30,6 +30,8 @@ const hasLimit = computed(() => Boolean(props.limit && props.limit.status !== 'n
 const currentFlowScopeLabel = computed(() => props.limit?.flowScopeLabel || flowScopeOptions.find((option) => option.value === props.limit?.flowScope)?.label || '全部交易')
 const selectedFlowScopeLabel = computed(() => flowScopeOptions.find((option) => option.value === form.flowScope)?.label || '—')
 const completedTurnover = computed(() => Number(props.limit?.completedTurnover || 0))
+const reasonPreview = computed(() => form.reason.trim() || '未填写')
+const removeReasonPreview = computed(() => form.removeReason.trim() || '未填写')
 const remainingTurnover = computed(() => {
   const required = Number(form.requiredTurnover)
   return Number.isFinite(required) ? Math.max(0, required - completedTurnover.value) : 0
@@ -78,13 +80,11 @@ const startSetConfirm = async () => {
   if (required <= completedTurnover.value) return showError('所需流水必须大于当前已完成流水')
   if (form.expiryMode === 'scheduled' && !form.expiresAt) return showError('请选择到期时间')
   if (form.expiryMode === 'scheduled' && new Date(form.expiresAt).getTime() <= Date.now()) return showError('到期时间必须晚于当前时间')
-  if (!form.reason.trim()) return showError('设置原因必填')
   if (form.reason.trim().length > 200) return showError('设置原因不能超过 200 字')
   stage.value = 'confirm-set'; await nextTick(); backRef.value?.focus?.()
 }
 const startRemoveConfirm = async () => {
   errorMessage.value = ''
-  if (!form.removeReason.trim()) return showError('解除原因必填')
   if (form.removeReason.trim().length > 200) return showError('解除原因不能超过 200 字')
   stage.value = 'confirm-remove'; await nextTick(); backRef.value?.focus?.()
 }
@@ -157,10 +157,10 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
                 </div>
               </fieldset>
               <label v-if="form.expiryMode === 'scheduled'" class="block"><span class="text-sm font-medium text-slate-800">到期时间 <span class="text-rose-500">*</span></span><input v-model="form.expiresAt" type="datetime-local" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /></label>
-              <label class="block"><span class="text-sm font-medium text-slate-800">设置原因 <span class="text-rose-500">*</span></span><textarea v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /></label>
+              <label class="block"><span class="text-sm font-medium text-slate-800">设置原因（可选）</span><textarea v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /></label>
               <div v-if="hasLimit" class="rounded-lg border border-rose-200 bg-rose-50 p-3">
                 <p class="text-sm font-medium text-rose-900">解除现有限制</p>
-                <textarea v-model="form.removeReason" rows="2" maxlength="200" class="mt-2 w-full rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-rose-100" placeholder="请输入解除原因" />
+                <textarea v-model="form.removeReason" rows="2" maxlength="200" class="mt-2 w-full rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-rose-100" placeholder="可填写解除原因" />
                 <button type="button" :disabled="busy" class="mt-2 rounded-lg border border-rose-300 bg-white px-3 py-2 text-sm font-medium text-rose-700 disabled:opacity-40" @click="startRemoveConfirm">解除限制</button>
               </div>
             </template>
@@ -168,8 +168,8 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
             <template v-else>
               <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
                 <h3 class="font-semibold">{{ stage === 'confirm-remove' ? '确认解除出金流水限制' : '确认设置出金流水限制' }}</h3>
-                <dl v-if="stage === 'confirm-set'" class="mt-3 grid grid-cols-[7rem_1fr] gap-y-2"><dt>流水范围</dt><dd>{{ selectedFlowScopeLabel }}</dd><dt>流水要求金额</dt><dd>{{ money(form.requiredTurnover) }} USDT</dd><dt>已完成有效流水</dt><dd>{{ money(completedTurnover) }} USDT</dd><dt>剩余所需流水</dt><dd>{{ money(remainingTurnover) }} USDT</dd><dt>有效期</dt><dd>{{ form.expiryMode === 'unlimited' ? '无限期' : form.expiresAt }}</dd><dt>设置原因</dt><dd class="break-words">{{ form.reason.trim() }}</dd></dl>
-                <p v-else class="mt-3 break-words">解除原因：{{ form.removeReason.trim() }}</p>
+                <dl v-if="stage === 'confirm-set'" class="mt-3 grid grid-cols-[7rem_1fr] gap-y-2"><dt>流水范围</dt><dd>{{ selectedFlowScopeLabel }}</dd><dt>流水要求金额</dt><dd>{{ money(form.requiredTurnover) }} USDT</dd><dt>已完成有效流水</dt><dd>{{ money(completedTurnover) }} USDT</dd><dt>剩余所需流水</dt><dd>{{ money(remainingTurnover) }} USDT</dd><dt>有效期</dt><dd>{{ form.expiryMode === 'unlimited' ? '无限期' : form.expiresAt }}</dd><dt>设置原因</dt><dd class="break-words">{{ reasonPreview }}</dd></dl>
+                <p v-else class="mt-3 break-words">解除原因：{{ removeReasonPreview }}</p>
               </div>
               <p class="text-xs text-slate-500">提交后还需通过 MFA 验证，验证成功才会执行。</p>
             </template>
