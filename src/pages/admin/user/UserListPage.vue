@@ -278,12 +278,6 @@ const resolveControlReturnFocus = () => {
 }
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
 const controlMetaOf = (user) => getUserControlListMeta(userControlState.value, userIdOf(user))
-const controlTypeBadgeClass = (label) => ({
-  盈利: 'bg-orange-100 text-orange-700 ring-orange-200',
-  亏损: 'bg-emerald-100 text-emerald-700 ring-emerald-200',
-  存在模块差异: 'bg-amber-100 text-amber-700 ring-amber-200',
-  当前模块点控: 'bg-sky-100 text-sky-700 ring-sky-200'
-}[label] || 'bg-slate-100 text-slate-500 ring-slate-200')
 const isLocked = (user) => [USER_STATUS.SUSPENDED, USER_STATUS.BANNED].includes(user?.status)
 const isAgentUser = (user) => user?.role === USER_ROLE.AGENT
 const cancelControlItems = computed(() => getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}, USER_LIST_CONTROL_MODULE_KEYS))
@@ -1012,7 +1006,7 @@ const clearDetailDrawer = () => {
               <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">信用分</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">裂变上级</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">控盘类型</th>
+              <th class="min-w-24 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 whitespace-nowrap">点控</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
             </tr>
           </thead>
@@ -1088,16 +1082,11 @@ const clearDetailDrawer = () => {
                 <span v-else class="text-xs text-slate-400">-</span>
               </td>
 
-              <!-- 用户控盘类型 -->
-              <td class="px-4 py-3">
-                <span
-                  v-if="controlMetaOf(user).hasCurrent"
-                  class="inline-flex rounded-md px-2.5 py-1 text-xs font-semibold ring-1"
-                  :class="controlTypeBadgeClass(controlMetaOf(user).controlLabel)"
-                >
+              <!-- 用户点控 -->
+              <td class="px-4 py-3 whitespace-nowrap">
+                <span :class="controlMetaOf(user).hasCurrent ? 'text-sm font-medium text-slate-700' : 'text-xs text-slate-400'">
                   {{ controlMetaOf(user).controlLabel }}
                 </span>
-                <span v-else class="text-xs text-slate-400">-</span>
               </td>
 
               <!-- 用户快捷操作 -->

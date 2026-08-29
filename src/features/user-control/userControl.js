@@ -398,19 +398,20 @@ export function getEffectiveUserControlRules(rules = {}) {
 export function getUserControlListMeta(state, userId) {
   const effectiveRules = Object.values(getEffectiveUserControlRules(state.rules[String(userId)] || {}))
   if (!effectiveRules.length) {
-    return { hasCurrent: false, controlLabel: '未设置', durationLabel: '—' }
+    return { hasCurrent: false, controlLabel: '-', durationLabel: '—' }
   }
 
   const summary = summarizeUserControl(state, userId)
   const globalRule = effectiveRules.find((rule) => rule.source === 'global')
+  const displayRule = globalRule || effectiveRules[0]
   const durations = [...new Set(effectiveRules.map((rule) => rule.duration).filter(Boolean))]
   const controlLabel = summary.kind === 'divergent'
     ? '存在模块差异'
-    : globalRule?.strategy === 'positive'
-      ? '盈利'
-      : globalRule?.strategy === 'negative'
-        ? '亏损'
-        : '当前模块点控'
+    : displayRule?.strategy === 'positive'
+      ? '永久盈利'
+      : displayRule?.strategy === 'negative'
+        ? '永久亏损'
+        : '-'
 
   return {
     hasCurrent: true,

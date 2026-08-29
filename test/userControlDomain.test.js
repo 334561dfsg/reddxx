@@ -32,7 +32,7 @@ test('demo seed includes synchronized, consumed, cancelled, and failure examples
   assert.equal(summarizeUserControl(seed, '158').kind, 'synced')
   assert.equal(summarizeUserControl(seed, '153').kind, 'synced')
   assert.equal(summarizeUserControl(seed, 'user_1001').kind, 'synced')
-  assert.equal(userControlHelpers.getUserControlListMeta(seed, 'user_1001').controlLabel, '亏损')
+  assert.equal(userControlHelpers.getUserControlListMeta(seed, 'user_1001').controlLabel, '永久亏损')
   assert.ok(Object.values(seed.rules.user_1001).every((rule) => rule.strategy === 'negative' && rule.value === 'loss'))
   assert.equal(summarizeUserControl(seed, 'user_1002').kind, 'none')
   assert.equal(summarizeUserControl(seed, 'user_1003').kind, 'synced')
@@ -113,7 +113,7 @@ test('list metadata only reflects active and processing rules', () => {
   })
   assert.deepEqual(userControlHelpers.getUserControlListMeta(unified, 'user_1001'), {
     hasCurrent: true,
-    controlLabel: '盈利',
+    controlLabel: '永久盈利',
     durationLabel: '持续生效'
   })
 
@@ -122,7 +122,7 @@ test('list metadata only reflects active and processing rules', () => {
   })
   assert.deepEqual(userControlHelpers.getUserControlListMeta(cancelled, 'user_1001'), {
     hasCurrent: false,
-    controlLabel: '未设置',
+    controlLabel: '-',
     durationLabel: '—'
   })
 
@@ -137,7 +137,7 @@ test('list metadata only reflects active and processing rules', () => {
   }))
   assert.deepEqual(userControlHelpers.getUserControlListMeta(consumed, 'user_1004'), {
     hasCurrent: false,
-    controlLabel: '未设置',
+    controlLabel: '-',
     durationLabel: '—'
   })
 })
@@ -215,7 +215,7 @@ test('divergence keys identify delivery overrides without tracking removed modul
   assert.deepEqual(summarizeUserControl(splitBatchState, 'user_1003'), {
     kind: 'synced', aligned: 1, total: 1, label: '1/1 已同步'
   })
-  assert.equal(userControlHelpers.getUserControlListMeta(splitBatchState, 'user_1003').controlLabel, '盈利')
+  assert.equal(userControlHelpers.getUserControlListMeta(splitBatchState, 'user_1003').controlLabel, '永久盈利')
   assert.deepEqual(userControlHelpers.getUserControlDivergenceKeys(splitBatchRules), [])
 })
 
