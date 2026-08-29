@@ -168,6 +168,7 @@ test('AI quant front orders open a dedicated detail page', () => {
   assert.match(frontOrdersPanelSource, /:class="\[fx\.btnInlineNeutral, 'max-md:w-full'\]"/)
   assert.match(frontOrdersPanelSource, /:class="\[fx\.btnTableAction, 'max-md:w-full'\]"/)
   assert.match(frontOrdersPanelSource, /:class="\[fx\.btnDisabledHint, 'max-md:w-full'\]"/)
+  assert.ok(frontOrdersPanelSource.includes('flex min-h-11 w-full items-center justify-center rounded-lg border border-white/[0.1] bg-white/[0.04] text-sm font-semibold text-white/70 transition hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35'))
   assert.match(frontOrdersPanelSource, /function aiQuantOrderDetailLocation\(orderId\)/)
   assert.match(frontOrdersPanelSource, /ai-quant\/order\/\$\{orderId\}/)
   assert.match(frontOrdersPanelSource, /:to="aiQuantOrderDetailLocation\(o\.id\)"/)
