@@ -38,7 +38,7 @@ const yieldAdjustments = ref([...createYieldAdjustmentsMock(), ...buildAiQuantDe
 const currencyTab = ref('USDC')
 
 /** Hero 主入口：机器人市场 / 我的托管（与借贷、流动性列表一致） */
-const heroPanel = ref('market')
+const heroPanel = ref(route.query.tab === 'orders' ? 'mine' : 'market')
 
 watch(
   products,
@@ -185,6 +185,14 @@ watch(recordTab, () => {
   pgInterest.resetPage()
 })
 
+watch(
+  () => route.query.tab,
+  (tab) => {
+    if (tab === 'orders') heroPanel.value = 'mine'
+    if (tab === 'products') heroPanel.value = 'market'
+  }
+)
+
 watch(heroPanel, (panel) => {
   if (panel === 'market') pgTier.resetPage()
   if (panel === 'mine') {
@@ -284,6 +292,13 @@ function formatTierAmountPlain(min, max, productCurrency) {
   const b = Number(max)
   if (!Number.isFinite(a) || !Number.isFinite(b)) return `— ${cur}`
   return `${a} ~ ${b} ${cur}`
+}
+
+function aiQuantOrderDetailLocation(orderId) {
+  return {
+    path: `${prefix}/finance/ai-quant/order/${orderId}`,
+    query: { from: 'orders' }
+  }
 }
 
 /** 立即租用弹窗 */
@@ -746,13 +761,19 @@ const rentSubmitValid = computed(() => {
                   <p class="mt-0.5 tabular-nums text-[11px] text-white/55 sm:text-xs">
                     {{ o.principal }} {{ o.currency }}
                   </p>
-                  <div v-if="canApplyEarlyRedeemAiOrder(o)" class="mt-3 md:hidden">
-                    <button type="button" :class="fx.btnTableActionBlock" @click="openAiRedeemDialog(o)">
+                  <div class="mt-3 grid grid-cols-2 gap-2 md:hidden">
+                    <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
+                      查看详情
+                    </RouterLink>
+                    <button
+                      v-if="canApplyEarlyRedeemAiOrder(o)"
+                      type="button"
+                      :class="fx.btnTableActionBlock"
+                      @click="openAiRedeemDialog(o)"
+                    >
                       申请赎回
                     </button>
-                  </div>
-                  <div v-else class="mt-3 md:hidden">
-                    <p :class="[fx.hintBlock, 'text-[11px]']">
+                    <p v-else :class="[fx.hintBlock, 'text-center text-[11px]']">
                       不可提前赎回
                     </p>
                   </div>
@@ -761,15 +782,20 @@ const rentSubmitValid = computed(() => {
                   {{ o.principal }} {{ o.currency }}
                 </td>
                 <td class="max-md:hidden md:table-cell md:px-5 md:py-3 md:text-left">
-                  <button
-                    v-if="canApplyEarlyRedeemAiOrder(o)"
-                    type="button"
-                    :class="fx.btnTableAction"
-                    @click="openAiRedeemDialog(o)"
-                  >
-                    申请赎回
-                  </button>
-                  <span v-else class="text-xs text-white/35">不可提前赎回</span>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableAction">
+                      查看详情
+                    </RouterLink>
+                    <button
+                      v-if="canApplyEarlyRedeemAiOrder(o)"
+                      type="button"
+                      :class="fx.btnTableAction"
+                      @click="openAiRedeemDialog(o)"
+                    >
+                      申请赎回
+                    </button>
+                    <span v-else class="text-xs text-white/35">不可提前赎回</span>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -822,18 +848,24 @@ const rentSubmitValid = computed(() => {
                     <span class="text-white/35">日收益</span>
                     <span class="text-right tabular-nums text-white/70">{{ o.expectedDailyYield }}</span>
                   </div>
-                  <div v-if="o.status === ORDER_STATUS.RUNNING" class="mt-3 md:hidden">
-                    <button
-                      v-if="canApplyEarlyRedeemAiOrder(o)"
-                      type="button"
-                      :class="fx.btnTableActionBlock"
-                      @click="openAiRedeemDialog(o)"
-                    >
-                      申请赎回
-                    </button>
-                    <p v-else :class="[fx.hintBlock, 'text-[11px]']">
-                      不可提前赎回
-                    </p>
+                  <div class="mt-3 grid grid-cols-2 gap-2 md:hidden">
+                    <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
+                      查看详情
+                    </RouterLink>
+                    <template v-if="o.status === ORDER_STATUS.RUNNING">
+                      <button
+                        v-if="canApplyEarlyRedeemAiOrder(o)"
+                        type="button"
+                        :class="fx.btnTableActionBlock"
+                        @click="openAiRedeemDialog(o)"
+                      >
+                        申请赎回
+                      </button>
+                      <p v-else :class="[fx.hintBlock, 'text-center text-[11px]']">
+                        不可提前赎回
+                      </p>
+                    </template>
+                    <span v-else :class="[fx.hintBlock, 'text-center text-[11px]']">—</span>
                   </div>
                 </td>
                 <td class="hidden tabular-nums text-white/55 md:table-cell md:px-5 md:py-3">{{ o.startDate }}</td>
@@ -848,18 +880,23 @@ const rentSubmitValid = computed(() => {
                   {{ o.expectedDailyYield }}
                 </td>
                 <td class="max-md:hidden md:table-cell md:px-5 md:py-3 md:text-left">
-                  <template v-if="o.status === ORDER_STATUS.RUNNING">
-                    <button
-                      v-if="canApplyEarlyRedeemAiOrder(o)"
-                      type="button"
-                      :class="fx.btnTableAction"
-                      @click="openAiRedeemDialog(o)"
-                    >
-                      申请赎回
-                    </button>
-                    <span v-else class="text-xs text-white/35">不可提前赎回</span>
-                  </template>
-                  <span v-else class="text-xs text-white/35">—</span>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableAction">
+                      查看详情
+                    </RouterLink>
+                    <template v-if="o.status === ORDER_STATUS.RUNNING">
+                      <button
+                        v-if="canApplyEarlyRedeemAiOrder(o)"
+                        type="button"
+                        :class="fx.btnTableAction"
+                        @click="openAiRedeemDialog(o)"
+                      >
+                        申请赎回
+                      </button>
+                      <span v-else class="text-xs text-white/35">不可提前赎回</span>
+                    </template>
+                    <span v-else class="text-xs text-white/35">—</span>
+                  </div>
                 </td>
                 <td
                   class="max-md:block max-md:w-full max-md:px-3 max-md:pb-4 max-md:pt-1 md:table-cell md:px-5 md:py-3 md:text-left"
@@ -891,6 +928,7 @@ const rentSubmitValid = computed(() => {
                 <th class="px-3 py-2.5 md:px-5">产品名称</th>
                 <th class="hidden px-3 py-2.5 md:table-cell md:px-5">赎回时间</th>
                 <th class="hidden px-3 py-2.5 md:table-cell md:px-5">本金</th>
+                <th class="hidden px-3 py-2.5 md:table-cell md:px-5">操作</th>
                 <th class="px-3 py-2.5 text-right md:px-5">状态</th>
               </tr>
             </thead>
@@ -910,12 +948,22 @@ const rentSubmitValid = computed(() => {
                     <span class="text-white/35">本金</span>
                     <span class="text-right tabular-nums text-white/80">{{ o.principal }} {{ o.currency }}</span>
                   </div>
+                  <div class="mt-3 md:hidden">
+                    <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
+                      查看详情
+                    </RouterLink>
+                  </div>
                 </td>
                 <td class="hidden tabular-nums text-white/55 md:table-cell md:px-5 md:py-3">
                   {{ o.settledAt || '—' }}
                 </td>
                 <td class="hidden tabular-nums md:table-cell md:px-5 md:py-3">
                   {{ o.principal }} {{ o.currency }}
+                </td>
+                <td class="hidden md:table-cell md:px-5 md:py-3">
+                  <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableAction">
+                    查看详情
+                  </RouterLink>
                 </td>
                 <td
                   class="max-md:block max-md:w-full max-md:px-3 max-md:pb-4 max-md:pt-3 md:px-5 md:py-3 md:text-left"

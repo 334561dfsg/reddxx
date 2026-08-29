@@ -124,6 +124,12 @@ export const frontDesktopRoutes = [
         })
       },
       {
+        path: 'ai-quant/order/:orderId',
+        name: 'front-finance-ai-quant-order-detail',
+        component: () => import('../../pages/front/finance/aiQuant/FinanceAiQuantOrderDetailPage.vue'),
+        meta: { title: 'AI 量化订单详情', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
+      },
+      {
         path: 'ai-quant/:productId',
         name: 'front-finance-ai-quant-detail',
         component: () => import('../../pages/front/finance/aiQuant/FinanceAiQuantDetailPage.vue'),
@@ -145,6 +151,12 @@ export const frontDesktopRoutes = [
           name: 'front-finance-portfolio-detail',
           params: { productId: to.params.productId }
         })
+      },
+      {
+        path: 'portfolio/order/:orderId',
+        name: 'front-finance-portfolio-order-detail',
+        component: () => import('../../pages/front/finance/portfolio/FinancePortfolioOrderDetailPage.vue'),
+        meta: { title: '组合订单详情', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
       },
       {
         path: 'portfolio/:productId',

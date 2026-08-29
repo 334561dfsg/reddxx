@@ -284,6 +284,54 @@ test('front portfolio orders include pagination controls', () => {
   assert.match(source, /v-for="page in totalOrderPages"/)
 })
 
+test('front portfolio orders open a dedicated order detail page', () => {
+  const listSource = readFileSync(
+    new URL('../src/pages/front/finance/portfolio/FinancePortfolioListPage.vue', import.meta.url),
+    'utf8'
+  )
+  const detailSource = readFileSync(
+    new URL('../src/pages/front/finance/portfolio/FinancePortfolioOrderDetailPage.vue', import.meta.url),
+    'utf8'
+  )
+  const financeRoute = frontDesktopRoutes.find((route) => route.path === 'finance')
+  const orderRoute = financeRoute.children.find((route) => route.name === 'front-finance-portfolio-order-detail')
+
+  assert.equal(orderRoute?.path, 'portfolio/order/:orderId')
+  assert.equal(orderRoute?.meta?.hideFrontChromeOnMobile, true)
+  assert.equal(orderRoute?.meta?.hideFrontFloatingOnMobile, true)
+  assert.match(listSource, /function portfolioOrderDetailLocation\(orderId\)/)
+  assert.match(listSource, /portfolio\/order\/\$\{orderId\}/)
+  assert.match(listSource, /:to="portfolioOrderDetailLocation\(order\.id\)"/)
+  assert.match(listSource, /查看详情/)
+  assert.match(detailSource, /aria-label="投资组合订单详情页"/)
+  assert.match(detailSource, /query: \{ tab: 'orders' \}/)
+})
+
+test('front portfolio order detail focuses daily earnings with load more', () => {
+  const source = readFileSync(
+    new URL('../src/pages/front/finance/portfolio/FinancePortfolioOrderDetailPage.vue', import.meta.url),
+    'utf8'
+  )
+
+  assert.match(source, /dailyPageSize = 8/)
+  assert.match(source, /const dailyRows = computed/)
+  assert.match(source, /const visibleDailyRows = computed/)
+  assert.match(source, /function loadMoreDailyRows\(\)/)
+  assert.match(source, /aria-label="每日收益明细"/)
+  assert.match(source, /aria-label="移动端每日收益明细列表"/)
+  assert.match(source, /aria-label="桌面端每日收益明细表格"/)
+  assert.match(source, />收益</)
+  assert.match(source, /累计收益/)
+  assert.match(source, /加载更多/)
+  assert.match(source, /dailyYield:/)
+  assert.match(source, /cumulativeYield:/)
+  assert.match(source, /function resolveActualYield\(row\)/)
+  assert.doesNotMatch(source, /formatYieldRange/)
+  assert.doesNotMatch(source, /minDaily|maxDaily|minCumulative|maxCumulative/)
+  assert.doesNotMatch(source, /订单摘要/)
+  assert.doesNotMatch(source, /日收益率|基础收益|收益调整/)
+})
+
 test('front portfolio mobile orders use incremental loading while desktop keeps page controls', () => {
   const source = readFileSync(
     new URL('../src/pages/front/finance/portfolio/FinancePortfolioListPage.vue', import.meta.url),

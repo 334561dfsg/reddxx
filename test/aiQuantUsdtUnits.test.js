@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import * as aiQuantConstants from '../src/admin/constants/aiQuant.js'
+import { frontDesktopRoutes } from '../src/router/modules/front.js'
 
 const adminProductSource = readFileSync(
   new URL('../src/pages/admin/aiQuant/AiQuantProductPage.vue', import.meta.url),
@@ -20,6 +21,15 @@ const frontDetailSource = readFileSync(
   'utf8'
 )
 const mockCatalogSource = readFileSync(new URL('../src/admin/mock/aiQuant.js', import.meta.url), 'utf8')
+
+function readOptionalSource(path) {
+  try {
+    return readFileSync(new URL(path, import.meta.url), 'utf8')
+  } catch (error) {
+    if (error?.code === 'ENOENT') return ''
+    throw error
+  }
+}
 
 test('AI quant admin displays subscription ranges and monetary limits in USDT', () => {
   assert.match(adminProductSource, /tier\.minAmount \}\}-\{\{ tier\.maxAmount \}\} USDT/)
@@ -107,6 +117,39 @@ test('AI quant list mock covers unlimited-term orders across visible states', ()
   assert.ok(unlimitedBlocks.some(([, , , status]) => status === 'SETTLED'))
   assert.ok(unlimitedBlocks.some(([, , , status]) => status === 'EARLY_REDEEMED'))
   assert.match(frontListSource, /formatAiQuantOrderEndLabel\(o\)/)
+})
+
+test('AI quant front orders open a dedicated detail page', () => {
+  const orderDetailSource = readOptionalSource('../src/pages/front/finance/aiQuant/FinanceAiQuantOrderDetailPage.vue')
+  const financeRoute = frontDesktopRoutes.find((route) => route.path === 'finance')
+  const orderRoute = financeRoute.children.find((route) => route.name === 'front-finance-ai-quant-order-detail')
+
+  assert.equal(orderRoute?.path, 'ai-quant/order/:orderId')
+  assert.equal(orderRoute?.meta?.hideFrontChromeOnMobile, true)
+  assert.equal(orderRoute?.meta?.hideFrontFloatingOnMobile, true)
+  assert.match(frontListSource, /function aiQuantOrderDetailLocation\(orderId\)/)
+  assert.match(frontListSource, /ai-quant\/order\/\$\{orderId\}/)
+  assert.match(frontListSource, /:to="aiQuantOrderDetailLocation\(o\.id\)"/)
+  assert.match(frontListSource, /查看详情/)
+  assert.match(orderDetailSource, /aria-label="AI 量化订单详情页"/)
+  assert.match(orderDetailSource, /query: \{ tab: 'orders' \}/)
+})
+
+test('AI quant order detail shows fixed daily earnings with load more', () => {
+  const orderDetailSource = readOptionalSource('../src/pages/front/finance/aiQuant/FinanceAiQuantOrderDetailPage.vue')
+
+  assert.match(orderDetailSource, /dailyPageSize = 8/)
+  assert.match(orderDetailSource, /const dailyRows = computed/)
+  assert.match(orderDetailSource, /const visibleDailyRows = computed/)
+  assert.match(orderDetailSource, /function loadMoreDailyRows\(\)/)
+  assert.match(orderDetailSource, /function orderDailyEarnings\(row\)/)
+  assert.match(orderDetailSource, /aria-label="每日收益明细"/)
+  assert.match(orderDetailSource, /aria-label="移动端每日收益明细列表"/)
+  assert.match(orderDetailSource, /aria-label="桌面端每日收益明细表格"/)
+  assert.match(orderDetailSource, />收益</)
+  assert.match(orderDetailSource, /累计收益/)
+  assert.match(orderDetailSource, /加载更多/)
+  assert.doesNotMatch(orderDetailSource, /收益范围|日收益率|基础收益|收益调整/)
 })
 
 test('AI quant admin order page formats unlimited-term cycle fields safely', () => {

@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { portfolioProductsCatalog } from '../../../../admin/state/financeCatalogs'
 import { portfolioOrders } from '../../../../admin/state/portfolioOrders'
 import {
@@ -16,12 +17,13 @@ import {
 } from '../../../../admin/constants/portfolio'
 
 const prefix = '/front'
+const route = useRoute()
 const products = portfolioProductsCatalog
 const orders = portfolioOrders
 const currentUserId = 'U10086'
 const currentMonthKey = new Date().toISOString().slice(0, 7)
 
-const panel = ref('market')
+const panel = ref(route.query.tab === 'orders' ? 'mine' : 'market')
 const orderPanel = ref('running')
 const currentOrderPage = ref(1)
 const orderPageSize = 5
@@ -66,6 +68,14 @@ function openOrderPanel(nextPanel) {
   visibleOrderCount.value = mobileOrderPageSize
 }
 
+watch(
+  () => route.query.tab,
+  (tab) => {
+    if (tab === 'orders') panel.value = 'mine'
+    if (tab === 'products') panel.value = 'market'
+  }
+)
+
 function goOrderPage(page) {
   currentOrderPage.value = Math.min(Math.max(1, page), totalOrderPages.value)
 }
@@ -100,6 +110,13 @@ function getMonthlyRemainingCount(product) {
 
 function formatPortfolioAssetTitle(product) {
   return product.assets.map((asset) => asset.symbol).join(' + ')
+}
+
+function portfolioOrderDetailLocation(orderId) {
+  return {
+    path: `${prefix}/finance/portfolio/order/${orderId}`,
+    query: { from: 'orders' }
+  }
 }
 
 function openRedeem(order) {
@@ -399,14 +416,22 @@ function redeemSummary(product, order) {
                 <span>开始 {{ order.startedAt }}</span>
               </div>
             </div>
-            <button
-              type="button"
-              class="inline-flex min-h-10 items-center justify-center rounded-xl border border-white/[0.14] bg-white/[0.04] px-4 text-sm font-semibold text-white/75 transition hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:text-white/30"
-              :disabled="order.status !== ORDER_STATUS.RUNNING"
-              @click="openRedeem(order)"
-            >
-              提前赎回
-            </button>
+            <div class="grid grid-cols-2 gap-2" :data-testid="`portfolio-order-card-actions-${order.id}`">
+              <RouterLink
+                :to="portfolioOrderDetailLocation(order.id)"
+                class="inline-flex min-h-10 w-full items-center justify-center rounded-xl border border-white/[0.14] bg-white/[0.04] px-4 text-sm font-semibold text-white/75 transition hover:bg-white/[0.08]"
+              >
+                查看详情
+              </RouterLink>
+              <button
+                type="button"
+                class="inline-flex min-h-10 w-full items-center justify-center rounded-xl border border-white/[0.14] bg-white/[0.04] px-4 text-sm font-semibold text-white/75 transition hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:text-white/30"
+                :disabled="order.status !== ORDER_STATUS.RUNNING"
+                @click="openRedeem(order)"
+              >
+                提前赎回
+              </button>
+            </div>
           </article>
           <article v-for="order in pagedOrders" :key="`desktop-${order.id}`" class="hidden gap-4 p-5 lg:grid lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
@@ -423,14 +448,22 @@ function redeemSummary(product, order) {
                 <span>开始 {{ order.startedAt }}</span>
               </div>
             </div>
-            <button
-              type="button"
-              class="inline-flex min-h-10 items-center justify-center rounded-xl border border-white/[0.14] bg-white/[0.04] px-4 text-sm font-semibold text-white/75 transition hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:text-white/30"
-              :disabled="order.status !== ORDER_STATUS.RUNNING"
-              @click="openRedeem(order)"
-            >
-              提前赎回
-            </button>
+            <div class="flex flex-wrap items-center justify-end gap-2">
+              <RouterLink
+                :to="portfolioOrderDetailLocation(order.id)"
+                class="inline-flex min-h-10 items-center justify-center rounded-xl border border-white/[0.14] bg-white/[0.04] px-4 text-sm font-semibold text-white/75 transition hover:bg-white/[0.08]"
+              >
+                查看详情
+              </RouterLink>
+              <button
+                type="button"
+                class="inline-flex min-h-10 items-center justify-center rounded-xl border border-white/[0.14] bg-white/[0.04] px-4 text-sm font-semibold text-white/75 transition hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:text-white/30"
+                :disabled="order.status !== ORDER_STATUS.RUNNING"
+                @click="openRedeem(order)"
+              >
+                提前赎回
+              </button>
+            </div>
           </article>
           <div v-if="!filteredOrders.length" class="p-8 text-center text-sm text-white/40">
             暂无订单
