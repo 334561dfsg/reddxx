@@ -250,6 +250,31 @@ test('module page can add a user by UID email or phone search', () => {
   assert.doesNotMatch(source, /demo_user_\$\{addUserEffectiveId\}/)
 })
 
+test('module page hides email and phone values from user identity display', () => {
+  const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
+  const addDialog = elementByTestId(source, 'module-user-control-add-dialog')
+
+  assert.doesNotMatch(source, /row\.email/)
+  assert.doesNotMatch(source, /row\.phone/)
+  assert.doesNotMatch(source, /未留手机号/)
+  assert.doesNotMatch(addDialog, /addSearchResult\.email/)
+  assert.doesNotMatch(addDialog, /addSearchResult\.phone/)
+  assert.match(source, /UID \{\{ row\.userId \}\}/)
+  assert.match(addDialog, /UID \{\{ addUserEffectiveId \}\}/)
+})
+
+test('module page omits the status filter', () => {
+  const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
+
+  assert.doesNotMatch(source, /statusFilter/)
+  assert.doesNotMatch(source, /全部状态/)
+  assert.doesNotMatch(source, /当前有效/)
+  assert.doesNotMatch(source, /已执行/)
+  assert.doesNotMatch(source, /已取消/)
+  assert.match(source, /value:\s*valueFilter\.value/)
+  assert.doesNotMatch(source, /status:\s*statusFilter\.value/)
+})
+
 test('module metadata and fallback use the unified point-control label', () => {
   const moduleSource = read('../src/features/user-control/userControl.js')
   const pageSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')

@@ -19,7 +19,6 @@ const props = defineProps({
 
 const query = ref('')
 const valueFilter = ref('')
-const statusFilter = ref('')
 const addOpen = ref(false)
 const addUserId = ref('')
 const addSearchAttempted = ref(false)
@@ -104,8 +103,7 @@ const rows = computed(() => allUsers.value.map((user) => ({
 
 const filteredRows = computed(() => filterUserControlRows(rows.value, {
   query: query.value,
-  value: valueFilter.value,
-  status: statusFilter.value
+  value: valueFilter.value
 }))
 
 const pointControlLabel = (rule) => {
@@ -158,7 +156,6 @@ const confirmAddUser = () => {
   }
   query.value = userId
   valueFilter.value = ''
-  statusFilter.value = ''
   closeAddUser()
 }
 
@@ -207,7 +204,6 @@ const submitSetting = (payload) => {
 const resetFilters = () => {
   query.value = ''
   valueFilter.value = ''
-  statusFilter.value = ''
 }
 </script>
 
@@ -243,12 +239,6 @@ const resetFilters = () => {
           <option value="">全部控制内容</option>
           <option v-for="option in valueOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
         </select>
-        <select v-model="statusFilter" class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500">
-          <option value="">全部状态</option>
-          <option value="active">当前有效</option>
-          <option value="consumed">已执行</option>
-          <option value="cancelled">已取消</option>
-        </select>
       </div>
       <div class="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
         <span>共 {{ filteredRows.length }} 位用户</span>
@@ -274,7 +264,7 @@ const resetFilters = () => {
             <tr v-for="row in filteredRows" :key="row.userId" class="hover:bg-slate-50">
               <td class="px-4 py-4">
                 <p class="font-medium text-slate-900">{{ row.username }}</p>
-                <p class="mt-0.5 text-xs text-slate-500">UID {{ row.userId }} · {{ row.email }} · {{ row.phone || '未留手机号' }}</p>
+                <p class="mt-0.5 text-xs text-slate-500">UID {{ row.userId }}</p>
               </td>
               <td class="px-4 py-4 whitespace-nowrap">
                 <span
@@ -362,7 +352,7 @@ const resetFilters = () => {
                     {{ addSearchResult.username }}
                   </p>
                   <p class="mt-1 break-words text-xs text-slate-500">
-                    UID {{ addUserEffectiveId }} · {{ addSearchResult.email }} · {{ addSearchResult.phone }}
+                    UID {{ addUserEffectiveId }}
                   </p>
                   <p v-if="addUserAlreadyListed" class="mt-2 text-xs text-amber-700">
                     该 UID 已在列表中，确认后将清空其他筛选并定位到该用户。
