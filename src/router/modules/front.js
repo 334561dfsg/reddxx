@@ -61,11 +61,17 @@ export const frontDesktopRoutes = [
         path: 'liquidity',
         name: 'front-finance-liquidity',
         component: () => import('../../pages/front/finance/liquidity/FinanceLiquidityListPage.vue'),
-        meta: { title: '流动性挖矿' }
+        meta: { title: '流动性挖矿', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
       },
       {
         path: 'liquidity/rules',
         redirect: '/front/finance/liquidity'
+      },
+      {
+        path: 'liquidity/orders',
+        name: 'front-finance-liquidity-orders',
+        component: () => import('../../pages/front/finance/liquidity/FinanceLiquidityOrdersPage.vue'),
+        meta: { title: '流动性挖矿订单', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
       },
       {
         path: 'liquidity/:productId/rules',

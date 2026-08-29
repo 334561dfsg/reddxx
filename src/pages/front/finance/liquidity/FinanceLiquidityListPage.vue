@@ -3,6 +3,7 @@ import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import FrontClientPager from '../../../../components/front/FrontClientPager.vue'
 import { useClientListPagination } from '../../../../composables/useClientListPagination'
 import { useRoute } from 'vue-router'
+import FrontTopNav from '../../../../components/FrontTopNav.vue'
 import FrontPopupCard from '../../../../components/front/FrontPopupCard.vue'
 import FrontPopupCloseButton from '../../../../components/front/FrontPopupCloseButton.vue'
 import FrontPopupShell from '../../../../components/front/FrontPopupShell.vue'
@@ -24,6 +25,7 @@ import { FINANCE_FX as fx } from '../../../../constants/frontFinanceUi'
 
 const prefix = '/front'
 const route = useRoute()
+const navMenuOpen = ref(false)
 
 /** Keep UX copy aligned with product detail where relevant */
 const DEMO_AVAILABLE_FUNDS = 5.562875
@@ -369,6 +371,10 @@ function fillAllPurchase() {
   purchaseAmount.value = String(cap)
 }
 
+function openNavigationMenu() {
+  navMenuOpen.value = true
+}
+
 const mineLimitDesc = computed(() => {
   const p = mineProduct.value
   if (!p) return ''
@@ -391,30 +397,63 @@ const mineMinVipLabel = computed(() => {
 
 <template>
   <div :class="fx.pageRoot">
+    <FrontTopNav
+      prefix="/front"
+      drawer-only
+      v-model:mobile-drawer-open="navMenuOpen"
+      @mobile-open-change="navMenuOpen = $event"
+    />
     <header :class="fx.header">
       <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <div :class="fx.headerGlowL" />
         <div :class="fx.headerGlowR" />
         <div :class="fx.headerGrad" />
       </div>
-      <div :class="fx.headerInner">
-        <nav :class="fx.breadcrumbNav">
+      <div class="relative mx-auto max-w-7xl px-4 pb-4 pt-[calc(5.5rem+env(safe-area-inset-top,0px))] sm:px-8 sm:pb-8 lg:px-10 lg:pb-10 lg:pt-10">
+        <div
+          class="fixed inset-x-0 top-0 z-40 flex h-[4.5rem] items-center justify-center border-b border-white/[0.08] bg-black/95 px-4 pt-[env(safe-area-inset-top,0px)] backdrop-blur supports-[backdrop-filter]:bg-black/80 sm:px-8 lg:hidden"
+          aria-label="流动性挖矿移动端标题栏"
+        >
+          <button
+            type="button"
+            class="absolute left-4 inline-flex h-10 w-10 items-center justify-center rounded-md text-white/86 transition hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 sm:left-8 lg:hidden"
+            aria-haspopup="dialog"
+            aria-controls="front-nav-drawer"
+            :aria-expanded="navMenuOpen"
+            :aria-label="navMenuOpen ? '关闭菜单' : '打开菜单'"
+            @click="openNavigationMenu"
+          >
+            <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+            </svg>
+          </button>
+          <h1 class="text-base font-semibold text-white">流动性挖矿</h1>
+          <RouterLink
+            :to="`${prefix}/finance/liquidity/orders`"
+            class="absolute right-4 inline-flex min-h-10 items-center justify-center rounded-lg border border-lime-400/45 bg-lime-400/10 px-3 text-sm font-semibold text-lime-200 transition hover:bg-lime-400/15 focus:outline-none focus:ring-2 focus:ring-lime-300/60 sm:right-8 lg:hidden"
+            aria-label="查看流动性挖矿订单"
+          >
+            订单
+          </RouterLink>
+        </div>
+
+        <nav :class="[fx.breadcrumbNav, 'hidden lg:block']">
           <RouterLink :to="`${prefix}/finance`" class="transition hover:text-lime-300">金融</RouterLink>
           <span class="mx-1.5 text-white/20 sm:mx-2">/</span>
           <span class="text-white/70">流动性挖矿</span>
         </nav>
 
-        <div class="mt-4 flex flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
-          <div class="min-w-0 flex-1 space-y-5 sm:space-y-6">
+        <div class="mt-0 flex flex-col gap-4 sm:gap-5 lg:mt-4 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
+          <div class="min-w-0 flex-1 space-y-3 sm:space-y-4 lg:space-y-6">
             <div>
-              <p :class="fx.kicker">
+              <p class="inline-flex items-center gap-2 rounded-full border border-lime-400/25 bg-lime-400/[0.08] px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.22em] text-lime-200/95 sm:px-3 sm:py-1 sm:text-[11px] sm:tracking-[0.3em]">
                 Earn · 锁仓理财
               </p>
-              <h1 :class="fx.h1">
+              <h1 class="mt-1 text-[28px] font-bold leading-tight tracking-tight text-white sm:mt-2 sm:text-3xl md:text-4xl lg:mt-3 lg:text-[3.25rem] lg:leading-tight">
                 流动性挖矿
               </h1>
             </div>
-            <div :class="fx.heroSegmentWrap" role="tablist" aria-label="页面主入口">
+            <div :class="[fx.heroSegmentWrap, 'hidden lg:inline-flex']" role="tablist" aria-label="页面主入口">
               <button
                 type="button"
                 role="tab"
@@ -461,7 +500,6 @@ const mineMinVipLabel = computed(() => {
     <div :class="fx.mainWrap">
       <template v-if="heroPanel === 'products'">
         <div :class="fx.filterRailWrap">
-          <p :class="fx.filterMobileLabel">资产</p>
           <div :class="fx.filterChipWrap" role="tablist" aria-label="锁仓币种">
             <button
               type="button"

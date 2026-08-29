@@ -10,8 +10,7 @@ const prefix = '/front'
 const dailyPageSize = 8
 const visibleDailyLimit = ref(dailyPageSize)
 const ordersReturnLocation = {
-  path: `${prefix}/finance/liquidity`,
-  query: { tab: 'orders' }
+  path: `${prefix}/finance/liquidity/orders`
 }
 
 const orders = computed(() => [...createLockedOrdersMock(), ...buildLockedDemoExtraOrders()])
