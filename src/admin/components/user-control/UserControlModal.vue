@@ -443,6 +443,7 @@ const submit = () => {
           >
             <div ref="leftPanelRef" class="min-w-0 space-y-2.5">
                   <section
+                    v-if="!isSimplifiedGlobalControl"
                     data-testid="user-control-current-status"
                     class="rounded-lg border px-3.5 py-3 shadow-sm"
                     :class="hasActiveExistingRules ? 'border-amber-300 bg-amber-50 ring-1 ring-amber-100' : 'border-sky-200 bg-sky-50 ring-1 ring-sky-100'"

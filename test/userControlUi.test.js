@@ -243,6 +243,7 @@ test('shared modal shows the selected user current point-control status', () => 
   assert.match(currentStatus, /当前点控状态/)
   assert.match(currentStatus, /已开启点控/)
   assert.match(currentStatus, /未开启点控/)
+  assert.match(currentStatus, /v-if="!isSimplifiedGlobalControl"/)
   assert.match(currentStatus, /border-amber-300 bg-amber-50 ring-1 ring-amber-100/)
   assert.match(currentStatus, /border-sky-200 bg-sky-50 ring-1 ring-sky-100/)
   assert.match(currentStatus, /bg-amber-200 text-amber-900/)
@@ -253,6 +254,7 @@ test('shared modal shows the selected user current point-control status', () => 
   assert.match(currentStatus, /@click="emit\('request-cancel'\)"/)
   assert.match(source, /const emit = defineEmits\(\['close', 'submit', 'request-cancel'\]\)/)
   const userSource = read('../src/pages/admin/user/UserListPage.vue')
+  assert.match(userSource, /simplified-global-control-types/)
   assert.match(userSource, /@request-cancel="requestControlCancelFromSetting"/)
   assert.match(userSource, /const requestControlCancelFromSetting = async \(\) =>/)
   assert.match(userSource, /controlModalOpen\.value = false[\s\S]*await nextTick\(\)[\s\S]*openControlCancel\(user\)/)
@@ -377,7 +379,6 @@ test('user list moves point-control actions into the complete operation drawer a
   assert.match(source, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
   assert.match(source, /data-testid="unified-user-control-cancel-body"[^>]*overflow-y-auto/)
   assert.match(productDocument, /用户列表只展示“点控”入口/)
-  assert.match(productDocument, /点控弹窗的“当前点控状态”区域展示“取消点控”按钮/)
   assert.doesNotMatch(productDocument, /互斥展示/)
 })
 
