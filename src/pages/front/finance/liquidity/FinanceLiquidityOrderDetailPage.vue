@@ -99,22 +99,12 @@ watch(
 const summaryItems = computed(() => {
   const row = order.value
   if (!row) return []
-  const items = [
+  return [
     { label: '订单号', value: row.id },
     { label: '产品', value: row.productName },
     { label: '金额', value: `${row.amount} ${row.currency}` },
-    { label: '锁仓期限', value: `${row.lockDays} 天` },
-    { label: '下单时间', value: row.lockedAt },
-    { label: '到期时间', value: row.unlockAt },
-    { label: row.status === ORDER_STATUS.LOCKED ? '预计总收益' : '实际总收益', value: `${row.totalInterest} ${row.currency}`, strong: true },
     { label: '订单状态', value: orderStatusLabel(row) }
   ]
-
-  if (row.completedAt) items.push({ label: '完成时间', value: row.completedAt })
-  if (Number(row.earlyRedeemFeeApplied) > 0) {
-    items.push({ label: '提前赎回手续费', value: formatAmount(row.earlyRedeemFeeApplied, row.currency) })
-  }
-  return items
 })
 </script>
 
@@ -171,16 +161,16 @@ const summaryItems = computed(() => {
     </header>
 
     <main class="mx-auto max-w-7xl px-4 py-5 sm:px-8 sm:py-8 lg:px-10">
-      <section class="rounded-lg border border-white/[0.08] bg-white/[0.025] p-4 sm:p-5" aria-label="订单概要">
-        <dl class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section class="rounded-lg border border-white/[0.08] bg-white/[0.025] p-3.5 sm:p-4" aria-label="订单概要">
+        <dl class="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
           <div
             v-for="item in summaryItems"
             :key="item.label"
-            class="min-w-0 rounded-lg border border-white/[0.06] bg-black/25 px-3 py-2.5"
+            class="min-w-0 rounded-lg border border-white/[0.06] bg-black/25 px-3 py-2"
           >
             <dt class="text-xs text-white/35">{{ item.label }}</dt>
             <dd
-              class="mt-1 break-words text-sm tabular-nums"
+              class="mt-1 break-words text-xs tabular-nums sm:text-sm"
               :class="item.strong ? 'font-semibold text-lime-200' : 'text-white/82'"
             >
               {{ item.value }}

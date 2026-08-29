@@ -239,10 +239,14 @@ test('front liquidity order detail page shows daily earnings rows', async (t) =>
   const summary = findByAriaLabel(harness, '订单概要')
   assert.ok(summary, 'detail page should keep an order summary section')
   assert.equal(harness.findByText('订单概要'), undefined, 'summary section should not show a heading block')
+  assert.ok(summary.textContent.includes('订单号'))
+  assert.ok(summary.textContent.includes('产品'))
+  assert.ok(summary.textContent.includes('金额'))
+  assert.ok(summary.textContent.includes('订单状态'))
   assert.equal(
     summary.textContent.includes('USDT 流动性挖矿订单'),
     false,
     'summary section should not show the product subtitle block'
   )
-  assert.doesNotMatch(summary.textContent, /每日收益|日收益率|基础收益|收益调整/)
+  assert.doesNotMatch(summary.textContent, /锁仓期限|下单时间|到期时间|每日收益|日收益率|基础收益|收益调整|预计总收益|实际总收益/)
 })
