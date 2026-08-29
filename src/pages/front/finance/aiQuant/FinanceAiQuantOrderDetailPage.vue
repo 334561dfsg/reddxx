@@ -9,8 +9,7 @@ const prefix = '/front'
 const dailyPageSize = 8
 const visibleDailyLimit = ref(dailyPageSize)
 const ordersReturnLocation = {
-  path: `${prefix}/finance/ai-quant`,
-  query: { tab: 'orders' }
+  path: `${prefix}/finance/ai-quant/orders`
 }
 
 const orders = computed(() => [...createAiQuantOrdersMock(), ...buildAiQuantDemoExtraOrders()])
@@ -106,13 +105,13 @@ watch(
     aria-label="AI 量化订单详情页"
   >
     <header
-      class="flex min-h-14 items-center justify-center border-b border-white/[0.06] bg-black px-4 pt-[env(safe-area-inset-top,0px)] lg:hidden"
+      class="fixed inset-x-0 top-0 z-40 flex min-h-14 items-center justify-center border-b border-white/[0.06] bg-black/95 px-4 pt-[env(safe-area-inset-top,0px)] backdrop-blur supports-[backdrop-filter]:bg-black/80 lg:hidden"
       aria-label="订单详情移动端标题栏"
     >
       <RouterLink
         :to="ordersReturnLocation"
         class="absolute left-3 inline-flex h-11 w-11 items-center justify-center rounded-full text-white transition hover:bg-white/[0.06] focus:outline-none focus:ring-2 focus:ring-lime-300/60"
-        aria-label="返回 AI 量化"
+        aria-label="返回 AI 量化订单"
       >
         <span class="text-3xl leading-none" aria-hidden="true">‹</span>
       </RouterLink>
@@ -148,7 +147,7 @@ watch(
       </div>
     </header>
 
-    <main class="mx-auto max-w-7xl px-4 py-5 sm:px-8 sm:py-8 lg:px-10">
+    <main class="mx-auto max-w-7xl px-4 pb-5 pt-[calc(4.75rem+env(safe-area-inset-top,0px))] sm:px-8 sm:pb-8 sm:pt-[calc(5.5rem+env(safe-area-inset-top,0px))] lg:px-10 lg:py-8">
       <section class="rounded-lg border border-white/[0.08] bg-white/[0.025] p-3.5 sm:p-4" aria-label="订单概要">
         <dl class="grid grid-cols-2 gap-2.5 lg:grid-cols-3">
           <div

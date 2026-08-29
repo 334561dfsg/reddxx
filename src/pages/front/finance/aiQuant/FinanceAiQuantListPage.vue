@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
+import FrontTopNav from '../../../../components/FrontTopNav.vue'
 import FrontPopupCard from '../../../../components/front/FrontPopupCard.vue'
 import FrontPopupCloseButton from '../../../../components/front/FrontPopupCloseButton.vue'
 import FrontPopupShell from '../../../../components/front/FrontPopupShell.vue'
@@ -8,23 +9,20 @@ import FrontStrokeIcon from '../../../../components/front/FrontStrokeIcon.vue'
 import FrontClientPager from '../../../../components/front/FrontClientPager.vue'
 import { useClientListPagination } from '../../../../composables/useClientListPagination'
 import { FINANCE_FX as fx } from '../../../../constants/frontFinanceUi'
-import { createAiQuantOrdersMock, createYieldAdjustmentsMock } from '../../../../admin/mock/aiQuant'
 import { aiQuantProductsCatalog } from '../../../../admin/state/financeCatalogs'
-import { buildAiQuantDemoExtraOrders, buildAiQuantDemoExtraAdjustments } from '../../../../admin/mock/frontFinanceDemoBulk'
 import {
   PRODUCT_STATUS,
   productStatusMeta,
-  ORDER_STATUS,
-  orderStatusMeta,
   SETTLEMENT_PERIOD,
   settlementPeriodMeta,
   formatAiQuantDurationLabel,
-  adjustmentTypeMeta,
   sortAiQuantProducts
 } from '../../../../admin/constants/aiQuant'
+import FinanceAiQuantOrdersPanel from './FinanceAiQuantOrdersPanel.vue'
 
 const prefix = '/front'
 const route = useRoute()
+const navMenuOpen = ref(false)
 
 const LIST_PAGE_SIZE = 8
 
@@ -32,8 +30,6 @@ const LIST_PAGE_SIZE = 8
 const TAB_CURRENCIES = ['USDC', 'BTC', 'ETH', 'DOGE', 'XRP', 'SOL', 'BNB', 'TRX']
 
 const products = aiQuantProductsCatalog
-const orders = ref([...createAiQuantOrdersMock(), ...buildAiQuantDemoExtraOrders()])
-const yieldAdjustments = ref([...createYieldAdjustmentsMock(), ...buildAiQuantDemoExtraAdjustments()])
 
 const currencyTab = ref('USDC')
 
@@ -116,73 +112,10 @@ function displayCurrency(tab) {
   return tab === 'USDC' ? 'USDC' : tab
 }
 
-const ordersForTabCurrency = computed(() =>
-  orders.value.filter((o) => productCurrencyMatchesTab(o.currency, currencyTab.value))
-)
-
-const runningOrdersTab = computed(() =>
-  ordersForTabCurrency.value.filter((o) => o.status === ORDER_STATUS.RUNNING)
-)
-
-const custodyPrincipal = computed(() =>
-  runningOrdersTab.value.reduce((s, o) => s + (Number(o.principal) || 0), 0)
-)
-
-const expectedDailyTab = computed(() =>
-  runningOrdersTab.value.reduce((s, o) => s + (Number(o.expectedDailyYield) || 0), 0)
-)
-
-const accumulatedYieldTab = computed(() =>
-  ordersForTabCurrency.value.reduce((s, o) => s + (Number(o.accumulatedYield) || 0), 0)
-)
-
-const custodyOrderCount = computed(() => runningOrdersTab.value.length)
-
-function formatAmountForTab(n, currency) {
-  const v = Number(n)
-  if (!Number.isFinite(v)) return '0'
-  const dec = currency === 'BTC' || currency === 'ETH' ? 4 : 2
-  return v.toLocaleString(undefined, { maximumFractionDigits: dec })
-}
-
-const recordTab = ref('running')
-
-const buyOrders = computed(() =>
-  ordersForTabCurrency.value.filter(
-    (o) =>
-      o.status === ORDER_STATUS.RUNNING ||
-      o.status === ORDER_STATUS.COMPLETED ||
-      o.status === ORDER_STATUS.SETTLED ||
-      o.status === ORDER_STATUS.LOCKED ||
-      o.status === ORDER_STATUS.CANCELLED
-  )
-)
-
-const redeemOrders = computed(() =>
-  ordersForTabCurrency.value.filter((o) => o.status === ORDER_STATUS.EARLY_REDEEMED)
-)
-
-const interestRows = computed(() => yieldAdjustments.value.filter((a) => productCurrencyMatchesTab(a.currency, currencyTab.value)))
-
 const pgTier = useClientListPagination(tierRows, { pageSize: LIST_PAGE_SIZE })
-const pgRunning = useClientListPagination(runningOrdersTab, { pageSize: LIST_PAGE_SIZE })
-const pgBuy = useClientListPagination(buyOrders, { pageSize: LIST_PAGE_SIZE })
-const pgRedeem = useClientListPagination(redeemOrders, { pageSize: LIST_PAGE_SIZE })
-const pgInterest = useClientListPagination(interestRows, { pageSize: LIST_PAGE_SIZE })
 
 watch(currencyTab, () => {
   pgTier.resetPage()
-  pgRunning.resetPage()
-  pgBuy.resetPage()
-  pgRedeem.resetPage()
-  pgInterest.resetPage()
-})
-
-watch(recordTab, () => {
-  pgRunning.resetPage()
-  pgBuy.resetPage()
-  pgRedeem.resetPage()
-  pgInterest.resetPage()
 })
 
 watch(
@@ -195,23 +128,7 @@ watch(
 
 watch(heroPanel, (panel) => {
   if (panel === 'market') pgTier.resetPage()
-  if (panel === 'mine') {
-    pgRunning.resetPage()
-    pgBuy.resetPage()
-    pgRedeem.resetPage()
-    pgInterest.resetPage()
-  }
 })
-
-function orderStatusPillClass(status) {
-  if (status === ORDER_STATUS.RUNNING) return 'bg-sky-400/15 text-sky-200'
-  if (status === ORDER_STATUS.COMPLETED) return 'bg-lime-400/12 text-lime-200'
-  if (status === ORDER_STATUS.SETTLED) return 'bg-white/10 text-white/60'
-  if (status === ORDER_STATUS.EARLY_REDEEMED) return 'bg-lime-400/12 text-lime-200'
-  if (status === ORDER_STATUS.LOCKED) return 'bg-amber-400/15 text-amber-200'
-  if (status === ORDER_STATUS.CANCELLED) return 'bg-rose-400/15 text-rose-200'
-  return 'bg-white/10 text-white/55'
-}
 
 function productRentable(p) {
   return p.status === PRODUCT_STATUS.ENABLED
@@ -251,54 +168,12 @@ function formatValueDateUtc8() {
   return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}:${get('second')} (UTC+8)`
 }
 
-/** 订单结算/赎回时间（UTC+8，无时区后缀） */
-function formatAiOrderSettledAt() {
-  const d = new Date()
-  const parts = new Intl.DateTimeFormat('zh-CN', {
-    timeZone: 'Asia/Shanghai',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  }).formatToParts(d)
-  const get = (t) => parts.find((x) => x.type === t)?.value ?? ''
-  return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}:${get('second')}`
-}
-
-function productForAiOrder(o) {
-  if (!o?.productId) return null
-  return products.value.find((p) => p.id === o.productId) ?? null
-}
-
-function canApplyEarlyRedeemAiOrder(o) {
-  if (!o || o.status !== ORDER_STATUS.RUNNING) return false
-  const p = productForAiOrder(o)
-  if (p && p.earlyRedeemEnabled === false) return false
-  return true
-}
-
-function formatAiQuantOrderEndLabel(o) {
-  if (!o) return '—'
-  if (Number(o.totalDays) === 0 || o.endDate == null || o.endDate === '') return '无限期'
-  return o.endDate
-}
-
 function formatTierAmountPlain(min, max, productCurrency) {
   const cur = displayAssetCurrency(productCurrency)
   const a = Number(min)
   const b = Number(max)
   if (!Number.isFinite(a) || !Number.isFinite(b)) return `— ${cur}`
   return `${a} ~ ${b} ${cur}`
-}
-
-function aiQuantOrderDetailLocation(orderId) {
-  return {
-    path: `${prefix}/finance/ai-quant/order/${orderId}`,
-    query: { from: 'orders' }
-  }
 }
 
 /** 立即租用弹窗 */
@@ -332,7 +207,6 @@ function openRentDialog(row) {
     clearTimeout(clearRentTimer)
     clearRentTimer = null
   }
-  aiRedeemOpen.value = false
   rentRow.value = row
   rentAmount.value = ''
   rentOpen.value = true
@@ -344,49 +218,6 @@ function closeRentDialog() {
 
 function onRentEscape(e) {
   if (e.key === 'Escape' && rentOpen.value) closeRentDialog()
-}
-
-/** 运行中订单：申请提前赎回 */
-const aiRedeemOpen = ref(false)
-const aiRedeemOrder = ref(null)
-let clearAiRedeemTimer = null
-
-const aiRedeemProductSnapshot = computed(() =>
-  aiRedeemOrder.value ? productForAiOrder(aiRedeemOrder.value) : null
-)
-
-function openAiRedeemDialog(order) {
-  if (!canApplyEarlyRedeemAiOrder(order)) return
-  if (clearAiRedeemTimer != null) {
-    clearTimeout(clearAiRedeemTimer)
-    clearAiRedeemTimer = null
-  }
-  rentOpen.value = false
-  aiRedeemOrder.value = order
-  aiRedeemOpen.value = true
-}
-
-function closeAiRedeemDialog() {
-  aiRedeemOpen.value = false
-}
-
-function onAiRedeemEscape(e) {
-  if (e.key === 'Escape' && aiRedeemOpen.value) closeAiRedeemDialog()
-}
-
-function confirmAiEarlyRedeem() {
-  const o = aiRedeemOrder.value
-  if (!o || !canApplyEarlyRedeemAiOrder(o)) return
-  const now = formatAiOrderSettledAt()
-  const idx = orders.value.findIndex((x) => x.id === o.id)
-  if (idx === -1) return
-  orders.value[idx] = {
-    ...orders.value[idx],
-    status: ORDER_STATUS.EARLY_REDEEMED,
-    settledAt: now
-  }
-  orders.value = [...orders.value]
-  aiRedeemOpen.value = false
 }
 
 watch(rentOpen, (open) => {
@@ -408,32 +239,16 @@ watch(rentOpen, (open) => {
   }
 })
 
-watch(aiRedeemOpen, (open) => {
-  if (typeof window === 'undefined') return
-  if (open) {
-    window.addEventListener('keydown', onAiRedeemEscape)
-  } else {
-    window.removeEventListener('keydown', onAiRedeemEscape)
-    if (clearAiRedeemTimer != null) clearTimeout(clearAiRedeemTimer)
-    clearAiRedeemTimer = window.setTimeout(() => {
-      aiRedeemOrder.value = null
-      clearAiRedeemTimer = null
-    }, 360)
-  }
-})
-
 watchEffect(() => {
   if (typeof document === 'undefined') return
-  document.body.style.overflow = rentOpen.value || aiRedeemOpen.value ? 'hidden' : ''
+  document.body.style.overflow = rentOpen.value ? 'hidden' : ''
 })
 
 onUnmounted(() => {
   if (clearRentTimer != null) clearTimeout(clearRentTimer)
-  if (clearAiRedeemTimer != null) clearTimeout(clearAiRedeemTimer)
   if (typeof document !== 'undefined') document.body.style.overflow = ''
   if (typeof window !== 'undefined') {
     window.removeEventListener('keydown', onRentEscape)
-    window.removeEventListener('keydown', onAiRedeemEscape)
   }
 })
 
@@ -459,10 +274,20 @@ const rentSubmitValid = computed(() => {
   if (n > rentAvailable.value) return false
   return true
 })
+
+function openNavigationMenu() {
+  navMenuOpen.value = true
+}
 </script>
 
 <template>
   <div :class="fx.pageRoot">
+    <FrontTopNav
+      prefix="/front"
+      drawer-only
+      v-model:mobile-drawer-open="navMenuOpen"
+      @mobile-open-change="navMenuOpen = $event"
+    />
     <header :class="fx.header">
       <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <div :class="fx.headerGlowL" />
@@ -470,25 +295,52 @@ const rentSubmitValid = computed(() => {
         <div :class="fx.headerGrad" />
       </div>
 
-      <div :class="fx.headerInner">
-        <nav :class="fx.breadcrumbNav">
+      <div class="relative mx-auto max-w-7xl px-4 pb-4 pt-[calc(5.5rem+env(safe-area-inset-top,0px))] sm:px-8 sm:pb-8 lg:px-10 lg:pb-10 lg:pt-10">
+        <div
+          class="fixed inset-x-0 top-0 z-40 flex h-[4.5rem] items-center justify-center border-b border-white/[0.08] bg-black/95 px-4 pt-[env(safe-area-inset-top,0px)] backdrop-blur supports-[backdrop-filter]:bg-black/80 sm:px-8 lg:hidden"
+          aria-label="AI 量化移动端标题栏"
+        >
+          <button
+            type="button"
+            class="absolute left-4 inline-flex h-10 w-10 items-center justify-center rounded-md text-white/86 transition hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 sm:left-8 lg:hidden"
+            aria-haspopup="dialog"
+            aria-controls="front-nav-drawer"
+            :aria-expanded="navMenuOpen"
+            :aria-label="navMenuOpen ? '关闭菜单' : '打开菜单'"
+            @click="openNavigationMenu"
+          >
+            <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+            </svg>
+          </button>
+          <h1 class="text-base font-semibold text-white">AI 量化</h1>
+          <RouterLink
+            :to="`${prefix}/finance/ai-quant/orders`"
+            class="absolute right-4 inline-flex min-h-10 items-center justify-center rounded-lg border border-lime-400/45 bg-lime-400/10 px-3 text-sm font-semibold text-lime-200 transition hover:bg-lime-400/15 focus:outline-none focus:ring-2 focus:ring-lime-300/60 sm:right-8 lg:hidden"
+            aria-label="查看 AI 量化订单"
+          >
+            订单
+          </RouterLink>
+        </div>
+
+        <nav :class="[fx.breadcrumbNav, 'hidden lg:block']">
           <RouterLink :to="`${prefix}/finance`" class="transition hover:text-lime-300">金融</RouterLink>
           <span class="mx-1.5 text-white/20 sm:mx-2">/</span>
           <span class="text-white/70">AI 量化</span>
         </nav>
 
         <!-- Hero：仅一级入口 + 标题；「购买/赎回/利息」在正文区，避免与市场 Tab 视觉同级 -->
-        <div class="mt-4 flex flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
-          <div class="min-w-0 flex-1 space-y-5 sm:space-y-6">
+        <div class="mt-0 flex flex-col gap-4 sm:gap-5 lg:mt-4 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
+          <div class="min-w-0 flex-1 space-y-3 sm:space-y-4 lg:space-y-6">
             <div>
-              <p :class="fx.kicker">
+              <p class="inline-flex items-center gap-2 rounded-full border border-lime-400/25 bg-lime-400/[0.08] px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.22em] text-lime-200/95 sm:px-3 sm:py-1 sm:text-[11px] sm:tracking-[0.3em]">
                 Quant · 策略托管
               </p>
-              <h1 :class="fx.h1">
+              <h1 class="mt-1 text-[28px] font-bold leading-tight tracking-tight text-white sm:mt-2 sm:text-3xl md:text-4xl lg:mt-3 lg:text-[3.25rem] lg:leading-tight">
                 AI 量化交易
               </h1>
             </div>
-            <div :class="fx.heroSegmentWrap" role="tablist" aria-label="页面主入口">
+            <div :class="[fx.heroSegmentWrap, 'hidden lg:inline-flex']" role="tablist" aria-label="页面主入口">
               <button
                 type="button"
                 role="tab"
@@ -532,11 +384,9 @@ const rentSubmitValid = computed(() => {
       </div>
     </header>
 
-    <!-- 上下 padding 与面板无关，避免切换主 Tab 时滚动条/视口宽度变化带动币种行「伸缩」 -->
     <div :class="fx.mainWrap">
-      <!-- 币种 Tab：全宽 flex，不用 inline-flex 随内容宽窄变化 -->
+      <template v-if="heroPanel === 'market'">
       <div :class="fx.filterRailWrap">
-        <p :class="fx.filterMobileLabel">资产</p>
         <div :class="fx.filterChipWrap" role="tablist" aria-label="托管币种">
           <button
             v-for="c in TAB_CURRENCIES"
@@ -552,7 +402,6 @@ const rentSubmitValid = computed(() => {
         </div>
       </div>
 
-      <template v-if="heroPanel === 'market'">
       <!-- 机器人分档表 -->
       <div :class="fx.tableWrapMarket">
         <table
@@ -652,490 +501,13 @@ const rentSubmitValid = computed(() => {
       </template>
 
       <template v-else>
-      <!-- 托管概览：放在正文区，避免 Hero 内 Tab + 大数字 + 三列挤在一起 -->
-      <div class="mt-5 space-y-3 sm:mt-6 sm:space-y-4">
-        <div :class="['sm:rounded-2xl sm:py-5', fx.statCard]">
-          <p :class="[fx.statCardLabel, 'uppercase tracking-wide']">
-            托管金额 · {{ displayCurrency(currencyTab) }}
-          </p>
-          <p class="mt-1.5 text-2xl font-bold tabular-nums tracking-tight text-white sm:text-3xl md:text-4xl">
-            {{
-              runningOrdersTab.length
-                ? formatAmountForTab(custodyPrincipal, currencyTab)
-                : '0'
-            }}
-          </p>
-        </div>
-        <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4">
-          <div :class="fx.statCard">
-            <p :class="fx.statCardLabel">预计日收益</p>
-            <p class="mt-1 text-sm font-semibold tabular-nums text-lime-200/95 sm:text-base">
-              {{
-                runningOrdersTab.length
-                  ? formatAmountForTab(expectedDailyTab, currencyTab)
-                  : '0'
-              }}
-            </p>
-          </div>
-          <div :class="fx.statCard">
-            <p :class="fx.statCardLabel">累计收益</p>
-            <p class="mt-1 text-sm font-semibold tabular-nums text-lime-200/90 sm:text-base">
-              {{ formatAmountForTab(accumulatedYieldTab, currencyTab) }}
-            </p>
-          </div>
-          <div :class="['col-span-2 sm:col-span-1', fx.statCard]">
-            <p :class="fx.statCardLabel">订单托管</p>
-            <p class="mt-1 text-sm font-semibold tabular-nums text-white sm:text-base">
-              {{ custodyOrderCount }}
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- 记录：二级用底边线 Tab，与 Hero 胶囊主入口区分 -->
-      <section class="mt-5 sm:mt-6">
-        <div :class="fx.panelRecords">
-          <div :class="fx.panelRecordsHeader">
-            <p :class="fx.sectionKicker">记录明细</p>
-            <div :class="fx.recordTablist4" role="tablist" aria-label="记录类型">
-              <button
-                type="button"
-                role="tab"
-                :aria-selected="recordTab === 'running'"
-                :class="[fx.recordTab, recordTab === 'running' ? fx.recordTabOn : fx.recordTabOff]"
-                @click="recordTab = 'running'"
-              >
-                运行中
-              </button>
-              <button
-                type="button"
-                role="tab"
-                :aria-selected="recordTab === 'buy'"
-                :class="[fx.recordTab, recordTab === 'buy' ? fx.recordTabOn : fx.recordTabOff]"
-                @click="recordTab = 'buy'"
-              >
-                购买
-              </button>
-              <button
-                type="button"
-                role="tab"
-                :aria-selected="recordTab === 'redeem'"
-                :class="[fx.recordTab, recordTab === 'redeem' ? fx.recordTabOn : fx.recordTabOff]"
-                @click="recordTab = 'redeem'"
-              >
-                赎回
-              </button>
-              <button
-                type="button"
-                role="tab"
-                :aria-selected="recordTab === 'interest'"
-                :class="[fx.recordTab, recordTab === 'interest' ? fx.recordTabOn : fx.recordTabOff]"
-                @click="recordTab = 'interest'"
-              >
-                利息
-              </button>
-            </div>
-          </div>
-          <div class="overflow-x-auto">
-          <!-- 运行中 -->
-          <table
-            v-if="recordTab === 'running' && runningOrdersTab.length"
-            :class="['w-full min-w-0 border-collapse text-left md:min-w-[560px] md:table-auto max-md:table-fixed', fx.tableBodyText]"
-          >
-            <thead class="hidden md:table-header-group">
-              <tr :class="fx.tableHeadRow">
-                <th class="px-3 py-2.5 md:px-5">产品</th>
-                <th class="hidden px-3 py-2.5 md:table-cell md:px-5">本金</th>
-                <th class="px-3 py-2.5 text-right md:px-5 md:text-left">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="o in pgRunning.pagedItems"
-                :key="`mine-run-${o.id}`"
-                class="border-b border-white/[0.06] transition hover:bg-white/[0.02] max-md:block max-md:last:border-0 md:table-row"
-              >
-                <td class="min-w-0 max-md:block max-md:w-full max-md:px-3 max-md:pb-0 max-md:pt-4 md:table-cell md:px-5 md:py-3">
-                  <p class="text-[14px] font-medium leading-snug text-white sm:text-sm">{{ o.productName }}</p>
-                  <p class="mt-0.5 tabular-nums text-[11px] text-white/55 sm:text-xs">
-                    {{ o.principal }} {{ o.currency }}
-                  </p>
-                  <div class="mt-3 grid grid-cols-2 gap-2 md:hidden">
-                    <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
-                      查看详情
-                    </RouterLink>
-                    <button
-                      v-if="canApplyEarlyRedeemAiOrder(o)"
-                      type="button"
-                      :class="fx.btnTableActionBlock"
-                      @click="openAiRedeemDialog(o)"
-                    >
-                      申请赎回
-                    </button>
-                    <p v-else :class="[fx.hintBlock, 'text-center text-[11px]']">
-                      不可提前赎回
-                    </p>
-                  </div>
-                </td>
-                <td class="hidden tabular-nums text-white/80 md:table-cell md:px-5 md:py-3">
-                  {{ o.principal }} {{ o.currency }}
-                </td>
-                <td class="max-md:hidden md:table-cell md:px-5 md:py-3 md:text-left">
-                  <div class="flex flex-wrap items-center gap-2">
-                    <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableAction">
-                      查看详情
-                    </RouterLink>
-                    <button
-                      v-if="canApplyEarlyRedeemAiOrder(o)"
-                      type="button"
-                      :class="fx.btnTableAction"
-                      @click="openAiRedeemDialog(o)"
-                    >
-                      申请赎回
-                    </button>
-                    <span v-else class="text-xs text-white/35">不可提前赎回</span>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <p
-            v-else-if="recordTab === 'running'"
-            class="px-3 py-12 text-center text-sm text-white/40 sm:py-14"
-          >
-            当前币种暂无运行中托管
-          </p>
-
-          <!-- 购买 -->
-          <table
-            v-else-if="recordTab === 'buy' && buyOrders.length"
-            :class="['w-full min-w-0 border-collapse text-left md:min-w-[960px] md:table-auto max-md:table-fixed', fx.tableBodyText]"
-          >
-            <thead class="hidden md:table-header-group">
-              <tr :class="fx.tableHeadRow">
-                <th class="px-3 py-2.5 md:px-5">产品名称</th>
-                <th class="hidden px-3 py-2.5 md:table-cell md:px-5">购买时间</th>
-                <th class="hidden px-3 py-2.5 lg:table-cell lg:px-5">结束时间</th>
-                <th class="hidden px-3 py-2.5 md:table-cell md:px-5">支付金额</th>
-                <th class="hidden px-3 py-2.5 lg:table-cell lg:px-5">累计收益</th>
-                <th class="hidden px-3 py-2.5 md:table-cell md:px-5">日收益</th>
-                <th class="px-3 py-2.5 text-right md:px-5 md:text-left">操作</th>
-                <th class="px-3 py-2.5 text-right md:px-5">状态</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="o in pgBuy.pagedItems"
-                :key="o.id"
-                class="border-b border-white/[0.06] hover:bg-white/[0.02] max-md:block max-md:last:border-0 md:table-row"
-              >
-                <td class="min-w-0 max-md:block max-md:w-full max-md:px-3 max-md:pb-0 max-md:pt-4 md:table-cell md:px-5 md:py-3">
-                  <p class="text-[14px] font-medium leading-snug text-white sm:text-sm">
-                    {{ o.productName }}
-                  </p>
-                  <div
-                    class="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 border-t border-white/[0.06] pt-3 text-[11px] text-white/50 md:hidden"
-                  >
-                    <span class="text-white/35">购买</span>
-                    <span class="text-right tabular-nums text-white/70">{{ o.startDate }}</span>
-                    <span class="text-white/35">结束</span>
-                    <span class="text-right tabular-nums text-white/70">{{ formatAiQuantOrderEndLabel(o) }}</span>
-                    <span class="text-white/35">支付</span>
-                    <span class="text-right tabular-nums text-white/80">{{ o.principal }} {{ o.currency }}</span>
-                    <span class="text-white/35">累计收益</span>
-                    <span class="text-right tabular-nums text-lime-200/90">{{ o.accumulatedYield }}</span>
-                    <span class="text-white/35">日收益</span>
-                    <span class="text-right tabular-nums text-white/70">{{ o.expectedDailyYield }}</span>
-                  </div>
-                  <div class="mt-3 grid grid-cols-2 gap-2 md:hidden">
-                    <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
-                      查看详情
-                    </RouterLink>
-                    <template v-if="o.status === ORDER_STATUS.RUNNING">
-                      <button
-                        v-if="canApplyEarlyRedeemAiOrder(o)"
-                        type="button"
-                        :class="fx.btnTableActionBlock"
-                        @click="openAiRedeemDialog(o)"
-                      >
-                        申请赎回
-                      </button>
-                      <p v-else :class="[fx.hintBlock, 'text-center text-[11px]']">
-                        不可提前赎回
-                      </p>
-                    </template>
-                    <span v-else :class="[fx.hintBlock, 'text-center text-[11px]']">—</span>
-                  </div>
-                </td>
-                <td class="hidden tabular-nums text-white/55 md:table-cell md:px-5 md:py-3">{{ o.startDate }}</td>
-                <td class="hidden tabular-nums text-white/55 lg:table-cell lg:px-5 lg:py-3">{{ formatAiQuantOrderEndLabel(o) }}</td>
-                <td class="hidden tabular-nums md:table-cell md:px-5 md:py-3">
-                  {{ o.principal }} {{ o.currency }}
-                </td>
-                <td class="hidden tabular-nums text-lime-200/90 lg:table-cell lg:px-5 lg:py-3">
-                  {{ o.accumulatedYield }}
-                </td>
-                <td class="hidden tabular-nums text-white/60 md:table-cell md:px-5 md:py-3">
-                  {{ o.expectedDailyYield }}
-                </td>
-                <td class="max-md:hidden md:table-cell md:px-5 md:py-3 md:text-left">
-                  <div class="flex flex-wrap items-center gap-2">
-                    <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableAction">
-                      查看详情
-                    </RouterLink>
-                    <template v-if="o.status === ORDER_STATUS.RUNNING">
-                      <button
-                        v-if="canApplyEarlyRedeemAiOrder(o)"
-                        type="button"
-                        :class="fx.btnTableAction"
-                        @click="openAiRedeemDialog(o)"
-                      >
-                        申请赎回
-                      </button>
-                      <span v-else class="text-xs text-white/35">不可提前赎回</span>
-                    </template>
-                    <span v-else class="text-xs text-white/35">—</span>
-                  </div>
-                </td>
-                <td
-                  class="max-md:block max-md:w-full max-md:px-3 max-md:pb-4 max-md:pt-1 md:table-cell md:px-5 md:py-3 md:text-left"
-                >
-                  <span
-                    class="inline-flex min-h-[1.75rem] items-center rounded-full px-2.5 py-1 text-[11px] font-semibold sm:text-xs md:px-2.5"
-                    :class="orderStatusPillClass(o.status)"
-                  >
-                    {{ orderStatusMeta[o.status]?.label ?? o.status }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <p
-            v-else-if="recordTab === 'buy'"
-            class="px-3 py-12 text-center text-sm text-white/40 sm:py-14"
-          >
-            暂无数据
-          </p>
-
-          <!-- 赎回 -->
-          <table
-            v-else-if="recordTab === 'redeem' && redeemOrders.length"
-            :class="['w-full min-w-0 border-collapse text-left md:min-w-[640px] md:table-auto max-md:table-fixed', fx.tableBodyText]"
-          >
-            <thead class="hidden md:table-header-group">
-              <tr :class="fx.tableHeadRow">
-                <th class="px-3 py-2.5 md:px-5">产品名称</th>
-                <th class="hidden px-3 py-2.5 md:table-cell md:px-5">赎回时间</th>
-                <th class="hidden px-3 py-2.5 md:table-cell md:px-5">本金</th>
-                <th class="hidden px-3 py-2.5 md:table-cell md:px-5">操作</th>
-                <th class="px-3 py-2.5 text-right md:px-5">状态</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="o in pgRedeem.pagedItems"
-                :key="o.id"
-                class="border-b border-white/[0.06] hover:bg-white/[0.02] max-md:block max-md:last:border-0 md:table-row"
-              >
-                <td class="min-w-0 max-md:block max-md:w-full max-md:px-3 max-md:pb-0 max-md:pt-4 md:px-5 md:py-3">
-                  <p class="text-[14px] font-medium leading-snug text-white sm:text-sm">{{ o.productName }}</p>
-                  <div
-                    class="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 border-t border-white/[0.06] pt-3 text-[11px] text-white/50 md:hidden"
-                  >
-                    <span class="text-white/35">赎回时间</span>
-                    <span class="text-right tabular-nums text-white/70">{{ o.settledAt || o.endDate }}</span>
-                    <span class="text-white/35">本金</span>
-                    <span class="text-right tabular-nums text-white/80">{{ o.principal }} {{ o.currency }}</span>
-                  </div>
-                  <div class="mt-3 md:hidden">
-                    <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
-                      查看详情
-                    </RouterLink>
-                  </div>
-                </td>
-                <td class="hidden tabular-nums text-white/55 md:table-cell md:px-5 md:py-3">
-                  {{ o.settledAt || '—' }}
-                </td>
-                <td class="hidden tabular-nums md:table-cell md:px-5 md:py-3">
-                  {{ o.principal }} {{ o.currency }}
-                </td>
-                <td class="hidden md:table-cell md:px-5 md:py-3">
-                  <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableAction">
-                    查看详情
-                  </RouterLink>
-                </td>
-                <td
-                  class="max-md:block max-md:w-full max-md:px-3 max-md:pb-4 max-md:pt-3 md:px-5 md:py-3 md:text-left"
-                >
-                  <span
-                    class="inline-flex min-h-[1.75rem] items-center rounded-full px-2.5 py-1 text-[11px] font-semibold sm:text-xs"
-                    :class="orderStatusPillClass(o.status)"
-                  >
-                    {{ orderStatusMeta[o.status]?.label ?? o.status }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <p
-            v-else-if="recordTab === 'redeem'"
-            class="px-3 py-12 text-center text-sm text-white/40 sm:py-14"
-          >
-            暂无数据
-          </p>
-
-          <!-- 利息 / 调整 -->
-          <table
-            v-else-if="recordTab === 'interest' && interestRows.length"
-            :class="['w-full min-w-0 border-collapse text-left md:min-w-[720px] md:table-auto max-md:table-fixed', fx.tableBodyText]"
-          >
-            <thead class="hidden md:table-header-group">
-              <tr :class="fx.tableHeadRow">
-                <th class="px-3 py-2.5 md:px-5">说明</th>
-                <th class="hidden px-3 py-2.5 md:table-cell md:px-5">类型</th>
-                <th class="hidden px-3 py-2.5 md:table-cell md:px-5">金额</th>
-                <th class="hidden px-3 py-2.5 lg:table-cell lg:px-5">时间</th>
-                <th class="px-3 py-2.5 text-right md:px-5">类型</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="a in pgInterest.pagedItems"
-                :key="a.id"
-                class="border-b border-white/[0.06] hover:bg-white/[0.02] max-md:block max-md:last:border-0 md:table-row"
-              >
-                <td class="min-w-0 max-md:block max-md:w-full max-md:px-3 max-md:pb-0 max-md:pt-4 md:px-5 md:py-3">
-                  <p class="text-[14px] leading-snug text-white sm:text-sm">{{ a.reason }}</p>
-                  <div
-                    class="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 border-t border-white/[0.06] pt-3 text-[11px] text-white/50 md:hidden"
-                  >
-                    <span class="text-white/35">类型</span>
-                    <span class="text-right text-white/75">{{ adjustmentTypeMeta[a.type]?.label ?? a.type }}</span>
-                    <span class="text-white/35">金额</span>
-                    <span class="text-right tabular-nums text-white/80">{{
-                      a.amount
-                    }}{{ a.currency ? ` ${a.currency}` : a.percentage != null ? ` (${a.percentage}%)` : '' }}</span>
-                    <span class="text-white/35">时间</span>
-                    <span class="text-right tabular-nums text-white/60">{{ a.createdAt }}</span>
-                  </div>
-                </td>
-                <td class="hidden md:table-cell md:px-5 md:py-3">
-                  {{ adjustmentTypeMeta[a.type]?.label ?? a.type }}
-                </td>
-                <td class="hidden tabular-nums md:table-cell md:px-5 md:py-3">
-                  {{ a.amount }}{{ a.currency ? ` ${a.currency}` : a.percentage != null ? ` (${a.percentage}%)` : '' }}
-                </td>
-                <td class="hidden tabular-nums text-white/50 lg:table-cell lg:px-5 lg:py-3">{{ a.createdAt }}</td>
-                <td
-                  class="max-md:block max-md:w-full max-md:px-3 max-md:pb-4 max-md:pt-2 text-left text-[12px] text-white/70 md:px-5 md:py-3 md:text-right lg:text-sm"
-                >
-                  <p class="text-[11px] text-white/35 md:hidden">类型</p>
-                  <p class="mt-0.5 break-words md:mt-0">{{ a.productName || a.orderId || '—' }}</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <p
-            v-else-if="recordTab === 'interest'"
-            class="px-3 py-12 text-center text-sm text-white/40 sm:py-14"
-          >
-            暂无数据
-          </p>
-          </div>
-          <FrontClientPager
-            v-if="recordTab === 'running' && runningOrdersTab.length"
-            :page="pgRunning.page"
-            :total-pages="pgRunning.totalPages"
-            :total="pgRunning.total"
-            :page-size="pgRunning.pageSize"
-            @prev="pgRunning.goPrev"
-            @next="pgRunning.goNext"
-          />
-          <FrontClientPager
-            v-else-if="recordTab === 'buy' && buyOrders.length"
-            :page="pgBuy.page"
-            :total-pages="pgBuy.totalPages"
-            :total="pgBuy.total"
-            :page-size="pgBuy.pageSize"
-            @prev="pgBuy.goPrev"
-            @next="pgBuy.goNext"
-          />
-          <FrontClientPager
-            v-else-if="recordTab === 'redeem' && redeemOrders.length"
-            :page="pgRedeem.page"
-            :total-pages="pgRedeem.totalPages"
-            :total="pgRedeem.total"
-            :page-size="pgRedeem.pageSize"
-            @prev="pgRedeem.goPrev"
-            @next="pgRedeem.goNext"
-          />
-          <FrontClientPager
-            v-else-if="recordTab === 'interest' && interestRows.length"
-            :page="pgInterest.page"
-            :total-pages="pgInterest.totalPages"
-            :total="pgInterest.total"
-            :page-size="pgInterest.pageSize"
-            @prev="pgInterest.goPrev"
-            @next="pgInterest.goNext"
-          />
-        </div>
-      </section>
+        <FinanceAiQuantOrdersPanel />
       </template>
     </div>
 
     <FrontPopupShell
-      v-model="aiRedeemOpen"
-      aria-labelledby="ai-quant-redeem-dialog-title"
-      close-on-backdrop
-      @backdrop-click="closeAiRedeemDialog"
-    >
-      <FrontPopupCard v-if="aiRedeemOrder" variant="padded" wide @click.stop>
-        <FrontPopupCloseButton @click="closeAiRedeemDialog" />
-        <h2 id="ai-quant-redeem-dialog-title" class="pr-10 text-lg font-semibold tracking-tight text-white">
-          确认提前赎回
-        </h2>
-        <p class="mt-1.5 text-[13px] leading-relaxed text-white/45">
-          确认后订单将标记为「提前赎回」，您可在「赎回」记录中查看。
-        </p>
-        <dl class="mt-4 space-y-2 rounded-xl border border-white/[0.08] bg-black/35 px-3 py-3 text-sm">
-          <div class="flex justify-between gap-3">
-            <dt class="text-white/45">产品</dt>
-            <dd class="text-right text-white/90">{{ aiRedeemOrder.productName }}</dd>
-          </div>
-          <div class="flex justify-between gap-3">
-            <dt class="text-white/45">本金</dt>
-            <dd class="tabular-nums font-medium text-white">
-              {{ aiRedeemOrder.principal }} {{ aiRedeemOrder.currency }}
-            </dd>
-          </div>
-          <div class="flex justify-between gap-3 border-t border-white/[0.06] pt-2">
-            <dt class="text-white/45">规则手续费（约）</dt>
-            <dd class="tabular-nums text-amber-200/90">
-              {{
-                aiRedeemProductSnapshot?.earlyRedeemFeePercent != null
-                  ? `${aiRedeemProductSnapshot.earlyRedeemFeePercent}%`
-                  : '—'
-              }}
-            </dd>
-          </div>
-        </dl>
-        <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <button type="button" :class="fx.btnGhost" @click="closeAiRedeemDialog">
-            取消
-          </button>
-          <button type="button" :class="fx.btnPrimary" @click="confirmAiEarlyRedeem">
-            确认赎回
-          </button>
-        </div>
-      </FrontPopupCard>
-    </FrontPopupShell>
-
-    <FrontPopupShell
       v-model="rentOpen"
       aria-labelledby="ai-quant-rent-dialog-title"
-      close-on-backdrop
-      @backdrop-click="closeRentDialog"
     >
       <FrontPopupCard v-if="rentRow" variant="flow" flow-max="680" wide @click.stop>
         <FrontPopupCloseButton @click="closeRentDialog" />

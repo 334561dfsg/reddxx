@@ -16,6 +16,14 @@ const frontListSource = readFileSync(
   new URL('../src/pages/front/finance/aiQuant/FinanceAiQuantListPage.vue', import.meta.url),
   'utf8'
 )
+const frontOrdersPanelSource = readFileSync(
+  new URL('../src/pages/front/finance/aiQuant/FinanceAiQuantOrdersPanel.vue', import.meta.url),
+  'utf8'
+)
+const frontOrdersPageSource = readFileSync(
+  new URL('../src/pages/front/finance/aiQuant/FinanceAiQuantOrdersPage.vue', import.meta.url),
+  'utf8'
+)
 const frontDetailSource = readFileSync(
   new URL('../src/pages/front/finance/aiQuant/FinanceAiQuantDetailPage.vue', import.meta.url),
   'utf8'
@@ -116,23 +124,49 @@ test('AI quant list mock covers unlimited-term orders across visible states', ()
   assert.ok(unlimitedBlocks.some(([, , , status]) => status === 'RUNNING'))
   assert.ok(unlimitedBlocks.some(([, , , status]) => status === 'SETTLED'))
   assert.ok(unlimitedBlocks.some(([, , , status]) => status === 'EARLY_REDEEMED'))
-  assert.match(frontListSource, /formatAiQuantOrderEndLabel\(o\)/)
+  assert.match(frontOrdersPanelSource, /formatAiQuantOrderEndLabel\(o\)/)
 })
 
 test('AI quant front orders open a dedicated detail page', () => {
   const orderDetailSource = readOptionalSource('../src/pages/front/finance/aiQuant/FinanceAiQuantOrderDetailPage.vue')
   const financeRoute = frontDesktopRoutes.find((route) => route.path === 'finance')
+  const listRoute = financeRoute.children.find((route) => route.name === 'front-finance-ai-quant')
+  const ordersRoute = financeRoute.children.find((route) => route.name === 'front-finance-ai-quant-orders')
   const orderRoute = financeRoute.children.find((route) => route.name === 'front-finance-ai-quant-order-detail')
 
+  assert.equal(listRoute?.meta?.hideFrontChromeOnMobile, true)
+  assert.equal(listRoute?.meta?.hideFrontFloatingOnMobile, true)
+  assert.equal(ordersRoute?.path, 'ai-quant/orders')
+  assert.equal(ordersRoute?.meta?.hideFrontChromeOnMobile, true)
+  assert.equal(ordersRoute?.meta?.hideFrontFloatingOnMobile, true)
   assert.equal(orderRoute?.path, 'ai-quant/order/:orderId')
   assert.equal(orderRoute?.meta?.hideFrontChromeOnMobile, true)
   assert.equal(orderRoute?.meta?.hideFrontFloatingOnMobile, true)
-  assert.match(frontListSource, /function aiQuantOrderDetailLocation\(orderId\)/)
-  assert.match(frontListSource, /ai-quant\/order\/\$\{orderId\}/)
-  assert.match(frontListSource, /:to="aiQuantOrderDetailLocation\(o\.id\)"/)
-  assert.match(frontListSource, /查看详情/)
+  assert.match(frontListSource, /FrontTopNav/)
+  assert.match(frontListSource, /drawer-only/)
+  assert.match(frontListSource, /aria-label="AI 量化移动端标题栏"/)
+  assert.match(frontListSource, /fixed inset-x-0 top-0 z-40/)
+  assert.match(frontListSource, /h-\[4\.5rem\]/)
+  assert.match(frontListSource, /aria-label="查看 AI 量化订单"/)
+  assert.match(frontListSource, /finance\/ai-quant\/orders/)
+  assert.match(frontListSource, /hidden lg:inline-flex/)
+  assert.doesNotMatch(frontListSource, /fx\.filterMobileLabel/)
+  assert.match(frontOrdersPageSource, /aria-label="AI 量化订单页"/)
+  assert.match(frontOrdersPageSource, /aria-label="AI 量化订单移动端标题栏"/)
+  assert.match(frontOrdersPageSource, /fixed inset-x-0 top-0 z-40/)
+  assert.match(frontOrdersPageSource, /pt-\[calc\(4\.75rem\+env\(safe-area-inset-top,0px\)\)\]/)
+  assert.match(frontOrdersPageSource, /FinanceAiQuantOrdersPanel/)
+  assert.match(frontOrdersPanelSource, /aria-label="AI 量化订单列表"/)
+  assert.match(frontOrdersPanelSource, /function aiQuantOrderDetailLocation\(orderId\)/)
+  assert.match(frontOrdersPanelSource, /ai-quant\/order\/\$\{orderId\}/)
+  assert.match(frontOrdersPanelSource, /:to="aiQuantOrderDetailLocation\(o\.id\)"/)
+  assert.match(frontOrdersPanelSource, /加载更多订单/)
+  assert.doesNotMatch(frontOrdersPanelSource, /FrontClientPager/)
+  assert.doesNotMatch(frontOrdersPanelSource, />记录明细</)
+  assert.doesNotMatch(frontOrdersPanelSource, /上一页|下一页/)
   assert.match(orderDetailSource, /aria-label="AI 量化订单详情页"/)
-  assert.match(orderDetailSource, /query: \{ tab: 'orders' \}/)
+  assert.match(orderDetailSource, /finance\/ai-quant\/orders/)
+  assert.match(orderDetailSource, /fixed inset-x-0 top-0 z-40/)
 })
 
 test('AI quant order detail shows fixed daily earnings with load more', () => {

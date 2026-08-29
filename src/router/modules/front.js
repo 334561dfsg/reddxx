@@ -116,7 +116,13 @@ export const frontDesktopRoutes = [
         path: 'ai-quant',
         name: 'front-finance-ai-quant',
         component: () => import('../../pages/front/finance/aiQuant/FinanceAiQuantListPage.vue'),
-        meta: { title: 'AI 量化' }
+        meta: { title: 'AI 量化', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
+      },
+      {
+        path: 'ai-quant/orders',
+        name: 'front-finance-ai-quant-orders',
+        component: () => import('../../pages/front/finance/aiQuant/FinanceAiQuantOrdersPage.vue'),
+        meta: { title: 'AI 量化订单', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
       },
       {
         path: 'ai-quant/rules',
