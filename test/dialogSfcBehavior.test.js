@@ -141,7 +141,7 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
     delivery: { strategy: 'positive', method: 'profit', value: 'profit', duration: 'permanent', status: 'active' }
   }
   const rulesB = {
-    portfolio: { strategy: 'negative', method: 'lowLoss', value: 'lowYield', duration: 'once', status: 'active' }
+    delivery: { strategy: 'negative', method: 'loss', value: 'loss', duration: 'permanent', status: 'active' }
   }
   let harness
   harness = await createSfcHarness(component, {
@@ -162,7 +162,7 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
   ))
   close.click()
   harness.props.user = userB
-  harness.props.moduleKey = 'portfolio'
+  harness.props.moduleKey = 'delivery'
   harness.props.existingRules = rulesB
   harness.props.open = true
   await harness.flush()
@@ -171,9 +171,9 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
   await harness.finishTransitions()
 
   const body = harness.findByTestId('user-control-dialog-body')
-  assert.match(body.textContent, /投资组合点控规则/)
-  assert.doesNotMatch(body.textContent, /交割点控规则/)
-  assert.doesNotMatch(body.textContent, /当前选择：做低亏损/)
+  assert.match(body.textContent, /交割点控规则/)
+  assert.doesNotMatch(body.textContent, /投资组合点控规则/)
+  assert.doesNotMatch(body.textContent, /当前选择：亏损/)
   assert.doesNotMatch(body.textContent, /当前选择说明/)
   assert.match(harness.findByTestId('user-control-target-user').textContent, /Beta/)
 })

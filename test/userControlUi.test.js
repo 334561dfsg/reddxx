@@ -3,8 +3,6 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import {
   buildUserControlPayload,
-  defaultControlIntensity,
-  getControlMethodOptions,
   getModuleControlOptions,
   isUserControlFormComplete
 } from '../src/features/user-control/userControlForm.js'
@@ -23,54 +21,45 @@ test('form helper exposes only trading outcomes for trade modules', () => {
   assert.deepEqual(getModuleControlOptions('trade').map((option) => option.value), ['profit', 'loss'])
 })
 
-test('form helper exposes only yield outcomes for finance modules', () => {
-  assert.deepEqual(getModuleControlOptions('finance').map((option) => option.value), ['highYield', 'lowYield'])
-})
-
-test('form helper exposes customer control methods by control type', () => {
-  assert.deepEqual(getControlMethodOptions('positive').map((option) => option.label), ['默认盈利', '做高盈利', '做低盈利'])
-  assert.deepEqual(getControlMethodOptions('negative').map((option) => option.label), ['默认亏损', '做高亏损', '做低亏损'])
-  assert.deepEqual(getControlMethodOptions('positive', { scope: 'global' }).map((option) => option.label), ['默认盈利', '做高盈利', '做低盈利'])
-  assert.deepEqual(getControlMethodOptions('negative', { scope: 'global' }).map((option) => option.label), ['默认亏损', '做高亏损', '做低亏损'])
-  assert.match(getControlMethodOptions('positive', { scope: 'global' })[1].description, /仅针对交割合约生效/)
-  assert.deepEqual(getControlMethodOptions('positive', { scope: 'module', moduleKey: 'delivery' }).map((option) => option.label), ['默认盈利', '做高盈利', '做低盈利'])
-  assert.deepEqual(getControlMethodOptions('negative', { scope: 'module', moduleKey: 'aiQuant' }).map((option) => option.label), ['默认亏损'])
+test('form helper does not expose finance point-control outcomes', () => {
+  assert.deepEqual(getModuleControlOptions('finance'), [])
 })
 
 test('form helper rejects incomplete values used by the disabled state', () => {
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'profit', duration: 'once', note: '   ' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', simplifiedControlTypes: true, noteRequired: false, note: '   ' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'normal', simplifiedControlTypes: true, noteRequired: false, note: '   ' }), true)
   assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'profit', noteRequired: false, note: '   ' }), true)
   assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'normal', noteRequired: false, note: '   ' }), true)
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: '', method: 'profit', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highLoss', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'highProfit', note: '审计备注' }), true)
-  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), true)
-  assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'delivery', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 8, max: 3 } }, duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'delivery', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 3, max: 8 } }, duration: 'once', note: '审计备注' }), true)
-  assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'aiQuant', family: 'finance', userId: '159', strategy: 'negative', method: 'lowLoss', intensity: { finance: { min: 1, max: 5 } }, duration: 'once', note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'ignored', duration: 'once', note: '审计备注' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '', strategy: 'positive', method: 'ignored', duration: 'once', note: '审计备注' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'ignored', note: '审计备注' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'ignored', duration: 'once', note: '审计备注' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'delivery', family: 'trade', userId: '159', strategy: 'positive', intensity: { trade: { min: 3, max: 8 } }, duration: 'once', note: '审计备注' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'aiQuant', family: 'finance', userId: '159', strategy: 'negative', duration: 'once', note: '审计备注' }), false)
 })
 
 test('form helper trims notes and builds scope-specific payloads', () => {
   assert.deepEqual(buildUserControlPayload({
-    scope: 'module', moduleKey: 'delivery', family: 'trade', userId: '159', strategy: 'negative', method: 'highLoss',
-    intensity: { trade: { min: '3%', max: '8%' } }, duration: 'permanent', note: '  模块备注  '
+    scope: 'module', moduleKey: 'delivery', family: 'trade', userId: '159', strategy: 'negative',
+    simplifiedControlTypes: true, noteRequired: false, duration: 'permanent', note: '  模块备注  '
   }), {
     userId: '159',
     strategy: 'negative',
-    method: 'highLoss',
+    method: 'loss',
     value: 'loss',
-    intensity: { trade: { mode: 'percentRange', min: 3, max: 8, unit: '%' } },
+    intensity: {},
     duration: 'permanent',
     note: '模块备注'
   })
   assert.deepEqual(buildUserControlPayload({
-    scope: 'global', userId: '158', strategy: 'positive', method: 'lowProfit',
+    scope: 'global', userId: '158', strategy: 'positive', method: 'ignored',
     modules: ['delivery'], note: '  用户点控备注  '
   }), {
     userId: '158',
     strategy: 'positive',
-    method: 'lowProfit',
+    method: 'profit',
     modules: ['delivery'],
     intensity: {},
     duration: 'permanent',
@@ -109,37 +98,31 @@ test('global point-control payload can target only delivery without strength', (
   assert.deepEqual(next.operationLogs[0].modules, ['delivery'])
 })
 
-test('shared modal presents user-list control as trading-only while module finance wording remains available', () => {
+test('shared modal presents simplified point-control settings across user list and delivery module', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
   const userListSource = read('../src/pages/admin/user/UserListPage.vue')
-  const helperSource = read('../src/features/user-control/userControlForm.js')
+  const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   assert.match(source, /盈利/)
   assert.match(source, /亏损/)
   assert.match(source, /永久盈利/)
   assert.match(source, /永久亏损/)
   assert.match(source, /正常/)
   assert.match(source, /控盘类型/)
-  assert.match(source, /控盘方式/)
-  assert.match(source, /v-if="!isSimplifiedGlobalControl"[\s\S]*label="控盘方式"/)
-  assert.match(source, /v-if="intensityFields\.length"/)
-  assert.match(source, /if \(isGlobalScope\.value\) \{[\s\S]*return \[\]/)
+  assert.doesNotMatch(source, /label="控盘方式"/)
+  assert.doesNotMatch(source, /id-base="user-control-method"/)
+  assert.doesNotMatch(source, /user-control-intensity-title/)
+  assert.doesNotMatch(source, /simplifiedGlobalControlTypes/)
+  assert.doesNotMatch(source, /isSimplifiedControlTypes/)
   assert.match(userListSource, /const USER_LIST_CONTROL_MODULE_KEYS = Object\.freeze\(\['delivery'\]\)/)
   assert.match(userListSource, /:unified-module-keys="USER_LIST_CONTROL_MODULE_KEYS"/)
-  assert.match(userListSource, /simplified-global-control-types/)
   assert.match(userListSource, /:show-help-panel="false"/)
   assert.match(userListSource, /:note-required="false"/)
-  assert.doesNotMatch(source, /理财类控盘力度范围/)
-  assert.match(source, /按订单本金/)
-  assert.match(source, /点控方式/)
-  assert.match(helperSource, /做高盈利/)
-  assert.match(helperSource, /做低盈利/)
-  assert.match(helperSource, /做高亏损/)
-  assert.match(helperSource, /做低亏损/)
-  assert.match(helperSource, /仅针对交割合约生效/)
+  assert.match(moduleSource, /scope="module"[\s\S]*:show-help-panel="false"[\s\S]*:note-required="false"/)
+  assert.match(moduleSource, /if \(payload\.strategy === 'normal'\) \{[\s\S]*?cancelSingleModuleControl/)
   assert.match(source, /结算时按方向控制结算价/)
-  assert.match(source, /AI量化点控规则/)
-  assert.match(source, /收益率提升数值/)
-  assert.match(source, /收益率降低数值/)
+  assert.doesNotMatch(source, /AI量化点控规则/)
+  assert.doesNotMatch(source, /收益率提升数值/)
+  assert.doesNotMatch(source, /收益率降低数值/)
   assert.doesNotMatch(source, /只生效一次/)
   assert.doesNotMatch(source, /控制周期/)
   assert.doesNotMatch(source, /id-base="user-control-duration"/)
@@ -168,24 +151,22 @@ test('shared modal defaults new point-control rules to loss without overriding e
   assert.match(source, /const DEFAULT_CONTROL_STRATEGY = 'negative'/)
   assert.match(source, /const inferredStrategy = \['loss', 'lowYield'\]\.includes\(existing\?\.value\)[\s\S]*\? 'negative'[\s\S]*: DEFAULT_CONTROL_STRATEGY/)
   assert.match(source, /form\.strategy = existing\?\.strategy \|\| inferredStrategy/)
-  assert.match(source, /defaultControlMethod\(form\.strategy, methodContext\)/)
+  assert.doesNotMatch(source, /defaultControlMethod/)
 })
 
-test('shared modal renders percent range controls for scoped point-control strength', () => {
+test('shared modal removes scoped point-control strength from the setting surface', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
 
-  assert.deepEqual(defaultControlIntensity('trade'), { mode: 'percentRange', min: 1, max: 10, unit: '%' })
-  assert.deepEqual(defaultControlIntensity('finance'), { mode: 'percentRange', min: 1, max: 10, unit: '%' })
   assert.equal(isUserControlFormComplete({
     scope: 'module',
     moduleKey: 'delivery',
     family: 'trade',
     userId: '159',
     strategy: 'negative',
-    method: 'loss',
-    intensity: { trade: { min: 1, max: 10 } },
+    simplifiedControlTypes: true,
+    noteRequired: false,
     duration: 'permanent',
-    note: '默认控盘力度'
+    note: ''
   }), true)
   assert.equal(isUserControlFormComplete({
     scope: 'module',
@@ -193,23 +174,17 @@ test('shared modal renders percent range controls for scoped point-control stren
     family: 'trade',
     userId: '159',
     strategy: 'negative',
-    method: 'loss',
-    intensity: { trade: { min: 0, max: 10 } },
+    simplifiedControlTypes: true,
+    noteRequired: false,
     duration: 'permanent',
-    note: '默认控盘力度'
-  }), false)
-  assert.match(source, /defaultControlIntensity\('trade'\)/)
-  assert.match(source, /defaultControlIntensity\('finance'\)/)
-  assert.match(source, /v-for="field in intensityFields"/)
-  assert.match(source, /v-model\.trim="form\[field\.minModel\]"/)
-  assert.match(source, /v-model\.trim="form\[field\.maxModel\]"/)
-  assert.match(source, /最小比例/)
-  assert.match(source, /最大比例/)
-  assert.match(source, />~<\/span>/)
-  assert.match(source, /inputmode="decimal"/)
-  assert.match(source, /user-control-\$\{field\.key\}-intensity-help/)
-  assert.match(source, /intensity:\s*\{[\s\S]*trade:\s*\{ mode:\s*'percentRange', min:\s*form\.tradeIntensityMin, max:\s*form\.tradeIntensityMax, unit:\s*'%'/)
-  assert.match(source, /finance:\s*\{ mode:\s*'percentRange', min:\s*form\.financeIntensityMin, max:\s*form\.financeIntensityMax, unit:\s*'%'/)
+    note: ''
+  }), true)
+  assert.doesNotMatch(source, /defaultControlIntensity/)
+  assert.doesNotMatch(source, /v-for="field in intensityFields"/)
+  assert.doesNotMatch(source, /最小比例/)
+  assert.doesNotMatch(source, /最大比例/)
+  assert.doesNotMatch(source, /inputmode="decimal"/)
+  assert.match(source, /intensity:\s*\{\}/)
 })
 
 test('shared modal omits the existing-rule summary and atomic overwrite copy', () => {
@@ -229,37 +204,22 @@ test('shared modal renders the target email in the read-only user identity block
   assert.match(targetUser, /selectedUserEmail/)
 })
 
-test('shared modal shows the selected user current point-control status', () => {
+test('shared modal omits the selected user current point-control status', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
   const currentStatus = elementByTestId(source, 'user-control-current-status')
 
-  assert.notEqual(currentStatus, '')
-  assert.match(source, /activeExistingRules/)
-  assert.match(source, /\['active', 'processing'\]\.includes\(rule\?\.status\)/)
-  assert.match(currentStatus, /当前点控状态/)
-  assert.match(currentStatus, /已开启点控/)
-  assert.match(currentStatus, /未开启点控/)
-  assert.match(currentStatus, /v-if="!isSimplifiedGlobalControl"/)
-  assert.match(currentStatus, /border-amber-300 bg-amber-50 ring-1 ring-amber-100/)
-  assert.match(currentStatus, /border-sky-200 bg-sky-50 ring-1 ring-sky-100/)
-  assert.match(currentStatus, /bg-amber-200 text-amber-900/)
-  assert.match(currentStatus, /bg-sky-200 text-sky-900/)
-  assert.match(currentStatus, /已开启点控模块/)
-  assert.match(currentStatus, /再次确认会覆盖对应点控设置/)
-  assert.match(currentStatus, /取消点控/)
-  assert.match(currentStatus, /@click="emit\('request-cancel'\)"/)
-  assert.match(source, /const emit = defineEmits\(\['close', 'submit', 'request-cancel'\]\)/)
+  assert.equal(currentStatus, '')
+  assert.doesNotMatch(source, /activeExistingRules/)
+  assert.doesNotMatch(source, /当前点控状态/)
+  assert.doesNotMatch(source, /已开启点控模块/)
   const userSource = read('../src/pages/admin/user/UserListPage.vue')
-  assert.match(userSource, /simplified-global-control-types/)
-  assert.match(userSource, /@request-cancel="requestControlCancelFromSetting"/)
-  assert.match(userSource, /const requestControlCancelFromSetting = async \(\) =>/)
-  assert.match(userSource, /controlModalOpen\.value = false[\s\S]*await nextTick\(\)[\s\S]*openControlCancel\(user\)/)
+  assert.match(userSource, /if \(payload\.strategy === 'normal'\) \{[\s\S]*?cancelUnifiedUserControl/)
 })
 
 test('module page explains settlement-only delivery control and module-only scope', () => {
   const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   assert.match(source, /不改变K线/)
-  assert.match(source, /实时浮盈亏/)
+  assert.match(source, /实时盈亏/)
   assert.match(source, /本次操作只影响当前模块/)
   assert.match(source, /规则来源/)
 })
@@ -553,17 +513,17 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   assert.match(source, /displayedModuleRules = computed/)
   assert.match(source, /isGlobalScope\.value[\s\S]*\? globalModules\.value[\s\S]*: moduleMeta\.value \? \[moduleMeta\.value\]/)
   assert.match(source, /:hint="selectedControlType\?\.description \|\| '请选择点控类型'"[\s\S]*id-base="user-control-strategy"/)
-  assert.match(source, /controlMethodContext = computed/)
-  assert.match(source, /controlMethodOptions = computed\(\(\) => form\.strategy === 'normal' \? \[\] : getControlMethodOptions\(form\.strategy, controlMethodContext\.value\)\)/)
+  assert.doesNotMatch(source, /controlMethodContext = computed/)
+  assert.doesNotMatch(source, /controlMethodOptions = computed/)
   assert.doesNotMatch(source, /v-if="showControlMethodSelect"/)
-  assert.match(source, /label="控盘方式"/)
-  assert.match(source, /id-base="user-control-method"/)
+  assert.doesNotMatch(source, /label="控盘方式"/)
+  assert.doesNotMatch(source, /id-base="user-control-method"/)
   assert.doesNotMatch(source, /selectedDuration/)
   assert.doesNotMatch(source, /durationOptions/)
   assert.match(source, /v-for="rule in displayedModuleRules"/)
   assert.match(source, /rule\.title/)
   assert.match(source, /影响范围[\s\S]*rule\.scope/)
-  assert.match(source, /点控方式[\s\S]*rule\.pointMethod/)
+  assert.match(source, /执行说明[\s\S]*rule\.pointMethod/)
   assert.match(source, /生效方式[\s\S]*rule\.effect/)
   assert.match(source, /示例[\s\S]*rule\.example/)
   assert.doesNotMatch(source, /class="sr-only"[\s\S]*id="user-control-strategy-help"[\s\S]*id="user-control-method-help"[\s\S]*id="user-control-duration-help"/)
@@ -574,21 +534,20 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   assert.match(source, /交割点控规则/)
   assert.doesNotMatch(source, /永续点控规则/)
   assert.doesNotMatch(source, /现货点控规则/)
-  assert.match(source, /AI量化点控规则/)
-  assert.match(source, /流动性挖矿点控规则/)
-  assert.match(source, /投资组合点控规则/)
+  assert.doesNotMatch(source, /AI量化点控规则/)
+  assert.doesNotMatch(source, /流动性挖矿点控规则/)
+  assert.doesNotMatch(source, /投资组合点控规则/)
   assert.doesNotMatch(source, /不单独修改K线、盘口行情和实时浮盈亏/)
   assert.match(source, /只影响目标用户交割合约订单，不改变公共行情、K线、盘口和其他用户订单/)
   assert.match(source, /交割通过结算价偏移处理/)
-  assert.match(source, /做高\/做低仅针对交割合约生效/)
+  assert.doesNotMatch(source, /做高|做低/)
   assert.doesNotMatch(source, /通过成交价偏移处理/)
-  assert.match(source, /通过收益率调整处理/)
+  assert.doesNotMatch(source, /通过收益率调整处理/)
   assert.match(source, /影响当前用户交割合约订单的最终结算价格/)
   assert.doesNotMatch(source, /现货订单成交即结束/)
-  assert.match(source, /盈利时替换为点控收益率提升数值/)
+  assert.doesNotMatch(source, /盈利时替换为点控收益率提升数值/)
   assert.doesNotMatch(source, /grid gap-3 sm:grid-cols-3/)
-  assert.match(helperSource, /交割模块按有利价格偏移处理/)
-  assert.match(helperSource, /交割模块按不利价格偏移处理/)
+  assert.doesNotMatch(helperSource, /做高|做低/)
   assert.doesNotMatch(source, />交易类效果</)
   assert.doesNotMatch(source, />理财类效果</)
   assert.doesNotMatch(source, /本次操作只影响当前模块，其他五个模块的用户规则保持不变。/)
@@ -679,7 +638,7 @@ test('point-control setting and detail surfaces use the shared dialog lifecycle 
   assert.match(settingSource, /SelectOnlyCombobox/)
   assert.match(settingSource, /ref="firstControlSelect"/)
   assert.match(settingSource, /id-base="user-control-strategy"/)
-  assert.match(settingSource, /id-base="user-control-method"/)
+  assert.doesNotMatch(settingSource, /id-base="user-control-method"/)
   assert.doesNotMatch(settingSource, /id-base="user-control-duration"/)
   assert.match(settingSource, /duration: 'permanent'/)
   assert.doesNotMatch(settingSource, /type="radio" name="strategy"|type="radio" name="method"|type="radio" name="duration"/)

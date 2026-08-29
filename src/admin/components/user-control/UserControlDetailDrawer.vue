@@ -45,18 +45,12 @@ const isDivergentModule = (moduleKey) => summary.value.kind === 'divergent' && d
 
 const valueLabel = (value) => ({
   profit: '盈利',
-  loss: '亏损',
-  highYield: '高收益',
-  lowYield: '低收益'
+  loss: '亏损'
 })[value] || '未设置'
 
 const methodLabel = (method, fallbackValue) => ({
   profit: '盈利',
-  highProfit: '做高盈利',
-  lowProfit: '做低盈利',
-  loss: '亏损',
-  highLoss: '做高亏损',
-  lowLoss: '做低亏损'
+  loss: '亏损'
 })[method] || valueLabel(fallbackValue)
 
 const durationLabel = (duration) => ({ once: '只生效一次', permanent: '持续生效' })[duration] || '—'

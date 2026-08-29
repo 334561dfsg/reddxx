@@ -6,11 +6,6 @@ import {
 } from '../../../features/user-control/userControl.js'
 import {
   buildUserControlPayload,
-  defaultControlIntensity,
-  defaultControlMethod,
-  getControlMethodOptions,
-  getControlTypeOptions,
-  isControlMethodForStrategy,
   isUserControlFormComplete
 } from '../../../features/user-control/userControlForm.js'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
@@ -25,7 +20,6 @@ const props = defineProps({
   },
   moduleKey: { type: String, default: '' },
   unifiedModuleKeys: { type: Array, default: () => [] },
-  simplifiedGlobalControlTypes: { type: Boolean, default: false },
   showHelpPanel: { type: Boolean, default: true },
   noteRequired: { type: Boolean, default: true },
   user: { type: Object, default: null },
@@ -33,7 +27,7 @@ const props = defineProps({
   returnFocus: { type: [Object, Function], default: null }
 })
 
-const emit = defineEmits(['close', 'submit', 'request-cancel'])
+const emit = defineEmits(['close', 'submit'])
 
 const dialogRef = ref(null)
 const firstControlSelect = ref(null)
@@ -88,11 +82,6 @@ const handleAfterLeave = async () => {
 
 const form = reactive({
   strategy: '',
-  method: '',
-  tradeIntensityMin: '',
-  tradeIntensityMax: '',
-  financeIntensityMin: '',
-  financeIntensityMax: '',
   duration: 'permanent',
   note: ''
 })
@@ -113,62 +102,10 @@ const globalModules = computed(() => {
 const selectedUserId = computed(() => String(displayUser.value?.userId ?? displayUser.value?.id ?? ''))
 const selectedUserName = computed(() => displayUser.value?.username || displayUser.value?.name || '未选择用户')
 const selectedUserEmail = computed(() => displayUser.value?.email || '邮箱未提供')
-const activeExistingRules = computed(() => Object.entries(displayedDialogData.value.existingRules || {})
-  .filter(([key, rule]) => {
-    if (!['active', 'processing'].includes(rule?.status)) return false
-    return !isGlobalScope.value || globalModules.value.some((module) => module.key === (rule?.moduleKey || key))
-  })
-  .map(([key, rule]) => {
-    const module = USER_CONTROL_MODULES.find((item) => item.key === (rule?.moduleKey || key))
-    return {
-      key,
-      label: module?.label || key,
-      status: rule.status
-    }
-  }))
-const hasActiveExistingRules = computed(() => activeExistingRules.value.length > 0)
 
-const isSimplifiedGlobalControl = computed(() => props.simplifiedGlobalControlTypes && isGlobalScope.value)
-const controlTypeOptions = computed(() => isSimplifiedGlobalControl.value ? SIMPLE_GLOBAL_CONTROL_TYPE_OPTIONS : getControlTypeOptions())
-const controlMethodContext = computed(() => ({
-  scope: displayScope.value,
-  moduleKey: displayModuleKey.value
-}))
-const controlMethodOptions = computed(() => form.strategy === 'normal' ? [] : getControlMethodOptions(form.strategy, controlMethodContext.value))
+const controlTypeOptions = computed(() => SIMPLE_GLOBAL_CONTROL_TYPE_OPTIONS)
 const selectedControlType = computed(() => controlTypeOptions.value.find((option) => option.value === form.strategy) || null)
-const selectedControlMethod = computed(() => controlMethodOptions.value.find((option) => option.value === form.method) || null)
 const shouldShowHelpPanel = computed(() => props.showHelpPanel)
-const intensityFields = computed(() => {
-  if (isGlobalScope.value) {
-    return []
-  }
-  const family = moduleMeta.value?.family
-  if (family === 'trade') {
-    return [{
-      key: 'trade',
-      minModel: 'tradeIntensityMin',
-      maxModel: 'tradeIntensityMax',
-      label: '控盘力度范围',
-      modules: moduleMeta.value?.label || '当前交易模块',
-      hint: form.strategy === 'negative'
-        ? '按本单保证金或成交额在范围内生成目标亏损比例'
-        : '按本单保证金或成交额在范围内生成目标盈利比例'
-    }]
-  }
-  if (family === 'finance') {
-    return [{
-      key: 'finance',
-      minModel: 'financeIntensityMin',
-      maxModel: 'financeIntensityMax',
-      label: '控盘力度范围',
-      modules: moduleMeta.value?.label || '当前理财模块',
-      hint: form.strategy === 'negative'
-        ? '按订单本金在范围内生成目标低收益率'
-        : '按订单本金在范围内生成目标收益率'
-    }]
-  }
-  return []
-})
 
 const affectedModules = computed(() => isGlobalScope.value
   ? globalModules.value
@@ -182,28 +119,7 @@ const moduleRuleCatalog = Object.freeze({
     scope: '影响当前用户交割合约订单的最终结算价格，不影响公共行情、产品配置和其他用户订单。',
     pointMethod: '通过结算价偏移处理：买涨盈利向上偏移、亏损向下偏移；买跌盈利向下偏移、亏损向上偏移。',
     effect: '默认长期生效。盈利时：买涨结算价向上偏移，买跌结算价向下偏移；亏损时：买涨结算价向下偏移，买跌结算价向上偏移。',
-    example: '说明：控盘方式只作为操作标记，不参与结算逻辑；实际按盈利或亏损方向在结算时处理价格偏移。'
-  },
-  aiQuant: {
-    title: 'AI量化点控规则',
-    scope: '影响当前用户 AI 量化订单最终收益率调整，不影响产品基础收益率和其他用户收益。',
-    pointMethod: '通过收益率调整处理：盈利使用点控收益率提升数值，亏损使用点控收益率降低数值。',
-    effect: '默认长期生效。盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
-    example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
-  },
-  liquidity: {
-    title: '流动性挖矿点控规则',
-    scope: '影响当前用户流动性挖矿订单收益率调整，不影响矿池基础收益规则和其他用户收益。',
-    pointMethod: '通过收益率调整处理：盈利使用点控收益率提升数值，亏损使用点控收益率降低数值。',
-    effect: '默认长期生效。盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
-    example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
-  },
-  portfolio: {
-    title: '投资组合点控规则',
-    scope: '影响当前用户投资组合订单最终收益率调整，不影响组合产品基础规则、持仓展示和其他用户收益。',
-    pointMethod: '通过收益率调整处理：盈利使用点控收益率提升数值，亏损使用点控收益率降低数值。',
-    effect: '默认长期生效。盈利时替换为点控收益率提升数值；亏损时替换为点控收益率降低数值。',
-    example: '说明：控盘方式只作为操作标记，不参与收益计算逻辑。'
+    example: '说明：实际按永久盈利或永久亏损方向在结算时处理价格偏移。'
   }
 })
 
@@ -213,9 +129,9 @@ const globalRuleCatalog = Object.freeze([
     label: '交割',
     title: '交易模块规则',
     scope: '只影响目标用户交割合约订单，不改变公共行情、K线、盘口和其他用户订单。',
-    pointMethod: '交割通过结算价偏移处理；做高/做低仅针对交割合约生效。',
+    pointMethod: '交割通过结算价偏移处理。',
     effect: '默认长期生效。交割在结算时按方向控制结算价。',
-    example: '说明：控盘方式只作为操作标记，不参与价格偏移逻辑。'
+    example: '说明：实际按永久盈利或永久亏损方向在结算时处理价格偏移。'
   }
 ])
 
@@ -247,11 +163,7 @@ const formInput = computed(() => ({
   family: moduleMeta.value?.family,
   userId: selectedUserId.value,
   strategy: form.strategy,
-  method: form.strategy === 'normal' ? '' : form.method,
-  intensity: {
-    trade: { mode: 'percentRange', min: form.tradeIntensityMin, max: form.tradeIntensityMax, unit: '%' },
-    finance: { mode: 'percentRange', min: form.financeIntensityMin, max: form.financeIntensityMax, unit: '%' }
-  },
+  intensity: {},
   duration: form.duration,
   noteRequired: props.noteRequired,
   note: form.note
@@ -268,16 +180,6 @@ const resetForm = (data) => {
     ? 'negative'
     : DEFAULT_CONTROL_STRATEGY
   form.strategy = existing?.strategy || inferredStrategy
-  const methodContext = { scope: data.scope, moduleKey: data.moduleKey }
-  form.method = existing?.method && isControlMethodForStrategy(form.strategy, existing.method, methodContext)
-    ? existing.method
-    : defaultControlMethod(form.strategy, methodContext)
-  const tradeDefault = defaultControlIntensity('trade')
-  const financeDefault = defaultControlIntensity('finance')
-  form.tradeIntensityMin = String(existing?.intensity?.trade?.min ?? existing?.intensity?.trade?.value ?? tradeDefault.min)
-  form.tradeIntensityMax = String(existing?.intensity?.trade?.max ?? existing?.intensity?.trade?.value ?? tradeDefault.max)
-  form.financeIntensityMin = String(existing?.intensity?.finance?.min ?? existing?.intensity?.finance?.value ?? financeDefault.min)
-  form.financeIntensityMax = String(existing?.intensity?.finance?.max ?? existing?.intensity?.finance?.value ?? financeDefault.max)
   form.duration = 'permanent'
   form.note = ''
   noteTouched.value = false
@@ -310,23 +212,6 @@ const observeLeftPanelHeight = () => {
 }
 
 watch(
-  () => form.strategy,
-  (strategy) => {
-    if (strategy === 'normal') {
-      form.method = ''
-      return
-    }
-    if (!isControlMethodForStrategy(strategy, form.method, controlMethodContext.value)) form.method = defaultControlMethod(strategy, controlMethodContext.value)
-  }
-)
-
-watch(controlMethodOptions, (options) => {
-  if (form.strategy !== 'normal' && !options.some((option) => option.value === form.method)) {
-    form.method = defaultControlMethod(form.strategy, controlMethodContext.value)
-  }
-})
-
-watch(
   [() => props.open, dialogData],
   ([open, data]) => {
     if (open) resetForm(data)
@@ -349,11 +234,6 @@ watch(rendered, (isRendered) => {
 watch(
   [
     () => form.strategy,
-    () => form.method,
-    () => form.tradeIntensityMin,
-    () => form.tradeIntensityMax,
-    () => form.financeIntensityMin,
-    () => form.financeIntensityMax,
     () => form.note,
     affectedModules,
     displayedModuleRules
@@ -428,52 +308,6 @@ const submit = () => {
             :class="shouldShowHelpPanel ? 'lg:grid-cols-[minmax(0,1fr)_400px]' : ''"
           >
             <div ref="leftPanelRef" class="min-w-0 space-y-2.5">
-                  <section
-                    v-if="!isSimplifiedGlobalControl"
-                    data-testid="user-control-current-status"
-                    class="rounded-lg border px-3.5 py-3 shadow-sm"
-                    :class="hasActiveExistingRules ? 'border-amber-300 bg-amber-50 ring-1 ring-amber-100' : 'border-sky-200 bg-sky-50 ring-1 ring-sky-100'"
-                    aria-labelledby="user-control-current-status-title"
-                  >
-                    <div class="flex flex-wrap items-start justify-between gap-2">
-                      <div class="flex flex-wrap items-center gap-2">
-                        <h3
-                          id="user-control-current-status-title"
-                          class="text-sm font-semibold"
-                          :class="hasActiveExistingRules ? 'text-amber-950' : 'text-sky-950'"
-                        >当前点控状态</h3>
-                        <span
-                          class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
-                          :class="hasActiveExistingRules ? 'bg-amber-200 text-amber-900' : 'bg-sky-200 text-sky-900'"
-                        >
-                          {{ hasActiveExistingRules ? '已开启点控' : '未开启点控' }}
-                        </span>
-                      </div>
-                      <button
-                        v-if="hasActiveExistingRules"
-                        type="button"
-                        :disabled="phase !== 'open'"
-                        class="inline-flex min-h-8 shrink-0 items-center justify-center rounded-lg bg-rose-600 px-3 text-xs font-semibold text-white hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        aria-label="取消用户点控"
-                        @click="emit('request-cancel')"
-                      >
-                        取消点控
-                      </button>
-                    </div>
-                    <p class="mt-1.5 text-xs font-medium leading-5" :class="hasActiveExistingRules ? 'text-amber-800' : 'text-sky-700'">
-                      {{ hasActiveExistingRules ? '当前用户已有生效点控模块，再次确认会覆盖对应点控设置。' : '当前选择的用户暂未开启点控。' }}
-                    </p>
-                    <div v-if="hasActiveExistingRules" class="mt-2 flex flex-wrap gap-1.5" aria-label="已开启点控模块">
-                      <span
-                        v-for="rule in activeExistingRules"
-                        :key="rule.key"
-                        class="rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-amber-800 ring-1 ring-amber-300"
-                      >
-                        {{ rule.label }}
-                      </span>
-                    </div>
-                  </section>
-
                   <SelectOnlyCombobox
                     ref="firstControlSelect"
                     v-model="form.strategy"
@@ -483,76 +317,6 @@ const submit = () => {
                     :hint="selectedControlType?.description || '请选择点控类型'"
                     id-base="user-control-strategy"
                   />
-
-                  <SelectOnlyCombobox
-                    v-if="!isSimplifiedGlobalControl"
-                    v-model="form.method"
-                    :options="controlMethodOptions"
-                    label="控盘方式"
-                    required
-                    :hint="selectedControlMethod?.description || '请选择默认、做高或做低方式'"
-                    id-base="user-control-method"
-                  />
-
-                  <section v-if="intensityFields.length" class="rounded-lg border border-slate-200 bg-slate-50 p-3" aria-labelledby="user-control-intensity-title">
-                    <div class="flex items-start justify-between gap-3">
-                      <div class="min-w-0">
-                        <h3 id="user-control-intensity-title" class="text-sm font-semibold text-slate-900">
-                          控盘力度
-                        </h3>
-                        <p class="mt-0.5 text-xs leading-5 text-slate-500">
-                          交易类按百分比设置，系统按各模块口径结算。
-                        </p>
-                      </div>
-                      <span class="shrink-0 rounded-full bg-white px-2 py-1 text-xs font-medium text-slate-600">%</span>
-                    </div>
-                    <div class="mt-3 grid gap-3" :class="intensityFields.length > 1 ? 'sm:grid-cols-2' : ''">
-                      <div v-for="field in intensityFields" :key="field.key">
-                        <p :id="`user-control-${field.key}-intensity-label`" class="text-sm font-semibold text-slate-900">
-                          {{ field.label }} <span class="text-rose-500">*</span>
-                        </p>
-                        <span class="mt-0.5 block text-xs leading-5 text-slate-500">适用于 {{ field.modules }}</span>
-                        <div class="mt-1.5 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
-                          <span class="block">
-                            <label class="sr-only" :for="`user-control-${field.key}-intensity-min`">{{ field.label }}最小比例</label>
-                            <div class="flex rounded-lg border border-slate-300 bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100">
-                              <input
-                                :id="`user-control-${field.key}-intensity-min`"
-                                v-model.trim="form[field.minModel]"
-                                type="text"
-                                inputmode="decimal"
-                                autocomplete="off"
-                                placeholder="最小比例"
-                                class="min-w-0 flex-1 rounded-l-lg px-3 py-2 text-sm outline-none"
-                                :aria-describedby="`user-control-${field.key}-intensity-help`"
-                              />
-                              <span class="flex min-w-12 items-center justify-center rounded-r-lg border-l border-slate-200 bg-slate-50 text-sm font-semibold text-slate-500">%</span>
-                            </div>
-                          </span>
-                          <span class="text-sm font-semibold text-slate-400" aria-hidden="true">~</span>
-                          <span class="block">
-                            <label class="sr-only" :for="`user-control-${field.key}-intensity-max`">{{ field.label }}最大比例</label>
-                            <div class="flex rounded-lg border border-slate-300 bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100">
-                              <input
-                                :id="`user-control-${field.key}-intensity-max`"
-                                v-model.trim="form[field.maxModel]"
-                                type="text"
-                                inputmode="decimal"
-                                autocomplete="off"
-                                placeholder="最大比例"
-                                class="min-w-0 flex-1 rounded-l-lg px-3 py-2 text-sm outline-none"
-                                :aria-describedby="`user-control-${field.key}-intensity-help`"
-                              />
-                              <span class="flex min-w-12 items-center justify-center rounded-r-lg border-l border-slate-200 bg-slate-50 text-sm font-semibold text-slate-500">%</span>
-                            </div>
-                          </span>
-                        </div>
-                        <span :id="`user-control-${field.key}-intensity-help`" class="mt-1 block text-xs leading-5 text-slate-500">
-                          {{ field.hint }}
-                        </span>
-                      </div>
-                    </div>
-                  </section>
 
               <div v-if="affectedModules.length">
                 <p class="text-sm font-semibold text-slate-900">影响模块</p>
@@ -604,7 +368,7 @@ const submit = () => {
                     <dd>{{ rule.scope }}</dd>
                   </div>
                   <div>
-                    <dt class="font-semibold">点控方式</dt>
+                    <dt class="font-semibold">执行说明</dt>
                     <dd>{{ rule.pointMethod }}</dd>
                   </div>
                   <div>

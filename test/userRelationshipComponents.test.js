@@ -202,7 +202,7 @@ test('relationship action branches live inside the operation Drawer handler', ()
   }
 
   const controlStart = source.indexOf('const selectControlSetting')
-  const controlEnd = source.indexOf('const selectControlCancel', controlStart)
+  const controlEnd = source.indexOf('const selectUserDetail', controlStart)
   const controlSelector = source.slice(controlStart, controlEnd)
   assert.doesNotMatch(controlSelector, /id ===|\btrigger\b/)
 })

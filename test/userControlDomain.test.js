@@ -236,7 +236,7 @@ test('unified positive maps only trading modules to profit', () => {
   assert.ok(Object.values(next.rules['159']).every((rule) => rule.source === 'global' && rule.status === 'active'))
 })
 
-test('unified control persists only trade intensity for trading modules', () => {
+test('unified control ignores legacy intensity fields', () => {
   const intensity = {
     trade: { mode: 'percentRange', min: 3, max: 8, unit: '%' },
     finance: { mode: 'percentRange', min: 1, max: 5, unit: '%' }
@@ -246,11 +246,11 @@ test('unified control persists only trade intensity for trading modules', () => 
     now: '2026-07-25 14:35:00', batchId: 'batch-intensity'
   })
 
-  assert.deepEqual(next.rules['159'].delivery.intensity, { trade: intensity.trade })
+  assert.equal(next.rules['159'].delivery.intensity, undefined)
   assert.equal(next.rules['159'].perpetual, undefined)
   assert.equal(next.rules['159'].spot, undefined)
   assert.equal(next.rules['159'].aiQuant, undefined)
-  assert.deepEqual(next.operationLogs[0].intensity, intensity)
+  assert.equal(next.operationLogs[0].intensity, undefined)
 })
 
 test('unified negative maps only trading modules to loss', () => {
@@ -267,13 +267,13 @@ test('unified negative maps only trading modules to loss', () => {
   assert.equal(next.rules['159'].portfolio, undefined)
 })
 
-test('advanced profit and loss methods only persist for delivery rules', () => {
+test('legacy profit and loss methods are normalized to basic delivery rules', () => {
   const unified = applyUnifiedControl(createUserControlState(), {
-    userId: 'method-user', strategy: 'positive', method: 'highProfit', duration: 'permanent',
-    note: '用户点控入口同步做高', now: '2026-08-01 10:00:00', batchId: 'method-global'
+    userId: 'method-user', strategy: 'positive', method: 'ignored', duration: 'permanent',
+    note: '用户点控入口同步盈利', now: '2026-08-01 10:00:00', batchId: 'method-global'
   })
-  assert.equal(unified.operationLogs[0].method, 'highProfit')
-  assert.equal(unified.rules['method-user'].delivery.method, 'highProfit')
+  assert.equal(unified.operationLogs[0].method, 'profit')
+  assert.equal(unified.rules['method-user'].delivery.method, 'profit')
   assert.equal(unified.rules['method-user'].perpetual, undefined)
   assert.equal(unified.rules['method-user'].spot, undefined)
   assert.equal(unified.rules['method-user'].aiQuant, undefined)
@@ -281,19 +281,18 @@ test('advanced profit and loss methods only persist for delivery rules', () => {
   assert.equal(unified.rules['method-user'].portfolio, undefined)
 
   assert.throws(() => applyModuleControl(unified, {
-    userId: 'method-user', moduleKey: 'spot', strategy: 'positive', method: 'lowProfit',
-    duration: 'permanent', note: '现货不支持做低', now: '2026-08-01 10:05:00', ruleId: 'method-spot'
+    userId: 'method-user', moduleKey: 'spot', strategy: 'positive', method: 'ignored',
+    duration: 'permanent', note: '现货模块已移除', now: '2026-08-01 10:05:00', ruleId: 'method-spot'
   }), /unknown moduleKey/)
 
-  const aiQuant = applyModuleControl(unified, {
-    userId: 'method-user', moduleKey: 'aiQuant', strategy: 'negative', method: 'lowLoss',
-    duration: 'permanent', note: '理财不支持做低亏损', now: '2026-08-01 10:10:00', ruleId: 'method-ai'
-  })
-  assert.equal(aiQuant.rules['method-user'].aiQuant.method, 'loss')
+  assert.throws(() => applyModuleControl(unified, {
+    userId: 'method-user', moduleKey: 'aiQuant', strategy: 'negative', method: 'ignored',
+    duration: 'permanent', note: 'AI量化模块已移除', now: '2026-08-01 10:10:00', ruleId: 'method-ai'
+  }), /unknown moduleKey/)
 
-  assert.throws(() => applyModuleControl(aiQuant, {
-    userId: 'method-user', moduleKey: 'perpetual', strategy: 'negative', method: 'highLoss',
-    duration: 'permanent', note: '永续支持做高亏损', now: '2026-08-01 10:15:00', ruleId: 'method-perp'
+  assert.throws(() => applyModuleControl(unified, {
+    userId: 'method-user', moduleKey: 'perpetual', strategy: 'negative', method: 'ignored',
+    duration: 'permanent', note: '永续模块已移除', now: '2026-08-01 10:15:00', ruleId: 'method-perp'
   }), /unknown moduleKey/)
 })
 
@@ -489,10 +488,7 @@ test('simulation values reset to valid outcomes for the selected module family',
   assert.equal(userControlHelpers.isUserControlSimulationValue('delivery', trade.beforeValue), true)
   assert.equal(userControlHelpers.isUserControlSimulationValue('delivery', trade.afterValue), true)
 
-  const finance = userControlHelpers.getUserControlSimulationValues('aiQuant', trade.afterValue)
-  assert.deepEqual(finance, { beforeValue: 'lowYield', afterValue: 'highYield' })
-  assert.equal(userControlHelpers.isUserControlSimulationValue('aiQuant', finance.beforeValue), true)
-  assert.equal(userControlHelpers.isUserControlSimulationValue('aiQuant', finance.afterValue), true)
+  assert.throws(() => userControlHelpers.getUserControlSimulationValues('aiQuant', trade.afterValue), /unknown moduleKey/)
   assert.equal(userControlHelpers.isUserControlSimulationValue('aiQuant', 'loss'), false)
 })
 
@@ -574,7 +570,7 @@ test('simulation rule binding preserves beforeValue across unrelated state repla
 test('log query normalization follows changed, array, invalid, and cleared route values', () => {
   assert.equal(typeof userControlHelpers.normalizeUserControlLogQuery, 'function')
   assert.deepEqual(userControlHelpers.normalizeUserControlLogQuery({ userId: '159', module: 'aiQuant' }), {
-    userId: '159', module: 'aiQuant'
+    userId: '159', module: ''
   })
   assert.deepEqual(userControlHelpers.normalizeUserControlLogQuery({ userId: ['158'], module: ['spot'] }), {
     userId: '158', module: ''

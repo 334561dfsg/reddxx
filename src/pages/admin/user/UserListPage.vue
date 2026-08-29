@@ -356,19 +356,6 @@ const selectControlSetting = (user) => {
   openControlSetting(user)
 }
 
-const selectControlCancel = (user) => {
-  controlReturnUserId.value = userIdOf(user)
-  openControlCancel(user)
-}
-
-const requestControlCancelFromSetting = async () => {
-  const user = controlUser.value
-  if (!user) return
-  controlModalOpen.value = false
-  await nextTick()
-  openControlCancel(user)
-}
-
 const selectUserDetail = (user, returnFocus = null) => {
   openUserDetail(user, 'overview', returnFocus)
 }
@@ -531,11 +518,6 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
 
   if (id === 'point-control') {
     selectControlSetting(user)
-    return
-  }
-
-  if (id === 'cancel-point-control') {
-    selectControlCancel(user)
     return
   }
 
@@ -1238,7 +1220,6 @@ const clearDetailDrawer = () => {
       :open="controlModalOpen"
       scope="global"
       :unified-module-keys="USER_LIST_CONTROL_MODULE_KEYS"
-      simplified-global-control-types
       :show-help-panel="false"
       :note-required="false"
       :user="controlUser"
@@ -1246,7 +1227,6 @@ const clearDetailDrawer = () => {
       :return-focus="resolveControlReturnFocus"
       @close="closeControlSetting"
       @submit="submitControlSetting"
-      @request-cancel="requestControlCancelFromSetting"
     />
 
     <UserOperations

@@ -211,7 +211,7 @@ export const consoleRoutes = [
     name: 'delivery-user-control',
     component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
     props: { moduleKey: 'delivery' },
-    meta: { title: '交割合约 / 用户点控', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
+    meta: { title: '交割合约 / 用户点控', desc: '仅在目标用户交割合约到期结算时控制盈亏方向，不改变K线与实时盈亏。' }
   },
   {
     path: 'delivery/overview',

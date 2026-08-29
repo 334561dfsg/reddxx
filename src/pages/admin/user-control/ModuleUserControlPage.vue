@@ -70,9 +70,7 @@ const { content: displayedModuleCancelData, clear: clearModuleCancelSnapshot } =
   })
 })
 
-const valueOptions = computed(() => moduleMeta.value.family === 'finance'
-  ? [{ value: 'highYield', label: '高收益' }, { value: 'lowYield', label: '低收益' }]
-  : [{ value: 'profit', label: '盈利' }, { value: 'loss', label: '亏损' }])
+const valueOptions = computed(() => [{ value: 'profit', label: '盈利' }, { value: 'loss', label: '亏损' }])
 
 const userIdOf = (user) => String(user?.userId ?? user?.id ?? '')
 const currentRule = (user) => userControlState.value.rules[userIdOf(user)]?.[props.moduleKey] || null
@@ -157,9 +155,7 @@ const summaryCards = computed(() => [
 
 const valueLabel = (value) => ({
   profit: '盈利',
-  loss: '亏损',
-  highYield: '高收益',
-  lowYield: '低收益'
+  loss: '亏损'
 })[value] || '未设置'
 
 const durationLabel = (duration) => ({ once: '只生效一次', permanent: '持续生效' })[duration] || '—'
@@ -241,6 +237,20 @@ const closeSetting = () => {
 
 const submitSetting = (payload) => {
   const sequence = nextSequence()
+  if (payload.strategy === 'normal') {
+    const rule = selectedUser.value ? currentRule(selectedUser.value) : null
+    if (selectedUser.value && ['active', 'processing'].includes(rule?.status)) {
+      cancelSingleModuleControl({
+        userId: userIdOf(selectedUser.value),
+        moduleKey: props.moduleKey,
+        note: payload.note || '恢复正常',
+        now: formatTime(),
+        operationId: `demo-cancel-${props.moduleKey}-${sequence}`
+      })
+    }
+    closeSetting()
+    return
+  }
   setModuleUserControl({
     ...payload,
     moduleKey: props.moduleKey,
@@ -302,11 +312,11 @@ const resetFilters = () => {
     </header>
 
     <div v-if="moduleKey === 'perpetual'" class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-800">
-      用户点控不改变K线、标记价格和实时浮盈亏，只在目标用户最终平仓结算时决定盈亏方向。
+      用户点控不改变K线、标记价格和实时盈亏，只在目标用户交割合约到期结算时决定盈亏方向。
       优先级：单笔/持仓控制 &gt; 用户级控制 &gt; 全局场控 &gt; 自然结果。
     </div>
     <div v-else-if="moduleMeta.family === 'trade'" class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-800">
-      用户点控只作用于目标用户的最终结算，不改变全局行情、K线或实时浮盈亏。
+      用户点控只作用于目标用户的到期结算，不改变全局行情、K线或实时盈亏。
       单笔订单或持仓控制优先于用户级控制。
     </div>
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -419,6 +429,8 @@ const resetFilters = () => {
       :open="modalOpen"
       scope="module"
       :module-key="moduleKey"
+      :show-help-panel="false"
+      :note-required="false"
       :user="selectedUser"
       :existing-rules="selectedUser ? (userControlState.rules[userIdOf(selectedUser)] || {}) : {}"
       @close="closeSetting"
