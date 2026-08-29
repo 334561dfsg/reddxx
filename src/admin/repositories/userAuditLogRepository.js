@@ -600,7 +600,7 @@ const seedAuditLogs = () => {
       category: 'risk',
       action: 'risk.control.apply',
       result: 'success',
-      reason: '复核符合，用户点控设置交易三模块控亏',
+      reason: '复核符合，用户点控设置交割控亏',
       before: { activeModules: [] },
       after: { delivery: 'loss', perpetual: 'loss', spot: 'loss', duration: 'once' },
       related: { businessId: 'CTRL-APPLY-user_1004-001' }

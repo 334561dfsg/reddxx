@@ -32,11 +32,8 @@ test('form helper exposes customer control methods by control type', () => {
   assert.deepEqual(getControlMethodOptions('negative').map((option) => option.label), ['默认亏损', '做高亏损', '做低亏损'])
   assert.deepEqual(getControlMethodOptions('positive', { scope: 'global' }).map((option) => option.label), ['默认盈利', '做高盈利', '做低盈利'])
   assert.deepEqual(getControlMethodOptions('negative', { scope: 'global' }).map((option) => option.label), ['默认亏损', '做高亏损', '做低亏损'])
-  assert.match(getControlMethodOptions('positive', { scope: 'global' })[1].description, /仅针对交割合约、永续合约生效/)
-  assert.match(getControlMethodOptions('negative', { scope: 'global' })[2].description, /现货按默认方式处理/)
+  assert.match(getControlMethodOptions('positive', { scope: 'global' })[1].description, /仅针对交割合约生效/)
   assert.deepEqual(getControlMethodOptions('positive', { scope: 'module', moduleKey: 'delivery' }).map((option) => option.label), ['默认盈利', '做高盈利', '做低盈利'])
-  assert.deepEqual(getControlMethodOptions('negative', { scope: 'module', moduleKey: 'perpetual' }).map((option) => option.label), ['默认亏损', '做高亏损', '做低亏损'])
-  assert.deepEqual(getControlMethodOptions('positive', { scope: 'module', moduleKey: 'spot' }).map((option) => option.label), ['默认盈利'])
   assert.deepEqual(getControlMethodOptions('negative', { scope: 'module', moduleKey: 'aiQuant' }).map((option) => option.label), ['默认亏损'])
 })
 
@@ -49,7 +46,6 @@ test('form helper rejects incomplete values used by the disabled state', () => {
   assert.equal(isUserControlFormComplete({ scope: 'global', userId: '', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'highProfit', note: '审计备注' }), true)
   assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), true)
-  assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'spot', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 3, max: 8 } }, duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'delivery', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 8, max: 3 } }, duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'delivery', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 3, max: 8 } }, duration: 'once', note: '审计备注' }), true)
   assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'aiQuant', family: 'finance', userId: '159', strategy: 'negative', method: 'lowLoss', intensity: { finance: { min: 1, max: 5 } }, duration: 'once', note: '审计备注' }), false)
@@ -57,7 +53,7 @@ test('form helper rejects incomplete values used by the disabled state', () => {
 
 test('form helper trims notes and builds scope-specific payloads', () => {
   assert.deepEqual(buildUserControlPayload({
-    scope: 'module', moduleKey: 'perpetual', family: 'trade', userId: '159', strategy: 'negative', method: 'highLoss',
+    scope: 'module', moduleKey: 'delivery', family: 'trade', userId: '159', strategy: 'negative', method: 'highLoss',
     intensity: { trade: { min: '3%', max: '8%' } }, duration: 'permanent', note: '  模块备注  '
   }), {
     userId: '159',
@@ -139,8 +135,7 @@ test('shared modal presents user-list control as trading-only while module finan
   assert.match(helperSource, /做低盈利/)
   assert.match(helperSource, /做高亏损/)
   assert.match(helperSource, /做低亏损/)
-  assert.match(helperSource, /仅针对交割合约、永续合约生效/)
-  assert.match(source, /成交时控制成交价/)
+  assert.match(helperSource, /仅针对交割合约生效/)
   assert.match(source, /结算时按方向控制结算价/)
   assert.match(source, /AI量化点控规则/)
   assert.match(source, /收益率提升数值/)
@@ -261,7 +256,7 @@ test('shared modal shows the selected user current point-control status', () => 
   assert.match(userSource, /controlModalOpen\.value = false[\s\S]*await nextTick\(\)[\s\S]*openControlCancel\(user\)/)
 })
 
-test('module page explains settlement-only perpetual control and module-only scope', () => {
+test('module page explains settlement-only delivery control and module-only scope', () => {
   const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   assert.match(source, /不改变K线/)
   assert.match(source, /实时浮盈亏/)
@@ -573,23 +568,23 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   assert.doesNotMatch(source, /状态规则：/)
   assert.doesNotMatch(source, /六模块用户点控批次说明/)
   assert.match(source, /交割点控规则/)
-  assert.match(source, /永续点控规则/)
-  assert.match(source, /现货点控规则/)
+  assert.doesNotMatch(source, /永续点控规则/)
+  assert.doesNotMatch(source, /现货点控规则/)
   assert.match(source, /AI量化点控规则/)
   assert.match(source, /流动性挖矿点控规则/)
   assert.match(source, /投资组合点控规则/)
-  assert.match(source, /不单独修改K线、盘口行情和实时浮盈亏/)
-  assert.match(source, /只影响目标用户订单价格，不改变公共行情、K线、盘口和其他用户订单/)
-  assert.match(source, /交易类通过价格偏移处理/)
-  assert.match(source, /做高\/做低仅针对交割、永续生效，现货按默认方式处理/)
-  assert.match(source, /通过成交价偏移处理/)
+  assert.doesNotMatch(source, /不单独修改K线、盘口行情和实时浮盈亏/)
+  assert.match(source, /只影响目标用户交割合约订单，不改变公共行情、K线、盘口和其他用户订单/)
+  assert.match(source, /交割通过结算价偏移处理/)
+  assert.match(source, /做高\/做低仅针对交割合约生效/)
+  assert.doesNotMatch(source, /通过成交价偏移处理/)
   assert.match(source, /通过收益率调整处理/)
   assert.match(source, /影响当前用户交割合约订单的最终结算价格/)
-  assert.match(source, /现货订单成交即结束/)
+  assert.doesNotMatch(source, /现货订单成交即结束/)
   assert.match(source, /盈利时替换为点控收益率提升数值/)
   assert.doesNotMatch(source, /grid gap-3 sm:grid-cols-3/)
-  assert.match(helperSource, /交易模块按有利价格偏移处理/)
-  assert.match(helperSource, /交易模块按不利价格偏移处理/)
+  assert.match(helperSource, /交割模块按有利价格偏移处理/)
+  assert.match(helperSource, /交割模块按不利价格偏移处理/)
   assert.doesNotMatch(source, />交易类效果</)
   assert.doesNotMatch(source, />理财类效果</)
   assert.doesNotMatch(source, /本次操作只影响当前模块，其他五个模块的用户规则保持不变。/)

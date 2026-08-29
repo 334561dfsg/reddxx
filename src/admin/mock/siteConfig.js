@@ -310,9 +310,7 @@ export function normalizeVoiceAlerts(raw) {
 }
 
 export const DEFAULT_POINT_CONTROL_RATIOS = {
-  delivery: 50,
-  perpetual: 50,
-  spot: 50
+  delivery: 50
 }
 
 function normalizePointControlRatioValue(value, fallback) {
@@ -326,9 +324,7 @@ function normalizePointControlRatioValue(value, fallback) {
 export function normalizePointControlRatios(raw) {
   const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {}
   return {
-    delivery: normalizePointControlRatioValue(source.delivery, DEFAULT_POINT_CONTROL_RATIOS.delivery),
-    perpetual: normalizePointControlRatioValue(source.perpetual, DEFAULT_POINT_CONTROL_RATIOS.perpetual),
-    spot: normalizePointControlRatioValue(source.spot, DEFAULT_POINT_CONTROL_RATIOS.spot)
+    delivery: normalizePointControlRatioValue(source.delivery, DEFAULT_POINT_CONTROL_RATIOS.delivery)
   }
 }
 

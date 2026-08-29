@@ -138,7 +138,7 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
   const userA = { id: 'user-a', username: 'Alpha', email: 'alpha@example.test' }
   const userB = { id: 'user-b', username: 'Beta', email: 'beta@example.test' }
   const rulesA = {
-    spot: { strategy: 'positive', method: 'profit', value: 'profit', duration: 'permanent', status: 'active' }
+    delivery: { strategy: 'positive', method: 'profit', value: 'profit', duration: 'permanent', status: 'active' }
   }
   const rulesB = {
     portfolio: { strategy: 'negative', method: 'lowLoss', value: 'lowYield', duration: 'once', status: 'active' }
@@ -147,7 +147,7 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
   harness = await createSfcHarness(component, {
     open: true,
     scope: 'module',
-    moduleKey: 'spot',
+    moduleKey: 'delivery',
     user: userA,
     existingRules: rulesA
   }, {
@@ -172,7 +172,7 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
 
   const body = harness.findByTestId('user-control-dialog-body')
   assert.match(body.textContent, /投资组合点控规则/)
-  assert.doesNotMatch(body.textContent, /现货点控规则/)
+  assert.doesNotMatch(body.textContent, /交割点控规则/)
   assert.doesNotMatch(body.textContent, /当前选择：做低亏损/)
   assert.doesNotMatch(body.textContent, /当前选择说明/)
   assert.match(harness.findByTestId('user-control-target-user').textContent, /Beta/)
@@ -180,7 +180,7 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
 
 test('module cancellation SFC runs both enter transitions for its local dialog', async (t) => {
   const component = await loadVueSfc(projectFile('src/pages/admin/user-control/ModuleUserControlPage.vue'))
-  const harness = await createSfcHarness(component, { moduleKey: 'spot' })
+  const harness = await createSfcHarness(component, { moduleKey: 'delivery' })
   t.after(harness.cleanup)
 
   const cancel = harness.allNodes().find((node) => (

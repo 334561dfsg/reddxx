@@ -106,7 +106,7 @@ const summaryMeta = computed(() => {
   }
   return {
     classes: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-    description: summary.value.kind === 'synced' ? '三个交易模块沿用同一批用户点控配置。' : '当前没有生效中的用户点控。'
+    description: summary.value.kind === 'synced' ? '交割合约沿用当前用户点控配置。' : '当前没有生效中的用户点控。'
   }
 })
 </script>

@@ -34,7 +34,7 @@ export const consoleRoutes = [
     component: () => import('../../pages/admin/platform/PointControlConfigPage.vue'),
     meta: {
       title: '平台配置 / 点控配置',
-      desc: '配置交割、永续与现货用户点控的输赢比例。'
+      desc: '配置交割合约用户点控的输赢比例。'
     }
   },
   {
@@ -139,13 +139,6 @@ export const consoleRoutes = [
     path: 'perpetual/orders',
     name: 'perpetual-orders',
     component: () => import('../../pages/admin/perpetual/PerpetualOrderPage.vue')
-  },
-  {
-    path: 'perpetual/user-control',
-    name: 'perpetual-user-control',
-    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
-    props: { moduleKey: 'perpetual' },
-    meta: { title: '永续合约 / 用户点控', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
   },
   {
     path: 'delivery',
@@ -495,13 +488,6 @@ export const consoleRoutes = [
     path: 'spot/orders',
     name: 'spot-orders',
     component: () => import('../../pages/admin/spot/SpotOrderPage.vue')
-  },
-  {
-    path: 'spot/user-control',
-    name: 'spot-user-control',
-    component: () => import('../../pages/admin/user-control/ModuleUserControlPage.vue'),
-    props: { moduleKey: 'spot' },
-    meta: { title: '现货交易 / 用户点控', desc: '仅在目标用户最终平仓结算时控制盈亏方向，不改变K线与实时浮盈亏。' }
   },
   {
     path: 'users/tag-rules',

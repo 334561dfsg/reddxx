@@ -1,5 +1,4 @@
 import {
-  applyModuleControl,
   applyUnifiedControl,
   cancelUnifiedControl,
   consumeModuleControl,
@@ -46,25 +45,16 @@ export function createUserControlDemoSeed() {
     userId: '158',
     strategy: 'positive',
     duration: 'permanent',
-    note: '演示：批次带盈后单模块覆盖',
+    note: '演示：交割长期控盈',
     now: TIMESTAMPS.unified158,
     batchId: 'demo-batch-158'
   })
-  const divergent158 = applyModuleControl(unified158, {
-    userId: '158',
-    moduleKey: 'perpetual',
-    value: 'loss',
-    duration: 'permanent',
-    note: '演示：永续单独控亏',
-    now: TIMESTAMPS.override158,
-    ruleId: 'demo-rule-158-perpetual'
-  })
 
-  const unified153 = applyUnifiedControl(divergent158, {
+  const unified153 = applyUnifiedControl(unified158, {
     userId: '153',
     strategy: 'negative',
     duration: 'permanent',
-    note: '演示：交易三模块已同步',
+    note: '演示：交割点控已同步',
     now: TIMESTAMPS.unified153,
     batchId: 'demo-batch-153'
   })
@@ -73,7 +63,7 @@ export function createUserControlDemoSeed() {
     userId: 'user_1001',
     strategy: 'negative',
     duration: 'permanent',
-    note: '演示：列表用户交易三模块默认控亏',
+    note: '演示：列表用户交割默认控亏',
     now: TIMESTAMPS.unified1001,
     batchId: 'demo-batch-user-1001'
   })
@@ -97,22 +87,12 @@ export function createUserControlDemoSeed() {
     userId: 'user_1003',
     strategy: 'negative',
     duration: 'permanent',
-    note: '演示：列表用户点控控亏后单模块覆盖',
+    note: '演示：列表用户交割控亏',
     now: TIMESTAMPS.unified1003,
     batchId: 'demo-batch-user-1003'
   })
 
-  const divergent1003 = applyModuleControl(unified1003, {
-    userId: 'user_1003',
-    moduleKey: 'perpetual',
-    value: 'profit',
-    duration: 'permanent',
-    note: '演示：列表用户永续单独控盈',
-    now: TIMESTAMPS.override1003,
-    ruleId: 'demo-rule-user-1003-perpetual'
-  })
-
-  const unified1004 = applyUnifiedControl(divergent1003, {
+  const unified1004 = applyUnifiedControl(unified1003, {
     userId: 'user_1004',
     strategy: 'negative',
     duration: 'permanent',
@@ -122,7 +102,7 @@ export function createUserControlDemoSeed() {
   })
   const cancelled1004 = cancelUnifiedControl(unified1004, {
     userId: 'user_1004',
-    note: '演示：取消交易三模块永久规则',
+    note: '演示：取消交割永久规则',
     now: TIMESTAMPS.cancelled1004,
     operationId: 'demo-cancel-user-1004'
   })
@@ -130,15 +110,15 @@ export function createUserControlDemoSeed() {
     userId: 'user_1005',
     strategy: 'negative',
     duration: 'permanent',
-    note: '演示：失败前保持的交易三模块规则',
+    note: '演示：失败前保持的交割规则',
     now: TIMESTAMPS.unified1005,
     batchId: 'demo-batch-user-1005-original'
   })
-  const failedWrite1005 = applyUnifiedControl({ ...unified1005, failureModule: 'spot' }, {
+  const failedWrite1005 = applyUnifiedControl({ ...unified1005, failureModule: 'delivery' }, {
     userId: 'user_1005',
     strategy: 'positive',
     duration: 'once',
-    note: '演示：现货写入失败后交易三模块全部回滚',
+    note: '演示：交割写入失败后保持原规则',
     now: TIMESTAMPS.failedWrite1005,
     batchId: 'demo-batch-user-1005-failed'
   })

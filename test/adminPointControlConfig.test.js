@@ -9,9 +9,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
 
 test('point-control ratios default to neutral percentages and normalize saved values', () => {
   assert.deepEqual(DEFAULT_SITE_CONFIG.pointControlRatios, {
-    delivery: 50,
-    perpetual: 50,
-    spot: 50
+    delivery: 50
   })
 
   const normalized = normalizeSiteConfig({
@@ -23,9 +21,7 @@ test('point-control ratios default to neutral percentages and normalize saved va
   })
 
   assert.deepEqual(normalized.pointControlRatios, {
-    delivery: 62.5,
-    perpetual: 40,
-    spot: 0
+    delivery: 62.5
   })
 
   const repaired = normalizeSiteConfig({
@@ -37,9 +33,7 @@ test('point-control ratios default to neutral percentages and normalize saved va
   })
 
   assert.deepEqual(repaired.pointControlRatios, {
-    delivery: 50,
-    perpetual: 50,
-    spot: 50
+    delivery: 50
   })
 })
 
@@ -58,13 +52,13 @@ test('point-control settings route and platform menu entry are registered', () =
   )
 })
 
-test('point-control settings page exposes three explicit percent inputs', () => {
+test('point-control settings page exposes only the delivery percent input', () => {
   const source = read('../src/pages/admin/platform/PointControlConfigPage.vue')
 
   assert.match(source, /点控配置/)
   assert.match(source, /交割点控输赢比例/)
-  assert.match(source, /永续点控输赢比例/)
-  assert.match(source, /现货点控输赢比例/)
+  assert.doesNotMatch(source, /永续点控输赢比例/)
+  assert.doesNotMatch(source, /现货点控输赢比例/)
   assert.match(source, /inputmode="decimal"/)
   assert.match(source, /aria-invalid/)
   assert.match(source, /保存配置/)

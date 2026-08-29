@@ -11,16 +11,6 @@ const CONTROL_FIELDS = [
     key: 'delivery',
     label: '交割点控输赢比例',
     help: '用于交割合约用户点控的默认输赢比例，按百分比 0-100 保存。'
-  },
-  {
-    key: 'perpetual',
-    label: '永续点控输赢比例',
-    help: '用于永续合约用户点控的默认输赢比例，按百分比 0-100 保存。'
-  },
-  {
-    key: 'spot',
-    label: '现货点控输赢比例',
-    help: '用于现货交易用户点控的默认输赢比例，按百分比 0-100 保存。'
   }
 ]
 
@@ -31,18 +21,14 @@ const statusMessage = ref('')
 const statusKind = ref('success')
 const fieldErrors = ref({})
 const draftText = ref({
-  delivery: '',
-  perpetual: '',
-  spot: ''
+  delivery: ''
 })
 
 const savedRatios = computed(() => normalizePointControlRatios(savedConfig.value?.pointControlRatios))
 const hasFieldErrors = computed(() => Object.keys(fieldErrors.value).length > 0)
 
 const draftRatios = computed(() => ({
-  delivery: parsePercentDraft(draftText.value.delivery),
-  perpetual: parsePercentDraft(draftText.value.perpetual),
-  spot: parsePercentDraft(draftText.value.spot)
+  delivery: parsePercentDraft(draftText.value.delivery)
 }))
 
 const isDirty = computed(() => (
@@ -66,10 +52,10 @@ const numericInputState = computed(() => CONTROL_FIELDS.map((field) => ({
   stepperPolicy: 'no stepper; mouse wheel does not change text input value',
   normalizationPolicy: 'strip commas, ASCII/full-width percent signs, and surrounding whitespace',
   validationBinding: 'fieldErrors blocks explicit save',
-  submitSnapshotPolicy: 'save freezes parsed percent values for delivery, perpetual, and spot',
+  submitSnapshotPolicy: 'save freezes parsed percent value for delivery',
   permissionBoundary: 'current demo admin console allows platform configuration read/write',
   feedbackBinding: 'field error plus page status message',
-  responsivePolicy: 'three-column desktop grid collapses to single-column without removing fields or actions',
+  responsivePolicy: 'single-column setting remains reachable without removing fields or actions',
   runtimeVerification: 'static tests and production build only; browser, screen reader, touch, IME, zoom, and permission switching unverified'
 })))
 
@@ -123,9 +109,7 @@ function fieldDescribedBy(field) {
 function setDraftFromRatios(value) {
   const next = normalizePointControlRatios(value)
   draftText.value = {
-    delivery: String(next.delivery),
-    perpetual: String(next.perpetual),
-    spot: String(next.spot)
+    delivery: String(next.delivery)
   }
   fieldErrors.value = {}
 }
@@ -214,7 +198,7 @@ onMounted(loadConfig)
       <div class="min-w-0">
         <h1 id="point-control-config-title" class="text-2xl font-bold text-slate-900">点控配置</h1>
         <p class="mt-1 text-sm leading-6 text-slate-500">
-          配置交割、永续、现货点控的控制力度。当前值按输赢比例百分比保存。
+          配置交割点控的控制力度。当前值按输赢比例百分比保存。
         </p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -244,7 +228,7 @@ onMounted(loadConfig)
 
     <section v-else class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <div class="mb-5 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm leading-6 text-blue-800">
-        保存后，三个交易模块的用户点控将按各自比例读取配置；已打开的草稿需重新保存后才会使用新值。
+        保存后，交割合约用户点控将按当前比例读取配置；已打开的草稿需重新保存后才会使用新值。
       </div>
 
       <div

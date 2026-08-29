@@ -10,8 +10,8 @@ const MODULE_CONTROL_OPTIONS = Object.freeze({
 })
 
 const CONTROL_TYPE_OPTIONS = Object.freeze([
-  Object.freeze({ value: 'positive', label: '盈利', description: '交易模块按有利价格偏移处理' }),
-  Object.freeze({ value: 'negative', label: '亏损', description: '交易模块按不利价格偏移处理' })
+  Object.freeze({ value: 'positive', label: '盈利', description: '交割模块按有利价格偏移处理' }),
+  Object.freeze({ value: 'negative', label: '亏损', description: '交割模块按不利价格偏移处理' })
 ])
 
 const CONTROL_METHOD_OPTIONS = Object.freeze({
@@ -28,8 +28,8 @@ const CONTROL_METHOD_OPTIONS = Object.freeze({
 })
 
 const ADVANCED_CONTROL_METHODS = new Set(['highProfit', 'lowProfit', 'highLoss', 'lowLoss'])
-const ADVANCED_CONTROL_MODULES = new Set(['delivery', 'perpetual'])
-const GLOBAL_ADVANCED_METHOD_NOTE = '仅针对交割合约、永续合约生效，现货按默认方式处理'
+const ADVANCED_CONTROL_MODULES = new Set(['delivery'])
+const GLOBAL_ADVANCED_METHOD_NOTE = '仅针对交割合约生效'
 const VALID_STRATEGIES = new Set(['positive', 'negative', 'normal'])
 const VALID_DURATIONS = new Set(['once', 'permanent'])
 const DEFAULT_DURATION = 'permanent'

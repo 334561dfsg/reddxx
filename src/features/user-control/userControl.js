@@ -2,8 +2,6 @@ import { appendUserAuditLog } from '../../admin/repositories/userAuditLogReposit
 
 export const USER_CONTROL_MODULES = Object.freeze([
   { key: 'delivery', label: '交割', family: 'trade', actionLabel: '用户点控' },
-  { key: 'perpetual', label: '永续', family: 'trade', actionLabel: '用户点控' },
-  { key: 'spot', label: '现货', family: 'trade', actionLabel: '用户点控' },
   { key: 'aiQuant', label: 'AI量化', family: 'finance', actionLabel: '用户点控' },
   { key: 'liquidity', label: '流动性挖矿', family: 'finance', actionLabel: '用户点控' },
   { key: 'portfolio', label: '投资组合', family: 'finance', actionLabel: '用户点控' }
@@ -29,7 +27,7 @@ const controlMethods = {
   negative: ['loss', 'highLoss', 'lowLoss']
 }
 const advancedControlMethods = new Set(['highProfit', 'lowProfit', 'highLoss', 'lowLoss'])
-const advancedControlModules = new Set(['delivery', 'perpetual'])
+const advancedControlModules = new Set(['delivery'])
 
 const strategyValue = (strategy, family) => {
   if (strategy === 'positive') return family === 'trade' ? 'profit' : 'highYield'
@@ -146,9 +144,9 @@ export function applyUnifiedControl(state, input) {
         ...(intensity ? { intensity } : {}),
         duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
         before, note, status: 'failed', failedModule: state.failureModule,
-        errorMessage: `模块 ${state.failureModule} 写入失败，交易模块均未更新`, createdAt: input.now
+        errorMessage: `模块 ${state.failureModule} 写入失败，交割规则未更新`, createdAt: input.now
       }, ...state.operationLogs],
-      lastError: `模块 ${state.failureModule} 写入失败，交易模块均未更新`
+      lastError: `模块 ${state.failureModule} 写入失败，交割规则未更新`
     }
   }
 
