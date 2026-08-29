@@ -278,6 +278,11 @@ const resolveControlReturnFocus = () => {
 }
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
 const controlMetaOf = (user) => getUserControlListMeta(userControlState.value, userIdOf(user))
+const pointControlBadgeClass = (label) => ({
+  永久盈利: 'bg-orange-100 text-orange-700 ring-orange-200',
+  永久亏损: 'bg-emerald-100 text-emerald-700 ring-emerald-200',
+  存在模块差异: 'bg-amber-100 text-amber-700 ring-amber-200'
+}[label] || 'bg-sky-100 text-sky-700 ring-sky-200')
 const isLocked = (user) => [USER_STATUS.SUSPENDED, USER_STATUS.BANNED].includes(user?.status)
 const isAgentUser = (user) => user?.role === USER_ROLE.AGENT
 const cancelControlItems = computed(() => getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}, USER_LIST_CONTROL_MODULE_KEYS))
@@ -1084,9 +1089,14 @@ const clearDetailDrawer = () => {
 
               <!-- 用户点控 -->
               <td class="px-4 py-3 whitespace-nowrap">
-                <span :class="controlMetaOf(user).hasCurrent ? 'text-sm font-medium text-slate-700' : 'text-xs text-slate-400'">
+                <span
+                  v-if="controlMetaOf(user).hasCurrent"
+                  class="inline-flex rounded-md px-2.5 py-1 text-xs font-semibold ring-1"
+                  :class="pointControlBadgeClass(controlMetaOf(user).controlLabel)"
+                >
                   {{ controlMetaOf(user).controlLabel }}
                 </span>
+                <span v-else class="text-xs text-slate-400">-</span>
               </td>
 
               <!-- 用户快捷操作 -->
