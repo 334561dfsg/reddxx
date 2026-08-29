@@ -6,9 +6,9 @@ import { navTree } from '../src/admin/config/nav.js'
 import { consoleRoutes } from '../src/router/modules/console.js'
 import * as publicDepositAddressDomain from '../src/admin/mock/publicDepositAddress.js'
 
-test('exposes public deposit address management under asset management', () => {
-  const assets = navTree.find((entry) => entry.title === '资产管理')
-  const item = assets?.children?.find((entry) => entry.path === '/admin/assets/public-deposit-addresses')
+test('exposes public deposit address management under platform config', () => {
+  const platform = navTree.find((entry) => entry.title === '平台配置')
+  const item = platform?.children?.find((entry) => entry.path === '/admin/assets/public-deposit-addresses')
 
   assert.deepEqual(item, {
     title: '公共收款地址',
@@ -18,6 +18,7 @@ test('exposes public deposit address management under asset management', () => {
   const route = consoleRoutes.find((entry) => entry.name === 'assets-public-deposit-addresses')
   assert.ok(route)
   assert.equal(route.path, 'assets/public-deposit-addresses')
+  assert.equal(route.meta?.title, '平台配置 / 公共收款地址')
 })
 
 test('provides a mock repository for public deposit address records', () => {

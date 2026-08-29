@@ -37,7 +37,6 @@ export const navTree = [
       { title: '认证等级配置', path: '/admin/users/verification-config' },
       { title: '认证身份审核', path: '/admin/users/verification-audit' },
       { title: '认证审核日志', path: '/admin/users/verification-log' },
-      { title: '出金策略', path: '/admin/users/withdraw-policy' },
     ]
   },
   {
@@ -90,20 +89,6 @@ export const navTree = [
     children: [
       { title: '产品管理', path: '/admin/spot/products' },
       { title: '订单管理', path: '/admin/spot/orders' }
-    ]
-  },
-  {
-    title: '资产管理',
-    icon: 'wallet',
-    children: [
-      { title: '币种管理', path: '/admin/assets/currencies' },
-      { title: '公共收款地址', path: '/admin/assets/public-deposit-addresses' },
-      { title: '交易对管理', path: '/admin/spot/symbols' },
-      { title: '手动归集', path: '/admin/assets/manual-collect' },
-      { title: '归集记录', path: '/admin/assets/collect-records' },
-      { title: '链上交易日志', path: '/admin/assets/address-logs' },
-      { title: '闪兑汇率管理', path: '/admin/assets/exchange-rate' },
-      { title: '闪兑费率模板', path: '/admin/assets/fee-template' },
     ]
   },
   {
@@ -167,6 +152,15 @@ export const navTree = [
     children: [
       { title: '模拟账户配置', path: '/admin/platform/demo-account-config' },
       { title: '点控配置', path: '/admin/platform/point-control-config' },
+      { title: '出金策略', path: '/admin/users/withdraw-policy' },
+      { title: '币种管理', path: '/admin/assets/currencies' },
+      { title: '公共收款地址', path: '/admin/assets/public-deposit-addresses' },
+      { title: '交易对管理', path: '/admin/spot/symbols' },
+      { title: '手动归集', path: '/admin/assets/manual-collect' },
+      { title: '归集记录', path: '/admin/assets/collect-records' },
+      { title: '链上交易日志', path: '/admin/assets/address-logs' },
+      { title: '闪兑汇率管理', path: '/admin/assets/exchange-rate' },
+      { title: '闪兑费率模板', path: '/admin/assets/fee-template' },
       { title: '站点配置', path: '/admin/system/site-config' },
       { title: '社媒配置', path: '/admin/system/social-links' },
       { title: '内容页配置', path: '/admin/system/content-pages' },

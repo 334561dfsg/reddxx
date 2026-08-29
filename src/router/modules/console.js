@@ -232,36 +232,56 @@ export const consoleRoutes = [
   {
     path: 'assets/exchange-rate',
     name: 'assets-exchange-rate',
-    component: () => import('../../pages/admin/assets/AssetsExchangeRatePage.vue')
+    component: () => import('../../pages/admin/assets/AssetsExchangeRatePage.vue'),
+    meta: {
+      title: '平台配置 / 闪兑汇率管理',
+      desc: '维护前台闪兑使用的币种汇率。'
+    }
   },
   {
     path: 'assets/public-deposit-addresses',
     name: 'assets-public-deposit-addresses',
     component: () => import('../../pages/admin/assets/AssetsPublicDepositAddressPage.vue'),
     meta: {
-      title: '资产管理 / 公共收款地址',
+      title: '平台配置 / 公共收款地址',
       desc: '按币种与网络维护充值收款地址。'
     }
   },
   {
     path: 'assets/fee-template',
     name: 'assets-fee-template',
-    component: () => import('../../pages/admin/assets/AssetsFeeTemplatePage.vue')
+    component: () => import('../../pages/admin/assets/AssetsFeeTemplatePage.vue'),
+    meta: {
+      title: '平台配置 / 闪兑费率模板',
+      desc: '维护前台闪兑手续费模板。'
+    }
   },
   {
     path: 'assets/manual-collect',
     name: 'assets-manual-collect',
-    component: () => import('../../pages/admin/assets/AssetsManualCollectPage.vue')
+    component: () => import('../../pages/admin/assets/AssetsManualCollectPage.vue'),
+    meta: {
+      title: '平台配置 / 手动归集',
+      desc: '发起资产手动归集并查看提交状态。'
+    }
   },
   {
     path: 'assets/collect-records',
     name: 'assets-collect-records',
-    component: () => import('../../pages/admin/assets/AssetsCollectRecordsPage.vue')
+    component: () => import('../../pages/admin/assets/AssetsCollectRecordsPage.vue'),
+    meta: {
+      title: '平台配置 / 归集记录',
+      desc: '查看资产归集处理记录。'
+    }
   },
   {
     path: 'assets/address-logs',
     name: 'assets-address-logs',
-    component: () => import('../../pages/admin/assets/AssetsAddressLogsPage.vue')
+    component: () => import('../../pages/admin/assets/AssetsAddressLogsPage.vue'),
+    meta: {
+      title: '平台配置 / 链上交易日志',
+      desc: '查看链上充值、提币与地址相关交易日志。'
+    }
   },
   {
     path: 'assets/overview',
@@ -276,7 +296,7 @@ export const consoleRoutes = [
     name: 'system-currencies',
     component: () => import('../../pages/admin/assets/AssetsCurrencyPage.vue'),
     meta: {
-      title: '系统设置 / 币种管理',
+      title: '平台配置 / 币种管理',
       desc: '统一维护平台支持的币种、精度与网络配置'
     }
   },
@@ -482,7 +502,11 @@ export const consoleRoutes = [
   {
     path: 'spot/symbols',
     name: 'spot-symbols',
-    component: () => import('../../pages/admin/spot/SpotSymbolPage.vue')
+    component: () => import('../../pages/admin/spot/SpotSymbolPage.vue'),
+    meta: {
+      title: '平台配置 / 交易对管理',
+      desc: '维护现货交易对、展示状态与排序。'
+    }
   },
   {
     path: 'spot/orders',
@@ -502,7 +526,11 @@ export const consoleRoutes = [
   {
     path: 'users/withdraw-policy',
     name: 'users-withdraw-policy',
-    component: () => import('../../pages/admin/user/WithdrawPolicyPage.vue')
+    component: () => import('../../pages/admin/user/WithdrawPolicyPage.vue'),
+    meta: {
+      title: '平台配置 / 出金策略',
+      desc: '配置用户出金维度、额度与命中优先级策略。'
+    }
   },
   {
     path: 'users/vip-upgrades',
