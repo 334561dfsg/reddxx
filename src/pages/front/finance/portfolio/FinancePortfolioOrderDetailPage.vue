@@ -3,9 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { portfolioOrders } from '../../../../admin/state/portfolioOrders'
 import {
-  ORDER_STATUS,
   formatPortfolioAmount,
-  orderStatusMeta,
   roundMoney
 } from '../../../../admin/constants/portfolio'
 
@@ -22,19 +20,6 @@ const order = computed(() => {
   const id = String(route.params.orderId || '')
   return portfolioOrders.value.find((row) => row.id === id) ?? null
 })
-
-function orderStatusLabel(row) {
-  return orderStatusMeta[row?.status]?.label ?? row?.status ?? '—'
-}
-
-function statusPillClass(status) {
-  if (status === ORDER_STATUS.RUNNING) return 'bg-sky-400/15 text-sky-200'
-  if (status === ORDER_STATUS.COMPLETED) return 'bg-lime-400/12 text-lime-200'
-  if (status === ORDER_STATUS.SETTLED) return 'bg-white/10 text-white/60'
-  if (status === ORDER_STATUS.EARLY_REDEEMED) return 'bg-purple-400/15 text-purple-200'
-  if (status === ORDER_STATUS.CANCELLED) return 'bg-rose-400/15 text-rose-200'
-  return 'bg-white/10 text-white/55'
-}
 
 function formatAssetTitle(row) {
   const assets = row?.assets || []
@@ -69,8 +54,7 @@ const summaryItems = computed(() => {
   return [
     { label: '订单号', value: row.id },
     { label: '组合', value: formatAssetTitle(row) },
-    { label: '本金', value: formatPortfolioAmount(row.principal, row.quoteCurrency) },
-    { label: '订单状态', value: orderStatusLabel(row) }
+    { label: '本金', value: formatPortfolioAmount(row.principal, row.quoteCurrency) }
   ]
 })
 
@@ -140,9 +124,6 @@ watch(
           <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-2">
               <h1 class="text-2xl font-bold tracking-tight text-white sm:text-3xl">订单详情</h1>
-              <span class="rounded-full px-2.5 py-1 text-xs font-semibold" :class="statusPillClass(order.status)">
-                {{ orderStatusLabel(order) }}
-              </span>
             </div>
             <p class="mt-2 text-sm text-white/50">
               {{ formatAssetTitle(order) }} · {{ order.id }}
@@ -160,7 +141,7 @@ watch(
 
     <main class="mx-auto max-w-7xl px-4 py-5 sm:px-8 sm:py-8 lg:px-10">
       <section class="rounded-lg border border-white/[0.08] bg-white/[0.025] p-3.5 sm:p-4" aria-label="订单概要">
-        <dl class="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+        <dl class="grid grid-cols-2 gap-2.5 lg:grid-cols-3">
           <div
             v-for="item in summaryItems"
             :key="item.label"

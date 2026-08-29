@@ -242,7 +242,7 @@ test('front liquidity order detail page shows daily earnings rows', async (t) =>
   assert.ok(summary.textContent.includes('订单号'))
   assert.ok(summary.textContent.includes('产品'))
   assert.ok(summary.textContent.includes('金额'))
-  assert.ok(summary.textContent.includes('订单状态'))
+  assert.equal(summary.textContent.includes('订单状态'), false)
   assert.equal(
     summary.textContent.includes('USDT 流动性挖矿订单'),
     false,
