@@ -568,7 +568,7 @@ const submit = () => {
                     </div>
                   </section>
 
-              <div v-if="!isSimplifiedGlobalControl">
+              <div v-if="affectedModules.length">
                 <p class="text-sm font-semibold text-slate-900">影响模块</p>
                 <div class="mt-1 flex flex-wrap gap-1.5">
                   <span v-for="item in affectedModules" :key="item.key" class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
