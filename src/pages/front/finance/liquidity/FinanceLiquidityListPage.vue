@@ -31,7 +31,7 @@ const DEMO_AVAILABLE_FUNDS = 5.562875
 const currencyTab = ref('')
 const orderTab = ref('active')
 /** Hero 主入口：挖矿产品 / 我的订单（与 AI 量化、借贷一致） */
-const heroPanel = ref('products')
+const heroPanel = ref(route.query.tab === 'orders' ? 'orders' : 'products')
 
 const LIST_PAGE_SIZE = 8
 
@@ -82,6 +82,29 @@ const pgOrdersTab = useClientListPagination(ordersForTab, { pageSize: LIST_PAGE_
 watch(orderTab, () => {
   pgOrdersTab.resetPage()
 })
+
+watch(
+  () => route.query.tab,
+  (tab) => {
+    if (tab === 'orders') heroPanel.value = 'orders'
+    if (tab === 'products') heroPanel.value = 'products'
+  }
+)
+
+function orderDetailLocation(orderId) {
+  return {
+    path: `${prefix}/finance/liquidity/order/${orderId}`,
+    query: { from: 'orders' }
+  }
+}
+
+function goOrdersPrev() {
+  pgOrdersTab.goPrev()
+}
+
+function goOrdersNext() {
+  pgOrdersTab.goNext()
+}
 
 function statusPillClass(status) {
   if (status === PRODUCT_STATUS.ENABLED) return 'bg-lime-400/15 text-lime-200'
@@ -604,9 +627,9 @@ const mineMinVipLabel = computed(() => {
                   <th class="hidden px-3 py-2.5 font-semibold md:table-cell md:px-5 md:py-3">下单时间</th>
                   <th class="hidden px-3 py-2.5 font-semibold md:table-cell md:px-5 md:py-3">金额</th>
                   <th class="hidden px-3 py-2.5 font-semibold md:table-cell md:px-5 md:py-3">到期</th>
-                <th class="hidden px-3 py-2.5 font-semibold lg:table-cell lg:px-5 lg:py-3">收益</th>
-                <th class="px-3 py-2.5 text-right font-semibold md:px-5 md:py-3 md:text-left">操作</th>
-                <th class="px-3 py-2.5 text-right font-semibold md:px-5 md:py-3 md:text-left">状态</th>
+                  <th class="hidden px-3 py-2.5 font-semibold lg:table-cell lg:px-5 lg:py-3">收益</th>
+                  <th class="px-3 py-2.5 text-right font-semibold md:px-5 md:py-3 md:text-left">操作</th>
+                  <th class="px-3 py-2.5 text-right font-semibold md:px-5 md:py-3 md:text-left">状态</th>
                 </tr>
               </thead>
               <tbody>
@@ -619,6 +642,7 @@ const mineMinVipLabel = computed(() => {
                     <p class="text-[14px] font-medium leading-snug text-white sm:text-sm">{{ o.productName }}</p>
                     <div
                       class="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 border-t border-white/[0.06] pt-3 text-[11px] text-white/50 md:hidden"
+                      :data-testid="`liquidity-order-card-info-${o.id}`"
                     >
                       <span class="text-white/35">期限</span>
                       <span class="text-right tabular-nums text-white/70">{{ o.lockDays }} 天</span>
@@ -630,31 +654,48 @@ const mineMinVipLabel = computed(() => {
                       <span class="text-right tabular-nums text-white/60">{{ o.unlockAt }}</span>
                       <span class="text-white/35">收益</span>
                       <span class="text-right tabular-nums text-lime-300/90">{{ o.totalInterest }} {{ o.currency }}</span>
+                      <span class="text-white/35">当前状态</span>
+                      <span class="text-right">
+                        <span
+                          class="inline-flex min-h-[1.625rem] items-center rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                          :class="orderDisplayStatus(o).class"
+                        >
+                          {{ orderDisplayStatus(o).label }}
+                        </span>
+                      </span>
                     </div>
                     <div
-                      v-if="orderTab === 'active' && o.status === ORDER_STATUS.LOCKED"
-                      class="mt-3 flex flex-wrap gap-2 border-t border-white/[0.06] pt-3 md:hidden"
+                      class="mt-3 grid grid-cols-2 gap-2 border-t border-white/[0.06] pt-3 md:hidden"
+                      :data-testid="`liquidity-order-card-actions-${o.id}`"
                     >
-                      <button
-                        v-if="isOrderMatured(o)"
-                        type="button"
-                        :class="fx.btnPrimarySm"
-                        @click="openSettleOrder(o)"
+                      <RouterLink
+                        :to="orderDetailLocation(o.id)"
+                        :class="[fx.btnInlineNeutral, 'max-md:w-full']"
                       >
-                        领取本息
-                      </button>
-                      <template v-else>
+                        查看详情
+                      </RouterLink>
+                      <template v-if="orderTab === 'active' && o.status === ORDER_STATUS.LOCKED">
                         <button
-                          v-if="productForOrder(o)?.earlyRedeemEnabled"
+                          v-if="isOrderMatured(o)"
                           type="button"
-                          :class="fx.btnTableAction"
-                          @click="openEarlyRedeem(o)"
+                          :class="[fx.btnPrimarySm, 'max-md:w-full']"
+                          @click="openSettleOrder(o)"
                         >
-                          提前赎回
+                          领取本息
                         </button>
-                        <span v-else :class="fx.btnDisabledHint">
-                          不可提前赎回
-                        </span>
+                        <template v-else>
+                          <button
+                            v-if="productForOrder(o)?.earlyRedeemEnabled"
+                            type="button"
+                            :class="[fx.btnTableAction, 'max-md:w-full']"
+                            @click="openEarlyRedeem(o)"
+                          >
+                            提前赎回
+                          </button>
+                          <span v-else :class="[fx.btnDisabledHint, 'max-md:w-full']">
+                            不可提前赎回
+                          </span>
+                        </template>
                       </template>
                     </div>
                   </td>
@@ -665,40 +706,40 @@ const mineMinVipLabel = computed(() => {
                   <td class="hidden tabular-nums text-lime-300/90 lg:table-cell lg:px-5 lg:py-3">
                     {{ o.totalInterest }} {{ o.currency }}
                   </td>
-                  <td
-                    class="max-md:block max-md:w-full max-md:px-3 max-md:pb-2 max-md:pt-2 md:table-cell md:px-5 md:py-3 md:text-left"
-                  >
-                    <div v-if="orderTab === 'active' && o.status === ORDER_STATUS.LOCKED" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-                      <button
-                        v-if="isOrderMatured(o)"
-                        type="button"
-                        :class="['hidden md:inline-flex', fx.btnPrimarySm]"
-                        @click="openSettleOrder(o)"
+                  <td class="hidden md:table-cell md:px-5 md:py-3 md:text-left">
+                    <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                      <RouterLink
+                        :to="orderDetailLocation(o.id)"
+                        :class="fx.btnInlineNeutral"
                       >
-                        领取本息
-                      </button>
-                      <template v-else>
+                        查看详情
+                      </RouterLink>
+                      <template v-if="orderTab === 'active' && o.status === ORDER_STATUS.LOCKED">
                         <button
-                          v-if="productForOrder(o)?.earlyRedeemEnabled"
+                          v-if="isOrderMatured(o)"
                           type="button"
-                          :class="['hidden md:inline-flex', fx.btnTableAction]"
-                          @click="openEarlyRedeem(o)"
+                          :class="fx.btnPrimarySm"
+                          @click="openSettleOrder(o)"
                         >
-                          提前赎回
+                          领取本息
                         </button>
-                        <span
-                          v-else
-                          class="hidden text-xs text-white/40 md:inline"
-                        >
-                          —
-                        </span>
+                        <template v-else>
+                          <button
+                            v-if="productForOrder(o)?.earlyRedeemEnabled"
+                            type="button"
+                            :class="fx.btnTableAction"
+                            @click="openEarlyRedeem(o)"
+                          >
+                            提前赎回
+                          </button>
+                          <span v-else :class="fx.btnDisabledHint">
+                            不可提前赎回
+                          </span>
+                        </template>
                       </template>
                     </div>
-                    <span v-else class="text-xs text-white/35 md:text-sm">—</span>
                   </td>
-                  <td
-                    class="max-md:block max-md:w-full max-md:px-3 max-md:pb-4 max-md:pt-1 md:table-cell md:px-5 md:py-3 md:text-left"
-                  >
+                  <td class="hidden md:table-cell md:px-5 md:py-3 md:text-left">
                     <span
                       class="inline-flex min-h-[1.75rem] items-center rounded-full px-2.5 py-1 text-[11px] font-semibold sm:text-xs"
                       :class="orderDisplayStatus(o).class"
@@ -715,8 +756,8 @@ const mineMinVipLabel = computed(() => {
             :total-pages="pgOrdersTab.totalPages"
             :total="pgOrdersTab.total"
             :page-size="pgOrdersTab.pageSize"
-            @prev="pgOrdersTab.goPrev"
-            @next="pgOrdersTab.goNext"
+            @prev="goOrdersPrev"
+            @next="goOrdersNext"
           />
           <p v-if="ordersForTab.length === 0" class="px-3 py-12 text-center text-sm text-white/40 sm:py-14">
             当前分类暂无订单

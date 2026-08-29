@@ -72,6 +72,12 @@ export const frontDesktopRoutes = [
         redirect: '/front/finance/liquidity'
       },
       {
+        path: 'liquidity/order/:orderId',
+        name: 'front-finance-liquidity-order-detail',
+        component: () => import('../../pages/front/finance/liquidity/FinanceLiquidityOrderDetailPage.vue'),
+        meta: { title: '锁仓订单详情', hideFrontChromeOnMobile: true, hideFrontFloatingOnMobile: true }
+      },
+      {
         path: 'liquidity/:productId',
         name: 'front-finance-liquidity-detail',
         component: () => import('../../pages/front/finance/liquidity/FinanceLiquidityDetailPage.vue'),
