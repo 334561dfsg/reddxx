@@ -153,6 +153,7 @@ test('front liquidity home uses a standalone mobile shell with drawer menu', asy
   assert.match(source, /space-y-3/)
   assert.match(source, /text-\[28px\]/)
   assert.match(source, /h-\[4\.5rem\]/)
+  assert.doesNotMatch(source, /查看产品说明与规则/)
   assert.doesNotMatch(source, /fixed inset-x-0 top-0 z-40 flex min-h-12/)
   assert.doesNotMatch(source, /relative -mx-4 mb-4 flex min-h-12/)
   assert.doesNotMatch(source, /-mt-1 mb-5 flex h-12/)

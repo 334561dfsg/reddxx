@@ -948,14 +948,6 @@ const mineMinVipLabel = computed(() => {
             <li>{{ mineLimitDesc }}</li>
           </ul>
 
-          <RouterLink
-            class="mt-4 inline-flex text-xs font-medium text-lime-300/90 transition hover:text-lime-200"
-            :to="`${prefix}/finance/liquidity/${mineProduct.id}`"
-            @click="closeMineDialog"
-          >
-            查看产品说明与规则 →
-          </RouterLink>
-
           <div v-if="mineCanSubmit" class="mt-5 border-t border-white/[0.08] pt-5">
             <label class="block">
               <span class="text-sm font-medium text-white/70">购买金额（{{ mineProduct.currency }}）</span>
