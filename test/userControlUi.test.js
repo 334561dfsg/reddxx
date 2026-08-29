@@ -218,10 +218,10 @@ test('shared modal omits the selected user current point-control status', () => 
 
 test('module page explains settlement-only delivery control and module-only scope', () => {
   const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
-  assert.match(source, /不改变K线/)
+  assert.match(source, /不改变全局行情、K线或实时盈亏/)
   assert.match(source, /实时盈亏/)
-  assert.match(source, /本次操作只影响当前模块/)
-  assert.match(source, /规则来源/)
+  assert.match(source, /只作用于目标用户的到期结算/)
+  assert.doesNotMatch(source, /规则来源/)
 })
 
 test('module page can add a user by UID email or phone search', () => {
@@ -230,7 +230,7 @@ test('module page can add a user by UID email or phone search', () => {
 
   assert.match(source, />添加用户<\/button>/)
   assert.notEqual(addDialog, '')
-  assert.match(source, /点控记录和手动添加/)
+  assert.doesNotMatch(source, /点控记录和手动添加/)
   assert.match(source, /搜索 UID、用户名、邮箱或手机号/)
   assert.match(addDialog, /UID、邮箱或手机号/)
   assert.match(addDialog, /placeholder="输入 UID、邮箱或手机号"/)
@@ -266,13 +266,30 @@ test('module page omits rejected demo and finance helper copy', () => {
   assert.doesNotMatch(source, /Demo 模式/)
   assert.doesNotMatch(source, /仅更新前端 Mock，不接入真实结算/)
   assert.doesNotMatch(source, /用户收益调节只在目标用户实际收益入账或最终结算时生效；预估收益变化不会消费一次性规则。/)
+  assert.doesNotMatch(source, /summaryCards/)
+  assert.doesNotMatch(source, /sourceFilter/)
+  assert.doesNotMatch(source, /sourceMeta/)
+  assert.doesNotMatch(source, /module-user-control-cancel-dialog/)
+  assert.doesNotMatch(source, /@click="openCancel\(row\)"/)
+  assert.doesNotMatch(source, />\s*取消\s*<\/button>[\s\S]*RouterLink/)
 })
 
-test('module page uses the simplified current-state vocabulary', () => {
+test('module page uses the user-list style point-control badge column', () => {
   const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   const detailSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
-  assert.match(source, /rule\.status === 'active' && rule\.duration === 'once'[\s\S]*待执行/)
-  assert.match(source, /rule\.status === 'active'[\s\S]*生效中/)
+  assert.match(source, />点控<\/th>/)
+  assert.doesNotMatch(source, />当前控制<\/th>/)
+  assert.doesNotMatch(source, />生效方式<\/th>/)
+  assert.doesNotMatch(source, />当前状态<\/th>/)
+  assert.match(source, /const pointControlLabel = \(rule\) =>/)
+  assert.match(source, /!\['active', 'processing'\]\.includes\(rule\?\.status\)/)
+  assert.match(source, /永久盈利:\s*'bg-orange-100 text-orange-700 ring-orange-200'/)
+  assert.match(source, /永久亏损:\s*'bg-emerald-100 text-emerald-700 ring-emerald-200'/)
+  assert.match(source, /pointControlBadgeClass\(pointControlLabel\(row\.rule\)\)/)
+  assert.match(source, /<span v-else class="text-xs text-slate-400">-<\/span>/)
+  assert.doesNotMatch(source, /const statusMeta/)
+  assert.doesNotMatch(source, /const durationLabel/)
+  assert.doesNotMatch(source, /const valueLabel/)
   assert.doesNotMatch(source, /<option value="processing">/)
   assert.doesNotMatch(source, /processing:\s*\{\s*label:\s*'处理中'/)
   assert.doesNotMatch(detailSource, /processing:\s*\{\s*label:\s*'处理中'/)
@@ -598,17 +615,13 @@ test('user management preserves an MFA failure for the open modal to announce', 
   assert.match(flow, /errorAttempt\.value \+= 1/)
 })
 
-test('point-control cancellation dialogs and detail drawer keep overlays open and only bodies scrollable', () => {
+test('unified point-control cancellation dialog and detail drawer keep overlays open and only bodies scrollable', () => {
   const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   const userListSource = read('../src/pages/admin/user/UserListPage.vue')
   const detailSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
-  const moduleFrame = openingTag(moduleSource, 'module-user-control-cancel-dialog')
 
+  assert.doesNotMatch(moduleSource, /module-user-control-cancel-dialog/)
   assert.doesNotMatch(moduleSource, /@mousedown\.self="closeCancel"|@click\.self="closeCancel"/)
-  assert.match(moduleFrame, /max-h-\[calc\(100vh-2rem\)\]/)
-  assert.match(moduleFrame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-2rem\)\]/)
-  assert.match(moduleFrame, /overflow-hidden/)
-  assert.match(moduleSource, /data-testid="module-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.doesNotMatch(userListSource, /@mousedown\.self="closeControlCancel"|@click\.self="closeControlCancel"/)
   assert.match(userListSource, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
   assert.match(userListSource, /data-testid="unified-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
@@ -619,10 +632,10 @@ test('point-control cancellation dialogs and detail drawer keep overlays open an
   assert.match(detailSource, /flex-1[^>]*overflow-y-auto/)
 })
 
-test('module and unified cancel dialogs use compact spacing', () => {
+test('unified cancel dialog uses compact spacing while module page omits standalone cancellation', () => {
   const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   const userSource = read('../src/pages/admin/user/UserListPage.vue')
-  assert.match(moduleSource, /data-testid="module-user-control-cancel-dialog"[\s\S]*?px-5 py-4/)
+  assert.doesNotMatch(moduleSource, /data-testid="module-user-control-cancel-dialog"/)
   assert.match(userSource, /data-testid="unified-user-control-cancel-dialog"[\s\S]*?px-5 py-4/)
 })
 
@@ -654,12 +667,12 @@ test('point-control setting and detail surfaces use the shared dialog lifecycle 
   assert.doesNotMatch(detailSource, /@click\.self|@mousedown\.self|backdrop-click/)
 })
 
-test('point-control cancellation dialogs retain their layer, focus target, and closing content', () => {
+test('unified point-control cancellation dialog retains its layer, focus target, and closing content', () => {
   const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   const unifiedSource = read('../src/pages/admin/user/UserListPage.vue')
 
+  assert.doesNotMatch(moduleSource, /moduleCancelRendered|moduleCancelDialogRef|moduleCancelReturnRef|module-user-control-cancel-title/)
   for (const [source, rendered, dialogRef, returnRef, title] of [
-    [moduleSource, 'moduleCancelRendered', 'moduleCancelDialogRef', 'moduleCancelReturnRef', 'module-user-control-cancel-title'],
     [unifiedSource, 'unifiedCancelRendered', 'unifiedCancelDialogRef', 'unifiedCancelReturnRef', 'unified-user-control-cancel-title']
   ]) {
     assert.match(source, /useDialogLifecycle/)
@@ -674,12 +687,7 @@ test('point-control cancellation dialogs retain their layer, focus target, and c
     assert.doesNotMatch(source, /@mousedown\.self="(?:closeCancel|closeControlCancel)"|@click\.self="(?:closeCancel|closeControlCancel)"/)
   }
 
-  const moduleFrame = openingTag(moduleSource, 'module-user-control-cancel-dialog')
   const unifiedFrame = openingTag(unifiedSource, 'unified-user-control-cancel-dialog')
-  assert.match(moduleFrame, /max-h-\[calc\(100vh-2rem\)\]/)
-  assert.match(moduleFrame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-2rem\)\]/)
-  assert.match(moduleFrame, /overflow-hidden/)
-  assert.match(moduleSource, /data-testid="module-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.match(unifiedFrame, /max-h-\[calc\(100vh-2rem\)\]/)
   assert.match(unifiedFrame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-2rem\)\]/)
   assert.match(unifiedFrame, /overflow-hidden/)
@@ -691,7 +699,7 @@ test('ordinary point-control dialogs keep a safe close button in the fixed heade
   const unifiedSource = read('../src/pages/admin/user/UserListPage.vue')
   const mfaSource = read('../src/admin/components/MfaVerificationModal.vue')
 
-  assert.match(moduleSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*@click="closeCancel"/)
+  assert.match(moduleSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*@click="closeAddUser"/)
   assert.match(unifiedSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*@click="closeControlCancel"/)
   assert.match(mfaSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*:disabled="displayedDialog\.loading \|\| displayedDialog\.verifyRequested"[^>]*@click="close"/)
 })

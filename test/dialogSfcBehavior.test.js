@@ -178,24 +178,6 @@ test('setting SFC resets queued reopen B from B props instead of the leaving A s
   assert.match(harness.findByTestId('user-control-target-user').textContent, /Beta/)
 })
 
-test('module cancellation SFC runs both enter transitions for its local dialog', async (t) => {
-  const component = await loadVueSfc(projectFile('src/pages/admin/user-control/ModuleUserControlPage.vue'))
-  const harness = await createSfcHarness(component, { moduleKey: 'delivery' })
-  t.after(harness.cleanup)
-
-  const cancel = harness.allNodes().find((node) => (
-    node.tag === 'button' && node.textContent.trim() === '取消' && !node.disabled
-  ))
-  assert.ok(cancel)
-  cancel.click()
-  await harness.flush()
-
-  const frame = harness.findByTestId('module-user-control-cancel-dialog')
-  assert.ok(frame)
-  assert.equal(frame.parent.classList.contains('dialog-overlay-enter-from'), true)
-  assert.equal(frame.classList.contains('dialog-panel-enter-from'), true)
-})
-
 test('user operation Drawer runs both right-edge enter transitions', async (t) => {
   const component = await loadVueSfc(projectFile('src/admin/components/user/UserOperationDrawer.vue'))
   const harness = await createSfcHarness(component, {
