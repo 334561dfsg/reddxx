@@ -86,6 +86,17 @@ function formatAiQuantOrderEndLabel(o) {
   return o.endDate
 }
 
+function formatOrderMoney(value, currency) {
+  const n = Number(value)
+  if (!Number.isFinite(n)) return `— ${currency || ''}`.trim()
+  const abs = Math.abs(n)
+  const digits = currency === 'BTC' ? 6 : currency === 'ETH' ? 4 : 2
+  const amount = abs >= 10000
+    ? `${Number((n / 1000).toFixed(2)).toLocaleString()}K`
+    : n.toLocaleString(undefined, { maximumFractionDigits: digits })
+  return `${amount} ${currency}`
+}
+
 function aiQuantOrderDetailLocation(orderId) {
   return {
     path: `${prefix}/finance/ai-quant/order/${orderId}`,
@@ -247,9 +258,19 @@ onUnmounted(() => {
           >
             <td class="min-w-0 max-md:block max-md:w-full max-md:px-3 max-md:pb-0 max-md:pt-4 md:table-cell md:px-5 md:py-3">
               <p class="text-[14px] font-medium leading-snug text-white sm:text-sm">{{ o.productName }}</p>
-              <p class="mt-0.5 tabular-nums text-[11px] text-white/55 sm:text-xs">
-                {{ o.principal }} {{ o.currency }}
-              </p>
+              <div
+                class="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 border-t border-white/[0.06] pt-3 text-[11px] text-white/50 md:hidden"
+                :data-testid="`ai-quant-order-card-info-${o.id}`"
+              >
+                <span class="text-white/35">购买时间</span>
+                <span class="text-right tabular-nums text-white/70">{{ o.startDate }}</span>
+                <span class="text-white/35">结束时间</span>
+                <span class="text-right tabular-nums text-white/70">{{ formatAiQuantOrderEndLabel(o) }}</span>
+                <span class="text-white/35">支付金额</span>
+                <span class="text-right tabular-nums text-white/80">{{ formatOrderMoney(o.principal, o.currency) }}</span>
+                <span class="text-white/35">累计收益</span>
+                <span class="text-right font-semibold tabular-nums text-lime-300">{{ formatOrderMoney(o.accumulatedYield, o.currency) }}</span>
+              </div>
               <div class="mt-3 grid grid-cols-2 gap-2 md:hidden">
                 <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
                   查看详情
@@ -324,17 +345,18 @@ onUnmounted(() => {
               </p>
               <div
                 class="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 border-t border-white/[0.06] pt-3 text-[11px] text-white/50 md:hidden"
+                :data-testid="`ai-quant-order-card-info-${o.id}`"
               >
-                <span class="text-white/35">购买</span>
+                <span class="text-white/35">购买时间</span>
                 <span class="text-right tabular-nums text-white/70">{{ o.startDate }}</span>
-                <span class="text-white/35">结束</span>
+                <span class="text-white/35">结束时间</span>
                 <span class="text-right tabular-nums text-white/70">{{ formatAiQuantOrderEndLabel(o) }}</span>
-                <span class="text-white/35">支付</span>
-                <span class="text-right tabular-nums text-white/80">{{ o.principal }} {{ o.currency }}</span>
+                <span class="text-white/35">支付金额</span>
+                <span class="text-right tabular-nums text-white/80">{{ formatOrderMoney(o.principal, o.currency) }}</span>
                 <span class="text-white/35">累计收益</span>
-                <span class="text-right tabular-nums text-lime-200/90">{{ o.accumulatedYield }}</span>
+                <span class="text-right font-semibold tabular-nums text-lime-300">{{ formatOrderMoney(o.accumulatedYield, o.currency) }}</span>
                 <span class="text-white/35">日收益</span>
-                <span class="text-right tabular-nums text-white/70">{{ o.expectedDailyYield }}</span>
+                <span class="text-right tabular-nums text-white/70">{{ formatOrderMoney(o.expectedDailyYield, o.currency) }}</span>
               </div>
               <div class="mt-3 grid grid-cols-2 gap-2 md:hidden">
                 <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
@@ -429,11 +451,16 @@ onUnmounted(() => {
               <p class="text-[14px] font-medium leading-snug text-white sm:text-sm">{{ o.productName }}</p>
               <div
                 class="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 border-t border-white/[0.06] pt-3 text-[11px] text-white/50 md:hidden"
+                :data-testid="`ai-quant-order-card-info-${o.id}`"
               >
-                <span class="text-white/35">赎回时间</span>
-                <span class="text-right tabular-nums text-white/70">{{ o.settledAt || o.endDate }}</span>
-                <span class="text-white/35">本金</span>
-                <span class="text-right tabular-nums text-white/80">{{ o.principal }} {{ o.currency }}</span>
+                <span class="text-white/35">购买时间</span>
+                <span class="text-right tabular-nums text-white/70">{{ o.startDate }}</span>
+                <span class="text-white/35">结束时间</span>
+                <span class="text-right tabular-nums text-white/70">{{ formatAiQuantOrderEndLabel(o) }}</span>
+                <span class="text-white/35">支付金额</span>
+                <span class="text-right tabular-nums text-white/80">{{ formatOrderMoney(o.principal, o.currency) }}</span>
+                <span class="text-white/35">累计收益</span>
+                <span class="text-right font-semibold tabular-nums text-lime-300">{{ formatOrderMoney(o.accumulatedYield, o.currency) }}</span>
               </div>
               <div class="mt-3 md:hidden">
                 <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
