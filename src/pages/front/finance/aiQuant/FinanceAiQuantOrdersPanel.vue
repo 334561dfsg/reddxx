@@ -271,19 +271,19 @@ onUnmounted(() => {
                 <span class="text-white/35">累计收益</span>
                 <span class="text-right font-semibold tabular-nums text-lime-300">{{ formatOrderMoney(o.accumulatedYield, o.currency) }}</span>
               </div>
-              <div class="mt-3 grid grid-cols-2 gap-2 md:hidden">
-                <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
+              <div class="mt-3 grid grid-cols-2 gap-2 border-t border-white/[0.06] pt-3 md:hidden">
+                <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="[fx.btnInlineNeutral, 'max-md:w-full']">
                   查看详情
                 </RouterLink>
                 <button
                   v-if="canApplyEarlyRedeemAiOrder(o)"
                   type="button"
-                  :class="fx.btnTableActionBlock"
+                  :class="[fx.btnTableAction, 'max-md:w-full']"
                   @click="openAiRedeemDialog(o)"
                 >
                   申请赎回
                 </button>
-                <p v-else :class="[fx.hintBlock, 'text-center text-[11px]']">
+                <p v-else :class="[fx.btnDisabledHint, 'max-md:w-full']">
                   不可提前赎回
                 </p>
               </div>
@@ -292,8 +292,8 @@ onUnmounted(() => {
               {{ o.principal }} {{ o.currency }}
             </td>
             <td class="max-md:hidden md:table-cell md:px-5 md:py-3 md:text-left">
-              <div class="flex flex-wrap items-center gap-2">
-                <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableAction">
+              <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnInlineNeutral">
                   查看详情
                 </RouterLink>
                 <button
@@ -358,24 +358,24 @@ onUnmounted(() => {
                 <span class="text-white/35">日收益</span>
                 <span class="text-right tabular-nums text-white/70">{{ formatOrderMoney(o.expectedDailyYield, o.currency) }}</span>
               </div>
-              <div class="mt-3 grid grid-cols-2 gap-2 md:hidden">
-                <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
+              <div class="mt-3 grid grid-cols-2 gap-2 border-t border-white/[0.06] pt-3 md:hidden">
+                <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="[fx.btnInlineNeutral, 'max-md:w-full']">
                   查看详情
                 </RouterLink>
                 <template v-if="o.status === ORDER_STATUS.RUNNING">
                   <button
                     v-if="canApplyEarlyRedeemAiOrder(o)"
                     type="button"
-                    :class="fx.btnTableActionBlock"
+                    :class="[fx.btnTableAction, 'max-md:w-full']"
                     @click="openAiRedeemDialog(o)"
                   >
                     申请赎回
                   </button>
-                  <p v-else :class="[fx.hintBlock, 'text-center text-[11px]']">
+                  <p v-else :class="[fx.btnDisabledHint, 'max-md:w-full']">
                     不可提前赎回
                   </p>
                 </template>
-                <span v-else :class="[fx.hintBlock, 'text-center text-[11px]']">—</span>
+                <span v-else :class="[fx.btnDisabledHint, 'max-md:w-full']">—</span>
               </div>
             </td>
             <td class="hidden tabular-nums text-white/55 md:table-cell md:px-5 md:py-3">{{ o.startDate }}</td>
@@ -390,8 +390,8 @@ onUnmounted(() => {
               {{ o.expectedDailyYield }}
             </td>
             <td class="max-md:hidden md:table-cell md:px-5 md:py-3 md:text-left">
-              <div class="flex flex-wrap items-center gap-2">
-                <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableAction">
+              <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnInlineNeutral">
                   查看详情
                 </RouterLink>
                 <template v-if="o.status === ORDER_STATUS.RUNNING">
@@ -462,8 +462,8 @@ onUnmounted(() => {
                 <span class="text-white/35">累计收益</span>
                 <span class="text-right font-semibold tabular-nums text-lime-300">{{ formatOrderMoney(o.accumulatedYield, o.currency) }}</span>
               </div>
-              <div class="mt-3 md:hidden">
-                <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableActionBlock">
+              <div class="mt-3 grid grid-cols-2 gap-2 border-t border-white/[0.06] pt-3 md:hidden">
+                <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="[fx.btnInlineNeutral, 'max-md:w-full']">
                   查看详情
                 </RouterLink>
               </div>
@@ -475,7 +475,7 @@ onUnmounted(() => {
               {{ o.principal }} {{ o.currency }}
             </td>
             <td class="hidden md:table-cell md:px-5 md:py-3">
-              <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnTableAction">
+              <RouterLink :to="aiQuantOrderDetailLocation(o.id)" :class="fx.btnInlineNeutral">
                 查看详情
               </RouterLink>
             </td>
