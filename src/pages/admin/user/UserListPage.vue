@@ -277,7 +277,6 @@ const resolveControlReturnFocus = () => {
   )
 }
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
-const hasRules = (user) => Object.values(rulesOf(user)).some((rule) => ['active', 'processing'].includes(rule.status))
 const controlMetaOf = (user) => getUserControlListMeta(userControlState.value, userIdOf(user))
 const controlTypeBadgeClass = (label) => ({
   盈利: 'bg-orange-100 text-orange-700 ring-orange-200',
@@ -987,7 +986,7 @@ const clearDetailDrawer = () => {
     <!-- 用户表格 -->
     <div v-else-if="!loading && users.length > 0" class="rounded-xl border border-slate-200 bg-white overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[1300px]">
+        <table class="w-full min-w-[1220px]">
           <thead class="bg-slate-50 border-b border-slate-200">
             <tr>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
@@ -998,7 +997,6 @@ const clearDetailDrawer = () => {
               <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">信用分</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">裂变上级</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">是否点控中</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">控盘类型</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
             </tr>
@@ -1073,13 +1071,6 @@ const clearDetailDrawer = () => {
                   {{ user.parentUsername }}
                 </span>
                 <span v-else class="text-xs text-slate-400">-</span>
-              </td>
-
-              <!-- 用户点控状态 -->
-              <td class="px-4 py-3">
-                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="hasRules(user) ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'">
-                  {{ hasRules(user) ? '是' : '否' }}
-                </span>
               </td>
 
               <!-- 用户控盘类型 -->
