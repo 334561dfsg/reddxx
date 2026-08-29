@@ -97,6 +97,13 @@ const rulesDuration = (rules = {}) => {
   return durations.length > 1 ? 'mixed' : durations[0] || ''
 }
 
+const normalizeUnifiedModules = (input = {}) => {
+  if (!Array.isArray(input.modules)) return USER_CONTROL_UNIFIED_MODULES
+  const requestedKeys = new Set(input.modules.map((module) => String(module || '')).filter(Boolean))
+  const modules = USER_CONTROL_UNIFIED_MODULES.filter((module) => requestedKeys.has(module.key))
+  return modules.length ? modules : USER_CONTROL_UNIFIED_MODULES
+}
+
 export const createUserControlState = () => ({
   rules: {},
   ruleHistory: [],
@@ -123,10 +130,11 @@ export function snapshotUserControlRules(state, userId) {
 
 export function applyUnifiedControl(state, input) {
   const userId = requireText(input.userId, 'userId')
-  const note = requireText(input.note, 'note')
+  const note = String(input.note || '').trim()
   const strategy = normalizeStrategy(input)
   const method = normalizeMethod({ ...input, strategy, scope: 'global' })
   const intensity = cloneIntensity(input.intensity)
+  const targetModules = normalizeUnifiedModules(input)
   if (!['once', 'permanent'].includes(input.duration)) throw new TypeError('duration must be once or permanent')
   if (state.failureModule) {
     const before = Object.fromEntries(Object.entries(state.rules[userId] || {}).map(([key, rule]) => [key, { ...rule }]))
@@ -134,7 +142,7 @@ export function applyUnifiedControl(state, input) {
       ...state,
       operationLogs: [{
         id: `op-${input.batchId}-failed`, userId, scope: 'global', action: 'apply',
-        modules: USER_CONTROL_UNIFIED_MODULES.map((item) => item.key), strategy, method,
+        modules: targetModules.map((item) => item.key), strategy, method,
         ...(intensity ? { intensity } : {}),
         duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
         before, note, status: 'failed', failedModule: state.failureModule,
@@ -147,7 +155,7 @@ export function applyUnifiedControl(state, input) {
   const before = Object.fromEntries(Object.entries(state.rules[userId] || {}).map(([key, rule]) => [key, { ...rule }]))
   const nextRules = cloneRules(state, userId)
   const overwrittenRules = {}
-  USER_CONTROL_UNIFIED_MODULES.forEach((module) => {
+  targetModules.forEach((module) => {
     const moduleMethod = normalizeMethod({ ...input, strategy, method, scope: 'module', moduleKey: module.key })
     overwrittenRules[module.key] = nextRules[module.key]
     nextRules[module.key] = {
@@ -174,7 +182,7 @@ export function applyUnifiedControl(state, input) {
     rules: { ...state.rules, [userId]: nextRules },
     ruleHistory: [...supersedeRules(overwrittenRules, input.now), ...(state.ruleHistory || [])],
     operationLogs: [{ id: `op-${input.batchId}`, userId, scope: 'global', action: 'apply',
-      modules: USER_CONTROL_UNIFIED_MODULES.map((item) => item.key), strategy, method,
+      modules: targetModules.map((item) => item.key), strategy, method,
       ...(intensity ? { intensity } : {}),
       duration: input.duration, operator: operatorOf(input), batchId: input.batchId,
       before, note, status: 'success', createdAt: input.now }, ...state.operationLogs],
@@ -271,9 +279,11 @@ export function cancelUnifiedControl(state, input) {
   const userId = requireText(input.userId, 'userId')
   const note = requireText(input.note, 'note')
   const before = cloneRules(state, userId)
-  if (!USER_CONTROL_UNIFIED_MODULES.some((module) => ['active', 'processing'].includes(before[module.key]?.status))) return state
+  const targetModules = normalizeUnifiedModules(input)
+  const targetModuleKeys = new Set(targetModules.map((module) => module.key))
+  if (!targetModules.some((module) => ['active', 'processing'].includes(before[module.key]?.status))) return state
   const cancelled = Object.fromEntries(Object.entries(before).map(([key, rule]) => [key,
-    USER_CONTROL_UNIFIED_MODULE_KEYS.has(key) && ['active', 'processing'].includes(rule.status)
+    targetModuleKeys.has(key) && ['active', 'processing'].includes(rule.status)
       ? { ...rule, status: 'cancelled', cancelledAt: input.now }
       : rule
   ]))
@@ -289,7 +299,7 @@ export function cancelUnifiedControl(state, input) {
   })
   return { ...state, rules: { ...state.rules, [userId]: cancelled }, operationLogs: [{
     id: input.operationId, userId, scope: 'global', action: 'cancel',
-    modules: USER_CONTROL_UNIFIED_MODULES.map((item) => item.key), duration: rulesDuration(before),
+    modules: targetModules.map((item) => item.key), duration: rulesDuration(before),
     operator: operatorOf(input), batchId: input.batchId || input.operationId,
     before, note, status: 'success', createdAt: input.now
   }, ...state.operationLogs] }
@@ -411,9 +421,10 @@ export function getUserControlListMeta(state, userId) {
   }
 }
 
-export function getUnifiedControlCancelItems(rules = {}) {
+export function getUnifiedControlCancelItems(rules = {}, modules = undefined) {
   const effectiveRules = getEffectiveUserControlRules(rules)
-  return USER_CONTROL_UNIFIED_MODULES
+  const targetModules = normalizeUnifiedModules({ modules })
+  return targetModules
     .filter((module) => effectiveRules[module.key])
     .map((module) => ({
       moduleKey: module.key,

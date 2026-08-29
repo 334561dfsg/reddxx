@@ -97,10 +97,16 @@ const hasRequiredIntensity = (input = {}) => {
 }
 
 const normalizeDuration = (duration) => VALID_DURATIONS.has(duration) ? duration : DEFAULT_DURATION
+const normalizeModules = (modules) => {
+  if (!Array.isArray(modules)) return undefined
+  const values = [...new Set(modules.map((module) => text(module)).filter(Boolean))]
+  return values.length ? values : undefined
+}
 
 export function isUserControlFormComplete(input = {}) {
-  if (!text(input.userId) || !text(input.note) || !VALID_DURATIONS.has(normalizeDuration(input.duration))) return false
-  if (input.scope === 'global') return VALID_STRATEGIES.has(input.strategy) && isControlMethodForStrategy(input.strategy, input.method, input) && hasRequiredIntensity(input)
+  const noteRequired = input.noteRequired !== false
+  if (!text(input.userId) || (noteRequired && !text(input.note)) || !VALID_DURATIONS.has(normalizeDuration(input.duration))) return false
+  if (input.scope === 'global') return VALID_STRATEGIES.has(input.strategy) && isControlMethodForStrategy(input.strategy, input.method, input)
   if (input.scope !== 'module') return false
   return VALID_STRATEGIES.has(input.strategy)
     && isControlMethodForStrategy(input.strategy, input.method, input)
@@ -114,6 +120,7 @@ export function buildUserControlPayload(input = {}) {
     userId: text(input.userId),
     strategy: input.strategy,
     method: input.method,
+    ...(input.scope === 'global' && normalizeModules(input.modules) ? { modules: normalizeModules(input.modules) } : {}),
     ...(input.scope === 'module' ? { value: moduleValueForStrategy(input.strategy, input.family) } : {}),
     intensity: normalizeIntensity(input),
     duration: normalizeDuration(input.duration),

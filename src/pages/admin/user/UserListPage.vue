@@ -31,6 +31,7 @@ import {
   userControlState
 } from '../../../admin/state/userControlState.js'
 import {
+  getUserControlListMeta,
   getUnifiedControlCancelItems
 } from '../../../features/user-control/userControl.js'
 import { createDialogCloseAction, useDialogContentSnapshot, useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
@@ -201,27 +202,7 @@ const membershipMfaReturnFocus = ref(null)
 const lastMembershipUserId = ref('')
 const lastMembershipActionType = ref('')
 const cancelNote = ref('')
-const {
-  open: mfaOpen,
-  loading: mfaLoading,
-  error: mfaError,
-  errorAttempt: mfaErrorAttempt,
-  pendingAction: pendingMfaAction,
-  request: requestMfa,
-  openPending: openPendingMfa,
-  verify: verifyMfa,
-  cancel: cancelMfa
-} = useMfaActionFlow({
-  execute: async (action) => {
-    if (action?.type === 'apply') await applyControl(action.payload)
-    if (action?.type === 'cancel') {
-      const cancelItems = getUnifiedControlCancelItems(rulesOf(controlUser.value))
-      if (cancelItems.length) await cancelUnifiedUserControl(action.payload)
-      controlUser.value = null
-    }
-  },
-  onSuccess: () => { cancelNote.value = '' }
-})
+const USER_LIST_CONTROL_MODULE_KEYS = Object.freeze(['delivery'])
 const {
   open: membershipMfaOpen,
   loading: membershipMfaLoading,
@@ -297,9 +278,16 @@ const resolveControlReturnFocus = () => {
 }
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
 const hasRules = (user) => Object.values(rulesOf(user)).some((rule) => ['active', 'processing'].includes(rule.status))
+const controlMetaOf = (user) => getUserControlListMeta(userControlState.value, userIdOf(user))
+const controlTypeBadgeClass = (label) => ({
+  盈利: 'bg-orange-100 text-orange-700 ring-orange-200',
+  亏损: 'bg-emerald-100 text-emerald-700 ring-emerald-200',
+  存在模块差异: 'bg-amber-100 text-amber-700 ring-amber-200',
+  当前模块点控: 'bg-sky-100 text-sky-700 ring-sky-200'
+}[label] || 'bg-slate-100 text-slate-500 ring-slate-200')
 const isLocked = (user) => [USER_STATUS.SUSPENDED, USER_STATUS.BANNED].includes(user?.status)
 const isAgentUser = (user) => user?.role === USER_ROLE.AGENT
-const cancelControlItems = computed(() => getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}))
+const cancelControlItems = computed(() => getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}, USER_LIST_CONTROL_MODULE_KEYS))
 const {
   rendered: unifiedCancelRendered,
   phase: unifiedCancelPhase,
@@ -362,7 +350,7 @@ const openControlSetting = (user) => {
 
 const closeControlSetting = () => {
   controlModalOpen.value = false
-  if (!mfaOpen.value) controlUser.value = null
+  controlUser.value = null
 }
 
 const selectControlSetting = (user) => {
@@ -864,12 +852,6 @@ const applyControl = (payload) => {
 }
 
 const submitControlSetting = (payload) => {
-  const overwritesCurrentRules = controlUser.value && hasRules(controlUser.value)
-  controlModalOpen.value = false
-  if (payload.duration === 'permanent' || overwritesCurrentRules) {
-    requestMfa({ type: 'apply', payload })
-    return
-  }
   applyControl(payload)
 }
 
@@ -886,38 +868,21 @@ const confirmControlCancel = () => {
   if (unifiedCancelPhase.value !== 'open' || !controlUser.value || !cancelControlItems.value.length || !cancelNote.value.trim()) return
   const payload = {
     userId: userIdOf(controlUser.value),
+    modules: USER_LIST_CONTROL_MODULE_KEYS,
     note: cancelNote.value.trim(),
     now: formatTime(),
     operationId: `demo-global-cancel-${nextSequence()}`
   }
-  pendingMfaAction.value = { type: 'cancel', payload }
+  cancelUnifiedUserControl(payload)
   closeControlCancel()
 }
 
 const handleUnifiedCancelAfterLeave = async () => {
-  const shouldOpenMfa = pendingMfaAction.value?.type === 'cancel'
   if (!await onUnifiedCancelAfterLeave()) return
   cancelNote.value = ''
   clearUnifiedCancelSnapshot()
-  if (shouldOpenMfa) {
-    openPendingMfa()
-  } else {
-    controlUser.value = null
-  }
-}
-
-const handleMfaVerify = (code) => verifyMfa(code)
-
-const handleMfaCancel = () => {
-  if (!cancelMfa()) return
   controlUser.value = null
-  cancelNote.value = ''
 }
-
-const mfaTitle = computed(() => pendingMfaAction.value?.type === 'cancel' ? '取消用户点控安全验证' : '用户点控安全验证')
-const mfaDescription = computed(() => pendingMfaAction.value?.type === 'cancel'
-  ? '取消交易模块的生效规则属于敏感操作，请输入 MFA 验证码'
-  : '长期生效或覆盖用户点控属于敏感操作，请输入 MFA 验证码')
 
 const roleConfig = {
   [USER_ROLE.USER]: { text: '普通用户', class: 'bg-blue-100 text-blue-700' },
@@ -1022,7 +987,7 @@ const clearDetailDrawer = () => {
     <!-- 用户表格 -->
     <div v-else-if="!loading && users.length > 0" class="rounded-xl border border-slate-200 bg-white overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[1220px]">
+        <table class="w-full min-w-[1300px]">
           <thead class="bg-slate-50 border-b border-slate-200">
             <tr>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
@@ -1034,6 +999,7 @@ const clearDetailDrawer = () => {
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">裂变上级</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">是否点控中</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">控盘类型</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
             </tr>
           </thead>
@@ -1114,6 +1080,18 @@ const clearDetailDrawer = () => {
                 <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="hasRules(user) ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'">
                   {{ hasRules(user) ? '是' : '否' }}
                 </span>
+              </td>
+
+              <!-- 用户控盘类型 -->
+              <td class="px-4 py-3">
+                <span
+                  v-if="controlMetaOf(user).hasCurrent"
+                  class="inline-flex rounded-md px-2.5 py-1 text-xs font-semibold ring-1"
+                  :class="controlTypeBadgeClass(controlMetaOf(user).controlLabel)"
+                >
+                  {{ controlMetaOf(user).controlLabel }}
+                </span>
+                <span v-else class="text-xs text-slate-400">-</span>
               </td>
 
               <!-- 用户快捷操作 -->
@@ -1254,6 +1232,9 @@ const clearDetailDrawer = () => {
     <UserControlModal
       :open="controlModalOpen"
       scope="global"
+      :unified-module-keys="USER_LIST_CONTROL_MODULE_KEYS"
+      :show-help-panel="false"
+      :note-required="false"
       :user="controlUser"
       :existing-rules="controlUser ? rulesOf(controlUser) : {}"
       :return-focus="resolveControlReturnFocus"
@@ -1476,14 +1457,14 @@ const clearDetailDrawer = () => {
                   <span class="text-sm font-medium text-slate-800">取消点控备注 <span class="text-rose-500">*</span></span>
                   <textarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100" />
                   <span class="mt-1 block text-xs" :class="cancelNote.trim() ? 'text-slate-500' : 'text-rose-600'">
-                    {{ cancelNote.trim() ? '确认后还需完成 MFA 验证' : '取消点控备注必填' }}
+                    {{ cancelNote.trim() ? '确认后将直接取消点控' : '取消点控备注必填' }}
                   </span>
                 </label>
               </div>
               <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
                 <button ref="unifiedCancelReturnRef" type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeControlCancel">返回</button>
                 <button type="button" :disabled="unifiedCancelPhase !== 'open' || !cancelControlItems.length || !cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmControlCancel">
-                  继续 MFA 验证
+                  确认取消点控
                 </button>
               </footer>
             </section>
@@ -1491,18 +1472,6 @@ const clearDetailDrawer = () => {
         </div>
       </Transition>
     </Teleport>
-
-    <MfaVerificationModal
-      v-model:open="mfaOpen"
-      :loading="mfaLoading"
-      :title="mfaTitle"
-      :description="mfaDescription"
-      :error="mfaError"
-      :error-attempt="mfaErrorAttempt"
-      :return-focus="resolveControlReturnFocus"
-      @verify="handleMfaVerify"
-      @cancel="handleMfaCancel"
-    />
 
     <MfaVerificationModal
       v-model:open="fundsMfaOpen"

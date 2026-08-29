@@ -8,6 +8,10 @@ import {
   getModuleControlOptions,
   isUserControlFormComplete
 } from '../src/features/user-control/userControlForm.js'
+import {
+  applyUnifiedControl,
+  createUserControlState
+} from '../src/features/user-control/userControl.js'
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
 const openingTag = (source, testId) => source.match(new RegExp(`<[^>]+data-testid="${testId}"[^>]*>`))?.[0] || ''
@@ -38,11 +42,12 @@ test('form helper exposes customer control methods by control type', () => {
 
 test('form helper rejects incomplete values used by the disabled state', () => {
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'profit', duration: 'once', note: '   ' }), false)
+  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'profit', noteRequired: false, note: '   ' }), true)
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: '', method: 'profit', duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highLoss', duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'global', userId: '', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), false)
-  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 3, max: 8 } }, note: '审计备注' }), true)
-  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 3, max: 8 } }, duration: 'once', note: '审计备注' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'highProfit', note: '审计备注' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), true)
   assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'spot', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 3, max: 8 } }, duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'delivery', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 8, max: 3 } }, duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'module', moduleKey: 'delivery', family: 'trade', userId: '159', strategy: 'positive', method: 'highProfit', intensity: { trade: { min: 3, max: 8 } }, duration: 'once', note: '审计备注' }), true)
@@ -64,30 +69,52 @@ test('form helper trims notes and builds scope-specific payloads', () => {
   })
   assert.deepEqual(buildUserControlPayload({
     scope: 'global', userId: '158', strategy: 'positive', method: 'lowProfit',
-    intensity: { trade: { min: 3, max: 8 } }, note: '  用户点控备注  '
+    modules: ['delivery'], note: '  用户点控备注  '
   }), {
     userId: '158',
     strategy: 'positive',
     method: 'lowProfit',
-    intensity: {
-      trade: { mode: 'percentRange', min: 3, max: 8, unit: '%' }
-    },
+    modules: ['delivery'],
+    intensity: {},
     duration: 'permanent',
     note: '用户点控备注'
   })
 })
 
+test('global point-control payload can target only delivery without strength', () => {
+  const state = createUserControlState()
+  const next = applyUnifiedControl(state, {
+    userId: '158',
+    strategy: 'negative',
+    method: 'loss',
+    modules: ['delivery'],
+    duration: 'permanent',
+    note: '',
+    batchId: 'demo-global-0001',
+    now: '2026-08-29 12:00:00'
+  })
+
+  assert.deepEqual(Object.keys(next.rules['158']), ['delivery'])
+  assert.equal(next.rules['158'].delivery.value, 'loss')
+  assert.equal(next.rules['158'].delivery.intensity, undefined)
+  assert.deepEqual(next.operationLogs[0].modules, ['delivery'])
+})
+
 test('shared modal presents user-list control as trading-only while module finance wording remains available', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
+  const userListSource = read('../src/pages/admin/user/UserListPage.vue')
   const helperSource = read('../src/features/user-control/userControlForm.js')
   assert.match(source, /盈利/)
   assert.match(source, /亏损/)
   assert.match(source, /控盘类型/)
   assert.match(source, /控盘方式/)
-  assert.match(source, /控盘力度/)
-  assert.match(source, /控盘力度范围/)
+  assert.match(source, /v-if="intensityFields\.length"/)
+  assert.match(source, /if \(isGlobalScope\.value\) \{[\s\S]*return \[\]/)
+  assert.match(userListSource, /const USER_LIST_CONTROL_MODULE_KEYS = Object\.freeze\(\['delivery'\]\)/)
+  assert.match(userListSource, /:unified-module-keys="USER_LIST_CONTROL_MODULE_KEYS"/)
+  assert.match(userListSource, /:show-help-panel="false"/)
+  assert.match(userListSource, /:note-required="false"/)
   assert.doesNotMatch(source, /理财类控盘力度范围/)
-  assert.match(source, /按订单保证金或成交额/)
   assert.match(source, /按订单本金/)
   assert.match(source, /点控方式/)
   assert.match(helperSource, /做高盈利/)
@@ -106,7 +133,7 @@ test('shared modal presents user-list control as trading-only while module finan
   assert.match(source, /默认长期生效/)
   assert.doesNotMatch(source, /点控目标范围/)
   assert.doesNotMatch(source, /targetRanges/)
-  assert.match(source, /交易模块规则/)
+  assert.match(source, /globalModules = computed/)
   assert.doesNotMatch(source, /理财模块规则/)
   assert.match(source, /只对点控开始之后产生的订单生效；点控前订单和已完成历史订单不受影响。/)
   assert.match(source, /点控备注/)
@@ -115,7 +142,8 @@ test('shared modal presents user-list control as trading-only while module finan
 test('shared modal exposes note validation on blur while submit stays disabled', () => {
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
   assert.match(source, /@blur="noteTouched = true"/)
-  assert.match(source, /noteTouched && !form\.note\.trim\(\)/)
+  assert.match(source, /noteRequired && noteTouched && !form\.note\.trim\(\)/)
+  assert.match(source, /选填，最多 200 字/)
   assert.match(source, /:disabled="phase !== 'open' \|\| !isComplete"/)
 })
 
@@ -283,6 +311,11 @@ test('user list moves point-control actions into the complete operation drawer a
 
   assert.match(source, /是否点控中/)
   assert.match(source, /hasRules\(user\) \? '是' : '否'/)
+  assert.match(source, /控盘类型/)
+  assert.match(source, /getUserControlListMeta/)
+  assert.match(source, /controlMetaOf\(user\)\.controlLabel/)
+  assert.match(source, /盈利:\s*'bg-orange-100 text-orange-700 ring-orange-200'/)
+  assert.match(source, /亏损:\s*'bg-emerald-100 text-emerald-700 ring-emerald-200'/)
   assert.doesNotMatch(source, /<th[^>]*>\s*状态\s*<\/th>/)
   assert.doesNotMatch(source, /statusConfig\[user\.status\]/)
   assert.doesNotMatch(source, />用户点控</)
@@ -314,11 +347,13 @@ test('user list moves point-control actions into the complete operation drawer a
   assert.doesNotMatch(operationCatalog, /title: '取消点控'/)
   assert.match(operationCatalog, /title: '点控日志'/)
   assert.doesNotMatch(actionBar, /控制详情|设置控制|修改控制|取消控制|控制日志/)
-  assert.match(source, /MfaVerificationModal/)
   assert.match(source, /getUnifiedControlCancelItems/)
   assert.match(source, /v-for="item in cancelControlItems"/)
   assert.match(source, /当前没有可取消的模块/)
   assert.match(source, /:disabled="!cancelControlItems\.length"/)
+  assert.match(source, /确认后将直接取消点控/)
+  assert.match(source, /确认取消点控/)
+  assert.doesNotMatch(source, /继续 MFA 验证/)
   assert.doesNotMatch(source, /@mousedown\.self="closeControlCancel"/)
   assert.match(source, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
   assert.match(source, /data-testid="unified-user-control-cancel-body"[^>]*overflow-y-auto/)
@@ -327,13 +362,15 @@ test('user list moves point-control actions into the complete operation drawer a
   assert.doesNotMatch(productDocument, /互斥展示/)
 })
 
-test('MFA completion rechecks cancellation items before it writes a unified cancellation', () => {
+test('user point-control setting and cancellation no longer require MFA', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
 
-  assert.match(source, /useMfaActionFlow\(\{[\s\S]*?const cancelItems = getUnifiedControlCancelItems\(rulesOf\(controlUser\.value\)\)/)
-  assert.match(source, /if \(cancelItems\.length\) await cancelUnifiedUserControl\(action\.payload\)/)
-  assert.match(source, /cancelUnifiedUserControl\(action\.payload\)[\s\S]*?controlUser\.value = null/)
-  assert.match(source, /const handleMfaVerify = \(code\) => verifyMfa\(code\)/)
+  assert.match(source, /const submitControlSetting = \(payload\) => \{[\s\S]*?applyControl\(payload\)[\s\S]*?\}/)
+  assert.match(source, /const confirmControlCancel = \(\) => \{[\s\S]*?cancelUnifiedUserControl\(payload\)[\s\S]*?closeControlCancel\(\)[\s\S]*?\}/)
+  assert.doesNotMatch(source, /requestMfa\(\{ type: 'apply'/)
+  assert.doesNotMatch(source, /requestMfa\(\{ type: 'cancel'/)
+  assert.doesNotMatch(source, /pendingMfaAction\.value = \{ type: 'cancel'/)
+  assert.doesNotMatch(source, /const handleMfaVerify = \(code\) => verifyMfa\(code\)/)
 })
 
 test('user operation components expose their existing dialogs to an external unified menu', () => {
@@ -473,7 +510,8 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
   const helperSource = read('../src/features/user-control/userControlForm.js')
   const frame = openingTag(source, 'user-control-dialog-frame')
-  assert.match(source, /max-w-\[1080px\]/)
+  assert.match(source, /:class="shouldShowHelpPanel \? 'max-w-\[1080px\]' : 'max-w-\[720px\]'"/)
+  assert.doesNotMatch(frame.match(/class="([^"]*)"/)?.[1] || '', /max-w-\[1080px\]/)
   assert.match(source, /<Teleport to="body">/)
   assert.match(source, /fixed inset-0/)
   assert.doesNotMatch(source, /@mousedown\.self|@click\.self/)
@@ -484,14 +522,15 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   assert.match(source, /data-testid="user-control-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto[^>]*lg:flex-none[^>]*lg:overflow-hidden/)
   assert.match(source, /px-5 py-3/)
   assert.match(source, /rows="2"/)
-  assert.match(source, /grid items-start gap-4 lg:grid-cols-\[minmax\(0,1fr\)_400px\]/)
+  assert.match(source, /class="grid items-start gap-4"[\s\S]*:class="shouldShowHelpPanel \? 'lg:grid-cols-\[minmax\(0,1fr\)_400px\]' : ''"/)
   assert.match(source, /<div ref="leftPanelRef" class="min-w-0 space-y-2\.5">[\s\S]*id-base="user-control-strategy"/)
+  assert.match(source, /v-if="shouldShowHelpPanel"[\s\S]*data-testid="user-control-help-panel"/)
   assert.match(source, /data-testid="user-control-help-panel"[^>]*overflow-y-auto/)
   assert.match(source, /:style="\{ maxHeight: helpPanelMaxHeight \|\| undefined \}"/)
   assert.match(source, /getBoundingClientRect\?\.\(\)\.height/)
   assert.match(source, /matchMedia\('\(min-width: 1024px\)'\)/)
   assert.match(source, /displayedModuleRules = computed/)
-  assert.match(source, /isGlobalScope\.value[\s\S]*\? USER_CONTROL_UNIFIED_MODULES[\s\S]*: moduleMeta\.value \? \[moduleMeta\.value\]/)
+  assert.match(source, /isGlobalScope\.value[\s\S]*\? globalModules\.value[\s\S]*: moduleMeta\.value \? \[moduleMeta\.value\]/)
   assert.match(source, /:hint="selectedControlType\?\.description \|\| '请选择盈利或亏损'"[\s\S]*id-base="user-control-strategy"/)
   assert.match(source, /controlMethodContext = computed/)
   assert.match(source, /controlMethodOptions = computed\(\(\) => getControlMethodOptions\(form\.strategy, controlMethodContext\.value\)\)/)
@@ -573,8 +612,8 @@ test('user management preserves an MFA failure for the open modal to announce', 
   const flow = read('../src/admin/composables/useMfaActionFlow.js')
 
   assert.match(source, /useMfaActionFlow/)
-  assert.match(source, /:error="mfaError"/)
-  assert.match(source, /:error-attempt="mfaErrorAttempt"/)
+  assert.match(source, /:error="fundsMfaError"/)
+  assert.match(source, /:error-attempt="fundsMfaErrorAttempt"/)
   assert.match(flow, /catch \(failure\) \{[\s\S]*?error\.value =/)
   assert.match(flow, /errorAttempt\.value \+= 1/)
 })
@@ -677,16 +716,16 @@ test('ordinary point-control dialogs keep a safe close button in the fixed heade
   assert.match(mfaSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*:disabled="displayedDialog\.loading \|\| displayedDialog\.verifyRequested"[^>]*@click="close"/)
 })
 
-test('unified cancellation waits for leave before it opens MFA', () => {
+test('unified cancellation keeps the leaving dialog mounted before clearing user state', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
   const confirm = source.slice(
     source.indexOf('const confirmControlCancel = () => {'),
-    source.indexOf('const handleMfaVerify =')
+    source.indexOf('const roleConfig =')
   )
 
-  assert.match(confirm, /pendingMfaAction\.value = \{ type: 'cancel', payload \}/)
-  assert.doesNotMatch(confirm, /requestMfa\(\{ type: 'cancel', payload \}\)/)
-  assert.match(confirm, /const handleUnifiedCancelAfterLeave = async \(\) => \{[\s\S]*?await onUnifiedCancelAfterLeave\(\)[\s\S]*?openPendingMfa\(\)/)
+  assert.match(confirm, /cancelUnifiedUserControl\(payload\)[\s\S]*?closeControlCancel\(\)/)
+  assert.match(confirm, /const handleUnifiedCancelAfterLeave = async \(\) => \{[\s\S]*?await onUnifiedCancelAfterLeave\(\)[\s\S]*?controlUser\.value = null/)
+  assert.doesNotMatch(confirm, /openPendingMfa\(\)/)
 })
 
 test('user list exposes wallet address search as a distinct applied query field', () => {

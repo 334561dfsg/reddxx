@@ -24,6 +24,9 @@ const props = defineProps({
     validator: (value) => ['global', 'module'].includes(value)
   },
   moduleKey: { type: String, default: '' },
+  unifiedModuleKeys: { type: Array, default: () => [] },
+  showHelpPanel: { type: Boolean, default: true },
+  noteRequired: { type: Boolean, default: true },
   user: { type: Object, default: null },
   existingRules: { type: Object, default: () => ({}) },
   returnFocus: { type: [Object, Function], default: null }
@@ -96,13 +99,18 @@ const noteTouched = ref(false)
 const DEFAULT_CONTROL_STRATEGY = 'negative'
 
 const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key === displayModuleKey.value) || null)
+const globalModules = computed(() => {
+  const requestedKeys = new Set(props.unifiedModuleKeys.map((key) => String(key || '')).filter(Boolean))
+  const modules = USER_CONTROL_UNIFIED_MODULES.filter((module) => !requestedKeys.size || requestedKeys.has(module.key))
+  return modules.length ? modules : USER_CONTROL_UNIFIED_MODULES
+})
 const selectedUserId = computed(() => String(displayUser.value?.userId ?? displayUser.value?.id ?? ''))
 const selectedUserName = computed(() => displayUser.value?.username || displayUser.value?.name || '未选择用户')
 const selectedUserEmail = computed(() => displayUser.value?.email || '邮箱未提供')
 const activeExistingRules = computed(() => Object.entries(displayedDialogData.value.existingRules || {})
   .filter(([key, rule]) => {
     if (!['active', 'processing'].includes(rule?.status)) return false
-    return !isGlobalScope.value || USER_CONTROL_UNIFIED_MODULES.some((module) => module.key === (rule?.moduleKey || key))
+    return !isGlobalScope.value || globalModules.value.some((module) => module.key === (rule?.moduleKey || key))
   })
   .map(([key, rule]) => {
     const module = USER_CONTROL_MODULES.find((item) => item.key === (rule?.moduleKey || key))
@@ -122,20 +130,10 @@ const controlMethodContext = computed(() => ({
 const controlMethodOptions = computed(() => getControlMethodOptions(form.strategy, controlMethodContext.value))
 const selectedControlType = computed(() => controlTypeOptions.value.find((option) => option.value === form.strategy) || null)
 const selectedControlMethod = computed(() => controlMethodOptions.value.find((option) => option.value === form.method) || null)
+const shouldShowHelpPanel = computed(() => props.showHelpPanel)
 const intensityFields = computed(() => {
   if (isGlobalScope.value) {
-    return [
-      {
-        key: 'trade',
-        minModel: 'tradeIntensityMin',
-        maxModel: 'tradeIntensityMax',
-        label: '控盘力度范围',
-        modules: '永续、交割、现货',
-        hint: form.strategy === 'negative'
-          ? '按订单保证金或成交额在范围内生成目标亏损比例'
-          : '按订单保证金或成交额在范围内生成目标盈利比例'
-      }
-    ]
+    return []
   }
   const family = moduleMeta.value?.family
   if (family === 'trade') {
@@ -166,7 +164,7 @@ const intensityFields = computed(() => {
 })
 
 const affectedModules = computed(() => isGlobalScope.value
-  ? USER_CONTROL_UNIFIED_MODULES
+  ? globalModules.value
   : moduleMeta.value ? [moduleMeta.value] : [])
 
 const effectiveOrderNotice = '只对点控开始之后产生的订单生效；点控前订单和已完成历史订单不受影响。'
@@ -237,11 +235,11 @@ const fallbackModuleRule = Object.freeze({
 })
 
 const ruleModules = computed(() => isGlobalScope.value
-  ? USER_CONTROL_UNIFIED_MODULES
+  ? globalModules.value
   : moduleMeta.value ? [moduleMeta.value] : [])
 
 const displayedModuleRules = computed(() => {
-  if (isGlobalScope.value) return globalRuleCatalog
+  if (isGlobalScope.value && ruleModules.value.length === USER_CONTROL_UNIFIED_MODULES.length) return globalRuleCatalog
   return ruleModules.value.map((module) => ({
     key: module.key,
     label: module.label,
@@ -252,6 +250,7 @@ const displayedModuleRules = computed(() => {
 const formInput = computed(() => ({
   scope: displayScope.value,
   moduleKey: displayModuleKey.value,
+  modules: isGlobalScope.value ? globalModules.value.map((module) => module.key) : undefined,
   family: moduleMeta.value?.family,
   userId: selectedUserId.value,
   strategy: form.strategy,
@@ -261,6 +260,7 @@ const formInput = computed(() => ({
     finance: { mode: 'percentRange', min: form.financeIntensityMin, max: form.financeIntensityMax, unit: '%' }
   },
   duration: form.duration,
+  noteRequired: props.noteRequired,
   note: form.note
 }))
 
@@ -398,7 +398,8 @@ const submit = () => {
             v-show="phase !== 'closing'"
             ref="dialogRef"
             data-testid="user-control-dialog-frame"
-            class="flex max-h-[calc(100vh-1.5rem)] w-full max-w-[1080px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-1.5rem)]"
+            class="flex max-h-[calc(100vh-1.5rem)] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-1.5rem)]"
+            :class="shouldShowHelpPanel ? 'max-w-[1080px]' : 'max-w-[720px]'"
             role="dialog"
             aria-modal="true"
             aria-labelledby="user-control-dialog-title"
@@ -425,7 +426,10 @@ const submit = () => {
         </header>
 
         <div data-testid="user-control-dialog-body" class="min-h-0 flex-1 overflow-y-auto px-5 py-3 lg:flex-none lg:overflow-hidden">
-          <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
+          <div
+            class="grid items-start gap-4"
+            :class="shouldShowHelpPanel ? 'lg:grid-cols-[minmax(0,1fr)_400px]' : ''"
+          >
             <div ref="leftPanelRef" class="min-w-0 space-y-2.5">
                   <section
                     data-testid="user-control-current-status"
@@ -491,7 +495,7 @@ const submit = () => {
                     id-base="user-control-method"
                   />
 
-                  <section class="rounded-lg border border-slate-200 bg-slate-50 p-3" aria-labelledby="user-control-intensity-title">
+                  <section v-if="intensityFields.length" class="rounded-lg border border-slate-200 bg-slate-50 p-3" aria-labelledby="user-control-intensity-title">
                     <div class="flex items-start justify-between gap-3">
                       <div class="min-w-0">
                         <h3 id="user-control-intensity-title" class="text-sm font-semibold text-slate-900">
@@ -561,21 +565,21 @@ const submit = () => {
               </div>
 
               <label class="block">
-                <span class="text-sm font-semibold text-slate-900">点控备注 <span class="text-rose-500">*</span></span>
+                <span class="text-sm font-semibold text-slate-900">点控备注 <span v-if="noteRequired" class="text-rose-500">*</span></span>
                 <textarea
                   v-model="form.note"
                   rows="2"
                   maxlength="200"
                   placeholder="请填写点控原因，便于后续审计"
                   class="mt-1.5 w-full rounded-lg border px-3 py-1.5 text-sm outline-none focus:ring-2"
-                  :class="noteTouched && !form.note.trim() ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100'"
-                  :aria-invalid="noteTouched && !form.note.trim()"
+                  :class="noteRequired && noteTouched && !form.note.trim() ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-blue-500 focus:ring-blue-100'"
+                  :aria-invalid="noteRequired && noteTouched && !form.note.trim()"
                   aria-describedby="user-control-note-help"
                   @blur="noteTouched = true"
                 />
                 <span id="user-control-note-help" class="mt-1 flex justify-between text-xs">
-                  <span :class="noteTouched && !form.note.trim() ? 'text-rose-600' : 'text-slate-500'">
-                    {{ noteTouched && !form.note.trim() ? '请填写点控备注后再确认' : '必填，最多 200 字' }}
+                  <span :class="noteRequired && noteTouched && !form.note.trim() ? 'text-rose-600' : 'text-slate-500'">
+                    {{ noteRequired && noteTouched && !form.note.trim() ? '请填写点控备注后再确认' : noteRequired ? '必填，最多 200 字' : '选填，最多 200 字' }}
                   </span>
                   <span class="text-slate-400">{{ form.note.length }}/200</span>
                 </span>
@@ -583,6 +587,7 @@ const submit = () => {
             </div>
 
             <aside
+              v-if="shouldShowHelpPanel"
               data-testid="user-control-help-panel"
               class="min-w-0 space-y-2 overflow-y-auto pr-1"
               :style="{ maxHeight: helpPanelMaxHeight || undefined }"
