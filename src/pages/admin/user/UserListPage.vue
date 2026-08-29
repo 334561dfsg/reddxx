@@ -851,6 +851,21 @@ const applyControl = (payload) => {
 }
 
 const submitControlSetting = (payload) => {
+  if (payload.strategy === 'normal') {
+    const cancelItems = getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}, USER_LIST_CONTROL_MODULE_KEYS)
+    if (controlUser.value && cancelItems.length) {
+      cancelUnifiedUserControl({
+        userId: userIdOf(controlUser.value),
+        modules: USER_LIST_CONTROL_MODULE_KEYS,
+        note: payload.note || '恢复正常',
+        now: formatTime(),
+        operationId: `demo-global-cancel-${nextSequence()}`
+      })
+    }
+    controlModalOpen.value = false
+    controlUser.value = null
+    return
+  }
   applyControl(payload)
 }
 
@@ -1224,6 +1239,7 @@ const clearDetailDrawer = () => {
       :open="controlModalOpen"
       scope="global"
       :unified-module-keys="USER_LIST_CONTROL_MODULE_KEYS"
+      simplified-global-control-types
       :show-help-panel="false"
       :note-required="false"
       :user="controlUser"

@@ -43,6 +43,7 @@ test('form helper exposes customer control methods by control type', () => {
 test('form helper rejects incomplete values used by the disabled state', () => {
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'profit', duration: 'once', note: '   ' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'positive', method: 'profit', noteRequired: false, note: '   ' }), true)
+  assert.equal(isUserControlFormComplete({ scope: 'global', userId: '158', strategy: 'normal', noteRequired: false, note: '   ' }), true)
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: '', method: 'profit', duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'module', family: 'trade', userId: '159', strategy: 'positive', method: 'highLoss', duration: 'once', note: '审计备注' }), false)
   assert.equal(isUserControlFormComplete({ scope: 'global', userId: '', strategy: 'positive', method: 'highProfit', duration: 'once', note: '审计备注' }), false)
@@ -79,6 +80,18 @@ test('form helper trims notes and builds scope-specific payloads', () => {
     duration: 'permanent',
     note: '用户点控备注'
   })
+  assert.deepEqual(buildUserControlPayload({
+    scope: 'global', userId: '158', strategy: 'normal', method: '',
+    modules: ['delivery'], noteRequired: false, note: '  '
+  }), {
+    userId: '158',
+    strategy: 'normal',
+    method: '',
+    modules: ['delivery'],
+    intensity: {},
+    duration: 'permanent',
+    note: ''
+  })
 })
 
 test('global point-control payload can target only delivery without strength', () => {
@@ -106,12 +119,17 @@ test('shared modal presents user-list control as trading-only while module finan
   const helperSource = read('../src/features/user-control/userControlForm.js')
   assert.match(source, /盈利/)
   assert.match(source, /亏损/)
+  assert.match(source, /永久盈利/)
+  assert.match(source, /永久亏损/)
+  assert.match(source, /正常/)
   assert.match(source, /控盘类型/)
   assert.match(source, /控盘方式/)
+  assert.match(source, /v-if="!isSimplifiedGlobalControl"[\s\S]*label="控盘方式"/)
   assert.match(source, /v-if="intensityFields\.length"/)
   assert.match(source, /if \(isGlobalScope\.value\) \{[\s\S]*return \[\]/)
   assert.match(userListSource, /const USER_LIST_CONTROL_MODULE_KEYS = Object\.freeze\(\['delivery'\]\)/)
   assert.match(userListSource, /:unified-module-keys="USER_LIST_CONTROL_MODULE_KEYS"/)
+  assert.match(userListSource, /simplified-global-control-types/)
   assert.match(userListSource, /:show-help-panel="false"/)
   assert.match(userListSource, /:note-required="false"/)
   assert.doesNotMatch(source, /理财类控盘力度范围/)
@@ -134,6 +152,7 @@ test('shared modal presents user-list control as trading-only while module finan
   assert.doesNotMatch(source, /点控目标范围/)
   assert.doesNotMatch(source, /targetRanges/)
   assert.match(source, /globalModules = computed/)
+  assert.match(source, /v-if="!isSimplifiedGlobalControl"[\s\S]*影响模块/)
   assert.doesNotMatch(source, /理财模块规则/)
   assert.match(source, /只对点控开始之后产生的订单生效；点控前订单和已完成历史订单不受影响。/)
   assert.match(source, /点控备注/)
@@ -365,6 +384,7 @@ test('user list moves point-control actions into the complete operation drawer a
 test('user point-control setting and cancellation no longer require MFA', () => {
   const source = read('../src/pages/admin/user/UserListPage.vue')
 
+  assert.match(source, /if \(payload\.strategy === 'normal'\) \{[\s\S]*?cancelUnifiedUserControl\(\{[\s\S]*?note: payload\.note \|\| '恢复正常'/)
   assert.match(source, /const submitControlSetting = \(payload\) => \{[\s\S]*?applyControl\(payload\)[\s\S]*?\}/)
   assert.match(source, /const confirmControlCancel = \(\) => \{[\s\S]*?cancelUnifiedUserControl\(payload\)[\s\S]*?closeControlCancel\(\)[\s\S]*?\}/)
   assert.doesNotMatch(source, /requestMfa\(\{ type: 'apply'/)
@@ -531,9 +551,9 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   assert.match(source, /matchMedia\('\(min-width: 1024px\)'\)/)
   assert.match(source, /displayedModuleRules = computed/)
   assert.match(source, /isGlobalScope\.value[\s\S]*\? globalModules\.value[\s\S]*: moduleMeta\.value \? \[moduleMeta\.value\]/)
-  assert.match(source, /:hint="selectedControlType\?\.description \|\| '请选择盈利或亏损'"[\s\S]*id-base="user-control-strategy"/)
+  assert.match(source, /:hint="selectedControlType\?\.description \|\| '请选择点控类型'"[\s\S]*id-base="user-control-strategy"/)
   assert.match(source, /controlMethodContext = computed/)
-  assert.match(source, /controlMethodOptions = computed\(\(\) => getControlMethodOptions\(form\.strategy, controlMethodContext\.value\)\)/)
+  assert.match(source, /controlMethodOptions = computed\(\(\) => form\.strategy === 'normal' \? \[\] : getControlMethodOptions\(form\.strategy, controlMethodContext\.value\)\)/)
   assert.doesNotMatch(source, /v-if="showControlMethodSelect"/)
   assert.match(source, /label="控盘方式"/)
   assert.match(source, /id-base="user-control-method"/)

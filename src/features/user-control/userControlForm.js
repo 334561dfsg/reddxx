@@ -30,7 +30,7 @@ const CONTROL_METHOD_OPTIONS = Object.freeze({
 const ADVANCED_CONTROL_METHODS = new Set(['highProfit', 'lowProfit', 'highLoss', 'lowLoss'])
 const ADVANCED_CONTROL_MODULES = new Set(['delivery', 'perpetual'])
 const GLOBAL_ADVANCED_METHOD_NOTE = '仅针对交割合约、永续合约生效，现货按默认方式处理'
-const VALID_STRATEGIES = new Set(['positive', 'negative'])
+const VALID_STRATEGIES = new Set(['positive', 'negative', 'normal'])
 const VALID_DURATIONS = new Set(['once', 'permanent'])
 const DEFAULT_DURATION = 'permanent'
 const text = (value) => String(value ?? '').trim()
@@ -106,6 +106,7 @@ const normalizeModules = (modules) => {
 export function isUserControlFormComplete(input = {}) {
   const noteRequired = input.noteRequired !== false
   if (!text(input.userId) || (noteRequired && !text(input.note)) || !VALID_DURATIONS.has(normalizeDuration(input.duration))) return false
+  if (input.scope === 'global' && input.strategy === 'normal') return true
   if (input.scope === 'global') return VALID_STRATEGIES.has(input.strategy) && isControlMethodForStrategy(input.strategy, input.method, input)
   if (input.scope !== 'module') return false
   return VALID_STRATEGIES.has(input.strategy)

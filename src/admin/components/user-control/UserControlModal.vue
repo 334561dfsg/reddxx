@@ -25,6 +25,7 @@ const props = defineProps({
   },
   moduleKey: { type: String, default: '' },
   unifiedModuleKeys: { type: Array, default: () => [] },
+  simplifiedGlobalControlTypes: { type: Boolean, default: false },
   showHelpPanel: { type: Boolean, default: true },
   noteRequired: { type: Boolean, default: true },
   user: { type: Object, default: null },
@@ -97,6 +98,11 @@ const form = reactive({
 })
 const noteTouched = ref(false)
 const DEFAULT_CONTROL_STRATEGY = 'negative'
+const SIMPLE_GLOBAL_CONTROL_TYPE_OPTIONS = Object.freeze([
+  Object.freeze({ value: 'negative', label: '永久亏损', description: '长期按亏损方向处理该用户点控' }),
+  Object.freeze({ value: 'positive', label: '永久盈利', description: '长期按盈利方向处理该用户点控' }),
+  Object.freeze({ value: 'normal', label: '正常', description: '恢复为正常结算，不再对该用户执行点控' })
+])
 
 const moduleMeta = computed(() => USER_CONTROL_MODULES.find((item) => item.key === displayModuleKey.value) || null)
 const globalModules = computed(() => {
@@ -122,12 +128,13 @@ const activeExistingRules = computed(() => Object.entries(displayedDialogData.va
   }))
 const hasActiveExistingRules = computed(() => activeExistingRules.value.length > 0)
 
-const controlTypeOptions = computed(() => getControlTypeOptions())
+const isSimplifiedGlobalControl = computed(() => props.simplifiedGlobalControlTypes && isGlobalScope.value)
+const controlTypeOptions = computed(() => isSimplifiedGlobalControl.value ? SIMPLE_GLOBAL_CONTROL_TYPE_OPTIONS : getControlTypeOptions())
 const controlMethodContext = computed(() => ({
   scope: displayScope.value,
   moduleKey: displayModuleKey.value
 }))
-const controlMethodOptions = computed(() => getControlMethodOptions(form.strategy, controlMethodContext.value))
+const controlMethodOptions = computed(() => form.strategy === 'normal' ? [] : getControlMethodOptions(form.strategy, controlMethodContext.value))
 const selectedControlType = computed(() => controlTypeOptions.value.find((option) => option.value === form.strategy) || null)
 const selectedControlMethod = computed(() => controlMethodOptions.value.find((option) => option.value === form.method) || null)
 const shouldShowHelpPanel = computed(() => props.showHelpPanel)
@@ -254,7 +261,7 @@ const formInput = computed(() => ({
   family: moduleMeta.value?.family,
   userId: selectedUserId.value,
   strategy: form.strategy,
-  method: form.method,
+  method: form.strategy === 'normal' ? '' : form.method,
   intensity: {
     trade: { mode: 'percentRange', min: form.tradeIntensityMin, max: form.tradeIntensityMax, unit: '%' },
     finance: { mode: 'percentRange', min: form.financeIntensityMin, max: form.financeIntensityMax, unit: '%' }
@@ -319,12 +326,16 @@ const observeLeftPanelHeight = () => {
 watch(
   () => form.strategy,
   (strategy) => {
+    if (strategy === 'normal') {
+      form.method = ''
+      return
+    }
     if (!isControlMethodForStrategy(strategy, form.method, controlMethodContext.value)) form.method = defaultControlMethod(strategy, controlMethodContext.value)
   }
 )
 
 watch(controlMethodOptions, (options) => {
-  if (!options.some((option) => option.value === form.method)) {
+  if (form.strategy !== 'normal' && !options.some((option) => option.value === form.method)) {
     form.method = defaultControlMethod(form.strategy, controlMethodContext.value)
   }
 })
@@ -482,11 +493,12 @@ const submit = () => {
                     :options="controlTypeOptions"
                     label="控盘类型"
                     required
-                    :hint="selectedControlType?.description || '请选择盈利或亏损'"
+                    :hint="selectedControlType?.description || '请选择点控类型'"
                     id-base="user-control-strategy"
                   />
 
                   <SelectOnlyCombobox
+                    v-if="!isSimplifiedGlobalControl"
                     v-model="form.method"
                     :options="controlMethodOptions"
                     label="控盘方式"
@@ -555,7 +567,7 @@ const submit = () => {
                     </div>
                   </section>
 
-              <div>
+              <div v-if="!isSimplifiedGlobalControl">
                 <p class="text-sm font-semibold text-slate-900">影响模块</p>
                 <div class="mt-1 flex flex-wrap gap-1.5">
                   <span v-for="item in affectedModules" :key="item.key" class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
