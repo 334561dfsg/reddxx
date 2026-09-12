@@ -28,13 +28,13 @@ test('restore removes only named pairs; public fallback never overrides invalid 
   apply(r, [{ coin: a.coin, network: a.network }], ['1'], 'restore')
   assert.equal(r.resolve('1', a.coin, a.network).source, 'public')
   assert.equal(r.resolve('1', b.coin, b.network).source, 'dedicated')
-  const invalid = setup({ initialRows: [{ userId: '1', ...a, address: 'broken' }], resolvePublic: () => a })
+  const invalid = setup({ initialRows: [{ userId: '1', ...a, address: '   ' }], resolvePublic: () => a })
   assert.throws(() => invalid.resolve('1', a.coin, a.network), /失效/)
 })
 
-test('rejects unsupported combinations, duplicates, empty sets and invalid addresses before any write', () => {
+test('rejects unsupported combinations, duplicates, empty sets and empty addresses before any write', () => {
   const r = setup()
-  for (const entries of [[{ ...a, coin: 'BTC' }], [a, a], [{ ...a, address: 'wrong' }], []]) {
+  for (const entries of [[{ ...a, coin: 'BTC' }], [a, a], [{ ...a, address: '   ' }], []]) {
     assert.throws(() => r.preview({ userIds: ['1'], entries, mode: 'fill' }))
   }
   assert.throws(() => r.preview({ userIds: [], entries: [a], mode: 'fill' }))

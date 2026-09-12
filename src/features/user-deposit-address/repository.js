@@ -1,4 +1,4 @@
-// This is the console's in-memory demo repository. Production must validate addresses,
+// This is the console's in-memory demo repository. Production must validate required fields,
 // authorization and request identity on the server in the same transaction as the write.
 export const DEPOSIT_NETWORKS_BY_COIN = Object.freeze({
   USDT: Object.freeze(['TRC20', 'ERC20', 'BSC']),
@@ -18,12 +18,7 @@ export function validateDepositEntry(entry, restore = false) {
   if (restore) return ''
   const address = String(entry.address || '').trim()
   if (!address) return '请填写收款地址'
-  const valid = entry.network === 'TRC20'
-    ? /^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(address)
-    : entry.network === 'Bitcoin'
-      ? /^(?:[13][1-9A-HJ-NP-Za-km-z]{25,34}|bc1[ac-hj-np-z02-9]{11,71})$/.test(address)
-      : /^0x[0-9a-fA-F]{40}$/.test(address)
-  return valid ? '' : '地址格式与所选网络不匹配'
+  return ''
 }
 
 export function createUserDepositAddressRepository({ initialRows = [], userExists = () => true, resolvePublic = () => null, appendAudit = () => {} } = {}) {

@@ -16,7 +16,7 @@ test('confirm opens Google verification without writing; invalid verification ke
   const input = harness.allNodes().find(node => node.getAttribute?.('aria-label') === 'USDT ERC20 公共收款地址')
   assert.equal(input.value, original)
   assert.ok(input.getAttribute('class').includes('address-input--order'))
-  input.value = '0x' + '8'.repeat(40)
+  input.value = 'custom-deposit-address'
   input.dispatchEvent({ type: 'input', target: input })
   await harness.flush()
   assert.ok(input.getAttribute('class').includes('address-input--changed'))
@@ -38,7 +38,7 @@ test('confirm opens Google verification without writing; invalid verification ke
   await harness.flush()
   harness.findByText('验证并继续', 'button').click()
   await harness.flush(); await harness.finishTransitions()
-  assert.equal(publicDepositAddressRepository.resolve('USDT', 'ERC20').address, '0x' + '8'.repeat(40))
+  assert.equal(publicDepositAddressRepository.resolve('USDT', 'ERC20').address, 'custom-deposit-address')
   assert.equal(userDepositAddressRepository.resolve('user_1001', 'USDT', 'ERC20').address, original)
   assert.ok(harness.findByText('修改成功', 'h3'))
 })

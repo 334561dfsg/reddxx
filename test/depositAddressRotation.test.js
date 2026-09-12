@@ -27,11 +27,11 @@ test('verification precedes writes; changed public address is pinned to the user
   await rotation.confirm(plan, '123456')
   assert.equal(publicRepo.listLogs('p1').length, logCount)
 })
-test('no edits, invalid address and stale public snapshot never write', async () => {
+test('no edits, empty address and stale public snapshot never write', async () => {
   const { rotation, publicRepo, userRepo } = setup()
   const session = rotation.open('u1')
   assert.throws(() => rotation.prepare(session, [{ id: old.id, address: old.address }]), /未修改/)
-  assert.throws(() => rotation.prepare(session, [{ id: old.id, address: 'bad' }]), /格式/)
+  assert.throws(() => rotation.prepare(session, [{ id: old.id, address: '   ' }]), /填写/)
   const plan = rotation.prepare(session, [{ id: old.id, address: next }])
   publicRepo.save({ ...old, address: '0x' + '3'.repeat(40) })
   await assert.rejects(rotation.confirm(plan, '123456'), /变化/)
@@ -91,4 +91,16 @@ test('multiple changed networks commit together; later failure rolls back audit 
   assert.equal(publicRepo.resolve('USDC', 'ERC20').address, next)
   assert.equal(publicRepo.resolve('ETH', 'Ethereum').address, untouched.address)
   assert.equal(userRepo.list('u1').some(row => row.coin === 'ETH'), false)
+})
+
+
+test('accepts nonstandard address text through repeated rotations and dedicated resolution', async () => {
+  const { rotation, publicRepo, userRepo } = setup()
+  const session = rotation.open('u1')
+  await rotation.confirm(rotation.prepare(session, [{ id: old.id, address: '  custom-address  ' }]), '123456')
+  assert.equal(publicRepo.resolve('USDT', 'ERC20').address, 'custom-address')
+  const nextSession = rotation.open('u1')
+  await rotation.confirm(rotation.prepare(nextSession, nextSession.addresses.map(row => ({ ...row, address: 'next-address' }))), '123456')
+  assert.equal(userRepo.resolve('u1', 'USDT', 'ERC20').address, 'custom-address')
+  assert.equal(publicRepo.resolve('USDT', 'ERC20').address, 'next-address')
 })
