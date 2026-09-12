@@ -1,17 +1,15 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
+import { publicDepositAddressRepository } from '../../../admin/repositories/publicDepositAddressRepository.js'
 import PanelSingleSelect from '../../../admin/components/form/PanelSingleSelect.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import { useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
 import {
   PUBLIC_DEPOSIT_COINS,
   PUBLIC_DEPOSIT_NETWORKS,
-  createPublicDepositAddressRepository,
-  publicDepositAddressLogMock,
-  publicDepositAddressMock
 } from '../../../admin/mock/publicDepositAddress'
 
-const repository = createPublicDepositAddressRepository(publicDepositAddressMock, publicDepositAddressLogMock)
+const repository = publicDepositAddressRepository
 const rows = ref(repository.list())
 const keyword = ref('')
 const networkFilter = ref('all')

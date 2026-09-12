@@ -214,6 +214,22 @@ const seedAuditLogs = () => {
   sequence = 0
   const seedRows = [
     {
+      id: 'UAUD-SEED-DEPOSIT-SET', occurredAt: '2026-07-24T08:00:00.000Z',
+      targetUser: { uid: 'user_1001', name: 'agent_wang' }, source: 'admin',
+      operator: { id: 'admin_current', name: '当前管理员' }, category: 'funds',
+      action: 'funds.deposit-address.set', result: 'success', reason: '设置专属收款地址（演示记录）',
+      before: {}, after: { coin: 'USDT', network: 'ERC20', address: '0x1111111111111111111111111111111111111111' },
+      related: { requestId: 'UDA-SEED-SET' }
+    },
+    {
+      id: 'UAUD-SEED-DEPOSIT-RESTORE', occurredAt: '2026-07-24T08:10:00.000Z',
+      targetUser: { uid: 'user_1001', name: 'agent_wang' }, source: 'admin',
+      operator: { id: 'admin_current', name: '当前管理员' }, category: 'funds',
+      action: 'funds.deposit-address.restore', result: 'success', reason: '恢复公共地址（演示记录）',
+      before: { coin: 'USDT', network: 'ERC20', address: '0x1111111111111111111111111111111111111111' }, after: {},
+      related: { requestId: 'UDA-SEED-RESTORE' }
+    },
+    {
       id: 'UAUD-SEED-046',
       occurredAt: '2026-07-28T00:05:00.000Z',
       targetUser: { uid: 'user_1004', name: 'user_chen', email: 'chen@example.com', phone: '8613910001004' },
@@ -867,4 +883,16 @@ export const resetUserAuditLogsForTests = ({ seed = false } = {}) => {
   mutableAuditLogs.splice(0)
   sequence = 0
   if (seed) seedAuditLogs()
+}
+
+// Keep user audit records atomic with address rotation in the in-memory demo.
+export function withUserAuditTransaction(work) {
+  const count = mutableAuditLogs.length
+  const previousSequence = sequence
+  try { return work() }
+  catch (error) {
+    mutableAuditLogs.splice(count)
+    sequence = previousSequence
+    throw error
+  }
 }

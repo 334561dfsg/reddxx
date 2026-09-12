@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../constants/user'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import { userDepositAddressRepository, userDepositAddressVersion } from '../../repositories/userDepositAddressRepository.js'
 import UserOperations from './UserOperations.vue'
 
 const props = defineProps({
@@ -10,6 +11,8 @@ const props = defineProps({
   initialTab: { type: String, default: 'overview' },
   returnFocus: { type: [Object, Function], default: null }
 })
+
+const depositAddresses = computed(() => { userDepositAddressVersion.value; return userDepositAddressRepository.list(props.user?.id) })
 
 const emit = defineEmits(['close', 'closed'])
 const drawerRef = ref(null)
@@ -338,6 +341,11 @@ const tabButtonClass = (id) => {
           <!-- Body -->
           <div data-testid="user-detail-drawer-body" class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain p-4 sm:p-6">
             <template v-if="activeTab === 'overview'">
+              <section class="mb-4 rounded-xl border border-slate-200 bg-white p-4">
+                <h3 class="text-sm font-semibold text-slate-900">收款地址配置</h3>
+                <p class="mt-2 text-sm text-slate-500">{{ depositAddresses.length ? '以下币种和网络使用专属地址，其他组合继承公共地址。' : '使用对应币种和网络的公共地址。' }}</p>
+                <ul class="mt-3 space-y-3"><li v-for="entry in depositAddresses" :key="entry.coin + entry.network" class="text-sm"><strong>{{ entry.coin }} / {{ entry.network }}</strong><span class="mt-1 block break-all font-mono text-slate-600">{{ entry.address }}</span></li></ul>
+              </section>
               <div class="grid gap-4 lg:grid-cols-3">
                 <section class="rounded-xl border border-slate-200 bg-white p-4 lg:col-span-2 sm:p-5">
                   <h3 class="text-sm font-semibold text-slate-900">账户信息</h3>

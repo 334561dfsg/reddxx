@@ -82,7 +82,7 @@ test('page exposes filtering, address fields and history-safe actions without ob
   assert.doesNotMatch(source, /form\.confirmations/)
   assert.doesNotMatch(source, /form\.chainWide/)
   assert.match(source, /停用后仍保留历史记录/)
-  assert.match(source, /createPublicDepositAddressRepository/)
+  assert.match(source, /const repository = publicDepositAddressRepository/)
 })
 
 test('page exposes editable sort order for public deposit addresses', () => {

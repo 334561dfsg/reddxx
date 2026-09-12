@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
+import DepositAddressRotationDialog from '../../../admin/components/user/DepositAddressRotationDialog.vue'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import { getUserById } from '../../../admin/mock/user'
 import {
@@ -16,6 +17,17 @@ const coinFilter = ref(FUND_ORDER_FILTER_ALL)
 const loading = ref(false)
 const rows = ref([])
 const aggregates = ref(null)
+const addressDialogOpen = ref(false)
+const addressUser = ref(null)
+const addressOrder = ref(null)
+const addressReturnFocus = ref(null)
+function openAddressEditor(order, trigger) {
+  if (addressDialogOpen.value) return
+  addressUser.value = { id: order.userId, username: order.username }
+  addressOrder.value = { id: order.id, coin: order.coin, network: order.network, toAddress: order.toAddress }
+  addressReturnFocus.value = trigger
+  addressDialogOpen.value = true
+}
 const selectedOrder = ref(null)
 const selectedUser = ref(null)
 const showUserDrawer = ref(false)
@@ -377,7 +389,10 @@ onMounted(loadList)
               </td>
               <td class="px-4 py-3 text-xs text-slate-500">{{ formatTime(order.submitTime) }}</td>
               <td class="px-4 py-3 text-right">
-                <button type="button" class="text-sm font-medium text-blue-600 hover:underline" @click="openDetail(order)">查看</button>
+                <div class="flex flex-wrap justify-end gap-2">
+                  <button type="button" class="min-h-11 rounded px-2 text-sm font-medium text-blue-600 hover:underline focus-visible:ring-2 focus-visible:ring-blue-500" @click="openDetail(order)">详情</button>
+                  <button type="button" class="min-h-11 rounded px-2 text-sm font-medium text-blue-600 hover:underline focus-visible:ring-2 focus-visible:ring-blue-500" :aria-label="`修改入金地址 ${order.id}`" @click="openAddressEditor(order, $event.currentTarget)">修改入金地址</button>
+                </div>
               </td>
             </tr>
             <tr v-if="!loading && rows.length === 0">
@@ -393,6 +408,8 @@ onMounted(loadList)
         :total-count="pagination.total"
       />
     </article>
+
+    <DepositAddressRotationDialog :visible="addressDialogOpen" :user="addressUser" :order="addressOrder" :return-focus="addressReturnFocus" @close="addressDialogOpen = false" />
 
     <Teleport to="body">
       <div v-if="selectedOrder" class="fixed inset-0 z-50 flex justify-end bg-slate-900/35" @click.self="closeDetail">

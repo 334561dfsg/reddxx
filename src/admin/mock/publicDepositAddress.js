@@ -6,7 +6,7 @@ export const PUBLIC_DEPOSIT_NETWORKS = ['TRC20', 'ERC20', 'BSC', 'Bitcoin', 'Eth
 export const publicDepositAddressMock = [
   {
     id: 'pda_0001', coin: 'USDT', network: 'TRC20',
-    address: 'TXj6P3QhY9rK7aM2wV8sN4cD1fG5uL0bEe',
+    address: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
     enabled: true, sortOrder: 100, remark: 'TRON 网络默认收款地址', operator: 'admin_01', updatedAt: '2026-07-20 10:32:18'
   },
   {
@@ -21,7 +21,7 @@ export const publicDepositAddressMock = [
   },
   {
     id: 'pda_0004', coin: 'BTC', network: 'Bitcoin',
-    address: 'bc1q9m0w7j6s4l2f8x3a5d1k7n6e2c9p4h8u3v5z0r',
+    address: '1BoatSLRHtKNngkdXEeobR76b53LETtpyT',
     enabled: true, sortOrder: 70, remark: 'BTC 主网充值', operator: 'admin_01', updatedAt: '2026-07-17 14:55:31'
   },
   {
@@ -59,8 +59,8 @@ export const publicDepositAddressLogMock = [
   {
     id: 'pdal_0006', addressId: 'pda_0001', action: 'edit', operator: 'admin_01',
     occurredAt: '2026-07-01 14:40:27',
-    before: { address: 'TXj6P3QhY9rK7aM2wV8sN4cD1fG5uL0bEe', enabled: true, remark: 'TRC20 公共地址' },
-    after: { address: 'TXj6P3QhY9rK7aM2wV8sN4cD1fG5uL0bEe', enabled: true, remark: 'TRC20 公共地址' }
+    before: { address: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb', enabled: true, remark: 'TRC20 公共地址' },
+    after: { address: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb', enabled: true, remark: 'TRC20 公共地址' }
   },
   {
     id: 'pdal_0007', addressId: 'pda_0001', action: 'edit', operator: 'admin_03',
@@ -73,7 +73,7 @@ export const publicDepositAddressLogMock = [
     occurredAt: '2026-06-18 08:33:52',
     before: null,
     after: {
-      coin: 'USDT', network: 'TRC20', address: 'TXj6P3QhY9rK7aM2wV8sN4cD1fG5uL0bEe',
+      coin: 'USDT', network: 'TRC20', address: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
       enabled: true, remark: 'USDT 收款地址'
     }
   },
@@ -153,6 +153,16 @@ export function createPublicDepositAddressRepository(initialRows = [], initialLo
   }
 
   return {
+    // Synchronous mock transaction; includes replacement history and ID sequences.
+    transaction(work) {
+      const snapshot = { rows: clone(rows), logs: clone(logs), sequence, logSequence }
+      try { return work() }
+      catch (error) {
+        rows = snapshot.rows; logs = snapshot.logs
+        sequence = snapshot.sequence; logSequence = snapshot.logSequence
+        throw error
+      }
+    },
     list() {
       return clone(rows).sort(sortPublicDepositAddresses)
     },

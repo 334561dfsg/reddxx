@@ -1,4 +1,5 @@
 import { usersList } from './user.js'
+import { publicDepositAddressMock } from './publicDepositAddress.js'
 
 export const FUND_ORDER_FILTER_ALL = 'all'
 
@@ -143,7 +144,10 @@ let withdrawOrders = Array.from({ length: 18 }, (_, i) => createWithdrawOrder(i,
   auditNote: i === 8 ? rejectReasons[0] : ''
 }))
 
+// Snapshot the seed address so later public-address edits never rewrite this order.
+const demoOrderAddress = publicDepositAddressMock.find(row => row.enabled && row.coin === 'BTC' && row.network === 'Bitcoin')
 let depositOrders = Array.from({ length: 20 }, (_, i) => createDepositOrder(i, {
+  ...(i === 0 ? { network: demoOrderAddress.network, toAddress: demoOrderAddress.address } : {}),
   status:
     i === 1 || i === 7 ? DEPOSIT_ORDER_STATUS.CREDITED :
     i === 4 ? DEPOSIT_ORDER_STATUS.REJECTED :
