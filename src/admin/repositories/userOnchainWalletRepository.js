@@ -102,7 +102,24 @@ const USER_1004_WALLET = Object.freeze({
   ])
 })
 
+const USER_1001_WALLET = {
+  userId: 'user_1001',
+  addresses: [
+    { coin: 'USDT', network: 'TRC20', address: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb', label: 'USDT 主入金地址', status: 'active' },
+    { coin: 'USDT', network: 'ERC20', address: '0x7B4d8aE91F3cC5bA26e10d4E8a97fA72B19D63c1', label: 'USDT 以太坊入金地址', status: 'active' },
+    { coin: 'BTC', network: 'Bitcoin', address: '1BoatSLRHtKNngkdXEeobR76b53LETtpyT', label: 'BTC 入金地址', status: 'active' },
+    { coin: 'ETH', network: 'Ethereum', address: '0x3C8F1bA902dE7654cB10A98f67eD54C3210bFE76', label: '历史 ETH 入金地址', status: 'inactive' }
+  ].map((row, index) => ({
+    ...row,
+    id: `wallet_user_1001_deposit_${row.coin.toLowerCase()}_${row.network.toLowerCase()}`,
+    userId: 'user_1001', kind: 'deposit',
+    firstUsedAt: `2026-01-${String(index + 10).padStart(2, '0')}T08:30:00.000Z`,
+    lastUsedAt: row.status === 'active' ? '2026-09-12T12:15:00.000Z' : '2026-05-20T09:00:00.000Z'
+  }))
+}
+
 const walletByUserId = new Map([
+  [USER_1001_WALLET.userId, USER_1001_WALLET],
   [USER_1004_WALLET.userId, USER_1004_WALLET]
 ])
 

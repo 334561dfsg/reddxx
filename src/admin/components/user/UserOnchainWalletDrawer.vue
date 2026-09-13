@@ -22,7 +22,6 @@ const addresses = computed(() => (Array.isArray(props.wallet?.addresses) ? props
 const segmentAddresses = computed(() => addresses.value.filter((address) => address.kind === activeSegment.value))
 const segmentLabel = computed(() => activeSegment.value === 'deposit' ? '入金' : '提现')
 const copyInProgress = computed(() => copyingId.value !== null)
-const statusLabel = (status) => ({ active: '启用', inactive: '停用' })[status] || status || '未知'
 
 const {
   rendered,
@@ -58,20 +57,6 @@ const maskAddress = (address) => {
     return `${value.slice(0, visibleLength)}…${value.slice(-1)}`
   }
   return `${value.slice(0, 8)}…${value.slice(-6)}`
-}
-const formatTimestamp = (value) => {
-  if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  })
 }
 const isRevealed = (id) => revealedIds.value.has(id)
 const toggleAddressReveal = (id) => {
@@ -187,36 +172,10 @@ watch(() => props.visible, (visible) => {
               :data-testid="`wallet-address-${address.id}`"
               class="rounded-xl border border-slate-200 bg-white p-4"
             >
-              <div class="flex flex-wrap items-start justify-between gap-2">
-                <div class="min-w-0">
-                  <h3 class="break-words text-sm font-semibold text-slate-900">{{ address.label || `${segmentLabel}地址` }}</h3>
-                  <p class="mt-1 text-xs text-slate-500">{{ address.coin }} · {{ address.network }}</p>
-                </div>
-                <span class="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">{{ statusLabel(address.status) }}</span>
-              </div>
+              <p class="break-words text-sm font-medium text-slate-700">{{ address.coin }} · {{ address.network }}</p>
               <p :id="`wallet-address-${address.id}-value`" class="mt-3 break-all rounded-lg bg-slate-50 px-3 py-2 font-mono text-sm text-slate-800">
                 {{ isRevealed(address.id) ? address.address : maskAddress(address.address) }}
               </p>
-              <dl class="mt-3 grid gap-2 text-xs sm:grid-cols-2">
-                <div class="min-w-0 rounded-lg bg-slate-50 px-3 py-2">
-                  <dt class="text-slate-500">首次使用</dt>
-                  <dd
-                    :data-testid="`wallet-address-${address.id}-first-used-at`"
-                    class="mt-1 break-words font-medium text-slate-800"
-                  >
-                    {{ formatTimestamp(address.firstUsedAt) }}
-                  </dd>
-                </div>
-                <div class="min-w-0 rounded-lg bg-slate-50 px-3 py-2">
-                  <dt class="text-slate-500">最后使用</dt>
-                  <dd
-                    :data-testid="`wallet-address-${address.id}-last-used-at`"
-                    class="mt-1 break-words font-medium text-slate-800"
-                  >
-                    {{ formatTimestamp(address.lastUsedAt) }}
-                  </dd>
-                </div>
-              </dl>
               <div class="mt-3 flex flex-wrap gap-2">
                 <button
                   type="button"

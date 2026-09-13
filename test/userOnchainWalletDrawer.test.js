@@ -61,17 +61,14 @@ test('wallet drawer presents the user and deposit addresses by default', async (
   assert.match(frame.textContent, /链上钱包/)
   assert.match(frame.textContent, /Alpha · UID user_1004/)
   assert.equal(findIn(harness, frame, (node) => node.tag === 'button' && node.textContent.trim() === '入金地址').hasAttribute('aria-pressed'), true)
-  assert.match(frame.textContent, /主入金地址/)
+  assert.doesNotMatch(frame.textContent, /主入金地址/)
   assert.doesNotMatch(frame.textContent, /常用提现地址/)
   assert.match(frame.textContent, /TQp4YdHg…YVvnE5/)
   const addressCard = harness.findByTestId('wallet-address-wallet_user_1004_deposit_usdt_trc20')
-  assert.match(addressCard.textContent, /首次使用/)
-  assert.match(addressCard.textContent, /2025/)
-  assert.match(addressCard.textContent, /最后使用/)
-  assert.match(addressCard.textContent, /2026/)
+  assert.doesNotMatch(addressCard.textContent, /首次使用|最后使用|启用/)
 })
 
-test('wallet drawer renders inactive status with a Chinese label', async (t) => {
+test('wallet drawer retains historical addresses without a status badge', async (t) => {
   const inactiveWallet = {
     userId: 'user_1004',
     addresses: [
@@ -87,7 +84,8 @@ test('wallet drawer renders inactive status with a Chinese label', async (t) => 
   t.after(harness.cleanup)
 
   const card = harness.findByTestId('wallet-address-inactive-wallet-address')
-  assert.match(card.textContent, /停用/)
+  assert.match(card.textContent, /USDT · TRC20/)
+  assert.doesNotMatch(card.textContent, /停用/)
   assert.doesNotMatch(card.textContent, /inactive/)
 })
 
@@ -127,29 +125,6 @@ test('wallet drawer ignores backdrop, pointer, touch, drag, and swipe closing at
   findIn(harness, frame, (node) => node.getAttribute?.('aria-label') === '关闭').click()
   await harness.flush()
   assert.equal(harness.emitted.filter(([name]) => name === 'onClose').length, 1)
-})
-
-test('wallet drawer renders safe timestamp fallbacks for missing or invalid values', async (t) => {
-  const fallbackWallet = {
-    userId: 'user_1004',
-    addresses: [
-      {
-        ...wallet.addresses[0],
-        firstUsedAt: '',
-        lastUsedAt: 'not-a-date'
-      }
-    ]
-  }
-  const harness = await mount({ wallet: fallbackWallet })
-  t.after(harness.cleanup)
-
-  const addressCard = harness.findByTestId('wallet-address-wallet_user_1004_deposit_usdt_trc20')
-  const firstUsedAt = findIn(harness, addressCard, (node) => node.getAttribute?.('data-testid') === 'wallet-address-wallet_user_1004_deposit_usdt_trc20-first-used-at')
-  const lastUsedAt = findIn(harness, addressCard, (node) => node.getAttribute?.('data-testid') === 'wallet-address-wallet_user_1004_deposit_usdt_trc20-last-used-at')
-  assert.ok(firstUsedAt)
-  assert.ok(lastUsedAt)
-  assert.equal(firstUsedAt.textContent.trim(), '—')
-  assert.equal(lastUsedAt.textContent.trim(), '—')
 })
 
 test('wallet drawer never exposes a complete short address before reveal', async (t) => {
@@ -370,7 +345,7 @@ test('wallet drawer switches to withdrawal records and gives an empty state', as
 
   findIn(harness, frame, (node) => node.tag === 'button' && node.textContent.trim() === '提现地址').click()
   await harness.flush()
-  assert.match(frame.textContent, /常用提现地址/)
+  assert.ok(harness.findByTestId('wallet-address-wallet_user_1004_withdrawal_usdt_trc20'))
   assert.doesNotMatch(frame.textContent, /主入金地址/)
 
   harness.props.wallet = { userId: 'user_1004', addresses: [] }
