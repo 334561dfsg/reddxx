@@ -21,7 +21,6 @@ test('confirm opens Google verification without writing; invalid verification ke
   await harness.flush()
   assert.ok(input.getAttribute('class').includes('address-input--changed'))
   assert.equal(input.getAttribute('class').includes('address-input--order'), false)
-  assert.ok(harness.findByText(`该用户将使用原地址：${original}`))
   harness.findByText('确认修改', 'button').click()
   await harness.flush(); await harness.finishTransitions()
   assert.ok(harness.findByTestId('mfa-dialog-frame'))

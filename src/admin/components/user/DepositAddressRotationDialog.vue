@@ -119,7 +119,6 @@ onBeforeUnmount(() => { disposed = true; repository.cancel(pending.value) })
                 </div>
                 <input :id="`rotation-${row.id}`" v-model="row.address" :aria-label="`${row.coin} ${row.network} 公共收款地址`" type="text" required autocomplete="off" spellcheck="false" :aria-invalid="!!fieldErrors[row.id]" :aria-describedby="fieldErrors[row.id] ? `rotation-error-${row.id}` : undefined" class="address-input" :class="{ 'address-input--order': isOrderAddress(row) && row.address.trim() === row.original, 'address-input--changed': row.address.trim() !== row.original }" />
                 <p v-if="fieldErrors[row.id]" :id="`rotation-error-${row.id}`" class="text-sm text-rose-700">{{ fieldErrors[row.id] }}</p>
-                <p v-if="row.address.trim() !== row.original" class="break-all text-xs text-slate-500">该用户将使用原地址：{{ row.original }}</p>
                 <p v-if="row.address.trim() !== row.original && session.dedicated.some(own => own.coin === row.coin && own.network === row.network && own.address !== row.original)" class="text-xs text-amber-700">该用户已有专属配置，本次将替换为上方原公共地址。</p>
               </div>
             </template>

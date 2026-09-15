@@ -994,7 +994,7 @@ const clearDetailDrawer = () => {
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">裂变上级</th>
               <th class="min-w-24 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 whitespace-nowrap">点控</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
+              <th class="w-[20rem] max-w-[20rem] px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-200">
@@ -1082,8 +1082,8 @@ const clearDetailDrawer = () => {
               </td>
 
               <!-- 用户快捷操作 -->
-              <td class="px-4 py-3">
-                <div data-testid="user-row-action-bar" class="flex flex-wrap items-center gap-2" @click.stop>
+              <td class="w-[20rem] max-w-[20rem] px-4 py-3">
+                <div data-testid="user-row-action-bar" class="flex max-w-[20rem] flex-wrap items-center gap-2" @click.stop>
                   <button
                     type="button"
                     class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
