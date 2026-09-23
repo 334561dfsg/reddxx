@@ -343,9 +343,15 @@ export const getUsers = ({
   userIdKeyword,
   phoneKeyword,
   emailKeyword,
-  walletAddressKeyword
+  walletAddressKeyword,
+  role,
+  agentParentId,
+  employeeId
 }) => {
   let filteredUsers = [...usersList]
+  if (role) filteredUsers = filteredUsers.filter(user => user.role === role)
+  if (agentParentId) filteredUsers = filteredUsers.filter(user => user.agentParentId === agentParentId)
+  if (employeeId) filteredUsers = filteredUsers.filter(user => employeeId === "unassigned" ? user.role === "user" && !user.employeeId : user.employeeId === employeeId)
 
   if (searchKeyword && searchKeyword.trim()) {
     const keyword = searchKeyword.toLowerCase()

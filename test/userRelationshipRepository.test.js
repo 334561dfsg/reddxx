@@ -273,3 +273,30 @@ test('team report derives totals and direct branch summaries', () => {
   assert.equal(report.availableBalance, descendants.reduce((sum, row) => sum + Number(row.balance || 0), 0))
   assert.ok(report.branches.every((branch) => branch.memberCount >= 1))
 })
+
+test('profile editing saves and audits salesperson checkbox changes', () => {
+ const previous=snapshotUser('user_1004')
+ try {
+  let updated=updateProfile(previous.id,{...previous,isSalesperson:true})
+  assert.equal(updated.isSalesperson,true)
+  updated=updateProfile(previous.id,{...updated,isSalesperson:false})
+  assert.equal(updated.isSalesperson,false)
+ } finally { restoreUser(previous); if (previous.isSalesperson === undefined) delete getUser(previous.id).isSalesperson }
+})
+
+test('profile promotion saves MFA without exposing it in audit or replacing login credentials', () => {
+ const previous=snapshotUser('user_1004')
+ const mfaSetup={secret:'TESTONLYBASE32SECRET',status:'pending',accountName:previous.email}
+ try {
+  const updated=updateProfile(previous.id,{...previous,isSalesperson:true},{mfaSetup})
+  assert.equal(updated.mfaSetup.secret,mfaSetup.secret)
+  assert.equal(updated.passwordCredential,previous.passwordCredential)
+  assert.equal(JSON.stringify(getRelationshipAuditLog()).includes(mfaSetup.secret),false)
+  updateProfile(previous.id,{...updated,isSalesperson:true},{mfaSetup:{secret:'replacement'}})
+  assert.equal(updated.mfaSetup.secret,mfaSetup.secret)
+ } finally {
+  restoreUser(previous)
+  if(previous.isSalesperson===undefined)delete getUser(previous.id).isSalesperson
+  if(previous.mfaSetup===undefined)delete getUser(previous.id).mfaSetup
+ }
+})

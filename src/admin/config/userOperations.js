@@ -23,6 +23,8 @@ export const USER_OPERATION_ENTRIES = Object.freeze([
   { id: 'team-report', title: '查看裂变团队报表', description: '查看该用户裂变团队的业务汇总', group: 'fission', status: 'available', risk: 'normal', handler: 'team-report' },
   { id: 'reset-agent', title: '设置为代理', description: '设置用户代理身份', group: 'agent', status: 'available', risk: 'sensitive', handler: 'reset-agent' },
   { id: 'set-agent-parent', title: '设置上级代理', description: '设置用户归属的上级代理账号', group: 'agent', status: 'available', risk: 'sensitive', handler: 'set-agent-parent' },
+  { id: 'set-employee', title: '设置上级业务员', description: '设置上级业务员并自动关联其所属代理', group: 'agent', status: 'available', risk: 'sensitive', handler: 'set-employee' },
+  { id: 'staff-report', title: '查看员工业绩', description: '按代理、员工和客户查询业务贡献', group: 'agent', status: 'available', risk: 'normal', handler: 'staff-report' },
   { id: 'agent-subordinates', title: '查看下级用户', description: '查看归属于该代理的直属客户', group: 'agent', status: 'available', risk: 'normal', handler: 'agent-subordinates' },
   { id: 'agent-report', title: '查看代理报表', description: '查看该代理的业务与佣金汇总', group: 'agent', status: 'available', risk: 'normal', handler: 'agent-report' },
 
@@ -80,7 +82,7 @@ export const getUserOperationGroups = (user) => USER_OPERATION_GROUPS.map((group
   ...group,
   entries: USER_OPERATION_ENTRIES
     .filter((entry) => !DRAWER_HIDDEN_ENTRY_IDS.has(entry.id) && entry.group === group.id && (
-      !AGENT_ONLY_ENTRY_IDS.has(entry.id) || isAgentUser(user)
+      (!AGENT_ONLY_ENTRY_IDS.has(entry.id) || isAgentUser(user)) && (entry.id !== 'set-employee' || user?.role === 'user') && (entry.id !== 'staff-report' || isAgentUser(user) || (user?.createdByAdmin && user?.agentParentId))
     ))
     .map((entry) => resolveEntry(entry, user))
 }))

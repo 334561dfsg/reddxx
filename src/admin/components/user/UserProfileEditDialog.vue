@@ -1,7 +1,9 @@
 <script setup>
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, ref, watch, onBeforeUnmount } from 'vue'
 import { updateProfile, validateProfile } from '../../repositories/userRelationshipRepository.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import AgentDeliveryCard from '../agent/AgentDeliveryCard.vue'
+import { createSalespersonMfa, salespersonDelivery } from '../../../features/user-staff/userMfa.js'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
 import { getAllowedPhoneDialOptions, getPhoneDialTextLabel, splitPhoneByDial } from '../../utils/phoneDialOptions.js'
 
@@ -16,9 +18,14 @@ const dialogRef = ref(null)
 const firstFieldRef = ref(null)
 const errorRef = ref(null)
 const submitting = ref(false)
+const delivery = ref(null)
+const deliveryRef = ref(null)
+const copying = ref(false)
+let disposed = false
+onBeforeUnmount(() => { disposed = true; delivery.value = null })
 const submitError = ref('')
 const errors = reactive({})
-const form = reactive({ username: '', email: '', phoneDial: '+86', phoneNational: '', remark: '', reason: '' })
+const form = reactive({ username: '', email: '', phoneDial: '+86', phoneNational: '', isSalesperson: false, remark: '', reason: '' })
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const dialOptions = computed(() => getAllowedPhoneDialOptions().map((item) => ({
   value: item.dial,
@@ -32,10 +39,13 @@ const resetForm = () => {
     dial: item.value,
     label: item.label
   })))
+  delivery.value = null
+  copying.value = false
   form.username = props.user?.username || ''
   form.email = props.user?.email || ''
   form.phoneDial = phoneParts.dial
   form.phoneNational = phoneParts.nationalDigits
+  form.isSalesperson = props.user?.isSalesperson === true
   form.remark = props.user?.remark || ''
   form.reason = ''
   for (const key of Object.keys(errors)) delete errors[key]
@@ -56,7 +66,7 @@ const {
   initialFocusRef: firstFieldRef,
   returnFocusRef: computed(() => props.returnFocus),
   requestClose: () => emit('close'),
-  closeDisabled: submitting
+  closeDisabled: computed(() => submitting.value || copying.value)
 })
 
 const close = createDialogCloseAction(requestDialogClose)
@@ -85,11 +95,16 @@ const submit = async () => {
 
   submitting.value = true
   try {
-    await Promise.resolve()
-    const updated = updateProfile(userId.value, { ...form })
+    const targetId = userId.value
+    const values = { ...form }
+    const promoted = values.isSalesperson && props.user?.isSalesperson !== true
+    const mfaSetup = promoted ? (props.user?.mfaSetup || await createSalespersonMfa(values.email.trim())) : null
+    if (disposed || !props.visible || targetId !== userId.value) return
+    const updated = updateProfile(targetId, values, { mfaSetup })
+    if (promoted) delivery.value = salespersonDelivery(updated.email, '使用原登录密码（未修改）', mfaSetup)
     emit('saved', updated)
     submitting.value = false
-    close()
+    if (delivery.value) { await nextTick(); deliveryRef.value?.focus() } else close()
   } catch (error) {
     if (error?.fields) Object.assign(errors, error.fields)
     submitError.value = error?.message || '保存失败，请稍后重试'
@@ -107,18 +122,22 @@ watch(() => [props.visible, userId.value], ([visible]) => {
   <Teleport to="body">
     <Transition name="profile-dialog" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
       <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 grid place-items-center bg-slate-950/50 p-4" :style="layerStyle" role="presentation">
-        <section ref="dialogRef" class="profile-dialog-panel flex max-h-[calc(100vh-2rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="profile-edit-title" :aria-busy="submitting">
+        <section ref="dialogRef" class="profile-dialog-panel flex max-h-[calc(100vh-2rem)] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" :class="delivery ? 'max-w-2xl' : 'max-w-lg'" role="dialog" aria-modal="true" aria-labelledby="profile-edit-title" :aria-busy="submitting">
           <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
             <div class="min-w-0 flex-1">
-              <h2 id="profile-edit-title" class="text-lg font-semibold text-slate-900">编辑用户资料</h2>
+              <h2 id="profile-edit-title" class="text-lg font-semibold text-slate-900">{{ delivery ? '业务员设置成功' : '编辑用户资料' }}</h2>
               <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p>
             </div>
-            <button type="button" :disabled="submitting" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-40" aria-label="关闭" @click="close">×</button>
+            <button type="button" :disabled="submitting || copying" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-40" aria-label="关闭" @click="close">×</button>
           </header>
 
           <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
             <p v-if="submitError" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ submitError }}</p>
 
+            <div v-if="delivery" ref="deliveryRef" tabindex="-1" class="outline-none">
+              <AgentDeliveryCard :delivery="delivery" recipient="业务员" title="业务员设置成功，以下信息可发送给业务员" description="登录密码保持不变；下方卡片可截图发送给业务员，用于设置验证器。" @copying="copying=$event" />
+            </div>
+            <template v-else>
             <label class="block">
               <span class="text-sm font-medium text-slate-800">用户名 <span class="text-rose-500">*</span></span>
               <input ref="firstFieldRef" v-model="form.username" :disabled="submitting" type="text" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" />
@@ -164,16 +183,22 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               <span v-if="errors.phone" :id="phoneErrorId" class="mt-1 block text-xs text-rose-600">{{ errors.phone }}</span>
             </fieldset>
 
+            <label class="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-800">
+              <input v-model="form.isSalesperson" :disabled="submitting" type="checkbox" class="h-4 w-4 rounded border-slate-300 accent-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:cursor-not-allowed" />
+              是否为业务员
+            </label>
+
             <label class="block">
               <span class="text-sm font-medium text-slate-800">操作原因（可选）</span>
               <textarea v-model="form.reason" :disabled="submitting" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" placeholder="请填写为什么编辑用户资料" />
               <span class="mt-1 flex justify-between gap-3 text-xs"><span class="text-rose-600">{{ errors.reason || '' }}</span><span class="text-slate-500">{{ form.reason.length }}/200</span></span>
             </label>
+            </template>
           </div>
 
           <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-            <button type="button" :disabled="submitting" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40" @click="close">取消</button>
-            <button type="button" :disabled="submitting || phase !== 'open'" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" @click="submit">{{ submitting ? '保存中…' : '保存资料' }}</button>
+            <button type="button" :disabled="submitting || copying" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40" @click="close">{{ delivery ? '完成' : '取消' }}</button>
+            <button v-if="!delivery" type="button" :disabled="submitting || phase !== 'open'" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" @click="submit">{{ submitting ? '保存中…' : '保存资料' }}</button>
           </footer>
         </section>
       </div>

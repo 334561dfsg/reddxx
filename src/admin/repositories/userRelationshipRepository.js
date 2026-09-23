@@ -1,3 +1,4 @@
+import { persistStaffUserUpdate } from './userStaffRepository.js'
 import { usersList } from '../mock/user.js'
 import { USER_ROLE, USER_STATUS } from '../constants/user.js'
 import { appendUserAuditLog } from './userAuditLogRepository.js'
@@ -162,7 +163,7 @@ export const validateProfile = (input, userId) => {
   return errors
 }
 
-export const updateProfile = (userId, patch) => {
+export const updateProfile = (userId, patch, { mfaSetup = null } = {}) => {
   const user = requireUser(userId)
   const cleanReason = normalizeOptionalReason(patch?.reason)
   const errors = validateProfile(patch, userId)
@@ -176,15 +177,19 @@ export const updateProfile = (userId, patch) => {
     username: user.username,
     email: user.email,
     phone: user.phone,
-    remark: user.remark
+    remark: user.remark,
+    isSalesperson: user.isSalesperson === true
   }
   const after = {
     username: normalized(patch.username),
     email: normalized(patch.email),
     phone: normalizedProfilePhone(patch),
-    remark: normalized(patch.remark)
+    remark: normalized(patch.remark),
+    isSalesperson: patch.isSalesperson === undefined ? user.isSalesperson === true : patch.isSalesperson === true
   }
-  Object.assign(user, after)
+  const storedChanges = { ...after, ...(after.isSalesperson && !user.mfaSetup && mfaSetup ? { mfaSetup } : {}) }
+  persistStaffUserUpdate(idOf(user), storedChanges)
+  Object.assign(user, storedChanges)
   appendAudit({
     type: 'profile',
     userId: idOf(user),
@@ -245,6 +250,8 @@ export const setAgentParent = ({ userId, agentParentId = null, reason }) => {
   const nextAgentParentId = agentParentId ? String(agentParentId) : null
   const cleanReason = normalizeOptionalReason(reason)
 
+  if (usersList.some(row => row.employeeId === userId)) throw new Error('该用户名下已有客户，请先解除客户分配再修改代理')
+  if (user.employeeId && String(user.agentParentId || '') !== String(nextAgentParentId || '')) throw new Error('请先解除所属员工，再修改上级代理')
   if (nextAgentParentId === idOf(user)) throw new Error('不能选择用户本人作为上级代理')
   const agentParent = nextAgentParentId ? requireUser(nextAgentParentId) : null
   if (agentParent && agentParent.role !== USER_ROLE.AGENT) throw new Error('上级代理必须选择代理用户')
@@ -259,6 +266,7 @@ export const setAgentParent = ({ userId, agentParentId = null, reason }) => {
     agentParentId: nextAgentParentId,
     agentParentUsername: agentParent?.username ?? null
   }
+  persistStaffUserUpdate(idOf(user), after)
   Object.assign(user, after)
   appendAudit({
     type: 'agent-parent',
@@ -282,6 +290,8 @@ export const setAgentParent = ({ userId, agentParentId = null, reason }) => {
 export const updateAgentRole = ({ userId, role, reason, successorParentId }) => {
   const user = requireUser(userId)
   const cleanReason = normalizeOptionalReason(reason)
+  if (user.employeeId || usersList.some(row => row.employeeId === userId)) throw new Error('员工或已分配员工的客户不能直接变更代理身份')
+  if (role === USER_ROLE.USER && usersList.some(row => row.createdByAdmin && row.agentParentId === userId)) throw new Error('该代理名下存在员工，请先处理员工归属')
   if (![USER_ROLE.USER, USER_ROLE.AGENT].includes(role)) throw new Error('目标身份不正确')
   if (user.role === role) throw new Error('目标身份与当前身份相同')
 

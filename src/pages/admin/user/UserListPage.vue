@@ -1,5 +1,8 @@
 <script setup>
-import { ref, computed, nextTick, onMounted, reactive, watch } from 'vue'
+import { ref, computed, nextTick, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
+import UserStaffEditorDialog from '../../../admin/components/user/UserStaffEditorDialog.vue'
+import UserStaffReportDrawer from '../../../admin/components/user/UserStaffReportDrawer.vue'
+import { getUserStaffRepository } from '../../../admin/repositories/userStaffRepository.js'
 import { getUsers, usersList } from '../../../admin/mock/user'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../../admin/constants/user'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
@@ -59,6 +62,52 @@ import {
   setUserVipLevel
 } from '../../../admin/repositories/userCreditMembershipRepository.js'
 
+const staffEditorOpen = ref(false)
+const staffEditorMode = ref('create')
+const staffTarget = ref(null)
+const staffReturnFocus = ref(null)
+const staffReportOpen = ref(false)
+const staffReportUser = ref(null)
+const staffReportReturnFocus = ref(null)
+const staffMessage = ref('')
+const staffToast = ref(null)
+let staffToastTimer = null
+function showUserCreatedToast(user) {
+  clearTimeout(staffToastTimer)
+  staffToast.value = {
+    messageId: `user-created-${user.id}`, channel: 'toast', severity: 'success',
+    sourceOwner: 'user-list.create', resultBinding: user.id,
+    durationPolicy: 'auto-dismiss', dismissPolicy: 'preserve-created-user',
+    announcementPolicy: 'polite-no-focus', dedupeKey: `user-created-${user.id}`,
+    sensitiveBoundary: 'no-account-or-password', recoveryActions: [], message: '添加成功'
+  }
+  staffToastTimer = setTimeout(() => { staffToast.value = null }, 3000)
+}
+onBeforeUnmount(() => { clearTimeout(staffToastTimer); staffToast.value = null })
+const staffError = ref('')
+const staffRevision = ref(0)
+const roleFilter = ref('')
+const agentFilter = ref('')
+const employeeFilter = ref('')
+const staffEmployees = computed(() => {
+  staffRevision.value
+  try { return getUserStaffRepository().employees(agentFilter.value) } catch { return [] }
+})
+const staffAgents = computed(() => { staffRevision.value; try { return getUserStaffRepository().agents() } catch { return [] } })
+const staffName = (id) => usersList.find(user => user.id === id)?.username || '—'
+function openStaffEditor(mode, user, trigger) { if (staffEditorOpen.value) return; staffEditorMode.value = mode; staffTarget.value = user; staffReturnFocus.value = trigger; staffEditorOpen.value = true }
+function openStaffReport(user, trigger) { if (staffReportOpen.value) return; staffReportUser.value = user; staffReportReturnFocus.value = trigger; staffReportOpen.value = true }
+function staffSaved({ user, created }) {
+  staffRevision.value++
+  staffMessage.value = created ? '' : `已更新 ${user.username} 的上级业务员，历史业绩保持原归属。`
+  if (created) showUserCreatedToast(user)
+  if (created) { userIdKeyword.value = user.id; phoneKeyword.value = ''; emailKeyword.value = ''; walletAddressKeyword.value = ''; roleFilter.value = ''; agentFilter.value = ''; employeeFilter.value = '' }
+  fetchUsers()
+}
+function initializeStaff() { try { getUserStaffRepository().seedDemo(); staffError.value = ''; staffRevision.value++; fetchUsers() } catch (error) { staffError.value = error.message; fetchUsers() } }
+watch(agentFilter, () => { employeeFilter.value = '' })
+watch([roleFilter, agentFilter, employeeFilter], () => { pagination.currentPage = 1; fetchUsers() })
+
 // 搜索关键词
 const userIdKeyword = ref('')
 const phoneKeyword = ref('')
@@ -82,7 +131,9 @@ const pagination = reactive({
 const totalPages = computed(() => Math.ceil(pagination.total / pagination.pageSize))
 
 // 获取用户数据
+let userQueryGeneration = 0
 const fetchUsers = async () => {
+  const generation = ++userQueryGeneration
   loading.value = true
   try {
     const { list, total } = await getUsers({
@@ -91,15 +142,19 @@ const fetchUsers = async () => {
       userIdKeyword: userIdKeyword.value,
       phoneKeyword: phoneKeyword.value,
       emailKeyword: emailKeyword.value,
-      walletAddressKeyword: walletAddressKeyword.value
+      walletAddressKeyword: walletAddressKeyword.value,
+      role: roleFilter.value,
+      agentParentId: agentFilter.value,
+      employeeId: employeeFilter.value
     })
+    if (generation !== userQueryGeneration) return
     users.value = list
     pagination.total = total
   } catch (error) {
     console.error('获取用户列表失败:', error)
     // 在这里可以添加错误提示，例如使用一个通知组件
   } finally {
-    loading.value = false
+    if (generation === userQueryGeneration) loading.value = false
   }
 }
 
@@ -113,7 +168,7 @@ watch([userIdKeyword, phoneKeyword, emailKeyword, walletAddressKeyword, () => pa
 }, { deep: true })
 
 // 组件加载时获取数据
-onMounted(fetchUsers)
+onMounted(initializeStaff)
 
 // 模态弹窗状态
 const showDetailDrawer = ref(false)
@@ -375,6 +430,9 @@ const handleOperationDrawerAction = async ({ id, user, trigger }) => {
   operationActionReturnFocus.value = trigger || (typeof document === 'undefined' ? null : document.activeElement)
   controlReturnUserId.value = userIdOf(user)
 
+  if (id === 'set-employee') { openStaffEditor('assign', user, trigger); return }
+  if (id === 'staff-report') { openStaffReport(user, trigger); return }
+
   if (id === 'onchain-wallet') {
     onchainWalletUser.value = user
     onchainWalletData.value = getUserOnchainWallet(userIdOf(user))
@@ -608,6 +666,8 @@ const clearProfileEdit = () => {
 }
 
 const handleProfileSaved = (updatedUser) => {
+  staffRevision.value++
+  if (employeeFilter.value === updatedUser.id && !updatedUser.isSalesperson) employeeFilter.value = ''
   const updatedId = userIdOf(updatedUser)
   users.value = users.value.map((user) => userIdOf(user) === updatedId ? { ...updatedUser } : user)
   operationDrawerUser.value = { ...updatedUser }
@@ -933,13 +993,27 @@ const clearDetailDrawer = () => {
 <template>
   <section class="space-y-6">
     <!-- 页面标题 -->
-    <div>
-      <h1 class="text-2xl font-bold text-slate-900">用户管理</h1>
-      <p class="text-sm text-slate-500 mt-1">管理系统用户、查看用户信息和操作记录</p>
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div><h1 class="text-2xl font-bold text-slate-900">用户管理</h1><p class="text-sm text-slate-500 mt-1">管理系统用户、查看用户信息和操作记录</p></div>
+      <div class="flex flex-wrap gap-3"><button type="button" class="min-h-11 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" :disabled="!!staffError" @click="openStaffEditor('create', null, $event.currentTarget)">添加用户</button></div>
     </div>
+    <Teleport to="body">
+      <div class="pointer-events-none fixed inset-x-0 top-5 z-[10000] flex justify-center" role="status" aria-live="polite" aria-atomic="true">
+        <div v-if="staffToast" class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 shadow-lg">
+          <span aria-hidden="true" class="text-emerald-600">✓</span>{{ staffToast.message }}
+        </div>
+      </div>
+    </Teleport>
+    <p v-if="staffMessage" role="status" class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">{{ staffMessage }}</p>
+    <p v-if="staffError" role="alert" class="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{{ staffError }}<button class="ml-3 underline" type="button" @click="initializeStaff">重试</button></p>
 
     <!-- 筛选和搜索区域 -->
     <div class="rounded-xl border border-slate-200 bg-white p-5">
+      <div class="mb-4 grid gap-3 sm:grid-cols-3">
+        <label class="text-xs font-medium text-slate-600">用户类型<select v-model="roleFilter" class="mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm"><option value="">全部类型</option><option value="user">普通用户</option><option value="agent">代理</option></select></label>
+        <label class="text-xs font-medium text-slate-600">所属代理<select v-model="agentFilter" class="mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm"><option value="">全部代理</option><option v-for="agent in staffAgents" :key="agent.id" :value="agent.id">{{ agent.username }} · {{ agent.id }}</option></select></label>
+        <label class="text-xs font-medium text-slate-600">业务员<select v-model="employeeFilter" class="mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm"><option value="">全部业务员</option><option value="unassigned">未分配业务员</option><option v-for="person in staffEmployees" :key="person.id" :value="person.id">{{ person.username }} · {{ person.id }}</option></select></label>
+      </div>
       <!-- 搜索框 -->
       <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <UserListSearchField
@@ -989,6 +1063,8 @@ const clearDetailDrawer = () => {
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">用户名</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">邮箱</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">角色</th>
+              <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-slate-600">是否为业务员</th>
+              <th scope="col" class="min-w-40 px-4 py-3 text-left text-xs font-semibold text-slate-600">所属代理</th>
               <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">VIP</th>
               <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">信用分</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
@@ -1029,6 +1105,10 @@ const clearDetailDrawer = () => {
                 </span>
               </td>
 
+              <td class="px-4 py-3 text-xs">
+                <span :class="user.isSalesperson === true ? 'text-blue-700 bg-blue-50' : 'text-slate-500 bg-slate-100'" class="inline-flex rounded-full px-2 py-1 font-medium">{{ user.isSalesperson === true ? '是' : '否' }}</span>
+              </td>
+              <td class="px-4 py-3 text-xs text-slate-600"><p>{{ user.role === 'agent' ? '代理账号' : user.agentParentId ? staffName(user.agentParentId) : '未设置代理' }}</p></td>
               <!-- VIP -->
               <td class="px-4 py-3 text-center">
                 <span v-if="user.isVip" class="inline-flex items-center justify-center">
@@ -1152,6 +1232,14 @@ const clearDetailDrawer = () => {
                   >
                     设置上级代理</button>
                   <button
+                    v-if="user.role === 'user'"
+                    type="button"
+                    class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-indigo-50/80 px-2.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                    :disabled="!!staffError"
+                    aria-label="设置上级业务员"
+                    @click="handleOperationDrawerAction({ id: 'set-employee', user, trigger: $event.currentTarget })"
+                  >设置上级业务员</button>
+                  <button
                     :ref="(element) => setActionMenuTriggerRef(user, element)"
                     type="button"
                     class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1229,6 +1317,8 @@ const clearDetailDrawer = () => {
       @submit="submitControlSetting"
     />
 
+    <UserStaffEditorDialog :visible="staffEditorOpen" :mode="staffEditorMode" :user="staffTarget" :return-focus="staffReturnFocus" @close="staffEditorOpen = false" @saved="staffSaved" @closed="staffTarget = null; staffReturnFocus = null" />
+    <UserStaffReportDrawer :visible="staffReportOpen" :user="staffReportUser" :return-focus="staffReportReturnFocus" @close="staffReportOpen = false" @closed="staffReportUser = null; staffReportReturnFocus = null" />
     <UserOperations
       v-if="operationUser"
       ref="userOperations"

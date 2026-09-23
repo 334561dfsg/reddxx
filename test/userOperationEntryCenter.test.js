@@ -38,7 +38,7 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '查看全部裂变下级',
     '查看裂变团队报表'
   ])
-  assert.deepEqual(agent.entries.map((entry) => entry.title), ['设置上级代理'])
+  assert.deepEqual(agent.entries.map((entry) => entry.title), ['设置上级代理', '设置上级业务员'])
   assert.equal(agent.entries.some((entry) => entry.id === 'agent-report'), false)
   const funds = groups.find((group) => group.id === 'funds')
   assert.deepEqual(funds.entries.map((entry) => entry.title), [
@@ -61,6 +61,7 @@ test('operation catalog keeps the approved quick actions and grouped entries', (
     '查看全部裂变下级',
     '查看裂变团队报表',
     '设置上级代理',
+    '设置上级业务员',
     '资金概况',
     '链上钱包',
     '客服入金',
@@ -83,8 +84,8 @@ test('operation catalog exposes agent-only reporting and contextual agent action
   const agentGroups = getUserOperationGroups({ status: 'active', role: 'agent' })
   const agent = agentGroups.find((group) => group.id === 'agent')
 
-  assert.deepEqual(agent.entries.map((entry) => entry.id), ['set-agent-parent', 'agent-subordinates', 'agent-report'])
-  assert.deepEqual(agent.entries.map((entry) => entry.title), ['设置上级代理', '查看下级用户', '查看代理报表'])
+  assert.deepEqual(agent.entries.map((entry) => entry.id), ['set-agent-parent', 'staff-report', 'agent-subordinates', 'agent-report'])
+  assert.deepEqual(agent.entries.map((entry) => entry.title), ['设置上级代理', '查看员工业绩', '查看下级用户', '查看代理报表'])
   assert.equal(agent.entries.find((entry) => entry.id === 'agent-subordinates').handler, 'agent-subordinates')
   assert.equal(agent.entries.find((entry) => entry.id === 'agent-subordinates').description, '查看归属于该代理的直属客户')
   assert.equal(agent.entries.find((entry) => entry.id === 'agent-report').handler, 'agent-report')
@@ -251,7 +252,7 @@ test('user list exposes one-click row actions and coordinates the complete opera
   assert.match(source, />\s*更多\s*<\/button>/)
   assert.match(source, /data-testid="user-row-action-bar"[^>]*flex-wrap[^>]*gap-2/)
   assert.match(source, /whitespace-nowrap/)
-  assert.equal((actionBar.match(/class="inline-flex h-8 min-w-/g) || []).length, 10)
+  assert.equal((actionBar.match(/class="inline-flex h-8 min-w-/g) || []).length, 11)
   assert.match(source, /id: 'edit-profile'/)
   assert.match(source, /id: 'freeze-account'/)
   assert.match(source, /id: 'credit-review'/)
