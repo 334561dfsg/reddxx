@@ -1,7 +1,10 @@
 <script setup>
+import SelectOnlyCombobox from '../../admin/components/form/SelectOnlyCombobox.vue'
 import { computed, ref, watch } from 'vue'
 import { AGENT_PRODUCT_LINE_DEFS } from '../../admin/constants/agentCommission'
-import { agentDailyReportRows } from '../../admin/mock/agentPortal'
+import { useAgentReportScope } from '../../composables/useAgentReportScope.js'
+
+const { isAgent, employeeFilter, employeeOptions, dailyRows, reportError, retryReport } = useAgentReportScope()
 import AgentListPaginationBar from '../../components/agent-system/AgentListPaginationBar.vue'
 import { useAgentPagedList } from '../../composables/useAgentListPagination'
 
@@ -28,7 +31,7 @@ const productOptions = computed(() =>
 
 const queryRows = computed(() => {
   const rows = []
-  for (const day of agentDailyReportRows) {
+  for (const day of dailyRows.value) {
     for (const product of productOptions.value) {
       const tradeVolume = Number(day.volumeByModule?.[product.value] ?? 0)
       const estCommission = Number(day.commissionByModule?.[product.value] ?? 0)
@@ -79,28 +82,39 @@ function openDatePicker(event) {
 
 <template>
   <div class="space-y-4">
+    <div v-if="reportError" role="alert" class="rounded-lg border border-rose-400/30 p-3 text-sm text-rose-200">
+      {{ reportError }}
+      <button type="button" class="ml-3 underline" @click="retryReport">重试</button>
+    </div>
     <div>
       <p class="text-sm font-medium text-white/90">业绩数据查询</p>
       <p class="mt-1 text-sm leading-relaxed text-white/50">
-        按日期和产品线检索直邀用户产生的交易额与预估佣金；成员列表请在「团队管理」查看。
+        {{ isAgent ? '按日期、产品线和所属业务员查询业绩。' : '按日期和产品线查询本人名下客户的业绩。' }}
       </p>
     </div>
 
     <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-      <div class="grid gap-3 sm:grid-cols-3">
+      <div class="grid gap-3 sm:grid-cols-2" :class="isAgent ? 'xl:grid-cols-4' : 'xl:grid-cols-3'">
         <div>
-          <label class="block text-xs text-white/45">产品线</label>
-          <select
+          <SelectOnlyCombobox
             v-model="productFilter"
-            class="mt-1 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2 text-sm text-white"
-          >
-            <option value="all">全部产品线</option>
-            <option v-for="o in productOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
-          </select>
+            theme="agent"
+            label="产品线"
+            :options="[{ value: 'all', label: '全部产品线' }, ...productOptions]"
+          />
         </div>
+      <div v-if="isAgent" class="min-w-0">
+        <SelectOnlyCombobox
+          v-model="employeeFilter"
+          theme="agent"
+          label="业务员"
+          :options="[{ value: '', label: '全部业务员' }, ...employeeOptions]"
+        />
+      </div>
         <div>
-          <label class="block text-xs text-white/45">开始日期</label>
+          <label for="agent-query-start" class="block text-xs text-white/45">开始日期</label>
           <input
+            id="agent-query-start"
             v-model="dateFrom"
             type="date"
             class="mt-1 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2 text-sm text-white [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:invert"
@@ -109,8 +123,9 @@ function openDatePicker(event) {
           />
         </div>
         <div>
-          <label class="block text-xs text-white/45">结束日期</label>
+          <label for="agent-query-end" class="block text-xs text-white/45">结束日期</label>
           <input
+            id="agent-query-end"
             v-model="dateTo"
             type="date"
             class="mt-1 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2 text-sm text-white [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:invert"
@@ -122,7 +137,7 @@ function openDatePicker(event) {
       <button
         type="button"
         class="rounded-lg border border-white/10 px-3 py-2 text-sm text-white/75 transition hover:bg-white/[0.04]"
-        @click="productFilter = 'all'; dateFrom = ''; dateTo = ''"
+        @click="productFilter = 'all'; dateFrom = ''; dateTo = ''; employeeFilter = ''"
       >
         重置
       </button>
@@ -183,6 +198,6 @@ function openDatePicker(event) {
         @update:page-size="pageSize = $event"
       />
     </div>
-    <p v-if="!rows.length" class="text-center text-sm text-white/45">暂无匹配数据</p>
+    <p v-if="!rows.length && !reportError" class="text-center text-sm text-white/45">暂无匹配数据</p>
   </div>
 </template>

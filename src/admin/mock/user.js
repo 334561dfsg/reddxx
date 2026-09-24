@@ -28,6 +28,15 @@ const generateUser = (id, overrides = {}) => ({
 })
 
 export const usersList = [
+  // Explicitly provisioned mock salesperson for shared-portal login testing.
+  generateUser(900001, {
+    username: '测试业务员', email: 'sales.test@example.com', phone: '',
+    isSalesperson: true, agentParentId: 'user_1001', agentParentUsername: 'agent_wang',
+    employeeId: null, parentId: null, parentUsername: null,
+    balance: 0, frozenBalance: 0, totalProfit: 0, tradingVolume: 0,
+    passwordCredential: {"algorithm":"PBKDF2-SHA-256","iterations":600000,"salt":"d5f8f942605b54bd90b4e257b088f522","hash":"7bbe50297d62e3a689ab2993b80ec8fe9a11bed1ef73205453c5031c15b0ec33"},
+    mfaSetup: { issuer: 'FEX Sales', accountName: 'sales.test@example.com', secret: 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP', status: 'pending' }
+  }),
   generateUser(1001, {
     username: 'agent_wang',
     email: 'wang@agent.com',

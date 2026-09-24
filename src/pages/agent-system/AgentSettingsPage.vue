@@ -41,7 +41,7 @@ async function submitPassword() {
   pwdMsg.value = ''
   pwdSubmitting.value = true
   try {
-    const r = auth.changePassword({
+    const r = await auth.changePassword({
       oldPassword: pwdOld.value,
       newPassword: pwdNew.value,
       confirmPassword: pwdConfirm.value
@@ -157,7 +157,7 @@ async function bindPhoneMfa() {
     <div v-show="activeTab === 'password'" class="rounded-xl border border-white/[0.06] bg-white/[0.03] p-5">
       <h2 class="text-sm font-semibold text-white">修改登录密码</h2>
       <p class="mt-1 text-xs text-white/40">
-        修改后将用于代理系统登录；初始默认密码为 <span class="font-mono text-white/55">{{ AGENT_DEFAULT_LOGIN_PASSWORD }}</span>（未改过前）。
+        修改后将用于代理系统登录。<span v-if="auth.role === 'agent'">初始默认密码为 <span class="font-mono text-white/55">{{ AGENT_DEFAULT_LOGIN_PASSWORD }}</span>（未改过前）。</span>
       </p>
       <form class="mt-4 space-y-3" @submit.prevent="submitPassword">
         <div>

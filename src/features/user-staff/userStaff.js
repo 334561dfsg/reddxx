@@ -159,6 +159,39 @@ export function createStaffRepository({ users, storage = null, now = () => new D
     else { level='customer'; rows=users.filter(u=>u.role==='user' && (!u.isSalesperson || u.employeeId) && (matches({agentId:u.agentParentId,employeeId:u.employeeId,customerId:u.id},agentId,employeeId,'') || successful.some(r=>r.customerId===u.id&&matches(r,agentId,employeeId,'')&&within(r.date)))).map(u=>({id:u.id,name:u.username,metrics:summarize(agentId,employeeId,u.id)})) }
     return { level, summary:summarize(agentId,employeeId,''), rows, unassignedAgentCount:users.filter(u=>u.role==='user'&&!u.isSalesperson&&!u.agentParentId).length, startDate, endDate }
   }
+  const dailyReport = ({ agentId, employeeId = '' }) => {
+    activeAgent(agentId)
+    if (employeeId && !employees(agentId).some(e => e.id === employeeId)) throw new Error('所选业务员不属于当前代理')
+    const belongs = row => row.agentId === agentId && (!employeeId || row.employeeId === employeeId)
+    const moduleKeys = ['deposit', 'perpetual', 'delivery', 'spot', 'aiQuant', 'lending', 'borrowing', 'portfolio']
+    const kindToModule = { deposit:'deposit', perpetual:'perpetual', delivery:'delivery', spot:'spot', ai:'aiQuant', wealth:'lending', borrowing:'borrowing', portfolio:'portfolio' }
+    const days = new Map()
+    const dayFor = date => {
+      if (!days.has(date)) days.set(date, { date, newInvites:0, volumeCents:Object.fromEntries(moduleKeys.map(k=>[k,0])), commissionCents:Object.fromEntries(moduleKeys.map(k=>[k,0])) })
+      return days.get(date)
+    }
+    for (const row of records) {
+      const key = kindToModule[row.kind]
+      if (!key || row.status !== 'success' || !belongs(row)) continue
+      const day = dayFor(row.date)
+      day.volumeCents[key] += row.amountCents || 0
+      day.commissionCents[key] += row.commissionCents || 0
+    }
+    const registered = new Set()
+    for (const row of registrations) {
+      if (!belongs(row) || !validDate(row.date) || registered.has(row.customerId)) continue
+      registered.add(row.customerId)
+      dayFor(row.date).newInvites++
+    }
+    return [...days.values()].map(day => ({
+      date:day.date,
+      newInvites:day.newInvites,
+      tradeVolume:Object.values(day.volumeCents).reduce((s,v)=>s+v,0)/100,
+      estCommission:Object.values(day.commissionCents).reduce((s,v)=>s+v,0)/100,
+      volumeByModule:Object.fromEntries(moduleKeys.map(k=>[k,day.volumeCents[k]/100])),
+      commissionByModule:Object.fromEntries(moduleKeys.map(k=>[k,day.commissionCents[k]/100]))
+    })).sort((a,b)=>b.date.localeCompare(a.date))
+  }
   const seedDemo = () => {
     if (initialized) return
     registrations=users.filter(u=>u.role==='user'&&!u.isSalesperson).map(u=>({customerId:u.id,agentId:u.agentParentId||'',employeeId:u.employeeId||'',date:text(u.registerTime).slice(0,10)}))
@@ -177,5 +210,5 @@ export function createStaffRepository({ users, storage = null, now = () => new D
     initialized=true;persist(snapshot())
   }
   const persistUserUpdate = (id, patch) => persist(snapshot(users.map(u => u.id === id ? {...u, ...patch} : u)))
-  return {createUser,assignEmployee,recordBusiness,report,seedDemo,persistUserUpdate,employees:agentId=>clone(employees(agentId)),agents:()=>clone(users.filter(u=>u.role==='agent')),getAudit:()=>clone(audit),persist:()=>persist(snapshot()),nameOf:id=>getUser(id)?.username||'—'}
+  return {createUser,assignEmployee,recordBusiness,report,dailyReport,seedDemo,persistUserUpdate,employees:agentId=>clone(employees(agentId)),agents:()=>clone(users.filter(u=>u.role==='agent')),getAudit:()=>clone(audit),persist:()=>persist(snapshot()),nameOf:id=>getUser(id)?.username||'—'}
 }

@@ -10,6 +10,8 @@ import {
 } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
+  theme: { type: String, default: 'admin' },
+  hideLabel: { type: Boolean, default: false },
   modelValue: { type: [String, Number], default: null },
   options: { type: Array, default: () => [] },
   label: { type: String, required: true },
@@ -290,7 +292,7 @@ function positionPopup() {
   const renderedWidth = Math.min(Math.max(rect.width, 1), Math.max(1, width - margin * 2))
   const left = Math.min(Math.max(rect.left, leftOffset + margin), leftOffset + width - margin - renderedWidth)
   const safeWidth = `min(${Math.round(renderedWidth)}px, calc(100vw - max(${margin}px, env(safe-area-inset-left, 0px)) - max(${margin}px, env(safe-area-inset-right, 0px))))`
-  const safeHeight = `min(${Math.floor(availableHeight)}px, calc(100vh - max(${margin}px, env(safe-area-inset-top, 0px)) - max(${margin}px, env(safe-area-inset-bottom, 0px))), calc(100dvh - max(${margin}px, env(safe-area-inset-top, 0px)) - max(${margin}px, env(safe-area-inset-bottom, 0px))))`
+  const safeHeight = `min(${Math.floor(renderedHeight)}px, calc(100vh - max(${margin}px, env(safe-area-inset-top, 0px)) - max(${margin}px, env(safe-area-inset-bottom, 0px))), calc(100dvh - max(${margin}px, env(safe-area-inset-top, 0px)) - max(${margin}px, env(safe-area-inset-bottom, 0px))))`
   popupStyle.value = {
     position: 'fixed',
     top: `clamp(calc(${Math.round(topOffset)}px + max(${margin}px, env(safe-area-inset-top, 0px))), ${Math.round(top)}px, calc(${Math.round(topOffset + height)}px - max(${margin}px, env(safe-area-inset-bottom, 0px)) - ${safeHeight}))`,
@@ -438,8 +440,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="rootRef" class="select-only-combobox relative min-w-0" :data-invalid="effectiveInvalid ? 'true' : null">
-    <span :id="labelId" class="mb-1 block text-sm font-medium text-gray-700">
+  <div ref="rootRef" class="select-only-combobox relative min-w-0" :data-theme="theme" :data-invalid="effectiveInvalid ? 'true' : null">
+    <span :id="labelId" :class="hideLabel ? 'sr-only' : 'select-only-combobox__label mb-1 block text-sm font-medium text-gray-700'">
       {{ label }}
       <span v-if="required" :id="requiredId" class="text-red-700">（必填）</span>
     </span>
@@ -470,7 +472,8 @@ onUnmounted(() => {
           {{ hint }}
         </span>
       </span>
-      <span class="shrink-0 text-xs text-gray-500">{{ readonly ? '只读' : '选择' }}</span>
+      <svg v-if="theme === 'agent' && !readonly" class="h-4 w-4 shrink-0 text-white/45" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      <span v-else class="shrink-0 text-xs text-gray-500">{{ readonly ? '只读' : '选择' }}</span>
     </div>
 
     <p v-if="orphaned" :id="orphanedId" data-testid="select-only-combobox-orphaned" role="alert" class="mt-1 text-sm text-red-700">
@@ -482,7 +485,7 @@ onUnmounted(() => {
 
     <Teleport :to="portalTarget">
       <Transition name="select-only-combobox" @after-leave="handleAfterLeave">
-        <div v-if="rendered" ref="popupRef" data-testid="select-only-combobox-popup" :style="popupStyle" class="select-only-combobox__popup z-50 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl">
+        <div v-if="rendered" ref="popupRef" data-testid="select-only-combobox-popup" :data-theme="theme" :style="popupStyle" class="select-only-combobox__popup z-50 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl">
           <ul
             :id="open ? listboxId : null"
             :role="open ? 'listbox' : null"
@@ -518,6 +521,18 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.select-only-combobox[data-theme='agent'] .select-only-combobox__label { color: rgb(255 255 255 / .45); font-size: .75rem; font-weight: 400; }
+.select-only-combobox[data-theme='agent'] [role='combobox'] { border-color: rgb(255 255 255 / .1); background: #0c1219; color: #f1f5f9; }
+.select-only-combobox[data-theme='agent'] [role='combobox']:hover { border-color: rgb(255 255 255 / .2); }
+.select-only-combobox[data-theme='agent'] [role='combobox']:focus-visible { border-color: #34d399; box-shadow: 0 0 0 2px rgb(52 211 153 / .25); }
+.select-only-combobox[data-theme='agent'] [aria-disabled='true'] { opacity: .5; }
+.select-only-combobox[data-theme='agent'] [role='alert'] { color: #fda4af; }
+.select-only-combobox__popup[data-theme='agent'] { border-color: rgb(255 255 255 / .12); background: #101923; color: #f1f5f9; box-shadow: 0 12px 32px rgb(0 0 0 / .4); }
+.select-only-combobox__popup[data-theme='agent'] [role='option'] { color: #e2e8f0; overflow-wrap: anywhere; }
+.select-only-combobox__popup[data-theme='agent'] [role='option']:hover,
+.select-only-combobox__popup[data-theme='agent'] [aria-selected='true'] { background: rgb(16 185 129 / .16); color: #a7f3d0; }
+.select-only-combobox__popup[data-theme='agent'] [aria-disabled='true'] { color: #64748b; }
+
 .select-only-combobox__popup {
   max-height: min(24rem, calc(100vh - 2rem));
   max-height: min(24rem, calc(100dvh - 2rem));

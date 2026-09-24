@@ -1,4 +1,5 @@
 <script setup>
+import SelectOnlyCombobox from '../../admin/components/form/SelectOnlyCombobox.vue'
 defineProps({
   currentPage: { type: Number, required: true },
   totalPages: { type: Number, required: true },
@@ -15,19 +16,18 @@ defineEmits(['update:currentPage', 'update:pageSize'])
   >
     <span>共 <span class="tabular-nums font-medium text-white/75">{{ totalCount }}</span> 条</span>
     <div class="flex flex-wrap items-center gap-2.5">
-      <label class="flex items-center gap-2">
+      <div class="flex items-center gap-2">
         <span class="text-[10px] font-medium uppercase tracking-wider text-white/35">每页</span>
-        <select
-          :value="pageSize"
-          class="cursor-pointer rounded-xl border border-white/[0.1] bg-[#080c10]/95 px-2.5 py-1.5 text-xs font-medium text-white/85 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] outline-none transition hover:border-white/[0.16] focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/15"
-          @change="$emit('update:pageSize', Number($event.target.value))"
-        >
-          <option :value="5">5</option>
-          <option :value="10">10</option>
-          <option :value="20">20</option>
-          <option :value="50">50</option>
-        </select>
-      </label>
+        <SelectOnlyCombobox
+          :model-value="pageSize"
+          theme="agent"
+          label="每页条数"
+          hide-label
+          class="w-20"
+          :options="[5, 10, 20, 50].map(value => ({ value, label: String(value) }))"
+          @update:model-value="$emit('update:pageSize', $event)"
+        />
+      </div>
       <button
         type="button"
         class="rounded-xl border border-white/[0.1] bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-white/80 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] transition hover:border-emerald-500/25 hover:bg-emerald-500/[0.08] hover:text-emerald-50 disabled:cursor-not-allowed disabled:opacity-35"

@@ -1,4 +1,5 @@
 <script setup>
+import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
 defineProps({
   searchKeyword: { type: String, default: '' },
   filterLevel: { type: String, default: 'all' },
@@ -134,13 +135,13 @@ const agentBtnPrimary =
       </div>
 
       <div>
-        <label :class="agentLabel">认证等级</label>
-        <select :value="filterLevel" :class="`${agentField} cursor-pointer`" @change="emit('update:filter-level', $event.target.value)">
-          <option value="all">全部等级</option>
-          <option v-for="option in levelOptions" :key="option.value" :value="option.value">
-            {{ option.label }}
-          </option>
-        </select>
+        <SelectOnlyCombobox
+          :model-value="filterLevel"
+          theme="agent"
+          label="认证等级"
+          :options="[{ value: 'all', label: '全部等级' }, ...levelOptions]"
+          @update:model-value="emit('update:filter-level', $event)"
+        />
       </div>
 
       <div>

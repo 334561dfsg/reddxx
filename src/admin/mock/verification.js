@@ -3,7 +3,7 @@ import {
   VERIFICATION_STATUS, 
   VERIFICATION_DOC_TYPE,
   LOG_ACTION_TYPE
-} from '../../constants/verification'
+} from '../../constants/verification.js'
 
 // 认证权限配置
 export const verificationConfig = {
@@ -227,9 +227,14 @@ export const getVerificationAudits = ({
   searchKeyword,
   applyLevel,
   status,
-  dateRange
+  dateRange,
+  allowedUserIds
 }) => {
   let filteredAudits = [...verificationAuditList]
+  if (allowedUserIds !== undefined) {
+    const allowed = new Set(allowedUserIds)
+    filteredAudits = filteredAudits.filter(audit => allowed.has(audit.userId))
+  }
 
   if (searchKeyword && searchKeyword.trim()) {
     const keyword = searchKeyword.toLowerCase()

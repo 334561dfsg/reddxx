@@ -9,3 +9,16 @@ export const AGENT_SYSTEM_NAV = [
   { key: 'commission', label: '佣金结算', to: '/agent-system/commission', desc: '账期、进度与入账' },
   { key: 'settings', label: '账户设置', to: '/agent-system/settings', desc: '安全与资料' }
 ]
+
+const SALESPERSON_NAV_KEYS = new Set(['dashboard', 'data', 'dailyReport', 'verification', 'settings'])
+
+export function getAgentSystemNav(role) {
+  if (role === 'agent') return AGENT_SYSTEM_NAV
+  if (role === 'salesperson') return AGENT_SYSTEM_NAV.filter(item => SALESPERSON_NAV_KEYS.has(item.key))
+  return []
+}
+
+export function canAccessAgentSystemPath(role, path) {
+  const pathname = String(path).split(/[?#]/)[0].replace(/\/+$/, '')
+  return getAgentSystemNav(role).some(item => item.to === pathname)
+}

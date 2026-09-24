@@ -2,14 +2,15 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import CrossPlatformFloatNav from '../components/CrossPlatformFloatNav.vue'
-import { AGENT_SYSTEM_NAV } from '../constants/agentSystemNav'
-import { useAgentAuthStore } from '../stores/agentAuth'
+import { getAgentSystemNav } from '../constants/agentSystemNav'
+import { AGENT_DEMO_LOGIN_ENABLED, useAgentAuthStore } from '../stores/agentAuth'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAgentAuthStore()
 
 const mobileNavOpen = ref(false)
+const navigation = computed(() => getAgentSystemNav(auth.role))
 
 const pageTitle = computed(() => route.meta?.title || '代理系统')
 
@@ -64,9 +65,10 @@ function logout() {
           <span v-if="auth.uid" class="block font-mono text-[10px] text-white/30">UID {{ auth.uid }}</span>
         </p>
       </div>
+      <button v-if="AGENT_DEMO_LOGIN_ENABLED" type="button" class="mx-4 my-3 rounded-lg border border-emerald-500/25 px-3 py-2 text-sm text-emerald-200 hover:bg-emerald-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400" @click="logout">切换演示身份</button>
       <nav class="space-y-0.5 p-2 md:flex-1 md:overflow-y-auto md:p-3" aria-label="代理系统导航">
         <RouterLink
-          v-for="item in AGENT_SYSTEM_NAV"
+          v-for="item in navigation"
           :key="item.key"
           :to="item.to"
           class="flex flex-col rounded-lg px-3 py-2.5 text-left transition"

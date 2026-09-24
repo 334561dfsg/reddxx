@@ -777,3 +777,21 @@ test('popup geometry clamps every edge to its corresponding safe-area inset', as
   assert.match(popup.style.width, /safe-area-inset-left[\s\S]*safe-area-inset-right/)
   assert.match(popup.style.maxHeight, /safe-area-inset-top[\s\S]*safe-area-inset-bottom/)
 })
+
+test('short upward popup reserves its content height instead of all space above the trigger', async (t) => {
+  const component = await loadVueSfc(componentFile)
+  const harness = await createSfcHarness(component, baseProps, {}, {
+    innerWidth: 390, innerHeight: 844,
+    visualViewport: { width: 390, height: 844, offsetLeft: 0, offsetTop: 0 }
+  })
+  t.after(harness.cleanup)
+  const combobox = harness.findByTestId('select-only-combobox')
+  combobox.getBoundingClientRect = () => ({ top: 674, bottom: 714, left: 65, right: 145, width: 80, height: 40 })
+  await dispatchKey(harness, combobox, 'Enter')
+  const popup = harness.findByTestId('select-only-combobox-popup')
+  popup.scrollHeight = 168
+  harness.window.dispatchEvent({ type: 'resize' })
+  await harness.flush()
+  assert.match(popup.style.top, /500px/)
+  assert.match(popup.style.maxHeight, /^min\(168px,/)
+})

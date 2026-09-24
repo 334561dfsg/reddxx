@@ -1,6 +1,9 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, reactive } from 'vue'
 import { getVerificationAudits, verificationAuditList } from '../../admin/mock/verification'
+import { useAgentAuthStore } from '../../stores/agentAuth.js'
+import { usersList } from '../../admin/mock/user.js'
+import { portalClientIds } from '../../features/user-staff/portalScope.js'
 import AgentListPaginationBar from '../../components/agent-system/AgentListPaginationBar.vue'
 import AuditStatsCards from '../../admin/components/verification-audit/AuditStatsCards.vue'
 import AuditFilters from '../../admin/components/verification-audit/AuditFilters.vue'
@@ -12,6 +15,12 @@ import {
   VERIFICATION_DOC_TYPE_OPTIONS
 } from '../../constants/verification'
 
+const auth = useAgentAuthStore()
+const allowedUserIds = computed(() => portalClientIds(auth, usersList))
+const auditRevision = ref(0)
+const scopedAudits = computed(() => { auditRevision.value; return verificationAuditList.filter(audit => allowedUserIds.value.includes(audit.userId)) })
+const canAccessAudit = audit => audit && allowedUserIds.value.includes(audit.userId)
+let requestGeneration = 0
 const auditList = ref([])
 const loading = ref(false)
 const searchKeyword = ref('')
@@ -73,6 +82,7 @@ const selectedSiteInfo = computed(() => {
 })
 
 const fetchAudits = async () => {
+  const generation = ++requestGeneration
   loading.value = true
   try {
     const { list, total } = await getVerificationAudits({
@@ -81,18 +91,21 @@ const fetchAudits = async () => {
       searchKeyword: searchKeyword.value,
       applyLevel: filterLevel.value,
       status: VERIFICATION_STATUS.PENDING,
-      dateRange: dateRange.value
+      dateRange: dateRange.value,
+      allowedUserIds: allowedUserIds.value
     })
+    if (generation !== requestGeneration) return
+    auditRevision.value++
     auditList.value = list
     pagination.total = total
   } catch (error) {
     console.error('获取认证审核列表失败:', error)
   } finally {
-    loading.value = false
+    if (generation === requestGeneration) loading.value = false
   }
 }
 
-watch([searchKeyword, filterLevel, dateRange], () => {
+watch([searchKeyword, filterLevel, dateRange, () => auth.userId, () => auth.agentId, () => auth.role], () => {
   if (pagination.currentPage !== 1) {
     pagination.currentPage = 1
   } else {
@@ -149,14 +162,15 @@ watch(showDetailModal, (open) => {
 onMounted(fetchAudits)
 
 onUnmounted(() => {
+  requestGeneration++
   setAgentShellScrollLocked(false)
 })
 
 const statistics = computed(() => {
-  const total = verificationAuditList.length
-  const pending = verificationAuditList.filter((a) => a.status === VERIFICATION_STATUS.PENDING).length
-  const approved = verificationAuditList.filter((a) => a.status === VERIFICATION_STATUS.APPROVED).length
-  const rejected = verificationAuditList.filter((a) => a.status === VERIFICATION_STATUS.REJECTED).length
+  const total = scopedAudits.value.length
+  const pending = scopedAudits.value.filter((a) => a.status === VERIFICATION_STATUS.PENDING).length
+  const approved = scopedAudits.value.filter((a) => a.status === VERIFICATION_STATUS.APPROVED).length
+  const rejected = scopedAudits.value.filter((a) => a.status === VERIFICATION_STATUS.REJECTED).length
   return [
     { label: '待审核', value: pending.toLocaleString(), trend: '需处理', color: 'blue' },
     {
@@ -188,6 +202,7 @@ const formatDate = (dateString) => {
 }
 
 const viewDetail = (audit) => {
+  if (!canAccessAudit(audit)) return
   selectedAudit.value = audit
   showDetailModal.value = true
   auditAction.value = null
@@ -201,31 +216,39 @@ const closeDetail = () => {
   auditNote.value = ''
 }
 
+watch(() => [auth.role, auth.userId, auth.agentId], () => {
+  requestGeneration++
+  auditList.value = []
+  pagination.total = 0
+  closeDetail()
+}, { flush:'sync' })
+
 const startAuditAction = (action) => {
   auditAction.value = action
 }
 
 const submitAudit = () => {
-  if (!selectedAudit.value || !auditAction.value) return
+  if (!canAccessAudit(selectedAudit.value) || !auditAction.value) return
   const idx = verificationAuditList.findIndex((a) => a.id === selectedAudit.value.id)
   if (idx === -1) return
   const now = new Date().toISOString()
   const audit = verificationAuditList[idx]
+  if (!canAccessAudit(audit)) return
   if (auditAction.value === 'approve') {
     audit.status = VERIFICATION_STATUS.APPROVED
     audit.auditTime = now
-    audit.auditor = 'agent_current'
+    audit.auditor = auth.userId
     showToast('审核通过！')
   } else if (auditAction.value === 'reject') {
     audit.status = VERIFICATION_STATUS.REJECTED
     audit.auditTime = now
-    audit.auditor = 'agent_current'
+    audit.auditor = auth.userId
     audit.rejectReason = auditNote.value || '不符合认证要求'
     showToast('已拒绝申请！')
   } else if (auditAction.value === 'resubmit') {
     audit.status = VERIFICATION_STATUS.RESUBMIT
     audit.auditTime = now
-    audit.auditor = 'agent_current'
+    audit.auditor = auth.userId
     audit.rejectReason = auditNote.value || '需要补充材料'
     showToast('已要求用户补件！')
   }

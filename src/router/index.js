@@ -3,6 +3,7 @@ import ConsoleLayout from '../layouts/ConsoleLayout.vue'
 import FrontDesktopLayout from '../layouts/FrontDesktopLayout.vue'
 import HomeEntryPage from '../pages/HomeEntryPage.vue'
 import { useAgentAuthStore } from '../stores/agentAuth'
+import { canAccessAgentSystemPath } from '../constants/agentSystemNav.js'
 import { useFrontAuthStore } from '../stores/frontAuth'
 import { agentSystemRoutes } from './modules/agentSystem'
 import { consoleRoutes } from './modules/console'
@@ -73,6 +74,9 @@ router.beforeEach((to) => {
         path: '/agent-system/login',
         query: { redirect: to.fullPath }
       }
+    }
+    if (needAgent && to.path !== '/agent-system' && !canAccessAgentSystemPath(agentAuth.role, to.path)) {
+      return '/agent-system/dashboard'
     }
     const guestAgent = to.matched.some((r) => r.meta.agentGuestOnly)
     if (guestAgent && agentAuth.isLoggedIn) {

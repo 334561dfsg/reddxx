@@ -1,9 +1,12 @@
 <script setup>
+import SelectOnlyCombobox from '../../admin/components/form/SelectOnlyCombobox.vue'
 import { computed, ref } from 'vue'
 import { AGENT_PRODUCT_LINE_DEFS } from '../../admin/constants/agentCommission'
 import AgentListPaginationBar from '../../components/agent-system/AgentListPaginationBar.vue'
 import { useAgentPagedList } from '../../composables/useAgentListPagination'
-import { agentDailyReportRows } from '../../admin/mock/agentPortal'
+import { useAgentReportScope } from '../../composables/useAgentReportScope.js'
+
+const { isAgent, employeeFilter, employeeOptions, dailyRows, reportError, retryReport } = useAgentReportScope()
 
 /** 明细表列名（与记佣产品线 key 对应） */
 const MODULE_COL_LABEL = {
@@ -12,15 +15,14 @@ const MODULE_COL_LABEL = {
   delivery: '交割',
   spot: '现货',
   aiQuant: 'AI量化',
+  portfolio: '投资组合',
   lending: '理财',
   borrowing: '借贷'
 }
 
-const monthKeys = [
-  ...new Set(agentDailyReportRows.map((r) => r.date.slice(0, 7)))
-].sort((a, b) => (a < b ? 1 : -1))
-
-const monthFilter = ref(monthKeys[0] ?? '')
+const currentMonth = new Date().toISOString().slice(0, 7)
+const monthKeys = computed(() => [...new Set([currentMonth, monthFilter.value, ...dailyRows.value.map(r => r.date.slice(0, 7))])].sort().reverse())
+const monthFilter = ref(dailyRows.value[0]?.date.slice(0, 7) || currentMonth)
 
 function monthLabel(ym) {
   const [y, m] = ym.split('-')
@@ -28,7 +30,7 @@ function monthLabel(ym) {
 }
 
 const rows = computed(() =>
-  agentDailyReportRows
+  dailyRows.value
     .filter((r) => r.date.startsWith(monthFilter.value))
     .sort((a, b) => (a.date < b.date ? 1 : -1))
 )
@@ -47,19 +49,31 @@ const { pageSize, currentPage, totalCount, totalPages, pagedList } = useAgentPag
 
 <template>
   <div class="space-y-4">
+    <div v-if="reportError" role="alert" class="rounded-lg border border-rose-400/30 p-3 text-sm text-rose-200">
+      {{ reportError }}
+      <button type="button" class="ml-3 underline" @click="retryReport">重试</button>
+    </div>
     <p class="text-sm text-white/50">
-      下表按<strong class="text-white/75">后台代理记佣产品线</strong>展示各模块交易额；对接接口后以服务端口径为准。
+      {{ isAgent ? '按月份和所属业务员汇总各产品线业绩。' : '按月份汇总本人名下客户的各产品线业绩。' }}
     </p>
 
-    <div class="flex flex-wrap items-end gap-3">
+    <div class="grid gap-3 sm:grid-cols-2 lg:max-w-2xl">
+      <div v-if="isAgent" class="min-w-0">
+        <SelectOnlyCombobox
+          v-model="employeeFilter"
+          theme="agent"
+          label="业务员"
+          :options="[{ value: '', label: '全部业务员' }, ...employeeOptions]"
+        />
+      </div>
+
       <div>
-        <label class="block text-xs text-white/45">统计月份</label>
-        <select
+        <SelectOnlyCombobox
           v-model="monthFilter"
-          class="mt-1 min-w-[10rem] rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2 text-sm text-white"
-        >
-          <option v-for="m in monthKeys" :key="m" :value="m">{{ monthLabel(m) }}</option>
-        </select>
+          theme="agent"
+          label="统计月份"
+          :options="monthKeys.map(value => ({ value, label: monthLabel(value) }))"
+        />
       </div>
     </div>
 
@@ -136,5 +150,6 @@ const { pageSize, currentPage, totalCount, totalPages, pagedList } = useAgentPag
         @update:page-size="pageSize = $event"
       />
     </div>
+    <p v-if="!rows.length && !reportError" class="text-center text-sm text-white/45" role="status">暂无匹配数据</p>
   </div>
 </template>

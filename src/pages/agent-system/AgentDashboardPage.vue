@@ -4,10 +4,21 @@ import { RouterLink } from 'vue-router'
 import { agentDashboardSummary, buildAgentInviteLink } from '../../admin/mock/agentPortal'
 import { agentSettlementApi } from '../../admin/mock/agentSettlement'
 import { agentPortalSettlementHeadline } from '../../admin/constants/agentSettlement'
+import { useAgentReportScope } from '../../composables/useAgentReportScope.js'
+import { usersList } from '../../admin/mock/user.js'
+import { verificationAuditList } from '../../admin/mock/verification.js'
+import { portalClientIds } from '../../features/user-staff/portalScope.js'
 import { useAgentAuthStore } from '../../stores/agentAuth'
 
 const auth = useAgentAuthStore()
-const s = agentDashboardSummary
+const { dailyRows, reportError } = useAgentReportScope()
+const s = computed(() => {
+  if (auth.role !== 'salesperson') return agentDashboardSummary
+  const month = new Date(Date.now() + 8 * 3600000).toISOString().slice(0, 7)
+  const rows = dailyRows.value.filter(row => row.date.startsWith(month))
+  const allowed = new Set(portalClientIds(auth, usersList))
+  return { monthVolume:rows.reduce((sum,row)=>sum+row.tradeVolume,0), monthVolumeUnit:'USDT', monthCommission:rows.reduce((sum,row)=>sum+row.estCommission,0), pendingKyc:verificationAuditList.filter(row=>allowed.has(row.userId)&&row.status==='pending').length }
+})
 const periodSummary = ref(null)
 
 const agentInviteLink = computed(() => buildAgentInviteLink(auth.inviteCode))
@@ -20,19 +31,21 @@ function copyAgentText(text) {
 }
 
 onMounted(async () => {
+  if (auth.role !== 'agent') return
   const res = await agentSettlementApi.getCurrentPeriodSummary(auth.uid)
   if (res.success) periodSummary.value = res.data
 })
 
 const settlementSubline = computed(() => {
   const p = periodSummary.value
-  if (!p?.status) return `${s.settlementStatus} · ${s.nextSettlementDate}`
+  if (!p?.status) return `${s.value.settlementStatus} · ${s.value.nextSettlementDate}`
   return `${agentPortalSettlementHeadline(p.status)} · ${p.period} 账期 · 预计 ${p.nextSettlementDate}`
 })
 </script>
 
 <template>
   <div class="space-y-6">
+    <p v-if="reportError && auth.role === 'salesperson'" role="alert" class="rounded-lg border border-rose-400/30 p-3 text-sm text-rose-200">{{ reportError }}</p>
     <p class="text-sm text-white/55 md:hidden">{{ auth.nickname }} · UID {{ auth.uid }}</p>
 
     <section
@@ -57,7 +70,7 @@ const settlementSubline = computed(() => {
               {{ s.monthCommission.toLocaleString('zh-CN', { minimumFractionDigits: 2 }) }}
               <span class="text-sm font-normal text-white/40">USDT</span>
             </p>
-            <p class="mt-2 border-t border-white/[0.05] pt-2 text-[11px] leading-snug text-white/35">{{ settlementSubline }}</p>
+            <p v-if="auth.role === 'agent'" class="mt-2 border-t border-white/[0.05] pt-2 text-[11px] leading-snug text-white/35">{{ settlementSubline }}</p>
           </div>
           <div class="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 transition hover:border-white/[0.1]">
             <p class="text-[11px] font-medium uppercase tracking-wider text-white/38">本月直邀交易量</p>
@@ -133,10 +146,10 @@ const settlementSubline = computed(() => {
         <li>
           <RouterLink class="text-emerald-300/95 hover:underline" to="/agent-system/daily-report">数据日报 · 按日交易与佣金</RouterLink>
         </li>
-        <li>
+        <li v-if="auth.role === 'agent'">
           <RouterLink class="text-emerald-300/95 hover:underline" to="/agent-system/commission-rates">记佣比例 · 各产品线一级比例</RouterLink>
         </li>
-        <li>
+        <li v-if="auth.role === 'agent'">
           <RouterLink class="text-emerald-300/95 hover:underline" to="/agent-system/commission">佣金结算 · 账期、进度与入账</RouterLink>
         </li>
       </ul>
