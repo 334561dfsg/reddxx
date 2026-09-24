@@ -9,7 +9,8 @@ import {
   setAgentCredentialMfaBound
 } from '../admin/mock/agent.js'
 
-export const AGENT_DEMO_LOGIN_ENABLED = import.meta.env?.DEV === true || import.meta.env?.VITE_ENABLE_DEMO_LOGIN === 'true'
+// This project is a prototype: demo identities are enabled unless explicitly disabled.
+export const AGENT_DEMO_LOGIN_ENABLED = import.meta.env?.VITE_ENABLE_DEMO_LOGIN !== 'false'
 
 const SESSION_KEY = 'fex-agent-session-v1'
 const PROFILES_KEY = 'fex-agent-profiles-v1'

@@ -153,12 +153,18 @@ test('verification scope is applied before pagination and unknown roles fail clo
  assert.equal((await getVerificationAudits({page:1,pageSize:10,allowedUserIds:[]})).total,0)
 })
 
-test('demo login is disabled outside explicitly enabled demo environments', async () => {
+test('prototype demo login defaults on and switches only between the fixed demo identities', async () => {
  const {AGENT_DEMO_LOGIN_ENABLED}=await import('../src/stores/agentAuth.js')
- assert.equal(Boolean(AGENT_DEMO_LOGIN_ENABLED),false)
+ assert.equal(AGENT_DEMO_LOGIN_ENABLED,true)
  setActivePinia(createPinia())
  const auth=useAgentAuthStore()
- assert.equal(auth.loginDemo('agent').ok,false)
- assert.equal(auth.loginDemo('salesperson').ok,false)
+ assert.equal(auth.loginDemo('agent').ok,true)
+ assert.equal(auth.role,'agent')
+ assert.equal(auth.userId,'user_1001')
+ assert.equal(auth.loginDemo('salesperson').ok,true)
+ assert.equal(auth.role,'salesperson')
+ assert.equal(auth.userId,'user_900001')
+ auth.logout()
+ assert.equal(auth.loginDemo('admin').ok,false)
  assert.equal(auth.isLoggedIn,false)
 })
