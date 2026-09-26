@@ -24,7 +24,7 @@ export function validateNewUser(input, users = []) {
   return errors
 }
 
-async function passwordCredential(password) {
+export async function passwordCredential(password) {
   if (!globalThis.crypto?.subtle) throw new Error('当前浏览器不支持安全保存账号，请使用 localhost 或 HTTPS')
   const salt = crypto.getRandomValues(new Uint8Array(16))
   const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits'])

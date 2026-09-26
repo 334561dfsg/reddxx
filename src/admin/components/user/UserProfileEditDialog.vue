@@ -4,6 +4,8 @@ import { updateProfile, validateProfile } from '../../repositories/userRelations
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import AgentDeliveryCard from '../agent/AgentDeliveryCard.vue'
 import { createSalespersonMfa, salespersonDelivery } from '../../../features/user-staff/userMfa.js'
+import { generateUserPassword } from '../../../features/user-staff/userCredentials.js'
+import { passwordCredential } from '../../../features/user-staff/userStaff.js'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
 import { getAllowedPhoneDialOptions, getPhoneDialTextLabel, splitPhoneByDial } from '../../utils/phoneDialOptions.js'
 
@@ -26,6 +28,20 @@ onBeforeUnmount(() => { disposed = true; delivery.value = null })
 const submitError = ref('')
 const errors = reactive({})
 const form = reactive({ username: '', email: '', phoneDial: '+86', phoneNational: '', isSalesperson: false, remark: '', reason: '' })
+const passwordMode = ref('auto')
+const password = ref('')
+const confirmPassword = ref('')
+const showPassword = ref(false)
+const isPromotion = computed(() => form.isSalesperson && props.user?.isSalesperson !== true)
+const setPasswordMode = (mode) => {
+  passwordMode.value = mode
+  password.value = mode === 'auto' ? generateUserPassword() : ''
+  confirmPassword.value = ''
+}
+watch(isPromotion, (active) => {
+  if (active && !password.value) setPasswordMode('auto')
+  if (!active) { password.value = ''; confirmPassword.value = '' }
+})
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const dialOptions = computed(() => getAllowedPhoneDialOptions().map((item) => ({
   value: item.dial,
@@ -39,6 +55,10 @@ const resetForm = () => {
     dial: item.value,
     label: item.label
   })))
+  password.value = ''
+  confirmPassword.value = ''
+  passwordMode.value = 'auto'
+  showPassword.value = false
   delivery.value = null
   copying.value = false
   form.username = props.user?.username || ''
@@ -46,6 +66,7 @@ const resetForm = () => {
   form.phoneDial = phoneParts.dial
   form.phoneNational = phoneParts.nationalDigits
   form.isSalesperson = props.user?.isSalesperson === true
+  if (isPromotion.value) setPasswordMode('auto')
   form.remark = props.user?.remark || ''
   form.reason = ''
   for (const key of Object.keys(errors)) delete errors[key]
@@ -86,6 +107,10 @@ const submit = async () => {
   for (const key of Object.keys(errors)) delete errors[key]
   submitError.value = ''
   Object.assign(errors, validateProfile(form, userId.value))
+  if (isPromotion.value) {
+    if (password.value.length < 6 || password.value.length > 128) errors.password = '密码须为 6–128 个字符'
+    if (passwordMode.value === 'manual' && password.value !== confirmPassword.value) errors.confirmPassword = '两次输入的密码不一致'
+  }
   if (form.reason.trim().length > 200) errors.reason = '操作原因不能超过 200 字'
   if (Object.keys(errors).length) {
     submitError.value = '请检查并修正表单中的错误'
@@ -98,10 +123,14 @@ const submit = async () => {
     const targetId = userId.value
     const values = { ...form }
     const promoted = values.isSalesperson && props.user?.isSalesperson !== true
+    const loginPassword = promoted ? password.value : null
+    const credential = promoted ? await passwordCredential(loginPassword) : null
     const mfaSetup = promoted ? (props.user?.mfaSetup || await createSalespersonMfa(values.email.trim())) : null
     if (disposed || !props.visible || targetId !== userId.value) return
-    const updated = updateProfile(targetId, values, { mfaSetup })
-    if (promoted) delivery.value = salespersonDelivery(updated.email, '使用原登录密码（未修改）', mfaSetup)
+    const updated = updateProfile(targetId, values, { mfaSetup, passwordCredential: credential })
+    if (promoted) delivery.value = salespersonDelivery(updated.email, loginPassword, mfaSetup)
+    password.value = ''
+    confirmPassword.value = ''
     emit('saved', updated)
     submitting.value = false
     if (delivery.value) { await nextTick(); deliveryRef.value?.focus() } else close()
@@ -135,7 +164,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
             <p v-if="submitError" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ submitError }}</p>
 
             <div v-if="delivery" ref="deliveryRef" tabindex="-1" class="outline-none">
-              <AgentDeliveryCard :delivery="delivery" recipient="业务员" title="业务员设置成功，以下信息可发送给业务员" description="登录密码保持不变；下方卡片可截图发送给业务员，用于设置验证器。" @copying="copying=$event" />
+              <AgentDeliveryCard :delivery="delivery" recipient="业务员" title="业务员设置成功，以下信息可发送给业务员" description="请复制账号、新登录密码和 MFA 信息，发送给业务员并设置验证器。" @copying="copying=$event" />
             </div>
             <template v-else>
             <label class="block">
@@ -187,6 +216,26 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               <input v-model="form.isSalesperson" :disabled="submitting" type="checkbox" class="h-4 w-4 rounded border-slate-300 accent-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:cursor-not-allowed" />
               是否为业务员
             </label>
+
+            <fieldset v-if="isPromotion" :disabled="submitting" class="space-y-3 rounded-lg border border-slate-200 p-3">
+              <legend class="px-1 text-sm font-medium text-slate-800">初始登录密码 <span class="text-rose-500">*</span></legend>
+              <div class="flex gap-2">
+                <button type="button" :aria-pressed="passwordMode === 'auto'" class="rounded-md border px-3 py-1.5 text-sm" :class="passwordMode === 'auto' ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300'" @click="setPasswordMode('auto')">自动生成</button>
+                <button type="button" :aria-pressed="passwordMode === 'manual'" class="rounded-md border px-3 py-1.5 text-sm" :class="passwordMode === 'manual' ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300'" @click="setPasswordMode('manual')">手动输入</button>
+              </div>
+              <label class="block text-sm text-slate-700">
+                密码
+                <input v-model="password" :readonly="passwordMode === 'auto'" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="128" required :aria-invalid="Boolean(errors.password)" aria-describedby="profile-password-hint profile-password-error" class="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+              </label>
+              <p id="profile-password-error" class="text-xs text-rose-600">{{ errors.password }}</p>
+              <label v-if="passwordMode === 'manual'" class="block text-sm text-slate-700">
+                确认密码
+                <input v-model="confirmPassword" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="128" required :aria-invalid="Boolean(errors.confirmPassword)" aria-describedby="profile-confirm-password-error" class="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                <span id="profile-confirm-password-error" class="mt-1 block text-xs text-rose-600">{{ errors.confirmPassword }}</span>
+              </label>
+              <label class="flex items-center gap-2 text-sm text-slate-700"><input v-model="showPassword" type="checkbox" class="h-4 w-4 accent-blue-600" />显示密码</label>
+              <p id="profile-password-hint" class="text-xs text-slate-500">6–128 个字符。保存后将更新该用户的登录密码，原密码失效。</p>
+            </fieldset>
 
             <label class="block">
               <span class="text-sm font-medium text-slate-800">操作原因（可选）</span>

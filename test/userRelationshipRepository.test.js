@@ -300,3 +300,22 @@ test('profile promotion saves MFA without exposing it in audit or replacing logi
   if(previous.mfaSetup===undefined)delete getUser(previous.id).mfaSetup
  }
 })
+
+test('promotion stores the new hashed password, verifies login, and excludes credentials from audit', async () => {
+ const { passwordCredential } = await import('../src/features/user-staff/userStaff.js')
+ const { verifyStaffPassword } = await import('../src/features/user-staff/verifyCredential.js')
+ const previous=snapshotUser('user_1004')
+ try {
+  const credential=await passwordCredential('NewSales123!')
+  const updated=updateProfile(previous.id,{...previous,isSalesperson:true},{passwordCredential:credential})
+  assert.equal(await verifyStaffPassword('NewSales123!',updated.passwordCredential),true)
+  assert.equal(await verifyStaffPassword('wrong-password',updated.passwordCredential),false)
+  assert.equal(JSON.stringify(getRelationshipAuditLog()).includes(credential.hash),false)
+  updateProfile(previous.id,{...updated,username:updated.username},{passwordCredential:{hash:'should-not-replace'}})
+  assert.equal(updated.passwordCredential.hash,credential.hash)
+ } finally {
+  restoreUser(previous)
+  if(previous.isSalesperson===undefined)delete getUser(previous.id).isSalesperson
+  if(previous.passwordCredential===undefined)delete getUser(previous.id).passwordCredential
+ }
+})

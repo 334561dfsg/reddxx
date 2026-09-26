@@ -163,7 +163,7 @@ export const validateProfile = (input, userId) => {
   return errors
 }
 
-export const updateProfile = (userId, patch, { mfaSetup = null } = {}) => {
+export const updateProfile = (userId, patch, { mfaSetup = null, passwordCredential = null } = {}) => {
   const user = requireUser(userId)
   const cleanReason = normalizeOptionalReason(patch?.reason)
   const errors = validateProfile(patch, userId)
@@ -187,7 +187,7 @@ export const updateProfile = (userId, patch, { mfaSetup = null } = {}) => {
     remark: normalized(patch.remark),
     isSalesperson: patch.isSalesperson === undefined ? user.isSalesperson === true : patch.isSalesperson === true
   }
-  const storedChanges = { ...after, ...(after.isSalesperson && !user.mfaSetup && mfaSetup ? { mfaSetup } : {}) }
+  const storedChanges = { ...after, ...(after.isSalesperson && !before.isSalesperson && passwordCredential ? { passwordCredential } : {}), ...(after.isSalesperson && !user.mfaSetup && mfaSetup ? { mfaSetup } : {}) }
   persistStaffUserUpdate(idOf(user), storedChanges)
   Object.assign(user, storedChanges)
   appendAudit({
