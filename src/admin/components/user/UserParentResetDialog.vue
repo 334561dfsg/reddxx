@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton, AdminTextarea, nativeControl } from '../antd/controls.js'
+
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import PanelSingleSelect from '../form/PanelSingleSelect.vue'
 import { getDescendants, getParentCandidates, getUserById, resetParent } from '../../repositories/userRelationshipRepository.js'
@@ -130,7 +132,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               <h2 id="parent-reset-title" class="text-lg font-semibold text-slate-900">重设裂变上级</h2>
               <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p>
             </div>
-            <button type="button" :disabled="submitting" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40" aria-label="关闭" @click="close">×</button>
+            <AdminButton type="button" :disabled="submitting" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
@@ -167,7 +169,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
 
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">变更原因（可选）</span>
-                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="可填写重设裂变上级的原因" />
+                <AdminTextarea :ref="element => { reasonRef = nativeControl(element) }" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="可填写重设裂变上级的原因" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>
@@ -187,12 +189,12 @@ watch(() => [props.visible, userId.value], ([visible]) => {
 
           <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
             <template v-if="phaseName === 'form'">
-              <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" @click="close">取消</button>
-              <button type="button" class="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700" @click="startConfirm">下一步</button>
+              <AdminButton type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" @click="close">取消</AdminButton>
+              <AdminButton type="button" class="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700" @click="startConfirm">下一步</AdminButton>
             </template>
             <template v-else>
-              <button ref="backRef" type="button" :disabled="submitting" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40" @click="backToForm">返回修改</button>
-              <button type="button" :disabled="submitting" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50" @click="confirmReset">{{ submitting ? '提交中…' : '确认重设裂变上级' }}</button>
+              <AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="submitting" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40" @click="backToForm">返回修改</AdminButton>
+              <AdminButton type="button" :disabled="submitting" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50" @click="confirmReset">{{ submitting ? '提交中…' : '确认重设裂变上级' }}</AdminButton>
             </template>
           </footer>
         </section>

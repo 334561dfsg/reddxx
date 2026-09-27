@@ -122,28 +122,18 @@ const showToast = (message) => {
                 :key="row.key"
                 class="flex items-center space-x-2"
               >
-                <input
-                  v-model="tempConfig[row.key]"
-                  type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                >
+                <a-checkbox v-model:checked="tempConfig[row.key]" class="text-blue-600" />
                 <span class="text-sm text-gray-700">{{ row.label }}</span>
               </label>
             </div>
 
             <div class="flex space-x-2 pt-4 border-t">
-              <button 
-                @click="saveConfig"
-                class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
+              <a-button @click="saveConfig" class="flex-1 bg-blue-600 text-white hover:bg-blue-700 transition-colors" html-type="button" type="primary">
                 保存
-              </button>
-              <button 
-                @click="cancelEdit"
-                class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-              >
+              </a-button>
+              <a-button @click="cancelEdit" class="flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors" html-type="button">
                 取消
-              </button>
+              </a-button>
             </div>
           </template>
 
@@ -173,12 +163,9 @@ const showToast = (message) => {
               </div>
             </div>
 
-            <button 
-              @click="startEdit(VERIFICATION_LEVEL.NONE)"
-              class="w-full mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-            >
+            <a-button @click="startEdit(VERIFICATION_LEVEL.NONE)" class="w-full mt-4 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors" html-type="button">
               编辑配置
-            </button>
+            </a-button>
           </template>
         </div>
       </div>
@@ -200,28 +187,18 @@ const showToast = (message) => {
                 :key="row.key"
                 class="flex items-center space-x-2"
               >
-                <input
-                  v-model="tempConfig[row.key]"
-                  type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                >
+                <a-checkbox v-model:checked="tempConfig[row.key]" class="text-blue-600" />
                 <span class="text-sm text-gray-700">{{ row.label }}</span>
               </label>
             </div>
 
             <div class="flex space-x-2 pt-4 border-t">
-              <button 
-                @click="saveConfig"
-                class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
+              <a-button @click="saveConfig" class="flex-1 bg-blue-600 text-white hover:bg-blue-700 transition-colors" html-type="button" type="primary">
                 保存
-              </button>
-              <button 
-                @click="cancelEdit"
-                class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-              >
+              </a-button>
+              <a-button @click="cancelEdit" class="flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors" html-type="button">
                 取消
-              </button>
+              </a-button>
             </div>
           </template>
 
@@ -251,12 +228,9 @@ const showToast = (message) => {
               </div>
             </div>
 
-            <button 
-              @click="startEdit(VERIFICATION_LEVEL.BASIC)"
-              class="w-full mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-            >
+            <a-button @click="startEdit(VERIFICATION_LEVEL.BASIC)" class="w-full mt-4 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors" html-type="button">
               编辑配置
-            </button>
+            </a-button>
           </template>
         </div>
       </div>
@@ -278,11 +252,7 @@ const showToast = (message) => {
                 :key="row.key"
                 class="flex items-center space-x-2"
               >
-                <input
-                  v-model="tempConfig[row.key]"
-                  type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                >
+                <a-checkbox v-model:checked="tempConfig[row.key]" class="text-blue-600" />
                 <span class="text-sm text-gray-700">{{ row.label }}</span>
               </label>
 
@@ -294,12 +264,7 @@ const showToast = (message) => {
                     :key="docType.value"
                     class="flex items-center space-x-2"
                   >
-                    <input 
-                      type="checkbox" 
-                      :checked="requiresDocument(VERIFICATION_LEVEL.ADVANCED, docType.value)"
-                      @change="toggleDocument(docType.value)"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    >
+                    <a-checkbox :checked="requiresDocument(VERIFICATION_LEVEL.ADVANCED, docType.value)" @change="toggleDocument(docType.value)" class="text-blue-600" />
                     <span class="text-sm text-gray-700">{{ docType.label }}</span>
                   </label>
                 </div>
@@ -307,18 +272,12 @@ const showToast = (message) => {
             </div>
 
             <div class="flex space-x-2 pt-4 border-t">
-              <button 
-                @click="saveConfig"
-                class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
+              <a-button @click="saveConfig" class="flex-1 bg-blue-600 text-white hover:bg-blue-700 transition-colors" html-type="button" type="primary">
                 保存
-              </button>
-              <button 
-                @click="cancelEdit"
-                class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-              >
+              </a-button>
+              <a-button @click="cancelEdit" class="flex-1 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors" html-type="button">
                 取消
-              </button>
+              </a-button>
             </div>
           </template>
 
@@ -348,12 +307,9 @@ const showToast = (message) => {
               </div>
             </div>
 
-            <button 
-              @click="startEdit(VERIFICATION_LEVEL.ADVANCED)"
-              class="w-full mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-            >
+            <a-button @click="startEdit(VERIFICATION_LEVEL.ADVANCED)" class="w-full mt-4 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors" html-type="button">
               编辑配置
-            </button>
+            </a-button>
           </template>
         </div>
       </div>

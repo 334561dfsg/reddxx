@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton, AdminInput, AdminTextarea, nativeControl } from '../antd/controls.js'
+
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
@@ -146,7 +148,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
               <h2 id="user-funds-mutation-title" class="text-lg font-semibold text-slate-900">{{ config.title }}</h2>
               <p class="mt-0.5 truncate text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p>
             </div>
-            <button type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40" aria-label="关闭" @click="close">×</button>
+            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="user-funds-mutation-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
@@ -185,14 +187,14 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
               <div>
                 <label for="user-funds-operation-amount" class="text-sm font-medium text-slate-800">{{ config.amountLabel }} <span class="text-rose-500">*</span></label>
                 <div class="mt-1.5 flex gap-2">
-                  <input id="user-funds-operation-amount" ref="amountRef" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="最多两位小数" />
-                  <button type="button" class="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" @click="fillMaximum">全部</button>
+                  <AdminInput id="user-funds-operation-amount" :ref="element => { amountRef = nativeControl(element) }" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="最多两位小数" />
+                  <AdminButton type="button" class="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" @click="fillMaximum">全部</AdminButton>
                 </div>
                 <p class="mt-1 text-xs text-slate-500">最多可操作 {{ money(maximumAmount) }}</p>
               </div>
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">操作原因（可选）</span>
-                <textarea ref="reasonRef" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" :placeholder="`可填写${config.action}原因`" />
+                <AdminTextarea :ref="element => { reasonRef = nativeControl(element) }" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" :placeholder="`可填写${config.action}原因`" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>
@@ -215,12 +217,12 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
 
           <footer class="flex shrink-0 justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3 sm:px-5">
             <template v-if="stage === 'edit'">
-              <button type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="close">取消</button>
-              <button type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="startConfirm">下一步</button>
+              <AdminButton type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="close">取消</AdminButton>
+              <AdminButton type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="startConfirm">下一步</AdminButton>
             </template>
             <template v-else>
-              <button ref="backRef" type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="backToEdit">返回修改</button>
-              <button ref="submitButtonRef" type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="requestMfa">{{ busy ? '验证中…' : '提交并验证' }}</button>
+              <AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="backToEdit">返回修改</AdminButton>
+              <AdminButton :ref="element => { submitButtonRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="requestMfa">{{ busy ? '验证中…' : '提交并验证' }}</AdminButton>
             </template>
           </footer>
         </section>

@@ -5,26 +5,26 @@
         <h1 class="text-3xl font-semibold text-slate-900">产品管理</h1>
         <p class="mt-1 text-sm text-slate-500">借贷产品：借出币种、额度、利率与流动性；与弹窗内预览一致。</p>
       </div>
-      <button type="button" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="showAddProduct">
+      <a-button type="text" html-type="button" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="showAddProduct">
         + 添加产品
-      </button>
+      </a-button>
     </header>
 
     <article class="rounded-xl border border-slate-200 bg-white">
       <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-4">
         <div class="flex flex-wrap items-center gap-2">
-          <select v-model="filters.status" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500">
-            <option value="">全部状态</option>
-            <option value="active">活跃</option>
-            <option value="inactive">停用</option>
-            <option value="suspended">暂停</option>
-          </select>
-          <button type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="resetFilters">重置</button>
+          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.status" class="">
+            <a-select-option value="">全部状态</a-select-option>
+            <a-select-option value="active">活跃</a-select-option>
+            <a-select-option value="inactive">停用</a-select-option>
+            <a-select-option value="suspended">暂停</a-select-option>
+          </a-select>
+          <a-button type="text" html-type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="resetFilters">重置</a-button>
         </div>
 
         <div class="relative w-full max-w-sm">
-          <input
-            v-model="searchKeyword"
+          <a-input
+            v-model:value="searchKeyword"
             type="text"
             class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500"
             placeholder="搜索产品名称或代码..."
@@ -43,7 +43,7 @@
               <div class="flex items-center gap-2">
                 <h3 class="text-lg font-semibold text-slate-900">{{ product.productName }}</h3>
                 <span class="text-sm text-slate-500">{{ product.productId }}</span>
-                <span 
+                <span
                   class="rounded-md px-2 py-0.5 text-xs font-medium"
                   :class="{
                     'bg-emerald-50 text-emerald-700': product.status === 'active',
@@ -69,21 +69,21 @@
               </p>
             </div>
             <div class="flex items-center gap-2">
-              <button 
-                type="button" 
+              <a-button type="text"
+                html-type="button"
                 class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-100"
                 @click="editProduct(product)"
               >
                 编辑
-              </button>
-              <button 
-                type="button" 
+              </a-button>
+              <a-button type="text"
+                html-type="button"
                 class="rounded-lg border px-3 py-1.5 text-sm"
                 :class="product.status === 'active' ? 'border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100' : 'border-emerald-200 bg-emerald-50 text-emerald-600 hover:bg-emerald-100'"
                 @click="toggleProductStatus(product)"
               >
                 {{ product.status === 'active' ? '暂停' : '启用' }}
-              </button>
+              </a-button>
             </div>
           </div>
 
@@ -118,20 +118,19 @@
     </article>
 
     <!-- 产品编辑模态框 - 左右布局 -->
-    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div class="flex h-[min(88vh,56rem)] w-full max-w-6xl max-h-[95vh] flex-col overflow-hidden rounded-xl bg-white shadow-2xl">
-        <!-- 弹窗头部 -->
-        <div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
+    <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1152" :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeModal">
+<template #title><template v-if="showModal"><div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
           <div>
             <h2 class="text-xl font-semibold text-slate-900">{{ isEditing ? '编辑产品' : '新增产品' }}</h2>
             <p class="mt-1 text-sm text-slate-500">左侧维护参数，右侧实时预览；保存后与列表展示一致。</p>
           </div>
-          <button type="button" class="text-slate-400 hover:text-slate-600" @click="closeModal">
+          <a-button aria-label="关闭" type="text" html-type="button" class="text-slate-400 hover:text-slate-600" @click="closeModal">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
-        </div>
+          </a-button>
+        </div></template></template>
+<template v-if="showModal">
 
         <!-- 弹窗主体：左右分栏（固定高度，仅内部滚动，避免切换 Tab 时整窗伸缩） -->
         <div class="flex min-h-0 flex-1 overflow-hidden">
@@ -140,18 +139,18 @@
             <!-- Tab 导航 -->
             <div class="shrink-0 border-b border-slate-200 px-6">
               <div class="flex gap-1">
-                <button
-                  type="button"
+                <a-button type="text"
+                  html-type="button"
                   @click="activeTab = 'basic'"
                   class="px-4 py-3 text-sm font-medium border-b-2 transition-colors"
-                  :class="activeTab === 'basic' 
-                    ? 'border-blue-600 text-blue-600' 
+                  :class="activeTab === 'basic'
+                    ? 'border-blue-600 text-blue-600'
                     : 'border-transparent text-slate-600 hover:text-slate-900'"
                 >
                   基本配置
-                </button>
-                <button
-                  type="button"
+                </a-button>
+                <a-button type="text"
+                  html-type="button"
                   @click="activeTab = 'collateral'"
                   class="px-4 py-3 text-sm font-medium border-b-2 transition-colors"
                   :class="activeTab === 'collateral'
@@ -159,9 +158,9 @@
                     : 'border-transparent text-slate-600 hover:text-slate-900'"
                 >
                   质押配置
-                </button>
-                <button
-                  type="button"
+                </a-button>
+                <a-button type="text"
+                  html-type="button"
                   @click="activeTab = 'details'"
                   class="px-4 py-3 text-sm font-medium border-b-2 transition-colors"
                   :class="activeTab === 'details'
@@ -169,9 +168,9 @@
                     : 'border-transparent text-slate-600 hover:text-slate-900'"
                 >
                   详细配置
-                </button>
-                <button
-                  type="button"
+                </a-button>
+                <a-button type="text"
+                  html-type="button"
                   @click="activeTab = 'rules'"
                   class="px-4 py-3 text-sm font-medium border-b-2 transition-colors"
                   :class="activeTab === 'rules'
@@ -179,7 +178,7 @@
                     : 'border-transparent text-slate-600 hover:text-slate-900'"
                 >
                   计算规则
-                </button>
+                </a-button>
               </div>
             </div>
 
@@ -197,26 +196,26 @@
                   <div class="space-y-4">
                     <div>
                       <label class="block text-sm font-medium text-slate-700 mb-1.5">产品名称</label>
-                      <input 
-                        v-model="formData.productName" 
-                        type="text" 
+                      <a-input
+                        v-model:value="formData.productName"
+                        type="text"
                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="例如：USDT 灵活借贷"
                       />
                     </div>
                     <div>
                       <label class="mb-1.5 block text-sm font-medium text-slate-700">借出币种</label>
-                      <select
-                        v-model="formData.loanCurrency"
-                        class="w-full max-w-md rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      <a-select :get-popup-container="(trigger) => trigger.parentElement"
+                        v-model:value="formData.loanCurrency"
+                        class="w-full max-w-md"
                       >
-                        <option value="">请选择</option>
-                        <option value="USDT">USDT</option>
-                        <option value="USDC">USDC</option>
-                        <option value="DAI">DAI</option>
-                        <option value="BTC">BTC</option>
-                        <option value="ETH">ETH</option>
-                      </select>
+                        <a-select-option value="">请选择</a-select-option>
+                        <a-select-option value="USDT">USDT</a-select-option>
+                        <a-select-option value="USDC">USDC</a-select-option>
+                        <a-select-option value="DAI">DAI</a-select-option>
+                        <a-select-option value="BTC">BTC</a-select-option>
+                        <a-select-option value="ETH">ETH</a-select-option>
+                      </a-select>
                     </div>
                   </div>
                 </div>
@@ -233,18 +232,18 @@
                   <div class="grid grid-cols-2 gap-3">
                     <div>
                       <label class="block text-sm font-medium text-slate-700 mb-1.5">最小借款额</label>
-                      <input 
-                        v-model.number="formData.minLoanAmount" 
-                        type="number" 
+                      <a-input
+                        v-model:value.number="formData.minLoanAmount"
+                        type="number"
                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="1000"
                       />
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-slate-700 mb-1.5">最大借款额</label>
-                      <input 
-                        v-model.number="formData.maxLoanAmount" 
-                        type="number" 
+                      <a-input
+                        v-model:value.number="formData.maxLoanAmount"
+                        type="number"
                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="500000"
                       />
@@ -263,18 +262,18 @@
                   <div class="grid grid-cols-2 gap-3">
                     <div>
                       <label class="block text-sm font-medium text-slate-700 mb-1.5">最短期限 (天)</label>
-                      <input 
-                        v-model.number="formData.minLoanDuration" 
-                        type="number" 
+                      <a-input
+                        v-model:value.number="formData.minLoanDuration"
+                        type="number"
                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="7"
                       />
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-slate-700 mb-1.5">最长期限 (天)</label>
-                      <input 
-                        v-model.number="formData.maxLoanDuration" 
-                        type="number" 
+                      <a-input
+                        v-model:value.number="formData.maxLoanDuration"
+                        type="number"
                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="90"
                       />
@@ -293,19 +292,19 @@
                   <div class="grid gap-4 md:grid-cols-2">
                     <div>
                       <label class="block text-sm font-medium text-slate-700 mb-1.5">状态</label>
-                      <select
-                        v-model="formData.status"
-                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      <a-select :get-popup-container="(trigger) => trigger.parentElement"
+                        v-model:value="formData.status"
+                        class="w-full"
                       >
-                        <option value="active">活跃</option>
-                        <option value="inactive">停用</option>
-                        <option value="suspended">暂停</option>
-                      </select>
+                        <a-select-option value="active">活跃</a-select-option>
+                        <a-select-option value="inactive">停用</a-select-option>
+                        <a-select-option value="suspended">暂停</a-select-option>
+                      </a-select>
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-slate-700 mb-1.5">产品排序</label>
-                      <input
-                        v-model.number="formData.sortOrder"
+                      <a-input
+                        v-model:value.number="formData.sortOrder"
                         type="number"
                         placeholder="数字越大越靠前"
                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -320,8 +319,8 @@
                 <div class="grid gap-4 md:grid-cols-2">
                   <div>
                     <label class="mb-1.5 block text-sm font-medium text-slate-700">质押倍数</label>
-                    <input
-                      v-model.number="formData.collateralMultiplier"
+                    <a-input
+                      v-model:value.number="formData.collateralMultiplier"
                       type="number"
                       step="0.1"
                       min="1"
@@ -341,19 +340,19 @@
                       </p>
                     </div>
                     <div class="flex items-center gap-2">
-                      <button type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50" @click="selectAllCollateralCurrencies">
+                      <a-button type="text" html-type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50" @click="selectAllCollateralCurrencies">
                         全选开放币种
-                      </button>
-                      <button type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50" @click="clearCollateralCurrencies">
+                      </a-button>
+                      <a-button type="text" html-type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50" @click="clearCollateralCurrencies">
                         清空
-                      </button>
+                      </a-button>
                     </div>
                   </div>
 
                   <div class="rounded-xl border border-slate-200 bg-white">
                     <div class="border-b border-slate-200 p-3">
-                      <input
-                        v-model="collateralCurrencyKeyword"
+                      <a-input
+                        v-model:value="collateralCurrencyKeyword"
                         type="text"
                         class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
                         placeholder="搜索币种，例如 BTC / USDT"
@@ -365,7 +364,7 @@
                           class="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700"
                         >
                           {{ coin }}
-                          <button type="button" class="text-blue-400 hover:text-blue-700" :aria-label="`移除 ${coin}`" @click="removeCollateralCurrency(coin)">×</button>
+                          <a-button type="text" html-type="button" class="text-blue-400 hover:text-blue-700" :aria-label="`移除 ${coin}`" @click="removeCollateralCurrency(coin)">×</a-button>
                         </span>
                       </div>
                       <p v-else class="mt-3 text-xs text-slate-400">尚未选择质押币种</p>
@@ -378,7 +377,7 @@
                         class="flex min-h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
                       >
                         <span class="font-medium">{{ coin }}</span>
-                        <input v-model="formData.collateralCurrencies" :value="coin" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-blue-600" />
+                        <a-checkbox :checked="formData.collateralCurrencies.includes(coin)" @change="$event.target.checked ? formData.collateralCurrencies.push(coin) : formData.collateralCurrencies.splice(formData.collateralCurrencies.indexOf(coin), 1)" :value="coin" class="" />
                       </label>
                       <p v-if="filteredCollateralCurrencyOptions.length === 0" class="px-3 py-8 text-center text-sm text-slate-500">
                         没有匹配的开放币种
@@ -403,8 +402,8 @@
                     利率设置
                   </h3>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">年化利率（%）</label>
-                  <input
-                    v-model.number="formData.interestRate"
+                  <a-input
+                    v-model:value.number="formData.interestRate"
                     type="number"
                     step="0.01"
                     min="0"
@@ -422,8 +421,8 @@
                     逾期规则
                   </h3>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">逾期违约金比例（每日 %）</label>
-                  <input
-                    v-model.number="formData.overduePenaltyRate"
+                  <a-input
+                    v-model:value.number="formData.overduePenaltyRate"
                     type="number"
                     step="0.01"
                     min="0"
@@ -443,8 +442,8 @@
                     质押风险与处理
                   </h3>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">质押预警比例（%）</label>
-                  <input
-                    v-model.number="formData.collateralWarningThreshold"
+                  <a-input
+                    v-model:value.number="formData.collateralWarningThreshold"
                     type="number"
                     step="1"
                     min="1"
@@ -458,8 +457,8 @@
 
                 <div>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">逾期处理阈值（%）</label>
-                  <input
-                    v-model.number="formData.collateralDisposalThreshold"
+                  <a-input
+                    v-model:value.number="formData.collateralDisposalThreshold"
                     type="number"
                     step="1"
                     min="1"
@@ -479,8 +478,8 @@
                     流动性
                   </h3>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">可用流动性</label>
-                  <input
-                    v-model.number="formData.availableLiquidity"
+                  <a-input
+                    v-model:value.number="formData.availableLiquidity"
                     type="number"
                     class="w-full max-w-md rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="1000000"
@@ -491,12 +490,12 @@
                 <div>
                   <h3 class="mb-3 text-sm font-semibold text-slate-900">其他信息</h3>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">产品描述</label>
-                  <textarea
-                    v-model="formData.description"
+                  <a-textarea
+                    v-model:value="formData.description"
                     rows="3"
                     class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="可选：产品特点、适用场景等"
-                  ></textarea>
+                  ></a-textarea>
                 </div>
               </div>
 
@@ -559,22 +558,7 @@
             </div>
 
             <!-- 左侧底部按钮 -->
-            <div class="flex shrink-0 items-center justify-end gap-3 border-t border-slate-200 p-4">
-              <button 
-                type="button" 
-                class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50"
-                @click="closeModal"
-              >
-                取消
-              </button>
-              <button 
-                type="button" 
-                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
-                @click="saveProduct"
-              >
-                {{ isEditing ? '保存修改' : '创建产品' }}
-              </button>
-            </div>
+
           </div>
 
           <!-- 右侧：实时预览区域 (40%) -->
@@ -599,7 +583,7 @@
                       <h3 class="text-lg font-semibold text-slate-900">
                         {{ formData.productName || '未命名产品' }}
                       </h3>
-                      <span 
+                      <span
                         class="rounded-md px-2 py-0.5 text-xs font-medium"
                         :class="{
                           'bg-emerald-50 text-emerald-700': formData.status === 'active',
@@ -669,8 +653,24 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </template>
+
+<template #footer><div class="flex shrink-0 items-center justify-end gap-3 border-t border-slate-200 p-4">
+              <a-button type="text"
+                html-type="button"
+                class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50"
+                @click="closeModal"
+              >
+                取消
+              </a-button>
+              <a-button type="text"
+                html-type="button"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                @click="saveProduct"
+              >
+                {{ isEditing ? '保存修改' : '创建产品' }}
+              </a-button>
+            </div></template></a-modal>
   </section>
 </template>
 

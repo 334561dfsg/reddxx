@@ -1,4 +1,5 @@
 <script setup>
+import { nativeControl } from '../../../admin/components/antd/controls.js'
 import { computed, ref } from 'vue'
 import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
 import { usersList } from '../../../admin/mock/user.js'
@@ -233,40 +234,30 @@ const resetFilters = () => {
           <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          <input v-model="query" type="search" placeholder="搜索 UID、用户名、邮箱或手机号" class="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+          <a-input v-model:value="query" type="search" placeholder="搜索 UID、用户名、邮箱或手机号" class="w-full pl-9 pr-3" />
         </label>
-        <select v-model="valueFilter" class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500">
-          <option value="">全部控制内容</option>
-          <option v-for="option in valueOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-        </select>
+        <a-select v-model:value="valueFilter" class="">
+          <a-select-option value="">全部控制内容</a-select-option>
+          <a-select-option v-for="option in valueOptions" :key="option.value" :value="option.value">{{ option.label }}</a-select-option>
+        </a-select>
       </div>
       <div class="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
         <span>共 {{ filteredRows.length }} 位用户</span>
         <div class="flex items-center gap-4">
-          <button type="button" class="font-medium text-blue-600 hover:text-blue-700" @click="resetFilters">重置筛选</button>
-          <button type="button" class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="openAddUser">添加用户</button>
+          <a-button html-type="button" class="font-medium text-blue-600 hover:text-blue-700" @click="resetFilters">重置筛选</a-button>
+          <a-button html-type="button" class="bg-blue-600 text-sm font-medium text-white hover:bg-blue-700" @click="openAddUser" type="primary">添加用户</a-button>
         </div>
       </div>
     </article>
 
     <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[840px] text-left text-sm">
-          <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600">
-            <tr>
-              <th class="px-4 py-3">用户</th>
-              <th class="px-4 py-3 whitespace-nowrap">点控</th>
-              <th class="px-4 py-3">更新时间</th>
-              <th class="px-4 py-3 text-right">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr v-for="row in filteredRows" :key="row.userId" class="hover:bg-slate-50">
-              <td class="px-4 py-4">
+        <a-table  :data-source="filteredRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.userId" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" ><template #title>用户</template><template #default="{ record: row, index: index }"><div class=" ">
                 <p class="font-medium text-slate-900">{{ row.username }}</p>
                 <p class="mt-0.5 text-xs text-slate-500">UID {{ row.userId }}</p>
-              </td>
-              <td class="px-4 py-4 whitespace-nowrap">
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>点控</template><template #default="{ record: row, index: index }"><div class="  whitespace-nowrap">
                 <span
                   v-if="pointControlLabel(row.rule) !== '-'"
                   class="inline-flex rounded-md px-2.5 py-1 text-xs font-semibold ring-1"
@@ -275,13 +266,13 @@ const resetFilters = () => {
                   {{ pointControlLabel(row.rule) }}
                 </span>
                 <span v-else class="text-xs text-slate-400">-</span>
-              </td>
-              <td class="px-4 py-4 text-slate-500">{{ row.rule?.updatedAt || '—' }}</td>
-              <td class="px-4 py-4">
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>更新时间</template><template #default="{ record: row, index: index }"><div class="  text-slate-500">{{ row.rule?.updatedAt || '—' }}</div></template></a-table-column>
+<a-table-column key="column-3" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class=" ">
                 <div class="flex items-center justify-end gap-3 whitespace-nowrap text-sm font-medium">
-                  <button type="button" class="text-blue-600 hover:text-blue-800" @click="openSetting(row)">
+                  <a-button html-type="button" class="text-blue-600 hover:text-blue-800" @click="openSetting(row)">
                     {{ row.rule ? '修改' : '设置' }}
-                  </button>
+                  </a-button>
                   <RouterLink
                     :to="{ name: 'users-control-log', query: { userId: row.userId, module: moduleKey } }"
                     class="text-slate-600 hover:text-slate-900"
@@ -289,14 +280,12 @@ const resetFilters = () => {
                     日志
                   </RouterLink>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div></template></a-table-column>
+</a-table>
       </div>
       <div v-if="filteredRows.length === 0" class="px-6 py-14 text-center">
         <p class="text-sm font-medium text-slate-700">没有符合筛选条件的用户</p>
-        <button type="button" class="mt-2 text-sm font-medium text-blue-600" @click="resetFilters">清除筛选条件</button>
+        <a-button html-type="button" class="mt-2 text-sm font-medium text-blue-600" @click="resetFilters">清除筛选条件</a-button>
       </div>
     </article>
 
@@ -322,24 +311,12 @@ const resetFilters = () => {
                   <h2 id="module-user-control-add-title" class="break-words text-lg font-semibold text-slate-900">添加{{ moduleMeta.label }}点控用户</h2>
                   <p class="mt-1 break-words text-sm text-slate-500">按 UID、邮箱或手机号搜索并加入当前用户点控列表。</p>
                 </div>
-                <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeAddUser">×</button>
+                <a-button html-type="button" class="flex min-w-11 shrink-0 items-center justify-center text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeAddUser">×</a-button>
               </header>
               <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
                 <label class="block" for="module-user-control-add-user-id">
                   <span class="text-sm font-medium text-slate-800">用户 UID <span class="text-rose-500">*</span></span>
-                  <input
-                    id="module-user-control-add-user-id"
-                    ref="addInputRef"
-                    v-model.trim="addUserId"
-                    type="search"
-                    autocomplete="off"
-                    placeholder="输入 UID、邮箱或手机号"
-                    :aria-invalid="addSearchAttempted && normalizedAddUserKeyword && !addSearchResult ? 'true' : 'false'"
-                    aria-describedby="module-user-control-add-help"
-                    class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                    @input="clearAddSearchResult"
-                    @keydown.enter.prevent="confirmAddUser"
-                  />
+                  <a-input id="module-user-control-add-user-id" :ref="el => { addInputRef = nativeControl(el) }" :value="addUserId" @update:value="addUserId = $event.trim()" type="search" autocomplete="off" placeholder="输入 UID、邮箱或手机号" :aria-invalid="addSearchAttempted && normalizedAddUserKeyword && !addSearchResult ? 'true' : 'false'" aria-describedby="module-user-control-add-help" class="mt-2 w-full" @input="clearAddSearchResult" @keydown.enter.prevent="confirmAddUser" />
                 </label>
                 <p id="module-user-control-add-help" class="text-xs leading-5 text-slate-500">
                   命中用户后点击确定会把用户加入当前列表并定位到该行，不会创建点控规则。
@@ -360,10 +337,10 @@ const resetFilters = () => {
                 </div>
               </div>
               <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-                <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeAddUser">取消</button>
-                <button type="button" :disabled="!canConfirmAddUser" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmAddUser">
+                <a-button html-type="button" class="border border-slate-300 bg-white text-sm font-medium text-slate-700" @click="closeAddUser">取消</a-button>
+                <a-button html-type="button" :disabled="!canConfirmAddUser" class="bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmAddUser" type="primary">
                   确定
-                </button>
+                </a-button>
               </footer>
             </section>
           </Transition>

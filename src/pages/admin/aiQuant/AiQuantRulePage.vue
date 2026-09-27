@@ -26,7 +26,7 @@ const sections = [
 		<!-- 导航栏 -->
 		<article class="rounded-xl border border-slate-200 bg-white p-4">
 			<nav class="flex flex-wrap gap-2">
-				<button
+				<a-button type="text"
 					v-for="section in sections"
 					:key="section.key"
 					@click="activeSection = section.key"
@@ -38,7 +38,7 @@ const sections = [
 					]"
 				>
 					{{ section.label }}
-				</button>
+				</a-button>
 			</nav>
 		</article>
 
@@ -167,36 +167,7 @@ const sections = [
 					<div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
 						<h3 class="font-semibold text-slate-900">📊 阶梯收益率设计</h3>
 						<div class="mt-3 overflow-x-auto rounded-lg border border-slate-200">
-							<table class="w-full text-sm">
-								<thead class="bg-slate-100 text-slate-600">
-									<tr>
-										<th class="px-3 py-2 text-left font-medium">产品档次</th>
-										<th class="px-3 py-2 text-left font-medium">投资额度</th>
-										<th class="px-3 py-2 text-left font-medium">日化收益</th>
-										<th class="px-3 py-2 text-left font-medium">年化收益</th>
-									</tr>
-								</thead>
-								<tbody class="text-slate-700">
-									<tr class="border-t border-slate-100">
-										<td class="px-3 py-2">入门级</td>
-										<td class="px-3 py-2">100 - 10,000 USDT</td>
-										<td class="px-3 py-2 text-blue-600 font-medium">0.15%</td>
-										<td class="px-3 py-2">54.75%</td>
-									</tr>
-									<tr class="border-t border-slate-100">
-										<td class="px-3 py-2">进阶级</td>
-										<td class="px-3 py-2">10,000 - 50,000 USDT</td>
-										<td class="px-3 py-2 text-blue-600 font-medium">0.18%</td>
-										<td class="px-3 py-2">65.7%</td>
-									</tr>
-									<tr class="border-t border-slate-100">
-										<td class="px-3 py-2">旗舰级</td>
-										<td class="px-3 py-2">50,000+ USDT</td>
-										<td class="px-3 py-2 text-blue-600 font-medium">0.30%</td>
-										<td class="px-3 py-2">109.5%</td>
-									</tr>
-								</tbody>
-							</table>
+							<a-table size="small" :pagination="false" :data-source="[{ key: 0 }, { key: 1 }, { key: 2 }]" row-key="key" :scroll="{ x: 'max-content' }"><a-table-column key="static-0"><template #title>产品档次</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2">入门级</div><div v-if="record.key === 1" class="px-3 py-2">进阶级</div><div v-if="record.key === 2" class="px-3 py-2">旗舰级</div></template></a-table-column><a-table-column key="static-1"><template #title>投资额度</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2">100 - 10,000 USDT</div><div v-if="record.key === 1" class="px-3 py-2">10,000 - 50,000 USDT</div><div v-if="record.key === 2" class="px-3 py-2">50,000+ USDT</div></template></a-table-column><a-table-column key="static-2"><template #title>日化收益</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2 text-blue-600 font-medium">0.15%</div><div v-if="record.key === 1" class="px-3 py-2 text-blue-600 font-medium">0.18%</div><div v-if="record.key === 2" class="px-3 py-2 text-blue-600 font-medium">0.30%</div></template></a-table-column><a-table-column key="static-3"><template #title>年化收益</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2">54.75%</div><div v-if="record.key === 1" class="px-3 py-2">65.7%</div><div v-if="record.key === 2" class="px-3 py-2">109.5%</div></template></a-table-column></a-table>
 						</div>
 					</div>
 					<div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
@@ -218,73 +189,19 @@ const sections = [
 				</h2>
 				<p class="mt-3 text-sm text-slate-600">用户需达到相应VIP等级才能购买高收益产品。等级越高，可购买的产品范围越广。</p>
 				<div class="mt-4 overflow-x-auto rounded-lg border border-slate-200">
-					<table class="w-full text-sm">
-						<thead class="bg-slate-100 text-slate-600">
-							<tr>
-								<th class="px-3 py-2 text-left font-medium">VIP等级</th>
-								<th class="px-3 py-2 text-left font-medium">累计入金要求</th>
-								<th class="px-3 py-2 text-left font-medium">邀请人数</th>
-								<th class="px-3 py-2 text-left font-medium">实名认证</th>
-								<th class="px-3 py-2 text-left font-medium">可购产品范围</th>
-							</tr>
-						</thead>
-						<tbody class="text-slate-700">
-							<tr class="border-t border-slate-100">
-								<td class="px-3 py-2">
+					<a-table size="small" :pagination="false" :data-source="[{ key: 0 }, { key: 1 }, { key: 2 }, { key: 3 }, { key: 4 }, { key: 5 }]" row-key="key" :scroll="{ x: 'max-content' }"><a-table-column key="static-0"><template #title>VIP等级</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2">
 									<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-md bg-slate-100 text-slate-700">V0 普通</span>
-								</td>
-								<td class="px-3 py-2">0 USDT</td>
-								<td class="px-3 py-2">0 人</td>
-								<td class="px-3 py-2 text-slate-400">○ 不需要</td>
-								<td class="px-3 py-2">基础产品</td>
-							</tr>
-							<tr class="border-t border-slate-100">
-								<td class="px-3 py-2">
+								</div><div v-if="record.key === 1" class="px-3 py-2">
 									<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-md bg-blue-100 text-blue-700">V1 银卡</span>
-								</td>
-								<td class="px-3 py-2">1,000 USDT</td>
-								<td class="px-3 py-2">3 人</td>
-								<td class="px-3 py-2 text-green-600">✓ 必须</td>
-								<td class="px-3 py-2">标准+进阶</td>
-							</tr>
-							<tr class="border-t border-slate-100">
-								<td class="px-3 py-2">
+								</div><div v-if="record.key === 2" class="px-3 py-2">
 									<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-md bg-yellow-100 text-yellow-700">V2 金卡</span>
-								</td>
-								<td class="px-3 py-2">10,000 USDT</td>
-								<td class="px-3 py-2">10 人</td>
-								<td class="px-3 py-2 text-green-600">✓ 必须</td>
-								<td class="px-3 py-2">全部普通产品</td>
-							</tr>
-							<tr class="border-t border-slate-100">
-								<td class="px-3 py-2">
+								</div><div v-if="record.key === 3" class="px-3 py-2">
 									<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-md bg-purple-100 text-purple-700">V3 铂金</span>
-								</td>
-								<td class="px-3 py-2">50,000 USDT</td>
-								<td class="px-3 py-2">30 人</td>
-								<td class="px-3 py-2 text-green-600">✓ 必须</td>
-								<td class="px-3 py-2">高级产品</td>
-							</tr>
-							<tr class="border-t border-slate-100">
-								<td class="px-3 py-2">
+								</div><div v-if="record.key === 4" class="px-3 py-2">
 									<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-md bg-emerald-100 text-emerald-700">V4 钻石</span>
-								</td>
-								<td class="px-3 py-2">100,000 USDT</td>
-								<td class="px-3 py-2">50 人</td>
-								<td class="px-3 py-2 text-green-600">✓ 必须</td>
-								<td class="px-3 py-2">旗舰产品</td>
-							</tr>
-							<tr class="border-t border-slate-100">
-								<td class="px-3 py-2">
+								</div><div v-if="record.key === 5" class="px-3 py-2">
 									<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-md bg-rose-100 text-rose-700">V5 王者</span>
-								</td>
-								<td class="px-3 py-2">500,000 USDT</td>
-								<td class="px-3 py-2">100 人</td>
-								<td class="px-3 py-2 text-green-600">✓ 必须</td>
-								<td class="px-3 py-2">全部产品无限制</td>
-							</tr>
-						</tbody>
-					</table>
+								</div></template></a-table-column><a-table-column key="static-1"><template #title>累计入金要求</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2">0 USDT</div><div v-if="record.key === 1" class="px-3 py-2">1,000 USDT</div><div v-if="record.key === 2" class="px-3 py-2">10,000 USDT</div><div v-if="record.key === 3" class="px-3 py-2">50,000 USDT</div><div v-if="record.key === 4" class="px-3 py-2">100,000 USDT</div><div v-if="record.key === 5" class="px-3 py-2">500,000 USDT</div></template></a-table-column><a-table-column key="static-2"><template #title>邀请人数</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2">0 人</div><div v-if="record.key === 1" class="px-3 py-2">3 人</div><div v-if="record.key === 2" class="px-3 py-2">10 人</div><div v-if="record.key === 3" class="px-3 py-2">30 人</div><div v-if="record.key === 4" class="px-3 py-2">50 人</div><div v-if="record.key === 5" class="px-3 py-2">100 人</div></template></a-table-column><a-table-column key="static-3"><template #title>实名认证</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2 text-slate-400">○ 不需要</div><div v-if="record.key === 1" class="px-3 py-2 text-green-600">✓ 必须</div><div v-if="record.key === 2" class="px-3 py-2 text-green-600">✓ 必须</div><div v-if="record.key === 3" class="px-3 py-2 text-green-600">✓ 必须</div><div v-if="record.key === 4" class="px-3 py-2 text-green-600">✓ 必须</div><div v-if="record.key === 5" class="px-3 py-2 text-green-600">✓ 必须</div></template></a-table-column><a-table-column key="static-4"><template #title>可购产品范围</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2">基础产品</div><div v-if="record.key === 1" class="px-3 py-2">标准+进阶</div><div v-if="record.key === 2" class="px-3 py-2">全部普通产品</div><div v-if="record.key === 3" class="px-3 py-2">高级产品</div><div v-if="record.key === 4" class="px-3 py-2">旗舰产品</div><div v-if="record.key === 5" class="px-3 py-2">全部产品无限制</div></template></a-table-column></a-table>
 				</div>
 			</div>
 

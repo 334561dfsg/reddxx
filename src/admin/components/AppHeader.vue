@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { Badge as ABadge, Switch as ASwitch, Avatar as AAvatar, Popover as APopover, Breadcrumb as ABreadcrumb, BreadcrumbItem as ABreadcrumbItem } from 'ant-design-vue'
 import { useRoute, useRouter } from 'vue-router'
 import AdminChangePasswordDialog from './AdminChangePasswordDialog.vue'
 import AdminSoundGuideDialog from './AdminSoundGuideDialog.vue'
@@ -268,13 +269,11 @@ onUnmounted(() => {
           <path d="M3.5 5.5H16.5M3.5 10H16.5M3.5 14.5H16.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
         </svg>
       </a-button>
-      <span class="hover:text-black/85 cursor-pointer transition-colors">首页</span>
-      <span class="text-black/15">/</span>
-      <span class="text-black/85">运营系统</span>
+      <a-breadcrumb><a-breadcrumb-item><RouterLink to="/admin">首页</RouterLink></a-breadcrumb-item><a-breadcrumb-item>运营系统</a-breadcrumb-item></a-breadcrumb>
     </div>
 
     <div class="flex items-center gap-4 text-black/45">
-      <div class="relative">
+      <a-popover :open="menuOpen" placement="bottomRight" :arrow="false">
         <a-button type="text"
           :ref="element => { triggerRef = element?.$el || element }"
           html-type="button"
@@ -285,26 +284,23 @@ onUnmounted(() => {
           :aria-expanded="menuOpen ? 'true' : 'false'"
           @click="toggleMenu"
         >
+          <a-badge :count="notifications.totalUnread" :overflow-count="99" :offset="[4, -2]">
           <svg viewBox="0 0 20 20" class="h-5 w-5" fill="none" aria-hidden="true">
             <path d="M10 3.8C7.7 3.8 5.8 5.7 5.8 8V10.3L4.5 12.2V13H15.5V12.2L14.2 10.3V8C14.2 5.7 12.3 3.8 10 3.8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M8.6 14.4C8.8 15.1 9.4 15.5 10 15.5C10.6 15.5 11.2 15.1 11.4 14.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
           </svg>
-          <span
-            v-if="notifications.hasUnread"
-            class="absolute -right-1 -top-1 grid min-h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white"
-            aria-hidden="true"
-          >
-            {{ totalUnreadLabel }}
-          </span>
+          </a-badge>
+
         </a-button>
 
+        <template #content>
         <div
           v-if="menuOpen"
           id="admin-notification-menu"
           ref="menuRef"
           role="menu"
           aria-label="后台消息通知"
-          class="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-slate-200 bg-white text-slate-700 shadow-xl"
+          class="w-[min(22rem,calc(100vw-3rem))] overflow-hidden text-slate-700"
         >
           <div class="border-b border-slate-100 px-4 py-3">
             <div class="flex items-start justify-between gap-3">
@@ -328,7 +324,7 @@ onUnmounted(() => {
               html-type="button"
               role="menuitem"
               :aria-label="category.displayMode === 'dot' ? `${category.label}，有未读消息，查看用户信息` : `${category.label}，${category.unreadCount} 条未读`"
-              class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
+              class="notification-entry flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
               @click="openCategory(category)"
             >
               <span class="min-w-0">
@@ -358,24 +354,7 @@ onUnmounted(() => {
               <span class="block font-medium text-slate-900">消息提示音</span>
               <span class="mt-0.5 block text-xs text-slate-500">新消息到达时播放对应提示音</span>
             </span>
-            <span class="relative inline-flex h-7 w-12 shrink-0 items-center">
-              <input
-                type="checkbox"
-                role="switch"
-                class="peer sr-only"
-                :checked="notifications.soundEnabled"
-                aria-label="消息提示音"
-                @change="onSoundChange"
-              />
-              <span
-                aria-hidden="true"
-                class="h-6 w-11 rounded-full bg-slate-200 transition-colors peer-checked:bg-antd-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-antd-primary/40"
-              ></span>
-              <span
-                aria-hidden="true"
-                class="pointer-events-none absolute left-0.5 top-1 h-5 w-5 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5"
-              ></span>
-            </span>
+            <a-switch :checked="notifications.soundEnabled" aria-label="消息提示音" @change="checked => notifications.setSoundEnabled(checked)" />
           </label>
 
           <div class="border-t border-slate-100 px-4 py-3">
@@ -383,7 +362,7 @@ onUnmounted(() => {
               :ref="element => { soundGuideTriggerRef = element?.$el || element }"
               html-type="button"
               role="menuitem"
-              class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
+              class="notification-entry flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
               @click="openSoundGuide"
             >
               <span class="min-w-0">
@@ -396,8 +375,9 @@ onUnmounted(() => {
             </a-button>
           </div>
         </div>
-      </div>
-      <div class="relative">
+        </template>
+      </a-popover>
+      <a-popover :open="accountMenuOpen" placement="bottomRight" :arrow="false">
         <a-button type="text"
           :ref="element => { accountTriggerRef = element?.$el || element }"
           html-type="button"
@@ -408,22 +388,21 @@ onUnmounted(() => {
           :aria-expanded="accountMenuOpen ? 'true' : 'false'"
           @click="toggleAccountMenu"
         >
-          <span class="grid h-6 w-6 place-items-center rounded-full bg-antd-primary/10 text-xs font-bold text-antd-primary">
-            AD
-          </span>
+          <a-avatar :size="24" style="color: #1677ff; background: #e6f4ff">AD</a-avatar>
           <span class="text-sm text-black/65">Admin</span>
           <svg viewBox="0 0 20 20" class="h-4 w-4 text-black/35" fill="none" aria-hidden="true">
             <path d="M6 8L10 12L14 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </a-button>
 
+        <template #content>
         <div
           v-if="accountMenuOpen"
           id="admin-account-menu"
           ref="accountMenuRef"
           role="menu"
           aria-label="Admin 账号操作"
-          class="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-48 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 text-slate-700 shadow-xl"
+          class="w-48 overflow-hidden text-slate-700"
         >
           <a-button type="text"
             html-type="button"
@@ -448,7 +427,8 @@ onUnmounted(() => {
             <span>退出登录</span>
           </a-button>
         </div>
-      </div>
+        </template>
+      </a-popover>
     </div>
   </a-layout-header>
 
@@ -487,3 +467,7 @@ onUnmounted(() => {
     @cancel="cancelPasswordMfa"
   />
 </template>
+
+<style scoped>
+.notification-entry.ant-btn { display: flex; height: auto; min-height: 56px; white-space: normal; padding: 8px 12px; }
+</style>

@@ -51,49 +51,63 @@ const fmtSignedCurrency = (val, currency) => {
 		<article class="rounded-xl border border-slate-200 bg-white">
 			<div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
 				<div class="inline-flex items-center gap-3 text-sm">
-					<button type="button" class="font-medium" :class="statusFilter === COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = COMMON_FILTER_ALL">全部</button>
-					<button type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.LOCKED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.LOCKED">锁定中</button>
-					<button type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.COMPLETED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.COMPLETED">已完成</button>
-					<button type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.EARLY_REDEEMED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.EARLY_REDEEMED">提前赎回</button>
+					<a-button type="text" html-type="button" class="font-medium" :class="statusFilter === COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = COMMON_FILTER_ALL">全部</a-button>
+					<a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.LOCKED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.LOCKED">锁定中</a-button>
+					<a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.COMPLETED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.COMPLETED">已完成</a-button>
+					<a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.EARLY_REDEEMED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.EARLY_REDEEMED">提前赎回</a-button>
 				</div>
-				<input v-model="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+				<a-input v-model:value="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
 			</div>
 
 			<div class="overflow-x-auto">
-				<table class="w-full text-sm">
-					<thead class="bg-slate-50 text-slate-500">
-						<tr>
-							<th class="px-4 py-3 text-left font-medium">订单ID</th>
-							<th class="px-4 py-3 text-left font-medium">用户</th>
-							<th class="px-4 py-3 text-left font-medium">产品</th>
-							<th class="px-4 py-3 text-left font-medium">金额</th>
-							<th class="px-4 py-3 text-left font-medium">周期</th>
-							<th class="px-4 py-3 text-left font-medium">年化收益率</th>
-							<th class="px-4 py-3 text-left font-medium">基础预计收益</th>
-							<th class="px-4 py-3 text-left font-medium">已执行调整</th>
-							<th class="px-4 py-3 text-left font-medium">应发收益</th>
-							<th class="px-4 py-3 text-left font-medium">状态</th>
-							<th class="px-4 py-3 text-left font-medium">剩余天数</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-for="order in filteredOrders" :key="order.id" class="border-t border-slate-100">
-							<td class="px-4 py-3 font-mono text-xs text-slate-600">{{ order.id }}</td>
-							<td class="px-4 py-3 text-slate-700">{{ order.userName }}</td>
-							<td class="px-4 py-3 text-slate-700">{{ order.productName }}</td>
-							<td class="px-4 py-3 font-medium text-slate-900">{{ fmtCurrency(order.amount, order.currency) }}</td>
-							<td class="px-4 py-3 text-slate-700">{{ order.lockDays }} 天</td>
-							<td class="px-4 py-3 font-medium text-emerald-600">{{ lockYieldAnnualPct(order).toFixed(2) }}%</td>
-							<td class="px-4 py-3 font-medium text-slate-700">{{ fmtCurrency(order.baseInterest, order.currency) }}</td>
-							<td class="px-4 py-3 font-medium" :class="adjustmentClass(order.executedInterestAdjustment)">
+				<a-table  size="small" :pagination="false" :data-source="filteredOrders" :row-key="(order) => order.id" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
+<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-mono text-xs text-slate-600&quot;] })">
+<template #title>订单ID</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.id }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.userName }}</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>产品</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.productName }}</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-slate-900&quot;] })">
+<template #title>金额</template>
+<template #default="{ record: order, index: rowIndex }">{{ fmtCurrency(order.amount, order.currency) }}</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>周期</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.lockDays }} 天</template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-emerald-600&quot;] })">
+<template #title>年化收益率</template>
+<template #default="{ record: order, index: rowIndex }">{{ lockYieldAnnualPct(order).toFixed(2) }}%</template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-slate-700&quot;] })">
+<template #title>基础预计收益</template>
+<template #default="{ record: order, index: rowIndex }">{{ fmtCurrency(order.baseInterest, order.currency) }}</template>
+</a-table-column>
+<a-table-column key="column-7" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium&quot;, adjustmentClass(order.executedInterestAdjustment)] })">
+<template #title>已执行调整</template>
+<template #default="{ record: order, index: rowIndex }">
 								{{ fmtSignedCurrency(order.executedInterestAdjustment, order.currency) }}
-							</td>
-							<td class="px-4 py-3 font-medium text-blue-600">{{ fmtCurrency(order.payableInterest, order.currency) }}</td>
-							<td class="px-4 py-3"><span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="orderStatusMeta[order.status].class">{{ orderStatusMeta[order.status].label }}</span></td>
-							<td class="px-4 py-3 text-slate-700">{{ order.daysRemaining > 0 ? `${order.daysRemaining} 天` : '-' }}</td>
-						</tr>
-					</tbody>
-				</table>
+							</template>
+</a-table-column>
+<a-table-column key="column-8" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-blue-600&quot;] })">
+<template #title>应发收益</template>
+<template #default="{ record: order, index: rowIndex }">{{ fmtCurrency(order.payableInterest, order.currency) }}</template>
+</a-table-column>
+<a-table-column key="column-9" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: order, index: rowIndex }"><span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="orderStatusMeta[order.status].class">{{ orderStatusMeta[order.status].label }}</span></template>
+</a-table-column>
+<a-table-column key="column-10" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>剩余天数</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.daysRemaining > 0 ? `${order.daysRemaining} 天` : '-' }}</template>
+</a-table-column>
+</a-table>
 			</div>
 		</article>
 	</section>

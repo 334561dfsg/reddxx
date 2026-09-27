@@ -92,7 +92,7 @@ test('recharge Drawer removes the duplicate summary card and paginates records f
   assert.match(drawer.textContent, /DEP-005/)
   assert.doesNotMatch(drawer.textContent, /DEP-006/)
 
-  harness.findByText('下一页', 'button').click()
+  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
   await harness.flush()
   assert.doesNotMatch(drawer.textContent, /DEP-001/)
   assert.match(drawer.textContent, /DEP-006/)
@@ -124,7 +124,7 @@ test('recharge Drawer returns to page one when the open Drawer switches users wi
   t.after(harness.cleanup)
 
   const drawer = harness.findByTestId('user-recharge-summary-drawer')
-  harness.findByText('下一页', 'button').click()
+  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
   await harness.flush()
   assert.match(drawer.textContent, /DEP-006/)
   assert.doesNotMatch(drawer.textContent, /DEP-001/)
@@ -186,9 +186,9 @@ test('recharge Drawer keeps fixed pagination visible outside its record list for
   assert.equal(recordList.contains(pagination), false)
 
   const buttons = harness.allNodes().filter((node) => pagination.contains(node) && node.tag === 'button')
-  assert.deepEqual(buttons.map((button) => button.textContent.trim()), ['上一页', '1', '下一页'])
+  assert.equal(buttons.length, 2)
   assert.equal(buttons[0].disabled, true)
-  assert.equal(buttons[2].disabled, true)
+  assert.equal(buttons[1].disabled, true)
 })
 
 test('recharge Drawer resets its record list scroll when pagination changes', async (t) => {
@@ -208,7 +208,7 @@ test('recharge Drawer resets its record list scroll when pagination changes', as
 
   const recordList = harness.findByTestId('user-recharge-record-list')
   recordList.scrollTop = 180
-  harness.findByText('下一页', 'button').click()
+  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
   await harness.flush()
   assert.equal(recordList.scrollTop, 0)
 })
@@ -619,7 +619,7 @@ test('membership mutation Dialog follows modal, select-choice, and responsive co
   assert.match(source, /import PanelSingleSelect from '\.\.\/form\/PanelSingleSelect\.vue'/)
   assert.match(source, /data-testid="membership-vip-level-select"/)
   assert.doesNotMatch(source, /name="vip-target"/)
-  assert.match(source, /type="radio"/)
+  assert.match(source, /<AdminRadio\b/)
   assert.match(source, /data-testid="user-membership-mutation-body"[^>]*overflow-y-auto/)
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
   assert.match(source, /closeDisabled/)
@@ -817,7 +817,7 @@ test('credit review decision Dialog is a guarded third layer with accessible mot
   assert.match(source, /useDialogLifecycle/)
   assert.match(source, /:style="layerStyle"/)
   assert.match(source, /aria-labelledby="review-decision-label"/)
-  assert.match(source, /type="radio"/)
+  assert.match(source, /<AdminRadio\b/)
   assert.doesNotMatch(source, /<select\b|role="combobox"/)
   assert.match(source, /data-testid="user-credit-review-decision-body"[^>]*overflow-y-auto/)
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)

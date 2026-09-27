@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton, AdminTextarea } from '../antd/controls.js'
+
 import { ref, computed, watch } from 'vue'
 import { CREDIT_SCORE_CHANGE_TYPE, CREDIT_SCORE_AUDIT_STATUS } from '../../constants/creditScore'
 
@@ -135,11 +137,11 @@ const submitAudit = () => {
                 </span>
               </div>
             </div>
-            <button type="button" class="text-slate-400 hover:text-slate-600 transition-colors" @click="handleClose">
+            <AdminButton type="button" class="text-slate-400 hover:text-slate-600 transition-colors" @click="handleClose">
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </button>
+            </AdminButton>
           </div>
         </div>
 
@@ -223,25 +225,25 @@ const submitAudit = () => {
         <section class="shrink-0 border-t border-slate-200 bg-white px-5 py-4">
           <template v-if="readOnly">
             <div class="flex justify-end">
-              <button type="button" class="ant-btn" @click="handleClose">关闭</button>
+              <AdminButton type="button" class="ant-btn" @click="handleClose">关闭</AdminButton>
             </div>
           </template>
           <template v-else>
           <div class="text-xs text-slate-500">审核操作</div>
           <div class="mt-3 flex flex-wrap justify-end gap-2">
-            <button type="button" class="ant-btn" @click="handleClose">关闭</button>
-            <button
+            <AdminButton type="button" class="ant-btn" @click="handleClose">关闭</AdminButton>
+            <AdminButton
               v-if="audit.auditStatus === CREDIT_SCORE_AUDIT_STATUS.PENDING"
               type="button"
               class="ant-btn ant-btn-primary"
               @click="startAuditAction('approve')"
-            >通过</button>
-            <button
+            >通过</AdminButton>
+            <AdminButton
               v-if="audit.auditStatus === CREDIT_SCORE_AUDIT_STATUS.PENDING"
               type="button"
               class="ant-btn ant-btn-danger"
               @click="startAuditAction('reject')"
-            >拒绝</button>
+            >拒绝</AdminButton>
           </div>
 
           <div v-if="auditAction" class="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
@@ -250,7 +252,7 @@ const submitAudit = () => {
             </div>
 
             <div class="mt-2 flex flex-wrap gap-2">
-              <button
+              <AdminButton
                 v-for="tpl in noteTemplates[auditAction]"
                 :key="tpl"
                 type="button"
@@ -258,10 +260,10 @@ const submitAudit = () => {
                 @click="useNoteTemplate(tpl)"
               >
                 快捷填充
-              </button>
+              </AdminButton>
             </div>
 
-            <textarea
+            <AdminTextarea
               v-model="auditNote"
               rows="3"
               class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
@@ -269,8 +271,8 @@ const submitAudit = () => {
             />
 
             <div class="mt-3 flex justify-end gap-2">
-              <button type="button" class="ant-btn ant-btn-primary" @click="submitAudit">确认提交</button>
-              <button type="button" class="ant-btn" @click="auditAction = null">取消</button>
+              <AdminButton type="button" class="ant-btn ant-btn-primary" @click="submitAudit">确认提交</AdminButton>
+              <AdminButton type="button" class="ant-btn" @click="auditAction = null">取消</AdminButton>
             </div>
           </div>
           </template>

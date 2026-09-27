@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton, AdminTextarea } from '../antd/controls.js'
+
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import {
   USER_CONTROL_MODULES,
@@ -295,11 +297,11 @@ const submit = () => {
               <span class="break-all">{{ selectedUserEmail }}</span>
             </div>
           </div>
-          <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="关闭" @click="close">
+          <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="关闭" @click="close">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
+          </AdminButton>
         </header>
 
         <div data-testid="user-control-dialog-body" class="min-h-0 flex-1 overflow-y-auto px-5 py-3 lg:flex-none lg:overflow-hidden">
@@ -329,7 +331,7 @@ const submit = () => {
 
               <label class="block">
                 <span class="text-sm font-semibold text-slate-900">点控备注 <span v-if="noteRequired" class="text-rose-500">*</span></span>
-                <textarea
+                <AdminTextarea
                   v-model="form.note"
                   rows="2"
                   maxlength="200"
@@ -391,17 +393,17 @@ const submit = () => {
         </div>
 
         <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-          <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" @click="close">
+          <AdminButton type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" @click="close">
             取消
-          </button>
-          <button
+          </AdminButton>
+          <AdminButton
             type="button"
             :disabled="phase !== 'open' || !isComplete"
             class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             @click="submit"
           >
             确认设置
-          </button>
+          </AdminButton>
         </footer>
           </section>
         </Transition>

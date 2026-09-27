@@ -327,14 +327,10 @@ const getFeeTemplateName = (templateId) => {
         <h1 class="text-3xl font-semibold text-slate-900">汇率管理</h1>
         <p class="mt-1 text-sm text-slate-500">管理闪兑模块各交易对的市场汇率及加成配置</p>
       </div>
-      <button
-        type="button"
-        class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        @click="openCreateRate()"
-      >
+      <a-button html-type="button" class="inline-flex items-center gap-2 bg-blue-600 text-sm font-medium text-white hover:bg-blue-700" @click="openCreateRate()" type="primary">
         <span class="text-base">+</span>
         <span>新增交易对</span>
-      </button>
+      </a-button>
     </header>
 
     <article class="rounded-xl border border-slate-200 bg-white">
@@ -342,22 +338,16 @@ const getFeeTemplateName = (templateId) => {
         <div class="flex flex-wrap items-center gap-4">
           <!-- Status Filter -->
           <div class="inline-flex items-center gap-2 text-sm">
-            <button type="button" class="font-medium" :class="statusTab === 'all' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'all'; handleFilterChange()">全部</button>
-            <button type="button" class="font-medium" :class="statusTab === 'enabled' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'enabled'; handleFilterChange()">已启用</button>
-            <button type="button" class="font-medium" :class="statusTab === 'disabled' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'disabled'; handleFilterChange()">已禁用</button>
+            <a-button html-type="button" class="font-medium" :class="statusTab === 'all' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'all'; handleFilterChange()">全部</a-button>
+            <a-button html-type="button" class="font-medium" :class="statusTab === 'enabled' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'enabled'; handleFilterChange()">已启用</a-button>
+            <a-button html-type="button" class="font-medium" :class="statusTab === 'disabled' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'disabled'; handleFilterChange()">已禁用</a-button>
           </div>
         </div>
 
         <!-- Search -->
         <div class="flex w-full max-w-2xl flex-wrap items-center justify-end gap-2">
           <div class="relative w-full max-w-sm">
-            <input
-              v-model="search"
-              type="text"
-              class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500"
-              placeholder="搜索交易对..."
-              @input="handleFilterChange"
-            />
+            <a-input v-model:value="search" type="text" class="w-full pl-9 pr-3" placeholder="搜索交易对..." @input="handleFilterChange" />
             <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none">
               <circle cx="9" cy="9" r="5.8" stroke="currentColor" stroke-width="1.6" />
               <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
@@ -420,16 +410,12 @@ const getFeeTemplateName = (templateId) => {
 
           <!-- 操作区 -->
           <div class="flex items-center justify-end border-t border-slate-100 bg-slate-50/30 p-4 md:w-32 md:border-t-0 md:bg-white">
-            <button 
-              type="button" 
-              class="flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-blue-600 hover:text-white hover:border-blue-600 active:scale-95 md:w-20"
-              @click="openEditRate(pair)"
-            >
+            <a-button html-type="button" class="flex w-full items-center justify-center gap-2 border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-blue-600 hover:text-white hover:border-blue-600 active:scale-95 md:w-20" @click="openEditRate(pair)" type="primary">
               <span>编辑</span>
               <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
-            </button>
+            </a-button>
           </div>
         </div>
 
@@ -441,42 +427,19 @@ const getFeeTemplateName = (templateId) => {
       <!-- 分页栏 -->
       <footer v-if="totalPages > 1" class="flex items-center justify-between border-t border-slate-200 px-6 py-4 text-sm">
         <p class="text-slate-500">共 {{ filteredPairs.length }} 个交易对</p>
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            class="rounded border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent"
-            :disabled="currentPage === 1"
-            @click="goPrev"
-          >
-            上一页
-          </button>
-          <span class="text-xs font-medium text-slate-600">{{ currentPage }} / {{ totalPages }}</span>
-          <button
-            type="button"
-            class="rounded border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent"
-            :disabled="currentPage === totalPages"
-            @click="goNext"
-          >
-            下一页
-          </button>
-        </div>
+        <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="filteredPairs.length" :show-size-changer="false"  @change="currentPage = $event" />
       </footer>
     </article>
   </section>
 
   <!-- 编辑/新增弹窗 -->
-  <div v-if="showEditModal" class="fixed inset-0 z-50 grid place-items-center bg-black/45 p-4">
-    <section class="flex max-h-[75vh] w-full max-w-5xl overflow-hidden rounded-xl bg-white shadow-2xl">
-      <div class="flex w-3/5 flex-col border-r border-slate-200">
-        <header class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-4">
+  <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showEditModal)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="showEditModal = false"><template #title><template v-if="showEditModal"><header class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-4">
           <div>
             <h2 class="text-xl font-semibold text-slate-900">{{ editingId ? '编辑汇率配置' : '新增交易对' }}</h2>
             <p class="mt-0.5 text-xs text-slate-500">左侧配置基本信息，费率详情请参考右侧预览</p>
           </div>
-          <button type="button" class="text-2xl text-slate-400 transition-colors hover:text-slate-600" @click="showEditModal = false">×</button>
-        </header>
-
-        <div class="flex-1 space-y-5 overflow-y-auto px-6 py-5">
+          <a-button aria-label="关闭" html-type="button" class="text-2xl text-slate-400 transition-colors hover:text-slate-600" @click="showEditModal = false">×</a-button>
+        </header></template></template><template v-if="showEditModal"><div class="grid gap-4 lg:grid-cols-[3fr_2fr]"><div class="min-w-0"><div class="flex-1 space-y-5 overflow-y-auto px-6 py-5">
           <section class="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <div class="flex items-center gap-2">
               <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
@@ -493,73 +456,52 @@ const getFeeTemplateName = (templateId) => {
                   <span class="text-sm font-medium text-slate-700">费率模板</span>
                   <span class="text-xs text-slate-500">选择模板后，基础费率和 VIP 分级费率将自动从模板同步，无需手动配置</span>
                 </div>
-                <select
-                  v-model="rateForm.feeTemplateId"
-                  @change="applyFeeTemplate(rateForm.feeTemplateId)"
-                  class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
-                  <option value="">请选择费率模板</option>
-                  <option v-for="template in feeTemplates.filter(t => t.enabled)" :key="template.id" :value="template.id">
+                <a-select v-model:value="rateForm.feeTemplateId" @change="applyFeeTemplate(rateForm.feeTemplateId)" class="w-full transition">
+                  <a-select-option value="">请选择费率模板</a-select-option>
+                  <a-select-option v-for="template in feeTemplates.filter(t => t.enabled)" :key="template.id" :value="template.id">
                 {{ template.name }} (逆：{{ (template.baseMarkup.buy * 100).toFixed(2) }}% | 正：{{ (template.baseMarkup.sell * 100).toFixed(2) }}%)
-              </option>
-                </select>
+              </a-select-option>
+                </a-select>
               </label>
               <label class="space-y-2">
                 <div class="flex flex-col">
                   <span class="text-sm font-medium text-slate-700">基础资产</span>
                   <span class="text-xs text-slate-500">交易对的主体资产（如 USDT）</span>
                 </div>
-                <select
-                  v-model="rateForm.baseAsset"
-                  class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
-                  <option value="">请选择资产</option>
-                  <option v-for="asset in availableAssets" :key="asset" :value="asset">{{ asset }}</option>
-                </select>
+                <a-select v-model:value="rateForm.baseAsset" class="w-full transition">
+                  <a-select-option value="">请选择资产</a-select-option>
+                  <a-select-option v-for="asset in availableAssets" :key="asset" :value="asset">{{ asset }}</a-select-option>
+                </a-select>
               </label>
               <label class="space-y-2">
                 <div class="flex flex-col">
                   <span class="text-sm font-medium text-slate-700">目标资产</span>
                   <span class="text-xs text-slate-500">交易对的兑换资产（如 BTC）</span>
                 </div>
-                <select
-                  v-model="rateForm.quoteAsset"
-                  class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
-                  <option value="">请选择资产</option>
-                  <option v-for="asset in availableAssets" :key="asset" :value="asset">{{ asset }}</option>
-                </select>
+                <a-select v-model:value="rateForm.quoteAsset" class="w-full transition">
+                  <a-select-option value="">请选择资产</a-select-option>
+                  <a-select-option v-for="asset in availableAssets" :key="asset" :value="asset">{{ asset }}</a-select-option>
+                </a-select>
               </label>
               <label class="space-y-2 md:col-span-2">
                 <div class="flex flex-col">
                   <span class="text-sm font-medium text-slate-700">市场汇率来源</span>
                   <span class="text-xs text-slate-500">实时获取 market 中间价的价格接口来源</span>
                 </div>
-                <select
-                  v-model="rateForm.source"
-                  class="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
-                  <option :value="EXCHANGE_RATE_SOURCE.BINANCE">币安 (Binance)</option>
-                </select>
+                <a-select v-model:value="rateForm.source" class="w-full transition">
+                  <a-select-option :value="EXCHANGE_RATE_SOURCE.BINANCE">币安 (Binance)</a-select-option>
+                </a-select>
               </label>
               <label class="flex items-center justify-between rounded-lg border border-emerald-100 bg-emerald-50/50 px-4 py-3 md:col-span-2">
                 <div class="flex flex-col">
                   <span class="text-sm font-medium text-emerald-900">启用该交易对</span>
                   <span class="text-xs text-emerald-700">是否允许用户在前端看到并交易此币对</span>
                 </div>
-                <input v-model="rateForm.enabled" type="checkbox" class="h-5 w-5 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500" />
+                <a-checkbox v-model:checked="rateForm.enabled" class="w-5 text-emerald-600" />
               </label>
             </div>
           </section>
-        </div>
-
-        <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-          <button type="button" class="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-white" @click="showEditModal = false">取消</button>
-          <button type="button" class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700" @click="saveRate()">保存</button>
-        </footer>
-      </div>
-
-      <div class="flex w-2/5 flex-col bg-gradient-to-br from-slate-50 to-slate-100">
+        </div></div><div class="flex min-w-0 flex-col bg-gradient-to-br from-slate-50 to-slate-100">
         <header class="border-b border-slate-200 px-5 py-4">
           <h3 class="text-lg font-semibold text-slate-900">实时预览</h3>
           <p class="mt-0.5 text-xs text-slate-500">调整左侧配置后即时更新</p>
@@ -612,20 +554,16 @@ const getFeeTemplateName = (templateId) => {
                   <span class="text-slate-500">回兑 {{ ((Number(rates.buy) || 0) * 100).toFixed(2) }}% / 兑换 {{ ((Number(rates.sell) || 0) * 100).toFixed(2) }}%</span>
                 </div>
               </div>
-              <button
-                v-if="hasMoreRatePreviewLevels"
-                type="button"
-                class="w-full rounded border border-violet-200 bg-white px-2.5 py-1.5 text-xs font-medium text-violet-700 transition hover:bg-violet-100"
-                @click="rateLevelsExpanded = !rateLevelsExpanded"
-              >
+              <a-button v-if="hasMoreRatePreviewLevels" html-type="button" class="w-full border border-violet-200 bg-white text-xs font-medium text-violet-700 transition hover:bg-violet-100" @click="rateLevelsExpanded = !rateLevelsExpanded">
                 {{ rateLevelsExpanded ? '收起' : `展开剩余 ${ratePreviewLevelEntries.length - RATE_LEVEL_PREVIEW_LIMIT} 级` }}
-              </button>
+              </a-button>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  </div>
+      </div></div></template><template #footer><template v-if="showEditModal"><footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+          <a-button html-type="button" class="border border-slate-300 text-sm font-medium text-slate-700 transition hover:bg-white" @click="showEditModal = false">取消</a-button>
+          <a-button html-type="button" class="bg-blue-600 text-sm font-medium text-white transition hover:bg-blue-700" @click="saveRate()" type="primary">保存</a-button>
+        </footer></template></template></a-modal>
 
   <!-- MFA 验证弹窗 -->
   <MfaVerificationModal

@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton, AdminInput, AdminRadio, AdminTextarea } from '../antd/controls.js'
+
 import { computed, ref } from 'vue'
 import { vipLevels } from '../../mock/vip'
 import { getAllCreditScoreConfig } from '../../mock/creditScore'
@@ -165,7 +167,7 @@ const confirm = () => {
 </script>
 
 <template>
-  <button
+  <AdminButton
     v-if="showTrigger"
     type="button"
     class="inline-flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg ring-1 ring-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-colors"
@@ -178,7 +180,7 @@ const confirm = () => {
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 8a4 4 0 100 8 4 4 0 000-8z" />
     </svg>
     调整
-  </button>
+  </AdminButton>
 
   <Teleport to="body">
     <Transition name="user-action-dialog" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
@@ -195,7 +197,7 @@ const confirm = () => {
                 <div class="text-xs font-medium tracking-wide text-slate-500">操作</div>
                 <div id="user-adjust-title" ref="titleRef" tabindex="-1" class="mt-1 text-lg font-semibold text-slate-900 outline-none">手动调整</div>
               </div>
-              <button
+              <AdminButton
                 type="button"
                 class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors"
                 @click="close"
@@ -204,7 +206,7 @@ const confirm = () => {
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </button>
+              </AdminButton>
             </div>
           </header>
 
@@ -221,20 +223,10 @@ const confirm = () => {
                 <fieldset class="min-w-0">
                   <legend class="mb-2 text-sm font-medium text-slate-700">调整为</legend>
                   <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <label
-                      v-for="o in activeVipOptions"
-                      :key="o.level"
-                      class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-500"
-                    >
-                      <input
-                        v-model="form.vipTargetLevel"
-                        type="radio"
-                        name="vip-target-level"
-                        :value="o.level"
-                        class="h-4 w-4 shrink-0"
-                      />
+                    <AdminRadio v-for="o in activeVipOptions" :key="o.level" class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-500" v-model="form.vipTargetLevel" name="vip-target-level" :value="o.level">
+
                       <span class="min-w-0 break-words">{{ o.label }}</span>
-                    </label>
+                    </AdminRadio>
                   </div>
                 </fieldset>
               </div>
@@ -259,20 +251,20 @@ const confirm = () => {
                 <fieldset class="min-w-0">
                   <legend class="mb-2 text-sm font-medium text-slate-700">类型</legend>
                   <div class="flex flex-wrap items-center gap-2">
-                    <label class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm cursor-pointer">
-                      <input v-model="form.scoreDirection" type="radio" name="credit-score-direction" value="increase" />
+                    <AdminRadio class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm cursor-pointer" v-model="form.scoreDirection" name="credit-score-direction" value="increase">
+
                       增加
-                    </label>
-                    <label class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm cursor-pointer">
-                      <input v-model="form.scoreDirection" type="radio" name="credit-score-direction" value="decrease" />
+                    </AdminRadio>
+                    <AdminRadio class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm cursor-pointer" v-model="form.scoreDirection" name="credit-score-direction" value="decrease">
+
                       扣减
-                    </label>
+                    </AdminRadio>
                   </div>
                 </fieldset>
 
                 <label class="min-w-0">
                   <span class="mb-2 block text-sm font-medium text-slate-700">调整分数</span>
-                  <input
+                  <AdminInput
                     v-model="form.scorePoints"
                     data-testid="user-adjust-score-points"
                     type="text"
@@ -300,7 +292,7 @@ const confirm = () => {
 
             <div>
               <div class="text-sm font-medium text-slate-700 mb-2">备注（可选）</div>
-              <textarea
+              <AdminTextarea
                 v-model="form.remark"
                 rows="3"
                 class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
@@ -309,20 +301,20 @@ const confirm = () => {
             </div>
 
             <div class="flex justify-end gap-3 pt-1">
-              <button
+              <AdminButton
                 type="button"
                 class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                 @click="close"
               >
                 取消
-              </button>
-              <button
+              </AdminButton>
+              <AdminButton
                 type="button"
                 class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
                 @click="confirm"
               >
                 确认调整
-              </button>
+              </AdminButton>
             </div>
           </div>
         </section>

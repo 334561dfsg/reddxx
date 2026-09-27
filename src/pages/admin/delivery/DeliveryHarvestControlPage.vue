@@ -288,77 +288,84 @@ const deltaTone = (delta) => {
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm">
-          <thead class="bg-slate-50 text-xs text-slate-500">
-            <tr>
-              <th class="px-5 py-3 font-medium">币种/档位</th>
-              <th class="px-5 py-3 font-medium">市价</th>
-              <th class="px-5 py-3 font-medium">结算倒计时</th>
-              <th class="px-5 py-3 font-medium">24h成交量</th>
-              <th class="px-5 py-3 font-medium">总持仓</th>
-              <th class="px-5 py-3 font-medium">多空比</th>
-              <th class="px-5 py-3 font-medium">平台预估亏损额</th>
-              <th class="px-5 py-3 font-medium">平台净头寸 (Delta)</th>
-              <th class="px-5 py-3 font-medium">实时盈亏 (PnL)</th>
-              <th class="px-5 py-3 font-medium text-right">进入</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr
-              v-for="row in pagedRadar"
-              :key="row.key"
-              class="group cursor-pointer hover:bg-slate-50/60"
-              @click="pickRow(row)"
-            >
-              <td class="px-5 py-3">
+        <a-table  size="small" :pagination="false" :data-source="pagedRadar" :row-key="(row) => row.key" :scroll="{ x: 'max-content' }" :custom-row="(row, rowIndex) => ({ class: [&quot;group cursor-pointer hover:bg-slate-50/60&quot;], onClick: () => (pickRow(row)) })">
+<a-table-column key="column-0" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
+<template #title>币种/档位</template>
+<template #default="{ record: row, index: rowIndex }">
                 <div class="font-semibold text-slate-900">{{ row.label }}</div>
                 <div class="mt-0.5 text-[11px] text-slate-500 font-mono">{{ row.key }}</div>
-              </td>
-              <td class="px-5 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
+<template #title>市价</template>
+<template #default="{ record: row, index: rowIndex }">
                 <div class="font-mono text-slate-900">{{ formatPrice(row.marketPrice) }}</div>
-              </td>
-              <td class="px-5 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
+<template #title>结算倒计时</template>
+<template #default="{ record: row, index: rowIndex }">
                 <span
                   class="inline-flex items-center rounded-lg border px-2.5 py-1 font-mono text-xs"
                   :class="flashCountdown(row) ? 'flash-bg border-rose-200 text-rose-700' : 'border-slate-200 text-slate-700 bg-white'"
                 >
                   {{ formatCountdown(row.remainSec) }}
                 </span>
-              </td>
-              <td class="px-5 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
+<template #title>24h成交量</template>
+<template #default="{ record: row, index: rowIndex }">
                 <div class="font-mono text-slate-700">{{ formatCompactUsd(row.volume24h) }}</div>
-              </td>
-              <td class="px-5 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
+<template #title>总持仓</template>
+<template #default="{ record: row, index: rowIndex }">
                 <div class="font-mono text-slate-700">{{ formatCompactUsd(row.position) }}</div>
-              </td>
-              <td class="px-5 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
+<template #title>多空比</template>
+<template #default="{ record: row, index: rowIndex }">
                 <div class="font-mono text-slate-700">{{ Number(row.longShortRatio || 0).toFixed(2) }}</div>
-              </td>
-              <td class="px-5 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
+<template #title>平台预估亏损额</template>
+<template #default="{ record: row, index: rowIndex }">
                 <div class="font-mono text-rose-700">{{ formatCompactUsd(row.estimatedLoss) }}</div>
-              </td>
-              <td class="px-5 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-7" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
+<template #title>平台净头寸 (Delta)</template>
+<template #default="{ record: row, index: rowIndex }">
                 <div class="font-mono" :class="deltaTone(row.platformDelta)">
                   {{ formatCompactUsd(row.platformDelta, true) }}
                 </div>
-              </td>
-              <td class="px-5 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-8" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
+<template #title>实时盈亏 (PnL)</template>
+<template #default="{ record: row, index: rowIndex }">
                 <div class="font-mono" :class="row.pnlNow < 0 ? 'text-rose-700' : 'text-emerald-700'">
                   {{ formatCompactUsd(row.pnlNow, true) }}
                 </div>
-              </td>
-              <td class="px-5 py-3 text-right">
-                <button
-                  type="button"
+              </template>
+</a-table-column>
+<a-table-column key="column-9" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3 text-right&quot;] })">
+<template #title>进入</template>
+<template #default="{ record: row, index: rowIndex }">
+                <a-button type="text"
+                  html-type="button"
                   class="inline-flex items-center rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
                   @click.stop="pickRow(row)"
                 >
                   实施场控
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </a-button>
+              </template>
+</a-table-column>
+</a-table>
       </div>
 
       <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-white px-5 py-3">
@@ -368,36 +375,16 @@ const deltaTone = (delta) => {
         </div>
 
         <div class="flex items-center gap-2">
-          <select
-            class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-slate-900 focus:outline-none focus:ring-0"
-            v-model.number="pageSize"
+          <a-select :get-popup-container="(trigger) => trigger.parentElement"
+            class=""
+            v-model:value.number="pageSize"
           >
-            <option :value="10">10 / 页</option>
-            <option :value="20">20 / 页</option>
-            <option :value="50">50 / 页</option>
-          </select>
+            <a-select-option :value="10">10 / 页</a-select-option>
+            <a-select-option :value="20">20 / 页</a-select-option>
+            <a-select-option :value="50">50 / 页</a-select-option>
+          </a-select>
 
-          <button
-            type="button"
-            class="h-9 rounded-lg border border-slate-200 px-3 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-40"
-            :disabled="page <= 1"
-            @click="goPrev"
-          >
-            上一页
-          </button>
-          <div class="text-sm text-slate-600">
-            <span class="font-mono text-slate-900">{{ page }}</span>
-            <span class="mx-1 text-slate-400">/</span>
-            <span class="font-mono text-slate-700">{{ totalPages }}</span>
-          </div>
-          <button
-            type="button"
-            class="h-9 rounded-lg border border-slate-200 px-3 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-40"
-            :disabled="page >= totalPages"
-            @click="goNext"
-          >
-            下一页
-          </button>
+          <a-pagination size="small" :current="page" :total="totalPages" :page-size="1" :show-size-changer="false" @change="page = $event" />
         </div>
       </div>
     </div>

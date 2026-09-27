@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton } from '../antd/controls.js'
+
 import { computed, ref, watch } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import CompactPagination from '../CompactPagination.vue'
@@ -71,7 +73,7 @@ watch(() => [props.visible, props.summary, userId.value], ([visible]) => { if (v
               <h2 id="user-recharge-summary-title" ref="titleRef" tabindex="-1" class="text-lg font-semibold text-slate-900 outline-none">会员累计充值</h2>
               <p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · VIP{{ displaySummary?.currentVipLevel ?? user?.vipLevel ?? 0 }}</p>
             </div>
-            <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="user-recharge-summary-body" class="recharge-drawer-body min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right));">

@@ -179,87 +179,49 @@ onMounted(loadList)
     <article class="rounded-xl border border-slate-200 bg-white">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
         <div class="flex flex-wrap gap-2">
-          <button
-            v-for="opt in [{ value: FUND_ORDER_FILTER_ALL, label: '全部' }, ...withdrawStatusOptions]"
-            :key="opt.value"
-            type="button"
-            class="rounded-lg px-3 py-2 text-sm font-medium transition"
-            :class="statusFilter === opt.value ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-            @click="statusFilter = opt.value; handleSearch()"
-          >
+          <a-button v-for="opt in [{ value: FUND_ORDER_FILTER_ALL, label: '全部' }, ...withdrawStatusOptions]" :key="opt.value" html-type="button" class="text-sm font-medium transition" :class="statusFilter === opt.value ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" @click="statusFilter = opt.value; handleSearch()">
             {{ opt.label }}
-          </button>
+          </a-button>
         </div>
         <div class="flex w-full flex-wrap gap-2 lg:w-auto">
-          <select v-model="coinFilter" class="h-10 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500" @change="handleSearch">
-            <option :value="FUND_ORDER_FILTER_ALL">全部币种</option>
-            <option v-for="coin in coins" :key="coin" :value="coin">{{ coin }}</option>
-          </select>
-          <input
-            v-model="keyword"
-            type="text"
-            placeholder="搜索订单、用户、地址或哈希"
-            class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 lg:w-72"
-            @keyup.enter="handleSearch"
-          />
-          <button type="button" class="ant-btn ant-btn-primary" @click="handleSearch">查询</button>
-          <button type="button" class="ant-btn" @click="resetFilters">重置</button>
+          <a-select v-model:value="coinFilter" class="" @change="handleSearch">
+            <a-select-option :value="FUND_ORDER_FILTER_ALL">全部币种</a-select-option>
+            <a-select-option v-for="coin in coins" :key="coin" :value="coin">{{ coin }}</a-select-option>
+          </a-select>
+          <a-input v-model:value="keyword" type="text" placeholder="搜索订单、用户、地址或哈希" class="w-full lg:w-72" @keyup.enter="handleSearch" />
+          <a-button html-type="button" class="" @click="handleSearch" type="primary">查询</a-button>
+          <a-button html-type="button" class="" @click="resetFilters">重置</a-button>
         </div>
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
-            <tr>
-              <th class="px-4 py-3">订单</th>
-              <th class="px-4 py-3">用户</th>
-              <th class="px-4 py-3 text-right">出金金额</th>
-              <th class="px-4 py-3">地址 / 网络</th>
-              <th class="px-4 py-3">状态</th>
-              <th class="px-4 py-3">申请时间</th>
-              <th class="px-4 py-3 text-right">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr v-if="loading">
-              <td colspan="7" class="px-4 py-10 text-center text-slate-500">加载中...</td>
-            </tr>
-            <tr v-for="order in rows" v-else :key="order.id" class="hover:bg-slate-50">
-              <td class="px-4 py-3">
+        <a-table  :data-source="rows" :loading="loading" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(order) => order.id" :custom-row="(order, index) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" ><template #title>订单</template><template #default="{ record: order, index: index }"><div class=" ">
                 <div class="font-mono text-xs text-slate-500">{{ order.id }}</div>
                 <div class="mt-1 text-xs text-slate-400">VIP{{ order.vipLevel }}</div>
-              </td>
-              <td class="px-4 py-3">
-                <button
-                  type="button"
-                  class="font-medium text-blue-600 hover:text-blue-700 hover:underline"
-                  @click="openUserPanel(order)"
-                >
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>用户</template><template #default="{ record: order, index: index }"><div class=" ">
+                <a-button html-type="button" class="font-medium text-blue-600 hover:text-blue-700 hover:underline" @click="openUserPanel(order)">
                   {{ order.username }}
-                </button>
+                </a-button>
                 <div class="text-xs text-slate-500">{{ order.userId }}</div>
-              </td>
-              <td class="px-4 py-3 text-right">
+              </div></template></a-table-column>
+<a-table-column key="column-2" align="right"><template #title>出金金额</template><template #default="{ record: order, index: index }"><div class="  text-right">
                 <div class="font-semibold text-slate-900">{{ formatMoney(order.amount) }} {{ order.coin }}</div>
                 <div class="text-xs text-slate-500">手续费 {{ order.fee }} {{ order.coin }}</div>
-              </td>
-              <td class="max-w-[260px] px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>地址 / 网络</template><template #default="{ record: order, index: index }"><div class="max-w-[260px]  ">
                 <div class="truncate font-mono text-xs text-slate-700">{{ order.address }}</div>
                 <div class="mt-1 text-xs text-slate-500">{{ order.network }}</div>
-              </td>
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>状态</template><template #default="{ record: order, index: index }"><div class=" ">
                 <span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="statusMeta(order.status).badgeClass">{{ statusMeta(order.status).label }}</span>
-              </td>
-              <td class="px-4 py-3 text-xs text-slate-500">{{ formatTime(order.applyTime) }}</td>
-              <td class="px-4 py-3 text-right">
-                <button type="button" class="text-sm font-medium text-blue-600 hover:underline" @click="openDetail(order)">处理</button>
-              </td>
-            </tr>
-            <tr v-if="!loading && rows.length === 0">
-              <td colspan="7" class="px-4 py-10 text-center text-slate-500">暂无出金审核记录</td>
-            </tr>
-          </tbody>
-        </table>
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>申请时间</template><template #default="{ record: order, index: index }"><div class="  text-xs text-slate-500">{{ formatTime(order.applyTime) }}</div></template></a-table-column>
+<a-table-column key="column-6" align="right"><template #title>操作</template><template #default="{ record: order, index: index }"><div class="  text-right">
+                <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:underline" @click="openDetail(order)">处理</a-button>
+              </div></template></a-table-column><template #emptyText>暂无出金审核记录</template>
+</a-table>
       </div>
       <AdminListPaginationBar
         v-model:current-page="pagination.currentPage"
@@ -270,28 +232,21 @@ onMounted(loadList)
     </article>
 
     <Teleport to="body">
-      <div v-if="selectedOrder" class="fixed inset-0 z-50 flex justify-end bg-slate-900/35" @click.self="closeDetail">
-        <aside class="flex h-full w-full max-w-2xl flex-col bg-white shadow-2xl">
-          <header class="border-b border-slate-200 px-6 py-4">
+      <a-drawer :open="Boolean(selectedOrder)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeDetail"><template #title><template v-if="Boolean(selectedOrder)"><header class="border-b border-slate-200 px-6 py-4">
             <div class="flex items-start justify-between gap-4">
               <div>
                 <p class="text-xs font-medium text-slate-500">出金审核详情</p>
                 <h2 class="mt-1 text-xl font-semibold text-slate-900">{{ selectedOrder.id }}</h2>
               </div>
-              <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100" @click="closeDetail">关闭</button>
+              <a-button aria-label="关闭" html-type="button" class="text-slate-500 hover:bg-slate-100" @click="closeDetail">关闭</a-button>
             </div>
-          </header>
-          <div class="min-h-0 flex-1 space-y-5 overflow-y-auto p-6">
+          </header></template></template><template v-if="selectedOrder"><div class="min-h-0 flex-1 space-y-5 overflow-y-auto p-6">
             <div class="grid gap-3 sm:grid-cols-2">
               <div class="rounded-xl bg-slate-50 p-4">
                 <p class="text-xs text-slate-500">用户</p>
-                <button
-                  type="button"
-                  class="mt-1 font-semibold text-blue-600 hover:text-blue-700 hover:underline"
-                  @click="openUserPanel(selectedOrder)"
-                >
+                <a-button html-type="button" class="mt-1 font-semibold text-blue-600 hover:text-blue-700 hover:underline" @click="openUserPanel(selectedOrder)">
                   {{ selectedOrder.username }}
-                </button>
+                </a-button>
                 <p class="text-xs text-slate-500">{{ selectedOrder.email }}</p>
               </div>
               <div class="rounded-xl bg-slate-50 p-4">
@@ -323,21 +278,19 @@ onMounted(loadList)
             <div v-if="selectedOrder.status === WITHDRAW_AUDIT_STATUS.PENDING" class="rounded-xl border border-slate-200 p-4">
               <p class="text-sm font-semibold text-slate-900">审核操作</p>
               <div class="mt-3 flex gap-2">
-                <button type="button" class="ant-btn ant-btn-primary" @click="auditAction = 'approve'">通过</button>
-                <button type="button" class="ant-btn danger" @click="auditAction = 'reject'">拒绝</button>
+                <a-button html-type="button" class="" @click="auditAction = 'approve'" type="primary">通过</a-button>
+                <a-button html-type="button" class="danger" @click="auditAction = 'reject'">拒绝</a-button>
               </div>
               <div v-if="auditAction" class="mt-3">
-                <textarea v-model="auditNote" rows="3" class="ant-input w-full" :placeholder="auditAction === 'reject' ? '请输入拒绝原因' : '请输入审核备注（可选）'"></textarea>
+                <a-textarea v-model:value="auditNote" rows="3" class="w-full" :placeholder="auditAction === 'reject' ? '请输入拒绝原因' : '请输入审核备注（可选）'"></a-textarea>
                 <div class="mt-3 flex justify-end gap-2">
-                  <button type="button" class="ant-btn" @click="auditAction = ''">取消</button>
-                  <button type="button" class="ant-btn ant-btn-primary" @click="submitAction(auditAction)">确认提交</button>
+                  <a-button html-type="button" class="" @click="auditAction = ''">取消</a-button>
+                  <a-button html-type="button" class="" @click="submitAction(auditAction)" type="primary">确认提交</a-button>
                 </div>
               </div>
             </div>
 
-          </div>
-        </aside>
-      </div>
+          </div></template></a-drawer>
     </Teleport>
 
     <UserDetailDrawer

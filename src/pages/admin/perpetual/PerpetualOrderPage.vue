@@ -10,8 +10,8 @@
     <article class="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm relative min-h-[400px]">
       <div class="flex items-center justify-between border-b border-slate-200 p-4 bg-white">
         <h3 class="text-base font-semibold text-slate-900">订单列表</h3>
-        <button
-          type="button"
+        <a-button
+          html-type="button"
           class="ant-btn inline-flex items-center gap-2"
           @click="exportOrders"
         >
@@ -19,135 +19,137 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
           </svg>
           <span>导出订单</span>
-        </button>
+        </a-button>
       </div>
 
       <!-- 筛选区域 -->
       <div class="p-4 border-b border-slate-100 bg-slate-50/30">
         <div class="flex flex-wrap items-center gap-3">
           <!-- 基础筛选 -->
-          <select v-model="filters.status" class="ant-select !w-32 !py-1.5">
-            <option value="">全部状态</option>
-            <option :value="PERPETUAL_ORDER_STATUS.HOLDING">持仓中</option>
-            <option :value="PERPETUAL_ORDER_STATUS.CLOSED">已平仓</option>
-            <option :value="PERPETUAL_ORDER_STATUS.LIQUIDATED">已爆仓</option>
-          </select>
-          
-          <select v-model="filters.symbol" class="ant-select !w-40 !py-1.5">
-            <option value="">全部交易对</option>
-            <option value="BTC/USDT">BTC/USDT</option>
-            <option value="ETH/USDT">ETH/USDT</option>
-            <option value="BNB/USDT">BNB/USDT</option>
-            <option value="SOL/USDT">SOL/USDT</option>
-          </select>
-          
-          <select v-model="filters.side" class="ant-select !w-32 !py-1.5">
-            <option value="">全部方向</option>
-            <option :value="PERPETUAL_ORDER_SIDE.LONG">多</option>
-            <option :value="PERPETUAL_ORDER_SIDE.SHORT">空</option>
-          </select>
-          
-          <input v-model="filters.userId" type="text" placeholder="搜索用户 ID..." class="ant-input !w-64 !py-1.5" />
-          
+          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.status" class="!w-32">
+            <a-select-option value="">全部状态</a-select-option>
+            <a-select-option :value="PERPETUAL_ORDER_STATUS.HOLDING">持仓中</a-select-option>
+            <a-select-option :value="PERPETUAL_ORDER_STATUS.CLOSED">已平仓</a-select-option>
+            <a-select-option :value="PERPETUAL_ORDER_STATUS.LIQUIDATED">已爆仓</a-select-option>
+          </a-select>
+
+          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.symbol" class="!w-40">
+            <a-select-option value="">全部交易对</a-select-option>
+            <a-select-option value="BTC/USDT">BTC/USDT</a-select-option>
+            <a-select-option value="ETH/USDT">ETH/USDT</a-select-option>
+            <a-select-option value="BNB/USDT">BNB/USDT</a-select-option>
+            <a-select-option value="SOL/USDT">SOL/USDT</a-select-option>
+          </a-select>
+
+          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.side" class="!w-32">
+            <a-select-option value="">全部方向</a-select-option>
+            <a-select-option :value="PERPETUAL_ORDER_SIDE.LONG">多</a-select-option>
+            <a-select-option :value="PERPETUAL_ORDER_SIDE.SHORT">空</a-select-option>
+          </a-select>
+
+          <a-input v-model:value="filters.userId" type="text" placeholder="搜索用户 ID..." class="ant-input !w-64 !py-1.5" />
+
           <!-- 高级筛选展开按钮 -->
-          <button type="button" class="ant-btn flex items-center gap-1 !py-1.5" @click="showAdvancedFilters = !showAdvancedFilters">
+          <a-button html-type="button" class="ant-btn flex items-center gap-1 !py-1.5" @click="showAdvancedFilters = !showAdvancedFilters">
             <span>{{ showAdvancedFilters ? '收起' : '高级筛选' }}</span>
             <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': showAdvancedFilters }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
-          </button>
-          
-          <button type="button" class="ant-btn !py-1.5" @click="resetFilters">重置</button>
+          </a-button>
+
+          <a-button html-type="button" class="ant-btn !py-1.5" @click="resetFilters">重置</a-button>
         </div>
       </div>
-      
+
       <!-- 高级筛选 -->
       <div v-show="showAdvancedFilters" class="border-b border-slate-200 bg-slate-50/50 px-4 py-3">
         <div class="grid gap-3 md:grid-cols-4">
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">杠杆倍数范围</label>
             <div class="flex items-center gap-2">
-              <input v-model="filters.minLeverage" type="number" placeholder="最小" class="ant-input !py-1.5" />
+              <a-input v-model:value="filters.minLeverage" type="number" placeholder="最小" class="ant-input !py-1.5" />
               <span class="text-slate-500">-</span>
-              <input v-model="filters.maxLeverage" type="number" placeholder="最大" class="ant-input !py-1.5" />
+              <a-input v-model:value="filters.maxLeverage" type="number" placeholder="最大" class="ant-input !py-1.5" />
             </div>
           </div>
-          
+
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">仓位价值范围 (USDT)</label>
             <div class="flex items-center gap-2">
-              <input v-model="filters.minPositionValue" type="number" placeholder="最小" class="ant-input !py-1.5" />
+              <a-input v-model:value="filters.minPositionValue" type="number" placeholder="最小" class="ant-input !py-1.5" />
               <span class="text-slate-500">-</span>
-              <input v-model="filters.maxPositionValue" type="number" placeholder="最大" class="ant-input !py-1.5" />
+              <a-input v-model:value="filters.maxPositionValue" type="number" placeholder="最大" class="ant-input !py-1.5" />
             </div>
           </div>
-          
+
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">盈亏范围 (USDT)</label>
             <div class="flex items-center gap-2">
-              <input v-model="filters.minPnl" type="number" placeholder="最小" class="ant-input !py-1.5" />
+              <a-input v-model:value="filters.minPnl" type="number" placeholder="最小" class="ant-input !py-1.5" />
               <span class="text-slate-500">-</span>
-              <input v-model="filters.maxPnl" type="number" placeholder="最大" class="ant-input !py-1.5" />
+              <a-input v-model:value="filters.maxPnl" type="number" placeholder="最大" class="ant-input !py-1.5" />
             </div>
           </div>
-          
+
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">开仓时间范围</label>
-            <input v-model="filters.dateRange" type="date" class="ant-input !py-1.5" />
+            <a-input v-model:value="filters.dateRange" type="date" class="ant-input !py-1.5" />
           </div>
         </div>
       </div>
 
       <!-- 订单表格 -->
       <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-slate-50 text-slate-500">
-            <tr>
-              <th class="px-4 py-3 text-left font-medium">订单 ID</th>
-              <th class="px-4 py-3 text-left font-medium">用户信息</th>
-              <th class="px-4 py-3 text-left font-medium">交易对 / 方向</th>
-              <th class="px-4 py-3 text-left font-medium">杠杆 / 仓位</th>
-              <th class="px-4 py-3 text-left font-medium">价格信息</th>
-              <th class="px-4 py-3 text-left font-medium">盈亏</th>
-              <th class="px-4 py-3 text-left font-medium">保证金率</th>
-              <th class="px-4 py-3 text-left font-medium">状态</th>
-              <th class="px-4 py-3 text-left font-medium">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="order in paginatedOrders" :key="order.id" class="border-t border-slate-100 hover:bg-slate-50" :class="{
-              'bg-emerald-50': order.unrealizedPnl > 0 && order.status === PERPETUAL_ORDER_STATUS.HOLDING,
-              'bg-rose-50': order.unrealizedPnl < 0 && order.status === PERPETUAL_ORDER_STATUS.HOLDING
-            }">
-              <td class="px-4 py-3">
+        <a-table  size="small" :pagination="false" :data-source="paginatedOrders" :row-key="(order) => order.id" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;border-t border-slate-100 hover:bg-slate-50&quot;, {
+              'bg-emerald-50': order.unrealizedPnl > 0 &amp;&amp; order.status === PERPETUAL_ORDER_STATUS.HOLDING,
+              'bg-rose-50': order.unrealizedPnl < 0 &amp;&amp; order.status === PERPETUAL_ORDER_STATUS.HOLDING
+            }] })">
+<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>订单 ID</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="font-mono text-xs text-slate-600">{{ order.orderId }}</div>
                 <div class="text-xs text-slate-500">{{ order.openTime.split(' ')[0] }}</div>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>用户信息</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="text-slate-700 font-medium">{{ order.userName }}</div>
                 <div class="text-xs text-slate-500">{{ order.userId }}</div>
                 <span :class="['text-xs px-2 py-0.5 rounded-md font-medium', vipLevelMeta[order.vipLevel]?.class || 'bg-slate-100 text-slate-600']">
                   {{ vipLevelMeta[order.vipLevel]?.label || order.vipLevel }}
                 </span>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>交易对 / 方向</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="font-medium text-slate-900 mb-1">{{ order.productName }}</div>
                 <span :class="['text-xs px-2 py-0.5 rounded-md font-medium', perpetualOrderSideMeta[order.side]?.badgeClass]">
                   {{ perpetualOrderSideMeta[order.side]?.text }}
                 </span>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>杠杆 / 仓位</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="text-slate-700">{{ order.leverage }}x</div>
                 <div class="text-xs text-slate-500">${{ order.positionValue?.toLocaleString() }}</div>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>价格信息</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="text-xs">
                   <div class="text-slate-600">入场：${{ order.entryPrice?.toLocaleString() }}</div>
                   <div class="text-slate-600">当前：${{ order.currentPrice?.toLocaleString() }}</div>
                   <div class="text-slate-500">强平：${{ order.liquidationPrice?.toLocaleString() }}</div>
                 </div>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>盈亏</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="font-medium" :class="{
                   'text-emerald-600': order.unrealizedPnl > 0,
                   'text-rose-600': order.unrealizedPnl < 0,
@@ -162,8 +164,11 @@
                 }">
                   {{ order.unrealizedPnlRate?.toFixed(2) }}%
                 </div>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>保证金率</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="mb-1">
                   <span class="text-xs font-medium" :class="{
                     'text-emerald-600': order.marginRatio <= 20,
@@ -178,20 +183,25 @@
                     'bg-rose-500': order.marginRatio > 50
                   }" :style="{width: `${Math.min(order.marginRatio, 100)}%`}"></div>
                 </div>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-7" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: order, index: rowIndex }">
                 <span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="perpetualOrderStatusMeta[order.status]?.badgeClass">
                   {{ perpetualOrderStatusMeta[order.status]?.text }}
                 </span>
-              </td>
-              <td class="px-4 py-3">
-                <button type="button" class="ant-btn !h-8 !px-3 " @click="viewOrder(order)">
+              </template>
+</a-table-column>
+<a-table-column key="column-8" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: order, index: rowIndex }">
+                <a-button html-type="button" class="ant-btn !h-8 !px-3 " @click="viewOrder(order)">
                   详情
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </a-button>
+              </template>
+</a-table-column>
+</a-table>
       </div>
 
       <!-- 分页 -->
@@ -200,21 +210,14 @@
           共 {{ filteredOrders.length }} 条订单 · 第 {{ currentPage }} / {{ totalPages }} 页
         </div>
         <div class="flex items-center gap-3">
-          <button type="button" :disabled="currentPage === 1" class="ant-btn !h-9 !px-4 !text-sm disabled:opacity-50 disabled:cursor-not-allowed" @click="prevPage">
-            上一页
-          </button>
-          <button type="button" :disabled="currentPage === totalPages" class="ant-btn !h-9 !px-4 !text-sm disabled:opacity-50 disabled:cursor-not-allowed" @click="nextPage">
-            下一页
-          </button>
+          <a-pagination size="small" :current="currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="currentPage = $event" />
         </div>
       </div>
     </article>
 
     <!-- 详情弹窗 -->
-    <div v-if="showDetailModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <article class="relative w-full max-w-6xl max-h-[95vh] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl flex flex-col">
-        <!-- 头部 -->
-        <header class="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
+    <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDetailModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeDetailModal">
+<template #title><template v-if="showDetailModal"><header class="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div class="flex items-center gap-4">
             <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
               <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -226,31 +229,32 @@
               <p class="mt-0.5 text-sm text-slate-500">订单编号：{{ currentOrder?.orderId }}</p>
             </div>
           </div>
-          <button type="button" class="text-slate-400 hover:text-slate-600 transition-colors" @click="closeDetailModal">
+          <a-button aria-label="关闭" type="text" html-type="button" class="text-slate-400 hover:text-slate-600 transition-colors" @click="closeDetailModal">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
-          </button>
-        </header>
+          </a-button>
+        </header></template></template>
+<template v-if="showDetailModal">
 
         <!-- Tab 导航 -->
         <div class="border-b border-slate-200 bg-slate-50 px-6">
           <div class="flex gap-1">
-            <button
+            <a-button type="text"
               v-for="tab in detailTabs"
               :key="tab.id"
-              type="button"
+              html-type="button"
               @click="currentTab = tab.id"
               class="px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2"
-              :class="currentTab === tab.id 
-                ? 'border-blue-600 text-blue-600 bg-white' 
+              :class="currentTab === tab.id
+                ? 'border-blue-600 text-blue-600 bg-white'
                 : 'border-transparent text-slate-600 hover:text-slate-900'"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path :d="tab.icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
               </svg>
               <span>{{ tab.label }}</span>
-            </button>
+            </a-button>
           </div>
         </div>
 
@@ -271,24 +275,24 @@
                 <p class="mt-1 text-xs text-blue-600">{{ currentOrder?.productName }}</p>
               </div>
 
-              <div class="rounded-xl border" :class="currentOrder?.unrealizedPnl >= 0 
-                ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100/50' 
+              <div class="rounded-xl border" :class="currentOrder?.unrealizedPnl >= 0
+                ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100/50'
                 : 'border-rose-200 bg-gradient-to-br from-rose-50 to-rose-100/50'">
-                <div class="flex items-center gap-2 text-sm" :class="currentOrder?.unrealizedPnl >= 0 
-                  ? 'text-emerald-700' 
+                <div class="flex items-center gap-2 text-sm" :class="currentOrder?.unrealizedPnl >= 0
+                  ? 'text-emerald-700'
                   : 'text-rose-700'">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                   </svg>
                   <span>未实现盈亏</span>
                 </div>
-                <p class="mt-2 text-2xl font-bold" :class="currentOrder?.unrealizedPnl >= 0 
-                  ? 'text-emerald-900' 
+                <p class="mt-2 text-2xl font-bold" :class="currentOrder?.unrealizedPnl >= 0
+                  ? 'text-emerald-900'
                   : 'text-rose-900'">
                   {{ currentOrder?.unrealizedPnl >= 0 ? '+' : '' }}${{ currentOrder?.unrealizedPnl?.toFixed(2) }}
                 </p>
-                <p class="mt-1 text-xs" :class="currentOrder?.unrealizedPnl >= 0 
-                  ? 'text-emerald-600' 
+                <p class="mt-1 text-xs" :class="currentOrder?.unrealizedPnl >= 0
+                  ? 'text-emerald-600'
                   : 'text-rose-600'">
                   {{ currentOrder?.unrealizedPnlRate?.toFixed(2) }}%
                 </p>
@@ -437,8 +441,8 @@
                 </div>
                 <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
                   <p class="text-xs text-slate-500">已实现盈亏</p>
-                  <p class="mt-1 text-lg font-bold" :class="currentOrder?.realizedPnl >= 0 
-                    ? 'text-emerald-600' 
+                  <p class="mt-1 text-lg font-bold" :class="currentOrder?.realizedPnl >= 0
+                    ? 'text-emerald-600'
                     : 'text-rose-600'">
                     {{ currentOrder?.realizedPnl >= 0 ? '+' : '' }}${{ currentOrder?.realizedPnl?.toFixed(2) }}
                   </p>
@@ -489,35 +493,35 @@
                 <span>盈亏明细</span>
               </h3>
               <div class="space-y-4">
-                <div class="flex justify-between items-center p-4 rounded-lg" :class="currentOrder?.unrealizedPnl >= 0 
-                  ? 'bg-emerald-50 border border-emerald-200' 
+                <div class="flex justify-between items-center p-4 rounded-lg" :class="currentOrder?.unrealizedPnl >= 0
+                  ? 'bg-emerald-50 border border-emerald-200'
                   : 'bg-rose-50 border border-rose-200'">
                   <span class="text-sm font-medium text-slate-700">未实现盈亏</span>
                   <div class="text-right">
-                    <p class="text-2xl font-bold" :class="currentOrder?.unrealizedPnl >= 0 
-                      ? 'text-emerald-600' 
+                    <p class="text-2xl font-bold" :class="currentOrder?.unrealizedPnl >= 0
+                      ? 'text-emerald-600'
                       : 'text-rose-600'">
                       {{ currentOrder?.unrealizedPnl >= 0 ? '+' : '' }}${{ currentOrder?.unrealizedPnl?.toFixed(2) }}
                     </p>
-                    <p class="text-sm" :class="currentOrder?.unrealizedPnl >= 0 
-                      ? 'text-emerald-600' 
+                    <p class="text-sm" :class="currentOrder?.unrealizedPnl >= 0
+                      ? 'text-emerald-600'
                       : 'text-rose-600'">
                       {{ currentOrder?.unrealizedPnlRate?.toFixed(2) }}%
                     </p>
                   </div>
                 </div>
-                
+
                 <div class="flex justify-between items-center p-4 rounded-lg bg-slate-50 border border-slate-200">
                   <span class="text-sm font-medium text-slate-700">已实现盈亏</span>
                   <div class="text-right">
-                    <p class="text-2xl font-bold" :class="currentOrder?.realizedPnl >= 0 
-                      ? 'text-emerald-600' 
+                    <p class="text-2xl font-bold" :class="currentOrder?.realizedPnl >= 0
+                      ? 'text-emerald-600'
                       : 'text-rose-600'">
                       {{ currentOrder?.realizedPnl >= 0 ? '+' : '' }}${{ currentOrder?.realizedPnl?.toFixed(2) }}
                     </p>
                   </div>
                 </div>
-                
+
                 <div class="flex justify-between items-center p-4 rounded-lg bg-slate-50 border border-slate-200">
                   <span class="text-sm font-medium text-slate-700">总费用</span>
                   <div class="text-right">
@@ -557,7 +561,7 @@
                     </p>
                   </div>
                 </div>
-                
+
                 <div v-if="currentOrder?.status !== PERPETUAL_ORDER_STATUS.HOLDING" class="flex items-start gap-3">
                   <div class="w-8 h-8 rounded-full" :class="{
                     'bg-emerald-100': currentOrder?.status === PERPETUAL_ORDER_STATUS.CLOSED,
@@ -586,15 +590,15 @@
         </div>
 
         <!-- 底部按钮 -->
-        <footer class="border-t border-slate-200 bg-slate-50 px-6 py-4">
+        </template>
+<template #footer><template v-if="showDetailModal"><footer class="border-t border-slate-200 bg-slate-50 px-6 py-4">
           <div class="flex items-center justify-end">
-            <button type="button" class="ant-btn !px-6 !py-2.5 !h-auto" @click="closeDetailModal">
+            <a-button html-type="button" class="ant-btn !px-6 !py-2.5 !h-auto" @click="closeDetailModal">
               关闭
-            </button>
+            </a-button>
           </div>
-        </footer>
-      </article>
-    </div>
+        </footer></template></template>
+</a-modal>
   </section>
 </template>
 

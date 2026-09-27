@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { 
-  REPORT_TIME_RANGE, 
-  REPORT_TIME_RANGE_OPTIONS, 
+import {
+  REPORT_TIME_RANGE,
+  REPORT_TIME_RANGE_OPTIONS,
   RISK_LEVEL_CONFIG,
   USER_TYPE_CONFIG,
   RISK_ASSESSMENT_CRITERIA
@@ -95,10 +95,10 @@ const filteredOverview = computed(() => {
   if (selectedContract.value === 'ALL') {
     return overview.value
   }
-  
+
   const contract = contracts.value.find(c => c.symbol === selectedContract.value)
   if (!contract) return overview.value
-  
+
   return {
     totalVolume24h: contract.volume24h,
     totalPosition: contract.position,
@@ -174,7 +174,7 @@ const whalesPageNumbers = computed(() => {
   const total = whalesTotalPages.value
   const current = whalesCurrentPage.value
   const pages = []
-  
+
   if (total <= 7) {
     // 页数少于7页，全部显示
     for (let i = 1; i <= total; i++) {
@@ -183,22 +183,22 @@ const whalesPageNumbers = computed(() => {
   } else {
     // 页数较多，显示首页、当前页前后2页、末页
     pages.push(1)
-    
+
     if (current > 3) {
       pages.push('...')
     }
-    
+
     for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
       pages.push(i)
     }
-    
+
     if (current < total - 2) {
       pages.push('...')
     }
-    
+
     pages.push(total)
   }
-  
+
   return pages
 })
 // 监听合约切换，重置页码
@@ -352,7 +352,7 @@ const openRiskHelpModal = () => {
         <p class="text-sm text-slate-500 mt-1">提供全面的市场数据分析，辅助线控调控决策</p>
       </div>
       <div class="flex items-center gap-3">
-        <button
+        <a-button type="text"
           @click="refreshData"
           class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors inline-flex items-center gap-2"
         >
@@ -360,8 +360,8 @@ const openRiskHelpModal = () => {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
           刷新
-        </button>
-        <button
+        </a-button>
+        <a-button type="text"
           @click="exportReport"
           class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
         >
@@ -369,7 +369,7 @@ const openRiskHelpModal = () => {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           导出报表
-        </button>
+        </a-button>
       </div>
     </div>
 
@@ -385,21 +385,21 @@ const openRiskHelpModal = () => {
         <!-- 合约选择 -->
         <div class="flex items-center gap-3">
           <span class="text-sm font-medium text-slate-700">合约：</span>
-          <select
-            v-model="selectedContract"
-            class="px-4 py-2 text-sm font-medium border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-slate-700"
+          <a-select :get-popup-container="(trigger) => trigger.parentElement"
+            v-model:value="selectedContract"
+            class="font-medium"
           >
-            <option v-for="option in contractOptions" :key="option.value" :value="option.value">
+            <a-select-option v-for="option in contractOptions" :key="option.value" :value="option.value">
               {{ option.label }}
-            </option>
-          </select>
+            </a-select-option>
+          </a-select>
         </div>
-        
+
         <!-- 时间范围 -->
         <div class="flex items-center gap-3">
           <span class="text-sm font-medium text-slate-700">时间：</span>
           <div class="flex items-center gap-2">
-          <button
+          <a-button type="text"
             v-for="option in REPORT_TIME_RANGE_OPTIONS"
             :key="option.value"
             @click="timeRange = option.value"
@@ -411,20 +411,20 @@ const openRiskHelpModal = () => {
             ]"
           >
             {{ option.label }}
-          </button>
+          </a-button>
         </div>
         </div>
-        
+
         <!-- 自定义日期范围 -->
         <div v-if="timeRange === REPORT_TIME_RANGE.CUSTOM" class="flex items-center gap-2">
-          <input
-            v-model="customDateRange.start"
+          <a-input
+            v-model:value="customDateRange.start"
             type="date"
             class="px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <span class="text-slate-500">至</span>
-          <input
-            v-model="customDateRange.end"
+          <a-input
+            v-model:value="customDateRange.end"
             type="date"
             class="px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -449,7 +449,7 @@ const openRiskHelpModal = () => {
     <div class="bg-white rounded-xl border border-slate-200">
       <div class="border-b border-slate-200">
         <div class="flex overflow-x-auto">
-          <button
+          <a-button type="text"
             v-for="tab in tabs"
             :key="tab.id"
             @click="activeTab = tab.id"
@@ -464,7 +464,7 @@ const openRiskHelpModal = () => {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="tab.icon" />
             </svg>
             {{ tab.name }}
-          </button>
+          </a-button>
         </div>
       </div>
 
@@ -503,11 +503,11 @@ const openRiskHelpModal = () => {
             </div>
 
             <!-- 风险等级 - 已隐藏，让运营人员根据数据自行判断 -->
-            <!-- <div 
+            <!-- <div
               :class="[
                 'rounded-xl p-6 bg-gradient-to-br hidden',
-                RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'emerald' 
-                  ? 'from-emerald-50 to-teal-50 border border-emerald-200' 
+                RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'emerald'
+                  ? 'from-emerald-50 to-teal-50 border border-emerald-200'
                   : RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'amber'
                   ? 'from-amber-50 to-yellow-50 border border-amber-200'
                   : RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'orange'
@@ -537,7 +537,7 @@ const openRiskHelpModal = () => {
                     </svg>
                   </button>
                 </div>
-                <svg 
+                <svg
                   :class="[
                     'h-8 w-8',
                     RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'emerald'
@@ -548,8 +548,8 @@ const openRiskHelpModal = () => {
                       ? 'text-orange-600'
                       : 'text-rose-600'
                   ]"
-                  fill="none" 
-                  stroke="currentColor" 
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -620,45 +620,49 @@ const openRiskHelpModal = () => {
             -->
             <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
               <div class="max-h-96 overflow-y-auto">
-                <table class="w-full">
-                <thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
-                  <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-900 uppercase">合约</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">24h交易量</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">持仓</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">多空比</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">平台盈亏</th>
-                    <th class="px-6 py-3 text-center text-xs font-semibold text-slate-900 uppercase">线控</th>
-                    <!-- <th class="px-6 py-3 text-center text-xs font-semibold text-slate-900 uppercase">风险</th> -->
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200">
-                  <tr v-for="contract in paginatedContractsWithControl" :key="contract.symbol" class="hover:bg-slate-50">
-                    <td class="px-6 py-4">
+                <a-table  size="small" :pagination="false" :data-source="paginatedContractsWithControl" :row-key="(contract) => contract.symbol" :scroll="{ x: 'max-content' }" :custom-row="(contract, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>合约</template>
+<template #default="{ record: contract, index: rowIndex }">
                       <div>
                         <p class="text-sm font-medium text-slate-900">{{ contract.name }}</p>
                         <p class="text-xs text-slate-500">{{ contract.symbol }}</p>
                       </div>
-                    </td>
-                    <td class="px-6 py-4 text-right">
+                    </template>
+</a-table-column>
+<a-table-column key="column-1" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>24h交易量</template>
+<template #default="{ record: contract, index: rowIndex }">
                       <p class="text-sm font-medium text-slate-900">${{ formatAmount(contract.volume24h) }}</p>
-                    </td>
-                    <td class="px-6 py-4 text-right">
+                    </template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>持仓</template>
+<template #default="{ record: contract, index: rowIndex }">
                       <p class="text-sm font-medium text-slate-900">${{ formatAmount(contract.position) }}</p>
                       <p class="text-xs text-slate-500">
-                        多: ${{ formatAmount(contract.longPosition) }} / 
+                        多: ${{ formatAmount(contract.longPosition) }} /
                         空: ${{ formatAmount(contract.shortPosition) }}
                       </p>
-                    </td>
-                    <td class="px-6 py-4 text-right">
+                    </template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>多空比</template>
+<template #default="{ record: contract, index: rowIndex }">
                       <p class="text-sm font-medium text-slate-900">{{ contract.longShortRatio.toFixed(2) }}</p>
-                    </td>
-                    <td class="px-6 py-4 text-right">
+                    </template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>平台盈亏</template>
+<template #default="{ record: contract, index: rowIndex }">
                       <p :class="contract.platformPnl24h >= 0 ? 'text-emerald-600' : 'text-rose-600'" class="text-sm font-medium">
                         {{ formatCurrency(contract.platformPnl24h) }}
                       </p>
-                    </td>
-                    <td class="px-6 py-4 text-center">
+                    </template>
+</a-table-column>
+<a-table-column key="column-5" align="center" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4 text-center&quot;] })">
+<template #title>线控</template>
+<template #default="{ record: contract, index: rowIndex }">
                       <div class="flex flex-col items-center gap-1">
                         <span
                           v-if="!contract.controlConfigured"
@@ -687,19 +691,9 @@ const openRiskHelpModal = () => {
                           规则 {{ contract.controlEnabledRules }}/{{ contract.controlRuleCount }}
                         </span>
                       </div>
-                    </td>
-                    <!-- 风险等级已隐藏 -->
-                    <!-- <td class="px-6 py-4 text-center">
-                      <span
-                        :class="RISK_LEVEL_CONFIG[contract.riskLevel].class"
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
-                      >
-                        {{ RISK_LEVEL_CONFIG[contract.riskLevel].text }}
-                      </span>
-                    </td> -->
-                  </tr>
-                </tbody>
-              </table>
+                    </template>
+</a-table-column>
+</a-table>
               </div>
             </div>
             <div v-if="selectedContract === 'ALL'" class="mt-2 flex items-center justify-between text-xs text-slate-500">
@@ -708,47 +702,7 @@ const openRiskHelpModal = () => {
             </div>
 
             <div v-if="selectedContract === 'ALL'" class="mt-3 flex items-center justify-end gap-2">
-              <button
-                @click="contractsCurrentPage = Math.max(1, contractsCurrentPage - 1)"
-                :disabled="contractsCurrentPage === 1"
-                :class="[
-                  'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors',
-                  contractsCurrentPage === 1
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                    : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
-                ]"
-              >
-                上一页
-              </button>
-              <div class="flex items-center gap-1">
-                <template v-for="(page, index) in contractsPageNumbers" :key="index">
-                  <button
-                    v-if="page !== '...'"
-                    @click="contractsCurrentPage = page"
-                    :class="[
-                      'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors',
-                      contractsCurrentPage === page
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
-                    ]"
-                  >
-                    {{ page }}
-                  </button>
-                  <span v-else class="px-2 text-slate-400">...</span>
-                </template>
-              </div>
-              <button
-                @click="contractsCurrentPage = Math.min(contractsTotalPages, contractsCurrentPage + 1)"
-                :disabled="contractsCurrentPage === contractsTotalPages"
-                :class="[
-                  'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors',
-                  contractsCurrentPage === contractsTotalPages
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                    : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
-                ]"
-              >
-                下一页
-              </button>
+              <a-pagination size="small" :current="contractsCurrentPage" :total="contractsTotalPages" :page-size="1" :show-size-changer="false" @change="contractsCurrentPage = $event" />
             </div>
             <div class="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
               <p class="font-semibold text-slate-900 mb-1">要点</p>
@@ -774,7 +728,7 @@ const openRiskHelpModal = () => {
                 <span v-if="filteredActionSuggestions.length > 0" class="text-sm text-slate-500">
                   显示 {{ displayedActionSuggestions.length }} / {{ filteredActionSuggestions.length }} 条
                 </span>
-                <button
+                <a-button type="text"
                   v-if="filteredActionSuggestions.length > 3"
                   @click="showAllSuggestions = !showAllSuggestions"
                   class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
@@ -783,7 +737,7 @@ const openRiskHelpModal = () => {
                   <svg class="h-4 w-4" :class="{ 'rotate-180': showAllSuggestions }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                   </svg>
-                </button>
+                </a-button>
               </div>
             </div>
             <div v-if="filteredActionSuggestions.length === 0" class="bg-slate-50 border border-slate-200 rounded-lg p-8 text-center">
@@ -817,7 +771,7 @@ const openRiskHelpModal = () => {
                         ]"
                       >
                         {{ suggestion.priority === 'critical' ? '🚨 紧急' :
-                           suggestion.priority === 'high' ? '高优先级' : 
+                           suggestion.priority === 'high' ? '高优先级' :
                            suggestion.priority === 'medium' ? '中优先级' : '低优先级' }}
                       </span>
                       <span v-if="selectedContract === 'ALL'" class="text-xs text-slate-600">{{ suggestion.contract }}</span>
@@ -832,7 +786,7 @@ const openRiskHelpModal = () => {
                       <span><span class="font-medium text-slate-700">影响参数:</span> {{ suggestion.affects }}</span>
                     </div>
                   </div>
-                  <button 
+                  <a-button type="text"
                     :class="[
                       'ml-4 px-3 py-1.5 text-xs font-medium text-white rounded-lg transition-colors whitespace-nowrap',
                       suggestion.priority === 'critical' ? 'bg-rose-600 hover:bg-rose-700' :
@@ -841,7 +795,7 @@ const openRiskHelpModal = () => {
                     ]"
                   >
                     执行操作
-                  </button>
+                  </a-button>
                 </div>
               </div>
             </div>
@@ -862,31 +816,34 @@ const openRiskHelpModal = () => {
               - 净持仓：是“净敞口”核心指标，常用于净持仓触发类规则。
             -->
             <div class="overflow-x-auto">
-              <table class="w-full">
-                <thead class="bg-slate-50">
-                  <tr>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-900">杠杆区间</th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-900">多头人数</th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-900">空头人数</th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-900">多头持仓</th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-900">空头持仓</th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-900">净持仓</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200">
-                  <tr v-for="item in leverageDistribution" :key="item.leverage" class="hover:bg-slate-50">
-                    <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ item.leverage }}</td>
-                    <td class="px-4 py-3 text-right text-sm text-slate-700">{{ item.longCount }}</td>
-                    <td class="px-4 py-3 text-right text-sm text-slate-700">{{ item.shortCount }}</td>
-                    <td class="px-4 py-3 text-right text-sm text-emerald-600 font-medium">${{ formatAmount(item.longVolume) }}</td>
-                    <td class="px-4 py-3 text-right text-sm text-rose-600 font-medium">${{ formatAmount(item.shortVolume) }}</td>
-                    <td class="px-4 py-3 text-right text-sm font-medium" 
-                        :class="(item.longVolume - item.shortVolume) >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+              <a-table  size="small" :pagination="false" :data-source="leverageDistribution" :row-key="(item) => item.leverage" :scroll="{ x: 'max-content' }" :custom-row="(item, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-sm font-medium text-slate-900&quot;] })">
+<template #title>杠杆区间</template>
+<template #default="{ record: item, index: rowIndex }">{{ item.leverage }}</template>
+</a-table-column>
+<a-table-column key="column-1" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-right text-sm text-slate-700&quot;] })">
+<template #title>多头人数</template>
+<template #default="{ record: item, index: rowIndex }">{{ item.longCount }}</template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-right text-sm text-slate-700&quot;] })">
+<template #title>空头人数</template>
+<template #default="{ record: item, index: rowIndex }">{{ item.shortCount }}</template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-right text-sm text-emerald-600 font-medium&quot;] })">
+<template #title>多头持仓</template>
+<template #default="{ record: item, index: rowIndex }">${{ formatAmount(item.longVolume) }}</template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-right text-sm text-rose-600 font-medium&quot;] })">
+<template #title>空头持仓</template>
+<template #default="{ record: item, index: rowIndex }">${{ formatAmount(item.shortVolume) }}</template>
+</a-table-column>
+<a-table-column key="column-5" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-right text-sm font-medium&quot;, (item.longVolume - item.shortVolume) >= 0 ? 'text-emerald-600' : 'text-rose-600'] })">
+<template #title>净持仓</template>
+<template #default="{ record: item, index: rowIndex }">
                       {{ formatCurrency(item.longVolume - item.shortVolume) }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    </template>
+</a-table-column>
+</a-table>
             </div>
           </div>
 
@@ -1003,7 +960,7 @@ const openRiskHelpModal = () => {
                 <span v-if="filteredRiskAlerts.length > 0" class="text-sm text-slate-500">
                   共 {{ filteredRiskAlerts.length }} 条预警
                 </span>
-                <button
+                <a-button type="text"
                   v-if="filteredRiskAlerts.length > 5"
                   @click="showAllRiskAlerts = !showAllRiskAlerts"
                   class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
@@ -1019,7 +976,7 @@ const openRiskHelpModal = () => {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                   </svg>
                   <span v-if="!showAllRiskAlerts" class="text-slate-500">(显示 5 / {{ filteredRiskAlerts.length }})</span>
-                </button>
+                </a-button>
               </div>
             </div>
             <div v-if="filteredRiskAlerts.length === 0" class="bg-slate-50 border border-slate-200 rounded-lg p-8 text-center">
@@ -1080,116 +1037,67 @@ const openRiskHelpModal = () => {
             </div>
             <div v-else>
               <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
-              <table class="w-full">
-                <thead class="bg-slate-50 border-b border-slate-200">
-                  <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-900 uppercase">用户</th>
-                    <!-- <th class="px-6 py-3 text-left text-xs font-semibold text-slate-900 uppercase">类型</th> -->
-                    <th v-if="selectedContract === 'ALL'" class="px-6 py-3 text-left text-xs font-semibold text-slate-900 uppercase">交易合约</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">总持仓</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">多头/空头</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">杠杆</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-900 uppercase">24h盈亏</th>
-                    <!-- <th class="px-6 py-3 text-center text-xs font-semibold text-slate-900 uppercase">风险</th> -->
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200">
-                <tr v-for="whale in paginatedWhalesList" :key="whale.userId" class="hover:bg-slate-50">
-                    <td class="px-6 py-4">
+              <a-table  size="small" :pagination="false" :data-source="paginatedWhalesList" :row-key="(whale) => whale.userId" :scroll="{ x: 'max-content' }" :custom-row="(whale, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: whale, index: rowIndex }">
                       <p class="text-sm font-medium text-slate-900">{{ whale.username }}</p>
                       <p class="text-xs text-slate-500">{{ whale.userId }}</p>
-                    </td>
-                    <!-- <td class="px-6 py-4">
-                      <span :class="USER_TYPE_CONFIG[whale.type].class" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                        {{ USER_TYPE_CONFIG[whale.type].icon }} {{ USER_TYPE_CONFIG[whale.type].text }}
-                      </span>
-                    </td> -->
-                    <td v-if="selectedContract === 'ALL'" class="px-6 py-4">
+                    </template>
+</a-table-column>
+<a-table-column key="column-1" v-if="selectedContract === 'ALL'" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>交易合约</template>
+<template #default="{ record: whale, index: rowIndex }">
                       <div class="flex flex-wrap gap-1">
-                        <span 
-                          v-for="contract in whale.contracts" 
+                        <span
+                          v-for="contract in whale.contracts"
                           :key="contract"
                           class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700"
                         >
                           {{ contract }}
                         </span>
                       </div>
-                    </td>
-                    <td class="px-6 py-4 text-right">
+                    </template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>总持仓</template>
+<template #default="{ record: whale, index: rowIndex }">
                       <p class="text-sm font-medium text-slate-900">${{ formatAmount(whale.totalPosition) }}</p>
-                    </td>
-                    <td class="px-6 py-4 text-right">
+                    </template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>多头/空头</template>
+<template #default="{ record: whale, index: rowIndex }">
                       <p class="text-xs text-emerald-600">${{ formatAmount(whale.longPosition) }}</p>
                       <p class="text-xs text-rose-600">${{ formatAmount(whale.shortPosition) }}</p>
-                    </td>
-                    <td class="px-6 py-4 text-right">
+                    </template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>杠杆</template>
+<template #default="{ record: whale, index: rowIndex }">
                       <p class="text-sm font-medium text-slate-900">{{ whale.leverage }}x</p>
-                    </td>
-                    <td class="px-6 py-4 text-right">
+                    </template>
+</a-table-column>
+<a-table-column key="column-5" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>24h盈亏</template>
+<template #default="{ record: whale, index: rowIndex }">
                       <p :class="whale.pnl24h >= 0 ? 'text-emerald-600' : 'text-rose-600'" class="text-sm font-medium">
                         {{ formatCurrency(whale.pnl24h) }}
                       </p>
                       <p :class="whale.pnlRate >= 0 ? 'text-emerald-600' : 'text-rose-600'" class="text-xs">
                         ({{ whale.pnlRate >= 0 ? '+' : '' }}{{ whale.pnlRate.toFixed(2) }}%)
                       </p>
-                    </td>
-                    <!-- 风险等级已隐藏 -->
-                    <!-- <td class="px-6 py-4 text-center">
-                      <span :class="RISK_LEVEL_CONFIG[whale.riskLevel].class" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border">
-                        {{ RISK_LEVEL_CONFIG[whale.riskLevel].text }}
-                      </span>
-                    </td> -->
-                  </tr>
-                </tbody>
-              </table>
-              
+                    </template>
+</a-table-column>
+</a-table>
+
               <!-- 分页控件 -->
               <div v-if="whalesTotalPages > 1" class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
                 <div class="text-sm text-slate-600">
                   共 {{ filteredWhalesList.length }} 个大户，第 {{ whalesCurrentPage }} / {{ whalesTotalPages }} 页
                 </div>
                 <div class="flex items-center gap-2">
-                  <button
-                    @click="whalesCurrentPage = Math.max(1, whalesCurrentPage - 1)"
-                    :disabled="whalesCurrentPage === 1"
-                    :class="[
-                      'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors',
-                      whalesCurrentPage === 1
-                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                        : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
-                    ]"
-                  >
-                    上一页
-                  </button>
-                  <div class="flex items-center gap-1">
-                    <template v-for="(page, index) in whalesPageNumbers" :key="index">
-                      <button
-                        v-if="page !== '...'"
-                        @click="whalesCurrentPage = page"
-                        :class="[
-                          'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors',
-                          whalesCurrentPage === page
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
-                        ]"
-                      >
-                        {{ page }}
-                      </button>
-                      <span v-else class="px-2 text-slate-400">...</span>
-                    </template>
-                  </div>
-                  <button
-                    @click="whalesCurrentPage = Math.min(whalesTotalPages, whalesCurrentPage + 1)"
-                    :disabled="whalesCurrentPage === whalesTotalPages"
-                    :class="[
-                      'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors',
-                      whalesCurrentPage === whalesTotalPages
-                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                        : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
-                    ]"
-                  >
-                    下一页
-                  </button>
+                  <a-pagination size="small" :current="whalesCurrentPage" :total="whalesTotalPages" :page-size="1" :show-size-changer="false" @change="whalesCurrentPage = $event" />
                 </div>
               </div>
             </div>
@@ -1216,33 +1124,24 @@ const openRiskHelpModal = () => {
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div
-        v-if="showRiskHelpModal"
-        class="fixed inset-0 bg-slate-900 bg-opacity-50 z-50 flex items-center justify-center p-4"
-      >
-        <!--
-          用途：把“风险等级”背后的判定口径透明化，并把每个档位的线控动作标准化：
-          - 判定标准：告诉运营/风控应该重点看哪些指标（盈亏、多空比、集中度、高杠杆占比等）。
-          - 建议操作：把报表信号映射到可执行的线控动作（偏移/滑点/延迟/杠杆限制/账户级限制等）。
-        -->
-        <div class="bg-white rounded-xl shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
-          <!-- 模态框头部 -->
-          <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
+      <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showRiskHelpModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="1024" :footer="null" :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showRiskHelpModal = false">
+<template #title><template v-if="showRiskHelpModal"><div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
             <div class="flex items-center gap-3">
               <svg class="h-6 w-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               <h3 class="text-lg font-semibold text-slate-900">风险评估标准</h3>
             </div>
-            <button
+            <a-button aria-label="关闭" type="text"
               @click="showRiskHelpModal = false"
               class="text-slate-400 hover:text-slate-600 transition-colors"
             >
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </button>
-          </div>
+            </a-button>
+          </div></template></template>
+<template v-if="showRiskHelpModal">
 
           <!-- 模态框内容 -->
           <div class="flex flex-col h-[calc(90vh-5rem)]">
@@ -1262,7 +1161,7 @@ const openRiskHelpModal = () => {
             <!-- Tab 切换 -->
             <div class="px-6 pt-3">
               <div class="flex gap-2 border-b border-slate-200">
-                <button
+                <a-button type="text"
                   v-for="(criteria, level) in RISK_ASSESSMENT_CRITERIA"
                   :key="level"
                   @click="selectedRiskLevel = level"
@@ -1277,7 +1176,7 @@ const openRiskHelpModal = () => {
                   ]"
                 >
                   <span :class="selectedRiskLevel === level ? 'font-bold' : ''">{{ criteria.level }}</span>
-                </button>
+                </a-button>
               </div>
             </div>
 
@@ -1350,8 +1249,9 @@ const openRiskHelpModal = () => {
               </p>
             </div>
           </div>
-        </div>
-      </div>
+        </template>
+
+</a-modal>
     </Transition>
   </section>
 </template>

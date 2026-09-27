@@ -514,7 +514,7 @@ const handleMfaVerify = async (code) => {
     </header>
 
     <div class="max-w-lg">
-      <input v-model="keyword" type="text" placeholder="搜索合约 (代码或名称)..." class="ant-input !py-2" />
+      <a-input v-model:value="keyword" type="text" placeholder="搜索合约 (代码或名称)..." class="ant-input !py-2" />
     </div>
 
     <article class="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
@@ -529,34 +529,33 @@ const handleMfaVerify = async (code) => {
       </div>
       <div class="overflow-x-auto">
         <div class="max-h-[640px] overflow-auto">
-          <table class="w-full">
-            <thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
-              <tr>
-                <th class="px-5 py-3 text-left text-xs font-semibold text-slate-900 uppercase">排名</th>
-                <th class="px-5 py-3 text-left text-xs font-semibold text-slate-900 uppercase">合约</th>
-                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">市场价</th>
-                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">24h交易量</th>
-                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">持仓(多/空/净)</th>
-                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">多空比</th>
-                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">平台盈亏</th>
-                <!-- <th class="px-5 py-3 text-left text-xs font-semibold text-slate-900 uppercase">手动配置</th> -->
-                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">操作</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200">
-              <tr v-for="(contract, idx) in boardPageContracts" :key="`board-${contract.id}`" class="hover:bg-slate-50">
-                <td class="px-5 py-4 text-sm font-semibold text-slate-900">
+          <a-table  size="small" :pagination="false" :data-source="boardPageContracts" :row-key="(contract) => `board-${contract.id}`" :scroll="{ x: 'max-content' }" :custom-row="(contract, idx) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-sm font-semibold text-slate-900&quot;] })">
+<template #title>排名</template>
+<template #default="{ record: contract, index: idx }">
                   {{ idx + 1 + (boardPagination.currentPage - 1) * boardPagination.pageSize }}
-                </td>
-                <td class="px-5 py-4">
+                </template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4&quot;] })">
+<template #title>合约</template>
+<template #default="{ record: contract, index: idx }">
                   <div>
                     <p class="text-sm font-bold text-slate-900">{{ contract.symbol }}</p>
                     <p class="text-xs text-slate-500">{{ contract.alias }}</p>
                   </div>
-                </td>
-                <td class="px-5 py-4 text-right text-sm font-semibold text-slate-900">{{ marketPriceText(contract) }}</td>
-                <td class="px-5 py-4 text-right text-sm font-semibold text-slate-900">{{ getMetric(contract, metricLabel.VOLUME)?.value || '-' }}</td>
-                <td class="px-5 py-4 text-right text-xs">
+                </template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-slate-900&quot;] })">
+<template #title>市场价</template>
+<template #default="{ record: contract, index: idx }">{{ marketPriceText(contract) }}</template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-slate-900&quot;] })">
+<template #title>24h交易量</template>
+<template #default="{ record: contract, index: idx }">{{ getMetric(contract, metricLabel.VOLUME)?.value || '-' }}</template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right text-xs&quot;] })">
+<template #title>持仓(多/空/净)</template>
+<template #default="{ record: contract, index: idx }">
                   <p class="font-semibold text-slate-900">
                     {{ getMetric(contract, metricLabel.LONG)?.value || '-' }} /
                     {{ getMetric(contract, metricLabel.SHORT)?.value || '-' }} /
@@ -564,28 +563,31 @@ const handleMfaVerify = async (code) => {
                       {{ getMetric(contract, metricLabel.NET)?.value || '-' }}
                     </span>
                   </p>
-                </td>
-                <td class="px-5 py-4 text-right text-sm font-semibold text-slate-900">{{ getMetric(contract, metricLabel.RATIO)?.value || '-' }}</td>
-                <td class="px-5 py-4 text-right text-sm font-semibold">
+                </template>
+</a-table-column>
+<a-table-column key="column-5" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-slate-900&quot;] })">
+<template #title>多空比</template>
+<template #default="{ record: contract, index: idx }">{{ getMetric(contract, metricLabel.RATIO)?.value || '-' }}</template>
+</a-table-column>
+<a-table-column key="column-6" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold&quot;] })">
+<template #title>平台盈亏</template>
+<template #default="{ record: contract, index: idx }">
                   <span :class="parseCompactUsd(getMetric(contract, metricLabel.PLATFORM_PNL)?.value) >= 0 ? 'text-emerald-600' : 'text-rose-600'">
                     {{ getMetric(contract, metricLabel.PLATFORM_PNL)?.value || '-' }}
                   </span>
-                </td>
-                <!-- <td class="px-5 py-4 text-xs font-semibold text-slate-700">
-                  <span class="block max-w-[360px] truncate" :title="manualOverrideSummary(contract.id)">
-                    {{ manualOverrideSummary(contract.id) }}
-                  </span>
-                </td> -->
-                <td class="px-5 py-4 text-right">
+                </template>
+</a-table-column>
+<a-table-column key="column-7" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: contract, index: idx }">
                   <div class="flex items-center justify-end gap-2">
-                    <button type="button" class="ant-btn !h-9 !px-4" @click="openManualLine(contract.id)">手动插线</button>
-                    <button v-if="isManualActive(contract.id)" type="button" class="ant-btn !h-9 !px-4" @click="requestRemoveManualLine(contract.id)">解除</button>
+                    <a-button html-type="button" class="ant-btn !h-9 !px-4" @click="openManualLine(contract.id)">手动插线</a-button>
+                    <a-button v-if="isManualActive(contract.id)" html-type="button" class="ant-btn !h-9 !px-4" @click="requestRemoveManualLine(contract.id)">解除</a-button>
                     <!-- <button type="button" class="ant-btn ant-btn-primary !h-9 !px-4" @click="openConfig(contract.id)">配置</button> -->
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </template>
+</a-table-column>
+</a-table>
         </div>
         <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-white px-5 py-3">
           <div class="text-sm text-slate-600">
@@ -593,25 +595,10 @@ const handleMfaVerify = async (code) => {
             <span class="font-medium">{{ boardTotalPages }}</span> 页
           </div>
           <div class="flex items-center gap-2">
-            <select v-model.number="boardPagination.pageSize" class="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-700">
-              <option v-for="size in boardPageSizeOptions" :key="`ps-${size}`" :value="size">{{ size }}/页</option>
-            </select>
-            <button
-              type="button"
-              class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="boardPagination.currentPage === 1"
-              @click="boardPagination.currentPage--"
-            >
-              上一页
-            </button>
-            <button
-              type="button"
-              class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="boardPagination.currentPage === boardTotalPages"
-              @click="boardPagination.currentPage++"
-            >
-              下一页
-            </button>
+            <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value.number="boardPagination.pageSize" class="">
+              <a-select-option v-for="size in boardPageSizeOptions" :key="`ps-${size}`" :value="size">{{ size }}/页</a-select-option>
+            </a-select>
+            <a-pagination size="small" :current="boardPagination.currentPage" :total="boardTotalPages" :page-size="1" :show-size-changer="false" @change="boardPagination.currentPage = $event" />
           </div>
         </div>
       </div>

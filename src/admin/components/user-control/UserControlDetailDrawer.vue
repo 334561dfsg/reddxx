@@ -1,4 +1,9 @@
 <script setup>
+import { Table } from 'ant-design-vue'
+const TableColumn = Table.Column
+
+import { AdminButton } from '../antd/controls.js'
+
 import { computed, ref } from 'vue'
 import {
   getUserControlDivergenceKeys,
@@ -117,7 +122,7 @@ const summaryMeta = computed(() => {
             <h2 id="user-control-detail-title" ref="titleRef" tabindex="-1" class="mt-1 break-words text-xl font-semibold text-slate-900">{{ user?.username || '用户' }}</h2>
             <p class="mt-1 break-all text-sm text-slate-500">UID {{ userId || '—' }} · {{ user?.email || '—' }}</p>
           </div>
-          <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="close">×</button>
+          <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="close">×</AdminButton>
         </header>
 
         <div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
@@ -131,51 +136,24 @@ const summaryMeta = computed(() => {
 
           <section class="overflow-hidden rounded-xl border border-slate-200">
             <div class="overflow-x-auto">
-              <table class="w-full min-w-[940px] text-left text-sm">
-                <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600">
-                  <tr>
-                    <th class="px-4 py-3">模块</th>
-                    <th class="px-4 py-3">当前控制</th>
-                    <th class="px-4 py-3">控制周期</th>
-                    <th class="px-4 py-3">状态</th>
-                    <th class="px-4 py-3">规则来源</th>
-                    <th class="px-4 py-3">更新时间</th>
-                    <th class="px-4 py-3">最近执行</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                  <tr
-                    v-for="module in USER_CONTROL_MODULES"
-                    :key="module.key"
-                    :class="isDivergentModule(module.key) ? 'bg-amber-50/80' : ''"
-                  >
-                    <td class="px-4 py-4">
+              <Table :data-source="USER_CONTROL_MODULES" :row-class-name="module => isDivergentModule(module.key) ? 'bg-amber-50/80' : ''" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="module => module.key"  ><TableColumn key="column-0"><template #title>模块</template><template #default="{ record: module, index: rowIndex }"><div class="px-4 py-4">
                       <div class="flex items-center gap-2">
                         <p class="font-medium text-slate-900">{{ module.label }}</p>
                         <span v-if="isDivergentModule(module.key)" class="rounded-full bg-amber-200 px-2 py-0.5 text-[11px] font-semibold text-amber-900">配置差异</span>
                       </div>
                       <p class="mt-0.5 text-xs text-slate-400">{{ module.actionLabel }}</p>
-                    </td>
-                    <td class="px-4 py-4 font-medium" :class="rules[module.key] ? 'text-slate-900' : 'text-slate-400'">{{ methodLabel(rules[module.key]?.method, rules[module.key]?.value) }}</td>
-                    <td class="px-4 py-4 text-slate-600">{{ durationLabel(rules[module.key]?.duration) }}</td>
-                    <td class="px-4 py-4">
+                    </div></template></TableColumn><TableColumn key="column-1"><template #title>当前控制</template><template #default="{ record: module, index: rowIndex }"><div class="px-4 py-4 font-medium" :class="rules[module.key] ? 'text-slate-900' : 'text-slate-400'">{{ methodLabel(rules[module.key]?.method, rules[module.key]?.value) }}</div></template></TableColumn><TableColumn key="column-2"><template #title>控制周期</template><template #default="{ record: module, index: rowIndex }"><div class="px-4 py-4 text-slate-600">{{ durationLabel(rules[module.key]?.duration) }}</div></template></TableColumn><TableColumn key="column-3"><template #title>状态</template><template #default="{ record: module, index: rowIndex }"><div class="px-4 py-4">
                       <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium" :class="statusMeta(rules[module.key]).classes">
                         {{ statusMeta(rules[module.key]).label }}
                       </span>
-                    </td>
-                    <td class="px-4 py-4 text-slate-600">{{ sourceLabel(rules[module.key]?.source) }}</td>
-                    <td class="px-4 py-4 text-slate-500">{{ rules[module.key]?.updatedAt || '—' }}</td>
-                    <td class="px-4 py-4 text-slate-500">
+                    </div></template></TableColumn><TableColumn key="column-4"><template #title>规则来源</template><template #default="{ record: module, index: rowIndex }"><div class="px-4 py-4 text-slate-600">{{ sourceLabel(rules[module.key]?.source) }}</div></template></TableColumn><TableColumn key="column-5"><template #title>更新时间</template><template #default="{ record: module, index: rowIndex }"><div class="px-4 py-4 text-slate-500">{{ rules[module.key]?.updatedAt || '—' }}</div></template></TableColumn><TableColumn key="column-6"><template #title>最近执行</template><template #default="{ record: module, index: rowIndex }"><div class="px-4 py-4 text-slate-500">
                       <template v-if="lastExecution(module.key)">
                         <p class="font-medium text-slate-700">{{ methodLabel(lastExecution(module.key).method, lastExecution(module.key).afterValue) }}</p>
                         <p class="mt-0.5 text-xs font-mono text-slate-500">业务单号 {{ lastExecution(module.key).businessId }}</p>
                         <p class="mt-0.5 text-xs">{{ lastExecution(module.key).createdAt }}</p>
                       </template>
                       <span v-else>暂无执行记录</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    </div></template></TableColumn></Table>
             </div>
           </section>
 

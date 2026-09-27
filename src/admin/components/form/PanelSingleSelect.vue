@@ -3,6 +3,7 @@ let panelSingleSelectSequence = 0
 </script>
 
 <script setup>
+import { AdminButton, AdminInput, nativeControl } from '../antd/controls.js'
 import { computed, nextTick, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
 import {
   registerDialogPopupHost,
@@ -656,8 +657,8 @@ onUnmounted(() => {
       >（必填）</span>
     </span>
 
-    <button
-      ref="triggerRef"
+    <AdminButton
+      :ref="element => { triggerRef = nativeControl(element) }"
       type="button"
       data-testid="panel-single-select-trigger"
       class="flex min-h-10 w-full items-center justify-between gap-3 rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-900 outline-none transition focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/30 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500"
@@ -674,7 +675,7 @@ onUnmounted(() => {
       <span class="shrink-0 text-xs text-gray-500">
         {{ readonly ? '只读' : '更改' }}
       </span>
-    </button>
+    </AdminButton>
 
     <p
       v-if="orphaned"
@@ -715,9 +716,9 @@ onUnmounted(() => {
             <label :for="searchId" class="mb-1 block text-xs font-medium text-gray-700">
               {{ resolvedSearchLabel }}
             </label>
-            <input
+            <AdminInput
               :id="searchId"
-              ref="searchRef"
+              :ref="element => { searchRef = nativeControl(element) }"
               v-model="query"
               data-testid="panel-single-select-search"
               type="search"
@@ -731,7 +732,7 @@ onUnmounted(() => {
               :readonly="readonly"
               class="min-h-10 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/30"
               @keydown="handleSearchKeydown"
-            >
+             />
             <p
               data-testid="panel-single-select-status"
               role="status"
@@ -763,7 +764,7 @@ onUnmounted(() => {
               :key="optionKey(option)"
               role="none"
             >
-              <button
+              <AdminButton
                 :id="optionId(option)"
                 type="button"
                 role="option"
@@ -793,7 +794,7 @@ onUnmounted(() => {
                 >
                   {{ option.status }}
                 </span>
-              </button>
+              </AdminButton>
             </li>
           </ul>
         </div>

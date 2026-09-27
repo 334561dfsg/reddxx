@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton, AdminTextarea } from '../antd/controls.js'
+
 import { VERIFICATION_LEVEL, VERIFICATION_STATUS } from '../../../constants/verification'
 
 defineProps({
@@ -25,11 +27,11 @@ const emit = defineEmits(['close', 'start-action', 'submit', 'cancel-action', 'u
     <div class="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl bg-white shadow-xl">
       <div class="flex shrink-0 items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
         <h3 class="text-lg font-semibold text-gray-900">认证申请详情</h3>
-        <button class="text-gray-400 hover:text-gray-600" @click="emit('close')">
+        <AdminButton class="text-gray-400 hover:text-gray-600" @click="emit('close')">
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
-        </button>
+        </AdminButton>
       </div>
 
       <div v-if="selectedAudit" class="audit-detail-modal-scroll min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-y-contain px-6 py-6 pr-4">
@@ -99,7 +101,7 @@ const emit = defineEmits(['close', 'start-action', 'submit', 'cancel-action', 'u
                   <div class="text-sm font-medium text-gray-900">{{ getDocTypeLabel(doc.type) }}</div>
                   <div class="text-xs text-gray-500">上传时间：{{ formatDate(doc.uploadTime) }}</div>
                 </div>
-                <button class="rounded-lg border border-blue-600 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50" @click="emit('preview', doc)">预览</button>
+                <AdminButton class="rounded-lg border border-blue-600 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50" @click="emit('preview', doc)">预览</AdminButton>
               </div>
               <p v-if="!groupedDocuments.idDocs.length" class="text-xs text-slate-500">暂无身份证件材料</p>
             </div>
@@ -112,7 +114,7 @@ const emit = defineEmits(['close', 'start-action', 'submit', 'cancel-action', 'u
                   <div class="text-sm font-medium text-gray-900">{{ getDocTypeLabel(doc.type) }}</div>
                   <div class="text-xs text-gray-500">上传时间：{{ formatDate(doc.uploadTime) }}</div>
                 </div>
-                <button class="rounded-lg border border-violet-600 px-3 py-1 text-sm text-violet-600 hover:bg-violet-50" @click="emit('preview', doc)">预览</button>
+                <AdminButton class="rounded-lg border border-violet-600 px-3 py-1 text-sm text-violet-600 hover:bg-violet-50" @click="emit('preview', doc)">预览</AdminButton>
               </div>
               <p v-if="!groupedDocuments.proofs.length" class="text-xs text-slate-500">暂无证明材料</p>
             </div>
@@ -132,9 +134,9 @@ const emit = defineEmits(['close', 'start-action', 'submit', 'cancel-action', 'u
       >
         <h4 class="mb-3 text-sm font-semibold text-gray-900">审核决策</h4>
         <div v-if="!auditAction" class="flex space-x-3">
-          <button :disabled="selectedMissingDocs.length > 0" class="flex-1 rounded-lg bg-emerald-600 px-4 py-2 text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-300" @click="emit('start-action', 'approve')">通过</button>
-          <button class="flex-1 rounded-lg bg-amber-600 px-4 py-2 text-white transition-colors hover:bg-amber-700" @click="emit('start-action', 'resubmit')">要求补件</button>
-          <button class="flex-1 rounded-lg bg-rose-600 px-4 py-2 text-white transition-colors hover:bg-rose-700" @click="emit('start-action', 'reject')">拒绝</button>
+          <AdminButton :disabled="selectedMissingDocs.length > 0" class="flex-1 rounded-lg bg-emerald-600 px-4 py-2 text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-300" @click="emit('start-action', 'approve')">通过</AdminButton>
+          <AdminButton class="flex-1 rounded-lg bg-amber-600 px-4 py-2 text-white transition-colors hover:bg-amber-700" @click="emit('start-action', 'resubmit')">要求补件</AdminButton>
+          <AdminButton class="flex-1 rounded-lg bg-rose-600 px-4 py-2 text-white transition-colors hover:bg-rose-700" @click="emit('start-action', 'reject')">拒绝</AdminButton>
         </div>
         <div v-else class="space-y-3">
           <div v-if="auditAction === 'approve'" class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
@@ -143,15 +145,15 @@ const emit = defineEmits(['close', 'start-action', 'submit', 'cancel-action', 'u
           </div>
           <div v-else-if="auditAction === 'resubmit'" class="rounded-lg border border-amber-200 bg-amber-50 p-4">
             <p class="mb-2 text-sm font-medium text-amber-900">要求用户补充材料</p>
-            <textarea :value="auditNote" placeholder="请说明需要补充的材料..." rows="3" class="ant-input mt-2" @input="emit('update:note', $event.target.value)"></textarea>
+            <AdminTextarea :value="auditNote" placeholder="请说明需要补充的材料..." rows="3" class="ant-input mt-2" @input="emit('update:note', $event.target.value)"></AdminTextarea>
           </div>
           <div v-else-if="auditAction === 'reject'" class="rounded-lg border border-rose-200 bg-rose-50 p-4">
             <p class="mb-2 text-sm font-medium text-rose-900">确认拒绝该认证申请？</p>
-            <textarea :value="auditNote" placeholder="请说明拒绝原因..." rows="3" class="ant-input mt-2" @input="emit('update:note', $event.target.value)"></textarea>
+            <AdminTextarea :value="auditNote" placeholder="请说明拒绝原因..." rows="3" class="ant-input mt-2" @input="emit('update:note', $event.target.value)"></AdminTextarea>
           </div>
           <div class="flex space-x-2">
-            <button class="ant-btn ant-btn-primary flex-1" @click="emit('submit')">确认提交</button>
-            <button class="ant-btn flex-1" @click="emit('cancel-action')">取消</button>
+            <AdminButton class="ant-btn ant-btn-primary flex-1" @click="emit('submit')">确认提交</AdminButton>
+            <AdminButton class="ant-btn flex-1" @click="emit('cancel-action')">取消</AdminButton>
           </div>
         </div>
       </div>

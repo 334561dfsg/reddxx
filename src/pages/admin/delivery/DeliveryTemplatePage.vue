@@ -375,37 +375,37 @@ const statusClass = (status) =>
       <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-4">
         <div class="flex flex-wrap items-center gap-6">
           <div class="inline-flex items-center gap-6 text-sm">
-            <button
-              type="button"
+            <a-button type="text"
+              html-type="button"
               class="relative py-2 font-medium transition-colors"
               :class="statusTab === COMMON_FILTER_ALL ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
               @click="statusTab = COMMON_FILTER_ALL"
             >
               全部
-            </button>
-            <button
-              type="button"
+            </a-button>
+            <a-button type="text"
+              html-type="button"
               class="relative py-2 font-medium transition-colors"
               :class="statusTab === DELIVERY_STATUS.ENABLED ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
               @click="statusTab = DELIVERY_STATUS.ENABLED"
             >
               已启用
-            </button>
-            <button
-              type="button"
+            </a-button>
+            <a-button type="text"
+              html-type="button"
               class="relative py-2 font-medium transition-colors"
               :class="statusTab === DELIVERY_STATUS.DISABLED ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
               @click="statusTab = DELIVERY_STATUS.DISABLED"
             >
               已禁用
-            </button>
+            </a-button>
           </div>
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
           <div class="relative w-64">
-            <input
-              v-model="search"
+            <a-input
+              v-model:value="search"
               type="text"
               class="ant-input w-full pl-9"
               placeholder="搜索模板名称..."
@@ -415,14 +415,14 @@ const statusClass = (status) =>
               <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
             </svg>
           </div>
-          <button
-            type="button"
+          <a-button type="primary"
+            html-type="button"
             class="ant-btn ant-btn-primary inline-flex items-center gap-1.5"
             @click="openCreateTemplate"
           >
             <span class="text-lg leading-none">+</span>
             <span>新增模板</span>
-          </button>
+          </a-button>
         </div>
       </div>
 
@@ -445,9 +445,9 @@ const statusClass = (status) =>
               <span class="text-xs text-slate-500">{{ tpl.cycles.length }} 个预设周期</span>
             </div>
             <div class="flex items-center gap-2">
-              <button
+              <a-button
                 v-if="tpl.cycles.length > 8"
-                type="button"
+                html-type="button"
                 class="ant-btn ant-btn-link text-xs flex items-center gap-1"
                 @click="toggleExpand(tpl.id)"
               >
@@ -461,15 +461,15 @@ const statusClass = (status) =>
                 >
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
+              </a-button>
               <div class="w-px h-3 bg-slate-200 mx-1"></div>
-              <button
-                type="button"
+              <a-button
+                html-type="button"
                 class="ant-btn"
                 @click="openEditTemplate(tpl)"
               >
                 编辑
-              </button>
+              </a-button>
             </div>
           </div>
 
@@ -502,34 +502,7 @@ const statusClass = (status) =>
           共 <span class="font-medium text-slate-900">{{ allFilteredTemplates.length }}</span> 个模板
         </div>
         <div class="flex items-center gap-2">
-          <button
-            type="button"
-            class="ant-btn ant-btn-sm"
-            :disabled="pagination.currentPage === 1"
-            @click="pagination.currentPage--"
-          >
-            上一页
-          </button>
-          <div class="flex items-center gap-1">
-            <button
-              v-for="p in totalPages"
-              :key="p"
-              type="button"
-              class="ant-btn ant-btn-sm w-8 p-0"
-              :class="pagination.currentPage === p ? 'ant-btn-primary' : ''"
-              @click="pagination.currentPage = p"
-            >
-              {{ p }}
-            </button>
-          </div>
-          <button
-            type="button"
-            class="ant-btn ant-btn-sm"
-            :disabled="pagination.currentPage === totalPages"
-            @click="pagination.currentPage++"
-          >
-            下一页
-          </button>
+          <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="pagination.currentPage = $event" />
         </div>
       </div>
     </article>
@@ -562,14 +535,14 @@ const statusClass = (status) =>
                 {{ editingTemplateId ? '编辑周期模板' : '新增周期模板' }}
               </h2>
             </div>
-            <button
-              type="button"
+            <a-button type="text"
+              html-type="button"
               class="inline-flex h-9 w-9 items-center justify-center rounded text-2xl leading-none text-slate-400 transition-colors hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               aria-label="关闭"
               @click="requestTemplateClose"
             >
               ×
-            </button>
+            </a-button>
           </header>
 
           <div class="flex-1 overflow-y-auto bg-white p-6 space-y-6">
@@ -583,13 +556,13 @@ const statusClass = (status) =>
                 <p class="font-medium">请修正以下内容后再保存模板</p>
                 <ul class="mt-2 list-disc space-y-1 pl-5">
                   <li v-for="error in visibleTemplateErrors" :key="error.id">
-                    <button
-                      type="button"
+                    <a-button type="text"
+                      html-type="button"
                       class="text-left underline underline-offset-2"
                       @click="focusTemplateErrorTarget(error)"
                     >
                       {{ error.message }}
-                    </button>
+                    </a-button>
                   </li>
                 </ul>
               </div>
@@ -597,9 +570,9 @@ const statusClass = (status) =>
               <div class="grid gap-6 md:grid-cols-2">
                 <div class="space-y-1.5">
                   <label for="template-name" class="text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 模板名称</label>
-                  <input
+                  <a-input
                     id="template-name"
-                    v-model="templateForm.name"
+                    v-model:value="templateForm.name"
                     type="text"
                     class="ant-input"
                     :class="getTemplateFieldError('template-name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : ''"
@@ -614,10 +587,10 @@ const statusClass = (status) =>
                 </div>
                 <div class="space-y-1.5">
                   <label for="template-status" class="block text-sm font-medium text-slate-900">状态</label>
-                  <select id="template-status" v-model="templateForm.status" class="ant-select w-full">
-                    <option :value="DELIVERY_STATUS.ENABLED">已启用</option>
-                    <option :value="DELIVERY_STATUS.DISABLED">已禁用</option>
-                  </select>
+                  <a-select :get-popup-container="(trigger) => trigger.parentElement" id="template-status" v-model:value="templateForm.status" class="w-full">
+                    <a-select-option :value="DELIVERY_STATUS.ENABLED">已启用</a-select-option>
+                    <a-select-option :value="DELIVERY_STATUS.DISABLED">已禁用</a-select-option>
+                  </a-select>
                   <p class="text-xs text-slate-400">禁用后不会影响已保存的产品展示，但不建议用于新产品选择。</p>
                 </div>
               </div>
@@ -629,16 +602,16 @@ const statusClass = (status) =>
               >
                 <div class="flex items-center justify-between">
                   <h3 class="text-sm font-semibold text-slate-900">周期配置 <span class="text-rose-500">*</span></h3>
-                  <button
+                  <a-button type="primary"
                     id="delivery-template-add-cycle"
-                    type="button"
+                    html-type="button"
                     class="ant-btn ant-btn-sm ant-btn-primary inline-flex items-center gap-1"
                     @click="addCycle"
                     aria-label="添加周期配置"
                   >
                     <span>+</span>
                     <span>添加周期</span>
-                  </button>
+                  </a-button>
                 </div>
 
                 <div class="space-y-3">
@@ -652,22 +625,22 @@ const statusClass = (status) =>
                         <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-xs font-semibold text-white">{{ index + 1 }}</span>
                         <span>周期{{ index + 1 }}</span>
                       </div>
-                      <button
-                        type="button"
+                      <a-button type="text"
+                        html-type="button"
                         class="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-300 text-xs leading-none text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
                         :aria-label="`删除周期${index + 1}`"
                         @click="removeCycle(cycle.id)"
                       >
                         −
-                      </button>
+                      </a-button>
                     </header>
 
                     <div class="grid gap-4 md:grid-cols-3">
                       <label class="space-y-1.5">
                         <span class="block text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 周期时长（秒）</span>
-                          <input
+                          <a-input
                             :id="`cycle-${cycle.id}-durationSec`"
-                            v-model.number="cycle.durationSec"
+                            v-model:value.number="cycle.durationSec"
                             type="number"
                             inputmode="numeric"
                             min="1"
@@ -685,9 +658,9 @@ const statusClass = (status) =>
                       </label>
                       <label class="space-y-1.5">
                         <span class="block text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 收益率</span>
-                        <input
+                        <a-input
                           :id="`cycle-${cycle.id}-payoutPct`"
-                          v-model.number="cycle.payoutPct"
+                          v-model:value.number="cycle.payoutPct"
                           type="number"
                           inputmode="decimal"
                           min="0"
@@ -705,9 +678,9 @@ const statusClass = (status) =>
                       </label>
                       <label class="space-y-1.5">
                         <span class="block text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 实际收益率</span>
-                        <input
+                        <a-input
                           :id="`cycle-${cycle.id}-actualPayoutPct`"
-                          v-model.number="cycle.actualPayoutPct"
+                          v-model:value.number="cycle.actualPayoutPct"
                           type="number"
                           inputmode="decimal"
                           min="0"
@@ -745,21 +718,21 @@ const statusClass = (status) =>
           </div>
 
           <footer class="flex justify-end gap-2 border-t border-slate-100 px-6 py-4">
-            <button
-              type="button"
+            <a-button
+              html-type="button"
               class="ant-btn"
               @click="requestTemplateClose"
             >
               取消
-            </button>
-            <button
-              type="button"
+            </a-button>
+            <a-button type="primary"
+              html-type="button"
               class="ant-btn ant-btn-primary"
               aria-label="保存周期模板"
               @click="saveTemplate"
             >
               保存模板
-            </button>
+            </a-button>
           </footer>
           </section>
 
@@ -784,25 +757,25 @@ const statusClass = (status) =>
                   >
                     关闭周期模板编辑？
                   </h3>
-                  <button
-                    type="button"
+                  <a-button type="text"
+                    html-type="button"
                     class="inline-flex h-9 w-9 items-center justify-center rounded text-2xl leading-none text-slate-400 transition-colors hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     aria-label="关闭未保存确认"
                     @click="cancelTemplateUnsavedClose"
                   >
                     ×
-                  </button>
+                  </a-button>
                 </header>
                 <div class="px-5 py-4 text-sm leading-6 text-slate-600">
                   当前周期模板有未保存的修改，关闭后这些修改不会保存。
                 </div>
                 <footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4">
-                  <button type="button" class="ant-btn" @click="cancelTemplateUnsavedClose">
+                  <a-button html-type="button" class="ant-btn" @click="cancelTemplateUnsavedClose">
                     继续编辑
-                  </button>
-                  <button type="button" class="ant-btn ant-btn-primary" @click="confirmTemplateUnsavedClose">
+                  </a-button>
+                  <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary" @click="confirmTemplateUnsavedClose">
                     确认关闭
-                  </button>
+                  </a-button>
                 </footer>
               </section>
             </div>

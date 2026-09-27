@@ -1,0 +1,47 @@
+/* These markers belong only to explicit management-console adapters. */
+.admin-antd-control-button.ant-btn {
+  min-height: 32px;
+  height: 32px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 22px;
+  box-shadow: none;
+}
+.admin-antd-control-button.ant-btn > span { min-width: 0; }
+.admin-antd-control-input.ant-input {
+  min-height: 32px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+textarea.admin-antd-control-input.ant-input { height: auto; }
+.admin-antd-control-button.ant-btn:focus-visible,
+.admin-antd-control-input.ant-input:focus-visible {
+  outline: 2px solid #1677ff;
+  outline-offset: 2px;
+}
+@media (forced-colors: active) {
+  .admin-antd-control-button.ant-btn { border: 1px solid ButtonText; }
+}
+.admin-antd-control-select.ant-select {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+}
+.admin-antd-control-button.ant-btn[aria-label="关闭"] {
+  min-width: 44px;
+  min-height: 44px;
+  height: 44px;
+  padding: 8px;
+}
+.admin-antd-control-button.ant-btn[role="option"] {
+  height: auto;
+  white-space: normal;
+}
+.admin-antd-control-button.ant-btn.w-full {
+  height: auto;
+  white-space: normal;
+}

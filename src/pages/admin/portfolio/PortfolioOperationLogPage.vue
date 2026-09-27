@@ -20,26 +20,28 @@ const {
     </header>
 
     <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <table class="w-full">
-        <thead class="border-b border-slate-200 bg-slate-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">时间</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">操作人</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">动作</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">对象</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">摘要</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200">
-          <tr v-for="log in pagedLogs" :key="log.id" class="hover:bg-slate-50">
-            <td class="px-6 py-4 text-sm text-slate-600">{{ log.createdAt }}</td>
-            <td class="px-6 py-4 text-sm text-slate-900">{{ log.operator }}</td>
-            <td class="px-6 py-4 text-sm text-blue-600">{{ log.action }}</td>
-            <td class="px-6 py-4 text-sm text-slate-700">{{ log.target }}</td>
-            <td class="px-6 py-4 text-sm text-slate-600">{{ log.summary }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <a-table  size="small" :pagination="false" :data-source="pagedLogs" :row-key="(log) => log.id" :scroll="{ x: 'max-content' }" :custom-row="(log, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>时间</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.createdAt }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-900&quot;] })">
+<template #title>操作人</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.operator }}</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-blue-600&quot;] })">
+<template #title>动作</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.action }}</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-700&quot;] })">
+<template #title>对象</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.target }}</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>摘要</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.summary }}</template>
+</a-table-column>
+</a-table>
       <AdminListPaginationBar
         :current-page="currentPage"
         :total-pages="totalPages"

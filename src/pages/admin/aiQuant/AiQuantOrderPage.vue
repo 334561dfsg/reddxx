@@ -10,8 +10,8 @@
 				<div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
 					<div class="md:col-span-2 xl:col-span-2">
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">关键词</label>
-						<input
-							v-model="filterDraft.search"
+						<a-input
+							v-model:value="filterDraft.search"
 							type="text"
 							autocomplete="off"
 							placeholder="订单号、用户ID、用户名、邮箱、产品名…"
@@ -21,39 +21,39 @@
 					</div>
 					<div>
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">币种</label>
-						<select v-model="filterDraft.currency" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500">
-							<option value="">全部币种</option>
-							<option v-for="c in uniqueCurrencies" :key="c" :value="c">{{ c }}</option>
-						</select>
+						<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filterDraft.currency" class="w-full">
+							<a-select-option value="">全部币种</a-select-option>
+							<a-select-option v-for="c in uniqueCurrencies" :key="c" :value="c">{{ c }}</a-select-option>
+						</a-select>
 					</div>
 					<div>
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">VIP</label>
-						<select v-model="filterDraft.vip" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500">
-							<option value="">全部等级</option>
-							<option v-for="lv in vipSelectLevels" :key="lv" :value="String(lv)">{{ vipLevelMeta[lv].label }}</option>
-						</select>
+						<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filterDraft.vip" class="w-full">
+							<a-select-option value="">全部等级</a-select-option>
+							<a-select-option v-for="lv in vipSelectLevels" :key="lv" :value="String(lv)">{{ vipLevelMeta[lv].label }}</a-select-option>
+						</a-select>
 					</div>
 					<div>
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">状态</label>
-						<select v-model="filterDraft.status" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500">
-							<option value="">全部状态</option>
-							<option v-for="st in orderStatusSelectValues" :key="st" :value="st">{{ orderStatusMeta[st].label }}</option>
-						</select>
+						<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filterDraft.status" class="w-full">
+							<a-select-option value="">全部状态</a-select-option>
+							<a-select-option v-for="st in orderStatusSelectValues" :key="st" :value="st">{{ orderStatusMeta[st].label }}</a-select-option>
+						</a-select>
 					</div>
 					<div class="md:col-span-2 xl:col-span-2">
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">产品</label>
-						<select v-model="filterDraft.product" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500">
-							<option value="">全部产品</option>
-							<option v-for="p in uniqueProducts" :key="p" :value="p">{{ p }}</option>
-						</select>
+						<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filterDraft.product" class="w-full">
+							<a-select-option value="">全部产品</a-select-option>
+							<a-select-option v-for="p in uniqueProducts" :key="p" :value="p">{{ p }}</a-select-option>
+						</a-select>
 					</div>
 				</div>
 
 				<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
 					<div>
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">本金 ≥</label>
-						<input
-							v-model="filterDraft.principalMin"
+						<a-input
+							v-model:value="filterDraft.principalMin"
 							type="text"
 							autocomplete="off"
 							inputmode="decimal"
@@ -63,8 +63,8 @@
 					</div>
 					<div>
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">本金 ≤</label>
-						<input
-							v-model="filterDraft.principalMax"
+						<a-input
+							v-model:value="filterDraft.principalMax"
 							type="text"
 							autocomplete="off"
 							inputmode="decimal"
@@ -74,28 +74,28 @@
 					</div>
 					<div>
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">下单日起</label>
-						<input v-model="filterDraft.startDateFrom" type="date" autocomplete="off" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500" />
+						<a-input v-model:value="filterDraft.startDateFrom" type="date" autocomplete="off" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500" />
 					</div>
 					<div>
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">下单日止</label>
-						<input v-model="filterDraft.startDateTo" type="date" autocomplete="off" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500" />
+						<a-input v-model:value="filterDraft.startDateTo" type="date" autocomplete="off" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500" />
 					</div>
 					<div class="flex flex-col justify-end gap-2 sm:col-span-2 lg:col-span-2 xl:col-span-2">
 						<div class="flex flex-wrap gap-2">
-							<button
-								type="button"
+							<a-button type="text"
+								html-type="button"
 								class="min-w-[7rem] flex-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 sm:flex-none"
 								@click="applySearch"
 							>
 								搜索
-							</button>
-							<button
-								type="button"
+							</a-button>
+							<a-button type="text"
+								html-type="button"
 								class="min-w-[7rem] flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:flex-none"
 								@click="resetFilters"
 							>
 								重置条件
-							</button>
+							</a-button>
 						</div>
 					</div>
 				</div>
@@ -111,43 +111,48 @@
 			</div>
 
 			<div class="overflow-x-auto">
-				<table class="w-full text-sm">
-					<thead class="bg-slate-50 text-slate-500">
-						<tr>
-							<th class="px-4 py-3 text-left font-medium">订单ID</th>
-							<th class="px-4 py-3 text-left font-medium">用户</th>
-							<th class="px-4 py-3 text-left font-medium">产品</th>
-							<th class="px-4 py-3 text-left font-medium">本金</th>
-							<th class="px-4 py-3 text-left font-medium">日利率</th>
-							<th class="px-4 py-3 text-left font-medium">周期</th>
-							<th class="px-4 py-3 text-left font-medium">累计收益</th>
-							<th class="px-4 py-3 text-left font-medium">状态</th>
-							<th class="px-4 py-3 text-left font-medium">操作</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-if="!filteredOrders.length">
-							<td colspan="9" class="px-4 py-12 text-center text-sm text-slate-500">
-								<template v-if="!orders.length">暂无订单数据源（mock 未加载）。请检查控制台报错。</template>
-								<template v-else>无符合条件的订单。请调整筛选后点击「搜索」，或「重置条件」。</template>
-							</td>
-						</tr>
-						<tr v-for="order in pagedOrders" :key="order.id" class="border-t border-slate-100">
-							<td class="px-4 py-3 font-mono text-xs text-slate-600">{{ order.id }}</td>
-							<td class="px-4 py-3">
+				<a-table  size="small" :pagination="false" :data-source="pagedOrders" :row-key="(order) => order.id" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
+<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-mono text-xs text-slate-600&quot;] })">
+<template #title>订单ID</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.id }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: order, index: rowIndex }">
 								<div class="text-slate-700">{{ order.userName }}</div>
 								<span :class="['text-xs px-2 py-0.5 rounded-md font-medium', vipLevelMeta[order.vipLevel].class]">
 									{{ vipLevelMeta[order.vipLevel].label }}
 								</span>
-							</td>
-							<td class="px-4 py-3 text-slate-700">{{ order.productName }}</td>
-							<td class="px-4 py-3 font-medium text-slate-900">{{ fmtCurrency(order.principal, order.currency) }}</td>
-							<td class="px-4 py-3 font-medium text-emerald-600">{{ order.dailyRate.toFixed(2) }}%</td>
-							<td class="px-4 py-3 text-slate-700">{{ formatAiQuantOrderCycleLabel(order) }}</td>
-							<td class="px-4 py-3 font-medium text-blue-600">{{ fmtCurrency(order.accumulatedYield, order.currency) }}</td>
-							<td class="px-4 py-3"><span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="orderStatusMeta[order.status].class">{{ orderStatusMeta[order.status].label }}</span></td>
-							<td class="px-4 py-3">
-								<button type="button" @click="viewOrderDetail(order)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</button>
+							</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>产品</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.productName }}</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-slate-900&quot;] })">
+<template #title>本金</template>
+<template #default="{ record: order, index: rowIndex }">{{ fmtCurrency(order.principal, order.currency) }}</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-emerald-600&quot;] })">
+<template #title>日利率</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.dailyRate.toFixed(2) }}%</template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>周期</template>
+<template #default="{ record: order, index: rowIndex }">{{ formatAiQuantOrderCycleLabel(order) }}</template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-blue-600&quot;] })">
+<template #title>累计收益</template>
+<template #default="{ record: order, index: rowIndex }">{{ fmtCurrency(order.accumulatedYield, order.currency) }}</template>
+</a-table-column>
+<a-table-column key="column-7" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: order, index: rowIndex }"><span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="orderStatusMeta[order.status].class">{{ orderStatusMeta[order.status].label }}</span></template>
+</a-table-column>
+<a-table-column key="column-8" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: order, index: rowIndex }">
+								<a-button type="text" html-type="button" @click="viewOrderDetail(order)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a-button>
 								<template v-if="isAiQuantUserPointControlled(order)">
 									<span class="text-slate-300 mx-1.5">|</span>
 									<span
@@ -159,18 +164,21 @@
 								</template>
 								<template v-else-if="canYieldAdjust(order)">
 									<span class="text-slate-300 mx-1.5">|</span>
-									<button
-										type="button"
+									<a-button type="text"
+										html-type="button"
 										@click="openYieldAdjustForOrder(order)"
 										class="text-emerald-600 hover:text-emerald-800 text-sm font-medium"
 									>
 										收益调整
-									</button>
+									</a-button>
 								</template>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+							</template>
+</a-table-column>
+<template #emptyText>
+								<template v-if="!orders.length">暂无订单数据源（mock 未加载）。请检查控制台报错。</template>
+								<template v-else>无符合条件的订单。请调整筛选后点击「搜索」，或「重置条件」。</template>
+							</template>
+</a-table>
 			</div>
 			<AdminListPaginationBar
 				v-model:current-page="listCurrentPage"
@@ -183,10 +191,8 @@
 		<AiQuantYieldAdjustmentModal ref="yieldModalRef" />
 
 		<!-- 订单详情弹窗 -->
-		<div v-if="showDetailModal && selectedOrder" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-			<div class="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col">
-				<!-- 弹窗头部 -->
-				<div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
+		<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDetailModal &amp;&amp; selectedOrder)" :mask-closable="false" :closable="false" :keyboard="true" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showDetailModal = false">
+<template #title><template v-if="showDetailModal &amp;&amp; selectedOrder"><div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
 					<div>
 						<h2 class="text-xl font-semibold text-slate-900 flex items-center gap-2">
 							订单详情
@@ -196,12 +202,13 @@
 						</h2>
 						<p class="text-sm text-slate-500 mt-1 font-mono">{{ selectedOrder.id }}</p>
 					</div>
-					<button @click="showDetailModal = false" class="text-slate-400 hover:text-slate-600">
+					<a-button aria-label="关闭" type="text" @click="showDetailModal = false" class="text-slate-400 hover:text-slate-600">
 						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 						</svg>
-					</button>
-				</div>
+					</a-button>
+				</div></template></template>
+<template v-if="showDetailModal &amp;&amp; selectedOrder">
 
 				<!-- 弹窗主体：左右分栏 -->
 				<div class="flex-1 flex overflow-hidden">
@@ -358,7 +365,7 @@
 											<div class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-2 rounded-full" :style="{ width: `${Math.min((selectedOrder.accumulatedYield / selectedOrder.principal) * 100, 100)}%` }"></div>
 										</div>
 									</div>
-									
+
 									<div class="bg-white rounded-lg p-4 border border-slate-200 space-y-2">
 										<div class="flex justify-between items-center text-xs">
 											<span class="text-slate-600">已获收益</span>
@@ -457,28 +464,28 @@
 				</div>
 
 				<!-- 底部操作栏 -->
-				<div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 flex-shrink-0 bg-slate-50">
-					<button
+				</template>
+<template #footer><template v-if="showDetailModal &amp;&amp; selectedOrder"><div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 flex-shrink-0 bg-slate-50">
+					<a-button type="text"
 						v-if="selectedOrder && isAiQuantUserPointControlled(selectedOrder)"
-						type="button"
+						html-type="button"
 						disabled
 						class="cursor-not-allowed rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700"
 						aria-label="用户点控中，订单收益调整不可用"
 					>
 						点控中
-					</button>
-					<button
+					</a-button>
+					<a-button type="text"
 						v-else-if="selectedOrder && canYieldAdjust(selectedOrder)"
-						type="button"
+						html-type="button"
 						@click="openYieldAdjustForOrder(selectedOrder); showDetailModal = false"
 						class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-800 transition hover:bg-emerald-100"
 					>
 						收益调整
-					</button>
-					<button type="button" @click="showDetailModal = false" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">关闭</button>
-				</div>
-			</div>
-		</div>
+					</a-button>
+					<a-button type="text" html-type="button" @click="showDetailModal = false" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">关闭</a-button>
+				</div></template></template>
+</a-modal>
 	</section>
 </template>
 

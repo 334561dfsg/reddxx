@@ -155,10 +155,10 @@ function toggleDimensionEnabled(dim) {
         </p>
       </div>
       <div class="flex flex-wrap gap-2">
-        <button type="button" class="ant-btn" :disabled="saving" @click="resetToSample">重新加载</button>
-        <button type="button" class="ant-btn ant-btn-primary" :disabled="saving" @click="persist">
+        <a-button html-type="button" class="" :disabled="saving" @click="resetToSample">重新加载</a-button>
+        <a-button html-type="button" class="" :disabled="saving" @click="persist" type="primary">
           保存配置
-        </button>
+        </a-button>
       </div>
     </div>
 
@@ -174,24 +174,12 @@ function toggleDimensionEnabled(dim) {
       <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1.5">单笔最低出金（USDT）</label>
-          <input
-            v-model.number="policy.defaultPolicy.minWithdrawUsdt"
-            type="number"
-            min="0"
-            step="0.01"
-            class="ant-input w-full !py-2"
-          />
+          <a-input type="number" min="0" step="0.01" class="w-full" :value="policy.defaultPolicy.minWithdrawUsdt" @update:value="policy.defaultPolicy.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
           <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制单笔最低出金。</p>
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1.5">每日出金上限（USDT）</label>
-          <input
-            v-model.number="policy.defaultPolicy.dailyCapUsdt"
-            type="number"
-            min="0"
-            step="1"
-            class="ant-input w-full !py-2"
-          />
+          <a-input type="number" min="0" step="1" class="w-full" :value="policy.defaultPolicy.dailyCapUsdt" @update:value="policy.defaultPolicy.dailyCapUsdt = $event === '' ? '' : Number($event)" />
           <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制每日出金上限。</p>
         </div>
       </div>
@@ -215,37 +203,14 @@ function toggleDimensionEnabled(dim) {
           >
             <span class="text-xs font-mono tabular-nums text-slate-400 w-4 shrink-0 text-center">{{ idx + 1 }}</span>
             <span class="text-sm font-medium text-slate-900 truncate min-w-0">{{ WITHDRAW_POLICY_DIMENSION_LABEL[dim] }}</span>
-            <button
-              type="button"
-              role="switch"
-              :aria-checked="isDimensionOn(dim)"
-              :aria-label="`${WITHDRAW_POLICY_DIMENSION_LABEL[dim]}：${isDimensionOn(dim) ? '已启用' : '已关闭'}`"
-              class="relative h-5 w-9 shrink-0 cursor-pointer rounded-full border transition-colors duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1"
-              :class="isDimensionOn(dim) ? 'border-blue-600 bg-blue-600' : 'border-slate-300/90 bg-slate-200'"
-              @click="toggleDimensionEnabled(dim)"
-            >
-              <span
-                class="pointer-events-none absolute left-0.5 top-0.5 block h-4 w-4 rounded-full bg-white shadow-sm ring-1 ring-slate-900/10 transition-transform duration-200 ease-out"
-                :class="isDimensionOn(dim) ? 'translate-x-4' : 'translate-x-0'"
-              />
-            </button>
+            <a-switch :checked="isDimensionOn(dim)" :aria-label="`${WITHDRAW_POLICY_DIMENSION_LABEL[dim]}：${isDimensionOn(dim) ? '已启用' : '已关闭'}`" @click="toggleDimensionEnabled(dim)" />
             <div class="flex items-center justify-end gap-0.5 shrink-0">
-              <button
-                type="button"
-                class="rounded-md px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent"
-                :disabled="idx === 0"
-                @click="moveDimension(idx, -1)"
-              >
+              <a-button html-type="button" class="text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent" :disabled="idx === 0" @click="moveDimension(idx, -1)">
                 上移
-              </button>
-              <button
-                type="button"
-                class="rounded-md px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent"
-                :disabled="idx === policy.dimensionPriority.length - 1"
-                @click="moveDimension(idx, 1)"
-              >
+              </a-button>
+              <a-button html-type="button" class="text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent" :disabled="idx === policy.dimensionPriority.length - 1" @click="moveDimension(idx, 1)">
                 下移
-              </button>
+              </a-button>
             </div>
           </li>
         </ul>
@@ -259,28 +224,17 @@ function toggleDimensionEnabled(dim) {
         <p class="text-xs text-slate-500 mt-0.5">等级列表与「VIP 等级配置」页面使用的 mock（vipLevels）一致，每等级一行，不可增删等级行。</p>
       </div>
       <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-600">
-            <tr>
-              <th class="px-4 py-2">VIP（mock）</th>
-              <th class="px-4 py-2">单笔最低 (U)</th>
-              <th class="px-4 py-2">每日上限 (U)</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr v-for="row in policy.vipRules" :key="row.id" class="hover:bg-slate-50/50">
-              <td class="px-4 py-2 text-slate-900 font-medium">{{ vipRowLabel(row.vipLevel) }}</td>
-              <td class="px-4 py-2">
-                <input v-model.number="row.minWithdrawUsdt" type="number" min="0" step="0.01" class="ant-input !py-1.5 w-32" />
+        <a-table  :data-source="policy.vipRules" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50/50&quot;] })">
+<a-table-column key="column-0" ><template #title>VIP（mock）</template><template #default="{ record: row, index: index }"><div class="  text-slate-900 font-medium">{{ vipRowLabel(row.vipLevel) }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>单笔最低 (U)</template><template #default="{ record: row, index: index }"><div class=" ">
+                <a-input type="number" min="0" step="0.01" class="w-32" :value="row.minWithdrawUsdt" @update:value="row.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
-              </td>
-              <td class="px-4 py-2">
-                <input v-model.number="row.dailyCapUsdt" type="number" min="0" step="1" class="ant-input !py-1.5 w-36" />
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>每日上限 (U)</template><template #default="{ record: row, index: index }"><div class=" ">
+                <a-input type="number" min="0" step="1" class="w-36" :value="row.dailyCapUsdt" @update:value="row.dailyCapUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div></template></a-table-column>
+</a-table>
       </div>
     </div>
 
@@ -291,28 +245,13 @@ function toggleDimensionEnabled(dim) {
         <p class="text-xs text-slate-500 mt-0.5">当前代理体系仅区分是否代理；开启「代理身份」维度后，代理用户会命中本规则。</p>
       </div>
       <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-600">
-            <tr>
-              <th class="px-4 py-2">用户身份</th>
-              <th class="px-4 py-2">单笔最低 (U)</th>
-              <th class="px-4 py-2">每日上限 (U)</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr class="hover:bg-slate-50/50">
-              <td class="px-4 py-2 text-slate-900 font-medium">代理</td>
-              <td class="px-4 py-2">
-                <input v-model.number="policy.agentRule.minWithdrawUsdt" type="number" min="0" step="0.01" class="ant-input !py-1.5 w-32" />
+        <a-table :data-source="[policy.agentRule]" :row-key="() => 'agent'" :pagination="false" size="small" :scroll="{ x: 'max-content' }"><a-table-column key="column-0"><template #title>用户身份</template><template #default="{ record: log }">代理</template></a-table-column><a-table-column key="column-1"><template #title>单笔最低 (U)</template><template #default="{ record: log }">
+                <a-input type="number" min="0" step="0.01" class="w-32" :value="policy.agentRule.minWithdrawUsdt" @update:value="policy.agentRule.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
-              </td>
-              <td class="px-4 py-2">
-                <input v-model.number="policy.agentRule.dailyCapUsdt" type="number" min="0" step="1" class="ant-input !py-1.5 w-36" />
+              </template></a-table-column><a-table-column key="column-2"><template #title>每日上限 (U)</template><template #default="{ record: log }">
+                <a-input type="number" min="0" step="1" class="w-36" :value="policy.agentRule.dailyCapUsdt" @update:value="policy.agentRule.dailyCapUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </template></a-table-column></a-table>
       </div>
     </div>
 
@@ -323,45 +262,23 @@ function toggleDimensionEnabled(dim) {
         <p class="text-xs text-slate-500 mt-0.5">等级与「认证等级配置」中的三档一致；单笔与每日上限仅在此配置，不在认证页维护。</p>
       </div>
       <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-600">
-            <tr>
-              <th class="px-4 py-2">认证等级</th>
-              <th class="px-4 py-2">单笔最低 (U)</th>
-              <th class="px-4 py-2">每日上限</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr v-for="row in policy.verificationRules" :key="row.id" class="hover:bg-slate-50/50">
-              <td class="px-4 py-2 text-slate-900 font-medium">{{ verificationRowLabel(row.verificationLevel) }}</td>
-              <td class="px-4 py-2">
-                <input v-model.number="row.minWithdrawUsdt" type="number" min="0" step="0.01" class="ant-input !py-1.5 w-32" />
+        <a-table  :data-source="policy.verificationRules" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50/50&quot;] })">
+<a-table-column key="column-0" ><template #title>认证等级</template><template #default="{ record: row, index: index }"><div class="  text-slate-900 font-medium">{{ verificationRowLabel(row.verificationLevel) }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>单笔最低 (U)</template><template #default="{ record: row, index: index }"><div class=" ">
+                <a-input type="number" min="0" step="0.01" class="w-32" :value="row.minWithdrawUsdt" @update:value="row.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
-              </td>
-              <td class="px-4 py-2">
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>每日上限</template><template #default="{ record: row, index: index }"><div class=" ">
                 <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <label class="inline-flex items-center gap-2 text-xs text-slate-600 whitespace-nowrap">
-                    <input
-                      type="checkbox"
-                      :checked="row.dailyCapUsdt === null"
-                      @change="setVerificationDailyUnlimited(row, $event)"
-                    />
+                    <a-checkbox :checked="row.dailyCapUsdt === null" @change="setVerificationDailyUnlimited(row, $event)" />
                     无限制
                   </label>
-                  <input
-                    v-if="row.dailyCapUsdt !== null"
-                    v-model.number="row.dailyCapUsdt"
-                    type="number"
-                    min="0"
-                    step="1"
-                    class="ant-input !py-1.5 w-36"
-                  />
+                  <a-input v-if="row.dailyCapUsdt !== null" type="number" min="0" step="1" class="w-36" :value="row.dailyCapUsdt" @update:value="row.dailyCapUsdt = $event === '' ? '' : Number($event)" />
                 </div>
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div></template></a-table-column>
+</a-table>
       </div>
     </div>
 
@@ -372,43 +289,30 @@ function toggleDimensionEnabled(dim) {
           <h2 class="text-base font-semibold text-slate-900">按信用分区间</h2>
           <p class="text-xs text-slate-500">按信用分落入的区间匹配规则；区间请勿互相重叠。</p>
         </div>
-        <button type="button" class="ant-btn ant-btn-primary !py-1.5 text-sm" @click="addCreditRule">+ 添加区间</button>
+        <a-button html-type="button" class="text-sm" @click="addCreditRule" type="primary">+ 添加区间</a-button>
       </div>
       <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-600">
-            <tr>
-              <th class="px-4 py-2">分数下限</th>
-              <th class="px-4 py-2">分数上限</th>
-              <th class="px-4 py-2">单笔最低 (U)</th>
-              <th class="px-4 py-2">每日上限 (U)</th>
-              <th class="px-4 py-2 w-24">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr v-for="row in policy.creditScoreRules" :key="row.id" class="hover:bg-slate-50/50">
-              <td class="px-4 py-2">
-                <input v-model.number="row.minScore" type="number" min="0" max="100" class="ant-input !py-1.5 w-24" />
-              </td>
-              <td class="px-4 py-2">
-                <input v-model.number="row.maxScore" type="number" min="0" max="100" class="ant-input !py-1.5 w-24" />
-              </td>
-              <td class="px-4 py-2">
-                <input v-model.number="row.minWithdrawUsdt" type="number" min="0" step="0.01" class="ant-input !py-1.5 w-32" />
+        <a-table  :data-source="policy.creditScoreRules" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50/50&quot;] })">
+<a-table-column key="column-0" ><template #title>分数下限</template><template #default="{ record: row, index: index }"><div class=" ">
+                <a-input type="number" min="0" max="100" class="w-24" :value="row.minScore" @update:value="row.minScore = $event === '' ? '' : Number($event)" />
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>分数上限</template><template #default="{ record: row, index: index }"><div class=" ">
+                <a-input type="number" min="0" max="100" class="w-24" :value="row.maxScore" @update:value="row.maxScore = $event === '' ? '' : Number($event)" />
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>单笔最低 (U)</template><template #default="{ record: row, index: index }"><div class=" ">
+                <a-input type="number" min="0" step="0.01" class="w-32" :value="row.minWithdrawUsdt" @update:value="row.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
-              </td>
-              <td class="px-4 py-2">
-                <input v-model.number="row.dailyCapUsdt" type="number" min="0" step="1" class="ant-input !py-1.5 w-36" />
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>每日上限 (U)</template><template #default="{ record: row, index: index }"><div class=" ">
+                <a-input type="number" min="0" step="1" class="w-36" :value="row.dailyCapUsdt" @update:value="row.dailyCapUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
-              </td>
-              <td class="px-4 py-2">
-                <button type="button" class="text-rose-600 text-xs font-medium hover:underline" @click="removeCreditRule(row.id)">
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>操作</template><template #default="{ record: row, index: index }"><div class=" ">
+                <a-button html-type="button" class="text-rose-600 text-xs font-medium hover:underline" @click="removeCreditRule(row.id)">
                   删除
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </a-button>
+              </div></template></a-table-column>
+</a-table>
       </div>
     </div>
       </div>
@@ -426,44 +330,28 @@ function toggleDimensionEnabled(dim) {
             <div class="space-y-3">
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">VIP 等级（mock）</label>
-                <select v-model.number="sim.vipLevel" class="ant-select !py-2 w-full">
-                  <option v-for="o in vipLevelOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
-                </select>
+                <a-select v-model:value="sim.vipLevel" class="w-full">
+                  <a-select-option v-for="o in vipLevelOptions" :key="o.value" :value="o.value">{{ o.label }}</a-select-option>
+                </a-select>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">代理身份</label>
                 <label class="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
                   <span>{{ sim.isAgent ? '是代理' : '非代理' }}</span>
-                  <button
-                    type="button"
-                    role="switch"
-                    :aria-checked="sim.isAgent"
-                    class="relative h-5 w-9 shrink-0 cursor-pointer rounded-full border transition-colors duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1"
-                    :class="sim.isAgent ? 'border-blue-600 bg-blue-600' : 'border-slate-300/90 bg-slate-200'"
-                    @click="sim.isAgent = !sim.isAgent"
-                  >
-                    <span
-                      class="pointer-events-none absolute left-0.5 top-0.5 block h-4 w-4 rounded-full bg-white shadow-sm ring-1 ring-slate-900/10 transition-transform duration-200 ease-out"
-                      :class="sim.isAgent ? 'translate-x-4' : 'translate-x-0'"
-                    />
-                  </button>
+                  <a-switch :checked="sim.isAgent" @click="sim.isAgent = !sim.isAgent" />
                 </label>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">认证等级</label>
-                <select v-model="sim.verificationLevel" class="ant-select !py-2 w-full">
-                  <option
-                    v-for="lvl in [VERIFICATION_LEVEL.NONE, VERIFICATION_LEVEL.BASIC, VERIFICATION_LEVEL.ADVANCED]"
-                    :key="lvl"
-                    :value="lvl"
-                  >
+                <a-select v-model:value="sim.verificationLevel" class="w-full">
+                  <a-select-option v-for="lvl in [VERIFICATION_LEVEL.NONE, VERIFICATION_LEVEL.BASIC, VERIFICATION_LEVEL.ADVANCED]" :key="lvl" :value="lvl">
                     {{ verificationRowLabel(lvl) }}
-                  </option>
-                </select>
+                  </a-select-option>
+                </a-select>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">信用分</label>
-                <input v-model.number="sim.creditScore" type="number" min="0" max="100" class="ant-input !py-2 w-full" />
+                <a-input type="number" min="0" max="100" class="w-full" :value="sim.creditScore" @update:value="sim.creditScore = $event === '' ? '' : Number($event)" />
               </div>
             </div>
             <div v-if="preview" class="rounded-lg border border-slate-200 bg-white p-4 text-sm">

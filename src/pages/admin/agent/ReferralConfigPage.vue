@@ -287,38 +287,28 @@ onMounted(() => {
         </p>
       </div>
       <div class="flex shrink-0 gap-2">
-        <button type="button" class="ant-btn" @click="resetConfig">重置为默认</button>
-        <button type="button" class="ant-btn ant-btn-primary" :disabled="isSaving" @click="saveConfig">
+        <a-button html-type="button" class="" @click="resetConfig">重置为默认</a-button>
+        <a-button html-type="button" class="" :disabled="isSaving" @click="saveConfig" type="primary">
           {{ isSaving ? '保存中…' : '保存配置' }}
-        </button>
+        </a-button>
       </div>
     </header>
 
     <nav class="flex gap-0 border-b border-slate-200" aria-label="裂变分销设置分区">
-      <button
-        type="button"
-        class="border-b-2 px-4 py-3 text-sm font-medium transition-colors -mb-px"
-        :class="
+      <a-button html-type="button" class="border-b-2 text-sm font-medium transition-colors -mb-px" :class="
           activeTab === 'rules'
             ? 'border-blue-600 text-blue-700'
             : 'border-transparent text-slate-500 hover:text-slate-800'
-        "
-        @click="activeTab = 'rules'"
-      >
+        " @click="activeTab = 'rules'">
         分佣规则
-      </button>
-      <button
-        type="button"
-        class="border-b-2 px-4 py-3 text-sm font-medium transition-colors -mb-px"
-        :class="
+      </a-button>
+      <a-button html-type="button" class="border-b-2 text-sm font-medium transition-colors -mb-px" :class="
           activeTab === 'settlement'
             ? 'border-blue-600 text-blue-700'
             : 'border-transparent text-slate-500 hover:text-slate-800'
-        "
-        @click="activeTab = 'settlement'"
-      >
+        " @click="activeTab = 'settlement'">
         佣金结算
-      </button>
+      </a-button>
     </nav>
 
     <div v-show="activeTab === 'rules'" class="space-y-8">
@@ -384,17 +374,7 @@ onMounted(() => {
               仅作用于「充值」产品线：开启时，被邀请用户仅其第一笔充值成功订单参与本条线的 A 与分佣计算；该用户后续充值订单不参与本条线分佣。
             </p>
           </div>
-          <button
-            type="button"
-            :class="config.depositFirstOnly ? 'bg-blue-600' : 'bg-slate-200'"
-            class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none"
-            @click="config.depositFirstOnly = !config.depositFirstOnly"
-          >
-            <span
-              :class="config.depositFirstOnly ? 'translate-x-5' : 'translate-x-0'"
-              class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition"
-            />
-          </button>
+          <a-switch :checked="config.depositFirstOnly" @click="config.depositFirstOnly = !config.depositFirstOnly" aria-label="仅首充返佣" />
         </div>
       </div>
     </section>
@@ -414,13 +394,7 @@ onMounted(() => {
         <div class="flex flex-col gap-1 sm:items-end">
           <label class="flex items-center gap-2 text-sm text-slate-600">
             <span class="whitespace-nowrap">示例手续费基数（USDT）</span>
-            <input
-              v-model.number="demoBaseAmount"
-              type="number"
-              min="0"
-              step="100"
-              class="ant-input w-36 text-right"
-            />
+            <a-input type="number" min="0" step="100" class="w-36 text-right" :value="demoBaseAmount" @update:value="demoBaseAmount = $event === '' ? '' : Number($event)" />
           </label>
           <span class="text-xs text-slate-400">下方各线「示例佣金」均按此基数 × rᵢ 计算</span>
         </div>
@@ -447,17 +421,7 @@ onMounted(() => {
                 </div>
                 <div class="flex shrink-0 flex-col items-end gap-0.5">
                   <span class="text-[10px] font-medium uppercase tracking-wide text-slate-400">记佣</span>
-                  <button
-                    type="button"
-                    :class="isLineEnabled(line) ? 'bg-blue-600' : 'bg-slate-200'"
-                    class="relative inline-flex h-6 w-11 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none"
-                    @click="toggleLine(line)"
-                  >
-                    <span
-                      :class="isLineEnabled(line) ? 'translate-x-5' : 'translate-x-0'"
-                      class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition"
-                    />
-                  </button>
+                  <a-switch :checked="isLineEnabled(line)" @click="toggleLine(line)" :aria-label="line.title || line.label || line.key" />
                 </div>
               </div>
 
@@ -479,16 +443,7 @@ onMounted(() => {
                       class="block"
                     >
                       <span class="text-xs text-slate-600">{{ idx + 1 }} 级上级</span>
-                      <input
-                        :id="line.key + '-rate-' + idx"
-                        type="number"
-                        min="0"
-                        max="1"
-                        step="0.001"
-                        class="ant-input mt-1 w-full text-sm"
-                        :value="ratesFor(line)[idx]"
-                        @input="setRateAt(line, idx, $event.target.value)"
-                      />
+                      <a-input :id="line.key + '-rate-' + idx" type="number" min="0" max="1" step="0.001" class="mt-1 w-full" :value="ratesFor(line)[idx]" @input="setRateAt(line, idx, $event.target.value)" />
                     </label>
                   </div>
 
@@ -555,17 +510,7 @@ onMounted(() => {
                 开启后：日结汇总单生成后系统自动划转至上级用户账户。关闭后：汇总单进入「裂变佣金结算」，由运营手动发放。
               </p>
             </div>
-            <button
-              type="button"
-              :class="config.autoExecute ? 'bg-blue-600' : 'bg-slate-200'"
-              class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none"
-              @click="config.autoExecute = !config.autoExecute"
-            >
-              <span
-                :class="config.autoExecute ? 'translate-x-5' : 'translate-x-0'"
-                class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition"
-              />
-            </button>
+            <a-switch :checked="config.autoExecute" @click="config.autoExecute = !config.autoExecute" aria-label="自动发放" />
           </div>
 
           <div class="grid gap-6 lg:grid-cols-2">
@@ -581,22 +526,17 @@ onMounted(() => {
             <div>
               <label class="block text-sm font-medium text-slate-800">结算触发时刻</label>
               <p class="mt-1 text-xs text-slate-500">24 小时制，与平台默认时区一致（与代理账期结算配置方式一致）。</p>
-              <input
-                v-model="config.referralSettlementTimeLocal"
-                type="time"
-                step="60"
-                class="ant-input mt-2 w-full max-w-[12rem] text-sm"
-              />
+              <a-input v-model:value="config.referralSettlementTimeLocal" type="time" step="60" class="mt-2 w-full max-w-[12rem]" />
             </div>
           </div>
 
           <div class="max-w-md">
             <label class="block text-sm font-medium text-slate-800">佣金入账账户</label>
-            <select v-model="config.referralCommissionCreditTo" class="ant-input mt-2 w-full text-sm">
-              <option v-for="opt in REFERRAL_COMMISSION_CREDIT_TO_OPTIONS" :key="opt.value" :value="opt.value">
+            <a-select v-model:value="config.referralCommissionCreditTo" class="mt-2 w-full">
+              <a-select-option v-for="opt in REFERRAL_COMMISSION_CREDIT_TO_OPTIONS" :key="opt.value" :value="opt.value">
                 {{ opt.label }}
-              </option>
-            </select>
+              </a-select-option>
+            </a-select>
             <p class="mt-1.5 text-xs leading-relaxed text-slate-500">
               {{ currentCreditOption?.hint }}
             </p>
@@ -609,30 +549,15 @@ onMounted(() => {
             </p>
             <ul class="mt-3 space-y-2 text-sm text-slate-700">
               <li class="flex items-center gap-2">
-                <input
-                  id="ref-notify-email"
-                  v-model="config.referralNotifyAfterSettlementEmail"
-                  type="checkbox"
-                  class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                />
+                <a-checkbox id="ref-notify-email" v-model:checked="config.referralNotifyAfterSettlementEmail" class="text-blue-600" />
                 <label for="ref-notify-email" class="cursor-pointer select-none">发送邮件</label>
               </li>
               <li class="flex items-center gap-2">
-                <input
-                  id="ref-notify-site"
-                  v-model="config.referralNotifyAfterSettlementSite"
-                  type="checkbox"
-                  class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                />
+                <a-checkbox id="ref-notify-site" v-model:checked="config.referralNotifyAfterSettlementSite" class="text-blue-600" />
                 <label for="ref-notify-site" class="cursor-pointer select-none">发送站内信</label>
               </li>
               <li class="flex items-center gap-2">
-                <input
-                  id="ref-notify-sms"
-                  v-model="config.referralNotifyAfterSettlementSms"
-                  type="checkbox"
-                  class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                />
+                <a-checkbox id="ref-notify-sms" v-model:checked="config.referralNotifyAfterSettlementSms" class="text-blue-600" />
                 <label for="ref-notify-sms" class="cursor-pointer select-none">发送手机短信</label>
               </li>
             </ul>

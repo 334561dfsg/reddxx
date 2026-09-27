@@ -1,4 +1,9 @@
 <script setup>
+import { Table } from 'ant-design-vue'
+const TableColumn = Table.Column
+
+import { AdminButton } from '../antd/controls.js'
+
 import { computed, ref, watch } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import CompactPagination from '../CompactPagination.vue'
@@ -79,7 +84,7 @@ watch(totalPages, (nextTotalPages) => {
               <h2 id="user-agent-report-title" ref="titleRef" tabindex="-1" class="break-words text-lg font-semibold text-slate-900 outline-none">代理业务报表</h2>
               <p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知代理' }} · UID {{ userId || '—' }}</p>
             </div>
-            <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="user-agent-report-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
@@ -99,7 +104,7 @@ watch(totalPages, (nextTotalPages) => {
               </section>
 
               <div data-testid="agent-report-tablist" class="mt-4 grid shrink-0 grid-cols-2 rounded-xl bg-slate-100 p-1 text-sm font-medium" role="tablist" aria-label="代理业务报表视图">
-                <button
+                <AdminButton
                   id="agent-report-products-tab"
                   type="button"
                   class="min-h-10 rounded-lg px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -108,8 +113,8 @@ watch(totalPages, (nextTotalPages) => {
                   :aria-selected="activeTab === 'products' ? 'true' : 'false'"
                   aria-controls="agent-report-products-panel"
                   @click="activeTab = 'products'"
-                >产品线汇总</button>
-                <button
+                >产品线汇总</AdminButton>
+                <AdminButton
                   id="agent-report-daily-tab"
                   type="button"
                   class="min-h-10 rounded-lg px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -118,7 +123,7 @@ watch(totalPages, (nextTotalPages) => {
                   :aria-selected="activeTab === 'daily' ? 'true' : 'false'"
                   aria-controls="agent-report-daily-panel"
                   @click="activeTab = 'daily'"
-                >业绩明细</button>
+                >业绩明细</AdminButton>
               </div>
 
               <section
@@ -135,24 +140,7 @@ watch(totalPages, (nextTotalPages) => {
                   <span class="text-xs text-slate-500">共 {{ productLines.length }} 个产品线</span>
                 </div>
                 <div v-if="productLines.length" class="mt-2 overflow-hidden rounded-xl border border-slate-200">
-                  <table data-testid="agent-report-product-table" class="w-full divide-y divide-slate-200 text-left text-sm">
-                    <thead class="bg-slate-50 text-xs text-slate-500">
-                      <tr>
-                        <th scope="col" class="px-3 py-2 font-medium">产品线</th>
-                        <th scope="col" class="px-3 py-2 font-medium">业务量</th>
-                        <th scope="col" class="px-3 py-2 font-medium">佣金</th>
-                        <th scope="col" class="px-3 py-2 text-right font-medium">订单</th>
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100 bg-white">
-                      <tr v-for="line in productLines" :key="line.key" data-testid="agent-report-product-row" class="align-top">
-                        <th scope="row" class="px-3 py-2 font-medium text-slate-900">{{ line.label }}</th>
-                        <td class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.volume) }}</td>
-                        <td class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.commission) }}</td>
-                        <td class="px-3 py-2 text-right text-slate-600">{{ formatNumber(line.orderCount) }} 笔</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <Table :data-source="productLines" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="line => line.key" data-testid="agent-report-product-table" :custom-row="() => ({ 'data-testid': 'agent-report-product-row' })"><TableColumn key="column-0"><template #title>产品线</template><template #default="{ record: line, index: rowIndex }"><div scope="row" class="px-3 py-2 font-medium text-slate-900">{{ line.label }}</div></template></TableColumn><TableColumn key="column-1"><template #title>业务量</template><template #default="{ record: line, index: rowIndex }"><div class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.volume) }}</div></template></TableColumn><TableColumn key="column-2"><template #title>佣金</template><template #default="{ record: line, index: rowIndex }"><div class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.commission) }}</div></template></TableColumn><TableColumn key="column-3"><template #title>订单</template><template #default="{ record: line, index: rowIndex }"><div class="px-3 py-2 text-right text-slate-600">{{ formatNumber(line.orderCount) }} 笔</div></template></TableColumn></Table>
                 </div>
                 <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无产品线汇总</p>
               </section>

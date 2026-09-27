@@ -99,7 +99,7 @@ test('AI quant products sort by descending configured order and keep missing val
 })
 
 test('AI quant product editor exposes numeric sort order beside product status', () => {
-  assert.match(adminProductSource, /v-model\.number="productForm\.sortOrder"/)
+  assert.match(adminProductSource, /v-model:value\.number="productForm\.sortOrder"/)
   assert.match(adminProductSource, /产品状态[\s\S]*产品排序/)
   assert.match(adminProductSource, /sortAiQuantProducts/)
   assert.match(frontListSource, /sortAiQuantProducts/)
@@ -111,8 +111,8 @@ test('AI quant product editor includes a product currency select', () => {
   assert.match(adminProductSource, /productForm\.productCurrency\s*=\s*'USDT'/)
   assert.match(adminProductSource, /productForm\.productCurrency\s*=\s*product\.productCurrency\s*\?\?\s*product\.currency/)
   assert.match(adminProductSource, />产品品种<\/label>/)
-  assert.match(adminProductSource, /v-model="productForm\.productCurrency"/)
-  assert.match(adminProductSource, /v-model="productForm\.productCurrency"[\s\S]*v-for="currency in SUPPORTED_CURRENCIES"/)
+  assert.match(adminProductSource, /v-model:value="productForm\.productCurrency"/)
+  assert.match(adminProductSource, /v-model:value="productForm\.productCurrency"[\s\S]*v-for="currency in SUPPORTED_CURRENCIES"/)
 })
 
 test('AI quant list mock covers unlimited-term orders across visible states', () => {

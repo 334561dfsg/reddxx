@@ -68,10 +68,10 @@ const faqList = [
 
     <article class="rounded-xl border border-slate-200 bg-white p-4">
       <nav class="flex flex-wrap gap-2">
-        <button
+        <a-button type="text"
           v-for="tab in tabs"
           :key="tab.id"
-          type="button"
+          html-type="button"
           :class="[
             'px-4 py-2 text-sm font-medium rounded-lg transition',
             activeTab === tab.id
@@ -82,7 +82,7 @@ const faqList = [
         >
           <span class="mr-1">{{ tab.icon }}</span>
           {{ tab.label }}
-        </button>
+        </a-button>
       </nav>
     </article>
 

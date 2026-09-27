@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { Select } from 'ant-design-vue'
 import { ASSET_CURRENCY_TYPE } from '../constants/assets'
 
 const props = defineProps({
@@ -34,10 +35,16 @@ const valueProxy = computed({
 </script>
 
 <template>
-  <select :id="id" v-model="valueProxy" class="ant-select !w-32 !h-8">
-    <option v-if="includeAll" :value="allValue">{{ allLabel }}</option>
-    <option :value="ASSET_CURRENCY_TYPE.VIRTUAL">虚拟币</option>
-    <option :value="ASSET_CURRENCY_TYPE.FIAT">法币</option>
-    <option :value="ASSET_CURRENCY_TYPE.METAL">贵金属</option>
-  </select>
+  <Select
+    :id="id"
+    v-model:value="valueProxy"
+    aria-label="币种类型"
+    class="w-32"
+    :options="[
+      ...(includeAll ? [{ value: allValue, label: allLabel }] : []),
+      { value: ASSET_CURRENCY_TYPE.VIRTUAL, label: '虚拟币' },
+      { value: ASSET_CURRENCY_TYPE.FIAT, label: '法币' },
+      { value: ASSET_CURRENCY_TYPE.METAL, label: '贵金属' }
+    ]"
+  />
 </template>

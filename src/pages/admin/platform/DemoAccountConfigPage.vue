@@ -171,14 +171,9 @@ onMounted(loadConfig)
         </p>
       </div>
       <div class="flex flex-wrap gap-2">
-        <button
-          type="button"
-          class="ant-btn ant-btn-primary"
-          :disabled="loading || isSaving || !isDirty"
-          @click="saveConfig"
-        >
+        <a-button html-type="button" class="" :disabled="loading || isSaving || !isDirty" @click="saveConfig" type="primary">
           {{ isSaving ? '保存中…' : '保存配置' }}
-        </button>
+        </a-button>
       </div>
     </header>
 
@@ -206,16 +201,7 @@ onMounted(loadConfig)
             每次获取金额
           </label>
           <div class="relative max-w-xl">
-            <input
-              id="demo-claim-amount"
-              v-model="draftText.claimAmountUsd"
-              type="text"
-              inputmode="decimal"
-              class="ant-input w-full pr-16 font-mono"
-              :aria-invalid="Boolean(fieldErrors.claimAmountUsd)"
-              aria-describedby="demo-claim-amount-help demo-claim-amount-error"
-              placeholder="例如：500000"
-            />
+            <a-input id="demo-claim-amount" v-model:value="draftText.claimAmountUsd" type="text" inputmode="decimal" class="w-full pr-16 font-mono" :aria-invalid="Boolean(fieldErrors.claimAmountUsd)" aria-describedby="demo-claim-amount-help demo-claim-amount-error" placeholder="例如：500000" />
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">USDT</span>
           </div>
           <p id="demo-claim-amount-help" class="mt-1.5 text-xs text-slate-500">
@@ -231,16 +217,7 @@ onMounted(loadConfig)
             每月获取次数
           </label>
           <div class="relative max-w-xl">
-            <input
-              id="demo-monthly-claim-limit"
-              v-model="draftText.monthlyClaimLimit"
-              type="text"
-              inputmode="numeric"
-              class="ant-input w-full pr-12 font-mono"
-              :aria-invalid="Boolean(fieldErrors.monthlyClaimLimit)"
-              aria-describedby="demo-monthly-claim-limit-help demo-monthly-claim-limit-error"
-              placeholder="例如：3"
-            />
+            <a-input id="demo-monthly-claim-limit" v-model:value="draftText.monthlyClaimLimit" type="text" inputmode="numeric" class="w-full pr-12 font-mono" :aria-invalid="Boolean(fieldErrors.monthlyClaimLimit)" aria-describedby="demo-monthly-claim-limit-help demo-monthly-claim-limit-error" placeholder="例如：3" />
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">次</span>
           </div>
           <p id="demo-monthly-claim-limit-help" class="mt-1.5 text-xs text-slate-500">

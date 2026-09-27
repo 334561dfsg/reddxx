@@ -17,16 +17,16 @@
 
     <article class="rounded-xl border border-slate-200 bg-white">
       <div class="flex flex-wrap items-center gap-3 border-b border-slate-200 p-4">
-        <select
-          v-model="actionFilter"
-          class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 min-w-[7.5rem]"
+        <a-select :get-popup-container="(trigger) => trigger.parentElement"
+          v-model:value="actionFilter"
+          class="min-w-[7.5rem]"
         >
-          <option value="">全部类型</option>
-          <option value="adjust">调整</option>
-          <option value="reset">重置</option>
-        </select>
-        <input
-          v-model="search"
+          <a-select-option value="">全部类型</a-select-option>
+          <a-select-option value="adjust">调整</a-select-option>
+          <a-select-option value="reset">重置</a-select-option>
+        </a-select>
+        <a-input
+          v-model:value="search"
           type="search"
           class="min-w-[12rem] flex-1 max-w-md rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
           placeholder="产品、原因、操作人…"
@@ -35,24 +35,14 @@
       </div>
 
       <div v-if="filteredLogs.length" class="overflow-x-auto">
-        <table class="w-full min-w-[56rem] text-sm">
-          <thead class="bg-slate-50 text-slate-500">
-            <tr>
-              <th class="px-4 py-3 text-left font-medium">日志ID</th>
-              <th class="px-4 py-3 text-left font-medium">类型</th>
-              <th class="px-4 py-3 text-left font-medium">产品</th>
-              <th class="px-4 py-3 text-left font-medium">调整比例</th>
-              <th class="px-4 py-3 text-left font-medium">倍数</th>
-              <th class="px-4 py-3 text-left font-medium">生效策略</th>
-              <th class="px-4 py-3 text-left font-medium">原因</th>
-              <th class="px-4 py-3 text-left font-medium">操作人</th>
-              <th class="px-4 py-3 text-left font-medium">时间</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in pagedLogs" :key="row.id" class="border-t border-slate-100">
-              <td class="px-4 py-3 font-mono text-xs text-slate-600">{{ row.id }}</td>
-              <td class="px-4 py-3">
+        <a-table  size="small" :pagination="false" :data-source="pagedLogs" :row-key="(row) => row.id" :scroll="{ x: 'max-content' }" :custom-row="(row, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
+<a-table-column key="column-0" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 font-mono text-xs text-slate-600&quot;] })">
+<template #title>日志ID</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.id }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>类型</template>
+<template #default="{ record: row, index: rowIndex }">
                 <span
                   class="rounded-md px-2 py-0.5 text-xs font-medium"
                   :class="
@@ -63,30 +53,50 @@
                 >
                   {{ row.actionType === 'reset' ? '重置' : '调整' }}
                 </span>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>产品</template>
+<template #default="{ record: row, index: rowIndex }">
                 <div class="font-medium text-slate-900">{{ row.productName }}</div>
                 <div class="text-xs text-slate-500">{{ row.currency }}</div>
-              </td>
-              <td class="px-4 py-3 tabular-nums">
+              </template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 tabular-nums&quot;] })">
+<template #title>调整比例</template>
+<template #default="{ record: row, index: rowIndex }">
                 <span class="text-slate-600">{{ formatRate(row.beforeRate) }}</span>
                 <span class="mx-1 text-slate-300">→</span>
                 <span :class="rateClass(row.afterRate)">{{ formatRate(row.afterRate) }}</span>
-              </td>
-              <td class="px-4 py-3 tabular-nums text-slate-700">
+              </template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 tabular-nums text-slate-700&quot;] })">
+<template #title>倍数</template>
+<template #default="{ record: row, index: rowIndex }">
                 {{ fmtMult(row.beforeMultiplier) }}
                 <span class="mx-1 text-slate-300">→</span>
                 {{ fmtMult(row.afterMultiplier) }}
-              </td>
-              <td class="px-4 py-3 text-slate-600">{{ row.durationLabel || '—' }}</td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-600&quot;] })">
+<template #title>生效策略</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.durationLabel || '—' }}</template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>原因</template>
+<template #default="{ record: row, index: rowIndex }">
                 <div class="max-w-[14rem] truncate text-slate-700" :title="row.reason">{{ row.reason }}</div>
-              </td>
-              <td class="px-4 py-3 text-slate-700">{{ row.operator }}</td>
-              <td class="px-4 py-3 whitespace-nowrap text-slate-600">{{ row.createdAt }}</td>
-            </tr>
-          </tbody>
-        </table>
+              </template>
+</a-table-column>
+<a-table-column key="column-7" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>操作人</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.operator }}</template>
+</a-table-column>
+<a-table-column key="column-8" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 whitespace-nowrap text-slate-600&quot;] })">
+<template #title>时间</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.createdAt }}</template>
+</a-table-column>
+</a-table>
       </div>
       <div v-else class="px-4 py-12 text-center text-sm text-slate-500">暂无日志</div>
 

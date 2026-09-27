@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton } from '../antd/controls.js'
+
 import { computed, ref } from 'vue'
 import UserControlLogContent from './UserControlLogContent.vue'
 import { useDialogContentSnapshot, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
@@ -74,14 +76,14 @@ const handleAfterLeave = async () => {
                 {{ displayedUser?.username || '未知用户' }} · UID {{ userId || '—' }}
               </p>
             </div>
-            <button
+            <AdminButton
               type="button"
               class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-label="关闭"
               @click="requestDialogClose"
             >
               ×
-            </button>
+            </AdminButton>
           </header>
 
           <div

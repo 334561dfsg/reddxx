@@ -153,37 +153,37 @@ const nextPage = () => {
     <article class="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
       <!-- 筛选区域 -->
       <div class="flex flex-wrap items-center gap-3 border-b border-slate-200 p-4 md:px-6 bg-slate-50/30">
-        <select
-          v-model="filters.status"
-          class="ant-select !w-36"
+        <a-select :get-popup-container="(trigger) => trigger.parentElement"
+          v-model:value="filters.status"
+          class="!w-36"
         >
-          <option value="">全部状态</option>
-          <option :value="DELIVERY_ORDER_STATUS.PENDING">待结算</option>
-          <option :value="DELIVERY_ORDER_STATUS.SETTLED">已结算</option>
-          <option :value="DELIVERY_ORDER_STATUS.EXERCISED">已行权</option>
-        </select>
+          <a-select-option value="">全部状态</a-select-option>
+          <a-select-option :value="DELIVERY_ORDER_STATUS.PENDING">待结算</a-select-option>
+          <a-select-option :value="DELIVERY_ORDER_STATUS.SETTLED">已结算</a-select-option>
+          <a-select-option :value="DELIVERY_ORDER_STATUS.EXERCISED">已行权</a-select-option>
+        </a-select>
 
-        <select
-          v-model="filters.product"
-          class="ant-select !w-36"
+        <a-select :get-popup-container="(trigger) => trigger.parentElement"
+          v-model:value="filters.product"
+          class="!w-36"
         >
-          <option value="">全部产品</option>
-          <option value="BTC 期权">BTC 期权</option>
-          <option value="ETH 期权">ETH 期权</option>
-        </select>
+          <a-select-option value="">全部产品</a-select-option>
+          <a-select-option value="BTC 期权">BTC 期权</a-select-option>
+          <a-select-option value="ETH 期权">ETH 期权</a-select-option>
+        </a-select>
 
-        <select
-          v-model="filters.result"
-          class="ant-select !w-32"
+        <a-select :get-popup-container="(trigger) => trigger.parentElement"
+          v-model:value="filters.result"
+          class="!w-32"
         >
-          <option value="">全部结果</option>
-          <option :value="DELIVERY_ORDER_RESULT.WIN">赢利</option>
-          <option :value="DELIVERY_ORDER_RESULT.LOSS">亏损</option>
-        </select>
+          <a-select-option value="">全部结果</a-select-option>
+          <a-select-option :value="DELIVERY_ORDER_RESULT.WIN">赢利</a-select-option>
+          <a-select-option :value="DELIVERY_ORDER_RESULT.LOSS">亏损</a-select-option>
+        </a-select>
 
         <div class="relative w-full max-w-xs">
-          <input
-            v-model="filters.userId"
+          <a-input
+            v-model:value="filters.userId"
             type="text"
             placeholder="搜索用户 ID..."
             class="ant-input pl-9"
@@ -194,8 +194,8 @@ const nextPage = () => {
           </svg>
         </div>
 
-        <button
-          type="button"
+        <a-button
+          html-type="button"
           class="ant-btn inline-flex items-center gap-1.5"
           @click="showAdvancedFilters = !showAdvancedFilters"
         >
@@ -209,20 +209,20 @@ const nextPage = () => {
           >
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
-        </button>
+        </a-button>
 
-        <button
-          type="button"
+        <a-button
+          html-type="button"
           class="ant-btn"
           @click="resetFilters"
         >
           重置
-        </button>
+        </a-button>
 
         <div class="flex-1"></div>
 
-        <button
-          type="button"
+        <a-button
+          html-type="button"
           class="ant-btn inline-flex items-center gap-2"
           @click="exportOrders"
         >
@@ -235,7 +235,7 @@ const nextPage = () => {
             />
           </svg>
           <span>导出订单</span>
-        </button>
+        </a-button>
       </div>
 
       <!-- 高级筛选 -->
@@ -244,15 +244,15 @@ const nextPage = () => {
           <div class="space-y-1.5">
             <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">投资金额 (USDT)</label>
             <div class="flex items-center gap-2">
-              <input
-                v-model.number="filters.minInvest"
+              <a-input
+                v-model:value.number="filters.minInvest"
                 type="number"
                 placeholder="最小"
                 class="ant-input !py-1 text-xs"
               />
               <span class="text-slate-300">-</span>
-              <input
-                v-model.number="filters.maxInvest"
+              <a-input
+                v-model:value.number="filters.maxInvest"
                 type="number"
                 placeholder="最大"
                 class="ant-input !py-1 text-xs"
@@ -263,15 +263,15 @@ const nextPage = () => {
           <div class="space-y-1.5">
             <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">实际收益 (%)</label>
             <div class="flex items-center gap-2">
-              <input
-                v-model.number="filters.minYield"
+              <a-input
+                v-model:value.number="filters.minYield"
                 type="number"
                 placeholder="最小"
                 class="ant-input !py-1 text-xs"
               />
               <span class="text-slate-300">-</span>
-              <input
-                v-model.number="filters.maxYield"
+              <a-input
+                v-model:value.number="filters.maxYield"
                 type="number"
                 placeholder="最大"
                 class="ant-input !py-1 text-xs"
@@ -281,21 +281,21 @@ const nextPage = () => {
 
           <div class="space-y-1.5">
             <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">周期类型</label>
-            <select
-              v-model="filters.cycleType"
-              class="ant-select !py-1 text-xs"
+            <a-select :get-popup-container="(trigger) => trigger.parentElement"
+              v-model:value="filters.cycleType"
+              class=""
             >
-              <option value="">全部周期</option>
-              <option value="short">短周期 (≤60s)</option>
-              <option value="medium">中周期 (60s-180s)</option>
-              <option value="long">长周期 (>180s)</option>
-            </select>
+              <a-select-option value="">全部周期</a-select-option>
+              <a-select-option value="short">短周期 (≤60s)</a-select-option>
+              <a-select-option value="medium">中周期 (60s-180s)</a-select-option>
+              <a-select-option value="long">长周期 (>180s)</a-select-option>
+            </a-select>
           </div>
 
           <div class="space-y-1.5">
             <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">下单日期</label>
-            <input
-              v-model="filters.dateRange"
+            <a-input
+              v-model:value="filters.dateRange"
               type="date"
               class="ant-input !py-1 text-xs"
             />
@@ -305,32 +305,20 @@ const nextPage = () => {
 
       <!-- 表格内容 -->
       <div class="overflow-x-auto">
-        <table class="w-full border-collapse text-left ant-table">
-          <thead class="ant-table-thead">
-            <tr>
-              <th class="px-6 py-4">订单信息</th>
-              <th class="px-6 py-4">用户信息</th>
-              <th class="px-6 py-4">投资明细</th>
-              <th class="px-6 py-4">预期收益</th>
-              <th class="px-6 py-4">结算结果</th>
-              <th class="px-6 py-4">状态</th>
-              <th class="px-6 py-4 text-center">操作</th>
-            </tr>
-          </thead>
-          <tbody class="ant-table-tbody divide-y divide-slate-100">
-            <tr
-              v-for="order in paginatedOrders"
-              :key="order.id"
-              class="text-sm group"
-            >
-              <td class="px-6 py-4">
+        <a-table  size="small" :pagination="false" :data-source="paginatedOrders" :row-key="(order) => order.id" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;text-sm group&quot;] })">
+<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>订单信息</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="flex flex-col">
                   <span class="font-bold text-slate-900">{{ order.productName }}</span>
                   <span class="mt-0.5 font-mono text-[11px] text-slate-400">{{ order.id }}</span>
                   <span class="mt-1 text-[11px] text-slate-500">{{ order.betTime }}</span>
                 </div>
-              </td>
-              <td class="px-6 py-4">
+              </template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>用户信息</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="flex flex-col">
                   <div class="flex items-center gap-2">
                     <span class="font-medium text-slate-700">{{ order.userName }}</span>
@@ -343,8 +331,11 @@ const nextPage = () => {
                   </div>
                   <span class="mt-0.5 font-mono text-[11px] text-slate-400">{{ order.userId }}</span>
                 </div>
-              </td>
-              <td class="px-6 py-4">
+              </template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>投资明细</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="flex flex-col">
                   <div class="flex items-center gap-1.5">
                     <span
@@ -355,14 +346,20 @@ const nextPage = () => {
                   </div>
                   <span class="mt-0.5 text-[11px] text-slate-500">周期: {{ order.cycleSeconds }}s</span>
                 </div>
-              </td>
-              <td class="px-6 py-4">
+              </template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>预期收益</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="flex flex-col">
                   <span class="font-bold text-blue-600">{{ order.expectedYield }}%</span>
                   <span class="mt-0.5 text-[11px] text-slate-400">手续费: {{ order.fee }} USDT</span>
                 </div>
-              </td>
-              <td class="px-6 py-4">
+              </template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>结算结果</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div v-if="order.status !== DELIVERY_ORDER_STATUS.PEND" class="flex flex-col">
                   <span
                     class="font-bold"
@@ -373,8 +370,11 @@ const nextPage = () => {
                   <span class="mt-0.5 text-[11px] text-slate-500">实际收益: {{ order.actualYield }}%</span>
                 </div>
                 <span v-else class="text-slate-300 italic">待结算</span>
-              </td>
-              <td class="px-6 py-4">
+              </template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: order, index: rowIndex }">
                 <span
                   class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border"
                   :class="deliveryOrderStatusMeta[order.status]?.class"
@@ -382,19 +382,21 @@ const nextPage = () => {
                   <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                   {{ deliveryOrderStatusMeta[order.status]?.label }}
                 </span>
-              </td>
-              <td class="px-6 py-4 text-center">
-                <button
-                  type="button"
+              </template>
+</a-table-column>
+<a-table-column key="column-6" align="center" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4 text-center&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: order, index: rowIndex }">
+                <a-button
+                  html-type="button"
                   class="ant-btn ant-btn-sm"
                   @click="viewOrder(order)"
                 >
                   详情
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </a-button>
+              </template>
+</a-table-column>
+</a-table>
       </div>
 
       <!-- 分页 -->
@@ -403,67 +405,35 @@ const nextPage = () => {
           共 <span class="font-medium text-slate-900">{{ filteredOrders.length }}</span> 条订单
         </div>
         <div class="flex items-center gap-2">
-          <button
-            type="button"
-            class="ant-btn ant-btn-sm"
-            :disabled="currentPage === 1"
-            @click="prevPage"
-          >
-            上一页
-          </button>
-          <div class="flex items-center gap-1">
-            <button
-              v-for="p in totalPages"
-              :key="p"
-              type="button"
-              class="ant-btn ant-btn-sm w-8 p-0"
-              :class="currentPage === p ? 'ant-btn-primary' : ''"
-              @click="currentPage = p"
-            >
-              {{ p }}
-            </button>
-          </div>
-          <button
-            type="button"
-            class="ant-btn ant-btn-sm"
-            :disabled="currentPage === totalPages"
-            @click="nextPage"
-          >
-            下一页
-          </button>
+          <a-pagination size="small" :current="currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="currentPage = $event" />
         </div>
       </div>
     </article>
 
     <!-- 订单详情模态框 -->
     <Transition name="modal">
-      <div
-        v-if="showDetailModal"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
-      >
-        <section
-          class="flex flex-col w-full max-w-4xl h-[85vh] overflow-hidden rounded-lg bg-white shadow-xl"
-        >
-          <header class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+      <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDetailModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="896"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeDetailModal">
+<template #title><template v-if="showDetailModal"><header class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
             <div>
               <h2 class="text-lg font-semibold text-slate-900">订单详情</h2>
               <p class="mt-0.5 text-xs text-slate-400 font-mono">#{{ currentOrder?.id }}</p>
             </div>
-            <button
-              type="button"
+            <a-button aria-label="关闭" type="text"
+              html-type="button"
               class="text-slate-400 hover:text-slate-600 transition-colors text-2xl leading-none"
               @click="closeDetailModal"
             >
               ×
-            </button>
-          </header>
+            </a-button>
+          </header></template></template>
+<template v-if="showDetailModal">
 
           <div class="px-6 border-b border-slate-100 bg-white">
             <div class="flex gap-8">
-              <button
+              <a-button type="text"
                 v-for="tab in detailTabs"
                 :key="tab.id"
-                type="button"
+                html-type="button"
                 class="relative py-3 text-sm transition-all"
                 :class="
                   currentTab === tab.id
@@ -473,7 +443,7 @@ const nextPage = () => {
                 @click="currentTab = tab.id"
               >
                 {{ tab.label }}
-              </button>
+              </a-button>
             </div>
           </div>
 
@@ -630,17 +600,17 @@ const nextPage = () => {
             </div>
           </div>
 
-          <footer class="flex justify-end gap-2 border-t border-slate-100 px-6 py-4">
-            <button
-              type="button"
+          </template>
+<template #footer><template v-if="showDetailModal"><footer class="flex justify-end gap-2 border-t border-slate-100 px-6 py-4">
+            <a-button
+              html-type="button"
               class="ant-btn"
               @click="closeDetailModal"
             >
               关闭
-            </button>
-          </footer>
-        </section>
-      </div>
+            </a-button>
+          </footer></template></template>
+</a-modal>
     </Transition>
   </section>
 </template>

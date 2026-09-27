@@ -1,18 +1,18 @@
 <template>
 	<Teleport to="body">
-		<div v-if="showAdjustmentModal" class="fixed inset-0 z-[60] grid place-items-center bg-black/45 p-4">
-			<article class="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col" @click.stop>
-				<header class="flex items-center justify-between border-b border-slate-200 px-5 py-4 flex-shrink-0">
+		<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showAdjustmentModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="512"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showAdjustmentModal = false">
+<template #title><template v-if="showAdjustmentModal"><header class="flex items-center justify-between border-b border-slate-200 px-5 py-4 flex-shrink-0">
 					<div>
 						<h2 class="text-lg font-semibold text-slate-900">订单收益调整</h2>
 						<p class="text-xs text-slate-500 mt-0.5">仅作用于当前订单，提交后可在「收益调整记录」中查询</p>
 					</div>
-					<button type="button" class="text-slate-400 hover:text-slate-600 p-1" aria-label="关闭" @click="showAdjustmentModal = false">
+					<a-button type="text" html-type="button" class="text-slate-400 hover:text-slate-600 p-1" aria-label="关闭" @click="showAdjustmentModal = false">
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 						</svg>
-					</button>
-				</header>
+					</a-button>
+				</header></template></template>
+<template v-if="showAdjustmentModal">
 
 				<div class="flex-1 overflow-y-auto p-5 space-y-4">
 					<div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm space-y-1.5">
@@ -32,14 +32,14 @@
 
 					<div class="space-y-3">
 						<label class="block text-sm font-medium text-slate-700 mb-1.5">调整类型</label>
-						<select
-							v-model="adjustmentForm.type"
-							class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+						<a-select :get-popup-container="(trigger) => trigger.parentElement"
+							v-model:value="adjustmentForm.type"
+							class="w-full"
 						>
-							<option v-for="(meta, key) in adjustmentTypeMeta" :key="key" :value="key">
+							<a-select-option v-for="(meta, key) in adjustmentTypeMeta" :key="key" :value="key">
 								{{ meta.label }}
-							</option>
-						</select>
+							</a-select-option>
+						</a-select>
 						<div class="rounded-lg border px-3 py-2.5 text-xs" :class="activeTypeConfig.tipClass">
 							<div class="font-medium">{{ activeTypeConfig.title }}</div>
 							<p class="mt-1 leading-5">{{ activeTypeConfig.desc }}</p>
@@ -51,8 +51,8 @@
 							{{ activeTypeConfig.amountLabel }} <span class="text-red-500">*</span>
 						</label>
 						<div class="flex gap-2">
-							<input
-								v-model.number="adjustmentForm.amount"
+							<a-input
+								v-model:value.number="adjustmentForm.amount"
 								type="number"
 								step="0.01"
 								min="0"
@@ -65,15 +65,15 @@
 						</div>
 						<p class="mt-1.5 text-xs leading-5 text-slate-500">{{ activeTypeConfig.amountHelp }}</p>
 						<div v-if="adjustmentForm.currency === 'USDT'" class="mt-2 flex flex-wrap gap-1.5">
-							<button
+							<a-button type="text"
 								v-for="preset in amountPresetsUsdt"
 								:key="preset"
-								type="button"
+								html-type="button"
 								class="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600 hover:border-blue-300 hover:bg-blue-50"
 								@click="adjustmentForm.amount = preset"
 							>
 								+{{ preset }}
-							</button>
+							</a-button>
 						</div>
 					</div>
 
@@ -82,8 +82,8 @@
 							{{ activeTypeConfig.percentageLabel }} <span class="text-red-500">*</span>
 						</label>
 						<div class="flex gap-2">
-							<input
-								v-model.number="adjustmentForm.percentage"
+							<a-input
+								v-model:value.number="adjustmentForm.percentage"
 								type="number"
 								step="0.01"
 								min="0"
@@ -100,18 +100,18 @@
 					<div>
 						<label class="block text-sm font-medium text-slate-700 mb-1.5">原因说明 <span class="text-red-500">*</span></label>
 						<div class="mb-2 flex flex-wrap gap-1.5">
-							<button
+							<a-button type="text"
 								v-for="t in reasonTemplates"
 								:key="t"
-								type="button"
+								html-type="button"
 								class="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600 hover:border-blue-300 hover:bg-blue-50"
 								@click="adjustmentForm.reason = t"
 							>
 								{{ t }}
-							</button>
+							</a-button>
 						</div>
-						<textarea
-							v-model="adjustmentForm.reason"
+						<a-textarea
+							v-model:value="adjustmentForm.reason"
 							rows="3"
 							maxlength="200"
 							class="w-full resize-none rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
@@ -125,22 +125,22 @@
 					</p>
 				</div>
 
-				<footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-3 flex-shrink-0 bg-slate-50">
-					<button type="button" class="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" @click="showAdjustmentModal = false">
+				</template>
+<template #footer><template v-if="showAdjustmentModal"><footer class="flex justify-end gap-2 border-t border-slate-200 px-5 py-3 flex-shrink-0 bg-slate-50">
+					<a-button type="text" html-type="button" class="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" @click="showAdjustmentModal = false">
 						取消
-					</button>
-					<button
-						type="button"
+					</a-button>
+					<a-button type="text"
+						html-type="button"
 						class="rounded-lg px-4 py-2 text-sm font-medium text-white transition"
 						:class="isFormValid ? 'bg-blue-600 hover:bg-blue-700' : 'cursor-not-allowed bg-slate-400'"
 						:disabled="!isFormValid"
 						@click="saveAdjustment"
 					>
 						提交调整
-					</button>
-				</footer>
-			</article>
-		</div>
+					</a-button>
+				</footer></template></template>
+</a-modal>
 	</Teleport>
 </template>
 

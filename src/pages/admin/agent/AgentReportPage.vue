@@ -203,17 +203,17 @@ onUnmounted(() => {
           <label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-500"
             >开始日期</label
           >
-          <input v-model="startDate" type="date" class="ant-input !h-9 !text-sm" />
+          <a-input v-model:value="startDate" type="date" class="" />
         </div>
         <div>
           <label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-500"
             >结束日期</label
           >
-          <input v-model="endDate" type="date" class="ant-input !h-9 !text-sm" />
+          <a-input v-model:value="endDate" type="date" class="" />
         </div>
-        <button type="button" class="ant-btn ant-btn-primary !h-9" :disabled="loading" @click="loadDaily">
+        <a-button html-type="button" class="" :disabled="loading" @click="loadDaily" type="primary">
           {{ loading ? '查询中…' : '查询' }}
-        </button>
+        </a-button>
       </div>
 
       <div class="relative min-h-[280px] overflow-x-auto">
@@ -224,90 +224,44 @@ onUnmounted(() => {
           <div class="h-9 w-9 animate-spin rounded-full border-2 border-slate-200 border-t-violet-600" />
         </div>
 
-        <table class="min-w-full divide-y divide-slate-200 text-sm">
-          <thead class="bg-slate-50">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600">日期</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600">当日佣金 (USDT)</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600">有佣代理数</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600">分佣笔数</th>
-              <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 w-28">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 bg-white">
-            <tr
-              v-for="row in dailyRows"
-              :key="row.date"
-              class="transition-colors"
-              :class="
+        <a-table  :data-source="dailyRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.date" :custom-row="(row, index) => ({ class: [&quot;transition-colors&quot;, (
                 isRowActive(row.date)
                   ? 'bg-violet-50/80 hover:bg-violet-50'
                   : 'hover:bg-slate-50/90 cursor-pointer'
-              "
-              @click="selectDay(row.date)"
-            >
-              <td class="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">
+              )], onClick: () => (selectDay(row.date)) })">
+<a-table-column key="column-0" ><template #title>日期</template><template #default="{ record: row, index: index }"><div class="  font-medium text-slate-900 whitespace-nowrap">
                 {{ row.date }}
-              </td>
-              <td class="px-4 py-3 text-right font-mono tabular-nums text-slate-900">
+              </div></template></a-table-column>
+<a-table-column key="column-1" align="right"><template #title>当日佣金 (USDT)</template><template #default="{ record: row, index: index }"><div class="  text-right font-mono tabular-nums text-slate-900">
                 ${{ row.totalCommission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
-              </td>
-              <td class="px-4 py-3 text-right tabular-nums text-slate-700">{{ row.agentCount }}</td>
-              <td class="px-4 py-3 text-right tabular-nums text-slate-600">{{ row.recordCount }}</td>
-              <td class="px-4 py-3 text-center">
-                <button
-                  type="button"
-                  class="text-xs font-medium text-violet-600 hover:text-violet-800 hover:underline"
-                  @click.stop="selectDay(row.date)"
-                >
+              </div></template></a-table-column>
+<a-table-column key="column-2" align="right"><template #title>有佣代理数</template><template #default="{ record: row, index: index }"><div class="  text-right tabular-nums text-slate-700">{{ row.agentCount }}</div></template></a-table-column>
+<a-table-column key="column-3" align="right"><template #title>分佣笔数</template><template #default="{ record: row, index: index }"><div class="  text-right tabular-nums text-slate-600">{{ row.recordCount }}</div></template></a-table-column>
+<a-table-column key="column-4" align="center"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="  text-center">
+                <a-button html-type="button" class="text-xs font-medium text-violet-600 hover:text-violet-800 hover:underline" @click.stop="selectDay(row.date)">
                   {{ isRowActive(row.date) ? '收起' : '查看代理' }}
-                </button>
-              </td>
-            </tr>
-            <tr v-if="!loading && dailyRows.length === 0">
-              <td colspan="5" class="px-4 py-12 text-center text-slate-500">该范围内暂无数据</td>
-            </tr>
-          </tbody>
-        </table>
+                </a-button>
+              </div></template></a-table-column><template #emptyText>该范围内暂无数据</template>
+</a-table>
       </div>
     </div>
 
     <!-- 当日代理明细：右侧抽屉（Teleport 到 body，避免主内容区 overflow 裁切 fixed 遮罩） -->
     <Teleport to="body">
       <Transition name="agent-report-drawer">
-        <div
-          v-if="selectedDate"
-          class="fixed inset-0 z-[100] flex justify-end bg-black/40"
-          role="presentation"
-          @click.self="closeAgentDrawer"
-        >
-          <aside
-            class="agent-report-drawer-panel flex h-full w-full max-w-xl flex-col border-l border-slate-200 bg-white shadow-2xl"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="agent-report-drawer-title"
-            @click.stop
-          >
-            <div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/90 px-4 py-3 sm:px-5">
+        <a-drawer :open="Boolean(selectedDate)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeAgentDrawer"><template #title><template v-if="Boolean(selectedDate)"><div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/90 px-4 py-3 sm:px-5">
               <div class="min-w-0">
                 <h2 id="agent-report-drawer-title" class="text-base font-semibold text-slate-900">
                   {{ selectedLabel }} · 产生佣金的代理
                 </h2>
                 <p class="mt-0.5 text-xs text-slate-500">按当日佣金从高到低排序</p>
               </div>
-              <button
-                type="button"
-                class="shrink-0 rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-                aria-label="关闭"
-                @click="closeAgentDrawer"
-              >
+              <a-button aria-label="关闭" html-type="button" class="shrink-0 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"  @click="closeAgentDrawer">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </button>
-            </div>
-
-            <div class="relative min-h-0 flex-1 overflow-x-auto overflow-y-auto">
+              </a-button>
+            </div></template></template><template v-if="selectedDate"><div class="relative min-h-0 flex-1 overflow-x-auto overflow-y-auto">
               <div
                 v-if="detailLoading"
                 class="absolute inset-0 z-10 flex items-center justify-center bg-white/80"
@@ -315,34 +269,16 @@ onUnmounted(() => {
                 <div class="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-violet-600" />
               </div>
 
-              <table class="min-w-full divide-y divide-slate-200 text-sm">
-                <thead class="sticky top-0 z-[1] bg-slate-50 shadow-[0_1px_0_0_rgb(226_232_240)]">
-                  <tr>
-                    <th class="px-4 py-2.5 text-left text-xs font-semibold text-slate-600">UID</th>
-                    <th class="px-4 py-2.5 text-left text-xs font-semibold text-slate-600">用户名</th>
-                    <th class="px-4 py-2.5 text-left text-xs font-semibold text-slate-600">邮箱</th>
-                    <th class="px-4 py-2.5 text-right text-xs font-semibold text-slate-600">当日佣金 (USDT)</th>
-                    <th class="px-4 py-2.5 text-right text-xs font-semibold text-slate-600">关联笔数</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                  <tr v-for="a in dayAgents" :key="a.uid" class="hover:bg-slate-50/80">
-                    <td class="px-4 py-2.5 font-mono text-slate-900">{{ a.uid }}</td>
-                    <td class="px-4 py-2.5 font-medium text-slate-900">{{ a.username }}</td>
-                    <td class="px-4 py-2.5 text-slate-600">{{ a.email }}</td>
-                    <td class="px-4 py-2.5 text-right font-mono tabular-nums text-emerald-700">
+              <a-table  :data-source="dayAgents" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(a) => a.uid" :custom-row="(a, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
+<a-table-column key="column-0" ><template #title>UID</template><template #default="{ record: a, index: index }"><div class=" .5 font-mono text-slate-900">{{ a.uid }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>用户名</template><template #default="{ record: a, index: index }"><div class=" .5 font-medium text-slate-900">{{ a.username }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>邮箱</template><template #default="{ record: a, index: index }"><div class=" .5 text-slate-600">{{ a.email }}</div></template></a-table-column>
+<a-table-column key="column-3" align="right"><template #title>当日佣金 (USDT)</template><template #default="{ record: a, index: index }"><div class=" .5 text-right font-mono tabular-nums text-emerald-700">
                       ${{ a.commission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
-                    </td>
-                    <td class="px-4 py-2.5 text-right tabular-nums text-slate-600">{{ a.orderCount }}</td>
-                  </tr>
-                  <tr v-if="!detailLoading && dayAgents.length === 0">
-                    <td colspan="5" class="px-4 py-8 text-center text-slate-500">暂无代理数据</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </aside>
-        </div>
+                    </div></template></a-table-column>
+<a-table-column key="column-4" align="right"><template #title>关联笔数</template><template #default="{ record: a, index: index }"><div class=" .5 text-right tabular-nums text-slate-600">{{ a.orderCount }}</div></template></a-table-column><template #emptyText>暂无代理数据</template>
+</a-table>
+            </div></template></a-drawer>
       </Transition>
     </Teleport>
   </div>

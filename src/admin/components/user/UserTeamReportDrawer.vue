@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton } from '../antd/controls.js'
+
 import { computed, ref, watch } from 'vue'
 import { getTeamReport } from '../../repositories/userRelationshipRepository.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
@@ -82,7 +84,7 @@ watch(totalPages, (nextTotalPages) => {
               <h2 id="team-report-title" ref="titleRef" tabindex="-1" class="text-xl font-semibold text-slate-900 outline-none">裂变团队报表</h2>
               <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · 裂变统计范围不包含本人</p>
             </div>
-            <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="team-report-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">

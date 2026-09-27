@@ -1,4 +1,5 @@
 <script setup>
+import { nativeControl } from '../../../admin/components/antd/controls.js'
 import { computed, reactive, ref } from 'vue'
 import { publicDepositAddressRepository } from '../../../admin/repositories/publicDepositAddressRepository.js'
 import PanelSingleSelect from '../../../admin/components/form/PanelSingleSelect.vue'
@@ -290,13 +291,9 @@ async function copyAddress(row) {
           按币种与网络维护用户充值时展示的平台地址。同一币种和网络只能启用一个地址，未配置地址的充值入口应暂停展示。
         </p>
       </div>
-      <button
-        type="button"
-        class="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-slate-900 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
-        @click="openCreate"
-      >
+      <a-button html-type="button" class="inline-flex shrink-0 items-center justify-center bg-slate-900 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800" @click="openCreate">
         <span class="mr-1.5 text-lg leading-none">＋</span>新增地址
-      </button>
+      </a-button>
     </header>
 
     <section class="grid gap-4 sm:grid-cols-3">
@@ -320,81 +317,59 @@ async function copyAddress(row) {
     <section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div class="flex flex-col gap-3 border-b border-slate-200 p-4 lg:flex-row lg:items-center">
         <div class="relative min-w-0 flex-1 lg:max-w-md">
-          <input
-            v-model="keyword"
-            type="search"
-            placeholder="搜索币种、网络、地址或备注"
-            class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100"
-          />
+          <a-input v-model:value="keyword" type="search" placeholder="搜索币种、网络、地址或备注" class="w-full transition" />
         </div>
-        <select v-model="networkFilter" class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:border-slate-400">
-          <option value="all">全部网络</option>
-          <option v-for="network in PUBLIC_DEPOSIT_NETWORKS" :key="network" :value="network">{{ network }}</option>
-        </select>
-        <select v-model="statusFilter" class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:border-slate-400">
-          <option value="all">全部状态</option>
-          <option value="enabled">已启用</option>
-          <option value="disabled">已停用</option>
-        </select>
+        <a-select v-model:value="networkFilter" class="text-slate-700">
+          <a-select-option value="all">全部网络</a-select-option>
+          <a-select-option v-for="network in PUBLIC_DEPOSIT_NETWORKS" :key="network" :value="network">{{ network }}</a-select-option>
+        </a-select>
+        <a-select v-model:value="statusFilter" class="text-slate-700">
+          <a-select-option value="all">全部状态</a-select-option>
+          <a-select-option value="enabled">已启用</a-select-option>
+          <a-select-option value="disabled">已停用</a-select-option>
+        </a-select>
       </div>
 
       <div class="overflow-x-auto">
-        <table class="min-w-[980px] w-full text-left text-sm">
-          <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
-            <tr>
-              <th class="px-5 py-3">币种 / 网络</th>
-              <th class="px-5 py-3">收款地址</th>
-              <th class="px-5 py-3">状态</th>
-              <th class="px-5 py-3">排序</th>
-              <th class="px-5 py-3">更新信息</th>
-              <th class="px-5 py-3 text-right">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr v-for="row in filteredRows" :key="row.id" class="transition hover:bg-slate-50/70">
-              <td class="px-5 py-4">
+        <a-table  :data-source="filteredRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;transition hover:bg-slate-50/70&quot;] })">
+<a-table-column key="column-0" ><template #title>币种 / 网络</template><template #default="{ record: row, index: index }"><div class=" ">
                 <p class="font-semibold text-slate-900">{{ row.coin }}</p>
                 <p class="mt-1 text-xs text-slate-500">{{ row.network }}</p>
-              </td>
-              <td class="max-w-md px-5 py-4">
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>收款地址</template><template #default="{ record: row, index: index }"><div class="max-w-md  ">
                 <p class="break-all font-mono text-xs text-slate-700" :title="row.address">{{ maskedAddress(row) }}</p>
                 <div class="mt-2 flex gap-3 text-xs font-medium">
-                  <button type="button" class="text-slate-500 hover:text-slate-900" @click="toggleReveal(row.id)">
+                  <a-button html-type="button" class="text-slate-500 hover:text-slate-900" @click="toggleReveal(row.id)">
                     {{ revealedIds.has(row.id) ? '隐藏' : '查看完整地址' }}
-                  </button>
-                  <button type="button" class="text-blue-600 hover:text-blue-700" @click="copyAddress(row)">
+                  </a-button>
+                  <a-button html-type="button" class="text-blue-600 hover:text-blue-700" @click="copyAddress(row)">
                     {{ copiedId === row.id ? '已复制' : '复制' }}
-                  </button>
+                  </a-button>
                 </div>
-              </td>
-              <td class="px-5 py-4">
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
                 <span class="inline-flex items-center gap-1.5 text-xs font-semibold" :class="row.enabled ? 'text-emerald-700' : 'text-slate-400'">
                   <span class="h-2 w-2 rounded-full" :class="row.enabled ? 'bg-emerald-500' : 'bg-slate-300'" />
                   {{ row.enabled ? '已启用' : '已停用' }}
                 </span>
-              </td>
-              <td class="px-5 py-4 text-sm font-semibold text-slate-700">
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>排序</template><template #default="{ record: row, index: index }"><div class="  text-sm font-semibold text-slate-700">
                 {{ row.sortOrder ?? 0 }}
-              </td>
-              <td class="px-5 py-4 text-xs text-slate-500">
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>更新信息</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-500">
                 <p>{{ row.updatedAt || '—' }}</p>
                 <p class="mt-1">{{ row.operator || '—' }}</p>
-              </td>
-              <td class="px-5 py-4 text-right">
+              </div></template></a-table-column>
+<a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="  text-right">
                 <div class="flex justify-end gap-3 text-xs font-semibold">
-                  <button type="button" class="text-blue-600 hover:text-blue-800" @click="openEdit(row)">编辑</button>
-                  <button type="button" class="text-violet-600 hover:text-violet-800" @click="openLogDialog(row)">修改日志</button>
-                  <button type="button" :class="row.enabled ? 'text-rose-600 hover:text-rose-800' : 'text-emerald-600 hover:text-emerald-800'" @click="toggleStatus(row)">
+                  <a-button html-type="button" class="text-blue-600 hover:text-blue-800" @click="openEdit(row)">编辑</a-button>
+                  <a-button html-type="button" class="text-violet-600 hover:text-violet-800" @click="openLogDialog(row)">修改日志</a-button>
+                  <a-button html-type="button" :class="row.enabled ? 'text-rose-600 hover:text-rose-800' : 'text-emerald-600 hover:text-emerald-800'" @click="toggleStatus(row)">
                     {{ row.enabled ? '停用' : '启用' }}
-                  </button>
+                  </a-button>
                 </div>
-              </td>
-            </tr>
-            <tr v-if="filteredRows.length === 0">
-              <td colspan="6" class="px-5 py-14 text-center text-sm text-slate-400">没有匹配的地址配置</td>
-            </tr>
-          </tbody>
-        </table>
+              </div></template></a-table-column>
+</a-table>
       </div>
       <div class="border-t border-slate-100 px-5 py-3 text-xs text-slate-500">
         共 {{ filteredRows.length }} 条记录 · 地址停用后仍保留历史记录，不支持物理删除
@@ -425,7 +400,7 @@ async function copyAddress(row) {
             <h2 id="public-deposit-address-dialog-title" class="text-lg font-bold text-slate-900">{{ form.id ? '编辑收款地址' : '新增收款地址' }}</h2>
             <p class="mt-1 text-xs text-slate-500">更换地址会生成新记录，原地址自动停用并保留。</p>
           </div>
-          <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeModal">×</button>
+          <a-button html-type="button" class="flex min-w-11 shrink-0 items-center justify-center text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeModal">×</a-button>
           </div>
         </header>
 
@@ -433,7 +408,7 @@ async function copyAddress(row) {
           <div class="min-h-0 flex-1 space-y-5 overflow-y-auto p-6">
           <div class="grid gap-4 sm:grid-cols-2">
             <PanelSingleSelect
-              ref="addressInitialFocusRef"
+              :ref="el => { addressInitialFocusRef = nativeControl(el) }"
               v-model="form.coin"
               label="币种"
               search-label="搜索币种"
@@ -455,27 +430,19 @@ async function copyAddress(row) {
 
           <label class="block space-y-2 text-sm font-medium text-slate-700">
             <span>收款地址</span>
-            <input v-model="form.address" type="text" spellcheck="false" placeholder="请输入完整链上地址" class="h-11 w-full rounded-lg border border-slate-200 px-3 font-mono text-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100" />
+            <a-input v-model:value="form.address" type="text" spellcheck="false" placeholder="请输入完整链上地址" class="w-full font-mono" />
             <span v-if="form.id && editingAddress !== form.address" class="block text-xs font-normal text-amber-600">检测到地址变更：保存后将新建记录并停用原地址。</span>
           </label>
 
           <label class="block space-y-2 text-sm font-medium text-slate-700">
             <span>排序</span>
-            <input
-              v-model="form.sortOrder"
-              type="number"
-              inputmode="numeric"
-              min="0"
-              step="1"
-              placeholder="数值越大展示越靠前"
-              class="h-11 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
-            />
+            <a-input type="number" inputmode="numeric" min="0" step="1" placeholder="数值越大展示越靠前" class="w-full" :value="form.sortOrder" @update:value="form.sortOrder = $event === '' ? '' : Number($event)" />
             <span class="block text-xs font-normal text-slate-500">列表按排序值从大到小展示，相同排序按更新时间降序。</span>
           </label>
 
           <label class="block space-y-2 text-sm font-medium text-slate-700">
             <span>备注</span>
-            <textarea v-model="form.remark" rows="3" placeholder="填写地址用途或更换原因" class="w-full resize-none rounded-lg border border-slate-200 px-3 py-2 outline-none focus:border-slate-400" />
+            <a-textarea v-model:value="form.remark" rows="3" placeholder="填写地址用途或更换原因" class="w-full resize-none" />
           </label>
 
           <label class="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
@@ -483,15 +450,15 @@ async function copyAddress(row) {
               <span class="block text-sm font-semibold text-slate-800">启用状态</span>
               <span class="mt-0.5 block text-xs text-slate-500">启用后可参与前台充值地址匹配</span>
             </span>
-            <input v-model="form.enabled" type="checkbox" class="h-5 w-5 rounded border-slate-300 text-slate-900 focus:ring-slate-500" />
+            <a-checkbox v-model:checked="form.enabled" class="w-5 text-slate-900" />
           </label>
 
           <p v-if="formError" class="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{{ formError }}</p>
           </div>
 
           <footer class="shrink-0 flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-            <button type="button" class="h-10 rounded-lg border border-slate-200 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-50" @click="closeModal">取消</button>
-            <button type="submit" class="h-10 rounded-lg bg-slate-900 px-5 text-sm font-semibold text-white hover:bg-slate-800">保存配置</button>
+            <a-button html-type="button" class="border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50" @click="closeModal">取消</a-button>
+            <a-button html-type="submit" class="bg-slate-900 text-sm font-semibold text-white hover:bg-slate-800">保存配置</a-button>
           </footer>
         </form>
       </section>
@@ -526,7 +493,7 @@ async function copyAddress(row) {
               {{ logRow.coin }} · {{ logRow.network }} · {{ logRow.id }}
             </p>
           </div>
-          <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeLogDialog">×</button>
+          <a-button html-type="button" class="flex min-w-11 shrink-0 items-center justify-center text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeLogDialog">×</a-button>
           </div>
         </header>
 
@@ -550,26 +517,15 @@ async function copyAddress(row) {
               </div>
 
               <div class="overflow-x-auto">
-                <table class="w-full min-w-[650px] text-left text-xs">
-                  <thead class="border-b border-slate-100 text-slate-400">
-                    <tr>
-                      <th class="w-32 px-4 py-2.5 font-medium">变更字段</th>
-                      <th class="px-4 py-2.5 font-medium">变更前</th>
-                      <th class="px-4 py-2.5 font-medium">变更后</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-100">
-                    <tr v-for="field in changedLogFields(log)" :key="field">
-                      <td class="px-4 py-3 font-semibold text-slate-600">{{ LOG_FIELD_LABELS[field] }}</td>
-                      <td class="max-w-xs break-all px-4 py-3 text-slate-500" :class="field === 'address' ? 'font-mono' : ''">
+                <a-table  :data-source="changedLogFields(log)" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(field) => field" >
+<a-table-column key="column-0" ><template #title>变更字段</template><template #default="{ record: field, index: index }"><div class="  font-semibold text-slate-600">{{ LOG_FIELD_LABELS[field] }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>变更前</template><template #default="{ record: field, index: index }"><div class="max-w-xs break-all   text-slate-500" :class="field === 'address' ? 'font-mono' : ''">
                         {{ formatLogValue(field, log.before?.[field]) }}
-                      </td>
-                      <td class="max-w-xs break-all bg-emerald-50/40 px-4 py-3 text-slate-800" :class="field === 'address' ? 'font-mono' : ''">
+                      </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>变更后</template><template #default="{ record: field, index: index }"><div class="max-w-xs break-all bg-emerald-50/40   text-slate-800" :class="field === 'address' ? 'font-mono' : ''">
                         {{ formatLogValue(field, log.after?.[field]) }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                      </div></template></a-table-column>
+</a-table>
               </div>
             </article>
 
@@ -577,20 +533,7 @@ async function copyAddress(row) {
               <p class="text-xs text-slate-500">
                 共 {{ addressLogs.length }} 条 · 第 {{ logPage }} / {{ logPageCount }} 页
               </p>
-              <div class="flex items-center gap-2">
-                <button
-                  type="button"
-                  class="h-9 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
-                  :disabled="logPage <= 1"
-                  @click="logPage -= 1"
-                >上一页</button>
-                <button
-                  type="button"
-                  class="h-9 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
-                  :disabled="logPage >= logPageCount"
-                  @click="logPage += 1"
-                >下一页</button>
-              </div>
+              <a-pagination size="small" v-model:current="logPage" :page-size="LOG_PAGE_SIZE" :total="addressLogs.length" :show-size-changer="false" />
             </footer>
           </div>
           <div v-else class="py-14 text-center">

@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton, AdminInput, nativeControl } from './antd/controls.js'
+
 import { useMfaVerification } from '../composables/useMfaVerification.js'
 
 const props = defineProps({
@@ -77,7 +79,7 @@ const {
                   <h2 id="mfa-dialog-title" class="break-words text-xl font-semibold text-slate-900">{{ displayedDialog.title }}</h2>
                   <p class="mt-0.5 break-words text-xs text-slate-500">{{ displayedDialog.description }}</p>
                 </div>
-                <button
+                <AdminButton
                   type="button"
                   class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
                   aria-label="关闭"
@@ -87,7 +89,7 @@ const {
                   @click="close"
                 >
                   ×
-                </button>
+                </AdminButton>
               </div>
             </header>
 
@@ -102,8 +104,8 @@ const {
 
               <label class="block space-y-2">
                 <span class="text-sm font-medium text-slate-700">验证码</span>
-                <input
-                  ref="verificationInput"
+                <AdminInput
+                  :ref="element => { verificationInput = nativeControl(element) }"
                   v-model="verificationCode"
                   type="text"
                   inputmode="numeric"
@@ -136,7 +138,7 @@ const {
             </div>
 
             <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-              <button
+              <AdminButton
                 type="button"
                 class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
                 :disabled="displayedDialog.loading || displayedDialog.verifyRequested"
@@ -144,8 +146,8 @@ const {
                 @click="handleCancel"
               >
                 取消
-              </button>
-              <button
+              </AdminButton>
+              <AdminButton
                 type="button"
                 class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                 :disabled="displayedDialog.loading || displayedDialog.verifyRequested || !verificationCode"
@@ -160,7 +162,7 @@ const {
                   </svg>
                   验证中...
                 </span>
-              </button>
+              </AdminButton>
             </footer>
           </section>
         </Transition>

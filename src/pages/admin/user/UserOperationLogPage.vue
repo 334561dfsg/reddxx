@@ -160,69 +160,63 @@ const goToPage = (page) => {
       <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <label class="space-y-1 text-sm text-slate-600">
           <span>目标用户</span>
-          <input v-model="filterDraft.keyword" class="ant-input" placeholder="UID / 用户名 / 邮箱 / 手机" />
+          <a-input v-model:value="filterDraft.keyword" class="" placeholder="UID / 用户名 / 邮箱 / 手机" />
         </label>
         <label class="space-y-1 text-sm text-slate-600">
           <span>操作人或来源</span>
-          <input v-model="filterDraft.operatorKeyword" class="ant-input" placeholder="管理员 / 系统规则 / 任务" />
+          <a-input v-model:value="filterDraft.operatorKeyword" class="" placeholder="管理员 / 系统规则 / 任务" />
         </label>
         <label class="space-y-1 text-sm text-slate-600">
           <span>业务分类</span>
-          <select v-model="filterDraft.category" class="ant-input" @change="filterDraft.action = ''">
-            <option value="">全部分类</option>
-            <option v-for="item in USER_AUDIT_CATEGORIES" :key="item.value" :value="item.value">{{ item.label }}</option>
-          </select>
+          <a-select v-model:value="filterDraft.category" class="" @change="filterDraft.action = ''">
+            <a-select-option value="">全部分类</a-select-option>
+            <a-select-option v-for="item in USER_AUDIT_CATEGORIES" :key="item.value" :value="item.value">{{ item.label }}</a-select-option>
+          </a-select>
         </label>
         <label class="space-y-1 text-sm text-slate-600">
           <span>操作类型</span>
-          <select v-model="filterDraft.action" class="ant-input">
-            <option value="">全部操作</option>
-            <option v-for="item in actionOptions" :key="item.value" :value="item.value">{{ item.label }}</option>
-          </select>
+          <a-select v-model:value="filterDraft.action" class="">
+            <a-select-option value="">全部操作</a-select-option>
+            <a-select-option v-for="item in actionOptions" :key="item.value" :value="item.value">{{ item.label }}</a-select-option>
+          </a-select>
         </label>
         <label class="space-y-1 text-sm text-slate-600">
           <span>操作结果</span>
-          <select v-model="filterDraft.result" class="ant-input">
-            <option value="">全部结果</option>
-            <option v-for="item in USER_AUDIT_RESULTS" :key="item.value" :value="item.value">{{ item.label }}</option>
-          </select>
+          <a-select v-model:value="filterDraft.result" class="">
+            <a-select-option value="">全部结果</a-select-option>
+            <a-select-option v-for="item in USER_AUDIT_RESULTS" :key="item.value" :value="item.value">{{ item.label }}</a-select-option>
+          </a-select>
         </label>
         <label class="space-y-1 text-sm text-slate-600">
           <span>操作原因</span>
-          <input v-model="filterDraft.reasonKeyword" class="ant-input" placeholder="复核 / 规则 / 备注关键词" />
+          <a-input v-model:value="filterDraft.reasonKeyword" class="" placeholder="复核 / 规则 / 备注关键词" />
         </label>
         <label class="space-y-1 text-sm text-slate-600">
           <span>关联 ID</span>
-          <input v-model="filterDraft.relatedKeyword" class="ant-input" placeholder="业务 / 请求 / 规则 / 任务 ID" />
+          <a-input v-model:value="filterDraft.relatedKeyword" class="" placeholder="业务 / 请求 / 规则 / 任务 ID" />
         </label>
         <div class="grid grid-cols-2 gap-2">
           <label class="space-y-1 text-sm text-slate-600">
             <span>开始时间</span>
-            <input v-model="filterDraft.timeFrom" class="ant-input" type="date" />
+            <a-input v-model:value="filterDraft.timeFrom" class="" type="date" />
           </label>
           <label class="space-y-1 text-sm text-slate-600">
             <span>结束时间</span>
-            <input v-model="filterDraft.timeTo" class="ant-input" type="date" />
+            <a-input v-model:value="filterDraft.timeTo" class="" type="date" />
           </label>
         </div>
       </div>
       <div class="mt-4 flex flex-wrap items-center gap-2">
-        <button type="submit" class="ant-btn ant-btn-primary">查询</button>
-        <button type="button" class="ant-btn" @click="resetFilters">重置</button>
+        <a-button html-type="submit" class="" type="primary">查询</a-button>
+        <a-button html-type="button" class="" @click="resetFilters">重置</a-button>
       </div>
     </form>
 
     <div v-if="hasAppliedFilters" class="flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
       <span class="text-slate-500">已应用条件</span>
-      <button
-        v-for="item in appliedFilterItems"
-        :key="item.key"
-        type="button"
-        class="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-slate-700 hover:border-blue-300 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        @click="removeAppliedFilter(item.key)"
-      >
+      <a-button v-for="item in appliedFilterItems" :key="item.key" html-type="button" class="border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" @click="removeAppliedFilter(item.key)">
         {{ item.label }}：{{ item.value }} ×
-      </button>
+      </a-button>
     </div>
 
     <div class="rounded-lg border border-slate-200 bg-white shadow-sm" aria-live="polite" :aria-busy="requestPhase !== 'ready'">
@@ -243,54 +237,22 @@ const goToPage = (page) => {
 
       <div v-else>
         <div class="hidden overflow-x-auto md:block">
-          <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-            <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-              <tr>
-                <th class="px-4 py-3">时间</th>
-                <th class="px-4 py-3">目标用户</th>
-                <th class="px-4 py-3">操作人</th>
-                <th class="px-4 py-3">分类 / 操作</th>
-                <th class="px-4 py-3">变更摘要</th>
-                <th class="px-4 py-3">原因</th>
-                <th class="px-4 py-3">结果</th>
-                <th class="px-4 py-3">详情</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <template v-for="log in queryResult.rows" :key="log.id">
-                <tr class="align-top">
-                  <td class="whitespace-nowrap px-4 py-3 text-slate-600">{{ formatTime(log.occurredAt) }}</td>
-                  <td class="px-4 py-3">
+          <a-table :data-source="queryResult.rows" row-key="id" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :expanded-row-keys="expandedLogId ? [expandedLogId] : []" :show-expand-column="false"><a-table-column key="column-0"><template #title>时间</template><template #default="{ record: log }">{{ formatTime(log.occurredAt) }}</template></a-table-column><a-table-column key="column-1"><template #title>目标用户</template><template #default="{ record: log }">
                     <div class="font-medium text-slate-900">{{ log.targetUser.uid }}</div>
                     <div class="text-xs text-slate-500">{{ log.targetUser.name || '-' }}</div>
-                  </td>
-                  <td class="px-4 py-3">
+                  </template></a-table-column><a-table-column key="column-2"><template #title>操作人</template><template #default="{ record: log }">
                     <div class="font-medium text-slate-900">{{ log.operator.name }}</div>
                     <div class="text-xs text-slate-500">{{ log.sourceLabel }}</div>
-                  </td>
-                  <td class="px-4 py-3">
+                  </template></a-table-column><a-table-column key="column-3"><template #title>分类 / 操作</template><template #default="{ record: log }">
                     <div class="font-medium text-slate-900">{{ log.categoryLabel }}</div>
                     <div class="text-xs text-slate-500">{{ log.actionLabel }}</div>
-                  </td>
-                  <td class="max-w-xs px-4 py-3 text-slate-700">{{ log.summary }}</td>
-                  <td class="max-w-xs px-4 py-3 text-slate-600">{{ log.reason }}</td>
-                  <td class="px-4 py-3">
+                  </template></a-table-column><a-table-column key="column-4"><template #title>变更摘要</template><template #default="{ record: log }">{{ log.summary }}</template></a-table-column><a-table-column key="column-5"><template #title>原因</template><template #default="{ record: log }">{{ log.reason }}</template></a-table-column><a-table-column key="column-6"><template #title>结果</template><template #default="{ record: log }">
                     <span class="rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">{{ log.resultLabel }}</span>
-                  </td>
-                  <td class="px-4 py-3">
-                    <button
-                      type="button"
-                      class="text-sm font-medium text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      :aria-expanded="expandedLogId === log.id"
-                      :aria-controls="`audit-detail-${log.id}`"
-                      @click="toggleDetail(log.id)"
-                    >
+                  </template></a-table-column><a-table-column key="column-7"><template #title>详情</template><template #default="{ record: log }">
+                    <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" :aria-expanded="expandedLogId === log.id" :aria-controls="`audit-detail-${log.id}`" @click="toggleDetail(log.id)">
                       {{ expandedLogId === log.id ? '收起' : '查看' }}
-                    </button>
-                  </td>
-                </tr>
-                <tr v-if="expandedLogId === log.id" :id="`audit-detail-${log.id}`" class="bg-slate-50">
-                  <td colspan="8" class="px-4 py-4">
+                    </a-button>
+                  </template></a-table-column><template #expandedRowRender="{ record: log }"><div :id="`audit-detail-${log.id}`">
                     <div class="grid gap-3 lg:grid-cols-[1fr_280px]">
                       <div class="rounded-md border border-slate-200 bg-white p-3">
                         <h3 class="text-sm font-semibold text-slate-900">字段变更</h3>
@@ -311,11 +273,7 @@ const goToPage = (page) => {
                         <p>规则ID：{{ log.related.ruleId || '-' }}</p>
                       </div>
                     </div>
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
+                  </div></template></a-table>
         </div>
 
         <div class="divide-y divide-slate-100 md:hidden">
@@ -333,15 +291,9 @@ const goToPage = (page) => {
               <p>原因：{{ log.reason }}</p>
               <p>摘要：{{ log.summary }}</p>
             </div>
-            <button
-              type="button"
-              class="mt-3 text-sm font-medium text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              :aria-expanded="expandedLogId === log.id"
-              :aria-controls="`mobile-audit-detail-${log.id}`"
-              @click="toggleDetail(log.id)"
-            >
+            <a-button html-type="button" class="mt-3 text-sm font-medium text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" :aria-expanded="expandedLogId === log.id" :aria-controls="`mobile-audit-detail-${log.id}`" @click="toggleDetail(log.id)">
               {{ expandedLogId === log.id ? '收起详情' : '查看详情' }}
-            </button>
+            </a-button>
             <div v-if="expandedLogId === log.id" :id="`mobile-audit-detail-${log.id}`" class="mt-3 rounded-md bg-slate-50 p-3 text-sm text-slate-600">
               <div v-for="diff in log.diff" :key="diff.field" class="border-b border-slate-200 py-2 last:border-0">
                 <p class="font-medium text-slate-800">{{ diff.field }}</p>
@@ -356,23 +308,7 @@ const goToPage = (page) => {
         </div>
       </div>
 
-      <nav v-if="queryResult.totalPages > 1" class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 p-4" aria-label="用户操作日志分页">
-        <button type="button" class="ant-btn" :disabled="queryResult.page <= 1" @click="goToPage(queryResult.page - 1)">上一页</button>
-        <div class="flex flex-wrap gap-2">
-          <button
-            v-for="pageNumber in pageNumbers"
-            :key="pageNumber"
-            type="button"
-            class="rounded-md border px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            :class="pageNumber === queryResult.page ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 bg-white text-slate-700'"
-            :aria-current="pageNumber === queryResult.page ? 'page' : undefined"
-            @click="goToPage(pageNumber)"
-          >
-            {{ pageNumber }}
-          </button>
-        </div>
-        <button type="button" class="ant-btn" :disabled="queryResult.page >= queryResult.totalPages" @click="goToPage(queryResult.page + 1)">下一页</button>
-      </nav>
+      <a-pagination v-if="queryResult.totalPages > 1" size="small" :current="queryResult.page" :page-size="queryResult.pageSize" :total="queryResult.total" :show-size-changer="false"  @change="goToPage" />
     </div>
   </section>
 </template>

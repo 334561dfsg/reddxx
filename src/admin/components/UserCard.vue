@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton } from './antd/controls.js'
+
 import { computed } from 'vue'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../constants/user'
 
@@ -74,16 +76,16 @@ const profitClass = computed(() => {
         <p class="text-sm text-slate-500 mt-1">{{ user.email }}</p>
         <p class="text-xs font-mono text-slate-400 mt-1">ID: {{ user.id }}</p>
       </div>
-      
+
       <!-- 状态和角色标签 -->
       <div class="flex flex-col gap-2 items-end">
-        <span 
+        <span
           :class="statusConfig[user.status].class"
           class="px-3 py-1 text-xs font-medium rounded-full"
         >
           {{ statusConfig[user.status].text }}
         </span>
-        <span 
+        <span
           :class="roleConfig[user.role].class"
           class="px-3 py-1 text-xs font-medium rounded-full"
         >
@@ -96,7 +98,7 @@ const profitClass = computed(() => {
     <div class="mb-4 p-3 bg-slate-50 rounded-lg">
       <p class="text-xs text-slate-500 mb-1">信用分</p>
       <div class="flex items-center gap-2">
-        <span 
+        <span
           :class="creditScoreClass"
           class="inline-flex px-3 py-1 text-lg font-bold rounded-md"
         >
@@ -149,29 +151,29 @@ const profitClass = computed(() => {
 
       <div class="flex items-center justify-between">
         <span class="text-xs text-slate-500">KYC状态</span>
-        <span 
+        <span
           :class="kycConfig[user.kycStatus].class"
           class="px-2 py-1 text-xs font-medium rounded-full"
         >
           {{ kycConfig[user.kycStatus].text }}
         </span>
       </div>
-      
+
       <div class="flex items-center justify-between">
         <span class="text-xs text-slate-500">手机号</span>
         <span class="text-xs text-slate-700">{{ user.phone }}</span>
       </div>
-      
+
       <div class="flex items-center justify-between">
         <span class="text-xs text-slate-500">注册时间</span>
         <span class="text-xs text-slate-700">{{ formatDate(user.registerTime) }}</span>
       </div>
-      
+
       <div class="flex items-center justify-between">
         <span class="text-xs text-slate-500">最后登录</span>
         <span class="text-xs text-slate-700">{{ formatDate(user.lastLoginTime) }}</span>
       </div>
-      
+
       <div class="flex items-center justify-between">
         <span class="text-xs text-slate-500">登录IP</span>
         <span class="text-xs font-mono text-slate-700">{{ user.lastLoginIp }}</span>
@@ -185,15 +187,15 @@ const profitClass = computed(() => {
 
     <!-- 操作按钮 -->
     <div class="mt-4 pt-4 border-t border-slate-100 flex gap-2">
-      <button class="flex-1 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+      <AdminButton class="flex-1 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
         编辑用户
-      </button>
-      <button class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+      </AdminButton>
+      <AdminButton class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
         管理权限
-      </button>
-      <button class="px-4 py-2 text-sm font-medium text-rose-600 bg-rose-50 rounded-lg hover:bg-rose-100 transition-colors">
+      </AdminButton>
+      <AdminButton class="px-4 py-2 text-sm font-medium text-rose-600 bg-rose-50 rounded-lg hover:bg-rose-100 transition-colors">
         禁用
-      </button>
+      </AdminButton>
     </div>
   </article>
 </template>

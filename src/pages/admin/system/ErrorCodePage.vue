@@ -186,9 +186,9 @@ const nextPage = () => {
       </div>
 
       <div class="flex items-center gap-2">
-        <button type="button" class="ant-btn ant-btn-primary !h-9 !px-4 !text-sm" @click="openCreate">
+        <a-button html-type="button" class="!text-sm" @click="openCreate" type="primary">
           新建错误码
-        </button>
+        </a-button>
       </div>
     </header>
 
@@ -196,40 +196,26 @@ const nextPage = () => {
       <div class="grid gap-3 md:grid-cols-4">
         <label class="block space-y-1">
           <span class="text-xs font-medium text-slate-600">错误码ID</span>
-          <input
-            v-model="filters.errorCodeId"
-            type="number"
-            inputmode="numeric"
-            placeholder="例如 100001"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
+          <a-input type="number" inputmode="numeric" placeholder="例如 100001" class="w-full" :value="filters.errorCodeId" @update:value="filters.errorCodeId = $event === '' ? '' : Number($event)" />
         </label>
 
         <label class="block space-y-1">
           <span class="text-xs font-medium text-slate-600">语言</span>
-          <select
-            v-model="filters.language"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="">全部</option>
-            <option v-for="lang in languages" :key="lang" :value="lang">{{ lang }}</option>
-          </select>
+          <a-select v-model:value="filters.language" class="w-full">
+            <a-select-option value="">全部</a-select-option>
+            <a-select-option v-for="lang in languages" :key="lang" :value="lang">{{ lang }}</a-select-option>
+          </a-select>
         </label>
 
         <label class="block space-y-1 md:col-span-2">
           <span class="text-xs font-medium text-slate-600">关键词</span>
-          <input
-            v-model="filters.keyword"
-            type="text"
-            placeholder="搜索 error_code_name / error_code_id / language"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
+          <a-input v-model:value="filters.keyword" type="text" placeholder="搜索 error_code_name / error_code_id / language" class="w-full" />
         </label>
       </div>
 
       <div class="flex items-center justify-between gap-3">
         <label class="flex items-center gap-2 text-sm text-slate-600 select-none">
-          <input v-model="filters.includeDeleted" type="checkbox" class="h-4 w-4" />
+          <a-checkbox v-model:checked="filters.includeDeleted" class="w-4" />
           显示已删除
         </label>
 
@@ -246,65 +232,34 @@ const nextPage = () => {
       </div>
 
       <div v-else class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-slate-50 border-b border-slate-200">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">错误码ID</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">语言</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">文案</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">创建时间</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">更新时间</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">状态</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
-            </tr>
-          </thead>
-
-          <tbody class="divide-y divide-slate-200">
-            <tr v-for="row in list" :key="row.id" class="hover:bg-slate-50 transition-colors">
-              <td class="px-4 py-3 text-xs font-mono text-slate-600">{{ formatId(row.id) }}</td>
-              <td class="px-4 py-3 text-sm text-slate-800 font-mono">{{ formatId(row.error_code_id) }}</td>
-              <td class="px-4 py-3 text-sm text-slate-700">{{ row.language }}</td>
-              <td class="px-4 py-3 text-sm text-slate-800">
+        <a-table  :data-source="list" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50 transition-colors&quot;] })">
+<a-table-column key="column-0" ><template #title>ID</template><template #default="{ record: row, index: index }"><div class="  text-xs font-mono text-slate-600">{{ formatId(row.id) }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>错误码ID</template><template #default="{ record: row, index: index }"><div class="  text-sm text-slate-800 font-mono">{{ formatId(row.error_code_id) }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>语言</template><template #default="{ record: row, index: index }"><div class="  text-sm text-slate-700">{{ row.language }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>文案</template><template #default="{ record: row, index: index }"><div class="  text-sm text-slate-800">
                 <div class="max-w-[520px] truncate" :title="row.error_code_name">{{ row.error_code_name }}</div>
-              </td>
-              <td class="px-4 py-3 text-sm text-slate-600">{{ row.created_at_text }}</td>
-              <td class="px-4 py-3 text-sm text-slate-600">{{ row.updated_at_text }}</td>
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>创建时间</template><template #default="{ record: row, index: index }"><div class="  text-sm text-slate-600">{{ row.created_at_text }}</div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>更新时间</template><template #default="{ record: row, index: index }"><div class="  text-sm text-slate-600">{{ row.updated_at_text }}</div></template></a-table-column>
+<a-table-column key="column-6" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
                 <span
                   class="rounded-full px-2 py-0.5 text-xs font-medium"
                   :class="row.deleted_at ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'"
                 >
                   {{ row.deleted_at ? '已删除' : '生效中' }}
                 </span>
-              </td>
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-7" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class=" ">
                 <div class="flex items-center justify-end gap-2">
-                  <button
-                    type="button"
-                    class="ant-btn !h-8 !px-3 !text-xs"
-                    :disabled="Boolean(row.deleted_at)"
-                    @click="openEdit(row)"
-                  >
+                  <a-button html-type="button" class="!text-xs" :disabled="Boolean(row.deleted_at)" @click="openEdit(row)">
                     编辑
-                  </button>
-                  <button
-                    type="button"
-                    class="ant-btn !h-8 !px-3 !text-xs"
-                    :class="row.deleted_at ? '!border-emerald-200 !text-emerald-700 hover:!border-emerald-300' : '!border-rose-200 !text-rose-700 hover:!border-rose-300'"
-                    @click="toggleDelete(row)"
-                  >
+                  </a-button>
+                  <a-button html-type="button" class="!text-xs" :class="row.deleted_at ? '!border-emerald-200 !text-emerald-700 hover:!border-emerald-300' : '!border-rose-200 !text-rose-700 hover:!border-rose-300'" @click="toggleDelete(row)">
                     {{ row.deleted_at ? '恢复' : '删除' }}
-                  </button>
+                  </a-button>
                 </div>
-              </td>
-            </tr>
-
-            <tr v-if="list.length === 0">
-              <td colspan="8" class="px-6 py-10 text-center text-sm text-slate-500">暂无数据</td>
-            </tr>
-          </tbody>
-        </table>
+              </div></template></a-table-column><template #emptyText>暂无数据</template>
+</a-table>
       </div>
 
       <div v-if="pagination.total > 0" class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
@@ -312,97 +267,50 @@ const nextPage = () => {
           第 <span class="font-medium">{{ pagination.currentPage }}</span> / {{ totalPages }} 页
           <span class="text-slate-400 mx-2">·</span>
           每页
-          <select v-model="pagination.pageSize" class="ant-select !w-20 !h-7 !py-0 !px-1 text-xs">
-            <option :value="10">10</option>
-            <option :value="20">20</option>
-            <option :value="50">50</option>
-            <option :value="100">100</option>
-          </select>
+          <a-select v-model:value="pagination.pageSize" class="!w-20">
+            <a-select-option :value="10">10</a-select-option>
+            <a-select-option :value="20">20</a-select-option>
+            <a-select-option :value="50">50</a-select-option>
+            <a-select-option :value="100">100</a-select-option>
+          </a-select>
           条
         </div>
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            class="ant-btn !h-8 !px-3 !text-xs disabled:opacity-50 disabled:cursor-not-allowed"
-            :disabled="pagination.currentPage === 1 || loading"
-            @click="prevPage"
-          >
-            上一页
-          </button>
-          <button
-            type="button"
-            class="ant-btn !h-8 !px-3 !text-xs disabled:opacity-50 disabled:cursor-not-allowed"
-            :disabled="pagination.currentPage === totalPages || loading"
-            @click="nextPage"
-          >
-            下一页
-          </button>
-        </div>
+        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false"  :disabled="loading" @change="pagination.currentPage = $event" />
       </div>
     </article>
 
-    <div v-if="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div class="w-full max-w-lg rounded-xl bg-white shadow-xl overflow-hidden">
-        <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+    <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <h3 class="text-base font-semibold text-slate-900">{{ modalMode === 'create' ? '新建错误码' : '编辑错误码' }}</h3>
-          <button type="button" class="rounded-md p-1 text-slate-500 hover:bg-slate-100" @click="closeModal">
+          <a-button aria-label="关闭" html-type="button" class="text-slate-500 hover:bg-slate-100" @click="closeModal">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
-        </div>
-
-        <div class="p-5 space-y-4">
+          </a-button>
+        </div></template></template><template v-if="modalOpen"><div class="p-5 space-y-4">
           <label class="block space-y-1">
             <span class="text-xs font-medium text-slate-600">错误码ID</span>
-            <input
-              v-model="form.error_code_id"
-              type="number"
-              inputmode="numeric"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+            <a-input type="number" inputmode="numeric" class="w-full" :value="form.error_code_id" @update:value="form.error_code_id = $event === '' ? '' : Number($event)" />
           </label>
 
           <label class="block space-y-1">
             <span class="text-xs font-medium text-slate-600">语言</span>
             <div class="flex items-center gap-2">
-              <select
-                v-model="form.language"
-                class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option v-for="lang in languages" :key="lang" :value="lang">{{ lang }}</option>
-              </select>
-              <input
-                v-model="form.language"
-                type="text"
-                placeholder="或手动输入"
-                class="w-40 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+              <a-select v-model:value="form.language" class="min-w-0 flex-1">
+                <a-select-option v-for="lang in languages" :key="lang" :value="lang">{{ lang }}</a-select-option>
+              </a-select>
+              <a-input v-model:value="form.language" type="text" placeholder="或手动输入" class="w-40" />
             </div>
           </label>
 
           <label class="block space-y-1">
             <span class="text-xs font-medium text-slate-600">文案</span>
-            <textarea
-              v-model="form.error_code_name"
-              rows="3"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            ></textarea>
+            <a-textarea v-model:value="form.error_code_name" rows="3" class="w-full"></a-textarea>
           </label>
-        </div>
-
-        <div class="flex items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
-          <button type="button" class="ant-btn !h-9 !px-4 !text-sm" :disabled="submitting" @click="closeModal">取消</button>
-          <button
-            type="button"
-            class="ant-btn ant-btn-primary !h-9 !px-4 !text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            :disabled="submitting || !isFormValid"
-            @click="submit"
-          >
+        </div></template><template #footer><template v-if="Boolean(modalOpen)"><div class="flex items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
+          <a-button html-type="button" class="!text-sm" :disabled="submitting" @click="closeModal">取消</a-button>
+          <a-button html-type="button" class="!text-sm disabled:opacity-50 disabled:cursor-not-allowed" :disabled="submitting || !isFormValid" @click="submit" type="primary">
             {{ submitting ? '提交中...' : '保存' }}
-          </button>
-        </div>
-      </div>
-    </div>
+          </a-button>
+        </div></template></template></a-modal>
   </section>
 </template>

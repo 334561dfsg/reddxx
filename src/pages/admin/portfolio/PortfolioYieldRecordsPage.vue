@@ -21,33 +21,39 @@ const {
     </header>
 
     <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <table class="w-full">
-        <thead class="border-b border-slate-200 bg-slate-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">记录 ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">订单</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">产品</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">用户</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">收益</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">日期</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase text-slate-500">状态</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200">
-          <tr v-for="record in pagedRecords" :key="record.id" class="hover:bg-slate-50">
-            <td class="px-6 py-4 font-mono text-xs text-slate-500">{{ record.id }}</td>
-            <td class="px-6 py-4 font-mono text-xs text-slate-500">{{ record.orderId }}</td>
-            <td class="px-6 py-4 text-sm text-slate-900">{{ record.productName }}</td>
-            <td class="px-6 py-4 text-sm text-slate-600">{{ record.userName }}</td>
-            <td class="px-6 py-4 text-sm">
+      <a-table  size="small" :pagination="false" :data-source="pagedRecords" :row-key="(record) => record.id" :scroll="{ x: 'max-content' }" :custom-row="(record, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 font-mono text-xs text-slate-500&quot;] })">
+<template #title>记录 ID</template>
+<template #default="{ record: record, index: rowIndex }">{{ record.id }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 font-mono text-xs text-slate-500&quot;] })">
+<template #title>订单</template>
+<template #default="{ record: record, index: rowIndex }">{{ record.orderId }}</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-900&quot;] })">
+<template #title>产品</template>
+<template #default="{ record: record, index: rowIndex }">{{ record.productName }}</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: record, index: rowIndex }">{{ record.userName }}</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm&quot;] })">
+<template #title>收益</template>
+<template #default="{ record: record, index: rowIndex }">
               <div class="font-medium text-emerald-600">{{ formatPortfolioAmount(record.yieldAmount) }}</div>
               <div class="text-xs text-slate-500">日收益率 {{ record.dailyRatePct }}%</div>
-            </td>
-            <td class="px-6 py-4 text-sm text-slate-600">{{ record.recordDate }}</td>
-            <td class="px-6 py-4"><span class="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-700">{{ record.status }}</span></td>
-          </tr>
-        </tbody>
-      </table>
+            </template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>日期</template>
+<template #default="{ record: record, index: rowIndex }">{{ record.recordDate }}</template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: record, index: rowIndex }"><span class="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-700">{{ record.status }}</span></template>
+</a-table-column>
+</a-table>
       <AdminListPaginationBar
         :current-page="currentPage"
         :total-pages="totalPages"

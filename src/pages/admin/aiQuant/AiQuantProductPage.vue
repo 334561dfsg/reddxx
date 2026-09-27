@@ -5,115 +5,121 @@
 				<h1 class="text-3xl font-semibold text-slate-900">AI量化产品管理</h1>
 				<p class="mt-1 text-sm text-slate-500">配置理财产品、收益阶梯及准入门槛</p>
 			</div>
-			<button @click="openCreateProduct" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">
+			<a-button type="text" @click="openCreateProduct" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">
 				+ 创建产品
-			</button>
+			</a-button>
 		</header>
 
 		<!-- 筛选器 -->
 		<div class="rounded-xl border border-slate-200 bg-white p-4">
 			<div class="grid grid-cols-4 gap-4">
 				<div>
-					<input v-model="search" placeholder="搜索产品名称或币种" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+					<a-input v-model:value="search" placeholder="搜索产品名称或币种" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 				</div>
 				<div>
-					<select v-model="statusFilter" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-						<option :value="COMMON_FILTER_ALL">全部状态</option>
-						<option v-for="(meta, key) in productStatusMeta" :key="key" :value="key">{{ meta.label }}</option>
-					</select>
+					<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="statusFilter" class="w-full transition">
+						<a-select-option :value="COMMON_FILTER_ALL">全部状态</a-select-option>
+						<a-select-option v-for="(meta, key) in productStatusMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
+					</a-select>
 				</div>
 				<div>
-					<select v-model="currencyFilter" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-						<option :value="COMMON_FILTER_ALL">全部币种</option>
-						<option v-for="currency in SUPPORTED_CURRENCIES" :key="currency" :value="currency">{{ currency }}</option>
-					</select>
+					<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="currencyFilter" class="w-full transition">
+						<a-select-option :value="COMMON_FILTER_ALL">全部币种</a-select-option>
+						<a-select-option v-for="currency in SUPPORTED_CURRENCIES" :key="currency" :value="currency">{{ currency }}</a-select-option>
+					</a-select>
 				</div>
 				<div>
-					<select v-model="modeFilter" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-						<option :value="COMMON_FILTER_ALL">全部模式</option>
-						<option v-for="(meta, key) in operationModeMeta" :key="key" :value="key">{{ meta.label }}</option>
-					</select>
+					<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="modeFilter" class="w-full transition">
+						<a-select-option :value="COMMON_FILTER_ALL">全部模式</a-select-option>
+						<a-select-option v-for="(meta, key) in operationModeMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
+					</a-select>
 				</div>
 			</div>
 		</div>
 
 		<!-- 产品列表 -->
 		<article class="rounded-xl border border-slate-200 bg-white overflow-hidden">
-			<table class="w-full">
-				<thead class="bg-slate-50 border-b border-slate-200">
-					<tr>
-						<th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">产品信息</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">运营模式</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">收益阶梯</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">限购规则</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">运营数据</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">状态</th>
-						<th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">操作</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-slate-200">
-					<tr v-for="product in pagedProducts" :key="product.id" class="transition hover:bg-slate-50">
-						<td class="px-6 py-4">
+			<a-table  size="small" :pagination="false" :data-source="pagedProducts" :row-key="(product) => product.id" :scroll="{ x: 'max-content' }" :custom-row="(product, rowIndex) => ({ class: [&quot;transition hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>产品信息</template>
+<template #default="{ record: product, index: rowIndex }">
 							<div>
 								<div class="font-medium text-slate-900">{{ product.name }}</div>
 								<div class="flex items-center gap-1.5 mt-0.5">
 									<span class="text-xs text-slate-400 font-mono">{{ product.id }}</span>
-									<button 
-										@click="copyProductId(product.id)" 
+									<a-button type="text"
+										@click="copyProductId(product.id)"
 										class="text-slate-400 hover:text-blue-600 transition p-0.5 rounded hover:bg-blue-50"
 										title="复制产品ID"
 									>
 										<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
 										</svg>
-									</button>
+									</a-button>
 								</div>
 								<div class="text-sm text-slate-500 mt-1">{{ product.currency }} · {{ vipLevelMeta[product.minVipLevel].label }}+</div>
 							</div>
-						</td>
-						<td class="px-6 py-4">
+						</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>运营模式</template>
+<template #default="{ record: product, index: rowIndex }">
 							<div class="text-sm">
 								<div class="font-medium text-slate-900">{{ operationModeMeta[product.operationMode].label }}</div>
 								<div class="text-xs text-slate-500">托管 {{ formatAiQuantDurationLabel(product.durationDays) }}</div>
 								<div class="text-xs text-slate-400">{{ settlementPeriodMeta[product.settlementPeriod].label }}</div>
 							</div>
-						</td>
-						<td class="px-6 py-4">
+						</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>收益阶梯</template>
+<template #default="{ record: product, index: rowIndex }">
 							<div class="text-xs space-y-1">
 								<div v-for="(tier, idx) in product.tiers" :key="idx" class="flex items-center justify-between">
 									<span class="text-slate-600">{{ tier.minAmount }}-{{ tier.maxAmount }} USDT</span>
 									<span class="font-medium text-green-600">{{ tier.dailyRate }}%</span>
 								</div>
 							</div>
-						</td>
-						<td class="px-6 py-4">
+						</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>限购规则</template>
+<template #default="{ record: product, index: rowIndex }">
 							<div class="text-sm text-slate-600">
 								<div>单用户: {{ product.limitAmount }} USDT</div>
 								<div>产品总额: {{ product.limitCount }} USDT</div>
 								<div>次数: {{ product.monthlyLimitCount }}/月</div>
 							</div>
-						</td>
-						<td class="px-6 py-4">
+						</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>运营数据</template>
+<template #default="{ record: product, index: rowIndex }">
 							<div class="text-sm text-slate-600">
 								<div>锁定: {{ product.totalLocked }} USDT</div>
 								<div>订单: {{ product.totalOrders }} 笔</div>
 								<div class="text-green-600">收益: {{ product.totalYield }} USDT</div>
 							</div>
-						</td>
-						<td class="px-6 py-4">
+						</template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: product, index: rowIndex }">
 							<span :class="['px-2 py-1 text-xs rounded-full', productStatusMeta[product.status].color]">
 								{{ productStatusMeta[product.status].label }}
 							</span>
-						</td>
-						<td class="px-6 py-4 text-right">
-							<button @click="openEditProduct(product)" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition mr-3">编辑</button>
-							<button @click="toggleProductStatus(product)" class="text-sm font-medium text-slate-600 transition hover:text-slate-800">
+						</template>
+</a-table-column>
+<a-table-column key="column-6" align="right" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: product, index: rowIndex }">
+							<a-button type="text" @click="openEditProduct(product)" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition mr-3">编辑</a-button>
+							<a-button type="text" @click="toggleProductStatus(product)" class="text-sm font-medium text-slate-600 transition hover:text-slate-800">
 								{{ product.status === PRODUCT_STATUS.ENABLED ? '禁用' : '启用' }}
-							</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+							</a-button>
+						</template>
+</a-table-column>
+</a-table>
 
 			<AdminListPaginationBar
 				v-model:current-page="productCurrentPage"
@@ -129,26 +135,19 @@
 
 		<!-- 产品编辑弹窗：Teleport 到 body，避免落在 main overflow 内导致 fixed 遮罩无法全屏 -->
 		<Teleport to="body">
-			<div
-				v-if="showProductModal"
-				class="fixed inset-0 z-[100] flex min-h-[100dvh] w-full items-center justify-center overflow-y-auto overscroll-contain bg-black/50 p-4"
-			>
-				<div
-					class="my-auto flex min-h-0 w-full max-w-6xl max-h-[90vh] flex-col overflow-hidden rounded-xl bg-white shadow-2xl"
-					@click.stop
-				>
-				<!-- 弹窗头部 -->
-				<div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
+			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showProductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showProductModal = false">
+<template #title><template v-if="showProductModal"><div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
 					<div>
 						<h2 class="text-xl font-semibold text-slate-900">{{ editingProductId ? '编辑产品' : '创建产品' }}</h2>
 						<p class="text-sm text-slate-500 mt-1">配置产品信息，右侧实时预览效果</p>
 					</div>
-					<button @click="showProductModal = false" class="text-slate-400 hover:text-slate-600">
+					<a-button aria-label="关闭" type="text" @click="showProductModal = false" class="text-slate-400 hover:text-slate-600">
 						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 						</svg>
-					</button>
-				</div>
+					</a-button>
+				</div></template></template>
+<template v-if="showProductModal">
 
 				<!-- 弹窗主体：左右分栏 -->
 				<div class="flex-1 flex overflow-hidden">
@@ -156,8 +155,8 @@
 					<div class="w-3/5 border-r border-slate-200 flex flex-col">
 						<div class="shrink-0 border-b border-slate-200 px-6">
 							<div class="flex gap-1">
-								<button
-									type="button"
+								<a-button type="text"
+									html-type="button"
 									:class="[
 										'border-b-2 px-4 py-3 text-sm font-medium transition-colors',
 										productModalTab === 'config'
@@ -167,9 +166,9 @@
 									@click="productModalTab = 'config'"
 								>
 									产品配置
-								</button>
-								<button
-									type="button"
+								</a-button>
+								<a-button type="text"
+									html-type="button"
 									:class="[
 										'border-b-2 px-4 py-3 text-sm font-medium transition-colors',
 										productModalTab === 'rules'
@@ -179,7 +178,7 @@
 									@click="productModalTab = 'rules'"
 								>
 									计算规则
-								</button>
+								</a-button>
 							</div>
 						</div>
 						<div class="flex-1 overflow-y-auto p-6">
@@ -190,31 +189,31 @@
 								<div class="grid grid-cols-2 gap-4">
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">产品名称</label>
-										<input v-model="productForm.name" placeholder="例如：BTC 智能量化基金 A" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value="productForm.name" placeholder="例如：BTC 智能量化基金 A" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 									</div>
 								<div>
 									<label class="block text-sm font-medium text-slate-700 mb-1">计价币种</label>
-									<select v-model="productForm.currency" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-										<option v-for="currency in SUPPORTED_CURRENCIES" :key="currency" :value="currency">{{ currency }}</option>
-									</select>
+									<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.currency" class="w-full transition">
+										<a-select-option v-for="currency in SUPPORTED_CURRENCIES" :key="currency" :value="currency">{{ currency }}</a-select-option>
+									</a-select>
 								</div>
 								<div>
 									<label class="block text-sm font-medium text-slate-700 mb-1">产品品种</label>
-									<select v-model="productForm.productCurrency" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-										<option v-for="currency in SUPPORTED_CURRENCIES" :key="currency" :value="currency">{{ currency }}</option>
-									</select>
+									<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.productCurrency" class="w-full transition">
+										<a-select-option v-for="currency in SUPPORTED_CURRENCIES" :key="currency" :value="currency">{{ currency }}</a-select-option>
+									</a-select>
 								</div>
 								<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">运营模式</label>
-										<select v-model="productForm.operationMode" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-											<option v-for="(meta, key) in operationModeMeta" :key="key" :value="key">{{ meta.label }}</option>
-										</select>
+										<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.operationMode" class="w-full transition">
+											<a-select-option v-for="(meta, key) in operationModeMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
+										</a-select>
 									</div>
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">最低 VIP 等级</label>
-										<select v-model="productForm.minVipLevel" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-											<option v-for="(meta, key) in vipLevelMeta" :key="key" :value="Number(key)">{{ meta.label }}</option>
-										</select>
+										<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.minVipLevel" class="w-full transition">
+											<a-select-option v-for="(meta, key) in vipLevelMeta" :key="key" :value="Number(key)">{{ meta.label }}</a-select-option>
+										</a-select>
 									</div>
 								</div>
 							</div>
@@ -225,19 +224,19 @@
 								<div class="grid grid-cols-2 gap-4">
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">托管周期</label>
-										<select v-model.number="productForm.durationDays" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-											<option v-for="opt in aiQuantDurationOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-										</select>
+										<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value.number="productForm.durationDays" class="w-full transition">
+											<a-select-option v-for="opt in aiQuantDurationOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</a-select-option>
+										</a-select>
 									</div>
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">派息周期</label>
-										<select v-model="productForm.settlementPeriod" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-											<option v-for="(meta, key) in productFormSettlementPeriodMeta" :key="key" :value="key">{{ meta.label }}</option>
-										</select>
+										<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.settlementPeriod" class="w-full transition">
+											<a-select-option v-for="(meta, key) in productFormSettlementPeriodMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
+										</a-select>
 									</div>
 									<div v-if="productForm.settlementPeriod === SETTLEMENT_PERIOD.CUSTOM">
 										<label class="block text-sm font-medium text-slate-700 mb-1">自定义天数</label>
-										<input v-model.number="productForm.customDays" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value.number="productForm.customDays" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 									</div>
 								</div>
 							</div>
@@ -251,22 +250,22 @@
 												用户申购金额落入对应区间后，按该档日收益率计算预估收益；区间请连续且不要重叠。
 											</p>
 										</div>
-										<button @click="addTier" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition">+ 添加阶梯</button>
+										<a-button type="text" @click="addTier" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition">+ 添加阶梯</a-button>
 									</div>
 									<div class="space-y-3">
 										<div v-for="(tier, idx) in productForm.tiers" :key="idx" class="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
 											<div class="flex items-center justify-between gap-3">
 												<div class="text-sm font-semibold text-slate-900">档位 {{ idx + 1 }}</div>
-												<button @click="removeTier(idx)" class="text-sm text-red-600 transition hover:text-red-800">删除</button>
+												<a-button type="text" @click="removeTier(idx)" class="text-sm text-red-600 transition hover:text-red-800">删除</a-button>
 											</div>
 											<div class="grid grid-cols-2 gap-3">
 												<label class="block">
 													<span class="mb-1 block text-xs font-medium text-slate-600">档位名称</span>
-													<input v-model="tier.label" placeholder="例如：标准级" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+													<a-input v-model:value="tier.label" placeholder="例如：标准级" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 												</label>
 												<label class="block">
 													<span class="mb-1 block text-xs font-medium text-slate-600">日收益率（%）</span>
-													<input v-model.number="tier.dailyRate" placeholder="例如：0.15" type="number" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+													<a-input v-model:value.number="tier.dailyRate" placeholder="例如：0.15" type="number" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 												</label>
 											</div>
 											<div>
@@ -275,9 +274,9 @@
 													<span class="text-xs text-slate-400">单位：USDT</span>
 												</div>
 												<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-													<input v-model.number="tier.minAmount" placeholder="最低金额" type="number" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+													<a-input v-model:value.number="tier.minAmount" placeholder="最低金额" type="number" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 													<span class="text-xs text-slate-400">至</span>
-													<input v-model.number="tier.maxAmount" placeholder="最高金额" type="number" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+													<a-input v-model:value.number="tier.maxAmount" placeholder="最高金额" type="number" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 												</div>
 											</div>
 										</div>
@@ -289,12 +288,12 @@
 								<h3 class="font-semibold text-slate-900 mb-3">赎回规则</h3>
 								<div class="space-y-3">
 									<label class="flex items-center">
-										<input v-model="productForm.earlyRedeemEnabled" type="checkbox" class="mr-2 rounded border-slate-300" />
+										<a-checkbox v-model:checked="productForm.earlyRedeemEnabled" class="mr-2" />
 										<span class="text-sm text-slate-700">允许提前赎回</span>
 									</label>
 									<div v-if="productForm.earlyRedeemEnabled">
 										<label class="block text-sm font-medium text-slate-700 mb-1">提前赎回手续费 (%)</label>
-										<input v-model.number="productForm.earlyRedeemFeePercent" type="number" step="0.1" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value.number="productForm.earlyRedeemFeePercent" type="number" step="0.1" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 									</div>
 								</div>
 							</div>
@@ -305,15 +304,15 @@
 								<div class="grid grid-cols-3 gap-4">
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">单用户最大持仓（USDT）</label>
-										<input v-model.number="productForm.limitAmount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value.number="productForm.limitAmount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 									</div>
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">产品总限额（USDT）</label>
-										<input v-model.number="productForm.limitCount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value.number="productForm.limitCount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 									</div>
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">月限购次数</label>
-										<input v-model.number="productForm.monthlyLimitCount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value.number="productForm.monthlyLimitCount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 									</div>
 								</div>
 							</div>
@@ -322,13 +321,13 @@
 							<div class="grid grid-cols-2 gap-4">
 								<div>
 									<label class="block text-sm font-medium text-slate-700 mb-1">产品状态</label>
-									<select v-model="productForm.status" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-										<option v-for="(meta, key) in productStatusMeta" :key="key" :value="key">{{ meta.label }}</option>
-									</select>
+									<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.status" class="w-full transition">
+										<a-select-option v-for="(meta, key) in productStatusMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
+									</a-select>
 								</div>
 								<div>
 									<label class="block text-sm font-medium text-slate-700 mb-1">产品排序</label>
-									<input v-model.number="productForm.sortOrder" type="number" placeholder="数字越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+									<a-input v-model:value.number="productForm.sortOrder" type="number" placeholder="数字越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
 								</div>
 							</div>
 						</div>
@@ -537,12 +536,12 @@
 				</div>
 
 				<!-- 底部操作栏 -->
-				<div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 flex-shrink-0">
-					<button @click="showProductModal = false" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">取消</button>
-					<button @click="saveProduct" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">保存产品</button>
-				</div>
-				</div>
-			</div>
+				</template>
+<template #footer><template v-if="showProductModal"><div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 flex-shrink-0">
+					<a-button type="text" @click="showProductModal = false" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">取消</a-button>
+					<a-button type="text" @click="saveProduct" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">保存产品</a-button>
+				</div></template></template>
+</a-modal>
 		</Teleport>
 	</section>
 </template>

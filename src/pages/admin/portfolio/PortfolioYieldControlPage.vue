@@ -189,48 +189,52 @@ const validUntilMin = computed(() => {
 
     <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <div class="border-b border-slate-200 bg-slate-50 p-4">
-        <input
-          v-model="keyword"
+        <a-input
+          v-model:value="keyword"
           type="search"
           placeholder="搜索产品名称、ID 或币种"
           class="w-full max-w-md rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
         />
       </div>
-      <table class="w-full min-w-[900px] text-sm">
-        <thead class="bg-slate-50 text-slate-500">
-          <tr>
-            <th class="px-4 py-3 text-left font-medium">产品</th>
-            <th class="px-4 py-3 text-left font-medium">基准收益</th>
-            <th class="px-4 py-3 text-left font-medium">当前收益</th>
-            <th class="px-4 py-3 text-left font-medium">调整比例</th>
-            <th class="px-4 py-3 text-left font-medium">倍数</th>
-            <th class="px-4 py-3 text-right font-medium">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="product in pagedProducts" :key="product.id" class="border-t border-slate-100 hover:bg-slate-50">
-            <td class="px-4 py-3">
+      <a-table  size="small" :pagination="false" :data-source="pagedProducts" :row-key="(product) => product.id" :scroll="{ x: 'max-content' }" :custom-row="(product, rowIndex) => ({ class: [&quot;border-t border-slate-100 hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>产品</template>
+<template #default="{ record: product, index: rowIndex }">
               <div class="font-medium text-slate-900">{{ productTitle(product) }}</div>
               <div class="font-mono text-xs text-slate-400">{{ product.id }}</div>
-            </td>
-            <td class="px-4 py-3 text-slate-600">{{ baseRateRange(product) }}</td>
-            <td class="px-4 py-3 font-medium text-emerald-600">{{ formatPortfolioRateRange(product) }}</td>
-            <td class="px-4 py-3">
+            </template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-600&quot;] })">
+<template #title>基准收益</template>
+<template #default="{ record: product, index: rowIndex }">{{ baseRateRange(product) }}</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-emerald-600&quot;] })">
+<template #title>当前收益</template>
+<template #default="{ record: product, index: rowIndex }">{{ formatPortfolioRateRange(product) }}</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>调整比例</template>
+<template #default="{ record: product, index: rowIndex }">
               <span :class="['font-medium', rateClass(product.yieldAdjustmentRate)]">
                 {{ formatPortfolioAdjustmentRate(product.yieldAdjustmentRate || 0) }}
               </span>
-            </td>
-            <td class="px-4 py-3 tabular-nums text-slate-700">{{ Number(product.currentYieldMultiplier || 1).toFixed(2) }}×</td>
-            <td class="px-4 py-3 text-right">
-              <button class="text-sm font-medium text-blue-600 hover:text-blue-800" @click="openControl(product)">调整</button>
+            </template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3 tabular-nums text-slate-700&quot;] })">
+<template #title>倍数</template>
+<template #default="{ record: product, index: rowIndex }">{{ Number(product.currentYieldMultiplier || 1).toFixed(2) }}×</template>
+</a-table-column>
+<a-table-column key="column-5" align="right" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3 text-right&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: product, index: rowIndex }">
+              <a-button type="text" class="text-sm font-medium text-blue-600 hover:text-blue-800" @click="openControl(product)">调整</a-button>
               <template v-if="Number(product.yieldAdjustmentRate || 0) !== 0">
                 <span class="mx-2 text-slate-200">|</span>
-                <button class="text-sm font-medium text-slate-600 hover:text-slate-900" @click="resetControl(product)">重置</button>
+                <a-button type="text" class="text-sm font-medium text-slate-600 hover:text-slate-900" @click="resetControl(product)">重置</a-button>
               </template>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </template>
+</a-table-column>
+</a-table>
       <div v-if="filteredProducts.length === 0" class="py-12 text-center text-sm text-slate-500">暂无产品</div>
       <AdminListPaginationBar
         :current-page="currentPage"
@@ -243,15 +247,15 @@ const validUntilMin = computed(() => {
     </article>
 
     <Teleport to="body">
-      <div v-if="showControlModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
-        <div class="w-full max-w-2xl rounded-xl bg-white shadow-2xl">
-          <div class="flex items-start justify-between border-b border-slate-200 px-6 py-4">
+      <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showControlModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="672"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showControlModal = false">
+<template #title><template v-if="showControlModal"><div class="flex items-start justify-between border-b border-slate-200 px-6 py-4">
             <div>
               <h2 class="text-xl font-semibold text-slate-900">收益调控</h2>
               <p class="mt-1 text-sm text-slate-500">{{ activeProduct ? productTitle(activeProduct) : '' }}</p>
             </div>
-            <button class="text-2xl leading-none text-slate-400 hover:text-slate-700" @click="showControlModal = false">×</button>
-          </div>
+            <a-button aria-label="关闭" type="text" class="text-2xl leading-none text-slate-400 hover:text-slate-700" @click="showControlModal = false">×</a-button>
+          </div></template></template>
+<template v-if="showControlModal">
           <div class="space-y-5 p-6">
             <div class="grid gap-3 rounded-xl bg-slate-50 p-4 text-sm md:grid-cols-2">
               <div>
@@ -268,7 +272,7 @@ const validUntilMin = computed(() => {
 
             <label class="block">
               <span class="mb-1 block text-sm font-medium text-slate-700">调整比例（%）</span>
-              <input v-model.number="controlForm.adjustmentRate" type="range" min="-100" max="100" step="5" class="w-full" />
+              <a-slider v-model:value.number="controlForm.adjustmentRate" :min="-100" :max="100" :step="5" class="w-full" />
               <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
                 <span>-100%</span>
                 <span :class="['text-base font-semibold', rateClass(controlForm.adjustmentRate)]">
@@ -279,29 +283,29 @@ const validUntilMin = computed(() => {
             </label>
 
             <div class="grid gap-3 md:grid-cols-4">
-              <button class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = 50">强激励 +50%</button>
-              <button class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = 20">温和上调 +20%</button>
-              <button class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = -20">成本回收 -20%</button>
-              <button class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = 0">恢复基准</button>
+              <a-button type="text" class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = 50">强激励 +50%</a-button>
+              <a-button type="text" class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = 20">温和上调 +20%</a-button>
+              <a-button type="text" class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = -20">成本回收 -20%</a-button>
+              <a-button type="text" class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = 0">恢复基准</a-button>
             </div>
 
             <label class="block">
               <span class="mb-1 block text-sm font-medium text-slate-700">有效期至</span>
-              <input v-model="controlForm.validUntil" type="date" :min="validUntilMin" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+              <a-input v-model:value="controlForm.validUntil" type="date" :min="validUntilMin" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
               <span class="mt-1 block text-xs text-slate-500">留空表示持续生效，后续可手动重置。</span>
             </label>
 
             <label class="block">
               <span class="mb-1 block text-sm font-medium text-slate-700">调整原因</span>
-              <textarea v-model="controlForm.reason" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="请输入调整原因，便于日志追溯"></textarea>
+              <a-textarea v-model:value="controlForm.reason" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="请输入调整原因，便于日志追溯"></a-textarea>
             </label>
           </div>
-          <div class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
-            <button class="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700" @click="showControlModal = false">取消</button>
-            <button class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="saveControl">保存调控</button>
-          </div>
-        </div>
-      </div>
+          </template>
+<template #footer><template v-if="showControlModal"><div class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <a-button type="text" class="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700" @click="showControlModal = false">取消</a-button>
+            <a-button type="text" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="saveControl">保存调控</a-button>
+          </div></template></template>
+</a-modal>
     </Teleport>
   </section>
 </template>

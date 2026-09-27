@@ -228,7 +228,7 @@ test('module page can add a user by UID email or phone search', () => {
   const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   const addDialog = elementByTestId(source, 'module-user-control-add-dialog')
 
-  assert.match(source, />添加用户<\/button>/)
+  assert.match(source, />添加用户<\/a-button>/)
   assert.notEqual(addDialog, '')
   assert.doesNotMatch(source, /点控记录和手动添加/)
   assert.match(source, /搜索 UID、用户名、邮箱或手机号/)
@@ -302,7 +302,7 @@ test('module page omits rejected demo and finance helper copy', () => {
 test('module page uses the user-list style point-control badge column', () => {
   const source = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   const detailSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
-  assert.match(source, />点控<\/th>/)
+  assert.match(source, /<template #title>点控<\/template>/)
   assert.doesNotMatch(source, />当前控制<\/th>/)
   assert.doesNotMatch(source, />生效方式<\/th>/)
   assert.doesNotMatch(source, />当前状态<\/th>/)
@@ -435,7 +435,7 @@ test('log content presents operation and execution records in one point-control 
   const source = read('../src/admin/components/user-control/UserControlLogContent.vue')
   assert.match(source, /用户点控日志/)
   assert.match(source, /unifiedLogs/)
-  assert.equal(source.match(/<table/g)?.length, 1)
+  assert.equal(source.match(/<Table\s/g)?.length, 1)
   assert.doesNotMatch(source, /Demo 演示页/)
   assert.doesNotMatch(source, /所有模拟只在当前浏览器内存中生效/)
   assert.doesNotMatch(source, /role="tablist"/)
@@ -457,7 +457,7 @@ test('log content paginates filtered rows and resets from every filter', () => {
   const source = read('../src/admin/components/user-control/UserControlLogContent.vue')
   assert.match(source, /useAdminListPagination\(unifiedLogs,\s*\{[\s\S]*pageSize:\s*10/)
   assert.match(source, /resetSources:\s*\[[\s\S]*filters\.userId[\s\S]*filters\.module[\s\S]*filters\.source[\s\S]*filters\.action[\s\S]*filters\.dateFrom[\s\S]*filters\.dateTo/)
-  assert.match(source, /v-for="log in pagedLogs"/)
+  assert.match(source, /:data-source="pagedLogs"/)
   assert.match(source, /<AdminListPaginationBar[\s\S]*:total-count="unifiedLogs\.length"[\s\S]*@update:page-size="onPageSizeChange"/)
 })
 
@@ -614,7 +614,7 @@ test('MFA modal prevents duplicate verification and exposes loading and errors a
   assert.match(mfaController, /useDialogLifecycle/)
   assert.match(mfaSource, /aria-labelledby="mfa-dialog-title"/)
   assert.match(mfaSource, /:aria-busy="displayedDialog\.loading"/)
-  assert.match(mfaSource, /ref="verificationInput"/)
+  assert.match(mfaSource, /verificationInput = nativeControl\(element\)/)
   assert.match(mfaSource, /ref="errorSummary"/)
   assert.match(mfaSource, /role="alert"/)
   assert.match(mfaSource, /aria-live="assertive"/)
@@ -708,7 +708,7 @@ test('unified point-control cancellation dialog retains its layer, focus target,
     assert.match(source, new RegExp(`ref="${dialogRef}"`))
     assert.match(source, new RegExp(`aria-labelledby="${title}"`))
     assert.match(source, new RegExp(`id="${title}"`))
-    assert.match(source, new RegExp(`ref="${returnRef}"`))
+    assert.match(source, new RegExp(`${returnRef} = nativeControl`))
     assert.doesNotMatch(source, /@mousedown\.self="(?:closeCancel|closeControlCancel)"|@click\.self="(?:closeCancel|closeControlCancel)"/)
   }
 
@@ -724,9 +724,9 @@ test('ordinary point-control dialogs keep a safe close button in the fixed heade
   const unifiedSource = read('../src/pages/admin/user/UserListPage.vue')
   const mfaSource = read('../src/admin/components/MfaVerificationModal.vue')
 
-  assert.match(moduleSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*@click="closeAddUser"/)
-  assert.match(unifiedSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*@click="closeControlCancel"/)
-  assert.match(mfaSource, /<header[^>]*>[\s\S]*?<button[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*:disabled="displayedDialog\.loading \|\| displayedDialog\.verifyRequested"[^>]*@click="close"/)
+  assert.match(moduleSource, /<header[^>]*>[\s\S]*?<a-button[^>]*aria-label="关闭"[^>]*@click="closeAddUser"/)
+  assert.match(unifiedSource, /<header[^>]*>[\s\S]*?<AdminButton[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*@click="closeControlCancel"/)
+  assert.match(mfaSource, /<header[^>]*>[\s\S]*?<AdminButton[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*:disabled="displayedDialog\.loading \|\| displayedDialog\.verifyRequested"[^>]*@click="close"/)
 })
 
 test('unified cancellation keeps the leaving dialog mounted before clearing user state', () => {

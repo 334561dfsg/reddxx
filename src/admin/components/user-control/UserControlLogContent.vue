@@ -1,4 +1,9 @@
 <script setup>
+import { Table } from 'ant-design-vue'
+const TableColumn = Table.Column
+
+import { AdminButton, AdminInput, AdminSelect, nativeControl } from '../antd/controls.js'
+
 import { computed, reactive, watch } from 'vue'
 import AdminListPaginationBar from '../AdminListPaginationBar.vue'
 import { useAdminListPagination } from '../../composables/useAdminListPagination.js'
@@ -171,74 +176,52 @@ const clearFilters = () => {
       <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
         <label v-if="showUserFilter" data-testid="user-control-log-user-filter" class="space-y-1 text-xs font-medium text-slate-600">
           <span>UID</span>
-          <input v-model.trim="filters.userId" type="search" placeholder="输入 UID" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500" />
+          <AdminInput v-model.trim="filters.userId" type="search" placeholder="输入 UID" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500" />
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">
           <span>模块</span>
-          <select v-model="filters.module" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500">
+          <AdminSelect v-model="filters.module" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500">
             <option value="">全部模块</option>
             <option v-for="module in USER_CONTROL_MODULES" :key="module.key" :value="module.key">{{ module.label }}</option>
-          </select>
+          </AdminSelect>
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">
           <span>规则来源</span>
-          <select v-model="filters.source" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500">
+          <AdminSelect v-model="filters.source" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500">
             <option value="">全部来源</option>
             <option value="global">用户点控设置</option>
             <option value="module">当前模块点控</option>
-          </select>
+          </AdminSelect>
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">
           <span>操作类型</span>
-          <select v-model="filters.action" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500">
+          <AdminSelect v-model="filters.action" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500">
             <option value="">全部操作</option>
             <option value="apply">设置控制</option>
             <option value="cancel">取消控制</option>
             <option value="execute">执行规则</option>
-          </select>
+          </AdminSelect>
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">
           <span>开始日期</span>
-          <input v-model="filters.dateFrom" data-testid="user-control-log-date-from" type="date" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500" />
+          <AdminInput v-model="filters.dateFrom" data-testid="user-control-log-date-from" type="date" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500" />
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">
           <span>结束日期</span>
-          <input v-model="filters.dateTo" data-testid="user-control-log-date-to" type="date" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500" />
+          <AdminInput v-model="filters.dateTo" data-testid="user-control-log-date-to" type="date" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500" />
         </label>
         <div class="flex items-end">
-          <button type="button" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50" @click="clearFilters">清除筛选</button>
+          <AdminButton type="button" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50" @click="clearFilters">清除筛选</AdminButton>
         </div>
       </div>
     </article>
 
     <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[1680px] text-left text-sm">
-          <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600">
-            <tr>
-              <th class="px-4 py-3">操作时间</th><th class="px-4 py-3">操作人</th><th class="px-4 py-3">UID</th><th class="px-4 py-3">模块</th><th class="px-4 py-3">日志类型</th><th class="px-4 py-3">规则来源</th><th class="px-4 py-3">控制周期</th><th class="px-4 py-3">业务/批次号</th><th class="px-4 py-3">变更前</th><th class="px-4 py-3">变更后</th><th class="px-4 py-3">状态</th><th class="px-4 py-3">备注</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr v-for="log in pagedLogs" :key="log.id" class="align-top hover:bg-slate-50">
-              <td class="whitespace-nowrap px-4 py-4 text-slate-500">{{ log.createdAt }}</td>
-              <td data-testid="user-control-unified-operator-value" class="whitespace-nowrap px-4 py-4 text-slate-700">{{ log.operator }}</td>
-              <td class="px-4 py-4 font-mono text-xs text-slate-700">{{ log.userId }}</td>
-              <td class="px-4 py-4 text-slate-700">{{ log.moduleLabels }}</td>
-              <td class="px-4 py-4 font-medium text-slate-900">{{ actionLabel(log.action) }}</td>
-              <td class="px-4 py-4 text-slate-600">{{ sourceLabel(log.source) }}</td>
-              <td data-testid="user-control-unified-duration-value" class="px-4 py-4 text-slate-600">{{ durationLabel(log.duration) }}</td>
-              <td data-testid="user-control-unified-reference-value" class="px-4 py-4 font-mono text-xs text-slate-700">{{ log.referenceId }}</td>
-              <td class="max-w-xs px-4 py-4 text-xs leading-5 text-slate-500">{{ log.before }}</td>
-              <td class="max-w-xs px-4 py-4 text-xs leading-5 text-slate-700">{{ log.after }}</td>
-              <td class="px-4 py-4">
+        <Table :data-source="pagedLogs" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="log => log.id"  ><TableColumn key="column-0"><template #title>操作时间</template><template #default="{ record: log, index: rowIndex }"><div class="whitespace-nowrap px-4 py-4 text-slate-500">{{ log.createdAt }}</div></template></TableColumn><TableColumn key="column-1"><template #title>操作人</template><template #default="{ record: log, index: rowIndex }"><div data-testid="user-control-unified-operator-value" class="whitespace-nowrap px-4 py-4 text-slate-700">{{ log.operator }}</div></template></TableColumn><TableColumn key="column-2"><template #title>UID</template><template #default="{ record: log, index: rowIndex }"><div class="px-4 py-4 font-mono text-xs text-slate-700">{{ log.userId }}</div></template></TableColumn><TableColumn key="column-3"><template #title>模块</template><template #default="{ record: log, index: rowIndex }"><div class="px-4 py-4 text-slate-700">{{ log.moduleLabels }}</div></template></TableColumn><TableColumn key="column-4"><template #title>日志类型</template><template #default="{ record: log, index: rowIndex }"><div class="px-4 py-4 font-medium text-slate-900">{{ actionLabel(log.action) }}</div></template></TableColumn><TableColumn key="column-5"><template #title>规则来源</template><template #default="{ record: log, index: rowIndex }"><div class="px-4 py-4 text-slate-600">{{ sourceLabel(log.source) }}</div></template></TableColumn><TableColumn key="column-6"><template #title>控制周期</template><template #default="{ record: log, index: rowIndex }"><div data-testid="user-control-unified-duration-value" class="px-4 py-4 text-slate-600">{{ durationLabel(log.duration) }}</div></template></TableColumn><TableColumn key="column-7"><template #title>业务/批次号</template><template #default="{ record: log, index: rowIndex }"><div data-testid="user-control-unified-reference-value" class="px-4 py-4 font-mono text-xs text-slate-700">{{ log.referenceId }}</div></template></TableColumn><TableColumn key="column-8"><template #title>变更前</template><template #default="{ record: log, index: rowIndex }"><div class="max-w-xs px-4 py-4 text-xs leading-5 text-slate-500">{{ log.before }}</div></template></TableColumn><TableColumn key="column-9"><template #title>变更后</template><template #default="{ record: log, index: rowIndex }"><div class="max-w-xs px-4 py-4 text-xs leading-5 text-slate-700">{{ log.after }}</div></template></TableColumn><TableColumn key="column-10"><template #title>状态</template><template #default="{ record: log, index: rowIndex }"><div class="px-4 py-4">
                 <span v-if="log.status" class="rounded-full px-2.5 py-1 text-xs font-medium" :class="executionStatusClasses(log.status)">{{ statusLabel(log.status) }}</span>
                 <span v-else class="text-slate-400">—</span>
-              </td>
-              <td class="max-w-xs px-4 py-4 text-slate-600">{{ log.note }}</td>
-            </tr>
-          </tbody>
-        </table>
+              </div></template></TableColumn><TableColumn key="column-11"><template #title>备注</template><template #default="{ record: log, index: rowIndex }"><div class="max-w-xs px-4 py-4 text-slate-600">{{ log.note }}</div></template></TableColumn></Table>
         <p v-if="unifiedLogs.length === 0" class="px-6 py-14 text-center text-sm text-slate-500">没有符合筛选条件的日志</p>
       </div>
       <AdminListPaginationBar

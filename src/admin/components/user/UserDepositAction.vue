@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton, AdminInput, AdminRadio, AdminTextarea } from '../antd/controls.js'
+
 import { computed, ref } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
@@ -105,7 +107,7 @@ const confirm = () => {
 </script>
 
 <template>
-  <button
+  <AdminButton
     v-if="showTrigger"
     type="button"
     class="inline-flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg ring-1 ring-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-colors"
@@ -117,7 +119,7 @@ const confirm = () => {
       <path stroke-linecap="round" stroke-linejoin="round" d="M7 19l5 4 5-4" />
     </svg>
     入金
-  </button>
+  </AdminButton>
 
   <Teleport to="body">
     <Transition name="user-action-dialog" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
@@ -134,7 +136,7 @@ const confirm = () => {
                 <div class="text-xs font-medium tracking-wide text-slate-500">操作</div>
                 <div id="user-deposit-title" ref="titleRef" tabindex="-1" class="mt-1 text-lg font-semibold text-slate-900 outline-none">入金</div>
               </div>
-              <button
+              <AdminButton
                 type="button"
                 class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-white transition-colors"
                 @click="close"
@@ -143,7 +145,7 @@ const confirm = () => {
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </button>
+              </AdminButton>
             </div>
           </header>
 
@@ -183,12 +185,7 @@ const confirm = () => {
             <fieldset class="m-0 min-w-0 border-0 p-0">
               <legend class="mb-2 text-sm font-medium text-slate-700">选择入金账户</legend>
               <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <label
-                  v-for="opt in depositAccountOptions"
-                  :key="opt.key"
-                  class="flex min-h-12 cursor-pointer items-center justify-between gap-3 rounded-xl border bg-white px-3 py-2 text-sm transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
-                  :class="form.depositAccountKey === opt.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 text-slate-700 hover:border-blue-300'"
-                >
+                <AdminRadio v-for="opt in depositAccountOptions" :key="opt.key" class="flex min-h-12 cursor-pointer items-center justify-between gap-3 rounded-xl border bg-white px-3 py-2 text-sm transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2" :class="form.depositAccountKey === opt.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 text-slate-700 hover:border-blue-300'" v-model="form.depositAccountKey" name="deposit-account" :value="opt.key">
                   <span class="font-medium">{{ opt.label }}</span>
                   <span class="flex items-center gap-2">
                     <span class="text-xs tabular-nums text-slate-500">{{ formatMoney(opt.value, { min: 2, max: 2 }) }}</span>
@@ -197,20 +194,14 @@ const confirm = () => {
                       class="rounded-full bg-blue-100 px-1.5 py-0.5 text-xs font-semibold text-blue-800"
                     >已选择</span>
                   </span>
-                  <input
-                    v-model="form.depositAccountKey"
-                    type="radio"
-                    name="deposit-account"
-                    :value="opt.key"
-                    class="sr-only"
-                  />
-                </label>
+
+                </AdminRadio>
               </div>
             </fieldset>
 
             <div>
               <div class="text-sm font-medium text-slate-700 mb-2">操作入金数量：</div>
-              <input
+              <AdminInput
                 v-model="form.depositAmount"
                 type="number"
                 step="0.01"
@@ -221,7 +212,7 @@ const confirm = () => {
 
             <div>
               <div class="text-sm font-medium text-slate-700 mb-2">备注：</div>
-              <textarea
+              <AdminTextarea
                 v-model="form.remark"
                 rows="4"
                 class="w-full rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none focus:bg-white border border-slate-100"
@@ -230,13 +221,13 @@ const confirm = () => {
             </div>
 
             <div class="mt-5 flex justify-end">
-              <button
+              <AdminButton
                 type="button"
                 class="px-7 py-3 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors"
                 @click="confirm"
               >
                 确认入金操作
-              </button>
+              </AdminButton>
             </div>
           </div>
         </section>

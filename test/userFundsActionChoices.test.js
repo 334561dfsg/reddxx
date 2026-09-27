@@ -136,12 +136,12 @@ const openDialog = async (harness, label) => {
   await harness.finishTransitions()
 }
 
-test('deposit retains native radios while transfer uses select-only comboboxes', () => {
+test('deposit uses Ant radios while transfer uses select-only comboboxes', () => {
   const depositSource = read(depositFile)
   const transferSource = read(transferFile)
 
   assert.doesNotMatch(depositSource, /<select\b/)
-  assert.match(depositSource, /type="radio"/)
+  assert.match(depositSource, /<AdminRadio\b/)
   assert.doesNotMatch(transferSource, /<select\b/)
   assert.doesNotMatch(transferSource, /type="radio"/)
   assert.match(transferSource, /SelectOnlyCombobox/)
@@ -220,7 +220,7 @@ test('transfer keyboard combobox choices emit the existing transfer payload', as
   assert.match(usdcCoin.textContent, /USDC/)
 
   await setInput(harness, '请输入划转的数量', ' 10.25 ')
-  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
+  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.replace(/\s/g, '') === '划转').at(-1).click()
 
   assert.deepEqual(harness.emitted, [[
     'onSubmit',
@@ -245,7 +245,7 @@ test('transfer preserves the destination conflict until the operator selects a d
   assert.match(explanation.textContent, /“从”账户和“到”账户不能相同，请重新选择“到”账户。/)
 
   await setInput(harness, '请输入划转的数量', ' 10.25 ')
-  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
+  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.replace(/\s/g, '') === '划转').at(-1).click()
   await harness.flush()
   assert.deepEqual(harness.emitted, [])
   await selectComboboxOption(harness, 'transfer-to', '永续合约')
@@ -253,7 +253,7 @@ test('transfer preserves the destination conflict until the operator selects a d
   assert.equal(destination.getAttribute('aria-describedby'), null)
   assert.equal(harness.allNodes().some((node) => node.getAttribute?.('id') === 'transfer-to-error'), false)
   await selectComboboxWithKeyboard(harness, 'transfer-coin', 1)
-  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
+  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.replace(/\s/g, '') === '划转').at(-1).click()
 
   assert.deepEqual(harness.emitted, [[
     'onSubmit',
@@ -284,7 +284,7 @@ test('transfer blocks unavailable committed accounts without replacing their val
 
   await selectComboboxWithKeyboard(harness, 'transfer-coin', 1)
   await setInput(harness, '请输入划转的数量', '10.25')
-  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
+  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.replace(/\s/g, '') === '划转').at(-1).click()
   await harness.flush()
 
   assert.deepEqual(harness.emitted, [])
@@ -299,7 +299,7 @@ test('transfer gives the required coin a field-owned error after submit and clea
 
   await openDialog(harness, '划转')
   await setInput(harness, '请输入划转的数量', '10.25')
-  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.trim() === '划转').at(-1).click()
+  harness.allNodes().filter((node) => node.tag === 'button' && node.textContent.replace(/\s/g, '') === '划转').at(-1).click()
   await harness.flush()
 
   const coin = findCombobox(harness, 'transfer-coin')

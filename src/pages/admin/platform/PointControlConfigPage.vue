@@ -202,23 +202,12 @@ onMounted(loadConfig)
         </p>
       </div>
       <div class="flex flex-wrap gap-2">
-        <button
-          type="button"
-          class="ant-btn"
-          :disabled="loading || isSaving || !isDirty"
-          @click="restoreSaved"
-        >
+        <a-button html-type="button" class="" :disabled="loading || isSaving || !isDirty" @click="restoreSaved">
           恢复已保存
-        </button>
-        <button
-          type="button"
-          class="ant-btn ant-btn-primary"
-          :disabled="loading || isSaving || !isDirty"
-          :aria-busy="isSaving ? 'true' : 'false'"
-          @click="saveConfig"
-        >
+        </a-button>
+        <a-button html-type="button" class="" :disabled="loading || isSaving || !isDirty" :aria-busy="isSaving ? 'true' : 'false'" @click="saveConfig" type="primary">
           {{ isSaving ? '正在保存点控配置…' : '保存配置' }}
-        </button>
+        </a-button>
       </div>
     </header>
 
@@ -251,16 +240,7 @@ onMounted(loadConfig)
               {{ field.label }}
             </label>
             <div class="relative">
-              <input
-                :id="`point-control-${field.key}-ratio`"
-                v-model="draftText[field.key]"
-                type="text"
-                inputmode="decimal"
-                class="ant-input w-full pr-10 font-mono"
-                :aria-invalid="fieldErrors[field.key] ? 'true' : 'false'"
-                :aria-describedby="fieldDescribedBy(field)"
-                placeholder="例如：50"
-              />
+              <a-input :id="`point-control-${field.key}-ratio`" v-model:value="draftText[field.key]" type="text" inputmode="decimal" class="w-full pr-10 font-mono" :aria-invalid="fieldErrors[field.key] ? 'true' : 'false'" :aria-describedby="fieldDescribedBy(field)" placeholder="例如：50" />
               <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">%</span>
             </div>
             <p :id="`point-control-${field.key}-help`" class="mt-1.5 text-xs leading-5 text-slate-500">

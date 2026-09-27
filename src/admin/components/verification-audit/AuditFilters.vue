@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton, AdminInput } from '../antd/controls.js'
+import { Select } from 'ant-design-vue'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
 defineProps({
   searchKeyword: { type: String, default: '' },
@@ -41,7 +43,7 @@ const agentBtnPrimary =
     <div v-if="variant !== 'agent'" class="flex flex-wrap items-end gap-x-3 gap-y-3">
       <div class="min-w-0 w-full flex-1 sm:w-auto sm:min-w-[11rem] sm:max-w-[15rem]">
         <label class="mb-1.5 block text-sm font-medium text-slate-700">搜索</label>
-        <input
+        <AdminInput
           :value="searchKeyword"
           type="text"
           placeholder="用户名、邮箱、姓名…"
@@ -52,29 +54,26 @@ const agentBtnPrimary =
 
       <div class="w-full shrink-0 sm:w-[9.5rem]">
         <label class="mb-1.5 block text-sm font-medium text-slate-700">认证等级</label>
-        <select
+        <Select
           :value="filterLevel"
-          class="ant-select !py-1.5 w-full cursor-pointer"
-          @change="emit('update:filter-level', $event.target.value)"
-        >
-          <option value="all">全部等级</option>
-          <option v-for="option in levelOptions" :key="option.value" :value="option.value">
-            {{ option.label }}
-          </option>
-        </select>
+          aria-label="认证等级"
+          class="w-full"
+          :options="[{ value: 'all', label: '全部等级' }, ...levelOptions]"
+          @change="emit('update:filter-level', $event)"
+        />
       </div>
 
       <div class="min-w-0 w-full flex-1 sm:w-auto sm:min-w-[17rem] sm:max-w-[21rem]">
         <label class="mb-1.5 block text-sm font-medium text-slate-700">申请时间范围</label>
         <div class="flex flex-nowrap items-center gap-2">
-          <input
+          <AdminInput
             :value="dateRange.start"
             type="date"
             class="ant-input !py-1.5 min-w-0 w-0 flex-1 sm:max-w-[9.75rem]"
             @input="emit('update:date-range', { ...dateRange, start: $event.target.value })"
           />
           <span class="shrink-0 text-sm text-slate-400">至</span>
-          <input
+          <AdminInput
             :value="dateRange.end"
             type="date"
             class="ant-input !py-1.5 min-w-0 w-0 flex-1 sm:max-w-[9.75rem]"
@@ -84,7 +83,7 @@ const agentBtnPrimary =
       </div>
 
       <div class="flex w-full shrink-0 items-end justify-end gap-2 sm:ml-auto sm:w-auto">
-        <button
+        <AdminButton
           title="重置筛选"
           type="button"
           class="rounded-lg bg-slate-100 p-2 text-slate-500 transition-colors hover:bg-slate-200"
@@ -98,8 +97,8 @@ const agentBtnPrimary =
               d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
             />
           </svg>
-        </button>
-        <button
+        </AdminButton>
+        <AdminButton
           v-if="showExportButton"
           type="button"
           class="ant-btn inline-flex shrink-0 items-center gap-2"
@@ -115,7 +114,7 @@ const agentBtnPrimary =
             />
           </svg>
           导出数据
-        </button>
+        </AdminButton>
       </div>
     </div>
 

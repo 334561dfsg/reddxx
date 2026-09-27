@@ -295,14 +295,10 @@ const handleMfaVerify = async (code) => {
         <h1 class="text-3xl font-semibold text-slate-900">费率模板管理</h1>
         <p class="mt-1 text-sm text-slate-500">管理用于闪兑汇率的可复用手续费和 VIP 分级费率模板</p>
       </div>
-      <button
-        type="button"
-        class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        @click="openCreateTemplate()"
-      >
+      <a-button html-type="button" class="inline-flex items-center gap-2 bg-blue-600 text-sm font-medium text-white hover:bg-blue-700" @click="openCreateTemplate()" type="primary">
         <span class="text-base">+</span>
         <span>新增模板</span>
-      </button>
+      </a-button>
     </header>
 
     <article class="rounded-xl border border-slate-200 bg-white">
@@ -310,22 +306,16 @@ const handleMfaVerify = async (code) => {
         <div class="flex flex-wrap items-center gap-4">
           <!-- Status Filter -->
           <div class="inline-flex items-center gap-2 text-sm">
-            <button type="button" class="font-medium" :class="statusTab === 'all' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'all'; handleFilterChange()">全部</button>
-            <button type="button" class="font-medium" :class="statusTab === 'enabled' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'enabled'; handleFilterChange()">已启用</button>
-            <button type="button" class="font-medium" :class="statusTab === 'disabled' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'disabled'; handleFilterChange()">已禁用</button>
+            <a-button html-type="button" class="font-medium" :class="statusTab === 'all' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'all'; handleFilterChange()">全部</a-button>
+            <a-button html-type="button" class="font-medium" :class="statusTab === 'enabled' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'enabled'; handleFilterChange()">已启用</a-button>
+            <a-button html-type="button" class="font-medium" :class="statusTab === 'disabled' ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = 'disabled'; handleFilterChange()">已禁用</a-button>
           </div>
         </div>
 
         <!-- Search -->
         <div class="flex w-full max-w-2xl flex-wrap items-center justify-end gap-2">
           <div class="relative w-full max-w-sm">
-            <input
-              v-model="search"
-              type="text"
-              class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500"
-              placeholder="搜索模板名称..."
-              @input="handleFilterChange"
-            />
+            <a-input v-model:value="search" type="text" class="w-full pl-9 pr-3" placeholder="搜索模板名称..." @input="handleFilterChange" />
             <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none">
               <circle cx="9" cy="9" r="5.8" stroke="currentColor" stroke-width="1.6" />
               <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
@@ -357,7 +347,7 @@ const handleMfaVerify = async (code) => {
               <p class="text-sm text-slate-600">{{ template.description || '—' }}</p>
               <p class="text-xs text-slate-400">最后更新：{{ template.updatedAt }}</p>
             </div>
-            <button type="button" class="shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50" @click="openEditTemplate(template)">编辑</button>
+            <a-button html-type="button" class="shrink-0 border border-slate-200 text-sm text-slate-700 hover:bg-slate-50" @click="openEditTemplate(template)">编辑</a-button>
           </div>
 
           <div class="mt-4 grid gap-3 lg:grid-cols-2">
@@ -388,14 +378,9 @@ const handleMfaVerify = async (code) => {
                   <span class="font-medium text-slate-700">{{ vipLevelLabel(level) }}</span>
                   <span class="text-slate-500">回兑 {{ ((Number(rates.buy) || 0) * 100).toFixed(2) }}% / 兑换 {{ ((Number(rates.sell) || 0) * 100).toFixed(2) }}%</span>
                 </div>
-                <button
-                  v-if="hasMoreTemplateLevels(template)"
-                  type="button"
-                  class="w-full rounded border border-violet-200 bg-white px-2.5 py-1.5 text-xs font-medium text-violet-700 transition hover:bg-violet-100"
-                  @click="toggleTemplateLevelsExpand(template.id)"
-                >
+                <a-button v-if="hasMoreTemplateLevels(template)" html-type="button" class="w-full border border-violet-200 bg-white text-xs font-medium text-violet-700 transition hover:bg-violet-100" @click="toggleTemplateLevelsExpand(template.id)">
                   {{ isTemplateLevelsExpanded(template.id) ? '收起' : `展开剩余 ${getTemplateLevelEntries(template).length - TEMPLATE_LEVEL_PREVIEW_LIMIT} 级` }}
-                </button>
+                </a-button>
               </div>
             </div>
           </div>
@@ -409,42 +394,19 @@ const handleMfaVerify = async (code) => {
       <!-- 分页栏 -->
       <footer v-if="totalPages > 1" class="flex items-center justify-between border-t border-slate-200 px-6 py-4 text-sm">
         <p class="text-slate-500">共 {{ filteredTemplates.length }} 个模板</p>
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            class="rounded border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent"
-            :disabled="currentPage === 1"
-            @click="goPrev"
-          >
-            上一页
-          </button>
-          <span class="text-xs font-medium text-slate-600">{{ currentPage }} / {{ totalPages }}</span>
-          <button
-            type="button"
-            class="rounded border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent"
-            :disabled="currentPage === totalPages"
-            @click="goNext"
-          >
-            下一页
-          </button>
-        </div>
+        <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="filteredTemplates.length" :show-size-changer="false"  @change="currentPage = $event" />
       </footer>
     </article>
   </section>
 
   <!-- 编辑/新增弹窗 -->
-  <div v-if="showEditModal" class="fixed inset-0 z-50 grid place-items-center bg-black/45 p-4">
-    <section class="flex h-[88vh] w-full max-w-5xl overflow-hidden rounded-xl bg-white shadow-2xl">
-      <div class="flex w-3/5 flex-col border-r border-slate-200">
-        <header class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-violet-50 to-blue-50 px-6 py-4">
+  <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showEditModal)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="showEditModal = false"><template #title><template v-if="showEditModal"><header class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-violet-50 to-blue-50 px-6 py-4">
           <div>
             <h2 class="text-xl font-semibold text-slate-900">{{ editingId ? '编辑费率模板' : '新增费率模板' }}</h2>
             <p class="mt-0.5 text-xs text-slate-500">左侧配置模板参数，右侧实时预览效果</p>
           </div>
-          <button type="button" class="text-2xl text-slate-400 transition-colors hover:text-slate-600" @click="showEditModal = false">×</button>
-        </header>
-
-        <div class="flex-1 space-y-5 overflow-y-auto px-6 py-5">
+          <a-button aria-label="关闭" html-type="button" class="text-2xl text-slate-400 transition-colors hover:text-slate-600" @click="showEditModal = false">×</a-button>
+        </header></template></template><template v-if="showEditModal"><div class="grid gap-4 lg:grid-cols-[3fr_2fr]"><div class="min-w-0"><div class="flex-1 space-y-5 overflow-y-auto px-6 py-5">
           <section class="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <div class="flex items-center gap-2">
               <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
@@ -458,15 +420,15 @@ const handleMfaVerify = async (code) => {
             <div class="grid gap-3.5 md:grid-cols-2">
               <label class="space-y-1.5 md:col-span-2">
                 <span class="text-sm font-medium text-slate-700">模板名称</span>
-                <input v-model="templateForm.name" type="text" placeholder="如：标准费率模板" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                <a-input v-model:value="templateForm.name" type="text" placeholder="如：标准费率模板" class="w-full transition" />
               </label>
               <label class="space-y-1.5 md:col-span-2">
                 <span class="text-sm font-medium text-slate-700">描述说明</span>
-                <input v-model="templateForm.description" type="text" placeholder="模板适用场景说明" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                <a-input v-model:value="templateForm.description" type="text" placeholder="模板适用场景说明" class="w-full transition" />
               </label>
               <label class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm md:col-span-2">
                 <span class="text-slate-700">启用该模板</span>
-                <input v-model="templateForm.enabled" type="checkbox" class="h-4 w-4" />
+                <a-checkbox v-model:checked="templateForm.enabled" class="w-4" />
               </label>
             </div>
           </section>
@@ -484,11 +446,11 @@ const handleMfaVerify = async (code) => {
             <div class="grid gap-3.5 md:grid-cols-2 rounded-lg bg-white p-4">
               <label class="space-y-1.5">
                   <span class="text-sm font-medium text-slate-700">回兑费率加成 (目标币 → 基础币, %)</span>
-                  <input v-model.number="templateForm.baseMarkup.buy" type="number" step="0.001" @input="updateBaseMarkup" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                  <a-input type="number" step="0.001" @input="updateBaseMarkup" class="w-full transition" :value="templateForm.baseMarkup.buy" @update:value="templateForm.baseMarkup.buy = $event === '' ? '' : Number($event)" />
                 </label>
                 <label class="space-y-1.5">
                   <span class="text-sm font-medium text-slate-700">兑换费率加成 (基础币 → 目标币, %)</span>
-                  <input v-model.number="templateForm.baseMarkup.sell" type="number" step="0.001" @input="updateBaseMarkup" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                  <a-input type="number" step="0.001" @input="updateBaseMarkup" class="w-full transition" :value="templateForm.baseMarkup.sell" @update:value="templateForm.baseMarkup.sell = $event === '' ? '' : Number($event)" />
                 </label>
             </div>
           </section>
@@ -504,7 +466,7 @@ const handleMfaVerify = async (code) => {
                 </div>
                 <h3 class="text-base font-semibold text-slate-900">VIP 分级费率设置</h3>
               </div>
-              <button type="button" class="rounded-md border border-violet-200 bg-white px-2.5 py-1 text-xs text-violet-700 hover:bg-violet-50" @click="initUserLevelRates">按VIP模块重置</button>
+              <a-button html-type="button" class="border border-violet-200 bg-white text-xs text-violet-700 hover:bg-violet-50" @click="initUserLevelRates">按VIP模块重置</a-button>
             </div>
 
             <div v-if="activeVipLevels.length === 0" class="rounded-md border border-dashed border-violet-200 bg-white p-3 text-xs text-slate-500">
@@ -521,25 +483,17 @@ const handleMfaVerify = async (code) => {
                 <div class="grid gap-3 md:grid-cols-2">
                   <label class="space-y-1.5">
                     <span class="text-xs text-slate-600">回兑费率 (%)</span>
-                    <input v-model.number="templateForm.userLevelRates[`vip${vip.level}`].buy" type="number" step="0.001" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-100" />
+                    <a-input type="number" step="0.001" class="w-full transition" :value="templateForm.userLevelRates[`vip${vip.level}`].buy" @update:value="templateForm.userLevelRates[`vip${vip.level}`].buy = $event === '' ? '' : Number($event)" />
                   </label>
                   <label class="space-y-1.5">
                     <span class="text-xs text-slate-600">兑换费率 (%)</span>
-                    <input v-model.number="templateForm.userLevelRates[`vip${vip.level}`].sell" type="number" step="0.001" class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-100" />
+                    <a-input type="number" step="0.001" class="w-full transition" :value="templateForm.userLevelRates[`vip${vip.level}`].sell" @update:value="templateForm.userLevelRates[`vip${vip.level}`].sell = $event === '' ? '' : Number($event)" />
                   </label>
                 </div>
               </div>
             </div>
           </section>
-        </div>
-
-        <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-          <button type="button" class="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-white" @click="showEditModal = false">取消</button>
-          <button type="button" class="rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-violet-700" @click="saveTemplate()">保存模板</button>
-        </footer>
-      </div>
-
-      <div class="flex w-2/5 flex-col bg-gradient-to-br from-slate-50 to-slate-100">
+        </div></div><div class="flex min-w-0 flex-col bg-gradient-to-br from-slate-50 to-slate-100">
         <header class="border-b border-slate-200 px-5 py-4">
           <h3 class="text-lg font-semibold text-slate-900">实时预览</h3>
           <p class="mt-0.5 text-xs text-slate-500">调整左侧配置后即时更新模板效果</p>
@@ -590,20 +544,16 @@ const handleMfaVerify = async (code) => {
                     <span class="text-slate-500">回兑 {{ ((Number(rates.buy) || 0) * 100).toFixed(2) }}% / 兑换 {{ ((Number(rates.sell) || 0) * 100).toFixed(2) }}%</span>
                   </div>
                 </div>
-              <button
-                v-if="hasMoreTemplatePreviewLevels"
-                type="button"
-                class="w-full rounded border border-violet-200 bg-white px-2.5 py-1.5 text-xs font-medium text-violet-700 transition hover:bg-violet-100"
-                @click="templatePreviewExpanded = !templatePreviewExpanded"
-              >
+              <a-button v-if="hasMoreTemplatePreviewLevels" html-type="button" class="w-full border border-violet-200 bg-white text-xs font-medium text-violet-700 transition hover:bg-violet-100" @click="templatePreviewExpanded = !templatePreviewExpanded">
                 {{ templatePreviewExpanded ? '收起' : `展开剩余 ${templatePreviewLevelEntries.length - TEMPLATE_LEVEL_PREVIEW_LIMIT} 级` }}
-              </button>
+              </a-button>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  </div>
+      </div></div></template><template #footer><template v-if="showEditModal"><footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+          <a-button html-type="button" class="border border-slate-300 text-sm font-medium text-slate-700 transition hover:bg-white" @click="showEditModal = false">取消</a-button>
+          <a-button html-type="button" class="bg-violet-600 text-sm font-medium text-white transition hover:bg-violet-700" @click="saveTemplate()" type="primary">保存模板</a-button>
+        </footer></template></template></a-modal>
 
   <!-- MFA 验证弹窗 -->
   <MfaVerificationModal

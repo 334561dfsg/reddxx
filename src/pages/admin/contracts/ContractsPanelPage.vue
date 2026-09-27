@@ -470,9 +470,9 @@ const onLockDeliveryHarvest = (payload) => {
 
     <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
       <div class="flex flex-wrap items-center gap-3 text-sm">
-        <button type="button" class="font-medium" :class="activeTab === t.key ? 'text-blue-600' : 'text-slate-500 hover:text-slate-900'" v-for="t in tabItems" :key="t.key" @click="activeTab = t.key">
+        <a-button type="text" html-type="button" class="font-medium" :class="activeTab === t.key ? 'text-blue-600' : 'text-slate-500 hover:text-slate-900'" v-for="t in tabItems" :key="t.key" @click="activeTab = t.key">
           {{ t.label }}
-        </button>
+        </a-button>
       </div>
       <div class="flex items-center gap-3 text-xs text-slate-500">
         <!-- <span>实时刷新 {{ Number(refreshIntervalMs) / 1000 }}s</span> -->
@@ -524,45 +524,53 @@ const onLockDeliveryHarvest = (payload) => {
           <p class="mt-0.5 text-xs text-slate-500">按 24h 交易量排序TOP 10，筛选仅影响列表展示</p>
         </div>
         <div class="flex items-center gap-2">
-          <button v-if="activeTab !== 'delivery'" type="button" class="ant-btn !h-9 !px-4" @click="openPerpReport">永续线控</button>
-          <button v-if="activeTab !== 'perpetual'" type="button" class="ant-btn !h-9 !px-4" @click="openDeliveryContracts">交割场控</button>
+          <a-button v-if="activeTab !== 'delivery'" html-type="button" class="ant-btn !h-9 !px-4" @click="openPerpReport">永续线控</a-button>
+          <a-button v-if="activeTab !== 'perpetual'" html-type="button" class="ant-btn !h-9 !px-4" @click="openDeliveryContracts">交割场控</a-button>
         </div>
       </div>
       <div class="overflow-auto">
-        <table class="w-full">
-          <thead class="bg-slate-50 border-b border-slate-200">
-            <tr>
-              <th class="px-5 py-3 text-left text-xs font-semibold text-slate-900 uppercase">产品线</th>
-              <th class="px-5 py-3 text-left text-xs font-semibold text-slate-900 uppercase">合约</th>
-              <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">24h交易量</th>
-              <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">做多总额</th>
-              <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">做空总额</th>
-              <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">平台盈亏</th>
-              <th class="px-5 py-3 text-left text-xs font-semibold text-slate-900 uppercase">风险摘要</th>
-              <th class="px-5 py-3 text-right text-xs font-semibold text-slate-900 uppercase">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200">
-            <tr v-for="row in filteredUnifiedContracts" :key="row.key" class="hover:bg-slate-50">
-              <td class="px-5 py-4 text-sm font-semibold text-slate-900">{{ row.product }}</td>
-              <td class="px-5 py-4">
+        <a-table  size="small" :pagination="false" :data-source="filteredUnifiedContracts" :row-key="(row) => row.key" :scroll="{ x: 'max-content' }" :custom-row="(row, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-sm font-semibold text-slate-900&quot;] })">
+<template #title>产品线</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.product }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4&quot;] })">
+<template #title>合约</template>
+<template #default="{ record: row, index: rowIndex }">
                 <p class="text-sm font-bold text-slate-900">{{ row.symbol }}</p>
                 <p class="text-xs text-slate-500">{{ row.name }}</p>
-              </td>
-              <td class="px-5 py-4 text-right text-sm font-semibold text-slate-900">${{ formatNumber(Math.round(row.volume)) }}</td>
-              <td class="px-5 py-4 text-right text-sm font-semibold text-emerald-700">${{ formatNumber(Math.round(row.longAmount || 0)) }}</td>
-              <td class="px-5 py-4 text-right text-sm font-semibold text-rose-700">${{ formatNumber(Math.round(row.shortAmount || 0)) }}</td>
-              <td class="px-5 py-4 text-right text-sm font-semibold">
+              </template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-slate-900&quot;] })">
+<template #title>24h交易量</template>
+<template #default="{ record: row, index: rowIndex }">${{ formatNumber(Math.round(row.volume)) }}</template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-emerald-700&quot;] })">
+<template #title>做多总额</template>
+<template #default="{ record: row, index: rowIndex }">${{ formatNumber(Math.round(row.longAmount || 0)) }}</template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-rose-700&quot;] })">
+<template #title>做空总额</template>
+<template #default="{ record: row, index: rowIndex }">${{ formatNumber(Math.round(row.shortAmount || 0)) }}</template>
+</a-table-column>
+<a-table-column key="column-5" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold&quot;] })">
+<template #title>平台盈亏</template>
+<template #default="{ record: row, index: rowIndex }">
                 <span :class="row.platformPnl >= 0 ? 'text-emerald-600' : 'text-rose-600'">{{ formatCompactUsd(row.platformPnl, true) }}</span>
-              </td>
-              <td class="px-5 py-4 text-sm text-slate-600">{{ row.extra }}</td>
-              <td class="px-5 py-4 text-right">
-                <button v-if="row.product === '永续'" type="button" class="ant-btn !h-9 !px-4" @click="openPerpManualDialog(row.contractId)">手动插线</button>
-                <button v-else type="button" class="ant-btn !h-9 !px-4" @click="openDeliveryHarvestControl(row.symbol)">场控设置</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-sm text-slate-600&quot;] })">
+<template #title>风险摘要</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.extra }}</template>
+</a-table-column>
+<a-table-column key="column-7" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-right&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: row, index: rowIndex }">
+                <a-button v-if="row.product === '永续'" html-type="button" class="ant-btn !h-9 !px-4" @click="openPerpManualDialog(row.contractId)">手动插线</a-button>
+                <a-button v-else html-type="button" class="ant-btn !h-9 !px-4" @click="openDeliveryHarvestControl(row.symbol)">场控设置</a-button>
+              </template>
+</a-table-column>
+</a-table>
       </div>
     </article>
 

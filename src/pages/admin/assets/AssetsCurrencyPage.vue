@@ -282,32 +282,26 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
 
           <div class="flex items-center gap-2">
             <span class="text-sm text-slate-600 whitespace-nowrap">入金</span>
-            <select v-model="depositSupportDraft" class="w-28 rounded-lg border border-slate-300 px-2 !h-8 text-sm">
-              <option value="all">全部</option>
-              <option value="enabled">开启</option>
-              <option value="disabled">关闭</option>
-            </select>
+            <a-select v-model:value="depositSupportDraft" class="w-28">
+              <a-select-option value="all">全部</a-select-option>
+              <a-select-option value="enabled">开启</a-select-option>
+              <a-select-option value="disabled">关闭</a-select-option>
+            </a-select>
           </div>
 
           <div class="flex items-center gap-2">
             <span class="text-sm text-slate-600 whitespace-nowrap">出金</span>
-            <select v-model="withdrawSupportDraft" class="w-28 rounded-lg border border-slate-300 px-2 !h-8 text-sm">
-              <option value="all">全部</option>
-              <option value="enabled">开启</option>
-              <option value="disabled">关闭</option>
-            </select>
+            <a-select v-model:value="withdrawSupportDraft" class="w-28">
+              <a-select-option value="all">全部</a-select-option>
+              <a-select-option value="enabled">开启</a-select-option>
+              <a-select-option value="disabled">关闭</a-select-option>
+            </a-select>
           </div>
 
           <div class="flex items-center gap-2 w-full sm:w-auto">
             <span class="text-sm text-slate-600 whitespace-nowrap">币种名称</span>
             <div class="relative w-full sm:w-80">
-              <input
-                v-model="searchDraft"
-                type="text"
-                class="ant-input w-full pl-9 !h-8"
-                placeholder="搜索币种名称或符号..."
-                @keyup.enter="applySearch"
-              />
+              <a-input v-model:value="searchDraft" type="text" class="w-full pl-9" placeholder="搜索币种名称或符号..." @keyup.enter="applySearch" />
               <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2 h-4 w-4 text-slate-400" fill="none">
                 <circle cx="9" cy="9" r="5.8" stroke="currentColor" stroke-width="1.6" />
                 <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
@@ -317,12 +311,12 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
-          <button type="button" class="ant-btn !h-8" @click="resetSearch">
+          <a-button html-type="button" class="" @click="resetSearch">
             <span>重置</span>
-          </button>
-          <button type="button" class="ant-btn ant-btn-primary !h-8" @click="applySearch">
+          </a-button>
+          <a-button html-type="button" class="" @click="applySearch" type="primary">
             <span>搜索</span>
-          </button>
+          </a-button>
         </div>
       </div>
     </article>
@@ -330,16 +324,16 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
     <article class="rounded-xl border border-slate-200 bg-white">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
         <div class="inline-flex items-center gap-4 text-sm">
-          <button type="button" class="font-medium" :class="statusTab === ASSET_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_COMMON_FILTER_ALL">全部</button>
-          <button type="button" class="font-medium" :class="statusTab === ASSET_STATUS.ENABLED ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_STATUS.ENABLED">已启用</button>
-          <button type="button" class="font-medium" :class="statusTab === ASSET_STATUS.DISABLED ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_STATUS.DISABLED">已禁用</button>
+          <a-button html-type="button" class="font-medium" :class="statusTab === ASSET_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_COMMON_FILTER_ALL">全部</a-button>
+          <a-button html-type="button" class="font-medium" :class="statusTab === ASSET_STATUS.ENABLED ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_STATUS.ENABLED">已启用</a-button>
+          <a-button html-type="button" class="font-medium" :class="statusTab === ASSET_STATUS.DISABLED ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_STATUS.DISABLED">已禁用</a-button>
           <span class="text-slate-400">|</span>
           <span class="text-slate-500">启用币种: <span class="font-medium text-slate-700">{{ enabledCount }}</span> / {{ coins.length }}</span>
         </div>
 
-        <button type="button" class="ant-btn ant-btn-primary !h-8 shrink-0" @click="openCreate">
+        <a-button html-type="button" class="shrink-0" @click="openCreate" type="primary">
           <span>+ 新增币种</span>
-        </button>
+        </a-button>
       </div>
 
       <div class="space-y-3 p-3">
@@ -381,7 +375,7 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
                 </p>
               </div>
             </div>
-            <button type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50" @click="openEdit(coin)">编辑</button>
+            <a-button html-type="button" class="border border-slate-200 text-sm text-slate-700 hover:bg-slate-50" @click="openEdit(coin)">编辑</a-button>
           </div>
 
           <div v-if="!isNonVirtualType(coin.type) && coin.networks.length" class="mt-2.5 grid gap-2 xl:grid-cols-3">
@@ -408,55 +402,22 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
       <!-- 分页栏 -->
       <footer v-if="totalPages > 1" class="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm">
         <p class="text-slate-500">共 {{ filteredCoins.length }} 个币种</p>
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            class="rounded border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent"
-            :disabled="currentPage === 1"
-            @click="goPrev"
-          >
-            上一页
-          </button>
-          <span class="text-xs font-medium text-slate-600">{{ currentPage }} / {{ totalPages }}</span>
-          <button
-            type="button"
-            class="rounded border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent"
-            :disabled="currentPage === totalPages"
-            @click="goNext"
-          >
-            下一页
-          </button>
-        </div>
+        <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="filteredCoins.length" :show-size-changer="false"  @change="currentPage = $event" />
       </footer>
     </article>
   </section>
 
-  <div v-if="showEditModal" class="fixed inset-0 z-50 grid place-items-center bg-black/45 p-4">
-    <section class="w-full max-w-3xl rounded-xl bg-white">
-      <header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+  <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showEditModal)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="showEditModal = false"><template #title><template v-if="Boolean(showEditModal)"><header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
         <h2 class="text-xl font-semibold text-slate-900">{{ editingCoinId ? '编辑币种配置' : '新增币种配置' }}</h2>
-        <button type="button" class="text-2xl text-slate-400" @click="showEditModal = false">×</button>
-      </header>
-
-      <div class="max-h-[74vh] space-y-5 overflow-y-auto px-5 py-4">
+        <a-button aria-label="关闭" html-type="button" class="text-2xl text-slate-400" @click="showEditModal = false">×</a-button>
+      </header></template></template><template v-if="showEditModal"><div class="max-h-[74vh] space-y-5 overflow-y-auto px-5 py-4">
         <nav class="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1">
-          <button
-            type="button"
-            class="rounded-md px-3 py-1.5 text-sm"
-            :class="modalTab === ASSET_MODAL_TAB.BASIC ? 'bg-white font-medium text-blue-600 shadow-sm' : 'text-slate-600'"
-            @click="modalTab = ASSET_MODAL_TAB.BASIC"
-          >
+          <a-button html-type="button" class="text-sm" :class="modalTab === ASSET_MODAL_TAB.BASIC ? 'bg-white font-medium text-blue-600 shadow-sm' : 'text-slate-600'" @click="modalTab = ASSET_MODAL_TAB.BASIC">
             基本信息
-          </button>
-          <button
-            v-if="!isOffchain"
-            type="button"
-            class="rounded-md px-3 py-1.5 text-sm"
-            :class="modalTab === ASSET_MODAL_TAB.NETWORK ? 'bg-white font-medium text-blue-600 shadow-sm' : 'text-slate-600'"
-            @click="modalTab = ASSET_MODAL_TAB.NETWORK"
-          >
+          </a-button>
+          <a-button v-if="!isOffchain" html-type="button" class="text-sm" :class="modalTab === ASSET_MODAL_TAB.NETWORK ? 'bg-white font-medium text-blue-600 shadow-sm' : 'text-slate-600'" @click="modalTab = ASSET_MODAL_TAB.NETWORK">
             设置网络
-          </button>
+          </a-button>
         </nav>
 
         <section v-if="modalTab === ASSET_MODAL_TAB.BASIC" class="rounded-lg border border-slate-200 p-4">
@@ -465,13 +426,7 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
             <div class="space-y-1 md:col-span-2">
               <span class="text-sm">币种类型</span>
               <div class="mt-1 grid gap-2 sm:grid-cols-3">
-                <button
-                  type="button"
-                  class="rounded-lg border p-3 text-left transition-colors"
-                  :class="typeCardClass(ASSET_CURRENCY_TYPE.VIRTUAL)"
-                  :aria-pressed="form.type === ASSET_CURRENCY_TYPE.VIRTUAL"
-                  @click="form.type = ASSET_CURRENCY_TYPE.VIRTUAL"
-                >
+                <a-button html-type="button" class="border text-left transition-colors" :class="typeCardClass(ASSET_CURRENCY_TYPE.VIRTUAL)" :aria-pressed="form.type === ASSET_CURRENCY_TYPE.VIRTUAL" @click="form.type = ASSET_CURRENCY_TYPE.VIRTUAL">
                   <div class="flex items-start gap-3">
                     <span class="mt-1 inline-flex h-4 w-4 items-center justify-center rounded-full border border-slate-300 bg-white">
                       <span v-if="form.type === ASSET_CURRENCY_TYPE.VIRTUAL" class="h-2 w-2 rounded-full bg-blue-600"></span>
@@ -481,15 +436,9 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
                       <p class="mt-0.5 text-xs text-slate-500">可配置网络，支持充值/提现/归集</p>
                     </div>
                   </div>
-                </button>
+                </a-button>
 
-                <button
-                  type="button"
-                  class="rounded-lg border p-3 text-left transition-colors"
-                  :class="typeCardClass(ASSET_CURRENCY_TYPE.METAL)"
-                  :aria-pressed="form.type === ASSET_CURRENCY_TYPE.METAL"
-                  @click="form.type = ASSET_CURRENCY_TYPE.METAL"
-                >
+                <a-button html-type="button" class="border text-left transition-colors" :class="typeCardClass(ASSET_CURRENCY_TYPE.METAL)" :aria-pressed="form.type === ASSET_CURRENCY_TYPE.METAL" @click="form.type = ASSET_CURRENCY_TYPE.METAL">
                   <div class="flex items-start gap-3">
                     <span class="mt-1 inline-flex h-4 w-4 items-center justify-center rounded-full border border-slate-300 bg-white">
                       <span v-if="form.type === ASSET_CURRENCY_TYPE.METAL" class="h-2 w-2 rounded-full bg-blue-600"></span>
@@ -499,15 +448,9 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
                       <p class="mt-0.5 text-xs text-slate-500">无区块链网络，仅用于报价/资产记账（如 XAU）</p>
                     </div>
                   </div>
-                </button>
+                </a-button>
 
-                <button
-                  type="button"
-                  class="rounded-lg border p-3 text-left transition-colors"
-                  :class="typeCardClass(ASSET_CURRENCY_TYPE.FIAT)"
-                  :aria-pressed="form.type === ASSET_CURRENCY_TYPE.FIAT"
-                  @click="form.type = ASSET_CURRENCY_TYPE.FIAT"
-                >
+                <a-button html-type="button" class="border text-left transition-colors" :class="typeCardClass(ASSET_CURRENCY_TYPE.FIAT)" :aria-pressed="form.type === ASSET_CURRENCY_TYPE.FIAT" @click="form.type = ASSET_CURRENCY_TYPE.FIAT">
                   <div class="flex items-start gap-3">
                     <span class="mt-1 inline-flex h-4 w-4 items-center justify-center rounded-full border border-slate-300 bg-white">
                       <span v-if="form.type === ASSET_CURRENCY_TYPE.FIAT" class="h-2 w-2 rounded-full bg-blue-600"></span>
@@ -517,17 +460,17 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
                       <p class="mt-0.5 text-xs text-slate-500">无区块链网络，常用于汇率报价与法币记账</p>
                     </div>
                   </div>
-                </button>
+                </a-button>
               </div>
               <p v-if="isOffchain" class="mt-2 text-xs text-amber-600">已选择非虚拟币：将不显示归集设置与网络设置，保存时自动清空网络。</p>
             </div>
             <label class="space-y-1">
               <span class="text-sm">币种名称</span>
-              <input v-model="form.name" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+              <a-input v-model:value="form.name" type="text" class="w-full" />
             </label>
             <label class="space-y-1">
               <span class="text-sm">币种符号</span>
-              <input v-model="form.symbol" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+              <a-input v-model:value="form.symbol" type="text" class="w-full" />
             </label>
             <div class="space-y-2 md:col-span-2">
               <span class="text-sm">币种 Icon</span>
@@ -539,33 +482,33 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
                   <p class="text-sm font-medium text-slate-800">上传 Icon</p>
                   <p class="mt-1 text-xs text-slate-500">支持 PNG/JPG/SVG，建议 120x120；当前仅展示界面，后续接入上传接口。</p>
                 </div>
-                <button type="button" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-100">
+                <a-button html-type="button" class="border border-slate-300 bg-white text-sm text-slate-700 hover:bg-slate-100">
                   选择图片
-                </button>
+                </a-button>
               </div>
             </div>
             <label class="inline-flex items-center gap-2 text-sm md:col-span-2">
-              <input v-model="form.isQuoteCurrency" type="checkbox" class="h-4 w-4" />
+              <a-checkbox v-model:checked="form.isQuoteCurrency" class="w-4" />
               是否计价货币
             </label>
             <label class="inline-flex items-center gap-2 text-sm md:col-span-2">
-              <input v-model="form.canDeposit" type="checkbox" class="h-4 w-4" />
+              <a-checkbox v-model:checked="form.canDeposit" class="w-4" />
               允许入金
             </label>
             <label class="inline-flex items-center gap-2 text-sm md:col-span-2">
-              <input v-model="form.canWithdraw" type="checkbox" class="h-4 w-4" />
+              <a-checkbox v-model:checked="form.canWithdraw" class="w-4" />
               允许出金
             </label>
             <label class="space-y-1">
               <span class="text-sm">精度位数</span>
-              <input v-model.number="form.precision" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+              <a-input type="number" class="w-full" :value="form.precision" @update:value="form.precision = $event === '' ? '' : Number($event)" />
             </label>
             <label class="space-y-1">
               <span class="text-sm">状态</span>
-              <select v-model="form.status" class="w-full rounded-lg border border-slate-300 px-3 py-2">
-                <option :value="ASSET_STATUS.ENABLED">启用</option>
-                <option :value="ASSET_STATUS.DISABLED">禁用</option>
-              </select>
+              <a-select v-model:value="form.status" class="w-full">
+                <a-select-option :value="ASSET_STATUS.ENABLED">启用</a-select-option>
+                <a-select-option :value="ASSET_STATUS.DISABLED">禁用</a-select-option>
+              </a-select>
             </label>
           </div>
         </section>
@@ -573,13 +516,13 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
         <section v-if="modalTab === ASSET_MODAL_TAB.NETWORK" class="rounded-lg border border-slate-200 p-4">
           <div class="flex items-center justify-between">
             <h3 class="text-sm font-medium text-slate-900">设置网络</h3>
-            <button type="button" class="rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white" @click="addNetwork">+ 添加网络</button>
+            <a-button html-type="button" class="bg-blue-600 text-sm text-white" @click="addNetwork" type="primary">+ 添加网络</a-button>
           </div>
           <div class="mt-3 rounded-lg border border-slate-200 bg-white p-3">
             <h4 class="text-sm font-medium text-slate-900">归集设置</h4>
             <div class="mt-3">
               <label class="inline-flex items-center gap-2 text-sm">
-                <input v-model="form.autoCollect" type="checkbox" class="h-4 w-4" />
+                <a-checkbox v-model:checked="form.autoCollect" class="w-4" />
                 启用自动归集
               </label>
             </div>
@@ -593,61 +536,53 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
                   <div class="flex items-center gap-2">
                     <span class="font-medium text-slate-800">网络 {{ index + 1 }}</span>
                     <span class="text-xs text-slate-500">{{ network.name || '未命名网络' }}</span>
-                    <button
-                      type="button"
-                      class="inline-flex items-center gap-1 px-1 py-0.5 text-xs text-slate-500 hover:text-slate-700"
-                      @click="toggleNetworkPanel(network.id)"
-                    >
+                    <a-button html-type="button" class="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700" @click="toggleNetworkPanel(network.id)">
                       {{ activeNetworkId === network.id ? '收起' : '展开' }}
                       <span class="text-slate-400 transition-transform" :class="activeNetworkId === network.id ? 'rotate-180' : ''">⌄</span>
-                    </button>
+                    </a-button>
                   </div>
                   <span class="rounded-md px-2 py-0.5 text-xs" :class="badgeClass(network.status)">{{ network.status === ASSET_STATUS.ENABLED ? '启用' : '禁用' }}</span>
                 </div>
-                <button type="button" class="rounded-md px-2 py-1 text-sm text-rose-500 hover:bg-rose-50" @click.stop="removeNetwork(network.id)">删除</button>
+                <a-button html-type="button" class="text-sm text-rose-500 hover:bg-rose-50" @click.stop="removeNetwork(network.id)">删除</a-button>
               </div>
 
               <div v-if="activeNetworkId === network.id" class="grid gap-3 md:grid-cols-2">
                 <label class="space-y-1">
                   <span class="text-sm">网络名称</span>
-                  <input v-model="network.name" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+                  <a-input v-model:value="network.name" type="text" class="w-full" />
                 </label>
                 <label class="space-y-1">
                   <span class="text-sm">最小归集数量</span>
-                  <input v-model.number="network.threshold" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+                  <a-input type="number" class="w-full" :value="network.threshold" @update:value="network.threshold = $event === '' ? '' : Number($event)" />
                 </label>
                 <label class="space-y-1">
                   <span class="text-sm">归集间隔 (分钟)</span>
-                  <input v-model.number="network.intervalMin" :disabled="!form.autoCollect" type="number" min="0" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+                  <a-input :disabled="!form.autoCollect" type="number" min="0" class="w-full" :value="network.intervalMin" @update:value="network.intervalMin = $event === '' ? '' : Number($event)" />
                 </label>
                 <label class="space-y-1">
                   <span class="text-sm">合约地址</span>
-                  <input v-model="network.contract" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+                  <a-input v-model:value="network.contract" type="text" class="w-full" />
                 </label>
                 <label class="space-y-1">
                   <span class="text-sm">Gas 限制</span>
-                  <input v-model.number="network.gasLimit" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+                  <a-input type="number" class="w-full" :value="network.gasLimit" @update:value="network.gasLimit = $event === '' ? '' : Number($event)" />
                 </label>
                 <label class="space-y-1 md:col-span-2">
                   <span class="text-sm">归集地址</span>
-                  <input v-model="network.collectAddress" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+                  <a-input v-model:value="network.collectAddress" type="text" class="w-full" />
                 </label>
                 <label class="inline-flex items-center gap-2 text-sm md:col-span-2">
-                  <input v-model="network.status" :true-value="ASSET_STATUS.ENABLED" :false-value="ASSET_STATUS.DISABLED" type="checkbox" class="h-4 w-4" />
+                  <a-checkbox class="w-4" :checked="network.status === ASSET_STATUS.ENABLED" @update:checked="network.status = $event ? ASSET_STATUS.ENABLED : ASSET_STATUS.DISABLED" />
                   启用该网络
                 </label>
               </div>
             </article>
           </div>
         </section>
-      </div>
-
-      <footer class="flex justify-end gap-3 border-t border-slate-200 px-5 py-4">
-        <button type="button" class="rounded-lg border border-slate-300 px-4 py-2" @click="showEditModal = false">取消</button>
-        <button type="button" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white" @click="saveCoin">保存</button>
-      </footer>
-    </section>
-  </div>
+      </div></template><template #footer><template v-if="Boolean(showEditModal)"><footer class="flex justify-end gap-3 border-t border-slate-200 px-5 py-4">
+        <a-button html-type="button" class="border border-slate-300" @click="showEditModal = false">取消</a-button>
+        <a-button html-type="button" class="bg-blue-600 font-medium text-white" @click="saveCoin" type="primary">保存</a-button>
+      </footer></template></template></a-modal>
 
   <!-- MFA 验证弹窗 -->
   <MfaVerificationModal

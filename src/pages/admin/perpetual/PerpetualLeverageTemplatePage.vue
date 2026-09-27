@@ -210,30 +210,30 @@ const submitTemplate = () => {
       <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-4">
         <div class="flex flex-wrap items-center gap-4">
           <div class="inline-flex items-center gap-2 text-sm">
-            <button type="button" class="font-medium" :class="statusTab === PERPETUAL_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = PERPETUAL_COMMON_FILTER_ALL">全部</button>
-            <button
-              type="button"
+            <a-button type="text" html-type="button" class="font-medium" :class="statusTab === PERPETUAL_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = PERPETUAL_COMMON_FILTER_ALL">全部</a-button>
+            <a-button type="text"
+              html-type="button"
               class="font-medium"
               :class="statusTab === PERPETUAL_STATUS.ENABLED ? 'text-blue-600' : 'text-slate-500'"
               @click="statusTab = PERPETUAL_STATUS.ENABLED"
             >
               已启用
-            </button>
-            <button
-              type="button"
+            </a-button>
+            <a-button type="text"
+              html-type="button"
               class="font-medium"
               :class="statusTab === PERPETUAL_STATUS.DISABLED ? 'text-blue-600' : 'text-slate-500'"
               @click="statusTab = PERPETUAL_STATUS.DISABLED"
             >
               已禁用
-            </button>
+            </a-button>
           </div>
         </div>
 
         <div class="flex w-full max-w-2xl flex-wrap items-center justify-end gap-2">
           <div class="relative w-full max-w-sm">
-            <input
-              v-model="search"
+            <a-input
+              v-model:value="search"
               type="text"
               class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500"
               placeholder="搜索模板名称..."
@@ -243,13 +243,13 @@ const submitTemplate = () => {
               <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
             </svg>
           </div>
-          <button
-            type="button"
+          <a-button type="primary"
+            html-type="button"
             class="ant-btn ant-btn-primary"
             @click="openCreateTemplate"
           >
             <span>+ 新增模板</span>
-          </button>
+          </a-button>
         </div>
       </div>
 
@@ -264,7 +264,7 @@ const submitTemplate = () => {
               </div>
               <p class="mt-3 text-sm text-slate-600">杠杆范围: <span class="font-medium text-slate-900">{{ tpl.leverageRange }}</span></p>
             </div>
-            <button type="button" class="ant-btn !h-8 !px-3 " @click="openEditTemplate(tpl)">编辑模板</button>
+            <a-button html-type="button" class="ant-btn !h-8 !px-3 " @click="openEditTemplate(tpl)">编辑模板</a-button>
           </div>
 
           <div class="mt-4">
@@ -295,22 +295,7 @@ const submitTemplate = () => {
             共 <span class="font-medium">{{ filteredTemplates.length }}</span> 个模板，第 <span class="font-medium">{{ pagination.currentPage }}</span> / <span class="font-medium">{{ totalPages }}</span> 页
           </div>
           <div class="flex items-center gap-2">
-            <button
-              type="button"
-              class="ant-btn !h-8 !px-3 !text-xs disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              :disabled="pagination.currentPage === 1"
-              @click="pagination.currentPage--"
-            >
-              上一页
-            </button>
-            <button
-              type="button"
-              class="ant-btn !h-8 !px-3 !text-xs disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              :disabled="pagination.currentPage === totalPages"
-              @click="pagination.currentPage++"
-            >
-              下一页
-            </button>
+            <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="pagination.currentPage = $event" />
           </div>
         </div>
 
@@ -319,18 +304,18 @@ const submitTemplate = () => {
     </article>
   </section>
 
-  <div v-if="showTemplateModal" class="fixed inset-0 z-50 grid place-items-center bg-black/45 p-4">
-    <section class="w-full max-w-3xl rounded-xl bg-white">
-      <header class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+  <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showTemplateModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="768"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showTemplateModal = false">
+<template #title><template v-if="showTemplateModal"><header class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
         <h2 class="text-2xl font-semibold text-slate-900">{{ editingTemplateId ? '编辑杠杆模板' : '新增杠杆模板' }}</h2>
-        <button type="button" class="text-2xl text-slate-400 hover:text-slate-700" @click="showTemplateModal = false">×</button>
-      </header>
+        <a-button aria-label="关闭" type="text" html-type="button" class="text-2xl text-slate-400 hover:text-slate-700" @click="showTemplateModal = false">×</a-button>
+      </header></template></template>
+<template v-if="showTemplateModal">
 
       <div class="space-y-5 px-6 py-5">
         <label class="block space-y-2">
           <span class="text-sm font-medium text-slate-700">模板名称 <span class="text-rose-500">*</span></span>
-          <input
-            v-model="newTemplateName"
+          <a-input
+            v-model:value="newTemplateName"
             type="text"
             class="ant-input"
             placeholder="请输入模板名称"
@@ -338,19 +323,19 @@ const submitTemplate = () => {
         </label>
 
         <div class="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1">
-          <button
+          <a-button type="text"
             v-for="tab in [
               ['leverage', '杠杆档位'],
               ['contract', '合约模板']
             ]"
             :key="tab[0]"
-            type="button"
+            html-type="button"
             class="rounded-md px-4 py-2 text-sm font-medium transition"
             :class="activeTemplateTab === tab[0] ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
             @click="activeTemplateTab = tab[0]"
           >
             {{ tab[1] }}
-          </button>
+          </a-button>
         </div>
 
         <div v-show="activeTemplateTab === 'leverage'" class="space-y-3">
@@ -360,26 +345,26 @@ const submitTemplate = () => {
           </div>
 
           <div class="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
-            <button
+            <a-button type="text"
               v-for="lv in leverageLevels"
               :key="lv"
-              type="button"
+              html-type="button"
               class="rounded-lg border px-3 py-2 text-sm transition-all"
               :class="selectedLeverages.includes(lv) ? 'border-blue-300 bg-blue-50 font-medium text-blue-600 shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100'
               "
               @click="toggleLeverage(lv)"
             >
               {{ lv }}x
-            </button>
+            </a-button>
           </div>
 
           <div class="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
             <label for="custom-leverage" class="block text-sm font-medium text-slate-700">手动添加倍数</label>
             <div class="flex gap-2">
               <div class="relative min-w-0 flex-1">
-                <input
+                <a-input
                   id="custom-leverage"
-                  v-model="customLeverageInput"
+                  v-model:value="customLeverageInput"
                   type="number"
                   min="1"
                   max="1000"
@@ -392,17 +377,17 @@ const submitTemplate = () => {
                 />
                 <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">x</span>
               </div>
-              <button type="button" class="ant-btn ant-btn-primary shrink-0" @click="addCustomLeverage">添加</button>
+              <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary shrink-0" @click="addCustomLeverage">添加</a-button>
             </div>
             <p v-if="customLeverageError" class="text-sm text-rose-500">{{ customLeverageError }}</p>
           </div>
 
           <div class="flex flex-wrap gap-2">
-            <button type="button" class="ant-btn !h-8 !px-3 !text-xs" @click="pickLeveragePack('all')">全选</button>
-            <button type="button" class="ant-btn !h-8 !px-3 !text-xs" @click="pickLeveragePack('clear')">清空</button>
-            <button type="button" class="ant-btn !h-8 !px-3 !text-xs" @click="pickLeveragePack('low')">低杠杆 (1-10x)</button>
-            <button type="button" class="ant-btn !h-8 !px-3 !text-xs" @click="pickLeveragePack('mid')">中等杠杆 (10-50x)</button>
-            <button type="button" class="ant-btn !h-8 !px-3 !text-xs" @click="pickLeveragePack('high')">高杠杆 (50-125x)</button>
+            <a-button html-type="button" class="ant-btn !h-8 !px-3 !text-xs" @click="pickLeveragePack('all')">全选</a-button>
+            <a-button html-type="button" class="ant-btn !h-8 !px-3 !text-xs" @click="pickLeveragePack('clear')">清空</a-button>
+            <a-button html-type="button" class="ant-btn !h-8 !px-3 !text-xs" @click="pickLeveragePack('low')">低杠杆 (1-10x)</a-button>
+            <a-button html-type="button" class="ant-btn !h-8 !px-3 !text-xs" @click="pickLeveragePack('mid')">中等杠杆 (10-50x)</a-button>
+            <a-button html-type="button" class="ant-btn !h-8 !px-3 !text-xs" @click="pickLeveragePack('high')">高杠杆 (50-125x)</a-button>
           </div>
 
           <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
@@ -414,8 +399,8 @@ const submitTemplate = () => {
                 class="inline-flex items-center overflow-hidden rounded-md border border-blue-100 bg-white text-sm shadow-sm"
               >
                 <span class="px-2 py-1 font-medium text-blue-600">{{ lv }}x</span>
-                <button
-                  type="button"
+                <a-button type="text"
+                  html-type="button"
                   class="grid h-7 w-7 place-items-center border-l border-rose-100 bg-rose-50 text-rose-500 transition hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-rose-300"
                   :aria-label="`删除 ${lv}x 杠杆档位`"
                   title="删除该档位"
@@ -424,7 +409,7 @@ const submitTemplate = () => {
                   <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" aria-hidden="true" fill="none">
                     <path d="M4.5 6.5H15.5M8 3.5H12M6.5 6.5L7 16H13L13.5 6.5M8.5 9V13.5M11.5 9V13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
-                </button>
+                </a-button>
               </div>
             </div>
             <p v-else class="mt-2 text-sm text-slate-500">暂无选择任何档位</p>
@@ -444,11 +429,11 @@ const submitTemplate = () => {
             <p class="text-sm font-medium text-slate-700">下单模式</p>
             <div class="mt-3 grid gap-3 sm:grid-cols-2">
               <label class="flex cursor-pointer items-center gap-3 rounded-lg border bg-white p-3 text-sm transition" :class="templateOrderMode === 'cost' ? 'border-blue-300 text-blue-600 shadow-sm' : 'border-slate-200 text-slate-700'">
-                <input v-model="templateOrderMode" type="radio" value="cost" class="h-4 w-4" />
+                <a-radio :checked="templateOrderMode === &quot;cost&quot;" @change="templateOrderMode = &quot;cost&quot;" value="cost" class="" />
                 <span>按成本(USDT)下单</span>
               </label>
               <label class="flex cursor-pointer items-center gap-3 rounded-lg border bg-white p-3 text-sm transition" :class="templateOrderMode === 'quantity' ? 'border-blue-300 text-blue-600 shadow-sm' : 'border-slate-200 text-slate-700'">
-                <input v-model="templateOrderMode" type="radio" value="quantity" class="h-4 w-4" />
+                <a-radio :checked="templateOrderMode === &quot;quantity&quot;" @change="templateOrderMode = &quot;quantity&quot;" value="quantity" class="" />
                 <span>按数量(张数=币价)下单</span>
               </label>
             </div>
@@ -456,8 +441,8 @@ const submitTemplate = () => {
 
           <label class="block space-y-2">
             <span class="text-sm font-medium text-slate-700">合约面值 <span class="text-slate-400">USDT</span></span>
-            <input
-              v-model.number="templateContractFaceValueUsdt"
+            <a-input
+              v-model:value.number="templateContractFaceValueUsdt"
               type="number"
               min="1"
               step="1"
@@ -469,8 +454,8 @@ const submitTemplate = () => {
           <div class="grid gap-4 sm:grid-cols-2">
             <label class="block space-y-2">
               <span class="text-sm font-medium text-slate-700">维持保证金率 <span class="text-slate-400">%</span></span>
-              <input
-                v-model.number="templateMaintenanceMarginRate"
+              <a-input
+                v-model:value.number="templateMaintenanceMarginRate"
                 type="number"
                 min="0.01"
                 max="100"
@@ -482,8 +467,8 @@ const submitTemplate = () => {
 
             <label class="block space-y-2">
               <span class="text-sm font-medium text-slate-700">强平手续费率 <span class="text-slate-400">%</span></span>
-              <input
-                v-model.number="templateLiquidationFeeRate"
+              <a-input
+                v-model:value.number="templateLiquidationFeeRate"
                 type="number"
                 min="0"
                 max="100"
@@ -510,17 +495,17 @@ const submitTemplate = () => {
 
       </div>
 
-      <footer class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
-        <button type="button" class="ant-btn" @click="showTemplateModal = false">取消</button>
-        <button
-          type="button"
+      </template>
+<template #footer><template v-if="showTemplateModal"><footer class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
+        <a-button html-type="button" class="ant-btn" @click="showTemplateModal = false">取消</a-button>
+        <a-button type="primary"
+          html-type="button"
           class="ant-btn ant-btn-primary"
           :disabled="!newTemplateName.trim() || !selectedLeverages.length"
           @click="submitTemplate"
         >
           {{ editingTemplateId ? '保存模板' : '创建模板' }}
-        </button>
-      </footer>
-    </section>
-  </div>
+        </a-button>
+      </footer></template></template>
+</a-modal>
 </template>

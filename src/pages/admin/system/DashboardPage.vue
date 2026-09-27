@@ -43,7 +43,7 @@ const { summary, orders } = storeToRefs(store)
         <div class="pro-card p-6">
           <div class="mb-4 flex items-center justify-between">
             <h2 class="text-base font-medium text-black/85">最近订单</h2>
-            <button class="text-sm text-antd-primary hover:text-antd-primary-hover transition-colors">查看全部</button>
+            <a-button class="text-sm text-antd-primary hover:text-antd-primary-hover transition-colors" html-type="button">查看全部</a-button>
           </div>
           <OrderTable :orders="orders" />
         </div>

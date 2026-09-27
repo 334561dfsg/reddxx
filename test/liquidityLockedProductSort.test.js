@@ -25,7 +25,7 @@ test('liquidity locked products sort descending without mutating source', () => 
 
 test('liquidity product sorting is configured in admin and applied to client list', () => {
   assert.match(adminSource, /产品状态[\s\S]*产品排序/)
-  assert.match(adminSource, /v-model\.number="productForm\.sortOrder"/)
+  assert.match(adminSource, /v-model:value\.number="productForm\.sortOrder"/)
   assert.match(adminSource, /productForm\.sortOrder = Number\(product\.sortOrder/)
   assert.match(adminSource, /sortOrder: Number\(productForm\.sortOrder\)/)
   assert.match(adminSource, /Math\.max\([\s\S]*sortOrder[\s\S]*\+ 10/)
@@ -39,8 +39,8 @@ test('liquidity period inputs have visible titles with dynamic currency units', 
   assert.match(adminSource, /年化收益率（%）/)
   assert.match(adminSource, /最低申购金额（\{\{ productForm\.currency \}\}）/)
   assert.match(adminSource, /最高申购金额（\{\{ productForm\.currency \}\}）/)
-  assert.match(adminSource, /锁仓天数（天）[\s\S]*v-model\.number="period\.days"/)
-  assert.match(adminSource, /年化收益率（%）[\s\S]*v-model\.number="period\.annualRate"/)
+  assert.match(adminSource, /锁仓天数（天）[\s\S]*v-model:value\.number="period\.days"/)
+  assert.match(adminSource, /年化收益率（%）[\s\S]*v-model:value\.number="period\.annualRate"/)
 })
 
 test('liquidity product editor includes a product currency select', () => {
@@ -49,6 +49,6 @@ test('liquidity product editor includes a product currency select', () => {
   assert.match(adminSource, /productForm\.productCurrency\s*=\s*product\.productCurrency\s*\?\?\s*product\.currency/)
   assert.match(adminSource, /productCurrency:\s*productForm\.productCurrency/)
   assert.match(adminSource, />产品品种<\/label>/)
-  assert.match(adminSource, /v-model="productForm\.productCurrency"/)
-  assert.match(adminSource, /v-model="productForm\.productCurrency"[\s\S]*v-for="curr in SUPPORTED_CURRENCIES"/)
+  assert.match(adminSource, /v-model:value="productForm\.productCurrency"/)
+  assert.match(adminSource, /v-model:value="productForm\.productCurrency"[\s\S]*v-for="curr in SUPPORTED_CURRENCIES"/)
 })

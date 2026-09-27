@@ -454,8 +454,8 @@ test('portfolio admin selects min VIP level from configured VIP levels', () => {
 
   assert.match(source, /getActiveVipLevels/)
   assert.match(source, /activeVipLevels/)
-  assert.match(source, /<select\s+v-model\.number="productForm\.minVipLevel"/)
-  assert.doesNotMatch(source, /<input\s+v-model\.number="productForm\.minVipLevel"/)
+  assert.match(source, /<a-select[\s\S]*?v-model:value\.number="productForm\.minVipLevel"/)
+  assert.doesNotMatch(source, /<a-input[^>]*v-model:value\.number="productForm\.minVipLevel"/)
 })
 
 test('portfolio products support configurable hot badge display', () => {
@@ -494,7 +494,7 @@ test('portfolio admin supports numeric sorting and recommended flag', () => {
   assert.match(mockSource, /sortOrder:/)
   assert.match(mockSource, /isRecommended:/)
   assert.match(adminSource, /productForm\.sortOrder/)
-  assert.match(adminSource, /v-model\.number="productForm\.sortOrder"/)
+  assert.match(adminSource, /v-model:value\.number="productForm\.sortOrder"/)
   assert.match(adminSource, /productForm\.isRecommended/)
   assert.match(adminSource, /加到推荐/)
   assert.doesNotMatch(adminSource, /<div>排序 \{\{ Number\(product\.sortOrder\) \|\| 0 \}\}<\/div>/)
@@ -594,8 +594,8 @@ test('portfolio admin selects composition assets from supported exchange coins',
 
   assert.match(source, /createAssetsCoinsMock/)
   assert.match(source, /supportedTradeCoins/)
-  assert.match(source, /<select\s+v-model="asset\.symbol"/)
-  assert.doesNotMatch(source, /<input\s+v-model="asset\.symbol"/)
+  assert.match(source, /<a-select[\s\S]*?v-model:value="asset\.symbol"/)
+  assert.doesNotMatch(source, /<a-input[^>]*v-model:value="asset\.symbol"/)
 })
 
 test('portfolio admin limits composition assets to three coins', () => {
@@ -670,7 +670,7 @@ test('portfolio admin list pages use pagination', () => {
     const source = readFileSync(new URL(page.path, import.meta.url), 'utf8')
     assert.match(source, /AdminListPaginationBar/)
     assert.match(source, /useAdminListPagination/)
-    assert.match(source, new RegExp(`v-for="[^"]+ in ${page.rows}"`))
+    assert.match(source, new RegExp(`:data-source="${page.rows}"`))
     assert.match(source, new RegExp(`total-count="${page.sourceRows}\\.length"`))
     assert.match(source, /@update:page-size="onPageSizeChange"/)
   }

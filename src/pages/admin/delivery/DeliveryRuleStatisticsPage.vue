@@ -57,32 +57,32 @@ const statistics = ref(createRuleStatisticsMock())
       <div class="mb-4 flex items-center justify-between">
         <h3 class="text-lg font-semibold text-slate-900">📊 过去7天触发趋势</h3>
         <div class="flex gap-2">
-          <button 
-            type="button"
+          <a-button type="text"
+            html-type="button"
             class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
             7天
-          </button>
-          <button 
-            type="button"
+          </a-button>
+          <a-button type="text"
+            html-type="button"
             class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
             30天
-          </button>
+          </a-button>
         </div>
       </div>
 
       <div class="grid grid-cols-7 gap-2">
-        <div 
-          v-for="data in statistics.performanceData" 
-          :key="data.date" 
+        <div
+          v-for="data in statistics.performanceData"
+          :key="data.date"
           class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center transition hover:border-blue-300 hover:shadow-md"
         >
           <p class="text-xs font-medium text-slate-500">{{ data.date }}</p>
           <p class="mt-3 text-3xl font-bold text-blue-600">{{ data.hits }}</p>
           <p class="mt-1 text-xs text-slate-600">触发次数</p>
           <div class="mx-auto mt-3 h-1 w-full rounded-full bg-slate-200">
-            <div 
+            <div
               class="h-1 rounded-full bg-blue-600"
               :style="{ width: `${(data.hits / 70) * 100}%` }"
             ></div>

@@ -28,9 +28,9 @@ test('platform report renders asset metrics as currency rows with metric columns
   const source = read('../src/pages/admin/system/PlatformReportPage.vue')
 
   assert.match(source, /kind: 'assetTable'/)
-  assert.match(source, /<th scope="col" class="w-32 whitespace-nowrap px-4 py-3">币种<\/th>/)
+  assert.match(source, /<a-table-column title="币种"/)
   assert.match(source, /v-for="column in section\.tableColumns"/)
-  assert.match(source, /v-for="row in section\.rows"/)
+  assert.match(source, /:data-source="section\.rows"/)
   assert.match(source, /提币实际到账/)
   assert.match(source, /提币手续费/)
   assert.doesNotMatch(source, /后台提现/)
@@ -72,9 +72,9 @@ test('platform report only shows user account balance cards in total overview', 
 test('platform report exposes month and day period filters', () => {
   const source = read('../src/pages/admin/system/PlatformReportPage.vue')
 
-  assert.match(source, /v-model="selectedMonth"/)
+  assert.match(source, /v-model:value="selectedMonth"/)
   assert.match(source, /type="month"/)
-  assert.match(source, /v-model="selectedDate"/)
+  assert.match(source, /v-model:value="selectedDate"/)
   assert.match(source, /type="date"/)
   assert.match(source, /displaySectionTitle\(section\.title\)/)
   assert.match(source, /恢复当前时间/)

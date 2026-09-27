@@ -405,8 +405,8 @@ onMounted(() => {
           <div class="flex items-center gap-2 w-full sm:w-auto">
             <span class="text-sm text-slate-600 whitespace-nowrap">产品名称</span>
             <div class="relative w-full sm:w-80">
-              <input
-                v-model="searchDraft"
+              <a-input
+                v-model:value="searchDraft"
                 type="text"
                 class="ant-input w-full pl-9 !h-8"
                 placeholder="搜索产品名称或代码..."
@@ -421,12 +421,12 @@ onMounted(() => {
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
-          <button type="button" class="ant-btn !h-8" @click="resetSearch">
+          <a-button html-type="button" class="ant-btn !h-8" @click="resetSearch">
             <span>重置</span>
-          </button>
-          <button type="button" class="ant-btn ant-btn-primary !h-8" @click="applySearch">
+          </a-button>
+          <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-8" @click="applySearch">
             <span>搜索</span>
-          </button>
+          </a-button>
         </div>
       </div>
     </article>
@@ -434,30 +434,30 @@ onMounted(() => {
     <article class="rounded-xl border border-slate-200 bg-white">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
         <div class="inline-flex items-center gap-2 text-sm">
-          <button type="button" class="font-medium" :class="statusTab === PERPETUAL_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = PERPETUAL_COMMON_FILTER_ALL">全部</button>
-          <button
-            type="button"
+          <a-button type="text" html-type="button" class="font-medium" :class="statusTab === PERPETUAL_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = PERPETUAL_COMMON_FILTER_ALL">全部</a-button>
+          <a-button type="text"
+            html-type="button"
             class="font-medium"
             :class="statusTab === PERPETUAL_STATUS.ENABLED ? 'text-blue-600' : 'text-slate-500'"
             @click="statusTab = PERPETUAL_STATUS.ENABLED"
           >
             已启用
-          </button>
-          <button
-            type="button"
+          </a-button>
+          <a-button type="text"
+            html-type="button"
             class="font-medium"
             :class="statusTab === PERPETUAL_STATUS.DISABLED ? 'text-blue-600' : 'text-slate-500'"
             @click="statusTab = PERPETUAL_STATUS.DISABLED"
           >
             已禁用
-          </button>
+          </a-button>
           <span class="ml-2 text-slate-400">|</span>
           <span class="text-slate-500">共 <span class="font-medium text-slate-700">{{ filteredProducts.length }}</span> 个</span>
         </div>
 
-        <button type="button" class="ant-btn ant-btn-primary !h-8 shrink-0" @click="openCreateContract">
+        <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-8 shrink-0" @click="openCreateContract">
           <span>+ 新增合约</span>
-        </button>
+        </a-button>
       </div>
 
       <div class="space-y-4 p-4">
@@ -504,14 +504,14 @@ onMounted(() => {
                   下移
                 </button>
               </div> -->
-              <button
-                type="button"
+              <a-button type="text"
+                html-type="button"
                 class="rounded-lg border border-violet-200 bg-violet-50 px-3 py-1.5 text-sm text-violet-600"
                 @click="openControlModal(item)"
               >
                 线控设置
-              </button>
-              <button type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700" @click="openEditContract(item)">编辑</button>
+              </a-button>
+              <a-button type="text" html-type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700" @click="openEditContract(item)">编辑</a-button>
             </div>
           </div>
 
@@ -547,22 +547,7 @@ onMounted(() => {
             共 <span class="font-medium">{{ filteredProducts.length }}</span> 个产品，第 <span class="font-medium">{{ pagination.currentPage }}</span> / <span class="font-medium">{{ totalPages }}</span> 页
           </div>
           <div class="flex items-center gap-2">
-            <button
-              type="button"
-              class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="pagination.currentPage === 1"
-              @click="pagination.currentPage--"
-            >
-              上一页
-            </button>
-            <button
-              type="button"
-              class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="pagination.currentPage === totalPages"
-              @click="pagination.currentPage++"
-            >
-              下一页
-            </button>
+            <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="pagination.currentPage = $event" />
           </div>
         </div>
 
@@ -571,25 +556,25 @@ onMounted(() => {
     </article>
   </section>
 
-  <div v-if="showContractModal" class="fixed inset-0 z-50 grid place-items-center bg-black/45 p-4">
-    <section class="w-full max-w-3xl rounded-xl bg-white">
-      <header class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+  <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showContractModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="768"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showContractModal = false">
+<template #title><template v-if="showContractModal"><header class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
         <h2 class="text-2xl font-semibold text-slate-900">{{ editingContractId ? '编辑永续合约' : '新增永续合约' }}</h2>
-        <button type="button" class="text-2xl text-slate-400 hover:text-slate-700" @click="showContractModal = false">×</button>
-      </header>
+        <a-button aria-label="关闭" type="text" html-type="button" class="text-2xl text-slate-400 hover:text-slate-700" @click="showContractModal = false">×</a-button>
+      </header></template></template>
+<template v-if="showContractModal">
 
       <div class="px-6 pt-4">
         <div class="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1">
-          <button
+          <a-button type="text"
             v-for="step in steps"
             :key="step.key"
-            type="button"
+            html-type="button"
             class="rounded-md px-4 py-1.5 text-sm"
             :class="contractStep === step.key ? 'bg-white font-medium text-blue-600 shadow-sm' : 'text-slate-600'"
             @click="contractStep = step.key"
           >
             {{ step.label }}
-          </button>
+          </a-button>
         </div>
       </div>
 
@@ -597,51 +582,51 @@ onMounted(() => {
         <div v-if="contractStep === PERPETUAL_CONTRACT_STEP.BASE" class="grid gap-4 md:grid-cols-2">
           <label class="space-y-2">
             <span class="text-sm font-medium">产品名称 <span class="text-rose-500">*</span></span>
-            <input v-model="contractForm.productName" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+            <a-input v-model:value="contractForm.productName" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
           </label>
           <label class="space-y-2">
             <span class="text-sm font-medium">产品代码 <span class="text-rose-500">*</span></span>
-            <input v-model="contractForm.productCode" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+            <a-input v-model:value="contractForm.productCode" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
           </label>
           <label class="space-y-2 md:col-span-2">
             <span class="text-sm font-medium">选择交易对 <span class="text-rose-500">*</span></span>
-            <select v-model="contractForm.spotSymbol" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500">
-              <option v-for="opt in pairOptions" :key="`pair-${opt}`" :value="opt">{{ opt }}</option>
-            </select>
+            <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="contractForm.spotSymbol" class="w-full">
+              <a-select-option v-for="opt in pairOptions" :key="`pair-${opt}`" :value="opt">{{ opt }}</a-select-option>
+            </a-select>
           </label>
           <div class="space-y-2">
             <span class="text-sm font-medium">产品状态</span>
             <div class="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1">
-              <button
-                type="button"
+              <a-button type="text"
+                html-type="button"
                 class="rounded-md px-4 py-1.5 text-sm"
                 :class="contractForm.status === PERPETUAL_STATUS.ENABLED ? 'bg-emerald-100 font-medium text-emerald-700' : 'text-slate-600'"
                 @click="contractForm.status = PERPETUAL_STATUS.ENABLED"
               >
                 已启用
-              </button>
-              <button
-                type="button"
+              </a-button>
+              <a-button type="text"
+                html-type="button"
                 class="rounded-md px-4 py-1.5 text-sm"
                 :class="contractForm.status === PERPETUAL_STATUS.DISABLED ? 'bg-rose-100 font-medium text-rose-700' : 'text-slate-600'"
                 @click="contractForm.status = PERPETUAL_STATUS.DISABLED"
               >
                 已禁用
-              </button>
+              </a-button>
             </div>
           </div>
           <label class="space-y-2">
             <span class="text-sm font-medium">产品排序</span>
-            <input v-model.number="contractForm.sortOrder" type="number" placeholder="数字越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+            <a-input v-model:value.number="contractForm.sortOrder" type="number" placeholder="数字越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
           </label>
         </div>
 
         <div v-if="contractStep === PERPETUAL_CONTRACT_STEP.LEVERAGE" class="space-y-4">
           <label class="block max-w-md space-y-2">
             <span class="text-sm font-medium">选择杠杆模板 <span class="text-rose-500">*</span></span>
-            <select v-model="contractForm.templateId" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500">
-              <option v-for="tpl in templates" :key="tpl.id" :value="tpl.id">{{ tpl.name }}</option>
-            </select>
+            <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="contractForm.templateId" class="w-full">
+              <a-select-option v-for="tpl in templates" :key="tpl.id" :value="tpl.id">{{ tpl.name }}</a-select-option>
+            </a-select>
           </label>
 
           <article v-if="selectedTemplate" class="rounded-lg border border-slate-200 bg-slate-50 p-4">
@@ -666,17 +651,17 @@ onMounted(() => {
           <div class="grid gap-4 md:grid-cols-3">
             <label class="space-y-2">
               <span class="text-sm font-medium">最低买入量 (USDT) <span class="text-rose-500">*</span></span>
-              <input v-model="contractForm.minBuy" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+              <a-input v-model:value="contractForm.minBuy" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
               <span class="block text-xs leading-5 text-slate-500">输入 0 表示最低买入量不限制。</span>
             </label>
             <label class="space-y-2">
               <span class="text-sm font-medium">最大买入量 (USDT) <span class="text-rose-500">*</span></span>
-              <input v-model="contractForm.maxBuy" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+              <a-input v-model:value="contractForm.maxBuy" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
               <span class="block text-xs leading-5 text-slate-500">输入 0 表示最大买入量不限制。</span>
             </label>
             <label class="space-y-2">
               <span class="text-sm font-medium">最大持仓量 (USDT) <span class="text-rose-500">*</span></span>
-              <input v-model="contractForm.maxPosition" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+              <a-input v-model:value="contractForm.maxPosition" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
               <span class="block text-xs leading-5 text-slate-500">输入 0 表示最大持仓量不限制。</span>
             </label>
           </div>
@@ -694,11 +679,11 @@ onMounted(() => {
           <div class="grid gap-4 md:grid-cols-2">
             <label class="space-y-2">
               <span class="text-sm font-medium">买入费率 <span class="text-rose-500">*</span></span>
-              <input v-model="contractForm.buyFee" type="number" step="0.001" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+              <a-input v-model:value="contractForm.buyFee" type="number" step="0.001" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
             </label>
             <label class="space-y-2">
               <span class="text-sm font-medium">卖出费率 <span class="text-rose-500">*</span></span>
-              <input v-model="contractForm.sellFee" type="number" step="0.001" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+              <a-input v-model:value="contractForm.sellFee" type="number" step="0.001" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
             </label>
           </div>
 
@@ -710,20 +695,20 @@ onMounted(() => {
         </div>
       </div>
 
-      <footer class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
-        <button type="button" class="rounded-lg border border-slate-200 px-4 py-2" @click="showContractModal = false">取消</button>
-        <button
-          type="button"
+      </template>
+<template #footer><template v-if="showContractModal"><footer class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
+        <a-button type="text" html-type="button" class="rounded-lg border border-slate-200 px-4 py-2" @click="showContractModal = false">取消</a-button>
+        <a-button type="text"
+          html-type="button"
           class="rounded-lg px-4 py-2 font-medium text-white"
           :class="isContractValid ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-300'"
           :disabled="!isContractValid"
           @click="submitContract"
         >
           {{ editingContractId ? '保存' : '创建' }}
-        </button>
-      </footer>
-    </section>
-  </div>
+        </a-button>
+      </footer></template></template>
+</a-modal>
 
   <ControlConfigModal
     :open="controlModalOpen"

@@ -125,7 +125,7 @@ const actionTypeLabel = (type) => {
 const toggleRuleStatus = (ruleId) => {
   const rule = rules.value.find((r) => r.id === ruleId)
   if (!rule) return
-  
+
   if (rule.status === DELIVERY_RULE_STATUS.ENABLED) {
     rule.status = DELIVERY_RULE_STATUS.PAUSED
   } else {
@@ -192,7 +192,7 @@ const saveRule = (ruleData) => {
       }
     }
   }
-  
+
   closeModal()
 }
 </script>
@@ -274,8 +274,8 @@ const saveRule = (ruleData) => {
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-4 md:px-6">
           <div class="flex flex-wrap items-center gap-3">
             <div class="relative w-72">
-              <input
-                v-model="keyword"
+              <a-input
+                v-model:value="keyword"
                 type="text"
                 placeholder="搜索规则名称或描述..."
                 class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500"
@@ -285,26 +285,26 @@ const saveRule = (ruleData) => {
                 <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
               </svg>
             </div>
-            <select
-              v-model="statusFilter"
-              class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
+            <a-select :get-popup-container="(trigger) => trigger.parentElement"
+              v-model:value="statusFilter"
+              class=""
             >
-              <option value="all">全部状态</option>
-              <option :value="DELIVERY_RULE_STATUS.ENABLED">运行中</option>
-              <option :value="DELIVERY_RULE_STATUS.PAUSED">已暂停</option>
-              <option :value="DELIVERY_RULE_STATUS.DISABLED">已禁用</option>
-            </select>
-            <select
-              v-model="priorityFilter"
-              class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              <a-select-option value="all">全部状态</a-select-option>
+              <a-select-option :value="DELIVERY_RULE_STATUS.ENABLED">运行中</a-select-option>
+              <a-select-option :value="DELIVERY_RULE_STATUS.PAUSED">已暂停</a-select-option>
+              <a-select-option :value="DELIVERY_RULE_STATUS.DISABLED">已禁用</a-select-option>
+            </a-select>
+            <a-select :get-popup-container="(trigger) => trigger.parentElement"
+              v-model:value="priorityFilter"
+              class=""
             >
-              <option value="all">全部优先级</option>
-              <option :value="DELIVERY_RULE_PRIORITY.HIGH">高优先级</option>
-              <option :value="DELIVERY_RULE_PRIORITY.MEDIUM">中优先级</option>
-              <option :value="DELIVERY_RULE_PRIORITY.LOW">低优先级</option>
-            </select>
-            <button
-              type="button"
+              <a-select-option value="all">全部优先级</a-select-option>
+              <a-select-option :value="DELIVERY_RULE_PRIORITY.HIGH">高优先级</a-select-option>
+              <a-select-option :value="DELIVERY_RULE_PRIORITY.MEDIUM">中优先级</a-select-option>
+              <a-select-option :value="DELIVERY_RULE_PRIORITY.LOW">低优先级</a-select-option>
+            </a-select>
+            <a-button type="text"
+              html-type="button"
               class="rounded-md border border-slate-200 bg-white px-4 h-9 text-sm font-medium text-slate-700 hover:text-[#1677ff] hover:border-[#1677ff] transition-colors"
               @click="
                 keyword = '';
@@ -313,16 +313,16 @@ const saveRule = (ruleData) => {
               "
             >
               重置
-            </button>
+            </a-button>
           </div>
-          <button
-            type="button"
+          <a-button type="text"
+            html-type="button"
             class="inline-flex items-center gap-1.5 h-9 px-4 rounded-md bg-[#1677ff] text-white text-sm font-medium shadow-sm hover:bg-[#4096ff] active:bg-[#0958d9] transition-colors"
             @click="openCreateModal"
           >
             <span class="text-base">+</span>
             <span>新增规则</span>
-          </button>
+          </a-button>
         </div>
 
         <div class="p-4 md:p-6 space-y-4">
@@ -392,30 +392,30 @@ const saveRule = (ruleData) => {
 
                 <!-- 操作按钮 -->
                 <div class="flex items-center gap-2">
-                  <button
-                    type="button"
+                  <a-button
+                    html-type="button"
                     class="ant-btn !h-8 !px-3 "
                     title="编辑"
                     @click="openEditModal(rule)"
                   >
                     编辑
-                  </button>
-                  <button
-                    type="button"
+                  </a-button>
+                  <a-button
+                    html-type="button"
                     class="ant-btn !h-8 !px-3 "
                     title="复制"
                     @click="openDuplicateModal(rule)"
                   >
                     复制
-                  </button>
-                  <button
-                    type="button"
+                  </a-button>
+                  <a-button
+                    html-type="button"
                     class="ant-btn !h-8 !px-3  !text-rose-600 !border-rose-300 hover:!text-rose-700 hover:!border-rose-500"
                     title="删除"
                     @click="deleteRule(rule.id)"
                   >
                     删除
-                  </button>
+                  </a-button>
                 </div>
               </div>
             </div>
@@ -427,13 +427,13 @@ const saveRule = (ruleData) => {
             >
               <div class="text-center">
                 <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">该规则已禁用</p>
-                <button
-                  type="button"
+                <a-button type="text"
+                  html-type="button"
                   class="mt-3 rounded-lg bg-white border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm"
                   @click="toggleRuleStatus(rule.id)"
                 >
                   立即启用
-                </button>
+                </a-button>
               </div>
             </div>
           </article>
@@ -446,22 +446,7 @@ const saveRule = (ruleData) => {
             <span class="font-bold text-slate-900">{{ pagination.currentPage }}</span> / {{ totalPages }} 页
           </div>
           <div class="flex items-center gap-2">
-            <button
-              type="button"
-              class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="pagination.currentPage === 1"
-              @click="pagination.currentPage--"
-            >
-              上一页
-            </button>
-            <button
-              type="button"
-              class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="pagination.currentPage === totalPages"
-              @click="pagination.currentPage++"
-            >
-              下一页
-            </button>
+            <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="pagination.currentPage = $event" />
           </div>
         </div>
       </article>

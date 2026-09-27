@@ -1,4 +1,5 @@
 <script setup>
+import { AdminButton, AdminTextarea, nativeControl } from '../../../admin/components/antd/controls.js'
 import { ref, computed, nextTick, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
 import { BarChartOutlined } from '@ant-design/icons-vue'
 import UserStaffEditorDialog from '../../../admin/components/user/UserStaffEditorDialog.vue'
@@ -1521,7 +1522,7 @@ const clearDetailDrawer = () => {
                   <h2 id="unified-user-control-cancel-title" class="break-words text-lg font-semibold text-slate-900">取消用户点控</h2>
                   <p class="mt-1 break-words text-sm text-slate-500">{{ displayedUnifiedCancelData.user?.username }} · UID {{ userIdOf(displayedUnifiedCancelData.user) }}</p>
                 </div>
-                <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeControlCancel">×</button>
+                <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeControlCancel">×</AdminButton>
               </header>
               <div data-testid="unified-user-control-cancel-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
                 <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
@@ -1539,17 +1540,17 @@ const clearDetailDrawer = () => {
                 </div>
                 <label class="block">
                   <span class="text-sm font-medium text-slate-800">取消点控备注 <span class="text-rose-500">*</span></span>
-                  <textarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100" />
+                  <AdminTextarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100" />
                   <span class="mt-1 block text-xs" :class="cancelNote.trim() ? 'text-slate-500' : 'text-rose-600'">
                     {{ cancelNote.trim() ? '确认后将直接取消点控' : '取消点控备注必填' }}
                   </span>
                 </label>
               </div>
               <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-                <button ref="unifiedCancelReturnRef" type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeControlCancel">返回</button>
-                <button type="button" :disabled="unifiedCancelPhase !== 'open' || !cancelControlItems.length || !cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmControlCancel">
+                <AdminButton :ref="element => { unifiedCancelReturnRef = nativeControl(element) }" type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeControlCancel">返回</AdminButton>
+                <AdminButton type="button" :disabled="unifiedCancelPhase !== 'open' || !cancelControlItems.length || !cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmControlCancel">
                   确认取消点控
-                </button>
+                </AdminButton>
               </footer>
             </section>
           </Transition>

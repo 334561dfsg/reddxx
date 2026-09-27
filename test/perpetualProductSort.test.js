@@ -27,7 +27,7 @@ test('perpetual products sort by descending configured number without mutating s
 
 test('perpetual product editor places numeric sort input beside status and saves it', () => {
   assert.match(pageSource, /产品状态[\s\S]*产品排序/)
-  assert.match(pageSource, /v-model\.number="contractForm\.sortOrder"/)
+  assert.match(pageSource, /v-model:value\.number="contractForm\.sortOrder"/)
   assert.match(pageSource, /数字越大越靠前/)
   assert.match(pageSource, /sortOrder: Number\(contractForm\.sortOrder\)/)
   assert.match(pageSource, /contractForm\.sortOrder = Number\(item\.sortOrder/)

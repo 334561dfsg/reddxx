@@ -1,4 +1,7 @@
 <script setup>
+import { Switch } from 'ant-design-vue'
+import { AdminButton, AdminInput, AdminSelect, AdminSlider, nativeControl } from './antd/controls.js'
+
 import { computed, reactive, ref, watch } from 'vue'
 
 const props = defineProps({
@@ -157,7 +160,7 @@ const exampleCalc = computed(() => {
   const basePrice = examplePrice
   const offset = form.priceOffset
   let adjustedPrice = basePrice
-  
+
   // 根据偏移方向计算价格
   if (form.offsetDirection === 'up') {
     adjustedPrice = basePrice + offset
@@ -168,17 +171,17 @@ const exampleCalc = computed(() => {
   } else if (form.offsetDirection === 'against') {
     adjustedPrice = basePrice - offset // 假设逆势
   }
-  
+
   // 计算滑点影响
   const slippageAmount = adjustedPrice * (form.slippagePct / 100)
   const finalPrice = adjustedPrice + slippageAmount
-  
+
   // 计算实际成本
   const baseCost = basePrice * exampleAmount
   const actualCost = finalPrice * exampleAmount
   const difference = actualCost - baseCost
   const differencePercent = ((difference / baseCost) * 100).toFixed(2)
-  
+
   return {
     basePrice: basePrice.toFixed(2),
     adjustedPrice: adjustedPrice.toFixed(2),
@@ -197,11 +200,11 @@ const calculatedPreview = computed(() => {
   const basePrice = examplePrice
   const offset = Number(form.priceOffset || 0)
   const slippage = Number(form.slippagePct || 0) / 100
-  
+
   // 根据偏移方向计算价格
   let buyPrice = basePrice
   let sellPrice = basePrice
-  
+
   if (form.offsetDirection === 'against') {
     // 逆势：买入价提高，卖出价降低
     buyPrice = basePrice + offset
@@ -219,25 +222,25 @@ const calculatedPreview = computed(() => {
     buyPrice = basePrice
     sellPrice = basePrice
   }
-  
+
   // 加上滑点影响
   const buySlippage = buyPrice * slippage
   const sellSlippage = sellPrice * slippage
-  
+
   // 基于 10,000 USDT 的成本影响分析
   const orderAmount = 10000
   const btcAmount = orderAmount / basePrice
-  
+
   // 价格偏移成本（买卖双向平均）
   const priceOffsetCost = Math.abs((buyPrice - basePrice) + (basePrice - sellPrice)) * btcAmount / 2
-  
+
   // 滑点成本
   const slippageCost = (buySlippage + sellSlippage) * btcAmount / 2
-  
+
   // 总额外成本
   const totalExtraCost = priceOffsetCost + slippageCost
   const totalExtraCostPct = (totalExtraCost / orderAmount) * 100
-  
+
   return {
     buyPrice: buyPrice + buySlippage,
     sellPrice: sellPrice - sellSlippage,
@@ -271,7 +274,7 @@ const save = () => {
             <h2 class="text-xl font-semibold text-slate-900">配置 {{ symbol }} 线控参数</h2>
             <p class="mt-0.5 text-xs text-slate-500">调整参数后可在右侧查看实时影响</p>
           </div>
-          <button type="button" class="text-2xl text-slate-400 hover:text-slate-600 transition-colors" @click="emit('close')">×</button>
+          <AdminButton type="button" class="text-2xl text-slate-400 hover:text-slate-600 transition-colors" @click="emit('close')">×</AdminButton>
         </header>
 
         <div class="flex-1 space-y-5 overflow-y-auto px-6 py-5">
@@ -289,7 +292,7 @@ const save = () => {
                   <p class="text-xs text-slate-600">选择预设方案快速配置</p>
                 </div>
               </div>
-              <span class="rounded-lg px-2.5 py-1 text-xs font-bold shadow-sm" 
+              <span class="rounded-lg px-2.5 py-1 text-xs font-bold shadow-sm"
                 :class="{
                   'bg-gradient-to-r from-rose-500 to-pink-500 text-white': riskLabel.text === '高风险',
                   'bg-gradient-to-r from-amber-500 to-orange-500 text-white': riskLabel.text === '中风险',
@@ -302,7 +305,7 @@ const save = () => {
 
             <!-- 预设选项 -->
             <div class="grid gap-3 sm:grid-cols-3">
-              <button
+              <AdminButton
                 v-for="key in presetKeys"
                 :key="key"
                 type="button"
@@ -320,7 +323,7 @@ const save = () => {
                     :class="selectedPreset === key ? 'border-blue-600 bg-blue-600' : 'border-slate-300 bg-white group-hover:border-slate-400'"
                   />
                 </div>
-              </button>
+              </AdminButton>
             </div>
 
             <p class="text-xs text-slate-600">
@@ -349,7 +352,7 @@ const save = () => {
               <label class="block space-y-2">
                 <div class="flex items-center justify-between text-sm">
                   <span class="font-medium text-slate-700">价格偏移 (点)</span>
-                  <input
+                  <AdminInput
                     v-model.number="form.priceOffset"
                     type="number"
                     min="0"
@@ -357,18 +360,18 @@ const save = () => {
                     class="ant-input !w-20 !h-8 !px-2 !text-right"
                   />
                 </div>
-                <input v-model.number="form.priceOffset" type="range" min="0" max="50" step="1" class="w-full accent-blue-600" />
+                <AdminSlider v-model.number="form.priceOffset" min="0" max="50" step="1" class="w-full accent-blue-600" />
                 <p class="text-xs text-slate-500 font-medium">范围 0-50，建议先从 3-10 点测试</p>
               </label>
 
               <label class="block space-y-2">
                 <span class="text-sm font-medium text-slate-700">偏移方向</span>
-                <select v-model="form.offsetDirection" class="ant-select">
+                <AdminSelect v-model="form.offsetDirection" class="ant-select">
                   <option value="random">随机偏移</option>
                   <option value="against">逆势偏移</option>
                   <option value="up">向上偏移</option>
                   <option value="down">向下偏移</option>
-                </select>
+                </AdminSelect>
               </label>
             </div>
           </section>
@@ -391,7 +394,7 @@ const save = () => {
               <label class="block space-y-2">
                 <div class="flex items-center justify-between text-sm">
                   <span class="font-medium text-slate-700">滑点率 (%)</span>
-                  <input
+                  <AdminInput
                     v-model.number="form.slippagePct"
                     type="number"
                     min="0"
@@ -400,13 +403,13 @@ const save = () => {
                     class="ant-input !w-20 !h-8 !px-2 !text-right"
                   />
                 </div>
-                <input v-model.number="form.slippagePct" type="range" min="0" max="2" step="0.01" class="w-full accent-violet-600" />
+                <AdminSlider v-model.number="form.slippagePct" min="0" max="2" step="0.01" class="w-full accent-violet-600" />
               </label>
 
               <label class="block space-y-2">
                 <div class="flex items-center justify-between text-sm">
                   <span class="font-medium text-slate-700">成交延迟 (ms)</span>
-                  <input
+                  <AdminInput
                     v-model.number="form.latencyMs"
                     type="number"
                     min="0"
@@ -415,7 +418,7 @@ const save = () => {
                     class="ant-input !w-20 !h-8 !px-2 !text-right"
                   />
                 </div>
-                <input v-model.number="form.latencyMs" type="range" min="0" max="5000" step="10" class="w-full accent-violet-600" />
+                <AdminSlider v-model.number="form.latencyMs" min="0" max="5000" step="10" class="w-full accent-violet-600" />
               </label>
             </div>
           </section>
@@ -438,7 +441,7 @@ const save = () => {
               <label class="block space-y-2">
                 <div class="flex items-center justify-between text-sm">
                   <span class="font-medium text-slate-700">最大杠杆限制</span>
-                  <input
+                  <AdminInput
                     v-model.number="form.maxLeverage"
                     type="number"
                     min="1"
@@ -447,7 +450,7 @@ const save = () => {
                     class="ant-input !w-20 !h-8 !px-2 !text-right"
                   />
                 </div>
-                <input v-model.number="form.maxLeverage" type="range" min="1" max="125" step="1" class="w-full accent-amber-600" />
+                <AdminSlider v-model.number="form.maxLeverage" min="1" max="125" step="1" class="w-full accent-amber-600" />
                 <p class="text-xs text-slate-500 font-medium">范围 1-125x，保存后对新开仓位生效</p>
               </label>
             </div>
@@ -467,17 +470,14 @@ const save = () => {
                   <h3 class="text-base font-semibold text-slate-900">启用自动触发规则</h3>
                 </div>
               </div>
-              <label class="relative inline-flex cursor-pointer items-center">
-                <input v-model="form.autoTriggerEnabled" type="checkbox" class="peer sr-only" />
-                <div class="peer h-6 w-11 rounded-full bg-slate-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
-              </label>
+              <Switch v-model:checked="form.autoTriggerEnabled" aria-label="启用自动触发规则" />
             </div>
           </section>
         </div>
 
         <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-          <button type="button" class="ant-btn !h-10 !px-6" @click="emit('close')">取消</button>
-          <button type="button" class="ant-btn ant-btn-primary !h-10 !px-8" @click="save">保存配置</button>
+          <AdminButton type="button" class="ant-btn !h-10 !px-6" @click="emit('close')">取消</AdminButton>
+          <AdminButton type="button" class="ant-btn ant-btn-primary !h-10 !px-8" @click="save">保存配置</AdminButton>
         </footer>
       </div>
       <!-- 右侧数据计算预览 -->
@@ -527,8 +527,8 @@ const save = () => {
           <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
             <div class="flex items-center justify-between">
               <h4 class="text-sm font-semibold text-emerald-900">数据计算预览</h4>
-              <span 
-                class="rounded-md px-2 py-1 text-xs font-medium" 
+              <span
+                class="rounded-md px-2 py-1 text-xs font-medium"
                 :class="{
                   'bg-rose-100 text-rose-700': riskScore >= 75,
                   'bg-amber-100 text-amber-700': riskScore >= 45 && riskScore < 75,

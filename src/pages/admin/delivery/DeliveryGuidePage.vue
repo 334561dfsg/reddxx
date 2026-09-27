@@ -37,17 +37,17 @@ const sectionTitle = computed(() => tabs.find((item) => item.key === activeTab.v
 
     <div class="border-b border-slate-200">
       <div class="flex flex-wrap gap-5 text-sm">
-        <button
+        <a-button type="text"
           v-for="tab in tabs"
           :key="tab.key"
-          type="button"
+          html-type="button"
           class="relative py-2 text-slate-500 transition hover:text-slate-800"
           :class="{ 'font-medium text-blue-600': activeTab === tab.key }"
           @click="onTabChange(tab.key)"
         >
           {{ tab.label }}
           <span v-if="activeTab === tab.key" class="absolute inset-x-0 -bottom-px h-0.5 bg-blue-600"></span>
-        </button>
+        </a-button>
       </div>
     </div>
 

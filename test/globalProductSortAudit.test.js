@@ -29,7 +29,7 @@ test('all seven product editors expose and persist the same numeric sorting cont
 
   for (const [path, model] of editors) {
     const source = readSource(path)
-    assert.match(source, new RegExp(`v-model\\.number="${model}\\.sortOrder"`), path)
+    assert.match(source, new RegExp(`v-model:value\\.number="${model}\\.sortOrder"`), path)
     assert.match(source, /数字越大越靠前/, path)
     assert.match(source, /Math\.max\([\s\S]*sortOrder[\s\S]*\+ 10/, path)
     assert.match(source, /sortOrder:\s*Number\(/, path)

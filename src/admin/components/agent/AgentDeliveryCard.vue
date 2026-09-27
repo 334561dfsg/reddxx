@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton } from '../antd/controls.js'
+
 import { ref, onBeforeUnmount } from 'vue'
 
 const props = defineProps({
@@ -45,14 +47,14 @@ const copyDelivery = async () => {
         <h4 class="text-sm font-semibold text-emerald-900">{{ title }}</h4>
         <p class="mt-1 text-xs leading-relaxed text-emerald-800">{{ description }}</p>
       </div>
-      <button
+      <AdminButton
         type="button"
         class="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         :disabled="copying"
         @click="copyDelivery"
       >
         {{ copying ? '复制中…' : copied ? '已复制' : '复制通知内容' }}
-      </button>
+      </AdminButton>
     </div>
 
     <p v-if="error" class="mt-3 rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm text-rose-700" role="alert">{{ error }}</p>

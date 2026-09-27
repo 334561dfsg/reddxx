@@ -193,9 +193,7 @@ const showToast = (message) => {
 
     <div class="relative min-h-[400px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <transition name="audit-drawer">
-        <div v-if="showDetailModal && selectedAudit && selectedSiteInfo" class="fixed inset-0 z-40 bg-slate-900/35">
-          <section class="audit-drawer-panel flex h-[88vh] w-full flex-col overflow-hidden rounded-b-2xl border-b border-slate-200 bg-slate-50 shadow-2xl">
-            <div class="border-b border-slate-200 bg-gradient-to-r from-white to-slate-100 px-5 py-4">
+        <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showDetailModal && selectedAudit && selectedSiteInfo)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeDetail"><template #title><template v-if="Boolean(showDetailModal && selectedAudit && selectedSiteInfo)"><div class="flex items-center justify-between gap-3"><span>详情</span><a-button aria-label="关闭" html-type="button"   @click="closeDetail">×</a-button></div></template></template><template v-if="showDetailModal && selectedAudit && selectedSiteInfo"><div class="border-b border-slate-200 bg-gradient-to-r from-white to-slate-100 px-5 py-4">
               <div class="flex items-start justify-between gap-4">
                 <div>
                   <div class="text-xs font-medium tracking-wide text-slate-500">认证审核详情抽屉</div>
@@ -210,7 +208,7 @@ const showToast = (message) => {
                 </div>
               </div>
             </div>
-            <div class="min-h-0 flex-1 overflow-y-auto p-4">
+<div class="min-h-0 flex-1 overflow-y-auto p-4">
               <div class="space-y-4">
                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                   <section class="rounded-xl border border-slate-200 bg-white p-4">
@@ -261,7 +259,7 @@ const showToast = (message) => {
                         <div class="font-medium text-slate-900">{{ getDocTypeLabel(doc.type) }}</div>
                         <div class="mt-0.5 truncate text-xs text-slate-500">{{ formatDate(doc.uploadTime) }} · {{ doc.url }}</div>
                       </div>
-                      <button class="ant-btn shrink-0" @click="previewDocument(doc)">预览</button>
+                      <a-button class="shrink-0" @click="previewDocument(doc)" html-type="button">预览</a-button>
                     </div>
                     <div v-if="!selectedAudit.documents?.length" class="rounded-lg border border-dashed border-slate-300 px-3 py-4 text-sm text-slate-500">
                       暂无上传材料
@@ -269,15 +267,13 @@ const showToast = (message) => {
                   </div>
                 </section>
               </div>
-            </div>
-
-            <section class="shrink-0 border-t border-slate-200 bg-white px-5 py-4">
+            </div></template><template #footer><template v-if="Boolean(showDetailModal && selectedAudit && selectedSiteInfo)"><section class="shrink-0 border-t border-slate-200 bg-white px-5 py-4">
               <div class="text-xs text-slate-500">审核操作</div>
               <div class="mt-3 flex flex-wrap justify-end gap-2">
-                <button class="ant-btn" @click="closeDetail">关闭</button>
-                <button class="ant-btn ant-btn-primary" @click="startAuditAction('approve')">通过</button>
-                <button class="ant-btn" @click="startAuditAction('resubmit')">要求补件</button>
-                <button class="ant-btn ant-btn-danger" @click="startAuditAction('reject')">拒绝</button>
+                <a-button class="" @click="closeDetail" html-type="button">关闭</a-button>
+                <a-button class="" @click="startAuditAction('approve')" html-type="button" type="primary">通过</a-button>
+                <a-button class="" @click="startAuditAction('resubmit')" html-type="button">要求补件</a-button>
+                <a-button class="" @click="startAuditAction('reject')" html-type="button">拒绝</a-button>
               </div>
 
               <div v-if="auditAction" class="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
@@ -290,21 +286,13 @@ const showToast = (message) => {
                         : '填写拒绝原因'
                   }}
                 </div>
-                <textarea
-                  v-if="auditAction !== 'approve'"
-                  v-model="auditNote"
-                  rows="3"
-                  class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
-                  :placeholder="auditAction === 'reject' ? '请填写拒绝原因' : '请填写补件说明'"
-                />
+                <a-textarea v-if="auditAction !== 'approve'" v-model:value="auditNote" rows="3" class="mt-2 w-full" :placeholder="auditAction === 'reject' ? '请填写拒绝原因' : '请填写补件说明'" />
                 <div class="mt-3 flex justify-end gap-2">
-                  <button class="ant-btn ant-btn-primary" @click="submitAudit">确认提交</button>
-                  <button class="ant-btn" @click="auditAction = null">取消</button>
+                  <a-button class="" @click="submitAudit" html-type="button" type="primary">确认提交</a-button>
+                  <a-button class="" @click="auditAction = null" html-type="button">取消</a-button>
                 </div>
               </div>
-            </section>
-          </section>
-        </div>
+            </section></template></template></a-modal>
       </transition>
 
       <div class="border-b border-slate-200 bg-white px-4 py-3">

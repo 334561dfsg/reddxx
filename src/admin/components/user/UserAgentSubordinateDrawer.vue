@@ -1,4 +1,6 @@
 <script setup>
+import { AdminButton, AdminInput, AdminSelect, nativeControl } from '../antd/controls.js'
+
 import { computed, nextTick, ref, watch } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import CompactPagination from '../CompactPagination.vue'
@@ -88,7 +90,7 @@ watch(() => props.error, async (error) => {
               <h2 id="user-agent-subordinate-title" ref="titleRef" tabindex="-1" class="break-words text-lg font-semibold text-slate-900 outline-none">代理下级用户</h2>
               <p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知代理' }} · UID {{ userId || '—' }}</p>
             </div>
-            <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</button>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="user-agent-subordinate-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
@@ -96,16 +98,16 @@ watch(() => props.error, async (error) => {
               <div class="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 min-[520px]:grid-cols-[minmax(0,1fr)_10rem]">
                 <label class="block min-w-0 text-xs font-medium text-slate-600">
                   搜索下级用户
-                  <input v-model="query" type="search" aria-label="搜索下级用户" placeholder="搜索 UID 或用户名" class="ant-input mt-1 w-full" />
+                  <AdminInput v-model="query" type="search" aria-label="搜索下级用户" placeholder="搜索 UID 或用户名" class="ant-input mt-1 w-full" />
                 </label>
                 <label class="block text-xs font-medium text-slate-600">
                   用户状态
-                  <select v-model="status" aria-label="用户状态" class="ant-select mt-1 w-full">
+                  <AdminSelect v-model="status" aria-label="用户状态" class="ant-select mt-1 w-full">
                     <option value="all">全部</option>
                     <option value="active">活跃</option>
                     <option value="suspended">暂停</option>
                     <option value="banned">禁用</option>
-                  </select>
+                  </AdminSelect>
                 </label>
               </div>
               <div class="flex flex-wrap items-center justify-between gap-2">
@@ -118,7 +120,7 @@ watch(() => props.error, async (error) => {
               <p v-if="error" ref="errorRef" data-testid="agent-subordinate-error" tabindex="-1" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" role="alert">
                 <span class="font-semibold">代理下级用户加载失败</span>
                 <span class="mt-1 block break-words">{{ error }}</span>
-                <button data-testid="agent-subordinate-retry" type="button" class="ant-btn mt-3" :disabled="loading" @click="emit('retry')">{{ loading ? '重试中…' : '重试' }}</button>
+                <AdminButton data-testid="agent-subordinate-retry" type="button" class="ant-btn mt-3" :disabled="loading" @click="emit('retry')">{{ loading ? '重试中…' : '重试' }}</AdminButton>
               </p>
 
               <div v-else-if="loading" class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50" role="status">

@@ -197,9 +197,9 @@ onMounted(() => {
           。
         </p>
       </div>
-      <button type="button" class="ant-btn ant-btn-primary shrink-0" :disabled="loading" @click="openAdd">
+      <a-button html-type="button" class="shrink-0" :disabled="loading" @click="openAdd" type="primary">
         添加 SMTP
-      </button>
+      </a-button>
     </div>
 
     <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
@@ -208,25 +208,14 @@ onMounted(() => {
 
     <div v-else class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-slate-200 text-sm">
-          <thead class="bg-slate-50/80">
-            <tr>
-              <th class="px-4 py-3 text-left font-medium text-slate-700">名称</th>
-              <th class="px-4 py-3 text-left font-medium text-slate-700">服务器</th>
-              <th class="px-4 py-3 text-left font-medium text-slate-700">发件人</th>
-              <th class="px-4 py-3 text-left font-medium text-slate-700">状态</th>
-              <th class="px-4 py-3 text-right font-medium text-slate-700">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 bg-white">
-            <tr v-for="row in rows" :key="row.id">
-              <td class="px-4 py-3 text-slate-900">{{ row.name || '—' }}</td>
-              <td class="px-4 py-3">
+        <a-table  :data-source="rows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" >
+<a-table-column key="column-0" ><template #title>名称</template><template #default="{ record: row, index: index }"><div class="  text-slate-900">{{ row.name || '—' }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>服务器</template><template #default="{ record: row, index: index }"><div class=" ">
                 <span class="font-mono text-xs text-slate-800">{{ row.host || '—' }}</span>
                 <span v-if="row.port" class="ml-1 text-xs text-slate-500">:{{ row.port }}</span>
-              </td>
-              <td class="px-4 py-3 text-xs text-slate-700">{{ row.fromEmail || '—' }}</td>
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>发件人</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-700">{{ row.fromEmail || '—' }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
                 <span
                   :class="
                     row.enabled ? 'rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800' : 'text-slate-500'
@@ -234,118 +223,80 @@ onMounted(() => {
                 >
                   {{ row.enabled ? '启用' : '停用' }}
                 </span>
-              </td>
-              <td class="px-4 py-3 text-right whitespace-nowrap">
-                <button
-                  type="button"
-                  class="text-slate-600 hover:underline"
-                  :disabled="testingId === row.id"
-                  @click="testRow(row)"
-                >
+              </div></template></a-table-column>
+<a-table-column key="column-4" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="  text-right whitespace-nowrap">
+                <a-button html-type="button" class="text-slate-600 hover:underline" :disabled="testingId === row.id" @click="testRow(row)">
                   {{ testingId === row.id ? '发送中…' : '测试' }}
-                </button>
+                </a-button>
                 <span class="mx-2 text-slate-300">|</span>
-                <button type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</button>
+                <a-button html-type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</a-button>
                 <span class="mx-2 text-slate-300">|</span>
-                <button type="button" class="text-red-600 hover:underline" @click="removeRow(row)">删除</button>
-              </td>
-            </tr>
-            <tr v-if="rows.length === 0">
-              <td colspan="5" class="px-4 py-10 text-center text-sm text-slate-500">
+                <a-button html-type="button" class="text-red-600 hover:underline" @click="removeRow(row)" danger>删除</a-button>
+              </div></template></a-table-column><template #emptyText>
                 暂无 SMTP 账户，请点击「添加 SMTP」。
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </template>
+</a-table>
       </div>
     </div>
 
     <Teleport to="body">
-      <div
-        v-if="showModal"
-        class="fixed inset-0 z-[100] grid place-items-center bg-black/45 p-4"
-        @click.self="closeModal"
-      >
-        <div
-          class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl"
-        >
-          <div class="border-b border-slate-200 px-5 py-4">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showModal)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(showModal)"><div class="flex items-center justify-between gap-3"><span>{{ editingId ? '编辑 SMTP' : '添加 SMTP' }}</span><a-button aria-label="关闭" html-type="button"   @click="closeModal">×</a-button></div></template></template><template v-if="showModal"><div class="border-b border-slate-200 px-5 py-4">
             <h2 class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑 SMTP' : '添加 SMTP' }}</h2>
           </div>
-          <div class="space-y-4 px-5 py-4">
+<div class="space-y-4 px-5 py-4">
             <div>
               <label class="mb-1.5 block text-sm font-medium text-slate-700">显示名称（可选）</label>
-              <input v-model="formName" type="text" class="ant-input w-full" placeholder="列表中区分多条账户" />
+              <a-input v-model:value="formName" type="text" class="w-full" placeholder="列表中区分多条账户" />
             </div>
             <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
-              <input v-model="formEnabled" type="checkbox" class="rounded border-slate-300" />
+              <a-checkbox v-model:checked="formEnabled" class="" />
               启用该账户（启用后其他 SMTP 将自动关闭）
             </label>
             <div class="grid gap-4 md:grid-cols-2">
               <div class="md:col-span-2">
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">SMTP 服务器</label>
-                <input
-                  v-model="formHost"
-                  type="text"
-                  class="ant-input w-full"
-                  placeholder="例如：smtp.example.com"
-                  autocomplete="off"
-                />
+                <a-input v-model:value="formHost" type="text" class="w-full" placeholder="例如：smtp.example.com" autocomplete="off" />
               </div>
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">端口</label>
-                <input
-                  v-model.number="formPort"
-                  type="number"
-                  min="1"
-                  max="65535"
-                  class="ant-input w-full max-w-[10rem]"
-                />
+                <a-input type="number" min="1" max="65535" class="w-full max-w-[10rem]" :value="formPort" @update:value="formPort = $event === '' ? '' : Number($event)" />
               </div>
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">加密方式</label>
-                <select v-model="formEncryption" class="ant-select w-full max-w-[10rem]">
-                  <option value="none">无</option>
-                  <option value="tls">TLS（常用 587）</option>
-                  <option value="ssl">SSL（常用 465）</option>
-                </select>
+                <a-select v-model:value="formEncryption" class="w-full max-w-[10rem]">
+                  <a-select-option value="none">无</a-select-option>
+                  <a-select-option value="tls">TLS（常用 587）</a-select-option>
+                  <a-select-option value="ssl">SSL（常用 465）</a-select-option>
+                </a-select>
               </div>
               <div class="md:col-span-2">
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">用户名</label>
-                <input v-model="formUsername" type="text" class="ant-input w-full" autocomplete="off" />
+                <a-input v-model:value="formUsername" type="text" class="w-full" autocomplete="off" />
               </div>
               <div class="md:col-span-2">
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">密码</label>
-                <input
-                  v-model="formPassword"
-                  type="password"
-                  class="ant-input w-full"
-                  autocomplete="new-password"
-                />
+                <a-input v-model:value="formPassword" type="password" class="w-full" autocomplete="new-password" />
                 <p class="mt-1 text-xs text-amber-800/90">演示存于浏览器本地；上线后请由后端加密保管。</p>
               </div>
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">发件人名称</label>
-                <input v-model="formFromName" type="text" class="ant-input w-full" />
+                <a-input v-model:value="formFromName" type="text" class="w-full" />
               </div>
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">发件人邮箱</label>
-                <input v-model="formFromEmail" type="email" class="ant-input w-full" />
+                <a-input v-model:value="formFromEmail" type="email" class="w-full" />
               </div>
               <div class="md:col-span-2">
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">回复地址（可选）</label>
-                <input v-model="formReplyTo" type="email" class="ant-input w-full" />
+                <a-input v-model:value="formReplyTo" type="email" class="w-full" />
               </div>
             </div>
-          </div>
-          <div class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
-            <button type="button" class="ant-btn" @click="closeModal">取消</button>
-            <button type="button" class="ant-btn ant-btn-primary" :disabled="isSaving" @click="submitModal">
+          </div></template><template #footer><template v-if="Boolean(showModal)"><div class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
+            <a-button html-type="button" class="" @click="closeModal">取消</a-button>
+            <a-button html-type="button" class="" :disabled="isSaving" @click="submitModal" type="primary">
               {{ isSaving ? '保存中…' : '保存' }}
-            </button>
-          </div>
-        </div>
-      </div>
+            </a-button>
+          </div></template></template></a-modal>
     </Teleport>
   </div>
 </template>

@@ -151,14 +151,14 @@ const saveProduct = () => {
 // 处理 MFA 验证
 const handleMfaVerify = async (code) => {
   mfaLoading.value = true
-  
+
   try {
     // TODO: 这里调用后端 API 验证 MFA 验证码
     // const response = await api.verifyMFA(code)
-    
+
     // 模拟 API 调用延迟
     await new Promise(resolve => setTimeout(resolve, 1000))
-    
+
     // 验证成功后执行实际的保存操作
     if (pendingSaveData.value) {
       if (editingProductId.value) {
@@ -166,7 +166,7 @@ const handleMfaVerify = async (code) => {
       } else {
         products.value.unshift({ id: `prod-${Date.now()}`, ...pendingSaveData.value, totalLocked: 0, totalOrders: 0, createdAt: new Date().toISOString().split('T')[0] })
       }
-      
+
       showProductModal.value = false
       pendingSaveData.value = null
       showMfaModal.value = false
@@ -238,19 +238,19 @@ const saveAdjustment = () => {
 }
 
 const approveAdjustment = (id) => {
-  adjustments.value = adjustments.value.map(a => 
+  adjustments.value = adjustments.value.map(a =>
     a.id === id ? { ...a, status: ADJUSTMENT_STATUS.APPROVED } : a
   )
 }
 
 const executeAdjustment = (id) => {
-  adjustments.value = adjustments.value.map(a => 
+  adjustments.value = adjustments.value.map(a =>
     a.id === id ? { ...a, status: ADJUSTMENT_STATUS.EXECUTED, executedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) } : a
   )
 }
 
 const rejectAdjustment = (id) => {
-  adjustments.value = adjustments.value.map(a => 
+  adjustments.value = adjustments.value.map(a =>
     a.id === id ? { ...a, status: ADJUSTMENT_STATUS.REJECTED } : a
   )
 }
@@ -293,18 +293,18 @@ const fmtSignedCurrency = (val, currency) => {
           <h1 class="text-3xl font-semibold text-slate-900">产品管理</h1>
           <p class="mt-1 text-sm text-slate-500">配置锁仓产品、阶梯收益与限购策略</p>
         </div>
-        <button type="button" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="openCreateProduct">+ 新增产品</button>
+        <a-button type="text" html-type="button" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="openCreateProduct">+ 新增产品</a-button>
       </header>
 
       <article class="rounded-xl border border-slate-200 bg-white">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
           <div class="inline-flex items-center gap-3 text-sm">
-            <button type="button" class="font-medium" :class="statusFilter === COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = COMMON_FILTER_ALL">全部</button>
-            <button type="button" class="font-medium" :class="statusFilter === PRODUCT_STATUS.ENABLED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = PRODUCT_STATUS.ENABLED">上架中</button>
-            <button type="button" class="font-medium" :class="statusFilter === PRODUCT_STATUS.DISABLED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = PRODUCT_STATUS.DISABLED">已下架</button>
-            <button type="button" class="font-medium" :class="statusFilter === PRODUCT_STATUS.SOLD_OUT ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = PRODUCT_STATUS.SOLD_OUT">已售罄</button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = COMMON_FILTER_ALL">全部</a-button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === PRODUCT_STATUS.ENABLED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = PRODUCT_STATUS.ENABLED">上架中</a-button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === PRODUCT_STATUS.DISABLED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = PRODUCT_STATUS.DISABLED">已下架</a-button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === PRODUCT_STATUS.SOLD_OUT ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = PRODUCT_STATUS.SOLD_OUT">已售罄</a-button>
           </div>
-          <input v-model="search" type="text" placeholder="搜索产品名称或币种..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+          <a-input v-model:value="search" type="text" placeholder="搜索产品名称或币种..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
         </div>
 
         <div class="space-y-3 p-4">
@@ -325,7 +325,7 @@ const fmtSignedCurrency = (val, currency) => {
                   </div>
                 </div>
               </div>
-              <button type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50" @click="openEditProduct(product)">编辑</button>
+              <a-button type="text" html-type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50" @click="openEditProduct(product)">编辑</a-button>
             </div>
 
             <div class="mt-3 grid gap-3 md:grid-cols-5">
@@ -374,49 +374,63 @@ const fmtSignedCurrency = (val, currency) => {
       <article class="rounded-xl border border-slate-200 bg-white">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
           <div class="inline-flex items-center gap-3 text-sm">
-            <button type="button" class="font-medium" :class="statusFilter === COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = COMMON_FILTER_ALL">全部</button>
-            <button type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.LOCKED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.LOCKED">锁定中</button>
-            <button type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.COMPLETED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.COMPLETED">已完成</button>
-            <button type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.EARLY_REDEEMED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.EARLY_REDEEMED">提前赎回</button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = COMMON_FILTER_ALL">全部</a-button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.LOCKED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.LOCKED">锁定中</a-button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.COMPLETED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.COMPLETED">已完成</a-button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.EARLY_REDEEMED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.EARLY_REDEEMED">提前赎回</a-button>
           </div>
-          <input v-model="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+          <a-input v-model:value="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
         </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead class="bg-slate-50 text-slate-500">
-              <tr>
-                <th class="px-4 py-3 text-left font-medium">订单ID</th>
-                <th class="px-4 py-3 text-left font-medium">用户</th>
-                <th class="px-4 py-3 text-left font-medium">产品</th>
-                <th class="px-4 py-3 text-left font-medium">金额</th>
-                <th class="px-4 py-3 text-left font-medium">周期</th>
-                <th class="px-4 py-3 text-left font-medium">年化收益率</th>
-                <th class="px-4 py-3 text-left font-medium">基础预计收益</th>
-                <th class="px-4 py-3 text-left font-medium">已执行调整</th>
-                <th class="px-4 py-3 text-left font-medium">应发收益</th>
-                <th class="px-4 py-3 text-left font-medium">状态</th>
-                <th class="px-4 py-3 text-left font-medium">剩余天数</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="order in filteredOrders" :key="order.id" class="border-t border-slate-100">
-                <td class="px-4 py-3 font-mono text-xs text-slate-600">{{ order.id }}</td>
-                <td class="px-4 py-3 text-slate-700">{{ order.userName }}</td>
-                <td class="px-4 py-3 text-slate-700">{{ order.productName }}</td>
-                <td class="px-4 py-3 font-medium text-slate-900">{{ fmtCurrency(order.amount, order.currency) }}</td>
-                <td class="px-4 py-3 text-slate-700">{{ order.lockDays }} 天</td>
-                <td class="px-4 py-3 font-medium text-emerald-600">{{ lockYieldAnnualPct(order).toFixed(2) }}%</td>
-                <td class="px-4 py-3 font-medium text-slate-700">{{ fmtCurrency(order.baseInterest, order.currency) }}</td>
-                <td class="px-4 py-3 font-medium" :class="adjustmentClass(order.executedInterestAdjustment)">
+          <a-table  size="small" :pagination="false" :data-source="filteredOrders" :row-key="(order) => order.id" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
+<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-mono text-xs text-slate-600&quot;] })">
+<template #title>订单ID</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.id }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.userName }}</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>产品</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.productName }}</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-slate-900&quot;] })">
+<template #title>金额</template>
+<template #default="{ record: order, index: rowIndex }">{{ fmtCurrency(order.amount, order.currency) }}</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>周期</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.lockDays }} 天</template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-emerald-600&quot;] })">
+<template #title>年化收益率</template>
+<template #default="{ record: order, index: rowIndex }">{{ lockYieldAnnualPct(order).toFixed(2) }}%</template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-slate-700&quot;] })">
+<template #title>基础预计收益</template>
+<template #default="{ record: order, index: rowIndex }">{{ fmtCurrency(order.baseInterest, order.currency) }}</template>
+</a-table-column>
+<a-table-column key="column-7" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium&quot;, adjustmentClass(order.executedInterestAdjustment)] })">
+<template #title>已执行调整</template>
+<template #default="{ record: order, index: rowIndex }">
                   {{ fmtSignedCurrency(order.executedInterestAdjustment, order.currency) }}
-                </td>
-                <td class="px-4 py-3 font-medium text-blue-600">{{ fmtCurrency(order.payableInterest, order.currency) }}</td>
-                <td class="px-4 py-3"><span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="orderStatusMeta[order.status].class">{{ orderStatusMeta[order.status].label }}</span></td>
-                <td class="px-4 py-3 text-slate-700">{{ order.daysRemaining > 0 ? `${order.daysRemaining} 天` : '-' }}</td>
-              </tr>
-            </tbody>
-          </table>
+                </template>
+</a-table-column>
+<a-table-column key="column-8" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-blue-600&quot;] })">
+<template #title>应发收益</template>
+<template #default="{ record: order, index: rowIndex }">{{ fmtCurrency(order.payableInterest, order.currency) }}</template>
+</a-table-column>
+<a-table-column key="column-9" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: order, index: rowIndex }"><span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="orderStatusMeta[order.status].class">{{ orderStatusMeta[order.status].label }}</span></template>
+</a-table-column>
+<a-table-column key="column-10" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>剩余天数</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.daysRemaining > 0 ? `${order.daysRemaining} 天` : '-' }}</template>
+</a-table-column>
+</a-table>
         </div>
       </article>
     </template>
@@ -428,18 +442,18 @@ const fmtSignedCurrency = (val, currency) => {
           <h1 class="text-3xl font-semibold text-slate-900">手工调整</h1>
           <p class="mt-1 text-sm text-slate-500">处理补息、扣息、展期与提前赎回</p>
         </div>
-        <button type="button" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="openCreateAdjustment">+ 新建调整</button>
+        <a-button type="text" html-type="button" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="openCreateAdjustment">+ 新建调整</a-button>
       </header>
 
       <article class="rounded-xl border border-slate-200 bg-white">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
           <div class="inline-flex items-center gap-3 text-sm">
-            <button type="button" class="font-medium" :class="statusFilter === COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = COMMON_FILTER_ALL">全部</button>
-            <button type="button" class="font-medium" :class="statusFilter === ADJUSTMENT_STATUS.PENDING ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ADJUSTMENT_STATUS.PENDING">待处理</button>
-            <button type="button" class="font-medium" :class="statusFilter === ADJUSTMENT_STATUS.APPROVED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ADJUSTMENT_STATUS.APPROVED">已批准</button>
-            <button type="button" class="font-medium" :class="statusFilter === ADJUSTMENT_STATUS.EXECUTED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ADJUSTMENT_STATUS.EXECUTED">已执行</button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = COMMON_FILTER_ALL">全部</a-button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ADJUSTMENT_STATUS.PENDING ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ADJUSTMENT_STATUS.PENDING">待处理</a-button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ADJUSTMENT_STATUS.APPROVED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ADJUSTMENT_STATUS.APPROVED">已批准</a-button>
+            <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ADJUSTMENT_STATUS.EXECUTED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ADJUSTMENT_STATUS.EXECUTED">已执行</a-button>
           </div>
-          <input v-model="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+          <a-input v-model:value="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
         </div>
 
         <div class="space-y-3 p-4">
@@ -459,11 +473,11 @@ const fmtSignedCurrency = (val, currency) => {
                 </div>
               </div>
               <div v-if="adj.status === ADJUSTMENT_STATUS.PENDING" class="flex gap-2">
-                <button type="button" class="rounded-lg border border-emerald-500 px-3 py-1.5 text-sm text-emerald-600 hover:bg-emerald-50" @click="approveAdjustment(adj.id)">批准</button>
-                <button type="button" class="rounded-lg border border-rose-500 px-3 py-1.5 text-sm text-rose-600 hover:bg-rose-50" @click="rejectAdjustment(adj.id)">拒绝</button>
+                <a-button type="text" html-type="button" class="rounded-lg border border-emerald-500 px-3 py-1.5 text-sm text-emerald-600 hover:bg-emerald-50" @click="approveAdjustment(adj.id)">批准</a-button>
+                <a-button type="text" html-type="button" class="rounded-lg border border-rose-500 px-3 py-1.5 text-sm text-rose-600 hover:bg-rose-50" @click="rejectAdjustment(adj.id)">拒绝</a-button>
               </div>
               <div v-else-if="adj.status === ADJUSTMENT_STATUS.APPROVED" class="flex gap-2">
-                <button type="button" class="rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700" @click="executeAdjustment(adj.id)">执行</button>
+                <a-button type="text" html-type="button" class="rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700" @click="executeAdjustment(adj.id)">执行</a-button>
               </div>
             </div>
           </article>
@@ -527,20 +541,16 @@ const fmtSignedCurrency = (val, currency) => {
             </div>
           </div>
           <div class="mt-3 overflow-x-auto rounded-lg border border-slate-200">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-50 text-slate-500">
-                <tr>
-                  <th class="px-3 py-2 text-left font-medium">用户层级</th>
-                  <th class="px-3 py-2 text-left font-medium">限购上限</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in rules.purchaseLimit.riskCaps" :key="item.level" class="border-t border-slate-100">
-                  <td class="px-3 py-2">{{ item.level }}</td>
-                  <td class="px-3 py-2 font-medium">{{ item.maxAmount.toLocaleString() }} USDT</td>
-                </tr>
-              </tbody>
-            </table>
+            <a-table  size="small" :pagination="false" :data-source="rules.purchaseLimit.riskCaps" :row-key="(item) => item.level" :scroll="{ x: 'max-content' }" :custom-row="(item, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
+<a-table-column key="column-0" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-3 py-2&quot;] })">
+<template #title>用户层级</template>
+<template #default="{ record: item, index: rowIndex }">{{ item.level }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-3 py-2 font-medium&quot;] })">
+<template #title>限购上限</template>
+<template #default="{ record: item, index: rowIndex }">{{ item.maxAmount.toLocaleString() }} USDT</template>
+</a-table-column>
+</a-table>
           </div>
         </div>
 
@@ -566,17 +576,12 @@ const fmtSignedCurrency = (val, currency) => {
 
     <!-- 产品编辑弹窗：Teleport 到 body，遮罩铺满视口 -->
     <Teleport to="body">
-      <div
-        v-if="showProductModal"
-        class="fixed inset-0 z-[100] grid min-h-[100dvh] w-full place-items-center overflow-y-auto bg-black/50 p-4 sm:p-6"
-        role="dialog"
-        aria-modal="true"
-      >
-      <section class="w-full max-w-2xl rounded-xl bg-white shadow-xl">
-        <header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+      <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showProductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="672"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showProductModal = false">
+<template #title><template v-if="showProductModal"><header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <h2 class="text-xl font-semibold text-slate-900">{{ editingProductId ? '编辑产品' : '新增产品' }}</h2>
-          <button type="button" class="text-2xl text-slate-400" @click="showProductModal = false">×</button>
-        </header>
+          <a-button aria-label="关闭" type="text" html-type="button" class="text-2xl text-slate-400" @click="showProductModal = false">×</a-button>
+        </header></template></template>
+<template v-if="showProductModal">
 
         <div class="max-h-[70vh] space-y-5 overflow-y-auto px-5 py-4">
           <div class="grid gap-x-5 gap-y-4 md:grid-cols-2">
@@ -585,15 +590,15 @@ const fmtSignedCurrency = (val, currency) => {
                 <span class="lb-label">产品名称</span>
                 <span class="lb-label-aux">必填</span>
               </div>
-              <input v-model="productForm.name" type="text" class="lb-ctrl" autocomplete="off" />
+              <a-input v-model:value="productForm.name" type="text" class="lb-ctrl" autocomplete="off" />
             </div>
             <div class="lb-stack">
               <div class="lb-label-row">
                 <span class="lb-label">计价币种</span>
               </div>
-              <select v-model="productForm.currency" class="lb-ctrl lb-select">
-                <option v-for="curr in SUPPORTED_CURRENCIES" :key="curr" :value="curr">{{ curr }}</option>
-              </select>
+              <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.currency" class="lb-ctrl lb-select">
+                <a-select-option v-for="curr in SUPPORTED_CURRENCIES" :key="curr" :value="curr">{{ curr }}</a-select-option>
+              </a-select>
             </div>
           </div>
 
@@ -603,15 +608,15 @@ const fmtSignedCurrency = (val, currency) => {
                 <span class="lb-label">锁仓与年化收益</span>
                 <span class="lb-label-aux !text-left">每行一档</span>
               </div>
-              <button type="button" class="h-9 shrink-0 rounded-md bg-blue-600 px-3 text-sm font-medium text-white hover:bg-blue-700" @click="addPeriod">+ 添加档位</button>
+              <a-button type="text" html-type="button" class="h-9 shrink-0 rounded-md bg-blue-600 px-3 text-sm font-medium text-white hover:bg-blue-700" @click="addPeriod">+ 添加档位</a-button>
             </div>
             <div class="space-y-2">
               <div v-for="(period, idx) in productForm.periods" :key="idx" class="flex flex-wrap items-center gap-2">
-                <input v-model.number="period.days" type="number" placeholder="天数" inputmode="numeric" class="lb-cell-in w-[4.5rem]" />
-                <input v-model.number="period.annualRate" type="number" step="0.01" min="0" placeholder="年化%" inputmode="decimal" class="lb-cell-in w-[6.25rem]" />
-                <input v-model.number="period.minAmount" type="number" placeholder="单笔最小" inputmode="decimal" class="lb-cell-in min-w-[6rem] flex-1" />
-                <input v-model.number="period.maxAmount" type="number" placeholder="单笔最大" inputmode="decimal" class="lb-cell-in min-w-[6rem] flex-1" />
-                <button type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 text-rose-600 hover:border-rose-200 hover:bg-rose-50" title="删除" @click="removePeriod(idx)">×</button>
+                <a-input v-model:value.number="period.days" type="number" placeholder="天数" inputmode="numeric" class="lb-cell-in w-[4.5rem]" />
+                <a-input v-model:value.number="period.annualRate" type="number" step="0.01" min="0" placeholder="年化%" inputmode="decimal" class="lb-cell-in w-[6.25rem]" />
+                <a-input v-model:value.number="period.minAmount" type="number" placeholder="单笔最小" inputmode="decimal" class="lb-cell-in min-w-[6rem] flex-1" />
+                <a-input v-model:value.number="period.maxAmount" type="number" placeholder="单笔最大" inputmode="decimal" class="lb-cell-in min-w-[6rem] flex-1" />
+                <a-button type="text" html-type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 text-rose-600 hover:border-rose-200 hover:bg-rose-50" title="删除" @click="removePeriod(idx)">×</a-button>
               </div>
             </div>
           </div>
@@ -622,7 +627,7 @@ const fmtSignedCurrency = (val, currency) => {
                 <span class="lb-label">提前赎回</span>
               </div>
               <label class="flex h-10 cursor-pointer items-center gap-2.5">
-                <input v-model="productForm.earlyRedeemEnabled" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                <a-checkbox v-model:checked="productForm.earlyRedeemEnabled" class="" />
                 <span class="text-sm text-slate-700">允许提前赎回</span>
               </label>
             </div>
@@ -631,7 +636,7 @@ const fmtSignedCurrency = (val, currency) => {
                 <span class="lb-label">违约金</span>
                 <span class="lb-label-aux">% · 本金</span>
               </div>
-              <input v-model.number="productForm.earlyRedeemFee" type="number" class="lb-ctrl w-32 tabular-nums" />
+              <a-input v-model:value.number="productForm.earlyRedeemFee" type="number" class="lb-ctrl w-32 tabular-nums" />
             </div>
           </div>
 
@@ -640,30 +645,30 @@ const fmtSignedCurrency = (val, currency) => {
               <div class="lb-label-row">
                 <span class="lb-label">限购类型</span>
               </div>
-              <select v-model="productForm.purchaseLimitType" class="lb-ctrl lb-select">
-                <option :value="PURCHASE_LIMIT_TYPE.NONE">不限购</option>
-                <option :value="PURCHASE_LIMIT_TYPE.LIFETIME">终身限购</option>
-                <option :value="PURCHASE_LIMIT_TYPE.PERIOD">周期限购</option>
-              </select>
+              <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.purchaseLimitType" class="lb-ctrl lb-select">
+                <a-select-option :value="PURCHASE_LIMIT_TYPE.NONE">不限购</a-select-option>
+                <a-select-option :value="PURCHASE_LIMIT_TYPE.LIFETIME">终身限购</a-select-option>
+                <a-select-option :value="PURCHASE_LIMIT_TYPE.PERIOD">周期限购</a-select-option>
+              </a-select>
             </div>
             <div v-if="productForm.purchaseLimitType === PURCHASE_LIMIT_TYPE.LIFETIME" class="lb-stack max-w-lg">
               <div class="lb-label-row">
                 <span class="lb-label">终身限购额度</span>
               </div>
-              <input v-model.number="productForm.lifetimeLimit" type="number" class="lb-ctrl tabular-nums" />
+              <a-input v-model:value.number="productForm.lifetimeLimit" type="number" class="lb-ctrl tabular-nums" />
             </div>
             <div v-if="productForm.purchaseLimitType === PURCHASE_LIMIT_TYPE.PERIOD" class="grid gap-x-5 gap-y-4 sm:grid-cols-2">
               <div class="lb-stack">
                 <div class="lb-label-row">
                   <span class="lb-label">周期天数</span>
                 </div>
-                <input v-model.number="productForm.periodDays" type="number" class="lb-ctrl tabular-nums" />
+                <a-input v-model:value.number="productForm.periodDays" type="number" class="lb-ctrl tabular-nums" />
               </div>
               <div class="lb-stack">
                 <div class="lb-label-row">
                   <span class="lb-label">周期限购额度</span>
                 </div>
-                <input v-model.number="productForm.periodLimit" type="number" class="lb-ctrl tabular-nums" />
+                <a-input v-model:value.number="productForm.periodLimit" type="number" class="lb-ctrl tabular-nums" />
               </div>
             </div>
             <div class="grid gap-x-5 gap-y-4 sm:grid-cols-2">
@@ -671,17 +676,17 @@ const fmtSignedCurrency = (val, currency) => {
                 <div class="lb-label-row">
                   <span class="lb-label">最低 VIP</span>
                 </div>
-                <select v-model.number="productForm.minVipLevel" class="lb-ctrl lb-select">
-                  <option v-for="opt in LOCKED_MIN_VIP_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                </select>
+                <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value.number="productForm.minVipLevel" class="lb-ctrl lb-select">
+                  <a-select-option v-for="opt in LOCKED_MIN_VIP_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</a-select-option>
+                </a-select>
               </div>
               <div class="lb-stack">
                 <div class="lb-label-row">
                   <span class="lb-label">最低认证</span>
                 </div>
-                <select v-model="productForm.minKycLevel" class="lb-ctrl lb-select">
-                  <option v-for="opt in LOCKED_MIN_KYC_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                </select>
+                <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.minKycLevel" class="lb-ctrl lb-select">
+                  <a-select-option v-for="opt in LOCKED_MIN_KYC_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</a-select-option>
+                </a-select>
               </div>
             </div>
             <div class="lb-stack max-w-xs">
@@ -690,8 +695,8 @@ const fmtSignedCurrency = (val, currency) => {
                 <span class="lb-label-aux">0–100 · %</span>
               </div>
               <p class="mb-1 text-xs text-slate-500">锁仓额中可按该比例计入与借出币种相同的借贷资金池（前台借贷详情可借余额按此推算）。</p>
-              <input
-                v-model.number="productForm.lendableRatio"
+              <a-input
+                v-model:value.number="productForm.lendableRatio"
                 type="number"
                 min="0"
                 max="100"
@@ -705,69 +710,64 @@ const fmtSignedCurrency = (val, currency) => {
             <div class="lb-label-row">
               <span class="lb-label">产品状态</span>
             </div>
-            <select v-model="productForm.status" class="lb-ctrl lb-select">
-              <option :value="PRODUCT_STATUS.ENABLED">上架中</option>
-              <option :value="PRODUCT_STATUS.DISABLED">已下架</option>
-              <option :value="PRODUCT_STATUS.SOLD_OUT">已售罄</option>
-            </select>
+            <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.status" class="lb-ctrl lb-select">
+              <a-select-option :value="PRODUCT_STATUS.ENABLED">上架中</a-select-option>
+              <a-select-option :value="PRODUCT_STATUS.DISABLED">已下架</a-select-option>
+              <a-select-option :value="PRODUCT_STATUS.SOLD_OUT">已售罄</a-select-option>
+            </a-select>
           </div>
         </div>
 
-        <footer class="flex justify-end gap-3 border-t border-slate-200 px-5 py-4">
-          <button type="button" class="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium text-slate-700 hover:bg-slate-50" @click="showProductModal = false">取消</button>
-          <button type="button" class="h-10 rounded-md bg-blue-600 px-5 text-sm font-medium text-white shadow-sm hover:bg-blue-700" @click="saveProduct">保存</button>
-        </footer>
-      </section>
-      </div>
+        </template>
+<template #footer><template v-if="showProductModal"><footer class="flex justify-end gap-3 border-t border-slate-200 px-5 py-4">
+          <a-button type="text" html-type="button" class="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium text-slate-700 hover:bg-slate-50" @click="showProductModal = false">取消</a-button>
+          <a-button type="text" html-type="button" class="h-10 rounded-md bg-blue-600 px-5 text-sm font-medium text-white shadow-sm hover:bg-blue-700" @click="saveProduct">保存</a-button>
+        </footer></template></template>
+</a-modal>
     </Teleport>
 
     <!-- 调整申请弹窗 -->
     <Teleport to="body">
-      <div
-        v-if="showAdjustmentModal"
-        class="fixed inset-0 z-[100] grid min-h-[100dvh] w-full place-items-center overflow-y-auto bg-black/50 p-4 sm:p-6"
-        role="dialog"
-        aria-modal="true"
-      >
-      <section class="w-full max-w-md rounded-xl bg-white shadow-xl">
-        <header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+      <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showAdjustmentModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="448"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showAdjustmentModal = false">
+<template #title><template v-if="showAdjustmentModal"><header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <h2 class="text-xl font-semibold text-slate-900">新建调整</h2>
-          <button type="button" class="text-2xl text-slate-400" @click="showAdjustmentModal = false">×</button>
-        </header>
+          <a-button aria-label="关闭" type="text" html-type="button" class="text-2xl text-slate-400" @click="showAdjustmentModal = false">×</a-button>
+        </header></template></template>
+<template v-if="showAdjustmentModal">
 
         <div class="space-y-4 px-5 py-4">
           <label class="space-y-1">
             <span class="text-sm font-medium">订单ID</span>
-            <input v-model="adjustmentForm.orderId" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+            <a-input v-model:value="adjustmentForm.orderId" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
           </label>
 
           <label class="space-y-1">
             <span class="text-sm font-medium">调整类型</span>
-            <select v-model="adjustmentForm.type" class="w-full rounded-lg border border-slate-300 px-3 py-2">
-              <option :value="ADJUSTMENT_TYPE.ADD_INTEREST">补息</option>
-              <option :value="ADJUSTMENT_TYPE.DEDUCT_INTEREST">扣息</option>
-              <option :value="ADJUSTMENT_TYPE.EXTEND">展期</option>
-              <option :value="ADJUSTMENT_TYPE.EARLY_REDEEM">提前赎回</option>
-            </select>
+            <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="adjustmentForm.type" class="w-full">
+              <a-select-option :value="ADJUSTMENT_TYPE.ADD_INTEREST">补息</a-select-option>
+              <a-select-option :value="ADJUSTMENT_TYPE.DEDUCT_INTEREST">扣息</a-select-option>
+              <a-select-option :value="ADJUSTMENT_TYPE.EXTEND">展期</a-select-option>
+              <a-select-option :value="ADJUSTMENT_TYPE.EARLY_REDEEM">提前赎回</a-select-option>
+            </a-select>
           </label>
 
           <label class="space-y-1">
             <span class="text-sm font-medium">金额</span>
-            <input v-model.number="adjustmentForm.amount" type="number" step="0.0001" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+            <a-input v-model:value.number="adjustmentForm.amount" type="number" step="0.0001" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
           </label>
 
           <label class="space-y-1">
             <span class="text-sm font-medium">原因说明</span>
-            <textarea v-model="adjustmentForm.reason" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2"></textarea>
+            <a-textarea v-model:value="adjustmentForm.reason" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2"></a-textarea>
           </label>
         </div>
 
-        <footer class="flex justify-end gap-3 border-t border-slate-200 px-5 py-4">
-          <button type="button" class="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium text-slate-700 hover:bg-slate-50" @click="showAdjustmentModal = false">取消</button>
-          <button type="button" class="h-10 rounded-md bg-blue-600 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700" @click="saveAdjustment">提交</button>
-        </footer>
-      </section>
-      </div>
+        </template>
+<template #footer><template v-if="showAdjustmentModal"><footer class="flex justify-end gap-3 border-t border-slate-200 px-5 py-4">
+          <a-button type="text" html-type="button" class="h-10 rounded-md border border-slate-300 px-4 text-sm font-medium text-slate-700 hover:bg-slate-50" @click="showAdjustmentModal = false">取消</a-button>
+          <a-button type="text" html-type="button" class="h-10 rounded-md bg-blue-600 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700" @click="saveAdjustment">提交</a-button>
+        </footer></template></template>
+</a-modal>
     </Teleport>
 
     <!-- MFA 验证弹窗 -->

@@ -1,4 +1,6 @@
 <script setup>
+import { Table, Tag } from 'ant-design-vue'
+import { AdminButton } from '../antd/controls.js'
 defineProps({
   loading: { type: Boolean, default: false },
   auditList: { type: Array, default: () => [] },
@@ -10,11 +12,37 @@ defineProps({
   variant: { type: String, default: 'admin' }
 })
 
+const columns = [
+  { title: '用户信息', key: 'user' },
+  { title: '认证等级', key: 'level' },
+  { title: '认证资料', key: 'documents' },
+  { title: '状态', key: 'status' },
+  { title: '申请时间', key: 'time' },
+  { title: '操作', key: 'actions' }
+]
 const emit = defineEmits(['view-detail', 'prev-page', 'next-page'])
 </script>
 
 <template>
-  <div class="overflow-x-auto">
+  <Table v-if="variant !== 'agent'" :data-source="auditList" :columns="columns" row-key="id" size="small" :loading="loading" :pagination="false" :scroll="{ x: 'max-content' }" :locale="{ emptyText: '暂无审核记录' }">
+    <template #bodyCell="{ column, record: audit }">
+      <div v-if="column.key === 'user'">
+        <p class="font-medium">{{ audit.username }}</p>
+        <p>{{ audit.basicInfo?.realName ?? '—' }}</p>
+        <p class="text-xs text-slate-500">{{ audit.email }}</p>
+      </div>
+      <div v-else-if="column.key === 'level'" class="space-y-1">
+        <Tag :class="levelConfig[audit.currentLevel]?.class">{{ levelConfig[audit.currentLevel]?.text }}</Tag>
+        <p class="text-xs text-slate-500">↓ 申请</p>
+        <Tag :class="levelConfig[audit.applyLevel]?.class">{{ levelConfig[audit.applyLevel]?.text }}</Tag>
+      </div>
+      <span v-else-if="column.key === 'documents'">{{ audit.documents?.length || 0 }} 份</span>
+      <Tag v-else-if="column.key === 'status'" :class="statusConfig[audit.status]?.class">{{ statusConfig[audit.status]?.text }}</Tag>
+      <span v-else-if="column.key === 'time'">{{ formatDate(audit.submitTime) }}</span>
+      <AdminButton v-else-if="column.key === 'actions'" class="bg-blue-600 text-white" @click="emit('view-detail', audit)">查看详情</AdminButton>
+    </template>
+  </Table>
+  <div v-else class="overflow-x-auto">
     <table class="w-full min-w-[52rem] border-collapse text-left text-sm">
       <thead :class="variant === 'agent' ? 'bg-white/[0.04] text-xs text-white/50' : 'bg-slate-50'">
         <tr>
@@ -158,7 +186,7 @@ const emit = defineEmits(['view-detail', 'prev-page', 'next-page'])
     </table>
   </div>
 
-  <div v-if="!loading && auditList.length === 0" :class="variant === 'agent' ? 'py-12 text-center text-sm text-white/45' : 'py-12 text-center'">
+  <div v-if="variant === 'agent' && !loading && auditList.length === 0" :class="variant === 'agent' ? 'py-12 text-center text-sm text-white/45' : 'py-12 text-center'">
     <p :class="variant === 'agent' ? '' : 'text-gray-500'">暂无审核记录</p>
   </div>
 
@@ -186,7 +214,7 @@ const emit = defineEmits(['view-detail', 'prev-page', 'next-page'])
       页
     </div>
     <div class="flex items-center gap-2">
-      <button
+      <AdminButton
         type="button"
         :disabled="pagination.currentPage === 1 || loading"
         :class="
@@ -197,8 +225,8 @@ const emit = defineEmits(['view-detail', 'prev-page', 'next-page'])
         @click="emit('prev-page')"
       >
         上一页
-      </button>
-      <button
+      </AdminButton>
+      <AdminButton
         type="button"
         :disabled="pagination.currentPage === totalPages || loading"
         :class="
@@ -209,7 +237,7 @@ const emit = defineEmits(['view-detail', 'prev-page', 'next-page'])
         @click="emit('next-page')"
       >
         下一页
-      </button>
+      </AdminButton>
     </div>
   </div>
 </template>

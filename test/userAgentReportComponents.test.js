@@ -97,7 +97,7 @@ test('agent report Drawer keeps overview outside tabs and separates products fro
   assert.match(drawer.textContent, /代理业绩明细/)
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 21 条 · 第 1 / 3 页')
 
-  harness.findByText('下一页', 'button').click()
+  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
   await harness.flush()
   assert.deepEqual(dailyDates(harness), dailyRows.slice(10, 20).map((row) => row.date))
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 21 条 · 第 2 / 3 页')
@@ -122,7 +122,7 @@ test('agent report Drawer keeps overview outside tabs and separates products fro
   assert.equal(activeProductPanel.getAttribute('aria-labelledby'), 'agent-report-products-tab')
   assert.equal(activeProductPanel.getAttribute('tabindex'), '0')
   assert.equal(activeProductPanel.classList.contains('overflow-y-auto'), true)
-  assert.equal(activeProductTable.classList.contains('divide-y'), true)
+  assert.ok(harness.allNodes().some(node => activeProductTable.contains(node) && node.tag === 'table'))
   assert.equal(productRows[0].tag, 'tr')
   assert.deepEqual(
     productRows
@@ -239,9 +239,9 @@ test('agent report Drawer clamps same-user data shrink but resets page for a new
   t.after(harness.cleanup)
   await harness.finishTransitions()
 
-  harness.findByText('下一页', 'button').click()
+  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
   await harness.flush()
-  harness.findByText('下一页', 'button').click()
+  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
   await harness.flush()
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 21 条 · 第 3 / 3 页')
 

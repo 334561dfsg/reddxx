@@ -249,38 +249,28 @@ onMounted(() => {
         </p>
       </div>
       <div class="flex shrink-0 gap-2">
-        <button type="button" class="ant-btn" @click="resetConfig">重置为默认</button>
-        <button type="button" class="ant-btn ant-btn-primary" :disabled="isSaving" @click="saveConfig">
+        <a-button html-type="button" class="" @click="resetConfig">重置为默认</a-button>
+        <a-button html-type="button" class="" :disabled="isSaving" @click="saveConfig" type="primary">
           {{ isSaving ? '保存中…' : '保存配置' }}
-        </button>
+        </a-button>
       </div>
     </header>
 
     <nav class="flex gap-0 border-b border-slate-200" aria-label="代理记佣配置分区">
-      <button
-        type="button"
-        class="-mb-px border-b-2 px-4 py-3 text-sm font-medium transition-colors"
-        :class="
+      <a-button html-type="button" class="-mb-px border-b-2 text-sm font-medium transition-colors" :class="
           activeTab === 'rules'
             ? 'border-blue-600 text-blue-700'
             : 'border-transparent text-slate-500 hover:text-slate-800'
-        "
-        @click="activeTab = 'rules'"
-      >
+        " @click="activeTab = 'rules'">
         记佣规则
-      </button>
-      <button
-        type="button"
-        class="-mb-px border-b-2 px-4 py-3 text-sm font-medium transition-colors"
-        :class="
+      </a-button>
+      <a-button html-type="button" class="-mb-px border-b-2 text-sm font-medium transition-colors" :class="
           activeTab === 'settlement'
             ? 'border-blue-600 text-blue-700'
             : 'border-transparent text-slate-500 hover:text-slate-800'
-        "
-        @click="activeTab = 'settlement'"
-      >
+        " @click="activeTab = 'settlement'">
         佣金结算
-      </button>
+      </a-button>
     </nav>
 
     <div v-show="activeTab === 'rules'" class="space-y-8">
@@ -338,17 +328,7 @@ onMounted(() => {
               仅作用于「充值」产品线：开启时，代理名下客户仅其第一笔充值成功订单参与本条线的 A 与佣金计算；该客户后续充值订单不参与本条线记佣。
             </p>
           </div>
-          <button
-            type="button"
-            :class="config.agentCommissionDepositFirstOnly ? 'bg-blue-600' : 'bg-slate-200'"
-            class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none"
-            @click="config.agentCommissionDepositFirstOnly = !config.agentCommissionDepositFirstOnly"
-          >
-            <span
-              :class="config.agentCommissionDepositFirstOnly ? 'translate-x-5' : 'translate-x-0'"
-              class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition"
-            />
-          </button>
+          <a-switch :checked="config.agentCommissionDepositFirstOnly" @click="config.agentCommissionDepositFirstOnly = !config.agentCommissionDepositFirstOnly" aria-label="代理仅首充返佣" />
         </div>
       </div>
     </section>
@@ -367,13 +347,7 @@ onMounted(() => {
         <div class="flex flex-col gap-1 sm:items-end">
           <label class="flex items-center gap-2 text-sm text-slate-600">
             <span class="whitespace-nowrap">示例手续费基数（USDT）</span>
-            <input
-              v-model.number="demoBaseAmount"
-              type="number"
-              min="0"
-              step="100"
-              class="ant-input w-36 text-right"
-            />
+            <a-input type="number" min="0" step="100" class="w-36 text-right" :value="demoBaseAmount" @update:value="demoBaseAmount = $event === '' ? '' : Number($event)" />
           </label>
           <span class="text-xs text-slate-400">示例佣金 = 基数 × r</span>
         </div>
@@ -400,17 +374,7 @@ onMounted(() => {
                 </div>
                 <div class="flex shrink-0 flex-col items-end gap-0.5">
                   <span class="text-[10px] font-medium uppercase tracking-wide text-slate-400">记佣</span>
-                  <button
-                    type="button"
-                    :class="isLineEnabled(line) ? 'bg-blue-600' : 'bg-slate-200'"
-                    class="relative inline-flex h-6 w-11 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none"
-                    @click="toggleLine(line)"
-                  >
-                    <span
-                      :class="isLineEnabled(line) ? 'translate-x-5' : 'translate-x-0'"
-                      class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition"
-                    />
-                  </button>
+                  <a-switch :checked="isLineEnabled(line)" @click="toggleLine(line)" :aria-label="line.title || line.label || line.key" />
                 </div>
               </div>
 
@@ -424,16 +388,7 @@ onMounted(() => {
 
                 <template v-if="isLineEnabled(line)">
                   <label class="mt-4 block text-xs font-medium text-slate-700" :for="'agcr-' + line.key">比例 r（0～1）</label>
-                  <input
-                    :id="'agcr-' + line.key"
-                    type="number"
-                    min="0"
-                    max="1"
-                    step="0.001"
-                    class="ant-input mt-1 w-full max-w-[220px] text-sm"
-                    :value="rateNum(line)"
-                    @input="setRate(line, $event.target.value)"
-                  />
+                  <a-input :id="'agcr-' + line.key" type="number" min="0" max="1" step="0.001" class="mt-1 w-full max-w-[220px]" :value="rateNum(line)" @input="setRate(line, $event.target.value)" />
                   <div class="mt-3 flex flex-wrap gap-1.5">
                     <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-700">
                       r = {{ (rateNum(line) * 100).toFixed(2) }}%
@@ -487,38 +442,23 @@ onMounted(() => {
                 开启后：账期汇总单生成后系统自动划转至代理人账户。关闭后：汇总单进入「佣金结算」，由运营审核通过后入账。
               </p>
             </div>
-            <button
-              type="button"
-              :class="config.agentCommissionAutoExecute ? 'bg-blue-600' : 'bg-slate-200'"
-              class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none"
-              @click="config.agentCommissionAutoExecute = !config.agentCommissionAutoExecute"
-            >
-              <span
-                :class="config.agentCommissionAutoExecute ? 'translate-x-5' : 'translate-x-0'"
-                class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition"
-              />
-            </button>
+            <a-switch :checked="config.agentCommissionAutoExecute" @click="config.agentCommissionAutoExecute = !config.agentCommissionAutoExecute" aria-label="自动发放代理佣金" />
           </div>
 
           <div class="grid gap-6 lg:grid-cols-2">
             <div>
               <label class="block text-sm font-medium text-slate-800">结算周期</label>
-              <select v-model="config.agentSettlementCycle" class="ant-input mt-2 w-full max-w-md text-sm">
-                <option v-for="opt in AGENT_SETTLEMENT_CYCLE_OPTIONS" :key="opt.value" :value="opt.value">
+              <a-select v-model:value="config.agentSettlementCycle" class="mt-2 w-full max-w-md">
+                <a-select-option v-for="opt in AGENT_SETTLEMENT_CYCLE_OPTIONS" :key="opt.value" :value="opt.value">
                   {{ opt.label }}
-                </option>
-              </select>
+                </a-select-option>
+              </a-select>
               <p class="mt-1 text-xs text-slate-500">{{ currentCycleOption?.desc }}</p>
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-800">结算触发时刻</label>
               <p class="mt-1 text-xs text-slate-500">24 小时制，与平台默认时区一致（与裂变日结时刻配置方式相同）。</p>
-              <input
-                v-model="config.agentSettlementTimeLocal"
-                type="time"
-                step="60"
-                class="ant-input mt-2 w-full max-w-[12rem] text-sm"
-              />
+              <a-input v-model:value="config.agentSettlementTimeLocal" type="time" step="60" class="mt-2 w-full max-w-[12rem]" />
             </div>
           </div>
 
@@ -528,32 +468,25 @@ onMounted(() => {
               <template v-if="config.agentSettlementCycle === AGENT_SETTLEMENT_CYCLE.WEEKLY">单周：每个自然周在指定星期触发上一完整周账期。</template>
               <template v-else>双周：每两个自然周在指定星期触发账期汇总（与账务双周历对齐）。</template>
             </p>
-            <select v-model.number="config.agentSettlementWeekday" class="ant-input mt-2 w-full text-sm">
-              <option v-for="d in AGENT_SETTLEMENT_WEEKDAY_OPTIONS" :key="d.value" :value="d.value">
+            <a-select v-model:value="config.agentSettlementWeekday" class="mt-2 w-full">
+              <a-select-option v-for="d in AGENT_SETTLEMENT_WEEKDAY_OPTIONS" :key="d.value" :value="d.value">
                 {{ d.label }}
-              </option>
-            </select>
+              </a-select-option>
+            </a-select>
           </div>
           <div v-else class="max-w-md">
             <label class="block text-sm font-medium text-slate-800">结算日 · 每月几号</label>
             <p class="mt-1 text-xs text-slate-500">按自然月；若某月无该日（如 31 号），由账务任务按月末规则处理。</p>
-            <input
-              v-model.number="config.agentSettlementMonthDay"
-              type="number"
-              min="1"
-              max="31"
-              step="1"
-              class="ant-input mt-2 w-full max-w-[8rem] text-sm"
-            />
+            <a-input type="number" min="1" max="31" step="1" class="mt-2 w-full max-w-[8rem]" :value="config.agentSettlementMonthDay" @update:value="config.agentSettlementMonthDay = $event === '' ? '' : Number($event)" />
           </div>
 
           <div class="max-w-md">
             <label class="block text-sm font-medium text-slate-800">佣金入账账户</label>
-            <select v-model="config.agentCommissionCreditTo" class="ant-input mt-2 w-full text-sm">
-              <option v-for="opt in REFERRAL_COMMISSION_CREDIT_TO_OPTIONS" :key="opt.value" :value="opt.value">
+            <a-select v-model:value="config.agentCommissionCreditTo" class="mt-2 w-full">
+              <a-select-option v-for="opt in REFERRAL_COMMISSION_CREDIT_TO_OPTIONS" :key="opt.value" :value="opt.value">
                 {{ opt.label }}
-              </option>
-            </select>
+              </a-select-option>
+            </a-select>
             <p class="mt-1.5 text-xs leading-relaxed text-slate-500">
               {{
                 REFERRAL_COMMISSION_CREDIT_TO_OPTIONS.find((o) => o.value === config.agentCommissionCreditTo)?.hint
@@ -568,30 +501,15 @@ onMounted(() => {
             </p>
             <ul class="mt-3 space-y-2 text-sm text-slate-700">
               <li class="flex items-center gap-2">
-                <input
-                  id="agent-notify-email"
-                  v-model="config.agentNotifyAfterSettlementEmail"
-                  type="checkbox"
-                  class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                />
+                <a-checkbox id="agent-notify-email" v-model:checked="config.agentNotifyAfterSettlementEmail" class="text-blue-600" />
                 <label for="agent-notify-email" class="cursor-pointer select-none">发送邮件</label>
               </li>
               <li class="flex items-center gap-2">
-                <input
-                  id="agent-notify-site"
-                  v-model="config.agentNotifyAfterSettlementSite"
-                  type="checkbox"
-                  class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                />
+                <a-checkbox id="agent-notify-site" v-model:checked="config.agentNotifyAfterSettlementSite" class="text-blue-600" />
                 <label for="agent-notify-site" class="cursor-pointer select-none">发送站内信</label>
               </li>
               <li class="flex items-center gap-2">
-                <input
-                  id="agent-notify-sms"
-                  v-model="config.agentNotifyAfterSettlementSms"
-                  type="checkbox"
-                  class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                />
+                <a-checkbox id="agent-notify-sms" v-model:checked="config.agentNotifyAfterSettlementSms" class="text-blue-600" />
                 <label for="agent-notify-sms" class="cursor-pointer select-none">发送手机短信</label>
               </li>
             </ul>

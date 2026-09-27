@@ -172,7 +172,7 @@ const setQuery = async (harness, value) => {
 }
 
 const renderedOptions = (harness) => harness.allNodes().filter((node) => node.getAttribute?.('role') === 'option')
-const optionLabel = (option) => option.children[0]?.children[0]?.textContent
+const optionLabel = (option) => findHostNode(option, (node) => node.classList?.contains('block') && node.classList?.contains('truncate') && !node.classList?.contains('text-xs'))?.textContent
 
 const findHostNode = (root, predicate) => {
   if (predicate(root)) return root
@@ -250,7 +250,7 @@ test('a rendered enabled option cannot commit after the current option refresh m
     option.value === 'active' ? { ...option, disabled: true } : option
   ))
   await harness.flush()
-  staleCommit({ type: 'click', target: staleEnabledOption, currentTarget: staleEnabledOption })
+  staleCommit({ type: 'click', target: staleEnabledOption, currentTarget: staleEnabledOption, preventDefault() {} })
   await harness.flush()
 
   assert.equal(harness.props.modelValue, 'review')

@@ -609,48 +609,24 @@ onMounted(() => {
           role="tablist"
           aria-label="语言与区号配置分区"
         >
-          <button
-            v-for="t in localeTabs"
-            :key="t.key"
-            type="button"
-            role="tab"
-            :aria-selected="activeTab === t.key"
-            class="rounded-md px-3 py-1.5 text-sm font-medium transition"
-            :class="
+          <a-button v-for="t in localeTabs" :key="t.key" html-type="button" role="tab" :aria-selected="activeTab === t.key" class="text-sm font-medium transition" :class="
               activeTab === t.key
                 ? 'bg-white text-slate-900 shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
-            "
-            @click="activeTab = t.key"
-          >
+            " @click="activeTab = t.key">
             {{ t.label }}
-          </button>
+          </a-button>
         </div>
         <div class="flex shrink-0 flex-wrap gap-2">
-          <button
-            v-if="activeTab === 'language'"
-            type="button"
-            class="ant-btn"
-            @click="openAddLanguageForm"
-          >
+          <a-button v-if="activeTab === 'language'" html-type="button" class="" @click="openAddLanguageForm">
             添加语言
-          </button>
-          <button
-            v-if="activeTab === 'dial'"
-            type="button"
-            class="ant-btn"
-            @click="openAddDialForm"
-          >
+          </a-button>
+          <a-button v-if="activeTab === 'dial'" html-type="button" class="" @click="openAddDialForm">
             添加区号
-          </button>
-          <button
-            type="button"
-            class="ant-btn ant-btn-primary"
-            :disabled="isSaving"
-            @click="saveConfig"
-          >
+          </a-button>
+          <a-button html-type="button" class="" :disabled="isSaving" @click="saveConfig" type="primary">
             {{ isSaving ? '保存中…' : '保存' }}
-          </button>
+          </a-button>
         </div>
       </div>
 
@@ -668,29 +644,15 @@ onMounted(() => {
             <div class="flex flex-wrap items-center justify-between gap-2">
               <label class="text-sm font-medium text-slate-700">语言列表</label>
               <div class="flex flex-wrap gap-2 text-xs">
-	                <button type="button" class="text-blue-600 hover:underline" @click="selectAllLocales">
+	                <a-button html-type="button" class="text-blue-600 hover:underline" @click="selectAllLocales">
 	                  全选
-	                </button>
+	                </a-button>
 	              </div>
             </div>
 
             <div class="overflow-x-auto overflow-hidden rounded-lg border border-slate-200">
-              <table class="w-full min-w-[58rem] border-collapse text-left text-sm">
-                <thead class="bg-slate-50 text-slate-600">
-                  <tr>
-                    <th class="w-28 px-4 py-2.5 font-medium">图标</th>
-                    <th class="px-4 py-2.5 font-medium">语言名称</th>
-                    <th class="w-32 px-4 py-2.5 font-medium">语言代码</th>
-                    <th class="w-28 px-4 py-2.5 font-medium">排序</th>
-                    <th class="w-24 px-4 py-2.5 text-right font-medium">Key 数</th>
-                    <th class="w-24 px-4 py-2.5 text-center font-medium">启用</th>
-                    <th class="w-28 px-4 py-2.5 text-center font-medium">默认</th>
-		                    <th class="w-44 px-4 py-2.5 text-right font-medium">操作</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 bg-white">
-                  <tr v-for="loc in localesTableRows" :key="loc.code" class="hover:bg-slate-50/80">
-                    <td class="px-4 py-2.5">
+              <a-table  :data-source="localesTableRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(loc) => loc.code" :custom-row="(loc, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
+<a-table-column key="column-0" ><template #title>图标</template><template #default="{ record: loc, index: index }"><div class=" .5">
                       <span class="inline-flex h-8 w-12 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white text-base">
                         <img
                           v-if="isImageIcon(loc.icon)"
@@ -700,66 +662,32 @@ onMounted(() => {
                         />
                         <span v-else>{{ loc.icon || '□' }}</span>
                       </span>
-                    </td>
-                    <td class="px-4 py-2.5 text-slate-800">{{ loc.label }}</td>
-                    <td class="px-4 py-2.5 font-mono text-xs text-slate-500">{{ loc.code }}</td>
-                    <td class="px-4 py-2.5">
-                      <input
-                        type="number"
-                        step="1"
-                        class="ant-input w-full max-w-[6.5rem] text-right text-sm tabular-nums"
-                        :value="config.i18n.localeSortOrder?.[loc.code] ?? 0"
-                        @input="onLocaleSortInput(loc.code, $event.target.value)"
-                      />
-                    </td>
-                    <td class="px-4 py-2.5 text-right tabular-nums text-slate-700">{{ loc.keyCount }}</td>
-                    <td class="px-4 py-2.5 text-center">
-                      <input
-                        type="checkbox"
-                        class="rounded border-slate-300"
-                        :checked="config.i18n.enabledLocales?.includes(loc.code)"
-                        @change="toggleLocale(loc.code, $event.target.checked)"
-                      />
-                    </td>
-                    <td class="px-4 py-2.5 text-center">
-                      <input
-                        type="radio"
-                        class="border-slate-300"
-                        name="admin-default-locale-pick"
-                        :value="loc.code"
-                        :checked="config.i18n.defaultLocale === loc.code"
-                        :disabled="!config.i18n.enabledLocales?.includes(loc.code)"
-                        @change="setDefaultLocale(loc.code)"
-                      />
-	                    </td>
-	                    <td class="px-4 py-2.5 text-right">
-                      <button
-                        type="button"
-                        class="mr-3 text-xs font-medium text-blue-600 hover:underline"
-                        @click="downloadLocalePackage(loc.code)"
-                      >
+                    </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>语言名称</template><template #default="{ record: loc, index: index }"><div class=" .5 text-slate-800">{{ loc.label }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>语言代码</template><template #default="{ record: loc, index: index }"><div class=" .5 font-mono text-xs text-slate-500">{{ loc.code }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>排序</template><template #default="{ record: loc, index: index }"><div class=" .5">
+                      <a-input type="number" step="1" class="w-full max-w-[6.5rem] text-right tabular-nums" :value="config.i18n.localeSortOrder?.[loc.code] ?? 0" @input="onLocaleSortInput(loc.code, $event.target.value)" />
+                    </div></template></a-table-column>
+<a-table-column key="column-4" align="right"><template #title>Key 数</template><template #default="{ record: loc, index: index }"><div class=" .5 text-right tabular-nums text-slate-700">{{ loc.keyCount }}</div></template></a-table-column>
+<a-table-column key="column-5" align="center"><template #title>启用</template><template #default="{ record: loc, index: index }"><div class=" .5 text-center">
+                      <a-checkbox class="" :checked="config.i18n.enabledLocales?.includes(loc.code)" @change="toggleLocale(loc.code, $event.target.checked)" />
+                    </div></template></a-table-column>
+<a-table-column key="column-6" align="center"><template #title>默认</template><template #default="{ record: loc, index: index }"><div class=" .5 text-center">
+                      <a-radio class="" name="admin-default-locale-pick" :value="loc.code" :checked="config.i18n.defaultLocale === loc.code" :disabled="!config.i18n.enabledLocales?.includes(loc.code)" @change="setDefaultLocale(loc.code)" />
+	                    </div></template></a-table-column>
+<a-table-column key="column-7" align="right"><template #title>操作</template><template #default="{ record: loc, index: index }"><div class=" .5 text-right">
+                      <a-button html-type="button" class="mr-3 text-xs font-medium text-blue-600 hover:underline" @click="downloadLocalePackage(loc.code)">
                         下载
-                      </button>
-		                      <button
-		                        type="button"
-		                        class="mr-3 text-xs font-medium text-blue-600 hover:underline"
-                        @click="editLanguage(loc)"
-                      >
+                      </a-button>
+		                      <a-button html-type="button" class="mr-3 text-xs font-medium text-blue-600 hover:underline" @click="editLanguage(loc)">
                         编辑
-                      </button>
-                      <button
-                        v-if="loc.custom"
-                        type="button"
-                        class="text-xs font-medium text-red-600 hover:underline"
-                        @click="removeLanguage(loc)"
-                      >
+                      </a-button>
+                      <a-button v-if="loc.custom" html-type="button" class="text-xs font-medium text-red-600 hover:underline" @click="removeLanguage(loc)" danger>
                         删除
-                      </button>
+                      </a-button>
                       <span v-else class="text-xs text-slate-400">内置</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    </div></template></a-table-column>
+</a-table>
             </div>
             <p class="text-xs text-slate-500">语言文件在添加/编辑弹窗中上传；「排序」填整数，数字越小在前台语言列表中越靠前。</p>
 
@@ -770,18 +698,7 @@ onMounted(() => {
                   关闭后顶栏与移动端菜单中的语言入口将隐藏（仍使用默认语言展示页面）。
                 </p>
               </div>
-              <button
-                type="button"
-                :class="config.i18n.languageSwitcherEnabled ? 'bg-blue-600' : 'bg-slate-200'"
-                class="relative mt-0.5 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none"
-                :aria-pressed="config.i18n.languageSwitcherEnabled"
-                @click="config.i18n.languageSwitcherEnabled = !config.i18n.languageSwitcherEnabled"
-              >
-                <span
-                  :class="config.i18n.languageSwitcherEnabled ? 'translate-x-5' : 'translate-x-0'"
-                  class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                />
-              </button>
+              <a-switch :checked="config.i18n.languageSwitcherEnabled" @click="config.i18n.languageSwitcherEnabled = !config.i18n.languageSwitcherEnabled" aria-label="前台语言切换" />
             </div>
         </section>
 
@@ -800,24 +717,12 @@ onMounted(() => {
           <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="text-sm font-medium text-slate-700">可选区号列表</span>
             <div class="flex flex-wrap gap-2 text-xs">
-              <button type="button" class="text-blue-600 hover:underline" @click="selectAllDialCodes">全选</button>
+              <a-button html-type="button" class="text-blue-600 hover:underline" @click="selectAllDialCodes">全选</a-button>
             </div>
           </div>
           <div class="overflow-x-auto overflow-hidden rounded-lg border border-slate-200">
-            <table class="w-full min-w-[48rem] border-collapse text-left text-sm">
-                <thead class="bg-slate-50 text-slate-600">
-                <tr>
-                  <th class="w-24 px-4 py-2.5 font-medium">图标</th>
-                  <th class="px-4 py-2.5 font-medium">地区与区号</th>
-                  <th class="w-28 px-4 py-2.5 font-medium">国际区号</th>
-                  <th class="w-28 px-4 py-2.5 font-medium">排序</th>
-                  <th class="w-24 px-4 py-2.5 text-center font-medium">启用</th>
-                  <th class="w-32 px-4 py-2.5 text-right font-medium">操作</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100 bg-white">
-                <tr v-for="row in dialsTableRows" :key="row.dial" class="hover:bg-slate-50/80">
-                  <td class="px-4 py-2.5">
+            <a-table  :data-source="dialsTableRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.dial" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
+<a-table-column key="column-0" ><template #title>图标</template><template #default="{ record: row, index: index }"><div class=" .5">
                     <div class="flex items-center gap-2">
                       <span class="inline-flex h-8 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white text-base">
                         <img
@@ -829,103 +734,61 @@ onMounted(() => {
                         <span v-else>{{ row.icon || '□' }}</span>
                       </span>
                     </div>
-                  </td>
-                  <td class="px-4 py-2.5 text-slate-800">{{ row.label }}</td>
-                  <td class="px-4 py-2.5 font-mono text-sm text-slate-600">{{ row.dial }}</td>
-                  <td class="px-4 py-2.5">
-                    <input
-                      type="number"
-                      step="1"
-                      class="ant-input w-full max-w-[6.5rem] text-right text-sm tabular-nums"
-                      :value="config.dialSortOrder?.[row.dial] ?? 0"
-                      @input="onDialSortInput(row.dial, $event.target.value)"
-                    />
-                  </td>
-                  <td class="px-4 py-2.5 text-center">
-                    <input
-                      type="checkbox"
-                      class="rounded border-slate-300"
-                      :checked="config.allowedDialCodes?.includes(row.dial)"
-                      @change="toggleDial(row.dial, $event.target.checked)"
-                    />
-                  </td>
-                  <td class="px-4 py-2.5 text-right">
-                    <button
-                      type="button"
-                      class="mr-3 text-xs font-medium text-blue-600 hover:underline"
-                      @click="editCustomDial(row)"
-                    >
+                  </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>地区与区号</template><template #default="{ record: row, index: index }"><div class=" .5 text-slate-800">{{ row.label }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>国际区号</template><template #default="{ record: row, index: index }"><div class=" .5 font-mono text-sm text-slate-600">{{ row.dial }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>排序</template><template #default="{ record: row, index: index }"><div class=" .5">
+                    <a-input type="number" step="1" class="w-full max-w-[6.5rem] text-right tabular-nums" :value="config.dialSortOrder?.[row.dial] ?? 0" @input="onDialSortInput(row.dial, $event.target.value)" />
+                  </div></template></a-table-column>
+<a-table-column key="column-4" align="center"><template #title>启用</template><template #default="{ record: row, index: index }"><div class=" .5 text-center">
+                    <a-checkbox class="" :checked="config.allowedDialCodes?.includes(row.dial)" @change="toggleDial(row.dial, $event.target.checked)" />
+                  </div></template></a-table-column>
+<a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class=" .5 text-right">
+                    <a-button html-type="button" class="mr-3 text-xs font-medium text-blue-600 hover:underline" @click="editCustomDial(row)">
                       编辑
-                    </button>
-                    <button
-                      v-if="row.custom"
-                      type="button"
-                      class="text-xs font-medium text-red-600 hover:underline"
-                      @click="removeCustomDial(row)"
-                    >
+                    </a-button>
+                    <a-button v-if="row.custom" html-type="button" class="text-xs font-medium text-red-600 hover:underline" @click="removeCustomDial(row)" danger>
                       删除
-                    </button>
+                    </a-button>
                     <span v-else class="text-xs text-slate-400">内置</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </div></template></a-table-column>
+</a-table>
           </div>
           <p class="text-xs text-slate-500">「排序」填整数，数字越小在区号下拉中越靠前；保存后前台登录与绑定手机等处的区号顺序与此一致。</p>
         </section>
       </div>
 
       <div class="flex justify-end border-t border-slate-200 bg-slate-50/50 px-4 py-4">
-        <button type="button" class="ant-btn ant-btn-primary" :disabled="isSaving" @click="saveConfig">
+        <a-button html-type="button" class="" :disabled="isSaving" @click="saveConfig" type="primary">
           {{ isSaving ? '保存中…' : '保存' }}
-        </button>
+        </a-button>
       </div>
     </div>
 
     <Teleport to="body">
-      <div
-        v-if="languageFormOpen"
-        class="fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/45 px-4 py-6"
-        role="dialog"
-        aria-modal="true"
-        @click.self="resetLanguageForm"
-      >
-        <div class="w-full max-w-xl overflow-hidden rounded-xl bg-white shadow-2xl">
-          <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(languageFormOpen)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="resetLanguageForm"><template #title><template v-if="Boolean(languageFormOpen)"><div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <h2 class="text-base font-semibold text-slate-900">
                 {{ editingLocaleCode ? '编辑语言' : '添加语言' }}
               </h2>
               <p class="mt-1 text-xs text-slate-500">维护语言名称、代码、图标和对应 JSON 文件。</p>
             </div>
-            <button
-              type="button"
-              class="rounded-md px-2 py-1 text-xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-              aria-label="关闭"
-              @click="resetLanguageForm"
-            >
+            <a-button aria-label="关闭" html-type="button" class="text-xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700"  @click="resetLanguageForm">
               ×
-            </button>
-          </div>
-
-          <div class="space-y-4 px-5 py-5">
+            </a-button>
+          </div></template></template><template v-if="languageFormOpen"><div class="space-y-4 px-5 py-5">
             <div class="grid gap-4 sm:grid-cols-2">
               <label class="block">
                 <span class="mb-1 block text-xs font-medium text-slate-600">语言代码</span>
-                <input
-                  v-model="languageForm.code"
-                  class="ant-input w-full"
-                  placeholder="vi"
-                  :disabled="Boolean(editingLocaleCode)"
-                />
+                <a-input v-model:value="languageForm.code" class="w-full" placeholder="vi" :disabled="Boolean(editingLocaleCode)" />
               </label>
               <label class="block">
                 <span class="mb-1 block text-xs font-medium text-slate-600">语言名称</span>
-                <input v-model="languageForm.label" class="ant-input w-full" placeholder="Tiếng Việt" />
+                <a-input v-model:value="languageForm.label" class="w-full" placeholder="Tiếng Việt" />
               </label>
               <label class="block">
                 <span class="mb-1 block text-xs font-medium text-slate-600">简称</span>
-                <input v-model="languageForm.short" class="ant-input w-full" placeholder="VI" />
+                <a-input v-model:value="languageForm.short" class="w-full" placeholder="VI" />
               </label>
               <label class="block">
                 <span class="mb-1 block text-xs font-medium text-slate-600">图标</span>
@@ -960,58 +823,34 @@ onMounted(() => {
                 </label>
               </div>
             </div>
-          </div>
-
-          <div class="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
-            <button type="button" class="ant-btn" @click="resetLanguageForm">取消</button>
-            <button type="button" class="ant-btn ant-btn-primary" @click="saveLanguage">
+          </div></template><template #footer><template v-if="Boolean(languageFormOpen)"><div class="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
+            <a-button html-type="button" class="" @click="resetLanguageForm">取消</a-button>
+            <a-button html-type="button" class="" @click="saveLanguage" type="primary">
               {{ editingLocaleCode ? '保存' : '添加' }}
-            </button>
-          </div>
-        </div>
-      </div>
+            </a-button>
+          </div></template></template></a-modal>
     </Teleport>
 
     <Teleport to="body">
-      <div
-        v-if="dialFormOpen"
-        class="fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/45 px-4 py-6"
-        role="dialog"
-        aria-modal="true"
-        @click.self="resetCustomDialForm"
-      >
-        <div class="w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-2xl">
-          <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(dialFormOpen)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="resetCustomDialForm"><template #title><template v-if="Boolean(dialFormOpen)"><div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <h2 class="text-base font-semibold text-slate-900">
                 {{ editingCustomDial ? '编辑区号' : '添加区号' }}
               </h2>
               <p class="mt-1 text-xs text-slate-500">维护国际区号、地区名称和显示图标。</p>
             </div>
-            <button
-              type="button"
-              class="rounded-md px-2 py-1 text-xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-              aria-label="关闭"
-              @click="resetCustomDialForm"
-            >
+            <a-button aria-label="关闭" html-type="button" class="text-xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700"  @click="resetCustomDialForm">
               ×
-            </button>
-          </div>
-
-          <div class="space-y-4 px-5 py-5">
+            </a-button>
+          </div></template></template><template v-if="dialFormOpen"><div class="space-y-4 px-5 py-5">
             <div class="grid gap-4 sm:grid-cols-2">
               <label class="block">
                 <span class="mb-1 block text-xs font-medium text-slate-600">国际区号</span>
-                <input
-                  v-model="customDialForm.dial"
-                  class="ant-input w-full"
-                  placeholder="+84"
-                  :disabled="Boolean(editingCustomDial)"
-                />
+                <a-input v-model:value="customDialForm.dial" class="w-full" placeholder="+84" :disabled="Boolean(editingCustomDial)" />
               </label>
               <label class="block">
                 <span class="mb-1 block text-xs font-medium text-slate-600">地区名称</span>
-                <input v-model="customDialForm.label" class="ant-input w-full" placeholder="越南 +84" />
+                <a-input v-model:value="customDialForm.label" class="w-full" placeholder="越南 +84" />
               </label>
               <label class="block sm:col-span-2">
                 <span class="mb-1 block text-xs font-medium text-slate-600">图标</span>
@@ -1032,16 +871,12 @@ onMounted(() => {
                 </div>
               </label>
             </div>
-          </div>
-
-          <div class="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
-            <button type="button" class="ant-btn" @click="resetCustomDialForm">取消</button>
-            <button type="button" class="ant-btn ant-btn-primary" @click="saveCustomDial">
+          </div></template><template #footer><template v-if="Boolean(dialFormOpen)"><div class="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
+            <a-button html-type="button" class="" @click="resetCustomDialForm">取消</a-button>
+            <a-button html-type="button" class="" @click="saveCustomDial" type="primary">
               {{ editingCustomDial ? '保存' : '添加' }}
-            </button>
-          </div>
-        </div>
-      </div>
+            </a-button>
+          </div></template></template></a-modal>
     </Teleport>
   </div>
 </template>

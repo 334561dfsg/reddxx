@@ -550,17 +550,13 @@ const tabs = [
               有未保存的修改
             </span>
           </div>
-          <button
-            @click="saveConfig"
-            :disabled="isSaving"
-            class="ant-btn ant-btn-primary !h-9"
-          >
+          <a-button @click="saveConfig" :disabled="isSaving" class="" html-type="button" type="primary">
             <svg v-if="isSaving" class="animate-spin h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             {{ isSaving ? '保存中...' : '保存配置' }}
-          </button>
+          </a-button>
         </div>
 
         <!-- 标签页导航 -->
@@ -568,22 +564,17 @@ const tabs = [
           <!-- 标签头部 -->
           <div class="border-b border-slate-200 bg-slate-50">
             <nav class="flex -mb-px">
-              <button
-                v-for="tab in tabs"
-                :key="tab.id"
-                @click="activeTab = tab.id"
-                :class="[
+              <a-button v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id" :class="[
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600 bg-white'
                     : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100',
                   'flex-1 py-4 px-4 text-center border-b-2 font-medium text-sm transition-colors inline-flex items-center justify-center gap-2'
-                ]"
-              >
+                ]" html-type="button">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="tab.icon" />
                 </svg>
                 {{ tab.name }}
-              </button>
+              </a-button>
             </nav>
           </div>
 
@@ -597,25 +588,12 @@ const tabs = [
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">最大分数</label>
-                    <input
-                      v-model.number="formData.maxScore"
-                      type="number"
-                      min="0"
-                      max="1000"
-                      class="ant-input"
-                    />
+                    <a-input type="number" min="0" max="1000" class="" :value="formData.maxScore" @update:value="formData.maxScore = $event === '' ? '' : Number($event)" />
                     <p class="text-xs text-slate-500 mt-1">信用分上限</p>
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">初始分数</label>
-                    <input
-                      v-model.number="formData.initialScore"
-                      type="number"
-                      min="0"
-                      :max="formData.maxScore"
-                      class="ant-input"
-                      :class="{'!border-rose-500': validationErrors.initialScore}"
-                    />
+                    <a-input type="number" min="0" :max="formData.maxScore" class="" :class="{'!border-rose-500': validationErrors.initialScore}" :value="formData.initialScore" @update:value="formData.initialScore = $event === '' ? '' : Number($event)" />
                     <p v-if="validationErrors.initialScore" class="text-xs text-rose-600 mt-1">{{ validationErrors.initialScore }}</p>
                     <p v-else class="text-xs text-slate-500 mt-1">新用户默认分数</p>
                   </div>
@@ -629,29 +607,13 @@ const tabs = [
                     <h4 class="text-sm font-semibold text-slate-900">VIP自动升级</h4>
                     <p class="text-xs text-slate-500 mt-1">根据信用分自动升级VIP等级</p>
                   </div>
-                  <button
-                    @click="formData.autoUpgradeVip1Enabled = !formData.autoUpgradeVip1Enabled"
-                    :class="formData.autoUpgradeVip1Enabled ? 'bg-blue-600' : 'bg-slate-300'"
-                    class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  >
-                    <span
-                      :class="formData.autoUpgradeVip1Enabled ? 'translate-x-6' : 'translate-x-1'"
-                      class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
-                    />
-                  </button>
+                  <a-switch :checked="formData.autoUpgradeVip1Enabled" @click="formData.autoUpgradeVip1Enabled = !formData.autoUpgradeVip1Enabled" aria-label="信用分自动升级 VIP" />
                 </div>
 
                 <div v-if="formData.autoUpgradeVip1Enabled" class="space-y-4">
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">升级到VIP1所需信用分</label>
-                    <input
-                      v-model.number="formData.autoUpgradeVip1Score"
-                      type="number"
-                      min="0"
-                      :max="formData.maxScore"
-                      class="ant-input"
-                      :class="{'!border-rose-500': validationErrors.autoUpgradeVip1Score}"
-                    />
+                    <a-input type="number" min="0" :max="formData.maxScore" class="" :class="{'!border-rose-500': validationErrors.autoUpgradeVip1Score}" :value="formData.autoUpgradeVip1Score" @update:value="formData.autoUpgradeVip1Score = $event === '' ? '' : Number($event)" />
                     <p v-if="validationErrors.autoUpgradeVip1Score" class="text-xs text-rose-600 mt-1">{{ validationErrors.autoUpgradeVip1Score }}</p>
                     <p v-else class="text-xs text-slate-500 mt-1">普通用户达到此分数自动升级为VIP1</p>
                   </div>
@@ -660,13 +622,7 @@ const tabs = [
                     <label class="block text-sm font-medium text-slate-700 mb-2">VIP升级充值金额</label>
                     <div class="flex items-center gap-2 flex-wrap">
                       <span class="text-sm text-slate-600">VIP + 用户每充值</span>
-                      <input
-                        v-model.number="formData.vipUpgradeRechargeAmount"
-                        type="number"
-                        min="0"
-                        step="1000"
-                        class="ant-input !w-32"
-                      />
+                      <a-input type="number" min="0" step="1000" class="!w-32" :value="formData.vipUpgradeRechargeAmount" @update:value="formData.vipUpgradeRechargeAmount = $event === '' ? '' : Number($event)" />
                       <span class="text-sm text-slate-600">USDT 升一级</span>
                     </div>
                     <p class="text-xs text-slate-500 mt-2">例如：VIP1用户充值该金额后自动升级为VIP2</p>
@@ -686,14 +642,7 @@ const tabs = [
                 <label class="block text-sm font-medium text-slate-700 mb-2">充值规则</label>
                 <div class="flex items-center gap-2 flex-wrap">
                   <span class="text-sm text-slate-600">每充值</span>
-                  <input
-                    v-model.number="formData.rechargeAmount"
-                    type="number"
-                    min="0"
-                    step="1000"
-                    class="ant-input !w-32"
-                    :class="{'!border-rose-500': validationErrors.rechargeAmount}"
-                  />
+                  <a-input type="number" min="0" step="1000" class="!w-32" :class="{'!border-rose-500': validationErrors.rechargeAmount}" :value="formData.rechargeAmount" @update:value="formData.rechargeAmount = $event === '' ? '' : Number($event)" />
                   <span class="text-sm text-slate-600">USDT，获得</span>
                   <span class="px-3 py-2 bg-blue-50 text-blue-700 font-semibold rounded-lg">+1</span>
                   <span class="text-sm text-slate-600">信用分</span>
@@ -709,26 +658,14 @@ const tabs = [
                 <div>
                   <label class="block text-sm font-medium text-slate-700 mb-2">初级认证奖励</label>
                   <div class="flex items-center gap-2">
-                    <input
-                      v-model.number="formData.primaryKycScore"
-                      type="number"
-                      min="0"
-                      :max="formData.maxScore"
-                      class="ant-input !w-24"
-                    />
+                    <a-input type="number" min="0" :max="formData.maxScore" class="!w-24" :value="formData.primaryKycScore" @update:value="formData.primaryKycScore = $event === '' ? '' : Number($event)" />
                     <span class="text-sm text-slate-600">信用分</span>
                   </div>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-slate-700 mb-2">高级认证奖励</label>
                   <div class="flex items-center gap-2">
-                    <input
-                      v-model.number="formData.advancedKycScore"
-                      type="number"
-                      min="0"
-                      :max="formData.maxScore"
-                      class="ant-input !w-24"
-                    />
+                    <a-input type="number" min="0" :max="formData.maxScore" class="!w-24" :value="formData.advancedKycScore" @update:value="formData.advancedKycScore = $event === '' ? '' : Number($event)" />
                     <span class="text-sm text-slate-600">信用分</span>
                   </div>
                 </div>
@@ -744,35 +681,20 @@ const tabs = [
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">行为名称</label>
-                    <input
-                      v-model="customEarnDraft.name"
-                      type="text"
-                      class="ant-input"
-                      placeholder="例如：活动奖励"
-                    />
+                    <a-input v-model:value="customEarnDraft.name" type="text" class="" placeholder="例如：活动奖励" />
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">加分</label>
                     <div class="flex items-center gap-2">
                       <span class="text-emerald-600">+</span>
-                      <input
-                        v-model.number="customEarnDraft.score"
-                        type="number"
-                        min="0"
-                        :max="formData.maxScore"
-                        class="ant-input !w-24"
-                      />
+                      <a-input type="number" min="0" :max="formData.maxScore" class="!w-24" :value="customEarnDraft.score" @update:value="customEarnDraft.score = $event === '' ? '' : Number($event)" />
                       <span class="text-sm text-slate-600">分</span>
                     </div>
                   </div>
                   <div class="flex items-end">
-                    <button
-                      type="button"
-                      class="ant-btn ant-btn-primary !h-9 w-full"
-                      @click="addCustomEarnRule"
-                    >
+                    <a-button html-type="button" class="w-full" @click="addCustomEarnRule" type="primary">
                       添加
-                    </button>
+                    </a-button>
                   </div>
                 </div>
 
@@ -782,48 +704,23 @@ const tabs = [
 
                 <div v-if="earnCustomRulesDraft?.length" class="mt-4">
                   <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                      <thead>
-                        <tr class="text-xs text-slate-500">
-                          <th class="text-left font-medium py-2 pr-2 whitespace-nowrap">行为名称</th>
-                          <th class="text-left font-medium py-2 pr-2 whitespace-nowrap">加分</th>
-                          <th class="text-right font-medium py-2 whitespace-nowrap">操作</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="rule in earnCustomRulesDraft"
-                          :key="rule.id"
-                          class="border-t border-slate-200"
-                        >
-                          <td class="py-2 pr-2">
-                            <input v-model="rule.name" type="text" class="ant-input w-full" />
-                          </td>
-                          <td class="py-2 pr-2 w-44">
+                    <a-table  :data-source="earnCustomRulesDraft" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(rule) => rule.id" :custom-row="(rule, index) => ({ class: [&quot;border-t border-slate-200&quot;] })">
+<a-table-column key="column-0" ><template #title>行为名称</template><template #default="{ record: rule, index: index }"><div class=" pr-2">
+                            <a-input v-model:value="rule.name" type="text" class="w-full" />
+                          </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>加分</template><template #default="{ record: rule, index: index }"><div class=" pr-2 w-44">
                             <div class="flex items-center gap-2">
                               <span class="text-emerald-600">+</span>
-                              <input
-                                v-model.number="rule.score"
-                                type="number"
-                                min="0"
-                                :max="formData.maxScore"
-                                class="ant-input w-24"
-                              />
+                              <a-input type="number" min="0" :max="formData.maxScore" class="w-24" :value="rule.score" @update:value="rule.score = $event === '' ? '' : Number($event)" />
                               <span class="text-slate-500">分</span>
                             </div>
-                          </td>
-                          <td class="py-2 text-right whitespace-nowrap">
-                            <button
-                              type="button"
-                              class="ant-btn !bg-slate-100 !border-slate-200 !text-slate-700 !h-9 !px-3"
-                              @click="removeCustomEarnRule(rule.id)"
-                            >
+                          </div></template></a-table-column>
+<a-table-column key="column-2" align="right"><template #title>操作</template><template #default="{ record: rule, index: index }"><div class=" text-right whitespace-nowrap">
+                            <a-button html-type="button" class="!bg-slate-100 !border-slate-200 !text-slate-700" @click="removeCustomEarnRule(rule.id)">
                               删除
-                            </button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                            </a-button>
+                          </div></template></a-table-column>
+</a-table>
                   </div>
                 </div>
 
@@ -846,35 +743,20 @@ const tabs = [
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">行为名称</label>
-                        <input
-                          v-model="customDeductionDraft.name"
-                          type="text"
-                          class="ant-input"
-                          placeholder="例如：违规退款"
-                        />
+                        <a-input v-model:value="customDeductionDraft.name" type="text" class="" placeholder="例如：违规退款" />
                       </div>
                       <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">扣分</label>
                         <div class="flex items-center gap-2">
                           <span class="text-rose-600">-</span>
-                          <input
-                            v-model.number="customDeductionDraft.score"
-                            type="number"
-                            min="0"
-                            :max="formData.maxScore"
-                            class="ant-input !w-24"
-                          />
+                          <a-input type="number" min="0" :max="formData.maxScore" class="!w-24" :value="customDeductionDraft.score" @update:value="customDeductionDraft.score = $event === '' ? '' : Number($event)" />
                           <span class="text-sm text-slate-600">分</span>
                         </div>
                       </div>
                       <div class="flex items-end">
-                        <button
-                          type="button"
-                          class="ant-btn ant-btn-primary !h-9 w-full"
-                          @click="addCustomDeductionRule"
-                        >
+                        <a-button html-type="button" class="w-full" @click="addCustomDeductionRule" type="primary">
                           添加
-                        </button>
+                        </a-button>
                       </div>
                     </div>
 
@@ -884,48 +766,23 @@ const tabs = [
 
                     <div v-if="deductionCustomRulesDraft?.length" class="mt-4">
                       <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                          <thead>
-                            <tr class="text-xs text-slate-500">
-                              <th class="text-left font-medium py-2 pr-2 whitespace-nowrap">行为名称</th>
-                              <th class="text-left font-medium py-2 pr-2 whitespace-nowrap">扣分</th>
-                              <th class="text-right font-medium py-2 whitespace-nowrap">操作</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr
-                            v-for="rule in deductionCustomRulesDraft"
-                              :key="rule.id"
-                              class="border-t border-slate-200"
-                            >
-                              <td class="py-2 pr-2">
-                                <input v-model="rule.name" type="text" class="ant-input w-full" />
-                              </td>
-                              <td class="py-2 pr-2 w-44">
+                        <a-table  :data-source="deductionCustomRulesDraft" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(rule) => rule.id" :custom-row="(rule, index) => ({ class: [&quot;border-t border-slate-200&quot;] })">
+<a-table-column key="column-0" ><template #title>行为名称</template><template #default="{ record: rule, index: index }"><div class=" pr-2">
+                                <a-input v-model:value="rule.name" type="text" class="w-full" />
+                              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>扣分</template><template #default="{ record: rule, index: index }"><div class=" pr-2 w-44">
                                 <div class="flex items-center gap-2">
                                   <span class="text-rose-600">-</span>
-                                  <input
-                                    v-model.number="rule.score"
-                                    type="number"
-                                    min="0"
-                                  :max="formData.maxScore"
-                                    class="ant-input w-24"
-                                  />
+                                  <a-input type="number" min="0" :max="formData.maxScore" class="w-24" :value="rule.score" @update:value="rule.score = $event === '' ? '' : Number($event)" />
                                   <span class="text-slate-500">分</span>
                                 </div>
-                              </td>
-                              <td class="py-2 text-right whitespace-nowrap">
-                                <button
-                                  type="button"
-                                  class="ant-btn !bg-slate-100 !border-slate-200 !text-slate-700 !h-9 !px-3"
-                                  @click="removeCustomDeductionRule(rule.id)"
-                                >
+                              </div></template></a-table-column>
+<a-table-column key="column-2" align="right"><template #title>操作</template><template #default="{ record: rule, index: index }"><div class=" text-right whitespace-nowrap">
+                                <a-button html-type="button" class="!bg-slate-100 !border-slate-200 !text-slate-700" @click="removeCustomDeductionRule(rule.id)">
                                   删除
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                                </a-button>
+                              </div></template></a-table-column>
+</a-table>
                       </div>
                     </div>
 
@@ -937,13 +794,7 @@ const tabs = [
                 <!-- 最低分数 -->
                 <div class="pt-4 border-t border-slate-200">
                   <label class="block text-sm font-medium text-slate-700 mb-2">最低分数保护</label>
-                  <input
-                    v-model.number="formData.minScore"
-                    type="number"
-                    min="0"
-                    :max="formData.maxScore"
-                    class="ant-input"
-                  />
+                  <a-input type="number" min="0" :max="formData.maxScore" class="" :value="formData.minScore" @update:value="formData.minScore = $event === '' ? '' : Number($event)" />
                   <p class="text-xs text-slate-500 mt-1">扣分后不会低于此值（0表示无保护）</p>
                 </div>
 
@@ -964,16 +815,7 @@ const tabs = [
                   <h4 class="text-sm font-semibold text-slate-900">启用人工审核</h4>
                   <p class="text-xs text-slate-500 mt-1">开启后，符合条件的积分变动需要人工审核</p>
                 </div>
-                <button
-                  @click="formData.manualAuditEnabled = !formData.manualAuditEnabled"
-                  :class="formData.manualAuditEnabled ? 'bg-blue-600' : 'bg-slate-300'"
-                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  <span
-                    :class="formData.manualAuditEnabled ? 'translate-x-6' : 'translate-x-1'"
-                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
-                  />
-                </button>
+                <a-switch :checked="formData.manualAuditEnabled" @click="formData.manualAuditEnabled = !formData.manualAuditEnabled" aria-label="人工审核" />
               </div>
 
               <div v-if="formData.manualAuditEnabled" class="space-y-4">
@@ -982,13 +824,7 @@ const tabs = [
                   <label class="block text-sm font-medium text-slate-700 mb-2">审核阈值</label>
                   <div class="flex items-center gap-2 flex-wrap">
                     <span class="text-sm text-slate-600">积分变动绝对值超过</span>
-                    <input
-                      v-model.number="formData.manualAuditThreshold"
-                      type="number"
-                      min="0"
-                      :max="formData.maxScore"
-                      class="ant-input !w-24"
-                    />
+                    <a-input type="number" min="0" :max="formData.maxScore" class="!w-24" :value="formData.manualAuditThreshold" @update:value="formData.manualAuditThreshold = $event === '' ? '' : Number($event)" />
                     <span class="text-sm text-slate-600">分时需要审核</span>
                   </div>
                   <p class="text-xs text-slate-500 mt-2">
@@ -1005,12 +841,7 @@ const tabs = [
                       :key="option.value"
                       class="flex items-center gap-3 p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
                     >
-                      <input
-                        type="checkbox"
-                        :value="option.value"
-                        v-model="formData.manualAuditTypes"
-                        class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                      />
+                      <a-checkbox :value="option.value" :checked="formData.manualAuditTypes.includes(option.value)" @update:checked="formData.manualAuditTypes = $event ? [...formData.manualAuditTypes, option.value] : formData.manualAuditTypes.filter(value => value !== option.value)" class="text-blue-600" />
                       <span class="text-sm text-slate-700">{{ option.label }}</span>
                     </label>
                   </div>
@@ -1086,13 +917,7 @@ const tabs = [
             <!-- 充值金额 -->
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-2">充值金额(USDT)</label>
-              <input
-                v-model.number="calculatorInputs.rechargeAmount"
-                type="number"
-                min="0"
-                step="10000"
-                class="ant-input bg-white"
-              />
+              <a-input type="number" min="0" step="10000" class="" :value="calculatorInputs.rechargeAmount" @update:value="calculatorInputs.rechargeAmount = $event === '' ? '' : Number($event)" />
               <p class="text-xs text-slate-500 mt-1">当前输入：{{ formatNumber(calculatorInputs.rechargeAmount) }} USDT</p>
             </div>
 
@@ -1100,19 +925,11 @@ const tabs = [
             <div class="space-y-2">
               <p class="text-xs font-medium text-slate-600 mb-1">✅ 加分项</p>
               <label class="flex items-center gap-2 cursor-pointer">
-                <input
-                  v-model="calculatorInputs.hasPrimaryKyc"
-                  type="checkbox"
-                  class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                />
+                <a-checkbox v-model:checked="calculatorInputs.hasPrimaryKyc" class="text-emerald-600" />
                 <span class="text-sm text-slate-700">已完成初级认证</span>
               </label>
               <label class="flex items-center gap-2 cursor-pointer">
-                <input
-                  v-model="calculatorInputs.hasAdvancedKyc"
-                  type="checkbox"
-                  class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                />
+                <a-checkbox v-model:checked="calculatorInputs.hasAdvancedKyc" class="text-emerald-600" />
                 <span class="text-sm text-slate-700">已完成高级认证</span>
               </label>
 
@@ -1123,11 +940,7 @@ const tabs = [
                   :key="rule.id"
                   class="flex items-center gap-2 cursor-pointer"
                 >
-                  <input
-                    type="checkbox"
-                    v-model="calculatorInputs.customEarnSelected[rule.id]"
-                    class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                  />
+                  <a-checkbox v-model:checked="calculatorInputs.customEarnSelected[rule.id]" class="text-emerald-600" />
                   <span class="text-sm text-slate-700">{{ rule.name }}（+{{ rule.score }}分）</span>
                 </label>
               </div>
@@ -1143,11 +956,7 @@ const tabs = [
                   :key="rule.id"
                   class="flex items-center gap-2 cursor-pointer"
                 >
-                  <input
-                    type="checkbox"
-                    v-model="calculatorInputs.customDeductionSelected[rule.id]"
-                    class="rounded border-slate-300 text-rose-600 focus:ring-rose-500"
-                  />
+                  <a-checkbox v-model:checked="calculatorInputs.customDeductionSelected[rule.id]" class="text-rose-600" />
                   <span class="text-sm text-slate-700">{{ rule.name }}（-{{ rule.score }}分）</span>
                 </label>
               </div>

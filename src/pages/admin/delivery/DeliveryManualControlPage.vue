@@ -509,10 +509,10 @@ const rowTone = (row) => {
           <div class="text-[11px] text-slate-400 font-mono">Global Risk Heatmap</div>
         </div>
         <div class="max-h-[36rem] overflow-y-auto divide-y divide-slate-100">
-          <button
+          <a-button type="text"
             v-for="row in sortedRiskBoard"
             :key="row.key"
-            type="button"
+            html-type="button"
             class="w-full text-left px-4 py-3 transition-all hover:bg-slate-50/60"
             :class="row.key === selectedKey ? 'bg-slate-50 ring-1 ring-inset ring-blue-200' : ''"
             :style="heatStyle(row)"
@@ -535,7 +535,7 @@ const rowTone = (row) => {
                 <span class="text-xs font-mono text-slate-700">{{ formatPrice(row.marketPrice) }}</span>
               </div>
             </div>
-          </button>
+          </a-button>
         </div>
       </aside>
 
@@ -598,17 +598,17 @@ const rowTone = (row) => {
 
                 <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
                   <label class="inline-flex items-center gap-2 text-xs text-slate-600">
-                    <input v-model="spoofEnabled" type="checkbox" class="h-4 w-4 rounded border-slate-300" :disabled="locked" />
+                    <a-checkbox v-model:checked="spoofEnabled" class="" :disabled="locked" />
                     <span>同步产生虚假成交</span>
                   </label>
                   <div class="flex items-center gap-2">
-                    <button type="button" class="ant-btn ant-btn-default !h-9 !px-3 !text-xs" :disabled="locked" @click="oneClickFlatten">
+                    <a-button html-type="button" class="ant-btn ant-btn-default !h-9 !px-3 !text-xs" :disabled="locked" @click="oneClickFlatten">
                       一键抹平
-                    </button>
-                    <button type="button" class="ant-btn ant-btn-primary !h-9 !px-3 !text-xs" :disabled="locked" @click="confirmHarvest">
+                    </a-button>
+                    <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-9 !px-3 !text-xs" :disabled="locked" @click="confirmHarvest">
                       确定收割
-                    </button>
-                    <button type="button" class="ant-btn !h-9 !px-3 !text-xs" @click="undoIntervention">撤销干预</button>
+                    </a-button>
+                    <a-button html-type="button" class="ant-btn !h-9 !px-3 !text-xs" @click="undoIntervention">撤销干预</a-button>
                   </div>
                 </div>
               </div>
@@ -618,24 +618,22 @@ const rowTone = (row) => {
                   <h3 class="text-xs font-semibold text-slate-900">虚假量能联动（示意）</h3>
                   <span class="text-[11px] text-slate-500">Orderbook Spoofing</span>
                 </div>
-                <table class="w-full text-xs">
-                  <thead class="bg-slate-50 border-b border-slate-100">
-                    <tr class="text-slate-500">
-                      <th class="text-left px-4 py-2">类型</th>
-                      <th class="text-right px-4 py-2">价格</th>
-                      <th class="text-right px-4 py-2">数量(USDT)</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-100">
-                    <tr v-for="o in spoofOrders" :key="o.id">
-                      <td class="px-4 py-2" :class="o.side === 'buy' ? 'text-emerald-700' : o.side === 'sell' ? 'text-rose-700' : 'text-slate-700'">
+                <a-table  size="small" :pagination="false" :data-source="spoofOrders" :row-key="(o) => o.id" :scroll="{ x: 'max-content' }">
+<a-table-column key="column-0" :custom-cell="(o, rowIndex) => ({ class: [&quot;px-4 py-2&quot;, o.side === 'buy' ? 'text-emerald-700' : o.side === 'sell' ? 'text-rose-700' : 'text-slate-700'] })">
+<template #title>类型</template>
+<template #default="{ record: o, index: rowIndex }">
                         {{ o.label }}
-                      </td>
-                      <td class="px-4 py-2 text-right font-mono">{{ formatPrice(o.price) }}</td>
-                      <td class="px-4 py-2 text-right font-mono">{{ formatCompactUsd(o.sizeUsd) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                      </template>
+</a-table-column>
+<a-table-column key="column-1" align="right" :custom-cell="(o, rowIndex) => ({ class: [&quot;px-4 py-2 text-right font-mono&quot;] })">
+<template #title>价格</template>
+<template #default="{ record: o, index: rowIndex }">{{ formatPrice(o.price) }}</template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(o, rowIndex) => ({ class: [&quot;px-4 py-2 text-right font-mono&quot;] })">
+<template #title>数量(USDT)</template>
+<template #default="{ record: o, index: rowIndex }">{{ formatCompactUsd(o.sizeUsd) }}</template>
+</a-table-column>
+</a-table>
               </div>
             </div>
 
@@ -653,13 +651,12 @@ const rowTone = (row) => {
                 </div>
 
                 <div class="mt-3 space-y-3">
-                  <input
-                    type="range"
+                  <a-slider
                     :min="priceMin"
                     :max="priceMax"
                     :step="tickSize"
-                    v-model.number="manualPrice"
-                    class="w-full accent-blue-600"
+                    v-model:value.number="manualPrice"
+                    class="w-full"
                     :disabled="locked"
                   />
                   <div class="grid grid-cols-2 gap-2">
@@ -674,26 +671,26 @@ const rowTone = (row) => {
                   </div>
 
                   <div class="flex items-center gap-2">
-                    <input
+                    <a-input
                       type="number"
-                      v-model.number="manualPrice"
+                      v-model:value.number="manualPrice"
                       :step="tickSize"
                       :disabled="locked"
                       class="flex-1 rounded border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-200"
                       :class="deviationWarn ? 'flash-warn border-rose-300' : ''"
                     />
-                    <button type="button" class="ant-btn ant-btn-default !h-10 !px-3 !text-xs" :disabled="locked" @click="manualPrice = roundToTick(marketPrice, tickSize)">
+                    <a-button html-type="button" class="ant-btn ant-btn-default !h-10 !px-3 !text-xs" :disabled="locked" @click="manualPrice = roundToTick(marketPrice, tickSize)">
                       贴近市价
-                    </button>
+                    </a-button>
                   </div>
 
                   <div class="flex items-center justify-between gap-2">
-                    <button type="button" class="ant-btn ant-btn-default !h-9 !px-3 !text-xs" :disabled="locked" @click="harvestAll">
+                    <a-button html-type="button" class="ant-btn ant-btn-default !h-9 !px-3 !text-xs" :disabled="locked" @click="harvestAll">
                       一键收割以上所有人
-                    </button>
-                    <button type="button" class="ant-btn ant-btn-primary !h-9 !px-3 !text-xs" :disabled="locked || !isSprint" @click="lockResult">
+                    </a-button>
+                    <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-9 !px-3 !text-xs" :disabled="locked || !isSprint" @click="lockResult">
                       锁定结果
-                    </button>
+                    </a-button>
                   </div>
                 </div>
               </div>
@@ -782,49 +779,51 @@ const rowTone = (row) => {
 
           <div v-else class="space-y-2">
             <div class="rounded-lg border border-slate-200 overflow-hidden">
-              <table class="w-full text-xs">
-                <thead class="bg-slate-50 border-b border-slate-100">
-                  <tr class="text-slate-500">
-                    <th class="text-left px-4 py-2">用户</th>
-                    <th class="text-left px-4 py-2">方向</th>
-                    <th class="text-right px-4 py-2">持仓</th>
-                    <th class="text-right px-4 py-2">盈亏</th>
-                    <th class="text-right px-4 py-2">操作</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                  <tr v-for="(u, idx) in relevantWhales.slice(0, 8)" :key="u.uid" class="hover:bg-slate-50/70">
-                    <td class="px-4 py-2">
+              <a-table  size="small" :pagination="false" :data-source="relevantWhales.slice(0, 8)" :row-key="(u) => u.uid" :scroll="{ x: 'max-content' }" :custom-row="(u, idx) => ({ class: [&quot;hover:bg-slate-50/70&quot;] })">
+<a-table-column key="column-0" :custom-cell="(u, idx) => ({ class: [&quot;px-4 py-2&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: u, index: idx }">
                       <div class="flex items-center gap-2">
                         <span class="text-slate-400 font-mono">#{{ idx + 1 }}</span>
                         <span class="font-semibold text-slate-900 font-mono">{{ u.uid }}</span>
                         <span v-if="flaggedUsers.has(u.uid)" class="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5">已标记</span>
                       </div>
-                    </td>
-                    <td class="px-4 py-2">
+                    </template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(u, idx) => ({ class: [&quot;px-4 py-2&quot;] })">
+<template #title>方向</template>
+<template #default="{ record: u, index: idx }">
                       <span class="inline-flex items-center gap-1 rounded px-2 py-1 border text-[11px]"
                         :class="u.side === 'long' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-rose-50 border-rose-200 text-rose-700'"
                       >
                         {{ u.side === 'long' ? '多' : '空' }}
                       </span>
-                    </td>
-                    <td class="px-4 py-2 text-right font-mono">{{ formatCompactUsd(u.holdingUsd) }}</td>
-                    <td class="px-4 py-2 text-right font-mono" :class="u.pnl >= 0 ? 'text-rose-600' : 'text-emerald-600'">
+                    </template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(u, idx) => ({ class: [&quot;px-4 py-2 text-right font-mono&quot;] })">
+<template #title>持仓</template>
+<template #default="{ record: u, index: idx }">{{ formatCompactUsd(u.holdingUsd) }}</template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(u, idx) => ({ class: [&quot;px-4 py-2 text-right font-mono&quot;, u.pnl >= 0 ? 'text-rose-600' : 'text-emerald-600'] })">
+<template #title>盈亏</template>
+<template #default="{ record: u, index: idx }">
                       {{ formatCompactUsd(u.pnl, true) }}
-                    </td>
-                    <td class="px-4 py-2">
+                    </template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(u, idx) => ({ class: [&quot;px-4 py-2&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: u, index: idx }">
                       <div class="flex justify-end gap-2">
-                        <button type="button" class="ant-btn ant-btn-default !h-8 !px-2 !text-xs" :disabled="locked" @click="harvestOneWhale(u)">
+                        <a-button html-type="button" class="ant-btn ant-btn-default !h-8 !px-2 !text-xs" :disabled="locked" @click="harvestOneWhale(u)">
                           收割
-                        </button>
-                        <button type="button" class="ant-btn !h-8 !px-2 !text-xs" @click="toggleFlag(u)">
+                        </a-button>
+                        <a-button html-type="button" class="ant-btn !h-8 !px-2 !text-xs" @click="toggleFlag(u)">
                           禁封/滑点
-                        </button>
+                        </a-button>
                       </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    </template>
+</a-table-column>
+</a-table>
             </div>
 
             <div class="rounded-lg border border-slate-200 bg-slate-50/40 p-4 text-xs text-slate-700 space-y-2">

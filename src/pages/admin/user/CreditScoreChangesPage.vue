@@ -205,15 +205,12 @@ const closeChangeDetail = () => {
     <div class="rounded-xl border border-slate-200 bg-white overflow-hidden relative min-h-[400px]">
       <div class="flex items-center justify-between border-b border-slate-200 p-4 bg-white">
         <h3 class="text-base font-semibold text-slate-900">变动记录</h3>
-        <button
-          @click="exportData"
-          class="ant-btn inline-flex items-center gap-2"
-        >
+        <a-button @click="exportData" class="inline-flex items-center gap-2" html-type="button">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           导出数据
-        </button>
+        </a-button>
       </div>
 
       <div class="p-4 border-b border-slate-100 bg-slate-50/30">
@@ -221,61 +218,37 @@ const closeChangeDetail = () => {
           <!-- 搜索 -->
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1.5">搜索</label>
-            <input
-              v-model="searchKeyword"
-              type="text"
-              placeholder="用户名/ID/原因..."
-              class="ant-input !py-1.5"
-            />
+            <a-input v-model:value="searchKeyword" type="text" placeholder="用户名/ID/原因..." class="" />
           </div>
 
           <!-- 变动类型 -->
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1.5">变动类型</label>
-            <select
-              v-model="selectedChangeType"
-              class="ant-select !py-1.5"
-            >
-              <option value="all">全部类型</option>
-              <option
-                v-for="option in CREDIT_SCORE_CHANGE_TYPE_OPTIONS"
-                :key="option.value"
-                :value="option.value"
-              >
+            <a-select v-model:value="selectedChangeType" class="">
+              <a-select-option value="all">全部类型</a-select-option>
+              <a-select-option v-for="option in CREDIT_SCORE_CHANGE_TYPE_OPTIONS" :key="option.value" :value="option.value">
                 {{ option.label }}
-              </option>
-            </select>
+              </a-select-option>
+            </a-select>
           </div>
 
           <!-- 开始日期 -->
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1.5">开始日期</label>
-            <input
-              v-model="dateRange.start"
-              type="date"
-              class="ant-input !py-1.5"
-            />
+            <a-input v-model:value="dateRange.start" type="date" class="" />
           </div>
 
           <!-- 结束日期 -->
           <div class="flex items-end gap-2">
             <div class="flex-1">
               <label class="block text-sm font-medium text-slate-700 mb-1.5">结束日期</label>
-              <input
-                v-model="dateRange.end"
-                type="date"
-                class="ant-input !py-1.5"
-              />
+              <a-input v-model:value="dateRange.end" type="date" class="" />
             </div>
-            <button
-              @click="resetFilters"
-              title="重置筛选"
-              class="p-2 text-slate-500 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
-            >
+            <a-button @click="resetFilters" title="重置筛选" class="text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors" html-type="button">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-            </button>
+            </a-button>
           </div>
         </div>
       </div>
@@ -289,37 +262,14 @@ const closeChangeDetail = () => {
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-slate-50">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">用户</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">变动类型</th>
-              <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">变动前</th>
-              <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">变动值</th>
-              <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">变动后</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">关联金额</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">原因</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作人</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">时间</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200">
-            <tr
-              v-for="change in changes"
-              :key="change.id"
-              class="hover:bg-slate-50 transition-colors"
-            >
-              <!-- 用户 -->
-              <td class="px-4 py-3">
+        <a-table  :data-source="changes" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(change) => change.id" :custom-row="(change, index) => ({ class: [&quot;hover:bg-slate-50 transition-colors&quot;] })">
+<a-table-column key="column-0" ><template #title>用户</template><template #default="{ record: change, index: index }"><div class=" ">
                 <div>
                   <p class="text-sm font-medium text-slate-900">{{ change.username }}</p>
                   <p class="text-xs text-slate-500">{{ change.userId }}</p>
                 </div>
-              </td>
-
-              <!-- 变动类型 -->
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>变动类型</template><template #default="{ record: change, index: index }"><div class=" ">
                 <span
                   v-if="changeTypeConfig[change.changeType]"
                   :class="changeTypeConfig[change.changeType].class"
@@ -327,72 +277,47 @@ const closeChangeDetail = () => {
                 >
                   {{ changeTypeConfig[change.changeType].text }}
                 </span>
-              </td>
-
-              <!-- 变动前 -->
-              <td class="px-4 py-3 text-center">
+              </div></template></a-table-column>
+<a-table-column key="column-2" align="center"><template #title>变动前</template><template #default="{ record: change, index: index }"><div class="  text-center">
                 <span class="text-sm font-medium text-slate-700">{{ change.beforeScore }}</span>
-              </td>
-
-              <!-- 变动值 -->
-              <td class="px-4 py-3 text-center">
+              </div></template></a-table-column>
+<a-table-column key="column-3" align="center"><template #title>变动值</template><template #default="{ record: change, index: index }"><div class="  text-center">
                 <span
                   :class="change.changeAmount > 0 ? 'text-emerald-600' : change.changeAmount < 0 ? 'text-rose-600' : 'text-slate-600'"
                   class="text-sm font-semibold"
                 >
                   {{ change.changeAmount > 0 ? '+' : '' }}{{ change.changeAmount }}
                 </span>
-              </td>
-
-              <!-- 变动后 -->
-              <td class="px-4 py-3 text-center">
+              </div></template></a-table-column>
+<a-table-column key="column-4" align="center"><template #title>变动后</template><template #default="{ record: change, index: index }"><div class="  text-center">
                 <span class="text-sm font-medium text-slate-700">{{ change.afterScore }}</span>
-              </td>
-
-              <!-- 关联金额 -->
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>关联金额</template><template #default="{ record: change, index: index }"><div class=" ">
                 <span v-if="change.relatedAmount" class="text-sm text-slate-700 font-medium">
                   {{ formatAmount(change.relatedAmount) }}
                 </span>
                 <span v-else class="text-sm text-slate-400">-</span>
-              </td>
-
-              <!-- 原因 -->
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-6" ><template #title>原因</template><template #default="{ record: change, index: index }"><div class=" ">
                 <span class="text-sm text-slate-700">{{ change.reason }}</span>
-              </td>
-
-              <!-- 操作人 -->
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-7" ><template #title>操作人</template><template #default="{ record: change, index: index }"><div class=" ">
                 <span class="text-sm text-slate-700">{{ change.operatorName }}</span>
-              </td>
-
-              <!-- 时间 -->
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-8" ><template #title>时间</template><template #default="{ record: change, index: index }"><div class=" ">
                 <span class="text-sm text-slate-600">{{ formatDateTime(change.createdAt) }}</span>
-              </td>
-              <td class="px-4 py-3 text-right">
-                <button
-                  type="button"
-                  class="text-sm font-medium text-blue-600 hover:text-blue-800"
-                  @click="openChangeDetail(change)"
-                >
+              </div></template></a-table-column>
+<a-table-column key="column-9" align="right"><template #title>操作</template><template #default="{ record: change, index: index }"><div class="  text-right">
+                <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:text-blue-800" @click="openChangeDetail(change)">
                   查看
-                </button>
-              </td>
-            </tr>
-
-            <!-- 空状态 -->
-            <tr v-if="!loading && changes.length === 0">
-              <td colspan="10" class="px-4 py-12 text-center">
+                </a-button>
+              </div></template></a-table-column><template #emptyText>
                 <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <p class="mt-2 text-sm text-slate-600">暂无数据</p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </template>
+</a-table>
       </div>
 
       <!-- 分页 -->
@@ -400,22 +325,7 @@ const closeChangeDetail = () => {
         <div class="text-sm text-slate-600">
           共 <span class="font-medium">{{ pagination.total }}</span> 条记录，第 <span class="font-medium">{{ pagination.currentPage }}</span> / <span class="font-medium">{{ totalPages }}</span> 页
         </div>
-        <div class="flex items-center gap-2">
-          <button
-            @click="pagination.currentPage--"
-            :disabled="pagination.currentPage === 1 || loading"
-            class="px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            上一页
-          </button>
-          <button
-            @click="pagination.currentPage++"
-            :disabled="pagination.currentPage === totalPages || loading"
-            class="px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            下一页
-          </button>
-        </div>
+        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false"  :disabled="loading" @change="pagination.currentPage = $event" />
       </div>
     </div>
 

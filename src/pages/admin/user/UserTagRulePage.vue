@@ -360,7 +360,7 @@ const conditionSummary = (conditions = []) => {
         <h1 class="text-2xl font-bold text-slate-900">用户标签规则</h1>
         <p class="text-sm text-slate-500 mt-1">配置用户打标签的规则，支持条件组合与优先级</p>
       </div>
-      <button @click="openCreate" class="ant-btn ant-btn-primary">+ 新建规则</button>
+      <a-button @click="openCreate" class="" html-type="button" type="primary">+ 新建规则</a-button>
     </div>
 
     <div class="grid gap-4 sm:grid-cols-3">
@@ -377,82 +377,57 @@ const conditionSummary = (conditions = []) => {
     <div class="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
       <div class="grid gap-3 sm:grid-cols-3">
         <div class="sm:col-span-2">
-          <input
-            v-model="keyword"
-            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-            placeholder="搜索规则名称 / 标签"
-          />
+          <a-input v-model:value="keyword" class="w-full" placeholder="搜索规则名称 / 标签" />
         </div>
         <div>
-          <select
-            v-model="statusFilter"
-            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-          >
-            <option value="all">全部状态</option>
-            <option v-for="opt in USER_TAG_RULE_STATUS_OPTIONS" :key="opt.value" :value="opt.value">
+          <a-select v-model:value="statusFilter" class="w-full">
+            <a-select-option value="all">全部状态</a-select-option>
+            <a-select-option v-for="opt in USER_TAG_RULE_STATUS_OPTIONS" :key="opt.value" :value="opt.value">
               {{ opt.label }}
-            </option>
-          </select>
+            </a-select-option>
+          </a-select>
         </div>
       </div>
 
       <div v-if="loading" class="py-10 text-center text-sm text-slate-500">加载中...</div>
       <div v-else class="overflow-x-auto rounded-lg border border-slate-200">
-        <table class="w-full">
-          <thead class="bg-slate-50 border-b border-slate-200">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">优先级</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">规则名称</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">标签</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">匹配逻辑</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">条件概览</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">状态</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200">
-            <tr v-for="rule in rules" :key="rule.id" class="hover:bg-slate-50 transition-colors">
-              <td class="px-4 py-3">
+        <a-table  :data-source="rules" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(rule) => rule.id" :custom-row="(rule, index) => ({ class: [&quot;hover:bg-slate-50 transition-colors&quot;] })">
+<a-table-column key="column-0" ><template #title>优先级</template><template #default="{ record: rule, index: index }"><div class=" ">
                 <span class="text-sm font-mono text-slate-700">{{ rule.priority }}</span>
-              </td>
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>规则名称</template><template #default="{ record: rule, index: index }"><div class=" ">
                 <p class="text-sm font-medium text-slate-900">{{ rule.name }}</p>
-              </td>
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>标签</template><template #default="{ record: rule, index: index }"><div class=" ">
                 <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-700">
                   {{ rule.tag }}
                 </span>
-              </td>
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>匹配逻辑</template><template #default="{ record: rule, index: index }"><div class=" ">
                 <span class="text-sm text-slate-700">{{ matchModeLabel(rule.matchMode) }}</span>
-              </td>
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>条件概览</template><template #default="{ record: rule, index: index }"><div class=" ">
                 <p class="text-sm text-slate-600 line-clamp-2 max-w-[520px]">{{ conditionSummary(rule.conditions) }}</p>
-              </td>
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>状态</template><template #default="{ record: rule, index: index }"><div class=" ">
                 <span
                   class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
                   :class="rule.status === USER_TAG_RULE_STATUS.ENABLED ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'"
                 >
                   {{ statusLabel(rule.status) }}
                 </span>
-              </td>
-              <td class="px-4 py-3 text-right">
+              </div></template></a-table-column>
+<a-table-column key="column-6" align="right"><template #title>操作</template><template #default="{ record: rule, index: index }"><div class="  text-right">
                 <div class="inline-flex items-center gap-3">
-                  <button class="text-sm text-slate-600 hover:text-slate-800" @click="toggleStatus(rule)">
+                  <a-button class="text-sm text-slate-600 hover:text-slate-800" @click="toggleStatus(rule)" html-type="button">
                     {{ rule.status === USER_TAG_RULE_STATUS.ENABLED ? '禁用' : '启用' }}
-                  </button>
-                  <button class="text-sm text-blue-600 hover:text-blue-700 font-medium" @click="openEdit(rule)">编辑</button>
-                  <button class="text-sm text-slate-600 hover:text-slate-800" @click="openDuplicate(rule)">复制</button>
-                  <button class="text-sm text-rose-600 hover:text-rose-700 font-medium" @click="deleteRule(rule)">删除</button>
+                  </a-button>
+                  <a-button class="text-sm text-blue-600 hover:text-blue-700 font-medium" @click="openEdit(rule)" html-type="button">编辑</a-button>
+                  <a-button class="text-sm text-slate-600 hover:text-slate-800" @click="openDuplicate(rule)" html-type="button">复制</a-button>
+                  <a-button class="text-sm text-rose-600 hover:text-rose-700 font-medium" @click="deleteRule(rule)" html-type="button">删除</a-button>
                 </div>
-              </td>
-            </tr>
-            <tr v-if="!loading && rules.length === 0">
-              <td class="px-4 py-10 text-center text-sm text-slate-500" colspan="7">暂无规则</td>
-            </tr>
-          </tbody>
-        </table>
+              </div></template></a-table-column><template #emptyText>暂无规则</template>
+</a-table>
       </div>
 
       <div v-if="pagination.total > 0" class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -463,98 +438,26 @@ const conditionSummary = (conditions = []) => {
           </p>
           <div class="flex items-center gap-2">
             <span class="text-sm text-slate-600">每页</span>
-            <select
-              v-model.number="pagination.pageSize"
-              class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-            >
-              <option v-for="s in pageSizeOptions" :key="s" :value="s">{{ s }}</option>
-            </select>
+            <a-select v-model:value="pagination.pageSize" class="">
+              <a-select-option v-for="s in pageSizeOptions" :key="s" :value="s">{{ s }}</a-select-option>
+            </a-select>
             <span class="text-sm text-slate-600">条</span>
           </div>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 justify-end">
-          <button
-            class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
-            :disabled="pagination.currentPage <= 1"
-            @click="goToPage(1)"
-          >
-            首页
-          </button>
-          <button
-            class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
-            :disabled="pagination.currentPage <= 1"
-            @click="goToPage(pagination.currentPage - 1)"
-          >
-            上一页
-          </button>
-
-          <button
-            v-for="item in pageItems"
-            :key="String(item)"
-            class="min-w-9 px-3 py-1.5 rounded-lg border text-sm"
-            :class="
-              item === '...'
-                ? 'border-transparent text-slate-400 cursor-default'
-                : item === pagination.currentPage
-                  ? 'border-blue-600 bg-blue-600 text-white'
-                  : 'border-slate-200 text-slate-700 hover:bg-slate-50'
-            "
-            :disabled="item === '...'"
-            @click="item === '...' ? null : goToPage(item)"
-          >
-            {{ item }}
-          </button>
-
-          <button
-            class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
-            :disabled="pagination.currentPage >= totalPages"
-            @click="goToPage(pagination.currentPage + 1)"
-          >
-            下一页
-          </button>
-          <button
-            class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
-            :disabled="pagination.currentPage >= totalPages"
-            @click="goToPage(totalPages)"
-          >
-            末页
-          </button>
-
-          <div class="flex items-center gap-2">
-            <span class="text-sm text-slate-600">跳转</span>
-            <input
-              v-model="jumpTo"
-              inputmode="numeric"
-              class="w-20 rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-              placeholder="页码"
-              @keydown.enter="applyJump"
-            />
-            <button
-              class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm hover:bg-slate-50"
-              @click="applyJump"
-            >
-              确定
-            </button>
-          </div>
-        </div>
+        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false" show-quick-jumper @change="goToPage" />
       </div>
     </div>
 
-    <div v-if="modalOpen" class="fixed inset-0 z-50 grid place-items-center bg-black/45 p-4">
-      <section class="flex h-[88vh] w-full max-w-6xl overflow-hidden rounded-xl bg-white shadow-2xl">
-        <div class="flex w-3/5 flex-col border-r border-slate-200">
-          <header class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-violet-50 to-blue-50 px-6 py-4">
+    <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="modalOpen"><header class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-violet-50 to-blue-50 px-6 py-4">
             <div>
               <h2 class="text-xl font-semibold text-slate-900">
                 {{ modalMode === 'edit' ? '编辑标签规则' : modalMode === 'duplicate' ? '复制标签规则' : '新建标签规则' }}
               </h2>
               <p class="mt-0.5 text-xs text-slate-500">配置规则的基础信息与条件组合</p>
             </div>
-            <button type="button" class="text-2xl text-slate-400 hover:text-slate-600 transition-colors" @click="closeModal">×</button>
-          </header>
-
-          <div class="flex-1 space-y-5 overflow-y-auto px-6 py-5">
+            <a-button aria-label="关闭" html-type="button" class="text-2xl text-slate-400 hover:text-slate-600 transition-colors" @click="closeModal">×</a-button>
+          </header></template></template><template v-if="modalOpen"><div class="grid gap-4 lg:grid-cols-[3fr_2fr]"><div class="min-w-0"><div class="flex-1 space-y-5 overflow-y-auto px-6 py-5">
             <section class="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
               <div class="flex items-center gap-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
@@ -568,31 +471,31 @@ const conditionSummary = (conditions = []) => {
               <div class="grid gap-4 sm:grid-cols-2">
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">规则名称 <span class="text-rose-500">*</span></span>
-                  <input v-model="form.name" type="text" class="ant-input" placeholder="例如：高净值用户" @input="resetPreview" />
+                  <a-input v-model:value="form.name" type="text" class="" placeholder="例如：高净值用户" @input="resetPreview" />
                 </label>
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">标签标识 <span class="text-rose-500">*</span></span>
-                  <input v-model="form.tag" type="text" class="ant-input" placeholder="例如：HIGH_VALUE" @input="resetPreview" />
+                  <a-input v-model:value="form.tag" type="text" class="" placeholder="例如：HIGH_VALUE" @input="resetPreview" />
                 </label>
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">状态</span>
-                  <select v-model="form.status" class="ant-select" @change="resetPreview">
-                    <option v-for="opt in USER_TAG_RULE_STATUS_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                  </select>
+                  <a-select v-model:value="form.status" class="" @change="resetPreview">
+                    <a-select-option v-for="opt in USER_TAG_RULE_STATUS_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</a-select-option>
+                  </a-select>
                 </label>
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">优先级（越小越先执行）</span>
-                  <input v-model.number="form.priority" type="number" min="1" class="ant-input" @input="resetPreview" />
+                  <a-input type="number" min="1" class="" @input="resetPreview" :value="form.priority" @update:value="form.priority = $event === '' ? '' : Number($event)" />
                 </label>
                 <div class="sm:col-span-2">
                   <p class="text-sm font-medium text-slate-700 mb-2">匹配逻辑</p>
                   <div class="flex items-center gap-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
                     <label class="inline-flex items-center gap-2 text-sm text-slate-700">
-                      <input v-model="form.matchMode" type="radio" :value="USER_TAG_RULE_MATCH_MODE.ALL" @change="resetPreview" />
+                      <a-radio :value="USER_TAG_RULE_MATCH_MODE.ALL" @change="resetPreview" :checked="form.matchMode === USER_TAG_RULE_MATCH_MODE.ALL" @update:checked="form.matchMode = USER_TAG_RULE_MATCH_MODE.ALL" />
                       满足全部条件
                     </label>
                     <label class="inline-flex items-center gap-2 text-sm text-slate-700">
-                      <input v-model="form.matchMode" type="radio" :value="USER_TAG_RULE_MATCH_MODE.ANY" @change="resetPreview" />
+                      <a-radio :value="USER_TAG_RULE_MATCH_MODE.ANY" @change="resetPreview" :checked="form.matchMode === USER_TAG_RULE_MATCH_MODE.ANY" @update:checked="form.matchMode = USER_TAG_RULE_MATCH_MODE.ANY" />
                       满足任一条件
                     </label>
                   </div>
@@ -610,44 +513,44 @@ const conditionSummary = (conditions = []) => {
                   </div>
                   <h3 class="text-base font-semibold text-slate-900">条件</h3>
                 </div>
-                <button type="button" class="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1" @click="addCondition">
+                <a-button html-type="button" class="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1" @click="addCondition">
                   <span class="text-base">+</span> 添加条件
-                </button>
+                </a-button>
               </div>
 
               <div class="space-y-3">
                 <div v-for="(cond, idx) in form.conditions" :key="idx" class="rounded-lg border border-blue-200 bg-white p-4 shadow-sm">
                   <div class="grid gap-3 sm:grid-cols-12 items-center">
                     <div class="sm:col-span-4">
-                      <select v-model="cond.field" class="ant-select" @change="handleFieldChange(idx)">
-                        <option v-for="f in conditionFields" :key="f.value" :value="f.value">{{ f.label }}</option>
-                      </select>
+                      <a-select v-model:value="cond.field" class="" @change="handleFieldChange(idx)">
+                        <a-select-option v-for="f in conditionFields" :key="f.value" :value="f.value">{{ f.label }}</a-select-option>
+                      </a-select>
                     </div>
                     <div class="sm:col-span-3">
-                      <select v-model="cond.operator" class="ant-select" @change="resetPreview">
-                        <option v-for="op in operatorOptionsForField(cond.field)" :key="op.value" :value="op.value">{{ op.label }}</option>
-                      </select>
+                      <a-select v-model:value="cond.operator" class="" @change="resetPreview">
+                        <a-select-option v-for="op in operatorOptionsForField(cond.field)" :key="op.value" :value="op.value">{{ op.label }}</a-select-option>
+                      </a-select>
                     </div>
                     <div class="sm:col-span-4">
                       <template v-if="getFieldMeta(cond.field)?.type === 'enum'">
-                        <select v-model="cond.value" class="ant-select" @change="resetPreview">
-                          <option v-for="opt in getFieldMeta(cond.field)?.options || []" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                        </select>
+                        <a-select v-model:value="cond.value" class="" @change="resetPreview">
+                          <a-select-option v-for="opt in getFieldMeta(cond.field)?.options || []" :key="opt.value" :value="opt.value">{{ opt.label }}</a-select-option>
+                        </a-select>
                       </template>
                       <template v-else-if="getFieldMeta(cond.field)?.type === 'boolean'">
-                        <select v-model="cond.value" class="ant-select" @change="resetPreview">
-                          <option :value="true">是</option>
-                          <option :value="false">否</option>
-                        </select>
+                        <a-select v-model:value="cond.value" class="" @change="resetPreview">
+                          <a-select-option :value="true">是</a-select-option>
+                          <a-select-option :value="false">否</a-select-option>
+                        </a-select>
                       </template>
                       <template v-else>
-                        <input v-model.number="cond.value" type="number" class="ant-input" @input="resetPreview" />
+                        <a-input type="number" class="" @input="resetPreview" :value="cond.value" @update:value="cond.value = $event === '' ? '' : Number($event)" />
                       </template>
                     </div>
                     <div class="sm:col-span-1 text-right">
-                      <button type="button" class="text-xs font-bold text-rose-500 hover:text-rose-600 transition-colors" @click="removeCondition(idx)">
+                      <a-button html-type="button" class="text-xs font-bold text-rose-500 hover:text-rose-600 transition-colors" @click="removeCondition(idx)">
                         删除
-                      </button>
+                      </a-button>
                     </div>
                   </div>
                 </div>
@@ -657,19 +560,7 @@ const conditionSummary = (conditions = []) => {
                 </div>
               </div>
             </section>
-          </div>
-
-          <footer class="border-t border-slate-200 bg-white px-6 py-4">
-            <div class="flex items-center justify-end gap-3">
-              <button type="button" class="ant-btn !h-10 !px-5" @click="closeModal">取消</button>
-              <button type="button" class="ant-btn ant-btn-primary !h-10 !px-5" @click="submit">
-                {{ modalMode === 'edit' ? '保存规则' : '创建规则' }}
-              </button>
-            </div>
-          </footer>
-        </div>
-
-        <div class="flex w-2/5 flex-col bg-gradient-to-br from-slate-50 to-slate-100">
+          </div></div><div class="flex min-w-0 flex-col bg-gradient-to-br from-slate-50 to-slate-100">
           <header class="border-b border-slate-200 px-5 py-4">
             <h3 class="text-lg font-semibold text-slate-900">规则预览</h3>
             <p class="mt-0.5 text-xs text-slate-500">查看规则表达式、命中样例和配置说明</p>
@@ -715,38 +606,20 @@ const conditionSummary = (conditions = []) => {
             <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
               <div class="flex items-center justify-between">
                 <h4 class="text-sm font-semibold text-emerald-900">命中预览</h4>
-                <button
-                  class="px-3 py-1.5 rounded-lg border border-emerald-200 text-sm bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  :disabled="previewLoading"
-                  @click="preview"
-                >
+                <a-button class="border border-emerald-200 text-sm bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed" :disabled="previewLoading" @click="preview" html-type="button">
                   {{ previewLoading ? '计算中...' : '预览命中用户' }}
-                </button>
+                </a-button>
               </div>
               <div v-if="previewResult" class="mt-3 space-y-3">
                 <p class="text-sm text-slate-700">
                   预计命中 <span class="font-mono font-semibold">{{ previewResult.count }}</span> 位用户（展示前 10 条）
                 </p>
                 <div class="overflow-x-auto rounded-lg border border-emerald-200 bg-white">
-                  <table class="w-full">
-                    <thead class="bg-emerald-50 border-b border-emerald-200">
-                      <tr>
-                        <th class="px-4 py-2 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">用户ID</th>
-                        <th class="px-4 py-2 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">用户名</th>
-                        <th class="px-4 py-2 text-left text-xs font-semibold text-emerald-800 uppercase tracking-wider">邮箱</th>
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y divide-emerald-100">
-                      <tr v-for="u in previewResult.sample" :key="u.id">
-                        <td class="px-4 py-2 text-xs font-mono text-slate-700">{{ u.id }}</td>
-                        <td class="px-4 py-2 text-sm text-slate-700">{{ u.username }}</td>
-                        <td class="px-4 py-2 text-sm text-slate-700">{{ u.email }}</td>
-                      </tr>
-                      <tr v-if="previewResult.sample.length === 0">
-                        <td class="px-4 py-6 text-center text-sm text-slate-500" colspan="3">暂无命中</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <a-table  :data-source="previewResult.sample" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(u) => u.id" >
+<a-table-column key="column-0" ><template #title>用户ID</template><template #default="{ record: u, index: index }"><div class="  text-xs font-mono text-slate-700">{{ u.id }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>用户名</template><template #default="{ record: u, index: index }"><div class="  text-sm text-slate-700">{{ u.username }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>邮箱</template><template #default="{ record: u, index: index }"><div class="  text-sm text-slate-700">{{ u.email }}</div></template></a-table-column><template #emptyText>暂无命中</template>
+</a-table>
                 </div>
               </div>
               <p v-else class="mt-3 text-sm text-slate-600">点击“预览命中用户”计算规则影响范围</p>
@@ -769,8 +642,13 @@ const conditionSummary = (conditions = []) => {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </div></div></template><template #footer><template v-if="modalOpen"><footer class="border-t border-slate-200 bg-white px-6 py-4">
+            <div class="flex items-center justify-end gap-3">
+              <a-button html-type="button" class="" @click="closeModal">取消</a-button>
+              <a-button html-type="button" class="" @click="submit" type="primary">
+                {{ modalMode === 'edit' ? '保存规则' : '创建规则' }}
+              </a-button>
+            </div>
+          </footer></template></template></a-modal>
   </section>
 </template>

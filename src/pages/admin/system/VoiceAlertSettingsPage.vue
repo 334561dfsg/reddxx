@@ -124,20 +124,15 @@ onMounted(loadConfig)
         </p>
       </div>
       <div class="flex flex-wrap gap-2">
-        <button type="button" class="ant-btn" :disabled="loading || isSaving || !isDirty" @click="restoreSaved">
+        <a-button html-type="button" class="" :disabled="loading || isSaving || !isDirty" @click="restoreSaved">
           恢复已保存
-        </button>
-        <button type="button" class="ant-btn" :disabled="loading || isSaving" @click="restoreDefault">
+        </a-button>
+        <a-button html-type="button" class="" :disabled="loading || isSaving" @click="restoreDefault">
           恢复默认
-        </button>
-        <button
-          type="button"
-          class="ant-btn ant-btn-primary"
-          :disabled="loading || isSaving || !isDirty"
-          @click="saveConfig"
-        >
+        </a-button>
+        <a-button html-type="button" class="" :disabled="loading || isSaving || !isDirty" @click="saveConfig" type="primary">
           {{ isSaving ? '保存中…' : '保存配置' }}
-        </button>
+        </a-button>
       </div>
     </header>
 
@@ -167,20 +162,7 @@ onMounted(loadConfig)
                 关闭后所有业务提示音停止播放；独立事件开关仍会保留，重新开启总开关后继续按事件配置生效。
               </p>
             </div>
-            <button
-              type="button"
-              role="switch"
-              :aria-checked="draft.enabled"
-              :aria-label="draft.enabled ? '关闭所有语音提醒' : '开启所有语音提醒'"
-              :class="draft.enabled ? 'bg-blue-600' : 'bg-slate-300'"
-              class="relative inline-flex h-7 w-12 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              @click="toggleGlobal"
-            >
-              <span
-                :class="draft.enabled ? 'translate-x-5' : 'translate-x-0'"
-                class="pointer-events-none inline-block h-6 w-6 rounded-full bg-white shadow transition-transform duration-200"
-              />
-            </button>
+            <a-switch :checked="draft.enabled" :aria-label="draft.enabled ? '关闭所有语音提醒' : '开启所有语音提醒'" @click="toggleGlobal" />
           </div>
         </div>
 
@@ -200,20 +182,7 @@ onMounted(loadConfig)
                 <p class="break-words text-sm font-medium text-slate-900">{{ event.label }}</p>
                 <p class="mt-1 break-words font-mono text-[11px] text-slate-500">{{ event.key }}</p>
               </div>
-              <button
-                type="button"
-                role="switch"
-                :aria-checked="draft.events[event.key]"
-                :aria-label="`${draft.events[event.key] ? '关闭' : '开启'}${event.label}声音`"
-                :class="draft.events[event.key] ? 'bg-blue-600' : 'bg-slate-300'"
-                class="relative mt-0.5 inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                @click="toggleEvent(event.key)"
-              >
-                <span
-                  :class="draft.events[event.key] ? 'translate-x-5' : 'translate-x-0'"
-                  class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transition-transform duration-200"
-                />
-              </button>
+              <a-switch :checked="draft.events[event.key]" :aria-label="`${draft.events[event.key] ? '关闭' : '开启'}${event.label}声音`" @click="toggleEvent(event.key)" />
             </div>
           </div>
         </div>

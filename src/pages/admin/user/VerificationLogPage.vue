@@ -300,15 +300,12 @@ const showToast = (message) => {
     <div class="bg-white rounded-xl border border-slate-200 overflow-hidden relative min-h-[400px] shadow-sm">
       <div class="flex items-center justify-between border-b border-slate-200 p-4 bg-white">
         <h3 class="text-base font-semibold text-slate-900">操作日志</h3>
-        <button
-          @click="exportLogs"
-          class="ant-btn inline-flex items-center gap-2"
-        >
+        <a-button @click="exportLogs" class="inline-flex items-center gap-2" html-type="button">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           导出日志
-        </button>
+        </a-button>
       </div>
 
       <!-- 筛选栏 -->
@@ -317,30 +314,18 @@ const showToast = (message) => {
           <!-- 搜索 -->
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1.5">搜索</label>
-            <input 
-              v-model="searchKeyword"
-              type="text" 
-              placeholder="用户名、操作人..."
-              class="ant-input !py-1.5"
-            >
+            <a-input v-model:value="searchKeyword" type="text" placeholder="用户名、操作人..." class="" />
           </div>
           
           <!-- 操作类型 -->
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1.5">操作类型</label>
-            <select 
-              v-model="filterActionType"
-              class="ant-select !py-1.5"
-            >
-              <option value="all">全部类型</option>
-              <option 
-                v-for="option in actionTypeOptions" 
-                :key="option.value" 
-                :value="option.value"
-              >
+            <a-select v-model:value="filterActionType" class="">
+              <a-select-option value="all">全部类型</a-select-option>
+              <a-select-option v-for="option in actionTypeOptions" :key="option.value" :value="option.value">
                 {{ option.label }}
-              </option>
-            </select>
+              </a-select-option>
+            </a-select>
           </div>
           
           <!-- 时间范围 -->
@@ -348,28 +333,16 @@ const showToast = (message) => {
             <div class="flex-1">
               <label class="block text-sm font-medium text-slate-700 mb-1.5">申请时间范围</label>
               <div class="flex items-center gap-2">
-                <input
-                  v-model="filterDateRange.start"
-                  type="date"
-                  class="ant-input !py-1.5"
-                >
+                <a-input v-model:value="filterDateRange.start" type="date" class="" />
                 <span class="text-slate-400">至</span>
-                <input
-                  v-model="filterDateRange.end"
-                  type="date"
-                  class="ant-input !py-1.5"
-                >
+                <a-input v-model:value="filterDateRange.end" type="date" class="" />
               </div>
             </div>
-            <button
-              @click="resetFilters"
-              title="重置筛选"
-              class="p-2 text-slate-500 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
-            >
+            <a-button @click="resetFilters" title="重置筛选" class="text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors" html-type="button">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-            </button>
+            </a-button>
           </div>
         </div>
       </div>
@@ -383,34 +356,21 @@ const showToast = (message) => {
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-slate-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">时间</th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作类型</th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">用户</th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">等级变更</th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作人</th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">描述</th>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-slate-200">
-            <tr v-for="log in logList" :key="log.id" class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+        <a-table  :data-source="logList" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(log) => log.id" :custom-row="(log, index) => ({ class: [&quot;hover:bg-gray-50&quot;] })">
+<a-table-column key="column-0" ><template #title>时间</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap text-sm text-gray-900">
                 {{ formatDate(log.actionTime) }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>操作类型</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap">
                 <span :class="actionTypeConfig[log.actionType].class" class="px-2 py-1 text-xs font-semibold rounded-full inline-flex items-center">
                   <span class="mr-1">{{ actionTypeConfig[log.actionType].icon }}</span>
                   {{ actionTypeConfig[log.actionType].text }}
                 </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>用户</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap">
                 <div class="text-sm font-medium text-gray-900">{{ log.username }}</div>
                 <div class="text-xs text-gray-400">{{ log.userId }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>等级变更</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap">
                 <div v-if="log.beforeLevel && log.afterLevel" class="flex items-center space-x-2">
                   <span :class="levelConfig[log.beforeLevel].class" class="px-2 py-1 text-xs font-semibold rounded-full">
                     {{ levelConfig[log.beforeLevel].text }}
@@ -423,24 +383,19 @@ const showToast = (message) => {
                   </span>
                 </div>
                 <span v-else class="text-sm text-gray-400">-</span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>操作人</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap text-sm text-gray-500">
                 {{ log.operator }}
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-900">
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>描述</template><template #default="{ record: log, index: index }"><div class="  text-sm text-gray-900">
                 {{ log.description }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button 
-                  @click="viewDetail(log)"
-                  class="text-blue-600 hover:text-blue-900"
-                >
+              </div></template></a-table-column>
+<a-table-column key="column-6" ><template #title>操作</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap text-sm font-medium">
+                <a-button @click="viewDetail(log)" class="text-blue-600 hover:text-blue-900" html-type="button">
                   详情
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </a-button>
+              </div></template></a-table-column>
+</a-table>
       </div>
 
       <div v-if="!loading && logList.length === 0" class="text-center py-12">
@@ -452,29 +407,12 @@ const showToast = (message) => {
         <div class="text-sm text-gray-600">
           共 <span class="font-medium">{{ pagination.total }}</span> 条记录，第 <span class="font-medium">{{ pagination.currentPage }}</span> / <span class="font-medium">{{ totalPages }}</span> 页
         </div>
-        <div class="flex items-center gap-2">
-          <button
-            @click="pagination.currentPage--"
-            :disabled="pagination.currentPage === 1 || loading"
-            class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            上一页
-          </button>
-          <button
-            @click="pagination.currentPage++"
-            :disabled="pagination.currentPage === totalPages || loading"
-            class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            下一页
-          </button>
-        </div>
+        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false"  :disabled="loading" @change="pagination.currentPage = $event" />
       </div>
     </div>
 
     <transition name="audit-drawer">
-      <div v-if="showDetailModal && selectedLog && selectedSiteInfo" class="fixed inset-0 z-40 bg-slate-900/35">
-        <section class="audit-drawer-panel absolute left-0 right-0 top-0 flex h-[88vh] w-full flex-col overflow-hidden rounded-b-2xl border-b border-slate-200 bg-slate-50 shadow-2xl">
-          <div class="border-b border-slate-200 bg-gradient-to-r from-white to-slate-100 px-5 py-4">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showDetailModal && selectedLog && selectedSiteInfo)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeDetail"><template #title><template v-if="Boolean(showDetailModal && selectedLog && selectedSiteInfo)"><div class="flex items-center justify-between gap-3"><span>详情</span><a-button aria-label="关闭" html-type="button"   @click="closeDetail">×</a-button></div></template></template><template v-if="showDetailModal && selectedLog && selectedSiteInfo"><div class="border-b border-slate-200 bg-gradient-to-r from-white to-slate-100 px-5 py-4">
             <div class="flex items-start justify-between gap-4">
               <div>
                 <div class="text-xs font-medium tracking-wide text-slate-500">认证日志详情抽屉</div>
@@ -494,8 +432,7 @@ const showToast = (message) => {
               </div>
             </div>
           </div>
-
-          <div class="min-h-0 flex-1 overflow-y-auto p-4">
+<div class="min-h-0 flex-1 overflow-y-auto p-4">
             <div class="space-y-4">
               <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <section class="rounded-xl border border-slate-200 bg-white p-4">
@@ -578,15 +515,11 @@ const showToast = (message) => {
                 </div>
               </section>
             </div>
-          </div>
-
-          <section class="shrink-0 border-t border-slate-200 bg-white px-5 py-4">
+          </div></template><template #footer><template v-if="Boolean(showDetailModal && selectedLog && selectedSiteInfo)"><section class="shrink-0 border-t border-slate-200 bg-white px-5 py-4">
             <div class="mt-1 flex justify-end">
-              <button class="ant-btn" @click="closeDetail">关闭</button>
+              <a-button class="" @click="closeDetail" html-type="button">关闭</a-button>
             </div>
-          </section>
-        </section>
-      </div>
+          </section></template></template></a-modal>
     </transition>
 
     <!-- 成功提示 Toast -->

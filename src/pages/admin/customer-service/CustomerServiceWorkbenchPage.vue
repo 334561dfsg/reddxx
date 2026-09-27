@@ -148,24 +148,17 @@ onUnmounted(() => unsubscribe?.())
         <div class="border-b border-slate-200 p-4">
           <div class="flex items-center justify-between">
             <h2 class="font-semibold text-slate-900">用户消息</h2>
-            <button type="button" class="text-xl text-slate-400 lg:hidden" aria-label="关闭用户消息列表" @click="listOpen = false">×</button>
+            <a-button html-type="button" class="text-xl text-slate-400 lg:hidden" aria-label="关闭用户消息列表" @click="listOpen = false">×</a-button>
           </div>
           <div class="mt-3 grid grid-cols-2 gap-2 text-center text-xs">
-            <button type="button" class="rounded-lg px-2 py-2" :class="unreadOnly ? 'bg-rose-50 text-rose-700 ring-1 ring-rose-200' : 'bg-slate-50 text-slate-600'" @click="unreadOnly = true"><b class="block text-base">{{ summary.unread }}</b>新消息</button>
-            <button type="button" class="rounded-lg px-2 py-2" :class="!unreadOnly ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200' : 'bg-slate-50 text-slate-600'" @click="unreadOnly = false"><b class="block text-base">{{ summary.all }}</b>全部用户</button>
+            <a-button style="height: auto !important; padding: 8px !important" html-type="button" class="" :class="unreadOnly ? 'bg-rose-50 text-rose-700 ring-1 ring-rose-200' : 'bg-slate-50 text-slate-600'" @click="unreadOnly = true"><b class="block text-base">{{ summary.unread }}</b>新消息</a-button>
+            <a-button style="height: auto !important; padding: 8px !important" html-type="button" class="" :class="!unreadOnly ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200' : 'bg-slate-50 text-slate-600'" @click="unreadOnly = false"><b class="block text-base">{{ summary.all }}</b>全部用户</a-button>
           </div>
-          <input v-model="query" type="search" placeholder="搜索邮箱、UID 或消息" class="mt-3 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100" />
+          <a-input v-model:value="query" type="search" placeholder="搜索邮箱、UID 或消息" class="mt-3 w-full transition" />
         </div>
 
         <div class="min-h-0 flex-1 overflow-y-auto p-2">
-          <button
-            v-for="thread in threads"
-            :key="thread.id"
-            type="button"
-            class="mb-1 w-full rounded-lg border px-3 py-3 text-left transition"
-            :class="selectedId === thread.id ? 'border-blue-200 bg-blue-50/70' : 'border-transparent hover:bg-slate-50'"
-            @click="selectThread(thread)"
-          >
+          <a-button style="height: auto !important; padding: 12px !important; white-space: normal" v-for="thread in threads" :key="thread.id" html-type="button" class="mb-1 w-full border text-left transition" :class="selectedId === thread.id ? 'border-blue-200 bg-blue-50/70' : 'border-transparent hover:bg-slate-50'" @click="selectThread(thread)">
             <div class="flex items-start gap-3">
               <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-800 text-sm font-semibold text-white">{{ (thread.user.nickname || thread.user.email || '?').slice(0, 1).toUpperCase() }}</span>
               <span class="min-w-0 flex-1">
@@ -179,7 +172,7 @@ onUnmounted(() => unsubscribe?.())
                 </span>
               </span>
             </div>
-          </button>
+          </a-button>
           <p v-if="!threads.length" class="px-4 py-10 text-center text-sm text-slate-400">没有匹配的用户消息</p>
         </div>
       </aside>
@@ -187,13 +180,13 @@ onUnmounted(() => unsubscribe?.())
       <main class="flex min-w-0 flex-col bg-slate-50/50">
         <template v-if="selected">
           <header class="flex min-h-16 items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
-            <button type="button" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs text-slate-600 lg:hidden" @click="listOpen = true">用户</button>
+            <a-button html-type="button" class="border border-slate-200 text-xs text-slate-600 lg:hidden" @click="listOpen = true">用户</a-button>
             <div class="min-w-0">
               <h2 class="truncate font-semibold text-slate-900">{{ selected.user.nickname || selected.user.email }}</h2>
               <p class="mt-1 text-xs text-slate-400">UID {{ selected.user.uid || selected.userId }} · {{ selected.user.email }}</p>
             </div>
             <div class="flex shrink-0 items-center gap-2">
-              <button type="button" class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700" @click="profileOpen = true">用户信息</button>
+              <a-button html-type="button" class="border border-slate-200 text-xs text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700" @click="profileOpen = true">用户信息</a-button>
             </div>
           </header>
 
@@ -201,9 +194,9 @@ onUnmounted(() => unsubscribe?.())
             <div class="space-y-4">
               <article v-for="message in selected.messages" :key="message.id" class="flex" :class="message.sender === 'agent' ? 'justify-end' : 'justify-start'">
                 <div class="max-w-[78%] rounded-2xl px-3.5 py-2.5 text-sm shadow-sm" :class="message.sender === 'agent' ? 'rounded-br-md bg-blue-600 text-white' : 'rounded-bl-md border border-slate-200 bg-white text-slate-700'">
-                  <button v-if="message.imageDataUrl" type="button" class="mb-2 block cursor-zoom-in overflow-hidden rounded-lg" aria-label="放大消息图片" @click="previewImage(message.imageDataUrl)">
+                  <a-button v-if="message.imageDataUrl" html-type="button" class="mb-2 block cursor-zoom-in overflow-hidden" aria-label="放大消息图片" @click="previewImage(message.imageDataUrl)">
                     <img :src="message.imageDataUrl" alt="消息图片" class="max-h-52 object-contain transition hover:opacity-90" />
-                  </button>
+                  </a-button>
                   <p v-if="message.text" class="whitespace-pre-wrap break-words">{{ message.text }}</p>
                   <p class="mt-1 text-[10px]" :class="message.sender === 'agent' ? 'text-blue-100' : 'text-slate-400'">{{ formatTime(message.createdAt) }}</p>
                 </div>
@@ -213,8 +206,8 @@ onUnmounted(() => unsubscribe?.())
 
           <footer class="border-t border-slate-200 bg-white p-3 md:p-4">
             <div class="flex items-end gap-2">
-              <textarea v-model="draft" rows="2" class="min-h-16 min-w-0 flex-1 resize-none rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100" placeholder="输入回复内容，Enter 发送" aria-label="客服回复" @keydown="onReplyKeydown" />
-              <button type="button" class="h-10 rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-300" :disabled="!canReply" @click="sendReply">发送</button>
+              <a-textarea v-model:value="draft" rows="2" class="min-w-0 flex-1 resize-none transition" placeholder="输入回复内容，Enter 发送" aria-label="客服回复" @keydown="onReplyKeydown" />
+              <a-button html-type="button" class="bg-blue-600 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-300" :disabled="!canReply" @click="sendReply" type="primary">发送</a-button>
             </div>
           </footer>
         </template>
@@ -225,7 +218,7 @@ onUnmounted(() => unsubscribe?.())
 
     </div>
 
-    <button v-if="listOpen" type="button" class="fixed inset-0 z-40 bg-black/30 lg:hidden" aria-label="关闭客服面板" @click="listOpen = false" />
+    <div v-if="listOpen" class="fixed inset-0 z-40 bg-black/30 lg:hidden" aria-hidden="true" />
     <UserDetailDrawer :visible="profileOpen" :user="detailUser" @close="profileOpen = false" />
     <CustomerServiceImagePreview :src="previewImageUrl" @close="previewImageUrl = ''" />
   </section>

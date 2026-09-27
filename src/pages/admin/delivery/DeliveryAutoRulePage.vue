@@ -120,7 +120,7 @@ const actionTypeLabel = (type) => {
 const toggleRuleStatus = (ruleId) => {
   const rule = rules.value.find((r) => r.id === ruleId)
   if (!rule) return
-  
+
   if (rule.status === DELIVERY_RULE_STATUS.ENABLED) {
     rule.status = DELIVERY_RULE_STATUS.PAUSED
   } else {
@@ -176,18 +176,18 @@ const saveRule = (ruleData) => {
 // 处理 MFA 验证
 const handleMfaVerify = async (code) => {
   mfaLoading.value = true
-  
+
   try {
     // TODO: 这里调用后端 API 验证 MFA 验证码
     // const response = await api.verifyMFA(code)
-    
+
     // 模拟 API 调用延迟
     await new Promise(resolve => setTimeout(resolve, 1000))
-    
+
     // 验证成功后执行实际的保存操作
     if (pendingSaveData.value) {
       const { mode, ruleData, currentRule } = pendingSaveData.value
-      
+
       if (mode === 'create' || mode === 'duplicate') {
         // 新增规则
         const newRule = {
@@ -213,7 +213,7 @@ const handleMfaVerify = async (code) => {
           alert('自动化规则编辑成功！')
         }
       }
-      
+
       closeModal()
       pendingSaveData.value = null
       showMfaModal.value = false
@@ -248,10 +248,10 @@ const handleMfaVerify = async (code) => {
 
     <!-- Tab 切换 -->
     <div class="flex items-center gap-2 border-b border-slate-200">
-      <button
+      <a-button type="text"
         v-for="tab in tabs"
         :key="tab.key"
-        type="button"
+        html-type="button"
         class="flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition"
         :class="activeTab === tab.key ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-600 hover:text-slate-900'"
         @click="activeTab = tab.key"
@@ -260,39 +260,39 @@ const handleMfaVerify = async (code) => {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="tab.icon" />
         </svg>
         {{ tab.label }}
-      </button>
+      </a-button>
     </div>
 
     <!-- 规则列表 -->
     <div v-if="activeTab === 'rules'">
       <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
-          <input
-            v-model="keyword"
+          <a-input
+            v-model:value="keyword"
             type="text"
             placeholder="搜索规则名称或描述..."
             class="w-full min-w-[280px] rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"
           />
-          <select v-model="statusFilter" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
-            <option value="all">全部状态</option>
-            <option :value="DELIVERY_RULE_STATUS.ENABLED">运行中</option>
-            <option :value="DELIVERY_RULE_STATUS.PAUSED">已暂停</option>
-            <option :value="DELIVERY_RULE_STATUS.DISABLED">已禁用</option>
-          </select>
-          <select v-model="priorityFilter" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
-            <option value="all">全部优先级</option>
-            <option :value="DELIVERY_RULE_PRIORITY.HIGH">高优先级</option>
-            <option :value="DELIVERY_RULE_PRIORITY.MEDIUM">中优先级</option>
-            <option :value="DELIVERY_RULE_PRIORITY.LOW">低优先级</option>
-          </select>
+          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="statusFilter" class="">
+            <a-select-option value="all">全部状态</a-select-option>
+            <a-select-option :value="DELIVERY_RULE_STATUS.ENABLED">运行中</a-select-option>
+            <a-select-option :value="DELIVERY_RULE_STATUS.PAUSED">已暂停</a-select-option>
+            <a-select-option :value="DELIVERY_RULE_STATUS.DISABLED">已禁用</a-select-option>
+          </a-select>
+          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="priorityFilter" class="">
+            <a-select-option value="all">全部优先级</a-select-option>
+            <a-select-option :value="DELIVERY_RULE_PRIORITY.HIGH">高优先级</a-select-option>
+            <a-select-option :value="DELIVERY_RULE_PRIORITY.MEDIUM">中优先级</a-select-option>
+            <a-select-option :value="DELIVERY_RULE_PRIORITY.LOW">低优先级</a-select-option>
+          </a-select>
         </div>
-        <button 
-          type="button" 
+        <a-button type="text"
+          html-type="button"
           class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
           @click="openCreateModal"
         >
           + 新增规则
-        </button>
+        </a-button>
       </div>
 
       <div class="space-y-3">
@@ -305,8 +305,8 @@ const handleMfaVerify = async (code) => {
           <div class="flex items-start justify-between gap-4">
             <div class="flex items-start gap-4 flex-1">
               <!-- 开关 -->
-              <button
-                type="button"
+              <a-button type="text"
+                html-type="button"
                 class="relative mt-1 h-6 w-11 rounded-full transition"
                 :class="rule.status === DELIVERY_RULE_STATUS.ENABLED ? 'bg-emerald-600' : 'bg-slate-300'"
                 @click="toggleRuleStatus(rule.id)"
@@ -315,7 +315,7 @@ const handleMfaVerify = async (code) => {
                   class="absolute top-0.5 h-5 w-5 rounded-full bg-white transition"
                   :class="rule.status === DELIVERY_RULE_STATUS.ENABLED ? 'left-5' : 'left-0.5'"
                 ></span>
-              </button>
+              </a-button>
 
               <div class="flex-1">
                 <div class="flex items-center gap-2 flex-wrap">
@@ -365,27 +365,27 @@ const handleMfaVerify = async (code) => {
 
             <!-- 操作按钮 -->
             <div class="flex items-center gap-2 text-sm">
-              <button 
-                type="button" 
+              <a-button type="text"
+                html-type="button"
                 class="font-medium text-blue-600 hover:text-blue-700"
                 @click="openEditModal(rule)"
               >
                 编辑
-              </button>
-              <button 
-                type="button" 
+              </a-button>
+              <a-button type="text"
+                html-type="button"
                 class="font-medium text-slate-600 hover:text-slate-700"
                 @click="openDuplicateModal(rule)"
               >
                 复制
-              </button>
-              <button 
-                type="button" 
-                class="font-medium text-rose-600 hover:text-rose-700" 
+              </a-button>
+              <a-button type="text"
+                html-type="button"
+                class="font-medium text-rose-600 hover:text-rose-700"
                 @click="deleteRule(rule.id)"
               >
                 删除
-              </button>
+              </a-button>
             </div>
           </div>
         </article>
@@ -396,37 +396,43 @@ const handleMfaVerify = async (code) => {
     <div v-if="activeTab === 'history'">
       <article class="rounded-xl border border-slate-200 bg-white">
         <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead class="border-b border-slate-200 bg-slate-50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-slate-900 uppercase">时间</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-slate-900 uppercase">规则</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-slate-900 uppercase">用户</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-slate-900 uppercase">触发值</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-slate-900 uppercase">执行动作</th>
-                <th class="px-6 py-3 text-center text-xs font-semibold text-slate-900 uppercase">结果</th>
-                <th class="px-6 py-3 text-center text-xs font-semibold text-slate-900 uppercase">影响持仓</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200">
-              <tr v-for="hit in hitHistory" :key="hit.id" class="hover:bg-slate-50">
-                <td class="px-6 py-4 text-sm text-slate-600">{{ hit.triggerTime }}</td>
-                <td class="px-6 py-4 text-sm font-medium text-slate-900">{{ hit.ruleName }}</td>
-                <td class="px-6 py-4 text-sm">
+          <a-table  size="small" :pagination="false" :data-source="hitHistory" :row-key="(hit) => hit.id" :scroll="{ x: 'max-content' }" :custom-row="(hit, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(hit, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>时间</template>
+<template #default="{ record: hit, index: rowIndex }">{{ hit.triggerTime }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(hit, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm font-medium text-slate-900&quot;] })">
+<template #title>规则</template>
+<template #default="{ record: hit, index: rowIndex }">{{ hit.ruleName }}</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(hit, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: hit, index: rowIndex }">
                   <div class="font-medium text-slate-900">{{ hit.userName }}</div>
                   <div class="text-slate-500">{{ hit.userId }}</div>
-                </td>
-                <td class="px-6 py-4 text-sm text-slate-600">{{ hit.triggerValue }}</td>
-                <td class="px-6 py-4 text-sm text-slate-600">{{ hit.action }}</td>
-                <td class="px-6 py-4 text-center">
+                </template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(hit, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>触发值</template>
+<template #default="{ record: hit, index: rowIndex }">{{ hit.triggerValue }}</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(hit, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>执行动作</template>
+<template #default="{ record: hit, index: rowIndex }">{{ hit.action }}</template>
+</a-table-column>
+<a-table-column key="column-5" align="center" :custom-cell="(hit, rowIndex) => ({ class: [&quot;px-6 py-4 text-center&quot;] })">
+<template #title>结果</template>
+<template #default="{ record: hit, index: rowIndex }">
                   <span class="rounded-md bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700">
                     {{ hit.result === 'success' ? '成功' : '失败' }}
                   </span>
-                </td>
-                <td class="px-6 py-4 text-center text-sm font-semibold text-slate-900">{{ hit.affectedPositions }}</td>
-              </tr>
-            </tbody>
-          </table>
+                </template>
+</a-table-column>
+<a-table-column key="column-6" align="center" :custom-cell="(hit, rowIndex) => ({ class: [&quot;px-6 py-4 text-center text-sm font-semibold text-slate-900&quot;] })">
+<template #title>影响持仓</template>
+<template #default="{ record: hit, index: rowIndex }">{{ hit.affectedPositions }}</template>
+</a-table-column>
+</a-table>
         </div>
       </article>
     </div>

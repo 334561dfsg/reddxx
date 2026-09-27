@@ -142,7 +142,7 @@ test('front news admin route and platform config menu entry are registered', () 
   )
 })
 
-test('front news admin page uses custom selects and edits independent news content', () => {
+test('front news admin page uses Ant selects and edits independent news content', () => {
   const source = readFileSync(adminNewsPageUrl, 'utf8')
   assert.match(source, /frontNews/)
   assert.match(source, /发布新闻/)
@@ -165,10 +165,10 @@ test('front news admin page uses custom selects and edits independent news conte
   assert.match(source, /languageFilter/)
   assert.match(source, /formLocale/)
   assert.match(source, /新闻内容/)
-  assert.match(source, /role="combobox"/)
-  assert.match(source, /aria-haspopup="listbox"/)
-  assert.match(source, /admin-select-trigger/)
-  assert.match(source, /news-select-popup/)
+  assert.match(source, /<a-select/)
+  assert.match(source, /:options="languageFilterOptions"/)
+  assert.match(source, /@change="commitCustomSelect/)
+  assert.match(source, /:options="selectOptionMap\.formLocale"/)
   assert.match(source, /siteConfigApi\.updateSiteConfig/)
   assert.doesNotMatch(source, /<select[\s>]/)
   assert.doesNotMatch(source, /announcements/)

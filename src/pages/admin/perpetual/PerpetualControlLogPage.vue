@@ -57,29 +57,29 @@ const nextPage = () => {
 
     <article class="rounded-xl border border-slate-200 bg-white p-4">
       <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <select v-model="contractFilter" class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500">
-          <option value="all">全部合约</option>
-          <option value="BTCUSDT">BTCUSDT</option>
-          <option value="ETHUSDT">ETHUSDT</option>
-          <option value="SOLUSDT">SOLUSDT</option>
-        </select>
+        <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="contractFilter" class="">
+          <a-select-option value="all">全部合约</a-select-option>
+          <a-select-option value="BTCUSDT">BTCUSDT</a-select-option>
+          <a-select-option value="ETHUSDT">ETHUSDT</a-select-option>
+          <a-select-option value="SOLUSDT">SOLUSDT</a-select-option>
+        </a-select>
 
-        <select v-model="actionFilter" class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500">
-          <option value="all">全部动作</option>
-          <option value="触发规则">触发规则</option>
-          <option value="编辑参数">编辑参数</option>
-          <option value="暂停线控">暂停线控</option>
-          <option value="新增规则">新增规则</option>
-        </select>
+        <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="actionFilter" class="">
+          <a-select-option value="all">全部动作</a-select-option>
+          <a-select-option value="触发规则">触发规则</a-select-option>
+          <a-select-option value="编辑参数">编辑参数</a-select-option>
+          <a-select-option value="暂停线控">暂停线控</a-select-option>
+          <a-select-option value="新增规则">新增规则</a-select-option>
+        </a-select>
 
-        <select v-model="resultFilter" class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500">
-          <option value="all">全部结果</option>
-          <option value="success">成功</option>
-          <option value="failed">失败</option>
-        </select>
+        <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="resultFilter" class="">
+          <a-select-option value="all">全部结果</a-select-option>
+          <a-select-option value="success">成功</a-select-option>
+          <a-select-option value="failed">失败</a-select-option>
+        </a-select>
 
-        <input
-          v-model="keyword"
+        <a-input
+          v-model:value="keyword"
           type="text"
           placeholder="搜索日志ID/规则/操作人..."
           class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
@@ -89,36 +89,44 @@ const nextPage = () => {
 
     <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[980px] text-left text-sm">
-          <thead class="bg-slate-50 text-slate-500">
-            <tr>
-              <th class="px-4 py-3 font-medium">时间</th>
-              <th class="px-4 py-3 font-medium">日志ID</th>
-              <th class="px-4 py-3 font-medium">合约</th>
-              <th class="px-4 py-3 font-medium">动作</th>
-              <th class="px-4 py-3 font-medium">规则/对象</th>
-              <th class="px-4 py-3 font-medium">操作人</th>
-              <th class="px-4 py-3 font-medium">结果</th>
-              <th class="px-4 py-3 font-medium">详情</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="log in paginatedLogs" :key="log.id" class="border-t border-slate-100 align-top">
-              <td class="px-4 py-3 text-slate-600">{{ log.time }}</td>
-              <td class="px-4 py-3 font-medium text-slate-900">{{ log.id }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ log.contract }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ log.action }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ log.rule }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ log.operator }}</td>
-              <td class="px-4 py-3">
+        <a-table  size="small" :pagination="false" :data-source="paginatedLogs" :row-key="(log) => log.id" :scroll="{ x: 'max-content' }" :custom-row="(log, rowIndex) => ({ class: [&quot;border-t border-slate-100 align-top&quot;] })">
+<a-table-column key="column-0" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-600&quot;] })">
+<template #title>时间</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.time }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-slate-900&quot;] })">
+<template #title>日志ID</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.id }}</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>合约</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.contract }}</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>动作</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.action }}</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>规则/对象</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.rule }}</template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
+<template #title>操作人</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.operator }}</template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>结果</template>
+<template #default="{ record: log, index: rowIndex }">
                 <span class="rounded-full px-2 py-0.5 text-xs font-medium" :class="log.result === 'success' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
                   {{ log.result === 'success' ? '成功' : '失败' }}
                 </span>
-              </td>
-              <td class="px-4 py-3 text-slate-600">{{ log.detail }}</td>
-            </tr>
-          </tbody>
-        </table>
+              </template>
+</a-table-column>
+<a-table-column key="column-7" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-600&quot;] })">
+<template #title>详情</template>
+<template #default="{ record: log, index: rowIndex }">{{ log.detail }}</template>
+</a-table-column>
+</a-table>
       </div>
 
       <!-- 分页 -->
@@ -127,22 +135,7 @@ const nextPage = () => {
           共 {{ filteredLogs.length }} 条日志 · 第 {{ currentPage }} / {{ totalPages }} 页
         </div>
         <div class="flex items-center gap-3">
-          <button 
-            type="button" 
-            :disabled="currentPage === 1" 
-            class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed" 
-            @click="prevPage"
-          >
-            上一页
-          </button>
-          <button 
-            type="button" 
-            :disabled="currentPage === totalPages" 
-            class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed" 
-            @click="nextPage"
-          >
-            下一页
-          </button>
+          <a-pagination size="small" :current="currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="currentPage = $event" />
         </div>
       </div>
 

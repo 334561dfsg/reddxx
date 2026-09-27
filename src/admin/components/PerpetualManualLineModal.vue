@@ -1,4 +1,9 @@
 <script setup>
+import { Table } from 'ant-design-vue'
+const TableColumn = Table.Column
+
+import { AdminButton, AdminInput, AdminSelect, AdminSlider, nativeControl } from './antd/controls.js'
+
 import { computed, reactive, ref, watch } from 'vue'
 import { PERP_CONTROL_OFFSET_DIRECTION } from '../constants/perpetualControl'
 
@@ -172,7 +177,7 @@ const setOffsetDirection = (dir) => {
 }
 
 const quickPriceOffsets = [1, 2, 3, 5, 8, 13]
- 
+
 
 const basePrice = computed(() => {
   const p = Number(props.basePrice || 0)
@@ -187,7 +192,7 @@ const ratioValue = computed(() => {
 
 const platformPnlPositive = computed(() => parseCompactUsd(props.metrics?.platformPnl) >= 0)
 
- 
+
 
 const priceOffsetFocused = ref(false)
 const priceOffsetDraft = ref('0')
@@ -230,9 +235,9 @@ watch(
   { immediate: true }
 )
 
- 
 
- 
+
+
 
 const quoteAt = (centerPrice, offsetPoints, offsetDirection) => {
   const p0 = Number(centerPrice || 0)
@@ -546,9 +551,9 @@ const emitSave = () =>
                 <span v-if="contractLabel" class="truncate">· {{ contractLabel }}</span>
               </div>
             </div>
-            <button type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="close">
+            <AdminButton type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="close">
               关闭
-            </button>
+            </AdminButton>
           </div>
 
           <div class="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-2.5">
@@ -602,48 +607,27 @@ const emitSave = () =>
               </div>
 
               <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-                <table class="w-full table-fixed text-left text-[11px]">
-                  <thead class="text-slate-500">
-                      <tr>
-                        <th class="sticky top-0 z-10 bg-slate-50 px-3 py-2 font-semibold w-20">UID</th>
-                        <th class="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-right font-semibold w-14">方向</th>
-                        <th class="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-right font-semibold">本金 / 杠杆</th>
-                        <th class="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-right font-semibold">开仓价 / 数量</th>
-                        <th class="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-right font-semibold">浮盈 / 收益率</th>
-                        <th class="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-right font-semibold">爆仓价 / 距离</th>
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100 text-slate-700">
-                      <tr v-for="u in riskUsers" :key="u.uid" class="hover:bg-slate-50/60" :class="String(ui.selectedUid) === String(u.uid) ? 'bg-slate-50' : ''">
-                        <td class="px-3 py-2 font-mono text-slate-900 truncate">{{ u.uid }}</td>
-                        <td class="px-3 py-2 text-right">
+                <Table :data-source="riskUsers" :row-class-name="u => String(ui.selectedUid) === String(u.uid) ? 'bg-slate-50' : ''" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="u => u.uid"  ><TableColumn key="column-0"><template #title>UID</template><template #default="{ record: u, index: rowIndex }"><div class="px-3 py-2 font-mono text-slate-900 truncate">{{ u.uid }}</div></template></TableColumn><TableColumn key="column-1"><template #title>方向</template><template #default="{ record: u, index: rowIndex }"><div class="px-3 py-2 text-right">
                           <div class="font-semibold" :class="u.side === 'long' ? 'text-emerald-700' : 'text-rose-700'">{{ u.side === 'long' ? '多' : '空' }}</div>
-                        </td>
-                        <td class="px-3 py-2 text-right">
+                        </div></template></TableColumn><TableColumn key="column-2"><template #title>本金 / 杠杆</template><template #default="{ record: u, index: rowIndex }"><div class="px-3 py-2 text-right">
                           <div class="font-mono text-slate-900">{{ formatCompactUsd(u.principal) }}</div>
                           <div class="mt-1 font-mono text-slate-500">{{ u.leverage }}x</div>
-                        </td>
-                        <td class="px-3 py-2 text-right">
+                        </div></template></TableColumn><TableColumn key="column-3"><template #title>开仓价 / 数量</template><template #default="{ record: u, index: rowIndex }"><div class="px-3 py-2 text-right">
                           <div class="font-mono text-slate-900">{{ formatPrice(u.entryPrice) }}</div>
                           <div class="mt-1 font-mono text-slate-500">{{ formatCompactNumber(u.qty, u.qty >= 1 ? 4 : 6) }}</div>
-                        </td>
-                        <td class="px-3 py-2 text-right">
+                        </div></template></TableColumn><TableColumn key="column-4"><template #title>浮盈 / 收益率</template><template #default="{ record: u, index: rowIndex }"><div class="px-3 py-2 text-right">
                           <div class="font-mono" :class="u.pnlNow >= 0 ? 'text-emerald-700' : 'text-rose-700'">{{ formatCompactUsd(u.pnlNow, { withSign: true }) }}</div>
                           <div class="mt-1 font-mono text-slate-500">{{ `${formatCompactNumber((u.pnlNow / Math.max(1, Number(u.principal || 0))) * 100, 2)}%` }}</div>
-                        </td>
-                        <td class="px-3 py-2 text-right">
+                        </div></template></TableColumn><TableColumn key="column-5"><template #title>爆仓价 / 距离</template><template #default="{ record: u, index: rowIndex }"><div class="px-3 py-2 text-right">
                           <div class="font-mono text-slate-900">{{ formatPrice(u.liquidationPrice) }}</div>
                           <div class="mt-1 font-mono text-slate-500">{{ formatCompactNumber(u.liqDistance, u.liqDistance >= 1 ? 2 : 5) }}</div>
-                        </td>
-                      </tr>
-                    </tbody>
-                </table>
+                        </div></template></TableColumn></Table>
 
                 <div v-if="targetUser" class="p-5">
                   <div class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-[11px] text-slate-600">
                     <div class="flex items-center justify-between">
                       <div class="font-semibold text-slate-900">已锁定目标</div>
-                      <button type="button" class="text-slate-500 hover:text-slate-900" @click="ui.selectedUid = ''">清除</button>
+                      <AdminButton type="button" class="text-slate-500 hover:text-slate-900" @click="ui.selectedUid = ''">清除</AdminButton>
                     </div>
                     <div class="mt-2 grid grid-cols-2 gap-2">
                       <div>
@@ -685,7 +669,7 @@ const emitSave = () =>
                         <span v-if="form.offsetDirection === PERP_CONTROL_OFFSET_DIRECTION.UP">+</span>
                         <span v-else-if="form.offsetDirection === PERP_CONTROL_OFFSET_DIRECTION.DOWN">-</span>
                         <span v-else>+</span>
-                        <input
+                        <AdminInput
                           :value="priceOffsetDraft"
                           type="number"
                           min="0"
@@ -702,52 +686,52 @@ const emitSave = () =>
                     </div>
                   </div>
                   <div class="mt-2 grid grid-cols-2 gap-2">
-                    <button
+                    <AdminButton
                       type="button"
                       class="h-8 rounded-lg border text-[11px] font-semibold transition"
                       :class="form.offsetDirection === PERP_CONTROL_OFFSET_DIRECTION.UP ? 'border-slate-900 bg-slate-900 text-white shadow-sm ring-2 ring-slate-900 ring-offset-1 ring-offset-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'"
                       @click="setOffsetDirection(PERP_CONTROL_OFFSET_DIRECTION.UP)"
                     >
                       向上
-                    </button>
-                    <button
+                    </AdminButton>
+                    <AdminButton
                       type="button"
                       class="h-8 rounded-lg border text-[11px] font-semibold transition"
                       :class="form.offsetDirection === PERP_CONTROL_OFFSET_DIRECTION.DOWN ? 'border-slate-900 bg-slate-900 text-white shadow-sm ring-2 ring-slate-900 ring-offset-1 ring-offset-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'"
                       @click="setOffsetDirection(PERP_CONTROL_OFFSET_DIRECTION.DOWN)"
                     >
                       向下
-                    </button>
+                    </AdminButton>
                   </div>
-                  <input v-model.number="form.priceOffset" type="range" min="0" max="50" step="1" class="mt-2 w-full accent-slate-900" />
+                  <AdminSlider v-model.number="form.priceOffset" min="0" max="50" step="1" class="mt-2 w-full accent-slate-900" />
                   <div class="mt-2 flex flex-wrap gap-2">
-                    <button v-for="v in quickPriceOffsets" :key="`po-${v}`" type="button" class="h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50" @click="form.priceOffset = v">
+                    <AdminButton v-for="v in quickPriceOffsets" :key="`po-${v}`" type="button" class="h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50" @click="form.priceOffset = v">
                       {{ v }}
-                    </button>
+                    </AdminButton>
                   </div>
                 </div>
 
-                
+
 
                 <div class="rounded-xl border border-slate-200 bg-white p-4">
                   <div class="flex items-center justify-between">
                     <div class="text-xs font-semibold text-slate-900">持续时间</div>
                     <div class="font-mono text-[11px] text-slate-500">{{ Number(form.durationSec || 0) === 0 ? '持续' : `${Number(form.durationSec || 0)}s` }}</div>
                   </div>
-                  <select v-model.number="form.durationSec" class="mt-2 h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-0">
+                  <AdminSelect v-model.number="form.durationSec" class="mt-2 h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-0">
                     <option v-for="v in quickManualInputs.durationSec" :key="`dur-${v}`" :value="v">{{ v === 0 ? '持续' : `${v}s` }}</option>
-                  </select>
+                  </AdminSelect>
                 </div>
               </div>
 
               <div class="border-t border-slate-200 bg-white p-5">
                 <div class="grid gap-2" :class="allowRemove && isManualActive ? 'grid-cols-2' : 'grid-cols-1'">
-                  <button v-if="allowRemove && isManualActive" type="button" class="h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50" @click="remove">
+                  <AdminButton v-if="allowRemove && isManualActive" type="button" class="h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50" @click="remove">
                     解除手动
-                  </button>
-                  <button type="button" class="h-11 w-full rounded-xl bg-rose-600 px-4 text-sm font-semibold text-white hover:bg-rose-500 disabled:opacity-40" :disabled="outlierCheck.locked || !contractId" @click="emitSave">
+                  </AdminButton>
+                  <AdminButton type="button" class="h-11 w-full rounded-xl bg-rose-600 px-4 text-sm font-semibold text-white hover:bg-rose-500 disabled:opacity-40" :disabled="outlierCheck.locked || !contractId" @click="emitSave">
                     保存并生效
-                  </button>
+                  </AdminButton>
                 </div>
               </div>
             </section>
@@ -816,7 +800,7 @@ const emitSave = () =>
                     <line v-if="curve.xFor" :x1="curve.xFor(manualPreview.marketPrice)" :x2="curve.xFor(manualPreview.marketPrice)" :y1="curve.pad" :y2="curve.h - curve.pad" stroke="#0ea5e9" stroke-dasharray="7 6" opacity="0.9" />
                     <line v-if="curve.xFor && hoverPrice !== null" :x1="curve.xFor(hoverPrice)" :x2="curve.xFor(hoverPrice)" :y1="curve.pad" :y2="curve.h - curve.pad" stroke="#64748b" stroke-dasharray="4 4" opacity="0.8" />
                   </svg>
-                  
+
                 </div>
 
                 <div class="rounded-lg border border-slate-200 bg-white p-4">
@@ -842,7 +826,7 @@ const emitSave = () =>
               </div>
             </section>
 
-            
+
           </div>
         </div>
       </div>

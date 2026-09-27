@@ -385,22 +385,9 @@ const resetPeriodFilter = () => {
       <div class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
         <div class="overflow-x-auto">
           <div class="flex min-w-max gap-2" role="tablist" aria-label="平台报表周期">
-            <button
-              v-for="tab in reportTabs"
-              :id="tab.tabId"
-              :key="tab.id"
-              type="button"
-              role="tab"
-              :aria-selected="activeTabId === tab.id"
-              :aria-controls="tab.panelId"
-              class="rounded px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              :class="activeTabId === tab.id ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'"
-              @click="selectTab(tab.id)"
-              @keydown.left="selectAdjacentTab($event, -1)"
-              @keydown.right="selectAdjacentTab($event, 1)"
-            >
+            <a-button v-for="tab in reportTabs" :id="tab.tabId" :key="tab.id" html-type="button" role="tab" :aria-selected="activeTabId === tab.id" :aria-controls="tab.panelId" class="text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" :class="activeTabId === tab.id ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'" @click="selectTab(tab.id)" @keydown.left="selectAdjacentTab($event, -1)" @keydown.right="selectAdjacentTab($event, 1)">
               {{ tab.label }}
-            </button>
+            </a-button>
           </div>
         </div>
 
@@ -417,12 +404,7 @@ const resetPeriodFilter = () => {
             class="flex items-center gap-2 text-sm font-medium text-slate-700"
           >
             <span class="whitespace-nowrap">查询月份</span>
-            <input
-              v-model="selectedMonth"
-              type="month"
-              class="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-              aria-describedby="platform-report-period-filter-title"
-            />
+            <a-input v-model:value="selectedMonth" type="month" class="text-slate-900" aria-describedby="platform-report-period-filter-title" />
           </label>
 
           <label
@@ -430,21 +412,12 @@ const resetPeriodFilter = () => {
             class="flex items-center gap-2 text-sm font-medium text-slate-700"
           >
             <span class="whitespace-nowrap">查询日期</span>
-            <input
-              v-model="selectedDate"
-              type="date"
-              class="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-              aria-describedby="platform-report-period-filter-title"
-            />
+            <a-input v-model:value="selectedDate" type="date" class="text-slate-900" aria-describedby="platform-report-period-filter-title" />
           </label>
 
-          <button
-            type="button"
-            class="h-10 rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            @click="resetPeriodFilter"
-          >
+          <a-button html-type="button" class="border border-slate-300 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" @click="resetPeriodFilter">
             恢复当前时间
-          </button>
+          </a-button>
         </div>
       </div>
     </div>
@@ -504,45 +477,7 @@ const resetPeriodFilter = () => {
             tabindex="0"
             :aria-label="`${section.tableLabel}，可横向滚动查看全部列`"
           >
-            <table class="min-w-[720px] w-full border-collapse text-sm">
-              <caption class="sr-only">{{ section.tableLabel }}</caption>
-              <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
-                <tr>
-                  <th scope="col" class="w-32 whitespace-nowrap px-4 py-3">币种</th>
-                  <th
-                    v-for="column in section.tableColumns"
-                    :key="`${section.title}-${column.key}`"
-                    scope="col"
-                    class="whitespace-nowrap px-4 py-3 text-right"
-                  >
-                    {{ column.label }}
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-200 bg-white">
-                <tr
-                  v-for="row in section.rows"
-                  :key="`${section.title}-${row.asset}`"
-                  class="hover:bg-slate-50"
-                >
-                  <th scope="row" class="whitespace-nowrap px-4 py-3 text-left font-medium text-slate-700">
-                    <span
-                      class="inline-flex rounded px-2 py-0.5 text-xs font-medium"
-                      :class="badgeClassByTone[row.tone]"
-                    >
-                      {{ row.asset }}
-                    </span>
-                  </th>
-                  <td
-                    v-for="column in section.tableColumns"
-                    :key="`${section.title}-${row.asset}-${column.key}`"
-                    class="whitespace-nowrap px-4 py-3 text-right font-mono text-sm font-semibold text-slate-950"
-                  >
-                    {{ row[column.key] }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <a-table :data-source="section.rows" :pagination="false" size="small" row-key="asset" :scroll="{ x: 'max-content' }" :aria-label="section.tableLabel"><a-table-column title="币种" key="asset"><template #default="{ record: row }"><span class="inline-flex rounded px-2 py-0.5 text-xs font-medium" :class="badgeClassByTone[row.tone]">{{ row.asset }}</span></template></a-table-column><a-table-column v-for="column in section.tableColumns" :key="column.key" :title="column.label" :data-index="column.key" align="right" /></a-table>
           </div>
 
           <div

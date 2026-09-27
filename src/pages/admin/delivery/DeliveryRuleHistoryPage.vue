@@ -48,8 +48,8 @@ const nextPage = () => {
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1.5">关键词</label>
-          <input
-            v-model="keyword"
+          <a-input
+            v-model:value="keyword"
             type="text"
             placeholder="用户名、用户ID"
             class="ant-input !py-1.5"
@@ -57,18 +57,18 @@ const nextPage = () => {
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1.5">规则</label>
-          <select v-model="ruleFilter" class="ant-select !py-1.5">
-            <option value="all">全部规则</option>
-            <option v-for="rule in uniqueRules" :key="rule" :value="rule">{{ rule }}</option>
-          </select>
+          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="ruleFilter" class="">
+            <a-select-option value="all">全部规则</a-select-option>
+            <a-select-option v-for="rule in uniqueRules" :key="rule" :value="rule">{{ rule }}</a-select-option>
+          </a-select>
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1.5">结果</label>
-          <select v-model="resultFilter" class="ant-select !py-1.5">
-            <option value="all">全部结果</option>
-            <option value="success">成功</option>
-            <option value="failed">失败</option>
-          </select>
+          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="resultFilter" class="">
+            <a-select-option value="all">全部结果</a-select-option>
+            <a-select-option value="success">成功</a-select-option>
+            <a-select-option value="failed">失败</a-select-option>
+          </a-select>
         </div>
       </div>
     </div>
@@ -76,49 +76,55 @@ const nextPage = () => {
     <!-- 历史记录表格 -->
     <article class="pro-card">
       <div class="overflow-x-auto">
-        <table class="ant-table">
-          <thead class="ant-table-thead">
-            <tr>
-              <th>时间</th>
-              <th>规则</th>
-              <th>用户</th>
-              <th>触发值</th>
-              <th>执行动作</th>
-              <th>操作人</th>
-              <th class="text-center">结果</th>
-              <th class="text-center">影响持仓</th>
-            </tr>
-          </thead>
-          <tbody class="ant-table-tbody">
-            <tr v-for="hit in paginatedHistory" :key="hit.id">
-              <td class="whitespace-nowrap text-slate-600 text-sm">{{ hit.triggerTime }}</td>
-              <td class="text-sm font-medium text-slate-900">{{ hit.ruleName }}</td>
-              <td class="text-sm">
+        <a-table  size="small" :pagination="false" :data-source="paginatedHistory" :row-key="(hit) => hit.id" :scroll="{ x: 'max-content' }">
+<a-table-column key="column-0" :custom-cell="(hit, rowIndex) => ({ class: [&quot;whitespace-nowrap text-slate-600 text-sm&quot;] })">
+<template #title>时间</template>
+<template #default="{ record: hit, index: rowIndex }">{{ hit.triggerTime }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(hit, rowIndex) => ({ class: [&quot;text-sm font-medium text-slate-900&quot;] })">
+<template #title>规则</template>
+<template #default="{ record: hit, index: rowIndex }">{{ hit.ruleName }}</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(hit, rowIndex) => ({ class: [&quot;text-sm&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: hit, index: rowIndex }">
                 <div class="font-medium text-slate-900">{{ hit.userName }}</div>
                 <div class="text-slate-500">{{ hit.userId }}</div>
-              </td>
-              <td class="text-sm text-slate-600">{{ hit.triggerValue }}</td>
-              <td class="text-sm text-slate-600">{{ hit.action }}</td>
-              <td class="text-sm text-slate-600">{{ hit.operator }}</td>
-              <td class="text-center">
+              </template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(hit, rowIndex) => ({ class: [&quot;text-sm text-slate-600&quot;] })">
+<template #title>触发值</template>
+<template #default="{ record: hit, index: rowIndex }">{{ hit.triggerValue }}</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(hit, rowIndex) => ({ class: [&quot;text-sm text-slate-600&quot;] })">
+<template #title>执行动作</template>
+<template #default="{ record: hit, index: rowIndex }">{{ hit.action }}</template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(hit, rowIndex) => ({ class: [&quot;text-sm text-slate-600&quot;] })">
+<template #title>操作人</template>
+<template #default="{ record: hit, index: rowIndex }">{{ hit.operator }}</template>
+</a-table-column>
+<a-table-column key="column-6" align="center" :custom-cell="(hit, rowIndex) => ({ class: [&quot;text-center&quot;] })">
+<template #title>结果</template>
+<template #default="{ record: hit, index: rowIndex }">
                 <span
                   class="rounded-md px-2 py-1 text-xs font-medium"
                   :class="hit.result === 'success' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'"
                 >
                   {{ hit.result === 'success' ? '成功' : '失败' }}
                 </span>
-              </td>
-              <td class="text-center text-sm font-semibold text-slate-900">
+              </template>
+</a-table-column>
+<a-table-column key="column-7" align="center" :custom-cell="(hit, rowIndex) => ({ class: [&quot;text-center text-sm font-semibold text-slate-900&quot;] })">
+<template #title>影响持仓</template>
+<template #default="{ record: hit, index: rowIndex }">
                 {{ hit.affectedPositions }}
-              </td>
-            </tr>
-            <tr v-if="paginatedHistory.length === 0">
-              <td colspan="8" class="text-center text-sm text-slate-500 py-10">
+              </template>
+</a-table-column>
+<template #emptyText>
                 暂无符合条件的数据
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </template>
+</a-table>
       </div>
       <div class="flex items-center justify-between border-t border-slate-100 px-6 py-4">
         <p class="text-sm text-slate-600">
@@ -126,34 +132,7 @@ const nextPage = () => {
           <span class="font-medium">{{ pagination.currentPage }}</span> / <span class="font-medium">{{ totalPages }}</span> 页
         </p>
         <div class="flex items-center gap-2">
-          <button
-            type="button"
-            class="ant-btn !h-8 !px-3 !text-xs disabled:opacity-50 disabled:cursor-not-allowed"
-            :disabled="pagination.currentPage === 1"
-            @click="prevPage"
-          >
-            上一页
-          </button>
-          <div class="flex items-center gap-1">
-            <button
-              v-for="p in totalPages"
-              :key="p"
-              type="button"
-              class="ant-btn !h-8 !w-8 !p-0 !text-xs"
-              :class="pagination.currentPage === p ? 'ant-btn-primary' : ''"
-              @click="pagination.currentPage = p"
-            >
-              {{ p }}
-            </button>
-          </div>
-          <button
-            type="button"
-            class="ant-btn !h-8 !px-3 !text-xs disabled:opacity-50 disabled:cursor-not-allowed"
-            :disabled="pagination.currentPage === totalPages"
-            @click="nextPage"
-          >
-            下一页
-          </button>
+          <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="pagination.currentPage = $event" />
         </div>
       </div>
     </article>

@@ -13,8 +13,8 @@
           <div class="flex items-center gap-2 w-full sm:w-auto">
             <span class="text-sm text-slate-600 whitespace-nowrap">产品名称</span>
             <div class="relative w-full sm:w-80">
-              <input
-                v-model="searchKeywordDraft"
+              <a-input
+                v-model:value="searchKeywordDraft"
                 type="text"
                 class="ant-input w-full pl-9 !h-8"
                 placeholder="搜索产品名称 / 产品ID / 币种..."
@@ -29,12 +29,12 @@
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
-          <button type="button" class="ant-btn !h-8" @click="resetSearch">
+          <a-button html-type="button" class="ant-btn !h-8" @click="resetSearch">
             <span>重置</span>
-          </button>
-          <button type="button" class="ant-btn ant-btn-primary !h-8" @click="applySearch">
+          </a-button>
+          <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-8" @click="applySearch">
             <span>搜索</span>
-          </button>
+          </a-button>
         </div>
       </div>
     </article>
@@ -42,45 +42,45 @@
     <article class="rounded-xl border border-slate-200 bg-white">
       <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-4">
         <div class="inline-flex items-center gap-6 text-sm">
-          <button
-            type="button"
+          <a-button type="text"
+            html-type="button"
             class="relative py-2 font-medium transition-colors"
             :class="filters.status === '' ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
             @click="filters.status = ''"
           >
             全部
-          </button>
-          <button
-            type="button"
+          </a-button>
+          <a-button type="text"
+            html-type="button"
             class="relative py-2 font-medium transition-colors"
             :class="filters.status === 'trading' ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
             @click="filters.status = 'trading'"
           >
             交易中
-          </button>
-          <button
-            type="button"
+          </a-button>
+          <a-button type="text"
+            html-type="button"
             class="relative py-2 font-medium transition-colors"
             :class="filters.status === 'suspended' ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
             @click="filters.status = 'suspended'"
           >
             已暂停
-          </button>
-          <button
-            type="button"
+          </a-button>
+          <a-button type="text"
+            html-type="button"
             class="relative py-2 font-medium transition-colors"
             :class="filters.status === 'delisted' ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
             @click="filters.status = 'delisted'"
           >
             已下架
-          </button>
+          </a-button>
           <span class="text-slate-400">|</span>
           <span class="text-slate-500">共 <span class="font-medium text-slate-700">{{ totalItems }}</span> 条</span>
         </div>
 
-        <button type="button" class="ant-btn ant-btn-primary !h-8 shrink-0" @click="showAddProduct">
+        <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-8 shrink-0" @click="showAddProduct">
           <span>+ 新增产品</span>
-        </button>
+        </a-button>
       </div>
 
       <div class="p-4 space-y-4">
@@ -104,17 +104,17 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <button type="button" class="ant-btn text-xs" @click="editProduct(product)">编辑</button>
-              <button
-                type="button"
+              <a-button html-type="button" class="ant-btn text-xs" @click="editProduct(product)">编辑</a-button>
+              <a-button
+                html-type="button"
                 class="ant-btn text-xs"
                 :disabled="product.status === 'delisted'"
                 :class="product.status === 'trading' ? '!text-orange-500 hover:!text-orange-600 disabled:!text-slate-300' : '!text-emerald-600 hover:!text-emerald-700 disabled:!text-slate-300'"
                 @click="togglePause(product)"
               >
                 {{ product.status === 'trading' ? '暂停' : '恢复' }}
-              </button>
-      
+              </a-button>
+
             </div>
           </div>
 
@@ -167,65 +167,32 @@
           </div>
           <div class="flex items-center gap-2">
             <span>每页</span>
-            <select v-model.number="pagination.pageSize" class="ant-select !w-20" @change="handlePageSizeChange">
-              <option :value="5">5</option>
-              <option :value="10">10</option>
-              <option :value="20">20</option>
-              <option :value="50">50</option>
-            </select>
+            <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value.number="pagination.pageSize" class="!w-20" @change="handlePageSizeChange">
+              <a-select-option :value="5">5</a-select-option>
+              <a-select-option :value="10">10</a-select-option>
+              <a-select-option :value="20">20</a-select-option>
+              <a-select-option :value="50">50</a-select-option>
+            </a-select>
             <span>条</span>
           </div>
         </div>
 
         <div v-if="totalPages > 1" class="flex items-center gap-2">
-          <button
-            type="button"
-            class="ant-btn ant-btn-sm"
-            :disabled="pagination.currentPage <= 1"
-            @click="goToPage(pagination.currentPage - 1)"
-          >
-            上一页
-          </button>
-          <div class="flex items-center gap-1">
-            <template v-for="p in pageButtons" :key="String(p)">
-              <span v-if="p === '...'" class="px-2 text-slate-400">...</span>
-              <button
-                v-else
-                type="button"
-                class="ant-btn ant-btn-sm w-8 p-0"
-                :class="pagination.currentPage === p ? 'ant-btn-primary' : ''"
-                @click="goToPage(p)"
-              >
-                {{ p }}
-              </button>
-            </template>
-          </div>
-          <button
-            type="button"
-            class="ant-btn ant-btn-sm"
-            :disabled="pagination.currentPage >= totalPages"
-            @click="goToPage(pagination.currentPage + 1)"
-          >
-            下一页
-          </button>
+          <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="goToPage($event)" />
         </div>
       </div>
     </article>
 
-    <div
-      v-if="showModal"
-      class="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
-    >
-      <section class="flex h-[90vh] w-full max-w-6xl overflow-hidden rounded-lg bg-white shadow-2xl border border-black/[0.06]">
-        <div class="flex w-3/5 flex-col border-r border-black/[0.06]">
-          <header class="flex items-center justify-between border-b border-black/[0.06] bg-white px-6 py-4">
+    <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="showModal" :mask-closable="false" :closable="false" :keyboard="false" :width="1152" :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeModal"><template #title><header class="flex items-center justify-between border-b border-black/[0.06] bg-white px-6 py-4">
             <div>
               <h2 class="text-lg font-semibold text-black/85">{{ isEditing ? '编辑现货产品' : '新增现货产品' }}</h2>
               <p class="mt-1 text-sm text-black/65">配置现货交易产品的基础信息、精度限制与费率</p>
               <p v-if="isEditing" class="mt-1 text-xs text-black/45 font-mono">{{ editingProductId }}</p>
             </div>
-            <button type="button" class="text-black/45 hover:text-black/85 transition-colors text-2xl leading-none" @click="closeModal">×</button>
-          </header>
+            <a-button aria-label="关闭" type="text" html-type="button" class="text-black/45 hover:text-black/85 transition-colors text-2xl leading-none" @click="closeModal">×</a-button>
+          </header></template><section class="flex flex-col md:flex-row  w-full max-w-6xl overflow-hidden rounded-lg bg-white shadow-2xl border border-black/[0.06]">
+        <div class="flex w-full md:w-3/5 flex-col border-r border-black/[0.06]">
+
 
           <div class="flex-1 space-y-6 overflow-y-auto px-6 py-6 bg-[#f0f2f5]">
             <section class="space-y-4 rounded-lg border border-black/[0.06] bg-white p-6 shadow-sm">
@@ -240,32 +207,32 @@
                 <div class="space-y-1.5">
                   <label class="text-sm text-black/85 font-medium">产品名称 <span class="text-rose-500">*</span></label>
                   <p class="text-sm text-black/45">用于列表展示与搜索，建议使用交易对命名（如 BTC/USDT）。</p>
-                  <input v-model="formData.productName" type="text" placeholder="如：BTC/USDT" class="ant-input" />
+                  <a-input v-model:value="formData.productName" type="text" placeholder="如：BTC/USDT" class="ant-input" />
                 </div>
 
                 <div class="grid gap-4 sm:grid-cols-2">
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">状态</label>
                     <p class="text-sm text-black/45">交易中会开放交易；暂停会限制交易行为。</p>
-                    <select v-model="formData.status" class="ant-select">
-                      <option value="trading">交易中</option>
-                      <option value="suspended">暂停交易</option>
-                    </select>
+                    <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="formData.status" class="">
+                      <a-select-option value="trading">交易中</a-select-option>
+                      <a-select-option value="suspended">暂停交易</a-select-option>
+                    </a-select>
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">产品排序</label>
                     <p class="text-sm text-black/45">数字越大越靠前。</p>
-                    <input v-model.number="formData.sortOrder" type="number" placeholder="数字越大越靠前" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.sortOrder" type="number" placeholder="数字越大越靠前" class="ant-input font-mono" />
                   </div>
                 </div>
 
                 <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">交易对 <span class="text-rose-500">*</span></label>
                     <p class="text-sm text-black/45">选择交易对</p>
-                    <select v-model="formData.spotSymbol" class="ant-select" :disabled="spotSymbolLoading">
-                      <option value="" disabled>{{ spotSymbolLoading ? '加载中...' : '请选择交易对' }}</option>
-                      <option v-for="opt in spotSymbolOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                    </select>
+                    <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="formData.spotSymbol" class="" :disabled="spotSymbolLoading">
+                      <a-select-option value="" disabled>{{ spotSymbolLoading ? '加载中...' : '请选择交易对' }}</a-select-option>
+                      <a-select-option v-for="opt in spotSymbolOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</a-select-option>
+                    </a-select>
                 </div>
               </div>
             </section>
@@ -283,12 +250,12 @@
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">价格精度</label>
                     <p class="text-sm text-black/45">价格允许的小数位数。</p>
-                    <input v-model.number="formData.pricePrecision" type="number" min="0" step="1" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.pricePrecision" type="number" min="0" step="1" class="ant-input font-mono" />
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">数量精度</label>
                     <p class="text-sm text-black/45">数量允许的小数位数。</p>
-                    <input v-model.number="formData.quantityPrecision" type="number" min="0" step="1" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.quantityPrecision" type="number" min="0" step="1" class="ant-input font-mono" />
                   </div>
                 </div>
 
@@ -296,17 +263,17 @@
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">最小下单量</label>
                     <p class="text-sm text-black/45">单笔最小基础币数量。</p>
-                    <input v-model.number="formData.minOrderQuantity" type="number" min="0" step="0.00000001" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.minOrderQuantity" type="number" min="0" step="0.00000001" class="ant-input font-mono" />
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">最小下单额</label>
                     <p class="text-sm text-black/45">单笔最小计价币金额。</p>
-                    <input v-model.number="formData.minOrderValue" type="number" min="0" step="0.01" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.minOrderValue" type="number" min="0" step="0.01" class="ant-input font-mono" />
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">最大下单额</label>
                     <p class="text-sm text-black/45">单笔最大计价币金额。</p>
-                    <input v-model.number="formData.maxOrderValue" type="number" min="0" step="0.01" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.maxOrderValue" type="number" min="0" step="0.01" class="ant-input font-mono" />
                   </div>
                 </div>
               </div>
@@ -324,24 +291,21 @@
                 <div class="space-y-1.5">
                   <label class="text-sm text-black/85 font-medium">买入费率 (%)</label>
                   <p class="text-sm text-black/45">对买入成交额收取的费率。</p>
-                  <input v-model.number="formData.buyFee" type="number" min="0" step="0.001" class="ant-input font-mono" />
+                  <a-input v-model:value.number="formData.buyFee" type="number" min="0" step="0.001" class="ant-input font-mono" />
                 </div>
                 <div class="space-y-1.5">
                   <label class="text-sm text-black/85 font-medium">卖出费率 (%)</label>
                   <p class="text-sm text-black/45">对卖出成交额收取的费率。</p>
-                  <input v-model.number="formData.sellFee" type="number" min="0" step="0.001" class="ant-input font-mono" />
+                  <a-input v-model:value.number="formData.sellFee" type="number" min="0" step="0.001" class="ant-input font-mono" />
                 </div>
               </div>
             </section>
           </div>
 
-          <footer class="flex justify-end gap-3 border-t border-black/[0.06] bg-white px-6 py-4">
-            <button type="button" class="ant-btn" @click="closeModal">取消</button>
-            <button type="button" class="ant-btn ant-btn-primary" @click="saveProduct">保存</button>
-          </footer>
+
         </div>
 
-        <div class="flex w-2/5 flex-col bg-black/[0.01]">
+        <div class="flex w-full md:w-2/5 flex-col bg-black/[0.01]">
           <header class="border-b border-black/[0.06] px-6 py-4">
             <h3 class="text-base font-semibold text-black/85">预览</h3>
             <p class="mt-1 text-sm text-black/65">实时预览产品在列表中的展示效果</p>
@@ -414,8 +378,10 @@
             </article>
           </div>
         </div>
-      </section>
-    </div>
+      </section><template #footer><footer class="flex justify-end gap-3 border-t border-black/[0.06] bg-white px-6 py-4">
+            <a-button html-type="button" class="ant-btn" @click="closeModal">取消</a-button>
+            <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary" @click="saveProduct">保存</a-button>
+          </footer></template></a-modal>
   </section>
 </template>
 
@@ -598,18 +564,18 @@ const filteredProducts = computed(() => {
   if (filters.value.status) {
     result = result.filter(p => p.status === filters.value.status)
   }
-  
+
   // 搜索关键词过滤
   const keyword = searchKeywordApplied.value.trim().toLowerCase()
   if (keyword) {
-    result = result.filter(p => 
+    result = result.filter(p =>
       p.productName.toLowerCase().includes(keyword) ||
       p.productId.toLowerCase().includes(keyword) ||
       p.baseCurrency.toLowerCase().includes(keyword) ||
       p.quoteCurrency.toLowerCase().includes(keyword)
     )
   }
-  
+
   return result
 })
 

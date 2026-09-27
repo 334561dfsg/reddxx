@@ -232,67 +232,56 @@ const applyPresetDays = (days) => {
 				<h1 class="text-3xl font-semibold text-slate-900">产品管理</h1>
 				<p class="mt-1 text-sm text-slate-500">配置锁仓产品、多档年化收益、赎回与限购及申购门槛</p>
 			</div>
-			<button
-				type="button"
+			<a-button type="text"
+				html-type="button"
 				class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
 				@click="openCreateProduct"
 			>
 				+ 创建产品
-			</button>
+			</a-button>
 		</header>
 
 		<div class="rounded-xl border border-slate-200 bg-white p-4">
 			<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 				<div>
-					<input
-						v-model="search"
+					<a-input
+						v-model:value="search"
 						type="search"
 						placeholder="搜索产品名称或币种"
 						class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
 					/>
 				</div>
 				<div>
-					<select
-						v-model="statusFilter"
-						class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+					<a-select :get-popup-container="(trigger) => trigger.parentElement"
+						v-model:value="statusFilter"
+						class="w-full transition"
 					>
-						<option :value="COMMON_FILTER_ALL">全部状态</option>
-						<option v-for="(meta, key) in productStatusMeta" :key="key" :value="key">{{ meta.label }}</option>
-					</select>
+						<a-select-option :value="COMMON_FILTER_ALL">全部状态</a-select-option>
+						<a-select-option v-for="(meta, key) in productStatusMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
+					</a-select>
 				</div>
 				<div>
-					<select
-						v-model="currencyFilter"
-						class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+					<a-select :get-popup-container="(trigger) => trigger.parentElement"
+						v-model:value="currencyFilter"
+						class="w-full transition"
 					>
-						<option :value="COMMON_FILTER_ALL">全部币种</option>
-						<option v-for="currency in SUPPORTED_CURRENCIES" :key="currency" :value="currency">{{ currency }}</option>
-					</select>
+						<a-select-option :value="COMMON_FILTER_ALL">全部币种</a-select-option>
+						<a-select-option v-for="currency in SUPPORTED_CURRENCIES" :key="currency" :value="currency">{{ currency }}</a-select-option>
+					</a-select>
 				</div>
 			</div>
 		</div>
 
 		<article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-			<table class="w-full">
-				<thead class="border-b border-slate-200 bg-slate-50">
-					<tr>
-						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">产品信息</th>
-						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">锁仓与年化</th>
-						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">提前赎回</th>
-						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">限购与门槛</th>
-						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">运营数据</th>
-						<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">状态</th>
-						<th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">操作</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-slate-200">
-					<tr v-for="product in filteredProducts" :key="product.id" class="transition hover:bg-slate-50">
-						<td class="px-6 py-4">
+			<a-table  size="small" :pagination="false" :data-source="filteredProducts" :row-key="(product) => product.id" :scroll="{ x: 'max-content' }" :custom-row="(product, rowIndex) => ({ class: [&quot;transition hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>产品信息</template>
+<template #default="{ record: product, index: rowIndex }">
 							<div class="font-medium text-slate-900">{{ product.name }}</div>
 							<div class="mt-0.5 flex items-center gap-1.5">
 								<span class="font-mono text-xs text-slate-400">{{ product.id }}</span>
-								<button
-									type="button"
+								<a-button type="text"
+									html-type="button"
 									class="rounded p-0.5 text-slate-400 transition hover:bg-blue-50 hover:text-blue-600"
 									title="复制产品ID"
 									@click="copyProductId(product.id)"
@@ -305,11 +294,14 @@ const applyPresetDays = (days) => {
 											d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
 										/>
 									</svg>
-								</button>
+								</a-button>
 							</div>
 							<div class="mt-1 text-sm text-slate-500">{{ product.currency }} · {{ product.periods.length }} 档</div>
-						</td>
-						<td class="px-6 py-4">
+						</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>锁仓与年化</template>
+<template #default="{ record: product, index: rowIndex }">
 							<div class="space-y-1 text-xs">
 								<div
 									v-for="(period, idx) in product.periods"
@@ -320,12 +312,18 @@ const applyPresetDays = (days) => {
 									<span class="font-medium text-emerald-600">{{ lockYieldAnnualPct(period).toFixed(2) }}%</span>
 								</div>
 							</div>
-						</td>
-						<td class="px-6 py-4 text-sm text-slate-600">
+						</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>提前赎回</template>
+<template #default="{ record: product, index: rowIndex }">
 							<span v-if="product.earlyRedeemEnabled" class="text-amber-700">违约金 {{ product.earlyRedeemFee }}%</span>
 							<span v-else>不支持</span>
-						</td>
-						<td class="px-6 py-4 text-sm text-slate-600">
+						</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>限购与门槛</template>
+<template #default="{ record: product, index: rowIndex }">
 							<div v-if="product.purchaseLimitType === PURCHASE_LIMIT_TYPE.LIFETIME">终身 {{ fmtCurrency(product.lifetimeLimit, product.currency) }}</div>
 							<div v-else-if="product.purchaseLimitType === PURCHASE_LIMIT_TYPE.PERIOD">
 								{{ product.periodDays }} 天 / {{ fmtCurrency(product.periodLimit, product.currency) }}
@@ -334,64 +332,67 @@ const applyPresetDays = (days) => {
 							<div class="mt-1 text-xs text-slate-500">
 								{{ minVipOptionLabel(product.minVipLevel) }} · {{ lockedMinKycLabel(product.minKycLevel) }}
 							</div>
-						</td>
-						<td class="px-6 py-4 text-sm text-slate-600">
+						</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>运营数据</template>
+<template #default="{ record: product, index: rowIndex }">
 							<div>锁仓 {{ fmtCurrency(product.totalLocked, product.currency) }}</div>
 							<div>订单 {{ product.totalOrders }} 笔</div>
-						</td>
-						<td class="px-6 py-4">
+						</template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: product, index: rowIndex }">
 							<span :class="['rounded-full px-2 py-1 text-xs font-medium', productStatusMeta[product.status].class]">
 								{{ productStatusMeta[product.status].label }}
 							</span>
-						</td>
-						<td class="px-6 py-4 text-right">
-							<button
-								type="button"
+						</template>
+</a-table-column>
+<a-table-column key="column-6" align="right" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: product, index: rowIndex }">
+							<a-button type="text"
+								html-type="button"
 								class="mr-3 text-sm font-medium text-blue-600 transition hover:text-blue-800"
 								@click="openEditProduct(product)"
 							>
 								编辑
-							</button>
-							<button
-								type="button"
+							</a-button>
+							<a-button type="text"
+								html-type="button"
 								class="text-sm font-medium text-slate-600 transition hover:text-slate-800"
 								@click="toggleProductStatus(product)"
 							>
 								{{ product.status === PRODUCT_STATUS.ENABLED ? '下架' : '上架' }}
-							</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+							</a-button>
+						</template>
+</a-table-column>
+</a-table>
 			<div v-if="filteredProducts.length === 0" class="py-12 text-center text-slate-500">暂无产品数据</div>
 		</article>
 
 		<Teleport to="body">
-			<div
-				v-if="showProductModal"
-				class="fixed inset-0 z-[100] flex min-h-[100dvh] w-full items-center justify-center overflow-y-auto bg-black/50 p-4 sm:p-6"
-				role="dialog"
-				aria-modal="true"
-			>
-				<div class="flex max-h-[90vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl">
-					<div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
+			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showProductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showProductModal = false">
+<template #title><template v-if="showProductModal"><div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
 						<div>
 							<h2 class="text-xl font-semibold text-slate-900">{{ editingProductId ? '编辑产品' : '创建产品' }}</h2>
 							<p class="mt-1 text-sm text-slate-500">配置产品信息，右侧实时预览效果</p>
 						</div>
-						<button type="button" class="text-slate-400 transition hover:text-slate-600" @click="showProductModal = false">
+						<a-button aria-label="关闭" type="text" html-type="button" class="text-slate-400 transition hover:text-slate-600" @click="showProductModal = false">
 							<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 							</svg>
-						</button>
-					</div>
+						</a-button>
+					</div></template></template>
+<template v-if="showProductModal">
 
 					<div class="flex min-h-0 flex-1 overflow-hidden">
 						<div class="flex w-3/5 flex-col border-r border-slate-200">
 							<div class="shrink-0 border-b border-slate-200 px-6">
 								<div class="flex gap-1">
-									<button
-										type="button"
+									<a-button type="text"
+										html-type="button"
 										:class="[
 											'border-b-2 px-4 py-3 text-sm font-medium transition-colors',
 											productModalTab === 'config'
@@ -401,9 +402,9 @@ const applyPresetDays = (days) => {
 										@click="productModalTab = 'config'"
 									>
 										产品配置
-									</button>
-									<button
-										type="button"
+									</a-button>
+									<a-button type="text"
+										html-type="button"
 										:class="[
 											'border-b-2 px-4 py-3 text-sm font-medium transition-colors',
 											productModalTab === 'rules'
@@ -413,7 +414,7 @@ const applyPresetDays = (days) => {
 										@click="productModalTab = 'rules'"
 									>
 										计算规则
-									</button>
+									</a-button>
 								</div>
 							</div>
 							<div class="flex-1 overflow-y-auto p-6">
@@ -423,8 +424,8 @@ const applyPresetDays = (days) => {
 									<div class="grid grid-cols-2 gap-4">
 										<div>
 											<label class="mb-1 block text-sm font-medium text-slate-700">产品名称</label>
-											<input
-												v-model="productForm.name"
+											<a-input
+												v-model:value="productForm.name"
 												type="text"
 												placeholder="例如：USDT 稳健锁仓"
 												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
@@ -432,37 +433,37 @@ const applyPresetDays = (days) => {
 										</div>
 										<div>
 											<label class="mb-1 block text-sm font-medium text-slate-700">计价币种</label>
-											<select
-											v-model="productForm.currency"
-											class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+											<a-select :get-popup-container="(trigger) => trigger.parentElement"
+											v-model:value="productForm.currency"
+											class="w-full transition"
 										>
-											<option v-for="curr in SUPPORTED_CURRENCIES" :key="curr" :value="curr">{{ curr }}</option>
-										</select>
+											<a-select-option v-for="curr in SUPPORTED_CURRENCIES" :key="curr" :value="curr">{{ curr }}</a-select-option>
+										</a-select>
 									</div>
 									<div>
 										<label class="mb-1 block text-sm font-medium text-slate-700">产品品种</label>
-										<select
-											v-model="productForm.productCurrency"
-											class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+										<a-select :get-popup-container="(trigger) => trigger.parentElement"
+											v-model:value="productForm.productCurrency"
+											class="w-full transition"
 										>
-											<option v-for="curr in SUPPORTED_CURRENCIES" :key="curr" :value="curr">{{ curr }}</option>
-										</select>
+											<a-select-option v-for="curr in SUPPORTED_CURRENCIES" :key="curr" :value="curr">{{ curr }}</a-select-option>
+										</a-select>
 									</div>
 									<div>
 											<label class="mb-1 block text-sm font-medium text-slate-700">产品状态</label>
-											<select
-												v-model="productForm.status"
-												class="w-full max-w-md rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+											<a-select :get-popup-container="(trigger) => trigger.parentElement"
+												v-model:value="productForm.status"
+												class="w-full max-w-md transition"
 											>
-												<option :value="PRODUCT_STATUS.ENABLED">上架中（可申购）</option>
-												<option :value="PRODUCT_STATUS.DISABLED">已下架</option>
-												<option :value="PRODUCT_STATUS.SOLD_OUT">已售罄</option>
-											</select>
+												<a-select-option :value="PRODUCT_STATUS.ENABLED">上架中（可申购）</a-select-option>
+												<a-select-option :value="PRODUCT_STATUS.DISABLED">已下架</a-select-option>
+												<a-select-option :value="PRODUCT_STATUS.SOLD_OUT">已售罄</a-select-option>
+											</a-select>
 										</div>
 										<div>
 											<label class="mb-1 block text-sm font-medium text-slate-700">产品排序</label>
-											<input
-												v-model.number="productForm.sortOrder"
+											<a-input
+												v-model:value.number="productForm.sortOrder"
 												type="number"
 												placeholder="数字越大越靠前"
 												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
@@ -475,25 +476,25 @@ const applyPresetDays = (days) => {
 								<div>
 									<div class="mb-3 flex items-center justify-between">
 										<h3 class="font-semibold text-slate-900">锁仓与收益</h3>
-										<button
-											type="button"
+										<a-button type="text"
+											html-type="button"
 											class="text-sm font-medium text-blue-600 transition hover:text-blue-800"
 											@click="addPeriod"
 										>
 											+ 添加档位
-										</button>
+										</a-button>
 									</div>
 									<p class="mb-3 text-xs text-slate-500">年化按单利口径展示；常用天数可一键追加。</p>
 									<div class="mb-3 flex flex-wrap gap-2">
-										<button
+										<a-button type="text"
 											v-for="d in LOCK_PERIODS"
 											:key="d"
-											type="button"
+											html-type="button"
 											class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-blue-300 hover:text-blue-700"
 											@click="applyPresetDays(d)"
 										>
 											{{ d }} 天
-										</button>
+										</a-button>
 									</div>
 									<div class="space-y-3">
 										<div
@@ -505,8 +506,8 @@ const applyPresetDays = (days) => {
 												<div class="grid grid-cols-2 gap-2">
 													<label class="block">
 														<span class="mb-1 block text-xs font-medium text-slate-600">锁仓天数（天）</span>
-														<input
-															v-model.number="period.days"
+														<a-input
+															v-model:value.number="period.days"
 															type="number"
 															min="1"
 															placeholder="请输入天数"
@@ -515,8 +516,8 @@ const applyPresetDays = (days) => {
 													</label>
 													<label class="block">
 														<span class="mb-1 block text-xs font-medium text-slate-600">年化收益率（%）</span>
-														<input
-															v-model.number="period.annualRate"
+														<a-input
+															v-model:value.number="period.annualRate"
 															type="number"
 															min="0"
 															step="0.01"
@@ -528,8 +529,8 @@ const applyPresetDays = (days) => {
 												<div class="grid grid-cols-2 gap-2">
 													<label class="block">
 														<span class="mb-1 block text-xs font-medium text-slate-600">最低申购金额（{{ productForm.currency }}）</span>
-														<input
-															v-model.number="period.minAmount"
+														<a-input
+															v-model:value.number="period.minAmount"
 															type="number"
 															min="0"
 															step="0.01"
@@ -539,8 +540,8 @@ const applyPresetDays = (days) => {
 													</label>
 													<label class="block">
 														<span class="mb-1 block text-xs font-medium text-slate-600">最高申购金额（{{ productForm.currency }}）</span>
-														<input
-															v-model.number="period.maxAmount"
+														<a-input
+															v-model:value.number="period.maxAmount"
 															type="number"
 															min="0"
 															step="0.01"
@@ -550,13 +551,13 @@ const applyPresetDays = (days) => {
 													</label>
 												</div>
 											</div>
-											<button
-												type="button"
+											<a-button type="text"
+												html-type="button"
 												class="mt-1 text-sm text-red-600 transition hover:text-red-800"
 												@click="removePeriod(idx)"
 											>
 												删除
-											</button>
+											</a-button>
 										</div>
 									</div>
 								</div>
@@ -565,13 +566,13 @@ const applyPresetDays = (days) => {
 									<h3 class="mb-3 font-semibold text-slate-900">赎回规则</h3>
 									<div class="space-y-3">
 										<label class="flex items-center">
-											<input v-model="productForm.earlyRedeemEnabled" type="checkbox" class="mr-2 rounded border-slate-300" />
+											<a-checkbox v-model:checked="productForm.earlyRedeemEnabled" class="mr-2" />
 											<span class="text-sm text-slate-700">允许提前赎回</span>
 										</label>
 										<div v-if="productForm.earlyRedeemEnabled">
 											<label class="mb-1 block text-sm font-medium text-slate-700">违约金（占本金 %）</label>
-											<input
-												v-model.number="productForm.earlyRedeemFee"
+											<a-input
+												v-model:value.number="productForm.earlyRedeemFee"
 												type="number"
 												min="0"
 												step="0.1"
@@ -584,8 +585,8 @@ const applyPresetDays = (days) => {
 								<div>
 									<h3 class="mb-3 font-semibold text-slate-900">限购规则</h3>
 									<div class="grid grid-cols-3 gap-3">
-										<button
-											type="button"
+										<a-button type="text"
+											html-type="button"
 											:class="[
 												'rounded-lg border-2 p-3 text-center text-sm transition',
 												productForm.purchaseLimitType === PURCHASE_LIMIT_TYPE.NONE
@@ -595,9 +596,9 @@ const applyPresetDays = (days) => {
 											@click="productForm.purchaseLimitType = PURCHASE_LIMIT_TYPE.NONE"
 										>
 											<div class="font-semibold">不限购</div>
-										</button>
-										<button
-											type="button"
+										</a-button>
+										<a-button type="text"
+											html-type="button"
 											:class="[
 												'rounded-lg border-2 p-3 text-center text-sm transition',
 												productForm.purchaseLimitType === PURCHASE_LIMIT_TYPE.LIFETIME
@@ -607,9 +608,9 @@ const applyPresetDays = (days) => {
 											@click="productForm.purchaseLimitType = PURCHASE_LIMIT_TYPE.LIFETIME"
 										>
 											<div class="font-semibold">终身限购</div>
-										</button>
-										<button
-											type="button"
+										</a-button>
+										<a-button type="text"
+											html-type="button"
 											:class="[
 												'rounded-lg border-2 p-3 text-center text-sm transition',
 												productForm.purchaseLimitType === PURCHASE_LIMIT_TYPE.PERIOD
@@ -619,12 +620,12 @@ const applyPresetDays = (days) => {
 											@click="productForm.purchaseLimitType = PURCHASE_LIMIT_TYPE.PERIOD"
 										>
 											<div class="font-semibold">周期限购</div>
-										</button>
+										</a-button>
 									</div>
 									<div v-if="productForm.purchaseLimitType === PURCHASE_LIMIT_TYPE.LIFETIME" class="mt-4">
 										<label class="mb-1 block text-sm font-medium text-slate-700">终身限购额度</label>
-										<input
-											v-model.number="productForm.lifetimeLimit"
+										<a-input
+											v-model:value.number="productForm.lifetimeLimit"
 											type="number"
 											min="0"
 											class="w-full max-w-md rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
@@ -633,8 +634,8 @@ const applyPresetDays = (days) => {
 									<div v-if="productForm.purchaseLimitType === PURCHASE_LIMIT_TYPE.PERIOD" class="mt-4 grid grid-cols-2 gap-4">
 										<div>
 											<label class="mb-1 block text-sm font-medium text-slate-700">周期天数</label>
-											<input
-												v-model.number="productForm.periodDays"
+											<a-input
+												v-model:value.number="productForm.periodDays"
 												type="number"
 												min="1"
 												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
@@ -642,8 +643,8 @@ const applyPresetDays = (days) => {
 										</div>
 										<div>
 											<label class="mb-1 block text-sm font-medium text-slate-700">周期内限额</label>
-											<input
-												v-model.number="productForm.periodLimit"
+											<a-input
+												v-model:value.number="productForm.periodLimit"
 												type="number"
 												min="0"
 												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
@@ -653,21 +654,21 @@ const applyPresetDays = (days) => {
 									<div class="mt-4 grid grid-cols-2 gap-4 border-t border-slate-200 pt-4">
 										<div>
 											<label class="mb-1 block text-sm font-medium text-slate-700">最低 VIP</label>
-											<select
-												v-model.number="productForm.minVipLevel"
-												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+											<a-select :get-popup-container="(trigger) => trigger.parentElement"
+												v-model:value.number="productForm.minVipLevel"
+												class="w-full transition"
 											>
-												<option v-for="opt in LOCKED_MIN_VIP_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-											</select>
+												<a-select-option v-for="opt in LOCKED_MIN_VIP_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</a-select-option>
+											</a-select>
 										</div>
 										<div>
 											<label class="mb-1 block text-sm font-medium text-slate-700">最低认证</label>
-											<select
-												v-model="productForm.minKycLevel"
-												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+											<a-select :get-popup-container="(trigger) => trigger.parentElement"
+												v-model:value="productForm.minKycLevel"
+												class="w-full transition"
 											>
-												<option v-for="opt in LOCKED_MIN_KYC_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-											</select>
+												<a-select-option v-for="opt in LOCKED_MIN_KYC_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</a-select-option>
+											</a-select>
 										</div>
 									</div>
 								</div>
@@ -878,24 +879,24 @@ const applyPresetDays = (days) => {
 						</div>
 					</div>
 
-					<div class="flex shrink-0 justify-end gap-3 border-t border-slate-200 px-6 py-4">
-						<button
-							type="button"
+					</template>
+<template #footer><template v-if="showProductModal"><div class="flex shrink-0 justify-end gap-3 border-t border-slate-200 px-6 py-4">
+						<a-button type="text"
+							html-type="button"
 							class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
 							@click="showProductModal = false"
 						>
 							取消
-						</button>
-						<button
-							type="button"
+						</a-button>
+						<a-button type="text"
+							html-type="button"
 							class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
 							@click="saveProduct"
 						>
 							保存产品
-						</button>
-					</div>
-				</div>
-			</div>
+						</a-button>
+					</div></template></template>
+</a-modal>
 		</Teleport>
 	</section>
 </template>

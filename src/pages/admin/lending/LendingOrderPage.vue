@@ -5,94 +5,84 @@
         <h1 class="text-3xl font-semibold text-slate-900">订单管理</h1>
         <p class="mt-1 text-sm text-slate-500">监控借贷订单状态与授信占用</p>
       </div>
-      <button type="button" class="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2" @click="exportOrders">
+      <a-button type="text" html-type="button" class="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2" @click="exportOrders">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
         </svg>
         <span>导出订单</span>
-      </button>
+      </a-button>
     </header>
 
     <article class="rounded-xl border border-slate-200 bg-white">
       <div class="flex flex-wrap items-center gap-3 border-b border-slate-200 p-4">
-        <select v-model="filters.status" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500">
-          <option value="">不限</option>
-          <option
+        <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.status" class="">
+          <a-select-option value="">不限</a-select-option>
+          <a-select-option
             v-for="option in orderStatusOptions"
             :key="option.value"
             :value="option.value"
           >
             {{ option.label }}
-          </option>
-        </select>
-        <select v-model="filters.collateralRisk" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500">
-          <option value="">不限</option>
-          <option
+          </a-select-option>
+        </a-select>
+        <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.collateralRisk" class="">
+          <a-select-option value="">不限</a-select-option>
+          <a-select-option
             v-for="option in collateralRiskOptions"
             :key="option.value"
             :value="option.value"
           >
             {{ option.label }}
-          </option>
-        </select>
-        <input v-model="filters.userId" type="text" placeholder="搜索用户ID..." class="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
-        <button type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="resetFilters">重置</button>
+          </a-select-option>
+        </a-select>
+        <a-input v-model:value="filters.userId" type="text" placeholder="搜索用户ID..." class="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+        <a-button type="text" html-type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="resetFilters">重置</a-button>
         <div v-if="selectedDeductOrders.length" class="ml-auto flex flex-wrap items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2">
           <span class="text-xs font-medium text-rose-700">已选 {{ selectedDeductOrders.length }} 笔可处理订单</span>
-          <button type="button" class="rounded-md bg-rose-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-rose-700" @click="openBatchDeductDialog">
+          <a-button type="text" html-type="button" class="rounded-md bg-rose-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-rose-700" @click="openBatchDeductDialog">
             {{ batchDeductActionText }}
-          </button>
-          <button type="button" class="rounded-md border border-rose-200 bg-white px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50" @click="clearSelectedOrders">
+          </a-button>
+          <a-button type="text" html-type="button" class="rounded-md border border-rose-200 bg-white px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50" @click="clearSelectedOrders">
             清空选择
-          </button>
+          </a-button>
         </div>
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-slate-50 text-slate-500">
-            <tr>
-              <th class="w-10 px-4 py-3 text-left font-medium">
-                <input
-                  type="checkbox"
-                  class="h-4 w-4 rounded border-slate-300 text-rose-600"
+        <a-table  size="small" :pagination="false" :data-source="filteredOrders" :row-key="(order) => order.orderId" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
+<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>
+                <a-checkbox
+                  class=""
                   :checked="allSelectableChecked"
-                  :indeterminate.prop="someSelectableChecked && !allSelectableChecked"
+                  :indeterminate="someSelectableChecked && !allSelectableChecked"
                   :disabled="selectableFilteredOrders.length === 0"
                   aria-label="选择当前筛选下可处理订单"
                   @change="toggleAllSelectableOrders"
                 />
-              </th>
-              <th class="px-4 py-3 text-left font-medium">订单ID</th>
-              <th class="px-4 py-3 text-left font-medium">用户信息</th>
-              <th class="px-4 py-3 text-left font-medium">产品名称</th>
-              <th class="px-4 py-3 text-left font-medium">借贷金额</th>
-              <th class="px-4 py-3 text-left font-medium">质押资产</th>
-              <th class="px-4 py-3 text-left font-medium">利息/总债务</th>
-              <th class="px-4 py-3 text-left font-medium">期限</th>
-              <th class="px-4 py-3 text-left font-medium">状态</th>
-              <th class="px-4 py-3 text-left font-medium">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="order in filteredOrders" :key="order.orderId" class="border-t border-slate-100">
-              <td class="px-4 py-3">
-                <input
-                  type="checkbox"
-                  class="h-4 w-4 rounded border-slate-300 text-rose-600 disabled:cursor-not-allowed disabled:opacity-40"
+              </template>
+<template #default="{ record: order, index: rowIndex }">
+                <a-checkbox
+                  class="disabled:opacity-40"
                   :checked="selectedOrderIds.includes(order.orderId)"
                   :disabled="!canDeductCollateral(order)"
                   :aria-label="`选择订单 ${order.orderId}`"
                   @change="toggleOrderSelection(order)"
                 />
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>订单ID</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="font-mono text-xs text-slate-600">{{ order.orderId }}</div>
                 <div class="text-xs text-slate-500">{{ formatDate(order.createTime) }}</div>
-              </td>
-              <td class="px-4 py-3">
-                <button
-                  type="button"
+              </template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>用户信息</template>
+<template #default="{ record: order, index: rowIndex }">
+                <a-button type="text"
+                  html-type="button"
                   class="group block w-full text-left rounded-lg -mx-1 px-1 py-0.5 hover:bg-slate-100 transition-colors"
                   @click.stop="openUserDrawerFromOrder(order)"
                 >
@@ -118,14 +108,23 @@
                       </span>
                     </div>
                   </template>
-                </button>
-              </td>
-              <td class="px-4 py-3 font-medium text-slate-900">{{ order.productName }}</td>
-              <td class="px-4 py-3">
+                </a-button>
+              </template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-slate-900&quot;] })">
+<template #title>产品名称</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.productName }}</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>借贷金额</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="font-medium text-slate-900">{{ formatCurrency(order.loanAmount) }}</div>
                 <div class="text-xs text-slate-500">{{ order.loanCurrency }}</div>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>质押资产</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="font-medium text-slate-900">
                   {{ order.collateralAmount ? `${formatPlainNumber(order.collateralAmount)} ${order.collateralType}` : '—' }}
                 </div>
@@ -135,16 +134,25 @@
                 <div v-if="order.collateralValue" class="mt-1 text-[11px]" :class="collateralRiskStageMeta(order).hintClass">
                   {{ collateralRiskStageMeta(order).label }} · 债务占比 {{ collateralDebtRatioLabel(order) }} / 预警 {{ collateralWarningThresholdLabel(order) }} / 处理 {{ collateralDisposalThresholdLabel(order) }}
                 </div>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>利息/总债务</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="text-xs text-slate-600">利息: {{ formatCurrency(order.interestAccrued) }}</div>
                 <div class="font-medium text-slate-900">{{ formatCurrency(order.totalDebt) }}</div>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-7" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>期限</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="text-slate-700">{{ order.daysElapsed }}d / {{ order.loanDuration }}d</div>
                 <div class="text-xs text-slate-500">剩余 {{ order.daysRemaining }}d</div>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-8" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: order, index: rowIndex }">
                 <span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="statusChipClass(order.status)">
                   {{ statusLabel(order.status) }}
                 </span>
@@ -153,63 +161,51 @@
                     {{ collateralRiskStageMeta(order).label }}
                   </span>
                 </div>
-              </td>
-              <td class="px-4 py-3">
+              </template>
+</a-table-column>
+<a-table-column key="column-9" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: order, index: rowIndex }">
                 <div class="flex items-center gap-2">
-                  <button 
-                    v-if="order.status === 'pending'" 
-                    type="button" 
-                    class="rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs text-blue-600 hover:bg-blue-100 font-medium transition-colors whitespace-nowrap" 
+                  <a-button type="text"
+                    v-if="order.status === 'pending'"
+                    html-type="button"
+                    class="rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs text-blue-600 hover:bg-blue-100 font-medium transition-colors whitespace-nowrap"
                     @click="reviewOrder(order)"
                   >
                     审核
-                  </button>
-                  <button 
+                  </a-button>
+                  <a-button type="text"
                     v-else
-                    type="button" 
-                    class="rounded border border-slate-200 px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 font-medium transition-colors whitespace-nowrap" 
+                    html-type="button"
+                    class="rounded border border-slate-200 px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 font-medium transition-colors whitespace-nowrap"
                     @click="viewOrder(order)"
                   >
                     详情
-                  </button>
-                  <button
+                  </a-button>
+                  <a-button type="text"
                     v-if="canDeductCollateral(order)"
-                    type="button"
+                    html-type="button"
                     class="rounded border border-rose-200 bg-rose-50 px-2 py-1 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-100 whitespace-nowrap"
                     @click="openDeductDialog(order)"
                   >
                     {{ deductActionText(order) }}
-                  </button>
+                  </a-button>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </template>
+</a-table-column>
+</a-table>
       </div>
 
       <div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-        <button type="button" :disabled="currentPage === 1" class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed" @click="prevPage">
-          上一页
-        </button>
-        <span class="text-sm text-slate-600">第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</span>
-        <button type="button" :disabled="currentPage === totalPages" class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed" @click="nextPage">
-          下一页
-        </button>
+        <a-pagination size="small" :current="currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="currentPage = $event" />
       </div>
     </article>
 
     <!-- 审核/详情模态框：Teleport 到 body，避免落在 main overflow 内导致 fixed 遮罩无法全屏 -->
     <Teleport to="body">
-      <div
-        v-if="showReviewModal"
-        class="fixed inset-0 z-[100] flex min-h-[100dvh] w-full items-center justify-center overflow-y-auto overscroll-contain bg-black/50 p-4"
-      >
-        <article
-          class="relative flex h-[min(88vh,56rem)] w-full max-w-5xl max-h-[95vh] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl"
-          @click.stop
-        >
-        <!-- 头部 - 简洁设计 -->
-        <header class="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
+      <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showReviewModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1024"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeReviewModal">
+<template #title><template v-if="showReviewModal"><header class="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div class="flex items-center gap-4">
             <div class="flex h-12 w-12 items-center justify-center rounded-full" :class="{
               'bg-blue-100': isReviewMode,
@@ -227,69 +223,70 @@
               <p class="mt-0.5 text-sm text-slate-500">订单编号: {{ currentReviewOrder?.orderId }}</p>
             </div>
           </div>
-          <button type="button" class="text-slate-400 hover:text-slate-600 transition-colors" @click="closeReviewModal">
+          <a-button aria-label="关闭" type="text" html-type="button" class="text-slate-400 hover:text-slate-600 transition-colors" @click="closeReviewModal">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
-          </button>
-        </header>
+          </a-button>
+        </header></template></template>
+<template v-if="showReviewModal">
 
         <!-- Tab 导航 -->
         <div class="shrink-0 border-b border-slate-200 bg-slate-50 px-6">
           <div class="flex gap-1">
-            <button
-              type="button"
+            <a-button type="text"
+              html-type="button"
               @click="detailTab = 'overview'"
               class="px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2"
-              :class="detailTab === 'overview' 
-                ? 'border-blue-600 text-blue-600 bg-white' 
+              :class="detailTab === 'overview'
+                ? 'border-blue-600 text-blue-600 bg-white'
                 : 'border-transparent text-slate-600 hover:text-slate-900'"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
               </svg>
               <span>概览</span>
-            </button>
-            <button
-              type="button"
+            </a-button>
+            <a-button type="text"
+              html-type="button"
               @click="detailTab = 'details'"
               class="px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2"
-              :class="detailTab === 'details' 
-                ? 'border-blue-600 text-blue-600 bg-white' 
+              :class="detailTab === 'details'
+                ? 'border-blue-600 text-blue-600 bg-white'
                 : 'border-transparent text-slate-600 hover:text-slate-900'"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
               </svg>
               <span>借贷详情</span>
-            </button>
-            <button
-              type="button"
+            </a-button>
+            <a-button type="text"
+              html-type="button"
               @click="detailTab = 'history'"
               class="px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2"
-              :class="detailTab === 'history' 
-                ? 'border-blue-600 text-blue-600 bg-white' 
+              :class="detailTab === 'history'
+                ? 'border-blue-600 text-blue-600 bg-white'
                 : 'border-transparent text-slate-600 hover:text-slate-900'"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
               <span>历史借贷</span>
-            </button>
-            <button
+            </a-button>
+            <a-button type="text"
               v-if="isReviewMode"
-              type="button"
+              html-type="button"
               @click="detailTab = 'review'"
               class="px-4 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2"
-              :class="detailTab === 'review' 
-                ? 'border-blue-600 text-blue-600 bg-white' 
+              :class="detailTab === 'review'
+                ? 'border-blue-600 text-blue-600 bg-white'
                 : 'border-transparent text-slate-600 hover:text-slate-900'"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
               <span>审核意见</span>
-            </button>
+            </a-button>
           </div>
         </div>
 
@@ -403,13 +400,13 @@
                   </span>
                   <span>用户信息</span>
                 </h3>
-                <button
-                  type="button"
+                <a-button type="text"
+                  html-type="button"
                   class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-100"
                   @click.stop="openUserDrawerForCurrentModalOrder"
                 >
                   用户档案（与用户管理一致）
-                </button>
+                </a-button>
               </div>
               <div class="grid gap-4 md:grid-cols-3">
                 <div class="space-y-1">
@@ -565,25 +562,25 @@
               </h3>
               <p class="mb-4 text-xs text-slate-500">同一用户 ID 下的全部订单（含本单），按创建时间倒序。</p>
               <div class="overflow-x-auto rounded-lg border border-slate-100">
-                <table class="w-full min-w-[640px] text-sm">
-                  <thead class="bg-slate-50 text-slate-500">
-                    <tr>
-                      <th class="px-3 py-2 text-left font-medium">订单号</th>
-                      <th class="px-3 py-2 text-left font-medium">产品</th>
-                      <th class="px-3 py-2 text-right font-medium">金额</th>
-                      <th class="px-3 py-2 text-left font-medium">状态</th>
-                      <th class="px-3 py-2 text-left font-medium">创建时间</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="row in userLendingHistoryPaged" :key="row.orderId" class="border-t border-slate-100" :class="{ 'bg-blue-50/60': row.orderId === currentReviewOrder?.orderId }">
-                      <td class="px-3 py-2 font-mono text-xs text-slate-700">{{ row.orderId }}</td>
-                      <td class="px-3 py-2 text-slate-800">{{ row.productName }}</td>
-                      <td class="px-3 py-2 text-right font-medium text-slate-900">
+                <a-table  size="small" :pagination="false" :data-source="userLendingHistoryPaged" :row-key="(row) => row.orderId" :scroll="{ x: 'max-content' }" :custom-row="(row, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;, { 'bg-blue-50/60': row.orderId === currentReviewOrder?.orderId }] })">
+<a-table-column key="column-0" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-3 py-2 font-mono text-xs text-slate-700&quot;] })">
+<template #title>订单号</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.orderId }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-3 py-2 text-slate-800&quot;] })">
+<template #title>产品</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.productName }}</template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-3 py-2 text-right font-medium text-slate-900&quot;] })">
+<template #title>金额</template>
+<template #default="{ record: row, index: rowIndex }">
                         {{ formatCurrency(row.requestedAmount ?? row.loanAmount) }}
                         <span class="text-xs font-normal text-slate-500">{{ row.loanCurrency }}</span>
-                      </td>
-                      <td class="px-3 py-2">
+                      </template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-3 py-2&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: row, index: rowIndex }">
                         <span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="{
                           'bg-blue-50 text-blue-700': row.status === 'pending',
                           'bg-emerald-50 text-emerald-700': row.status === 'active',
@@ -593,14 +590,14 @@
                           'bg-rose-50 text-rose-700': row.status === 'liquidated',
                           'bg-slate-100 text-slate-500': row.status === 'cancelled'
                         }">{{ statusLabel(row.status) }}</span>
-                      </td>
-                      <td class="px-3 py-2 text-xs text-slate-600">{{ row.createTime }}</td>
-                    </tr>
-                    <tr v-if="!userLendingHistory.length">
-                      <td colspan="5" class="px-3 py-8 text-center text-slate-500">暂无记录</td>
-                    </tr>
-                  </tbody>
-                </table>
+                      </template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-3 py-2 text-xs text-slate-600&quot;] })">
+<template #title>创建时间</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.createTime }}</template>
+</a-table-column>
+<template #emptyText>暂无记录</template>
+</a-table>
               </div>
               <AdminListPaginationBar
                 :current-page="historyPage"
@@ -624,12 +621,12 @@
                 </span>
                 <span>审核意见</span>
               </h3>
-              <textarea 
-                v-model="reviewComment" 
-                rows="8" 
+              <a-textarea
+                v-model:value="reviewComment"
+                rows="8"
                 placeholder="请输入审核意见和理由（批准时选填，拒绝时必填）..."
                 class="w-full rounded-lg border-2 border-slate-300 bg-slate-50 px-4 py-3 text-sm leading-relaxed outline-none transition-colors focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-200"
-              ></textarea>
+              ></a-textarea>
               <p class="mt-2 flex items-center gap-1 text-xs text-slate-500">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -641,22 +638,23 @@
         </div>
 
         <!-- 操作按钮 -->
-        <footer class="shrink-0 border-t border-slate-200 bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4">
+        </template>
+<template #footer><template v-if="showReviewModal"><footer class="shrink-0 border-t border-slate-200 bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4">
           <div class="flex items-center justify-between">
             <div class="text-sm text-slate-500">
               {{ isReviewMode ? '请仔细审核后做出决策' : '如需操作请联系管理员' }}
             </div>
             <div class="flex items-center gap-3">
-              <button 
-                type="button" 
+              <a-button type="text"
+                html-type="button"
                 class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
                 @click="closeReviewModal"
               >
                 {{ isReviewMode ? '取消' : '关闭' }}
-              </button>
+              </a-button>
               <template v-if="isReviewMode">
-                <button 
-                  type="button" 
+                <a-button type="text"
+                  html-type="button"
                   class="rounded-lg border border-rose-300 bg-rose-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-rose-600 flex items-center gap-2"
                   @click="rejectOrder"
                 >
@@ -664,17 +662,17 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                   </svg>
                   <span>拒绝申请</span>
-                </button>
-                <button
+                </a-button>
+                <a-button type="text"
                   v-if="canDeductCollateral(currentReviewOrder)"
-                  type="button"
+                  html-type="button"
                   class="rounded-lg border border-rose-300 bg-white px-5 py-2.5 text-sm font-medium text-rose-600 shadow-sm transition-colors hover:bg-rose-50"
                   @click="openDeductDialog(currentReviewOrder)"
                 >
                   {{ deductActionText(currentReviewOrder) }}
-                </button>
-                <button 
-                  type="button" 
+                </a-button>
+                <a-button type="text"
+                  html-type="button"
                   class="rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:from-emerald-600 hover:to-emerald-700 flex items-center gap-2"
                   @click="approveOrder"
                 >
@@ -682,33 +680,29 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                   </svg>
                   <span>批准放款</span>
-                </button>
+                </a-button>
               </template>
             </div>
           </div>
-        </footer>
-      </article>
-      </div>
+        </footer></template></template>
+</a-modal>
     </Teleport>
 
     <Teleport to="body">
-      <div
-        v-if="showDeductModal"
-        class="fixed inset-0 z-[120] flex min-h-[100dvh] w-full items-center justify-center overflow-y-auto bg-black/50 p-4"
-      >
-        <article class="w-full max-w-2xl overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl" @click.stop>
-          <header class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-4">
+      <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDeductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="672"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeDeductDialog">
+<template #title><template v-if="showDeductModal"><header class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-4">
             <div>
               <p class="text-xs font-semibold uppercase tracking-wide text-rose-600">{{ deductActionText(deductOrder) }}</p>
               <h2 class="mt-1 text-xl font-semibold text-slate-900">确认{{ deductActionText(deductOrder) }}质押资产</h2>
               <p class="mt-1 text-sm text-slate-500">{{ deductActionDescription(deductOrder) }}确认后订单将标记为「违约结清」，待还债务清零。</p>
             </div>
-            <button type="button" class="text-slate-400 transition hover:text-slate-600" @click="closeDeductDialog">
+            <a-button aria-label="关闭" type="text" html-type="button" class="text-slate-400 transition hover:text-slate-600" @click="closeDeductDialog">
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
               </svg>
-            </button>
-          </header>
+            </a-button>
+          </header></template></template>
+<template v-if="showDeductModal">
 
           <div v-if="deductOrder" class="space-y-4 p-6">
             <div class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-relaxed text-rose-900">
@@ -751,36 +745,33 @@
             </div>
           </div>
 
-          <footer class="flex items-center justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-            <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" @click="closeDeductDialog">
+          </template>
+<template #footer><template v-if="showDeductModal"><footer class="flex items-center justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+            <a-button type="text" html-type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" @click="closeDeductDialog">
               取消
-            </button>
-            <button type="button" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" :disabled="!canDeductCollateral(deductOrder)" @click="confirmDeductCollateral">
+            </a-button>
+            <a-button type="text" html-type="button" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" :disabled="!canDeductCollateral(deductOrder)" @click="confirmDeductCollateral">
               确认{{ deductActionText(deductOrder) }}并结清
-            </button>
-          </footer>
-        </article>
-      </div>
+            </a-button>
+          </footer></template></template>
+</a-modal>
     </Teleport>
 
     <Teleport to="body">
-      <div
-        v-if="showBatchDeductModal"
-        class="fixed inset-0 z-[125] flex min-h-[100dvh] w-full items-center justify-center overflow-y-auto bg-black/50 p-4"
-      >
-        <article class="flex h-[min(86vh,46rem)] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl" @click.stop>
-          <header class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-200 px-6 py-4">
+      <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showBatchDeductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="896"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeBatchDeductDialog">
+<template #title><template v-if="showBatchDeductModal"><header class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-200 px-6 py-4">
             <div>
               <p class="text-xs font-semibold uppercase tracking-wide text-rose-600">{{ batchDeductActionText }}</p>
               <h2 class="mt-1 text-xl font-semibold text-slate-900">确认{{ batchDeductActionText }}质押资产</h2>
               <p class="mt-1 text-sm text-slate-500">确认后所选订单将统一标记为「违约结清」，待还债务清零。</p>
             </div>
-            <button type="button" class="text-slate-400 transition hover:text-slate-600" @click="closeBatchDeductDialog">
+            <a-button aria-label="关闭" type="text" html-type="button" class="text-slate-400 transition hover:text-slate-600" @click="closeBatchDeductDialog">
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
               </svg>
-            </button>
-          </header>
+            </a-button>
+          </header></template></template>
+<template v-if="showBatchDeductModal">
 
           <div class="min-h-0 flex-1 space-y-4 overflow-y-auto p-6">
             <div class="grid gap-3 md:grid-cols-3">
@@ -803,41 +794,45 @@
             </div>
 
             <div class="overflow-hidden rounded-lg border border-slate-200">
-              <table class="w-full min-w-[720px] text-sm">
-                <thead class="bg-slate-50 text-slate-500">
-                  <tr>
-                    <th class="px-3 py-2 text-left font-medium">订单</th>
-                    <th class="px-3 py-2 text-left font-medium">用户</th>
-                    <th class="px-3 py-2 text-right font-medium">待还</th>
-                    <th class="px-3 py-2 text-right font-medium">质押资产</th>
-                    <th class="px-3 py-2 text-right font-medium">估值</th>
-                    <th class="px-3 py-2 text-right font-medium">占比/预警/处理</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="order in selectedDeductOrders" :key="`batch-${order.orderId}`" class="border-t border-slate-100">
-                    <td class="px-3 py-2 font-mono text-xs text-slate-700">{{ order.orderId }}</td>
-                    <td class="px-3 py-2 text-slate-800">{{ order.userName }}</td>
-                    <td class="px-3 py-2 text-right font-medium text-rose-700">{{ formatCurrency(order.totalDebt) }}</td>
-                    <td class="px-3 py-2 text-right tabular-nums text-slate-900">{{ formatPlainNumber(order.collateralAmount) }} {{ order.collateralType }}</td>
-                    <td class="px-3 py-2 text-right font-medium text-slate-900">{{ formatCurrency(order.collateralValue) }}</td>
-                    <td class="px-3 py-2 text-right font-medium text-rose-700">{{ collateralDebtRatioLabel(order) }} / {{ collateralWarningThresholdLabel(order) }} / {{ collateralDisposalThresholdLabel(order) }}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <a-table  size="small" :pagination="false" :data-source="selectedDeductOrders" :row-key="(order) => `batch-${order.orderId}`" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
+<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-3 py-2 font-mono text-xs text-slate-700&quot;] })">
+<template #title>订单</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.orderId }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-3 py-2 text-slate-800&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.userName }}</template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-3 py-2 text-right font-medium text-rose-700&quot;] })">
+<template #title>待还</template>
+<template #default="{ record: order, index: rowIndex }">{{ formatCurrency(order.totalDebt) }}</template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-3 py-2 text-right tabular-nums text-slate-900&quot;] })">
+<template #title>质押资产</template>
+<template #default="{ record: order, index: rowIndex }">{{ formatPlainNumber(order.collateralAmount) }} {{ order.collateralType }}</template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-3 py-2 text-right font-medium text-slate-900&quot;] })">
+<template #title>估值</template>
+<template #default="{ record: order, index: rowIndex }">{{ formatCurrency(order.collateralValue) }}</template>
+</a-table-column>
+<a-table-column key="column-5" align="right" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-3 py-2 text-right font-medium text-rose-700&quot;] })">
+<template #title>占比/预警/处理</template>
+<template #default="{ record: order, index: rowIndex }">{{ collateralDebtRatioLabel(order) }} / {{ collateralWarningThresholdLabel(order) }} / {{ collateralDisposalThresholdLabel(order) }}</template>
+</a-table-column>
+</a-table>
             </div>
           </div>
 
-          <footer class="flex shrink-0 items-center justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-            <button type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" @click="closeBatchDeductDialog">
+          </template>
+<template #footer><template v-if="showBatchDeductModal"><footer class="flex shrink-0 items-center justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+            <a-button type="text" html-type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" @click="closeBatchDeductDialog">
               取消
-            </button>
-            <button type="button" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" :disabled="selectedDeductOrders.length === 0" @click="confirmBatchDeductCollateral">
+            </a-button>
+            <a-button type="text" html-type="button" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" :disabled="selectedDeductOrders.length === 0" @click="confirmBatchDeductCollateral">
               确认{{ batchDeductActionText }}
-            </button>
-          </footer>
-        </article>
-      </div>
+            </a-button>
+          </footer></template></template>
+</a-modal>
     </Teleport>
 
     <UserDetailDrawer

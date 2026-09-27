@@ -102,94 +102,51 @@ const statusText = (status) => ({
     <article class="rounded-xl border border-slate-200 bg-white">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
         <div class="inline-flex items-center gap-4 text-sm">
-          <button type="button" class="font-medium" :class="typeTab === ASSET_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_COMMON_FILTER_ALL; handleFilterChange()">全部</button>
-          <button type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.DEPOSIT ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.DEPOSIT; handleFilterChange()">充值</button>
-          <button type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.WITHDRAW ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.WITHDRAW; handleFilterChange()">提现</button>
-          <button type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.COLLECT ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.COLLECT; handleFilterChange()">归集</button>
-          <button type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.TRANSFER ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.TRANSFER; handleFilterChange()">转账</button>
+          <a-button html-type="button" class="font-medium" :class="typeTab === ASSET_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_COMMON_FILTER_ALL; handleFilterChange()">全部</a-button>
+          <a-button html-type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.DEPOSIT ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.DEPOSIT; handleFilterChange()">充值</a-button>
+          <a-button html-type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.WITHDRAW ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.WITHDRAW; handleFilterChange()">提现</a-button>
+          <a-button html-type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.COLLECT ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.COLLECT; handleFilterChange()">归集</a-button>
+          <a-button html-type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.TRANSFER ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.TRANSFER; handleFilterChange()">转账</a-button>
         </div>
         <div class="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap">
-          <select v-model="coinFilter" class="h-10 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm" @change="handleFilterChange">
-            <option :value="ASSET_COMMON_FILTER_ALL">全部币种</option>
-            <option value="USDT">USDT</option>
-            <option value="BTC">BTC</option>
-            <option value="ETH">ETH</option>
-          </select>
-          <select v-model="statusFilter" class="h-10 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm" @change="handleFilterChange">
-            <option :value="ASSET_COMMON_FILTER_ALL">全部状态</option>
-            <option :value="ASSET_ADDRESS_LOG_STATUS.CONFIRMED">已确认</option>
-            <option :value="ASSET_ADDRESS_LOG_STATUS.PENDING">待确认</option>
-            <option :value="ASSET_ADDRESS_LOG_STATUS.FAILED">失败</option>
-          </select>
-          <input
-            v-model="keyword"
-            type="text"
-            placeholder="搜索交易哈希或地址..."
-            class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm lg:w-72"
-            @input="handleFilterChange"
-          />
+          <a-select v-model:value="coinFilter" class="" @change="handleFilterChange">
+            <a-select-option :value="ASSET_COMMON_FILTER_ALL">全部币种</a-select-option>
+            <a-select-option value="USDT">USDT</a-select-option>
+            <a-select-option value="BTC">BTC</a-select-option>
+            <a-select-option value="ETH">ETH</a-select-option>
+          </a-select>
+          <a-select v-model:value="statusFilter" class="" @change="handleFilterChange">
+            <a-select-option :value="ASSET_COMMON_FILTER_ALL">全部状态</a-select-option>
+            <a-select-option :value="ASSET_ADDRESS_LOG_STATUS.CONFIRMED">已确认</a-select-option>
+            <a-select-option :value="ASSET_ADDRESS_LOG_STATUS.PENDING">待确认</a-select-option>
+            <a-select-option :value="ASSET_ADDRESS_LOG_STATUS.FAILED">失败</a-select-option>
+          </a-select>
+          <a-input v-model:value="keyword" type="text" placeholder="搜索交易哈希或地址..." class="w-full lg:w-72" @input="handleFilterChange" />
         </div>
       </div>
 
       <div class="overflow-x-auto p-4">
-        <table class="min-w-full text-left text-sm">
-          <thead>
-            <tr class="bg-slate-50 text-slate-500">
-              <th class="px-4 py-3 font-medium">类型</th>
-              <th class="px-4 py-3 font-medium">币种/网络</th>
-              <th class="px-4 py-3 font-medium">地址</th>
-              <th class="px-4 py-3 font-medium">金额</th>
-              <th class="px-4 py-3 font-medium">TxHash</th>
-              <th class="px-4 py-3 font-medium">区块/确认数</th>
-              <th class="px-4 py-3 font-medium">状态</th>
-              <th class="px-4 py-3 font-medium">时间</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in pagedLogs" :key="row.id" class="border-b border-slate-100">
-              <td class="px-4 py-3">
+        <a-table  :data-source="pagedLogs" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;border-b border-slate-100&quot;] })">
+<a-table-column key="column-0" ><template #title>类型</template><template #default="{ record: row, index: index }"><div class=" ">
                 <span class="font-medium" :class="typeColor(row.type)">{{ typeIcon(row.type) }} {{ typeText(row.type) }}</span>
-              </td>
-              <td class="px-4 py-3">
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>币种/网络</template><template #default="{ record: row, index: index }"><div class=" ">
                 <p class="font-medium text-slate-800">{{ row.coin }}</p>
                 <p class="text-slate-500">{{ row.network }}</p>
-              </td>
-              <td class="px-4 py-3 text-slate-700">{{ row.address }}</td>
-              <td class="px-4 py-3 font-semibold" :class="amountColor(row.amount)">{{ row.amount }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ row.txHash }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ row.block }}</td>
-              <td class="px-4 py-3"><span class="rounded-md px-2 py-0.5 text-xs" :class="statusClass(row.status)">{{ statusText(row.status) }}</span></td>
-              <td class="px-4 py-3 text-slate-700">{{ row.time }}</td>
-            </tr>
-            <tr v-if="filtered.length === 0">
-              <td colspan="8" class="p-8 text-center text-sm text-slate-500">未找到匹配的交易日志</td>
-            </tr>
-          </tbody>
-        </table>
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>地址</template><template #default="{ record: row, index: index }"><div class="  text-slate-700">{{ row.address }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>金额</template><template #default="{ record: row, index: index }"><div class="  font-semibold" :class="amountColor(row.amount)">{{ row.amount }}</div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>TxHash</template><template #default="{ record: row, index: index }"><div class="  text-slate-700">{{ row.txHash }}</div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>区块/确认数</template><template #default="{ record: row, index: index }"><div class="  text-slate-700">{{ row.block }}</div></template></a-table-column>
+<a-table-column key="column-6" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" "><span class="rounded-md px-2 py-0.5 text-xs" :class="statusClass(row.status)">{{ statusText(row.status) }}</span></div></template></a-table-column>
+<a-table-column key="column-7" ><template #title>时间</template><template #default="{ record: row, index: index }"><div class="  text-slate-700">{{ row.time }}</div></template></a-table-column>
+</a-table>
       </div>
 
       <!-- 分页栏 -->
       <footer v-if="totalPages > 1" class="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm">
         <p class="text-slate-500">共 {{ filtered.length }} 条日志</p>
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            class="rounded border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent"
-            :disabled="currentPage === 1"
-            @click="goPrev"
-          >
-            上一页
-          </button>
-          <span class="text-xs font-medium text-slate-600">{{ currentPage }} / {{ totalPages }}</span>
-          <button
-            type="button"
-            class="rounded border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent"
-            :disabled="currentPage === totalPages"
-            @click="goNext"
-          >
-            下一页
-          </button>
-        </div>
+        <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="filtered.length" :show-size-changer="false"  @change="currentPage = $event" />
       </footer>
     </article>
   </section>

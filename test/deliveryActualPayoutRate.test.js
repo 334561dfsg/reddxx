@@ -28,7 +28,7 @@ test('period template editor saves and displays the actual payout rate', () => {
   assert.match(templatePageSource, /周期配置 <span class="text-rose-500">\*<\/span>/)
   assert.match(templatePageSource, /周期\{\{ index \+ 1 \}\}/)
   assert.match(templatePageSource, /实际收益率/)
-  assert.match(templatePageSource, /v-model\.number="cycle\.actualPayoutPct"/)
+  assert.match(templatePageSource, /v-model:value\.number="cycle\.actualPayoutPct"/)
   assert.match(templatePageSource, /actualPayoutPct: Number\(c\.actualPayoutPct\)/)
   assert.doesNotMatch(templatePageSource, /<table class="w-full text-left border-collapse ant-table">/)
 })

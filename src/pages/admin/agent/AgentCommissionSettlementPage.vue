@@ -236,165 +236,88 @@ const doAdvance = (batchId, action, label) => {
         <div class="flex flex-wrap gap-3">
           <div>
             <label class="block text-xs font-medium text-slate-600">关键词</label>
-            <input
-              v-model="searchKeyword"
-              type="search"
-              placeholder="汇总单号 / UID / 邮箱 / 账期"
-              class="mt-1 w-56 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-              @keyup.enter="handleSearch"
-            />
+            <a-input v-model:value="searchKeyword" type="search" placeholder="汇总单号 / UID / 邮箱 / 账期" class="mt-1 w-56" @keyup.enter="handleSearch" />
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600">状态</label>
-            <select
-              v-model="statusFilter"
-              class="mt-1 w-44 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-            >
-              <option v-for="o in statusOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
-            </select>
+            <a-select v-model:value="statusFilter" class="mt-1 w-44">
+              <a-select-option v-for="o in statusOptions" :key="o.value" :value="o.value">{{ o.label }}</a-select-option>
+            </a-select>
           </div>
         </div>
         <div class="flex flex-wrap gap-2">
-          <button
-            type="button"
-            class="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800"
-            @click="handleSearch"
-          >
+          <a-button html-type="button" class="bg-slate-900 text-sm font-medium text-white hover:bg-slate-800" @click="handleSearch">
             查询
-          </button>
-          <button
-            type="button"
-            class="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
-            @click="handleReset"
-          >
+          </a-button>
+          <a-button html-type="button" class="border border-slate-300 text-sm text-slate-700 hover:bg-slate-50" @click="handleReset">
             重置
-          </button>
+          </a-button>
         </div>
       </div>
     </div>
 
     <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-          <thead class="bg-slate-50 text-xs font-medium uppercase text-slate-600">
-            <tr>
-              <th class="px-3 py-3">汇总单号</th>
-              <th class="px-3 py-3">账期</th>
-              <th class="px-3 py-3">代理</th>
-              <th class="px-3 py-3">汇总来源</th>
-              <th class="px-3 py-3 text-right">佣金 (USDT)</th>
-              <th class="px-3 py-3">入账方式</th>
-              <th class="px-3 py-3">状态</th>
-              <th class="px-3 py-3">划转流水</th>
-              <th class="px-3 py-3">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr v-if="loading">
-              <td colspan="9" class="px-4 py-8 text-center text-slate-500">加载中…</td>
-            </tr>
-            <tr v-else-if="!recordList.length">
-              <td colspan="9" class="px-4 py-8 text-center text-slate-500">暂无数据</td>
-            </tr>
-            <tr v-for="row in recordList" v-else :key="row.id" class="hover:bg-slate-50/80">
-              <td class="px-3 py-2 font-mono text-xs text-slate-800">{{ row.batchNo }}</td>
-              <td class="px-3 py-2 font-mono">{{ row.period }}</td>
-              <td class="px-3 py-2">
+        <a-table  :data-source="recordList" :loading="loading" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
+<a-table-column key="column-0" ><template #title>汇总单号</template><template #default="{ record: row, index: index }"><div class="  font-mono text-xs text-slate-800">{{ row.batchNo }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>账期</template><template #default="{ record: row, index: index }"><div class="  font-mono">{{ row.period }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>代理</template><template #default="{ record: row, index: index }"><div class=" ">
                 <div class="font-medium text-slate-900">{{ row.agentName }}</div>
                 <div class="text-xs text-slate-500">UID {{ row.agentUid }} · {{ row.agentEmail }}</div>
-              </td>
-              <td class="px-3 py-2">
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>汇总来源</template><template #default="{ record: row, index: index }"><div class=" ">
                 <div class="text-sm text-slate-800">{{ row.sourceDetailCount }} 条明细</div>
                 <div class="text-xs text-slate-500">{{ row.invitedUserCount }} 个邀请用户</div>
-              </td>
-              <td class="px-3 py-2 text-right tabular-nums font-medium text-slate-900">
+              </div></template></a-table-column>
+<a-table-column key="column-4" align="right"><template #title>佣金 (USDT)</template><template #default="{ record: row, index: index }"><div class="  text-right tabular-nums font-medium text-slate-900">
                 {{ formatMoney(row.amount) }}
-              </td>
-              <td class="px-3 py-2">
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>入账方式</template><template #default="{ record: row, index: index }"><div class=" ">
                 <span
                   class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium"
                   :class="row.autoCredit ? 'bg-blue-50 text-blue-800 ring-1 ring-inset ring-blue-200' : 'bg-slate-50 text-slate-700 ring-1 ring-inset ring-slate-200'"
                 >
                   {{ settlementModeLabel(row) }}
                 </span>
-              </td>
-              <td class="px-3 py-2">
+              </div></template></a-table-column>
+<a-table-column key="column-6" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
                 <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium" :class="badgeClass(row.status)">
                   {{ agentSettlementStatusLabel(row.status) }}
                 </span>
-              </td>
-              <td class="px-3 py-2 font-mono text-xs text-slate-600">{{ row.creditTxnId || '—' }}</td>
-              <td class="px-3 py-2">
+              </div></template></a-table-column>
+<a-table-column key="column-7" ><template #title>划转流水</template><template #default="{ record: row, index: index }"><div class="  font-mono text-xs text-slate-600">{{ row.creditTxnId || '—' }}</div></template></a-table-column>
+<a-table-column key="column-8" ><template #title>操作</template><template #default="{ record: row, index: index }"><div class=" ">
                 <div class="flex flex-wrap gap-1">
-                  <button
-                    type="button"
-                    class="rounded border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-700 hover:bg-slate-50"
-                    @click="openDetails(row)"
-                  >
+                  <a-button html-type="button" class="border border-slate-200 bg-white text-xs text-slate-700 hover:bg-slate-50" @click="openDetails(row)">
                     明细
-                  </button>
-                  <button
-                    v-if="row.status === AGENT_SETTLEMENT_STATUS.PENDING_REVIEW"
-                    type="button"
-                    class="rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs text-emerald-900 hover:bg-emerald-100"
-                    @click="doAdvance(row.id, AGENT_SETTLEMENT_ACTION.APPROVE, '审核通过并划转入账')"
-                  >
+                  </a-button>
+                  <a-button v-if="row.status === AGENT_SETTLEMENT_STATUS.PENDING_REVIEW" html-type="button" class="border border-emerald-200 bg-emerald-50 text-xs text-emerald-900 hover:bg-emerald-100" @click="doAdvance(row.id, AGENT_SETTLEMENT_ACTION.APPROVE, '审核通过并划转入账')">
                     审核通过
-                  </button>
+                  </a-button>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div></template></a-table-column><template #emptyText>暂无数据</template>
+</a-table>
       </div>
       <div class="flex items-center justify-between border-t border-slate-100 px-4 py-3 text-sm text-slate-600">
         <span>共 {{ pagination.total }} 条</span>
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            class="rounded border border-slate-300 px-2 py-1 disabled:cursor-not-allowed disabled:opacity-40"
-            :disabled="pagination.currentPage <= 1 || loading"
-            @click="pagination.currentPage -= 1"
-          >
-            上一页
-          </button>
-          <span>{{ pagination.currentPage }} / {{ totalPages }}</span>
-          <button
-            type="button"
-            class="rounded border border-slate-300 px-2 py-1 disabled:cursor-not-allowed disabled:opacity-40"
-            :disabled="pagination.currentPage >= totalPages || loading"
-            @click="pagination.currentPage += 1"
-          >
-            下一页
-          </button>
-        </div>
+        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false"  :disabled="loading" @change="pagination.currentPage = $event" />
       </div>
     </div>
   </div>
 
   <Teleport to="body">
     <!-- 汇总明细 -->
-    <div
-      v-if="detailDrawer.visible"
-      class="fixed inset-0 z-[90] flex justify-end bg-slate-900/30"
-      role="dialog"
-      aria-modal="true"
-      @click.self="closeDetails"
-    >
-      <div class="flex h-full w-full max-w-5xl flex-col bg-white shadow-2xl">
-        <div class="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
+    <a-drawer :open="Boolean(detailDrawer.visible)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeDetails"><template #title><template v-if="Boolean(detailDrawer.visible)"><div class="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
           <div>
             <p class="text-base font-semibold text-slate-900">返佣明细</p>
             <p class="mt-1 text-xs text-slate-500">
               {{ detailDrawer.batch?.batchNo }} · {{ detailDrawer.batch?.period }} · UID {{ detailDrawer.batch?.agentUid }}
             </p>
           </div>
-          <button type="button" class="rounded-md border border-slate-300 px-2 py-1 text-sm text-slate-600 hover:bg-slate-50" @click="closeDetails">
+          <a-button aria-label="关闭" html-type="button" class="border border-slate-300 text-sm text-slate-600 hover:bg-slate-50" @click="closeDetails">
             关闭
-          </button>
-        </div>
-
-        <div v-if="detailDrawer.batch" class="grid gap-3 border-b border-slate-100 bg-slate-50 px-5 py-4 sm:grid-cols-2">
+          </a-button>
+        </div></template></template><template v-if="detailDrawer.visible"><div v-if="detailDrawer.batch" class="grid gap-3 border-b border-slate-100 bg-slate-50 px-5 py-4 sm:grid-cols-2">
           <div>
             <p class="text-xs text-slate-500">汇总佣金</p>
             <p class="mt-1 text-lg font-semibold text-slate-900">{{ formatMoney(detailDrawer.batch.amount) }} USDT</p>
@@ -404,61 +327,32 @@ const doAdvance = (batchId, action, label) => {
             <p class="mt-1 text-lg font-semibold text-slate-900">{{ detailDrawer.batch.sourceDetailCount }} 条</p>
           </div>
         </div>
-
-        <div class="min-h-0 flex-1 overflow-auto">
+<div class="min-h-0 flex-1 overflow-auto">
           <div v-if="detailDrawer.loading" class="px-5 py-10 text-center text-sm text-slate-500">加载明细中…</div>
-          <table v-else class="min-w-full divide-y divide-slate-200 text-left text-sm">
-            <thead class="bg-white text-xs font-medium text-slate-500">
-              <tr>
-                <th class="px-5 py-3">产生时间</th>
-                <th class="px-5 py-3">被邀请用户</th>
-                <th class="px-5 py-3">业务类型</th>
-                <th class="px-5 py-3">来源单号</th>
-                <th class="px-5 py-3 text-right">计佣基数</th>
-                <th class="px-5 py-3 text-right">比例</th>
-                <th class="px-5 py-3 text-right">佣金</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr v-for="item in detailDrawer.list" :key="item.id" class="hover:bg-slate-50/80">
-                <td class="px-5 py-3 font-mono text-xs text-slate-600">{{ item.occurredAt }}</td>
-                <td class="px-5 py-3">
+          <a-table v-else :data-source="detailDrawer.list" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(item) => item.id" :custom-row="(item, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
+<a-table-column key="column-0" ><template #title>产生时间</template><template #default="{ record: item, index: index }"><div class="  font-mono text-xs text-slate-600">{{ item.occurredAt }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>被邀请用户</template><template #default="{ record: item, index: index }"><div class=" ">
                   <div class="font-medium text-slate-900">UID {{ item.invitedUid }}</div>
                   <div class="text-xs text-slate-500">{{ item.invitedEmail }}</div>
-                </td>
-                <td class="px-5 py-3 text-slate-700">{{ item.typeLabel }}</td>
-                <td class="px-5 py-3 font-mono text-xs text-slate-600">{{ item.sourceOrderNo }}</td>
-                <td class="px-5 py-3 text-right tabular-nums">{{ formatMoney(item.baseAmount) }}</td>
-                <td class="px-5 py-3 text-right tabular-nums">{{ (item.commissionRate * 100).toFixed(2) }}%</td>
-                <td class="px-5 py-3 text-right tabular-nums font-medium text-slate-900">{{ formatMoney(item.commission) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+                </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>业务类型</template><template #default="{ record: item, index: index }"><div class="  text-slate-700">{{ item.typeLabel }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>来源单号</template><template #default="{ record: item, index: index }"><div class="  font-mono text-xs text-slate-600">{{ item.sourceOrderNo }}</div></template></a-table-column>
+<a-table-column key="column-4" align="right"><template #title>计佣基数</template><template #default="{ record: item, index: index }"><div class="  text-right tabular-nums">{{ formatMoney(item.baseAmount) }}</div></template></a-table-column>
+<a-table-column key="column-5" align="right"><template #title>比例</template><template #default="{ record: item, index: index }"><div class="  text-right tabular-nums">{{ (item.commissionRate * 100).toFixed(2) }}%</div></template></a-table-column>
+<a-table-column key="column-6" align="right"><template #title>佣金</template><template #default="{ record: item, index: index }"><div class="  text-right tabular-nums font-medium text-slate-900">{{ formatMoney(item.commission) }}</div></template></a-table-column>
+</a-table>
+        </div></template></a-drawer>
 
     <!-- 确认操作 -->
-    <div
-      v-if="confirmDialog.visible"
-      class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-4"
-      role="dialog"
-      aria-modal="true"
-      @click.self="closeConfirm"
-    >
-      <div class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-xl">
-        <p class="text-base font-semibold text-slate-900">请确认</p>
-        <p class="mt-2 text-sm leading-relaxed text-slate-600">{{ confirmDialog.message }}</p>
-        <div class="mt-6 flex justify-end gap-2">
-          <button type="button" class="ant-btn" :disabled="confirmDialog.loading" @click="closeConfirm">
+    <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(confirmDialog.visible)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeConfirm"><template #title><template v-if="Boolean(confirmDialog.visible)"><div class="flex items-center justify-between gap-3"><span>请确认</span><a-button aria-label="关闭" html-type="button"  :disabled="confirmDialog.loading" @click="closeConfirm">×</a-button></div></template></template><template v-if="confirmDialog.visible"><p class="text-base font-semibold text-slate-900">请确认</p>
+<p class="mt-2 text-sm leading-relaxed text-slate-600">{{ confirmDialog.message }}</p></template><template #footer><template v-if="Boolean(confirmDialog.visible)"><div class="mt-6 flex justify-end gap-2">
+          <a-button html-type="button" class="" :disabled="confirmDialog.loading" @click="closeConfirm">
             取消
-          </button>
-          <button type="button" class="ant-btn ant-btn-primary" :disabled="confirmDialog.loading" @click="submitConfirm">
+          </a-button>
+          <a-button html-type="button" class="" :disabled="confirmDialog.loading" @click="submitConfirm" type="primary">
             {{ confirmDialog.loading ? '处理中…' : '确定' }}
-          </button>
-        </div>
-      </div>
-    </div>
+          </a-button>
+        </div></template></template></a-modal>
 
     <!-- 结果提示 -->
     <div

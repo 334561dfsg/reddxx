@@ -1,15 +1,15 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { 
-  DELIVERY_REPORT_TIME_RANGE, 
-  DELIVERY_REPORT_TIME_RANGE_OPTIONS, 
+import {
+  DELIVERY_REPORT_TIME_RANGE,
+  DELIVERY_REPORT_TIME_RANGE_OPTIONS,
   DELIVERY_RISK_LEVEL_CONFIG,
   DELIVERY_USER_TYPE_CONFIG,
   DELIVERY_CYCLE_TYPE_CONFIG,
   DELIVERY_CONTRACT_STATUS_CONFIG
 } from '../../../admin/constants/deliveryReport'
-import { 
-  DELIVERY_RULE_ACTION_CONFIG 
+import {
+  DELIVERY_RULE_ACTION_CONFIG
 } from '../../../admin/constants/deliveryControl'
 import {
   deliveryMarketOverview,
@@ -52,10 +52,10 @@ const filteredOverview = computed(() => {
   if (selectedContract.value === 'ALL') {
     return overview.value
   }
-  
+
   const contract = contracts.value.find(c => c.symbol === selectedContract.value)
   if (!contract) return overview.value
-  
+
   return {
     totalVolume24h: contract.volume24h,
     totalPosition: contract.position,
@@ -140,14 +140,14 @@ const exportReport = () => {
       </div>
 
       <div class="flex items-center gap-3">
-        <button type="button" class="ant-btn inline-flex items-center gap-2" @click="refreshData">
+        <a-button html-type="button" class="ant-btn inline-flex items-center gap-2" @click="refreshData">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
           刷新
-        </button>
-        <button type="button" class="ant-btn ant-btn-primary inline-flex items-center gap-2" @click="exportReport">
+        </a-button>
+        <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary inline-flex items-center gap-2" @click="exportReport">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
           导出报表
-        </button>
+        </a-button>
       </div>
     </header>
 
@@ -155,24 +155,24 @@ const exportReport = () => {
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="space-y-1.5">
           <label class="block text-sm font-medium text-slate-700">合约</label>
-          <select v-model="selectedContract" class="ant-select !py-1.5">
-            <option v-for="option in contractOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-          </select>
+          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="selectedContract" class="">
+            <a-select-option v-for="option in contractOptions" :key="option.value" :value="option.value">{{ option.label }}</a-select-option>
+          </a-select>
         </div>
 
         <div class="space-y-1.5">
           <label class="block text-sm font-medium text-slate-700">统计周期</label>
-          <select v-model="timeRange" class="ant-select !py-1.5">
-            <option v-for="option in DELIVERY_REPORT_TIME_RANGE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
-          </select>
+          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="timeRange" class="">
+            <a-select-option v-for="option in DELIVERY_REPORT_TIME_RANGE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</a-select-option>
+          </a-select>
         </div>
 
         <div v-if="timeRange === DELIVERY_REPORT_TIME_RANGE.CUSTOM" class="space-y-1.5">
           <label class="block text-sm font-medium text-slate-700">自定义日期</label>
           <div class="flex items-center gap-2">
-            <input v-model="customDateRange.start" type="date" class="ant-input !py-1.5" />
+            <a-input v-model:value="customDateRange.start" type="date" class="ant-input !py-1.5" />
             <span class="text-slate-400">-</span>
-            <input v-model="customDateRange.end" type="date" class="ant-input !py-1.5" />
+            <a-input v-model:value="customDateRange.end" type="date" class="ant-input !py-1.5" />
           </div>
         </div>
       </div>
@@ -181,10 +181,10 @@ const exportReport = () => {
     <article class="pro-card overflow-hidden">
       <div class="border-b border-black/[0.06] bg-white px-6">
         <div class="flex gap-8">
-          <button
+          <a-button type="text"
             v-for="tab in tabs"
             :key="tab.id"
-            type="button"
+            html-type="button"
             class="relative px-1 py-4 text-sm transition-all"
             :class="activeTab === tab.id ? 'text-antd-primary font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-antd-primary' : 'text-black/45 hover:text-black/85'"
             @click="activeTab = tab.id"
@@ -193,7 +193,7 @@ const exportReport = () => {
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="tab.icon" /></svg>
               <span>{{ tab.name }}</span>
             </div>
-          </button>
+          </a-button>
         </div>
       </div>
 
@@ -231,43 +231,49 @@ const exportReport = () => {
             </div>
 
             <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm">
-              <header class="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between"><h3 class="text-sm font-semibold text-black/85">交割合约明细</h3><button class="ant-btn ant-btn-link !text-xs">查看全部</button></header>
+              <header class="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between"><h3 class="text-sm font-semibold text-black/85">交割合约明细</h3><a-button class="ant-btn ant-btn-link !text-xs">查看全部</a-button></header>
               <div class="overflow-x-auto">
-                <table class="ant-table">
-                  <thead class="ant-table-thead">
-                    <tr>
-                      <th>合约名称</th>
-                      <th class="text-center">交割时间</th>
-                      <th class="text-center">状态</th>
-                      <th class="text-right">总持仓</th>
-                      <th class="text-right">多空比</th>
-                      <th class="text-right">平台盈亏</th>
-                      <th class="text-center">风险</th>
-                    </tr>
-                  </thead>
-                  <tbody class="ant-table-tbody">
-                    <tr v-for="contract in filteredContracts" :key="contract.symbol" class="group transition-all hover:bg-black/[0.01]">
-                      <td>
+                <a-table  size="small" :pagination="false" :data-source="filteredContracts" :row-key="(contract) => contract.symbol" :scroll="{ x: 'max-content' }" :custom-row="(contract, rowIndex) => ({ class: [&quot;group transition-all hover:bg-black/[0.01]&quot;] })">
+<a-table-column key="column-0">
+<template #title>合约名称</template>
+<template #default="{ record: contract, index: rowIndex }">
                         <div class="text-sm font-medium text-black/85">{{ contract.name }}</div>
                         <span :class="DELIVERY_CYCLE_TYPE_CONFIG[contract.cycleType].class" class="inline-flex items-center px-1.5 py-0.5 mt-1 rounded text-[10px] font-medium">{{ DELIVERY_CYCLE_TYPE_CONFIG[contract.cycleType].text }}</span>
-                      </td>
-                      <td class="text-center">
+                      </template>
+</a-table-column>
+<a-table-column key="column-1" align="center" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-center&quot;] })">
+<template #title>交割时间</template>
+<template #default="{ record: contract, index: rowIndex }">
                         <div class="text-sm text-black/85 font-mono">{{ contract.expiryDate.split(' ')[0] }}</div>
                         <div class="text-[11px] text-black/25">{{ contract.daysToExpiry }}天后</div>
-                      </td>
-                      <td class="text-center">
+                      </template>
+</a-table-column>
+<a-table-column key="column-2" align="center" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-center&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: contract, index: rowIndex }">
                         <span :class="DELIVERY_CONTRACT_STATUS_CONFIG[contract.status].class" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium">{{ DELIVERY_CONTRACT_STATUS_CONFIG[contract.status].text }}</span>
-                      </td>
-                      <td class="text-right">
+                      </template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-right&quot;] })">
+<template #title>总持仓</template>
+<template #default="{ record: contract, index: rowIndex }">
                         <div class="text-sm font-medium text-black/85 font-mono">${{ formatAmount(contract.position) }}</div>
                         <div class="text-[11px] text-black/45 font-mono">L: ${{ formatAmount(contract.longPosition) }} / S: ${{ formatAmount(contract.shortPosition) }}</div>
-                      </td>
-                      <td class="text-right font-mono text-sm">{{ contract.longShortRatio.toFixed(2) }}</td>
-                      <td class="text-right font-mono text-sm" :class="contract.platformPnl24h >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatCurrency(contract.platformPnl24h) }}</td>
-                      <td class="text-center"><span :class="DELIVERY_RISK_LEVEL_CONFIG[contract.riskLevel].class" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border">{{ DELIVERY_RISK_LEVEL_CONFIG[contract.riskLevel].text }}</span></td>
-                    </tr>
-                  </tbody>
-                </table>
+                      </template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;] })">
+<template #title>多空比</template>
+<template #default="{ record: contract, index: rowIndex }">{{ contract.longShortRatio.toFixed(2) }}</template>
+</a-table-column>
+<a-table-column key="column-5" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;, contract.platformPnl24h >= 0 ? 'text-emerald-500' : 'text-rose-500'] })">
+<template #title>平台盈亏</template>
+<template #default="{ record: contract, index: rowIndex }">{{ formatCurrency(contract.platformPnl24h) }}</template>
+</a-table-column>
+<a-table-column key="column-6" align="center" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-center&quot;] })">
+<template #title>风险</template>
+<template #default="{ record: contract, index: rowIndex }"><span :class="DELIVERY_RISK_LEVEL_CONFIG[contract.riskLevel].class" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border">{{ DELIVERY_RISK_LEVEL_CONFIG[contract.riskLevel].text }}</span></template>
+</a-table-column>
+</a-table>
               </div>
             </section>
           </div>
@@ -277,28 +283,32 @@ const exportReport = () => {
             <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm">
               <header class="px-6 py-4 border-b border-black/[0.06]"><h3 class="text-sm font-semibold text-black/85">持仓到期分布</h3></header>
               <div class="overflow-x-auto">
-                <table class="ant-table">
-                  <thead class="ant-table-thead">
-                    <tr>
-                      <th>到期范围</th>
-                      <th class="text-right">多头人数</th>
-                      <th class="text-right">空头人数</th>
-                      <th class="text-right">多头持仓</th>
-                      <th class="text-right">空头持仓</th>
-                      <th class="text-right">净持仓 (Delta)</th>
-                    </tr>
-                  </thead>
-                  <tbody class="ant-table-tbody">
-                    <tr v-for="item in deliveryExpiryDistribution" :key="item.range" class="hover:bg-black/[0.01]">
-                      <td class="text-sm font-medium text-black/85">{{ item.range }}</td>
-                      <td class="text-right font-mono text-black/45">{{ item.longCount }}</td>
-                      <td class="text-right font-mono text-black/45">{{ item.shortCount }}</td>
-                      <td class="text-right font-mono text-emerald-500">${{ formatAmount(item.longVolume) }}</td>
-                      <td class="text-right font-mono text-rose-500">${{ formatAmount(item.shortVolume) }}</td>
-                      <td class="text-right font-mono font-medium" :class="(item.longVolume - item.shortVolume) >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatCurrency(item.longVolume - item.shortVolume) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <a-table  size="small" :pagination="false" :data-source="deliveryExpiryDistribution" :row-key="(item) => item.range" :scroll="{ x: 'max-content' }" :custom-row="(item, rowIndex) => ({ class: [&quot;hover:bg-black/[0.01]&quot;] })">
+<a-table-column key="column-0" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-sm font-medium text-black/85&quot;] })">
+<template #title>到期范围</template>
+<template #default="{ record: item, index: rowIndex }">{{ item.range }}</template>
+</a-table-column>
+<a-table-column key="column-1" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-black/45&quot;] })">
+<template #title>多头人数</template>
+<template #default="{ record: item, index: rowIndex }">{{ item.longCount }}</template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-black/45&quot;] })">
+<template #title>空头人数</template>
+<template #default="{ record: item, index: rowIndex }">{{ item.shortCount }}</template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-emerald-500&quot;] })">
+<template #title>多头持仓</template>
+<template #default="{ record: item, index: rowIndex }">${{ formatAmount(item.longVolume) }}</template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-rose-500&quot;] })">
+<template #title>空头持仓</template>
+<template #default="{ record: item, index: rowIndex }">${{ formatAmount(item.shortVolume) }}</template>
+</a-table-column>
+<a-table-column key="column-5" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono font-medium&quot;, (item.longVolume - item.shortVolume) >= 0 ? 'text-emerald-500' : 'text-rose-500'] })">
+<template #title>净持仓 (Delta)</template>
+<template #default="{ record: item, index: rowIndex }">{{ formatCurrency(item.longVolume - item.shortVolume) }}</template>
+</a-table-column>
+</a-table>
               </div>
             </section>
           </div>
@@ -343,35 +353,39 @@ const exportReport = () => {
             <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm">
               <header class="px-6 py-4 border-b border-black/[0.06]"><h3 class="text-sm font-semibold text-black/85">大户异常监控</h3></header>
               <div class="overflow-x-auto">
-                <table class="ant-table">
-                  <thead class="ant-table-thead">
-                    <tr>
-                      <th>用户信息</th>
-                      <th class="text-center">账号类型</th>
-                      <th class="text-right">总持仓</th>
-                      <th class="text-right">24h 盈亏</th>
-                      <th class="text-right">临期敞口</th>
-                      <th>主要合约</th>
-                      <th class="text-center">风险等级</th>
-                    </tr>
-                  </thead>
-                  <tbody class="ant-table-tbody">
-                    <tr v-for="whale in paginatedWhalesList" :key="whale.userId" class="hover:bg-black/[0.01]">
-                      <td><div class="text-sm font-medium text-black/85">{{ whale.username }}</div><div class="text-[11px] text-black/45 font-mono">{{ whale.userId }}</div></td>
-                      <td class="text-center"><span :class="DELIVERY_USER_TYPE_CONFIG[whale.type].class" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium">{{ DELIVERY_USER_TYPE_CONFIG[whale.type].icon }} {{ DELIVERY_USER_TYPE_CONFIG[whale.type].text }}</span></td>
-                      <td class="text-right"><div class="text-sm font-medium text-black/85 font-mono">${{ formatAmount(whale.totalPosition) }}</div><div class="text-[11px] text-black/45 font-mono">L: ${{ formatAmount(whale.longPosition) }} / S: ${{ formatAmount(whale.shortPosition) }}</div></td>
-                      <td class="text-right"><div :class="whale.pnl24h >= 0 ? 'text-emerald-500' : 'text-rose-500'" class="text-sm font-medium font-mono">{{ formatCurrency(whale.pnl24h) }}</div><div :class="whale.pnlRate >= 0 ? 'text-emerald-500' : 'text-rose-500'" class="text-[11px] font-mono">{{ whale.pnlRate >= 0 ? '+' : '' }}{{ whale.pnlRate.toFixed(1) }}%</div></td>
-                      <td class="text-right font-mono text-sm font-medium">${{ formatAmount(whale.nearExpiryPositions) }}</td>
-                      <td><div class="flex flex-wrap gap-1"><span v-for="contract in whale.contracts.slice(0, 2)" :key="contract" class="text-[10px] text-black/45 bg-black/[0.02] px-1.5 py-0.5 rounded border border-black/[0.05]">{{ contract }}</span><span v-if="whale.contracts.length > 2" class="text-[10px] text-black/25">+{{ whale.contracts.length - 2 }}</span></div></td>
-                      <td class="text-center"><span :class="DELIVERY_RISK_LEVEL_CONFIG[whale.riskLevel].class" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border">{{ DELIVERY_RISK_LEVEL_CONFIG[whale.riskLevel].text }}</span></td>
-                    </tr>
-                  </tbody>
-                </table>
+                <a-table  size="small" :pagination="false" :data-source="paginatedWhalesList" :row-key="(whale) => whale.userId" :scroll="{ x: 'max-content' }" :custom-row="(whale, rowIndex) => ({ class: [&quot;hover:bg-black/[0.01]&quot;] })">
+<a-table-column key="column-0">
+<template #title>用户信息</template>
+<template #default="{ record: whale, index: rowIndex }"><div class="text-sm font-medium text-black/85">{{ whale.username }}</div><div class="text-[11px] text-black/45 font-mono">{{ whale.userId }}</div></template>
+</a-table-column>
+<a-table-column key="column-1" align="center" :custom-cell="(whale, rowIndex) => ({ class: [&quot;text-center&quot;] })">
+<template #title>账号类型</template>
+<template #default="{ record: whale, index: rowIndex }"><span :class="DELIVERY_USER_TYPE_CONFIG[whale.type].class" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium">{{ DELIVERY_USER_TYPE_CONFIG[whale.type].icon }} {{ DELIVERY_USER_TYPE_CONFIG[whale.type].text }}</span></template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;text-right&quot;] })">
+<template #title>总持仓</template>
+<template #default="{ record: whale, index: rowIndex }"><div class="text-sm font-medium text-black/85 font-mono">${{ formatAmount(whale.totalPosition) }}</div><div class="text-[11px] text-black/45 font-mono">L: ${{ formatAmount(whale.longPosition) }} / S: ${{ formatAmount(whale.shortPosition) }}</div></template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;text-right&quot;] })">
+<template #title>24h 盈亏</template>
+<template #default="{ record: whale, index: rowIndex }"><div :class="whale.pnl24h >= 0 ? 'text-emerald-500' : 'text-rose-500'" class="text-sm font-medium font-mono">{{ formatCurrency(whale.pnl24h) }}</div><div :class="whale.pnlRate >= 0 ? 'text-emerald-500' : 'text-rose-500'" class="text-[11px] font-mono">{{ whale.pnlRate >= 0 ? '+' : '' }}{{ whale.pnlRate.toFixed(1) }}%</div></template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;text-right font-mono text-sm font-medium&quot;] })">
+<template #title>临期敞口</template>
+<template #default="{ record: whale, index: rowIndex }">${{ formatAmount(whale.nearExpiryPositions) }}</template>
+</a-table-column>
+<a-table-column key="column-5">
+<template #title>主要合约</template>
+<template #default="{ record: whale, index: rowIndex }"><div class="flex flex-wrap gap-1"><span v-for="contract in whale.contracts.slice(0, 2)" :key="contract" class="text-[10px] text-black/45 bg-black/[0.02] px-1.5 py-0.5 rounded border border-black/[0.05]">{{ contract }}</span><span v-if="whale.contracts.length > 2" class="text-[10px] text-black/25">+{{ whale.contracts.length - 2 }}</span></div></template>
+</a-table-column>
+<a-table-column key="column-6" align="center" :custom-cell="(whale, rowIndex) => ({ class: [&quot;text-center&quot;] })">
+<template #title>风险等级</template>
+<template #default="{ record: whale, index: rowIndex }"><span :class="DELIVERY_RISK_LEVEL_CONFIG[whale.riskLevel].class" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border">{{ DELIVERY_RISK_LEVEL_CONFIG[whale.riskLevel].text }}</span></template>
+</a-table-column>
+</a-table>
               </div>
               <footer v-if="whalesTotalPages > 1" class="px-6 py-4 border-t border-black/[0.06] flex items-center justify-center gap-4">
-                <button @click="whalesCurrentPage = Math.max(1, whalesCurrentPage - 1)" :disabled="whalesCurrentPage === 1" class="ant-btn !py-1 !px-3 disabled:opacity-30">上一页</button>
-                <span class="text-xs text-black/45">第 {{ whalesCurrentPage }} / {{ whalesTotalPages }} 页</span>
-                <button @click="whalesCurrentPage = Math.min(whalesTotalPages, whalesCurrentPage + 1)" :disabled="whalesCurrentPage === whalesTotalPages" class="ant-btn !py-1 !px-3 disabled:opacity-30">下一页</button>
+                <a-pagination size="small" :current="whalesCurrentPage" :total="whalesTotalPages" :page-size="1" :show-size-changer="false" @change="whalesCurrentPage = $event" />
               </footer>
             </section>
           </div>
@@ -388,28 +402,32 @@ const exportReport = () => {
             <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm">
               <header class="px-6 py-4 border-b border-black/[0.06]"><h3 class="text-sm font-semibold text-black/85">规则性能排行榜</h3></header>
               <div class="overflow-x-auto">
-                <table class="ant-table">
-                  <thead class="ant-table-thead">
-                    <tr>
-                      <th>规则名称</th>
-                      <th class="text-right">触发次数</th>
-                      <th class="text-right">成功率</th>
-                      <th class="text-right">总影响</th>
-                      <th class="text-right">平均影响</th>
-                      <th>最近触发</th>
-                    </tr>
-                  </thead>
-                  <tbody class="ant-table-tbody">
-                    <tr v-for="rule in deliveryAutoRuleStats.rulePerformance" :key="rule.ruleId" class="hover:bg-black/[0.01]">
-                      <td><div class="text-sm font-medium text-black/85">{{ rule.ruleName }}</div><div class="text-[11px] text-black/45 font-mono">{{ rule.ruleId }}</div></td>
-                      <td class="text-right font-mono text-sm">{{ rule.triggers }}</td>
-                      <td class="text-right font-mono text-sm" :class="rule.successRate >= 95 ? 'text-emerald-500' : 'text-amber-500'">{{ rule.successRate.toFixed(1) }}%</td>
-                      <td class="text-right font-mono text-sm text-emerald-500 font-medium">{{ formatCurrency(rule.totalImpact) }}</td>
-                      <td class="text-right font-mono text-sm text-black/45">{{ formatCurrency(rule.avgImpact) }}</td>
-                      <td class="text-xs text-black/45">{{ rule.lastTrigger }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <a-table  size="small" :pagination="false" :data-source="deliveryAutoRuleStats.rulePerformance" :row-key="(rule) => rule.ruleId" :scroll="{ x: 'max-content' }" :custom-row="(rule, rowIndex) => ({ class: [&quot;hover:bg-black/[0.01]&quot;] })">
+<a-table-column key="column-0">
+<template #title>规则名称</template>
+<template #default="{ record: rule, index: rowIndex }"><div class="text-sm font-medium text-black/85">{{ rule.ruleName }}</div><div class="text-[11px] text-black/45 font-mono">{{ rule.ruleId }}</div></template>
+</a-table-column>
+<a-table-column key="column-1" align="right" :custom-cell="(rule, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;] })">
+<template #title>触发次数</template>
+<template #default="{ record: rule, index: rowIndex }">{{ rule.triggers }}</template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(rule, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;, rule.successRate >= 95 ? 'text-emerald-500' : 'text-amber-500'] })">
+<template #title>成功率</template>
+<template #default="{ record: rule, index: rowIndex }">{{ rule.successRate.toFixed(1) }}%</template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(rule, rowIndex) => ({ class: [&quot;text-right font-mono text-sm text-emerald-500 font-medium&quot;] })">
+<template #title>总影响</template>
+<template #default="{ record: rule, index: rowIndex }">{{ formatCurrency(rule.totalImpact) }}</template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(rule, rowIndex) => ({ class: [&quot;text-right font-mono text-sm text-black/45&quot;] })">
+<template #title>平均影响</template>
+<template #default="{ record: rule, index: rowIndex }">{{ formatCurrency(rule.avgImpact) }}</template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(rule, rowIndex) => ({ class: [&quot;text-xs text-black/45&quot;] })">
+<template #title>最近触发</template>
+<template #default="{ record: rule, index: rowIndex }">{{ rule.lastTrigger }}</template>
+</a-table-column>
+</a-table>
               </div>
             </section>
 
@@ -417,22 +435,20 @@ const exportReport = () => {
               <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm">
                 <header class="px-6 py-4 border-b border-black/[0.06]"><h3 class="text-sm font-semibold text-black/85">操作类型分布</h3></header>
                 <div class="overflow-x-auto">
-                  <table class="ant-table">
-                    <thead class="ant-table-thead">
-                      <tr>
-                        <th>类型</th>
-                        <th class="text-right">次数</th>
-                        <th class="text-right">影响</th>
-                      </tr>
-                    </thead>
-                    <tbody class="ant-table-tbody">
-                      <tr v-for="item in deliveryAutoRuleStats.actionsByType" :key="item.action">
-                        <td><span :class="DELIVERY_RULE_ACTION_CONFIG[item.action]?.class || 'bg-black/5 text-black/45'" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium">{{ DELIVERY_RULE_ACTION_CONFIG[item.action]?.text || item.action }}</span></td>
-                        <td class="text-right font-mono text-sm">{{ item.count }}</td>
-                        <td class="text-right font-mono text-sm" :class="item.impact >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatCurrency(item.impact) }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <a-table  size="small" :pagination="false" :data-source="deliveryAutoRuleStats.actionsByType" :row-key="(item) => item.action" :scroll="{ x: 'max-content' }">
+<a-table-column key="column-0">
+<template #title>类型</template>
+<template #default="{ record: item, index: rowIndex }"><span :class="DELIVERY_RULE_ACTION_CONFIG[item.action]?.class || 'bg-black/5 text-black/45'" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium">{{ DELIVERY_RULE_ACTION_CONFIG[item.action]?.text || item.action }}</span></template>
+</a-table-column>
+<a-table-column key="column-1" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;] })">
+<template #title>次数</template>
+<template #default="{ record: item, index: rowIndex }">{{ item.count }}</template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;, item.impact >= 0 ? 'text-emerald-500' : 'text-rose-500'] })">
+<template #title>影响</template>
+<template #default="{ record: item, index: rowIndex }">{{ formatCurrency(item.impact) }}</template>
+</a-table-column>
+</a-table>
                 </div>
               </section>
 

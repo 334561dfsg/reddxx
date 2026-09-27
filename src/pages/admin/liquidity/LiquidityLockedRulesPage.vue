@@ -24,13 +24,13 @@ const sections = [
 		<!-- 导航栏 -->
 		<article class="rounded-xl border border-slate-200 bg-white p-4">
 			<nav class="flex flex-wrap gap-2">
-				<button v-for="section in sections" :key="section.key" @click="activeSection = section.key"
+				<a-button type="text" v-for="section in sections" :key="section.key" @click="activeSection = section.key"
 						:class="['px-4 py-2 text-sm font-medium rounded-lg transition',
 								activeSection === section.key
 								? 'bg-blue-600 text-white'
 								: 'bg-slate-100 text-slate-700 hover:bg-slate-200']">
 					{{ section.label }}
-				</button>
+				</a-button>
 			</nav>
 		</article>
 
@@ -217,42 +217,7 @@ const sections = [
 						<h3 class="font-semibold text-slate-900">👥 风险分层限购</h3>
 						<p class="mt-2 text-sm text-slate-700">根据用户等级（普通/VIP/黄金/铂金/钻石）设置不同的限购额度。</p>
 						<div class="mt-2 overflow-x-auto rounded-lg border border-slate-200">
-							<table class="w-full text-sm">
-								<thead class="bg-slate-100 text-slate-600">
-									<tr>
-										<th class="px-3 py-2 text-left font-medium">用户等级</th>
-										<th class="px-3 py-2 text-left font-medium">单次限额</th>
-										<th class="px-3 py-2 text-left font-medium">终身限额</th>
-									</tr>
-								</thead>
-								<tbody class="text-slate-700">
-									<tr class="border-t border-slate-100">
-										<td class="px-3 py-2">普通用户</td>
-										<td class="px-3 py-2">10,000 USDT</td>
-										<td class="px-3 py-2">50,000 USDT</td>
-									</tr>
-									<tr class="border-t border-slate-100">
-										<td class="px-3 py-2">VIP</td>
-										<td class="px-3 py-2">50,000 USDT</td>
-										<td class="px-3 py-2">200,000 USDT</td>
-									</tr>
-									<tr class="border-t border-slate-100">
-										<td class="px-3 py-2">黄金</td>
-										<td class="px-3 py-2">100,000 USDT</td>
-										<td class="px-3 py-2">500,000 USDT</td>
-									</tr>
-									<tr class="border-t border-slate-100">
-										<td class="px-3 py-2">铂金</td>
-										<td class="px-3 py-2">300,000 USDT</td>
-										<td class="px-3 py-2">1,000,000 USDT</td>
-									</tr>
-									<tr class="border-t border-slate-100">
-										<td class="px-3 py-2">钻石</td>
-										<td class="px-3 py-2">500,000 USDT</td>
-										<td class="px-3 py-2">2,000,000 USDT</td>
-									</tr>
-								</tbody>
-							</table>
+							<a-table size="small" :pagination="false" :data-source="[{ key: 0 }, { key: 1 }, { key: 2 }, { key: 3 }, { key: 4 }]" row-key="key" :scroll="{ x: 'max-content' }"><a-table-column key="static-0"><template #title>用户等级</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2">普通用户</div><div v-if="record.key === 1" class="px-3 py-2">VIP</div><div v-if="record.key === 2" class="px-3 py-2">黄金</div><div v-if="record.key === 3" class="px-3 py-2">铂金</div><div v-if="record.key === 4" class="px-3 py-2">钻石</div></template></a-table-column><a-table-column key="static-1"><template #title>单次限额</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2">10,000 USDT</div><div v-if="record.key === 1" class="px-3 py-2">50,000 USDT</div><div v-if="record.key === 2" class="px-3 py-2">100,000 USDT</div><div v-if="record.key === 3" class="px-3 py-2">300,000 USDT</div><div v-if="record.key === 4" class="px-3 py-2">500,000 USDT</div></template></a-table-column><a-table-column key="static-2"><template #title>终身限额</template><template #default="{ record }"><div v-if="record.key === 0" class="px-3 py-2">50,000 USDT</div><div v-if="record.key === 1" class="px-3 py-2">200,000 USDT</div><div v-if="record.key === 2" class="px-3 py-2">500,000 USDT</div><div v-if="record.key === 3" class="px-3 py-2">1,000,000 USDT</div><div v-if="record.key === 4" class="px-3 py-2">2,000,000 USDT</div></template></a-table-column></a-table>
 						</div>
 					</div>
 				</div>
