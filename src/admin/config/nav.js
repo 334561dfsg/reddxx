@@ -18,6 +18,7 @@ export const navTree = [
     icon: 'users',
     children: [
       { title: '用户列表', path: '/admin/users/list' },
+      { title: '用户充值报表', path: '/admin/users/deposit-report' },
       { title: '用户操作日志', path: '/admin/users/operation-logs' },
       { title: '出金审核', path: '/admin/users/withdraw-audit' },
       { title: '入金审核', path: '/admin/users/deposit-orders' },

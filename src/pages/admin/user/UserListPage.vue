@@ -995,7 +995,13 @@ const clearDetailDrawer = () => {
     <!-- 页面标题 -->
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div><h1 class="text-2xl font-bold text-slate-900">用户管理</h1><p class="text-sm text-slate-500 mt-1">管理系统用户、查看用户信息和操作记录</p></div>
-      <div class="flex flex-wrap gap-3"><button type="button" class="min-h-11 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" :disabled="!!staffError" @click="openStaffEditor('create', null, $event.currentTarget)">添加用户</button></div>
+      <div class="flex flex-wrap gap-3">
+        <RouterLink to="/admin/users/deposit-report" class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4v16h16M8 16v-5m5 5V7m5 9v-7" /></svg>
+          用户充值报表
+        </RouterLink>
+        <button type="button" class="min-h-11 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" :disabled="!!staffError" @click="openStaffEditor('create', null, $event.currentTarget)">添加用户</button>
+      </div>
     </div>
     <Teleport to="body">
       <div class="pointer-events-none fixed inset-x-0 top-5 z-[10000] flex justify-center" role="status" aria-live="polite" aria-atomic="true">

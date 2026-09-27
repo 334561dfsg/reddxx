@@ -56,6 +56,13 @@ export const consoleRoutes = [
     component: () => import('../../pages/admin/user/UserListPage.vue')
   },
   {
+    path: 'users/deposit-report',
+    name: 'users-deposit-report',
+    component: () => import('../../pages/admin/user/UserDepositReportPage.vue'),
+    meta: { title: '用户管理 / 用户充值报表', desc: '按代理、业务员和日期逐笔查询充值订单，导出全部筛选结果。' }
+  },
+  { path: 'users/performance-report', redirect: '/admin/users/deposit-report' },
+  {
     path: 'users/operation-logs',
     name: 'users-operation-logs',
     component: () => import('../../pages/admin/user/UserOperationLogPage.vue'),
