@@ -1,16 +1,35 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, h, watch } from 'vue'
 import { getSiteConfigSnapshot } from '../mock/siteConfig'
 import { navTree } from '../config/nav'
 import { useAdminPermissionsStore } from '../stores/adminPermissions'
 import { filterNavTreeByPermissions } from '../utils/filterNavByPermissions'
-import SidebarNode from './SidebarNode.vue'
+import { Layout, Drawer } from 'ant-design-vue'
+import { useRoute, useRouter } from 'vue-router'
+import { AppstoreOutlined, TeamOutlined, SettingOutlined, BarChartOutlined } from '@ant-design/icons-vue'
 
+const wide = ref(window.matchMedia('(min-width: 1024px)').matches)
+const media = window.matchMedia('(min-width: 1024px)')
+const syncWidth = event => { wide.value = event.matches }
+onMounted(() => media.addEventListener('change', syncWidth))
+onUnmounted(() => media.removeEventListener('change', syncWidth))
+const route = useRoute()
+const router = useRouter()
+const openKeys = ref([])
+const menuItems = computed(() => {
+  const map = (items) => items.map(item => ({ key: item.path || item.title, label: item.title, icon: item.icon ? () => h(item.icon === 'users' ? TeamOutlined : item.icon === 'finance' ? BarChartOutlined : item.icon === 'settings' ? SettingOutlined : AppstoreOutlined) : undefined, children: item.children?.length ? map(item.children) : undefined }))
+  return map(filteredNavTree.value)
+})
 const permStore = useAdminPermissionsStore()
 
 const filteredNavTree = computed(() =>
   filterNavTreeByPermissions(navTree, (keys) => permStore.canAny(keys))
 )
+
+watch(() => route.path, path => {
+  const visit = (items, parents = []) => { for (const item of items) { const key = item.path || item.title; if (item.path === path) openKeys.value = [...new Set([...openKeys.value, ...parents])]; if (item.children) visit(item.children, [...parents, key]) } }
+  visit(filteredNavTree.value)
+}, { immediate: true, flush: 'post' })
 
 const props = defineProps({
   mobileOpen: {
@@ -59,10 +78,7 @@ const sidebarClass = computed(() => {
 </script>
 
 <template>
-  <aside
-    class="fixed inset-y-0 left-0 z-40 w-[256px] shrink-0 border-r border-slate-200 bg-white text-slate-700 transition-transform duration-200 lg:static lg:z-auto"
-    :class="sidebarClass"
-  >
+  <component :is="wide ? Layout.Sider : Drawer" :width="256" theme="light" :open="mobileOpen" placement="left" :mask-closable="false" :closable="false" :body-style="{ padding: 0 }" @close="emit('close')">
     <div class="flex h-full flex-col">
       <div class="flex items-center justify-between gap-3 border-b border-slate-200/70 px-5 py-4">
         <div class="flex min-w-0 items-center gap-3">
@@ -97,23 +113,39 @@ const sidebarClass = computed(() => {
           </div>
         </div>
 
-        <button
-          type="button"
+        <a-button
+          v-if="!wide"
+          type="text"
           class="rounded-md p-1 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 lg:hidden"
-          aria-label="close menu"
+          aria-label="关闭"
           @click="emit('close')"
         >
           <svg viewBox="0 0 20 20" class="h-5 w-5" fill="none">
             <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
           </svg>
-        </button>
+        </a-button>
       </div>
 
-      <nav class="flex-1 overflow-y-auto px-3 py-3">
-        <ul class="space-y-1">
-          <SidebarNode v-for="item in filteredNavTree" :key="item.title + (item.path || '')" :item="item" :level="0" />
-        </ul>
+      <nav class="sidebar-menu flex-1 overflow-y-auto py-2" aria-label="管理台导航">
+        <a-menu v-model:open-keys="openKeys" :selected-keys="[route.path]" :items="menuItems" mode="inline" @click="({ key }) => { if (key.startsWith('/')) { router.push(key); emit('close') } }" />
       </nav>
     </div>
-  </aside>
+  </component>
 </template>
+
+<style scoped>
+.sidebar-menu :deep(.ant-menu-item),
+.sidebar-menu :deep(.ant-menu-submenu-title) {
+  height: 36px;
+  line-height: 36px;
+  margin-block: 2px;
+}
+/* Preserve usable touch targets while keeping the surrounding spacing compact. */
+@media (pointer: coarse) {
+  .sidebar-menu :deep(.ant-menu-item),
+  .sidebar-menu :deep(.ant-menu-submenu-title) {
+    height: 44px;
+    line-height: 44px;
+  }
+}
+</style>

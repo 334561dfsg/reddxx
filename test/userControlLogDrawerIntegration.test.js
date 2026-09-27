@@ -25,6 +25,12 @@ const mountUserList = async () => {
   })
   const host = {
     setup() {
+      // Keep this harness focused on drawer coordination; render the Ant table's
+      // public bodyCell slot contract and forward button DOM events.
+      const components = getCurrentInstance().appContext.components
+      components.RouterLink = { props: { to: String, custom: Boolean }, setup: (props, { slots }) => () => props.custom ? slots.default?.({ href: props.to, navigate: () => {} }) : h('a', { href: props.to }, slots.default?.()) }
+      components['a-button'] = { inheritAttrs: false, setup: (_, { attrs, slots }) => () => h('button', attrs, slots.default?.()) }
+      components['a-table'] = { props: ['dataSource', 'columns'], setup: (props, { slots }) => () => h('table', props.dataSource.map(record => h('tr', props.columns.map(column => h('td', slots.bodyCell?.({ record, column })))))) }
       getCurrentInstance().appContext.config.globalProperties.$router = {
         push: async (location) => { routerPushes.push(location) }
       }

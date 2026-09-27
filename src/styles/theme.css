@@ -11,10 +11,10 @@
   --transition-all: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
-/* Ant Design Style Base Components */
+/* Legacy prototype styles: exclude real Ant Design Vue components. */
 
 /* Buttons */
-.ant-btn {
+.ant-btn:not([class*="css-"]) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -37,35 +37,35 @@
   background: #ffffff;
 }
 
-.ant-btn:hover {
+.ant-btn:not([class*="css-"]):hover {
   color: var(--antd-primary-hover);
   border-color: var(--antd-primary-hover);
 }
 
-.ant-btn:active {
+.ant-btn:not([class*="css-"]):active {
   color: var(--antd-primary-active);
   border-color: var(--antd-primary-active);
 }
 
-.ant-btn-primary {
+.ant-btn-primary:not([class*="css-"]) {
   color: #fff;
   background-color: var(--antd-primary);
   border-color: var(--antd-primary);
   box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
 }
 
-.ant-btn-primary:hover {
+.ant-btn-primary:not([class*="css-"]):hover {
   color: #fff;
   background-color: var(--antd-primary-hover);
   border-color: var(--antd-primary-hover);
 }
 
-.ant-btn-primary:active {
+.ant-btn-primary:not([class*="css-"]):active {
   background-color: var(--antd-primary-active);
   border-color: var(--antd-primary-active);
 }
 
-.ant-btn-link {
+.ant-btn-link:not([class*="css-"]) {
   color: var(--antd-primary);
   border-color: transparent;
   background: transparent;
@@ -73,13 +73,13 @@
   padding: 4px 8px;
 }
 
-.ant-btn-link:hover {
+.ant-btn-link:not([class*="css-"]):hover {
   color: var(--antd-primary-hover);
   background: rgba(0, 0, 0, 0.018);
 }
 
-/* Form Controls */
-.ant-input, .ant-select {
+/* Legacy native selects only: Ant Select owns its inner selector border. */
+.ant-input:not([class*="css-"]), select.ant-select {
   box-sizing: border-box;
   margin: 0;
   padding: 4px 11px;
@@ -100,18 +100,18 @@
   transition: var(--transition-all);
 }
 
-.ant-input:hover, .ant-select:hover {
+.ant-input:not([class*="css-"]):hover, select.ant-select:hover {
   border-color: var(--antd-primary-hover);
 }
 
-.ant-input:focus, .ant-select:focus {
+.ant-input:not([class*="css-"]):focus, select.ant-select:focus {
   border-color: var(--antd-primary);
   box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
   outline: 0;
 }
 
 /* Table Style */
-.ant-table {
+.ant-table:not([class*="css-"]) {
   width: 100%;
   text-align: left;
   border-radius: 8px 8px 0 0;
@@ -119,7 +119,7 @@
   border-spacing: 0;
 }
 
-.ant-table-thead > tr > th {
+.ant-table-thead:not(.ant-table-wrapper *) > tr > th {
   position: relative;
   color: var(--text-primary);
   font-weight: 600;
@@ -130,19 +130,19 @@
   padding: 12px 16px;
 }
 
-.ant-table-tbody > tr > td {
+.ant-table-tbody:not(.ant-table-wrapper *) > tr > td {
   border-bottom: 1px solid #f0f0f0;
   transition: background 0.3s;
   padding: 12px 16px;
   color: var(--text-primary);
 }
 
-.ant-table-tbody > tr:hover > td {
+.ant-table-tbody:not(.ant-table-wrapper *) > tr:hover > td {
   background: #fafafa;
 }
 
 /* Pagination */
-.ant-pagination-item {
+.ant-pagination-item:not(.ant-pagination *) {
   display: inline-block;
   min-width: 32px;
   height: 32px;
@@ -159,18 +159,18 @@
   transition: var(--transition-all);
 }
 
-.ant-pagination-item:hover {
+.ant-pagination-item:not(.ant-pagination *):hover {
   border-color: var(--antd-primary);
   color: var(--antd-primary);
 }
 
-.ant-pagination-item-active {
+.ant-pagination-item-active:not(.ant-pagination *) {
   font-weight: 600;
   background-color: #fff;
   border-color: var(--antd-primary);
 }
 
-.ant-pagination-item-active a {
+.ant-pagination-item-active:not(.ant-pagination *) a {
   color: var(--antd-primary);
 }
 

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, nextTick, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
+import { BarChartOutlined } from '@ant-design/icons-vue'
 import UserStaffEditorDialog from '../../../admin/components/user/UserStaffEditorDialog.vue'
 import UserStaffReportDrawer from '../../../admin/components/user/UserStaffReportDrawer.vue'
 import { getUserStaffRepository } from '../../../admin/repositories/userStaffRepository.js'
@@ -61,6 +62,77 @@ import {
   grantUserRebate,
   setUserVipLevel
 } from '../../../admin/repositories/userCreditMembershipRepository.js'
+
+const userColumnDefinitions = [
+  {
+    "title": "ID",
+    "key": "col0",
+    "width": 150
+  },
+  {
+    "title": "用户名",
+    "key": "col1",
+    "width": 150
+  },
+  {
+    "title": "邮箱",
+    "key": "col2",
+    "width": 150
+  },
+  {
+    "title": "角色",
+    "key": "col3",
+    "width": 150
+  },
+  {
+    "title": "是否为业务员",
+    "key": "col4",
+    "width": 150
+  },
+  {
+    "title": "所属代理",
+    "key": "col5",
+    "width": 150
+  },
+  {
+    "title": "VIP",
+    "key": "col6",
+    "width": 150
+  },
+  {
+    "title": "信用分",
+    "key": "col7",
+    "width": 150
+  },
+  {
+    "title": "账户余额",
+    "key": "col8",
+    "width": 150
+  },
+  {
+    "title": "裂变上级",
+    "key": "col9",
+    "width": 150
+  },
+  {
+    "title": "点控",
+    "key": "col10",
+    "width": 150
+  },
+  {
+    "title": "操作",
+    "key": "col11",
+    "width": 352
+  }
+]
+const actionColumnMedia = typeof window !== 'undefined' ? window.matchMedia?.('(min-width: 768px)') : null
+const pinActions = ref(actionColumnMedia?.matches ?? true)
+const updateActionPinning = event => { pinActions.value = event.matches }
+onMounted(() => actionColumnMedia?.addEventListener('change', updateActionPinning))
+onBeforeUnmount(() => actionColumnMedia?.removeEventListener('change', updateActionPinning))
+const userColumns = computed(() => userColumnDefinitions.map(column => column.key === 'col11'
+  ? { ...column, fixed: pinActions.value ? 'right' : undefined }
+  : column))
 
 const staffEditorOpen = ref(false)
 const staffEditorMode = ref('create')
@@ -996,11 +1068,10 @@ const clearDetailDrawer = () => {
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div><h1 class="text-2xl font-bold text-slate-900">用户管理</h1><p class="text-sm text-slate-500 mt-1">管理系统用户、查看用户信息和操作记录</p></div>
       <div class="flex flex-wrap gap-3">
-        <RouterLink to="/admin/users/deposit-report" class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4v16h16M8 16v-5m5 5V7m5 9v-7" /></svg>
-          用户充值报表
+        <RouterLink to="/admin/users/deposit-report" custom v-slot="{ href, navigate }">
+          <a-button :href="href" @click="navigate"><template #icon><BarChartOutlined /></template>用户充值报表</a-button>
         </RouterLink>
-        <button type="button" class="min-h-11 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" :disabled="!!staffError" @click="openStaffEditor('create', null, $event.currentTarget)">添加用户</button>
+        <a-button type="primary" html-type="button" :disabled="!!staffError" @click="openStaffEditor('create', null, $event.currentTarget)">添加用户</a-button>
       </div>
     </div>
     <Teleport to="body">
@@ -1011,14 +1082,14 @@ const clearDetailDrawer = () => {
       </div>
     </Teleport>
     <p v-if="staffMessage" role="status" class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">{{ staffMessage }}</p>
-    <p v-if="staffError" role="alert" class="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{{ staffError }}<button class="ml-3 underline" type="button" @click="initializeStaff">重试</button></p>
+    <p v-if="staffError" role="alert" class="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{{ staffError }}<a-button html-type="button" @click="initializeStaff">重试</a-button></p>
 
     <!-- 筛选和搜索区域 -->
-    <div class="rounded-xl border border-slate-200 bg-white p-5">
+    <a-card :bordered="false">
       <div class="mb-4 grid gap-3 sm:grid-cols-3">
-        <label class="text-xs font-medium text-slate-600">用户类型<select v-model="roleFilter" class="mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm"><option value="">全部类型</option><option value="user">普通用户</option><option value="agent">代理</option></select></label>
-        <label class="text-xs font-medium text-slate-600">所属代理<select v-model="agentFilter" class="mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm"><option value="">全部代理</option><option v-for="agent in staffAgents" :key="agent.id" :value="agent.id">{{ agent.username }} · {{ agent.id }}</option></select></label>
-        <label class="text-xs font-medium text-slate-600">业务员<select v-model="employeeFilter" class="mt-1 block min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm"><option value="">全部业务员</option><option value="unassigned">未分配业务员</option><option v-for="person in staffEmployees" :key="person.id" :value="person.id">{{ person.username }} · {{ person.id }}</option></select></label>
+        <label class="text-xs font-medium text-slate-600">用户类型<a-select v-model:value="roleFilter" class="mt-1 w-full"><a-select-option value="">全部类型</a-select-option><a-select-option value="user">普通用户</a-select-option><a-select-option value="agent">代理</a-select-option></a-select></label>
+        <label class="text-xs font-medium text-slate-600">所属代理<a-select v-model:value="agentFilter" class="mt-1 w-full"><a-select-option value="">全部代理</a-select-option><a-select-option v-for="agent in staffAgents" :key="agent.id" :value="agent.id">{{ agent.username }} · {{ agent.id }}</a-select-option></a-select></label>
+        <label class="text-xs font-medium text-slate-600">业务员<a-select v-model:value="employeeFilter" class="mt-1 w-full"><a-select-option value="">全部业务员</a-select-option><a-select-option value="unassigned">未分配业务员</a-select-option><a-select-option v-for="person in staffEmployees" :key="person.id" :value="person.id">{{ person.username }} · {{ person.id }}</a-select-option></a-select></label>
       </div>
       <!-- 搜索框 -->
       <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -1051,83 +1122,46 @@ const clearDetailDrawer = () => {
           icon-path="M17 9V7a5 5 0 00-10 0v2M5 9h14v10H5V9z"
         />
       </div>
-    </div>
+    </a-card>
 
-    <!-- 加载状态 -->
-    <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-12 text-center">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-      <p class="mt-4 text-sm text-slate-500">正在加载用户数据...</p>
-    </div>
+    <a-card v-if="loading" :bordered="false" class="text-center"><a-spin tip="正在加载用户数据…"><div class="h-24" /></a-spin></a-card>
 
     <!-- 用户表格 -->
     <div v-else-if="!loading && users.length > 0" class="rounded-xl border border-slate-200 bg-white overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[1220px]">
-          <thead class="bg-slate-50 border-b border-slate-200">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">用户名</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">邮箱</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">角色</th>
-              <th scope="col" class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-slate-600">是否为业务员</th>
-              <th scope="col" class="min-w-40 px-4 py-3 text-left text-xs font-semibold text-slate-600">所属代理</th>
-              <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">VIP</th>
-              <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">信用分</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">账户余额</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">裂变上级</th>
-              <th class="min-w-24 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 whitespace-nowrap">点控</th>
-              <th class="w-[20rem] max-w-[20rem] px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200">
-            <tr 
-              v-for="user in users" 
-              :key="user.id"
-              class="hover:bg-slate-50 transition-colors cursor-pointer"
-              @click="openUserDetail(user, 'overview', $event.currentTarget)"
-            >
-              <!-- ID -->
-              <td class="px-4 py-3">
+<a-table :columns="userColumns" :data-source="users" row-key="id" :pagination="false" :scroll="{ x: 1970 }" size="middle" :custom-row="user => ({ onClick: event => openUserDetail(user, 'overview', event.currentTarget) })">
+<template #bodyCell="{ column, record: user }">
+<template v-if="column.key === 'col0'">
                 <span class="text-xs font-mono text-slate-600">{{ user.id }}</span>
-              </td>
-
-              <!-- 用户名 -->
-              <td class="px-4 py-3">
+              </template>
+<template v-if="column.key === 'col1'">
                 <p class="text-sm font-medium text-slate-900">{{ user.username }}</p>
-              </td>
-
-              <!-- 邮箱 -->
-              <td class="px-4 py-3">
+              </template>
+<template v-if="column.key === 'col2'">
                 <p class="text-sm text-slate-600">{{ user.email }}</p>
-              </td>
-
-              <!-- 角色 -->
-              <td class="px-4 py-3">
-                <span 
+              </template>
+<template v-if="column.key === 'col3'">
+                <span
                   :class="roleConfig[user.role].class"
                   class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
                 >
                   {{ roleConfig[user.role].text }}
                 </span>
-              </td>
-
-              <td class="px-4 py-3 text-xs">
+              </template>
+<template v-if="column.key === 'col4'">
                 <span :class="user.isSalesperson === true ? 'text-blue-700 bg-blue-50' : 'text-slate-500 bg-slate-100'" class="inline-flex rounded-full px-2 py-1 font-medium">{{ user.isSalesperson === true ? '是' : '否' }}</span>
-              </td>
-              <td class="px-4 py-3 text-xs text-slate-600"><p>{{ user.role === 'agent' ? '代理账号' : user.agentParentId ? staffName(user.agentParentId) : '未设置代理' }}</p></td>
-              <!-- VIP -->
-              <td class="px-4 py-3 text-center">
+              </template>
+<template v-if="column.key === 'col5'"><p>{{ user.role === 'agent' ? '代理账号' : user.agentParentId ? staffName(user.agentParentId) : '未设置代理' }}</p></template>
+<template v-if="column.key === 'col6'">
                 <span v-if="user.isVip" class="inline-flex items-center justify-center">
                   <svg class="h-5 w-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                   </svg>
                 </span>
                 <span v-else class="text-xs text-slate-400">-</span>
-              </td>
-
-              <!-- 信用分 -->
-              <td class="px-4 py-3 text-center">
-                <span 
+              </template>
+<template v-if="column.key === 'col7'">
+                <span
                   class="inline-flex px-2 py-1 text-sm font-semibold rounded-md"
                   :class="{
                     'bg-emerald-100 text-emerald-700': user.creditScore >= 700,
@@ -1138,25 +1172,19 @@ const clearDetailDrawer = () => {
                 >
                   {{ user.creditScore }}
                 </span>
-              </td>
-
-              <!-- 账户余额 -->
-              <td class="px-4 py-3 text-right">
+              </template>
+<template v-if="column.key === 'col8'">
                 <span class="text-sm font-medium text-slate-900">
                   {{ formatCurrency(user.balance) }}
                 </span>
-              </td>
-
-              <!-- 裂变上级 -->
-              <td class="px-4 py-3">
+              </template>
+<template v-if="column.key === 'col9'">
                 <span v-if="user.parentUsername" class="text-sm text-slate-600">
                   {{ user.parentUsername }}
                 </span>
                 <span v-else class="text-xs text-slate-400">-</span>
-              </td>
-
-              <!-- 用户点控 -->
-              <td class="px-4 py-3 whitespace-nowrap">
+              </template>
+<template v-if="column.key === 'col10'">
                 <span
                   v-if="controlMetaOf(user).hasCurrent"
                   class="inline-flex rounded-md px-2.5 py-1 text-xs font-semibold ring-1"
@@ -1165,123 +1193,97 @@ const clearDetailDrawer = () => {
                   {{ controlMetaOf(user).controlLabel }}
                 </span>
                 <span v-else class="text-xs text-slate-400">-</span>
-              </td>
-
-              <!-- 用户快捷操作 -->
-              <td class="w-[20rem] max-w-[20rem] px-4 py-3">
+              </template>
+<template v-if="column.key === 'col11'">
                 <div data-testid="user-row-action-bar" class="flex max-w-[20rem] flex-wrap items-center gap-2" @click.stop>
-                  <button
-                    type="button"
-                    class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    html-type="button"
+
                     aria-label="查看用户详情"
                     @click="selectUserDetail(user, $event.currentTarget)"
                   >
-                    详情</button>
-                  <button
-                    type="button"
-                    class="inline-flex h-8 min-w-16 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    详情</a-button>
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-16 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    html-type="button"
+
                     aria-label="编辑用户资料"
                     @click="handleOperationDrawerAction({ id: 'edit-profile', user, trigger: $event.currentTarget })"
                   >
-                    编辑资料</button>
-                  <button
-                    type="button"
-                    class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs bg-blue-50/70 font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    编辑资料</a-button>
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs bg-blue-50/70 font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    html-type="button"
+
                     aria-label="客服入金"
                     @click="openRegularAction(user, 'deposit', $event.currentTarget)"
                   >
-                    入金</button>
-                  <button
-                    type="button"
-                    class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg px-2.5 text-xs font-medium focus:outline-none focus:ring-2"
+                    入金</a-button>
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg px-2.5 text-xs font-medium focus:outline-none focus:ring-2"
+                    html-type="button"
+
                     :class="isLocked(user)
                       ? 'bg-emerald-50/80 text-emerald-700 hover:bg-emerald-100 focus:ring-emerald-500'
                       : 'bg-rose-50/80 text-rose-700 hover:bg-rose-100 focus:ring-rose-500'"
                     :aria-label="isLocked(user) ? '解封用户' : '封禁用户'"
                     @click="handleOperationDrawerAction({ id: 'freeze-account', user, trigger: $event.currentTarget })"
                   >
-                    {{ isLocked(user) ? '解封' : '封户' }}</button>
-                  <button
-                    type="button"
-                    class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg bg-amber-50/80 px-2.5 text-xs font-medium text-amber-700 hover:bg-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    {{ isLocked(user) ? '解封' : '封户' }}</a-button>
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg bg-amber-50/80 px-2.5 text-xs font-medium text-amber-700 hover:bg-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    html-type="button"
+
                     aria-label="设置用户点控"
                     @click="handleOperationDrawerAction({ id: 'point-control', user, trigger: $event.currentTarget })"
                   >
-                    点控</button>
-                  <button
-                    type="button"
-                    class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-rose-50/80 font-medium text-rose-700 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    点控</a-button>
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-rose-50/80 font-medium text-rose-700 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    html-type="button"
+
                     aria-label="修改用户信用分"
                     @click="handleOperationDrawerAction({ id: 'credit-adjust', user, trigger: $event.currentTarget })"
                   >
-                    修改信用分</button>
-                  <button
-                    type="button"
-                    class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-violet-50/80 font-medium text-violet-700 hover:bg-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    修改信用分</a-button>
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-violet-50/80 font-medium text-violet-700 hover:bg-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    html-type="button"
+
                     aria-label="查看用户信用分审核"
                     @click="handleOperationDrawerAction({ id: 'credit-review', user, trigger: $event.currentTarget })"
                   >
-                    信用分审核</button>
-                  <button
+                    信用分审核</a-button>
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-emerald-50/80 px-2.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     v-if="!isAgentUser(user)"
-                    type="button"
-                    class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-emerald-50/80 px-2.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    html-type="button"
+
                     aria-label="设置用户为代理"
                     @click="handleOperationDrawerAction({ id: 'reset-agent', user, trigger: $event.currentTarget })"
                   >
-                    设为代理</button>
-                  <button
-                    type="button"
-                    class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-cyan-50/80 px-2.5 text-xs font-medium text-cyan-700 hover:bg-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    设为代理</a-button>
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-cyan-50/80 px-2.5 text-xs font-medium text-cyan-700 hover:bg-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    html-type="button"
+
                     aria-label="设置用户上级代理"
                     @click="handleOperationDrawerAction({ id: 'set-agent-parent', user, trigger: $event.currentTarget })"
                   >
-                    设置上级代理</button>
-                  <button
+                    设置上级代理</a-button>
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-indigo-50/80 px-2.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
                     v-if="user.role === 'user'"
-                    type="button"
-                    class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-indigo-50/80 px-2.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                    html-type="button"
+
                     :disabled="!!staffError"
                     aria-label="设置上级业务员"
                     @click="handleOperationDrawerAction({ id: 'set-employee', user, trigger: $event.currentTarget })"
-                  >设置上级业务员</button>
-                  <button
-                    :ref="(element) => setActionMenuTriggerRef(user, element)"
-                    type="button"
-                    class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >设置上级业务员</a-button>
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    :ref="(element) => setActionMenuTriggerRef(user, element?.$el || element)"
+                    html-type="button"
                     aria-label="更多用户操作"
                     @click="openOperationDrawer(user)"
                   >
                     更多
-                  </button>
+                  </a-button>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </template>
+</template></a-table>
       </div>
-      <!-- 分页 -->
-      <div v-if="totalPages > 1" class="p-4 border-t border-slate-200 flex items-center justify-between">
-        <p class="text-sm text-slate-600">
-          第 <span class="font-medium">{{ pagination.currentPage }}</span> / <span class="font-medium">{{ totalPages }}</span> 页，共 <span class="font-medium">{{ pagination.total }}</span> 条记录
-        </p>
-        <div class="flex items-center gap-2">
-          <button
-            @click="pagination.currentPage--"
-            :disabled="pagination.currentPage <= 1"
-            class="px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            上一页
-          </button>
-          <button
-            @click="pagination.currentPage++"
-            :disabled="pagination.currentPage >= totalPages"
-            class="px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            下一页
-          </button>
-        </div>
-      </div>
+      <div class="p-4 flex justify-end"><a-pagination v-model:current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false" :show-total="total => `共 ${total} 条`" /></div>
     </div>
 
     <!-- 空状态 -->
@@ -1291,13 +1293,13 @@ const clearDetailDrawer = () => {
       </svg>
       <h3 class="mt-4 text-lg font-semibold text-slate-900">未找到用户</h3>
       <p class="mt-2 text-sm text-slate-500">请尝试调整用户 ID、手机号、邮箱或钱包地址</p>
-      <button
+      <a-button type="primary"
         v-if="hasSearchFilters"
         @click="userIdKeyword = ''; phoneKeyword = ''; emailKeyword = ''; walletAddressKeyword = ''"
-        class="mt-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+
       >
         清空搜索
-      </button>
+      </a-button>
     </div>
 
     <!-- 用户详情抽屉 -->
@@ -1582,6 +1584,33 @@ const clearDetailDrawer = () => {
 </template>
 
 <style scoped>
+
+[data-testid="user-row-action-bar"] :deep(.ant-btn) {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 0 10px; font-size: 12px; font-weight: 500;
+  border-radius: 8px; box-shadow: none;
+}
+[data-testid="user-row-action-bar"] :deep(.ant-btn:not([aria-label="更多用户操作"])) { border-color: transparent; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn:focus-visible) { outline: 2px solid #1677ff; outline-offset: 2px; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="客服入金"]) { background: #eff6ff; color: #1d4ed8; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="客服入金"]:hover:not(:disabled)) { background: #dbeafe; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="封禁用户"]) { background: #fff1f2; color: #be123c; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="封禁用户"]:hover:not(:disabled)) { background: #ffe4e6; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="解封用户"]) { background: #ecfdf5; color: #047857; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="解封用户"]:hover:not(:disabled)) { background: #d1fae5; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户点控"]) { background: #fffbeb; color: #b45309; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户点控"]:hover:not(:disabled)) { background: #fef3c7; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="修改用户信用分"]) { background: #fff1f2; color: #be123c; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="修改用户信用分"]:hover:not(:disabled)) { background: #ffe4e6; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="查看用户信用分审核"]) { background: #f5f3ff; color: #6d28d9; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="查看用户信用分审核"]:hover:not(:disabled)) { background: #ede9fe; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户为代理"]) { background: #ecfdf5; color: #047857; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户为代理"]:hover:not(:disabled)) { background: #d1fae5; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户上级代理"]) { background: #ecfeff; color: #0e7490; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户上级代理"]:hover:not(:disabled)) { background: #cffafe; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置上级业务员"]) { background: #eef2ff; color: #4338ca; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置上级业务员"]:hover:not(:disabled)) { background: #e0e7ff; }
+
 .dialog-overlay-enter-active { transition: opacity 200ms ease-out; }
 .dialog-overlay-leave-active { transition: opacity 150ms ease-in; }
 .dialog-panel-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }

@@ -256,10 +256,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header class="flex h-12 items-center justify-between border-b border-black/[0.06] bg-white px-4 md:px-6">
+  <a-layout-header style="padding: 0 24px; height: 56px; line-height: normal; background: white" class="flex h-12 items-center justify-between border-b border-black/[0.06] bg-white px-4 md:px-6">
     <div class="flex items-center gap-3 text-sm text-black/45">
-      <button
-        type="button"
+      <a-button type="text"
+        html-type="button"
         class="rounded-md p-1.5 text-black/65 transition hover:bg-black/5 lg:hidden"
         aria-label="open menu"
         @click="emit('toggle-menu')"
@@ -267,7 +267,7 @@ onUnmounted(() => {
         <svg viewBox="0 0 20 20" class="h-5 w-5" fill="none">
           <path d="M3.5 5.5H16.5M3.5 10H16.5M3.5 14.5H16.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
         </svg>
-      </button>
+      </a-button>
       <span class="hover:text-black/85 cursor-pointer transition-colors">首页</span>
       <span class="text-black/15">/</span>
       <span class="text-black/85">运营系统</span>
@@ -275,9 +275,9 @@ onUnmounted(() => {
 
     <div class="flex items-center gap-4 text-black/45">
       <div class="relative">
-        <button
-          ref="triggerRef"
-          type="button"
+        <a-button type="text"
+          :ref="element => { triggerRef = element?.$el || element }"
+          html-type="button"
           class="relative rounded-md p-1.5 transition hover:bg-black/5 hover:text-black/85 focus:outline-none focus:ring-2 focus:ring-antd-primary/30"
           :aria-label="notificationButtonLabel"
           aria-haspopup="menu"
@@ -296,7 +296,7 @@ onUnmounted(() => {
           >
             {{ totalUnreadLabel }}
           </span>
-        </button>
+        </a-button>
 
         <div
           v-if="menuOpen"
@@ -322,10 +322,10 @@ onUnmounted(() => {
           </div>
 
           <div class="max-h-[min(26rem,calc(100vh-9rem))] overflow-y-auto py-1 supports-[height:100dvh]:max-h-[min(26rem,calc(100dvh-9rem))]">
-            <button
+            <a-button type="text"
               v-for="category in notifications.visibleCategories"
               :key="category.key"
-              type="button"
+              html-type="button"
               role="menuitem"
               :aria-label="category.displayMode === 'dot' ? `${category.label}，有未读消息，查看用户信息` : `${category.label}，${category.unreadCount} 条未读`"
               class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
@@ -346,7 +346,7 @@ onUnmounted(() => {
               >
                 {{ category.unreadCount }}
               </span>
-            </button>
+            </a-button>
 
             <div v-if="!notifications.visibleCategories.length" class="px-4 py-6 text-center text-sm text-slate-500">
               暂无未读消息
@@ -379,9 +379,9 @@ onUnmounted(() => {
           </label>
 
           <div class="border-t border-slate-100 px-4 py-3">
-            <button
-              ref="soundGuideTriggerRef"
-              type="button"
+            <a-button type="text"
+              :ref="element => { soundGuideTriggerRef = element?.$el || element }"
+              html-type="button"
               role="menuitem"
               class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
               @click="openSoundGuide"
@@ -393,14 +393,14 @@ onUnmounted(() => {
               <svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0 text-slate-400" fill="none" aria-hidden="true">
                 <path d="M7.5 4.5L12.5 10L7.5 15.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
-            </button>
+            </a-button>
           </div>
         </div>
       </div>
       <div class="relative">
-        <button
-          ref="accountTriggerRef"
-          type="button"
+        <a-button type="text"
+          :ref="element => { accountTriggerRef = element?.$el || element }"
+          html-type="button"
           class="flex items-center gap-2 rounded-md px-2 py-1 text-left transition-colors hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-antd-primary/30"
           aria-label="Admin 账号菜单"
           aria-haspopup="menu"
@@ -415,7 +415,7 @@ onUnmounted(() => {
           <svg viewBox="0 0 20 20" class="h-4 w-4 text-black/35" fill="none" aria-hidden="true">
             <path d="M6 8L10 12L14 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
-        </button>
+        </a-button>
 
         <div
           v-if="accountMenuOpen"
@@ -425,8 +425,8 @@ onUnmounted(() => {
           aria-label="Admin 账号操作"
           class="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-48 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 text-slate-700 shadow-xl"
         >
-          <button
-            type="button"
+          <a-button type="text"
+            html-type="button"
             role="menuitem"
             class="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition hover:bg-slate-50 focus:bg-slate-50 focus:outline-none"
             @click="openChangePasswordDialog"
@@ -435,9 +435,9 @@ onUnmounted(() => {
               <path d="M6.5 8V6.8C6.5 4.9 8 3.5 10 3.5C12 3.5 13.5 4.9 13.5 6.8V8M5.5 8H14.5V15.5H5.5V8ZM10 11V12.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
             <span>修改密码</span>
-          </button>
-          <button
-            type="button"
+          </a-button>
+          <a-button type="text"
+            html-type="button"
             role="menuitem"
             class="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-rose-600 transition hover:bg-rose-50 focus:bg-rose-50 focus:outline-none"
             @click="logout"
@@ -446,11 +446,11 @@ onUnmounted(() => {
               <path d="M8 4.5H5.5V15.5H8M11 7L14 10M14 10L11 13M14 10H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
             <span>退出登录</span>
-          </button>
+          </a-button>
         </div>
       </div>
     </div>
-  </header>
+  </a-layout-header>
 
   <AdminChangePasswordDialog
     v-model:open="changePasswordOpen"
