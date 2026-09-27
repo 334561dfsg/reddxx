@@ -90,7 +90,11 @@ const agentOptions = computed(() => [{ value: '', label: '全部代理' }, { val
 const employeeOptions = computed(() => [{ value: '', label: '全部业务员' }, { value: 'unassigned', label: '未分配业务员' }, ...employees.value.map(userOption)])
 const format = (value, precision = 8) => value == null ? '—' : Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: precision })
 function userOption(user) {
-  return { value: user.id, label: `${user.username} · ${user.id}`, description: user.email || '未设置邮箱', searchText: `${user.id} ${user.username} ${user.email || ''}` }
+  const uid = String(user.uid ?? user.id).replace(/^user_/, '')
+  return { value: user.id, label: `${user.username} · UID ${uid}`, description: user.email || '未设置邮箱', searchText: `${user.id} UID ${uid} ${user.username} ${user.email || ''}` }
+}
+function filterUserOption(input, option) {
+  return String(option.searchText || option.label).toLowerCase().includes(input.trim().toLowerCase())
 }
 function clearArtifact() {
   if (artifact.value) URL.revokeObjectURL(artifact.value.url)
@@ -171,8 +175,22 @@ onUnmounted(() => { live = false; clearArtifact(); document.removeEventListener(
 
     <a-card :bordered="false"><a-form :model="draft" layout="vertical" aria-label="用户充值查询" @finish="query">
       <div class="grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <label class="report-field">所属代理<a-select v-model:value="draft.agentId" :options="agentOptions" show-search :filter-option="(input, option) => (option.searchText || option.label).toLowerCase().includes(input.toLowerCase())" aria-label="所属代理" /></label>
-        <label class="report-field">所属业务员<a-select v-model:value="draft.employeeId" :options="employeeOptions" show-search :filter-option="(input, option) => (option.searchText || option.label).toLowerCase().includes(input.toLowerCase())" aria-label="所属业务员" /></label>
+        <label class="report-field">所属代理
+          <a-select v-model:value="draft.agentId" :options="agentOptions" show-search :filter-option="filterUserOption" :virtual="false" placeholder="输入 UID 或邮箱搜索" aria-label="所属代理，可按 UID 或邮箱搜索" not-found-content="未找到匹配的 UID 或邮箱">
+            <template #option="option">
+              <div>{{ option.label }}</div>
+              <div v-if="option.description" class="text-xs font-normal text-slate-500">{{ option.description }}</div>
+            </template>
+          </a-select>
+        </label>
+        <label class="report-field">所属业务员
+          <a-select v-model:value="draft.employeeId" :options="employeeOptions" show-search :filter-option="filterUserOption" :virtual="false" placeholder="输入 UID 或邮箱搜索" aria-label="所属业务员，可按 UID 或邮箱搜索" not-found-content="未找到匹配的 UID 或邮箱">
+            <template #option="option">
+              <div>{{ option.label }}</div>
+              <div v-if="option.description" class="text-xs font-normal text-slate-500">{{ option.description }}</div>
+            </template>
+          </a-select>
+        </label>
         <label class="report-field">用户 ID / 昵称<a-input v-model:value="draft.keyword" type="search" placeholder="输入用户 ID 或昵称" autocomplete="off" @keydown.enter="event => event.isComposing && event.preventDefault()" /></label>
         <label class="report-field">开始日期（UTC+8）<a-date-picker v-model:value="draft.startDate" value-format="YYYY-MM-DD" format="YYYY-MM-DD" :allow-clear="false" required :aria-invalid="dateError" :aria-describedby="dateError ? 'user-report-error' : undefined" /></label>
         <label class="report-field">结束日期（UTC+8）<a-date-picker v-model:value="draft.endDate" value-format="YYYY-MM-DD" format="YYYY-MM-DD" :allow-clear="false" required :aria-invalid="dateError" :aria-describedby="dateError ? 'user-report-error' : undefined" /></label>
@@ -240,7 +258,6 @@ onUnmounted(() => { live = false; clearArtifact(); document.removeEventListener(
           <template v-if="column.key === 'status'"><div><a-tag :color="row.status === 'credited' ? 'success' : row.status === 'rejected' ? 'error' : 'warning'">{{ depositReportStatus(row.status) }}</a-tag><span class="mt-1 block text-xs text-slate-500">{{ row.creditedTime ? userReportTime(row.creditedTime) : '尚未入账' }}</span></div></template></template></a-table>
         <div class="flex justify-end border-t border-slate-200 p-4"><a-pagination v-model:current="page" v-model:page-size="pageSize" :total="report.rows.length" :page-size-options="['10', '20', '50']" show-size-changer :show-total="total => `共 ${total} 条`" @show-size-change="page = 1" /></div>
       </section>
-      <p class="text-xs leading-6 text-slate-500">统计口径：每笔充值一行，同一用户的多笔充值分别列出；包含待确认、已入账和已驳回订单，以状态区分。时间均为 UTC+8，折合 USDT 使用订单记录值。未充值用户不生成占位行。</p>
     </template>
   </section>
 </template>
