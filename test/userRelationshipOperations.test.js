@@ -638,12 +638,9 @@ test('agent parent Dialog keeps agent ownership separate from fission wording', 
   assert.doesNotMatch(source, /resetParent/)
 })
 
-test('agent account settings exposes MFA reset and submits it with the shared delivery result', () => {
+test('agent account settings keep account delivery without MFA controls', () => {
   const source = agentManagementSource()
-  assert.match(source, /resetMfa: false/)
-  assert.match(source, /重设 MFA/)
-  assert.match(source, /v-model:checked="accountForm\.resetMfa"/)
-  assert.match(source, /resetMfa: accountForm\.value\.resetMfa/)
+  assert.doesNotMatch(source, /resetMfa|MFA|mfaSetup/)
   assert.match(source, /<a-modal[\s\S]*代理登录账号设置/)
   assert.match(source, /<AgentDeliveryCard[\s\S]*title="账号设置已保存，以下信息可发送给代理"/)
 })
@@ -717,12 +714,12 @@ test('shared agent upgrade dialog shows copyable delivery after initial UID crea
   assert.ok(harness.findByText('复制通知内容', 'button'))
   assert.match(harness.document.body.textContent, /登录账号：zhang@vip.com/)
   assert.match(harness.document.body.textContent, /初始密码：/)
-  assert.match(harness.document.body.textContent, /MFA 绑定二维码/)
-  assert.match(harness.document.body.textContent, /截图发送给代理/)
+  assert.doesNotMatch(harness.document.body.textContent, /MFA|二维码|验证器/)
+  assert.match(harness.document.body.textContent, /发送给代理/)
   assert.doesNotMatch(harness.document.body.textContent, /登录入口/)
   assert.doesNotMatch(harness.document.body.textContent, /\/agent-system\/login/)
   const qrImage = harness.allNodes().find((node) => node.tag === 'img' && node.getAttribute('alt') === 'MFA 绑定二维码')
-  assert.match(qrImage?.getAttribute('src') || '', /^https:\/\/api\.qrserver\.com\/v1\/create-qr-code\//)
+  assert.equal(qrImage, undefined)
 })
 
 test('parent-reset associates orphaned selection errors with the trigger without linking reason errors', async (t) => {

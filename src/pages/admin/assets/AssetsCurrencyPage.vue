@@ -407,7 +407,7 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
     </article>
   </section>
 
-  <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showEditModal)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="showEditModal = false"><template #title><template v-if="Boolean(showEditModal)"><header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+  <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showEditModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="showEditModal = false"><template #title><template v-if="Boolean(showEditModal)"><header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
         <h2 class="text-xl font-semibold text-slate-900">{{ editingCoinId ? '编辑币种配置' : '新增币种配置' }}</h2>
         <a-button aria-label="关闭" html-type="button" class="text-2xl text-slate-400" @click="showEditModal = false">×</a-button>
       </header></template></template><template v-if="showEditModal"><div class="max-h-[74vh] space-y-5 overflow-y-auto px-5 py-4">

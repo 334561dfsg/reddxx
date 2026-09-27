@@ -3,7 +3,7 @@ import { AdminButton, AdminCheckbox, AdminInput, AdminTextarea, nativeControl } 
 
 import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import AgentDeliveryCard from '../agent/AgentDeliveryCard.vue'
-import { salespersonDelivery } from '../../../features/user-staff/userMfa.js'
+import { salespersonDelivery } from '../../../features/user-staff/credentialDelivery.js'
 import UserStaffSurface from './UserStaffSurface.vue'
 import PanelSingleSelect from '../form/PanelSingleSelect.vue'
 import { getUserStaffRepository } from '../../repositories/userStaffRepository.js'
@@ -52,7 +52,7 @@ async function submit(){
     const repo=getUserStaffRepository()
     const result=isCreate.value?await repo.createUser({email:form.email,phone:form.phone,password:form.password,isSalesperson:form.isSalesperson,isCurrent}):repo.assignEmployee({customerId:props.user.id,employeeId:form.employeeId,reason:form.reason})
     if(!isCurrent())return
-    if(isCreate.value)delivery.value=result.isSalesperson ? salespersonDelivery(result.email,form.password,result.mfaSetup) : {email:result.email,password:form.password}
+    if(isCreate.value)delivery.value=result.isSalesperson ? salespersonDelivery(result.email,form.password) : {email:result.email,password:form.password}
     form.password='';form.confirmPassword='';baseline.value=JSON.stringify(form);busy.value=false
     emit('saved',{user:result,created:isCreate.value})
     if(isCreate.value){await nextTick();deliveryTitle.value?.focus()}else surface.value.close()
@@ -65,7 +65,7 @@ onBeforeUnmount(()=>{disposed=true;session++;form.password='';form.confirmPasswo
 <template>
   <UserStaffSurface ref="surface" :visible="visible" :title="title" :subtitle="delivery?'':isCreate?'邮箱作为用户登录名':`${user?.username || ''} · ${user?.id || ''}`" :return-focus="returnFocus" :initial-focus="first" :busy="busy||copying" :before-close="safeClose" @close="emit('close')" @closed="closed">
     <p v-if="error" ref="errorRef" tabindex="-1" role="alert" class="mb-4 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{{ error }}</p>
-    <div v-if="delivery?.mfaSetup" ref="deliveryTitle" tabindex="-1" class="outline-none"><AgentDeliveryCard :delivery="delivery" @copying="copying=$event" recipient="业务员" title="业务员创建成功，以下信息可发送给业务员" description="初始密码只在本次创建结果中展示；下方卡片可截图发送给业务员，用于设置验证器。" /></div>
+    <div v-if="delivery && form.isSalesperson" ref="deliveryTitle" tabindex="-1" class="outline-none"><AgentDeliveryCard :delivery="delivery" @copying="copying=$event" recipient="业务员" title="业务员创建成功，以下信息可发送给业务员" description="初始密码只在本次创建结果中展示；下方卡片可截图发送给业务员，请妥善保管账号和密码。" /></div>
     <div v-else-if="delivery" class="space-y-4"><h3 ref="deliveryTitle" tabindex="-1" class="font-medium text-emerald-700">用户已添加，可以复制账号和密码。</h3><div class="rounded-lg border border-slate-200 bg-slate-50 p-4"><pre class="whitespace-pre-wrap break-all text-sm leading-7 select-text">{{ userCredentialText(delivery.email,delivery.password) }}</pre></div><p class="text-xs text-slate-500">密码仅在本次添加成功后展示，关闭后不再显示。</p><p role="status" class="text-sm text-emerald-700">{{ copied?'账号和密码已复制':'' }}</p></div>
     <div v-else-if="discard" class="rounded-xl border border-amber-200 bg-amber-50 p-4"><h3 class="font-semibold text-amber-950">{{ discardAction==='reset'?'重置已填写的内容？':'放弃未保存的修改？' }}</h3><p class="mt-2 text-sm text-amber-900">本次填写的内容将被清空，不会保存。</p></div>
     <div v-else-if="confirm" class="space-y-3 text-sm"><h3 class="font-semibold text-slate-900">确认客户归属变更</h3><dl class="space-y-3 rounded-xl bg-slate-50 p-4"><div><dt class="text-slate-500">保存后所属代理</dt><dd>{{ agentLabel }}</dd></div><div><dt class="text-slate-500">原业务员</dt><dd>{{ user?.employeeId ? getUserStaffRepository().nameOf(user.employeeId) : '未分配业务员' }}</dd></div><div><dt class="text-slate-500">新业务员</dt><dd>{{ options.find(o=>o.value===form.employeeId)?.label }}</dd></div></dl><p class="text-slate-600">仅影响后续业务归属，历史业绩保持不变。</p></div>
@@ -90,7 +90,7 @@ onBeforeUnmount(()=>{disposed=true;session++;form.password='';form.confirmPasswo
       </fieldset>
     </form>
     <template #footer><div class="flex flex-wrap justify-end gap-3">
-      <template v-if="delivery"><AdminButton type="button" class="ant-btn" :disabled="copying" @click="surface.close()">完成</AdminButton><AdminButton v-if="!delivery.mfaSetup" type="button" class="ant-btn ant-btn-primary" :disabled="copying" @click="copyCredentials">{{ copying?'复制中…':copied?'再次复制账号和密码':'复制账号和密码' }}</AdminButton></template>
+      <template v-if="delivery"><AdminButton type="button" class="ant-btn" :disabled="copying" @click="surface.close()">完成</AdminButton><AdminButton v-if="!form.isSalesperson" type="button" class="ant-btn ant-btn-primary" :disabled="copying" @click="copyCredentials">{{ copying?'复制中…':copied?'再次复制账号和密码':'复制账号和密码' }}</AdminButton></template>
       <template v-else-if="discard"><AdminButton :ref="element => { keepRef = nativeControl(element) }" type="button" class="ant-btn" @click="discard=false">继续填写</AdminButton><AdminButton type="button" class="ant-btn ant-btn-primary" @click="abandon">{{ discardAction==='reset'?'确认重置':'放弃并关闭' }}</AdminButton></template>
       <template v-else><AdminButton :ref="element => { keepRef = nativeControl(element) }" type="button" :disabled="busy" class="ant-btn" @click="confirm ? confirm=false : surface.close()">{{ confirm?'返回修改':'取消' }}</AdminButton><AdminButton v-if="isCreate" type="button" :disabled="busy" class="ant-btn" @click="requestReset">重置</AdminButton><AdminButton type="button" :disabled="busy" class="ant-btn ant-btn-primary" @click="submit">{{ busy?'保存中…':confirm?'确认变更':isCreate?'确认添加':'下一步' }}</AdminButton></template>
     </div></template>

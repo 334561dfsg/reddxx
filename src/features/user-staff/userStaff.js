@@ -1,4 +1,3 @@
-import { createSalespersonMfa } from './userMfa.js'
 const STORAGE_KEY = 'fex.user-staff.v1'
 const clone = value => JSON.parse(JSON.stringify(value))
 const text = value => String(value ?? '').trim()
@@ -88,11 +87,10 @@ export function createStaffRepository({ users, storage = null, now = () => new D
     if (agentId) activeAgent(agentId)
     const email = text(input.email).toLowerCase(), phone = text(input.phone)
     const credential = await passwordCredential(input.password)
-    const mfaSetup = isSalesperson ? await createSalespersonMfa(email) : null
     if (input.isCurrent && !input.isCurrent()) throw new Error('创建已取消，请重新提交')
     // Revalidate uniqueness after asynchronous derivation; two simultaneous saves cannot insert duplicates.
     assertValid()
-    return insertUser({ email, phone, credential, isSalesperson, mfaSetup, agent:agentId ? activeAgent(agentId) : null })
+    return insertUser({ email, phone, credential, isSalesperson, agent:agentId ? activeAgent(agentId) : null })
   }
   const assignEmployee = ({ customerId, employeeId = '', reason = '' }) => {
     const customer = requireUser(customerId)

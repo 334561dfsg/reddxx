@@ -27,7 +27,6 @@ const accountTarget = ref(null)
 const accountForm = ref({
   loginAccount: '',
   resetPassword: false,
-  resetMfa: false,
   passwordMode: 'auto',
   password: '',
   confirmPassword: ''
@@ -175,7 +174,6 @@ const openAccountSettings = (agent) => {
   accountForm.value = {
     loginAccount: agent.loginAccount || agent.email || '',
     resetPassword: false,
-    resetMfa: false,
     passwordMode: 'auto',
     password: '',
     confirmPassword: ''
@@ -220,7 +218,6 @@ const saveAccountSettings = async () => {
     const res = await agentApi.updateAgentLoginCredential(accountTarget.value.uid, {
       loginAccount: accountForm.value.loginAccount,
       resetPassword: accountForm.value.resetPassword,
-      resetMfa: accountForm.value.resetMfa,
       password: accountForm.value.password,
       passwordMode: accountForm.value.passwordMode
     })
@@ -467,7 +464,7 @@ const formatDate = (dateString) => {
 
     <!-- 代理登录账号设置 -->
     <Teleport to="body">
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showAccountModal && accountTarget)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeAccountModal"><template #title><template v-if="Boolean(showAccountModal && accountTarget)"><header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showAccountModal && accountTarget)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeAccountModal"><template #title><template v-if="Boolean(showAccountModal && accountTarget)"><header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
             <div class="min-w-0">
               <h3 id="agent-account-title" class="text-lg font-semibold text-slate-900">代理登录账号设置</h3>
               <p class="mt-1 break-words text-sm text-slate-500">{{ accountTarget.username }} · UID {{ accountTarget.uid }}</p>
@@ -496,13 +493,7 @@ const formatDate = (dateString) => {
                 </span>
               </label>
 
-              <label class="flex items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                <a-checkbox v-model:checked="accountForm.resetMfa" class="mt-1" />
-                <span>
-                  <span class="block font-medium text-slate-900">重设 MFA</span>
-                  <span class="mt-0.5 block text-xs text-slate-500">生成新的 MFA 密钥和二维码；代理需重新绑定安全验证。</span>
-                </span>
-              </label>
+
 
               <div v-if="accountForm.resetPassword" class="grid gap-4 sm:grid-cols-2">
                 <div class="sm:col-span-2 flex flex-wrap gap-2">
@@ -529,7 +520,7 @@ const formatDate = (dateString) => {
 
     <!-- 产品线记佣（紧凑行式布局；底栏固定，避免无法取消） -->
     <Teleport to="body">
-    <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showCommissionModal)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeCommissionModal"><template #title><template v-if="Boolean(showCommissionModal)"><div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 sm:px-5">
+    <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showCommissionModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeCommissionModal"><template #title><template v-if="Boolean(showCommissionModal)"><div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 sm:px-5">
           <div class="min-w-0">
             <h3 id="commission-modal-title" class="text-base font-semibold text-slate-900">代理产品线记佣</h3>
             <p class="mt-0.5 font-mono text-xs text-slate-500">UID {{ commissionTargetUid }}</p>

@@ -31,19 +31,6 @@ const createMfaSecret = () => {
   return Array.from({ length: 16 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('')
 }
 
-const buildMfaSetup = (loginAccount, secret = createMfaSecret()) => {
-  const issuer = 'FEX Agent'
-  const label = `${issuer}:${loginAccount}`
-  const otpauthUrl = `otpauth://totp/${encodeURIComponent(label)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}`
-  return {
-    issuer,
-    accountName: loginAccount,
-    secret,
-    otpauthUrl,
-    qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(otpauthUrl)}`
-  }
-}
-
 // 模拟代理列表数据
 export const mockAgentList = [
   {
@@ -260,16 +247,13 @@ function assertPassword(password) {
   return value
 }
 
-function buildAgentDelivery({ agent, loginAccount, password, changed = false, mfaSetup }) {
+function buildAgentDelivery({ agent, loginAccount, password, changed = false }) {
   const title = changed ? '代理登录账号已更新' : '代理系统登录信息'
   const message = [
     `${title}`,
     `代理：${agent.username}（UID ${agent.uid}）`,
     `登录账号：${loginAccount}`,
     password ? `初始密码：${password}` : null,
-    mfaSetup?.secret ? `MFA 密钥：${mfaSetup.secret}` : null,
-    mfaSetup?.qrCodeUrl ? 'MFA 二维码：见下方截图区域' : null,
-    '首次登录后请完成 MFA 安全验证绑定；绑定后再次登录需输入安全验证码。'
   ].filter(Boolean).join('\n')
   return {
     title,
@@ -277,19 +261,17 @@ function buildAgentDelivery({ agent, loginAccount, password, changed = false, mf
     loginUrl: AGENT_PORTAL_LOGIN_URL,
     loginAccount,
     initialPassword: password || '',
-    mfaRequired: true,
-    mfaSetup: mfaSetup || null,
     message
   }
 }
 
-function upsertCredential({ agent, loginAccount, password, resetMfa = false }) {
+function upsertCredential({ agent, loginAccount, password }) {
   ensureAgentCredentialsSeeded()
   const previous = findCredentialByUid(agent.uid)
   if (previous?.loginAccount && previous.loginAccount !== loginAccount) {
     agentCredentials.delete(previous.loginAccount)
   }
-  const mfaSecret = resetMfa ? createMfaSecret() : previous?.mfaSecret || createMfaSecret()
+  const mfaSecret = previous?.mfaSecret || createMfaSecret()
   const credential = {
     ...(previous || {}),
     uid: Number(agent.uid),
@@ -298,7 +280,7 @@ function upsertCredential({ agent, loginAccount, password, resetMfa = false }) {
     loginAccount,
     password: password || previous?.password || DEFAULT_AGENT_LOGIN_PASSWORD,
     mfaRequired: true,
-    mfaBound: resetMfa ? false : previous?.mfaBound === true,
+    mfaBound: previous?.mfaBound === true,
     mfaSecret,
     updatedAt: new Date().toISOString()
   }
@@ -468,7 +450,6 @@ export const agentApi = {
             agent,
             loginAccount,
             password,
-            mfaSetup: buildMfaSetup(loginAccount, credential.mfaSecret)
           })
           resolve({
             success: true,
@@ -497,14 +478,12 @@ export const agentApi = {
             agent,
             loginAccount,
             password: nextPassword,
-            resetMfa: payload?.resetMfa === true
           })
           const delivery = buildAgentDelivery({
             agent,
             loginAccount,
             password: payload?.resetPassword ? nextPassword : '',
             changed: true,
-            mfaSetup: buildMfaSetup(loginAccount, credential.mfaSecret)
           })
           resolve({
             success: true,

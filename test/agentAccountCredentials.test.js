@@ -31,18 +31,13 @@ test('upgrading a user to agent stores login credentials and delivery message', 
   assert.match(res.data.delivery.message, /代理系统登录信息/)
   assert.doesNotMatch(res.data.delivery.message, /登录入口/)
   assert.doesNotMatch(res.data.delivery.message, /\/agent-system\/login/)
-  assert.match(res.data.delivery.message, /首次登录后请完成 MFA/)
-  assert.match(res.data.delivery.message, /MFA 密钥：/)
-  assert.match(res.data.delivery.message, /MFA 二维码：见下方截图区域/)
-  assert.doesNotMatch(res.data.delivery.message, /https:\/\/api\.qrserver\.com/)
-  assert.match(res.data.delivery.mfaSetup.secret, /^[A-Z2-7]{16}$/)
-  assert.match(res.data.delivery.mfaSetup.otpauthUrl, /^otpauth:\/\/totp\//)
-  assert.match(res.data.delivery.mfaSetup.qrCodeUrl, /^https:\/\/api\.qrserver\.com\/v1\/create-qr-code\//)
+  assert.doesNotMatch(res.data.delivery.message, /MFA|密钥|二维码|验证器/)
+  assert.equal(res.data.delivery.mfaSetup, undefined)
 
   const credential = getAgentCredentialByLogin('VIP-ZHANG-AGENT')
   assert.equal(credential.uid, res.data.agent.uid)
   assert.equal(credential.password, 'Agent!23456')
-  assert.equal(credential.mfaSecret, res.data.delivery.mfaSetup.secret)
+  assert.match(credential.mfaSecret, /^[A-Z2-7]{16}$/)
 })
 
 test('agent login accepts configured account and enforces MFA code after binding', async () => {
@@ -110,7 +105,7 @@ test('agent account settings rejects duplicate login account and returns reset d
   assert.doesNotMatch(updated.data.delivery.message, /\/agent-system\/login/)
 })
 
-test('agent account settings can reset MFA without resetting password', async () => {
+test('agent account settings ignore removed MFA reset and preserve existing credentials', async () => {
   __resetAgentCredentialsForTests()
   const created = await agentApi.upgradeToAgent({
     userId: 'user_1006',
@@ -128,12 +123,11 @@ test('agent account settings can reset MFA without resetting password', async ()
   const after = getAgentCredentialByLogin('mfa-reset-agent')
   assert.equal(updated.success, true)
   assert.equal(updated.data.delivery.initialPassword, '')
-  assert.notEqual(after.mfaSecret, before.mfaSecret)
-  assert.equal(after.mfaBound, false)
-  assert.equal(updated.data.delivery.mfaSetup.secret, after.mfaSecret)
-  assert.match(updated.data.delivery.message, /MFA 密钥：/)
-  assert.match(updated.data.delivery.message, /MFA 二维码：见下方截图区域/)
-  assert.doesNotMatch(updated.data.delivery.message, /https:\/\/api\.qrserver\.com/)
+  assert.equal(after.mfaSecret, before.mfaSecret)
+  assert.equal(after.mfaBound, before.mfaBound)
+  assert.equal(after.password, before.password)
+  assert.equal(updated.data.delivery.mfaSetup, undefined)
+  assert.doesNotMatch(updated.data.delivery.message, /MFA|密钥|二维码/)
 })
 
 test('agent user lookup matches only exact user id and returns a single candidate', async () => {

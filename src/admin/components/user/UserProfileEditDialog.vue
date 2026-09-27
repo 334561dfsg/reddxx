@@ -5,7 +5,7 @@ import { computed, nextTick, reactive, ref, watch, onBeforeUnmount } from 'vue'
 import { updateProfile, validateProfile } from '../../repositories/userRelationshipRepository.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import AgentDeliveryCard from '../agent/AgentDeliveryCard.vue'
-import { createSalespersonMfa, salespersonDelivery } from '../../../features/user-staff/userMfa.js'
+import { salespersonDelivery } from '../../../features/user-staff/credentialDelivery.js'
 import { generateUserPassword } from '../../../features/user-staff/userCredentials.js'
 import { passwordCredential } from '../../../features/user-staff/userStaff.js'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
@@ -127,10 +127,9 @@ const submit = async () => {
     const promoted = values.isSalesperson && props.user?.isSalesperson !== true
     const loginPassword = promoted ? password.value : null
     const credential = promoted ? await passwordCredential(loginPassword) : null
-    const mfaSetup = promoted ? (props.user?.mfaSetup || await createSalespersonMfa(values.email.trim())) : null
     if (disposed || !props.visible || targetId !== userId.value) return
-    const updated = updateProfile(targetId, values, { mfaSetup, passwordCredential: credential })
-    if (promoted) delivery.value = salespersonDelivery(updated.email, loginPassword, mfaSetup)
+    const updated = updateProfile(targetId, values, { passwordCredential: credential })
+    if (promoted) delivery.value = salespersonDelivery(updated.email, loginPassword)
     password.value = ''
     confirmPassword.value = ''
     emit('saved', updated)
@@ -166,7 +165,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
             <p v-if="submitError" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ submitError }}</p>
 
             <div v-if="delivery" ref="deliveryRef" tabindex="-1" class="outline-none">
-              <AgentDeliveryCard :delivery="delivery" recipient="业务员" title="业务员设置成功，以下信息可发送给业务员" description="请复制账号、新登录密码和 MFA 信息，发送给业务员并设置验证器。" @copying="copying=$event" />
+              <AgentDeliveryCard :delivery="delivery" recipient="业务员" title="业务员设置成功，以下信息可发送给业务员" description="请复制账号和新登录密码，发送给业务员。" @copying="copying=$event" />
             </div>
             <template v-else>
             <label class="block">

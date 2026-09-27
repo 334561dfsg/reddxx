@@ -473,7 +473,7 @@ onMounted(load)
     </div>
 
     <Teleport to="body">
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="flex items-center justify-between gap-3"><span>{{ editingId ? '编辑页面' : '添加页面' }}</span><a-button aria-label="关闭" html-type="button"   @click="closeModal">×</a-button></div></template></template><template v-if="modalOpen"><div class="shrink-0 border-b border-slate-200 px-5 py-4">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="flex items-center justify-between gap-3"><span>{{ editingId ? '编辑页面' : '添加页面' }}</span><a-button aria-label="关闭" html-type="button"   @click="closeModal">×</a-button></div></template></template><template v-if="modalOpen"><div class="shrink-0 border-b border-slate-200 px-5 py-4">
             <h2 class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑页面' : '添加页面' }}</h2>
           </div>
 <div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">

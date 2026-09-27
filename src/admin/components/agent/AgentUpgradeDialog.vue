@@ -199,7 +199,7 @@ watch(() => props.visible, async (visible) => {
           <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
             <div class="min-w-0">
               <h3 id="agent-upgrade-title" class="text-lg font-semibold text-slate-900">添加代理</h3>
-              <p class="mt-1 text-sm text-slate-500">选择已有用户，并设置代理系统登录账号、初始密码和 MFA 引导信息。</p>
+              <p class="mt-1 text-sm text-slate-500">选择已有用户，并设置代理系统登录账号、初始密码。</p>
             </div>
             <AdminButton type="button" :disabled="submitting" class="flex min-h-10 min-w-10 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
           </header>
@@ -258,7 +258,7 @@ watch(() => props.visible, async (visible) => {
                   <AdminInput v-model="form.confirmPassword" type="password" autocomplete="new-password" class="ant-input mt-1.5" />
                 </label>
                 <p class="sm:col-span-2 text-xs leading-relaxed text-slate-500">
-                  创建成功后会生成可复制通知和 MFA 二维码，可截图发送给代理。
+                  创建成功后可复制账号和初始密码，发送给代理。
                 </p>
               </section>
             </template>

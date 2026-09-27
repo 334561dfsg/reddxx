@@ -766,7 +766,7 @@ onMounted(() => {
     </div>
 
     <Teleport to="body">
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(languageFormOpen)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="resetLanguageForm"><template #title><template v-if="Boolean(languageFormOpen)"><div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(languageFormOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="resetLanguageForm"><template #title><template v-if="Boolean(languageFormOpen)"><div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <h2 class="text-base font-semibold text-slate-900">
                 {{ editingLocaleCode ? '编辑语言' : '添加语言' }}
@@ -832,7 +832,7 @@ onMounted(() => {
     </Teleport>
 
     <Teleport to="body">
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(dialFormOpen)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="resetCustomDialForm"><template #title><template v-if="Boolean(dialFormOpen)"><div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(dialFormOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="resetCustomDialForm"><template #title><template v-if="Boolean(dialFormOpen)"><div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <h2 class="text-base font-semibold text-slate-900">
                 {{ editingCustomDial ? '编辑区号' : '添加区号' }}

@@ -49,8 +49,10 @@ test('salesperson login verifies created password, preserves role on reload, and
   globalThis.localStorage={getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)}
   const repo=createStaffRepository({users:usersList})
   const person=await repo.createUser({email:'portal-sales-test@example.com',password:'Sales!12345',isSalesperson:true,agentParentId:'user_1001'})
-  // Verify the authenticator challenge first, then isolate password/session behavior.
+  // New settings create password-only accounts; legacy bound accounts retain their challenge.
   const row=usersList.find(u=>u.id===person.id)
+  assert.equal(row.mfaSetup,undefined)
+  row.mfaSetup={secret:'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ',status:'bound'}
   try {
     setActivePinia(createPinia())
     const challenge=await useAgentAuthStore().login(person.email,'Sales!12345')
