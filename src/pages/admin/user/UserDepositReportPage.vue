@@ -187,6 +187,7 @@ async function exportCsv() {
   if (!report.value?.rows.length || error.value || loading.value || exporting.value) return
   exporting.value = true
   exportError.value = ''
+  taskError.value = ''
   try {
     activeExportId.value = taskService.create(report.value)
     receipt.value = ''
@@ -212,11 +213,17 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
       </div>
     </header>
     <a-modal v-model:open="exportProgressOpen" :title="exportProgressTitle" :width="480" :mask-closable="false" class="deposit-export-modal" :after-close="() => releaseTaskBackground(exportTrigger)">
-      <div class="py-6 text-center" role="status">
-        <a-spin v-if="activeExport?.status === 'running'" size="large" />
-        <p class="mt-5 text-sm text-slate-600">{{ activeExport?.status === 'succeeded' ? '搜索结果已导出，可以关闭，稍后在“导出文件下载”中下载。' : activeExport?.status === 'failed' ? `导出失败：${activeExport.error}。可以关闭，稍后在“导出文件下载”中重试。` : '正在导出搜索结果，可以关闭，稍后在“导出文件下载”中下载。' }}</p>
+      <div class="py-6 text-center">
+        <template v-if="activeExport?.status === 'succeeded'">
+          <a-button type="primary" @click="downloadTask(activeExport)"><template #icon><DownloadOutlined /></template>下载</a-button>
+        </template>
+        <div v-else role="status">
+          <a-spin v-if="activeExport?.status === 'running'" size="large" />
+          <p class="mt-5 text-sm text-slate-600">{{ activeExport?.status === 'failed' ? `导出失败：${activeExport.error}。可以关闭，稍后在“导出文件下载”中重试。` : '正在导出搜索结果，可以关闭，稍后在“导出文件下载”中下载。' }}</p>
+        </div>
       </div>
-      <template #footer><a-button @click="exportProgressOpen = false">关闭</a-button></template>
+      <a-alert v-if="taskError" :message="taskError" type="error" show-icon />
+      <template #footer><a-button v-if="activeExport?.status !== 'succeeded'" @click="exportProgressOpen = false">关闭</a-button></template>
     </a-modal>
     <a-modal v-model:open="tasksOpen" title="导出文件下载" :width="960" :mask-closable="false" :footer="null" class="deposit-export-modal" :after-close="() => releaseTaskBackground()" :body-style="{ maxHeight: '65vh', overflowY: 'auto' }">
       <a-alert v-if="taskError" :message="taskError" type="error" show-icon class="mb-3" />
