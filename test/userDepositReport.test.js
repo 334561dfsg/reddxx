@@ -11,27 +11,28 @@ const users = [
 ]
 const orders = [
   { id: 'd1', userId: 'c1', submitTime: '2026-08-31T16:00:00Z', coin: 'BTC', amount: 0.00012345, usdtValue: 12.10, status: 'credited', creditedTime: '2026-09-01T02:00:00Z' },
-  { id: 'd2', userId: 'c1', submitTime: '2026-09-30T15:59:59Z', coin: 'USDT', amount: 200.01, usdtValue: 200.01, status: 'review' },
+  { id: 'd2', userId: 'c1', submitTime: '2026-09-30T15:59:59Z', coin: 'USDT', amount: 200.01, usdtValue: 200.01, status: 'credited' },
+  { id: 'pending', userId: 'c1', submitTime: '2026-09-15T04:00:00Z', coin: 'USDT', amount: 5, status: 'review' },
   { id: 'd3', userId: 'c1', submitTime: '2026-09-15T04:00:00Z', coin: 'USDT', amount: 3, usdtValue: 3, status: 'rejected' },
   { id: 'before', userId: 'c1', submitTime: '2026-08-31T15:59:59Z', coin: 'USDT', amount: 1, status: 'credited' },
   { id: 'after', userId: 'c1', submitTime: '2026-09-30T16:00:00Z', coin: 'USDT', amount: 1, status: 'credited' }
 ]
 const build = (extra = {}, list = orders) => reportApi.buildUserDepositReport(users, list, { ...filters, ...extra })
 
-test('each recharge is a separate row, including pending/rejected, with no synthetic zero-activity row', () => {
+test('each recharge is a separate row, only approved orders, with no synthetic zero-activity row', () => {
   assert.equal(typeof reportApi.buildUserDepositReport, 'function')
   const result = build()
-  assert.deepEqual(result.rows.map(row => row.orderId), ['d2', 'd3', 'd1'])
-  assert.deepEqual(result.rows.map(row => row.userId), ['c1', 'c1', 'c1'])
-  assert.equal(result.rows[2].amount, 0.00012345)
-  assert.equal(result.rows[2].coin, 'BTC')
-  assert.equal(result.rows[2].agentEmail, 'agent@example.com')
-  assert.equal(result.rows[2].employeeEmail, 'sales@example.com')
+  assert.deepEqual(result.rows.map(row => row.orderId), ['d2', 'd1'])
+  assert.deepEqual(result.rows.map(row => row.userId), ['c1', 'c1'])
+  assert.equal(result.rows[1].amount, 0.00012345)
+  assert.equal(result.rows[1].coin, 'BTC')
+  assert.equal(result.rows[1].agentEmail, 'agent@example.com')
+  assert.equal(result.rows[1].employeeEmail, 'sales@example.com')
 })
 
 test('agent, salesperson and keyword filters intersect on current customer ownership', () => {
-  assert.equal(build({ agentId: 'a1', employeeId: 's1', keyword: ' C1 ' }).rows.length, 3)
-  assert.equal(build({ employeeId: 's1', keyword: '客户' }).rows.length, 3)
+  assert.equal(build({ agentId: 'a1', employeeId: 's1', keyword: ' C1 ' }).rows.length, 2)
+  assert.equal(build({ employeeId: 's1', keyword: '客户' }).rows.length, 2)
   assert.equal(build({ agentId: 'unassigned' }).rows.length, 0)
   assert.equal(build({ keyword: '无充值用户' }).rows.length, 0)
 })
@@ -54,11 +55,13 @@ test('CSV exports all individual orders, preserves crypto precision and neutrali
   const csv = reportApi.userDepositCsv(result)
   assert.ok(csv.startsWith('\ufeff'))
   assert.ok(csv.includes('用户充值报表'))
-  assert.ok(csv.includes('全部 3 笔充值'))
-  assert.ok(csv.includes('"d1"') && csv.includes('"d2"') && csv.includes('"d3"'))
+  assert.ok(csv.includes('全部 2 笔充值'))
+  assert.ok(csv.includes('"d1"') && csv.includes('"d2"'))
   assert.ok(csv.includes('0.00012345'))
   assert.ok(csv.includes('"\'=1+1"'))
-  assert.ok(csv.includes('已入账') && csv.includes('待确认') && csv.includes('已驳回'))
+  assert.ok(csv.includes('审核成功'))
+  assert.ok(!csv.includes('待确认') && !csv.includes('已驳回'))
+  assert.ok(!csv.includes('"pending"') && !csv.includes('"d3"'))
   assert.ok(!csv.includes('交易金额'))
 })
 

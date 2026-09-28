@@ -1,9 +1,11 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { SettingOutlined } from '@ant-design/icons-vue'
+import { DownloadOutlined, SettingOutlined } from '@ant-design/icons-vue'
 import { getUserStaffRepository } from '../../../admin/repositories/userStaffRepository.js'
-import { defaultUserReportFilters, userDepositCsv, depositReportStatus, userReportTime } from '../../../features/user-staff/userDepositReport.js'
+import { defaultUserReportFilters, depositReportStatus, userReportTime } from '../../../features/user-staff/userDepositReport.js'
 import { getUserDepositReport } from '../../../admin/repositories/userDepositReportRepository.js'
+
+import { getDepositExportTasks } from '../../../features/user-staff/depositExportTasks.js'
 
 // Column preferences only affect this page's display; CSV always includes all fields.
 const columnRegistry = [
@@ -77,7 +79,61 @@ const pageSize = ref(10)
 const receipt = ref('')
 const exportError = ref('')
 const exporting = ref(false)
-const artifact = ref(null)
+const tasksOpen = ref(false)
+const exportProgressOpen = ref(false)
+const exportTrigger = ref(null)
+const activeExportId = ref('')
+const taskTrigger = ref(null)
+let taskBackground = null
+let taskBackgroundWasInert = false
+function releaseTaskBackground(target = taskTrigger) {
+  if (taskBackground) taskBackground.inert = taskBackgroundWasInert
+  taskBackground = null
+  if (live) nextTick(() => (target?.value || target)?.$el?.focus())
+}
+watch([tasksOpen, exportProgressOpen], async ([tasks, progress]) => {
+  if (!tasks && !progress) return
+  await nextTick()
+  if ((!tasksOpen.value && !exportProgressOpen.value) || !live) return
+  if (!taskBackground) {
+    taskBackground = document.getElementById('app')
+    taskBackgroundWasInert = taskBackground?.inert || false
+  }
+  if (taskBackground) taskBackground.inert = true
+  document.querySelectorAll('.deposit-export-modal .ant-modal-close').forEach(button => button.setAttribute('aria-label', '关闭'))
+})
+const taskService = getDepositExportTasks()
+const exportTasks = ref(taskService.list())
+const unsubscribeTasks = taskService.subscribe(tasks => { exportTasks.value = tasks })
+const taskError = ref('')
+const activeExport = computed(() => exportTasks.value.find(task => task.id === activeExportId.value))
+const exportProgressTitle = computed(() => activeExport.value?.status === 'succeeded' ? '导出完成' : activeExport.value?.status === 'failed' ? '导出失败' : '导出中')
+const runningTasks = computed(() => exportTasks.value.filter(task => task.status === 'running').length)
+const taskColumns = [
+  { title: '报表 / 查询范围', key: 'report' },
+  { title: '创建时间（UTC+8）', key: 'created', width: 175 },
+  { title: '条数', dataIndex: 'count', width: 70 },
+  { title: '状态', key: 'status', width: 110 },
+  { title: '操作', key: 'action', width: 90 }
+]
+function downloadTask(task) {
+  taskError.value = ''
+  try {
+    const artifact = taskService.download(task.id)
+    const url = URL.createObjectURL(new Blob([artifact.csv], { type: 'text/csv;charset=utf-8;' }))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = artifact.filename
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  } catch (cause) { taskError.value = cause.message }
+}
+function retryTask(task) {
+  taskError.value = ''
+  try { taskService.retry(task.id) } catch (cause) { taskError.value = cause.message }
+}
 let live = true
 const loading = ref(false)
 let queryGeneration = 0
@@ -97,8 +153,6 @@ function filterUserOption(input, option) {
   return String(option.searchText || option.label).toLowerCase().includes(input.trim().toLowerCase())
 }
 function clearArtifact() {
-  if (artifact.value) URL.revokeObjectURL(artifact.value.url)
-  artifact.value = null
   receipt.value = ''
   exportError.value = ''
 }
@@ -132,36 +186,21 @@ function reset() {
 async function exportCsv() {
   if (!report.value?.rows.length || error.value || loading.value || exporting.value) return
   exporting.value = true
-  clearArtifact()
-  const snapshot = report.value
-  await nextTick()
-  if (!live || report.value !== snapshot || error.value || loading.value) { exporting.value = false; return }
+  exportError.value = ''
   try {
-    const blob = new Blob([userDepositCsv(snapshot)], { type: 'text/csv;charset=utf-8;' })
-    artifact.value = {
-      url: URL.createObjectURL(blob),
-      filename: `用户充值报表-演示-${snapshot.filters.startDate}-${snapshot.filters.endDate}.csv`,
-      count: snapshot.rows.length
-    }
-    const link = document.createElement('a')
-    link.href = artifact.value.url
-    link.download = artifact.value.filename
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    receipt.value = `已生成 ${artifact.value.count} 笔充值的 CSV，已请求浏览器下载。若未开始，可点击重新下载。`
-  } catch (cause) {
-    exportError.value = `导出失败：${cause.message || '文件生成失败'}。请重试导出。`
-  } finally {
-    exporting.value = false
-  }
+    activeExportId.value = taskService.create(report.value)
+    receipt.value = ''
+    exportProgressOpen.value = true
+    await nextTick()
+  } catch (cause) { exportError.value = cause.message || '任务创建失败，请重试' }
+  finally { exporting.value = false }
 }
 onMounted(async () => {
   document.addEventListener('pointerdown', outsideColumns)
   await query()
   if (live && !error.value) headingRef.value?.focus()
 })
-onUnmounted(() => { live = false; clearArtifact(); document.removeEventListener('pointerdown', outsideColumns) })
+onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); clearArtifact(); document.removeEventListener('pointerdown', outsideColumns) })
 </script>
 
 <template>
@@ -172,6 +211,25 @@ onUnmounted(() => { live = false; clearArtifact(); document.removeEventListener(
         <p class="mt-1 text-sm text-slate-500">每笔充值单独展示，支持按代理、业务员和充值时间查询。</p>
       </div>
     </header>
+    <a-modal v-model:open="exportProgressOpen" :title="exportProgressTitle" :width="480" :mask-closable="false" class="deposit-export-modal" :after-close="() => releaseTaskBackground(exportTrigger)">
+      <div class="py-6 text-center" role="status">
+        <a-spin v-if="activeExport?.status === 'running'" size="large" />
+        <p class="mt-5 text-sm text-slate-600">{{ activeExport?.status === 'succeeded' ? '搜索结果已导出，可以关闭，稍后在“导出文件下载”中下载。' : activeExport?.status === 'failed' ? `导出失败：${activeExport.error}。可以关闭，稍后在“导出文件下载”中重试。` : '正在导出搜索结果，可以关闭，稍后在“导出文件下载”中下载。' }}</p>
+      </div>
+      <template #footer><a-button @click="exportProgressOpen = false">关闭</a-button></template>
+    </a-modal>
+    <a-modal v-model:open="tasksOpen" title="导出文件下载" :width="960" :mask-closable="false" :footer="null" class="deposit-export-modal" :after-close="() => releaseTaskBackground()" :body-style="{ maxHeight: '65vh', overflowY: 'auto' }">
+      <a-alert v-if="taskError" :message="taskError" type="error" show-icon class="mb-3" />
+      <a-table :columns="taskColumns" :data-source="exportTasks" row-key="id" size="small" :pagination="{ pageSize: 8, showSizeChanger: false }" :scroll="{ x: 780 }" :locale="{ emptyText: '暂无导出文件，请先导出充值报表' }">
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'report'"><div class="font-medium">用户充值报表</div><div class="text-xs text-slate-500">{{ record.range }}</div><div class="text-xs text-slate-500">{{ record.scope }}</div></template>
+          <template v-else-if="column.key === 'created'">{{ userReportTime(record.createdAt) }}</template>
+          <template v-else-if="column.key === 'status'"><a-tag :color="record.status === 'succeeded' ? 'success' : record.status === 'failed' ? 'error' : 'processing'">{{ record.status === 'succeeded' ? '生成成功' : record.status === 'failed' ? '生成失败' : '生成中' }}</a-tag><div v-if="record.error" class="text-xs text-red-600">{{ record.error }}</div></template>
+          <template v-else-if="column.key === 'action'"><a-button v-if="record.status === 'succeeded'" type="link" size="small" :aria-label="`下载 ${record.filename}`" @click="downloadTask(record)">下载</a-button><a-button v-else-if="record.status === 'failed'" type="link" size="small" @click="retryTask(record)">重试</a-button><span v-else class="text-slate-400">请稍候</span></template>
+        </template>
+      </a-table>
+      <span role="status" class="sr-only">{{ runningTasks ? `${runningTasks} 个任务生成中` : '任务列表已更新' }}</span>
+    </a-modal>
 
     <a-card :bordered="false"><a-form :model="draft" layout="vertical" aria-label="用户充值查询" @finish="query">
       <div class="grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -214,8 +272,9 @@ onUnmounted(() => { live = false; clearArtifact(); document.removeEventListener(
           <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 id="report-results-title" class="font-semibold text-slate-900">充值明细 <span class="ml-1 text-sm font-normal text-slate-500">{{ report.rows.length }} 笔充值</span></h2>
             <div class="flex flex-wrap items-center gap-2">
+              <a-button ref="exportTrigger" html-type="button" :disabled="!report.rows.length || !!error || loading || exporting" :aria-busy="exporting" @click="exportCsv">{{ exporting ? '正在创建任务…' : '导出全部查询结果' }}</a-button>
+              <a-button ref="taskTrigger" @click="taskError = ''; tasksOpen = true"><template #icon><DownloadOutlined /></template>导出文件下载<span v-if="runningTasks">（{{ runningTasks }}）</span></a-button>
               <RouterLink to="/admin/users/list" custom v-slot="{ href, navigate }"><a-button :href="href" @click="navigate">用户列表</a-button></RouterLink>
-            <a-button html-type="button" :disabled="!report.rows.length || !!error || loading || exporting" :aria-busy="exporting" @click="exportCsv">{{ exporting ? '正在生成 CSV…' : '导出全部查询结果' }}</a-button>
               <div ref="columnsRoot" class="column-settings" @keydown.esc.stop.prevent="closeColumns()" @focusout="event => { if (columnsOpen && event.relatedTarget && !columnsRoot?.contains(event.relatedTarget)) closeColumns(false) }">
                 <a-popover :open="columnsOpen" :arrow="false" placement="bottomRight" :get-popup-container="trigger => trigger.parentElement">
                 <a-button ref="columnsTrigger" type="text" size="small" aria-label="列设置" title="列设置" html-type="button" :aria-expanded="columnsOpen" aria-controls="report-column-settings" @click="toggleColumns">
@@ -240,7 +299,7 @@ onUnmounted(() => { live = false; clearArtifact(); document.removeEventListener(
             </div>
           </div>
           <p role="status" class="sr-only">{{ columnsNotice }}</p>
-          <p v-if="receipt" role="status" class="text-sm text-emerald-800">{{ receipt }} <a v-if="artifact" :href="artifact.url" :download="artifact.filename" class="inline-flex min-h-11 items-center underline">重新下载 CSV</a></p>
+          <p v-if="receipt" role="status" class="text-sm text-emerald-800">{{ receipt }}</p>
           <p v-if="exportError" role="alert" class="text-sm text-rose-700">{{ exportError }}</p>
         </div>
 
@@ -255,7 +314,7 @@ onUnmounted(() => { live = false; clearArtifact(); document.removeEventListener(
           <template v-if="column.key === 'employee'"><div><span class="block">{{ row.employeeId || '未分配业务员' }}</span><span class="mt-1 block text-xs text-slate-500">{{ row.employeeEmail || (row.employeeId ? '未设置邮箱' : '—') }}</span></div></template>
           <template v-if="column.key === 'amount'"><div><span>{{ format(row.amount) }}</span><span class="mt-1 block text-xs text-slate-500">{{ row.coin }}</span></div></template>
           <template v-if="column.key === 'usdt'"><span>{{ format(row.usdtValue, 2) }}</span></template>
-          <template v-if="column.key === 'status'"><div><a-tag :color="row.status === 'credited' ? 'success' : row.status === 'rejected' ? 'error' : 'warning'">{{ depositReportStatus(row.status) }}</a-tag><span class="mt-1 block text-xs text-slate-500">{{ row.creditedTime ? userReportTime(row.creditedTime) : '尚未入账' }}</span></div></template></template></a-table>
+          <template v-if="column.key === 'status'"><div><a-tag color="success">{{ depositReportStatus(row.status) }}</a-tag><span class="mt-1 block text-xs text-slate-500">{{ userReportTime(row.creditedTime) }}</span></div></template></template></a-table>
         <div class="flex justify-end border-t border-slate-200 p-4"><a-pagination v-model:current="page" v-model:page-size="pageSize" :total="report.rows.length" :page-size-options="['10', '20', '50']" show-size-changer :show-total="total => `共 ${total} 条`" @show-size-change="page = 1" /></div>
       </section>
     </template>
@@ -276,4 +335,12 @@ onUnmounted(() => { live = false; clearArtifact(); document.removeEventListener(
 .column-option { display: flex; align-items: center; min-height: 30px; margin-inline-start: 0; font-size: .875rem; color: #334155; cursor: pointer; }
 
 @media (pointer: coarse) { .column-option { min-height: 44px; } }
+</style>
+
+<style>
+.deposit-export-modal { top: max(16px, env(safe-area-inset-top)); padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+.deposit-export-modal .ant-modal-content { max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow: hidden; display: flex; flex-direction: column; }
+.deposit-export-modal .ant-modal-body { min-height: 0; overflow: auto; }
+.deposit-export-modal .ant-modal-header { flex-shrink: 0; padding-right: 32px; }
+@media (prefers-reduced-motion: reduce) { .deposit-export-modal, .deposit-export-modal * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
 </style>
