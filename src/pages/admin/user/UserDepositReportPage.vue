@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { DownloadOutlined, SettingOutlined } from '@ant-design/icons-vue'
+import { DownloadOutlined, FileExcelOutlined, SettingOutlined } from '@ant-design/icons-vue'
 import { getUserStaffRepository } from '../../../admin/repositories/userStaffRepository.js'
 import { defaultUserReportFilters, depositReportStatus, userReportTime } from '../../../features/user-staff/userDepositReport.js'
 import { getUserDepositReport } from '../../../admin/repositories/userDepositReportRepository.js'
@@ -120,7 +120,9 @@ function downloadTask(task) {
   taskError.value = ''
   try {
     const artifact = taskService.download(task.id)
-    const url = URL.createObjectURL(new Blob([artifact.csv], { type: 'text/csv;charset=utf-8;' }))
+    const isExcel = artifact.format === 'xlsx'
+    const content = isExcel ? Uint8Array.from(atob(artifact.csv), char => char.charCodeAt(0)) : artifact.csv
+    const url = URL.createObjectURL(new Blob([content], { type: isExcel ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'text/csv;charset=utf-8;' }))
     const link = document.createElement('a')
     link.href = url
     link.download = artifact.filename
@@ -212,10 +214,17 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
         <p class="mt-1 text-sm text-slate-500">每笔充值单独展示，支持按代理、业务员和充值时间查询。</p>
       </div>
     </header>
-    <a-modal v-model:open="exportProgressOpen" :title="exportProgressTitle" :width="480" :mask-closable="false" class="deposit-export-modal" :after-close="() => releaseTaskBackground(exportTrigger)">
+    <a-modal v-model:open="exportProgressOpen" :title="exportProgressTitle" :width="560" :mask-closable="false" class="deposit-export-modal" :after-close="() => releaseTaskBackground(exportTrigger)">
       <div class="py-6 text-center">
         <template v-if="activeExport?.status === 'succeeded'">
-          <a-button type="primary" @click="downloadTask(activeExport)"><template #icon><DownloadOutlined /></template>下载</a-button>
+          <div class="export-file-card">
+            <div class="export-file-icon"><FileExcelOutlined /></div>
+            <div class="min-w-0 flex-1 text-left">
+              <div class="font-medium text-slate-900 break-all">{{ activeExport.filename }}</div>
+              <div class="mt-1 text-xs text-slate-500">Excel 工作簿 · {{ activeExport.count }} 条记录</div>
+            </div>
+            <a-button type="primary" @click="downloadTask(activeExport)"><template #icon><DownloadOutlined /></template>下载</a-button>
+          </div>
         </template>
         <div v-else role="status">
           <a-spin v-if="activeExport?.status === 'running'" size="large" />
@@ -335,6 +344,8 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
 .report-primary, .report-primary:hover:not(:disabled) { background: #2563eb; color: white; border-color: #2563eb; }
 .report-button:disabled { cursor: not-allowed; opacity: .45; }
 .user-deposit-report :deep(:focus-visible) { outline: 2px solid #2563eb; outline-offset: 3px; }
+.export-file-card { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid #e8ecef; border-radius: 8px; background: #fafcfb; flex-wrap: wrap; }
+.export-file-icon { display: grid; place-items: center; width: 48px; height: 56px; flex-shrink: 0; border-radius: 8px; background: #e8f5ed; color: #217346; font-size: 30px; }
 .report-field { display: flex; min-width: 0; flex-direction: column; gap: .25rem; font-size: .875rem; font-weight: 500; color: #374151; }
 .column-settings { position: relative; }
 .column-panel { width: 216px; max-width: calc(100vw - 4rem); }

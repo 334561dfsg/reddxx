@@ -1,7 +1,7 @@
-import { userDepositCsv } from './userDepositReport.js'
+import { userDepositExcel } from './depositExcel.js'
 
 // Prototype task service. Replace with the backend task API when available.
-export function createDepositExportTasks({ storage, schedule = callback => setTimeout(callback, 800), generate = userDepositCsv } = {}) {
+export function createDepositExportTasks({ storage, schedule = callback => setTimeout(callback, 800), generate = userDepositExcel } = {}) {
   const key = 'admin-deposit-export-tasks-v1'
   let tasks = []
   const listeners = new Set()
@@ -13,9 +13,9 @@ export function createDepositExportTasks({ storage, schedule = callback => setTi
     listeners.forEach(listener => listener(list()))
   }
   function run(task) {
-    schedule(() => {
+    schedule(async () => {
       try {
-        task.csv = generate(task.snapshot)
+        task.csv = await generate(task.snapshot)
         task.status = 'succeeded'
         task.error = ''
         task.completedAt = new Date().toISOString()
@@ -40,8 +40,8 @@ export function createDepositExportTasks({ storage, schedule = callback => setTi
       if (existing) return existing.id
       const task = {
         id: `DP-${globalThis.crypto.randomUUID()}`, identity, snapshot,
-        createdAt: new Date().toISOString(), completedAt: '', status: 'running', error: '', csv: '',
-        filename: `用户充值报表-${snapshot.filters.startDate}-${snapshot.filters.endDate}.csv`,
+        createdAt: new Date().toISOString(), completedAt: '', status: 'running', error: '', csv: '', format: 'xlsx',
+        filename: `用户充值报表-${snapshot.filters.startDate}-${snapshot.filters.endDate}.xlsx`,
         count: snapshot.rows.length,
         range: `${snapshot.filters.startDate} 至 ${snapshot.filters.endDate}`,
         scope: `${snapshot.agentLabel} · ${snapshot.employeeLabel}${snapshot.filters.keyword ? ` · ${snapshot.filters.keyword}` : ''}`
@@ -62,7 +62,7 @@ export function createDepositExportTasks({ storage, schedule = callback => setTi
     download(id) {
       const task = tasks.find(item => item.id === id)
       if (!task || task.status !== 'succeeded' || !task.csv) throw new Error('文件尚未生成成功')
-      return { filename: task.filename, csv: task.csv }
+      return { filename: task.filename, csv: task.csv, format: task.format || 'csv' }
     }
   }
 }
