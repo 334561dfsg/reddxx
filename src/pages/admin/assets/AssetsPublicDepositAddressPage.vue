@@ -2,6 +2,7 @@
 import { nativeControl } from '../../../admin/components/antd/controls.js'
 import { computed, reactive, ref } from 'vue'
 import { publicDepositAddressRepository } from '../../../admin/repositories/publicDepositAddressRepository.js'
+import MinimumDepositDialog from '../../../admin/components/assets/MinimumDepositDialog.vue'
 import PanelSingleSelect from '../../../admin/components/form/PanelSingleSelect.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import { useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
@@ -10,6 +11,9 @@ import {
   PUBLIC_DEPOSIT_NETWORKS,
 } from '../../../admin/mock/publicDepositAddress'
 
+const minimumDepositTrigger = ref(null)
+const minimumDepositOpen = ref(false)
+const minimumDepositReceipt = ref('')
 const repository = publicDepositAddressRepository
 const rows = ref(repository.list())
 const keyword = ref('')
@@ -291,10 +295,15 @@ async function copyAddress(row) {
           按币种与网络维护用户充值时展示的平台地址。同一币种和网络只能启用一个地址，未配置地址的充值入口应暂停展示。
         </p>
       </div>
-      <a-button html-type="button" class="inline-flex shrink-0 items-center justify-center bg-slate-900 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800" @click="openCreate">
-        <span class="mr-1.5 text-lg leading-none">＋</span>新增地址
-      </a-button>
+      <div class="flex shrink-0 flex-wrap items-center gap-3">
+        <a-button :ref="el => { minimumDepositTrigger = nativeControl(el) }" html-type="button" aria-haspopup="dialog" class="min-h-11" @click="minimumDepositOpen = true">最低充值金额</a-button>
+        <a-button html-type="button" class="inline-flex shrink-0 items-center justify-center bg-slate-900 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800" @click="openCreate">
+          <span class="mr-1.5 text-lg leading-none">＋</span>新增地址
+        </a-button>
+      </div>
     </header>
+    <p v-if="minimumDepositReceipt" role="status" class="text-sm text-emerald-700">{{ minimumDepositReceipt }}</p>
+    <MinimumDepositDialog :return-focus="minimumDepositTrigger" :open="minimumDepositOpen" @close="minimumDepositOpen = false" @saved="value => { minimumDepositReceipt = `最低充值金额已保存：${value.amountUsdt} USDT（当前浏览器演示配置）` }" />
 
     <section class="grid gap-4 sm:grid-cols-3">
       <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">

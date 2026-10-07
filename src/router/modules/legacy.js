@@ -1,5 +1,9 @@
 export const legacyRoutes = [
   {
+    path: 'assets/publicDepositAddresses',
+    redirect: '/admin/assets/public-deposit-addresses'
+  },
+  {
     path: 'referral',
     redirect: '/admin/agent/referral-config'
   },
