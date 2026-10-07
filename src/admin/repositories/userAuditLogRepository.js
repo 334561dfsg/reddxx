@@ -214,6 +214,15 @@ const seedAuditLogs = () => {
   sequence = 0
   const seedRows = [
     {
+      id: 'UAUD-SEED-ACCOUNT-TYPE', occurredAt: new Date(Date.now() - 3600000).toISOString(),
+      targetUser: { uid: 'user_910001', name: '报表业务员张敏', email: 'report.sales01@example.com' },
+      source: 'admin', operator: { id: 'admin_current', name: '当前管理员' },
+      category: 'permission', action: 'permission.account-type.update', result: 'success',
+      reason: '账户类型调整（演示记录）', summary: '账户类型变更：客户 → 业务员（演示记录）',
+      before: { accountType: '客户' }, after: { accountType: '业务员' },
+      related: { businessId: 'REL-profile-user_910001' }
+    },
+    {
       id: 'UAUD-SEED-DEPOSIT-SET', occurredAt: '2026-07-24T08:00:00.000Z',
       targetUser: { uid: 'user_1001', name: 'agent_wang' }, source: 'admin',
       operator: { id: 'admin_current', name: '当前管理员' }, category: 'funds',

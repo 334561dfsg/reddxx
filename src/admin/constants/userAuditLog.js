@@ -24,6 +24,7 @@ export const USER_AUDIT_ACTIONS = Object.freeze([
   { value: 'funds.deposit-address.set', label: '设置专属收款地址', category: 'funds' },
   { value: 'funds.deposit-address.restore', label: '恢复公共收款地址', category: 'funds' },
   { value: 'profile.update', label: '编辑用户资料', category: 'profile' },
+  { value: 'permission.account-type.update', label: '账户类型变更', category: 'permission' },
   { value: 'relationship.parent.reset', label: '重置裂变上级', category: 'permission' },
   { value: 'relationship.agent-parent.set', label: '设置上级代理', category: 'permission' },
   { value: 'permission.agent-role.update', label: '调整代理身份', category: 'permission' },

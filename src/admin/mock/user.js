@@ -322,7 +322,12 @@ usersList.push(...[
   { id: 900002, username: '业务员张敏', email: 'sales.demo01@example.com', agentParentId: 'user_1001', agentParentUsername: 'agent_wang' },
   { id: 900003, username: '业务员李华', email: 'sales.demo02@example.com', agentParentId: 'user_1003', agentParentUsername: 'agent_li' },
   { id: 900004, username: '业务员陈晨', email: 'sales.demo03@example.com', agentParentId: 'user_1009', agentParentUsername: 'agent_zhao' },
-  { id: 900005, username: '业务员周宁', email: 'sales.demo04@example.com', agentParentId: null, agentParentUsername: null }
+  { id: 900005, username: '业务员周宁', email: 'sales.demo04@example.com', agentParentId: null, agentParentUsername: null },
+  // Separate report fixtures from login/search demo identities that may already
+  // have a different salesperson flag persisted in browser storage.
+  { id: 910001, username: '报表业务员张敏', email: 'report.sales01@example.com', agentParentId: 'user_1001', agentParentUsername: 'agent_wang' },
+  { id: 910002, username: '报表业务员李华', email: 'report.sales02@example.com', agentParentId: 'user_1003', agentParentUsername: 'agent_li' },
+  { id: 910003, username: '报表业务员陈晨', email: 'report.sales03@example.com', agentParentId: 'user_1009', agentParentUsername: 'agent_zhao' }
 ].map(({ id, ...profile }) => generateUser(id, {
   ...profile,
   isSalesperson: true, employeeId: null,

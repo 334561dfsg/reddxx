@@ -2,7 +2,7 @@
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { DownloadOutlined, FileExcelOutlined, SettingOutlined } from '@ant-design/icons-vue'
 import { getUserStaffRepository } from '../../../admin/repositories/userStaffRepository.js'
-import { defaultUserReportFilters, depositReportStatus, userReportTime } from '../../../features/user-staff/userDepositReport.js'
+import { defaultUserReportFilters, depositUserTypeOptions, depositUserTypeLabel, depositReportStatus, userReportTime } from '../../../features/user-staff/userDepositReport.js'
 import { getUserDepositReport } from '../../../admin/repositories/userDepositReportRepository.js'
 
 import { getDepositExportTasks } from '../../../features/user-staff/depositExportTasks.js'
@@ -10,7 +10,7 @@ import { getDepositExportTasks } from '../../../features/user-staff/depositExpor
 // Column preferences only affect this page's display; CSV always includes all fields.
 const columnRegistry = [
   { id: 'order', label: '充值单号 / 时间', required: true },
-  { id: 'user', label: '用户 ID / 昵称', required: true },
+  { id: 'user', label: '用户 ID / 昵称 / 类型', required: true },
   { id: 'agent', label: '代理 ID / 邮箱' },
   { id: 'employee', label: '业务员 ID / 邮箱' },
   { id: 'amount', label: '充值金额 / 币种', required: true },
@@ -146,6 +146,7 @@ const agentOptions = computed(() => [{ value: '', label: '全部代理' }, { val
 // Keep the full option set, so changing the agent never silently replaces a
 // selected salesperson. Incompatible combinations receive a query error.
 const employeeOptions = computed(() => [{ value: '', label: '全部业务员' }, { value: 'unassigned', label: '未分配业务员' }, ...employees.value.map(userOption)])
+const userTypeOptions = [{ value: '', label: '全部类型' }, ...depositUserTypeOptions]
 const format = (value, precision = 8) => value == null ? '—' : Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: precision })
 function userOption(user) {
   const uid = String(user.uid ?? user.id).replace(/^user_/, '')
@@ -211,7 +212,7 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
     <header class="flex flex-wrap items-start justify-between gap-3">
       <div class="min-w-0">
         <h1 id="user-deposit-report-title" ref="headingRef" tabindex="-1" class="text-2xl font-bold text-slate-900">用户充值报表</h1>
-        <p class="mt-1 text-sm text-slate-500">每笔充值单独展示，支持按代理、业务员和充值时间查询。</p>
+        <p class="mt-1 text-sm text-slate-500">每笔充值单独展示，支持按用户类型、所属代理、所属业务员和充值时间查询。用户类型按当前账号身份展示。</p>
       </div>
     </header>
     <a-modal v-model:open="exportProgressOpen" :title="exportProgressTitle" :width="560" :mask-closable="false" class="deposit-export-modal" :after-close="() => releaseTaskBackground(exportTrigger)">
@@ -265,6 +266,9 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
             </template>
           </a-select>
         </label>
+        <label class="report-field">用户类型
+          <a-select v-model:value="draft.userType" :options="userTypeOptions" :virtual="false" aria-label="用户类型" />
+        </label>
         <label class="report-field">用户 ID / 昵称<a-input v-model:value="draft.keyword" type="search" placeholder="输入用户 ID 或昵称" autocomplete="off" @keydown.enter="event => event.isComposing && event.preventDefault()" /></label>
         <label class="report-field">开始日期（UTC+8）<a-date-picker v-model:value="draft.startDate" value-format="YYYY-MM-DD" format="YYYY-MM-DD" :allow-clear="false" required :aria-invalid="dateError" :aria-describedby="dateError ? 'user-report-error' : undefined" /></label>
         <label class="report-field">结束日期（UTC+8）<a-date-picker v-model:value="draft.endDate" value-format="YYYY-MM-DD" format="YYYY-MM-DD" :allow-clear="false" required :aria-invalid="dateError" :aria-describedby="dateError ? 'user-report-error' : undefined" /></label>
@@ -286,7 +290,18 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
       <section class="min-w-0 rounded-xl border border-slate-200 bg-white" aria-labelledby="report-results-title" data-capability-tier="display" :aria-busy="loading">
         <div class="space-y-3 border-b border-slate-200 p-4 sm:p-5">
           <div class="flex flex-wrap items-center justify-between gap-3">
-            <h2 id="report-results-title" class="font-semibold text-slate-900">充值明细 <span class="ml-1 text-sm font-normal text-slate-500">{{ report.rows.length }} 笔充值</span></h2>
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-baseline gap-x-5 gap-y-2">
+                <h2 id="report-results-title" class="font-semibold text-slate-900">充值明细 <span class="ml-1 text-sm font-normal text-slate-500">{{ report.rows.length }} 笔充值</span></h2>
+                <dl class="flex min-w-0 flex-wrap items-baseline gap-x-1 gap-y-1 text-sm font-normal text-slate-500" aria-label="当前查询结果按用户类型汇总充值 USDT">
+                  <div v-for="(item, index) in report.typeTotals" :key="item.userType" class="flex min-w-0 flex-wrap items-baseline gap-y-1">
+                    <dt><span v-if="index" class="mx-1" aria-hidden="true">/</span>{{ item.label }}：</dt>
+                    <dd class="m-0"><span class="tabular-nums" :class="item.totalUsdt == null ? '' : 'font-semibold text-red-500'">{{ format(item.totalUsdt, 2) }}</span> USDT</dd>
+                    <dd v-if="item.missingCount" class="m-0 ml-1 text-xs font-normal text-amber-800">（{{ item.missingCount }} 笔缺少折合金额，未计入）</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
             <div class="flex flex-wrap items-center gap-2">
               <a-button ref="exportTrigger" html-type="button" :disabled="!report.rows.length || !!error || loading || exporting" :aria-busy="exporting" @click="exportCsv">{{ exporting ? '正在创建任务…' : '导出全部查询结果' }}</a-button>
               <a-button ref="taskTrigger" @click="taskError = ''; tasksOpen = true"><template #icon><DownloadOutlined /></template>导出文件下载<span v-if="runningTasks">（{{ runningTasks }}）</span></a-button>
@@ -314,6 +329,7 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
               </div>
             </div>
           </div>
+          <p class="text-sm text-slate-500">用户类型：{{ report.userTypeLabel }}</p>
           <p role="status" class="sr-only">{{ columnsNotice }}</p>
           <p v-if="receipt" role="status" class="text-sm text-emerald-800">{{ receipt }}</p>
           <p v-if="exportError" role="alert" class="text-sm text-rose-700">{{ exportError }}</p>
@@ -321,11 +337,11 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
 
         <div v-if="!rows.length" class="px-4 py-10 text-center">
           <p class="font-medium text-slate-800">当前条件没有充值记录</p>
-          <p class="mt-2 text-sm text-slate-500">可调整充值日期、代理、业务员或用户关键词后重新查询。</p>
+          <p class="mt-2 text-sm text-slate-500">可调整用户类型、充值日期、代理、业务员或用户关键词后重新查询。</p>
           <a-button html-type="button" @click="reset">重置筛选条件</a-button>
         </div>
         <a-table v-else :columns="reportColumns" :data-source="rows" row-key="orderId" :pagination="false" :scroll="{ x: 1100 }" size="middle"><template #bodyCell="{ column, record: row }"><template v-if="column.key === 'order'"><span class="block font-semibold text-slate-900">{{ row.orderId }}</span><span class="mt-1 block text-xs text-slate-500">{{ userReportTime(row.submitTime) }}</span></template>
-          <template v-if="column.key === 'user'"><div><span class="block font-medium text-slate-900">{{ row.nickname }}</span><span class="mt-1 block text-xs text-slate-500">{{ row.userId }}</span></div></template>
+          <template v-if="column.key === 'user'"><div><span class="block font-medium text-slate-900">{{ row.nickname }}</span><div class="mt-1 flex flex-wrap items-center gap-1"><span class="text-xs text-slate-500">{{ row.userId }}</span><a-tag :color="row.userType === 'agent' ? 'purple' : row.userType === 'salesperson' ? 'blue' : undefined">{{ depositUserTypeLabel(row.userType) }}</a-tag></div></div></template>
           <template v-if="column.key === 'agent'"><div><span class="block">{{ row.agentId || '未分配代理' }}</span><span class="mt-1 block text-xs text-slate-500">{{ row.agentEmail || (row.agentId ? '未设置邮箱' : '—') }}</span></div></template>
           <template v-if="column.key === 'employee'"><div><span class="block">{{ row.employeeId || '未分配业务员' }}</span><span class="mt-1 block text-xs text-slate-500">{{ row.employeeEmail || (row.employeeId ? '未设置邮箱' : '—') }}</span></div></template>
           <template v-if="column.key === 'amount'"><div><span>{{ format(row.amount) }}</span><span class="mt-1 block text-xs text-slate-500">{{ row.coin }}</span></div></template>

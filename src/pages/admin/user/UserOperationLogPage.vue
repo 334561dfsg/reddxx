@@ -158,51 +158,51 @@ const goToPage = (page) => {
 
     <form class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm" @submit.prevent="applyFilters">
       <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <label class="space-y-1 text-sm text-slate-600">
+        <label class="flex min-w-0 flex-col gap-1 text-sm text-slate-600">
           <span>目标用户</span>
-          <a-input v-model:value="filterDraft.keyword" class="" placeholder="UID / 用户名 / 邮箱 / 手机" />
+          <a-input v-model:value="filterDraft.keyword" class="w-full min-w-0" placeholder="UID / 用户名 / 邮箱 / 手机" />
         </label>
-        <label class="space-y-1 text-sm text-slate-600">
+        <label class="flex min-w-0 flex-col gap-1 text-sm text-slate-600">
           <span>操作人或来源</span>
-          <a-input v-model:value="filterDraft.operatorKeyword" class="" placeholder="管理员 / 系统规则 / 任务" />
+          <a-input v-model:value="filterDraft.operatorKeyword" class="w-full min-w-0" placeholder="管理员 / 系统规则 / 任务" />
         </label>
-        <label class="space-y-1 text-sm text-slate-600">
+        <label class="flex min-w-0 flex-col gap-1 text-sm text-slate-600">
           <span>业务分类</span>
-          <a-select v-model:value="filterDraft.category" class="" @change="filterDraft.action = ''">
+          <a-select v-model:value="filterDraft.category" class="w-full min-w-0" :virtual="false" popup-class-name="user-audit-filter-popup" aria-label="业务分类" @change="filterDraft.action = ''">
             <a-select-option value="">全部分类</a-select-option>
             <a-select-option v-for="item in USER_AUDIT_CATEGORIES" :key="item.value" :value="item.value">{{ item.label }}</a-select-option>
           </a-select>
         </label>
-        <label class="space-y-1 text-sm text-slate-600">
+        <label class="flex min-w-0 flex-col gap-1 text-sm text-slate-600">
           <span>操作类型</span>
-          <a-select v-model:value="filterDraft.action" class="">
+          <a-select v-model:value="filterDraft.action" class="w-full min-w-0" :virtual="false" popup-class-name="user-audit-filter-popup" aria-label="操作类型">
             <a-select-option value="">全部操作</a-select-option>
             <a-select-option v-for="item in actionOptions" :key="item.value" :value="item.value">{{ item.label }}</a-select-option>
           </a-select>
         </label>
-        <label class="space-y-1 text-sm text-slate-600">
+        <label class="flex min-w-0 flex-col gap-1 text-sm text-slate-600">
           <span>操作结果</span>
-          <a-select v-model:value="filterDraft.result" class="">
+          <a-select v-model:value="filterDraft.result" class="w-full min-w-0" :virtual="false" popup-class-name="user-audit-filter-popup" aria-label="操作结果">
             <a-select-option value="">全部结果</a-select-option>
             <a-select-option v-for="item in USER_AUDIT_RESULTS" :key="item.value" :value="item.value">{{ item.label }}</a-select-option>
           </a-select>
         </label>
-        <label class="space-y-1 text-sm text-slate-600">
+        <label class="flex min-w-0 flex-col gap-1 text-sm text-slate-600">
           <span>操作原因</span>
-          <a-input v-model:value="filterDraft.reasonKeyword" class="" placeholder="复核 / 规则 / 备注关键词" />
+          <a-input v-model:value="filterDraft.reasonKeyword" class="w-full min-w-0" placeholder="复核 / 规则 / 备注关键词" />
         </label>
-        <label class="space-y-1 text-sm text-slate-600">
+        <label class="flex min-w-0 flex-col gap-1 text-sm text-slate-600">
           <span>关联 ID</span>
-          <a-input v-model:value="filterDraft.relatedKeyword" class="" placeholder="业务 / 请求 / 规则 / 任务 ID" />
+          <a-input v-model:value="filterDraft.relatedKeyword" class="w-full min-w-0" placeholder="业务 / 请求 / 规则 / 任务 ID" />
         </label>
-        <div class="grid grid-cols-2 gap-2">
-          <label class="space-y-1 text-sm text-slate-600">
+        <div class="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-2">
+          <label class="flex min-w-0 flex-col gap-1 text-sm text-slate-600">
             <span>开始时间</span>
-            <a-input v-model:value="filterDraft.timeFrom" class="" type="date" />
+            <a-input v-model:value="filterDraft.timeFrom" class="w-full min-w-0" type="date" />
           </label>
-          <label class="space-y-1 text-sm text-slate-600">
+          <label class="flex min-w-0 flex-col gap-1 text-sm text-slate-600">
             <span>结束时间</span>
-            <a-input v-model:value="filterDraft.timeTo" class="" type="date" />
+            <a-input v-model:value="filterDraft.timeTo" class="w-full min-w-0" type="date" />
           </label>
         </div>
       </div>
@@ -258,7 +258,7 @@ const goToPage = (page) => {
                         <h3 class="text-sm font-semibold text-slate-900">字段变更</h3>
                         <div class="mt-2 divide-y divide-slate-100">
                           <div v-for="diff in log.diff" :key="diff.field" class="grid gap-2 py-2 text-sm md:grid-cols-3">
-                            <span class="font-medium text-slate-700">{{ diff.field }}</span>
+                            <span class="font-medium text-slate-700">{{ diff.field === 'accountType' ? '账户类型' : diff.field }}</span>
                             <span class="text-slate-500">前：{{ formatDiffValue(diff.before) }}</span>
                             <span class="text-slate-500">后：{{ formatDiffValue(diff.after) }}</span>
                           </div>
@@ -296,7 +296,7 @@ const goToPage = (page) => {
             </a-button>
             <div v-if="expandedLogId === log.id" :id="`mobile-audit-detail-${log.id}`" class="mt-3 rounded-md bg-slate-50 p-3 text-sm text-slate-600">
               <div v-for="diff in log.diff" :key="diff.field" class="border-b border-slate-200 py-2 last:border-0">
-                <p class="font-medium text-slate-800">{{ diff.field }}</p>
+                <p class="font-medium text-slate-800">{{ diff.field === 'accountType' ? '账户类型' : diff.field }}</p>
                 <p>前：{{ formatDiffValue(diff.before) }}</p>
                 <p>后：{{ formatDiffValue(diff.after) }}</p>
               </div>
@@ -312,3 +312,10 @@ const goToPage = (page) => {
     </div>
   </section>
 </template>
+
+<style scoped>
+:global(.user-audit-filter-popup .ant-select-item-option-content) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+</style>

@@ -44,7 +44,7 @@ export function createDepositExportTasks({ storage, schedule = callback => setTi
         filename: `用户充值报表-${snapshot.filters.startDate}-${snapshot.filters.endDate}.xlsx`,
         count: snapshot.rows.length,
         range: `${snapshot.filters.startDate} 至 ${snapshot.filters.endDate}`,
-        scope: `${snapshot.agentLabel} · ${snapshot.employeeLabel}${snapshot.filters.keyword ? ` · ${snapshot.filters.keyword}` : ''}`
+        scope: `${snapshot.userTypeLabel || '全部类型'} · ${snapshot.agentLabel} · ${snapshot.employeeLabel}${snapshot.filters.keyword ? ` · ${snapshot.filters.keyword}` : ''}`
       }
       tasks.unshift(task)
       try { publish() } catch { tasks.shift(); throw new Error('任务保存失败，请检查浏览器存储空间后重试') }

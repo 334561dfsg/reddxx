@@ -98,3 +98,16 @@ export function createMinimumDepositMfaSession(repository, verify) {
     }
   }
 }
+
+// Both prices share USD as their quote; retain the USDT/USD factor explicitly.
+export function calculateMinimumFromUsdPrices(amount, coin, usdtUsdPrice) {
+  const precision = coin?.precision
+  if (!Number.isInteger(precision) || precision < 0 || precision > 18) return null
+  const price = decimal(coin.usdPrice)
+  const quote = decimal(usdtUsdPrice)
+  if (!price || !quote) return null
+  const minimum = decimal(normalizeMinimumUsdt(amount))
+  const numerator = minimum.numerator * quote.numerator * price.denominator * 10n ** BigInt(precision)
+  const denominator = minimum.denominator * quote.denominator * price.numerator
+  return formatUnits((numerator + denominator - 1n) / denominator, precision)
+}

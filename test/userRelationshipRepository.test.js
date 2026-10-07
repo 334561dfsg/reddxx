@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { usersList } from '../src/admin/mock/user.js'
+import { queryUserAuditLogs, resetUserAuditLogsForTests } from '../src/admin/repositories/userAuditLogRepository.js'
 import {
   getDirectReferrals,
   getDescendants,
@@ -22,6 +23,31 @@ import {
 const getUser = (id) => usersList.find((user) => user.id === id)
 const snapshotUser = (id) => ({ ...getUser(id) })
 const restoreUser = (snapshot) => Object.assign(getUser(snapshot.id), snapshot)
+
+test('account type audit tracks customer, salesperson and agent transitions only when changed', () => {
+  const fixture = { id: 'type-audit-fixture', username: 'type_audit', email: 'type-audit@example.com', phone: '', remark: '', role: 'user', isSalesperson: false, status: 'active' }
+  usersList.push(fixture)
+  resetUserAuditLogsForTests()
+  const logs = () => queryUserAuditLogs({ filters: { action: 'permission.account-type.update' } }).rows
+  try {
+    updateProfile(fixture.id, { ...fixture, isSalesperson: true, reason: '调整类型' })
+    updateProfile(fixture.id, { ...fixture, remark: '仅更新备注' })
+    assert.equal(logs().length, 1)
+    assert.equal(logs()[0].before.accountType, '客户')
+    assert.equal(logs()[0].after.accountType, '业务员')
+    assert.equal(logs()[0].actionLabel, '账户类型变更')
+    assert.equal(logs()[0].reason, '调整类型')
+    updateAgentRole({ userId: fixture.id, role: 'agent' })
+    updateAgentRole({ userId: fixture.id, role: 'user' })
+    updateProfile(fixture.id, { ...fixture, isSalesperson: false })
+    assert.equal(logs().length, 4)
+    assert.ok(logs().some(log => log.before.accountType === '业务员' && log.after.accountType === '代理'))
+    assert.ok(logs().some(log => log.before.accountType === '代理' && log.after.accountType === '业务员'))
+    assert.ok(logs().some(log => log.before.accountType === '业务员' && log.after.accountType === '客户'))
+    assert.throws(() => updateAgentRole({ userId: fixture.id, role: 'invalid' }))
+    assert.equal(logs().length, 4)
+  } finally { usersList.splice(usersList.indexOf(fixture), 1); resetUserAuditLogsForTests() }
+})
 
 test('returns direct children and breadth-first descendants with paths', () => {
   const directIds = getDirectReferrals('user_1001').map((row) => row.id)

@@ -183,6 +183,49 @@ let chainDepositEvents = Array.from({ length: 26 }, (_, i) => createChainDeposit
   order.confirmations = event.confirmations
 })
 
+// Stable report fixtures: 12 credited deposits per account type, interleaved
+// across the last 27 days so the default report and every type filter have data.
+const reportDemoUsers = [
+  ['user_1002', 'user_1004', 'user_1006'],
+  ['user_910001', 'user_910002', 'user_910003'],
+  ['user_1001', 'user_1003', 'user_1009']
+]
+const reportDemoAssets = [
+  { coin: 'USDT', network: 'TRC20', amount: 680, rate: 1, confirmations: 12 },
+  { coin: 'BTC', network: 'Bitcoin', amount: 0.0125, rate: 98000, confirmations: 3 },
+  { coin: 'ETH', network: 'Ethereum', amount: 0.35, rate: 3200, confirmations: 12 },
+  { coin: 'USDC', network: 'ERC20', amount: 1250, rate: 1, confirmations: 12 }
+]
+for (let index = 0; index < 36; index++) {
+  const round = Math.floor(index / 3)
+  const user = usersList.find(item => item.id === reportDemoUsers[index % 3][round % 3])
+  const asset = reportDemoAssets[round % reportDemoAssets.length]
+  const amount = Number((asset.amount * (1 + Math.floor(round / 4) * 0.5)).toFixed(8))
+  const submitTime = isoDaysAgo(Math.floor(round * 26 / 11), 1 + (index % 3) * 0.1)
+  const creditedTime = new Date(Date.parse(submitTime) + 20 * 60 * 1000).toISOString()
+  const order = createDepositOrder(20 + index, {
+    userId: user.id, username: user.username, email: user.email,
+    coin: asset.coin, network: asset.network, amount,
+    usdtValue: Number((amount * asset.rate).toFixed(2)),
+    requiredConfirmations: asset.confirmations, confirmations: asset.confirmations,
+    status: DEPOSIT_ORDER_STATUS.CREDITED, submitTime, creditedTime,
+    operator: 'admin_02', auditNote: '充值报表多类型演示数据'
+  })
+  const event = createChainDepositEvent(26 + index, {
+    coin: order.coin, network: order.network, chain: order.network,
+    amount: order.amount, usdtValue: order.usdtValue, toAddress: order.toAddress,
+    confirmations: asset.confirmations, requiredConfirmations: asset.confirmations,
+    blockTime: submitTime, listenTime: creditedTime,
+    status: CHAIN_DEPOSIT_EVENT_STATUS.LINKED, linkedOrderId: order.id
+  })
+  Object.assign(order, {
+    linkedChainEventId: event.id, linkedChainEvent: clone(event),
+    txHash: event.txHash, fromAddress: event.fromAddress
+  })
+  depositOrders.push(order)
+  chainDepositEvents.push(event)
+}
+
 function applyFilters(list, { status = FUND_ORDER_FILTER_ALL, coin = FUND_ORDER_FILTER_ALL, keyword = '' } = {}) {
   const kw = String(keyword || '').trim().toLowerCase()
   return list.filter((order) => {

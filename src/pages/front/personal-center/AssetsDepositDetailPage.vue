@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import FrontSearchablePopoverPicker from '../../../components/front/FrontSearchablePopoverPicker.vue'
 import SecurityCheckDialog from '../../../components/front/SecurityCheckDialog.vue'
@@ -10,6 +10,9 @@ import {
   demoDepositAddress,
   networkHintDeposit
 } from '../../../constants/frontAssetCenterDemo'
+import { browserMinimumDepositRepository, MINIMUM_DEPOSIT_CHANGED } from '../../../features/minimum-deposit/browserRepository.js'
+import { calculateMinimumFromUsdPrices } from '../../../features/minimum-deposit/model.js'
+import { frontAssetHoldingCoinMarket } from '../../../constants/frontAssetCenterDemo'
 import { useFrontAuthStore } from '../../../stores/frontAuth'
 import { useFrontSecurityStore } from '../../../stores/frontSecurity'
 
@@ -52,6 +55,29 @@ const pickerSymbol = ref('')
 const symbol = computed(() => String(route.params.symbol || '').toUpperCase())
 
 const coinMeta = computed(() => FRONT_DEPOSIT_COINS.find((c) => c.symbol === symbol.value))
+
+const minimumUsdt = ref(null)
+const minimumLoadError = ref(false)
+function refreshMinimumDeposit() {
+  try {
+    minimumUsdt.value = browserMinimumDepositRepository.read().amountUsdt
+    minimumLoadError.value = false
+  } catch {
+    minimumUsdt.value = null
+    minimumLoadError.value = true
+  }
+}
+const minimumQuantity = computed(() => minimumUsdt.value === null ? null : calculateMinimumFromUsdPrices(
+  minimumUsdt.value,
+  frontAssetHoldingCoinMarket(symbol.value),
+  frontAssetHoldingCoinMarket('USDT')?.usdPrice
+))
+onMounted(() => {
+  refreshMinimumDeposit()
+  window.addEventListener('storage', refreshMinimumDeposit)
+  window.addEventListener('focus', refreshMinimumDeposit)
+  window.addEventListener(MINIMUM_DEPOSIT_CHANGED, refreshMinimumDeposit)
+})
 
 const depositCoinOptions = computed(() =>
   FRONT_DEPOSIT_COINS.map((c) => ({ value: c.symbol, label: c.symbol }))
@@ -179,6 +205,9 @@ function onQuickPay() {
 }
 
 onUnmounted(() => {
+  window.removeEventListener('storage', refreshMinimumDeposit)
+  window.removeEventListener('focus', refreshMinimumDeposit)
+  window.removeEventListener(MINIMUM_DEPOSIT_CHANGED, refreshMinimumDeposit)
   if (copyTimer) clearTimeout(copyTimer)
   resetVoucherPreview()
 })
@@ -298,14 +327,20 @@ const addressShell =
           </div>
 
           <div class="min-w-0">
-            <label :class="labelBase">充币数量</label>
+            <label for="deposit-amount" :class="labelBase">充币数量</label>
             <input
+              id="deposit-amount"
+              aria-describedby="deposit-minimum-hint"
               v-model="depositAmount"
               type="text"
               inputmode="decimal"
               placeholder="请填写充币数量"
               :class="inputBase"
             />
+            <p id="deposit-minimum-hint" role="status" class="mt-2 break-words text-xs leading-5 text-white/65 sm:text-sm">
+              <template v-if="minimumQuantity !== null">最低充值数量：<span class="font-medium text-lime-300">{{ minimumQuantity }} {{ coinMeta.symbol }}</span>（约 {{ minimumUsdt }} USDT）</template>
+              <template v-else>{{ minimumLoadError ? '最低充值金额暂时无法加载' : '当前币种汇率暂不可用，无法计算最低充值数量' }}<button type="button" class="ml-2 inline-flex min-h-11 items-center text-lime-300 underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-lime-300" @click="refreshMinimumDeposit">重试</button></template>
+            </p>
           </div>
 
           <div class="min-w-0">

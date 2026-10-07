@@ -31,6 +31,7 @@ const normalizeOptionalReason = (reason) => {
 }
 
 const cloneAuditValue = (value) => JSON.parse(JSON.stringify(value))
+const accountTypeLabel = (user) => user.role === USER_ROLE.AGENT ? '代理' : user.isSalesperson === true ? '业务员' : '客户'
 
 const appendAudit = ({ type, userId, before, after, reason, affectedUserIds }) => {
   relationshipAuditLog.push({
@@ -67,6 +68,19 @@ const appendUnifiedRelationshipAudit = ({ type, user, before, after, reason, aff
       requestId: affectedUserIds?.length > 1 ? `REL-AFFECTED-${affectedUserIds.length}` : ''
     }
   })
+  if (type === 'profile' || type === 'agent-role') {
+    const previousType = accountTypeLabel({ ...user, ...before })
+    const nextType = accountTypeLabel({ ...user, ...after })
+    if (previousType !== nextType) appendUserAuditLog({
+      targetUser: { uid: idOf(user), name: user.username, email: user.email, phone: user.phone },
+      source: 'admin',
+      operator: { id: 'admin_current', name: '当前管理员' },
+      category: 'permission', action: 'permission.account-type.update', result: 'success', reason,
+      summary: `账户类型变更：${previousType} → ${nextType}`,
+      before: { accountType: previousType }, after: { accountType: nextType },
+      related: { businessId: `REL-${type}-${idOf(user)}` }
+    })
+  }
 }
 
 export const getUserById = (id) => {
