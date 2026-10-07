@@ -210,6 +210,9 @@ onMounted(loadList)
                 <div class="font-semibold text-slate-900">{{ formatMoney(order.amount) }} {{ order.coin }}</div>
                 <div class="text-xs text-slate-500">手续费 {{ order.fee }} {{ order.coin }}</div>
               </div></template></a-table-column>
+<a-table-column key="usdt-value" title="折合 USDT" align="right"><template #default="{ record: order }">
+                <span class="whitespace-nowrap tabular-nums">{{ order.usdtValue == null ? '—' : formatMoney(order.usdtValue) }}</span>
+              </template></a-table-column>
 <a-table-column key="column-3" ><template #title>地址 / 网络</template><template #default="{ record: order, index: index }"><div class="max-w-[260px]  ">
                 <div class="truncate font-mono text-xs text-slate-700">{{ order.address }}</div>
                 <div class="mt-1 text-xs text-slate-500">{{ order.network }}</div>
