@@ -1,6 +1,7 @@
 <script setup>
 import { computed, h, nextTick, ref, watch } from 'vue'
 import { Button, Empty, Modal, Space, Statistic, Table, Typography } from 'ant-design-vue'
+import { valueMockWalletHoldings } from '../../mock/userWalletQuotes.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
@@ -11,6 +12,15 @@ const props = defineProps({
 const emit = defineEmits(['close', 'closed'])
 const dialogRef = ref(null)
 const titleRef = ref(null)
+const quoteTick = ref(0)
+const valuedHoldings = computed(() => valueMockWalletHoldings(props.wallet?.holdings ?? [], quoteTick.value))
+const totalValueUsdt = computed(() => valuedHoldings.value.reduce((sum, row) => sum + row.valueUsdt, 0))
+watch(() => [props.visible, props.wallet], ([visible, wallet], previous, onCleanup) => {
+  quoteTick.value = 0
+  if (!visible || !wallet) return
+  const timer = setInterval(() => { quoteTick.value += 1 }, 15000)
+  onCleanup(() => clearInterval(timer))
+}, { immediate: true })
 const tableViewportRef = ref(null)
 const tableScrollHeight = ref(1)
 // Measure the available table region, not the viewport: the summary and modal
@@ -48,7 +58,8 @@ const columns = [
   { title: '币种', dataIndex: 'coin', key: 'coin' },
   { title: '数量', dataIndex: 'quantity', key: 'quantity', align: 'right', customRender: ({ text, record }) => amount(text, record.precision) },
   { title: '冻结', dataIndex: 'frozen', key: 'frozen', align: 'right', customRender: ({ text, record }) => amount(text, record.precision) },
-  { title: '最新价（USD）', dataIndex: 'latestPrice', key: 'latestPrice', align: 'right', customRender: ({ text }) => amount(text, 8) }
+  { title: '最新价（USDT）', dataIndex: 'latestPrice', key: 'latestPrice', align: 'right', customRender: ({ text }) => amount(text, 8) },
+  { title: 'USDT 价值', dataIndex: 'valueUsdt', key: 'valueUsdt', align: 'right', customRender: ({ text }) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(text) }
 ]
 // Keep Ant's complete modal content; the shared lifecycle owns layered focus/isolation.
 const setModalElement = element => {
@@ -90,10 +101,11 @@ watch(dialogRef, async (element, previous, onCleanup) => {
     <div class="wallet-holdings-content">
       <Space direction="vertical" :size="4" class="wallet-holdings-summary">
         <Typography.Text type="secondary">{{ wallet?.username }} · UID {{ wallet?.userId }}</Typography.Text>
-        <Statistic title="钱包总额（USD 估值）" :value="wallet?.total ?? 0" :precision="2" />
+        <Statistic title="钱包总额（USDT 估值）" :value="totalValueUsdt" :precision="2" />
+        <Typography.Text type="secondary">模拟报价每 15 秒刷新 · USDT 价值含冻结数量</Typography.Text>
       </Space>
       <div ref="tableViewportRef" class="wallet-holdings-table-viewport">
-      <Table :columns="columns" :data-source="wallet?.holdings ?? []" row-key="coin" :pagination="false" :scroll="{ y: tableScrollHeight }" size="small" :table-layout="'fixed'">
+      <Table :columns="columns" :data-source="valuedHoldings" row-key="coin" :pagination="false" :scroll="{ y: tableScrollHeight }" size="small" :table-layout="'fixed'">
         <template #emptyText><Empty :image="Empty.PRESENTED_IMAGE_SIMPLE" description="该钱包暂无持有币种" /></template>
       </Table>
       </div>
