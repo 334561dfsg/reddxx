@@ -2,6 +2,16 @@
 
 These instructions apply to every agent and every change in this repository.
 
+## Ant Design Vue UI constraints
+
+All new or modified admin UI must use the installed `ant-design-vue` components and follow Ant Design's design language. This is a required project convention for subsequent work, not an optional preference.
+
+1. Use `Modal` for dialogs and `Drawer` for drawers; use Ant Design Vue `Button`, `Table`, `Descriptions`, `Statistic`, `Alert`, `Empty`, and form controls where applicable. Reuse existing Ant Design wrappers when they preserve these semantics. Do not recreate these components using native HTML and Tailwind styling or merely imitate Ant Design visually.
+2. Inherit the application's `ConfigProvider` theme and design tokens for colors, typography, spacing, borders, radii, shadows, and component states. Do not introduce a competing visual system or override library appearance with utility classes. Custom CSS is limited to necessary layout, responsive sizing, safe areas, accessibility, and the interaction safeguards below.
+3. Keep one modal owner. Integrate library overlays with the shared layer system so lower drawers/dialogs remain inert, Escape affects only the top layer, and focus returns after closing. Disable backdrop closing. Preserve fixed headers/footers, body-only scrolling, motion preferences, and cleanup; library defaults do not waive these constraints.
+4. When changing an existing admin surface, migrate the components touched by that change to Ant Design Vue. Do not expand the task into unrelated page migrations. If the library lacks a required capability, extend an Ant Design component through a reusable adapter and document the reason.
+5. Verify component usage and relevant interactions, and report runtime/device checks that were not performed.
+
 ## Responsive and adaptive interaction constraints
 
 All responsive and adaptive work must preserve the same core business capabilities, data results, authorization, validation, error handling, safety confirmations, and status feedback across PC, tablet, and mobile. A low-frequency or secondary capability may be collapsed, collected, or converted into another component, but it must not be removed and must remain discoverable and accessible; do not use `display: none` to hide a capability users still need.

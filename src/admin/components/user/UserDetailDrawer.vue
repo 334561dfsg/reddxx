@@ -9,6 +9,8 @@ import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../constants/user'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import { userDepositAddressRepository, userDepositAddressVersion } from '../../repositories/userDepositAddressRepository.js'
 import UserOperations from './UserOperations.vue'
+import UserWalletHoldingsDialog from './UserWalletHoldingsDialog.vue'
+import { USER_WALLETS, createMockWalletHoldings } from '../../mock/userWalletHoldings.js'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -230,6 +232,25 @@ const computedAssets = computed(() => {
 const usableBalance = computed(() => Number(props.user?.balance || 0))
 const totalBalance = computed(() => usableBalance.value + Number(props.user?.frozenBalance || 0))
 
+const walletDetail = ref(null)
+const walletDetailOpen = ref(false)
+const walletReturnFocus = ref(null)
+const openWalletDetail = (wallet, event) => {
+  if (phase.value !== 'open' || walletDetail.value || !computedAssets.value) return
+  const total = computedAssets.value[wallet.key]
+  walletDetail.value = {
+    ...wallet, total, userId: props.user.id, username: props.user.username,
+    holdings: createMockWalletHoldings(wallet.key, total)
+  }
+  walletReturnFocus.value = event.currentTarget
+  walletDetailOpen.value = true
+}
+const clearWalletDetail = () => {
+  walletDetail.value = null
+  walletReturnFocus.value = null
+}
+watch(() => [props.visible, props.user?.id], () => { walletDetailOpen.value = false })
+
 // 用户操作（封户/入金/划转）已抽出到 `UserOperations.vue`，这里不再维护弹窗与表单逻辑
 
 const tabButtonClass = (id) => {
@@ -407,31 +428,17 @@ const tabButtonClass = (id) => {
 
                     <div>
                       <!-- <div class="text-sm font-semibold text-slate-900">账户资产</div> -->
-                      <div class="mt-3 grid grid-cols-2 gap-4 text-sm">
-                        <div class="rounded-lg bg-white border border-slate-100 px-4 py-3">
-                          <div class="text-xs text-slate-500">市值账户</div>
-                          <div class="mt-2 font-semibold text-slate-900 text-lg">
-                            {{ computedAssets ? formatMoney(computedAssets.marketAccount, { min: 2, max: 2 }) : '-' }}
-                          </div>
-                        </div>
-                        <div class="rounded-lg bg-white border border-slate-100 px-4 py-3">
-                          <div class="text-xs text-slate-500">理财账户</div>
-                          <div class="mt-2 font-semibold text-slate-900 text-lg">
-                            {{ computedAssets ? formatMoney(computedAssets.wealthAccount, { min: 2, max: 2 }) : '-' }}
-                          </div>
-                        </div>
-                        <div class="rounded-lg bg-white border border-slate-100 px-4 py-3">
-                          <div class="text-xs text-slate-500">交易合约</div>
-                          <div class="mt-2 font-semibold text-slate-900 text-lg">
-                            {{ computedAssets ? formatMoney(computedAssets.tradingContract, { min: 2, max: 2 }) : '-' }}
-                          </div>
-                        </div>
-                        <div class="rounded-lg bg-white border border-slate-100 px-4 py-3">
-                          <div class="text-xs text-slate-500">永续合约</div>
-                          <div class="mt-2 font-semibold text-slate-900 text-lg">
-                            {{ computedAssets ? formatMoney(computedAssets.perpetualContract, { min: 2, max: 2 }) : '-' }}
-                          </div>
-                        </div>
+                      <div class="mt-3 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+                        <button
+                          v-for="wallet in USER_WALLETS" :key="wallet.key" type="button"
+                          class="min-w-0 rounded-lg border border-slate-200 bg-white px-4 py-3 text-left transition-colors hover:border-blue-300 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                          aria-haspopup="dialog" :aria-label="`查看${wallet.label}持有币种明细`"
+                          @click="openWalletDetail(wallet, $event)"
+                        >
+                          <span class="block text-xs text-slate-500">{{ wallet.label }}</span>
+                          <span class="mt-2 block break-all text-lg font-semibold text-slate-900">{{ computedAssets ? formatMoney(computedAssets[wallet.key], { min: 2, max: 2 }) : '-' }}</span>
+                          <span class="mt-2 block text-xs text-blue-600">查看币种明细 →</span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -785,6 +792,10 @@ const tabButtonClass = (id) => {
       </div>
     </Transition>
   </Teleport>
+  <UserWalletHoldingsDialog
+    :visible="walletDetailOpen" :wallet="walletDetail" :return-focus="walletReturnFocus"
+    @close="walletDetailOpen = false" @closed="clearWalletDetail"
+  />
 </template>
 
 <style scoped>

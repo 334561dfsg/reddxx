@@ -404,6 +404,11 @@ export const useDialogLifecycle = ({
     return true
   }
 
+  // Library portals may mount their content after the initial open tick.
+  watch(dialogRef, (element) => {
+    if (element && rendered.value && isOpen()) registerLayerAfterRender()
+  }, { flush: 'post' })
+
   watch(isOpen, (nextOpen) => {
     if (nextOpen) startOpening()
     else startClosing()
