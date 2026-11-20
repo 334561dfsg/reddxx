@@ -21,6 +21,7 @@ export const ORDER_STATUS = {
   COMPLETED: 'completed',
   SETTLED: 'settled',
   EARLY_REDEEMED: 'early_redeemed',
+  FORCE_REDEEMED: 'force_redeemed',
   LOCKED: 'locked',
   CANCELLED: 'cancelled'
 }
@@ -30,6 +31,7 @@ export const orderStatusMeta = {
   [ORDER_STATUS.COMPLETED]: { label: '已完成', class: 'bg-emerald-100 text-emerald-700' },
   [ORDER_STATUS.SETTLED]: { label: '已结算', class: 'bg-slate-100 text-slate-600' },
   [ORDER_STATUS.EARLY_REDEEMED]: { label: '提前赎回', class: 'bg-purple-100 text-purple-700' },
+  [ORDER_STATUS.FORCE_REDEEMED]: { label: '强制赎回', class: 'bg-purple-100 text-purple-700' },
   [ORDER_STATUS.LOCKED]: { label: '锁定中', class: 'bg-amber-100 text-amber-700' },
   [ORDER_STATUS.CANCELLED]: { label: '已取消', class: 'bg-rose-100 text-rose-700' }
 }

@@ -2,8 +2,10 @@
 	<section class="space-y-4">
 		<header>
 			<h1 class="text-3xl font-semibold text-slate-900">订单管理</h1>
-			<p class="mt-1 text-sm text-slate-500">查看用户订单、收益状态及订单详情；收益调整在订单行或详情中发起</p>
+			<p class="mt-1 text-sm text-slate-500">查看用户订单、收益状态及订单详情；收益调整在订单行或详情中发起，强制赎回在订单行发起</p>
 		</header>
+
+		<a-alert v-if="redemptionNotice" type="success" show-icon :message="redemptionNotice" role="status" />
 
 		<article class="rounded-xl border border-slate-200 bg-white">
 			<div class="space-y-4 border-b border-slate-200 p-4">
@@ -152,6 +154,7 @@
 <a-table-column key="column-8" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
 <template #title>操作</template>
 <template #default="{ record: order, index: rowIndex }">
+								<a-button type="link" danger :disabled="!canForceRedeemAiQuantOrder(order)" @click="openForceRedeem(order)">强制赎回</a-button>
 								<a-button type="text" html-type="button" @click="viewOrderDetail(order)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a-button>
 								<template v-if="isAiQuantUserPointControlled(order)">
 									<span class="text-slate-300 mx-1.5">|</span>
@@ -189,6 +192,7 @@
 		</article>
 
 		<AiQuantYieldAdjustmentModal ref="yieldModalRef" />
+    <AiQuantForceRedeemModal :open="redeemOpen" :order="redeemOrder" @close="redeemOpen = false" @closed="redeemOrder = null" @saved="handleRedeemed" />
 
 		<!-- 订单详情弹窗 -->
 		<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDetailModal &amp;&amp; selectedOrder)" :mask-closable="false" :closable="false" :keyboard="true" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showDetailModal = false">
@@ -496,6 +500,8 @@ import { getAiQuantAdminOrdersSnapshot } from '../../../admin/state/aiQuantOrder
 import { userControlState } from '../../../admin/state/userControlState.js'
 import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
 import { useAgentPagedList } from '../../../composables/useAgentListPagination'
+import AiQuantForceRedeemModal from './AiQuantForceRedeemModal.vue'
+import { canForceRedeemAiQuantOrder } from '../../../admin/domain/aiQuantRedemption.js'
 import AiQuantYieldAdjustmentModal from './AiQuantYieldAdjustmentModal.vue'
 
 /** 页面内快照，避免全局 ref 在热更新等场景被清空；演示数据仅本页持有 */
@@ -520,6 +526,19 @@ const filterDraft = reactive(emptyFilterFields())
 const filterApplied = ref(emptyFilterFields())
 
 const yieldModalRef = ref(null)
+const redeemOpen = ref(false)
+const redeemOrder = ref(null)
+const redemptionNotice = ref('')
+function openForceRedeem(order) {
+  if (redeemOrder.value || !canForceRedeemAiQuantOrder(order)) return
+  redeemOrder.value = order
+  redeemOpen.value = true
+}
+function handleRedeemed(updated) {
+  orders.value = orders.value.map((order) => order.id === updated.id ? updated : order)
+  if (selectedOrder.value?.id === updated.id) selectedOrder.value = updated
+  redemptionNotice.value = `订单 ${updated.id} 已强制赎回（演示），操作日志已记录。`
+}
 
 function applySearch() {
 	filterApplied.value = {
@@ -540,6 +559,7 @@ const orderStatusSelectValues = [
 	ORDER_STATUS.COMPLETED,
 	ORDER_STATUS.SETTLED,
 	ORDER_STATUS.EARLY_REDEEMED,
+	ORDER_STATUS.FORCE_REDEEMED,
 	ORDER_STATUS.LOCKED,
 	ORDER_STATUS.CANCELLED
 ]
