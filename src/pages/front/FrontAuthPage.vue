@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Button } from 'ant-design-vue'
 import { getSiteConfigSnapshot, SITE_CONFIG_STORAGE_KEY } from '../../admin/mock/siteConfig'
 import { useFrontSiteI18n } from '../../composables/useFrontSiteI18n'
 import FrontDialPicker from '../../components/front/FrontDialPicker.vue'
@@ -61,6 +62,7 @@ const password = ref('')
 const confirmPassword = ref('')
 const errorMsg = ref('')
 const pending = ref(false)
+const demoPending = ref(false)
 const walletPendingKey = ref(null)
 
 const inviteCode = ref('')
@@ -154,7 +156,7 @@ const loginVerifyBindings = computed(() => ({
 
 function navigateAfterAuth() {
   const redir = typeof route.query.redirect === 'string' ? route.query.redirect : ''
-  router.replace(redir.startsWith('/front') ? redir : '/front/personal-center')
+  return router.replace(redir.startsWith('/front') ? redir : '/front/personal-center')
 }
 
 watch(loginVerifyOpen, (open) => {
@@ -377,6 +379,7 @@ function goResetPassword() {
 }
 
 async function onSubmit() {
+  if (pending.value || walletPendingKey.value || loginVerifyOpen.value) return
   errorMsg.value = ''
   if (inviteCodeRequired.value && !inviteCode.value.trim()) {
     errorMsg.value = '请填写邀请码'
@@ -453,7 +456,31 @@ async function onSubmit() {
 
 const walletPickerOpen = ref(false)
 
+async function onDemoLogin() {
+  if (isRegister.value || pending.value || walletPendingKey.value || loginVerifyOpen.value) return
+  errorMsg.value = ''
+  pending.value = true
+  demoPending.value = true
+  try {
+    auth.ensureHydrated()
+    // Only the built-in mock identity uses this direct demo entry.
+    const demo = FRONT_DEMO_SEED_USERS[0]
+    const result = auth.login(demo.email, demo.password)
+    if (!result.ok) {
+      errorMsg.value = result.message
+      return
+    }
+    await navigateAfterAuth()
+  } catch {
+    errorMsg.value = '演示登录失败，请重试'
+  } finally {
+    pending.value = false
+    demoPending.value = false
+  }
+}
+
 async function onWalletLogin(providerKey) {
+  if (pending.value || walletPendingKey.value || loginVerifyOpen.value) return
   errorMsg.value = ''
   walletPendingKey.value = providerKey
   try {
@@ -825,6 +852,19 @@ async function onPickWalletProvider(providerKey) {
             }}
           </button>
         </form>
+
+        <div v-if="!isRegister" class="mt-3">
+          <Button
+            block
+            size="large"
+            html-type="button"
+            :loading="demoPending"
+            :disabled="pending || Boolean(walletPendingKey) || loginVerifyOpen"
+            @click="onDemoLogin"
+          >
+            {{ demoPending ? '演示账号登录中…' : '演示账号' }}
+          </Button>
+        </div>
 
         <template v-if="showWalletLoginButton">
           <div v-if="!walletOnlyLogin" class="relative my-3">
