@@ -90,5 +90,6 @@
   },
   "blocked": {
     "message": "Le chat en direct est actuellement indisponible."
-  }
+  },
+  "channelsUnavailable": "Ce canal est indisponible. Veuillez nous contacter par e-mail."
 }

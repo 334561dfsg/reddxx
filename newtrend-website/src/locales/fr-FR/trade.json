@@ -399,7 +399,8 @@
     "confirmClose": "Clôturer toute la position {{quantity}} sur {{pair}} à {{price}} USDT ?",
     "confirmCancel": "Annuler l’ordre {{pair}} (quantité {{quantity}}, prix {{price}} USDT) ?",
     "closed": "{{pair}} clôturé. Consultez l’historique des positions.",
-    "cancelled": "{{pair}} annulé. Consultez l’historique des ordres."
+    "cancelled": "{{pair}} annulé. Consultez l’historique des ordres.",
+    "partiallyFilled": "Partiellement exécuté"
   },
   "form": {
     "availableQuantity": "Quantité disponible",
@@ -440,6 +441,7 @@
     "tradingPair": "Paire",
     "latestPrice": "Dernier prix",
     "metals": "Métaux précieux",
-    "availablePairs": "Paires disponibles"
+    "availablePairs": "Paires disponibles",
+    "energy": "Énergie"
   }
 }

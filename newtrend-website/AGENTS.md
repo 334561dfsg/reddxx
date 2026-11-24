@@ -109,3 +109,39 @@ Supersedes the combined seven-tab terminal and wide-screen four-column rules for
 ## Reference-only trading scope (user decision, 2026-11-24)
 
 Reproduce GMXX trading page structure/content/interaction without unsolicited product additions. Retain the existing visual style and explicit prior requirements (persistent favorites, USDT denomination, no technical indicators, fixed order actions and overlay safeguards). Do not restore the extra product heading/navigation strip, market-disclosure panel, terminal network/ticker footer, one-year chart period, or inert simple-mode/account labels. Spot sidebar is a plain three-column quote list; search remains in the existing instrument picker.
+
+## Unified three-column spot layout (user decision, 2026-11-24)
+
+Spot now follows the same responsive grid as perpetual and delivery: chart left, order book middle, buy/sell form right, records below. Remove the spot market-list/latest-trades sidebar. Keep both buy/sell forms, separate drafts and fixed actions accessible in the narrow form column. This supersedes the prior spot-specific composition; Trading V2 is unchanged.
+
+## Trading record mock coverage (user request, 2026-11-24)
+
+Keep synthetic samples in every current/history tab across perpetual, delivery and spot. Include both directions, pending and partially filled orders, profitable/loss-making positions, settled delivery outcomes and spot cancellations. Current delivery cards must not display invented settlement values. Partial cancellation preserves executed quantity and its fee, and confirms only the remaining quantity. Current fixtures are session-local snapshots; refresh resets them, and they do not auto-settle. The user's later authorization permits test-only reference orders, superseding the earlier blanket prohibition above; never submit actual financial trades or copy account data into fixtures.
+
+## Trading energy category (user decision, 2026-11-24)
+
+The trading pair selector replaces stocks with Energy across all three products. Use the trading-specific catalog with WTI/USDT, BRENT/USDT and NG/USDT synthetic quotes; do not merely relabel stock instruments as energy. Keep the existing terminal styling and USDT quote convention.
+
+## Customer support drawer (user decision, 2026-11-24)
+
+Customer support opens from the right as a 448px maximum, full-height drawer, matching the provided screenshot. Keep a fixed title/close header, scrollable body and three dark rounded channel cards (live chat, WhatsApp, email) with lime icons. Reuse the root native modal owner; backdrop clicks must not close it. WhatsApp has no configured destination; report channel unavailability instead of inventing a number. Chat remains prototype-only.
+
+## Header menu corners (user feedback, 2026-11-24)
+
+Use 12px outer corners and 8px menu-item corners for shared header popovers (Trade, Finance, AI Quant and profile), consistent with the compact terminal panels. Do not restore the oversized 28px popup corners.
+
+## Site-wide corner scale (user decision, 2026-11-24)
+
+NewQuantCapital uses shared radius tokens: `--nt-radius-panel` 12px for cards, menus and dialogs; `--nt-radius-control` 8px for fields and menu items; `--nt-radius-sm` 4px for compact tags and details. Larger source-theme radius utilities resolve to the panel token. Preserve circular avatars/icons, pill actions, intentionally square drawers and chart geometry. Apply this to the public site only, not admin or Trading V2.
+
+## Unified public page widths (latest user decision, 2026-11-24)
+
+This supersedes the earlier page-specific source widths. Public browsing pages (C2C, Earn, assets, AI Quant, news, charity, legal, profile, referrals, rewards, detail pages and home sections) share a 1400px outer container, centered with 24px horizontal padding (16px below 768px), including safe-area insets. Use `styles/site-containers.css` and its tokens. Keep trading full-width and focused account forms at 768px; preserve readable internal prose and authentication form layouts. Header remains full-width; footer content aligns with the shared page content edges.
+
+## Live chat sidebar (user reference, 2026-11-24)
+
+Selecting live chat replaces the support channel list with a chat view in the same drawer. Keep queue status under the fixed header, a centered welcome in the scrollable message area, and a fixed bottom pill composer with emoji, attachment and send controls. Messages/attachment names remain local prototype state, with no network upload or support delivery. Do not reintroduce the previous central message form.
+
+## Shared spacing and typography (user decision, 2026-11-24)
+
+Use `docs/design-system.md` and `styles/site-design-system.css` for site-wide typography, spacing and control dimensions. Page titles, section headings, card headings, body and captions have distinct shared tokens; avoid local inline heading sizes. Normal cards share padding and page grids share gaps, with compact trading and readable marketing/article/form layouts as documented exceptions.

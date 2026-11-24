@@ -23,7 +23,7 @@ function act(o){
  const closing=o.bucket==='positions',action=closing?'trade.closePosition':'trade.cancelOrder'
  openModal('account-confirm',`${t(action)} · ${o.marketName}`,{
   focusCancel:true,returnFocus:()=>document.querySelector('.record-tabs .active')?.focus(),confirmLabel:action,
-  description:t(closing?'trade.current.confirmClose':'trade.current.confirmCancel',{pair:o.marketName,quantity:fmt(o.quantity),price:fmt(closing?o.markPrice:o.price)}),
+  description:t(closing?'trade.current.confirmClose':'trade.current.confirmCancel',{pair:o.marketName,quantity:fmt(closing?o.quantity:o.quantity-(o.filledQuantity||0)),price:fmt(closing?o.markPrice:o.price)}),
   onConfirm:()=>{if(finishCurrentTrade(session.orders,o.id))emit('complete',t(closing?'trade.current.closed':'trade.current.cancelled',{pair:o.marketName}))}
  })
 }
@@ -31,6 +31,6 @@ function act(o){
 <template><div class="current-trades"><div ref="list" class="history-list">
 <article v-for="o in rows" :key="o.id" class="history-card"><header><strong>{{ o.marketName }}</strong><span class="direction" :class="o.direction==='buy'?'positive':'negative'">{{ $t(o.kind==='spot'?(o.direction==='buy'?'trade.buy':'trade.sell'):(o.direction==='buy'?'trade.buyLong':'trade.sellShort')) }}</span><span v-if="o.kind==='futures'" class="history-tag">{{ o.leverage }}x</span><button class="record-action" :aria-label="$t(o.bucket==='positions'?'trade.closePosition':'trade.cancelOrder')+' '+o.marketName" @click="act(o)">{{ $t(o.bucket==='positions'?'trade.closePosition':'trade.cancelOrder') }}</button></header>
 <dl><div v-for="f in fields(o)" :key="f.label"><dt>{{ $t(f.label) }}</dt><dd :class="f.type==='pnl'?(f.value>0?'positive':f.value<0?'negative':''):''">{{ value(f) }}<small v-if="f.unit"> {{ f.unit }}</small></dd></div></dl>
-</article></div><div class="history-footer" aria-hidden="true"></div></div></template>
+</article></div></div></template>
 
 <style scoped src="../styles/trade-records.css"></style>

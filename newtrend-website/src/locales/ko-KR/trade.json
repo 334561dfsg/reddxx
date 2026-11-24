@@ -399,7 +399,8 @@
     "confirmClose": "{{pair}} 포지션 전체 {{quantity}}를 {{price}} USD에 청산하시겠습니까?",
     "confirmCancel": "{{pair}} 주문(수량 {{quantity}}, 가격 {{price}} USDT)을 취소하시겠습니까?",
     "closed": "{{pair}} 청산 완료. 포지션 내역에서 확인하세요.",
-    "cancelled": "{{pair}} 취소 완료. 주문 내역에서 확인하세요."
+    "cancelled": "{{pair}} 취소 완료. 주문 내역에서 확인하세요.",
+    "partiallyFilled": "부분 체결"
   },
   "form": {
     "availableQuantity": "사용 가능 수량",
@@ -440,6 +441,7 @@
     "tradingPair": "거래쌍",
     "latestPrice": "최근 가격",
     "metals": "귀금속",
-    "availablePairs": "거래 가능한 거래쌍"
+    "availablePairs": "거래 가능한 거래쌍",
+    "energy": "에너지"
   }
 }

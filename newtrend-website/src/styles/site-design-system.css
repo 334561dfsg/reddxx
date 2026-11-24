@@ -1,0 +1,44 @@
+/* Public-site design scale. Trading keeps its explicit compact layout. */
+:root{
+ --nt-space-1:4px;--nt-space-2:8px;--nt-space-3:12px;--nt-space-4:16px;
+ --nt-space-6:24px;--nt-space-8:32px;--nt-space-12:48px;
+ --nt-text-caption:12px;--nt-text-body:14px;--nt-text-label:14px;
+ --nt-text-card-title:16px;--nt-text-section:24px;--nt-text-page:32px;
+ --nt-page-block:32px;--nt-section-gap:32px;--nt-card-padding:24px;--nt-grid-gap:24px;
+ --nt-control-height:40px;--nt-line-body:1.6;--nt-line-heading:1.3;
+ --nt-text-primary:#ffffff;--nt-text-secondary:#ffffff99;--nt-text-muted:#ffffff66;
+}
+@media(max-width:767px){:root{--nt-text-page:26px;--nt-text-section:20px;--nt-page-block:24px;--nt-section-gap:24px;--nt-card-padding:16px;--nt-grid-gap:16px}}
+#site-shell{font-size:var(--nt-text-body);line-height:var(--nt-line-body)}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content){padding-top:var(--nt-page-block);padding-bottom:var(--nt-space-12)}
+#site-shell #main-content :is(.section-pad,.news-heading){padding-top:var(--nt-space-12);padding-bottom:var(--nt-space-12)}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.news-heading,.article-content,.auth-layout) h1{
+ font-size:var(--nt-text-page);line-height:var(--nt-line-heading);font-weight:600;letter-spacing:-.02em;margin-top:0;margin-bottom:var(--nt-space-4);
+}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content,.auth-layout) h2,
+#site-shell #main-content .section-heading{font-size:var(--nt-text-section);line-height:var(--nt-line-heading);font-weight:600;letter-spacing:-.01em}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content) h3,
+#site-shell #main-content :is(.card,.feature-card,.charity-card,.profile-group) h2{font-size:var(--nt-text-card-title);line-height:1.5;font-weight:600}
+#site-shell #main-content .page-desc{font-size:var(--nt-text-body);line-height:var(--nt-line-body);color:var(--nt-text-secondary)}
+#site-shell #main-content .page-kicker{font-size:var(--nt-text-caption);line-height:1.5;margin-bottom:var(--nt-space-2)}
+#site-shell #main-content .page-hero{padding-top:0;padding-bottom:var(--nt-section-gap);gap:var(--nt-grid-gap)}
+#site-shell #main-content .section-gap{margin-top:var(--nt-section-gap)}
+#site-shell #main-content :is(.two-cols,.three-cols,.four-cols){gap:var(--nt-grid-gap)}
+#site-shell #main-content .card:not(.finance-table){padding:var(--nt-card-padding)}
+#site-shell #main-content :is(.feature-card,.charity-card)>div{padding:var(--nt-card-padding)}
+#site-shell #main-content :is(.feature-card,.charity-card) h3{margin-top:0;margin-bottom:var(--nt-space-2)}
+#site-shell #main-content :is(.feature-card,.charity-card) p{font-size:var(--nt-text-body);line-height:var(--nt-line-body)}
+#site-shell #main-content .form-stack{gap:var(--nt-space-4)}
+#site-shell #main-content .subnav{gap:var(--nt-space-2);margin-bottom:var(--nt-section-gap);padding:var(--nt-space-1)}
+#site-shell #main-content .subnav>a{font-size:var(--nt-text-body);line-height:20px;min-height:var(--nt-control-height);padding:10px 16px}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.auth-layout) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select){min-height:var(--nt-control-height);font-size:var(--nt-text-body);line-height:20px;padding:9px 12px}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.auth-layout) :is(.primary-button,.secondary-button){min-height:var(--nt-control-height);font-size:var(--nt-text-body);line-height:20px;padding:10px 16px}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) .metric{font-size:28px;line-height:1.3;font-weight:600;font-variant-numeric:tabular-nums}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) :is(.muted,small){line-height:1.5}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) small{font-size:var(--nt-text-caption)}
+#site-shell #main-content .account-header{margin-bottom:var(--nt-section-gap)}
+#site-shell #main-content .legal-page{line-height:1.8}
+#site-shell #main-content .legal-page :is(h2,h3){margin-top:var(--nt-section-gap);margin-bottom:var(--nt-space-3)}
+@media(pointer:coarse){:root{--nt-control-height:44px}}
+/* One text family; numeric metrics retain their deliberate monospace treatment. */
+#site-shell :is(h1,h2,h3,h4,.page-title,.section-heading){font-family:inherit}

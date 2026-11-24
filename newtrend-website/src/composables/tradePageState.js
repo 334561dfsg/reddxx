@@ -9,7 +9,7 @@ export function createOrderDrafts() {
   return {
     futures:{type:'market',amount:'',price:'',leverage:200,stops:false,tp:'',sl:''},
     options:{side:'buy',amount:'',duration:30},
-    spot:{type:'market',buy:{amount:'',price:''},sell:{amount:'',price:''}},
+    spot:{side:'buy',type:'market',buy:{amount:'',price:''},sell:{amount:'',price:''}},
   }
 }
 // Lifetime is one website session: page changes retain drafts; reload resets them.

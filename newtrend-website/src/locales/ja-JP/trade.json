@@ -399,7 +399,8 @@
     "confirmClose": "{{pair}} の全数量 {{quantity}} を {{price}} USDT で決済しますか？",
     "confirmCancel": "{{pair}} の注文（数量 {{quantity}}、価格 {{price}} USDT）をキャンセルしますか？",
     "closed": "{{pair}} を決済しました。ポジション履歴をご確認ください。",
-    "cancelled": "{{pair}} をキャンセルしました。注文履歴をご確認ください。"
+    "cancelled": "{{pair}} をキャンセルしました。注文履歴をご確認ください。",
+    "partiallyFilled": "一部約定"
   },
   "form": {
     "availableQuantity": "利用可能数量",
@@ -440,6 +441,7 @@
     "tradingPair": "取引ペア",
     "latestPrice": "最終価格",
     "metals": "貴金属",
-    "availablePairs": "取引可能なペア"
+    "availablePairs": "取引可能なペア",
+    "energy": "エネルギー"
   }
 }

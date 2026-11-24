@@ -23,7 +23,7 @@ onUnmounted(() => preference?.removeEventListener('change', updatePreference))
 .partner-window{overflow:hidden;padding:16px 0;mask-image:linear-gradient(to right,transparent,#000 24px,#000 calc(100% - 24px),transparent)}
 .partner-track{display:flex;width:max-content;animation:partners-scroll 52s linear infinite}
 .partner-group{display:flex;align-items:center;gap:24px;padding-right:24px;flex-shrink:0}
-.partner-group img{width:112px;height:56px;object-fit:contain;background:#fff;border-radius:16px;flex-shrink:0}
+.partner-group img{width:112px;height:56px;object-fit:contain;background:#fff;border-radius:var(--nt-radius-panel);flex-shrink:0}
 .partner-window:hover .partner-track,.partner-window:focus-within .partner-track,.paused .partner-track{animation-play-state:paused}
 .reduced .partner-track{animation:none;width:auto}.reduced .partner-group{flex-wrap:wrap;justify-content:center;padding:0 24px}.reduced .partner-copy{display:none}
 @keyframes partners-scroll{to{transform:translateX(-50%)}}

@@ -16,6 +16,8 @@ import News from './pages/News.vue'
 import Account from './pages/Account.vue'
 import './source-theme.css'
 import './styles.css'
+import './styles/site-containers.css'
+import './styles/site-design-system.css'
 applyLocale(locale.value)
 const router=createRouter({history:createWebHistory('/newtrend/'),routes:[
  {path:'/',component:Home},

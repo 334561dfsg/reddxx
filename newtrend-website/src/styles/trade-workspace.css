@@ -8,13 +8,13 @@
  padding:4px max(4px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left));
  font:14px/20px 'Exo 2','PingFang SC',Arial,sans-serif;background:#101216;color:#fff;min-width:0;
 }
-.product-terminal .terminal-panel,.product-terminal .instrument-bar,.product-terminal .product-heading{background:#05070b;border:0;border-radius:12px;min-width:0}
+.product-terminal .terminal-panel,.product-terminal .instrument-bar,.product-terminal .product-heading{background:#05070b;border:0;border-radius:var(--nt-radius-panel);min-width:0}
 .product-terminal .product-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:12px 20px;margin-bottom:4px}
 .product-terminal .product-heading h1{font:600 18px/28px 'Exo 2',sans-serif;margin:0}
 .product-terminal .product-navigation{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
 .product-terminal .product-navigation a{color:var(--terminal-muted);padding:8px 0;position:relative}
 .product-terminal .product-navigation a.active{color:var(--nt-accent)}
-.product-terminal .product-navigation a.active:after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--nt-accent);border-radius:2px}
+.product-terminal .product-navigation a.active:after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--nt-accent);border-radius:var(--nt-radius-sm)}
 .product-terminal .instrument-bar{display:flex;align-items:center;flex-wrap:wrap;gap:20px;padding:12px 20px;margin-bottom:4px;min-height:76px}
 .product-terminal .instrument-identity{display:flex;align-items:center;gap:8px;min-width:0}
 .product-terminal .instrument-identity .coin{width:28px;height:28px;flex:none}
@@ -26,7 +26,7 @@
 .product-terminal .instrument-stats{display:flex;align-items:center;gap:32px;flex-wrap:wrap;margin:0;font-size:12px;line-height:18px}
 .product-terminal .instrument-stats dt{color:var(--terminal-muted);margin-bottom:4px}
 .product-terminal .instrument-stats dd{margin:0;font-variant-numeric:tabular-nums}
-.product-terminal .market-disclosure{margin-left:auto;padding:8px 12px;border:1px solid var(--terminal-divider);border-radius:8px;color:var(--nt-accent);min-height:40px}
+.product-terminal .market-disclosure{margin-left:auto;padding:8px 12px;border:1px solid var(--terminal-divider);border-radius:var(--nt-radius-control);color:var(--nt-accent);min-height:40px}
 .product-terminal .expanded-markets{margin-bottom:4px;padding:16px;max-height:380px;display:flex;flex-direction:column;overflow:hidden}
 .product-terminal .expanded-markets .pair-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:24px}
 .product-terminal .workspace-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,18%) minmax(300px,22%);grid-template-rows:minmax(480px,min(660px,calc(100vh - 220px))) 340px;gap:4px}
@@ -34,7 +34,7 @@
 .product-terminal .chart-panel{grid-column:1;grid-row:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .product-terminal .panel-heading{font:500 14px/20px 'Exo 2',sans-serif;min-height:44px;padding:12px 16px;margin:0;border-bottom:1px solid var(--terminal-divider);flex:none}
 .product-terminal .timeframes{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px;color:var(--terminal-muted);font-size:12px;line-height:16px;flex:none}
-.product-terminal .timeframes button{min-width:40px;min-height:32px;padding:6px;border-radius:6px}
+.product-terminal .timeframes button{min-width:40px;min-height:32px;padding:6px;border-radius:var(--nt-radius-control)}
 .product-terminal .timeframes button.active{background:var(--terminal-input);color:var(--nt-accent)}
 .product-terminal .ohlc{display:flex;flex-wrap:wrap;gap:8px 16px;padding:0 16px 8px;color:var(--terminal-muted);font-size:12px;line-height:18px;flex:none}
 .product-terminal .ohlc b{font-weight:400;color:var(--nt-green)}
@@ -61,7 +61,7 @@
 .product-terminal .records-panel>.empty{display:grid;place-content:center;flex:1;min-height:100px;margin:0;color:var(--terminal-muted)}
 .product-terminal .market-panel{display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .product-terminal .market-browser{display:flex;flex-direction:column;min-height:0;overflow:hidden;flex:1;padding:12px}
-.product-terminal .market-browser>input{width:100%;min-height:40px;flex:none;background:var(--terminal-input);border-radius:12px;padding:8px 12px;font-size:14px}
+.product-terminal .market-browser>input{width:100%;min-height:40px;flex:none;background:var(--terminal-input);border-radius:var(--nt-radius-control);padding:8px 12px;font-size:14px}
 .product-terminal .pair-categories{display:flex;flex-wrap:wrap;gap:4px 10px;padding:8px 0;flex:none;font-size:12px;line-height:18px}
 .product-terminal .pair-categories button{min-height:32px;color:var(--terminal-muted)}
 .product-terminal .pair-categories .active{color:var(--nt-accent)}
@@ -69,7 +69,7 @@
 .product-terminal .pair-sort button{min-height:32px}
 .product-terminal .pair-sort button[aria-pressed=true]{color:var(--nt-accent)}
 .product-terminal .pair-list{overflow-y:auto;min-height:0;flex:1}
-.product-terminal .pair-row{display:flex;align-items:center;gap:6px;min-height:52px;border-radius:6px;padding:6px}
+.product-terminal .pair-row{display:flex;align-items:center;gap:6px;min-height:52px;border-radius:var(--nt-radius-control);padding:6px}
 .product-terminal .pair-row.selected{background:#0c1017}
 .product-terminal .pair-row>button{width:28px;min-height:36px;color:var(--terminal-muted);flex:none;font-size:18px}
 .product-terminal .pair-row>a{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1;min-width:0;font-size:14px;line-height:20px}
@@ -78,12 +78,12 @@
 .product-terminal .pair-row>a>span:last-child{text-align:right;overflow-wrap:anywhere}
 .product-terminal .pair-row small{display:block;font-size:12px;line-height:16px;font-weight:400}
 .product-terminal .pair-row .mini-label{color:var(--terminal-muted)}
-.product-terminal .terminal-status{display:flex;align-items:center;gap:20px;padding:12px 16px;margin-top:4px;background:#05070b;border-radius:12px;overflow:hidden;font-size:12px}
+.product-terminal .terminal-status{display:flex;align-items:center;gap:20px;padding:12px 16px;margin-top:4px;background:#05070b;border-radius:var(--nt-radius-panel);overflow:hidden;font-size:12px}
 .product-terminal .terminal-status>span{flex:none}
 .product-terminal .terminal-status .market-ticker{min-width:0;flex:1}
 .product-terminal button:focus-visible,.product-terminal a:focus-visible,.product-terminal input:focus-visible{outline:2px solid var(--nt-accent);outline-offset:-2px}
 .product-terminal *{scrollbar-width:thin;scrollbar-color:#303236 transparent}
-.product-terminal ::-webkit-scrollbar{width:3px;height:3px}.product-terminal ::-webkit-scrollbar-thumb{background:#303236;border-radius:3px}
+.product-terminal ::-webkit-scrollbar{width:3px;height:3px}.product-terminal ::-webkit-scrollbar-thumb{background:#303236;border-radius:var(--nt-radius-sm)}
 /* Spot follows a separate composition: book left, chart and dual order form center, markets right. */
 .spot-workspace .workspace-grid{grid-template-columns:minmax(220px,17%) minmax(0,1fr) minmax(290px,22%);grid-template-rows:520px 440px 340px}
 .spot-workspace .chart-panel{grid-column:2;grid-row:1}
@@ -129,7 +129,7 @@
 @media(prefers-reduced-motion:reduce){.product-terminal *{scroll-behavior:auto!important;transition:none!important}}
 /* Spot market data uses aligned columns and a separate public trade tape. */
 .product-terminal .book-controls{display:flex;gap:8px;padding:8px 12px;flex-wrap:wrap}
-.product-terminal .book-controls button{min-height:36px;padding:6px 10px;border:1px solid var(--terminal-divider);border-radius:6px;font-size:12px;color:var(--terminal-muted)}
+.product-terminal .book-controls button{min-height:36px;padding:6px 10px;border:1px solid var(--terminal-divider);border-radius:var(--nt-radius-control);font-size:12px;color:var(--terminal-muted)}
 .product-terminal .book-controls button[aria-pressed=true]{color:var(--nt-accent);border-color:var(--nt-accent)}
 .spot-workspace .market-browser{flex:1;min-height:240px}
 .spot-workspace .spot-market-head{display:grid;grid-template-columns:1.1fr 1fr .8fr;padding:4px 6px 4px 34px;font-size:11px;gap:4px;color:var(--terminal-muted)}
@@ -145,7 +145,7 @@
 @media(max-width:760px){.spot-workspace .market-panel{height:760px}.spot-workspace .recent-trades{flex-basis:310px}}
 .spot-workspace .spot-order-form .type-tabs button.active{background:transparent;color:var(--nt-accent);border-radius:0;border-bottom:2px solid var(--nt-accent)}
 .product-terminal .market-tools{flex:none}
-.product-terminal .market-tools>input{width:100%;min-height:40px;background:var(--terminal-input);border-radius:12px;padding:8px 12px;font-size:14px}
+.product-terminal .market-tools>input{width:100%;min-height:40px;background:var(--terminal-input);border-radius:var(--nt-radius-control);padding:8px 12px;font-size:14px}
 .spot-workspace .spot-quote-browser{padding:12px 16px 0}
 .spot-workspace .spot-quote-browser .spot-market-head{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,.8fr);padding:0 0 8px;gap:12px;font-size:14px;line-height:22px;text-transform:uppercase}
 .spot-workspace .spot-quote-browser .spot-market-head button{min-height:52px;overflow-wrap:normal}
@@ -159,7 +159,7 @@
 @media(min-width:761px) and (max-width:1199px){.spot-workspace .market-panel{grid-template-rows:minmax(0,1fr)}.spot-workspace .market-browser{grid-row:1}.spot-workspace .recent-trades{grid-row:1}}
 @media(pointer:coarse){.spot-workspace .spot-quote-browser .pair-row,.spot-workspace .spot-quote-browser .pair-row>a{min-height:44px}}
 .product-terminal .book-controls{gap:4px}
-.product-terminal .book-controls button{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-height:34px;padding:5px;border:0;border-radius:4px;color:var(--terminal-muted)}
+.product-terminal .book-controls button{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-height:34px;padding:5px;border:0;border-radius:var(--nt-radius-sm);color:var(--terminal-muted)}
 .product-terminal .book-controls button[aria-pressed=true]{color:#fff;background:var(--terminal-input)}
 .product-terminal .book-controls button:hover{background:var(--terminal-input)}
 .product-terminal .book-controls svg{flex:none;display:block}
@@ -228,3 +228,79 @@
  .product-terminal .timeframes button,.spot-workspace .spot-quote-browser .pair-row>a{min-height:44px}
  .product-terminal .record-tabs button{min-height:44px}
 }
+
+/* V2 visual rhythm, independent of the compact product-specific grid heights. */
+.product-terminal .instrument-bar{padding:8px 12px;gap:12px}
+.product-terminal .instrument-price{font-size:18px;line-height:28px;font-weight:600}
+.product-terminal .instrument-stats{gap:24px;font-size:12px;line-height:16px}
+.product-terminal .instrument-stats dt{margin-bottom:4px}
+.product-terminal .instrument-stats dd{color:var(--terminal-secondary)}
+.product-terminal .instrument-stats dd.positive{color:var(--nt-green)}
+.product-terminal .instrument-stats dd.negative{color:var(--nt-red)}
+.product-terminal .panel-heading{min-height:40px;padding:10px 16px;font:500 14px/20px 'Exo 2','PingFang SC',Arial,sans-serif;border-color:var(--terminal-divider)}
+.product-terminal .timeframes{min-height:40px;padding:6px 12px;gap:8px;border-bottom:1px solid var(--terminal-divider);font-size:12px;line-height:16px}
+.product-terminal .timeframes button{min-width:32px;padding:4px;min-height:28px;border-radius:var(--nt-radius-sm)}
+.product-terminal .timeframes button.active{background:var(--terminal-input);color:#fff}
+.product-terminal .ohlc{padding:6px 12px 0;gap:6px 12px;font-size:12px;line-height:18px}
+.product-terminal .book-controls{padding:6px 12px 4px}
+.product-terminal .book-head{padding:8px 16px;font-size:12px;line-height:16px}
+.product-terminal .book-head small{font-size:11px;line-height:16px}
+.product-terminal .book-body{padding:0 16px 8px}
+.product-terminal .book-row{font-size:12px;line-height:16px;padding:3px 0}
+.product-terminal .book-price{font-size:18px;line-height:28px;padding:10px 0;font-weight:600}
+.product-terminal .record-tabs{padding:0 16px;gap:20px}
+.product-terminal .record-tabs button{min-height:40px;padding:10px 0;font-size:14px;line-height:20px;font-weight:500}
+.product-terminal .record-tabs button.active:after{background:#fff}
+.product-terminal .trade-order-form .form-body{padding:8px 16px;gap:10px}
+.product-terminal .trade-order-form .form-actions{padding:8px 16px max(12px,env(safe-area-inset-bottom))}
+.product-terminal .trade-order-form .form-summary{font-size:12px;line-height:16px;gap:8px 12px}
+.product-terminal .trade-order-form .form-summary dd{color:var(--terminal-secondary)}
+.product-terminal .trade-order-form .form-summary dd.positive{color:var(--nt-green)}
+.product-terminal .trade-order-form .type-tabs button{font-size:14px;line-height:20px}
+.product-terminal .trade-order-form .percentages button{border-color:var(--terminal-divider);color:var(--terminal-muted)}
+.product-terminal .history-card{padding:12px 16px}
+.product-terminal .history-card header{font-size:14px;line-height:20px;margin-bottom:10px}
+.product-terminal .history-card dl{gap:10px 16px;font-size:12px;line-height:18px}
+.product-terminal .history-card dt{color:var(--terminal-muted);margin-bottom:4px}
+.product-terminal .history-card dd{color:var(--terminal-secondary)}
+.product-terminal .history-card dd.positive{color:var(--nt-green)}
+.product-terminal .history-card dd.negative{color:var(--nt-red)}
+.spot-workspace .spot-quote-browser{padding:4px 16px 0}
+.spot-workspace .spot-quote-browser .spot-market-head{font-size:12px;line-height:16px;text-transform:none}
+.spot-workspace .spot-quote-browser .pair-row>a{font-size:12px;line-height:20px;color:var(--terminal-secondary)}
+.spot-workspace .spot-quote-browser .pair-row>a>span:first-child{font-weight:500;color:#fff}
+.product-terminal .prints-head,.product-terminal .print-row{padding-left:16px;padding-right:16px;font-size:12px;line-height:16px}
+.product-terminal .prints-head small{font-size:11px}
+.product-terminal .print-row{color:var(--terminal-secondary)}
+.product-terminal button:focus-visible,.product-terminal a:focus-visible{outline:1px solid #ffffff70;outline-offset:-2px}
+@media(max-width:760px){
+ .product-terminal .instrument-stats{gap:8px 12px;font-size:12px;line-height:16px}
+ .product-terminal .instrument-bar{padding:8px 12px}
+ .product-terminal .record-tabs{gap:8px 16px;flex-wrap:wrap}
+ .product-terminal .record-tabs button{font-size:13px}
+ .product-terminal .timeframes{gap:4px}
+}
+@media(pointer:coarse){.product-terminal .timeframes button,.product-terminal .record-tabs button{min-height:44px}}
+@media(min-width:1200px){
+ .spot-workspace .workspace-grid{grid-template-rows:clamp(280px,calc(100vh - 690px),400px) 360px 200px;grid-template-rows:clamp(280px,calc(100dvh - 690px),400px) 360px 200px}
+}
+@media(min-width:761px) and (max-width:1199px){.spot-workspace .workspace-grid{grid-template-rows:320px 360px 230px 280px}}
+
+/* Shared order controls across perpetual, delivery and spot. */
+.product-terminal .order-panel .trade-order-form .form-body{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+.product-terminal .order-panel .trade-order-form .spot-side{width:100%;gap:12px}
+.product-terminal .order-panel .trade-order-form .direction-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#0c1017;border-radius:var(--nt-radius-control);flex:none;width:100%;box-sizing:border-box}
+.product-terminal .order-panel .trade-order-form .direction-tabs button{min-height:36px;padding:8px 12px;border:0;border-radius:var(--nt-radius-control);background:transparent;color:var(--terminal-muted);font-size:14px;line-height:20px;font-weight:500}
+.product-terminal .order-panel .trade-order-form .direction-tabs .buy.active{background:#2bc28720;color:var(--nt-green)}
+.product-terminal .order-panel .trade-order-form .direction-tabs .sell.active{background:#ff446620;color:var(--nt-red)}
+.product-terminal .order-panel .trade-order-form .price-tabs{display:flex;gap:24px;border-bottom:1px solid var(--terminal-divider);padding:0;margin-bottom:4px;width:100%}
+.product-terminal .order-panel .trade-order-form .price-tabs button{position:relative;background:transparent;padding:8px 0;min-height:36px;color:var(--terminal-muted);border:0;border-radius:0;font-size:14px;line-height:20px;font-weight:500}
+.product-terminal .order-panel .trade-order-form .price-tabs button.active{background:transparent;color:#fff}
+.product-terminal .price-tabs button.active:after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:#fff}
+.product-terminal .order-panel .trade-order-form .percentages button{min-height:28px;border-radius:var(--nt-radius-sm);font-size:12px;line-height:16px;background:#0c1017;border:1px solid var(--terminal-divider)}
+.product-terminal .order-panel .trade-order-form .percentages button:hover{background:var(--terminal-input);color:#fff}
+.product-terminal .order-panel .trade-order-form .form-actions button{min-height:40px;border-radius:999px;font-size:14px;line-height:20px;font-weight:500;box-shadow:none}
+.product-terminal .order-panel .trade-order-form .form-actions button.buy{background:var(--nt-green)}
+.product-terminal .order-panel .trade-order-form .form-actions button.sell{background:var(--nt-red)}
+.product-terminal .order-panel .trade-order-form button:focus-visible{outline:1px solid #ffffff70;outline-offset:-2px}
+@media(pointer:coarse){.product-terminal .order-panel .trade-order-form .direction-tabs button,.product-terminal .order-panel .trade-order-form .price-tabs button,.product-terminal .order-panel .trade-order-form .percentages button,.product-terminal .order-panel .trade-order-form .form-actions button{min-height:44px}}

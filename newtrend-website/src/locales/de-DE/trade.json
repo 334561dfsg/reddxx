@@ -399,7 +399,8 @@
     "confirmClose": "Die gesamte Position {{quantity}} in {{pair}} zu {{price}} USDT schließen?",
     "confirmCancel": "Auftrag für {{pair}} (Menge {{quantity}}, Preis {{price}} USDT) stornieren?",
     "closed": "{{pair}} geschlossen. Siehe Positionsverlauf.",
-    "cancelled": "{{pair}} storniert. Siehe Auftragsverlauf."
+    "cancelled": "{{pair}} storniert. Siehe Auftragsverlauf.",
+    "partiallyFilled": "Teilweise ausgeführt"
   },
   "form": {
     "availableQuantity": "Verfügbare Menge",
@@ -440,6 +441,7 @@
     "tradingPair": "Handelspaar",
     "latestPrice": "Letzter Preis",
     "metals": "Edelmetalle",
-    "availablePairs": "Verfügbare Handelspaare"
+    "availablePairs": "Verfügbare Handelspaare",
+    "energy": "Energie"
   }
 }

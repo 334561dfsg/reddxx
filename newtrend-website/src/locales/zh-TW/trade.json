@@ -399,7 +399,8 @@
     "confirmClose": "確認以 {{price}} USDT 平倉 {{pair}} 的全部 {{quantity}} 倉位？",
     "confirmCancel": "確認撤銷 {{pair}} 的委託（數量 {{quantity}}，價格 {{price}} USDT）？",
     "closed": "{{pair}} 已平倉，可在合約歷史倉位查看。",
-    "cancelled": "{{pair}} 已撤單，可在對應歷史委託查看。"
+    "cancelled": "{{pair}} 已撤單，可在對應歷史委託查看。",
+    "partiallyFilled": "部分成交"
   },
   "form": {
     "availableQuantity": "可用數量",
@@ -440,6 +441,7 @@
     "tradingPair": "交易對",
     "latestPrice": "最新價",
     "metals": "貴金屬",
-    "availablePairs": "當前市場可交易對"
+    "availablePairs": "當前市場可交易對",
+    "energy": "能源"
   }
 }

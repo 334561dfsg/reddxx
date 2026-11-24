@@ -4,7 +4,7 @@
  height:auto;min-height:40px;margin:0;padding:9px 12px;
  font-family:inherit;font-size:14px;font-weight:400;line-height:20px;
  color:#fff;background:var(--terminal-input,#1e2024);
- border:1px solid transparent;border-radius:12px;box-shadow:none;
+ border:1px solid transparent;border-radius:var(--nt-radius-control);box-shadow:none;
  outline:none;outline-offset:0;transition:border-color 150ms ease-out,box-shadow 150ms ease-out;
 }
 .trading-terminal .order-panel input.trade-field::placeholder{color:#ffffff45;opacity:1}

@@ -90,5 +90,6 @@
   },
   "blocked": {
     "message": "目前暫時無法使用線上客服。"
-  }
+  },
+  "channelsUnavailable": "此聯絡管道暫不可用，請使用電子郵件。"
 }

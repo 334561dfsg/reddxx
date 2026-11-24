@@ -90,5 +90,6 @@
   },
   "blocked": {
     "message": "Live Chat is currently unavailable."
-  }
+  },
+  "channelsUnavailable": "This channel is currently unavailable. Please contact us by email."
 }
