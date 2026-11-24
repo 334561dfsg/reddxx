@@ -35,6 +35,7 @@ const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:
  {path:'/news/:id?',component:News},
  {path:'/:account(profile|bind-email|bind-phone|change-password|fund-password|2fa|devices|kyc|referrals|promotions|joint-account|survey|help-center)/:id?',component:Account},
  {path:'/:section(about|privacy|agreement|risk-disclosure|regulatory-information|content)/:id?',component:Legal},
+ {path:'/c2c/accounts',redirect:'/c2c/buy'},
  {path:'/:section/:id?',component:Content},
  {path:'/:pathMatch(.*)*',redirect:'/'}
 ],scrollBehavior(to,from,saved){

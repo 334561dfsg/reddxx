@@ -1,5 +1,5 @@
 import { computed, shallowRef, onMounted, onUnmounted } from 'vue'
-import { markets, hotStocks } from '../data'
+import { markets, tradingMarkets, hotStocks } from '../data'
 import { nextQuote } from './quoteModel'
 
 export function useDemoQuotes() {
@@ -7,7 +7,7 @@ export function useDemoQuotes() {
     symbol, price: Number(price), delta: Number(delta), change: Number(change.replace('%', '')),
     reference: Number(price) - Number(delta),
   }))
-  const quotes = shallowRef(markets.map(quote => ({ ...quote, ...initialStocks.find(stock => stock.symbol === quote.symbol) })))
+  const quotes = shallowRef([...markets, ...tradingMarkets.filter(market => market.category === 'trade.pages.energy')].map(quote => ({ ...quote, ...initialStocks.find(stock => stock.symbol === quote.symbol) })))
   const stocks = computed(() => initialStocks.map(stock => quotes.value.find(quote => quote.symbol === stock.symbol)))
   const paused = shallowRef(false)
   let timer, sequence = 0
