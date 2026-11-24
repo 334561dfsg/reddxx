@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "menuEntry": "Mes récompenses"
+  },
+  "list": {
+    "title": "Mes tâches de récompense",
+    "description": "Suivez les tâches de récompense exclusives préparées pour vous — progression, récompense et temps restant en un coup d'œil."
+  },
+  "status": {
+    "in_progress": "En cours",
+    "completed": "Terminée",
+    "expired": "Expirée",
+    "cancelled": "Annulée"
+  },
+  "fields": {
+    "target": "Objectif",
+    "accumulatedByType": {
+      "DEPOSIT_MILESTONE": "Déposé",
+      "CHECK_IN_STREAK": "Pointé",
+      "REFERRAL": "Invité"
+    },
+    "reward": "Récompense",
+    "deadline": "Échéance",
+    "remaining": "Temps restant",
+    "startedAt": "Début",
+    "description": "Description",
+    "progressMetric": "Indicateur de progression",
+    "enrollmentSource": "Source"
+  },
+  "campaignTypes": {
+    "DEPOSIT_MILESTONE": "Dépôt",
+    "CHECK_IN_STREAK": "Pointage",
+    "REFERRAL": "Parrainage"
+  },
+  "progressMetrics": {
+    "DEPOSIT_USDT": "Dépôt (USDT)",
+    "LOGIN_DAY": "Jours de connexion",
+    "TURNOVER": "Volume échangé",
+    "REFERRAL_QUALIFIED": "Parrainages qualifiés"
+  },
+  "enrollmentSources": {
+    "ASSIGN": "Attribuée",
+    "SELF": "Inscription personnelle",
+    "REFERRAL": "Parrainage"
+  },
+  "checkIn": {
+    "success": "Pointage réussi",
+    "pending": "Pointage en cours…",
+    "error": "Échec du pointage, veuillez réessayer"
+  },
+  "progress": {
+    "remainingToTarget": "Encore {{amount}} {{unit}} pour atteindre l'objectif",
+    "unit": {
+      "CHECK_IN_STREAK": "pointages",
+      "REFERRAL": "parrainages"
+    }
+  },
+  "countdown": {
+    "ended": "Terminé",
+    "daysHours": "{{days}} j {{hours}} h",
+    "daysHoursMinutes": "{{days}} jours {{hours}} heures {{minutes}} minutes restantes"
+  },
+  "reward": {
+    "creditedLabel": "Créditée"
+  },
+  "cta": {
+    "deposit": "Déposer maintenant",
+    "viewDetail": "Voir les détails",
+    "checkIn": "Pointer",
+    "invite": "Inviter des amis"
+  },
+  "empty": {
+    "title": "Des récompenses exclusives arrivent",
+    "description": "Lorsqu'une tâche de récompense vous sera attribuée, elle apparaîtra ici. Restez à l'écoute."
+  },
+  "detail": {
+    "back": "Retour aux récompenses",
+    "notFoundTitle": "Tâche introuvable",
+    "notFoundDescription": "Cette tâche de récompense n'existe pas ou n'est plus disponible.",
+    "sectionProgress": "Progression",
+    "sectionInfo": "Détails de la tâche"
+  },
+  "states": {
+    "loadError": "Échec du chargement des tâches de récompense",
+    "retry": "Réessayer",
+    "loadMore": "Charger plus"
+  }
+}

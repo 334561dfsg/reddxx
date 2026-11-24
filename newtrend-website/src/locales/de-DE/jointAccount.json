@@ -1,0 +1,327 @@
+{
+  "nav": {
+    "menuEntry": "Gemeinschaftskonto"
+  },
+  "page": {
+    "title": "Gemeinschaftskonto",
+    "description": "Teilen Sie ein Guthabenkonto mit Ehepartner, Familie, Geschäftspartner oder Bevollmächtigtem"
+  },
+  "common": {
+    "back": "Zurück",
+    "retry": "Erneut versuchen",
+    "loadMore": "Mehr laden"
+  },
+  "relationship": {
+    "spouse": "Ehepartner",
+    "family": "Familie",
+    "partner": "Partner",
+    "agent": "Bevollmächtigter"
+  },
+  "operatedBy": {
+    "member": "Mitglied des Gemeinschaftskontos",
+    "actor": "Bedient von {{actor}}",
+    "withUid": "Bedient von {{actor}} (UID {{uid}})"
+  },
+  "initiatedBy": {
+    "actor": "Veranlasst von {{actor}}"
+  },
+  "actingFor": {
+    "primaryWithName": "UID {{uid}} ({{name}})",
+    "primaryUidOnly": "UID {{uid}}",
+    "unnamedAccount": "Unbenanntes Gemeinschaftskonto",
+    "primarySuspended": "Der Hauptantragsteller des Gemeinschaftskontos wurde gesperrt, daher können Sie dieses Konto derzeit nicht bedienen. Wechseln Sie zurück zu Ihrem eigenen Konto oder wenden Sie sich an den Hauptantragsteller.",
+    "primaryKycNotVerified": "Der Hauptantragsteller des Gemeinschaftskontos hat die Identitätsprüfung nicht bestanden. Wenden Sie sich an den Hauptantragsteller.",
+    "restrictedTitle": "Wechseln Sie dafür zurück zu Ihrem eigenen Konto",
+    "restrictedDesc": "Sie bedienen ein Gemeinschaftskonto. Identitätsprüfung, Empfehlungszuordnung sowie Anträge und Mitgliedschaftsänderungen für Gemeinschaftskonten sind nur über Ihr eigenes Konto möglich."
+  },
+  "session": {
+    "invalid": "Ihre Sitzung für das Gemeinschaftskonto ist nicht mehr gültig. Melden Sie sich erneut an."
+  },
+  "switcher": {
+    "title": "Konto wechseln",
+    "self": "Mein Konto",
+    "selfHint": "Ihr eigenes Guthaben und Ihre Einstellungen",
+    "loadMore": "Mehr anzeigen ({{loaded}}/{{total}})",
+    "switching": "Konto wird gewechselt…",
+    "backToSelf": "Zurück zu meinem Konto",
+    "retryAfter": "Versuchen Sie es in {{seconds}} s erneut."
+  },
+  "delegated": {
+    "title": "Sie bedienen {{name}}",
+    "desc": "Anträge, Umbenennung, Zustimmung und Austritt verwalten Sie über Ihr eigenes Konto. Überweisungen zwischen Ihrem Guthaben und Gemeinschaftskonten sind in beiden Modi möglich."
+  },
+  "consent": {
+    "title": "Anfragen warten auf Sie ({{count}})",
+    "desc": "Jemand hat beantragt, Sie zu seinem Gemeinschaftskonto hinzuzufügen. Wenn Sie zustimmen, geht der Antrag in die Prüfung; bis zur Genehmigung ändert sich nichts.",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "accepted": "Anfrage angenommen. Sie wartet jetzt auf die Prüfung.",
+    "declined": "Anfrage abgelehnt"
+  },
+  "intro": {
+    "title": "Gemeinschaftskonto eröffnen",
+    "addMemberTitle": "Mitglied zu Ihrem Gemeinschaftskonto hinzufügen",
+    "unavailable": "Neue Anträge sind derzeit nicht möglich.",
+    "points": {
+      "ownership": "Guthaben, Wallet und Verifizierung bleiben bei Ihnen",
+      "switch": "Das Mitglied wechselt mit dem eigenen Konto hinein",
+      "exit": "Mitglied entfernen oder Konto jederzeit auflösen"
+    },
+    "prepare": "Sie benötigen einen Nachweis der Beziehung sowie die UID oder den Ausweis der anderen Person",
+    "kycOnly": "Nur für verifizierte Kunden"
+  },
+  "apply": {
+    "start": "Beantragen",
+    "restart": "Erneut beantragen",
+    "title": "Gemeinschaftskonto beantragen",
+    "memberSection": "Mitglied",
+    "relationshipType": "Ihre Beziehung",
+    "mode": {
+      "existing": "Hat bereits ein Konto",
+      "invite": "Zur Registrierung einladen"
+    },
+    "modeHint": {
+      "existing": "Prüfung nach Zustimmung",
+      "invite": "Registrierungslink nach Genehmigung"
+    },
+    "memberUid": "UID der Person",
+    "memberUidPlaceholder": "z. B. 100023",
+    "memberUidHint": "Die UID steht auf ihrer Profilseite. Die Identität muss verifiziert sein; wird der Antrag zurückgewiesen, können Sie 24 Stunden lang nicht erneut an dieselbe UID senden.",
+    "memberNotEligible": {
+      "not_eligible": "Prüfen Sie, ob die UID korrekt ist, und bitten Sie diesen Nutzer zu bestätigen, dass seine Identitätsprüfung genehmigt, sein Konto aktiv und die maximale Anzahl an Gemeinschaftskonten nicht erreicht ist.",
+      "self": "Sie können sich nicht selbst als Mitglied hinzufügen. Geben Sie die UID der anderen Person ein."
+    },
+    "memberFullName": "Vollständiger Name des Mitglieds",
+    "memberFullNamePlaceholder": "Wie im Ausweis angegeben",
+    "memberFront": "Ausweis des Mitglieds (Vorderseite)",
+    "memberBack": "Ausweis des Mitglieds (Rückseite)",
+    "memberSelfie": "Selfie des Mitglieds",
+    "proofSection": "Nachweis der Beziehung",
+    "proofFile": "Nachweis {{index}}",
+    "addProof": "Weiteren hinzufügen",
+    "incomplete": "Füllen Sie alle Felder aus und laden Sie die erforderlichen Dateien hoch.",
+    "cancel": "Abbrechen",
+    "submit": "Antrag einreichen",
+    "submitted": "Antrag eingereicht",
+    "kycRequiredTitle": "Schließen Sie zuerst die Identitätsprüfung ab",
+    "kycRequiredDesc": "Nur Kunden mit bestandener Identitätsprüfung können ein Gemeinschaftskonto beantragen.",
+    "goKyc": "Zur Verifizierung",
+    "upload": "Hochladen",
+    "reupload": "Ersetzen",
+    "uploading": "Wird hochgeladen {{progress}} %",
+    "proofMeta": "JPG, PNG oder PDF, bis 20 MB",
+    "idDocumentMeta": "JPG, PNG oder PDF",
+    "selfieMeta": "Nur JPG oder PNG",
+    "proofCount": "{{count}} von {{max}}",
+    "missing": "Es fehlt noch: {{items}}",
+    "ready": "Alles vollständig, bereit zum Einreichen",
+    "missingItem": {
+      "relationship": "Beziehung",
+      "memberUid": "UID der Person",
+      "memberDetails": "Angaben zur Person",
+      "memberDocuments": "Ausweisdokumente",
+      "proof": "Nachweis der Beziehung"
+    },
+    "missingSeparator": ", "
+  },
+  "application": {
+    "eyebrow": "Letzter Antrag",
+    "status": {
+      "pending_consent": "Wartet auf Mitglied",
+      "pending_review": "In Prüfung",
+      "approved": "Genehmigt",
+      "rejected": "Abgelehnt",
+      "cancelled": "Storniert"
+    },
+    "desc": {
+      "pending_consent": "Das Mitglied hat noch nicht zugestimmt. Wir benachrichtigen Sie, sobald es antwortet.",
+      "pending_review": "Wir prüfen den Antrag und benachrichtigen Sie über das Ergebnis.",
+      "approved": "Der Antrag wurde genehmigt.",
+      "rejected": "Prüfen Sie den Grund unten und beantragen Sie es dann erneut.",
+      "cancelled": "Dieser Antrag wurde storniert."
+    },
+    "memberGone": "Mitglied entfernt",
+    "memberGoneDesc": "Der Antrag wurde genehmigt, das Mitglied gehört dem Gemeinschaftskonto jedoch nicht mehr an. Um ein Mitglied hinzuzufügen, beantragen Sie es erneut.",
+    "cancel": "Antrag stornieren",
+    "cancelTitle": "Diesen Antrag stornieren?",
+    "cancelConfirm": "Der Antrag wird damit beendet. Wenn Sie einen bestehenden Nutzer eingeladen haben, erhält dieser eine Benachrichtigung über die Stornierung.",
+    "cancelled": "Antrag storniert",
+    "title": {
+      "pending_consent": "Wartet auf Zustimmung",
+      "pending_review": "Antrag in Prüfung",
+      "approved": "Antrag genehmigt",
+      "rejected": "Antrag abgelehnt",
+      "cancelled": "Antrag storniert"
+    }
+  },
+  "detail": {
+    "relationshipType": "Beziehung",
+    "memberUid": "UID des Mitglieds",
+    "memberName": "Name des Mitglieds",
+    "submittedAt": "Eingereicht am",
+    "rejectionReason": "Grund",
+    "reviewedAt": "Geprüft am",
+    "activatedAt": "Mitglied seit",
+    "uidValue": "UID {{uid}}"
+  },
+  "owned": {
+    "eyebrow": "Ihr Gemeinschaftskonto",
+    "active": "Aktiv",
+    "desc": "Sie sind der Hauptantragsteller. Sie müssen das Konto nicht wechseln; das Mitglied wechselt zu diesem Konto, um es zu bedienen.",
+    "primary": "Hauptantragsteller",
+    "you": "Sie",
+    "member": "Mitglied",
+    "memberStatus": {
+      "pending": "Noch nicht registriert",
+      "active": "Aktiv"
+    },
+    "noMember": "Noch kein Mitglied",
+    "removeMember": "Mitglied entfernen",
+    "dissolve": "Konto auflösen",
+    "removeTitle": "Dieses Mitglied entfernen?",
+    "removeConfirm": "Das Mitglied verliert sofort den Zugriff auf dieses Konto und wird davon abgemeldet. Sein eigenes Konto und Vermögen bleiben unberührt. Sie bestätigen mit einer Sicherheitsprüfung.",
+    "memberRemoved": "Mitglied entfernt",
+    "dissolveTitle": "Dieses Gemeinschaftskonto auflösen?",
+    "dissolveConfirm": "Das Mitglied verliert sofort den Zugriff und das Gemeinschaftskonto wird geschlossen. Ihr eigenes Guthaben bleibt bei Ihnen. Sie bestätigen mit einer Sicherheitsprüfung.",
+    "dissolved": "Gemeinschaftskonto aufgelöst",
+    "createdAt": "Eröffnet am {{time}}"
+  },
+  "label": {
+    "edit": "Umbenennen",
+    "title": "Gemeinschaftskonto umbenennen",
+    "description": "Mitglieder sehen diesen Namen, wenn sie zum Konto wechseln. Bereits gesendete Benachrichtigungen behalten den Namen, mit dem sie gesendet wurden.",
+    "field": "Name",
+    "placeholder": "z. B. Familiensparen",
+    "hint": "{{count}}/{{max}} Zeichen. Leer lassen, um den Namen zu entfernen.",
+    "clear": "Name entfernen",
+    "save": "Name speichern",
+    "saved": "Name gespeichert"
+  },
+  "invitation": {
+    "title": "Registrierungslink für Mitglieder",
+    "expiresIn": "Läuft ab in {{time}}",
+    "expiresInDays": "Läuft ab in {{days}} T {{time}}",
+    "keepPrivate": "Jeder mit diesem Link kann sich als Mitglied Ihres Gemeinschaftskontos registrieren. Senden Sie ihn nur an die Person, für die Sie den Antrag gestellt haben.",
+    "copy": "Link kopieren",
+    "share": "Teilen",
+    "copied": "Link kopiert",
+    "copyFailed": "Link konnte nicht kopiert werden. Markieren und kopieren Sie ihn manuell.",
+    "shareTitle": "Registrierungslink für das Gemeinschaftskonto",
+    "expiredAt": "Der Link ist am {{time}} abgelaufen",
+    "unavailable": "Der Link ist derzeit nicht verfügbar",
+    "contactSupportHint": "Wenden Sie sich an den Support, um einen neuen Link zu erhalten.",
+    "contactSupport": "Support kontaktieren"
+  },
+  "confirm": {
+    "keep": "Behalten"
+  },
+  "memberships": {
+    "title": "Gemeinschaftskonten, denen Sie angehören ({{count}})",
+    "desc": "Wechseln Sie zu einem Gemeinschaftskonto, um dessen Guthaben zu bedienen. Ihr eigenes Konto und Ihre Wallet bleiben getrennt.",
+    "joinedAt": "Beigetreten {{time}}",
+    "current": "Wird gerade bedient",
+    "switch": "Zu diesem Konto wechseln",
+    "notifications": "Kopien von Guthabenbenachrichtigungen",
+    "notificationsHint": "Kopien der Guthabenaktivitäten dieses Kontos im Posteingang und per E-Mail. Echtzeit-Updates erhalten Sie weiterhin, auch wenn dies deaktiviert ist.",
+    "leave": "Austreten",
+    "leaveTitle": "{{name}} verlassen?",
+    "leaveWithdrawFirst": "Übertragen Sie benötigtes Guthaben vor dem Austritt auf Ihr eigenes Konto.",
+    "leaveConfirm": "Beim Austritt werden bereits überwiesene Beträge nicht zurückerstattet und Ihr eigenes Konto wird nicht geschlossen. Der Zugriff auf dieses Gemeinschaftskonto endet sofort.",
+    "left": "Sie haben das Gemeinschaftskonto verlassen"
+  },
+  "transfer": {
+    "open": "Überweisen",
+    "title": "Überweisung zwischen Konten",
+    "description": "Übertragen Sie Guthaben zwischen Ihrem Guthabenkonto und dem Guthabenkonto des Gemeinschaftskontos.",
+    "direction": {
+      "to_joint": "Auf das Gemeinschaftskonto",
+      "from_joint": "Auf mein Konto"
+    },
+    "from": "Von",
+    "to": "An",
+    "ownFunding": "Mein Guthabenkonto",
+    "jointFunding": "Guthabenkonto von {{name}}",
+    "asset": "Asset",
+    "amount": "Betrag",
+    "securityHint": "Die erste Überweisung in jede Richtung erfordert Ihr Fondspasswort und eine weitere Verifizierung. Beide müssen die Identitätsprüfung bestanden haben.",
+    "submit": "Überweisen",
+    "done": "{{amount}} {{asset}} überwiesen",
+    "directionLabel": "Richtung",
+    "snapshotJoint": "Kontostand von {{name}} nach der Überweisung",
+    "snapshotOwn": "Mein Kontostand nach der Überweisung",
+    "snapshotHint": "Die angezeigten Kontostände gelten für den Zeitpunkt dieser Überweisung und sind nicht live. Aktuelle Kontostände finden Sie auf Ihrer Asset-Seite.",
+    "close": "Fertig",
+    "denial": {
+      "kyc_required": "Für die Überweisung müssen Sie und der Hauptantragsteller die Identitätsprüfung abgeschlossen haben.",
+      "party_not_active": "Ihr Konto oder das des Hauptantragstellers ist derzeit nicht aktiv, daher ist keine Überweisung möglich.",
+      "membership_inactive": "Sie sind kein Mitglied dieses Gemeinschaftskontos mehr. Bitte laden Sie die Seite neu.",
+      "joint_account_inactive": "Dieses Gemeinschaftskonto ist nicht mehr aktiv.",
+      "invalid_accounts": "Überweisungen sind nur zwischen den Finanzierungskonten zweier verschiedener Nutzer möglich."
+    }
+  },
+  "history": {
+    "title": "Überweisungsverlauf",
+    "empty": "Noch keine Überweisungen.",
+    "actor": "von {{actor}} UID {{uid}}"
+  },
+  "register": {
+    "eyebrow": "Einladung zum Gemeinschaftskonto",
+    "previewPrimary": "Sie registrieren sich als Mitglied des Gemeinschaftskontos von UID {{uid}} ({{name}}).",
+    "previewPrimaryUidOnly": "Sie registrieren sich als Mitglied des Gemeinschaftskontos von UID {{uid}}.",
+    "previewMemberName": "Name im Antrag: {{name}}",
+    "previewRelationship": "Beziehung: {{relationship}}",
+    "previewWarning": "Wenn diese Angaben nicht stimmen, fahren Sie nicht fort. Die Registrierung ersetzt keine Identitätsprüfung; vor Auszahlungen oder Überweisungen müssen Sie sich noch verifizieren.",
+    "previewExpiresAt": "Link gültig bis {{time}}.",
+    "previewFailed": "Die Linkdetails konnten nicht geladen werden.",
+    "retry": "Erneut versuchen",
+    "tooManyRequests": "Zu viele Versuche. Versuchen Sie es in einigen Minuten erneut.",
+    "requiresNewAccount": "Diese Einladung funktioniert nur mit einem neuen Konto, und diese E-Mail-Adresse oder Telefonnummer ist bereits registriert. Verwenden Sie eine noch nicht registrierte oder bitten Sie den Hauptantragsteller, stattdessen Ihr bestehendes Konto hinzuzufügen.",
+    "resendCode": "Fordern Sie einen neuen Bestätigungscode an und versuchen Sie es erneut.",
+    "loggedInElsewhere": "Diese Einladung gilt für ein neues Konto. Melden Sie sich zuerst ab und registrieren Sie sich dann mit einer E-Mail-Adresse oder Telefonnummer, die hier noch nicht verwendet wurde.",
+    "logoutAndContinue": "Abmelden und fortfahren",
+    "issue": {
+      "invalid": "Dieser Einladungslink ist ungültig.",
+      "not_usable": "Dieser Einladungslink wurde bereits verwendet oder ist nicht mehr gültig.",
+      "expired": "Dieser Einladungslink ist abgelaufen. Bitten Sie den Hauptantragsteller, sich für einen neuen an den Support zu wenden."
+    },
+    "issueFallback": "Unten können Sie weiterhin ein reguläres Konto registrieren."
+  },
+  "selfSettings": {
+    "notice": "Sie bedienen ein Gemeinschaftskonto. Änderungen hier gelten für Ihre eigene Anmeldung und Ihre eigenen Sicherheitseinstellungen, nicht für die des Hauptantragstellers."
+  },
+  "holder": {
+    "title": "Kontoinhaber",
+    "vacant": "Noch nicht hinzugefügt",
+    "withYou": "{{role}} · Sie"
+  },
+  "faq": {
+    "title": "Häufige Fragen",
+    "memberCan": {
+      "q": "Was kann ein Mitglied tun?",
+      "a": "Zum Gemeinschaftskonto wechseln, um dessen Guthaben zu verwalten, und zwischen dem eigenen Guthabenkonto und dem Gemeinschaftskonto übertragen. Eigenes Konto und Wallet bleiben getrennt."
+    },
+    "memberSteps": {
+      "q": "Was muss die andere Person tun?",
+      "a": "Mit bestehendem Konto nimmt sie Ihre Anfrage vor der Prüfung an. Ohne Konto senden Sie ihr nach der Genehmigung einen Registrierungslink."
+    },
+    "dissolve": {
+      "q": "Wie löse ich das Konto auf?",
+      "a": "Jederzeit auf dieser Seite. Das Mitglied verliert sofort den Zugriff, Ihr eigenes Guthaben bleibt bei Ihnen."
+    }
+  },
+  "progress": {
+    "label": "Antragsfortschritt",
+    "submit": "Einreichen",
+    "consent": "Zustimmung",
+    "review": "Prüfung",
+    "register": "Registrierung",
+    "active": "Aktiv",
+    "failed": "Abgelehnt",
+    "state": {
+      "done": ", erledigt",
+      "current": ", aktueller Schritt",
+      "failed": ", abgelehnt",
+      "upcoming": ", noch offen"
+    }
+  }
+}

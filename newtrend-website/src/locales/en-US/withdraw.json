@@ -1,0 +1,62 @@
+{
+  "history": {
+    "entry": "History",
+    "title": "Withdraw history",
+    "subtitle": "Review your withdrawal timeline",
+    "back": "Back",
+    "filterAll": "All",
+    "range7d": "Last 7 days",
+    "range30d": "Last 30 days",
+    "rangeAll": "All time",
+    "status": {
+      "PENDING": "Pending",
+      "REVIEWING": "Reviewing",
+      "APPROVED": "Approved",
+      "SENT": "Sent",
+      "COMPLETED": "Completed",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled"
+    },
+    "columns": {
+      "amount": "Amount",
+      "asset": "Asset",
+      "network": "Network",
+      "fee": "Fee",
+      "txid": "Transaction Hash (TXID)",
+      "createdAt": "Created at",
+      "completedAt": "Completed at",
+      "status": "Status",
+      "action": "Action"
+    },
+    "empty": "No withdrawal records yet",
+    "withdrawNow": "Withdraw now",
+    "txidCopied": "Transaction hash copied",
+    "explorerAria": "View transaction on block explorer",
+    "trackProgressHint": "You can track each stage of your withdrawal in the history.",
+    "stagesAria": "Withdrawal progress",
+    "stages": {
+      "submitted": "Submitted",
+      "reviewing": "Risk review",
+      "broadcasting": "On-chain broadcast",
+      "completed": "Completed"
+    },
+    "stageHint": {
+      "PENDING": "In queue — risk review usually begins within a few hours",
+      "REVIEWING": "Risk review usually completes within a few hours",
+      "APPROVED": "Approved — broadcasting on-chain shortly",
+      "SENT": "Broadcast on-chain — usually confirmed within ~30 minutes"
+    },
+    "detail": {
+      "view": "Details",
+      "title": "Withdrawal details",
+      "address": "Withdrawal address",
+      "addressCopied": "Withdrawal address copied",
+      "copyAria": "Copy"
+    }
+  },
+  "pendingNotice": {
+    "title": "You have a withdrawal in progress",
+    "description": "Only one withdrawal can be in progress at a time. A new withdrawal request will be rejected until this one is completed or rejected.",
+    "viewHistory": "View withdrawal history"
+  }
+}

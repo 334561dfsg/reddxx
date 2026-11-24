@@ -1,0 +1,567 @@
+{
+  "landing": {
+    "eyebrow": "AI Quant",
+    "title": "Let AI trade for you, or hand it to a managed fund",
+    "subtitle": "Two independent product lines. Pick one to start; switch anytime.",
+    "strategy": {
+      "kicker": "AI engine · Automated",
+      "name": "Strategies",
+      "valueProp": "An AI engine auto-executes trades from proven templates. You pick the template, the engine runs it.",
+      "chipA": "Backtested",
+      "chipB": "Risk-capped",
+      "browse": "Browse strategies",
+      "mine": "My strategies",
+      "mineHint": "Yours · running instances"
+    },
+    "quantFund": {
+      "kicker": "AI-managed · Hands-off",
+      "name": "Quant Fund",
+      "valueProp": "An AI-managed fixed-term fund. Subscribe and let settlement run automatically at maturity.",
+      "chipA": "Fixed-term",
+      "chipB": "Auto-settle",
+      "browse": "Browse funds",
+      "mine": "My positions",
+      "mineHint": "Yours · subscriptions and interest"
+    }
+  },
+  "nav": {
+    "ariaLabel": "AI Quant module navigation",
+    "strategy": "Strategies",
+    "myStrategies": "My Strategies",
+    "quantFund": "Quant Fund",
+    "myPositions": "My Positions"
+  },
+  "myStrategies": {
+    "subtitle": "Running AI strategies",
+    "title": "My Strategies",
+    "empty": "You haven't subscribed to any strategy. Browse templates to get started.",
+    "browseStrategies": "Browse templates",
+    "summary": {
+      "totalCapital": "Total capital",
+      "totalPnl": "Total PnL",
+      "running": "Running",
+      "total": "Strategies"
+    }
+  },
+  "table": {
+    "columns": {
+      "strategyName": "Strategy",
+      "styleMarket": "Style / Market",
+      "trend": "P&L trend",
+      "pnl": "PnL",
+      "capital": "Capital",
+      "endDate": "End",
+      "action": "Action"
+    }
+  },
+  "hero": {
+    "subtitle": "AI Quant",
+    "title": "Quant power for every trader.",
+    "description": "Hundreds of AI-backed strategies, transparent risk parameters, and full control over every decision. Subscribe to a template, set your limits, and let the math do the heavy lifting.",
+    "browseStrategies": "Browse strategies",
+    "howItWorks": "How it works",
+    "modelsRunning": "Models running · 24/7",
+    "statActive": "Active",
+    "statActiveSub": "Strategies running right now",
+    "statActiveFallback": "Templates available",
+    "statActiveFallbackSub": "Strategies ready to subscribe",
+    "statAvgSharpe": "Median Sharpe",
+    "statAvgSharpeSub": "Across all listed templates"
+  },
+  "howItWorks": {
+    "title": "How AI Quant works",
+    "description": "A short walkthrough of how strategies are built, backtested, and run.",
+    "empty": "The introduction video isn't available right now. Please check back later.",
+    "unsupported": "Your browser does not support the video tag."
+  },
+  "sections": {
+    "featured": "Featured today",
+    "live": "Live performance",
+    "browse": "Browse strategies"
+  },
+  "spotlight": {
+    "subtitle": "One top-Sharpe pick from each style — conservative, balanced, and aggressive — surfaced for fast-track subscription.",
+    "styleBadge": {
+      "conservative": "Steady pick",
+      "balanced": "Balanced pick",
+      "aggressive": "Bold pick"
+    },
+    "subscribeNow": "Subscribe now"
+  },
+  "templates": {
+    "label": "Strategy templates",
+    "title": "Strategy templates",
+    "subtitle": "Each template runs on a tested AI model with public risk and return metrics.",
+    "recommendedTitle": "Recommended",
+    "filterAll": "All",
+    "filterByStyle": "Style",
+    "filterByMarket": "Market",
+    "empty": "No strategies match your filter yet.",
+    "loading": "Loading strategies…",
+    "subscribe": "Subscribe",
+    "sortBy": {
+      "label": "Sort",
+      "sharpe_desc": "Sharpe ratio · high to low",
+      "sharpe_asc": "Sharpe ratio · low to high",
+      "winRate_desc": "Win rate · high to low",
+      "winRate_asc": "Win rate · low to high",
+      "minCapital_desc": "Min capital · high to low",
+      "minCapital_asc": "Min capital · low to high",
+      "period_desc": "Period · long to short",
+      "period_asc": "Period · short to long"
+    },
+    "fields": {
+      "winRate": "Win rate",
+      "sharpeRatio": "Sharpe ratio",
+      "aiModel": "AI model",
+      "tradesPerDay": "Trades / day",
+      "tradesPerDayValue": "{{n}} trades/day",
+      "capital": "Capital ({{asset}})",
+      "period": "Period",
+      "riskLevel": "Risk",
+      "supportedSymbols": "Symbols"
+    },
+    "riskLevelValue": "Lv.{{level}}",
+    "guideCard": {
+      "title": "Haven't found the right strategy?",
+      "description": "Explore quant funds — fully AI-managed, no monitoring needed, auto-settled at maturity.",
+      "cta": "Browse quant funds"
+    }
+  },
+  "style": {
+    "conservative": "Conservative",
+    "balanced": "Balanced",
+    "aggressive": "Aggressive"
+  },
+  "market": {
+    "crypto": "Crypto",
+    "stock": "Stock",
+    "forex": "Forex",
+    "indices": "Indices"
+  },
+  "aiModelNames": {
+    "local": "In-house quant model"
+  },
+  "detail": {
+    "title": "Strategy details",
+    "close": "Close",
+    "openAria": "View details of {{name}}",
+    "descriptionTitle": "About this strategy",
+    "paramsTitle": "Key parameters",
+    "periodValue": "{{min}} – {{max}} days",
+    "dailyTargetLabel": "Daily target return",
+    "dailyTargetValue": "{{percent}}%/day",
+    "explain": {
+      "sharpeRatio": "Return earned per unit of risk taken — higher means better risk-adjusted performance.",
+      "winRate": "The share of historical trades that closed in profit.",
+      "riskLevel": "The platform's rating of the strategy's volatility and drawdown — higher means larger swings."
+    }
+  },
+  "strategies": {
+    "label": "My strategies",
+    "title": "My strategies",
+    "subtitle": "Real-time view of every strategy subscribed to your account.",
+    "trendPlaceholder": "Performance curve coming soon",
+    "empty": "You don't have any active strategies yet. Pick a template to get started.",
+    "loginRequired": "Sign in to manage your strategies.",
+    "fields": {
+      "capital": "Capital",
+      "pnl": "P&L",
+      "returnPercent": "Return",
+      "period": "Period",
+      "tradesCount": "Trades",
+      "winRate": "Win rate",
+      "endDate": "Ends"
+    }
+  },
+  "status": {
+    "initializing": "Initializing",
+    "running": "Running",
+    "paused": "Paused",
+    "completed": "Completed",
+    "pending_review": "Under review",
+    "rejected": "Rejected"
+  },
+  "actions": {
+    "pause": "Pause",
+    "resume": "Resume",
+    "stop": "Stop",
+    "viewStats": "View stats",
+    "hideStats": "Hide stats",
+    "toast": {
+      "pauseSuccess": "Strategy paused",
+      "pauseError": "Couldn't pause the strategy. Please try again.",
+      "resumeSuccess": "Strategy resumed",
+      "resumeError": "Couldn't resume the strategy. Please try again.",
+      "stopSuccess": "Strategy stopped",
+      "stopError": "Couldn't stop the strategy. Please try again."
+    },
+    "stopConfirm": {
+      "title": "Stop this strategy?",
+      "notice": "Stopping closes all open positions for “{{name}}” and ends the strategy for good. Your realized P&L stays intact, but this can't be undone.",
+      "cancel": "Keep running",
+      "confirm": "Stop strategy",
+      "confirming": "Stopping…"
+    }
+  },
+  "create": {
+    "title": "Subscribe to {{name}}",
+    "subtitle": "Set your capital, stop loss, take profit, and period.",
+    "subtitleDailyTarget": "Set your capital and period. This template targets a fixed daily return, so take profit / stop loss are not needed.",
+    "demoNotice": "Demo mode: capital is reserved from your simulated account — no real funds are involved.",
+    "capitalLabel": "Capital ({{asset}})",
+    "availableBalanceLabel": "Available",
+    "maxButton": "Max",
+    "capitalHint": "Range: {{min}} – {{max}}",
+    "takeProfitLabel": "Take profit (%)",
+    "stopLossLabel": "Stop loss (%)",
+    "periodLabel": "Period (days)",
+    "periodHint": "Range: {{min}} – {{max}} days",
+    "submit": "Subscribe",
+    "submitting": "Submitting…",
+    "cancel": "Cancel",
+    "submitSuccess": "Subscribed successfully",
+    "fees": {
+      "title": "Fees & rules",
+      "feePerTrade": "Fee per trade",
+      "feePerTradeValue": "{{fee}} {{asset}}",
+      "maxOpenTrades": "Max open trades",
+      "maxOpenTradesValue": "{{n}} trades"
+    },
+    "settlementNote": "You can stop a strategy at any time. Stopping closes all open positions and ends the strategy; realized PnL is kept in your account.",
+    "simulator": {
+      "title": "Projected profit simulation",
+      "params": "{{rate}}%/day ±{{tolerance}}% · compounded",
+      "range": "Simulated range: {{lower}} – {{upper}}",
+      "legendExpected": "Expected",
+      "legendBand": "Tolerance band",
+      "tooltipDay": "Day {{day}}",
+      "tooltipExpected": "Expected",
+      "tooltipUpper": "Upper",
+      "tooltipLower": "Lower",
+      "emptyHint": "Enter a capital amount and period to preview the projection.",
+      "disclaimer": "Simulation is illustrative, based on the template's daily target and tolerance compounded daily. It is not a guarantee of returns."
+    },
+    "errors": {
+      "capitalRequired": "Enter a capital amount.",
+      "belowMin": "Capital must be at least {{min}}.",
+      "aboveMax": "Capital must be no more than {{max}}.",
+      "emptyRange": "This template is not available for your account right now.",
+      "periodOutOfRange": "Period must be between {{min}} and {{max}} days.",
+      "takeProfitOutOfRange": "Take profit must be between 1% and 100%.",
+      "stopLossOutOfRange": "Stop loss must be between 1% and 50%.",
+      "createFailed": "Failed to create strategy. Please try again.",
+      "badRequest": "The request was rejected. Please review your inputs.",
+      "unauthorized": "Please sign in to create a strategy.",
+      "paymentRequired": "Insufficient balance. Please top up before creating this strategy.",
+      "notFound": "This strategy template is no longer available.",
+      "conflict": "A conflicting strategy is already running. Stop or wait for it to finish.",
+      "validation": "Some fields look invalid. Please check and try again."
+    }
+  },
+  "dailyStats": {
+    "netPnl": "Net P&L",
+    "tradesLabel": "Trades",
+    "activeDays": "Active days",
+    "date": "Date",
+    "pnl": "P&L",
+    "loss": "Loss",
+    "profit": "Profit",
+    "empty": "No closed trades in this window yet.",
+    "rangeCaption": "{{range}} · UTC",
+    "showingLatest": "Showing the latest {{shown}} of {{total}} days"
+  },
+  "risk": {
+    "title": "Risk notice",
+    "body": "Past performance never guarantees future results. AI strategies and signals are reference tools, not financial advice. Crypto and futures trading can lose your entire balance — only trade what you can afford to lose."
+  },
+  "quantFund": {
+    "title": "Quant Fund",
+    "hero": {
+      "subtitle": "AI-managed Quant Fund",
+      "title": "Quant Fund — AI-managed fixed-term yield",
+      "description": "Fixed-term products run by our AI quant book. Lock in for a defined window, accrue interest at a daily yield, and let settlement run automatically at maturity.",
+      "disclaimer": "AI-managed · Fixed-term settlement",
+      "viewPositionsCta": "My positions"
+    },
+    "filters": {
+      "assetAll": "All assets"
+    },
+    "card": {
+      "dailyReturn": "Daily yield",
+      "term": "Term",
+      "termDaysValue": "{{days}} days",
+      "termFlexible": "Flexible",
+      "investmentLimit": "Subscription range ({{currency}})",
+      "availableQuota": "Available quota",
+      "subscribedDisplayed": "Subscribed",
+      "projectProgress": "Project progress",
+      "maxUnlimited": "Unlimited",
+      "tagFlexible": "Flexible",
+      "tagRedeemable": "Redeem anytime",
+      "cta": "Subscribe",
+      "ctaSoldOut": "Quota exhausted"
+    },
+    "creditScore": {
+      "label": "Min. credit score",
+      "requirement": "Credit score ≥ {{score}}",
+      "insufficient": "Requires a credit score of {{required}}. Yours is {{current}}."
+    },
+    "detail": {
+      "investmentRange": "Subscription range",
+      "minHoldDays": "Min. hold {{days}} days",
+      "subscribeCta": "Subscribe now",
+      "disclosure": "Disclosure documents",
+      "calcTitle": "Earnings calculator",
+      "calcDaysLabel": "Holding period",
+      "calcEstTotal": "Est. total earnings",
+      "calcDisclaimer": "Estimates are for reference only and do not constitute a guarantee of returns.",
+      "calcAccrualNote": "No earnings accrue before {{days}} days of holding.",
+      "flowTitle": "How it works",
+      "flowStep1Title": "Subscribe",
+      "flowStep1Desc": "Choose an amount and confirm your subscription with your funding account balance.",
+      "flowStep2Title": "Interest accrual",
+      "flowStep2Desc": "Earnings start accruing after the subscription is confirmed.",
+      "flowStep3Title": "Earnings paid",
+      "flowStep3Desc": "Earnings are settled and credited to your account periodically.",
+      "flowStep4Title": "Redeem",
+      "flowStep4DescFixed": "Principal and earnings are returned automatically at maturity.",
+      "flowStep4DescFlexible": "Redeem anytime; funds are returned to your funding account.",
+      "quotaTitle": "Quota details",
+      "quotaTotal": "Total quota",
+      "quotaPerUser": "Per-user limit",
+      "moreTitle": "More products"
+    },
+    "riskLevel": {
+      "LOW": "Low risk",
+      "MEDIUM": "Medium risk",
+      "HIGH": "High risk",
+      "EXTREME": "Extreme risk"
+    },
+    "subscribe": {
+      "title": "Subscribe to {{name}}",
+      "amountLabel": "Amount ({{currency}})",
+      "amountHint": "Range: {{min}} – {{max}} {{currency}}",
+      "availableBalanceLabel": "Available",
+      "maxButton": "Max",
+      "estDailyEarnings": "Est. daily earnings",
+      "riskAckPrefix": "I have read and accept the ",
+      "riskAckLink": "Quant Fund Risk Disclosure",
+      "riskAckSuffix": " for this product.",
+      "submit": "Confirm subscription",
+      "submitting": "Submitting…",
+      "cancel": "Cancel",
+      "errorAmountRange": "Amount must be between {{min}} and {{max}} {{currency}}.",
+      "errorAmountInvalid": "Please enter a valid amount.",
+      "errorExceedsAvailable": "Amount exceeds the remaining quota. Only {{available}} {{currency}} left — please adjust your amount.",
+      "errorInsufficientBalance": "Insufficient available balance — only {{available}} {{currency}} available.",
+      "goDeposit": "Go to deposit",
+      "errorRequireRiskAck": "Please acknowledge the risk notice before continuing.",
+      "success": "Subscription confirmed",
+      "close": "Close"
+    },
+    "redeem": {
+      "button": "Redeem",
+      "title": "Redeem order",
+      "confirmNotice": "Interest accrues by actual holding days. No interest if held under the minimum {{minHoldDays}} days. The final amount is set at settlement.",
+      "confirmNoticeNoMin": "Interest accrues by actual holding days. The final amount is set at settlement.",
+      "reviewNotice": "This redemption requires review. After you submit, an administrator reviews it before any payout — your principal stays invested and keeps earning until then.",
+      "confirm": "Confirm redemption",
+      "submitting": "Submitting…",
+      "cancel": "Cancel",
+      "resultTitle": "Redemption complete",
+      "pendingTitle": "Redemption request submitted",
+      "pendingDescription": "Your redemption is awaiting review. Your principal stays in the fund and keeps earning interest until an administrator approves it.",
+      "settledPrincipal": "Settled principal",
+      "settledInterest": "Settled interest",
+      "heldDaysLabel": "Holding period",
+      "heldDays": "{{days}} days",
+      "fundsReturned": "Principal and interest have been returned to your Funding account.",
+      "done": "Done",
+      "confirmNoticeEarlyRedeem": "This is a locked-term product. Early redemption will incur a penalty based on the remaining lock-up days. The final amount is set at settlement.",
+      "penaltyAmount": "Early redemption penalty",
+      "remainingLockDays": "Remaining lock-up",
+      "remainingLockDaysValue": "{{days}} days",
+      "notSupported": "Early redemption not supported",
+      "needVip": "VIP {{tier}} required for early redemption",
+      "penaltyEstimate": "Estimated penalty"
+    },
+    "topUp": {
+      "button": "Top up",
+      "title": "Top up subscription",
+      "description": "Top up to resume review",
+      "countdownLabel": "Top up in",
+      "countdownDaysHours": "{{days}}d {{hours}}h",
+      "countdownDaysHoursMinutes": "{{days}}d {{hours}}h {{minutes}}m",
+      "expired": "Expired",
+      "overdue": "Overdue",
+      "overdueDays": "Overdue by {{days}}d",
+      "deadlineNotice": "If you don't top up before the deadline, the order is automatically cancelled and your principal is released.",
+      "lateFeeDeadlineNotice": "If you don't top up before the deadline, a late fee will be charged to your account.",
+      "lockedNotice": "Top-up and decline are closed. Contact support to settle the late fee.",
+      "contactSupport": "Contact support",
+      "noticeWithTarget": "The reviewer set the target amount for this order to {{target}} {{currency}}. Top up the difference below to resume review.",
+      "noticeGeneric": "The reviewer adjusted the target amount for this order. Confirm to top up the difference and resume review.",
+      "currentPrincipal": "Current amount",
+      "targetAmount": "Target amount",
+      "shortfall": "Amount to top up",
+      "availableBalanceLabel": "Available",
+      "errorInsufficientBalance": "Insufficient balance to complete the top-up.",
+      "goDeposit": "Deposit",
+      "confirm": "Confirm top-up",
+      "submitting": "Processing…",
+      "cancel": "Cancel",
+      "resultTitle": "Top-up complete",
+      "resultPrincipal": "New subscription amount",
+      "resultProjectedInterest": "Projected interest",
+      "resultStatusNotice": "Your order is back under review.",
+      "done": "Done"
+    },
+    "decline": {
+      "button": "Decline",
+      "title": "Decline adjustment",
+      "notice": "Declining cancels this order and releases {{principal}} {{currency}} back to your available balance. This can't be undone.",
+      "reasonLabel": "Reason (optional)",
+      "reasonPlaceholder": "Let us know why (optional)",
+      "confirm": "Decline & cancel order",
+      "submitting": "Processing…",
+      "cancel": "Keep order",
+      "resultTitle": "Order cancelled",
+      "resultReleased": "Released to balance",
+      "resultNotice": "Funds have been returned to your available balance.",
+      "done": "Done"
+    },
+    "positions": {
+      "title": "My Quant Fund positions",
+      "subtitle": "All Quant Fund orders and settlement status under your account.",
+      "tabs": {
+        "all": "All",
+        "active": "Active",
+        "pending_review": "Under review",
+        "redeem_pending_review": "Redemption review",
+        "awaiting_top_up": "Top-up needed",
+        "rejected": "Rejected",
+        "settled": "Settled",
+        "cancelled": "Cancelled",
+        "redeemed": "Redeemed"
+      },
+      "tabGroups": {
+        "all": "All",
+        "pending": "In progress",
+        "active": "Active",
+        "history": "History"
+      },
+      "historyFilter": {
+        "all": "All statuses"
+      },
+      "summary": {
+        "totalPrincipal": "Total principal",
+        "totalProjectedInterest": "Projected interest",
+        "activeInterestPaidTotal": "Interest paid (active)",
+        "settledTotalReceived": "Settled total received",
+        "activeCount": "Active orders",
+        "breakdownToggle": "Breakdown by asset",
+        "interestProgress": "Interest progress {{percent}}%",
+        "earningsTrend": "{{days}}-day interest trend",
+        "usdPrice": "@ {{price}} USD",
+        "partialValuation": "No USD price for {{assets}}; totals only include assets that could be valued."
+      },
+      "empty": "No orders in this tab yet.",
+      "table": {
+        "status": "Status",
+        "productName": "Product",
+        "principal": "Principal",
+        "dailyReturn": "Daily yield",
+        "term": "Term",
+        "projectedInterest": "Projected interest",
+        "interestPaidTotal": "Interest paid",
+        "interestPaidThrough": "Paid through",
+        "interestRemaining": "Pending",
+        "accruedInterestEstimate": "Est. accrued",
+        "subscribedAt": "Subscribed",
+        "maturityDate": "Matures",
+        "action": "Action"
+      },
+      "maturityPending": "Set on approval",
+      "fields": {
+        "productName": "Product",
+        "principal": "Principal",
+        "dailyReturn": "Daily yield",
+        "term": "Term",
+        "projectedInterest": "Projected interest",
+        "interestPaidTotal": "Interest paid",
+        "interestPaidThrough": "Paid through",
+        "interestRemaining": "Pending interest",
+        "accruedInterestEstimate": "Est. accrued interest",
+        "minHoldDays": "Min. hold",
+        "subscribedAt": "Subscribed",
+        "maturityDate": "Matures",
+        "settledAt": "Settled at",
+        "settledInterest": "Settled interest",
+        "settledPrincipal": "Settled principal",
+        "settledTotal": "Settled total",
+        "cancelReason": "Cancel reason"
+      },
+      "detail": {
+        "title": "Order details",
+        "close": "Close order details",
+        "viewProduct": "View product",
+        "remainingDays": "{{days}} days left",
+        "sections": {
+          "interest": "Interest",
+          "settlement": "Settlement"
+        }
+      },
+      "topUpReminder": {
+        "title": "{{count}} order(s) awaiting top-up",
+        "description": "Top up before the deadline, or the order is cancelled and your principal is released.",
+        "overdueDescription": "{{count}} past the top-up deadline. Act now, or contact support if the options are closed.",
+        "overdueLockedDescription": "{{count}} past the top-up deadline. Top-up and decline are closed — contact support to settle the late fee.",
+        "cta": "Top up"
+      }
+    },
+    "interestRecords": {
+      "title": "Interest payout details",
+      "subtitle": "Per-payout interest records for this order.",
+      "back": "Back",
+      "entry": "Payout details",
+      "table": {
+        "interestDate": "Interest date",
+        "amount": "Quantity",
+        "creditedAt": "Credited at"
+      },
+      "empty": "No interest payouts yet."
+    },
+    "status": {
+      "product": {
+        "active": "Open"
+      },
+      "order": {
+        "active": "Active",
+        "settled": "Settled",
+        "cancelled": "Cancelled",
+        "redeemed": "Redeemed",
+        "redeem_pending_review": "Redemption review",
+        "pending_review": "Under review",
+        "awaiting_top_up": "Top-up needed",
+        "rejected": "Rejected"
+      }
+    },
+    "errors": {
+      "unknown": "Something went wrong. Please try again.",
+      "quotaExhausted": "This product is sold out and is currently unavailable for subscription.",
+      "exceedsRemainingQuota": "Your subscription amount exceeds the product's remaining quota. Please adjust your amount.",
+      "perUserQuotaExceeded": "Your subscription amount exceeds your personal subscription limit. Please adjust your amount.",
+      "notAwaitingTopUp": "This order is no longer awaiting a top-up. It may have already been updated.",
+      "topUpLockedOverdue": "This order is overdue. Top-up and decline are closed — contact support to continue.",
+      "insufficientBalance": "Insufficient balance to complete the top-up. Please deposit and try again.",
+      "insufficientCreditScore": "Your credit score is below the minimum required for this product."
+    },
+    "states": {
+      "loading": "Loading…",
+      "empty": "Nothing here yet.",
+      "error": "Failed to load.",
+      "retry": "Retry"
+    }
+  }
+}

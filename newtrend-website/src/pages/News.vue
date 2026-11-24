@@ -3,10 +3,10 @@ import {computed,ref,watch} from 'vue'
 import {useRoute,useRouter} from 'vue-router'
 import {locale,t} from '../i18n'
 import {path} from '../data'
-import snapshots from '../news-locales.json'
-import digests from '../news-digests.json'
+import snapshots from '../content/news/articles.json'
+import digests from '../content/news/digests.json'
 import assetSources from '../../asset-sources.json'
-import sources from '../news-sources.json'
+import sources from '../content/news/sources.json'
 const route=useRoute(),router=useRouter(),category=ref('All'),limit=ref(10)
 const all=computed(()=>snapshots[locale.value]||snapshots['en-US']),aliases={google:1,ethereum:2,cftc:3,binance:4}
 const selectedImage=computed(()=>{for(const list of Object.values(snapshots)){const found=list.find(n=>n.id===route.params.id);if(found)return found.image}return snapshots['en-US'][aliases[route.params.id]]?.image})

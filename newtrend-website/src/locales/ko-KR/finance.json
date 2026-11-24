@@ -1,0 +1,17 @@
+{
+  "ui": {
+    "annualized": "≈ 연율",
+    "afterAccrualBegins": "이자 발생 후",
+    "0Subscribed": "0% 신청됨",
+    "localPreviewOnlyNoRealSubscription": "· 로컬 미리보기이며 실제 가입은 없습니다.",
+    "dailyRate": "일 이율 ·",
+    "minimum": "· 최소 금액",
+    "dailyRateUpTo00273": "일 이율 최대 0.0273%",
+    "3Products": "상품 3개",
+    "subscribe": "가입 ›",
+    "reviewEachProductSTermsAndRedemptionRulesDisplayed": "상품 약관과 환매 규정을 확인하세요. 표시 수익률은 추정치로 변동될 수 있습니다.",
+    "714306090180Days": "7 / 14 / 30 / 60 / 90 / 180일",
+    "usdSecuredLoan": "USD 담보 대출",
+    "browseEarnProducts": "금융 상품 보기 →"
+  }
+}

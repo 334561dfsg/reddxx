@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "menuEntry": "マイ特典"
+  },
+  "list": {
+    "title": "マイ特典タスク",
+    "description": "あなたのために用意された限定の特典タスクを確認——進捗・特典・残り時間がひと目でわかります。"
+  },
+  "status": {
+    "in_progress": "進行中",
+    "completed": "達成済み",
+    "expired": "期限切れ",
+    "cancelled": "キャンセル済み"
+  },
+  "fields": {
+    "target": "目標",
+    "accumulatedByType": {
+      "DEPOSIT_MILESTONE": "入金済み",
+      "CHECK_IN_STREAK": "チェックイン済み",
+      "REFERRAL": "招待済み"
+    },
+    "reward": "特典",
+    "deadline": "締切",
+    "remaining": "残り時間",
+    "startedAt": "開始",
+    "description": "活動説明",
+    "progressMetric": "進捗指標",
+    "enrollmentSource": "参加経路"
+  },
+  "campaignTypes": {
+    "DEPOSIT_MILESTONE": "入金",
+    "CHECK_IN_STREAK": "チェックイン",
+    "REFERRAL": "紹介"
+  },
+  "progressMetrics": {
+    "DEPOSIT_USDT": "入金額（USDT）",
+    "LOGIN_DAY": "ログイン日数",
+    "TURNOVER": "取引高",
+    "REFERRAL_QUALIFIED": "有効な紹介数"
+  },
+  "enrollmentSources": {
+    "ASSIGN": "付与",
+    "SELF": "自己参加",
+    "REFERRAL": "紹介"
+  },
+  "checkIn": {
+    "success": "チェックインしました",
+    "pending": "チェックイン中…",
+    "error": "チェックインに失敗しました。もう一度お試しください"
+  },
+  "progress": {
+    "remainingToTarget": "達成まであと {{amount}} {{unit}}",
+    "unit": {
+      "CHECK_IN_STREAK": "回",
+      "REFERRAL": "人"
+    }
+  },
+  "countdown": {
+    "ended": "終了",
+    "daysHours": "{{days}}日 {{hours}}時間",
+    "daysHoursMinutes": "残り {{days}}日 {{hours}}時間 {{minutes}}分"
+  },
+  "reward": {
+    "creditedLabel": "付与済み"
+  },
+  "cta": {
+    "deposit": "入金する",
+    "viewDetail": "詳細を見る",
+    "checkIn": "チェックイン",
+    "invite": "友達を招待"
+  },
+  "empty": {
+    "title": "限定特典をご用意中です",
+    "description": "特典タスクが付与されると、ここに表示されます。お楽しみに。"
+  },
+  "detail": {
+    "back": "特典一覧へ戻る",
+    "notFoundTitle": "タスクが見つかりません",
+    "notFoundDescription": "この特典タスクは存在しないか、すでに利用できません。",
+    "sectionProgress": "進捗",
+    "sectionInfo": "タスク詳細"
+  },
+  "states": {
+    "loadError": "特典タスクの読み込みに失敗しました",
+    "retry": "再試行",
+    "loadMore": "もっと見る"
+  }
+}

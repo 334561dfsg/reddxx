@@ -1,0 +1,33 @@
+{
+  "ui": {
+    "weCareForEveryChildCaughtInTheDevastation": "Nous prenons soin de chaque enfant pris dans les ravages de la guerre",
+    "weHelpEndHunger": "Nous aidons à éliminer la faim",
+    "weBringComputersAndEthernetNetworksToEveryCorner": "Nous apportons des ordinateurs et des réseaux Ethernet aux quatre coins du monde",
+    "weProvideHopeInTimesOfDisaster": "Nous apportons de l’espoir en temps de catastrophe",
+    "weInvestInTheEducationalFutureOfCountriesIn": "Nous investissons dans l’avenir éducatif des pays des régions reculées",
+    "weHelpPeopleWithDisabilitiesStartANewLife": "Nous aidons les personnes handicapées à reprendre une nouvelle vie",
+    "identityVerification": "Vérification d’identité",
+    "selectAPngOrJpegImage": "Sélectionnez une image PNG ou JPEG",
+    "imageMustNotExceed10Mb": "Image limitée à 10 Mo",
+    "demoDepositRequest": "Demande de dépôt démo",
+    "demoWithdrawalRequest": "Demande de retrait démo",
+    "localDemoCompletedNoDataOrFundsWereSent": "Démo terminée. Aucun envoi de données ou de fonds.",
+    "charitySlide": "Diapositive caritative",
+    "message": " :",
+    "connectGenerosityWithMeaningfulChangeAndBringHopeTo": "Transformez la générosité en changement et apportez de l’espoir aux communautés.",
+    "sourceFiguresAreASnapshotLocalDonationsAreDemonstrations": "Chiffres instantanés du site source. Les dons locaux sont simulés.",
+    "merchantReviewIsNotConnectedInThisLocalDemo": "Aucun service de validation des marchands connecté.",
+    "no": "Aucun",
+    "orders": "Ordres",
+    "thisDemoDoesNotCollectBankCardOrReal": "Cette démo ne collecte aucune donnée bancaire réelle.",
+    "confirmC2c": "Confirmer C2C",
+    "thisLocalDemoDoesNotCreateRealOrders": "Cette démo ne crée aucun ordre réel.",
+    "noTradersAvailable": "Aucun trader disponible",
+    "noFollowingYet": "Aucun suivi",
+    "selectAnAssetAndNetworkThenEnterTheDestination": "Choisissez l’actif et le réseau, puis l’adresse et le montant",
+    "localDemoDoNotTransferToDemoAddressesOr": "Démo locale. Aucun transfert vers les adresses démo ni justificatif réel.",
+    "selectedLocallyFilesAreNotUploaded": "Sélection locale sans envoi de fichier",
+    "submitDemo": "Envoyer la démo",
+    "noAnnouncements": "Aucune annonce"
+  }
+}

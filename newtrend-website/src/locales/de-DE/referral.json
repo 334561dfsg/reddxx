@@ -1,0 +1,77 @@
+{
+  "page": {
+    "back": "Zurück",
+    "subtitle": "Empfehlung",
+    "title": "Freunde einladen",
+    "description": "Teilen Sie Ihren Empfehlungslink und erhalten Sie Belohnungen, wenn sich Ihre Freunde registrieren und einzahlen.",
+    "qualificationHint": "Freunde gelten als qualifiziert, sobald ihre Gesamteinzahlung {{amount}} USDT erreicht."
+  },
+  "code": {
+    "title": "Ihr Empfehlungscode",
+    "copy": "Code kopieren"
+  },
+  "bind": {
+    "title": "Haben Sie einen Empfehlungscode?",
+    "description": "Geben Sie den Empfehlungscode eines Freundes ein, um Ihr Konto mit seinem zu verknüpfen. Dies ist nur einmal möglich.",
+    "placeholder": "Empfehlungscode eingeben",
+    "submit": "Code verknüpfen",
+    "success": "Empfehlungscode verknüpft",
+    "errors": {
+      "invalid": "Dieser Empfehlungscode ist ungültig. Bitte prüfen und erneut versuchen.",
+      "self": "Sie können Ihren eigenen Empfehlungscode nicht verknüpfen.",
+      "alreadyBound": "Ihr Konto ist bereits einem Werber zugeordnet."
+    }
+  },
+  "shareLink": {
+    "title": "Teilen-Link",
+    "description": "Freunde, die sich über diesen Link registrieren, werden Ihnen automatisch zugeordnet.",
+    "copy": "Link kopieren",
+    "scanHint": "Zum Registrieren scannen",
+    "qrAlt": "QR-Code des Empfehlungslinks"
+  },
+  "stats": {
+    "totalInvited": "Eingeladen",
+    "qualifiedCount": "Qualifiziert",
+    "rewardedCount": "Belohnt",
+    "totalAccumulated": "Gesamt eingezahlt"
+  },
+  "invitees": {
+    "title": "Eingeladene Freunde",
+    "uidLabel": "UID {{uid}}",
+    "uidFallback": "Unbekannter Nutzer",
+    "columns": {
+      "user": "Nutzer",
+      "status": "Status",
+      "accumulated": "Eingezahlt",
+      "boundAt": "Beigetreten"
+    }
+  },
+  "status": {
+    "bound": "Zugeordnet",
+    "qualified": "Qualifiziert",
+    "rewarded": "Belohnt"
+  },
+  "pagination": {
+    "prev": "Zurück",
+    "next": "Weiter",
+    "range": "{{from}}–{{to}} von {{total}}"
+  },
+  "states": {
+    "loadError": "Laden fehlgeschlagen. Bitte erneut versuchen.",
+    "retry": "Erneut versuchen"
+  },
+  "empty": {
+    "title": "Noch keine Einladungen",
+    "description": "Teilen Sie Ihren Link, um Freunde einzuladen."
+  },
+  "toast": {
+    "copied": "Kopiert",
+    "copyFailed": "Kopieren fehlgeschlagen"
+  },
+  "nav": {
+    "menuEntry": "Freunde einladen"
+  },
+  "unit": {
+    "usdt": "USDT"
+  }
+}

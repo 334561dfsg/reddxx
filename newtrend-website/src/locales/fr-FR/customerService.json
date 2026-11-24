@@ -1,0 +1,94 @@
+{
+  "title": "Service client",
+  "menu": {
+    "title": "Comment souhaitez-vous nous contacter ?",
+    "subtitle": "Choisissez le canal qui vous convient le mieux.",
+    "liveChat": "Chat en direct",
+    "liveChatDesc": "Discutez avec notre équipe d'assistance en temps réel",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "Échangez avec nous en tête-à-tête sur WhatsApp",
+    "email": "E-mail",
+    "emailDesc": "Envoyez-nous un e-mail et nous vous répondrons"
+  },
+  "welcomeMessage": "Bonjour ! Comment puis-je vous aider aujourd'hui ?",
+  "placeholder": "Saisissez votre message...",
+  "send": "Envoyer",
+  "loading": "Chargement…",
+  "status": {
+    "pending": "En attente dans la file…",
+    "open": "Un agent a rejoint la conversation",
+    "closed": "Conversation fermée",
+    "closedInputHint": "Cette conversation est terminée. Démarrez-en une nouvelle si vous avez besoin d'aide."
+  },
+  "emoji": {
+    "add": "Ajouter un emoji"
+  },
+  "attachment": {
+    "add": "Ajouter une pièce jointe",
+    "uploading": "Téléversement…",
+    "confirming": "Traitement…",
+    "failed": "Échec du téléversement",
+    "tooLarge": "Dépasse la limite de {{limit}}",
+    "retry": "Réessayer",
+    "remove": "Supprimer",
+    "download": "Télécharger",
+    "limitType": "Seuls les formats JPG, PNG, PDF, Excel, Word, CSV et ZIP sont pris en charge",
+    "limitTypeGuest": "Les invités ne peuvent envoyer que des fichiers JPG, PNG et PDF. Connectez-vous pour envoyer des fichiers Excel, Word, CSV et ZIP",
+    "limitCount": "Jusqu'à {{count}} pièces jointes autorisées",
+    "queued": "En attente d'envoi…",
+    "retryAfter": "Réessayez dans {{seconds}} s",
+    "stage": {
+      "request": "Impossible de démarrer l'envoi",
+      "upload": "Échec de l'envoi",
+      "confirm": "Impossible de finaliser l'envoi"
+    },
+    "reason": {
+      "offline": "Vous êtes hors ligne. Reconnectez-vous puis réessayez.",
+      "timeout": "Délai d'envoi dépassé. Réessayez.",
+      "connection": "Échec de la connexion. Vérifiez votre réseau puis réessayez.",
+      "format": "Ce type de fichier n'est pas pris en charge.",
+      "content": "Le contenu du fichier ne correspond pas à son type.",
+      "size": "Le fichier est trop volumineux.",
+      "identity": "Votre session de discussion a expiré.",
+      "signature": "Le lien d'envoi a expiré. Réessayez pour en obtenir un nouveau.",
+      "forbidden": "Le stockage a refusé l'envoi. Réessayez ou contactez le support.",
+      "rateLimit": "Trop de requêtes.",
+      "quota": "Limite de pièces jointes atteinte. Retirez d'autres fichiers puis réessayez.",
+      "storage": "Le stockage des fichiers est indisponible. Réessayez plus tard.",
+      "unknown": "Une erreur est survenue. Réessayez."
+    }
+  },
+  "toast": {
+    "newMessageTitle": "Nouveau message du support",
+    "newMessageTitleWithCount": "Nouveau message du support ({{unread}})",
+    "attachment": "[Pièce jointe]",
+    "view": "Voir",
+    "close": "Fermer"
+  },
+  "errors": {
+    "sendFailed": "Échec de l'envoi. Veuillez réessayer.",
+    "loadFailed": "Échec du chargement. Veuillez réessayer.",
+    "offline": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+    "notSent": "Non envoyé"
+  },
+  "connection": {
+    "reconnecting": "Connexion perdue. Reconnexion…",
+    "stale": "Impossible de joindre le serveur. Actualisez la page pour recevoir les nouveaux messages.",
+    "refresh": "Actualiser la page",
+    "retry": "Réessayer",
+    "restored": "Reconnecté"
+  },
+  "guest": {
+    "unavailableTitle": "Le chat invité n'est plus disponible",
+    "unavailableDesc": "Votre identité invitée dans ce navigateur a expiré ou n'est plus valide.",
+    "unavailableHint": "Les anciens messages invités ne sont plus consultables. Connectez-vous pour contacter le support depuis votre compte, ou démarrez un nouveau chat invité.",
+    "startNew": "Démarrer un nouveau chat",
+    "merging": "Transfert de votre chat invité vers votre compte…",
+    "mergeFailed": "Votre chat invité n'a pas encore été transféré vers votre compte.",
+    "mergeRetry": "Réessayer",
+    "expiredTitle": "La discussion invité a expiré"
+  },
+  "blocked": {
+    "message": "Le chat en direct est actuellement indisponible."
+  }
+}

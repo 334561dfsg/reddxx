@@ -1,0 +1,19 @@
+{
+  "ui": {
+    "selectAFile": "Datei auswählen",
+    "jpgPngOrPdfOnly": "Nur JPG, PNG oder PDF",
+    "fileIsTooLarge": "Datei zu groß",
+    "exactly6Digits": "Genau 6 Ziffern",
+    "checkThePasswordRequirements": "Passwortanforderungen prüfen",
+    "back": "← Zurück",
+    "copyUid": "UID kopieren",
+    "830Characters": "8–30 Zeichen",
+    "localDemoCode123456": "Lokaler Demo-Code: 123456",
+    "demoKeyOnlyNotValidForARealAccount": "Demo-Schlüssel, nicht für echte Konten gültig.",
+    "1PersonalInformation": "1　Persönliche Angaben",
+    "2UploadDocuments": "2　Dokumente hochladen",
+    "useFictionalDetailsAndDemoImagesFilesStayOn": "Nur fiktive Angaben und Demobilder. Dateien bleiben auf diesem Gerät.",
+    "thisDemoDoesNotOpenARealJointAccount": "Diese Demo eröffnet kein echtes Gemeinschaftskonto.",
+    "primaryApplicantYou": "Hauptantragsteller · Sie"
+  }
+}

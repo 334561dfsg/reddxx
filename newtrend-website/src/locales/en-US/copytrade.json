@@ -1,0 +1,166 @@
+{
+  "page": {
+    "title": "Copy Trade",
+    "subtitle": "Follow professional traders",
+    "description": "Discover, evaluate, and copy strategies from verified traders. Backtested signals, transparent performance, full control of risk."
+  },
+  "tabs": {
+    "leaderboard": "Leaderboard",
+    "following": "Following",
+    "myTrades": "My copy trades"
+  },
+  "filters": {
+    "show": "Filters",
+    "hide": "Hide filters",
+    "sort": "Sort by",
+    "period": "Period",
+    "risk": "Risk",
+    "clear": "Clear filters",
+    "searchPlaceholder": "Search traders"
+  },
+  "sort": {
+    "displayOrder": "Featured",
+    "roi": "Return",
+    "followers": "Followers",
+    "winRate": "Win rate",
+    "aum": "AUM"
+  },
+  "risk": {
+    "all": "All",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  },
+  "trader": {
+    "rank": "Rank #{{rank}}",
+    "verified": "Verified",
+    "memberTrader": "Member Trader",
+    "followers": "Followers",
+    "tradingDays_one": "{{count}} day trading",
+    "tradingDays_other": "{{count}} days trading",
+    "roi": "Return",
+    "roi30d": "30D return",
+    "winRate": "Win rate",
+    "maxDD": "Max drawdown",
+    "aum": "AUM",
+    "performance": "Performance",
+    "positions": "Positions",
+    "history": "History",
+    "totalTrades": "Total trades",
+    "profitTrades": "Profitable",
+    "lossTrades": "Loss",
+    "avgReturn": "Avg return",
+    "sharpe": "Sharpe",
+    "avgHolding": "Avg holding",
+    "noPositions": "No open positions",
+    "positionsHidden": "Positions hidden",
+    "historyHidden": "Track record hidden",
+    "historyHiddenDesc": "This trader doesn't share their closed trades.",
+    "entry": "Entry",
+    "back": "Back"
+  },
+  "follow": {
+    "copyTrader": "Copy this trader",
+    "unfollow": "Stop following",
+    "following": "Following",
+    "follow": "Follow",
+    "editSettings": "Edit copy settings"
+  },
+  "settings": {
+    "title": "Copy settings · {{name}}",
+    "mode": "Copy mode",
+    "modeFixed": "Fixed amount",
+    "modeProportional": "Proportional",
+    "mvpModeFixedOnly": "Only Fixed amount is available in this release. Proportional mode is coming soon.",
+    "amountPerTrade": "Amount per trade ({{asset}})",
+    "maxPositionSize": "Max position size ({{asset}})",
+    "takeProfit": "Take profit %",
+    "stopLoss": "Stop loss %",
+    "maxDailyTrades": "Max daily trades",
+    "riskAckLabel": "I understand the risks of copy trading",
+    "riskAckHint": "Copied trades follow this trader automatically and can lose money. You accept the risk each time you start copying. The maximum loss on a single copied trade is that trade's margin.",
+    "cancel": "Cancel",
+    "confirm": "Start copying",
+    "saving": "Saving...",
+    "editTitle": "Adjust copy settings · {{name}}",
+    "saveChanges": "Save changes"
+  },
+  "unfollow": {
+    "title": "Stop following {{name}}?",
+    "description": "You can keep your open copy positions running, or close them all immediately.",
+    "closeOpenPositionsLabel": "Close all open copy positions now",
+    "closeOpenPositionsHint": "Otherwise, existing positions stay open and stop tracking new trades from this trader.",
+    "cancel": "Cancel",
+    "confirm": "Stop following",
+    "processing": "Processing..."
+  },
+  "myPositions": {
+    "status": {
+      "open": "Open",
+      "closed": "Closed",
+      "failed": "Failed",
+      "all": "All"
+    },
+    "mark": "Mark",
+    "size": "Size",
+    "fromTrader": "Trader",
+    "close": "Close",
+    "closing": "Closing...",
+    "closeConfirm": {
+      "title": "Close {{symbol}} position?",
+      "description": "The position will be closed at market price and PnL settled immediately. This cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Close position"
+    },
+    "failedReason": "Reason"
+  },
+  "summary": {
+    "activeFollowing": "Active follows",
+    "openPositions": "Open positions",
+    "unrealizedPnl": "Unrealized PnL",
+    "realizedPnl": "Realized PnL"
+  },
+  "empty": {
+    "noFollowing": "You are not following any trader yet",
+    "noFollowingDesc": "Browse the leaderboard to discover verified traders with transparent performance.",
+    "explore": "Explore traders",
+    "noMyTrades": "No copy trades yet",
+    "noMyTradesDesc": "Once you start following a trader, your copied trades will appear here.",
+    "noHistory": "No track record yet",
+    "noHistoryDesc": "This trader has no closed positions yet.",
+    "noSearchResults": "No traders found",
+    "noSearchResultsDesc": "Try a different name, or clear the search and filters."
+  },
+  "placeholder": {
+    "comingSoon": "Coming soon"
+  },
+  "security": {
+    "footer": "All performance data is verified and updated daily."
+  },
+  "errors": {
+    "leaderboardLoadFailed": "Failed to load leaderboard",
+    "traderLoadFailed": "Failed to load trader profile",
+    "followingLoadFailed": "Failed to load following list",
+    "followFailed": "Failed to follow trader",
+    "unfollowFailed": "Failed to stop following",
+    "historyLoadFailed": "Couldn't load track record"
+  },
+  "retry": "Retry",
+  "history": {
+    "exit": "Exit",
+    "closedAt": "Closed",
+    "loadMore": "Load more",
+    "rateLimited": "Too many requests. Please try again later."
+  },
+  "loginPrompt": {
+    "cta": "Sign in",
+    "history": {
+      "title": "Sign in to view the full track record",
+      "desc": "Sign in to see this trader's complete closed-position history."
+    },
+    "myTrades": {
+      "title": "Sign in to view your copy trades",
+      "desc": "Sign in to see your copied positions and PnL."
+    }
+  }
+}

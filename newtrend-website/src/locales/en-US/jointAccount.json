@@ -1,0 +1,327 @@
+{
+  "nav": {
+    "menuEntry": "Joint account"
+  },
+  "page": {
+    "title": "Joint account",
+    "description": "Share one funding account with a spouse, family member, partner or agent"
+  },
+  "common": {
+    "back": "Back",
+    "retry": "Retry",
+    "loadMore": "Load more"
+  },
+  "relationship": {
+    "spouse": "Spouse",
+    "family": "Family",
+    "partner": "Partner",
+    "agent": "Agent"
+  },
+  "operatedBy": {
+    "member": "joint member",
+    "actor": "Operated by {{actor}}",
+    "withUid": "Operated by {{actor}} (UID {{uid}})"
+  },
+  "initiatedBy": {
+    "actor": "Initiated by {{actor}}"
+  },
+  "actingFor": {
+    "primaryWithName": "UID {{uid}} ({{name}})",
+    "primaryUidOnly": "UID {{uid}}",
+    "unnamedAccount": "Unnamed joint account",
+    "primarySuspended": "The joint account's primary applicant has been suspended, so you can't operate this account right now. Switch back to your own account or contact the primary applicant.",
+    "primaryKycNotVerified": "The joint account's primary applicant hasn't passed identity verification. Contact the primary applicant.",
+    "restrictedTitle": "Switch back to your own account to do this",
+    "restrictedDesc": "You're operating a joint account. Identity verification, referral binding and joint account applications or membership changes can only be made from your own account."
+  },
+  "session": {
+    "invalid": "Your joint account session is no longer valid. Sign in again."
+  },
+  "switcher": {
+    "title": "Switch account",
+    "self": "My account",
+    "selfHint": "Your own funds and settings",
+    "loadMore": "Show more ({{loaded}}/{{total}})",
+    "switching": "Switching account…",
+    "backToSelf": "Back to my account",
+    "retryAfter": "Try again in {{seconds}} s."
+  },
+  "delegated": {
+    "title": "You're operating {{name}}",
+    "desc": "Applications, renaming, consent and leaving are managed from your own account. Transfers between your funds and joint accounts work in either mode."
+  },
+  "consent": {
+    "title": "Requests waiting for you ({{count}})",
+    "desc": "Someone has applied to add you to their joint account. If you accept, the application goes to review; nothing changes until it's approved.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "accepted": "Request accepted. It's now waiting for review.",
+    "declined": "Request declined"
+  },
+  "intro": {
+    "title": "Open a joint account",
+    "addMemberTitle": "Add a member to your joint account",
+    "unavailable": "New applications aren't available right now.",
+    "points": {
+      "ownership": "Funds, wallet and verification stay yours",
+      "switch": "The member switches in with their own account",
+      "exit": "Remove the member or dissolve the account anytime"
+    },
+    "prepare": "You'll need proof of relationship and the other person's UID or ID",
+    "kycOnly": "Available to verified customers"
+  },
+  "apply": {
+    "start": "Apply",
+    "restart": "Apply again",
+    "title": "Apply for a joint account",
+    "memberSection": "Member",
+    "relationshipType": "Your relationship",
+    "mode": {
+      "existing": "They have an account",
+      "invite": "Invite them to register"
+    },
+    "modeHint": {
+      "existing": "Goes to review after they accept",
+      "invite": "Get a registration link after approval"
+    },
+    "memberUid": "Their UID",
+    "memberUidPlaceholder": "e.g. 100023",
+    "memberUidHint": "Their UID is on their profile page. They must have passed identity verification; if the application is returned, you can’t submit to the same UID again for 24 hours.",
+    "memberNotEligible": {
+      "not_eligible": "Check that the UID is correct, then ask this user to confirm that their identity verification is approved, their account is active, and they haven't reached the maximum number of joint accounts.",
+      "self": "You can't add yourself as a member. Enter the other person's UID."
+    },
+    "memberFullName": "Member's full name",
+    "memberFullNamePlaceholder": "As shown on their ID",
+    "memberFront": "Member ID (front)",
+    "memberBack": "Member ID (back)",
+    "memberSelfie": "Member selfie",
+    "proofSection": "Proof of relationship",
+    "proofFile": "Proof {{index}}",
+    "addProof": "Add another",
+    "incomplete": "Fill in every field and upload the required files.",
+    "cancel": "Cancel",
+    "submit": "Submit application",
+    "submitted": "Application submitted",
+    "kycRequiredTitle": "Complete identity verification first",
+    "kycRequiredDesc": "Only verified customers can apply for a joint account.",
+    "goKyc": "Verify identity",
+    "upload": "Upload",
+    "reupload": "Replace",
+    "uploading": "Uploading {{progress}}%",
+    "proofMeta": "JPG, PNG or PDF, up to 20 MB",
+    "idDocumentMeta": "JPG, PNG or PDF",
+    "selfieMeta": "JPG or PNG only",
+    "proofCount": "{{count}} of {{max}}",
+    "missing": "Still needed: {{items}}",
+    "ready": "Everything is in. Ready to submit",
+    "missingItem": {
+      "relationship": "relationship",
+      "memberUid": "their UID",
+      "memberDetails": "their details",
+      "memberDocuments": "their ID documents",
+      "proof": "proof of relationship"
+    },
+    "missingSeparator": ", "
+  },
+  "application": {
+    "eyebrow": "Latest application",
+    "status": {
+      "pending_consent": "Waiting for member",
+      "pending_review": "In review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "desc": {
+      "pending_consent": "The member hasn't accepted yet. We'll notify you when they respond.",
+      "pending_review": "We're reviewing the application and will notify you of the result.",
+      "approved": "The application was approved.",
+      "rejected": "Check the reason below, then apply again.",
+      "cancelled": "This application was cancelled."
+    },
+    "memberGone": "Member removed",
+    "memberGoneDesc": "The application was approved, but this member is no longer on the joint account. To add a member, apply again.",
+    "cancel": "Cancel application",
+    "cancelTitle": "Cancel this application?",
+    "cancelConfirm": "The application will stop here. If you invited an existing user, they'll be told it was cancelled.",
+    "cancelled": "Application cancelled",
+    "title": {
+      "pending_consent": "Waiting for them to accept",
+      "pending_review": "Application in review",
+      "approved": "Application approved",
+      "rejected": "Application rejected",
+      "cancelled": "Application cancelled"
+    }
+  },
+  "detail": {
+    "relationshipType": "Relationship",
+    "memberUid": "Member UID",
+    "memberName": "Member name",
+    "submittedAt": "Submitted",
+    "rejectionReason": "Reason",
+    "reviewedAt": "Reviewed",
+    "activatedAt": "Member joined",
+    "uidValue": "UID {{uid}}"
+  },
+  "owned": {
+    "eyebrow": "Your joint account",
+    "active": "Active",
+    "desc": "You're the primary applicant. You don't need to switch accounts; the member switches to this account to operate it.",
+    "primary": "Primary applicant",
+    "you": "You",
+    "member": "Member",
+    "memberStatus": {
+      "pending": "Not registered yet",
+      "active": "Active"
+    },
+    "noMember": "No member yet",
+    "removeMember": "Remove member",
+    "dissolve": "Dissolve account",
+    "removeTitle": "Remove this member?",
+    "removeConfirm": "The member immediately loses access to this account and is signed out of it. Their own account and assets aren't affected. You'll confirm with a security check.",
+    "memberRemoved": "Member removed",
+    "dissolveTitle": "Dissolve this joint account?",
+    "dissolveConfirm": "The member immediately loses access and the joint account closes. Your own funds stay with you. You'll confirm with a security check.",
+    "dissolved": "Joint account dissolved",
+    "createdAt": "Opened {{time}}"
+  },
+  "label": {
+    "edit": "Rename",
+    "title": "Rename joint account",
+    "description": "Members see this name when they switch to the account. Past notifications keep the name they were sent with.",
+    "field": "Name",
+    "placeholder": "e.g. Family savings",
+    "hint": "{{count}}/{{max}} characters. Leave empty to remove the name.",
+    "clear": "Remove name",
+    "save": "Save name",
+    "saved": "Name saved"
+  },
+  "invitation": {
+    "title": "Member registration link",
+    "expiresIn": "Expires in {{time}}",
+    "expiresInDays": "Expires in {{days}}d {{time}}",
+    "keepPrivate": "Anyone with this link can register as the member of your joint account. Send it only to the person you applied for.",
+    "copy": "Copy link",
+    "share": "Share",
+    "copied": "Link copied",
+    "copyFailed": "Couldn't copy the link. Select it and copy it manually.",
+    "shareTitle": "Joint account registration link",
+    "expiredAt": "The link expired on {{time}}",
+    "unavailable": "The link isn't available right now",
+    "contactSupportHint": "Contact support to get a new link.",
+    "contactSupport": "Contact support"
+  },
+  "confirm": {
+    "keep": "Keep"
+  },
+  "memberships": {
+    "title": "Joint accounts you belong to ({{count}})",
+    "desc": "Switch to a joint account to operate its funds. Your own account and wallet stay separate.",
+    "joinedAt": "Joined {{time}}",
+    "current": "Operating now",
+    "switch": "Switch to this account",
+    "notifications": "Fund notification copies",
+    "notificationsHint": "Inbox and email copies of this account's fund activity. Real-time updates still arrive when this is off.",
+    "leave": "Leave",
+    "leaveTitle": "Leave {{name}}?",
+    "leaveWithdrawFirst": "Move any funds you need into your own account before leaving.",
+    "leaveConfirm": "Leaving doesn't return funds already transferred and doesn't close your own account. You'll lose access to this joint account right away.",
+    "left": "You left the joint account"
+  },
+  "transfer": {
+    "open": "Transfer",
+    "title": "Transfer between accounts",
+    "description": "Move funds between your funding account and the joint account's funding account.",
+    "direction": {
+      "to_joint": "To joint account",
+      "from_joint": "To my account"
+    },
+    "from": "From",
+    "to": "To",
+    "ownFunding": "My funding account",
+    "jointFunding": "{{name}} funding account",
+    "asset": "Asset",
+    "amount": "Amount",
+    "securityHint": "The first transfer in each direction asks for your fund password and one more verification. Both of you must have passed identity verification.",
+    "submit": "Transfer",
+    "done": "Transferred {{amount}} {{asset}}",
+    "directionLabel": "Direction",
+    "snapshotJoint": "{{name}} balance after transfer",
+    "snapshotOwn": "My balance after transfer",
+    "snapshotHint": "Balances shown are as of this transfer, not live. Check your assets page for current balances.",
+    "close": "Done",
+    "denial": {
+      "kyc_required": "Both you and the primary applicant must pass identity verification before transferring.",
+      "party_not_active": "Your account or the primary applicant's account isn't active, so transfers are unavailable.",
+      "membership_inactive": "You're no longer a member of this joint account. Refresh the page.",
+      "joint_account_inactive": "This joint account is no longer active.",
+      "invalid_accounts": "Transfers must be between the funding accounts of two different users."
+    }
+  },
+  "history": {
+    "title": "Transfer history",
+    "empty": "No transfers yet.",
+    "actor": "by {{actor}} UID {{uid}}"
+  },
+  "register": {
+    "eyebrow": "Joint account invitation",
+    "previewPrimary": "You're registering as the member of the joint account of UID {{uid}} ({{name}}).",
+    "previewPrimaryUidOnly": "You're registering as the member of the joint account of UID {{uid}}.",
+    "previewMemberName": "Name on the application: {{name}}",
+    "previewRelationship": "Relationship: {{relationship}}",
+    "previewWarning": "If these details aren't right, don't continue. Registering doesn't verify your identity; you'll still need to verify before withdrawing or transferring.",
+    "previewExpiresAt": "Link valid until {{time}}.",
+    "previewFailed": "Couldn't load the link details.",
+    "retry": "Retry",
+    "tooManyRequests": "Too many attempts. Try again in a few minutes.",
+    "requiresNewAccount": "This invitation only works with a new account, and this email or phone is already registered. Use one that hasn't been registered, or ask the primary applicant to add your existing account instead.",
+    "resendCode": "Request a new verification code and try again.",
+    "loggedInElsewhere": "This invitation is for a new account. Sign out first, then register with an email or phone that hasn't been used here.",
+    "logoutAndContinue": "Sign out and continue",
+    "issue": {
+      "invalid": "This invitation link is invalid.",
+      "not_usable": "This invitation link has already been used or is no longer valid.",
+      "expired": "This invitation link has expired. Ask the primary applicant to contact support for a new one."
+    },
+    "issueFallback": "You can still register a regular account below."
+  },
+  "selfSettings": {
+    "notice": "You're operating a joint account. Changes here apply to your own sign-in and security settings, not the primary applicant's."
+  },
+  "holder": {
+    "title": "Account holders",
+    "vacant": "Not added yet",
+    "withYou": "{{role}} · You"
+  },
+  "faq": {
+    "title": "Common questions",
+    "memberCan": {
+      "q": "What can a member do?",
+      "a": "Switch to the joint account to operate its funds, and transfer between their own funding account and the joint account. Their own account and wallet stay separate."
+    },
+    "memberSteps": {
+      "q": "What does the other person need to do?",
+      "a": "If they already have an account, they accept your request before it goes to review. If they don't, you send them a registration link after approval."
+    },
+    "dissolve": {
+      "q": "How do I dissolve it?",
+      "a": "Dissolve it on this page anytime. The member loses access immediately, and your own funds stay with you."
+    }
+  },
+  "progress": {
+    "label": "Application progress",
+    "submit": "Submit",
+    "consent": "Member accepts",
+    "review": "Review",
+    "register": "Member registers",
+    "active": "Active",
+    "failed": "Rejected",
+    "state": {
+      "done": ", done",
+      "current": ", current step",
+      "failed": ", rejected",
+      "upcoming": ", not started"
+    }
+  }
+}

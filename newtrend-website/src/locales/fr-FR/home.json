@@ -1,0 +1,467 @@
+{
+  "seo": {
+    "title": "Tradez cryptos, forex, indices et actions",
+    "description": "{{brand}} est une plateforme de trading multi-actifs — tradez crypto, forex, indices, actions américaines et métaux depuis un seul compte, avec des outils assistés par IA."
+  },
+  "hero": {
+    "badge": "Trading multi-actifs · Un seul compte",
+    "title": "Cryptos, forex, actions — le tout sur un seul compte.",
+    "title1": "Tradez plus intelligemment.",
+    "titleHighlight": "Conçu pour",
+    "title2": "le prochain million de traders.",
+    "desc": "Un seul compte pour les cryptos, le forex, les indices, les actions américaines et les métaux — avec une liquidité profonde, des frais réduits, et la data et l'IA dont vous avez besoin pour rentabiliser chaque trade.",
+    "startTrading": "Commencer à trader",
+    "seeMarkets": "Voir les marchés",
+    "exploreQuantFund": "Explorer le Fonds Quant",
+    "watchFilm": "Découvrir le fonctionnement d'AI Quant",
+    "watchDemo": "Voir une démo de 90 secondes",
+    "appMockupAlt": "Application mobile {{brand}} — portefeuille, AI quant, copy trading et marchés en direct",
+    "appMockupPip": "En direct"
+  },
+  "aiQuantFilm": {
+    "title": "Comment fonctionne AI Quant",
+    "description": "Un bref aperçu de la façon dont les stratégies sont conçues, backtestées et exécutées.",
+    "unsupported": "Votre navigateur ne prend pas en charge la balise vidéo."
+  },
+  "products": {
+    "label": "01 / Ce que vous pouvez trader",
+    "titleFrom": "Des",
+    "perpetual": "Perpétuels",
+    "titleTo": "aux",
+    "options": "Options binaires",
+    "titleEnd": " —<br/>un seul compte, tous les marchés qui comptent pour vous.",
+    "viewAll": "Voir tous les produits →",
+    "perpLabel": "PERPÉTUELS",
+    "perpTitle1": "Liquidité profonde,",
+    "perpTitle2": "tous les actifs majeurs.",
+    "perpDesc": "Plus de 200 paires de futures couvrant cryptos, or et argent. Jusqu'à 125x de levier, exécutions en moins de 50 ms, taux de financement transparents — réglés en USD pour la simplicité d'un seul compte.",
+    "perpStat1": "Paires de trading",
+    "perpStat2": "Levier max.",
+    "perpStat3": "Frais les plus bas",
+    "perpTag1": "Crypto",
+    "perpTag2": "Métaux",
+    "perpTag3": "Réglé en USD",
+    "optLabel": "OPTIONS BINAIRES",
+    "optTitle1": "Choisissez une direction.",
+    "optTitle2": "Connaissez votre risque maximal d'avance.",
+    "optDesc": "Prédisez simplement si le prix monte ou descend — l'ampleur du mouvement n'a pas d'importance. Contrats de 60 secondes, 90 secondes et 6 minutes avec paiement fixe et perte plafonnée.",
+    "optStat1": "Options d'expiration",
+    "optStat2": "Paiement max.",
+    "optStat3": "Fixe",
+    "optStat4": "Cote",
+    "optTag1": "Hausse",
+    "optTag2": "Baisse",
+    "multiLabel": "UN COMPTE · TROIS MARCHÉS",
+    "multiTitle": "Cryptos, or, argent —<br/><1>un seul solde, sans changer de plateforme.</1>",
+    "multiDesc": "Tradez cryptos, or (XAU) et argent (XAG) depuis le même solde de marge. Contrôles de risque unifiés, P&L unifié, sans jongler entre les exchanges.",
+    "multiAsset1": "Crypto",
+    "multiAsset1Sub": "Plus de 200 paires",
+    "multiAsset2": "Or",
+    "multiAsset2Sub": "XAU/USDT",
+    "multiAsset3": "Argent",
+    "multiAsset3Sub": "XAG/USDT"
+  },
+  "ai": {
+    "label": "02 / Votre copilote IA",
+    "title1": "La puissance quantitative pour ",
+    "titleHighlight": "chaque trader",
+    "title2": ",<br/>pas seulement les hedge funds.",
+    "subtitle": "Trois outils d'IA qui travaillent ensemble — laissez les mathématiques faire le gros du travail, vous gardez le dernier mot sur chaque trade.",
+    "quantTag": "01 / QUANT",
+    "quantTitle": "Bibliothèque de stratégies IA",
+    "quantDesc": "Des centaines de stratégies backtestées sur 5 ans de données — suivi de tendance, arbitrage, grille, retour à la moyenne. Abonnement en un clic, exécution automatique, suivi de la performance en direct à tout moment.",
+    "quantChartLabel": "COURBE DE CAPITAL · 90J",
+    "quantWinRate": "Taux de réussite",
+    "quantSharpe": "Ratio de Sharpe",
+    "quantMaxDrawdown": "Drawdown max.",
+    "quantLink": "Parcourir les stratégies →",
+    "copyTag": "02 / COPY",
+    "copyTitle": "Copiez les traders en qui vous avez confiance",
+    "copyDesc": "Reproduisez les meilleurs traders classés par rendement ajusté au risque. Définissez votre propre stop-loss, sortez à tout moment, partagez une part fixe — sans verrouillage de plateforme.",
+    "copyLabel": "MEILLEURS TRADERS · 30J",
+    "copyRoi": "ROI",
+    "copyLink": "Voir le classement →",
+    "signalTag": "03 / SIGNAL",
+    "signalTitle": "Signaux de trading filtrés",
+    "signalDesc": "Plus de 3 800 signaux chaque mois, notés selon la structure du marché, les flux on-chain et le sentiment — seuls les 10 % les meilleurs atteignent votre écran.",
+    "signalLong": "Long",
+    "signalTime": "il y a 2 min",
+    "signalEntry": "Zone d'entrée",
+    "signalStop": "Stop loss",
+    "signalTarget": "Objectif 1 / 2",
+    "signalRr": "Risque / rendement",
+    "signalConfidence": "Confiance",
+    "signalLink": "Voir les derniers signaux →",
+    "riskWarning": "⚠ Avis de risque : les performances passées ne garantissent jamais les résultats futurs. Les stratégies et signaux IA sont des outils de référence, pas des conseils. Le trading de cryptos et de futures peut entraîner la perte de la totalité de votre solde — ne tradez que ce que vous pouvez vous permettre de perdre."
+  },
+  "markets": {
+    "label": "03 / Marchés en direct",
+    "title": "De vrais prix,",
+    "titleHighlight": "en temps réel —",
+    "tabAll": "Tout",
+    "tabHot": "Tendance",
+    "tabGainers": "Meilleures hausses 24h",
+    "tabFunding": "Financement",
+    "tabNew": "Nouveautés",
+    "colPair": "Paire",
+    "colPrice": "Prix",
+    "colChange": "Variation 24h",
+    "colVolume": "Volume 24h",
+    "colFunding": "Financement",
+    "tradeLink": "Trader →",
+    "viewAll": "Voir les {{total}} marchés →",
+    "pulseLabel": "Marchés en direct · paires principales",
+    "empty": "Aucun marché dans cette catégorie pour le moment.",
+    "viewAllPlain": "Voir tous les marchés →"
+  },
+  "partners": {
+    "label": "05 / Partenaires",
+    "title": "Partenaires"
+  },
+  "news": {
+    "label": "06 / Apprenez les marchés",
+    "title": "Devenez plus affûté",
+    "titleHighlight": "à chaque trade.",
+    "viewAll": "Voir toutes les leçons →",
+    "tagHeadline": "À la une",
+    "tagDeep": "Analyse approfondie",
+    "tagCourse": "Cours",
+    "article1Meta": "Étude de marché · 12 min de lecture",
+    "article1Title": "La demande d'options BTC explose —<br/>voici ce que fait le smart money.",
+    "article1Desc": "Au cours des 30 derniers jours, le volume des options binaires BTC a bondi de 42 %. Nous analysons où vont les flux, quelles échéances sont saturées, et à quoi ressemblent les taux de réussite selon les cohortes retail vs institutionnelles...",
+    "article2Meta": "8 min de lecture",
+    "article2Title": "Options binaires 101 — de votre premier contrat à un véritable avantage",
+    "article2Desc": "Mécaniques de base, choix de la bonne échéance, et comment dimensionner les positions pour qu'une mauvaise série ne ruine pas votre compte...",
+    "article3Meta": "3 min de lecture",
+    "article3Title": "Les futures sur l'or (XAU/USDT) sont désormais disponibles avec un levier de 100x",
+    "article3Desc": "Tradez cryptos et métaux précieux depuis le même solde de marge. Frais maker à partir de 0,02 %...",
+    "article4Meta": "5 min de lecture",
+    "article4Title": "Copy Trading v2.4 — appariés sur le risque réel, pas seulement les rendements",
+    "article4Desc": "La nouvelle version apparie traders et suiveurs sur 12 indicateurs de risque, pour qu'une stratégie agressive ne se retrouve jamais dans un portefeuille prudent..."
+  },
+  "cta": {
+    "title": "Prêt à trader avec un avantage ?",
+    "title1": "Prêt à",
+    "titleHighlight": "trader avec un avantage",
+    "title2": " ?",
+    "desc": "Ouvrez un compte en moins de 2 minutes. Les nouveaux utilisateurs peuvent accéder à des fonds d'essai, des récompenses de plateforme et des avantages de trading adaptés aux débutants.",
+    "start": "Créer un compte gratuit",
+    "tradeNow": "Trader maintenant",
+    "guaranteeLine": "Ouvrez un compte en 2 minutes · Sans KYC pour l'essai · Annulez à tout moment"
+  },
+  "whyNvdx": {
+    "label": "Pourquoi {{brand}}",
+    "title": "Pourquoi {{brand}}",
+    "subtitle": "Quatre raisons pour lesquelles les traders passent à {{brand}} et y restent. Bâti autour de ce qui compte quand de l'argent réel est en jeu.",
+    "learnMore": "En savoir plus",
+    "features": {
+      "multiAsset": {
+        "title": "Multi-actifs",
+        "desc": "Cryptos, forex, indices, actions américaines et métaux — un seul solde de marge, sans changer de plateforme.",
+        "imageAlt": "Disques de verre translucides empilés représentant cryptos, or, FX et actions unifiés sous un seul solde de marge"
+      },
+      "aiAssisted": {
+        "title": "Copilote IA",
+        "desc": "Des signaux et stratégies notés auxquels vous pouvez vous abonner, ou que vous pouvez ignorer entièrement. Vous gardez le contrôle.",
+        "imageAlt": "Constellation de nœuds de données vert acide formant une ligne de tendance ascendante, représentant des signaux de trading notés par IA"
+      },
+      "web3Custody": {
+        "title": "Sécurité du compte",
+        "desc": "L'authentification à deux facteurs, le mot de passe des fonds et la gestion des appareils vous aident à protéger votre compte.",
+        "imageAlt": "Module de coffre en titane brossé avec une face cryptographique en nid d'abeille et un faisceau d'audit en direct"
+      },
+      "liquidity": {
+        "title": "Toujours liquide",
+        "desc": "Exécutions en moins de 50 ms sur les paires majeures, 24/7, avec un financement transparent.",
+        "imageAlt": "Flux liquides vert acide traversant à toute vitesse des canaux usinés avec précision, représentant une exécution à faible latence"
+      }
+    }
+  },
+  "payments": {
+    "label": "Paiements",
+    "title": "Retirez où que vous soyez",
+    "subtitle": "Déplacez votre argent comme vous le faites déjà — cartes, virements bancaires, stablecoins ou crypto native."
+  },
+  "earn": {
+    "eyebrow": "Épargne",
+    "title": "Faites travailler vos actifs inactifs",
+    "subtitle": "Produits flexibles, à terme et de staking, avec des rendements de référence transparents, pensés pour le détenteur de long terme.",
+    "cta": "Découvrir les produits"
+  },
+  "insights": {
+    "label": "Analyses",
+    "title": "Dernières analyses"
+  },
+  "aqua": {
+    "hero": {
+      "badge": "Moteur de matching nouvelle génération",
+      "titleLead": "Tradez à la",
+      "titleGradient": "vitesse de la lumière",
+      "titleTail": "— jamais en retard.",
+      "desc": "Un moteur de matching en moins de 50 ms, des flux de données en temps réel et des copilotes IA. Cryptos, forex, métaux et actions — un seul compte, zéro latence.",
+      "hudLabel": "Terminal d'exécution",
+      "hudStatus": "En direct",
+      "hudPair": "BTC/USDT · PERP",
+      "hudLatency": "Latence de matching",
+      "hudLatencyValue": "42 ms",
+      "hudThroughput": "Ordres / s",
+      "hudThroughputValue": "1,2 M"
+    },
+    "metrics": {
+      "label": "Conçu pour la performance",
+      "pairs": "Paires négociables",
+      "latency": "Latence moy. de matching",
+      "traders": "Traders actifs",
+      "uptime": "Disponibilité du moteur"
+    },
+    "features": {
+      "label": "Conçu différemment",
+      "title": "Tout ce qu'il faut pour trader avec un avantage.",
+      "subtitle": "L'essentiel, repensé — profondeur multi-actifs, assistance IA, sécurité du compte et une latence que vous ressentez.",
+      "multiAsset": {
+        "title": "Multi-actifs",
+        "desc": "Cryptos, forex, indices, actions américaines et métaux sur un seul solde de marge — sans changer de plateforme."
+      },
+      "ai": {
+        "title": "Copilote IA",
+        "desc": "Des signaux notés et des stratégies backtestées auxquels vous pouvez vous abonner ou que vous pouvez ignorer. Vous gardez le dernier mot."
+      },
+      "custody": {
+        "title": "Sécurité du compte",
+        "desc": "L'authentification à deux facteurs, le mot de passe des fonds et la gestion des appareils vous aident à protéger votre compte."
+      },
+      "speed": {
+        "title": "Moins de 50 ms",
+        "desc": "Un moteur de matching qui exécute en moins de 50 ms, 24/7, avec un financement transparent."
+      }
+    },
+    "markets": {
+      "label": "Marchés en direct",
+      "title": "De vrais prix, diffusés en temps réel.",
+      "viewAll": "Voir les {{total}} marchés",
+      "viewAllPlain": "Voir tous les marchés"
+    },
+    "cta": {
+      "title": "Prêt à trader à pleine vitesse ?",
+      "desc": "Ouvrez un compte en moins de 2 minutes. Les nouveaux utilisateurs peuvent accéder à des fonds d'essai, des récompenses de plateforme et des avantages de trading adaptés aux débutants.",
+      "start": "Créer un compte gratuit",
+      "secondary": "Explorer les marchés"
+    }
+  },
+  "cyber": {
+    "hero": {
+      "badge": "Cœur de matching en ligne",
+      "titleLead": "Branchez-vous",
+      "titleGlitch": "sur la grille néon",
+      "titleTail": "de tous les marchés.",
+      "desc": "Un cœur de matching sous 50 ms, des flux de données permanents et des signaux IA. Crypto, forex, métaux et actions US — une seule ligne vers tout.",
+      "bootLabel": "Séquence de démarrage",
+      "uplink": "Liaison montante",
+      "boot1": "Chargement du cœur de matching",
+      "boot2": "Synchronisation des flux de marché",
+      "boot3": "Chargement des modules du compte",
+      "boot4": "Liaison établie",
+      "bootDone": "Système en ligne",
+      "pairLabel": "Paire",
+      "latency": "Latence de matching",
+      "latencyValue": "42 ms",
+      "throughput": "Ordres / sec",
+      "throughputValue": "1,2 M"
+    },
+    "stats": {
+      "label": "État de la grille en direct",
+      "pairs": "Paires négociables",
+      "latency": "Latence moyenne",
+      "traders": "Traders actifs",
+      "uptime": "Disponibilité du moteur"
+    },
+    "features": {
+      "label": "Équipement",
+      "title": "Un équipement taillé pour les marchés violents.",
+      "subtitle": "Profondeur multi-actifs, signaux IA, sécurité du compte et matching à la milliseconde — tout est intégré.",
+      "multiAsset": {
+        "title": "Matrice multi-actifs",
+        "desc": "Crypto, forex, indices, actions US et métaux partagent un même solde de marge. Un compte, tous les marchés."
+      },
+      "ai": {
+        "title": "Moteur de signaux IA",
+        "desc": "Signaux notés et stratégies backtestées en continu. Les suivre ou non reste votre décision."
+      },
+      "custody": {
+        "title": "Sécurité du compte",
+        "desc": "L'authentification à deux facteurs, le mot de passe des fonds et la gestion des appareils vous aident à protéger votre compte."
+      },
+      "speed": {
+        "title": "Matching à la milliseconde",
+        "desc": "Un cœur de matching 24/7 qui exécute en moins de 50 ms, avec des frais de financement transparents."
+      }
+    },
+    "markets": {
+      "label": "Mur des marchés",
+      "title": "Des prix en direct, sortis du cœur.",
+      "viewAll": "Voir les {{total}} marchés",
+      "viewAllPlain": "Voir tous les marchés"
+    },
+    "cta": {
+      "title": "Branchez-vous. Tradez.",
+      "desc": "Ouvrez un compte en 2 minutes. Fonds de démo, récompenses et avantages débutants préchargés.",
+      "start": "Créer un compte gratuit",
+      "secondary": "Explorer les marchés"
+    }
+  },
+  "founding": {
+    "title": "Membres fondateurs",
+    "description": "{{brandName}} est une plateforme d'investissement financier stratégique mondiale, dédiée à connecter la finance traditionnelle et l'économie numérique. Notre avantage concurrentiel réside dans notre équipe stratégique d'élite ({{names}}) qui fournit aux clients des solutions d'allocation d'actifs transversales, couvrant plusieurs marchés et domaines. En combinant le contrôle des risques par l'IA et les normes internationales de conformité, nous garantissons la sécurité des fonds et la fluidité financière de la plateforme. Grâce à des services sur mesure et au soutien de la recherche mondiale, notre mission est de créer pour les utilisateurs un écosystème de croissance patrimoniale sécurisé, intelligent et transfrontalier, et de devenir le partenaire stratégique de la nouvelle génération d'investisseurs.",
+    "prev": "Membre précédent",
+    "next": "Membre suivant"
+  },
+  "premium": {
+    "hero": {
+      "emailPlaceholder": "Adresse e-mail",
+      "signUp": "S'inscrire",
+      "hotTitle": "Cryptos populaires"
+    },
+    "steps": {
+      "label": "Commencer",
+      "title": "Commencez à trader en 3 étapes simples",
+      "s1Title": "Créez votre compte",
+      "s1Desc": "Inscrivez-vous avec votre e-mail en moins de deux minutes.",
+      "s2Title": "Approvisionnez votre portefeuille",
+      "s2Desc": "Déposez par carte, virement bancaire ou crypto.",
+      "s3Title": "Commencez à trader",
+      "s3Desc": "Tradez crypto, métaux et plus depuis un seul compte."
+    },
+    "stats": {
+      "assets": "Actifs cotés",
+      "volume": "Volume 24 h",
+      "uptime": "Disponibilité",
+      "uptimeValue": "24/7"
+    }
+  },
+  "cobalt": {
+    "hero": {
+      "title": "Une plateforme de trading multi-actifs",
+      "subtitle": "Achetez, vendez et gérez des marchés : crypto, forex, métaux et indices.",
+      "assetsTitle": "Marchés en vedette",
+      "phoneAlt": "Tradez crypto, forex et actions depuis une seule application mobile"
+    },
+    "credentials": {
+      "markets": "Crypto, forex, métaux et indices dans un seul compte",
+      "security": "Authentification à deux facteurs et gestion des appareils pour votre compte"
+    },
+    "built": {
+      "title": "Conçu pour trader tous les marchés",
+      "items": {
+        "markets": "Tradez {{total}} marchés en toute sécurité : crypto, forex, métaux et indices",
+        "marketsFallback": "Tradez crypto, forex, métaux et indices en toute sécurité",
+        "onboarding": "Configurez votre compte en toute sécurité et sans friction",
+        "support": "Assistance prioritaire 24h/24 et 7j/7"
+      },
+      "marketCount": "{{total}} marchés"
+    },
+    "explore": {
+      "title": "Explorez Bitcoin, Ethereum et des centaines d’autres cryptos",
+      "subtitle": "Achetez, vendez et gérez des centaines d’actifs crypto — simplement et en toute sécurité.",
+      "viewMore": "Voir plus d’actifs",
+      "tabGainers": "Meilleures hausses",
+      "tabVolume": "Meilleurs échanges"
+    },
+    "advanced": {
+      "title": "Chaque marché, sa façon de trader",
+      "tagline": "Crypto, forex, métaux et indices dans un seul compte — chaque marché dispose des modes de trading conçus pour lui : futures perpétuels avec effet de levier et options binaires à gain fixe.",
+      "items": {
+        "markets": "Un seul compte pour la crypto, le forex, les métaux et les indices",
+        "futures": "Futures perpétuels avec effet de levier — ordres au marché, à cours limité et stop-limite",
+        "options": "Options binaires : prédisez la direction, gain et risque maximal fixés à l'avance"
+      },
+      "cta": "Essayer maintenant",
+      "previewAlt": "L’écran de trading affiché sur une tablette tenue en main"
+    },
+    "earn": {
+      "eyebrow": "Revenus",
+      "title": "Faites travailler vos cryptos",
+      "subtitle": "Augmentez vos avoirs avec des revenus flexibles et transparents — sans configuration complexe, sans surprise.",
+      "cta": "Commencer à gagner",
+      "features": {
+        "flexible": {
+          "title": "Conditions flexibles",
+          "desc": "Souscrivez et retirez quand vous le souhaitez, sans blocage prolongé."
+        },
+        "secure": {
+          "title": "Sécurisé par conception",
+          "desc": "L'authentification à deux facteurs, le mot de passe des fonds et la gestion des appareils vous aident à protéger votre compte."
+        },
+        "auto": {
+          "title": "Capitalisation automatique",
+          "desc": "Les revenus s'accumulent et se réinvestissent automatiquement."
+        }
+      }
+    },
+    "trust": {
+      "eyebrow": "Sécurité",
+      "title": "Fonctions de sécurité pour votre compte",
+      "subtitle": "Des outils pour protéger votre compte et en contrôler l'accès.",
+      "items": {
+        "twoFactor": {
+          "title": "Authentification à deux facteurs",
+          "desc": "Ajoutez une deuxième étape de vérification à la connexion."
+        },
+        "fundPassword": {
+          "title": "Mot de passe des fonds",
+          "desc": "Définissez un mot de passe des fonds distinct dans les paramètres du compte."
+        },
+        "devices": {
+          "title": "Gestion des appareils",
+          "desc": "Consultez les appareils connectés à votre compte et révoquez ceux que vous ne reconnaissez pas."
+        },
+        "support": {
+          "title": "Obtenez de l'aide quand vous en avez besoin",
+          "desc": "Vous pouvez contacter notre équipe d'assistance à tout moment pour résoudre rapidement les questions courantes."
+        }
+      }
+    }
+  },
+  "pulse": {
+    "hero": {
+      "desc": "Un seul compte pour les cryptos, le forex, les indices, les actions américaines et les métaux."
+    },
+    "cta": {
+      "title": "Prêt à commencer à trader ?",
+      "desc": "Ouvrez un compte en quelques minutes et passez votre première transaction dès aujourd'hui.",
+      "start": "Commencer",
+      "trade": "Aller au trading"
+    }
+  },
+  "ribbon": {
+    "features": {
+      "title": "Une plateforme de trading multi-actifs plus avancée",
+      "subtitle": "Conçue pour les traders exigeants",
+      "cards": {
+        "markets": {
+          "title": "Plus de {{total}} marchés",
+          "titleFallback": "Des centaines de marchés",
+          "desc": "Tradez en temps réel cryptomonnaies, forex, indices, métaux précieux et actions américaines, depuis un seul compte."
+        },
+        "quant": {
+          "title": "Quant IA et copy trading",
+          "desc": "Les stratégies IA et les fonds quantitatifs travaillent en continu ; suivez les meilleurs traders en un clic."
+        },
+        "security": {
+          "title": "Sécurité du compte",
+          "desc": "L'authentification à deux facteurs, le mot de passe des fonds et la gestion des appareils vous aident à protéger votre compte."
+        }
+      }
+    },
+    "customize": {
+      "title": "Conçu pour vos besoins — tradez à votre façon.",
+      "desc": "L'espace de trading est entièrement modulaire : glissez, redimensionnez, affichez ou masquez chaque panneau. Pensé pour les traders professionnels, avec une latence ultra-faible et une liquidité profonde.",
+      "sparkPrice": "128 700 $"
+    }
+  },
+  "ui": {
+    "marketSnapshot": "Instantané du marché",
+    "whyNewquantcapital": "Pourquoi NewQuantCapital",
+    "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "Quatre raisons pour lesquelles les traders passent à NewQuantCapital et y restent. Bâti autour de ce qui compte quand de l'argent réel est en jeu.",
+    "hoursAgo": " heures auparavant"
+  }
+}

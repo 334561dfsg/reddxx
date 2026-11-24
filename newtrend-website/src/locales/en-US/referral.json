@@ -1,0 +1,77 @@
+{
+  "page": {
+    "back": "Back",
+    "subtitle": "Referral",
+    "title": "Invite Friends",
+    "description": "Share your referral link and earn rewards when your friends register and deposit.",
+    "qualificationHint": "Friends qualify once their total deposit reaches {{amount}} USDT."
+  },
+  "code": {
+    "title": "Your Referral Code",
+    "copy": "Copy code"
+  },
+  "bind": {
+    "title": "Have an invite code?",
+    "description": "Enter a friend's invite code to link your account to theirs. You can only do this once.",
+    "placeholder": "Enter invite code",
+    "submit": "Bind code",
+    "success": "Invite code bound",
+    "errors": {
+      "invalid": "This invite code is invalid. Check it and try again.",
+      "self": "You can't bind your own invite code.",
+      "alreadyBound": "Your account is already linked to an inviter."
+    }
+  },
+  "shareLink": {
+    "title": "Share Link",
+    "description": "Friends who register through this link are bound to you automatically.",
+    "copy": "Copy link",
+    "scanHint": "Scan to register",
+    "qrAlt": "Referral link QR code"
+  },
+  "stats": {
+    "totalInvited": "Invited",
+    "qualifiedCount": "Qualified",
+    "rewardedCount": "Rewarded",
+    "totalAccumulated": "Total Deposited"
+  },
+  "invitees": {
+    "title": "Invited Friends",
+    "uidLabel": "UID {{uid}}",
+    "uidFallback": "Unknown user",
+    "columns": {
+      "user": "User",
+      "status": "Status",
+      "accumulated": "Deposited",
+      "boundAt": "Joined"
+    }
+  },
+  "status": {
+    "bound": "Bound",
+    "qualified": "Qualified",
+    "rewarded": "Rewarded"
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next",
+    "range": "{{from}}–{{to}} of {{total}}"
+  },
+  "states": {
+    "loadError": "Failed to load. Please try again.",
+    "retry": "Retry"
+  },
+  "empty": {
+    "title": "No invites yet",
+    "description": "Share your link to start inviting friends."
+  },
+  "toast": {
+    "copied": "Copied",
+    "copyFailed": "Copy failed"
+  },
+  "nav": {
+    "menuEntry": "Invite Friends"
+  },
+  "unit": {
+    "usdt": "USDT"
+  }
+}

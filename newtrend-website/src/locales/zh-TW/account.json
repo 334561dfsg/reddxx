@@ -1,0 +1,19 @@
+{
+  "ui": {
+    "selectAFile": "請選擇檔案",
+    "jpgPngOrPdfOnly": "僅支援 JPG、PNG 或 PDF",
+    "fileIsTooLarge": "檔案過大",
+    "exactly6Digits": "僅可包含 6 位數字",
+    "checkThePasswordRequirements": "請檢查密碼規則",
+    "back": "← 返回",
+    "copyUid": "複製 UID",
+    "830Characters": "8–30 位字元",
+    "localDemoCode123456": "本地演示驗證碼：123456",
+    "demoKeyOnlyNotValidForARealAccount": "本地演示密鑰，不可用於真實帳戶。",
+    "1PersonalInformation": "1　個人信息",
+    "2UploadDocuments": "2　證件上傳",
+    "useFictionalDetailsAndDemoImagesFilesStayOn": "僅使用虛構資料與演示圖片。檔案不會上傳。",
+    "thisDemoDoesNotOpenARealJointAccount": "本地申請不建立真實聯名帳戶。",
+    "primaryApplicantYou": "主申請人 · 您"
+  }
+}

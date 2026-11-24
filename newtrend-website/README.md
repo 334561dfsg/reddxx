@@ -36,3 +36,9 @@
 ## 验证
 
 `design-qa.md` 记录视觉对照、修正和未验证项；`qa/` 保存浏览器截图和手机宽度检查结果。浏览器检查使用 Codex 内置浏览器，不代表 Safari 或真机验收。
+
+## 语言包维护
+
+界面文案统一使用 `src/locales/<语言>/<模块>.json` 和固定翻译键，例如 `profile.changePassword.title`。六种语言的键和插值参数保持一致；默认回退英文。新闻和法律正文独立存放于 `src/content/`。旧的中文原文匹配、别名表和补充翻译表已删除。
+
+新增文案时同步补齐六套语言包，然后在根目录运行 `npm run check:locales --prefix newtrend-website`。调用示例与状态保持规则见 [语言包说明](src/locales/README.md)。

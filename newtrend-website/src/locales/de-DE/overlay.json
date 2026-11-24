@@ -1,0 +1,27 @@
+{
+  "ui": {
+    "unsavedContentUseCloseOrCancelToLeave": "Nicht gespeicherter Inhalt. Mit Schließen oder Abbrechen verlassen.",
+    "insufficientBalanceSwitchToDemoToTryThisLocally": "Unzureichendes Guthaben. Zum Testen auf Demo wechseln.",
+    "createdDemo": "Erstellt (Demo)",
+    "videoFailedToLoadTryAgainLater": "Video konnte nicht geladen werden. Später erneut versuchen.",
+    "welcomeToNewquantcapitalSupport": "Willkommen beim NewQuantCapital Support",
+    "message": "Nachricht",
+    "describeYourIssue": "Beschreiben Sie Ihr Anliegen",
+    "messagesAreNotSentToTheOriginalSupportTeam": "Nachrichten werden nicht an den ursprünglichen Support gesendet.",
+    "demoMessageShownLocallyNothingWasSent": "Demo-Nachricht lokal angezeigt. Nichts gesendet.",
+    "thisLocalDemoDoesNotRequestWalletPermissionsOr": "Diese Demo fordert keine Wallet-Berechtigung oder Signatur an.",
+    "connectDemoWallet": "Demo-Wallet verbinden",
+    "localDemoAccountConnected": "Lokales Demokonto verbunden",
+    "noNewMessages": "Keine neuen Nachrichten",
+    "100000UsdMoreToReachVip1": "Noch 100,000 USD bis VIP 1",
+    "days": " Tage",
+    "orderQuantity": "Auftragsmenge",
+    "localSimulation": " · Lokale Simulation",
+    "orderSummary": "Auftragsübersicht",
+    "daysLater": " Tage später",
+    "demoCompletedNoRealTransactionWasSent": "Demo abgeschlossen. Keine echte Transaktion gesendet.",
+    "localInterfaceDemoNotConnectedToTheOriginalAccount": "Lokale Demo ohne Verbindung zum ursprünglichen Kontodienst.",
+    "confirmOrder": "Auftrag bestätigen"
+  },
+  "amountMinimum": "Geben Sie einen gültigen Betrag von mindestens {{amount}} ein."
+}

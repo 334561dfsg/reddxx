@@ -1,0 +1,33 @@
+{
+  "ui": {
+    "weCareForEveryChildCaughtInTheDevastation": "We Care for Every Child Caught in the Devastation of War",
+    "weHelpEndHunger": "We help end hunger",
+    "weBringComputersAndEthernetNetworksToEveryCorner": "We bring computers and Ethernet networks to every corner of the world",
+    "weProvideHopeInTimesOfDisaster": "We provide hope in times of disaster",
+    "weInvestInTheEducationalFutureOfCountriesIn": "We invest in the educational future of countries in remote regions",
+    "weHelpPeopleWithDisabilitiesStartANewLife": "We help people with disabilities start a new life",
+    "identityVerification": "Identity verification",
+    "selectAPngOrJpegImage": "Select a PNG or JPEG image",
+    "imageMustNotExceed10Mb": "Image must not exceed 10 MB",
+    "demoDepositRequest": "Demo deposit request",
+    "demoWithdrawalRequest": "Demo withdrawal request",
+    "localDemoCompletedNoDataOrFundsWereSent": "Local demo completed. No data or funds were sent.",
+    "charitySlide": "Charity slide",
+    "message": ":",
+    "connectGenerosityWithMeaningfulChangeAndBringHopeTo": "Connect generosity with meaningful change and bring hope to communities in need.",
+    "sourceFiguresAreASnapshotLocalDonationsAreDemonstrations": "Source figures are a snapshot. Local donations are demonstrations only.",
+    "merchantReviewIsNotConnectedInThisLocalDemo": "Merchant review is not connected in this local demo.",
+    "no": "No",
+    "orders": "Orders",
+    "thisDemoDoesNotCollectBankCardOrReal": "This demo does not collect bank card or real payout account details.",
+    "confirmC2c": "Confirm C2C",
+    "thisLocalDemoDoesNotCreateRealOrders": "This local demo does not create real orders.",
+    "noTradersAvailable": "No traders available",
+    "noFollowingYet": "No following yet",
+    "selectAnAssetAndNetworkThenEnterTheDestination": "Select an asset and network, then enter the destination and amount",
+    "localDemoDoNotTransferToDemoAddressesOr": "Local demo. Do not transfer to demo addresses or provide real receipts.",
+    "selectedLocallyFilesAreNotUploaded": "Selected locally; files are not uploaded",
+    "submitDemo": "Submit demo",
+    "noAnnouncements": "No announcements"
+  }
+}

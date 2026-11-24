@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
-import {tr,t,applyLocale,locale} from './i18n'
+import {t,applyLocale,formatCompact} from './i18n'
 import Home from './pages/Home.vue'
 import Trade from './pages/Trade.vue'
 import Finance from './pages/Finance.vue'
@@ -28,4 +28,4 @@ const router=createRouter({history:createWebHistory('/newtrend/'),routes:[
  {path:'/:pathMatch(.*)*',redirect:'/zh-TW/'}
 ],scrollBehavior(to,from,saved){return saved||{top:0}}})
 router.beforeEach(to=>{if(to.params.locale)applyLocale(to.params.locale)})
-const app=createApp(App);app.config.globalProperties.$tr=tr;app.config.globalProperties.$t=t;app.use(router).mount('#app')
+const app=createApp(App);app.config.globalProperties.$compact=formatCompact;app.config.globalProperties.$t=t;app.use(router).mount('#app')

@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "menuEntry": "내 혜택"
+  },
+  "list": {
+    "title": "내 혜택 작업",
+    "description": "회원님을 위해 준비된 전용 혜택 작업을 확인하세요 — 진행률, 혜택, 남은 시간을 한눈에."
+  },
+  "status": {
+    "in_progress": "진행 중",
+    "completed": "완료됨",
+    "expired": "만료됨",
+    "cancelled": "취소됨"
+  },
+  "fields": {
+    "target": "목표",
+    "accumulatedByType": {
+      "DEPOSIT_MILESTONE": "입금액",
+      "CHECK_IN_STREAK": "출석",
+      "REFERRAL": "초대"
+    },
+    "reward": "혜택",
+    "deadline": "마감",
+    "remaining": "남은 시간",
+    "startedAt": "시작",
+    "description": "활동 설명",
+    "progressMetric": "진행 지표",
+    "enrollmentSource": "참여 경로"
+  },
+  "campaignTypes": {
+    "DEPOSIT_MILESTONE": "입금",
+    "CHECK_IN_STREAK": "출석",
+    "REFERRAL": "추천"
+  },
+  "progressMetrics": {
+    "DEPOSIT_USDT": "입금액(USDT)",
+    "LOGIN_DAY": "로그인 일수",
+    "TURNOVER": "거래량",
+    "REFERRAL_QUALIFIED": "유효 추천 수"
+  },
+  "enrollmentSources": {
+    "ASSIGN": "지급",
+    "SELF": "직접 참여",
+    "REFERRAL": "추천"
+  },
+  "checkIn": {
+    "success": "출석 완료",
+    "pending": "출석 중…",
+    "error": "출석에 실패했습니다. 다시 시도해 주세요"
+  },
+  "progress": {
+    "remainingToTarget": "목표까지 {{amount}} {{unit}} 남음",
+    "unit": {
+      "CHECK_IN_STREAK": "회",
+      "REFERRAL": "명"
+    }
+  },
+  "countdown": {
+    "ended": "종료됨",
+    "daysHours": "{{days}}일 {{hours}}시간",
+    "daysHoursMinutes": "{{days}}일 {{hours}}시간 {{minutes}}분 남음"
+  },
+  "reward": {
+    "creditedLabel": "지급됨"
+  },
+  "cta": {
+    "deposit": "입금하러 가기",
+    "viewDetail": "상세 보기",
+    "checkIn": "출석하기",
+    "invite": "친구 초대"
+  },
+  "empty": {
+    "title": "전용 혜택을 준비하고 있어요",
+    "description": "혜택 작업이 배정되면 이곳에 표시됩니다. 기대해 주세요."
+  },
+  "detail": {
+    "back": "혜택 목록으로",
+    "notFoundTitle": "작업을 찾을 수 없습니다",
+    "notFoundDescription": "이 혜택 작업은 존재하지 않거나 더 이상 이용할 수 없습니다.",
+    "sectionProgress": "진행률",
+    "sectionInfo": "작업 정보"
+  },
+  "states": {
+    "loadError": "혜택 작업을 불러오지 못했습니다",
+    "retry": "다시 시도",
+    "loadMore": "더 보기"
+  }
+}

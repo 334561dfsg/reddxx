@@ -1,0 +1,85 @@
+{
+  "home": "Digital Asset Trading Platform",
+  "trade": "{{pair}} — Live Price & Trading",
+  "auth": {
+    "login": "Log In — Secure Access to Your Account",
+    "register": "Sign Up — Start Trading Digital Assets",
+    "forgotPassword": "Reset Password — Regain Access Quickly"
+  },
+  "legal": {
+    "about": "About Us",
+    "privacy": "Privacy Policy",
+    "riskDisclosure": "Risk Disclosure",
+    "agreement": "User Agreement",
+    "regulation": "Regulatory Information",
+    "regulatoryInformation": "Regulatory Information",
+    "content": "Platform Information"
+  },
+  "news": {
+    "index": "News — Market Insights & Announcements",
+    "detail": "News Article"
+  },
+  "charity": "Charity — Trading for Good",
+  "aiQuant": {
+    "landing": "AI Quant — Strategies & Quant Funds",
+    "strategy": "Quant Strategies — Automated Trading",
+    "strategyMine": "My Strategies — Subscriptions & Performance",
+    "quantFund": "Quant Funds — Professionally Managed",
+    "quantFundDetail": "Quant Fund Product",
+    "quantFundPositions": "My Quant Fund Positions",
+    "interestRecords": "Quant Fund Earnings History"
+  },
+  "c2c": {
+    "buy": "C2C Buy — Fast Fiat On-Ramp",
+    "sell": "C2C Sell — Secure Fiat Off-Ramp",
+    "orders": "C2C Orders",
+    "orderDetail": "C2C Order Details",
+    "paymentAccounts": "Payment Methods"
+  },
+  "copytrade": {
+    "index": "Copy Trading — Follow Top Traders",
+    "trader": "Trader Profile"
+  },
+  "deposit": {
+    "index": "Deposit — Fund Your Account in Minutes",
+    "history": "Deposit History"
+  },
+  "withdraw": {
+    "index": "Withdraw — Move Assets Securely",
+    "history": "Withdrawal History"
+  },
+  "earn": {
+    "simple": "Flexible Earn — Put Idle Assets to Work",
+    "simpleDetail": "Earn Product Details",
+    "loan": "Crypto Loan — Borrow Against Your Assets",
+    "loanBorrow": "New Loan",
+    "loanMy": "My Loans",
+    "loanLiquidations": "Loan Liquidation History",
+    "myEarnings": "My Earnings"
+  },
+  "assets": {
+    "index": "Assets — All Your Balances in One Place",
+    "records": "Transaction Records",
+    "transfer": "Transfer Funds"
+  },
+  "user": {
+    "profile": "Account Center",
+    "survey": "Survey",
+    "helpCenter": "Help Center — FAQs & Support",
+    "messages": "Messages",
+    "messageDetail": "Message Details",
+    "promotionTasks": "Promotions — Deposit Bonus Tasks",
+    "promotionTaskDetail": "Promotion Task Details",
+    "referrals": "Refer Friends — Share & Earn Commission",
+    "changePassword": "Change Password",
+    "devices": "Device Management",
+    "fundPassword": "Fund Password",
+    "kyc": "Identity Verification",
+    "kycBasic": "Basic Verification",
+    "kycAdvanced": "Advanced Verification",
+    "bindEmail": "Link Email",
+    "bindPhone": "Link Phone",
+    "twoFactor": "Two-Factor Authentication (2FA)",
+    "jointAccount": "Joint Account"
+  }
+}

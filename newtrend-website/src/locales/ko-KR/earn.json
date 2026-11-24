@@ -1,0 +1,410 @@
+{
+  "nav": {
+    "ariaLabel": "어닝 모듈 내비게이션",
+    "products": "상품",
+    "myEarnings": "내 어닝",
+    "loan": "대출",
+    "myLoans": "내 대출"
+  },
+  "header": {
+    "subtitle": "수동 수익",
+    "title": "어닝",
+    "heroDescription": "유휴 자산을 운용하세요. 투명한 참고 수익률 — 데이 트레이더가 아닌 장기 보유자를 위해 설계되었습니다.",
+    "myEarnings": "내 수익"
+  },
+  "educational": {
+    "headline": "유휴 암호화폐로 수익을 창출하세요.",
+    "chip": {
+      "apyUpTo": "최대 APY {{value}}%",
+      "types": "자유형 & 고정형",
+      "dailyRateUpTo": "일일 이율 최대 {{value}}%"
+    },
+    "cta": "상품 둘러보기"
+  },
+  "holdings": {
+    "totalHoldings": "총 보유액",
+    "perDay": "+${{amount}}/일",
+    "cumulative": "누적",
+    "principal": "원금",
+    "accruedReward": "적립",
+    "dailyEstimated": "일일 예상",
+    "rewardsLast7d": "최근 7일",
+    "nextRewardLabel": "다음 보상",
+    "nextReward": "약 {{hours}}시간 후"
+  },
+  "table": {
+    "columns": {
+      "product": "상품",
+      "category": "유형",
+      "term": "기간",
+      "minAmount": "최소",
+      "totalSubscribed": "구독됨",
+      "availableQuota": "사용 가능",
+      "apy": "APY",
+      "action": "작업",
+      "dailyRate": "일일 이율"
+    }
+  },
+  "featured": {
+    "title": "추천 상품",
+    "productCount": "{{count}}개 상품",
+    "totalSubscribed": "{{amount}} 구독됨",
+    "quotaRemaining": "{{amount}}만 남음",
+    "subscribeNow": "구독"
+  },
+  "badge": {
+    "hot": "인기",
+    "featured": "추천",
+    "exclusive": "전용",
+    "exclusiveHint": "지정된 사용자 전용"
+  },
+  "apy": {
+    "label": "예상 APY",
+    "suffix": "APY",
+    "annualizedShort": "APY (연)",
+    "approx": "≈ 연 {{value}}%"
+  },
+  "actions": {
+    "subscribe": "구독",
+    "viewDetail": "상세 보기",
+    "redeem": "환매"
+  },
+  "tabs": {
+    "all": "전체",
+    "flexible": "자유형",
+    "fixed": "고정형",
+    "staking": "스테이킹"
+  },
+  "products": {
+    "count": "{{count}}개 상품",
+    "categoryFlex": "자유형",
+    "categoryFixed": "고정형",
+    "categoryStake": "스테이킹",
+    "min": "최소 {{amount}}",
+    "max": "최대 {{amount}}",
+    "totalSubscribed": "{{amount}} 구독됨",
+    "termFlexible": "자유형",
+    "termFixed": "{{days}}일",
+    "minValue": "≥ {{value}} {{unit}}",
+    "minValueWithEstimate": "≥ {{value}} {{unit}} (약 {{amount}} {{asset}})"
+  },
+  "sort": {
+    "highestApy": "APY 높은 순",
+    "shortestTerm": "기간 짧은 순",
+    "mostPopular": "인기 순",
+    "highestDailyRate": "일일 이율 높은 순"
+  },
+  "security": {
+    "footer": "신청 전에 각 상품의 조건과 상환 규정을 확인하세요.",
+    "disclaimer": "금융 자문이 아닙니다. 수익률은 추정치이며 변동될 수 있습니다."
+  },
+  "states": {
+    "retry": "다시 시도",
+    "loading": "불러오는 중…",
+    "holdingsError": "어닝 요약을 불러오지 못했습니다.",
+    "productsError": "어닝 상품을 불러오지 못했습니다.",
+    "productsEmpty": "현재 이용 가능한 어닝 상품이 없습니다.",
+    "detailError": "상품 상세를 불러오지 못했습니다.",
+    "myEarningsError": "이 목록을 불러오지 못했습니다."
+  },
+  "productDetail": {
+    "title": "상품 상세",
+    "back": "어닝으로 돌아가기",
+    "notFound": "이 상품은 더 이상 이용할 수 없습니다.",
+    "unlimited": "무제한",
+    "keyFacts": {
+      "term": "기간",
+      "min": "최소 구독",
+      "max": "최대 구독",
+      "availableQuota": "사용 가능 한도",
+      "totalSubscribed": "총 구독액",
+      "perUserQuota": "1인당 한도",
+      "estAccrualStart": "예상 이자 시작일",
+      "estMaturity": "예상 만기일",
+      "accrualMode": "이자 계산 방식",
+      "accrualModeRolling": "24시간 롤링",
+      "accrualModeRollingHint": "주문 체결과 동시에 이자가 시작되며 24시간마다 적립됩니다."
+    },
+    "risk": {
+      "title": "리스크 고지",
+      "notGuaranteed": "보상은 보장되지 않으며 시장 상황에 따라 변동될 수 있습니다.",
+      "smartContract": "스테이킹 기반 상품에는 스마트 계약 리스크가 적용됩니다.",
+      "earlyRedemption": "고정형 상품의 조기 환매 시 적립된 보상을 상실합니다.",
+      "noEarlyRedemption": "일일 지급 고정형 상품은 조기 환매할 수 없습니다.",
+      "earlyRedemptionPenalty": "정기 상품을 조기 환매하면 원금의 {{rate}}%가 위약금으로 차감됩니다. 가입 시점의 비율이 적용됩니다."
+    },
+    "exploreOthers": "다른 상품 둘러보기",
+    "disabled": {
+      "paused": "이 상품의 구독이 일시적으로 중단되었습니다.",
+      "closed": "이 상품은 더 이상 구독을 받지 않습니다.",
+      "soldOut": "한도가 소진되었습니다. 나중에 다시 확인해 주세요.",
+      "subscriptionDisabled": "현재 구독이 비활성화되어 있습니다."
+    },
+    "groups": {
+      "rules": "신청 규칙",
+      "quota": "상품 한도"
+    },
+    "quotaFilled": "{{percent}}% 신청됨"
+  },
+  "subscribe": {
+    "title": "구독",
+    "amountLabel": "금액",
+    "amountPlaceholder": "금액 입력",
+    "availableBalanceLabel": "사용 가능",
+    "maxButton": "최대",
+    "goDeposit": "입금하기",
+    "submit": "구독 확인",
+    "cancel": "취소",
+    "estDailyReward": "예상 일일 보상",
+    "estMaturityReward": "만기 시 예상 보상",
+    "errors": {
+      "minAmount": "최소 구독액은 {{amount}} {{asset}}입니다.",
+      "maxAmount": "최대 구독액은 {{amount}} {{asset}}입니다.",
+      "availableQuota": "남은 한도가 {{amount}} {{asset}}뿐입니다.",
+      "perUserQuota": "1인당 한도는 {{amount}} {{asset}}입니다.",
+      "invalidAmount": "유효한 금액을 입력하세요.",
+      "insufficientBalance": "사용 가능한 잔액이 부족합니다. 현재 {{amount}} {{asset}} 사용 가능합니다.",
+      "priceChanged": "가격이 변동되었습니다. 현재 최소 구독액은 {{amount}} {{asset}}입니다.",
+      "unavailableAtCurrentPrice": "현재 가격에서는 구독할 수 없습니다.",
+      "valuationPriceUnavailable": "현재 가격을 가져올 수 없습니다. 잠시 후 다시 시도해 주세요."
+    },
+    "success": {
+      "title": "구독이 확인되었습니다",
+      "orderId": "주문 {{id}}",
+      "viewHoldings": "내 보유 보기"
+    },
+    "dates": {
+      "accrualStart": "예상 이자 시작일",
+      "maturity": "예상 만기일",
+      "settlement": "예상 입금일",
+      "reviewRequired": "이 신청은 심사가 필요합니다. 승인 다음 날부터 이자가 발생합니다.",
+      "rollingNote": "주문 체결과 동시에 이자가 시작되며 24시간마다 적립됩니다. 정기 상품은 만기 후 약 10분 이내에 원금과 이자가 자동으로 입금됩니다.",
+      "rollingReviewRequired": "이 신청은 심사가 필요합니다. 승인되는 즉시 이자가 시작됩니다."
+    },
+    "fillRequiredMin": "입력",
+    "estReward": "예상 보상",
+    "estRewardEmpty": "금액을 입력하면 예상 보상이 표시됩니다"
+  },
+  "redeem": {
+    "title": "환매",
+    "subtitle": {
+      "flexible": "자유형 보유 환매",
+      "fixedMatured": "만기 포지션 환매",
+      "fixedEarly": "조기 환매"
+    },
+    "redeemInFull": "전액 환매",
+    "redeemPartial": "부분 환매",
+    "amountLabel": "환매 금액",
+    "redeemAll": "전액 환매",
+    "principal": "원금",
+    "remainingPrincipal": "잔여 원금",
+    "continueAccrue": "잔여 원금은 계속 보상을 적립합니다.",
+    "eligibleReward": "수령 가능 보상",
+    "fundingNote": "자금은 펀딩 계정으로 입금됩니다.",
+    "warning": {
+      "fixedEarly": "조기 환매: 수령 가능 보상이 0이 됩니다. 이 작업은 취소할 수 없습니다.",
+      "fixedEarlyPenalty": "조기 환매: 원금에서 위약금이 차감되고 수령 가능 보상이 0이 됩니다. 이 작업은 취소할 수 없습니다."
+    },
+    "submit": "환매 확인",
+    "cancel": "취소",
+    "errors": {
+      "disabled": "이 상품은 조기 환매가 허용되지 않습니다.",
+      "exceedsPrincipal": "금액은 원금 {{amount}} {{asset}}을(를) 초과할 수 없습니다.",
+      "holdingInactive": "이 보유는 활성 상태가 아니어서 환매할 수 없습니다.",
+      "invalidAmount": "유효한 금액을 입력하세요.",
+      "awaitingFinalCoupon": "마지막 날 이자가 입금 처리 중입니다. 원금과 이자는 자동으로 입금되며 별도 조치가 필요하지 않습니다. 몇 분 후 다시 시도할 수도 있습니다.",
+      "dailyPayoutNoEarly": "일일 지급 고정형 보유 자산은 조기 환매할 수 없습니다.",
+      "penaltyChanged": "위약금 금액이 변경되었습니다. 새 금액을 확인한 후 다시 확정해 주세요."
+    },
+    "success": {
+      "title": "환매가 확인되었습니다",
+      "id": "환매 {{id}}",
+      "viewRedemptions": "환매 내역 보기",
+      "done": "확인",
+      "penalty": "차감된 위약금",
+      "received": "실제 입금액"
+    },
+    "confirm": {
+      "title": "적립된 보상을 상실하시겠습니까?",
+      "body": "조기 환매 시 적립된 모든 보상(~{{amount}} {{asset}})을 상실합니다. 이 작업은 되돌릴 수 없습니다.",
+      "youReceive": "수령액",
+      "youForfeit": "상실액",
+      "cancel": "취소",
+      "acknowledge": "이해했습니다, 조기 환매",
+      "penaltyTitle": "조기 환매 위약금 확인",
+      "penaltyBody": "조기 환매 시 위약금 {{amount}} {{asset}}(원금의 {{rate}}%)이 차감되며, 누적된 보상은 모두 포기됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "acknowledgePenalty": "위약금에 동의하고 조기 환매"
+    },
+    "dailyPaidOut": "매 기간 지갑으로 지급 완료",
+    "penalty": "조기 환매 위약금 ({{rate}}%)",
+    "estimatedReceive": "예상 입금액"
+  },
+  "myEarnings": {
+    "title": "내 수익",
+    "table": {
+      "productName": "상품",
+      "asset": "자산",
+      "principal": "원금",
+      "accruedInterest": "적립 이자",
+      "term": "기간 / 만기",
+      "status": "상태",
+      "action": "작업",
+      "amount": "금액",
+      "subscribedQuantity": "구독 수량",
+      "subscribedAt": "구독 시각",
+      "completedAt": "완료 시각",
+      "redemptionType": "유형",
+      "eligibleReward": "수령 가능 보상",
+      "createdAt": "생성 시각",
+      "rewardAmount": "보상",
+      "rewardDate": "보상 날짜",
+      "paidAt": "지급 시각",
+      "dailyRate": "일일 이율"
+    },
+    "summary": {
+      "totalValue": "총 가치",
+      "principal": "원금",
+      "accruedReward": "적립 보상",
+      "cumulativeReward": "누적 보상",
+      "dailyEstimatedReward": "일일 예상",
+      "earningsTrend": "최근 {{days}}일 수익 추이",
+      "usdNote": "아래 금액은 USD 환산으로 표시됩니다"
+    },
+    "tabs": {
+      "holdings": "보유",
+      "orders": "주문",
+      "redemptions": "환매",
+      "rewards": "보상"
+    },
+    "filter": {
+      "asset": "자산",
+      "all": "전체 자산",
+      "status": "상태"
+    },
+    "holdings": {
+      "subscribedQuantity": "구독 수량",
+      "accruedInterest": "적립",
+      "paidReward": "지급됨",
+      "daysRemaining": "{{days}}일 남음",
+      "matured": "만기",
+      "flexible": "자유형",
+      "redeemCta": "환매",
+      "maturityCountdownLabel": "만기까지",
+      "readyToRedeem": "환매 가능",
+      "subscribedAt": "구독일",
+      "startedAt": "시작일",
+      "maturityAt": "만기일",
+      "lastAccruedAt": "최근 적립",
+      "nextAccrualLabel": "다음 이자 지급",
+      "settlementEtaLabel": "입금 예정",
+      "settlingLabel": "입금 처리 중…",
+      "countdownDaysHoursMinutes": "{{days}}일 {{hours}}시간 {{minutes}}분",
+      "accrualStartDate": "이자 시작일",
+      "maturityDate": "만기일",
+      "settlementDate": "입금 예정일",
+      "accrualStartTime": "이자 시작",
+      "maturityTime": "만기",
+      "settlementEtaTime": "입금 예정",
+      "paidToWallet": "지갑으로 지급됨"
+    },
+    "orders": {
+      "subscribedAt": "구독 시각",
+      "completedAt": "완료 시각",
+      "amount": "금액",
+      "valueUsd": "≈ {{value}} USD"
+    },
+    "redemptions": {
+      "createdAt": "요청 시각",
+      "completedAt": "완료 시각",
+      "amount": "금액",
+      "eligibleReward": "수령 가능 보상",
+      "penalty": "위약금"
+    },
+    "rewards": {
+      "rewardDate": "보상 날짜",
+      "amount": "금액",
+      "paidAt": "지급 시각"
+    },
+    "status": {
+      "active": "활성",
+      "redeeming": "환매 중",
+      "redeemed": "환매됨",
+      "matured": "만기",
+      "pending": "대기 중",
+      "completed": "완료",
+      "failed": "실패",
+      "pending_review": "검토 중",
+      "rejected": "거부됨",
+      "accrued": "적립됨",
+      "paid": "지급됨"
+    },
+    "redemptionType": {
+      "flexiblePartial": "자유형 · 부분",
+      "flexibleFull": "자유형 · 전액",
+      "fixedMatured": "고정형 · 만기",
+      "fixedEarly": "고정형 · 조기"
+    },
+    "empty": {
+      "holdings": "아직 보유가 없습니다. 상품을 구독하고 수익을 시작하세요.",
+      "orders": "아직 구독 주문이 없습니다.",
+      "redemptions": "아직 환매 기록이 없습니다.",
+      "rewards": "아직 보상 기록이 없습니다.",
+      "browseProducts": "상품 둘러보기"
+    },
+    "loadMore": "더 보기",
+    "redeemDisabledTooltip": "이 상품은 조기 환매가 허용되지 않습니다."
+  },
+  "errors": {
+    "INSUFFICIENT_BALANCE": "잔액이 부족합니다.",
+    "QUOTA_EXHAUSTED": "상품 한도가 소진되었습니다.",
+    "PRODUCT_NOT_AVAILABLE": "이 상품은 현재 이용할 수 없습니다.",
+    "PER_USER_QUOTA_EXCEEDED": "1인당 한도에 도달했습니다.",
+    "AMOUNT_OUT_OF_RANGE": "금액이 허용 범위를 벗어났습니다.",
+    "HOLDING_NOT_REDEEMABLE": "이 보유는 환매할 수 없습니다.",
+    "EARLY_REDEMPTION_NOT_ALLOWED": "조기 환매가 허용되지 않습니다.",
+    "IDEMPOTENCY_CONFLICT": "중복 요청이 감지되었습니다. 새로고침 후 다시 시도하세요.",
+    "UNKNOWN": "문제가 발생했습니다. 다시 시도하세요."
+  },
+  "loan": {
+    "subtitle": "온체인 신용",
+    "title": "대출",
+    "description": "보유 자산을 매도하지 않고 담보로 스테이블코인을 빌리세요. 초과 담보 포지션, 투명한 청산 임계값, 연중무휴 상환 — {{brand}}에 곧 제공됩니다.",
+    "comingSoon": "곧 제공 예정",
+    "disclaimer": "투명한 청산"
+  },
+  "dailyRate": {
+    "label": "예상 일일 이율",
+    "suffix": "일일 이율"
+  },
+  "payoutMode": {
+    "label": "보상 지급",
+    "daily": "매일 지갑으로 지급",
+    "at_end": "만기 또는 환매 시 일괄 지급",
+    "dailyBadge": "일일 지급"
+  },
+  "timeline": {
+    "title": "타임라인",
+    "steps": {
+      "subscribe": "신청",
+      "accrualStart": "이자 시작",
+      "maturity": "만기",
+      "settlement": "입금",
+      "redeem": "상환"
+    },
+    "values": {
+      "now": "지금",
+      "onOrder": "주문 체결 즉시",
+      "afterReview": "승인 다음 날",
+      "afterReviewRolling": "승인 즉시",
+      "afterDays": "이자 시작 후 {{days}}일",
+      "settleRolling": "만기 후 약 10분 이내",
+      "redeemAnytime": "언제든지 가능"
+    },
+    "accruingDays": "{{days}}일간 이자 적립",
+    "accruingDaily": "매일 이자 적립",
+    "rollingRule": "24시간마다 이자 적립"
+  },
+  "maturityAfterDays": "이자 시작 후 {{count}}일",
+  "productName": "{{symbol}} {{term}}",
+  "fixedTermName": "{{count}}일 정기 운용"
+}

@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "menuEntry": "我的活動"
+  },
+  "list": {
+    "title": "我的獎勵任務",
+    "description": "追蹤為你準備的專屬獎勵任務,進度、獎勵與剩餘時間一目了然。"
+  },
+  "status": {
+    "in_progress": "進行中",
+    "completed": "已完成",
+    "expired": "已過期",
+    "cancelled": "已取消"
+  },
+  "fields": {
+    "target": "目標",
+    "accumulatedByType": {
+      "DEPOSIT_MILESTONE": "已充值",
+      "CHECK_IN_STREAK": "已簽到",
+      "REFERRAL": "已邀請"
+    },
+    "reward": "獎勵",
+    "deadline": "截止時間",
+    "remaining": "剩餘時間",
+    "startedAt": "開始時間",
+    "description": "活動說明",
+    "progressMetric": "進度口徑",
+    "enrollmentSource": "任務來源"
+  },
+  "campaignTypes": {
+    "DEPOSIT_MILESTONE": "充值",
+    "CHECK_IN_STREAK": "簽到",
+    "REFERRAL": "邀請"
+  },
+  "progressMetrics": {
+    "DEPOSIT_USDT": "充值額（USDT）",
+    "LOGIN_DAY": "登入天數",
+    "TURNOVER": "交易量",
+    "REFERRAL_QUALIFIED": "達標邀請人數"
+  },
+  "enrollmentSources": {
+    "ASSIGN": "系統指派",
+    "SELF": "自行參加",
+    "REFERRAL": "邀請加入"
+  },
+  "checkIn": {
+    "success": "簽到成功",
+    "pending": "簽到中…",
+    "error": "簽到失敗，請稍後再試"
+  },
+  "progress": {
+    "remainingToTarget": "還差 {{amount}} {{unit}} 達標",
+    "unit": {
+      "CHECK_IN_STREAK": "次",
+      "REFERRAL": "人"
+    }
+  },
+  "countdown": {
+    "ended": "已結束",
+    "daysHours": "{{days}}天 {{hours}}時",
+    "daysHoursMinutes": "剩餘 {{days}} 天 {{hours}} 小時 {{minutes}} 分鐘"
+  },
+  "reward": {
+    "creditedLabel": "已到帳"
+  },
+  "cta": {
+    "deposit": "去充值",
+    "viewDetail": "查看詳情",
+    "checkIn": "立即簽到",
+    "invite": "邀請好友"
+  },
+  "empty": {
+    "title": "專屬獎勵即將為你開啟",
+    "description": "當有獎勵任務下發給你時，將顯示在這裡。敬請期待。"
+  },
+  "detail": {
+    "back": "返回獎勵列表",
+    "notFoundTitle": "任務不存在",
+    "notFoundDescription": "此獎勵任務不存在或已不可用。",
+    "sectionProgress": "進度",
+    "sectionInfo": "任務資訊"
+  },
+  "states": {
+    "loadError": "獎勵任務載入失敗",
+    "retry": "重試",
+    "loadMore": "載入更多"
+  }
+}

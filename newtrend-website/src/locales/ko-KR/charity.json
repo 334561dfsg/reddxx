@@ -1,0 +1,161 @@
+{
+  "seo": {
+    "title": "기부 — 선한 거래",
+    "description": "{{brand}} 펀딩 잔액으로 검증된 공익 캠페인을 후원하세요."
+  },
+  "hero": {
+    "goToSlide": "{{index}}번 슬라이드로 이동"
+  },
+  "stats": {
+    "label": "진행 중인 캠페인",
+    "title": "함께라면 의미 있는 변화를 만듭니다",
+    "totalRaised": "총 모금액",
+    "peopleHelped": "도움받은 사람"
+  },
+  "campaigns": {
+    "title": "진행 중인 캠페인",
+    "subtitle": "사업을 선택하고 펀딩 계정에서 직접 기부하세요.",
+    "completedBadge": "목표 달성",
+    "raisedLabel": "모금액",
+    "targetLabel": "목표",
+    "progress": "{{percent}}% 달성",
+    "donate": "기부",
+    "view": "자세히 보기",
+    "loadingTitle": "캠페인 불러오는 중",
+    "empty": {
+      "title": "현재 진행 중인 캠페인이 없습니다",
+      "desc": "새로운 사업이 정기적으로 추가됩니다. 곧 다시 확인해 주세요."
+    },
+    "error": {
+      "title": "캠페인을 불러오지 못했습니다",
+      "desc": "캠페인을 가져오는 중 문제가 발생했습니다.",
+      "retry": "다시 시도"
+    },
+    "statusActive": "진행 중",
+    "statusInactive": "종료",
+    "peopleHelped": "{{value}}명 지원"
+  },
+  "howItWorks": {
+    "title": "작동 방식",
+    "steps": [
+      {
+        "title": "비영리단체",
+        "desc": "전 세계 비영리단체가 {{brand}}에 신청·가입하여 더 많은 자금을 확보하고 새로운 역량을 키우며 중요한 관계를 맺습니다."
+      },
+      {
+        "title": "기부자",
+        "desc": "여러분 같은 분들이 좋아하는 프로젝트에 기부합니다. 신뢰할 수 있는 단체가 자금을 어떻게 사용했는지 소식을 받으면 정말 뿌듯합니다."
+      },
+      {
+        "title": "기업",
+        "desc": "관대한 기업과 임직원이 기부와 후원으로 임팩트 높은 프로젝트를 지원하고 지역사회의 번영을 돕습니다."
+      },
+      {
+        "title": "우리의 영향",
+        "desc": "비영리단체는 필요한 자금을 확보해 피드백을 경청하고 새로운 업무 방식을 시도합니다. 전 세계 지역사회가 더 나아집니다!"
+      }
+    ]
+  },
+  "narrative": {
+    "label": "우리의 약속",
+    "title": "시장은 부를 창출합니다. 우리는 그것이 더 멀리 닿도록 돕습니다.",
+    "lead": "{{brand}}는 열린 시장이 기회를 만든다는 믿음 위에 세워졌습니다. 기부는 시장이 너무 자주 외면하는 사람들에게 그 기회를 확장하는 우리의 방식입니다.",
+    "paragraphs": [
+      "이 페이지의 모든 캠페인은 공개 전에 당사 파트너십 팀과 독립 NGO 파트너의 검증을 거칩니다. 단체, 예산, 의도한 성과를 확인하고 자금이 집행됨에 따라 진행 상황을 공개합니다.",
+      "기부금이 이미 당사가 운영하는 경로로 이동하기 때문에 카드 수수료, 환전 스프레드, 중간에서 떼어가는 중개자가 없습니다. 기부하신 금액이 곧 도착하는 금액입니다.",
+      "이것은 시작일 뿐입니다. 커뮤니티가 성장할수록 깨끗한 물, 교육, 의료, 긴급 구호를 대규모로 후원할 수 있는 역량도 커집니다."
+    ],
+    "highlights": [
+      {
+        "title": "검증된 파트너",
+        "desc": "모든 NGO는 정당성, 거버넌스, 실적에 대해 검토됩니다."
+      },
+      {
+        "title": "수수료 없음",
+        "desc": "비용을 저희가 부담하여 기부금의 100%가 해당 목적에 전달됩니다."
+      },
+      {
+        "title": "공개 보고",
+        "desc": "마일스톤 및 임팩트 업데이트가 커뮤니티에 공유됩니다."
+      }
+    ]
+  },
+  "donate": {
+    "title": "{{name}}에 기부",
+    "description": "기부금은 펀딩 {{asset}} 잔액에서 차감됩니다.",
+    "amountLabel": "기부 금액",
+    "amountPlaceholder": "0.00",
+    "rangeHint": "최소 {{min}} · 최대 {{max}} {{asset}}",
+    "minOnlyHint": "최소 {{min}} {{asset}}",
+    "raisedSummary": "{{raised}} / {{target}} {{asset}} 모금됨",
+    "cancel": "취소",
+    "submit": "내용 확인",
+    "submitting": "처리 중…",
+    "confirm": {
+      "title": "기부 내용 확인",
+      "description": "펀딩 잔액에서 차감하기 전에 내용을 확인하세요.",
+      "projectLabel": "기부 대상",
+      "amountLabel": "기부 금액",
+      "sourceLabel": "출금 계정",
+      "sourceValue": "펀딩 잔액",
+      "back": "수정하기",
+      "submit": "기부 확인",
+      "notice": "확정된 기부는 취소하거나 환불할 수 없습니다.",
+      "reviewNotice": "기부는 플랫폼 검토 후 완료됩니다. 검토 중에는 해당 금액이 동결되며, 승인되지 않으면 전액 반환됩니다."
+    },
+    "success": {
+      "title": "관대한 후원에 감사드립니다",
+      "desc": "{{name}}에 {{amount}} {{asset}}을(를) 기부하셨습니다.",
+      "donationId": "참조: {{id}}",
+      "done": "완료"
+    },
+    "pendingReview": {
+      "title": "기부가 접수되었습니다",
+      "desc": "플랫폼 승인 후 출금이 완료되며, 결과는 메시지로 알려 드립니다."
+    },
+    "errors": {
+      "invalidAmount": "유효한 기부 금액을 입력하세요.",
+      "minAmount": "최소 기부 금액은 {{amount}} {{asset}}입니다.",
+      "maxAmount": "최대 기부 금액은 {{amount}} {{asset}}입니다.",
+      "CHARITY_PROJECT_NOT_AVAILABLE": "이 캠페인은 현재 기부를 받지 않습니다.",
+      "CHARITY_DONATION_AMOUNT_INVALID": "이 캠페인에 대해 기부 금액이 유효하지 않습니다.",
+      "CHARITY_FUNDING_TARGET_EXCEEDED": "이 기부는 캠페인의 모금 목표를 초과합니다.",
+      "CHARITY_INSUFFICIENT_BALANCE": "이 기부를 위한 펀딩 잔액이 부족합니다.",
+      "VALIDATION_ERROR": "기부 금액을 확인하고 다시 시도하세요.",
+      "CHARITY_PROJECT_NOT_FOUND": "이 캠페인을 찾을 수 없습니다.",
+      "ENTITY_NOT_FOUND": "이 캠페인을 찾을 수 없습니다.",
+      "generic": "기부에 실패했습니다. 다시 시도하세요."
+    }
+  },
+  "donations": {
+    "label": "나의 기부",
+    "title": "나의 기부 내역",
+    "subtitle": "회원님이 후원한 모든 캠페인의 기록입니다.",
+    "signedOut": {
+      "title": "로그인하여 기부 내역을 확인하세요",
+      "desc": "그동안의 기부와 후원한 프로젝트를 확인할 수 있습니다.",
+      "action": "로그인"
+    },
+    "empty": {
+      "title": "회원님의 나눔 이야기가 여기서 시작됩니다",
+      "desc": "아직 기부 내역이 없습니다. 위 캠페인을 후원하여 첫 기부를 시작해 보세요."
+    },
+    "error": {
+      "title": "기부 내역을 불러오지 못했습니다",
+      "desc": "문제가 발생했습니다. 다시 시도해 주세요.",
+      "retry": "다시 시도"
+    },
+    "recentNote": "최근 {{shown}}건(총 {{total}}건)을 표시합니다",
+    "columns": {
+      "project": "캠페인",
+      "amount": "금액",
+      "date": "날짜",
+      "status": "상태"
+    },
+    "statusCompleted": "완료",
+    "statusPendingReview": "검토 중",
+    "statusRejected": "미승인",
+    "unknownProject": "자선 캠페인"
+  },
+  "slideLabel": "자선 슬라이드 {{index}}: {{title}}"
+}

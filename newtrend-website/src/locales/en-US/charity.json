@@ -1,0 +1,161 @@
+{
+  "seo": {
+    "title": "Charity — Trading for Good",
+    "description": "Support vetted public-good campaigns with your {{brand}} Funding balance."
+  },
+  "hero": {
+    "goToSlide": "Go to slide {{index}}"
+  },
+  "stats": {
+    "label": "Active campaigns",
+    "title": "Together we are making it count",
+    "totalRaised": "Total raised",
+    "peopleHelped": "People helped"
+  },
+  "campaigns": {
+    "title": "Active campaigns",
+    "subtitle": "Choose a cause and contribute directly from your Funding account.",
+    "completedBadge": "Goal reached",
+    "raisedLabel": "Raised",
+    "targetLabel": "Goal",
+    "progress": "{{percent}}% funded",
+    "donate": "Donate",
+    "view": "Learn more",
+    "loadingTitle": "Loading campaigns",
+    "empty": {
+      "title": "No active campaigns right now",
+      "desc": "New causes are added regularly. Please check back soon."
+    },
+    "error": {
+      "title": "Couldn't load campaigns",
+      "desc": "Something went wrong while fetching campaigns.",
+      "retry": "Try again"
+    },
+    "statusActive": "Active",
+    "statusInactive": "Ended",
+    "peopleHelped": "{{value}} people helped"
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "steps": [
+      {
+        "title": "Nonprofits",
+        "desc": "Nonprofits worldwide apply and join {{brand}} to access more funding, build new skills, and form vital connections."
+      },
+      {
+        "title": "Donors",
+        "desc": "People like you donate to the projects you love; getting updates on how trusted organizations use your funds feels great."
+      },
+      {
+        "title": "Companies",
+        "desc": "Generous companies and their employees give and fund further to support high-impact projects and help local communities thrive."
+      },
+      {
+        "title": "Our impact",
+        "desc": "Nonprofits get the funding they need to listen to feedback and try new ways of working; communities everywhere become better off!"
+      }
+    ]
+  },
+  "narrative": {
+    "label": "Our commitment",
+    "title": "Markets create wealth. We help it reach further.",
+    "lead": "{{brand}} was built on the belief that open markets create opportunity. Charity is how we extend that opportunity to people the markets too often leave behind.",
+    "paragraphs": [
+      "Every campaign on this page is vetted by our partnerships team and an independent NGO partner before it goes live. We verify the organisation, the budget and the intended outcome, and we publish progress as funds are deployed.",
+      "Because donations move on rails we already operate, there are no card fees, no FX spreads and no intermediaries skimming the top. The amount you give is the amount that arrives.",
+      "This is just the beginning. As the community grows, so does our capacity to fund clean water, education, healthcare and emergency relief at scale."
+    ],
+    "highlights": [
+      {
+        "title": "Vetted partners",
+        "desc": "Every NGO is reviewed for legitimacy, governance and track record."
+      },
+      {
+        "title": "Zero fees",
+        "desc": "We absorb the cost so 100% of your donation reaches the cause."
+      },
+      {
+        "title": "Public reporting",
+        "desc": "Milestone and impact updates are shared back with the community."
+      }
+    ]
+  },
+  "donate": {
+    "title": "Donate to {{name}}",
+    "description": "Your contribution is debited from your Funding {{asset}} balance.",
+    "amountLabel": "Donation amount",
+    "amountPlaceholder": "0.00",
+    "rangeHint": "Min {{min}} · Max {{max}} {{asset}}",
+    "minOnlyHint": "Minimum {{min}} {{asset}}",
+    "raisedSummary": "{{raised}} / {{target}} {{asset}} raised",
+    "cancel": "Cancel",
+    "submit": "Review donation",
+    "submitting": "Processing…",
+    "confirm": {
+      "title": "Review your donation",
+      "description": "Check the details before we debit your Funding balance.",
+      "projectLabel": "Campaign",
+      "amountLabel": "You donate",
+      "sourceLabel": "Paid from",
+      "sourceValue": "Funding balance",
+      "back": "Back to edit",
+      "submit": "Confirm donation",
+      "notice": "Donations are final. Once confirmed, this amount cannot be reversed or refunded.",
+      "reviewNotice": "Donations are reviewed by the platform before they're completed. The amount is frozen during review and returned in full if the donation isn't approved."
+    },
+    "success": {
+      "title": "Thank you for your generosity",
+      "desc": "You donated {{amount}} {{asset}} to {{name}}.",
+      "donationId": "Reference: {{id}}",
+      "done": "Done"
+    },
+    "pendingReview": {
+      "title": "Donation submitted",
+      "desc": "The amount will be debited once the platform approves your donation. We'll send the result to your Messages."
+    },
+    "errors": {
+      "invalidAmount": "Please enter a valid donation amount.",
+      "minAmount": "Minimum donation is {{amount}} {{asset}}.",
+      "maxAmount": "Maximum donation is {{amount}} {{asset}}.",
+      "CHARITY_PROJECT_NOT_AVAILABLE": "This campaign is not accepting donations right now.",
+      "CHARITY_DONATION_AMOUNT_INVALID": "The donation amount is invalid for this campaign.",
+      "CHARITY_FUNDING_TARGET_EXCEEDED": "This donation would exceed the campaign's funding goal.",
+      "CHARITY_INSUFFICIENT_BALANCE": "Your Funding balance is insufficient for this donation.",
+      "VALIDATION_ERROR": "Please check the donation amount and try again.",
+      "CHARITY_PROJECT_NOT_FOUND": "This campaign could not be found.",
+      "ENTITY_NOT_FOUND": "This campaign could not be found.",
+      "generic": "Donation failed. Please try again."
+    }
+  },
+  "donations": {
+    "label": "Your giving",
+    "title": "Your donation history",
+    "subtitle": "A record of every campaign you have supported.",
+    "signedOut": {
+      "title": "Sign in to see your giving",
+      "desc": "Track every donation you have made and the causes you have supported.",
+      "action": "Sign in"
+    },
+    "empty": {
+      "title": "Your giving story starts here",
+      "desc": "You have not donated yet. Support a campaign above to make your first contribution."
+    },
+    "error": {
+      "title": "Couldn’t load your donations",
+      "desc": "Something went wrong. Please try again.",
+      "retry": "Retry"
+    },
+    "recentNote": "Showing your most recent {{shown}} of {{total}}",
+    "columns": {
+      "project": "Campaign",
+      "amount": "Amount",
+      "date": "Date",
+      "status": "Status"
+    },
+    "statusCompleted": "Completed",
+    "statusPendingReview": "Under review",
+    "statusRejected": "Not approved",
+    "unknownProject": "Charity campaign"
+  },
+  "slideLabel": "Charity slide {{index}}: {{title}}"
+}

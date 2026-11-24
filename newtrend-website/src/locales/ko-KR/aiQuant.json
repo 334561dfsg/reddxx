@@ -1,0 +1,567 @@
+{
+  "landing": {
+    "eyebrow": "AI 퀀트",
+    "title": "AI에게 거래를 맡기거나, 운용 펀드에 위탁하세요",
+    "subtitle": "독립된 두 개의 제품 라인. 하나를 골라 시작하세요. 언제든 전환할 수 있습니다.",
+    "strategy": {
+      "kicker": "AI 엔진 · 자동 실행",
+      "name": "전략",
+      "valueProp": "검증된 템플릿을 기반으로 AI 엔진이 자동으로 주문하고 거래합니다. 템플릿을 고르면 엔진이 실행합니다.",
+      "chipA": "백테스트 완료",
+      "chipB": "리스크 상한",
+      "browse": "전략 둘러보기",
+      "mine": "내 전략",
+      "mineHint": "개인 · 실행 중인 인스턴스"
+    },
+    "quantFund": {
+      "kicker": "AI 운용 · 신경 끄기",
+      "name": "퀀트 펀드",
+      "valueProp": "AI가 운용하는 정기형 펀드. 청약하면 만기에 자동으로 정산됩니다.",
+      "chipA": "정기",
+      "chipB": "자동 정산",
+      "browse": "펀드 둘러보기",
+      "mine": "내 포지션",
+      "mineHint": "개인 · 청약 및 이자"
+    }
+  },
+  "nav": {
+    "ariaLabel": "AI 퀀트 모듈 내비게이션",
+    "strategy": "전략",
+    "myStrategies": "내 전략",
+    "quantFund": "퀀트 펀드",
+    "myPositions": "내 포지션"
+  },
+  "myStrategies": {
+    "subtitle": "실행 중인 AI 전략",
+    "title": "내 전략",
+    "empty": "구독한 전략이 없습니다. 템플릿을 둘러보고 시작하세요.",
+    "browseStrategies": "템플릿 둘러보기",
+    "summary": {
+      "totalCapital": "총 투자금",
+      "totalPnl": "총 손익",
+      "running": "실행 중",
+      "total": "전략 수"
+    }
+  },
+  "table": {
+    "columns": {
+      "strategyName": "전략",
+      "styleMarket": "스타일 / 시장",
+      "trend": "손익 추세",
+      "pnl": "손익",
+      "capital": "자본",
+      "endDate": "종료",
+      "action": "작업"
+    }
+  },
+  "hero": {
+    "subtitle": "AI 퀀트",
+    "title": "모든 트레이더를 위한 퀀트 파워.",
+    "description": "수백 개의 AI 기반 전략, 투명한 리스크 파라미터, 그리고 모든 의사결정에 대한 완전한 통제. 템플릿을 구독하고 한도를 설정한 뒤 수학이 무거운 일을 처리하도록 맡기세요.",
+    "browseStrategies": "전략 둘러보기",
+    "howItWorks": "작동 방식",
+    "modelsRunning": "모델 실행 중 · 연중무휴",
+    "statActive": "활성",
+    "statActiveSub": "현재 실행 중인 전략",
+    "statActiveFallback": "이용 가능한 템플릿",
+    "statActiveFallbackSub": "구독 가능한 전략 수",
+    "statAvgSharpe": "중앙값 샤프 지수",
+    "statAvgSharpeSub": "등록된 템플릿 전체 기준"
+  },
+  "howItWorks": {
+    "title": "AI 퀀트 작동 방식",
+    "description": "전략이 구축되고 백테스트되며 실행되는 방식에 대한 간단한 안내입니다.",
+    "empty": "소개 영상을 현재 이용할 수 없습니다. 나중에 다시 확인해 주세요.",
+    "unsupported": "사용 중인 브라우저가 video 태그를 지원하지 않습니다."
+  },
+  "sections": {
+    "featured": "오늘의 추천",
+    "live": "실시간 성과",
+    "browse": "전략 둘러보기"
+  },
+  "spotlight": {
+    "subtitle": "보수·균형·공격 각 스타일에서 샤프 지수가 가장 높은 전략을 하나씩 골라 바로 구독할 수 있게 준비했습니다.",
+    "styleBadge": {
+      "conservative": "안정형 추천",
+      "balanced": "균형형 추천",
+      "aggressive": "공격형 추천"
+    },
+    "subscribeNow": "지금 구독하기"
+  },
+  "templates": {
+    "label": "전략 템플릿",
+    "title": "전략 템플릿",
+    "subtitle": "각 템플릿은 공개된 리스크 및 수익 지표를 가진 검증된 AI 모델로 실행됩니다.",
+    "recommendedTitle": "추천",
+    "filterAll": "전체",
+    "filterByStyle": "스타일",
+    "filterByMarket": "시장",
+    "empty": "필터에 맞는 전략이 아직 없습니다.",
+    "loading": "전략 불러오는 중…",
+    "subscribe": "구독",
+    "sortBy": {
+      "label": "정렬",
+      "sharpe_desc": "샤프 지수 · 높은 순",
+      "sharpe_asc": "샤프 지수 · 낮은 순",
+      "winRate_desc": "승률 · 높은 순",
+      "winRate_asc": "승률 · 낮은 순",
+      "minCapital_desc": "최소 자본 · 높은 순",
+      "minCapital_asc": "최소 자본 · 낮은 순",
+      "period_desc": "기간 · 긴 순",
+      "period_asc": "기간 · 짧은 순"
+    },
+    "fields": {
+      "winRate": "승률",
+      "sharpeRatio": "샤프 지수",
+      "aiModel": "AI 모델",
+      "tradesPerDay": "일일 거래 수",
+      "tradesPerDayValue": "일평균 {{n}}회",
+      "capital": "자본 ({{asset}})",
+      "period": "기간",
+      "riskLevel": "리스크",
+      "supportedSymbols": "심볼"
+    },
+    "riskLevelValue": "Lv.{{level}}",
+    "guideCard": {
+      "title": "마음에 드는 전략을 찾지 못하셨나요?",
+      "description": "AI가 전 과정을 운용하는 퀀트 펀드를 살펴보세요. 청약 후 지켜볼 필요 없이 만기에 자동 정산됩니다.",
+      "cta": "퀀트 펀드 둘러보기"
+    }
+  },
+  "style": {
+    "conservative": "보수적",
+    "balanced": "균형",
+    "aggressive": "공격적"
+  },
+  "market": {
+    "crypto": "암호화폐",
+    "stock": "주식",
+    "forex": "외환",
+    "indices": "지수"
+  },
+  "aiModelNames": {
+    "local": "자체 개발 퀀트 모델"
+  },
+  "detail": {
+    "title": "전략 상세",
+    "close": "닫기",
+    "openAria": "{{name}} 상세 보기",
+    "descriptionTitle": "전략 소개",
+    "paramsTitle": "주요 파라미터",
+    "periodValue": "{{min}} – {{max}}일",
+    "dailyTargetLabel": "일일 목표 수익률",
+    "dailyTargetValue": "{{percent}}%/일",
+    "explain": {
+      "sharpeRatio": "감수한 위험 한 단위당 얻은 수익을 나타내며, 높을수록 위험 조정 성과가 우수합니다.",
+      "winRate": "과거 거래 중 수익으로 마감한 비율입니다.",
+      "riskLevel": "플랫폼이 평가한 변동성·낙폭 등급으로, 높을수록 변동이 큽니다."
+    }
+  },
+  "strategies": {
+    "label": "내 전략",
+    "title": "내 전략",
+    "subtitle": "계정에 구독된 모든 전략의 실시간 현황.",
+    "trendPlaceholder": "성과 추이 곧 제공 예정",
+    "empty": "아직 활성 전략이 없습니다. 템플릿을 선택해 시작하세요.",
+    "loginRequired": "전략을 관리하려면 로그인하세요.",
+    "fields": {
+      "capital": "자본",
+      "pnl": "손익",
+      "returnPercent": "수익률",
+      "period": "기간",
+      "tradesCount": "거래 수",
+      "winRate": "승률",
+      "endDate": "종료"
+    }
+  },
+  "status": {
+    "initializing": "초기화 중",
+    "running": "실행 중",
+    "paused": "일시정지",
+    "completed": "완료",
+    "pending_review": "검토 중",
+    "rejected": "거부됨"
+  },
+  "actions": {
+    "pause": "일시정지",
+    "resume": "재개",
+    "stop": "중지",
+    "viewStats": "통계 보기",
+    "hideStats": "통계 접기",
+    "toast": {
+      "pauseSuccess": "전략을 일시정지했습니다",
+      "pauseError": "전략을 일시정지하지 못했습니다. 다시 시도해 주세요.",
+      "resumeSuccess": "전략을 재개했습니다",
+      "resumeError": "전략을 재개하지 못했습니다. 다시 시도해 주세요.",
+      "stopSuccess": "전략을 정지했습니다",
+      "stopError": "전략을 정지하지 못했습니다. 다시 시도해 주세요."
+    },
+    "stopConfirm": {
+      "title": "이 전략을 정지할까요?",
+      "notice": "정지하면 '{{name}}'의 모든 미결제 포지션이 청산되고 전략이 종료됩니다. 실현 손익은 유지되지만 이 작업은 되돌릴 수 없습니다.",
+      "cancel": "계속 실행",
+      "confirm": "전략 정지",
+      "confirming": "정지 중…"
+    }
+  },
+  "create": {
+    "title": "{{name}} 구독",
+    "subtitle": "자본, 손절, 익절, 기간을 설정하세요.",
+    "subtitleDailyTarget": "원금과 운용 기간을 설정하세요. 이 템플릿은 고정 일일 목표 수익률로 운용되므로 익절/손절 설정이 필요하지 않습니다.",
+    "demoNotice": "데모 모드: 자본금은 모의 계좌에서 예약되며 실제 자금은 사용되지 않습니다.",
+    "capitalLabel": "자본 ({{asset}})",
+    "availableBalanceLabel": "사용 가능",
+    "maxButton": "최대",
+    "capitalHint": "범위: {{min}} – {{max}}",
+    "takeProfitLabel": "익절 (%)",
+    "stopLossLabel": "손절 (%)",
+    "periodLabel": "기간 (일)",
+    "periodHint": "범위: {{min}} – {{max}} 일",
+    "submit": "구독",
+    "submitting": "제출 중…",
+    "cancel": "취소",
+    "submitSuccess": "구독이 완료되었습니다",
+    "fees": {
+      "title": "수수료 및 규칙",
+      "feePerTrade": "거래당 수수료",
+      "feePerTradeValue": "{{fee}} {{asset}}",
+      "maxOpenTrades": "최대 동시 포지션",
+      "maxOpenTradesValue": "{{n}}건"
+    },
+    "settlementNote": "전략은 언제든지 조기 종료할 수 있습니다. 종료 시 모든 미결제 포지션이 청산되고 전략이 종료되며, 실현 손익은 계정에 남습니다.",
+    "simulator": {
+      "title": "예상 수익 시뮬레이션",
+      "params": "{{rate}}%/일 ±{{tolerance}}% · 일복리",
+      "range": "시뮬레이션 범위: {{lower}} – {{upper}}",
+      "legendExpected": "예상",
+      "legendBand": "변동 범위",
+      "tooltipDay": "{{day}}일차",
+      "tooltipExpected": "예상",
+      "tooltipUpper": "상한",
+      "tooltipLower": "하한",
+      "emptyHint": "원금과 기간을 입력하면 시뮬레이션이 표시됩니다.",
+      "disclaimer": "본 시뮬레이션은 템플릿의 일일 목표와 허용 범위를 일복리로 추산한 참고용 수치이며, 수익을 보장하지 않습니다."
+    },
+    "errors": {
+      "capitalRequired": "자본 금액을 입력하세요.",
+      "belowMin": "자본은 최소 {{min}} 이상이어야 합니다.",
+      "aboveMax": "자본은 {{max}}을(를) 초과할 수 없습니다.",
+      "emptyRange": "이 템플릿은 현재 귀하의 계정에서 이용할 수 없습니다.",
+      "periodOutOfRange": "기간은 {{min}}일에서 {{max}}일 사이여야 합니다.",
+      "takeProfitOutOfRange": "익절은 1%에서 100% 사이여야 합니다.",
+      "stopLossOutOfRange": "손절은 1%에서 50% 사이여야 합니다.",
+      "createFailed": "전략 생성에 실패했습니다. 다시 시도해 주세요.",
+      "badRequest": "요청이 거부되었습니다. 입력 내용을 확인해 주세요.",
+      "unauthorized": "전략을 생성하려면 로그인하세요.",
+      "paymentRequired": "잔액이 부족합니다. 이 전략을 생성하기 전에 충전해 주세요.",
+      "notFound": "이 전략 템플릿은 더 이상 이용할 수 없습니다.",
+      "conflict": "충돌하는 전략이 이미 실행 중입니다. 중지하거나 종료될 때까지 기다려 주세요.",
+      "validation": "일부 입력 항목이 올바르지 않습니다. 확인 후 다시 시도해 주세요."
+    }
+  },
+  "dailyStats": {
+    "netPnl": "순손익",
+    "tradesLabel": "거래 횟수",
+    "activeDays": "거래일 수",
+    "date": "날짜",
+    "pnl": "손익",
+    "loss": "손실",
+    "profit": "수익",
+    "empty": "이 기간에 청산된 거래가 아직 없습니다.",
+    "rangeCaption": "{{range}} · UTC",
+    "showingLatest": "최근 {{shown}}일 / 총 {{total}}일 표시"
+  },
+  "risk": {
+    "title": "리스크 고지",
+    "body": "과거의 성과가 미래의 결과를 보장하지 않습니다. AI 전략 및 신호는 참고 도구일 뿐 금융 자문이 아닙니다. 암호화폐 및 선물 거래는 전체 잔액을 잃을 수 있으므로 — 잃어도 감당할 수 있는 금액만 거래하세요."
+  },
+  "quantFund": {
+    "title": "퀀트 펀드",
+    "hero": {
+      "subtitle": "AI 운용 퀀트 펀드",
+      "title": "퀀트 펀드 — AI 운용 확정 기간 수익",
+      "description": "당사 AI 퀀트 장부가 운용하는 확정 기간 상품입니다. 정해진 기간 동안 예치하고 일일 수익률로 이자를 적립하며 만기 시 정산이 자동으로 진행됩니다.",
+      "disclaimer": "AI 운용 · 확정 기간 정산",
+      "viewPositionsCta": "내 포지션"
+    },
+    "filters": {
+      "assetAll": "전체 자산"
+    },
+    "card": {
+      "dailyReturn": "일일 수익률",
+      "term": "기간",
+      "termDaysValue": "{{days}}일",
+      "termFlexible": "자유형",
+      "investmentLimit": "구독 범위 ({{currency}})",
+      "availableQuota": "이용 가능 한도",
+      "subscribedDisplayed": "구독됨",
+      "projectProgress": "프로젝트 진행률",
+      "maxUnlimited": "무제한",
+      "tagFlexible": "자유형",
+      "tagRedeemable": "언제든 환매",
+      "cta": "구독",
+      "ctaSoldOut": "한도 소진"
+    },
+    "creditScore": {
+      "label": "최소 신용 점수",
+      "requirement": "신용 점수 {{score}} 이상",
+      "insufficient": "신용 점수 {{required}} 이상 필요, 현재 {{current}}"
+    },
+    "detail": {
+      "investmentRange": "구독 범위",
+      "minHoldDays": "최소 보유 {{days}}일",
+      "subscribeCta": "지금 구독",
+      "disclosure": "공시 문서",
+      "calcTitle": "수익 계산기",
+      "calcDaysLabel": "보유 기간",
+      "calcEstTotal": "예상 총 수익",
+      "calcDisclaimer": "계산 결과는 참고용이며 수익을 보장하지 않습니다.",
+      "calcAccrualNote": "{{days}}일 미만 보유 시 수익이 발생하지 않습니다.",
+      "flowTitle": "이용 절차",
+      "flowStep1Title": "구독",
+      "flowStep1Desc": "금액을 선택하고 펀딩 계정 잔액으로 구독을 확정합니다.",
+      "flowStep2Title": "이자 발생 시작",
+      "flowStep2Desc": "구독 확정 후 수익이 누적되기 시작합니다.",
+      "flowStep3Title": "수익 지급",
+      "flowStep3Desc": "수익은 정기적으로 정산되어 계정에 지급됩니다.",
+      "flowStep4Title": "환매",
+      "flowStep4DescFixed": "만기 시 원금과 수익이 자동 반환됩니다.",
+      "flowStep4DescFlexible": "언제든지 환매 가능하며 자금은 펀딩 계정으로 반환됩니다.",
+      "quotaTitle": "한도 상세",
+      "quotaTotal": "총 한도",
+      "quotaPerUser": "1인 한도",
+      "moreTitle": "다른 상품"
+    },
+    "riskLevel": {
+      "LOW": "낮은 리스크",
+      "MEDIUM": "중간 리스크",
+      "HIGH": "높은 리스크",
+      "EXTREME": "극도 리스크"
+    },
+    "subscribe": {
+      "title": "{{name}} 구독",
+      "amountLabel": "금액 ({{currency}})",
+      "amountHint": "범위: {{min}} – {{max}} {{currency}}",
+      "availableBalanceLabel": "사용 가능",
+      "maxButton": "최대",
+      "estDailyEarnings": "예상 일일 수익",
+      "riskAckPrefix": "다음 내용을 읽고 동의합니다: ",
+      "riskAckLink": "퀀트 펀드 리스크 공시",
+      "riskAckSuffix": " (이 상품에 대한).",
+      "submit": "구독 확인",
+      "submitting": "제출 중…",
+      "cancel": "취소",
+      "errorAmountRange": "금액은 {{min}}에서 {{max}} {{currency}} 사이여야 합니다.",
+      "errorAmountInvalid": "유효한 금액을 입력하세요.",
+      "errorExceedsAvailable": "금액이 남은 한도를 초과합니다. {{available}} {{currency}}만 남았습니다 — 금액을 조정해 주세요.",
+      "errorInsufficientBalance": "사용 가능한 잔액이 부족합니다. 현재 {{available}} {{currency}} 사용 가능합니다.",
+      "goDeposit": "입금하기",
+      "errorRequireRiskAck": "계속하기 전에 리스크 고지를 확인해 주세요.",
+      "success": "구독이 확인되었습니다",
+      "close": "닫기"
+    },
+    "redeem": {
+      "button": "환매",
+      "title": "주문 환매",
+      "confirmNotice": "이자는 실제 보유 일수에 따라 적립됩니다. 최소 {{minHoldDays}}일 미만으로 보유 시 이자가 없습니다. 최종 금액은 정산 시 확정됩니다.",
+      "confirmNoticeNoMin": "이자는 실제 보유 일수에 따라 적립됩니다. 최종 금액은 정산 시 확정됩니다.",
+      "reviewNotice": "이 환매는 검토가 필요합니다. 제출 후 관리자가 승인해야 지급되며, 그때까지 원금은 펀드에 남아 계속 이자가 적립됩니다.",
+      "confirm": "환매 확인",
+      "submitting": "제출 중…",
+      "cancel": "취소",
+      "resultTitle": "환매 완료",
+      "pendingTitle": "환매 신청이 제출되었습니다",
+      "pendingDescription": "환매가 검토를 기다리고 있습니다. 관리자가 승인할 때까지 원금은 펀드에 남아 계속 이자가 적립됩니다.",
+      "settledPrincipal": "정산 원금",
+      "settledInterest": "정산 이자",
+      "heldDaysLabel": "보유 기간",
+      "heldDays": "{{days}}일",
+      "fundsReturned": "원금과 이자가 펀딩 계정으로 반환되었습니다.",
+      "done": "완료",
+      "confirmNoticeEarlyRedeem": "이 상품은 잠금 기간이 있는 상품입니다. 조기 상환 시 남은 잠금 일수에 따라 위약금이 부과됩니다. 최종 금액은 정산 시 확정됩니다.",
+      "penaltyAmount": "조기 상환 위약금",
+      "remainingLockDays": "남은 잠금 기간",
+      "remainingLockDaysValue": "{{days}}일",
+      "notSupported": "조기 상환 미지원",
+      "needVip": "조기 상환은 VIP {{tier}} 이상 필요",
+      "penaltyEstimate": "예상 위약금"
+    },
+    "topUp": {
+      "button": "추가하기",
+      "title": "청약 금액 추가",
+      "description": "추가하여 심사 재개",
+      "countdownLabel": "추가 납입 마감",
+      "countdownDaysHours": "{{days}}일 {{hours}}시간",
+      "countdownDaysHoursMinutes": "{{days}}일 {{hours}}시간 {{minutes}}분",
+      "expired": "기한 만료",
+      "overdue": "기한 초과",
+      "overdueDays": "{{days}}일 초과",
+      "deadlineNotice": "기한까지 추가 납입하지 않으면 주문이 자동으로 취소되고 원금이 반환됩니다.",
+      "lateFeeDeadlineNotice": "기한 내에 추가 납입하지 않으면 계정에 연체료가 부과됩니다.",
+      "lockedNotice": "추가 납입과 거절이 마감되었습니다. 연체료 납부는 고객센터로 문의해 주세요.",
+      "contactSupport": "고객센터 문의",
+      "noticeWithTarget": "심사자가 이 주문의 목표 금액을 {{target}} {{currency}}(으)로 설정했습니다. 아래에서 차액을 추가하여 심사를 재개하세요.",
+      "noticeGeneric": "심사자가 이 주문의 목표 금액을 조정했습니다. 확인하면 차액을 추가하고 심사를 재개합니다.",
+      "currentPrincipal": "현재 금액",
+      "targetAmount": "목표 금액",
+      "shortfall": "추가 필요 금액",
+      "availableBalanceLabel": "사용 가능",
+      "errorInsufficientBalance": "잔액이 부족하여 추가를 완료할 수 없습니다.",
+      "goDeposit": "입금하기",
+      "confirm": "추가 확인",
+      "submitting": "처리 중…",
+      "cancel": "취소",
+      "resultTitle": "추가 완료",
+      "resultPrincipal": "새 청약 금액",
+      "resultProjectedInterest": "예상 이자",
+      "resultStatusNotice": "주문이 다시 심사 중입니다.",
+      "done": "완료"
+    },
+    "decline": {
+      "button": "거절",
+      "title": "조정 거절",
+      "notice": "거절하면 이 주문이 취소되고 {{principal}} {{currency}}이(가) 사용 가능 잔액으로 반환됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "reasonLabel": "사유 (선택)",
+      "reasonPlaceholder": "사유를 알려주세요 (선택)",
+      "confirm": "거절 및 주문 취소",
+      "submitting": "처리 중…",
+      "cancel": "주문 유지",
+      "resultTitle": "주문이 취소됨",
+      "resultReleased": "잔액으로 반환됨",
+      "resultNotice": "자금이 사용 가능 잔액으로 반환되었습니다.",
+      "done": "완료"
+    },
+    "positions": {
+      "title": "내 퀀트 펀드 포지션",
+      "subtitle": "계정의 모든 퀀트 펀드 주문 및 정산 상태.",
+      "tabs": {
+        "all": "전체",
+        "active": "활성",
+        "pending_review": "검토 중",
+        "redeem_pending_review": "환매 검토 중",
+        "awaiting_top_up": "추가 입금 대기",
+        "rejected": "거부됨",
+        "settled": "정산됨",
+        "cancelled": "취소됨",
+        "redeemed": "환매됨"
+      },
+      "tabGroups": {
+        "all": "전체",
+        "pending": "처리 중",
+        "active": "활성",
+        "history": "내역"
+      },
+      "historyFilter": {
+        "all": "전체 상태"
+      },
+      "summary": {
+        "totalPrincipal": "총 원금",
+        "totalProjectedInterest": "예상 이자",
+        "activeInterestPaidTotal": "지급된 이자(보유 중)",
+        "settledTotalReceived": "정산 총 수령액",
+        "activeCount": "활성 주문",
+        "breakdownToggle": "자산별 내역",
+        "interestProgress": "이자 진행률 {{percent}}%",
+        "earningsTrend": "최근 {{days}}일 이자 추이",
+        "usdPrice": "@ {{price}} USD",
+        "partialValuation": "{{assets}}의 USD 가격이 없어 합계에는 평가 가능한 자산만 포함됩니다."
+      },
+      "empty": "이 탭에는 아직 주문이 없습니다.",
+      "table": {
+        "status": "상태",
+        "productName": "상품",
+        "principal": "원금",
+        "dailyReturn": "일일 수익률",
+        "term": "기간",
+        "projectedInterest": "예상 이자",
+        "interestPaidTotal": "지급 이자",
+        "interestPaidThrough": "지급 완료일",
+        "interestRemaining": "미지급",
+        "accruedInterestEstimate": "예상",
+        "subscribedAt": "구독일",
+        "maturityDate": "만기일",
+        "action": "작업"
+      },
+      "maturityPending": "승인 후 확정",
+      "fields": {
+        "productName": "상품",
+        "principal": "원금",
+        "dailyReturn": "일일 수익률",
+        "term": "기간",
+        "projectedInterest": "예상 이자",
+        "interestPaidTotal": "지급 이자",
+        "interestPaidThrough": "지급 완료일",
+        "interestRemaining": "미지급 이자",
+        "accruedInterestEstimate": "예상 발생 이자",
+        "minHoldDays": "최소 보유 기간",
+        "subscribedAt": "구독일",
+        "maturityDate": "만기일",
+        "settledAt": "정산 시각",
+        "settledInterest": "정산 이자",
+        "settledPrincipal": "정산 원금",
+        "settledTotal": "정산 합계",
+        "cancelReason": "취소 사유"
+      },
+      "detail": {
+        "title": "주문 상세",
+        "close": "주문 상세 닫기",
+        "viewProduct": "상품 보기",
+        "remainingDays": "{{days}}일 남음",
+        "sections": {
+          "interest": "이자",
+          "settlement": "정산"
+        }
+      },
+      "topUpReminder": {
+        "title": "추가 입금 대기 주문 {{count}}건",
+        "description": "기한까지 추가 납입하세요. 기한이 지나면 주문이 자동으로 취소되고 원금이 반환됩니다.",
+        "overdueDescription": "이 중 {{count}}건이 추가 납입 기한을 넘겼습니다. 지금 처리하시고, 접수가 종료된 경우 고객센터로 문의하세요.",
+        "overdueLockedDescription": "그중 {{count}}건이 기한을 넘겼습니다. 추가 납입과 거절이 마감되었으니 고객센터로 문의해 주세요.",
+        "cta": "추가하기"
+      }
+    },
+    "interestRecords": {
+      "title": "이자 지급 내역",
+      "subtitle": "이 주문의 건별 이자 지급 내역입니다.",
+      "back": "뒤로",
+      "entry": "이자 내역",
+      "table": {
+        "interestDate": "이자 산정일",
+        "amount": "수량",
+        "creditedAt": "입금 시각"
+      },
+      "empty": "아직 이자 지급 내역이 없습니다."
+    },
+    "status": {
+      "product": {
+        "active": "모집 중"
+      },
+      "order": {
+        "active": "활성",
+        "settled": "정산됨",
+        "cancelled": "취소됨",
+        "redeemed": "환매됨",
+        "redeem_pending_review": "환매 검토 중",
+        "pending_review": "검토 중",
+        "awaiting_top_up": "추가 입금 대기",
+        "rejected": "거부됨"
+      }
+    },
+    "errors": {
+      "unknown": "문제가 발생했습니다. 다시 시도해 주세요.",
+      "quotaExhausted": "이 상품은 매진되어 현재 구독할 수 없습니다.",
+      "exceedsRemainingQuota": "구독 금액이 상품의 남은 한도를 초과합니다. 금액을 조정해 주세요.",
+      "perUserQuotaExceeded": "구독 금액이 개인 구독 한도를 초과합니다. 금액을 조정해 주세요.",
+      "notAwaitingTopUp": "이 주문은 더 이상 추가 입금 대기 상태가 아닙니다. 이미 업데이트되었을 수 있습니다.",
+      "topUpLockedOverdue": "이 주문은 기한이 지났습니다. 추가 납입과 거절 접수가 종료되었으니 고객센터로 문의하세요.",
+      "insufficientBalance": "잔액이 부족하여 추가를 완료할 수 없습니다. 입금 후 다시 시도하세요.",
+      "insufficientCreditScore": "신용 점수가 이 상품의 청약 기준에 미달합니다."
+    },
+    "states": {
+      "loading": "불러오는 중…",
+      "empty": "아직 아무것도 없습니다.",
+      "error": "불러오기에 실패했습니다.",
+      "retry": "다시 시도"
+    }
+  }
+}

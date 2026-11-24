@@ -1,0 +1,335 @@
+{
+  "market": {
+    "subtitle": "담보 대출",
+    "title": "암호화폐 대출",
+    "description": "암호화폐 자산 또는 부동산, 은행 예금 등 오프라인 자산을 담보로 대출받으세요. 통화를 선택해 일일 이율, 한도, 조건을 확인하세요.",
+    "dailyRate": "일일 이율",
+    "annualized": "~{{value}}% 연이율",
+    "borrowRange": "대출 범위",
+    "term": "조건",
+    "termDays": "{{days}}일",
+    "borrowCta": "대출",
+    "loadError": "대출 가능 통화를 불러오지 못했습니다.",
+    "empty": "현재 대출 가능한 통화가 없습니다.",
+    "myLoans": "내 대출"
+  },
+  "borrow": {
+    "back": "마켓으로 돌아가기",
+    "title": "대출",
+    "titleWithCurrency": "{{currency}} 대출",
+    "notAvailable": "이 통화는 대출이 불가능합니다.",
+    "amountLabel": "대출 금액",
+    "amountPlaceholder": "금액 입력",
+    "range": "{{min}} – {{max}} {{currency}}",
+    "amountError": {
+      "invalid": "유효한 금액을 입력하세요.",
+      "min": "최소 금액은 {{amount}} {{currency}}입니다.",
+      "max": "최대 금액은 {{amount}} {{currency}}입니다."
+    },
+    "termLabel": "기간",
+    "submit": "대출 확인",
+    "submitting": "제출 중…",
+    "phase": {
+      "signing": "서명 전송 중…",
+      "creating": "신청서 생성 중…",
+      "review": "심사 중",
+      "done": "모든 단계가 완료되었습니다",
+      "steps": {
+        "signing": "서명 확인",
+        "creating": "신청 제출",
+        "review": "심사"
+      }
+    },
+    "progress": {
+      "title": "대출 신청을 제출하는 중",
+      "desc": "이 창을 열어 두세요. 서명한 계약서를 업로드하고 신청서를 생성하고 있습니다.",
+      "failedTitle": "제출이 완료되지 않았습니다",
+      "failedDesc": "창을 닫고 정보를 수정한 뒤 다시 제출하세요.",
+      "close": "닫기"
+    },
+    "collateral": {
+      "label": "담보 유형",
+      "crypto": "암호화폐 담보",
+      "offline": "오프라인 자산",
+      "offlineHint": "부동산, 은행 예금 등 오프라인 자산을 담보로 대출할 수 있습니다. 신청은 수동 심사 후 지급됩니다.",
+      "recommended": "추천"
+    },
+    "offline": {
+      "assetTypeLabel": "자산 유형",
+      "assetTypePlaceholder": "자산 유형 선택",
+      "assetTypes": {
+        "BANK_STATEMENT": "은행 거래내역서",
+        "PROPERTY": "부동산",
+        "INCOME": "소득 증명",
+        "STOCK_HOLDING": "주식 보유",
+        "OTHER": "기타"
+      },
+      "declaredValueLabel": "신고 평가액",
+      "declaredValuePlaceholder": "추정 가치를 입력하세요",
+      "declaredValueError": "0보다 큰 값을 입력하세요.",
+      "descriptionLabel": "자산 설명(선택)",
+      "descriptionPlaceholder": "담보 자산을 설명하세요",
+      "proofTitle": "증빙 서류",
+      "proofHint": "자산의 소유권과 가치를 증명하는 서류를 1~20개 업로드하세요.",
+      "proofItemTitle": "서류 {{index}}",
+      "proofUploadLabel": "서류 업로드",
+      "notePlaceholder": "이 서류에 메모 추가(선택)",
+      "addProof": "서류 추가",
+      "removeProof": "삭제",
+      "clickToUpload": "클릭하여 업로드"
+    },
+    "gate": {
+      "login": "로그인",
+      "verify": "지금 인증",
+      "advancedTitle": "고급 인증이 필요합니다",
+      "advancedDesc": "오프라인 자산 대출에는 레벨 2 고급 인증이 필요합니다. 자산 증빙을 제출하여 이용을 시작하세요.",
+      "advancedCta": "지금 인증하기"
+    },
+    "quote": {
+      "title": "실시간 견적",
+      "placeholder": "견적을 보려면 금액을 입력하세요.",
+      "unavailable": "견적을 일시적으로 이용할 수 없습니다.",
+      "retry": "다시 시도",
+      "dailyRate": "일일 이율",
+      "interest": "예상 이자",
+      "dueAt": "만기일",
+      "requiredCollateral": "필요 담보",
+      "collateralUnavailable": "담보 견적 이용 불가",
+      "liquidationLtv": "청산 LTV",
+      "offlineNote": "오프라인 담보 대출은 온체인 담보 평가를 거치지 않습니다. 감정 평가액과 개시 LTV는 수동 심사에서 확정됩니다."
+    },
+    "success": {
+      "title": "대출 성공",
+      "amount": "{{amount}} {{currency}}이(가) 계정에 입금되었습니다",
+      "status": "상태: {{status}}",
+      "backToMarket": "마켓으로 돌아가기",
+      "pendingTitle": "신청이 접수되었습니다",
+      "pendingDesc": "{{amount}} {{currency}} 오프라인 담보 대출이 수동 심사 중입니다. 승인 후 자금이 입금됩니다.",
+      "goMyLoans": "내 대출 보기"
+    }
+  },
+  "signature": {
+    "hint": "여기에 서명",
+    "undo": "실행 취소",
+    "clear": "지우기",
+    "required": "계속하려면 서명하세요.",
+    "uploading": "서명 업로드 중…",
+    "uploadError": "서명 업로드에 실패했습니다. 눌러서 다시 시도하세요."
+  },
+  "contract": {
+    "consentLabel": "대출 계약서의 조건을 읽고 명시적으로 동의합니다.",
+    "empty": "계약서 템플릿을 준비 중입니다. 서명하면 견적에 표시된 대출 조건에 동의하는 것으로 간주됩니다.",
+    "title": "대출 계약서",
+    "version": "버전 {{version}}",
+    "readHint": "서명하기 전에 대출 계약서를 끝까지 읽어 주세요.",
+    "loadError": "대출 계약서를 불러오지 못했습니다.",
+    "retry": "다시 시도",
+    "agreeAndSign": "읽고 동의합니다 — 아래에 서명하세요",
+    "viewFull": "계약서 전문 보기",
+    "fullTitle": "대출 계약서"
+  },
+  "loans": {
+    "subtitle": "담보 대출",
+    "title": "내 대출",
+    "loadError": "대출을 불러오지 못했습니다.",
+    "empty": "이 카테고리에는 아직 대출이 없습니다.",
+    "truncated": "{{total}}건 중 처음 {{shown}}건을 표시합니다.",
+    "liquidatedAt": "청산 시각",
+    "badDebt": "부족액",
+    "badDebtSettled": "전액 충당",
+    "viewLiquidations": "청산 기록 보기",
+    "liquidationLine": "청산 {{value}}%",
+    "summary": {
+      "outstanding": "미상환",
+      "borrowed": "총 대출액",
+      "repaid": "총 상환액",
+      "interest": "총 이자"
+    },
+    "tabs": {
+      "ariaLabel": "대출 상태 필터",
+      "ongoing": "진행 중",
+      "settled": "상환 완료",
+      "other": "기타"
+    },
+    "row": {
+      "outstanding": "미상환",
+      "dueAt": "만기 {{value}}",
+      "noDueAt": "고정 기간 없음",
+      "repay": "상환",
+      "offlineCollateral": "오프라인 담보"
+    },
+    "detail": {
+      "title": "{{currency}} 대출",
+      "snapshotHint": "이 대출의 최신 값을 표시합니다.",
+      "refreshError": "새로고침하지 못했습니다 — 마지막으로 불러온 값을 표시합니다.",
+      "borrowed": "대출액",
+      "repaid": "상환액",
+      "interest": "발생 이자",
+      "overdueFee": "연체 수수료",
+      "dailyRate": "일일 이율",
+      "term": "기간",
+      "collateral": "담보",
+      "dueAt": "만기 시각",
+      "estimatedDueAt": "예상 만기 시각",
+      "appliedAt": "신청 시각",
+      "disbursedAt": "대출 시각",
+      "overdueAt": "연체 시작",
+      "repayMode": "상환 방식",
+      "repayModeOffchain": "온체인 외 송금",
+      "repayNetwork": "수취 네트워크",
+      "repayAddress": "수취 주소",
+      "viewHistory": "상환 내역 보기",
+      "viewContract": "서명한 계약서 보기",
+      "offlineAssetTypes": {
+        "BANK_STATEMENT": "은행 거래내역서",
+        "PROPERTY": "부동산",
+        "INCOME": "소득 증명",
+        "STOCK_HOLDING": "주식 보유",
+        "OTHER": "기타"
+      },
+      "declaredValue": "신고 평가액",
+      "appraisedValue": "감정 평가액",
+      "assetDescription": "자산 설명",
+      "offlineRiskNote": "오프라인 담보 대출은 자동 LTV 모니터링 및 청산 대상에서 제외됩니다. 연체 건은 수동으로 처리됩니다."
+    },
+    "repay": {
+      "offchain": {
+        "subtitle": "상환 금액을 아래 주소로 온체인 외 송금한 뒤 증빙을 업로드하세요. 운영팀이 확인합니다.",
+        "currencyLabel": "상환 통화",
+        "networkSelectLabel": "수취 네트워크",
+        "optionsLoading": "사용 가능한 통화를 불러오는 중…",
+        "optionsEmpty": "현재 사용 가능한 수취 주소가 없습니다. 상환하기 전에 고객지원에 문의해 주세요.",
+        "addressLoading": "수취 주소를 확인하는 중…",
+        "addressNotConfigured": "이 통화/네트워크에 설정된 수취 주소가 없습니다. 다른 항목을 선택하거나 고객지원에 문의해 주세요.",
+        "addressLabel": "수취 주소",
+        "network": "네트워크: {{network}}",
+        "networkLabel": "수취 네트워크",
+        "tokenLabel": "상환 통화",
+        "copy": "주소 복사",
+        "copied": "주소를 복사했습니다",
+        "transferHint": "정확한 금액을 이 주소로 송금한 뒤 아래에 송금 증빙을 업로드하세요.",
+        "addressPending": "수취 주소를 발급 중입니다. 잠시 후 다시 시도하세요.",
+        "proofLabel": "송금 증빙",
+        "proofUpload": "증빙 업로드",
+        "clickToUpload": "클릭하여 업로드",
+        "txHashLabel": "트랜잭션 해시",
+        "txHashPlaceholder": "온체인 트랜잭션 해시를 붙여넣으세요",
+        "optionalTag": "(선택)",
+        "statusLabel": "상태",
+        "submit": "상환 신청 제출",
+        "success": {
+          "title": "상환 신청이 제출되었습니다",
+          "desc": "상환 신청을 접수했습니다. 송금 확인 후 운영팀이 승인합니다."
+        }
+      },
+      "title": "{{currency}} 상환",
+      "subtitle": "미상환 잔액을 상환하여 담보를 회수하세요.",
+      "outstandingLabel": "미상환",
+      "amountLabel": "상환 금액",
+      "amountPlaceholder": "금액 입력",
+      "repayAll": "전액 상환",
+      "amountError": {
+        "invalid": "유효한 금액을 입력하세요."
+      },
+      "cappedHint": "상환은 미상환 잔액 {{amount}} {{currency}}로 제한됩니다.",
+      "cancel": "취소",
+      "submit": "상환 확인",
+      "submitting": "제출 중…",
+      "waterfall": {
+        "overdueFee": "연체 수수료",
+        "interest": "이자",
+        "principal": "원금"
+      },
+      "success": {
+        "title": "상환 성공",
+        "repaid": "{{amount}} {{currency}} 상환됨",
+        "outstandingAfter": "잔여 미상환",
+        "settled": "전액 상환 완료 — 담보가 해제되었습니다.",
+        "done": "완료",
+        "settledOffline": "전액 상환 완료 — 대출이 정산되었습니다. 오프라인 담보는 플랫폼 외부에서 처리됩니다."
+      }
+    }
+  },
+  "signedContract": {
+    "pdfGenerating": "생성 중…",
+    "pdfError": "PDF를 불러오지 못했습니다. 나중에 다시 시도해 주세요."
+  },
+  "repaymentClaim": {
+    "amount": "금액",
+    "toAddress": "수취 주소",
+    "txHash": "Tx 해시",
+    "empty": "이 대출에 대한 상환 신청이 아직 없습니다.",
+    "status": {
+      "submitted": "확인 대기",
+      "confirmed": "확인됨",
+      "rejected": "거부됨"
+    }
+  },
+  "repayments": {
+    "title": "상환 내역",
+    "loadError": "상환 내역을 불러오지 못했습니다.",
+    "empty": "이 대출에 대한 상환이 아직 없습니다.",
+    "totalRepaid": "상환액",
+    "overdueFee": "연체 수수료",
+    "interest": "이자",
+    "principal": "원금",
+    "outstandingAfter": "상환 후 미상환"
+  },
+  "liquidations": {
+    "subtitle": "리스크 센터",
+    "title": "청산 기록",
+    "back": "내 대출로 돌아가기",
+    "loadMore": "더 보기",
+    "empty": "아직 청산 기록이 없습니다.",
+    "badDebtNote": "이 부족액은 여전히 미상환 부채로 집계됩니다.",
+    "priceUnavailable": "—",
+    "filter": {
+      "loan": "단일 대출만 표시 중 ({{id}})",
+      "clear": "필터 해제"
+    },
+    "trigger": {
+      "ltvBreach": "자동 청산",
+      "adminForce": "강제 청산",
+      "unknown": "청산"
+    },
+    "columns": {
+      "currency": "대출 통화",
+      "collateral": "매도한 담보",
+      "liquidationPrice": "체결가",
+      "proceeds": "매도 대금",
+      "appliedAmount": "상환 충당액",
+      "badDebt": "부족액"
+    }
+  },
+  "status": {
+    "pending": "검토 중",
+    "active": "대출 중",
+    "overdue": "연체",
+    "repaid": "상환 완료",
+    "liquidated": "청산됨",
+    "rejected": "거부됨",
+    "forceClosed": "종료됨",
+    "unknown": "—"
+  },
+  "health": {
+    "safe": "안전",
+    "warn": "경고",
+    "danger": "위험",
+    "unknown": "—"
+  },
+  "guard": {
+    "loginRequired": "계속하려면 로그인하세요.",
+    "kycRequired": "대출 또는 상환 전에 신원 인증이 필요합니다."
+  },
+  "error": {
+    "fallback": "문제가 발생했습니다. 다시 시도하세요.",
+    "offlineCollateralNotAllowed": "이 통화는 현재 오프라인 담보 대출을 지원하지 않습니다.",
+    "signatureRequired": "신청서를 제출하기 전에 계약서에 서명해 주세요.",
+    "termsNotAccepted": "제출하기 전에 대출 약관에 동의해 주세요.",
+    "offlineCollateralInvalid": "오프라인 담보 정보가 올바르지 않습니다. 자산 유형, 신고 가치, 증빙 파일을 확인해 주세요.",
+    "vipTierNotConfigured": "회원님의 VIP 등급에서는 아직 대출을 이용할 수 없습니다. 고객센터에 문의해 주세요.",
+    "currencyNotSupported": "이 통화는 현재 대출을 이용할 수 없습니다.",
+    "termInvalid": "유효한 대출 기간을 선택해 주세요.",
+    "signatureFileInvalid": "서명을 확인할 수 없습니다. 다시 서명해 주세요."
+  }
+}

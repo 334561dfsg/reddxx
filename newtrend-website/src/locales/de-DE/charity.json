@@ -1,0 +1,161 @@
+{
+  "seo": {
+    "title": "Wohltätigkeit — Trading für den guten Zweck",
+    "description": "Unterstützen Sie geprüfte gemeinnützige Kampagnen mit Ihrem {{brand}}-Funding-Guthaben."
+  },
+  "hero": {
+    "goToSlide": "Zu Folie {{index}} springen"
+  },
+  "stats": {
+    "label": "Aktive Kampagnen",
+    "title": "Gemeinsam lassen wir es zählen",
+    "totalRaised": "Insgesamt gesammelt",
+    "peopleHelped": "Geholfenen Menschen"
+  },
+  "campaigns": {
+    "title": "Aktive Kampagnen",
+    "subtitle": "Wählen Sie einen guten Zweck und spenden Sie direkt von Ihrem Funding-Konto.",
+    "completedBadge": "Ziel erreicht",
+    "raisedLabel": "Gesammelt",
+    "targetLabel": "Ziel",
+    "progress": "{{percent}} % finanziert",
+    "donate": "Spenden",
+    "view": "Mehr erfahren",
+    "loadingTitle": "Kampagnen werden geladen",
+    "empty": {
+      "title": "Derzeit keine aktiven Kampagnen",
+      "desc": "Neue Anliegen werden regelmäßig hinzugefügt. Bitte schauen Sie bald wieder vorbei."
+    },
+    "error": {
+      "title": "Kampagnen konnten nicht geladen werden",
+      "desc": "Beim Abrufen der Kampagnen ist ein Fehler aufgetreten.",
+      "retry": "Erneut versuchen"
+    },
+    "statusActive": "Aktiv",
+    "statusInactive": "Beendet",
+    "peopleHelped": "{{value}} Menschen geholfen"
+  },
+  "howItWorks": {
+    "title": "So funktioniert es",
+    "steps": [
+      {
+        "title": "Non-Profits",
+        "desc": "Non-Profit-Organisationen weltweit bewerben sich und treten {{brand}} bei, um mehr Förderung zu erhalten, neue Fähigkeiten aufzubauen und wichtige Kontakte zu knüpfen."
+      },
+      {
+        "title": "Spender",
+        "desc": "Menschen wie Sie spenden für Projekte, die sie lieben; Updates darüber, wie vertrauenswürdige Organisationen Ihre Mittel verwenden, fühlen sich großartig an."
+      },
+      {
+        "title": "Unternehmen",
+        "desc": "Großzügige Unternehmen und ihre Mitarbeitenden spenden und fördern, um wirkungsvolle Projekte zu unterstützen und lokale Gemeinschaften erblühen zu lassen."
+      },
+      {
+        "title": "Unsere Wirkung",
+        "desc": "Non-Profits erhalten die nötige Förderung, um auf Feedback zu hören und neue Arbeitsweisen auszuprobieren; Gemeinschaften überall geht es besser!"
+      }
+    ]
+  },
+  "narrative": {
+    "label": "Unser Engagement",
+    "title": "Märkte schaffen Wohlstand. Wir helfen, dass er weiter reicht.",
+    "lead": "{{brand}} wurde auf der Überzeugung gegründet, dass offene Märkte Chancen schaffen. Wohltätigkeit ist unsere Art, diese Chancen auf Menschen auszuweiten, die die Märkte zu oft zurücklassen.",
+    "paragraphs": [
+      "Jede Kampagne auf dieser Seite wird von unserem Partnerschaftsteam und einem unabhängigen NGO-Partner geprüft, bevor sie online geht. Wir verifizieren die Organisation, das Budget und das angestrebte Ergebnis und veröffentlichen den Fortschritt, während die Mittel eingesetzt werden.",
+      "Da Spenden über Kanäle laufen, die wir bereits betreiben, gibt es keine Kartengebühren, keine Wechselkursaufschläge und keine Zwischenhändler, die etwas abschöpfen. Der Betrag, den Sie geben, ist der Betrag, der ankommt.",
+      "Das ist erst der Anfang. Mit dem Wachstum der Community wächst auch unsere Fähigkeit, sauberes Wasser, Bildung, Gesundheitsversorgung und Soforthilfe in großem Umfang zu finanzieren."
+    ],
+    "highlights": [
+      {
+        "title": "Geprüfte Partner",
+        "desc": "Jede NGO wird auf Seriosität, Governance und Erfolgsbilanz geprüft."
+      },
+      {
+        "title": "Keine Gebühren",
+        "desc": "Wir übernehmen die Kosten, sodass 100 % Ihrer Spende den guten Zweck erreichen."
+      },
+      {
+        "title": "Öffentliche Berichterstattung",
+        "desc": "Meilenstein- und Wirkungsberichte werden mit der Community geteilt."
+      }
+    ]
+  },
+  "donate": {
+    "title": "An {{name}} spenden",
+    "description": "Ihr Beitrag wird von Ihrem Funding-{{asset}}-Guthaben abgebucht.",
+    "amountLabel": "Spendenbetrag",
+    "amountPlaceholder": "0.00",
+    "rangeHint": "Min. {{min}} · Max. {{max}} {{asset}}",
+    "minOnlyHint": "Minimum {{min}} {{asset}}",
+    "raisedSummary": "{{raised}} / {{target}} {{asset}} gesammelt",
+    "cancel": "Abbrechen",
+    "submit": "Spende prüfen",
+    "submitting": "Wird verarbeitet …",
+    "confirm": {
+      "title": "Spende prüfen",
+      "description": "Prüfen Sie die Angaben, bevor wir Ihr Funding-Guthaben belasten.",
+      "projectLabel": "Kampagne",
+      "amountLabel": "Sie spenden",
+      "sourceLabel": "Belastet wird",
+      "sourceValue": "Funding-Guthaben",
+      "back": "Zurück zur Eingabe",
+      "submit": "Spende bestätigen",
+      "notice": "Bestätigte Spenden sind endgültig und können nicht storniert oder erstattet werden.",
+      "reviewNotice": "Ihre Spende wird vor dem Abschluss von der Plattform geprüft. Der Betrag wird während der Prüfung eingefroren und vollständig zurückerstattet, falls die Spende nicht genehmigt wird."
+    },
+    "success": {
+      "title": "Danke für Ihre Großzügigkeit",
+      "desc": "Sie haben {{amount}} {{asset}} an {{name}} gespendet.",
+      "donationId": "Referenz: {{id}}",
+      "done": "Fertig"
+    },
+    "pendingReview": {
+      "title": "Spende eingereicht",
+      "desc": "Der Betrag wird abgebucht, sobald die Plattform Ihre Spende genehmigt hat. Das Ergebnis erhalten Sie in Ihren Nachrichten."
+    },
+    "errors": {
+      "invalidAmount": "Bitte geben Sie einen gültigen Spendenbetrag ein.",
+      "minAmount": "Die Mindestspende beträgt {{amount}} {{asset}}.",
+      "maxAmount": "Die Höchstspende beträgt {{amount}} {{asset}}.",
+      "CHARITY_PROJECT_NOT_AVAILABLE": "Diese Kampagne nimmt derzeit keine Spenden an.",
+      "CHARITY_DONATION_AMOUNT_INVALID": "Der Spendenbetrag ist für diese Kampagne ungültig.",
+      "CHARITY_FUNDING_TARGET_EXCEEDED": "Diese Spende würde das Finanzierungsziel der Kampagne überschreiten.",
+      "CHARITY_INSUFFICIENT_BALANCE": "Ihr Funding-Guthaben reicht für diese Spende nicht aus.",
+      "VALIDATION_ERROR": "Bitte überprüfen Sie den Spendenbetrag und versuchen Sie es erneut.",
+      "CHARITY_PROJECT_NOT_FOUND": "Diese Kampagne konnte nicht gefunden werden.",
+      "ENTITY_NOT_FOUND": "Diese Kampagne konnte nicht gefunden werden.",
+      "generic": "Spende fehlgeschlagen. Bitte versuchen Sie es erneut."
+    }
+  },
+  "donations": {
+    "label": "Ihre Spenden",
+    "title": "Ihr Spendenverlauf",
+    "subtitle": "Eine Übersicht aller von Ihnen unterstützten Kampagnen.",
+    "signedOut": {
+      "title": "Melden Sie sich an, um Ihre Spenden zu sehen",
+      "desc": "Verfolgen Sie jede Ihrer Spenden und die von Ihnen unterstützten Projekte.",
+      "action": "Anmelden"
+    },
+    "empty": {
+      "title": "Ihre Spendengeschichte beginnt hier",
+      "desc": "Sie haben noch nicht gespendet. Unterstützen Sie eine Kampagne oben für Ihren ersten Beitrag."
+    },
+    "error": {
+      "title": "Ihre Spenden konnten nicht geladen werden",
+      "desc": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "retry": "Erneut versuchen"
+    },
+    "recentNote": "Ihre {{shown}} neuesten von {{total}} Spenden werden angezeigt",
+    "columns": {
+      "project": "Kampagne",
+      "amount": "Betrag",
+      "date": "Datum",
+      "status": "Status"
+    },
+    "statusCompleted": "Abgeschlossen",
+    "statusPendingReview": "In Prüfung",
+    "statusRejected": "Nicht genehmigt",
+    "unknownProject": "Wohltätigkeitskampagne"
+  },
+  "slideLabel": "Hilfsprojekt-Folie {{index}}: {{title}}"
+}

@@ -1,0 +1,30 @@
+{
+  "seo": {
+    "title": "暗号資産とマーケットニュース",
+    "description": "{{brand}} がお届けする暗号資産、外国為替、株式市場の最新ニュース、分析、インサイト。"
+  },
+  "pageTitle": "ニュースセンター",
+  "breadcrumbHome": "ホーム",
+  "breadcrumbNews": "ニュース",
+  "loadMore": "さらに読み込む",
+  "loading": "読み込み中...",
+  "retry": "再試行",
+  "backToList": "← 一覧に戻る",
+  "readTime": "{{minutes}} 分で読了",
+  "author": "著者",
+  "publishedAt": "公開日",
+  "relatedNews": "関連記事",
+  "noMore": "これ以上記事はありません",
+  "tags": "タグ",
+  "share": "シェア",
+  "allCategories": "すべてのカテゴリー",
+  "articleNotFound": "記事が見つからないか、削除されました",
+  "backToHome": "ホームに戻る",
+  "categoryAll": "すべて",
+  "emptyTitle": "まだ記事がありません",
+  "emptyHint": "後ほどご確認ください — 新しい記事が毎日届きます。",
+  "errorTitle": "最新ニュースを読み込めませんでした",
+  "errorHint": "こちら側で問題が発生しました。もう一度お試しください。",
+  "viewOriginal": "原文を見る →",
+  "viewSource": "ソースを見る"
+}

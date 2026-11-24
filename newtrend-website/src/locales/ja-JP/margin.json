@@ -1,0 +1,335 @@
+{
+  "market": {
+    "subtitle": "担保ローン",
+    "title": "暗号資産ローン",
+    "description": "暗号資産のほか、不動産や銀行預金などのオフライン資産を担保に借り入れできます。通貨を選んで日次レート、限度額、条件を確認しましょう。",
+    "dailyRate": "日次レート",
+    "annualized": "約{{value}}% APR",
+    "borrowRange": "借入範囲",
+    "term": "条件",
+    "termDays": "{{days}}日",
+    "borrowCta": "借りる",
+    "loadError": "借入可能な通貨の読み込みに失敗しました。",
+    "empty": "現在借入可能な通貨はありません。",
+    "myLoans": "マイローン"
+  },
+  "borrow": {
+    "back": "マーケットに戻る",
+    "title": "借りる",
+    "titleWithCurrency": "{{currency}} を借りる",
+    "notAvailable": "この通貨は借入できません。",
+    "amountLabel": "借入金額",
+    "amountPlaceholder": "金額を入力",
+    "range": "{{min}} – {{max}} {{currency}}",
+    "amountError": {
+      "invalid": "有効な金額を入力してください。",
+      "min": "最低は {{amount}} {{currency}} です。",
+      "max": "最高は {{amount}} {{currency}} です。"
+    },
+    "termLabel": "期間",
+    "submit": "借入を確定",
+    "submitting": "送信中…",
+    "phase": {
+      "signing": "署名を送信中…",
+      "creating": "申込を作成中…",
+      "review": "審査中",
+      "done": "すべてのステップが完了しました",
+      "steps": {
+        "signing": "署名確認",
+        "creating": "申込送信",
+        "review": "審査"
+      }
+    },
+    "progress": {
+      "title": "借入申請を送信しています",
+      "desc": "このウィンドウを開いたままにしてください。署名済み契約書をアップロードし、申請を作成しています。",
+      "failedTitle": "送信が完了しませんでした",
+      "failedDesc": "ウィンドウを閉じて内容を修正し、もう一度送信してください。",
+      "close": "閉じる"
+    },
+    "collateral": {
+      "label": "担保タイプ",
+      "crypto": "暗号資産担保",
+      "offline": "オフライン資産",
+      "offlineHint": "不動産や銀行預金などのオフライン資産を担保に借入できます。申請は人手による審査の後に入金されます。",
+      "recommended": "おすすめ"
+    },
+    "offline": {
+      "assetTypeLabel": "資産タイプ",
+      "assetTypePlaceholder": "資産タイプを選択",
+      "assetTypes": {
+        "BANK_STATEMENT": "銀行取引明細書",
+        "PROPERTY": "不動産",
+        "INCOME": "収入証明",
+        "STOCK_HOLDING": "株式保有",
+        "OTHER": "その他"
+      },
+      "declaredValueLabel": "申告評価額",
+      "declaredValuePlaceholder": "推定評価額を入力",
+      "declaredValueError": "0 より大きい値を入力してください。",
+      "descriptionLabel": "資産の説明（任意）",
+      "descriptionPlaceholder": "担保資産の説明を入力",
+      "proofTitle": "証明書類",
+      "proofHint": "資産の所有権と価値を証明する書類を 1〜20 件アップロードしてください。",
+      "proofItemTitle": "書類 {{index}}",
+      "proofUploadLabel": "書類をアップロード",
+      "notePlaceholder": "この書類にメモを追加（任意）",
+      "addProof": "書類を追加",
+      "removeProof": "削除",
+      "clickToUpload": "クリックしてアップロード"
+    },
+    "gate": {
+      "login": "ログイン",
+      "verify": "今すぐ認証",
+      "advancedTitle": "高度な本人確認が必要です",
+      "advancedDesc": "オフライン資産による借入にはレベル 2 の高度な本人確認が必要です。資産証明を提出して利用を開始してください。",
+      "advancedCta": "今すぐ認証"
+    },
+    "quote": {
+      "title": "ライブクォート",
+      "placeholder": "金額を入力してクォートを確認してください。",
+      "unavailable": "クォートは一時的にご利用いただけません。",
+      "retry": "再試行",
+      "dailyRate": "日次レート",
+      "interest": "予想利息",
+      "dueAt": "返済期日",
+      "requiredCollateral": "必要担保",
+      "collateralUnavailable": "担保クォートが利用できません",
+      "liquidationLtv": "清算LTV",
+      "offlineNote": "オフライン担保ローンはオンチェーンの担保評価を行いません。査定額と開始時 LTV は人手による審査で確定します。"
+    },
+    "success": {
+      "title": "借入に成功しました",
+      "amount": "{{amount}} {{currency}} がアカウントに入金されました",
+      "status": "ステータス: {{status}}",
+      "backToMarket": "マーケットに戻る",
+      "pendingTitle": "申請を受け付けました",
+      "pendingDesc": "{{amount}} {{currency}} のオフライン担保ローンは審査中です。承認後に資金が入金されます。",
+      "goMyLoans": "マイローンを見る"
+    }
+  },
+  "signature": {
+    "hint": "ここに署名",
+    "undo": "元に戻す",
+    "clear": "消去",
+    "required": "続行するには署名してください。",
+    "uploading": "署名をアップロード中…",
+    "uploadError": "署名のアップロードに失敗しました。タップして再試行してください。"
+  },
+  "contract": {
+    "consentLabel": "借入契約書の条件を読み、明確に同意します。",
+    "empty": "契約書テンプレートは準備中です。署名により、試算に表示された借入条件に同意したものとみなされます。",
+    "title": "借入契約書",
+    "version": "バージョン {{version}}",
+    "readHint": "署名する前に借入契約書をすべてお読みください。",
+    "loadError": "借入契約書の読み込みに失敗しました。",
+    "retry": "再試行",
+    "agreeAndSign": "内容を読み、同意します — 下に署名してください",
+    "viewFull": "契約書全文を表示",
+    "fullTitle": "借入契約書"
+  },
+  "loans": {
+    "subtitle": "担保ローン",
+    "title": "マイローン",
+    "loadError": "ローンの読み込みに失敗しました。",
+    "empty": "このカテゴリーにはまだローンがありません。",
+    "truncated": "{{total}} 件中、最初の {{shown}} 件を表示。",
+    "liquidatedAt": "清算日時",
+    "badDebt": "差額",
+    "badDebtSettled": "全額充当",
+    "viewLiquidations": "清算記録を表示",
+    "liquidationLine": "清算 {{value}}%",
+    "summary": {
+      "outstanding": "未返済",
+      "borrowed": "総借入額",
+      "repaid": "総返済額",
+      "interest": "総利息"
+    },
+    "tabs": {
+      "ariaLabel": "ローンステータスフィルタ",
+      "ongoing": "進行中",
+      "settled": "返済済み",
+      "other": "その他"
+    },
+    "row": {
+      "outstanding": "未返済",
+      "dueAt": "期日 {{value}}",
+      "noDueAt": "期間の定めなし",
+      "repay": "返済",
+      "offlineCollateral": "オフライン担保"
+    },
+    "detail": {
+      "title": "{{currency}} ローン",
+      "snapshotHint": "このローンの最新の値を表示しています。",
+      "refreshError": "更新できませんでした — 最後に読み込まれた値を表示しています。",
+      "borrowed": "借入額",
+      "repaid": "返済額",
+      "interest": "発生利息",
+      "overdueFee": "延滞手数料",
+      "dailyRate": "日次レート",
+      "term": "期間",
+      "collateral": "担保",
+      "dueAt": "返済期限",
+      "estimatedDueAt": "返済期限（予定）",
+      "appliedAt": "申請日時",
+      "disbursedAt": "借入日時",
+      "overdueAt": "延滞開始",
+      "repayMode": "返済方法",
+      "repayModeOffchain": "チェーン外送金",
+      "repayNetwork": "受取ネットワーク",
+      "repayAddress": "受取アドレス",
+      "viewHistory": "返済履歴を表示",
+      "viewContract": "署名済み契約書を表示",
+      "offlineAssetTypes": {
+        "BANK_STATEMENT": "銀行取引明細書",
+        "PROPERTY": "不動産",
+        "INCOME": "収入証明",
+        "STOCK_HOLDING": "株式保有",
+        "OTHER": "その他"
+      },
+      "declaredValue": "申告評価額",
+      "appraisedValue": "査定評価額",
+      "assetDescription": "資産の説明",
+      "offlineRiskNote": "オフライン担保ローンは自動 LTV 監視および清算の対象外です。延滞は人手で対応します。"
+    },
+    "repay": {
+      "offchain": {
+        "subtitle": "返済額を下記アドレスへチェーン外で送金し、証憑をアップロードしてください。運営が確認します。",
+        "currencyLabel": "返済通貨",
+        "networkSelectLabel": "受取ネットワーク",
+        "optionsLoading": "利用可能な通貨を読み込み中…",
+        "optionsEmpty": "現在、利用可能な受取アドレスがありません。返済前にサポートにお問い合わせください。",
+        "addressLoading": "受取アドレスを取得中…",
+        "addressNotConfigured": "この通貨／ネットワークには受取アドレスが設定されていません。別の組み合わせを選択するか、サポートにお問い合わせください。",
+        "addressLabel": "受取アドレス",
+        "network": "ネットワーク：{{network}}",
+        "networkLabel": "受取ネットワーク",
+        "tokenLabel": "返済通貨",
+        "copy": "アドレスをコピー",
+        "copied": "アドレスをコピーしました",
+        "transferHint": "正確な金額をこのアドレスへ送金し、下に送金証憑をアップロードしてください。",
+        "addressPending": "受取アドレスを発行中です。しばらくしてから再試行してください。",
+        "proofLabel": "送金証憑",
+        "proofUpload": "証憑をアップロード",
+        "clickToUpload": "クリックしてアップロード",
+        "txHashLabel": "トランザクションハッシュ",
+        "txHashPlaceholder": "オンチェーンのトランザクションハッシュを貼り付け",
+        "optionalTag": "（任意）",
+        "statusLabel": "ステータス",
+        "submit": "返済申請を送信",
+        "success": {
+          "title": "返済申請を送信しました",
+          "desc": "返済申請を受け付けました。送金を確認後、運営が承認します。"
+        }
+      },
+      "title": "{{currency}} を返済",
+      "subtitle": "未返済残高を返済して担保を解放します。",
+      "outstandingLabel": "未返済",
+      "amountLabel": "返済金額",
+      "amountPlaceholder": "金額を入力",
+      "repayAll": "全額返済",
+      "amountError": {
+        "invalid": "有効な金額を入力してください。"
+      },
+      "cappedHint": "返済は未返済額 {{amount}} {{currency}} が上限です。",
+      "cancel": "キャンセル",
+      "submit": "返済を確定",
+      "submitting": "送信中…",
+      "waterfall": {
+        "overdueFee": "延滞手数料",
+        "interest": "利息",
+        "principal": "元本"
+      },
+      "success": {
+        "title": "返済に成功しました",
+        "repaid": "{{amount}} {{currency}} を返済しました",
+        "outstandingAfter": "残りの未返済額",
+        "settled": "全額返済しました — 担保が解放されました。",
+        "done": "完了",
+        "settledOffline": "全額返済が完了し、ローンは清算されました。オフライン担保はプラットフォーム外で処理されます。"
+      }
+    }
+  },
+  "signedContract": {
+    "pdfGenerating": "生成中…",
+    "pdfError": "PDF の読み込みに失敗しました。後でもう一度お試しください。"
+  },
+  "repaymentClaim": {
+    "amount": "金額",
+    "toAddress": "受取アドレス",
+    "txHash": "Txハッシュ",
+    "empty": "この借入の返済申請はまだありません。",
+    "status": {
+      "submitted": "確認待ち",
+      "confirmed": "確認済み",
+      "rejected": "却下"
+    }
+  },
+  "repayments": {
+    "title": "返済履歴",
+    "loadError": "返済履歴の読み込みに失敗しました。",
+    "empty": "このローンにはまだ返済がありません。",
+    "totalRepaid": "返済額",
+    "overdueFee": "延滞手数料",
+    "interest": "利息",
+    "principal": "元本",
+    "outstandingAfter": "返済後の未返済額"
+  },
+  "liquidations": {
+    "subtitle": "リスクセンター",
+    "title": "清算記録",
+    "back": "マイローンに戻る",
+    "loadMore": "さらに読み込む",
+    "empty": "清算記録はまだありません。",
+    "badDebtNote": "この差額は未返済の債務として引き続き計上されます。",
+    "priceUnavailable": "—",
+    "filter": {
+      "loan": "1 件のローンのみ表示中（{{id}}）",
+      "clear": "フィルターを解除"
+    },
+    "trigger": {
+      "ltvBreach": "自動清算",
+      "adminForce": "強制清算",
+      "unknown": "清算"
+    },
+    "columns": {
+      "currency": "借入通貨",
+      "collateral": "売却した担保",
+      "liquidationPrice": "約定価格",
+      "proceeds": "売却代金",
+      "appliedAmount": "返済充当額",
+      "badDebt": "差額"
+    }
+  },
+  "status": {
+    "pending": "審査中",
+    "active": "借入中",
+    "overdue": "延滞",
+    "repaid": "返済済み",
+    "liquidated": "清算済み",
+    "rejected": "却下",
+    "forceClosed": "クローズ済み",
+    "unknown": "—"
+  },
+  "health": {
+    "safe": "安全",
+    "warn": "警告",
+    "danger": "危険",
+    "unknown": "—"
+  },
+  "guard": {
+    "loginRequired": "続行するにはログインしてください。",
+    "kycRequired": "借入または返済の前に本人確認が必要です。"
+  },
+  "error": {
+    "fallback": "問題が発生しました。もう一度お試しください。",
+    "offlineCollateralNotAllowed": "この通貨は現在オフライン担保による借入に対応していません。",
+    "signatureRequired": "申請を送信する前に契約書に署名してください。",
+    "termsNotAccepted": "送信する前に借入条件に同意してください。",
+    "offlineCollateralInvalid": "オフライン担保の情報が正しくありません。資産タイプ・申告評価額・証明ファイルをご確認ください。",
+    "vipTierNotConfigured": "お客様の VIP ランクではまだ借入をご利用いただけません。サポートにお問い合わせください。",
+    "currencyNotSupported": "この通貨は現在借入をご利用いただけません。",
+    "termInvalid": "有効な借入期間を選択してください。",
+    "signatureFileInvalid": "署名を確認できませんでした。もう一度署名してください。"
+  }
+}

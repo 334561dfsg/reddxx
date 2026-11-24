@@ -1,0 +1,94 @@
+{
+  "title": "カスタマーサービス",
+  "menu": {
+    "title": "どのようにお問い合わせされますか?",
+    "subtitle": "ご都合のよいチャネルをお選びください。",
+    "liveChat": "ライブチャット",
+    "liveChatDesc": "サポートチームとリアルタイムでチャット",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "WhatsAppで1対1でご相談",
+    "email": "メール",
+    "emailDesc": "メールをお送りいただければ返信いたします"
+  },
+  "welcomeMessage": "こんにちは!本日はどのようなご用件でしょうか?",
+  "placeholder": "メッセージを入力...",
+  "send": "送信",
+  "loading": "読み込み中…",
+  "status": {
+    "pending": "順番待ち中…",
+    "open": "担当者が参加しました",
+    "closed": "会話が終了しました",
+    "closedInputHint": "この会話は終了しました。さらにサポートが必要な場合は新しい会話を開始してください。"
+  },
+  "emoji": {
+    "add": "絵文字を追加"
+  },
+  "attachment": {
+    "add": "添付ファイルを追加",
+    "uploading": "アップロード中…",
+    "confirming": "処理中…",
+    "failed": "アップロードに失敗しました",
+    "tooLarge": "上限 {{limit}} を超えています",
+    "retry": "再試行",
+    "remove": "削除",
+    "download": "ダウンロード",
+    "limitType": "JPG、PNG、PDF、Excel、Word、CSV、ZIPのみサポートされています",
+    "limitTypeGuest": "ゲストはJPG、PNG、PDFのみ送信できます。Excel、Word、CSV、ZIPを送信するにはログインしてください",
+    "limitCount": "添付ファイルは最大 {{count}} 個までです",
+    "queued": "アップロード待機中…",
+    "retryAfter": "{{seconds}}秒後に再試行できます",
+    "stage": {
+      "request": "アップロードを開始できません",
+      "upload": "アップロード失敗",
+      "confirm": "アップロードを完了できません"
+    },
+    "reason": {
+      "offline": "オフラインです。接続後に再試行してください。",
+      "timeout": "タイムアウトしました。再試行してください。",
+      "connection": "接続に失敗しました。ネットワークを確認して再試行してください。",
+      "format": "このファイル形式には対応していません。",
+      "content": "ファイルの内容が形式と一致しません。",
+      "size": "ファイルが大きすぎます。",
+      "identity": "チャットの認証が無効になりました。",
+      "signature": "アップロードリンクの期限が切れました。再試行すると新しいリンクを取得します。",
+      "forbidden": "ストレージがアップロードを拒否しました。再試行するかサポートにお問い合わせください。",
+      "rateLimit": "リクエストが多すぎます。",
+      "quota": "添付ファイルの上限に達しました。他のファイルを削除して再試行してください。",
+      "storage": "ファイルストレージを利用できません。しばらくしてから再試行してください。",
+      "unknown": "エラーが発生しました。再試行してください。"
+    }
+  },
+  "toast": {
+    "newMessageTitle": "サポートから新着メッセージ",
+    "newMessageTitleWithCount": "サポートから新着メッセージ（{{unread}}）",
+    "attachment": "[添付ファイル]",
+    "view": "表示",
+    "close": "閉じる"
+  },
+  "errors": {
+    "sendFailed": "送信に失敗しました。もう一度お試しください。",
+    "loadFailed": "読み込みに失敗しました。もう一度お試しください。",
+    "offline": "ネットワークエラー。接続を確認して再試行してください。",
+    "notSent": "未送信"
+  },
+  "connection": {
+    "reconnecting": "接続が切断されました。再接続中…",
+    "stale": "サーバーに接続できません。ページを再読み込みして新しいメッセージを受信してください。",
+    "refresh": "ページを再読み込み",
+    "retry": "再試行",
+    "restored": "再接続しました"
+  },
+  "guest": {
+    "unavailableTitle": "ゲストチャットは利用できなくなりました",
+    "unavailableDesc": "このブラウザのゲスト ID は期限切れか、無効になっています。",
+    "unavailableHint": "以前のゲストのメッセージは表示できません。ログインしてアカウントからサポートに連絡するか、新しいゲストチャットを開始してください。",
+    "startNew": "新しいチャットを開始",
+    "merging": "ゲストチャットをアカウントに移行しています…",
+    "mergeFailed": "ゲストチャットはまだアカウントに移行されていません。",
+    "mergeRetry": "再試行",
+    "expiredTitle": "ゲストチャットの有効期限が切れました"
+  },
+  "blocked": {
+    "message": "現在、ライブチャットはご利用いただけません。"
+  }
+}

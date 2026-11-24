@@ -1,0 +1,259 @@
+{
+  "version": {
+    "updateAvailable": "Eine neue Version ist verfügbar",
+    "refreshNow": "Jetzt aktualisieren"
+  },
+  "getStarted": "Loslegen",
+  "scrollLeft": "Nach links scrollen",
+  "scrollRight": "Nach rechts scrollen",
+  "trade": "Handeln",
+  "home": "Startseite",
+  "language": "Sprache",
+  "options": "Optionshandel",
+  "optionsDesc": "Long oder short mit begrenztem Risiko",
+  "binaryOptions": "Binäre Optionen",
+  "all": "Alle",
+  "search": "Suchen",
+  "contract": "Futures",
+  "futures": "Futures-Handel",
+  "futuresDesc": "Perpetual-Kontrakte mit Hebel handeln",
+  "spotTrading": "Spot-Handel",
+  "spotDesc": "Echte Vermögenswerte zum Marktpreis kaufen und verkaufen",
+  "finance": "Finanzen",
+  "earn": "Earn",
+  "earnDesc": "Ungenutzte Assets Rendite erzielen lassen",
+  "simpleEarn": "Simple Earn",
+  "myEarnings": "Meine Erträge",
+  "loan": "Kredit",
+  "loanDesc": "Gegen Ihre Krypto-Bestände leihen",
+  "c2c": "C2C",
+  "c2cDesc": "Krypto direkt zwischen Nutzern handeln",
+  "aiQuant": "KI-Quant",
+  "aiQuantOverview": "Übersicht",
+  "aiQuantStrategy": "Strategie",
+  "aiQuantStrategyDesc": "Trades mit Quant-Strategien automatisieren",
+  "aiQuantQuantFund": "Quant-Fonds",
+  "aiQuantQuantFundDesc": "In professionell verwaltete Fonds investieren",
+  "aiQuantQuantFundPositions": "Meine Quant-Fonds-Positionen",
+  "copytrade": "Copy-Trade",
+  "copyTrading": "Copy-Trading",
+  "copytradeDesc": "Top-Tradern automatisch folgen",
+  "error": {
+    "generic": "Etwas ist schiefgelaufen, bitte versuchen Sie es später erneut",
+    "network": "Netzwerkfehler. Prüfe deine Verbindung und versuche es erneut.",
+    "requestId": "Anfrage-ID: {{requestId}}"
+  },
+  "errorGuidance": {
+    "kycRequired": {
+      "title": "Identitätsprüfung erforderlich",
+      "cta": "Jetzt verifizieren"
+    },
+    "registrationIncomplete": {
+      "title": "Die Registrierung ist noch nicht abgeschlossen",
+      "cta": "Registrierung fortsetzen"
+    },
+    "socialLocalEmailUnverified": {
+      "title": "Diese E-Mail ist registriert, aber nicht bestätigt",
+      "cta": "Passwort zurücksetzen"
+    },
+    "kycPendingReview": {
+      "title": "Identitätsprüfung wird überprüft",
+      "cta": "Fortschritt anzeigen"
+    },
+    "advancedVerificationRequired": {
+      "title": "Höhere Verifizierungsstufe erforderlich",
+      "cta": "Jetzt verifizieren"
+    },
+    "insufficientBalance": {
+      "title": "Unzureichendes Trading-Guthaben",
+      "cta": "Guthaben übertragen"
+    },
+    "insufficientFundingBalance": {
+      "title": "Unzureichendes Funding-Guthaben",
+      "cta": "Jetzt einzahlen"
+    },
+    "fundPasswordNotSet": {
+      "title": "Fondspasswort nicht festgelegt",
+      "cta": "Fondspasswort festlegen"
+    },
+    "twoFactorNotEnabled": {
+      "title": "Zwei-Faktor-Authentifizierung erforderlich",
+      "cta": "2FA aktivieren"
+    },
+    "vipTierInsufficient": {
+      "title": "VIP-Stufe nicht ausreichend",
+      "cta": "VIP upgraden"
+    }
+  },
+  "news": "News",
+  "charity": "Wohltätigkeit",
+  "menu": "Menü",
+  "toggleTheme": "Design wechseln",
+  "closeMenu": "Menü schließen",
+  "deposit": "Einzahlen",
+  "profile": "Profil",
+  "assets": "Assets",
+  "assetsCenter": "Asset-Center",
+  "kyc": "Identifizierung",
+  "connectWallet": "Wallet verbinden",
+  "connectingWallet": "Wird verbunden …",
+  "message": "Nachrichten",
+  "more": "Mehr",
+  "aboutUs": "Über uns",
+  "privacyPolicy": "Datenschutzrichtlinie",
+  "riskCompliance": "Risiko & Compliance",
+  "regulatoryInformation": "Aufsichtsrechtliche Informationen",
+  "userAgreement": "Nutzungsvereinbarung",
+  "riskDisclosure": "Risikohinweis",
+  "regulation": "Regulierung",
+  "productsServices": "Produkte & Dienstleistungen",
+  "helpCenter": "Hilfecenter",
+  "faq": "FAQ",
+  "announcements": "Ankündigungen",
+  "onlineSupport": "Online-Support",
+  "whatsApp": "WhatsApp",
+  "x": "X",
+  "telegram": "Telegram",
+  "youtube": "YouTube",
+  "instagram": "Instagram",
+  "facebook": "Facebook",
+  "tiktok": "TikTok",
+  "linkedin": "LinkedIn",
+  "discord": "Discord",
+  "email": "E-Mail",
+  "loadFailed": "Laden fehlgeschlagen",
+  "noData": "Keine Daten",
+  "noMore": "Nicht mehr",
+  "copyright": "© {{year}} {{brand}} Trading-Plattform. Alle Rechte vorbehalten.",
+  "loading": "Wird geladen …",
+  "logout": "Abmelden",
+  "unnamed": "Unbenannt",
+  "security": "Sicherheit",
+  "copy": "Kopieren",
+  "copied": "Kopiert",
+  "copyFailed": "Kopieren fehlgeschlagen",
+  "kycVerified": "Verifiziert",
+  "kycVerifiedLevel": "Verifiziert · L{{level}}",
+  "kycPending": "In Prüfung",
+  "kycUnverified": "Nicht verifiziert",
+  "kycAdvancedPending": "Basis verifiziert · Stufe 2 ausstehend",
+  "kycUpgradeCta": "Stufe 2 verifizieren",
+  "on": "EIN",
+  "off": "AUS",
+  "upload": {
+    "invalidType": "Unterstützte Formate: {{formats}}",
+    "tooLarge": "Die Datei überschreitet das Limit von {{limit}}",
+    "retry": "Erneut versuchen",
+    "animatedImage": "Animierte Bilder werden nicht unterstützt. Lade ein Standbild hoch.",
+    "undecodable": "Dieses Bild kann nicht gelesen werden. Lade eine JPG- oder PNG-Datei hoch.",
+    "linkExpired": "Der Upload-Link ist abgelaufen. Versuche es erneut.",
+    "incomplete": "Der Upload wurde nicht abgeschlossen. Versuche es erneut.",
+    "unsupportedFormat": "Format nicht unterstützt. Lade ein Standbild als JPG, PNG, WebP, BMP oder AVIF hoch.",
+    "photoTooLarge": "Dieses Foto ist zu groß. Nimm es neu auf oder komprimiere es und versuche es erneut.",
+    "contentMismatch": "Der Dateiinhalt passt nicht zum Format. Nimm das Foto neu auf oder scanne das Dokument erneut."
+  },
+  "demo": {
+    "real": "Echt",
+    "demo": "Demo",
+    "mode": "DEMO-HANDELSMODUS",
+    "noRealFunds": "Kein echtes Geld",
+    "account": "Demokonto",
+    "confirmTitle": "In den Demo-Modus wechseln",
+    "confirmMessage": "Der Wechsel in den Demo-Modus bedeutet, dass kein echtes Geld beteiligt ist.",
+    "confirmEnable": "Bestätigen",
+    "confirmCancel": "Abbrechen",
+    "realModeRequired": "Diese Seite ist nur im Echt-Modus verfügbar"
+  },
+  "accountSuspended": {
+    "banner": "Dein Konto wurde gesperrt – zugehörige Daten und Funktionen sind nicht verfügbar. Bei Fragen wende dich an den Support.",
+    "title": "Konto gesperrt",
+    "desc": "Dein Konto wurde gesperrt, daher kann dieser Inhalt nicht geladen werden. Bei Fragen wende dich an den Support."
+  },
+  "moduleDisabled": {
+    "title": "Auf dieser Website nicht verfügbar",
+    "desc": "Diese Funktion wird hier derzeit nicht angeboten. Ihre bestehenden Aufträge, Bestände und Ihr Verlauf bleiben weiterhin verfügbar."
+  },
+  "emailVerification": {
+    "banner": "E-Mail bestätigen, um Auszahlungen freizuschalten",
+    "verifyNow": "Jetzt bestätigen",
+    "title": "E-Mail bestätigen",
+    "intro": "Zum Schutz Ihres Guthabens ist für Auszahlungen und OTC-Verkäufe eine bestätigte E-Mail erforderlich. Wir senden einen Code an die folgende Adresse.",
+    "changeEmail": "E-Mail ändern",
+    "sendCode": "Code senden",
+    "sending": "Wird gesendet …",
+    "resend": "Code erneut senden",
+    "resendIn": "Erneut senden in {{seconds}} s",
+    "codeLabel": "Bestätigungscode",
+    "codeHint": "Geben Sie den {{length}}-stelligen Code aus der E-Mail ein.",
+    "confirm": "E-Mail bestätigen",
+    "confirming": "Wird bestätigt …",
+    "verified": "E-Mail bestätigt",
+    "guideTitle": "Bestätigen Sie Ihre E-Mail vor der Auszahlung",
+    "guideDescription": "Ihre E-Mail ist noch nicht bestätigt. Auszahlungen bleiben gesperrt, bis Sie sie bestätigen.",
+    "dialogCrashed": "Das Fenster zur E-Mail-Bestätigung konnte nicht geladen werden. Bitte versuchen Sie es erneut."
+  },
+  "assetsMenu": {
+    "total": "Gesamtvermögen",
+    "frozen": "Eingefroren",
+    "hideBalance": "Guthaben anzeigen / ausblenden",
+    "deposit": "Einzahlen",
+    "transfer": "Übertragen",
+    "withdraw": "Auszahlen",
+    "viewAll": "Alle Assets anzeigen"
+  },
+  "pagination": {
+    "info": "{{total}} Einträge · Seite {{page}} / {{totalPages}}"
+  },
+  "messages": {
+    "title": "Nachrichten",
+    "viewAll": "Alle anzeigen",
+    "markAllRead": "Alle als gelesen markieren",
+    "markAllReadSuccess": "{{count}} Nachrichten als gelesen markiert",
+    "markAllReadFailed": "Markieren aller als gelesen fehlgeschlagen",
+    "markReadFailed": "Markieren als gelesen fehlgeschlagen",
+    "loadFailed": "Nachrichten konnten nicht geladen werden",
+    "back": "Zurück",
+    "tabs": {
+      "all": "Alle",
+      "unread": "Ungelesen",
+      "read": "Gelesen"
+    },
+    "types": {
+      "all": "Alle Typen",
+      "notice": "Hinweis",
+      "announcement": "Ankündigung",
+      "alert": "Warnung",
+      "system": "System"
+    }
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "backHome": "Zurück zur Startseite"
+  },
+  "footer": {
+    "language": "Sprache",
+    "version": "v{{version}}"
+  },
+  "contentPage": {
+    "fallbackTitle": "Inhalt",
+    "empty": "Dieser Inhalt ist noch nicht verfügbar."
+  },
+  "auth": {
+    "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an."
+  },
+  "vipBadge": "VIP {{tier}}",
+  "spot": "Spot",
+  "h5Guide": {
+    "title": "Zur mobilen Website wechseln",
+    "description": "Die mobile Website ist für Smartphone-Bildschirme gestaltet und per Touch einfacher zu bedienen.",
+    "goToMobile": "Zur mobilen Website",
+    "stay": "Nicht jetzt, hier bleiben",
+    "close": "Schließen"
+  },
+  "durationDays": "{{count}} Tage",
+  "tradeMarket": "{{symbol}} handeln",
+  "favoriteMarket": "{{symbol}} zu Favoriten hinzufügen",
+  "unfavoriteMarket": "{{symbol}} aus Favoriten entfernen",
+  "durationSeconds": "{{count}} Sekunden"
+}

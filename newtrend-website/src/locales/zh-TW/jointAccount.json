@@ -1,0 +1,327 @@
+{
+  "nav": {
+    "menuEntry": "聯名帳戶"
+  },
+  "page": {
+    "title": "聯名帳戶",
+    "description": "與配偶、家人、合夥人或代理人共用一個資金帳戶"
+  },
+  "common": {
+    "back": "返回",
+    "retry": "重試",
+    "loadMore": "載入更多"
+  },
+  "relationship": {
+    "spouse": "配偶",
+    "family": "家人",
+    "partner": "合夥人",
+    "agent": "代理人"
+  },
+  "operatedBy": {
+    "member": "聯名成員",
+    "actor": "{{actor}}操作",
+    "withUid": "{{actor}}操作（UID {{uid}}）"
+  },
+  "initiatedBy": {
+    "actor": "{{actor}}發起"
+  },
+  "actingFor": {
+    "primaryWithName": "UID {{uid}}（{{name}}）",
+    "primaryUidOnly": "UID {{uid}}",
+    "unnamedAccount": "未命名聯名帳戶",
+    "primarySuspended": "聯名帳戶的主申請人已被停用，暫時無法操作此帳戶。請切回本人帳戶，或聯絡主申請人。",
+    "primaryKycNotVerified": "聯名帳戶的主申請人尚未通過身分認證，請聯絡主申請人。",
+    "restrictedTitle": "請切回本人帳戶再辦理",
+    "restrictedDesc": "您正在操作聯名帳戶。身分認證、邀請人綁定，以及聯名帳戶的申請與成員關係變更，只能在本人帳戶下辦理。"
+  },
+  "session": {
+    "invalid": "聯名帳戶的登入狀態已失效，請重新登入。"
+  },
+  "switcher": {
+    "title": "切換帳戶",
+    "self": "本人帳戶",
+    "selfHint": "您自己的資金與設定",
+    "loadMore": "顯示更多（{{loaded}}/{{total}}）",
+    "switching": "正在切換帳戶…",
+    "backToSelf": "切回本人帳戶",
+    "retryAfter": "請於 {{seconds}} 秒後再試。"
+  },
+  "delegated": {
+    "title": "您正在操作「{{name}}」",
+    "desc": "申請、改名、同意與退出須在本人帳戶下辦理。您的資金帳戶與聯名帳戶之間的劃轉在兩種狀態下都可使用。"
+  },
+  "consent": {
+    "title": "待您確認的申請（{{count}}）",
+    "desc": "有人申請將您加入其聯名帳戶。同意後申請會進入審核，審核通過前不會有任何變更。",
+    "accept": "同意",
+    "decline": "拒絕",
+    "accepted": "已同意，申請等待審核中。",
+    "declined": "已拒絕申請"
+  },
+  "intro": {
+    "title": "開立聯名帳戶",
+    "addMemberTitle": "為聯名帳戶加入成員",
+    "unavailable": "目前暫不開放新申請。",
+    "points": {
+      "ownership": "資金、錢包與身分認證仍屬於您",
+      "switch": "成員用自己的帳號切換進來操作",
+      "exit": "可隨時移除成員或解散帳戶"
+    },
+    "prepare": "需準備：關係證明，以及對方的 UID 或證件",
+    "kycOnly": "限已通過身分認證的客戶申請"
+  },
+  "apply": {
+    "start": "申請",
+    "restart": "重新申請",
+    "title": "申請聯名帳戶",
+    "memberSection": "成員",
+    "relationshipType": "與對方的關係",
+    "mode": {
+      "existing": "對方已有帳號",
+      "invite": "邀請對方註冊"
+    },
+    "modeHint": {
+      "existing": "對方同意後進入審核",
+      "invite": "審核通過後取得註冊連結"
+    },
+    "memberUid": "對方的 UID",
+    "memberUidPlaceholder": "例如 100023",
+    "memberUidHint": "UID 顯示在對方的個人資料頁。對方須已通過身分認證；被退回的申請 24 小時內不能再向同一 UID 提交。",
+    "memberNotEligible": {
+      "not_eligible": "請確認 UID 填寫正確，並請對方確認：已通過身分認證、帳戶狀態正常，且已加入的聯名帳戶數未達上限。",
+      "self": "不能將自己設為成員，請填寫對方的 UID。"
+    },
+    "memberFullName": "成員全名",
+    "memberFullNamePlaceholder": "與證件一致",
+    "memberFront": "成員證件正面",
+    "memberBack": "成員證件反面",
+    "memberSelfie": "成員自拍",
+    "proofSection": "關係證明",
+    "proofFile": "證明 {{index}}",
+    "addProof": "再加一份",
+    "incomplete": "請填寫所有欄位並上傳必要文件。",
+    "cancel": "取消",
+    "submit": "提交申請",
+    "submitted": "申請已提交",
+    "kycRequiredTitle": "請先完成身分認證",
+    "kycRequiredDesc": "只有已通過身分認證的客戶可以申請聯名帳戶。",
+    "goKyc": "前往認證",
+    "upload": "上傳",
+    "reupload": "重新上傳",
+    "uploading": "上傳中 {{progress}}%",
+    "proofMeta": "JPG、PNG 或 PDF，20 MB 以內",
+    "idDocumentMeta": "JPG、PNG 或 PDF",
+    "selfieMeta": "僅 JPG 或 PNG",
+    "proofCount": "{{count}}/{{max}} 份",
+    "missing": "還差：{{items}}",
+    "ready": "資料已齊全，可以提交",
+    "missingItem": {
+      "relationship": "關係",
+      "memberUid": "對方的 UID",
+      "memberDetails": "對方資料",
+      "memberDocuments": "對方證件",
+      "proof": "關係證明"
+    },
+    "missingSeparator": "、"
+  },
+  "application": {
+    "eyebrow": "最新申請",
+    "status": {
+      "pending_consent": "等待成員同意",
+      "pending_review": "審核中",
+      "approved": "已通過",
+      "rejected": "未通過",
+      "cancelled": "已取消"
+    },
+    "desc": {
+      "pending_consent": "成員尚未同意，對方回覆後會通知您。",
+      "pending_review": "我們正在審核申請，有結果時會通知您。",
+      "approved": "申請已審核通過。",
+      "rejected": "請查看下方原因後重新申請。",
+      "cancelled": "此申請已取消。"
+    },
+    "memberGone": "成員已移除",
+    "memberGoneDesc": "申請已審核通過，但該成員目前已不在聯名帳戶中。如需新增成員，請重新申請。",
+    "cancel": "取消申請",
+    "cancelTitle": "確定取消此申請？",
+    "cancelConfirm": "申請將就此終止。若您指定的是已有帳號的用戶，對方會收到取消通知。",
+    "cancelled": "申請已取消",
+    "title": {
+      "pending_consent": "等待對方同意",
+      "pending_review": "申請審核中",
+      "approved": "申請已通過",
+      "rejected": "申請未通過",
+      "cancelled": "申請已取消"
+    }
+  },
+  "detail": {
+    "relationshipType": "關係",
+    "memberUid": "成員 UID",
+    "memberName": "成員姓名",
+    "submittedAt": "提交時間",
+    "rejectionReason": "未通過原因",
+    "reviewedAt": "審核時間",
+    "activatedAt": "成員加入時間",
+    "uidValue": "UID {{uid}}"
+  },
+  "owned": {
+    "eyebrow": "您的聯名帳戶",
+    "active": "生效中",
+    "desc": "您是主申請人，無需切換帳戶；成員切換到此帳戶後即可操作。",
+    "primary": "主申請人",
+    "you": "您",
+    "member": "成員",
+    "memberStatus": {
+      "pending": "尚未註冊",
+      "active": "生效中"
+    },
+    "noMember": "尚無成員",
+    "removeMember": "移除成員",
+    "dissolve": "解散帳戶",
+    "removeTitle": "確定移除此成員？",
+    "removeConfirm": "成員將立即失去此帳戶的操作權限並被登出此帳戶；其本人帳戶與資產不受影響。需完成安全驗證確認。",
+    "memberRemoved": "已移除成員",
+    "dissolveTitle": "確定解散此聯名帳戶？",
+    "dissolveConfirm": "成員將立即失去操作權限，聯名帳戶隨之關閉；您本人的資金仍屬於您。需完成安全驗證確認。",
+    "dissolved": "聯名帳戶已解散",
+    "createdAt": "開立於 {{time}}"
+  },
+  "label": {
+    "edit": "改名",
+    "title": "修改聯名帳戶名稱",
+    "description": "成員切換到此帳戶時會看到這個名稱；已發送的通知保留當時的名稱。",
+    "field": "名稱",
+    "placeholder": "例如 家庭儲蓄",
+    "hint": "{{count}}/{{max}} 個字元，留空即清除名稱。",
+    "clear": "清除名稱",
+    "save": "儲存名稱",
+    "saved": "名稱已儲存"
+  },
+  "invitation": {
+    "title": "成員註冊連結",
+    "expiresIn": "{{time}} 後失效",
+    "expiresInDays": "{{days}} 天 {{time}} 後失效",
+    "keepPrivate": "取得此連結的人都能註冊成為您聯名帳戶的成員。請只發送給您申請時登記的本人。",
+    "copy": "複製連結",
+    "share": "分享",
+    "copied": "連結已複製",
+    "copyFailed": "複製失敗，請手動選取連結複製。",
+    "shareTitle": "聯名帳戶註冊連結",
+    "expiredAt": "連結已於 {{time}} 過期",
+    "unavailable": "連結暫不可用",
+    "contactSupportHint": "請聯絡客服重新取得連結。",
+    "contactSupport": "聯絡客服"
+  },
+  "confirm": {
+    "keep": "保留"
+  },
+  "memberships": {
+    "title": "您加入的聯名帳戶（{{count}}）",
+    "desc": "切換到聯名帳戶即可操作其資金；您本人的帳戶與錢包保持獨立。",
+    "joinedAt": "{{time}} 加入",
+    "current": "目前操作中",
+    "switch": "切換到此帳戶",
+    "notifications": "資金通知副本",
+    "notificationsHint": "此帳戶資金動態的站內信與郵件副本。關閉後仍會收到即時推送。",
+    "leave": "退出",
+    "leaveTitle": "確定退出「{{name}}」？",
+    "leaveWithdrawFirst": "退出前，請先把需要的資金轉回您本人的帳戶。",
+    "leaveConfirm": "退出不會追回已轉出的資金，也不會關閉您本人的帳戶；退出後立即失去此聯名帳戶的操作權限。",
+    "left": "已退出聯名帳戶"
+  },
+  "transfer": {
+    "open": "劃轉",
+    "title": "跨帳戶劃轉",
+    "description": "在您的資金帳戶與聯名帳戶的資金帳戶之間劃轉。",
+    "direction": {
+      "to_joint": "轉入聯名帳戶",
+      "from_joint": "轉回本人帳戶"
+    },
+    "from": "從",
+    "to": "到",
+    "ownFunding": "我的資金帳戶",
+    "jointFunding": "「{{name}}」資金帳戶",
+    "asset": "幣種",
+    "amount": "數量",
+    "securityHint": "每個方向的首次劃轉需驗證您的資金密碼及另一項安全驗證；雙方都須已通過身分認證。",
+    "submit": "劃轉",
+    "done": "已劃轉 {{amount}} {{asset}}",
+    "directionLabel": "方向",
+    "snapshotJoint": "劃轉後「{{name}}」餘額",
+    "snapshotOwn": "劃轉後我的餘額",
+    "snapshotHint": "以上為本次劃轉當時的餘額，非即時數據；最新餘額請以資產頁為準。",
+    "close": "完成",
+    "denial": {
+      "kyc_required": "雙方都須通過身分認證才能劃轉，請確認您與主申請人皆已完成認證。",
+      "party_not_active": "您或主申請人的帳戶目前無法使用，暫時不能劃轉。",
+      "membership_inactive": "您已不是此聯名帳戶的成員，請重新整理頁面。",
+      "joint_account_inactive": "此聯名帳戶已失效，無法劃轉。",
+      "invalid_accounts": "轉出與轉入須是兩個不同用戶的資金帳戶。"
+    }
+  },
+  "history": {
+    "title": "劃轉紀錄",
+    "empty": "尚無劃轉紀錄。",
+    "actor": "{{actor}} UID {{uid}} 操作"
+  },
+  "register": {
+    "eyebrow": "聯名帳戶邀請",
+    "previewPrimary": "您將註冊為 UID {{uid}}（{{name}}）聯名帳戶的成員。",
+    "previewPrimaryUidOnly": "您將註冊為 UID {{uid}} 聯名帳戶的成員。",
+    "previewMemberName": "申請登記的姓名：{{name}}",
+    "previewRelationship": "關係：{{relationship}}",
+    "previewWarning": "如資訊不符，請勿繼續。註冊不等於完成身分認證；提現或劃轉前仍須自行認證。",
+    "previewExpiresAt": "連結有效期至 {{time}}。",
+    "previewFailed": "無法載入連結資訊。",
+    "retry": "重試",
+    "tooManyRequests": "嘗試次數過多，請稍後再試。",
+    "requiresNewAccount": "此邀請只適用於新帳號，而這個信箱或手機已經註冊。請改用未註冊過的信箱或手機，或請主申請人改以您現有的帳號提出申請。",
+    "resendCode": "請重新取得驗證碼後再試。",
+    "loggedInElsewhere": "此邀請用於註冊新帳號。請先登出，再用未在本平台使用過的信箱或手機註冊。",
+    "logoutAndContinue": "登出並繼續",
+    "issue": {
+      "invalid": "此邀請連結無效。",
+      "not_usable": "此邀請連結已被使用或已失效。",
+      "expired": "此邀請連結已過期，請由主申請人聯絡客服重新取得。"
+    },
+    "issueFallback": "您仍可在下方註冊一般帳戶。"
+  },
+  "selfSettings": {
+    "notice": "您正在操作聯名帳戶。此處的變更只套用於您本人的登入與安全設定，不會修改主申請人的設定。"
+  },
+  "holder": {
+    "title": "帳戶持有人",
+    "vacant": "待加入",
+    "withYou": "{{role}} · 您"
+  },
+  "faq": {
+    "title": "常見問題",
+    "memberCan": {
+      "q": "成員可以做什麼",
+      "a": "切換到聯名帳戶操作其資金，並可在自己的資金帳戶與聯名帳戶之間劃轉。成員的帳戶與錢包保持獨立。"
+    },
+    "memberSteps": {
+      "q": "對方要做什麼",
+      "a": "已有帳號：對方同意您的申請後進入審核。尚未註冊：審核通過後，您把註冊連結發給對方。"
+    },
+    "dissolve": {
+      "q": "如何解散",
+      "a": "隨時可在本頁解散。成員立即失去操作權限，您本人的資金仍屬於您。"
+    }
+  },
+  "progress": {
+    "label": "申請進度",
+    "submit": "提交申請",
+    "consent": "成員同意",
+    "review": "審核",
+    "register": "成員註冊",
+    "active": "生效",
+    "failed": "未通過",
+    "state": {
+      "done": "，已完成",
+      "current": "，目前步驟",
+      "failed": "，未通過",
+      "upcoming": "，未開始"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "entry": {
+    "title": "Umfrage",
+    "description": "Teilen Sie uns Ihr Feedback mit"
+  },
+  "hint": {
+    "required": "Erforderlich",
+    "singleChoice": "Wählen Sie eine Option",
+    "multipleChoice": "Wählen Sie eine oder mehrere Optionen",
+    "textPlaceholder": "Geben Sie Ihre Antwort ein"
+  },
+  "validation": {
+    "required": "Diese Frage ist erforderlich"
+  },
+  "actions": {
+    "back": "Zurück",
+    "submit": "Absenden",
+    "submitting": "Wird gesendet …"
+  },
+  "success": {
+    "submitted": "Erfolgreich abgesendet"
+  },
+  "error": {
+    "loadFailed": "Umfrage konnte nicht geladen werden",
+    "unavailable": "Umfrage nicht verfügbar",
+    "unavailableDescription": "Diese Umfrage ist nicht mehr verfügbar oder existiert nicht.",
+    "alreadySubmitted": "Sie haben diese Umfrage bereits abgesendet",
+    "validation": "Einige Antworten sind ungültig. Bitte überprüfen Sie sie und versuchen Sie es erneut.",
+    "submitFailed": "Absenden fehlgeschlagen. Bitte versuchen Sie es erneut."
+  },
+  "readonly": {
+    "badge": "Abgeschlossen",
+    "title": "Ihre Antworten",
+    "submittedAt": "Abgesendet am {{time}}",
+    "noAnswer": "Keine Antwort"
+  }
+}

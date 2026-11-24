@@ -1,0 +1,27 @@
+{
+  "ui": {
+    "unsavedContentUseCloseOrCancelToLeave": "未送信の内容があります。閉じるかキャンセルで終了してください。",
+    "insufficientBalanceSwitchToDemoToTryThisLocally": "残高不足です。デモに切り替えてお試しください。",
+    "createdDemo": "作成済み（デモ）",
+    "videoFailedToLoadTryAgainLater": "動画を読み込めません。後でもう一度お試しください。",
+    "welcomeToNewquantcapitalSupport": "NewQuantCapitalサポートへようこそ",
+    "message": "メッセージ",
+    "describeYourIssue": "お問い合わせ内容を入力",
+    "messagesAreNotSentToTheOriginalSupportTeam": "元サイトのサポートへメッセージは送信されません。",
+    "demoMessageShownLocallyNothingWasSent": "デモメッセージを表示しました。外部送信はありません。",
+    "thisLocalDemoDoesNotRequestWalletPermissionsOr": "このデモではウォレットの許可や署名を求めません。",
+    "connectDemoWallet": "デモウォレットを接続",
+    "localDemoAccountConnected": "ローカルデモ口座に接続済み",
+    "noNewMessages": "新しいメッセージはありません",
+    "100000UsdMoreToReachVip1": "VIP 1 まであと 100,000 USD",
+    "days": " 日",
+    "orderQuantity": "注文数量",
+    "localSimulation": " · ローカルシミュレーション",
+    "orderSummary": "注文概要",
+    "daysLater": " 日後",
+    "demoCompletedNoRealTransactionWasSent": "デモ完了。実際の取引は送信されていません。",
+    "localInterfaceDemoNotConnectedToTheOriginalAccount": "ローカルデモです。元サイトのアカウントサービスには接続しません。",
+    "confirmOrder": "注文を確認"
+  },
+  "amountMinimum": "{{amount}} 以上の有効な金額を入力してください。"
+}

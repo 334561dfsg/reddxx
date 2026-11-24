@@ -1,5 +1,5 @@
 import { reactive, shallowRef } from 'vue'
-export const session = reactive({loggedIn:sessionStorage.getItem('nt-visitor')!=='true',mode:'真實',orders:[],subscriptions:[]})
+export const session = reactive({loggedIn:sessionStorage.getItem('nt-visitor')!=='true',mode:"common.demo.real",orders:[],subscriptions:[]})
 export const modal=shallowRef(null)
 export function openModal(type,title,data={}){if(!modal.value) modal.value={type,title,data}}
 export function closeModal(){modal.value=null}

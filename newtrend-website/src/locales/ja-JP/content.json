@@ -1,0 +1,33 @@
+{
+  "ui": {
+    "weCareForEveryChildCaughtInTheDevastation": "戦争の惨禍に巻き込まれたすべての子どもを支えます",
+    "weHelpEndHunger": "私たちは飢餓の撲滅を支援します",
+    "weBringComputersAndEthernetNetworksToEveryCorner": "私たちはコンピューターとイーサネットネットワークを世界の隅々まで届けます",
+    "weProvideHopeInTimesOfDisaster": "私たちは災害の中で希望を届けます",
+    "weInvestInTheEducationalFutureOfCountriesIn": "私たちは遠隔地域の国々の教育の未来に投資します",
+    "weHelpPeopleWithDisabilitiesStartANewLife": "私たちは障がいのある人々が新たな人生を歩めるよう支援します",
+    "identityVerification": "本人確認",
+    "selectAPngOrJpegImage": "PNGまたはJPEG画像を選択",
+    "imageMustNotExceed10Mb": "画像は10 MB以下にしてください",
+    "demoDepositRequest": "デモ入金申請",
+    "demoWithdrawalRequest": "デモ出金申請",
+    "localDemoCompletedNoDataOrFundsWereSent": "デモ完了。データ送信や送金は行われていません。",
+    "charitySlide": "支援スライド",
+    "message": "：",
+    "connectGenerosityWithMeaningfulChangeAndBringHopeTo": "支援を確かな変化につなげ、助けを必要とする地域に希望を届けます。",
+    "sourceFiguresAreASnapshotLocalDonationsAreDemonstrations": "元サイトの数値はスナップショットです。寄付はデモのみです。",
+    "merchantReviewIsNotConnectedInThisLocalDemo": "このデモは加盟店審査サービスに接続していません。",
+    "no": "なし",
+    "orders": "注文",
+    "thisDemoDoesNotCollectBankCardOrReal": "このデモは実際の銀行カードや入金口座情報を収集しません。",
+    "confirmC2c": "C2Cを確認",
+    "thisLocalDemoDoesNotCreateRealOrders": "このデモは実際の注文を作成しません。",
+    "noTradersAvailable": "表示できるトレーダーはいません",
+    "noFollowingYet": "フォローはありません",
+    "selectAnAssetAndNetworkThenEnterTheDestination": "通貨とネットワークを選び、出金先と金額を入力",
+    "localDemoDoNotTransferToDemoAddressesOr": "ローカルデモです。デモアドレスへの送金や実際の証明書の提出は不要です。",
+    "selectedLocallyFilesAreNotUploaded": "端末内で選択し、アップロードしません",
+    "submitDemo": "デモを送信",
+    "noAnnouncements": "お知らせはありません"
+  }
+}

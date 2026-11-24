@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "menuEntry": "My Rewards"
+  },
+  "list": {
+    "title": "My Reward Tasks",
+    "description": "Track the exclusive reward tasks prepared for you — progress, reward, and time left at a glance."
+  },
+  "status": {
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "expired": "Expired",
+    "cancelled": "Cancelled"
+  },
+  "fields": {
+    "target": "Target",
+    "accumulatedByType": {
+      "DEPOSIT_MILESTONE": "Deposited",
+      "CHECK_IN_STREAK": "Checked in",
+      "REFERRAL": "Invited"
+    },
+    "reward": "Reward",
+    "deadline": "Deadline",
+    "remaining": "Time Left",
+    "startedAt": "Started",
+    "description": "Description",
+    "progressMetric": "Progress metric",
+    "enrollmentSource": "Source"
+  },
+  "campaignTypes": {
+    "DEPOSIT_MILESTONE": "Deposit",
+    "CHECK_IN_STREAK": "Check-in",
+    "REFERRAL": "Referral"
+  },
+  "progressMetrics": {
+    "DEPOSIT_USDT": "Deposit (USDT)",
+    "LOGIN_DAY": "Login days",
+    "TURNOVER": "Turnover",
+    "REFERRAL_QUALIFIED": "Qualified referrals"
+  },
+  "enrollmentSources": {
+    "ASSIGN": "Assigned",
+    "SELF": "Self-enrolled",
+    "REFERRAL": "Referral"
+  },
+  "checkIn": {
+    "success": "Checked in successfully",
+    "pending": "Checking in…",
+    "error": "Check-in failed, please try again"
+  },
+  "progress": {
+    "remainingToTarget": "{{amount}} {{unit}} more to reach the target",
+    "unit": {
+      "CHECK_IN_STREAK": "check-ins",
+      "REFERRAL": "referrals"
+    }
+  },
+  "countdown": {
+    "ended": "Ended",
+    "daysHours": "{{days}}d {{hours}}h",
+    "daysHoursMinutes": "{{days}} days {{hours}} hours {{minutes}} minutes left"
+  },
+  "reward": {
+    "creditedLabel": "Credited"
+  },
+  "cta": {
+    "deposit": "Deposit now",
+    "viewDetail": "View details",
+    "checkIn": "Check in",
+    "invite": "Invite friends"
+  },
+  "empty": {
+    "title": "Exclusive rewards are on the way",
+    "description": "When a reward task is assigned to you, it will show up here. Stay tuned for what's coming."
+  },
+  "detail": {
+    "back": "Back to rewards",
+    "notFoundTitle": "Task not found",
+    "notFoundDescription": "This reward task doesn't exist or is no longer available.",
+    "sectionProgress": "Progress",
+    "sectionInfo": "Task details"
+  },
+  "states": {
+    "loadError": "Failed to load reward tasks",
+    "retry": "Retry",
+    "loadMore": "Load more"
+  }
+}

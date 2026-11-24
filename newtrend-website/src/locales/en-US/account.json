@@ -1,0 +1,19 @@
+{
+  "ui": {
+    "selectAFile": "Select a file",
+    "jpgPngOrPdfOnly": "JPG, PNG or PDF only",
+    "fileIsTooLarge": "File is too large",
+    "exactly6Digits": "Exactly 6 digits",
+    "checkThePasswordRequirements": "Check the password requirements",
+    "back": "← Back",
+    "copyUid": "Copy UID",
+    "830Characters": "8–30 characters",
+    "localDemoCode123456": "Local demo code: 123456",
+    "demoKeyOnlyNotValidForARealAccount": "Demo key only. Not valid for a real account.",
+    "1PersonalInformation": "1　Personal information",
+    "2UploadDocuments": "2　Upload documents",
+    "useFictionalDetailsAndDemoImagesFilesStayOn": "Use fictional details and demo images. Files stay on this device.",
+    "thisDemoDoesNotOpenARealJointAccount": "This demo does not open a real joint account.",
+    "primaryApplicantYou": "Primary applicant · You"
+  }
+}

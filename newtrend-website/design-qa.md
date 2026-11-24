@@ -93,3 +93,19 @@ All local account input used fictional data. Source account inspection was read-
 The repository now runs all four prototypes with one root `npm run dev` on 5173. New Trends is a separate HTML entry under `/newtrend/`, with namespaced asset URLs and router history. Source remains in `newtrend-website/`. Root build includes both HTML entries and copies public assets. Root preview handles deep-link fallback.
 
 Verified after integration: original admin dashboard, front home and agent login; New Trends news, profile and asset transfer; English language switching followed by page refresh; production-preview English news with 26 image elements and no failed loaded images. Root build and nine New Trends tests passed. Standalone 4173 service was stopped; temporary production verification server was stopped after checks. Device-specific checks were not repeated for this hosting-only change.
+
+## Module-based language packs
+
+UI translations now resolve fixed keys in `src/locales/<locale>/<namespace>.json`. Source-text reverse maps, alias overrides and regex sentence translation were removed. Six languages have 3,953 matching keys with matching interpolation parameters. News/digests and legal documents were moved to `src/content/` without changing their language-fallback policy. Homepage news now reads the same localized content as the news section.
+
+Verification for this refactor:
+- `npm run check:locales --prefix newtrend-website`: six packs pass key, parameter and literal-reference checks.
+- `npm test --prefix newtrend-website`: 13 tests pass, covering locale persistence, English fallback, parameterized messages, stable product IDs and content changes, validation, and Worker packaging. Localization tests also pass when invoked from the repository root.
+- `node --test test/newtrendDeploymentRouting.test.js`: both deployment route tests pass.
+- Root `npm run build` succeeds; existing large-chunk warnings remain.
+- 498 desktop route checks across six languages: rendered main content, no leaked key-like labels in content/accessibility attributes, no failed loaded images or horizontal overflow. Evidence: `qa/language-pack-routes.json`. Browser navigation timeouts were resumed in fresh tabs; all target routes received completed checks.
+- 30 mobile checks at 390 × 844 (news/profile/earn/transfer/strategy × six locales) pass; `qa/language-pack-mobile.json`.
+- English Flexible earn filter retained four rows after switching to German. Transfer draft retained amount 123, USD and account selections after English → German. Strategy ascending Sharpe sort displayed the expected nine-item order. Phone text was redacted by the browser, so exact phone-value retention is not claimed from that check.
+- Latest preview console returned no errors/warnings. Screenshots: `qa/language-pack-mobile.png` and `qa/language-pack-desktop.png`.
+
+The broader device/assistive-technology limits documented above still apply; real devices, virtual keyboards, 200% zoom and all account validation branches were not rerun in this refactor. This is a local implementation check, not an online deployment verification.

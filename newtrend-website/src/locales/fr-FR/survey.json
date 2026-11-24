@@ -1,0 +1,37 @@
+{
+  "entry": {
+    "title": "Sondage",
+    "description": "Partagez vos commentaires avec nous"
+  },
+  "hint": {
+    "required": "Obligatoire",
+    "singleChoice": "Choisissez une réponse",
+    "multipleChoice": "Choisissez une ou plusieurs réponses",
+    "textPlaceholder": "Saisissez votre réponse"
+  },
+  "validation": {
+    "required": "Cette question est obligatoire"
+  },
+  "actions": {
+    "back": "Retour",
+    "submit": "Soumettre",
+    "submitting": "Envoi en cours…"
+  },
+  "success": {
+    "submitted": "Soumis avec succès"
+  },
+  "error": {
+    "loadFailed": "Échec du chargement du sondage",
+    "unavailable": "Sondage indisponible",
+    "unavailableDescription": "Ce sondage n'est plus disponible ou n'existe pas.",
+    "alreadySubmitted": "Vous avez déjà soumis ce sondage",
+    "validation": "Certaines réponses sont invalides. Veuillez les vérifier et réessayer.",
+    "submitFailed": "Échec de la soumission. Veuillez réessayer."
+  },
+  "readonly": {
+    "badge": "Terminé",
+    "title": "Vos réponses",
+    "submittedAt": "Soumis le {{time}}",
+    "noAnswer": "Aucune réponse"
+  }
+}

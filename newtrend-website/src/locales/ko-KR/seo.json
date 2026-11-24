@@ -1,0 +1,85 @@
+{
+  "home": "디지털 자산 거래 플랫폼",
+  "trade": "{{pair}} — 실시간 시세 및 거래",
+  "auth": {
+    "login": "로그인 — 계정에 안전하게 접속",
+    "register": "회원가입 — 디지털 자산 거래 시작하기",
+    "forgotPassword": "비밀번호 재설정 — 빠르게 계정 복구"
+  },
+  "legal": {
+    "about": "회사 소개",
+    "privacy": "개인정보 처리방침",
+    "riskDisclosure": "위험 고지",
+    "agreement": "이용약관",
+    "regulation": "규제 정보",
+    "regulatoryInformation": "규제 정보",
+    "content": "플랫폼 정보"
+  },
+  "news": {
+    "index": "뉴스 — 시장 동향 및 공지사항",
+    "detail": "뉴스 기사"
+  },
+  "charity": "자선 활동 — 거래로 선한 영향력을",
+  "aiQuant": {
+    "landing": "AI 퀀트 — 전략 및 퀀트 펀드",
+    "strategy": "퀀트 전략 — 자동화 거래",
+    "strategyMine": "내 전략 — 구독 및 성과",
+    "quantFund": "퀀트 펀드 — 전문 운용",
+    "quantFundDetail": "퀀트 펀드 상품",
+    "quantFundPositions": "내 퀀트 펀드 포지션",
+    "interestRecords": "퀀트 펀드 수익 내역"
+  },
+  "c2c": {
+    "buy": "C2C 구매 — 빠른 법정화폐 입금",
+    "sell": "C2C 판매 — 안전한 법정화폐 출금",
+    "orders": "C2C 주문",
+    "orderDetail": "C2C 주문 상세",
+    "paymentAccounts": "결제 수단 관리"
+  },
+  "copytrade": {
+    "index": "카피 트레이딩 — 톱 트레이더 따라하기",
+    "trader": "트레이더 프로필"
+  },
+  "deposit": {
+    "index": "입금 — 몇 분 만에 계정에 자금 충전",
+    "history": "입금 내역"
+  },
+  "withdraw": {
+    "index": "출금 — 자산을 안전하게 인출",
+    "history": "출금 내역"
+  },
+  "earn": {
+    "simple": "자유 예치 — 유휴 자산으로 수익 창출",
+    "simpleDetail": "예치 상품 상세",
+    "loan": "코인 대출 — 보유 자산 담보 대출",
+    "loanBorrow": "대출 신청",
+    "loanMy": "내 대출",
+    "loanLiquidations": "대출 청산 내역",
+    "myEarnings": "내 수익"
+  },
+  "assets": {
+    "index": "자산 — 모든 잔고를 한곳에서 관리",
+    "records": "자금 내역",
+    "transfer": "자금 이체"
+  },
+  "user": {
+    "profile": "계정 센터",
+    "survey": "설문조사",
+    "helpCenter": "고객센터 — 자주 묻는 질문 및 지원",
+    "messages": "메시지",
+    "messageDetail": "메시지 상세",
+    "promotionTasks": "프로모션 — 입금 보너스 미션",
+    "promotionTaskDetail": "프로모션 미션 상세",
+    "referrals": "친구 초대 — 공유하고 커미션 받기",
+    "changePassword": "비밀번호 변경",
+    "devices": "로그인 기기 관리",
+    "fundPassword": "자금 비밀번호",
+    "kyc": "신원 인증",
+    "kycBasic": "기본 인증",
+    "kycAdvanced": "고급 인증",
+    "bindEmail": "이메일 연동",
+    "bindPhone": "휴대폰 연동",
+    "twoFactor": "2단계 인증 (2FA)",
+    "jointAccount": "공동명의 계정"
+  }
+}

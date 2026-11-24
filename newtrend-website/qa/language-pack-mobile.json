@@ -1,0 +1,242 @@
+[
+  {
+    "lang": "zh-TW",
+    "page": "news",
+    "broken": 0,
+    "heading": "新聞中心",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "zh-TW",
+    "page": "profile",
+    "broken": 0,
+    "heading": "個人中心",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "zh-TW",
+    "page": "earn/simple",
+    "broken": 0,
+    "heading": "理財中心",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "zh-TW",
+    "page": "assets/transfer",
+    "broken": 0,
+    "heading": "劃轉",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "zh-TW",
+    "page": "ai-quant/strategy",
+    "broken": 0,
+    "heading": "把量化能力交給 每一位交易者",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "en-US",
+    "page": "news",
+    "broken": 0,
+    "heading": "News Center",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "en-US",
+    "page": "profile",
+    "broken": 0,
+    "heading": "Profile",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "en-US",
+    "page": "earn/simple",
+    "broken": 0,
+    "heading": "Earn",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "en-US",
+    "page": "assets/transfer",
+    "broken": 0,
+    "heading": "Transfer",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "en-US",
+    "page": "ai-quant/strategy",
+    "broken": 0,
+    "heading": "Quant power for every trader",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "fr-FR",
+    "page": "news",
+    "broken": 0,
+    "heading": "Centre d'actualités",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "fr-FR",
+    "page": "profile",
+    "broken": 0,
+    "heading": "Profil",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "fr-FR",
+    "page": "earn/simple",
+    "broken": 0,
+    "heading": "Earn",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "fr-FR",
+    "page": "assets/transfer",
+    "broken": 0,
+    "heading": "Transfert",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "fr-FR",
+    "page": "ai-quant/strategy",
+    "broken": 0,
+    "heading": "La puissance quantitative pour chaque trader",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "de-DE",
+    "page": "news",
+    "broken": 0,
+    "heading": "News-Center",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "de-DE",
+    "page": "profile",
+    "broken": 0,
+    "heading": "Profil",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "de-DE",
+    "page": "earn/simple",
+    "broken": 0,
+    "heading": "Earn",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "de-DE",
+    "page": "assets/transfer",
+    "broken": 0,
+    "heading": "Übertragen",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "de-DE",
+    "page": "ai-quant/strategy",
+    "broken": 0,
+    "heading": "Quant-Power für jeden Trader",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ja-JP",
+    "page": "news",
+    "broken": 0,
+    "heading": "ニュースセンター",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ja-JP",
+    "page": "profile",
+    "broken": 0,
+    "heading": "プロフィール",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ja-JP",
+    "page": "earn/simple",
+    "broken": 0,
+    "heading": "Earn",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ja-JP",
+    "page": "assets/transfer",
+    "broken": 0,
+    "heading": "振替",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ja-JP",
+    "page": "ai-quant/strategy",
+    "broken": 0,
+    "heading": "クオントの力を すべてのトレーダー",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ko-KR",
+    "page": "news",
+    "broken": 0,
+    "heading": "뉴스 센터",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ko-KR",
+    "page": "profile",
+    "broken": 0,
+    "heading": "프로필",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ko-KR",
+    "page": "earn/simple",
+    "broken": 0,
+    "heading": "어닝",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ko-KR",
+    "page": "assets/transfer",
+    "broken": 0,
+    "heading": "이체",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ko-KR",
+    "page": "ai-quant/strategy",
+    "broken": 0,
+    "heading": "헤지펀드뿐만 아니라 모든 트레이더",
+    "overflow": false,
+    "width": 390
+  }
+]
