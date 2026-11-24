@@ -5,9 +5,30 @@ import Icon from './Icon.vue'
 import {navGroups,path} from '../data'
 import {session,openModal,logout,requestModeSwitch} from '../session'
 const route=useRoute(),router=useRouter(),expanded=shallowRef(''),nav=shallowRef(null)
-watch(()=>route.fullPath,()=>expanded.value='')
+let hoverCloseTimer
+function cancelHoverClose(){clearTimeout(hoverCloseTimer)}
+function enterMenu(event,label){
+ if(event.pointerType!=='mouse')return
+ cancelHoverClose()
+ expanded.value=label
+}
+function leaveMenu(event,label){
+ if(event.pointerType!=='mouse')return
+ cancelHoverClose()
+ const group=event.currentTarget
+ hoverCloseTimer=setTimeout(()=>{
+  if(expanded.value===label&&!group.querySelector('.nav-popover')?.contains(document.activeElement))expanded.value=''
+ },120)
+}
+function toggleMenu(event,label){
+ cancelHoverClose()
+ // Mouse clicks keep an already hovered menu open; keyboard and touch toggle it.
+ if(event.detail>0&&event.pointerType==='mouse'&&expanded.value===label)return
+ expanded.value=expanded.value===label?'':label
+}
+watch(()=>route.fullPath,()=>{cancelHoverClose();expanded.value=''})
 function dismiss(e){if(!nav.value?.contains(e.target))expanded.value=''}
-onMounted(()=>document.addEventListener('pointerdown',dismiss));onUnmounted(()=>document.removeEventListener('pointerdown',dismiss))
+onMounted(()=>document.addEventListener('pointerdown',dismiss));onUnmounted(()=>{cancelHoverClose();document.removeEventListener('pointerdown',dismiss)})
 function signout(){logout();expanded.value='';router.push(path('/'))}
 </script>
 <template>
@@ -16,8 +37,8 @@ function signout(){logout();expanded.value='';router.push(path('/'))}
  <button class="icon-button mobile-menu" :aria-label="$t(&quot;common.menu&quot;)" aria-haspopup="dialog" @click="openModal('menu','NewQuantCapital')"><Icon name="menu"/></button>
  <RouterLink class="brand" :to="path('/')"><img src="/newtrend/assets/newquantcapital-mark.svg" :alt="$t(&quot;NewQuantCapital&quot;)"/>{{ $t("NewQuantCapital") }}</RouterLink>
  <nav class="desktop-navigation" :aria-label="$t(&quot;header.ui.mainNavigation&quot;)"><RouterLink :to="path('/')">{{ $t("common.home") }}</RouterLink>
- <div v-for="group in navGroups" :key="group.label" class="nav-group" @focusout="e=>{if(!e.currentTarget.contains(e.relatedTarget))expanded=''}">
-  <button :aria-expanded="expanded===group.label" :aria-controls="'nav-'+group.label" @click="expanded=expanded===group.label?'':group.label">{{ $t(group.label) }}<Icon name="chevron-down"/></button>
+ <div v-for="group in navGroups" :key="group.label" class="nav-group" @pointerenter="enterMenu($event,group.label)" @pointerleave="leaveMenu($event,group.label)" @focusout="e=>{if(!e.currentTarget.contains(e.relatedTarget))expanded=''}">
+  <button :aria-expanded="expanded===group.label" :aria-controls="'nav-'+group.label" @click="toggleMenu($event,group.label)">{{ $t(group.label) }}<Icon name="chevron-down"/></button>
   <div v-if="expanded===group.label" :id="'nav-'+group.label" class="nav-popover"><RouterLink v-if="group.path" :to="path(group.path)" class="nav-overview">{{ $t("aiQuant.landing.eyebrow") }}</RouterLink><RouterLink v-for="item in group.items" :key="item[0]" :to="path(item[2])"><Icon :name="item[3]" green/><span>{{ $t(item[0]) }}<small>{{ $t(item[1]) }}</small></span></RouterLink></div>
  </div>
  <RouterLink :to="path('/news')">{{ $t("common.news") }}</RouterLink><RouterLink :to="path('/charity')">{{ $t("common.charity") }}</RouterLink></nav>
