@@ -7,7 +7,7 @@ import { createServer } from 'vite'
 import { loadPacks, validatePacks, validateReferences } from '../scripts/check-locales.mjs'
 let server, i18n, account, data
 before(async () => {
- globalThis.location = { pathname: '/newtrend/en-US/' }
+ globalThis.location = { pathname: '/newtrend/' }
  const saved = new Map()
  globalThis.localStorage = { getItem: k => saved.get(k) || null, setItem: (k,v) => saved.set(k,v) }
  globalThis.document = { documentElement: { lang: '' } }
@@ -53,7 +53,7 @@ test('language switches preserve stable product identifiers and change product n
  i18n.applyLocale('de-DE')
  assert.equal(p.id,id);assert.equal(p.type,type)
  assert.notEqual(p.name,englishName);assert.notEqual(data.news[0].title,englishNews)
- assert.equal(data.path('/news'),'/de-DE/news')
+ assert.equal(data.path('/news'),'/news')
 })
 test('six locales provide account titles and synchronize locale preference', () => {
  const seen=new Set()

@@ -97,3 +97,7 @@ Crypto market pairs use /USDT, and trading quote amounts, margin, fees, P&L and 
 All order-form text inputs and custom select triggers share `src/styles/trade-form-controls.css`: 40px desktop minimum height, 44px coarse-pointer minimum height, 14px/20px type, 12px radius, 12px horizontal padding and identical background/focus treatment. This narrowly namespaced stylesheet overrides legacy terminal input compaction. Keep validation borders distinct without changing geometry.
 
 - 用户决定（2026-11-24）：三个交易模式均显示顶部收藏星标，与列表收藏状态同步；收藏按本项目 localStorage 键保存，刷新和切换模式后保留。
+
+## Locale-free URLs (user decision, 2026-11-24)
+
+Use `/newtrend/` with no language segment for every page. Language changes update local preference and document language without replacing the URL or remounting the page. Legacy locale-prefixed links redirect to the equivalent locale-free route while retaining query/hash. Asset account routes such as `/newtrend/assets/overview` must not be mistaken for static asset files.

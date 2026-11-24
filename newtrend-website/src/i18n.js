@@ -21,9 +21,8 @@ function flatten(object, prefix = '', result = {}) {
   return result
 }
 const messages = Object.fromEntries(Object.entries(resources).map(([language, data]) => [language, flatten(data)]))
-const pathLocale = location.pathname.replace(/^\/newtrend(?=\/|$)/, '').split('/')[1]
 const storedLocale = localStorage.getItem('nt-locale')
-export const locale = ref(resources[pathLocale] ? pathLocale : resources[storedLocale] ? storedLocale : 'zh-TW')
+export const locale = ref(resources[storedLocale] ? storedLocale : 'zh-TW')
 
 /** Keys are resolved directly. Raw API/user values are returned unchanged, never reverse-translated. */
 export function t(key, params = {}) {

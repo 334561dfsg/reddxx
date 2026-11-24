@@ -4,7 +4,7 @@
 
 ## 运行
 
-在仓库根目录执行一次 `npm run dev` 即可，原型总入口为 http://localhost:5173/ ，新站为 http://localhost:5173/newtrend/zh-TW/ 。无需单独启动 4173。
+在仓库根目录执行一次 `npm run dev` 即可，原型总入口为 http://localhost:5173/ ，新站为 http://localhost:5173/newtrend/ 。无需单独启动 4173。
 
 在仓库根目录执行 `npm run build` 同时构建所有原型，`npm run preview` 启动统一生产预览。新站仍以独立 HTML 页面加载，样式和路由不影响其他原型。服务器部署时，`/newtrend/*` 应回退到 `/newtrend/index.html`。
 
@@ -42,3 +42,5 @@
 界面文案统一使用 `src/locales/<语言>/<模块>.json` 和固定翻译键，例如 `profile.changePassword.title`。六种语言的键和插值参数保持一致；默认回退英文。新闻和法律正文独立存放于 `src/content/`。旧的中文原文匹配、别名表和补充翻译表已删除。
 
 新增文案时同步补齐六套语言包，然后在根目录运行 `npm run check:locales --prefix newtrend-website`。调用示例与状态保持规则见 [语言包说明](src/locales/README.md)。
+
+站内 URL 不携带语言段；语言切换保留当前 URL，并通过本地偏好保存。旧的带语言链接自动跳转到对应新地址。

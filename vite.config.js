@@ -8,12 +8,12 @@ const root = fileURLToPath(new URL('.', import.meta.url))
 function newTrendPrototype() {
   const rewrite = (preview) => (req, res, next) => {
     const pathname = (req.url || '').split('?')[0]
-    if (pathname === '/newtrend' || pathname === '/newtrend/') {
-      res.writeHead(302, { Location: '/newtrend/zh-TW/' })
+    if (pathname === '/newtrend') {
+      res.writeHead(302, { Location: '/newtrend/' })
       res.end()
       return
     }
-    if (pathname.startsWith('/newtrend/assets/')) {
+    if (pathname.startsWith('/newtrend/assets/') && /\.[^/]+$/.test(pathname)) {
       if (!preview) req.url = req.url.replace('/newtrend/assets/', '/newtrend-website/public/assets/')
     } else if (pathname.startsWith('/newtrend/')) {
       req.url = preview ? '/newtrend/index.html' : '/newtrend-website/index.html'

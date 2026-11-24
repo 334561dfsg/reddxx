@@ -31,7 +31,7 @@
           <div class="mt-2 text-sm text-white/65">由后台对注册用户开通代理后登录；数据、审核与佣金</div>
         </RouterLink>
         <a
-          href="/newtrend/zh-TW/"
+          href="/newtrend/"
           class="rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:border-lime-300/40 hover:bg-lime-300/10"
         >
           <div class="text-xl font-semibold">NewQuantCapital</div>

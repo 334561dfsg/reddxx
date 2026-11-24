@@ -15,7 +15,7 @@ watch(modal,async(value)=>{if(!value)return;current.value=value;amount.value=Str
 function cleanup(){document.body.style.overflow=previousOverflow??'';if(trigger?.isConnected)trigger.focus();else returnFocus?.();clearTimeout(closeTimer)}
 function close(afterClose){if(closing.value||!current.value)return;closing.value=true;closeTimer=setTimeout(()=>{dialog.value?.close();current.value=null;closeModal();closing.value=false;cleanup();if(typeof afterClose==='function')afterClose()},matchMedia('(prefers-reduced-motion: reduce)').matches?0:150)}
 function cancel(e){e.preventDefault();if(amount.value&&!done.value){error.value="overlay.ui.unsavedContentUseCloseOrCancelToLeave";return}close()}
-function changeLanguage(l){applyLocale(l);close();router.replace({path:route.path.replace(/^\/[^/]+/,'/'+l),query:route.query,hash:route.hash})}
+function changeLanguage(l){applyLocale(l);close();}
 function accountAction(){if(done.value||closing.value)return;if(current.value.type==='account-edit'){if(!message.value.trim()){error.value="profile.enterUsername";return}current.value.data.onSave?.(message.value.trim())}else current.value.data.onConfirm?.();done.value=true;close()}
 function switchFromMenu(mode){
   if(mode===session.mode||closing.value)return
