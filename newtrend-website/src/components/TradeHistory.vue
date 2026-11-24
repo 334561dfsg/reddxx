@@ -2,11 +2,12 @@
 import {computed,ref,watch} from 'vue'
 import {fmt} from '../data'
 import {historyFields} from '../utils/mockTradeHistory'
-const props=defineProps({rows:{type:Array,required:true},bucket:String})
-const page=ref(1),scroller=ref(null),size=5
+const props=defineProps({rows:{type:Array,required:true},bucket:String,modelValue:{type:Number,default:1}})
+const emit=defineEmits(['update:modelValue'])
+const page=computed({get:()=>props.modelValue,set:value=>emit('update:modelValue',value)}),scroller=ref(null),size=5
 const pages=computed(()=>Math.max(1,Math.ceil(props.rows.length/size)))
 const visible=computed(()=>props.rows.slice((page.value-1)*size,page.value*size))
-watch(()=>props.bucket,()=>page.value=1)
+
 watch(pages,n=>page.value=Math.min(page.value,n))
 function go(n){page.value=n;scroller.value?.scrollTo({top:0,behavior:'instant'})}
 function date(value){if(!value)return '—';return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date(value))}

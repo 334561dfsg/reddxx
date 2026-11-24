@@ -419,5 +419,27 @@
     "withdraw": "출금",
     "invalidStops": "유효한 익절 또는 손절 가격을 입력하세요. 매수는 익절이 주문가보다 높고 손절은 낮아야 하며 매도는 반대입니다.",
     "confirm": "{{quantity}} {{unit}}를 {{price}} USD에 주문하시겠습니까?"
+  },
+  "pages": {
+    "perpetual": "무기한 선물",
+    "delivery": "만기 옵션",
+    "deliveryCurrent": "현재 만기 주문",
+    "deliveryHistory": "만기 주문 내역",
+    "chart": "차트",
+    "markets": "시장 및 즐겨찾기",
+    "marketCategories": "시장 분류",
+    "marketOverview": "시장 개요",
+    "records": "거래 내역",
+    "emptyRecords": "내역이 없습니다",
+    "both": "매수·매도",
+    "bid": "매수 호가",
+    "ask": "매도 호가",
+    "latestTrades": "최근 체결",
+    "time": "시간",
+    "direction": "방향",
+    "tradingPair": "거래쌍",
+    "latestPrice": "최근 가격",
+    "metals": "귀금속",
+    "availablePairs": "거래 가능한 거래쌍"
   }
 }

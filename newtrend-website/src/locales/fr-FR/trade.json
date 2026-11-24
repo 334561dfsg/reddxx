@@ -419,5 +419,27 @@
     "withdraw": "Retrait",
     "invalidStops": "Saisissez un TP ou SL valide : pour un achat, TP supérieur et SL inférieur au prix de l’ordre ; inversement pour une vente.",
     "confirm": "Confirmer un ordre de {{quantity}} {{unit}} à {{price}} USDT ?"
+  },
+  "pages": {
+    "perpetual": "Contrats perpétuels",
+    "delivery": "Options à échéance",
+    "deliveryCurrent": "Ordres à échéance en cours",
+    "deliveryHistory": "Historique des échéances",
+    "chart": "Graphique",
+    "markets": "Marchés et favoris",
+    "marketCategories": "Catégories de marché",
+    "marketOverview": "Aperçu du marché",
+    "records": "Historique de trading",
+    "emptyRecords": "Aucun enregistrement",
+    "both": "Achat et vente",
+    "bid": "Achats",
+    "ask": "Ventes",
+    "latestTrades": "Dernières transactions",
+    "time": "Heure",
+    "direction": "Sens",
+    "tradingPair": "Paire",
+    "latestPrice": "Dernier prix",
+    "metals": "Métaux précieux",
+    "availablePairs": "Paires disponibles"
   }
 }

@@ -419,5 +419,27 @@
     "withdraw": "Auszahlen",
     "invalidStops": "Gültigen TP- oder SL-Preis eingeben: bei Long TP über und SL unter dem Auftragspreis; bei Short umgekehrt.",
     "confirm": "Auftrag über {{quantity}} {{unit}} zu {{price}} USDT bestätigen?"
+  },
+  "pages": {
+    "perpetual": "Unbefristete Futures",
+    "delivery": "Optionen mit Laufzeit",
+    "deliveryCurrent": "Aktuelle Optionsaufträge",
+    "deliveryHistory": "Optionshistorie",
+    "chart": "Chart",
+    "markets": "Märkte und Favoriten",
+    "marketCategories": "Marktkategorien",
+    "marketOverview": "Marktübersicht",
+    "records": "Handelsaufzeichnungen",
+    "emptyRecords": "Noch keine Einträge",
+    "both": "Kauf & Verkauf",
+    "bid": "Kauforders",
+    "ask": "Verkaufsorders",
+    "latestTrades": "Letzte Trades",
+    "time": "Zeit",
+    "direction": "Richtung",
+    "tradingPair": "Handelspaar",
+    "latestPrice": "Letzter Preis",
+    "metals": "Edelmetalle",
+    "availablePairs": "Verfügbare Handelspaare"
   }
 }

@@ -419,5 +419,27 @@
     "withdraw": "提現",
     "invalidStops": "請輸入有效的止盈或止損價格：做多止盈高於委託價、止損低於委託價；做空相反。",
     "confirm": "確認提交數量 {{quantity}} {{unit}}、價格 {{price}} USDT 的委託？"
+  },
+  "pages": {
+    "perpetual": "永續合約",
+    "delivery": "交割期權",
+    "deliveryCurrent": "當前交割訂單",
+    "deliveryHistory": "交割歷史訂單",
+    "chart": "行情圖表",
+    "markets": "行情與自選",
+    "marketCategories": "市場分類",
+    "marketOverview": "行情概覽",
+    "records": "交易記錄",
+    "emptyRecords": "暫無記錄",
+    "both": "買賣盤",
+    "bid": "買盤",
+    "ask": "賣盤",
+    "latestTrades": "最新成交",
+    "time": "時間",
+    "direction": "方向",
+    "tradingPair": "交易對",
+    "latestPrice": "最新價",
+    "metals": "貴金屬",
+    "availablePairs": "當前市場可交易對"
   }
 }

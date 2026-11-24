@@ -419,5 +419,27 @@
     "withdraw": "出金",
     "invalidStops": "有効な利確・損切り価格を入力してください。買いでは利確は注文価格より高く、損切りは低く設定します。売りは逆です。",
     "confirm": "{{quantity}} {{unit}} を {{price}} USDT で注文しますか？"
+  },
+  "pages": {
+    "perpetual": "無期限先物",
+    "delivery": "決済オプション",
+    "deliveryCurrent": "現在の決済注文",
+    "deliveryHistory": "決済注文履歴",
+    "chart": "チャート",
+    "markets": "マーケット・お気に入り",
+    "marketCategories": "市場カテゴリ",
+    "marketOverview": "市場概要",
+    "records": "取引履歴",
+    "emptyRecords": "履歴はありません",
+    "both": "売買板",
+    "bid": "買い板",
+    "ask": "売り板",
+    "latestTrades": "最新の約定",
+    "time": "時刻",
+    "direction": "売買",
+    "tradingPair": "取引ペア",
+    "latestPrice": "最終価格",
+    "metals": "貴金属",
+    "availablePairs": "取引可能なペア"
   }
 }

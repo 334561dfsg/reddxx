@@ -101,3 +101,11 @@ All order-form text inputs and custom select triggers share `src/styles/trade-fo
 ## Locale-free URLs (user decision, 2026-11-24)
 
 Use `/newtrend/` with no language segment for every page. Language changes update local preference and document language without replacing the URL or remounting the page. Legacy locale-prefixed links redirect to the equivalent locale-free route while retaining query/hash. Asset account routes such as `/newtrend/assets/overview` must not be mistaken for static asset files.
+
+## Dedicated trading pages (user decision, 2026-11-24)
+
+Supersedes the combined seven-tab terminal and wide-screen four-column rules for newtrend only. Follow GMXX page composition: perpetual/delivery with chart, book and right-hand order panel; spot with left book, center chart and dual buy/sell form below, right market list. Preserve NewQuantCapital visual language. Each page shows only its own current/history records, including separate current/settled delivery tabs. Preserve per-product draft/view state on route changes, persistent favorites, USDT and existing safeguards. Keep the root shared service and locale-free routes. Trading V2 is unchanged.
+
+## Reference-only trading scope (user decision, 2026-11-24)
+
+Reproduce GMXX trading page structure/content/interaction without unsolicited product additions. Retain the existing visual style and explicit prior requirements (persistent favorites, USDT denomination, no technical indicators, fixed order actions and overlay safeguards). Do not restore the extra product heading/navigation strip, market-disclosure panel, terminal network/ticker footer, one-year chart period, or inert simple-mode/account labels. Spot sidebar is a plain three-column quote list; search remains in the existing instrument picker.

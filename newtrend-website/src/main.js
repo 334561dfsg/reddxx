@@ -3,7 +3,9 @@ import { createRouter, createWebHistory, START_LOCATION } from 'vue-router'
 import App from './App.vue'
 import {t,applyLocale,formatCompact,locale} from './i18n'
 import Home from './pages/Home.vue'
-import Trade from './pages/Trade.vue'
+import FuturesTrade from './pages/trading/FuturesTrade.vue'
+import OptionsTrade from './pages/trading/OptionsTrade.vue'
+import SpotTrade from './pages/trading/SpotTrade.vue'
 import Finance from './pages/Finance.vue'
 import Quant from './pages/Quant.vue'
 import Assets from './pages/Assets.vue'
@@ -18,7 +20,11 @@ applyLocale(locale.value)
 const router=createRouter({history:createWebHistory('/newtrend/'),routes:[
  {path:'/',component:Home},
  {path:'/:legacyLocale(en-US|zh-TW|fr-FR|de-DE|ja-JP|ko-KR)/:legacyPath(.*)*',redirect:to=>({path:'/'+(Array.isArray(to.params.legacyPath)?to.params.legacyPath.join('/'):to.params.legacyPath||''),query:to.query,hash:to.hash})},
- {path:'/trade/:mode?/:symbol?',component:Trade},
+ {path:'/trade',redirect:'/trade/futures/BTCUSDT'},
+ {path:'/trade/futures/:symbol?',component:FuturesTrade},
+ {path:'/trade/options/:symbol?',component:OptionsTrade},
+ {path:'/trade/spot/:symbol?',component:SpotTrade},
+ {path:'/trade/:pathMatch(.*)*',redirect:'/trade/futures/BTCUSDT'},
  // Copy trading is temporarily excluded from this prototype.
  {path:'/copytrade/:pathMatch(.*)*',redirect:'/'},
  {path:'/earn/:section?/:id?',component:Finance},

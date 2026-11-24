@@ -419,5 +419,27 @@
     "withdraw": "Withdraw",
     "invalidStops": "Enter a valid TP or SL price: for long orders TP must be above and SL below the order price; reverse for shorts.",
     "confirm": "Confirm an order for {{quantity}} {{unit}} at {{price}} USDT?"
+  },
+  "pages": {
+    "perpetual": "Perpetual futures",
+    "delivery": "Delivery options",
+    "deliveryCurrent": "Current delivery orders",
+    "deliveryHistory": "Delivery history",
+    "chart": "Chart",
+    "markets": "Markets & favorites",
+    "marketCategories": "Market categories",
+    "marketOverview": "Market overview",
+    "records": "Trading records",
+    "emptyRecords": "No records yet",
+    "both": "Buy & sell",
+    "bid": "Buy orders",
+    "ask": "Sell orders",
+    "latestTrades": "Latest trades",
+    "time": "Time",
+    "direction": "Side",
+    "tradingPair": "Trading pair",
+    "latestPrice": "Latest price",
+    "metals": "Precious metals",
+    "availablePairs": "Available trading pairs"
   }
 }
