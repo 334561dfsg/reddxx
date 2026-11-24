@@ -463,5 +463,12 @@
     "whyNewquantcapital": "Pourquoi NewQuantCapital",
     "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "Quatre raisons pour lesquelles les traders passent à NewQuantCapital et y restent. Bâti autour de ce qui compte quand de l'argent réel est en jeu.",
     "hoursAgo": " heures auparavant"
+  },
+  "motion": {
+    "pausePartners": "Suspendre le défilement",
+    "resumePartners": "Reprendre le défilement",
+    "pauseQuotes": "Suspendre les mises à jour",
+    "resumeQuotes": "Reprendre les mises à jour",
+    "demoQuotes": "Cours de démonstration · Paires populaires"
   }
 }

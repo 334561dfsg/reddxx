@@ -463,5 +463,12 @@
     "whyNewquantcapital": "Why NewQuantCapital",
     "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "Four reasons traders move to NewQuantCapital and stay. Built around the things that matter when real money is on the line.",
     "hoursAgo": " hours ago"
+  },
+  "motion": {
+    "pausePartners": "Pause scrolling",
+    "resumePartners": "Resume scrolling",
+    "pauseQuotes": "Pause updates",
+    "resumeQuotes": "Resume updates",
+    "demoQuotes": "Demo quotes · Top pairs"
   }
 }

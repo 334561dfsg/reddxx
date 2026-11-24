@@ -463,5 +463,12 @@
     "whyNewquantcapital": "NewQuantCapital를 선택하는 이유",
     "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "트레이더가 NewQuantCapital로 이동하고 머무는 네 가지 이유. 실제 자금이 걸려 있을 때 중요한 것들을 중심으로 설계되었습니다.",
     "hoursAgo": " 시간 전"
+  },
+  "motion": {
+    "pausePartners": "스크롤 일시 중지",
+    "resumePartners": "스크롤 재개",
+    "pauseQuotes": "업데이트 일시 중지",
+    "resumeQuotes": "업데이트 재개",
+    "demoQuotes": "모의 시세 · 인기 거래쌍"
   }
 }

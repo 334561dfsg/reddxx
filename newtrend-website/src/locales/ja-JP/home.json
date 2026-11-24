@@ -463,5 +463,12 @@
     "whyNewquantcapital": "NewQuantCapital を選ぶ理由",
     "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "トレーダーが NewQuantCapital に移行し、留まる4つの理由。実際のお金がかかっているときに重要なことを中心に構築されています。",
     "hoursAgo": " 時間前"
+  },
+  "motion": {
+    "pausePartners": "スクロールを一時停止",
+    "resumePartners": "スクロールを再開",
+    "pauseQuotes": "更新を一時停止",
+    "resumeQuotes": "更新を再開",
+    "demoQuotes": "デモ相場 · 人気銘柄"
   }
 }

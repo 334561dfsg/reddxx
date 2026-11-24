@@ -1,0 +1,119 @@
+/* Measured from the reference terminal at 1280px, 2026-11-24.
+   Keep these shared values independent of the selected trading mode. */
+.trading-terminal{
+  --nt-green:#2bc287;--nt-red:#ff4466;
+  --terminal-divider:color-mix(in srgb,#fff 8%,#05070b);
+  --terminal-muted:color-mix(in srgb,#fff 62%,#05070b);
+  --terminal-secondary:color-mix(in srgb,#fff 70%,#05070b);
+  --terminal-input:color-mix(in srgb,#fff 10%,#05070b);
+  font-family:'Exo 2','PingFang SC',Arial,sans-serif;font-size:14px;line-height:20px;
+  background:#101216;color:#fff;
+}
+.trading-terminal .terminal-panel{background:#05070b;border:0;border-radius:12px}
+.trading-terminal .instrument-bar{height:56px;padding:0 12px;gap:12px;background:#05070b;border-radius:12px}
+.trading-terminal .instrument-bar .coin-label{font-size:18px;line-height:28px;font-weight:700}
+.trading-terminal .instrument-bar>strong{font-size:18px;line-height:28px;font-weight:600}
+.trading-terminal .instrument-bar>span{font-size:12px;line-height:16px}
+.trading-terminal .instrument-bar small{font-size:12px;line-height:16px;color:var(--terminal-muted);margin:0}
+.trading-terminal .instrument-bar .coin{width:28px;height:28px}
+.trading-terminal .pair-panel{padding:16px 12px 0}
+.trading-terminal .pair-panel>input{height:32px;min-height:32px;line-height:16px;padding:4px 12px 4px 36px;background:var(--terminal-input);border:1px solid var(--terminal-input);font-size:12px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23a0a1a2' stroke-width='1.5'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center}
+.trading-terminal .pair-panel .trade-modes{margin:0;height:36px;border-color:var(--terminal-divider)}
+.trading-terminal .trade-modes a{color:var(--terminal-muted);font-size:14px;line-height:20px}
+.trading-terminal .trade-modes a.active{color:#fff}
+.trading-terminal .pair-categories{gap:12px;padding:8px 0;font-size:12px;line-height:16px;margin:0}
+.trading-terminal .pair-categories button{padding:0;color:var(--terminal-muted)}
+.trading-terminal .pair-categories button.active{color:#fff}
+.trading-terminal .pair-sort{height:28px;padding:4px 0 8px;gap:8px;font-size:12px;line-height:16px;color:var(--terminal-muted)}
+.trading-terminal .pair-sort button{padding:0}
+.trading-terminal .pair-list .pair-row{padding:8px 12px;min-height:52px;gap:8px}
+.trading-terminal .pair-row.selected{background:#0c1017}
+.trading-terminal .pair-row>a,.trading-terminal .pair-row .coin-label{font-size:14px;line-height:20px;font-weight:600;gap:8px}
+.trading-terminal .pair-row .coin{width:28px;height:28px;flex-shrink:0}
+.trading-terminal .pair-row small{font-size:12px;line-height:16px;font-weight:400;margin:0}
+.trading-terminal .pair-row .mini-label{color:var(--terminal-muted);text-align:left}
+.trading-terminal .pair-row>button{padding:0;font-size:16px;color:var(--terminal-muted);width:16px;flex-shrink:0}
+.trading-terminal .timeframes{min-height:40px;padding:8px 12px;gap:12px;align-items:center;font-size:12px;line-height:16px;color:var(--terminal-muted);border-bottom:1px solid var(--terminal-divider)}
+.trading-terminal .timeframes button{padding:0}
+.trading-terminal .timeframes .active{padding:4px;border-radius:4px;background:var(--terminal-input);color:#fff}
+.trading-terminal .ohlc{font-size:12px;line-height:18px;padding:6px 12px 0;gap:12px;color:var(--terminal-muted)}
+.trading-terminal .ohlc b{color:var(--nt-green)}
+.trading-terminal .orderbook{padding:0 16px 8px}
+.trading-terminal .orderbook h2{font-family:inherit;font-size:15px;line-height:22.5px;font-weight:500;margin:0}
+.trading-terminal .options-book-title,.trading-terminal .orderbook>h2{height:40px;padding:8px 0;border-bottom:1px solid var(--terminal-divider)}
+.trading-terminal .book-head,.trading-terminal .book-row{font-family:inherit;font-size:12px;line-height:16px;font-weight:400;grid-template-columns:32% 34% 34%}
+.trading-terminal .book-head{padding:8px 0;color:var(--terminal-muted)}
+.trading-terminal .book-row{padding:3px 0}
+.trading-terminal .book-row:before{background:color-mix(in srgb,#f46 12%,#05070b)}
+.trading-terminal .book-row.bid:before{background:color-mix(in srgb,#0ee685 12%,#05070b)}
+.trading-terminal .book-row>span{position:relative}
+.trading-terminal .book-price,.trading-terminal .options-book-mid{font-size:18px;line-height:28px;font-weight:600;padding:12px 0}
+.trading-terminal .order-panel{padding:0 16px 16px;gap:12px}
+.trading-terminal .order-panel .trade-modes{height:40px;min-height:40px;margin:0 -16px;padding:0 8px;border-color:var(--terminal-divider)}
+.trading-terminal .order-panel label,.trading-terminal .order-panel .mini-label,.trading-terminal .order-panel .summary-line,.trading-terminal .order-panel .details-list{font-size:12px;line-height:16px;color:var(--terminal-secondary)}
+.trading-terminal .order-panel input:not([type=range]),.trading-terminal .order-panel select{min-height:36px;padding:8px 12px;font-size:14px;line-height:20px;background-color:var(--terminal-input);border-radius:12px}
+.trading-terminal .order-panel .tabs{gap:4px;margin:0}
+.trading-terminal .order-panel .tabs button{font-size:14px;line-height:20px;padding:8px 12px;border-radius:4px;background:#0c1017}
+.trading-terminal .order-panel .tabs button.active{background:var(--nt-green)}
+.trading-terminal .order-buttons button{border-radius:999px;font-size:14px;line-height:20px;min-height:40px;padding:10px 12px}
+.trading-terminal .order-buttons .buy{background:var(--nt-green)}
+.trading-terminal .order-buttons .sell{background:var(--nt-red)}
+.trading-terminal .records-panel .record-tabs{padding:0 16px;gap:16px;border-color:var(--terminal-divider);font-size:14px;line-height:20px}
+.trading-terminal .record-tabs button{padding:12px 0;color:var(--terminal-muted);font-weight:500}
+.trading-terminal .record-tabs button.active{color:#fff;border-color:#fff}
+.trading-terminal .records-panel .filter-row{margin:12px 16px;font-size:12px;line-height:16px}
+.trading-terminal .pair-list,.trading-terminal .order-panel,.trading-terminal .orderbook,.trading-terminal .records-panel{scrollbar-width:auto;scrollbar-color:auto}
+.trading-terminal ::-webkit-scrollbar{width:3px;height:3px}
+.trading-terminal ::-webkit-scrollbar-track{background:transparent}
+.trading-terminal ::-webkit-scrollbar-thumb{background:color-mix(in srgb,#fff 12%,#05070b);border-radius:999px}
+.trading-terminal ::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,#fff 24%,#05070b)}
+@media(pointer:coarse){.trading-terminal .pair-panel .trade-modes{height:44px}.trading-terminal .order-panel .trade-modes{height:44px}.trading-terminal .trade-modes a{min-height:44px}}
+@media(max-width:750px){.trading-terminal .instrument-bar{height:auto;min-height:56px;padding:12px;flex-wrap:wrap}.trading-terminal .pair-panel{min-width:0}.trading-terminal .pair-row>a{flex-wrap:wrap}.trading-terminal .pair-categories{flex-wrap:wrap}.trading-terminal .timeframes{gap:8px}}
+/* The list-specific legacy selectors otherwise override the shared scrollbar. */
+.trading-terminal .pair-panel .pair-list::-webkit-scrollbar{width:3px;height:3px}
+.trading-terminal .pair-panel .pair-list::-webkit-scrollbar-thumb{background:color-mix(in srgb,#fff 12%,#05070b);border-radius:999px}
+
+/* Keep the order actions outside the only scrolling part of the form. */
+.trading-terminal:not(.options-terminal) .order-panel{display:flex;flex-direction:column;gap:0;overflow:hidden;padding:0;min-height:0}
+.trading-terminal:not(.options-terminal) .order-panel>.trade-modes{position:static;margin:0;flex-shrink:0}
+.trading-terminal .order-form-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:12px;padding:8px 16px;scroll-padding-block:12px}
+.trading-terminal .order-form-scroll>*{flex-shrink:0}
+.trading-terminal .order-panel>.order-buttons{flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:8px 16px 12px;background:#05070b;position:relative;z-index:1}
+@media(min-width:1151px){.trading-terminal:not(.options-terminal) .order-panel{height:100%;max-height:calc(100vh - 100px);max-height:calc(100dvh - 100px);align-self:start}}
+@media(max-width:1150px){.trading-terminal:not(.options-terminal) .order-panel{height:560px;max-height:calc(100vh - 100px);max-height:calc(100dvh - 100px);min-height:200px}.trading-terminal .order-panel>.order-buttons{padding-bottom:max(12px,env(safe-area-inset-bottom))}}
+
+/* Reference inputs use a subtle inset border, not the site's lime focus ring. */
+.trading-terminal .pair-panel>input{border-radius:12px;box-shadow:0 1px 3px #0000001a,0 1px 2px -1px #0000001a;transition:border-color 150ms ease-out}
+.trading-terminal input:not([type=range]):not([type=checkbox]):focus,
+.trading-terminal input:not([type=range]):not([type=checkbox]):focus-visible,
+.trading-terminal select:focus,
+.trading-terminal select:focus-visible{outline:none;outline-offset:0;border-color:color-mix(in srgb,#fff 14%,#05070b)}
+.trading-terminal .order-form-scroll:focus-visible{outline:1px solid color-mix(in srgb,#fff 24%,#05070b);outline-offset:-1px}
+@media(prefers-reduced-motion:reduce){.trading-terminal .pair-panel>input{transition:none}}
+.trading-terminal .records-panel .records-filters{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:8px 16px;flex-shrink:0}
+.trading-terminal .records-panel .record-tabs{flex-wrap:nowrap;overflow-x:auto;flex-shrink:0}
+.trading-terminal .records-panel .record-tabs button{white-space:nowrap}
+.trading-terminal .record-status-tabs{display:inline-flex;gap:4px;align-items:center;padding:4px;border:1px solid #191b1f;border-radius:24px;background:#0c1017;flex-shrink:0}
+.trading-terminal .record-status-tabs button{padding:4px 12px;border:0;border-radius:16px;background:transparent;font-size:12px;line-height:16px;font-weight:500;color:var(--terminal-muted);white-space:nowrap;transition:color 150ms ease-out,background-color 150ms ease-out}
+.trading-terminal .record-status-tabs button.active{background:var(--terminal-input);color:#fff;box-shadow:0 1px 3px #0000001a,0 1px 2px -1px #0000001a}
+.trading-terminal .record-status-tabs button:hover{color:#fff}
+.trading-terminal .record-status-tabs button:focus-visible{outline:1px solid #ffffff70;outline-offset:1px}
+@media(prefers-reduced-motion:reduce){.trading-terminal .record-status-tabs button{transition:none}}
+.trading-terminal .record-date-range{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--terminal-muted);font-size:12px;line-height:16px}
+.trading-terminal .record-date{position:relative;display:flex;align-items:center;gap:6px;min-height:32px;cursor:pointer}
+.trading-terminal .record-date:before{content:'';width:12px;height:12px;border:1px solid currentColor;border-radius:2px;background:linear-gradient(transparent 3px,currentColor 3px,currentColor 4px,transparent 4px)}
+.trading-terminal .record-date input{position:absolute;inset:0;width:100%;height:100%;min-height:0;opacity:0;cursor:pointer;padding:0}
+.trading-terminal .record-date input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
+.trading-terminal .record-date:focus-within{outline:1px solid #ffffff3d;outline-offset:2px;border-radius:4px}
+.trading-terminal .record-date.filled{color:#fff}.trading-terminal .date-clear{font-size:18px;width:24px;height:28px}
+
+/* Selection changes color only; its underline never participates in sizing. */
+.trading-terminal .record-tabs button,
+.trading-terminal .record-tabs button.active{position:relative;flex:0 0 auto;border:0;min-height:44px;padding:12px 0;font-size:14px;line-height:20px;font-weight:500;transform:none;scale:none;transition:color 150ms ease-out}
+.trading-terminal .record-tabs button::after{content:'';position:absolute;inset:auto 0 0;height:2px;background:transparent}
+.trading-terminal .record-tabs button.active::after{background:#fff}
+.trading-terminal .record-tabs button:focus-visible{outline-offset:-2px}
+.trading-terminal .timeframes button,.trading-terminal .timeframes button.active{padding:4px;transform:none}
+.trading-terminal .records-panel{display:flex;flex-direction:column;overflow:hidden;overflow-anchor:none}
+@media(max-width:1599px){.trading-terminal .records-panel{height:400px;height:clamp(320px,45dvh,440px);min-height:320px}}
+@media(prefers-reduced-motion:reduce){.trading-terminal .record-tabs button{transition:none}}

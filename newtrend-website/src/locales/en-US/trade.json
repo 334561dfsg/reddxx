@@ -414,5 +414,34 @@
     "simulatedPricesAndOrdersNoTradingServiceConnected": "Simulated prices and orders. No trading service connected.",
     "connectedLocalDemo": "● Connected · Local demo",
     "marketSnapshot": "Market snapshot ·"
+  },
+  "calendar": {
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month"
+  },
+  "history": {
+    "openFill": "Open position fill",
+    "fullClose": "Full close",
+    "averagePrice": "Average execution price",
+    "positionValue": "Position value",
+    "averageClosePrice": "Average close price",
+    "time": "Time",
+    "orderQuantity": "Order quantity",
+    "filledQuantity": "Filled quantity",
+    "transactionTime": "Transaction time",
+    "pnl": "Profit and loss",
+    "pagination": "History pagination",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "page": "Page {{value}}"
+  },
+  "current": {
+    "pending": "Pending",
+    "unrealized": "Unrealized P&L",
+    "remaining": "Remaining quantity",
+    "confirmClose": "Close the entire {{quantity}} position in {{pair}} at {{price}} USD?",
+    "confirmCancel": "Cancel the {{pair}} order (quantity {{quantity}}, price {{price}} USD)?",
+    "closed": "{{pair}} closed. View it in position history.",
+    "cancelled": "{{pair}} cancelled. View it in order history."
   }
 }

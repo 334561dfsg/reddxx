@@ -162,7 +162,9 @@
     "confirmMessage": "Der Wechsel in den Demo-Modus bedeutet, dass kein echtes Geld beteiligt ist.",
     "confirmEnable": "Bestätigen",
     "confirmCancel": "Abbrechen",
-    "realModeRequired": "Diese Seite ist nur im Echt-Modus verfügbar"
+    "realModeRequired": "Diese Seite ist nur im Echt-Modus verfügbar",
+    "confirmRealTitle": "Zum Echtgeldmodus wechseln",
+    "confirmRealMessage": "Nach dem Wechsel werden die Vermögenswerte und die Handelsoberfläche des Echtgeldkontos angezeigt."
   },
   "accountSuspended": {
     "banner": "Dein Konto wurde gesperrt – zugehörige Daten und Funktionen sind nicht verfügbar. Bei Fragen wende dich an den Support.",

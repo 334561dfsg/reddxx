@@ -8,4 +8,4 @@ import Footer from './components/Footer.vue'
 import Overlay from './components/Overlay.vue'
 const route=useRoute()
 </script>
-<template><div id="site-shell"><Header/><main id="main-content"><RouterView/></main><Footer v-if="!route.path.includes('/trade/')"/><div class="demo-caption">{{ $t("app.ui.localPreviewMarketSnapshotNoLiveTrading") }}</div></div><Overlay/></template>
+<template><div id="site-shell"><Header/><main id="main-content"><RouterView/></main><Footer v-if="!route.path.includes('/trade/')"/></div><Overlay/></template>

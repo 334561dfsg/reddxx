@@ -414,5 +414,34 @@
     "simulatedPricesAndOrdersNoTradingServiceConnected": "模擬相場と注文です。取引サービスには接続しません。",
     "connectedLocalDemo": "● 接続済み · ローカルデモ",
     "marketSnapshot": "市場スナップショット ·"
+  },
+  "calendar": {
+    "previousMonth": "前の月",
+    "nextMonth": "次の月"
+  },
+  "history": {
+    "openFill": "新規約定",
+    "fullClose": "全決済",
+    "averagePrice": "平均約定価格",
+    "positionValue": "ポジション価値",
+    "averageClosePrice": "平均決済価格",
+    "time": "日時",
+    "orderQuantity": "注文数量",
+    "filledQuantity": "約定数量",
+    "transactionTime": "約定日時",
+    "pnl": "損益",
+    "pagination": "履歴ページ",
+    "previousPage": "前のページ",
+    "nextPage": "次のページ",
+    "page": "{{value}} ページ"
+  },
+  "current": {
+    "pending": "未約定",
+    "unrealized": "未実現損益",
+    "remaining": "残数量",
+    "confirmClose": "{{pair}} の全数量 {{quantity}} を {{price}} USD で決済しますか？",
+    "confirmCancel": "{{pair}} の注文（数量 {{quantity}}、価格 {{price}} USD）をキャンセルしますか？",
+    "closed": "{{pair}} を決済しました。ポジション履歴をご確認ください。",
+    "cancelled": "{{pair}} をキャンセルしました。注文履歴をご確認ください。"
   }
 }

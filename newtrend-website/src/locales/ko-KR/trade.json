@@ -414,5 +414,34 @@
     "simulatedPricesAndOrdersNoTradingServiceConnected": "모의 시세와 주문입니다. 거래 서비스에 연결되지 않습니다.",
     "connectedLocalDemo": "● 연결됨 · 로컬 데모",
     "marketSnapshot": "시장 스냅샷 ·"
+  },
+  "calendar": {
+    "previousMonth": "이전 달",
+    "nextMonth": "다음 달"
+  },
+  "history": {
+    "openFill": "포지션 진입 체결",
+    "fullClose": "전체 청산",
+    "averagePrice": "평균 체결가",
+    "positionValue": "포지션 가치",
+    "averageClosePrice": "평균 청산가",
+    "time": "시간",
+    "orderQuantity": "주문 수량",
+    "filledQuantity": "체결 수량",
+    "transactionTime": "거래 시간",
+    "pnl": "손익",
+    "pagination": "내역 페이지",
+    "previousPage": "이전 페이지",
+    "nextPage": "다음 페이지",
+    "page": "{{value}} 페이지"
+  },
+  "current": {
+    "pending": "미체결",
+    "unrealized": "미실현 손익",
+    "remaining": "남은 수량",
+    "confirmClose": "{{pair}} 포지션 전체 {{quantity}}를 {{price}} USD에 청산하시겠습니까?",
+    "confirmCancel": "{{pair}} 주문(수량 {{quantity}}, 가격 {{price}} USD)을 취소하시겠습니까?",
+    "closed": "{{pair}} 청산 완료. 포지션 내역에서 확인하세요.",
+    "cancelled": "{{pair}} 취소 완료. 주문 내역에서 확인하세요."
   }
 }

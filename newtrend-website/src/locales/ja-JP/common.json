@@ -162,7 +162,9 @@
     "confirmMessage": "デモモードに切り替えると、実資金は一切使用されません。",
     "confirmEnable": "確定",
     "confirmCancel": "キャンセル",
-    "realModeRequired": "このページはリアルモードでのみご利用いただけます"
+    "realModeRequired": "このページはリアルモードでのみご利用いただけます",
+    "confirmRealTitle": "リアルモードに切り替え",
+    "confirmRealMessage": "切り替えると、リアル口座の資産と取引画面が表示されます。"
   },
   "accountSuspended": {
     "banner": "お客様のアカウントは停止されています。関連するデータと機能はご利用いただけません。ご不明な点はサポートまでお問い合わせください。",

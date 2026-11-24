@@ -414,5 +414,34 @@
     "simulatedPricesAndOrdersNoTradingServiceConnected": "Simulierte Kurse und Aufträge. Kein Handelsdienst verbunden.",
     "connectedLocalDemo": "● Verbunden · Lokale Demo",
     "marketSnapshot": "Markt-Snapshot ·"
+  },
+  "calendar": {
+    "previousMonth": "Vorheriger Monat",
+    "nextMonth": "Nächster Monat"
+  },
+  "history": {
+    "openFill": "Position eröffnet",
+    "fullClose": "Vollständig geschlossen",
+    "averagePrice": "Durchschnittlicher Ausführungspreis",
+    "positionValue": "Positionswert",
+    "averageClosePrice": "Durchschnittlicher Schlusspreis",
+    "time": "Zeit",
+    "orderQuantity": "Auftragsmenge",
+    "filledQuantity": "Ausgeführte Menge",
+    "transactionTime": "Transaktionszeit",
+    "pnl": "Gewinn und Verlust",
+    "pagination": "Verlaufsseiten",
+    "previousPage": "Vorherige Seite",
+    "nextPage": "Nächste Seite",
+    "page": "Seite {{value}}"
+  },
+  "current": {
+    "pending": "Offen",
+    "unrealized": "Unrealisierter Gewinn/Verlust",
+    "remaining": "Restmenge",
+    "confirmClose": "Die gesamte Position {{quantity}} in {{pair}} zu {{price}} USD schließen?",
+    "confirmCancel": "Auftrag für {{pair}} (Menge {{quantity}}, Preis {{price}} USD) stornieren?",
+    "closed": "{{pair}} geschlossen. Siehe Positionsverlauf.",
+    "cancelled": "{{pair}} storniert. Siehe Auftragsverlauf."
   }
 }

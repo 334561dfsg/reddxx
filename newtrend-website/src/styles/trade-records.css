@@ -1,0 +1,24 @@
+/* Shared geometry: every record category uses the same card and scroll frame. */
+.trade-history,.current-trades{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;overflow:hidden}
+.history-list{overflow-y:auto;min-height:0;flex:1;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#303236 transparent;overflow-anchor:none}
+.history-card{padding:16px;border-bottom:1px solid var(--terminal-divider,#ffffff14)}
+.history-card header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:32px;margin-bottom:16px;font-size:14px;line-height:20px}
+.history-card header strong{font-weight:600}
+.direction,.history-tag{font-size:12px;line-height:18px;padding:4px 8px;border-radius:4px}
+.direction.positive{background:#2bc2871a}.direction.negative{background:#ff44661a}
+.history-tag{background:#ffffff0d;color:#a0a1a2}
+.history-card dl{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:16px;margin:0;font-size:12px;line-height:18px}
+.history-card dt{color:#8c8f96;margin-bottom:8px;overflow-wrap:anywhere}
+.history-card dd{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px;min-height:20px;line-height:20px;margin:0;color:#d2d3d5;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.history-card dd.positive{color:#2bc287}.history-card dd.negative{color:#ff4466}
+.history-card dd small{font-size:10px;line-height:inherit;vertical-align:baseline;color:#8c8f96}
+.history-pagination,.history-footer{display:flex;justify-content:center;align-items:center;gap:8px;padding:8px 16px;height:44px;flex:none;background:#05070b}
+.history-pagination button{height:28px;min-width:28px;border-radius:4px;font-size:12px;color:#a0a1a2;transform:none;transition:color 150ms,background-color 150ms}
+.history-pagination button[aria-current=page]{color:var(--nt-accent);background:#a5ff4a12}
+.history-pagination button:disabled{opacity:.3}
+.history-pagination button:focus-visible,.record-action:focus-visible{outline:2px solid var(--nt-accent);outline-offset:2px}
+.record-action{margin-left:auto;border:1px solid #ffffff24;border-radius:4px;padding:5px 16px;min-height:32px;font-size:12px;line-height:20px;color:var(--nt-accent)}
+.record-action:hover{background:#ffffff0d}
+@media(max-width:1100px){.history-card dl{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:600px){.history-card dl{grid-template-columns:repeat(2,minmax(0,1fr))}.history-card header{gap:6px;min-height:44px}.record-action{min-height:44px}.history-pagination,.history-footer{height:52px}.history-pagination button{min-width:36px;height:36px}}
+@media(prefers-reduced-motion:reduce){.history-pagination button{transition:none}}

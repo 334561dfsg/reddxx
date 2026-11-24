@@ -162,7 +162,9 @@
     "confirmMessage": "Switching to demo mode means no real funds are involved.",
     "confirmEnable": "Confirm",
     "confirmCancel": "Cancel",
-    "realModeRequired": "This page is only available in real mode"
+    "realModeRequired": "This page is only available in real mode",
+    "confirmRealTitle": "Switch to real mode",
+    "confirmRealMessage": "Switching will show the real account’s assets and trading interface."
   },
   "accountSuspended": {
     "banner": "Your account has been suspended — related data and features are unavailable. Contact support if you think this is a mistake.",

@@ -414,5 +414,34 @@
     "simulatedPricesAndOrdersNoTradingServiceConnected": "本地模擬行情與委託，不連接交易服務。",
     "connectedLocalDemo": "● 連線穩定 · 本地演示",
     "marketSnapshot": "市場快照 · "
+  },
+  "calendar": {
+    "previousMonth": "上一個月",
+    "nextMonth": "下一個月"
+  },
+  "history": {
+    "openFill": "開倉成交",
+    "fullClose": "全部平倉",
+    "averagePrice": "成交均價",
+    "positionValue": "倉位價值",
+    "averageClosePrice": "平倉均價",
+    "time": "時間",
+    "orderQuantity": "委託數量",
+    "filledQuantity": "成交數量",
+    "transactionTime": "成交時間",
+    "pnl": "盈虧",
+    "pagination": "歷史記錄分頁",
+    "previousPage": "上一頁",
+    "nextPage": "下一頁",
+    "page": "第 {{value}} 頁"
+  },
+  "current": {
+    "pending": "未成交",
+    "unrealized": "未實現盈虧",
+    "remaining": "剩餘數量",
+    "confirmClose": "確認以 {{price}} USD 平倉 {{pair}} 的全部 {{quantity}} 倉位？",
+    "confirmCancel": "確認撤銷 {{pair}} 的委託（數量 {{quantity}}，價格 {{price}} USD）？",
+    "closed": "{{pair}} 已平倉，可在合約歷史倉位查看。",
+    "cancelled": "{{pair}} 已撤單，可在對應歷史委託查看。"
   }
 }
