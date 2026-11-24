@@ -7,6 +7,8 @@ export const markets = [
 ].map(([symbol,name,price,change,volume,image,category])=>({symbol,name,id:name.replace('/',''),price,change,volume,image,category}))
 const fiat=new Set(['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','TWD','THB','KRW','RUB'])
 for(const row of marketSnapshot){if(markets.some(m=>m.name===row.name))continue;const symbol=row.name.split('/')[0];markets.push({...row,symbol,id:row.name.replace('/',''),volume:'—',image:null,category:row.name.includes('/')?(fiat.has(symbol)?"aiQuant.market.forex":"home.products.perpTag1"):"aiQuant.market.stock"})}
+// Crypto instruments settle in USDT; retain legacy route IDs for existing links.
+for(const market of markets){if(market.category==='home.products.perpTag1')market.name=market.name.replace(/\/USD$/, '/USDT')}
 export const hotStocks=[['BABA','84.425','-0.345','-0.80%'],['COIN','107.64','+0.6','+0.53%'],['HYUNDAI','205.895','+21.02','+11.44%'],['MSTR','82.975','-1.12','-1.30%'],['RKLB','49.965','+1.51','+3.13%'],['SKHYNIX','873.105','+66.52','+7.87%'],['SNDK','86.995','+3.15','+3.62%'],['UBER','64.69','-0.07','-0.13%']]
 export const features=[["home.whyNvdx.features.multiAsset.title","home.whyNvdx.features.multiAsset.desc",'bbf6320a56018d43.webp','layers','/trade/futures/BTCUSD'],["home.whyNvdx.features.aiAssisted.title","home.whyNvdx.features.aiAssisted.desc",'541c9d203a4d25c5.webp','sparkles','/ai-quant'],["home.whyNvdx.features.web3Custody.title","auth.featureSecurityDesc",'d7f8014d43243489.webp','shield','/profile'],["home.whyNvdx.features.liquidity.title","home.whyNvdx.features.liquidity.desc",'b8253acd0b1b6b5d.webp','zap','/trade/futures/BTCUSD']]
 export const news = [

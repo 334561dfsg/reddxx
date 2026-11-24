@@ -1,6 +1,6 @@
 // Synthetic fixtures; structure observed on GMXX delivery, perpetual and spot history.
 const round=(n,d=2)=>Number(n.toFixed(d))
-const symbols=[['BTC/USD',60120,.025],['ETH/USD',1685,.8],['SOL/USD',70.4,12],['BNB/USD',546,2]]
+const symbols=[['BTC/USDT',60120,.025],['ETH/USDT',1685,.8],['SOL/USDT',70.4,12],['BNB/USDT',546,2]]
 const start=Date.parse('2026-11-24T03:40:00+08:00')
 export const historyBuckets=['positionHistory','orderHistory','optionsOrders','spotOrdersHistory']
 export const mockTradeHistory=historyBuckets.flatMap((bucket,b)=>Array.from({length:12},(_,i)=>{
@@ -11,8 +11,8 @@ export const mockTradeHistory=historyBuckets.flatMap((bucket,b)=>Array.from({len
 export function historyFields(o){
  const field=(label,value,type='number',unit='')=>({label,value,type,unit})
  const time=(label,value)=>field(label,value,'date')
- if(o.bucket==='optionsOrders')return [time('trade.openTime',o.openedAt??o.createdAt),field('trade.entryPrice',o.price),field('trade.fee',o.fee,'number','USD'),time('trade.closeTime',o.closedAt),field('trade.closePrice',o.closePrice),field('trade.amount',o.amount,'number','USD'),field('trade.history.pnl',o.pnl,'pnl','USD')]
- if(o.bucket==='positionHistory')return [field('trade.history.averagePrice',o.price),field('trade.history.pnl',o.event==='trade.history.openFill'?null:o.pnl,'pnl','USD'),field('trade.history.positionValue',o.notional,'number','USD'),field('trade.fee',o.fee,'number','USD'),field('trade.history.averageClosePrice',o.event==='trade.history.openFill'?null:o.closePrice),field('trade.quantity',o.quantity),time('trade.history.time',o.closedAt??o.createdAt)]
+ if(o.bucket==='optionsOrders')return [time('trade.openTime',o.openedAt??o.createdAt),field('trade.entryPrice',o.price),field('trade.fee',o.fee,'number','USDT'),time('trade.closeTime',o.closedAt),field('trade.closePrice',o.closePrice),field('trade.amount',o.amount,'number','USDT'),field('trade.history.pnl',o.pnl,'pnl','USDT')]
+ if(o.bucket==='positionHistory')return [field('trade.history.averagePrice',o.price),field('trade.history.pnl',o.event==='trade.history.openFill'?null:o.pnl,'pnl','USDT'),field('trade.history.positionValue',o.notional,'number','USDT'),field('trade.fee',o.fee,'number','USDT'),field('trade.history.averageClosePrice',o.event==='trade.history.openFill'?null:o.closePrice),field('trade.quantity',o.quantity),time('trade.history.time',o.closedAt??o.createdAt)]
  if(o.bucket==='orderHistory')return [time('trade.orderTime',o.createdAt),field('trade.history.orderQuantity',o.quantity),field('trade.orderPrice',o.price),field('trade.history.averagePrice',o.filledQuantity?o.price:null),field('trade.history.filledQuantity',o.filledQuantity),field('trade.orderType',o.orderType,'key'),field('trade.status',o.recordStatus,'key')]
  return [time('trade.history.transactionTime',o.createdAt),field('trade.history.orderQuantity',o.quantity),field('trade.history.filledQuantity',o.filledQuantity),field('trade.history.averagePrice',o.filledQuantity?o.price:null)]
 }

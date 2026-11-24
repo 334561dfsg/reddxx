@@ -75,3 +75,23 @@ Extend the GMXX-style record cards to current futures positions, current futures
 ## Stable record layout (user feedback, 2026-11-24)
 
 Record-tab selection must not change scale, border dimensions, font weight, or flex width. Use an absolutely positioned underline. Current and historical cards share `src/styles/trade-records.css` for padding, header/action height, label/value gaps, scrollbar gutter and footer space. Keep the record panel's height independent of selected category or row count, with body-only scrolling and reachable fixed pagination. Preserve responsive field wrapping.
+
+## Order-form fields reference (user decision, 2026-11-24)
+
+Use GMXX only for order-form fields, product semantics and conditional display; keep the current NewQuantCapital fonts, colors, borders, spacing, controls and anchored action footer. `TradeOrderForm.vue` owns independent futures/options/spot drafts. Futures shows available quantity, limit-only price, leverage, USD notional, percentage shortcuts, max openable, initial margin, fee and optional TP/SL. Delivery/options shows direction, asset, available, minimum, fee, eight reference periods/rates and estimated return. Spot preserves separate buy-USD/sell-base inputs, limit prices, percentages and available-to-buy/sell summaries. All three use body-only scrolling and fixed actions. Reference account balances must never be copied; use local fixture balances and local confirmation/record creation only.
+
+## Order-form funding links removed (user decision, 2026-11-24)
+
+Do not show the deposit, withdraw or transfer shortcut row inside any trading order form. Keep funding access through the existing global Assets navigation.
+
+## Custom trading selects (user decision, 2026-11-24)
+
+Trading order forms must not use native HTML select popups. Use RecordFilter's field variant for leverage and delivery period: trigger-width dark portaled list, lime committed/check state, subtle active highlight, viewport flipping, thin scrollbar and select-only keyboard semantics. Preserve the current value on Escape/outside/Tab; only explicit option or Enter/Space selection commits.
+
+## USDT trading denomination (user decision, 2026-11-24)
+
+Crypto market pairs use /USDT, and trading quote amounts, margin, fees, P&L and confirmation messages use USDT in all six locales. Existing legacy /BTCUSD-style URLs remain supported, along with /BTCUSDT aliases. Spot sell quantity remains denominated in the base asset (e.g. BTC); do not relabel base quantity as quote currency. Preserve actual forex instrument identities.
+
+## Unified order controls (user decision, 2026-11-24)
+
+All order-form text inputs and custom select triggers share `src/styles/trade-form-controls.css`: 40px desktop minimum height, 44px coarse-pointer minimum height, 14px/20px type, 12px radius, 12px horizontal padding and identical background/focus treatment. This narrowly namespaced stylesheet overrides legacy terminal input compaction. Keep validation borders distinct without changing geometry.

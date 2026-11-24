@@ -2,7 +2,7 @@
 const round=(n,d=2)=>Number(n.toFixed(d))
 export function createCurrentTrades(){
  return ['positions','openOrders','spotOpenOrders'].flatMap((bucket,b)=>[
-  ['BTC/USD',60120,.025],['ETH/USD',1685,.8],['SOL/USD',70.4,12]
+  ['BTC/USDT',60120,.025],['ETH/USDT',1685,.8],['SOL/USDT',70.4,12]
  ].map(([marketName,price,quantity],i)=>({
   id:`current-${bucket}-${i}`,bucket,kind:b===2?'spot':'futures',marketName,
   direction:i===1?'sell':'buy',price,quantity,filledQuantity:0,

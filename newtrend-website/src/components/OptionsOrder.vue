@@ -14,20 +14,20 @@ function submit(side) {
   if(!Number.isFinite(Number(amount.value))||Number(amount.value)<100){error.value='trade.amountBelowMinimum';return}
   if(Number(amount.value)>100000){error.value='assets.withdraw.error.insufficientBalance';return}
   openModal('order',`${t(side)} · ${props.pair.name}`,{
-    symbol:'USD',min:100,max:100000,amount:amount.value,side,kind:'options',marketName:props.pair.name,bucket:'optionsOrders',direction:side==='trade.buyUp'?'buy':'sell',
+    symbol:'USDT',min:100,max:100000,amount:amount.value,side,kind:'options',marketName:props.pair.name,bucket:'optionsOrders',direction:side==='trade.buyUp'?'buy':'sell',
     name:`${t('trade.optionTrade')} ${t(side)} ${props.pair.name}`,
-    description:`${t('trade.durationSeconds',{value:selected.value})} · ${t('trade.payoutRate')} ${rate.value}% · ${t('trade.expectedReturn')} +${fmt(expected.value)} USD`,
+    description:`${t('trade.durationSeconds',{value:selected.value})} · ${t('trade.payoutRate')} ${rate.value}% · ${t('trade.expectedReturn')} +${fmt(expected.value)} USDT`,
   })
 }
 </script>
 <template>
   <div class="options-form">
-    <div class="duration-label"><span>{{ $t('trade.period') }} / {{ $t('trade.payoutRate') }}</span><button class="help" :aria-label="$t('trade.help')" @click="openModal('info','trade.payoutRate',{description:{key:'trade.payoutRateTooltip',params:{asset:'USD'}}})">ⓘ</button></div>
+    <div class="duration-label"><span>{{ $t('trade.period') }} / {{ $t('trade.payoutRate') }}</span><button class="help" :aria-label="$t('trade.help')" @click="openModal('info','trade.payoutRate',{description:{key:'trade.payoutRateTooltip',params:{asset:'USDT'}}})">ⓘ</button></div>
     <div class="duration-grid"><button v-for="[seconds,payout] in durations" :key="seconds" :aria-pressed="selected===seconds" :class="{active:selected===seconds}" @click="selected=seconds"><span>{{ $t('trade.durationSeconds',{value:seconds}) }}</span><span>{{ payout }}%</span></button></div>
-    <div class="amount-heading"><label for="options-amount">{{ $t('trade.amount') }}</label><span>{{ $t('trade.minBet') }} 100 USD</span></div>
-    <div class="amount-field"><input id="options-amount" v-model="amount" type="number" min="100" max="100000" step="1" inputmode="decimal" placeholder="≥ 100" :aria-invalid="Boolean(error)" :aria-describedby="error?'options-error':undefined" @input="error=''"/><span>USD</span></div>
+    <div class="amount-heading"><label for="options-amount">{{ $t('trade.amount') }}</label><span>{{ $t('trade.minBet') }} 100 USDT</span></div>
+    <div class="amount-field"><input id="options-amount" v-model="amount" type="number" min="100" max="100000" step="1" inputmode="decimal" placeholder="≥ 100" :aria-invalid="Boolean(error)" :aria-describedby="error?'options-error':undefined" @input="error=''"/><span>USDT</span></div>
     <div class="quick-amounts"><button v-for="value in [100,300,500,700,900,1100,1300,1500]" :key="value" @click="amount=String(value);error=''">{{ fmt(value) }}</button></div>
-    <dl><dt>{{ $t('trade.expectedReturn') }}</dt><dd class="positive">+{{ fmt(expected) }} USD</dd><dt>{{ $t('trade.available') }}</dt><dd>{{ session.mode==='common.demo.demo'?'100,000':'0' }} USD <RouterLink class="transfer" :to="path('/assets/transfer')">⇆ {{ $t('trade.transfer') }}</RouterLink></dd></dl>
+    <dl><dt>{{ $t('trade.expectedReturn') }}</dt><dd class="positive">+{{ fmt(expected) }} USDT</dd><dt>{{ $t('trade.available') }}</dt><dd>{{ session.mode==='common.demo.demo'?'100,000':'0' }} USDT <RouterLink class="transfer" :to="path('/assets/transfer')">⇆ {{ $t('trade.transfer') }}</RouterLink></dd></dl>
     <p v-if="error" id="options-error" role="alert" class="form-error">{{ $t(error) }}</p>
     <div class="options-actions"><button class="up" @click="submit('trade.buyUp')">↗ {{ $t('trade.buyUp') }}</button><button class="down" @click="submit('trade.buyDown')">↘ {{ $t('trade.buyDown') }}</button></div>
   </div>

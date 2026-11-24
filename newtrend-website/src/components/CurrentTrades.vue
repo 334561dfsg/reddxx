@@ -11,9 +11,9 @@ watch(()=>props.bucket,()=>{list.value?.scrollTo({top:0})})
 function fields(o){
  const f=(label,value,type='number',unit='')=>({label,value,type,unit})
  return o.bucket==='positions'?[
-  f('trade.history.positionValue',o.notional,'number','USD'),f('trade.quantity',o.quantity),
-  f('trade.entryPrice',o.price),f('trade.markPrice',o.markPrice),f('trade.margin',o.margin,'number','USD'),
-  f('trade.current.unrealized',positionPnl(o),'pnl','USD'),f('trade.openTime',o.createdAt,'date')
+  f('trade.history.positionValue',o.notional,'number','USDT'),f('trade.quantity',o.quantity),
+  f('trade.entryPrice',o.price),f('trade.markPrice',o.markPrice),f('trade.margin',o.margin,'number','USDT'),
+  f('trade.current.unrealized',positionPnl(o),'pnl','USDT'),f('trade.openTime',o.createdAt,'date')
  ]:[f('trade.orderTime',o.createdAt,'date'),f('trade.history.orderQuantity',o.quantity),
  f('trade.orderPrice',o.price),f('trade.history.filledQuantity',o.filledQuantity||0),
  f('trade.current.remaining',o.quantity-(o.filledQuantity||0)),f('trade.orderType',o.orderType,'key'),f('trade.status',o.recordStatus,'key')]
