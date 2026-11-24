@@ -73,6 +73,9 @@ function tradeV2Prototype() {
 export default defineConfig({
   plugins: [vue(), newTrendPrototype(), tradeV2Prototype()],
   build: {
-    rollupOptions: { input: { main: `${root}index.html`, newtrend: `${root}newtrend-website/index.html`, tradeV2: `${root}交易v2/index.html` } }
+    rollupOptions: { output:{manualChunks(id){
+      const match=id.match(/newtrend-website\/src\/locales\/([^/]+)\//)
+      if(match)return `newquant-locale-${match[1]}`
+    }}, input: { main: `${root}index.html`, newtrend: `${root}newtrend-website/index.html`, tradeV2: `${root}交易v2/index.html` } }
   }
 })

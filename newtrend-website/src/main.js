@@ -2,23 +2,22 @@ import { createApp } from 'vue'
 import { createRouter, createWebHistory, START_LOCATION } from 'vue-router'
 import App from './App.vue'
 import {t,applyLocale,formatCompact,locale} from './i18n'
-import Home from './pages/Home.vue'
-import FuturesTrade from './pages/trading/FuturesTrade.vue'
-import OptionsTrade from './pages/trading/OptionsTrade.vue'
-import SpotTrade from './pages/trading/SpotTrade.vue'
-import Finance from './pages/Finance.vue'
-import Quant from './pages/Quant.vue'
-import Assets from './pages/Assets.vue'
-import Content from './pages/Content.vue'
-import Auth from './pages/Auth.vue'
-import Legal from './pages/Legal.vue'
-import News from './pages/News.vue'
-import Account from './pages/Account.vue'
+const Home=()=>import('./pages/Home.vue')
+const FuturesTrade=()=>import('./pages/trading/FuturesTrade.vue')
+const OptionsTrade=()=>import('./pages/trading/OptionsTrade.vue')
+const SpotTrade=()=>import('./pages/trading/SpotTrade.vue')
+const Finance=()=>import('./pages/Finance.vue')
+const Quant=()=>import('./pages/Quant.vue')
+const Assets=()=>import('./pages/Assets.vue')
+const Content=()=>import('./pages/Content.vue')
+const Auth=()=>import('./pages/Auth.vue')
+const Legal=()=>import('./pages/Legal.vue')
+const News=()=>import('./pages/News.vue')
+const Account=()=>import('./pages/Account.vue')
 import './source-theme.css'
 import './styles.css'
 import './styles/site-containers.css'
 import './styles/site-design-system.css'
-applyLocale(locale.value)
 const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:[
  {path:'/',component:Home},
  {path:'/:legacyLocale(en-US|zh-TW|fr-FR|de-DE|ja-JP|ko-KR)/:legacyPath(.*)*',redirect:to=>({path:'/'+(Array.isArray(to.params.legacyPath)?to.params.legacyPath.join('/'):to.params.legacyPath||''),query:to.query,hash:to.hash})},
@@ -45,7 +44,10 @@ const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:
 }})
 router.beforeEach((to,from)=>{
   // Old homepage inspection links may contain #markets; do not jump there on load.
-  if(from===START_LOCATION&&to.hash&&to.matched.some(record=>record.components?.default===Home))
+  if(from===START_LOCATION&&to.hash&&to.path==='/')
     return {path:to.path,query:to.query,hash:'',replace:true}
 })
-const app=createApp(App);app.config.globalProperties.$compact=formatCompact;app.config.globalProperties.$t=t;app.use(router).mount('#app')
+async function start(){
+ const app=createApp(App);app.config.globalProperties.$compact=formatCompact;app.config.globalProperties.$t=t;app.use(router);await Promise.all([applyLocale(locale.value),router.isReady()]);app.mount('#app')
+}
+start()
