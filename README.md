@@ -40,3 +40,9 @@ npm run dev
 - Add auth and route guards
 - Connect APIs and replace store mock data
 - Add E2E testing (Playwright) and component tests (Vitest)
+
+## 搜索引擎收录策略
+
+整个站点默认不收录：两个 HTML 入口均包含 `noindex, nofollow, nosnippet, noimageindex`，Vercel 对所有路径（包括静态资源）发送相同的 `X-Robots-Tag` 响应头。`robots.txt` 保持允许抓取，以便搜索引擎能够读取禁止收录指令；不要改成 `Disallow: /` 而阻断这些指令。新增 HTML 入口时必须沿用此策略。
+
+发布前运行 `node --test test/searchIndexingPolicy.test.js`。此策略随前端和 Vercel 配置重新发布生效；已收录的页面需要等待搜索引擎重新抓取后移除。使用其他托管服务时需配置同等响应头。
