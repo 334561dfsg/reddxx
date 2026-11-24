@@ -7,7 +7,7 @@ import { createServer } from 'vite'
 import { loadPacks, validatePacks, validateReferences } from '../scripts/check-locales.mjs'
 let server, i18n, account, data
 before(async () => {
- globalThis.location = { pathname: '/newtrend/' }
+ globalThis.location = { pathname: '/NewQuantCapital/' }
  const saved = new Map()
  globalThis.localStorage = { getItem: k => saved.get(k) || null, setItem: (k,v) => saved.set(k,v) }
  globalThis.document = { documentElement: { lang: '' } }

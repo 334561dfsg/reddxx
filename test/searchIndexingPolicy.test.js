@@ -14,7 +14,7 @@ test('both independent HTML entries declare noindex before JavaScript runs', () 
 
 test('deployment sends noindex for every prototype route and asset', () => {
   const config = JSON.parse(read('vercel.json'))
-  for (const url of ['/', '/admin', '/front/home', '/agent-system/login', '/newtrend/zh-TW/', '/newtrend/en-US/news/123', '/assets/app.js', '/newtrend/assets/image.png']) {
+  for (const url of ['/', '/admin', '/front/home', '/agent-system/login', '/NewQuantCapital/zh-TW/', '/NewQuantCapital/en-US/news/123', '/assets/app.js', '/NewQuantCapital/assets/image.png']) {
     const headers = config.headers.filter(rule => new RegExp(`^${rule.source}$`).test(url)).flatMap(rule => rule.headers)
     assert.ok(headers.some(h => h.key.toLowerCase() === 'x-robots-tag' && directives(h.value).includes('noindex')), url)
   }

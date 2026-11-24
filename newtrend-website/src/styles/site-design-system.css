@@ -42,3 +42,39 @@
 @media(pointer:coarse){:root{--nt-control-height:44px}}
 /* One text family; numeric metrics retain their deliberate monospace treatment. */
 #site-shell :is(h1,h2,h3,h4,.page-title,.section-heading){font-family:inherit}
+
+/* Shared navigation and controls also live outside the main page container. */
+#site-shell .site-header :is(nav>a,.nav-group>button,.asset-link,.wallet-button),
+#site-shell .nav-popover>a,#site-shell .nav-popover>button{
+ font-size:var(--nt-text-body);line-height:20px;font-weight:400;
+}
+#site-shell .nav-popover>a,#site-shell .nav-popover>button{padding:10px 16px;min-height:40px}
+#site-shell .nav-popover :is(small,.nav-overview){font-size:var(--nt-text-caption);line-height:18px}
+#site-shell #main-content :is(.filter-row,.tabs,.news-filters,.auth-tabs) button,
+#site-shell #main-content :is(.form-stack,.account-form,.auth-form) label{
+ font-size:var(--nt-text-body);line-height:20px;
+}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.news-feed) :is(td,.summary-line,.details-list){font-size:var(--nt-text-body);line-height:22px}
+#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) :is(th,.mini-label,.tag-chip,.form-error,.form-success,.notice){font-size:var(--nt-text-caption);line-height:18px}
+#site-shell #main-content .market-table td{font-size:var(--nt-text-body);line-height:22px}
+#site-shell #main-content :is(.profile-box,.finance-table) h2{font-size:var(--nt-text-card-title);line-height:24px}
+#site-shell #main-content :is(.news-item,.news-row,.insight-stack) h3{font-size:18px;line-height:27px;font-weight:600}
+#site-shell #main-content :is(.feature-card,.charity-card,.auth-features) h3{font-size:var(--nt-text-card-title);line-height:24px}
+#site-shell #main-content :is(.news-row small,.profile-group>a small,.asset-account-button small,.mobile-market-details){font-size:var(--nt-text-caption);line-height:18px}
+#site-shell #main-content .finance-table td[data-label]::before{font-size:var(--nt-text-caption);line-height:18px}
+#site-shell #main-content :is(.news-row p,.auth-features p,.quant-intro p){font-size:var(--nt-text-body);line-height:var(--nt-line-body)}
+/* Native root dialogs and teleported controls cannot rely on #main-content. */
+.nt-dialog.nt-dialog .overlay-header h2,.nt-dialog.nt-dialog.mode-confirm .overlay-header h2{font-size:var(--nt-text-card-title);line-height:24px;font-weight:600}
+.nt-dialog.nt-dialog :is(.overlay-body,.overlay-footer,.language-list,.drawer-nav){font-size:var(--nt-text-body);line-height:22px}
+.nt-dialog.nt-dialog :is(.primary-button,.secondary-button,.drawer-subnav a){font-size:var(--nt-text-body);line-height:20px}
+.nt-dialog.nt-dialog :is(.drawer-subnav small,.support-subtitle,.support-copy small,.chat-queue,.chat-welcome,.chat-message small,.chat-attachments){font-size:var(--nt-text-caption);line-height:18px}
+.nt-dialog.nt-dialog .support-intro{font-size:var(--nt-text-card-title);line-height:24px}
+.nt-dialog.nt-dialog :is(.chat-composer textarea,.chat-message,.support-back){font-size:var(--nt-text-body);line-height:20px}
+@media(pointer:coarse){#site-shell .nav-popover>a,#site-shell .nav-popover>button{min-height:44px}}
+
+/* Audit follow-ups: quote labels and secondary metadata stay readable. */
+#site-shell .market-ticker-item small{font-size:var(--nt-text-caption);line-height:18px}
+#site-shell #main-content .charity-banner h1{font-size:var(--nt-text-page);line-height:var(--nt-line-heading);font-weight:600}
+#site-shell #main-content .home-cta small{font-size:var(--nt-text-caption);line-height:18px}
+#site-shell #main-content .quote-card{padding:var(--nt-card-padding)}
+#site-shell #main-content .quote-card small{font-size:var(--nt-text-caption);line-height:18px}

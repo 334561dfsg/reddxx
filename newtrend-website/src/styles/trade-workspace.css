@@ -42,7 +42,7 @@
 .product-terminal .orderbook{grid-column:2;grid-row:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;padding:0}
 .product-terminal .book-head,.product-terminal .book-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:6px;text-align:right;font-size:12px;line-height:18px;font-variant-numeric:tabular-nums}
 .product-terminal .book-head{color:var(--terminal-muted);padding:10px 12px;flex:none}
-.product-terminal .book-head small{display:block;font-size:10px}
+.product-terminal .book-head small{display:block;font-size:12px}
 .product-terminal .book-head>span:first-child,.product-terminal .book-row>span:first-child{text-align:left}
 .product-terminal .book-body{overflow-y:auto;min-height:0;padding:0 12px 12px;flex:1}
 .product-terminal .book-row{position:relative;padding:6px 0}
@@ -65,7 +65,7 @@
 .product-terminal .pair-categories{display:flex;flex-wrap:wrap;gap:4px 10px;padding:8px 0;flex:none;font-size:12px;line-height:18px}
 .product-terminal .pair-categories button{min-height:32px;color:var(--terminal-muted)}
 .product-terminal .pair-categories .active{color:var(--nt-accent)}
-.product-terminal .pair-sort{display:flex;justify-content:space-between;gap:4px;flex-wrap:wrap;font-size:11px;line-height:16px;color:var(--terminal-muted);flex:none;padding:4px 0}
+.product-terminal .pair-sort{display:flex;justify-content:space-between;gap:4px;flex-wrap:wrap;font-size:12px;line-height:16px;color:var(--terminal-muted);flex:none;padding:4px 0}
 .product-terminal .pair-sort button{min-height:32px}
 .product-terminal .pair-sort button[aria-pressed=true]{color:var(--nt-accent)}
 .product-terminal .pair-list{overflow-y:auto;min-height:0;flex:1}
@@ -132,13 +132,13 @@
 .product-terminal .book-controls button{min-height:36px;padding:6px 10px;border:1px solid var(--terminal-divider);border-radius:var(--nt-radius-control);font-size:12px;color:var(--terminal-muted)}
 .product-terminal .book-controls button[aria-pressed=true]{color:var(--nt-accent);border-color:var(--nt-accent)}
 .spot-workspace .market-browser{flex:1;min-height:240px}
-.spot-workspace .spot-market-head{display:grid;grid-template-columns:1.1fr 1fr .8fr;padding:4px 6px 4px 34px;font-size:11px;gap:4px;color:var(--terminal-muted)}
+.spot-workspace .spot-market-head{display:grid;grid-template-columns:1.1fr 1fr .8fr;padding:4px 6px 4px 34px;font-size:12px;gap:4px;color:var(--terminal-muted)}
 .spot-market-head button{min-height:36px;text-align:right}.spot-market-head button:first-child{text-align:left}
 .spot-workspace .spot-market-list .pair-row{min-height:40px;padding:2px 0;gap:2px}
 .spot-workspace .spot-market-list .pair-row>a{display:grid;grid-template-columns:1.1fr 1fr .8fr;gap:4px;font-size:12px}
 .spot-market-list .pair-row>a>span{overflow-wrap:anywhere;text-align:right}.spot-market-list .pair-row>a>span:first-child{text-align:left}
 .recent-trades{display:flex;flex-direction:column;flex:0 0 350px;min-height:0;border-top:1px solid var(--terminal-divider)}
-.prints-head,.print-row{display:grid;grid-template-columns:1fr .65fr 1.15fr .9fr;gap:6px;font-size:11px;line-height:18px;padding:8px 12px;text-align:right;font-variant-numeric:tabular-nums}
+.prints-head,.print-row{display:grid;grid-template-columns:1fr .65fr 1.15fr .9fr;gap:6px;font-size:12px;line-height:18px;padding:8px 12px;text-align:right;font-variant-numeric:tabular-nums}
 .prints-head{color:var(--terminal-muted);flex:none}.prints-head small{display:block}.prints-head>span:first-child,.print-row>span:first-child{text-align:left}
 .prints-list{overflow-y:auto;min-height:0;flex:1}.print-row{padding-top:6px;padding-bottom:6px}.print-row>span{overflow-wrap:anywhere}
 @media(min-width:761px) and (max-width:1199px){.spot-workspace .market-panel{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto minmax(0,1fr)}.spot-workspace .market-panel>.panel-heading{grid-column:1}.spot-workspace .market-browser{grid-column:1;grid-row:2;min-height:0}.spot-workspace .recent-trades{grid-column:2;grid-row:1/3;border-top:0;border-left:1px solid var(--terminal-divider)}.spot-workspace .market-panel .spot-market-list{display:block}}
@@ -177,7 +177,7 @@
 .product-terminal .panel-heading{min-height:36px;padding:8px 12px;font-size:13px;line-height:20px}
 .product-terminal .timeframes{padding:4px 8px;gap:4px}
 .product-terminal .timeframes button{min-height:28px;padding:4px 6px}
-.product-terminal .ohlc{padding:0 12px 4px;gap:4px 12px;font-size:11px}
+.product-terminal .ohlc{padding:0 12px 4px;gap:4px 12px;font-size:12px}
 .product-terminal .book-controls{padding:4px 8px}
 .product-terminal .book-head{padding:6px 10px}
 .product-terminal .book-body{padding:0 10px 8px}
@@ -214,7 +214,7 @@
 }
 @media(max-width:760px){
  .product-terminal .instrument-bar{padding:8px 10px;gap:8px 12px}
- .product-terminal .instrument-stats{gap:6px 12px;grid-template-columns:repeat(3,minmax(0,1fr));font-size:11px;line-height:16px}
+ .product-terminal .instrument-stats{gap:6px 12px;grid-template-columns:repeat(3,minmax(0,1fr));font-size:12px;line-height:16px}
  .product-terminal .chart-panel{height:300px}
  .product-terminal .order-panel{height:440px;max-height:none;min-height:0}
  .spot-workspace .order-panel{height:490px}
@@ -244,7 +244,7 @@
 .product-terminal .ohlc{padding:6px 12px 0;gap:6px 12px;font-size:12px;line-height:18px}
 .product-terminal .book-controls{padding:6px 12px 4px}
 .product-terminal .book-head{padding:8px 16px;font-size:12px;line-height:16px}
-.product-terminal .book-head small{font-size:11px;line-height:16px}
+.product-terminal .book-head small{font-size:12px;line-height:16px}
 .product-terminal .book-body{padding:0 16px 8px}
 .product-terminal .book-row{font-size:12px;line-height:16px;padding:3px 0}
 .product-terminal .book-price{font-size:18px;line-height:28px;padding:10px 0;font-weight:600}
@@ -270,7 +270,7 @@
 .spot-workspace .spot-quote-browser .pair-row>a{font-size:12px;line-height:20px;color:var(--terminal-secondary)}
 .spot-workspace .spot-quote-browser .pair-row>a>span:first-child{font-weight:500;color:#fff}
 .product-terminal .prints-head,.product-terminal .print-row{padding-left:16px;padding-right:16px;font-size:12px;line-height:16px}
-.product-terminal .prints-head small{font-size:11px}
+.product-terminal .prints-head small{font-size:12px}
 .product-terminal .print-row{color:var(--terminal-secondary)}
 .product-terminal button:focus-visible,.product-terminal a:focus-visible{outline:1px solid #ffffff70;outline-offset:-2px}
 @media(max-width:760px){

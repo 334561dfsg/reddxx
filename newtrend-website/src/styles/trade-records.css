@@ -11,7 +11,7 @@
 .history-card dt{color:#8c8f96;margin-bottom:8px;overflow-wrap:anywhere}
 .history-card dd{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px;min-height:20px;line-height:20px;margin:0;color:#d2d3d5;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .history-card dd.positive{color:#2bc287}.history-card dd.negative{color:#ff4466}
-.history-card dd small{font-size:10px;line-height:inherit;vertical-align:baseline;color:#8c8f96}
+.history-card dd small{font-size:12px;line-height:inherit;vertical-align:baseline;color:#8c8f96}
 .history-pagination,.history-footer{display:flex;justify-content:center;align-items:center;gap:8px;padding:8px 16px;height:44px;flex:none;background:#05070b}
 .history-pagination button{height:28px;min-width:28px;border-radius:var(--nt-radius-sm);font-size:12px;color:#a0a1a2;transform:none;transition:color 150ms,background-color 150ms}
 .history-pagination button[aria-current=page]{color:var(--nt-accent);background:#a5ff4a12}

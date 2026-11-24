@@ -8,29 +8,34 @@ const root = fileURLToPath(new URL('.', import.meta.url))
 function newTrendPrototype() {
   const rewrite = (preview) => (req, res, next) => {
     const pathname = (req.url || '').split('?')[0]
-    if (pathname === '/newtrend') {
-      res.writeHead(302, { Location: '/newtrend/' })
+    if (pathname === '/newtrend' || pathname.startsWith('/newtrend/')) {
+      res.writeHead(302, { Location: (req.url || '').replace(/^\/newtrend(?=\/|\?|$)/, '/NewQuantCapital') })
       res.end()
       return
     }
-    if (pathname.startsWith('/newtrend/assets/') && /\.[^/]+$/.test(pathname)) {
-      if (!preview) req.url = req.url.replace('/newtrend/assets/', '/newtrend-website/public/assets/')
-    } else if (pathname.startsWith('/newtrend/')) {
-      req.url = preview ? '/newtrend/index.html' : '/newtrend-website/index.html'
+    if (pathname === '/NewQuantCapital') {
+      res.writeHead(302, { Location: '/NewQuantCapital/' + ((req.url || '').includes('?') ? '?' + (req.url || '').split('?').slice(1).join('?') : '') })
+      res.end()
+      return
+    }
+    if (pathname.startsWith('/NewQuantCapital/assets/') && /\.[^/]+$/.test(pathname)) {
+      if (!preview) req.url = req.url.replace('/NewQuantCapital/assets/', '/newtrend-website/public/assets/')
+    } else if (pathname.startsWith('/NewQuantCapital/')) {
+      req.url = preview ? '/NewQuantCapital/index.html' : '/newtrend-website/index.html'
     }
     next()
   }
   return {
     name: 'newtrend-prototype',
     resolveId(id) {
-      if (id.startsWith('/newtrend/assets/')) return `${root}newtrend-website/public/assets/${id.slice('/newtrend/assets/'.length)}`
+      if (id.startsWith('/NewQuantCapital/assets/')) return `${root}newtrend-website/public/assets/${id.slice('/NewQuantCapital/assets/'.length)}`
     },
     configureServer(server) { server.middlewares.use(rewrite(false)) },
     configurePreviewServer(server) { server.middlewares.use(rewrite(true)) },
     async writeBundle() {
-      await mkdir(`${root}dist/newtrend`, { recursive: true })
-      await cp(`${root}newtrend-website/public/assets`, `${root}dist/newtrend/assets`, { recursive: true })
-      await copyFile(`${root}dist/newtrend-website/index.html`, `${root}dist/newtrend/index.html`)
+      await mkdir(`${root}dist/NewQuantCapital`, { recursive: true })
+      await cp(`${root}newtrend-website/public/assets`, `${root}dist/NewQuantCapital/assets`, { recursive: true })
+      await copyFile(`${root}dist/newtrend-website/index.html`, `${root}dist/NewQuantCapital/index.html`)
     }
   }
 }

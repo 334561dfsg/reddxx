@@ -9,13 +9,18 @@ function fallback(pathname) {
 }
 
 test('NewQuantCapital direct navigation and refresh use its own HTML entry', () => {
-  for (const pathname of ['/newtrend', '/newtrend/', '/newtrend/zh-TW/', '/newtrend/en-US/news', '/newtrend/de-DE/profile']) {
-    assert.equal(fallback(pathname), '/newtrend/index.html', pathname)
+  for (const pathname of ['/NewQuantCapital', '/NewQuantCapital/', '/NewQuantCapital/zh-TW/', '/NewQuantCapital/en-US/news', '/NewQuantCapital/de-DE/profile']) {
+    assert.equal(fallback(pathname), '/NewQuantCapital/index.html', pathname)
   }
 })
 
 test('existing prototype routes keep the original HTML entry', () => {
-  for (const pathname of ['/', '/admin', '/front/home', '/agent-system/dashboard', '/newtrend-other']) {
+  for (const pathname of ['/', '/admin', '/front/home', '/agent-system/dashboard', '/NewQuantCapital-other']) {
     assert.equal(fallback(pathname), '/index.html', pathname)
   }
+})
+
+test('legacy site links redirect to the branded path', () => {
+ assert.ok(config.redirects.some(rule=>rule.source==='/newtrend'&&rule.destination==='/NewQuantCapital/'))
+ assert.ok(config.redirects.some(rule=>rule.source==='/newtrend/:path*'&&rule.destination==='/NewQuantCapital/:path*'))
 })

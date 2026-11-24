@@ -35,7 +35,7 @@ function signout(){logout();expanded.value='';router.push(path('/'))}
 <a class="skip-link" href="#main-content">{{ $t("header.ui.skipToMainContent") }}</a>
 <header class="site-header" ref="nav" @keydown.esc="expanded=''">
  <button class="icon-button mobile-menu" :aria-label="$t(&quot;common.menu&quot;)" aria-haspopup="dialog" @click="openModal('menu','NewQuantCapital')"><Icon name="menu"/></button>
- <RouterLink class="brand" :to="path('/')"><img src="/newtrend/assets/newquantcapital-mark.svg" :alt="$t(&quot;NewQuantCapital&quot;)"/>{{ $t("NewQuantCapital") }}</RouterLink>
+ <RouterLink class="brand" :to="path('/')"><img src="/NewQuantCapital/assets/newquantcapital-mark.svg" :alt="$t(&quot;NewQuantCapital&quot;)"/>{{ $t("NewQuantCapital") }}</RouterLink>
  <nav class="desktop-navigation" :aria-label="$t(&quot;header.ui.mainNavigation&quot;)"><RouterLink :to="path('/')">{{ $t("common.home") }}</RouterLink>
  <div v-for="group in navGroups" :key="group.label" class="nav-group" @pointerenter="enterMenu($event,group.label)" @pointerleave="leaveMenu($event,group.label)" @focusout="e=>{if(!e.currentTarget.contains(e.relatedTarget))expanded=''}">
   <button :aria-expanded="expanded===group.label" :aria-controls="'nav-'+group.label" @click="toggleMenu($event,group.label)">{{ $t(group.label) }}<Icon name="chevron-down"/></button>

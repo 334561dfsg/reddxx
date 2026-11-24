@@ -20,16 +20,28 @@
       "destination": "/trade-v2/index.html"
     },
     {
-      "source": "/newtrend",
-      "destination": "/newtrend/index.html"
+      "source": "/NewQuantCapital",
+      "destination": "/NewQuantCapital/index.html"
     },
     {
-      "source": "/newtrend/(.*)",
-      "destination": "/newtrend/index.html"
+      "source": "/NewQuantCapital/(.*)",
+      "destination": "/NewQuantCapital/index.html"
     },
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/newtrend",
+      "destination": "/NewQuantCapital/",
+      "permanent": true
+    },
+    {
+      "source": "/newtrend/:path*",
+      "destination": "/NewQuantCapital/:path*",
+      "permanent": true
     }
   ]
 }

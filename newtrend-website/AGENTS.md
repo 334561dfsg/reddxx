@@ -145,3 +145,11 @@ Selecting live chat replaces the support channel list with a chat view in the sa
 ## Shared spacing and typography (user decision, 2026-11-24)
 
 Use `docs/design-system.md` and `styles/site-design-system.css` for site-wide typography, spacing and control dimensions. Page titles, section headings, card headings, body and captions have distinct shared tokens; avoid local inline heading sizes. Normal cards share padding and page grids share gaps, with compact trading and readable marketing/article/form layouts as documented exceptions.
+
+## Public image size (user decision, 2026-11-24)
+
+Compress newly added raster images before shipping. Prefer WebP for photographic/mockup assets, preserve transparency and legible text, and verify image references after conversion. The homepage phone header must read NewQuantCapital. Do not ship the generated PNG when a visually verified compressed WebP is available.
+
+## Public URL prefix (user decision, 2026-11-24)
+
+Serve this site at `/NewQuantCapital/` (case preserved), replacing `/newtrend/`. Keep the source folder `newtrend-website` unchanged. Root Vite dev/preview, build output, router history, asset paths and deployment rewrites use the branded prefix; legacy `/newtrend/` URLs redirect while retaining the subpath.
