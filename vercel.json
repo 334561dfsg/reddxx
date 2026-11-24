@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/newtrend",
+      "destination": "/newtrend/index.html"
+    },
+    {
+      "source": "/newtrend/(.*)",
+      "destination": "/newtrend/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
