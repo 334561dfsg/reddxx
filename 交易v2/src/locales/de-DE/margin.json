@@ -1,0 +1,335 @@
+{
+  "market": {
+    "subtitle": "Besicherte Darlehen",
+    "title": "Krypto-Kredite",
+    "description": "Leihen Sie gegen Ihre Krypto-Assets oder Offline-Vermögenswerte wie Immobilien und Bankeinlagen. Wählen Sie eine Währung, um Tageszins, Limits und Konditionen zu sehen.",
+    "dailyRate": "Tageszins",
+    "annualized": "~{{value}} % p. a.",
+    "borrowRange": "Kreditbereich",
+    "term": "Konditionen",
+    "termDays": "{{days}}T",
+    "borrowCta": "Leihen",
+    "loadError": "Leihbare Währungen konnten nicht geladen werden.",
+    "empty": "Derzeit sind keine leihbaren Währungen verfügbar.",
+    "myLoans": "Meine Kredite"
+  },
+  "borrow": {
+    "back": "Zurück zum Markt",
+    "title": "Leihen",
+    "titleWithCurrency": "{{currency}} leihen",
+    "notAvailable": "Diese Währung ist nicht zum Leihen verfügbar.",
+    "amountLabel": "Kreditbetrag",
+    "amountPlaceholder": "Betrag eingeben",
+    "range": "{{min}} – {{max}} {{currency}}",
+    "amountError": {
+      "invalid": "Geben Sie einen gültigen Betrag ein.",
+      "min": "Das Minimum beträgt {{amount}} {{currency}}.",
+      "max": "Das Maximum beträgt {{amount}} {{currency}}."
+    },
+    "termLabel": "Laufzeit",
+    "submit": "Kredit bestätigen",
+    "submitting": "Wird gesendet …",
+    "phase": {
+      "signing": "Signatur wird übermittelt …",
+      "creating": "Antrag wird erstellt …",
+      "review": "In Prüfung",
+      "done": "Alle Schritte abgeschlossen",
+      "steps": {
+        "signing": "Signatur",
+        "creating": "Antrag",
+        "review": "Prüfung"
+      }
+    },
+    "progress": {
+      "title": "Kreditantrag wird übermittelt",
+      "desc": "Lassen Sie dieses Fenster geöffnet. Wir laden Ihren signierten Vertrag hoch und erstellen den Antrag.",
+      "failedTitle": "Übermittlung nicht abgeschlossen",
+      "failedDesc": "Schließen Sie dieses Fenster, korrigieren Sie die Angaben und senden Sie erneut.",
+      "close": "Schließen"
+    },
+    "collateral": {
+      "label": "Art der Sicherheit",
+      "crypto": "Krypto-Sicherheit",
+      "offline": "Offline-Vermögenswert",
+      "offlineHint": "Leihen Sie gegen Offline-Vermögenswerte wie Immobilien oder Bankeinlagen. Anträge werden vor der Auszahlung manuell geprüft.",
+      "recommended": "Empfohlen"
+    },
+    "offline": {
+      "assetTypeLabel": "Vermögensart",
+      "assetTypePlaceholder": "Vermögensart auswählen",
+      "assetTypes": {
+        "BANK_STATEMENT": "Kontoauszug",
+        "PROPERTY": "Immobilie",
+        "INCOME": "Einkommensnachweis",
+        "STOCK_HOLDING": "Aktienbestand",
+        "OTHER": "Sonstiges"
+      },
+      "declaredValueLabel": "Angegebener Wert",
+      "declaredValuePlaceholder": "Geschätzten Wert eingeben",
+      "declaredValueError": "Geben Sie einen Wert größer als 0 ein.",
+      "descriptionLabel": "Beschreibung des Vermögenswerts (optional)",
+      "descriptionPlaceholder": "Beschreiben Sie den verpfändeten Vermögenswert",
+      "proofTitle": "Nachweisdokumente",
+      "proofHint": "Laden Sie 1–20 Dokumente hoch, die Eigentum und Wert des Vermögenswerts belegen.",
+      "proofItemTitle": "Dokument {{index}}",
+      "proofUploadLabel": "Dokument hochladen",
+      "notePlaceholder": "Notiz zu diesem Dokument hinzufügen (optional)",
+      "addProof": "Dokument hinzufügen",
+      "removeProof": "Entfernen",
+      "clickToUpload": "Zum Hochladen klicken"
+    },
+    "gate": {
+      "login": "Anmelden",
+      "verify": "Jetzt verifizieren",
+      "advancedTitle": "Erweiterte Verifizierung erforderlich",
+      "advancedDesc": "Für Darlehen mit Offline-Sicherheiten ist die erweiterte Verifizierung (Stufe 2) erforderlich. Reichen Sie Ihre Vermögensnachweise ein, um sie freizuschalten.",
+      "advancedCta": "Jetzt verifizieren"
+    },
+    "quote": {
+      "title": "Live-Angebot",
+      "placeholder": "Geben Sie einen Betrag ein, um Ihr Angebot zu sehen.",
+      "unavailable": "Angebot vorübergehend nicht verfügbar.",
+      "retry": "Erneut versuchen",
+      "dailyRate": "Tageszins",
+      "interest": "Gesch. Zinsen",
+      "dueAt": "Fälligkeitsdatum",
+      "requiredCollateral": "Erforderliche Sicherheit",
+      "collateralUnavailable": "Sicherheitsangebot nicht verfügbar",
+      "liquidationLtv": "Liquidations-LTV",
+      "offlineNote": "Bei Darlehen mit Offline-Sicherheiten entfällt die On-Chain-Bewertung – der geprüfte Wert und der Eröffnungs-LTV werden bei der manuellen Prüfung festgelegt."
+    },
+    "success": {
+      "title": "Kredit erfolgreich",
+      "amount": "{{amount}} {{currency}} Ihrem Konto gutgeschrieben",
+      "status": "Status: {{status}}",
+      "backToMarket": "Zurück zum Markt",
+      "pendingTitle": "Antrag eingereicht",
+      "pendingDesc": "Ihr Darlehen über {{amount}} {{currency}} mit Offline-Sicherheit wird manuell geprüft. Die Mittel werden nach Genehmigung gutgeschrieben.",
+      "goMyLoans": "Meine Darlehen ansehen"
+    }
+  },
+  "signature": {
+    "hint": "Hier unterschreiben",
+    "undo": "Rückgängig",
+    "clear": "Löschen",
+    "required": "Bitte unterschreiben, um fortzufahren.",
+    "uploading": "Unterschrift wird hochgeladen…",
+    "uploadError": "Unterschrift konnte nicht hochgeladen werden. Zum Wiederholen tippen."
+  },
+  "contract": {
+    "consentLabel": "Ich habe die Bedingungen des Darlehensvertrags gelesen und stimme ihnen ausdrücklich zu.",
+    "empty": "Die Vertragsvorlage wird noch finalisiert. Mit Ihrer Unterschrift stimmen Sie den im Angebot angezeigten Darlehensbedingungen zu.",
+    "title": "Darlehensvertrag",
+    "version": "Version {{version}}",
+    "readHint": "Bitte lesen Sie den Darlehensvertrag vollständig, bevor Sie unterschreiben.",
+    "loadError": "Darlehensvertrag konnte nicht geladen werden.",
+    "retry": "Erneut versuchen",
+    "agreeAndSign": "Ich habe gelesen und stimme zu – unten unterschreiben",
+    "viewFull": "Vollständigen Vertrag anzeigen",
+    "fullTitle": "Darlehensvertrag"
+  },
+  "loans": {
+    "subtitle": "Besicherte Darlehen",
+    "title": "Meine Kredite",
+    "loadError": "Ihre Kredite konnten nicht geladen werden.",
+    "empty": "Noch keine Kredite in dieser Kategorie.",
+    "truncated": "Es werden die ersten {{shown}} von {{total}} angezeigt.",
+    "liquidatedAt": "Liquidiert am",
+    "badDebt": "Fehlbetrag",
+    "badDebtSettled": "Vollständig gedeckt",
+    "viewLiquidations": "Liquidationsaufzeichnungen anzeigen",
+    "liquidationLine": "Liq. {{value}} %",
+    "summary": {
+      "outstanding": "Ausstehend",
+      "borrowed": "Insgesamt geliehen",
+      "repaid": "Insgesamt zurückgezahlt",
+      "interest": "Zinsen gesamt"
+    },
+    "tabs": {
+      "ariaLabel": "Kreditstatus-Filter",
+      "ongoing": "Laufend",
+      "settled": "Zurückgezahlt",
+      "other": "Sonstige"
+    },
+    "row": {
+      "outstanding": "Ausstehend",
+      "dueAt": "Fällig {{value}}",
+      "noDueAt": "Keine feste Laufzeit",
+      "repay": "Zurückzahlen",
+      "offlineCollateral": "Offline-Sicherheit"
+    },
+    "detail": {
+      "title": "{{currency}}-Kredit",
+      "snapshotHint": "Es werden die neuesten Werte für diesen Kredit angezeigt.",
+      "refreshError": "Aktualisierung nicht möglich – es werden die zuletzt geladenen Werte angezeigt.",
+      "borrowed": "Geliehen",
+      "repaid": "Zurückgezahlt",
+      "interest": "Aufgelaufene Zinsen",
+      "overdueFee": "Verzugsgebühr",
+      "dailyRate": "Tageszins",
+      "term": "Laufzeit",
+      "collateral": "Sicherheit",
+      "dueAt": "Fällig am",
+      "estimatedDueAt": "Voraussichtlich fällig am",
+      "appliedAt": "Beantragt am",
+      "disbursedAt": "Geliehen am",
+      "overdueAt": "Überfällig seit",
+      "repayMode": "Rückzahlung",
+      "repayModeOffchain": "Off-Chain-Überweisung",
+      "repayNetwork": "Empfangsnetzwerk",
+      "repayAddress": "Empfangsadresse",
+      "viewHistory": "Rückzahlungsverlauf anzeigen",
+      "viewContract": "Signierten Vertrag ansehen",
+      "offlineAssetTypes": {
+        "BANK_STATEMENT": "Kontoauszug",
+        "PROPERTY": "Immobilie",
+        "INCOME": "Einkommensnachweis",
+        "STOCK_HOLDING": "Aktienbestand",
+        "OTHER": "Sonstiges"
+      },
+      "declaredValue": "Angegebener Wert",
+      "appraisedValue": "Geprüfter Wert",
+      "assetDescription": "Beschreibung des Vermögenswerts",
+      "offlineRiskNote": "Darlehen mit Offline-Sicherheiten sind von der automatischen LTV-Überwachung und Liquidation ausgenommen. Überfällige Fälle werden manuell bearbeitet."
+    },
+    "repay": {
+      "offchain": {
+        "subtitle": "Überweisen Sie die Rückzahlung off-chain an die untenstehende Adresse und laden Sie Ihren Nachweis hoch. Das Operations-Team bestätigt sie.",
+        "currencyLabel": "Rückzahlungswährung",
+        "networkSelectLabel": "Empfangsnetzwerk",
+        "optionsLoading": "Verfügbare Währungen werden geladen…",
+        "optionsEmpty": "Derzeit ist keine Empfangsadresse verfügbar. Bitte kontaktieren Sie den Support, bevor Sie zurückzahlen.",
+        "addressLoading": "Empfangsadresse wird aufgelöst…",
+        "addressNotConfigured": "Für diese Währung/dieses Netzwerk ist keine Empfangsadresse konfiguriert. Bitte wählen Sie eine andere oder kontaktieren Sie den Support.",
+        "addressLabel": "Empfangsadresse",
+        "network": "Netzwerk: {{network}}",
+        "networkLabel": "Empfangsnetzwerk",
+        "tokenLabel": "Rückzahlungstoken",
+        "copy": "Adresse kopieren",
+        "copied": "Adresse kopiert",
+        "transferHint": "Senden Sie den genauen Betrag an diese Adresse und laden Sie unten den Überweisungsnachweis hoch.",
+        "addressPending": "Die Empfangsadresse wird zugewiesen. Bitte versuchen Sie es in Kürze erneut.",
+        "proofLabel": "Überweisungsnachweis",
+        "proofUpload": "Nachweis hochladen",
+        "clickToUpload": "Zum Hochladen klicken",
+        "txHashLabel": "Transaktions-Hash",
+        "txHashPlaceholder": "On-Chain-Transaktions-Hash einfügen",
+        "optionalTag": "(optional)",
+        "statusLabel": "Status",
+        "submit": "Rückzahlungsantrag senden",
+        "success": {
+          "title": "Rückzahlungsantrag eingereicht",
+          "desc": "Wir haben Ihren Rückzahlungsantrag erhalten. Das Operations-Team bestätigt ihn nach Prüfung Ihrer Überweisung."
+        }
+      },
+      "title": "{{currency}} zurückzahlen",
+      "subtitle": "Zahlen Sie Ihren ausstehenden Saldo zurück, um Sicherheiten freizugeben.",
+      "outstandingLabel": "Ausstehend",
+      "amountLabel": "Rückzahlungsbetrag",
+      "amountPlaceholder": "Betrag eingeben",
+      "repayAll": "Alles zurückzahlen",
+      "amountError": {
+        "invalid": "Geben Sie einen gültigen Betrag ein."
+      },
+      "cappedHint": "Die Rückzahlung ist auf den ausstehenden Betrag von {{amount}} {{currency}} begrenzt.",
+      "cancel": "Abbrechen",
+      "submit": "Rückzahlung bestätigen",
+      "submitting": "Wird gesendet …",
+      "waterfall": {
+        "overdueFee": "Verzugsgebühr",
+        "interest": "Zinsen",
+        "principal": "Kapital"
+      },
+      "success": {
+        "title": "Rückzahlung erfolgreich",
+        "repaid": "{{amount}} {{currency}} zurückgezahlt",
+        "outstandingAfter": "Verbleibend ausstehend",
+        "settled": "Vollständig zurückgezahlt – Ihre Sicherheit wurde freigegeben.",
+        "done": "Fertig",
+        "settledOffline": "Vollständig zurückgezahlt – Ihr Darlehen ist beglichen. Offline-Sicherheiten werden außerhalb der Plattform abgewickelt."
+      }
+    }
+  },
+  "signedContract": {
+    "pdfGenerating": "Wird erstellt…",
+    "pdfError": "PDF konnte nicht geladen werden. Bitte versuchen Sie es später erneut."
+  },
+  "repaymentClaim": {
+    "amount": "Betrag",
+    "toAddress": "Empfangsadresse",
+    "txHash": "Tx-Hash",
+    "empty": "Noch keine Rückzahlungsanträge für dieses Darlehen.",
+    "status": {
+      "submitted": "Prüfung ausstehend",
+      "confirmed": "Bestätigt",
+      "rejected": "Abgelehnt"
+    }
+  },
+  "repayments": {
+    "title": "Rückzahlungsverlauf",
+    "loadError": "Rückzahlungsverlauf konnte nicht geladen werden.",
+    "empty": "Noch keine Rückzahlungen für diesen Kredit.",
+    "totalRepaid": "Zurückgezahlt",
+    "overdueFee": "Verzugsgebühr",
+    "interest": "Zinsen",
+    "principal": "Kapital",
+    "outstandingAfter": "Ausstehend danach"
+  },
+  "liquidations": {
+    "subtitle": "Risiko-Center",
+    "title": "Liquidationsaufzeichnungen",
+    "back": "Zurück zu meinen Krediten",
+    "loadMore": "Mehr laden",
+    "empty": "Noch keine Liquidationen.",
+    "badDebtNote": "Dieser Fehlbetrag wird weiterhin als offene Schuld geführt.",
+    "priceUnavailable": "—",
+    "filter": {
+      "loan": "Nur ein Kredit wird angezeigt ({{id}})",
+      "clear": "Filter entfernen"
+    },
+    "trigger": {
+      "ltvBreach": "Automatische Liquidation",
+      "adminForce": "Erzwungene Liquidation",
+      "unknown": "Liquidation"
+    },
+    "columns": {
+      "currency": "Kreditwährung",
+      "collateral": "Verkaufte Sicherheit",
+      "liquidationPrice": "Ausführungspreis",
+      "proceeds": "Erlös",
+      "appliedAmount": "Für Rückzahlung verwendet",
+      "badDebt": "Fehlbetrag"
+    }
+  },
+  "status": {
+    "pending": "In Prüfung",
+    "active": "Geliehen",
+    "overdue": "Überfällig",
+    "repaid": "Zurückgezahlt",
+    "liquidated": "Liquidiert",
+    "rejected": "Abgelehnt",
+    "forceClosed": "Geschlossen",
+    "unknown": "—"
+  },
+  "health": {
+    "safe": "Sicher",
+    "warn": "Warnung",
+    "danger": "Gefahr",
+    "unknown": "—"
+  },
+  "guard": {
+    "loginRequired": "Bitte melden Sie sich an, um fortzufahren.",
+    "kycRequired": "Vor dem Leihen oder Zurückzahlen ist eine Identitätsprüfung erforderlich."
+  },
+  "error": {
+    "fallback": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "offlineCollateralNotAllowed": "Offline-Besicherung ist für diese Währung derzeit nicht verfügbar.",
+    "signatureRequired": "Bitte unterschreiben Sie den Vertrag, bevor Sie den Antrag absenden.",
+    "termsNotAccepted": "Bitte stimmen Sie den Kreditbedingungen zu, bevor Sie absenden.",
+    "offlineCollateralInvalid": "Die Angaben zur Offline-Besicherung sind ungültig. Bitte prüfen Sie Anlageart, angegebenen Wert und Nachweisdateien.",
+    "vipTierNotConfigured": "Für Ihre VIP-Stufe ist die Kreditaufnahme noch nicht verfügbar. Bitte kontaktieren Sie den Support.",
+    "currencyNotSupported": "Diese Währung ist derzeit nicht für die Kreditaufnahme verfügbar.",
+    "termInvalid": "Bitte wählen Sie eine gültige Kreditlaufzeit.",
+    "signatureFileInvalid": "Ihre Signatur konnte nicht verifiziert werden. Bitte unterschreiben Sie erneut."
+  }
+}

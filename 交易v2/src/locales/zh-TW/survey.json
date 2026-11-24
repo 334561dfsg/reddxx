@@ -1,0 +1,37 @@
+{
+  "entry": {
+    "title": "問卷調查",
+    "description": "與我們分享你的意見回饋"
+  },
+  "hint": {
+    "required": "必填",
+    "singleChoice": "單選",
+    "multipleChoice": "可多選",
+    "textPlaceholder": "請輸入你的回答"
+  },
+  "validation": {
+    "required": "此題為必填項"
+  },
+  "actions": {
+    "back": "返回",
+    "submit": "提交",
+    "submitting": "提交中…"
+  },
+  "success": {
+    "submitted": "提交成功"
+  },
+  "error": {
+    "loadFailed": "問卷載入失敗",
+    "unavailable": "問卷暫不可用",
+    "unavailableDescription": "此問卷已不可用或不存在。",
+    "alreadySubmitted": "你已提交過本問卷",
+    "validation": "部分答案有誤，請檢查後重試。",
+    "submitFailed": "提交失敗，請重試。"
+  },
+  "readonly": {
+    "badge": "已作答",
+    "title": "你的回答",
+    "submittedAt": "提交於 {{time}}",
+    "noAnswer": "未作答"
+  }
+}

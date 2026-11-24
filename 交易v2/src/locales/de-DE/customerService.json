@@ -1,0 +1,94 @@
+{
+  "title": "Kundenservice",
+  "menu": {
+    "title": "Wie möchten Sie uns erreichen?",
+    "subtitle": "Wählen Sie den Kanal, der für Sie am besten passt.",
+    "liveChat": "Live-Chat",
+    "liveChatDesc": "Chatten Sie in Echtzeit mit unserem Support-Team",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "Sprechen Sie persönlich mit uns über WhatsApp",
+    "email": "E-Mail",
+    "emailDesc": "Schicken Sie uns eine E-Mail und wir melden uns bei Ihnen"
+  },
+  "welcomeMessage": "Hallo! Wie kann ich Ihnen heute helfen?",
+  "placeholder": "Geben Sie Ihre Nachricht ein …",
+  "send": "Senden",
+  "loading": "Wird geladen …",
+  "status": {
+    "pending": "Warten in der Warteschlange …",
+    "open": "Ein Mitarbeiter ist beigetreten",
+    "closed": "Unterhaltung geschlossen",
+    "closedInputHint": "Diese Unterhaltung ist beendet. Starten Sie eine neue, wenn Sie weitere Hilfe benötigen."
+  },
+  "emoji": {
+    "add": "Emoji einfügen"
+  },
+  "attachment": {
+    "add": "Anhang hinzufügen",
+    "uploading": "Wird hochgeladen …",
+    "confirming": "Wird verarbeitet …",
+    "failed": "Upload fehlgeschlagen",
+    "tooLarge": "Über dem Limit von {{limit}}",
+    "retry": "Erneut versuchen",
+    "remove": "Entfernen",
+    "download": "Herunterladen",
+    "limitType": "Nur JPG, PNG, PDF, Excel, Word, CSV und ZIP werden unterstützt",
+    "limitTypeGuest": "Gäste können nur JPG, PNG und PDF senden. Melden Sie sich an, um Excel, Word, CSV und ZIP zu senden",
+    "limitCount": "Bis zu {{count}} Anhänge erlaubt",
+    "queued": "Wartet auf Upload…",
+    "retryAfter": "Erneut versuchen in {{seconds}} s",
+    "stage": {
+      "request": "Upload konnte nicht starten",
+      "upload": "Upload fehlgeschlagen",
+      "confirm": "Upload konnte nicht abgeschlossen werden"
+    },
+    "reason": {
+      "offline": "Sie sind offline. Stellen Sie die Verbindung her und versuchen Sie es erneut.",
+      "timeout": "Zeitüberschreitung beim Upload. Erneut versuchen.",
+      "connection": "Verbindung fehlgeschlagen. Prüfen Sie Ihr Netzwerk und versuchen Sie es erneut.",
+      "format": "Dieser Dateityp wird nicht unterstützt.",
+      "content": "Der Dateiinhalt passt nicht zum Dateityp.",
+      "size": "Die Datei ist zu groß.",
+      "identity": "Ihre Chat-Sitzung ist abgelaufen.",
+      "signature": "Der Upload-Link ist abgelaufen. Erneut versuchen, um einen neuen zu erhalten.",
+      "forbidden": "Der Speicher hat den Upload abgelehnt. Erneut versuchen oder Support kontaktieren.",
+      "rateLimit": "Zu viele Anfragen.",
+      "quota": "Anhangslimit erreicht. Entfernen Sie andere Dateien und versuchen Sie es erneut.",
+      "storage": "Der Dateispeicher ist nicht verfügbar. Später erneut versuchen.",
+      "unknown": "Etwas ist schiefgelaufen. Erneut versuchen."
+    }
+  },
+  "toast": {
+    "newMessageTitle": "Neue Nachricht vom Support",
+    "newMessageTitleWithCount": "Neue Nachricht vom Support ({{unread}})",
+    "attachment": "[Anhang]",
+    "view": "Ansehen",
+    "close": "Schließen"
+  },
+  "errors": {
+    "sendFailed": "Senden fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "loadFailed": "Laden fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "offline": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "notSent": "Nicht gesendet"
+  },
+  "connection": {
+    "reconnecting": "Verbindung unterbrochen. Verbindung wird wiederhergestellt …",
+    "stale": "Server nicht erreichbar. Aktualisieren Sie die Seite, um neue Nachrichten zu empfangen.",
+    "refresh": "Seite aktualisieren",
+    "retry": "Erneut versuchen",
+    "restored": "Wieder verbunden"
+  },
+  "guest": {
+    "unavailableTitle": "Gast-Chat nicht mehr verfügbar",
+    "unavailableDesc": "Ihre Gastidentität in diesem Browser ist abgelaufen oder ungültig.",
+    "unavailableHint": "Frühere Gastnachrichten können nicht mehr angezeigt werden. Melden Sie sich an, um den Support über Ihr Konto zu kontaktieren, oder starten Sie einen neuen Gast-Chat.",
+    "startNew": "Neuen Chat starten",
+    "merging": "Ihr Gast-Chat wird in Ihr Konto übertragen…",
+    "mergeFailed": "Ihr Gast-Chat wurde noch nicht in Ihr Konto übertragen.",
+    "mergeRetry": "Erneut versuchen",
+    "expiredTitle": "Gast-Chat ist abgelaufen"
+  },
+  "blocked": {
+    "message": "Der Live-Chat ist derzeit nicht verfügbar."
+  }
+}

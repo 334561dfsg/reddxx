@@ -1,0 +1,166 @@
+{
+  "page": {
+    "title": "Copy-Trade",
+    "subtitle": "Folgen Sie professionellen Tradern",
+    "description": "Entdecken, bewerten und kopieren Sie Strategien verifizierter Trader. Getestete Signale, transparente Performance, volle Risikokontrolle."
+  },
+  "tabs": {
+    "leaderboard": "Bestenliste",
+    "following": "Gefolgt",
+    "myTrades": "Meine Copy-Trades"
+  },
+  "filters": {
+    "show": "Filter",
+    "hide": "Filter ausblenden",
+    "sort": "Sortieren nach",
+    "period": "Zeitraum",
+    "risk": "Risiko",
+    "clear": "Filter löschen",
+    "searchPlaceholder": "Trader suchen"
+  },
+  "sort": {
+    "displayOrder": "Empfohlen",
+    "roi": "Rendite",
+    "followers": "Follower",
+    "winRate": "Gewinnrate",
+    "aum": "Verwaltetes Vermögen"
+  },
+  "risk": {
+    "all": "Alle",
+    "low": "Niedrig",
+    "medium": "Mittel",
+    "high": "Hoch"
+  },
+  "trader": {
+    "rank": "Rang #{{rank}}",
+    "verified": "Verifiziert",
+    "memberTrader": "Mitglieds-Trader",
+    "followers": "Follower",
+    "tradingDays_one": "{{count}} Tag Handel",
+    "tradingDays_other": "{{count}} Tage Handel",
+    "roi": "Rendite",
+    "roi30d": "30-Tage-Rendite",
+    "winRate": "Gewinnrate",
+    "maxDD": "Max. Drawdown",
+    "aum": "Verwaltetes Vermögen",
+    "performance": "Performance",
+    "positions": "Positionen",
+    "history": "Verlauf",
+    "totalTrades": "Trades gesamt",
+    "profitTrades": "Profitabel",
+    "lossTrades": "Verlust",
+    "avgReturn": "Ø Rendite",
+    "sharpe": "Sharpe",
+    "avgHolding": "Ø Haltedauer",
+    "noPositions": "Keine offenen Positionen",
+    "positionsHidden": "Positionen ausgeblendet",
+    "historyHidden": "Handelshistorie ausgeblendet",
+    "historyHiddenDesc": "Dieser Trader teilt seine geschlossenen Positionen nicht.",
+    "entry": "Einstieg",
+    "back": "Zurück"
+  },
+  "follow": {
+    "copyTrader": "Diesen Trader kopieren",
+    "unfollow": "Nicht mehr folgen",
+    "following": "Gefolgt",
+    "follow": "Folgen",
+    "editSettings": "Copy-Einstellungen bearbeiten"
+  },
+  "settings": {
+    "title": "Copy-Einstellungen · {{name}}",
+    "mode": "Copy-Modus",
+    "modeFixed": "Fester Betrag",
+    "modeProportional": "Proportional",
+    "mvpModeFixedOnly": "In dieser Version ist nur „Fester Betrag“ verfügbar. Der proportionale Modus folgt in Kürze.",
+    "amountPerTrade": "Betrag pro Trade ({{asset}})",
+    "maxPositionSize": "Max. Positionsgröße ({{asset}})",
+    "takeProfit": "Take-Profit %",
+    "stopLoss": "Stop-Loss %",
+    "maxDailyTrades": "Max. Trades pro Tag",
+    "riskAckLabel": "Ich verstehe die Risiken des Copy-Tradings",
+    "riskAckHint": "Kopierte Trades folgen diesem Trader automatisch und können zu Verlusten führen. Sie akzeptieren dieses Risiko bei jedem Start des Kopierens. Der maximale Verlust je kopiertem Trade ist auf dessen Margin begrenzt.",
+    "cancel": "Abbrechen",
+    "confirm": "Kopieren starten",
+    "saving": "Wird gespeichert …",
+    "editTitle": "Copy-Einstellungen anpassen · {{name}}",
+    "saveChanges": "Änderungen speichern"
+  },
+  "unfollow": {
+    "title": "{{name}} nicht mehr folgen?",
+    "description": "Sie können Ihre offenen Copy-Positionen weiterlaufen lassen oder sie sofort alle schließen.",
+    "closeOpenPositionsLabel": "Jetzt alle offenen Copy-Positionen schließen",
+    "closeOpenPositionsHint": "Andernfalls bleiben bestehende Positionen offen und verfolgen keine neuen Trades dieses Traders mehr.",
+    "cancel": "Abbrechen",
+    "confirm": "Nicht mehr folgen",
+    "processing": "Wird verarbeitet …"
+  },
+  "myPositions": {
+    "status": {
+      "open": "Offen",
+      "closed": "Geschlossen",
+      "failed": "Fehlgeschlagen",
+      "all": "Alle"
+    },
+    "mark": "Markierung",
+    "size": "Größe",
+    "fromTrader": "Trader",
+    "close": "Schließen",
+    "closing": "Wird geschlossen …",
+    "closeConfirm": {
+      "title": "Position {{symbol}} schließen?",
+      "description": "Die Position wird zum Marktpreis geschlossen und der PnL sofort verrechnet. Dies kann nicht rückgängig gemacht werden.",
+      "cancel": "Abbrechen",
+      "confirm": "Position schließen"
+    },
+    "failedReason": "Grund"
+  },
+  "summary": {
+    "activeFollowing": "Aktive Follows",
+    "openPositions": "Offene Positionen",
+    "unrealizedPnl": "Unrealisierte GuV",
+    "realizedPnl": "Realisierte GuV"
+  },
+  "empty": {
+    "noFollowing": "Sie folgen noch keinem Trader",
+    "noFollowingDesc": "Durchsuchen Sie die Bestenliste, um verifizierte Trader mit transparenter Performance zu entdecken.",
+    "explore": "Trader entdecken",
+    "noMyTrades": "Noch keine Copy-Trades",
+    "noMyTradesDesc": "Sobald Sie einem Trader folgen, erscheinen Ihre kopierten Trades hier.",
+    "noHistory": "Noch keine Erfolgsbilanz",
+    "noHistoryDesc": "Dieser Trader hat noch keine geschlossenen Positionen.",
+    "noSearchResults": "Keine Trader gefunden",
+    "noSearchResultsDesc": "Versuchen Sie einen anderen Namen oder setzen Sie Suche und Filter zurück."
+  },
+  "placeholder": {
+    "comingSoon": "Demnächst verfügbar"
+  },
+  "security": {
+    "footer": "Alle Performance-Daten werden verifiziert und täglich aktualisiert."
+  },
+  "errors": {
+    "leaderboardLoadFailed": "Bestenliste konnte nicht geladen werden",
+    "traderLoadFailed": "Trader-Profil konnte nicht geladen werden",
+    "followingLoadFailed": "Folge-Liste konnte nicht geladen werden",
+    "followFailed": "Trader konnte nicht gefolgt werden",
+    "unfollowFailed": "Entfolgen fehlgeschlagen",
+    "historyLoadFailed": "Erfolgsbilanz konnte nicht geladen werden"
+  },
+  "retry": "Erneut versuchen",
+  "history": {
+    "exit": "Ausstieg",
+    "closedAt": "Geschlossen",
+    "loadMore": "Mehr laden",
+    "rateLimited": "Zu viele Anfragen. Bitte versuchen Sie es später erneut."
+  },
+  "loginPrompt": {
+    "cta": "Anmelden",
+    "history": {
+      "title": "Anmelden, um die vollständige Erfolgsbilanz zu sehen",
+      "desc": "Melden Sie sich an, um die vollständige Historie der geschlossenen Positionen dieses Traders zu sehen."
+    },
+    "myTrades": {
+      "title": "Anmelden, um Ihre Copy-Trades zu sehen",
+      "desc": "Melden Sie sich an, um Ihre kopierten Positionen und Ihren Gewinn/Verlust zu sehen."
+    }
+  }
+}

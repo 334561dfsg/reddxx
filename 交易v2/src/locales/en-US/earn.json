@@ -1,0 +1,410 @@
+{
+  "nav": {
+    "ariaLabel": "Earn module navigation",
+    "products": "Products",
+    "myEarnings": "My Earn",
+    "loan": "Loan",
+    "myLoans": "My Loans"
+  },
+  "header": {
+    "subtitle": "Passive Income",
+    "title": "Earn",
+    "heroDescription": "Put your idle assets to work. Transparent reference yields — designed for the long-term holder, not the day trader.",
+    "myEarnings": "My Earnings"
+  },
+  "educational": {
+    "headline": "Earn on your idle crypto.",
+    "chip": {
+      "apyUpTo": "APY up to {{value}}%",
+      "types": "Flexible & Fixed",
+      "dailyRateUpTo": "Daily rate up to {{value}}%"
+    },
+    "cta": "Explore products"
+  },
+  "holdings": {
+    "totalHoldings": "Total Holdings",
+    "perDay": "+${{amount}}/day",
+    "cumulative": "Cumulative",
+    "principal": "Principal",
+    "accruedReward": "Accrued",
+    "dailyEstimated": "Daily Estimated",
+    "rewardsLast7d": "Last 7 days",
+    "nextRewardLabel": "Next reward",
+    "nextReward": "in ~{{hours}}h"
+  },
+  "table": {
+    "columns": {
+      "product": "Product",
+      "category": "Type",
+      "term": "Term",
+      "minAmount": "Min",
+      "totalSubscribed": "Subscribed",
+      "availableQuota": "Available",
+      "apy": "APY",
+      "action": "Action",
+      "dailyRate": "Daily rate"
+    }
+  },
+  "featured": {
+    "title": "Featured Products",
+    "productCount": "{{count}} products",
+    "totalSubscribed": "{{amount}} subscribed",
+    "quotaRemaining": "Only {{amount}} left",
+    "subscribeNow": "Subscribe"
+  },
+  "badge": {
+    "hot": "Hot",
+    "featured": "Featured",
+    "exclusive": "Exclusive",
+    "exclusiveHint": "Only available to selected users"
+  },
+  "apy": {
+    "label": "Est. APY",
+    "suffix": "APY",
+    "annualizedShort": "APY (p.a.)",
+    "approx": "≈ {{value}}% APY"
+  },
+  "actions": {
+    "subscribe": "Subscribe",
+    "viewDetail": "View detail",
+    "redeem": "Redeem"
+  },
+  "tabs": {
+    "all": "All",
+    "flexible": "Flexible",
+    "fixed": "Fixed",
+    "staking": "Staking"
+  },
+  "products": {
+    "count": "{{count}} products",
+    "categoryFlex": "Flex",
+    "categoryFixed": "Fixed",
+    "categoryStake": "Stake",
+    "min": "Min {{amount}}",
+    "max": "Max {{amount}}",
+    "totalSubscribed": "{{amount}} subscribed",
+    "termFlexible": "Flexible",
+    "termFixed": "{{days}}D",
+    "minValue": "≥ {{value}} {{unit}}",
+    "minValueWithEstimate": "≥ {{value}} {{unit}} (≈ {{amount}} {{asset}})"
+  },
+  "sort": {
+    "highestApy": "Highest APY",
+    "shortestTerm": "Shortest Term",
+    "mostPopular": "Most Popular",
+    "highestDailyRate": "Highest daily rate"
+  },
+  "security": {
+    "footer": "Review each product's terms and redemption rules before subscribing.",
+    "disclaimer": "Not financial advice. Yields are estimates and may change."
+  },
+  "states": {
+    "retry": "Retry",
+    "loading": "Loading…",
+    "holdingsError": "Failed to load your Earn summary.",
+    "productsError": "Failed to load Earn products.",
+    "productsEmpty": "No Earn products available right now.",
+    "detailError": "Failed to load product details.",
+    "myEarningsError": "Failed to load this list."
+  },
+  "productDetail": {
+    "title": "Product details",
+    "back": "Back to Earn",
+    "notFound": "This product is no longer available.",
+    "unlimited": "Unlimited",
+    "keyFacts": {
+      "term": "Term",
+      "min": "Min subscription",
+      "max": "Max subscription",
+      "availableQuota": "Available quota",
+      "totalSubscribed": "Total subscribed",
+      "perUserQuota": "Per-user limit",
+      "estAccrualStart": "Est. accrual start",
+      "estMaturity": "Est. maturity date",
+      "accrualMode": "Accrual method",
+      "accrualModeRolling": "24h rolling",
+      "accrualModeRollingHint": "Interest starts when your order fills and accrues every 24 hours."
+    },
+    "risk": {
+      "title": "Risk disclosure",
+      "notGuaranteed": "Rewards are not guaranteed and may change with market conditions.",
+      "smartContract": "Smart-contract risk applies to staking-backed products.",
+      "earlyRedemption": "Early redemption forfeits accrued rewards on fixed-term products.",
+      "noEarlyRedemption": "Fixed-term products with daily payout can't be redeemed early.",
+      "earlyRedemptionPenalty": "Redeeming a fixed-term product early deducts {{rate}}% of your principal as a penalty. The rate in effect when you subscribed applies."
+    },
+    "exploreOthers": "Explore other products",
+    "disabled": {
+      "paused": "Subscription is temporarily paused for this product.",
+      "closed": "This product is no longer accepting subscriptions.",
+      "soldOut": "Quota exhausted. Please check back later.",
+      "subscriptionDisabled": "Subscriptions are currently disabled."
+    },
+    "groups": {
+      "rules": "Subscription rules",
+      "quota": "Product quota"
+    },
+    "quotaFilled": "{{percent}}% subscribed"
+  },
+  "subscribe": {
+    "title": "Subscribe",
+    "amountLabel": "Amount",
+    "amountPlaceholder": "Enter amount",
+    "availableBalanceLabel": "Available",
+    "maxButton": "Max",
+    "goDeposit": "Go to deposit",
+    "submit": "Confirm subscribe",
+    "cancel": "Cancel",
+    "estDailyReward": "Estimated daily reward",
+    "estMaturityReward": "Estimated reward at maturity",
+    "errors": {
+      "minAmount": "Minimum subscription is {{amount}} {{asset}}.",
+      "maxAmount": "Maximum subscription is {{amount}} {{asset}}.",
+      "availableQuota": "Only {{amount}} {{asset}} of quota remains.",
+      "perUserQuota": "Per-user limit is {{amount}} {{asset}}.",
+      "invalidAmount": "Please enter a valid amount.",
+      "insufficientBalance": "Insufficient available balance — only {{amount}} {{asset}} available.",
+      "priceChanged": "The price has changed. The current minimum subscription is {{amount}} {{asset}}.",
+      "unavailableAtCurrentPrice": "Subscription is unavailable at the current price.",
+      "valuationPriceUnavailable": "Unable to get the price right now. Please try again later."
+    },
+    "success": {
+      "title": "Subscription confirmed",
+      "orderId": "Order {{id}}",
+      "viewHoldings": "View my holdings"
+    },
+    "dates": {
+      "accrualStart": "Est. accrual start",
+      "maturity": "Est. maturity date",
+      "settlement": "Est. settlement date",
+      "reviewRequired": "This subscription requires review. Interest starts accruing the day after approval.",
+      "rollingNote": "Interest starts the moment your order fills and accrues every 24 hours. For fixed terms, principal and interest arrive within about 10 minutes of maturity.",
+      "rollingReviewRequired": "This subscription requires review. Interest starts accruing as soon as it is approved."
+    },
+    "fillRequiredMin": "Fill in",
+    "estReward": "Estimated reward",
+    "estRewardEmpty": "Enter an amount to see your estimated reward"
+  },
+  "redeem": {
+    "title": "Redeem",
+    "subtitle": {
+      "flexible": "Redeem flexible holding",
+      "fixedMatured": "Redeem matured position",
+      "fixedEarly": "Early redemption"
+    },
+    "redeemInFull": "Redeem in full",
+    "redeemPartial": "Partial redemption",
+    "amountLabel": "Redemption amount",
+    "redeemAll": "Redeem all",
+    "principal": "Principal",
+    "remainingPrincipal": "Remaining principal",
+    "continueAccrue": "Remaining principal keeps accruing rewards.",
+    "eligibleReward": "Eligible reward",
+    "fundingNote": "Funds will be credited to your Funding account.",
+    "warning": {
+      "fixedEarly": "Early redemption: eligible reward will be 0. This action cannot be undone.",
+      "fixedEarlyPenalty": "Early redemption: a penalty is deducted from your principal and eligible reward will be 0. This action cannot be undone."
+    },
+    "submit": "Confirm redeem",
+    "cancel": "Cancel",
+    "errors": {
+      "disabled": "Early redemption is not allowed for this product.",
+      "exceedsPrincipal": "Amount cannot exceed principal {{amount}} {{asset}}.",
+      "holdingInactive": "This holding is not active and cannot be redeemed.",
+      "invalidAmount": "Please enter a valid amount.",
+      "awaitingFinalCoupon": "The final day's interest is still being credited. Your principal and interest will arrive automatically — no action needed. You may also retry in a few minutes.",
+      "dailyPayoutNoEarly": "Fixed-term holdings with daily payout can't be redeemed early.",
+      "penaltyChanged": "The penalty amount has changed. Review the new amount and confirm again."
+    },
+    "success": {
+      "title": "Redemption confirmed",
+      "id": "Redemption {{id}}",
+      "viewRedemptions": "View redemptions",
+      "done": "Confirm",
+      "penalty": "Penalty deducted",
+      "received": "Amount credited"
+    },
+    "confirm": {
+      "title": "Forfeit accrued rewards?",
+      "body": "Early redemption will forfeit all accrued rewards (~{{amount}} {{asset}}). This action is irreversible.",
+      "youReceive": "You receive",
+      "youForfeit": "You forfeit",
+      "cancel": "Cancel",
+      "acknowledge": "I understand, redeem early",
+      "penaltyTitle": "Confirm early redemption penalty",
+      "penaltyBody": "Redeeming early deducts a penalty of {{amount}} {{asset}} ({{rate}}% of your principal) and forfeits all accrued rewards. This action is irreversible.",
+      "acknowledgePenalty": "Accept penalty and redeem early"
+    },
+    "dailyPaidOut": "Already paid to your wallet each period",
+    "penalty": "Early redemption penalty ({{rate}}%)",
+    "estimatedReceive": "Estimated amount received"
+  },
+  "myEarnings": {
+    "title": "My Earnings",
+    "table": {
+      "productName": "Product",
+      "asset": "Asset",
+      "principal": "Principal",
+      "accruedInterest": "Accrued Interest",
+      "term": "Term / Maturity",
+      "status": "Status",
+      "action": "Action",
+      "amount": "Amount",
+      "subscribedQuantity": "Subscribed Quantity",
+      "subscribedAt": "Subscribed at",
+      "completedAt": "Completed at",
+      "redemptionType": "Type",
+      "eligibleReward": "Eligible reward",
+      "createdAt": "Created at",
+      "rewardAmount": "Reward",
+      "rewardDate": "Reward date",
+      "paidAt": "Paid at",
+      "dailyRate": "Daily rate"
+    },
+    "summary": {
+      "totalValue": "Total value",
+      "principal": "Principal",
+      "accruedReward": "Accrued reward",
+      "cumulativeReward": "Cumulative reward",
+      "dailyEstimatedReward": "Estimated per-day",
+      "earningsTrend": "{{days}}-day earnings trend",
+      "usdNote": "Amounts below are shown in USD equivalent"
+    },
+    "tabs": {
+      "holdings": "Holdings",
+      "orders": "Orders",
+      "redemptions": "Redemptions",
+      "rewards": "Rewards"
+    },
+    "filter": {
+      "asset": "Asset",
+      "all": "All assets",
+      "status": "Status"
+    },
+    "holdings": {
+      "subscribedQuantity": "Subscribed Quantity",
+      "accruedInterest": "Accrued",
+      "paidReward": "Paid",
+      "daysRemaining": "{{days}}D remaining",
+      "matured": "Matured",
+      "flexible": "Flexible",
+      "redeemCta": "Redeem",
+      "maturityCountdownLabel": "Matures in",
+      "readyToRedeem": "Ready to redeem",
+      "subscribedAt": "Subscribed",
+      "startedAt": "Started",
+      "maturityAt": "Maturity",
+      "lastAccruedAt": "Last accrued",
+      "nextAccrualLabel": "Next accrual",
+      "settlementEtaLabel": "Funds arrive in",
+      "settlingLabel": "Settling…",
+      "countdownDaysHoursMinutes": "{{days}}d {{hours}}h {{minutes}}m",
+      "accrualStartDate": "Accrual start",
+      "maturityDate": "Maturity date",
+      "settlementDate": "Est. settlement date",
+      "accrualStartTime": "Accrual start",
+      "maturityTime": "Maturity",
+      "settlementEtaTime": "Est. funds arrival",
+      "paidToWallet": "Paid to wallet"
+    },
+    "orders": {
+      "subscribedAt": "Subscribed at",
+      "completedAt": "Completed at",
+      "amount": "Amount",
+      "valueUsd": "≈ {{value}} USD"
+    },
+    "redemptions": {
+      "createdAt": "Requested at",
+      "completedAt": "Completed at",
+      "amount": "Amount",
+      "eligibleReward": "Eligible reward",
+      "penalty": "Penalty"
+    },
+    "rewards": {
+      "rewardDate": "Reward date",
+      "amount": "Amount",
+      "paidAt": "Paid at"
+    },
+    "status": {
+      "active": "Active",
+      "redeeming": "Redeeming",
+      "redeemed": "Redeemed",
+      "matured": "Matured",
+      "pending": "Pending",
+      "completed": "Completed",
+      "failed": "Failed",
+      "pending_review": "Under review",
+      "rejected": "Rejected",
+      "accrued": "Accrued",
+      "paid": "Paid"
+    },
+    "redemptionType": {
+      "flexiblePartial": "Flex · Partial",
+      "flexibleFull": "Flex · Full",
+      "fixedMatured": "Fixed · Matured",
+      "fixedEarly": "Fixed · Early"
+    },
+    "empty": {
+      "holdings": "No holdings yet. Subscribe a product to start earning.",
+      "orders": "No subscription orders yet.",
+      "redemptions": "No redemption records yet.",
+      "rewards": "No reward records yet.",
+      "browseProducts": "Browse products"
+    },
+    "loadMore": "Load more",
+    "redeemDisabledTooltip": "Early redemption is not allowed for this product."
+  },
+  "errors": {
+    "INSUFFICIENT_BALANCE": "Insufficient balance.",
+    "QUOTA_EXHAUSTED": "Product quota exhausted.",
+    "PRODUCT_NOT_AVAILABLE": "This product is not currently available.",
+    "PER_USER_QUOTA_EXCEEDED": "Per-user limit reached.",
+    "AMOUNT_OUT_OF_RANGE": "Amount is outside the allowed range.",
+    "HOLDING_NOT_REDEEMABLE": "This holding cannot be redeemed.",
+    "EARLY_REDEMPTION_NOT_ALLOWED": "Early redemption is not allowed.",
+    "IDEMPOTENCY_CONFLICT": "Duplicate request detected. Please refresh and try again.",
+    "UNKNOWN": "Something went wrong. Please try again."
+  },
+  "loan": {
+    "subtitle": "On-Chain Credit",
+    "title": "Loan",
+    "description": "Borrow stablecoins against your holdings without selling. Over-collateralised positions, transparent liquidation thresholds, and 24/7 repayment — coming to {{brand}} soon.",
+    "comingSoon": "Coming Soon",
+    "disclaimer": "Transparent liquidation"
+  },
+  "dailyRate": {
+    "label": "Est. daily rate",
+    "suffix": "Daily rate"
+  },
+  "payoutMode": {
+    "label": "Reward payout",
+    "daily": "Paid to your wallet daily",
+    "at_end": "Paid in full at maturity or redemption",
+    "dailyBadge": "Daily payout"
+  },
+  "timeline": {
+    "title": "Timeline",
+    "steps": {
+      "subscribe": "Subscribe",
+      "accrualStart": "Interest starts",
+      "maturity": "Maturity",
+      "settlement": "Payout",
+      "redeem": "Redeem"
+    },
+    "values": {
+      "now": "Now",
+      "onOrder": "When your order fills",
+      "afterReview": "The day after approval",
+      "afterReviewRolling": "On approval",
+      "afterDays": "{{days}} days after start",
+      "settleRolling": "About 10 minutes after maturity",
+      "redeemAnytime": "Any time"
+    },
+    "accruingDays": "Earning for {{days}} days",
+    "accruingDaily": "Earning daily",
+    "rollingRule": "Interest accrues every 24 hours"
+  },
+  "maturityAfterDays": "{{count}} days after interest starts",
+  "productName": "{{symbol}} {{term}}",
+  "fixedTermName": "{{count}}-Day Fixed-Term Earn"
+}

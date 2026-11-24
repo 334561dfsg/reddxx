@@ -1,0 +1,410 @@
+{
+  "nav": {
+    "ariaLabel": "Navigation du module Earn",
+    "products": "Produits",
+    "myEarnings": "Mon Earn",
+    "loan": "Prêt",
+    "myLoans": "Mes prêts"
+  },
+  "header": {
+    "subtitle": "Revenu passif",
+    "title": "Earn",
+    "heroDescription": "Faites travailler vos actifs inactifs. Rendements de référence transparents — conçus pour le détenteur à long terme, pas pour le day trader.",
+    "myEarnings": "Mes revenus"
+  },
+  "educational": {
+    "headline": "Générez du rendement sur vos cryptos inactives.",
+    "chip": {
+      "apyUpTo": "APY jusqu'à {{value}} %",
+      "types": "Flexible et fixe",
+      "dailyRateUpTo": "Taux quotidien jusqu'à {{value}} %"
+    },
+    "cta": "Explorer les produits"
+  },
+  "holdings": {
+    "totalHoldings": "Avoirs totaux",
+    "perDay": "+${{amount}}/jour",
+    "cumulative": "Cumulé",
+    "principal": "Principal",
+    "accruedReward": "Accumulé",
+    "dailyEstimated": "Estimé par jour",
+    "rewardsLast7d": "7 derniers jours",
+    "nextRewardLabel": "Prochaine récompense",
+    "nextReward": "dans ~{{hours}} h"
+  },
+  "table": {
+    "columns": {
+      "product": "Produit",
+      "category": "Type",
+      "term": "Durée",
+      "minAmount": "Min",
+      "totalSubscribed": "Souscrit",
+      "availableQuota": "Disponible",
+      "apy": "APY",
+      "action": "Action",
+      "dailyRate": "Taux quotidien"
+    }
+  },
+  "featured": {
+    "title": "Produits à la une",
+    "productCount": "{{count}} produits",
+    "totalSubscribed": "{{amount}} souscrits",
+    "quotaRemaining": "Plus que {{amount}} restants",
+    "subscribeNow": "Souscrire"
+  },
+  "badge": {
+    "hot": "Populaire",
+    "featured": "À la une",
+    "exclusive": "Exclusif",
+    "exclusiveHint": "Réservé à certains utilisateurs"
+  },
+  "apy": {
+    "label": "APY est.",
+    "suffix": "APY",
+    "annualizedShort": "APY (annuel)",
+    "approx": "≈ {{value}} % APY"
+  },
+  "actions": {
+    "subscribe": "Souscrire",
+    "viewDetail": "Voir le détail",
+    "redeem": "Racheter"
+  },
+  "tabs": {
+    "all": "Tout",
+    "flexible": "Flexible",
+    "fixed": "Fixe",
+    "staking": "Staking"
+  },
+  "products": {
+    "count": "{{count}} produits",
+    "categoryFlex": "Flexible",
+    "categoryFixed": "Fixe",
+    "categoryStake": "Staking",
+    "min": "Min {{amount}}",
+    "max": "Max {{amount}}",
+    "totalSubscribed": "{{amount}} souscrits",
+    "termFlexible": "Flexible",
+    "termFixed": "{{days}}J",
+    "minValue": "≥ {{value}} {{unit}}",
+    "minValueWithEstimate": "≥ {{value}} {{unit}} (≈ {{amount}} {{asset}})"
+  },
+  "sort": {
+    "highestApy": "APY le plus élevé",
+    "shortestTerm": "Durée la plus courte",
+    "mostPopular": "Les plus populaires",
+    "highestDailyRate": "Taux quotidien le plus élevé"
+  },
+  "security": {
+    "footer": "Consultez les conditions et les règles de rachat de chaque produit avant de souscrire.",
+    "disclaimer": "Ne constitue pas un conseil financier. Les rendements sont des estimations et peuvent évoluer."
+  },
+  "states": {
+    "retry": "Réessayer",
+    "loading": "Chargement…",
+    "holdingsError": "Échec du chargement du récapitulatif Earn.",
+    "productsError": "Échec du chargement des produits Earn.",
+    "productsEmpty": "Aucun produit Earn disponible pour le moment.",
+    "detailError": "Échec du chargement des détails du produit.",
+    "myEarningsError": "Échec du chargement de cette liste."
+  },
+  "productDetail": {
+    "title": "Détails du produit",
+    "back": "Retour à Earn",
+    "notFound": "Ce produit n'est plus disponible.",
+    "unlimited": "Illimité",
+    "keyFacts": {
+      "term": "Durée",
+      "min": "Souscription min.",
+      "max": "Souscription max.",
+      "availableQuota": "Quota disponible",
+      "totalSubscribed": "Total souscrit",
+      "perUserQuota": "Limite par utilisateur",
+      "estAccrualStart": "Début des intérêts (est.)",
+      "estMaturity": "Échéance (est.)",
+      "accrualMode": "Mode de calcul",
+      "accrualModeRolling": "Glissant 24 h",
+      "accrualModeRollingHint": "Les intérêts commencent dès l'exécution de votre ordre et sont calculés toutes les 24 heures."
+    },
+    "risk": {
+      "title": "Avertissement sur les risques",
+      "notGuaranteed": "Les récompenses ne sont pas garanties et peuvent évoluer selon les conditions du marché.",
+      "smartContract": "Le risque lié aux contrats intelligents s'applique aux produits adossés au staking.",
+      "earlyRedemption": "Le rachat anticipé entraîne la perte des récompenses accumulées sur les produits à terme fixe.",
+      "noEarlyRedemption": "Les produits à terme fixe avec versement quotidien ne peuvent pas être rachetés par anticipation.",
+      "earlyRedemptionPenalty": "Le rachat anticipé d'un produit à terme fixe entraîne une pénalité de {{rate}} % de votre capital. Le taux en vigueur lors de votre souscription s'applique."
+    },
+    "exploreOthers": "Explorer d'autres produits",
+    "disabled": {
+      "paused": "La souscription est temporairement suspendue pour ce produit.",
+      "closed": "Ce produit n'accepte plus de souscriptions.",
+      "soldOut": "Quota épuisé. Veuillez revenir plus tard.",
+      "subscriptionDisabled": "Les souscriptions sont actuellement désactivées."
+    },
+    "groups": {
+      "rules": "Règles de souscription",
+      "quota": "Quota du produit"
+    },
+    "quotaFilled": "{{percent}} % souscrit"
+  },
+  "subscribe": {
+    "title": "Souscrire",
+    "amountLabel": "Montant",
+    "amountPlaceholder": "Saisissez le montant",
+    "availableBalanceLabel": "Disponible",
+    "maxButton": "Max",
+    "goDeposit": "Effectuer un dépôt",
+    "submit": "Confirmer la souscription",
+    "cancel": "Annuler",
+    "estDailyReward": "Récompense quotidienne estimée",
+    "estMaturityReward": "Récompense estimée à l'échéance",
+    "errors": {
+      "minAmount": "La souscription minimale est de {{amount}} {{asset}}.",
+      "maxAmount": "La souscription maximale est de {{amount}} {{asset}}.",
+      "availableQuota": "Il ne reste que {{amount}} {{asset}} de quota.",
+      "perUserQuota": "La limite par utilisateur est de {{amount}} {{asset}}.",
+      "invalidAmount": "Veuillez saisir un montant valide.",
+      "insufficientBalance": "Solde disponible insuffisant — seulement {{amount}} {{asset}} disponibles.",
+      "priceChanged": "Le prix a changé. La souscription minimale actuelle est de {{amount}} {{asset}}.",
+      "unavailableAtCurrentPrice": "La souscription est indisponible au prix actuel.",
+      "valuationPriceUnavailable": "Impossible d’obtenir le prix pour le moment. Veuillez réessayer plus tard."
+    },
+    "success": {
+      "title": "Souscription confirmée",
+      "orderId": "Ordre {{id}}",
+      "viewHoldings": "Voir mes avoirs"
+    },
+    "dates": {
+      "accrualStart": "Début des intérêts (est.)",
+      "maturity": "Échéance (est.)",
+      "settlement": "Règlement (est.)",
+      "reviewRequired": "Cette souscription nécessite une vérification. Les intérêts commencent le lendemain de l'approbation.",
+      "rollingNote": "Les intérêts commencent dès l'exécution de votre ordre et sont calculés toutes les 24 heures. Pour les produits à terme, le capital et les intérêts sont versés environ 10 minutes après l'échéance.",
+      "rollingReviewRequired": "Cette souscription est soumise à validation. Les intérêts commencent dès son approbation."
+    },
+    "fillRequiredMin": "Remplir",
+    "estReward": "Récompense estimée",
+    "estRewardEmpty": "Saisissez un montant pour voir la récompense estimée"
+  },
+  "redeem": {
+    "title": "Racheter",
+    "subtitle": {
+      "flexible": "Racheter un avoir flexible",
+      "fixedMatured": "Racheter une position arrivée à échéance",
+      "fixedEarly": "Rachat anticipé"
+    },
+    "redeemInFull": "Racheter en totalité",
+    "redeemPartial": "Rachat partiel",
+    "amountLabel": "Montant du rachat",
+    "redeemAll": "Tout racheter",
+    "principal": "Principal",
+    "remainingPrincipal": "Principal restant",
+    "continueAccrue": "Le principal restant continue d'accumuler des récompenses.",
+    "eligibleReward": "Récompense éligible",
+    "fundingNote": "Les fonds seront crédités sur votre compte Financement.",
+    "warning": {
+      "fixedEarly": "Rachat anticipé : la récompense éligible sera de 0. Cette action est irréversible.",
+      "fixedEarlyPenalty": "Rachat anticipé : une pénalité est déduite de votre capital et la récompense éligible sera de 0. Cette action est irréversible."
+    },
+    "submit": "Confirmer le rachat",
+    "cancel": "Annuler",
+    "errors": {
+      "disabled": "Le rachat anticipé n'est pas autorisé pour ce produit.",
+      "exceedsPrincipal": "Le montant ne peut pas dépasser le principal {{amount}} {{asset}}.",
+      "holdingInactive": "Cet avoir n'est pas actif et ne peut pas être racheté.",
+      "invalidAmount": "Veuillez saisir un montant valide.",
+      "awaitingFinalCoupon": "Les intérêts du dernier jour sont en cours de crédit. Votre capital et vos intérêts arriveront automatiquement, aucune action requise. Vous pouvez aussi réessayer dans quelques minutes.",
+      "dailyPayoutNoEarly": "Les positions à terme fixe avec versement quotidien ne peuvent pas être rachetées par anticipation.",
+      "penaltyChanged": "Le montant de la pénalité a changé. Vérifiez le nouveau montant et confirmez à nouveau."
+    },
+    "success": {
+      "title": "Rachat confirmé",
+      "id": "Rachat {{id}}",
+      "viewRedemptions": "Voir les rachats",
+      "done": "Confirmer",
+      "penalty": "Pénalité déduite",
+      "received": "Montant crédité"
+    },
+    "confirm": {
+      "title": "Renoncer aux récompenses accumulées ?",
+      "body": "Le rachat anticipé entraînera la perte de toutes les récompenses accumulées (~{{amount}} {{asset}}). Cette action est irréversible.",
+      "youReceive": "Vous recevez",
+      "youForfeit": "Vous perdez",
+      "cancel": "Annuler",
+      "acknowledge": "Je comprends, racheter par anticipation",
+      "penaltyTitle": "Confirmer la pénalité de rachat anticipé",
+      "penaltyBody": "Le rachat anticipé entraîne une pénalité de {{amount}} {{asset}} ({{rate}} % de votre capital) et la perte de toutes les récompenses accumulées. Cette action est irréversible.",
+      "acknowledgePenalty": "Accepter la pénalité et racheter"
+    },
+    "dailyPaidOut": "Déjà versées sur votre portefeuille à chaque période",
+    "penalty": "Pénalité de rachat anticipé ({{rate}} %)",
+    "estimatedReceive": "Montant estimé à recevoir"
+  },
+  "myEarnings": {
+    "title": "Mes revenus",
+    "table": {
+      "productName": "Produit",
+      "asset": "Actif",
+      "principal": "Principal",
+      "accruedInterest": "Intérêts accumulés",
+      "term": "Durée / Échéance",
+      "status": "Statut",
+      "action": "Action",
+      "amount": "Montant",
+      "subscribedQuantity": "Quantité souscrite",
+      "subscribedAt": "Souscrit le",
+      "completedAt": "Terminé le",
+      "redemptionType": "Type",
+      "eligibleReward": "Récompense éligible",
+      "createdAt": "Créé le",
+      "rewardAmount": "Récompense",
+      "rewardDate": "Date de récompense",
+      "paidAt": "Payé le",
+      "dailyRate": "Taux quotidien"
+    },
+    "summary": {
+      "totalValue": "Valeur totale",
+      "principal": "Principal",
+      "accruedReward": "Récompense accumulée",
+      "cumulativeReward": "Récompense cumulée",
+      "dailyEstimatedReward": "Estimé par jour",
+      "earningsTrend": "Tendance des gains sur {{days}} jours",
+      "usdNote": "Les montants ci-dessous sont affichés en équivalent USD"
+    },
+    "tabs": {
+      "holdings": "Avoirs",
+      "orders": "Ordres",
+      "redemptions": "Rachats",
+      "rewards": "Récompenses"
+    },
+    "filter": {
+      "asset": "Actif",
+      "all": "Tous les actifs",
+      "status": "Statut"
+    },
+    "holdings": {
+      "subscribedQuantity": "Quantité souscrite",
+      "accruedInterest": "Accumulé",
+      "paidReward": "Payé",
+      "daysRemaining": "{{days}}J restants",
+      "matured": "Arrivé à échéance",
+      "flexible": "Flexible",
+      "redeemCta": "Racheter",
+      "maturityCountdownLabel": "Échéance dans",
+      "readyToRedeem": "Prêt à racheter",
+      "subscribedAt": "Souscrit",
+      "startedAt": "Démarré",
+      "maturityAt": "Échéance",
+      "lastAccruedAt": "Dernière accumulation",
+      "nextAccrualLabel": "Prochains intérêts",
+      "settlementEtaLabel": "Fonds reçus dans",
+      "settlingLabel": "Règlement en cours…",
+      "countdownDaysHoursMinutes": "{{days}} j {{hours}} h {{minutes}} min",
+      "accrualStartDate": "Début des intérêts",
+      "maturityDate": "Date d'échéance",
+      "settlementDate": "Date de règlement estimée",
+      "accrualStartTime": "Début des intérêts",
+      "maturityTime": "Échéance",
+      "settlementEtaTime": "Versement estimé",
+      "paidToWallet": "Versé sur le portefeuille"
+    },
+    "orders": {
+      "subscribedAt": "Souscrit le",
+      "completedAt": "Terminé le",
+      "amount": "Montant",
+      "valueUsd": "≈ {{value}} USD"
+    },
+    "redemptions": {
+      "createdAt": "Demandé le",
+      "completedAt": "Terminé le",
+      "amount": "Montant",
+      "eligibleReward": "Récompense éligible",
+      "penalty": "Pénalité"
+    },
+    "rewards": {
+      "rewardDate": "Date de récompense",
+      "amount": "Montant",
+      "paidAt": "Payé le"
+    },
+    "status": {
+      "active": "Actif",
+      "redeeming": "Rachat en cours",
+      "redeemed": "Racheté",
+      "matured": "Arrivé à échéance",
+      "pending": "En attente",
+      "completed": "Terminé",
+      "failed": "Échoué",
+      "pending_review": "En cours d'examen",
+      "rejected": "Rejeté",
+      "accrued": "Accumulé",
+      "paid": "Payé"
+    },
+    "redemptionType": {
+      "flexiblePartial": "Flexible · Partiel",
+      "flexibleFull": "Flexible · Total",
+      "fixedMatured": "Fixe · Échéance",
+      "fixedEarly": "Fixe · Anticipé"
+    },
+    "empty": {
+      "holdings": "Aucun avoir pour le moment. Souscrivez un produit pour commencer à gagner.",
+      "orders": "Aucun ordre de souscription pour le moment.",
+      "redemptions": "Aucun historique de rachat pour le moment.",
+      "rewards": "Aucun historique de récompense pour le moment.",
+      "browseProducts": "Parcourir les produits"
+    },
+    "loadMore": "Charger plus",
+    "redeemDisabledTooltip": "Le rachat anticipé n'est pas autorisé pour ce produit."
+  },
+  "errors": {
+    "INSUFFICIENT_BALANCE": "Solde insuffisant.",
+    "QUOTA_EXHAUSTED": "Quota du produit épuisé.",
+    "PRODUCT_NOT_AVAILABLE": "Ce produit n'est pas disponible actuellement.",
+    "PER_USER_QUOTA_EXCEEDED": "Limite par utilisateur atteinte.",
+    "AMOUNT_OUT_OF_RANGE": "Le montant est en dehors de la plage autorisée.",
+    "HOLDING_NOT_REDEEMABLE": "Cet avoir ne peut pas être racheté.",
+    "EARLY_REDEMPTION_NOT_ALLOWED": "Le rachat anticipé n'est pas autorisé.",
+    "IDEMPOTENCY_CONFLICT": "Requête en double détectée. Veuillez actualiser et réessayer.",
+    "UNKNOWN": "Une erreur s'est produite. Veuillez réessayer."
+  },
+  "loan": {
+    "subtitle": "Crédit on-chain",
+    "title": "Prêt",
+    "description": "Empruntez des stablecoins contre vos avoirs sans vendre. Positions surcollatéralisées, seuils de liquidation transparents et remboursement 24/7 — bientôt disponible sur {{brand}}.",
+    "comingSoon": "Bientôt disponible",
+    "disclaimer": "Liquidation transparente"
+  },
+  "dailyRate": {
+    "label": "Taux quotidien est.",
+    "suffix": "Taux quotidien"
+  },
+  "payoutMode": {
+    "label": "Versement des récompenses",
+    "daily": "Versées chaque jour sur votre portefeuille",
+    "at_end": "Versées en une fois à l'échéance ou au rachat",
+    "dailyBadge": "Versement quotidien"
+  },
+  "timeline": {
+    "title": "Calendrier",
+    "steps": {
+      "subscribe": "Souscription",
+      "accrualStart": "Début des intérêts",
+      "maturity": "Échéance",
+      "settlement": "Versement",
+      "redeem": "Rachat"
+    },
+    "values": {
+      "now": "Maintenant",
+      "onOrder": "Dès l'exécution de l'ordre",
+      "afterReview": "Le lendemain de l'approbation",
+      "afterReviewRolling": "Dès l'approbation",
+      "afterDays": "{{days}} jours après le début",
+      "settleRolling": "Environ 10 minutes après l'échéance",
+      "redeemAnytime": "À tout moment"
+    },
+    "accruingDays": "Intérêts pendant {{days}} jours",
+    "accruingDaily": "Intérêts quotidiens",
+    "rollingRule": "Intérêts calculés toutes les 24 heures"
+  },
+  "maturityAfterDays": "{{count}} jours après le début des intérêts",
+  "productName": "{{symbol}} {{term}}",
+  "fixedTermName": "Placement fixe de {{count}} jours"
+}

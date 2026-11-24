@@ -1,0 +1,94 @@
+{
+  "title": "고객 지원",
+  "menu": {
+    "title": "어떤 방법으로 문의하시겠습니까?",
+    "subtitle": "가장 편리한 채널을 선택하세요.",
+    "liveChat": "실시간 채팅",
+    "liveChatDesc": "지원팀과 실시간으로 채팅하세요",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "WhatsApp에서 1:1로 문의하세요",
+    "email": "이메일",
+    "emailDesc": "이메일을 보내주시면 답변드리겠습니다"
+  },
+  "welcomeMessage": "안녕하세요! 무엇을 도와드릴까요?",
+  "placeholder": "메시지를 입력하세요...",
+  "send": "전송",
+  "loading": "불러오는 중…",
+  "status": {
+    "pending": "대기열에서 대기 중…",
+    "open": "상담원이 참여했습니다",
+    "closed": "대화가 종료되었습니다",
+    "closedInputHint": "이 대화는 종료되었습니다. 추가 도움이 필요하면 새 대화를 시작하세요."
+  },
+  "emoji": {
+    "add": "이모지 추가"
+  },
+  "attachment": {
+    "add": "첨부파일 추가",
+    "uploading": "업로드 중…",
+    "confirming": "처리 중…",
+    "failed": "업로드 실패",
+    "tooLarge": "{{limit}} 제한 초과",
+    "retry": "다시 시도",
+    "remove": "제거",
+    "download": "다운로드",
+    "limitType": "JPG, PNG, PDF, Excel, Word, CSV, ZIP만 지원됩니다",
+    "limitTypeGuest": "게스트는 JPG, PNG, PDF만 보낼 수 있습니다. Excel, Word, CSV, ZIP 파일은 로그인 후 보낼 수 있습니다",
+    "limitCount": "최대 {{count}}개의 첨부파일이 허용됩니다",
+    "queued": "업로드 대기 중…",
+    "retryAfter": "{{seconds}}초 후 다시 시도할 수 있습니다",
+    "stage": {
+      "request": "업로드를 시작할 수 없음",
+      "upload": "업로드 실패",
+      "confirm": "업로드를 완료할 수 없음"
+    },
+    "reason": {
+      "offline": "오프라인 상태입니다. 연결 후 다시 시도하세요.",
+      "timeout": "업로드 시간이 초과되었습니다. 다시 시도하세요.",
+      "connection": "연결에 실패했습니다. 네트워크를 확인하고 다시 시도하세요.",
+      "format": "지원하지 않는 파일 형식입니다.",
+      "content": "파일 내용이 형식과 일치하지 않습니다.",
+      "size": "파일이 너무 큽니다.",
+      "identity": "채팅 인증이 만료되었습니다.",
+      "signature": "업로드 링크가 만료되었습니다. 다시 시도하면 새 링크를 받습니다.",
+      "forbidden": "저장소에서 업로드를 거부했습니다. 다시 시도하거나 고객센터에 문의하세요.",
+      "rateLimit": "요청이 너무 많습니다.",
+      "quota": "첨부 한도에 도달했습니다. 다른 파일을 삭제하고 다시 시도하세요.",
+      "storage": "파일 저장소를 사용할 수 없습니다. 잠시 후 다시 시도하세요.",
+      "unknown": "오류가 발생했습니다. 다시 시도하세요."
+    }
+  },
+  "toast": {
+    "newMessageTitle": "고객센터 새 메시지",
+    "newMessageTitleWithCount": "고객센터 새 메시지 ({{unread}})",
+    "attachment": "[첨부파일]",
+    "view": "보기",
+    "close": "닫기"
+  },
+  "errors": {
+    "sendFailed": "전송에 실패했습니다. 다시 시도하세요.",
+    "loadFailed": "불러오기에 실패했습니다. 다시 시도하세요.",
+    "offline": "네트워크 오류입니다. 연결을 확인하고 다시 시도하세요.",
+    "notSent": "전송되지 않음"
+  },
+  "connection": {
+    "reconnecting": "연결이 끊겼습니다. 다시 연결하는 중…",
+    "stale": "서버에 연결할 수 없습니다. 페이지를 새로고침하여 새 메시지를 받으세요.",
+    "refresh": "페이지 새로고침",
+    "retry": "다시 시도",
+    "restored": "다시 연결됨"
+  },
+  "guest": {
+    "unavailableTitle": "게스트 채팅을 더 이상 사용할 수 없습니다",
+    "unavailableDesc": "이 브라우저의 게스트 신원이 만료되었거나 유효하지 않습니다.",
+    "unavailableHint": "이전 게스트 메시지는 더 이상 볼 수 없습니다. 로그인하여 계정에서 고객센터에 문의하거나 새 게스트 채팅을 시작하세요.",
+    "startNew": "새 채팅 시작",
+    "merging": "게스트 채팅을 계정으로 옮기는 중…",
+    "mergeFailed": "게스트 채팅이 아직 계정으로 옮겨지지 않았습니다.",
+    "mergeRetry": "다시 시도",
+    "expiredTitle": "게스트 채팅이 만료되었습니다"
+  },
+  "blocked": {
+    "message": "현재 실시간 채팅을 이용할 수 없습니다."
+  }
+}

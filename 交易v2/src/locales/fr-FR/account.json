@@ -1,0 +1,19 @@
+{
+  "ui": {
+    "selectAFile": "Sélectionnez un fichier",
+    "jpgPngOrPdfOnly": "JPG, PNG ou PDF uniquement",
+    "fileIsTooLarge": "Fichier trop volumineux",
+    "exactly6Digits": "Exactement 6 chiffres",
+    "checkThePasswordRequirements": "Vérifiez les règles du mot de passe",
+    "back": "← Retour",
+    "copyUid": "Copier l’UID",
+    "830Characters": "8 à 30 caractères",
+    "localDemoCode123456": "Code de démonstration local : 123456",
+    "demoKeyOnlyNotValidForARealAccount": "Clé de démonstration, inutilisable sur un compte réel.",
+    "1PersonalInformation": "1　Informations personnelles",
+    "2UploadDocuments": "2　Importer les documents",
+    "useFictionalDetailsAndDemoImagesFilesStayOn": "Utilisez des données fictives. Les fichiers restent sur cet appareil.",
+    "thisDemoDoesNotOpenARealJointAccount": "Cette démonstration ne crée aucun compte joint réel.",
+    "primaryApplicantYou": "Demandeur principal · Vous"
+  }
+}

@@ -1,0 +1,50 @@
+<script setup>
+import { computed, ref, nextTick, watch, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
+const props = defineProps({ id: {type:String,required:true}, modelValue:[String,Number], variant:{type:String,default:'filter'}, label:String, options:{type:Array,required:true}, searchLabel:String })
+const emit = defineEmits(['update:modelValue'])
+const route=useRoute(), trigger=ref(null), panel=ref(null), search=ref(null), open=ref(false), closing=ref(false), query=ref(''), active=ref(null), geometry=ref({})
+let closeTimer, typeBuffer='', typeTimer
+const selected=computed(()=>props.options.find(o=>o.value===props.modelValue))
+const visible=computed(()=>props.options.filter(o=>o.label.toLowerCase().includes(query.value.trim().toLowerCase())))
+const optionId=value=>`${props.id}-option-${encodeURIComponent(value||'all')}`
+const activeId=computed(()=>open.value&&visible.value.some(o=>o.value===active.value)?optionId(active.value):undefined)
+function reconcile(){if(!visible.value.some(o=>o.value===active.value&&!o.disabled)){active.value=visible.value.find(o=>o.value===props.modelValue&&!o.disabled)?.value??visible.value.find(o=>!o.disabled)?.value??null}}
+function place(){if(!open.value||!trigger.value)return;const r=trigger.value.getBoundingClientRect(),v=window.visualViewport,left=v?.offsetLeft||0,top=v?.offsetTop||0,w=v?.width||innerWidth,h=v?.height||innerHeight,width=Math.min(props.variant==='field'?r.width:props.searchLabel?224:144,w-16),desired=props.searchLabel?279:Math.min(280,props.options.length*32+8),below=top+h-r.bottom-36,above=r.top-top-8,up=below<desired&&above>below,height=Math.min(desired,Math.max(80,up?above:below));geometry.value={left:Math.max(left+8,Math.min(r.left,left+w-width-8))+'px',top:(up?r.top-height-4:r.bottom+4)+'px',width:width+'px',maxHeight:height+'px'}}
+function listen(add){const fn=add?'addEventListener':'removeEventListener';document[fn]('pointerdown',outside,true);document[fn]('focusin',focusChanged);window[fn]('resize',place);window[fn]('scroll',place,true);window.visualViewport?.[fn]('resize',place);window.visualViewport?.[fn]('scroll',place)}
+async function show(){if(open.value||closing.value)return;query.value='';active.value=null;open.value=true;reconcile();listen(true);place();await nextTick();if(props.searchLabel)search.value?.focus();reveal()}
+function close(restore=true){if(!open.value||closing.value)return;closing.value=true;listen(false);const delay=matchMedia('(prefers-reduced-motion: reduce)').matches?0:100;closeTimer=setTimeout(()=>{open.value=false;closing.value=false;query.value='';active.value=null;if(restore)trigger.value?.focus()},delay)}
+function outside(e){if(!trigger.value?.contains(e.target)&&!panel.value?.contains(e.target))close(false)}
+function focusChanged(e){if(!trigger.value?.contains(e.target)&&!panel.value?.contains(e.target))close(false)}
+function choose(value){if(closing.value||!props.options.some(o=>o.value===value&&!o.disabled))return;emit('update:modelValue',value);close()}
+function reveal(){nextTick(()=>document.getElementById(activeId.value)?.scrollIntoView({block:'nearest'}))}
+function move(delta){const enabled=visible.value.filter(o=>!o.disabled);if(!enabled.length)return;const index=enabled.findIndex(o=>o.value===active.value);active.value=enabled[(index+delta+enabled.length)%enabled.length].value;reveal()}
+function keys(e){if(closing.value)return;if(e.key==='Escape'&&open.value){e.preventDefault();e.stopPropagation();close();return}if(e.key==='Tab'){if(!props.searchLabel)close(false);return}if(['ArrowDown','ArrowUp'].includes(e.key)){e.preventDefault();if(!open.value)show();else move(e.key==='ArrowDown'?1:-1);return}if(e.key==='Enter'||(!props.searchLabel&&e.key===' ')){e.preventDefault();if(!open.value)show();else if(active.value!==null)choose(active.value);return}if(!props.searchLabel&&open.value&&['Home','End'].includes(e.key)){e.preventDefault();const enabled=visible.value.filter(o=>!o.disabled);active.value=(e.key==='Home'?enabled[0]:enabled.at(-1))?.value??null;reveal();return}if(!props.searchLabel&&e.key.length===1&&!e.metaKey&&!e.ctrlKey&&!e.altKey){e.preventDefault();if(!open.value)show();typeBuffer+=e.key.toLowerCase();clearTimeout(typeTimer);typeTimer=setTimeout(()=>typeBuffer='',700);active.value=props.options.find(o=>!o.disabled&&o.label.toLowerCase().startsWith(typeBuffer))?.value??active.value;reveal()}}
+watch([visible,()=>props.modelValue],()=>{if(open.value){reconcile();reveal()}})
+watch(()=>route.fullPath,()=>close(false))
+onBeforeUnmount(()=>{listen(false);clearTimeout(closeTimer);clearTimeout(typeTimer)})
+</script>
+<template>
+  <button ref="trigger" type="button" class="record-filter" :class="{'field-select':variant==='field','trade-field':variant==='field'}" :role="searchLabel?undefined:'combobox'" :aria-label="label+' '+(selected?.label||modelValue)" :aria-expanded="open" :aria-controls="searchLabel?id+'-panel':id+'-list'" :aria-haspopup="searchLabel?undefined:'listbox'" :aria-activedescendant="searchLabel?undefined:activeId" @click="open?close():show()" @keydown="keys">
+    <span class="filter-caption">{{ label }}</span><span>{{ selected?.label||modelValue }}</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+  </button>
+  <Teleport to="body">
+    <div v-if="open" :id="id+'-panel'" ref="panel" class="record-filter-popup" :class="{closing,'field-select-popup':variant==='field'}" :style="geometry" @keydown.esc="keys">
+      <div v-if="searchLabel" class="filter-search"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="m11 11 4 4"/></svg><input ref="search" v-model="query" role="combobox" :aria-label="searchLabel" :placeholder="searchLabel" aria-autocomplete="list" aria-expanded="true" :aria-controls="id+'-list'" :aria-activedescendant="activeId" @keydown="keys"/></div>
+      <div :id="id+'-list'" role="listbox" :aria-label="label" class="filter-options">
+        <div v-for="o in visible" :id="optionId(o.value)" :key="o.value" role="option" :aria-selected="active===o.value" :aria-disabled="o.disabled||undefined" class="filter-option" :class="{active:active===o.value,committed:modelValue===o.value}" @pointermove="!o.disabled&&(active=o.value)" @pointerdown.prevent @click="choose(o.value)"><span>{{ o.label }}</span><svg v-if="modelValue===o.value" viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg></div>
+      </div>
+      <p v-if="!visible.length" role="status" class="filter-empty">{{ $t('markets.ui.noMatchingMarkets') }}</p>
+    </div>
+  </Teleport>
+</template>
+<style scoped>
+.record-filter{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0;border:0;background:transparent;color:#fff;font:12px/16px 'Exo 2','PingFang SC',Arial,sans-serif;white-space:nowrap}.filter-caption{color:#a0a1a2}.record-filter svg,.record-filter-popup svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.4;flex:none}.record-filter:focus-visible{outline:1px solid #ffffff3d;outline-offset:2px;border-radius:4px}.record-filter:hover{color:white}.record-filter-popup{position:fixed;z-index:50;display:flex;flex-direction:column;overflow:hidden;background:rgba(10,13,18,.98);border:1px solid #191b1f;border-radius:12px;color:#fff;font:12px/16px 'Exo 2','PingFang SC',Arial,sans-serif;box-shadow:0 6px 20px #0004;animation:filter-in 150ms ease-out}.record-filter-popup.closing{animation:filter-out 100ms ease-in forwards;pointer-events:none}.filter-search{display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #191b1f;flex-shrink:0;color:#a0a1a2}.filter-search input{width:100%;min-width:0;height:36px;min-height:36px;padding:0;border:0;border-radius:0;background:transparent;font:inherit;box-shadow:none;color:#fff}.filter-search input:focus,.filter-search input:focus-visible{outline:none}.filter-search input::placeholder{color:#a0a1a2}.filter-options{overflow-y:auto;min-height:0;padding:4px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#414246 transparent}.filter-options::-webkit-scrollbar{width:3px}.filter-options::-webkit-scrollbar-thumb{background:#414246;border-radius:3px}.filter-option{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:30px;padding:6px 8px;border-radius:6px;cursor:pointer}.filter-option.active{background:#0c1017}.filter-option[aria-disabled=true]{opacity:.4;cursor:default}.filter-empty{padding:16px;color:#a0a1a2;margin:0}@keyframes filter-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}@keyframes filter-out{to{opacity:0}}@media(prefers-reduced-motion:reduce){.record-filter-popup,.record-filter-popup.closing{animation:none}}@media(pointer:coarse){.filter-option{min-height:44px}.record-filter{min-height:44px}}
+
+.field-select{justify-content:space-between;text-align:left}.field-select .filter-caption{display:none}.field-select>svg{margin-left:auto;transition:transform 150ms ease-out}.field-select[aria-expanded=true]>svg{transform:rotate(180deg)}
+.field-select-popup{font-size:14px;line-height:20px;background:#0c1017;border-color:#24272c;border-radius:12px}.field-select-popup .filter-option{min-height:36px;padding:8px 12px}.field-select-popup .filter-option.active{background:#ffffff0d}.field-select-popup .filter-option.committed{color:#a5ff4a}.field-select-popup .filter-option svg{color:#a5ff4a}
+@media(pointer:coarse){.field-select,.field-select-popup .filter-option{min-height:44px}}
+@media(prefers-reduced-motion:reduce){.field-select>svg{transition:none}}
+</style>
+
+<style src="../styles/trade-form-controls.css"></style>

@@ -1,0 +1,567 @@
+{
+  "landing": {
+    "eyebrow": "AI Quant",
+    "title": "Lassen Sie die KI für Sie handeln, oder übergeben Sie es einem verwalteten Fonds",
+    "subtitle": "Zwei unabhängige Produktlinien. Wählen Sie eine zum Start; jederzeit wechselbar.",
+    "strategy": {
+      "kicker": "KI-Engine · Automatisiert",
+      "name": "Strategien",
+      "valueProp": "Eine KI-Engine führt Trades automatisch anhand bewährter Vorlagen aus. Sie wählen die Vorlage, die Engine handelt.",
+      "chipA": "Backtestet",
+      "chipB": "Risiko begrenzt",
+      "browse": "Strategien durchsuchen",
+      "mine": "Meine Strategien",
+      "mineHint": "Privat · laufende Instanzen"
+    },
+    "quantFund": {
+      "kicker": "KI-verwaltet · Sorglos",
+      "name": "Quant-Fonds",
+      "valueProp": "Ein KI-verwalteter Fonds mit fester Laufzeit. Zeichnen Sie und lassen Sie die Abrechnung bei Fälligkeit automatisch laufen.",
+      "chipA": "Feste Laufzeit",
+      "chipB": "Auto-Abrechnung",
+      "browse": "Fonds durchsuchen",
+      "mine": "Meine Positionen",
+      "mineHint": "Privat · Zeichnungen und Zinsen"
+    }
+  },
+  "nav": {
+    "ariaLabel": "Navigation des KI-Quant-Moduls",
+    "strategy": "Strategien",
+    "myStrategies": "Meine Strategien",
+    "quantFund": "Quant-Fonds",
+    "myPositions": "Meine Positionen"
+  },
+  "myStrategies": {
+    "subtitle": "Laufende KI-Strategien",
+    "title": "Meine Strategien",
+    "empty": "Sie haben noch keine Strategie abonniert. Durchsuchen Sie Vorlagen, um zu starten.",
+    "browseStrategies": "Vorlagen durchsuchen",
+    "summary": {
+      "totalCapital": "Gesamtkapital",
+      "totalPnl": "Gesamt-PnL",
+      "running": "Laufend",
+      "total": "Strategien"
+    }
+  },
+  "table": {
+    "columns": {
+      "strategyName": "Strategie",
+      "styleMarket": "Stil / Markt",
+      "trend": "GuV-Trend",
+      "pnl": "GuV",
+      "capital": "Kapital",
+      "endDate": "Ende",
+      "action": "Aktion"
+    }
+  },
+  "hero": {
+    "subtitle": "KI-Quant",
+    "title": "Quant-Power für jeden Trader.",
+    "description": "Hunderte KI-gestützte Strategien, transparente Risikoparameter und volle Kontrolle über jede Entscheidung. Abonnieren Sie eine Vorlage, legen Sie Ihre Grenzen fest und lassen Sie die Mathematik die Arbeit machen.",
+    "browseStrategies": "Strategien durchsuchen",
+    "howItWorks": "So funktioniert es",
+    "modelsRunning": "Modelle laufen · rund um die Uhr",
+    "statActive": "Aktiv",
+    "statActiveSub": "Aktuell laufende Strategien",
+    "statActiveFallback": "Verfügbare Vorlagen",
+    "statActiveFallbackSub": "Abonnierbare Strategien",
+    "statAvgSharpe": "Median-Sharpe",
+    "statAvgSharpeSub": "Über alle gelisteten Vorlagen"
+  },
+  "howItWorks": {
+    "title": "So funktioniert KI-Quant",
+    "description": "Eine kurze Übersicht, wie Strategien erstellt, getestet und ausgeführt werden.",
+    "empty": "Das Einführungsvideo ist derzeit nicht verfügbar. Bitte schauen Sie später wieder vorbei.",
+    "unsupported": "Ihr Browser unterstützt das Video-Tag nicht."
+  },
+  "sections": {
+    "featured": "Heute hervorgehoben",
+    "live": "Live-Performance",
+    "browse": "Strategien durchsuchen"
+  },
+  "spotlight": {
+    "subtitle": "Je Stil — konservativ, ausgewogen, aggressiv — die Strategie mit dem höchsten Sharpe-Verhältnis, direkt abonnierbar.",
+    "styleBadge": {
+      "conservative": "Solide Wahl",
+      "balanced": "Ausgewogene Wahl",
+      "aggressive": "Mutige Wahl"
+    },
+    "subscribeNow": "Jetzt abonnieren"
+  },
+  "templates": {
+    "label": "Strategievorlagen",
+    "title": "Strategievorlagen",
+    "subtitle": "Jede Vorlage läuft auf einem getesteten KI-Modell mit öffentlichen Risiko- und Renditekennzahlen.",
+    "recommendedTitle": "Empfohlen",
+    "filterAll": "Alle",
+    "filterByStyle": "Stil",
+    "filterByMarket": "Markt",
+    "empty": "Noch keine Strategie passt zu Ihrem Filter.",
+    "loading": "Strategien werden geladen …",
+    "subscribe": "Abonnieren",
+    "sortBy": {
+      "label": "Sortieren",
+      "sharpe_desc": "Sharpe-Verhältnis · hoch bis niedrig",
+      "sharpe_asc": "Sharpe-Verhältnis · niedrig bis hoch",
+      "winRate_desc": "Gewinnrate · hoch bis niedrig",
+      "winRate_asc": "Gewinnrate · niedrig bis hoch",
+      "minCapital_desc": "Min. Kapital · hoch bis niedrig",
+      "minCapital_asc": "Min. Kapital · niedrig bis hoch",
+      "period_desc": "Laufzeit · lang bis kurz",
+      "period_asc": "Laufzeit · kurz bis lang"
+    },
+    "fields": {
+      "winRate": "Gewinnrate",
+      "sharpeRatio": "Sharpe-Verhältnis",
+      "aiModel": "KI-Modell",
+      "tradesPerDay": "Trades / Tag",
+      "tradesPerDayValue": "{{n}} Trades/Tag",
+      "capital": "Kapital ({{asset}})",
+      "period": "Laufzeit",
+      "riskLevel": "Risiko",
+      "supportedSymbols": "Symbole"
+    },
+    "riskLevelValue": "Stufe {{level}}",
+    "guideCard": {
+      "title": "Keine passende Strategie gefunden?",
+      "description": "Entdecken Sie Quant-Fonds: vollständig KI-verwaltet, kein Beobachten nötig, automatische Abrechnung bei Fälligkeit.",
+      "cta": "Quant-Fonds ansehen"
+    }
+  },
+  "style": {
+    "conservative": "Konservativ",
+    "balanced": "Ausgewogen",
+    "aggressive": "Aggressiv"
+  },
+  "market": {
+    "crypto": "Krypto",
+    "stock": "Aktien",
+    "forex": "Devisen",
+    "indices": "Indizes"
+  },
+  "aiModelNames": {
+    "local": "Hauseigenes Quant-Modell"
+  },
+  "detail": {
+    "title": "Strategiedetails",
+    "close": "Schließen",
+    "openAria": "Details zu {{name}} ansehen",
+    "descriptionTitle": "Über diese Strategie",
+    "paramsTitle": "Schlüsselparameter",
+    "periodValue": "{{min}} – {{max}} Tage",
+    "dailyTargetLabel": "Tägliches Renditeziel",
+    "dailyTargetValue": "{{percent}} %/Tag",
+    "explain": {
+      "sharpeRatio": "Ertrag pro übernommener Risikoeinheit — je höher, desto besser die risikoadjustierte Performance.",
+      "winRate": "Anteil der historischen Trades, die mit Gewinn geschlossen wurden.",
+      "riskLevel": "Einstufung von Volatilität und Drawdown durch die Plattform — je höher, desto stärker die Schwankungen."
+    }
+  },
+  "strategies": {
+    "label": "Meine Strategien",
+    "title": "Meine Strategien",
+    "subtitle": "Echtzeitübersicht jeder Strategie, die mit Ihrem Konto abonniert ist.",
+    "trendPlaceholder": "Performancekurve folgt in Kürze",
+    "empty": "Sie haben noch keine aktiven Strategien. Wählen Sie eine Vorlage, um zu starten.",
+    "loginRequired": "Melden Sie sich an, um Ihre Strategien zu verwalten.",
+    "fields": {
+      "capital": "Kapital",
+      "pnl": "GuV",
+      "returnPercent": "Rendite",
+      "period": "Laufzeit",
+      "tradesCount": "Trades",
+      "winRate": "Gewinnrate",
+      "endDate": "Endet"
+    }
+  },
+  "status": {
+    "initializing": "Wird initialisiert",
+    "running": "Läuft",
+    "paused": "Pausiert",
+    "completed": "Abgeschlossen",
+    "pending_review": "In Prüfung",
+    "rejected": "Abgelehnt"
+  },
+  "actions": {
+    "pause": "Pausieren",
+    "resume": "Fortsetzen",
+    "stop": "Stoppen",
+    "viewStats": "Statistik ansehen",
+    "hideStats": "Statistik ausblenden",
+    "toast": {
+      "pauseSuccess": "Strategie pausiert",
+      "pauseError": "Strategie konnte nicht pausiert werden. Bitte erneut versuchen.",
+      "resumeSuccess": "Strategie fortgesetzt",
+      "resumeError": "Strategie konnte nicht fortgesetzt werden. Bitte erneut versuchen.",
+      "stopSuccess": "Strategie gestoppt",
+      "stopError": "Strategie konnte nicht gestoppt werden. Bitte erneut versuchen."
+    },
+    "stopConfirm": {
+      "title": "Diese Strategie stoppen?",
+      "notice": "Beim Stoppen werden alle offenen Positionen von „{{name}}“ geschlossen und die Strategie beendet. Ihr realisierter Gewinn/Verlust bleibt erhalten, aber dieser Vorgang kann nicht rückgängig gemacht werden.",
+      "cancel": "Weiterlaufen lassen",
+      "confirm": "Strategie stoppen",
+      "confirming": "Wird gestoppt…"
+    }
+  },
+  "create": {
+    "title": "{{name}} abonnieren",
+    "subtitle": "Legen Sie Kapital, Stop-Loss, Take-Profit und Laufzeit fest.",
+    "subtitleDailyTarget": "Legen Sie Kapital und Laufzeit fest. Diese Vorlage zielt auf eine feste Tagesrendite ab – Take-Profit/Stop-Loss sind nicht erforderlich.",
+    "demoNotice": "Demo-Modus: Das Kapital wird von Ihrem Demokonto reserviert – es werden keine echten Mittel verwendet.",
+    "capitalLabel": "Kapital ({{asset}})",
+    "availableBalanceLabel": "Verfügbar",
+    "maxButton": "Max",
+    "capitalHint": "Bereich: {{min}} – {{max}}",
+    "takeProfitLabel": "Take-Profit (%)",
+    "stopLossLabel": "Stop-Loss (%)",
+    "periodLabel": "Laufzeit (Tage)",
+    "periodHint": "Bereich: {{min}} – {{max}} Tage",
+    "submit": "Abonnieren",
+    "submitting": "Wird gesendet …",
+    "cancel": "Abbrechen",
+    "submitSuccess": "Erfolgreich abonniert",
+    "fees": {
+      "title": "Gebühren & Regeln",
+      "feePerTrade": "Gebühr pro Trade",
+      "feePerTradeValue": "{{fee}} {{asset}}",
+      "maxOpenTrades": "Max. offene Positionen",
+      "maxOpenTradesValue": "{{n}} Trades"
+    },
+    "settlementNote": "Sie können eine Strategie jederzeit vorzeitig beenden. Dabei werden alle offenen Positionen geschlossen und die Strategie endet; Ihr realisierter Gewinn/Verlust bleibt auf Ihrem Konto erhalten.",
+    "simulator": {
+      "title": "Simulation des erwarteten Gewinns",
+      "params": "{{rate}} %/Tag ±{{tolerance}} % · Zinseszins",
+      "range": "Simulierte Spanne: {{lower}} – {{upper}}",
+      "legendExpected": "Erwartet",
+      "legendBand": "Toleranzband",
+      "tooltipDay": "Tag {{day}}",
+      "tooltipExpected": "Erwartet",
+      "tooltipUpper": "Obergrenze",
+      "tooltipLower": "Untergrenze",
+      "emptyHint": "Geben Sie Kapital und Laufzeit ein, um die Projektion zu sehen.",
+      "disclaimer": "Die Simulation ist eine illustrative Hochrechnung auf Basis des täglichen Zielwerts und der Toleranz der Vorlage mit täglichem Zinseszins. Sie stellt keine Renditegarantie dar."
+    },
+    "errors": {
+      "capitalRequired": "Geben Sie einen Kapitalbetrag ein.",
+      "belowMin": "Das Kapital muss mindestens {{min}} betragen.",
+      "aboveMax": "Das Kapital darf höchstens {{max}} betragen.",
+      "emptyRange": "Diese Vorlage ist derzeit für Ihr Konto nicht verfügbar.",
+      "periodOutOfRange": "Die Laufzeit muss zwischen {{min}} und {{max}} Tagen liegen.",
+      "takeProfitOutOfRange": "Take-Profit muss zwischen 1 % und 100 % liegen.",
+      "stopLossOutOfRange": "Stop-Loss muss zwischen 1 % und 50 % liegen.",
+      "createFailed": "Strategie konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+      "badRequest": "Die Anfrage wurde abgelehnt. Bitte überprüfen Sie Ihre Eingaben.",
+      "unauthorized": "Bitte melden Sie sich an, um eine Strategie zu erstellen.",
+      "paymentRequired": "Unzureichendes Guthaben. Bitte laden Sie auf, bevor Sie diese Strategie erstellen.",
+      "notFound": "Diese Strategievorlage ist nicht mehr verfügbar.",
+      "conflict": "Eine widersprüchliche Strategie läuft bereits. Stoppen Sie sie oder warten Sie, bis sie beendet ist.",
+      "validation": "Einige Felder scheinen ungültig zu sein. Bitte überprüfen Sie sie und versuchen Sie es erneut."
+    }
+  },
+  "dailyStats": {
+    "netPnl": "Netto-GuV",
+    "tradesLabel": "Trades",
+    "activeDays": "Aktive Tage",
+    "date": "Datum",
+    "pnl": "GuV",
+    "loss": "Verlust",
+    "profit": "Gewinn",
+    "empty": "In diesem Zeitraum noch keine geschlossenen Trades.",
+    "rangeCaption": "{{range}} · UTC",
+    "showingLatest": "Die letzten {{shown}} von {{total}} Tagen"
+  },
+  "risk": {
+    "title": "Risikohinweis",
+    "body": "Vergangene Wertentwicklung ist keine Garantie für zukünftige Ergebnisse. KI-Strategien und -Signale sind Referenzhilfen, keine Finanzberatung. Krypto- und Futures-Handel kann Ihr gesamtes Guthaben kosten – handeln Sie nur mit Mitteln, deren Verlust Sie sich leisten können."
+  },
+  "quantFund": {
+    "title": "Quant-Fonds",
+    "hero": {
+      "subtitle": "KI-verwalteter Quant-Fonds",
+      "title": "Quant-Fonds – KI-verwaltete Festzinsrendite",
+      "description": "Festlaufzeit-Produkte, die von unserem KI-Quant-Buch betrieben werden. Binden Sie sich für ein festgelegtes Zeitfenster, erzielen Sie Zinsen zu einer Tagesrendite und lassen Sie die Abrechnung bei Fälligkeit automatisch erfolgen.",
+      "disclaimer": "KI-verwaltet · Festlaufzeit-Abrechnung",
+      "viewPositionsCta": "Meine Positionen"
+    },
+    "filters": {
+      "assetAll": "Alle Assets"
+    },
+    "card": {
+      "dailyReturn": "Tagesrendite",
+      "term": "Laufzeit",
+      "termDaysValue": "{{days}} Tage",
+      "termFlexible": "Flexibel",
+      "investmentLimit": "Zeichnungsbereich ({{currency}})",
+      "availableQuota": "Verfügbares Kontingent",
+      "subscribedDisplayed": "Gezeichnet",
+      "projectProgress": "Projektfortschritt",
+      "maxUnlimited": "Unbegrenzt",
+      "tagFlexible": "Flexibel",
+      "tagRedeemable": "Jederzeit einlösbar",
+      "cta": "Zeichnen",
+      "ctaSoldOut": "Kontingent ausgeschöpft"
+    },
+    "creditScore": {
+      "label": "Min. Kredit-Score",
+      "requirement": "Kredit-Score ≥ {{score}}",
+      "insufficient": "Erfordert einen Kredit-Score von {{required}}. Ihr Score: {{current}}."
+    },
+    "detail": {
+      "investmentRange": "Zeichnungsbereich",
+      "minHoldDays": "Mind. Haltedauer {{days}} Tage",
+      "subscribeCta": "Jetzt zeichnen",
+      "disclosure": "Offenlegungsdokumente",
+      "calcTitle": "Ertragsrechner",
+      "calcDaysLabel": "Haltedauer",
+      "calcEstTotal": "Geschätzte Gesamterträge",
+      "calcDisclaimer": "Die Schätzungen dienen nur zur Orientierung und stellen keine Renditegarantie dar.",
+      "calcAccrualNote": "Vor {{days}} Tagen Haltedauer fallen keine Erträge an.",
+      "flowTitle": "So funktioniert es",
+      "flowStep1Title": "Zeichnen",
+      "flowStep1Desc": "Betrag wählen und Zeichnung mit dem Guthaben Ihres Funding-Kontos bestätigen.",
+      "flowStep2Title": "Zinslauf beginnt",
+      "flowStep2Desc": "Erträge laufen nach Bestätigung der Zeichnung auf.",
+      "flowStep3Title": "Ertragsauszahlung",
+      "flowStep3Desc": "Erträge werden periodisch abgerechnet und Ihrem Konto gutgeschrieben.",
+      "flowStep4Title": "Rücknahme",
+      "flowStep4DescFixed": "Kapital und Erträge werden bei Fälligkeit automatisch zurückgezahlt.",
+      "flowStep4DescFlexible": "Jederzeit rücknehmbar; die Mittel fließen auf Ihr Funding-Konto zurück.",
+      "quotaTitle": "Kontingentdetails",
+      "quotaTotal": "Gesamtkontingent",
+      "quotaPerUser": "Limit pro Nutzer",
+      "moreTitle": "Weitere Produkte"
+    },
+    "riskLevel": {
+      "LOW": "Geringes Risiko",
+      "MEDIUM": "Mittleres Risiko",
+      "HIGH": "Hohes Risiko",
+      "EXTREME": "Extremes Risiko"
+    },
+    "subscribe": {
+      "title": "{{name}} zeichnen",
+      "amountLabel": "Betrag ({{currency}})",
+      "amountHint": "Bereich: {{min}} – {{max}} {{currency}}",
+      "availableBalanceLabel": "Verfügbar",
+      "maxButton": "Max",
+      "estDailyEarnings": "Geschätzte tägliche Erträge",
+      "riskAckPrefix": "Ich habe die ",
+      "riskAckLink": "Risikooffenlegung des Quant-Fonds",
+      "riskAckSuffix": " für dieses Produkt gelesen und akzeptiere sie.",
+      "submit": "Zeichnung bestätigen",
+      "submitting": "Wird gesendet …",
+      "cancel": "Abbrechen",
+      "errorAmountRange": "Der Betrag muss zwischen {{min}} und {{max}} {{currency}} liegen.",
+      "errorAmountInvalid": "Bitte geben Sie einen gültigen Betrag ein.",
+      "errorExceedsAvailable": "Der Betrag übersteigt das verbleibende Kontingent. Es sind nur noch {{available}} {{currency}} übrig – bitte passen Sie Ihren Betrag an.",
+      "errorInsufficientBalance": "Verfügbares Guthaben reicht nicht aus – nur {{available}} {{currency}} verfügbar.",
+      "goDeposit": "Zur Einzahlung",
+      "errorRequireRiskAck": "Bitte bestätigen Sie den Risikohinweis, bevor Sie fortfahren.",
+      "success": "Zeichnung bestätigt",
+      "close": "Schließen"
+    },
+    "redeem": {
+      "button": "Einlösen",
+      "title": "Order einlösen",
+      "confirmNotice": "Zinsen werden nach tatsächlichen Haltetagen berechnet. Keine Zinsen bei einer Haltedauer unter der Mindestdauer von {{minHoldDays}} Tagen. Der endgültige Betrag wird bei der Abrechnung festgelegt.",
+      "confirmNoticeNoMin": "Zinsen werden nach tatsächlichen Haltetagen berechnet. Der endgültige Betrag wird bei der Abrechnung festgelegt.",
+      "reviewNotice": "Diese Einlösung muss geprüft werden. Nach dem Absenden prüft ein Administrator die Anfrage vor jeder Auszahlung – bis dahin bleibt Ihr Kapital investiert und verzinst sich weiter.",
+      "confirm": "Einlösung bestätigen",
+      "submitting": "Wird gesendet …",
+      "cancel": "Abbrechen",
+      "resultTitle": "Einlösung abgeschlossen",
+      "pendingTitle": "Einlösungsantrag eingereicht",
+      "pendingDescription": "Ihre Einlösung wird geprüft. Ihr Kapital bleibt im Fonds und verzinst sich weiter, bis ein Administrator sie genehmigt.",
+      "settledPrincipal": "Abgerechnetes Kapital",
+      "settledInterest": "Abgerechnete Zinsen",
+      "heldDaysLabel": "Haltedauer",
+      "heldDays": "{{days}} Tage",
+      "fundsReturned": "Kapital und Zinsen wurden auf Ihr Funding-Konto zurückgebucht.",
+      "done": "Fertig",
+      "confirmNoticeEarlyRedeem": "Dies ist ein Produkt mit fester Laufzeit. Eine vorzeitige Rückzahlung führt zu einer Vertragsstrafe basierend auf den verbleibenden Sperrtagen. Der endgültige Betrag wird bei der Abrechnung festgelegt.",
+      "penaltyAmount": "Vorfälligkeitsentschädigung",
+      "remainingLockDays": "Verbleibende Sperrfrist",
+      "remainingLockDaysValue": "{{days}} Tage",
+      "notSupported": "Vorzeitige Rückzahlung nicht möglich",
+      "needVip": "VIP {{tier}} für vorzeitige Rückzahlung erforderlich",
+      "penaltyEstimate": "Geschätzte Vertragsstrafe"
+    },
+    "topUp": {
+      "button": "Aufstocken",
+      "title": "Zeichnung aufstocken",
+      "description": "Aufstocken, um die Prüfung fortzusetzen",
+      "countdownLabel": "Aufstockung in",
+      "countdownDaysHours": "{{days}}T {{hours}}Std",
+      "countdownDaysHoursMinutes": "{{days}}T {{hours}}Std {{minutes}}Min",
+      "expired": "Abgelaufen",
+      "overdue": "Überfällig",
+      "overdueDays": "{{days}} Tage überfällig",
+      "deadlineNotice": "Erfolgt die Aufstockung nicht vor Ablauf der Frist, wird der Auftrag automatisch storniert und Ihr Kapital freigegeben.",
+      "lateFeeDeadlineNotice": "Wenn Sie nicht vor Ablauf der Frist aufstocken, wird Ihrem Konto eine Säumnisgebühr berechnet.",
+      "lockedNotice": "Aufstocken und Ablehnen sind geschlossen. Wenden Sie sich an den Support, um die Säumnisgebühr zu begleichen.",
+      "contactSupport": "Support kontaktieren",
+      "noticeWithTarget": "Der Prüfer hat den Zielbetrag für diese Order auf {{target}} {{currency}} festgelegt. Stocken Sie unten die Differenz auf, um die Prüfung fortzusetzen.",
+      "noticeGeneric": "Der Prüfer hat den Zielbetrag für diese Order angepasst. Bestätigen Sie, um die Differenz aufzustocken und die Prüfung fortzusetzen.",
+      "currentPrincipal": "Aktueller Betrag",
+      "targetAmount": "Zielbetrag",
+      "shortfall": "Aufzustockender Betrag",
+      "availableBalanceLabel": "Verfügbar",
+      "errorInsufficientBalance": "Unzureichendes Guthaben für die Aufstockung.",
+      "goDeposit": "Einzahlen",
+      "confirm": "Aufstockung bestätigen",
+      "submitting": "Wird verarbeitet…",
+      "cancel": "Abbrechen",
+      "resultTitle": "Aufstockung abgeschlossen",
+      "resultPrincipal": "Neuer Zeichnungsbetrag",
+      "resultProjectedInterest": "Erwartete Zinsen",
+      "resultStatusNotice": "Ihre Order wird erneut geprüft.",
+      "done": "Fertig"
+    },
+    "decline": {
+      "button": "Ablehnen",
+      "title": "Anpassung ablehnen",
+      "notice": "Durch die Ablehnung wird diese Order storniert und {{principal}} {{currency}} werden auf Ihr verfügbares Guthaben freigegeben. Dies kann nicht rückgängig gemacht werden.",
+      "reasonLabel": "Grund (optional)",
+      "reasonPlaceholder": "Teilen Sie uns den Grund mit (optional)",
+      "confirm": "Ablehnen & Order stornieren",
+      "submitting": "Wird verarbeitet…",
+      "cancel": "Order behalten",
+      "resultTitle": "Order storniert",
+      "resultReleased": "Auf Guthaben freigegeben",
+      "resultNotice": "Die Mittel wurden auf Ihr verfügbares Guthaben zurückgebucht.",
+      "done": "Fertig"
+    },
+    "positions": {
+      "title": "Meine Quant-Fonds-Positionen",
+      "subtitle": "Alle Quant-Fonds-Orders und der Abrechnungsstatus Ihres Kontos.",
+      "tabs": {
+        "all": "Alle",
+        "active": "Aktiv",
+        "pending_review": "In Prüfung",
+        "redeem_pending_review": "Rückzahlung in Prüfung",
+        "awaiting_top_up": "Aufstockung nötig",
+        "rejected": "Abgelehnt",
+        "settled": "Abgerechnet",
+        "cancelled": "Storniert",
+        "redeemed": "Eingelöst"
+      },
+      "tabGroups": {
+        "all": "Alle",
+        "pending": "In Bearbeitung",
+        "active": "Aktiv",
+        "history": "Verlauf"
+      },
+      "historyFilter": {
+        "all": "Alle Status"
+      },
+      "summary": {
+        "totalPrincipal": "Gesamtkapital",
+        "totalProjectedInterest": "Prognostizierte Zinsen",
+        "activeInterestPaidTotal": "Ausgezahlte Zinsen (aktiv)",
+        "settledTotalReceived": "Abgerechnet erhalten gesamt",
+        "activeCount": "Aktive Orders",
+        "breakdownToggle": "Aufschlüsselung nach Asset",
+        "interestProgress": "Zinsfortschritt {{percent}} %",
+        "earningsTrend": "Zinsverlauf über {{days}} Tage",
+        "usdPrice": "@ {{price}} USD",
+        "partialValuation": "Kein USD-Preis für {{assets}}; die Summen enthalten nur bewertbare Assets."
+      },
+      "empty": "Noch keine Orders in diesem Tab.",
+      "table": {
+        "status": "Status",
+        "productName": "Produkt",
+        "principal": "Kapital",
+        "dailyReturn": "Tagesrendite",
+        "term": "Laufzeit",
+        "projectedInterest": "Prognostizierte Zinsen",
+        "interestPaidTotal": "Gezahlte Zinsen",
+        "interestPaidThrough": "Gezahlt bis",
+        "interestRemaining": "Ausstehend",
+        "accruedInterestEstimate": "Gesch. aufgelaufen",
+        "subscribedAt": "Gezeichnet",
+        "maturityDate": "Fällig",
+        "action": "Aktion"
+      },
+      "maturityPending": "Nach Freigabe festgelegt",
+      "fields": {
+        "productName": "Produkt",
+        "principal": "Kapital",
+        "dailyReturn": "Tagesrendite",
+        "term": "Laufzeit",
+        "projectedInterest": "Prognostizierte Zinsen",
+        "interestPaidTotal": "Gezahlte Zinsen",
+        "interestPaidThrough": "Gezahlt bis",
+        "interestRemaining": "Ausstehende Zinsen",
+        "accruedInterestEstimate": "Gesch. aufgelaufene Zinsen",
+        "minHoldDays": "Mindesthaltedauer",
+        "subscribedAt": "Gezeichnet",
+        "maturityDate": "Fällig",
+        "settledAt": "Abgerechnet am",
+        "settledInterest": "Abgerechnete Zinsen",
+        "settledPrincipal": "Abgerechnetes Kapital",
+        "settledTotal": "Abrechnung gesamt",
+        "cancelReason": "Stornogrund"
+      },
+      "detail": {
+        "title": "Auftragsdetails",
+        "close": "Auftragsdetails schließen",
+        "viewProduct": "Produkt ansehen",
+        "remainingDays": "Noch {{days}} Tage",
+        "sections": {
+          "interest": "Zinsen",
+          "settlement": "Abrechnung"
+        }
+      },
+      "topUpReminder": {
+        "title": "{{count}} Auftrag/Aufträge erwarten Aufstockung",
+        "description": "Vor Fristablauf aufstocken, sonst wird der Auftrag storniert und Ihr Kapital freigegeben.",
+        "overdueDescription": "{{count}} davon sind über der Frist. Handeln Sie jetzt, oder wenden Sie sich an den Support, wenn die Optionen geschlossen sind.",
+        "overdueLockedDescription": "{{count}} davon sind überfällig. Aufstocken und Ablehnen sind geschlossen – wenden Sie sich an den Support, um die Säumnisgebühr zu begleichen.",
+        "cta": "Aufstocken"
+      }
+    },
+    "interestRecords": {
+      "title": "Zinsausschüttungs-Details",
+      "subtitle": "Einzelne Zinsausschüttungen für diese Order.",
+      "back": "Zurück",
+      "entry": "Ausschüttungsdetails",
+      "table": {
+        "interestDate": "Zinsdatum",
+        "amount": "Menge",
+        "creditedAt": "Gutgeschrieben am"
+      },
+      "empty": "Noch keine Zinsausschüttungen."
+    },
+    "status": {
+      "product": {
+        "active": "Offen"
+      },
+      "order": {
+        "active": "Aktiv",
+        "settled": "Abgerechnet",
+        "cancelled": "Storniert",
+        "redeemed": "Eingelöst",
+        "redeem_pending_review": "Rückzahlung in Prüfung",
+        "pending_review": "In Prüfung",
+        "awaiting_top_up": "Aufstockung nötig",
+        "rejected": "Abgelehnt"
+      }
+    },
+    "errors": {
+      "unknown": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "quotaExhausted": "Dieses Produkt ist ausverkauft und derzeit nicht zur Zeichnung verfügbar.",
+      "exceedsRemainingQuota": "Ihr Zeichnungsbetrag übersteigt das verbleibende Kontingent des Produkts. Bitte passen Sie Ihren Betrag an.",
+      "perUserQuotaExceeded": "Ihr Zeichnungsbetrag übersteigt Ihr persönliches Zeichnungslimit. Bitte passen Sie Ihren Betrag an.",
+      "notAwaitingTopUp": "Diese Order wartet nicht mehr auf eine Aufstockung. Möglicherweise wurde sie bereits aktualisiert.",
+      "topUpLockedOverdue": "Dieser Auftrag ist überfällig. Aufstocken und Ablehnen sind geschlossen – wenden Sie sich an den Support.",
+      "insufficientBalance": "Unzureichendes Guthaben für die Aufstockung. Bitte zahlen Sie ein und versuchen Sie es erneut.",
+      "insufficientCreditScore": "Ihr Kredit-Score liegt unter dem für dieses Produkt erforderlichen Mindestwert."
+    },
+    "states": {
+      "loading": "Wird geladen …",
+      "empty": "Hier ist noch nichts.",
+      "error": "Laden fehlgeschlagen.",
+      "retry": "Erneut versuchen"
+    }
+  }
+}

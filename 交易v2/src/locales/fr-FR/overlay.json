@@ -1,0 +1,27 @@
+{
+  "ui": {
+    "unsavedContentUseCloseOrCancelToLeave": "Contenu non envoyé. Utilisez Fermer ou Annuler pour quitter.",
+    "insufficientBalanceSwitchToDemoToTryThisLocally": "Solde insuffisant. Passez en mode Démo pour essayer.",
+    "createdDemo": "Créé (démo)",
+    "videoFailedToLoadTryAgainLater": "Chargement vidéo impossible. Réessayez plus tard.",
+    "welcomeToNewquantcapitalSupport": "Bienvenue chez l’assistance NewQuantCapital",
+    "message": "Message",
+    "describeYourIssue": "Décrivez votre problème",
+    "messagesAreNotSentToTheOriginalSupportTeam": "Aucun message envoyé à l’assistance du site original.",
+    "demoMessageShownLocallyNothingWasSent": "Message affiché localement. Aucun envoi effectué.",
+    "thisLocalDemoDoesNotRequestWalletPermissionsOr": "Cette démo ne demande ni autorisation ni signature de portefeuille.",
+    "connectDemoWallet": "Connecter le portefeuille démo",
+    "localDemoAccountConnected": "Compte démo local connecté",
+    "noNewMessages": "Aucun nouveau message",
+    "100000UsdMoreToReachVip1": "Encore 100,000 USD pour atteindre le niveau VIP 1",
+    "days": " jours",
+    "orderQuantity": "Quantité de l’ordre",
+    "localSimulation": " · Simulation locale",
+    "orderSummary": "Résumé de l’ordre",
+    "daysLater": " jours plus tard",
+    "demoCompletedNoRealTransactionWasSent": "Démo terminée. Aucune transaction réelle envoyée.",
+    "localInterfaceDemoNotConnectedToTheOriginalAccount": "Démo locale sans connexion aux comptes du site original.",
+    "confirmOrder": "Confirmer l’ordre"
+  },
+  "amountMinimum": "Saisissez un montant valide d’au moins {{amount}}."
+}

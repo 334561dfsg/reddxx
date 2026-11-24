@@ -1,0 +1,327 @@
+{
+  "nav": {
+    "menuEntry": "共同名義口座"
+  },
+  "page": {
+    "title": "共同名義口座",
+    "description": "配偶者・家族・パートナー・代理人と一つの資金口座を共有します"
+  },
+  "common": {
+    "back": "戻る",
+    "retry": "再試行",
+    "loadMore": "さらに読み込む"
+  },
+  "relationship": {
+    "spouse": "配偶者",
+    "family": "家族",
+    "partner": "パートナー",
+    "agent": "代理人"
+  },
+  "operatedBy": {
+    "member": "共同名義メンバー",
+    "actor": "{{actor}}による操作",
+    "withUid": "{{actor}}による操作（UID {{uid}}）"
+  },
+  "initiatedBy": {
+    "actor": "{{actor}}が開始"
+  },
+  "actingFor": {
+    "primaryWithName": "UID {{uid}}（{{name}}）",
+    "primaryUidOnly": "UID {{uid}}",
+    "unnamedAccount": "名称未設定の共同名義口座",
+    "primarySuspended": "この共同名義口座の主申請者が停止されているため、現在この口座を操作できません。ご自身のアカウントに戻るか、主申請者にご連絡ください。",
+    "primaryKycNotVerified": "この共同名義口座の主申請者は本人確認が完了していません。主申請者にご連絡ください。",
+    "restrictedTitle": "この操作はご自身のアカウントに戻って行ってください",
+    "restrictedDesc": "現在、共同名義口座を操作中です。本人確認、紹介者の登録、共同名義口座の申請やメンバーの変更は、ご自身のアカウントからのみ行えます。"
+  },
+  "session": {
+    "invalid": "共同名義口座のセッションが無効になりました。もう一度ログインしてください。"
+  },
+  "switcher": {
+    "title": "アカウントを切り替え",
+    "self": "自分のアカウント",
+    "selfHint": "ご自身の資金と設定",
+    "loadMore": "さらに表示（{{loaded}}/{{total}}）",
+    "switching": "アカウントを切り替えています…",
+    "backToSelf": "自分のアカウントに戻る",
+    "retryAfter": "{{seconds}} 秒後にもう一度お試しください。"
+  },
+  "delegated": {
+    "title": "{{name}} を操作中です",
+    "desc": "申請、名称変更、同意、退会はご自身のアカウントから行います。ご自身の資金口座と共同名義口座の間の振替は、どちらの状態でも利用できます。"
+  },
+  "consent": {
+    "title": "確認待ちのリクエスト（{{count}}）",
+    "desc": "あなたを共同名義口座に追加する申請が届いています。承認すると申請は審査に進みます。審査で承認されるまで何も変更されません。",
+    "accept": "承認",
+    "decline": "拒否",
+    "accepted": "リクエストを承認しました。現在審査待ちです。",
+    "declined": "リクエストを拒否しました"
+  },
+  "intro": {
+    "title": "共同名義口座を開設",
+    "addMemberTitle": "共同名義口座にメンバーを追加",
+    "unavailable": "現在、新規の申請は受け付けていません。",
+    "points": {
+      "ownership": "資金・ウォレット・本人確認はあなたのものです",
+      "switch": "メンバーは自分のアカウントから切り替えて操作します",
+      "exit": "メンバーの削除や口座の解散はいつでも可能です"
+    },
+    "prepare": "必要なもの：関係の証明書類、相手の UID または本人確認書類",
+    "kycOnly": "本人確認済みのお客様のみ申請できます"
+  },
+  "apply": {
+    "start": "申請する",
+    "restart": "再申請",
+    "title": "共同名義口座を申請",
+    "memberSection": "メンバー",
+    "relationshipType": "相手との関係",
+    "mode": {
+      "existing": "アカウントあり",
+      "invite": "登録を招待"
+    },
+    "modeHint": {
+      "existing": "相手の承認後に審査へ",
+      "invite": "承認後に登録リンクを取得"
+    },
+    "memberUid": "相手の UID",
+    "memberUidPlaceholder": "例：100023",
+    "memberUidHint": "UID は相手のプロフィールページに表示されます。相手は本人確認済みである必要があります。差し戻された場合、24 時間は同じ UID に申請できません。",
+    "memberNotEligible": {
+      "not_eligible": "UID が正しいかご確認のうえ、相手の方に本人確認が承認済みであること、口座が有効であること、参加中の共同口座数が上限に達していないことを確認してもらってください。",
+      "self": "ご自身をメンバーに追加することはできません。相手の方の UID を入力してください。"
+    },
+    "memberFullName": "メンバーの氏名",
+    "memberFullNamePlaceholder": "身分証明書の表記どおり",
+    "memberFront": "メンバーの身分証明書（表）",
+    "memberBack": "メンバーの身分証明書（裏）",
+    "memberSelfie": "メンバーの自撮り写真",
+    "proofSection": "関係の証明書類",
+    "proofFile": "証明書類 {{index}}",
+    "addProof": "もう1件追加",
+    "incomplete": "すべての項目を入力し、必要なファイルをアップロードしてください。",
+    "cancel": "キャンセル",
+    "submit": "申請を送信",
+    "submitted": "申請を送信しました",
+    "kycRequiredTitle": "先に本人確認を完了してください",
+    "kycRequiredDesc": "共同名義口座は本人確認が完了したお客様のみ申請できます。",
+    "goKyc": "本人確認へ",
+    "upload": "アップロード",
+    "reupload": "差し替え",
+    "uploading": "アップロード中 {{progress}}%",
+    "proofMeta": "JPG・PNG・PDF、20 MB まで",
+    "idDocumentMeta": "JPG・PNG・PDF",
+    "selfieMeta": "JPG・PNG のみ",
+    "proofCount": "{{count}}/{{max}} 件",
+    "missing": "未入力：{{items}}",
+    "ready": "すべて揃いました。送信できます",
+    "missingItem": {
+      "relationship": "関係",
+      "memberUid": "相手の UID",
+      "memberDetails": "相手の情報",
+      "memberDocuments": "相手の本人確認書類",
+      "proof": "関係の証明書類"
+    },
+    "missingSeparator": "、"
+  },
+  "application": {
+    "eyebrow": "最新の申請",
+    "status": {
+      "pending_consent": "メンバーの承認待ち",
+      "pending_review": "審査中",
+      "approved": "承認済み",
+      "rejected": "否認",
+      "cancelled": "取消済み"
+    },
+    "desc": {
+      "pending_consent": "メンバーはまだ承認していません。返答があり次第お知らせします。",
+      "pending_review": "申請を審査中です。結果をお知らせします。",
+      "approved": "申請が承認されました。",
+      "rejected": "下記の理由を確認し、再度申請してください。",
+      "cancelled": "この申請は取り消されました。"
+    },
+    "memberGone": "メンバー削除済み",
+    "memberGoneDesc": "申請は承認されましたが、このメンバーは現在共同名義口座に含まれていません。メンバーを追加するには再申請してください。",
+    "cancel": "申請を取り消す",
+    "cancelTitle": "この申請を取り消しますか？",
+    "cancelConfirm": "申請はここで終了します。既存ユーザーを招待していた場合は、取り消されたことが通知されます。",
+    "cancelled": "申請を取り消しました",
+    "title": {
+      "pending_consent": "相手の承認待ち",
+      "pending_review": "申請の審査中",
+      "approved": "申請が承認されました",
+      "rejected": "申請が否認されました",
+      "cancelled": "申請は取り消されました"
+    }
+  },
+  "detail": {
+    "relationshipType": "関係",
+    "memberUid": "メンバーの UID",
+    "memberName": "メンバーの氏名",
+    "submittedAt": "申請日時",
+    "rejectionReason": "理由",
+    "reviewedAt": "審査日時",
+    "activatedAt": "メンバー参加日時",
+    "uidValue": "UID {{uid}}"
+  },
+  "owned": {
+    "eyebrow": "あなたの共同名義口座",
+    "active": "有効",
+    "desc": "あなたは主申請者です。アカウントを切り替える必要はありません。メンバーがこの口座に切り替えて操作します。",
+    "primary": "主申請者",
+    "you": "あなた",
+    "member": "メンバー",
+    "memberStatus": {
+      "pending": "未登録",
+      "active": "有効"
+    },
+    "noMember": "メンバーはまだいません",
+    "removeMember": "メンバーを削除",
+    "dissolve": "口座を解散",
+    "removeTitle": "このメンバーを削除しますか？",
+    "removeConfirm": "メンバーはただちにこの口座を操作できなくなり、この口座からログアウトされます。メンバー自身のアカウントと資産には影響しません。セキュリティ認証で確認します。",
+    "memberRemoved": "メンバーを削除しました",
+    "dissolveTitle": "この共同名義口座を解散しますか？",
+    "dissolveConfirm": "メンバーはただちに操作できなくなり、共同名義口座は閉鎖されます。ご自身の資金はあなたのもとに残ります。セキュリティ認証で確認します。",
+    "dissolved": "共同名義口座を解散しました",
+    "createdAt": "{{time}} 開設"
+  },
+  "label": {
+    "edit": "名称変更",
+    "title": "共同名義口座の名称を変更",
+    "description": "メンバーが口座を切り替えるときに、この名称が表示されます。送信済みの通知には、送信時の名称が残ります。",
+    "field": "名称",
+    "placeholder": "例：家族の貯蓄",
+    "hint": "{{count}}/{{max}} 文字。空欄にすると名称を削除します。",
+    "clear": "名称を削除",
+    "save": "名称を保存",
+    "saved": "名称を保存しました"
+  },
+  "invitation": {
+    "title": "メンバー登録リンク",
+    "expiresIn": "残り {{time}}",
+    "expiresInDays": "残り {{days}} 日 {{time}}",
+    "keepPrivate": "このリンクを持つ人は誰でも、あなたの共同名義口座のメンバーとして登録できます。申請した本人にのみ送ってください。",
+    "copy": "リンクをコピー",
+    "share": "共有",
+    "copied": "リンクをコピーしました",
+    "copyFailed": "コピーできませんでした。リンクを選択して手動でコピーしてください。",
+    "shareTitle": "共同名義口座の登録リンク",
+    "expiredAt": "リンクは {{time}} に期限切れになりました",
+    "unavailable": "現在リンクを利用できません",
+    "contactSupportHint": "新しいリンクはサポートにお問い合わせください。",
+    "contactSupport": "サポートに連絡"
+  },
+  "confirm": {
+    "keep": "残す"
+  },
+  "memberships": {
+    "title": "参加中の共同名義口座（{{count}}）",
+    "desc": "共同名義口座に切り替えると、その資金を操作できます。ご自身のアカウントとウォレットは別々のままです。",
+    "joinedAt": "{{time}} に参加",
+    "current": "操作中",
+    "switch": "この口座に切り替え",
+    "notifications": "資金通知のコピー",
+    "notificationsHint": "この口座の資金の動きを受信箱とメールにコピーして送ります。オフにしても、リアルタイムの更新は届きます。",
+    "leave": "退会",
+    "leaveTitle": "{{name}} から退会しますか？",
+    "leaveWithdrawFirst": "退会する前に、必要な資金をご自身の口座へ移してください。",
+    "leaveConfirm": "退会しても、すでに振り替えた資金は戻りません。ご自身のアカウントも閉鎖されません。この共同名義口座はただちに操作できなくなります。",
+    "left": "共同名義口座から退会しました"
+  },
+  "transfer": {
+    "open": "振替",
+    "title": "口座間の振替",
+    "description": "ご自身の資金口座と、共同名義口座の資金口座の間で資金を移動します。",
+    "direction": {
+      "to_joint": "共同名義口座へ",
+      "from_joint": "自分の口座へ"
+    },
+    "from": "振替元",
+    "to": "振替先",
+    "ownFunding": "自分の資金口座",
+    "jointFunding": "{{name}}の資金口座",
+    "asset": "資産",
+    "amount": "数量",
+    "securityHint": "各方向の初回の振替では、資金パスワードと追加の認証が必要です。双方とも本人確認が完了している必要があります。",
+    "submit": "振替",
+    "done": "{{amount}} {{asset}} を振り替えました",
+    "directionLabel": "方向",
+    "snapshotJoint": "振替後の{{name}}の残高",
+    "snapshotOwn": "振替後の自分の残高",
+    "snapshotHint": "表示される残高はこの振替時点のもので、リアルタイムではありません。最新の残高は資産ページでご確認ください。",
+    "close": "完了",
+    "denial": {
+      "kyc_required": "振替には、あなたと主申請者の双方が本人確認を完了している必要があります。",
+      "party_not_active": "あなたまたは主申請者の口座が現在利用できないため、振替できません。",
+      "membership_inactive": "この共同名義口座のメンバーではなくなりました。ページを更新してください。",
+      "joint_account_inactive": "この共同名義口座は無効になりました。",
+      "invalid_accounts": "振替は異なる2人のユーザーの資金口座間でのみ可能です。"
+    }
+  },
+  "history": {
+    "title": "振替履歴",
+    "empty": "振替はまだありません。",
+    "actor": "{{actor}}（UID {{uid}}）による操作"
+  },
+  "register": {
+    "eyebrow": "共同名義口座への招待",
+    "previewPrimary": "UID {{uid}}（{{name}}）の共同名義口座のメンバーとして登録しようとしています。",
+    "previewPrimaryUidOnly": "UID {{uid}} の共同名義口座のメンバーとして登録しようとしています。",
+    "previewMemberName": "申請上の氏名：{{name}}",
+    "previewRelationship": "関係：{{relationship}}",
+    "previewWarning": "内容に誤りがある場合は、先に進まないでください。登録しただけでは本人確認は完了しません。出金や振替の前に、別途本人確認が必要です。",
+    "previewExpiresAt": "リンクの有効期限：{{time}}。",
+    "previewFailed": "リンクの詳細を読み込めませんでした。",
+    "retry": "再試行",
+    "tooManyRequests": "試行回数が多すぎます。数分後にもう一度お試しください。",
+    "requiresNewAccount": "この招待は新規アカウント専用です。このメールアドレスまたは電話番号はすでに登録されています。未登録のものを使用するか、主申請者に既存のアカウントを追加してもらってください。",
+    "resendCode": "認証コードを再取得して、もう一度お試しください。",
+    "loggedInElsewhere": "この招待は新規アカウント用です。先にログアウトし、ここで未使用のメールアドレスまたは電話番号で登録してください。",
+    "logoutAndContinue": "ログアウトして続行",
+    "issue": {
+      "invalid": "この招待リンクは無効です。",
+      "not_usable": "この招待リンクはすでに使用されたか、無効になっています。",
+      "expired": "この招待リンクは期限切れです。主申請者からサポートに新しいリンクを依頼してもらってください。"
+    },
+    "issueFallback": "下から通常のアカウントを登録することもできます。"
+  },
+  "selfSettings": {
+    "notice": "共同名義口座を操作中です。ここでの変更は、主申請者ではなく、ご自身のログインとセキュリティ設定に適用されます。"
+  },
+  "holder": {
+    "title": "口座名義人",
+    "vacant": "未追加",
+    "withYou": "{{role}} · あなた"
+  },
+  "faq": {
+    "title": "よくある質問",
+    "memberCan": {
+      "q": "メンバーにできること",
+      "a": "共同名義口座に切り替えて資金を操作し、自分の資金口座と共同名義口座の間で振替できます。メンバー自身の口座とウォレットは別のままです。"
+    },
+    "memberSteps": {
+      "q": "相手がすること",
+      "a": "アカウントがある場合、相手が申請を承認してから審査に進みます。ない場合、承認後に登録リンクを相手に送ります。"
+    },
+    "dissolve": {
+      "q": "解散の方法",
+      "a": "このページからいつでも解散できます。メンバーはすぐに操作権限を失い、あなたの資金はあなたのものです。"
+    }
+  },
+  "progress": {
+    "label": "申請の進捗",
+    "submit": "申請",
+    "consent": "メンバー承認",
+    "review": "審査",
+    "register": "メンバー登録",
+    "active": "有効",
+    "failed": "否認",
+    "state": {
+      "done": "、完了",
+      "current": "、現在のステップ",
+      "failed": "、否認",
+      "upcoming": "、未着手"
+    }
+  }
+}

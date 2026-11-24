@@ -1,0 +1,85 @@
+{
+  "home": "Handelsplattform für digitale Assets",
+  "trade": "{{pair}} — Live-Kurs & Trading",
+  "auth": {
+    "login": "Anmelden — Sicherer Zugriff auf Ihr Konto",
+    "register": "Registrieren — Jetzt digitale Assets handeln",
+    "forgotPassword": "Passwort zurücksetzen — Zugriff schnell wiederherstellen"
+  },
+  "legal": {
+    "about": "Über uns",
+    "privacy": "Datenschutzerklärung",
+    "riskDisclosure": "Risikohinweise",
+    "agreement": "Nutzungsvereinbarung",
+    "regulation": "Regulatorische Informationen",
+    "regulatoryInformation": "Regulatorische Informationen",
+    "content": "Plattform-Informationen"
+  },
+  "news": {
+    "index": "News — Marktanalysen & Ankündigungen",
+    "detail": "News-Artikel"
+  },
+  "charity": "Charity — Trading für den guten Zweck",
+  "aiQuant": {
+    "landing": "AI Quant — Strategien & Quant-Fonds",
+    "strategy": "Quant-Strategien — Automatisiertes Trading",
+    "strategyMine": "Meine Strategien — Abos & Performance",
+    "quantFund": "Quant-Fonds — Professionell verwaltet",
+    "quantFundDetail": "Quant-Fonds-Produkt",
+    "quantFundPositions": "Meine Quant-Fonds-Positionen",
+    "interestRecords": "Quant-Fonds-Ertragshistorie"
+  },
+  "c2c": {
+    "buy": "C2C-Kauf — Schnelle Fiat-Einzahlung",
+    "sell": "C2C-Verkauf — Sichere Fiat-Auszahlung",
+    "orders": "C2C-Aufträge",
+    "orderDetail": "C2C-Auftragsdetails",
+    "paymentAccounts": "Zahlungsmethoden"
+  },
+  "copytrade": {
+    "index": "Copy Trading — Top-Tradern folgen",
+    "trader": "Trader-Profil"
+  },
+  "deposit": {
+    "index": "Einzahlen — Konto in Minuten aufladen",
+    "history": "Einzahlungshistorie"
+  },
+  "withdraw": {
+    "index": "Auszahlen — Assets sicher transferieren",
+    "history": "Auszahlungshistorie"
+  },
+  "earn": {
+    "simple": "Flexibles Earn — Ungenutzte Assets verzinsen",
+    "simpleDetail": "Earn-Produktdetails",
+    "loan": "Krypto-Kredit — Gegen Ihre Assets leihen",
+    "loanBorrow": "Neuer Kredit",
+    "loanMy": "Meine Kredite",
+    "loanLiquidations": "Kredit-Liquidationshistorie",
+    "myEarnings": "Meine Erträge"
+  },
+  "assets": {
+    "index": "Vermögen — Alle Guthaben an einem Ort",
+    "records": "Transaktionshistorie",
+    "transfer": "Guthaben übertragen"
+  },
+  "user": {
+    "profile": "Kontocenter",
+    "survey": "Umfrage",
+    "helpCenter": "Hilfecenter — FAQs & Support",
+    "messages": "Nachrichten",
+    "messageDetail": "Nachrichtendetails",
+    "promotionTasks": "Aktionen — Einzahlungsbonus-Aufgaben",
+    "promotionTaskDetail": "Aktionsaufgaben-Details",
+    "referrals": "Freunde werben — Teilen & Provision verdienen",
+    "changePassword": "Passwort ändern",
+    "devices": "Geräteverwaltung",
+    "fundPassword": "Handelspasswort",
+    "kyc": "Identitätsprüfung",
+    "kycBasic": "Basis-Verifizierung",
+    "kycAdvanced": "Erweiterte Verifizierung",
+    "bindEmail": "E-Mail verknüpfen",
+    "bindPhone": "Telefon verknüpfen",
+    "twoFactor": "Zwei-Faktor-Authentifizierung (2FA)",
+    "jointAccount": "Gemeinschaftskonto"
+  }
+}

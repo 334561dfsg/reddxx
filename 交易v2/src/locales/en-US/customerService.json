@@ -1,0 +1,94 @@
+{
+  "title": "Customer Service",
+  "menu": {
+    "title": "How would you like to reach us?",
+    "subtitle": "Choose the channel that works best for you.",
+    "liveChat": "Live Chat",
+    "liveChatDesc": "Chat with our support team in real time",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "Talk to us one-on-one on WhatsApp",
+    "email": "Email",
+    "emailDesc": "Send us an email and we'll get back to you"
+  },
+  "welcomeMessage": "Hello! How can I help you today?",
+  "placeholder": "Type your message...",
+  "send": "Send",
+  "loading": "Loading…",
+  "status": {
+    "pending": "Waiting in queue…",
+    "open": "An agent has joined",
+    "closed": "Conversation closed",
+    "closedInputHint": "This conversation has ended. Start a new one if you need more help."
+  },
+  "emoji": {
+    "add": "Add emoji"
+  },
+  "attachment": {
+    "add": "Add attachment",
+    "uploading": "Uploading…",
+    "confirming": "Processing…",
+    "failed": "Upload failed",
+    "tooLarge": "Exceeds {{limit}} limit",
+    "retry": "Retry",
+    "remove": "Remove",
+    "download": "Download",
+    "limitType": "Only JPG, PNG, PDF, Excel, Word, CSV and ZIP files are supported",
+    "limitTypeGuest": "Guests can only send JPG, PNG and PDF files. Log in to send Excel, Word, CSV and ZIP files",
+    "limitCount": "Up to {{count}} attachments allowed",
+    "queued": "Waiting to upload…",
+    "retryAfter": "Try again in {{seconds}}s",
+    "stage": {
+      "request": "Couldn't start upload",
+      "upload": "Upload failed",
+      "confirm": "Couldn't finish upload"
+    },
+    "reason": {
+      "offline": "You're offline. Reconnect and retry.",
+      "timeout": "The upload timed out. Retry.",
+      "connection": "Connection failed. Check your network and retry.",
+      "format": "This file type isn't supported.",
+      "content": "The file content doesn't match its type.",
+      "size": "The file is too large.",
+      "identity": "Your chat session has expired.",
+      "signature": "The upload link expired. Retry to get a new one.",
+      "forbidden": "Storage refused the upload. Retry or contact support.",
+      "rateLimit": "Too many requests.",
+      "quota": "Attachment limit reached. Remove other files and retry.",
+      "storage": "File storage is unavailable. Retry later.",
+      "unknown": "Something went wrong. Retry."
+    }
+  },
+  "toast": {
+    "newMessageTitle": "New message from support",
+    "newMessageTitleWithCount": "New message from support ({{unread}})",
+    "attachment": "[Attachment]",
+    "view": "View",
+    "close": "Close"
+  },
+  "errors": {
+    "sendFailed": "Failed to send. Please try again.",
+    "loadFailed": "Failed to load. Please try again.",
+    "offline": "Network error. Please check your connection and retry.",
+    "notSent": "Not sent"
+  },
+  "connection": {
+    "reconnecting": "Connection lost. Reconnecting…",
+    "stale": "Can't reach the server. Refresh the page to receive new messages.",
+    "refresh": "Refresh page",
+    "retry": "Retry",
+    "restored": "Reconnected"
+  },
+  "guest": {
+    "unavailableTitle": "Guest chat is no longer available",
+    "unavailableDesc": "Your guest identity in this browser has expired or is no longer valid.",
+    "unavailableHint": "Previous guest messages can't be viewed anymore. Log in to contact support from your account, or start a new guest chat.",
+    "startNew": "Start new chat",
+    "merging": "Moving your guest chat to your account…",
+    "mergeFailed": "Your guest chat hasn't been moved to your account yet.",
+    "mergeRetry": "Retry",
+    "expiredTitle": "Guest chat has expired"
+  },
+  "blocked": {
+    "message": "Live Chat is currently unavailable."
+  }
+}

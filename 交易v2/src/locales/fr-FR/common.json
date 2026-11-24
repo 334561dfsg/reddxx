@@ -1,0 +1,261 @@
+{
+  "version": {
+    "updateAvailable": "Une nouvelle version est disponible",
+    "refreshNow": "Actualiser"
+  },
+  "getStarted": "Commencer",
+  "scrollLeft": "Défiler à gauche",
+  "scrollRight": "Défiler à droite",
+  "trade": "Trader",
+  "home": "Accueil",
+  "language": "Langue",
+  "options": "Trading d'options",
+  "optionsDesc": "Prenez des positions longues ou courtes à risque défini",
+  "binaryOptions": "Options binaires",
+  "all": "Tout",
+  "search": "Rechercher",
+  "contract": "Futures",
+  "futures": "Trading de futures",
+  "futuresDesc": "Tradez des contrats perpétuels avec effet de levier",
+  "spotTrading": "Trading au comptant",
+  "spotDesc": "Achetez et vendez des actifs réels au prix du marché",
+  "finance": "Finance",
+  "earn": "Earn",
+  "earnDesc": "Faites fructifier vos actifs inactifs",
+  "simpleEarn": "Simple Earn",
+  "myEarnings": "Mes revenus",
+  "loan": "Prêt",
+  "loanDesc": "Empruntez sur vos avoirs en crypto",
+  "c2c": "C2C",
+  "c2cDesc": "Achetez et vendez des cryptos de particulier à particulier",
+  "aiQuant": "AI Quant",
+  "aiQuantOverview": "Aperçu",
+  "aiQuantStrategy": "Stratégie",
+  "aiQuantStrategyDesc": "Automatisez vos trades avec des stratégies quant",
+  "aiQuantQuantFund": "Fonds Quant",
+  "aiQuantQuantFundDesc": "Investissez dans des fonds gérés par des pros",
+  "aiQuantQuantFundPositions": "Mes positions Fonds Quant",
+  "copytrade": "Copy Trade",
+  "copyTrading": "Copy Trading",
+  "copytradeDesc": "Copiez automatiquement les meilleurs traders",
+  "error": {
+    "generic": "Une erreur s'est produite, veuillez réessayer plus tard",
+    "network": "Erreur réseau. Vérifiez votre connexion et réessayez.",
+    "requestId": "ID de requête : {{requestId}}"
+  },
+  "errorGuidance": {
+    "kycRequired": {
+      "title": "Vérification d'identité requise",
+      "cta": "Vérifier maintenant"
+    },
+    "registrationIncomplete": {
+      "title": "L'inscription n'est pas encore terminée",
+      "cta": "Poursuivre l'inscription"
+    },
+    "socialLocalEmailUnverified": {
+      "title": "Cet e-mail est enregistré mais non vérifié",
+      "cta": "Réinitialiser le mot de passe"
+    },
+    "kycPendingReview": {
+      "title": "Vérification d'identité en cours d'examen",
+      "cta": "Voir la progression"
+    },
+    "advancedVerificationRequired": {
+      "title": "Niveau de vérification supérieur requis",
+      "cta": "Vérifier maintenant"
+    },
+    "insufficientBalance": {
+      "title": "Solde de trading insuffisant",
+      "cta": "Transférer des fonds"
+    },
+    "insufficientFundingBalance": {
+      "title": "Solde de financement insuffisant",
+      "cta": "Déposer maintenant"
+    },
+    "fundPasswordNotSet": {
+      "title": "Mot de passe de fonds non défini",
+      "cta": "Définir le mot de passe"
+    },
+    "twoFactorNotEnabled": {
+      "title": "Authentification à deux facteurs requise",
+      "cta": "Activer la 2FA"
+    },
+    "vipTierInsufficient": {
+      "title": "Niveau VIP insuffisant",
+      "cta": "Améliorer le VIP"
+    }
+  },
+  "news": "Actualités",
+  "charity": "Charité",
+  "menu": "Menu",
+  "toggleTheme": "Changer de thème",
+  "closeMenu": "Fermer le menu",
+  "deposit": "Dépôt",
+  "profile": "Profil",
+  "assets": "Actifs",
+  "assetsCenter": "Centre des actifs",
+  "kyc": "Identification",
+  "connectWallet": "Connecter le portefeuille",
+  "connectingWallet": "Connexion...",
+  "message": "Messages",
+  "more": "Plus",
+  "aboutUs": "À propos",
+  "privacyPolicy": "Politique de confidentialité",
+  "riskCompliance": "Risque et conformité",
+  "regulatoryInformation": "Informations réglementaires",
+  "userAgreement": "Contrat utilisateur",
+  "riskDisclosure": "Avertissement sur les risques",
+  "regulation": "Réglementation",
+  "productsServices": "Produits et services",
+  "helpCenter": "Centre d'aide",
+  "faq": "FAQ",
+  "announcements": "Annonces",
+  "onlineSupport": "Assistance en ligne",
+  "whatsApp": "WhatsApp",
+  "x": "X",
+  "telegram": "Telegram",
+  "youtube": "YouTube",
+  "instagram": "Instagram",
+  "facebook": "Facebook",
+  "tiktok": "TikTok",
+  "linkedin": "LinkedIn",
+  "discord": "Discord",
+  "email": "E-mail",
+  "loadFailed": "Échec du chargement",
+  "noData": "Aucune donnée",
+  "noMore": "Plus rien",
+  "copyright": "© {{year}} {{brand}} Trading Platform. Tous droits réservés.",
+  "loading": "Chargement...",
+  "logout": "Déconnexion",
+  "unnamed": "Sans nom",
+  "security": "Sécurité",
+  "copy": "Copier",
+  "copied": "Copié",
+  "copyFailed": "Échec de la copie",
+  "kycVerified": "Vérifié",
+  "kycVerifiedLevel": "Vérifié · N{{level}}",
+  "kycPending": "En cours d'examen",
+  "kycUnverified": "Non vérifié",
+  "kycAdvancedPending": "Niveau de base vérifié · Niveau 2 en attente",
+  "kycUpgradeCta": "Vérifier le niveau 2",
+  "on": "ACTIVÉ",
+  "off": "DÉSACTIVÉ",
+  "upload": {
+    "invalidType": "Formats acceptés : {{formats}}",
+    "tooLarge": "Le fichier dépasse la limite de {{limit}}",
+    "retry": "Réessayer",
+    "animatedImage": "Les images animées ne sont pas acceptées. Importez une image fixe.",
+    "undecodable": "Impossible de lire cette image. Importez un fichier JPG ou PNG.",
+    "linkExpired": "Le lien d'envoi a expiré. Réessayez.",
+    "incomplete": "L'envoi n'a pas abouti. Réessayez.",
+    "unsupportedFormat": "Format non pris en charge. Importez une image fixe au format JPG, PNG, WebP, BMP ou AVIF.",
+    "photoTooLarge": "Cette photo est trop volumineuse. Reprenez-la ou compressez-la, puis réessayez.",
+    "contentMismatch": "Le contenu du fichier ne correspond pas à son format. Reprenez la photo ou numérisez à nouveau le document."
+  },
+  "demo": {
+    "real": "Réel",
+    "demo": "Démo",
+    "mode": "MODE TRADING DÉMO",
+    "noRealFunds": "Aucun fonds réel",
+    "account": "Compte démo",
+    "confirmTitle": "Passer en mode démo",
+    "confirmMessage": "Passer en mode démo signifie qu'aucun fonds réel n'est impliqué.",
+    "confirmEnable": "Confirmer",
+    "confirmCancel": "Annuler",
+    "realModeRequired": "Cette page n'est disponible qu'en mode réel",
+    "confirmRealTitle": "Passer au mode réel",
+    "confirmRealMessage": "Le changement affichera les actifs et l’interface de trading du compte réel."
+  },
+  "accountSuspended": {
+    "banner": "Votre compte a été suspendu — les données et fonctionnalités associées sont indisponibles. En cas de doute, contactez le support.",
+    "title": "Compte suspendu",
+    "desc": "Votre compte a été suspendu, ce contenu ne peut donc pas être chargé. En cas de doute, contactez le support."
+  },
+  "moduleDisabled": {
+    "title": "Indisponible sur ce site",
+    "desc": "Cette fonctionnalité n'est pas proposée ici pour le moment. Vos ordres, positions et historiques existants restent accessibles."
+  },
+  "emailVerification": {
+    "banner": "Vérifiez votre e-mail pour débloquer les retraits",
+    "verifyNow": "Vérifier maintenant",
+    "title": "Vérifier votre e-mail",
+    "intro": "Pour protéger vos fonds, les retraits et les ventes OTC nécessitent un e-mail vérifié. Nous enverrons un code à l'adresse ci-dessous.",
+    "changeEmail": "Changer l'e-mail",
+    "sendCode": "Envoyer le code",
+    "sending": "Envoi...",
+    "resend": "Renvoyer le code",
+    "resendIn": "Renvoyer dans {{seconds}} s",
+    "codeLabel": "Code de vérification",
+    "codeHint": "Saisissez le code à {{length}} chiffres reçu par e-mail.",
+    "confirm": "Vérifier l'e-mail",
+    "confirming": "Vérification...",
+    "verified": "E-mail vérifié",
+    "guideTitle": "Vérifiez votre e-mail avant de retirer",
+    "guideDescription": "Votre e-mail n'est pas encore vérifié. Les retraits restent bloqués tant qu'il ne l'est pas.",
+    "dialogCrashed": "La fenêtre de vérification de l'e-mail n'a pas pu se charger. Veuillez réessayer."
+  },
+  "assetsMenu": {
+    "total": "Total des actifs",
+    "frozen": "Gelé",
+    "hideBalance": "Afficher / masquer le solde",
+    "deposit": "Dépôt",
+    "transfer": "Transfert",
+    "withdraw": "Retrait",
+    "viewAll": "Voir tous les actifs"
+  },
+  "pagination": {
+    "info": "{{total}} enregistrements · page {{page}} / {{totalPages}}"
+  },
+  "messages": {
+    "title": "Messages",
+    "viewAll": "Voir tout",
+    "markAllRead": "Tout marquer comme lu",
+    "markAllReadSuccess": "{{count}} messages marqués comme lus",
+    "markAllReadFailed": "Échec du marquage de tout comme lu",
+    "markReadFailed": "Échec du marquage comme lu",
+    "loadFailed": "Échec du chargement des messages",
+    "back": "Retour",
+    "tabs": {
+      "all": "Tout",
+      "unread": "Non lus",
+      "read": "Lus"
+    },
+    "types": {
+      "all": "Tous les types",
+      "notice": "Avis",
+      "announcement": "Annonce",
+      "alert": "Alerte",
+      "system": "Système"
+    }
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "backHome": "Retour à l'accueil"
+  },
+  "footer": {
+    "language": "Langue",
+    "version": "v{{version}}"
+  },
+  "contentPage": {
+    "fallbackTitle": "Contenu",
+    "empty": "Ce contenu n'est pas encore disponible."
+  },
+  "auth": {
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter."
+  },
+  "vipBadge": "VIP {{tier}}",
+  "spot": "Spot",
+  "h5Guide": {
+    "title": "Passer au site mobile",
+    "description": "Le site mobile est conçu pour les écrans de téléphone et plus simple à utiliser au doigt.",
+    "goToMobile": "Aller sur le site mobile",
+    "stay": "Pas maintenant, rester ici",
+    "close": "Fermer"
+  },
+  "durationDays": "{{count}} jours",
+  "tradeMarket": "Trader {{symbol}}",
+  "favoriteMarket": "Ajouter {{symbol}} aux favoris",
+  "unfavoriteMarket": "Retirer {{symbol}} des favoris",
+  "durationSeconds": "{{count}} secondes"
+}

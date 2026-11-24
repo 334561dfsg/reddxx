@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "menuEntry": "Meine Prämien"
+  },
+  "list": {
+    "title": "Meine Prämienaufgaben",
+    "description": "Verfolge die exklusiven Prämienaufgaben, die für dich vorbereitet wurden – Fortschritt, Prämie und verbleibende Zeit auf einen Blick."
+  },
+  "status": {
+    "in_progress": "Laufend",
+    "completed": "Abgeschlossen",
+    "expired": "Abgelaufen",
+    "cancelled": "Storniert"
+  },
+  "fields": {
+    "target": "Ziel",
+    "accumulatedByType": {
+      "DEPOSIT_MILESTONE": "Eingezahlt",
+      "CHECK_IN_STREAK": "Eingecheckt",
+      "REFERRAL": "Eingeladen"
+    },
+    "reward": "Prämie",
+    "deadline": "Frist",
+    "remaining": "Verbleibende Zeit",
+    "startedAt": "Beginn",
+    "description": "Beschreibung",
+    "progressMetric": "Fortschrittsmetrik",
+    "enrollmentSource": "Quelle"
+  },
+  "campaignTypes": {
+    "DEPOSIT_MILESTONE": "Einzahlung",
+    "CHECK_IN_STREAK": "Check-in",
+    "REFERRAL": "Empfehlung"
+  },
+  "progressMetrics": {
+    "DEPOSIT_USDT": "Einzahlung (USDT)",
+    "LOGIN_DAY": "Login-Tage",
+    "TURNOVER": "Handelsvolumen",
+    "REFERRAL_QUALIFIED": "Qualifizierte Empfehlungen"
+  },
+  "enrollmentSources": {
+    "ASSIGN": "Zugewiesen",
+    "SELF": "Selbst angemeldet",
+    "REFERRAL": "Empfehlung"
+  },
+  "checkIn": {
+    "success": "Erfolgreich eingecheckt",
+    "pending": "Check-in läuft…",
+    "error": "Check-in fehlgeschlagen, bitte erneut versuchen"
+  },
+  "progress": {
+    "remainingToTarget": "Noch {{amount}} {{unit}} bis zum Ziel",
+    "unit": {
+      "CHECK_IN_STREAK": "Check-ins",
+      "REFERRAL": "Empfehlungen"
+    }
+  },
+  "countdown": {
+    "ended": "Beendet",
+    "daysHours": "{{days}} T {{hours}} Std",
+    "daysHoursMinutes": "Noch {{days}} Tage {{hours}} Stunden {{minutes}} Minuten"
+  },
+  "reward": {
+    "creditedLabel": "Gutgeschrieben"
+  },
+  "cta": {
+    "deposit": "Jetzt einzahlen",
+    "viewDetail": "Details ansehen",
+    "checkIn": "Einchecken",
+    "invite": "Freunde einladen"
+  },
+  "empty": {
+    "title": "Exklusive Prämien sind unterwegs",
+    "description": "Sobald dir eine Prämienaufgabe zugewiesen wird, erscheint sie hier. Bleib gespannt."
+  },
+  "detail": {
+    "back": "Zurück zu den Prämien",
+    "notFoundTitle": "Aufgabe nicht gefunden",
+    "notFoundDescription": "Diese Prämienaufgabe existiert nicht oder ist nicht mehr verfügbar.",
+    "sectionProgress": "Fortschritt",
+    "sectionInfo": "Aufgabendetails"
+  },
+  "states": {
+    "loadError": "Prämienaufgaben konnten nicht geladen werden",
+    "retry": "Erneut versuchen",
+    "loadMore": "Mehr laden"
+  }
+}

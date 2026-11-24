@@ -1,0 +1,37 @@
+{
+  "entry": {
+    "title": "Survey",
+    "description": "Share your feedback with us"
+  },
+  "hint": {
+    "required": "Required",
+    "singleChoice": "Choose one",
+    "multipleChoice": "Choose one or more",
+    "textPlaceholder": "Type your answer"
+  },
+  "validation": {
+    "required": "This question is required"
+  },
+  "actions": {
+    "back": "Back",
+    "submit": "Submit",
+    "submitting": "Submitting…"
+  },
+  "success": {
+    "submitted": "Submitted successfully"
+  },
+  "error": {
+    "loadFailed": "Failed to load the survey",
+    "unavailable": "Survey unavailable",
+    "unavailableDescription": "This survey is no longer available or does not exist.",
+    "alreadySubmitted": "You have already submitted this survey",
+    "validation": "Some answers are invalid. Please review and try again.",
+    "submitFailed": "Submission failed. Please try again."
+  },
+  "readonly": {
+    "badge": "Completed",
+    "title": "Your responses",
+    "submittedAt": "Submitted on {{time}}",
+    "noAnswer": "No answer"
+  }
+}

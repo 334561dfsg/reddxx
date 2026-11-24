@@ -1,0 +1,335 @@
+{
+  "market": {
+    "subtitle": "Prêts garantis",
+    "title": "Prêts crypto",
+    "description": "Empruntez contre vos cryptos ou des actifs hors ligne tels que biens immobiliers et dépôts bancaires. Choisissez une devise pour voir le taux quotidien, les limites et les conditions.",
+    "dailyRate": "Taux quotidien",
+    "annualized": "~{{value}} % TAEG",
+    "borrowRange": "Plage d'emprunt",
+    "term": "Conditions",
+    "termDays": "{{days}}j",
+    "borrowCta": "Emprunter",
+    "loadError": "Échec du chargement des devises empruntables.",
+    "empty": "Aucune devise empruntable n'est disponible pour le moment.",
+    "myLoans": "Mes prêts"
+  },
+  "borrow": {
+    "back": "Retour au marché",
+    "title": "Emprunter",
+    "titleWithCurrency": "Emprunter {{currency}}",
+    "notAvailable": "Cette devise n'est pas disponible à l'emprunt.",
+    "amountLabel": "Montant de l'emprunt",
+    "amountPlaceholder": "Saisissez le montant",
+    "range": "{{min}} – {{max}} {{currency}}",
+    "amountError": {
+      "invalid": "Saisissez un montant valide.",
+      "min": "Le minimum est de {{amount}} {{currency}}.",
+      "max": "Le maximum est de {{amount}} {{currency}}."
+    },
+    "termLabel": "Durée",
+    "submit": "Confirmer l'emprunt",
+    "submitting": "Envoi en cours…",
+    "phase": {
+      "signing": "Envoi de la signature…",
+      "creating": "Création de la demande…",
+      "review": "En cours d'examen",
+      "done": "Toutes les étapes sont terminées",
+      "steps": {
+        "signing": "Signature",
+        "creating": "Demande",
+        "review": "Examen"
+      }
+    },
+    "progress": {
+      "title": "Envoi de votre demande de prêt",
+      "desc": "Gardez cette fenêtre ouverte. Nous transmettons votre contrat signé et créons la demande.",
+      "failedTitle": "L'envoi n'est pas allé au bout",
+      "failedDesc": "Fermez cette fenêtre pour corriger les informations et renvoyer la demande.",
+      "close": "Fermer"
+    },
+    "collateral": {
+      "label": "Type de garantie",
+      "crypto": "Garantie crypto",
+      "offline": "Actif hors ligne",
+      "offlineHint": "Empruntez en adossant des actifs hors ligne tels qu'un bien immobilier ou des dépôts bancaires. Les demandes sont examinées manuellement avant le versement des fonds.",
+      "recommended": "Recommandé"
+    },
+    "offline": {
+      "assetTypeLabel": "Type d'actif",
+      "assetTypePlaceholder": "Sélectionnez le type d'actif",
+      "assetTypes": {
+        "BANK_STATEMENT": "Relevé bancaire",
+        "PROPERTY": "Bien immobilier",
+        "INCOME": "Justificatif de revenus",
+        "STOCK_HOLDING": "Actions détenues",
+        "OTHER": "Autre"
+      },
+      "declaredValueLabel": "Valeur déclarée",
+      "declaredValuePlaceholder": "Saisissez la valeur estimée",
+      "declaredValueError": "Saisissez une valeur supérieure à 0.",
+      "descriptionLabel": "Description de l'actif (facultatif)",
+      "descriptionPlaceholder": "Décrivez l'actif mis en garantie",
+      "proofTitle": "Documents justificatifs",
+      "proofHint": "Téléversez 1 à 20 documents prouvant la propriété et la valeur de l'actif.",
+      "proofItemTitle": "Document {{index}}",
+      "proofUploadLabel": "Téléverser un document",
+      "notePlaceholder": "Ajoutez une note pour ce document (facultatif)",
+      "addProof": "Ajouter un document",
+      "removeProof": "Supprimer",
+      "clickToUpload": "Cliquez pour téléverser"
+    },
+    "gate": {
+      "login": "Se connecter",
+      "verify": "Vérifier maintenant",
+      "advancedTitle": "Vérification avancée requise",
+      "advancedDesc": "L'emprunt adossé à des actifs hors ligne nécessite la vérification avancée de niveau 2. Soumettez vos justificatifs d'actifs pour le débloquer.",
+      "advancedCta": "Vérifier maintenant"
+    },
+    "quote": {
+      "title": "Cotation en direct",
+      "placeholder": "Saisissez un montant pour voir votre cotation.",
+      "unavailable": "La cotation est temporairement indisponible.",
+      "retry": "Réessayer",
+      "dailyRate": "Taux quotidien",
+      "interest": "Intérêts est.",
+      "dueAt": "Date d'échéance",
+      "requiredCollateral": "Garantie requise",
+      "collateralUnavailable": "Cotation de garantie indisponible",
+      "liquidationLtv": "LTV de liquidation",
+      "offlineNote": "Les prêts à garantie hors ligne ne passent pas par la valorisation on-chain : la valeur expertisée et le LTV d'ouverture sont fixés lors de l'examen manuel."
+    },
+    "success": {
+      "title": "Emprunt réussi",
+      "amount": "{{amount}} {{currency}} crédités sur votre compte",
+      "status": "Statut : {{status}}",
+      "backToMarket": "Retour au marché",
+      "pendingTitle": "Demande envoyée",
+      "pendingDesc": "Votre prêt de {{amount}} {{currency}} à garantie hors ligne est en cours d'examen manuel. Les fonds seront crédités après approbation.",
+      "goMyLoans": "Voir mes prêts"
+    }
+  },
+  "signature": {
+    "hint": "Signez ici",
+    "undo": "Annuler",
+    "clear": "Effacer",
+    "required": "Veuillez signer pour continuer.",
+    "uploading": "Téléversement de la signature…",
+    "uploadError": "Échec du téléversement de la signature. Touchez pour réessayer."
+  },
+  "contract": {
+    "consentLabel": "J’ai lu et j’accepte explicitement les conditions du contrat de prêt.",
+    "empty": "Le modèle de contrat est en cours de finalisation. En signant, vous acceptez les conditions du prêt affichées dans le devis.",
+    "title": "Contrat de prêt",
+    "version": "Version {{version}}",
+    "readHint": "Veuillez lire l’intégralité du contrat de prêt avant de signer.",
+    "loadError": "Échec du chargement du contrat de prêt.",
+    "retry": "Réessayer",
+    "agreeAndSign": "J’ai lu et j’accepte — signez ci-dessous",
+    "viewFull": "Voir le contrat complet",
+    "fullTitle": "Contrat de prêt"
+  },
+  "loans": {
+    "subtitle": "Prêts garantis",
+    "title": "Mes prêts",
+    "loadError": "Échec du chargement de vos prêts.",
+    "empty": "Aucun prêt dans cette catégorie pour le moment.",
+    "truncated": "Affichage des {{shown}} premiers sur {{total}}.",
+    "liquidatedAt": "Liquidé le",
+    "badDebt": "Déficit",
+    "badDebtSettled": "Entièrement couvert",
+    "viewLiquidations": "Voir l'historique des liquidations",
+    "liquidationLine": "Liq. {{value}} %",
+    "summary": {
+      "outstanding": "En cours",
+      "borrowed": "Total emprunté",
+      "repaid": "Total remboursé",
+      "interest": "Total des intérêts"
+    },
+    "tabs": {
+      "ariaLabel": "Filtre de statut des prêts",
+      "ongoing": "En cours",
+      "settled": "Remboursés",
+      "other": "Autres"
+    },
+    "row": {
+      "outstanding": "En cours",
+      "dueAt": "Échéance {{value}}",
+      "noDueAt": "Sans durée fixe",
+      "repay": "Rembourser",
+      "offlineCollateral": "Garantie hors ligne"
+    },
+    "detail": {
+      "title": "Prêt {{currency}}",
+      "snapshotHint": "Affichage des dernières valeurs de ce prêt.",
+      "refreshError": "Impossible d'actualiser — affichage des dernières valeurs chargées.",
+      "borrowed": "Emprunté",
+      "repaid": "Remboursé",
+      "interest": "Intérêts accumulés",
+      "overdueFee": "Frais de retard",
+      "dailyRate": "Taux quotidien",
+      "term": "Durée",
+      "collateral": "Garantie",
+      "dueAt": "Échéance",
+      "estimatedDueAt": "Échéance estimée",
+      "appliedAt": "Demandé le",
+      "disbursedAt": "Emprunté le",
+      "overdueAt": "En retard depuis",
+      "repayMode": "Remboursement",
+      "repayModeOffchain": "Transfert hors chaîne",
+      "repayNetwork": "Réseau de réception",
+      "repayAddress": "Adresse de réception",
+      "viewHistory": "Voir l'historique des remboursements",
+      "viewContract": "Voir le contrat signé",
+      "offlineAssetTypes": {
+        "BANK_STATEMENT": "Relevé bancaire",
+        "PROPERTY": "Bien immobilier",
+        "INCOME": "Justificatif de revenus",
+        "STOCK_HOLDING": "Actions détenues",
+        "OTHER": "Autre"
+      },
+      "declaredValue": "Valeur déclarée",
+      "appraisedValue": "Valeur expertisée",
+      "assetDescription": "Description de l'actif",
+      "offlineRiskNote": "Les prêts à garantie hors ligne sont exemptés du suivi LTV automatique et de la liquidation. Les retards sont traités manuellement."
+    },
+    "repay": {
+      "offchain": {
+        "subtitle": "Transférez le remboursement hors chaîne à l’adresse ci-dessous, puis téléversez votre justificatif. Le service Opérations le confirmera.",
+        "currencyLabel": "Devise de remboursement",
+        "networkSelectLabel": "Réseau de réception",
+        "optionsLoading": "Chargement des devises disponibles…",
+        "optionsEmpty": "Aucune adresse de réception n'est disponible pour le moment. Veuillez contacter le support avant de rembourser.",
+        "addressLoading": "Résolution de l'adresse de réception…",
+        "addressNotConfigured": "Aucune adresse de réception n'est configurée pour cette devise/ce réseau. Veuillez en choisir une autre ou contacter le support.",
+        "addressLabel": "Adresse de réception",
+        "network": "Réseau : {{network}}",
+        "networkLabel": "Réseau de réception",
+        "tokenLabel": "Jeton de remboursement",
+        "copy": "Copier l’adresse",
+        "copied": "Adresse copiée",
+        "transferHint": "Envoyez le montant exact à cette adresse, puis téléversez le justificatif de transfert ci-dessous.",
+        "addressPending": "L’adresse de réception est en cours d’attribution. Veuillez réessayer dans un instant.",
+        "proofLabel": "Justificatif de transfert",
+        "proofUpload": "Téléverser le justificatif",
+        "clickToUpload": "Cliquez pour téléverser",
+        "txHashLabel": "Hash de transaction",
+        "txHashPlaceholder": "Collez le hash de transaction on-chain",
+        "optionalTag": "(facultatif)",
+        "statusLabel": "Statut",
+        "submit": "Soumettre la demande de remboursement",
+        "success": {
+          "title": "Demande de remboursement soumise",
+          "desc": "Nous avons reçu votre demande de remboursement. Le service Opérations la confirmera après vérification de votre transfert."
+        }
+      },
+      "title": "Rembourser {{currency}}",
+      "subtitle": "Remboursez votre solde en cours pour libérer la garantie.",
+      "outstandingLabel": "En cours",
+      "amountLabel": "Montant du remboursement",
+      "amountPlaceholder": "Saisissez le montant",
+      "repayAll": "Tout rembourser",
+      "amountError": {
+        "invalid": "Saisissez un montant valide."
+      },
+      "cappedHint": "Le remboursement est plafonné au montant en cours de {{amount}} {{currency}}.",
+      "cancel": "Annuler",
+      "submit": "Confirmer le remboursement",
+      "submitting": "Envoi en cours…",
+      "waterfall": {
+        "overdueFee": "Frais de retard",
+        "interest": "Intérêts",
+        "principal": "Principal"
+      },
+      "success": {
+        "title": "Remboursement réussi",
+        "repaid": "{{amount}} {{currency}} remboursés",
+        "outstandingAfter": "Solde restant en cours",
+        "settled": "Entièrement remboursé — votre garantie a été libérée.",
+        "done": "Terminé",
+        "settledOffline": "Intégralement remboursé — votre prêt est soldé. Les garanties hors ligne sont gérées hors plateforme."
+      }
+    }
+  },
+  "signedContract": {
+    "pdfGenerating": "Génération…",
+    "pdfError": "Échec du chargement du PDF. Veuillez réessayer plus tard."
+  },
+  "repaymentClaim": {
+    "amount": "Montant",
+    "toAddress": "Adresse de réception",
+    "txHash": "Hash de transaction",
+    "empty": "Aucune demande de remboursement pour ce prêt.",
+    "status": {
+      "submitted": "En attente de validation",
+      "confirmed": "Confirmée",
+      "rejected": "Rejetée"
+    }
+  },
+  "repayments": {
+    "title": "Historique des remboursements",
+    "loadError": "Échec du chargement de l'historique des remboursements.",
+    "empty": "Aucun remboursement pour ce prêt pour le moment.",
+    "totalRepaid": "Remboursé",
+    "overdueFee": "Frais de retard",
+    "interest": "Intérêts",
+    "principal": "Principal",
+    "outstandingAfter": "En cours après"
+  },
+  "liquidations": {
+    "subtitle": "Centre des risques",
+    "title": "Historique des liquidations",
+    "back": "Retour à mes prêts",
+    "loadMore": "Charger plus",
+    "empty": "Aucune liquidation pour le moment.",
+    "badDebtNote": "Ce déficit reste comptabilisé comme dette due.",
+    "priceUnavailable": "—",
+    "filter": {
+      "loan": "Affichage d'un seul prêt ({{id}})",
+      "clear": "Effacer le filtre"
+    },
+    "trigger": {
+      "ltvBreach": "Liquidation automatique",
+      "adminForce": "Liquidation forcée",
+      "unknown": "Liquidation"
+    },
+    "columns": {
+      "currency": "Devise du prêt",
+      "collateral": "Garantie vendue",
+      "liquidationPrice": "Prix d'exécution",
+      "proceeds": "Produit",
+      "appliedAmount": "Affecté au remboursement",
+      "badDebt": "Déficit"
+    }
+  },
+  "status": {
+    "pending": "En cours d'examen",
+    "active": "Emprunt en cours",
+    "overdue": "En retard",
+    "repaid": "Remboursé",
+    "liquidated": "Liquidé",
+    "rejected": "Rejeté",
+    "forceClosed": "Clôturé",
+    "unknown": "—"
+  },
+  "health": {
+    "safe": "Sûr",
+    "warn": "Avertissement",
+    "danger": "Danger",
+    "unknown": "—"
+  },
+  "guard": {
+    "loginRequired": "Veuillez vous connecter pour continuer.",
+    "kycRequired": "La vérification d'identité est requise avant d'emprunter ou de rembourser."
+  },
+  "error": {
+    "fallback": "Une erreur s'est produite. Veuillez réessayer.",
+    "offlineCollateralNotAllowed": "Le prêt avec garantie hors ligne n'est pas disponible pour cette devise pour le moment.",
+    "signatureRequired": "Veuillez signer le contrat avant de soumettre votre demande.",
+    "termsNotAccepted": "Veuillez accepter les conditions du prêt avant de soumettre.",
+    "offlineCollateralInvalid": "Les informations de garantie hors ligne sont invalides. Veuillez vérifier le type d'actif, la valeur déclarée et les fichiers justificatifs.",
+    "vipTierNotConfigured": "Le prêt n'est pas encore disponible pour votre niveau VIP. Veuillez contacter le support.",
+    "currencyNotSupported": "Cette devise n'est pas disponible à l'emprunt pour le moment.",
+    "termInvalid": "Veuillez choisir une durée de prêt valide.",
+    "signatureFileInvalid": "Votre signature n'a pas pu être vérifiée. Veuillez signer à nouveau."
+  }
+}

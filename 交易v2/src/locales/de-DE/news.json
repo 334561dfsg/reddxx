@@ -1,0 +1,30 @@
+{
+  "seo": {
+    "title": "Krypto- & Marktnachrichten",
+    "description": "Neueste Nachrichten, Analysen und Einblicke zu Krypto, Devisen und Aktienmärkten von {{brand}}."
+  },
+  "pageTitle": "News-Center",
+  "breadcrumbHome": "Startseite",
+  "breadcrumbNews": "News",
+  "loadMore": "Mehr laden",
+  "loading": "Wird geladen …",
+  "retry": "Erneut versuchen",
+  "backToList": "← Zurück zur Liste",
+  "readTime": "{{minutes}} Min. Lesezeit",
+  "author": "Autor",
+  "publishedAt": "Veröffentlicht am",
+  "relatedNews": "Verwandte Artikel",
+  "noMore": "Keine weiteren Artikel",
+  "tags": "Tags",
+  "share": "Teilen",
+  "allCategories": "Alle Kategorien",
+  "articleNotFound": "Artikel nicht gefunden oder entfernt",
+  "backToHome": "Zurück zur Startseite",
+  "categoryAll": "Alle",
+  "emptyTitle": "Noch keine Artikel",
+  "emptyHint": "Schauen Sie bald wieder vorbei – täglich kommen neue Geschichten hinzu.",
+  "errorTitle": "Die neuesten Nachrichten konnten nicht geladen werden",
+  "errorHint": "Auf unserer Seite ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+  "viewOriginal": "Original ansehen →",
+  "viewSource": "Quelle besuchen"
+}

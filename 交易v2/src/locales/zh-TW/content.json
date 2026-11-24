@@ -1,0 +1,33 @@
+{
+  "ui": {
+    "weCareForEveryChildCaughtInTheDevastation": "我們關懷每一位陷入戰爭災難的兒童",
+    "weHelpEndHunger": "我們幫助消除飢餓",
+    "weBringComputersAndEthernetNetworksToEveryCorner": "我們讓計算機和以太網絡進入世界每個角落",
+    "weProvideHopeInTimesOfDisaster": "我們在災難中提供希望",
+    "weInvestInTheEducationalFutureOfCountriesIn": "我們投資於偏遠地區國家的教育未來",
+    "weHelpPeopleWithDisabilitiesStartANewLife": "我們讓殘障者重獲新生",
+    "identityVerification": "身分驗證",
+    "selectAPngOrJpegImage": "請選擇 PNG 或 JPEG 圖片",
+    "imageMustNotExceed10Mb": "圖片不可超過 10 MB",
+    "demoDepositRequest": "充值演示申請",
+    "demoWithdrawalRequest": "提現演示申請",
+    "localDemoCompletedNoDataOrFundsWereSent": "本地演示已完成。未傳送資料、未執行轉帳。",
+    "charitySlide": "公益輪播第 ",
+    "message": " 張：",
+    "connectGenerosityWithMeaningfulChangeAndBringHopeTo": "以區塊鏈連接愛心，讓每一份支持化為真實的改變。一起為需要幫助的人們，帶來希望與機會。",
+    "sourceFiguresAreASnapshotLocalDonationsAreDemonstrations": "以上為原站展示數據的靜態快照；本地捐贈僅作交互演示。",
+    "merchantReviewIsNotConnectedInThisLocalDemo": "本地演示未連接商家審核服務。",
+    "no": "暫無",
+    "orders": "訂單",
+    "thisDemoDoesNotCollectBankCardOrReal": "本地演示不收集銀行卡或真實收款帳戶資料。",
+    "confirmC2c": "確認 C2C ",
+    "thisLocalDemoDoesNotCreateRealOrders": "本地演示不產生真實訂單。",
+    "noTradersAvailable": "目前沒有可展示的交易員",
+    "noFollowingYet": "暫無跟隨",
+    "selectAnAssetAndNetworkThenEnterTheDestination": "選擇幣種與網路，輸入提現地址及金額",
+    "localDemoDoNotTransferToDemoAddressesOr": "本地演示，請勿向任何演示地址轉帳，也無需上傳真實交易憑證。",
+    "selectedLocallyFilesAreNotUploaded": "僅在本機選擇，不上傳檔案",
+    "submitDemo": "提交演示",
+    "noAnnouncements": "暫無公告"
+  }
+}

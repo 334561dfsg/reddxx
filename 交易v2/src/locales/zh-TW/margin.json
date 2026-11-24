@@ -1,0 +1,335 @@
+{
+  "market": {
+    "subtitle": "抵押借貸",
+    "title": "加密借貸",
+    "description": "以加密資產，或房產、銀行存款等線下資產作抵押借款。選擇幣種查看日利率、額度與期限。",
+    "dailyRate": "日利率",
+    "annualized": "年化 ~{{value}}%",
+    "borrowRange": "可借區間",
+    "term": "期限",
+    "termDays": "{{days}} 天",
+    "borrowCta": "去借款",
+    "loadError": "可借幣種載入失敗。",
+    "empty": "目前沒有可借幣種。",
+    "myLoans": "我的借貸"
+  },
+  "borrow": {
+    "back": "返回市場",
+    "title": "借款",
+    "titleWithCurrency": "借款 {{currency}}",
+    "notAvailable": "此幣種暫不開放借貸。",
+    "amountLabel": "借款數量",
+    "amountPlaceholder": "請輸入數量",
+    "range": "{{min}} – {{max}} {{currency}}",
+    "amountError": {
+      "invalid": "請輸入有效金額。",
+      "min": "最低 {{amount}} {{currency}}。",
+      "max": "最高 {{amount}} {{currency}}。"
+    },
+    "termLabel": "期限",
+    "submit": "確認借款",
+    "submitting": "提交中…",
+    "phase": {
+      "signing": "簽約確認提交中…",
+      "creating": "借款申請建立中…",
+      "review": "平台審核中",
+      "done": "所有步驟已完成",
+      "steps": {
+        "signing": "簽約確認",
+        "creating": "提交申請",
+        "review": "平台審核"
+      }
+    },
+    "progress": {
+      "title": "正在提交借款申請",
+      "desc": "請保持視窗開啟，我們正在上傳簽約檔案並建立借款申請。",
+      "failedTitle": "提交未完成",
+      "failedDesc": "關閉視窗後修正資料，再重新提交。",
+      "close": "關閉"
+    },
+    "collateral": {
+      "label": "抵押類型",
+      "crypto": "加密資產抵押",
+      "offline": "線下資產",
+      "offlineHint": "以房產、銀行存款等線下資產作為抵押借款。申請將經人工審核後放款。",
+      "recommended": "推薦"
+    },
+    "offline": {
+      "assetTypeLabel": "資產類型",
+      "assetTypePlaceholder": "選擇資產類型",
+      "assetTypes": {
+        "BANK_STATEMENT": "銀行對帳單",
+        "PROPERTY": "房產",
+        "INCOME": "收入證明",
+        "STOCK_HOLDING": "股票持倉",
+        "OTHER": "其他"
+      },
+      "declaredValueLabel": "申報估值",
+      "declaredValuePlaceholder": "輸入估值",
+      "declaredValueError": "請輸入大於 0 的估值。",
+      "descriptionLabel": "資產描述（選填）",
+      "descriptionPlaceholder": "描述抵押資產",
+      "proofTitle": "證明文件",
+      "proofHint": "上傳 1–20 份證明資產所有權與價值的文件。",
+      "proofItemTitle": "文件 {{index}}",
+      "proofUploadLabel": "上傳文件",
+      "notePlaceholder": "為此文件新增備註（選填）",
+      "addProof": "新增文件",
+      "removeProof": "移除",
+      "clickToUpload": "點擊上傳"
+    },
+    "gate": {
+      "login": "登入",
+      "verify": "前往驗證",
+      "advancedTitle": "需要高級認證",
+      "advancedDesc": "線下資產借款需通過 Level 2 高級認證。提交您的資產證明以解鎖。",
+      "advancedCta": "立即認證"
+    },
+    "quote": {
+      "title": "實時試算",
+      "placeholder": "輸入金額即可查看試算。",
+      "unavailable": "試算暫時無法取得。",
+      "retry": "重試",
+      "dailyRate": "日利率",
+      "interest": "預計利息",
+      "dueAt": "到期日",
+      "requiredCollateral": "需抵押",
+      "collateralUnavailable": "抵押報價暫不可用",
+      "liquidationLtv": "清算線 LTV",
+      "offlineNote": "線下抵押借款不進行鏈上抵押定價——核定估值與開倉 LTV 由人工審核時確定。"
+    },
+    "success": {
+      "title": "借款成功",
+      "amount": "{{amount}} {{currency}} 已入賬",
+      "status": "狀態：{{status}}",
+      "backToMarket": "返回市場",
+      "pendingTitle": "申請已提交",
+      "pendingDesc": "您的 {{amount}} {{currency}} 線下抵押借款正在人工審核中，審批通過後資金將入帳。",
+      "goMyLoans": "查看我的借貸"
+    }
+  },
+  "signature": {
+    "hint": "在此簽名",
+    "undo": "復原",
+    "clear": "清除",
+    "required": "請先簽名後繼續。",
+    "uploading": "簽名上傳中…",
+    "uploadError": "簽名上傳失敗，點擊重試。"
+  },
+  "contract": {
+    "consentLabel": "我已閱讀並明確同意本借款合約的全部條款。",
+    "empty": "合約範本準備中。簽名即表示您同意試算面板所列的借款條款。",
+    "title": "借款合約",
+    "version": "版本 {{version}}",
+    "readHint": "簽名前請完整閱讀借款合約。",
+    "loadError": "載入借款合約失敗。",
+    "retry": "重試",
+    "agreeAndSign": "我已閱讀並同意，於下方簽名",
+    "viewFull": "查看合約全文",
+    "fullTitle": "借款合約"
+  },
+  "loans": {
+    "subtitle": "抵押借貸",
+    "title": "我的借貸",
+    "loadError": "借貸列表載入失敗。",
+    "empty": "此分類下暫無借貸。",
+    "truncated": "僅顯示前 {{shown}} 筆，共 {{total}} 筆。",
+    "liquidatedAt": "清算時間",
+    "badDebt": "差額",
+    "badDebtSettled": "已足額",
+    "viewLiquidations": "查看強平記錄",
+    "liquidationLine": "清算 {{value}}%",
+    "summary": {
+      "outstanding": "當前欠款",
+      "borrowed": "總借出",
+      "repaid": "已還",
+      "interest": "利息"
+    },
+    "tabs": {
+      "ariaLabel": "借貸狀態篩選",
+      "ongoing": "進行中",
+      "settled": "已結清",
+      "other": "其他"
+    },
+    "row": {
+      "outstanding": "當前欠款",
+      "dueAt": "到期 {{value}}",
+      "noDueAt": "無固定期限",
+      "repay": "還款",
+      "offlineCollateral": "線下抵押"
+    },
+    "detail": {
+      "title": "{{currency}} 借貸",
+      "snapshotHint": "顯示此筆借貸的最新數值。",
+      "refreshError": "無法刷新，顯示最近一次載入的數值。",
+      "borrowed": "借出",
+      "repaid": "已還",
+      "interest": "累計利息",
+      "overdueFee": "逾期費",
+      "dailyRate": "日利率",
+      "term": "期限",
+      "collateral": "抵押",
+      "dueAt": "到期時間",
+      "estimatedDueAt": "預計到期時間",
+      "appliedAt": "申請時間",
+      "disbursedAt": "借款時間",
+      "overdueAt": "逾期起算",
+      "repayMode": "還款方式",
+      "repayModeOffchain": "鏈下轉帳",
+      "repayNetwork": "收款網路",
+      "repayAddress": "收款地址",
+      "viewHistory": "查看還款歷史",
+      "viewContract": "查看已簽合約",
+      "offlineAssetTypes": {
+        "BANK_STATEMENT": "銀行對帳單",
+        "PROPERTY": "房產",
+        "INCOME": "收入證明",
+        "STOCK_HOLDING": "股票持倉",
+        "OTHER": "其他"
+      },
+      "declaredValue": "申報估值",
+      "appraisedValue": "核定估值",
+      "assetDescription": "資產描述",
+      "offlineRiskNote": "線下抵押借款不參與自動 LTV 監控與清算，逾期將由人工處理。"
+    },
+    "repay": {
+      "offchain": {
+        "subtitle": "請將還款金額鏈下轉帳至下方地址，並上傳轉帳憑證，由營運確認。",
+        "currencyLabel": "還款幣種",
+        "networkSelectLabel": "收款網路",
+        "optionsLoading": "載入可用收款幣種…",
+        "optionsEmpty": "暫無可用收款地址，請聯繫客服後再還款。",
+        "addressLoading": "解析收款地址…",
+        "addressNotConfigured": "此幣種／網路暫未配置收款地址，請改選或聯繫客服。",
+        "addressLabel": "收款地址",
+        "network": "網路：{{network}}",
+        "networkLabel": "收款網路",
+        "tokenLabel": "還款幣種",
+        "copy": "複製地址",
+        "copied": "地址已複製",
+        "transferHint": "請按金額轉帳至此地址，並於下方上傳轉帳憑證。",
+        "addressPending": "收款地址產生中，請稍後再試。",
+        "proofLabel": "轉帳憑證",
+        "proofUpload": "上傳憑證",
+        "clickToUpload": "點擊上傳",
+        "txHashLabel": "交易雜湊",
+        "txHashPlaceholder": "貼上鏈上交易雜湊",
+        "optionalTag": "（選填）",
+        "statusLabel": "狀態",
+        "submit": "提交還款單",
+        "success": {
+          "title": "還款單已提交",
+          "desc": "已收到您的還款單，營運核對轉帳後將確認入帳。"
+        }
+      },
+      "title": "還款 {{currency}}",
+      "subtitle": "償還欠款以釋放抵押品。",
+      "outstandingLabel": "當前欠款",
+      "amountLabel": "還款金額",
+      "amountPlaceholder": "請輸入金額",
+      "repayAll": "全部還清",
+      "amountError": {
+        "invalid": "請輸入有效金額。"
+      },
+      "cappedHint": "還款將按當前欠款 {{amount}} {{currency}} 封頂。",
+      "cancel": "取消",
+      "submit": "確認還款",
+      "submitting": "提交中…",
+      "waterfall": {
+        "overdueFee": "逾期費",
+        "interest": "利息",
+        "principal": "本金"
+      },
+      "success": {
+        "title": "還款成功",
+        "repaid": "已還款 {{amount}} {{currency}}",
+        "outstandingAfter": "剩餘欠款",
+        "settled": "已全部結清 —— 抵押品已釋放。",
+        "done": "完成",
+        "settledOffline": "已全額還清——借款已結清。線下抵押由線下另行處理。"
+      }
+    }
+  },
+  "signedContract": {
+    "pdfGenerating": "生成中…",
+    "pdfError": "載入 PDF 失敗,請稍後再試。"
+  },
+  "repaymentClaim": {
+    "amount": "金額",
+    "toAddress": "收款地址",
+    "txHash": "交易雜湊",
+    "empty": "此筆借貸尚無還款單。",
+    "status": {
+      "submitted": "待確認",
+      "confirmed": "已確認",
+      "rejected": "已駁回"
+    }
+  },
+  "repayments": {
+    "title": "還款歷史",
+    "loadError": "還款歷史載入失敗。",
+    "empty": "此筆借貸暫無還款記錄。",
+    "totalRepaid": "本次還款",
+    "overdueFee": "逾期費",
+    "interest": "利息",
+    "principal": "本金",
+    "outstandingAfter": "還款後餘額"
+  },
+  "liquidations": {
+    "subtitle": "風險中心",
+    "title": "強平記錄",
+    "back": "返回我的借貸",
+    "loadMore": "載入更多",
+    "empty": "尚無強平記錄。",
+    "badDebtNote": "此差額仍計為未償還欠款。",
+    "priceUnavailable": "—",
+    "filter": {
+      "loan": "僅顯示單筆借款（{{id}}）",
+      "clear": "清除篩選"
+    },
+    "trigger": {
+      "ltvBreach": "系統自動清算",
+      "adminForce": "平台強制清算",
+      "unknown": "強平"
+    },
+    "columns": {
+      "currency": "借款幣種",
+      "collateral": "賣出抵押",
+      "liquidationPrice": "成交價",
+      "proceeds": "賣出所得",
+      "appliedAmount": "用於還款",
+      "badDebt": "差額"
+    }
+  },
+  "status": {
+    "pending": "審批中",
+    "active": "借貸中",
+    "overdue": "已逾期",
+    "repaid": "已結清",
+    "liquidated": "已強平",
+    "rejected": "已駁回",
+    "forceClosed": "已關閉",
+    "unknown": "—"
+  },
+  "health": {
+    "safe": "安全",
+    "warn": "預警",
+    "danger": "危險",
+    "unknown": "—"
+  },
+  "guard": {
+    "loginRequired": "請先登入後再操作。",
+    "kycRequired": "借款或還款前需先完成身分驗證。"
+  },
+  "error": {
+    "fallback": "操作失敗，請稍後再試。",
+    "offlineCollateralNotAllowed": "此幣種暫不支援線下抵押借款。",
+    "signatureRequired": "請先簽署合約後再提交申請。",
+    "termsNotAccepted": "請先同意借款條款後再提交。",
+    "offlineCollateralInvalid": "線下抵押資料有誤，請檢查資產類型、申報估值與證明檔案。",
+    "vipTierNotConfigured": "您的 VIP 等級暫未開放借款，請聯絡客服。",
+    "currencyNotSupported": "此幣種暫不支援借貸。",
+    "termInvalid": "請選擇有效的借款期限。",
+    "signatureFileInvalid": "簽名檔案無效，請重新簽名。"
+  }
+}

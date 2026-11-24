@@ -3,7 +3,7 @@
     <div class="mx-auto max-w-5xl">
       <h1 class="text-3xl font-semibold">选择入口</h1>
       <p class="mt-2 text-sm text-white/60">
-        选择管理台、响应式前台、代理系统，或独立的 NewQuantCapital 网站原型。
+        选择管理台、响应式前台、代理系统，NewQuantCapital 网站原型或交易 V2。
       </p>
 
       <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -36,6 +36,13 @@
         >
           <div class="text-xl font-semibold">NewQuantCapital</div>
           <div class="mt-2 text-sm text-white/65">独立网站原型 · 多语言、新闻与账户中心</div>
+        </a>
+        <a
+          href="/trade-v2/"
+          class="rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:border-lime-300/40 hover:bg-lime-300/10"
+        >
+          <div class="text-xl font-semibold">交易 V2</div>
+          <div class="mt-2 text-sm text-white/65">合约、期权与现货交易</div>
         </a>
       </div>
     </div>

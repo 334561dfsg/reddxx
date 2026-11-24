@@ -1,0 +1,94 @@
+{
+  "title": "客服",
+  "menu": {
+    "title": "您想透過哪種方式聯絡我們？",
+    "subtitle": "請選擇最適合您的聯絡管道。",
+    "liveChat": "線上客服",
+    "liveChatDesc": "與客服團隊即時對話",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "透過 WhatsApp 一對一與我們溝通",
+    "email": "電子郵件",
+    "emailDesc": "寄送郵件給我們，我們會盡快回覆"
+  },
+  "welcomeMessage": "您好！有什麼可以幫助您的嗎？",
+  "placeholder": "輸入消息...",
+  "send": "發送",
+  "loading": "載入中…",
+  "status": {
+    "pending": "排隊中，請稍候…",
+    "open": "客服已接入",
+    "closed": "會話已結束",
+    "closedInputHint": "會話已結束，如需協助請重新發起諮詢"
+  },
+  "emoji": {
+    "add": "插入表情"
+  },
+  "attachment": {
+    "add": "添加附件",
+    "uploading": "上傳中…",
+    "confirming": "處理中…",
+    "failed": "上傳失敗",
+    "tooLarge": "超過 {{limit}} 上限",
+    "retry": "重試",
+    "remove": "移除",
+    "download": "下載",
+    "limitType": "僅支援 JPG、PNG、PDF、Excel、Word、CSV、ZIP 格式",
+    "limitTypeGuest": "遊客僅支援 JPG、PNG、PDF 格式，登入後可傳送 Excel、Word、CSV、ZIP",
+    "limitCount": "最多上傳 {{count}} 個附件",
+    "queued": "等待上傳…",
+    "retryAfter": "{{seconds}} 秒後可重試",
+    "stage": {
+      "request": "無法開始上傳",
+      "upload": "上傳失敗",
+      "confirm": "無法完成上傳"
+    },
+    "reason": {
+      "offline": "目前離線，恢復連線後重試。",
+      "timeout": "上傳逾時，請重試。",
+      "connection": "連線失敗，請檢查網路後重試。",
+      "format": "不支援此檔案格式。",
+      "content": "檔案內容與格式不符。",
+      "size": "檔案過大。",
+      "identity": "對話身份已失效。",
+      "signature": "上傳連結已過期，重試即可取得新連結。",
+      "forbidden": "儲存服務拒絕了上傳，請重試或聯絡客服。",
+      "rateLimit": "請求過於頻繁。",
+      "quota": "附件額度已滿，移除其他檔案後重試。",
+      "storage": "檔案儲存暫時無法使用，請稍後重試。",
+      "unknown": "發生錯誤，請重試。"
+    }
+  },
+  "toast": {
+    "newMessageTitle": "客服新訊息",
+    "newMessageTitleWithCount": "客服新訊息（{{unread}}）",
+    "attachment": "[附件]",
+    "view": "查看",
+    "close": "關閉"
+  },
+  "errors": {
+    "sendFailed": "發送失敗，請重試",
+    "loadFailed": "載入失敗，請重試",
+    "offline": "網路異常，請檢查連線後重試",
+    "notSent": "未發送"
+  },
+  "connection": {
+    "reconnecting": "連線中斷，正在重新連線…",
+    "stale": "無法連線至伺服器，請重新整理頁面以接收最新消息。",
+    "refresh": "重新整理頁面",
+    "retry": "重試",
+    "restored": "已重新連線"
+  },
+  "guest": {
+    "unavailableTitle": "遊客對話已失效",
+    "unavailableDesc": "這個瀏覽器上的遊客身份已過期或失效。",
+    "unavailableHint": "原有遊客對話紀錄無法再查看。登入後可在帳號下聯絡客服，或開始新的遊客對話。",
+    "startNew": "開始新對話",
+    "merging": "正在把遊客對話同步到您的帳號…",
+    "mergeFailed": "遊客對話尚未同步到您的帳號。",
+    "mergeRetry": "重試",
+    "expiredTitle": "遊客對話已過期"
+  },
+  "blocked": {
+    "message": "目前暫時無法使用線上客服。"
+  }
+}

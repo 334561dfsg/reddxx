@@ -1,0 +1,85 @@
+{
+  "home": "Plateforme de trading d'actifs numériques",
+  "trade": "{{pair}} — Cours en direct & trading",
+  "auth": {
+    "login": "Connexion — Accédez à votre compte en toute sécurité",
+    "register": "Inscription — Commencez à trader des actifs numériques",
+    "forgotPassword": "Réinitialiser le mot de passe — Récupérez vite votre accès"
+  },
+  "legal": {
+    "about": "À propos",
+    "privacy": "Politique de confidentialité",
+    "riskDisclosure": "Avertissement sur les risques",
+    "agreement": "Conditions d'utilisation",
+    "regulation": "Informations réglementaires",
+    "regulatoryInformation": "Informations réglementaires",
+    "content": "Informations sur la plateforme"
+  },
+  "news": {
+    "index": "Actualités — Analyses de marché & annonces",
+    "detail": "Article d'actualité"
+  },
+  "charity": "Charité — Trader pour la bonne cause",
+  "aiQuant": {
+    "landing": "AI Quant — Stratégies & fonds quantitatifs",
+    "strategy": "Stratégies quantitatives — Trading automatisé",
+    "strategyMine": "Mes stratégies — Abonnements & performance",
+    "quantFund": "Fonds quantitatifs — Gestion professionnelle",
+    "quantFundDetail": "Produit de fonds quantitatif",
+    "quantFundPositions": "Mes positions en fonds quantitatifs",
+    "interestRecords": "Historique des gains du fonds quantitatif"
+  },
+  "c2c": {
+    "buy": "Achat C2C — Dépôt fiat rapide",
+    "sell": "Vente C2C — Retrait fiat sécurisé",
+    "orders": "Ordres C2C",
+    "orderDetail": "Détails de l'ordre C2C",
+    "paymentAccounts": "Moyens de paiement"
+  },
+  "copytrade": {
+    "index": "Copy trading — Suivez les meilleurs traders",
+    "trader": "Profil du trader"
+  },
+  "deposit": {
+    "index": "Dépôt — Alimentez votre compte en quelques minutes",
+    "history": "Historique des dépôts"
+  },
+  "withdraw": {
+    "index": "Retrait — Transférez vos actifs en sécurité",
+    "history": "Historique des retraits"
+  },
+  "earn": {
+    "simple": "Épargne flexible — Faites fructifier vos actifs",
+    "simpleDetail": "Détails du produit d'épargne",
+    "loan": "Prêt crypto — Empruntez sur vos actifs",
+    "loanBorrow": "Nouvel emprunt",
+    "loanMy": "Mes emprunts",
+    "loanLiquidations": "Historique des liquidations de prêts",
+    "myEarnings": "Mes gains"
+  },
+  "assets": {
+    "index": "Actifs — Tous vos soldes au même endroit",
+    "records": "Historique des fonds",
+    "transfer": "Transfert de fonds"
+  },
+  "user": {
+    "profile": "Centre de compte",
+    "survey": "Sondage",
+    "helpCenter": "Centre d'aide — FAQ & assistance",
+    "messages": "Messages",
+    "messageDetail": "Détails du message",
+    "promotionTasks": "Promotions — Missions bonus de dépôt",
+    "promotionTaskDetail": "Détails de la mission promotionnelle",
+    "referrals": "Parrainage — Partagez et gagnez des commissions",
+    "changePassword": "Modifier le mot de passe",
+    "devices": "Gestion des appareils",
+    "fundPassword": "Mot de passe des fonds",
+    "kyc": "Vérification d'identité",
+    "kycBasic": "Vérification de base",
+    "kycAdvanced": "Vérification avancée",
+    "bindEmail": "Associer un e-mail",
+    "bindPhone": "Associer un téléphone",
+    "twoFactor": "Authentification à deux facteurs (2FA)",
+    "jointAccount": "Compte joint"
+  }
+}

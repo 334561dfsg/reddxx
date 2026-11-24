@@ -1,0 +1,27 @@
+{
+  "ui": {
+    "unsavedContentUseCloseOrCancelToLeave": "Unsaved content. Use Close or Cancel to leave.",
+    "insufficientBalanceSwitchToDemoToTryThisLocally": "Insufficient balance. Switch to Demo to try this locally.",
+    "createdDemo": "Created (demo)",
+    "videoFailedToLoadTryAgainLater": "Video failed to load. Try again later.",
+    "welcomeToNewquantcapitalSupport": "Welcome to NewQuantCapital Support",
+    "message": "Message",
+    "describeYourIssue": "Describe your issue",
+    "messagesAreNotSentToTheOriginalSupportTeam": "Messages are not sent to the original support team.",
+    "demoMessageShownLocallyNothingWasSent": "Demo message shown locally. Nothing was sent.",
+    "thisLocalDemoDoesNotRequestWalletPermissionsOr": "This local demo does not request wallet permissions or signatures.",
+    "connectDemoWallet": "Connect demo wallet",
+    "localDemoAccountConnected": "Local demo account connected",
+    "noNewMessages": "No new messages",
+    "100000UsdMoreToReachVip1": "100,000 USD more to reach VIP 1",
+    "days": " days",
+    "orderQuantity": "Order quantity",
+    "localSimulation": " · Local simulation",
+    "orderSummary": "Order summary",
+    "daysLater": " days later",
+    "demoCompletedNoRealTransactionWasSent": "Demo completed. No real transaction was sent.",
+    "localInterfaceDemoNotConnectedToTheOriginalAccount": "Local interface demo. Not connected to the original account service.",
+    "confirmOrder": "Confirm order"
+  },
+  "amountMinimum": "Enter a valid amount of at least {{amount}}."
+}

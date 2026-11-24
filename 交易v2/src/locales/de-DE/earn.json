@@ -1,0 +1,410 @@
+{
+  "nav": {
+    "ariaLabel": "Navigation des Earn-Moduls",
+    "products": "Produkte",
+    "myEarnings": "Mein Earn",
+    "loan": "Kredit",
+    "myLoans": "Meine Kredite"
+  },
+  "header": {
+    "subtitle": "Passives Einkommen",
+    "title": "Earn",
+    "heroDescription": "Lassen Sie Ihre ungenutzten Assets arbeiten. Transparente Referenzrenditen – konzipiert für den langfristigen Halter, nicht den Daytrader.",
+    "myEarnings": "Meine Erträge"
+  },
+  "educational": {
+    "headline": "Verdienen Sie mit Ihrem ungenutzten Krypto.",
+    "chip": {
+      "apyUpTo": "APY bis zu {{value}} %",
+      "types": "Flexibel & fest",
+      "dailyRateUpTo": "Tageszins bis zu {{value}} %"
+    },
+    "cta": "Produkte erkunden"
+  },
+  "holdings": {
+    "totalHoldings": "Gesamtbestände",
+    "perDay": "+${{amount}}/Tag",
+    "cumulative": "Kumuliert",
+    "principal": "Kapital",
+    "accruedReward": "Aufgelaufen",
+    "dailyEstimated": "Täglich geschätzt",
+    "rewardsLast7d": "Letzte 7 Tage",
+    "nextRewardLabel": "Nächste Belohnung",
+    "nextReward": "in ~{{hours}} Std."
+  },
+  "table": {
+    "columns": {
+      "product": "Produkt",
+      "category": "Typ",
+      "term": "Laufzeit",
+      "minAmount": "Min.",
+      "totalSubscribed": "Gezeichnet",
+      "availableQuota": "Verfügbar",
+      "apy": "APY",
+      "action": "Aktion",
+      "dailyRate": "Tageszins"
+    }
+  },
+  "featured": {
+    "title": "Hervorgehobene Produkte",
+    "productCount": "{{count}} Produkte",
+    "totalSubscribed": "{{amount}} gezeichnet",
+    "quotaRemaining": "Nur noch {{amount}} übrig",
+    "subscribeNow": "Zeichnen"
+  },
+  "badge": {
+    "hot": "Beliebt",
+    "featured": "Empfohlen",
+    "exclusive": "Exklusiv",
+    "exclusiveHint": "Nur für ausgewählte Nutzer"
+  },
+  "apy": {
+    "label": "Gesch. APY",
+    "suffix": "APY",
+    "annualizedShort": "APY (p. a.)",
+    "approx": "≈ {{value}} % APY"
+  },
+  "actions": {
+    "subscribe": "Zeichnen",
+    "viewDetail": "Details anzeigen",
+    "redeem": "Einlösen"
+  },
+  "tabs": {
+    "all": "Alle",
+    "flexible": "Flexibel",
+    "fixed": "Fest",
+    "staking": "Staking"
+  },
+  "products": {
+    "count": "{{count}} Produkte",
+    "categoryFlex": "Flex",
+    "categoryFixed": "Fest",
+    "categoryStake": "Stake",
+    "min": "Min. {{amount}}",
+    "max": "Max. {{amount}}",
+    "totalSubscribed": "{{amount}} gezeichnet",
+    "termFlexible": "Flexibel",
+    "termFixed": "{{days}}T",
+    "minValue": "≥ {{value}} {{unit}}",
+    "minValueWithEstimate": "≥ {{value}} {{unit}} (≈ {{amount}} {{asset}})"
+  },
+  "sort": {
+    "highestApy": "Höchste APY",
+    "shortestTerm": "Kürzeste Laufzeit",
+    "mostPopular": "Beliebteste",
+    "highestDailyRate": "Höchster Tageszins"
+  },
+  "security": {
+    "footer": "Prüfen Sie vor der Zeichnung die Bedingungen und Rückgaberegeln jedes Produkts.",
+    "disclaimer": "Keine Finanzberatung. Renditen sind Schätzungen und können sich ändern."
+  },
+  "states": {
+    "retry": "Erneut versuchen",
+    "loading": "Wird geladen …",
+    "holdingsError": "Ihre Earn-Übersicht konnte nicht geladen werden.",
+    "productsError": "Earn-Produkte konnten nicht geladen werden.",
+    "productsEmpty": "Derzeit keine Earn-Produkte verfügbar.",
+    "detailError": "Produktdetails konnten nicht geladen werden.",
+    "myEarningsError": "Diese Liste konnte nicht geladen werden."
+  },
+  "productDetail": {
+    "title": "Produktdetails",
+    "back": "Zurück zu Earn",
+    "notFound": "Dieses Produkt ist nicht mehr verfügbar.",
+    "unlimited": "Unbegrenzt",
+    "keyFacts": {
+      "term": "Laufzeit",
+      "min": "Min. Zeichnung",
+      "max": "Max. Zeichnung",
+      "availableQuota": "Verfügbares Kontingent",
+      "totalSubscribed": "Insgesamt gezeichnet",
+      "perUserQuota": "Limit pro Nutzer",
+      "estAccrualStart": "Vorauss. Zinsbeginn",
+      "estMaturity": "Vorauss. Fälligkeit",
+      "accrualMode": "Verzinsungsmodus",
+      "accrualModeRolling": "24 h rollierend",
+      "accrualModeRollingHint": "Die Verzinsung beginnt mit der Ausführung deiner Order und läuft alle 24 Stunden weiter."
+    },
+    "risk": {
+      "title": "Risikohinweis",
+      "notGuaranteed": "Belohnungen sind nicht garantiert und können sich mit den Marktbedingungen ändern.",
+      "smartContract": "Bei staking-gestützten Produkten besteht ein Smart-Contract-Risiko.",
+      "earlyRedemption": "Vorzeitige Einlösung führt bei Festlaufzeit-Produkten zum Verfall aufgelaufener Belohnungen.",
+      "noEarlyRedemption": "Festlaufzeit-Produkte mit täglicher Auszahlung können nicht vorzeitig eingelöst werden.",
+      "earlyRedemptionPenalty": "Bei vorzeitiger Einlösung eines Festlaufzeitprodukts werden {{rate}} % Ihres Kapitals als Gebühr abgezogen. Es gilt der Satz zum Zeitpunkt Ihrer Zeichnung."
+    },
+    "exploreOthers": "Andere Produkte erkunden",
+    "disabled": {
+      "paused": "Die Zeichnung für dieses Produkt ist vorübergehend pausiert.",
+      "closed": "Dieses Produkt nimmt keine Zeichnungen mehr an.",
+      "soldOut": "Kontingent ausgeschöpft. Bitte schauen Sie später wieder vorbei.",
+      "subscriptionDisabled": "Zeichnungen sind derzeit deaktiviert."
+    },
+    "groups": {
+      "rules": "Zeichnungsregeln",
+      "quota": "Produktkontingent"
+    },
+    "quotaFilled": "{{percent}} % gezeichnet"
+  },
+  "subscribe": {
+    "title": "Zeichnen",
+    "amountLabel": "Betrag",
+    "amountPlaceholder": "Betrag eingeben",
+    "availableBalanceLabel": "Verfügbar",
+    "maxButton": "Max",
+    "goDeposit": "Zur Einzahlung",
+    "submit": "Zeichnung bestätigen",
+    "cancel": "Abbrechen",
+    "estDailyReward": "Geschätzte tägliche Belohnung",
+    "estMaturityReward": "Geschätzte Belohnung bei Fälligkeit",
+    "errors": {
+      "minAmount": "Die Mindestzeichnung beträgt {{amount}} {{asset}}.",
+      "maxAmount": "Die Höchstzeichnung beträgt {{amount}} {{asset}}.",
+      "availableQuota": "Es verbleiben nur noch {{amount}} {{asset}} Kontingent.",
+      "perUserQuota": "Das Limit pro Nutzer beträgt {{amount}} {{asset}}.",
+      "invalidAmount": "Bitte geben Sie einen gültigen Betrag ein.",
+      "insufficientBalance": "Verfügbares Guthaben reicht nicht aus – nur {{amount}} {{asset}} verfügbar.",
+      "priceChanged": "Der Preis hat sich geändert. Die aktuelle Mindestzeichnung beträgt {{amount}} {{asset}}.",
+      "unavailableAtCurrentPrice": "Zum aktuellen Preis ist keine Zeichnung möglich.",
+      "valuationPriceUnavailable": "Der Preis ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut."
+    },
+    "success": {
+      "title": "Zeichnung bestätigt",
+      "orderId": "Order {{id}}",
+      "viewHoldings": "Meine Bestände anzeigen"
+    },
+    "dates": {
+      "accrualStart": "Vorauss. Zinsbeginn",
+      "maturity": "Vorauss. Fälligkeit",
+      "settlement": "Vorauss. Gutschrift",
+      "reviewRequired": "Diese Zeichnung erfordert eine Prüfung. Die Verzinsung beginnt am Tag nach der Genehmigung.",
+      "rollingNote": "Die Verzinsung beginnt mit der Ausführung deiner Order und wird alle 24 Stunden gutgeschrieben. Bei Laufzeitprodukten werden Kapital und Zinsen rund 10 Minuten nach Fälligkeit automatisch ausgezahlt.",
+      "rollingReviewRequired": "Diese Zeichnung wird geprüft. Die Verzinsung beginnt unmittelbar nach der Freigabe."
+    },
+    "fillRequiredMin": "Übernehmen",
+    "estReward": "Geschätzte Belohnung",
+    "estRewardEmpty": "Betrag eingeben, um die geschätzte Belohnung zu sehen"
+  },
+  "redeem": {
+    "title": "Einlösen",
+    "subtitle": {
+      "flexible": "Flexiblen Bestand einlösen",
+      "fixedMatured": "Fällige Position einlösen",
+      "fixedEarly": "Vorzeitige Einlösung"
+    },
+    "redeemInFull": "Vollständig einlösen",
+    "redeemPartial": "Teilweise Einlösung",
+    "amountLabel": "Einlösebetrag",
+    "redeemAll": "Alles einlösen",
+    "principal": "Kapital",
+    "remainingPrincipal": "Verbleibendes Kapital",
+    "continueAccrue": "Das verbleibende Kapital erzielt weiterhin Belohnungen.",
+    "eligibleReward": "Anrechenbare Belohnung",
+    "fundingNote": "Mittel werden Ihrem Funding-Konto gutgeschrieben.",
+    "warning": {
+      "fixedEarly": "Vorzeitige Einlösung: Die anrechenbare Belohnung beträgt 0. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "fixedEarlyPenalty": "Vorzeitige Einlösung: Von Ihrem Kapital wird eine Gebühr abgezogen und die anrechenbare Belohnung beträgt 0. Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "submit": "Einlösung bestätigen",
+    "cancel": "Abbrechen",
+    "errors": {
+      "disabled": "Vorzeitige Einlösung ist für dieses Produkt nicht zulässig.",
+      "exceedsPrincipal": "Der Betrag darf das Kapital {{amount}} {{asset}} nicht überschreiten.",
+      "holdingInactive": "Dieser Bestand ist nicht aktiv und kann nicht eingelöst werden.",
+      "invalidAmount": "Bitte geben Sie einen gültigen Betrag ein.",
+      "awaitingFinalCoupon": "Die Zinsen des letzten Tages werden noch gutgeschrieben. Kapital und Zinsen gehen automatisch ein – keine Aktion erforderlich. Sie können es auch in einigen Minuten erneut versuchen.",
+      "dailyPayoutNoEarly": "Festlaufzeit-Positionen mit täglicher Auszahlung können nicht vorzeitig eingelöst werden.",
+      "penaltyChanged": "Die Höhe der Gebühr hat sich geändert. Prüfen Sie den neuen Betrag und bestätigen Sie erneut."
+    },
+    "success": {
+      "title": "Einlösung bestätigt",
+      "id": "Einlösung {{id}}",
+      "viewRedemptions": "Einlösungen anzeigen",
+      "done": "Bestätigen",
+      "penalty": "Abgezogene Gebühr",
+      "received": "Gutgeschriebener Betrag"
+    },
+    "confirm": {
+      "title": "Aufgelaufene Belohnungen verfallen lassen?",
+      "body": "Die vorzeitige Einlösung führt zum Verfall aller aufgelaufenen Belohnungen (~{{amount}} {{asset}}). Diese Aktion ist unwiderruflich.",
+      "youReceive": "Sie erhalten",
+      "youForfeit": "Sie verlieren",
+      "cancel": "Abbrechen",
+      "acknowledge": "Ich verstehe, vorzeitig einlösen",
+      "penaltyTitle": "Gebühr für vorzeitige Einlösung bestätigen",
+      "penaltyBody": "Bei vorzeitiger Einlösung wird eine Gebühr von {{amount}} {{asset}} ({{rate}} % Ihres Kapitals) abgezogen, und alle aufgelaufenen Belohnungen verfallen. Diese Aktion ist unwiderruflich.",
+      "acknowledgePenalty": "Gebühr akzeptieren und vorzeitig einlösen"
+    },
+    "dailyPaidOut": "Bereits periodisch in Ihre Wallet ausgezahlt",
+    "penalty": "Gebühr für vorzeitige Einlösung ({{rate}} %)",
+    "estimatedReceive": "Voraussichtliche Gutschrift"
+  },
+  "myEarnings": {
+    "title": "Meine Erträge",
+    "table": {
+      "productName": "Produkt",
+      "asset": "Asset",
+      "principal": "Kapital",
+      "accruedInterest": "Aufgelaufene Zinsen",
+      "term": "Laufzeit / Fälligkeit",
+      "status": "Status",
+      "action": "Aktion",
+      "amount": "Betrag",
+      "subscribedQuantity": "Zeichnungsmenge",
+      "subscribedAt": "Gezeichnet am",
+      "completedAt": "Abgeschlossen am",
+      "redemptionType": "Typ",
+      "eligibleReward": "Anrechenbare Belohnung",
+      "createdAt": "Erstellt am",
+      "rewardAmount": "Belohnung",
+      "rewardDate": "Belohnungsdatum",
+      "paidAt": "Bezahlt am",
+      "dailyRate": "Tageszins"
+    },
+    "summary": {
+      "totalValue": "Gesamtwert",
+      "principal": "Kapital",
+      "accruedReward": "Aufgelaufene Belohnung",
+      "cumulativeReward": "Kumulierte Belohnung",
+      "dailyEstimatedReward": "Geschätzt pro Tag",
+      "earningsTrend": "Ertragsverlauf über {{days}} Tage",
+      "usdNote": "Die untenstehenden Beträge werden in USD-Äquivalent angezeigt"
+    },
+    "tabs": {
+      "holdings": "Bestände",
+      "orders": "Orders",
+      "redemptions": "Einlösungen",
+      "rewards": "Belohnungen"
+    },
+    "filter": {
+      "asset": "Asset",
+      "all": "Alle Assets",
+      "status": "Status"
+    },
+    "holdings": {
+      "subscribedQuantity": "Zeichnungsmenge",
+      "accruedInterest": "Aufgelaufen",
+      "paidReward": "Bezahlt",
+      "daysRemaining": "{{days}}T verbleibend",
+      "matured": "Fällig",
+      "flexible": "Flexibel",
+      "redeemCta": "Einlösen",
+      "maturityCountdownLabel": "Fällig in",
+      "readyToRedeem": "Bereit zur Einlösung",
+      "subscribedAt": "Gezeichnet",
+      "startedAt": "Gestartet",
+      "maturityAt": "Fälligkeit",
+      "lastAccruedAt": "Zuletzt aufgelaufen",
+      "nextAccrualLabel": "Nächste Zinsgutschrift",
+      "settlementEtaLabel": "Gutschrift in",
+      "settlingLabel": "Wird gutgeschrieben…",
+      "countdownDaysHoursMinutes": "{{days}} T {{hours}} Std {{minutes}} Min",
+      "accrualStartDate": "Zinsbeginn",
+      "maturityDate": "Fälligkeitsdatum",
+      "settlementDate": "Voraus. Abrechnungsdatum",
+      "accrualStartTime": "Zinsbeginn",
+      "maturityTime": "Fälligkeit",
+      "settlementEtaTime": "Voraussichtliche Gutschrift",
+      "paidToWallet": "An Wallet ausgezahlt"
+    },
+    "orders": {
+      "subscribedAt": "Gezeichnet am",
+      "completedAt": "Abgeschlossen am",
+      "amount": "Betrag",
+      "valueUsd": "≈ {{value}} USD"
+    },
+    "redemptions": {
+      "createdAt": "Angefordert am",
+      "completedAt": "Abgeschlossen am",
+      "amount": "Betrag",
+      "eligibleReward": "Anrechenbare Belohnung",
+      "penalty": "Gebühr"
+    },
+    "rewards": {
+      "rewardDate": "Belohnungsdatum",
+      "amount": "Betrag",
+      "paidAt": "Bezahlt am"
+    },
+    "status": {
+      "active": "Aktiv",
+      "redeeming": "Wird eingelöst",
+      "redeemed": "Eingelöst",
+      "matured": "Fällig",
+      "pending": "Ausstehend",
+      "completed": "Abgeschlossen",
+      "failed": "Fehlgeschlagen",
+      "pending_review": "In Prüfung",
+      "rejected": "Abgelehnt",
+      "accrued": "Aufgelaufen",
+      "paid": "Bezahlt"
+    },
+    "redemptionType": {
+      "flexiblePartial": "Flex · Teilweise",
+      "flexibleFull": "Flex · Voll",
+      "fixedMatured": "Fest · Fällig",
+      "fixedEarly": "Fest · Vorzeitig"
+    },
+    "empty": {
+      "holdings": "Noch keine Bestände. Zeichnen Sie ein Produkt, um Erträge zu erzielen.",
+      "orders": "Noch keine Zeichnungs-Orders.",
+      "redemptions": "Noch keine Einlösungen.",
+      "rewards": "Noch keine Belohnungen.",
+      "browseProducts": "Produkte durchsuchen"
+    },
+    "loadMore": "Mehr laden",
+    "redeemDisabledTooltip": "Vorzeitige Einlösung ist für dieses Produkt nicht zulässig."
+  },
+  "errors": {
+    "INSUFFICIENT_BALANCE": "Unzureichendes Guthaben.",
+    "QUOTA_EXHAUSTED": "Produktkontingent ausgeschöpft.",
+    "PRODUCT_NOT_AVAILABLE": "Dieses Produkt ist derzeit nicht verfügbar.",
+    "PER_USER_QUOTA_EXCEEDED": "Limit pro Nutzer erreicht.",
+    "AMOUNT_OUT_OF_RANGE": "Der Betrag liegt außerhalb des zulässigen Bereichs.",
+    "HOLDING_NOT_REDEEMABLE": "Dieser Bestand kann nicht eingelöst werden.",
+    "EARLY_REDEMPTION_NOT_ALLOWED": "Vorzeitige Einlösung ist nicht zulässig.",
+    "IDEMPOTENCY_CONFLICT": "Doppelte Anfrage erkannt. Bitte aktualisieren und erneut versuchen.",
+    "UNKNOWN": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+  },
+  "loan": {
+    "subtitle": "On-Chain-Kredit",
+    "title": "Kredit",
+    "description": "Leihen Sie Stablecoins gegen Ihre Bestände, ohne zu verkaufen. Überbesicherte Positionen, transparente Liquidationsschwellen und Rückzahlung rund um die Uhr – bald bei {{brand}}.",
+    "comingSoon": "Demnächst verfügbar",
+    "disclaimer": "Transparente Liquidation"
+  },
+  "dailyRate": {
+    "label": "Gesch. Tageszins",
+    "suffix": "Tageszins"
+  },
+  "payoutMode": {
+    "label": "Auszahlung der Belohnungen",
+    "daily": "Täglich in Ihre Wallet ausgezahlt",
+    "at_end": "Vollständig bei Fälligkeit oder Einlösung ausgezahlt",
+    "dailyBadge": "Tägliche Auszahlung"
+  },
+  "timeline": {
+    "title": "Zeitplan",
+    "steps": {
+      "subscribe": "Zeichnung",
+      "accrualStart": "Zinsbeginn",
+      "maturity": "Fälligkeit",
+      "settlement": "Gutschrift",
+      "redeem": "Rückgabe"
+    },
+    "values": {
+      "now": "Jetzt",
+      "onOrder": "Mit Ausführung der Order",
+      "afterReview": "Am Tag nach der Genehmigung",
+      "afterReviewRolling": "Nach der Freigabe",
+      "afterDays": "{{days}} Tage nach Zinsbeginn",
+      "settleRolling": "Rund 10 Minuten nach Fälligkeit",
+      "redeemAnytime": "Jederzeit"
+    },
+    "accruingDays": "Verzinsung über {{days}} Tage",
+    "accruingDaily": "Tägliche Verzinsung",
+    "rollingRule": "Verzinsung alle 24 Stunden"
+  },
+  "maturityAfterDays": "{{count}} Tage nach Zinsbeginn",
+  "productName": "{{symbol}} {{term}}",
+  "fixedTermName": "Festanlage für {{count}} Tage"
+}

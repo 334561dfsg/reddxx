@@ -1,0 +1,567 @@
+{
+  "landing": {
+    "eyebrow": "AI クオント",
+    "title": "AI に取引を任せるか、運用ファンドに託す",
+    "subtitle": "独立した 2 つのプロダクトライン。まず一つ選んでください。いつでも切り替えられます。",
+    "strategy": {
+      "kicker": "AI エンジン · 自動実行",
+      "name": "ストラテジー",
+      "valueProp": "検証済みテンプレートに基づき、AI エンジンが自動で発注・取引します。テンプレートを選べば、あとはエンジンが実行します。",
+      "chipA": "バックテスト済み",
+      "chipB": "リスク上限",
+      "browse": "ストラテジーを見る",
+      "mine": "マイストラテジー",
+      "mineHint": "個人 · 稼働中のインスタンス"
+    },
+    "quantFund": {
+      "kicker": "AI 運用 · ほったらかし",
+      "name": "クオントファンド",
+      "valueProp": "AI が運用する定期型ファンド。申し込むだけで、満期時に自動で決済されます。",
+      "chipA": "定期",
+      "chipB": "自動決済",
+      "browse": "ファンドを見る",
+      "mine": "マイポジション",
+      "mineHint": "個人 · 申込と利息"
+    }
+  },
+  "nav": {
+    "ariaLabel": "AIクオントモジュールナビゲーション",
+    "strategy": "ストラテジー",
+    "myStrategies": "マイストラテジー",
+    "quantFund": "クオントファンド",
+    "myPositions": "マイポジション"
+  },
+  "myStrategies": {
+    "subtitle": "稼働中のAIストラテジー",
+    "title": "マイストラテジー",
+    "empty": "まだストラテジーを購読していません。テンプレートを見て始めましょう。",
+    "browseStrategies": "テンプレートを見る",
+    "summary": {
+      "totalCapital": "投資総額",
+      "totalPnl": "合計損益",
+      "running": "稼働中",
+      "total": "ストラテジー数"
+    }
+  },
+  "table": {
+    "columns": {
+      "strategyName": "ストラテジー",
+      "styleMarket": "スタイル / マーケット",
+      "trend": "損益推移",
+      "pnl": "損益",
+      "capital": "資金",
+      "endDate": "終了",
+      "action": "操作"
+    }
+  },
+  "hero": {
+    "subtitle": "AIクオント",
+    "title": "すべてのトレーダーにクオントの力を。",
+    "description": "数百のAI搭載ストラテジー、透明性の高いリスクパラメータ、そしてあらゆる意思決定を完全にコントロール。テンプレートを購読し、上限を設定して、計算に重労働を任せましょう。",
+    "browseStrategies": "ストラテジーを見る",
+    "howItWorks": "仕組み",
+    "modelsRunning": "稼働中のモデル · 24/7",
+    "statActive": "稼働中",
+    "statActiveSub": "現在稼働中のストラテジー",
+    "statActiveFallback": "利用可能なテンプレート",
+    "statActiveFallbackSub": "購読可能なストラテジー数",
+    "statAvgSharpe": "シャープレシオ中央値",
+    "statAvgSharpeSub": "掲載テンプレート全体の中央値"
+  },
+  "howItWorks": {
+    "title": "AIクオントの仕組み",
+    "description": "ストラテジーがどのように構築、バックテスト、運用されるかの簡単な説明。",
+    "empty": "紹介動画は現在ご利用いただけません。後ほどお試しください。",
+    "unsupported": "お使いのブラウザはvideoタグに対応していません。"
+  },
+  "sections": {
+    "featured": "本日の注目",
+    "live": "ライブパフォーマンス",
+    "browse": "ストラテジーを見る"
+  },
+  "spotlight": {
+    "subtitle": "保守・バランス・アグレッシブの各スタイルから、シャープレシオ最高の1本を厳選。そのまま購読できます。",
+    "styleBadge": {
+      "conservative": "堅実派に",
+      "balanced": "バランス派に",
+      "aggressive": "積極派に"
+    },
+    "subscribeNow": "今すぐ購読"
+  },
+  "templates": {
+    "label": "ストラテジーテンプレート",
+    "title": "ストラテジーテンプレート",
+    "subtitle": "各テンプレートは、公開されたリスクとリターンの指標を持つ実証済みAIモデルで稼働します。",
+    "recommendedTitle": "おすすめ",
+    "filterAll": "すべて",
+    "filterByStyle": "スタイル",
+    "filterByMarket": "マーケット",
+    "empty": "フィルタに一致するストラテジーはまだありません。",
+    "loading": "ストラテジーを読み込み中…",
+    "subscribe": "購読",
+    "sortBy": {
+      "label": "並べ替え",
+      "sharpe_desc": "シャープレシオ · 高い順",
+      "sharpe_asc": "シャープレシオ · 低い順",
+      "winRate_desc": "勝率 · 高い順",
+      "winRate_asc": "勝率 · 低い順",
+      "minCapital_desc": "最低資金 · 高い順",
+      "minCapital_asc": "最低資金 · 低い順",
+      "period_desc": "期間 · 長い順",
+      "period_asc": "期間 · 短い順"
+    },
+    "fields": {
+      "winRate": "勝率",
+      "sharpeRatio": "シャープレシオ",
+      "aiModel": "AIモデル",
+      "tradesPerDay": "取引数 / 日",
+      "tradesPerDayValue": "1日平均 {{n}} 回",
+      "capital": "資金 ({{asset}})",
+      "period": "期間",
+      "riskLevel": "リスク",
+      "supportedSymbols": "銘柄"
+    },
+    "riskLevelValue": "Lv.{{level}}",
+    "guideCard": {
+      "title": "ぴったりのストラテジーが見つかりませんか？",
+      "description": "AIにすべてお任せできるクオントファンドもご覧ください。購読後の見守りは不要で、満期に自動精算されます。",
+      "cta": "クオントファンドを見る"
+    }
+  },
+  "style": {
+    "conservative": "保守的",
+    "balanced": "バランス型",
+    "aggressive": "積極的"
+  },
+  "market": {
+    "crypto": "暗号資産",
+    "stock": "株式",
+    "forex": "外国為替",
+    "indices": "株価指数"
+  },
+  "aiModelNames": {
+    "local": "自社開発クオントモデル"
+  },
+  "detail": {
+    "title": "ストラテジーの詳細",
+    "close": "閉じる",
+    "openAria": "「{{name}}」の詳細を見る",
+    "descriptionTitle": "ストラテジーについて",
+    "paramsTitle": "主要パラメータ",
+    "periodValue": "{{min}} – {{max}} 日",
+    "dailyTargetLabel": "日次目標リターン",
+    "dailyTargetValue": "{{percent}}%/日",
+    "explain": {
+      "sharpeRatio": "リスク1単位あたりに得られたリターンを示し、高いほどリスク調整後のパフォーマンスが優れています。",
+      "winRate": "過去の取引のうち利益で終えた割合です。",
+      "riskLevel": "プラットフォームによる変動・ドローダウンの等級で、高いほど値動きが大きくなります。"
+    }
+  },
+  "strategies": {
+    "label": "マイストラテジー",
+    "title": "マイストラテジー",
+    "subtitle": "アカウントで購読中のすべてのストラテジーをリアルタイムで表示。",
+    "trendPlaceholder": "パフォーマンス推移は近日公開",
+    "empty": "まだアクティブなストラテジーがありません。テンプレートを選んで始めましょう。",
+    "loginRequired": "ストラテジーを管理するにはサインインしてください。",
+    "fields": {
+      "capital": "資金",
+      "pnl": "損益",
+      "returnPercent": "リターン",
+      "period": "期間",
+      "tradesCount": "取引数",
+      "winRate": "勝率",
+      "endDate": "終了"
+    }
+  },
+  "status": {
+    "initializing": "初期化中",
+    "running": "稼働中",
+    "paused": "一時停止",
+    "completed": "完了",
+    "pending_review": "審査中",
+    "rejected": "却下"
+  },
+  "actions": {
+    "pause": "一時停止",
+    "resume": "再開",
+    "stop": "停止",
+    "viewStats": "統計を見る",
+    "hideStats": "統計を閉じる",
+    "toast": {
+      "pauseSuccess": "戦略を一時停止しました",
+      "pauseError": "戦略を一時停止できませんでした。もう一度お試しください。",
+      "resumeSuccess": "戦略を再開しました",
+      "resumeError": "戦略を再開できませんでした。もう一度お試しください。",
+      "stopSuccess": "戦略を停止しました",
+      "stopError": "戦略を停止できませんでした。もう一度お試しください。"
+    },
+    "stopConfirm": {
+      "title": "この戦略を停止しますか?",
+      "notice": "停止すると「{{name}}」のすべての建玉が決済され、戦略が終了します。実現損益は保持されますが、この操作は元に戻せません。",
+      "cancel": "運用を続ける",
+      "confirm": "戦略を停止",
+      "confirming": "停止中…"
+    }
+  },
+  "create": {
+    "title": "{{name}} を購読",
+    "subtitle": "資金、ストップロス、利益確定、期間を設定します。",
+    "subtitleDailyTarget": "元本と運用期間を設定してください。このテンプレートは固定の日次目標リターンで運用されるため、利確／損切りの設定は不要です。",
+    "demoNotice": "デモモード:証拠金はシミュレーション口座から確保され、実資金は使用されません。",
+    "capitalLabel": "資金 ({{asset}})",
+    "availableBalanceLabel": "利用可能",
+    "maxButton": "最大",
+    "capitalHint": "範囲: {{min}} – {{max}}",
+    "takeProfitLabel": "利益確定 (%)",
+    "stopLossLabel": "ストップロス (%)",
+    "periodLabel": "期間 (日)",
+    "periodHint": "範囲: {{min}} – {{max}} 日",
+    "submit": "購読",
+    "submitting": "送信中…",
+    "cancel": "キャンセル",
+    "submitSuccess": "購読が完了しました",
+    "fees": {
+      "title": "手数料とルール",
+      "feePerTrade": "取引ごとの手数料",
+      "feePerTradeValue": "{{fee}} {{asset}}",
+      "maxOpenTrades": "最大同時ポジション数",
+      "maxOpenTradesValue": "{{n}} 件"
+    },
+    "settlementNote": "ストラテジーはいつでも途中で終了できます。終了すると保有ポジションがすべて決済されてストラテジーが終了し、実現損益は口座に残ります。",
+    "simulator": {
+      "title": "想定利益シミュレーション",
+      "params": "{{rate}}%/日 ±{{tolerance}}% · 日次複利",
+      "range": "シミュレーション範囲：{{lower}} – {{upper}}",
+      "legendExpected": "想定",
+      "legendBand": "変動レンジ",
+      "tooltipDay": "{{day}}日目",
+      "tooltipExpected": "想定",
+      "tooltipUpper": "上限",
+      "tooltipLower": "下限",
+      "emptyHint": "元本と期間を入力するとシミュレーションを表示します。",
+      "disclaimer": "本シミュレーションはテンプレートの日次目標と許容幅を日次複利で試算した参考値であり、収益を保証するものではありません。"
+    },
+    "errors": {
+      "capitalRequired": "資金額を入力してください。",
+      "belowMin": "資金は最低 {{min}} 必要です。",
+      "aboveMax": "資金は {{max}} 以下である必要があります。",
+      "emptyRange": "このテンプレートは現在、お客様のアカウントではご利用いただけません。",
+      "periodOutOfRange": "期間は {{min}} から {{max}} 日の間で設定してください。",
+      "takeProfitOutOfRange": "利益確定は1%から100%の間で設定してください。",
+      "stopLossOutOfRange": "ストップロスは1%から50%の間で設定してください。",
+      "createFailed": "ストラテジーの作成に失敗しました。もう一度お試しください。",
+      "badRequest": "リクエストが拒否されました。入力内容をご確認ください。",
+      "unauthorized": "ストラテジーを作成するにはサインインしてください。",
+      "paymentRequired": "残高が不足しています。このストラテジーを作成する前にチャージしてください。",
+      "notFound": "このストラテジーテンプレートはご利用いただけなくなりました。",
+      "conflict": "競合するストラテジーがすでに稼働中です。停止するか、終了をお待ちください。",
+      "validation": "一部のフィールドが無効なようです。確認してもう一度お試しください。"
+    }
+  },
+  "dailyStats": {
+    "netPnl": "純損益",
+    "tradesLabel": "取引回数",
+    "activeDays": "取引日数",
+    "date": "日付",
+    "pnl": "損益",
+    "loss": "損失",
+    "profit": "利益",
+    "empty": "この期間に決済済みの取引はまだありません。",
+    "rangeCaption": "{{range}} · UTC",
+    "showingLatest": "直近 {{shown}} / 全 {{total}} 日を表示"
+  },
+  "risk": {
+    "title": "リスク通知",
+    "body": "過去の実績は将来の結果を保証するものではありません。AIストラテジーとシグナルは参考ツールであり、投資助言ではありません。暗号資産および先物取引は残高をすべて失う可能性があります。失っても問題ない範囲でのみ取引してください。"
+  },
+  "quantFund": {
+    "title": "クオントファンド",
+    "hero": {
+      "subtitle": "AI運用のクオントファンド",
+      "title": "クオントファンド — AI運用の確定期間利回り",
+      "description": "AIクオントブックが運用する確定期間商品。定められた期間ロックし、日次利回りで利息を蓄積、満期時に決済を自動で実行します。",
+      "disclaimer": "AI運用 · 確定期間決済",
+      "viewPositionsCta": "マイポジション"
+    },
+    "filters": {
+      "assetAll": "すべての資産"
+    },
+    "card": {
+      "dailyReturn": "日次利回り",
+      "term": "期間",
+      "termDaysValue": "{{days}} 日",
+      "termFlexible": "フレキシブル",
+      "investmentLimit": "購読範囲 ({{currency}})",
+      "availableQuota": "利用可能枠",
+      "subscribedDisplayed": "購読済み",
+      "projectProgress": "プロジェクト進捗",
+      "maxUnlimited": "無制限",
+      "tagFlexible": "フレキシブル",
+      "tagRedeemable": "いつでも償還可能",
+      "cta": "購読",
+      "ctaSoldOut": "枠が満了しました"
+    },
+    "creditScore": {
+      "label": "最低信用スコア",
+      "requirement": "信用スコア {{score}} 以上",
+      "insufficient": "信用スコア {{required}} 以上が必要です。現在のスコア:{{current}}"
+    },
+    "detail": {
+      "investmentRange": "購読範囲",
+      "minHoldDays": "最低保有 {{days}} 日",
+      "subscribeCta": "今すぐ購読",
+      "disclosure": "開示文書",
+      "calcTitle": "収益シミュレーター",
+      "calcDaysLabel": "保有日数",
+      "calcEstTotal": "推定総収益",
+      "calcDisclaimer": "試算結果は参考値であり、収益を保証するものではありません。",
+      "calcAccrualNote": "保有 {{days}} 日未満では収益は発生しません。",
+      "flowTitle": "ご利用の流れ",
+      "flowStep1Title": "購読",
+      "flowStep1Desc": "金額を選択し、資金アカウントの残高で購読を確定します。",
+      "flowStep2Title": "利息計算開始",
+      "flowStep2Desc": "購読確定後に収益の計算が始まります。",
+      "flowStep3Title": "収益の支払い",
+      "flowStep3Desc": "収益は定期的に精算され、アカウントに入金されます。",
+      "flowStep4Title": "償還",
+      "flowStep4DescFixed": "満期時に元本と収益が自動的に返還されます。",
+      "flowStep4DescFlexible": "いつでも償還可能。資金は資金アカウントに返還されます。",
+      "quotaTitle": "枠の詳細",
+      "quotaTotal": "総枠",
+      "quotaPerUser": "1ユーザー上限",
+      "moreTitle": "その他の商品"
+    },
+    "riskLevel": {
+      "LOW": "低リスク",
+      "MEDIUM": "中リスク",
+      "HIGH": "高リスク",
+      "EXTREME": "極めて高いリスク"
+    },
+    "subscribe": {
+      "title": "{{name}} を購読",
+      "amountLabel": "金額 ({{currency}})",
+      "amountHint": "範囲: {{min}} – {{max}} {{currency}}",
+      "availableBalanceLabel": "利用可能",
+      "maxButton": "最大",
+      "estDailyEarnings": "推定日次収益",
+      "riskAckPrefix": "私は次の内容を読み、同意します ",
+      "riskAckLink": "クオントファンドのリスク開示",
+      "riskAckSuffix": " 本商品について。",
+      "submit": "購読を確定",
+      "submitting": "送信中…",
+      "cancel": "キャンセル",
+      "errorAmountRange": "金額は {{min}} から {{max}} {{currency}} の間である必要があります。",
+      "errorAmountInvalid": "有効な金額を入力してください。",
+      "errorExceedsAvailable": "金額が残りの枠を超えています。残り {{available}} {{currency}} のみです。金額を調整してください。",
+      "errorInsufficientBalance": "利用可能残高が不足しています。利用可能額は {{available}} {{currency}} です。",
+      "goDeposit": "入金する",
+      "errorRequireRiskAck": "続行する前にリスク通知に同意してください。",
+      "success": "購読が確定しました",
+      "close": "閉じる"
+    },
+    "redeem": {
+      "button": "償還",
+      "title": "注文を償還",
+      "confirmNotice": "利息は実際の保有日数に応じて発生します。最低 {{minHoldDays}} 日未満の保有では利息は発生しません。最終金額は決済時に確定します。",
+      "confirmNoticeNoMin": "利息は実際の保有日数に応じて発生します。最終金額は決済時に確定します。",
+      "reviewNotice": "この償還には審査が必要です。送信後、管理者の承認を経てから支払われます。それまで元本はファンド内に留まり利息が発生し続けます。",
+      "confirm": "償還を確定",
+      "submitting": "送信中…",
+      "cancel": "キャンセル",
+      "resultTitle": "償還が完了しました",
+      "pendingTitle": "償還申請を送信しました",
+      "pendingDescription": "償還は審査待ちです。承認されるまで、元本はファンド内に留まり利息が発生し続けます。",
+      "settledPrincipal": "決済元本",
+      "settledInterest": "決済利息",
+      "heldDaysLabel": "保有期間",
+      "heldDays": "{{days}} 日",
+      "fundsReturned": "元本と利息がファンディングアカウントに返還されました。",
+      "done": "完了",
+      "confirmNoticeEarlyRedeem": "これはロック期間のある商品です。早期償還では残りのロック日数に応じて違約金が差し引かれます。最終金額は決済時に確定します。",
+      "penaltyAmount": "早期償還違約金",
+      "remainingLockDays": "残りロック期間",
+      "remainingLockDaysValue": "{{days}} 日",
+      "notSupported": "早期償還は対応していません",
+      "needVip": "早期償還には VIP {{tier}} が必要です",
+      "penaltyEstimate": "違約金（予想）"
+    },
+    "topUp": {
+      "button": "追加する",
+      "title": "申込金額を追加",
+      "description": "追加して審査を再開",
+      "countdownLabel": "補足期限",
+      "countdownDaysHours": "{{days}}日 {{hours}}時間",
+      "countdownDaysHoursMinutes": "{{days}}日 {{hours}}時間 {{minutes}}分",
+      "expired": "期限切れ",
+      "overdue": "期限超過",
+      "overdueDays": "{{days}}日超過",
+      "deadlineNotice": "期限までに補足されない場合、注文は自動的にキャンセルされ、元本の保留が解除されます。",
+      "lateFeeDeadlineNotice": "期限までに追加入金がない場合、お客様のアカウントに延滞金が発生します。",
+      "lockedNotice": "追加入金と辞退の受付は終了しました。延滞金のお支払いはサポートへご連絡ください。",
+      "contactSupport": "サポートに連絡",
+      "noticeWithTarget": "審査担当者がこの注文の目標金額を {{target}} {{currency}} に設定しました。以下で差額を追加して審査を再開してください。",
+      "noticeGeneric": "審査担当者がこの注文の目標金額を調整しました。確認すると差額を追加して審査を再開します。",
+      "currentPrincipal": "現在の金額",
+      "targetAmount": "目標金額",
+      "shortfall": "追加が必要な金額",
+      "availableBalanceLabel": "利用可能",
+      "errorInsufficientBalance": "残高が不足しているため追加できません。",
+      "goDeposit": "入金する",
+      "confirm": "追加を確定",
+      "submitting": "処理中…",
+      "cancel": "キャンセル",
+      "resultTitle": "追加が完了しました",
+      "resultPrincipal": "新しい申込金額",
+      "resultProjectedInterest": "予想利息",
+      "resultStatusNotice": "ご注文は再び審査中です。",
+      "done": "完了"
+    },
+    "decline": {
+      "button": "拒否する",
+      "title": "調整を拒否",
+      "notice": "拒否するとこの注文はキャンセルされ、{{principal}} {{currency}} が利用可能残高に返却されます。この操作は取り消せません。",
+      "reasonLabel": "理由（任意）",
+      "reasonPlaceholder": "理由をお聞かせください（任意）",
+      "confirm": "拒否して注文をキャンセル",
+      "submitting": "処理中…",
+      "cancel": "注文を維持",
+      "resultTitle": "注文をキャンセルしました",
+      "resultReleased": "残高に返却",
+      "resultNotice": "資金は利用可能残高に返却されました。",
+      "done": "完了"
+    },
+    "positions": {
+      "title": "マイクオントファンドポジション",
+      "subtitle": "アカウント内のすべてのクオントファンド注文と決済状況。",
+      "tabs": {
+        "all": "すべて",
+        "active": "アクティブ",
+        "pending_review": "審査中",
+        "redeem_pending_review": "償還審査中",
+        "awaiting_top_up": "追加入金待ち",
+        "rejected": "却下",
+        "settled": "決済済み",
+        "cancelled": "キャンセル済み",
+        "redeemed": "償還済み"
+      },
+      "tabGroups": {
+        "all": "すべて",
+        "pending": "処理中",
+        "active": "アクティブ",
+        "history": "履歴"
+      },
+      "historyFilter": {
+        "all": "すべてのステータス"
+      },
+      "summary": {
+        "totalPrincipal": "元本合計",
+        "totalProjectedInterest": "予想利息",
+        "activeInterestPaidTotal": "支払済み利息（保有中）",
+        "settledTotalReceived": "決済受取合計",
+        "activeCount": "アクティブ注文",
+        "breakdownToggle": "資産別内訳",
+        "interestProgress": "利息進捗 {{percent}}%",
+        "earningsTrend": "直近 {{days}} 日間の利息推移",
+        "usdPrice": "@ {{price}} USD",
+        "partialValuation": "{{assets}} のUSD価格が取得できないため、合計には評価可能な資産のみ含まれます。"
+      },
+      "empty": "このタブにはまだ注文がありません。",
+      "table": {
+        "status": "ステータス",
+        "productName": "商品",
+        "principal": "元本",
+        "dailyReturn": "日次利回り",
+        "term": "期間",
+        "projectedInterest": "予想利息",
+        "interestPaidTotal": "支払利息",
+        "interestPaidThrough": "支払済み日",
+        "interestRemaining": "未払分",
+        "accruedInterestEstimate": "見込み",
+        "subscribedAt": "購読日",
+        "maturityDate": "満期",
+        "action": "操作"
+      },
+      "maturityPending": "承認後に確定",
+      "fields": {
+        "productName": "商品",
+        "principal": "元本",
+        "dailyReturn": "日次利回り",
+        "term": "期間",
+        "projectedInterest": "予想利息",
+        "interestPaidTotal": "支払利息",
+        "interestPaidThrough": "利息支払済み日",
+        "interestRemaining": "未払利息",
+        "accruedInterestEstimate": "見込み利息",
+        "minHoldDays": "最低保有期間",
+        "subscribedAt": "購読日",
+        "maturityDate": "満期",
+        "settledAt": "決済日時",
+        "settledInterest": "決済利息",
+        "settledPrincipal": "決済元本",
+        "settledTotal": "決済合計",
+        "cancelReason": "キャンセル理由"
+      },
+      "detail": {
+        "title": "注文詳細",
+        "close": "注文詳細を閉じる",
+        "viewProduct": "商品を見る",
+        "remainingDays": "残り {{days}} 日",
+        "sections": {
+          "interest": "利息",
+          "settlement": "決済"
+        }
+      },
+      "topUpReminder": {
+        "title": "追加入金待ちの注文が {{count}} 件あります",
+        "description": "期限までに補足してください。期限切れの注文は自動的にキャンセルされ、元本の保留が解除されます。",
+        "overdueDescription": "うち {{count}} 件が補足期限を過ぎています。早めにご対応ください。受付が終了している場合はサポートへ。",
+        "overdueLockedDescription": "うち {{count}} 件が期限切れです。追加入金と辞退の受付は終了しました。延滞金はサポートへご連絡ください。",
+        "cta": "追加する"
+      }
+    },
+    "interestRecords": {
+      "title": "配当明細",
+      "subtitle": "この注文の配当明細（1件ごと）。",
+      "back": "戻る",
+      "entry": "配当明細",
+      "table": {
+        "interestDate": "利息計算日",
+        "amount": "数量",
+        "creditedAt": "入金日時"
+      },
+      "empty": "配当明細はまだありません。"
+    },
+    "status": {
+      "product": {
+        "active": "募集中"
+      },
+      "order": {
+        "active": "アクティブ",
+        "settled": "決済済み",
+        "cancelled": "キャンセル済み",
+        "redeemed": "償還済み",
+        "redeem_pending_review": "償還審査中",
+        "pending_review": "審査中",
+        "awaiting_top_up": "追加入金待ち",
+        "rejected": "却下"
+      }
+    },
+    "errors": {
+      "unknown": "問題が発生しました。もう一度お試しください。",
+      "quotaExhausted": "この商品は完売しており、現在購読いただけません。",
+      "exceedsRemainingQuota": "購読金額が商品の残り枠を超えています。金額を調整してください。",
+      "perUserQuotaExceeded": "購読金額が個人の購読上限を超えています。金額を調整してください。",
+      "notAwaitingTopUp": "この注文は追加入金待ちではなくなりました。すでに更新された可能性があります。",
+      "topUpLockedOverdue": "この注文は期限を超過しています。補足と辞退の受付は終了しました。サポートへご連絡ください。",
+      "insufficientBalance": "残高が不足しているため追加を完了できません。入金してから再度お試しください。",
+      "insufficientCreditScore": "信用スコアがこの商品の申込条件を満たしていません。"
+    },
+    "states": {
+      "loading": "読み込み中…",
+      "empty": "まだ何もありません。",
+      "error": "読み込みに失敗しました。",
+      "retry": "再試行"
+    }
+  }
+}

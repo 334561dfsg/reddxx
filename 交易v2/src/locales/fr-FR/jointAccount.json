@@ -1,0 +1,327 @@
+{
+  "nav": {
+    "menuEntry": "Compte joint"
+  },
+  "page": {
+    "title": "Compte joint",
+    "description": "Partagez un compte de fonds avec un conjoint, un proche, un associé ou un mandataire"
+  },
+  "common": {
+    "back": "Retour",
+    "retry": "Réessayer",
+    "loadMore": "Charger plus"
+  },
+  "relationship": {
+    "spouse": "Conjoint",
+    "family": "Famille",
+    "partner": "Partenaire",
+    "agent": "Mandataire"
+  },
+  "operatedBy": {
+    "member": "membre du compte joint",
+    "actor": "Opéré par {{actor}}",
+    "withUid": "Opéré par {{actor}} (UID {{uid}})"
+  },
+  "initiatedBy": {
+    "actor": "Initié par {{actor}}"
+  },
+  "actingFor": {
+    "primaryWithName": "UID {{uid}} ({{name}})",
+    "primaryUidOnly": "UID {{uid}}",
+    "unnamedAccount": "Compte joint sans nom",
+    "primarySuspended": "Le demandeur principal du compte joint a été suspendu : vous ne pouvez pas utiliser ce compte pour le moment. Revenez à votre propre compte ou contactez le demandeur principal.",
+    "primaryKycNotVerified": "Le demandeur principal du compte joint n'a pas passé la vérification d'identité. Contactez le demandeur principal.",
+    "restrictedTitle": "Revenez à votre propre compte pour effectuer cette action",
+    "restrictedDesc": "Vous utilisez un compte joint. La vérification d'identité, le rattachement d'un parrain, ainsi que les demandes et modifications de membres de comptes joints ne sont possibles que depuis votre propre compte."
+  },
+  "session": {
+    "invalid": "Votre session de compte joint n'est plus valide. Reconnectez-vous."
+  },
+  "switcher": {
+    "title": "Changer de compte",
+    "self": "Mon compte",
+    "selfHint": "Vos propres fonds et paramètres",
+    "loadMore": "Afficher plus ({{loaded}}/{{total}})",
+    "switching": "Changement de compte…",
+    "backToSelf": "Revenir à mon compte",
+    "retryAfter": "Réessayez dans {{seconds}} s."
+  },
+  "delegated": {
+    "title": "Vous utilisez {{name}}",
+    "desc": "Les demandes, le renommage, le consentement et le départ se gèrent depuis votre propre compte. Les transferts entre vos fonds et les comptes joints fonctionnent dans les deux modes."
+  },
+  "consent": {
+    "title": "Demandes en attente de votre réponse ({{count}})",
+    "desc": "Quelqu'un a demandé à vous ajouter à son compte joint. Si vous acceptez, la demande passe en examen ; rien ne change tant qu'elle n'est pas approuvée.",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "accepted": "Demande acceptée. Elle est maintenant en attente d'examen.",
+    "declined": "Demande refusée"
+  },
+  "intro": {
+    "title": "Ouvrir un compte joint",
+    "addMemberTitle": "Ajouter un membre à votre compte joint",
+    "unavailable": "Les nouvelles demandes ne sont pas disponibles pour le moment.",
+    "points": {
+      "ownership": "Les fonds, le portefeuille et la vérification restent à vous",
+      "switch": "Le membre y accède avec son propre compte",
+      "exit": "Retirez le membre ou dissolvez le compte à tout moment"
+    },
+    "prepare": "À prévoir : un justificatif de la relation et l'UID ou la pièce d'identité de l'autre personne",
+    "kycOnly": "Réservé aux clients dont l’identité est vérifiée"
+  },
+  "apply": {
+    "start": "Demander",
+    "restart": "Refaire une demande",
+    "title": "Demander un compte joint",
+    "memberSection": "Membre",
+    "relationshipType": "Votre relation",
+    "mode": {
+      "existing": "Elle a déjà un compte",
+      "invite": "L'inviter à s'inscrire"
+    },
+    "modeHint": {
+      "existing": "Examen après son accord",
+      "invite": "Lien d'inscription après l'approbation"
+    },
+    "memberUid": "Son UID",
+    "memberUidPlaceholder": "ex. 100023",
+    "memberUidHint": "L'UID figure sur sa page de profil. Son identité doit être vérifiée ; si la demande est renvoyée, vous ne pourrez pas la soumettre au même UID pendant 24 heures.",
+    "memberNotEligible": {
+      "not_eligible": "Vérifiez que l'UID est correct, puis demandez à cet utilisateur de confirmer que sa vérification d'identité est approuvée, que son compte est actif et qu'il n'a pas atteint le nombre maximal de comptes joints.",
+      "self": "Vous ne pouvez pas vous ajouter vous-même comme membre. Saisissez l'UID de l'autre personne."
+    },
+    "memberFullName": "Nom complet du membre",
+    "memberFullNamePlaceholder": "Tel qu'indiqué sur sa pièce d'identité",
+    "memberFront": "Pièce d'identité du membre (recto)",
+    "memberBack": "Pièce d'identité du membre (verso)",
+    "memberSelfie": "Selfie du membre",
+    "proofSection": "Justificatif de la relation",
+    "proofFile": "Justificatif {{index}}",
+    "addProof": "Ajouter un autre",
+    "incomplete": "Remplissez tous les champs et téléversez les fichiers requis.",
+    "cancel": "Annuler",
+    "submit": "Envoyer la demande",
+    "submitted": "Demande envoyée",
+    "kycRequiredTitle": "Terminez d'abord la vérification d'identité",
+    "kycRequiredDesc": "Seuls les clients ayant passé la vérification d'identité peuvent demander un compte joint.",
+    "goKyc": "Aller à la vérification",
+    "upload": "Importer",
+    "reupload": "Remplacer",
+    "uploading": "Import {{progress}} %",
+    "proofMeta": "JPG, PNG ou PDF, jusqu'à 20 Mo",
+    "idDocumentMeta": "JPG, PNG ou PDF",
+    "selfieMeta": "JPG ou PNG uniquement",
+    "proofCount": "{{count}} sur {{max}}",
+    "missing": "Il manque : {{items}}",
+    "ready": "Tout est prêt pour l’envoi",
+    "missingItem": {
+      "relationship": "la relation",
+      "memberUid": "son UID",
+      "memberDetails": "ses informations",
+      "memberDocuments": "ses pièces d'identité",
+      "proof": "le justificatif de la relation"
+    },
+    "missingSeparator": ", "
+  },
+  "application": {
+    "eyebrow": "Dernière demande",
+    "status": {
+      "pending_consent": "En attente du membre",
+      "pending_review": "En cours d'examen",
+      "approved": "Approuvée",
+      "rejected": "Refusée",
+      "cancelled": "Annulée"
+    },
+    "desc": {
+      "pending_consent": "Le membre n'a pas encore accepté. Nous vous préviendrons dès sa réponse.",
+      "pending_review": "Nous examinons la demande et vous informerons du résultat.",
+      "approved": "La demande a été approuvée.",
+      "rejected": "Consultez le motif ci-dessous, puis refaites une demande.",
+      "cancelled": "Cette demande a été annulée."
+    },
+    "memberGone": "Membre retiré",
+    "memberGoneDesc": "La demande a été approuvée, mais ce membre ne fait plus partie du compte joint. Pour ajouter un membre, refaites une demande.",
+    "cancel": "Annuler la demande",
+    "cancelTitle": "Annuler cette demande ?",
+    "cancelConfirm": "La demande s'arrêtera ici. Si vous avez invité un utilisateur existant, il sera informé de l'annulation.",
+    "cancelled": "Demande annulée",
+    "title": {
+      "pending_consent": "En attente de son accord",
+      "pending_review": "Demande en cours d'examen",
+      "approved": "Demande approuvée",
+      "rejected": "Demande refusée",
+      "cancelled": "Demande annulée"
+    }
+  },
+  "detail": {
+    "relationshipType": "Relation",
+    "memberUid": "UID du membre",
+    "memberName": "Nom du membre",
+    "submittedAt": "Soumise le",
+    "rejectionReason": "Motif",
+    "reviewedAt": "Examinée le",
+    "activatedAt": "Membre depuis le",
+    "uidValue": "UID {{uid}}"
+  },
+  "owned": {
+    "eyebrow": "Votre compte joint",
+    "active": "Actif",
+    "desc": "Vous êtes le demandeur principal. Vous n'avez pas besoin de changer de compte ; le membre bascule vers ce compte pour l'utiliser.",
+    "primary": "Demandeur principal",
+    "you": "Vous",
+    "member": "Membre",
+    "memberStatus": {
+      "pending": "Pas encore inscrit",
+      "active": "Actif"
+    },
+    "noMember": "Aucun membre pour le moment",
+    "removeMember": "Retirer le membre",
+    "dissolve": "Dissoudre le compte",
+    "removeTitle": "Retirer ce membre ?",
+    "removeConfirm": "Le membre perd immédiatement l'accès à ce compte et en est déconnecté. Son propre compte et ses actifs ne sont pas affectés. Vous confirmerez par un contrôle de sécurité.",
+    "memberRemoved": "Membre retiré",
+    "dissolveTitle": "Dissoudre ce compte joint ?",
+    "dissolveConfirm": "Le membre perd immédiatement l'accès et le compte joint est fermé. Vos propres fonds restent à vous. Vous confirmerez par un contrôle de sécurité.",
+    "dissolved": "Compte joint dissous",
+    "createdAt": "Ouvert le {{time}}"
+  },
+  "label": {
+    "edit": "Renommer",
+    "title": "Renommer le compte joint",
+    "description": "Les membres voient ce nom lorsqu'ils basculent vers le compte. Les notifications déjà envoyées conservent le nom d'origine.",
+    "field": "Nom",
+    "placeholder": "ex. Épargne familiale",
+    "hint": "{{count}}/{{max}} caractères. Laissez vide pour supprimer le nom.",
+    "clear": "Supprimer le nom",
+    "save": "Enregistrer le nom",
+    "saved": "Nom enregistré"
+  },
+  "invitation": {
+    "title": "Lien d'inscription du membre",
+    "expiresIn": "Expire dans {{time}}",
+    "expiresInDays": "Expire dans {{days}} j {{time}}",
+    "keepPrivate": "Toute personne disposant de ce lien peut s'inscrire comme membre de votre compte joint. Envoyez-le uniquement à la personne pour laquelle vous avez fait la demande.",
+    "copy": "Copier le lien",
+    "share": "Partager",
+    "copied": "Lien copié",
+    "copyFailed": "Impossible de copier le lien. Sélectionnez-le et copiez-le manuellement.",
+    "shareTitle": "Lien d'inscription au compte joint",
+    "expiredAt": "Le lien a expiré le {{time}}",
+    "unavailable": "Le lien est indisponible pour le moment",
+    "contactSupportHint": "Contactez le support pour obtenir un nouveau lien.",
+    "contactSupport": "Contacter le support"
+  },
+  "confirm": {
+    "keep": "Conserver"
+  },
+  "memberships": {
+    "title": "Comptes joints dont vous êtes membre ({{count}})",
+    "desc": "Basculez vers un compte joint pour utiliser ses fonds. Votre propre compte et votre portefeuille restent distincts.",
+    "joinedAt": "Rejoint {{time}}",
+    "current": "Utilisé actuellement",
+    "switch": "Basculer vers ce compte",
+    "notifications": "Copies des notifications de fonds",
+    "notificationsHint": "Copies de l'activité des fonds de ce compte dans votre boîte de réception et par e-mail. Les mises à jour en temps réel continuent d'arriver si cette option est désactivée.",
+    "leave": "Quitter",
+    "leaveTitle": "Quitter {{name}} ?",
+    "leaveWithdrawFirst": "Transférez vers votre propre compte les fonds dont vous avez besoin avant de partir.",
+    "leaveConfirm": "Quitter le compte ne restitue pas les fonds déjà transférés et ne ferme pas votre propre compte. Vous perdrez immédiatement l'accès à ce compte joint.",
+    "left": "Vous avez quitté le compte joint"
+  },
+  "transfer": {
+    "open": "Transférer",
+    "title": "Transfert entre comptes",
+    "description": "Déplacez des fonds entre votre compte de fonds et celui du compte joint.",
+    "direction": {
+      "to_joint": "Vers le compte joint",
+      "from_joint": "Vers mon compte"
+    },
+    "from": "De",
+    "to": "Vers",
+    "ownFunding": "Mon compte de fonds",
+    "jointFunding": "Compte de fonds de {{name}}",
+    "asset": "Actif",
+    "amount": "Montant",
+    "securityHint": "Le premier transfert dans chaque sens demande votre mot de passe de fonds et une vérification supplémentaire. Vous devez tous deux avoir passé la vérification d'identité.",
+    "submit": "Transférer",
+    "done": "{{amount}} {{asset}} transférés",
+    "directionLabel": "Sens",
+    "snapshotJoint": "Solde de {{name}} après le transfert",
+    "snapshotOwn": "Mon solde après le transfert",
+    "snapshotHint": "Les soldes affichés correspondent au moment de ce transfert et ne sont pas en temps réel. Consultez votre page d'actifs pour les soldes actuels.",
+    "close": "Terminé",
+    "denial": {
+      "kyc_required": "Vous et le demandeur principal devez avoir terminé la vérification d'identité pour effectuer un transfert.",
+      "party_not_active": "Votre compte ou celui du demandeur principal n'est pas actif ; le transfert est indisponible.",
+      "membership_inactive": "Vous n'êtes plus membre de ce compte joint. Actualisez la page.",
+      "joint_account_inactive": "Ce compte joint n'est plus actif.",
+      "invalid_accounts": "Les transferts doivent avoir lieu entre les comptes de financement de deux utilisateurs différents."
+    }
+  },
+  "history": {
+    "title": "Historique des transferts",
+    "empty": "Aucun transfert pour le moment.",
+    "actor": "par {{actor}} UID {{uid}}"
+  },
+  "register": {
+    "eyebrow": "Invitation à un compte joint",
+    "previewPrimary": "Vous vous inscrivez comme membre du compte joint de l'UID {{uid}} ({{name}}).",
+    "previewPrimaryUidOnly": "Vous vous inscrivez comme membre du compte joint de l'UID {{uid}}.",
+    "previewMemberName": "Nom figurant sur la demande : {{name}}",
+    "previewRelationship": "Relation : {{relationship}}",
+    "previewWarning": "Si ces informations sont inexactes, ne continuez pas. L'inscription ne vérifie pas votre identité ; vous devrez encore vous faire vérifier avant tout retrait ou transfert.",
+    "previewExpiresAt": "Lien valable jusqu'au {{time}}.",
+    "previewFailed": "Impossible de charger les détails du lien.",
+    "retry": "Réessayer",
+    "tooManyRequests": "Trop de tentatives. Réessayez dans quelques minutes.",
+    "requiresNewAccount": "Cette invitation ne fonctionne qu'avec un nouveau compte, et cet e-mail ou ce numéro de téléphone est déjà enregistré. Utilisez-en un qui ne l'est pas, ou demandez au demandeur principal d'ajouter plutôt votre compte existant.",
+    "resendCode": "Demandez un nouveau code de vérification et réessayez.",
+    "loggedInElsewhere": "Cette invitation est destinée à un nouveau compte. Déconnectez-vous d'abord, puis inscrivez-vous avec un e-mail ou un numéro de téléphone encore jamais utilisé ici.",
+    "logoutAndContinue": "Se déconnecter et continuer",
+    "issue": {
+      "invalid": "Ce lien d'invitation n'est pas valide.",
+      "not_usable": "Ce lien d'invitation a déjà été utilisé ou n'est plus valide.",
+      "expired": "Ce lien d'invitation a expiré. Demandez au demandeur principal de contacter le support pour en obtenir un nouveau."
+    },
+    "issueFallback": "Vous pouvez toujours créer un compte classique ci-dessous."
+  },
+  "selfSettings": {
+    "notice": "Vous utilisez un compte joint. Les modifications effectuées ici s'appliquent à votre propre connexion et à vos propres paramètres de sécurité, pas à ceux du demandeur principal."
+  },
+  "holder": {
+    "title": "Titulaires du compte",
+    "vacant": "Pas encore ajouté",
+    "withYou": "{{role}} · Vous"
+  },
+  "faq": {
+    "title": "Questions fréquentes",
+    "memberCan": {
+      "q": "Que peut faire un membre ?",
+      "a": "Basculer sur le compte joint pour en gérer les fonds, et effectuer des transferts entre son propre compte de fonds et le compte joint. Son compte et son portefeuille restent séparés."
+    },
+    "memberSteps": {
+      "q": "Que doit faire l'autre personne ?",
+      "a": "Si elle a déjà un compte, elle accepte votre demande avant l'examen. Sinon, vous lui envoyez un lien d'inscription après l'approbation."
+    },
+    "dissolve": {
+      "q": "Comment dissoudre le compte ?",
+      "a": "À tout moment depuis cette page. Le membre perd l’accès immédiatement et vos fonds restent à vous."
+    }
+  },
+  "progress": {
+    "label": "Avancement de la demande",
+    "submit": "Envoi",
+    "consent": "Accord du membre",
+    "review": "Examen",
+    "register": "Inscription du membre",
+    "active": "Actif",
+    "failed": "Refusée",
+    "state": {
+      "done": ", terminé",
+      "current": ", étape en cours",
+      "failed": ", refusée",
+      "upcoming": ", à venir"
+    }
+  }
+}

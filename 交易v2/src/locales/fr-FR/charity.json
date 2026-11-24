@@ -1,0 +1,161 @@
+{
+  "seo": {
+    "title": "Charité — Trader pour le bien",
+    "description": "Soutenez des campagnes d'intérêt public vérifiées avec votre solde Financement {{brand}}."
+  },
+  "hero": {
+    "goToSlide": "Aller à la diapositive {{index}}"
+  },
+  "stats": {
+    "label": "Campagnes actives",
+    "title": "Ensemble, nous faisons la différence",
+    "totalRaised": "Total collecté",
+    "peopleHelped": "Personnes aidées"
+  },
+  "campaigns": {
+    "title": "Campagnes actives",
+    "subtitle": "Choisissez une cause et contribuez directement depuis votre compte Financement.",
+    "completedBadge": "Objectif atteint",
+    "raisedLabel": "Collecté",
+    "targetLabel": "Objectif",
+    "progress": "{{percent}} % financé",
+    "donate": "Faire un don",
+    "view": "En savoir plus",
+    "loadingTitle": "Chargement des campagnes",
+    "empty": {
+      "title": "Aucune campagne active pour le moment",
+      "desc": "De nouvelles causes sont ajoutées régulièrement. Revenez bientôt."
+    },
+    "error": {
+      "title": "Impossible de charger les campagnes",
+      "desc": "Une erreur s'est produite lors de la récupération des campagnes.",
+      "retry": "Réessayer"
+    },
+    "statusActive": "En cours",
+    "statusInactive": "Terminé",
+    "peopleHelped": "{{value}} personnes aidées"
+  },
+  "howItWorks": {
+    "title": "Comment ça marche",
+    "steps": [
+      {
+        "title": "Associations",
+        "desc": "Des associations du monde entier rejoignent {{brand}} pour accéder à plus de financements, développer de nouvelles compétences et nouer des liens essentiels."
+      },
+      {
+        "title": "Donateurs",
+        "desc": "Des personnes comme vous font un don aux projets qu’elles aiment ; recevoir des nouvelles sur l’utilisation de vos fonds par des organisations de confiance procure un sentiment formidable."
+      },
+      {
+        "title": "Entreprises",
+        "desc": "Des entreprises généreuses et leurs employés donnent et financent davantage pour soutenir des projets à fort impact et aider les communautés locales à prospérer."
+      },
+      {
+        "title": "Notre impact",
+        "desc": "Les associations obtiennent les fonds nécessaires pour écouter les retours et essayer de nouvelles méthodes de travail ; partout, les communautés s’améliorent !"
+      }
+    ]
+  },
+  "narrative": {
+    "label": "Notre engagement",
+    "title": "Les marchés créent de la richesse. Nous l'aidons à aller plus loin.",
+    "lead": "{{brand}} a été fondé sur la conviction que des marchés ouverts créent des opportunités. La charité est notre façon d'étendre cette opportunité aux personnes que les marchés laissent trop souvent de côté.",
+    "paragraphs": [
+      "Chaque campagne de cette page est vérifiée par notre équipe partenariats et un partenaire ONG indépendant avant sa mise en ligne. Nous vérifions l'organisation, le budget et l'objectif visé, et nous publions les progrès à mesure que les fonds sont déployés.",
+      "Comme les dons transitent par des rails que nous exploitons déjà, il n'y a pas de frais de carte, pas de marges de change et aucun intermédiaire qui prélève sa part. Le montant que vous donnez est le montant qui arrive.",
+      "Ce n'est que le début. À mesure que la communauté grandit, notre capacité à financer l'eau potable, l'éducation, la santé et l'aide d'urgence à grande échelle augmente aussi."
+    ],
+    "highlights": [
+      {
+        "title": "Partenaires vérifiés",
+        "desc": "Chaque ONG est examinée pour sa légitimité, sa gouvernance et son historique."
+      },
+      {
+        "title": "Zéro frais",
+        "desc": "Nous absorbons les coûts pour que 100 % de votre don atteigne la cause."
+      },
+      {
+        "title": "Rapports publics",
+        "desc": "Les mises à jour sur les jalons et l'impact sont partagées avec la communauté."
+      }
+    ]
+  },
+  "donate": {
+    "title": "Faire un don à {{name}}",
+    "description": "Votre contribution est débitée de votre solde Financement {{asset}}.",
+    "amountLabel": "Montant du don",
+    "amountPlaceholder": "0.00",
+    "rangeHint": "Min {{min}} · Max {{max}} {{asset}}",
+    "minOnlyHint": "Minimum {{min}} {{asset}}",
+    "raisedSummary": "{{raised}} / {{target}} {{asset}} collectés",
+    "cancel": "Annuler",
+    "submit": "Vérifier le don",
+    "submitting": "Traitement…",
+    "confirm": {
+      "title": "Vérifiez votre don",
+      "description": "Contrôlez les détails avant le débit de votre solde Financement.",
+      "projectLabel": "Campagne",
+      "amountLabel": "Vous donnez",
+      "sourceLabel": "Débité de",
+      "sourceValue": "Solde Financement",
+      "back": "Modifier",
+      "submit": "Confirmer le don",
+      "notice": "Un don confirmé est définitif : il ne peut être ni annulé ni remboursé.",
+      "reviewNotice": "Votre don sera examiné par la plateforme avant d'être finalisé. Le montant est gelé pendant l'examen et intégralement restitué si le don n'est pas approuvé."
+    },
+    "success": {
+      "title": "Merci pour votre générosité",
+      "desc": "Vous avez fait don de {{amount}} {{asset}} à {{name}}.",
+      "donationId": "Référence : {{id}}",
+      "done": "Terminé"
+    },
+    "pendingReview": {
+      "title": "Don soumis",
+      "desc": "Le montant sera débité dès que la plateforme aura approuvé votre don. Le résultat vous sera communiqué dans vos Messages."
+    },
+    "errors": {
+      "invalidAmount": "Veuillez saisir un montant de don valide.",
+      "minAmount": "Le don minimum est de {{amount}} {{asset}}.",
+      "maxAmount": "Le don maximum est de {{amount}} {{asset}}.",
+      "CHARITY_PROJECT_NOT_AVAILABLE": "Cette campagne n'accepte pas de dons pour le moment.",
+      "CHARITY_DONATION_AMOUNT_INVALID": "Le montant du don est invalide pour cette campagne.",
+      "CHARITY_FUNDING_TARGET_EXCEEDED": "Ce don dépasserait l'objectif de financement de la campagne.",
+      "CHARITY_INSUFFICIENT_BALANCE": "Votre solde Financement est insuffisant pour ce don.",
+      "VALIDATION_ERROR": "Veuillez vérifier le montant du don et réessayer.",
+      "CHARITY_PROJECT_NOT_FOUND": "Cette campagne est introuvable.",
+      "ENTITY_NOT_FOUND": "Cette campagne est introuvable.",
+      "generic": "Échec du don. Veuillez réessayer."
+    }
+  },
+  "donations": {
+    "label": "Vos dons",
+    "title": "Historique de vos dons",
+    "subtitle": "Un récapitulatif de chaque campagne que vous avez soutenue.",
+    "signedOut": {
+      "title": "Connectez-vous pour voir vos dons",
+      "desc": "Suivez chaque don que vous avez effectué et les causes que vous avez soutenues.",
+      "action": "Se connecter"
+    },
+    "empty": {
+      "title": "Votre histoire de générosité commence ici",
+      "desc": "Vous n’avez pas encore fait de don. Soutenez une campagne ci-dessus pour votre première contribution."
+    },
+    "error": {
+      "title": "Impossible de charger vos dons",
+      "desc": "Une erreur s’est produite. Veuillez réessayer.",
+      "retry": "Réessayer"
+    },
+    "recentNote": "Affichage de vos {{shown}} dons les plus récents sur {{total}}",
+    "columns": {
+      "project": "Campagne",
+      "amount": "Montant",
+      "date": "Date",
+      "status": "Statut"
+    },
+    "statusCompleted": "Terminé",
+    "statusPendingReview": "En cours d'examen",
+    "statusRejected": "Non approuvé",
+    "unknownProject": "Campagne caritative"
+  },
+  "slideLabel": "Diapositive solidaire {{index}} : {{title}}"
+}

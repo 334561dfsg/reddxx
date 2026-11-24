@@ -1,0 +1,27 @@
+{
+  "ui": {
+    "unsavedContentUseCloseOrCancelToLeave": "尚有未提交內容，請使用右上角關閉或取消退出。",
+    "insufficientBalanceSwitchToDemoToTryThisLocally": "可用餘額不足。這是本地演示，切換至「模擬」可體驗操作。",
+    "createdDemo": "已建立（模擬）",
+    "videoFailedToLoadTryAgainLater": "影片載入失敗，請稍後再試。",
+    "welcomeToNewquantcapitalSupport": "歡迎聯絡 NewQuantCapital 客服",
+    "message": "訊息",
+    "describeYourIssue": "請描述您的問題",
+    "messagesAreNotSentToTheOriginalSupportTeam": "本地展示不會發送訊息至原站客服。",
+    "demoMessageShownLocallyNothingWasSent": "演示訊息已顯示，未發送至外部。",
+    "thisLocalDemoDoesNotRequestWalletPermissionsOr": "本地前端演示不會要求錢包授權或簽名。",
+    "connectDemoWallet": "連接演示錢包",
+    "localDemoAccountConnected": "已連接本地演示帳戶",
+    "noNewMessages": "暫無新訊息",
+    "100000UsdMoreToReachVip1": "距 VIP 1 還需 100,000 USD",
+    "days": " 天",
+    "orderQuantity": "數量",
+    "localSimulation": " · 本地模擬操作",
+    "orderSummary": "委託摘要",
+    "daysLater": " 天後",
+    "demoCompletedNoRealTransactionWasSent": "演示操作已完成，沒有發送真實交易。",
+    "localInterfaceDemoNotConnectedToTheOriginalAccount": "這是本地介面演示，未連接原站帳戶服務。",
+    "confirmOrder": "確認委託"
+  },
+  "amountMinimum": "請輸入不低於 {{amount}} 的有效金額。"
+}

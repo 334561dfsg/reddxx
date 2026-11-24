@@ -1,0 +1,30 @@
+{
+  "seo": {
+    "title": "Crypto & Market News",
+    "description": "Latest crypto, forex and stock market news, analysis and insights from {{brand}}."
+  },
+  "pageTitle": "News Center",
+  "breadcrumbHome": "Home",
+  "breadcrumbNews": "News",
+  "loadMore": "Load More",
+  "loading": "Loading...",
+  "retry": "Retry",
+  "backToList": "← Back to List",
+  "readTime": "{{minutes}} min read",
+  "author": "Author",
+  "publishedAt": "Published on",
+  "relatedNews": "Related Articles",
+  "noMore": "No more articles",
+  "tags": "Tags",
+  "share": "Share",
+  "allCategories": "All Categories",
+  "articleNotFound": "Article not found or has been removed",
+  "backToHome": "Back to Home",
+  "categoryAll": "All",
+  "emptyTitle": "No articles yet",
+  "emptyHint": "Check back soon — fresh stories arrive every day.",
+  "errorTitle": "Couldn't load the latest news",
+  "errorHint": "Something went wrong on our end. Please try again.",
+  "viewOriginal": "View original →",
+  "viewSource": "Visit source"
+}

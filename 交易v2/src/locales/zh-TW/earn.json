@@ -1,0 +1,410 @@
+{
+  "nav": {
+    "ariaLabel": "理財模組導覽",
+    "products": "理財產品",
+    "myEarnings": "我的理財",
+    "loan": "借貸",
+    "myLoans": "我的借貸"
+  },
+  "header": {
+    "subtitle": "被動收益",
+    "title": "理財中心",
+    "heroDescription": "讓閒置資產持續生息。透明參考收益率 —— 為長期持有者打造，而非高頻交易者。",
+    "myEarnings": "我的收益"
+  },
+  "educational": {
+    "headline": "讓閒置加密資產持續生息。",
+    "chip": {
+      "apyUpTo": "年化最高 {{value}}%",
+      "types": "活期 & 定期",
+      "dailyRateUpTo": "日利率最高 {{value}}%"
+    },
+    "cta": "瀏覽產品"
+  },
+  "holdings": {
+    "totalHoldings": "總持倉估值",
+    "perDay": "+${{amount}}/日",
+    "cumulative": "累計收益",
+    "principal": "本金",
+    "accruedReward": "應計收益",
+    "dailyEstimated": "預估每日收益",
+    "rewardsLast7d": "近 7 日",
+    "nextRewardLabel": "下次結算",
+    "nextReward": "約 {{hours}} 小時後"
+  },
+  "table": {
+    "columns": {
+      "product": "產品",
+      "category": "類型",
+      "term": "期限",
+      "minAmount": "起投",
+      "totalSubscribed": "總申購",
+      "availableQuota": "剩餘額度",
+      "apy": "年化",
+      "action": "操作",
+      "dailyRate": "日利率"
+    }
+  },
+  "featured": {
+    "title": "熱門精選",
+    "productCount": "{{count}} 款產品",
+    "totalSubscribed": "已認購 {{amount}}",
+    "quotaRemaining": "僅剩 {{amount}}",
+    "subscribeNow": "申購"
+  },
+  "badge": {
+    "hot": "熱門",
+    "featured": "精選",
+    "exclusive": "專屬",
+    "exclusiveHint": "僅限指定用戶"
+  },
+  "apy": {
+    "label": "預期年化",
+    "suffix": "APY",
+    "annualizedShort": "年化",
+    "approx": "≈ 年化 {{value}}%"
+  },
+  "actions": {
+    "subscribe": "申購",
+    "viewDetail": "查看詳情",
+    "redeem": "贖回"
+  },
+  "tabs": {
+    "all": "全部",
+    "flexible": "活期",
+    "fixed": "定期",
+    "staking": "質押"
+  },
+  "products": {
+    "count": "共 {{count}} 款產品",
+    "categoryFlex": "活期",
+    "categoryFixed": "定期",
+    "categoryStake": "質押",
+    "min": "起投 {{amount}}",
+    "max": "上限 {{amount}}",
+    "totalSubscribed": "已認購 {{amount}}",
+    "termFlexible": "活期",
+    "termFixed": "{{days}} 天",
+    "minValue": "≥ {{value}} {{unit}}",
+    "minValueWithEstimate": "≥ {{value}} {{unit}}（約 {{amount}} {{asset}}）"
+  },
+  "sort": {
+    "highestApy": "年化最高",
+    "shortestTerm": "期限最短",
+    "mostPopular": "最受歡迎",
+    "highestDailyRate": "日利率最高"
+  },
+  "security": {
+    "footer": "申購前請查看各產品的條款與贖回規則。",
+    "disclaimer": "本頁內容不構成投資建議；年化收益為預估值並可能變動。"
+  },
+  "states": {
+    "retry": "重試",
+    "loading": "載入中…",
+    "holdingsError": "無法載入理財總覽。",
+    "productsError": "無法載入理財產品。",
+    "productsEmpty": "暫無可申購的理財產品。",
+    "detailError": "無法載入產品詳情。",
+    "myEarningsError": "無法載入此列表。"
+  },
+  "productDetail": {
+    "title": "產品詳情",
+    "back": "返回理財中心",
+    "notFound": "此產品已下線。",
+    "unlimited": "無限",
+    "keyFacts": {
+      "term": "期限",
+      "min": "最低申購",
+      "max": "最高申購",
+      "availableQuota": "剩餘額度",
+      "totalSubscribed": "總申購量",
+      "perUserQuota": "單用戶限額",
+      "estAccrualStart": "預計起息日",
+      "estMaturity": "預計到期日",
+      "accrualMode": "計息方式",
+      "accrualModeRolling": "24 小時滾動",
+      "accrualModeRollingHint": "下單即起息，每滿 24 小時計息一次。"
+    },
+    "risk": {
+      "title": "風險揭示",
+      "notGuaranteed": "收益不保證；可能隨市場狀況變動。",
+      "smartContract": "質押類產品存在智能合約風險。",
+      "earlyRedemption": "定期產品提前贖回將放棄已計收益。",
+      "noEarlyRedemption": "收益按日發放的定期產品不支援提前贖回。",
+      "earlyRedemptionPenalty": "定期產品提前贖回將按本金的 {{rate}}% 扣除懲罰金，實際比例以申購時為準。"
+    },
+    "exploreOthers": "瀏覽其他產品",
+    "disabled": {
+      "paused": "此產品申購已暫停。",
+      "closed": "此產品已停止申購。",
+      "soldOut": "額度已滿，請稍後再來。",
+      "subscriptionDisabled": "申購暫未開放。"
+    },
+    "groups": {
+      "rules": "申購規則",
+      "quota": "產品額度"
+    },
+    "quotaFilled": "已申購 {{percent}}%"
+  },
+  "subscribe": {
+    "title": "申購",
+    "amountLabel": "申購金額",
+    "amountPlaceholder": "請輸入金額",
+    "availableBalanceLabel": "可用餘額",
+    "maxButton": "最大",
+    "goDeposit": "前往充值",
+    "submit": "確認申購",
+    "cancel": "取消",
+    "estDailyReward": "預計每日收益",
+    "estMaturityReward": "預計到期收益",
+    "errors": {
+      "minAmount": "最低申購 {{amount}} {{asset}}。",
+      "maxAmount": "最高申購 {{amount}} {{asset}}。",
+      "availableQuota": "剩餘額度僅 {{amount}} {{asset}}。",
+      "perUserQuota": "單用戶限額 {{amount}} {{asset}}。",
+      "invalidAmount": "請輸入有效金額。",
+      "insufficientBalance": "可用餘額不足，目前可用 {{amount}} {{asset}}。",
+      "priceChanged": "價格已變動，目前最低申購 {{amount}} {{asset}}。",
+      "unavailableAtCurrentPrice": "目前價格下暫無法申購。",
+      "valuationPriceUnavailable": "暫時無法取得價格，請稍後再試。"
+    },
+    "success": {
+      "title": "申購成功",
+      "orderId": "訂單 {{id}}",
+      "viewHoldings": "查看我的持倉"
+    },
+    "dates": {
+      "accrualStart": "預計起息日",
+      "maturity": "預計到期日",
+      "settlement": "預計入帳日",
+      "reviewRequired": "本次申購需人工審核,審核通過後次日起息。",
+      "rollingNote": "下單即起息，每滿 24 小時計息一次；定期到期後約 10 分鐘內本息自動到賬。",
+      "rollingReviewRequired": "本次申購需人工審核，審核通過後即起息。"
+    },
+    "fillRequiredMin": "填入",
+    "estReward": "預計收益",
+    "estRewardEmpty": "輸入金額後顯示預計收益"
+  },
+  "redeem": {
+    "title": "贖回",
+    "subtitle": {
+      "flexible": "贖回活期持倉",
+      "fixedMatured": "贖回到期持倉",
+      "fixedEarly": "提前贖回"
+    },
+    "redeemInFull": "全額贖回",
+    "redeemPartial": "部分贖回",
+    "amountLabel": "贖回金額",
+    "redeemAll": "全部贖回",
+    "principal": "本金",
+    "remainingPrincipal": "剩餘本金",
+    "continueAccrue": "剩餘本金將繼續計息。",
+    "eligibleReward": "可領收益",
+    "fundingNote": "資金將到帳您的資金帳戶。",
+    "warning": {
+      "fixedEarly": "提前贖回：可領收益將歸零，且操作不可撤銷。",
+      "fixedEarlyPenalty": "提前贖回：將從本金扣除懲罰金，可領收益歸零，且操作不可撤銷。"
+    },
+    "submit": "確認贖回",
+    "cancel": "取消",
+    "errors": {
+      "disabled": "此產品不支援提前贖回。",
+      "exceedsPrincipal": "金額不可超過本金 {{amount}} {{asset}}。",
+      "holdingInactive": "此持倉狀態非活躍，無法贖回。",
+      "invalidAmount": "請輸入有效金額。",
+      "awaitingFinalCoupon": "最後一日利息正在入帳,本金與利息將自動到帳,無需任何操作;也可數分鐘後重試。",
+      "dailyPayoutNoEarly": "收益按日發放的定期持倉不支援提前贖回。",
+      "penaltyChanged": "懲罰金額已變化，請重新確認。"
+    },
+    "success": {
+      "title": "贖回已提交",
+      "id": "贖回單 {{id}}",
+      "viewRedemptions": "查看贖回記錄",
+      "done": "確認",
+      "penalty": "已扣懲罰金",
+      "received": "實際到帳"
+    },
+    "confirm": {
+      "title": "確認放棄已計收益？",
+      "body": "提前贖回將放棄全部已計收益（約 {{amount}} {{asset}}），且不可撤銷。",
+      "youReceive": "您將到帳",
+      "youForfeit": "您將放棄",
+      "cancel": "取消",
+      "acknowledge": "已了解，仍提前贖回",
+      "penaltyTitle": "確認扣除提前贖回懲罰金？",
+      "penaltyBody": "提前贖回將扣除懲罰金 {{amount}} {{asset}}（本金的 {{rate}}%），並放棄全部已計收益，且不可撤銷。",
+      "acknowledgePenalty": "同意扣除並提前贖回"
+    },
+    "dailyPaidOut": "收益已逐期發放至錢包",
+    "penalty": "提前贖回懲罰金（{{rate}}%）",
+    "estimatedReceive": "預計到帳"
+  },
+  "myEarnings": {
+    "title": "我的收益",
+    "summary": {
+      "totalValue": "總價值",
+      "principal": "本金",
+      "accruedReward": "應計收益",
+      "cumulativeReward": "累計收益",
+      "dailyEstimatedReward": "每日預估",
+      "earningsTrend": "近 {{days}} 天收益趨勢",
+      "usdNote": "以下金額均為折合 USD"
+    },
+    "table": {
+      "productName": "產品名稱",
+      "asset": "幣種",
+      "principal": "本金",
+      "accruedInterest": "累計利息",
+      "term": "期限 / 到期",
+      "status": "狀態",
+      "action": "操作",
+      "amount": "金額",
+      "subscribedQuantity": "申購數量",
+      "subscribedAt": "申購時間",
+      "completedAt": "完成時間",
+      "redemptionType": "類型",
+      "eligibleReward": "已計收益",
+      "createdAt": "創建時間",
+      "rewardAmount": "獎勵金額",
+      "rewardDate": "獎勵日期",
+      "paidAt": "到帳時間",
+      "dailyRate": "日利率"
+    },
+    "tabs": {
+      "holdings": "持倉",
+      "orders": "申購單",
+      "redemptions": "贖回單",
+      "rewards": "收益明細"
+    },
+    "filter": {
+      "asset": "幣種",
+      "all": "全部幣種",
+      "status": "狀態"
+    },
+    "holdings": {
+      "subscribedQuantity": "申購數量",
+      "accruedInterest": "應計",
+      "paidReward": "已發",
+      "daysRemaining": "剩餘 {{days}} 天",
+      "matured": "已到期",
+      "flexible": "活期",
+      "redeemCta": "贖回",
+      "maturityCountdownLabel": "距到期",
+      "readyToRedeem": "可贖回",
+      "subscribedAt": "申購時間",
+      "startedAt": "起息時間",
+      "maturityAt": "到期時間",
+      "lastAccruedAt": "上次結算",
+      "nextAccrualLabel": "下次計息",
+      "settlementEtaLabel": "預計到賬",
+      "settlingLabel": "結算中…",
+      "countdownDaysHoursMinutes": "{{days}} 天 {{hours}} 小時 {{minutes}} 分鐘",
+      "accrualStartDate": "起息日",
+      "maturityDate": "到期日",
+      "settlementDate": "預計入帳日",
+      "accrualStartTime": "起息時間",
+      "maturityTime": "到期時間",
+      "settlementEtaTime": "預計到賬時間",
+      "paidToWallet": "已發放至錢包"
+    },
+    "orders": {
+      "subscribedAt": "申購時間",
+      "completedAt": "完成時間",
+      "amount": "金額",
+      "valueUsd": "≈ {{value}} USD"
+    },
+    "redemptions": {
+      "createdAt": "發起時間",
+      "completedAt": "完成時間",
+      "amount": "金額",
+      "eligibleReward": "可領收益",
+      "penalty": "懲罰金"
+    },
+    "rewards": {
+      "rewardDate": "結算日期",
+      "amount": "金額",
+      "paidAt": "發放時間"
+    },
+    "status": {
+      "active": "活躍",
+      "redeeming": "贖回中",
+      "redeemed": "已贖回",
+      "matured": "已到期",
+      "pending": "處理中",
+      "completed": "已完成",
+      "failed": "已失敗",
+      "pending_review": "審核中",
+      "rejected": "已拒絕",
+      "accrued": "已計提",
+      "paid": "已發放"
+    },
+    "redemptionType": {
+      "flexiblePartial": "活期 · 部分",
+      "flexibleFull": "活期 · 全額",
+      "fixedMatured": "定期 · 到期",
+      "fixedEarly": "定期 · 提前"
+    },
+    "empty": {
+      "holdings": "暫無持倉。申購任意產品即可開始賺取收益。",
+      "orders": "暫無申購單。",
+      "redemptions": "暫無贖回記錄。",
+      "rewards": "暫無收益記錄。",
+      "browseProducts": "瀏覽產品"
+    },
+    "loadMore": "載入更多",
+    "redeemDisabledTooltip": "此產品不支援提前贖回。"
+  },
+  "errors": {
+    "INSUFFICIENT_BALANCE": "餘額不足。",
+    "QUOTA_EXHAUSTED": "產品額度已滿。",
+    "PRODUCT_NOT_AVAILABLE": "此產品當前不可用。",
+    "PER_USER_QUOTA_EXCEEDED": "已達到單用戶限額。",
+    "AMOUNT_OUT_OF_RANGE": "金額超出允許範圍。",
+    "HOLDING_NOT_REDEEMABLE": "此持倉無法贖回。",
+    "EARLY_REDEMPTION_NOT_ALLOWED": "此產品不支援提前贖回。",
+    "IDEMPOTENCY_CONFLICT": "偵測到重複請求，請刷新後重試。",
+    "UNKNOWN": "請求失敗，請稍後重試。"
+  },
+  "loan": {
+    "subtitle": "鏈上信貸",
+    "title": "借貸",
+    "description": "以持倉作為抵押借入穩定幣，無需賣出。超額抵押、清算線透明、24/7 隨借隨還 —— 即將上線 {{brand}}。",
+    "comingSoon": "即將上線",
+    "disclaimer": "透明清算機制"
+  },
+  "dailyRate": {
+    "label": "預估日利率",
+    "suffix": "日利率"
+  },
+  "payoutMode": {
+    "label": "收益發放",
+    "daily": "收益按日發放至錢包",
+    "at_end": "到期/贖回時一次性發放",
+    "dailyBadge": "按日發放"
+  },
+  "timeline": {
+    "title": "資金時間線",
+    "steps": {
+      "subscribe": "申購",
+      "accrualStart": "起息",
+      "maturity": "到期",
+      "settlement": "入帳",
+      "redeem": "贖回"
+    },
+    "values": {
+      "now": "現在",
+      "onOrder": "下單即起息",
+      "afterReview": "審核通過後次日",
+      "afterReviewRolling": "審核通過後",
+      "afterDays": "起息後 {{days}} 天",
+      "settleRolling": "到期後約 10 分鐘內",
+      "redeemAnytime": "隨時可贖回"
+    },
+    "accruingDays": "計息 {{days}} 天",
+    "accruingDaily": "每日計息",
+    "rollingRule": "每滿 24 小時計息一次"
+  },
+  "maturityAfterDays": "起息後 {{count}} 天",
+  "productName": "{{symbol}} {{term}}",
+  "fixedTermName": "{{count}} 天定期理財"
+}

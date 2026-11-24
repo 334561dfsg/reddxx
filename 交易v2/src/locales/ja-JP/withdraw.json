@@ -1,0 +1,62 @@
+{
+  "history": {
+    "entry": "履歴",
+    "title": "出金履歴",
+    "subtitle": "出金のタイムラインを確認",
+    "back": "戻る",
+    "filterAll": "すべて",
+    "range7d": "過去7日間",
+    "range30d": "過去30日間",
+    "rangeAll": "全期間",
+    "status": {
+      "PENDING": "保留中",
+      "REVIEWING": "審査中",
+      "APPROVED": "承認済み",
+      "SENT": "送信済み",
+      "COMPLETED": "完了",
+      "REJECTED": "却下",
+      "CANCELLED": "キャンセル済み"
+    },
+    "columns": {
+      "amount": "数量",
+      "asset": "資産",
+      "network": "ネットワーク",
+      "fee": "手数料",
+      "txid": "トランザクションハッシュ (TXID)",
+      "createdAt": "作成日時",
+      "completedAt": "完了日時",
+      "status": "ステータス",
+      "action": "操作"
+    },
+    "empty": "まだ出金記録がありません",
+    "withdrawNow": "今すぐ出金",
+    "txidCopied": "トランザクションハッシュをコピーしました",
+    "explorerAria": "ブロックエクスプローラーで取引を表示",
+    "trackProgressHint": "出金履歴で各ステージの進捗を確認できます。",
+    "stagesAria": "出金の進捗",
+    "stages": {
+      "submitted": "提出済み",
+      "reviewing": "リスク審査",
+      "broadcasting": "オンチェーン送信",
+      "completed": "完了"
+    },
+    "stageHint": {
+      "PENDING": "順番待ち —— リスク審査は通常数時間以内に開始します",
+      "REVIEWING": "リスク審査は通常数時間以内に完了します",
+      "APPROVED": "承認済み —— まもなくオンチェーンに送信します",
+      "SENT": "オンチェーン送信済み —— 通常約30分以内に確認されます"
+    },
+    "detail": {
+      "view": "詳細",
+      "title": "出金詳細",
+      "address": "出金アドレス",
+      "addressCopied": "出金アドレスをコピーしました",
+      "copyAria": "コピー"
+    }
+  },
+  "pendingNotice": {
+    "title": "処理中の出金があります",
+    "description": "同時に処理できる出金は1件のみです。この出金が完了または却下されるまで、新しい出金申請は受け付けられません。",
+    "viewHistory": "出金履歴を見る"
+  }
+}

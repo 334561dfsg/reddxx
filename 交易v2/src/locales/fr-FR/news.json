@@ -1,0 +1,30 @@
+{
+  "seo": {
+    "title": "Actualités crypto et marchés",
+    "description": "Dernières actualités, analyses et éclairages sur les cryptos, le forex et les marchés boursiers par {{brand}}."
+  },
+  "pageTitle": "Centre d'actualités",
+  "breadcrumbHome": "Accueil",
+  "breadcrumbNews": "Actualités",
+  "loadMore": "Charger plus",
+  "loading": "Chargement...",
+  "retry": "Réessayer",
+  "backToList": "← Retour à la liste",
+  "readTime": "{{minutes}} min de lecture",
+  "author": "Auteur",
+  "publishedAt": "Publié le",
+  "relatedNews": "Articles connexes",
+  "noMore": "Plus d'articles",
+  "tags": "Tags",
+  "share": "Partager",
+  "allCategories": "Toutes les catégories",
+  "articleNotFound": "Article introuvable ou supprimé",
+  "backToHome": "Retour à l'accueil",
+  "categoryAll": "Tout",
+  "emptyTitle": "Aucun article pour le moment",
+  "emptyHint": "Revenez bientôt — de nouveaux articles arrivent chaque jour.",
+  "errorTitle": "Impossible de charger les dernières actualités",
+  "errorHint": "Une erreur s'est produite de notre côté. Veuillez réessayer.",
+  "viewOriginal": "Voir l'original →",
+  "viewSource": "Consulter la source"
+}

@@ -35,9 +35,39 @@ function newTrendPrototype() {
   }
 }
 
+function tradeV2Prototype() {
+  const rewrite = (preview) => (req, res, next) => {
+    const pathname = (req.url || '').split('?')[0]
+    if (pathname === '/trade-v2') {
+      res.writeHead(302, { Location: '/trade-v2/' })
+      res.end()
+      return
+    }
+    if (pathname.startsWith('/trade-v2/assets/')) {
+      if (!preview) req.url = req.url.replace('/trade-v2/assets/', '/交易v2/public/assets/')
+    } else if (pathname.startsWith('/trade-v2/')) {
+      req.url = preview ? '/trade-v2/index.html' : '/交易v2/index.html'
+    }
+    next()
+  }
+  return {
+    name: 'trade-v2-prototype',
+    resolveId(id) {
+      if (id.startsWith('/trade-v2/assets/')) return `${root}交易v2/public/assets/${id.slice('/trade-v2/assets/'.length)}`
+    },
+    configureServer(server) { server.middlewares.use(rewrite(false)) },
+    configurePreviewServer(server) { server.middlewares.use(rewrite(true)) },
+    async writeBundle() {
+      await mkdir(`${root}dist/trade-v2`, { recursive: true })
+      await cp(`${root}交易v2/public/assets`, `${root}dist/trade-v2/assets`, { recursive: true })
+      await copyFile(`${root}dist/交易v2/index.html`, `${root}dist/trade-v2/index.html`)
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [vue(), newTrendPrototype()],
+  plugins: [vue(), newTrendPrototype(), tradeV2Prototype()],
   build: {
-    rollupOptions: { input: { main: `${root}index.html`, newtrend: `${root}newtrend-website/index.html` } }
+    rollupOptions: { input: { main: `${root}index.html`, newtrend: `${root}newtrend-website/index.html`, tradeV2: `${root}交易v2/index.html` } }
   }
 })

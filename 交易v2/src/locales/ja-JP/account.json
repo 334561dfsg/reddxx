@@ -1,0 +1,19 @@
+{
+  "ui": {
+    "selectAFile": "ファイルを選択",
+    "jpgPngOrPdfOnly": "JPG、PNG、PDFのみ",
+    "fileIsTooLarge": "ファイルサイズが大きすぎます",
+    "exactly6Digits": "数字6桁のみ",
+    "checkThePasswordRequirements": "パスワードの要件を確認してください",
+    "back": "← 戻る",
+    "copyUid": "UIDをコピー",
+    "830Characters": "8～30文字",
+    "localDemoCode123456": "ローカルデモコード：123456",
+    "demoKeyOnlyNotValidForARealAccount": "デモ用キーです。実際のアカウントには使用できません。",
+    "1PersonalInformation": "1　個人情報",
+    "2UploadDocuments": "2　本人確認書類",
+    "useFictionalDetailsAndDemoImagesFilesStayOn": "架空の情報とデモ画像を使用してください。ファイルは送信されません。",
+    "thisDemoDoesNotOpenARealJointAccount": "このデモでは実際の共同口座は開設されません。",
+    "primaryApplicantYou": "主申請者 · あなた"
+  }
+}

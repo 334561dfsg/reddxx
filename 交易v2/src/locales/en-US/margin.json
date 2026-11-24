@@ -1,0 +1,335 @@
+{
+  "market": {
+    "subtitle": "Secured Lending",
+    "title": "Crypto Loans",
+    "description": "Borrow against your crypto, or offline assets such as property and bank deposits. Pick a currency to see the daily rate, limits and terms.",
+    "dailyRate": "Daily rate",
+    "annualized": "~{{value}}% APR",
+    "borrowRange": "Borrow range",
+    "term": "Terms",
+    "termDays": "{{days}}d",
+    "borrowCta": "Borrow",
+    "loadError": "Failed to load borrowable currencies.",
+    "empty": "No borrowable currencies are available right now.",
+    "myLoans": "My loans"
+  },
+  "borrow": {
+    "back": "Back to market",
+    "title": "Borrow",
+    "titleWithCurrency": "Borrow {{currency}}",
+    "notAvailable": "This currency is not available for borrowing.",
+    "amountLabel": "Borrow amount",
+    "amountPlaceholder": "Enter amount",
+    "range": "{{min}} – {{max}} {{currency}}",
+    "amountError": {
+      "invalid": "Enter a valid amount.",
+      "min": "Minimum is {{amount}} {{currency}}.",
+      "max": "Maximum is {{amount}} {{currency}}."
+    },
+    "termLabel": "Term",
+    "submit": "Confirm borrow",
+    "submitting": "Submitting…",
+    "phase": {
+      "signing": "Submitting signature…",
+      "creating": "Creating application…",
+      "review": "Under platform review",
+      "done": "All steps completed",
+      "steps": {
+        "signing": "Sign agreement",
+        "creating": "Submit application",
+        "review": "Platform review"
+      }
+    },
+    "progress": {
+      "title": "Submitting your borrow request",
+      "desc": "Keep this window open. We're uploading your signed agreement and creating the application.",
+      "failedTitle": "Submission didn't finish",
+      "failedDesc": "Close this window to fix the details and submit again.",
+      "close": "Close"
+    },
+    "collateral": {
+      "label": "Collateral type",
+      "crypto": "Crypto collateral",
+      "offline": "Offline asset",
+      "offlineHint": "Borrow against offline assets such as property or bank deposits. Applications are manually reviewed before funds are released.",
+      "recommended": "Recommended"
+    },
+    "offline": {
+      "assetTypeLabel": "Asset type",
+      "assetTypePlaceholder": "Select asset type",
+      "assetTypes": {
+        "BANK_STATEMENT": "Bank statement",
+        "PROPERTY": "Property",
+        "INCOME": "Income proof",
+        "STOCK_HOLDING": "Stock Holdings",
+        "OTHER": "Other"
+      },
+      "declaredValueLabel": "Declared value",
+      "declaredValuePlaceholder": "Enter the estimated value",
+      "declaredValueError": "Enter a value greater than 0.",
+      "descriptionLabel": "Asset description (optional)",
+      "descriptionPlaceholder": "Describe the pledged asset",
+      "proofTitle": "Proof documents",
+      "proofHint": "Upload 1–20 documents proving ownership and value of the asset.",
+      "proofItemTitle": "Document {{index}}",
+      "proofUploadLabel": "Upload document",
+      "notePlaceholder": "Add a note for this document (optional)",
+      "addProof": "Add document",
+      "removeProof": "Remove",
+      "clickToUpload": "Click to upload"
+    },
+    "gate": {
+      "login": "Log in",
+      "verify": "Verify now",
+      "advancedTitle": "Advanced verification required",
+      "advancedDesc": "Offline-asset borrowing requires Level 2 advanced verification. Submit your asset proofs to unlock it.",
+      "advancedCta": "Verify now"
+    },
+    "quote": {
+      "title": "Live quote",
+      "placeholder": "Enter an amount to see your quote.",
+      "unavailable": "Quote is temporarily unavailable.",
+      "retry": "Retry",
+      "dailyRate": "Daily rate",
+      "interest": "Est. interest",
+      "dueAt": "Due date",
+      "requiredCollateral": "Required collateral",
+      "collateralUnavailable": "Collateral quote unavailable",
+      "liquidationLtv": "Liquidation LTV",
+      "offlineNote": "Offline-collateral loans skip on-chain collateral pricing — the appraised value and opening LTV are set during manual review."
+    },
+    "success": {
+      "title": "Borrow successful",
+      "amount": "{{amount}} {{currency}} credited to your account",
+      "status": "Status: {{status}}",
+      "backToMarket": "Back to market",
+      "pendingTitle": "Application submitted",
+      "pendingDesc": "Your {{amount}} {{currency}} offline-collateral loan is under manual review. Funds will be credited once approved.",
+      "goMyLoans": "View my loans"
+    }
+  },
+  "signature": {
+    "hint": "Sign here",
+    "undo": "Undo",
+    "clear": "Clear",
+    "required": "Please sign to continue.",
+    "uploading": "Uploading signature…",
+    "uploadError": "Failed to upload signature. Tap to retry."
+  },
+  "contract": {
+    "consentLabel": "I have read and explicitly agree to the loan agreement terms.",
+    "empty": "The agreement template is being finalized. By signing you agree to the loan terms shown in the live quote.",
+    "title": "Loan agreement",
+    "version": "Version {{version}}",
+    "readHint": "Please read the loan agreement in full before signing.",
+    "loadError": "Failed to load the loan agreement.",
+    "retry": "Retry",
+    "agreeAndSign": "I have read and agree — sign below",
+    "viewFull": "View full agreement",
+    "fullTitle": "Loan agreement"
+  },
+  "loans": {
+    "subtitle": "Secured Lending",
+    "title": "My loans",
+    "loadError": "Failed to load your loans.",
+    "empty": "No loans in this category yet.",
+    "truncated": "Showing the first {{shown}} of {{total}}.",
+    "liquidatedAt": "Liquidated at",
+    "badDebt": "Shortfall",
+    "badDebtSettled": "Fully covered",
+    "viewLiquidations": "View liquidation records",
+    "liquidationLine": "Liq. {{value}}%",
+    "summary": {
+      "outstanding": "Outstanding",
+      "borrowed": "Total borrowed",
+      "repaid": "Total repaid",
+      "interest": "Total interest"
+    },
+    "tabs": {
+      "ariaLabel": "Loan status filter",
+      "ongoing": "Ongoing",
+      "settled": "Repaid",
+      "other": "Other"
+    },
+    "row": {
+      "outstanding": "Outstanding",
+      "dueAt": "Due {{value}}",
+      "noDueAt": "No fixed term",
+      "repay": "Repay",
+      "offlineCollateral": "Offline collateral"
+    },
+    "detail": {
+      "title": "{{currency}} loan",
+      "snapshotHint": "Showing the latest values for this loan.",
+      "refreshError": "Couldn't refresh — showing the last loaded values.",
+      "borrowed": "Borrowed",
+      "repaid": "Repaid",
+      "interest": "Interest accrued",
+      "overdueFee": "Overdue fee",
+      "dailyRate": "Daily rate",
+      "term": "Term",
+      "collateral": "Collateral",
+      "dueAt": "Due at",
+      "estimatedDueAt": "Estimated due at",
+      "appliedAt": "Applied at",
+      "disbursedAt": "Borrowed at",
+      "overdueAt": "Overdue since",
+      "repayMode": "Repayment",
+      "repayModeOffchain": "Off-chain transfer",
+      "repayNetwork": "Receiving network",
+      "repayAddress": "Receiving address",
+      "viewHistory": "View repayment history",
+      "viewContract": "View signed agreement",
+      "offlineAssetTypes": {
+        "BANK_STATEMENT": "Bank statement",
+        "PROPERTY": "Property",
+        "INCOME": "Income proof",
+        "STOCK_HOLDING": "Stock Holdings",
+        "OTHER": "Other"
+      },
+      "declaredValue": "Declared value",
+      "appraisedValue": "Appraised value",
+      "assetDescription": "Asset description",
+      "offlineRiskNote": "Offline-collateral loans are exempt from automatic LTV monitoring and liquidation. Overdue cases are handled manually."
+    },
+    "repay": {
+      "offchain": {
+        "subtitle": "Transfer the repayment off-chain to the address below, then upload your proof. Operations will confirm it.",
+        "currencyLabel": "Repayment currency",
+        "networkSelectLabel": "Receiving network",
+        "optionsLoading": "Loading available currencies…",
+        "optionsEmpty": "No receiving address is available yet. Please contact support before repaying.",
+        "addressLoading": "Resolving receiving address…",
+        "addressNotConfigured": "No receiving address is configured for this currency/network. Please choose another or contact support.",
+        "addressLabel": "Receiving address",
+        "network": "Network: {{network}}",
+        "networkLabel": "Receiving network",
+        "tokenLabel": "Repayment token",
+        "copy": "Copy address",
+        "copied": "Address copied",
+        "transferHint": "Send the exact amount to this address, then upload the transfer proof below.",
+        "addressPending": "The receiving address is being assigned. Please try again shortly.",
+        "proofLabel": "Transfer proof",
+        "proofUpload": "Upload proof",
+        "clickToUpload": "Click to upload",
+        "txHashLabel": "Transaction hash",
+        "txHashPlaceholder": "Paste the on-chain transaction hash",
+        "optionalTag": "(optional)",
+        "statusLabel": "Status",
+        "submit": "Submit repayment claim",
+        "success": {
+          "title": "Repayment claim submitted",
+          "desc": "We received your repayment claim. Operations will confirm it after verifying your transfer."
+        }
+      },
+      "title": "Repay {{currency}}",
+      "subtitle": "Repay your outstanding balance to free up collateral.",
+      "outstandingLabel": "Outstanding",
+      "amountLabel": "Repay amount",
+      "amountPlaceholder": "Enter amount",
+      "repayAll": "Repay all",
+      "amountError": {
+        "invalid": "Enter a valid amount."
+      },
+      "cappedHint": "Repayment is capped at the outstanding {{amount}} {{currency}}.",
+      "cancel": "Cancel",
+      "submit": "Confirm repayment",
+      "submitting": "Submitting…",
+      "waterfall": {
+        "overdueFee": "Overdue fee",
+        "interest": "Interest",
+        "principal": "Principal"
+      },
+      "success": {
+        "title": "Repayment successful",
+        "repaid": "{{amount}} {{currency}} repaid",
+        "outstandingAfter": "Remaining outstanding",
+        "settled": "Fully repaid — your collateral has been released.",
+        "settledOffline": "Fully repaid — your loan is settled. Offline collateral arrangements are handled off-platform.",
+        "done": "Done"
+      }
+    }
+  },
+  "signedContract": {
+    "pdfGenerating": "Generating…",
+    "pdfError": "Failed to load the PDF. Please try again later."
+  },
+  "repaymentClaim": {
+    "amount": "Amount",
+    "toAddress": "To address",
+    "txHash": "Tx hash",
+    "empty": "No repayment claims yet for this loan.",
+    "status": {
+      "submitted": "Pending review",
+      "confirmed": "Confirmed",
+      "rejected": "Rejected"
+    }
+  },
+  "repayments": {
+    "title": "Repayment history",
+    "loadError": "Failed to load repayment history.",
+    "empty": "No repayments yet for this loan.",
+    "totalRepaid": "Repaid",
+    "overdueFee": "Overdue fee",
+    "interest": "Interest",
+    "principal": "Principal",
+    "outstandingAfter": "Outstanding after"
+  },
+  "liquidations": {
+    "subtitle": "Risk Center",
+    "title": "Liquidation records",
+    "back": "Back to my loans",
+    "loadMore": "Load more",
+    "empty": "No liquidation records yet.",
+    "badDebtNote": "This shortfall is still recorded as outstanding debt.",
+    "priceUnavailable": "—",
+    "filter": {
+      "loan": "Showing one loan only ({{id}})",
+      "clear": "Clear filter"
+    },
+    "trigger": {
+      "ltvBreach": "Auto liquidation",
+      "adminForce": "Forced liquidation",
+      "unknown": "Liquidation"
+    },
+    "columns": {
+      "currency": "Loan currency",
+      "collateral": "Collateral sold",
+      "liquidationPrice": "Execution price",
+      "proceeds": "Proceeds",
+      "appliedAmount": "Applied to repayment",
+      "badDebt": "Shortfall"
+    }
+  },
+  "status": {
+    "pending": "Under review",
+    "active": "Borrowing",
+    "overdue": "Overdue",
+    "repaid": "Repaid",
+    "liquidated": "Liquidated",
+    "rejected": "Rejected",
+    "forceClosed": "Closed",
+    "unknown": "—"
+  },
+  "health": {
+    "safe": "Safe",
+    "warn": "Warning",
+    "danger": "Danger",
+    "unknown": "—"
+  },
+  "guard": {
+    "loginRequired": "Please log in to continue.",
+    "kycRequired": "Identity verification is required before borrowing or repaying."
+  },
+  "error": {
+    "fallback": "Something went wrong. Please try again.",
+    "offlineCollateralNotAllowed": "Offline collateral borrowing isn't available for this currency right now.",
+    "signatureRequired": "Please sign the contract before submitting your application.",
+    "termsNotAccepted": "Please agree to the loan terms before submitting.",
+    "offlineCollateralInvalid": "Your offline collateral details are invalid. Please check the asset type, declared value, and proof files.",
+    "vipTierNotConfigured": "Borrowing isn't available for your VIP tier yet. Please contact support.",
+    "currencyNotSupported": "This currency isn't available for borrowing right now.",
+    "termInvalid": "Please choose a valid loan term.",
+    "signatureFileInvalid": "Your signature couldn't be verified. Please sign again."
+  }
+}

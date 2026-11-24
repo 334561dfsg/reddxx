@@ -1,0 +1,474 @@
+{
+  "seo": {
+    "title": "加密貨幣、外匯、指數與美股交易",
+    "description": "{{brand}} 是多資產交易平台，一個帳戶即可交易加密貨幣、外匯、指數、美股與貴金屬，並提供 AI 輔助工具。"
+  },
+  "hero": {
+    "badge": "多資產交易 · 一個帳戶",
+    "title": "加密貨幣、外匯、美股 —— 一個帳戶全搞定。",
+    "title1": "更聰明地交易，",
+    "titleHighlight": "為下一代",
+    "title2": "百萬交易者而生。",
+    "desc": "一個帳戶，交易加密貨幣、外匯、指數、美股與貴金屬 —— 具備深度流動性、低手續費，以及讓每一筆交易都有依據的數據與 AI。",
+    "startTrading": "開始交易",
+    "seeMarkets": "查看行情",
+    "exploreQuantFund": "探索量化基金",
+    "watchFilm": "了解 AI Quant 運作機制",
+    "watchDemo": "看 90 秒示範",
+    "appMockupAlt": "{{brand}} 行動端 App 實拍 —— 資產總覽、AI 量化、跟單與即時行情",
+    "appMockupPip": "即時"
+  },
+  "aiQuantFilm": {
+    "title": "AI Quant 運作機制",
+    "description": "用一段短片帶你了解策略如何構建、回測與運行。",
+    "unsupported": "您的瀏覽器不支援影片播放。"
+  },
+  "products": {
+    "label": "01 / 你能買什麼",
+    "titleFrom": "從",
+    "perpetual": "永續期貨",
+    "titleTo": "到",
+    "options": "二元期權",
+    "titleEnd": " —<br/>一個帳戶，涵蓋所有你在意的市場。",
+    "viewAll": "看全部產品 →",
+    "perpLabel": "永續期貨",
+    "perpTitle1": "高深度流動性，",
+    "perpTitle2": "主流資產全覆蓋。",
+    "perpDesc": "200+ 個期貨交易對，覆蓋加密貨幣、黃金、白銀。最高 125 倍槓桿，撮合延遲低於 50 毫秒，資金費率透明 —— 全部以 USD 計價，一個帳戶走天下。",
+    "perpStat1": "交易對",
+    "perpStat2": "最高槓桿",
+    "perpStat3": "最低費率",
+    "perpTag1": "加密貨幣",
+    "perpTag2": "貴金屬",
+    "perpTag3": "USD 計價",
+    "optLabel": "二元期權",
+    "optTitle1": "選一個方向，",
+    "optTitle2": "最大風險事先知道。",
+    "optDesc": "只需判斷價格漲跌方向 —— 漲跌幅度不影響盈虧。60 秒、90 秒、6 分鐘到期，賠付固定，虧損封頂。",
+    "optStat1": "到期時間",
+    "optStat2": "最高賠付",
+    "optStat3": "固定",
+    "optStat4": "賠率",
+    "optTag1": "看漲",
+    "optTag2": "看跌",
+    "multiLabel": "一個帳戶 · 三個市場",
+    "multiTitle": "加密、黃金、白銀 ——<br/><1>一份保證金，無需切換。</1>",
+    "multiDesc": "在同一個保證金帳戶裡交易加密貨幣、黃金（XAU）和白銀（XAG）。統一風控、統一盈虧、不再兩邊切平台。",
+    "multiAsset1": "加密貨幣",
+    "multiAsset1Sub": "200+ 交易對",
+    "multiAsset2": "黃金",
+    "multiAsset2Sub": "XAU/USDT",
+    "multiAsset3": "白銀",
+    "multiAsset3Sub": "XAG/USDT"
+  },
+  "ai": {
+    "label": "02 / 你的 AI 助手",
+    "title1": "把量化能力交給 ",
+    "titleHighlight": "每一位交易者",
+    "title2": "，<br/>不只是對沖基金。",
+    "subtitle": "三套 AI 工具協同運作 —— 計算交給演算法做，決策權始終在你手裡。",
+    "quantTag": "01 / 量化",
+    "quantTitle": "AI 策略庫",
+    "quantDesc": "上百個策略，全部經過 5 年歷史資料回測 —— 趨勢、套利、網格、均值回歸。一鍵訂閱，自動執行，即時追蹤表現。",
+    "quantChartLabel": "淨值曲線 · 90 天",
+    "quantWinRate": "勝率",
+    "quantSharpe": "夏普比率",
+    "quantMaxDrawdown": "最大回撤",
+    "quantLink": "瀏覽策略 →",
+    "copyTag": "02 / 跟單",
+    "copyTitle": "跟你信任的人交易",
+    "copyDesc": "按風險調整後收益排名的頂級交易者，自動複製倉位。自己設止損、隨時退出、按固定比例分潤 —— 無鎖定期。",
+    "copyLabel": "頂級交易者 · 30 天",
+    "copyRoi": "收益率",
+    "copyLink": "看交易者榜單 →",
+    "signalTag": "03 / 訊號",
+    "signalTitle": "經過篩選的交易訊號",
+    "signalDesc": "每月 3,800+ 訊號，按市場結構、鏈上資料、市場情緒三維度打分 —— 只有前 10% 才會推送給你。",
+    "signalLong": "做多",
+    "signalTime": "2 分鐘前",
+    "signalEntry": "建倉區間",
+    "signalStop": "止損位",
+    "signalTarget": "目標 1 / 2",
+    "signalRr": "盈虧比",
+    "signalConfidence": "可信度",
+    "signalLink": "看最新訊號 →",
+    "riskWarning": "⚠ 風險提示：過往表現不代表未來收益。AI 策略和訊號僅供參考，不構成投資建議。加密貨幣與期貨交易可能讓你損失全部本金 —— 請只用閒錢交易。"
+  },
+  "markets": {
+    "label": "03 / 即時行情",
+    "title": "真實價格，",
+    "titleHighlight": "即時呈現 ——",
+    "tabAll": "全部",
+    "tabHot": "熱門",
+    "tabGainers": "24 小時漲幅榜",
+    "tabFunding": "資金費率",
+    "tabNew": "新上線",
+    "colPair": "交易對",
+    "colPrice": "價格",
+    "colChange": "24h 漲跌",
+    "colVolume": "24h 成交",
+    "colFunding": "資金費率",
+    "tradeLink": "去交易 →",
+    "viewAll": "看全部 {{total}} 個市場 →",
+    "pulseLabel": "即時市場 · 熱門交易對",
+    "empty": "此分類暫無市場。",
+    "viewAllPlain": "看全部市場 →"
+  },
+  "partners": {
+    "label": "05 / 合作夥伴",
+    "title": "合作夥伴"
+  },
+  "news": {
+    "label": "06 / 學習市場",
+    "title": "每一筆交易都讓你",
+    "titleHighlight": "更懂市場。",
+    "viewAll": "全部 →",
+    "tagHeadline": "精選",
+    "tagDeep": "深度",
+    "tagCourse": "課程",
+    "article1Meta": "市場研究 · 閱讀 12 分鐘",
+    "article1Title": "BTC 期權需求正在爆發 ——<br/>聰明錢在賭什麼？",
+    "article1Desc": "過去 30 天，BTC 二元期權成交量飆升 42%。我們拆解資金流向、交易擁擠的到期時間、以及散戶與機構的勝率差異...",
+    "article2Meta": "閱讀 8 分鐘",
+    "article2Title": "二元期權入門 —— 從第一張合約到形成真正的優勢",
+    "article2Desc": "核心機制、如何選擇到期時間、如何控制倉位讓連續虧損不至於打爆帳戶...",
+    "article3Meta": "閱讀 3 分鐘",
+    "article3Title": "黃金期貨（XAU/USDT）上線，最高 100 倍槓桿",
+    "article3Desc": "用同一個保證金帳戶同時交易加密貨幣和貴金屬。Maker 費率低至 0.02%...",
+    "article4Meta": "閱讀 5 分鐘",
+    "article4Title": "Copy Trading v2.4 —— 按真實風險匹配，不只是看收益",
+    "article4Desc": "新版本基於 12 項風險指標在交易者與跟單方之間匹配，激進策略不會進入保守帳戶..."
+  },
+  "cta": {
+    "title": "準備好以更有優勢的方式交易了嗎？",
+    "title1": "準備好",
+    "titleHighlight": "更有優勢地交易",
+    "title2": "了嗎？",
+    "desc": "2 分鐘內開戶。新用戶可使用體驗金、平台獎勵與新手友善的交易權益。",
+    "start": "免費建立帳戶",
+    "tradeNow": "立即交易",
+    "guaranteeLine": "2 分鐘開戶 · 體驗階段無需 KYC · 隨時註銷"
+  },
+  "whyNvdx": {
+    "label": "為什麼選 {{brand}}",
+    "title": "為什麼選 {{brand}}",
+    "subtitle": "交易者遷移到 {{brand}} 並留下來的四個原因。圍繞「真金白銀上場時真正重要的事」打造。",
+    "learnMore": "了解更多",
+    "features": {
+      "multiAsset": {
+        "title": "全資產覆蓋",
+        "desc": "加密貨幣、外匯、指數、美股與貴金屬 —— 一份保證金，無需切換平台。",
+        "imageAlt": "四枚分層懸浮的玻璃圓盤 —— 加密貨幣、黃金、外匯、股指匯聚於單一保證金"
+      },
+      "aiAssisted": {
+        "title": "AI 助手",
+        "desc": "可訂閱的評分訊號與策略，也可以完全不用。決策權始終在你手裡。",
+        "imageAlt": "酸檸檬色資料節點組成上升趨勢線 —— AI 評分訊號星座"
+      },
+      "web3Custody": {
+        "title": "帳戶安全",
+        "desc": "雙重驗證、資金密碼與登入設備管理，協助你保護帳戶。",
+        "imageAlt": "拉絲鈦金屬保險庫 —— 多簽冷錢包與鏈上儲備證明審計掃描"
+      },
+      "liquidity": {
+        "title": "全天候流動性",
+        "desc": "主流品種撮合延遲低於 50 毫秒，24/7 不停盤，資金費率透明。",
+        "imageAlt": "酸檸檬色液體流穿過精密水道 —— 低延遲撮合與全天候流動性"
+      }
+    }
+  },
+  "payments": {
+    "label": "出金渠道",
+    "title": "隨時隨地提取",
+    "subtitle": "用你已經在用的方式取出資金 —— 銀行卡、電匯、穩定幣或原生加密資產。"
+  },
+  "earn": {
+    "eyebrow": "理財",
+    "title": "讓閒置資產持續增值",
+    "subtitle": "活期、定期與質押產品,提供透明的參考年化,為長期持有者而設。",
+    "cta": "探索產品"
+  },
+  "insights": {
+    "label": "洞見",
+    "title": "最新洞見"
+  },
+  "aqua": {
+    "hero": {
+      "badge": "新世代撮合引擎",
+      "titleLead": "用",
+      "titleGradient": "光速",
+      "titleTail": "捕捉每一個行情。",
+      "desc": "低於 50 毫秒的撮合引擎、即時資料串流與 AI 副駕。加密貨幣、外匯、貴金屬與股票，一個帳戶，零延遲。",
+      "hudLabel": "執行終端",
+      "hudStatus": "即時",
+      "hudPair": "BTC/USDT · 永續",
+      "hudLatency": "撮合延遲",
+      "hudLatencyValue": "42ms",
+      "hudThroughput": "每秒訂單",
+      "hudThroughputValue": "1.2M"
+    },
+    "metrics": {
+      "label": "為效能而生",
+      "pairs": "可交易對",
+      "latency": "平均撮合延遲",
+      "traders": "活躍交易者",
+      "uptime": "引擎在線率"
+    },
+    "features": {
+      "label": "與眾不同",
+      "title": "交易致勝所需，一應俱全。",
+      "subtitle": "把關鍵能力重新打造——多資產深度、AI 輔助、帳戶安全，以及你能感受到的低延遲。",
+      "multiAsset": {
+        "title": "多資產",
+        "desc": "加密貨幣、外匯、指數、美股與貴金屬共用一個保證金餘額，無需切換平台。"
+      },
+      "ai": {
+        "title": "AI 副駕",
+        "desc": "可訂閱或忽略的評分訊號與回測策略，最終決定權仍在你手上。"
+      },
+      "custody": {
+        "title": "帳戶安全",
+        "desc": "雙重驗證、資金密碼與登入設備管理，協助你保護帳戶。"
+      },
+      "speed": {
+        "title": "50 毫秒內成交",
+        "desc": "全天候運作的撮合引擎，50 毫秒內成交，資金費率透明。"
+      }
+    },
+    "markets": {
+      "label": "即時行情",
+      "title": "真實價格，即時串流。",
+      "viewAll": "查看全部 {{total}} 個市場",
+      "viewAllPlain": "查看全部市場"
+    },
+    "cta": {
+      "title": "準備好全速交易了嗎？",
+      "desc": "2 分鐘內開戶。新用戶可使用體驗金、平台獎勵與新手友善的交易權益。",
+      "start": "免費建立帳戶",
+      "secondary": "探索市場"
+    }
+  },
+  "cyber": {
+    "hero": {
+      "badge": "撮合核心 · 已上線",
+      "titleLead": "接入",
+      "titleGlitch": "霓虹網格",
+      "titleTail": "毫秒成交。",
+      "desc": "低於 50 毫秒的撮合核心、不斷線的資料串流與 AI 訊號。加密貨幣、外匯、貴金屬與美股——一條專線全部接通。",
+      "bootLabel": "開機序列",
+      "uplink": "上行鏈路",
+      "boot1": "載入撮合核心",
+      "boot2": "同步行情串流",
+      "boot3": "載入帳戶模組",
+      "boot4": "連線就緒",
+      "bootDone": "系統上線",
+      "pairLabel": "交易對",
+      "latency": "撮合延遲",
+      "latencyValue": "42ms",
+      "throughput": "每秒訂單",
+      "throughputValue": "1.2M"
+    },
+    "stats": {
+      "label": "網格即時狀態",
+      "pairs": "可交易對",
+      "latency": "平均撮合延遲",
+      "traders": "活躍交易者",
+      "uptime": "引擎在線率"
+    },
+    "features": {
+      "label": "裝備清單",
+      "title": "為高壓行情打造的裝備。",
+      "subtitle": "多資產深度、AI 訊號、帳戶安全與毫秒撮合——全部內建，即插即用。",
+      "multiAsset": {
+        "title": "多資產矩陣",
+        "desc": "加密貨幣、外匯、指數、美股與貴金屬共用同一保證金餘額，一個帳戶橫跨全市場。"
+      },
+      "ai": {
+        "title": "AI 訊號引擎",
+        "desc": "評分訊號與回測策略持續推送，接受或忽略，決定權在你。"
+      },
+      "custody": {
+        "title": "帳戶安全",
+        "desc": "雙重驗證、資金密碼與登入設備管理，協助你保護帳戶。"
+      },
+      "speed": {
+        "title": "毫秒撮合",
+        "desc": "全天候撮合核心，50 毫秒內成交，資金費率全透明。"
+      }
+    },
+    "markets": {
+      "label": "行情監控牆",
+      "title": "即時串流，直出撮合核心。",
+      "viewAll": "查看全部 {{total}} 個市場",
+      "viewAllPlain": "查看全部市場"
+    },
+    "cta": {
+      "title": "接入網格，開始交易。",
+      "desc": "2 分鐘完成開戶。體驗金、平台獎勵與新手權益已預載。",
+      "start": "免費建立帳戶",
+      "secondary": "探索市場"
+    }
+  },
+  "founding": {
+    "title": "創立成員",
+    "description": "{{brandName}} 是全球化策略性投資金融平台，致力於連結傳統金融與數位經濟，核心優勢在於頂尖策略團隊（{{names}}）為客戶提供跨市場、跨領域的資產配置方案，結合 AI 風控與國際合規標準，保障資金安全與金融流動平台；客製化服務與全球投入研究支持，使命是為用戶打造安全、智慧、跨界的財富成長生態，成為新一代投資者的策略夥伴。",
+    "prev": "上一位",
+    "next": "下一位"
+  },
+  "premium": {
+    "hero": {
+      "emailPlaceholder": "電子郵件",
+      "signUp": "註冊",
+      "hotTitle": "熱門幣種"
+    },
+    "steps": {
+      "label": "快速開始",
+      "title": "三步輕鬆開始交易",
+      "s1Title": "建立帳戶",
+      "s1Desc": "兩分鐘內用電子郵件完成註冊。",
+      "s2Title": "充值錢包",
+      "s2Desc": "透過銀行卡、銀行轉帳或加密貨幣充值。",
+      "s3Title": "開始交易",
+      "s3Desc": "在單一帳戶交易加密貨幣、貴金屬等。"
+    },
+    "stats": {
+      "assets": "上架資產",
+      "volume": "24 小時成交額",
+      "uptime": "全天候運行",
+      "uptimeValue": "24/7"
+    }
+  },
+  "cobalt": {
+    "hero": {
+      "title": "多元資產交易平台",
+      "subtitle": "買賣並管理涵蓋加密貨幣、外匯、貴金屬與指數的市場。",
+      "assetsTitle": "熱門市場",
+      "phoneAlt": "在同一款行動應用程式中交易加密貨幣、外匯與股票"
+    },
+    "credentials": {
+      "markets": "一個帳戶交易加密貨幣、外匯、貴金屬與指數",
+      "security": "支援雙重驗證與登入設備管理"
+    },
+    "built": {
+      "title": "為多元資產交易而生",
+      "items": {
+        "markets": "安全交易 {{total}} 個市場，涵蓋加密貨幣、外匯、貴金屬與指數",
+        "marketsFallback": "安全交易加密貨幣、外匯、貴金屬與指數",
+        "onboarding": "安全且無縫地設定您的帳戶",
+        "support": "全天候優先支援"
+      },
+      "marketCount": "{{total}} 個市場"
+    },
+    "explore": {
+      "title": "探索比特幣、以太坊等數百種加密貨幣",
+      "subtitle": "簡單、安全地購買、出售與管理數百種加密貨幣。",
+      "viewMore": "查看更多資產",
+      "tabGainers": "漲幅榜",
+      "tabVolume": "成交額榜"
+    },
+    "advanced": {
+      "title": "多元市場，多種交易方式",
+      "tagline": "加密貨幣、外匯、貴金屬與指數，一個帳戶全覆蓋——每個市場都配有為其設計的交易方式：帶槓桿的永續合約，以及固定收益的二元期權。",
+      "items": {
+        "markets": "一個帳戶交易加密貨幣、外匯、貴金屬與指數",
+        "futures": "永續合約：支援槓桿與市價、限價、止損限價委託",
+        "options": "二元期權：判斷漲跌方向，收益與最大風險事前固定"
+      },
+      "cta": "立即試用",
+      "previewAlt": "手持平板電腦操作交易畫面"
+    },
+    "earn": {
+      "eyebrow": "理財",
+      "title": "讓你的加密資產動起來",
+      "subtitle": "以靈活、透明的收益增長持倉——無需複雜設定,沒有意外。",
+      "cta": "開始賺取收益",
+      "features": {
+        "flexible": {
+          "title": "靈活期限",
+          "desc": "隨時申購與贖回,沒有冗長鎖倉。"
+        },
+        "secure": {
+          "title": "安全設計",
+          "desc": "雙重驗證、資金密碼與登入設備管理，協助你保護帳戶。"
+        },
+        "auto": {
+          "title": "自動複利",
+          "desc": "收益自動累積並再投入,讓餘額持續增長。"
+        }
+      }
+    },
+    "trust": {
+      "eyebrow": "安全",
+      "title": "帳戶安全功能",
+      "subtitle": "協助你保護帳戶並管理存取權限的工具。",
+      "items": {
+        "twoFactor": {
+          "title": "雙重驗證",
+          "desc": "登入時增加第二步驗證。"
+        },
+        "fundPassword": {
+          "title": "資金密碼",
+          "desc": "在帳戶設定中設定獨立的資金密碼。"
+        },
+        "devices": {
+          "title": "登入設備管理",
+          "desc": "查看已登入的裝置，並移除不認識的裝置。"
+        },
+        "support": {
+          "title": "及時獲得所需幫助",
+          "desc": "您可以隨時聯繫我們的支援團隊,獲得常見問題的快速解決方案。"
+        }
+      }
+    }
+  },
+  "pulse": {
+    "hero": {
+      "desc": "一個帳戶，交易加密貨幣、外匯、指數、美股與貴金屬。"
+    },
+    "cta": {
+      "title": "準備好開始交易了嗎？",
+      "desc": "幾分鐘即可建立帳戶，今天就完成你的第一筆交易。",
+      "start": "立即開始",
+      "trade": "前往交易"
+    }
+  },
+  "ribbon": {
+    "features": {
+      "title": "更先進的多元資產交易平台",
+      "subtitle": "專為資深交易者打造",
+      "cards": {
+        "markets": {
+          "title": "超過 {{total}} 個交易市場",
+          "titleFallback": "數百個交易市場",
+          "desc": "即時交易加密貨幣、外匯、指數、貴金屬與美股，一個帳戶全部覆蓋。"
+        },
+        "quant": {
+          "title": "AI 量化與跟單交易",
+          "desc": "AI 策略與量化基金全天候運作，一鍵跟單頂尖交易者，讓數據為你決策。"
+        },
+        "security": {
+          "title": "帳戶安全",
+          "desc": "雙重驗證、資金密碼與登入設備管理，協助你保護帳戶。"
+        }
+      }
+    },
+    "customize": {
+      "title": "為您的需求而設，自由掌握交易方式。",
+      "desc": "交易中心支援模組自由拖曳、調整大小、顯示或隱藏，為專業交易人士而設，超低延遲與深度流動性盡在掌握。",
+      "sparkPrice": "$128,700"
+    }
+  },
+  "ui": {
+    "marketSnapshot": "市場行情快照",
+    "whyNewquantcapital": "為什麼選 NewQuantCapital",
+    "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "交易者遷移到 NewQuantCapital 並留下來的四個原因。圍繞「真金白銀上場時真正重要的事」打造。",
+    "hoursAgo": " 小時前"
+  },
+  "motion": {
+    "pausePartners": "暫停滾動",
+    "resumePartners": "繼續滾動",
+    "pauseQuotes": "暫停更新",
+    "resumeQuotes": "繼續更新",
+    "demoQuotes": "模擬行情 · 熱門交易對"
+  }
+}

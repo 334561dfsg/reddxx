@@ -1,0 +1,261 @@
+{
+  "version": {
+    "updateAvailable": "A new version is available",
+    "refreshNow": "Refresh now"
+  },
+  "getStarted": "Get Started",
+  "scrollLeft": "Scroll left",
+  "scrollRight": "Scroll right",
+  "trade": "Trade",
+  "home": "Home",
+  "language": "Language",
+  "options": "Options Trading",
+  "optionsDesc": "Go long or short with defined risk",
+  "binaryOptions": "Binary Options",
+  "all": "All",
+  "search": "Search",
+  "contract": "Futures",
+  "futures": "Futures Trading",
+  "futuresDesc": "Trade perpetual contracts with leverage",
+  "spotTrading": "Spot Trading",
+  "spotDesc": "Buy and sell real assets at market price",
+  "finance": "Finance",
+  "earn": "Earn",
+  "earnDesc": "Put idle assets to work for yield",
+  "simpleEarn": "Simple Earn",
+  "myEarnings": "My Earnings",
+  "loan": "Loan",
+  "loanDesc": "Borrow against your crypto holdings",
+  "c2c": "C2C",
+  "c2cDesc": "Buy and sell crypto peer to peer",
+  "aiQuant": "AI Quant",
+  "aiQuantOverview": "Overview",
+  "aiQuantStrategy": "Strategy",
+  "aiQuantStrategyDesc": "Automate trades with quant strategies",
+  "aiQuantQuantFund": "Quant Fund",
+  "aiQuantQuantFundDesc": "Invest in professionally managed funds",
+  "aiQuantQuantFundPositions": "My Quant Fund positions",
+  "copytrade": "Copy Trade",
+  "copyTrading": "Copy Trading",
+  "copytradeDesc": "Follow top traders automatically",
+  "error": {
+    "generic": "Something went wrong, please try again later",
+    "network": "Network error. Check your connection and try again.",
+    "requestId": "Request ID: {{requestId}}"
+  },
+  "errorGuidance": {
+    "kycRequired": {
+      "title": "Identity verification required",
+      "cta": "Verify now"
+    },
+    "registrationIncomplete": {
+      "title": "Registration is not complete yet",
+      "cta": "Continue registration"
+    },
+    "socialLocalEmailUnverified": {
+      "title": "This email is registered but not verified",
+      "cta": "Reset password"
+    },
+    "kycPendingReview": {
+      "title": "Identity verification under review",
+      "cta": "View progress"
+    },
+    "advancedVerificationRequired": {
+      "title": "Higher verification level required",
+      "cta": "Verify now"
+    },
+    "insufficientBalance": {
+      "title": "Insufficient trading balance",
+      "cta": "Transfer funds"
+    },
+    "insufficientFundingBalance": {
+      "title": "Insufficient funding balance",
+      "cta": "Deposit now"
+    },
+    "fundPasswordNotSet": {
+      "title": "Fund password not set",
+      "cta": "Set fund password"
+    },
+    "twoFactorNotEnabled": {
+      "title": "Two-factor authentication required",
+      "cta": "Enable 2FA"
+    },
+    "vipTierInsufficient": {
+      "title": "VIP level not high enough",
+      "cta": "Upgrade VIP"
+    }
+  },
+  "news": "News",
+  "charity": "Charity",
+  "menu": "Menu",
+  "toggleTheme": "Toggle theme",
+  "closeMenu": "Close menu",
+  "deposit": "Deposit",
+  "profile": "Profile",
+  "assets": "Assets",
+  "assetsCenter": "Assets Center",
+  "kyc": "Identification",
+  "connectWallet": "Connect Wallet",
+  "connectingWallet": "Connecting...",
+  "message": "Messages",
+  "more": "More",
+  "aboutUs": "About Us",
+  "privacyPolicy": "Privacy Policy",
+  "riskCompliance": "Risk & Compliance",
+  "regulatoryInformation": "Regulatory Information",
+  "userAgreement": "User Agreement",
+  "riskDisclosure": "Risk Disclosure",
+  "regulation": "Regulation",
+  "productsServices": "Products & Services",
+  "helpCenter": "Help Center",
+  "faq": "FAQ",
+  "announcements": "Announcements",
+  "onlineSupport": "Online Support",
+  "whatsApp": "WhatsApp",
+  "x": "X",
+  "telegram": "Telegram",
+  "youtube": "YouTube",
+  "instagram": "Instagram",
+  "facebook": "Facebook",
+  "tiktok": "TikTok",
+  "linkedin": "LinkedIn",
+  "discord": "Discord",
+  "email": "Email",
+  "loadFailed": "Load Failed",
+  "noData": "No Data",
+  "noMore": "No More",
+  "copyright": "© {{year}} {{brand}} Trading Platform. All rights reserved.",
+  "loading": "Loading...",
+  "logout": "Logout",
+  "unnamed": "Unnamed",
+  "security": "Security",
+  "copy": "Copy",
+  "copied": "Copied",
+  "copyFailed": "Copy failed",
+  "kycVerified": "Verified",
+  "kycVerifiedLevel": "Verified · L{{level}}",
+  "kycPending": "Under Review",
+  "kycUnverified": "Unverified",
+  "kycAdvancedPending": "Basic Verified · Level 2 Pending",
+  "kycUpgradeCta": "Verify Level 2",
+  "on": "ON",
+  "off": "OFF",
+  "upload": {
+    "invalidType": "Supported formats: {{formats}}",
+    "tooLarge": "File exceeds the {{limit}} limit",
+    "retry": "Retry",
+    "animatedImage": "Animated images aren't supported. Upload a still image.",
+    "undecodable": "This image can't be read. Upload a JPG or PNG.",
+    "linkExpired": "The upload link expired. Try again.",
+    "incomplete": "The upload didn't finish. Try again.",
+    "unsupportedFormat": "Format not supported. Upload a still image in JPG, PNG, WebP, BMP, or AVIF.",
+    "photoTooLarge": "This photo is too large. Retake or compress it, then try again.",
+    "contentMismatch": "The file contents don't match its format. Retake or rescan it."
+  },
+  "demo": {
+    "real": "Real",
+    "demo": "Demo",
+    "mode": "DEMO TRADING MODE",
+    "noRealFunds": "No real funds",
+    "account": "Demo Account",
+    "confirmTitle": "Switch to demo mode",
+    "confirmMessage": "Switching to demo mode means no real funds are involved.",
+    "confirmEnable": "Confirm",
+    "confirmCancel": "Cancel",
+    "realModeRequired": "This page is only available in real mode",
+    "confirmRealTitle": "Switch to real mode",
+    "confirmRealMessage": "Switching will show the real account’s assets and trading interface."
+  },
+  "accountSuspended": {
+    "banner": "Your account has been suspended — related data and features are unavailable. Contact support if you think this is a mistake.",
+    "title": "Account suspended",
+    "desc": "Your account has been suspended, so this content can't be loaded. Contact support if you have questions."
+  },
+  "moduleDisabled": {
+    "title": "Not available on this site",
+    "desc": "This feature isn't offered here right now. Your existing orders, holdings and history are still available."
+  },
+  "emailVerification": {
+    "banner": "Verify your email to unlock withdrawals",
+    "verifyNow": "Verify now",
+    "title": "Verify your email",
+    "intro": "To keep your funds safe, withdrawals and OTC sells require a verified email. We'll send a code to the address below.",
+    "changeEmail": "Change email",
+    "sendCode": "Send code",
+    "sending": "Sending...",
+    "resend": "Resend code",
+    "resendIn": "Resend in {{seconds}}s",
+    "codeLabel": "Verification code",
+    "codeHint": "Enter the {{length}}-digit code from the email.",
+    "confirm": "Verify email",
+    "confirming": "Verifying...",
+    "verified": "Email verified",
+    "guideTitle": "Verify your email before withdrawing",
+    "guideDescription": "Your email isn't verified yet. Withdrawals stay locked until you verify it.",
+    "dialogCrashed": "The email verification dialog failed to load. Please try again."
+  },
+  "assetsMenu": {
+    "total": "Total Assets",
+    "frozen": "Frozen",
+    "hideBalance": "Show / Hide balance",
+    "deposit": "Deposit",
+    "transfer": "Transfer",
+    "withdraw": "Withdraw",
+    "viewAll": "View all assets"
+  },
+  "pagination": {
+    "info": "{{total}} records · page {{page}} / {{totalPages}}"
+  },
+  "messages": {
+    "title": "Messages",
+    "viewAll": "View all",
+    "markAllRead": "Mark all as read",
+    "markAllReadSuccess": "Marked {{count}} messages as read",
+    "markAllReadFailed": "Failed to mark all as read",
+    "markReadFailed": "Failed to mark as read",
+    "loadFailed": "Failed to load messages",
+    "back": "Back",
+    "tabs": {
+      "all": "All",
+      "unread": "Unread",
+      "read": "Read"
+    },
+    "types": {
+      "all": "All types",
+      "notice": "Notice",
+      "announcement": "Announcement",
+      "alert": "Alert",
+      "system": "System"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "backHome": "Back to home"
+  },
+  "footer": {
+    "language": "Language",
+    "version": "v{{version}}"
+  },
+  "contentPage": {
+    "fallbackTitle": "Content",
+    "empty": "This content is not available yet."
+  },
+  "auth": {
+    "sessionExpired": "Your session has expired. Please sign in again."
+  },
+  "vipBadge": "VIP {{tier}}",
+  "spot": "Spot",
+  "h5Guide": {
+    "title": "Switch to the mobile site",
+    "description": "The mobile site is designed for phone screens and is easier to use with touch.",
+    "goToMobile": "Go to mobile site",
+    "stay": "Not now, stay here",
+    "close": "Close"
+  },
+  "durationDays": "{{count}} days",
+  "tradeMarket": "Trade {{symbol}}",
+  "favoriteMarket": "Add {{symbol}} to favorites",
+  "unfavoriteMarket": "Remove {{symbol}} from favorites",
+  "durationSeconds": "{{count}} seconds"
+}

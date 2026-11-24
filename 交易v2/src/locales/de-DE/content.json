@@ -1,0 +1,33 @@
+{
+  "ui": {
+    "weCareForEveryChildCaughtInTheDevastation": "Wir kümmern uns um jedes Kind, das von den Verwüstungen des Krieges betroffen ist",
+    "weHelpEndHunger": "Wir helfen, den Hunger zu beenden",
+    "weBringComputersAndEthernetNetworksToEveryCorner": "Wir bringen Computer und Ethernet-Netzwerke in jeden Winkel der Welt",
+    "weProvideHopeInTimesOfDisaster": "Wir spenden Hoffnung in Katastrophenzeiten",
+    "weInvestInTheEducationalFutureOfCountriesIn": "Wir investieren in die Bildungszukunft von Ländern in abgelegenen Regionen",
+    "weHelpPeopleWithDisabilitiesStartANewLife": "Wir helfen Menschen mit Behinderungen, ein neues Leben zu beginnen",
+    "identityVerification": "Identitätsprüfung",
+    "selectAPngOrJpegImage": "PNG- oder JPEG-Bild auswählen",
+    "imageMustNotExceed10Mb": "Bild darf 10 MB nicht überschreiten",
+    "demoDepositRequest": "Demo-Einzahlungsantrag",
+    "demoWithdrawalRequest": "Demo-Auszahlungsantrag",
+    "localDemoCompletedNoDataOrFundsWereSent": "Demo abgeschlossen. Keine Daten oder Gelder übertragen.",
+    "charitySlide": "Spendenfolie",
+    "message": ":",
+    "connectGenerosityWithMeaningfulChangeAndBringHopeTo": "Großzügigkeit in Veränderung verwandeln und Gemeinschaften Hoffnung geben.",
+    "sourceFiguresAreASnapshotLocalDonationsAreDemonstrations": "Quelldaten als Snapshot. Lokale Spenden sind nur eine Demo.",
+    "merchantReviewIsNotConnectedInThisLocalDemo": "Keine Händlerprüfung in dieser lokalen Demo verbunden.",
+    "no": "Keine",
+    "orders": "Aufträge",
+    "thisDemoDoesNotCollectBankCardOrReal": "Diese Demo erfasst keine echten Bank- oder Auszahlungskonten.",
+    "confirmC2c": "C2C bestätigen",
+    "thisLocalDemoDoesNotCreateRealOrders": "Diese Demo erstellt keine echten Aufträge.",
+    "noTradersAvailable": "Keine Trader verfügbar",
+    "noFollowingYet": "Noch keine gefolgten Trader",
+    "selectAnAssetAndNetworkThenEnterTheDestination": "Asset und Netzwerk wählen, dann Ziel und Betrag eingeben",
+    "localDemoDoNotTransferToDemoAddressesOr": "Lokale Demo. Keine Überweisungen an Demo-Adressen oder echten Belege.",
+    "selectedLocallyFilesAreNotUploaded": "Lokal ausgewählt; kein Datei-Upload",
+    "submitDemo": "Demo absenden",
+    "noAnnouncements": "Keine Ankündigungen"
+  }
+}

@@ -1,0 +1,410 @@
+{
+  "nav": {
+    "ariaLabel": "Earnモジュールナビゲーション",
+    "products": "商品",
+    "myEarnings": "マイEarn",
+    "loan": "ローン",
+    "myLoans": "マイローン"
+  },
+  "header": {
+    "subtitle": "パッシブインカム",
+    "title": "Earn",
+    "heroDescription": "遊休資産を運用しましょう。透明な参考利回り — デイトレーダーではなく長期保有者のために設計されています。",
+    "myEarnings": "マイ収益"
+  },
+  "educational": {
+    "headline": "遊休の暗号資産で収益を得る。",
+    "chip": {
+      "apyUpTo": "APY最大 {{value}}%",
+      "types": "フレキシブル & 固定",
+      "dailyRateUpTo": "日次レート最大 {{value}}%"
+    },
+    "cta": "商品を見る"
+  },
+  "holdings": {
+    "totalHoldings": "総保有額",
+    "perDay": "+${{amount}}/日",
+    "cumulative": "累計",
+    "principal": "元本",
+    "accruedReward": "発生済み",
+    "dailyEstimated": "日次予想",
+    "rewardsLast7d": "過去7日間",
+    "nextRewardLabel": "次回の報酬",
+    "nextReward": "約{{hours}}時間後"
+  },
+  "table": {
+    "columns": {
+      "product": "商品",
+      "category": "タイプ",
+      "term": "期間",
+      "minAmount": "最低",
+      "totalSubscribed": "購読済み",
+      "availableQuota": "利用可能",
+      "apy": "APY",
+      "action": "操作",
+      "dailyRate": "日次レート"
+    }
+  },
+  "featured": {
+    "title": "注目商品",
+    "productCount": "{{count}} 商品",
+    "totalSubscribed": "{{amount}} 購読済み",
+    "quotaRemaining": "残り {{amount}} のみ",
+    "subscribeNow": "購読"
+  },
+  "badge": {
+    "hot": "人気",
+    "featured": "注目",
+    "exclusive": "限定",
+    "exclusiveHint": "対象ユーザー限定"
+  },
+  "apy": {
+    "label": "予想APY",
+    "suffix": "APY",
+    "annualizedShort": "APY (年率)",
+    "approx": "≈ 年率 {{value}}%"
+  },
+  "actions": {
+    "subscribe": "購読",
+    "viewDetail": "詳細を表示",
+    "redeem": "償還"
+  },
+  "tabs": {
+    "all": "すべて",
+    "flexible": "フレキシブル",
+    "fixed": "固定",
+    "staking": "ステーキング"
+  },
+  "products": {
+    "count": "{{count}} 商品",
+    "categoryFlex": "フレキシブル",
+    "categoryFixed": "固定",
+    "categoryStake": "ステーク",
+    "min": "最低 {{amount}}",
+    "max": "上限 {{amount}}",
+    "totalSubscribed": "{{amount}} 購読済み",
+    "termFlexible": "フレキシブル",
+    "termFixed": "{{days}}日",
+    "minValue": "≥ {{value}} {{unit}}",
+    "minValueWithEstimate": "≥ {{value}} {{unit}}（約 {{amount}} {{asset}}）"
+  },
+  "sort": {
+    "highestApy": "APYが高い順",
+    "shortestTerm": "期間が短い順",
+    "mostPopular": "人気順",
+    "highestDailyRate": "日次レートが高い順"
+  },
+  "security": {
+    "footer": "申し込み前に各商品の条件と償還ルールをご確認ください。",
+    "disclaimer": "投資助言ではありません。利回りは推定値であり変更される場合があります。"
+  },
+  "states": {
+    "retry": "再試行",
+    "loading": "読み込み中…",
+    "holdingsError": "Earnサマリーの読み込みに失敗しました。",
+    "productsError": "Earn商品の読み込みに失敗しました。",
+    "productsEmpty": "現在利用可能なEarn商品がありません。",
+    "detailError": "商品詳細の読み込みに失敗しました。",
+    "myEarningsError": "このリストの読み込みに失敗しました。"
+  },
+  "productDetail": {
+    "title": "商品詳細",
+    "back": "Earnに戻る",
+    "notFound": "この商品はご利用いただけなくなりました。",
+    "unlimited": "無制限",
+    "keyFacts": {
+      "term": "期間",
+      "min": "最低購読額",
+      "max": "最高購読額",
+      "availableQuota": "利用可能枠",
+      "totalSubscribed": "総購読額",
+      "perUserQuota": "ユーザーごとの上限",
+      "estAccrualStart": "利息開始日(予定)",
+      "estMaturity": "満期日(予定)",
+      "accrualMode": "利息計算方式",
+      "accrualModeRolling": "24時間ローリング",
+      "accrualModeRollingHint": "注文成立と同時に利息が発生し、24時間ごとに計上されます。"
+    },
+    "risk": {
+      "title": "リスク開示",
+      "notGuaranteed": "報酬は保証されておらず、市場状況により変動する場合があります。",
+      "smartContract": "ステーキング型商品にはスマートコントラクトリスクが適用されます。",
+      "earlyRedemption": "固定期間商品では早期償還により発生済みの報酬を失います。",
+      "noEarlyRedemption": "日次支払いの固定期間商品は早期償還できません。",
+      "earlyRedemptionPenalty": "定期商品を早期償還すると、元本の {{rate}}% がペナルティとして差し引かれます。適用される料率は申込時点のものです。"
+    },
+    "exploreOthers": "他の商品を見る",
+    "disabled": {
+      "paused": "この商品の購読は一時的に停止されています。",
+      "closed": "この商品は購読を受け付けていません。",
+      "soldOut": "枠が満了しました。後ほどご確認ください。",
+      "subscriptionDisabled": "現在購読は無効になっています。"
+    },
+    "groups": {
+      "rules": "申込ルール",
+      "quota": "商品枠"
+    },
+    "quotaFilled": "{{percent}}% 申込済み"
+  },
+  "subscribe": {
+    "title": "購読",
+    "amountLabel": "金額",
+    "amountPlaceholder": "金額を入力",
+    "availableBalanceLabel": "利用可能",
+    "maxButton": "最大",
+    "goDeposit": "入金する",
+    "submit": "購読を確定",
+    "cancel": "キャンセル",
+    "estDailyReward": "予想日次報酬",
+    "estMaturityReward": "満期時の予想報酬",
+    "errors": {
+      "minAmount": "最低購読額は {{amount}} {{asset}} です。",
+      "maxAmount": "最高購読額は {{amount}} {{asset}} です。",
+      "availableQuota": "残り枠は {{amount}} {{asset}} のみです。",
+      "perUserQuota": "ユーザーごとの上限は {{amount}} {{asset}} です。",
+      "invalidAmount": "有効な金額を入力してください。",
+      "insufficientBalance": "利用可能残高が不足しています。利用可能額は {{amount}} {{asset}} です。",
+      "priceChanged": "価格が変動しました。現在の最低購読額は {{amount}} {{asset}} です。",
+      "unavailableAtCurrentPrice": "現在の価格では購読できません。",
+      "valuationPriceUnavailable": "現在価格を取得できません。しばらくしてから再度お試しください。"
+    },
+    "success": {
+      "title": "購読が確定しました",
+      "orderId": "注文 {{id}}",
+      "viewHoldings": "マイ保有を表示"
+    },
+    "dates": {
+      "accrualStart": "利息開始日(予定)",
+      "maturity": "満期日(予定)",
+      "settlement": "入金日(予定)",
+      "reviewRequired": "この申込みには審査が必要です。承認の翌日から利息が発生します。",
+      "rollingNote": "注文成立と同時に利息が発生し、24時間ごとに計上されます。定期商品は満期から約10分以内に元本と利息が自動で入金されます。",
+      "rollingReviewRequired": "この申込は審査が必要です。承認と同時に利息が発生します。"
+    },
+    "fillRequiredMin": "入力する",
+    "estReward": "予想報酬",
+    "estRewardEmpty": "金額を入力すると予想報酬が表示されます"
+  },
+  "redeem": {
+    "title": "償還",
+    "subtitle": {
+      "flexible": "フレキシブル保有を償還",
+      "fixedMatured": "満期ポジションを償還",
+      "fixedEarly": "早期償還"
+    },
+    "redeemInFull": "全額償還",
+    "redeemPartial": "一部償還",
+    "amountLabel": "償還金額",
+    "redeemAll": "全額償還",
+    "principal": "元本",
+    "remainingPrincipal": "残り元本",
+    "continueAccrue": "残り元本は引き続き報酬が発生します。",
+    "eligibleReward": "対象報酬",
+    "fundingNote": "資金はファンディングアカウントに入金されます。",
+    "warning": {
+      "fixedEarly": "早期償還: 対象報酬は0になります。この操作は取り消せません。",
+      "fixedEarlyPenalty": "早期償還：元本からペナルティが差し引かれ、受取可能な報酬は 0 になります。この操作は取り消せません。"
+    },
+    "submit": "償還を確定",
+    "cancel": "キャンセル",
+    "errors": {
+      "disabled": "この商品では早期償還は許可されていません。",
+      "exceedsPrincipal": "金額は元本 {{amount}} {{asset}} を超えることはできません。",
+      "holdingInactive": "この保有はアクティブではないため償還できません。",
+      "invalidAmount": "有効な金額を入力してください。",
+      "awaitingFinalCoupon": "最終日の利息を計上処理中です。元本と利息は自動的に入金されますので、操作は不要です。数分後に再試行することもできます。",
+      "dailyPayoutNoEarly": "日次支払いの固定期間ポジションは早期償還できません。",
+      "penaltyChanged": "ペナルティ額が変更されました。新しい金額を確認のうえ、もう一度確定してください。"
+    },
+    "success": {
+      "title": "償還が確定しました",
+      "id": "償還 {{id}}",
+      "viewRedemptions": "償還を表示",
+      "done": "確定",
+      "penalty": "差引ペナルティ",
+      "received": "受取額"
+    },
+    "confirm": {
+      "title": "発生済みの報酬を放棄しますか?",
+      "body": "早期償還により、発生済みのすべての報酬(約 {{amount}} {{asset}})を失います。この操作は取り消せません。",
+      "youReceive": "受取額",
+      "youForfeit": "放棄する額",
+      "cancel": "キャンセル",
+      "acknowledge": "理解しました。早期償還する",
+      "penaltyTitle": "早期償還ペナルティを確認",
+      "penaltyBody": "早期償還すると、ペナルティとして {{amount}} {{asset}}（元本の {{rate}}%）が差し引かれ、発生済みの報酬はすべて放棄されます。この操作は取り消せません。",
+      "acknowledgePenalty": "ペナルティに同意して早期償還"
+    },
+    "dailyPaidOut": "各期ごとにウォレットへ支払い済み",
+    "penalty": "早期償還ペナルティ（{{rate}}%）",
+    "estimatedReceive": "受取予定額"
+  },
+  "myEarnings": {
+    "title": "マイ収益",
+    "table": {
+      "productName": "商品",
+      "asset": "資産",
+      "principal": "元本",
+      "accruedInterest": "発生済み利息",
+      "term": "期間 / 満期",
+      "status": "ステータス",
+      "action": "操作",
+      "amount": "金額",
+      "subscribedQuantity": "購読数量",
+      "subscribedAt": "購読日時",
+      "completedAt": "完了日時",
+      "redemptionType": "タイプ",
+      "eligibleReward": "対象報酬",
+      "createdAt": "作成日時",
+      "rewardAmount": "報酬",
+      "rewardDate": "報酬日",
+      "paidAt": "支払日時",
+      "dailyRate": "日次レート"
+    },
+    "summary": {
+      "totalValue": "総評価額",
+      "principal": "元本",
+      "accruedReward": "発生済み報酬",
+      "cumulativeReward": "累計報酬",
+      "dailyEstimatedReward": "1日あたり予想",
+      "earningsTrend": "直近 {{days}} 日間の収益推移",
+      "usdNote": "以下の金額はUSD換算で表示されています"
+    },
+    "tabs": {
+      "holdings": "保有",
+      "orders": "注文",
+      "redemptions": "償還",
+      "rewards": "報酬"
+    },
+    "filter": {
+      "asset": "資産",
+      "all": "すべての資産",
+      "status": "ステータス"
+    },
+    "holdings": {
+      "subscribedQuantity": "購読数量",
+      "accruedInterest": "発生済み",
+      "paidReward": "支払済み",
+      "daysRemaining": "残り {{days}}日",
+      "matured": "満期",
+      "flexible": "フレキシブル",
+      "redeemCta": "償還",
+      "maturityCountdownLabel": "満期まで",
+      "readyToRedeem": "償還可能",
+      "subscribedAt": "購読日",
+      "startedAt": "開始日",
+      "maturityAt": "満期",
+      "lastAccruedAt": "最終発生日",
+      "nextAccrualLabel": "次回利息計上",
+      "settlementEtaLabel": "着金まで",
+      "settlingLabel": "着金処理中…",
+      "countdownDaysHoursMinutes": "{{days}}日{{hours}}時間{{minutes}}分",
+      "accrualStartDate": "利息開始日",
+      "maturityDate": "満期日",
+      "settlementDate": "入金予定日",
+      "accrualStartTime": "利息開始",
+      "maturityTime": "満期",
+      "settlementEtaTime": "入金予定",
+      "paidToWallet": "ウォレットへ支払い済み"
+    },
+    "orders": {
+      "subscribedAt": "購読日時",
+      "completedAt": "完了日時",
+      "amount": "金額",
+      "valueUsd": "≈ {{value}} USD"
+    },
+    "redemptions": {
+      "createdAt": "申請日時",
+      "completedAt": "完了日時",
+      "amount": "金額",
+      "eligibleReward": "対象報酬",
+      "penalty": "ペナルティ"
+    },
+    "rewards": {
+      "rewardDate": "報酬日",
+      "amount": "金額",
+      "paidAt": "支払日時"
+    },
+    "status": {
+      "active": "アクティブ",
+      "redeeming": "償還中",
+      "redeemed": "償還済み",
+      "matured": "満期",
+      "pending": "保留中",
+      "completed": "完了",
+      "failed": "失敗",
+      "pending_review": "審査中",
+      "rejected": "却下",
+      "accrued": "発生済み",
+      "paid": "支払済み"
+    },
+    "redemptionType": {
+      "flexiblePartial": "フレキシブル · 一部",
+      "flexibleFull": "フレキシブル · 全額",
+      "fixedMatured": "固定 · 満期",
+      "fixedEarly": "固定 · 早期"
+    },
+    "empty": {
+      "holdings": "まだ保有がありません。商品を購読して収益を得ましょう。",
+      "orders": "まだ購読注文がありません。",
+      "redemptions": "まだ償還記録がありません。",
+      "rewards": "まだ報酬記録がありません。",
+      "browseProducts": "商品を見る"
+    },
+    "loadMore": "さらに読み込む",
+    "redeemDisabledTooltip": "この商品では早期償還は許可されていません。"
+  },
+  "errors": {
+    "INSUFFICIENT_BALANCE": "残高が不足しています。",
+    "QUOTA_EXHAUSTED": "商品の枠が満了しました。",
+    "PRODUCT_NOT_AVAILABLE": "この商品は現在ご利用いただけません。",
+    "PER_USER_QUOTA_EXCEEDED": "ユーザーごとの上限に達しました。",
+    "AMOUNT_OUT_OF_RANGE": "金額が許可された範囲外です。",
+    "HOLDING_NOT_REDEEMABLE": "この保有は償還できません。",
+    "EARLY_REDEMPTION_NOT_ALLOWED": "早期償還は許可されていません。",
+    "IDEMPOTENCY_CONFLICT": "重複リクエストが検出されました。更新してもう一度お試しください。",
+    "UNKNOWN": "問題が発生しました。もう一度お試しください。"
+  },
+  "loan": {
+    "subtitle": "オンチェーンクレジット",
+    "title": "ローン",
+    "description": "保有資産を売却せずにステーブルコインを借り入れ。超過担保ポジション、透明な清算しきい値、24/7の返済 — まもなく {{brand}} に登場します。",
+    "comingSoon": "近日公開",
+    "disclaimer": "透明な清算"
+  },
+  "dailyRate": {
+    "label": "予想日次レート",
+    "suffix": "日次レート"
+  },
+  "payoutMode": {
+    "label": "報酬の支払い",
+    "daily": "毎日ウォレットに支払い",
+    "at_end": "満期・償還時に一括支払い",
+    "dailyBadge": "日次支払い"
+  },
+  "timeline": {
+    "title": "タイムライン",
+    "steps": {
+      "subscribe": "申込",
+      "accrualStart": "利息開始",
+      "maturity": "満期",
+      "settlement": "入金",
+      "redeem": "償還"
+    },
+    "values": {
+      "now": "今すぐ",
+      "onOrder": "注文成立と同時",
+      "afterReview": "承認の翌日",
+      "afterReviewRolling": "承認後すぐ",
+      "afterDays": "利息開始から {{days}} 日後",
+      "settleRolling": "満期から約10分以内",
+      "redeemAnytime": "いつでも可能"
+    },
+    "accruingDays": "{{days}} 日間の利息計上",
+    "accruingDaily": "毎日利息計上",
+    "rollingRule": "24時間ごとに利息を計上"
+  },
+  "maturityAfterDays": "利息開始後 {{count}} 日",
+  "productName": "{{symbol}} {{term}}",
+  "fixedTermName": "{{count}}日間の定期運用"
+}

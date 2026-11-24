@@ -1,0 +1,14 @@
+{
+  "ui": {
+    "lowToHigh": "Croissant",
+    "subscribeToStrategy": "Souscrire à une stratégie",
+    "private": "Privé ·",
+    "subscriptionsAndInterest": "Souscriptions et intérêts",
+    "runningInstances": "Instances en cours",
+    "subscriptionRangeUsd": "Plage de souscription (USD)",
+    "capitalUsd": "Capital (USD)",
+    "790Days": "7 – 90 jours",
+    "proprietaryQuantModel1TradeDay": "Modèle quantitatif interne · 1 opération/jour",
+    "noMatchingStrategyTemplates": "Aucun modèle correspondant"
+  }
+}

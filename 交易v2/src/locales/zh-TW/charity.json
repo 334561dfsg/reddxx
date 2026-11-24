@@ -1,0 +1,161 @@
+{
+  "seo": {
+    "title": "公益捐贈 — 交易也能行善",
+    "description": "用你的 {{brand}} 資金帳戶餘額支持經審核的公益專案。"
+  },
+  "hero": {
+    "goToSlide": "前往第 {{index}} 張"
+  },
+  "stats": {
+    "label": "進行中的專案",
+    "title": "聚沙成塔,我們一起讓改變發生",
+    "totalRaised": "累計募得",
+    "peopleHelped": "受助人數"
+  },
+  "campaigns": {
+    "title": "進行中的公益專案",
+    "subtitle": "選擇一個公益專案,直接從你的資金帳戶捐贈。",
+    "completedBadge": "已達標",
+    "raisedLabel": "已籌",
+    "targetLabel": "目標",
+    "progress": "已達成 {{percent}}%",
+    "donate": "捐贈",
+    "view": "了解更多",
+    "loadingTitle": "正在載入專案",
+    "empty": {
+      "title": "目前沒有進行中的公益專案",
+      "desc": "我們會定期新增公益專案,敬請稍後再來。"
+    },
+    "error": {
+      "title": "無法載入公益專案",
+      "desc": "載入公益專案時發生錯誤。",
+      "retry": "重試"
+    },
+    "statusActive": "進行中",
+    "statusInactive": "已結束",
+    "peopleHelped": "已幫助 {{value}} 人"
+  },
+  "howItWorks": {
+    "title": "運作方式",
+    "steps": [
+      {
+        "title": "非營利組織",
+        "desc": "世界各地的非營利組織申請並加入 {{brand}},以獲得更多資金、建立新技能並建立重要聯繫。"
+      },
+      {
+        "title": "捐贈者",
+        "desc": "像您這樣的人捐贈給您喜愛的項目;當您收到可信組織如何使用您資金的更新時,您會感到非常棒。"
+      },
+      {
+        "title": "企業",
+        "desc": "慷慨的企業及其員工通過捐贈和資助進一步支持高影響力項目,幫助當地社區蓬勃發展。"
+      },
+      {
+        "title": "我們的影響",
+        "desc": "非營利組織擁有所需的資金來傾聽反饋並嘗試新的工作方式;全球各地的社區變得更加美好!"
+      }
+    ]
+  },
+  "narrative": {
+    "label": "我們的承諾",
+    "title": "市場創造財富,我們讓它走得更遠。",
+    "lead": "{{brand}} 始終相信:開放的市場創造機會。公益,是我們把這份機會延伸給那些常被市場忽略的人。",
+    "paragraphs": [
+      "本頁的每個專案,在上線前都由我們的合作夥伴團隊與獨立 NGO 夥伴共同審核。我們核實組織資質、預算與預期成效,並隨資金撥付公開進度。",
+      "由於捐款走的是我們既有的清算通道,沒有刷卡手續費、沒有匯差、也沒有中間商抽成。你捐出多少,受助對象就收到多少。",
+      "這只是開始。隨著社群成長,我們資助乾淨飲水、教育、醫療與緊急救援的能力,也會同步擴大。"
+    ],
+    "highlights": [
+      {
+        "title": "經審核的夥伴",
+        "desc": "每個 NGO 都經過資質、治理與過往紀錄的審核。"
+      },
+      {
+        "title": "零手續費",
+        "desc": "成本由我們承擔,你的捐款 100% 抵達公益專案。"
+      },
+      {
+        "title": "公開報告",
+        "desc": "里程碑與成效更新皆回饋給社群。"
+      }
+    ]
+  },
+  "donate": {
+    "title": "捐贈給 {{name}}",
+    "description": "本次捐款將從你的資金帳戶 {{asset}} 餘額中扣除。",
+    "amountLabel": "捐贈金額",
+    "amountPlaceholder": "0.00",
+    "rangeHint": "最低 {{min}} · 最高 {{max}} {{asset}}",
+    "minOnlyHint": "最低 {{min}} {{asset}}",
+    "raisedSummary": "已籌 {{raised}} / {{target}} {{asset}}",
+    "cancel": "取消",
+    "submit": "檢視捐贈明細",
+    "submitting": "處理中…",
+    "confirm": {
+      "title": "確認捐贈內容",
+      "description": "扣款前請再次核對以下資訊。",
+      "projectLabel": "捐贈項目",
+      "amountLabel": "捐贈金額",
+      "sourceLabel": "扣款帳戶",
+      "sourceValue": "資金帳戶餘額",
+      "back": "返回修改",
+      "submit": "確認捐贈",
+      "notice": "捐贈一經確認即無法撤銷或退回。",
+      "reviewNotice": "提交後需經平台審核,審核期間該金額將被凍結;審核未通過將全額退回。"
+    },
+    "success": {
+      "title": "感謝你的慷慨",
+      "desc": "你已向 {{name}} 捐贈 {{amount}} {{asset}}。",
+      "donationId": "憑證編號:{{id}}",
+      "done": "完成"
+    },
+    "pendingReview": {
+      "title": "捐贈已提交",
+      "desc": "平台審核通過後將完成扣款,結果將透過站內信通知你。"
+    },
+    "errors": {
+      "invalidAmount": "請輸入有效的捐贈金額。",
+      "minAmount": "最低捐贈金額為 {{amount}} {{asset}}。",
+      "maxAmount": "最高捐贈金額為 {{amount}} {{asset}}。",
+      "CHARITY_PROJECT_NOT_AVAILABLE": "此專案目前未開放捐贈。",
+      "CHARITY_DONATION_AMOUNT_INVALID": "捐贈金額不符合此專案的規定。",
+      "CHARITY_FUNDING_TARGET_EXCEEDED": "此筆捐贈將超過專案的募捐目標。",
+      "CHARITY_INSUFFICIENT_BALANCE": "你的資金帳戶餘額不足以完成此筆捐贈。",
+      "VALIDATION_ERROR": "請檢查捐贈金額後再試一次。",
+      "CHARITY_PROJECT_NOT_FOUND": "找不到此公益專案。",
+      "ENTITY_NOT_FOUND": "找不到此公益專案。",
+      "generic": "捐贈失敗,請再試一次。"
+    }
+  },
+  "donations": {
+    "label": "我的捐助",
+    "title": "我的捐助紀錄",
+    "subtitle": "您支持過的每一個公益項目的紀錄。",
+    "signedOut": {
+      "title": "登入以查看您的捐助",
+      "desc": "追蹤您的每一筆捐款,以及您支持過的公益項目。",
+      "action": "登入"
+    },
+    "empty": {
+      "title": "您的公益旅程從這裡開始",
+      "desc": "您尚未進行任何捐款。支持上方的公益項目,獻出您的第一份愛心。"
+    },
+    "error": {
+      "title": "無法載入您的捐助紀錄",
+      "desc": "發生錯誤,請稍後再試。",
+      "retry": "重試"
+    },
+    "recentNote": "顯示您最近的 {{shown}} 筆,共 {{total}} 筆",
+    "columns": {
+      "project": "公益項目",
+      "amount": "金額",
+      "date": "日期",
+      "status": "狀態"
+    },
+    "statusCompleted": "已完成",
+    "statusPendingReview": "審核中",
+    "statusRejected": "未通過",
+    "unknownProject": "公益項目"
+  },
+  "slideLabel": "公益輪播第 {{index}} 張：{{title}}"
+}

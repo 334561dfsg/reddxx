@@ -1,0 +1,261 @@
+{
+  "version": {
+    "updateAvailable": "有新版本可用",
+    "refreshNow": "立即刷新"
+  },
+  "getStarted": "開始使用",
+  "scrollLeft": "向左滾動",
+  "scrollRight": "向右滾動",
+  "trade": "交易",
+  "home": "首頁",
+  "language": "語言",
+  "options": "期權",
+  "optionsDesc": "以有限風險做多或做空",
+  "binaryOptions": "二元期權",
+  "all": "全部",
+  "search": "搜尋",
+  "contract": "合約",
+  "futures": "合約交易",
+  "futuresDesc": "以槓桿交易永續合約",
+  "spotTrading": "現貨交易",
+  "spotDesc": "以市場價格即時買賣真實資產",
+  "finance": "金融",
+  "earn": "理財",
+  "earnDesc": "讓閒置資產產生收益",
+  "simpleEarn": "活期理財",
+  "myEarnings": "我的收益",
+  "loan": "借貸",
+  "loanDesc": "以持有的加密資產借貸",
+  "c2c": "C2C",
+  "c2cDesc": "點對點買賣加密貨幣",
+  "aiQuant": "AI 量化",
+  "aiQuantOverview": "總覽",
+  "aiQuantStrategy": "策略",
+  "aiQuantStrategyDesc": "以量化策略自動交易",
+  "aiQuantQuantFund": "量化基金",
+  "aiQuantQuantFundDesc": "投資專業管理的基金",
+  "aiQuantQuantFundPositions": "我的量化基金持倉",
+  "copytrade": "跟單",
+  "copyTrading": "跟單交易",
+  "copytradeDesc": "自動跟隨頂尖交易員下單",
+  "error": {
+    "generic": "操作失敗，請稍後再試",
+    "network": "網路異常，請檢查網路後重試",
+    "requestId": "請求編號：{{requestId}}"
+  },
+  "errorGuidance": {
+    "kycRequired": {
+      "title": "需要先完成實名認證",
+      "cta": "去認證"
+    },
+    "registrationIncomplete": {
+      "title": "註冊流程尚未完成",
+      "cta": "繼續註冊"
+    },
+    "socialLocalEmailUnverified": {
+      "title": "該郵箱已註冊但尚未驗證",
+      "cta": "找回密碼"
+    },
+    "kycPendingReview": {
+      "title": "實名認證審核中",
+      "cta": "查看進度"
+    },
+    "advancedVerificationRequired": {
+      "title": "需要更高的認證等級",
+      "cta": "去認證"
+    },
+    "insufficientBalance": {
+      "title": "交易帳戶餘額不足",
+      "cta": "去劃轉"
+    },
+    "insufficientFundingBalance": {
+      "title": "資金帳戶餘額不足",
+      "cta": "去充值"
+    },
+    "fundPasswordNotSet": {
+      "title": "尚未設定資金密碼",
+      "cta": "設定資金密碼"
+    },
+    "twoFactorNotEnabled": {
+      "title": "需要開啟兩步驟驗證",
+      "cta": "開啟 2FA"
+    },
+    "vipTierInsufficient": {
+      "title": "VIP 等級不足",
+      "cta": "提升 VIP"
+    }
+  },
+  "news": "新聞",
+  "charity": "公益",
+  "menu": "選單",
+  "toggleTheme": "切換主題",
+  "closeMenu": "關閉選單",
+  "deposit": "充值",
+  "profile": "個人資料",
+  "assets": "資產",
+  "assetsCenter": "資產中心",
+  "kyc": "實名認證",
+  "connectWallet": "連接錢包",
+  "connectingWallet": "連接中...",
+  "message": "站內信",
+  "more": "更多",
+  "aboutUs": "關於我們",
+  "privacyPolicy": "隱私政策",
+  "riskCompliance": "風險與合規",
+  "regulatoryInformation": "監管資訊",
+  "userAgreement": "用戶協議",
+  "riskDisclosure": "風險披露",
+  "regulation": "監管",
+  "productsServices": "產品服務",
+  "helpCenter": "幫助中心",
+  "faq": "常見問題",
+  "announcements": "公告列表",
+  "onlineSupport": "線上客服",
+  "whatsApp": "WhatsApp",
+  "x": "X",
+  "telegram": "Telegram",
+  "youtube": "YouTube",
+  "instagram": "Instagram",
+  "facebook": "Facebook",
+  "tiktok": "TikTok",
+  "linkedin": "LinkedIn",
+  "discord": "Discord",
+  "email": "電子郵件",
+  "loadFailed": "載入失敗",
+  "noData": "暫無資料",
+  "noMore": "沒有更多了",
+  "copyright": "© {{year}} {{brand}} 交易平台. 保留所有權利.",
+  "loading": "Loading...",
+  "logout": "退出登錄",
+  "unnamed": "未命名",
+  "security": "安全",
+  "copy": "複製",
+  "copied": "已複製",
+  "copyFailed": "複製失敗",
+  "kycVerified": "已認證",
+  "kycVerifiedLevel": "已認證 · L{{level}}",
+  "kycPending": "認證中",
+  "kycUnverified": "未認證",
+  "kycAdvancedPending": "基礎已認證 · 待完成高級驗證",
+  "kycUpgradeCta": "去高級驗證",
+  "on": "已開啟",
+  "off": "未開啟",
+  "upload": {
+    "invalidType": "僅支援 {{formats}} 格式",
+    "tooLarge": "文件超過 {{limit}} 上限",
+    "retry": "重試",
+    "animatedImage": "不支援動態圖片，請上傳靜態圖片",
+    "undecodable": "無法讀取這張圖片，請上傳 JPG 或 PNG",
+    "linkExpired": "上傳連結已過期，請重試",
+    "incomplete": "上傳未完成，請重試",
+    "unsupportedFormat": "圖片格式不支援，請上傳 JPG、PNG、WebP、BMP 或 AVIF 靜態圖片",
+    "photoTooLarge": "照片過大，請重拍或壓縮後再試",
+    "contentMismatch": "檔案內容與格式不符，請重新拍攝或掃描"
+  },
+  "demo": {
+    "real": "真實",
+    "demo": "模擬",
+    "mode": "DEMO TRADING MODE",
+    "noRealFunds": "無真實資金",
+    "account": "模擬帳戶",
+    "confirmTitle": "切換到模擬模式",
+    "confirmMessage": "切換到模擬模式後，所有交易不涉及真實資金。",
+    "confirmEnable": "確認切換",
+    "confirmCancel": "取消",
+    "realModeRequired": "此頁面僅限真實帳戶訪問",
+    "confirmRealTitle": "切換到真實模式",
+    "confirmRealMessage": "切換後將顯示真實帳戶的資產與交易介面。"
+  },
+  "accountSuspended": {
+    "banner": "您的帳號已被停用，相關資料與功能暫時無法使用。如有疑問，請聯絡客服。",
+    "title": "帳號已停用",
+    "desc": "您的帳號已被停用，無法載入此內容。如有疑問，請聯絡客服。"
+  },
+  "moduleDisabled": {
+    "title": "本站暫未開放此功能",
+    "desc": "目前無法使用此功能。已有的訂單、持倉與歷史記錄仍可正常查看與操作。"
+  },
+  "emailVerification": {
+    "banner": "驗證郵箱以解鎖提現",
+    "verifyNow": "立即驗證",
+    "title": "驗證郵箱",
+    "intro": "為保障資金安全，提現和 OTC 賣出前需要先驗證郵箱。我們會向以下地址發送驗證碼。",
+    "changeEmail": "更換郵箱",
+    "sendCode": "發送驗證碼",
+    "sending": "發送中...",
+    "resend": "重新發送驗證碼",
+    "resendIn": "{{seconds}} 秒後可重新發送",
+    "codeLabel": "驗證碼",
+    "codeHint": "請輸入郵件中的 {{length}} 位數驗證碼。",
+    "confirm": "驗證郵箱",
+    "confirming": "驗證中...",
+    "verified": "郵箱已驗證",
+    "guideTitle": "提現前請先驗證郵箱",
+    "guideDescription": "你的郵箱尚未驗證，完成驗證後才能提現。",
+    "dialogCrashed": "郵箱驗證彈窗載入失敗，請重試。"
+  },
+  "assetsMenu": {
+    "total": "總資產",
+    "frozen": "凍結",
+    "hideBalance": "顯示 / 隱藏資產",
+    "deposit": "充值",
+    "transfer": "劃轉",
+    "withdraw": "提現",
+    "viewAll": "查看全部資產"
+  },
+  "pagination": {
+    "info": "共 {{total}} 條，第 {{page}} / {{totalPages}} 頁"
+  },
+  "messages": {
+    "title": "站內信",
+    "viewAll": "查看全部",
+    "markAllRead": "全部標記已讀",
+    "markAllReadSuccess": "已將 {{count}} 條消息標記為已讀",
+    "markAllReadFailed": "標記失敗，請稍後重試",
+    "markReadFailed": "標記已讀失敗",
+    "loadFailed": "載入站內信失敗",
+    "back": "返回",
+    "tabs": {
+      "all": "全部",
+      "unread": "未讀",
+      "read": "已讀"
+    },
+    "types": {
+      "all": "全部類型",
+      "notice": "通知",
+      "announcement": "公告",
+      "alert": "警告",
+      "system": "系統"
+    }
+  },
+  "notFound": {
+    "title": "找不到頁面",
+    "description": "您要訪問的頁面不存在或已被移動。",
+    "backHome": "返回首頁"
+  },
+  "footer": {
+    "language": "語言",
+    "version": "v{{version}}"
+  },
+  "contentPage": {
+    "fallbackTitle": "內容",
+    "empty": "此內容尚未提供。"
+  },
+  "auth": {
+    "sessionExpired": "登入已過期，請重新登入。"
+  },
+  "vipBadge": "VIP {{tier}}",
+  "spot": "現貨",
+  "h5Guide": {
+    "title": "切換至行動版",
+    "description": "行動版專為手機螢幕設計，觸控操作更順手。",
+    "goToMobile": "前往行動版",
+    "stay": "暫不，繼續瀏覽",
+    "close": "關閉"
+  },
+  "durationDays": "{{count}} 天",
+  "tradeMarket": "交易 {{symbol}}",
+  "favoriteMarket": "加入自選 {{symbol}}",
+  "unfavoriteMarket": "取消自選 {{symbol}}",
+  "durationSeconds": "{{count}} 秒"
+}

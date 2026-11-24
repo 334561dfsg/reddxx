@@ -1,0 +1,567 @@
+{
+  "landing": {
+    "eyebrow": "AI Quant",
+    "title": "Laissez l'IA trader pour vous, ou confiez-le à un fonds géré",
+    "subtitle": "Deux gammes de produits indépendantes. Choisissez-en une pour commencer ; changez à tout moment.",
+    "strategy": {
+      "kicker": "Moteur IA · Automatisé",
+      "name": "Stratégies",
+      "valueProp": "Un moteur IA exécute automatiquement les ordres à partir de modèles éprouvés. Vous choisissez le modèle, le moteur s'en occupe.",
+      "chipA": "Backtesté",
+      "chipB": "Risque plafonné",
+      "browse": "Parcourir les stratégies",
+      "mine": "Mes stratégies",
+      "mineHint": "Privé · instances en cours"
+    },
+    "quantFund": {
+      "kicker": "Géré par IA · Sans intervention",
+      "name": "Fonds Quant",
+      "valueProp": "Un fonds à terme géré par IA. Souscrivez et laissez le règlement s'exécuter automatiquement à l'échéance.",
+      "chipA": "À terme fixe",
+      "chipB": "Règlement auto",
+      "browse": "Parcourir les fonds",
+      "mine": "Mes positions",
+      "mineHint": "Privé · souscriptions et intérêts"
+    }
+  },
+  "nav": {
+    "ariaLabel": "Navigation du module AI Quant",
+    "strategy": "Stratégies",
+    "myStrategies": "Mes stratégies",
+    "quantFund": "Fonds Quant",
+    "myPositions": "Mes positions"
+  },
+  "myStrategies": {
+    "subtitle": "Stratégies IA en cours",
+    "title": "Mes stratégies",
+    "empty": "Vous n'êtes abonné à aucune stratégie. Parcourez les modèles pour commencer.",
+    "browseStrategies": "Parcourir les modèles",
+    "summary": {
+      "totalCapital": "Capital total",
+      "totalPnl": "PnL total",
+      "running": "En cours",
+      "total": "Stratégies"
+    }
+  },
+  "table": {
+    "columns": {
+      "strategyName": "Stratégie",
+      "styleMarket": "Style / Marché",
+      "trend": "Tendance P&L",
+      "pnl": "PnL",
+      "capital": "Capital",
+      "endDate": "Fin",
+      "action": "Action"
+    }
+  },
+  "hero": {
+    "subtitle": "AI Quant",
+    "title": "La puissance quantitative pour chaque trader.",
+    "description": "Des centaines de stratégies pilotées par l'IA, des paramètres de risque transparents et un contrôle total sur chaque décision. Abonnez-vous à un modèle, fixez vos limites et laissez les mathématiques faire le gros du travail.",
+    "browseStrategies": "Parcourir les stratégies",
+    "howItWorks": "Comment ça marche",
+    "modelsRunning": "Modèles en cours · 24/7",
+    "statActive": "Actives",
+    "statActiveSub": "Stratégies en cours d'exécution",
+    "statActiveFallback": "Modèles disponibles",
+    "statActiveFallbackSub": "Stratégies prêtes à souscrire",
+    "statAvgSharpe": "Sharpe médian",
+    "statAvgSharpeSub": "Sur tous les modèles répertoriés"
+  },
+  "howItWorks": {
+    "title": "Comment fonctionne AI Quant",
+    "description": "Un bref aperçu de la façon dont les stratégies sont conçues, backtestées et exécutées.",
+    "empty": "La vidéo d'introduction n'est pas disponible pour le moment. Veuillez réessayer plus tard.",
+    "unsupported": "Votre navigateur ne prend pas en charge la balise vidéo."
+  },
+  "sections": {
+    "featured": "À la une aujourd'hui",
+    "live": "Performance en direct",
+    "browse": "Parcourir les stratégies"
+  },
+  "spotlight": {
+    "subtitle": "Pour chaque style — prudent, équilibré, agressif — la stratégie au meilleur ratio de Sharpe, prête à souscrire.",
+    "styleBadge": {
+      "conservative": "Choix prudent",
+      "balanced": "Choix équilibré",
+      "aggressive": "Choix audacieux"
+    },
+    "subscribeNow": "S'abonner maintenant"
+  },
+  "templates": {
+    "label": "Modèles de stratégie",
+    "title": "Modèles de stratégie",
+    "subtitle": "Chaque modèle s'appuie sur un modèle d'IA éprouvé avec des indicateurs de risque et de rendement publics.",
+    "recommendedTitle": "Recommandé",
+    "filterAll": "Tous",
+    "filterByStyle": "Style",
+    "filterByMarket": "Marché",
+    "empty": "Aucune stratégie ne correspond encore à votre filtre.",
+    "loading": "Chargement des stratégies…",
+    "subscribe": "S'abonner",
+    "sortBy": {
+      "label": "Trier",
+      "sharpe_desc": "Ratio de Sharpe · décroissant",
+      "sharpe_asc": "Ratio de Sharpe · croissant",
+      "winRate_desc": "Taux de réussite · décroissant",
+      "winRate_asc": "Taux de réussite · croissant",
+      "minCapital_desc": "Capital min. · décroissant",
+      "minCapital_asc": "Capital min. · croissant",
+      "period_desc": "Période · longue à courte",
+      "period_asc": "Période · courte à longue"
+    },
+    "fields": {
+      "winRate": "Taux de réussite",
+      "sharpeRatio": "Ratio de Sharpe",
+      "aiModel": "Modèle IA",
+      "tradesPerDay": "Transactions / jour",
+      "tradesPerDayValue": "{{n}} transactions/jour",
+      "capital": "Capital ({{asset}})",
+      "period": "Période",
+      "riskLevel": "Risque",
+      "supportedSymbols": "Symboles"
+    },
+    "riskLevelValue": "Niv.{{level}}",
+    "guideCard": {
+      "title": "Pas trouvé la stratégie qu'il vous faut ?",
+      "description": "Découvrez les Fonds Quant gérés par l'IA : aucune surveillance requise, règlement automatique à l'échéance.",
+      "cta": "Parcourir les Fonds Quant"
+    }
+  },
+  "style": {
+    "conservative": "Prudent",
+    "balanced": "Équilibré",
+    "aggressive": "Agressif"
+  },
+  "market": {
+    "crypto": "Crypto",
+    "stock": "Actions",
+    "forex": "Forex",
+    "indices": "Indices"
+  },
+  "aiModelNames": {
+    "local": "Modèle quantitatif maison"
+  },
+  "detail": {
+    "title": "Détails de la stratégie",
+    "close": "Fermer",
+    "openAria": "Voir les détails de {{name}}",
+    "descriptionTitle": "À propos de cette stratégie",
+    "paramsTitle": "Paramètres clés",
+    "periodValue": "{{min}} – {{max}} jours",
+    "dailyTargetLabel": "Objectif de rendement quotidien",
+    "dailyTargetValue": "{{percent}} %/jour",
+    "explain": {
+      "sharpeRatio": "Rendement obtenu par unité de risque prise — plus il est élevé, meilleure est la performance ajustée du risque.",
+      "winRate": "Part des transactions historiques clôturées en profit.",
+      "riskLevel": "Niveau de volatilité et de drawdown attribué par la plateforme — plus il est élevé, plus les variations sont fortes."
+    }
+  },
+  "strategies": {
+    "label": "Mes stratégies",
+    "title": "Mes stratégies",
+    "subtitle": "Vue en temps réel de chaque stratégie souscrite sur votre compte.",
+    "trendPlaceholder": "Courbe de performance bientôt disponible",
+    "empty": "Vous n'avez encore aucune stratégie active. Choisissez un modèle pour commencer.",
+    "loginRequired": "Connectez-vous pour gérer vos stratégies.",
+    "fields": {
+      "capital": "Capital",
+      "pnl": "P&L",
+      "returnPercent": "Rendement",
+      "period": "Période",
+      "tradesCount": "Transactions",
+      "winRate": "Taux de réussite",
+      "endDate": "Se termine"
+    }
+  },
+  "status": {
+    "initializing": "Initialisation",
+    "running": "En cours",
+    "paused": "En pause",
+    "completed": "Terminée",
+    "pending_review": "En cours d'examen",
+    "rejected": "Rejetée"
+  },
+  "actions": {
+    "pause": "Mettre en pause",
+    "resume": "Reprendre",
+    "stop": "Arrêter",
+    "viewStats": "Voir les stats",
+    "hideStats": "Masquer les stats",
+    "toast": {
+      "pauseSuccess": "Stratégie mise en pause",
+      "pauseError": "Impossible de mettre la stratégie en pause. Veuillez réessayer.",
+      "resumeSuccess": "Stratégie reprise",
+      "resumeError": "Impossible de reprendre la stratégie. Veuillez réessayer.",
+      "stopSuccess": "Stratégie arrêtée",
+      "stopError": "Impossible d'arrêter la stratégie. Veuillez réessayer."
+    },
+    "stopConfirm": {
+      "title": "Arrêter cette stratégie ?",
+      "notice": "L'arrêt clôture toutes les positions ouvertes de « {{name}} » et met fin à la stratégie. Vos gains et pertes réalisés sont conservés, mais cette action est irréversible.",
+      "cancel": "Continuer",
+      "confirm": "Arrêter la stratégie",
+      "confirming": "Arrêt en cours…"
+    }
+  },
+  "create": {
+    "title": "S'abonner à {{name}}",
+    "subtitle": "Définissez votre capital, votre stop loss, votre take profit et votre période.",
+    "subtitleDailyTarget": "Définissez votre capital et la période. Ce modèle vise un rendement quotidien fixe : take profit et stop loss ne sont pas nécessaires.",
+    "demoNotice": "Mode démo : le capital est bloqué sur votre compte simulé — aucun fonds réel n'est utilisé.",
+    "capitalLabel": "Capital ({{asset}})",
+    "availableBalanceLabel": "Disponible",
+    "maxButton": "Max",
+    "capitalHint": "Plage : {{min}} – {{max}}",
+    "takeProfitLabel": "Take profit (%)",
+    "stopLossLabel": "Stop loss (%)",
+    "periodLabel": "Période (jours)",
+    "periodHint": "Plage : {{min}} – {{max}} jours",
+    "submit": "S'abonner",
+    "submitting": "Envoi en cours…",
+    "cancel": "Annuler",
+    "submitSuccess": "Abonnement réussi",
+    "fees": {
+      "title": "Frais et règles",
+      "feePerTrade": "Frais par transaction",
+      "feePerTradeValue": "{{fee}} {{asset}}",
+      "maxOpenTrades": "Positions ouvertes max",
+      "maxOpenTradesValue": "{{n}} transactions"
+    },
+    "settlementNote": "Vous pouvez arrêter une stratégie à tout moment. L'arrêt clôture toutes les positions ouvertes et met fin à la stratégie ; vos gains et pertes réalisés restent sur votre compte.",
+    "simulator": {
+      "title": "Simulation du profit projeté",
+      "params": "{{rate}} %/jour ±{{tolerance}} % · intérêts composés",
+      "range": "Fourchette simulée : {{lower}} – {{upper}}",
+      "legendExpected": "Attendu",
+      "legendBand": "Bande de tolérance",
+      "tooltipDay": "Jour {{day}}",
+      "tooltipExpected": "Attendu",
+      "tooltipUpper": "Haut",
+      "tooltipLower": "Bas",
+      "emptyHint": "Saisissez un capital et une période pour prévisualiser la projection.",
+      "disclaimer": "Simulation illustrative fondée sur l'objectif quotidien du modèle et sa tolérance, composés quotidiennement. Elle ne constitue pas une garantie de rendement."
+    },
+    "errors": {
+      "capitalRequired": "Saisissez un montant de capital.",
+      "belowMin": "Le capital doit être d'au moins {{min}}.",
+      "aboveMax": "Le capital ne doit pas dépasser {{max}}.",
+      "emptyRange": "Ce modèle n'est pas disponible pour votre compte actuellement.",
+      "periodOutOfRange": "La période doit être comprise entre {{min}} et {{max}} jours.",
+      "takeProfitOutOfRange": "Le take profit doit être compris entre 1 % et 100 %.",
+      "stopLossOutOfRange": "Le stop loss doit être compris entre 1 % et 50 %.",
+      "createFailed": "Échec de la création de la stratégie. Veuillez réessayer.",
+      "badRequest": "La demande a été rejetée. Veuillez vérifier vos saisies.",
+      "unauthorized": "Veuillez vous connecter pour créer une stratégie.",
+      "paymentRequired": "Solde insuffisant. Veuillez recharger avant de créer cette stratégie.",
+      "notFound": "Ce modèle de stratégie n'est plus disponible.",
+      "conflict": "Une stratégie en conflit est déjà en cours. Arrêtez-la ou attendez qu'elle se termine.",
+      "validation": "Certains champs semblent invalides. Veuillez vérifier et réessayer."
+    }
+  },
+  "dailyStats": {
+    "netPnl": "P&L net",
+    "tradesLabel": "Transactions",
+    "activeDays": "Jours actifs",
+    "date": "Date",
+    "pnl": "P&L",
+    "loss": "Perte",
+    "profit": "Gain",
+    "empty": "Aucune transaction clôturée sur cette période.",
+    "rangeCaption": "{{range}} · UTC",
+    "showingLatest": "Affichage des {{shown}} derniers jours sur {{total}}"
+  },
+  "risk": {
+    "title": "Avis de risque",
+    "body": "Les performances passées ne garantissent jamais les résultats futurs. Les stratégies et signaux IA sont des outils de référence, pas des conseils financiers. Le trading de cryptos et de contrats à terme peut entraîner la perte de la totalité de votre solde — ne tradez que ce que vous pouvez vous permettre de perdre."
+  },
+  "quantFund": {
+    "title": "Fonds Quant",
+    "hero": {
+      "subtitle": "Fonds Quant géré par IA",
+      "title": "Fonds Quant — rendement à terme géré par IA",
+      "description": "Des produits à terme gérés par notre book quantitatif IA. Bloquez sur une fenêtre définie, accumulez des intérêts à un rendement quotidien et laissez le règlement s'exécuter automatiquement à l'échéance.",
+      "disclaimer": "Géré par IA · Règlement à terme",
+      "viewPositionsCta": "Mes positions"
+    },
+    "filters": {
+      "assetAll": "Tous les actifs"
+    },
+    "card": {
+      "dailyReturn": "Rendement quotidien",
+      "term": "Durée",
+      "termDaysValue": "{{days}} jours",
+      "termFlexible": "Flexible",
+      "investmentLimit": "Plage de souscription ({{currency}})",
+      "availableQuota": "Quota disponible",
+      "subscribedDisplayed": "Souscrit",
+      "projectProgress": "Avancement du projet",
+      "maxUnlimited": "Illimité",
+      "tagFlexible": "Flexible",
+      "tagRedeemable": "Rachetable à tout moment",
+      "cta": "Souscrire",
+      "ctaSoldOut": "Quota épuisé"
+    },
+    "creditScore": {
+      "label": "Score de crédit min.",
+      "requirement": "Score de crédit ≥ {{score}}",
+      "insufficient": "Score de crédit requis : {{required}}. Le vôtre : {{current}}."
+    },
+    "detail": {
+      "investmentRange": "Plage de souscription",
+      "minHoldDays": "Détention min. {{days}} jours",
+      "subscribeCta": "Souscrire maintenant",
+      "disclosure": "Documents d'information",
+      "calcTitle": "Simulateur de gains",
+      "calcDaysLabel": "Durée de détention",
+      "calcEstTotal": "Gains totaux estimés",
+      "calcDisclaimer": "Les estimations sont fournies à titre indicatif et ne constituent pas une garantie de rendement.",
+      "calcAccrualNote": "Aucun gain n'est généré avant {{days}} jours de détention.",
+      "flowTitle": "Comment ça marche",
+      "flowStep1Title": "Souscription",
+      "flowStep1Desc": "Choisissez un montant et confirmez votre souscription avec le solde de votre compte de financement.",
+      "flowStep2Title": "Début des intérêts",
+      "flowStep2Desc": "Les gains commencent à courir après la confirmation de la souscription.",
+      "flowStep3Title": "Versement des gains",
+      "flowStep3Desc": "Les gains sont réglés et crédités périodiquement sur votre compte.",
+      "flowStep4Title": "Rachat",
+      "flowStep4DescFixed": "Le capital et les gains sont restitués automatiquement à l'échéance.",
+      "flowStep4DescFlexible": "Rachetez à tout moment ; les fonds retournent sur votre compte de financement.",
+      "quotaTitle": "Détails du quota",
+      "quotaTotal": "Quota total",
+      "quotaPerUser": "Limite par utilisateur",
+      "moreTitle": "Plus de produits"
+    },
+    "riskLevel": {
+      "LOW": "Risque faible",
+      "MEDIUM": "Risque moyen",
+      "HIGH": "Risque élevé",
+      "EXTREME": "Risque extrême"
+    },
+    "subscribe": {
+      "title": "Souscrire à {{name}}",
+      "amountLabel": "Montant ({{currency}})",
+      "amountHint": "Plage : {{min}} – {{max}} {{currency}}",
+      "availableBalanceLabel": "Disponible",
+      "maxButton": "Max",
+      "estDailyEarnings": "Gains quotidiens estimés",
+      "riskAckPrefix": "J'ai lu et j'accepte l'",
+      "riskAckLink": "Information sur les risques du Fonds Quant",
+      "riskAckSuffix": " pour ce produit.",
+      "submit": "Confirmer la souscription",
+      "submitting": "Envoi en cours…",
+      "cancel": "Annuler",
+      "errorAmountRange": "Le montant doit être compris entre {{min}} et {{max}} {{currency}}.",
+      "errorAmountInvalid": "Veuillez saisir un montant valide.",
+      "errorExceedsAvailable": "Le montant dépasse le quota restant. Il ne reste que {{available}} {{currency}} — veuillez ajuster votre montant.",
+      "errorInsufficientBalance": "Solde disponible insuffisant — seulement {{available}} {{currency}} disponibles.",
+      "goDeposit": "Effectuer un dépôt",
+      "errorRequireRiskAck": "Veuillez accepter l'avis de risque avant de continuer.",
+      "success": "Souscription confirmée",
+      "close": "Fermer"
+    },
+    "redeem": {
+      "button": "Racheter",
+      "title": "Racheter l'ordre",
+      "confirmNotice": "Les intérêts s'accumulent selon le nombre de jours de détention réels. Aucun intérêt si la détention est inférieure au minimum de {{minHoldDays}} jours. Le montant final est fixé au règlement.",
+      "confirmNoticeNoMin": "Les intérêts s'accumulent selon le nombre de jours de détention réels. Le montant final est fixé au règlement.",
+      "reviewNotice": "Ce rachat doit être examiné. Après votre soumission, un administrateur l'examine avant tout versement ; d'ici là, votre principal reste investi et continue de générer des intérêts.",
+      "confirm": "Confirmer le rachat",
+      "submitting": "Envoi en cours…",
+      "cancel": "Annuler",
+      "resultTitle": "Rachat terminé",
+      "pendingTitle": "Demande de rachat envoyée",
+      "pendingDescription": "Votre rachat est en attente d'examen. Votre principal reste dans le fonds et continue de générer des intérêts jusqu'à son approbation par un administrateur.",
+      "settledPrincipal": "Principal réglé",
+      "settledInterest": "Intérêts réglés",
+      "heldDaysLabel": "Durée de détention",
+      "heldDays": "{{days}} jours",
+      "fundsReturned": "Le principal et les intérêts ont été reversés sur votre compte Financement.",
+      "done": "Terminé",
+      "confirmNoticeEarlyRedeem": "Il s'agit d'un produit à terme bloqué. Un rachat anticipé entraînera une pénalité calculée selon le nombre de jours de blocage restants. Le montant final est fixé au règlement.",
+      "penaltyAmount": "Pénalité de rachat anticipé",
+      "remainingLockDays": "Blocage restant",
+      "remainingLockDaysValue": "{{days}} jours",
+      "notSupported": "Rachat anticipé non pris en charge",
+      "needVip": "Niveau VIP {{tier}} requis pour le rachat anticipé",
+      "penaltyEstimate": "Pénalité estimée"
+    },
+    "topUp": {
+      "button": "Compléter",
+      "title": "Compléter la souscription",
+      "description": "Complétez pour reprendre l'examen",
+      "countdownLabel": "Compléter sous",
+      "countdownDaysHours": "{{days}}j {{hours}}h",
+      "countdownDaysHoursMinutes": "{{days}}j {{hours}}h {{minutes}}min",
+      "expired": "Expiré",
+      "overdue": "En retard",
+      "overdueDays": "En retard de {{days}} j",
+      "deadlineNotice": "Sans complément avant l'échéance, la commande est automatiquement annulée et votre capital est libéré.",
+      "lateFeeDeadlineNotice": "Sans recharge avant l'échéance, des frais de retard seront imputés à votre compte.",
+      "lockedNotice": "La recharge et le refus sont fermés. Contactez le support pour régler les frais de retard.",
+      "contactSupport": "Contacter le support",
+      "noticeWithTarget": "L'examinateur a fixé le montant cible de cette commande à {{target}} {{currency}}. Complétez la différence ci-dessous pour reprendre l'examen.",
+      "noticeGeneric": "L'examinateur a ajusté le montant cible de cette commande. Confirmez pour compléter la différence et reprendre l'examen.",
+      "currentPrincipal": "Montant actuel",
+      "targetAmount": "Montant cible",
+      "shortfall": "Montant à compléter",
+      "availableBalanceLabel": "Disponible",
+      "errorInsufficientBalance": "Solde insuffisant pour effectuer le complément.",
+      "goDeposit": "Déposer",
+      "confirm": "Confirmer le complément",
+      "submitting": "Traitement…",
+      "cancel": "Annuler",
+      "resultTitle": "Complément effectué",
+      "resultPrincipal": "Nouveau montant de souscription",
+      "resultProjectedInterest": "Intérêts prévus",
+      "resultStatusNotice": "Votre commande est de nouveau en cours d'examen.",
+      "done": "Terminé"
+    },
+    "decline": {
+      "button": "Refuser",
+      "title": "Refuser l'ajustement",
+      "notice": "Le refus annule cette commande et libère {{principal}} {{currency}} vers votre solde disponible. Cette action est irréversible.",
+      "reasonLabel": "Motif (facultatif)",
+      "reasonPlaceholder": "Indiquez-nous pourquoi (facultatif)",
+      "confirm": "Refuser et annuler la commande",
+      "submitting": "Traitement…",
+      "cancel": "Conserver la commande",
+      "resultTitle": "Commande annulée",
+      "resultReleased": "Libéré vers le solde",
+      "resultNotice": "Les fonds ont été restitués sur votre solde disponible.",
+      "done": "Terminé"
+    },
+    "positions": {
+      "title": "Mes positions Fonds Quant",
+      "subtitle": "Tous les ordres Fonds Quant et leur statut de règlement sous votre compte.",
+      "tabs": {
+        "all": "Tous",
+        "active": "Actifs",
+        "pending_review": "En cours d'examen",
+        "redeem_pending_review": "Rachat en cours d'examen",
+        "awaiting_top_up": "Complément requis",
+        "rejected": "Rejetés",
+        "settled": "Réglés",
+        "cancelled": "Annulés",
+        "redeemed": "Rachetés"
+      },
+      "tabGroups": {
+        "all": "Tous",
+        "pending": "En cours",
+        "active": "Actifs",
+        "history": "Historique"
+      },
+      "historyFilter": {
+        "all": "Tous les statuts"
+      },
+      "summary": {
+        "totalPrincipal": "Principal total",
+        "totalProjectedInterest": "Intérêts projetés",
+        "activeInterestPaidTotal": "Intérêts versés (en cours)",
+        "settledTotalReceived": "Total réglé reçu",
+        "activeCount": "Ordres actifs",
+        "breakdownToggle": "Détail par actif",
+        "interestProgress": "Progression des intérêts {{percent}} %",
+        "earningsTrend": "Tendance des intérêts sur {{days}} jours",
+        "usdPrice": "@ {{price}} USD",
+        "partialValuation": "Pas de prix USD pour {{assets}} ; les totaux n'incluent que les actifs valorisables."
+      },
+      "empty": "Aucun ordre dans cet onglet pour le moment.",
+      "table": {
+        "status": "Statut",
+        "productName": "Produit",
+        "principal": "Principal",
+        "dailyReturn": "Rendement quotidien",
+        "term": "Durée",
+        "projectedInterest": "Intérêts projetés",
+        "interestPaidTotal": "Intérêts versés",
+        "interestPaidThrough": "Payé jusqu'au",
+        "interestRemaining": "À verser",
+        "accruedInterestEstimate": "Est. couru",
+        "subscribedAt": "Souscrit le",
+        "maturityDate": "Échéance",
+        "action": "Action"
+      },
+      "maturityPending": "Fixée à l'approbation",
+      "fields": {
+        "productName": "Produit",
+        "principal": "Principal",
+        "dailyReturn": "Rendement quotidien",
+        "term": "Durée",
+        "projectedInterest": "Intérêts projetés",
+        "interestPaidTotal": "Intérêts versés",
+        "interestPaidThrough": "Payé jusqu'au",
+        "interestRemaining": "Intérêts à verser",
+        "accruedInterestEstimate": "Intérêts courus estimés",
+        "minHoldDays": "Détention min.",
+        "subscribedAt": "Souscrit le",
+        "maturityDate": "Échéance",
+        "settledAt": "Réglé le",
+        "settledInterest": "Intérêts réglés",
+        "settledPrincipal": "Principal réglé",
+        "settledTotal": "Total réglé",
+        "cancelReason": "Motif d'annulation"
+      },
+      "detail": {
+        "title": "Détail de l'ordre",
+        "close": "Fermer le détail de l'ordre",
+        "viewProduct": "Voir le produit",
+        "remainingDays": "{{days}} jours restants",
+        "sections": {
+          "interest": "Intérêts",
+          "settlement": "Règlement"
+        }
+      },
+      "topUpReminder": {
+        "title": "{{count}} commande(s) en attente de complément",
+        "description": "Complétez avant l'échéance, sinon la commande est annulée et votre capital est libéré.",
+        "overdueDescription": "{{count}} au-delà de l'échéance de complément. Agissez maintenant, ou contactez le support si les options sont fermées.",
+        "overdueLockedDescription": "{{count}} ont dépassé l'échéance. La recharge et le refus sont fermés : contactez le support pour régler les frais de retard.",
+        "cta": "Compléter"
+      }
+    },
+    "interestRecords": {
+      "title": "Détails des versements d'intérêts",
+      "subtitle": "Relevé des intérêts versés pour cet ordre.",
+      "back": "Retour",
+      "entry": "Détail des intérêts",
+      "table": {
+        "interestDate": "Date d'intérêt",
+        "amount": "Quantité",
+        "creditedAt": "Crédité le"
+      },
+      "empty": "Aucun versement d'intérêts pour le moment."
+    },
+    "status": {
+      "product": {
+        "active": "Ouvert"
+      },
+      "order": {
+        "active": "Actif",
+        "settled": "Réglé",
+        "cancelled": "Annulé",
+        "redeemed": "Racheté",
+        "redeem_pending_review": "Rachat en cours d'examen",
+        "pending_review": "En cours d'examen",
+        "awaiting_top_up": "Complément requis",
+        "rejected": "Rejeté"
+      }
+    },
+    "errors": {
+      "unknown": "Une erreur s'est produite. Veuillez réessayer.",
+      "quotaExhausted": "Ce produit est épuisé et n'est actuellement pas disponible à la souscription.",
+      "exceedsRemainingQuota": "Votre montant de souscription dépasse le quota restant du produit. Veuillez ajuster votre montant.",
+      "perUserQuotaExceeded": "Votre montant de souscription dépasse votre limite de souscription personnelle. Veuillez ajuster votre montant.",
+      "notAwaitingTopUp": "Cette commande n'attend plus de complément. Elle a peut-être déjà été mise à jour.",
+      "topUpLockedOverdue": "Cette commande est en retard. Le complément et le refus sont fermés — contactez le support pour continuer.",
+      "insufficientBalance": "Solde insuffisant pour effectuer le complément. Veuillez déposer des fonds et réessayer.",
+      "insufficientCreditScore": "Votre score de crédit est inférieur au minimum requis pour ce produit."
+    },
+    "states": {
+      "loading": "Chargement…",
+      "empty": "Rien ici pour le moment.",
+      "error": "Échec du chargement.",
+      "retry": "Réessayer"
+    }
+  }
+}

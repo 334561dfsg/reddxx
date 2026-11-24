@@ -12,6 +12,14 @@
   ],
   "rewrites": [
     {
+      "source": "/trade-v2",
+      "destination": "/trade-v2/index.html"
+    },
+    {
+      "source": "/trade-v2/(.*)",
+      "destination": "/trade-v2/index.html"
+    },
+    {
       "source": "/newtrend",
       "destination": "/newtrend/index.html"
     },

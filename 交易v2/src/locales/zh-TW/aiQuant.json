@@ -1,0 +1,567 @@
+{
+  "landing": {
+    "eyebrow": "AI 量化",
+    "title": "讓 AI 替你交易，或交給量化基金託管",
+    "subtitle": "兩條獨立產品線。挑一個開始，隨時可切換。",
+    "strategy": {
+      "kicker": "AI 引擎 · 自動執行",
+      "name": "策略",
+      "valueProp": "後端 AI 引擎依經過驗證的範本自動下單交易。你挑範本，引擎執行。",
+      "chipA": "回測驗證",
+      "chipB": "風控封頂",
+      "browse": "瀏覽策略",
+      "mine": "我的策略",
+      "mineHint": "私人 · 運行中的實例"
+    },
+    "quantFund": {
+      "kicker": "AI 託管 · 全程省心",
+      "name": "量化基金",
+      "valueProp": "由 AI 託管的定期理財產品。申購後無須盯盤，到期自動結算。",
+      "chipA": "定期",
+      "chipB": "自動結算",
+      "browse": "瀏覽基金",
+      "mine": "我的倉位",
+      "mineHint": "私人 · 申購與利息"
+    }
+  },
+  "nav": {
+    "ariaLabel": "AI 量化模組導覽",
+    "strategy": "策略模板",
+    "myStrategies": "我的策略",
+    "quantFund": "量化基金",
+    "myPositions": "我的倉位"
+  },
+  "myStrategies": {
+    "subtitle": "運行中的 AI 策略",
+    "title": "我的策略",
+    "empty": "尚未訂閱任何策略，去策略模板看看吧。",
+    "browseStrategies": "瀏覽策略模板",
+    "summary": {
+      "totalCapital": "總投入",
+      "totalPnl": "總損益",
+      "running": "運行中",
+      "total": "策略總數"
+    }
+  },
+  "table": {
+    "columns": {
+      "strategyName": "策略",
+      "styleMarket": "風格 / 市場",
+      "trend": "盈虧走勢",
+      "pnl": "盈虧",
+      "capital": "本金",
+      "endDate": "截止",
+      "action": "操作"
+    }
+  },
+  "hero": {
+    "subtitle": "AI 量化",
+    "title": "把量化能力交給每一位交易者。",
+    "description": "上百套 AI 策略，風控參數透明，每一步決策仍由你掌控。訂閱模板、設定上限，讓演算法處理繁重的計算。",
+    "browseStrategies": "瀏覽策略",
+    "howItWorks": "運作機制",
+    "modelsRunning": "模型運行中 · 24/7",
+    "statActive": "運行中",
+    "statActiveSub": "當前運行的策略數量",
+    "statActiveFallback": "可用模板",
+    "statActiveFallbackSub": "可訂閱的策略模板數量",
+    "statAvgSharpe": "夏普中位數",
+    "statAvgSharpeSub": "全部已上架模板綜合"
+  },
+  "howItWorks": {
+    "title": "AI 量化運作機制",
+    "description": "用一段短片帶你了解策略如何構建、回測與運行。",
+    "empty": "介紹影片暫時無法載入,請稍後再試。",
+    "unsupported": "您的瀏覽器不支援影片播放。"
+  },
+  "sections": {
+    "featured": "今日精選",
+    "live": "即時表現",
+    "browse": "策略模板"
+  },
+  "spotlight": {
+    "subtitle": "保守、平衡、激進三種風格，各選出夏普最高的一支，已為你直通訂閱。",
+    "styleBadge": {
+      "conservative": "穩健之選",
+      "balanced": "均衡之選",
+      "aggressive": "進取之選"
+    },
+    "subscribeNow": "立即訂閱"
+  },
+  "templates": {
+    "label": "策略模板",
+    "title": "策略模板",
+    "subtitle": "每個模板都基於經過驗證的 AI 模型運行，風險與收益指標公開可見。",
+    "recommendedTitle": "推薦",
+    "filterAll": "全部",
+    "filterByStyle": "風格",
+    "filterByMarket": "市場",
+    "empty": "暫無符合篩選的策略。",
+    "loading": "正在載入策略…",
+    "subscribe": "訂閱",
+    "sortBy": {
+      "label": "排序",
+      "sharpe_desc": "夏普比率 由高到低",
+      "sharpe_asc": "夏普比率 由低到高",
+      "winRate_desc": "勝率 由高到低",
+      "winRate_asc": "勝率 由低到高",
+      "minCapital_desc": "起投金額 由高到低",
+      "minCapital_asc": "起投金額 由低到高",
+      "period_desc": "週期 由長到短",
+      "period_asc": "週期 由短到長"
+    },
+    "fields": {
+      "winRate": "勝率",
+      "sharpeRatio": "夏普比率",
+      "aiModel": "AI 模型",
+      "tradesPerDay": "日均交易",
+      "tradesPerDayValue": "日均 {{n}} 筆",
+      "capital": "資金（{{asset}}）",
+      "period": "週期",
+      "riskLevel": "風險等級",
+      "supportedSymbols": "交易對"
+    },
+    "riskLevelValue": "Lv.{{level}}",
+    "guideCard": {
+      "title": "沒找到合適的策略？",
+      "description": "看看由 AI 全程託管的量化基金：申購後無須盯盤，到期自動結算。",
+      "cta": "瀏覽量化基金"
+    }
+  },
+  "style": {
+    "conservative": "保守",
+    "balanced": "平衡",
+    "aggressive": "激進"
+  },
+  "market": {
+    "crypto": "加密",
+    "stock": "股票",
+    "forex": "外匯",
+    "indices": "指數"
+  },
+  "aiModelNames": {
+    "local": "自研量化模型"
+  },
+  "detail": {
+    "title": "策略詳情",
+    "close": "關閉",
+    "openAria": "查看「{{name}}」詳情",
+    "descriptionTitle": "策略說明",
+    "paramsTitle": "關鍵參數",
+    "periodValue": "{{min}} – {{max}} 天",
+    "dailyTargetLabel": "每日目標收益率",
+    "dailyTargetValue": "{{percent}}%/日",
+    "explain": {
+      "sharpeRatio": "衡量每承擔一單位風險換得的回報，數值越高代表風險調整後表現越好。",
+      "winRate": "歷史上獲利交易佔全部交易的比例。",
+      "riskLevel": "平台對策略波動與回撤程度的分級，等級越高波動越大。"
+    }
+  },
+  "strategies": {
+    "label": "我的策略",
+    "title": "我的策略",
+    "subtitle": "你帳戶下所有策略的即時表現。",
+    "trendPlaceholder": "績效曲線即將上線",
+    "empty": "你還沒有運行中的策略，挑一個模板開始吧。",
+    "loginRequired": "登入後可管理你的策略。",
+    "fields": {
+      "capital": "資金",
+      "pnl": "盈虧",
+      "returnPercent": "收益率",
+      "period": "週期",
+      "tradesCount": "交易筆數",
+      "winRate": "勝率",
+      "endDate": "到期"
+    }
+  },
+  "status": {
+    "initializing": "初始化中",
+    "running": "運行中",
+    "paused": "已暫停",
+    "completed": "已結束",
+    "pending_review": "審核中",
+    "rejected": "已拒絕"
+  },
+  "actions": {
+    "pause": "暫停",
+    "resume": "繼續",
+    "stop": "停止",
+    "viewStats": "查看統計",
+    "hideStats": "收起統計",
+    "toast": {
+      "pauseSuccess": "策略已暫停",
+      "pauseError": "暫停策略失敗,請再試一次。",
+      "resumeSuccess": "策略已恢復",
+      "resumeError": "恢復策略失敗,請再試一次。",
+      "stopSuccess": "策略已停止",
+      "stopError": "停止策略失敗,請再試一次。"
+    },
+    "stopConfirm": {
+      "title": "確定要停止這個策略嗎?",
+      "notice": "停止會平掉「{{name}}」的所有持倉並結束策略。已實現盈虧會保留,但此操作無法復原。",
+      "cancel": "繼續運行",
+      "confirm": "停止策略",
+      "confirming": "停止中…"
+    }
+  },
+  "create": {
+    "title": "訂閱 {{name}}",
+    "subtitle": "設定你的資金、止盈、止損與週期。",
+    "subtitleDailyTarget": "設定本金與運行週期。此模板以固定每日目標收益率運行，無需設定止盈／止損。",
+    "demoNotice": "模擬模式：本金將從你的模擬帳戶凍結，不涉及真實資金。",
+    "capitalLabel": "資金（{{asset}}）",
+    "availableBalanceLabel": "可用餘額",
+    "maxButton": "最大",
+    "capitalHint": "範圍：{{min}} – {{max}}",
+    "takeProfitLabel": "止盈（%）",
+    "stopLossLabel": "止損（%）",
+    "periodLabel": "週期（天）",
+    "periodHint": "範圍：{{min}} – {{max}} 天",
+    "submit": "訂閱",
+    "submitting": "提交中…",
+    "cancel": "取消",
+    "submitSuccess": "訂閱成功",
+    "fees": {
+      "title": "費用與規則",
+      "feePerTrade": "每筆交易費用",
+      "feePerTradeValue": "{{fee}} {{asset}}",
+      "maxOpenTrades": "最大同時持倉",
+      "maxOpenTradesValue": "{{n}} 筆"
+    },
+    "settlementNote": "訂閱後可隨時提前終止策略；終止會平掉所有持倉並結束策略，已實現盈虧會保留至你的帳戶。",
+    "simulator": {
+      "title": "預期盈利模擬",
+      "params": "{{rate}}%/日 ±{{tolerance}}% · 每日複利",
+      "range": "模擬區間：{{lower}} – {{upper}}",
+      "legendExpected": "預期",
+      "legendBand": "波動區間",
+      "tooltipDay": "第 {{day}} 天",
+      "tooltipExpected": "預期",
+      "tooltipUpper": "上限",
+      "tooltipLower": "下限",
+      "emptyHint": "輸入本金與週期即可預覽收益模擬。",
+      "disclaimer": "模擬結果僅為依模板每日目標與波動範圍按日複利推演的示意，不構成收益承諾。"
+    },
+    "errors": {
+      "capitalRequired": "請輸入資金金額。",
+      "belowMin": "資金不能低於 {{min}}。",
+      "aboveMax": "資金不能高於 {{max}}。",
+      "emptyRange": "該模板目前不可用。",
+      "periodOutOfRange": "週期需在 {{min}} – {{max}} 天之間。",
+      "takeProfitOutOfRange": "止盈需在 1% – 100% 之間。",
+      "stopLossOutOfRange": "止損需在 1% – 50% 之間。",
+      "createFailed": "建立策略失敗，請稍後重試。",
+      "badRequest": "請求被拒絕，請檢查表單輸入。",
+      "unauthorized": "請先登入後再建立策略。",
+      "paymentRequired": "餘額不足，請充值後再建立該策略。",
+      "notFound": "該策略模板已下架。",
+      "conflict": "已有衝突中的策略在運行，請停止或等待其結束。",
+      "validation": "部分欄位不合法，請檢查後重試。"
+    }
+  },
+  "dailyStats": {
+    "netPnl": "淨盈虧",
+    "tradesLabel": "交易次數",
+    "activeDays": "交易天數",
+    "date": "日期",
+    "pnl": "盈虧",
+    "loss": "虧損",
+    "profit": "獲利",
+    "empty": "此區間內尚無已平倉交易。",
+    "rangeCaption": "{{range}} · UTC",
+    "showingLatest": "顯示最近 {{shown}} / 共 {{total}} 天"
+  },
+  "risk": {
+    "title": "風險提示",
+    "body": "過往表現不代表未來收益。AI 策略和訊號僅供參考，不構成投資建議。加密貨幣與期貨交易可能讓你損失全部本金 —— 請只用閒錢交易。"
+  },
+  "quantFund": {
+    "title": "量化基金",
+    "hero": {
+      "subtitle": "AI 全託管量化基金",
+      "title": "量化基金 — AI 託管定期收益",
+      "description": "由 AI 量化團隊全程託管的定期產品。鎖定指定週期、按日均收益率計息，到期由系統自動結算。",
+      "disclaimer": "AI 全託管 · 定期結算",
+      "viewPositionsCta": "我的持倉"
+    },
+    "filters": {
+      "assetAll": "全部資產"
+    },
+    "card": {
+      "dailyReturn": "日均收益率",
+      "term": "週期",
+      "termDaysValue": "{{days}} 天",
+      "termFlexible": "活期",
+      "investmentLimit": "申購區間（{{currency}}）",
+      "availableQuota": "剩餘額度",
+      "subscribedDisplayed": "已認購",
+      "projectProgress": "項目進度",
+      "maxUnlimited": "不限",
+      "tagFlexible": "活期",
+      "tagRedeemable": "隨時贖回",
+      "cta": "立即申購",
+      "ctaSoldOut": "額度已滿"
+    },
+    "creditScore": {
+      "label": "最低信用分",
+      "requirement": "需信用分 ≥ {{score}}",
+      "insufficient": "需信用分 {{required}},您目前為 {{current}}"
+    },
+    "detail": {
+      "investmentRange": "申購區間",
+      "minHoldDays": "最短持有 {{days}} 天",
+      "subscribeCta": "立即申購",
+      "disclosure": "披露文件",
+      "calcTitle": "收益試算",
+      "calcDaysLabel": "持有天數",
+      "calcEstTotal": "預估總收益",
+      "calcDisclaimer": "試算結果僅供參考，不構成收益承諾。",
+      "calcAccrualNote": "持有未滿 {{days}} 天不產生收益。",
+      "flowTitle": "申購流程",
+      "flowStep1Title": "申購",
+      "flowStep1Desc": "選擇金額並使用資金帳戶餘額確認申購。",
+      "flowStep2Title": "開始計息",
+      "flowStep2Desc": "申購確認後開始累計收益。",
+      "flowStep3Title": "收益發放",
+      "flowStep3Desc": "收益定期結算並發放至您的帳戶。",
+      "flowStep4Title": "贖回",
+      "flowStep4DescFixed": "到期後本金與收益自動返還。",
+      "flowStep4DescFlexible": "隨時可贖回，資金返還至資金帳戶。",
+      "quotaTitle": "額度詳情",
+      "quotaTotal": "總額度",
+      "quotaPerUser": "單人限額",
+      "moreTitle": "更多產品"
+    },
+    "riskLevel": {
+      "LOW": "低風險",
+      "MEDIUM": "中等風險",
+      "HIGH": "高風險",
+      "EXTREME": "極高風險"
+    },
+    "subscribe": {
+      "title": "申購 {{name}}",
+      "amountLabel": "申購金額（{{currency}}）",
+      "amountHint": "區間：{{min}} – {{max}} {{currency}}",
+      "availableBalanceLabel": "可用餘額",
+      "maxButton": "最大",
+      "estDailyEarnings": "預估每日收益",
+      "riskAckPrefix": "我已閱讀並接受本產品的",
+      "riskAckLink": "量化基金風險提示",
+      "riskAckSuffix": "。",
+      "submit": "確認申購",
+      "submitting": "提交中…",
+      "cancel": "取消",
+      "errorAmountRange": "金額必須在 {{min}} – {{max}} {{currency}} 之間。",
+      "errorAmountInvalid": "請輸入有效金額。",
+      "errorExceedsAvailable": "申購金額超過目前剩餘額度，目前剩餘 {{available}} {{currency}}，請調整申購金額。",
+      "errorInsufficientBalance": "可用餘額不足，目前可用 {{available}} {{currency}}。",
+      "goDeposit": "前往充值",
+      "errorRequireRiskAck": "請先勾選風險提示後再繼續。",
+      "success": "申購成功",
+      "close": "關閉"
+    },
+    "redeem": {
+      "button": "贖回",
+      "title": "贖回訂單",
+      "confirmNotice": "利息按實際持有天數結算；持有不足最短 {{minHoldDays}} 天則無利息，最終以結算為準。",
+      "confirmNoticeNoMin": "利息按實際持有天數結算，最終以結算為準。",
+      "reviewNotice": "本次贖回需經後台審核。提交後將由管理員審核通過後才會結算出帳；在此之前本金留在基金內繼續計息。",
+      "confirm": "確認贖回",
+      "submitting": "提交中…",
+      "cancel": "取消",
+      "resultTitle": "贖回成功",
+      "pendingTitle": "贖回申請已提交",
+      "pendingDescription": "你的贖回正在等待後台審核。在審核通過前，本金將繼續留在基金內計息。",
+      "settledPrincipal": "結算本金",
+      "settledInterest": "結算利息",
+      "heldDaysLabel": "持有天數",
+      "heldDays": "{{days}} 天",
+      "fundsReturned": "本金與利息已返回你的資金帳戶。",
+      "done": "完成",
+      "confirmNoticeEarlyRedeem": "此為鎖定期產品,提前贖回將按剩餘鎖定天數扣收違約金,最終金額以結算為準。",
+      "penaltyAmount": "提前贖回違約金",
+      "remainingLockDays": "剩餘鎖定天數",
+      "remainingLockDaysValue": "{{days}} 天",
+      "notSupported": "未開放提前贖回",
+      "needVip": "需 VIP {{tier}} 可提前贖回",
+      "penaltyEstimate": "預估違約金"
+    },
+    "topUp": {
+      "button": "補足",
+      "title": "補足申購金額",
+      "description": "補足後恢復審核",
+      "countdownLabel": "補足倒數",
+      "countdownDaysHours": "{{days}}天 {{hours}}時",
+      "countdownDaysHoursMinutes": "{{days}}天 {{hours}}時 {{minutes}}分",
+      "expired": "已過期",
+      "overdue": "已逾期",
+      "overdueDays": "已逾期 {{days}} 天",
+      "deadlineNotice": "逾期未補足，系統將自動取消訂單並退回本金。",
+      "lateFeeDeadlineNotice": "逾期未補足，你的帳戶屆時會產生相應的滯納金。",
+      "lockedNotice": "入口已關閉，請聯絡客服繳納滯納金。",
+      "contactSupport": "聯絡客服",
+      "noticeWithTarget": "審核員已將此訂單的目標金額設為 {{target}} {{currency}}，請於下方補足差額以恢復審核。",
+      "noticeGeneric": "審核員已調整此訂單的目標金額，確認後將補足差額並恢復審核。",
+      "currentPrincipal": "目前金額",
+      "targetAmount": "目標金額",
+      "shortfall": "需補足金額",
+      "availableBalanceLabel": "可用餘額",
+      "errorInsufficientBalance": "餘額不足，無法完成補足。",
+      "goDeposit": "前往充值",
+      "confirm": "確認補足",
+      "submitting": "處理中…",
+      "cancel": "取消",
+      "resultTitle": "補足完成",
+      "resultPrincipal": "新申購金額",
+      "resultProjectedInterest": "預期利息",
+      "resultStatusNotice": "您的訂單已重新進入審核。",
+      "done": "完成"
+    },
+    "decline": {
+      "button": "拒絕",
+      "title": "拒絕補足",
+      "notice": "拒絕將取消此訂單，並把 {{principal}} {{currency}} 釋放回您的可用餘額。此操作無法復原。",
+      "reasonLabel": "原因（選填）",
+      "reasonPlaceholder": "告訴我們原因（選填）",
+      "confirm": "拒絕並取消訂單",
+      "submitting": "處理中…",
+      "cancel": "保留訂單",
+      "resultTitle": "訂單已取消",
+      "resultReleased": "已釋放至餘額",
+      "resultNotice": "資金已退回您的可用餘額。",
+      "done": "完成"
+    },
+    "positions": {
+      "title": "我的量化基金持倉",
+      "subtitle": "你在量化基金上的所有訂單與結算狀態。",
+      "tabs": {
+        "all": "全部",
+        "active": "運行中",
+        "pending_review": "審核中",
+        "redeem_pending_review": "贖回審核中",
+        "awaiting_top_up": "待補足",
+        "rejected": "已拒絕",
+        "settled": "已結算",
+        "cancelled": "已取消",
+        "redeemed": "已贖回"
+      },
+      "tabGroups": {
+        "all": "全部",
+        "pending": "處理中",
+        "active": "運行中",
+        "history": "歷史"
+      },
+      "historyFilter": {
+        "all": "全部狀態"
+      },
+      "summary": {
+        "totalPrincipal": "在持本金",
+        "totalProjectedInterest": "預計利息",
+        "activeInterestPaidTotal": "在持已派利息",
+        "settledTotalReceived": "已結算到賬",
+        "activeCount": "在持訂單數",
+        "breakdownToggle": "按資產明細",
+        "interestProgress": "派息進度 {{percent}}%",
+        "earningsTrend": "近 {{days}} 天派息趨勢",
+        "usdPrice": "@ {{price}} USD",
+        "partialValuation": "{{assets}} 暫無 USD 報價，總計僅包含可估值資產。"
+      },
+      "empty": "此分類下暫無訂單。",
+      "table": {
+        "status": "狀態",
+        "productName": "產品名稱",
+        "principal": "本金",
+        "dailyReturn": "日均收益率",
+        "term": "週期",
+        "projectedInterest": "預計利息",
+        "interestPaidTotal": "已派發利息",
+        "interestPaidThrough": "已派息至",
+        "interestRemaining": "待派",
+        "accruedInterestEstimate": "預估",
+        "subscribedAt": "申購時間",
+        "maturityDate": "到期時間",
+        "action": "操作"
+      },
+      "maturityPending": "核准後確定",
+      "fields": {
+        "productName": "產品名稱",
+        "principal": "本金",
+        "dailyReturn": "日均收益率",
+        "term": "週期",
+        "projectedInterest": "預計利息",
+        "interestPaidTotal": "已派發利息",
+        "interestPaidThrough": "已派息至",
+        "interestRemaining": "待派利息",
+        "accruedInterestEstimate": "預估利息",
+        "minHoldDays": "起息門檻",
+        "subscribedAt": "申購時間",
+        "maturityDate": "到期時間",
+        "settledAt": "結算時間",
+        "settledInterest": "結算利息",
+        "settledPrincipal": "結算本金",
+        "settledTotal": "結算合計",
+        "cancelReason": "取消原因"
+      },
+      "detail": {
+        "title": "訂單詳情",
+        "close": "關閉訂單詳情",
+        "viewProduct": "查看產品",
+        "remainingDays": "剩餘 {{days}} 天",
+        "sections": {
+          "interest": "利息",
+          "settlement": "結算"
+        }
+      },
+      "topUpReminder": {
+        "title": "有 {{count}} 筆訂單待補足",
+        "description": "請於期限前補足，逾期訂單將自動取消並退回本金。",
+        "overdueDescription": "其中 {{count}} 筆已過補足期限。請盡快處理；入口已關閉請聯絡客服。",
+        "overdueLockedDescription": "其中 {{count}} 筆已過補足期限。補足與拒絕入口已關閉，請聯絡客服繳納滯納金。",
+        "cta": "去補足"
+      }
+    },
+    "interestRecords": {
+      "title": "派息明細",
+      "subtitle": "此訂單的逐筆派息記錄。",
+      "back": "返回",
+      "entry": "派息明細",
+      "table": {
+        "interestDate": "計息日",
+        "amount": "數量",
+        "creditedAt": "入帳時間"
+      },
+      "empty": "暫無派息記錄。"
+    },
+    "status": {
+      "product": {
+        "active": "募集中"
+      },
+      "order": {
+        "active": "運行中",
+        "settled": "已結算",
+        "cancelled": "已取消",
+        "redeemed": "已贖回",
+        "redeem_pending_review": "贖回審核中",
+        "pending_review": "審核中",
+        "awaiting_top_up": "待補足",
+        "rejected": "已拒絕"
+      }
+    },
+    "errors": {
+      "unknown": "操作失敗，請稍後重試。",
+      "quotaExhausted": "該產品額度已售罄，暫時無法申購。",
+      "exceedsRemainingQuota": "申購金額超過產品目前的剩餘額度，請調整申購金額。",
+      "perUserQuotaExceeded": "申購金額超過你的個人可申購上限，請調整申購金額。",
+      "notAwaitingTopUp": "此訂單已不在待補足狀態，可能已被更新。",
+      "topUpLockedOverdue": "此訂單已逾期，補足與拒絕入口已關閉，請聯絡客服。",
+      "insufficientBalance": "餘額不足，無法完成補足，請充值後重試。",
+      "insufficientCreditScore": "您的信用分未達到此產品的申購門檻。"
+    },
+    "states": {
+      "loading": "載入中…",
+      "empty": "暫無資料。",
+      "error": "載入失敗。",
+      "retry": "重試"
+    }
+  }
+}

@@ -1,0 +1,474 @@
+{
+  "seo": {
+    "title": "Handeln Sie Krypto, Devisen, Indizes & Aktien",
+    "description": "{{brand}} ist eine Multi-Asset-Handelsplattform – handeln Sie Krypto, Devisen, Indizes, US-Aktien und Metalle über ein Konto, mit KI-gestützten Tools."
+  },
+  "hero": {
+    "badge": "Multi-Asset-Handel · Ein Konto",
+    "title": "Krypto, Devisen, Aktien – alles in einem Konto.",
+    "title1": "Klüger handeln.",
+    "titleHighlight": "Gebaut für",
+    "title2": "die nächsten Millionen Trader.",
+    "desc": "Ein Konto für Krypto, Devisen, Indizes, US-Aktien und Metalle – mit tiefer Liquidität, niedrigen Gebühren sowie den Daten und der KI, die Sie brauchen, damit jeder Trade zählt.",
+    "startTrading": "Handel starten",
+    "seeMarkets": "Märkte ansehen",
+    "exploreQuantFund": "Quant-Fonds erkunden",
+    "watchFilm": "Sehen, wie KI-Quant funktioniert",
+    "watchDemo": "90-Sekunden-Demo ansehen",
+    "appMockupAlt": "{{brand}} Mobile-App – Portfolio, KI-Quant, Copy-Trading und Live-Märkte",
+    "appMockupPip": "Live"
+  },
+  "aiQuantFilm": {
+    "title": "So funktioniert KI-Quant",
+    "description": "Eine kurze Übersicht, wie Strategien erstellt, getestet und ausgeführt werden.",
+    "unsupported": "Ihr Browser unterstützt das Video-Tag nicht."
+  },
+  "products": {
+    "label": "01 / Was Sie handeln können",
+    "titleFrom": "Von",
+    "perpetual": "Perpetuals",
+    "titleTo": "bis",
+    "options": "Binäroptionen",
+    "titleEnd": " —<br/>ein Konto, jeder Markt, der Ihnen wichtig ist.",
+    "viewAll": "Alle Produkte ansehen →",
+    "perpLabel": "PERPETUALS",
+    "perpTitle1": "Tiefe Liquidität,",
+    "perpTitle2": "jedes wichtige Asset.",
+    "perpDesc": "Über 200 Futures-Paare für Krypto, Gold und Silber. Bis zu 125-fache Hebelwirkung, Ausführungen in unter 50 ms, transparente Funding-Raten – in USD abgerechnet für Ein-Konto-Einfachheit.",
+    "perpStat1": "Handelspaare",
+    "perpStat2": "Max. Hebel",
+    "perpStat3": "Niedrigste Gebühr",
+    "perpTag1": "Krypto",
+    "perpTag2": "Metalle",
+    "perpTag3": "USD-abgerechnet",
+    "optLabel": "BINÄROPTIONEN",
+    "optTitle1": "Wählen Sie eine Richtung.",
+    "optTitle2": "Kennen Sie Ihr maximales Risiko im Voraus.",
+    "optDesc": "Sagen Sie einfach voraus, ob der Preis steigt oder fällt – die Größe der Bewegung spielt keine Rolle. Kontrakte über 60 Sekunden, 90 Sekunden und 6 Minuten mit fester Auszahlung und begrenztem Verlustrisiko.",
+    "optStat1": "Laufzeitoptionen",
+    "optStat2": "Max. Auszahlung",
+    "optStat3": "Fest",
+    "optStat4": "Quote",
+    "optTag1": "Steigen",
+    "optTag2": "Fallen",
+    "multiLabel": "EIN KONTO · DREI MÄRKTE",
+    "multiTitle": "Krypto, Gold, Silber —<br/><1>ein Guthaben, kein Wechseln.</1>",
+    "multiDesc": "Handeln Sie Krypto, Gold (XAU) und Silber (XAG) aus demselben Margin-Guthaben. Einheitliche Risikokontrollen, einheitliche GuV, kein Jonglieren zwischen Börsen.",
+    "multiAsset1": "Krypto",
+    "multiAsset1Sub": "200+ Paare",
+    "multiAsset2": "Gold",
+    "multiAsset2Sub": "XAU/USDT",
+    "multiAsset3": "Silber",
+    "multiAsset3Sub": "XAG/USDT"
+  },
+  "ai": {
+    "label": "02 / Ihr KI-Co-Pilot",
+    "title1": "Quant-Power für ",
+    "titleHighlight": "jeden Trader",
+    "title2": ",<br/>nicht nur für Hedgefonds.",
+    "subtitle": "Drei KI-Tools, die zusammenarbeiten – lassen Sie die Mathematik die Arbeit machen, Sie behalten bei jedem Trade die letzte Entscheidung.",
+    "quantTag": "01 / QUANT",
+    "quantTitle": "KI-Strategiebibliothek",
+    "quantDesc": "Hunderte Strategien, getestet auf 5 Jahren Daten – Trendfolge, Arbitrage, Grid, Mean Reversion. Ein-Klick-Abonnement, automatische Ausführung, jederzeit Live-Performance verfolgen.",
+    "quantChartLabel": "EQUITY-KURVE · 90T",
+    "quantWinRate": "Gewinnrate",
+    "quantSharpe": "Sharpe-Verhältnis",
+    "quantMaxDrawdown": "Max. Drawdown",
+    "quantLink": "Strategien durchsuchen →",
+    "copyTag": "02 / COPY",
+    "copyTitle": "Kopieren Sie die Trader, denen Sie vertrauen",
+    "copyDesc": "Bilden Sie Top-Trader ab, gerankt nach risikobereinigter Rendite. Legen Sie Ihren eigenen Stop-Loss fest, steigen Sie jederzeit aus, teilen Sie einen festen Anteil – ohne Plattform-Bindung.",
+    "copyLabel": "TOP-TRADER · 30T",
+    "copyRoi": "ROI",
+    "copyLink": "Bestenliste anzeigen →",
+    "signalTag": "03 / SIGNAL",
+    "signalTitle": "Gefilterte Trade-Signale",
+    "signalDesc": "Über 3.800 Signale pro Monat, bewertet nach Marktstruktur, On-Chain-Flow und Sentiment – nur die besten 10 % erreichen Ihren Bildschirm.",
+    "signalLong": "Long",
+    "signalTime": "vor 2 Min.",
+    "signalEntry": "Einstiegszone",
+    "signalStop": "Stop-Loss",
+    "signalTarget": "Ziel 1 / 2",
+    "signalRr": "Risiko / Chance",
+    "signalConfidence": "Konfidenz",
+    "signalLink": "Neueste Signale ansehen →",
+    "riskWarning": "⚠ Risikohinweis: Vergangene Wertentwicklung ist keine Garantie für zukünftige Ergebnisse. KI-Strategien und -Signale sind Referenzhilfen, keine Beratung. Krypto- und Futures-Handel kann Ihr gesamtes Guthaben kosten – handeln Sie nur mit Mitteln, deren Verlust Sie sich leisten können."
+  },
+  "markets": {
+    "label": "03 / Live-Märkte",
+    "title": "Echte Preise,",
+    "titleHighlight": "in Echtzeit —",
+    "tabAll": "Alle",
+    "tabHot": "Jetzt angesagt",
+    "tabGainers": "Top-Gewinner 24 Std.",
+    "tabFunding": "Funding",
+    "tabNew": "Neue Listings",
+    "colPair": "Paar",
+    "colPrice": "Preis",
+    "colChange": "24-Std.-Änderung",
+    "colVolume": "24-Std.-Volumen",
+    "colFunding": "Funding",
+    "tradeLink": "Handeln →",
+    "viewAll": "Alle {{total}} Märkte ansehen →",
+    "pulseLabel": "Live-Märkte · Top-Paare",
+    "empty": "Noch keine Märkte in dieser Kategorie.",
+    "viewAllPlain": "Alle Märkte ansehen →"
+  },
+  "partners": {
+    "label": "05 / Partner",
+    "title": "Partner"
+  },
+  "news": {
+    "label": "06 / Lernen Sie die Märkte kennen",
+    "title": "Werden Sie schärfer",
+    "titleHighlight": "mit jedem Trade.",
+    "viewAll": "Alle Lektionen ansehen →",
+    "tagHeadline": "Empfohlen",
+    "tagDeep": "Tiefgang",
+    "tagCourse": "Kurs",
+    "article1Meta": "Marktforschung · 12 Min. Lesezeit",
+    "article1Title": "Die Nachfrage nach BTC-Optionen explodiert —<br/>so verhält sich das Smart Money.",
+    "article1Desc": "In den letzten 30 Tagen ist das Volumen von BTC-Binäroptionen um 42 % gestiegen. Wir analysieren, wohin der Flow geht, welche Laufzeiten überfüllt sind und wie die Gewinnraten bei Retail- vs. institutionellen Kohorten aussehen …",
+    "article2Meta": "8 Min. Lesezeit",
+    "article2Title": "Binäroptionen 101 – vom ersten Kontrakt zu einem echten Vorteil",
+    "article2Desc": "Kernmechaniken, die Wahl der richtigen Laufzeit und wie Sie Positionen dimensionieren, damit eine Pechsträhne Ihr Konto nicht beendet …",
+    "article3Meta": "3 Min. Lesezeit",
+    "article3Title": "Gold-Futures (XAU/USDT) jetzt live mit 100-fachem Hebel",
+    "article3Desc": "Handeln Sie Krypto und Edelmetalle aus demselben Margin-Guthaben. Maker-Gebühren ab 0,02 % …",
+    "article4Meta": "5 Min. Lesezeit",
+    "article4Title": "Copy-Trading v2.4 – abgestimmt auf echtes Risiko, nicht nur Renditen",
+    "article4Desc": "Die neue Version stimmt Trader und Follower auf 12 Risikometriken ab, sodass eine aggressive Strategie nie in einem konservativen Buch landet …"
+  },
+  "cta": {
+    "title": "Bereit, mit einem Vorteil zu handeln?",
+    "title1": "Bereit, mit",
+    "titleHighlight": "einem Vorteil zu handeln",
+    "title2": "?",
+    "desc": "Eröffnen Sie ein Konto in unter 2 Minuten. Neue Nutzer können auf Testguthaben, Plattform-Belohnungen und einsteigerfreundliche Handelsvorteile zugreifen.",
+    "start": "Kostenloses Konto erstellen",
+    "tradeNow": "Jetzt handeln",
+    "guaranteeLine": "Konto in 2 Minuten eröffnen · Kein KYC für Test · Jederzeit kündbar"
+  },
+  "whyNvdx": {
+    "label": "Warum {{brand}}",
+    "title": "Warum {{brand}}",
+    "subtitle": "Vier Gründe, warum Trader zu {{brand}} wechseln und bleiben. Aufgebaut rund um die Dinge, die zählen, wenn echtes Geld auf dem Spiel steht.",
+    "learnMore": "Mehr erfahren",
+    "features": {
+      "multiAsset": {
+        "title": "Multi-Asset",
+        "desc": "Krypto, Devisen, Indizes, US-Aktien und Metalle – ein Margin-Guthaben, kein Wechseln der Handelsplätze.",
+        "imageAlt": "Gestapelte transparente Glasscheiben, die Krypto, Gold, Devisen und Aktien unter einem einzigen Margin-Guthaben vereinen"
+      },
+      "aiAssisted": {
+        "title": "KI-Co-Pilot",
+        "desc": "Bewertete Signale und Strategien, die Sie abonnieren oder vollständig ignorieren können. Sie behalten die Kontrolle.",
+        "imageAlt": "Konstellation aus säuregrünen Datenknoten, die eine steigende Trendlinie bilden und KI-bewertete Handelssignale darstellen"
+      },
+      "web3Custody": {
+        "title": "Kontosicherheit",
+        "desc": "Zwei-Faktor-Authentifizierung, Handelspasswort und Geräteverwaltung helfen Ihnen, Ihr Konto zu schützen.",
+        "imageAlt": "Modul eines gebürsteten Titan-Tresors mit kryptografischer Wabenfront und einem Live-Audit-Scanstrahl"
+      },
+      "liquidity": {
+        "title": "Immer liquide",
+        "desc": "Ausführungen unter 50 ms über große Paare hinweg, rund um die Uhr, mit transparentem Funding.",
+        "imageAlt": "Säuregrüne Flüssigkeitsströme, die durch präzisionsgefertigte Kanäle rasen und Ausführung mit niedriger Latenz darstellen"
+      }
+    }
+  },
+  "payments": {
+    "label": "Zahlungen",
+    "title": "Überall auszahlen",
+    "subtitle": "Bewegen Sie Geld so, wie Sie es bereits tun – Karten, Banküberweisungen, Stablecoins oder natives Krypto."
+  },
+  "earn": {
+    "eyebrow": "Verdienen",
+    "title": "Ungenutzte Assets arbeiten lassen",
+    "subtitle": "Flexible, feste und Staking-Produkte mit transparenten Referenzrenditen, gemacht für langfristige Anleger.",
+    "cta": "Produkte entdecken"
+  },
+  "insights": {
+    "label": "Einblicke",
+    "title": "Neueste Einblicke"
+  },
+  "aqua": {
+    "hero": {
+      "badge": "Matching-Engine der nächsten Generation",
+      "titleLead": "Handeln Sie mit",
+      "titleGradient": "Lichtgeschwindigkeit",
+      "titleTail": "— nie einen Schritt zurück.",
+      "desc": "Eine Matching-Engine unter 50 ms, Echtzeit-Datenströme und KI-Co-Piloten. Krypto, Devisen, Metalle und Aktien – ein Konto, null Verzögerung.",
+      "hudLabel": "Ausführungsterminal",
+      "hudStatus": "Live",
+      "hudPair": "BTC/USDT · PERP",
+      "hudLatency": "Match-Latenz",
+      "hudLatencyValue": "42 ms",
+      "hudThroughput": "Orders / Sek.",
+      "hudThroughputValue": "1,2 M"
+    },
+    "metrics": {
+      "label": "Auf Leistung ausgelegt",
+      "pairs": "Handelbare Paare",
+      "latency": "Ø Match-Latenz",
+      "traders": "Aktive Trader",
+      "uptime": "Engine-Verfügbarkeit"
+    },
+    "features": {
+      "label": "Anders gebaut",
+      "title": "Alles, was Sie brauchen, um mit einem Vorteil zu handeln.",
+      "subtitle": "Das Wesentliche, neu konstruiert – Multi-Asset-Tiefe, KI-Unterstützung, Kontosicherheit und spürbare Latenz.",
+      "multiAsset": {
+        "title": "Multi-Asset",
+        "desc": "Krypto, Devisen, Indizes, US-Aktien und Metalle auf einem Margin-Guthaben – kein Wechseln der Handelsplätze."
+      },
+      "ai": {
+        "title": "KI-Co-Pilot",
+        "desc": "Bewertete Signale und getestete Strategien, die Sie abonnieren oder ignorieren können. Sie behalten die letzte Entscheidung."
+      },
+      "custody": {
+        "title": "Kontosicherheit",
+        "desc": "Zwei-Faktor-Authentifizierung, Handelspasswort und Geräteverwaltung helfen Ihnen, Ihr Konto zu schützen."
+      },
+      "speed": {
+        "title": "Unter 50 ms",
+        "desc": "Eine Matching-Engine, die in unter 50 ms ausführt, rund um die Uhr, mit transparentem Funding."
+      }
+    },
+    "markets": {
+      "label": "Live-Märkte",
+      "title": "Echte Preise, in Echtzeit gestreamt.",
+      "viewAll": "Alle {{total}} Märkte ansehen",
+      "viewAllPlain": "Alle Märkte ansehen"
+    },
+    "cta": {
+      "title": "Bereit, mit voller Geschwindigkeit zu handeln?",
+      "desc": "Eröffnen Sie ein Konto in unter 2 Minuten. Neue Nutzer können auf Testguthaben, Plattform-Belohnungen und einsteigerfreundliche Handelsvorteile zugreifen.",
+      "start": "Kostenloses Konto erstellen",
+      "secondary": "Märkte erkunden"
+    }
+  },
+  "cyber": {
+    "hero": {
+      "badge": "Matching-Core online",
+      "titleLead": "Dock an",
+      "titleGlitch": "das Neon-Grid",
+      "titleTail": "aller Märkte an.",
+      "desc": "Ein Matching-Core unter 50 ms, unterbrechungsfreie Datenströme und KI-Signale. Krypto, Forex, Metalle und US-Aktien — eine Leitung zu allem.",
+      "bootLabel": "Bootsequenz",
+      "uplink": "Uplink",
+      "boot1": "Matching-Core wird geladen",
+      "boot2": "Marktdatenströme werden synchronisiert",
+      "boot3": "Kontomodule werden geladen",
+      "boot4": "Verbindung steht",
+      "bootDone": "System online",
+      "pairLabel": "Paar",
+      "latency": "Matching-Latenz",
+      "latencyValue": "42 ms",
+      "throughput": "Orders / Sek.",
+      "throughputValue": "1,2 M"
+    },
+    "stats": {
+      "label": "Grid-Status live",
+      "pairs": "Handelbare Paare",
+      "latency": "Ø Matching-Latenz",
+      "traders": "Aktive Trader",
+      "uptime": "Engine-Verfügbarkeit"
+    },
+    "features": {
+      "label": "Ausrüstung",
+      "title": "Ausrüstung für harte Märkte.",
+      "subtitle": "Multi-Asset-Tiefe, KI-Signale, Kontosicherheit und Millisekunden-Matching — alles integriert.",
+      "multiAsset": {
+        "title": "Multi-Asset-Matrix",
+        "desc": "Krypto, Forex, Indizes, US-Aktien und Metalle teilen sich eine Margin-Balance. Ein Konto, alle Märkte."
+      },
+      "ai": {
+        "title": "KI-Signal-Engine",
+        "desc": "Bewertete Signale und backgetestete Strategien im Stream. Ob du folgst, entscheidest du."
+      },
+      "custody": {
+        "title": "Kontosicherheit",
+        "desc": "Zwei-Faktor-Authentifizierung, Handelspasswort und Geräteverwaltung helfen Ihnen, Ihr Konto zu schützen."
+      },
+      "speed": {
+        "title": "Millisekunden-Matching",
+        "desc": "Ein Matching-Core rund um die Uhr, Ausführung unter 50 ms, transparente Funding-Raten."
+      }
+    },
+    "markets": {
+      "label": "Marktwand",
+      "title": "Live-Preise, direkt aus dem Core.",
+      "viewAll": "Alle {{total}} Märkte ansehen",
+      "viewAllPlain": "Alle Märkte ansehen"
+    },
+    "cta": {
+      "title": "Andocken. Traden.",
+      "desc": "Konto in 2 Minuten eröffnet. Demo-Guthaben, Rewards und Einsteiger-Vorteile vorinstalliert.",
+      "start": "Kostenloses Konto erstellen",
+      "secondary": "Märkte entdecken"
+    }
+  },
+  "founding": {
+    "title": "Gründungsmitglieder",
+    "description": "{{brandName}} ist eine globale strategische Investment-Finanzplattform, die sich der Verbindung traditioneller Finanzen und der digitalen Wirtschaft widmet. Unser Kernvorteil liegt in unserem erstklassigen Strategieteam ({{names}}), das Kunden grenzüberschreitende und branchenübergreifende Vermögensallokationslösungen bietet. Durch die Kombination von KI-Risikomanagement und internationalen Compliance-Standards gewährleisten wir die Sicherheit der Gelder und die finanzielle Liquidität der Plattform. Mit maßgeschneiderten Diensten und weltweiter Forschungsunterstützung ist es unsere Mission, den Nutzern ein sicheres, intelligentes und grenzüberschreitendes Ökosystem für Vermögenswachstum zu schaffen und der strategische Partner für die neue Generation von Investoren zu werden.",
+    "prev": "Vorheriges Mitglied",
+    "next": "Nächstes Mitglied"
+  },
+  "premium": {
+    "hero": {
+      "emailPlaceholder": "E-Mail-Adresse",
+      "signUp": "Registrieren",
+      "hotTitle": "Beliebte Coins"
+    },
+    "steps": {
+      "label": "Loslegen",
+      "title": "In 3 einfachen Schritten handeln",
+      "s1Title": "Konto erstellen",
+      "s1Desc": "Registrieren Sie sich in unter zwei Minuten mit Ihrer E-Mail.",
+      "s2Title": "Wallet aufladen",
+      "s2Desc": "Einzahlung per Karte, Banküberweisung oder Krypto.",
+      "s3Title": "Mit dem Handel beginnen",
+      "s3Desc": "Handeln Sie Krypto, Metalle und mehr mit einem Konto."
+    },
+    "stats": {
+      "assets": "Gelistete Werte",
+      "volume": "24-Std.-Volumen",
+      "uptime": "Betriebszeit",
+      "uptimeValue": "24/7"
+    }
+  },
+  "cobalt": {
+    "hero": {
+      "title": "Eine Multi-Asset-Trading-Plattform",
+      "subtitle": "Kaufen, verkaufen und verwalten Sie Märkte in den Bereichen Krypto, Forex, Metalle und Indizes.",
+      "assetsTitle": "Top-Märkte",
+      "phoneAlt": "Krypto, Forex und Aktien in einer mobilen App handeln"
+    },
+    "credentials": {
+      "markets": "Krypto, Forex, Metalle und Indizes in einem Konto",
+      "security": "Zwei-Faktor-Authentifizierung und Geräteverwaltung für Ihr Konto"
+    },
+    "built": {
+      "title": "Für den Handel auf allen Märkten gemacht",
+      "items": {
+        "markets": "Handeln Sie sicher auf {{total}} Märkten – Krypto, Forex, Metalle und Indizes",
+        "marketsFallback": "Handeln Sie sicher Krypto, Forex, Metalle und Indizes",
+        "onboarding": "Richten Sie Ihr Konto sicher und nahtlos ein",
+        "support": "Prioritäts-Support rund um die Uhr"
+      },
+      "marketCount": "{{total}} Märkte"
+    },
+    "explore": {
+      "title": "Entdecken Sie Bitcoin, Ethereum und Hunderte weitere Kryptos",
+      "subtitle": "Kaufen, verkaufen und verwalten Sie Hunderte Krypto-Assets — einfach und sicher.",
+      "viewMore": "Weitere Assets ansehen",
+      "tabGainers": "Top-Gewinner",
+      "tabVolume": "Top-Umsatz"
+    },
+    "advanced": {
+      "title": "Jeder Markt, auf seine Weise gehandelt",
+      "tagline": "Krypto, Forex, Metalle und Indizes in einem Konto — jeder Markt bringt die passenden Handelsarten mit: Perpetual-Futures mit Hebel und Binäre Optionen mit fester Auszahlung.",
+      "items": {
+        "markets": "Ein Konto für Krypto, Forex, Metalle und Indizes",
+        "futures": "Perpetual-Futures mit Hebel — Market-, Limit- und Stop-Limit-Orders",
+        "options": "Binäre Optionen: Richtung vorhersagen, Auszahlung und maximales Risiko stehen vorab fest"
+      },
+      "cta": "Jetzt ausprobieren",
+      "previewAlt": "Der Trading-Bildschirm auf einem Tablet in der Hand"
+    },
+    "earn": {
+      "eyebrow": "Erträge",
+      "title": "Lassen Sie Ihre Kryptos arbeiten",
+      "subtitle": "Vermehren Sie Ihre Bestände mit flexiblen, transparenten Erträgen – ohne komplizierte Einrichtung, ohne Überraschungen.",
+      "cta": "Jetzt verdienen",
+      "features": {
+        "flexible": {
+          "title": "Flexible Laufzeiten",
+          "desc": "Zeichnen und lösen Sie ein, wann es Ihnen passt – ohne lange Sperrfristen."
+        },
+        "secure": {
+          "title": "Sicher konzipiert",
+          "desc": "Zwei-Faktor-Authentifizierung, Handelspasswort und Geräteverwaltung helfen Ihnen, Ihr Konto zu schützen."
+        },
+        "auto": {
+          "title": "Automatischer Zinseszins",
+          "desc": "Erträge fallen an und werden automatisch reinvestiert."
+        }
+      }
+    },
+    "trust": {
+      "eyebrow": "Sicherheit",
+      "title": "Sicherheitsfunktionen für Ihr Konto",
+      "subtitle": "Werkzeuge, mit denen Sie Ihr Konto schützen und den Zugriff darauf kontrollieren.",
+      "items": {
+        "twoFactor": {
+          "title": "Zwei-Faktor-Authentifizierung",
+          "desc": "Fügen Sie bei der Anmeldung einen zweiten Verifizierungsschritt hinzu."
+        },
+        "fundPassword": {
+          "title": "Handelspasswort",
+          "desc": "Legen Sie in den Kontoeinstellungen ein separates Handelspasswort fest."
+        },
+        "devices": {
+          "title": "Geräteverwaltung",
+          "desc": "Prüfen Sie die angemeldeten Geräte und entfernen Sie unbekannte."
+        },
+        "support": {
+          "title": "Hilfe, wann immer Sie sie brauchen",
+          "desc": "Sie können unser Support-Team jederzeit kontaktieren und erhalten schnelle Lösungen für häufige Fragen."
+        }
+      }
+    }
+  },
+  "pulse": {
+    "hero": {
+      "desc": "Ein Konto für Krypto, Devisen, Indizes, US-Aktien und Metalle."
+    },
+    "cta": {
+      "title": "Bereit, mit dem Handel zu starten?",
+      "desc": "Eröffnen Sie in wenigen Minuten ein Konto und platzieren Sie noch heute Ihren ersten Trade.",
+      "start": "Jetzt starten",
+      "trade": "Zum Handel"
+    }
+  },
+  "ribbon": {
+    "features": {
+      "title": "Eine fortschrittlichere Multi-Asset-Handelsplattform",
+      "subtitle": "Entwickelt für anspruchsvolle Trader",
+      "cards": {
+        "markets": {
+          "title": "Über {{total}} Märkte",
+          "titleFallback": "Hunderte von Märkten",
+          "desc": "Handeln Sie Krypto, Forex, Indizes, Edelmetalle und US-Aktien in Echtzeit – alles über ein Konto."
+        },
+        "quant": {
+          "title": "KI-Quant- und Copy-Trading",
+          "desc": "KI-Strategien und Quant-Fonds arbeiten rund um die Uhr; folgen Sie Top-Tradern mit einem Klick."
+        },
+        "security": {
+          "title": "Kontosicherheit",
+          "desc": "Zwei-Faktor-Authentifizierung, Handelspasswort und Geräteverwaltung helfen Ihnen, Ihr Konto zu schützen."
+        }
+      }
+    },
+    "customize": {
+      "title": "Für Ihre Bedürfnisse gebaut – handeln Sie auf Ihre Art.",
+      "desc": "Der Trading-Arbeitsbereich ist vollständig modular: Verschieben, skalieren, ein- oder ausblenden Sie jedes Panel. Entwickelt für professionelle Trader – mit extrem niedriger Latenz und tiefer Liquidität.",
+      "sparkPrice": "128.700 $"
+    }
+  },
+  "ui": {
+    "marketSnapshot": "Markt-Snapshot",
+    "whyNewquantcapital": "Warum NewQuantCapital",
+    "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "Vier Gründe, warum Trader zu NewQuantCapital wechseln und bleiben. Aufgebaut rund um die Dinge, die zählen, wenn echtes Geld auf dem Spiel steht.",
+    "hoursAgo": " Stunden zuvor"
+  },
+  "motion": {
+    "pausePartners": "Scrollen pausieren",
+    "resumePartners": "Scrollen fortsetzen",
+    "pauseQuotes": "Aktualisierung pausieren",
+    "resumeQuotes": "Aktualisierung fortsetzen",
+    "demoQuotes": "Demo-Kurse · Beliebte Paare"
+  }
+}

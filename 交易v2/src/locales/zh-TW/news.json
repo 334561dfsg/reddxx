@@ -1,0 +1,30 @@
+{
+  "seo": {
+    "title": "加密貨幣與市場新聞",
+    "description": "{{brand}} 提供最新的加密貨幣、外匯與股市新聞、分析與洞察。"
+  },
+  "pageTitle": "新聞中心",
+  "breadcrumbHome": "首頁",
+  "breadcrumbNews": "新聞中心",
+  "loadMore": "載入更多",
+  "loading": "載入中…",
+  "retry": "重試",
+  "backToList": "← 返回列表",
+  "readTime": "{{minutes}} 分鐘閱讀",
+  "author": "作者",
+  "publishedAt": "發佈於",
+  "relatedNews": "相關文章",
+  "noMore": "沒有更多了",
+  "tags": "標籤",
+  "share": "分享",
+  "allCategories": "全部分類",
+  "articleNotFound": "文章不存在或已被刪除",
+  "backToHome": "返回首頁",
+  "categoryAll": "全部",
+  "emptyTitle": "暫無文章",
+  "emptyHint": "稍後再來看看 —— 每天都有新內容上線。",
+  "errorTitle": "無法載入最新新聞",
+  "errorHint": "伺服器出現問題，請稍後重試。",
+  "viewOriginal": "查看原文 →",
+  "viewSource": "訪問來源"
+}

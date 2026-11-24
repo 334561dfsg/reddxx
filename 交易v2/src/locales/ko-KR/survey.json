@@ -1,0 +1,37 @@
+{
+  "entry": {
+    "title": "설문조사",
+    "description": "의견을 공유해 주세요"
+  },
+  "hint": {
+    "required": "필수",
+    "singleChoice": "하나 선택",
+    "multipleChoice": "하나 이상 선택",
+    "textPlaceholder": "답변을 입력하세요"
+  },
+  "validation": {
+    "required": "이 질문은 필수입니다"
+  },
+  "actions": {
+    "back": "뒤로",
+    "submit": "제출",
+    "submitting": "제출 중…"
+  },
+  "success": {
+    "submitted": "제출되었습니다"
+  },
+  "error": {
+    "loadFailed": "설문조사를 불러오지 못했습니다",
+    "unavailable": "설문조사 이용 불가",
+    "unavailableDescription": "이 설문조사는 더 이상 이용할 수 없거나 존재하지 않습니다.",
+    "alreadySubmitted": "이미 이 설문조사를 제출하셨습니다",
+    "validation": "일부 답변이 올바르지 않습니다. 검토 후 다시 시도하세요.",
+    "submitFailed": "제출에 실패했습니다. 다시 시도하세요."
+  },
+  "readonly": {
+    "badge": "완료",
+    "title": "내 응답",
+    "submittedAt": "{{time}}에 제출됨",
+    "noAnswer": "답변 없음"
+  }
+}

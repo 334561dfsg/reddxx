@@ -1,0 +1,33 @@
+{
+  "ui": {
+    "weCareForEveryChildCaughtInTheDevastation": "전쟁의 참화에 휩쓸린 모든 아이들을 돌봅니다",
+    "weHelpEndHunger": "우리는 기아 종식을 돕습니다",
+    "weBringComputersAndEthernetNetworksToEveryCorner": "우리는 컴퓨터와 이더넷 네트워크를 세계 곳곳에 보급합니다",
+    "weProvideHopeInTimesOfDisaster": "우리는 재난 속에서 희망을 전합니다",
+    "weInvestInTheEducationalFutureOfCountriesIn": "우리는 외딴 지역 국가들의 교육 미래에 투자합니다",
+    "weHelpPeopleWithDisabilitiesStartANewLife": "우리는 장애인들이 새로운 삶을 시작할 수 있도록 돕습니다",
+    "identityVerification": "본인 인증",
+    "selectAPngOrJpegImage": "PNG 또는 JPEG 이미지 선택",
+    "imageMustNotExceed10Mb": "이미지는 10 MB 이하여야 합니다",
+    "demoDepositRequest": "데모 입금 신청",
+    "demoWithdrawalRequest": "데모 출금 신청",
+    "localDemoCompletedNoDataOrFundsWereSent": "데모 완료. 데이터나 자금은 전송되지 않았습니다.",
+    "charitySlide": "기부 슬라이드",
+    "message": ":",
+    "connectGenerosityWithMeaningfulChangeAndBringHopeTo": "나눔을 실질적 변화로 이어 도움이 필요한 지역에 희망을 전합니다.",
+    "sourceFiguresAreASnapshotLocalDonationsAreDemonstrations": "원본 수치의 스냅샷입니다. 기부는 데모로만 작동합니다.",
+    "merchantReviewIsNotConnectedInThisLocalDemo": "이 데모는 판매자 심사 서비스에 연결되지 않습니다.",
+    "no": "없음",
+    "orders": "주문",
+    "thisDemoDoesNotCollectBankCardOrReal": "이 데모는 실제 은행 카드나 수취 계정 정보를 수집하지 않습니다.",
+    "confirmC2c": "C2C 확인",
+    "thisLocalDemoDoesNotCreateRealOrders": "이 데모는 실제 주문을 생성하지 않습니다.",
+    "noTradersAvailable": "표시할 트레이더가 없습니다",
+    "noFollowingYet": "팔로우 없음",
+    "selectAnAssetAndNetworkThenEnterTheDestination": "자산과 네트워크를 선택하고 주소와 금액을 입력하세요",
+    "localDemoDoNotTransferToDemoAddressesOr": "로컬 데모입니다. 데모 주소로 송금하거나 실제 증빙을 제공하지 마세요.",
+    "selectedLocallyFilesAreNotUploaded": "로컬에서 선택하며 업로드되지 않습니다",
+    "submitDemo": "데모 제출",
+    "noAnnouncements": "공지 없음"
+  }
+}

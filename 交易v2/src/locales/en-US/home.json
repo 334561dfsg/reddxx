@@ -1,0 +1,474 @@
+{
+  "seo": {
+    "title": "Trade Crypto, Forex, Indices & Stocks",
+    "description": "{{brand}} is a multi-asset trading platform — trade crypto, forex, indices, US stocks and metals from one account, with AI-assisted tools."
+  },
+  "hero": {
+    "badge": "Multi-asset trading · One account",
+    "title": "Crypto, forex, stocks — all in one account.",
+    "title1": "Trade smarter.",
+    "titleHighlight": "Built for",
+    "title2": "the next million traders.",
+    "desc": "One account for crypto, forex, indices, US stocks and metals — with deep liquidity, low fees, and the data and AI you need to make every trade count.",
+    "startTrading": "Start Trading",
+    "seeMarkets": "See the markets",
+    "exploreQuantFund": "Explore Quant Fund",
+    "watchFilm": "See how AI Quant works",
+    "watchDemo": "Watch a 90-second demo",
+    "appMockupAlt": "{{brand}} mobile app — portfolio, AI quant, copy trading and live markets",
+    "appMockupPip": "Live"
+  },
+  "aiQuantFilm": {
+    "title": "How AI Quant works",
+    "description": "A short walkthrough of how strategies are built, backtested, and run.",
+    "unsupported": "Your browser does not support the video tag."
+  },
+  "products": {
+    "label": "01 / What you can trade",
+    "titleFrom": "From",
+    "perpetual": "Perpetuals",
+    "titleTo": "to",
+    "options": "Binary Options",
+    "titleEnd": " —<br/>one account, every market you care about.",
+    "viewAll": "See all products →",
+    "perpLabel": "PERPETUALS",
+    "perpTitle1": "Deep liquidity,",
+    "perpTitle2": "every major asset.",
+    "perpDesc": "200+ futures pairs covering crypto, gold, and silver. Up to 125x leverage, orders fill in under 50 ms, transparent funding rates — settled in USD for one-account simplicity.",
+    "perpStat1": "Trading pairs",
+    "perpStat2": "Max leverage",
+    "perpStat3": "Lowest fee",
+    "perpTag1": "Crypto",
+    "perpTag2": "Metals",
+    "perpTag3": "USD-settled",
+    "optLabel": "BINARY OPTIONS",
+    "optTitle1": "Pick a direction.",
+    "optTitle2": "Know your max risk upfront.",
+    "optDesc": "Just predict whether the price goes up or down — the size of the move doesn't matter. 60-second, 90-second, and 6-minute contracts with fixed payout and capped downside.",
+    "optStat1": "Expiry options",
+    "optStat2": "Max payout",
+    "optStat3": "Fixed",
+    "optStat4": "Odds",
+    "optTag1": "Rise",
+    "optTag2": "Fall",
+    "multiLabel": "ONE ACCOUNT · THREE MARKETS",
+    "multiTitle": "Crypto, gold, silver —<br/><1>one balance, no switching.</1>",
+    "multiDesc": "Trade crypto, gold (XAU), and silver (XAG) from the same margin balance. Unified risk controls, unified P&L, no juggling between exchanges.",
+    "multiAsset1": "Crypto",
+    "multiAsset1Sub": "200+ pairs",
+    "multiAsset2": "Gold",
+    "multiAsset2Sub": "XAU/USDT",
+    "multiAsset3": "Silver",
+    "multiAsset3Sub": "XAG/USDT"
+  },
+  "ai": {
+    "label": "02 / Your AI co-pilot",
+    "title1": "Quant power for ",
+    "titleHighlight": "every trader",
+    "title2": ",<br/>not just hedge funds.",
+    "subtitle": "Three AI tools working together — let the math do the heavy lifting, you keep the final call on every trade.",
+    "quantTag": "01 / QUANT",
+    "quantTitle": "AI strategy library",
+    "quantDesc": "Hundreds of strategies backtested on 5 years of data — trend-following, arbitrage, grid, mean reversion. One-click subscribe, auto-execute, watch live performance any time.",
+    "quantChartLabel": "EQUITY CURVE · 90D",
+    "quantWinRate": "Win rate",
+    "quantSharpe": "Sharpe ratio",
+    "quantMaxDrawdown": "Max drawdown",
+    "quantLink": "Browse strategies →",
+    "copyTag": "02 / COPY",
+    "copyTitle": "Copy the traders you trust",
+    "copyDesc": "Mirror top traders ranked by risk-adjusted return. Set your own stop-loss, exit any time, share a fixed slice — no platform lock-in.",
+    "copyLabel": "TOP TRADERS · 30D",
+    "copyRoi": "ROI",
+    "copyLink": "View leaderboard →",
+    "signalTag": "03 / SIGNAL",
+    "signalTitle": "Filtered trade signals",
+    "signalDesc": "3,800+ signals each month, scored on market structure, on-chain flow, and sentiment — only the top 10% reach your screen.",
+    "signalLong": "Long",
+    "signalTime": "2 min ago",
+    "signalEntry": "Entry zone",
+    "signalStop": "Stop loss",
+    "signalTarget": "Target 1 / 2",
+    "signalRr": "Risk / reward",
+    "signalConfidence": "Confidence",
+    "signalLink": "See latest signals →",
+    "riskWarning": "⚠ Risk notice: past performance never guarantees future results. AI strategies and signals are reference tools, not advice. Crypto and futures trading can lose your entire balance — only trade what you can afford to lose."
+  },
+  "markets": {
+    "label": "03 / Live markets",
+    "title": "Real prices,",
+    "titleHighlight": "real time —",
+    "tabAll": "All",
+    "tabHot": "Hot now",
+    "tabGainers": "Top gains 24h",
+    "tabFunding": "Funding",
+    "tabNew": "New listings",
+    "colPair": "Pair",
+    "colPrice": "Price",
+    "colChange": "24h change",
+    "colVolume": "24h volume",
+    "colFunding": "Funding",
+    "tradeLink": "Trade →",
+    "viewAll": "See all {{total}} markets →",
+    "pulseLabel": "Live markets · top pairs",
+    "empty": "No markets in this category yet.",
+    "viewAllPlain": "See all markets →"
+  },
+  "partners": {
+    "label": "05 / Partners",
+    "title": "Partners"
+  },
+  "news": {
+    "label": "06 / Learn the markets",
+    "title": "Get sharper",
+    "titleHighlight": "with every trade.",
+    "viewAll": "See all lessons →",
+    "tagHeadline": "Featured",
+    "tagDeep": "Deep dive",
+    "tagCourse": "Course",
+    "article1Meta": "Market research · 12 min read",
+    "article1Title": "BTC options demand is exploding —<br/>here's what the smart money is doing.",
+    "article1Desc": "Over the past 30 days BTC binary options volume jumped 42%. We break down where the flow is going, which expiries are crowded, and what win rates look like by retail vs institutional cohort...",
+    "article2Meta": "8 min read",
+    "article2Title": "Binary options 101 — from your first contract to a real edge",
+    "article2Desc": "Core mechanics, choosing the right expiry, and how to size positions so a bad streak doesn't end your account...",
+    "article3Meta": "3 min read",
+    "article3Title": "Gold futures (XAU/USDT) are now live with 100x leverage",
+    "article3Desc": "Trade crypto and precious metals from the same margin balance. Maker fees as low as 0.02%...",
+    "article4Meta": "5 min read",
+    "article4Title": "Copy Trading v2.4 — matched on real risk, not just returns",
+    "article4Desc": "The new release matches traders and followers on 12 risk metrics, so an aggressive strategy never lands in a conservative book..."
+  },
+  "cta": {
+    "title": "Ready to trade with an edge?",
+    "title1": "Ready to",
+    "titleHighlight": "trade with an edge",
+    "title2": "?",
+    "desc": "Open an account in under 2 minutes. New users may access trial funds, platform rewards, and beginner-friendly trading benefits.",
+    "start": "Create free account",
+    "tradeNow": "Trade Now",
+    "guaranteeLine": "Open an account in 2 minutes · No KYC for trial · Cancel any time"
+  },
+  "whyNvdx": {
+    "label": "Why {{brand}}",
+    "title": "Why {{brand}}",
+    "subtitle": "Four reasons traders move to {{brand}} and stay. Built around the things that matter when real money is on the line.",
+    "learnMore": "Learn more",
+    "features": {
+      "multiAsset": {
+        "title": "Multi-asset",
+        "desc": "Crypto, forex, indices, US stocks and metals — one margin balance, no switching venues.",
+        "imageAlt": "Stacked translucent glass discs representing crypto, gold, FX and equities unified under one margin balance"
+      },
+      "aiAssisted": {
+        "title": "AI co-pilot",
+        "desc": "Scored signals and strategies you can subscribe to, or ignore entirely. You stay in control.",
+        "imageAlt": "Constellation of acid-lime data nodes forming a rising trend line, representing AI-scored trading signals"
+      },
+      "web3Custody": {
+        "title": "Account security",
+        "desc": "Two-factor authentication, a fund password and device management help you protect your account.",
+        "imageAlt": "Brushed-titanium vault module with a cryptographic honeycomb face and a live audit scan beam"
+      },
+      "liquidity": {
+        "title": "Always liquid",
+        "desc": "Sub-50 ms fills across major pairs, 24/7, with transparent funding.",
+        "imageAlt": "Acid-lime liquid streams racing through precision-machined channels, representing low-latency execution"
+      }
+    }
+  },
+  "payments": {
+    "label": "Payments",
+    "title": "Withdraw anywhere",
+    "subtitle": "Move money the way you already do — cards, bank rails, stablecoins or native crypto."
+  },
+  "earn": {
+    "eyebrow": "Earn",
+    "title": "Put idle assets to work",
+    "subtitle": "Flexible, fixed, and staking products with transparent reference yields, built for the long-term holder.",
+    "cta": "Explore products"
+  },
+  "insights": {
+    "label": "Insights",
+    "title": "Latest insights"
+  },
+  "aqua": {
+    "hero": {
+      "badge": "Next-gen matching engine",
+      "titleLead": "Trade at the",
+      "titleGradient": "speed of light",
+      "titleTail": "— never a step behind.",
+      "desc": "A sub-50ms matching engine, real-time data streams and AI co-pilots. Crypto, forex, metals and stocks — one account, zero lag.",
+      "hudLabel": "Execution terminal",
+      "hudStatus": "Live",
+      "hudPair": "BTC/USDT · PERP",
+      "hudLatency": "Match latency",
+      "hudLatencyValue": "42ms",
+      "hudThroughput": "Orders / sec",
+      "hudThroughputValue": "1.2M"
+    },
+    "metrics": {
+      "label": "Engineered for performance",
+      "pairs": "Tradable pairs",
+      "latency": "Avg match latency",
+      "traders": "Active traders",
+      "uptime": "Engine uptime"
+    },
+    "features": {
+      "label": "Built different",
+      "title": "Everything you need to trade with an edge.",
+      "subtitle": "The essentials, re-engineered — multi-asset depth, AI assistance, account security and latency you can feel.",
+      "multiAsset": {
+        "title": "Multi-asset",
+        "desc": "Crypto, forex, indices, US stocks and metals on one margin balance — no switching venues."
+      },
+      "ai": {
+        "title": "AI co-pilot",
+        "desc": "Scored signals and backtested strategies you can subscribe to or ignore. You keep the final call."
+      },
+      "custody": {
+        "title": "Account security",
+        "desc": "Two-factor authentication, a fund password and device management help you protect your account."
+      },
+      "speed": {
+        "title": "Sub-50ms",
+        "desc": "A matching engine that fills in under 50ms, 24/7, with transparent funding."
+      }
+    },
+    "markets": {
+      "label": "Live markets",
+      "title": "Real prices, streaming in real time.",
+      "viewAll": "See all {{total}} markets",
+      "viewAllPlain": "See all markets"
+    },
+    "cta": {
+      "title": "Ready to trade at full speed?",
+      "desc": "Open an account in under 2 minutes. New users may access trial funds, platform rewards, and beginner-friendly trading benefits.",
+      "start": "Create free account",
+      "secondary": "Explore markets"
+    }
+  },
+  "cyber": {
+    "hero": {
+      "badge": "Matching core online",
+      "titleLead": "Plug into",
+      "titleGlitch": "the neon grid",
+      "titleTail": "of every market.",
+      "desc": "A sub-50ms matching core, always-on data streams and AI signals. Crypto, FX, metals and US stocks — one line into everything.",
+      "bootLabel": "Boot sequence",
+      "uplink": "Uplink",
+      "boot1": "Loading matching core",
+      "boot2": "Syncing market streams",
+      "boot3": "Loading account modules",
+      "boot4": "Link established",
+      "bootDone": "System online",
+      "pairLabel": "Pair",
+      "latency": "Match latency",
+      "latencyValue": "42ms",
+      "throughput": "Orders / sec",
+      "throughputValue": "1.2M"
+    },
+    "stats": {
+      "label": "Live grid status",
+      "pairs": "Tradable pairs",
+      "latency": "Avg match latency",
+      "traders": "Active traders",
+      "uptime": "Engine uptime"
+    },
+    "features": {
+      "label": "Loadout",
+      "title": "Gear built for violent markets.",
+      "subtitle": "Multi-asset depth, AI signals, account security and millisecond matching — all built in.",
+      "multiAsset": {
+        "title": "Multi-asset matrix",
+        "desc": "Crypto, FX, indices, US stocks and metals share one margin balance. One account, every market."
+      },
+      "ai": {
+        "title": "AI signal engine",
+        "desc": "Scored signals and backtested strategies stream in. Accept or ignore — the call is yours."
+      },
+      "custody": {
+        "title": "Account security",
+        "desc": "Two-factor authentication, a fund password and device management help you protect your account."
+      },
+      "speed": {
+        "title": "Millisecond matching",
+        "desc": "An always-on matching core that fills in under 50ms with transparent funding rates."
+      }
+    },
+    "markets": {
+      "label": "Market wall",
+      "title": "Live prices, straight off the core.",
+      "viewAll": "View all {{total}} markets",
+      "viewAllPlain": "View all markets"
+    },
+    "cta": {
+      "title": "Jack in. Start trading.",
+      "desc": "Open an account in 2 minutes. Demo funds, platform rewards and starter perks preloaded.",
+      "start": "Create free account",
+      "secondary": "Explore markets"
+    }
+  },
+  "founding": {
+    "title": "Founding members",
+    "description": "{{brandName}} is a global strategic investment and financial platform dedicated to bridging traditional finance and the digital economy. Its core strength lies in its top-tier strategic team ({{names}}) who provide clients with cross-market and cross-sector asset allocation solutions, integrating AI-powered risk management with international compliance standards to ensure the security and efficient flow of funds. The platform covers digital currencies, blockchain, AI-powered financial products, and traditional assets, offering customized VIP services and global investment research support. Its mission is to create a secure, intelligent, and cross-border wealth growth ecosystem for its users, and to become a strategic partner for the next generation of investors.",
+    "prev": "Previous member",
+    "next": "Next member"
+  },
+  "premium": {
+    "hero": {
+      "emailPlaceholder": "Email address",
+      "signUp": "Sign Up",
+      "hotTitle": "Hot Coins"
+    },
+    "steps": {
+      "label": "Get started",
+      "title": "Start trading in 3 simple steps",
+      "s1Title": "Create your account",
+      "s1Desc": "Sign up with your email in under two minutes.",
+      "s2Title": "Fund your wallet",
+      "s2Desc": "Deposit via card, bank transfer or crypto.",
+      "s3Title": "Start trading",
+      "s3Desc": "Trade crypto, metals and more from one account."
+    },
+    "stats": {
+      "assets": "Listed assets",
+      "volume": "24h volume",
+      "uptime": "Market uptime",
+      "uptimeValue": "24/7"
+    }
+  },
+  "cobalt": {
+    "hero": {
+      "title": "A multi-asset trading platform",
+      "subtitle": "Buy, sell and manage markets across crypto, forex, metals and indices.",
+      "assetsTitle": "Top markets",
+      "phoneAlt": "Trade crypto, forex and stocks from one mobile app"
+    },
+    "credentials": {
+      "markets": "Crypto, forex, metals and indices in one account",
+      "security": "Two-factor authentication and device management for your account"
+    },
+    "built": {
+      "title": "Built for trading every market",
+      "items": {
+        "markets": "Securely trade {{total}} markets across crypto, forex, metals and indices",
+        "marketsFallback": "Securely trade crypto, forex, metals and indices",
+        "onboarding": "Set up your account securely and seamlessly",
+        "support": "24/7 priority support"
+      },
+      "marketCount": "{{total}} markets"
+    },
+    "explore": {
+      "title": "Explore Bitcoin, Ethereum and hundreds more cryptos",
+      "subtitle": "Buy, sell and manage hundreds of crypto assets — simply and securely.",
+      "viewMore": "View more assets",
+      "tabGainers": "Top gainers",
+      "tabVolume": "Top turnover"
+    },
+    "advanced": {
+      "title": "Every market, traded its own way",
+      "tagline": "Crypto, forex, metals and indices in one account — each market comes with the trading modes built for it, from leveraged perpetual futures to fixed-payout binary options.",
+      "items": {
+        "markets": "One account across crypto, forex, metals and indices",
+        "futures": "Perpetual futures with leverage — market, limit and stop-limit orders",
+        "options": "Binary options: call the direction, with payout and max risk fixed upfront"
+      },
+      "cta": "Try it now",
+      "previewAlt": "The trading screen running on a tablet, held in hand"
+    },
+    "earn": {
+      "eyebrow": "Earn",
+      "title": "Put your crypto to work",
+      "subtitle": "Grow your holdings with flexible, transparent rewards — no complex setup, no surprises.",
+      "cta": "Start earning",
+      "features": {
+        "flexible": {
+          "title": "Flexible terms",
+          "desc": "Subscribe and redeem when it suits you, with no long lock-ups."
+        },
+        "secure": {
+          "title": "Secure by design",
+          "desc": "Two-factor authentication, a fund password and device management help you protect your account."
+        },
+        "auto": {
+          "title": "Auto-compounding",
+          "desc": "Rewards accrue and reinvest automatically, so your balance keeps working."
+        }
+      }
+    },
+    "trust": {
+      "eyebrow": "Security",
+      "title": "Security features for your account",
+      "subtitle": "Tools that help you protect your account and control access to it.",
+      "items": {
+        "twoFactor": {
+          "title": "Two-factor authentication",
+          "desc": "Add a second verification step when you sign in."
+        },
+        "fundPassword": {
+          "title": "Fund password",
+          "desc": "Set a separate fund password in your account settings."
+        },
+        "devices": {
+          "title": "Device management",
+          "desc": "Review the devices signed in to your account and revoke any you don't recognize."
+        },
+        "support": {
+          "title": "Get the help you need, when you need it",
+          "desc": "You can reach our support team anytime for quick solutions to common questions."
+        }
+      }
+    }
+  },
+  "pulse": {
+    "hero": {
+      "desc": "One account for crypto, forex, indices, US stocks and metals."
+    },
+    "cta": {
+      "title": "Ready to start trading?",
+      "desc": "Open an account in minutes and place your first trade today.",
+      "start": "Get started",
+      "trade": "Go to trading"
+    }
+  },
+  "ribbon": {
+    "features": {
+      "title": "A more advanced multi-asset trading platform",
+      "subtitle": "Built for serious traders",
+      "cards": {
+        "markets": {
+          "title": "Over {{total}} markets",
+          "titleFallback": "Hundreds of markets",
+          "desc": "Trade crypto, forex, indices, precious metals, and US stocks in real time — all from one account."
+        },
+        "quant": {
+          "title": "AI quant & copy trading",
+          "desc": "AI strategies and quant funds work around the clock, and one click lets you follow top traders."
+        },
+        "security": {
+          "title": "Account security",
+          "desc": "Two-factor authentication, a fund password and device management help you protect your account."
+        }
+      }
+    },
+    "customize": {
+      "title": "Built around your needs — trade your way.",
+      "desc": "The trading workspace is fully modular: drag, resize, show, or hide every panel. Designed for professional traders, with ultra-low latency and deep liquidity at your fingertips.",
+      "sparkPrice": "$128,700"
+    }
+  },
+  "ui": {
+    "marketSnapshot": "Market snapshot",
+    "whyNewquantcapital": "Why NewQuantCapital",
+    "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "Four reasons traders move to NewQuantCapital and stay. Built around the things that matter when real money is on the line.",
+    "hoursAgo": " hours ago"
+  },
+  "motion": {
+    "pausePartners": "Pause scrolling",
+    "resumePartners": "Resume scrolling",
+    "pauseQuotes": "Pause updates",
+    "resumeQuotes": "Resume updates",
+    "demoQuotes": "Demo quotes · Top pairs"
+  }
+}
