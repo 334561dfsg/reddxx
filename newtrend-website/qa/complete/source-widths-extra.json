@@ -1,0 +1,282 @@
+[
+  {
+    "rows": [
+      {
+        "cls": "font-display text-fg mt-2 text-4xl font-semibold tracking-tight lg:text-5xl",
+        "max": "none",
+        "padding": "0px",
+        "w": 579.8125,
+        "x": 272
+      },
+      {
+        "cls": "max-w-2xl",
+        "max": "672px",
+        "padding": "0px",
+        "w": 579.8125,
+        "x": 272
+      },
+      {
+        "cls": "flex flex-col items-start gap-6",
+        "max": "none",
+        "padding": "0px",
+        "w": 733.0859375,
+        "x": 272
+      },
+      {
+        "cls": "flex flex-col gap-6 xl:grid xl:grid-cols-[1.2fr_1fr] xl:gap-8",
+        "max": "none",
+        "padding": "0px",
+        "w": 1376,
+        "x": 272
+      },
+      {
+        "cls": "flex flex-col gap-8 lg:gap-10",
+        "max": "none",
+        "padding": "0px",
+        "w": 1376,
+        "x": 272
+      },
+      {
+        "cls": "page-ambient page-ambient-grid container mx-auto max-w-[1440px] px-6 py-10 lg:px-8 lg:py-5",
+        "max": "1440px",
+        "padding": "20px 32px",
+        "w": 1440,
+        "x": 240
+      }
+    ],
+    "url": "/zh-TW/earn/simple"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-fg font-display text-3xl font-semibold tracking-tight lg:text-5xl",
+        "max": "none",
+        "padding": "0px",
+        "w": 583.2421875,
+        "x": 313
+      },
+      {
+        "cls": "flex flex-col gap-4 lg:max-w-2xl",
+        "max": "672px",
+        "padding": "0px",
+        "w": 583.2421875,
+        "x": 313
+      },
+      {
+        "cls": "relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between",
+        "max": "none",
+        "padding": "0px",
+        "w": 1294,
+        "x": 313
+      },
+      {
+        "cls": "border-border-divider bg-bg-card relative overflow-hidden rounded-3xl border px-5 py-8 md:px-7 md:py-10 lg:px-10 lg:py-14",
+        "max": "none",
+        "padding": "56px 40px",
+        "w": 1376,
+        "x": 272
+      },
+      {
+        "cls": "container mx-auto flex max-w-[1440px] flex-col gap-10 px-4 py-10 md:px-6 lg:px-8 lg:py-14",
+        "max": "1440px",
+        "padding": "56px 32px",
+        "w": 1440,
+        "x": 240
+      },
+      {
+        "cls": "page-ambient page-ambient-grid",
+        "max": "none",
+        "padding": "0px",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/ai-quant/quant-fund"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-body text-fg font-semibold",
+        "max": "none",
+        "padding": "0px",
+        "w": 93.125,
+        "x": 305
+      },
+      {
+        "cls": "flex items-center justify-between gap-3 lg:shrink-0 lg:justify-start",
+        "max": "none",
+        "padding": "0px",
+        "w": 126.2109375,
+        "x": 305
+      },
+      {
+        "cls": "flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-6",
+        "max": "none",
+        "padding": "0px",
+        "w": 1310,
+        "x": 305
+      },
+      {
+        "cls": "border-border-divider bg-bg-secondary mb-6 rounded-2xl border px-4 py-3 sm:px-5",
+        "max": "none",
+        "padding": "12px 20px",
+        "w": 1352,
+        "x": 284
+      },
+      {
+        "cls": "mx-auto max-w-[1400px] px-4 py-6 md:px-6 md:py-8",
+        "max": "1400px",
+        "padding": "32px 24px",
+        "w": 1400,
+        "x": 260
+      }
+    ],
+    "url": "/zh-TW/assets"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-fg text-display font-semibold tracking-tight",
+        "max": "none",
+        "padding": "0px",
+        "w": 348.421875,
+        "x": 481
+      },
+      {
+        "cls": "flex flex-col gap-3",
+        "max": "none",
+        "padding": "0px",
+        "w": 348.421875,
+        "x": 481
+      },
+      {
+        "cls": "relative flex items-center justify-between gap-6",
+        "max": "none",
+        "padding": "0px",
+        "w": 958,
+        "x": 481
+      },
+      {
+        "cls": "border-border-divider bg-bg-card relative overflow-hidden rounded-3xl border px-5 py-7 md:px-7 md:py-9",
+        "max": "none",
+        "padding": "36px 28px",
+        "w": 1016,
+        "x": 452
+      },
+      {
+        "cls": "container mx-auto flex max-w-[1080px] flex-col gap-8 px-4 py-10 md:px-6 lg:px-8 lg:py-14",
+        "max": "1080px",
+        "padding": "56px 32px",
+        "w": 1080,
+        "x": 420
+      },
+      {
+        "cls": "page-ambient page-ambient-grid",
+        "max": "none",
+        "padding": "0px",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/referrals"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-fg font-display text-3xl font-semibold tracking-tight lg:text-5xl",
+        "max": "none",
+        "padding": "0px",
+        "w": 451.6484375,
+        "x": 313
+      },
+      {
+        "cls": "flex flex-col gap-4 lg:max-w-2xl",
+        "max": "672px",
+        "padding": "0px",
+        "w": 451.6484375,
+        "x": 313
+      },
+      {
+        "cls": "relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between",
+        "max": "none",
+        "padding": "0px",
+        "w": 1294,
+        "x": 313
+      },
+      {
+        "cls": "border-border-divider bg-bg-card relative overflow-hidden rounded-3xl border px-5 py-8 md:px-7 md:py-10 lg:px-10 lg:py-14",
+        "max": "none",
+        "padding": "56px 40px",
+        "w": 1376,
+        "x": 272
+      },
+      {
+        "cls": "container mx-auto flex max-w-[1440px] flex-col gap-10 px-4 py-10 md:px-6 lg:px-8 lg:py-14",
+        "max": "1440px",
+        "padding": "56px 32px",
+        "w": 1440,
+        "x": 240
+      },
+      {
+        "cls": "page-ambient page-ambient-grid",
+        "max": "none",
+        "padding": "0px",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/promotions/tasks"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-fg mb-2 text-3xl font-bold",
+        "max": "none",
+        "padding": "0px",
+        "w": 720,
+        "x": 600
+      },
+      {
+        "cls": "mx-auto max-w-3xl px-4 py-10 lg:px-6",
+        "max": "768px",
+        "padding": "40px 24px",
+        "w": 768,
+        "x": 576
+      }
+    ],
+    "url": "/zh-TW/devices"
+  },
+  {
+    "rows": [
+      {
+        "cls": "mb-6 text-3xl leading-tight tracking-tight md:text-4xl lg:text-5xl",
+        "max": "none",
+        "padding": "0px",
+        "w": 1352,
+        "x": 284
+      },
+      {
+        "cls": "mx-auto max-w-[1400px] px-6 py-16 md:py-24",
+        "max": "1400px",
+        "padding": "96px 24px",
+        "w": 1400,
+        "x": 260
+      },
+      {
+        "cls": "border-border-divider border-b",
+        "max": "none",
+        "padding": "0px",
+        "w": 1920,
+        "x": 0
+      },
+      {
+        "cls": "relative",
+        "max": "none",
+        "padding": "0px",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/news/01a20bb6-284f-7066-8b02-ef07c1a9deee"
+  }
+]

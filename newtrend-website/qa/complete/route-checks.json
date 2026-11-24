@@ -1,0 +1,4818 @@
+[
+  {
+    "broken": [],
+    "chars": 8869,
+    "chinese": [],
+    "overflow": false,
+    "title": "Crypto, forex, stocks — all in one account.",
+    "url": "/en-US/",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4404,
+    "chinese": [],
+    "overflow": false,
+    "title": "Order Book",
+    "url": "/en-US/trade/options/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4408,
+    "chinese": [],
+    "overflow": false,
+    "title": "Order Book",
+    "url": "/en-US/trade/futures/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4333,
+    "chinese": [],
+    "overflow": false,
+    "title": "Order Book",
+    "url": "/en-US/trade/spot/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1531,
+    "chinese": [],
+    "overflow": false,
+    "title": "Earn",
+    "url": "/en-US/earn/simple",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 680,
+    "chinese": [],
+    "overflow": false,
+    "title": "USDT 180-Day Fixed-Term Earn",
+    "url": "/en-US/earn/simple/usdt180",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 670,
+    "chinese": [],
+    "overflow": false,
+    "title": "USDT 90-Day Fixed-Term Earn",
+    "url": "/en-US/earn/simple/usdt90",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 670,
+    "chinese": [],
+    "overflow": false,
+    "title": "USDT 30-Day Fixed-Term Earn",
+    "url": "/en-US/earn/simple/usdt30",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 661,
+    "chinese": [],
+    "overflow": false,
+    "title": "BTC 60-Day Fixed-Term Earn",
+    "url": "/en-US/earn/simple/btc60",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 661,
+    "chinese": [],
+    "overflow": false,
+    "title": "USDT Flexible Earn",
+    "url": "/en-US/earn/simple/usdt",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 660,
+    "chinese": [],
+    "overflow": false,
+    "title": "USDC Flexible Earn",
+    "url": "/en-US/earn/simple/usdc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 654,
+    "chinese": [],
+    "overflow": false,
+    "title": "ETH Flexible Earn",
+    "url": "/en-US/earn/simple/eth",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 657,
+    "chinese": [],
+    "overflow": false,
+    "title": "BTC Flexible Earn",
+    "url": "/en-US/earn/simple/btc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 81,
+    "chinese": [],
+    "overflow": false,
+    "title": "My Earn",
+    "url": "/en-US/earn/my-earnings",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 302,
+    "chinese": [],
+    "overflow": false,
+    "title": "Crypto Loans",
+    "url": "/en-US/earn/loan",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 82,
+    "chinese": [],
+    "overflow": false,
+    "title": "My Loans",
+    "url": "/en-US/earn/loan/my",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 556,
+    "chinese": [],
+    "overflow": false,
+    "title": "Let AI trade for you, or hand it to a managed fund",
+    "url": "/en-US/ai-quant",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 3813,
+    "chinese": [
+      "自研量化模型 · 日均 1 trades"
+    ],
+    "overflow": false,
+    "title": "Quant power for every trader",
+    "url": "/en-US/ai-quant/strategy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 63,
+    "chinese": [],
+    "overflow": false,
+    "title": "My strategies",
+    "url": "/en-US/ai-quant/strategy/mine",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1497,
+    "chinese": [],
+    "overflow": false,
+    "title": "Quant Fund — AI-managed fixed-term yield",
+    "url": "/en-US/ai-quant/quant-fund",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 44,
+    "chinese": [],
+    "overflow": false,
+    "title": "My positions",
+    "url": "/en-US/ai-quant/quant-fund/positions",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 553,
+    "chinese": [],
+    "overflow": false,
+    "title": "Assets Distribution",
+    "url": "/en-US/assets",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 245,
+    "chinese": [],
+    "overflow": false,
+    "title": "Transfer",
+    "url": "/en-US/assets/transfer",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 56,
+    "chinese": [],
+    "overflow": false,
+    "title": "Fund Records",
+    "url": "/en-US/assets/records",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 407,
+    "chinese": [],
+    "overflow": false,
+    "title": "Deposit",
+    "url": "/en-US/deposit",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 271,
+    "chinese": [],
+    "overflow": false,
+    "title": "Withdraw",
+    "url": "/en-US/withdraw",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 513,
+    "chinese": [],
+    "overflow": false,
+    "title": "C2C Trading",
+    "url": "/en-US/c2c/buy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 513,
+    "chinese": [],
+    "overflow": false,
+    "title": "C2C Trading",
+    "url": "/en-US/c2c/sell",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 145,
+    "chinese": [],
+    "overflow": false,
+    "title": "C2C Trading",
+    "url": "/en-US/c2c/orders",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 186,
+    "chinese": [],
+    "overflow": false,
+    "title": "C2C Trading",
+    "url": "/en-US/c2c/accounts",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 293,
+    "chinese": [],
+    "overflow": false,
+    "title": "Copy a trader",
+    "url": "/en-US/copytrade",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1449,
+    "chinese": [],
+    "overflow": false,
+    "title": "We Care for Every Child Caught in the Devastation of War",
+    "url": "/en-US/charity",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 725,
+    "chinese": [],
+    "overflow": false,
+    "title": "Profile",
+    "url": "/en-US/profile",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 122,
+    "chinese": [],
+    "overflow": false,
+    "title": "Change Email",
+    "url": "/en-US/bind-email",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 161,
+    "chinese": [],
+    "overflow": false,
+    "title": "Bind Phone Number",
+    "url": "/en-US/bind-phone",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 280,
+    "chinese": [],
+    "overflow": false,
+    "title": "Change Login Password",
+    "url": "/en-US/change-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 158,
+    "chinese": [],
+    "overflow": false,
+    "title": "Set Fund Password",
+    "url": "/en-US/fund-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 357,
+    "chinese": [],
+    "overflow": false,
+    "title": "Bind Google Authenticator",
+    "url": "/en-US/2fa",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 260,
+    "chinese": [],
+    "overflow": false,
+    "title": "Device Management",
+    "url": "/en-US/devices",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 373,
+    "chinese": [],
+    "overflow": false,
+    "title": "Verification Center",
+    "url": "/en-US/kyc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 373,
+    "chinese": [],
+    "overflow": false,
+    "title": "KYC Verification",
+    "url": "/en-US/kyc/basic",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 175,
+    "chinese": [],
+    "overflow": false,
+    "title": "Advanced Verification",
+    "url": "/en-US/kyc/advanced",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 579,
+    "chinese": [],
+    "overflow": false,
+    "title": "Invite Friends",
+    "url": "/en-US/referrals",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 246,
+    "chinese": [],
+    "overflow": false,
+    "title": "My Reward Tasks",
+    "url": "/en-US/promotions/tasks",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 498,
+    "chinese": [],
+    "overflow": false,
+    "title": "Joint account",
+    "url": "/en-US/joint-account",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 3385,
+    "chinese": [],
+    "overflow": false,
+    "title": "Survey",
+    "url": "/en-US/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 350,
+    "chinese": [],
+    "overflow": false,
+    "title": "Help Center",
+    "url": "/en-US/help-center",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 30,
+    "chinese": [],
+    "overflow": false,
+    "title": "Announcements",
+    "url": "/en-US/messages",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 704,
+    "chinese": [],
+    "overflow": false,
+    "title": "Crypto, forex and global markets — in one platform.",
+    "url": "/en-US/login",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 708,
+    "chinese": [],
+    "overflow": false,
+    "title": "Crypto, forex and global markets — in one platform.",
+    "url": "/en-US/register",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 687,
+    "chinese": [],
+    "overflow": false,
+    "title": "Crypto, forex and global markets — in one platform.",
+    "url": "/en-US/forgot-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 2653,
+    "chinese": [],
+    "overflow": false,
+    "title": "News Center",
+    "url": "/en-US/news",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1737,
+    "chinese": [],
+    "overflow": false,
+    "title": "About New Trends",
+    "url": "/en-US/about",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7858,
+    "chinese": [],
+    "overflow": false,
+    "title": "Privacy Policy",
+    "url": "/en-US/privacy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 20356,
+    "chinese": [],
+    "overflow": false,
+    "title": "User Agreement",
+    "url": "/en-US/agreement",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 12883,
+    "chinese": [],
+    "overflow": false,
+    "title": "Terms of Service",
+    "url": "/en-US/content/terms",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 13889,
+    "chinese": [],
+    "overflow": false,
+    "title": "Risk Disclosure",
+    "url": "/en-US/risk-disclosure",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 56,
+    "chinese": [],
+    "overflow": false,
+    "title": "Regulatory Information",
+    "url": "/en-US/regulatory-information",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 2367,
+    "chinese": [],
+    "overflow": false,
+    "title": "SEC",
+    "url": "/en-US/content/regulation-sec",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "chinese": [],
+    "overflow": false,
+    "title": "SFC",
+    "url": "/en-US/content/regulation-sfc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "chinese": [],
+    "overflow": false,
+    "title": "GFSOB",
+    "url": "/en-US/content/regulation-gfsob",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "chinese": [],
+    "overflow": false,
+    "title": "FSRA",
+    "url": "/en-US/content/regulation-fsra",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "chinese": [],
+    "overflow": false,
+    "title": "FMSB",
+    "url": "/en-US/content/regulation-fmsb",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 523,
+    "chinese": [],
+    "overflow": false,
+    "title": "Why 42 Macro says it’s waiting to buy the Bitcoin dip",
+    "url": "/en-US/news/01a20c28-74c2-7258-8c9a-bb0d92dbcda6",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 594,
+    "chinese": [],
+    "overflow": false,
+    "title": "Google wants to make you the star of your own AI slop movies",
+    "url": "/en-US/news/01a20bb6-0d70-738a-ad9f-a572c45e37ba",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 630,
+    "chinese": [],
+    "overflow": false,
+    "title": "Ethereum Foundation doubles protocol security team ahead of overhaul",
+    "url": "/en-US/news/01a20b0c-a016-708e-b979-7559aeb9b8c6",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 562,
+    "chinese": [],
+    "overflow": false,
+    "title": "CFTC staff say exchanges can count Bitcoin toward operating reserves",
+    "url": "/en-US/news/01a20ad5-b34c-72e4-8ac9-5c7eea39fe56",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 605,
+    "chinese": [],
+    "overflow": false,
+    "title": "US seeks to recover $1.1B in crypto stolen in North Korea-linked Binance hack",
+    "url": "/en-US/news/01a20a63-4160-71c7-bb0d-846e55c3a194",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 575,
+    "chinese": [],
+    "overflow": false,
+    "title": "Kalshi secures temporary win in New York gambling law dispute",
+    "url": "/en-US/news/01a20a2c-53fe-724c-96b5-3e5d419f0b82",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 590,
+    "chinese": [],
+    "overflow": false,
+    "title": "BTCS offloads $44M in ETH to reduce DeFi debt amid market downturn",
+    "url": "/en-US/news/01a209f5-63a3-70e0-9282-288cd0b8ffee",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 581,
+    "chinese": [],
+    "overflow": false,
+    "title": "Base makes quantum security a 2027 priority as regulators warn of risks",
+    "url": "/en-US/news/01a209f5-6424-7054-9e7b-9c104cca6c05",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 579,
+    "chinese": [],
+    "overflow": false,
+    "title": "Cuomo says rivals urged companies to opt out of OKXICE tokenized stocks",
+    "url": "/en-US/news/01a209be-75fe-7019-ac8e-e4b3ef9da260",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 636,
+    "chinese": [],
+    "overflow": false,
+    "title": "Bitcoin rebounds 17% from $55K lows as Nvidia rally sparks $500M crypto liquidations",
+    "url": "/en-US/news/01a20982-f769-736a-b4ae-8985fb9d7f91",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 598,
+    "chinese": [],
+    "overflow": false,
+    "title": "Cross River Bank enters Bitcoin-backed lending with $250K loans",
+    "url": "/en-US/news/01a20947-758c-713b-94a3-e30b7d4a47a8",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 574,
+    "chinese": [],
+    "overflow": false,
+    "title": "How market depth shapes the price of a weekend Bitcoin sale",
+    "url": "/en-US/news/01a20947-763c-730e-81eb-69f9eeba4040",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 561,
+    "chinese": [],
+    "overflow": false,
+    "title": "Nvidia reinstates Jensen Huang as CEO amid ongoing intelligence probe",
+    "url": "/en-US/news/01a20910-88a2-702c-8b71-15487fa7ebf9",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 577,
+    "chinese": [],
+    "overflow": false,
+    "title": "OKX, ICE launch 113 tokenized assets despite issuer objections",
+    "url": "/en-US/news/01a208d9-984e-7286-bb49-554855f025db",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 582,
+    "chinese": [],
+    "overflow": false,
+    "title": "Trump-linked American Bitcoin secures $150M credit line from FalconX",
+    "url": "/en-US/news/01a208d9-98ca-7372-88f8-65019b856177",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 566,
+    "chinese": [],
+    "overflow": false,
+    "title": "Strategy buys 457 Bitcoin, spends $212M on preferred share buybacks",
+    "url": "/en-US/news/01a208a2-ab10-70d3-9bb6-6cd7d4a6b2e1",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 575,
+    "chinese": [],
+    "overflow": false,
+    "title": "AI agents are using credit cards. Where does that leave crypto?",
+    "url": "/en-US/news/01a208a2-ac24-7322-a12b-b3d6a0208b3c",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 553,
+    "chinese": [],
+    "overflow": false,
+    "title": "Critics of Netflix’s FTX drama point to Obama’s producer credit",
+    "url": "/en-US/news/01a208a2-acbd-7294-b336-f764402599a3",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 576,
+    "chinese": [],
+    "overflow": false,
+    "title": "ECB to let banks pledge more tokenized securities as collateral",
+    "url": "/en-US/news/01a2086b-bc3f-735c-a777-3943a8e59798",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 591,
+    "chinese": [],
+    "overflow": false,
+    "title": "BTC price gains 12% from $55K: Three things to know in Bitcoin this week",
+    "url": "/en-US/news/01a20834-cdfb-7360-ab23-3dc2a0681263",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 6918,
+    "chinese": [],
+    "overflow": false,
+    "title": "加密貨幣、外匯、美股 —— 一個帳戶全搞定。",
+    "url": "/zh-TW/",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4014,
+    "chinese": [],
+    "overflow": false,
+    "title": "訂單簿",
+    "url": "/zh-TW/trade/options/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4024,
+    "chinese": [],
+    "overflow": false,
+    "title": "訂單簿",
+    "url": "/zh-TW/trade/futures/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 3982,
+    "chinese": [],
+    "overflow": false,
+    "title": "訂單簿",
+    "url": "/zh-TW/trade/spot/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 994,
+    "chinese": [],
+    "overflow": false,
+    "title": "理財中心",
+    "url": "/zh-TW/earn/simple",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 335,
+    "chinese": [],
+    "overflow": false,
+    "title": "USDT 180-Day Fixed-Term Earn",
+    "url": "/zh-TW/earn/simple/usdt180",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 325,
+    "chinese": [],
+    "overflow": false,
+    "title": "USDT 90-Day Fixed-Term Earn",
+    "url": "/zh-TW/earn/simple/usdt90",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 325,
+    "chinese": [],
+    "overflow": false,
+    "title": "USDT 30-Day Fixed-Term Earn",
+    "url": "/zh-TW/earn/simple/usdt30",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 316,
+    "chinese": [],
+    "overflow": false,
+    "title": "BTC 60-Day Fixed-Term Earn",
+    "url": "/zh-TW/earn/simple/btc60",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 308,
+    "chinese": [],
+    "overflow": false,
+    "title": "USDT Flexible Earn",
+    "url": "/zh-TW/earn/simple/usdt",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 307,
+    "chinese": [],
+    "overflow": false,
+    "title": "USDC Flexible Earn",
+    "url": "/zh-TW/earn/simple/usdc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 301,
+    "chinese": [],
+    "overflow": false,
+    "title": "ETH Flexible Earn",
+    "url": "/zh-TW/earn/simple/eth",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 304,
+    "chinese": [],
+    "overflow": false,
+    "title": "BTC Flexible Earn",
+    "url": "/zh-TW/earn/simple/btc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 38,
+    "chinese": [],
+    "overflow": false,
+    "title": "我的理財",
+    "url": "/zh-TW/earn/my-earnings",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 150,
+    "chinese": [],
+    "overflow": false,
+    "title": "加密借貸",
+    "url": "/zh-TW/earn/loan",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 38,
+    "chinese": [],
+    "overflow": false,
+    "title": "我的借貸",
+    "url": "/zh-TW/earn/loan/my",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 212,
+    "chinese": [],
+    "overflow": false,
+    "title": "讓 AI 替你交易，或交給量化基金託管",
+    "url": "/zh-TW/ai-quant",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 2749,
+    "chinese": [],
+    "overflow": false,
+    "title": "把量化能力交給 每一位交易者",
+    "url": "/zh-TW/ai-quant/strategy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 28,
+    "chinese": [],
+    "overflow": false,
+    "title": "我的策略",
+    "url": "/zh-TW/ai-quant/strategy/mine",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1023,
+    "chinese": [],
+    "overflow": false,
+    "title": "量化基金 — AI 託管定期收益",
+    "url": "/zh-TW/ai-quant/quant-fund",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 20,
+    "chinese": [],
+    "overflow": false,
+    "title": "我的倉位",
+    "url": "/zh-TW/ai-quant/quant-fund/positions",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 340,
+    "chinese": [],
+    "overflow": false,
+    "title": "資產分布",
+    "url": "/zh-TW/assets",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 101,
+    "chinese": [],
+    "overflow": false,
+    "title": "劃轉",
+    "url": "/zh-TW/assets/transfer",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 21,
+    "chinese": [],
+    "overflow": false,
+    "title": "資金記錄",
+    "url": "/zh-TW/assets/records",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 198,
+    "chinese": [],
+    "overflow": false,
+    "title": "充值",
+    "url": "/zh-TW/deposit",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 120,
+    "chinese": [],
+    "overflow": false,
+    "title": "提現",
+    "url": "/zh-TW/withdraw",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 336,
+    "chinese": [],
+    "overflow": false,
+    "title": "C2C 交易",
+    "url": "/zh-TW/c2c/buy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 336,
+    "chinese": [],
+    "overflow": false,
+    "title": "C2C 交易",
+    "url": "/zh-TW/c2c/sell",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 58,
+    "chinese": [],
+    "overflow": false,
+    "title": "C2C 交易",
+    "url": "/zh-TW/c2c/orders",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 67,
+    "chinese": [],
+    "overflow": false,
+    "title": "C2C 交易",
+    "url": "/zh-TW/c2c/accounts",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 102,
+    "chinese": [],
+    "overflow": false,
+    "title": "跟單交易",
+    "url": "/zh-TW/copytrade",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 788,
+    "chinese": [],
+    "overflow": false,
+    "title": "我們關懷每一位陷入戰爭災難的兒童",
+    "url": "/zh-TW/charity",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 359,
+    "chinese": [],
+    "overflow": false,
+    "title": "個人中心",
+    "url": "/zh-TW/profile",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 46,
+    "chinese": [],
+    "overflow": false,
+    "title": "修改郵箱",
+    "url": "/zh-TW/bind-email",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 87,
+    "chinese": [],
+    "overflow": false,
+    "title": "綁定手機號碼",
+    "url": "/zh-TW/bind-phone",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 103,
+    "chinese": [],
+    "overflow": false,
+    "title": "登入密碼修改",
+    "url": "/zh-TW/change-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 67,
+    "chinese": [],
+    "overflow": false,
+    "title": "設置資金密碼",
+    "url": "/zh-TW/fund-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 163,
+    "chinese": [],
+    "overflow": false,
+    "title": "綁定谷歌驗證器",
+    "url": "/zh-TW/2fa",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 155,
+    "chinese": [],
+    "overflow": false,
+    "title": "裝置管理",
+    "url": "/zh-TW/devices",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 128,
+    "chinese": [],
+    "overflow": false,
+    "title": "驗證中心",
+    "url": "/zh-TW/kyc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 203,
+    "chinese": [],
+    "overflow": false,
+    "title": "KYC 認證",
+    "url": "/zh-TW/kyc/basic",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 59,
+    "chinese": [],
+    "overflow": false,
+    "title": "高級驗證",
+    "url": "/zh-TW/kyc/advanced",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 264,
+    "chinese": [],
+    "overflow": false,
+    "title": "邀請好友",
+    "url": "/zh-TW/referrals",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 80,
+    "chinese": [],
+    "overflow": false,
+    "title": "我的獎勵任務",
+    "url": "/zh-TW/promotions/tasks",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 175,
+    "chinese": [],
+    "overflow": false,
+    "title": "聯名帳戶",
+    "url": "/zh-TW/joint-account",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 3275,
+    "chinese": [],
+    "overflow": false,
+    "title": "問卷調查",
+    "url": "/zh-TW/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 112,
+    "chinese": [],
+    "overflow": false,
+    "title": "幫助中心",
+    "url": "/zh-TW/help-center",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 9,
+    "chinese": [],
+    "overflow": false,
+    "title": "公告列表",
+    "url": "/zh-TW/messages",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 289,
+    "chinese": [],
+    "overflow": false,
+    "title": "加密貨幣、外匯與全球市場 —— 集於一個平台。",
+    "url": "/zh-TW/login",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 285,
+    "chinese": [],
+    "overflow": false,
+    "title": "加密貨幣、外匯與全球市場 —— 集於一個平台。",
+    "url": "/zh-TW/register",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 279,
+    "chinese": [],
+    "overflow": false,
+    "title": "加密貨幣、外匯與全球市場 —— 集於一個平台。",
+    "url": "/zh-TW/forgot-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1365,
+    "chinese": [],
+    "overflow": false,
+    "title": "新聞中心",
+    "url": "/zh-TW/news",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 588,
+    "chinese": [],
+    "overflow": false,
+    "title": "關於 New Trends",
+    "url": "/zh-TW/about",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 2505,
+    "chinese": [],
+    "overflow": false,
+    "title": "隱私權政策",
+    "url": "/zh-TW/privacy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 6893,
+    "chinese": [],
+    "overflow": false,
+    "title": "使用者協議",
+    "url": "/zh-TW/agreement",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4291,
+    "chinese": [],
+    "overflow": false,
+    "title": "服務條款",
+    "url": "/zh-TW/content/terms",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4490,
+    "chinese": [],
+    "overflow": false,
+    "title": "風險揭露聲明",
+    "url": "/zh-TW/risk-disclosure",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 38,
+    "chinese": [],
+    "overflow": false,
+    "title": "監管資訊",
+    "url": "/zh-TW/regulatory-information",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1015,
+    "chinese": [],
+    "overflow": false,
+    "title": "SEC",
+    "url": "/zh-TW/content/regulation-sec",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "chinese": [],
+    "overflow": false,
+    "title": "SFC",
+    "url": "/zh-TW/content/regulation-sfc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "chinese": [],
+    "overflow": false,
+    "title": "GFSOB",
+    "url": "/zh-TW/content/regulation-gfsob",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "chinese": [],
+    "overflow": false,
+    "title": "FSRA",
+    "url": "/zh-TW/content/regulation-fsra",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "chinese": [],
+    "overflow": false,
+    "title": "FMSB",
+    "url": "/zh-TW/content/regulation-fmsb",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 230,
+    "chinese": [],
+    "overflow": false,
+    "title": "為什麼 42 Macro 表示正等待逢低買進 Bitcoin",
+    "url": "/zh-TW/news/01a20c28-92d4-70ca-9321-9719f081ac0a",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 219,
+    "chinese": [],
+    "overflow": false,
+    "title": "Google 想讓你成為自己 AI 爛片的主角",
+    "url": "/zh-TW/news/01a20bb6-284f-7066-8b02-ef07c1a9deee",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 275,
+    "chinese": [],
+    "overflow": false,
+    "title": "Ethereum Foundation 將協議安全團隊擴編一倍，為全面改造做準備",
+    "url": "/zh-TW/news/01a20b0c-b412-73dc-b0cb-13724dde6265",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 226,
+    "chinese": [],
+    "overflow": false,
+    "title": "CFTC 工作人員表示，交易所可將 Bitcoin 計入營運準備金",
+    "url": "/zh-TW/news/01a20ad5-c606-7027-a01f-084b2bbd8979",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 269,
+    "chinese": [],
+    "overflow": false,
+    "title": "美國尋求追回北韓關聯駭客攻擊 Binance 案中遭竊的 $1.1B 加密貨幣",
+    "url": "/zh-TW/news/01a20a63-5e75-7264-b9d4-c461aef875ba",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 208,
+    "chinese": [],
+    "overflow": false,
+    "title": "Kalshi 在紐約賭博法爭議中暫獲勝利",
+    "url": "/zh-TW/news/01a20a2c-7746-71ba-9b65-75b18d3b9d5b",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 286,
+    "chinese": [],
+    "overflow": false,
+    "title": "BTCS 拋售價值 4,400 萬美元的 ETH，以在市場低迷之際降低 DeFi 債務",
+    "url": "/zh-TW/news/01a209f5-821f-70e5-9b95-51e481f100a6",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 252,
+    "chinese": [],
+    "overflow": false,
+    "title": "Base 將量子安全列為 2027 年優先事項，監管機構警告相關風險",
+    "url": "/zh-TW/news/01a209f6-20b0-734e-b54f-aaf1feb519a1",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 246,
+    "chinese": [],
+    "overflow": false,
+    "title": "Cuomo稱競爭對手鼓勵企業退出OKXICE代幣化股票計畫",
+    "url": "/zh-TW/news/01a209be-924a-7356-a598-f86a820640a0",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 306,
+    "chinese": [],
+    "overflow": false,
+    "title": "Nvidia反彈帶動加密貨幣清算額達$500M，Bitcoin從$55K低點反彈17%",
+    "url": "/zh-TW/news/01a20983-1a13-70b1-8bea-2a64df747dcf",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 288,
+    "chinese": [],
+    "overflow": false,
+    "title": "Cross River Bank 推出比特幣擔保貸款，最高可貸 $250K",
+    "url": "/zh-TW/news/01a20947-8d15-7143-ab8c-ecb051b933cc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 253,
+    "chinese": [],
+    "overflow": false,
+    "title": "市場深度如何影響週末出售 Bitcoin 的價格",
+    "url": "/zh-TW/news/01a20947-f68a-709b-b5b6-033228fd5429",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 262,
+    "chinese": [],
+    "overflow": false,
+    "title": "Nvidia 在持續進行的情報調查期間恢復 Jensen Huang 的執行長職務",
+    "url": "/zh-TW/news/01a20910-9b31-7135-9c6a-1cb5ca340109",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 245,
+    "chinese": [],
+    "overflow": false,
+    "title": "OKX、ICE 推出 113 種代幣化資產，儘管發行商反對",
+    "url": "/zh-TW/news/01a208d9-b144-71a9-955c-13d26553f5eb",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 292,
+    "chinese": [],
+    "overflow": false,
+    "title": "與 Trump 有關聯的 American Bitcoin 獲 FalconX 提供 $150M 信用額度",
+    "url": "/zh-TW/news/01a208da-1cbc-73bc-838a-81fcf37e019e",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 259,
+    "chinese": [],
+    "overflow": false,
+    "title": "Strategy 買進 457 枚 Bitcoin，花費 2.12 億美元回購優先股",
+    "url": "/zh-TW/news/01a208a2-c098-7291-a1d9-c3f4914ba0f5",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 210,
+    "chinese": [],
+    "overflow": false,
+    "title": "AI 代理正在使用信用卡。這對加密貨幣意味著什麼？",
+    "url": "/zh-TW/news/01a208a3-5dfb-707e-b457-1c890c7025b5",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 393,
+    "chinese": [],
+    "overflow": false,
+    "title": "《Critics of Netflix’s FTX drama point to Obama’s producer credit》批評者指出，Netflix FTX 劇集的監製掛名包含 Obama",
+    "url": "/zh-TW/news/01a208a4-b1dc-70c5-aeec-b7613d006f54",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 210,
+    "chinese": [],
+    "overflow": false,
+    "title": "ECB 將允許銀行以更多代幣化證券作為抵押品",
+    "url": "/zh-TW/news/01a2086b-d242-7209-8bec-33d48b48900a",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 253,
+    "chinese": [],
+    "overflow": false,
+    "title": "BTC 價格自 $55K 上漲 12%：本週比特幣的三件須知",
+    "url": "/zh-TW/news/01a20835-0aa1-7218-b676-d6f97a55bf18",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 9685,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cryptos, forex, actions — le tout sur un seul compte.",
+    "url": "/fr-FR/",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4527,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Carnet d'ordres",
+    "url": "/fr-FR/trade/options/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4526,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Carnet d'ordres",
+    "url": "/fr-FR/trade/futures/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4445,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Carnet d'ordres",
+    "url": "/fr-FR/trade/spot/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1629,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Earn",
+    "url": "/fr-FR/earn/simple",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 816,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 180-Day Fixed-Term Earn",
+    "url": "/fr-FR/earn/simple/usdt180",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 806,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 90-Day Fixed-Term Earn",
+    "url": "/fr-FR/earn/simple/usdt90",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 806,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 30-Day Fixed-Term Earn",
+    "url": "/fr-FR/earn/simple/usdt30",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 797,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC 60-Day Fixed-Term Earn",
+    "url": "/fr-FR/earn/simple/btc60",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 802,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT Flexible Earn",
+    "url": "/fr-FR/earn/simple/usdt",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 801,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDC Flexible Earn",
+    "url": "/fr-FR/earn/simple/usdc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 795,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "ETH Flexible Earn",
+    "url": "/fr-FR/earn/simple/eth",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 798,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC Flexible Earn",
+    "url": "/fr-FR/earn/simple/btc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 92,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Mon Earn",
+    "url": "/fr-FR/earn/my-earnings",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 360,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Prêts crypto",
+    "url": "/fr-FR/earn/loan",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 93,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Mes prêts",
+    "url": "/fr-FR/earn/loan/my",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 671,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Laissez l'IA trader pour vous, ou confiez-le à un fonds géré",
+    "url": "/fr-FR/ai-quant",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4310,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "La puissance quantitative pour chaque trader",
+    "url": "/fr-FR/ai-quant/strategy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 69,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Mes stratégies",
+    "url": "/fr-FR/ai-quant/strategy/mine",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1680,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Fonds Quant — rendement à terme géré par IA",
+    "url": "/fr-FR/ai-quant/quant-fund",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 52,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Mes positions",
+    "url": "/fr-FR/ai-quant/quant-fund/positions",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 591,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Répartition des actifs",
+    "url": "/fr-FR/assets",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 258,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Transfert",
+    "url": "/fr-FR/assets/transfer",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 77,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Mouvements de fonds",
+    "url": "/fr-FR/assets/records",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 475,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Dépôt",
+    "url": "/fr-FR/deposit",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 298,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Retrait",
+    "url": "/fr-FR/withdraw",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 580,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Trading C2C",
+    "url": "/fr-FR/c2c/buy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 580,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Trading C2C",
+    "url": "/fr-FR/c2c/sell",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 164,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Trading C2C",
+    "url": "/fr-FR/c2c/orders",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 219,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Trading C2C",
+    "url": "/fr-FR/c2c/accounts",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 344,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Copier un trader",
+    "url": "/fr-FR/copytrade",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1746,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Nous prenons soin de chaque enfant pris dans les ravages de la guerre",
+    "url": "/fr-FR/charity",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 924,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Profil",
+    "url": "/fr-FR/profile",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 159,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Changer l'e-mail",
+    "url": "/fr-FR/bind-email",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 185,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Lier le téléphone",
+    "url": "/fr-FR/bind-phone",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 375,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Changer le mot de passe de connexion",
+    "url": "/fr-FR/change-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 223,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Définir le mot de passe de fonds",
+    "url": "/fr-FR/fund-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 449,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Lier Google Authenticator",
+    "url": "/fr-FR/2fa",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 289,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Gestion des appareils",
+    "url": "/fr-FR/devices",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 509,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Centre de vérification",
+    "url": "/fr-FR/kyc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 517,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Vérification KYC",
+    "url": "/fr-FR/kyc/basic",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 224,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Vérification avancée",
+    "url": "/fr-FR/kyc/advanced",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 704,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Inviter des amis",
+    "url": "/fr-FR/referrals",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 288,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Mes tâches de récompense",
+    "url": "/fr-FR/promotions/tasks",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 599,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Compte joint",
+    "url": "/fr-FR/joint-account",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 3535,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Sondage",
+    "url": "/fr-FR/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 402,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Centre d'aide",
+    "url": "/fr-FR/help-center",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 23,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Annonces",
+    "url": "/fr-FR/messages",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 901,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cryptos, forex et marchés mondiaux — sur une seule plateforme.",
+    "url": "/fr-FR/login",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 893,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cryptos, forex et marchés mondiaux — sur une seule plateforme.",
+    "url": "/fr-FR/register",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 894,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cryptos, forex et marchés mondiaux — sur une seule plateforme.",
+    "url": "/fr-FR/forgot-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 3529,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Centre d'actualités",
+    "url": "/fr-FR/news",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1737,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "About New Trends",
+    "url": "/fr-FR/about",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7858,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Privacy Policy",
+    "url": "/fr-FR/privacy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 20356,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "User Agreement",
+    "url": "/fr-FR/agreement",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 12883,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Terms of Service",
+    "url": "/fr-FR/content/terms",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 13889,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Risk Disclosure",
+    "url": "/fr-FR/risk-disclosure",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 61,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Informations réglementaires",
+    "url": "/fr-FR/regulatory-information",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 2367,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "SEC",
+    "url": "/fr-FR/content/regulation-sec",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "SFC",
+    "url": "/fr-FR/content/regulation-sfc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "GFSOB",
+    "url": "/fr-FR/content/regulation-gfsob",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "FSRA",
+    "url": "/fr-FR/content/regulation-fsra",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "FMSB",
+    "url": "/fr-FR/content/regulation-fmsb",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 543,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Pourquoi 42 Macro dit attendre le repli du Bitcoin pour acheter",
+    "url": "/fr-FR/news/01a20c28-a7c9-73d7-ad73-36faa0213c7e",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 625,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Google veut faire de vous la star de vos propres films IA de piètre qualité",
+    "url": "/fr-FR/news/01a20bb6-3f4b-73f7-b026-ee76c5eed233",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 612,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "La Ethereum Foundation double son équipe de sécurité du protocole avant une refonte",
+    "url": "/fr-FR/news/01a20b0c-c2f1-728b-8bad-8dfd6bcaffff",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 694,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Le personnel de la CFTC estime que les plateformes peuvent inclure le Bitcoin dans leurs réserves opérationnelles",
+    "url": "/fr-FR/news/01a20ad5-d459-73c6-8524-b8056a1a17d8",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 703,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Les États-Unis cherchent à récupérer 1,1 Md$ en crypto volés lors d’un piratage de Binance lié à la Corée du Nord",
+    "url": "/fr-FR/news/01a20a63-7599-723f-be46-7d190aa1e39d",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 680,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Kalshi obtient une victoire provisoire dans son litige avec New York sur la législation des jeux d’argent",
+    "url": "/fr-FR/news/01a20a2c-940f-722d-bc8d-4d97bb5dbeb3",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 626,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTCS cède pour 44 M$ d’ETH afin de réduire sa dette DeFi dans un marché en baisse",
+    "url": "/fr-FR/news/01a209f5-9bed-724f-bea9-90bd5d1fa5d8",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 689,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Base fait de la sécurité quantique une priorité pour 2027, alors que les régulateurs alertent sur les risques",
+    "url": "/fr-FR/news/01a209f6-4a7c-72c1-b3c4-2618d4f608e6",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 731,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cuomo affirme que des concurrents ont incité des entreprises à se retirer des actions tokenisées d’OKXICE",
+    "url": "/fr-FR/news/01a209be-ac0f-7362-b904-aa471a0f97cf",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 767,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Le Bitcoin rebondit de 17 % depuis son plus bas à 55 000 $ alors que le rallye de Nvidia déclenche 500 M$ de liquidations crypto",
+    "url": "/fr-FR/news/01a20983-3b20-711d-abbd-b3077f06e6d7",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 614,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cross River Bank se lance dans les prêts adossés au Bitcoin, jusqu’à 250K$",
+    "url": "/fr-FR/news/01a20947-a120-708f-8e9e-bb0111a46808",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 670,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Comment la profondeur de marché façonne le prix d’une vente de Bitcoin le week-end",
+    "url": "/fr-FR/news/01a20948-08b3-73b5-ad85-57cf1ab75d07",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 680,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Nvidia rétablit Jensen Huang au poste de PDG dans le cadre d’une enquête de renseignement en cours",
+    "url": "/fr-FR/news/01a20910-ab5c-724e-b63f-2d2333b11292",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 640,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "OKX et ICE lancent 113 actifs tokenisés malgré les objections des émetteurs",
+    "url": "/fr-FR/news/01a208d9-c580-7257-a4f4-0100ccbbe5dc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 639,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "American Bitcoin, liée à Trump, obtient une ligne de crédit de 150 M$ auprès de FalconX",
+    "url": "/fr-FR/news/01a208da-3305-7272-a7fe-af2e312c10b1",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 640,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Strategy achète 457 Bitcoin et consacre 212 M$ au rachat d’actions privilégiées",
+    "url": "/fr-FR/news/01a208a2-d589-717a-9ad0-2918403d4c5b",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 623,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Les agents IA utilisent des cartes de crédit. Quelle place reste-t-il aux cryptomonnaies ?",
+    "url": "/fr-FR/news/01a208a3-a32c-7281-9654-072013d2238f",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 625,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Les critiques du drame de Netflix sur FTX pointent du doigt le crédit de producteur d’Obama",
+    "url": "/fr-FR/news/01a208a4-d3f0-70a5-851e-a6fee26a28da",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 610,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "La BCE autorisera les banques à donner davantage de titres tokenisés en garantie",
+    "url": "/fr-FR/news/01a2086b-e6d2-70a1-a4d1-188bd72a0a0c",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 700,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Le cours du BTC gagne 12 % depuis 55 000 $ : trois choses à savoir sur le Bitcoin cette semaine",
+    "url": "/fr-FR/news/01a20835-44e2-73c1-9bac-df6579b12fea",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 9377,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Krypto, Devisen, Aktien – alles in einem Konto.",
+    "url": "/de-DE/",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4538,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Orderbuch",
+    "url": "/de-DE/trade/options/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4537,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Orderbuch",
+    "url": "/de-DE/trade/futures/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4455,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Orderbuch",
+    "url": "/de-DE/trade/spot/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1613,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Earn",
+    "url": "/de-DE/earn/simple",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 763,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 180-Day Fixed-Term Earn",
+    "url": "/de-DE/earn/simple/usdt180",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 753,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 90-Day Fixed-Term Earn",
+    "url": "/de-DE/earn/simple/usdt90",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 753,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 30-Day Fixed-Term Earn",
+    "url": "/de-DE/earn/simple/usdt30",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 744,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC 60-Day Fixed-Term Earn",
+    "url": "/de-DE/earn/simple/btc60",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 745,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT Flexible Earn",
+    "url": "/de-DE/earn/simple/usdt",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 744,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDC Flexible Earn",
+    "url": "/de-DE/earn/simple/usdc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 738,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "ETH Flexible Earn",
+    "url": "/de-DE/earn/simple/eth",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 741,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC Flexible Earn",
+    "url": "/de-DE/earn/simple/btc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 100,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Mein Earn",
+    "url": "/de-DE/earn/my-earnings",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 351,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Krypto-Kredite",
+    "url": "/de-DE/earn/loan",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 104,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Meine Kredite",
+    "url": "/de-DE/earn/loan/my",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 678,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Lassen Sie die KI für Sie handeln, oder übergeben Sie es einem verwalteten Fonds",
+    "url": "/de-DE/ai-quant",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4174,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Quant-Power für jeden Trader",
+    "url": "/de-DE/ai-quant/strategy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 73,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Meine Strategien",
+    "url": "/de-DE/ai-quant/strategy/mine",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1639,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Quant-Fonds – KI-verwaltete Festzinsrendite",
+    "url": "/de-DE/ai-quant/quant-fund",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 57,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Meine Positionen",
+    "url": "/de-DE/ai-quant/quant-fund/positions",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 556,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Vermögensverteilung",
+    "url": "/de-DE/assets",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 249,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Übertragen",
+    "url": "/de-DE/assets/transfer",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 72,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Kapitalbewegungen",
+    "url": "/de-DE/assets/records",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 460,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Einzahlen",
+    "url": "/de-DE/deposit",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 275,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Auszahlung",
+    "url": "/de-DE/withdraw",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 558,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C-Handel",
+    "url": "/de-DE/c2c/buy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 558,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C-Handel",
+    "url": "/de-DE/c2c/sell",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 163,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C-Handel",
+    "url": "/de-DE/c2c/orders",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 196,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C-Handel",
+    "url": "/de-DE/c2c/accounts",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 334,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Einen Trader kopieren",
+    "url": "/de-DE/copytrade",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1654,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Wir kümmern uns um jedes Kind, das von den Verwüstungen des Krieges betroffen ist",
+    "url": "/de-DE/charity",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 850,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Profil",
+    "url": "/de-DE/profile",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 147,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "E-Mail ändern",
+    "url": "/de-DE/bind-email",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 191,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Telefon verknüpfen",
+    "url": "/de-DE/bind-phone",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 354,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Anmeldepasswort ändern",
+    "url": "/de-DE/change-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 191,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Fondspasswort festlegen",
+    "url": "/de-DE/fund-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 448,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Google Authenticator verknüpfen",
+    "url": "/de-DE/2fa",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 304,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Geräteverwaltung",
+    "url": "/de-DE/devices",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 484,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Verifizierungscenter",
+    "url": "/de-DE/kyc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 434,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "KYC-Verifizierung",
+    "url": "/de-DE/kyc/basic",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 251,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Erweiterte Verifizierung",
+    "url": "/de-DE/kyc/advanced",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 727,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Freunde einladen",
+    "url": "/de-DE/referrals",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 284,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Meine Prämienaufgaben",
+    "url": "/de-DE/promotions/tasks",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 580,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Gemeinschaftskonto",
+    "url": "/de-DE/joint-account",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 3536,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Umfrage",
+    "url": "/de-DE/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 407,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Hilfecenter",
+    "url": "/de-DE/help-center",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 33,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Ankündigungen",
+    "url": "/de-DE/messages",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 824,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Krypto, Devisen und globale Märkte – auf einer Plattform.",
+    "url": "/de-DE/login",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 808,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Krypto, Devisen und globale Märkte – auf einer Plattform.",
+    "url": "/de-DE/register",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 806,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Krypto, Devisen und globale Märkte – auf einer Plattform.",
+    "url": "/de-DE/forgot-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 3256,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "News-Center",
+    "url": "/de-DE/news",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1737,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "About New Trends",
+    "url": "/de-DE/about",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7858,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Privacy Policy",
+    "url": "/de-DE/privacy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 20356,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "User Agreement",
+    "url": "/de-DE/agreement",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 12883,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Terms of Service",
+    "url": "/de-DE/content/terms",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 13889,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Risk Disclosure",
+    "url": "/de-DE/risk-disclosure",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 67,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Aufsichtsrechtliche Informationen",
+    "url": "/de-DE/regulatory-information",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 2367,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "SEC",
+    "url": "/de-DE/content/regulation-sec",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "SFC",
+    "url": "/de-DE/content/regulation-sfc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "GFSOB",
+    "url": "/de-DE/content/regulation-gfsob",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "FSRA",
+    "url": "/de-DE/content/regulation-fsra",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "FMSB",
+    "url": "/de-DE/content/regulation-fmsb",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 501,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Warum 42 Macro darauf wartet, den Bitcoin-Dip zu kaufen",
+    "url": "/de-DE/news/01a20c28-c4a7-7028-bdf2-e3c642e611fc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 578,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Google will dich zum Star deiner eigenen KI-Schundfilme machen",
+    "url": "/de-DE/news/01a20bb6-580c-73e4-b18b-025a121dbf89",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 602,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Ethereum Foundation verdoppelt Protokollsicherheitsteam vor umfassender Überarbeitung",
+    "url": "/de-DE/news/01a20b0c-d44a-72cd-98ed-1ae990e97416",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 601,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "CFTC-Mitarbeiter sagen, Börsen können Bitcoin auf ihre Betriebsreserven anrechnen",
+    "url": "/de-DE/news/01a20ad5-e386-722c-93b0-dc4a7095e19f",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 691,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USA wollen 1,1 Mrd. $ in Kryptowährungen zurückholen, die bei einem mit Nordkorea in Verbindung stehenden Binance-Hack gestohlen wurden",
+    "url": "/de-DE/news/01a20a63-91d4-7377-91b3-ee1c16c82a9b",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 580,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Kalshi erzielt vorläufigen Erfolg im Streit um Glücksspielgesetze in New York",
+    "url": "/de-DE/news/01a20a2c-b2b9-71f6-a7d1-d690cb5cd213",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 631,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTCS verkauft ETH im Wert von 44 Mio. $, um DeFi-Schulden angesichts des Marktrückgangs abzubauen",
+    "url": "/de-DE/news/01a209f5-b866-703d-8598-51730ec4b01c",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 639,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Base macht Quantensicherheit 2027 zur Priorität, während Regulierungsbehörden vor Risiken warnen",
+    "url": "/de-DE/news/01a209f6-705b-722e-a063-c92a6848d49e",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 650,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cuomo sagt, Konkurrenten hätten Unternehmen zum Opt-out bei tokenisierten Aktien von OKXICE gedrängt",
+    "url": "/de-DE/news/01a209be-c6e8-706a-89bf-4328a003ad23",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 732,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Bitcoin erholt sich um 17 % von Tiefständen bei 55.000 $, während Nvidia-Rallye Krypto-Liquidationen in Höhe von 500 Mio. $ auslöst",
+    "url": "/de-DE/news/01a20983-5c05-71f6-9692-d767068cfc08",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 583,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cross River Bank steigt mit Krediten über $250K in Bitcoin-besicherte Darlehen ein",
+    "url": "/de-DE/news/01a20947-b69c-7369-8b85-7224c7e8ddde",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 661,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Wie die Markttiefe den Preis eines Bitcoin-Verkaufs am Wochenende beeinflusst",
+    "url": "/de-DE/news/01a20948-20d5-7201-a938-382c600c25b7",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 617,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Nvidia setzt Jensen Huang während laufender Geheimdienstermittlungen wieder als CEO ein",
+    "url": "/de-DE/news/01a20910-bc71-715c-93af-2e27793856e2",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 661,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "OKX und ICE starten trotz Einwänden der Emittenten 113 tokenisierte Vermögenswerte",
+    "url": "/de-DE/news/01a208d9-df44-732f-ab36-3feff35f1e03",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 611,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Trump-nahe American Bitcoin sichert sich Kreditlinie über 150 Mio. $ von FalconX",
+    "url": "/de-DE/news/01a208da-4a71-7325-b6f4-01e848a23e98",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 582,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Strategy kauft 457 Bitcoin und gibt 212 Mio. $ für Rückkäufe von Vorzugsaktien aus",
+    "url": "/de-DE/news/01a208a2-e8fc-72b3-8466-73712d63c56a",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 507,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "KI-Agenten nutzen Kreditkarten. Was bedeutet das für Krypto?",
+    "url": "/de-DE/news/01a208a3-ec3d-73d4-a1cc-0d23a3462f54",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 572,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Kritiker des FTX-Dramas von Netflix verweisen auf Obamas Produzenten-Credit",
+    "url": "/de-DE/news/01a208a4-f6a3-714c-8e45-2f2f8088795c",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 597,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "EZB ermöglicht Banken, mehr tokenisierte Wertpapiere als Sicherheiten zu hinterlegen",
+    "url": "/de-DE/news/01a2086b-fb80-7178-8e7a-8a38a4810683",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 653,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC-Kurs steigt vom Tief bei $55K um 12 %: Drei Dinge, die man diese Woche über Bitcoin wissen sollte",
+    "url": "/de-DE/news/01a20835-8200-7063-9af0-06be6e720fae",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7361,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "暗号資産、外国為替、株式 — すべてを1つのアカウントで。",
+    "url": "/ja-JP/",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4102,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "板情報",
+    "url": "/ja-JP/trade/options/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4119,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "板情報",
+    "url": "/ja-JP/trade/futures/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4065,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "板情報",
+    "url": "/ja-JP/trade/spot/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1070,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Earn",
+    "url": "/ja-JP/earn/simple",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 379,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 180-Day Fixed-Term Earn",
+    "url": "/ja-JP/earn/simple/usdt180",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 369,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 90-Day Fixed-Term Earn",
+    "url": "/ja-JP/earn/simple/usdt90",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 369,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 30-Day Fixed-Term Earn",
+    "url": "/ja-JP/earn/simple/usdt30",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 360,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC 60-Day Fixed-Term Earn",
+    "url": "/ja-JP/earn/simple/btc60",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 360,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT Flexible Earn",
+    "url": "/ja-JP/earn/simple/usdt",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 359,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDC Flexible Earn",
+    "url": "/ja-JP/earn/simple/usdc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 353,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "ETH Flexible Earn",
+    "url": "/ja-JP/earn/simple/eth",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 356,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC Flexible Earn",
+    "url": "/ja-JP/earn/simple/btc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 54,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "マイEarn",
+    "url": "/ja-JP/earn/my-earnings",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 183,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "暗号資産ローン",
+    "url": "/ja-JP/earn/loan",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 53,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "マイローン",
+    "url": "/ja-JP/earn/loan/my",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 310,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "AI に取引を任せるか、運用ファンドに託す",
+    "url": "/ja-JP/ai-quant",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 2959,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "クオントの力を すべてのトレーダー",
+    "url": "/ja-JP/ai-quant/strategy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 40,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "マイストラテジー",
+    "url": "/ja-JP/ai-quant/strategy/mine",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1085,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "クオントファンド — AI運用の確定期間利回り",
+    "url": "/ja-JP/ai-quant/quant-fund",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 31,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "マイポジション",
+    "url": "/ja-JP/ai-quant/quant-fund/positions",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 390,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "資産配分",
+    "url": "/ja-JP/assets",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 135,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "振替",
+    "url": "/ja-JP/assets/transfer",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 28,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "資金記録",
+    "url": "/ja-JP/assets/records",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 253,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "入金",
+    "url": "/ja-JP/deposit",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 137,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "出金",
+    "url": "/ja-JP/withdraw",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 372,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C取引",
+    "url": "/ja-JP/c2c/buy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 372,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C取引",
+    "url": "/ja-JP/c2c/sell",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 78,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C取引",
+    "url": "/ja-JP/c2c/orders",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 88,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C取引",
+    "url": "/ja-JP/c2c/accounts",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 166,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "トレーダーをコピー",
+    "url": "/ja-JP/copytrade",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 875,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "戦争の惨禍に巻き込まれたすべての子どもを支えます",
+    "url": "/ja-JP/charity",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 436,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "プロフィール",
+    "url": "/ja-JP/profile",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 63,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "メールを変更",
+    "url": "/ja-JP/bind-email",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 105,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "電話番号を連携",
+    "url": "/ja-JP/bind-phone",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 158,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "ログインパスワードを変更",
+    "url": "/ja-JP/change-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 89,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "資金パスワードを設定",
+    "url": "/ja-JP/fund-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 257,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Google Authenticatorを連携",
+    "url": "/ja-JP/2fa",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 190,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "デバイス管理",
+    "url": "/ja-JP/devices",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 167,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "認証センター",
+    "url": "/ja-JP/kyc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 234,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "KYC認証",
+    "url": "/ja-JP/kyc/basic",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 92,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "上級認証",
+    "url": "/ja-JP/kyc/advanced",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 340,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "友達を招待",
+    "url": "/ja-JP/referrals",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 104,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "マイ特典タスク",
+    "url": "/ja-JP/promotions/tasks",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 239,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "共同名義口座",
+    "url": "/ja-JP/joint-account",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 3300,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "アンケート",
+    "url": "/ja-JP/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 220,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "ヘルプセンター",
+    "url": "/ja-JP/help-center",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 15,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "お知らせ",
+    "url": "/ja-JP/messages",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 383,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "暗号資産、外国為替、グローバル市場 — 1つのプラットフォームで。",
+    "url": "/ja-JP/login",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 376,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "暗号資産、外国為替、グローバル市場 — 1つのプラットフォームで。",
+    "url": "/ja-JP/register",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 369,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "暗号資産、外国為替、グローバル市場 — 1つのプラットフォームで。",
+    "url": "/ja-JP/forgot-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1631,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "ニュースセンター",
+    "url": "/ja-JP/news",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1737,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "About New Trends",
+    "url": "/ja-JP/about",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7858,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Privacy Policy",
+    "url": "/ja-JP/privacy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 20356,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "User Agreement",
+    "url": "/ja-JP/agreement",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 12883,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Terms of Service",
+    "url": "/ja-JP/content/terms",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 13889,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Risk Disclosure",
+    "url": "/ja-JP/risk-disclosure",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 38,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "規制情報",
+    "url": "/ja-JP/regulatory-information",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 2367,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "SEC",
+    "url": "/ja-JP/content/regulation-sec",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "SFC",
+    "url": "/ja-JP/content/regulation-sfc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "GFSOB",
+    "url": "/ja-JP/content/regulation-gfsob",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "FSRA",
+    "url": "/ja-JP/content/regulation-fsra",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "FMSB",
+    "url": "/ja-JP/content/regulation-fmsb",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 240,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "42 Macroがビットコインの押し目買いを待つ理由",
+    "url": "/ja-JP/news/01a20c28-da75-710d-be2a-243e80bf8a5a",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 274,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Google、あなたをAIの粗製乱造映画の主役にしようとしている",
+    "url": "/ja-JP/news/01a20bb6-7871-7300-bb8e-adb16d48387c",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 286,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Ethereum Foundation、刷新を前にプロトコルセキュリティチームを倍増",
+    "url": "/ja-JP/news/01a20b0c-e4ee-709e-b7b8-5a2249ae97e4",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 248,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "CFTCスタッフ、取引所がBitcoinを運営準備金に算入できると表明",
+    "url": "/ja-JP/news/01a20ad5-f4b6-727f-966d-71f0d87d4a05",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 292,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "米国、北朝鮮関連のBinanceハッキングで盗まれた11億ドル相当の暗号資産の回収を目指す",
+    "url": "/ja-JP/news/01a20a63-b1f5-7098-bbf7-258355b50bdf",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 253,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Kalshi、ニューヨーク州の賭博法を巡る争いで一時的な勝利",
+    "url": "/ja-JP/news/01a20a2c-d7e8-70f4-aa9f-aa5719910e0f",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 300,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTCS、相場下落を受けDeFi債務削減のため4,400万ドル相当のETHを売却",
+    "url": "/ja-JP/news/01a209f5-da62-72c9-a393-5f75708792f9",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 305,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Base、量子セキュリティを2027年の優先事項に　規制当局はリスクを警告",
+    "url": "/ja-JP/news/01a209f6-a0fa-7163-a288-429e5050d299",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 307,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cuomo氏、競合他社が企業にOKXICEのトークン化株式を不参加にするよう促したと主張",
+    "url": "/ja-JP/news/01a209be-e699-7090-b16e-34ff8bcc5175",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 346,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Nvidia株高を受けた仮想通貨の清算額が$500Mを超える中、Bitcoinは$55Kの安値から17%反発",
+    "url": "/ja-JP/news/01a20983-81f4-710d-97bf-09200b78b4e1",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 317,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cross River Bank、25万ドルの融資でビットコイン担保融資に参入",
+    "url": "/ja-JP/news/01a20947-cb7b-7338-bc10-55d415f11455",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 277,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "市場の厚みが週末のビットコイン売却価格を左右する仕組み",
+    "url": "/ja-JP/news/01a20948-362b-7016-9fbc-698289a94568",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 264,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "情報機関による調査が続く中、NvidiaがJensen HuangをCEOに復帰",
+    "url": "/ja-JP/news/01a20910-d057-7366-b9e2-2c28bfce9434",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 283,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "OKXとICE、発行企業の反対にもかかわらず113銘柄のトークン化資産をローンチ",
+    "url": "/ja-JP/news/01a208d9-f499-71ab-a38d-c2c29f11f250",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 305,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "トランプ氏ゆかりのAmerican Bitcoin、FalconXから1億5,000万ドルの信用枠を確保",
+    "url": "/ja-JP/news/01a208da-64c9-72be-b2f0-dd036722d1fc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 284,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Strategy、Bitcoinを457 BTC購入し、優先株の買い戻しに$212Mを支出",
+    "url": "/ja-JP/news/01a208a3-02a5-72be-96a9-d741c9f8b7cd",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 266,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "AIエージェントはクレジットカードを利用している。暗号資産はどうなるのか？",
+    "url": "/ja-JP/news/01a208a4-4968-7208-ae14-ff653cd3e07e",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 292,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "NetflixのFTXドラマを批判する人々、オバマ氏のプロデューサー表記に注目",
+    "url": "/ja-JP/news/01a208a5-1fbd-7012-9daf-46790f034145",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 261,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "ECB、銀行が担保として差し入れられるトークン化証券を拡大へ",
+    "url": "/ja-JP/news/01a2086c-128e-717a-a6f9-9ae61b750529",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 300,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC価格、55,000ドルから12%上昇：今週のBitcoinで知っておくべき3つのこと",
+    "url": "/ja-JP/news/01a20835-c42d-7004-8096-aa66e1755ff4",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7380,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "암호화폐, 외환, 주식 — 모두 하나의 계정에서.",
+    "url": "/ko-KR/",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4080,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "호가창",
+    "url": "/ko-KR/trade/options/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4094,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "호가창",
+    "url": "/ko-KR/trade/futures/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 4045,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "호가창",
+    "url": "/ko-KR/trade/spot/BTCUSD",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1049,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "어닝",
+    "url": "/ko-KR/earn/simple",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 397,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 180-Day Fixed-Term Earn",
+    "url": "/ko-KR/earn/simple/usdt180",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 387,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 90-Day Fixed-Term Earn",
+    "url": "/ko-KR/earn/simple/usdt90",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 387,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT 30-Day Fixed-Term Earn",
+    "url": "/ko-KR/earn/simple/usdt30",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 378,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC 60-Day Fixed-Term Earn",
+    "url": "/ko-KR/earn/simple/btc60",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 371,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDT Flexible Earn",
+    "url": "/ko-KR/earn/simple/usdt",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 370,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "USDC Flexible Earn",
+    "url": "/ko-KR/earn/simple/usdc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 364,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "ETH Flexible Earn",
+    "url": "/ko-KR/earn/simple/eth",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 367,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC Flexible Earn",
+    "url": "/ko-KR/earn/simple/btc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 43,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "내 어닝",
+    "url": "/ko-KR/earn/my-earnings",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 186,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "암호화폐 대출",
+    "url": "/ko-KR/earn/loan",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 43,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "내 대출",
+    "url": "/ko-KR/earn/loan/my",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 297,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "AI에게 거래를 맡기거나, 운용 펀드에 위탁하세요",
+    "url": "/ko-KR/ai-quant",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 2930,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "헤지펀드뿐만 아니라 모든 트레이더",
+    "url": "/ko-KR/ai-quant/strategy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 27,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "내 전략",
+    "url": "/ko-KR/ai-quant/strategy/mine",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1119,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "퀀트 펀드 — AI 운용 확정 기간 수익",
+    "url": "/ko-KR/ai-quant/quant-fund",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 23,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "내 포지션",
+    "url": "/ko-KR/ai-quant/quant-fund/positions",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 360,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "자산 분포",
+    "url": "/ko-KR/assets",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 132,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "이체",
+    "url": "/ko-KR/assets/transfer",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 32,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "자금 기록",
+    "url": "/ko-KR/assets/records",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 241,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "입금",
+    "url": "/ko-KR/deposit",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 146,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "출금",
+    "url": "/ko-KR/withdraw",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 364,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C 거래",
+    "url": "/ko-KR/c2c/buy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 364,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C 거래",
+    "url": "/ko-KR/c2c/sell",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 71,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C 거래",
+    "url": "/ko-KR/c2c/orders",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 84,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "C2C 거래",
+    "url": "/ko-KR/c2c/accounts",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 151,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "트레이더 카피",
+    "url": "/ko-KR/copytrade",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 922,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "전쟁의 참화에 휩쓸린 모든 아이들을 돌봅니다",
+    "url": "/ko-KR/charity",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 413,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "프로필",
+    "url": "/ko-KR/profile",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 64,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "이메일 변경",
+    "url": "/ko-KR/bind-email",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 112,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "휴대폰 번호 연결",
+    "url": "/ko-KR/bind-phone",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 166,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "로그인 비밀번호 변경",
+    "url": "/ko-KR/change-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 90,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "자금 비밀번호 설정",
+    "url": "/ko-KR/fund-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 243,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Google Authenticator 연결",
+    "url": "/ko-KR/2fa",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 175,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "기기 관리",
+    "url": "/ko-KR/devices",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 182,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "인증 센터",
+    "url": "/ko-KR/kyc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 236,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "KYC 인증",
+    "url": "/ko-KR/kyc/basic",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 91,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "고급 인증",
+    "url": "/ko-KR/kyc/advanced",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 337,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "친구 초대",
+    "url": "/ko-KR/referrals",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 114,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "내 혜택 작업",
+    "url": "/ko-KR/promotions/tasks",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 272,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "공동명의 계정",
+    "url": "/ko-KR/joint-account",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 3312,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "설문조사",
+    "url": "/ko-KR/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 175,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "고객센터",
+    "url": "/ko-KR/help-center",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 10,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "공지사항",
+    "url": "/ko-KR/messages",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 382,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "암호화폐, 외환, 글로벌 시장 — 하나의 플랫폼에서.",
+    "url": "/ko-KR/login",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 371,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "암호화폐, 외환, 글로벌 시장 — 하나의 플랫폼에서.",
+    "url": "/ko-KR/register",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 368,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "암호화폐, 외환, 글로벌 시장 — 하나의 플랫폼에서.",
+    "url": "/ko-KR/forgot-password",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1685,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "뉴스 센터",
+    "url": "/ko-KR/news",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 1737,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "About New Trends",
+    "url": "/ko-KR/about",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7858,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Privacy Policy",
+    "url": "/ko-KR/privacy",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 20356,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "User Agreement",
+    "url": "/ko-KR/agreement",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 12883,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Terms of Service",
+    "url": "/ko-KR/content/terms",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 13889,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Risk Disclosure",
+    "url": "/ko-KR/risk-disclosure",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 39,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "규제 정보",
+    "url": "/ko-KR/regulatory-information",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 2367,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "SEC",
+    "url": "/ko-KR/content/regulation-sec",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "SFC",
+    "url": "/ko-KR/content/regulation-sfc",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "GFSOB",
+    "url": "/ko-KR/content/regulation-gfsob",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "FSRA",
+    "url": "/ko-KR/content/regulation-fsra",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "FMSB",
+    "url": "/ko-KR/content/regulation-fmsb",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 260,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "42 Macro가 비트코인 하락 시 매수를 기다리는 이유",
+    "url": "/ko-KR/news/01a20c28-f7b6-7032-ab7f-efd2ff436a7a",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 280,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Google, 당신을 AI 저질 영화의 주인공으로 만들고 싶어 해",
+    "url": "/ko-KR/news/01a20bb6-91e9-7163-885a-9e6cc214da06",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 299,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Ethereum Foundation, 업그레이드 앞두고 프로토콜 보안팀 규모 두 배로 확대",
+    "url": "/ko-KR/news/01a20b0c-f475-73f4-b4f2-a2b9feccc4ad",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 268,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "CFTC 직원들, 거래소가 비트코인을 운영 준비금으로 산입할 수 있다고 밝혀",
+    "url": "/ko-KR/news/01a20ad6-034f-7324-9e75-ab057f0db824",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 310,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "미국, 북한 연계 바이낸스 해킹으로 도난당한 11억 달러 규모의 암호화폐 회수 추진",
+    "url": "/ko-KR/news/01a20a63-cdfd-71a0-8122-b9a8dca453ca",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 269,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Kalshi, 뉴욕 도박법 분쟁에서 잠정적 승리 확보",
+    "url": "/ko-KR/news/01a20a2c-f564-7209-be87-eca32e834fa6",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 324,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTCS, 시장 침체 속 DeFi 부채 줄이려 4,400만 달러 상당 ETH 매각",
+    "url": "/ko-KR/news/01a209f5-f55b-708f-87ed-bc4e0f172d4f",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 322,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Base, 규제당국의 위험 경고 속 2027년 양자 보안을 우선순위로 설정",
+    "url": "/ko-KR/news/01a209f6-cc11-73c3-895d-9519a669c422",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 328,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "쿠오모, 경쟁사들이 기업에 OKXICE 토큰화 주식 참여를 거부하도록 권유했다고 밝혀",
+    "url": "/ko-KR/news/01a209bf-0294-739f-8e35-36f1d58270b8",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 355,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Nvidia 랠리에 암호화폐 청산액 5억 달러 돌파…비트코인, 55,000달러 저점에서 17% 반등",
+    "url": "/ko-KR/news/01a20983-a2d4-7186-9b9d-cf1594366d99",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 339,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Cross River Bank, $250K 규모 비트코인 담보 대출 시작",
+    "url": "/ko-KR/news/01a20947-e4a7-705c-937c-bb53e6eb155a",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 293,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "시장 깊이가 주말 비트코인 매도 가격을 좌우하는 방식",
+    "url": "/ko-KR/news/01a20948-4a52-73c0-a518-d36fe717b5aa",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 296,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "진행 중인 정보기관 조사 속 Nvidia, Jensen Huang을 CEO로 복귀시켜",
+    "url": "/ko-KR/news/01a20910-e098-7361-b49f-73b1d6dec31d",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 281,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "OKX와 ICE, 발행사 반대에도 토큰화 자산 113종 출시",
+    "url": "/ko-KR/news/01a208da-081e-7167-88fd-c680e448bd38",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 350,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "트럼프와 연계된 American Bitcoin, FalconX로부터 1억 5,000만 달러 신용 한도 확보",
+    "url": "/ko-KR/news/01a208da-79f8-701a-b54d-53f408f7ce34",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 311,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Strategy, 비트코인 457개 매수하고 우선주 자사주 매입에 2억 1,200만 달러 지출",
+    "url": "/ko-KR/news/01a208a3-1791-713b-af11-c737cd0c6faa",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 295,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "AI 에이전트가 신용카드를 사용하고 있다. 그렇다면 암호화폐는 어디에 자리할까?",
+    "url": "/ko-KR/news/01a208a4-8e58-7037-8352-ba9c3c5349a9",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 306,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "Netflix의 FTX 드라마 비판론자들, 오바마의 제작자 크레딧 지적",
+    "url": "/ko-KR/news/01a208a5-4121-71eb-bcf4-eeee7f3ef17c",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 276,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "ECB, 은행의 담보로 더 많은 토큰화 증권을 맡길 수 있도록 허용",
+    "url": "/ko-KR/news/01a2086c-250f-711c-b4cb-a96bbf0e3e7c",
+    "viewport": 1920
+  },
+  {
+    "broken": [],
+    "chars": 309,
+    "chinese": [],
+    "keys": null,
+    "overflow": false,
+    "title": "BTC 가격, $55K에서 12% 상승: 이번 주 비트코인 관련 세 가지 주요 사항",
+    "url": "/ko-KR/news/01a20835-fdaf-7363-8048-30b36251944c",
+    "viewport": 1920
+  }
+]

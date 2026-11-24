@@ -1,0 +1,520 @@
+[
+  {
+    "rows": [
+      {
+        "cls": "text-4xl tracking-tight md:text-5xl",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 1352,
+        "x": 284
+      },
+      {
+        "cls": "mx-auto max-w-[1400px] px-6 py-16 md:py-24",
+        "max": "1400px",
+        "padding": "96px 24px",
+        "tag": "DIV",
+        "w": 1400,
+        "x": 260
+      },
+      {
+        "cls": "border-border-divider border-b",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1920,
+        "x": 0
+      },
+      {
+        "cls": "page-ambient page-ambient-grid relative",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/news"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-fg text-title mb-4 font-semibold",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 1232,
+        "x": 344
+      },
+      {
+        "cls": "mx-auto max-w-[1280px] px-4 py-8 lg:px-6",
+        "max": "1280px",
+        "padding": "32px 24px",
+        "tag": "DIV",
+        "w": 1280,
+        "x": 320
+      },
+      {
+        "cls": "flex-1",
+        "max": "none",
+        "padding": "0px",
+        "tag": "MAIN",
+        "w": 1920,
+        "x": 0
+      },
+      {
+        "cls": "",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/profile"
+  },
+  {
+    "rows": [
+      {
+        "cls": "font-display text-fg mt-2 text-4xl font-semibold tracking-tight lg:text-5xl",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 579.8125,
+        "x": 272
+      },
+      {
+        "cls": "max-w-2xl",
+        "max": "672px",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 579.8125,
+        "x": 272
+      },
+      {
+        "cls": "flex flex-col items-start gap-6",
+        "max": "none",
+        "padding": "0px",
+        "tag": "SECTION",
+        "w": 733.0859375,
+        "x": 272
+      },
+      {
+        "cls": "flex flex-col gap-6 xl:grid xl:grid-cols-[1.2fr_1fr] xl:gap-8",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1376,
+        "x": 272
+      }
+    ],
+    "url": "/zh-TW/earn/simple"
+  },
+  {
+    "rows": [
+      {
+        "cls": "font-display text-fg text-display tracking-tight",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 1376,
+        "x": 272
+      },
+      {
+        "cls": "flex flex-col gap-3",
+        "max": "none",
+        "padding": "0px",
+        "tag": "HEADER",
+        "w": 1376,
+        "x": 272
+      },
+      {
+        "cls": "mx-auto flex max-w-[1440px] flex-col gap-8 px-4 py-10 md:px-6 lg:px-8 lg:py-14",
+        "max": "1440px",
+        "padding": "56px 32px",
+        "tag": "DIV",
+        "w": 1440,
+        "x": 240
+      },
+      {
+        "cls": "page-ambient page-ambient-grid",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/ai-quant"
+  },
+  {
+    "rows": [
+      {
+        "cls": "font-display text-fg text-balance mt-5 text-4xl leading-[1.05] tracking-tight lg:text-6xl",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 809.59375,
+        "x": 272
+      },
+      {
+        "cls": "lg:col-span-3",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 809.59375,
+        "x": 272
+      },
+      {
+        "cls": "grid grid-cols-1 items-center gap-10 lg:grid-cols-5",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1376,
+        "x": 272
+      },
+      {
+        "cls": "relative mx-auto max-w-[1440px] px-6 lg:px-8",
+        "max": "1440px",
+        "padding": "0px 32px",
+        "tag": "DIV",
+        "w": 1440,
+        "x": 240
+      }
+    ],
+    "url": "/zh-TW/ai-quant/strategy"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-fg font-display text-3xl font-semibold tracking-tight lg:text-5xl",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 583.2421875,
+        "x": 313
+      },
+      {
+        "cls": "flex flex-col gap-4 lg:max-w-2xl",
+        "max": "672px",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 583.2421875,
+        "x": 313
+      },
+      {
+        "cls": "relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1294,
+        "x": 313
+      },
+      {
+        "cls": "border-border-divider bg-bg-card relative overflow-hidden rounded-3xl border px-5 py-8 md:px-7 md:py-10 lg:px-10 lg:py-14",
+        "max": "none",
+        "padding": "56px 40px",
+        "tag": "SECTION",
+        "w": 1376,
+        "x": 272
+      }
+    ],
+    "url": "/zh-TW/ai-quant/quant-fund"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-body text-fg font-semibold",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H2",
+        "w": 93.125,
+        "x": 305
+      },
+      {
+        "cls": "flex items-center justify-between gap-3 lg:shrink-0 lg:justify-start",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 126.2109375,
+        "x": 305
+      },
+      {
+        "cls": "flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-6",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1310,
+        "x": 305
+      },
+      {
+        "cls": "border-border-divider bg-bg-secondary mb-6 rounded-2xl border px-4 py-3 sm:px-5",
+        "max": "none",
+        "padding": "12px 20px",
+        "tag": "DIV",
+        "w": 1352,
+        "x": 284
+      }
+    ],
+    "url": "/zh-TW/assets"
+  },
+  {
+    "rows": [
+      {
+        "cls": "mb-8 text-3xl font-bold tracking-tight",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 1248,
+        "x": 336
+      },
+      {
+        "cls": "mx-auto max-w-7xl px-4 py-12",
+        "max": "1280px",
+        "padding": "48px 16px",
+        "tag": "DIV",
+        "w": 1280,
+        "x": 320
+      },
+      {
+        "cls": "flex-1",
+        "max": "none",
+        "padding": "0px",
+        "tag": "MAIN",
+        "w": 1920,
+        "x": 0
+      },
+      {
+        "cls": "",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/about"
+  },
+  {
+    "rows": [
+      {
+        "cls": "mb-8 text-3xl font-bold tracking-tight",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 1248,
+        "x": 336
+      },
+      {
+        "cls": "mx-auto max-w-7xl px-4 py-12",
+        "max": "1280px",
+        "padding": "48px 16px",
+        "tag": "DIV",
+        "w": 1280,
+        "x": 320
+      },
+      {
+        "cls": "flex-1",
+        "max": "none",
+        "padding": "0px",
+        "tag": "MAIN",
+        "w": 1920,
+        "x": 0
+      },
+      {
+        "cls": "",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/privacy"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-fg mb-2 text-3xl font-bold",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 720,
+        "x": 600
+      },
+      {
+        "cls": "mx-auto max-w-3xl px-4 py-10 lg:px-6",
+        "max": "768px",
+        "padding": "40px 24px",
+        "tag": "DIV",
+        "w": 768,
+        "x": 576
+      },
+      {
+        "cls": "flex-1",
+        "max": "none",
+        "padding": "0px",
+        "tag": "MAIN",
+        "w": 1920,
+        "x": 0
+      },
+      {
+        "cls": "",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/kyc"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-fg text-display font-semibold tracking-tight",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 348.421875,
+        "x": 481
+      },
+      {
+        "cls": "flex flex-col gap-3",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 348.421875,
+        "x": 481
+      },
+      {
+        "cls": "relative flex items-center justify-between gap-6",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 958,
+        "x": 481
+      },
+      {
+        "cls": "border-border-divider bg-bg-card relative overflow-hidden rounded-3xl border px-5 py-7 md:px-7 md:py-9",
+        "max": "none",
+        "padding": "36px 28px",
+        "tag": "SECTION",
+        "w": 1016,
+        "x": 452
+      }
+    ],
+    "url": "/zh-TW/referrals"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-fg text-display font-semibold tracking-tight",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 720,
+        "x": 600
+      },
+      {
+        "cls": "flex flex-col gap-2",
+        "max": "none",
+        "padding": "0px",
+        "tag": "HEADER",
+        "w": 720,
+        "x": 600
+      },
+      {
+        "cls": "mx-auto flex max-w-3xl flex-col gap-6 px-4 py-10 lg:px-6",
+        "max": "768px",
+        "padding": "40px 24px",
+        "tag": "DIV",
+        "w": 768,
+        "x": 576
+      },
+      {
+        "cls": "flex-1",
+        "max": "none",
+        "padding": "0px",
+        "tag": "MAIN",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/joint-account"
+  },
+  {
+    "rows": [
+      {
+        "cls": "text-fg mb-2 text-3xl font-bold",
+        "max": "none",
+        "padding": "0px",
+        "tag": "H1",
+        "w": 1232,
+        "x": 344
+      },
+      {
+        "cls": "mx-auto max-w-7xl px-4 py-10 lg:px-6",
+        "max": "1280px",
+        "padding": "40px 24px",
+        "tag": "DIV",
+        "w": 1280,
+        "x": 320
+      },
+      {
+        "cls": "flex-1",
+        "max": "none",
+        "padding": "0px",
+        "tag": "MAIN",
+        "w": 1920,
+        "x": 0
+      },
+      {
+        "cls": "",
+        "max": "none",
+        "padding": "0px",
+        "tag": "DIV",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/help-center"
+  },
+  {
+    "rows": [
+      {
+        "cls": "font-display text-fg max-w-2xl text-2xl tracking-tight md:text-4xl",
+        "max": "672px",
+        "padding": "0px",
+        "tag": "H2",
+        "w": 672,
+        "x": 392
+      },
+      {
+        "cls": "mx-auto max-w-[1200px] px-6 lg:px-8",
+        "max": "1200px",
+        "padding": "0px 32px",
+        "tag": "DIV",
+        "w": 1200,
+        "x": 360
+      },
+      {
+        "cls": "border-border-divider border-t py-12 md:py-20",
+        "max": "none",
+        "padding": "80px 0px",
+        "tag": "SECTION",
+        "w": 1920,
+        "x": 0
+      },
+      {
+        "cls": "flex-1",
+        "max": "none",
+        "padding": "0px",
+        "tag": "MAIN",
+        "w": 1920,
+        "x": 0
+      }
+    ],
+    "url": "/zh-TW/charity"
+  }
+]

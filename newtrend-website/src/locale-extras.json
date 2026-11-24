@@ -1,0 +1,891 @@
+{
+  "本地介面演示 · 靜態行情 · 不連接真實交易": {
+    "en-US": "Local preview · Market snapshot · No live trading",
+    "fr-FR": "Aperçu local · Cours instantanés · Sans transactions réelles",
+    "de-DE": "Lokale Vorschau · Marktdaten-Snapshot · Kein Live-Handel",
+    "ja-JP": "ローカルプレビュー · 参考相場 · 実際の取引なし",
+    "ko-KR": "로컬 미리보기 · 시세 스냅샷 · 실제 거래 없음"
+  },
+  "← 返回": {
+    "en-US": "← Back",
+    "fr-FR": "← Retour",
+    "de-DE": "← Zurück",
+    "ja-JP": "← 戻る",
+    "ko-KR": "← 뒤로"
+  },
+  "8–30 位字元": {
+    "en-US": "8–30 characters",
+    "fr-FR": "8 à 30 caractères",
+    "de-DE": "8–30 Zeichen",
+    "ja-JP": "8～30文字",
+    "ko-KR": "8~30자"
+  },
+  "僅可包含 6 位數字": {
+    "en-US": "Exactly 6 digits",
+    "fr-FR": "Exactement 6 chiffres",
+    "de-DE": "Genau 6 Ziffern",
+    "ja-JP": "数字6桁のみ",
+    "ko-KR": "숫자 6자리"
+  },
+  "請檢查密碼規則": {
+    "en-US": "Check the password requirements",
+    "fr-FR": "Vérifiez les règles du mot de passe",
+    "de-DE": "Passwortanforderungen prüfen",
+    "ja-JP": "パスワードの要件を確認してください",
+    "ko-KR": "비밀번호 요구 사항을 확인하세요"
+  },
+  "本地演示驗證碼：123456": {
+    "en-US": "Local demo code: 123456",
+    "fr-FR": "Code de démonstration local : 123456",
+    "de-DE": "Lokaler Demo-Code: 123456",
+    "ja-JP": "ローカルデモコード：123456",
+    "ko-KR": "로컬 데모 코드: 123456"
+  },
+  "本地演示密鑰，不可用於真實帳戶。": {
+    "en-US": "Demo key only. Not valid for a real account.",
+    "fr-FR": "Clé de démonstration, inutilisable sur un compte réel.",
+    "de-DE": "Demo-Schlüssel, nicht für echte Konten gültig.",
+    "ja-JP": "デモ用キーです。実際のアカウントには使用できません。",
+    "ko-KR": "데모 키입니다. 실제 계정에 사용할 수 없습니다."
+  },
+  "1　個人信息": {
+    "en-US": "1　Personal information",
+    "fr-FR": "1　Informations personnelles",
+    "de-DE": "1　Persönliche Angaben",
+    "ja-JP": "1　個人情報",
+    "ko-KR": "1　개인 정보"
+  },
+  "2　證件上傳": {
+    "en-US": "2　Upload documents",
+    "fr-FR": "2　Importer les documents",
+    "de-DE": "2　Dokumente hochladen",
+    "ja-JP": "2　本人確認書類",
+    "ko-KR": "2　신분증 업로드"
+  },
+  "僅使用虛構資料與演示圖片。檔案不會上傳。": {
+    "en-US": "Use fictional details and demo images. Files stay on this device.",
+    "fr-FR": "Utilisez des données fictives. Les fichiers restent sur cet appareil.",
+    "de-DE": "Nur fiktive Angaben und Demobilder. Dateien bleiben auf diesem Gerät.",
+    "ja-JP": "架空の情報とデモ画像を使用してください。ファイルは送信されません。",
+    "ko-KR": "가상 정보와 데모 이미지를 사용하세요. 파일은 전송되지 않습니다."
+  },
+  "本地申請不建立真實聯名帳戶。": {
+    "en-US": "This demo does not open a real joint account.",
+    "fr-FR": "Cette démonstration ne crée aucun compte joint réel.",
+    "de-DE": "Diese Demo eröffnet kein echtes Gemeinschaftskonto.",
+    "ja-JP": "このデモでは実際の共同口座は開設されません。",
+    "ko-KR": "이 데모는 실제 공동 계좌를 개설하지 않습니다."
+  },
+  "主申請人 · 您": {
+    "en-US": "Primary applicant · You",
+    "fr-FR": "Demandeur principal · Vous",
+    "de-DE": "Hauptantragsteller · Sie",
+    "ja-JP": "主申請者 · あなた",
+    "ko-KR": "주 신청자 · 본인"
+  },
+  "請選擇檔案": {
+    "en-US": "Select a file",
+    "fr-FR": "Sélectionnez un fichier",
+    "de-DE": "Datei auswählen",
+    "ja-JP": "ファイルを選択",
+    "ko-KR": "파일 선택"
+  },
+  "僅支援 JPG、PNG 或 PDF": {
+    "en-US": "JPG, PNG or PDF only",
+    "fr-FR": "JPG, PNG ou PDF uniquement",
+    "de-DE": "Nur JPG, PNG oder PDF",
+    "ja-JP": "JPG、PNG、PDFのみ",
+    "ko-KR": "JPG, PNG 또는 PDF만 지원"
+  },
+  "檔案過大": {
+    "en-US": "File is too large",
+    "fr-FR": "Fichier trop volumineux",
+    "de-DE": "Datei zu groß",
+    "ja-JP": "ファイルサイズが大きすぎます",
+    "ko-KR": "파일이 너무 큽니다"
+  },
+  "複製 UID": {
+    "en-US": "Copy UID",
+    "fr-FR": "Copier l’UID",
+    "de-DE": "UID kopieren",
+    "ja-JP": "UIDをコピー",
+    "ko-KR": "UID 복사"
+  },
+  "跳至主要內容": {
+    "en-US": "Skip to main content",
+    "fr-FR": "Aller au contenu principal",
+    "de-DE": "Zum Hauptinhalt",
+    "ja-JP": "メインコンテンツへ",
+    "ko-KR": "본문으로 건너뛰기"
+  },
+  "主要導覽": {
+    "en-US": "Main navigation",
+    "fr-FR": "Navigation principale",
+    "de-DE": "Hauptnavigation",
+    "ja-JP": "メインナビゲーション",
+    "ko-KR": "주 탐색"
+  },
+  "沒有符合的交易對": {
+    "en-US": "No matching markets",
+    "fr-FR": "Aucun marché correspondant",
+    "de-DE": "Keine passenden Märkte",
+    "ja-JP": "該当する市場はありません",
+    "ko-KR": "일치하는 시장이 없습니다"
+  },
+  "明細": {
+    "en-US": "Details",
+    "fr-FR": "Détails",
+    "de-DE": "Details",
+    "ja-JP": "明細",
+    "ko-KR": "상세"
+  },
+  "資產 / 可用餘額": {
+    "en-US": "Asset / Available balance",
+    "fr-FR": "Actif / Solde disponible",
+    "de-DE": "Vermögenswert / Verfügbar",
+    "ja-JP": "資産 / 利用可能残高",
+    "ko-KR": "자산 / 사용 가능 잔액"
+  },
+  "← 返回資產": {
+    "en-US": "← Back to assets",
+    "fr-FR": "← Retour aux actifs",
+    "de-DE": "← Zurück zu Vermögen",
+    "ja-JP": "← 資産へ戻る",
+    "ko-KR": "← 자산으로 돌아가기"
+  },
+  "⇅ 交換方向": {
+    "en-US": "⇅ Swap direction",
+    "fr-FR": "⇅ Inverser",
+    "de-DE": "⇅ Richtung wechseln",
+    "ja-JP": "⇅ 方向を切替",
+    "ko-KR": "⇅ 방향 바꾸기"
+  },
+  "劃轉數量": {
+    "en-US": "Transfer amount",
+    "fr-FR": "Montant du transfert",
+    "de-DE": "Transferbetrag",
+    "ja-JP": "振替数量",
+    "ko-KR": "이체 금액"
+  },
+  "全部記錄": {
+    "en-US": "All records",
+    "fr-FR": "Tous les historiques",
+    "de-DE": "Alle Einträge",
+    "ja-JP": "すべての履歴",
+    "ko-KR": "전체 내역"
+  },
+  "暫無記錄": {
+    "en-US": "No records yet",
+    "fr-FR": "Aucun historique",
+    "de-DE": "Noch keine Einträge",
+    "ja-JP": "履歴はありません",
+    "ko-KR": "내역이 없습니다"
+  },
+  "≈ 年化": {
+    "en-US": "≈ Annualized",
+    "fr-FR": "≈ Annualisé",
+    "de-DE": "≈ Annualisiert",
+    "ja-JP": "≈ 年率",
+    "ko-KR": "≈ 연율"
+  },
+  "日利率最高 0.0273%": {
+    "en-US": "Daily rate up to 0.0273%",
+    "fr-FR": "Taux journalier jusqu’à 0,0273 %",
+    "de-DE": "Tageszins bis zu 0,0273 %",
+    "ja-JP": "日利最大0.0273%",
+    "ko-KR": "일 이율 최대 0.0273%"
+  },
+  "3 款產品": {
+    "en-US": "3 products",
+    "fr-FR": "3 produits",
+    "de-DE": "3 Produkte",
+    "ja-JP": "3商品",
+    "ko-KR": "상품 3개"
+  },
+  "申購 ›": {
+    "en-US": "Subscribe ›",
+    "fr-FR": "Souscrire ›",
+    "de-DE": "Zeichnen ›",
+    "ja-JP": "申し込む ›",
+    "ko-KR": "가입 ›"
+  },
+  "私人 ·": {
+    "en-US": "Private ·",
+    "fr-FR": "Privé ·",
+    "de-DE": "Privat ·",
+    "ja-JP": "非公開 ·",
+    "ko-KR": "비공개 ·"
+  },
+  "運行中的實例": {
+    "en-US": "Running instances",
+    "fr-FR": "Instances en cours",
+    "de-DE": "Laufende Instanzen",
+    "ja-JP": "稼働中のインスタンス",
+    "ko-KR": "실행 중 인스턴스"
+  },
+  "申購與利息": {
+    "en-US": "Subscriptions and interest",
+    "fr-FR": "Souscriptions et intérêts",
+    "de-DE": "Zeichnungen und Zinsen",
+    "ja-JP": "申込と利息",
+    "ko-KR": "가입 및 이자"
+  },
+  "MA 指標": {
+    "en-US": "MA indicator",
+    "fr-FR": "Indicateur MA",
+    "de-DE": "MA-Indikator",
+    "ja-JP": "MA指標",
+    "ko-KR": "MA 지표"
+  },
+  "價格 (USD)": {
+    "en-US": "Price (USD)",
+    "fr-FR": "Prix (USD)",
+    "de-DE": "Preis (USD)",
+    "ja-JP": "価格 (USD)",
+    "ko-KR": "가격 (USD)"
+  },
+  "金額 (USD)": {
+    "en-US": "Amount (USD)",
+    "fr-FR": "Montant (USD)",
+    "de-DE": "Betrag (USD)",
+    "ja-JP": "金額 (USD)",
+    "ko-KR": "금액 (USD)"
+  },
+  "＋ 劃轉": {
+    "en-US": "＋ Transfer",
+    "fr-FR": "＋ Transférer",
+    "de-DE": "＋ Transfer",
+    "ja-JP": "＋ 振替",
+    "ko-KR": "＋ 이체"
+  },
+  "多倉": {
+    "en-US": "Long",
+    "fr-FR": "Long",
+    "de-DE": "Long",
+    "ja-JP": "ロング",
+    "ko-KR": "롱"
+  },
+  "空倉": {
+    "en-US": "Short",
+    "fr-FR": "Short",
+    "de-DE": "Short",
+    "ja-JP": "ショート",
+    "ko-KR": "숏"
+  },
+  "市場快照 ·": {
+    "en-US": "Market snapshot ·",
+    "fr-FR": "Instantané du marché ·",
+    "de-DE": "Markt-Snapshot ·",
+    "ja-JP": "市場スナップショット ·",
+    "ko-KR": "시장 스냅샷 ·"
+  },
+  "● 連線穩定 · 本地演示": {
+    "en-US": "● Connected · Local demo",
+    "fr-FR": "● Connecté · Démo locale",
+    "de-DE": "● Verbunden · Lokale Demo",
+    "ja-JP": "● 接続済み · ローカルデモ",
+    "ko-KR": "● 연결됨 · 로컬 데모"
+  },
+  "本地模擬行情與委託，不連接交易服務。": {
+    "en-US": "Simulated prices and orders. No trading service connected.",
+    "fr-FR": "Cours et ordres simulés. Aucun service de trading connecté.",
+    "de-DE": "Simulierte Kurse und Aufträge. Kein Handelsdienst verbunden.",
+    "ja-JP": "模擬相場と注文です。取引サービスには接続しません。",
+    "ko-KR": "모의 시세와 주문입니다. 거래 서비스에 연결되지 않습니다."
+  },
+  "秒": {
+    "en-US": " seconds",
+    "fr-FR": " secondes",
+    "de-DE": " Sekunden",
+    "ja-JP": " 秒",
+    "ko-KR": " 초"
+  },
+  "天": {
+    "en-US": " days",
+    "fr-FR": " jours",
+    "de-DE": " Tage",
+    "ja-JP": " 日",
+    "ko-KR": " 일"
+  },
+  "小時前": {
+    "en-US": " hours ago",
+    "fr-FR": " heures auparavant",
+    "de-DE": " Stunden zuvor",
+    "ja-JP": " 時間前",
+    "ko-KR": " 시간 전"
+  },
+  "馬克·祖克柏": {
+    "en-US": "Mark Zuckerberg",
+    "fr-FR": "Mark Zuckerberg",
+    "de-DE": "Mark Zuckerberg",
+    "ja-JP": "マーク・ザッカーバーグ",
+    "ko-KR": "마크 저커버그"
+  },
+  "傑里米·科勒": {
+    "en-US": "Jeremy Coller",
+    "fr-FR": "Jeremy Coller",
+    "de-DE": "Jeremy Coller",
+    "ja-JP": "ジェレミー・コラー",
+    "ko-KR": "제러미 콜러"
+  },
+  "雷·達裡奧": {
+    "en-US": "Ray Dalio",
+    "fr-FR": "Ray Dalio",
+    "de-DE": "Ray Dalio",
+    "ja-JP": "レイ・ダリオ",
+    "ko-KR": "레이 달리오"
+  },
+  "凱西·伍德": {
+    "en-US": "Cathie Wood",
+    "fr-FR": "Cathie Wood",
+    "de-DE": "Cathie Wood",
+    "ja-JP": "キャシー・ウッド",
+    "ko-KR": "캐시 우드"
+  },
+  "探索多元資產、智能交易工具與更靈活的交易體驗。": {
+    "en-US": "Explore global markets and smarter trading tools.",
+    "fr-FR": "Explorez les marchés et des outils de trading intelligents.",
+    "de-DE": "Globale Märkte und intelligente Handelstools entdecken.",
+    "ja-JP": "世界の市場とスマートな取引ツールを探索。",
+    "ko-KR": "글로벌 시장과 스마트 거래 도구를 만나보세요."
+  },
+  "本地介面演示：請使用虛構資料。資料不會送往原站，也不會儲存密碼。": {
+    "en-US": "Local demo: use fictional details. No data is sent to the original site and passwords are not stored.",
+    "fr-FR": "Démo locale : données fictives uniquement. Aucun envoi au site original, aucun stockage des mots de passe.",
+    "de-DE": "Lokale Demo: nur fiktive Angaben. Keine Übertragung an die Originalseite oder Speicherung von Passwörtern.",
+    "ja-JP": "ローカルデモです。架空の情報を使用してください。元サイトへの送信やパスワードの保存は行いません。",
+    "ko-KR": "로컬 데모입니다. 가상 정보를 사용하세요. 원본 사이트로 전송하거나 비밀번호를 저장하지 않습니다."
+  },
+  "顯示密碼": {
+    "en-US": "Show password",
+    "fr-FR": "Afficher le mot de passe",
+    "de-DE": "Passwort anzeigen",
+    "ja-JP": "パスワードを表示",
+    "ko-KR": "비밀번호 표시"
+  },
+  "隱藏密碼": {
+    "en-US": "Hide password",
+    "fr-FR": "Masquer le mot de passe",
+    "de-DE": "Passwort ausblenden",
+    "ja-JP": "パスワードを非表示",
+    "ko-KR": "비밀번호 숨기기"
+  },
+  "尚有未提交內容，請使用右上角關閉或取消退出。": {
+    "en-US": "Unsaved content. Use Close or Cancel to leave.",
+    "fr-FR": "Contenu non envoyé. Utilisez Fermer ou Annuler pour quitter.",
+    "de-DE": "Nicht gespeicherter Inhalt. Mit Schließen oder Abbrechen verlassen.",
+    "ja-JP": "未送信の内容があります。閉じるかキャンセルで終了してください。",
+    "ko-KR": "미제출 내용이 있습니다. 닫기 또는 취소를 사용하세요."
+  },
+  "演示操作已完成，沒有發送真實交易。": {
+    "en-US": "Demo completed. No real transaction was sent.",
+    "fr-FR": "Démo terminée. Aucune transaction réelle envoyée.",
+    "de-DE": "Demo abgeschlossen. Keine echte Transaktion gesendet.",
+    "ja-JP": "デモ完了。実際の取引は送信されていません。",
+    "ko-KR": "데모 완료. 실제 거래는 전송되지 않았습니다."
+  },
+  "這是本地介面演示，未連接原站帳戶服務。": {
+    "en-US": "Local interface demo. Not connected to the original account service.",
+    "fr-FR": "Démo locale sans connexion aux comptes du site original.",
+    "de-DE": "Lokale Demo ohne Verbindung zum ursprünglichen Kontodienst.",
+    "ja-JP": "ローカルデモです。元サイトのアカウントサービスには接続しません。",
+    "ko-KR": "로컬 데모입니다. 원본 계정 서비스에 연결되지 않습니다."
+  },
+  "歡迎聯絡 NewQuantCapital 客服": {
+    "en-US": "Welcome to NewQuantCapital Support",
+    "fr-FR": "Bienvenue chez l’assistance NewQuantCapital",
+    "de-DE": "Willkommen beim NewQuantCapital Support",
+    "ja-JP": "NewQuantCapitalサポートへようこそ",
+    "ko-KR": "NewQuantCapital 고객지원에 오신 것을 환영합니다"
+  },
+  "請描述您的問題": {
+    "en-US": "Describe your issue",
+    "fr-FR": "Décrivez votre problème",
+    "de-DE": "Beschreiben Sie Ihr Anliegen",
+    "ja-JP": "お問い合わせ内容を入力",
+    "ko-KR": "문의 내용을 입력하세요"
+  },
+  "本地展示不會發送訊息至原站客服。": {
+    "en-US": "Messages are not sent to the original support team.",
+    "fr-FR": "Aucun message envoyé à l’assistance du site original.",
+    "de-DE": "Nachrichten werden nicht an den ursprünglichen Support gesendet.",
+    "ja-JP": "元サイトのサポートへメッセージは送信されません。",
+    "ko-KR": "원본 고객지원으로 메시지가 전송되지 않습니다."
+  },
+  "演示訊息已顯示，未發送至外部。": {
+    "en-US": "Demo message shown locally. Nothing was sent.",
+    "fr-FR": "Message affiché localement. Aucun envoi effectué.",
+    "de-DE": "Demo-Nachricht lokal angezeigt. Nichts gesendet.",
+    "ja-JP": "デモメッセージを表示しました。外部送信はありません。",
+    "ko-KR": "데모 메시지가 표시되었습니다. 외부 전송은 없습니다."
+  },
+  "· 本地模擬操作": {
+    "en-US": " · Local simulation",
+    "fr-FR": " · Simulation locale",
+    "de-DE": " · Lokale Simulation",
+    "ja-JP": " · ローカルシミュレーション",
+    "ko-KR": " · 로컬 시뮬레이션"
+  },
+  "申購前請查看各產品的條款與贖回規則。收益為原站展示的預估值，可能變動。": {
+    "en-US": "Review each product’s terms and redemption rules. Displayed returns are estimates and may change.",
+    "fr-FR": "Consultez les conditions et règles de rachat. Les rendements estimés peuvent varier.",
+    "de-DE": "Produktbedingungen und Rückgaberegeln beachten. Geschätzte Erträge können sich ändern.",
+    "ja-JP": "商品条件と償還規則をご確認ください。表示利回りは推定値で変動します。",
+    "ko-KR": "상품 약관과 환매 규정을 확인하세요. 표시 수익률은 추정치로 변동될 수 있습니다."
+  },
+  "關於 NewQuantCapital": {
+    "en-US": "About NewQuantCapital",
+    "fr-FR": "À propos de NewQuantCapital",
+    "de-DE": "Über NewQuantCapital",
+    "ja-JP": "NewQuantCapitalについて",
+    "ko-KR": "NewQuantCapital 소개"
+  },
+  "聯絡我們": {
+    "en-US": "Contact us",
+    "fr-FR": "Contactez-nous",
+    "de-DE": "Kontakt",
+    "ja-JP": "お問い合わせ",
+    "ko-KR": "문의하기"
+  },
+  "資產總覽": {
+    "en-US": "Assets overview",
+    "fr-FR": "Vue d’ensemble des actifs",
+    "de-DE": "Vermögensübersicht",
+    "ja-JP": "資産概要",
+    "ko-KR": "자산 개요"
+  },
+  "身分驗證": {
+    "en-US": "Identity verification",
+    "fr-FR": "Vérification d’identité",
+    "de-DE": "Identitätsprüfung",
+    "ja-JP": "本人確認",
+    "ko-KR": "본인 인증"
+  },
+  "訊息": {
+    "en-US": "Message",
+    "fr-FR": "Message",
+    "de-DE": "Nachricht",
+    "ja-JP": "メッセージ",
+    "ko-KR": "메시지"
+  },
+  "关闭": {
+    "en-US": "Close",
+    "fr-FR": "Fermer",
+    "de-DE": "Schließen",
+    "ja-JP": "閉じる",
+    "ko-KR": "닫기"
+  },
+  "可用餘額不足。這是本地演示，切換至「模擬」可體驗操作。": {
+    "en-US": "Insufficient balance. Switch to Demo to try this locally.",
+    "fr-FR": "Solde insuffisant. Passez en mode Démo pour essayer.",
+    "de-DE": "Unzureichendes Guthaben. Zum Testen auf Demo wechseln.",
+    "ja-JP": "残高不足です。デモに切り替えてお試しください。",
+    "ko-KR": "잔액이 부족합니다. 데모로 전환하여 체험하세요."
+  },
+  "可用餘額不足，請切換模擬帳戶體驗": {
+    "en-US": "Insufficient balance. Switch to the demo account.",
+    "fr-FR": "Solde insuffisant. Passez au compte démo.",
+    "de-DE": "Unzureichendes Guthaben. Zum Demokonto wechseln.",
+    "ja-JP": "残高不足です。デモ口座に切り替えてください。",
+    "ko-KR": "잔액 부족. 데모 계정으로 전환하세요."
+  },
+  "已建立（模擬）": {
+    "en-US": "Created (demo)",
+    "fr-FR": "Créé (démo)",
+    "de-DE": "Erstellt (Demo)",
+    "ja-JP": "作成済み（デモ）",
+    "ko-KR": "생성됨 (데모)"
+  },
+  "影片載入失敗，請稍後再試。": {
+    "en-US": "Video failed to load. Try again later.",
+    "fr-FR": "Chargement vidéo impossible. Réessayez plus tard.",
+    "de-DE": "Video konnte nicht geladen werden. Später erneut versuchen.",
+    "ja-JP": "動画を読み込めません。後でもう一度お試しください。",
+    "ko-KR": "영상을 불러오지 못했습니다. 나중에 다시 시도하세요."
+  },
+  "本地前端演示不會要求錢包授權或簽名。": {
+    "en-US": "This local demo does not request wallet permissions or signatures.",
+    "fr-FR": "Cette démo ne demande ni autorisation ni signature de portefeuille.",
+    "de-DE": "Diese Demo fordert keine Wallet-Berechtigung oder Signatur an.",
+    "ja-JP": "このデモではウォレットの許可や署名を求めません。",
+    "ko-KR": "이 데모는 지갑 권한이나 서명을 요청하지 않습니다."
+  },
+  "連接演示錢包": {
+    "en-US": "Connect demo wallet",
+    "fr-FR": "Connecter le portefeuille démo",
+    "de-DE": "Demo-Wallet verbinden",
+    "ja-JP": "デモウォレットを接続",
+    "ko-KR": "데모 지갑 연결"
+  },
+  "已連接本地演示帳戶": {
+    "en-US": "Local demo account connected",
+    "fr-FR": "Compte démo local connecté",
+    "de-DE": "Lokales Demokonto verbunden",
+    "ja-JP": "ローカルデモ口座に接続済み",
+    "ko-KR": "로컬 데모 계정 연결됨"
+  },
+  "暫無新訊息": {
+    "en-US": "No new messages",
+    "fr-FR": "Aucun nouveau message",
+    "de-DE": "Keine neuen Nachrichten",
+    "ja-JP": "新しいメッセージはありません",
+    "ko-KR": "새 메시지 없음"
+  },
+  "暫無公告": {
+    "en-US": "No announcements",
+    "fr-FR": "Aucune annonce",
+    "de-DE": "Keine Ankündigungen",
+    "ja-JP": "お知らせはありません",
+    "ko-KR": "공지 없음"
+  },
+  "委託數量": {
+    "en-US": "Order quantity",
+    "fr-FR": "Quantité de l’ordre",
+    "de-DE": "Auftragsmenge",
+    "ja-JP": "注文数量",
+    "ko-KR": "주문 수량"
+  },
+  "委託摘要": {
+    "en-US": "Order summary",
+    "fr-FR": "Résumé de l’ordre",
+    "de-DE": "Auftragsübersicht",
+    "ja-JP": "注文概要",
+    "ko-KR": "주문 요약"
+  },
+  "確認委託": {
+    "en-US": "Confirm order",
+    "fr-FR": "Confirmer l’ordre",
+    "de-DE": "Auftrag bestätigen",
+    "ja-JP": "注文を確認",
+    "ko-KR": "주문 확인"
+  },
+  "天後": {
+    "en-US": " days later",
+    "fr-FR": " jours plus tard",
+    "de-DE": " Tage später",
+    "ja-JP": " 日後",
+    "ko-KR": " 일 후"
+  },
+  "轉出與轉入帳戶不能相同": {
+    "en-US": "Choose different source and destination accounts",
+    "fr-FR": "Choisissez deux comptes différents",
+    "de-DE": "Quell- und Zielkonto müssen verschieden sein",
+    "ja-JP": "振替元と振替先を別の口座にしてください",
+    "ko-KR": "출금 계정과 입금 계정은 달라야 합니다"
+  },
+  "演示劃轉已完成，已加入記錄。": {
+    "en-US": "Demo transfer completed and added to records.",
+    "fr-FR": "Transfert démo terminé et enregistré.",
+    "de-DE": "Demo-Transfer abgeschlossen und erfasst.",
+    "ja-JP": "デモ振替を完了し履歴に追加しました。",
+    "ko-KR": "데모 이체가 완료되어 내역에 추가되었습니다."
+  },
+  "本地演示記錄，不執行真實資金劃轉。": {
+    "en-US": "Local demo records. No real funds are transferred.",
+    "fr-FR": "Historique de démo. Aucun transfert réel.",
+    "de-DE": "Lokale Demo-Einträge. Kein echter Geldtransfer.",
+    "ja-JP": "ローカルデモ履歴です。実際の資金は移動しません。",
+    "ko-KR": "로컬 데모 내역입니다. 실제 자금은 이체되지 않습니다."
+  },
+  "重設密碼": {
+    "en-US": "Reset password",
+    "fr-FR": "Réinitialiser le mot de passe",
+    "de-DE": "Passwort zurücksetzen",
+    "ja-JP": "パスワードをリセット",
+    "ko-KR": "비밀번호 재설정"
+  },
+  "請輸入": {
+    "en-US": "Enter",
+    "fr-FR": "Saisir",
+    "de-DE": "Eingeben",
+    "ja-JP": "入力してください",
+    "ko-KR": "입력하세요"
+  },
+  "演示重設流程已完成，不會寄送電子郵件。": {
+    "en-US": "Demo reset complete. No email was sent.",
+    "fr-FR": "Réinitialisation démo terminée. Aucun e-mail envoyé.",
+    "de-DE": "Demo-Zurücksetzung abgeschlossen. Keine E-Mail gesendet.",
+    "ja-JP": "デモリセット完了。メールは送信されていません。",
+    "ko-KR": "데모 재설정 완료. 이메일은 전송되지 않았습니다."
+  },
+  "演示密碼至少需要 6 個字元": {
+    "en-US": "Demo password needs at least 6 characters",
+    "fr-FR": "Au moins 6 caractères pour le mot de passe démo",
+    "de-DE": "Demo-Passwort benötigt mindestens 6 Zeichen",
+    "ja-JP": "デモパスワードは6文字以上必要です",
+    "ko-KR": "데모 비밀번호는 6자 이상이어야 합니다"
+  },
+  "請選擇 PNG 或 JPEG 圖片": {
+    "en-US": "Select a PNG or JPEG image",
+    "fr-FR": "Sélectionnez une image PNG ou JPEG",
+    "de-DE": "PNG- oder JPEG-Bild auswählen",
+    "ja-JP": "PNGまたはJPEG画像を選択",
+    "ko-KR": "PNG 또는 JPEG 이미지 선택"
+  },
+  "圖片不可超過 10 MB": {
+    "en-US": "Image must not exceed 10 MB",
+    "fr-FR": "Image limitée à 10 Mo",
+    "de-DE": "Bild darf 10 MB nicht überschreiten",
+    "ja-JP": "画像は10 MB以下にしてください",
+    "ko-KR": "이미지는 10 MB 이하여야 합니다"
+  },
+  "充值演示申請": {
+    "en-US": "Demo deposit request",
+    "fr-FR": "Demande de dépôt démo",
+    "de-DE": "Demo-Einzahlungsantrag",
+    "ja-JP": "デモ入金申請",
+    "ko-KR": "데모 입금 신청"
+  },
+  "提現演示申請": {
+    "en-US": "Demo withdrawal request",
+    "fr-FR": "Demande de retrait démo",
+    "de-DE": "Demo-Auszahlungsantrag",
+    "ja-JP": "デモ出金申請",
+    "ko-KR": "데모 출금 신청"
+  },
+  "本地演示已完成。未傳送資料、未執行轉帳。": {
+    "en-US": "Local demo completed. No data or funds were sent.",
+    "fr-FR": "Démo terminée. Aucun envoi de données ou de fonds.",
+    "de-DE": "Demo abgeschlossen. Keine Daten oder Gelder übertragen.",
+    "ja-JP": "デモ完了。データ送信や送金は行われていません。",
+    "ko-KR": "데모 완료. 데이터나 자금은 전송되지 않았습니다."
+  },
+  "公益輪播第": {
+    "en-US": "Charity slide",
+    "fr-FR": "Diapositive caritative",
+    "de-DE": "Spendenfolie",
+    "ja-JP": "支援スライド",
+    "ko-KR": "기부 슬라이드"
+  },
+  "張：": {
+    "en-US": ":",
+    "fr-FR": " :",
+    "de-DE": ":",
+    "ja-JP": "：",
+    "ko-KR": ":"
+  },
+  "以區塊鏈連接愛心，讓每一份支持化為真實的改變。一起為需要幫助的人們，帶來希望與機會。": {
+    "en-US": "Connect generosity with meaningful change and bring hope to communities in need.",
+    "fr-FR": "Transformez la générosité en changement et apportez de l’espoir aux communautés.",
+    "de-DE": "Großzügigkeit in Veränderung verwandeln und Gemeinschaften Hoffnung geben.",
+    "ja-JP": "支援を確かな変化につなげ、助けを必要とする地域に希望を届けます。",
+    "ko-KR": "나눔을 실질적 변화로 이어 도움이 필요한 지역에 희망을 전합니다."
+  },
+  "以上為原站展示數據的靜態快照；本地捐贈僅作交互演示。": {
+    "en-US": "Source figures are a snapshot. Local donations are demonstrations only.",
+    "fr-FR": "Chiffres instantanés du site source. Les dons locaux sont simulés.",
+    "de-DE": "Quelldaten als Snapshot. Lokale Spenden sind nur eine Demo.",
+    "ja-JP": "元サイトの数値はスナップショットです。寄付はデモのみです。",
+    "ko-KR": "원본 수치의 스냅샷입니다. 기부는 데모로만 작동합니다."
+  },
+  "本地演示未連接商家審核服務。": {
+    "en-US": "Merchant review is not connected in this local demo.",
+    "fr-FR": "Aucun service de validation des marchands connecté.",
+    "de-DE": "Keine Händlerprüfung in dieser lokalen Demo verbunden.",
+    "ja-JP": "このデモは加盟店審査サービスに接続していません。",
+    "ko-KR": "이 데모는 판매자 심사 서비스에 연결되지 않습니다."
+  },
+  "暫無": {
+    "en-US": "No",
+    "fr-FR": "Aucun",
+    "de-DE": "Keine",
+    "ja-JP": "なし",
+    "ko-KR": "없음"
+  },
+  "訂單": {
+    "en-US": "Orders",
+    "fr-FR": "Ordres",
+    "de-DE": "Aufträge",
+    "ja-JP": "注文",
+    "ko-KR": "주문"
+  },
+  "本地演示不收集銀行卡或真實收款帳戶資料。": {
+    "en-US": "This demo does not collect bank card or real payout account details.",
+    "fr-FR": "Cette démo ne collecte aucune donnée bancaire réelle.",
+    "de-DE": "Diese Demo erfasst keine echten Bank- oder Auszahlungskonten.",
+    "ja-JP": "このデモは実際の銀行カードや入金口座情報を収集しません。",
+    "ko-KR": "이 데모는 실제 은행 카드나 수취 계정 정보를 수집하지 않습니다."
+  },
+  "確認 C2C": {
+    "en-US": "Confirm C2C",
+    "fr-FR": "Confirmer C2C",
+    "de-DE": "C2C bestätigen",
+    "ja-JP": "C2Cを確認",
+    "ko-KR": "C2C 확인"
+  },
+  "本地演示不產生真實訂單。": {
+    "en-US": "This local demo does not create real orders.",
+    "fr-FR": "Cette démo ne crée aucun ordre réel.",
+    "de-DE": "Diese Demo erstellt keine echten Aufträge.",
+    "ja-JP": "このデモは実際の注文を作成しません。",
+    "ko-KR": "이 데모는 실제 주문을 생성하지 않습니다."
+  },
+  "目前沒有可展示的交易員": {
+    "en-US": "No traders available",
+    "fr-FR": "Aucun trader disponible",
+    "de-DE": "Keine Trader verfügbar",
+    "ja-JP": "表示できるトレーダーはいません",
+    "ko-KR": "표시할 트레이더가 없습니다"
+  },
+  "暫無跟隨": {
+    "en-US": "No following yet",
+    "fr-FR": "Aucun suivi",
+    "de-DE": "Noch keine gefolgten Trader",
+    "ja-JP": "フォローはありません",
+    "ko-KR": "팔로우 없음"
+  },
+  "選擇幣種與網路，輸入提現地址及金額": {
+    "en-US": "Select an asset and network, then enter the destination and amount",
+    "fr-FR": "Choisissez l’actif et le réseau, puis l’adresse et le montant",
+    "de-DE": "Asset und Netzwerk wählen, dann Ziel und Betrag eingeben",
+    "ja-JP": "通貨とネットワークを選び、出金先と金額を入力",
+    "ko-KR": "자산과 네트워크를 선택하고 주소와 금액을 입력하세요"
+  },
+  "本地演示，請勿向任何演示地址轉帳，也無需上傳真實交易憑證。": {
+    "en-US": "Local demo. Do not transfer to demo addresses or provide real receipts.",
+    "fr-FR": "Démo locale. Aucun transfert vers les adresses démo ni justificatif réel.",
+    "de-DE": "Lokale Demo. Keine Überweisungen an Demo-Adressen oder echten Belege.",
+    "ja-JP": "ローカルデモです。デモアドレスへの送金や実際の証明書の提出は不要です。",
+    "ko-KR": "로컬 데모입니다. 데모 주소로 송금하거나 실제 증빙을 제공하지 마세요."
+  },
+  "僅在本機選擇，不上傳檔案": {
+    "en-US": "Selected locally; files are not uploaded",
+    "fr-FR": "Sélection locale sans envoi de fichier",
+    "de-DE": "Lokal ausgewählt; kein Datei-Upload",
+    "ja-JP": "端末内で選択し、アップロードしません",
+    "ko-KR": "로컬에서 선택하며 업로드되지 않습니다"
+  },
+  "提交演示": {
+    "en-US": "Submit demo",
+    "fr-FR": "Envoyer la démo",
+    "de-DE": "Demo absenden",
+    "ja-JP": "デモを送信",
+    "ko-KR": "데모 제출"
+  },
+  "起息後": {
+    "en-US": "After accrual begins",
+    "fr-FR": "Après le début des intérêts",
+    "de-DE": "Nach Zinsbeginn",
+    "ja-JP": "利息開始後",
+    "ko-KR": "이자 발생 후"
+  },
+  "· 本地頁面僅復刻原站展示，不提供真實申購。": {
+    "en-US": "· Local preview only. No real subscription.",
+    "fr-FR": "· Aperçu local sans souscription réelle.",
+    "de-DE": "· Lokale Vorschau ohne echte Zeichnung.",
+    "ja-JP": "· ローカル表示のみ。実際の申込はありません。",
+    "ko-KR": "· 로컬 미리보기이며 실제 가입은 없습니다."
+  },
+  "日利率 ·": {
+    "en-US": "Daily rate ·",
+    "fr-FR": "Taux journalier ·",
+    "de-DE": "Tageszins ·",
+    "ja-JP": "日利 ·",
+    "ko-KR": "일 이율 ·"
+  },
+  "· 起投": {
+    "en-US": "· Minimum",
+    "fr-FR": "· Minimum",
+    "de-DE": "· Mindestbetrag",
+    "ja-JP": "· 最低額",
+    "ko-KR": "· 최소 금액"
+  },
+  "USD 抵押借貸": {
+    "en-US": "USD secured loan",
+    "fr-FR": "Prêt garanti en USD",
+    "de-DE": "Besicherter USD-Kredit",
+    "ja-JP": "USD担保ローン",
+    "ko-KR": "USD 담보 대출"
+  },
+  "瀏覽理財產品 →": {
+    "en-US": "Browse Earn products →",
+    "fr-FR": "Voir les produits Earn →",
+    "de-DE": "Earn-Produkte ansehen →",
+    "ja-JP": "運用商品を見る →",
+    "ko-KR": "금융 상품 보기 →"
+  },
+  "市場行情快照": {
+    "en-US": "Market snapshot",
+    "fr-FR": "Instantané du marché",
+    "de-DE": "Markt-Snapshot",
+    "ja-JP": "市場スナップショット",
+    "ko-KR": "시장 스냅샷"
+  },
+  "低到高": {
+    "en-US": "Low to high",
+    "fr-FR": "Croissant",
+    "de-DE": "Aufsteigend",
+    "ja-JP": "低い順",
+    "ko-KR": "낮은 순"
+  },
+  "訂閱策略": {
+    "en-US": "Subscribe to strategy",
+    "fr-FR": "Souscrire à une stratégie",
+    "de-DE": "Strategie abonnieren",
+    "ja-JP": "戦略を購読",
+    "ko-KR": "전략 구독"
+  },
+  "沒有符合條件的策略模板": {
+    "en-US": "No matching strategy templates",
+    "fr-FR": "Aucun modèle correspondant",
+    "de-DE": "Keine passenden Strategievorlagen",
+    "ja-JP": "該当する戦略テンプレートはありません",
+    "ko-KR": "일치하는 전략 템플릿 없음"
+  },
+  "請先登入本地演示帳戶": {
+    "en-US": "Sign in to the local demo first",
+    "fr-FR": "Connectez-vous à la démo locale",
+    "de-DE": "Zuerst bei der lokalen Demo anmelden",
+    "ja-JP": "先にローカルデモにログインしてください",
+    "ko-KR": "먼저 로컬 데모에 로그인하세요"
+  },
+  "請輸入有效的下單金額": {
+    "en-US": "Enter a valid order amount",
+    "fr-FR": "Saisissez un montant valide",
+    "de-DE": "Gültigen Auftragsbetrag eingeben",
+    "ja-JP": "有効な注文金額を入力",
+    "ko-KR": "유효한 주문 금액을 입력하세요"
+  },
+  "取消自選": {
+    "en-US": "Remove from favorites",
+    "fr-FR": "Retirer des favoris",
+    "de-DE": "Aus Favoriten entfernen",
+    "ja-JP": "お気に入りから削除",
+    "ko-KR": "즐겨찾기 해제"
+  },
+  "以當前市場價格成交": {
+    "en-US": "Execute at the current market price",
+    "fr-FR": "Exécution au prix du marché",
+    "de-DE": "Zum aktuellen Marktpreis ausführen",
+    "ja-JP": "現在の市場価格で約定",
+    "ko-KR": "현재 시장가로 체결"
+  },
+  "使用資金百分比": {
+    "en-US": "Percentage of funds to use",
+    "fr-FR": "Pourcentage des fonds à utiliser",
+    "de-DE": "Anteil des einzusetzenden Guthabens",
+    "ja-JP": "使用資金の割合",
+    "ko-KR": "사용 자금 비율"
+  },
+  "自研量化模型 · 日均 1 筆": {
+    "en-US": "Proprietary quant model · 1 trade/day",
+    "fr-FR": "Modèle quantitatif interne · 1 opération/jour",
+    "de-DE": "Eigenes Quant-Modell · 1 Trade/Tag",
+    "ja-JP": "独自の量的モデル · 1日1取引",
+    "ko-KR": "자체 퀀트 모델 · 하루 1회 거래"
+  },
+  "模擬價格 K 線": {
+    "en-US": "Simulated candlestick chart",
+    "fr-FR": "Graphique en chandeliers simulé",
+    "de-DE": "Simulierter Kerzenchart",
+    "ja-JP": "シミュレーションローソク足チャート",
+    "ko-KR": "모의 캔들 차트"
+  },
+  "服務條款": {
+    "en-US": "Terms of Service",
+    "fr-FR": "Conditions d’utilisation",
+    "de-DE": "Nutzungsbedingungen",
+    "ja-JP": "利用規約",
+    "ko-KR": "이용약관"
+  }
+}

@@ -1,0 +1,3666 @@
+[
+  {
+    "broken": [],
+    "chars": 6920,
+    "overflow": false,
+    "url": "/zh-TW/",
+    "viewport": 390,
+    "wide": [
+      "ticker-track",
+      "",
+      "negative",
+      "",
+      ""
+    ]
+  },
+  {
+    "broken": [],
+    "chars": 4014,
+    "overflow": false,
+    "url": "/zh-TW/trade/options/BTCUSD",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 4024,
+    "overflow": false,
+    "url": "/zh-TW/trade/futures/BTCUSD",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 3982,
+    "overflow": false,
+    "url": "/zh-TW/trade/spot/BTCUSD",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 962,
+    "overflow": false,
+    "url": "/zh-TW/earn/simple",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 335,
+    "overflow": false,
+    "url": "/zh-TW/earn/simple/usdt180",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 325,
+    "overflow": false,
+    "url": "/zh-TW/earn/simple/usdt90",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 325,
+    "overflow": false,
+    "url": "/zh-TW/earn/simple/usdt30",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 316,
+    "overflow": false,
+    "url": "/zh-TW/earn/simple/btc60",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 308,
+    "overflow": false,
+    "url": "/zh-TW/earn/simple/usdt",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 307,
+    "overflow": false,
+    "url": "/zh-TW/earn/simple/usdc",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 301,
+    "overflow": false,
+    "url": "/zh-TW/earn/simple/eth",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 304,
+    "overflow": false,
+    "url": "/zh-TW/earn/simple/btc",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 38,
+    "overflow": false,
+    "url": "/zh-TW/earn/my-earnings",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 150,
+    "overflow": false,
+    "url": "/zh-TW/earn/loan",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 38,
+    "overflow": false,
+    "url": "/zh-TW/earn/loan/my",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 212,
+    "overflow": false,
+    "url": "/zh-TW/ai-quant",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 2749,
+    "overflow": false,
+    "url": "/zh-TW/ai-quant/strategy",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 28,
+    "overflow": false,
+    "url": "/zh-TW/ai-quant/strategy/mine",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 1023,
+    "overflow": false,
+    "url": "/zh-TW/ai-quant/quant-fund",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 20,
+    "overflow": false,
+    "url": "/zh-TW/ai-quant/quant-fund/positions",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 340,
+    "overflow": false,
+    "url": "/zh-TW/assets",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 101,
+    "overflow": false,
+    "url": "/zh-TW/assets/transfer",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 21,
+    "overflow": false,
+    "url": "/zh-TW/assets/records",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 198,
+    "overflow": false,
+    "url": "/zh-TW/deposit",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 120,
+    "overflow": false,
+    "url": "/zh-TW/withdraw",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 336,
+    "overflow": false,
+    "url": "/zh-TW/c2c/buy",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 336,
+    "overflow": false,
+    "url": "/zh-TW/c2c/sell",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 58,
+    "overflow": false,
+    "url": "/zh-TW/c2c/orders",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 67,
+    "overflow": false,
+    "url": "/zh-TW/c2c/accounts",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 102,
+    "overflow": false,
+    "url": "/zh-TW/copytrade",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 788,
+    "overflow": false,
+    "url": "/zh-TW/charity",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 359,
+    "overflow": false,
+    "url": "/zh-TW/profile",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 46,
+    "overflow": false,
+    "url": "/zh-TW/bind-email",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 87,
+    "overflow": false,
+    "url": "/zh-TW/bind-phone",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 103,
+    "overflow": false,
+    "url": "/zh-TW/change-password",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 67,
+    "overflow": false,
+    "url": "/zh-TW/fund-password",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 163,
+    "overflow": false,
+    "url": "/zh-TW/2fa",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 155,
+    "overflow": false,
+    "url": "/zh-TW/devices",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 128,
+    "overflow": false,
+    "url": "/zh-TW/kyc",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 203,
+    "overflow": false,
+    "url": "/zh-TW/kyc/basic",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 59,
+    "overflow": false,
+    "url": "/zh-TW/kyc/advanced",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 264,
+    "overflow": false,
+    "url": "/zh-TW/referrals",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 80,
+    "overflow": false,
+    "url": "/zh-TW/promotions/tasks",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 175,
+    "overflow": false,
+    "url": "/zh-TW/joint-account",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 3275,
+    "overflow": false,
+    "url": "/zh-TW/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 112,
+    "overflow": false,
+    "url": "/zh-TW/help-center",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 9,
+    "overflow": false,
+    "url": "/zh-TW/messages",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 289,
+    "overflow": false,
+    "url": "/zh-TW/login",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 285,
+    "overflow": false,
+    "url": "/zh-TW/register",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 279,
+    "overflow": false,
+    "url": "/zh-TW/forgot-password",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 1365,
+    "overflow": false,
+    "url": "/zh-TW/news",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 588,
+    "overflow": false,
+    "url": "/zh-TW/about",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 2505,
+    "overflow": false,
+    "url": "/zh-TW/privacy",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 6893,
+    "overflow": false,
+    "url": "/zh-TW/agreement",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 4291,
+    "overflow": false,
+    "url": "/zh-TW/content/terms",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 4490,
+    "overflow": false,
+    "url": "/zh-TW/risk-disclosure",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 38,
+    "overflow": false,
+    "url": "/zh-TW/regulatory-information",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 1015,
+    "overflow": false,
+    "url": "/zh-TW/content/regulation-sec",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "overflow": false,
+    "url": "/zh-TW/content/regulation-sfc",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "overflow": false,
+    "url": "/zh-TW/content/regulation-gfsob",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "overflow": false,
+    "url": "/zh-TW/content/regulation-fsra",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "overflow": false,
+    "url": "/zh-TW/content/regulation-fmsb",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 230,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20c28-92d4-70ca-9321-9719f081ac0a",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 219,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20bb6-284f-7066-8b02-ef07c1a9deee",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 275,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20b0c-b412-73dc-b0cb-13724dde6265",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 226,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20ad5-c606-7027-a01f-084b2bbd8979",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 269,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20a63-5e75-7264-b9d4-c461aef875ba",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 208,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20a2c-7746-71ba-9b65-75b18d3b9d5b",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 286,
+    "overflow": false,
+    "url": "/zh-TW/news/01a209f5-821f-70e5-9b95-51e481f100a6",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 252,
+    "overflow": false,
+    "url": "/zh-TW/news/01a209f6-20b0-734e-b54f-aaf1feb519a1",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 246,
+    "overflow": false,
+    "url": "/zh-TW/news/01a209be-924a-7356-a598-f86a820640a0",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 306,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20983-1a13-70b1-8bea-2a64df747dcf",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 288,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20947-8d15-7143-ab8c-ecb051b933cc",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 253,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20947-f68a-709b-b5b6-033228fd5429",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 262,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20910-9b31-7135-9c6a-1cb5ca340109",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 245,
+    "overflow": false,
+    "url": "/zh-TW/news/01a208d9-b144-71a9-955c-13d26553f5eb",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 292,
+    "overflow": false,
+    "url": "/zh-TW/news/01a208da-1cbc-73bc-838a-81fcf37e019e",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 259,
+    "overflow": false,
+    "url": "/zh-TW/news/01a208a2-c098-7291-a1d9-c3f4914ba0f5",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 210,
+    "overflow": false,
+    "url": "/zh-TW/news/01a208a3-5dfb-707e-b457-1c890c7025b5",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 393,
+    "overflow": false,
+    "url": "/zh-TW/news/01a208a4-b1dc-70c5-aeec-b7613d006f54",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 210,
+    "overflow": false,
+    "url": "/zh-TW/news/01a2086b-d242-7209-8bec-33d48b48900a",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 253,
+    "overflow": false,
+    "url": "/zh-TW/news/01a20835-0aa1-7218-b676-d6f97a55bf18",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 8863,
+    "overflow": false,
+    "url": "/en-US/",
+    "viewport": 390,
+    "wide": [
+      "ticker-track",
+      "",
+      "negative",
+      "",
+      ""
+    ]
+  },
+  {
+    "broken": [],
+    "chars": 4404,
+    "overflow": false,
+    "url": "/en-US/trade/options/BTCUSD",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 4408,
+    "overflow": false,
+    "url": "/en-US/trade/futures/BTCUSD",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 4333,
+    "overflow": false,
+    "url": "/en-US/trade/spot/BTCUSD",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 1467,
+    "overflow": false,
+    "url": "/en-US/earn/simple",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 680,
+    "overflow": false,
+    "url": "/en-US/earn/simple/usdt180",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 670,
+    "overflow": false,
+    "url": "/en-US/earn/simple/usdt90",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 670,
+    "overflow": false,
+    "url": "/en-US/earn/simple/usdt30",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 661,
+    "overflow": false,
+    "url": "/en-US/earn/simple/btc60",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 661,
+    "overflow": false,
+    "url": "/en-US/earn/simple/usdt",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 660,
+    "overflow": false,
+    "url": "/en-US/earn/simple/usdc",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 654,
+    "overflow": false,
+    "url": "/en-US/earn/simple/eth",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 657,
+    "overflow": false,
+    "url": "/en-US/earn/simple/btc",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 81,
+    "overflow": false,
+    "url": "/en-US/earn/my-earnings",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 302,
+    "overflow": false,
+    "url": "/en-US/earn/loan",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 82,
+    "overflow": false,
+    "url": "/en-US/earn/loan/my",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 556,
+    "overflow": false,
+    "url": "/en-US/ai-quant",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 3966,
+    "overflow": false,
+    "url": "/en-US/ai-quant/strategy",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 63,
+    "overflow": false,
+    "url": "/en-US/ai-quant/strategy/mine",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 1497,
+    "overflow": false,
+    "url": "/en-US/ai-quant/quant-fund",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 44,
+    "overflow": false,
+    "url": "/en-US/ai-quant/quant-fund/positions",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 553,
+    "overflow": false,
+    "url": "/en-US/assets",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 245,
+    "overflow": false,
+    "url": "/en-US/assets/transfer",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 56,
+    "overflow": false,
+    "url": "/en-US/assets/records",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 407,
+    "overflow": false,
+    "url": "/en-US/deposit",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 271,
+    "overflow": false,
+    "url": "/en-US/withdraw",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 513,
+    "overflow": false,
+    "url": "/en-US/c2c/buy",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 513,
+    "overflow": false,
+    "url": "/en-US/c2c/sell",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 145,
+    "overflow": false,
+    "url": "/en-US/c2c/orders",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 186,
+    "overflow": false,
+    "url": "/en-US/c2c/accounts",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 293,
+    "overflow": false,
+    "url": "/en-US/copytrade",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 1449,
+    "overflow": false,
+    "url": "/en-US/charity",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 725,
+    "overflow": false,
+    "url": "/en-US/profile",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 122,
+    "overflow": false,
+    "url": "/en-US/bind-email",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 161,
+    "overflow": false,
+    "url": "/en-US/bind-phone",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 280,
+    "overflow": false,
+    "url": "/en-US/change-password",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 158,
+    "overflow": false,
+    "url": "/en-US/fund-password",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 357,
+    "overflow": false,
+    "url": "/en-US/2fa",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 260,
+    "overflow": false,
+    "url": "/en-US/devices",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 373,
+    "overflow": false,
+    "url": "/en-US/kyc",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 373,
+    "overflow": false,
+    "url": "/en-US/kyc/basic",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 175,
+    "overflow": false,
+    "url": "/en-US/kyc/advanced",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 579,
+    "overflow": false,
+    "url": "/en-US/referrals",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 246,
+    "overflow": false,
+    "url": "/en-US/promotions/tasks",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 498,
+    "overflow": false,
+    "url": "/en-US/joint-account",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 3385,
+    "overflow": false,
+    "url": "/en-US/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 350,
+    "overflow": false,
+    "url": "/en-US/help-center",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 30,
+    "overflow": false,
+    "url": "/en-US/messages",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 704,
+    "overflow": false,
+    "url": "/en-US/login",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 708,
+    "overflow": false,
+    "url": "/en-US/register",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 687,
+    "overflow": false,
+    "url": "/en-US/forgot-password",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 2653,
+    "overflow": false,
+    "url": "/en-US/news",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 1737,
+    "overflow": false,
+    "url": "/en-US/about",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 7858,
+    "overflow": false,
+    "url": "/en-US/privacy",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 20356,
+    "overflow": false,
+    "url": "/en-US/agreement",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 12883,
+    "overflow": false,
+    "url": "/en-US/content/terms",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 13889,
+    "overflow": false,
+    "url": "/en-US/risk-disclosure",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 56,
+    "overflow": false,
+    "url": "/en-US/regulatory-information",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 2367,
+    "overflow": false,
+    "url": "/en-US/content/regulation-sec",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "overflow": false,
+    "url": "/en-US/content/regulation-sfc",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "overflow": false,
+    "url": "/en-US/content/regulation-gfsob",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "overflow": false,
+    "url": "/en-US/content/regulation-fsra",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "overflow": false,
+    "url": "/en-US/content/regulation-fmsb",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 523,
+    "overflow": false,
+    "url": "/en-US/news/01a20c28-74c2-7258-8c9a-bb0d92dbcda6",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 594,
+    "overflow": false,
+    "url": "/en-US/news/01a20bb6-0d70-738a-ad9f-a572c45e37ba",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 630,
+    "overflow": false,
+    "url": "/en-US/news/01a20b0c-a016-708e-b979-7559aeb9b8c6",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 562,
+    "overflow": false,
+    "url": "/en-US/news/01a20ad5-b34c-72e4-8ac9-5c7eea39fe56",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 605,
+    "overflow": false,
+    "url": "/en-US/news/01a20a63-4160-71c7-bb0d-846e55c3a194",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 575,
+    "overflow": false,
+    "url": "/en-US/news/01a20a2c-53fe-724c-96b5-3e5d419f0b82",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 590,
+    "overflow": false,
+    "url": "/en-US/news/01a209f5-63a3-70e0-9282-288cd0b8ffee",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 581,
+    "overflow": false,
+    "url": "/en-US/news/01a209f5-6424-7054-9e7b-9c104cca6c05",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 579,
+    "overflow": false,
+    "url": "/en-US/news/01a209be-75fe-7019-ac8e-e4b3ef9da260",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 636,
+    "overflow": false,
+    "url": "/en-US/news/01a20982-f769-736a-b4ae-8985fb9d7f91",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 598,
+    "overflow": false,
+    "url": "/en-US/news/01a20947-758c-713b-94a3-e30b7d4a47a8",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 574,
+    "overflow": false,
+    "url": "/en-US/news/01a20947-763c-730e-81eb-69f9eeba4040",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 561,
+    "overflow": false,
+    "url": "/en-US/news/01a20910-88a2-702c-8b71-15487fa7ebf9",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 577,
+    "overflow": false,
+    "url": "/en-US/news/01a208d9-984e-7286-bb49-554855f025db",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 582,
+    "overflow": false,
+    "url": "/en-US/news/01a208d9-98ca-7372-88f8-65019b856177",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 566,
+    "overflow": false,
+    "url": "/en-US/news/01a208a2-ab10-70d3-9bb6-6cd7d4a6b2e1",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 575,
+    "overflow": false,
+    "url": "/en-US/news/01a208a2-ac24-7322-a12b-b3d6a0208b3c",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 553,
+    "overflow": false,
+    "url": "/en-US/news/01a208a2-acbd-7294-b336-f764402599a3",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 576,
+    "overflow": false,
+    "url": "/en-US/news/01a2086b-bc3f-735c-a777-3943a8e59798",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 591,
+    "overflow": false,
+    "url": "/en-US/news/01a20834-cdfb-7360-ab23-3dc2a0681263",
+    "viewport": 390,
+    "wide": []
+  },
+  {
+    "broken": [],
+    "chars": 9676,
+    "overflow": false,
+    "url": "/fr-FR/",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4527,
+    "overflow": false,
+    "url": "/fr-FR/trade/options/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4526,
+    "overflow": false,
+    "url": "/fr-FR/trade/futures/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4445,
+    "overflow": false,
+    "url": "/fr-FR/trade/spot/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1559,
+    "overflow": false,
+    "url": "/fr-FR/earn/simple",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 816,
+    "overflow": false,
+    "url": "/fr-FR/earn/simple/usdt180",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 806,
+    "overflow": false,
+    "url": "/fr-FR/earn/simple/usdt90",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 806,
+    "overflow": false,
+    "url": "/fr-FR/earn/simple/usdt30",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 797,
+    "overflow": false,
+    "url": "/fr-FR/earn/simple/btc60",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 802,
+    "overflow": false,
+    "url": "/fr-FR/earn/simple/usdt",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 801,
+    "overflow": false,
+    "url": "/fr-FR/earn/simple/usdc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 795,
+    "overflow": false,
+    "url": "/fr-FR/earn/simple/eth",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 798,
+    "overflow": false,
+    "url": "/fr-FR/earn/simple/btc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 92,
+    "overflow": false,
+    "url": "/fr-FR/earn/my-earnings",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 360,
+    "overflow": false,
+    "url": "/fr-FR/earn/loan",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 93,
+    "overflow": false,
+    "url": "/fr-FR/earn/loan/my",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 671,
+    "overflow": false,
+    "url": "/fr-FR/ai-quant",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4310,
+    "overflow": false,
+    "url": "/fr-FR/ai-quant/strategy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 69,
+    "overflow": false,
+    "url": "/fr-FR/ai-quant/strategy/mine",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1680,
+    "overflow": false,
+    "url": "/fr-FR/ai-quant/quant-fund",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 52,
+    "overflow": false,
+    "url": "/fr-FR/ai-quant/quant-fund/positions",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 591,
+    "overflow": false,
+    "url": "/fr-FR/assets",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 258,
+    "overflow": false,
+    "url": "/fr-FR/assets/transfer",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 77,
+    "overflow": false,
+    "url": "/fr-FR/assets/records",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 475,
+    "overflow": false,
+    "url": "/fr-FR/deposit",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 298,
+    "overflow": false,
+    "url": "/fr-FR/withdraw",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 580,
+    "overflow": false,
+    "url": "/fr-FR/c2c/buy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 580,
+    "overflow": false,
+    "url": "/fr-FR/c2c/sell",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 164,
+    "overflow": false,
+    "url": "/fr-FR/c2c/orders",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 219,
+    "overflow": false,
+    "url": "/fr-FR/c2c/accounts",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 344,
+    "overflow": false,
+    "url": "/fr-FR/copytrade",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1746,
+    "overflow": false,
+    "url": "/fr-FR/charity",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 924,
+    "overflow": false,
+    "url": "/fr-FR/profile",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 159,
+    "overflow": false,
+    "url": "/fr-FR/bind-email",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 185,
+    "overflow": false,
+    "url": "/fr-FR/bind-phone",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 375,
+    "overflow": false,
+    "url": "/fr-FR/change-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 223,
+    "overflow": false,
+    "url": "/fr-FR/fund-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 449,
+    "overflow": false,
+    "url": "/fr-FR/2fa",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 289,
+    "overflow": false,
+    "url": "/fr-FR/devices",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 509,
+    "overflow": false,
+    "url": "/fr-FR/kyc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 517,
+    "overflow": false,
+    "url": "/fr-FR/kyc/basic",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 224,
+    "overflow": false,
+    "url": "/fr-FR/kyc/advanced",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 704,
+    "overflow": false,
+    "url": "/fr-FR/referrals",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 288,
+    "overflow": false,
+    "url": "/fr-FR/promotions/tasks",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 599,
+    "overflow": false,
+    "url": "/fr-FR/joint-account",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 3535,
+    "overflow": false,
+    "url": "/fr-FR/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 402,
+    "overflow": false,
+    "url": "/fr-FR/help-center",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 23,
+    "overflow": false,
+    "url": "/fr-FR/messages",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 901,
+    "overflow": false,
+    "url": "/fr-FR/login",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 893,
+    "overflow": false,
+    "url": "/fr-FR/register",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 894,
+    "overflow": false,
+    "url": "/fr-FR/forgot-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 3529,
+    "overflow": false,
+    "url": "/fr-FR/news",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1737,
+    "overflow": false,
+    "url": "/fr-FR/about",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 7858,
+    "overflow": false,
+    "url": "/fr-FR/privacy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 20356,
+    "overflow": false,
+    "url": "/fr-FR/agreement",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 12883,
+    "overflow": false,
+    "url": "/fr-FR/content/terms",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 13889,
+    "overflow": false,
+    "url": "/fr-FR/risk-disclosure",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 61,
+    "overflow": false,
+    "url": "/fr-FR/regulatory-information",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 2367,
+    "overflow": false,
+    "url": "/fr-FR/content/regulation-sec",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "overflow": false,
+    "url": "/fr-FR/content/regulation-sfc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "overflow": false,
+    "url": "/fr-FR/content/regulation-gfsob",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "overflow": false,
+    "url": "/fr-FR/content/regulation-fsra",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "overflow": false,
+    "url": "/fr-FR/content/regulation-fmsb",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 543,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20c28-a7c9-73d7-ad73-36faa0213c7e",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 625,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20bb6-3f4b-73f7-b026-ee76c5eed233",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 612,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20b0c-c2f1-728b-8bad-8dfd6bcaffff",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 694,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20ad5-d459-73c6-8524-b8056a1a17d8",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 703,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20a63-7599-723f-be46-7d190aa1e39d",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 680,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20a2c-940f-722d-bc8d-4d97bb5dbeb3",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 626,
+    "overflow": false,
+    "url": "/fr-FR/news/01a209f5-9bed-724f-bea9-90bd5d1fa5d8",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 689,
+    "overflow": false,
+    "url": "/fr-FR/news/01a209f6-4a7c-72c1-b3c4-2618d4f608e6",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 731,
+    "overflow": false,
+    "url": "/fr-FR/news/01a209be-ac0f-7362-b904-aa471a0f97cf",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 767,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20983-3b20-711d-abbd-b3077f06e6d7",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 614,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20947-a120-708f-8e9e-bb0111a46808",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 670,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20948-08b3-73b5-ad85-57cf1ab75d07",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 680,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20910-ab5c-724e-b63f-2d2333b11292",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 640,
+    "overflow": false,
+    "url": "/fr-FR/news/01a208d9-c580-7257-a4f4-0100ccbbe5dc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 639,
+    "overflow": false,
+    "url": "/fr-FR/news/01a208da-3305-7272-a7fe-af2e312c10b1",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 640,
+    "overflow": false,
+    "url": "/fr-FR/news/01a208a2-d589-717a-9ad0-2918403d4c5b",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 623,
+    "overflow": false,
+    "url": "/fr-FR/news/01a208a3-a32c-7281-9654-072013d2238f",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 625,
+    "overflow": false,
+    "url": "/fr-FR/news/01a208a4-d3f0-70a5-851e-a6fee26a28da",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 610,
+    "overflow": false,
+    "url": "/fr-FR/news/01a2086b-e6d2-70a1-a4d1-188bd72a0a0c",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 700,
+    "overflow": false,
+    "url": "/fr-FR/news/01a20835-44e2-73c1-9bac-df6579b12fea",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 9360,
+    "overflow": false,
+    "url": "/de-DE/",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4538,
+    "overflow": false,
+    "url": "/de-DE/trade/options/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4537,
+    "overflow": false,
+    "url": "/de-DE/trade/futures/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4455,
+    "overflow": false,
+    "url": "/de-DE/trade/spot/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1539,
+    "overflow": false,
+    "url": "/de-DE/earn/simple",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 763,
+    "overflow": false,
+    "url": "/de-DE/earn/simple/usdt180",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 753,
+    "overflow": false,
+    "url": "/de-DE/earn/simple/usdt90",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 753,
+    "overflow": false,
+    "url": "/de-DE/earn/simple/usdt30",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 744,
+    "overflow": false,
+    "url": "/de-DE/earn/simple/btc60",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 745,
+    "overflow": false,
+    "url": "/de-DE/earn/simple/usdt",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 744,
+    "overflow": false,
+    "url": "/de-DE/earn/simple/usdc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 738,
+    "overflow": false,
+    "url": "/de-DE/earn/simple/eth",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 741,
+    "overflow": false,
+    "url": "/de-DE/earn/simple/btc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 100,
+    "overflow": false,
+    "url": "/de-DE/earn/my-earnings",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 351,
+    "overflow": false,
+    "url": "/de-DE/earn/loan",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 104,
+    "overflow": false,
+    "url": "/de-DE/earn/loan/my",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 678,
+    "overflow": false,
+    "url": "/de-DE/ai-quant",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4174,
+    "overflow": false,
+    "url": "/de-DE/ai-quant/strategy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 73,
+    "overflow": false,
+    "url": "/de-DE/ai-quant/strategy/mine",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1639,
+    "overflow": false,
+    "url": "/de-DE/ai-quant/quant-fund",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 57,
+    "overflow": false,
+    "url": "/de-DE/ai-quant/quant-fund/positions",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 556,
+    "overflow": false,
+    "url": "/de-DE/assets",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 249,
+    "overflow": false,
+    "url": "/de-DE/assets/transfer",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 72,
+    "overflow": false,
+    "url": "/de-DE/assets/records",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 460,
+    "overflow": false,
+    "url": "/de-DE/deposit",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 275,
+    "overflow": false,
+    "url": "/de-DE/withdraw",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 558,
+    "overflow": false,
+    "url": "/de-DE/c2c/buy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 558,
+    "overflow": false,
+    "url": "/de-DE/c2c/sell",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 163,
+    "overflow": false,
+    "url": "/de-DE/c2c/orders",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 196,
+    "overflow": false,
+    "url": "/de-DE/c2c/accounts",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 334,
+    "overflow": false,
+    "url": "/de-DE/copytrade",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1654,
+    "overflow": false,
+    "url": "/de-DE/charity",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 850,
+    "overflow": false,
+    "url": "/de-DE/profile",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 147,
+    "overflow": false,
+    "url": "/de-DE/bind-email",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 191,
+    "overflow": false,
+    "url": "/de-DE/bind-phone",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 354,
+    "overflow": false,
+    "url": "/de-DE/change-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 191,
+    "overflow": false,
+    "url": "/de-DE/fund-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 448,
+    "overflow": false,
+    "url": "/de-DE/2fa",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 304,
+    "overflow": false,
+    "url": "/de-DE/devices",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 484,
+    "overflow": false,
+    "url": "/de-DE/kyc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 434,
+    "overflow": false,
+    "url": "/de-DE/kyc/basic",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 251,
+    "overflow": false,
+    "url": "/de-DE/kyc/advanced",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 727,
+    "overflow": false,
+    "url": "/de-DE/referrals",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 284,
+    "overflow": false,
+    "url": "/de-DE/promotions/tasks",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 580,
+    "overflow": false,
+    "url": "/de-DE/joint-account",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 3536,
+    "overflow": false,
+    "url": "/de-DE/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 407,
+    "overflow": false,
+    "url": "/de-DE/help-center",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 33,
+    "overflow": false,
+    "url": "/de-DE/messages",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 824,
+    "overflow": false,
+    "url": "/de-DE/login",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 808,
+    "overflow": false,
+    "url": "/de-DE/register",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 806,
+    "overflow": false,
+    "url": "/de-DE/forgot-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 3256,
+    "overflow": false,
+    "url": "/de-DE/news",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1737,
+    "overflow": false,
+    "url": "/de-DE/about",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 7858,
+    "overflow": false,
+    "url": "/de-DE/privacy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 20356,
+    "overflow": false,
+    "url": "/de-DE/agreement",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 12883,
+    "overflow": false,
+    "url": "/de-DE/content/terms",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 13889,
+    "overflow": false,
+    "url": "/de-DE/risk-disclosure",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 67,
+    "overflow": false,
+    "url": "/de-DE/regulatory-information",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 2367,
+    "overflow": false,
+    "url": "/de-DE/content/regulation-sec",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "overflow": false,
+    "url": "/de-DE/content/regulation-sfc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "overflow": false,
+    "url": "/de-DE/content/regulation-gfsob",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "overflow": false,
+    "url": "/de-DE/content/regulation-fsra",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "overflow": false,
+    "url": "/de-DE/content/regulation-fmsb",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 501,
+    "overflow": false,
+    "url": "/de-DE/news/01a20c28-c4a7-7028-bdf2-e3c642e611fc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 578,
+    "overflow": false,
+    "url": "/de-DE/news/01a20bb6-580c-73e4-b18b-025a121dbf89",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 602,
+    "overflow": true,
+    "url": "/de-DE/news/01a20b0c-d44a-72cd-98ed-1ae990e97416",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 601,
+    "overflow": false,
+    "url": "/de-DE/news/01a20ad5-e386-722c-93b0-dc4a7095e19f",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 691,
+    "overflow": false,
+    "url": "/de-DE/news/01a20a63-91d4-7377-91b3-ee1c16c82a9b",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 580,
+    "overflow": false,
+    "url": "/de-DE/news/01a20a2c-b2b9-71f6-a7d1-d690cb5cd213",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 631,
+    "overflow": false,
+    "url": "/de-DE/news/01a209f5-b866-703d-8598-51730ec4b01c",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 639,
+    "overflow": false,
+    "url": "/de-DE/news/01a209f6-705b-722e-a063-c92a6848d49e",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 650,
+    "overflow": false,
+    "url": "/de-DE/news/01a209be-c6e8-706a-89bf-4328a003ad23",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 732,
+    "overflow": false,
+    "url": "/de-DE/news/01a20983-5c05-71f6-9692-d767068cfc08",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 583,
+    "overflow": false,
+    "url": "/de-DE/news/01a20947-b69c-7369-8b85-7224c7e8ddde",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 661,
+    "overflow": false,
+    "url": "/de-DE/news/01a20948-20d5-7201-a938-382c600c25b7",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 617,
+    "overflow": true,
+    "url": "/de-DE/news/01a20910-bc71-715c-93af-2e27793856e2",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 661,
+    "overflow": false,
+    "url": "/de-DE/news/01a208d9-df44-732f-ab36-3feff35f1e03",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 611,
+    "overflow": false,
+    "url": "/de-DE/news/01a208da-4a71-7325-b6f4-01e848a23e98",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 582,
+    "overflow": false,
+    "url": "/de-DE/news/01a208a2-e8fc-72b3-8466-73712d63c56a",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 507,
+    "overflow": false,
+    "url": "/de-DE/news/01a208a3-ec3d-73d4-a1cc-0d23a3462f54",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 572,
+    "overflow": false,
+    "url": "/de-DE/news/01a208a4-f6a3-714c-8e45-2f2f8088795c",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 597,
+    "overflow": false,
+    "url": "/de-DE/news/01a2086b-fb80-7178-8e7a-8a38a4810683",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 653,
+    "overflow": false,
+    "url": "/de-DE/news/01a20835-8200-7063-9af0-06be6e720fae",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 7362,
+    "overflow": false,
+    "url": "/ja-JP/",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4102,
+    "overflow": false,
+    "url": "/ja-JP/trade/options/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4119,
+    "overflow": false,
+    "url": "/ja-JP/trade/futures/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4065,
+    "overflow": false,
+    "url": "/ja-JP/trade/spot/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1034,
+    "overflow": false,
+    "url": "/ja-JP/earn/simple",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 379,
+    "overflow": false,
+    "url": "/ja-JP/earn/simple/usdt180",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 369,
+    "overflow": false,
+    "url": "/ja-JP/earn/simple/usdt90",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 369,
+    "overflow": false,
+    "url": "/ja-JP/earn/simple/usdt30",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 360,
+    "overflow": false,
+    "url": "/ja-JP/earn/simple/btc60",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 360,
+    "overflow": false,
+    "url": "/ja-JP/earn/simple/usdt",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 359,
+    "overflow": false,
+    "url": "/ja-JP/earn/simple/usdc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 353,
+    "overflow": false,
+    "url": "/ja-JP/earn/simple/eth",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 356,
+    "overflow": false,
+    "url": "/ja-JP/earn/simple/btc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 54,
+    "overflow": false,
+    "url": "/ja-JP/earn/my-earnings",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 183,
+    "overflow": false,
+    "url": "/ja-JP/earn/loan",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 53,
+    "overflow": false,
+    "url": "/ja-JP/earn/loan/my",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 310,
+    "overflow": false,
+    "url": "/ja-JP/ai-quant",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 2959,
+    "overflow": false,
+    "url": "/ja-JP/ai-quant/strategy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 40,
+    "overflow": false,
+    "url": "/ja-JP/ai-quant/strategy/mine",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1085,
+    "overflow": false,
+    "url": "/ja-JP/ai-quant/quant-fund",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 31,
+    "overflow": false,
+    "url": "/ja-JP/ai-quant/quant-fund/positions",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 390,
+    "overflow": false,
+    "url": "/ja-JP/assets",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 135,
+    "overflow": false,
+    "url": "/ja-JP/assets/transfer",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 28,
+    "overflow": false,
+    "url": "/ja-JP/assets/records",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 253,
+    "overflow": false,
+    "url": "/ja-JP/deposit",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 137,
+    "overflow": false,
+    "url": "/ja-JP/withdraw",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 372,
+    "overflow": false,
+    "url": "/ja-JP/c2c/buy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 372,
+    "overflow": false,
+    "url": "/ja-JP/c2c/sell",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 78,
+    "overflow": false,
+    "url": "/ja-JP/c2c/orders",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 88,
+    "overflow": false,
+    "url": "/ja-JP/c2c/accounts",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 166,
+    "overflow": false,
+    "url": "/ja-JP/copytrade",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 875,
+    "overflow": false,
+    "url": "/ja-JP/charity",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 436,
+    "overflow": false,
+    "url": "/ja-JP/profile",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 63,
+    "overflow": false,
+    "url": "/ja-JP/bind-email",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 105,
+    "overflow": false,
+    "url": "/ja-JP/bind-phone",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 158,
+    "overflow": false,
+    "url": "/ja-JP/change-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 89,
+    "overflow": false,
+    "url": "/ja-JP/fund-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 257,
+    "overflow": false,
+    "url": "/ja-JP/2fa",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 190,
+    "overflow": false,
+    "url": "/ja-JP/devices",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 167,
+    "overflow": false,
+    "url": "/ja-JP/kyc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 234,
+    "overflow": false,
+    "url": "/ja-JP/kyc/basic",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 92,
+    "overflow": false,
+    "url": "/ja-JP/kyc/advanced",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 340,
+    "overflow": false,
+    "url": "/ja-JP/referrals",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 104,
+    "overflow": false,
+    "url": "/ja-JP/promotions/tasks",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 239,
+    "overflow": false,
+    "url": "/ja-JP/joint-account",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 3300,
+    "overflow": false,
+    "url": "/ja-JP/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 220,
+    "overflow": false,
+    "url": "/ja-JP/help-center",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 15,
+    "overflow": false,
+    "url": "/ja-JP/messages",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 383,
+    "overflow": false,
+    "url": "/ja-JP/login",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 376,
+    "overflow": false,
+    "url": "/ja-JP/register",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 369,
+    "overflow": false,
+    "url": "/ja-JP/forgot-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1631,
+    "overflow": false,
+    "url": "/ja-JP/news",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1737,
+    "overflow": false,
+    "url": "/ja-JP/about",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 7858,
+    "overflow": false,
+    "url": "/ja-JP/privacy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 20356,
+    "overflow": false,
+    "url": "/ja-JP/agreement",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 12883,
+    "overflow": false,
+    "url": "/ja-JP/content/terms",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 13889,
+    "overflow": false,
+    "url": "/ja-JP/risk-disclosure",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 38,
+    "overflow": false,
+    "url": "/ja-JP/regulatory-information",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 2367,
+    "overflow": false,
+    "url": "/ja-JP/content/regulation-sec",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "overflow": false,
+    "url": "/ja-JP/content/regulation-sfc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "overflow": false,
+    "url": "/ja-JP/content/regulation-gfsob",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "overflow": false,
+    "url": "/ja-JP/content/regulation-fsra",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "overflow": false,
+    "url": "/ja-JP/content/regulation-fmsb",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 240,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20c28-da75-710d-be2a-243e80bf8a5a",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 274,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20bb6-7871-7300-bb8e-adb16d48387c",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 286,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20b0c-e4ee-709e-b7b8-5a2249ae97e4",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 248,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20ad5-f4b6-727f-966d-71f0d87d4a05",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 292,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20a63-b1f5-7098-bbf7-258355b50bdf",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 253,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20a2c-d7e8-70f4-aa9f-aa5719910e0f",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 300,
+    "overflow": false,
+    "url": "/ja-JP/news/01a209f5-da62-72c9-a393-5f75708792f9",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 305,
+    "overflow": false,
+    "url": "/ja-JP/news/01a209f6-a0fa-7163-a288-429e5050d299",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 307,
+    "overflow": false,
+    "url": "/ja-JP/news/01a209be-e699-7090-b16e-34ff8bcc5175",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 346,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20983-81f4-710d-97bf-09200b78b4e1",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 317,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20947-cb7b-7338-bc10-55d415f11455",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 277,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20948-362b-7016-9fbc-698289a94568",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 264,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20910-d057-7366-b9e2-2c28bfce9434",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 283,
+    "overflow": false,
+    "url": "/ja-JP/news/01a208d9-f499-71ab-a38d-c2c29f11f250",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 305,
+    "overflow": false,
+    "url": "/ja-JP/news/01a208da-64c9-72be-b2f0-dd036722d1fc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 284,
+    "overflow": false,
+    "url": "/ja-JP/news/01a208a3-02a5-72be-96a9-d741c9f8b7cd",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 266,
+    "overflow": false,
+    "url": "/ja-JP/news/01a208a4-4968-7208-ae14-ff653cd3e07e",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 292,
+    "overflow": false,
+    "url": "/ja-JP/news/01a208a5-1fbd-7012-9daf-46790f034145",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 261,
+    "overflow": false,
+    "url": "/ja-JP/news/01a2086c-128e-717a-a6f9-9ae61b750529",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 300,
+    "overflow": false,
+    "url": "/ja-JP/news/01a20835-c42d-7004-8096-aa66e1755ff4",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 7379,
+    "overflow": false,
+    "url": "/ko-KR/",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4080,
+    "overflow": false,
+    "url": "/ko-KR/trade/options/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4094,
+    "overflow": false,
+    "url": "/ko-KR/trade/futures/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 4045,
+    "overflow": false,
+    "url": "/ko-KR/trade/spot/BTCUSD",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1011,
+    "overflow": false,
+    "url": "/ko-KR/earn/simple",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 397,
+    "overflow": false,
+    "url": "/ko-KR/earn/simple/usdt180",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 387,
+    "overflow": false,
+    "url": "/ko-KR/earn/simple/usdt90",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 387,
+    "overflow": false,
+    "url": "/ko-KR/earn/simple/usdt30",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 378,
+    "overflow": false,
+    "url": "/ko-KR/earn/simple/btc60",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 371,
+    "overflow": false,
+    "url": "/ko-KR/earn/simple/usdt",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 370,
+    "overflow": false,
+    "url": "/ko-KR/earn/simple/usdc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 364,
+    "overflow": false,
+    "url": "/ko-KR/earn/simple/eth",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 367,
+    "overflow": false,
+    "url": "/ko-KR/earn/simple/btc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 43,
+    "overflow": false,
+    "url": "/ko-KR/earn/my-earnings",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 186,
+    "overflow": false,
+    "url": "/ko-KR/earn/loan",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 43,
+    "overflow": false,
+    "url": "/ko-KR/earn/loan/my",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 297,
+    "overflow": false,
+    "url": "/ko-KR/ai-quant",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 2930,
+    "overflow": false,
+    "url": "/ko-KR/ai-quant/strategy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 27,
+    "overflow": false,
+    "url": "/ko-KR/ai-quant/strategy/mine",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1119,
+    "overflow": false,
+    "url": "/ko-KR/ai-quant/quant-fund",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 23,
+    "overflow": false,
+    "url": "/ko-KR/ai-quant/quant-fund/positions",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 360,
+    "overflow": false,
+    "url": "/ko-KR/assets",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 132,
+    "overflow": false,
+    "url": "/ko-KR/assets/transfer",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 32,
+    "overflow": false,
+    "url": "/ko-KR/assets/records",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 241,
+    "overflow": false,
+    "url": "/ko-KR/deposit",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 146,
+    "overflow": false,
+    "url": "/ko-KR/withdraw",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 364,
+    "overflow": false,
+    "url": "/ko-KR/c2c/buy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 364,
+    "overflow": false,
+    "url": "/ko-KR/c2c/sell",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 71,
+    "overflow": false,
+    "url": "/ko-KR/c2c/orders",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 84,
+    "overflow": false,
+    "url": "/ko-KR/c2c/accounts",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 151,
+    "overflow": false,
+    "url": "/ko-KR/copytrade",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 922,
+    "overflow": false,
+    "url": "/ko-KR/charity",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 413,
+    "overflow": false,
+    "url": "/ko-KR/profile",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 64,
+    "overflow": false,
+    "url": "/ko-KR/bind-email",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 112,
+    "overflow": false,
+    "url": "/ko-KR/bind-phone",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 166,
+    "overflow": false,
+    "url": "/ko-KR/change-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 90,
+    "overflow": false,
+    "url": "/ko-KR/fund-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 243,
+    "overflow": false,
+    "url": "/ko-KR/2fa",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 175,
+    "overflow": false,
+    "url": "/ko-KR/devices",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 182,
+    "overflow": false,
+    "url": "/ko-KR/kyc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 236,
+    "overflow": false,
+    "url": "/ko-KR/kyc/basic",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 91,
+    "overflow": false,
+    "url": "/ko-KR/kyc/advanced",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 337,
+    "overflow": false,
+    "url": "/ko-KR/referrals",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 114,
+    "overflow": false,
+    "url": "/ko-KR/promotions/tasks",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 272,
+    "overflow": false,
+    "url": "/ko-KR/joint-account",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 3312,
+    "overflow": false,
+    "url": "/ko-KR/survey/019e9f01-47a3-711f-9052-e7187b9f9407",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 175,
+    "overflow": false,
+    "url": "/ko-KR/help-center",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 10,
+    "overflow": false,
+    "url": "/ko-KR/messages",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 382,
+    "overflow": false,
+    "url": "/ko-KR/login",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 371,
+    "overflow": false,
+    "url": "/ko-KR/register",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 368,
+    "overflow": false,
+    "url": "/ko-KR/forgot-password",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1685,
+    "overflow": false,
+    "url": "/ko-KR/news",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 1737,
+    "overflow": false,
+    "url": "/ko-KR/about",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 7858,
+    "overflow": false,
+    "url": "/ko-KR/privacy",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 20356,
+    "overflow": false,
+    "url": "/ko-KR/agreement",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 12883,
+    "overflow": false,
+    "url": "/ko-KR/content/terms",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 13889,
+    "overflow": false,
+    "url": "/ko-KR/risk-disclosure",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 39,
+    "overflow": false,
+    "url": "/ko-KR/regulatory-information",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 2367,
+    "overflow": false,
+    "url": "/ko-KR/content/regulation-sec",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 5178,
+    "overflow": false,
+    "url": "/ko-KR/content/regulation-sfc",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 7152,
+    "overflow": false,
+    "url": "/ko-KR/content/regulation-gfsob",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 10067,
+    "overflow": false,
+    "url": "/ko-KR/content/regulation-fsra",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 8720,
+    "overflow": false,
+    "url": "/ko-KR/content/regulation-fmsb",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 260,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20c28-f7b6-7032-ab7f-efd2ff436a7a",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 280,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20bb6-91e9-7163-885a-9e6cc214da06",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 299,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20b0c-f475-73f4-b4f2-a2b9feccc4ad",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 268,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20ad6-034f-7324-9e75-ab057f0db824",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 310,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20a63-cdfd-71a0-8122-b9a8dca453ca",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 269,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20a2c-f564-7209-be87-eca32e834fa6",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 324,
+    "overflow": false,
+    "url": "/ko-KR/news/01a209f5-f55b-708f-87ed-bc4e0f172d4f",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 322,
+    "overflow": false,
+    "url": "/ko-KR/news/01a209f6-cc11-73c3-895d-9519a669c422",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 328,
+    "overflow": false,
+    "url": "/ko-KR/news/01a209bf-0294-739f-8e35-36f1d58270b8",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 355,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20983-a2d4-7186-9b9d-cf1594366d99",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 339,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20947-e4a7-705c-937c-bb53e6eb155a",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 293,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20948-4a52-73c0-a518-d36fe717b5aa",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 296,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20910-e098-7361-b49f-73b1d6dec31d",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 281,
+    "overflow": false,
+    "url": "/ko-KR/news/01a208da-081e-7167-88fd-c680e448bd38",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 350,
+    "overflow": false,
+    "url": "/ko-KR/news/01a208da-79f8-701a-b54d-53f408f7ce34",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 311,
+    "overflow": false,
+    "url": "/ko-KR/news/01a208a3-1791-713b-af11-c737cd0c6faa",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 295,
+    "overflow": false,
+    "url": "/ko-KR/news/01a208a4-8e58-7037-8352-ba9c3c5349a9",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 306,
+    "overflow": false,
+    "url": "/ko-KR/news/01a208a5-4121-71eb-bcf4-eeee7f3ef17c",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 276,
+    "overflow": false,
+    "url": "/ko-KR/news/01a2086c-250f-711c-b4cb-a96bbf0e3e7c",
+    "viewport": 390
+  },
+  {
+    "broken": [],
+    "chars": 309,
+    "overflow": false,
+    "url": "/ko-KR/news/01a20835-fdaf-7363-8048-30b36251944c",
+    "viewport": 390
+  }
+]

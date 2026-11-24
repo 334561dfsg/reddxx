@@ -1,0 +1,386 @@
+[
+  {
+    "lang": "zh-TW",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "個人中心",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "zh-TW",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "邀請好友",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "zh-TW",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "我的獎勵任務",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "zh-TW",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "修改手機號碼",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "en-US",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "Profile",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "en-US",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "Invite Friends",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "en-US",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "My Reward Tasks",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "en-US",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "Change Phone Number",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "fr-FR",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "Profil",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "fr-FR",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "Inviter des amis",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "fr-FR",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "Mes tâches de récompense",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "fr-FR",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "Changer le téléphone",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "de-DE",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "Profil",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "de-DE",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "Freunde einladen",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "de-DE",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "Meine Prämienaufgaben",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "de-DE",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "Telefon ändern",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "ja-JP",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "プロフィール",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "ja-JP",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "友達を招待",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "ja-JP",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "マイ特典タスク",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "ja-JP",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "電話番号を変更",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "ko-KR",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "프로필",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "ko-KR",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "친구 초대",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "ko-KR",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "내 혜택 작업",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "ko-KR",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "휴대폰 번호 변경",
+    "overflow": false,
+    "width": 1920
+  },
+  {
+    "lang": "zh-TW",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "個人中心",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "zh-TW",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "邀請好友",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "zh-TW",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "我的獎勵任務",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "zh-TW",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "修改手機號碼",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "en-US",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "Profile",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "en-US",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "Invite Friends",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "en-US",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "My Reward Tasks",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "en-US",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "Change Phone Number",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "fr-FR",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "Profil",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "fr-FR",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "Inviter des amis",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "fr-FR",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "Mes tâches de récompense",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "fr-FR",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "Changer le téléphone",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "de-DE",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "Profil",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "de-DE",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "Freunde einladen",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "de-DE",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "Meine Prämienaufgaben",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "de-DE",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "Telefon ändern",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ja-JP",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "プロフィール",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ja-JP",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "友達を招待",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ja-JP",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "マイ特典タスク",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ja-JP",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "電話番号を変更",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ko-KR",
+    "page": "profile",
+    "brokenImages": 0,
+    "heading": "프로필",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ko-KR",
+    "page": "referrals",
+    "brokenImages": 0,
+    "heading": "친구 초대",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ko-KR",
+    "page": "promotions/tasks",
+    "brokenImages": 0,
+    "heading": "내 혜택 작업",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "lang": "ko-KR",
+    "page": "bind-phone",
+    "brokenImages": 0,
+    "heading": "휴대폰 번호 변경",
+    "overflow": false,
+    "width": 390
+  }
+]

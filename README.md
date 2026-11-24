@@ -15,6 +15,14 @@ npm run dev
 
 ## Included
 
+## 独立原型入口
+
+根应用仍保留原来的选择入口页（默认 http://localhost:5173/），管理台 `/admin`、前台 `/front/home` 和代理系统 `/agent-system/dashboard` 均保留。
+
+新增 New Trends 代码独立存放于 `newtrend-website/`。只需在仓库根目录运行 `npm run dev`，四套原型共用 5173，新站入口为 `/newtrend/zh-TW/`，不再需要单独启动 4173。`npm run build` 同时打包四套原型，`npm run preview` 可验证统一构建。部署服务器需将 `/newtrend/*` 回退到 `/newtrend/index.html`，其余应用路由回退到 `/index.html`。
+
+## 原有功能
+
 - Console layout (sidebar + top header + content)
 - Dashboard page with KPI cards and order table
 - Orders page

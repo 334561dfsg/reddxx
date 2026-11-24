@@ -1,0 +1,162 @@
+[
+  {
+    "en-US": "42 Macro has reduced its Bitcoin exposure and is watching its own risk signals before buying again. The report links the firm’s caution to inflation, monetary tightening and the liquidity available to risk assets.",
+    "zh-TW": "42 Macro 已降低 Bitcoin 部位，準備等待風險訊號轉向後再評估買入。報導聚焦通膨、貨幣緊縮與市場流動性對其判斷的影響。",
+    "fr-FR": "42 Macro réduit son exposition au Bitcoin et attend un changement de ses indicateurs de risque. L’inflation et la liquidité restent au cœur de son analyse.",
+    "de-DE": "42 Macro hat sein Bitcoin-Engagement reduziert und wartet auf bessere Risikosignale. Inflation, Zinspolitik und Liquidität prägen die Einschätzung.",
+    "ja-JP": "42 MacroはBitcoin保有を減らし、リスク指標の改善を待っています。判断にはインフレ、金融政策、流動性が影響しています。",
+    "ko-KR": "42 Macro는 비트코인 비중을 줄이고 위험 지표 개선을 기다리고 있습니다. 인플레이션과 통화 정책, 유동성이 판단의 핵심입니다."
+  },
+  {
+    "en-US": "Google’s patent describes personalized video featuring a digital version of the viewer. Viewing preferences, images and synthetic speech could shape the stories. The filing outlines an idea rather than confirming a product launch.",
+    "zh-TW": "Google 的專利構想是讓觀眾的數位分身成為客製化影片角色，並結合觀看偏好、影像與合成語音。專利申請描述的是技術方案，並不代表相關產品已經推出。",
+    "fr-FR": "Le brevet de Google décrit des vidéos personnalisées mettant en scène un double numérique du spectateur. Il s’agit d’un concept, pas de l’annonce d’un produit commercial.",
+    "de-DE": "Googles Patent beschreibt personalisierte Videos mit einem digitalen Abbild des Zuschauers. Die Anmeldung ist ein Konzept und keine bestätigte Produkteinführung.",
+    "ja-JP": "Googleの特許は、視聴者のデジタル分身が登場する個別化動画を提案しています。特許出願は製品の発売を確約するものではありません。",
+    "ko-KR": "Google 특허는 시청자의 디지털 분신이 등장하는 맞춤형 영상을 설명합니다. 특허 출원이 제품 출시를 의미하지는 않습니다."
+  },
+  {
+    "en-US": "Ethereum’s foundation is expanding protocol security work as it prepares changes addressing AI and quantum-computing threats. The report highlights the tension between faster development and the need for verification across validators, transactions and rollup data.",
+    "zh-TW": "Ethereum Foundation 擴充協議安全工作，以因應 AI 與量子運算風險。報導指出，驗證者、交易授權與 rollup 資料都涉及調整，加快開發同時也提高驗證工作的需求。",
+    "fr-FR": "La fondation Ethereum renforce la sécurité du protocole face aux risques de l’IA et du calcul quantique. Accélérer le développement exige davantage de vérifications.",
+    "de-DE": "Die Ethereum Foundation verstärkt die Protokollsicherheit angesichts von KI- und Quantenrisiken. Schnellere Entwicklung erhöht den Bedarf an sorgfältiger Prüfung.",
+    "ja-JP": "Ethereum財団はAIと量子計算のリスクに備え、プロトコルの安全性検証を強化しています。開発の加速に伴い検証の重要性も高まっています。",
+    "ko-KR": "이더리움 재단은 AI와 양자 컴퓨팅 위험에 대비해 프로토콜 보안을 강화합니다. 개발 속도가 빨라질수록 검증의 중요성도 커집니다."
+  },
+  {
+    "en-US": "The report describes staff guidance on using certain crypto assets toward operating reserves. Valuation discounts and a separate liquidity requirement remain relevant. It distinguishes staff views from a formal commission rule change.",
+    "zh-TW": "報導介紹將部分加密資產計入營運準備金的工作人員指引，同時說明估值折扣與獨立流動性要求。這類意見與委員會正式修改規則的性質不同。",
+    "fr-FR": "Le texte présente des orientations permettant certains actifs crypto dans les réserves d’exploitation, avec décotes et exigences de liquidité distinctes. Ce n’est pas une modification formelle des règles.",
+    "de-DE": "Der Bericht behandelt Hinweise zur Anrechnung bestimmter Kryptowerte auf Betriebsreserven, einschließlich Abschlägen und gesonderter Liquiditätsanforderungen. Es handelt sich nicht um eine formelle Regeländerung.",
+    "ja-JP": "一部の暗号資産を運営準備金に算入する指針が紹介されています。評価の割引や別途の流動性要件があり、正式な規則改正とは異なります。",
+    "ko-KR": "일부 암호화폐의 운영 준비금 산입 지침을 다룹니다. 평가 할인과 별도 유동성 요건이 적용되며 공식 규정 개정과는 구분됩니다."
+  },
+  {
+    "en-US": "US prosecutors are pursuing recovery of crypto linked to the reported Binance theft. The article follows asset-freezing and forfeiture efforts alongside blockchain tracing of funds moving through multiple wallets and mixing services.",
+    "zh-TW": "美國檢察官正尋求追回與 Binance 遭竊事件有關的加密資產。文章整理凍結與沒收程序，以及資金經多個錢包和混幣服務流轉的鏈上追蹤情況。",
+    "fr-FR": "Les procureurs américains cherchent à récupérer des cryptoactifs liés au vol signalé chez Binance. Le dossier associe gel des avoirs, confiscation et traçage des fonds.",
+    "de-DE": "US-Ermittler verfolgen die Rückgewinnung von Kryptovermögen aus dem gemeldeten Binance-Diebstahl. Der Bericht behandelt Einfrieren, Einziehung und Blockchain-Analysen.",
+    "ja-JP": "報告されたBinanceの盗難に関連する資産について、米検察が回収を進めています。凍結・没収手続きと資金追跡が焦点です。",
+    "ko-KR": "미 검찰은 보도된 바이낸스 도난 관련 암호자산 회수를 추진합니다. 자산 동결, 몰수 절차와 온체인 자금 추적을 다룹니다."
+  },
+  {
+    "en-US": "A court declined an immediate restraining order sought against Kalshi. The wider dispute over sports-related event contracts continues, so the temporary outcome does not settle the underlying regulatory questions.",
+    "zh-TW": "法院未批准針對 Kalshi 的即時限制令，但與體育事件合約有關的爭議仍在進行。這次暫時結果並未解決其背後的監管問題。",
+    "fr-FR": "Un tribunal a refusé une restriction immédiate contre Kalshi. Le litige sur les contrats sportifs se poursuit et les questions réglementaires restent ouvertes.",
+    "de-DE": "Ein Gericht lehnte eine sofortige Verfügung gegen Kalshi ab. Der Streit über sportbezogene Ereigniskontrakte und die regulatorischen Fragen geht weiter.",
+    "ja-JP": "裁判所はKalshiへの即時制限命令を認めませんでした。スポーツ関連契約をめぐる争いは続いており、規制上の論点は未解決です。",
+    "ko-KR": "법원은 Kalshi에 대한 즉각적인 제한 명령을 받아들이지 않았습니다. 스포츠 이벤트 계약 관련 분쟁과 규제 쟁점은 계속됩니다."
+  },
+  {
+    "en-US": "BTCS sold part of its Ether holdings to reduce Aave borrowing during market volatility. The report contrasts that effort to lower liquidation exposure with other treasury firms that continued adding ETH.",
+    "zh-TW": "BTCS 在市場波動期間出售部分 Ether，以降低 Aave 借款與清算風險。報導並對照其他仍持續增加 ETH 部位的資產儲備企業。",
+    "fr-FR": "BTCS a vendu une partie de ses Ether pour réduire sa dette Aave et son risque de liquidation. D’autres sociétés de trésorerie ont continué à accumuler de l’ETH.",
+    "de-DE": "BTCS verkaufte Ether, um Aave-Schulden und Liquidationsrisiken zu verringern. Andere Treasury-Unternehmen kauften gleichzeitig weiter ETH.",
+    "ja-JP": "BTCSはAave借入と清算リスクを減らすためEtherを売却しました。一方でETHの買い増しを続ける企業も紹介されています。",
+    "ko-KR": "BTCS는 Aave 부채와 청산 위험을 줄이기 위해 이더 일부를 매각했습니다. 반대로 ETH를 계속 축적한 기업도 소개됩니다."
+  },
+  {
+    "en-US": "Base is preparing changes intended to support future quantum-resistant wallets. Its planned transaction format is an initial step, not an immediate solution to every quantum-security challenge.",
+    "zh-TW": "Base 正準備支援未來抗量子錢包的相關調整。規劃中的交易格式是基礎步驟，並不代表能立即解決所有量子安全問題。",
+    "fr-FR": "Base prépare une nouvelle base technique pour des portefeuilles résistants au quantique. Ce premier pas ne résout pas immédiatement tous les risques.",
+    "de-DE": "Base bereitet technische Grundlagen für quantenresistente Wallets vor. Das ist ein erster Schritt, keine sofortige Lösung aller Quantenrisiken.",
+    "ja-JP": "Baseは将来の耐量子ウォレットに向けた基盤を準備しています。新しい取引形式は初期段階であり、すべてのリスクを直ちに解消するものではありません。",
+    "ko-KR": "Base는 미래 양자 내성 지갑을 위한 기반을 준비합니다. 새로운 거래 형식은 첫 단계이며 모든 양자 보안 문제를 즉시 해결하지는 않습니다."
+  },
+  {
+    "en-US": "Andrew Cuomo said competitors encouraged issuers to stay out of OKXICE’s tokenized-stock launch. The report separates that allegation from issuers’ requests for more time to understand the platform.",
+    "zh-TW": "Andrew Cuomo 表示，競爭對手曾鼓勵發行公司不參加 OKXICE 代幣化股票上線。報導也提到部分公司希望先取得更多時間了解平台。",
+    "fr-FR": "Andrew Cuomo affirme que des concurrents ont encouragé certains émetteurs à éviter OKXICE. D’autres entreprises souhaitaient surtout davantage de temps pour examiner la plateforme.",
+    "de-DE": "Andrew Cuomo wirft Konkurrenten vor, Emittenten vom OKXICE-Start abgeraten zu haben. Einige Unternehmen wollten zunächst mehr Zeit zur Prüfung.",
+    "ja-JP": "Andrew Cuomoは、競合がOKXICEへの不参加を働きかけたと述べています。一部の発行企業は検討時間を求めたとも報じられています。",
+    "ko-KR": "Andrew Cuomo는 경쟁사가 OKXICE 참여를 막으려 했다고 주장했습니다. 일부 발행사는 플랫폼 검토 시간이 더 필요했다고 전해집니다."
+  },
+  {
+    "en-US": "Bitcoin rose alongside a sharp Nvidia-led market move in the report. The article tracks price rebounds and derivatives liquidations, illustrating how quickly leverage can amplify changes in risk sentiment.",
+    "zh-TW": "報導中的 Bitcoin 與 Nvidia 帶動的市場走勢同步反彈，並出現衍生品清算。文章以此說明風險情緒變化與槓桿部位之間的連動。",
+    "fr-FR": "Le Bitcoin a rebondi avec le mouvement de marché mené par Nvidia. Le texte suit les prix et les liquidations, montrant l’effet amplificateur du levier.",
+    "de-DE": "Bitcoin erholte sich im Bericht mit einer von Nvidia angeführten Marktbewegung. Liquidationen zeigen, wie Hebel Stimmungswechsel verstärken können.",
+    "ja-JP": "報道ではNvidia主導の市場上昇とともにBitcoinが反発しています。価格変動と清算を通じ、レバレッジの影響を説明しています。",
+    "ko-KR": "보도에서는 엔비디아가 이끈 시장 반등과 함께 비트코인이 상승했습니다. 가격 변화와 청산을 통해 레버리지 영향을 설명합니다."
+  },
+  {
+    "en-US": "Cross River and LendingUSA introduced loans secured by Bitcoin. Borrowers can obtain cash without immediately selling holdings, but falling collateral values can trigger additional funding requirements or liquidation.",
+    "zh-TW": "Cross River 與 LendingUSA 推出以 Bitcoin 擔保的貸款，讓借款人取得現金而不必立即出售持倉。不過抵押品價格下跌仍可能引發補充擔保或清算。",
+    "fr-FR": "Cross River et LendingUSA proposent des prêts garantis par Bitcoin. Une baisse du collatéral peut entraîner un appel de marge ou une liquidation.",
+    "de-DE": "Cross River und LendingUSA bieten Bitcoin-besicherte Kredite. Sinkende Sicherheitenwerte können Nachschüsse oder eine Liquidation auslösen.",
+    "ja-JP": "Cross RiverとLendingUSAはBitcoin担保ローンを導入しました。担保価格の下落時には追加担保や清算の可能性があります。",
+    "ko-KR": "Cross River와 LendingUSA가 비트코인 담보 대출을 도입했습니다. 담보 가치 하락 시 추가 담보 요구나 청산이 발생할 수 있습니다."
+  },
+  {
+    "en-US": "This market-depth report explains why a displayed bid does not guarantee the execution price of a larger Bitcoin order. Thin weekend liquidity and uneven order books can produce substantial slippage.",
+    "zh-TW": "這篇市場深度報導說明，畫面上的買價不保證大額 Bitcoin 訂單能以相同價格全部成交。週末流動性偏低與訂單簿分布不均可能導致明顯滑價。",
+    "fr-FR": "Le meilleur prix affiché ne garantit pas l’exécution d’un gros ordre Bitcoin. Une faible liquidité de week-end peut provoquer un glissement important.",
+    "de-DE": "Der beste angezeigte Kurs garantiert nicht den Ausführungspreis großer Bitcoin-Aufträge. Dünne Wochenendliquidität kann erhebliche Slippage verursachen.",
+    "ja-JP": "表示された最良価格で大口Bitcoin注文の全量が約定するとは限りません。週末の薄い流動性は大きなスリッページにつながります。",
+    "ko-KR": "표시된 최우선 호가가 대규모 비트코인 주문의 체결가를 보장하지 않습니다. 주말의 부족한 유동성은 큰 슬리피지를 유발할 수 있습니다."
+  },
+  {
+    "en-US": "The report says Nvidia’s board reinstated Jensen Huang while an independent investigation continued. It also describes changes to compliance oversight and the market reaction to the announcement.",
+    "zh-TW": "報導稱 Nvidia 董事會恢復 Jensen Huang 的職務，同時持續獨立調查。內容亦涉及合規監督安排與公告後的市場反應。",
+    "fr-FR": "Le reportage indique que Nvidia a rétabli Jensen Huang tout en poursuivant une enquête indépendante. Il décrit aussi le contrôle de conformité et la réaction du marché.",
+    "de-DE": "Laut Bericht setzte Nvidia Jensen Huang wieder ein, während eine unabhängige Untersuchung weiterläuft. Auch Compliance-Aufsicht und Marktreaktion werden behandelt.",
+    "ja-JP": "報道によるとNvidiaは独立調査を継続しながらJensen Huangを復帰させました。監督体制と市場反応も扱っています。",
+    "ko-KR": "보도에 따르면 엔비디아는 독립 조사를 계속하면서 Jensen Huang을 복귀시켰습니다. 준법 감독과 시장 반응도 다룹니다."
+  },
+  {
+    "en-US": "OKXICE’s launch brings tokenized securities to eligible customers with phased asset availability. The report covers issuer objections, custody rights and the technical restrictions governing access.",
+    "zh-TW": "OKXICE 分階段向合資格客戶提供代幣化證券。報導整理部分發行公司的反對意見、持有人權利，以及限制交易資格的技術安排。",
+    "fr-FR": "OKXICE ouvre progressivement les titres tokenisés aux clients éligibles. L’article examine les objections d’émetteurs, les droits et les restrictions d’accès.",
+    "de-DE": "OKXICE führt tokenisierte Wertpapiere schrittweise für berechtigte Kunden ein. Emittenteneinwände, Rechte und Zugangsbeschränkungen stehen im Mittelpunkt.",
+    "ja-JP": "OKXICEは対象顧客向けにトークン化証券を段階的に提供します。発行会社の反対、保有者の権利、アクセス制限が論点です。",
+    "ko-KR": "OKXICE는 적격 고객에게 토큰화 증권을 단계적으로 제공합니다. 발행사 반대, 보유자 권리와 접근 제한을 다룹니다."
+  },
+  {
+    "en-US": "American Bitcoin arranged a revolving facility backed by Bitcoin. The financing is intended to support operations and expansion while retaining coins, with collateral thresholds and borrowing costs still applying.",
+    "zh-TW": "American Bitcoin 安排以 Bitcoin 擔保的循環信貸，用於營運與擴張並保留持幣。該安排仍涉及抵押門檻、利息和其他融資成本。",
+    "fr-FR": "American Bitcoin a obtenu une ligne renouvelable garantie par Bitcoin pour financer son activité. Des seuils de garantie et des frais restent applicables.",
+    "de-DE": "American Bitcoin vereinbarte eine Bitcoin-besicherte Kreditlinie für Betrieb und Wachstum. Sicherheitenanforderungen und Finanzierungskosten bleiben bestehen.",
+    "ja-JP": "American Bitcoinは運営と拡張に向けBitcoin担保の融資枠を確保しました。担保条件と借入費用が適用されます。",
+    "ko-KR": "American Bitcoin은 운영과 확장을 위해 비트코인 담보 신용 한도를 확보했습니다. 담보 요건과 차입 비용은 여전히 적용됩니다."
+  },
+  {
+    "en-US": "Strategy added Bitcoin while allocating a larger sum to preferred-share repurchases. The report examines how stock issuance, cash reserves and buyback authorizations shaped that week’s capital allocation.",
+    "zh-TW": "Strategy 在增持 Bitcoin 的同時，將更大金額用於優先股回購。報導檢視股票發行、現金儲備與回購授權如何影響當週資本配置。",
+    "fr-FR": "Strategy a acheté du Bitcoin tout en consacrant davantage aux rachats d’actions préférentielles. Le reportage examine ses choix de financement et d’allocation du capital.",
+    "de-DE": "Strategy kaufte Bitcoin und setzte zugleich mehr Mittel für Vorzugsaktienrückkäufe ein. Der Bericht untersucht Finanzierung und Kapitalallokation.",
+    "ja-JP": "StrategyはBitcoinを購入する一方、より多くの資金を優先株の買い戻しに充てました。資金調達と資本配分を扱っています。",
+    "ko-KR": "Strategy는 비트코인을 매수하면서 더 많은 금액을 우선주 자사주 매입에 사용했습니다. 자금 조달과 자본 배분을 분석합니다."
+  },
+  {
+    "en-US": "AI agents already have ways to pay with cards, challenging the idea that every automated payment will use crypto. The discussion contrasts familiar consumer payment rails with stablecoins’ potential role in very small transactions.",
+    "zh-TW": "AI 代理已能使用信用卡付款，挑戰所有自動支付都會採用加密貨幣的假設。文章比較傳統支付方式與穩定幣在微額交易中的不同用途。",
+    "fr-FR": "Les agents IA peuvent déjà payer par carte. L’article compare ces moyens familiers au potentiel des stablecoins pour les très petits paiements.",
+    "de-DE": "KI-Agenten können bereits mit Karten zahlen. Der Beitrag vergleicht etablierte Zahlungswege mit Stablecoins bei Kleinstzahlungen.",
+    "ja-JP": "AIエージェントはすでにカード決済を利用できます。従来の決済手段と少額決済でのステーブルコインの役割を比較しています。",
+    "ko-KR": "AI 에이전트는 이미 카드로 결제할 수 있습니다. 기존 결제 수단과 소액 결제에서 스테이블코인의 역할을 비교합니다."
+  },
+  {
+    "en-US": "Criticism of the FTX drama centers on fictionalized scenes and portrayals of real people. The report distinguishes creative choices and producer credits from evidence about the underlying events.",
+    "zh-TW": "FTX 題材影集的爭議集中在虛構場景與真實人物的呈現方式。報導區分戲劇創作、製作人名單與現實事件證據之間的差異。",
+    "fr-FR": "Les critiques du drame FTX portent sur des scènes inventées et la représentation de personnes réelles. L’article distingue fiction et faits établis.",
+    "de-DE": "Die Kritik am FTX-Drama betrifft erfundene Szenen und die Darstellung realer Personen. Der Bericht trennt kreative Entscheidungen von belegten Ereignissen.",
+    "ja-JP": "FTXドラマへの批判は創作された場面と実在人物の描写に集中しています。創作上の選択と事実の証拠を区別しています。",
+    "ko-KR": "FTX 드라마에 대한 비판은 허구 장면과 실존 인물 묘사에 집중됩니다. 창작적 선택과 실제 사건의 증거를 구분합니다."
+  },
+  {
+    "en-US": "The ECB plans to broaden the tokenized securities eligible as collateral through licensed pilot platforms. Existing risk standards and settlement-access requirements still apply, with further operating details expected later.",
+    "zh-TW": "ECB 規劃擴大合資格試點平台發行的代幣化證券作為抵押品的範圍。現行風險標準與結算接入要求仍適用，後續還需公布操作細節。",
+    "fr-FR": "La BCE prévoit d’élargir les titres tokenisés acceptés en garantie via des plateformes pilotes agréées. Les exigences de risque et de règlement restent applicables.",
+    "de-DE": "Die EZB plant mehr tokenisierte Sicherheiten über zugelassene Pilotplattformen. Bestehende Risiko- und Abwicklungsanforderungen gelten weiter.",
+    "ja-JP": "ECBは認可された試験プラットフォームを通じ、担保に使えるトークン化証券を拡大する計画です。既存のリスク要件は維持されます。",
+    "ko-KR": "ECB는 승인된 시범 플랫폼을 통해 담보로 인정되는 토큰화 증권을 확대할 계획입니다. 기존 위험 및 결제 요건은 유지됩니다."
+  },
+  {
+    "en-US": "The weekly market preview links Bitcoin’s rebound to stock futures and the upcoming US inflation release. It frames the move within the prior sell-off and the uncertainty around future monetary policy.",
+    "zh-TW": "這篇每週市場前瞻將 Bitcoin 反彈與股票期貨及即將公布的美國通膨數據連結，並放在先前拋售與貨幣政策不確定性的背景下觀察。",
+    "fr-FR": "L’aperçu hebdomadaire relie le rebond du Bitcoin aux contrats boursiers et aux prochaines données d’inflation américaines, sur fond d’incertitude monétaire.",
+    "de-DE": "Der Wochenausblick verbindet Bitcoins Erholung mit Aktienfutures und bevorstehenden US-Inflationsdaten, vor dem Hintergrund unsicherer Geldpolitik.",
+    "ja-JP": "週間展望ではBitcoinの反発を株価先物と米インフレ指標に結び付け、金融政策の不確実性の中で捉えています。",
+    "ko-KR": "주간 전망은 비트코인 반등을 주식 선물과 미국 물가 지표에 연결하고 통화 정책 불확실성 속에서 살펴봅니다."
+  }
+]

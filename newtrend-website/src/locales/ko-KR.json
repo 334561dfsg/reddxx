@@ -1,0 +1,4872 @@
+{
+  "aiQuant": {
+    "landing": {
+      "eyebrow": "AI 퀀트",
+      "title": "AI에게 거래를 맡기거나, 운용 펀드에 위탁하세요",
+      "subtitle": "독립된 두 개의 제품 라인. 하나를 골라 시작하세요. 언제든 전환할 수 있습니다.",
+      "strategy": {
+        "kicker": "AI 엔진 · 자동 실행",
+        "name": "전략",
+        "valueProp": "검증된 템플릿을 기반으로 AI 엔진이 자동으로 주문하고 거래합니다. 템플릿을 고르면 엔진이 실행합니다.",
+        "chipA": "백테스트 완료",
+        "chipB": "리스크 상한",
+        "browse": "전략 둘러보기",
+        "mine": "내 전략",
+        "mineHint": "개인 · 실행 중인 인스턴스"
+      },
+      "quantFund": {
+        "kicker": "AI 운용 · 신경 끄기",
+        "name": "퀀트 펀드",
+        "valueProp": "AI가 운용하는 정기형 펀드. 청약하면 만기에 자동으로 정산됩니다.",
+        "chipA": "정기",
+        "chipB": "자동 정산",
+        "browse": "펀드 둘러보기",
+        "mine": "내 포지션",
+        "mineHint": "개인 · 청약 및 이자"
+      }
+    },
+    "nav": {
+      "ariaLabel": "AI 퀀트 모듈 내비게이션",
+      "strategy": "전략",
+      "myStrategies": "내 전략",
+      "quantFund": "퀀트 펀드",
+      "myPositions": "내 포지션"
+    },
+    "myStrategies": {
+      "subtitle": "실행 중인 AI 전략",
+      "title": "내 전략",
+      "empty": "구독한 전략이 없습니다. 템플릿을 둘러보고 시작하세요.",
+      "browseStrategies": "템플릿 둘러보기",
+      "summary": {
+        "totalCapital": "총 투자금",
+        "totalPnl": "총 손익",
+        "running": "실행 중",
+        "total": "전략 수"
+      }
+    },
+    "table": {
+      "columns": {
+        "strategyName": "전략",
+        "styleMarket": "스타일 / 시장",
+        "trend": "손익 추세",
+        "pnl": "손익",
+        "capital": "자본",
+        "endDate": "종료",
+        "action": "작업"
+      }
+    },
+    "hero": {
+      "subtitle": "AI 퀀트",
+      "title": "모든 트레이더를 위한 퀀트 파워.",
+      "description": "수백 개의 AI 기반 전략, 투명한 리스크 파라미터, 그리고 모든 의사결정에 대한 완전한 통제. 템플릿을 구독하고 한도를 설정한 뒤 수학이 무거운 일을 처리하도록 맡기세요.",
+      "browseStrategies": "전략 둘러보기",
+      "howItWorks": "작동 방식",
+      "modelsRunning": "모델 실행 중 · 연중무휴",
+      "statActive": "활성",
+      "statActiveSub": "현재 실행 중인 전략",
+      "statActiveFallback": "이용 가능한 템플릿",
+      "statActiveFallbackSub": "구독 가능한 전략 수",
+      "statAvgSharpe": "중앙값 샤프 지수",
+      "statAvgSharpeSub": "등록된 템플릿 전체 기준"
+    },
+    "howItWorks": {
+      "title": "AI 퀀트 작동 방식",
+      "description": "전략이 구축되고 백테스트되며 실행되는 방식에 대한 간단한 안내입니다.",
+      "empty": "소개 영상을 현재 이용할 수 없습니다. 나중에 다시 확인해 주세요.",
+      "unsupported": "사용 중인 브라우저가 video 태그를 지원하지 않습니다."
+    },
+    "sections": {
+      "featured": "오늘의 추천",
+      "live": "실시간 성과",
+      "browse": "전략 둘러보기"
+    },
+    "spotlight": {
+      "subtitle": "보수·균형·공격 각 스타일에서 샤프 지수가 가장 높은 전략을 하나씩 골라 바로 구독할 수 있게 준비했습니다.",
+      "styleBadge": {
+        "conservative": "안정형 추천",
+        "balanced": "균형형 추천",
+        "aggressive": "공격형 추천"
+      },
+      "subscribeNow": "지금 구독하기"
+    },
+    "templates": {
+      "label": "전략 템플릿",
+      "title": "전략 템플릿",
+      "subtitle": "각 템플릿은 공개된 리스크 및 수익 지표를 가진 검증된 AI 모델로 실행됩니다.",
+      "recommendedTitle": "추천",
+      "filterAll": "전체",
+      "filterByStyle": "스타일",
+      "filterByMarket": "시장",
+      "empty": "필터에 맞는 전략이 아직 없습니다.",
+      "loading": "전략 불러오는 중…",
+      "subscribe": "구독",
+      "sortBy": {
+        "label": "정렬",
+        "sharpe_desc": "샤프 지수 · 높은 순",
+        "sharpe_asc": "샤프 지수 · 낮은 순",
+        "winRate_desc": "승률 · 높은 순",
+        "winRate_asc": "승률 · 낮은 순",
+        "minCapital_desc": "최소 자본 · 높은 순",
+        "minCapital_asc": "최소 자본 · 낮은 순",
+        "period_desc": "기간 · 긴 순",
+        "period_asc": "기간 · 짧은 순"
+      },
+      "fields": {
+        "winRate": "승률",
+        "sharpeRatio": "샤프 지수",
+        "aiModel": "AI 모델",
+        "tradesPerDay": "일일 거래 수",
+        "tradesPerDayValue": "일평균 {{n}}회",
+        "capital": "자본 ({{asset}})",
+        "period": "기간",
+        "riskLevel": "리스크",
+        "supportedSymbols": "심볼"
+      },
+      "riskLevelValue": "Lv.{{level}}",
+      "guideCard": {
+        "title": "마음에 드는 전략을 찾지 못하셨나요?",
+        "description": "AI가 전 과정을 운용하는 퀀트 펀드를 살펴보세요. 청약 후 지켜볼 필요 없이 만기에 자동 정산됩니다.",
+        "cta": "퀀트 펀드 둘러보기"
+      }
+    },
+    "style": {
+      "conservative": "보수적",
+      "balanced": "균형",
+      "aggressive": "공격적"
+    },
+    "market": {
+      "crypto": "암호화폐",
+      "stock": "주식",
+      "forex": "외환",
+      "indices": "지수"
+    },
+    "aiModelNames": {
+      "local": "자체 개발 퀀트 모델"
+    },
+    "detail": {
+      "title": "전략 상세",
+      "close": "닫기",
+      "openAria": "{{name}} 상세 보기",
+      "descriptionTitle": "전략 소개",
+      "paramsTitle": "주요 파라미터",
+      "periodValue": "{{min}} – {{max}}일",
+      "dailyTargetLabel": "일일 목표 수익률",
+      "dailyTargetValue": "{{percent}}%/일",
+      "explain": {
+        "sharpeRatio": "감수한 위험 한 단위당 얻은 수익을 나타내며, 높을수록 위험 조정 성과가 우수합니다.",
+        "winRate": "과거 거래 중 수익으로 마감한 비율입니다.",
+        "riskLevel": "플랫폼이 평가한 변동성·낙폭 등급으로, 높을수록 변동이 큽니다."
+      }
+    },
+    "strategies": {
+      "label": "내 전략",
+      "title": "내 전략",
+      "subtitle": "계정에 구독된 모든 전략의 실시간 현황.",
+      "trendPlaceholder": "성과 추이 곧 제공 예정",
+      "empty": "아직 활성 전략이 없습니다. 템플릿을 선택해 시작하세요.",
+      "loginRequired": "전략을 관리하려면 로그인하세요.",
+      "fields": {
+        "capital": "자본",
+        "pnl": "손익",
+        "returnPercent": "수익률",
+        "period": "기간",
+        "tradesCount": "거래 수",
+        "winRate": "승률",
+        "endDate": "종료"
+      }
+    },
+    "status": {
+      "initializing": "초기화 중",
+      "running": "실행 중",
+      "paused": "일시정지",
+      "completed": "완료",
+      "pending_review": "검토 중",
+      "rejected": "거부됨"
+    },
+    "actions": {
+      "pause": "일시정지",
+      "resume": "재개",
+      "stop": "중지",
+      "viewStats": "통계 보기",
+      "hideStats": "통계 접기",
+      "toast": {
+        "pauseSuccess": "전략을 일시정지했습니다",
+        "pauseError": "전략을 일시정지하지 못했습니다. 다시 시도해 주세요.",
+        "resumeSuccess": "전략을 재개했습니다",
+        "resumeError": "전략을 재개하지 못했습니다. 다시 시도해 주세요.",
+        "stopSuccess": "전략을 정지했습니다",
+        "stopError": "전략을 정지하지 못했습니다. 다시 시도해 주세요."
+      },
+      "stopConfirm": {
+        "title": "이 전략을 정지할까요?",
+        "notice": "정지하면 '{{name}}'의 모든 미결제 포지션이 청산되고 전략이 종료됩니다. 실현 손익은 유지되지만 이 작업은 되돌릴 수 없습니다.",
+        "cancel": "계속 실행",
+        "confirm": "전략 정지",
+        "confirming": "정지 중…"
+      }
+    },
+    "create": {
+      "title": "{{name}} 구독",
+      "subtitle": "자본, 손절, 익절, 기간을 설정하세요.",
+      "subtitleDailyTarget": "원금과 운용 기간을 설정하세요. 이 템플릿은 고정 일일 목표 수익률로 운용되므로 익절/손절 설정이 필요하지 않습니다.",
+      "demoNotice": "데모 모드: 자본금은 모의 계좌에서 예약되며 실제 자금은 사용되지 않습니다.",
+      "capitalLabel": "자본 ({{asset}})",
+      "availableBalanceLabel": "사용 가능",
+      "maxButton": "최대",
+      "capitalHint": "범위: {{min}} – {{max}}",
+      "takeProfitLabel": "익절 (%)",
+      "stopLossLabel": "손절 (%)",
+      "periodLabel": "기간 (일)",
+      "periodHint": "범위: {{min}} – {{max}} 일",
+      "submit": "구독",
+      "submitting": "제출 중…",
+      "cancel": "취소",
+      "submitSuccess": "구독이 완료되었습니다",
+      "fees": {
+        "title": "수수료 및 규칙",
+        "feePerTrade": "거래당 수수료",
+        "feePerTradeValue": "{{fee}} {{asset}}",
+        "maxOpenTrades": "최대 동시 포지션",
+        "maxOpenTradesValue": "{{n}}건"
+      },
+      "settlementNote": "전략은 언제든지 조기 종료할 수 있습니다. 종료 시 모든 미결제 포지션이 청산되고 전략이 종료되며, 실현 손익은 계정에 남습니다.",
+      "simulator": {
+        "title": "예상 수익 시뮬레이션",
+        "params": "{{rate}}%/일 ±{{tolerance}}% · 일복리",
+        "range": "시뮬레이션 범위: {{lower}} – {{upper}}",
+        "legendExpected": "예상",
+        "legendBand": "변동 범위",
+        "tooltipDay": "{{day}}일차",
+        "tooltipExpected": "예상",
+        "tooltipUpper": "상한",
+        "tooltipLower": "하한",
+        "emptyHint": "원금과 기간을 입력하면 시뮬레이션이 표시됩니다.",
+        "disclaimer": "본 시뮬레이션은 템플릿의 일일 목표와 허용 범위를 일복리로 추산한 참고용 수치이며, 수익을 보장하지 않습니다."
+      },
+      "errors": {
+        "capitalRequired": "자본 금액을 입력하세요.",
+        "belowMin": "자본은 최소 {{min}} 이상이어야 합니다.",
+        "aboveMax": "자본은 {{max}}을(를) 초과할 수 없습니다.",
+        "emptyRange": "이 템플릿은 현재 귀하의 계정에서 이용할 수 없습니다.",
+        "periodOutOfRange": "기간은 {{min}}일에서 {{max}}일 사이여야 합니다.",
+        "takeProfitOutOfRange": "익절은 1%에서 100% 사이여야 합니다.",
+        "stopLossOutOfRange": "손절은 1%에서 50% 사이여야 합니다.",
+        "createFailed": "전략 생성에 실패했습니다. 다시 시도해 주세요.",
+        "badRequest": "요청이 거부되었습니다. 입력 내용을 확인해 주세요.",
+        "unauthorized": "전략을 생성하려면 로그인하세요.",
+        "paymentRequired": "잔액이 부족합니다. 이 전략을 생성하기 전에 충전해 주세요.",
+        "notFound": "이 전략 템플릿은 더 이상 이용할 수 없습니다.",
+        "conflict": "충돌하는 전략이 이미 실행 중입니다. 중지하거나 종료될 때까지 기다려 주세요.",
+        "validation": "일부 입력 항목이 올바르지 않습니다. 확인 후 다시 시도해 주세요."
+      }
+    },
+    "dailyStats": {
+      "netPnl": "순손익",
+      "tradesLabel": "거래 횟수",
+      "activeDays": "거래일 수",
+      "date": "날짜",
+      "pnl": "손익",
+      "loss": "손실",
+      "profit": "수익",
+      "empty": "이 기간에 청산된 거래가 아직 없습니다.",
+      "rangeCaption": "{{range}} · UTC",
+      "showingLatest": "최근 {{shown}}일 / 총 {{total}}일 표시"
+    },
+    "risk": {
+      "title": "리스크 고지",
+      "body": "과거의 성과가 미래의 결과를 보장하지 않습니다. AI 전략 및 신호는 참고 도구일 뿐 금융 자문이 아닙니다. 암호화폐 및 선물 거래는 전체 잔액을 잃을 수 있으므로 — 잃어도 감당할 수 있는 금액만 거래하세요."
+    },
+    "quantFund": {
+      "title": "퀀트 펀드",
+      "hero": {
+        "subtitle": "AI 운용 퀀트 펀드",
+        "title": "퀀트 펀드 — AI 운용 확정 기간 수익",
+        "description": "당사 AI 퀀트 장부가 운용하는 확정 기간 상품입니다. 정해진 기간 동안 예치하고 일일 수익률로 이자를 적립하며 만기 시 정산이 자동으로 진행됩니다.",
+        "disclaimer": "AI 운용 · 확정 기간 정산",
+        "viewPositionsCta": "내 포지션"
+      },
+      "filters": {
+        "assetAll": "전체 자산"
+      },
+      "card": {
+        "dailyReturn": "일일 수익률",
+        "term": "기간",
+        "termDaysValue": "{{days}}일",
+        "termFlexible": "자유형",
+        "investmentLimit": "구독 범위 ({{currency}})",
+        "availableQuota": "이용 가능 한도",
+        "subscribedDisplayed": "구독됨",
+        "projectProgress": "프로젝트 진행률",
+        "maxUnlimited": "무제한",
+        "tagFlexible": "자유형",
+        "tagRedeemable": "언제든 환매",
+        "cta": "구독",
+        "ctaSoldOut": "한도 소진"
+      },
+      "creditScore": {
+        "label": "최소 신용 점수",
+        "requirement": "신용 점수 {{score}} 이상",
+        "insufficient": "신용 점수 {{required}} 이상 필요, 현재 {{current}}"
+      },
+      "detail": {
+        "investmentRange": "구독 범위",
+        "minHoldDays": "최소 보유 {{days}}일",
+        "subscribeCta": "지금 구독",
+        "disclosure": "공시 문서",
+        "calcTitle": "수익 계산기",
+        "calcDaysLabel": "보유 기간",
+        "calcEstTotal": "예상 총 수익",
+        "calcDisclaimer": "계산 결과는 참고용이며 수익을 보장하지 않습니다.",
+        "calcAccrualNote": "{{days}}일 미만 보유 시 수익이 발생하지 않습니다.",
+        "flowTitle": "이용 절차",
+        "flowStep1Title": "구독",
+        "flowStep1Desc": "금액을 선택하고 펀딩 계정 잔액으로 구독을 확정합니다.",
+        "flowStep2Title": "이자 발생 시작",
+        "flowStep2Desc": "구독 확정 후 수익이 누적되기 시작합니다.",
+        "flowStep3Title": "수익 지급",
+        "flowStep3Desc": "수익은 정기적으로 정산되어 계정에 지급됩니다.",
+        "flowStep4Title": "환매",
+        "flowStep4DescFixed": "만기 시 원금과 수익이 자동 반환됩니다.",
+        "flowStep4DescFlexible": "언제든지 환매 가능하며 자금은 펀딩 계정으로 반환됩니다.",
+        "quotaTitle": "한도 상세",
+        "quotaTotal": "총 한도",
+        "quotaPerUser": "1인 한도",
+        "moreTitle": "다른 상품"
+      },
+      "riskLevel": {
+        "LOW": "낮은 리스크",
+        "MEDIUM": "중간 리스크",
+        "HIGH": "높은 리스크",
+        "EXTREME": "극도 리스크"
+      },
+      "subscribe": {
+        "title": "{{name}} 구독",
+        "amountLabel": "금액 ({{currency}})",
+        "amountHint": "범위: {{min}} – {{max}} {{currency}}",
+        "availableBalanceLabel": "사용 가능",
+        "maxButton": "최대",
+        "estDailyEarnings": "예상 일일 수익",
+        "riskAckPrefix": "다음 내용을 읽고 동의합니다: ",
+        "riskAckLink": "퀀트 펀드 리스크 공시",
+        "riskAckSuffix": " (이 상품에 대한).",
+        "submit": "구독 확인",
+        "submitting": "제출 중…",
+        "cancel": "취소",
+        "errorAmountRange": "금액은 {{min}}에서 {{max}} {{currency}} 사이여야 합니다.",
+        "errorAmountInvalid": "유효한 금액을 입력하세요.",
+        "errorExceedsAvailable": "금액이 남은 한도를 초과합니다. {{available}} {{currency}}만 남았습니다 — 금액을 조정해 주세요.",
+        "errorInsufficientBalance": "사용 가능한 잔액이 부족합니다. 현재 {{available}} {{currency}} 사용 가능합니다.",
+        "goDeposit": "입금하기",
+        "errorRequireRiskAck": "계속하기 전에 리스크 고지를 확인해 주세요.",
+        "success": "구독이 확인되었습니다",
+        "close": "닫기"
+      },
+      "redeem": {
+        "button": "환매",
+        "title": "주문 환매",
+        "confirmNotice": "이자는 실제 보유 일수에 따라 적립됩니다. 최소 {{minHoldDays}}일 미만으로 보유 시 이자가 없습니다. 최종 금액은 정산 시 확정됩니다.",
+        "confirmNoticeNoMin": "이자는 실제 보유 일수에 따라 적립됩니다. 최종 금액은 정산 시 확정됩니다.",
+        "reviewNotice": "이 환매는 검토가 필요합니다. 제출 후 관리자가 승인해야 지급되며, 그때까지 원금은 펀드에 남아 계속 이자가 적립됩니다.",
+        "confirm": "환매 확인",
+        "submitting": "제출 중…",
+        "cancel": "취소",
+        "resultTitle": "환매 완료",
+        "pendingTitle": "환매 신청이 제출되었습니다",
+        "pendingDescription": "환매가 검토를 기다리고 있습니다. 관리자가 승인할 때까지 원금은 펀드에 남아 계속 이자가 적립됩니다.",
+        "settledPrincipal": "정산 원금",
+        "settledInterest": "정산 이자",
+        "heldDaysLabel": "보유 기간",
+        "heldDays": "{{days}}일",
+        "fundsReturned": "원금과 이자가 펀딩 계정으로 반환되었습니다.",
+        "done": "완료",
+        "confirmNoticeEarlyRedeem": "이 상품은 잠금 기간이 있는 상품입니다. 조기 상환 시 남은 잠금 일수에 따라 위약금이 부과됩니다. 최종 금액은 정산 시 확정됩니다.",
+        "penaltyAmount": "조기 상환 위약금",
+        "remainingLockDays": "남은 잠금 기간",
+        "remainingLockDaysValue": "{{days}}일",
+        "notSupported": "조기 상환 미지원",
+        "needVip": "조기 상환은 VIP {{tier}} 이상 필요",
+        "penaltyEstimate": "예상 위약금"
+      },
+      "topUp": {
+        "button": "추가하기",
+        "title": "청약 금액 추가",
+        "description": "추가하여 심사 재개",
+        "countdownLabel": "추가 납입 마감",
+        "countdownDaysHours": "{{days}}일 {{hours}}시간",
+        "countdownDaysHoursMinutes": "{{days}}일 {{hours}}시간 {{minutes}}분",
+        "expired": "기한 만료",
+        "overdue": "기한 초과",
+        "overdueDays": "{{days}}일 초과",
+        "deadlineNotice": "기한까지 추가 납입하지 않으면 주문이 자동으로 취소되고 원금이 반환됩니다.",
+        "lateFeeDeadlineNotice": "기한 내에 추가 납입하지 않으면 계정에 연체료가 부과됩니다.",
+        "lockedNotice": "추가 납입과 거절이 마감되었습니다. 연체료 납부는 고객센터로 문의해 주세요.",
+        "contactSupport": "고객센터 문의",
+        "noticeWithTarget": "심사자가 이 주문의 목표 금액을 {{target}} {{currency}}(으)로 설정했습니다. 아래에서 차액을 추가하여 심사를 재개하세요.",
+        "noticeGeneric": "심사자가 이 주문의 목표 금액을 조정했습니다. 확인하면 차액을 추가하고 심사를 재개합니다.",
+        "currentPrincipal": "현재 금액",
+        "targetAmount": "목표 금액",
+        "shortfall": "추가 필요 금액",
+        "availableBalanceLabel": "사용 가능",
+        "errorInsufficientBalance": "잔액이 부족하여 추가를 완료할 수 없습니다.",
+        "goDeposit": "입금하기",
+        "confirm": "추가 확인",
+        "submitting": "처리 중…",
+        "cancel": "취소",
+        "resultTitle": "추가 완료",
+        "resultPrincipal": "새 청약 금액",
+        "resultProjectedInterest": "예상 이자",
+        "resultStatusNotice": "주문이 다시 심사 중입니다.",
+        "done": "완료"
+      },
+      "decline": {
+        "button": "거절",
+        "title": "조정 거절",
+        "notice": "거절하면 이 주문이 취소되고 {{principal}} {{currency}}이(가) 사용 가능 잔액으로 반환됩니다. 이 작업은 되돌릴 수 없습니다.",
+        "reasonLabel": "사유 (선택)",
+        "reasonPlaceholder": "사유를 알려주세요 (선택)",
+        "confirm": "거절 및 주문 취소",
+        "submitting": "처리 중…",
+        "cancel": "주문 유지",
+        "resultTitle": "주문이 취소됨",
+        "resultReleased": "잔액으로 반환됨",
+        "resultNotice": "자금이 사용 가능 잔액으로 반환되었습니다.",
+        "done": "완료"
+      },
+      "positions": {
+        "title": "내 퀀트 펀드 포지션",
+        "subtitle": "계정의 모든 퀀트 펀드 주문 및 정산 상태.",
+        "tabs": {
+          "all": "전체",
+          "active": "활성",
+          "pending_review": "검토 중",
+          "redeem_pending_review": "환매 검토 중",
+          "awaiting_top_up": "추가 입금 대기",
+          "rejected": "거부됨",
+          "settled": "정산됨",
+          "cancelled": "취소됨",
+          "redeemed": "환매됨"
+        },
+        "tabGroups": {
+          "all": "전체",
+          "pending": "처리 중",
+          "active": "활성",
+          "history": "내역"
+        },
+        "historyFilter": {
+          "all": "전체 상태"
+        },
+        "summary": {
+          "totalPrincipal": "총 원금",
+          "totalProjectedInterest": "예상 이자",
+          "activeInterestPaidTotal": "지급된 이자(보유 중)",
+          "settledTotalReceived": "정산 총 수령액",
+          "activeCount": "활성 주문",
+          "breakdownToggle": "자산별 내역",
+          "interestProgress": "이자 진행률 {{percent}}%",
+          "earningsTrend": "최근 {{days}}일 이자 추이",
+          "usdPrice": "@ {{price}} USD",
+          "partialValuation": "{{assets}}의 USD 가격이 없어 합계에는 평가 가능한 자산만 포함됩니다."
+        },
+        "empty": "이 탭에는 아직 주문이 없습니다.",
+        "table": {
+          "status": "상태",
+          "productName": "상품",
+          "principal": "원금",
+          "dailyReturn": "일일 수익률",
+          "term": "기간",
+          "projectedInterest": "예상 이자",
+          "interestPaidTotal": "지급 이자",
+          "interestPaidThrough": "지급 완료일",
+          "interestRemaining": "미지급",
+          "accruedInterestEstimate": "예상",
+          "subscribedAt": "구독일",
+          "maturityDate": "만기일",
+          "action": "작업"
+        },
+        "maturityPending": "승인 후 확정",
+        "fields": {
+          "productName": "상품",
+          "principal": "원금",
+          "dailyReturn": "일일 수익률",
+          "term": "기간",
+          "projectedInterest": "예상 이자",
+          "interestPaidTotal": "지급 이자",
+          "interestPaidThrough": "지급 완료일",
+          "interestRemaining": "미지급 이자",
+          "accruedInterestEstimate": "예상 발생 이자",
+          "minHoldDays": "최소 보유 기간",
+          "subscribedAt": "구독일",
+          "maturityDate": "만기일",
+          "settledAt": "정산 시각",
+          "settledInterest": "정산 이자",
+          "settledPrincipal": "정산 원금",
+          "settledTotal": "정산 합계",
+          "cancelReason": "취소 사유"
+        },
+        "detail": {
+          "title": "주문 상세",
+          "close": "주문 상세 닫기",
+          "viewProduct": "상품 보기",
+          "remainingDays": "{{days}}일 남음",
+          "sections": {
+            "interest": "이자",
+            "settlement": "정산"
+          }
+        },
+        "topUpReminder": {
+          "title": "추가 입금 대기 주문 {{count}}건",
+          "description": "기한까지 추가 납입하세요. 기한이 지나면 주문이 자동으로 취소되고 원금이 반환됩니다.",
+          "overdueDescription": "이 중 {{count}}건이 추가 납입 기한을 넘겼습니다. 지금 처리하시고, 접수가 종료된 경우 고객센터로 문의하세요.",
+          "overdueLockedDescription": "그중 {{count}}건이 기한을 넘겼습니다. 추가 납입과 거절이 마감되었으니 고객센터로 문의해 주세요.",
+          "cta": "추가하기"
+        }
+      },
+      "interestRecords": {
+        "title": "이자 지급 내역",
+        "subtitle": "이 주문의 건별 이자 지급 내역입니다.",
+        "back": "뒤로",
+        "entry": "이자 내역",
+        "table": {
+          "interestDate": "이자 산정일",
+          "amount": "수량",
+          "creditedAt": "입금 시각"
+        },
+        "empty": "아직 이자 지급 내역이 없습니다."
+      },
+      "status": {
+        "product": {
+          "active": "모집 중"
+        },
+        "order": {
+          "active": "활성",
+          "settled": "정산됨",
+          "cancelled": "취소됨",
+          "redeemed": "환매됨",
+          "redeem_pending_review": "환매 검토 중",
+          "pending_review": "검토 중",
+          "awaiting_top_up": "추가 입금 대기",
+          "rejected": "거부됨"
+        }
+      },
+      "errors": {
+        "unknown": "문제가 발생했습니다. 다시 시도해 주세요.",
+        "quotaExhausted": "이 상품은 매진되어 현재 구독할 수 없습니다.",
+        "exceedsRemainingQuota": "구독 금액이 상품의 남은 한도를 초과합니다. 금액을 조정해 주세요.",
+        "perUserQuotaExceeded": "구독 금액이 개인 구독 한도를 초과합니다. 금액을 조정해 주세요.",
+        "notAwaitingTopUp": "이 주문은 더 이상 추가 입금 대기 상태가 아닙니다. 이미 업데이트되었을 수 있습니다.",
+        "topUpLockedOverdue": "이 주문은 기한이 지났습니다. 추가 납입과 거절 접수가 종료되었으니 고객센터로 문의하세요.",
+        "insufficientBalance": "잔액이 부족하여 추가를 완료할 수 없습니다. 입금 후 다시 시도하세요.",
+        "insufficientCreditScore": "신용 점수가 이 상품의 청약 기준에 미달합니다."
+      },
+      "states": {
+        "loading": "불러오는 중…",
+        "empty": "아직 아무것도 없습니다.",
+        "error": "불러오기에 실패했습니다.",
+        "retry": "다시 시도"
+      }
+    }
+  },
+  "assets": {
+    "pageTitle": "자산",
+    "totalAssets": "총 자산",
+    "hide": "숨기기",
+    "show": "표시",
+    "yesterdayProfit": "어제 수익",
+    "todayProfit": "오늘 손익",
+    "deposit": "입금",
+    "transfer": "이체",
+    "history": "내역",
+    "distribution": {
+      "title": "자산 분포",
+      "assetsType": "자산 유형",
+      "earnAccount": "어닝 계정",
+      "quantFundAccount": "퀀트 펀드 계정"
+    },
+    "assetKind": {
+      "crypto": "가상자산",
+      "stablecoin": "스테이블코인",
+      "fiat": "법정화폐",
+      "stock": "주식"
+    },
+    "todayPnl": {
+      "futures": "선물",
+      "copyTrade": "카피 트레이드",
+      "aiQuant": "AI 퀀트",
+      "binaryOptions": "바이너리 옵션",
+      "quantFund": "퀀트 펀드",
+      "earn": "어닝"
+    },
+    "detail": {
+      "title": "{{account}} 자산 상세",
+      "symbol": "심볼",
+      "amount": "수량",
+      "allocation": "비중",
+      "available": "사용 가능",
+      "frozen": "동결",
+      "frozenOrder": "주문 동결",
+      "frozenWithdraw": "출금 동결",
+      "frozenBonus": "보너스 동결",
+      "lockedTag": "동결",
+      "syntheticTag": "합성 포지션",
+      "positionMargin": "포지션 증거금",
+      "unrealizedPnl": "미실현 손익"
+    },
+    "stockNotice": {
+      "title": "주식 잔액 안내",
+      "body": "주식 잔액은 해당 주가를 추종하는, 본 플랫폼과의 포지션입니다. 해당 기업의 주식을 보유하는 것이 아니며 제3자가 대신 주식을 보유하지도 않습니다. 배당은 지급되지 않고 외부로 출금하거나 이전할 수 없습니다. 현금화하려면 플랫폼 내에서 매도하세요."
+    },
+    "kindBreakdown": {
+      "title": "자산 유형별 현금",
+      "note": "현금만 집계합니다(사용 가능 잔액과 동결 잔액, USD 환산). 포지션 증거금, 미실현 손익, Earn, 퀀트 펀드는 포함되지 않으므로 네 항목의 합계는 총자산보다 작습니다."
+    },
+    "fundRecords": "자금 기록",
+    "fundRecordsTime": "시간",
+    "fundRecordsType": "유형",
+    "fundRecordsCoin": "코인",
+    "fundRecordsAmount": "수량",
+    "fundRecordsBalanceBefore": "이전 잔액",
+    "fundRecordsBalanceAfter": "이후 잔액",
+    "typeDeposit": "입금",
+    "typeWithdraw": "출금",
+    "typeTransferIn": "입금 이체",
+    "typeTransferOut": "출금 이체",
+    "statusCompleted": "완료",
+    "statusPending": "대기 중",
+    "time1D": "1일",
+    "time7D": "7일",
+    "time30D": "30일",
+    "time90D": "90일",
+    "time180D": "180일",
+    "noData": "데이터 없음",
+    "assetList": "자산 목록",
+    "coin": "코인",
+    "available": "사용 가능",
+    "frozen": "동결",
+    "valuation": "평가액",
+    "accountOverview": "계정 개요",
+    "tabs": {
+      "overview": "계정 개요",
+      "funding": "펀딩 계정",
+      "trading": "거래 계정"
+    },
+    "accountFunding": "펀딩",
+    "accountTrading": "거래",
+    "accountFutures": "선물",
+    "accountOptions": "옵션",
+    "accountAiQuant": "AI 퀀트",
+    "accountDemoTrading": "데모",
+    "transferFrom": "출금 계정",
+    "transferTo": "입금 계정",
+    "transferAsset": "자산",
+    "transferAmount": "금액 ({{asset}})",
+    "transferAll": "전액 이체",
+    "confirmTransfer": "이체 확인",
+    "transferAmountRequired": "이체 금액을 입력하세요",
+    "transferAmountExceeds": "금액이 사용 가능 잔액을 초과합니다",
+    "action": "작업",
+    "profitPositive": "+{{value}} USD (+{{percent}}%)",
+    "profitNegative": "{{value}} USD ({{percent}}%)",
+    "convert": {
+      "title": "환전",
+      "entry": "환전",
+      "from": "출금",
+      "to": "입금",
+      "available": "사용 가능",
+      "max": "최대",
+      "convertedAmount": "환전 금액",
+      "rate": "환율: 1 {{from}} ≈ {{rate}} {{to}}",
+      "rateUnavailable": "견적을 받으려면 금액을 입력하세요",
+      "confirm": "환전",
+      "quoting": "견적 받는 중…",
+      "quoteExpired": "견적이 만료되었습니다",
+      "refreshQuote": "견적 새로고침",
+      "records": "환전 내역",
+      "recordsTime": "시간",
+      "recordsPair": "페어",
+      "recordsPaid": "지불",
+      "recordsReceived": "수령",
+      "amountRequired": "금액을 입력하세요",
+      "amountExceeds": "금액이 사용 가능 잔액을 초과합니다",
+      "sameAsset": "서로 다른 두 자산을 선택하세요",
+      "currenciesLoadFailed": "환전 가능 통화를 불러오지 못했습니다. 나중에 다시 시도하세요",
+      "noCurrencies": "현재 환전 가능한 통화가 없습니다",
+      "error": {
+        "kycRequired": "환전하기 전에 신원 인증(KYC)을 완료하세요.",
+        "kycCta": "KYC 완료",
+        "generic": "환전에 실패했습니다. 나중에 다시 시도하세요",
+        "genericWithId": "환전에 실패했습니다. 나중에 다시 시도하세요. (참조: {{requestId}})"
+      },
+      "success": "{{fromAmount}} {{fromAsset}}을(를) {{toAmount}} {{toAsset}}(으)로 환전했습니다"
+    },
+    "records": {
+      "title": "거래 기록",
+      "back": "뒤로",
+      "filter": {
+        "all": "전체",
+        "asset": "자산",
+        "bizType": "분류",
+        "entryType": "항목 유형",
+        "direction": "방향",
+        "dateRange": "날짜",
+        "from": "시작",
+        "to": "종료",
+        "clearDate": "날짜 지우기",
+        "reset": "초기화",
+        "hideNeutralHint": "기본적으로 잔액이 변동되는 이벤트만 표시됩니다. 동결/동결 해제 항목(예: 주문 또는 출금 잠금)은 자산을 변동시키지 않아 숨겨집니다 — 보려면 항목 유형에서 선택하세요."
+      },
+      "direction": {
+        "ALL": "전체",
+        "CREDIT": "입금",
+        "DEBIT": "출금"
+      },
+      "column": {
+        "id": "거래 ID",
+        "time": "시간",
+        "asset": "자산",
+        "type": "유형",
+        "bizType": "분류",
+        "amount": "수량",
+        "balanceBefore": "이전 자산",
+        "balanceAfter": "이후 자산",
+        "balanceTooltip": "이 항목과 관련된 특정 하위 계정에서 이 자산의 총 자산(사용 가능 + 동결) — 다른 계정은 포함하지 않습니다."
+      },
+      "error": {
+        "validation": "일부 필터 값이 올바르지 않습니다. 조정 후 다시 시도하세요."
+      }
+    },
+    "recordsPageInfo": "{{total}}건 · 페이지 {{page}} / {{pages}}",
+    "demo": {
+      "reset": {
+        "entry": "데모 계정 초기화",
+        "confirmTitle": "데모 계정 초기화",
+        "confirmBody": "데모 계정 잔액이 초기 상태로 복원됩니다. 데모 주문 및 포지션도 함께 삭제될 수 있습니다. 이 작업은 취소할 수 없습니다.",
+        "confirmCta": "초기화 확인",
+        "cancelCta": "취소",
+        "submitting": "초기화 중…",
+        "success": "데모 계정이 초기화되었습니다.",
+        "error": {
+          "network": "네트워크 오류입니다. 연결을 확인하고 다시 시도하세요.",
+          "server": "서버 오류로 초기화에 실패했습니다. 나중에 다시 시도하세요.",
+          "unknown": "초기화에 실패했습니다. 나중에 다시 시도하세요.",
+          "tryAgainAfter": "{{time}} 후에 다시 시도하세요.",
+          "openPositionsHint": "보유 선물: {{futures}} · 대기 중 바이너리 옵션: {{binary}} · 대기 중 현물 주문: {{spot}}",
+          "ref": "참조: {{requestId}}"
+        }
+      }
+    },
+    "withdraw": {
+      "back": "뒤로",
+      "title": "출금",
+      "subtitle": "디지털 자산을 외부 지갑 주소로 출금합니다",
+      "loading": "출금 가능한 자산을 불러오는 중…",
+      "empty": "현재 출금 가능한 자산이 없습니다",
+      "available": "사용 가능 잔액",
+      "coin": "코인 선택",
+      "network": "네트워크 선택",
+      "address": "출금 주소",
+      "addressPlaceholder": "주소를 입력하거나 붙여넣으세요",
+      "addressValid": "주소 형식 확인됨",
+      "paste": "붙여넣기",
+      "clear": "지우기",
+      "amount": "금액",
+      "minAmount": "최소 금액 {{value}} {{symbol}}",
+      "max": "최대",
+      "fee": "네트워크 수수료",
+      "received": "실수령액",
+      "totalDeduct": "총 차감액",
+      "feeRatePercent": "({{percent}}%)",
+      "submit": "출금 확인",
+      "submitting": "제출 중…",
+      "success": "출금 요청이 제출되었습니다",
+      "result": {
+        "title": "출금이 접수되었습니다",
+        "statusHint": "심사 완료 후 송금됩니다",
+        "viewHistory": "내역 보기",
+        "again": "다시 출금"
+      },
+      "tips": {
+        "title": "보안 팁",
+        "checkAddress": "출금 주소를 다시 확인하세요 — 잘못된 주소는 복구할 수 없습니다",
+        "irreversible": "제출되면 온체인 거래는 되돌릴 수 없습니다",
+        "networkMatch": "출금 네트워크가 수신자 지갑과 일치하는지 확인하세요. 그렇지 않으면 자금이 손실될 수 있습니다"
+      },
+      "error": {
+        "addressRequired": "출금 주소를 입력하세요",
+        "addressTooLong": "출금 주소는 {{max}}자를 초과할 수 없습니다",
+        "amountPositive": "유효한 금액을 입력하세요",
+        "belowMinimum": "금액이 최소 출금 한도보다 낮습니다",
+        "insufficientBalance": "잔액이 부족합니다",
+        "feeExceedsAmount": "네트워크 수수료가 출금액보다 크거나 같습니다",
+        "invalidAddress": "유효하지 않은 출금 주소입니다. 확인 후 다시 시도하세요",
+        "kycRequired": "출금하기 전에 KYC 인증을 완료하세요",
+        "disabled": "이 자산 또는 네트워크에서는 출금이 지원되지 않습니다",
+        "demoMode": "데모 계정에서는 출금을 사용할 수 없습니다",
+        "generic": "출금에 실패했습니다. 나중에 다시 시도하세요",
+        "loadFailed": "출금 가능한 자산을 불러오지 못했습니다. 나중에 다시 시도하세요"
+      }
+    },
+    "onboarding": {
+      "title": "계정 설정하기",
+      "subtitle": "이미 시작했어요. 아래 단계를 완료하고 거래를 시작하세요.",
+      "progress": "{{done}}/{{total}}",
+      "depositCta": "지금 입금",
+      "steps": {
+        "register": "계정 만들기",
+        "kyc": "신원 인증 완료",
+        "deposit": "첫 입금 하기"
+      }
+    }
+  },
+  "auth": {
+    "loginRequiredToast": "계속하려면 로그인하세요.",
+    "login": "로그인",
+    "register": "회원가입",
+    "accountRegistration": "계정 등록",
+    "emailRegister": "이메일 가입",
+    "accountName": "계정 이름",
+    "email": "이메일",
+    "enterAccount": "계정을 입력하세요",
+    "enterEmail": "이메일을 입력하세요",
+    "phone": "휴대폰 번호",
+    "enterPhone": "휴대폰 번호를 입력해 주세요",
+    "username": "사용자 이름",
+    "enterUsername": "사용자 이름을 입력해 주세요",
+    "usernameRule": "영문자로 시작하는 4~30자(소문자 영문, 숫자, 밑줄 사용 가능)",
+    "usernameInvalid": "사용자 이름은 영문자로 시작하며 4~30자의 영문, 숫자 또는 밑줄이어야 합니다",
+    "usernameTaken": "이미 사용 중인 사용자 이름입니다. 다른 이름을 선택해 주세요.",
+    "registrationChannelDisabled": "현재 이 가입 방식은 이용할 수 없습니다.",
+    "emailDeferredFallback": "이메일과 비밀번호로 가입하는 방식은 현재 이용할 수 없습니다. 이메일 인증 코드로 가입을 계속해 주세요.",
+    "emailTakenPrompt": "이미 계정이 있으신가요?",
+    "country": "국가",
+    "password": "비밀번호",
+    "enterPassword": "비밀번호를 입력하세요",
+    "confirmPassword": "비밀번호 확인",
+    "confirmYourPassword": "비밀번호를 확인하세요",
+    "inviteCode": "초대 코드",
+    "enterInviteCode": "초대 코드 입력 (선택)",
+    "enterInviteCodeRequired": "초대 코드 입력",
+    "referralRequired": "가입하려면 초대 코드가 필요합니다.",
+    "invalidReferralCode": "유효하지 않은 초대 코드입니다. 확인 후 다시 시도해 주세요.",
+    "accountLogin": "계정 로그인",
+    "emailLogin": "이메일 로그인",
+    "rememberMe": "로그인 상태 유지",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "loginNow": "지금 로그인",
+    "loggingIn": "로그인 중...",
+    "registerNow": "지금 가입",
+    "registering": "가입 중...",
+    "fieldRequired": "필수 항목을 입력하세요",
+    "passwordRequired": "비밀번호를 입력하세요",
+    "passwordMismatch": "비밀번호가 일치하지 않습니다",
+    "passwordStrength": "비밀번호 강도",
+    "passwordStrengthLow": "약함",
+    "passwordStrengthMedium": "보통",
+    "passwordStrengthHigh": "강함",
+    "passwordRules": {
+      "minLength": "{{min}}–{{max}}자",
+      "containsLetter": "문자를 포함해야 합니다 (대소문자 구분)",
+      "notAllNumeric": "숫자로만 구성할 수 없습니다",
+      "notAllLetters": "문자로만 구성할 수 없습니다",
+      "onlyAllowedChars": "특수문자는 @ # $ * .로 제한됩니다"
+    },
+    "enterConfirmPassword": "비밀번호 확인을 입력하세요",
+    "walletLogin": "지갑 연결",
+    "walletLoggingIn": "지갑 로그인 중...",
+    "walletLoginFailed": "지갑 로그인에 실패했습니다",
+    "or": "또는",
+    "verificationCode": "인증 코드",
+    "enterVerificationCode": "인증 코드를 입력하세요",
+    "verificationCodeRequired": "인증 코드를 입력하세요",
+    "sendCode": "코드 전송",
+    "resendCode": "재전송",
+    "sending": "전송 중...",
+    "sendingVerificationCode": "인증 코드 전송 중...",
+    "resetPassword": "비밀번호 재설정",
+    "newPassword": "새 비밀번호",
+    "enterNewPassword": "새 비밀번호를 입력하세요",
+    "resetting": "재설정 중...",
+    "resetFailed": "비밀번호 재설정에 실패했습니다",
+    "usernameRecoveryHint": "사용자 이름으로 가입했고 이메일·휴대폰이 연결되어 있지 않나요? 고객센터에 문의해 일회용 재설정 코드를 받으세요.",
+    "contactSupport": "고객센터 문의",
+    "resetCode": "재설정 코드",
+    "enterResetCode": "고객센터에서 받은 재설정 코드를 입력하세요",
+    "back": "뒤로",
+    "backToLogin": "로그인으로 돌아가기",
+    "continue": "계속",
+    "setPassword": "비밀번호 설정",
+    "completeProfile": "프로필 작성",
+    "firstName": "이름",
+    "enterFirstName": "이름을 입력하세요",
+    "lastName": "성",
+    "enterLastName": "성을 입력하세요",
+    "countryCode": "국가 코드",
+    "enterCountryCode": "국가 코드를 입력하세요 (예: US)",
+    "acceptTerms": "약관 동의",
+    "termsDescription": "계속하려면 서비스 약관을 읽고 동의하세요.",
+    "registrationComplete": "가입 완료",
+    "registrationInProgress": "가입 진행 중",
+    "stepWalletConnect": "지갑 연결",
+    "stepEmail": "이메일 인증",
+    "stepPhone": "휴대폰 인증",
+    "stepVerify": "인증",
+    "stepAccount": "계정",
+    "stepPassword": "비밀번호 설정",
+    "stepProfile": "프로필",
+    "stepTerms": "약관",
+    "stepCompleted": "완료",
+    "passwordSetSuccess": "비밀번호가 설정되었습니다",
+    "profileCompleteSuccess": "프로필이 업데이트되었습니다",
+    "registerComplete": {
+      "subtitle": "시작할 곳을 선택하세요 — 나중에 언제든 다시 돌아올 수 있습니다.",
+      "actionDeposit": {
+        "title": "자금 입금",
+        "description": "암호화폐 또는 법정화폐를 추가해 거래를 시작하세요."
+      },
+      "actionTrade": {
+        "title": "거래 시작",
+        "description": "첫 현물 또는 선물 포지션을 여세요."
+      },
+      "actionCopyTrade": {
+        "title": "트레이더 카피",
+        "description": "상위 실적 트레이더를 자동으로 팔로우하세요."
+      },
+      "actionEarn": {
+        "title": "수익 창출",
+        "description": "유휴 자산을 저위험 상품으로 운용하세요."
+      },
+      "continueLater": "나중에"
+    },
+    "panelHeadline": "암호화폐, 외환, 글로벌 시장 — 하나의 플랫폼에서.",
+    "panelSubtitle": "투명한 가격, 고급 데이터, AI 기반 도구로 여러 시장에 접근하고 거래 결정을 뒷받침하세요.",
+    "featureMultiAssetTitle": "다중 자산",
+    "featureMultiAssetDesc": "암호화폐, 외환, 지수, 미국 시장, 금속을 하나의 플랫폼에서 이용하세요.",
+    "featureAiTitle": "AI 기반 인사이트",
+    "featureAiDesc": "시장 인사이트, 신호, 전략 도구 — 무엇을 언제 거래할지는 사용자가 결정합니다.",
+    "featureSecurityTitle": "자산 보안",
+    "featureSecurityDesc": "2단계 인증, 자금 비밀번호, 로그인 기기 관리로 계정을 보호할 수 있습니다.",
+    "featureExecutionTitle": "효율적인 체결",
+    "featureExecutionDesc": "지원 시장 전반의 경쟁력 있는 체결, 투명한 가격 및 펀딩 정보 제공.",
+    "panelComplianceLabel": "규제 및 컴플라이언스",
+    "panelCompliance": "서비스는 적용되는 규제 요건 및 각 법인별 허가에 따라 제공됩니다.",
+    "panelComplianceLink": "규제 공시 보기",
+    "turnstileRequired": "먼저 사람 인증을 완료하세요",
+    "turnstileFailed": "사람 인증에 실패했습니다. 다시 시도하세요",
+    "turnstileExpired": "인증이 만료되었습니다. 다시 인증하세요",
+    "stepUp": {
+      "title": "본인 확인",
+      "subtitle": "이 작업에는 추가 신원 확인이 필요합니다. 계속하려면 완료하세요.",
+      "explain": "이 작업에는 {{required}} 신뢰 수준이 필요하지만 현재 세션은 {{current}}입니다. 계속하려면 아래 인증을 완료하세요.",
+      "trust": {
+        "low": "낮음",
+        "normal": "보통",
+        "high": "높음"
+      },
+      "progress": "{{total}}단계 중 {{done}}단계",
+      "factor": {
+        "email_otp": {
+          "label": "이메일 인증 코드",
+          "hint": "방금 이메일로 전송된 코드를 입력하세요.",
+          "invalid": "이메일 인증 코드가 올바르지 않거나 만료되었습니다. 다시 시도해 주세요."
+        },
+        "sms_otp": {
+          "label": "SMS 인증 코드",
+          "hint": "휴대폰으로 전송된 코드를 입력하세요.",
+          "invalid": "SMS 인증 코드가 올바르지 않거나 만료되었습니다. 다시 시도해 주세요."
+        },
+        "totp": {
+          "label": "인증 앱 코드",
+          "hint": "인증 앱의 6자리 코드를 입력하세요.",
+          "invalid": "인증 앱 코드가 올바르지 않습니다. 다시 시도해 주세요."
+        },
+        "fund_password": {
+          "label": "자금 비밀번호",
+          "placeholder": "자금 비밀번호를 입력하세요",
+          "hint": "6자리 자금 비밀번호를 입력하세요.",
+          "invalid": "자금 비밀번호가 올바르지 않습니다. 다시 시도해 주세요."
+        },
+        "wallet_signature": {
+          "label": "지갑 서명",
+          "hint": "연결된 지갑으로 메시지에 서명하여 본인 인증을 완료하세요.",
+          "invalid": "지갑 서명 인증에 실패했습니다. 다시 서명해 주세요."
+        }
+      },
+      "verify": "인증",
+      "verifying": "인증 중...",
+      "resend": "코드 재전송",
+      "resendIn": "{{seconds}}초 후 재전송",
+      "throttled": "요청이 너무 많습니다. 잠시 후 다시 시도하세요.",
+      "loading": "인증 준비 중...",
+      "success": "인증이 완료되었습니다. 요청이 다시 제출되었습니다.",
+      "successReplayPartial": "인증은 완료되었으나 요청 재제출에 실패했습니다. 수동으로 다시 시도하세요.",
+      "signWithWallet": "지갑으로 서명",
+      "signing": "서명 대기 중...",
+      "walletNotConnected": "지갑을 연결한 후 다시 시도하세요.",
+      "walletMessageMissing": "서명 요청을 준비하지 못했습니다. 다시 열어 시도하세요.",
+      "cancel": "취소",
+      "dialogCrashed": "보안 인증 창을 불러오지 못했습니다. 다시 시도하세요.",
+      "setupSecurity": {
+        "title": "먼저 보안 인증 수단을 설정해 주세요",
+        "description": "이 작업에 사용할 수 있는 인증 수단이 계정에 없습니다. SMS 인증은 출금에 사용할 수 없으니 먼저 2FA를 활성화하거나 수신 가능한 이메일을 연결해 주세요.",
+        "cta2fa": "2FA 활성화",
+        "ctaBindEmail": "이메일 연결",
+        "ctaBindPhone": "휴대폰 번호 연결"
+      }
+    },
+    "stepUpChallenge": {
+      "title": "본인 확인",
+      "subtitle": "이 작업에는 추가 신원 확인이 필요합니다.",
+      "explain": "보안을 위해 이 {{scope}}을(를) 계속하려면 신원을 확인하세요.",
+      "scope": {
+        "transfer": "이체",
+        "withdraw": "출금",
+        "change_password": "비밀번호 변경",
+        "change_email": "이메일 변경",
+        "change_phone": "휴대폰 번호 변경",
+        "toggle_2fa": "2단계 인증 변경",
+        "bind_wallet": "지갑 연결",
+        "unbind_wallet": "지갑 연결 해제",
+        "remove_joint_member": "공동명의 계정 구성원 삭제",
+        "dissolve_joint_account": "공동명의 계정 해산"
+      },
+      "loading": "인증 준비 중...",
+      "success": "인증되었습니다. {{scope}}이(가) 완료되었습니다."
+    },
+    "channelPrompt": {
+      "login": "로그인 방법 선택",
+      "register": "가입 방법 선택",
+      "recover": "계정 복구 방법 선택"
+    }
+  },
+  "c2c": {
+    "pageTitle": "C2C 거래",
+    "subtitle": "장외 법정화폐 ↔ 암호화폐, 플랫폼 에스크로로 정산",
+    "nav": {
+      "ariaLabel": "C2C 모듈 내비게이션",
+      "buy": "구매",
+      "sell": "판매",
+      "orders": "내 주문",
+      "paymentAccounts": "수취 계좌"
+    },
+    "merchant": {
+      "apply": "머천트 신청"
+    },
+    "side": {
+      "buy": "구매",
+      "sell": "판매"
+    },
+    "quotes": {
+      "title": "견적 선택",
+      "filterAsset": "자산",
+      "filterFiat": "법정화폐",
+      "all": "전체",
+      "price": "가격",
+      "limitRange": "한도",
+      "minMax": "{{min}} ~ {{max}} {{asset}}",
+      "paymentInstructions": "결제 안내",
+      "expiresIn": "견적 유효",
+      "expired": "견적 만료",
+      "refreshing": "견적 새로고침 중…",
+      "select": "선택",
+      "selected": "선택됨",
+      "empty": "이용 가능한 견적이 없습니다",
+      "emptyHint": "나중에 다시 시도하거나 필터를 조정하세요"
+    },
+    "order": {
+      "formTitleBuy": "{{asset}} 구매",
+      "formTitleSell": "{{asset}} 판매",
+      "assetAmount": "수량 ({{asset}})",
+      "fiatAmount": "총액 ({{fiat}})",
+      "assetAmountPlaceholder": "수량 입력",
+      "fiatAmountPlaceholder": "총액 입력",
+      "price": "가격",
+      "estimatedReceive": "수령액",
+      "estimatedPay": "지불액",
+      "amountModeAsset": "수량 기준",
+      "amountModeFiat": "총액 기준",
+      "amountTooSmall": "최소 {{min}} {{asset}} 미만",
+      "amountTooLarge": "최대 {{max}} {{asset}} 초과",
+      "amountRequired": "수량 또는 총액을 입력하세요",
+      "agreementCheckbox": "다음 내용을 읽고 동의합니다:",
+      "agreementLink": "C2C 거래 약관",
+      "submitBuy": "구매 확인",
+      "submitSell": "판매 확인",
+      "submitting": "제출 중…",
+      "successBuyTitle": "주문 완료 — 결제를 완료하세요",
+      "successSellTitle": "주문 완료 — 자산 잠금됨",
+      "successBuyHint": "아래 플랫폼 계정으로 오프라인 결제 후 주문 상세에서 결제 증빙을 업로드하세요",
+      "successBuyPendingMatchTitle": "주문 완료 — 입금 계좌 배정 대기 중",
+      "successBuyPendingMatchHint": "플랫폼 검토 후 이 주문에 입금 계좌가 배정됩니다. 이후 주문 상세에서 결제하고 증빙을 업로드하세요",
+      "successSellHint": "자산이 잠겼습니다. 플랫폼이 오프라인으로 지급하고 검토 후 해제합니다",
+      "goUploadProof": "증빙 업로드",
+      "viewOrder": "주문 보기",
+      "selectPrompt": "계속하려면 왼쪽에서 견적을 선택하세요",
+      "payoutAccount": "수취 계좌",
+      "payoutAccountPlaceholder": "수취 계좌 선택",
+      "payoutAccountManage": "계좌 관리",
+      "payoutAccountEmpty": "사용 가능한 {{fiat}} 수취 계좌가 없습니다",
+      "payoutAccountEmptyCta": "수취 계좌 추가"
+    },
+    "agreement": {
+      "title": "C2C 거래 약관",
+      "version": "버전 {{version}}",
+      "agree": "읽고 동의합니다",
+      "close": "닫기",
+      "loadError": "약관을 불러오지 못했습니다. 다시 시도하세요"
+    },
+    "pendingMatch": {
+      "title": "입금 계좌 배정 대기",
+      "hint": "플랫폼이 이 주문의 입금 계좌를 배정하고 있습니다. 배정이 완료되면 계좌 정보와 결제 기한이 여기에 표시됩니다."
+    },
+    "paymentAccount": {
+      "title": "플랫폼 결제 계정",
+      "hint": "본인 인증 계정에서 아래 계정으로 이체하세요. 금액은 주문과 일치해야 합니다.",
+      "fiatCurrency": "통화",
+      "accountType": "계정 유형",
+      "accountName": "계정 이름",
+      "accountNumber": "계좌 번호",
+      "bankName": "은행명",
+      "branch": "지점",
+      "swiftCode": "SWIFT",
+      "routingNumber": "라우팅 번호",
+      "bankAddress": "은행 주소",
+      "phone": "전화",
+      "accountAddress": "계정 주소",
+      "copy": "복사",
+      "copied": "복사됨"
+    },
+    "payoutAccount": {
+      "title": "내 수취 계좌",
+      "hint": "플랫폼이 이 계좌로 오프라인 송금하며, 심사 후 주문이 완료됩니다."
+    },
+    "accounts": {
+      "title": "수취 계좌",
+      "subtitle": "판매 시 법정화폐를 수령할 은행 계좌",
+      "add": "계좌 추가",
+      "edit": "수정",
+      "delete": "삭제",
+      "empty": "등록된 수취 계좌가 없습니다",
+      "emptyHint": "판매 시 법정화폐를 수령할 은행 계좌를 추가하세요",
+      "status": {
+        "active": "사용 중",
+        "disabled": "비활성화"
+      },
+      "form": {
+        "createTitle": "수취 계좌 추가",
+        "editTitle": "수취 계좌 수정",
+        "fiatCurrency": "통화",
+        "fiatCurrencyPlaceholder": "통화 선택",
+        "fiatCurrencyEmpty": "현재 판매 가능한 통화가 없습니다",
+        "accountType": "계좌 유형",
+        "accountTypeBank": "은행 이체",
+        "accountName": "예금주",
+        "accountNamePlaceholder": "은행 계좌의 예금주명",
+        "accountNameHint": "KYC 실명과 일치해야 합니다",
+        "accountNumber": "계좌번호",
+        "accountNumberPlaceholder": "계좌번호 입력",
+        "bankName": "은행명",
+        "bankNamePlaceholder": "은행명 입력",
+        "branch": "지점(선택)",
+        "swiftCode": "SWIFT/BIC(선택)",
+        "routingNumber": "라우팅 번호(선택)",
+        "bankAddress": "은행 주소(선택)",
+        "phone": "전화번호(선택)",
+        "accountAddress": "계정 주소(선택)",
+        "remark": "비고(선택)",
+        "remarkPlaceholder": "선택 사항, 최대 255자",
+        "submitCreate": "계좌 추가",
+        "submitSave": "변경 사항 저장",
+        "submitting": "제출 중…",
+        "createSuccess": "수취 계좌가 추가되었습니다",
+        "saveSuccess": "수취 계좌가 업데이트되었습니다"
+      },
+      "deleteSuccess": "수취 계좌가 삭제되었습니다",
+      "deleteConfirm": {
+        "title": "이 수취 계좌를 삭제할까요?",
+        "hint": "완료된 주문의 송금 스냅샷은 유지됩니다. 이 작업은 되돌릴 수 없습니다.",
+        "cancel": "취소",
+        "confirm": "삭제",
+        "deleting": "삭제 중…"
+      }
+    },
+    "sellLocked": {
+      "title": "자산 잠금",
+      "holdId": "홀드 ID",
+      "hint": "플랫폼이 오프라인으로 지급하고 검토 후 해제합니다. 잠시 기다려 주세요."
+    },
+    "orders": {
+      "title": "내 C2C 주문",
+      "filterStatus": "상태",
+      "filterSide": "방향",
+      "filterAsset": "자산",
+      "all": "전체",
+      "empty": "아직 주문이 없습니다",
+      "emptyHint": "아직 C2C 주문이 없습니다",
+      "emptyFiltered": "조건에 맞는 주문이 없습니다",
+      "clearFilters": "필터 초기화",
+      "statusHint": "{{buy}} 또는 {{sell}}를 선택하면 상태별로 필터링할 수 있습니다",
+      "colSide": "방향",
+      "colAmount": "수량",
+      "colFiat": "총액",
+      "colPrice": "가격",
+      "colStatus": "상태",
+      "colCreated": "생성일",
+      "colExpires": "결제 기한",
+      "colOrderId": "주문 ID",
+      "view": "보기",
+      "loadMore": "더 보기",
+      "prev": "이전",
+      "next": "다음",
+      "pageInfo": "{{total}}건 중 {{from}}-{{to}}"
+    },
+    "detail": {
+      "title": "주문 상세",
+      "back": "뒤로",
+      "orderId": "주문 ID",
+      "side": "방향",
+      "asset": "자산",
+      "assetAmount": "수량",
+      "fiatCurrency": "법정화폐",
+      "fiatAmount": "총액",
+      "priceSnapshot": "가격",
+      "status": "상태",
+      "expiresAt": "만료 시각",
+      "paymentDue": "결제 남은 시간",
+      "createdAt": "생성 시각",
+      "holdId": "홀드 ID",
+      "kycLevel": "생성 시 KYC 레벨",
+      "payerName": "지불인",
+      "payerAccountLast4": "지불인 계좌 마지막 4자리",
+      "payerCountry": "지불인 국가/지역",
+      "agreementVersion": "약관 버전",
+      "agreementAcceptedAt": "약관 동의 시각",
+      "reviewedAt": "검토 시각",
+      "payerSection": "지불인 정보",
+      "metaSection": "추가 정보",
+      "proofsTitle": "결제 증빙",
+      "noProofs": "증빙 없음",
+      "uploadProof": "결제 증빙 업로드",
+      "notFoundTitle": "주문을 찾을 수 없습니다",
+      "notFoundHint": "이 주문이 존재하지 않거나 귀하의 주문이 아닙니다"
+    },
+    "status": {
+      "pending_match": "입금 계좌 배정 대기",
+      "pending_payment": "결제 대기 중",
+      "proof_uploaded": "증빙 제출됨, 검토 중",
+      "asset_locked": "자산 잠금됨, 구매자 매칭 대기 중",
+      "buyer_matched": "구매자 매칭 완료, 완료 대기 중",
+      "under_review": "검토 중",
+      "completed": "완료",
+      "rejected": "거부됨",
+      "cancelled": "취소됨",
+      "expired": "만료됨",
+      "stale": "실효됨"
+    },
+    "proof": {
+      "title": "결제 증빙 업로드",
+      "fileLabel": "결제 스크린샷",
+      "fileHint": "JPG / PNG / WEBP, 각 최대 10MB",
+      "payerName": "지불인 이름",
+      "payerNamePlaceholder": "지불인 이름을 입력하세요",
+      "payerAccountLast4": "지불인 계좌 마지막 4자리",
+      "payerAccountLast4Placeholder": "4자리",
+      "last4Invalid": "정확히 4자리를 입력하세요",
+      "paidAt": "결제 시각",
+      "paidAtInvalid": "결제 시각은 현재 시각보다 늦을 수 없습니다",
+      "paidAmount": "결제 금액",
+      "paidAmountPlaceholder": "결제 금액을 입력하세요",
+      "paidAmountInvalid": "유효한 결제 금액을 입력하세요",
+      "paidCurrency": "결제 통화",
+      "remark": "비고 (선택)",
+      "remarkPlaceholder": "선택, 최대 255자",
+      "submit": "증빙 제출",
+      "submitting": "제출 중…",
+      "submitSuccess": "증빙이 제출되었습니다. 검토 대기 중",
+      "uploadFailed": "업로드에 실패했습니다. 다시 시도하세요",
+      "statusLabel": {
+        "pending": "대기 중",
+        "accepted": "승인됨",
+        "rejected": "거부됨"
+      }
+    },
+    "error": {
+      "OTC_KYC_LEVEL_INSUFFICIENT": "KYC 레벨이 부족합니다. 먼저 신원 인증을 완료하세요.",
+      "OTC_AGREEMENT_VERSION_MISMATCH": "거래 약관이 업데이트되었습니다. 다시 검토하고 동의하세요.",
+      "OTC_QUOTE_UNAVAILABLE": "견적이 업데이트되었습니다. 다시 확인하세요.",
+      "OTC_QUOTE_NOT_FOUND": "견적을 찾을 수 없습니다. 견적 목록을 새로고침하세요.",
+      "OTC_ORDER_NOT_OPERABLE": "현재 주문 상태에서는 이 작업이 허용되지 않습니다. 새로고침 후 다시 시도하세요.",
+      "OTC_PROOF_ALREADY_UPLOADED": "유효한 증빙이 이미 존재합니다. 다시 업로드할 필요가 없습니다.",
+      "OTC_PAYMENT_ACCOUNT_NOT_FOUND": "플랫폼 결제 계정을 찾을 수 없습니다. 새로고침 후 다시 시도하세요.",
+      "OTC_INSUFFICIENT_FUNDING_BALANCE": "펀딩 잔액이 부족합니다. 입금하거나 금액을 줄이세요.",
+      "OTC_LIMIT_EXCEEDED_SINGLE": "단일 주문 한도를 초과했습니다. 금액을 줄이고 다시 시도하세요.",
+      "OTC_LIMIT_EXCEEDED_DAILY": "최근 24시간 한도를 초과했습니다. 나중에 다시 시도하세요.",
+      "OTC_LIMIT_EXCEEDED_MONTHLY": "최근 30일 한도를 초과했습니다. 나중에 다시 시도하세요.",
+      "OTC_PAYMENT_ACCOUNT_REQUIRED_FOR_SELL": "판매 주문 전에 수취 계좌를 선택하세요.",
+      "OTC_USER_PAYMENT_ACCOUNT_NOT_FOUND": "수취 계좌를 찾을 수 없거나 비활성화되었습니다. 다시 선택하세요.",
+      "OTC_PAYMENT_ACCOUNT_CURRENCY_MISMATCH": "수취 계좌 통화가 호가와 일치하지 않습니다. 같은 통화의 계좌를 선택하세요.",
+      "OTC_USER_PAYMENT_ACCOUNT_NAME_MISMATCH": "예금주는 KYC 실명과 일치해야 합니다.",
+      "OTC_USER_PAYMENT_ACCOUNT_LIMIT_EXCEEDED": "해당 통화의 계좌 수가 한도에 도달했습니다. 삭제 후 다시 시도하세요.",
+      "OTC_USER_PAYMENT_ACCOUNT_IN_USE": "진행 중인 판매 주문에서 사용 중인 계좌라 현재 삭제할 수 없습니다.",
+      "FILE_NOT_UPLOADED": "파일 업로드가 완료되지 않았습니다. 다시 시도하세요.",
+      "generic": "작업에 실패했습니다. 나중에 다시 시도하세요",
+      "genericWithId": "작업에 실패했습니다. 나중에 다시 시도하세요 (요청 id: {{requestId}})"
+    },
+    "common": {
+      "goKyc": "지금 인증",
+      "goDeposit": "입금",
+      "retry": "다시 시도",
+      "loading": "불러오는 중…"
+    }
+  },
+  "charity": {
+    "seo": {
+      "title": "기부 — 선한 거래",
+      "description": "{{brand}} 펀딩 잔액으로 검증된 공익 캠페인을 후원하세요."
+    },
+    "hero": {
+      "goToSlide": "{{index}}번 슬라이드로 이동"
+    },
+    "stats": {
+      "label": "진행 중인 캠페인",
+      "title": "함께라면 의미 있는 변화를 만듭니다",
+      "totalRaised": "총 모금액",
+      "peopleHelped": "도움받은 사람"
+    },
+    "campaigns": {
+      "title": "진행 중인 캠페인",
+      "subtitle": "사업을 선택하고 펀딩 계정에서 직접 기부하세요.",
+      "completedBadge": "목표 달성",
+      "raisedLabel": "모금액",
+      "targetLabel": "목표",
+      "progress": "{{percent}}% 달성",
+      "donate": "기부",
+      "view": "자세히 보기",
+      "loadingTitle": "캠페인 불러오는 중",
+      "empty": {
+        "title": "현재 진행 중인 캠페인이 없습니다",
+        "desc": "새로운 사업이 정기적으로 추가됩니다. 곧 다시 확인해 주세요."
+      },
+      "error": {
+        "title": "캠페인을 불러오지 못했습니다",
+        "desc": "캠페인을 가져오는 중 문제가 발생했습니다.",
+        "retry": "다시 시도"
+      },
+      "statusActive": "진행 중",
+      "statusInactive": "종료",
+      "peopleHelped": "{{value}}명 지원"
+    },
+    "howItWorks": {
+      "title": "작동 방식",
+      "steps": [
+        {
+          "title": "비영리단체",
+          "desc": "전 세계 비영리단체가 {{brand}}에 신청·가입하여 더 많은 자금을 확보하고 새로운 역량을 키우며 중요한 관계를 맺습니다."
+        },
+        {
+          "title": "기부자",
+          "desc": "여러분 같은 분들이 좋아하는 프로젝트에 기부합니다. 신뢰할 수 있는 단체가 자금을 어떻게 사용했는지 소식을 받으면 정말 뿌듯합니다."
+        },
+        {
+          "title": "기업",
+          "desc": "관대한 기업과 임직원이 기부와 후원으로 임팩트 높은 프로젝트를 지원하고 지역사회의 번영을 돕습니다."
+        },
+        {
+          "title": "우리의 영향",
+          "desc": "비영리단체는 필요한 자금을 확보해 피드백을 경청하고 새로운 업무 방식을 시도합니다. 전 세계 지역사회가 더 나아집니다!"
+        }
+      ]
+    },
+    "narrative": {
+      "label": "우리의 약속",
+      "title": "시장은 부를 창출합니다. 우리는 그것이 더 멀리 닿도록 돕습니다.",
+      "lead": "{{brand}}는 열린 시장이 기회를 만든다는 믿음 위에 세워졌습니다. 기부는 시장이 너무 자주 외면하는 사람들에게 그 기회를 확장하는 우리의 방식입니다.",
+      "paragraphs": [
+        "이 페이지의 모든 캠페인은 공개 전에 당사 파트너십 팀과 독립 NGO 파트너의 검증을 거칩니다. 단체, 예산, 의도한 성과를 확인하고 자금이 집행됨에 따라 진행 상황을 공개합니다.",
+        "기부금이 이미 당사가 운영하는 경로로 이동하기 때문에 카드 수수료, 환전 스프레드, 중간에서 떼어가는 중개자가 없습니다. 기부하신 금액이 곧 도착하는 금액입니다.",
+        "이것은 시작일 뿐입니다. 커뮤니티가 성장할수록 깨끗한 물, 교육, 의료, 긴급 구호를 대규모로 후원할 수 있는 역량도 커집니다."
+      ],
+      "highlights": [
+        {
+          "title": "검증된 파트너",
+          "desc": "모든 NGO는 정당성, 거버넌스, 실적에 대해 검토됩니다."
+        },
+        {
+          "title": "수수료 없음",
+          "desc": "비용을 저희가 부담하여 기부금의 100%가 해당 목적에 전달됩니다."
+        },
+        {
+          "title": "공개 보고",
+          "desc": "마일스톤 및 임팩트 업데이트가 커뮤니티에 공유됩니다."
+        }
+      ]
+    },
+    "donate": {
+      "title": "{{name}}에 기부",
+      "description": "기부금은 펀딩 {{asset}} 잔액에서 차감됩니다.",
+      "amountLabel": "기부 금액",
+      "amountPlaceholder": "0.00",
+      "rangeHint": "최소 {{min}} · 최대 {{max}} {{asset}}",
+      "minOnlyHint": "최소 {{min}} {{asset}}",
+      "raisedSummary": "{{raised}} / {{target}} {{asset}} 모금됨",
+      "cancel": "취소",
+      "submit": "내용 확인",
+      "submitting": "처리 중…",
+      "confirm": {
+        "title": "기부 내용 확인",
+        "description": "펀딩 잔액에서 차감하기 전에 내용을 확인하세요.",
+        "projectLabel": "기부 대상",
+        "amountLabel": "기부 금액",
+        "sourceLabel": "출금 계정",
+        "sourceValue": "펀딩 잔액",
+        "back": "수정하기",
+        "submit": "기부 확인",
+        "notice": "확정된 기부는 취소하거나 환불할 수 없습니다.",
+        "reviewNotice": "기부는 플랫폼 검토 후 완료됩니다. 검토 중에는 해당 금액이 동결되며, 승인되지 않으면 전액 반환됩니다."
+      },
+      "success": {
+        "title": "관대한 후원에 감사드립니다",
+        "desc": "{{name}}에 {{amount}} {{asset}}을(를) 기부하셨습니다.",
+        "donationId": "참조: {{id}}",
+        "done": "완료"
+      },
+      "pendingReview": {
+        "title": "기부가 접수되었습니다",
+        "desc": "플랫폼 승인 후 출금이 완료되며, 결과는 메시지로 알려 드립니다."
+      },
+      "errors": {
+        "invalidAmount": "유효한 기부 금액을 입력하세요.",
+        "minAmount": "최소 기부 금액은 {{amount}} {{asset}}입니다.",
+        "maxAmount": "최대 기부 금액은 {{amount}} {{asset}}입니다.",
+        "CHARITY_PROJECT_NOT_AVAILABLE": "이 캠페인은 현재 기부를 받지 않습니다.",
+        "CHARITY_DONATION_AMOUNT_INVALID": "이 캠페인에 대해 기부 금액이 유효하지 않습니다.",
+        "CHARITY_FUNDING_TARGET_EXCEEDED": "이 기부는 캠페인의 모금 목표를 초과합니다.",
+        "CHARITY_INSUFFICIENT_BALANCE": "이 기부를 위한 펀딩 잔액이 부족합니다.",
+        "VALIDATION_ERROR": "기부 금액을 확인하고 다시 시도하세요.",
+        "CHARITY_PROJECT_NOT_FOUND": "이 캠페인을 찾을 수 없습니다.",
+        "ENTITY_NOT_FOUND": "이 캠페인을 찾을 수 없습니다.",
+        "generic": "기부에 실패했습니다. 다시 시도하세요."
+      }
+    },
+    "donations": {
+      "label": "나의 기부",
+      "title": "나의 기부 내역",
+      "subtitle": "회원님이 후원한 모든 캠페인의 기록입니다.",
+      "signedOut": {
+        "title": "로그인하여 기부 내역을 확인하세요",
+        "desc": "그동안의 기부와 후원한 프로젝트를 확인할 수 있습니다.",
+        "action": "로그인"
+      },
+      "empty": {
+        "title": "회원님의 나눔 이야기가 여기서 시작됩니다",
+        "desc": "아직 기부 내역이 없습니다. 위 캠페인을 후원하여 첫 기부를 시작해 보세요."
+      },
+      "error": {
+        "title": "기부 내역을 불러오지 못했습니다",
+        "desc": "문제가 발생했습니다. 다시 시도해 주세요.",
+        "retry": "다시 시도"
+      },
+      "recentNote": "최근 {{shown}}건(총 {{total}}건)을 표시합니다",
+      "columns": {
+        "project": "캠페인",
+        "amount": "금액",
+        "date": "날짜",
+        "status": "상태"
+      },
+      "statusCompleted": "완료",
+      "statusPendingReview": "검토 중",
+      "statusRejected": "미승인",
+      "unknownProject": "자선 캠페인"
+    }
+  },
+  "common": {
+    "version": {
+      "updateAvailable": "새 버전을 사용할 수 있습니다",
+      "refreshNow": "지금 새로고침"
+    },
+    "getStarted": "시작하기",
+    "scrollLeft": "왼쪽으로 스크롤",
+    "scrollRight": "오른쪽으로 스크롤",
+    "trade": "거래",
+    "home": "홈",
+    "language": "언어",
+    "options": "옵션 거래",
+    "optionsDesc": "제한된 리스크로 롱 또는 숏",
+    "binaryOptions": "바이너리 옵션",
+    "all": "전체",
+    "search": "검색",
+    "contract": "선물",
+    "futures": "선물 거래",
+    "futuresDesc": "레버리지로 무기한 선물 거래",
+    "spotTrading": "현물 거래",
+    "spotDesc": "시장 가격으로 실물 자산 매매",
+    "finance": "금융",
+    "earn": "어닝",
+    "earnDesc": "유휴 자산으로 수익 창출",
+    "simpleEarn": "심플 어닝",
+    "myEarnings": "내 수익",
+    "loan": "대출",
+    "loanDesc": "보유 암호화폐를 담보로 대출",
+    "c2c": "C2C",
+    "c2cDesc": "개인 간 암호화폐 거래",
+    "aiQuant": "AI 퀀트",
+    "aiQuantOverview": "개요",
+    "aiQuantStrategy": "전략",
+    "aiQuantStrategyDesc": "퀀트 전략으로 거래 자동화",
+    "aiQuantQuantFund": "퀀트 펀드",
+    "aiQuantQuantFundDesc": "전문 운용 펀드에 투자",
+    "aiQuantQuantFundPositions": "내 퀀트 펀드 포지션",
+    "copytrade": "카피 트레이드",
+    "copyTrading": "카피 트레이딩",
+    "copytradeDesc": "톱 트레이더를 자동으로 팔로우",
+    "error": {
+      "generic": "문제가 발생했습니다. 나중에 다시 시도하세요",
+      "network": "네트워크 오류가 발생했습니다. 연결을 확인하고 다시 시도하세요.",
+      "requestId": "요청 ID: {{requestId}}"
+    },
+    "errorGuidance": {
+      "kycRequired": {
+        "title": "신원 인증이 필요합니다",
+        "cta": "지금 인증"
+      },
+      "registrationIncomplete": {
+        "title": "가입이 아직 완료되지 않았습니다",
+        "cta": "가입 계속하기"
+      },
+      "socialLocalEmailUnverified": {
+        "title": "이 이메일은 가입되어 있지만 아직 인증되지 않았습니다",
+        "cta": "비밀번호 재설정"
+      },
+      "kycPendingReview": {
+        "title": "신원 인증 심사 중",
+        "cta": "진행 상황 보기"
+      },
+      "advancedVerificationRequired": {
+        "title": "더 높은 인증 등급이 필요합니다",
+        "cta": "인증하기"
+      },
+      "insufficientBalance": {
+        "title": "거래 계정 잔액이 부족합니다",
+        "cta": "이체하기"
+      },
+      "insufficientFundingBalance": {
+        "title": "펀딩 계정 잔액이 부족합니다",
+        "cta": "입금하기"
+      },
+      "fundPasswordNotSet": {
+        "title": "자금 비밀번호가 설정되지 않았습니다",
+        "cta": "자금 비밀번호 설정"
+      },
+      "twoFactorNotEnabled": {
+        "title": "2단계 인증이 필요합니다",
+        "cta": "2FA 활성화"
+      },
+      "vipTierInsufficient": {
+        "title": "VIP 등급이 부족합니다",
+        "cta": "VIP 업그레이드"
+      }
+    },
+    "news": "뉴스",
+    "charity": "기부",
+    "menu": "메뉴",
+    "toggleTheme": "테마 전환",
+    "closeMenu": "메뉴 닫기",
+    "deposit": "입금",
+    "profile": "프로필",
+    "assets": "자산",
+    "assetsCenter": "자산 센터",
+    "kyc": "신원 인증",
+    "connectWallet": "지갑 연결",
+    "connectingWallet": "연결 중...",
+    "message": "메시지",
+    "more": "더 보기",
+    "aboutUs": "회사 소개",
+    "privacyPolicy": "개인정보 처리방침",
+    "riskCompliance": "리스크 및 컴플라이언스",
+    "regulatoryInformation": "규제 정보",
+    "userAgreement": "이용자 약관",
+    "riskDisclosure": "리스크 고지",
+    "regulation": "규제",
+    "productsServices": "제품 및 서비스",
+    "helpCenter": "고객센터",
+    "faq": "자주 묻는 질문",
+    "announcements": "공지사항",
+    "onlineSupport": "온라인 지원",
+    "whatsApp": "WhatsApp",
+    "x": "X",
+    "telegram": "Telegram",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn",
+    "discord": "Discord",
+    "email": "이메일",
+    "loadFailed": "불러오기 실패",
+    "noData": "데이터 없음",
+    "noMore": "더 이상 없음",
+    "copyright": "© {{year}} {{brand}} Trading Platform. All rights reserved.",
+    "loading": "불러오는 중...",
+    "logout": "로그아웃",
+    "unnamed": "이름 없음",
+    "security": "보안",
+    "copy": "복사",
+    "copied": "복사됨",
+    "copyFailed": "복사에 실패했습니다",
+    "kycVerified": "인증됨",
+    "kycVerifiedLevel": "인증됨 · L{{level}}",
+    "kycPending": "검토 중",
+    "kycUnverified": "미인증",
+    "kycAdvancedPending": "기본 인증됨 · 레벨 2 대기 중",
+    "kycUpgradeCta": "레벨 2 인증",
+    "on": "켜짐",
+    "off": "꺼짐",
+    "upload": {
+      "invalidType": "지원 형식: {{formats}}",
+      "tooLarge": "파일이 {{limit}} 제한을 초과했습니다",
+      "retry": "다시 시도",
+      "animatedImage": "움직이는 이미지는 지원하지 않습니다. 정지 이미지를 업로드하세요.",
+      "undecodable": "이 이미지를 읽을 수 없습니다. JPG 또는 PNG를 업로드하세요.",
+      "linkExpired": "업로드 링크가 만료되었습니다. 다시 시도하세요.",
+      "incomplete": "업로드가 완료되지 않았습니다. 다시 시도하세요.",
+      "unsupportedFormat": "지원하지 않는 형식입니다. JPG, PNG, WebP, BMP 또는 AVIF 정지 이미지를 업로드하세요.",
+      "photoTooLarge": "사진 용량이 너무 큽니다. 다시 촬영하거나 압축한 후 다시 시도하세요.",
+      "contentMismatch": "파일 내용이 형식과 일치하지 않습니다. 다시 촬영하거나 스캔하세요."
+    },
+    "demo": {
+      "real": "실거래",
+      "demo": "데모",
+      "mode": "데모 거래 모드",
+      "noRealFunds": "실제 자금 없음",
+      "account": "데모 계정",
+      "confirmTitle": "데모 모드로 전환",
+      "confirmMessage": "데모 모드로 전환하면 실제 자금이 사용되지 않습니다.",
+      "confirmEnable": "확인",
+      "confirmCancel": "취소",
+      "realModeRequired": "이 페이지는 실거래 모드에서만 이용할 수 있습니다"
+    },
+    "accountSuspended": {
+      "banner": "회원님의 계정이 정지되어 관련 데이터와 기능을 이용할 수 없습니다. 문의 사항은 고객지원에 문의해 주세요.",
+      "title": "계정 정지됨",
+      "desc": "회원님의 계정이 정지되어 이 콘텐츠를 불러올 수 없습니다. 문의 사항은 고객지원에 문의해 주세요."
+    },
+    "moduleDisabled": {
+      "title": "이 사이트에서는 이용할 수 없습니다",
+      "desc": "현재 이 기능은 제공되지 않습니다. 기존 주문, 보유 자산 및 내역은 계속 이용하실 수 있습니다."
+    },
+    "emailVerification": {
+      "banner": "이메일을 인증하고 출금을 활성화하세요",
+      "verifyNow": "지금 인증",
+      "title": "이메일 인증",
+      "intro": "자산 보호를 위해 출금과 OTC 판매에는 이메일 인증이 필요합니다. 아래 주소로 인증 코드를 보내드립니다.",
+      "changeEmail": "이메일 변경",
+      "sendCode": "코드 전송",
+      "sending": "전송 중...",
+      "resend": "코드 재전송",
+      "resendIn": "{{seconds}}초 후 재전송",
+      "codeLabel": "인증 코드",
+      "codeHint": "이메일로 받은 {{length}}자리 코드를 입력하세요.",
+      "confirm": "이메일 인증",
+      "confirming": "인증 중...",
+      "verified": "이메일이 인증되었습니다",
+      "guideTitle": "출금 전에 이메일을 인증해 주세요",
+      "guideDescription": "이메일이 아직 인증되지 않았습니다. 인증을 완료해야 출금할 수 있습니다.",
+      "dialogCrashed": "이메일 인증 창을 불러오지 못했습니다. 다시 시도해 주세요."
+    },
+    "assetsMenu": {
+      "total": "총 자산",
+      "frozen": "동결",
+      "hideBalance": "잔액 표시 / 숨기기",
+      "deposit": "입금",
+      "transfer": "이체",
+      "withdraw": "출금",
+      "viewAll": "전체 자산 보기"
+    },
+    "pagination": {
+      "info": "{{total}}건 · 페이지 {{page}} / {{totalPages}}"
+    },
+    "messages": {
+      "title": "메시지",
+      "viewAll": "전체 보기",
+      "markAllRead": "모두 읽음으로 표시",
+      "markAllReadSuccess": "{{count}}개의 메시지를 읽음으로 표시했습니다",
+      "markAllReadFailed": "모두 읽음 표시에 실패했습니다",
+      "markReadFailed": "읽음 표시에 실패했습니다",
+      "loadFailed": "메시지를 불러오지 못했습니다",
+      "back": "뒤로",
+      "tabs": {
+        "all": "전체",
+        "unread": "읽지 않음",
+        "read": "읽음"
+      },
+      "types": {
+        "all": "모든 유형",
+        "notice": "알림",
+        "announcement": "공지",
+        "alert": "경보",
+        "system": "시스템"
+      }
+    },
+    "notFound": {
+      "title": "페이지를 찾을 수 없습니다",
+      "description": "찾으시는 페이지가 존재하지 않거나 이동되었습니다.",
+      "backHome": "홈으로 돌아가기"
+    },
+    "footer": {
+      "language": "언어",
+      "version": "v{{version}}"
+    },
+    "contentPage": {
+      "fallbackTitle": "콘텐츠",
+      "empty": "이 콘텐츠는 아직 이용할 수 없습니다."
+    },
+    "auth": {
+      "sessionExpired": "세션이 만료되었습니다. 다시 로그인해 주세요."
+    },
+    "vipBadge": "VIP {{tier}}",
+    "spot": "현물",
+    "h5Guide": {
+      "title": "모바일 사이트로 전환",
+      "description": "모바일 사이트는 휴대폰 화면에 맞게 설계되어 터치로 더 편하게 이용할 수 있습니다.",
+      "goToMobile": "모바일 사이트로 이동",
+      "stay": "나중에, 계속 보기",
+      "close": "닫기"
+    }
+  },
+  "copytrade": {
+    "page": {
+      "title": "카피 트레이드",
+      "subtitle": "전문 트레이더를 팔로우하세요",
+      "description": "검증된 트레이더의 전략을 발견하고 평가하고 카피하세요. 백테스트된 신호, 투명한 성과, 완전한 리스크 통제."
+    },
+    "tabs": {
+      "leaderboard": "리더보드",
+      "following": "팔로잉",
+      "myTrades": "내 카피 거래"
+    },
+    "filters": {
+      "show": "필터",
+      "hide": "필터 숨기기",
+      "sort": "정렬",
+      "period": "기간",
+      "risk": "리스크",
+      "clear": "필터 지우기",
+      "searchPlaceholder": "트레이더 검색"
+    },
+    "sort": {
+      "displayOrder": "추천",
+      "roi": "수익률",
+      "followers": "팔로워",
+      "winRate": "승률",
+      "aum": "운용 자산"
+    },
+    "risk": {
+      "all": "전체",
+      "low": "낮음",
+      "medium": "보통",
+      "high": "높음"
+    },
+    "trader": {
+      "rank": "{{rank}}위",
+      "verified": "인증됨",
+      "memberTrader": "회원 트레이더",
+      "followers": "팔로워",
+      "tradingDays_one": "거래 {{count}}일",
+      "tradingDays_other": "거래 {{count}}일",
+      "roi": "수익률",
+      "roi30d": "30일 수익률",
+      "winRate": "승률",
+      "maxDD": "최대 낙폭",
+      "aum": "운용 자산",
+      "performance": "성과",
+      "positions": "포지션",
+      "history": "내역",
+      "totalTrades": "총 거래",
+      "profitTrades": "수익",
+      "lossTrades": "손실",
+      "avgReturn": "평균 수익률",
+      "sharpe": "샤프",
+      "avgHolding": "평균 보유",
+      "noPositions": "보유 포지션 없음",
+      "positionsHidden": "포지션 비공개",
+      "historyHidden": "거래 기록 비공개",
+      "historyHiddenDesc": "이 트레이더는 청산된 거래를 공개하지 않습니다.",
+      "entry": "진입",
+      "back": "뒤로"
+    },
+    "follow": {
+      "copyTrader": "이 트레이더 카피",
+      "unfollow": "팔로우 중지",
+      "following": "팔로잉",
+      "follow": "팔로우",
+      "editSettings": "복사 설정 편집"
+    },
+    "settings": {
+      "title": "카피 설정 · {{name}}",
+      "mode": "카피 모드",
+      "modeFixed": "고정 금액",
+      "modeProportional": "비례",
+      "mvpModeFixedOnly": "이번 릴리스에서는 고정 금액만 이용할 수 있습니다. 비례 모드는 곧 제공됩니다.",
+      "amountPerTrade": "거래당 금액 ({{asset}})",
+      "maxPositionSize": "최대 포지션 크기 ({{asset}})",
+      "takeProfit": "익절 %",
+      "stopLoss": "손절 %",
+      "maxDailyTrades": "일일 최대 거래 수",
+      "riskAckLabel": "카피 트레이딩의 위험을 이해합니다",
+      "riskAckHint": "카피 거래는 이 트레이더의 매매를 자동으로 복제하며 손실이 발생할 수 있습니다. 카피를 시작할 때마다 위험에 동의해야 합니다. 단일 카피 거래의 최대 손실은 해당 거래의 증거금으로 제한됩니다.",
+      "cancel": "취소",
+      "confirm": "카피 시작",
+      "saving": "저장 중...",
+      "editTitle": "복사 설정 편집 · {{name}}",
+      "saveChanges": "변경 사항 저장"
+    },
+    "unfollow": {
+      "title": "{{name}} 팔로우를 중지하시겠습니까?",
+      "description": "보유 중인 카피 포지션을 계속 유지하거나 모두 즉시 청산할 수 있습니다.",
+      "closeOpenPositionsLabel": "보유 카피 포지션을 지금 모두 청산",
+      "closeOpenPositionsHint": "그렇지 않으면 기존 포지션은 유지되며 이 트레이더의 새 거래 추적을 중지합니다.",
+      "cancel": "취소",
+      "confirm": "팔로우 중지",
+      "processing": "처리 중..."
+    },
+    "myPositions": {
+      "status": {
+        "open": "보유 중",
+        "closed": "청산됨",
+        "failed": "실패",
+        "all": "전체"
+      },
+      "mark": "표시가",
+      "size": "수량",
+      "fromTrader": "트레이더",
+      "close": "청산",
+      "closing": "청산 중...",
+      "closeConfirm": {
+        "title": "{{symbol}} 포지션을 청산할까요?",
+        "description": "포지션은 시장가로 청산되며 손익이 즉시 정산됩니다. 이 작업은 취소할 수 없습니다.",
+        "cancel": "취소",
+        "confirm": "청산"
+      },
+      "failedReason": "실패 사유"
+    },
+    "summary": {
+      "activeFollowing": "활성 팔로잉",
+      "openPositions": "보유 포지션",
+      "unrealizedPnl": "미실현 손익",
+      "realizedPnl": "실현 손익"
+    },
+    "empty": {
+      "noFollowing": "아직 팔로우 중인 트레이더가 없습니다",
+      "noFollowingDesc": "리더보드를 둘러보고 투명한 성과를 가진 검증된 트레이더를 발견하세요.",
+      "explore": "트레이더 탐색",
+      "noMyTrades": "아직 카피 거래가 없습니다",
+      "noMyTradesDesc": "트레이더를 팔로우하기 시작하면 카피된 거래가 여기에 표시됩니다.",
+      "noHistory": "아직 트레이딩 실적이 없습니다",
+      "noHistoryDesc": "이 트레이더는 아직 청산된 포지션이 없습니다.",
+      "noSearchResults": "일치하는 트레이더가 없습니다",
+      "noSearchResultsDesc": "다른 이름으로 검색하거나 검색어와 필터를 초기화해 보세요."
+    },
+    "placeholder": {
+      "comingSoon": "곧 제공 예정"
+    },
+    "security": {
+      "footer": "모든 성과 데이터는 검증되며 매일 업데이트됩니다."
+    },
+    "errors": {
+      "leaderboardLoadFailed": "리더보드를 불러오지 못했습니다",
+      "traderLoadFailed": "트레이더 프로필을 불러오지 못했습니다",
+      "followingLoadFailed": "팔로잉 목록을 불러오지 못했습니다",
+      "followFailed": "트레이더 팔로우에 실패했습니다",
+      "unfollowFailed": "팔로우 중지에 실패했습니다",
+      "historyLoadFailed": "실적을 불러오지 못했습니다"
+    },
+    "retry": "다시 시도",
+    "history": {
+      "exit": "청산",
+      "closedAt": "청산 시간",
+      "loadMore": "더 보기",
+      "rateLimited": "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요."
+    },
+    "loginPrompt": {
+      "cta": "로그인",
+      "history": {
+        "title": "로그인하고 전체 실적 보기",
+        "desc": "로그인하면 이 트레이더의 청산 포지션 전체 기록을 확인할 수 있습니다."
+      },
+      "myTrades": {
+        "title": "로그인하고 내 카피 거래 보기",
+        "desc": "로그인하면 카피한 포지션과 손익을 확인할 수 있습니다."
+      }
+    }
+  },
+  "customerService": {
+    "title": "고객 지원",
+    "menu": {
+      "title": "어떤 방법으로 문의하시겠습니까?",
+      "subtitle": "가장 편리한 채널을 선택하세요.",
+      "liveChat": "실시간 채팅",
+      "liveChatDesc": "지원팀과 실시간으로 채팅하세요",
+      "whatsapp": "WhatsApp",
+      "whatsappDesc": "WhatsApp에서 1:1로 문의하세요",
+      "email": "이메일",
+      "emailDesc": "이메일을 보내주시면 답변드리겠습니다"
+    },
+    "welcomeMessage": "안녕하세요! 무엇을 도와드릴까요?",
+    "placeholder": "메시지를 입력하세요...",
+    "send": "전송",
+    "loading": "불러오는 중…",
+    "status": {
+      "pending": "대기열에서 대기 중…",
+      "open": "상담원이 참여했습니다",
+      "closed": "대화가 종료되었습니다",
+      "closedInputHint": "이 대화는 종료되었습니다. 추가 도움이 필요하면 새 대화를 시작하세요."
+    },
+    "emoji": {
+      "add": "이모지 추가"
+    },
+    "attachment": {
+      "add": "첨부파일 추가",
+      "uploading": "업로드 중…",
+      "confirming": "처리 중…",
+      "failed": "업로드 실패",
+      "tooLarge": "{{limit}} 제한 초과",
+      "retry": "다시 시도",
+      "remove": "제거",
+      "download": "다운로드",
+      "limitType": "JPG, PNG, PDF, Excel, Word, CSV, ZIP만 지원됩니다",
+      "limitTypeGuest": "게스트는 JPG, PNG, PDF만 보낼 수 있습니다. Excel, Word, CSV, ZIP 파일은 로그인 후 보낼 수 있습니다",
+      "limitCount": "최대 {{count}}개의 첨부파일이 허용됩니다",
+      "queued": "업로드 대기 중…",
+      "retryAfter": "{{seconds}}초 후 다시 시도할 수 있습니다",
+      "stage": {
+        "request": "업로드를 시작할 수 없음",
+        "upload": "업로드 실패",
+        "confirm": "업로드를 완료할 수 없음"
+      },
+      "reason": {
+        "offline": "오프라인 상태입니다. 연결 후 다시 시도하세요.",
+        "timeout": "업로드 시간이 초과되었습니다. 다시 시도하세요.",
+        "connection": "연결에 실패했습니다. 네트워크를 확인하고 다시 시도하세요.",
+        "format": "지원하지 않는 파일 형식입니다.",
+        "content": "파일 내용이 형식과 일치하지 않습니다.",
+        "size": "파일이 너무 큽니다.",
+        "identity": "채팅 인증이 만료되었습니다.",
+        "signature": "업로드 링크가 만료되었습니다. 다시 시도하면 새 링크를 받습니다.",
+        "forbidden": "저장소에서 업로드를 거부했습니다. 다시 시도하거나 고객센터에 문의하세요.",
+        "rateLimit": "요청이 너무 많습니다.",
+        "quota": "첨부 한도에 도달했습니다. 다른 파일을 삭제하고 다시 시도하세요.",
+        "storage": "파일 저장소를 사용할 수 없습니다. 잠시 후 다시 시도하세요.",
+        "unknown": "오류가 발생했습니다. 다시 시도하세요."
+      }
+    },
+    "toast": {
+      "newMessageTitle": "고객센터 새 메시지",
+      "newMessageTitleWithCount": "고객센터 새 메시지 ({{unread}})",
+      "attachment": "[첨부파일]",
+      "view": "보기",
+      "close": "닫기"
+    },
+    "errors": {
+      "sendFailed": "전송에 실패했습니다. 다시 시도하세요.",
+      "loadFailed": "불러오기에 실패했습니다. 다시 시도하세요.",
+      "offline": "네트워크 오류입니다. 연결을 확인하고 다시 시도하세요.",
+      "notSent": "전송되지 않음"
+    },
+    "connection": {
+      "reconnecting": "연결이 끊겼습니다. 다시 연결하는 중…",
+      "stale": "서버에 연결할 수 없습니다. 페이지를 새로고침하여 새 메시지를 받으세요.",
+      "refresh": "페이지 새로고침",
+      "retry": "다시 시도",
+      "restored": "다시 연결됨"
+    },
+    "guest": {
+      "unavailableTitle": "게스트 채팅을 더 이상 사용할 수 없습니다",
+      "unavailableDesc": "이 브라우저의 게스트 신원이 만료되었거나 유효하지 않습니다.",
+      "unavailableHint": "이전 게스트 메시지는 더 이상 볼 수 없습니다. 로그인하여 계정에서 고객센터에 문의하거나 새 게스트 채팅을 시작하세요.",
+      "startNew": "새 채팅 시작",
+      "merging": "게스트 채팅을 계정으로 옮기는 중…",
+      "mergeFailed": "게스트 채팅이 아직 계정으로 옮겨지지 않았습니다.",
+      "mergeRetry": "다시 시도",
+      "expiredTitle": "게스트 채팅이 만료되었습니다"
+    },
+    "blocked": {
+      "message": "현재 실시간 채팅을 이용할 수 없습니다."
+    }
+  },
+  "deposit": {
+    "pageTitle": "입금",
+    "subtitle": "코인과 네트워크를 선택한 뒤 아래 주소로 송금하세요.",
+    "back": "뒤로",
+    "scanToDeposit": "스캔하여 입금",
+    "generating": "생성 중...",
+    "loadingAddress": "주소 불러오는 중...",
+    "error": {
+      "kycRequired": "입금 주소를 받으려면 신원 인증(KYC)을 완료하세요.",
+      "kycCta": "KYC 완료",
+      "generic": "입금 주소를 불러오지 못했습니다. 다시 시도하세요.",
+      "genericWithId": "입금 주소를 불러오지 못했습니다. 다시 시도하세요. (참조: {{requestId}})"
+    },
+    "depositTo": "입금 계정",
+    "fundingAccount": "펀딩 계정",
+    "securityTips": "보안 팁",
+    "saveImage": "이미지 저장",
+    "memo": "메모",
+    "copyMemo": "메모 복사",
+    "copyFailed": "복사에 실패했습니다",
+    "selectCoin": "코인 선택",
+    "selectNetwork": "네트워크 선택",
+    "depositAddress": "입금 주소",
+    "addressTrust": "이 입금 주소는 회원님의 계정 전용으로 생성되었습니다.",
+    "copyAddress": "주소 복사",
+    "copySuccess": "복사됨",
+    "minDeposit": "최소 입금액",
+    "confirmations": "확인 수",
+    "arrivalTime": "예상 도착 시간",
+    "depositNotice": "입금 안내",
+    "notice1": "위 주소로 대응하지 않는 통화를 입금하지 마세요. 그렇지 않으면 자산을 복구할 수 없습니다.",
+    "notice2": "입금 도착에는 네트워크 확인이 필요하며 구체적인 도착 시간은 네트워크 상황에 따라 달라집니다.",
+    "notice3": "입금 주소는 자주 변경되지 않으며 재사용할 수 있습니다. 변경 사항이 있을 경우 공지를 통해 알려드립니다.",
+    "qrCode": "QR 코드",
+    "recentDeposits": "최근 입금",
+    "time": "시간",
+    "amount": "금액",
+    "status": "상태",
+    "txid": "Tx 해시",
+    "completed": "완료",
+    "pending": "대기 중",
+    "processing": "처리 중",
+    "rejected": "거부됨",
+    "depositAmount": "입금 금액",
+    "uploadScreenshot": "스크린샷 업로드",
+    "submitDeposit": "입금 확인",
+    "depositRecords": "입금 기록",
+    "network": "네트워크",
+    "coin": "코인",
+    "action": "작업",
+    "pleaseSelectCoin": "코인을 선택하세요",
+    "pleaseSelectNetwork": "네트워크를 선택하세요",
+    "pleaseEnterAmount": "입금 금액을 입력하세요",
+    "depositSuccess": "입금이 제출되었습니다",
+    "tabs": {
+      "chain": "온체인 입금",
+      "voucher": "바우처 입금"
+    },
+    "voucher": {
+      "title": "바우처 입금",
+      "subtitle": "아래 주소로 송금한 뒤 거래를 바우처로 제출하세요.",
+      "fixedAddressTitle": "입금 주소",
+      "sharedAddressWarning": "아래 바우처를 반드시 제출해야 합니다. 그렇지 않으면 입금이 반영되지 않습니다.",
+      "amountLabel": "송금 금액",
+      "amountPlaceholder": "송금한 금액을 입력하세요",
+      "txHashLabel": "거래 해시 (TXID)",
+      "txHashPlaceholder": "(선택) 온체인 거래 해시를 붙여넣으세요",
+      "screenshotLabel": "송금 스크린샷",
+      "screenshotOptionalLabel": "송금 스크린샷 (선택)",
+      "screenshotHint": "클릭하여 업로드 (PNG / JPEG)",
+      "submit": "제출",
+      "submitting": "제출 중...",
+      "submittedTitle": "바우처가 제출되었습니다",
+      "submittedDesc": "바우처 ID: {{voucherId}}. 상태: 검토 대기 중.",
+      "submitAgain": "다른 바우처 제출",
+      "viewRecords": "입금 기록 보기",
+      "amountRequired": "송금 금액을 입력하세요.",
+      "amountTooSmall": "금액은 0보다 크고 최소 입금액 이상이어야 합니다.",
+      "txHashTooLong": "거래 해시는 최대 128자여야 합니다.",
+      "screenshotRequired": "송금 스크린샷을 업로드하세요.",
+      "processingTime": "검토는 일반적으로 영업일 기준 1일이 소요됩니다.",
+      "errorUnsupportedPair": "이 통화 / 네트워크 조합은 바우처 입금이 지원되지 않습니다.",
+      "errorIdempotencyConflict": "중복 제출이 감지되었습니다. 다시 시도하세요.",
+      "errorInvalidFile": "업로드한 스크린샷이 유효하지 않습니다. 다시 업로드하세요.",
+      "errorRegistrationIncomplete": "바우처를 제출하기 전에 가입을 완료하세요.",
+      "errorGeneric": "바우처 제출에 실패했습니다. 다시 시도하세요.",
+      "loadingOptions": "이용 가능한 옵션 불러오는 중...",
+      "noOptionsTitle": "이용 가능한 입금 옵션이 없습니다",
+      "noOptionsDesc": "현재 바우처 입금을 지원하는 통화 / 네트워크 조합이 없습니다. 나중에 다시 시도하세요."
+    },
+    "history": {
+      "entry": "내역",
+      "title": "입금 내역",
+      "subtitle": "입금 타임라인을 확인하세요",
+      "back": "뒤로",
+      "filterAll": "전체",
+      "range7d": "최근 7일",
+      "range30d": "최근 30일",
+      "rangeCustom": "사용자 지정",
+      "status": {
+        "PENDING": "대기 중",
+        "PENDING_KYC_REVIEW": "KYC 검토 대기 중",
+        "APPROVED": "승인됨",
+        "CREDITED": "입금됨",
+        "REJECTED": "거부됨",
+        "BELOW_MINIMUM": "최소액 미만",
+        "SUSPICIOUS": "의심됨"
+      },
+      "columns": {
+        "amount": "수량",
+        "currency": "통화",
+        "chain": "체인",
+        "id": "거래 ID",
+        "txid": "거래 해시",
+        "createdAt": "생성 시각",
+        "creditedAt": "입금 시각",
+        "status": "상태"
+      },
+      "empty": "아직 입금 기록이 없습니다",
+      "depositNow": "지금 입금",
+      "txidCopied": "거래 해시 복사됨",
+      "idCopied": "거래 ID 복사됨",
+      "explorerAria": "블록 익스플로러에서 거래 보기",
+      "arrival": {
+        "pending": "보통 1~30분 내 입금 (블록체인 혼잡 시 지연될 수 있음)",
+        "kycReview": "심사 중 — 보통 영업일 기준 1일 이내 완료"
+      }
+    }
+  },
+  "devices": {
+    "back": "뒤로",
+    "title": "기기 관리",
+    "subtitle": "내 계정에 로그인한 기기 목록입니다. 알 수 없는 기기는 즉시 해지하세요.",
+    "current": "현재 기기",
+    "trusted": "신뢰됨",
+    "trustedUntil": "{{time}}까지 신뢰",
+    "unnamedDevice": "알 수 없는 기기",
+    "firstSeen": "최초 로그인 {{time}}",
+    "lastSeen": "최근 활동 {{time}}",
+    "empty": "아직 로그인한 기기가 없습니다.",
+    "rename": "이름 변경",
+    "renameTitle": "기기 이름 변경",
+    "deviceName": "기기 이름",
+    "enterDeviceName": "기기 이름을 입력하세요",
+    "renameSuccess": "기기 이름이 변경되었습니다",
+    "trust": "신뢰",
+    "trustSuccess": "기기를 30일 동안 신뢰합니다",
+    "trustFailed": "기기를 신뢰할 수 없습니다",
+    "revoke": "해지",
+    "revokeTitle": "기기 해지",
+    "revokeBody": "해당 기기는 로그아웃되며 모든 액세스 토큰이 무효화됩니다.",
+    "revokeCurrentWarning": "현재 사용 중인 기기입니다. 해지하면 즉시 로그아웃됩니다.",
+    "revokeSuccess": "기기가 해지되었습니다",
+    "cancel": "취소",
+    "save": "저장"
+  },
+  "earn": {
+    "nav": {
+      "ariaLabel": "어닝 모듈 내비게이션",
+      "products": "상품",
+      "myEarnings": "내 어닝",
+      "loan": "대출",
+      "myLoans": "내 대출"
+    },
+    "header": {
+      "subtitle": "수동 수익",
+      "title": "어닝",
+      "heroDescription": "유휴 자산을 운용하세요. 투명한 참고 수익률 — 데이 트레이더가 아닌 장기 보유자를 위해 설계되었습니다.",
+      "myEarnings": "내 수익"
+    },
+    "educational": {
+      "headline": "유휴 암호화폐로 수익을 창출하세요.",
+      "chip": {
+        "apyUpTo": "최대 APY {{value}}%",
+        "types": "자유형 & 고정형",
+        "dailyRateUpTo": "일일 이율 최대 {{value}}%"
+      },
+      "cta": "상품 둘러보기"
+    },
+    "holdings": {
+      "totalHoldings": "총 보유액",
+      "perDay": "+${{amount}}/일",
+      "cumulative": "누적",
+      "principal": "원금",
+      "accruedReward": "적립",
+      "dailyEstimated": "일일 예상",
+      "rewardsLast7d": "최근 7일",
+      "nextRewardLabel": "다음 보상",
+      "nextReward": "약 {{hours}}시간 후"
+    },
+    "table": {
+      "columns": {
+        "product": "상품",
+        "category": "유형",
+        "term": "기간",
+        "minAmount": "최소",
+        "totalSubscribed": "구독됨",
+        "availableQuota": "사용 가능",
+        "apy": "APY",
+        "action": "작업",
+        "dailyRate": "일일 이율"
+      }
+    },
+    "featured": {
+      "title": "추천 상품",
+      "productCount": "{{count}}개 상품",
+      "totalSubscribed": "{{amount}} 구독됨",
+      "quotaRemaining": "{{amount}}만 남음",
+      "subscribeNow": "구독"
+    },
+    "badge": {
+      "hot": "인기",
+      "featured": "추천",
+      "exclusive": "전용",
+      "exclusiveHint": "지정된 사용자 전용"
+    },
+    "apy": {
+      "label": "예상 APY",
+      "suffix": "APY",
+      "annualizedShort": "APY (연)",
+      "approx": "≈ 연 {{value}}%"
+    },
+    "actions": {
+      "subscribe": "구독",
+      "viewDetail": "상세 보기",
+      "redeem": "환매"
+    },
+    "tabs": {
+      "all": "전체",
+      "flexible": "자유형",
+      "fixed": "고정형",
+      "staking": "스테이킹"
+    },
+    "products": {
+      "count": "{{count}}개 상품",
+      "categoryFlex": "자유형",
+      "categoryFixed": "고정형",
+      "categoryStake": "스테이킹",
+      "min": "최소 {{amount}}",
+      "max": "최대 {{amount}}",
+      "totalSubscribed": "{{amount}} 구독됨",
+      "termFlexible": "자유형",
+      "termFixed": "{{days}}일",
+      "minValue": "≥ {{value}} {{unit}}",
+      "minValueWithEstimate": "≥ {{value}} {{unit}} (약 {{amount}} {{asset}})"
+    },
+    "sort": {
+      "highestApy": "APY 높은 순",
+      "shortestTerm": "기간 짧은 순",
+      "mostPopular": "인기 순",
+      "highestDailyRate": "일일 이율 높은 순"
+    },
+    "security": {
+      "footer": "신청 전에 각 상품의 조건과 상환 규정을 확인하세요.",
+      "disclaimer": "금융 자문이 아닙니다. 수익률은 추정치이며 변동될 수 있습니다."
+    },
+    "states": {
+      "retry": "다시 시도",
+      "loading": "불러오는 중…",
+      "holdingsError": "어닝 요약을 불러오지 못했습니다.",
+      "productsError": "어닝 상품을 불러오지 못했습니다.",
+      "productsEmpty": "현재 이용 가능한 어닝 상품이 없습니다.",
+      "detailError": "상품 상세를 불러오지 못했습니다.",
+      "myEarningsError": "이 목록을 불러오지 못했습니다."
+    },
+    "productDetail": {
+      "title": "상품 상세",
+      "back": "어닝으로 돌아가기",
+      "notFound": "이 상품은 더 이상 이용할 수 없습니다.",
+      "unlimited": "무제한",
+      "keyFacts": {
+        "term": "기간",
+        "min": "최소 구독",
+        "max": "최대 구독",
+        "availableQuota": "사용 가능 한도",
+        "totalSubscribed": "총 구독액",
+        "perUserQuota": "1인당 한도",
+        "estAccrualStart": "예상 이자 시작일",
+        "estMaturity": "예상 만기일",
+        "accrualMode": "이자 계산 방식",
+        "accrualModeRolling": "24시간 롤링",
+        "accrualModeRollingHint": "주문 체결과 동시에 이자가 시작되며 24시간마다 적립됩니다."
+      },
+      "risk": {
+        "title": "리스크 고지",
+        "notGuaranteed": "보상은 보장되지 않으며 시장 상황에 따라 변동될 수 있습니다.",
+        "smartContract": "스테이킹 기반 상품에는 스마트 계약 리스크가 적용됩니다.",
+        "earlyRedemption": "고정형 상품의 조기 환매 시 적립된 보상을 상실합니다.",
+        "noEarlyRedemption": "일일 지급 고정형 상품은 조기 환매할 수 없습니다.",
+        "earlyRedemptionPenalty": "정기 상품을 조기 환매하면 원금의 {{rate}}%가 위약금으로 차감됩니다. 가입 시점의 비율이 적용됩니다."
+      },
+      "exploreOthers": "다른 상품 둘러보기",
+      "disabled": {
+        "paused": "이 상품의 구독이 일시적으로 중단되었습니다.",
+        "closed": "이 상품은 더 이상 구독을 받지 않습니다.",
+        "soldOut": "한도가 소진되었습니다. 나중에 다시 확인해 주세요.",
+        "subscriptionDisabled": "현재 구독이 비활성화되어 있습니다."
+      },
+      "groups": {
+        "rules": "신청 규칙",
+        "quota": "상품 한도"
+      },
+      "quotaFilled": "{{percent}}% 신청됨"
+    },
+    "subscribe": {
+      "title": "구독",
+      "amountLabel": "금액",
+      "amountPlaceholder": "금액 입력",
+      "availableBalanceLabel": "사용 가능",
+      "maxButton": "최대",
+      "goDeposit": "입금하기",
+      "submit": "구독 확인",
+      "cancel": "취소",
+      "estDailyReward": "예상 일일 보상",
+      "estMaturityReward": "만기 시 예상 보상",
+      "errors": {
+        "minAmount": "최소 구독액은 {{amount}} {{asset}}입니다.",
+        "maxAmount": "최대 구독액은 {{amount}} {{asset}}입니다.",
+        "availableQuota": "남은 한도가 {{amount}} {{asset}}뿐입니다.",
+        "perUserQuota": "1인당 한도는 {{amount}} {{asset}}입니다.",
+        "invalidAmount": "유효한 금액을 입력하세요.",
+        "insufficientBalance": "사용 가능한 잔액이 부족합니다. 현재 {{amount}} {{asset}} 사용 가능합니다.",
+        "priceChanged": "가격이 변동되었습니다. 현재 최소 구독액은 {{amount}} {{asset}}입니다.",
+        "unavailableAtCurrentPrice": "현재 가격에서는 구독할 수 없습니다.",
+        "valuationPriceUnavailable": "현재 가격을 가져올 수 없습니다. 잠시 후 다시 시도해 주세요."
+      },
+      "success": {
+        "title": "구독이 확인되었습니다",
+        "orderId": "주문 {{id}}",
+        "viewHoldings": "내 보유 보기"
+      },
+      "dates": {
+        "accrualStart": "예상 이자 시작일",
+        "maturity": "예상 만기일",
+        "settlement": "예상 입금일",
+        "reviewRequired": "이 신청은 심사가 필요합니다. 승인 다음 날부터 이자가 발생합니다.",
+        "rollingNote": "주문 체결과 동시에 이자가 시작되며 24시간마다 적립됩니다. 정기 상품은 만기 후 약 10분 이내에 원금과 이자가 자동으로 입금됩니다.",
+        "rollingReviewRequired": "이 신청은 심사가 필요합니다. 승인되는 즉시 이자가 시작됩니다."
+      },
+      "fillRequiredMin": "입력",
+      "estReward": "예상 보상",
+      "estRewardEmpty": "금액을 입력하면 예상 보상이 표시됩니다"
+    },
+    "redeem": {
+      "title": "환매",
+      "subtitle": {
+        "flexible": "자유형 보유 환매",
+        "fixedMatured": "만기 포지션 환매",
+        "fixedEarly": "조기 환매"
+      },
+      "redeemInFull": "전액 환매",
+      "redeemPartial": "부분 환매",
+      "amountLabel": "환매 금액",
+      "redeemAll": "전액 환매",
+      "principal": "원금",
+      "remainingPrincipal": "잔여 원금",
+      "continueAccrue": "잔여 원금은 계속 보상을 적립합니다.",
+      "eligibleReward": "수령 가능 보상",
+      "fundingNote": "자금은 펀딩 계정으로 입금됩니다.",
+      "warning": {
+        "fixedEarly": "조기 환매: 수령 가능 보상이 0이 됩니다. 이 작업은 취소할 수 없습니다.",
+        "fixedEarlyPenalty": "조기 환매: 원금에서 위약금이 차감되고 수령 가능 보상이 0이 됩니다. 이 작업은 취소할 수 없습니다."
+      },
+      "submit": "환매 확인",
+      "cancel": "취소",
+      "errors": {
+        "disabled": "이 상품은 조기 환매가 허용되지 않습니다.",
+        "exceedsPrincipal": "금액은 원금 {{amount}} {{asset}}을(를) 초과할 수 없습니다.",
+        "holdingInactive": "이 보유는 활성 상태가 아니어서 환매할 수 없습니다.",
+        "invalidAmount": "유효한 금액을 입력하세요.",
+        "awaitingFinalCoupon": "마지막 날 이자가 입금 처리 중입니다. 원금과 이자는 자동으로 입금되며 별도 조치가 필요하지 않습니다. 몇 분 후 다시 시도할 수도 있습니다.",
+        "dailyPayoutNoEarly": "일일 지급 고정형 보유 자산은 조기 환매할 수 없습니다.",
+        "penaltyChanged": "위약금 금액이 변경되었습니다. 새 금액을 확인한 후 다시 확정해 주세요."
+      },
+      "success": {
+        "title": "환매가 확인되었습니다",
+        "id": "환매 {{id}}",
+        "viewRedemptions": "환매 내역 보기",
+        "done": "확인",
+        "penalty": "차감된 위약금",
+        "received": "실제 입금액"
+      },
+      "confirm": {
+        "title": "적립된 보상을 상실하시겠습니까?",
+        "body": "조기 환매 시 적립된 모든 보상(~{{amount}} {{asset}})을 상실합니다. 이 작업은 되돌릴 수 없습니다.",
+        "youReceive": "수령액",
+        "youForfeit": "상실액",
+        "cancel": "취소",
+        "acknowledge": "이해했습니다, 조기 환매",
+        "penaltyTitle": "조기 환매 위약금 확인",
+        "penaltyBody": "조기 환매 시 위약금 {{amount}} {{asset}}(원금의 {{rate}}%)이 차감되며, 누적된 보상은 모두 포기됩니다. 이 작업은 되돌릴 수 없습니다.",
+        "acknowledgePenalty": "위약금에 동의하고 조기 환매"
+      },
+      "dailyPaidOut": "매 기간 지갑으로 지급 완료",
+      "penalty": "조기 환매 위약금 ({{rate}}%)",
+      "estimatedReceive": "예상 입금액"
+    },
+    "myEarnings": {
+      "title": "내 수익",
+      "table": {
+        "productName": "상품",
+        "asset": "자산",
+        "principal": "원금",
+        "accruedInterest": "적립 이자",
+        "term": "기간 / 만기",
+        "status": "상태",
+        "action": "작업",
+        "amount": "금액",
+        "subscribedQuantity": "구독 수량",
+        "subscribedAt": "구독 시각",
+        "completedAt": "완료 시각",
+        "redemptionType": "유형",
+        "eligibleReward": "수령 가능 보상",
+        "createdAt": "생성 시각",
+        "rewardAmount": "보상",
+        "rewardDate": "보상 날짜",
+        "paidAt": "지급 시각",
+        "dailyRate": "일일 이율"
+      },
+      "summary": {
+        "totalValue": "총 가치",
+        "principal": "원금",
+        "accruedReward": "적립 보상",
+        "cumulativeReward": "누적 보상",
+        "dailyEstimatedReward": "일일 예상",
+        "earningsTrend": "최근 {{days}}일 수익 추이",
+        "usdNote": "아래 금액은 USD 환산으로 표시됩니다"
+      },
+      "tabs": {
+        "holdings": "보유",
+        "orders": "주문",
+        "redemptions": "환매",
+        "rewards": "보상"
+      },
+      "filter": {
+        "asset": "자산",
+        "all": "전체 자산",
+        "status": "상태"
+      },
+      "holdings": {
+        "subscribedQuantity": "구독 수량",
+        "accruedInterest": "적립",
+        "paidReward": "지급됨",
+        "daysRemaining": "{{days}}일 남음",
+        "matured": "만기",
+        "flexible": "자유형",
+        "redeemCta": "환매",
+        "maturityCountdownLabel": "만기까지",
+        "readyToRedeem": "환매 가능",
+        "subscribedAt": "구독일",
+        "startedAt": "시작일",
+        "maturityAt": "만기일",
+        "lastAccruedAt": "최근 적립",
+        "nextAccrualLabel": "다음 이자 지급",
+        "settlementEtaLabel": "입금 예정",
+        "settlingLabel": "입금 처리 중…",
+        "countdownDaysHoursMinutes": "{{days}}일 {{hours}}시간 {{minutes}}분",
+        "accrualStartDate": "이자 시작일",
+        "maturityDate": "만기일",
+        "settlementDate": "입금 예정일",
+        "accrualStartTime": "이자 시작",
+        "maturityTime": "만기",
+        "settlementEtaTime": "입금 예정",
+        "paidToWallet": "지갑으로 지급됨"
+      },
+      "orders": {
+        "subscribedAt": "구독 시각",
+        "completedAt": "완료 시각",
+        "amount": "금액",
+        "valueUsd": "≈ {{value}} USD"
+      },
+      "redemptions": {
+        "createdAt": "요청 시각",
+        "completedAt": "완료 시각",
+        "amount": "금액",
+        "eligibleReward": "수령 가능 보상",
+        "penalty": "위약금"
+      },
+      "rewards": {
+        "rewardDate": "보상 날짜",
+        "amount": "금액",
+        "paidAt": "지급 시각"
+      },
+      "status": {
+        "active": "활성",
+        "redeeming": "환매 중",
+        "redeemed": "환매됨",
+        "matured": "만기",
+        "pending": "대기 중",
+        "completed": "완료",
+        "failed": "실패",
+        "pending_review": "검토 중",
+        "rejected": "거부됨",
+        "accrued": "적립됨",
+        "paid": "지급됨"
+      },
+      "redemptionType": {
+        "flexiblePartial": "자유형 · 부분",
+        "flexibleFull": "자유형 · 전액",
+        "fixedMatured": "고정형 · 만기",
+        "fixedEarly": "고정형 · 조기"
+      },
+      "empty": {
+        "holdings": "아직 보유가 없습니다. 상품을 구독하고 수익을 시작하세요.",
+        "orders": "아직 구독 주문이 없습니다.",
+        "redemptions": "아직 환매 기록이 없습니다.",
+        "rewards": "아직 보상 기록이 없습니다.",
+        "browseProducts": "상품 둘러보기"
+      },
+      "loadMore": "더 보기",
+      "redeemDisabledTooltip": "이 상품은 조기 환매가 허용되지 않습니다."
+    },
+    "errors": {
+      "INSUFFICIENT_BALANCE": "잔액이 부족합니다.",
+      "QUOTA_EXHAUSTED": "상품 한도가 소진되었습니다.",
+      "PRODUCT_NOT_AVAILABLE": "이 상품은 현재 이용할 수 없습니다.",
+      "PER_USER_QUOTA_EXCEEDED": "1인당 한도에 도달했습니다.",
+      "AMOUNT_OUT_OF_RANGE": "금액이 허용 범위를 벗어났습니다.",
+      "HOLDING_NOT_REDEEMABLE": "이 보유는 환매할 수 없습니다.",
+      "EARLY_REDEMPTION_NOT_ALLOWED": "조기 환매가 허용되지 않습니다.",
+      "IDEMPOTENCY_CONFLICT": "중복 요청이 감지되었습니다. 새로고침 후 다시 시도하세요.",
+      "UNKNOWN": "문제가 발생했습니다. 다시 시도하세요."
+    },
+    "loan": {
+      "subtitle": "온체인 신용",
+      "title": "대출",
+      "description": "보유 자산을 매도하지 않고 담보로 스테이블코인을 빌리세요. 초과 담보 포지션, 투명한 청산 임계값, 연중무휴 상환 — {{brand}}에 곧 제공됩니다.",
+      "comingSoon": "곧 제공 예정",
+      "disclaimer": "투명한 청산"
+    },
+    "dailyRate": {
+      "label": "예상 일일 이율",
+      "suffix": "일일 이율"
+    },
+    "payoutMode": {
+      "label": "보상 지급",
+      "daily": "매일 지갑으로 지급",
+      "at_end": "만기 또는 환매 시 일괄 지급",
+      "dailyBadge": "일일 지급"
+    },
+    "timeline": {
+      "title": "타임라인",
+      "steps": {
+        "subscribe": "신청",
+        "accrualStart": "이자 시작",
+        "maturity": "만기",
+        "settlement": "입금",
+        "redeem": "상환"
+      },
+      "values": {
+        "now": "지금",
+        "onOrder": "주문 체결 즉시",
+        "afterReview": "승인 다음 날",
+        "afterReviewRolling": "승인 즉시",
+        "afterDays": "이자 시작 후 {{days}}일",
+        "settleRolling": "만기 후 약 10분 이내",
+        "redeemAnytime": "언제든지 가능"
+      },
+      "accruingDays": "{{days}}일간 이자 적립",
+      "accruingDaily": "매일 이자 적립",
+      "rollingRule": "24시간마다 이자 적립"
+    }
+  },
+  "home": {
+    "seo": {
+      "title": "암호화폐, 외환, 지수, 주식 거래",
+      "description": "{{brand}}는 멀티에셋 거래 플랫폼입니다. 하나의 계정으로 암호화폐·외환·지수·미국 주식·귀금속을 거래하고 AI 보조 도구를 이용하세요."
+    },
+    "hero": {
+      "badge": "멀티에셋 거래 · 하나의 계정",
+      "title": "암호화폐, 외환, 주식 — 모두 하나의 계정에서.",
+      "title1": "더 스마트하게 거래하세요.",
+      "titleHighlight": "다음",
+      "title2": "백만 트레이더를 위해 설계되었습니다.",
+      "desc": "암호화폐, 외환, 지수, 미국 주식, 금속을 위한 하나의 계정 — 깊은 유동성, 낮은 수수료, 그리고 모든 거래를 가치 있게 만드는 데이터와 AI.",
+      "startTrading": "거래 시작",
+      "seeMarkets": "시장 보기",
+      "exploreQuantFund": "퀀트 펀드 둘러보기",
+      "watchFilm": "AI 퀀트 작동 방식 보기",
+      "watchDemo": "90초 데모 보기",
+      "appMockupAlt": "{{brand}} 모바일 앱 — 포트폴리오, AI 퀀트, 카피 트레이딩 및 실시간 시장",
+      "appMockupPip": "실시간"
+    },
+    "aiQuantFilm": {
+      "title": "AI 퀀트 작동 방식",
+      "description": "전략이 구축되고 백테스트되며 실행되는 방식에 대한 간단한 안내입니다.",
+      "unsupported": "사용 중인 브라우저가 video 태그를 지원하지 않습니다."
+    },
+    "products": {
+      "label": "01 / 거래 가능 항목",
+      "titleFrom": "에서",
+      "perpetual": "무기한 선물",
+      "titleTo": "부터",
+      "options": "바이너리 옵션",
+      "titleEnd": " —<br/>하나의 계정, 관심 있는 모든 시장.",
+      "viewAll": "모든 상품 보기 →",
+      "perpLabel": "무기한 선물",
+      "perpTitle1": "깊은 유동성,",
+      "perpTitle2": "모든 주요 자산.",
+      "perpDesc": "암호화폐, 금, 은을 아우르는 200개 이상의 선물 페어. 최대 125배 레버리지, 50ms 미만 체결, 투명한 펀딩 비율 — 하나의 계정으로 간편하게 USD로 정산됩니다.",
+      "perpStat1": "거래 페어",
+      "perpStat2": "최대 레버리지",
+      "perpStat3": "최저 수수료",
+      "perpTag1": "암호화폐",
+      "perpTag2": "금속",
+      "perpTag3": "USD 정산",
+      "optLabel": "바이너리 옵션",
+      "optTitle1": "방향을 선택하세요.",
+      "optTitle2": "최대 리스크를 미리 파악하세요.",
+      "optDesc": "가격이 오를지 내릴지만 예측하면 됩니다 — 변동 폭은 중요하지 않습니다. 고정 수익과 제한된 손실의 60초, 90초, 6분 계약.",
+      "optStat1": "만기 옵션",
+      "optStat2": "최대 수익",
+      "optStat3": "고정",
+      "optStat4": "배당률",
+      "optTag1": "상승",
+      "optTag2": "하락",
+      "multiLabel": "하나의 계정 · 세 개의 시장",
+      "multiTitle": "암호화폐, 금, 은 —<br/><1>하나의 잔액, 전환 없이.</1>",
+      "multiDesc": "동일한 증거금 잔액으로 암호화폐, 금(XAU), 은(XAG)을 거래하세요. 통합 리스크 관리, 통합 손익, 거래소 간 전환 불필요.",
+      "multiAsset1": "암호화폐",
+      "multiAsset1Sub": "200+ 페어",
+      "multiAsset2": "금",
+      "multiAsset2Sub": "XAU/USDT",
+      "multiAsset3": "은",
+      "multiAsset3Sub": "XAG/USDT"
+    },
+    "ai": {
+      "label": "02 / 당신의 AI 코파일럿",
+      "title1": "헤지펀드뿐만 아니라 ",
+      "titleHighlight": "모든 트레이더",
+      "title2": "를 위한,<br/>퀀트 파워.",
+      "subtitle": "함께 작동하는 세 가지 AI 도구 — 수학이 무거운 일을 처리하고, 모든 거래의 최종 결정은 당신이 합니다.",
+      "quantTag": "01 / 퀀트",
+      "quantTitle": "AI 전략 라이브러리",
+      "quantDesc": "5년 데이터로 백테스트된 수백 개의 전략 — 추세 추종, 차익거래, 그리드, 평균 회귀. 원클릭 구독, 자동 실행, 실시간 성과를 언제든 확인하세요.",
+      "quantChartLabel": "자산 곡선 · 90일",
+      "quantWinRate": "승률",
+      "quantSharpe": "샤프 지수",
+      "quantMaxDrawdown": "최대 낙폭",
+      "quantLink": "전략 둘러보기 →",
+      "copyTag": "02 / 카피",
+      "copyTitle": "신뢰하는 트레이더를 카피하세요",
+      "copyDesc": "리스크 조정 수익률로 순위가 매겨진 상위 트레이더를 미러링하세요. 직접 손절을 설정하고 언제든 종료하며 고정 비율을 공유하세요 — 플랫폼 종속 없음.",
+      "copyLabel": "상위 트레이더 · 30일",
+      "copyRoi": "투자수익률",
+      "copyLink": "리더보드 보기 →",
+      "signalTag": "03 / 신호",
+      "signalTitle": "필터링된 거래 신호",
+      "signalDesc": "매월 3,800개 이상의 신호, 시장 구조, 온체인 흐름, 심리로 점수화 — 상위 10%만 화면에 표시됩니다.",
+      "signalLong": "롱",
+      "signalTime": "2분 전",
+      "signalEntry": "진입 구간",
+      "signalStop": "손절",
+      "signalTarget": "목표 1 / 2",
+      "signalRr": "손익비",
+      "signalConfidence": "신뢰도",
+      "signalLink": "최신 신호 보기 →",
+      "riskWarning": "⚠ 리스크 고지: 과거의 성과는 미래의 결과를 보장하지 않습니다. AI 전략 및 신호는 참고 도구일 뿐 자문이 아닙니다. 암호화폐 및 선물 거래는 전체 잔액을 잃을 수 있으므로 — 잃어도 감당할 수 있는 금액만 거래하세요."
+    },
+    "markets": {
+      "label": "03 / 실시간 시장",
+      "title": "실제 가격,",
+      "titleHighlight": "실시간 —",
+      "tabAll": "전체",
+      "tabHot": "지금 인기",
+      "tabGainers": "24시간 상승 상위",
+      "tabFunding": "펀딩",
+      "tabNew": "신규 상장",
+      "colPair": "페어",
+      "colPrice": "가격",
+      "colChange": "24시간 변동",
+      "colVolume": "24시간 거래량",
+      "colFunding": "펀딩",
+      "tradeLink": "거래 →",
+      "viewAll": "{{total}}개 시장 모두 보기 →",
+      "pulseLabel": "실시간 시장 · 상위 페어",
+      "empty": "이 카테고리에는 아직 마켓이 없습니다.",
+      "viewAllPlain": "모든 시장 보기 →"
+    },
+    "partners": {
+      "label": "05 / 파트너",
+      "title": "파트너"
+    },
+    "news": {
+      "label": "06 / 시장 학습",
+      "title": "모든 거래마다",
+      "titleHighlight": "더 예리해지세요.",
+      "viewAll": "모든 강의 보기 →",
+      "tagHeadline": "추천",
+      "tagDeep": "심층 분석",
+      "tagCourse": "강좌",
+      "article1Meta": "시장 리서치 · 12분 소요",
+      "article1Title": "BTC 옵션 수요가 폭발하고 있습니다 —<br/>스마트 머니가 무엇을 하고 있는지 알아보세요.",
+      "article1Desc": "지난 30일 동안 BTC 바이너리 옵션 거래량이 42% 급증했습니다. 흐름이 어디로 향하는지, 어떤 만기가 붐비는지, 리테일 대 기관 코호트별 승률이 어떤지 분석합니다...",
+      "article2Meta": "8분 소요",
+      "article2Title": "바이너리 옵션 101 — 첫 계약부터 진정한 우위까지",
+      "article2Desc": "핵심 메커니즘, 올바른 만기 선택, 그리고 연패가 계좌를 끝장내지 않도록 포지션 크기를 조절하는 방법...",
+      "article3Meta": "3분 소요",
+      "article3Title": "금 선물(XAU/USDT)이 이제 100배 레버리지로 출시되었습니다",
+      "article3Desc": "동일한 증거금 잔액으로 암호화폐와 귀금속을 거래하세요. 메이커 수수료 최저 0.02%...",
+      "article4Meta": "5분 소요",
+      "article4Title": "카피 트레이딩 v2.4 — 수익률뿐 아니라 실제 리스크로 매칭",
+      "article4Desc": "새 릴리스는 12가지 리스크 지표로 트레이더와 팔로워를 매칭하여 공격적 전략이 보수적 포트폴리오에 들어가지 않도록 합니다..."
+    },
+    "cta": {
+      "title": "우위를 가지고 거래할 준비가 되셨나요?",
+      "title1": "준비되셨나요",
+      "titleHighlight": "우위를 가지고 거래할",
+      "title2": "?",
+      "desc": "2분 이내에 계정을 개설하세요. 신규 이용자는 체험 자금, 플랫폼 보상, 초보자 친화적 거래 혜택을 이용할 수 있습니다.",
+      "start": "무료 계정 만들기",
+      "tradeNow": "지금 거래",
+      "guaranteeLine": "2분 만에 계정 개설 · 체험은 KYC 불필요 · 언제든 취소"
+    },
+    "whyNvdx": {
+      "label": "{{brand}}를 선택하는 이유",
+      "title": "{{brand}}를 선택하는 이유",
+      "subtitle": "트레이더가 {{brand}}로 이동하고 머무는 네 가지 이유. 실제 자금이 걸려 있을 때 중요한 것들을 중심으로 설계되었습니다.",
+      "learnMore": "자세히 보기",
+      "features": {
+        "multiAsset": {
+          "title": "다중 자산",
+          "desc": "암호화폐, 외환, 지수, 미국 주식, 금속 — 하나의 증거금 잔액, 거래소 전환 없이.",
+          "imageAlt": "하나의 증거금 잔액으로 통합된 암호화폐, 금, 외환, 주식을 나타내는 적층된 반투명 유리 디스크"
+        },
+        "aiAssisted": {
+          "title": "AI 코파일럿",
+          "desc": "구독하거나 완전히 무시할 수 있는 점수화된 신호와 전략. 통제권은 당신에게 있습니다.",
+          "imageAlt": "AI로 점수화된 거래 신호를 나타내며 상승 추세선을 형성하는 애시드 라임 데이터 노드의 별자리"
+        },
+        "web3Custody": {
+          "title": "계정 보안",
+          "desc": "2단계 인증, 자금 비밀번호, 로그인 기기 관리로 계정을 보호할 수 있습니다.",
+          "imageAlt": "암호화 벌집 면과 실시간 감사 스캔 빔을 갖춘 브러시드 티타늄 금고 모듈"
+        },
+        "liquidity": {
+          "title": "항상 유동적",
+          "desc": "주요 페어 전반에서 50ms 미만 체결, 연중무휴, 투명한 펀딩.",
+          "imageAlt": "저지연 실행을 나타내며 정밀 가공된 채널을 통해 빠르게 흐르는 애시드 라임 액체 스트림"
+        }
+      }
+    },
+    "payments": {
+      "label": "결제",
+      "title": "어디서나 출금",
+      "subtitle": "이미 사용하시는 방식으로 자금을 이동하세요 — 카드, 은행 송금, 스테이블코인 또는 네이티브 암호화폐."
+    },
+    "earn": {
+      "eyebrow": "재테크",
+      "title": "유휴 자산을 일하게 하세요",
+      "subtitle": "유연형·고정형·스테이킹 상품을 투명한 참고 수익률로 제공하며, 장기 보유자를 위해 설계했습니다.",
+      "cta": "상품 살펴보기"
+    },
+    "insights": {
+      "label": "인사이트",
+      "title": "최신 인사이트"
+    },
+    "aqua": {
+      "hero": {
+        "badge": "차세대 매칭 엔진",
+        "titleLead": "거래하세요",
+        "titleGradient": "빛의 속도로",
+        "titleTail": "— 결코 한 발 늦지 않게.",
+        "desc": "50ms 미만 매칭 엔진, 실시간 데이터 스트림, AI 코파일럿. 암호화폐, 외환, 금속, 주식 — 하나의 계정, 지연 없음.",
+        "hudLabel": "실행 터미널",
+        "hudStatus": "실시간",
+        "hudPair": "BTC/USDT · PERP",
+        "hudLatency": "매칭 지연",
+        "hudLatencyValue": "42ms",
+        "hudThroughput": "초당 주문",
+        "hudThroughputValue": "1.2M"
+      },
+      "metrics": {
+        "label": "성능을 위해 설계됨",
+        "pairs": "거래 가능 페어",
+        "latency": "평균 매칭 지연",
+        "traders": "활성 트레이더",
+        "uptime": "엔진 가동률"
+      },
+      "features": {
+        "label": "다르게 설계됨",
+        "title": "우위를 가지고 거래하기 위한 모든 것.",
+        "subtitle": "재설계된 필수 요소 — 멀티 자산 심도, AI 지원, 계정 보안, 그리고 체감할 수 있는 지연 속도.",
+        "multiAsset": {
+          "title": "다중 자산",
+          "desc": "하나의 증거금 잔액으로 암호화폐, 외환, 지수, 미국 주식, 금속 — 거래소 전환 없이."
+        },
+        "ai": {
+          "title": "AI 코파일럿",
+          "desc": "구독하거나 무시할 수 있는 점수화된 신호와 백테스트된 전략. 최종 결정은 당신이 합니다."
+        },
+        "custody": {
+          "title": "계정 보안",
+          "desc": "2단계 인증, 자금 비밀번호, 로그인 기기 관리로 계정을 보호할 수 있습니다."
+        },
+        "speed": {
+          "title": "50ms 미만",
+          "desc": "투명한 펀딩과 함께 연중무휴 50ms 미만으로 체결하는 매칭 엔진."
+        }
+      },
+      "markets": {
+        "label": "실시간 시장",
+        "title": "실시간으로 스트리밍되는 실제 가격.",
+        "viewAll": "{{total}}개 시장 모두 보기",
+        "viewAllPlain": "모든 시장 보기"
+      },
+      "cta": {
+        "title": "최고 속도로 거래할 준비가 되셨나요?",
+        "desc": "2분 이내에 계정을 개설하세요. 신규 이용자는 체험 자금, 플랫폼 보상, 초보자 친화적 거래 혜택을 이용할 수 있습니다.",
+        "start": "무료 계정 만들기",
+        "secondary": "시장 둘러보기"
+      }
+    },
+    "cyber": {
+      "hero": {
+        "badge": "매칭 코어 가동 중",
+        "titleLead": "네온 그리드에",
+        "titleGlitch": "잭 인",
+        "titleTail": "— 밀리초의 속도로.",
+        "desc": "50ms 미만 매칭 코어, 끊김 없는 데이터 스트림, AI 시그널. 암호화폐·외환·귀금속·미국 주식을 하나의 회선으로.",
+        "bootLabel": "부트 시퀀스",
+        "uplink": "업링크",
+        "boot1": "매칭 코어 로딩 중",
+        "boot2": "시세 스트림 동기화 중",
+        "boot3": "계정 모듈 로딩 중",
+        "boot4": "링크 연결 완료",
+        "bootDone": "시스템 온라인",
+        "pairLabel": "페어",
+        "latency": "체결 지연",
+        "latencyValue": "42ms",
+        "throughput": "초당 주문",
+        "throughputValue": "1.2M"
+      },
+      "stats": {
+        "label": "그리드 실시간 상태",
+        "pairs": "거래 가능 페어",
+        "latency": "평균 체결 지연",
+        "traders": "활성 트레이더",
+        "uptime": "엔진 가동률"
+      },
+      "features": {
+        "label": "장비 목록",
+        "title": "거친 장세를 위한 장비.",
+        "subtitle": "멀티에셋 뎁스, AI 시그널, 계정 보안, 밀리초 매칭까지 모두 기본 탑재.",
+        "multiAsset": {
+          "title": "멀티에셋 매트릭스",
+          "desc": "암호화폐·외환·지수·미국 주식·귀금속이 하나의 증거금 잔고를 공유합니다. 계좌 하나로 전 시장을."
+        },
+        "ai": {
+          "title": "AI 시그널 엔진",
+          "desc": "점수화된 시그널과 백테스트된 전략이 실시간으로 도착합니다. 채택 여부는 언제나 당신의 몫."
+        },
+        "custody": {
+          "title": "계정 보안",
+          "desc": "2단계 인증, 자금 비밀번호, 로그인 기기 관리로 계정을 보호할 수 있습니다."
+        },
+        "speed": {
+          "title": "밀리초 매칭",
+          "desc": "연중무휴 매칭 코어가 50ms 이내에 체결합니다. 펀딩비도 투명하게."
+        }
+      },
+      "markets": {
+        "label": "마켓 월",
+        "title": "코어에서 바로 스트리밍되는 실시간 시세.",
+        "viewAll": "전체 {{total}}개 시장 보기",
+        "viewAllPlain": "전체 시장 보기"
+      },
+      "cta": {
+        "title": "잭 인하고 거래를 시작하세요.",
+        "desc": "2분이면 계좌 개설 완료. 체험금, 리워드, 신규 혜택이 준비되어 있습니다.",
+        "start": "무료 계좌 만들기",
+        "secondary": "시장 둘러보기"
+      }
+    },
+    "founding": {
+      "title": "창립 멤버",
+      "description": "{{brandName}} 는 전통 금융과 디지털 경제를 연결하는 데 전념하는 글로벌 전략적 투자 금융 플랫폼입니다. 핵심 강점은 최고 수준의 전략 팀({{names}})이 고객에게 시장과 분야를 아우르는 자산 배분 솔루션을 제공하는 데 있습니다. AI 리스크 관리와 국제 규정 준수 기준을 결합하여 자금 안전과 플랫폼의 금융 유동성을 보장합니다. 맞춤형 서비스와 글로벌 연구 지원을 통해 사용자에게 안전하고 지능적이며 경계를 넘나드는 부 성장 생태계를 조성하고, 차세대 투자자의 전략적 파트너가 되는 것을 사명으로 합니다.",
+      "prev": "이전 멤버",
+      "next": "다음 멤버"
+    },
+    "premium": {
+      "hero": {
+        "emailPlaceholder": "이메일 주소",
+        "signUp": "회원가입",
+        "hotTitle": "인기 코인"
+      },
+      "steps": {
+        "label": "시작하기",
+        "title": "간단한 3단계로 거래 시작",
+        "s1Title": "계정 만들기",
+        "s1Desc": "이메일로 2분 안에 가입하세요.",
+        "s2Title": "지갑에 입금",
+        "s2Desc": "카드, 계좌이체 또는 암호화폐로 입금하세요.",
+        "s3Title": "거래 시작",
+        "s3Desc": "하나의 계정으로 암호화폐, 금속 등을 거래하세요."
+      },
+      "stats": {
+        "assets": "상장 자산",
+        "volume": "24시간 거래대금",
+        "uptime": "가동 시간",
+        "uptimeValue": "24/7"
+      }
+    },
+    "cobalt": {
+      "hero": {
+        "title": "멀티에셋 거래 플랫폼",
+        "subtitle": "암호화폐·외환·귀금속·지수 마켓을 사고팔고 관리하세요.",
+        "assetsTitle": "인기 마켓",
+        "phoneAlt": "하나의 모바일 앱에서 암호화폐, 외환, 주식 거래"
+      },
+      "credentials": {
+        "markets": "암호화폐·외환·귀금속·지수를 하나의 계정으로",
+        "security": "2단계 인증과 로그인 기기 관리 지원"
+      },
+      "built": {
+        "title": "모든 시장의 거래를 위해",
+        "items": {
+          "markets": "암호화폐·외환·귀금속·지수, {{total}}개 마켓을 안전하게 거래",
+          "marketsFallback": "암호화폐·외환·귀금속·지수를 안전하게 거래",
+          "onboarding": "안전하고 매끄럽게 계정을 설정",
+          "support": "연중무휴 우선 지원"
+        },
+        "marketCount": "{{total}}개 마켓"
+      },
+      "explore": {
+        "title": "비트코인, 이더리움 등 수백 개의 암호화폐를 살펴보세요",
+        "subtitle": "수백 개의 암호화폐 자산을 간편하고 안전하게 사고팔고 관리하세요.",
+        "viewMore": "더 많은 자산 보기",
+        "tabGainers": "상승률 순위",
+        "tabVolume": "거래대금 순위"
+      },
+      "advanced": {
+        "title": "시장마다 그에 맞는 거래 방식",
+        "tagline": "암호화폐·외환·귀금속·지수를 하나의 계정에서 — 각 시장에는 레버리지 무기한 선물, 고정 수익 바이너리 옵션 등 시장에 맞는 거래 방식이 준비되어 있습니다.",
+        "items": {
+          "markets": "하나의 계정으로 암호화폐·외환·귀금속·지수 거래",
+          "futures": "레버리지 무기한 선물 — 시장가·지정가·스탑리밋 주문 지원",
+          "options": "바이너리 옵션: 방향만 예측, 수익과 최대 리스크는 사전에 확정"
+        },
+        "cta": "지금 사용해보기",
+        "previewAlt": "손에 든 태블릿에서 거래 화면을 조작"
+      },
+      "earn": {
+        "eyebrow": "수익",
+        "title": "암호화폐를 일하게 하세요",
+        "subtitle": "유연하고 투명한 리워드로 보유 자산을 키우세요 — 복잡한 설정도, 예상치 못한 일도 없습니다.",
+        "cta": "수익 시작하기",
+        "features": {
+          "flexible": {
+            "title": "유연한 기간",
+            "desc": "원할 때 가입·환매할 수 있으며 긴 락업이 없습니다."
+          },
+          "secure": {
+            "title": "설계부터 안전하게",
+            "desc": "2단계 인증, 자금 비밀번호, 로그인 기기 관리로 계정을 보호할 수 있습니다."
+          },
+          "auto": {
+            "title": "자동 복리",
+            "desc": "리워드가 자동으로 쌓이고 재투자됩니다."
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "보안",
+        "title": "계정을 위한 보안 기능",
+        "subtitle": "계정을 보호하고 접근을 관리하는 도구입니다.",
+        "items": {
+          "twoFactor": {
+            "title": "2단계 인증",
+            "desc": "로그인 시 두 번째 인증 단계를 추가하세요."
+          },
+          "fundPassword": {
+            "title": "자금 비밀번호",
+            "desc": "계정 설정에서 별도의 자금 비밀번호를 설정하세요."
+          },
+          "devices": {
+            "title": "로그인 기기 관리",
+            "desc": "로그인된 기기를 확인하고 모르는 기기를 해제하세요."
+          },
+          "support": {
+            "title": "필요할 때 바로 도움 받기",
+            "desc": "언제든지 지원팀에 문의하여 자주 묻는 질문에 대한 빠른 해결책을 받을 수 있습니다."
+          }
+        }
+      }
+    },
+    "pulse": {
+      "hero": {
+        "desc": "암호화폐, 외환, 지수, 미국 주식, 금속을 위한 하나의 계정."
+      },
+      "cta": {
+        "title": "거래를 시작할 준비가 되셨나요?",
+        "desc": "몇 분이면 계좌를 개설하고 오늘 첫 거래를 마칠 수 있습니다.",
+        "start": "지금 시작하기",
+        "trade": "거래하러 가기"
+      }
+    },
+    "ribbon": {
+      "features": {
+        "title": "더 앞선 멀티에셋 거래 플랫폼",
+        "subtitle": "전문 트레이더를 위해 설계",
+        "cards": {
+          "markets": {
+            "title": "{{total}}개 이상의 거래 시장",
+            "titleFallback": "수백 개의 거래 시장",
+            "desc": "암호화폐·외환·지수·귀금속·미국 주식을 하나의 계정에서 실시간으로 거래하세요."
+          },
+          "quant": {
+            "title": "AI 퀀트 & 카피 트레이딩",
+            "desc": "AI 전략과 퀀트 펀드가 24시간 운영되며, 클릭 한 번으로 톱 트레이더를 따라 거래할 수 있습니다."
+          },
+          "security": {
+            "title": "계정 보안",
+            "desc": "2단계 인증, 자금 비밀번호, 로그인 기기 관리로 계정을 보호할 수 있습니다."
+          }
+        }
+      },
+      "customize": {
+        "title": "당신의 필요에 맞춰, 원하는 방식으로 거래하세요.",
+        "desc": "트레이딩 워크스페이스는 완전 모듈형입니다. 모든 패널을 드래그하고, 크기를 조절하고, 표시하거나 숨길 수 있습니다. 전문 트레이더를 위해 설계되어 초저지연과 깊은 유동성을 제공합니다.",
+        "sparkPrice": "$128,700"
+      }
+    }
+  },
+  "jointAccount": {
+    "nav": {
+      "menuEntry": "공동명의 계정"
+    },
+    "page": {
+      "title": "공동명의 계정",
+      "description": "배우자, 가족, 파트너 또는 대리인과 하나의 자금 계정을 함께 씁니다"
+    },
+    "common": {
+      "back": "뒤로",
+      "retry": "다시 시도",
+      "loadMore": "더 보기"
+    },
+    "relationship": {
+      "spouse": "배우자",
+      "family": "가족",
+      "partner": "파트너",
+      "agent": "대리인"
+    },
+    "operatedBy": {
+      "member": "공동명의 구성원",
+      "actor": "{{actor}} 운용",
+      "withUid": "{{actor}} 운용(UID {{uid}})"
+    },
+    "initiatedBy": {
+      "actor": "{{actor}} 개시"
+    },
+    "actingFor": {
+      "primaryWithName": "UID {{uid}}({{name}})",
+      "primaryUidOnly": "UID {{uid}}",
+      "unnamedAccount": "이름 없는 공동명의 계정",
+      "primarySuspended": "공동명의 계정의 주 신청자가 정지되어 지금은 이 계정을 운용할 수 없습니다. 내 계정으로 돌아가거나 주 신청자에게 문의하세요.",
+      "primaryKycNotVerified": "공동명의 계정의 주 신청자가 본인 인증을 통과하지 않았습니다. 주 신청자에게 문의하세요.",
+      "restrictedTitle": "내 계정으로 돌아가서 진행하세요",
+      "restrictedDesc": "공동명의 계정을 운용하는 중입니다. 본인 인증, 추천인 등록, 공동명의 계정 신청 및 구성원 변경은 내 계정에서만 할 수 있습니다."
+    },
+    "session": {
+      "invalid": "공동명의 계정 세션이 더 이상 유효하지 않습니다. 다시 로그인하세요."
+    },
+    "switcher": {
+      "title": "계정 전환",
+      "self": "내 계정",
+      "selfHint": "내 자금과 설정",
+      "loadMore": "더 보기({{loaded}}/{{total}})",
+      "switching": "계정을 전환하는 중…",
+      "backToSelf": "내 계정으로 돌아가기",
+      "retryAfter": "{{seconds}}초 후에 다시 시도하세요."
+    },
+    "delegated": {
+      "title": "{{name}} 계정을 운용 중입니다",
+      "desc": "신청, 이름 변경, 동의, 탈퇴는 내 계정에서 처리합니다. 내 자금 계정과 공동명의 계정 간 이체는 어느 상태에서든 사용할 수 있습니다."
+    },
+    "consent": {
+      "title": "확인 대기 중인 요청({{count}})",
+      "desc": "누군가 회원님을 공동명의 계정에 추가하려고 신청했습니다. 수락하면 신청이 심사로 넘어가며, 승인되기 전까지는 아무것도 변경되지 않습니다.",
+      "accept": "수락",
+      "decline": "거절",
+      "accepted": "요청을 수락했습니다. 지금은 심사 대기 중입니다.",
+      "declined": "요청을 거절했습니다"
+    },
+    "intro": {
+      "title": "공동명의 계정 개설",
+      "addMemberTitle": "공동명의 계정에 구성원 추가",
+      "unavailable": "지금은 새 신청을 받지 않습니다.",
+      "points": {
+        "ownership": "자금, 지갑, 본인 인증은 계속 본인에게 있습니다",
+        "switch": "구성원은 자신의 계정으로 전환해 운용합니다",
+        "exit": "구성원 제거나 계정 해산은 언제든 가능합니다"
+      },
+      "prepare": "준비물: 관계 증빙과 상대방의 UID 또는 신분증",
+      "kycOnly": "본인 인증을 마친 고객만 신청할 수 있습니다"
+    },
+    "apply": {
+      "start": "신청",
+      "restart": "다시 신청",
+      "title": "공동명의 계정 신청",
+      "memberSection": "구성원",
+      "relationshipType": "상대방과의 관계",
+      "mode": {
+        "existing": "이미 계정이 있음",
+        "invite": "가입 초대"
+      },
+      "modeHint": {
+        "existing": "상대방 수락 후 심사",
+        "invite": "승인 후 가입 링크 발급"
+      },
+      "memberUid": "상대방 UID",
+      "memberUidPlaceholder": "예: 100023",
+      "memberUidHint": "UID는 상대방의 프로필 페이지에 있습니다. 상대방은 본인 인증을 마쳐야 하며, 신청이 반려되면 24시간 동안 같은 UID로 다시 신청할 수 없습니다.",
+      "memberNotEligible": {
+        "not_eligible": "UID가 올바른지 확인한 뒤, 상대방에게 신원 인증 승인 여부, 계정 활성 상태, 참여 중인 공동 계정 수가 한도에 도달하지 않았는지 확인을 요청하세요.",
+        "self": "본인을 구성원으로 추가할 수 없습니다. 상대방의 UID를 입력하세요."
+      },
+      "memberFullName": "구성원 전체 이름",
+      "memberFullNamePlaceholder": "신분증에 기재된 대로",
+      "memberFront": "구성원 신분증(앞면)",
+      "memberBack": "구성원 신분증(뒷면)",
+      "memberSelfie": "구성원 셀카",
+      "proofSection": "관계 증빙",
+      "proofFile": "증빙 {{index}}",
+      "addProof": "하나 더 추가",
+      "incomplete": "모든 항목을 입력하고 필요한 파일을 업로드하세요.",
+      "cancel": "취소",
+      "submit": "신청 제출",
+      "submitted": "신청을 제출했습니다",
+      "kycRequiredTitle": "먼저 본인 인증을 완료하세요",
+      "kycRequiredDesc": "본인 인증을 통과한 고객만 공동명의 계정을 신청할 수 있습니다.",
+      "goKyc": "인증하러 가기",
+      "upload": "업로드",
+      "reupload": "교체",
+      "uploading": "업로드 중 {{progress}}%",
+      "proofMeta": "JPG, PNG 또는 PDF, 최대 20MB",
+      "idDocumentMeta": "JPG, PNG 또는 PDF",
+      "selfieMeta": "JPG 또는 PNG만",
+      "proofCount": "{{count}}/{{max}}개",
+      "missing": "남은 항목: {{items}}",
+      "ready": "모두 준비되었습니다. 제출할 수 있습니다",
+      "missingItem": {
+        "relationship": "관계",
+        "memberUid": "상대방 UID",
+        "memberDetails": "상대방 정보",
+        "memberDocuments": "상대방 신분증",
+        "proof": "관계 증빙"
+      },
+      "missingSeparator": ", "
+    },
+    "application": {
+      "eyebrow": "최근 신청",
+      "status": {
+        "pending_consent": "구성원 수락 대기",
+        "pending_review": "심사 중",
+        "approved": "승인됨",
+        "rejected": "거절됨",
+        "cancelled": "취소됨"
+      },
+      "desc": {
+        "pending_consent": "구성원이 아직 수락하지 않았습니다. 응답하면 알려 드립니다.",
+        "pending_review": "신청을 심사하고 있으며, 결과를 알려 드립니다.",
+        "approved": "신청이 승인되었습니다.",
+        "rejected": "아래 사유를 확인한 뒤 다시 신청하세요.",
+        "cancelled": "이 신청은 취소되었습니다."
+      },
+      "memberGone": "구성원 삭제됨",
+      "memberGoneDesc": "신청은 승인되었지만 해당 구성원은 현재 공동명의 계정에 없습니다. 구성원을 추가하려면 다시 신청하세요.",
+      "cancel": "신청 취소",
+      "cancelTitle": "이 신청을 취소하시겠습니까?",
+      "cancelConfirm": "신청이 여기서 중단됩니다. 기존 사용자를 초대했다면 취소되었다는 알림이 전달됩니다.",
+      "cancelled": "신청을 취소했습니다",
+      "title": {
+        "pending_consent": "상대방 수락 대기 중",
+        "pending_review": "신청 심사 중",
+        "approved": "신청 승인됨",
+        "rejected": "신청 거절됨",
+        "cancelled": "신청 취소됨"
+      }
+    },
+    "detail": {
+      "relationshipType": "관계",
+      "memberUid": "구성원 UID",
+      "memberName": "구성원 이름",
+      "submittedAt": "신청 일시",
+      "rejectionReason": "사유",
+      "reviewedAt": "심사 일시",
+      "activatedAt": "구성원 참여 일시",
+      "uidValue": "UID {{uid}}"
+    },
+    "owned": {
+      "eyebrow": "내 공동명의 계정",
+      "active": "활성",
+      "desc": "회원님은 주 신청자입니다. 계정을 전환할 필요가 없으며, 구성원이 이 계정으로 전환해 운용합니다.",
+      "primary": "주 신청자",
+      "you": "나",
+      "member": "구성원",
+      "memberStatus": {
+        "pending": "아직 가입하지 않음",
+        "active": "활성"
+      },
+      "noMember": "아직 구성원이 없습니다",
+      "removeMember": "구성원 삭제",
+      "dissolve": "계정 해산",
+      "removeTitle": "이 구성원을 삭제하시겠습니까?",
+      "removeConfirm": "구성원은 즉시 이 계정에 접근할 수 없게 되며 이 계정에서 로그아웃됩니다. 구성원 본인의 계정과 자산에는 영향이 없습니다. 보안 인증으로 확인합니다.",
+      "memberRemoved": "구성원을 삭제했습니다",
+      "dissolveTitle": "이 공동명의 계정을 해산하시겠습니까?",
+      "dissolveConfirm": "구성원은 즉시 접근할 수 없게 되고 공동명의 계정은 폐쇄됩니다. 회원님 본인의 자금은 그대로 유지됩니다. 보안 인증으로 확인합니다.",
+      "dissolved": "공동명의 계정을 해산했습니다",
+      "createdAt": "{{time}} 개설"
+    },
+    "label": {
+      "edit": "이름 변경",
+      "title": "공동명의 계정 이름 변경",
+      "description": "구성원이 이 계정으로 전환할 때 이 이름이 표시됩니다. 이미 보낸 알림에는 발송 당시의 이름이 유지됩니다.",
+      "field": "이름",
+      "placeholder": "예: 가족 저축",
+      "hint": "{{count}}/{{max}}자. 비워 두면 이름이 삭제됩니다.",
+      "clear": "이름 삭제",
+      "save": "이름 저장",
+      "saved": "이름을 저장했습니다"
+    },
+    "invitation": {
+      "title": "구성원 가입 링크",
+      "expiresIn": "{{time}} 후 만료",
+      "expiresInDays": "{{days}}일 {{time}} 후 만료",
+      "keepPrivate": "이 링크를 가진 사람은 누구나 회원님의 공동명의 계정 구성원으로 가입할 수 있습니다. 신청한 당사자에게만 보내세요.",
+      "copy": "링크 복사",
+      "share": "공유",
+      "copied": "링크를 복사했습니다",
+      "copyFailed": "링크를 복사하지 못했습니다. 링크를 선택해 직접 복사하세요.",
+      "shareTitle": "공동명의 계정 가입 링크",
+      "expiredAt": "링크가 {{time}}에 만료되었습니다",
+      "unavailable": "지금은 링크를 사용할 수 없습니다",
+      "contactSupportHint": "새 링크는 고객센터에 문의하세요.",
+      "contactSupport": "고객센터 문의"
+    },
+    "confirm": {
+      "keep": "유지"
+    },
+    "memberships": {
+      "title": "참여 중인 공동명의 계정({{count}})",
+      "desc": "공동명의 계정으로 전환하면 해당 계정의 자금을 운용할 수 있습니다. 내 계정과 지갑은 별도로 유지됩니다.",
+      "joinedAt": "{{time}} 참여",
+      "current": "운용 중",
+      "switch": "이 계정으로 전환",
+      "notifications": "자금 알림 사본",
+      "notificationsHint": "이 계정의 자금 활동을 받은 메시지함과 이메일로 사본 발송합니다. 끄더라도 실시간 알림은 계속 받습니다.",
+      "leave": "탈퇴",
+      "leaveTitle": "{{name}}에서 탈퇴하시겠습니까?",
+      "leaveWithdrawFirst": "탈퇴하기 전에 필요한 자금을 내 계정으로 옮기세요.",
+      "leaveConfirm": "탈퇴해도 이미 이체한 자금은 돌아오지 않으며, 내 계정이 폐쇄되지도 않습니다. 이 공동명의 계정에는 즉시 접근할 수 없게 됩니다.",
+      "left": "공동명의 계정에서 탈퇴했습니다"
+    },
+    "transfer": {
+      "open": "이체",
+      "title": "계정 간 이체",
+      "description": "내 자금 계정과 공동명의 계정의 자금 계정 사이에서 자금을 옮깁니다.",
+      "direction": {
+        "to_joint": "공동명의 계정으로",
+        "from_joint": "내 계정으로"
+      },
+      "from": "보내는 계정",
+      "to": "받는 계정",
+      "ownFunding": "내 자금 계정",
+      "jointFunding": "{{name}} 자금 계정",
+      "asset": "자산",
+      "amount": "수량",
+      "securityHint": "각 방향의 첫 이체에는 자금 비밀번호와 추가 인증이 필요합니다. 두 사람 모두 본인 인증을 통과해야 합니다.",
+      "submit": "이체",
+      "done": "{{amount}} {{asset}}을(를) 이체했습니다",
+      "directionLabel": "방향",
+      "snapshotJoint": "이체 후 {{name}} 잔액",
+      "snapshotOwn": "이체 후 내 잔액",
+      "snapshotHint": "표시된 잔액은 이번 이체 시점 기준이며 실시간 값이 아닙니다. 최신 잔액은 자산 페이지에서 확인하세요.",
+      "close": "완료",
+      "denial": {
+        "kyc_required": "이체하려면 본인과 주 신청자 모두 신원 인증을 완료해야 합니다.",
+        "party_not_active": "본인 또는 주 신청자의 계정을 현재 사용할 수 없어 이체할 수 없습니다.",
+        "membership_inactive": "더 이상 이 공동명의 계정의 구성원이 아닙니다. 페이지를 새로고침하세요.",
+        "joint_account_inactive": "이 공동명의 계정은 더 이상 유효하지 않습니다.",
+        "invalid_accounts": "이체는 서로 다른 두 사용자의 자금 계정 사이에서만 가능합니다."
+      }
+    },
+    "history": {
+      "title": "이체 내역",
+      "empty": "아직 이체 내역이 없습니다.",
+      "actor": "{{actor}} UID {{uid}} 운용"
+    },
+    "register": {
+      "eyebrow": "공동명의 계정 초대",
+      "previewPrimary": "UID {{uid}}({{name}})의 공동명의 계정 구성원으로 가입하려고 합니다.",
+      "previewPrimaryUidOnly": "UID {{uid}}의 공동명의 계정 구성원으로 가입하려고 합니다.",
+      "previewMemberName": "신청서에 기재된 이름: {{name}}",
+      "previewRelationship": "관계: {{relationship}}",
+      "previewWarning": "내용이 맞지 않으면 계속하지 마세요. 가입만으로는 본인 인증이 완료되지 않으며, 출금이나 이체 전에 별도로 인증해야 합니다.",
+      "previewExpiresAt": "링크 유효 기간: {{time}}까지.",
+      "previewFailed": "링크 정보를 불러오지 못했습니다.",
+      "retry": "다시 시도",
+      "tooManyRequests": "시도 횟수가 너무 많습니다. 몇 분 후에 다시 시도하세요.",
+      "requiresNewAccount": "이 초대는 새 계정에서만 사용할 수 있는데, 이 이메일 또는 휴대폰 번호는 이미 가입되어 있습니다. 가입하지 않은 이메일이나 번호를 사용하거나, 주 신청자에게 기존 계정을 추가해 달라고 요청하세요.",
+      "resendCode": "인증 코드를 새로 받은 뒤 다시 시도하세요.",
+      "loggedInElsewhere": "이 초대는 새 계정용입니다. 먼저 로그아웃한 뒤, 이곳에서 사용한 적 없는 이메일이나 휴대폰 번호로 가입하세요.",
+      "logoutAndContinue": "로그아웃하고 계속",
+      "issue": {
+        "invalid": "이 초대 링크는 유효하지 않습니다.",
+        "not_usable": "이 초대 링크는 이미 사용되었거나 더 이상 유효하지 않습니다.",
+        "expired": "이 초대 링크가 만료되었습니다. 주 신청자에게 고객센터를 통해 새 링크를 받도록 요청하세요."
+      },
+      "issueFallback": "아래에서 일반 계정으로 가입할 수 있습니다."
+    },
+    "selfSettings": {
+      "notice": "공동명의 계정을 운용하는 중입니다. 여기서 변경한 내용은 주 신청자가 아닌 회원님 본인의 로그인 및 보안 설정에 적용됩니다."
+    },
+    "holder": {
+      "title": "계정 명의인",
+      "vacant": "추가 전",
+      "withYou": "{{role}} · 나"
+    },
+    "faq": {
+      "title": "자주 묻는 질문",
+      "memberCan": {
+        "q": "구성원은 무엇을 할 수 있나요",
+        "a": "공동명의 계정으로 전환해 자금을 운용하고, 자신의 자금 계정과 공동명의 계정 간에 이체할 수 있습니다. 구성원 본인의 계정과 지갑은 분리됩니다."
+      },
+      "memberSteps": {
+        "q": "상대방은 무엇을 해야 하나요",
+        "a": "이미 계정이 있으면 상대방이 신청을 수락한 뒤 심사가 진행됩니다. 계정이 없으면 승인 후 가입 링크를 보내면 됩니다."
+      },
+      "dissolve": {
+        "q": "어떻게 해산하나요",
+        "a": "이 페이지에서 언제든 해산할 수 있습니다. 구성원은 즉시 권한을 잃고, 본인의 자금은 그대로 본인에게 있습니다."
+      }
+    },
+    "progress": {
+      "label": "신청 진행 상황",
+      "submit": "신청",
+      "consent": "구성원 수락",
+      "review": "심사",
+      "register": "구성원 가입",
+      "active": "활성",
+      "failed": "거절됨",
+      "state": {
+        "done": ", 완료",
+        "current": ", 현재 단계",
+        "failed": ", 거절됨",
+        "upcoming": ", 시작 전"
+      }
+    }
+  },
+  "kyc": {
+    "kycTitle": "KYC 인증",
+    "kycDesc": "실제 정보를 입력하고 신분증 사진을 업로드하여 인증을 완료하세요.",
+    "fullName": "성명",
+    "enterFullName": "성명을 입력하세요",
+    "idType": "신분증 유형",
+    "selectIdType": "신분증 유형 선택",
+    "idCard": "주민등록증",
+    "passport": "여권",
+    "driverLicense": "운전면허증",
+    "idNumber": "신분증 번호",
+    "enterIdNumber": "신분증 번호를 입력하세요",
+    "country": "국가/지역",
+    "enterCountry": "국가/지역을 입력하세요",
+    "uploadDocuments": "서류 업로드",
+    "idFront": "신분증 앞면",
+    "idBack": "신분증 뒷면",
+    "selfie": "셀카",
+    "pendingTip": "제출하신 서류를 심사하고 있습니다. 심사가 완료되는 대로 알려드리며, 언제든지 이 페이지로 돌아와 진행 상황을 확인할 수 있습니다.",
+    "pendingHint": "이 페이지에서 기다릴 필요는 없습니다. 심사에 관해 궁금한 점이 있으면 고객지원에 문의해 주세요.",
+    "pending": "검토 중",
+    "clickToUpload": "클릭하여 업로드",
+    "uploadPrivacy": "제출하신 서류는 본인 확인 목적으로만 사용되며 암호화되어 저장됩니다.",
+    "verifiedTitle": "실명 인증 완료",
+    "verifiedDesc": "실명 인증을 완료하셨습니다.",
+    "back": "뒤로",
+    "submit": "인증 제출",
+    "step1Title": "개인 정보",
+    "step2Title": "서류 업로드",
+    "nextStep": "다음 단계",
+    "fillAllFields": "모든 필수 항목을 입력하세요",
+    "uploadError": "업로드에 실패했습니다. 다시 시도하세요",
+    "allUploadsRequired": "모든 필수 서류를 업로드하세요",
+    "invalidKycFile": "참조된 문서 업로드는 KYC 제출에 사용할 수 없습니다.",
+    "kycDocsSuccess": "서류가 업로드되었습니다",
+    "rejectedTitle": "인증 거부됨",
+    "rejectedDesc": "인증이 거부되었습니다. 정보를 확인하고 다시 시도하세요.",
+    "retry": "다시 시도",
+    "submitFailed": "제출에 실패했습니다. 다시 시도하세요",
+    "center": {
+      "title": "인증 센터",
+      "subtitle": "인증을 완료하여 더 높은 한도와 전체 기능을 잠금 해제하세요"
+    },
+    "basic": {
+      "level": "레벨 1",
+      "title": "기본 인증",
+      "description": "신원 정보와 신분증 사진을 제출하여 인증을 완료하세요",
+      "cta": "지금 인증"
+    },
+    "advanced": {
+      "level": "레벨 2",
+      "title": "고급 인증",
+      "description": "추가 서류를 제공하여 더 높은 거래 한도와 접근 권한을 잠금 해제하세요",
+      "cta": "지금 인증",
+      "lockedHint": "먼저 기본 인증(레벨 1)을 완료하여 잠금 해제하세요",
+      "pageTitle": "고급 인증",
+      "pageDesc": "신분증을 들고 찍은 사진과 최소 하나의 자산 증명을 업로드하여 고급 인증을 완료하세요.",
+      "pageDescOptional": "신분증을 들고 찍은 사진을 업로드하여 고급 인증을 완료하세요. 자산 증명을 추가하면 심사가 더 빨리 진행될 수 있습니다.",
+      "handheldLabel": "신분증 소지 사진",
+      "handheldHint": "얼굴과 서류가 명확히 보이도록 신분증을 들고 셀카를 찍으세요.",
+      "handheldUploadLabel": "신분증 소지",
+      "assetProofTitle": "자산 증명",
+      "assetProofDesc": "최소 하나의 자산 증명을 제공하세요. 더 추가하면 신청이 강화됩니다.",
+      "assetProofDescOptional": "자산 증명은 선택 사항입니다. 제출하면 심사가 더 빨리 진행될 수 있습니다.",
+      "proofItemTitle": "자산 증명 {{index}}",
+      "addProof": "자산 증명 추가",
+      "removeProof": "제거",
+      "proofType": "증명 유형",
+      "selectProofType": "증명 유형 선택",
+      "proofTypes": {
+        "BANK_STATEMENT": "은행 거래내역서",
+        "CRYPTO_HOLDING": "암호화폐 보유",
+        "STOCK_HOLDING": "주식 보유",
+        "PROPERTY": "부동산",
+        "INCOME": "소득 증명",
+        "OTHER": "기타"
+      },
+      "proofDocument": "증명 서류",
+      "proofUploadLabel": "서류 업로드",
+      "note": "비고 (선택)",
+      "notePlaceholder": "이 증명에 대한 비고를 추가하세요 (최대 500자)",
+      "submit": "인증 제출",
+      "handheldRequired": "신분증 소지 사진을 업로드하세요",
+      "assetProofRequired": "최소 하나의 자산 증명을 추가하세요",
+      "proofTypeRequired": "각 자산 증명에 대한 증명 유형을 선택하세요",
+      "proofUploadRequired": "각 자산 증명에 대한 서류를 업로드하세요",
+      "submitSuccess": "제출되었습니다. 신청이 검토 중입니다",
+      "verifiedTitle": "고급 인증 승인됨",
+      "verifiedDesc": "고급 인증을 완료하셨습니다.",
+      "pendingTitle": "검토 중",
+      "pendingDesc": "제출하신 서류를 심사하고 있습니다. 심사가 완료되는 대로 알려드리며, 언제든지 이 페이지로 돌아와 진행 상황을 확인할 수 있습니다.",
+      "pendingHint": "이 페이지에서 기다릴 필요는 없습니다. 심사에 관해 궁금한 점이 있으면 고객지원에 문의해 주세요.",
+      "rejectedTitle": "인증 거부됨",
+      "rejectedDesc": "고급 인증이 거부되었습니다. 세부 정보를 확인하고 다시 제출하세요.",
+      "rejectionReason": "사유: {{reason}}",
+      "retry": "다시 제출",
+      "errors": {
+        "KycNotApprovedForAdvanced": "고급 인증 전에 기본 인증(레벨 1)을 완료하세요.",
+        "AdvancedVerificationAlreadyApproved": "고급 인증이 이미 승인되었습니다."
+      }
+    },
+    "statusBadge": {
+      "none": "미인증",
+      "pending": "검토 중",
+      "approved": "인증됨",
+      "rejected": "거부됨"
+    },
+    "realtime": {
+      "approved": "KYC 인증이 승인되었습니다",
+      "rejected": "KYC 인증이 거부되었습니다",
+      "view": "확인",
+      "resolve": "상세 보기"
+    }
+  },
+  "margin": {
+    "market": {
+      "subtitle": "담보 대출",
+      "title": "암호화폐 대출",
+      "description": "암호화폐 자산 또는 부동산, 은행 예금 등 오프라인 자산을 담보로 대출받으세요. 통화를 선택해 일일 이율, 한도, 조건을 확인하세요.",
+      "dailyRate": "일일 이율",
+      "annualized": "~{{value}}% 연이율",
+      "borrowRange": "대출 범위",
+      "term": "조건",
+      "termDays": "{{days}}일",
+      "borrowCta": "대출",
+      "loadError": "대출 가능 통화를 불러오지 못했습니다.",
+      "empty": "현재 대출 가능한 통화가 없습니다.",
+      "myLoans": "내 대출"
+    },
+    "borrow": {
+      "back": "마켓으로 돌아가기",
+      "title": "대출",
+      "titleWithCurrency": "{{currency}} 대출",
+      "notAvailable": "이 통화는 대출이 불가능합니다.",
+      "amountLabel": "대출 금액",
+      "amountPlaceholder": "금액 입력",
+      "range": "{{min}} – {{max}} {{currency}}",
+      "amountError": {
+        "invalid": "유효한 금액을 입력하세요.",
+        "min": "최소 금액은 {{amount}} {{currency}}입니다.",
+        "max": "최대 금액은 {{amount}} {{currency}}입니다."
+      },
+      "termLabel": "기간",
+      "submit": "대출 확인",
+      "submitting": "제출 중…",
+      "phase": {
+        "signing": "서명 전송 중…",
+        "creating": "신청서 생성 중…",
+        "review": "심사 중",
+        "done": "모든 단계가 완료되었습니다",
+        "steps": {
+          "signing": "서명 확인",
+          "creating": "신청 제출",
+          "review": "심사"
+        }
+      },
+      "progress": {
+        "title": "대출 신청을 제출하는 중",
+        "desc": "이 창을 열어 두세요. 서명한 계약서를 업로드하고 신청서를 생성하고 있습니다.",
+        "failedTitle": "제출이 완료되지 않았습니다",
+        "failedDesc": "창을 닫고 정보를 수정한 뒤 다시 제출하세요.",
+        "close": "닫기"
+      },
+      "collateral": {
+        "label": "담보 유형",
+        "crypto": "암호화폐 담보",
+        "offline": "오프라인 자산",
+        "offlineHint": "부동산, 은행 예금 등 오프라인 자산을 담보로 대출할 수 있습니다. 신청은 수동 심사 후 지급됩니다.",
+        "recommended": "추천"
+      },
+      "offline": {
+        "assetTypeLabel": "자산 유형",
+        "assetTypePlaceholder": "자산 유형 선택",
+        "assetTypes": {
+          "BANK_STATEMENT": "은행 거래내역서",
+          "PROPERTY": "부동산",
+          "INCOME": "소득 증명",
+          "STOCK_HOLDING": "주식 보유",
+          "OTHER": "기타"
+        },
+        "declaredValueLabel": "신고 평가액",
+        "declaredValuePlaceholder": "추정 가치를 입력하세요",
+        "declaredValueError": "0보다 큰 값을 입력하세요.",
+        "descriptionLabel": "자산 설명(선택)",
+        "descriptionPlaceholder": "담보 자산을 설명하세요",
+        "proofTitle": "증빙 서류",
+        "proofHint": "자산의 소유권과 가치를 증명하는 서류를 1~20개 업로드하세요.",
+        "proofItemTitle": "서류 {{index}}",
+        "proofUploadLabel": "서류 업로드",
+        "notePlaceholder": "이 서류에 메모 추가(선택)",
+        "addProof": "서류 추가",
+        "removeProof": "삭제",
+        "clickToUpload": "클릭하여 업로드"
+      },
+      "gate": {
+        "login": "로그인",
+        "verify": "지금 인증",
+        "advancedTitle": "고급 인증이 필요합니다",
+        "advancedDesc": "오프라인 자산 대출에는 레벨 2 고급 인증이 필요합니다. 자산 증빙을 제출하여 이용을 시작하세요.",
+        "advancedCta": "지금 인증하기"
+      },
+      "quote": {
+        "title": "실시간 견적",
+        "placeholder": "견적을 보려면 금액을 입력하세요.",
+        "unavailable": "견적을 일시적으로 이용할 수 없습니다.",
+        "retry": "다시 시도",
+        "dailyRate": "일일 이율",
+        "interest": "예상 이자",
+        "dueAt": "만기일",
+        "requiredCollateral": "필요 담보",
+        "collateralUnavailable": "담보 견적 이용 불가",
+        "liquidationLtv": "청산 LTV",
+        "offlineNote": "오프라인 담보 대출은 온체인 담보 평가를 거치지 않습니다. 감정 평가액과 개시 LTV는 수동 심사에서 확정됩니다."
+      },
+      "success": {
+        "title": "대출 성공",
+        "amount": "{{amount}} {{currency}}이(가) 계정에 입금되었습니다",
+        "status": "상태: {{status}}",
+        "backToMarket": "마켓으로 돌아가기",
+        "pendingTitle": "신청이 접수되었습니다",
+        "pendingDesc": "{{amount}} {{currency}} 오프라인 담보 대출이 수동 심사 중입니다. 승인 후 자금이 입금됩니다.",
+        "goMyLoans": "내 대출 보기"
+      }
+    },
+    "signature": {
+      "hint": "여기에 서명",
+      "undo": "실행 취소",
+      "clear": "지우기",
+      "required": "계속하려면 서명하세요.",
+      "uploading": "서명 업로드 중…",
+      "uploadError": "서명 업로드에 실패했습니다. 눌러서 다시 시도하세요."
+    },
+    "contract": {
+      "consentLabel": "대출 계약서의 조건을 읽고 명시적으로 동의합니다.",
+      "empty": "계약서 템플릿을 준비 중입니다. 서명하면 견적에 표시된 대출 조건에 동의하는 것으로 간주됩니다.",
+      "title": "대출 계약서",
+      "version": "버전 {{version}}",
+      "readHint": "서명하기 전에 대출 계약서를 끝까지 읽어 주세요.",
+      "loadError": "대출 계약서를 불러오지 못했습니다.",
+      "retry": "다시 시도",
+      "agreeAndSign": "읽고 동의합니다 — 아래에 서명하세요",
+      "viewFull": "계약서 전문 보기",
+      "fullTitle": "대출 계약서"
+    },
+    "loans": {
+      "subtitle": "담보 대출",
+      "title": "내 대출",
+      "loadError": "대출을 불러오지 못했습니다.",
+      "empty": "이 카테고리에는 아직 대출이 없습니다.",
+      "truncated": "{{total}}건 중 처음 {{shown}}건을 표시합니다.",
+      "liquidatedAt": "청산 시각",
+      "badDebt": "부족액",
+      "badDebtSettled": "전액 충당",
+      "viewLiquidations": "청산 기록 보기",
+      "liquidationLine": "청산 {{value}}%",
+      "summary": {
+        "outstanding": "미상환",
+        "borrowed": "총 대출액",
+        "repaid": "총 상환액",
+        "interest": "총 이자"
+      },
+      "tabs": {
+        "ariaLabel": "대출 상태 필터",
+        "ongoing": "진행 중",
+        "settled": "상환 완료",
+        "other": "기타"
+      },
+      "row": {
+        "outstanding": "미상환",
+        "dueAt": "만기 {{value}}",
+        "noDueAt": "고정 기간 없음",
+        "repay": "상환",
+        "offlineCollateral": "오프라인 담보"
+      },
+      "detail": {
+        "title": "{{currency}} 대출",
+        "snapshotHint": "이 대출의 최신 값을 표시합니다.",
+        "refreshError": "새로고침하지 못했습니다 — 마지막으로 불러온 값을 표시합니다.",
+        "borrowed": "대출액",
+        "repaid": "상환액",
+        "interest": "발생 이자",
+        "overdueFee": "연체 수수료",
+        "dailyRate": "일일 이율",
+        "term": "기간",
+        "collateral": "담보",
+        "dueAt": "만기 시각",
+        "estimatedDueAt": "예상 만기 시각",
+        "appliedAt": "신청 시각",
+        "disbursedAt": "대출 시각",
+        "overdueAt": "연체 시작",
+        "repayMode": "상환 방식",
+        "repayModeOffchain": "온체인 외 송금",
+        "repayNetwork": "수취 네트워크",
+        "repayAddress": "수취 주소",
+        "viewHistory": "상환 내역 보기",
+        "viewContract": "서명한 계약서 보기",
+        "offlineAssetTypes": {
+          "BANK_STATEMENT": "은행 거래내역서",
+          "PROPERTY": "부동산",
+          "INCOME": "소득 증명",
+          "STOCK_HOLDING": "주식 보유",
+          "OTHER": "기타"
+        },
+        "declaredValue": "신고 평가액",
+        "appraisedValue": "감정 평가액",
+        "assetDescription": "자산 설명",
+        "offlineRiskNote": "오프라인 담보 대출은 자동 LTV 모니터링 및 청산 대상에서 제외됩니다. 연체 건은 수동으로 처리됩니다."
+      },
+      "repay": {
+        "offchain": {
+          "subtitle": "상환 금액을 아래 주소로 온체인 외 송금한 뒤 증빙을 업로드하세요. 운영팀이 확인합니다.",
+          "currencyLabel": "상환 통화",
+          "networkSelectLabel": "수취 네트워크",
+          "optionsLoading": "사용 가능한 통화를 불러오는 중…",
+          "optionsEmpty": "현재 사용 가능한 수취 주소가 없습니다. 상환하기 전에 고객지원에 문의해 주세요.",
+          "addressLoading": "수취 주소를 확인하는 중…",
+          "addressNotConfigured": "이 통화/네트워크에 설정된 수취 주소가 없습니다. 다른 항목을 선택하거나 고객지원에 문의해 주세요.",
+          "addressLabel": "수취 주소",
+          "network": "네트워크: {{network}}",
+          "networkLabel": "수취 네트워크",
+          "tokenLabel": "상환 통화",
+          "copy": "주소 복사",
+          "copied": "주소를 복사했습니다",
+          "transferHint": "정확한 금액을 이 주소로 송금한 뒤 아래에 송금 증빙을 업로드하세요.",
+          "addressPending": "수취 주소를 발급 중입니다. 잠시 후 다시 시도하세요.",
+          "proofLabel": "송금 증빙",
+          "proofUpload": "증빙 업로드",
+          "clickToUpload": "클릭하여 업로드",
+          "txHashLabel": "트랜잭션 해시",
+          "txHashPlaceholder": "온체인 트랜잭션 해시를 붙여넣으세요",
+          "optionalTag": "(선택)",
+          "statusLabel": "상태",
+          "submit": "상환 신청 제출",
+          "success": {
+            "title": "상환 신청이 제출되었습니다",
+            "desc": "상환 신청을 접수했습니다. 송금 확인 후 운영팀이 승인합니다."
+          }
+        },
+        "title": "{{currency}} 상환",
+        "subtitle": "미상환 잔액을 상환하여 담보를 회수하세요.",
+        "outstandingLabel": "미상환",
+        "amountLabel": "상환 금액",
+        "amountPlaceholder": "금액 입력",
+        "repayAll": "전액 상환",
+        "amountError": {
+          "invalid": "유효한 금액을 입력하세요."
+        },
+        "cappedHint": "상환은 미상환 잔액 {{amount}} {{currency}}로 제한됩니다.",
+        "cancel": "취소",
+        "submit": "상환 확인",
+        "submitting": "제출 중…",
+        "waterfall": {
+          "overdueFee": "연체 수수료",
+          "interest": "이자",
+          "principal": "원금"
+        },
+        "success": {
+          "title": "상환 성공",
+          "repaid": "{{amount}} {{currency}} 상환됨",
+          "outstandingAfter": "잔여 미상환",
+          "settled": "전액 상환 완료 — 담보가 해제되었습니다.",
+          "done": "완료",
+          "settledOffline": "전액 상환 완료 — 대출이 정산되었습니다. 오프라인 담보는 플랫폼 외부에서 처리됩니다."
+        }
+      }
+    },
+    "signedContract": {
+      "pdfGenerating": "생성 중…",
+      "pdfError": "PDF를 불러오지 못했습니다. 나중에 다시 시도해 주세요."
+    },
+    "repaymentClaim": {
+      "amount": "금액",
+      "toAddress": "수취 주소",
+      "txHash": "Tx 해시",
+      "empty": "이 대출에 대한 상환 신청이 아직 없습니다.",
+      "status": {
+        "submitted": "확인 대기",
+        "confirmed": "확인됨",
+        "rejected": "거부됨"
+      }
+    },
+    "repayments": {
+      "title": "상환 내역",
+      "loadError": "상환 내역을 불러오지 못했습니다.",
+      "empty": "이 대출에 대한 상환이 아직 없습니다.",
+      "totalRepaid": "상환액",
+      "overdueFee": "연체 수수료",
+      "interest": "이자",
+      "principal": "원금",
+      "outstandingAfter": "상환 후 미상환"
+    },
+    "liquidations": {
+      "subtitle": "리스크 센터",
+      "title": "청산 기록",
+      "back": "내 대출로 돌아가기",
+      "loadMore": "더 보기",
+      "empty": "아직 청산 기록이 없습니다.",
+      "badDebtNote": "이 부족액은 여전히 미상환 부채로 집계됩니다.",
+      "priceUnavailable": "—",
+      "filter": {
+        "loan": "단일 대출만 표시 중 ({{id}})",
+        "clear": "필터 해제"
+      },
+      "trigger": {
+        "ltvBreach": "자동 청산",
+        "adminForce": "강제 청산",
+        "unknown": "청산"
+      },
+      "columns": {
+        "currency": "대출 통화",
+        "collateral": "매도한 담보",
+        "liquidationPrice": "체결가",
+        "proceeds": "매도 대금",
+        "appliedAmount": "상환 충당액",
+        "badDebt": "부족액"
+      }
+    },
+    "status": {
+      "pending": "검토 중",
+      "active": "대출 중",
+      "overdue": "연체",
+      "repaid": "상환 완료",
+      "liquidated": "청산됨",
+      "rejected": "거부됨",
+      "forceClosed": "종료됨",
+      "unknown": "—"
+    },
+    "health": {
+      "safe": "안전",
+      "warn": "경고",
+      "danger": "위험",
+      "unknown": "—"
+    },
+    "guard": {
+      "loginRequired": "계속하려면 로그인하세요.",
+      "kycRequired": "대출 또는 상환 전에 신원 인증이 필요합니다."
+    },
+    "error": {
+      "fallback": "문제가 발생했습니다. 다시 시도하세요.",
+      "offlineCollateralNotAllowed": "이 통화는 현재 오프라인 담보 대출을 지원하지 않습니다.",
+      "signatureRequired": "신청서를 제출하기 전에 계약서에 서명해 주세요.",
+      "termsNotAccepted": "제출하기 전에 대출 약관에 동의해 주세요.",
+      "offlineCollateralInvalid": "오프라인 담보 정보가 올바르지 않습니다. 자산 유형, 신고 가치, 증빙 파일을 확인해 주세요.",
+      "vipTierNotConfigured": "회원님의 VIP 등급에서는 아직 대출을 이용할 수 없습니다. 고객센터에 문의해 주세요.",
+      "currencyNotSupported": "이 통화는 현재 대출을 이용할 수 없습니다.",
+      "termInvalid": "유효한 대출 기간을 선택해 주세요.",
+      "signatureFileInvalid": "서명을 확인할 수 없습니다. 다시 서명해 주세요."
+    }
+  },
+  "news": {
+    "seo": {
+      "title": "암호화폐 및 시장 뉴스",
+      "description": "{{brand}}의 최신 암호화폐, 외환, 주식 시장 뉴스, 분석 및 인사이트."
+    },
+    "pageTitle": "뉴스 센터",
+    "breadcrumbHome": "홈",
+    "breadcrumbNews": "뉴스",
+    "loadMore": "더 보기",
+    "loading": "불러오는 중...",
+    "retry": "다시 시도",
+    "backToList": "← 목록으로 돌아가기",
+    "readTime": "{{minutes}}분 소요",
+    "author": "작성자",
+    "publishedAt": "게시일",
+    "relatedNews": "관련 기사",
+    "noMore": "더 이상 기사가 없습니다",
+    "tags": "태그",
+    "share": "공유",
+    "allCategories": "전체 카테고리",
+    "articleNotFound": "기사를 찾을 수 없거나 삭제되었습니다",
+    "backToHome": "홈으로 돌아가기",
+    "categoryAll": "전체",
+    "emptyTitle": "아직 기사가 없습니다",
+    "emptyHint": "곧 다시 확인해 주세요 — 매일 새로운 소식이 도착합니다.",
+    "errorTitle": "최신 뉴스를 불러오지 못했습니다",
+    "errorHint": "당사 측에서 문제가 발생했습니다. 다시 시도하세요.",
+    "viewOriginal": "원문 보기 →",
+    "viewSource": "출처 방문"
+  },
+  "profile": {
+    "loadFailed": "불러오기 실패",
+    "unnamed": "이름 없음",
+    "uidUnknown": "알 수 없음",
+    "verified": "인증됨",
+    "basicInfo": "기본 정보",
+    "userId": "사용자 ID",
+    "email": "이메일",
+    "username": "사용자명",
+    "fullName": "성명",
+    "country": "국가/지역",
+    "locale": "언어",
+    "security": "보안",
+    "kycStatus": "신원 인증",
+    "deviceManagement": "기기 관리",
+    "twoFactor": "2단계 인증",
+    "fundPassword": "자금 비밀번호",
+    "setFundPassword": "자금 비밀번호 설정",
+    "enterFundPassword": "자금 비밀번호를 입력하세요",
+    "confirmFundPassword": "자금 비밀번호 확인",
+    "enterFundPasswordAgain": "자금 비밀번호를 확인하세요",
+    "account": "계정",
+    "registrationTime": "가입 시간",
+    "enabled": "활성화됨",
+    "disabled": "비활성화됨",
+    "set": "설정됨",
+    "notSet": "미설정",
+    "kyc.verified": "인증됨",
+    "kyc.pending": "대기 중",
+    "kyc.rejected": "거부됨",
+    "editUsername": "사용자명 수정",
+    "enterUsername": "사용자명을 입력하세요",
+    "cancel": "취소",
+    "confirm": "확인",
+    "copied": "복사됨",
+    "kyc.unverified": "미인증",
+    "avatarInvalidType": "JPG 및 PNG 이미지만 지원됩니다",
+    "avatarUploadSuccess": "프로필 사진이 업로드되었습니다",
+    "avatarUploadFailed": "프로필 사진 업로드에 실패했습니다",
+    "changeAvatar": "프로필 사진 변경",
+    "avatarUploadHint": "프로필 사진 변경 — JPG / PNG",
+    "usernameUpdated": "사용자명이 업데이트되었습니다",
+    "usernameUpdateFailed": "사용자명 업데이트에 실패했습니다",
+    "editName": "닉네임 수정",
+    "editNameHint": "닉네임은 프로필 페이지에 표시됩니다",
+    "firstName": "이름",
+    "lastName": "성",
+    "enterFirstName": "이름을 입력하세요",
+    "enterLastName": "성을 입력하세요",
+    "nameUpdated": "이름이 업데이트되었습니다",
+    "nameUpdateFailed": "이름 업데이트에 실패했습니다",
+    "languageUpdateFailed": "언어 설정 업데이트에 실패했습니다",
+    "kyc.none": "미인증",
+    "fundPasswordSet": "자금 비밀번호가 설정되었습니다",
+    "fundPasswordSetFailed": "자금 비밀번호 설정에 실패했습니다",
+    "changeFundPassword": "자금 비밀번호 변경",
+    "oldFundPassword": "기존 자금 비밀번호",
+    "enterOldFundPassword": "기존 자금 비밀번호를 입력하세요",
+    "newFundPassword": "새 자금 비밀번호",
+    "fundPasswordChanged": "자금 비밀번호가 변경되었습니다",
+    "fundPasswordChangeFailed": "자금 비밀번호 변경에 실패했습니다",
+    "changeFundPasswordShort": "변경",
+    "registrationProgress": "가입 진행 상황",
+    "registrationIncomplete": "가입이 완료되지 않았습니다. 남은 단계를 완료하세요.",
+    "continueRegistration": "가입 계속하기",
+    "stepPasswordSet": "비밀번호 설정",
+    "stepProfileComplete": "프로필 작성",
+    "stepAcceptTerms": "약관 동의",
+    "completed": "완료",
+    "pending": "대기 중",
+    "copy": "복사",
+    "copyFailed": "복사에 실패했습니다",
+    "startKyc": "지금 인증",
+    "securityLevel": "보안 수준",
+    "securityLevelLabel": {
+      "low": "낮음",
+      "medium": "보통",
+      "high": "높음"
+    },
+    "creditScore": "신용 점수",
+    "creditScoreLabel": {
+      "good": "신용 점수 양호",
+      "fair": "신용 점수 보통",
+      "poor": "신용 점수 낮음"
+    },
+    "pageTitle": "프로필",
+    "personalSettings": "개인 설정",
+    "personalSettingsHint": "내 계정에만 적용됩니다",
+    "myBusiness": "내 서비스",
+    "myBusinessHint": "참여 중인 기능",
+    "support": "지원",
+    "groupAccount": "계정",
+    "groupSecurity": "보안",
+    "groupPreferences": "환경설정",
+    "vipLevel": "VIP 등급",
+    "securityTodo": "미완료: {{items}}",
+    "securityAction": "설정하기",
+    "securityComplete": "모든 보안 항목이 설정되었습니다",
+    "listSeparator": ", ",
+    "creditScoreHint": "{{max}}점 만점 · 퀀트 펀드 청약 시 참고됩니다",
+    "loginPassword": "로그인 비밀번호",
+    "phone": "전화",
+    "notBound": "미연결",
+    "appearance": "화면 설정",
+    "themeDark": "다크",
+    "themeLight": "라이트",
+    "language": "언어",
+    "fontSize": "글자 크기",
+    "fontScaleStandard": "표준",
+    "fontScaleLarge": "크게",
+    "fontScaleXlarge": "아주 크게",
+    "helpCenter": "고객센터",
+    "contactSupport": "지원 문의",
+    "userFeedback": "피드백",
+    "aboutUs": "회사 소개",
+    "logout": "로그아웃",
+    "logoutConfirmTitle": "로그아웃 확인",
+    "logoutConfirmDescription": "계속하려면 다시 로그인해야 합니다. 로그아웃하시겠습니까?",
+    "fundPasswordPage": {
+      "back": "뒤로",
+      "setTitle": "자금 비밀번호 설정",
+      "setSubtitle": "자금을 보호하는 6자리 비밀번호입니다. 안전하게 보관하세요.",
+      "changeTitle": "자금 비밀번호 변경",
+      "changeSubtitle": "비밀번호를 정기적으로 변경하면 계정을 안전하게 유지하는 데 도움이 됩니다",
+      "oldPassword": "기존 자금 비밀번호",
+      "enterOldPassword": "기존 자금 비밀번호를 입력하세요",
+      "password": "자금 비밀번호",
+      "enterPassword": "6자리 자금 비밀번호를 입력하세요",
+      "newPassword": "새 자금 비밀번호",
+      "enterNewPassword": "새 자금 비밀번호를 입력하세요",
+      "confirmPassword": "비밀번호 확인",
+      "enterConfirmPassword": "자금 비밀번호를 다시 입력하세요",
+      "rules": {
+        "sixDigits": "{{length}}자리 숫자만"
+      },
+      "passwordMismatch": "비밀번호가 일치하지 않습니다",
+      "passwordSameAsOld": "새 비밀번호는 기존 비밀번호와 달라야 합니다",
+      "submit": "확인",
+      "set": "자금 비밀번호가 설정되었습니다",
+      "setFailed": "자금 비밀번호 설정에 실패했습니다",
+      "changed": "자금 비밀번호가 변경되었습니다",
+      "changeFailed": "자금 비밀번호 변경에 실패했습니다",
+      "forgotPassword": "자금 비밀번호를 잊으셨나요?",
+      "resetTitle": "자금 비밀번호 재설정",
+      "resetSubtitle": "본인 확인 후 기존 비밀번호 없이 새 6자리 자금 비밀번호를 설정할 수 있습니다",
+      "resetDone": "자금 비밀번호가 재설정되었습니다",
+      "resetFailed": "자금 비밀번호 재설정에 실패했습니다"
+    },
+    "bindEmailPage": {
+      "back": "뒤로",
+      "title": "이메일 연결",
+      "titleBind": "이메일 연결",
+      "titleChange": "이메일 변경",
+      "subtitle": "이메일을 추가하면 계정을 복구하고 중요한 알림을 받을 수 있습니다",
+      "subtitleBind": "이메일을 추가하면 계정을 복구하고 중요한 알림을 받을 수 있습니다",
+      "subtitleChange": "계정 복구 및 중요한 알림에 사용되는 이메일을 업데이트합니다",
+      "currentEmailLabel": "현재 이메일",
+      "email": "이메일",
+      "enterEmail": "이메일을 입력하세요",
+      "invalidEmail": "유효한 이메일 주소를 입력하세요",
+      "sameAsCurrentEmail": "새 이메일은 현재 이메일과 달라야 합니다",
+      "sendCode": "인증 코드 전송",
+      "sending": "전송 중...",
+      "resend": "재전송",
+      "resendInSeconds": "{{count}}초 후 재전송",
+      "verificationCode": "인증 코드",
+      "verificationCodePlaceholder": "6자리 코드를 입력하세요",
+      "codeLengthHint": "{{length}}자리 인증 코드를 입력하세요",
+      "submit": "이메일 연결",
+      "submitBind": "이메일 연결",
+      "submitChange": "이메일 변경",
+      "bindSuccess": "이메일이 연결되었습니다",
+      "bindFailed": "이메일 연결에 실패했습니다",
+      "changeSuccess": "이메일이 변경되었습니다",
+      "sendCodeFailed": "인증 코드 전송에 실패했습니다",
+      "emailAlreadyTaken": "이미 사용 중인 이메일입니다",
+      "invalidVerificationCode": "유효하지 않거나 만료된 인증 코드입니다",
+      "rateLimited": "요청이 너무 많습니다. 나중에 다시 시도하세요."
+    },
+    "bindPhonePage": {
+      "back": "뒤로",
+      "titleBind": "휴대폰 번호 연결",
+      "titleChange": "휴대폰 번호 변경",
+      "subtitleBind": "휴대폰 번호를 추가하면 SMS 코드로 로그인하고 계정을 복구할 수 있습니다",
+      "subtitleChange": "로그인 및 계정 복구에 사용되는 휴대폰 번호를 업데이트합니다",
+      "phone": "휴대폰 번호",
+      "enterPhone": "휴대폰 번호를 입력하세요",
+      "sendCode": "인증 코드 전송",
+      "sending": "전송 중...",
+      "resend": "재전송",
+      "resendInSeconds": "{{count}}초 후 재전송",
+      "verificationCode": "인증 코드",
+      "verificationCodePlaceholder": "6자리 코드를 입력하세요",
+      "codeLengthHint": "{{length}}자리 인증 코드를 입력하세요",
+      "submitBind": "휴대폰 번호 연결",
+      "submitChange": "휴대폰 번호 변경",
+      "bindSuccess": "휴대폰 번호가 연결되었습니다",
+      "bindFailed": "휴대폰 번호 연결에 실패했습니다",
+      "changeSuccess": "휴대폰 번호가 변경되었습니다",
+      "sendCodeFailed": "인증 코드 전송에 실패했습니다",
+      "invalidVerificationCode": "유효하지 않거나 만료된 인증 코드입니다",
+      "rateLimited": "요청이 너무 많습니다. 나중에 다시 시도하세요."
+    },
+    "changePassword": {
+      "back": "뒤로",
+      "title": "로그인 비밀번호 변경",
+      "subtitle": "비밀번호를 정기적으로 변경하면 계정을 안전하게 유지하는 데 도움이 됩니다",
+      "oldPassword": "기존 비밀번호",
+      "enterOldPassword": "기존 비밀번호를 입력하세요",
+      "newPassword": "새 비밀번호",
+      "enterNewPassword": "새 비밀번호를 입력하세요",
+      "confirmPassword": "비밀번호 확인",
+      "enterConfirmPassword": "새 비밀번호를 다시 입력하세요",
+      "passwordMismatch": "비밀번호가 일치하지 않습니다",
+      "passwordSameAsOld": "새 비밀번호는 기존 비밀번호와 달라야 합니다",
+      "submit": "확인",
+      "forgotPassword": "비밀번호를 잊으셨나요?",
+      "changed": "로그인 비밀번호가 변경되었습니다",
+      "changeFailed": "비밀번호 변경에 실패했습니다"
+    },
+    "helpCenterPage": {
+      "back": "뒤로",
+      "title": "고객센터",
+      "subtitle": "자주 묻는 질문과 가이드",
+      "searchPlaceholder": "질문 검색...",
+      "empty": "\"{{query}}\"에 대한 결과가 없습니다",
+      "categories": {
+        "all": "전체",
+        "account": "계정",
+        "trade": "거래",
+        "deposit": "입출금",
+        "security": "보안"
+      },
+      "faq": {
+        "account1": "비밀번호를 어떻게 변경하나요?",
+        "account1Answer": "프로필 → 개인 설정 → 로그인 비밀번호에서 비밀번호를 변경하세요.",
+        "account2": "비밀번호를 잊어버렸으면 어떻게 하나요?",
+        "account2Answer": "로그인 페이지에서 \"비밀번호를 잊으셨나요\"를 클릭하고 이메일 인증으로 재설정하세요.",
+        "trade1": "거래를 어떻게 하나요?",
+        "trade1Answer": "입금 후 거래 페이지로 이동해 거래 페어를 선택하고 수량과 가격을 입력한 뒤 주문하세요.",
+        "trade2": "거래 수수료는 얼마인가요?",
+        "trade2Answer": "수수료는 거래 페어마다 다릅니다. 자세한 내용은 수수료 안내를 확인하세요.",
+        "deposit1": "자금을 어떻게 입금하나요?",
+        "deposit1Answer": "자산 → 입금으로 이동해 통화를 선택한 뒤 입금 주소를 복사하여 송금하세요.",
+        "deposit2": "출금은 얼마나 걸리나요?",
+        "deposit2Answer": "승인되면 출금은 보통 10~30분 이내에 도착합니다.",
+        "security1": "2단계 인증을 어떻게 활성화하나요?",
+        "security1Answer": "프로필 → 개인 설정 → 2단계 인증에서 설정하세요.",
+        "security2": "계정이 침해되면 어떻게 하나요?",
+        "security2Answer": "즉시 고객 지원에 연락해 계정을 동결하고 증빙 서류를 제출하세요."
+      }
+    },
+    "vip": {
+      "totalDeposited": "누적 입금액",
+      "levelLabel": "VIP {{tier}}",
+      "maxReached": "최고 등급 달성 (VIP {{tier}})",
+      "amountToNext": "VIP {{tier}}까지 {{amount}} USD 남음",
+      "currentTierLabel": "현재 등급",
+      "baseTier": "기본",
+      "tiersLabel": "등급 사다리"
+    }
+  },
+  "promotion": {
+    "nav": {
+      "menuEntry": "내 혜택"
+    },
+    "list": {
+      "title": "내 혜택 작업",
+      "description": "회원님을 위해 준비된 전용 혜택 작업을 확인하세요 — 진행률, 혜택, 남은 시간을 한눈에."
+    },
+    "status": {
+      "in_progress": "진행 중",
+      "completed": "완료됨",
+      "expired": "만료됨",
+      "cancelled": "취소됨"
+    },
+    "fields": {
+      "target": "목표",
+      "accumulatedByType": {
+        "DEPOSIT_MILESTONE": "입금액",
+        "CHECK_IN_STREAK": "출석",
+        "REFERRAL": "초대"
+      },
+      "reward": "혜택",
+      "deadline": "마감",
+      "remaining": "남은 시간",
+      "startedAt": "시작",
+      "description": "활동 설명",
+      "progressMetric": "진행 지표",
+      "enrollmentSource": "참여 경로"
+    },
+    "campaignTypes": {
+      "DEPOSIT_MILESTONE": "입금",
+      "CHECK_IN_STREAK": "출석",
+      "REFERRAL": "추천"
+    },
+    "progressMetrics": {
+      "DEPOSIT_USDT": "입금액(USDT)",
+      "LOGIN_DAY": "로그인 일수",
+      "TURNOVER": "거래량",
+      "REFERRAL_QUALIFIED": "유효 추천 수"
+    },
+    "enrollmentSources": {
+      "ASSIGN": "지급",
+      "SELF": "직접 참여",
+      "REFERRAL": "추천"
+    },
+    "checkIn": {
+      "success": "출석 완료",
+      "pending": "출석 중…",
+      "error": "출석에 실패했습니다. 다시 시도해 주세요"
+    },
+    "progress": {
+      "remainingToTarget": "목표까지 {{amount}} {{unit}} 남음",
+      "unit": {
+        "CHECK_IN_STREAK": "회",
+        "REFERRAL": "명"
+      }
+    },
+    "countdown": {
+      "ended": "종료됨",
+      "daysHours": "{{days}}일 {{hours}}시간",
+      "daysHoursMinutes": "{{days}}일 {{hours}}시간 {{minutes}}분 남음"
+    },
+    "reward": {
+      "creditedLabel": "지급됨"
+    },
+    "cta": {
+      "deposit": "입금하러 가기",
+      "viewDetail": "상세 보기",
+      "checkIn": "출석하기",
+      "invite": "친구 초대"
+    },
+    "empty": {
+      "title": "전용 혜택을 준비하고 있어요",
+      "description": "혜택 작업이 배정되면 이곳에 표시됩니다. 기대해 주세요."
+    },
+    "detail": {
+      "back": "혜택 목록으로",
+      "notFoundTitle": "작업을 찾을 수 없습니다",
+      "notFoundDescription": "이 혜택 작업은 존재하지 않거나 더 이상 이용할 수 없습니다.",
+      "sectionProgress": "진행률",
+      "sectionInfo": "작업 정보"
+    },
+    "states": {
+      "loadError": "혜택 작업을 불러오지 못했습니다",
+      "retry": "다시 시도",
+      "loadMore": "더 보기"
+    }
+  },
+  "referral": {
+    "page": {
+      "back": "뒤로",
+      "subtitle": "친구 초대",
+      "title": "친구 초대",
+      "description": "초대 링크를 공유하고 친구가 가입 후 입금하면 보상을 받으세요.",
+      "qualificationHint": "친구의 누적 입금액이 {{amount}} USDT에 도달하면 달성됩니다."
+    },
+    "code": {
+      "title": "내 초대 코드",
+      "copy": "코드 복사"
+    },
+    "bind": {
+      "title": "초대 코드가 있으신가요?",
+      "description": "친구의 초대 코드를 입력하여 계정을 연결하세요. 연결은 한 번만 가능합니다.",
+      "placeholder": "초대 코드 입력",
+      "submit": "코드 연결",
+      "success": "초대 코드가 연결되었습니다",
+      "errors": {
+        "invalid": "초대 코드가 유효하지 않습니다. 확인 후 다시 시도해 주세요.",
+        "self": "본인의 초대 코드는 연결할 수 없습니다.",
+        "alreadyBound": "계정이 이미 초대자에게 연결되어 있습니다."
+      }
+    },
+    "shareLink": {
+      "title": "공유 링크",
+      "description": "이 링크로 가입한 친구는 자동으로 회원님에게 연결됩니다.",
+      "copy": "링크 복사",
+      "scanHint": "스캔하여 가입",
+      "qrAlt": "초대 링크 QR 코드"
+    },
+    "stats": {
+      "totalInvited": "초대",
+      "qualifiedCount": "달성",
+      "rewardedCount": "보상 지급",
+      "totalAccumulated": "총 입금액"
+    },
+    "invitees": {
+      "title": "초대한 친구",
+      "uidLabel": "UID {{uid}}",
+      "uidFallback": "알 수 없는 사용자",
+      "columns": {
+        "user": "사용자",
+        "status": "상태",
+        "accumulated": "입금액",
+        "boundAt": "가입일"
+      }
+    },
+    "status": {
+      "bound": "연결됨",
+      "qualified": "달성",
+      "rewarded": "보상 지급됨"
+    },
+    "pagination": {
+      "prev": "이전",
+      "next": "다음",
+      "range": "전체 {{total}}건 중 {{from}}–{{to}}건"
+    },
+    "states": {
+      "loadError": "불러오기에 실패했습니다. 다시 시도해 주세요.",
+      "retry": "다시 시도"
+    },
+    "empty": {
+      "title": "아직 초대 내역이 없습니다",
+      "description": "링크를 공유하여 친구를 초대해 보세요."
+    },
+    "toast": {
+      "copied": "복사됨",
+      "copyFailed": "복사 실패"
+    },
+    "nav": {
+      "menuEntry": "친구 초대"
+    },
+    "unit": {
+      "usdt": "USDT"
+    }
+  },
+  "seo": {
+    "home": "디지털 자산 거래 플랫폼",
+    "trade": "{{pair}} — 실시간 시세 및 거래",
+    "auth": {
+      "login": "로그인 — 계정에 안전하게 접속",
+      "register": "회원가입 — 디지털 자산 거래 시작하기",
+      "forgotPassword": "비밀번호 재설정 — 빠르게 계정 복구"
+    },
+    "legal": {
+      "about": "회사 소개",
+      "privacy": "개인정보 처리방침",
+      "riskDisclosure": "위험 고지",
+      "agreement": "이용약관",
+      "regulation": "규제 정보",
+      "regulatoryInformation": "규제 정보",
+      "content": "플랫폼 정보"
+    },
+    "news": {
+      "index": "뉴스 — 시장 동향 및 공지사항",
+      "detail": "뉴스 기사"
+    },
+    "charity": "자선 활동 — 거래로 선한 영향력을",
+    "aiQuant": {
+      "landing": "AI 퀀트 — 전략 및 퀀트 펀드",
+      "strategy": "퀀트 전략 — 자동화 거래",
+      "strategyMine": "내 전략 — 구독 및 성과",
+      "quantFund": "퀀트 펀드 — 전문 운용",
+      "quantFundDetail": "퀀트 펀드 상품",
+      "quantFundPositions": "내 퀀트 펀드 포지션",
+      "interestRecords": "퀀트 펀드 수익 내역"
+    },
+    "c2c": {
+      "buy": "C2C 구매 — 빠른 법정화폐 입금",
+      "sell": "C2C 판매 — 안전한 법정화폐 출금",
+      "orders": "C2C 주문",
+      "orderDetail": "C2C 주문 상세",
+      "paymentAccounts": "결제 수단 관리"
+    },
+    "copytrade": {
+      "index": "카피 트레이딩 — 톱 트레이더 따라하기",
+      "trader": "트레이더 프로필"
+    },
+    "deposit": {
+      "index": "입금 — 몇 분 만에 계정에 자금 충전",
+      "history": "입금 내역"
+    },
+    "withdraw": {
+      "index": "출금 — 자산을 안전하게 인출",
+      "history": "출금 내역"
+    },
+    "earn": {
+      "simple": "자유 예치 — 유휴 자산으로 수익 창출",
+      "simpleDetail": "예치 상품 상세",
+      "loan": "코인 대출 — 보유 자산 담보 대출",
+      "loanBorrow": "대출 신청",
+      "loanMy": "내 대출",
+      "loanLiquidations": "대출 청산 내역",
+      "myEarnings": "내 수익"
+    },
+    "assets": {
+      "index": "자산 — 모든 잔고를 한곳에서 관리",
+      "records": "자금 내역",
+      "transfer": "자금 이체"
+    },
+    "user": {
+      "profile": "계정 센터",
+      "survey": "설문조사",
+      "helpCenter": "고객센터 — 자주 묻는 질문 및 지원",
+      "messages": "메시지",
+      "messageDetail": "메시지 상세",
+      "promotionTasks": "프로모션 — 입금 보너스 미션",
+      "promotionTaskDetail": "프로모션 미션 상세",
+      "referrals": "친구 초대 — 공유하고 커미션 받기",
+      "changePassword": "비밀번호 변경",
+      "devices": "로그인 기기 관리",
+      "fundPassword": "자금 비밀번호",
+      "kyc": "신원 인증",
+      "kycBasic": "기본 인증",
+      "kycAdvanced": "고급 인증",
+      "bindEmail": "이메일 연동",
+      "bindPhone": "휴대폰 연동",
+      "twoFactor": "2단계 인증 (2FA)",
+      "jointAccount": "공동명의 계정"
+    }
+  },
+  "survey": {
+    "entry": {
+      "title": "설문조사",
+      "description": "의견을 공유해 주세요"
+    },
+    "hint": {
+      "required": "필수",
+      "singleChoice": "하나 선택",
+      "multipleChoice": "하나 이상 선택",
+      "textPlaceholder": "답변을 입력하세요"
+    },
+    "validation": {
+      "required": "이 질문은 필수입니다"
+    },
+    "actions": {
+      "back": "뒤로",
+      "submit": "제출",
+      "submitting": "제출 중…"
+    },
+    "success": {
+      "submitted": "제출되었습니다"
+    },
+    "error": {
+      "loadFailed": "설문조사를 불러오지 못했습니다",
+      "unavailable": "설문조사 이용 불가",
+      "unavailableDescription": "이 설문조사는 더 이상 이용할 수 없거나 존재하지 않습니다.",
+      "alreadySubmitted": "이미 이 설문조사를 제출하셨습니다",
+      "validation": "일부 답변이 올바르지 않습니다. 검토 후 다시 시도하세요.",
+      "submitFailed": "제출에 실패했습니다. 다시 시도하세요."
+    },
+    "readonly": {
+      "badge": "완료",
+      "title": "내 응답",
+      "submittedAt": "{{time}}에 제출됨",
+      "noAnswer": "답변 없음"
+    }
+  },
+  "trade": {
+    "network": {
+      "stable": "네트워크 안정",
+      "connecting": "연결 중…",
+      "slow": "느린 네트워크",
+      "unavailable": "네트워크가 불안정합니다. 다시 연결 중…",
+      "offline": "네트워크 끊김",
+      "forbidden": "서비스를 이용할 수 없습니다",
+      "banner": {
+        "offline": "오프라인 상태입니다. 시세 데이터 업데이트가 중단되었습니다. 네트워크 연결을 확인해 주세요.",
+        "unavailable": "시세 데이터 서비스를 일시적으로 사용할 수 없습니다. 자동으로 재시도 중이며 표시된 가격은 최신이 아닐 수 있습니다.",
+        "connecting": "시세 데이터에 다시 연결하는 중입니다. 표시된 가격은 최신이 아닐 수 있습니다.",
+        "stale": "이 시장의 시세 업데이트를 한동안 받지 못했습니다. 표시된 가격은 최신이 아닐 수 있습니다."
+      },
+      "desc": {
+        "stable": "연결됨 — 시세 데이터가 실시간으로 업데이트되고 있습니다.",
+        "connecting": "시세 데이터 서비스에 연결하는 중입니다. 가격 표시가 잠시 지연될 수 있습니다.",
+        "slow": "느린 네트워크가 감지되었습니다. 시세 데이터가 지연될 수 있습니다.",
+        "unavailable": "시세 데이터 서비스가 응답하지 않습니다. 자동으로 재시도 중이며 가격은 최신이 아닐 수 있습니다.",
+        "offline": "인터넷 연결이 없습니다. 연결이 복구될 때까지 시세와 거래를 이용할 수 없습니다.",
+        "forbidden": "이 계정에서는 시세 데이터를 이용할 수 없습니다. 문제가 있다고 생각되면 고객지원에 문의하세요."
+      }
+    },
+    "24hChange": "24시간 변동",
+    "24hHigh": "24시간 고가",
+    "24hLow": "24시간 저가",
+    "24hVolume": "24시간 거래량",
+    "chartLoadError": "K선 데이터를 불러오지 못했습니다",
+    "time": "시간",
+    "open": "시가",
+    "high": "고가",
+    "low": "저가",
+    "close": "종가",
+    "volume": "거래량",
+    "orderPrice": "주문 가격",
+    "amount": "수량",
+    "total": "총액",
+    "amountTooltip": "해당 가격의 주문 수량, 단위 {{coin}}",
+    "totalTooltip": "최우선 호가부터 해당 가격까지의 누적 수량, 단위 {{coin}}",
+    "hot": "인기",
+    "available": "사용 가능",
+    "leverage": "레버리지",
+    "marginMode": "증거금 모드",
+    "isolated": "격리",
+    "crossed": "교차",
+    "market": "시장가",
+    "limit": "지정가",
+    "oco": "OCO",
+    "price": "가격",
+    "enterPrice": "가격 입력",
+    "marketOptimalPrice": "시장가",
+    "quantity": "수량",
+    "enterQuantity": "수량 입력",
+    "inputModeQuantity": "수량",
+    "inputModeAmount": "금액",
+    "sizingUnitCoin": "코인",
+    "sizingUnitLot": "랏",
+    "sizingUnitContract": "계약",
+    "sizingUnitShare": "주",
+    "estQuantity": "예상 수량",
+    "help": "도움말",
+    "switchToPro": "프로 모드",
+    "switchToSimple": "심플 모드",
+    "simpleBuyAmount": "매수 금액 ({{asset}})",
+    "simpleLong": "상승 매수",
+    "simpleShort": "하락 매수",
+    "decrease": "감소",
+    "increase": "증가",
+    "leverageRiskShort": "레버리지는 수익과 손실을 모두 확대합니다. 신중하게 거래하세요.",
+    "marginTip": "증거금은 이 포지션을 개시하기 위해 잠긴 자금입니다. 증거금 = 주문 가치 ÷ 레버리지.",
+    "leverageTip": "레버리지는 매수력과 리스크를 배가시킵니다. 레버리지가 높을수록 작은 가격 변동으로도 청산될 수 있습니다.",
+    "marginModeTip": "격리는 각 포지션 자체의 증거금을 사용하고, 교차는 사용 가능 잔액 전체로 포지션을 뒷받침합니다.",
+    "liqPriceTip": "가격이 이 수준에 도달하면 포지션이 강제 청산될 수 있습니다.",
+    "confirmOrderTitle": "주문 확인",
+    "confirmOrderRisk": "레버리지는 수익과 손실을 모두 확대합니다 — 전체 증거금을 잃을 수 있습니다. 확인해 주세요.",
+    "dontAskAgain": "다시 묻지 않기",
+    "confirmPlaceOrder": "주문 확인",
+    "minBet": "최소: ",
+    "amountBelowMinimum": "금액이 선택한 기간의 최소 베팅액보다 적습니다",
+    "takeProfit": "익절",
+    "stopLoss": "손절",
+    "tpPrice": "익절 가격",
+    "slPrice": "손절 가격",
+    "optional": "선택",
+    "long": "롱",
+    "short": "숏",
+    "submitting": "제출 중...",
+    "buyLong": "매수 / 롱",
+    "sellShort": "매도 / 숏",
+    "futuresPositions": "선물 포지션",
+    "futuresHistory": "선물 포지션 내역",
+    "futuresOrders": "선물 미체결 주문",
+    "futuresOrdersHistory": "선물 주문 내역",
+    "optionsOrders": "옵션 주문",
+    "or": "또는",
+    "toTrade": "거래하려면",
+    "size": "수량",
+    "entryPrice": "진입 가격",
+    "markPrice": "표시 가격",
+    "estLiqPrice": "예상 청산 가격",
+    "symbol": "심볼",
+    "strikePrice": "행사 가격",
+    "premium": "프리미엄",
+    "expiry": "만기",
+    "direction": "방향",
+    "margin": "증거금",
+    "marginRatio": "증거금 비율",
+    "triggerPrice": "트리거 가격",
+    "filledAvg": "체결 / 평균",
+    "positionValue": "가치",
+    "maxOpen": "최대",
+    "notionalExceeded": "주문 가치가 최대 {{max}} {{asset}}를 초과합니다",
+    "belowMinimumNotional": "주문 가치가 최소 {{min}} {{asset}} 미만입니다",
+    "estimatedPnl": "예상 손익",
+    "tpSl": "익절/손절",
+    "action": "작업",
+    "pair": "페어",
+    "tradedPrice": "거래 가격",
+    "period": "기간",
+    "durationSeconds": "{{value}}초",
+    "fee": "수수료",
+    "feeRate": "요율",
+    "countdown": "카운트다운",
+    "pnl": "손익",
+    "closePosition": "청산",
+    "latestPrice": "최신 가격",
+    "avgEntryPrice": "평균 진입 가격",
+    "positionQuantity": "포지션 수량",
+    "orderBook": "호가창",
+    "chart": "차트",
+    "timeframe": "타임프레임",
+    "futuresTrade": "선물",
+    "optionTrade": "옵션",
+    "selectMarket": "마켓",
+    "futuresOrder": "선물 주문",
+    "optionsOrder": "옵션 주문",
+    "orderFailed": "주문 실패",
+    "optionActiveOrderBlocked": "진행 중인 주문이 있습니다. 정산 후 새 주문을 할 수 있습니다({{countdown}}).",
+    "optionActiveOrderSettling": "주문을 정산 중입니다. 잠시 기다려 주세요.",
+    "settlementRateUnavailable": "이 마켓의 정산 비율을 일시적으로 이용할 수 없습니다. 잠시 후 다시 시도하세요.",
+    "loadFailed": "데이터를 불러오지 못했습니다",
+    "buyUp": "상승 매수",
+    "call": "콜",
+    "put": "풋",
+    "closePrice": "종료 가격",
+    "closeTime": "종료 시간",
+    "openTime": "개시 시간",
+    "status": "상태",
+    "statusClosed": "종료됨",
+    "realizedPnl": "실현 손익",
+    "netProfit": "순이익",
+    "netProfitTooltip": "순이익 = 실현 손익(총액) − 거래 수수료. 펀딩 수수료는 포함되지 않습니다.",
+    "orderType": "유형",
+    "filled": "체결됨",
+    "cancelled": "취소됨",
+    "rejected": "거부됨",
+    "orderTime": "주문 시간",
+    "positionSide": "포지션 유형",
+    "resetFilters": "초기화",
+    "searchSymbol": "심볼 검색",
+    "buy": "매수",
+    "sell": "매도",
+    "buyDown": "하락 매수",
+    "expectedReturn": "예상 수익",
+    "optionTotalFrozen": "총 동결",
+    "optionExpectedReturnFeeNote": "수수료를 차감한 금액으로, 거래 성공 시 받게 되는 순이익입니다.",
+    "leverageAdjust": "레버리지 조정",
+    "confirm": "확인",
+    "cancel": "취소",
+    "cancelOrder": "취소",
+    "orderId": "주문 ID",
+    "leverageRisk": "10배 이상 레버리지로 거래할 경우 포지션은 작은 가격 변동만 견딜 수 있습니다. 리스크에 유의하세요. 레버리지 조정은 포지션과 주문 모두에 적용됩니다.",
+    "pairs": "페어",
+    "turnover": "거래대금",
+    "chg": "변동 %",
+    "up": "상승",
+    "down": "하락",
+    "won": "성공",
+    "lost": "실패",
+    "refunded": "환불됨",
+    "all": "전체",
+    "inProgress": "진행 중",
+    "settled": "정산됨",
+    "result": "결과",
+    "payout": "지급액",
+    "payoutRate": "수익률",
+    "payoutRateTooltip": "수익률은 거래 성공 시 베팅액에 더해지는 순이익입니다. 예를 들어 수익률 15%는 100 {{asset}} 베팅에서 추가로 15 {{asset}}를 벌어 — 15 {{asset}} 이익, 총 115 {{asset}}가 반환됩니다.",
+    "insufficientBalanceTitle": "잔액 부족",
+    "goToDeposit": "입금하러 가기",
+    "goToTransfer": "이체하러 가기",
+    "transfer": "이체",
+    "orderSuccess": "주문이 완료되었습니다",
+    "orderPlaced": "주문 완료",
+    "closeSuccess": "포지션이 청산되었습니다",
+    "closeFailed": "포지션 청산에 실패했습니다",
+    "cancelSuccess": "주문이 취소되었습니다",
+    "cancelFailed": "주문 취소에 실패했습니다",
+    "slTpUpdateSuccess": "익절/손절이 업데이트되었습니다",
+    "slTpUpdateFailed": "익절/손절 업데이트에 실패했습니다",
+    "slTpClear": "지우기",
+    "tpWillBeCancelled": "확인 후 익절이 취소됩니다",
+    "slWillBeCancelled": "확인 후 손절이 취소됩니다",
+    "addMargin": "증거금 추가",
+    "addMarginAmount": "추가 금액",
+    "enterAmount": "금액 입력",
+    "maxAddMargin": "최대 추가 가능",
+    "addMarginExceedMax": "금액이 최대 추가 가능 금액을 초과합니다",
+    "addMarginSuccess": "증거금이 추가되었습니다",
+    "addMarginFailed": "증거금 추가에 실패했습니다",
+    "interval_1m": "1분",
+    "interval_5m": "5분",
+    "interval_15m": "15분",
+    "interval_30m": "30분",
+    "interval_1h": "1시간",
+    "interval_1d": "1일",
+    "interval_1w": "1주",
+    "interval_1M": "1개월",
+    "interval_1y": "1년",
+    "copytradeEntry": "카피 트레이드",
+    "marketClosed": "시장 마감",
+    "marketClosedHint": "이 시장은 현재 마감되었습니다. 주문이 일시적으로 비활성화됩니다.",
+    "marketClosedShort": "마감",
+    "marketStatusUnknown": "상태 알 수 없음",
+    "marketStatusUnknownShort": "알 수 없음",
+    "marketStatusUnknownHint": "현재 이 종목의 거래 시간을 확인할 수 없습니다. 주문 가능 여부는 서버 판정에 따릅니다.",
+    "orderBookClosedHint": "이 시장은 현재 마감되었습니다. 거래 재개 후 호가 정보가 갱신됩니다.",
+    "empty": {
+      "positions": {
+        "title": "보유 포지션 없음",
+        "description": "포지션을 열면 선물 포지션과 실시간 손익이 여기에 표시됩니다."
+      },
+      "positionHistory": {
+        "title": "포지션 내역 없음",
+        "description": "청산 후 종료된 선물 포지션이 여기에 표시됩니다."
+      },
+      "openOrders": {
+        "title": "미체결 주문 없음",
+        "description": "주문한 내역은 체결되거나 취소될 때까지 여기에 표시됩니다."
+      },
+      "orderHistory": {
+        "title": "주문 내역 없음",
+        "description": "체결되거나 취소된 선물 주문이 여기에 표시됩니다."
+      },
+      "optionsOrders": {
+        "title": "옵션 주문 없음",
+        "description": "주문하면 옵션 거래가 여기에 표시됩니다."
+      },
+      "spotOpenOrders": {
+        "title": "현물 미체결 주문이 없습니다",
+        "description": "미체결 지정가 주문이 여기에 표시됩니다."
+      },
+      "spotOrdersHistory": {
+        "title": "현물 주문 내역이 없습니다",
+        "description": "체결·취소·거부된 현물 주문이 여기에 표시됩니다."
+      }
+    },
+    "indicator": {
+      "title": "지표 설정",
+      "entry": "기술 지표",
+      "mainTab": "메인",
+      "subTab": "보조",
+      "maTitle": "MA - 이동평균선",
+      "emaTitle": "EMA - 지수이동평균선",
+      "period": "기간",
+      "source": "가격 소스",
+      "lineStyle": "선 스타일",
+      "style_solid": "실선",
+      "style_dashed": "점선",
+      "color": "선 색상",
+      "reset": "초기화",
+      "save": "저장",
+      "volTitle": "Vol - 거래량",
+      "volDesc": "MAVOL은 일정 기간의 거래량을 합산해 평균한 값으로, 거래량 히스토그램 위에 더 부드러운 곡선(거래량 이동평균선)을 그립니다.",
+      "long": "Long",
+      "short": "Short",
+      "bar_solid": "채움",
+      "bar_hollow": "빈 막대",
+      "opacity": "불투명도",
+      "macdTitle": "MACD - 이동평균 수렴·확산",
+      "fastPeriod": "단기 기간",
+      "slowPeriod": "장기 기간",
+      "signalPeriod": "시그널 기간",
+      "longGrow": "Long (Grow)",
+      "longFall": "Long (Fall)",
+      "shortGrow": "Short (Grow)",
+      "shortFall": "Short (Fall)",
+      "bollTitle": "BOLL - 볼린저 밴드",
+      "multiplier": "승수",
+      "bgColor": "배경색",
+      "hide": "숨기기",
+      "show": "표시",
+      "configure": "설정",
+      "remove": "삭제",
+      "kdjTitle": "KDJ - 스토캐스틱",
+      "kdjPeriod": "계산 기간",
+      "kdjMa1": "이동평균 기간 1",
+      "kdjMa2": "이동평균 기간 2",
+      "rsiTitle": "RSI - 상대강도지수"
+    },
+    "spotOrder": "현물",
+    "spotTrade": "현물",
+    "spotBuy": "매수",
+    "spotSell": "매도",
+    "spotEstNotional": "예상 가치 ({{asset}})",
+    "estFee": "예상 수수료",
+    "spotEstReceive": "예상 수령액",
+    "spotSlippageHint": "최종 체결 가격은 체결 시점에 결정되며 표시 가격과 다를 수 있습니다.",
+    "spotOrderPendingToast": "주문이 제출되었습니다",
+    "executionPrice": "체결 가격",
+    "executedAt": "체결 시각",
+    "spotErrorSymbolNotTradable": "이 종목은 아직 현물 거래를 지원하지 않습니다.",
+    "spotErrorInsufficientBalance": "펀딩 계좌의 사용 가능 잔액이 부족합니다.",
+    "spotErrorBelowMinNotional": "주문 금액이 최소 주문 금액보다 적습니다.",
+    "spotErrorAboveMaxNotional": "주문 금액이 1회 한도를 초과했습니다.",
+    "spotErrorExposureLimit": "이 자산은 일시적으로 체결할 수 없습니다. 수량을 줄이거나 잠시 후 다시 시도하세요.",
+    "spotErrorMaxOpenOrders": "미체결 주문 한도에 도달했습니다. 먼저 일부 주문을 취소하세요.",
+    "spotErrorMarketClosed": "이 시장은 현재 휴장 중입니다. 시장가 주문은 불가하며 지정가 주문은 계속 접수됩니다.",
+    "spotErrorMarketDataStale": "시세 데이터가 지연되고 있습니다. 잠시 후 다시 시도하세요.",
+    "spotErrorIdempotencyConflict": "동일한 요청 키로 다른 주문이 이미 제출되었습니다. 다시 제출해 주세요.",
+    "spotErrorRateLimited": "요청이 너무 많습니다. 잠시 후 다시 시도하세요.",
+    "spotErrorRateLimitedRetryIn": "{{seconds}}초 후에 다시 시도하세요.",
+    "spotOcoTpShort": "익절",
+    "spotOcoSlShort": "손절",
+    "spotOcoTriggeredBy": "체결된 주문",
+    "spotOcoPendingHint": "익절/손절 가격 도달 시 자동 체결되고 다른 쪽은 취소됩니다. 아직 수정할 수 없으니 조정하려면 취소하세요.",
+    "spotOcoErrorDisabled": "이 사이트는 익절·손절 주문을 중단했습니다. 지정가 매도로 전환했습니다.",
+    "spotOcoErrorStopLossNotPositive": "손절 가격은 0보다 커야 합니다.",
+    "spotOcoErrorStopLossNotBelowTakeProfit": "손절 가격은 익절 가격보다 낮아야 합니다.",
+    "spotOcoErrorTakeProfitNotAboveMarket": "익절 가격은 현재 가격보다 높아야 합니다.",
+    "spotOcoErrorStopLossNotBelowMarket": "손절 가격은 현재 가격보다 낮아야 합니다.",
+    "spotOcoErrorBelowMinNotional": "손절 가격 기준 주문 금액이 최소 주문 금액보다 작습니다. 수량 또는 손절 가격을 높이세요.",
+    "pending": "미체결",
+    "spotOrders": "현물 주문",
+    "spotOrdersHistory": "현물 내역",
+    "spotOrderDetail": "주문 상세",
+    "futuresOrderDetail": {
+      "title": "주문 상세",
+      "reduceOnly": "감소 전용",
+      "orderSize": "주문 규모",
+      "lockedMargin": "잠긴 증거금",
+      "closeReason": "청산 사유",
+      "closeReasons": {
+        "manual": "수동 청산",
+        "liquidated": "강제 청산",
+        "reduceFill": "감소 체결",
+        "stopLossTriggered": "손절 발동",
+        "takeProfitTriggered": "익절 발동",
+        "marginCall": "마진콜"
+      },
+      "rejectedReason": "거부 사유",
+      "rejectedReasons": {
+        "reduceOnlyNoTargetPosition": "감소 전용 주문에 줄일 포지션이 없습니다",
+        "marginTypeConflict": "증거금 모드가 기존 포지션과 충돌합니다"
+      }
+    },
+    "spotQuoteAmount": "주문 금액",
+    "createdAt": "생성 시각",
+    "cancelledAt": "취소 시각",
+    "spotCancelTitle": "주문 취소",
+    "spotCancelAlreadyFilled": "이 주문은 이미 체결되어 더 이상 취소할 수 없습니다.",
+    "spotCancelAlreadyCancelled": "이 주문은 이미 취소되었습니다 — 자금이 해제되어 추가 조치가 필요 없습니다.",
+    "spotCancelAlreadyRejected": "이 주문은 거부되어 취소할 수 없습니다.",
+    "spotAmendTitle": "주문 수정",
+    "spotAmend": "수정",
+    "spotAmendSuccess": "주문이 수정되었습니다",
+    "spotAmendFilledToast": "주문이 수정되어 새 가격에 체결되었습니다",
+    "spotAmendNoChange": "가격 또는 수량을 변경한 후 제출하세요.",
+    "spotAmendCrossHint": "이 가격은 즉시 체결될 수 있습니다.",
+    "spotAmendAlreadyFilled": "이 주문은 이미 체결되어 더 이상 수정할 수 없습니다.",
+    "spotAmendAlreadyCancelled": "이 주문은 이미 취소되어 더 이상 수정할 수 없습니다.",
+    "spotAmendAlreadyRejected": "이 주문은 거부되어 수정할 수 없습니다.",
+    "newPrice": "새 가격",
+    "newQuantity": "새 수량",
+    "spotErrorSizingUnitNotAllowed": "이 종목에서는 해당 수량 단위를 사용할 수 없습니다.",
+    "spotErrorInvalidSizingInput": "유효한 가격과 수량을 입력하세요.",
+    "spotOrderNotFound": "주문을 찾을 수 없습니다.",
+    "spotOrderIdInvalid": "주문 ID가 잘못되었습니다. 목록을 새로고침한 후 다시 시도하세요.",
+    "spotMarketClosedHint": "휴장 중: 시장가 주문은 불가합니다. 지정가 주문은 계속 접수되며 개장 후 체결됩니다. 취소는 언제든 가능합니다.",
+    "marketList": {
+      "emptyProductLine": {
+        "title": "거래 가능한 마켓이 없습니다",
+        "description": "이 상품의 거래가 시작되면 마켓이 여기에 표시됩니다. 탭을 전환해 다른 상품을 거래하세요."
+      },
+      "emptyCategory": {
+        "title": "이 카테고리에 마켓이 없습니다",
+        "description": "선택한 상품에서는 이 카테고리에 열린 마켓이 없습니다. 다른 카테고리를 선택해 거래 가능한 마켓을 확인하세요."
+      },
+      "symbolSwitched": "{{from}}은(는) {{productLine}}에서 지원하지 않아 {{to}}(으)로 전환했습니다.",
+      "favorites": "즐겨찾기",
+      "favoriteAdd": "즐겨찾기에 추가",
+      "favoriteRemove": "즐겨찾기에서 제거",
+      "favoriteLimitReached": "즐겨찾기는 최대 {{max}}개까지 저장할 수 있습니다. 하나를 제거한 뒤 추가하세요.",
+      "emptyFavorites": {
+        "title": "아직 즐겨찾기가 없습니다",
+        "description": "목록에서 별표를 누르면 해당 마켓이 여기에 표시됩니다."
+      },
+      "emptyFavoritesGuest": {
+        "title": "로그인하면 즐겨찾기를 동기화할 수 있습니다",
+        "description": "지금 추가한 즐겨찾기는 이 기기에만 저장됩니다. 로그인하면 모든 기기에서 이용할 수 있습니다.",
+        "cta": "로그인"
+      }
+    }
+  },
+  "twoFactor": {
+    "bind2fa": "Google Authenticator 연결",
+    "bind2faDesc": "2단계 인증을 활성화하여 계정을 보호하세요.",
+    "step1": "1단계",
+    "step2": "2단계",
+    "step3": "3단계",
+    "downloadApp": "Google Authenticator 다운로드",
+    "scanOrCopy": "QR 코드 스캔 또는 시크릿 복사",
+    "scanTip": "Google Authenticator를 열고 QR 코드를 스캔하세요",
+    "copyTip": "스캔할 수 없나요? 시크릿 키를 직접 입력하세요",
+    "enterOtp": "인증 코드 입력",
+    "otpPlaceholder": "6자리 코드 입력",
+    "otpTip": "Google Authenticator의 6자리 코드를 입력하세요",
+    "confirm": "연결 확인",
+    "copied": "복사됨",
+    "boundSuccess": "연결 성공",
+    "bindFailed": "연결 실패",
+    "boundDesc": "2단계 인증이 활성화되었습니다. 계정이 더 안전해졌습니다.",
+    "googleAuthenticator": "Google Authenticator",
+    "secret": "시크릿",
+    "back": "뒤로",
+    "2faStatus": "2단계 인증",
+    "2faStatusDesc": "2단계 인증 설정을 관리하세요",
+    "2faEnabled": "활성화됨",
+    "2faEnabledDesc": "계정에 2단계 인증이 활성화되어 있습니다",
+    "boundDevice": "연결된 기기",
+    "unbind": "연결 해제",
+    "unbindDesc": "연결을 해제하면 계정 보안이 약화됩니다",
+    "enterOtpToUnbind": "연결을 해제하려면 Google Authenticator의 6자리 코드를 입력하세요",
+    "unbindSuccess": "연결이 해제되었습니다",
+    "unbindFailed": "연결 해제에 실패했습니다",
+    "confirmUnbind": "연결 해제 확인",
+    "cancel": "취소"
+  },
+  "withdraw": {
+    "history": {
+      "entry": "내역",
+      "title": "출금 내역",
+      "subtitle": "출금 타임라인을 확인하세요",
+      "back": "뒤로",
+      "filterAll": "전체",
+      "range7d": "최근 7일",
+      "range30d": "최근 30일",
+      "rangeAll": "전체 기간",
+      "status": {
+        "PENDING": "대기 중",
+        "REVIEWING": "검토 중",
+        "APPROVED": "승인됨",
+        "SENT": "전송됨",
+        "COMPLETED": "완료",
+        "REJECTED": "거부됨",
+        "CANCELLED": "취소됨"
+      },
+      "columns": {
+        "amount": "금액",
+        "asset": "자산",
+        "network": "네트워크",
+        "fee": "수수료",
+        "txid": "거래 해시 (TXID)",
+        "createdAt": "생성 시각",
+        "completedAt": "완료 시각",
+        "status": "상태",
+        "action": "작업"
+      },
+      "empty": "아직 출금 기록이 없습니다",
+      "withdrawNow": "지금 출금",
+      "txidCopied": "거래 해시 복사됨",
+      "explorerAria": "블록 익스플로러에서 거래 보기",
+      "trackProgressHint": "출금 내역에서 각 단계의 진행 상황을 추적할 수 있습니다.",
+      "stagesAria": "출금 진행 상황",
+      "stages": {
+        "submitted": "제출됨",
+        "reviewing": "리스크 심사",
+        "broadcasting": "온체인 전송",
+        "completed": "완료"
+      },
+      "stageHint": {
+        "PENDING": "대기 중 —— 리스크 심사는 보통 몇 시간 내에 시작됩니다",
+        "REVIEWING": "리스크 심사는 보통 몇 시간 내에 완료됩니다",
+        "APPROVED": "승인됨 —— 곧 온체인으로 전송됩니다",
+        "SENT": "온체인 전송됨 —— 보통 약 30분 내에 확인됩니다"
+      },
+      "detail": {
+        "view": "상세",
+        "title": "출금 상세",
+        "address": "출금 주소",
+        "addressCopied": "출금 주소 복사됨",
+        "copyAria": "복사"
+      }
+    },
+    "pendingNotice": {
+      "title": "처리 중인 출금이 있습니다",
+      "description": "출금은 한 번에 한 건만 진행할 수 있습니다. 이 출금이 완료되거나 거절되기 전까지 새 출금 신청은 거절됩니다.",
+      "viewHistory": "출금 내역 보기"
+    }
+  }
+}
