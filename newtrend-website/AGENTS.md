@@ -157,3 +157,7 @@ Serve this site at `/NewQuantCapital/` (case preserved), replacing `/newtrend/`.
 ## Earn source fidelity (latest user request, 2026-11-25)
 
 For `/NewQuantCapital/earn/simple`, its product details and subscription dialog, reproduce the reference's layout, icons, visible product content and interactions. This scoped request supersedes the shared geometry/type/corner simplification for these Earn surfaces: list outer max 1440px, detail content 960px, source rounded cards and pill controls. Keep NewQuantCapital branding, existing safety semantics, the prior removal of separate daily-rate sort buttons, and all other pages' shared design scale. Reference product names/descriptions are English even in zh-TW; preserve that content while keeping interface labels localized. Never submit reference-site financial actions. Product snapshots are public reference data; balances and subscription actions remain local prototype state.
+
+## My Earn records use lists (user feedback, 2026-11-25)
+
+Use compact table/list rows for holdings, subscription orders, redemptions and reward history on `/NewQuantCapital/earn/my-earnings`. Do not display holdings as a grid of independent cards. Preserve comparable columns and row-level actions; narrow layouts may wrap fields within the same contiguous list. Seed synthetic local records for varied statuses; never copy private reference-account records. The overview remains the source-style aggregate panel.

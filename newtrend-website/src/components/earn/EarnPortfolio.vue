@@ -1,0 +1,27 @@
+<script setup>
+import {shallowRef,reactive,watch,nextTick} from 'vue'
+import {useRoute} from 'vue-router'
+import EarnPortfolioSummary from './EarnPortfolioSummary.vue'
+import EarnHoldings from './EarnHoldings.vue'
+import EarnRecords from './EarnRecords.vue'
+import '../../styles/earn-portfolio.css'
+const route=useRoute(),tabs=['holdings','orders','redemptions','rewards']
+const active=shallowRef('holdings'),tabList=shallowRef(null)
+const limits=reactive({orders:6,redemptions:6,rewards:6})
+watch(()=>route.query.tab,value=>{if(tabs.includes(value))active.value=value},{immediate:true})
+async function moveTab(event,index){
+ const key=event.key
+ if(!['ArrowLeft','ArrowRight','Home','End'].includes(key))return
+ event.preventDefault()
+ const next=key==='Home'?0:key==='End'?tabs.length-1:(index+(key==='ArrowRight'?1:-1)+tabs.length)%tabs.length
+ active.value=tabs[next]
+ await nextTick()
+ tabList.value.querySelectorAll('[role=tab]')[next]?.focus()
+}
+</script>
+<template>
+<header class="portfolio-heading"><span class="earn-kicker">{{ $t('earn.header.subtitle') }}</span><h1>{{ $t('earn.myEarnings.title') }}</h1></header>
+<EarnPortfolioSummary/>
+<div class="portfolio-tab-area"><div ref="tabList" class="portfolio-tabs" role="tablist" :aria-label="$t('earn.myEarnings.title')"><button v-for="(tab,index) in tabs" :id="'portfolio-tab-'+tab" :key="tab" role="tab" :aria-selected="active===tab" :aria-controls="'portfolio-panel-'+tab" :tabindex="active===tab?0:-1" @click="active=tab" @keydown="moveTab($event,index)">{{ $t('earn.myEarnings.tabs.'+tab) }}</button></div>
+<div v-for="tab in tabs" v-show="active===tab" :id="'portfolio-panel-'+tab" :key="tab" class="portfolio-tab-panel" role="tabpanel" :aria-labelledby="'portfolio-tab-'+tab" tabindex="0"><EarnHoldings v-if="tab==='holdings'"/><EarnRecords v-else :tab="tab" :limit="limits[tab]" @load-more="limits[tab]+=6"/></div></div>
+</template>

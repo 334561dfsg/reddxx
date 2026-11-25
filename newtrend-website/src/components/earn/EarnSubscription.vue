@@ -1,6 +1,7 @@
 <script setup>
 import {computed,shallowRef,watch} from 'vue'
 import {session} from '../../session'
+import {recordEarnSubscription} from '../../earnPortfolio'
 import {fmt,path} from '../../data'
 import {subscriptionError,maximumSubscription} from '../../utils/earnProducts'
 import Coin from '../Coin.vue'
@@ -20,7 +21,7 @@ function submit(){
  touched.value=true
  if(validation.value)return
  // The existing prototype keeps subscriptions local; no reference-site request.
- session.subscriptions.push({name:props.product.name,amount:Number(amount.value),symbol:props.product.symbol,status:'earn.myEarnings.status.pending_review'})
+ recordEarnSubscription(props.product,Number(amount.value))
  done.value=true
 }
 </script>
@@ -31,7 +32,7 @@ function submit(){
  <div class="earn-amount-input"><input id="earn-amount" v-model="amount" data-earn-initial-focus inputmode="decimal" autocomplete="off" :placeholder="$t('earn.subscribe.amountPlaceholder')" :aria-invalid="Boolean(error)" aria-required="true" aria-describedby="earn-amount-hint" @input="touched=true"/><button type="button" @click="fillMax">{{ $t('earn.subscribe.maxButton') }}</button><span>{{ product.symbol }}</span></div>
  <div id="earn-amount-hint" class="earn-amount-hint"><p v-if="error" class="negative" role="alert">{{ $t(error) }} <RouterLink v-if="validation?.code==='insufficientBalance'" :to="path('/deposit')" @click="emit('close')">{{ $t('earn.subscribe.goDeposit') }}</RouterLink></p><p v-else>{{ $t('earn.products.min',{amount:fmt(product.min)+' '+product.symbol}) }} · {{ $t('earn.products.max',{amount:fmt(product.max)+' '+product.symbol}) }}</p></div>
  <div class="earn-estimate"><p class="earn-caption">{{ $t('earn.subscribe.estReward') }}</p><p v-if="!validation" class="earn-accent earn-mono">{{ fmt(estimate) }} {{ product.symbol }}</p><p v-else class="earn-estimate-empty">{{ $t('earn.subscribe.estRewardEmpty') }}</p><EarnTimeline :days="product.days" vertical/></div></template>
- <div v-else class="earn-success" role="status"><Icon name="check" green/><h3>{{ $t('earn.subscribe.success.title') }}</h3><RouterLink :to="path('/earn/my-earnings')" @click="emit('close')">{{ $t('earn.subscribe.success.viewHoldings') }}</RouterLink></div>
+ <div v-else class="earn-success" role="status"><Icon name="check" green/><h3>{{ $t('earn.subscribe.success.title') }}</h3><RouterLink :to="path('/earn/my-earnings')+'?tab=orders'" @click="emit('close')">{{ $t('earn.subscribe.success.viewHoldings') }}</RouterLink></div>
 </form>
 </template>
 <style scoped>
