@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton } from '../antd/controls.js'
 
 import { computed, ref, watch } from 'vue'
@@ -164,9 +165,7 @@ watch(() => props.visible, (visible) => {
             <p v-if="copyMessage" class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800" aria-live="polite">
               {{ copyMessage }}
             </p>
-            <p v-if="copyError" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800" role="alert">
-              {{ copyError }}
-            </p>
+            <FeedbackToast v-if="copyError" type="error" :source="() => (copyError) ? (copyError) : ''"></FeedbackToast>
 
             <article
               v-for="address in segmentAddresses"

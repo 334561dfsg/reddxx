@@ -28,6 +28,7 @@ const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:
  {path:'/trade/:pathMatch(.*)*',redirect:'/trade/futures/BTCUSDT'},
  // Copy trading is temporarily excluded from this prototype.
  {path:'/copytrade/:pathMatch(.*)*',redirect:'/'},
+ {path:'/earn/loan/order/:orderId',component:()=>import('./pages/LendingOrder.vue')},
  {path:'/earn/:section?/:id?',component:Finance},
  {path:'/ai-quant/:section?/:id?',component:Quant},
  {path:'/assets/:section?',component:Assets},

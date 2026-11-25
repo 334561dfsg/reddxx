@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { DownloadOutlined, FileExcelOutlined, SettingOutlined } from '@ant-design/icons-vue'
 import { getUserStaffRepository } from '../../../admin/repositories/userStaffRepository.js'
@@ -232,11 +233,11 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
           <p class="mt-5 text-sm text-slate-600">{{ activeExport?.status === 'failed' ? `导出失败：${activeExport.error}。可以关闭，稍后在“导出文件下载”中重试。` : '正在导出搜索结果，可以关闭，稍后在“导出文件下载”中下载。' }}</p>
         </div>
       </div>
-      <a-alert v-if="taskError" :message="taskError" type="error" show-icon />
+      <FeedbackToast v-if="taskError" type="error" :source="() => (taskError) ? ((taskError)) : ''"></FeedbackToast>
       <template #footer><a-button v-if="activeExport?.status !== 'succeeded'" @click="exportProgressOpen = false">关闭</a-button></template>
     </a-modal>
     <a-modal v-model:open="tasksOpen" title="导出文件下载" :width="960" :mask-closable="false" :footer="null" class="deposit-export-modal" :after-close="() => releaseTaskBackground()" :body-style="{ maxHeight: '65vh', overflowY: 'auto' }">
-      <a-alert v-if="taskError" :message="taskError" type="error" show-icon class="mb-3" />
+      <FeedbackToast v-if="taskError" type="error" :source="() => (taskError) ? ((taskError)) : ''"></FeedbackToast>
       <a-table :columns="taskColumns" :data-source="exportTasks" row-key="id" size="small" :pagination="{ pageSize: 8, showSizeChanger: false }" :scroll="{ x: 780 }" :locale="{ emptyText: '暂无导出文件，请先导出充值报表' }">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'report'"><div class="font-medium">用户充值报表</div><div class="text-xs text-slate-500">{{ record.range }}</div><div class="text-xs text-slate-500">{{ record.scope }}</div></template>
@@ -280,10 +281,7 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
       <p v-if="dirty" class="mt-2 text-sm text-amber-800">筛选条件尚未应用，请点击“查询报表”更新列表和导出数据。</p>
     </a-form></a-card>
 
-    <div v-if="error" id="user-report-error" ref="errorRef" tabindex="-1" role="alert" class="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
-      {{ error }}<span v-if="report">。以下保留上次成功查询结果，重新查询成功后可导出。</span>
-      <a-button html-type="button" @click="query">重试查询</a-button>
-    </div>
+    <FeedbackToast v-if="error" id="user-report-error" ref="errorRef" type="error" :source="() => (error) ? (([String((error) ?? ''),((report) ? [&quot;。以下保留上次成功查询结果，重新查询成功后可导出。&quot;].join('') : ''),''].join(''))) : ''"><a-button html-type="button" @click="query">重试查询</a-button></FeedbackToast>
 
     <p v-if="loading" role="status" class="text-sm text-slate-600">正在加载充值订单<span v-if="report">，下方暂为上次查询结果</span>…</p>
     <template v-if="report">
@@ -332,7 +330,7 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
           <p class="text-sm text-slate-500">用户类型：{{ report.userTypeLabel }}</p>
           <p role="status" class="sr-only">{{ columnsNotice }}</p>
           <p v-if="receipt" role="status" class="text-sm text-emerald-800">{{ receipt }}</p>
-          <p v-if="exportError" role="alert" class="text-sm text-rose-700">{{ exportError }}</p>
+          <FeedbackToast v-if="exportError" type="error" :source="() => (exportError) ? (exportError) : ''"></FeedbackToast>
         </div>
 
         <div v-if="!rows.length" class="px-4 py-10 text-center">

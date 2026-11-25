@@ -1,6 +1,8 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
+import {verificationOptions,vipOptions} from '../../../shared/lending/eligibility.js'
 import { Alert, Button, Card, Col, Descriptions, DescriptionsItem, Empty, Form, FormItem, Input, InputNumber, Radio, RadioGroup, Row, Select, Space, Switch, Tag, TypographyText } from 'ant-design-vue'
 import { ArrowLeftOutlined } from '@ant-design/icons-vue'
 import EarnPageShell from './EarnPageShell.vue'
@@ -35,7 +37,7 @@ function load(id){
  const product=id?earnAdmin.products.find(row=>row.id===id):null
  found.value=!id||Boolean(product)
  Object.keys(form).forEach(key=>delete form[key])
- Object.assign(form,clone(product||{name:'',symbol:'USDT',days:0,rate:.01,dailyRateMin:.01,dailyRateMax:.01,apy:3.65,min:10,max:100000,quota:1000000,perUser:100000,initialSubscribed:0,subscribed:0,sort:0,hot:false,earlyRule:'flexible',redemptionReviewRequired:true,earlyFeeBase:'principal',earlyFeeRate:0,settlement:'daily',risk:'',status:'draft'}))
+ Object.assign(form,clone(product||{minVerificationLevel:'none',minVipLevel:0,name:'',symbol:'USDT',days:0,rate:.01,dailyRateMin:.01,dailyRateMax:.01,apy:3.65,min:10,max:100000,quota:1000000,perUser:100000,initialSubscribed:0,subscribed:0,sort:0,hot:false,earlyRule:'flexible',redemptionReviewRequired:true,earlyFeeBase:'principal',earlyFeeRate:0,settlement:'daily',risk:'',status:'draft'}))
  productType.value=form.days>0?'fixed':'flexible';fixedDays.value=form.days>0?form.days:30;fixedRule.value=form.days>0?form.earlyRule:'disabled'
  original.value=JSON.stringify(form);error.value=''
 }
@@ -79,7 +81,7 @@ async function save(){
   <template v-if="form.id" #description><Space wrap><TypographyText type="secondary">{{ form.id }}</TypographyText><Tag :color="statusMeta[form.status]?.[1]">{{ statusMeta[form.status]?.[0] }}</Tag></Space></template>
   <Card v-if="!found"><Empty description="产品不存在或已失效"><Button @click="back">返回产品列表</Button></Empty></Card>
   <template v-else>
-   <div v-if="error" ref="errorRef" tabindex="-1"><Alert role="alert" show-icon type="error" :message="error"/></div>
+   <div v-if="error" ref="errorRef" tabindex="-1"><FeedbackToast  type="error" :source="() => (error)"></FeedbackToast></div>
    <Form class="earn-editor-form" name="earn-product-editor" layout="vertical" :model="form" @finish="save">
       <Card title="基本信息" :bordered="false">
        <Row :gutter="24" class="earn-editor-fields">
@@ -89,6 +91,10 @@ async function save(){
         <Col v-if="productType==='fixed'" :xs="24" :lg="12"><FormItem name="days" label="定期期限（天）" required><InputNumber style="width:100%" v-model:value="form.days" :min="1" :max="3650" :precision="0" :disabled="!!form.id"/></FormItem></Col>
        </Row>
       </Card>
+      <Card title="申购条件" :bordered="false"><Row :gutter="24">
+       <Col :span="12"><FormItem name="minVerificationLevel" label="最低认证等级" help="达到所选等级及以上可申购。"><Select v-model:value="form.minVerificationLevel" :options="verificationOptions"/></FormItem></Col>
+       <Col :span="12"><FormItem name="minVipLevel" label="最低 VIP 等级" help="两项条件同时设置时，需要同时满足；仅影响新申购。"><Select v-model:value="form.minVipLevel" show-search option-filter-prop="label" :options="vipOptions"/></FormItem></Col>
+      </Row></Card>
       <Card title="收益与赎回" :bordered="false">
        <Row :gutter="24" class="earn-editor-fields">
         <Col :xs="24" :lg="12"><FormItem name="dailyRateMin" label="日利率下限（%）" required><InputNumber style="width:100%" v-model:value="form.dailyRateMin" :min="0" :max="100" :precision="4"/></FormItem></Col>

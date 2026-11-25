@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, nativeControl } from './antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
@@ -194,16 +195,7 @@ const close = () => {
             </header>
 
             <form class="min-h-0 flex-1 overflow-y-auto px-6 py-5" @submit.prevent="submit">
-              <div
-                v-if="displayedDialog.hasSubmitted && (displayedDialog.submitErrorMessage || displayedDialog.fieldErrors.currentPassword || displayedDialog.fieldErrors.newPassword || displayedDialog.fieldErrors.confirmPassword)"
-                ref="errorSummary"
-                tabindex="-1"
-                role="alert"
-                aria-live="assertive"
-                class="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-300"
-              >
-                {{ displayedDialog.submitErrorMessage || '请修复表单中的错误后再继续' }}
-              </div>
+              <FeedbackToast v-if="displayedDialog.hasSubmitted && (displayedDialog.submitErrorMessage || displayedDialog.fieldErrors.currentPassword || displayedDialog.fieldErrors.newPassword || displayedDialog.fieldErrors.confirmPassword)" ref="errorSummary" type="error" :source="() => (displayedDialog.hasSubmitted &amp;&amp; (displayedDialog.submitErrorMessage || displayedDialog.fieldErrors.currentPassword || displayedDialog.fieldErrors.newPassword || displayedDialog.fieldErrors.confirmPassword)) ? (displayedDialog.submitErrorMessage || '请修复表单中的错误后再继续') : ''"></FeedbackToast>
 
               <div class="space-y-4">
                 <label class="block space-y-1.5">
@@ -218,9 +210,7 @@ const close = () => {
                     :aria-invalid="Boolean(displayedDialog.fieldErrors.currentPassword)"
                     :aria-describedby="displayedDialog.fieldErrors.currentPassword ? 'admin-current-password-error' : undefined"
                   />
-                  <span v-if="displayedDialog.fieldErrors.currentPassword" id="admin-current-password-error" class="block text-xs text-rose-600">
-                    {{ displayedDialog.fieldErrors.currentPassword }}
-                  </span>
+                  <FeedbackToast v-if="displayedDialog.fieldErrors.currentPassword" id="admin-current-password-error" type="error" :source="() => (displayedDialog.fieldErrors.currentPassword) ? (displayedDialog.fieldErrors.currentPassword) : ''"></FeedbackToast>
                 </label>
 
                 <label class="block space-y-1.5">
@@ -235,9 +225,7 @@ const close = () => {
                     :aria-describedby="displayedDialog.fieldErrors.newPassword ? 'admin-new-password-error admin-password-help' : 'admin-password-help'"
                   />
                   <span id="admin-password-help" class="block text-xs text-slate-500">8-32 位，需同时包含字母和数字</span>
-                  <span v-if="displayedDialog.fieldErrors.newPassword" id="admin-new-password-error" class="block text-xs text-rose-600">
-                    {{ displayedDialog.fieldErrors.newPassword }}
-                  </span>
+                  <FeedbackToast v-if="displayedDialog.fieldErrors.newPassword" id="admin-new-password-error" type="error" :source="() => (displayedDialog.fieldErrors.newPassword) ? (displayedDialog.fieldErrors.newPassword) : ''"></FeedbackToast>
                 </label>
 
                 <label class="block space-y-1.5">
@@ -251,9 +239,7 @@ const close = () => {
                     :aria-invalid="Boolean(displayedDialog.fieldErrors.confirmPassword)"
                     :aria-describedby="displayedDialog.fieldErrors.confirmPassword ? 'admin-confirm-password-error' : undefined"
                   />
-                  <span v-if="displayedDialog.fieldErrors.confirmPassword" id="admin-confirm-password-error" class="block text-xs text-rose-600">
-                    {{ displayedDialog.fieldErrors.confirmPassword }}
-                  </span>
+                  <FeedbackToast v-if="displayedDialog.fieldErrors.confirmPassword" id="admin-confirm-password-error" type="error" :source="() => (displayedDialog.fieldErrors.confirmPassword) ? (displayedDialog.fieldErrors.confirmPassword) : ''"></FeedbackToast>
                 </label>
               </div>
             </form>

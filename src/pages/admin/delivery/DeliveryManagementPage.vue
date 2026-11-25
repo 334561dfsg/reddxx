@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import {
@@ -1571,24 +1572,7 @@ onBeforeUnmount(() => {
             @submit.prevent="saveContract"
           >
           <div class="min-h-0 flex-1 space-y-6 overflow-y-auto bg-white p-6">
-            <div
-              v-if="contractErrorItems.length"
-              :id="contractErrorSummaryId"
-              ref="contractErrorSummaryRef"
-              tabindex="-1"
-              role="alert"
-              aria-live="assertive"
-              class="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 outline-none focus:ring-2 focus:ring-rose-400"
-            >
-              <p class="font-medium">请修复以下 {{ contractErrorItems.length }} 项后再保存</p>
-              <ul class="mt-2 list-disc space-y-1 pl-5">
-                <li v-for="error in contractErrorItems" :key="error.field">
-                  <a-button type="text" html-type="button" class="text-left underline underline-offset-2" @click="focusContractField(error.field)">
-                    {{ error.message }}
-                  </a-button>
-                </li>
-              </ul>
-            </div>
+            <FeedbackToast v-if="contractErrorItems.length" :id="contractErrorSummaryId" ref="contractErrorSummaryRef" type="error" :source="() => (contractErrorItems.length) ? (contractErrorItems.map(item => item.message).join('；')) : ''"><a-button type="link" @click="focusContractField(contractErrorItems[0].field)">定位首个错误</a-button></FeedbackToast>
 
             <div class="space-y-6">
               <div
@@ -1612,7 +1596,7 @@ onBeforeUnmount(() => {
                     :aria-invalid="Boolean(contractErrors.name)"
                     :aria-describedby="contractFieldDescribedBy('name')"
                   />
-                  <p v-if="contractErrors.name" :id="contractFieldErrorId('name')" class="text-xs text-rose-600">{{ contractErrors.name }}</p>
+                  <FeedbackToast v-if="contractErrors.name" :id="contractFieldErrorId('name')" type="error" :source="() => (contractErrors.name) ? (contractErrors.name) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5">
                   <label class="text-sm text-slate-900" :for="contractFieldId('code')">合约代码 <span class="text-rose-500">*</span></label>
@@ -1627,7 +1611,7 @@ onBeforeUnmount(() => {
                     :aria-invalid="Boolean(contractErrors.code)"
                     :aria-describedby="contractFieldDescribedBy('code')"
                   />
-                  <p v-if="contractErrors.code" :id="contractFieldErrorId('code')" class="text-xs text-rose-600">{{ contractErrors.code }}</p>
+                  <FeedbackToast v-if="contractErrors.code" :id="contractFieldErrorId('code')" type="error" :source="() => (contractErrors.code) ? (contractErrors.code) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5 md:col-span-2" :aria-busy="pairOptionsLoading ? 'true' : undefined">
                   <label class="text-sm text-slate-900" :for="contractFieldId('spotSymbol')">选择交易对 <span class="text-rose-500">*</span></label>
@@ -1649,7 +1633,7 @@ onBeforeUnmount(() => {
                   </a-select>
                   <p id="delivery-contract-spot-symbol-help" class="text-xs text-slate-400" aria-live="polite">
                     <template v-if="pairOptionsLoading">正在加载可用交易对。</template>
-                    <template v-else-if="pairOptionsError">{{ pairOptionsError }}</template>
+                    <FeedbackToast v-else-if="pairOptionsError" :source="() => (pairOptionsError) ? (pairOptionsError) : ''"/>
                     <template v-else-if="selectedSpotSymbolUnavailable">当前交易对已不在可用列表中，请重新选择后保存。</template>
                     <template v-else>保存时会同步合约的基础币种和计价币种。</template>
                   </p>
@@ -1663,7 +1647,7 @@ onBeforeUnmount(() => {
                   >
                     重新加载交易对
                   </a-button>
-                  <p v-if="contractErrors.spotSymbol" :id="contractFieldErrorId('spotSymbol')" class="text-xs text-rose-600">{{ contractErrors.spotSymbol }}</p>
+                  <FeedbackToast v-if="contractErrors.spotSymbol" :id="contractFieldErrorId('spotSymbol')" type="error" :source="() => (contractErrors.spotSymbol) ? (contractErrors.spotSymbol) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5">
                   <span id="delivery-contract-status-label" class="block text-sm text-slate-900">产品状态 <span class="text-rose-500">*</span></span>
@@ -1715,7 +1699,7 @@ onBeforeUnmount(() => {
                     @wheel.prevent
                   />
                   <p id="delivery-contract-sort-help" class="text-xs text-slate-400">数字越大越靠前，必须为大于等于 0 的数字。</p>
-                  <p v-if="contractErrors.sortOrder" :id="contractFieldErrorId('sortOrder')" class="text-xs text-rose-600">{{ contractErrors.sortOrder }}</p>
+                  <FeedbackToast v-if="contractErrors.sortOrder" :id="contractFieldErrorId('sortOrder')" type="error" :source="() => (contractErrors.sortOrder) ? (contractErrors.sortOrder) : ''"></FeedbackToast>
                 </div>
               </div>
 
@@ -1750,7 +1734,7 @@ onBeforeUnmount(() => {
                   <p id="delivery-contract-template-help" class="text-xs leading-5 text-slate-400" aria-live="polite">
                     {{ selectedTemplatePolicyText }}
                   </p>
-                  <p v-if="contractErrors.templateId" :id="contractFieldErrorId('templateId')" class="text-xs text-rose-600">{{ contractErrors.templateId }}</p>
+                  <FeedbackToast v-if="contractErrors.templateId" :id="contractFieldErrorId('templateId')" type="error" :source="() => (contractErrors.templateId) ? (contractErrors.templateId) : ''"></FeedbackToast>
                 </div>
                 <article v-if="selectedTemplate" class="space-y-4 rounded border border-blue-100 bg-blue-50/30 p-4">
                   <div class="flex flex-wrap items-start justify-between gap-2">
@@ -1799,7 +1783,7 @@ onBeforeUnmount(() => {
                       @wheel.prevent
                     />
                     <p class="text-xs leading-5 text-slate-400">输入 0 表示最低买入额不限制。</p>
-                    <p v-if="contractErrors.minBuy" :id="contractFieldErrorId('minBuy')" class="text-xs text-rose-600">{{ contractErrors.minBuy }}</p>
+                    <FeedbackToast v-if="contractErrors.minBuy" :id="contractFieldErrorId('minBuy')" type="error" :source="() => (contractErrors.minBuy) ? (contractErrors.minBuy) : ''"></FeedbackToast>
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-slate-900" :for="contractFieldId('maxBuy')">最高买入额 (USDT) <span class="text-rose-500">*</span></label>
@@ -1818,7 +1802,7 @@ onBeforeUnmount(() => {
                       @wheel.prevent
                     />
                     <p class="text-xs leading-5 text-slate-400">输入 0 表示最高买入额不限制。</p>
-                    <p v-if="contractErrors.maxBuy" :id="contractFieldErrorId('maxBuy')" class="text-xs text-rose-600">{{ contractErrors.maxBuy }}</p>
+                    <FeedbackToast v-if="contractErrors.maxBuy" :id="contractFieldErrorId('maxBuy')" type="error" :source="() => (contractErrors.maxBuy) ? (contractErrors.maxBuy) : ''"></FeedbackToast>
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-slate-900" :for="contractFieldId('maxHold')">最大持仓额 (USDT) <span class="text-rose-500">*</span></label>
@@ -1837,7 +1821,7 @@ onBeforeUnmount(() => {
                       @wheel.prevent
                     />
                     <p class="text-xs leading-5 text-slate-400">输入 0 表示最大持仓额不限制。</p>
-                    <p v-if="contractErrors.maxHold" :id="contractFieldErrorId('maxHold')" class="text-xs text-rose-600">{{ contractErrors.maxHold }}</p>
+                    <FeedbackToast v-if="contractErrors.maxHold" :id="contractFieldErrorId('maxHold')" type="error" :source="() => (contractErrors.maxHold) ? (contractErrors.maxHold) : ''"></FeedbackToast>
                   </div>
                   <p id="delivery-contract-limit-help" class="text-xs text-slate-400 md:col-span-3">金额单位为 USDT；最高买入额不能小于最低买入额，最大持仓额不能小于最高买入额；当参与比较的任一字段为 0 时不做大小比较。</p>
                 </div>
@@ -1872,7 +1856,7 @@ onBeforeUnmount(() => {
                     <span class="absolute right-3 top-1.5 text-slate-400 text-sm">%</span>
                   </div>
                   <p id="delivery-contract-fee-help" class="text-xs text-slate-400">费率单位为百分比，允许 0 到 100。</p>
-                  <p v-if="contractErrors.sellFee" :id="contractFieldErrorId('sellFee')" class="text-xs text-rose-600">{{ contractErrors.sellFee }}</p>
+                  <FeedbackToast v-if="contractErrors.sellFee" :id="contractFieldErrorId('sellFee')" type="error" :source="() => (contractErrors.sellFee) ? (contractErrors.sellFee) : ''"></FeedbackToast>
                 </div>
               </div>
             </div>

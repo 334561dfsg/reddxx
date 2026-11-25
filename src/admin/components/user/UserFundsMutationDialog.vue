@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
@@ -152,7 +153,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
           </header>
 
           <div data-testid="user-funds-mutation-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
-            <p v-if="errorMessage" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ errorMessage }}</p>
+            <FeedbackToast v-if="errorMessage" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
             <p class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">{{ config.hint }}</p>
 
             <template v-if="stage === 'edit'">

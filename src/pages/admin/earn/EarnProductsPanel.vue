@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { PlusOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -47,7 +48,7 @@ function show(row) { Object.assign(form,clone(row));error.value='';open.value=tr
 async function save(){ if(busy.value)return;busy.value=true;error.value='';try{await nextTick();setEarnProductStatus(earnAdmin,form.id,form.version);notice.value='产品状态已更新。';open.value=false}catch(cause){error.value=cause.message;await nextTick();errorRef.value?.focus()}finally{busy.value=false} }
 </script>
 <template>
- <Alert v-if="notice" :message="notice" type="success" show-icon closable @close="notice=''"/>
+ <FeedbackToast v-if="notice" type="success" :source="() => (notice) ? ((notice)) : ''"></FeedbackToast>
   <EarnSearchForm name="earn-products-filters" :model="filterModel" :fields="filterFields" @search="applyFilters" @reset="resetFilters"/>
 
   <EarnAdminTable title="产品目录" v-model:page="page" :rows="rows" :columns="columns"><template #toolbar><Button type="primary" @click="edit(null)"><template #icon><PlusOutlined/></template>新增产品</Button></template><template #cell="{column,record}">
@@ -70,7 +71,7 @@ async function save(){ if(busy.value)return;busy.value=true;error.value='';try{a
    <Space v-else-if="column.key==='actions'" :size="0"><Button type="link" @click="edit(record)">编辑</Button><Button type="link" :danger="record.status==='enabled'" @click="show(record)">{{ record.status==='enabled'?'下架':'上架' }}</Button></Space>
   </template></EarnAdminTable>
  <EarnAdminModal :open="open" :title="form.status==='enabled'?'下架理财产品':'上架理财产品'" :busy="busy" :confirm-text="'确认'+(form.status==='enabled'?'下架':'上架')" :danger="form.status==='enabled'" @close="open=false" @confirm="save">
-  <div v-if="error" ref="errorRef" tabindex="-1"><Alert type="error" show-icon role="alert" :message="error"/></div>
+  <div v-if="error" ref="errorRef" tabindex="-1"><FeedbackToast  type="error" :source="() => (error)"></FeedbackToast></div>
   <div><TypographyText strong>{{ form.name }}</TypographyText><p>{{ form.status==='enabled'?'确认下架该产品？现有持仓和赎回不受影响。':'确认上架该产品？' }}</p></div>
  </EarnAdminModal>
 </template>

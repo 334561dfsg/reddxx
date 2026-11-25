@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput } from '../antd/controls.js'
 
 import { computed, ref } from 'vue'
@@ -214,9 +215,7 @@ const confirm = () => {
                 :error-id="destinationConflict ? 'transfer-to-error' : ''"
                 id-base="transfer-to"
               />
-              <p v-if="destinationConflict" id="transfer-to-error" class="mt-1 text-sm text-red-700" role="alert">
-                “从”账户和“到”账户不能相同，请重新选择“到”账户。
-              </p>
+              <FeedbackToast v-if="destinationConflict" id="transfer-to-error" type="error" :source="() => (destinationConflict) ? (([&quot; “从”账户和“到”账户不能相同，请重新选择“到”账户。 &quot;].join(''))) : ''"></FeedbackToast>
             </div>
             <div>
               <SelectOnlyCombobox
@@ -230,9 +229,7 @@ const confirm = () => {
                 id-base="transfer-coin"
                 @update:model-value="updateCoin"
               />
-              <p v-if="coinError" id="transfer-coin-error" class="mt-1 text-sm text-red-700" role="alert">
-                请选择币种。
-              </p>
+              <FeedbackToast v-if="coinError" id="transfer-coin-error" type="error" :source="() => (coinError) ? (([&quot; 请选择币种。 &quot;].join(''))) : ''"></FeedbackToast>
             </div>
 
             <div>

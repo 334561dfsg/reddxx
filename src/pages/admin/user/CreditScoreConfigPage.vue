@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import { getAllCreditScoreConfig, updateCreditScoreConfigs } from '../../../admin/mock/creditScore'
 import { CREDIT_SCORE_CONFIG_KEYS, CREDIT_SCORE_CHANGE_TYPE, CREDIT_SCORE_CHANGE_TYPE_OPTIONS } from '../../../admin/constants/creditScore'
@@ -524,15 +525,7 @@ const tabs = [
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 translate-y-1"
     >
-      <div
-        v-if="saveSuccess"
-        class="bg-emerald-50 border border-emerald-200 rounded-lg p-4 flex items-center gap-3"
-      >
-        <svg class="h-5 w-5 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-        </svg>
-        <span class="text-sm text-emerald-800 font-medium">配置已成功保存！</span>
-      </div>
+      <FeedbackToast v-if="saveSuccess" type="success" :source="() => (saveSuccess) ? ('配置已成功保存！') : ''"/>
     </Transition>
 
     <!-- 主内容区域 - 左右布局 -->
@@ -594,7 +587,7 @@ const tabs = [
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">初始分数</label>
                     <a-input type="number" min="0" :max="formData.maxScore" class="" :class="{'!border-rose-500': validationErrors.initialScore}" :value="formData.initialScore" @update:value="formData.initialScore = $event === '' ? '' : Number($event)" />
-                    <p v-if="validationErrors.initialScore" class="text-xs text-rose-600 mt-1">{{ validationErrors.initialScore }}</p>
+                    <FeedbackToast v-if="validationErrors.initialScore" type="error" :source="() => (validationErrors.initialScore) ? (validationErrors.initialScore) : ''"></FeedbackToast>
                     <p v-else class="text-xs text-slate-500 mt-1">新用户默认分数</p>
                   </div>
                 </div>
@@ -614,7 +607,7 @@ const tabs = [
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">升级到VIP1所需信用分</label>
                     <a-input type="number" min="0" :max="formData.maxScore" class="" :class="{'!border-rose-500': validationErrors.autoUpgradeVip1Score}" :value="formData.autoUpgradeVip1Score" @update:value="formData.autoUpgradeVip1Score = $event === '' ? '' : Number($event)" />
-                    <p v-if="validationErrors.autoUpgradeVip1Score" class="text-xs text-rose-600 mt-1">{{ validationErrors.autoUpgradeVip1Score }}</p>
+                    <FeedbackToast v-if="validationErrors.autoUpgradeVip1Score" type="error" :source="() => (validationErrors.autoUpgradeVip1Score) ? (validationErrors.autoUpgradeVip1Score) : ''"></FeedbackToast>
                     <p v-else class="text-xs text-slate-500 mt-1">普通用户达到此分数自动升级为VIP1</p>
                   </div>
 
@@ -647,7 +640,7 @@ const tabs = [
                   <span class="px-3 py-2 bg-blue-50 text-blue-700 font-semibold rounded-lg">+1</span>
                   <span class="text-sm text-slate-600">信用分</span>
                 </div>
-                <p v-if="validationErrors.rechargeAmount" class="text-xs text-rose-600 mt-2">{{ validationErrors.rechargeAmount }}</p>
+                <FeedbackToast v-if="validationErrors.rechargeAmount" type="error" :source="() => (validationErrors.rechargeAmount) ? (validationErrors.rechargeAmount) : ''"></FeedbackToast>
                 <p v-else class="text-xs text-slate-500 mt-2">
                   💡 例如：设置为 {{ formatNumber(100000) }}，用户充值 {{ formatNumber(500000) }} USDT 将获得 5 信用分
                 </p>
@@ -698,9 +691,7 @@ const tabs = [
                   </div>
                 </div>
 
-                <p v-if="customEarnError" class="text-xs text-rose-600 mt-2">
-                  {{ customEarnError }}
-                </p>
+                <FeedbackToast v-if="customEarnError" type="error" :source="() => (customEarnError) ? (customEarnError) : ''"></FeedbackToast>
 
                 <div v-if="earnCustomRulesDraft?.length" class="mt-4">
                   <div class="overflow-x-auto">
@@ -760,9 +751,7 @@ const tabs = [
                       </div>
                     </div>
 
-                    <p v-if="customDeductionError" class="text-xs text-rose-600 mt-2">
-                      {{ customDeductionError }}
-                    </p>
+                    <FeedbackToast v-if="customDeductionError" type="error" :source="() => (customDeductionError) ? (customDeductionError) : ''"></FeedbackToast>
 
                     <div v-if="deductionCustomRulesDraft?.length" class="mt-4">
                       <div class="overflow-x-auto">

@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {computed,shallowRef,watch} from 'vue'
 import {earnPortfolio,redeemEarnHolding} from '../../earnPortfolio'
 import {redemptionQuote} from '../../utils/mockEarnPortfolio'
@@ -43,8 +44,8 @@ function submit(){
  </template>
  <div v-else class="portfolio-redeem-confirm"><h3>{{ $t('earn.redeem.confirm.title') }}</h3><p>{{ $t('earn.redeem.confirm.body',{amount:fmt(quote.accruedShare),asset:holding.symbol}) }}</p><dl><dt>{{ $t('earn.redeem.confirm.youReceive') }}</dt><dd>{{ fmt(quote.receive) }} {{ holding.symbol }}</dd><dt>{{ $t('earn.redeem.confirm.youForfeit') }}</dt><dd class="negative">{{ fmt(quote.accruedShare) }} {{ holding.symbol }}</dd></dl></div>
 </template>
-<div v-else-if="done" class="portfolio-redeem-success" role="status"><Icon name="check" green/><h3>{{ $t('earn.redeem.success.title') }}</h3><p>{{ $t('earn.redeem.success.received') }} {{ fmt(result.amount+result.reward) }} {{ result.symbol }}</p><RouterLink class="earn-accent" :to="path('/earn/my-earnings')+'?tab=redemptions'" @click="emit('close')">{{ $t('earn.redeem.success.viewRedemptions') }}</RouterLink></div>
-<p v-if="error" id="redeem-error" class="form-error" role="alert">{{ $t('earn.redeem.errors.'+error.error,{amount:fmt(error.amount),asset:holding?.symbol}) }}</p>
+<div v-else-if="done" class="portfolio-redeem-success"><FeedbackToast type="success" :source="() => $t('earn.redeem.success.title')"/><p>{{ $t('earn.redeem.success.received') }} {{ fmt(result.amount+result.reward) }} {{ result.symbol }}</p><RouterLink class="earn-accent" :to="path('/earn/my-earnings')+'?tab=redemptions'" @click="emit('close')">{{ $t('earn.redeem.success.viewRedemptions') }}</RouterLink></div>
+<FeedbackToast v-if="error" id="redeem-error" type="error" :source="() => (error) ? ($t('earn.redeem.errors.'+error.error,{amount:fmt(error.amount),asset:holding?.symbol})) : ''"></FeedbackToast>
 </form></template>
 <style scoped>
 .portfolio-redeem dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin:24px 0;font-size:14px}.portfolio-redeem dt{color:#fff6}.portfolio-redeem dd{text-align:right;margin:0;overflow-wrap:anywhere;font:500 13px/20px 'IBM Plex Mono',monospace}.portfolio-redeem-modes{display:flex;flex-wrap:wrap;gap:20px;margin:24px 0}.portfolio-redeem-modes label{display:flex;align-items:center;gap:8px;min-height:36px;cursor:pointer}.portfolio-redeem-modes input{accent-color:var(--nt-accent);min-height:0;margin:0}.portfolio-redeem-field{margin:16px 0}.portfolio-redeem-field>div{display:flex;align-items:center;background:#202226;border-radius:8px;padding-right:12px}.portfolio-redeem-field input{width:100%;min-width:0}.portfolio-redeem-field span{font-size:12px;color:#fff6}.portfolio-redeem-warning{padding:12px 16px;border:1px solid #e34a6840;background:#e34a680d;color:#ff92a6;border-radius:12px;margin-bottom:16px}.portfolio-redeem-confirm{margin-top:24px}.portfolio-redeem-confirm h3{font-size:18px;margin-bottom:12px}.portfolio-redeem-confirm p{color:#fff9;line-height:1.7}.portfolio-redeem-success{display:grid;gap:16px;justify-items:center;text-align:center;padding:24px 0}.portfolio-redeem .form-error{margin-top:16px}

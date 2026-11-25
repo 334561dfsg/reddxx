@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {computed,ref,watch} from 'vue'
 import {session} from '../../session'
 import {tradeProducts,selectProductRecords} from '../../utils/tradeProducts'
@@ -16,7 +17,7 @@ watch(()=>props.state.record,()=>notice.value='')
 <template>
 <section class="terminal-panel records-panel" :aria-label="$t('trade.pages.records')">
   <div class="record-tabs"><button v-for="tab in tabs" :key="tab.id" :class="{active:selected.id===tab.id}" :aria-pressed="selected.id===tab.id" @click="state.record=tab.id">{{ $t(tab.label) }}</button></div>
-  <p v-if="notice" role="status" class="record-notice">{{ notice }}</p>
+  <FeedbackToast v-if="notice" type="success" :source="() => (notice) ? (notice) : ''"/>
   <div v-if="!rows.length" class="empty" role="status">{{ $t('trade.pages.emptyRecords') }}</div>
   <TradeHistory v-else-if="historyBuckets.includes(selected.bucket)" :key="selected.id" v-model="page" :rows="rows" :bucket="selected.bucket"/>
   <CurrentTrades v-else :key="selected.id" :rows="rows" :bucket="selected.bucket" @complete="notice=$event"/>

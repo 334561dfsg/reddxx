@@ -3,6 +3,7 @@ let selectOnlyComboboxSequence = 0
 </script>
 
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
 import {
   registerDialogPopupHost,
@@ -476,12 +477,8 @@ onUnmounted(() => {
       <span v-else class="shrink-0 text-xs text-gray-500">{{ readonly ? '只读' : '选择' }}</span>
     </div>
 
-    <p v-if="orphaned" :id="orphanedId" data-testid="select-only-combobox-orphaned" role="alert" class="mt-1 text-sm text-red-700">
-      所选项“{{ displayText }}”已失效，请重新选择。
-    </p>
-    <p v-if="hasDuplicateOptions" :id="configErrorId" data-testid="select-only-combobox-config-error" role="alert" class="mt-1 text-sm text-red-700">
-      选择控件配置无效：选项值“{{ String(duplicateOption?.value) }}”重复，请联系管理员。
-    </p>
+    <FeedbackToast v-if="orphaned" :id="orphanedId" data-testid="select-only-combobox-orphaned" type="error" :source="() => (orphaned) ? (([&quot; 所选项“&quot;,String((displayText) ?? ''),&quot;”已失效，请重新选择。 &quot;].join(''))) : ''"></FeedbackToast>
+    <FeedbackToast v-if="hasDuplicateOptions" :id="configErrorId" data-testid="select-only-combobox-config-error" type="error" :source="() => (hasDuplicateOptions) ? (([&quot; 选择控件配置无效：选项值“&quot;,String((String(duplicateOption?.value)) ?? ''),&quot;”重复，请联系管理员。 &quot;].join(''))) : ''"></FeedbackToast>
 
     <Teleport :to="portalTarget">
       <Transition name="select-only-combobox" @after-leave="handleAfterLeave">

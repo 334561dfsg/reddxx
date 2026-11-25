@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, onUnmounted, ref, watch } from 'vue'
 import FrontSearchablePopoverPicker from '../../../components/front/FrontSearchablePopoverPicker.vue'
 import SecurityCheckDialog from '../../../components/front/SecurityCheckDialog.vue'
@@ -331,7 +332,7 @@ const labelBase =
       </div>
 
       <div class="max-lg:mt-1 space-y-2">
-        <p v-if="submitError" class="text-xs font-medium text-amber-200/90">{{ submitError }}</p>
+        <FeedbackToast v-if="submitError" type="error" :source="() => (submitError) ? (submitError) : ''"/>
         <button
           type="button"
           class="w-full rounded-xl bg-lime-400 py-3 text-base font-semibold text-black transition hover:bg-lime-300 active:scale-[0.99] [-webkit-tap-highlight-color:transparent] sm:py-2.5 sm:text-sm lg:w-auto lg:min-w-[200px] lg:rounded-lg lg:px-8 lg:py-3 lg:text-base"

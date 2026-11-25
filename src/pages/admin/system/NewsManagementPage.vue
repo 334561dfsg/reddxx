@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onMounted, ref } from 'vue'
 import {
   DEFAULT_SITE_CONFIG,
@@ -625,9 +626,7 @@ onMounted(load)
                   <p id="front-news-image-help" class="mt-2 text-xs leading-5 text-slate-500">
                     用于首页首条新闻卡片展示，支持 JPG、PNG、WebP，建议 16:9 横图，单张不超过 2MB。
                   </p>
-                  <p v-if="formImageError" id="front-news-image-error" class="mt-1 text-xs leading-5 text-red-600" role="alert">
-                    {{ formImageError }}
-                  </p>
+                  <FeedbackToast v-if="formImageError" id="front-news-image-error" type="error" :source="() => (formImageError) ? (formImageError) : ''"></FeedbackToast>
                 </div>
                 <div>
                   <label id="front-news-enabled-label" class="mb-1.5 block text-sm font-medium text-slate-700">状态</label>

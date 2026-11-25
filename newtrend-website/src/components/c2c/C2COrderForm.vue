@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {computed,ref,watch} from 'vue'
 import Coin from './C2CCoin.vue'
 import {formatQuote,quoteAmount} from '../../utils/c2cQuotes'
@@ -38,11 +39,11 @@ function submit(){
  <div class="c2c-pills c2c-mode" role="group" :aria-label="$t('c2c.order.amountModeAsset')+' / '+$t('c2c.order.amountModeFiat')"><button type="button" :class="{active:mode==='asset'}" :aria-pressed="mode==='asset'" @click="changeMode('asset')">{{ $t('c2c.order.amountModeAsset') }}</button><button type="button" :class="{active:mode==='fiat'}" :aria-pressed="mode==='fiat'" @click="changeMode('fiat')">{{ $t('c2c.order.amountModeFiat') }}</button></div>
  <label for="c2c-amount">{{ $t(mode==='asset'?'c2c.order.assetAmount':'c2c.order.fiatAmount',{asset:quote.symbol,fiat:'USDT'}) }}</label>
  <div class="c2c-amount-field"><input id="c2c-amount" v-model="amount" type="number" inputmode="decimal" min="0" step="any" :disabled="completed" :placeholder="$t(mode==='asset'?'c2c.order.assetAmountPlaceholder':'c2c.order.fiatAmountPlaceholder')" :aria-invalid="Boolean(amount&&result.error)" aria-describedby="c2c-amount-feedback"/><span><Coin :symbol="unit"/>{{ unit }}</span></div>
- <div id="c2c-amount-feedback"><p v-if="amount&&result.error" class="c2c-error" role="alert">{{ $t(result.error) }}</p><div v-else-if="Number(amount)>0" class="c2c-estimate"><span>{{ $t(side==='sell'?'c2c.order.estimatedReceive':mode==='asset'?'c2c.order.estimatedPay':'c2c.order.estimatedReceive') }}</span><strong>{{ formatQuote(mode==='asset'?result.total:result.quantity) }} {{ mode==='asset'?'USDT':quote.symbol }}</strong></div></div>
+ <div id="c2c-amount-feedback"><FeedbackToast v-if="amount&&result.error" type="error" :source="() => (amount&amp;&amp;result.error) ? ($t(result.error)) : ''"></FeedbackToast><div v-else-if="Number(amount)>0" class="c2c-estimate"><span>{{ $t(side==='sell'?'c2c.order.estimatedReceive':mode==='asset'?'c2c.order.estimatedPay':'c2c.order.estimatedReceive') }}</span><strong>{{ formatQuote(mode==='asset'?result.total:result.quantity) }} {{ mode==='asset'?'USDT':quote.symbol }}</strong></div></div>
  <div v-if="side==='sell'" class="c2c-payout-field"><label for="c2c-payout">{{ $t('c2c.order.payoutAccount') }}</label><select v-if="accounts.length" id="c2c-payout" v-model="accountId" :disabled="completed" required><option value="" disabled>{{ $t('c2c.order.payoutAccountPlaceholder') }}</option><option v-for="a in accounts" :key="a.id" :value="a.id">{{ a.bankName }} · {{ a.accountName }} · {{ a.accountNumber }}</option></select><p v-else class="muted">{{ $t('c2c.order.payoutAccountEmpty',{fiat:'USDT'}) }}</p><RouterLink class="c2c-text-button" :to="path('/c2c/payment-accounts')">{{ $t(accounts.length?'c2c.order.payoutAccountManage':'c2c.order.payoutAccountEmptyCta') }}</RouterLink></div>
  <div class="c2c-agreement"><label><input v-model="agreed" type="checkbox" :disabled="completed"/>{{ $t('c2c.order.agreementCheckbox') }}</label><button type="button" @click="agreement">{{ $t('c2c.order.agreementLink') }}</button></div>
- <p v-if="error" class="c2c-error" role="alert">{{ $t(error) }}</p>
- <p v-if="completed" class="c2c-success" role="status">{{ $t('overlay.ui.demoCompletedNoRealTransactionWasSent') }}</p>
+ <FeedbackToast v-if="error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
+ <FeedbackToast v-if="completed" type="success" :source="() => (completed) ? ($t('overlay.ui.demoCompletedNoRealTransactionWasSent')) : ''"/>
  <button class="c2c-submit" :class="{sell:side==='sell'}" :disabled="!agreed||Boolean(result.error)||completed||(side==='sell'&&!accounts.some(a=>a.id===accountId))">{{ $t(completed?'assets.statusCompleted':submitLabel) }}</button>
 <button v-if="completed" type="button" class="c2c-text-button" @click="resetOrder">{{ $t('c2c.order.newOrder') }}</button>
 <button v-if="orderId" class="c2c-text-button" type="button" @click="openModal('c2c-detail','c2c.detail.title',{id:orderId})">{{ $t('c2c.order.viewOrder') }}</button>

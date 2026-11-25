@@ -10,10 +10,12 @@ const stubComponentUrl = 'data:text/javascript;base64,' + Buffer.from(
 ).toString('base64')
 
 const resolveImport = (specifier, filename, vueImports) => {
+  if (vueImports[specifier]) return vueImports[specifier]
   if (!specifier.startsWith('.')) return import.meta.resolve(specifier)
 
   const resolved = resolve(dirname(filename), specifier)
   if (vueImports[resolved]) return vueImports[resolved]
+  if (resolved.endsWith('/src/shared/feedback/FeedbackToast.vue')) return loadVueSfcModuleUrl(resolved, {vueImports: {'ant-design-vue': pathToFileURL(resolve('test/helpers/feedbackAntStub.js')).href}})
   if (extname(resolved) === '.vue') return vueImports[resolved] || stubComponentUrl
   if (!extname(resolved) && existsSync(`${resolved}.js`)) {
     return pathToFileURL(`${resolved}.js`).href
@@ -196,6 +198,15 @@ const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
         if (candidate === target) found = true
       })
       return found
+    },
+    closest(selector) {
+      let candidate = node
+      while (candidate) {
+        if (selector.includes('[role="dialog"]') && candidate.getAttribute?.('role') === 'dialog') return candidate
+        if (selector.includes('dialog[open]') && candidate.tag === 'dialog' && candidate.hasAttribute('open')) return candidate
+        candidate = candidate.parent
+      }
+      return null
     },
     querySelector(selector) {
       let match = null

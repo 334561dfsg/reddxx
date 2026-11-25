@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, AdminRadio, AdminSelect, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
@@ -123,7 +124,7 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
           </header>
 
           <div data-testid="user-withdraw-flow-limit-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
-            <p v-if="errorMessage" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ errorMessage }}</p>
+            <FeedbackToast v-if="errorMessage" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
             <div class="grid gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm sm:grid-cols-2">
               <div class="flex items-center justify-between gap-3"><span class="text-slate-500">当前状态</span><strong class="text-slate-900">{{ statusText }}</strong></div>
               <div class="flex items-center justify-between gap-3"><span class="text-slate-500">流水范围</span><strong class="text-slate-900">{{ currentFlowScopeLabel }}</strong></div>

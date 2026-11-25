@@ -7,7 +7,8 @@
     "dev": "vite",
     "test": "node --test",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:feedback": "node scripts/check-feedback.mjs"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",

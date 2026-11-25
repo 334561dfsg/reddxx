@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminRadio, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
@@ -65,7 +66,7 @@ watch(() => [props.visible, props.review?.id], ([visible]) => { if (visible) res
           </header>
 
           <div data-testid="user-credit-review-decision-body" class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5">
-            <p v-if="errorMessage" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ errorMessage }}</p>
+            <FeedbackToast v-if="errorMessage" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
             <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
               <dl class="grid grid-cols-[5rem_1fr] gap-y-2"><dt class="text-slate-500">信用分</dt><dd class="font-semibold text-slate-900">{{ review?.beforeScore }} → {{ review?.proposedScore }} <span :class="review?.delta >= 0 ? 'text-emerald-700' : 'text-rose-700'">({{ review?.delta >= 0 ? '+' : '' }}{{ review?.delta }})</span></dd><dt class="text-slate-500">申请原因</dt><dd class="break-words text-slate-700">{{ review?.reason || '—' }}</dd><dt class="text-slate-500">申请人</dt><dd class="text-slate-700">{{ review?.applicantName || review?.applicantId || '—' }}</dd><dt class="text-slate-500">申请时间</dt><dd class="text-slate-700">{{ formatTime(review?.appliedAt) }}</dd></dl>
             </div>

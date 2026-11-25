@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import CrossPlatformFloatNav from '../../components/CrossPlatformFloatNav.vue'
@@ -109,7 +110,7 @@ async function submit() {
             placeholder="请输入 6 位验证码"
           />
         </div>
-        <p v-if="err" role="alert" class="text-sm text-rose-300">{{ err }}</p>
+        <FeedbackToast v-if="err" type="error" :source="() => (err) ? (err) : ''"></FeedbackToast>
         <button
           type="submit"
           class="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:bg-emerald-500 disabled:opacity-50"

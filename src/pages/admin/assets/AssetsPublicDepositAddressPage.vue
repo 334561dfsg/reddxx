@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { nativeControl } from '../../../admin/components/antd/controls.js'
 import { computed, reactive, ref } from 'vue'
 import { publicDepositAddressRepository } from '../../../admin/repositories/publicDepositAddressRepository.js'
@@ -462,7 +463,7 @@ async function copyAddress(row) {
             <a-checkbox v-model:checked="form.enabled" class="w-5 text-slate-900" />
           </label>
 
-          <p v-if="formError" class="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{{ formError }}</p>
+          <FeedbackToast v-if="formError" type="error" :source="() => (formError) ? (formError) : ''"></FeedbackToast>
           </div>
 
           <footer class="shrink-0 flex justify-end gap-3 border-t border-slate-100 px-6 py-4">

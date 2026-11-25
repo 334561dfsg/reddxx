@@ -1,3 +1,4 @@
+import {validateEligibility} from '../../shared/lending/eligibility.js'
 import { earnTerms } from '../../../newtrend-website/src/utils/earnProducts.js'
 import { createEarnPortfolio, earnPrices } from '../../../newtrend-website/src/utils/mockEarnPortfolio.js'
 
@@ -29,6 +30,7 @@ export function createEarnAdminState(now = Date.now()) {
     ['usdt','USDT',0,.0123,10,20000000], ['usdc','USDC',0,.0115,10,10000000],
     ['eth','ETH',0,.006,.01,5000], ['btc','BTC',0,.0049,.001,500],
   ].map(([id,symbol,days,rate,min,quota],index) => ({
+    minVerificationLevel:'none',minVipLevel:0,
     id, name: `${symbol} ${days ? days + '天定期理财' : '活期理财'}`, symbol, days, rate, dailyRateMin: rate, dailyRateMax: rate, min, quota,
     apy: earnTerms[id].apy, max: earnTerms[id].max, perUser: earnTerms[id].perUser,
     initialSubscribed: 0, subscribed: earnTerms[id].subscribed, hot: Boolean(earnTerms[id].hot),
@@ -61,6 +63,7 @@ export function createEarnAdminState(now = Date.now()) {
   return { products, ...portfolio, logs: [{ id: 'earn-log-initial', at: now-DAY, operator: '运营管理员', action: '初始化产品', target: '理财产品目录', reason: '创建活期和定期产品配置', before: '—', after: '8 个产品' }] }
 }
 export function validateProduct(product) {
+  try{validateEligibility({minVerificationLevel:'none',minVipLevel:0,...product})}catch{throw new Error('请选择有效的最低认证等级和最低 VIP 等级。')}
   if (typeof product.redemptionReviewRequired !== 'boolean') throw new Error('请设置赎回是否需要人工审核。')
   if (!product.name?.trim()) throw new Error('请填写产品名称。')
   if (!currencies.includes(product.symbol)) throw new Error('请选择支持的申购币种。')
@@ -82,7 +85,7 @@ function log(state, action, target, reason, before, after, now, operator = '运�
 }
 export function saveEarnProduct(state, input, now = Date.now()) {
   const previous = state.products.find(row => row.id === input.id)
-  input = {...input, subscribed:previous?.subscribed??0}
+  input = {minVerificationLevel:'none',minVipLevel:0,...input, subscribed:previous?.subscribed??0}
   validateProduct(input)
   if (previous && previous.version !== input.version) throw new Error('产品已更新，请关闭后重新打开。')
   if (previous && (previous.symbol !== input.symbol || previous.days !== Number(input.days))) throw new Error('已有产品的币种和期限不可变更，请新建产品。')

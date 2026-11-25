@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {reactive,computed,ref,watch} from 'vue'
 import {c2cState,saveAccount} from '../../utils/c2cState'
 const props=defineProps({account:Object})
@@ -16,5 +17,5 @@ function submit(){if(!valid.value||saved.value)return;try{saveAccount(c2cState,d
  <label>{{ $t('c2c.accounts.form.bankName') }}<input v-model="draft.bankName" required maxlength="100" :placeholder="$t('c2c.accounts.form.bankNamePlaceholder')"/></label>
  <div class="c2c-form-columns"><label v-for="key in ['branch','swiftCode','routingNumber','phone']" :key="key">{{ $t('c2c.accounts.form.'+key) }}<input v-model="draft[key]" maxlength="100"/></label></div>
  <label v-for="key in ['bankAddress','accountAddress','remark']" :key="key">{{ $t('c2c.accounts.form.'+key) }}<input v-model="draft[key]" maxlength="255"/></label>
- <p v-if="error" class="c2c-error" role="alert">{{ $t(error) }}</p>
+ <FeedbackToast v-if="error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
 </form></template>

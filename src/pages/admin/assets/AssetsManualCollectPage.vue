@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, ref, watch } from 'vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import { ASSET_WALLET_STATUS } from '../../../admin/constants/assets'
@@ -240,7 +241,7 @@ const handleMfaVerify = async (code) => {
                 {{ loading ? '加载中...' : '加载钱包余额' }}
               </a-button>
               <p v-if="lastLoadedAt" class="text-xs text-slate-500">最近加载时间：{{ lastLoadedAt }}</p>
-              <p v-if="loadError" class="text-xs text-rose-600">{{ loadError }}，请重试。</p>
+              <FeedbackToast v-if="loadError" type="error" :source="() => (loadError) ? (([String((loadError) ?? ''),&quot;，请重试。&quot;].join(''))) : ''"></FeedbackToast>
             </div>
           </div>
         </article>
@@ -289,7 +290,6 @@ const handleMfaVerify = async (code) => {
         </div>
 
         <div v-else-if="loadError" class="p-8 text-center text-sm text-slate-500">
-          <p>钱包数据加载失败</p>
           <a-button html-type="button" class="mt-3 border border-slate-300 text-xs" @click="loadWallets">重试加载</a-button>
         </div>
 

@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton } from '../antd/controls.js'
 
 import { ref, onBeforeUnmount } from 'vue'
@@ -57,7 +58,7 @@ const copyDelivery = async () => {
       </AdminButton>
     </div>
 
-    <p v-if="error" class="mt-3 rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm text-rose-700" role="alert">{{ error }}</p>
+    <FeedbackToast v-if="error" type="error" :source="() => (error) ? (error) : ''"></FeedbackToast>
 
     <div class="mt-3 rounded-lg border border-emerald-200 bg-white p-3" :aria-label="`${recipient}账号信息发送区域`">
       <pre class="whitespace-pre-wrap break-words" :class="textClass">{{ delivery?.message }}</pre>

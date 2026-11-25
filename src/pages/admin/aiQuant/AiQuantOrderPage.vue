@@ -5,7 +5,7 @@
 			<p class="mt-1 text-sm text-slate-500">查看用户订单、收益状态及订单详情；收益调整在订单行或详情中发起，强制赎回在订单行发起</p>
 		</header>
 
-		<a-alert v-if="redemptionNotice" type="success" show-icon :message="redemptionNotice" role="status" />
+		<FeedbackToast v-if="redemptionNotice" type="success" :source="() => (redemptionNotice) ? ((redemptionNotice)) : ''"></FeedbackToast>
 
 		<article class="rounded-xl border border-slate-200 bg-white">
 			<div class="space-y-4 border-b border-slate-200 p-4">
@@ -494,6 +494,7 @@
 </template>
 
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { ref, shallowRef, reactive, computed, nextTick, onMounted } from 'vue'
 import { ORDER_STATUS, orderStatusMeta, vipLevelMeta, VIP_LEVEL } from '../../../admin/constants/aiQuant'
 import { getAiQuantAdminOrdersSnapshot } from '../../../admin/state/aiQuantOrders'

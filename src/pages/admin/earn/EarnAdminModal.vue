@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { Alert, Button, Modal, Space } from 'ant-design-vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { useDialogLifecycle } from '../../../admin/composables/useDialogLifecycle.js'
-const props = defineProps({ open: Boolean, title: String, dirty: Boolean, busy: Boolean, confirmText: String, danger: Boolean })
+const props = defineProps({ open: Boolean, title: String, width: {type:Number,default:760}, dirty: Boolean, busy: Boolean, confirmText: String, danger: Boolean })
 const emit = defineEmits(['close','confirm','closed'])
 const dialogRef = ref(null), cancelRef = ref(null), discard = ref(false)
 let allowDiscard = false, timer
@@ -22,11 +22,11 @@ function discardAndClose() { allowDiscard = true; close() }
 async function afterClose() { if (await onAfterLeave()) emit('closed') }
 </script>
 <template>
- <Modal :open="open" centered :width="760" :closable="false" :mask-closable="false" :keyboard="false" :focus-trigger-after-close="false" :z-index="layerStyle.zIndex" :destroy-on-close="true" :wrap-props="{'aria-modal':true}" wrap-class-name="earn-admin-modal" transition-name="earn-admin-motion" mask-transition-name="earn-admin-mask" :after-close="afterClose" @cancel="close">
+ <Modal :open="open" centered :width="width" :closable="false" :mask-closable="false" :keyboard="false" :focus-trigger-after-close="false" :z-index="layerStyle.zIndex" :destroy-on-close="true" :wrap-props="{'aria-modal':true}" wrap-class-name="earn-admin-modal" transition-name="earn-admin-motion" mask-transition-name="earn-admin-mask" :after-close="afterClose" @cancel="close">
   <template #modalRender="{originVNode}"><div ref="dialogRef" :aria-busy="busy"><component :is="originVNode"/></div></template>
   <template #title><div class="earn-modal-title"><span>{{ title }}</span><Button type="text" aria-label="关闭" :disabled="busy" @click="close"><CloseOutlined/></Button></div></template>
   <div class="earn-modal-body"><Alert v-if="discard" type="warning" show-icon message="有未保存的内容，确定放弃吗？"/><slot/></div>
-  <template #footer><div class="earn-modal-footer"><Space :size="8" wrap><template v-if="discard"><Button @click="discard=false">继续编辑</Button><Button danger @click="discardAndClose">放弃修改并关闭</Button></template><template v-else><Button ref="cancelRef" :disabled="busy" @click="close">{{ confirmText?'取消':'关闭' }}</Button><Button v-if="confirmText" type="primary" :danger="danger" :loading="busy" :disabled="phase!=='open'" @click="emit('confirm')">{{ confirmText }}</Button></template></Space></div></template>
+  <template #footer><div class="earn-modal-footer"><Space :size="8" wrap><template v-if="discard"><Button @click="discard=false">继续编辑</Button><Button danger @click="discardAndClose">放弃修改并关闭</Button></template><template v-else><slot name="actions"/><Button ref="cancelRef" :disabled="busy" @click="close">{{ confirmText?'取消':'关闭' }}</Button><Button v-if="confirmText" type="primary" :danger="danger" :loading="busy" :disabled="phase!=='open'" @click="emit('confirm')">{{ confirmText }}</Button></template></Space></div></template>
  </Modal>
 </template>
 <style>

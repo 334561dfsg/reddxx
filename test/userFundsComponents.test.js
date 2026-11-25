@@ -70,7 +70,7 @@ test('funds mutation dialog previews and confirms all three operation modes', as
   assert.match(source, /reason: form\.reason\.trim\(\)/)
   assert.doesNotMatch(source, /v-if="mode === 'deduct'"/)
   assert.match(source, /returnFocus: submitButtonRef\.value/)
-  assert.match(source, /role="alert"/)
+  assert.match(source, /<FeedbackToast/)
 })
 
 test('funds mutation dialog uses required open, close, and reduced-motion timings', async () => {
@@ -119,7 +119,7 @@ test('withdraw flow limit dialog supports setting and removing a layered rule', 
   assert.match(source, /form\.expiresAt = ''/)
   assert.match(source, /提交并验证/)
   assert.match(source, /解除限制/)
-  assert.match(source, /role="alert"/)
+  assert.match(source, /<FeedbackToast/)
 })
 
 test('withdraw flow limit dialog preserves fixed-frame and motion requirements', async () => {

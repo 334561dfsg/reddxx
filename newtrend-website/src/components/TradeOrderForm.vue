@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../src/shared/feedback/FeedbackToast.vue'
 import {computed,reactive,ref,watch} from 'vue'
 import {session,openModal} from '../session'
 import {fmt} from '../data'
@@ -72,7 +73,7 @@ function submit(side){
 <dl class="form-summary"><dt class="positive">{{ $t('trade.form.maxOpen') }}</dt><dd class="positive">{{ fmt(maxOpen) }} USDT</dd><dt>{{ $t('trade.form.initialMargin') }}</dt><dd>{{ fmt(futureEstimate.margin) }} USDT</dd><dt>{{ $t('trade.fee') }}</dt><dd>{{ fmt(futureEstimate.fee) }} USDT</dd></dl>
 <label class="check-label"><input v-model="futures.stops" type="checkbox"/>{{ $t('trade.form.stops') }}</label>
 <template v-if="futures.stops"><label>{{ $t('trade.tpPrice') }} (USDT)<input class="trade-field" v-model="futures.tp" inputmode="decimal" :placeholder="$t('trade.enterPrice')"/></label><label>{{ $t('trade.slPrice') }} (USDT)<input class="trade-field" v-model="futures.sl" inputmode="decimal" :placeholder="$t('trade.enterPrice')"/></label></template>
-<p v-if="errors.futures" id="futures-form-error" role="alert" class="form-error">{{ $t(errors.futures) }}</p>
+<FeedbackToast v-if="errors.futures" id="futures-form-error" type="error" :source="() => (errors.futures) ? ($t(errors.futures)) : ''"></FeedbackToast>
 </template>
 <template v-else-if="mode==='options'">
 <div class="direction-tabs"><button v-for="side in ['buy','sell']" :key="side" :class="{active:options.side===side,buy:side==='buy',sell:side==='sell'}" :aria-pressed="options.side===side" @click="options.side=side">{{ $t(side==='buy'?'trade.buyLong':'trade.sellShort') }}</button></div>
@@ -81,7 +82,7 @@ function submit(side){
 <label>{{ $t('trade.quantity') }} (USDT)<input class="trade-field" v-model="options.amount" inputmode="decimal" :placeholder="$t('trade.enterQuantity')" :aria-invalid="!!errors.options" :aria-describedby="errors.options?'options-form-error':undefined" @input="errors.options=''"/></label>
 <div class="percentages"><button v-for="n in [25,50,75,100]" :key="n" @click="percentage('options',n)">{{ n }}%</button></div>
 <dl class="form-summary"><dt>{{ $t('trade.expectedReturn') }}</dt><dd class="positive">{{ options.amount?'+'+fmt(optionEstimate.expected)+' USDT':'—' }}</dd></dl>
-<p v-if="errors.options" id="options-form-error" role="alert" class="form-error">{{ $t(errors.options) }}</p>
+<FeedbackToast v-if="errors.options" id="options-form-error" type="error" :source="() => (errors.options) ? ($t(errors.options)) : ''"></FeedbackToast>
 </template>
 <template v-else>
 <div class="direction-tabs"><button v-for="side in ['buy','sell']" :key="side" :class="[side,{active:(spot.side||'buy')===side}]" :aria-pressed="(spot.side||'buy')===side" @click="spot.side=side;notice=''">{{ $t('trade.'+side) }}</button></div>
@@ -92,12 +93,12 @@ function submit(side){
 <div class="percentages"><button v-for="n in [25,50,75,100]" :key="n" @click="percentage('spot',n,side)">{{ n }}%</button></div>
 
 <dl class="form-summary"><dt>{{ $t('trade.available') }}</dt><dd>{{ fmt(side==='buy'?cash:holdings) }} {{ side==='buy'?'USDT':base }}</dd><dt>{{ $t(side==='buy'?'trade.form.canBuy':'trade.form.canSell') }}</dt><dd>{{ spotPrice(side)>0?fmt(side==='buy'?cash/(1+tradeFeeRate)/spotPrice(side):holdings*spotPrice(side)):'—' }} {{ side==='buy'?base:'USDT' }}</dd></dl>
-<p v-if="errors[side]" :id="'spot-'+side+'-error'" role="alert" class="form-error">{{ $t(errors[side]) }}</p>
+<FeedbackToast v-if="errors[side]" :id="'spot-'+side+'-error'" type="error" :source="() => (errors[side]) ? ($t(errors[side])) : ''"></FeedbackToast>
 </section>
 </template>
 
 </div>
-<footer class="form-actions"><p v-if="notice" role="status" class="positive">{{ notice }}</p><div :class="{'action-pair':mode==='futures'}"><button v-if="mode==='options'" :class="options.side==='buy'?'buy':'sell'" @click="submit(options.side)">{{ $t(options.side==='buy'?'trade.buyLong':'trade.sellShort') }}</button><button v-else-if="mode==='spot'" :class="spot.side==='sell'?'sell':'buy'" @click="submit(spot.side||'buy')">{{ $t(spot.side==='sell'?'trade.sell':'trade.buy') }}</button><template v-else><button class="buy" @click="submit('buy')">{{ $t(mode==='spot'?'trade.buy':'trade.buyLong') }}</button><button class="sell" @click="submit('sell')">{{ $t(mode==='spot'?'trade.sell':'trade.sellShort') }}</button></template></div></footer>
+<footer class="form-actions"><FeedbackToast v-if="notice" type="success" :source="() => (notice) ? (notice) : ''"/><div :class="{'action-pair':mode==='futures'}"><button v-if="mode==='options'" :class="options.side==='buy'?'buy':'sell'" @click="submit(options.side)">{{ $t(options.side==='buy'?'trade.buyLong':'trade.sellShort') }}</button><button v-else-if="mode==='spot'" :class="spot.side==='sell'?'sell':'buy'" @click="submit(spot.side||'buy')">{{ $t(spot.side==='sell'?'trade.sell':'trade.buy') }}</button><template v-else><button class="buy" @click="submit('buy')">{{ $t(mode==='spot'?'trade.buy':'trade.buyLong') }}</button><button class="sell" @click="submit('sell')">{{ $t(mode==='spot'?'trade.sell':'trade.sellShort') }}</button></template></div></footer>
 </div></template>
 <style scoped>
 .spot-amount-field{position:relative;display:block}.spot-amount-field input{padding-right:65px}.spot-amount-field>span{position:absolute;right:12px;top:50%;transform:translateY(-50%)}

@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { Alert, Button, Descriptions, DescriptionsItem, Modal } from 'ant-design-vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
@@ -71,7 +72,7 @@ async function submit() {
         <DescriptionsItem label="订单本金">{{ snapshot.principal }} {{ snapshot.currency }}</DescriptionsItem>
         <DescriptionsItem label="累计收益">{{ snapshot.accumulatedYield }} {{ snapshot.currency }}</DescriptionsItem>
       </Descriptions>
-      <Alert v-if="error" role="alert" type="error" show-icon :message="error" />
+      <FeedbackToast v-if="error" type="error" :source="() => (error) ? ((error)) : ''"></FeedbackToast>
 
     </div>
     <template #footer>

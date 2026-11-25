@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, nativeControl } from './antd/controls.js'
 
 import { useMfaVerification } from '../composables/useMfaVerification.js'
@@ -120,17 +121,7 @@ const {
                 />
               </label>
 
-              <p
-                v-if="displayedDialog.errorMessage"
-                id="mfa-error"
-                ref="errorSummary"
-                tabindex="-1"
-                role="alert"
-                aria-live="assertive"
-                class="mt-2 text-center text-sm text-rose-600"
-              >
-                {{ displayedDialog.errorMessage }}
-              </p>
+              <FeedbackToast v-if="displayedDialog.errorMessage" id="mfa-error" ref="errorSummary" type="error" :source="() => (displayedDialog.errorMessage) ? (displayedDialog.errorMessage) : ''"></FeedbackToast>
 
               <p id="mfa-help" class="mt-3 text-center text-xs text-slate-500">
                 请输入您的 Google Authenticator 或其他验证器应用生成的 6 位验证码

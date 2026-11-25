@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, reactive, ref } from 'vue'
 import {
   USER_AUDIT_ACTIONS,
@@ -228,9 +229,7 @@ const goToPage = (page) => {
         <p class="text-sm text-slate-500">第 {{ queryResult.page }} / {{ queryResult.totalPages }} 页</p>
       </div>
 
-      <div v-if="queryError" class="p-8 text-center text-sm text-red-600">
-        {{ queryError }}
-      </div>
+      <FeedbackToast v-if="queryError" type="error" :source="() => (queryError) ? (queryError) : ''"></FeedbackToast>
       <div v-else-if="!queryResult.rows.length" class="p-8 text-center text-sm text-slate-500">
         {{ hasAppliedFilters ? '当前筛选条件没有匹配的用户操作日志。' : '暂无用户操作日志。' }}
       </div>

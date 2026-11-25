@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import SelectOnlyCombobox from '../../admin/components/form/SelectOnlyCombobox.vue'
 import { computed, ref } from 'vue'
 import { AGENT_PRODUCT_LINE_DEFS } from '../../admin/constants/agentCommission'
@@ -49,10 +50,7 @@ const { pageSize, currentPage, totalCount, totalPages, pagedList } = useAgentPag
 
 <template>
   <div class="space-y-4">
-    <div v-if="reportError" role="alert" class="rounded-lg border border-rose-400/30 p-3 text-sm text-rose-200">
-      {{ reportError }}
-      <button type="button" class="ml-3 underline" @click="retryReport">重试</button>
-    </div>
+    <FeedbackToast v-if="reportError" type="error" :source="() => (reportError) ? (([String((reportError) ?? ''),&quot; &quot;,''].join(''))) : ''"><button type="button" class="ml-3 underline" @click="retryReport">重试</button></FeedbackToast>
     <p class="text-sm text-white/50">
       {{ isAgent ? '按月份和所属业务员汇总各产品线业绩。' : '按月份汇总本人名下客户的各产品线业绩。' }}
     </p>

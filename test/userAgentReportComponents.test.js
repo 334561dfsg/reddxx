@@ -183,7 +183,7 @@ test('agent report Drawer uses one keyboard-accessible report scroller and compa
   const pagination = harness.findByTestId('agent-report-pagination')
   assert.ok(errorState)
   assert.ok(pagination, 'the wrapped-error path retains its fixed pagination footer')
-  assert.equal(errorState.classList.contains('shrink-0'), true)
+  assert.equal(errorState.classList.contains('feedback-accessible-description'), true)
   assert.equal(dailyPanel.classList.contains('min-h-0'), true)
   assert.equal(dailyPanel.classList.contains('flex-1'), true)
   assert.equal(dailyPanel.classList.contains('overflow-y-auto'), true)
@@ -219,8 +219,8 @@ test('agent report Drawer assigns bottom safe-area padding only to the flexible 
   await emptyHarness.flush()
   const errorState = emptyHarness.findByTestId('agent-report-error-state')
   assert.ok(errorState)
-  assert.match(errorState.getAttribute('class'), new RegExp(safeBottomClass.replace(/[()[\]]/g, '\\$&')))
-  assert.equal(errorState.getAttribute('tabindex'), '-1')
+  assert.equal(errorState.classList.contains('feedback-accessible-description'), true)
+  assert.equal(errorState.getAttribute('tabindex'), null)
   assert.equal(emptyHarness.findByTestId('agent-report-pagination'), undefined)
 
   const dailyEmptyPanel = dailyEmptyHarness.findByTestId('agent-report-daily-panel')
@@ -321,7 +321,7 @@ test('agent report Drawer keeps agent-specific empty and loading-error feedback 
 
   harness.props.error = '报表服务暂时不可用'
   await harness.flush()
-  const alert = harness.allNodes().find((node) => node.getAttribute?.('role') === 'alert')
+  const alert = harness.findByTestId('agent-report-error-state')
   assert.ok(alert)
   assert.match(alert.textContent, /代理报表加载失败/)
   assert.match(alert.textContent, /报表服务暂时不可用/)
@@ -435,7 +435,7 @@ test('agent report Drawer uses the shared fixed layer, fixed report regions, and
   assert.match(source, /data-testid="agent-report-daily-panel"[\s\S]*class="mt-3 min-h-0 flex-1 overflow-y-auto/)
   assert.match(source, /data-testid="agent-report-products-panel"[\s\S]*class="mt-3 min-h-0 flex-1 overflow-y-auto/)
   assert.match(source, /activeTab === 'daily' && dailyRows\.length/)
-  assert.equal((source.match(/overflow-y-auto/g) || []).length, 4)
+  assert.equal((source.match(/overflow-y-auto/g) || []).length, 3)
   assert.match(source, /overflow-hidden/)
   assert.match(source, /aria-label="关闭"/)
   assert.match(source, /200ms ease-out/)

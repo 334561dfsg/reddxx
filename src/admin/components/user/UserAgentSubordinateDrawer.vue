@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, AdminSelect, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, ref, watch } from 'vue'
@@ -117,11 +118,7 @@ watch(() => props.error, async (error) => {
             </div>
 
             <div data-testid="agent-subordinate-list-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:px-5" role="region" aria-label="代理直属客户列表" tabindex="0">
-              <p v-if="error" ref="errorRef" data-testid="agent-subordinate-error" tabindex="-1" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" role="alert">
-                <span class="font-semibold">代理下级用户加载失败</span>
-                <span class="mt-1 block break-words">{{ error }}</span>
-                <AdminButton data-testid="agent-subordinate-retry" type="button" class="ant-btn mt-3" :disabled="loading" @click="emit('retry')">{{ loading ? '重试中…' : '重试' }}</AdminButton>
-              </p>
+              <FeedbackToast v-if="error" ref="errorRef" data-testid="agent-subordinate-error" type="error" :source="() => (error) ? (([[&quot;代理下级用户加载失败&quot;].join(''),[String((error) ?? '')].join(''),''].join(''))) : ''"><AdminButton data-testid="agent-subordinate-retry" type="button" class="ant-btn mt-3" :disabled="loading" @click="emit('retry')">{{ loading ? '重试中…' : '重试' }}</AdminButton></FeedbackToast>
 
               <div v-else-if="loading" class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50" role="status">
                 <p class="text-sm text-slate-600">正在加载代理下级用户…</p>

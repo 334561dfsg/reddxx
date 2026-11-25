@@ -74,7 +74,7 @@ test('edit profile entry opens an accessible validated child Dialog', () => {
   assert.match(source, /validateProfile/)
   assert.match(source, /updateProfile/)
   assert.match(source, /type="tel"[\s\S]*inputmode="numeric"[\s\S]*pattern="\[0-9\]\*"[\s\S]*maxlength="24"/)
-  assert.match(source, /role="alert"/)
+  assert.match(source, /<FeedbackToast/)
   assert.match(source, /:aria-busy="submitting"/)
   assert.match(source, /useDialogLifecycle/)
   assert.match(source, /:style="layerStyle"/)

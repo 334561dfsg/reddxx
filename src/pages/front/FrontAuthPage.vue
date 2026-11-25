@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Button } from 'ant-design-vue'
@@ -610,13 +611,7 @@ async function onPickWalletProvider(providerKey) {
           </button>
         </div>
 
-        <p
-          v-if="errorMsg"
-          class="mb-2 rounded-lg border border-rose-400/25 bg-rose-500/[0.08] px-3 py-2 text-sm text-rose-100/95 sm:px-2.5 sm:py-1.5 sm:text-xs"
-          role="alert"
-        >
-          {{ errorMsg }}
-        </p>
+        <FeedbackToast v-if="errorMsg" type="error" :source="() => (errorMsg) ? (errorMsg) : ''"></FeedbackToast>
 
         <form v-if="!walletOnlyLogin && passwordLoginEnabled" class="space-y-2" @submit.prevent="onSubmit">
           <!-- 注册：邮箱与手机互斥；区号按钮与输入框均为 2.75rem 高，切换时高度一致，无需额外 min-h（避免块内留白） -->

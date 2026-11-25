@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {ref} from 'vue'
 import {c2cState,removeAccount} from '../../utils/c2cState'
 import {openModal} from '../../session'
@@ -9,7 +10,7 @@ function remove(account){openModal('account-confirm','c2c.accounts.deleteConfirm
 </script>
 <template>
  <div class="c2c-heading"><div><h1>{{ $t('c2c.accounts.title') }}</h1><p>{{ $t('c2c.accounts.subtitle') }}</p></div><button class="c2c-add" @click="edit()">＋ {{ $t('c2c.accounts.add') }}</button></div>
- <p v-if="feedback" class="c2c-feedback" role="status">{{ $t(feedback) }}</p>
+ <FeedbackToast v-if="feedback" type="success" :source="() => (feedback) ? ($t(feedback)) : ''"/>
  <div v-if="!c2cState.accounts.length" class="c2c-empty c2c-accounts-empty"><C2CIcon name="bank"/><p>{{ $t('c2c.accounts.empty') }}</p><small>{{ $t('c2c.accounts.emptyHint') }}</small><button class="c2c-add" @click="edit()">＋ {{ $t('c2c.accounts.add') }}</button></div>
  <div v-else class="c2c-account-grid"><article v-for="account in c2cState.accounts" :key="account.id" class="c2c-account-card"><header><strong><C2CIcon name="bank"/>{{ account.bankName }}</strong><span class="c2c-status">{{ $t('c2c.accounts.status.active') }}</span></header><dl><div><dt>{{ $t('c2c.accounts.form.fiatCurrency') }}</dt><dd>{{ account.currency }}</dd></div><div><dt>{{ $t('c2c.accounts.form.accountName') }}</dt><dd>{{ account.accountName }}</dd></div><div><dt>{{ $t('c2c.accounts.form.accountNumber') }}</dt><dd>{{ account.accountNumber }}</dd></div></dl><footer><button @click="edit(account)">{{ $t('c2c.accounts.edit') }}</button><button class="c2c-danger" @click="remove(account)">{{ $t('c2c.accounts.delete') }}</button></footer></article></div>
 </template>

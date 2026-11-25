@@ -173,3 +173,19 @@ Reproduce `newtrendcapital.com/zh-TW/c2c/buy` at `/NewQuantCapital/c2c/buy`, inc
 ## Complete C2C module (user request, 2026-11-25)
 
 Extend the C2C source-fidelity scope to buy, sell, orders and payment accounts. All four share the same navigation and visual scale. Sell quotes currently contain USDT only (public snapshot 0.99); require an active matching payout account. Keep buy/sell drafts and order filters across tab navigation. Accounts support local create/edit/delete; existing order snapshots must not change when an account is edited, and an account used by an in-progress sell order cannot be deleted. Simulated sell creation locks local available quantity once; duplicate processing and insufficient balances must fail without partial mutation. Orders show direction/asset/status filters, pagination and read-only details. Keep all balances, accounts and orders local until backend integration is explicitly requested.
+
+## Lending source fidelity (2026-11-25)
+
+Reproduce the public reference `/zh-TW/earn/loan` at `/NewQuantCapital/earn/loan`: 1440px outer container, 32px desktop / 24px narrow gutters, pill navigation, source hero and daily-rate-first cards, term chips, and dedicated borrow route. Scope exceptions to shared geometry in `styles/lending-fidelity.css`. Preserve NewQuantCapital/USDT naming and Mock API integration. Product count, actual rates, amount limits and allowed term ranges remain controlled by admin data; never hard-code the reference's single USD product or override configured terms merely for a screenshot. The reference borrow detail was KYC-blocked; unseen application fields are the existing Mock flow, not verified reference UI. Never perform reference-site borrowing or identity submission.
+
+## No highlighted selection/focus borders (user decision, 2026-11-25)
+
+Do not add highlighted borders, outlines, outer focus rings, focus shadows or double borders for selected, focused or expanded controls/cards. This includes green accent rings and gray/white replacement rings. Keep ordinary structural borders unchanged across these states. Use background, text weight/color, check marks or underlines to distinguish selection and keyboard focus without an outer ring. Preserve keyboard operation, ARIA, validation messages and a visible non-border focus cue. Apply this convention to subsequent UI work, including library default focus styles; never reintroduce rings as an accessibility substitute when a surface/text cue can serve that purpose.
+
+## Standalone public loan details (2026-11-25)
+
+My Loans opens `/earn/loan/order/:orderId` as a dedicated page, not a dialog or an expanded list row. Match Earn's dark rounded panels and amount hierarchy, group debt, rates/term, timestamps, collateral and repayment records. The top return link restores the list's status group and page. Pending cancellation belongs in the page action area with explicit confirmation; there is no dialog Close action. Keep Mock API ownership, pending/no-interest semantics, toast feedback, duplicate-operation protection and non-border keyboard focus cues.
+
+## Toast-only operation feedback (2026-11-25)
+
+Follow the root AGENTS.md operation-feedback rule across all public pages: success, failure and validation results use toast, never a visible inline error/success paragraph, banner or card. Use Ant Design message or the shared FeedbackToast adapter; never both for the same result. Keep drafts, validation/ARIA, retry and next-step links. Native-dialog toasts must render inside its top layer and clean up on close. Business statuses, record data, static requirements, empty/loading content and intentional confirmations remain page content. Run the root `npm run check:feedback` guard before completing related changes.

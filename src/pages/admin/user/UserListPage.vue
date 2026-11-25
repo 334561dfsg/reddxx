@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminTextarea, nativeControl } from '../../../admin/components/antd/controls.js'
 import { ref, computed, nextTick, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
 import { BarChartOutlined } from '@ant-design/icons-vue'
@@ -1083,7 +1084,7 @@ const clearDetailDrawer = () => {
       </div>
     </Teleport>
     <p v-if="staffMessage" role="status" class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">{{ staffMessage }}</p>
-    <p v-if="staffError" role="alert" class="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{{ staffError }}<a-button html-type="button" @click="initializeStaff">重试</a-button></p>
+    <FeedbackToast v-if="staffError" type="error" :source="() => (staffError) ? (([String((staffError) ?? ''),''].join(''))) : ''"><a-button html-type="button" @click="initializeStaff">重试</a-button></FeedbackToast>
 
     <!-- 筛选和搜索区域 -->
     <a-card :bordered="false">

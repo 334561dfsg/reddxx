@@ -129,9 +129,10 @@ test('agent subordinate Drawer distinguishes empty data, filtered results, and r
   harness.props.error = '请求失败'
   await harness.flush()
   const error = harness.findByTestId('agent-subordinate-error')
-  assert.equal(error.getAttribute('role'), 'alert')
+  assert.equal(error.classList.contains('feedback-accessible-description'), true)
+  assert.equal(error.getAttribute('role'), null)
   assert.match(error.textContent, /请求失败/)
-  assert.equal(harness.document.activeElement, error)
+  assert.ok(harness.document.activeElement !== error, 'toast feedback must not focus its hidden description')
   harness.findByTestId('agent-subordinate-retry').click()
   assert.deepEqual(emitted, ['retry'])
   assert.ok(harness.findByTestId('user-agent-subordinate-drawer').isConnected)

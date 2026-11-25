@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import { USER_KYC_STATUS, USER_ROLE, USER_STATUS } from '../../../admin/constants/user.js'
@@ -137,7 +138,7 @@ onUnmounted(() => unsubscribe?.())
 
 <template>
   <section class="relative h-full min-h-0">
-    <p v-if="errorMessage" class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700" role="alert">{{ errorMessage }}</p>
+    <FeedbackToast v-if="errorMessage" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
 
     <div class="grid h-full min-h-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm lg:grid-cols-[280px_minmax(0,1fr)]">
       <aside

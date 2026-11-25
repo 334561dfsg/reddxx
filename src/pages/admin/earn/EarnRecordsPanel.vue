@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, reactive, ref, shallowRef, watch } from 'vue'
 import { Alert, Button, Descriptions, DescriptionsItem, Form, FormItem, Radio, RadioGroup, Space, Tag, TypographyText } from 'ant-design-vue'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
@@ -84,7 +85,7 @@ function show(row){selected.value=clone(row);error.value='';decision.value='appr
 async function submit(){if(busy.value)return;busy.value=true;error.value='';try{await nextTick();if(reviewable.value)reviewEarnOrder(earnAdmin,selected.value.id,decision.value);else if(settleable.value)reviewEarnRedemption(earnAdmin,selected.value.id,decision.value);else return;notice.value=reviewable.value?(decision.value==='approve'?'审核通过，已创建持仓并从审核通过时间开始计息。':'已拒绝申购，不创建持仓、不产生收益。'):(decision.value==='approve'?'赎回审核通过，已完成结算。':'已拒绝赎回，持仓已恢复。');open.value=false}catch(cause){error.value=cause.message;await nextTick();errorRef.value?.focus()}finally{busy.value=false}}
 </script>
 <template>
- <Alert v-if="notice" :message="notice" type="success" show-icon closable @close="notice=''"/>
+ <FeedbackToast v-if="notice" type="success" :source="() => (notice) ? ((notice)) : ''"></FeedbackToast>
   <EarnSearchForm :name="'earn-'+section+'-filters'" :model="filterModel" :fields="filterFields" @search="applyFilters" @reset="resetFilters"/>
   <EarnAdminTable :title="titles[section]" v-model:page="page" :rows="rows" :columns="columns"><template #cell="{column,record}">
    <Tag v-if="column.key==='status'" :color="statusMeta[record.status]?.[1]">{{ section==='redemptions'&&record.status==='pending'?'待审核':statusMeta[record.status]?.[0] }}</Tag>
@@ -93,7 +94,7 @@ async function submit(){if(busy.value)return;busy.value=true;error.value='';try{
    <template v-else>{{ label(record,column.key) }}</template>
   </template></EarnAdminTable>
  <EarnAdminModal :open="open" :title="reviewable?'审核申购':settleable?'审核赎回':titles[section]+'详情'" :confirm-text="confirmText" :danger="(reviewable||settleable)&&decision==='reject'" :busy="busy" @close="open=false" @confirm="submit">
-  <div v-if="error" ref="errorRef" tabindex="-1"><Alert :message="error" type="error" role="alert" show-icon/></div>
+  <div v-if="error" ref="errorRef" tabindex="-1"><FeedbackToast  type="error" :source="() => (error)"></FeedbackToast></div>
   <Descriptions v-if="selected" bordered size="small" :column="1"><DescriptionsItem v-for="[key,title] in [...fields[section],...extraFields]" :key="key" :label="title"><Tag v-if="key==='status'" :color="statusMeta[selected.status]?.[1]">{{ section==='redemptions'&&selected.status==='pending'?'待审核':statusMeta[selected.status]?.[0] }}</Tag><Button v-else-if="key==='userId'" type="link" :aria-label="'查看用户 '+selected.userId" @click.stop="showUser(selected,$event)">{{ selected.userId }}</Button><template v-else>{{ label(selected,key) }}</template></DescriptionsItem></Descriptions>
   <template v-if="section==='logs'&&selected"><TypographyText strong>变更前</TypographyText><pre class="earn-log-snapshot">{{ selected.before }}</pre><TypographyText strong>变更后</TypographyText><pre class="earn-log-snapshot">{{ selected.after }}</pre></template>
   <Form v-if="reviewable||settleable" layout="vertical"><FormItem name="decision" label="审核结果" required><RadioGroup v-model:value="decision"><Space wrap><Radio value="approve">{{ reviewable?'通过，开始理财':'通过并结算' }}</Radio><Radio value="reject">{{ reviewable?'拒绝申购':'拒绝赎回' }}</Radio></Space></RadioGroup></FormItem></Form>

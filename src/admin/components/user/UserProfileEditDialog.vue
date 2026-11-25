@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminCheckbox, AdminInput, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch, onBeforeUnmount } from 'vue'
@@ -162,7 +163,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
           </header>
 
           <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
-            <p v-if="submitError" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ submitError }}</p>
+            <FeedbackToast v-if="submitError" ref="errorRef" type="error" :source="() => (submitError) ? (submitError) : ''"></FeedbackToast>
 
             <div v-if="delivery" ref="deliveryRef" tabindex="-1" class="outline-none">
               <AgentDeliveryCard :delivery="delivery" recipient="业务员" title="业务员设置成功，以下信息可发送给业务员" description="请复制账号和新登录密码，发送给业务员。" @copying="copying=$event" />
@@ -171,13 +172,13 @@ watch(() => [props.visible, userId.value], ([visible]) => {
             <label class="block">
               <span class="text-sm font-medium text-slate-800">用户名 <span class="text-rose-500">*</span></span>
               <AdminInput :ref="element => { firstFieldRef = nativeControl(element) }" v-model="form.username" :disabled="submitting" type="text" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" />
-              <span v-if="errors.username" class="mt-1 block text-xs text-rose-600">{{ errors.username }}</span>
+              <FeedbackToast v-if="errors.username" type="error" :source="() => (errors.username) ? (errors.username) : ''"></FeedbackToast>
             </label>
 
             <label class="block">
               <span class="text-sm font-medium text-slate-800">邮箱 <span class="text-rose-500">*</span></span>
               <AdminInput v-model="form.email" :disabled="submitting" type="email" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" />
-              <span v-if="errors.email" class="mt-1 block text-xs text-rose-600">{{ errors.email }}</span>
+              <FeedbackToast v-if="errors.email" type="error" :source="() => (errors.email) ? (errors.email) : ''"></FeedbackToast>
             </label>
 
             <fieldset class="min-w-0">
@@ -209,8 +210,8 @@ watch(() => [props.visible, userId.value], ([visible]) => {
                   />
                 </label>
               </div>
-              <span v-if="errors.phoneDial" :id="phoneDialErrorId" class="mt-1 block text-xs text-rose-600">{{ errors.phoneDial }}</span>
-              <span v-if="errors.phone" :id="phoneErrorId" class="mt-1 block text-xs text-rose-600">{{ errors.phone }}</span>
+              <FeedbackToast v-if="errors.phoneDial" :id="phoneDialErrorId" type="error" :source="() => (errors.phoneDial) ? (errors.phoneDial) : ''"></FeedbackToast>
+              <FeedbackToast v-if="errors.phone" :id="phoneErrorId" type="error" :source="() => (errors.phone) ? (errors.phone) : ''"></FeedbackToast>
             </fieldset>
 
             <AdminCheckbox class="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-800" v-model="form.isSalesperson" :disabled="submitting">

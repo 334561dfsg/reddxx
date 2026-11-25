@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import FrontDialPicker from '../../components/front/FrontDialPicker.vue'
@@ -185,13 +186,7 @@ function goLogin() {
             </button>
           </div>
 
-          <p
-            v-if="errorMsg"
-            class="mb-2 rounded-lg border border-rose-400/25 bg-rose-500/[0.08] px-3 py-2 text-sm text-rose-100/95"
-            role="alert"
-          >
-            {{ errorMsg }}
-          </p>
+          <FeedbackToast v-if="errorMsg" type="error" :source="() => (errorMsg) ? (errorMsg) : ''"></FeedbackToast>
 
           <form class="space-y-3" @submit.prevent="onSubmit">
             <!-- 邮箱一行与区号+手机行均为 2.75rem 控件高，切换 Tab 时不上下伸缩 -->

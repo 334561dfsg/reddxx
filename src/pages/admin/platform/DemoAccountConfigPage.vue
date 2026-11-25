@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, onMounted, ref } from 'vue'
 import {
   DEFAULT_SITE_CONFIG,
@@ -207,9 +208,7 @@ onMounted(loadConfig)
           <p id="demo-claim-amount-help" class="mt-1.5 text-xs text-slate-500">
             资金单位固定为 USDT，最多支持 2 位小数。
           </p>
-          <p v-if="fieldErrors.claimAmountUsd" id="demo-claim-amount-error" class="mt-1.5 text-xs text-rose-600">
-            {{ fieldErrors.claimAmountUsd }}
-          </p>
+          <FeedbackToast v-if="fieldErrors.claimAmountUsd" id="demo-claim-amount-error" type="error" :source="() => (fieldErrors.claimAmountUsd) ? (fieldErrors.claimAmountUsd) : ''"></FeedbackToast>
         </div>
 
         <div>
@@ -223,9 +222,7 @@ onMounted(loadConfig)
           <p id="demo-monthly-claim-limit-help" class="mt-1.5 text-xs text-slate-500">
             按用户和自然月统计；填 0 表示本月不可获取。
           </p>
-          <p v-if="fieldErrors.monthlyClaimLimit" id="demo-monthly-claim-limit-error" class="mt-1.5 text-xs text-rose-600">
-            {{ fieldErrors.monthlyClaimLimit }}
-          </p>
+          <FeedbackToast v-if="fieldErrors.monthlyClaimLimit" id="demo-monthly-claim-limit-error" type="error" :source="() => (fieldErrors.monthlyClaimLimit) ? (fieldErrors.monthlyClaimLimit) : ''"></FeedbackToast>
         </div>
       </div>
 

@@ -1,9 +1,11 @@
+import {assertEarnEligibility,earnMockProfile} from './utils/earnEligibility'
 import { reactive } from 'vue'
 import { createEarnPortfolio, redeemLocalHolding } from './utils/mockEarnPortfolio'
 
 export const earnPortfolio = reactive(createEarnPortfolio())
 export function recordEarnSubscription(product, amount) {
-  const order = { id: crypto.randomUUID(), productId: product.id, symbol: product.symbol, amount, status: 'pending_review', createdAt: Date.now(), completedAt: null }
+  assertEarnEligibility(product)
+  const order = { eligibilitySnapshot:{minVerificationLevel:product.minVerificationLevel||'none',minVipLevel:product.minVipLevel||0,...earnMockProfile}, id: crypto.randomUUID(), productId: product.id, symbol: product.symbol, amount, status: 'pending_review', createdAt: Date.now(), completedAt: null }
   earnPortfolio.orders.unshift(order)
   return order
 }

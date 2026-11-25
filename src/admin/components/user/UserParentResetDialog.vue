@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
@@ -136,7 +137,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
           </header>
 
           <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
-            <p v-if="errorMessage" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ errorMessage }}</p>
+            <FeedbackToast v-if="errorMessage" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
 
             <template v-if="phaseName === 'form'">
               <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
@@ -145,13 +146,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               </div>
 
               <div class="block">
-                <p
-                  v-if="parentSelectionError"
-                  id="parent-reset-parent-error"
-                  data-testid="parent-reset-parent-error"
-                  role="alert"
-                  class="mb-1 text-sm text-rose-700"
-                >{{ parentSelectionError }}</p>
+                <FeedbackToast v-if="parentSelectionError" id="parent-reset-parent-error" data-testid="parent-reset-parent-error" type="error" :source="() => (parentSelectionError) ? (parentSelectionError) : ''"></FeedbackToast>
                 <PanelSingleSelect
                   ref="parentSelectRef"
                   v-model="form.parentId"

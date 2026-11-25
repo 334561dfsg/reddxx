@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, nativeControl } from '../antd/controls.js'
 
 import { computed, inject, nextTick, onBeforeUnmount, ref, watch } from 'vue'
@@ -111,7 +112,7 @@ onBeforeUnmount(() => { disposed = true; repository.cancel(pending.value) })
             </template>
             <template v-else>
               <p class="rounded-lg bg-blue-50 p-3 text-sm leading-6 text-blue-900">修改后，原地址将保留给该用户，新地址用于公共收款。仅更新有改动的项目，历史入金订单不变。</p>
-              <p v-if="error" ref="errorRef" tabindex="-1" role="alert" class="rounded-lg bg-rose-50 p-3 text-sm text-rose-700">{{ error }}</p>
+              <FeedbackToast v-if="error" ref="errorRef" type="error" :source="() => (error) ? (error) : ''"></FeedbackToast>
               <p v-if="session && !entries.length" class="text-sm text-slate-500">暂无启用的公共收款地址，请先在公共收款地址页面配置。</p>
               <div v-for="row in entries" :key="row.id" class="space-y-2">
                 <div class="flex flex-wrap items-center justify-between gap-2">
@@ -120,7 +121,7 @@ onBeforeUnmount(() => { disposed = true; repository.cancel(pending.value) })
                   <span v-if="row.address.trim() !== row.original" class="rounded bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">已修改</span>
                 </div>
                 <AdminInput :id="`rotation-${row.id}`" v-model="row.address" :aria-label="`${row.coin} ${row.network} 公共收款地址`" type="text" required autocomplete="off" spellcheck="false" :aria-invalid="!!fieldErrors[row.id]" :aria-describedby="fieldErrors[row.id] ? `rotation-error-${row.id}` : undefined" class="address-input" :class="{ 'address-input--order': isOrderAddress(row) && row.address.trim() === row.original, 'address-input--changed': row.address.trim() !== row.original }" />
-                <p v-if="fieldErrors[row.id]" :id="`rotation-error-${row.id}`" class="text-sm text-rose-700">{{ fieldErrors[row.id] }}</p>
+                <FeedbackToast v-if="fieldErrors[row.id]" :id="`rotation-error-${row.id}`" type="error" :source="() => (fieldErrors[row.id]) ? (fieldErrors[row.id]) : ''"></FeedbackToast>
                 <p v-if="row.address.trim() !== row.original && session.dedicated.some(own => own.coin === row.coin && own.network === row.network && own.address !== row.original)" class="text-xs text-amber-700">该用户已有专属配置，本次将替换为上方原公共地址。</p>
               </div>
             </template>

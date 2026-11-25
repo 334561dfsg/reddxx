@@ -3,6 +3,7 @@ let panelSingleSelectSequence = 0
 </script>
 
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, nativeControl } from '../antd/controls.js'
 import { computed, nextTick, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
 import {
@@ -677,25 +678,9 @@ onUnmounted(() => {
       </span>
     </AdminButton>
 
-    <p
-      v-if="orphaned"
-      :id="orphanedId"
-      data-testid="panel-single-select-orphaned"
-      role="alert"
-      class="mt-1 text-sm text-red-700"
-    >
-      所选项“{{ displayText }}”已失效，请重新选择。
-    </p>
+    <FeedbackToast v-if="orphaned" :id="orphanedId" data-testid="panel-single-select-orphaned" type="error" :source="() => (orphaned) ? (([&quot; 所选项“&quot;,String((displayText) ?? ''),&quot;”已失效，请重新选择。 &quot;].join(''))) : ''"></FeedbackToast>
 
-    <p
-      v-if="hasDuplicateOptions"
-      :id="configErrorId"
-      data-testid="panel-single-select-config-error"
-      role="alert"
-      class="mt-1 text-sm text-red-700"
-    >
-      选择控件配置无效：选项值“{{ duplicateOptionText }}”重复，请联系管理员。
-    </p>
+    <FeedbackToast v-if="hasDuplicateOptions" :id="configErrorId" data-testid="panel-single-select-config-error" type="error" :source="() => (hasDuplicateOptions) ? (([&quot; 选择控件配置无效：选项值“&quot;,String((duplicateOptionText) ?? ''),&quot;”重复，请联系管理员。 &quot;].join(''))) : ''"></FeedbackToast>
 
     <Teleport :to="portalTarget">
       <Transition

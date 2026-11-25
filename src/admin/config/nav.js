@@ -1,4 +1,3 @@
-import { LENDING_CREDIT_PERM } from '../constants/lendingCreditPermissions.js'
 
 export const navTree = [
   {
@@ -113,13 +112,7 @@ export const navTree = [
       { title: '订单管理', path: '/admin/lending/orders' },
       { title: '还款记录', path: '/admin/lending/repayment' },
       { title: '操作日志', path: '/admin/lending/operation-log' },
-      {
-        title: '授信中心',
-        path: '/admin/lending/credit-policy',
-        /** 额度模板或评分与规则任一权限即可见入口 */
-        permAny: [LENDING_CREDIT_PERM.EDIT_LIMITS, LENDING_CREDIT_PERM.EDIT_SCORECARD]
-      },
-      { title: '规则说明', path: '/admin/lending/guide' }
+      { title: '风控设置', path: '/admin/lending/risk-policy' },
     ]
   },
   {

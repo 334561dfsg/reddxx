@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, ref, watch } from 'vue'
 import FrontDarkField from './FrontDarkField.vue'
 import FrontLimeButton from './FrontLimeButton.vue'
@@ -112,18 +113,8 @@ defineExpose({ reset })
 
       <div class="min-h-0 flex-1 overflow-y-auto px-4 py-4">
         <template v-if="success">
-          <div
-            class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-5 text-center"
-          >
-            <div class="flex justify-center" aria-hidden="true">
-              <FrontStrokeIcon name="check" size-class="h-8 w-8 text-emerald-300" />
-            </div>
-            <p class="mt-2 text-sm font-medium text-emerald-100/95">登录密码已更新</p>
-            <p class="mt-1 text-xs leading-relaxed text-white/50">
-              请使用新密码登录。如在其他设备保存了旧密码，需重新登录。
-            </p>
-            <FrontLimeButton class="mt-5 w-full" @click="close">完成</FrontLimeButton>
-          </div>
+          <FeedbackToast type="success" :source="() => '登录密码已更新，请使用新密码登录。'"/>
+          <FrontLimeButton class="mt-5 w-full" @click="close">完成</FrontLimeButton>
         </template>
 
         <template v-else>
@@ -164,9 +155,7 @@ defineExpose({ reset })
             placeholder="再次输入新密码"
           />
 
-          <p v-if="submitError" class="mt-3 text-xs font-medium text-amber-200/95">
-            {{ submitError }}
-          </p>
+          <FeedbackToast v-if="submitError" type="error" :source="() => (submitError) ? (submitError) : ''"/>
 
           <FrontLimeButton class="mt-5 w-full" :disabled="!canSubmit" @click="onSubmit">
             确认修改

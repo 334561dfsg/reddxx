@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, ref, watch } from 'vue'
@@ -205,7 +206,7 @@ watch(() => props.visible, async (visible) => {
           </header>
 
           <div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-4">
-            <p v-if="errorMessage" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 outline-none" role="alert">{{ errorMessage }}</p>
+            <FeedbackToast v-if="errorMessage" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
 
             <AgentDeliveryCard v-if="delivery" :delivery="delivery" />
 

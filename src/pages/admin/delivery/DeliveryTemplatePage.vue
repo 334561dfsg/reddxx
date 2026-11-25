@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { COMMON_FILTER_ALL, DELIVERY_STATUS } from '../../../admin/constants/delivery'
 import { createDeliveryTemplatesMock, saveDeliveryTemplatesMock } from '../../../admin/mock/delivery'
@@ -547,25 +548,7 @@ const statusClass = (status) =>
 
           <div class="flex-1 overflow-y-auto bg-white p-6 space-y-6">
             <div class="space-y-6">
-              <div
-                v-if="visibleTemplateErrors.length > 0"
-                class="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
-                role="alert"
-                tabindex="-1"
-              >
-                <p class="font-medium">请修正以下内容后再保存模板</p>
-                <ul class="mt-2 list-disc space-y-1 pl-5">
-                  <li v-for="error in visibleTemplateErrors" :key="error.id">
-                    <a-button type="text"
-                      html-type="button"
-                      class="text-left underline underline-offset-2"
-                      @click="focusTemplateErrorTarget(error)"
-                    >
-                      {{ error.message }}
-                    </a-button>
-                  </li>
-                </ul>
-              </div>
+              <FeedbackToast v-if="visibleTemplateErrors.length > 0" type="error" :source="() => (visibleTemplateErrors.length > 0) ? (visibleTemplateErrors.map(item => item.message).join('；')) : ''"><a-button type="link" @click="focusTemplateErrorTarget(visibleTemplateErrors[0])">定位首个错误</a-button></FeedbackToast>
 
               <div class="grid gap-6 md:grid-cols-2">
                 <div class="space-y-1.5">
@@ -581,9 +564,7 @@ const statusClass = (status) =>
                     :aria-describedby="getTemplateFieldDescribedBy('template-name-help', getTemplateFieldError('template-name') ? 'template-name-error' : '')"
                   />
                   <p id="template-name-help" class="text-xs text-slate-400">用于后台识别该交割周期模板，保存后会显示在模板列表和产品配置中。</p>
-                  <p v-if="getTemplateFieldError('template-name')" id="template-name-error" class="text-xs text-rose-600">
-                    {{ getTemplateFieldError('template-name') }}
-                  </p>
+                  <FeedbackToast v-if="getTemplateFieldError('template-name')" id="template-name-error" type="error" :source="() => (getTemplateFieldError('template-name')) ? (getTemplateFieldError('template-name')) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5">
                   <label for="template-status" class="block text-sm font-medium text-slate-900">状态</label>
@@ -652,9 +633,7 @@ const statusClass = (status) =>
                             @wheel.prevent
                           />
                         <span :id="`cycle-${cycle.id}-durationSec-help`" class="block text-xs text-slate-400">单位为秒，必须大于 0。</span>
-                        <span v-if="getTemplateFieldError(`cycle-${cycle.id}-durationSec`)" :id="`cycle-${cycle.id}-durationSec-error`" class="block text-xs text-rose-600">
-                          {{ getTemplateFieldError(`cycle-${cycle.id}-durationSec`) }}
-                        </span>
+                        <FeedbackToast v-if="getTemplateFieldError(`cycle-${cycle.id}-durationSec`)" :id="`cycle-${cycle.id}-durationSec-error`" type="error" :source="() => (getTemplateFieldError(`cycle-${cycle.id}-durationSec`)) ? (getTemplateFieldError(`cycle-${cycle.id}-durationSec`)) : ''"></FeedbackToast>
                       </label>
                       <label class="space-y-1.5">
                         <span class="block text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 收益率</span>
@@ -672,9 +651,7 @@ const statusClass = (status) =>
                           @wheel.prevent
                         />
                         <span :id="`cycle-${cycle.id}-payoutPct-help`" class="block text-xs text-slate-400">展示给用户的收益率，单位为 %。</span>
-                        <span v-if="getTemplateFieldError(`cycle-${cycle.id}-payoutPct`)" :id="`cycle-${cycle.id}-payoutPct-error`" class="block text-xs text-rose-600">
-                          {{ getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) }}
-                        </span>
+                        <FeedbackToast v-if="getTemplateFieldError(`cycle-${cycle.id}-payoutPct`)" :id="`cycle-${cycle.id}-payoutPct-error`" type="error" :source="() => (getTemplateFieldError(`cycle-${cycle.id}-payoutPct`)) ? (getTemplateFieldError(`cycle-${cycle.id}-payoutPct`)) : ''"></FeedbackToast>
                       </label>
                       <label class="space-y-1.5">
                         <span class="block text-sm font-medium text-slate-900"><span class="text-rose-500">*</span> 实际收益率</span>
@@ -692,9 +669,7 @@ const statusClass = (status) =>
                           @wheel.prevent
                         />
                         <span :id="`cycle-${cycle.id}-actualPayoutPct-help`" class="block text-xs text-slate-400">实际结算使用的收益率，支持 8 位小数。</span>
-                        <span v-if="getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`)" :id="`cycle-${cycle.id}-actualPayoutPct-error`" class="block text-xs text-rose-600">
-                          {{ getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) }}
-                        </span>
+                        <FeedbackToast v-if="getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`)" :id="`cycle-${cycle.id}-actualPayoutPct-error`" type="error" :source="() => (getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`)) ? (getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`)) : ''"></FeedbackToast>
                       </label>
                     </div>
 

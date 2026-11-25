@@ -206,3 +206,14 @@ test('holding rewards are isolated by holding ID, including settlement payouts',
  assert.equal(rows.some(row=>row.id===pending.id+'-settlement'),true)
  assert.equal(rows.some(row=>row.status==='accrued'),false)
 })
+test('Earn eligibility saves validate existing levels without rechecking pending orders',()=>{
+ const state=createEarnAdminState(now),p=state.products[0]
+ const saved=saveEarnProduct(state,{...p,minVerificationLevel:'advanced',minVipLevel:5},now)
+ assert.equal(saved.minVerificationLevel,'advanced');assert.equal(saved.minVipLevel,5)
+ assert.throws(()=>saveEarnProduct(state,{...saved,minVipLevel:99},now),/等级/)
+ const order=state.orders.find(o=>o.status==='pending_review')
+ const product=state.products.find(p=>p.id===order.productId)
+ saveEarnProduct(state,{...product,minVerificationLevel:'advanced',minVipLevel:5},now)
+ reviewEarnOrder(state,order.id,'approve',now,'审核员（模拟）')
+ assert.equal(order.status,'completed')
+})

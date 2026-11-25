@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../src/shared/feedback/FeedbackToast.vue'
 import { computed, shallowRef } from 'vue'
 import { session, openModal } from '../session'
 import { fmt, path } from '../data'
@@ -28,7 +29,7 @@ function submit(side) {
     <div class="amount-field"><input id="options-amount" v-model="amount" type="number" min="100" max="100000" step="1" inputmode="decimal" placeholder="≥ 100" :aria-invalid="Boolean(error)" :aria-describedby="error?'options-error':undefined" @input="error=''"/><span>USDT</span></div>
     <div class="quick-amounts"><button v-for="value in [100,300,500,700,900,1100,1300,1500]" :key="value" @click="amount=String(value);error=''">{{ fmt(value) }}</button></div>
     <dl><dt>{{ $t('trade.expectedReturn') }}</dt><dd class="positive">+{{ fmt(expected) }} USDT</dd><dt>{{ $t('trade.available') }}</dt><dd>{{ session.mode==='common.demo.demo'?'100,000':'0' }} USDT <RouterLink class="transfer" :to="path('/assets/transfer')">⇆ {{ $t('trade.transfer') }}</RouterLink></dd></dl>
-    <p v-if="error" id="options-error" role="alert" class="form-error">{{ $t(error) }}</p>
+    <FeedbackToast v-if="error" id="options-error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
     <div class="options-actions"><button class="up" @click="submit('trade.buyUp')">↗ {{ $t('trade.buyUp') }}</button><button class="down" @click="submit('trade.buyDown')">↘ {{ $t('trade.buyDown') }}</button></div>
   </div>
 </template>

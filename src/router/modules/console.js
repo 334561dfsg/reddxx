@@ -392,22 +392,32 @@ export const consoleRoutes = [
   {
     path: 'lending/products',
     name: 'lending-products',
-    component: () => import('../../pages/admin/lending/LendingProductPage.vue')
+    component: () => import('../../pages/admin/lending/LendingLedgerPage.vue')
+  },
+  {
+    path: 'lending/products/new',
+    name: 'lending-product-create',
+    component: () => import('../../pages/admin/lending/LendingProductEditorPage.vue')
+  },
+  {
+    path: 'lending/products/:id/edit',
+    name: 'lending-product-edit',
+    component: () => import('../../pages/admin/lending/LendingProductEditorPage.vue')
   },
   {
     path: 'lending/orders',
     name: 'lending-orders',
-    component: () => import('../../pages/admin/lending/LendingOrderPage.vue')
+    component: () => import('../../pages/admin/lending/LendingLedgerPage.vue')
   },
   {
     path: 'lending/repayment',
     name: 'lending-repayment',
-    component: () => import('../../pages/admin/lending/LendingRepaymentPage.vue')
+    component: () => import('../../pages/admin/lending/LendingLedgerPage.vue')
   },
   {
     path: 'lending/operation-log',
     name: 'lending-operation-log',
-    component: () => import('../../pages/admin/lending/LendingOperationLogPage.vue'),
+    component: () => import('../../pages/admin/lending/LendingLedgerPage.vue'),
     meta: {
       title: '信用借贷 / 操作日志',
       desc: '授信、产品与订单等管理操作的审计记录。'
@@ -416,12 +426,17 @@ export const consoleRoutes = [
   {
     path: 'lending/guide',
     name: 'lending-guide',
-    component: () => import('../../pages/admin/lending/LendingGuidePage.vue')
+    redirect: '/admin/lending/products'
+  },
+  {
+    path: 'lending/risk-policy',
+    name: 'lending-risk-policy',
+    component: () => import('../../pages/admin/lending/LendingRiskPolicyPage.vue')
   },
   {
     path: 'lending/credit-policy',
     name: 'lending-credit-policy',
-    component: () => import('../../pages/admin/lending/LendingCreditPolicyPage.vue')
+    redirect: '/admin/lending/products'
   },
   {
     path: 'ai-quant',

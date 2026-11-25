@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, reactive, ref, watch } from 'vue'
 import {
   PERPETUAL_COMMON_FILTER_ALL,
@@ -379,7 +380,7 @@ const submitTemplate = () => {
               </div>
               <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary shrink-0" @click="addCustomLeverage">添加</a-button>
             </div>
-            <p v-if="customLeverageError" class="text-sm text-rose-500">{{ customLeverageError }}</p>
+            <FeedbackToast v-if="customLeverageError" type="error" :source="() => (customLeverageError) ? (customLeverageError) : ''"></FeedbackToast>
           </div>
 
           <div class="flex flex-wrap gap-2">

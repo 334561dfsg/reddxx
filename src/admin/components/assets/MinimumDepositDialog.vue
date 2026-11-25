@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import MfaVerificationModal from '../MfaVerificationModal.vue'
@@ -124,16 +125,13 @@ onBeforeUnmount(() => { disposed = true; session.cancel(); window.removeEventLis
           </header>
           <form novalidate class="flex min-h-0 flex-1 flex-col" @submit.prevent="save" @keydown.enter="($event.isComposing || composing) && $event.preventDefault()">
             <div class="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-5">
-              <div v-if="loadError" ref="errorRef" tabindex="-1" class="rounded-lg bg-rose-50 p-3 text-sm text-rose-700">
-                <p>{{ loadError }}</p>
-                <a-button html-type="button" class="mt-3" @click="retryLoad">重新读取</a-button>
-              </div>
+              <FeedbackToast v-if="loadError" ref="errorRef" type="error" :source="() => (loadError) ? (([[String((loadError) ?? '')].join(''),''].join(''))) : ''"><a-button html-type="button" class="mt-3" @click="retryLoad">重新读取</a-button></FeedbackToast>
               <template v-else>
                 <p class="text-sm leading-6 text-slate-500">统一设置所有币种的最低充值价值，默认 100 USDT。保存后按汇率换算各币种最低数量。</p>
                 <div>
                   <label for="minimum-deposit-amount" class="mb-2 block text-sm font-semibold text-slate-700">最低充值价值（USDT，必填）</label>
                   <a-input id="minimum-deposit-amount" :ref="el => { inputRef = nativeControl(el) }" v-model:value="draft" type="text" inputmode="decimal" autocomplete="off" required aria-required="true" :aria-invalid="!!fieldError" :aria-describedby="fieldError ? 'minimum-deposit-error' : undefined" :disabled="saving" placeholder="例如 100" @blur="touched = true" @compositionstart="composing = true" @compositionend="composing = false" />
-                  <p v-if="fieldError" id="minimum-deposit-error" class="mt-2 text-sm text-rose-700">{{ fieldError }}</p>
+                  <FeedbackToast v-if="fieldError" id="minimum-deposit-error" type="error" :source="() => (fieldError) ? (fieldError) : ''"></FeedbackToast>
                   <p v-if="dirty" class="mt-2 text-xs text-amber-700">有未保存的更改</p>
                 </div>
                 <div v-if="discard" ref="discardRef" tabindex="-1" class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">

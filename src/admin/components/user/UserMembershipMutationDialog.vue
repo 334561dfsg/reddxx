@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, AdminRadio, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
@@ -213,7 +214,7 @@ watch(
           </header>
 
           <div data-testid="user-membership-mutation-body" class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5">
-            <p v-if="errorMessage" :id="vipSelectionInvalid ? 'membership-vip-level-error' : null" ref="errorRef" tabindex="-1" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 outline-none" role="alert">{{ errorMessage }}</p>
+            <FeedbackToast v-if="errorMessage" :id="vipSelectionInvalid ? 'membership-vip-level-error' : null" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
 
             <template v-if="stage === 'edit'">
               <template v-if="mode === 'credit'">

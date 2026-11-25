@@ -465,7 +465,10 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import { message } from 'ant-design-vue'
+import { lendingCommand, refreshLending, lendingState, errorLabels } from '../../../shared/lending/client.js'
+import { lendingCreditPolicy } from '../../../admin/mock/lendingCreditConfig'
+import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   applyScorecardToPolicy,
@@ -485,6 +488,7 @@ import { SCORE_RULE_EVALUATOR } from '../../../admin/constants/lendingCreditScor
 import { appendLendingOperationLog } from '../../../admin/state/lendingOperationLogs'
 import { useAdminPermissionsStore } from '../../../admin/stores/adminPermissions'
 
+onMounted(async()=>{ await refreshLending(); if(lendingState.value.scorecard)Object.assign(lendingCreditScorecard,JSON.parse(JSON.stringify(lendingState.value.scorecard))) })
 const route = useRoute()
 const permStore = useAdminPermissionsStore()
 
@@ -504,7 +508,7 @@ const LIMITS_TAB_LABEL = '额度模板'
 const limitsSaveHint = ref('')
 let limitsSaveHintTimer = null
 
-function saveLimitsTemplate() {
+async function saveLimitsTemplate() {
   if (!canEditLimits.value) return
   const sc = lendingCreditScorecard
   let ms = Number(sc.minScale)
@@ -513,6 +517,7 @@ function saveLimitsTemplate() {
   const cap = Number(sc.baseAccountCapMax)
   if (Number.isFinite(cap) && cap >= 0) sc.baseAccountCapMax = Math.round(cap)
   applyScorecardToPolicy()
+  try { await lendingCommand('savePolicy', { policy: JSON.parse(JSON.stringify(lendingCreditPolicy)), scorecard: JSON.parse(JSON.stringify(lendingCreditScorecard)) }); message.success('保存成功') } catch(e) { message.error(errorLabels[e.message] || e.message); return }
   appendLendingOperationLog({
     module: LENDING_OP_MODULE.CREDIT_LIMITS,
     action: LENDING_OP_ACTION.SAVE_LIMITS,
@@ -653,11 +658,12 @@ function cancelScorecardEdit(dim) {
   delete scorecardEditingByKey[dim.key]
 }
 
-function saveScorecardEdit(dim) {
+async function saveScorecardEdit(dim) {
   if (!dim?.scoreRule) return
   delete scorecardEditSnapshotByKey[dim.key]
   delete scorecardEditingByKey[dim.key]
   applyScorecardToPolicy()
+  try { await lendingCommand('savePolicy', { policy: JSON.parse(JSON.stringify(lendingCreditPolicy)), scorecard: JSON.parse(JSON.stringify(lendingCreditScorecard)) }); message.success('保存成功') } catch(e) { message.error(errorLabels[e.message] || e.message); return }
   appendLendingOperationLog({
     module: LENDING_OP_MODULE.CREDIT_SCORECARD,
     action: LENDING_OP_ACTION.SAVE_SCORECARD,

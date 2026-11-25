@@ -10,7 +10,7 @@ import {
   REPAYMENT_PAYMENT_METHOD_USER,
   RISK_LEVEL,
   INTEREST_RATE_TYPE
-} from '../constants/cryptoLending'
+} from '../constants/cryptoLending.js'
 
 // 产品管理 Mock 数据
 export const mockProducts = [

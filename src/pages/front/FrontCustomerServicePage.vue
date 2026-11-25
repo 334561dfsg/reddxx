@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
@@ -163,7 +164,7 @@ onUnmounted(() => unsubscribe?.())
       </div>
 
       <footer class="shrink-0 border-t border-black/[0.08] bg-white px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] pt-3 sm:px-5 lg:border-white/[0.08] lg:bg-[#11151a] lg:pb-4 lg:pt-4">
-        <p v-if="errorMessage" class="mb-2 rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-600 lg:bg-rose-400/10 lg:text-rose-200" role="alert">{{ errorMessage }}</p>
+        <FeedbackToast v-if="errorMessage" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
         <div v-if="pendingImageUrl" class="mb-3 flex items-center gap-3 rounded-xl bg-black/[0.04] p-2 lg:bg-white/[0.05]">
           <img :src="pendingImageUrl" alt="待发送图片" class="h-12 w-12 rounded-lg object-cover" />
           <span class="min-w-0 flex-1 truncate text-xs text-black/55 lg:text-white/55">{{ pendingImageName }}</span>

@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { ref, computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { agentApi, normalizeAgentProductCommission } from '../../../admin/mock/agent.js'
 import { AGENT_STATUS, AGENT_STATUS_OPTIONS, AGENT_ROLE_LABEL } from '../../../admin/constants/agent.js'
@@ -471,7 +472,7 @@ const formatDate = (dateString) => {
             </div>
             <a-button aria-label="关闭" html-type="button" class="flex min-w-10 items-center justify-center text-2xl text-slate-400 hover:bg-slate-100"  @click="closeAccountModal">×</a-button>
           </header></template></template><template v-if="showAccountModal && accountTarget"><div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
-            <p v-if="accountError" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">{{ accountError }}</p>
+            <FeedbackToast v-if="accountError" type="error" :source="() => (accountError) ? (accountError) : ''"></FeedbackToast>
 
             <AgentDeliveryCard
               v-if="accountDelivery"

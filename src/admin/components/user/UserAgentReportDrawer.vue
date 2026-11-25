@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { Table } from 'ant-design-vue'
 const TableColumn = Table.Column
 
@@ -88,9 +89,7 @@ watch(totalPages, (nextTotalPages) => {
           </header>
 
           <div data-testid="user-agent-report-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
-            <p v-if="error" ref="errorRef" data-testid="agent-report-error-state" tabindex="-1" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 outline-none" :class="report ? 'shrink-0' : 'min-h-0 flex-1 overflow-y-auto pb-[max(1rem,env(safe-area-inset-bottom))]'" role="alert">
-              <span class="font-semibold">代理报表加载失败</span><span class="mt-1 block break-words">{{ error }}</span>
-            </p>
+            <FeedbackToast v-if="error" ref="errorRef" data-testid="agent-report-error-state" type="error" :source="() => (error) ? (([[&quot;代理报表加载失败&quot;].join(''),[String((error) ?? '')].join('')].join(''))) : ''"></FeedbackToast>
 
             <template v-if="report">
               <section data-testid="agent-report-overview" class="shrink-0" aria-labelledby="agent-report-summary-title">

@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, onMounted, ref } from 'vue'
 import {
   DEFAULT_POINT_CONTROL_RATIOS,
@@ -246,13 +247,7 @@ onMounted(loadConfig)
             <p :id="`point-control-${field.key}-help`" class="mt-1.5 text-xs leading-5 text-slate-500">
               {{ field.help }}
             </p>
-            <p
-              v-if="fieldErrors[field.key]"
-              :id="`point-control-${field.key}-error`"
-              class="mt-1.5 text-xs leading-5 text-rose-600"
-            >
-              {{ fieldErrors[field.key] }}
-            </p>
+            <FeedbackToast v-if="fieldErrors[field.key]" :id="`point-control-${field.key}-error`" type="error" :source="() => (fieldErrors[field.key]) ? (fieldErrors[field.key]) : ''"></FeedbackToast>
           </div>
         </div>
       </form>

@@ -591,7 +591,8 @@ test('duplicate option values are rejected deterministically and exposed as a co
   const configError = harness.findByTestId('panel-single-select-config-error')
   assert.equal(trigger.getAttribute('aria-invalid'), 'true')
   assert.match(trigger.getAttribute('aria-describedby'), /account-state-config-error/)
-  assert.equal(configError.getAttribute('role'), 'alert')
+  assert.equal(configError.getAttribute('role'), null)
+  assert.equal(configError.classList.contains('feedback-accessible-description'), true)
   assert.match(configError.textContent, /重复/)
 
   trigger.click()

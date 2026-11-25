@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { Table } from 'ant-design-vue'
 const TableColumn = Table.Column
 import { AdminButton, AdminInput, AdminSelect, nativeControl } from '../antd/controls.js'
@@ -33,7 +34,7 @@ watch(()=>props.visible,visible=>{if(!visible)return;const today=new Date(Date.n
       <label class="staff-filter">所属员工<AdminSelect v-model="draft.employeeId" :disabled="!draft.agentId"><option value="">{{ draft.agentId?'全部员工':'请先选择代理' }}</option><option v-for="e in employees" :key="e.id" :value="e.id">{{ e.username }} · {{ e.id }}</option><option v-if="draft.agentId" value="unassigned">未分配员工</option></AdminSelect></label>
       <div class="flex items-end"><AdminButton type="submit" class="min-h-11 w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">查询</AdminButton></div>
     </form>
-    <div v-if="error" ref="errorRef" tabindex="-1" role="alert" class="mt-4 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{{ error }}<span v-if="report">；以下为上次查询结果。</span><AdminButton type="button" class="ml-3 underline" @click="query">重试</AdminButton></div>
+    <FeedbackToast v-if="error" ref="errorRef" type="error" :source="() => (error) ? (([String((error) ?? ''),((report) ? [&quot;；以下为上次查询结果。&quot;].join('') : ''),''].join(''))) : ''"><AdminButton type="button" class="ml-3 underline" @click="query">重试</AdminButton></FeedbackToast>
     <template v-if="report">
       <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-3"><div v-for="[key,label,unit] in summaryCards" :key="key" class="rounded-xl border border-slate-200 p-4"><p class="text-xs text-slate-500">{{ label }} · {{ unit }}</p><p class="mt-2 break-words text-xl font-semibold tabular-nums" :class="key==='net'?'text-emerald-700':'text-slate-900'">{{ number(report.summary[key],key==='currentClients'?'count':'money') }}</p></div></div>
       <div class="mt-5 flex flex-wrap items-center justify-between gap-3"><h3 class="font-semibold text-slate-900">{{ levelLabel }}</h3><nav aria-label="报表查询层级" class="flex flex-wrap items-center gap-2 text-sm"><AdminButton type="button" class="min-h-10 text-blue-700 underline-offset-4 hover:underline" @click="back('all')">全部代理</AdminButton><template v-if="applied.agentId"><span>/</span><AdminButton type="button" class="min-h-10 text-blue-700 hover:underline" @click="back('agent')">{{ nameOf(applied.agentId) }}</AdminButton></template><template v-if="applied.employeeId"><span>/</span><span>{{ nameOf(applied.employeeId) }}</span></template></nav></div>

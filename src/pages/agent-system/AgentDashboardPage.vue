@@ -1,4 +1,5 @@
 <script setup>
+import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { agentDashboardSummary, buildAgentInviteLink } from '../../admin/mock/agentPortal'
@@ -45,7 +46,7 @@ const settlementSubline = computed(() => {
 
 <template>
   <div class="space-y-6">
-    <p v-if="reportError && auth.role === 'salesperson'" role="alert" class="rounded-lg border border-rose-400/30 p-3 text-sm text-rose-200">{{ reportError }}</p>
+    <FeedbackToast v-if="reportError && auth.role === 'salesperson'" type="error" :source="() => (reportError &amp;&amp; auth.role === 'salesperson') ? (reportError) : ''"></FeedbackToast>
     <p class="text-sm text-white/55 md:hidden">{{ auth.nickname }} · UID {{ auth.uid }}</p>
 
     <section
