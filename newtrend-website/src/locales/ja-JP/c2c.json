@@ -65,14 +65,18 @@
     "payoutAccountPlaceholder": "受取口座を選択",
     "payoutAccountManage": "口座を管理",
     "payoutAccountEmpty": "利用可能な {{fiat}} 受取口座がありません",
-    "payoutAccountEmptyCta": "受取口座を追加"
+    "payoutAccountEmptyCta": "受取口座を追加",
+    "confirmSummary": "{{amount}} {{asset}} を約 {{total}} USDT で購入します。確認後はローカルの模擬注文のみ作成され、資金は移動しません。",
+    "confirmSellSummary": "{{amount}} {{asset}} を約 {{total}} USDT で売却します。ローカルの模擬資産のみ凍結され、資金は移動しません。",
+    "newOrder": "新規注文"
   },
   "agreement": {
     "title": "C2C取引規約",
     "version": "バージョン {{version}}",
     "agree": "読んで同意しました",
     "close": "閉じる",
-    "loadError": "規約の読み込みに失敗しました。再試行してください"
+    "loadError": "規約の読み込みに失敗しました。再試行してください",
+    "body": "OTC 取引規約（v1-draft、法的効力のないサンプル）\n\n1. プラットフォームは取引相手として暗号資産の売買レートを提示します。レートには有効期限があり、送信前に変更される場合があります。\n\n2. 注文には所定レベルの本人確認が必要です。支払者の氏名と国は確認済み KYC 情報に基づきます。\n\n3. 注文ごと、日次、月次の上限が適用されます。\n\n4. 購入時は注文に記載された支払情報を使用します。売却時は対象資産が凍結され、プラットフォームによる審査を待ちます。\n\n5. 注文の送信は表示された規約への同意を意味します。支払情報の正確性を確認してください。"
   },
   "pendingMatch": {
     "title": "入金口座の割当待ち",

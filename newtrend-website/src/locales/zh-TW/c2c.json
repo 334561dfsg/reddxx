@@ -65,14 +65,18 @@
     "payoutAccountPlaceholder": "選擇收款帳戶",
     "payoutAccountManage": "管理收款帳戶",
     "payoutAccountEmpty": "尚無可用的 {{fiat}} 收款帳戶",
-    "payoutAccountEmptyCta": "新增收款帳戶"
+    "payoutAccountEmptyCta": "新增收款帳戶",
+    "confirmSummary": "買入 {{amount}} {{asset}}，預計支付 {{total}} USDT。確認後僅建立本地模擬訂單，不會轉移資金。",
+    "confirmSellSummary": "賣出 {{amount}} {{asset}}，預計收到 {{total}} USDT。確認後僅凍結本地模擬資產，不會轉移資金。",
+    "newOrder": "再下一單"
   },
   "agreement": {
     "title": "C2C 交易協議",
     "version": "版本 {{version}}",
     "agree": "我已閱讀並同意",
     "close": "關閉",
-    "loadError": "協議載入失敗，請重試"
+    "loadError": "協議載入失敗，請重試",
+    "body": "OTC 交易用戶協議（v1-draft，示例草稿，不具法律效力）\n\n1. 平台作為場外交易對手方，提供加密資產買賣報價。報價有有效期限，提交前可能更新。\n\n2. 下單須完成所需等級的身分驗證。付款人姓名及國別以已驗證的 KYC 資料為準。\n\n3. 交易受單筆、每日及每月累計限額約束。\n\n4. 買入時應依訂單所列的收款資訊付款；賣出時會凍結對應資產，由平台審核後處理。\n\n5. 提交訂單代表接受當前協議版本，使用者應核對付款資訊。"
   },
   "pendingMatch": {
     "title": "等待分配收款帳戶",

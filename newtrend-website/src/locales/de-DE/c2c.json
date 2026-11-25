@@ -65,14 +65,18 @@
     "payoutAccountPlaceholder": "Empfangskonto auswählen",
     "payoutAccountManage": "Konten verwalten",
     "payoutAccountEmpty": "Noch kein aktives {{fiat}}-Empfangskonto",
-    "payoutAccountEmptyCta": "Empfangskonto hinzufügen"
+    "payoutAccountEmptyCta": "Empfangskonto hinzufügen",
+    "confirmSummary": "{{amount}} {{asset}} für voraussichtlich {{total}} USDT kaufen. Die Bestätigung erstellt nur eine lokale simulierte Order; es wird kein Geld übertragen.",
+    "confirmSellSummary": "{{amount}} {{asset}} für etwa {{total}} USDT verkaufen. Nur lokale simulierte Vermögenswerte werden gesperrt; es wird kein Geld übertragen.",
+    "newOrder": "Neue Order"
   },
   "agreement": {
     "title": "C2C-Handelsvereinbarung",
     "version": "Version {{version}}",
     "agree": "Ich habe gelesen und stimme zu",
     "close": "Schließen",
-    "loadError": "Vereinbarung konnte nicht geladen werden, bitte erneut versuchen"
+    "loadError": "Vereinbarung konnte nicht geladen werden, bitte erneut versuchen",
+    "body": "OTC-Handelsvereinbarung (v1-draft, unverbindlicher Beispielentwurf)\n\n1. Die Plattform handelt als OTC-Gegenpartei und stellt Kurse für Kryptowerte bereit. Kurse laufen ab und können sich vor der Übermittlung ändern.\n\n2. Die erforderliche Identitätsprüfung muss abgeschlossen sein. Name und Land des Zahlenden stammen aus verifizierten KYC-Daten.\n\n3. Es gelten Limits pro Order, Tag und Monat.\n\n4. Bei Käufen gelten die Zahlungsdaten der Order. Bei Verkäufen werden die entsprechenden Vermögenswerte bis zur Prüfung gesperrt.\n\n5. Mit dem Absenden wird die angezeigte Fassung akzeptiert. Zahlungsdaten müssen auf Richtigkeit geprüft werden."
   },
   "pendingMatch": {
     "title": "Warten auf Zahlungskonto",

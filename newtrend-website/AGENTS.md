@@ -165,3 +165,11 @@ For `/NewQuantCapital/earn/simple`, its product details and subscription dialog,
 ## My Earn records use lists (user feedback, 2026-11-25)
 
 Use compact table/list rows for holdings, subscription orders, redemptions and reward history on `/NewQuantCapital/earn/my-earnings`. Do not display holdings as a grid of independent cards. Preserve comparable columns and row-level actions; narrow layouts may wrap fields within the same contiguous list. Seed synthetic local records for varied statuses; never copy private reference-account records. The overview remains the source-style aggregate panel.
+
+## C2C buy source fidelity (user request, 2026-11-25)
+
+Reproduce `newtrendcapital.com/zh-TW/c2c/buy` at `/NewQuantCapital/c2c/buy`, including the four navigation entries, asset/fiat filter pills, quote grid, timer, empty order panel, selection, amount modes and agreement. This scoped request supersedes generic page geometry/radius/type simplification for this buy surface (1440px outer width, 32px desktop gutters, 24px card corners). Retain NewQuantCapital branding and the prior USDT denomination decision. Public quote snapshots and local mock renewal are not a live feed; never submit reference-site transactions. Keep confirmation and generated orders local, preserve the demo-mode safeguard, and use the shared overlay owner.
+
+## Complete C2C module (user request, 2026-11-25)
+
+Extend the C2C source-fidelity scope to buy, sell, orders and payment accounts. All four share the same navigation and visual scale. Sell quotes currently contain USDT only (public snapshot 0.99); require an active matching payout account. Keep buy/sell drafts and order filters across tab navigation. Accounts support local create/edit/delete; existing order snapshots must not change when an account is edited, and an account used by an in-progress sell order cannot be deleted. Simulated sell creation locks local available quantity once; duplicate processing and insufficient balances must fail without partial mutation. Orders show direction/asset/status filters, pagination and read-only details. Keep all balances, accounts and orders local until backend integration is explicitly requested.

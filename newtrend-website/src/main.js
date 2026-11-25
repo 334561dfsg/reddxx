@@ -35,7 +35,8 @@ const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:
  {path:'/news/:id?',component:News},
  {path:'/:account(profile|bind-email|bind-phone|change-password|fund-password|2fa|devices|kyc|referrals|promotions|joint-account|survey|help-center)/:id?',component:Account},
  {path:'/:section(about|privacy|agreement|risk-disclosure|regulatory-information|content)/:id?',component:Legal},
- {path:'/c2c/accounts',redirect:'/c2c/buy'},
+ {path:'/c2c/:c2cPage(buy|sell|orders|payment-accounts)',component:()=>import('./pages/C2CBuy.vue')},
+ {path:'/c2c/accounts',redirect:'/c2c/payment-accounts'},
  {path:'/:section/:id?',component:Content},
  {path:'/:pathMatch(.*)*',redirect:'/'}
 ],scrollBehavior(to,from,saved){

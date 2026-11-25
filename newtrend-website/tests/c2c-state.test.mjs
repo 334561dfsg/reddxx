@@ -1,0 +1,10 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import {saveAccount,removeAccount,createC2COrder} from '../src/utils/c2cState.js'
+const makeState=()=>({accounts:[],orders:[],balances:{USDT:10000}})
+const draft={currency:'USDT',accountName:'Demo Customer',accountNumber:'DEMO-001',bankName:'Demo Bank'}
+const quote={symbol:'USDT',price:.99,min:3000,max:1e8}
+test('account validation prevents partial or unsupported accounts',()=>{const state=makeState();assert.throws(()=>saveAccount(state,{...draft,accountName:' '}));assert.throws(()=>saveAccount(state,{...draft,currency:'UNKNOWN'}));assert.equal(state.accounts.length,0)})
+test('sell locks balance once and freezes account details',()=>{const state=makeState(),account=saveAccount(state,draft);const args={side:'sell',quote,quantity:3000,accountId:account.id,requestId:'one'};const order=createC2COrder(state,args);assert.equal(state.balances.USDT,7000);assert.equal(order.amount,2970);assert.throws(()=>createC2COrder(state,args));assert.equal(state.balances.USDT,7000);saveAccount(state,{...account,bankName:'Changed'});assert.equal(order.account.bankName,'Demo Bank');assert.throws(()=>removeAccount(state,account.id));assert.equal(state.accounts.length,1)})
+test('missing accounts and insufficient balances never create sell orders',()=>{const state=makeState();assert.throws(()=>createC2COrder(state,{side:'sell',quote,quantity:3000,requestId:'a'}));const account=saveAccount(state,draft);assert.throws(()=>createC2COrder(state,{side:'sell',quote,quantity:11000,accountId:account.id,requestId:'b'}));assert.equal(state.orders.length,0);assert.equal(state.balances.USDT,10000)})
+test('buy remains pending and unused accounts can be deleted',()=>{const state=makeState(),account=saveAccount(state,draft);const order=createC2COrder(state,{side:'buy',quote,quantity:3000,requestId:'buy'});assert.equal(order.status,'pending_match');assert.equal(state.balances.USDT,10000);removeAccount(state,account.id);assert.equal(state.accounts.length,0)})

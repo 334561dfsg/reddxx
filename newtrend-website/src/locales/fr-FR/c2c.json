@@ -65,14 +65,18 @@
     "payoutAccountPlaceholder": "Sélectionnez un compte de réception",
     "payoutAccountManage": "Gérer les comptes",
     "payoutAccountEmpty": "Aucun compte de réception {{fiat}} actif",
-    "payoutAccountEmptyCta": "Ajouter un compte de réception"
+    "payoutAccountEmptyCta": "Ajouter un compte de réception",
+    "confirmSummary": "Acheter {{amount}} {{asset}} pour environ {{total}} USDT. La confirmation crée uniquement un ordre simulé local ; aucun fonds ne sera transféré.",
+    "confirmSellSummary": "Vendre {{amount}} {{asset}} pour environ {{total}} USDT. Seuls les actifs simulés locaux seront bloqués ; aucun fonds ne sera transféré.",
+    "newOrder": "Nouvel ordre"
   },
   "agreement": {
     "title": "Contrat de trading C2C",
     "version": "Version {{version}}",
     "agree": "J'ai lu et j'accepte",
     "close": "Fermer",
-    "loadError": "Échec du chargement du contrat, veuillez réessayer"
+    "loadError": "Échec du chargement du contrat, veuillez réessayer",
+    "body": "Accord de négociation OTC (v1-draft, exemple sans effet juridique)\n\n1. La plateforme agit comme contrepartie et fournit des cotations pour les cryptoactifs. Les cotations expirent et peuvent changer avant la soumission.\n\n2. Le niveau requis de vérification d’identité doit être atteint. Le nom et le pays du payeur proviennent des données KYC vérifiées.\n\n3. Des limites par ordre, quotidiennes et mensuelles s’appliquent.\n\n4. Pour acheter, utiliser les coordonnées de paiement de l’ordre. Pour vendre, les actifs correspondants sont bloqués dans l’attente de l’examen de la plateforme.\n\n5. Soumettre un ordre vaut acceptation de la version affichée. Vérifiez vos informations de paiement."
   },
   "pendingMatch": {
     "title": "En attente du compte de paiement",

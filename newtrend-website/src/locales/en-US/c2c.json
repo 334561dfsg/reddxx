@@ -65,14 +65,18 @@
     "payoutAccountPlaceholder": "Select a receiving account",
     "payoutAccountManage": "Manage accounts",
     "payoutAccountEmpty": "No active {{fiat}} receiving account yet",
-    "payoutAccountEmptyCta": "Add a receiving account"
+    "payoutAccountEmptyCta": "Add a receiving account",
+    "confirmSummary": "Buy {{amount}} {{asset}} for an estimated {{total}} USDT. Confirmation creates a local simulated order only; no funds are transferred.",
+    "confirmSellSummary": "Sell {{amount}} {{asset}} for approximately {{total}} USDT. Confirmation locks local simulated assets only; no funds are transferred.",
+    "newOrder": "New order"
   },
   "agreement": {
     "title": "C2C Trading Agreement",
     "version": "Version {{version}}",
     "agree": "I have read and agree",
     "close": "Close",
-    "loadError": "Failed to load the agreement, please retry"
+    "loadError": "Failed to load the agreement, please retry",
+    "body": "OTC trading agreement (v1-draft, illustrative draft with no legal effect)\n\n1. The platform acts as the OTC counterparty and provides quotes for buying and selling crypto assets. Quotes expire and may change before submission.\n\n2. Orders require the appropriate identity verification level. Payer name and country come from verified KYC information.\n\n3. Per-order, daily and monthly limits apply.\n\n4. Purchases use the payment details shown on the order. Sales lock the corresponding assets for platform review.\n\n5. Submitting an order accepts the displayed agreement version. Users are responsible for checking payment details."
   },
   "pendingMatch": {
     "title": "Awaiting Payment Account",

@@ -65,14 +65,18 @@
     "payoutAccountPlaceholder": "수취 계좌 선택",
     "payoutAccountManage": "계좌 관리",
     "payoutAccountEmpty": "사용 가능한 {{fiat}} 수취 계좌가 없습니다",
-    "payoutAccountEmptyCta": "수취 계좌 추가"
+    "payoutAccountEmptyCta": "수취 계좌 추가",
+    "confirmSummary": "{{amount}} {{asset}}을 약 {{total}} USDT에 구매합니다. 확인하면 로컬 모의 주문만 생성되며 자금은 이체되지 않습니다.",
+    "confirmSellSummary": "{{amount}} {{asset}}을 약 {{total}} USDT에 판매합니다. 로컬 모의 자산만 동결되며 자금은 이체되지 않습니다.",
+    "newOrder": "새 주문"
   },
   "agreement": {
     "title": "C2C 거래 약관",
     "version": "버전 {{version}}",
     "agree": "읽고 동의합니다",
     "close": "닫기",
-    "loadError": "약관을 불러오지 못했습니다. 다시 시도하세요"
+    "loadError": "약관을 불러오지 못했습니다. 다시 시도하세요",
+    "body": "OTC 거래 약관(v1-draft, 법적 효력이 없는 예시 초안)\n\n1. 플랫폼은 OTC 거래 상대방으로서 암호화폐 매매 호가를 제공합니다. 호가에는 유효 기간이 있으며 제출 전에 변경될 수 있습니다.\n\n2. 주문하려면 필요한 수준의 본인 인증을 완료해야 합니다. 결제자 이름과 국가는 인증된 KYC 정보를 사용합니다.\n\n3. 주문별, 일별, 월별 한도가 적용됩니다.\n\n4. 구매 시 주문에 표시된 결제 정보를 사용합니다. 판매 시 해당 자산은 플랫폼 검토가 끝날 때까지 동결됩니다.\n\n5. 주문 제출은 표시된 약관 버전에 대한 동의를 의미합니다. 결제 정보의 정확성을 확인해야 합니다."
   },
   "pendingMatch": {
     "title": "입금 계좌 배정 대기",
