@@ -1,6 +1,16 @@
 const sectionPage = () => import('../../pages/admin/system/SectionPage.vue')
 
 export const consoleRoutes = [
+  { path: 'earn/products/new', name: 'earn-admin-product-new', component: () => import('../../pages/admin/earn/EarnProductEditorPage.vue'), meta: { title: '理财管理 / 新增产品' } },
+  { path: 'earn/products/:id/edit', name: 'earn-admin-product-edit', component: () => import('../../pages/admin/earn/EarnProductEditorPage.vue'), meta: { title: '理财管理 / 编辑产品' } },
+  { path: 'earn', redirect: '/admin/earn/products' },
+  { path: 'earn/products', name: 'earn-admin-products', component: () => import('../../pages/admin/earn/EarnManagementPage.vue'), meta: { title: '理财管理 / 产品管理', earnSection: 'products' } },
+  { path: 'earn/orders', name: 'earn-admin-orders', component: () => import('../../pages/admin/earn/EarnManagementPage.vue'), meta: { title: '理财管理 / 申购订单', earnSection: 'orders' } },
+  { path: 'earn/holdings', name: 'earn-admin-holdings', component: () => import('../../pages/admin/earn/EarnManagementPage.vue'), meta: { title: '理财管理 / 持仓管理', earnSection: 'holdings' } },
+  { path: 'earn/redemptions', name: 'earn-admin-redemptions', component: () => import('../../pages/admin/earn/EarnManagementPage.vue'), meta: { title: '理财管理 / 赎回记录', earnSection: 'redemptions' } },
+  { path: 'earn/rewards', name: 'earn-admin-rewards', component: () => import('../../pages/admin/earn/EarnManagementPage.vue'), meta: { title: '理财管理 / 收益记录', earnSection: 'rewards' } },
+  { path: 'earn/logs', name: 'earn-admin-logs', component: () => import('../../pages/admin/earn/EarnManagementPage.vue'), meta: { title: '理财管理 / 操作日志', earnSection: 'logs' } },
+
   {
     path: '',
     name: 'dashboard',

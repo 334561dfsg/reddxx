@@ -25,6 +25,8 @@ const currentEntry = computed(() => {
 })
 
 /** 前台窄屏有底部 Tab，抬高快捷菜单避免遮挡 */
+const liftAboveEarnFooter = computed(() => /^\/admin\/earn\/products\/(new|[^/]+\/edit)\/?$/.test(route.path))
+
 const liftAboveTabBar = computed(() => currentEntry.value === 'front')
 
 function isMoreLinkActive(to) {
@@ -66,6 +68,7 @@ function platformRowClass(key) {
   <div
     ref="rootRef"
     class="fixed right-4 z-50 bottom-4"
+    :style="liftAboveEarnFooter ? {bottom:'calc(96px + env(safe-area-inset-bottom, 0px))'} : undefined"
     :class="
       liftAboveTabBar
         ? 'max-lg:[bottom:calc(1rem+0.5rem+3.5rem+0.6rem+env(safe-area-inset-bottom,0px))]'

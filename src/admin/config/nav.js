@@ -123,6 +123,18 @@ export const navTree = [
     ]
   },
   {
+    title: '理财管理',
+    icon: 'finance',
+    children: [
+      { title: '产品管理', path: '/admin/earn/products' },
+      { title: '申购订单', path: '/admin/earn/orders' },
+      { title: '持仓管理', path: '/admin/earn/holdings' },
+      { title: '赎回记录', path: '/admin/earn/redemptions' },
+      { title: '收益记录', path: '/admin/earn/rewards' },
+      { title: '操作日志', path: '/admin/earn/logs' },
+    ]
+  },
+  {
     title: 'AI量化交易',
     icon: 'robot',
     children: [
