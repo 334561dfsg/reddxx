@@ -153,3 +153,7 @@ Compress newly added raster images before shipping. Prefer WebP for photographic
 ## Public URL prefix (user decision, 2026-11-24)
 
 Serve this site at `/NewQuantCapital/` (case preserved), replacing `/newtrend/`. Keep the source folder `newtrend-website` unchanged. Root Vite dev/preview, build output, router history, asset paths and deployment rewrites use the branded prefix; legacy `/newtrend/` URLs redirect while retaining the subpath.
+
+## Earn source fidelity (latest user request, 2026-11-25)
+
+For `/NewQuantCapital/earn/simple`, its product details and subscription dialog, reproduce the reference's layout, icons, visible product content and interactions. This scoped request supersedes the shared geometry/type/corner simplification for these Earn surfaces: list outer max 1440px, detail content 960px, source rounded cards and pill controls. Keep NewQuantCapital branding, existing safety semantics, the prior removal of separate daily-rate sort buttons, and all other pages' shared design scale. Reference product names/descriptions are English even in zh-TW; preserve that content while keeping interface labels localized. Never submit reference-site financial actions. Product snapshots are public reference data; balances and subscription actions remain local prototype state.
