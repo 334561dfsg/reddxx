@@ -49,7 +49,7 @@
   },
   "kindBreakdown": {
     "title": "자산 유형별 현금",
-    "note": "현금만 집계합니다(사용 가능 잔액과 동결 잔액, USD 환산). 포지션 증거금, 미실현 손익, Earn, 퀀트 펀드는 포함되지 않으므로 네 항목의 합계는 총자산보다 작습니다."
+    "note": "현금만 집계합니다(사용 가능 잔액과 동결 잔액, USDT 환산). 포지션 증거금, 미실현 손익, Earn, 퀀트 펀드는 포함되지 않으므로 네 항목의 합계는 총자산보다 작습니다."
   },
   "fundRecords": "자금 기록",
   "fundRecordsTime": "시간",
@@ -96,8 +96,8 @@
   "transferAmountRequired": "이체 금액을 입력하세요",
   "transferAmountExceeds": "금액이 사용 가능 잔액을 초과합니다",
   "action": "작업",
-  "profitPositive": "+{{value}} USD (+{{percent}}%)",
-  "profitNegative": "{{value}} USD ({{percent}}%)",
+  "profitPositive": "+{{value}} USDT (+{{percent}}%)",
+  "profitNegative": "{{value}} USDT ({{percent}}%)",
   "convert": {
     "title": "환전",
     "entry": "환전",

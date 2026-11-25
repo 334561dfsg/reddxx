@@ -268,7 +268,7 @@
       "cumulativeReward": "Cumulative reward",
       "dailyEstimatedReward": "Estimated per-day",
       "earningsTrend": "{{days}}-day earnings trend",
-      "usdNote": "Amounts below are shown in USD equivalent"
+      "usdNote": "Amounts below are shown in USDT equivalent"
     },
     "tabs": {
       "holdings": "Holdings",
@@ -311,7 +311,7 @@
       "subscribedAt": "Subscribed at",
       "completedAt": "Completed at",
       "amount": "Amount",
-      "valueUsd": "≈ {{value}} USD"
+      "valueUsd": "≈ {{value}} USDT"
     },
     "redemptions": {
       "createdAt": "Requested at",

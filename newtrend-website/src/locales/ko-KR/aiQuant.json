@@ -463,8 +463,8 @@
         "breakdownToggle": "자산별 내역",
         "interestProgress": "이자 진행률 {{percent}}%",
         "earningsTrend": "최근 {{days}}일 이자 추이",
-        "usdPrice": "@ {{price}} USD",
-        "partialValuation": "{{assets}}의 USD 가격이 없어 합계에는 평가 가능한 자산만 포함됩니다."
+        "usdPrice": "@ {{price}} USDT",
+        "partialValuation": "{{assets}}의 USDT 가격이 없어 합계에는 평가 가능한 자산만 포함됩니다."
       },
       "empty": "이 탭에는 아직 주문이 없습니다.",
       "table": {

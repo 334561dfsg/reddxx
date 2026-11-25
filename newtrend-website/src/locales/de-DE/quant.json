@@ -5,8 +5,8 @@
     "private": "Privat ·",
     "subscriptionsAndInterest": "Zeichnungen und Zinsen",
     "runningInstances": "Laufende Instanzen",
-    "subscriptionRangeUsd": "Zeichnungsbereich (USD)",
-    "capitalUsd": "Kapital (USD)",
+    "subscriptionRangeUsd": "Zeichnungsbereich (USDT)",
+    "capitalUsd": "Kapital (USDT)",
     "790Days": "7 – 90 Tage",
     "proprietaryQuantModel1TradeDay": "Eigenes Quant-Modell · 1 Trade/Tag",
     "noMatchingStrategyTemplates": "Keine passenden Strategievorlagen"

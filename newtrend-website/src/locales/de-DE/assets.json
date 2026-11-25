@@ -49,7 +49,7 @@
   },
   "kindBreakdown": {
     "title": "Barbestand nach Anlageart",
-    "note": "Nur Barbestand – verfügbares und eingefrorenes Guthaben, bewertet in USD. Positionsmargin, nicht realisierte Gewinne und Verluste, Earn und Quant Fund sind nicht enthalten; die vier Werte ergeben daher weniger als Ihr Gesamtvermögen."
+    "note": "Nur Barbestand – verfügbares und eingefrorenes Guthaben, bewertet in USDT. Positionsmargin, nicht realisierte Gewinne und Verluste, Earn und Quant Fund sind nicht enthalten; die vier Werte ergeben daher weniger als Ihr Gesamtvermögen."
   },
   "fundRecords": "Kapitalbewegungen",
   "fundRecordsTime": "Zeit",
@@ -96,8 +96,8 @@
   "transferAmountRequired": "Bitte geben Sie den Übertragungsbetrag ein",
   "transferAmountExceeds": "Betrag übersteigt das verfügbare Guthaben",
   "action": "Aktion",
-  "profitPositive": "+{{value}} USD (+{{percent}} %)",
-  "profitNegative": "{{value}} USD ({{percent}} %)",
+  "profitPositive": "+{{value}} USDT (+{{percent}} %)",
+  "profitNegative": "{{value}} USDT ({{percent}} %)",
   "convert": {
     "title": "Umwandeln",
     "entry": "Umwandeln",

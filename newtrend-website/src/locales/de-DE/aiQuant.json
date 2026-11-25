@@ -463,8 +463,8 @@
         "breakdownToggle": "Aufschlüsselung nach Asset",
         "interestProgress": "Zinsfortschritt {{percent}} %",
         "earningsTrend": "Zinsverlauf über {{days}} Tage",
-        "usdPrice": "@ {{price}} USD",
-        "partialValuation": "Kein USD-Preis für {{assets}}; die Summen enthalten nur bewertbare Assets."
+        "usdPrice": "@ {{price}} USDT",
+        "partialValuation": "Kein USDT-Preis für {{assets}}; die Summen enthalten nur bewertbare Assets."
       },
       "empty": "Noch keine Orders in diesem Tab.",
       "table": {

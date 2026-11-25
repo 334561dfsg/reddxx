@@ -268,7 +268,7 @@
       "cumulativeReward": "累計報酬",
       "dailyEstimatedReward": "1日あたり予想",
       "earningsTrend": "直近 {{days}} 日間の収益推移",
-      "usdNote": "以下の金額はUSD換算で表示されています"
+      "usdNote": "以下の金額はUSDT換算で表示されています"
     },
     "tabs": {
       "holdings": "保有",
@@ -311,7 +311,7 @@
       "subscribedAt": "購読日時",
       "completedAt": "完了日時",
       "amount": "金額",
-      "valueUsd": "≈ {{value}} USD"
+      "valueUsd": "≈ {{value}} USDT"
     },
     "redemptions": {
       "createdAt": "申請日時",

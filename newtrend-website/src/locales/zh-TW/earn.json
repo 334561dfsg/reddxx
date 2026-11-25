@@ -248,7 +248,7 @@
       "cumulativeReward": "累計收益",
       "dailyEstimatedReward": "每日預估",
       "earningsTrend": "近 {{days}} 天收益趨勢",
-      "usdNote": "以下金額均為折合 USD"
+      "usdNote": "以下金額均為折合 USDT"
     },
     "table": {
       "productName": "產品名稱",
@@ -311,7 +311,7 @@
       "subscribedAt": "申購時間",
       "completedAt": "完成時間",
       "amount": "金額",
-      "valueUsd": "≈ {{value}} USD"
+      "valueUsd": "≈ {{value}} USDT"
     },
     "redemptions": {
       "createdAt": "發起時間",

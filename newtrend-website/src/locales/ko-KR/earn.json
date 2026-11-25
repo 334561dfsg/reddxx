@@ -268,7 +268,7 @@
       "cumulativeReward": "누적 보상",
       "dailyEstimatedReward": "일일 예상",
       "earningsTrend": "최근 {{days}}일 수익 추이",
-      "usdNote": "아래 금액은 USD 환산으로 표시됩니다"
+      "usdNote": "아래 금액은 USDT 환산으로 표시됩니다"
     },
     "tabs": {
       "holdings": "보유",
@@ -311,7 +311,7 @@
       "subscribedAt": "구독 시각",
       "completedAt": "완료 시각",
       "amount": "금액",
-      "valueUsd": "≈ {{value}} USD"
+      "valueUsd": "≈ {{value}} USDT"
     },
     "redemptions": {
       "createdAt": "요청 시각",

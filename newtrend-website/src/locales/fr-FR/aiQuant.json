@@ -463,8 +463,8 @@
         "breakdownToggle": "Détail par actif",
         "interestProgress": "Progression des intérêts {{percent}} %",
         "earningsTrend": "Tendance des intérêts sur {{days}} jours",
-        "usdPrice": "@ {{price}} USD",
-        "partialValuation": "Pas de prix USD pour {{assets}} ; les totaux n'incluent que les actifs valorisables."
+        "usdPrice": "@ {{price}} USDT",
+        "partialValuation": "Pas de prix USDT pour {{assets}} ; les totaux n'incluent que les actifs valorisables."
       },
       "empty": "Aucun ordre dans cet onglet pour le moment.",
       "table": {

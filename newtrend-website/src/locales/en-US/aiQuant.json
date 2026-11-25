@@ -463,8 +463,8 @@
         "breakdownToggle": "Breakdown by asset",
         "interestProgress": "Interest progress {{percent}}%",
         "earningsTrend": "{{days}}-day interest trend",
-        "usdPrice": "@ {{price}} USD",
-        "partialValuation": "No USD price for {{assets}}; totals only include assets that could be valued."
+        "usdPrice": "@ {{price}} USDT",
+        "partialValuation": "No USDT price for {{assets}}; totals only include assets that could be valued."
       },
       "empty": "No orders in this tab yet.",
       "table": {

@@ -254,7 +254,7 @@
     "totalDeposited": "누적 입금액",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "최고 등급 달성 (VIP {{tier}})",
-    "amountToNext": "VIP {{tier}}까지 {{amount}} USD 남음",
+    "amountToNext": "VIP {{tier}}까지 {{amount}} USDT 남음",
     "currentTierLabel": "현재 등급",
     "baseTier": "기본",
     "tiersLabel": "등급 사다리"

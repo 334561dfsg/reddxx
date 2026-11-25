@@ -254,7 +254,7 @@
     "totalDeposited": "Dépôts cumulés",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "Niveau maximum atteint (VIP {{tier}})",
-    "amountToNext": "Encore {{amount}} USD pour atteindre le niveau VIP {{tier}}",
+    "amountToNext": "Encore {{amount}} USDT pour atteindre le niveau VIP {{tier}}",
     "currentTierLabel": "Niveau actuel",
     "baseTier": "Base",
     "tiersLabel": "Paliers VIP"

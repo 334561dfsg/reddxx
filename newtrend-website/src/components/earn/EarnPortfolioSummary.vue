@@ -6,7 +6,7 @@ import {earnSummary} from '../../utils/mockEarnPortfolio'
 const hidden=shallowRef(false)
 const summary=computed(()=>earnSummary(earnPortfolio,products))
 const metrics=[['principal','principal'],['accruedReward','accrued'],['cumulativeReward','cumulative']]
-const money=value=>hidden.value?'****':'$'+value.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
+const money=value=>hidden.value?'****':value.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' USDT'
 </script>
 <template>
 <section class="earn-panel portfolio-summary">

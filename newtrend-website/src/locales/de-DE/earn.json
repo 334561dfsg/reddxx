@@ -268,7 +268,7 @@
       "cumulativeReward": "Kumulierte Belohnung",
       "dailyEstimatedReward": "Geschätzt pro Tag",
       "earningsTrend": "Ertragsverlauf über {{days}} Tage",
-      "usdNote": "Die untenstehenden Beträge werden in USD-Äquivalent angezeigt"
+      "usdNote": "Die untenstehenden Beträge werden in USDT-Äquivalent angezeigt"
     },
     "tabs": {
       "holdings": "Bestände",
@@ -311,7 +311,7 @@
       "subscribedAt": "Gezeichnet am",
       "completedAt": "Abgeschlossen am",
       "amount": "Betrag",
-      "valueUsd": "≈ {{value}} USD"
+      "valueUsd": "≈ {{value}} USDT"
     },
     "redemptions": {
       "createdAt": "Angefordert am",

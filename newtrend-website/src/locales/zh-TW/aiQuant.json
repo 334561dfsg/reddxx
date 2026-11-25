@@ -463,8 +463,8 @@
         "breakdownToggle": "按資產明細",
         "interestProgress": "派息進度 {{percent}}%",
         "earningsTrend": "近 {{days}} 天派息趨勢",
-        "usdPrice": "@ {{price}} USD",
-        "partialValuation": "{{assets}} 暫無 USD 報價，總計僅包含可估值資產。"
+        "usdPrice": "@ {{price}} USDT",
+        "partialValuation": "{{assets}} 暫無 USDT 報價，總計僅包含可估值資產。"
       },
       "empty": "此分類下暫無訂單。",
       "table": {

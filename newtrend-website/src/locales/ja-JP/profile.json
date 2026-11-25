@@ -254,7 +254,7 @@
     "totalDeposited": "累計入金額",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "最高ランクに到達（VIP {{tier}}）",
-    "amountToNext": "VIP {{tier}} まであと {{amount}} USD",
+    "amountToNext": "VIP {{tier}} まであと {{amount}} USDT",
     "currentTierLabel": "現在のランク",
     "baseTier": "ベース",
     "tiersLabel": "ランク階段"

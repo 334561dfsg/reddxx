@@ -463,8 +463,8 @@
         "breakdownToggle": "資産別内訳",
         "interestProgress": "利息進捗 {{percent}}%",
         "earningsTrend": "直近 {{days}} 日間の利息推移",
-        "usdPrice": "@ {{price}} USD",
-        "partialValuation": "{{assets}} のUSD価格が取得できないため、合計には評価可能な資産のみ含まれます。"
+        "usdPrice": "@ {{price}} USDT",
+        "partialValuation": "{{assets}} のUSDT価格が取得できないため、合計には評価可能な資産のみ含まれます。"
       },
       "empty": "このタブにはまだ注文がありません。",
       "table": {

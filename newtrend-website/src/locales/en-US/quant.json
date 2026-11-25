@@ -5,8 +5,8 @@
     "private": "Private ·",
     "subscriptionsAndInterest": "Subscriptions and interest",
     "runningInstances": "Running instances",
-    "subscriptionRangeUsd": "Subscription range (USD)",
-    "capitalUsd": "Capital (USD)",
+    "subscriptionRangeUsd": "Subscription range (USDT)",
+    "capitalUsd": "Capital (USDT)",
     "790Days": "7 – 90 days",
     "proprietaryQuantModel1TradeDay": "Proprietary quant model · 1 trade/day",
     "noMatchingStrategyTemplates": "No matching strategy templates"

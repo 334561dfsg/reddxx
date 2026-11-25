@@ -49,7 +49,7 @@
   },
   "kindBreakdown": {
     "title": "資産種別ごとの現金",
-    "note": "現金のみを集計しています（利用可能残高と凍結残高、USD 評価）。建玉証拠金・未実現損益・Earn・クオンツファンドは含まれないため、4 種類の合計は総資産より小さくなります。"
+    "note": "現金のみを集計しています（利用可能残高と凍結残高、USDT 評価）。建玉証拠金・未実現損益・Earn・クオンツファンドは含まれないため、4 種類の合計は総資産より小さくなります。"
   },
   "fundRecords": "資金記録",
   "fundRecordsTime": "時刻",
@@ -96,8 +96,8 @@
   "transferAmountRequired": "振替金額を入力してください",
   "transferAmountExceeds": "金額が利用可能残高を超えています",
   "action": "操作",
-  "profitPositive": "+{{value}} USD (+{{percent}}%)",
-  "profitNegative": "{{value}} USD ({{percent}}%)",
+  "profitPositive": "+{{value}} USDT (+{{percent}}%)",
+  "profitNegative": "{{value}} USDT ({{percent}}%)",
   "convert": {
     "title": "コンバート",
     "entry": "コンバート",

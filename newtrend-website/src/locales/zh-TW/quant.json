@@ -5,8 +5,8 @@
     "private": "私人 · ",
     "subscriptionsAndInterest": "申購與利息",
     "runningInstances": "運行中的實例",
-    "subscriptionRangeUsd": "申購區間（USD）",
-    "capitalUsd": "資金（USD）",
+    "subscriptionRangeUsd": "申購區間（USDT）",
+    "capitalUsd": "資金（USDT）",
     "790Days": "7 – 90 天",
     "proprietaryQuantModel1TradeDay": "自研量化模型 · 日均 1 筆",
     "noMatchingStrategyTemplates": "沒有符合條件的策略模板"

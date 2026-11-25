@@ -268,7 +268,7 @@
       "cumulativeReward": "Récompense cumulée",
       "dailyEstimatedReward": "Estimé par jour",
       "earningsTrend": "Tendance des gains sur {{days}} jours",
-      "usdNote": "Les montants ci-dessous sont affichés en équivalent USD"
+      "usdNote": "Les montants ci-dessous sont affichés en équivalent USDT"
     },
     "tabs": {
       "holdings": "Avoirs",
@@ -311,7 +311,7 @@
       "subscribedAt": "Souscrit le",
       "completedAt": "Terminé le",
       "amount": "Montant",
-      "valueUsd": "≈ {{value}} USD"
+      "valueUsd": "≈ {{value}} USDT"
     },
     "redemptions": {
       "createdAt": "Demandé le",

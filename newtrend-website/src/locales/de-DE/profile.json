@@ -254,7 +254,7 @@
     "totalDeposited": "Kumulierte Einzahlungen",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "Höchste Stufe erreicht (VIP {{tier}})",
-    "amountToNext": "Noch {{amount}} USD bis VIP {{tier}}",
+    "amountToNext": "Noch {{amount}} USDT bis VIP {{tier}}",
     "currentTierLabel": "Aktuelle Stufe",
     "baseTier": "Basis",
     "tiersLabel": "Stufenleiter"

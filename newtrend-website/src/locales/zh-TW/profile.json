@@ -254,7 +254,7 @@
     "totalDeposited": "累計入金",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "已達最高等級（VIP {{tier}}）",
-    "amountToNext": "距 VIP {{tier}} 還需 {{amount}} USD",
+    "amountToNext": "距 VIP {{tier}} 還需 {{amount}} USDT",
     "currentTierLabel": "當前等級",
     "baseTier": "起步",
     "tiersLabel": "等級階梯"

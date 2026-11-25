@@ -254,7 +254,7 @@
     "totalDeposited": "Cumulative deposits",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "Top tier reached (VIP {{tier}})",
-    "amountToNext": "{{amount}} USD more to reach VIP {{tier}}",
+    "amountToNext": "{{amount}} USDT more to reach VIP {{tier}}",
     "currentTierLabel": "Current tier",
     "baseTier": "Base",
     "tiersLabel": "Tier ladder"

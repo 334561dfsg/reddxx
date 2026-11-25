@@ -49,7 +49,7 @@
   },
   "kindBreakdown": {
     "title": "Cash by asset type",
-    "note": "Cash only — available plus frozen balances, valued in USD. Position margin, unrealized PnL, Earn and Quant Fund are excluded, so these four add up to less than your total assets."
+    "note": "Cash only — available plus frozen balances, valued in USDT. Position margin, unrealized PnL, Earn and Quant Fund are excluded, so these four add up to less than your total assets."
   },
   "fundRecords": "Fund Records",
   "fundRecordsTime": "Time",
@@ -96,8 +96,8 @@
   "transferAmountRequired": "Please enter transfer amount",
   "transferAmountExceeds": "Amount exceeds available balance",
   "action": "Action",
-  "profitPositive": "+{{value}} USD (+{{percent}}%)",
-  "profitNegative": "{{value}} USD ({{percent}}%)",
+  "profitPositive": "+{{value}} USDT (+{{percent}}%)",
+  "profitNegative": "{{value}} USDT ({{percent}}%)",
   "convert": {
     "title": "Convert",
     "entry": "Convert",

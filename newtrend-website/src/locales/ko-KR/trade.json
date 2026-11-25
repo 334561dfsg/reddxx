@@ -396,7 +396,7 @@
     "pending": "미체결",
     "unrealized": "미실현 손익",
     "remaining": "남은 수량",
-    "confirmClose": "{{pair}} 포지션 전체 {{quantity}}를 {{price}} USD에 청산하시겠습니까?",
+    "confirmClose": "{{pair}} 포지션 전체 {{quantity}}를 {{price}} USDT에 청산하시겠습니까?",
     "confirmCancel": "{{pair}} 주문(수량 {{quantity}}, 가격 {{price}} USDT)을 취소하시겠습니까?",
     "closed": "{{pair}} 청산 완료. 포지션 내역에서 확인하세요.",
     "cancelled": "{{pair}} 취소 완료. 주문 내역에서 확인하세요.",
@@ -419,7 +419,7 @@
     "deposit": "입금",
     "withdraw": "출금",
     "invalidStops": "유효한 익절 또는 손절 가격을 입력하세요. 매수는 익절이 주문가보다 높고 손절은 낮아야 하며 매도는 반대입니다.",
-    "confirm": "{{quantity}} {{unit}}를 {{price}} USD에 주문하시겠습니까?"
+    "confirm": "{{quantity}} {{unit}}를 {{price}} USDT에 주문하시겠습니까?"
   },
   "pages": {
     "perpetual": "무기한 선물",
