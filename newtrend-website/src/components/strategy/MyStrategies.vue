@@ -3,18 +3,24 @@ import StatusTag from '../ui/StatusTag.vue'
 import LineIcon from '../ui/LineIcon.vue'
 import EmptyState from '../ui/EmptyState.vue'
 import {money} from '../../utils/format.js'
-import {computed,ref,onMounted} from 'vue'
+import {computed,ref} from 'vue'
 import FeedbackToast from '../../platform/FeedbackToast.js'
 import {fmt,path} from '../../data'
 import {locale} from '../../i18n'
 import {openModal,session} from '../../session'
-import {strategyAccountFor,refreshStrategies,changeStatusFor} from '../../strategyPortfolio'
+import Skeleton from '../ui/Skeleton.vue'
+import RequestState from '../ui/RequestState.vue'
+import {changeStrategyStatus} from '../../api/strategy.js'
+import {invalidate} from '../../composables/useRequest.js'
 import PortfolioSummaryCard from '../PortfolioSummaryCard.vue'
 import FinancePagination from '../FinancePagination.vue'
 import {useFinancePagination} from '../../composables/useFinancePagination'
 // Reference "my strategies": summary, per-mode table with status/demo badges, actions and expandable daily stats.
-const account=computed(()=>strategyAccountFor(session.mode))
-const records=computed(()=>account.value.records)
+// The account ({balance, records}) is loaded and polled by pages/Strategy.vue; null while the first load runs.
+const props=defineProps({account:{type:Object,default:null},status:{type:String,required:true},error:Object})
+const emit=defineEmits(['retry'])
+const loading=computed(()=>props.status==='loading')
+const records=computed(()=>props.account?.records||[])
 const {page,total,shown}=useFinancePagination(records,10)
 // money comes from the shared site formatters
 const summary=computed(()=>{const list=records.value,pnl=list.reduce((sum,r)=>sum+r.pnl,0);return {capital:list.reduce((sum,r)=>sum+r.capital,0),pnl,running:list.filter(r=>r.status==='running').length,total:list.length}})
@@ -25,39 +31,38 @@ const styleKey=record=>record.template.style
 const marketKey=record=>record.template.market
 const feedback=ref(null),busy=ref(null)
 function notify(type,key){feedback.value=null;requestAnimationFrame(()=>{feedback.value={type,key}})}
-// 模擬 settles locally after a short simulated round trip so the row shows a real loading state; 真實 waits for the server.
+// Both modes go through the API (simulated latency for 模擬, the server for 真實).
 // busy={id,kind}: the clicked button spins, the row's other actions are disabled, repeated clicks are ignored.
-const ACTION_DELAY=650
-const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms))
 const isBusy=(record,kind)=>busy.value?.id===record.id&&(!kind||busy.value.kind===kind)
 async function apply(record,kind){
  if(busy.value)return
  busy.value={id:record.id,kind}
  // Bind to the mode that owned the row when clicked; a mode switch during the wait must not retarget it.
  const mode=session.mode
- try{if(mode==='common.demo.demo')await wait(ACTION_DELAY);await changeStatusFor(mode,record,kind);notify('success','aiQuant.actions.toast.'+kind+'Success')}
+ try{await changeStrategyStatus({mode,record,kind});notify('success','aiQuant.actions.toast.'+kind+'Success')}
  catch{notify('error','aiQuant.actions.toast.'+kind+'Error')}
- finally{busy.value=null}
+ finally{busy.value=null;invalidate('strategy')}
 }
 function act(record,kind){
  if(busy.value)return
  if(kind!=='stop')return apply(record,kind)
  openModal('account-confirm','aiQuant.actions.stopConfirm.title',{subtitle:record.template.name,danger:{key:'aiQuant.actions.stopConfirm.notice',params:{name:record.template.name}},cancelLabel:'aiQuant.actions.stopConfirm.cancel',confirmLabel:'aiQuant.actions.stopConfirm.confirm',destructive:true,focusCancel:true,onConfirm:()=>apply(record,'stop')})
 }
-// Settle local demo strategies whose term ended while the page was away (the server settles 真實 ones).
-onMounted(refreshStrategies)
 </script>
 <template>
 <div class="my-strategies">
  <header class="my-strategies-head"><span>{{ $t('aiQuant.myStrategies.subtitle') }}</span><h1>{{ $t('aiQuant.myStrategies.title') }}</h1></header>
- <EmptyState v-if="!records.length" class="my-strategies-empty" :text="$t('aiQuant.myStrategies.empty')"><RouterLink class="strategy-outline" :to="path('/ai-quant/strategy')">{{ $t('aiQuant.myStrategies.browseStrategies') }}</RouterLink></EmptyState>
+ <!-- Summary labels and the table header stay while loading; figures and rows are skeletons of the loaded size. -->
+ <RequestState v-if="status==='error'" :status="status" :error="error" class="strategy-request-frame" @retry="emit('retry')"/>
+ <EmptyState v-else-if="!loading&&!records.length" class="my-strategies-empty" :text="$t('aiQuant.myStrategies.empty')"><RouterLink class="strategy-outline" :to="path('/ai-quant/strategy')">{{ $t('aiQuant.myStrategies.browseStrategies') }}</RouterLink></EmptyState>
  <template v-else>
-  <PortfolioSummaryCard label-id="ms-summary-capital" :label="$t('aiQuant.myStrategies.summary.totalCapital')" :value="money(summary.capital)" unit="USDT"
+  <span v-if="loading" role="status" class="sr-only">{{ $t('common.loading') }}</span>
+  <PortfolioSummaryCard :loading="loading" label-id="ms-summary-capital" :label="$t('aiQuant.myStrategies.summary.totalCapital')" :value="money(summary.capital)" unit="USDT"
    :accent="{value:signed(summary.pnl),unit:'USDT',label:$t('aiQuant.myStrategies.summary.totalPnl'),tone:summary.pnl>=0?'profit':'loss'}"
    :stats="[{label:$t('aiQuant.myStrategies.summary.running'),value:String(summary.running),sensitive:false},{label:$t('aiQuant.myStrategies.summary.total'),value:String(summary.total),sensitive:false}]"/>
   <div class="my-strategies-table"><table>
    <thead><tr><th scope="col">{{ $t('aiQuant.table.columns.strategyName') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.pnl') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.capital') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.endDate') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.action') }}</th></tr></thead>
-   <tbody><template v-for="record in shown" :key="record.id">
+   <tbody><template v-if="loading"><tr v-for="n in 4" :key="n" class="ms-skeleton-row" aria-hidden="true"><td><div class="ms-skeleton-lines"><Skeleton width="64px" height="22px"/><Skeleton width="180px" height="18px"/><Skeleton width="120px" height="12px"/></div></td><td class="num"><div class="ms-skeleton-lines"><Skeleton width="110px" height="18px"/><Skeleton width="56px" height="12px"/></div></td><td class="num"><Skeleton width="96px"/></td><td class="num"><Skeleton width="88px"/></td><td class="num"><div class="ms-skeleton-actions"><Skeleton width="72px" height="32px"/><Skeleton width="96px" height="32px"/></div></td></tr></template><template v-else v-for="record in shown" :key="record.id">
     <tr>
      <td :data-label="$t('aiQuant.table.columns.strategyName')"><div class="ms-name"><div class="ms-badges"><StatusTag domain="strategy" :status="record.status"/><span v-if="record.status==='running'" class="ms-pulse" aria-hidden="true"></span><span v-if="record.mode==='demo'" class="ms-demo">{{ $t('common.demo.account') }}</span></div><strong>{{ record.template.name }}</strong><small>{{ $t(styleKey(record)) }} · {{ $t(marketKey(record)) }}</small></div></td>
      
@@ -78,8 +83,9 @@ onMounted(refreshStrategies)
     
    </template></tbody>
   </table></div>
-  <FinancePagination v-model:page="page" :total="total" :page-size="10"/>
+  <FinancePagination v-if="!loading" v-model:page="page" :total="total" :page-size="10"/>
  </template>
  <FeedbackToast v-if="feedback" :type="feedback.type" :source="()=>feedback?$t(feedback.key):''"/>
 </div>
 </template>
+<style>.ms-skeleton-row td{height:107px;box-sizing:border-box}@media(max-width:767px){.ms-skeleton-row td{height:auto}}.ms-skeleton-lines{display:grid;gap:8px;justify-items:start}.my-strategies-table td.num .ms-skeleton-lines{justify-items:end}.my-strategies-table td.num>.nt-skeleton{margin-left:auto}.ms-skeleton-actions{display:flex;gap:8px;justify-content:flex-end}</style>

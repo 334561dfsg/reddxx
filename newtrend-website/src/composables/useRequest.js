@@ -7,6 +7,8 @@ import {computed, getCurrentScope, onScopeDispose, shallowRef, watch} from 'vue'
 //   A key change drops the old data (it belongs to another mode/id) and shows 'loading' again; a tag
 //   invalidation or refresh() keeps the current data on screen and only sets `refreshing`.
 //   Out-of-order responses are ignored; nothing is written after the owning scope is disposed.
+//   poll: ms — background refresh on that interval while data is shown (skipped while a request is in flight or
+//   the tab is hidden), for server state others change (admin review, generated P&L).
 // useMutation(action) — one call at a time; a repeat while pending resolves to undefined without calling.
 // invalidate(tag) — refreshes every live request that declared that tag (e.g. after a subscription).
 
@@ -24,13 +26,14 @@ function subscribe(tags, refresh) {
   return () => tags.forEach(tag => listeners.get(tag)?.delete(refresh))
 }
 
-export function useRequest(fetcher, {key, tags = [], immediate = true} = {}) {
+export function useRequest(fetcher, {key, tags = [], immediate = true, poll = 0} = {}) {
   const data = shallowRef(null), error = shallowRef(null)
   const loading = shallowRef(immediate), refreshing = shallowRef(false)
-  let sequence = 0, alive = true
+  let sequence = 0, alive = true, inFlight = 0
 
   async function run({reset = false} = {}) {
     const id = ++sequence
+    inFlight++
     if (reset) data.value = null
     error.value = null
     if (data.value === null) loading.value = true
@@ -41,6 +44,7 @@ export function useRequest(fetcher, {key, tags = [], immediate = true} = {}) {
     } catch (cause) {
       if (alive && id === sequence) error.value = cause
     } finally {
+      inFlight--
       if (alive && id === sequence) loading.value = refreshing.value = false
     }
   }
@@ -49,7 +53,11 @@ export function useRequest(fetcher, {key, tags = [], immediate = true} = {}) {
   if (key) watch(key, () => run({reset: true}), {immediate})
   else if (immediate) run()
   const unsubscribe = subscribe(tags, refresh)
-  if (getCurrentScope()) onScopeDispose(() => { alive = false; unsubscribe() })
+  const timer = poll > 0 ? setInterval(() => {
+    const hidden = typeof document !== 'undefined' && document.hidden
+    if (alive && !inFlight && !hidden && data.value !== null) run()
+  }, poll) : null
+  if (getCurrentScope()) onScopeDispose(() => { alive = false; unsubscribe(); if (timer) clearInterval(timer) })
 
   const status = computed(() => data.value !== null ? 'ready' : error.value ? 'error' : 'loading')
   return {data, error, loading, refreshing, status, refresh}

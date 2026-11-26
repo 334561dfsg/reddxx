@@ -1,25 +1,19 @@
 <script setup>
 import BackLink from '../ui/BackLink.vue'
-import {computed} from 'vue'
+import Skeleton from '../ui/Skeleton.vue'
 import {path} from '../../data'
-import {session} from '../../session'
-import {strategyAccountFor} from '../../strategyPortfolio'
-import {strategyLoaded,strategyError} from '../../platform/strategyClient.js'
 import StrategyDailyStats from './StrategyDailyStats.vue'
-import NotFound from '../../pages/NotFound.vue'
 // Standalone 查看統計 page (same pattern as Quant Fund 派息明細): back link, strategy name, daily stats panel.
-const props=defineProps({recordId:{type:String,required:true}})
-const record=computed(()=>strategyAccountFor(session.mode).records.find(item=>item.id===props.recordId)||null)
-// 真實 records arrive from the shared Mock; do not flash not-found while the first response is pending.
-const waiting=computed(()=>session.mode!=='common.demo.demo'&&!strategyLoaded.value&&!strategyError.value)
+// The record is resolved by pages/Strategy.vue (which renders not-found); null while the account is loading, when the
+// back link and heading label stay and the name, subtitle and stats panel are skeletons.
+defineProps({record:{type:Object,default:null}})
 </script>
 <template>
-<div v-if="!record&&waiting" class="strategy-container strategy-stats-page" aria-busy="true"></div>
-<NotFound v-else-if="!record"/>
-<div v-else class="strategy-container strategy-stats-page">
+<div class="strategy-container strategy-stats-page">
  <BackLink :to="path('/ai-quant/strategy/mine')" class="strategy-stats-back">{{ $t('aiQuant.quantFund.interestRecords.back') }}</BackLink>
- <header class="strategy-stats-head"><span>{{ $t('aiQuant.actions.viewStats') }}</span><h1>{{ record?.template.name||'—' }}</h1><p v-if="record">{{ $t(record.template.style) }} · {{ $t(record.template.market) }}</p></header>
- <section class="strategy-stats-card"><StrategyDailyStats :items="record?.dailyStats||[]"/></section>
+ <span v-if="!record" role="status" class="sr-only">{{ $t('common.loading') }}</span>
+ <header class="strategy-stats-head"><span>{{ $t('aiQuant.actions.viewStats') }}</span><h1><template v-if="record">{{ record.template.name }}</template><Skeleton v-else inline width="320px"/></h1><p><template v-if="record">{{ $t(record.template.style) }} · {{ $t(record.template.market) }}</template><Skeleton v-else inline width="140px"/></p></header>
+ <section class="strategy-stats-card"><StrategyDailyStats :items="record?.dailyStats||[]" :loading="!record"/></section>
 </div>
 </template>
 <style>

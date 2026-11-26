@@ -25,7 +25,7 @@
 
 这是可运行的前端演示，不连接原站 API。默认展示已登录界面；账户资料为虚构数据。所有 mock 业务数据只存在内存中（不写入浏览器存储），刷新即重置。
 
-页面不直接读写 mock store，而是调用 `src/api/` 下的异步接口（目前理财、量化基金已迁移），由 `src/api/transport.js` 模拟网络延迟（300–800ms）、返回 JSON 快照和带错误码的失败，方便原型提前呈现骨架屏、提交中和失败重试状态；将来接入真实 API 只需替换 transport。调试参数：`?mock-delay=0`（或毫秒数）取消/固定延迟，`?mock-fail=earn`（服务名：`earn`、`quantFund`；或 `all`）让该服务全部失败。
+页面不直接读写 mock store，而是调用 `src/api/` 下的异步接口（目前理财、量化基金、AI 策略已迁移），由 `src/api/transport.js` 模拟网络延迟（300–800ms）、返回 JSON 快照和带错误码的失败，方便原型提前呈现骨架屏、提交中和失败重试状态；将来接入真实 API 只需替换 transport。调试参数：`?mock-delay=0`（或毫秒数）取消/固定延迟，`?mock-fail=earn`（服务名：`earn`、`quantFund`、`strategy`；或 `all`）让该服务全部失败。
 
 资金统一走 `src/mock/ledger.js` 的分账户、分币种账本：“真實”初始为空，“模擬”初始为 100,000 USDT / 100,000 USDC / 2 BTC / 30 ETH / 500 SOL。理财、量化基金、策略、交易、C2C、捐赠与兑换都通过账本扣款和入账，两种模式的记录互不影响。种子数据以页面加载时间为基准（`src/mock/clock.js`），到期、结算等生命周期按同一时钟推导。借贷使用根目录 dev server 的共享内存 mock（与管理后台共用），独立于账本。
 
