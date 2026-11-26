@@ -10,7 +10,18 @@ const depth=useDepth(()=>props.pair.id)
 const count=computed(()=>display.value==='both'?7:14)
 // Asks are farthest-first; show the `count` nearest to the spread. Bids are nearest-first.
 const rows=side=>{const book=depth.data.value;if(!book)return null;return side==='ask'?book.asks.slice(-count.value):book.bids.slice(0,count.value)}
-const maxQty=computed(()=>{const book=depth.data.value;return book?Math.max(...book.asks.map(l=>l[1]),...book.bids.map(l=>l[1])):1})
+// Depth like newtrendcapital.com/zh-TW/trade (read 2026-11-26): each row's background bar is the cumulative size from
+// the spread out to that level as a share of the visible side, so bars step up away from the spread and are redrawn
+// on every push (the reference's "background change"); 累計 is the running total (USDT) in the same direction.
+const sideRows=side=>{
+ const list=rows(side);if(!list)return null
+ const order=side==='ask'?[...list].reverse():list
+ let qty=0,value=0
+ const out=order.map(([price,q])=>{qty+=q;value+=q*price;return {price,qty:q,cumQty:qty,cumValue:value}})
+ const total=qty||1
+ for(const row of out)row.share=Math.round(row.cumQty/total*10000)/100
+ return side==='ask'?out.reverse():out
+}
 </script>
 <template>
 <section class="terminal-panel orderbook" :aria-label="$t('trade.orderBook')">
@@ -19,7 +30,7 @@ const maxQty=computed(()=>{const book=depth.data.value;return book?Math.max(...b
   <div class="book-body" :aria-busy="!depth.ready.value||undefined">
     <div v-for="side in (display==='both'?['ask','bid']:[display])" :key="side" class="book-side">
       <div v-if="(side==='bid'||display==='ask')" class="book-price" :class="pair.change<0?'negative':'positive'"><template v-if="pair.price!==null">{{ fmt(pair.price) }} {{ pair.change<0?'↓':'↑' }}</template><Skeleton v-else inline width="96px"/></div>
-      <template v-if="rows(side)"><div v-for="[price,qty] in rows(side)" :key="price" class="book-row" :class="{bid:side==='bid'}" :style="{'--depth':Math.round(qty/maxQty*100)+'%'}"><span :class="side==='bid'?'positive':'negative'">{{ fmt(price) }}</span><span>{{ qty.toFixed(4) }}</span><span>{{ fmt(qty*price) }}</span></div></template>
+      <template v-if="rows(side)"><div v-for="row in sideRows(side)" :key="row.price" class="book-row" :class="{bid:side==='bid'}" :style="{'--depth':row.share+'%'}"><span :class="side==='bid'?'positive':'negative'">{{ fmt(row.price) }}</span><span>{{ row.qty.toFixed(4) }}</span><span>{{ fmt(row.cumValue) }}</span></div></template>
       <template v-else><div v-for="n in count" :key="n" class="book-row book-skeleton-row" aria-hidden="true"><span><Skeleton inline width="64px"/></span><span><Skeleton inline width="44px"/></span><span><Skeleton inline width="56px"/></span></div></template>
     </div>
   </div>

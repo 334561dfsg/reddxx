@@ -391,3 +391,7 @@ Supersedes the GMXX-style record cards above (History reference, Current records
 ## Header profile menu (user reference, 2026-11-26)
 
 The header profile dropdown follows the GMXX account menu in the current style: avatar, name, KYC + VIP badges and UID copy; a 信用分 pill; a 2×2 grid of the current mode's account balances (資金帳戶, 交易帳戶, 理財帳戶, 量化基金; loaded from `getAssetsOverview` when the menu opens, masked with the assets menu's eye toggle); then 個人中心, 安全中心 (`/profile#security`, scrolls to the 安全 group 80px below the header), 身份認證, 清除快取 (same confirm as the profile row) and 登出. GMXX's Account Role entry is not copied: the header 真實/模擬 toggle already covers it. 邀請好友 is reached from 個人中心 → 我的業務.
+
+## Order book depth bars (reference read, 2026-11-26)
+
+Following newtrendcapital.com/zh-TW/trade (read-only DOM inspection): each order-book row's background bar is the cumulative size from the spread to that level as a share of the visible side (widest at the far end), drawn in opaque dim side colours (asks #230e16, bids #06221a) and redrawn instantly on every depth push; that bar movement is the "background change" on updates. 累計 is the running total (USDT) in the same direction. No row flash animation. The mock depth (`depthBook`) changes a staggered quarter of the levels per tick so the bars move unevenly, like a live book.

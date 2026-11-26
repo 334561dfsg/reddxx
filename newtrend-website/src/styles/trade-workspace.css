@@ -35,8 +35,9 @@
 .product-terminal .book-head>span:first-child,.product-terminal .book-row>span:first-child{text-align:left}
 .product-terminal .book-body{overflow-y:auto;min-height:0;flex:1}
 .product-terminal .book-row{position:relative}
-.product-terminal .book-row:before{content:'';position:absolute;top:0;bottom:0;right:0;width:var(--depth);background:#ff446614;pointer-events:none}
-.product-terminal .book-row.bid:before{background:#2bc28714}
+/* Depth bars after the reference (2026-11-26): opaque dim side colours, cumulative width, redrawn on each push. */
+.product-terminal .book-row:before{content:'';position:absolute;top:0;bottom:0;right:0;width:var(--depth);background:#230e16;pointer-events:none}
+.product-terminal .book-row.bid:before{background:#06221a}
 .product-terminal .book-row>span{position:relative;overflow-wrap:anywhere}
 .product-terminal .order-panel{grid-column:3;grid-row:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;padding:0;gap:0}
 .product-terminal .order-panel .trade-order-form{min-height:0}
