@@ -1,5 +1,4 @@
-import {reactive} from 'vue'
-export const c2cState=reactive({accounts:[],orders:[],balances:{USDT:100000}})
+// Pure C2C rules over a state object ({accounts, orders, balances}); the app's state lives in src/c2cStore.js.
 export const accountFields=['accountName','accountNumber','bankName','branch','swiftCode','routingNumber','phone','bankAddress','accountAddress','remark']
 export function saveAccount(state,draft){
  if(!['USDT'].includes(draft.currency)||['accountName','accountNumber','bankName'].some(key=>!draft[key]?.trim())||String(draft.remark||'').length>255)throw new Error('c2c.error.generic')

@@ -46,7 +46,7 @@ key claims were re-verified in code before inclusion. Tests 77/77 and locale che
 1. **Rules & bugs** — A1–A9; delete orphaned components and dead branches; mount resiliently. ✅ Done 2026-11-26 (see AGENTS.md "Refactor phase 1 conventions").
 2. **Mock layer** — `src/mock/` kernel: single clock, seedable ids, one price snapshot, per-mode/per-currency ledger;
    domain stores with pure commands (validate → mutate, `requestId`, `mode`); seeds replayed through commands; status derived from the clock.
-   Lending stays on the shared server mock (also used by admin) but goes through the same mode/clock conventions.
+   Lending stays on the shared server mock (also used by admin) but goes through the same mode/clock conventions. ✅ Done 2026-11-26 (see AGENTS.md "Refactor phase 2"; lending intentionally unchanged).
 3. **Components** — `components/ui` primitives (CoinIcon, Icon registry, StatusTag, BackLink, EmptyState, SummaryCard, RecordList, NtSelect), `utils/format.js`,
    `useLocaleSwitch`; split Overlay into host + registry; split Account/Content into pages; named routes per page; `@shared` alias.
 4. **CSS** — `styles/index.css` with `@layer` order and one tokens file; delete dead rules and unused vendor CSS;

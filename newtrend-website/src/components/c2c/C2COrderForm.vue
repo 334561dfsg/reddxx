@@ -6,7 +6,8 @@ import {formatQuote,quoteAmount} from '../../utils/c2cQuotes'
 import {openModal,session} from '../../session'
 import {t} from '../../i18n'
 import {path} from '../../data'
-import {c2cState,createC2COrder} from '../../utils/c2cState'
+import {createC2COrder} from '../../utils/c2cState'
+import {c2cState} from '../../c2cStore'
 const props=defineProps({quote:{type:Object,required:true},side:{type:String,default:'buy'}})
 const accountId=ref(''),orderId=ref('')
 let requestId=crypto.randomUUID()

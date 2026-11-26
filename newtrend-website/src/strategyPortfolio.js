@@ -1,12 +1,16 @@
 import {reactive} from 'vue'
 import {strategies} from './data'
-import {createStrategyAccount,enrichStrategies,buildDailyStats} from './utils/strategyTemplates'
+import {createStrategyAccount,enrichStrategies,buildDailyStats,completeExpiredStrategies} from './utils/strategyTemplates'
+import {bindBalance} from './mock/ledger.js'
+import {bootAt,clock} from './mock/clock.js'
 export const strategyCatalog=enrichStrategies(strategies)
 // Real and demo accounts are kept apart, like the reference lists strategies per account mode.
-export const strategyAccounts=reactive({real:createStrategyAccount(0),demo:createStrategyAccount()})
-// Seed mirroring the reference demo account's My Strategies on 2026-11-26: one running conservative stock strategy
+// Each account's `balance` is a live view of the shared ledger's USDT for that mode.
+export const strategyAccounts=reactive({real:bindBalance(createStrategyAccount(0),'real','USDT'),demo:bindBalance(createStrategyAccount(0),'demo','USDT')})
+// Seed mirroring the reference demo account's My Strategies: one running conservative stock strategy
 // (Lv.1, SPX500/US30 template) shown there as "Conservative Stock Blue", 500 capital, 14-day term, no P&L yet.
-const SEEDED_AT=Date.parse('2026-11-26T10:00:00+08:00')
+// Seeds are placed relative to page load (single mock clock), so end dates never go stale.
+const SEEDED_AT=bootAt
 {const template=strategyCatalog.find(s=>s.name==='Blue Chip Index Defender');if(template){const demo=strategyAccounts.demo,capital=500,days=14
  demo.records.push({id:'seed-demo-strategy-1',template:{...template,name:'Conservative Stock Blue',symbols:[...template.symbols]},capital,days,takeProfit:20,stopLoss:10,status:'running',mode:'demo',pnl:0,createdAt:SEEDED_AT,endAt:SEEDED_AT+days*86400000})
  demo.balance-=capital}}
@@ -35,3 +39,6 @@ export const strategyFilters=reactive({style:'',market:'',sort:'sharpe_desc'})
  seed('seed-real-strategy-10','Stable Crypto Income',{capital:800,days:30,startDaysAgo:75,status:'completed',pnl:9.6,stoppedDaysAgo:45})
  seed('seed-real-strategy-11','Diversified Index Growth',{capital:2200,days:30,startDaysAgo:82,status:'completed',pnl:-15.3,stoppedDaysAgo:52})
  seed('seed-real-strategy-12','FX Carry Conservative',{capital:1000,days:60,startDaysAgo:90,status:'completed',pnl:21.7,stoppedDaysAgo:30})}
+/** Completes strategies whose end date has passed and returns their capital + P&L (call on view; idempotent). */
+export const refreshStrategies=()=>{completeExpiredStrategies(strategyAccounts.real,clock.now());completeExpiredStrategies(strategyAccounts.demo,clock.now())}
+refreshStrategies()

@@ -1,10 +1,10 @@
 <script setup>
-import {computed,h,shallowRef,watch} from 'vue'
+import {computed,h,shallowRef,watch,onMounted} from 'vue'
 import {message} from 'ant-design-vue'
 import {useRouter} from 'vue-router'
 import {fmt,path} from '../../data'
 import {openModal,session} from '../../session'
-import {quantFundAccount,fundMode,findQuantFund} from '../../quantFundPortfolio'
+import {quantFundAccount,fundMode,findQuantFund,refreshQuantFunds} from '../../quantFundPortfolio'
 import {filterFundOrders,fundSummary,fundDate,HISTORY_STATUSES,accruedInterestEstimate,canRedeemFund,redeemFund} from '../../utils/quantFund'
 import {t} from '../../i18n'
 import Coin from '../Coin.vue'
@@ -54,6 +54,8 @@ function selectGroup(event,index){
  group.value=groups[target]
  event.currentTarget.parentElement.children[target]?.focus()
 }
+// Settle anything whose term ended while the page was away (mock clock lifecycle).
+onMounted(refreshQuantFunds)
 </script>
 <template>
 <div class="qf-positions">

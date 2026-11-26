@@ -1,4 +1,5 @@
 <script setup>
+import {tradeOrdersFor,releaseTradeFunds} from '../tradingFunds.js'
 import {ref,watch} from 'vue'
 import {fmt} from '../data'
 import {t} from '../i18n'
@@ -24,7 +25,7 @@ function act(o){
  openModal('account-confirm',`${t(action)} · ${o.marketName}`,{
   focusCancel:true,returnFocus:()=>document.querySelector('.record-tabs .active')?.focus(),confirmLabel:action,
   description:t(closing?'trade.current.confirmClose':'trade.current.confirmCancel',{pair:o.marketName,quantity:fmt(closing?o.quantity:o.quantity-(o.filledQuantity||0)),price:fmt(closing?o.markPrice:o.price)}),
-  onConfirm:()=>{if(finishCurrentTrade(session.orders,o.id))emit('complete',t(closing?'trade.current.closed':'trade.current.cancelled',{pair:o.marketName}))}
+  onConfirm:()=>{const mode=session.mode;if(finishCurrentTrade(tradeOrdersFor(mode),o.id)){releaseTradeFunds(mode,o);emit('complete',t(closing?'trade.current.closed':'trade.current.cancelled',{pair:o.marketName}))}}
  })
 }
 </script>

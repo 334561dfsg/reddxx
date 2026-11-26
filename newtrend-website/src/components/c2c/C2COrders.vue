@@ -1,6 +1,6 @@
 <script setup>
 import {computed,ref,watch} from 'vue'
-import {c2cState} from '../../utils/c2cState'
+import {c2cState} from '../../c2cStore'
 import {formatQuote,c2cQuotes} from '../../utils/c2cQuotes'
 import {openModal} from '../../session'
 const side=ref(''),asset=ref(''),status=ref(''),page=ref(1)

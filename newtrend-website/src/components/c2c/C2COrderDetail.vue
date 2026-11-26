@@ -1,6 +1,6 @@
 <script setup>
 import {computed} from 'vue'
-import {c2cState} from '../../utils/c2cState'
+import {c2cState} from '../../c2cStore'
 import {formatQuote} from '../../utils/c2cQuotes'
 const props=defineProps({id:String})
 const order=computed(()=>c2cState.orders.find(o=>o.id===props.id))

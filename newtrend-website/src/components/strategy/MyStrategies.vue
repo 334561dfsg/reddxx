@@ -1,10 +1,10 @@
 <script setup>
-import {computed,ref} from 'vue'
+import {computed,ref,onMounted} from 'vue'
 import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {fmt,path} from '../../data'
 import {locale} from '../../i18n'
 import {openModal,session} from '../../session'
-import {strategyAccountFor} from '../../strategyPortfolio'
+import {strategyAccountFor,refreshStrategies} from '../../strategyPortfolio'
 import {changeStrategyStatus} from '../../utils/strategyTemplates'
 import PortfolioSummaryCard from '../PortfolioSummaryCard.vue'
 import FinancePagination from '../FinancePagination.vue'
@@ -41,6 +41,8 @@ function act(record,kind){
  if(kind!=='stop')return apply(record,kind)
  openModal('account-confirm','aiQuant.actions.stopConfirm.title',{subtitle:record.template.name,danger:{key:'aiQuant.actions.stopConfirm.notice',params:{name:record.template.name}},cancelLabel:'aiQuant.actions.stopConfirm.cancel',confirmLabel:'aiQuant.actions.stopConfirm.confirm',destructive:true,focusCancel:true,onConfirm:()=>apply(record,'stop')})
 }
+// Settle anything whose term ended while the page was away (mock clock lifecycle).
+onMounted(refreshStrategies)
 </script>
 <template>
 <div class="my-strategies">

@@ -179,3 +179,26 @@ export function redeemFund(account, order, product, now = Date.now()) {
   if (product) product.subscribed = Math.max(0, product.subscribed - order.principal)
   return {order, principal: order.principal, interest, days}
 }
+
+/**
+ * Fixed-term orders whose maturity has passed settle automatically: the remaining term interest is paid as a final
+ * payout row, principal + interest are credited to the order's mode and the product quota is released.
+ * Returns the settled orders; safe to call repeatedly.
+ */
+export function settleMaturedFunds(account, findProduct, now = Date.now()) {
+  const settled = []
+  for (const order of account.orders) {
+    if (order.status !== 'active' || order.termDaysSnapshot == null || !order.maturityDate || order.maturityDate > now) continue
+    const due = round2(order.principal * order.dailyReturnPercentSnapshot / 100 * order.termDaysSnapshot)
+    const interest = Math.max(0, round2(due - order.interestPaidTotal))
+    if (interest > 0) (order.interestRecords ||= []).unshift({interestDate: order.maturityDate, amount: interest, creditedAt: order.maturityDate})
+    order.interestPaidTotal = round2(order.interestPaidTotal + interest)
+    order.status = 'settled'
+    order.settledAt = order.maturityDate
+    account.balances[order.mode] = round2((account.balances[order.mode] || 0) + order.principal + interest)
+    const product = findProduct?.(order.productId)
+    if (product) product.subscribed = Math.max(0, product.subscribed - order.principal)
+    settled.push(order)
+  }
+  return settled
+}

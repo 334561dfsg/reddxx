@@ -13,7 +13,7 @@ import EarnTimeline from './EarnTimeline.vue'
 const props=defineProps({product:{type:Object,required:true},closing:Boolean})
 const emit=defineEmits(['state','close'])
 const amount=shallowRef(''),touched=shallowRef(false),done=shallowRef(false)
-const balance=computed(()=>earnBalance(session.mode,props.product.symbol)),committed=computed(()=>earnCommitted(props.product.id))
+const balance=computed(()=>earnBalance(session.mode,props.product.symbol)),committed=computed(()=>earnCommitted(props.product.id,session.mode))
 const validation=computed(()=>{const code=earnEligibilityError(props.product);return code?{code}:subscriptionError(props.product,amount.value,balance.value,committed.value)})
 const error=computed(()=>touched.value&&validation.value?{key:(['verificationRequired','vipRequired'].includes(validation.value.code)?'lending.errors.':'earn.subscribe.errors.')+validation.value.code,params:{amount:fmt(validation.value.amount),asset:props.product.symbol}}:null)
 const estimate=computed(()=>Number(amount.value)*props.product.rate/100*(props.product.days||1))

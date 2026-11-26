@@ -3,11 +3,11 @@ import FinancePagination from '../FinancePagination.vue'
 import {useFinancePagination} from '../../composables/useFinancePagination'
 import {computed} from 'vue'
 import {products,fmt,path} from '../../data'
-import {earnPortfolio} from '../../earnPortfolio'
-import {openModal} from '../../session'
+import {earnPortfolioFor} from '../../earnPortfolio'
+import {openModal,session} from '../../session'
 import Coin from '../Coin.vue'
 import EarnIcon from './EarnIcon.vue'
-const holdings=computed(()=>earnPortfolio.holdings.filter(row=>row.status!=='redeemed').map(row=>({row,product:products.find(p=>p.id===row.productId)})))
+const holdings=computed(()=>earnPortfolioFor(session.mode).holdings.filter(row=>row.status!=='redeemed').map(row=>({row,product:products.find(p=>p.id===row.productId)})))
 const redeemDisabled=row=>row.status==='redeeming'||(row.maturityAt>Date.now()&&!row.earlyRedemption)
 function redeem(row){openModal('earn-redeem','earn.redeem.title',{holdingId:row.id,focusCancel:true})}
 const {page,total,shown}=useFinancePagination(holdings)

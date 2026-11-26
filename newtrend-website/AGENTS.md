@@ -278,3 +278,17 @@ Every Finance and AI Quant list uses `FinancePagination` + `useFinancePagination
 - Earn: per-mode, per-asset wallet in `earnPortfolio.js`; per-user quota is cumulative over pending orders + live holdings; `recordEarnSubscription` validates and reserves the balance; validation feedback appears only after a submit attempt.
 - Unknown routes, sections and ids render `pages/NotFound.vue` (no silent redirect home); unknown trading symbols rewrite the URL to the pair shown.
 - Lending errors go through `utils/lendingErrors.js` (unknown/network codes → `unavailable`).
+
+## No video buttons (user decision, 2026-11-26)
+
+Removed the homepage 了解 AI Quant 運作機制 and strategy 運作機制 video buttons, the Overlay video modal and `public/assets/ai-quant.mp4`. Do not reintroduce video players or "how it works" film entries.
+
+## Refactor phase 2 — mock data layer (2026-11-26)
+
+- `src/mock/`: `clock.js` (single `clock.now()`; seeds are placed relative to `bootAt`, never fixed calendar dates), `ids.js`, `prices.js` (one USDT price snapshot from the market list), `ledger.js` (per-mode, per-asset balances; 模擬 starts 100,000 USDT / 100,000 USDC / 2 BTC / 30 ETH / 500 SOL, 真實 starts empty).
+- Every domain moves money only through the ledger: Earn subscribe/redeem, Quant Fund subscribe/redeem/maturity (accounts expose ledger-bound `balances`), strategies subscribe/stop/expiry (ledger-bound `balance`), trading (`tradingFunds.js`: lock on order, payout on market fill, close returns margin + P&L − fee, cancel refunds the unfilled lock), C2C sell (`c2cStore.js`), Overlay donate/convert. Never hard-code a balance in a component.
+- Records are per mode: trades (`tradeOrdersFor`), Earn (`earnPortfolioFor`), C2C orders, wallet records, fund orders and strategies.
+- Lifecycles derive from the clock: fixed-term fund orders settle at maturity (`refreshQuantFunds`), strategies complete at their end date (`refreshStrategies`); both run at load and when their pages open.
+- Seeds must satisfy product rules (Quant Fund seeding throws otherwise); payout rows are never credited in the future.
+- Assets page and header totals come from `accountValue.js` (funding wallet + trading margin + Earn holdings + active fund principal).
+- Lending stays on the shared server mock (also used by the admin) and keeps its own balances by design.

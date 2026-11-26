@@ -1,7 +1,8 @@
 <script setup>
 import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {ref} from 'vue'
-import {c2cState,removeAccount} from '../../utils/c2cState'
+import {removeAccount} from '../../utils/c2cState'
+import {c2cState} from '../../c2cStore'
 import {openModal} from '../../session'
 import C2CIcon from './C2CIcon.vue'
 const feedback=ref('')

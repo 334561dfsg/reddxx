@@ -1,7 +1,8 @@
 <script setup>
 import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {reactive,computed,ref,watch} from 'vue'
-import {c2cState,saveAccount} from '../../utils/c2cState'
+import {saveAccount} from '../../utils/c2cState'
+import {c2cState} from '../../c2cStore'
 const props=defineProps({account:Object})
 const emit=defineEmits(['state','saved'])
 const draft=reactive({currency:props.account?.currency||'',accountName:'',accountNumber:'',bankName:'',branch:'',swiftCode:'',routingNumber:'',phone:'',bankAddress:'',accountAddress:'',remark:'',...props.account})

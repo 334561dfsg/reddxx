@@ -1,10 +1,11 @@
 <script setup>
+import {session} from '../../session'
 import {computed,shallowRef} from 'vue'
 import {products} from '../../data'
-import {earnPortfolio} from '../../earnPortfolio'
+import {earnPortfolioFor} from '../../earnPortfolio'
 import {earnSummary} from '../../utils/mockEarnPortfolio'
 const hidden=shallowRef(false)
-const summary=computed(()=>earnSummary(earnPortfolio,products))
+const summary=computed(()=>earnSummary(earnPortfolioFor(session.mode),products))
 const metrics=[['principal','principal'],['accruedReward','accrued'],['cumulativeReward','cumulative']]
 const money=value=>hidden.value?'****':value.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' USDT'
 </script>

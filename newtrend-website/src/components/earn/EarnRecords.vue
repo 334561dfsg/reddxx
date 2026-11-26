@@ -1,15 +1,16 @@
 <script setup>
+import {session} from '../../session'
 import FinancePagination from '../FinancePagination.vue'
 import {useFinancePagination} from '../../composables/useFinancePagination'
 import {computed} from 'vue'
 import {products,fmt,path} from '../../data'
 import {locale} from '../../i18n'
-import {earnPortfolio} from '../../earnPortfolio'
+import {earnPortfolioFor} from '../../earnPortfolio'
 import {earnPrices} from '../../utils/mockEarnPortfolio'
 import Coin from '../Coin.vue'
 import EarnIcon from './EarnIcon.vue'
 const props=defineProps({tab:{type:String,required:true}})
-const rows=computed(()=>earnPortfolio[props.tab].map(row=>({...row,product:products.find(p=>p.id===row.productId)})))
+const rows=computed(()=>earnPortfolioFor(session.mode)[props.tab].map(row=>({...row,product:products.find(p=>p.id===row.productId)})))
 const columns=computed(()=>props.tab==='orders'
  ?[['amount','earn.myEarnings.table.amount'],['status','earn.myEarnings.table.status'],['createdAt','earn.myEarnings.table.subscribedAt'],['completedAt','earn.myEarnings.table.completedAt']]
  :props.tab==='redemptions'

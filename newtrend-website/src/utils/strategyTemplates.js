@@ -76,3 +76,16 @@ export function buildDailyStats({startAt,endAt,totalPnl,seed=1,tradeDayRatio=.75
 export function summarizeDailyStats(items) {
  return {totalPnl:Math.round(items.reduce((s,i)=>s+i.pnl,0)*100)/100,totalTradeCount:items.reduce((s,i)=>s+i.tradeCount,0),activeDays:items.length}
 }
+
+/** Running/paused strategies past their end date complete and return capital + P&L to the account; idempotent. */
+export function completeExpiredStrategies(account, now = Date.now()) {
+  const done = []
+  for (const record of account.records) {
+    if (!['running', 'paused'].includes(record.status) || record.endAt > now) continue
+    record.status = 'completed'
+    record.stoppedAt = record.endAt
+    account.balance = Number((account.balance + record.capital + record.pnl).toFixed(8))
+    done.push(record)
+  }
+  return done
+}

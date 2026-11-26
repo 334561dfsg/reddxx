@@ -1,11 +1,12 @@
 <script setup>
+import {session} from '../../session'
 import {computed} from 'vue'
-import {earnPortfolio} from '../../earnPortfolio'
+import {earnPortfolioFor} from '../../earnPortfolio'
 import {products,fmt} from '../../data'
 import {locale} from '../../i18n'
 import Coin from '../Coin.vue'
 const props=defineProps({holdingId:{type:String,required:true}})
-const holding=computed(()=>earnPortfolio.holdings.find(row=>row.id===props.holdingId))
+const holding=computed(()=>earnPortfolioFor(session.mode).holdings.find(row=>row.id===props.holdingId))
 const product=computed(()=>products.find(row=>row.id===holding.value?.productId))
 const dates=[['subscribedAt','subscribedAt'],['startedAt','startedAt'],['maturityAt','maturityAt'],['lastAccruedAt','lastAccruedAt'],['nextAccrualLabel','nextAccrualAt']]
 const date=value=>new Date(value).toLocaleString(locale.value,{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})

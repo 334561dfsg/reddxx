@@ -1,14 +1,15 @@
 <script setup>
+import {session} from '../../session'
 import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {computed,shallowRef,watch} from 'vue'
-import {earnPortfolio,redeemEarnHolding} from '../../earnPortfolio'
+import {earnPortfolioFor,redeemEarnHolding} from '../../earnPortfolio'
 import {redemptionQuote} from '../../utils/mockEarnPortfolio'
 import {products,fmt,path} from '../../data'
 import Coin from '../Coin.vue'
 import Icon from '../Icon.vue'
 const props=defineProps({holdingId:{type:String,required:true},closing:Boolean})
 const emit=defineEmits(['state','close','focus-cancel'])
-const holding=computed(()=>earnPortfolio.holdings.find(row=>row.id===props.holdingId))
+const holding=computed(()=>earnPortfolioFor(session.mode).holdings.find(row=>row.id===props.holdingId))
 const product=computed(()=>products.find(row=>row.id===holding.value?.productId))
 const mode=shallowRef('full'),amount=shallowRef(String(holding.value?.principal||'')),touched=shallowRef(false)
 const confirming=shallowRef(false),done=shallowRef(false),failure=shallowRef(null),result=shallowRef(null)
@@ -26,7 +27,7 @@ function submit(){
  touched.value=true
  if(quote.value.error)return
  if(quote.value.early&&!confirming.value){confirming.value=true;emit('focus-cancel');return}
- const response=redeemEarnHolding(props.holdingId,quote.value.amount,{id:requestId,acknowledgeEarly:confirming.value})
+ const response=redeemEarnHolding(props.holdingId,quote.value.amount,{id:requestId,acknowledgeEarly:confirming.value},session.mode)
  if(response.error){failure.value=response;return}
  result.value=response.record
  done.value=true

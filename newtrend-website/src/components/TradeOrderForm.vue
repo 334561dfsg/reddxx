@@ -2,6 +2,8 @@
 import FeedbackToast from '../../../src/shared/feedback/FeedbackToast.vue'
 import {computed,reactive,ref,watch} from 'vue'
 import {session,openModal} from '../session'
+import {balanceOf} from '../mock/ledger.js'
+import {orderFunding,placeTradeOrder} from '../tradingFunds.js'
 import {fmt} from '../data'
 import {t} from '../i18n'
 import RecordFilter from './RecordFilter.vue'
@@ -10,8 +12,9 @@ import {deliveryPeriods,leverageOptions,orderEstimate,validStops,tradeFeeRate} f
 const props=defineProps({mode:String,pair:Object})
 const {futures,options,spot}=useOrderDrafts()
 const errors=reactive({futures:'',options:'',buy:'',sell:''}),notice=ref('')
-const demo=computed(()=>session.mode==='common.demo.demo'),cash=computed(()=>demo.value?100000:0)
-const base=computed(()=>props.pair.name.split('/')[0]),holdings=computed(()=>demo.value?2:0)
+// Balances come from the shared mock ledger for the current account mode.
+const demo=computed(()=>session.mode==='common.demo.demo'),cash=computed(()=>balanceOf(session.mode,'USDT'))
+const base=computed(()=>props.pair.name.split('/')[0]),holdings=computed(()=>balanceOf(session.mode,base.value))
 const leverageItems=leverageOptions.map(value=>({value,label:`${value}x`}))
 const periodItems=computed(()=>deliveryPeriods.map(([value,payout])=>({value,label:`${period(value)} · ${payout}%`})))
 const rate=computed(()=>deliveryPeriods.find(p=>p[0]===options.duration)[1])
@@ -42,10 +45,9 @@ function submit(side){
  if(!Number.isFinite(price)||price<=0){errors[key]='trade.spotErrorInvalidSizingInput';return}
  const estimate=orderEstimate({kind,side,amount,price,leverage:futures.leverage,rate:rate.value})
  if(kind==='futures'&&futures.stops&&!validStops(side,price,futures.tp,futures.sl)){errors[key]='trade.form.invalidStops';return}
- if(!demo.value){errors[key]='overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally';return}
  const cost=kind==='futures'?estimate.margin+estimate.fee:kind==='options'?amount:side==='buy'?amount+estimate.fee:amount
  const available=kind==='spot'&&side==='sell'?holdings.value:cash.value
- if(cost>available+1e-6){errors[key]='assets.withdraw.error.insufficientBalance';return}
+ if(cost>available+1e-6){errors[key]=demo.value?'assets.withdraw.error.insufficientBalance':'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally';return}
  const pending=kind!=='options'&&(kind==='futures'?futures.type:spot.type)==='limit'
  const action=kind==='spot'?(side==='buy'?'trade.buy':'trade.sell'):(side==='buy'?'trade.buyLong':'trade.sellShort')
  const record={id:crypto.randomUUID(),kind,marketName:props.pair.name,direction:side,price,markPrice:props.pair.price,amount,symbol:'USDT',...estimate,
@@ -57,7 +59,9 @@ function submit(side){
  let committed=false
  openModal('account-confirm',`${t(action)} · ${props.pair.name}`,{focusCancel:true,confirmLabel:'overlay.ui.confirmOrder',
   description:t('trade.form.confirm',{quantity:fmt(estimate.quantity),unit:kind==='options'?'USDT':base.value,price:fmt(price)})+(kind==='options'?` · ${period(options.duration)} · ${rate.value}%`:''),
-  onConfirm:()=>{if(committed)return;committed=true;session.orders.unshift({...record,createdAt:Date.now(),openedAt:Date.now()});notice.value=t('trade.orderSuccess');draft.amount=''}
+  onConfirm:()=>{if(committed)return;const mode=session.mode,funding=orderFunding({kind,side,pending,estimate,amount,base:base.value})
+   if(!placeTradeOrder(mode,{...record,createdAt:Date.now(),openedAt:Date.now()},funding)){errors[key]='assets.withdraw.error.insufficientBalance';return}
+   committed=true;notice.value=t('trade.orderSuccess');draft.amount=''}
  })
 }
 </script>
