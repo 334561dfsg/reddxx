@@ -44,7 +44,7 @@ test('redirects keep old links working', async () => {
   assert.equal((await landsOn('/trade/unknown/thing')).fullPath, '/trade/futures/BTCUSDT')
   assert.equal((await landsOn('/copytrade/leaderboard')).fullPath, '/')
   assert.equal((await landsOn('/c2c/accounts')).fullPath, '/c2c/payment-accounts')
-  for (const removed of ['/joint-account', '/promotions/tasks', '/survey/019e9f01-47a3-711f-9052-e7187b9f9407'])
+  for (const removed of ['/joint-account', '/promotions/tasks', '/survey/019e9f01-47a3-711f-9052-e7187b9f9407', '/fund-password', '/2fa', '/devices'])
     assert.equal((await landsOn(removed)).fullPath, '/profile', removed + ' was removed and lands on the profile')
   const legacy = await landsOn('/zh-TW/earn/simple?tab=1#top')
   assert.equal(legacy.path, '/earn/simple')

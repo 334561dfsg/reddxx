@@ -37,7 +37,6 @@
 :is(.account-page,.account-center) .referral-bind-input{flex-direction:column}
 :is(.account-page,.account-center) .referral-bind-input button{align-self:flex-end}
 }
-:is(.account-page,.account-center) .auth-qr{display:block;width:144px;height:144px;margin:16px auto}
 :is(.account-page,.account-center) .account-form a.secondary-button{display:block;text-align:center}
 :is(.account-page,.account-center) .profile-group>a>span{overflow-wrap:anywhere;min-width:0}
 :is(.account-page,.account-center) .profile-group>a small{max-width:45%}
@@ -63,9 +62,6 @@
 :is(.account-page,.account-center) .phone-input input{min-width:0;flex:1}
 :is(.account-page,.account-center) .phone-input select{width:95px}
 :is(.account-page,.account-center) .center{text-align:center}
-:is(.account-page,.account-center) .account-device{margin-top:24px}
-:is(.account-page,.account-center) .account-device p{margin-top:10px}
-:is(.account-page,.account-center) .device-actions{display:flex;gap:20px;flex-wrap:wrap;margin-top:24px}
 :is(.account-page,.account-center) .profile-overview,:is(.account-page,.account-center) .profile-box{background:#0c1017;border:1px solid #ffffff09;border-radius:var(--nt-radius-panel);overflow:hidden}
 :is(.account-page,.account-center) .profile-identity{display:flex;align-items:center;gap:32px;padding:24px 32px}
 :is(.account-page,.account-center) .profile-identity>.nt-icon{width:28px;height:28px}
