@@ -358,3 +358,7 @@ Transfer is a dialog (`components/overlay/AssetTransfer.vue`, Overlay type `tran
 
 `/withdraw` matches newtrendcapital.com/zh-TW/withdraw (measured at 1918px, positions identical): shared 1152px `.deposit-page` shell and top links; 可用餘額 card (44px lime icon, 18/28 value); two columns `minmax(0,1fr) 380px` gap 32 — coin and network pill Selects (network shows code + name without the deposit dot), address input with 粘貼 (and a clear ×), amount input with unit + 最大; right: 合計扣除 / 手續費 / 實際到帳 card and the 安全提示 card; full-width lime pill submit. Styles in `styles/withdraw-fidelity.css` (`.wd-` prefix). Coins, networks, withdraw fees (0, as on the reference) and address formats live in `mock/chains.js`, shared with deposit and the wallet service. The API validates network, address format, amount and balance and locks the amount (pending record); feedback is toast-only. Nothing is ever sent on-chain.
 
+
+## No onboarding banner on Assets (user decision, 2026-11-26)
+
+The assets overview starts with the total-assets card. Do not restore the 「完成帳戶設定 1/3 · 建立帳戶 · 完成身分驗證 · 完成首次充值 · 立即充值」 setup banner (markup and `.setup-banner` styles removed).
