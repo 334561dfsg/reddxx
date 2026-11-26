@@ -30,7 +30,7 @@ function submit(){
  <div class="strategy-form-field"><label for="strategy-days">{{ $t('aiQuant.create.periodLabel') }}</label><input id="strategy-days" v-model="draft.days" inputmode="numeric" aria-required="true" :aria-invalid="error?.field==='days'" aria-describedby="strategy-validation"/><small>{{ $t('aiQuant.create.periodHint',{min:product.minDays,max:product.maxDays}) }}</small></div>
  <section class="strategy-fees"><small>{{ $t('aiQuant.create.fees.title') }}</small><dl class="strategy-card-facts"><div><dt>{{ $t('aiQuant.create.fees.feePerTrade') }}</dt><dd>{{ product.fee }} USDT</dd></div><div><dt>{{ $t('aiQuant.create.fees.maxOpenTrades') }}</dt><dd>{{ $t('aiQuant.create.fees.maxOpenTradesValue',{n:product.maxOpenTrades}) }}</dd></div></dl></section>
  <p class="strategy-settlement">{{ $t('aiQuant.create.settlementNote') }}</p>
- <FeedbackToast id="strategy-validation" :source="()=>error?$t(error.key||'aiQuant.create.errors.'+error.code,error.params):''"/>
+ <FeedbackToast v-if="error" id="strategy-validation" :source="()=>error?$t(error.key||'aiQuant.create.errors.'+error.code,error.params):''"/>
  <RouterLink v-if="error?.code==='paymentRequired'" :to="path('/deposit')" @click="emit('close')">{{ $t('earn.subscribe.goDeposit') }}</RouterLink>
  </template>
  <template v-else><FeedbackToast type="success" :source="()=>$t('aiQuant.create.submitSuccess')"/><RouterLink class="strategy-cta" :to="path('/ai-quant/strategy/mine')" @click="emit('close')">{{ $t('aiQuant.nav.myStrategies') }}</RouterLink></template>
