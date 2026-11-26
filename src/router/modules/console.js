@@ -439,6 +439,54 @@ export const consoleRoutes = [
     redirect: '/admin/lending/products'
   },
   {
+    path: 'strategy',
+    redirect: '/admin/strategy/templates'
+  },
+  {
+    path: 'strategy/templates',
+    name: 'strategy-templates',
+    component: () => import('../../pages/admin/strategy/StrategyTemplatesPage.vue')
+  },
+  {
+    path: 'strategy/templates/new',
+    name: 'strategy-template-create',
+    component: () => import('../../pages/admin/strategy/StrategyTemplateEditorPage.vue')
+  },
+  {
+    path: 'strategy/templates/:id/edit',
+    name: 'strategy-template-edit',
+    component: () => import('../../pages/admin/strategy/StrategyTemplateEditorPage.vue')
+  },
+  {
+    path: 'strategy/subscriptions',
+    name: 'strategy-subscriptions',
+    component: () => import('../../pages/admin/strategy/StrategyRecordsPage.vue'),
+    meta: { strategySection: 'subscriptions' }
+  },
+  {
+    path: 'strategy/daily-pnl',
+    name: 'strategy-daily-pnl',
+    component: () => import('../../pages/admin/strategy/StrategyRecordsPage.vue'),
+    meta: { strategySection: 'daily-pnl' }
+  },
+  {
+    path: 'strategy/settlements',
+    name: 'strategy-settlements',
+    component: () => import('../../pages/admin/strategy/StrategyRecordsPage.vue'),
+    meta: { strategySection: 'settlements' }
+  },
+  {
+    path: 'strategy/logs',
+    name: 'strategy-logs',
+    component: () => import('../../pages/admin/strategy/StrategyRecordsPage.vue'),
+    meta: { strategySection: 'logs' }
+  },
+  {
+    path: 'strategy/risk-policy',
+    name: 'strategy-risk-policy',
+    component: () => import('../../pages/admin/strategy/StrategyRiskPolicyPage.vue')
+  },
+  {
     path: 'ai-quant',
     redirect: '/admin/ai-quant/products'
   },

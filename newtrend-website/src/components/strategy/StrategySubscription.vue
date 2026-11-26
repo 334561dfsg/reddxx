@@ -2,31 +2,36 @@
 import {computed,reactive,ref,watch} from 'vue'
 import FeedbackToast from '../../platform/FeedbackToast.js'
 import {session} from '../../session'
-import {strategyAccountFor,strategyNotice} from '../../strategyPortfolio'
-import {strategyValidation,subscribeStrategy} from '../../utils/strategyTemplates'
+import {strategyAccountFor,strategyNotice,subscribeFor} from '../../strategyPortfolio'
+import {strategyValidation} from '../../utils/strategyTemplates'
 import {fmt,path} from '../../data'
 const props=defineProps({product:{type:Object,required:true},closing:Boolean})
 const emit=defineEmits(['state','close'])
-const draft=reactive({capital:'',days:props.product.minDays,takeProfit:10,stopLoss:5}),error=ref(null),done=ref(false)
+const defaults={takeProfit:props.product.takeProfitRange?.default??10,stopLoss:props.product.stopLossRange?.default??5}
+const draft=reactive({capital:'',days:props.product.minDays,...defaults}),error=ref(null),done=ref(false),submitting=ref(false)
 const requestId=crypto.randomUUID()
 const account=computed(()=>strategyAccountFor(session.mode)),demo=computed(()=>session.mode==='common.demo.demo')
 const balance=computed(()=>account.value.balance)
-watch([()=>JSON.stringify(draft),done],()=>emit('state',{dirty:!!draft.capital||draft.days!==props.product.minDays||draft.takeProfit!==10||draft.stopLoss!==5,done:done.value}),{immediate:true})
-function submit(){
- if(done.value||props.closing)return
+watch([()=>JSON.stringify(draft),done,submitting],()=>emit('state',{busy:submitting.value,dirty:!!draft.capital||draft.days!==props.product.minDays||draft.takeProfit!==defaults.takeProfit||draft.stopLoss!==defaults.stopLoss,done:done.value}),{immediate:true})
+// Server (真實) error codes → existing form messages; anything else is a generic failure.
+const serverErrors={template:'notFound',templateChanged:'templateChanged',balance:'paymentRequired',capital:'validation',days:'periodOutOfRange',takeProfit:'takeProfitOutOfRange',stopLoss:'stopLossOutOfRange',userLimit:'userLimit',userCapital:'userCapital',capacity:'capacity',verificationRequired:'verificationRequired',vipRequired:'vipRequired',unavailable:'unavailable'}
+async function submit(){
+ if(done.value||props.closing||submitting.value)return
  error.value=null
  if(!session.loggedIn){error.value={code:'unauthorized'};return}
  const validation=strategyValidation(props.product,draft,balance.value)
- // Real accounts are validated against their own (empty) local balance; the hint points to the demo account.
- if(validation){error.value=validation.code==='paymentRequired'&&!demo.value?{...validation,key:'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally'}:validation;return}
+ if(validation){error.value=validation;return}
+ submitting.value=true
  try{
-  const record=subscribeStrategy(account.value,props.product,draft,requestId)
-  record.mode=demo.value?'demo':'real'
+  const record=await subscribeFor(session.mode,props.product,draft,requestId)
   done.value=true
-  // Reference behaviour: close the dialog and announce success with a toast on the page.
-  strategyNotice.key='aiQuant.create.submitSuccess';strategyNotice.at=Date.now()
+  // Reference behaviour: close the dialog and announce the result with a toast on the page.
+  strategyNotice.key=record?.status==='pending_review'?'aiQuant.create.submitPendingReview':'aiQuant.create.submitSuccess';strategyNotice.at=Date.now()
   emit('close')
- }catch(cause){error.value={code:cause.message}}
+ }catch(cause){
+  const code=cause.message
+  error.value=code==='periodOutOfRange'||code==='days'?{code:'periodOutOfRange',params:{min:props.product.minDays,max:props.product.maxDays}}:{code:serverErrors[code]||(['conflict','paymentRequired'].includes(code)?code:'createFailed')}
+ }finally{submitting.value=false}
 }
 </script>
 <template>

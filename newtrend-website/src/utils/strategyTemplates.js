@@ -30,8 +30,10 @@ export function strategyValidation(product,draft,balance) {
  if(capital>product.max)return {code:'aboveMax',field:'capital',params:{max:product.max}}
  if(capital>balance)return {code:'paymentRequired',field:'capital'}
  if(!Number.isInteger(days)||days<product.minDays||days>product.maxDays)return {code:'periodOutOfRange',field:'days',params:{min:product.minDays,max:product.maxDays}}
- if(!Number.isFinite(tp)||tp<1||tp>100)return {code:'takeProfitOutOfRange',field:'takeProfit'}
- if(!Number.isFinite(sl)||sl<1||sl>50)return {code:'stopLossOutOfRange',field:'stopLoss'}
+ // Ranges come from the template (admin-configured); the former fixed 1–100 / 1–50 remain the defaults.
+ const tpr=product.takeProfitRange||{min:1,max:100},slr=product.stopLossRange||{min:1,max:50}
+ if(!Number.isFinite(tp)||tp<tpr.min||tp>tpr.max)return {code:'takeProfitOutOfRange',field:'takeProfit',params:{min:tpr.min,max:tpr.max}}
+ if(!Number.isFinite(sl)||sl<slr.min||sl>slr.max)return {code:'stopLossOutOfRange',field:'stopLoss',params:{min:slr.min,max:slr.max}}
  return null
 }
 export function createStrategyAccount(balance=100000){return {balance,records:[],requests:[]}}

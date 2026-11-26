@@ -126,7 +126,8 @@
       "title": "마음에 드는 전략을 찾지 못하셨나요?",
       "description": "AI가 전 과정을 운용하는 퀀트 펀드를 살펴보세요. 청약 후 지켜볼 필요 없이 만기에 자동 정산됩니다.",
       "cta": "퀀트 펀드 둘러보기"
-    }
+    },
+    "loadFailed": "전략 목록을 불러오지 못했습니다."
   },
   "style": {
     "conservative": "보수적",
@@ -248,16 +249,24 @@
       "aboveMax": "자본은 {{max}}을(를) 초과할 수 없습니다.",
       "emptyRange": "이 템플릿은 현재 귀하의 계정에서 이용할 수 없습니다.",
       "periodOutOfRange": "기간은 {{min}}일에서 {{max}}일 사이여야 합니다.",
-      "takeProfitOutOfRange": "익절은 1%에서 100% 사이여야 합니다.",
-      "stopLossOutOfRange": "손절은 1%에서 50% 사이여야 합니다.",
+      "takeProfitOutOfRange": "익절은 {{min}}% ~ {{max}}% 사이여야 합니다.",
+      "stopLossOutOfRange": "손절은 {{min}}% ~ {{max}}% 사이여야 합니다.",
       "createFailed": "전략 생성에 실패했습니다. 다시 시도해 주세요.",
       "badRequest": "요청이 거부되었습니다. 입력 내용을 확인해 주세요.",
       "unauthorized": "전략을 생성하려면 로그인하세요.",
       "paymentRequired": "잔액이 부족합니다. 이 전략을 생성하기 전에 충전해 주세요.",
       "notFound": "이 전략 템플릿은 더 이상 이용할 수 없습니다.",
       "conflict": "충돌하는 전략이 이미 실행 중입니다. 중지하거나 종료될 때까지 기다려 주세요.",
-      "validation": "일부 입력 항목이 올바르지 않습니다. 확인 후 다시 시도해 주세요."
-    }
+      "validation": "일부 입력 항목이 올바르지 않습니다. 확인 후 다시 시도해 주세요.",
+      "templateChanged": "전략 조건이 변경되었습니다. 확인 후 다시 제출해 주세요.",
+      "userLimit": "동시에 운영할 수 있는 전략 수 한도에 도달했습니다.",
+      "userCapital": "전략 자금 한도에 도달했습니다.",
+      "capacity": "이 전략은 모집 한도에 도달했습니다.",
+      "verificationRequired": "인증 등급이 구독 조건을 충족하지 않습니다.",
+      "vipRequired": "VIP 등급이 구독 조건을 충족하지 않습니다.",
+      "unavailable": "전략 서비스를 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도해 주세요."
+    },
+    "submitPendingReview": "제출되었습니다. 심사를 기다려 주세요."
   },
   "dailyStats": {
     "netPnl": "순손익",

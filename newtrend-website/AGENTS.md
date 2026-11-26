@@ -336,3 +336,9 @@ The prototype keeps mock data, but pages must already behave like they call a se
 - Loads use `composables/useRequest.js` (`status` loading/error/ready, key change resets, `refresh`, stale-response guard, `tags` + `invalidate()` for in-place refresh after a mutation). Writes use `useMutation()` (one in flight). After a successful write, `invalidate('<module>')`.
 - Render loads with `components/ui/RequestState.vue`: skeletons (`components/ui/Skeleton.vue`) shaped like the real layout for the first load, toast + a neutral 重試 action for failures (no inline error text), data otherwise. Background refreshes keep current data on screen.
 - Dialog flows report `busy` in their `@state`; Overlay then shows `Spinner` on the primary action (`aria-busy`, `aria-disabled`, focus kept) and holds ×, cancel and Escape until the request settles. Inputs become read-only while submitting.
+
+## AI strategy ↔ admin (2026-11-26)
+
+- The strategy catalogue (both modes) is the shared strategy Mock's listed templates (`/api/mock/strategy`, configured in the admin 「AI 策略」); take-profit/stop-loss ranges and defaults come from each template.
+- 真實 records, balance and subscribe/pause/resume/stop go through `platform/strategyClient.js` (user `USR-DEMO`); new subscriptions follow the admin policy (review on by default → 審核中). Do not keep 真實 strategy data locally. 模擬 stays on the local ledger and local records.
+- Pages using strategy data must run `useStrategyFeed()` (Strategy.vue does) and handle loading/error (catalogue shows 載入中 / 載入失敗 + 重試).

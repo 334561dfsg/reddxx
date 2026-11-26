@@ -59,7 +59,7 @@ const primary=computed(()=>{
  if(c.type==='c2c-account')return {form:'c2c-account-form',label:c.data.account?'c2c.accounts.form.submitSave':'c2c.accounts.form.submitCreate',disabled:closing.value||!f.valid}
  const flows={'strategy-subscribe':['strategy-subscribe-form','aiQuant.create.submit',false],'quant-fund-subscribe':['quant-fund-subscribe-form','aiQuant.quantFund.subscribe.submit',false],'earn-subscribe':['earn-subscribe-form','earn.subscribe.submit',true],'earn-redeem':['earn-redeem-form',f.confirmLabel||'earn.redeem.submit',true]}
  const entry=flows[c.type];if(!entry||f.done)return null
- return {form:entry[0],label:entry[1],disabled:closing.value||(entry[2]&&!f.valid)}
+ return {form:entry[0],label:entry[1],disabled:closing.value||!!f.busy||(entry[2]&&!f.valid)}
 })
 const cancelLabel=computed(()=>{const c=current.value;if(c?.type==='account-confirm'&&c.data.cancelLabel&&!done.value)return c.data.cancelLabel;return done.value||flow.value.done||c?.type==='c2c-detail'?'aiQuant.detail.close':'aiQuant.create.cancel'})
 function keydown(e){if(e.key!=='Tab')return;const els=[...dialog.value.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select,textarea,[tabindex="0"]')].filter(x=>x.getClientRects().length);if(!els.length){e.preventDefault();return}const first=els[0],last=els[els.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}

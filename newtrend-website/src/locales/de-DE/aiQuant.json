@@ -126,7 +126,8 @@
       "title": "Keine passende Strategie gefunden?",
       "description": "Entdecken Sie Quant-Fonds: vollständig KI-verwaltet, kein Beobachten nötig, automatische Abrechnung bei Fälligkeit.",
       "cta": "Quant-Fonds ansehen"
-    }
+    },
+    "loadFailed": "Strategien konnten nicht geladen werden."
   },
   "style": {
     "conservative": "Konservativ",
@@ -248,16 +249,24 @@
       "aboveMax": "Das Kapital darf höchstens {{max}} betragen.",
       "emptyRange": "Diese Vorlage ist derzeit für Ihr Konto nicht verfügbar.",
       "periodOutOfRange": "Die Laufzeit muss zwischen {{min}} und {{max}} Tagen liegen.",
-      "takeProfitOutOfRange": "Take-Profit muss zwischen 1 % und 100 % liegen.",
-      "stopLossOutOfRange": "Stop-Loss muss zwischen 1 % und 50 % liegen.",
+      "takeProfitOutOfRange": "Take-Profit muss zwischen {{min}} % und {{max}} % liegen.",
+      "stopLossOutOfRange": "Stop-Loss muss zwischen {{min}} % und {{max}} % liegen.",
       "createFailed": "Strategie konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
       "badRequest": "Die Anfrage wurde abgelehnt. Bitte überprüfen Sie Ihre Eingaben.",
       "unauthorized": "Bitte melden Sie sich an, um eine Strategie zu erstellen.",
       "paymentRequired": "Unzureichendes Guthaben. Bitte laden Sie auf, bevor Sie diese Strategie erstellen.",
       "notFound": "Diese Strategievorlage ist nicht mehr verfügbar.",
       "conflict": "Eine widersprüchliche Strategie läuft bereits. Stoppen Sie sie oder warten Sie, bis sie beendet ist.",
-      "validation": "Einige Felder scheinen ungültig zu sein. Bitte überprüfen Sie sie und versuchen Sie es erneut."
-    }
+      "validation": "Einige Felder scheinen ungültig zu sein. Bitte überprüfen Sie sie und versuchen Sie es erneut.",
+      "templateChanged": "Die Strategiebedingungen wurden geändert. Bitte prüfen und erneut absenden.",
+      "userLimit": "Sie haben die maximale Anzahl aktiver Strategien erreicht.",
+      "userCapital": "Sie haben das maximale Strategiekapital erreicht.",
+      "capacity": "Diese Strategie ist ausgebucht.",
+      "verificationRequired": "Ihre Verifizierungsstufe erfüllt die Voraussetzung dieser Strategie nicht.",
+      "vipRequired": "Ihre VIP-Stufe erfüllt die Voraussetzung dieser Strategie nicht.",
+      "unavailable": "Der Strategiedienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut."
+    },
+    "submitPendingReview": "Eingereicht. Wartet auf Prüfung."
   },
   "dailyStats": {
     "netPnl": "Netto-GuV",

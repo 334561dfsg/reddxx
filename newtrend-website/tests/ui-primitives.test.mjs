@@ -8,6 +8,7 @@ import {statusDomains, statusLabelKey} from '../src/utils/statusLabels.js'
 import {earnPortfolios} from '../src/earnPortfolio.js'
 import {quantFundAccount} from '../src/quantFundPortfolio.js'
 import {strategyAccounts} from '../src/strategyPortfolio.js'
+import {seedStrategy} from '../../src/shared/strategy/seed.js'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const vueFiles = (function walk(dir, out = []) {
@@ -62,7 +63,7 @@ test('every status the mock data can show has a label in its domain', () => {
   const statuses = {
     earn: [...earnPortfolios.real.holdings, ...earnPortfolios.demo.holdings].map(row => row.status),
     'quant-fund': quantFundAccount.orders.map(order => order.status),
-    strategy: [...strategyAccounts.real.records, ...strategyAccounts.demo.records].map(record => record.status),
+    strategy: [...seedStrategy().subscriptions, ...strategyAccounts.demo.records].map(record => record.status).concat('initializing'),
     lending: ['pending', 'active', 'repaying', 'overdue', 'completed', 'rejected', 'cancelled', 'liquidated'],
   }
   assert.deepEqual(Object.keys(statuses).sort(), Object.keys(statusDomains).sort())

@@ -8,8 +8,7 @@ import FeedbackToast from '../../platform/FeedbackToast.js'
 import {fmt,path} from '../../data'
 import {locale} from '../../i18n'
 import {openModal,session} from '../../session'
-import {strategyAccountFor,refreshStrategies} from '../../strategyPortfolio'
-import {changeStrategyStatus} from '../../utils/strategyTemplates'
+import {strategyAccountFor,refreshStrategies,changeStatusFor} from '../../strategyPortfolio'
 import PortfolioSummaryCard from '../PortfolioSummaryCard.vue'
 import FinancePagination from '../FinancePagination.vue'
 import {useFinancePagination} from '../../composables/useFinancePagination'
@@ -21,12 +20,12 @@ const {page,total,shown}=useFinancePagination(records,10)
 const summary=computed(()=>{const list=records.value,pnl=list.reduce((sum,r)=>sum+r.pnl,0);return {capital:list.reduce((sum,r)=>sum+r.capital,0),pnl,running:list.filter(r=>r.status==='running').length,total:list.length}})
 const signed=value=>(value>=0?'+':'-')+money(Math.abs(value))
 const returnPercent=record=>record.capital?record.pnl/record.capital*100:0
-const endDate=record=>new Date(record.endAt).toLocaleDateString(locale.value,{year:'numeric',month:'2-digit',day:'2-digit'})
+const endDate=record=>!record.endAt?'—':new Date(record.endAt).toLocaleDateString(locale.value,{year:'numeric',month:'2-digit',day:'2-digit'})
 const styleKey=record=>record.template.style
 const marketKey=record=>record.template.market
 const feedback=ref(null),busy=ref(null)
 function notify(type,key){feedback.value=null;requestAnimationFrame(()=>{feedback.value={type,key}})}
-// Local mock settles after a short simulated round trip so the row shows a real loading state.
+// 模擬 settles locally after a short simulated round trip so the row shows a real loading state; 真實 waits for the server.
 // busy={id,kind}: the clicked button spins, the row's other actions are disabled, repeated clicks are ignored.
 const ACTION_DELAY=650
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms))
@@ -34,9 +33,9 @@ const isBusy=(record,kind)=>busy.value?.id===record.id&&(!kind||busy.value.kind=
 async function apply(record,kind){
  if(busy.value)return
  busy.value={id:record.id,kind}
- // Bind to the account that owned the row when clicked; a mode switch during the wait must not retarget it.
- const target=account.value
- try{await wait(ACTION_DELAY);changeStrategyStatus(target,record.id,kind);notify('success','aiQuant.actions.toast.'+kind+'Success')}
+ // Bind to the mode that owned the row when clicked; a mode switch during the wait must not retarget it.
+ const mode=session.mode
+ try{if(mode==='common.demo.demo')await wait(ACTION_DELAY);await changeStatusFor(mode,record,kind);notify('success','aiQuant.actions.toast.'+kind+'Success')}
  catch{notify('error','aiQuant.actions.toast.'+kind+'Error')}
  finally{busy.value=null}
 }
@@ -45,7 +44,7 @@ function act(record,kind){
  if(kind!=='stop')return apply(record,kind)
  openModal('account-confirm','aiQuant.actions.stopConfirm.title',{subtitle:record.template.name,danger:{key:'aiQuant.actions.stopConfirm.notice',params:{name:record.template.name}},cancelLabel:'aiQuant.actions.stopConfirm.cancel',confirmLabel:'aiQuant.actions.stopConfirm.confirm',destructive:true,focusCancel:true,onConfirm:()=>apply(record,'stop')})
 }
-// Settle anything whose term ended while the page was away (mock clock lifecycle).
+// Settle local demo strategies whose term ended while the page was away (the server settles 真實 ones).
 onMounted(refreshStrategies)
 </script>
 <template>
@@ -66,7 +65,7 @@ onMounted(refreshStrategies)
      <td class="num mono" :data-label="$t('aiQuant.table.columns.capital')">{{ fmt(record.capital) }}<span class="ms-unit">USDT</span></td>
      <td class="num ms-date" :data-label="$t('aiQuant.table.columns.endDate')">{{ endDate(record) }}</td>
      <td class="num" :data-label="$t('aiQuant.table.columns.action')"><div class="ms-actions">
-      <template v-for="kind in ['pause','resume','stop']" :key="kind"><button v-if="(kind==='pause'&&record.status==='running')||(kind==='resume'&&record.status==='paused')||(kind==='stop'&&record.status!=='completed')" type="button" class="ms-button" :class="{loading:isBusy(record,kind)}" :disabled="isBusy(record)" :aria-busy="isBusy(record,kind)||undefined" :aria-haspopup="kind==='stop'?'dialog':undefined" @click="act(record,kind)">
+      <template v-for="kind in ['pause','resume','stop']" :key="kind"><button v-if="(kind==='pause'&&record.status==='running')||(kind==='resume'&&record.status==='paused')||(kind==='stop'&&['running','paused'].includes(record.status))" type="button" class="ms-button" :class="{loading:isBusy(record,kind)}" :disabled="isBusy(record)" :aria-busy="isBusy(record,kind)||undefined" :aria-haspopup="kind==='stop'?'dialog':undefined" @click="act(record,kind)">
        <LineIcon name="spinner" v-if="isBusy(record,kind)" class="ms-icon ms-spin" aria-hidden="true"/>
        <LineIcon name="pause" v-else-if="kind==='pause'" class="ms-icon" aria-hidden="true"/>
        <LineIcon name="play" v-else-if="kind==='resume'" class="ms-icon" aria-hidden="true"/>

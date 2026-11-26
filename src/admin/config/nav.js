@@ -128,6 +128,18 @@ export const navTree = [
     ]
   },
   {
+    title: 'AI 策略',
+    icon: 'spark',
+    children: [
+      { title: '策略模板', path: '/admin/strategy/templates' },
+      { title: '用户策略', path: '/admin/strategy/subscriptions' },
+      { title: '收益记录', path: '/admin/strategy/daily-pnl' },
+      { title: '结算记录', path: '/admin/strategy/settlements' },
+      { title: '风控设置', path: '/admin/strategy/risk-policy' },
+      { title: '操作日志', path: '/admin/strategy/logs' },
+    ]
+  },
+  {
     title: 'AI量化交易',
     icon: 'robot',
     children: [

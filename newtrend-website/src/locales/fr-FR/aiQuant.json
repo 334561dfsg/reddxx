@@ -126,7 +126,8 @@
       "title": "Pas trouvé la stratégie qu'il vous faut ?",
       "description": "Découvrez les Fonds Quant gérés par l'IA : aucune surveillance requise, règlement automatique à l'échéance.",
       "cta": "Parcourir les Fonds Quant"
-    }
+    },
+    "loadFailed": "Échec du chargement des stratégies."
   },
   "style": {
     "conservative": "Prudent",
@@ -248,16 +249,24 @@
       "aboveMax": "Le capital ne doit pas dépasser {{max}}.",
       "emptyRange": "Ce modèle n'est pas disponible pour votre compte actuellement.",
       "periodOutOfRange": "La période doit être comprise entre {{min}} et {{max}} jours.",
-      "takeProfitOutOfRange": "Le take profit doit être compris entre 1 % et 100 %.",
-      "stopLossOutOfRange": "Le stop loss doit être compris entre 1 % et 50 %.",
+      "takeProfitOutOfRange": "La prise de bénéfices doit être comprise entre {{min}} % et {{max}} %.",
+      "stopLossOutOfRange": "Le stop loss doit être compris entre {{min}} % et {{max}} %.",
       "createFailed": "Échec de la création de la stratégie. Veuillez réessayer.",
       "badRequest": "La demande a été rejetée. Veuillez vérifier vos saisies.",
       "unauthorized": "Veuillez vous connecter pour créer une stratégie.",
       "paymentRequired": "Solde insuffisant. Veuillez recharger avant de créer cette stratégie.",
       "notFound": "Ce modèle de stratégie n'est plus disponible.",
       "conflict": "Une stratégie en conflit est déjà en cours. Arrêtez-la ou attendez qu'elle se termine.",
-      "validation": "Certains champs semblent invalides. Veuillez vérifier et réessayer."
-    }
+      "validation": "Certains champs semblent invalides. Veuillez vérifier et réessayer.",
+      "templateChanged": "Les conditions de la stratégie ont changé. Veuillez vérifier et soumettre à nouveau.",
+      "userLimit": "Vous avez atteint le nombre maximal de stratégies actives.",
+      "userCapital": "Vous avez atteint le capital maximal autorisé pour les stratégies.",
+      "capacity": "Cette stratégie est complète.",
+      "verificationRequired": "Votre niveau de vérification ne remplit pas la condition de cette stratégie.",
+      "vipRequired": "Votre niveau VIP ne remplit pas la condition de cette stratégie.",
+      "unavailable": "Le service de stratégies est temporairement indisponible. Veuillez réessayer plus tard."
+    },
+    "submitPendingReview": "Envoyé. En attente de validation."
   },
   "dailyStats": {
     "netPnl": "P&L net",

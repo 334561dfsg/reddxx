@@ -126,7 +126,8 @@
       "title": "Haven't found the right strategy?",
       "description": "Explore quant funds — fully AI-managed, no monitoring needed, auto-settled at maturity.",
       "cta": "Browse quant funds"
-    }
+    },
+    "loadFailed": "Failed to load strategies."
   },
   "style": {
     "conservative": "Conservative",
@@ -248,16 +249,24 @@
       "aboveMax": "Capital must be no more than {{max}}.",
       "emptyRange": "This template is not available for your account right now.",
       "periodOutOfRange": "Period must be between {{min}} and {{max}} days.",
-      "takeProfitOutOfRange": "Take profit must be between 1% and 100%.",
-      "stopLossOutOfRange": "Stop loss must be between 1% and 50%.",
+      "takeProfitOutOfRange": "Take profit must be between {{min}}% and {{max}}%.",
+      "stopLossOutOfRange": "Stop loss must be between {{min}}% and {{max}}%.",
       "createFailed": "Failed to create strategy. Please try again.",
       "badRequest": "The request was rejected. Please review your inputs.",
       "unauthorized": "Please sign in to create a strategy.",
       "paymentRequired": "Insufficient balance. Please top up before creating this strategy.",
       "notFound": "This strategy template is no longer available.",
       "conflict": "A conflicting strategy is already running. Stop or wait for it to finish.",
-      "validation": "Some fields look invalid. Please check and try again."
-    }
+      "validation": "Some fields look invalid. Please check and try again.",
+      "templateChanged": "The strategy terms have changed. Please review and submit again.",
+      "userLimit": "You have reached the maximum number of active strategies.",
+      "userCapital": "You have reached the maximum strategy capital.",
+      "capacity": "This strategy is fully subscribed.",
+      "verificationRequired": "Your verification level does not meet this strategy's requirement.",
+      "vipRequired": "Your VIP level does not meet this strategy's requirement.",
+      "unavailable": "The strategy service is temporarily unavailable. Please try again later."
+    },
+    "submitPendingReview": "Submitted. Awaiting review."
   },
   "dailyStats": {
     "netPnl": "Net P&L",

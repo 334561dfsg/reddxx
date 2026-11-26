@@ -4,7 +4,10 @@ import {earnProductFacts, findEarnProduct} from '../src/mock/catalog.js'
 import {balanceOf, resetLedger, DEMO_FUNDS} from '../src/mock/ledger.js'
 import {earnEligibilityError, earnMockProfile} from '../src/utils/earnEligibility.js'
 import {earnPortfolios, earnPortfolioFor, recordEarnSubscription} from '../src/earnPortfolio.js'
-import {strategyAccounts, strategyCatalog} from '../src/strategyPortfolio.js'
+import {strategyAccounts} from '../src/strategyPortfolio.js'
+import {strategies} from '../src/mock/catalog.js'
+import {enrichStrategies} from '../src/utils/strategyTemplates.js'
+const localTemplates = enrichStrategies(strategies)
 import {tradeOrdersFor, placeTradeOrder} from '../src/tradingFunds.js'
 
 const DAY = 86400000
@@ -33,8 +36,9 @@ test('Earn fixtures reference real products and respect their limits and terms',
 })
 
 test('strategy seeds fit their templates and lifecycle', () => {
-  for (const mode of ['real', 'demo']) for (const record of strategyAccounts[mode].records) {
-    const template = strategyCatalog.find(item => item.id === record.template.id)
+  // 模擬 records are local; 真實 ones live on the shared strategy Mock (validated in the root strategyDomain tests).
+  for (const mode of ['demo']) for (const record of strategyAccounts[mode].records) {
+    const template = localTemplates.find(item => item.id === record.template.id)
     assert.ok(template, `${record.id} template`)
     assert.ok(record.capital >= template.min && record.capital <= template.max, `${record.id} capital`)
     assert.ok(record.days >= template.minDays && record.days <= template.maxDays, `${record.id} days`)
@@ -99,7 +103,7 @@ test('trading records and locks are kept per mode', () => {
 test('strategy balances are live views of each mode’s ledger', () => {
   resetLedger()
   assert.equal(strategyAccounts.demo.balance, DEMO_FUNDS.USDT)
-  assert.equal(strategyAccounts.real.balance, 0)
+  assert.equal(balanceOf('real', 'USDT'), 0)
   strategyAccounts.demo.balance -= 250
   assert.equal(balanceOf('demo', 'USDT'), DEMO_FUNDS.USDT - 250)
   assert.equal(balanceOf('real', 'USDT'), 0)

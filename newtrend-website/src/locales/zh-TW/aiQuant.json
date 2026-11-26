@@ -126,7 +126,8 @@
       "title": "沒找到合適的策略？",
       "description": "看看由 AI 全程託管的量化基金：申購後無須盯盤，到期自動結算。",
       "cta": "瀏覽量化基金"
-    }
+    },
+    "loadFailed": "策略列表載入失敗。"
   },
   "style": {
     "conservative": "保守",
@@ -248,16 +249,24 @@
       "aboveMax": "資金不能高於 {{max}}。",
       "emptyRange": "該模板目前不可用。",
       "periodOutOfRange": "週期需在 {{min}} – {{max}} 天之間。",
-      "takeProfitOutOfRange": "止盈需在 1% – 100% 之間。",
-      "stopLossOutOfRange": "止損需在 1% – 50% 之間。",
+      "takeProfitOutOfRange": "止盈需在 {{min}}% – {{max}}% 之間。",
+      "stopLossOutOfRange": "止損需在 {{min}}% – {{max}}% 之間。",
       "createFailed": "建立策略失敗，請稍後重試。",
       "badRequest": "請求被拒絕，請檢查表單輸入。",
       "unauthorized": "請先登入後再建立策略。",
       "paymentRequired": "餘額不足，請充值後再建立該策略。",
       "notFound": "該策略模板已下架。",
       "conflict": "已有衝突中的策略在運行，請停止或等待其結束。",
-      "validation": "部分欄位不合法，請檢查後重試。"
-    }
+      "validation": "部分欄位不合法，請檢查後重試。",
+      "templateChanged": "策略條款已更新，請重新確認後提交。",
+      "userLimit": "已達到可同時運行的策略數量上限。",
+      "userCapital": "已達到策略資金上限。",
+      "capacity": "該策略模板額度已滿。",
+      "verificationRequired": "認證等級未達到訂閱要求。",
+      "vipRequired": "VIP 等級未達到訂閱要求。",
+      "unavailable": "策略服務暫時不可用，請稍後重試。"
+    },
+    "submitPendingReview": "已提交，等待審核。"
   },
   "dailyStats": {
     "netPnl": "淨盈虧",
