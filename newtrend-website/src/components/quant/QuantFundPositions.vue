@@ -1,4 +1,6 @@
 <script setup>
+import EmptyState from '../ui/EmptyState.vue'
+import {amount,money} from '../../utils/format.js'
 import {computed,h,shallowRef,watch,onMounted} from 'vue'
 import {message} from 'ant-design-vue'
 import {useRouter} from 'vue-router'
@@ -25,8 +27,8 @@ const {page,total,shown}=useFinancePagination(visible,10)
 watch([group,historyStatus,()=>session.mode],()=>{page.value=1})
 const summary=computed(()=>fundSummary(orders.value))
 // Reference table amounts: grouped, up to 2 decimals, no forced trailing zeros (4,999 / 0 / 21.9).
-const amount=value=>Number(value).toLocaleString('en-US',{maximumFractionDigits:2})
-const money=value=>Number(value).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
+// amount/money come from the shared site formatters
+
 const openOrder=order=>openModal('quant-fund-order','aiQuant.quantFund.positions.detail.title',order)
 const router=useRouter()
 const hasPayouts=order=>['active','settled','redeemed'].includes(order.status)
@@ -68,7 +70,7 @@ onMounted(refreshQuantFunds)
   <div v-if="group==='history'" class="qf-history-filter"><RecordFilter id="qf-history-status" v-model="historyStatus" variant="field" :label="$t('aiQuant.quantFund.positions.historyFilter.all')" :options="historyOptions"/></div>
  </div>
  <div id="qf-positions-panel" role="tabpanel" :aria-labelledby="'qf-tab-'+group">
-  <div v-if="!visible.length" class="qf-panel qf-positions-empty"><Icon name="briefcase"/><p>{{ $t('aiQuant.quantFund.positions.empty') }}</p><RouterLink :to="path('/ai-quant/quant-fund')" class="qf-inline-link">{{ $t('aiQuant.quantFund.title') }}</RouterLink></div>
+  <EmptyState v-if="!visible.length" class="qf-panel qf-positions-empty" :text="$t('aiQuant.quantFund.positions.empty')"><RouterLink :to="path('/ai-quant/quant-fund')" class="qf-inline-link">{{ $t('aiQuant.quantFund.title') }}</RouterLink></EmptyState>
   <div v-else class="qf-panel qf-table-wrap"><table class="qf-table">
    <thead><tr><th scope="col">{{ $t('aiQuant.quantFund.positions.table.status') }}</th><th scope="col">{{ $t('aiQuant.quantFund.positions.table.productName') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.principal') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.dailyReturn') }}</th><th scope="col">{{ $t('aiQuant.quantFund.positions.table.term') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.interestPaidTotal') }}</th><th scope="col">{{ $t('aiQuant.quantFund.positions.table.maturityDate') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.action') }}</th></tr></thead>
    <tbody><tr v-for="order in shown" :key="order.id" class="qf-row" @click="openOrder(order)">

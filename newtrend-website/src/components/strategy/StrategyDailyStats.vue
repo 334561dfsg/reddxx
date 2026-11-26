@@ -1,4 +1,6 @@
 <script setup>
+import EmptyState from '../ui/EmptyState.vue'
+import {signedMoney} from '../../utils/format.js'
 import {computed,onMounted,ref} from 'vue'
 import {locale} from '../../i18n'
 import {summarizeDailyStats} from '../../utils/strategyTemplates'
@@ -14,8 +16,8 @@ const summary=computed(()=>summarizeDailyStats(props.items))
 // Scale and range span every day, so bars and the caption stay stable across pages.
 const maxAbs=computed(()=>props.items.reduce((m,i)=>Math.max(m,Math.abs(i.pnl)),0))
 const sign=v=>!Number.isFinite(v)||v===0?'flat':v>0?'up':'down'
-const fixed=v=>Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
-const signed=v=>(sign(v)==='up'?'+':sign(v)==='down'?'-':'')+fixed(v)
+// signed amounts come from the shared site formatters
+const signed=signedMoney
 const parts=date=>{const [y,m,d]=date.split('-').map(Number),at=new Date(Date.UTC(y,m-1,d));return {day:new Intl.DateTimeFormat(locale.value,{month:'short',day:'numeric',timeZone:'UTC'}).format(at),weekday:new Intl.DateTimeFormat(locale.value,{weekday:'short',timeZone:'UTC'}).format(at)}}
 const range=computed(()=>{if(!props.items.length)return '';const last=parts(props.items[0].date).day,first=parts(props.items.at(-1).date).day;return first===last?last:`${first} – ${last}`})
 const width=item=>drawn.value&&maxAbs.value>0?`${(Math.min(1,Math.abs(item.pnl)/maxAbs.value)*50).toFixed(2)}%`:'0%'
@@ -23,7 +25,7 @@ const drawn=ref(false)
 onMounted(()=>requestAnimationFrame(()=>{drawn.value=true}))
 </script>
 <template>
-<p v-if="!items.length" class="ms-stats-empty">{{ $t('aiQuant.dailyStats.empty') }}</p>
+<EmptyState v-if="!items.length" class="ms-stats-empty" :text="$t('aiQuant.dailyStats.empty')"/>
 <div v-else class="ds">
  <div class="ds-summary">
   <div class="ds-net"><span class="ds-label">{{ $t('aiQuant.dailyStats.netPnl') }}</span>

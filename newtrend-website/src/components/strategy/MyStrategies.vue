@@ -1,6 +1,8 @@
 <script setup>
+import EmptyState from '../ui/EmptyState.vue'
+import {money} from '../../utils/format.js'
 import {computed,ref,onMounted} from 'vue'
-import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
+import FeedbackToast from '../../platform/FeedbackToast.js'
 import {fmt,path} from '../../data'
 import {locale} from '../../i18n'
 import {openModal,session} from '../../session'
@@ -13,7 +15,7 @@ import {useFinancePagination} from '../../composables/useFinancePagination'
 const account=computed(()=>strategyAccountFor(session.mode))
 const records=computed(()=>account.value.records)
 const {page,total,shown}=useFinancePagination(records,10)
-const money=value=>Number(value).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
+// money comes from the shared site formatters
 const summary=computed(()=>{const list=records.value,pnl=list.reduce((sum,r)=>sum+r.pnl,0);return {capital:list.reduce((sum,r)=>sum+r.capital,0),pnl,running:list.filter(r=>r.status==='running').length,total:list.length}})
 const signed=value=>(value>=0?'+':'-')+money(Math.abs(value))
 const returnPercent=record=>record.capital?record.pnl/record.capital*100:0
@@ -47,7 +49,7 @@ onMounted(refreshStrategies)
 <template>
 <div class="my-strategies">
  <header class="my-strategies-head"><span>{{ $t('aiQuant.myStrategies.subtitle') }}</span><h1>{{ $t('aiQuant.myStrategies.title') }}</h1></header>
- <div v-if="!records.length" class="my-strategies-empty"><p>{{ $t('aiQuant.myStrategies.empty') }}</p><RouterLink class="strategy-outline" :to="path('/ai-quant/strategy')">{{ $t('aiQuant.myStrategies.browseStrategies') }}</RouterLink></div>
+ <EmptyState v-if="!records.length" class="my-strategies-empty" :text="$t('aiQuant.myStrategies.empty')"><RouterLink class="strategy-outline" :to="path('/ai-quant/strategy')">{{ $t('aiQuant.myStrategies.browseStrategies') }}</RouterLink></EmptyState>
  <template v-else>
   <PortfolioSummaryCard label-id="ms-summary-capital" :label="$t('aiQuant.myStrategies.summary.totalCapital')" :value="money(summary.capital)" unit="USDT"
    :accent="{value:signed(summary.pnl),unit:'USDT',label:$t('aiQuant.myStrategies.summary.totalPnl'),tone:summary.pnl>=0?'profit':'loss'}"

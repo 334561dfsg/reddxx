@@ -1,7 +1,7 @@
 <script setup>
 import FinancePagination from '../FinancePagination.vue'
 import {useFinancePagination} from '../../composables/useFinancePagination'
-import {loanRateRange} from '../../../../src/shared/lending/terms.js'
+import {loanRateRange} from '../../platform/lendingRules.js'
 import {path,fmt} from '../../data'
 import Coin from '../Coin.vue'
 import Icon from './LendingIcon.vue'

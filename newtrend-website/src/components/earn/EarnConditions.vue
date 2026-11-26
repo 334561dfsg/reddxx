@@ -1,6 +1,6 @@
 <script setup>
 import {computed} from 'vue'
-import {eligibilityFailures} from '../../../../src/shared/lending/eligibility.js'
+import {eligibilityFailures} from '../../platform/lendingRules.js'
 import {earnMockProfile} from '../../utils/earnEligibility'
 import {path} from '../../data'
 const props=defineProps({product:{type:Object,required:true}})

@@ -1,9 +1,9 @@
 <script setup>
-import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
+import FeedbackToast from '../../platform/FeedbackToast.js'
 import {computed} from 'vue'
 import {ConfigProvider,Select,theme} from 'ant-design-vue'
 import {path,fmt} from '../../data'
-import {annualLoanRate,loanRateRange} from '../../../../src/shared/lending/terms.js'
+import {annualLoanRate,loanRateRange} from '../../platform/lendingRules.js'
 import Coin from '../Coin.vue'
 import Icon from '../Icon.vue'
 const props=defineProps({product:Object,amount:[String,Number],days:Number,collateral:String,profile:Object,wallet:Object,required:Number,estimated:Number,eligibility:Array,busy:Boolean,failure:String})

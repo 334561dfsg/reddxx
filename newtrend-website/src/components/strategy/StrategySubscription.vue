@@ -1,6 +1,6 @@
 <script setup>
 import {computed,reactive,ref,watch} from 'vue'
-import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
+import FeedbackToast from '../../platform/FeedbackToast.js'
 import {session} from '../../session'
 import {strategyAccountFor,strategyNotice} from '../../strategyPortfolio'
 import {strategyValidation,subscribeStrategy} from '../../utils/strategyTemplates'

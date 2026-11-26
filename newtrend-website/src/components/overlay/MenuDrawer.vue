@@ -1,0 +1,13 @@
+<script setup>
+import {shallowRef} from 'vue'
+import Icon from '../Icon.vue'
+import LanguageList from './LanguageList.vue'
+import {navGroups,path} from '../../data'
+import {session,logout} from '../../session'
+// Mobile navigation drawer body. Navigation, mode switches and language changes are reported to the overlay shell,
+// which owns closing order (close first, then act) and the dialog lifecycle.
+defineEmits(['close','navigate','switch-mode','language'])
+const expanded=shallowRef('')
+</script>
+<template><nav class="drawer-nav"><RouterLink :to="path('/')" @click="$emit('close')">{{ $t("common.home") }}</RouterLink><div v-for="g in navGroups" :key="g.label"><button :aria-expanded="expanded===g.label" @click="expanded=expanded===g.label?'':g.label">{{ $t(g.label) }}<Icon name="chevron-down"/></button><div v-if="expanded===g.label" class="drawer-subnav"><RouterLink v-if="g.path" :to="path(g.path)" @click="$emit('close')">{{ $t("aiQuant.landing.eyebrow") }}</RouterLink><RouterLink v-for="item in g.items" :key="item[0]" :to="path(item[2])" @click="$emit('close')">{{ $t(item[0]) }}<small>{{ $t(item[1]) }}</small></RouterLink></div></div><RouterLink :to="path('/news')" @click="$emit('close')">{{ $t("common.news") }}</RouterLink><RouterLink :to="path('/charity')" @click="$emit('close')">{{ $t("common.charity") }}</RouterLink></nav><div class="drawer-account"><div v-if="session.loggedIn" class="mode-toggle"><button v-for="m in [&quot;common.demo.real&quot;,&quot;common.demo.demo&quot;]" :key="m" :class="{active:session.mode===m}" :aria-pressed="session.mode===m" @click="$emit('switch-mode',m)">{{ $t(m) }}</button></div><button class="primary-button wide-button" @click="$emit('navigate',session.loggedIn?'/assets':'/login')">{{ $t(session.loggedIn?"assets.pageTitle":"auth.login") }}</button><button class="secondary-button wide-button" @click="$emit('navigate','/profile')">{{ $t("common.profile") }}</button><button v-if="session.loggedIn" @click="logout();$emit('close')">{{ $t("profile.logout") }}</button></div><p class="muted">{{ $t("common.language") }}</p><LanguageList @select="$emit('language',$event)"/></template>
+<style scoped>.drawer-nav>a,.drawer-nav>div>button{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;padding:14px 4px}.drawer-subnav a{display:block;padding:12px 16px;font-size:0.875rem}.drawer-subnav small{display:block;color:#fff6;font-size:0.6875rem;margin-top:4px}.drawer-account{display:grid;gap:14px;margin:32px 0 24px}.drawer-account .mode-toggle{justify-content:center}.drawer-account .mode-toggle button{flex:1}.drawer-account .primary-button{padding:9px 20px}</style>

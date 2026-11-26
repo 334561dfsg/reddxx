@@ -9,7 +9,10 @@ const SpotTrade=()=>import('./pages/trading/SpotTrade.vue')
 const Finance=()=>import('./pages/Finance.vue')
 const Quant=()=>import('./pages/Quant.vue')
 const Assets=()=>import('./pages/Assets.vue')
-const Content=()=>import('./pages/Content.vue')
+const Charity=()=>import('./pages/Charity.vue')
+const Withdraw=()=>import('./pages/Withdraw.vue')
+const Messages=()=>import('./pages/Messages.vue')
+const DepositPage=()=>import('./components/deposit/DepositPage.vue')
 const NotFound=()=>import('./pages/NotFound.vue')
 const Auth=()=>import('./pages/Auth.vue')
 const Legal=()=>import('./pages/Legal.vue')
@@ -45,7 +48,10 @@ const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:
  {path:'/:section(about|privacy|agreement|risk-disclosure|regulatory-information|content)/:id?',component:Legal},
  {path:'/c2c/:c2cPage(buy|sell|orders|payment-accounts)',component:()=>import('./pages/C2CBuy.vue')},
  {path:'/c2c/accounts',redirect:'/c2c/payment-accounts'},
- {path:'/:section(charity|deposit|withdraw|messages)',component:Content},
+ {path:'/charity',component:Charity},
+ {path:'/deposit',component:DepositPage},
+ {path:'/withdraw',component:Withdraw},
+ {path:'/messages',component:Messages},
  {path:'/:pathMatch(.*)*',component:NotFound}
 ],scrollBehavior(to,from,saved){
   // A reload reuses history.state.scroll; only back/forward should restore it.

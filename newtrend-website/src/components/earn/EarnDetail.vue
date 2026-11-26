@@ -1,4 +1,5 @@
 <script setup>
+import BackLink from '../ui/BackLink.vue'
 // Reference detail card glow uses the coin's brand colour at ~33% alpha (USDT measured: #26a17b55).
 const COIN_GLOW={USDT:'#26a17b',USDC:'#2775ca',BTC:'#f7931a',ETH:'#627eea',SOL:'#9945ff'}
 const coinGlow=symbol=>(COIN_GLOW[symbol]||'#a5ff4a')+'55'
@@ -13,7 +14,7 @@ import EarnTimeline from './EarnTimeline.vue'
 defineProps({product:{type:Object,required:true}})
 </script>
 <template><article class="earn-detail">
-<RouterLink class="earn-back" :to="path('/earn/simple')"><span aria-hidden="true">←</span>{{ $t('earn.productDetail.back') }}</RouterLink>
+<BackLink class="earn-back" :to="path('/earn/simple')">{{ $t('earn.productDetail.back') }}</BackLink>
 <div class="earn-panel earn-detail-summary nt-glow-host"><span class="nt-glow glow-earn-detail" :style="{'--glow-color':coinGlow(product.symbol)}" aria-hidden="true"></span><div class="earn-product-line"><Coin :symbol="product.symbol"/><div><div class="earn-title-line"><h1>{{ product.name }}</h1><span v-if="product.hot" class="earn-hot"><EarnIcon name="flame"/>{{ $t('earn.badge.hot') }}</span></div><p class="earn-caption">{{ product.symbol }} · {{ product.days?$t('common.durationDays',{count:product.days}):$t('earn.tabs.flexible') }}</p></div></div><div class="earn-detail-rate"><div><strong>{{ product.rate.toFixed(4) }}%</strong><span>{{ $t('earn.dailyRate.label') }}</span></div><p class="earn-caption earn-mono">{{ $t('earn.apy.approx',{value:product.apy.toFixed(2)}) }}</p></div></div>
 <section class="earn-panel"><h2><EarnIcon name="calendar"/>{{ $t('earn.timeline.title') }}</h2><EarnTimeline :days="product.days"/></section>
 <div class="earn-detail-columns"><section class="earn-panel"><h2><Icon name="coins"/>{{ $t('earn.productDetail.groups.rules') }}</h2><dl><dt>{{ $t('earn.productDetail.keyFacts.min') }}</dt><dd>{{ fmt(product.min) }} {{ product.symbol }}</dd><dt>{{ $t('earn.productDetail.keyFacts.max') }}</dt><dd>{{ fmt(product.max) }} {{ product.symbol }}</dd><dt>{{ $t('earn.productDetail.keyFacts.perUserQuota') }}</dt><dd>{{ product.perUser==null?$t('earn.productDetail.unlimited'):fmt(product.perUser)+' '+product.symbol }}</dd></dl></section>

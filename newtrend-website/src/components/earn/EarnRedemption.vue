@@ -1,6 +1,6 @@
 <script setup>
 import {session} from '../../session'
-import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
+import FeedbackToast from '../../platform/FeedbackToast.js'
 import {computed,shallowRef,watch} from 'vue'
 import {earnPortfolioFor,redeemEarnHolding} from '../../earnPortfolio'
 import {redemptionQuote} from '../../utils/mockEarnPortfolio'

@@ -1,5 +1,5 @@
 <script setup>
-import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
+import FeedbackToast from '../../platform/FeedbackToast.js'
 import {reactive,computed,ref,watch} from 'vue'
 import {saveAccount} from '../../utils/c2cState'
 import {c2cState} from '../../c2cStore'

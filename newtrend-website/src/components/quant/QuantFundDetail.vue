@@ -1,4 +1,5 @@
 <script setup>
+import BackLink from '../ui/BackLink.vue'
 import {computed,shallowRef,watch} from 'vue'
 import {useRoute,useRouter} from 'vue-router'
 import {loginPath} from '../../utils/redirect'
@@ -38,7 +39,7 @@ function subscribe(){
 </script>
 <template>
 <div class="qf-detail-page">
- <RouterLink :to="path('/ai-quant/quant-fund')" class="qf-back"><Icon name="chevron-left"/>{{ $t('aiQuant.quantFund.title') }}</RouterLink>
+ <BackLink :to="path('/ai-quant/quant-fund')" class="qf-back">{{ $t('aiQuant.quantFund.title') }}</BackLink>
  <div v-if="!product" class="card empty"><Icon name="bot"/><h1 class="qf-empty-title">{{ $t('common.notFound.title') }}</h1><p>{{ $t('common.notFound.description') }}</p></div>
  <div v-else class="qf-detail">
   <div class="qf-detail-grid">

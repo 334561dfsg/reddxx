@@ -1,4 +1,5 @@
 <script setup>
+import BackLink from '../components/ui/BackLink.vue'
 import {computed,ref} from 'vue'
 import {onBeforeRouteLeave,useRoute} from 'vue-router'
 import {path} from '../data'
@@ -13,7 +14,7 @@ onBeforeRouteLeave(()=>!busy.value)
 </script>
 <template>
  <article class="loan-order-page">
-  <RouterLink class="earn-back" :to="back" :aria-disabled="busy" @click="busy&&$event.preventDefault()"><span aria-hidden="true">←</span>{{$t('earn.nav.myLoans')}}</RouterLink>
+  <BackLink class="earn-back" :to="back" :aria-disabled="busy" @click="busy&&$event.preventDefault()">{{$t('earn.nav.myLoans')}}</BackLink>
   <h1>{{$t('lending.orderDetails')}}</h1>
   <LendingOrderDetail v-if="session.loggedIn" :key="String(route.params.orderId)" :order-id="String(route.params.orderId)" @state="busy=$event.busy"/>
   <RouterLink v-else :to="path('/login')">{{$t('lending.login')}}</RouterLink>

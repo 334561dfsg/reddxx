@@ -292,3 +292,14 @@ Removed the homepage 了解 AI Quant 運作機制 and strategy 運作機制 vide
 - Seeds must satisfy product rules (Quant Fund seeding throws otherwise); payout rows are never credited in the future.
 - Assets page and header totals come from `accountValue.js` (funding wallet + trading margin + Earn holdings + active fund principal).
 - Lending stays on the shared server mock (also used by the admin) and keeps its own balances by design.
+
+## Refactor phase 3 — component conventions (2026-11-26)
+
+- Formatting comes from `src/utils/format.js` (`money`, `amount`, `signedMoney`, `dateTime`, `isoDateTime`; dates display in Asia/Manila). Do not add local number/date formatters in components.
+- Coin icons: `<Coin symbol set="market|logo">` backed by `utils/coinAssets.js`. Back links: `components/ui/BackLink.vue`. Empty states: `components/ui/EmptyState.vue`.
+- Language switching goes through `composables/useLocaleSwitch.js` (busy guard + toast on load failure) in the header, mobile menu and profile.
+- Code from the repository root (`src/shared/...`) is imported only through `src/platform/` (`FeedbackToast.js`, `lendingRules.js` — pure, test-safe — and `lendingClient.js`); no deep `../../../src/shared` paths in site code.
+- Routes map to their own pages: `/charity` → `pages/Charity.vue`, `/deposit` → `DepositPage`, `/withdraw` → `pages/Withdraw.vue`, `/messages` → `pages/Messages.vue` (the unrouted copy-trade mock was removed; it is in git history before this phase).
+- `Overlay.vue` is the single dialog/drawer shell (lifecycle, focus, Escape/unsaved guard, footer). Flow bodies are components that emit `state` (`{dirty, valid, done, confirmLabel}`, or legacy `draft`) into one `flow` object; the footer's primary action comes from the `primary` computed table. Inline bodies live in `components/overlay/` (`MenuDrawer`, `LanguageList`, `SupportChannels`, `VipTiers`, `AmountForm`). Add new dialog types as components, not new inline template branches.
+- Donate/convert (`AmountForm`) show the real ledger balance of the current mode and report results by toast; there is no reward estimate for them.
+- `pages/Account.vue` is a thin shell (header + route → sub-page map). Sub-pages live in `pages/account/`, own their drafts and are remounted per route (`key`), so leaving a route discards its draft. Their feedback is an explicit toast per attempt via `pages/account/accountForm.js`; shared upload, countdown and copy helpers live there too. Account styles live in `pages/account/account.css`, every rule anchored to the account page roots.

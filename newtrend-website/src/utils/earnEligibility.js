@@ -1,4 +1,4 @@
-import {eligibilityFailures} from '../../../src/shared/lending/eligibility.js'
+import {eligibilityFailures} from '../platform/lendingRules.js'
 // Independent public Earn prototype profile; not a real authenticated identity.
 export const earnMockProfile=Object.freeze({verificationLevel:'basic',vipLevel:1,simulated:true})
 export function earnEligibilityError(product){return eligibilityFailures(product,earnMockProfile)[0]||null}

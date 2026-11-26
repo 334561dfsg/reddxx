@@ -1,4 +1,5 @@
 <script setup>
+import {money as formatMoney} from '../../utils/format.js'
 import {session} from '../../session'
 import {computed,shallowRef} from 'vue'
 import {products} from '../../data'
@@ -7,7 +8,7 @@ import {earnSummary} from '../../utils/mockEarnPortfolio'
 const hidden=shallowRef(false)
 const summary=computed(()=>earnSummary(earnPortfolioFor(session.mode),products))
 const metrics=[['principal','principal'],['accruedReward','accrued'],['cumulativeReward','cumulative']]
-const money=value=>hidden.value?'****':value.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' USDT'
+const money=value=>hidden.value?'****':formatMoney(value)+' USDT'
 </script>
 <template>
 <section class="earn-panel portfolio-summary nt-glow-host"><span class="nt-glow" aria-hidden="true"></span>

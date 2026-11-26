@@ -1,4 +1,5 @@
 <script setup>
+import {isoDateTime} from '../utils/format.js'
 import {tradeOrdersFor,releaseTradeFunds} from '../tradingFunds.js'
 import {ref,watch} from 'vue'
 import {fmt} from '../data'
@@ -19,7 +20,7 @@ function fields(o){
  f('trade.orderPrice',o.price),f('trade.history.filledQuantity',o.filledQuantity||0),
  f('trade.current.remaining',o.quantity-(o.filledQuantity||0)),f('trade.orderType',o.orderType,'key'),f('trade.status',o.recordStatus,'key')]
 }
-function value(f){if(f.value==null)return '—';if(f.type==='key')return t(f.value);if(f.type==='date')return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Manila',dateStyle:'short',timeStyle:'medium'}).format(new Date(f.value));return (f.type==='pnl'&&f.value>0?'+':'')+fmt(f.value)}
+function value(f){if(f.value==null)return '—';if(f.type==='key')return t(f.value);if(f.type==='date')return isoDateTime(f.value);return (f.type==='pnl'&&f.value>0?'+':'')+fmt(f.value)}
 function act(o){
  const closing=o.bucket==='positions',action=closing?'trade.closePosition':'trade.cancelOrder'
  openModal('account-confirm',`${t(action)} · ${o.marketName}`,{

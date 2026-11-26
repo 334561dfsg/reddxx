@@ -1,4 +1,5 @@
 <script setup>
+import EmptyState from '../ui/EmptyState.vue'
 import {message} from 'ant-design-vue'
 import {computed} from 'vue'
 import {session} from '../../session'
@@ -18,7 +19,7 @@ const announce=text=>message.success(text)
 <template>
 <section class="terminal-panel records-panel" :aria-label="$t('trade.pages.records')">
   <div class="record-tabs"><button v-for="tab in tabs" :key="tab.id" :class="{active:selected.id===tab.id}" :aria-pressed="selected.id===tab.id" @click="state.record=tab.id">{{ $t(tab.label) }}</button></div>
-  <div v-if="!rows.length" class="empty" role="status">{{ $t('trade.pages.emptyRecords') }}</div>
+  <EmptyState v-if="!rows.length" class="empty" :text="$t('trade.pages.emptyRecords')"/>
   <TradeHistory v-else-if="historyBuckets.includes(selected.bucket)" :key="selected.id" v-model="page" :rows="rows" :bucket="selected.bucket"/>
   <CurrentTrades v-else :key="selected.id" :rows="rows" :bucket="selected.bucket" @complete="announce"/>
 </section>

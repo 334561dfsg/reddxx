@@ -1,4 +1,5 @@
 <script setup>
+import {coinImage} from '../../utils/coinAssets'
 import {computed,h,onBeforeUnmount,ref,watch} from 'vue'
 import {ConfigProvider,Select,message,theme} from 'ant-design-vue'
 import {path} from '../../data'
@@ -16,7 +17,6 @@ const coins=[
  {symbol:'SOL',networks:['SOL']},
  {symbol:'DAI',networks:['ETH']},
 ]
-const icons={USDT:'/NewQuantCapital/assets/usdt.svg',ETH:'/NewQuantCapital/assets/c2c/eth.svg',BTC:'/NewQuantCapital/assets/c2c/btc.svg',USDC:'/NewQuantCapital/assets/c2c/usdc.svg',SOL:'/NewQuantCapital/assets/c2c/sol.svg'}
 const MAX_FILE=10*1024*1024
 
 const coin=ref('USDT'),network=ref('ETH'),amount=ref(''),hash=ref(''),file=ref(null),preview=ref(''),busy=ref(false),attempted=ref(false)
@@ -30,7 +30,7 @@ const ready=computed(()=>!amountInvalid.value&&!hashInvalid.value&&!!file.value)
 
 watch(coin,()=>{if(!networks.value.includes(network.value))network.value=networks.value[0]})
 
-const coinMark=symbol=>icons[symbol]?h('img',{class:'deposit-coin',src:icons[symbol],alt:''}):h('span',{class:'deposit-coin deposit-coin-text','aria-hidden':'true'},symbol.slice(0,2))
+const coinMark=symbol=>coinImage(symbol,'logo')?h('img',{class:'deposit-coin',src:coinImage(symbol,'logo'),alt:''}):h('span',{class:'deposit-coin deposit-coin-text','aria-hidden':'true'},symbol.slice(0,2))
 const coinOptions=computed(()=>coins.map(({symbol})=>({value:symbol,label:symbol,display:h('span',{class:'deposit-option'},[coinMark(symbol),h('span',{class:'deposit-option-text'},[h('strong',symbol),h('small',symbol)])])})))
 const networkOptions=computed(()=>networks.value.map(code=>({value:code,label:code,display:h('span',{class:'deposit-option deposit-network'},[h('span',{class:'deposit-dot','aria-hidden':'true'}),h('strong',code),h('small',code)])})))
 const selectTheme={algorithm:theme.darkAlgorithm,token:{colorPrimary:'#a5ff4a',colorBgContainer:'#0c1017',colorBgElevated:'#0c1017',colorText:'#ffffff',colorTextPlaceholder:'#a0a1a2',colorBorder:'#191b1f',controlOutline:'transparent',controlOutlineWidth:0,borderRadius:24,borderRadiusLG:24,fontSize:14},components:{Select:{controlHeight:48,optionPadding:'12px 16px',optionSelectedBg:'rgba(165,255,74,.1)',optionSelectedColor:'#a5ff4a',optionActiveBg:'rgba(255,255,255,.04)'}}}

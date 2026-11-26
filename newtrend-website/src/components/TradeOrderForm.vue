@@ -1,5 +1,5 @@
 <script setup>
-import FeedbackToast from '../../../src/shared/feedback/FeedbackToast.vue'
+import FeedbackToast from '../platform/FeedbackToast.js'
 import {computed,reactive,ref,watch} from 'vue'
 import {session,openModal} from '../session'
 import {balanceOf} from '../mock/ledger.js'

@@ -1,4 +1,5 @@
 <script setup>
+import {isoDateTime} from '../utils/format.js'
 import {computed,ref,watch} from 'vue'
 import {fmt} from '../data'
 import {historyFields} from '../utils/mockTradeHistory'
@@ -10,7 +11,7 @@ const visible=computed(()=>props.rows.slice((page.value-1)*size,page.value*size)
 
 watch(pages,n=>page.value=Math.min(page.value,n))
 function go(n){page.value=n;scroller.value?.scrollTo({top:0,behavior:'instant'})}
-function date(value){if(!value)return '—';return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date(value))}
+const date=isoDateTime
 function direction(o){return o.kind==='spot'?(o.direction==='buy'?'trade.buy':'trade.sell'):(o.direction==='buy'?'trade.buyLong':'trade.sellShort')}
 </script>
 <template><div class="trade-history"><div ref="scroller" class="history-list">

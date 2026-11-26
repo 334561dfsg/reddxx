@@ -1,5 +1,5 @@
 <script setup>
-import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
+import FeedbackToast from '../../platform/FeedbackToast.js'
 import {computed,nextTick,shallowRef,watch} from 'vue'
 import {useRouter} from 'vue-router'
 import {fmt,path} from '../../data'

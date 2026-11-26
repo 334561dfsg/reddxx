@@ -1,12 +1,13 @@
 <script setup>
+import BackLink from '../ui/BackLink.vue'
 import {lendingErrorKey} from '../../utils/lendingErrors.js'
-import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
+import FeedbackToast from '../../platform/FeedbackToast.js'
 import {computed,ref,watch} from 'vue'
 import {message} from 'ant-design-vue'
 import {t} from '../../i18n'
 import {useRoute} from 'vue-router'
-import {useLendingFeed,lendingCommand} from '../../../../src/shared/lending/client.js'
-import {eligibilityFailures} from '../../../../src/shared/lending/eligibility.js'
+import {useLendingFeed,lendingCommand} from '../../platform/lendingClient.js'
+import {eligibilityFailures} from '../../platform/lendingRules.js'
 import {session} from '../../session'
 import {path} from '../../data'
 import Coin from '../Coin.vue'
@@ -47,7 +48,7 @@ watch(()=>route.params.id,()=>{failure.value=''})
 <template>
  <section class="loan-module">
 
-  <template v-if="borrowing"><RouterLink :to="path('/earn/loan')" class="loan-borrow-back"><Icon name="arrow-left"/>{{$t('margin.borrow.back')}}</RouterLink><h1 v-if="!product" class="loan-borrow-title"><Coin v-if="product" :symbol="product.loanCurrency"/>{{$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})}}</h1></template>
+  <template v-if="borrowing"><BackLink :to="path('/earn/loan')" class="loan-borrow-back">{{$t('margin.borrow.back')}}</BackLink><h1 v-if="!product" class="loan-borrow-title"><Coin v-if="product" :symbol="product.loanCurrency"/>{{$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})}}</h1></template>
   <LendingCatalog v-if="!mine&&!borrowing" :products="products" @borrow="choose"/>
   <FeedbackToast v-if="error" type="error" :source="() => (error) ? (([String(($t('lending.errors.unavailable')) ?? ''),&quot; &quot;,''].join(''))) : ''"><button class="green-link" @click="refresh">{{$t('lending.refresh')}}</button></FeedbackToast>
   <p v-if="!session.loggedIn"><RouterLink :to="path('/login')">{{$t('lending.login')}}</RouterLink></p>

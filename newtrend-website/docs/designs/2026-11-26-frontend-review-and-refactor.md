@@ -49,6 +49,8 @@ key claims were re-verified in code before inclusion. Tests 77/77 and locale che
    Lending stays on the shared server mock (also used by admin) but goes through the same mode/clock conventions. ✅ Done 2026-11-26 (see AGENTS.md "Refactor phase 2"; lending intentionally unchanged).
 3. **Components** — `components/ui` primitives (CoinIcon, Icon registry, StatusTag, BackLink, EmptyState, SummaryCard, RecordList, NtSelect), `utils/format.js`,
    `useLocaleSwitch`; split Overlay into host + registry; split Account/Content into pages; named routes per page; `@shared` alias.
+   ✅ Done 2026-11-26 (see AGENTS.md "Refactor phase 3"). Shipped: format/coin/BackLink/EmptyState/locale-switch primitives, `src/platform/` bridge instead of an alias, Content → Charity/Withdraw/Messages pages,
+   Overlay shell + `components/overlay/*` bodies with one `flow` state, Account shell + `pages/account/*`. Deferred to phase 4 with the CSS work: Icon registry, StatusTag, SummaryCard/RecordList, NtSelect, named routes.
 4. **CSS** — `styles/index.css` with `@layer` order and one tokens file; delete dead rules and unused vendor CSS;
    remove id prefixes and correction blocks domain by domain; single non-ring focus cue.
 5. **Tests & docs** — kernel, routing table, seed validity, earn eligibility, mode switch; update AGENTS.md.

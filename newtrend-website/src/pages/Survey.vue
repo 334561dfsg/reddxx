@@ -1,5 +1,5 @@
 <script setup>
-import FeedbackToast from '../../../src/shared/feedback/FeedbackToast.vue'
+import FeedbackToast from '../platform/FeedbackToast.js'
 import {reactive,ref} from 'vue'
 import data from '../survey.json'
 import {t} from '../i18n'

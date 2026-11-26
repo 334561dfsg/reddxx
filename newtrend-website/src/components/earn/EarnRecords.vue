@@ -1,4 +1,5 @@
 <script setup>
+import {dateTime,money} from '../../utils/format.js'
 import {session} from '../../session'
 import FinancePagination from '../FinancePagination.vue'
 import {useFinancePagination} from '../../composables/useFinancePagination'
@@ -16,8 +17,8 @@ const columns=computed(()=>props.tab==='orders'
  :props.tab==='redemptions'
  ?[['amount','earn.myEarnings.table.amount'],['type','earn.myEarnings.table.redemptionType'],['reward','earn.myEarnings.table.eligibleReward'],['status','earn.myEarnings.table.status'],['createdAt','earn.myEarnings.table.createdAt'],['completedAt','earn.myEarnings.table.completedAt']]
  :[['amount','earn.myEarnings.table.rewardAmount'],['status','earn.myEarnings.table.status'],['rewardAt','earn.myEarnings.table.rewardDate'],['paidAt','earn.myEarnings.table.paidAt']])
-const date=value=>value?new Date(value).toLocaleString(locale.value,{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}):'—'
-const money=value=>value.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
+const date=value=>dateTime(value,locale.value)
+// money/date come from the shared site formatters
 const {page,total,shown}=useFinancePagination(rows)
 </script>
 <template>

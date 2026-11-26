@@ -1,5 +1,5 @@
 <script setup>
-import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
+import FeedbackToast from '../../platform/FeedbackToast.js'
 import EarnConditions from './EarnConditions.vue'
 import {earnEligibilityError} from '../../utils/earnEligibility'
 import {computed,shallowRef,watch} from 'vue'
