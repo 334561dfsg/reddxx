@@ -5,7 +5,9 @@ import Coin from '../Coin.vue'
 import {fmt} from '../../data'
 import {t} from '../../i18n'
 import {session} from '../../session'
-import {balanceOf,credit,debit} from '../../mock/ledger.js'
+import Skeleton from '../ui/Skeleton.vue'
+import {getAssetsOverview,spendFunds,walletErrorKey} from '../../api/wallet.js'
+import {invalidate,useMutation,useRequest} from '../../composables/useRequest.js'
 import {money} from '../../utils/format.js'
 
 // Generic amount dialog body for donate (charity) and convert (assets USDT → USDC 1:1).
@@ -14,18 +16,20 @@ const props=defineProps({kind:{type:String,required:true},data:{type:Object,requ
 const emit=defineEmits(['state'])
 const amount=shallowRef(String(props.data.amount||'')),invalid=shallowRef(false),done=shallowRef(false)
 const symbol=computed(()=>props.data.symbol||'USDT'),min=computed(()=>props.data.min??0.01)
-const available=computed(()=>balanceOf(session.mode,symbol.value))
-watch([amount,done],()=>emit('state',{dirty:Boolean(amount.value)&&!done.value,valid:Boolean(amount.value),done:done.value}),{immediate:true})
+// Balance from the API; spending goes through it too (the dialog shows busy and holds its close paths meanwhile).
+const overview=useRequest(()=>getAssetsOverview(session.mode),{key:()=>session.mode})
+const ready=computed(()=>overview.status.value==='ready')
+const available=computed(()=>overview.data.value?.balances[symbol.value]||0)
+const spending=useMutation(spendFunds)
+watch([amount,done,ready,spending.pending],()=>emit('state',{dirty:Boolean(amount.value)&&!done.value,valid:Boolean(amount.value)&&ready.value,done:done.value,busy:spending.pending.value}),{immediate:true})
 
 function fail(key,params){invalid.value=true;message.error(t(key,params))}
-function submit(){
- if(done.value)return
+async function submit(){
+ if(done.value||spending.pending.value||!ready.value)return
  const val=Number(amount.value)
- if(!Number.isFinite(val)||val<min.value)return fail('overlay.amountMinimum',{amount:fmt(min.value)})
- if(val>(props.data.max??500000))return fail('trade.spotErrorAboveMaxNotional')
- if(val>available.value)return fail(session.mode==='common.demo.demo'?'assets.withdraw.error.insufficientBalance':'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally')
- if(!debit(session.mode,symbol.value,val))return fail('assets.withdraw.error.insufficientBalance')
- if(props.kind==='convert')credit(session.mode,'USDC',val)
+ try{await spending.run({mode:session.mode,kind:props.kind,symbol:symbol.value,amount:val,min:min.value,max:props.data.max??500000})}
+ catch(cause){const key=walletErrorKey(cause);return fail(key,key==='overlay.amountMinimum'?{amount:fmt(min.value)}:undefined)}
+ invalidate('wallet')
  invalid.value=false;done.value=true;amount.value=''
  props.data.onConfirm?.(val)
  message.success(t('overlay.ui.demoCompletedNoRealTransactionWasSent'))
@@ -34,8 +38,8 @@ function submit(){
 <template>
 <div v-if="data.name" class="summary-line product-summary"><div class="coin-label"><Coin :symbol="symbol"/><div><strong>{{ $t(data.name) }}</strong><small class="muted product-meta">{{ symbol }}</small></div></div></div>
 <form id="action-form" class="form-stack" @submit.prevent="submit">
- <div class="summary-line"><label for="action-amount">{{ $t("earn.subscribe.amountLabel") }}</label><small class="muted">{{ $t("aiQuant.create.availableBalanceLabel") }}{{ money(available) }} {{ symbol }}</small></div>
- <input id="action-amount" v-model="amount" inputmode="decimal" :placeholder="$t('c2c.order.fiatAmountPlaceholder')" :aria-invalid="invalid" :disabled="done" @input="invalid=false"/>
+ <div class="summary-line"><label for="action-amount">{{ $t("earn.subscribe.amountLabel") }}</label><small class="muted">{{ $t("aiQuant.create.availableBalanceLabel") }}<template v-if="ready">{{ money(available) }}</template><Skeleton v-else inline width="72px"/> {{ symbol }}</small></div>
+ <input id="action-amount" v-model="amount" inputmode="decimal" :placeholder="$t('c2c.order.fiatAmountPlaceholder')" :aria-invalid="invalid" :disabled="done" :readonly="spending.pending.value" @input="invalid=false"/>
  <small class="muted">{{ $t("earn.table.columns.minAmount") }}{{ fmt(min) }} {{ symbol }}{{ $t("overlay.ui.localSimulation") }}</small>
 </form>
 </template>

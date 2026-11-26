@@ -6,7 +6,9 @@ import {message} from 'ant-design-vue'
 import NtSelect from '../ui/NtSelect.vue'
 import {path} from '../../data'
 import {session} from '../../session'
-import {addWalletRecord} from '../../walletRecords'
+import Spinner from '../ui/Spinner.vue'
+import {submitDepositVoucher,walletErrorKey} from '../../api/wallet.js'
+import {invalidate} from '../../composables/useRequest.js'
 import {t} from '../../i18n'
 import '../../styles/deposit-fidelity.css'
 
@@ -45,7 +47,7 @@ function pick(event){
  if(f.size>MAX_FILE){message.error(t('content.ui.imageMustNotExceed10Mb'));return}
  clearPreview();file.value=f;preview.value=URL.createObjectURL(f)
 }
-function submit(){
+async function submit(){
  if(busy.value)return
  attempted.value=true
  const errors=[]
@@ -54,11 +56,14 @@ function submit(){
  if(hashInvalid.value)errors.push('deposit.voucher.txHashTooLong')
  if(!file.value)errors.push('deposit.voucher.screenshotRequired')
  if(errors.length){message.error(errors.map(k=>t(k)).join(' '));document.querySelector('.deposit-page [aria-invalid="true"]')?.focus();return}
+ // Submitted through the API (the screenshot itself stays local in this prototype; only its name is sent).
  busy.value=true
- const voucherId='DV'+Date.now().toString(36).toUpperCase()
- addWalletRecord(session.mode,'deposit',{label:'content.ui.demoDepositRequest',amount:amount.value,symbol:coin.value,status:'pending'})
- message.success(`${t('deposit.voucher.submittedTitle')} ${t('deposit.voucher.submittedDesc',{voucherId})}`)
- amount.value='';hash.value='';file.value=null;clearPreview();attempted.value=false;busy.value=false
+ try{
+  const {voucherId}=await submitDepositVoucher({mode:session.mode,coin:coin.value,network:network.value,amount:amount.value,txHash:hash.value,fileName:file.value.name})
+  message.success(`${t('deposit.voucher.submittedTitle')} ${t('deposit.voucher.submittedDesc',{voucherId})}`)
+  amount.value='';hash.value='';file.value=null;clearPreview();attempted.value=false;invalidate('wallet')
+ }catch(cause){message.error(t(walletErrorKey(cause)))}
+ finally{busy.value=false}
 }
 onBeforeUnmount(clearPreview)
 </script>
@@ -129,7 +134,7 @@ onBeforeUnmount(clearPreview)
    </div>
   </div>
 
-  <button type="submit" class="deposit-submit" :class="{incomplete:!ready}" :aria-busy="busy" :disabled="busy">{{ $t(busy?'deposit.voucher.submitting':'deposit.voucher.submit') }}</button>
+  <button type="submit" class="deposit-submit" :class="{incomplete:!ready}" :aria-busy="busy" :disabled="busy"><Spinner v-if="busy"/>{{ $t(busy?'deposit.voucher.submitting':'deposit.voucher.submit') }}</button>
  </form>
 </div>
 </template>
