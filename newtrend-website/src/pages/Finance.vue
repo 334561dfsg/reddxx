@@ -1,8 +1,8 @@
 <script setup>
+import LineIcon from '../components/ui/LineIcon.vue'
 import NotFound from './NotFound.vue'
 import QuantAmbient from '../components/quant/QuantAmbient.vue'
 import {computed,ref,watch} from 'vue'
-import LendingIcon from '../components/lending/LendingIcon.vue'
 import LendingPanel from '../components/lending/LendingPanel.vue'
 import {useRoute} from 'vue-router'
 import {products,path} from '../data'
@@ -10,7 +10,6 @@ import Icon from '../components/Icon.vue'
 import EarnCatalog from '../components/earn/EarnCatalog.vue'
 import EarnPortfolio from '../components/earn/EarnPortfolio.vue'
 import EarnDetail from '../components/earn/EarnDetail.vue'
-import EarnIcon from '../components/earn/EarnIcon.vue'
 import '../styles/earn-fidelity.css'
 import '../styles/finance-layout.css'
 const route=useRoute()
@@ -62,7 +61,7 @@ const missing=computed(()=>{const id=route.params.id;if(!id)return false;if(sect
 <template>
 <NotFound v-if="missing"/>
 <EarnDetail v-else-if="product" :product="product"/>
-<div v-else class="page-wrap finance-page" :class="{'page-ambient page-ambient-grid':section!=='loan','finance-overview':!route.params.id||route.params.id==='my','earn-page':['simple','my-earnings'].includes(section),'earn-portfolio-page':section==='my-earnings','loan-fidelity-page':section==='loan','loan-borrow-page':section==='loan'&&route.params.id==='borrow'}"><nav ref="financeNav" @pointerdown="startNavDrag" @pointermove="moveNavDrag" @pointerup="endNavDrag" @pointercancel="endNavDrag" @lostpointercapture="navDrag=null" @pointerleave="!navDrag?.moved&&(navDrag=null)" @click.capture="clickNav" @dragstart.prevent v-if="!(section==='loan'&&route.params.id==='borrow')" class="subnav" :aria-label="section==='loan'?$t('common.loan'):$t('earn.nav.ariaLabel')"><!-- Each Finance module keeps its own two entries; Earn and Loan are no longer mixed in one bar. --><template v-if="section==='loan'"><RouterLink :to="path('/earn/loan')"><LendingIcon name="banknote"/>{{ $t("common.loan") }}</RouterLink><RouterLink :to="path('/earn/loan/my')"><LendingIcon name="wallet"/>{{ $t("earn.nav.myLoans") }}</RouterLink></template><template v-else><RouterLink :to="path('/earn/simple')"><EarnIcon name="sprout"/>{{ $t("earn.nav.products") }}</RouterLink><RouterLink :to="path('/earn/my-earnings')"><Icon name="coins"/>{{ $t("earn.nav.myEarnings") }}</RouterLink></template></nav>
+<div v-else class="page-wrap finance-page" :class="{'page-ambient page-ambient-grid':section!=='loan','finance-overview':!route.params.id||route.params.id==='my','earn-page':['simple','my-earnings'].includes(section),'earn-portfolio-page':section==='my-earnings','loan-fidelity-page':section==='loan','loan-borrow-page':section==='loan'&&route.params.id==='borrow'}"><nav ref="financeNav" @pointerdown="startNavDrag" @pointermove="moveNavDrag" @pointerup="endNavDrag" @pointercancel="endNavDrag" @lostpointercapture="navDrag=null" @pointerleave="!navDrag?.moved&&(navDrag=null)" @click.capture="clickNav" @dragstart.prevent v-if="!(section==='loan'&&route.params.id==='borrow')" class="subnav" :aria-label="section==='loan'?$t('common.loan'):$t('earn.nav.ariaLabel')"><!-- Each Finance module keeps its own two entries; Earn and Loan are no longer mixed in one bar. --><template v-if="section==='loan'"><RouterLink :to="path('/earn/loan')"><LineIcon set="lending" name="banknote"/>{{ $t("common.loan") }}</RouterLink><RouterLink :to="path('/earn/loan/my')"><LineIcon set="lending" name="wallet"/>{{ $t("earn.nav.myLoans") }}</RouterLink></template><template v-else><RouterLink :to="path('/earn/simple')"><LineIcon set="earn" name="sprout"/>{{ $t("earn.nav.products") }}</RouterLink><RouterLink :to="path('/earn/my-earnings')"><Icon name="coins"/>{{ $t("earn.nav.myEarnings") }}</RouterLink></template></nav>
 <QuantAmbient v-if="section==='loan'"/><EarnCatalog v-if="section==='simple'"/>
 <EarnPortfolio v-else-if="section==='my-earnings'"/>
 <LendingPanel v-else-if="section==='loan'"/>

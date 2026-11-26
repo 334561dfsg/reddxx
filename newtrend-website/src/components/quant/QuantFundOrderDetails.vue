@@ -1,4 +1,5 @@
 <script setup>
+import StatusTag from '../ui/StatusTag.vue'
 import {computed} from 'vue'
 import {fmt,path} from '../../data'
 import Coin from '../Coin.vue'
@@ -15,7 +16,7 @@ const settled=computed(()=>['settled','redeemed'].includes(props.order.status)&&
 <div class="qf-order">
  <section class="qf-order-head">
   <div class="qf-order-product"><Coin :symbol="order.asset"/><div><RouterLink :to="path(`/ai-quant/quant-fund/products/${order.productId}`)" class="qf-order-link" @click="emit('close')"><span>{{ order.productName }}</span><Icon name="arrow-up-right"/><span class="sr-only">{{ $t('aiQuant.quantFund.positions.detail.viewProduct') }}</span></RouterLink><small>{{ order.asset }}</small></div></div>
-  <span class="qf-status" :class="order.status">{{ $t('aiQuant.quantFund.positions.tabs.'+order.status) }}</span>
+  <StatusTag domain="quant-fund" :status="order.status"/>
  </section>
  <section class="qf-order-amounts"><div><small>{{ $t('aiQuant.quantFund.positions.fields.principal') }}</small><strong>{{ fmt(order.principal) }}<span>{{ order.asset }}</span></strong></div><div class="qf-order-rate"><small>{{ $t('aiQuant.quantFund.positions.fields.dailyReturn') }}</small><strong>{{ order.dailyReturnPercentSnapshot.toFixed(2) }}%</strong></div></section>
  <section class="qf-order-section"><dl>

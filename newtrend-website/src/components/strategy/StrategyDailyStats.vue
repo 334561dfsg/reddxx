@@ -1,4 +1,5 @@
 <script setup>
+import LineIcon from '../ui/LineIcon.vue'
 import EmptyState from '../ui/EmptyState.vue'
 import {signedMoney} from '../../utils/format.js'
 import {computed,onMounted,ref} from 'vue'
@@ -29,7 +30,7 @@ onMounted(()=>requestAnimationFrame(()=>{drawn.value=true}))
 <div v-else class="ds">
  <div class="ds-summary">
   <div class="ds-net"><span class="ds-label">{{ $t('aiQuant.dailyStats.netPnl') }}</span>
-   <span class="ds-net-value" :class="sign(summary.totalPnl)"><svg v-if="sign(summary.totalPnl)!=='flat'" viewBox="0 0 24 24" aria-hidden="true"><path v-if="sign(summary.totalPnl)==='up'" d="M22 7 13.5 15.5 8.5 10.5 2 17M16 7h6v6"/><path v-else d="M22 17 13.5 8.5 8.5 13.5 2 7M16 17h6v-6"/></svg>{{ signed(summary.totalPnl) }}</span>
+   <span class="ds-net-value" :class="sign(summary.totalPnl)"><LineIcon v-if="sign(summary.totalPnl)!=='flat'" :name="sign(summary.totalPnl)==='up'?'trend-up':'trend-down'" aria-hidden="true"/>{{ signed(summary.totalPnl) }}</span>
    <span class="ds-caption">{{ $t('aiQuant.dailyStats.rangeCaption',{range}) }}</span></div>
   <div class="ds-counts"><div><span class="ds-label">{{ $t('aiQuant.dailyStats.tradesLabel') }}</span><span class="ds-count">{{ summary.totalTradeCount }}</span></div><div><span class="ds-label">{{ $t('aiQuant.dailyStats.activeDays') }}</span><span class="ds-count">{{ summary.activeDays }}</span></div></div>
  </div>

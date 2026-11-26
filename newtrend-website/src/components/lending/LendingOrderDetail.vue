@@ -1,4 +1,5 @@
 <script setup>
+import StatusTag from '../ui/StatusTag.vue'
 import EmptyState from '../ui/EmptyState.vue'
 import {dateTime} from '../../utils/format.js'
 import {locale} from '../../i18n'
@@ -33,7 +34,7 @@ async function run(kind){
  <div class="loan-detail-content">
   <FeedbackToast v-if="error" type="error" :source="() => (error) ? (([String(($t('lending.errors.unavailable')) ?? ''),&quot; &quot;,''].join(''))) : ''"><button @click="refresh">{{$t('lending.refresh')}}</button></FeedbackToast>
   <template v-if="order">
-   <header ref="detailHeader" tabindex="-1" class="loan-detail-header"><div class="earn-product-line"><Coin :symbol="order.loanCurrency"/><div><strong>{{order.productName}}</strong><small>{{order.orderId}}</small></div></div><span class="portfolio-status" :class="order.status">{{$t('lending.statuses.'+order.status)}}</span></header>
+   <header ref="detailHeader" tabindex="-1" class="loan-detail-header"><div class="earn-product-line"><Coin :symbol="order.loanCurrency"/><div><strong>{{order.productName}}</strong><small>{{order.orderId}}</small></div></div><StatusTag domain="lending" :status="order.status"/></header>
    <div class="loan-detail-amounts"><div><span class="earn-caption">{{$t('lending.amount')}}</span><strong class="earn-mono">{{fmt(order.loanAmount)}} <small>{{order.loanCurrency}}</small></strong></div><div><span class="earn-caption">{{$t('lending.debt')}}</span><strong class="earn-mono earn-accent">{{fmt(order.totalDebt)}} <small>{{order.loanCurrency}}</small></strong></div></div>
    <div class="loan-detail-grid">
     <section class="loan-detail-section loan-detail-card"><h3>{{$t('lending.breakdown')}}</h3><dl><dt>{{$t('lending.principal')}}</dt><dd>{{fmt(order.principal)}} {{order.loanCurrency}}</dd><dt>{{$t('lending.interest')}}</dt><dd>{{fmt(order.interestAccrued)}} {{order.loanCurrency}}</dd><dt>{{$t('lending.penalty')}}</dt><dd>{{fmt(order.overduePenaltyAccrued)}} {{order.loanCurrency}}</dd></dl></section>

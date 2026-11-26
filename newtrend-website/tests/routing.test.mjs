@@ -19,7 +19,7 @@ test('known pages resolve to their named routes', () => {
     '/': 'home',
     '/trade/futures/BTCUSDT': 'trade-futures', '/trade/options/ETHUSDT': 'trade-options', '/trade/spot': 'trade-spot',
     '/earn': 'finance-home', '/earn/simple': 'finance', '/earn/simple/usdt90': 'finance', '/earn/my-earnings': 'finance', '/earn/loan': 'finance',
-    '/earn/loan/order/LN-1': 'loan-order',
+    '/earn/loan/order/LN-1': 'loan-order', '/earn/loan/borrow': 'finance',
     '/ai-quant': 'ai-quant', '/ai-quant/strategy/mine': 'ai-quant', '/ai-quant/quant-fund/positions': 'ai-quant',
     '/ai-quant/quant-fund/products/qf-vip0': 'quant-fund-product',
     '/ai-quant/quant-fund/positions/QFO-1/interest-records': 'quant-fund-interest',

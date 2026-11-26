@@ -1,4 +1,6 @@
 <script setup>
+import {statusLabelKey} from '../../utils/statusLabels.js'
+import StatusTag from '../ui/StatusTag.vue'
 import EmptyState from '../ui/EmptyState.vue'
 import {amount,money} from '../../utils/format.js'
 import {computed,h,shallowRef,watch,onMounted} from 'vue'
@@ -18,7 +20,7 @@ import Icon from '../Icon.vue'
 // Reference positions page: tab groups, summary, order table. Orders belong to the current real/demo mode.
 const groups=['all','pending','active','history']
 // History status filter uses the shared select-only RecordFilter (no native select popup).
-const historyOptions=computed(()=>[{value:'all',label:t('aiQuant.quantFund.positions.historyFilter.all')},...HISTORY_STATUSES.map(status=>({value:status,label:t('aiQuant.quantFund.positions.tabs.'+status)}))])
+const historyOptions=computed(()=>[{value:'all',label:t('aiQuant.quantFund.positions.historyFilter.all')},...HISTORY_STATUSES.map(status=>({value:status,label:t(statusLabelKey('quant-fund',status))}))])
 const group=shallowRef('all'),historyStatus=shallowRef('all')
 const orders=computed(()=>quantFundAccount.orders.filter(order=>order.mode===fundMode(session.mode)))
 const visible=computed(()=>filterFundOrders(orders.value,group.value,historyStatus.value))
@@ -74,7 +76,7 @@ onMounted(refreshQuantFunds)
   <div v-else class="qf-panel qf-table-wrap"><table class="qf-table">
    <thead><tr><th scope="col">{{ $t('aiQuant.quantFund.positions.table.status') }}</th><th scope="col">{{ $t('aiQuant.quantFund.positions.table.productName') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.principal') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.dailyReturn') }}</th><th scope="col">{{ $t('aiQuant.quantFund.positions.table.term') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.interestPaidTotal') }}</th><th scope="col">{{ $t('aiQuant.quantFund.positions.table.maturityDate') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.action') }}</th></tr></thead>
    <tbody><tr v-for="order in shown" :key="order.id" class="qf-row" @click="openOrder(order)">
-    <td><span class="qf-status" :class="order.status">{{ $t('aiQuant.quantFund.positions.tabs.'+order.status) }}</span></td>
+    <td><StatusTag domain="quant-fund" :status="order.status"/></td>
     <td><div class="qf-table-product"><Coin :symbol="order.asset"/><button type="button" class="qf-row-link" aria-haspopup="dialog" @click.stop="openOrder(order)">{{ order.productName }}</button></div></td>
     <td class="num"><span class="qf-num">{{ amount(order.principal) }}</span><span class="qf-unit">{{ order.asset }}</span></td>
     <td class="num qf-num qf-success-text">{{ order.dailyReturnPercentSnapshot.toFixed(2) }}%</td>

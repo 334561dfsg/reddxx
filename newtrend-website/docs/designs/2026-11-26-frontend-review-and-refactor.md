@@ -59,7 +59,8 @@ key claims were re-verified in code before inclusion. Tests 77/77 and locale che
    tokens centralised (158 colour and 79 font literals replaced); 19 focus rings replaced by one non-ring cue.
    Deliberately not done: `@layer` (Ant Design's unlayered CSS-in-JS would override all layered rules); full id removal (changes 12 routes —
    ids are the base/domain cascade tiers); global import of domain sheets (changes 4 routes); ~100 single `#site-shell` rules, doubled-class
-   selectors and `!important` remain. Phase 3 leftovers (Icon registry, StatusTag, SummaryCard/RecordList, NtSelect, named routes) are still open.
+   selectors and `!important` remain. Phase 3 leftovers: named routes done in phase 5; LineIcon registry, StatusTag, NtSelect and useAmountMask done afterwards
+   (see AGENTS.md "Shared UI primitives"); SummaryCard/RecordList intentionally not merged (different reference designs).
 5. **Tests & docs** — kernel, routing table, seed validity, earn eligibility, mode switch; update AGENTS.md.
    ✅ Done 2026-11-26 (see AGENTS.md "Refactor phase 5"). Route table extracted to `src/routes.js` with names; new `routing.test.mjs` (found and fixed:
    `/earn/x` rendered an empty Finance page) and `seeds-and-modes.test.mjs`; catalogue facts moved to `src/mock/catalog.js` so stores load in Node;

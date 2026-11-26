@@ -1,4 +1,5 @@
 <script setup>
+import LineIcon from '../ui/LineIcon.vue'
 import Icon from '../Icon.vue'
 defineEmits(['chat','unavailable'])
 </script>
@@ -7,7 +8,7 @@ defineEmits(['chat','unavailable'])
   <p class="support-subtitle">{{ $t('customerService.menu.subtitle') }}</p>
   <div class="support-channels">
    <button class="support-channel" @click="$emit('chat')"><span class="support-icon"><Icon name="headset" green/></span><span class="support-copy"><strong>{{ $t('customerService.menu.liveChat') }}</strong><small>{{ $t('customerService.menu.liveChatDesc') }}</small></span><Icon name="chevron-right"/></button>
-   <button class="support-channel" @click="$emit('unavailable')"><span class="support-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.2A8 8 0 1 1 20 11.5Z"/></svg></span><span class="support-copy"><strong>WhatsApp</strong><small>{{ $t('customerService.menu.whatsappDesc') }}</small></span><Icon name="chevron-right"/></button>
+   <button class="support-channel" @click="$emit('unavailable')"><span class="support-icon"><LineIcon name="message-circle" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"/></span><span class="support-copy"><strong>WhatsApp</strong><small>{{ $t('customerService.menu.whatsappDesc') }}</small></span><Icon name="chevron-right"/></button>
    <a class="support-channel" href="mailto:support@newtrendcapital.net"><span class="support-icon"><Icon name="mail" green/></span><span class="support-copy"><strong>{{ $t('customerService.menu.email') }}</strong><small>support@newtrendcapital.net</small></span><Icon name="chevron-right"/></a>
   </div>
 </template>

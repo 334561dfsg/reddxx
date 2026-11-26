@@ -319,3 +319,11 @@ Removed the homepage 了解 AI Quant 運作機制 and strategy 運作機制 vide
 - Catalogue facts shared by the UI and the stores (Earn products, strategy templates) live in `src/mock/catalog.js`; `data.js` only adds display names. Store modules must stay importable in Node (explicit `.js` extensions, no JSON/i18n/DOM imports) so seeds can be tested.
 - `tests/seeds-and-modes.test.mjs` guards seed validity (Earn holdings/orders vs product limits and terms, strategy seeds vs templates and lifecycle, daily-stats sums), Earn eligibility (simulated profile, blocked subscriptions have no side effects, eligibility snapshot) and per-mode isolation (Earn, trading, strategy balances). New seeds or modes must keep these passing.
 - The site README describes the current structure, mock boundaries and the check commands; keep it in step with structural changes.
+
+## Shared UI primitives (2026-11-26)
+
+- Line icons come from one registry, `src/icons/lineIcons.js`, rendered by `components/ui/LineIcon.vue` (`<LineIcon set="earn|lending|c2c|ui" name>`). A set carries the SVG attributes its icons were drawn with; caller attributes override them. Do not add inline `<svg>` icons or per-domain icon components; add a registry entry instead (static shapes only, checked by `tests/ui-primitives.test.mjs`). `Icon.vue` remains for the reference site's image icons (`icons.json`); bespoke graphics (Strategy hero chart, order-book layout glyph) stay inline.
+- Order/holding statuses render with `components/ui/StatusTag.vue` (`domain` = earn | lending | quant-fund | strategy). The look and translation namespace per domain live in `utils/statusLabels.js`; use `statusLabelKey()` wherever a status is named elsewhere (filters, details).
+- Ant Design Selects go through `components/ui/NtSelect.vue` with a theme `variant` (`pill` = deposit, `field` = lending) defined in `components/ui/selectThemes.js`; all Select props, events and slots pass through. Do not wrap a Select in its own ConfigProvider.
+- Hide-amount toggles use `composables/useAmountMask.js` (local state per panel, reference glyph per page).
+- Not unified on purpose: the summary cards (PortfolioSummaryCard for AI Quant, EarnPortfolioSummary for Earn) and the record tables replicate different reference designs, so they stay separate components.

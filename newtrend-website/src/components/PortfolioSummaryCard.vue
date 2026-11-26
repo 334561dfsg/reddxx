@@ -1,5 +1,5 @@
 <script setup>
-import {shallowRef} from 'vue'
+import {useAmountMask} from '../composables/useAmountMask.js'
 import Icon from './Icon.vue'
 // Reference PortfolioSummaryCard (newtrendcapital.com, AI Quant positions / my strategies, measured 2026-11-26):
 // label + eye toggle, 36px mono figure + unit, coloured accent line, bottom-aligned stats on the right, corner glow.
@@ -12,14 +12,13 @@ defineProps({
  accent:{type:Object,default:null},  // {value,unit,label,tone:'success'|'profit'|'loss'|'neutral'}
  stats:{type:Array,default:()=>[]},  // [{label,value,unit,tone,sensitive}]
 })
-const hidden=shallowRef(false)
-const mask=value=>hidden.value?'****':value
+const {hidden,toggle,masked:mask}=useAmountMask()
 </script>
 <template>
 <section class="psc nt-glow-host" :aria-labelledby="labelId"><span class="nt-glow" aria-hidden="true"></span>
  <div class="psc-row">
   <div class="psc-primary">
-   <span class="psc-label"><span :id="labelId">{{ label }}</span><button type="button" class="psc-eye" :aria-pressed="hidden" :aria-label="$t(hidden?'assets.show':'assets.hide')" :title="$t(hidden?'assets.show':'assets.hide')" @click="hidden=!hidden"><Icon :name="hidden?'eye-off':'eye'"/></button></span>
+   <span class="psc-label"><span :id="labelId">{{ label }}</span><button type="button" class="psc-eye" :aria-pressed="hidden" :aria-label="$t(hidden?'assets.show':'assets.hide')" :title="$t(hidden?'assets.show':'assets.hide')" @click="toggle"><Icon :name="hidden?'eye-off':'eye'"/></button></span>
    <span class="psc-display">{{ mask(value) }}<span v-if="unit">{{ unit }}</span></span>
    <span v-if="accent" class="psc-accent"><strong :class="'tone-'+(accent.tone||'profit')">{{ mask(accent.value)+(accent.unit?' '+accent.unit:'') }}</strong><small>{{ accent.label }}</small></span>
   </div>

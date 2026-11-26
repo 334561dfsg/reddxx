@@ -1,4 +1,5 @@
 <script setup>
+import LineIcon from './ui/LineIcon.vue'
 import {ref,nextTick,watch} from 'vue'
 const emit=defineEmits(['draft-change'])
 const draft=ref(''),messages=ref([]),attachments=ref([]),emojisOpen=ref(false),input=ref(null),fileInput=ref(null),log=ref(null)
@@ -22,11 +23,11 @@ function emoji(value){draft.value+=value;emojisOpen.value=false;nextTick(()=>inp
   <div v-if="attachments.length" class="chat-attachments"><div v-for="(file,i) in attachments" :key="i"><span>{{ file.name }}</span><button type="button" :aria-label="$t('customerService.attachment.remove')+' '+file.name" @click="attachments.splice(i,1)">×</button></div></div>
   <div v-if="emojisOpen" id="support-emojis" class="chat-emojis"><button v-for="value in ['😊','👍','🙏','❤️','👋','😃']" :key="value" type="button" :aria-label="value" @click="emoji(value)">{{ value }}</button></div>
   <div class="chat-composer">
-   <button type="button" class="chat-tool" :aria-label="$t('customerService.emoji.add')" :aria-expanded="emojisOpen" aria-controls="support-emojis" @click="emojisOpen=!emojisOpen"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M8.5 14a4 4 0 0 0 7 0M9 9h.01M15 9h.01"/></svg></button>
-   <button type="button" class="chat-tool" :aria-label="$t('customerService.attachment.add')" @click="fileInput.click()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 13 6-6a3 3 0 0 1 4 4l-7 7a5 5 0 0 1-7-7l7-7M7 14l7-7"/></svg></button>
+   <button type="button" class="chat-tool" :aria-label="$t('customerService.emoji.add')" :aria-expanded="emojisOpen" aria-controls="support-emojis" @click="emojisOpen=!emojisOpen"><LineIcon name="smile" aria-hidden="true"/></button>
+   <button type="button" class="chat-tool" :aria-label="$t('customerService.attachment.add')" @click="fileInput.click()"><LineIcon name="paperclip" aria-hidden="true"/></button>
    <input ref="fileInput" class="chat-file" type="file" multiple accept=".jpg,.jpeg,.png,.pdf,.xlsx,.xls,.doc,.docx,.csv,.zip" tabindex="-1" @change="attach"/>
    <textarea ref="input" v-model="draft" rows="1" :aria-label="$t('overlay.ui.message')" :placeholder="$t('customerService.placeholder')" @keydown.enter.exact="if(!$event.isComposing){$event.preventDefault();send()}"/>
-   <button class="chat-tool chat-send" type="submit" :disabled="!draft.trim()&&!attachments.length" :aria-label="$t('customerService.send')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 3-7 18-4-7-7-4 18-7ZM10 14 21 3"/></svg></button>
+   <button class="chat-tool chat-send" type="submit" :disabled="!draft.trim()&&!attachments.length" :aria-label="$t('customerService.send')"><LineIcon name="send" aria-hidden="true"/></button>
   </div>
  </form>
 </div>

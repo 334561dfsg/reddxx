@@ -1,4 +1,5 @@
 <script setup>
+import LineIcon from './ui/LineIcon.vue'
 import { computed, ref, nextTick, watch, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 const props = defineProps({ id: {type:String,required:true}, modelValue:[String,Number], variant:{type:String,default:'filter'}, label:String, options:{type:Array,required:true}, searchLabel:String, categories:{type:Array,default:()=>[]} })
@@ -28,15 +29,15 @@ onBeforeUnmount(()=>{listen(false);clearTimeout(closeTimer);clearTimeout(typeTim
 <template>
   <button ref="trigger" type="button" class="record-filter" :class="{'market-select':variant==='market','field-select':variant==='field','trade-field':variant==='field'}" :role="searchLabel?undefined:'combobox'" :aria-label="label+' '+(selected?.label||modelValue)" :aria-expanded="open" :aria-controls="searchLabel?id+'-panel':id+'-list'" :aria-haspopup="searchLabel?undefined:'listbox'" :aria-activedescendant="searchLabel?undefined:activeId" @click="open?close():show()" @keydown="keys">
     <span v-if="$slots.leading" class="filter-leading"><slot name="leading"/></span>
-    <span class="filter-caption">{{ variant==='market'?$t(selected?.category||categories[0]?.value):label }}</span><span class="filter-value">{{ selected?.label||modelValue }}</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+    <span class="filter-caption">{{ variant==='market'?$t(selected?.category||categories[0]?.value):label }}</span><span class="filter-value">{{ selected?.label||modelValue }}</span><LineIcon name="caret-down" aria-hidden="true"/>
   </button>
   <Teleport to="body">
     <div v-if="open" :id="id+'-panel'" ref="panel" class="record-filter-popup" :class="{closing,'market-select-popup':variant==='market','field-select-popup':variant==='field'}" :style="geometry" @keydown.esc="keys">
       <nav v-if="variant==='market'" class="market-select-categories" :aria-label="$t('trade.pages.marketCategories')"><button v-for="item in categories" :key="item.value" type="button" :aria-pressed="category===item.value" @click="category=item.value">{{ $t(item.value) }}</button></nav>
       <p v-if="variant==='market'" class="market-select-caption">{{ $t('trade.pages.availablePairs') }}</p>
-      <div v-if="searchLabel" class="filter-search"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="m11 11 4 4"/></svg><input ref="search" v-model="query" role="combobox" :aria-label="searchLabel" :placeholder="searchLabel" aria-autocomplete="list" aria-expanded="true" :aria-controls="id+'-list'" :aria-activedescendant="activeId" @keydown="keys"/></div>
+      <div v-if="searchLabel" class="filter-search"><LineIcon name="search" aria-hidden="true"/><input ref="search" v-model="query" role="combobox" :aria-label="searchLabel" :placeholder="searchLabel" aria-autocomplete="list" aria-expanded="true" :aria-controls="id+'-list'" :aria-activedescendant="activeId" @keydown="keys"/></div>
       <div :id="id+'-list'" role="listbox" :aria-label="label" class="filter-options">
-        <div v-for="o in visible" :id="optionId(o.value)" :key="o.value" role="option" :aria-selected="active===o.value" :aria-disabled="o.disabled||undefined" class="filter-option" :class="{active:active===o.value,committed:modelValue===o.value}" @pointermove="!o.disabled&&(active=o.value)" @pointerdown.prevent @click="choose(o.value)"><span>{{ o.label }}</span><template v-if="variant==='market'"><span class="market-option-price">{{ o.price }}</span><span class="market-option-change" :class="o.change<0?'negative':'positive'">{{ o.change>=0?'+':'' }}{{ o.change.toFixed(2) }}%</span></template><svg v-if="variant!=='market'&&modelValue===o.value" viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg></div>
+        <div v-for="o in visible" :id="optionId(o.value)" :key="o.value" role="option" :aria-selected="active===o.value" :aria-disabled="o.disabled||undefined" class="filter-option" :class="{active:active===o.value,committed:modelValue===o.value}" @pointermove="!o.disabled&&(active=o.value)" @pointerdown.prevent @click="choose(o.value)"><span>{{ o.label }}</span><template v-if="variant==='market'"><span class="market-option-price">{{ o.price }}</span><span class="market-option-change" :class="o.change<0?'negative':'positive'">{{ o.change>=0?'+':'' }}{{ o.change.toFixed(2) }}%</span></template><LineIcon name="check" v-if="variant!=='market'&&modelValue===o.value" aria-hidden="true"/></div>
       </div>
       <p v-if="!visible.length" role="status" class="filter-empty">{{ $t('markets.ui.noMatchingMarkets') }}</p>
     </div>

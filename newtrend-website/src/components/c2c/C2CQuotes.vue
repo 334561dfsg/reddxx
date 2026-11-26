@@ -1,7 +1,7 @@
 <script setup>
+import LineIcon from '../ui/LineIcon.vue'
 import {computed,ref,onMounted,onUnmounted} from 'vue'
 import Coin from '../Coin.vue'
-import C2CIcon from './C2CIcon.vue'
 import {c2cQuotes,c2cSellQuotes,formatQuote} from '../../utils/c2cQuotes'
 const props=defineProps({selected:String,side:{type:String,default:'buy'}})
 const quotes=computed(()=>props.side==='sell'?c2cSellQuotes:c2cQuotes)
@@ -25,7 +25,7 @@ function countdown(q){const seconds=remaining(q);return `${String(Math.floor(sec
  </div>
  <div class="c2c-quote-grid">
   <button v-for="q in filtered" :key="q.symbol" class="c2c-quote" :class="{selected:selected===q.symbol}" :aria-pressed="selected===q.symbol" @click="emit('select',q)">
-   <div class="c2c-quote-top"><div class="c2c-quote-identity"><span class="c2c-coin-pair"><Coin set="logo" :symbol="q.symbol"/><Coin set="logo" symbol="USDT"/></span><div><div class="c2c-pair-name">{{ q.symbol }}<span> / USDT</span></div><div class="c2c-price">{{ formatQuote(q.price) }}<small>USDT</small></div></div></div><span class="c2c-timer" :class="{warning:remaining(q)<60}" :aria-label="$t('c2c.quotes.expiresIn')+' '+countdown(q)"><C2CIcon name="timer"/>{{ countdown(q) }}</span></div>
+   <div class="c2c-quote-top"><div class="c2c-quote-identity"><span class="c2c-coin-pair"><Coin set="logo" :symbol="q.symbol"/><Coin set="logo" symbol="USDT"/></span><div><div class="c2c-pair-name">{{ q.symbol }}<span> / USDT</span></div><div class="c2c-price">{{ formatQuote(q.price) }}<small>USDT</small></div></div></div><span class="c2c-timer" :class="{warning:remaining(q)<60}" :aria-label="$t('c2c.quotes.expiresIn')+' '+countdown(q)"><LineIcon set="c2c" name="timer"/>{{ countdown(q) }}</span></div>
    <div class="c2c-limits"><span>{{ $t('c2c.quotes.limitRange') }}</span><span>{{ $t('c2c.quotes.minMax',{min:formatQuote(q.min),max:formatQuote(q.max),asset:q.symbol}) }}</span></div>
    <p v-if="q.note" class="c2c-quote-note">{{ q.note }}</p>
   </button>

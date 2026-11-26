@@ -1,4 +1,6 @@
 <script setup>
+import StatusTag from '../ui/StatusTag.vue'
+import LineIcon from '../ui/LineIcon.vue'
 import EmptyState from '../ui/EmptyState.vue'
 import {money} from '../../utils/format.js'
 import {computed,ref,onMounted} from 'vue'
@@ -58,20 +60,20 @@ onMounted(refreshStrategies)
    <thead><tr><th scope="col">{{ $t('aiQuant.table.columns.strategyName') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.pnl') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.capital') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.endDate') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.action') }}</th></tr></thead>
    <tbody><template v-for="record in shown" :key="record.id">
     <tr>
-     <td :data-label="$t('aiQuant.table.columns.strategyName')"><div class="ms-name"><div class="ms-badges"><span class="ms-status" :class="record.status">{{ $t('aiQuant.status.'+record.status) }}</span><span v-if="record.status==='running'" class="ms-pulse" aria-hidden="true"></span><span v-if="record.mode==='demo'" class="ms-demo">{{ $t('common.demo.account') }}</span></div><strong>{{ record.template.name }}</strong><small>{{ $t(styleKey(record)) }} · {{ $t(marketKey(record)) }}</small></div></td>
+     <td :data-label="$t('aiQuant.table.columns.strategyName')"><div class="ms-name"><div class="ms-badges"><StatusTag domain="strategy" :status="record.status"/><span v-if="record.status==='running'" class="ms-pulse" aria-hidden="true"></span><span v-if="record.mode==='demo'" class="ms-demo">{{ $t('common.demo.account') }}</span></div><strong>{{ record.template.name }}</strong><small>{{ $t(styleKey(record)) }} · {{ $t(marketKey(record)) }}</small></div></td>
      
      <td class="num" :data-label="$t('aiQuant.table.columns.pnl')"><div class="ms-pnl"><strong :class="record.pnl>=0?'profit':'loss'">{{ record.pnl>=0?'+':'' }}{{ money(record.pnl) }}<span>USDT</span></strong><span class="ms-return" :class="record.pnl>=0?'profit':'loss'">{{ record.pnl>=0?'+':'' }}{{ returnPercent(record).toFixed(2) }}%</span></div></td>
      <td class="num mono" :data-label="$t('aiQuant.table.columns.capital')">{{ fmt(record.capital) }}<span class="ms-unit">USDT</span></td>
      <td class="num ms-date" :data-label="$t('aiQuant.table.columns.endDate')">{{ endDate(record) }}</td>
      <td class="num" :data-label="$t('aiQuant.table.columns.action')"><div class="ms-actions">
       <template v-for="kind in ['pause','resume','stop']" :key="kind"><button v-if="(kind==='pause'&&record.status==='running')||(kind==='resume'&&record.status==='paused')||(kind==='stop'&&record.status!=='completed')" type="button" class="ms-button" :class="{loading:isBusy(record,kind)}" :disabled="isBusy(record)" :aria-busy="isBusy(record,kind)||undefined" :aria-haspopup="kind==='stop'?'dialog':undefined" @click="act(record,kind)">
-       <svg v-if="isBusy(record,kind)" class="ms-icon ms-spin" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-       <svg v-else-if="kind==='pause'" class="ms-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/></svg>
-       <svg v-else-if="kind==='resume'" class="ms-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3l14 9-14 9V3z"/></svg>
-       <svg v-else class="ms-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
+       <LineIcon name="spinner" v-if="isBusy(record,kind)" class="ms-icon ms-spin" aria-hidden="true"/>
+       <LineIcon name="pause" v-else-if="kind==='pause'" class="ms-icon" aria-hidden="true"/>
+       <LineIcon name="play" v-else-if="kind==='resume'" class="ms-icon" aria-hidden="true"/>
+       <LineIcon name="stop" v-else class="ms-icon" aria-hidden="true"/>
        <span>{{ $t('aiQuant.actions.'+kind) }}</span>
       </button></template>
-      <RouterLink class="ms-button ghost" :to="path('/ai-quant/strategy/mine/'+encodeURIComponent(record.id)+'/stats')">{{ $t('aiQuant.actions.viewStats') }}<svg class="ms-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></RouterLink>
+      <RouterLink class="ms-button ghost" :to="path('/ai-quant/strategy/mine/'+encodeURIComponent(record.id)+'/stats')">{{ $t('aiQuant.actions.viewStats') }}<LineIcon name="chevron-right" class="ms-icon" aria-hidden="true"/></RouterLink>
      </div></td>
     </tr>
     
