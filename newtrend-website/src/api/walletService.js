@@ -12,7 +12,7 @@ const DEMO = 'common.demo.demo'
 const insufficient = mode => mode === DEMO ? 'assets.withdraw.error.insufficientBalance' : 'assets.ui.insufficientBalanceSwitchToTheDemoAccount'
 const positive = value => Number.isFinite(Number(value)) && Number(value) > 0
 
-export function createWalletApi({accountValues, priceOf}) {
+export function createWalletApi({accountValues, priceOf, fundPassword = null}) {
   /** GET /assets/overview?mode= — {accounts: {accountKey: USDT value}, total, balances, prices: {symbol: USDT price}}. */
   const getAssetsOverview = (mode, symbols = []) => mockCall(SERVICE, () => {
     const accounts = accountValues(mode)
@@ -37,12 +37,8 @@ export function createWalletApi({accountValues, priceOf}) {
     return snapshot(addWalletRecord(mode, 'transfer', {label: {key: 'assets.transferRecord', params: labels}, amount, symbol: currency}))
   })
 
-  /**
-   * POST /assets/withdrawals {mode, coin, network, address, amount} — validates network, address format, amount and
-   * balance, then locks the amount (it leaves the available balance) and records a pending request; nothing is sent.
-   * The fee comes from the chain catalogue and is taken out of the amount (received = amount − fee).
-   */
-  const requestWithdrawal = ({mode, coin, network, address, amount}) => mockCall(SERVICE, () => {
+  // Withdrawal validation shared by the pre-check and the request: network, address format, amount, fee, balance.
+  function validateWithdrawal({mode, coin, network, address, amount}) {
     const cleanAddress = String(address || '').trim(), value = Number(amount)
     if (!networksOf(coin).includes(network)) throw new ApiError('assets.withdraw.error.disabled')
     if (!cleanAddress) throw new ApiError('assets.withdraw.error.addressRequired')
@@ -51,7 +47,33 @@ export function createWalletApi({accountValues, priceOf}) {
     if (!positive(amount)) throw new ApiError('assets.withdraw.error.amountPositive')
     const fee = withdrawFee(coin, network)
     if (fee > 0 && fee >= value) throw new ApiError('assets.withdraw.error.feeExceedsAmount')
-    if (value > (balancesOf(mode)[coin] || 0) || !debit(mode, coin, value)) throw new ApiError('assets.withdraw.error.insufficientBalance')
+    if (value > (balancesOf(mode)[coin] || 0)) throw new ApiError('assets.withdraw.error.insufficientBalance')
+    return {cleanAddress, value, fee}
+  }
+
+  /**
+   * POST /assets/withdrawals/check — validates the form without locking funds, so the page can ask for the fund
+   * password only when the rest is valid. {fundPasswordSet} tells it whether one exists yet.
+   */
+  const checkWithdrawal = request => mockCall(SERVICE, () => {
+    const {value, fee} = validateWithdrawal(request)
+    return {amount: value, fee, received: value - fee, fundPasswordSet: fundPassword ? fundPassword.isSet() : true}
+  })
+
+  /**
+   * POST /assets/withdrawals {mode, coin, network, address, amount, fundPassword} — validates network, address
+   * format, amount, balance and (when the site has a fund-password store) the 6-digit fund password, then locks the
+   * amount (it leaves the available balance) and records a pending request; nothing is sent.
+   * The fee comes from the chain catalogue and is taken out of the amount (received = amount − fee).
+   */
+  const requestWithdrawal = ({mode, coin, network, address, amount, fundPassword: password = ''}) => mockCall(SERVICE, () => {
+    const {cleanAddress, value, fee} = validateWithdrawal({mode, coin, network, address, amount})
+    if (fundPassword) {
+      if (!fundPassword.isSet()) throw new ApiError('assets.withdraw.error.fundPasswordNotSet')
+      if (!/^\d{6}$/.test(String(password))) throw new ApiError('assets.withdraw.error.fundPasswordRequired')
+      if (!fundPassword.verify(password)) throw new ApiError('assets.withdraw.error.fundPasswordWrong')
+    }
+    if (!debit(mode, coin, value)) throw new ApiError('assets.withdraw.error.insufficientBalance')
     const record = addWalletRecord(mode, 'withdraw', {label: 'content.ui.demoWithdrawalRequest', amount: value, symbol: coin, status: 'pending'})
     return {...snapshot(record), network, address: cleanAddress, fee, received: value - fee}
   })
@@ -80,5 +102,5 @@ export function createWalletApi({accountValues, priceOf}) {
     return {amount: value}
   })
 
-  return {getAssetsOverview, listWalletRecords, transferFunds, requestWithdrawal, submitDepositVoucher, spendFunds}
+  return {getAssetsOverview, listWalletRecords, transferFunds, checkWithdrawal, requestWithdrawal, submitDepositVoucher, spendFunds}
 }

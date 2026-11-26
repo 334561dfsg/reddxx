@@ -3,6 +3,7 @@
 // deterministic so filters, pagination and tests are stable. Every result is a JSON snapshot.
 import {ApiError, mockCall, snapshot} from './transport.js'
 import {otpauthUri, randomSecret, verifyTotp} from './totp.js'
+import {FUND_PASSWORD_PATTERN, createFundPasswordStore} from './fundPasswordStore.js'
 
 /** Local demo code accepted wherever the prototype asks for a verification code (same as the contact bindings). */
 export const DEMO_TOTP = '123456'
@@ -89,7 +90,7 @@ const page = (list, number = 1, size = 10) => {
   return {items: snapshot(list.slice((current - 1) * pageSize, current * pageSize)), total: list.length, page: current, pageSize}
 }
 
-export function createProfileApi({now = () => Date.now()} = {}) {
+export function createProfileApi({now = () => Date.now(), fundPassword = createFundPasswordStore()} = {}) {
   const start = now()
   const ledger = seedLedger(start)
   const notifications = seedNotifications(start)
@@ -198,5 +199,23 @@ export function createProfileApi({now = () => Date.now()} = {}) {
     return {enabled: false}
   })
 
-  return {getAuthenticator, createAuthenticatorSecret, bindAuthenticator, unbindAuthenticator, listSessions, endSession, listAccountChanges, listNotifications, getUnreadCount, markNotificationRead, markAllNotificationsRead, getInviteSummary, getPreferences, updatePreferences}
+  // 資金密碼: a 6-digit number, set once and then changed with the old one. Withdrawals check it (walletService).
+  /** GET /account/fund-password — {set} */
+  const getFundPassword = () => mockCall(SERVICE, () => ({set: fundPassword.isSet()}))
+
+  /** PUT /account/fund-password {oldPassword?, password, confirm} */
+  const saveFundPassword = ({oldPassword = '', password = '', confirm = ''} = {}) => mockCall(SERVICE, () => {
+    if (fundPassword.isSet()) {
+      if (!oldPassword) throw new ApiError('profile.center.fundPassword.oldRequired')
+      if (!fundPassword.verify(oldPassword)) throw new ApiError('profile.center.fundPassword.oldWrong')
+    }
+    if (!FUND_PASSWORD_PATTERN.test(password)) throw new ApiError('profile.center.fundPassword.sixDigits')
+    if (password !== confirm) throw new ApiError('profile.center.fundPassword.mismatch')
+    if (fundPassword.isSet() && password === oldPassword) throw new ApiError('profile.center.fundPassword.sameAsOld')
+    const changed = fundPassword.isSet()
+    fundPassword.write(password)
+    return {set: true, changed}
+  })
+
+  return {getFundPassword, saveFundPassword, getAuthenticator, createAuthenticatorSecret, bindAuthenticator, unbindAuthenticator, listSessions, endSession, listAccountChanges, listNotifications, getUnreadCount, markNotificationRead, markAllNotificationsRead, getInviteSummary, getPreferences, updatePreferences}
 }

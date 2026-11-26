@@ -234,8 +234,15 @@
       "disabled": "該幣種或網絡暫不支持提現",
       "demoMode": "模擬帳戶不支持提現操作",
       "generic": "提現失敗，請稍後重試",
-      "loadFailed": "載入可提現資產失敗，請稍後重試"
-    }
+      "loadFailed": "載入可提現資產失敗，請稍後重試",
+      "fundPasswordNotSet": "提現前請先設置資金密碼",
+      "fundPasswordRequired": "請輸入 6 位資金密碼",
+      "fundPasswordWrong": "資金密碼錯誤"
+    },
+    "fundPasswordTitle": "輸入資金密碼",
+    "fundPassword": "資金密碼",
+    "fundPasswordPlaceholder": "請輸入 6 位資金密碼",
+    "confirmWithdraw": "確認提現"
   },
   "onboarding": {
     "title": "完成帳戶設定",

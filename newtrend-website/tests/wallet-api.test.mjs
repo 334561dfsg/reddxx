@@ -62,3 +62,38 @@ test('injected outage rejects with network', async () => {
   const previous = configureMock({fail: ['wallet']})
   try { await assert.rejects(api.listWalletRecords(DEMO), {code: 'network'}) } finally { configureMock(previous) }
 })
+
+test('withdrawal with a fund-password store: pre-check locks nothing, request needs the right password', async () => {
+  const {createFundPasswordStore} = await import('../src/api/fundPasswordStore.js')
+  const {createProfileApi} = await import('../src/api/profileService.js')
+  const fundPassword = createFundPasswordStore()
+  const wallet = createWalletApi({accountValues: () => ({}), priceOf: () => 1, fundPassword})
+  const profile = createProfileApi({fundPassword})
+  const ethAddress = '0x' + 'a'.repeat(40)
+  const request = {mode: DEMO, coin: 'USDT', network: 'ETH', address: ethAddress, amount: 2}
+  const before = balanceOf(DEMO, 'USDT')
+  const check = await wallet.checkWithdrawal(request)
+  assert.equal(check.fundPasswordSet, false)
+  assert.equal(balanceOf(DEMO, 'USDT'), before, 'pre-check locks nothing')
+  await assert.rejects(wallet.checkWithdrawal({...request, address: 'x'}), {code: 'assets.withdraw.error.invalidAddress'})
+  await assert.rejects(wallet.requestWithdrawal({...request, fundPassword: '123456'}), {code: 'assets.withdraw.error.fundPasswordNotSet'})
+
+  await assert.rejects(profile.saveFundPassword({password: '12345', confirm: '12345'}), {code: 'profile.center.fundPassword.sixDigits'})
+  await assert.rejects(profile.saveFundPassword({password: '135790', confirm: '135791'}), {code: 'profile.center.fundPassword.mismatch'})
+  assert.deepEqual(await profile.saveFundPassword({password: '135790', confirm: '135790'}), {set: true, changed: false})
+  assert.equal((await profile.getFundPassword()).set, true)
+  assert.equal((await wallet.checkWithdrawal(request)).fundPasswordSet, true)
+
+  await assert.rejects(wallet.requestWithdrawal({...request, fundPassword: ''}), {code: 'assets.withdraw.error.fundPasswordRequired'})
+  await assert.rejects(wallet.requestWithdrawal({...request, fundPassword: '000000'}), {code: 'assets.withdraw.error.fundPasswordWrong'})
+  assert.equal(balanceOf(DEMO, 'USDT'), before, 'a rejected password locks nothing')
+  const done = await wallet.requestWithdrawal({...request, fundPassword: '135790'})
+  assert.equal(done.status, 'pending')
+  assert.equal(balanceOf(DEMO, 'USDT'), before - 2)
+
+  await assert.rejects(profile.saveFundPassword({password: '246800', confirm: '246800'}), {code: 'profile.center.fundPassword.oldRequired'})
+  await assert.rejects(profile.saveFundPassword({oldPassword: '111111', password: '246800', confirm: '246800'}), {code: 'profile.center.fundPassword.oldWrong'})
+  await assert.rejects(profile.saveFundPassword({oldPassword: '135790', password: '135790', confirm: '135790'}), {code: 'profile.center.fundPassword.sameAsOld'})
+  assert.equal((await profile.saveFundPassword({oldPassword: '135790', password: '246800', confirm: '246800'})).changed, true)
+  await assert.rejects(wallet.requestWithdrawal({...request, fundPassword: '135790'}), {code: 'assets.withdraw.error.fundPasswordWrong'})
+})

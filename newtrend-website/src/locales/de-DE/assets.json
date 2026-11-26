@@ -234,8 +234,15 @@
       "disabled": "Auszahlung wird für dieses Asset oder Netzwerk nicht unterstützt",
       "demoMode": "Auszahlungen sind auf dem Demo-Konto nicht verfügbar",
       "generic": "Auszahlung fehlgeschlagen, bitte versuchen Sie es später erneut",
-      "loadFailed": "Laden der auszahlbaren Assets fehlgeschlagen, bitte versuchen Sie es später erneut"
-    }
+      "loadFailed": "Laden der auszahlbaren Assets fehlgeschlagen, bitte versuchen Sie es später erneut",
+      "fundPasswordNotSet": "Legen Sie vor der Auszahlung ein Fondspasswort fest",
+      "fundPasswordRequired": "Geben Sie das 6-stellige Fondspasswort ein",
+      "fundPasswordWrong": "Falsches Fondspasswort"
+    },
+    "fundPasswordTitle": "Fondspasswort eingeben",
+    "fundPassword": "Fondspasswort",
+    "fundPasswordPlaceholder": "6-stelliges Fondspasswort eingeben",
+    "confirmWithdraw": "Auszahlung bestätigen"
   },
   "onboarding": {
     "title": "Konto einrichten",

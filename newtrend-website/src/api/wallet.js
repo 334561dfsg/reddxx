@@ -3,8 +3,9 @@
 import {accountValues} from '../accountValue.js'
 import {priceOf} from '../mock/prices.js'
 import {createWalletApi} from './walletService.js'
+import {fundPasswordStore} from './fundPassword.js'
 
-export const {getAssetsOverview, listWalletRecords, transferFunds, requestWithdrawal, submitDepositVoucher, spendFunds} = createWalletApi({accountValues, priceOf})
+export const {getAssetsOverview, listWalletRecords, transferFunds, checkWithdrawal, requestWithdrawal, submitDepositVoucher, spendFunds} = createWalletApi({accountValues, priceOf, fundPassword: fundPasswordStore})
 
 /** Locale key for a wallet rejection (validation codes are keys already; transport failures are generic). */
 export const walletErrorKey = error => /^[a-z]+\.[\w.]+$/i.test(String(error?.code || '')) && error.code !== 'network' ? error.code : 'common.requestFailed'

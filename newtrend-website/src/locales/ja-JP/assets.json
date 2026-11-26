@@ -234,8 +234,15 @@
       "disabled": "この資産またはネットワークでは出金がサポートされていません",
       "demoMode": "デモアカウントでは出金できません",
       "generic": "出金に失敗しました。後ほどお試しください",
-      "loadFailed": "出金可能な資産の読み込みに失敗しました。後ほどお試しください"
-    }
+      "loadFailed": "出金可能な資産の読み込みに失敗しました。後ほどお試しください",
+      "fundPasswordNotSet": "出金する前に資金パスワードを設定してください",
+      "fundPasswordRequired": "6 桁の資金パスワードを入力してください",
+      "fundPasswordWrong": "資金パスワードが正しくありません"
+    },
+    "fundPasswordTitle": "資金パスワードを入力",
+    "fundPassword": "資金パスワード",
+    "fundPasswordPlaceholder": "6 桁の資金パスワードを入力",
+    "confirmWithdraw": "出金を確定"
   },
   "onboarding": {
     "title": "アカウントを設定する",

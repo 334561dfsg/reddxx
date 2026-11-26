@@ -3,14 +3,14 @@ import {computed,ref,watch} from 'vue'
 import {message} from 'ant-design-vue'
 import {fmt,path} from '../data'
 import {t} from '../i18n'
-import {session} from '../session'
+import {openModal,session} from '../session'
 import LineIcon from '../components/ui/LineIcon.vue'
 import NtSelect from '../components/ui/NtSelect.vue'
 import Skeleton from '../components/ui/Skeleton.vue'
 import Spinner from '../components/ui/Spinner.vue'
 import {coinOptions as coinOptionsFor,networkOptions as networkOptionsFor} from '../components/deposit/chainOptions.js'
 import {ADDRESS_MAX_LENGTH,networksOf,withdrawFee} from '../mock/chains.js'
-import {getAssetsOverview,requestWithdrawal,walletErrorKey} from '../api/wallet.js'
+import {checkWithdrawal,getAssetsOverview,requestWithdrawal,walletErrorKey} from '../api/wallet.js'
 import {invalidate,useMutation,useRequest} from '../composables/useRequest.js'
 import '../styles/deposit-fidelity.css'
 import '../styles/withdraw-fidelity.css'
@@ -18,7 +18,8 @@ import '../styles/withdraw-fidelity.css'
 // Withdraw page, laid out after newtrendcapital.com/zh-TW/withdraw (measured 2026-11-26): available balance card,
 // coin / network / address (paste) / amount (unit + 最大) on the left; a 380px column with the 合計扣除 / 手續費 /
 // 實際到帳 summary and the 安全提示 card; full-width submit. Validation and the balance lock happen in the wallet API
-// (address format per network, amount, balance); results are toast-only. Nothing is ever sent on-chain.
+// (address format per network, amount, balance) and the fund password is asked for in a dialog before the request;
+// results are toast-only. Nothing is ever sent on-chain.
 const coin=ref('USDT'),network=ref('ETH'),address=ref(''),amount=ref(''),invalid=ref('')
 const networks=computed(()=>networksOf(coin.value))
 const coinOptions=coinOptionsFor()
@@ -33,7 +34,12 @@ const hasAmount=computed(()=>amount.value.trim()!==''&&Number.isFinite(value.val
 const fee=computed(()=>withdrawFee(coin.value,network.value))
 const received=computed(()=>hasAmount.value?Math.max(0,value.value-fee.value):0)
 
-const submitting=useMutation(requestWithdrawal),busy=submitting.pending
+// 提現 first asks the wallet API to validate the form (no funds locked), then asks for the 6-digit fund password in
+// a dialog; the request itself re-validates and checks the password server-side. Without a fund password the
+// set-password dialog opens instead (user decision 2026-11-26).
+const checking=useMutation(checkWithdrawal),submitting=useMutation(requestWithdrawal)
+const busy=computed(()=>checking.pending.value||submitting.pending.value)
+const markInvalid=key=>{invalid.value=key.includes('ddress')?'address':key.includes('mount')||key.includes('alance')||key.includes('fee')?'amount':''}
 async function paste(){
  if(busy.value)return
  try{const text=(await navigator.clipboard.readText()).trim();if(text){address.value=text.slice(0,ADDRESS_MAX_LENGTH);invalid.value=''}}
@@ -43,16 +49,23 @@ function fillMax(){if(!ready.value||busy.value)return;amount.value=String(Math.f
 async function submit(){
  if(busy.value)return
  invalid.value=''
- try{
-  await submitting.run({mode:session.mode,coin:coin.value,network:network.value,address:address.value,amount:amount.value})
- }catch(cause){
-  const key=walletErrorKey(cause)
-  invalid.value=key.includes('ddress')?'address':key.includes('mount')||key.includes('alance')||key.includes('fee')?'amount':''
-  message.error(t(key,cause.params))
-  return
+ const request={mode:session.mode,coin:coin.value,network:network.value,address:address.value,amount:amount.value}
+ let check
+ try{check=await checking.run(request)}
+ catch(cause){const key=walletErrorKey(cause);markInvalid(key);return message.error(t(key,cause.params))}
+ if(!check.fundPasswordSet){
+  message.error(t('assets.withdraw.error.fundPasswordNotSet'))
+  return openModal('fund-password','profile.center.fundPassword.setTitle',{set:false})
  }
- message.success(t('assets.withdraw.success'))
- amount.value='';address.value='';invalidate('wallet')
+ openModal('fund-password-verify','assets.withdraw.fundPasswordTitle',{
+  summary:{coin:coin.value,amount:fmt(check.amount),fee:fmt(check.fee),received:fmt(check.received),address:address.value.trim()},
+  onSubmit:async fundPassword=>{
+   try{await submitting.run({...request,fundPassword})}
+   catch(cause){markInvalid(walletErrorKey(cause));throw cause}
+   message.success(t('assets.withdraw.success'))
+   amount.value='';address.value='';invalidate('wallet')
+  },
+ })
 }
 </script>
 <template>

@@ -496,6 +496,34 @@
       "notBound": "Google OTP가 연동되어 있지 않습니다",
       "bound": "Google OTP를 연동했습니다",
       "unbound": "Google OTP 연동을 해제했습니다"
+    },
+    "fundPassword": {
+      "name": "자금 비밀번호",
+      "hint": "출금 등 자금 작업 시 확인하는 6자리 비밀번호입니다.",
+      "notSet": "미설정",
+      "isSet": "설정됨",
+      "set": "설정하기",
+      "change": "변경",
+      "setTitle": "자금 비밀번호 설정",
+      "changeTitle": "자금 비밀번호 변경",
+      "lead": "로그인 비밀번호와 다른 6자리 숫자를 설정하세요. 출금할 때마다 입력해야 합니다.",
+      "old": "현재 자금 비밀번호",
+      "oldPlaceholder": "현재 자금 비밀번호 입력",
+      "password": "자금 비밀번호",
+      "new": "새 자금 비밀번호",
+      "placeholder": "6자리 숫자 입력",
+      "rule": "정확히 6자리 숫자",
+      "confirm": "자금 비밀번호 확인",
+      "confirmPlaceholder": "6자리 숫자를 다시 입력",
+      "confirmSet": "자금 비밀번호 설정",
+      "confirmChange": "변경 확인",
+      "oldRequired": "현재 자금 비밀번호를 입력하세요",
+      "oldWrong": "현재 자금 비밀번호가 올바르지 않습니다",
+      "sixDigits": "자금 비밀번호는 정확히 6자리 숫자여야 합니다",
+      "mismatch": "두 입력이 일치하지 않습니다",
+      "sameAsOld": "새 자금 비밀번호는 현재와 달라야 합니다",
+      "saved": "자금 비밀번호를 설정했습니다",
+      "changed": "자금 비밀번호를 변경했습니다"
     }
   }
 }

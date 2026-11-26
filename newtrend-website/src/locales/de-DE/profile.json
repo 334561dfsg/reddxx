@@ -496,6 +496,34 @@
       "notBound": "Google Authenticator ist nicht verknüpft",
       "bound": "Google Authenticator verknüpft",
       "unbound": "Google Authenticator getrennt"
+    },
+    "fundPassword": {
+      "name": "Fondspasswort",
+      "hint": "Ein 6-stelliges Passwort zur Bestätigung von Auszahlungen und anderen Fondsvorgängen.",
+      "notSet": "Nicht festgelegt",
+      "isSet": "Festgelegt",
+      "set": "Festlegen",
+      "change": "Ändern",
+      "setTitle": "Fondspasswort festlegen",
+      "changeTitle": "Fondspasswort ändern",
+      "lead": "Wählen Sie 6 Ziffern, die sich vom Anmeldepasswort unterscheiden. Sie geben sie bei jeder Auszahlung ein.",
+      "old": "Aktuelles Fondspasswort",
+      "oldPlaceholder": "Aktuelles Fondspasswort eingeben",
+      "password": "Fondspasswort",
+      "new": "Neues Fondspasswort",
+      "placeholder": "6 Ziffern eingeben",
+      "rule": "Genau 6 Ziffern",
+      "confirm": "Fondspasswort bestätigen",
+      "confirmPlaceholder": "Die 6 Ziffern erneut eingeben",
+      "confirmSet": "Fondspasswort festlegen",
+      "confirmChange": "Änderung bestätigen",
+      "oldRequired": "Geben Sie das aktuelle Fondspasswort ein",
+      "oldWrong": "Das aktuelle Fondspasswort ist falsch",
+      "sixDigits": "Das Fondspasswort muss genau 6 Ziffern haben",
+      "mismatch": "Die beiden Eingaben stimmen nicht überein",
+      "sameAsOld": "Das neue Fondspasswort muss sich vom aktuellen unterscheiden",
+      "saved": "Fondspasswort festgelegt",
+      "changed": "Fondspasswort geändert"
     }
   }
 }

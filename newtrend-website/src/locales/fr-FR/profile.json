@@ -496,6 +496,34 @@
       "notBound": "Google Authenticator n'est pas associé",
       "bound": "Google Authenticator associé",
       "unbound": "Google Authenticator dissocié"
+    },
+    "fundPassword": {
+      "name": "Mot de passe des fonds",
+      "hint": "Un mot de passe à 6 chiffres confirmé lors des retraits et autres opérations sur les fonds.",
+      "notSet": "Non défini",
+      "isSet": "Défini",
+      "set": "Définir",
+      "change": "Modifier",
+      "setTitle": "Définir le mot de passe des fonds",
+      "changeTitle": "Modifier le mot de passe des fonds",
+      "lead": "Choisissez 6 chiffres différents de votre mot de passe de connexion. Il sera demandé à chaque retrait.",
+      "old": "Mot de passe des fonds actuel",
+      "oldPlaceholder": "Saisissez le mot de passe actuel",
+      "password": "Mot de passe des fonds",
+      "new": "Nouveau mot de passe des fonds",
+      "placeholder": "Saisissez 6 chiffres",
+      "rule": "Exactement 6 chiffres",
+      "confirm": "Confirmer le mot de passe",
+      "confirmPlaceholder": "Saisissez à nouveau les 6 chiffres",
+      "confirmSet": "Définir le mot de passe",
+      "confirmChange": "Confirmer la modification",
+      "oldRequired": "Saisissez le mot de passe des fonds actuel",
+      "oldWrong": "Le mot de passe des fonds actuel est incorrect",
+      "sixDigits": "Le mot de passe des fonds doit comporter exactement 6 chiffres",
+      "mismatch": "Les deux saisies ne correspondent pas",
+      "sameAsOld": "Le nouveau mot de passe doit être différent de l'actuel",
+      "saved": "Mot de passe des fonds défini",
+      "changed": "Mot de passe des fonds modifié"
     }
   }
 }

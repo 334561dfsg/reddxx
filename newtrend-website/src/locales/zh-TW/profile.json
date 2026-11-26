@@ -496,6 +496,34 @@
       "notBound": "尚未綁定谷歌驗證器",
       "bound": "谷歌驗證器已綁定",
       "unbound": "已解除綁定谷歌驗證器"
+    },
+    "fundPassword": {
+      "name": "資金密碼",
+      "hint": "6 位數字密碼，提現等資金操作時需輸入確認。",
+      "notSet": "未設置",
+      "isSet": "已設置",
+      "set": "去設置",
+      "change": "修改",
+      "setTitle": "設置資金密碼",
+      "changeTitle": "修改資金密碼",
+      "lead": "請設置 6 位數字，且不要與登入密碼相同；每次提現都需要輸入。",
+      "old": "目前資金密碼",
+      "oldPlaceholder": "請輸入目前資金密碼",
+      "password": "資金密碼",
+      "new": "新資金密碼",
+      "placeholder": "請輸入 6 位數字",
+      "rule": "必須為 6 位數字",
+      "confirm": "確認資金密碼",
+      "confirmPlaceholder": "請再次輸入 6 位數字",
+      "confirmSet": "設置資金密碼",
+      "confirmChange": "確認修改",
+      "oldRequired": "請輸入目前資金密碼",
+      "oldWrong": "目前資金密碼不正確",
+      "sixDigits": "資金密碼必須為 6 位數字",
+      "mismatch": "兩次輸入不一致",
+      "sameAsOld": "新資金密碼不能與目前相同",
+      "saved": "資金密碼已設置",
+      "changed": "資金密碼已修改"
     }
   }
 }

@@ -234,8 +234,15 @@
       "disabled": "Withdrawal is not supported for this asset or network",
       "demoMode": "Withdrawals are not available on the demo account",
       "generic": "Withdrawal failed, please try again later",
-      "loadFailed": "Failed to load withdrawable assets, please try again later"
-    }
+      "loadFailed": "Failed to load withdrawable assets, please try again later",
+      "fundPasswordNotSet": "Set a fund password before withdrawing",
+      "fundPasswordRequired": "Enter the 6-digit fund password",
+      "fundPasswordWrong": "Incorrect fund password"
+    },
+    "fundPasswordTitle": "Enter fund password",
+    "fundPassword": "Fund password",
+    "fundPasswordPlaceholder": "Enter the 6-digit fund password",
+    "confirmWithdraw": "Confirm withdrawal"
   },
   "onboarding": {
     "title": "Set up your account",

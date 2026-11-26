@@ -234,8 +234,15 @@
       "disabled": "Le retrait n'est pas pris en charge pour cet actif ou ce réseau",
       "demoMode": "Les retraits ne sont pas disponibles sur le compte démo",
       "generic": "Échec du retrait, veuillez réessayer plus tard",
-      "loadFailed": "Échec du chargement des actifs au retrait, veuillez réessayer plus tard"
-    }
+      "loadFailed": "Échec du chargement des actifs au retrait, veuillez réessayer plus tard",
+      "fundPasswordNotSet": "Définissez un mot de passe des fonds avant de retirer",
+      "fundPasswordRequired": "Saisissez le mot de passe des fonds à 6 chiffres",
+      "fundPasswordWrong": "Mot de passe des fonds incorrect"
+    },
+    "fundPasswordTitle": "Saisir le mot de passe des fonds",
+    "fundPassword": "Mot de passe des fonds",
+    "fundPasswordPlaceholder": "Saisissez le mot de passe à 6 chiffres",
+    "confirmWithdraw": "Confirmer le retrait"
   },
   "onboarding": {
     "title": "Configurez votre compte",

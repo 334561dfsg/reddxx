@@ -496,6 +496,34 @@
       "notBound": "Google Authenticator is not bound",
       "bound": "Google Authenticator bound",
       "unbound": "Google Authenticator unbound"
+    },
+    "fundPassword": {
+      "name": "Fund password",
+      "hint": "A 6-digit password confirmed on withdrawals and other fund operations.",
+      "notSet": "Not set",
+      "isSet": "Set",
+      "set": "Set",
+      "change": "Change",
+      "setTitle": "Set fund password",
+      "changeTitle": "Change fund password",
+      "lead": "Use 6 digits that differ from your login password. You will enter it on every withdrawal.",
+      "old": "Current fund password",
+      "oldPlaceholder": "Enter the current fund password",
+      "password": "Fund password",
+      "new": "New fund password",
+      "placeholder": "Enter 6 digits",
+      "rule": "Exactly 6 digits",
+      "confirm": "Confirm fund password",
+      "confirmPlaceholder": "Enter the 6 digits again",
+      "confirmSet": "Set fund password",
+      "confirmChange": "Confirm change",
+      "oldRequired": "Enter the current fund password",
+      "oldWrong": "The current fund password is incorrect",
+      "sixDigits": "The fund password must be exactly 6 digits",
+      "mismatch": "The two entries do not match",
+      "sameAsOld": "The new fund password must differ from the current one",
+      "saved": "Fund password set",
+      "changed": "Fund password changed"
     }
   }
 }
