@@ -42,7 +42,9 @@ function close(afterClose){if(closing.value||!current.value)return;closing.value
 function cancel(e){e.preventDefault();if(busy.value)return;if(((flow.value.dirty&&!flow.value.done)||(isSupport.value&&message.value.trim()))&&!done.value){error.value="overlay.ui.unsavedContentUseCloseOrCancelToLeave";return}close()}
 const {switchTo:switchLocale}=useLocaleSwitch()
 async function changeLanguage(l){if(await switchLocale(l))close()}
-function accountAction(){if(done.value||closing.value)return;try{if(current.value.type==='account-edit'){if(!message.value.trim()){error.value="profile.enterUsername";return}current.value.data.onSave?.(message.value.trim())}else current.value.data.onConfirm?.();done.value=true;close()}catch(cause){error.value=cause.message||'c2c.error.generic'}}
+// onConfirm may return a promise (an API call): the confirm action then shows busy, close paths are held, and a
+// rejection keeps the dialog open with a toast (its message is a locale key).
+async function accountAction(){if(done.value||closing.value||busy.value)return;error.value='';try{if(current.value.type==='account-edit'){if(!message.value.trim()){error.value="profile.enterUsername";return}current.value.data.onSave?.(message.value.trim())}else{const pending=current.value.data.onConfirm?.();if(pending?.then){flow.value={...flow.value,busy:true};try{await pending}finally{flow.value={...flow.value,busy:false}}}}done.value=true;close()}catch(cause){error.value=cause.message||'c2c.error.generic'}}
 function switchFromMenu(mode){
   if(mode===session.mode||closing.value)return
   const from=route.fullPath

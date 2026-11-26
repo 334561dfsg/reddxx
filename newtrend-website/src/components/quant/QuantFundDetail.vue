@@ -5,17 +5,18 @@ import {useRoute,useRouter} from 'vue-router'
 import {loginPath} from '../../utils/redirect'
 import {fmt,path} from '../../data'
 import {openModal,session} from '../../session'
-import {quantFunds,findQuantFund} from '../../quantFundPortfolio'
 import {availableQuota,fundProgress,fundEstimate,isAmountDraft} from '../../utils/quantFund'
 import Icon from '../Icon.vue'
 import QuantFundCard from './QuantFundCard.vue'
 import QuantSlider from './QuantSlider.vue'
 // Layout follows the reference product detail page: hero, calculator, flow, quota, sticky summary, more products.
-const props=defineProps({productId:{type:String,required:true}})
+// The product is loaded by pages/Quant.vue (route owner); `catalog` feeds "more products" and may still be empty while loading.
+const props=defineProps({product:{type:Object,required:true},catalog:{type:Array,default:()=>[]}})
 const router=useRouter(),route=useRoute()
-const product=computed(()=>findQuantFund(props.productId))
+const product=computed(()=>props.product)
 const calcAmount=shallowRef(''),calcDays=shallowRef(30)
-watch(product,value=>{if(value){calcAmount.value=String(value.minAmount);calcDays.value=value.termDays??30}},{immediate:true})
+// Reset the calculator only when a different product is shown, not when a refresh brings new quota figures.
+watch(()=>product.value.id,()=>{calcAmount.value=String(product.value.minAmount);calcDays.value=product.value.termDays??30},{immediate:true})
 const days=computed(()=>calcDays.value)
 const estimate=computed(()=>product.value?fundEstimate(product.value,calcAmount.value,days.value):null)
 const progress=computed(()=>product.value?fundProgress(product.value):0)
@@ -27,7 +28,7 @@ const flow=computed(()=>{const flexible=product.value.termDays===null;return [
  ['calendar-clock','aiQuant.quantFund.detail.flowStep2Title','aiQuant.quantFund.detail.flowStep2Desc'],
  ['hand-coins','aiQuant.quantFund.detail.flowStep3Title','aiQuant.quantFund.detail.flowStep3Desc'],
  ['undo-2','aiQuant.quantFund.detail.flowStep4Title',flexible?'aiQuant.quantFund.detail.flowStep4DescFlexible':'aiQuant.quantFund.detail.flowStep4DescFixed']]})
-const moreProducts=computed(()=>quantFunds.filter(p=>p.id!==props.productId).slice(0,3))
+const moreProducts=computed(()=>props.catalog.filter(p=>p.id!==product.value.id).slice(0,3))
 const marks=[30,90,180,365]
 function onCalcInput(event){if(isAmountDraft(event.target.value))calcAmount.value=event.target.value;else event.target.value=calcAmount.value}
 function openProduct(p){router.push(path(`/ai-quant/quant-fund/products/${p.id}`))}
@@ -40,8 +41,7 @@ function subscribe(){
 <template>
 <div class="qf-detail-page">
  <BackLink :to="path('/ai-quant/quant-fund')" class="qf-back">{{ $t('aiQuant.quantFund.title') }}</BackLink>
- <div v-if="!product" class="card empty"><Icon name="bot"/><h1 class="qf-empty-title">{{ $t('common.notFound.title') }}</h1><p>{{ $t('common.notFound.description') }}</p></div>
- <div v-else class="qf-detail">
+ <div class="qf-detail">
   <div class="qf-detail-grid">
    <div class="qf-detail-main">
     <section class="qf-panel qf-detail-hero"><div class="qf-card-glow qf-detail-glow" aria-hidden="true"></div>
@@ -75,7 +75,7 @@ function subscribe(){
     <button type="button" class="qf-cta qf-cta-lg" :disabled="soldOut" aria-haspopup="dialog" @click="subscribe">{{ $t(soldOut?'aiQuant.quantFund.card.ctaSoldOut':'aiQuant.quantFund.detail.subscribeCta') }}</button>
    </aside>
   </div>
-  <section class="qf-more"><h2>{{ $t('aiQuant.quantFund.detail.moreTitle') }}</h2><div class="three-cols qf-grid"><QuantFundCard v-for="p in moreProducts" :key="p.id" :product="p" @open="openProduct"/></div></section>
+  <section v-if="moreProducts.length" class="qf-more"><h2>{{ $t('aiQuant.quantFund.detail.moreTitle') }}</h2><div class="three-cols qf-grid"><QuantFundCard v-for="p in moreProducts" :key="p.id" :product="p" @open="openProduct"/></div></section>
  </div>
 </div>
 </template>

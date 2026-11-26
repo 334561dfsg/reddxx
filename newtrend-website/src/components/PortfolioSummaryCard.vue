@@ -1,6 +1,7 @@
 <script setup>
 import {useAmountMask} from '../composables/useAmountMask.js'
 import Icon from './Icon.vue'
+import Skeleton from './ui/Skeleton.vue'
 // Reference PortfolioSummaryCard (newtrendcapital.com, AI Quant positions / my strategies, measured 2026-11-26):
 // label + eye toggle, 36px mono figure + unit, coloured accent line, bottom-aligned stats on the right, corner glow.
 // The eye masks every figure except stats marked sensitive:false (counts), exactly like the source component.
@@ -11,6 +12,7 @@ defineProps({
  unit:{type:String,default:''},
  accent:{type:Object,default:null},  // {value,unit,label,tone:'success'|'profit'|'loss'|'neutral'}
  stats:{type:Array,default:()=>[]},  // [{label,value,unit,tone,sensitive}]
+ loading:Boolean,  // labels and units stay; figures become same-height inline skeletons
 })
 const {hidden,toggle,masked:mask}=useAmountMask()
 </script>
@@ -19,10 +21,10 @@ const {hidden,toggle,masked:mask}=useAmountMask()
  <div class="psc-row">
   <div class="psc-primary">
    <span class="psc-label"><span :id="labelId">{{ label }}</span><button type="button" class="psc-eye" :aria-pressed="hidden" :aria-label="$t(hidden?'assets.show':'assets.hide')" :title="$t(hidden?'assets.show':'assets.hide')" @click="toggle"><Icon :name="hidden?'eye-off':'eye'"/></button></span>
-   <span class="psc-display">{{ mask(value) }}<span v-if="unit">{{ unit }}</span></span>
-   <span v-if="accent" class="psc-accent"><strong :class="'tone-'+(accent.tone||'profit')">{{ mask(accent.value)+(accent.unit?' '+accent.unit:'') }}</strong><small>{{ accent.label }}</small></span>
+   <span class="psc-display"><Skeleton v-if="loading" inline width="220px"/><template v-else>{{ mask(value) }}</template><span v-if="unit">{{ unit }}</span></span>
+   <span v-if="accent" class="psc-accent"><strong :class="'tone-'+(accent.tone||'profit')"><Skeleton v-if="loading" inline width="120px"/><template v-else>{{ mask(accent.value)+(accent.unit?' '+accent.unit:'') }}</template></strong><small>{{ accent.label }}</small></span>
   </div>
-  <dl v-if="stats.length" class="psc-stats" :style="{'--psc-cols':stats.length}"><div v-for="stat in stats" :key="stat.label"><dt>{{ stat.label }}</dt><dd :class="'tone-'+(stat.tone||'neutral')">{{ stat.sensitive===false?stat.value:mask(stat.value) }}<span v-if="stat.unit">{{ stat.unit }}</span></dd></div></dl>
+  <dl v-if="stats.length" class="psc-stats" :style="{'--psc-cols':stats.length}"><div v-for="stat in stats" :key="stat.label"><dt>{{ stat.label }}</dt><dd :class="'tone-'+(stat.tone||'neutral')"><Skeleton v-if="loading" inline width="96px"/><template v-else>{{ stat.sensitive===false?stat.value:mask(stat.value) }}</template><span v-if="stat.unit">{{ stat.unit }}</span></dd></div></dl>
  </div>
 </section>
 </template>
