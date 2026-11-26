@@ -56,3 +56,15 @@ test('preferences validate and persist in memory; invite summary is a snapshot',
   const invite = await api.getInviteSummary()
   assert.deepEqual(Object.keys(invite).sort(), ['code', 'invited', 'pending', 'settled'])
 })
+
+test('login sessions: current device first and protected; remote sessions end once', async () => {
+  const api = createProfileApi({now})
+  const list = await api.listSessions({current: {device: 'Mac', browser: 'Chrome', os: 'macOS', osVersion: '10.15.7', kind: 'desktop'}})
+  assert.equal(list[0].current, true)
+  assert.equal(list[0].device, 'Mac')
+  assert.ok(list.slice(1).every(session => !session.current))
+  await assert.rejects(api.endSession(list[0].id), {code: 'profile.center.devices.cannotEndCurrent'})
+  await api.endSession(list[1].id)
+  await assert.rejects(api.endSession(list[1].id), {code: 'profile.center.devices.notFound'})
+  assert.equal((await api.listSessions()).length, list.length - 1)
+})

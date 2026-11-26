@@ -447,6 +447,21 @@
       "description": "將清除頁面快取資料並重新向伺服器載入；語言與登入狀態不受影響。",
       "confirm": "清除",
       "done": "快取已清除"
+    },
+    "devices": {
+      "button": "裝置管理",
+      "title": "登入裝置管理",
+      "subtitle": "查看近期登入工作階段，結束可疑或未經授權的裝置。",
+      "thisDevice": "本機",
+      "version": "{{os}} {{version}}",
+      "unknown": "未知裝置",
+      "end": "結束",
+      "endLabel": "結束 {{device}} 的登入",
+      "ended": "已結束 {{device}} 的登入",
+      "onlyCurrent": "僅偵測到目前裝置，沒有其他線上工作階段。",
+      "endHint": "結束後，該裝置需要重新驗證身份才能存取帳戶。",
+      "cannotEndCurrent": "無法在此結束目前裝置，請改用登出。",
+      "notFound": "此工作階段已結束"
     }
   }
 }

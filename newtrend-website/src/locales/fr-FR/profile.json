@@ -447,6 +447,21 @@
       "description": "Les données de page en cache seront effacées et rechargées depuis le serveur. Votre langue et votre connexion sont conservées.",
       "confirm": "Vider",
       "done": "Cache vidé"
+    },
+    "devices": {
+      "button": "Gestion des appareils",
+      "title": "Gestion des appareils connectés",
+      "subtitle": "Consultez les sessions récentes et mettez fin à tout appareil suspect ou non autorisé.",
+      "thisDevice": "Cet appareil",
+      "version": "{{os}} {{version}}",
+      "unknown": "Appareil inconnu",
+      "end": "Terminer",
+      "endLabel": "Terminer la session sur {{device}}",
+      "ended": "Session sur {{device}} terminée",
+      "onlyCurrent": "Seul cet appareil est connecté. Aucune autre session en ligne.",
+      "endHint": "Un appareil déconnecté devra revérifier son identité pour accéder au compte.",
+      "cannotEndCurrent": "Impossible de terminer l'appareil actuel ici. Déconnectez-vous plutôt.",
+      "notFound": "Cette session est déjà terminée"
     }
   }
 }

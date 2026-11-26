@@ -447,6 +447,21 @@
       "description": "Cached page data will be cleared and reloaded from the server. Your language and sign-in stay as they are.",
       "confirm": "Clear",
       "done": "Cache cleared"
+    },
+    "devices": {
+      "button": "Device management",
+      "title": "Login device management",
+      "subtitle": "Review recent sign-in sessions and end any suspicious or unauthorized device.",
+      "thisDevice": "This device",
+      "version": "{{os}} {{version}}",
+      "unknown": "Unknown device",
+      "end": "End",
+      "endLabel": "End session on {{device}}",
+      "ended": "Session on {{device}} ended",
+      "onlyCurrent": "Only this device is signed in. No other online sessions.",
+      "endHint": "An ended device must verify its identity again before it can access the account.",
+      "cannotEndCurrent": "The current device can't be ended here. Log out instead.",
+      "notFound": "This session has already ended"
     }
   }
 }

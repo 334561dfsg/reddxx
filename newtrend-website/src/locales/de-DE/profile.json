@@ -447,6 +447,21 @@
       "description": "Zwischengespeicherte Seitendaten werden gelöscht und neu vom Server geladen. Sprache und Anmeldung bleiben erhalten.",
       "confirm": "Leeren",
       "done": "Cache geleert"
+    },
+    "devices": {
+      "button": "Geräteverwaltung",
+      "title": "Angemeldete Geräte verwalten",
+      "subtitle": "Prüfen Sie aktuelle Anmeldesitzungen und beenden Sie verdächtige oder nicht autorisierte Geräte.",
+      "thisDevice": "Dieses Gerät",
+      "version": "{{os}} {{version}}",
+      "unknown": "Unbekanntes Gerät",
+      "end": "Beenden",
+      "endLabel": "Sitzung auf {{device}} beenden",
+      "ended": "Sitzung auf {{device}} beendet",
+      "onlyCurrent": "Nur dieses Gerät ist angemeldet. Keine weiteren Online-Sitzungen.",
+      "endHint": "Ein beendetes Gerät muss seine Identität erneut bestätigen, bevor es auf das Konto zugreifen kann.",
+      "cannotEndCurrent": "Das aktuelle Gerät kann hier nicht beendet werden. Bitte abmelden.",
+      "notFound": "Diese Sitzung wurde bereits beendet"
     }
   }
 }

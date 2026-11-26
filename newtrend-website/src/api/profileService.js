@@ -139,5 +139,26 @@ export function createProfileApi({now = () => Date.now()} = {}) {
     return snapshot(preferences)
   })
 
-  return {listAccountChanges, listNotifications, getUnreadCount, markNotificationRead, markAllNotificationsRead, getInviteSummary, getPreferences, updatePreferences}
+  // Login sessions (裝置管理): the caller's own device is always first and cannot be ended; two seeded remote sessions.
+  const sessions = [
+    {id: 'SS2', device: 'iPhone', browser: 'Safari', os: 'iOS', osVersion: '18.1', ip: '198.51.100.7', lastActive: Math.round(start - 0.6 * DAY), kind: 'mobile'},
+    {id: 'SS3', device: 'Windows', browser: 'Edge', os: 'Windows', osVersion: '11', ip: '203.0.113.24', lastActive: Math.round(start - 3.2 * DAY), kind: 'desktop'},
+  ]
+
+  /** GET /account/sessions — {current} describes the calling client (as the server would read it from the request). */
+  const listSessions = ({current = {}} = {}) => mockCall(SERVICE, () => snapshot([
+    {id: 'SS1', device: current.device || 'Unknown', browser: current.browser || '', os: current.os || '', osVersion: current.osVersion || '', ip: '', lastActive: now(), kind: current.kind || 'desktop', current: true},
+    ...sessions.map(session => ({...session, current: false})),
+  ]))
+
+  /** DELETE /account/sessions/:id — ends a remote session; the current one cannot be ended here. */
+  const endSession = id => mockCall(SERVICE, () => {
+    if (id === 'SS1') throw new ApiError('profile.center.devices.cannotEndCurrent')
+    const index = sessions.findIndex(session => session.id === id)
+    if (index < 0) throw new ApiError('profile.center.devices.notFound')
+    sessions.splice(index, 1)
+    return {id}
+  })
+
+  return {listSessions, endSession, listAccountChanges, listNotifications, getUnreadCount, markNotificationRead, markAllNotificationsRead, getInviteSummary, getPreferences, updatePreferences}
 }
