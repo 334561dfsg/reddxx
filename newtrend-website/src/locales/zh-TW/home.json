@@ -467,8 +467,6 @@
   "motion": {
     "pausePartners": "暫停滾動",
     "resumePartners": "繼續滾動",
-    "pauseQuotes": "暫停更新",
-    "resumeQuotes": "繼續更新",
     "demoQuotes": "模擬行情 · 熱門交易對"
   }
 }

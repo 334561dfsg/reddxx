@@ -467,8 +467,6 @@
   "motion": {
     "pausePartners": "Pause scrolling",
     "resumePartners": "Resume scrolling",
-    "pauseQuotes": "Pause updates",
-    "resumeQuotes": "Resume updates",
     "demoQuotes": "Demo quotes · Top pairs"
   }
 }

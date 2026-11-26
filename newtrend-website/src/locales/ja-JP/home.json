@@ -467,8 +467,6 @@
   "motion": {
     "pausePartners": "スクロールを一時停止",
     "resumePartners": "スクロールを再開",
-    "pauseQuotes": "更新を一時停止",
-    "resumeQuotes": "更新を再開",
     "demoQuotes": "デモ相場 · 人気銘柄"
   }
 }

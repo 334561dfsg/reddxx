@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import { fmt } from '../data'
+import Skeleton from './ui/Skeleton.vue'
+// Rows always carry the full catalogue; price/change are null until the stream's first snapshot (inline skeletons).
 const props = defineProps({ rows: { type: Array, required: true }, paused: Boolean })
 // Fixed slots keep live price/percentage changes from moving the loop boundary.
 const itemWidth = 288
@@ -16,7 +18,7 @@ const trackStyle = computed(() => ({
     <div class="market-ticker-track">
       <div v-for="copy in 2" :key="copy" class="market-ticker-group" :aria-hidden="copy===2 ? 'true' : undefined">
         <span v-for="m in rows" :key="m.id" class="market-ticker-item">
-          <small>{{ $t(m.name) }}</small><b>{{ fmt(m.price) }}</b><strong :class="m.change<0?'negative':'positive'">{{ m.change>0?'+':'' }}{{ m.change.toFixed(2) }}%</strong><i aria-hidden="true">·</i>
+          <small>{{ $t(m.name) }}</small><template v-if="m.price!==null"><b>{{ fmt(m.price) }}</b><strong :class="m.change<0?'negative':'positive'">{{ m.change>0?'+':'' }}{{ m.change.toFixed(2) }}%</strong></template><template v-else><b><Skeleton inline width="64px"/></b><strong><Skeleton inline width="44px"/></strong></template><i aria-hidden="true">·</i>
         </span>
       </div>
     </div>

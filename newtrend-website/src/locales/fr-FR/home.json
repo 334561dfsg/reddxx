@@ -467,8 +467,6 @@
   "motion": {
     "pausePartners": "Suspendre le défilement",
     "resumePartners": "Reprendre le défilement",
-    "pauseQuotes": "Suspendre les mises à jour",
-    "resumeQuotes": "Reprendre les mises à jour",
     "demoQuotes": "Cours de démonstration · Paires populaires"
   }
 }

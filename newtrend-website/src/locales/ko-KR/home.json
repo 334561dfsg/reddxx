@@ -467,8 +467,6 @@
   "motion": {
     "pausePartners": "스크롤 일시 중지",
     "resumePartners": "스크롤 재개",
-    "pauseQuotes": "업데이트 일시 중지",
-    "resumeQuotes": "업데이트 재개",
     "demoQuotes": "모의 시세 · 인기 거래쌍"
   }
 }

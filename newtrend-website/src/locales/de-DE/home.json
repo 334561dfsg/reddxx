@@ -467,8 +467,6 @@
   "motion": {
     "pausePartners": "Scrollen pausieren",
     "resumePartners": "Scrollen fortsetzen",
-    "pauseQuotes": "Aktualisierung pausieren",
-    "resumeQuotes": "Aktualisierung fortsetzen",
     "demoQuotes": "Demo-Kurse · Beliebte Paare"
   }
 }
