@@ -117,5 +117,5 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 
 .overlay-footer .is-busy{cursor:progress}.overlay-close[aria-disabled=true],.overlay-footer .secondary-button[aria-disabled=true]{opacity:.5;cursor:not-allowed}
 
-.nt-dialog.nt-dialog.transfer-dialog{width:min(440px,calc(100vw - 32px))}.transfer-dialog .overlay-body{padding-bottom:24px}.nt-dialog.nt-dialog.transfer-dialog .overlay-header h2{font-size:18px;font-weight:600}
+.nt-dialog.nt-dialog.transfer-dialog{width:min(440px,calc(100vw - 32px))}.transfer-dialog .overlay-body{padding-bottom:24px}.nt-dialog.nt-dialog.transfer-dialog .overlay-header h2{font-size:18px;font-weight:600}.nt-dialog.nt-dialog.transfer-dialog .overlay-header{padding:22px 60px 18px 24px}.nt-dialog.nt-dialog.transfer-dialog .overlay-header h2{line-height:28px}.nt-dialog.nt-dialog.transfer-dialog .overlay-close{top:14px;right:10px;display:grid;place-items:center}
 </style>
