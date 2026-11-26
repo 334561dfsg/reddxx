@@ -387,3 +387,7 @@ Supersedes the GMXX sidebar layout above; the GMXX features and dialogs stay. `/
 ## Trade records as rows (user decision, 2026-11-26)
 
 Supersedes the GMXX-style record cards above (History reference, Current records, Stable record layout): every trading module (perpetual, delivery, spot) shows its current and history records as one compact line per record in `TradeHistory.vue` / `CurrentTrades.vue` (`styles/trade-records.css`): a table with a sticky 36px header row, 44px rows, the pair + coloured direction + tag (leverage, period, spot status) in the first column, the same fields as before as columns (numbers right-aligned, P&L coloured), and 平倉 / 撤單 in a final 操作 column. Data, fields, actions and confirmations are unchanged. History pages hold 10 rows; the panel scrolls vertically, and horizontally only when the columns do not fit. The loading skeleton uses the same table.
+
+## Header profile menu (user reference, 2026-11-26)
+
+The header profile dropdown follows the GMXX account menu in the current style: avatar, name, KYC + VIP badges and UID copy; a 信用分 pill; a 2×2 grid of the current mode's account balances (資金帳戶, 交易帳戶, 理財帳戶, 量化基金; loaded from `getAssetsOverview` when the menu opens, masked with the assets menu's eye toggle); then 個人中心, 安全中心 (`/profile#security`, scrolls to the 安全 group 80px below the header), 身份認證, 清除快取 (same confirm as the profile row) and 登出. GMXX's Account Role entry is not copied: the header 真實/模擬 toggle already covers it. 邀請好友 is reached from 個人中心 → 我的業務.

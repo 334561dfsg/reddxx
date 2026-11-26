@@ -7,6 +7,8 @@ import './styles/index.css'
 const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes,scrollBehavior(to,from,saved){
   // A reload reuses history.state.scroll; only back/forward should restore it.
   if(from===START_LOCATION)return {left:0,top:0,behavior:'instant'}
+  // In-app section links (e.g. the profile menu's 安全中心 → /profile#security) scroll below the fixed header.
+  if(to.hash&&!saved)return {el:to.hash,top:80,behavior:'smooth'}
   return saved||{left:0,top:0}
 }})
 router.beforeEach((to,from)=>{

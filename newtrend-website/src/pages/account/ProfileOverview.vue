@@ -68,7 +68,7 @@ function signOut() {
    <RouterLink class="pf-row" :to="path('/bind-email')"><LineIcon name="mail"/><span class="pf-row-label">{{ $t('auth.email') }}</span><span class="pf-row-value">{{ account.email || $t('profile.notBound') }}</span><LineIcon name="chevron-right" class="pf-chev"/></RouterLink>
    <RouterLink class="pf-row" :to="path('/bind-phone')"><LineIcon name="smartphone"/><span class="pf-row-label">{{ $t('auth.phone') }}</span><span class="pf-row-value">{{ account.phone || $t('profile.notBound') }}</span><LineIcon name="chevron-right" class="pf-chev"/></RouterLink>
   </div>
-  <div class="pf-group">
+  <div id="security" class="pf-group">
    <h3>{{ $t('common.security') }}</h3>
    <button type="button" class="pf-row" aria-haspopup="dialog" @click="openPassword"><LineIcon name="key"/><span class="pf-row-label">{{ $t('profile.loginPassword') }}</span><span class="pf-row-value">{{ $t('profile.set') }}</span><LineIcon name="chevron-right" class="pf-chev"/></button>
    <button type="button" class="pf-row" aria-haspopup="dialog" :disabled="!fund.data.value" @click="openFund"><LineIcon name="wallet"/><span class="pf-row-label">{{ $t('profile.center.fundPassword.name') }}</span><span class="pf-row-value"><template v-if="fund.data.value"><span v-if="!fund.data.value.set" class="pf-dot warn" aria-hidden="true"></span>{{ $t(fund.data.value.set?'profile.center.fundPassword.isSet':'profile.center.fundPassword.notSet') }}</template><Skeleton v-else inline width="48px"/></span><LineIcon name="chevron-right" class="pf-chev"/></button>
