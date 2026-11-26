@@ -26,7 +26,7 @@ test('known pages resolve to their named routes', () => {
     '/ai-quant/strategy/mine/STR-1/stats': 'strategy-stats',
     '/assets': 'assets', '/assets/records': 'assets',
     '/login': 'auth', '/register': 'auth', '/news': 'news', '/news/42': 'news',
-    '/profile': 'account', '/kyc/basic': 'account', '/help-center': 'account', '/preferences': 'account', '/security': 'account', '/records': 'account', '/notifications': 'account',
+    '/profile': 'account', '/kyc/basic': 'account', '/help-center': 'account', '/records': 'account', '/notifications': 'account',
     '/about': 'legal', '/privacy': 'legal',
     '/c2c/buy': 'c2c', '/c2c/payment-accounts': 'c2c',
     '/charity': 'charity', '/deposit': 'deposit', '/withdraw': 'withdraw', '/messages': 'messages',
@@ -46,7 +46,7 @@ test('redirects keep old links working', async () => {
   assert.equal((await landsOn('/c2c/accounts')).fullPath, '/c2c/payment-accounts')
   for (const removed of ['/joint-account', '/promotions/tasks', '/survey/019e9f01-47a3-711f-9052-e7187b9f9407', '/fund-password'])
     assert.equal((await landsOn(removed)).fullPath, '/profile', removed + ' was removed and lands on the profile')
-  for (const moved of ['/devices', '/2fa']) assert.equal((await landsOn(moved)).fullPath, '/security', moved + ' opens from the security centre')
+  for (const moved of ['/devices', '/2fa', '/security', '/preferences']) assert.equal((await landsOn(moved)).fullPath, '/profile', moved + ' is a row on the profile page')
   const legacy = await landsOn('/zh-TW/earn/simple?tab=1#top')
   assert.equal(legacy.path, '/earn/simple')
   assert.equal(legacy.query.tab, '1')

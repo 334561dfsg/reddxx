@@ -524,6 +524,11 @@
       "sameAsOld": "Le nouveau mot de passe doit être différent de l'actuel",
       "saved": "Mot de passe des fonds défini",
       "changed": "Mot de passe des fonds modifié"
+    },
+    "rows": {
+      "twoFactor": "Authentification à deux facteurs",
+      "unread": "{{count}} non lus",
+      "backToProfile": "Espace personnel"
     }
   }
 }

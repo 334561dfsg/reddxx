@@ -524,6 +524,11 @@
       "sameAsOld": "The new fund password must differ from the current one",
       "saved": "Fund password set",
       "changed": "Fund password changed"
+    },
+    "rows": {
+      "twoFactor": "Two-factor authentication",
+      "unread": "{{count}} unread",
+      "backToProfile": "Personal center"
     }
   }
 }

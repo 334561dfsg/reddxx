@@ -29,8 +29,9 @@ export const routes=[
  {path:'/copytrade/:pathMatch(.*)*',redirect:'/'},
  // Joint accounts, promotions (我的活動), the survey and fund password were removed (user decision, 2026-11-26); old links land on the profile.
  {path:'/:removed(joint-account|promotions|survey|fund-password)/:pathMatch(.*)*',redirect:'/profile'},
- // Device management and Google Authenticator live in security-centre dialogs (restored 2026-11-26).
- {path:'/:security(devices|2fa)/:pathMatch(.*)*',redirect:'/security'},
+ // Security / preference settings (devices, 2FA, fund password …) are rows and dialogs on /profile since the
+ // newtrendcapital-style redesign (2026-11-26).
+ {path:'/:security(devices|2fa|security|preferences)/:pathMatch(.*)*',redirect:'/profile'},
  {name:'loan-order',path:'/earn/loan/order/:orderId',component:()=>import('./pages/LendingOrder.vue')},
  // Section params are constrained so unknown sections reach the not-found page instead of an empty shell.
  // An id is only valid under a section, so /earn/x reaches not-found instead of an empty Finance shell.
@@ -43,7 +44,7 @@ export const routes=[
  {name:'assets',path:'/assets/:section(overview|transfer|records)?',component:Assets},
  {name:'auth',path:'/:auth(login|register|forgot-password)',component:Auth},
  {name:'news',path:'/news/:id?',component:News},
- {name:'account',path:'/:account(profile|preferences|security|records|notifications|bind-email|bind-phone|change-password|kyc|referrals|help-center)/:id?',component:Account},
+ {name:'account',path:'/:account(profile|records|notifications|bind-email|bind-phone|change-password|kyc|referrals|help-center)/:id?',component:Account},
  {name:'legal',path:'/:section(about|privacy|agreement|risk-disclosure|regulatory-information|content)/:id?',component:Legal},
  {name:'c2c',path:'/c2c/:c2cPage(buy|sell|orders|payment-accounts)',component:()=>import('./pages/C2CBuy.vue')},
  {path:'/c2c/accounts',redirect:'/c2c/payment-accounts'},

@@ -524,6 +524,11 @@
       "sameAsOld": "新資金密碼不能與目前相同",
       "saved": "資金密碼已設置",
       "changed": "資金密碼已修改"
+    },
+    "rows": {
+      "twoFactor": "雙重認證",
+      "unread": "{{count}} 則未讀",
+      "backToProfile": "個人中心"
     }
   }
 }

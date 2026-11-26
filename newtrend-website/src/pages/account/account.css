@@ -1,44 +1,21 @@
-/* Personal centre (pages/Account.vue and pages/account/*). Structure after gmxx.io/personal; look from the new skin:
+/* Personal centre (pages/Account.vue and pages/account/*). Overview after newtrendcapital.com/zh-TW/profile (pf-*, at the
+   end); detail pages keep the new-skin look:
    #0c1017 cards with the #191b1f divider border, grey #a0a1a2 secondary text, lime accent, pill controls.
    Every rule is anchored to .pc-shell so nothing leaks. Selection/focus use background and text, never rings. */
-.pc-shell{display:grid;grid-template-columns:248px minmax(0,1fr);gap:32px;align-items:start}
+.pc-shell{display:block}
+#main-content .pc-shell{max-width:1280px}
+#main-content .pc-shell.pc-narrow{max-width:768px}
 
 /* Sidebar: member card + grouped nav. */
-.pc-shell .pc-side{position:sticky;top:88px;display:grid;gap:12px;min-width:0}
-.pc-shell .pc-member{display:flex;gap:12px;align-items:flex-start;padding:16px;border:1px solid #191b1f;border-radius:var(--nt-radius-panel);background:#0c1017}
-.pc-shell .pc-avatar{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#a5ff4a40,#1d2733 70%);color:#e6e7e9}
-.pc-shell .pc-avatar svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.pc-shell .pc-avatar.large{width:72px;height:72px}
-.pc-shell .pc-avatar.large svg{width:34px;height:34px}
-.pc-shell .pc-member-text{display:grid;gap:4px;min-width:0}
-.pc-shell .pc-member-text strong{font-size:15px;line-height:22px;font-weight:600;overflow-wrap:anywhere}
-.pc-shell .pc-uid{display:inline-flex;align-items:center;gap:2px;font-size:12px;line-height:16px;color:#a0a1a2;font-variant-numeric:tabular-nums}
-.pc-shell .pc-uid button{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;color:#a0a1a2}
-.pc-shell .pc-uid button:hover,.pc-shell .pc-uid button:focus-visible{background:#ffffff0f;color:#fff;outline:none}
-.pc-shell .pc-uid svg,.pc-shell .pc-badge svg,.pc-shell .pc-link svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.pc-shell .pc-badges{display:flex;flex-wrap:wrap;gap:6px;margin:0}
-.pc-shell .pc-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:#ffffff0f;color:#a0a1a2;font-size:11px;line-height:16px;font-weight:500}
-.pc-shell .pc-badge.vip{background:#f5b94a1a;color:#f5b94a}
-.pc-shell .pc-badge.ok{background:#2bc2871a;color:#2bc287}
-.pc-shell .pc-nav{padding:8px;border:1px solid #191b1f;border-radius:var(--nt-radius-panel);background:#0c1017}
-.pc-shell .pc-nav ul{display:grid;gap:2px;margin:0;padding:0;list-style:none}
-.pc-shell .pc-nav ul+ul{margin-top:8px;padding-top:8px;border-top:1px solid #191b1f}
-.pc-shell .pc-nav a,.pc-shell .pc-nav button{display:flex;align-items:center;gap:12px;width:100%;min-height:42px;padding:8px 12px;border-radius:12px;color:#a0a1a2;font-size:14px;line-height:20px;text-align:left}
-.pc-shell .pc-nav svg{width:18px;height:18px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.pc-shell .pc-nav a:hover,.pc-shell .pc-nav button:hover{background:#ffffff08;color:#fff}
-.pc-shell .pc-nav a:focus-visible,.pc-shell .pc-nav button:focus-visible{outline:none;background:#ffffff0f;color:#fff;text-decoration:underline}
-.pc-shell .pc-nav a.active{background:#a5ff4a14;color:#fff;font-weight:600}
-.pc-shell .pc-nav a.active svg{color:var(--nt-accent)}
 
 /* Main column. */
 .pc-shell .pc-main{display:grid;gap:16px;min-width:0;align-content:start}
-.pc-shell .pc-title{margin:0;font-size:24px;line-height:32px;font-weight:600}
+#main-content .pc-shell .pc-title{margin:0;font-family:var(--nt-font-display);font-size:24px;line-height:32px;font-weight:600;letter-spacing:normal}
 .pc-shell .pc-subtitle{margin:-8px 0 0;color:#a0a1a2;font-size:14px;line-height:20px}
-.pc-shell .pc-section-label{margin:8px 0 -4px;font-size:12px;line-height:16px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:#a0a1a2}
 .pc-shell .pc-back{display:inline-flex;align-items:center;gap:6px;justify-self:start;color:#a0a1a2;font-size:14px;line-height:20px}
 .pc-shell .pc-back svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pc-shell .pc-back:hover,.pc-shell .pc-back:focus-visible{color:#fff;outline:none;text-decoration:underline}
-.pc-shell .pc-card{border:1px solid #191b1f;border-radius:var(--nt-radius-panel);background:#0c1017}
+.pc-shell .pc-card{border:1px solid #191b1f;border-radius:24px;background:#0c1017}
 .pc-shell .pc-muted{margin:0;color:#a0a1a2;font-size:13px;line-height:20px}
 .pc-shell .pc-muted.small{font-size:12px;line-height:18px}
 .pc-shell .pc-icon-tile{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#a5ff4a14;color:var(--nt-accent)}
@@ -59,46 +36,8 @@
 .pc-shell .pc-text-button:focus-visible{outline:none;text-decoration:underline}
 
 /* Overview. */
-.pc-shell .pc-hero{display:flex;align-items:center;gap:24px;padding:28px}
-.pc-shell .pc-hero-text{display:grid;gap:8px;min-width:0}
-.pc-shell .pc-hero-text h2{margin:0;font-size:20px;line-height:28px;font-weight:600;overflow-wrap:anywhere}
-.pc-shell .pc-hero .pc-uid{font-size:13px}
-.pc-shell .pc-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.pc-shell .pc-tile{display:grid;gap:8px;align-content:start;padding:20px;text-align:left;color:inherit}
-.pc-shell a.pc-tile:hover,.pc-shell button.pc-tile:hover{background:#11161e}
-.pc-shell .pc-tile:focus-visible{outline:none;background:#11161e}
-.pc-shell .pc-tile small{color:#a0a1a2;font-size:12px;line-height:16px}
-.pc-shell .pc-tile strong{font-size:18px;line-height:26px;font-weight:600}
-.pc-shell .pc-good{color:#2bc287;font-size:12px;font-weight:500}
-.pc-shell .pc-link{display:inline-flex;align-items:center;gap:2px;color:var(--nt-accent);font-size:13px;font-weight:500}
-.pc-shell .pc-progress{display:block;height:4px;border-radius:999px;background:#ffffff12;overflow:hidden}
-.pc-shell .pc-progress span{display:block;height:100%;border-radius:inherit;background:var(--nt-accent)}
 
 /* List rows (preferences, security contacts). */
-.pc-shell .pc-list{padding:4px 20px}
-.pc-shell .pc-row{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;padding:10px 0;font-size:14px;line-height:20px}
-.pc-shell .pc-row+.pc-row{border-top:1px solid #191b1f}
-.pc-shell .pc-row>div,.pc-shell .pc-row-lead>span:last-child{display:grid;gap:2px;min-width:0}
-.pc-shell .pc-row small{color:#a0a1a2;font-size:12px;line-height:16px;overflow-wrap:anywhere}
-.pc-shell .pc-row-lead{display:flex;align-items:center;gap:12px;min-width:0}
-.pc-shell .pc-select{width:200px}
-.pc-shell .pc-switch{position:relative;flex-shrink:0;width:44px;height:24px;border-radius:999px;background:#2a2e32;transition:background .15s ease-out}
-.pc-shell .pc-switch span{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s ease-out}
-.pc-shell .pc-switch[aria-checked=true]{background:var(--nt-accent)}
-.pc-shell .pc-switch[aria-checked=true] span{transform:translateX(20px);background:var(--nt-bg)}
-.pc-shell .pc-switch:focus-visible{outline:none;background:#3a3f45}
-.pc-shell .pc-switch[aria-checked=true]:focus-visible{background:#c4ff8a}
-.pc-shell .pc-switch:disabled{opacity:.6;cursor:progress}
-.pc-shell .pc-switch-skeleton{flex-shrink:0;border-radius:999px}
-.pc-shell .pc-logout{justify-self:center;width:min(320px,100%);min-height:44px;margin-top:8px;border-radius:999px;background:#202326;color:#ff6b84;font-size:14px;font-weight:500}
-.pc-shell .pc-logout:hover{background:#2a2e32}
-.pc-shell .pc-logout:focus-visible{outline:none;text-decoration:underline}
-@media(prefers-reduced-motion:reduce){.pc-shell .pc-switch,.pc-shell .pc-switch span{transition:none}}
-
-/* Security. */
-.pc-shell .pc-security{display:flex;align-items:center;gap:16px;padding:20px}
-.pc-shell .pc-security-text{flex:1;display:grid;gap:4px;min-width:0}
-.pc-shell .pc-security-text h2{margin:0;font-size:15px;line-height:22px;font-weight:600}
 
 /* Identity verification. */
 .pc-shell .pc-identity-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
@@ -223,40 +162,80 @@
 .pc-shell.account-help-center .pc-main>input{min-height:44px;padding:0 16px;border:1px solid #191b1f;border-radius:999px;background:#0c1017}
 
 @media(max-width:1023px){
- .pc-shell{grid-template-columns:1fr;gap:20px}
- .pc-shell .pc-side{position:static}
- .pc-shell .pc-nav ul{display:flex;flex-wrap:wrap}
- .pc-shell .pc-nav ul+ul{margin-top:0;padding-top:0;border-top:0}
- .pc-shell .pc-nav li{flex:0 0 auto}
  .pc-shell .pc-identity-body{grid-template-columns:1fr}
  .pc-shell .pc-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:640px){
- .pc-shell .pc-tiles,.pc-shell .pc-stats,.pc-shell .pc-fields{grid-template-columns:1fr}
- .pc-shell .pc-identity-head,.pc-shell .pc-invite,.pc-shell .pc-security{flex-direction:column;align-items:stretch}
- .pc-shell .pc-hero{flex-direction:column;align-items:flex-start;padding:20px}
  .pc-shell .pc-filters .pc-field{width:100%}
  .pc-shell .pc-select{width:160px}
 }
 
-/* GMXX interactions (2026-11-26): the whole member card opens the overview (stretched name link; the copy button sits
-   above it); 帳變記錄 is a standalone full-width page; the language row is one button that opens the picker dialog. */
-.pc-shell .pc-member{position:relative}
-.pc-shell .pc-member:hover{background:#11161e}
-.pc-shell .pc-member.active{background:#a5ff4a0f}
-.pc-shell .pc-member-name{font-size:15px;line-height:22px;font-weight:600;color:#fff;overflow-wrap:anywhere}
-.pc-shell .pc-member-name::after{content:'';position:absolute;inset:0;border-radius:inherit}
-.pc-shell .pc-member-name:focus-visible{outline:none;text-decoration:underline}
-.pc-shell .pc-member .pc-uid button{position:relative;z-index:1}
-.pc-shell.pc-standalone{grid-template-columns:minmax(0,1fr)}
-.pc-shell .pc-row-button{width:100%;text-align:left;color:inherit}
-.pc-shell .pc-row-button:hover .pc-row-value,.pc-shell .pc-row-button:focus-visible .pc-row-value{color:#fff}
-.pc-shell .pc-row-button:focus-visible{outline:none}
-.pc-shell .pc-row-button:focus-visible>span:first-child{text-decoration:underline}
-.pc-shell .pc-row-value{display:inline-flex;align-items:center;gap:4px;color:#a0a1a2}
-.pc-shell .pc-row-value svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.pc-shell .pc-actions{display:flex;flex-wrap:wrap;gap:8px;flex-shrink:0}
-.pc-shell .pc-actions{align-items:center}
 .pc-shell .pc-chip.ok{background:#2bc2871a;color:#2bc287}
-.pc-shell .pc-hint{padding:16px 20px}
-.pc-shell .pc-hint h2{margin:0 0 4px;font-size:13px;line-height:20px;font-weight:600;color:#e6e7e9}
+
+/* Overview after newtrendcapital.com/zh-TW/profile (measured 2026-11-26 at 1568px): 1280px page, Syne 24/32 title,
+   #0c1017 cards with a #191b1f border and 24px corners; header card = identity row (56px avatar, Syne 24/32 name,
+   UID + copy) over metric tiles (16px 20px padding, 12/18 grey label + chevron, 18/28 600 value with an 8px status dot,
+   4px bars); two columns of boxes (12px 20px head, 16/600 title, 12px hint; 12/18 600 grey group labels; 48px rows:
+   18px grey icon, label, grey value, chevron) and a 32px pill 登出. Every row keeps a non-ring focus cue. */
+.pc-overview .pc-main{display:block}
+#main-content .pc-overview .pf-title{margin:0 0 16px;font-family:var(--nt-font-display);letter-spacing:normal;font-size:24px;line-height:32px;font-weight:600}
+.pc-overview .pf-card{border:1px solid #191b1f;border-radius:24px;background:#0c1017;overflow:hidden}
+.pc-overview .pf-identity{display:flex;align-items:center;gap:16px;padding:20px}
+.pc-overview .pf-avatar{display:grid;place-items:center;flex-shrink:0;width:56px;height:56px;border-radius:50%;background:#0c1017;color:#e6e7e9}
+.pc-overview .pf-avatar svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pc-overview .pf-identity-text{display:grid;gap:2px;min-width:0}
+#main-content .pc-overview .pf-identity-text h2{margin:0;font-family:var(--nt-font-display);letter-spacing:normal;font-size:24px;line-height:32px;font-weight:600;overflow-wrap:anywhere}
+.pc-overview .pf-uid{display:inline-flex;align-items:center;gap:2px;margin:0;color:#a0a1a2;font-size:12px;line-height:18px;font-variant-numeric:tabular-nums}
+.pc-overview .pf-uid button{display:grid;place-items:center;width:24px;height:22px;margin:-2px 0;border-radius:8px;color:#a0a1a2}
+.pc-overview .pf-uid button:hover,.pc-overview .pf-uid button:focus-visible{outline:none;background:#ffffff0f;color:#fff}
+.pc-overview .pf-uid svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pc-overview .pf-tiles{display:grid;grid-auto-columns:1fr;grid-auto-flow:column;margin-left:-1px}
+.pc-overview .pf-tile{display:flex;flex-direction:column;gap:6px;min-width:0;padding:16px 20px;border-left:1px solid #191b1f;border-top:1px solid #191b1f;text-align:left;color:inherit}
+.pc-overview a.pf-tile:hover,.pc-overview button.pf-tile:hover,.pc-overview .pf-tile:focus-visible{outline:none;background:#11161e}
+.pc-overview .pf-tile-label{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#a0a1a2;font-size:12px;line-height:18px}
+.pc-overview .pf-tile-label svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pc-overview .pf-tile-value{display:flex;align-items:center;gap:8px;font-size:18px;line-height:28px;font-weight:600}
+.pc-overview .pf-tile-cta{color:var(--nt-accent);font-size:12px;line-height:18px;font-weight:500}
+.pc-overview .pf-tile-sub{color:#b4b5b6;font-size:12px;line-height:18px}
+.pc-overview .pf-good{color:#2bc287;font-size:14px;font-weight:500}
+.pc-overview .pf-bar{display:block;height:4px;border-radius:999px;background:#232528;overflow:hidden}
+.pc-overview .pf-bar span{display:block;height:100%;border-radius:inherit;background:var(--nt-accent)}
+.pc-overview .pf-bar.ok span{background:#2bc287}
+.pc-overview .pf-dot{display:inline-block;flex-shrink:0;width:8px;height:8px;border-radius:50%}
+.pc-overview .pf-dot.warn{background:#fcd34d}
+.pc-overview .pf-dot.ok{background:#2bc287}
+.pc-overview .pf-dot.accent{background:var(--nt-accent)}
+.pc-overview .pf-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px;align-items:start}
+.pc-overview .pf-side{display:grid;gap:16px;justify-items:start}
+.pc-overview .pf-side>.pf-box{width:100%}
+.pc-overview .pf-box-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;border-bottom:1px solid #191b1f}
+#main-content .pc-overview .pf-box-head h2{letter-spacing:normal;margin:0;font-size:16px;line-height:25.6px;font-weight:600}
+.pc-overview .pf-box-head small{color:#a0a1a2;font-size:12px;line-height:18px}
+.pc-overview .pf-group{padding:0 0 4px}
+.pc-overview .pf-group+.pf-group{border-top:1px solid #191b1f}
+#main-content .pc-overview .pf-group h3{letter-spacing:normal;margin:0;padding:12px 20px 8px;color:#a0a1a2;font-size:12px;line-height:18px;font-weight:600}
+.pc-overview .pf-row{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:8px 20px;color:#fff;font-size:15px;line-height:22px;text-align:left}
+.pc-overview .pf-row>svg:first-child{width:18px;height:18px;flex-shrink:0;color:#a0a1a2;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pc-overview .pf-row-label{flex:1;min-width:0;overflow-wrap:anywhere}
+.pc-overview .pf-row-value{display:inline-flex;align-items:center;gap:6px;max-width:55%;color:#a0a1a2;font-size:14px;line-height:20px;text-align:right;overflow-wrap:anywhere}
+.pc-overview .pf-chev{width:16px;height:16px;flex-shrink:0;color:#a0a1a2;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pc-overview a.pf-row:hover,.pc-overview button.pf-row:hover:not(:disabled){background:#ffffff06}
+.pc-overview a.pf-row:focus-visible,.pc-overview button.pf-row:focus-visible{outline:none;background:#ffffff0a}
+.pc-overview a.pf-row:focus-visible .pf-row-label,.pc-overview button.pf-row:focus-visible .pf-row-label{text-decoration:underline}
+.pc-overview button.pf-row:disabled{cursor:progress}
+.pc-overview .pf-row.static{cursor:default}
+.pc-overview .pf-switch{position:relative;flex-shrink:0;width:40px;height:22px;border-radius:999px;background:#2a2e32;transition:background .15s ease-out}
+.pc-overview .pf-switch span{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s ease-out}
+.pc-overview .pf-switch[aria-checked=true]{background:var(--nt-accent)}
+.pc-overview .pf-switch[aria-checked=true] span{transform:translateX(18px);background:var(--nt-bg)}
+.pc-overview .pf-switch:focus-visible{outline:none;background:#3a3f45}
+.pc-overview .pf-switch[aria-checked=true]:focus-visible{background:#c4ff8a}
+.pc-overview .pf-switch:disabled{opacity:.6;cursor:progress}
+.pc-overview .pf-switch-skeleton{flex-shrink:0;border-radius:999px}
+.pc-overview .pf-logout{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;border:1px solid #1e2023;border-radius:999px;background:#05070b;color:#b4b5b6;font-size:12px}
+.pc-overview .pf-logout svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pc-overview .pf-logout:hover{color:#fff}
+.pc-overview .pf-logout:focus-visible{outline:none;color:#fff;text-decoration:underline}
+@media(prefers-reduced-motion:reduce){.pc-overview .pf-switch,.pc-overview .pf-switch span{transition:none}}
+@media(max-width:1023px){.pc-overview .pf-tiles{grid-auto-flow:row;grid-template-columns:repeat(2,minmax(0,1fr))}.pc-overview .pf-columns{grid-template-columns:1fr}}
+@media(max-width:640px){.pc-overview .pf-tiles{grid-template-columns:1fr}}

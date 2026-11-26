@@ -524,6 +524,11 @@
       "sameAsOld": "새 자금 비밀번호는 현재와 달라야 합니다",
       "saved": "자금 비밀번호를 설정했습니다",
       "changed": "자금 비밀번호를 변경했습니다"
+    },
+    "rows": {
+      "twoFactor": "2단계 인증",
+      "unread": "읽지 않음 {{count}}개",
+      "backToProfile": "마이페이지"
     }
   }
 }

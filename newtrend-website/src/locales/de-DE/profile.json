@@ -524,6 +524,11 @@
       "sameAsOld": "Das neue Fondspasswort muss sich vom aktuellen unterscheiden",
       "saved": "Fondspasswort festgelegt",
       "changed": "Fondspasswort geändert"
+    },
+    "rows": {
+      "twoFactor": "Zwei-Faktor-Authentifizierung",
+      "unread": "{{count}} ungelesen",
+      "backToProfile": "Persönlicher Bereich"
     }
   }
 }
