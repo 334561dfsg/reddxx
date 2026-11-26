@@ -128,7 +128,15 @@
       "generic": "Umwandlung fehlgeschlagen, bitte versuchen Sie es später erneut",
       "genericWithId": "Umwandlung fehlgeschlagen, bitte versuchen Sie es später erneut. (Ref: {{requestId}})"
     },
-    "success": "{{fromAmount}} {{fromAsset}} in {{toAmount}} {{toAsset}} umgewandelt"
+    "success": "{{fromAmount}} {{fromAsset}} in {{toAmount}} {{toAsset}} umgewandelt",
+    "fromLabel": "Von",
+    "toLabel": "Nach",
+    "quantity": "Tauschmenge",
+    "swap": "Beide Assets tauschen",
+    "rateLabel": "Kurs",
+    "assetsRequired": "Wählen Sie die zu tauschenden Assets",
+    "amountTooSmall": "Der Betrag ist zu klein zum Tauschen",
+    "recordLabel": "Blitztausch {{from}} → {{to}} (erhalten {{receive}} {{to}})"
   },
   "records": {
     "title": "Transaktionsverlauf",

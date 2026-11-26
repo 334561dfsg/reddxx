@@ -128,7 +128,15 @@
       "generic": "コンバートに失敗しました。後ほどお試しください",
       "genericWithId": "コンバートに失敗しました。後ほどお試しください。(参照: {{requestId}})"
     },
-    "success": "{{fromAmount}} {{fromAsset}} を {{toAmount}} {{toAsset}} にコンバートしました"
+    "success": "{{fromAmount}} {{fromAsset}} を {{toAmount}} {{toAsset}} にコンバートしました",
+    "fromLabel": "交換元",
+    "toLabel": "交換先",
+    "quantity": "交換数量",
+    "swap": "2 つの通貨を入れ替える",
+    "rateLabel": "参考レート",
+    "assetsRequired": "交換する通貨を選択してください",
+    "amountTooSmall": "交換数量が少なすぎます",
+    "recordLabel": "即時交換 {{from}} → {{to}}（受取 {{receive}} {{to}}）"
   },
   "records": {
     "title": "取引記録",

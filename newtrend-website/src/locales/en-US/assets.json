@@ -128,7 +128,15 @@
       "generic": "Conversion failed, please try again later",
       "genericWithId": "Conversion failed, please try again later. (Ref: {{requestId}})"
     },
-    "success": "Converted {{fromAmount}} {{fromAsset}} to {{toAmount}} {{toAsset}}"
+    "success": "Converted {{fromAmount}} {{fromAsset}} to {{toAmount}} {{toAsset}}",
+    "fromLabel": "From",
+    "toLabel": "To",
+    "quantity": "Exchange quantity",
+    "swap": "Swap the two assets",
+    "rateLabel": "Rate",
+    "assetsRequired": "Select the assets to exchange",
+    "amountTooSmall": "The amount is too small to exchange",
+    "recordLabel": "Flash exchange {{from}} → {{to}} (received {{receive}} {{to}})"
   },
   "records": {
     "title": "Transaction Records",

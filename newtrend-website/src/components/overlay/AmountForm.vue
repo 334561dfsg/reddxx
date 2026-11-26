@@ -10,7 +10,7 @@ import {getAssetsOverview,spendFunds,walletErrorKey} from '../../api/wallet.js'
 import {invalidate,useMutation,useRequest} from '../../composables/useRequest.js'
 import {money} from '../../utils/format.js'
 
-// Generic amount dialog body for donate (charity) and convert (assets USDT → USDC 1:1).
+// Generic amount dialog body for donate (charity). 閃兌 has its own dialog (FlashExchange).
 // Spends from the shared ledger; the shell's footer submits it through form="action-form".
 const props=defineProps({kind:{type:String,required:true},data:{type:Object,required:true}})
 const emit=defineEmits(['state'])

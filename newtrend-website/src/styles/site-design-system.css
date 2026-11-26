@@ -103,10 +103,10 @@
 #site-shell .header-dropdown .menu-row,#site-shell .header-dropdown>.menu-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:0;padding:8px 16px;border-radius:0;font-size:14px;line-height:20px;font-weight:400;color:#fff;text-align:left;white-space:nowrap;transition:background-color 150ms}
 #site-shell .header-dropdown>.menu-row.view-all,#site-shell .header-dropdown>.menu-row.logout{padding:12px 16px}
 #site-shell .header-dropdown>.menu-row.logout{color:#f46}
-#site-shell .header-dropdown .menu-row:hover,#site-shell .header-dropdown .menu-row:focus-visible,#site-shell .assets-quick-actions>a:hover,#site-shell .assets-quick-actions>a:focus-visible{background:color-mix(in srgb,#fff 14%,var(--nt-bg));outline:none}
+#site-shell .header-dropdown .menu-row:hover,#site-shell .header-dropdown .menu-row:focus-visible,#site-shell .assets-quick-actions>:is(a,button):hover,#site-shell .assets-quick-actions>:is(a,button):focus-visible{background:color-mix(in srgb,#fff 14%,var(--nt-bg));outline:none}
 #site-shell .header-dropdown .menu-row:hover:not(.logout){color:#fff}
 #site-shell .header-dropdown .menu-row.logout:hover{color:#f46}
-#site-shell .header-dropdown .menu-row:focus-visible,#site-shell .assets-quick-actions>a:focus-visible{text-decoration:underline;text-underline-offset:3px}
+#site-shell .header-dropdown .menu-row:focus-visible,#site-shell .assets-quick-actions>:is(a,button):focus-visible{text-decoration:underline;text-underline-offset:3px}
 #site-shell .header-dropdown .view-all .nt-icon{width:16px;height:16px;opacity:.62}
 #site-shell .header-dropdown .menu-list{padding:4px 0}
 #site-shell .assets-summary{padding:16px}
@@ -118,7 +118,7 @@
 #site-shell .assets-summary-value strong{font-size:24px;line-height:32px;font-weight:700}
 #site-shell .assets-summary-value span{font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,var(--nt-bg))}
 #site-shell .assets-quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px}
-#site-shell .assets-quick-actions>a{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;border-radius:var(--nt-radius-panel);font-size:12px;line-height:16px;color:#fff;transition:background-color 150ms}
+#site-shell .assets-quick-actions>:is(a,button){display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;border-radius:var(--nt-radius-panel);font-size:12px;line-height:16px;color:#fff;transition:background-color 150ms}
 #site-shell .assets-quick-actions .nt-icon{width:16px;height:16px}
 #site-shell .profile-summary{display:flex;align-items:center;gap:12px;padding:12px 16px}
 #site-shell .profile-summary>div{min-width:0;flex:1}

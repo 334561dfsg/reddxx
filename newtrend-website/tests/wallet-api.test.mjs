@@ -47,15 +47,35 @@ test('withdrawal and deposit voucher stay pending and validate inputs', async ()
   assert.equal(record.kind, 'deposit')
 })
 
-test('convert debits once and credits USDC; donate only debits; limits use locale codes', async () => {
+test('donate debits once; limits use locale codes', async () => {
   const usdt = balanceOf(DEMO, 'USDT'), usdc = balanceOf(DEMO, 'USDC')
-  await api.spendFunds({mode: DEMO, kind: 'convert', amount: 100, min: 1})
-  assert.equal(balanceOf(DEMO, 'USDT'), usdt - 100)
-  assert.equal(balanceOf(DEMO, 'USDC'), usdc + 100)
   await api.spendFunds({mode: DEMO, kind: 'donate', amount: 50, min: 1})
-  assert.equal(balanceOf(DEMO, 'USDC'), usdc + 100)
-  await assert.rejects(api.spendFunds({mode: DEMO, kind: 'convert', amount: 0.5, min: 1}), {code: 'overlay.amountMinimum'})
+  assert.equal(balanceOf(DEMO, 'USDT'), usdt - 50)
+  assert.equal(balanceOf(DEMO, 'USDC'), usdc, 'donate credits nothing')
+  await assert.rejects(api.spendFunds({mode: DEMO, kind: 'donate', amount: 0.5, min: 1}), {code: 'overlay.amountMinimum'})
   await assert.rejects(api.spendFunds({mode: REAL, kind: 'donate', amount: 5}), {code: 'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally'})
+})
+
+test('flash exchange converts at the price ratio, records once and validates', async () => {
+  const assets = await api.listFlashAssets(DEMO)
+  assert.deepEqual(assets.map(a => a.asset), ['USDT', 'USDC', 'BTC', 'ETH', 'SOL'])
+  const quote = await api.quoteFlashExchange({from: 'BTC', to: 'USDT', amount: 0.01})
+  assert.equal(quote.rate, 50000)
+  assert.equal(quote.receive, 500)
+  assert.equal((await api.quoteFlashExchange({from: 'USDT', to: 'BTC', amount: 1000})).receive, 0.02)
+  const btc = balanceOf(DEMO, 'BTC'), usdt = balanceOf(DEMO, 'USDT'), records = (await api.listWalletRecords(DEMO)).length
+  const done = await api.flashExchange({mode: DEMO, from: 'BTC', to: 'USDT', amount: 0.01})
+  assert.equal(done.receive, 500)
+  assert.ok(Math.abs(balanceOf(DEMO, 'BTC') - (btc - 0.01)) < 1e-12)
+  assert.equal(balanceOf(DEMO, 'USDT'), usdt + 500)
+  const list = await api.listWalletRecords(DEMO)
+  assert.equal(list.length, records + 1)
+  assert.equal(list[0].kind, 'exchange')
+  await assert.rejects(api.flashExchange({mode: DEMO, from: 'BTC', to: 'BTC', amount: 1}), {code: 'assets.convert.sameAsset'})
+  await assert.rejects(api.flashExchange({mode: DEMO, from: 'BTC', to: 'USDT', amount: 0}), {code: 'assets.convert.amountRequired'})
+  await assert.rejects(api.flashExchange({mode: DEMO, from: 'BTC', to: 'USDT', amount: 1e6}), {code: 'assets.convert.amountExceeds'})
+  await assert.rejects(api.flashExchange({mode: REAL, from: 'USDT', to: 'BTC', amount: 10}), {code: 'assets.convert.amountExceeds'})
+  await assert.rejects(api.flashExchange({mode: DEMO, from: 'USDT', to: 'BTC', amount: 0.0000001}), {code: 'assets.convert.amountTooSmall'})
 })
 
 test('injected outage rejects with network', async () => {

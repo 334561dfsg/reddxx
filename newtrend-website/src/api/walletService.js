@@ -88,8 +88,8 @@ export function createWalletApi({accountValues, priceOf, fundPassword = null}) {
   })
 
   /**
-   * POST /assets/spend {mode, kind: 'convert'|'donate', symbol, amount, min, max} — debits the ledger once;
-   * convert also credits USDC 1:1. Rejects with the amount-form locale keys (params for the minimum).
+   * POST /assets/spend {mode, kind: 'donate', symbol, amount, min, max} — debits the ledger once;
+   * Rejects with the amount-form locale keys (params for the minimum). (閃兌 is flashExchange below.)
    */
   const spendFunds = ({mode, kind, symbol = 'USDT', amount, min = 0.01, max = 500000}) => mockCall(SERVICE, () => {
     const value = Number(amount)
@@ -98,9 +98,43 @@ export function createWalletApi({accountValues, priceOf, fundPassword = null}) {
     if (value > (balancesOf(mode)[symbol] || 0) || !debit(mode, symbol, value)) {
       throw new ApiError(mode === DEMO ? 'assets.withdraw.error.insufficientBalance' : 'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally')
     }
-    if (kind === 'convert') credit(mode, 'USDC', value)
     return {amount: value}
   })
 
-  return {getAssetsOverview, listWalletRecords, transferFunds, checkWithdrawal, requestWithdrawal, submitDepositVoucher, spendFunds}
+  // 閃兌 (flash exchange): instant conversion between the funding wallet's assets at the server's USDT price
+  // snapshot (rate = price(from) / price(to)), no fee. The quote is informational; the exchange re-prices on the server.
+  const FLASH_ASSETS = ['USDT', 'USDC', 'BTC', 'ETH', 'SOL']
+  const DECIMALS = {USDT: 2, USDC: 2, BTC: 8, ETH: 8, SOL: 6}
+  const floorTo = (value, asset) => Math.floor(value * 10 ** DECIMALS[asset]) / 10 ** DECIMALS[asset]
+  function flashRate(from, to) {
+    if (!FLASH_ASSETS.includes(from) || !FLASH_ASSETS.includes(to)) throw new ApiError('assets.convert.error.generic')
+    if (from === to) throw new ApiError('assets.convert.sameAsset')
+    const fromPrice = priceOf(from), toPrice = priceOf(to)
+    if (!(fromPrice > 0) || !(toPrice > 0)) throw new ApiError('assets.convert.error.generic')
+    return fromPrice / toPrice
+  }
+
+  /** GET /assets/flash-exchange/assets?mode= — exchangeable assets with the mode's available balance. */
+  const listFlashAssets = mode => mockCall(SERVICE, () => FLASH_ASSETS.map(asset => ({asset, available: balancesOf(mode)[asset] || 0})))
+
+  /** GET /assets/flash-exchange/quote?from=&to=&amount= — {rate, receive}; amount is optional. */
+  const quoteFlashExchange = ({from, to, amount = 0}) => mockCall(SERVICE, () => {
+    const rate = flashRate(from, to)
+    return {rate, receive: positive(amount) ? floorTo(Number(amount) * rate, to) : 0}
+  })
+
+  /** POST /assets/flash-exchange {mode, from, to, amount} — debits `from`, credits `to` at the current rate, records it. */
+  const flashExchange = ({mode, from, to, amount}) => mockCall(SERVICE, () => {
+    const rate = flashRate(from, to), value = Number(amount)
+    if (!positive(amount)) throw new ApiError('assets.convert.amountRequired')
+    const receive = floorTo(value * rate, to)
+    if (!(receive > 0)) throw new ApiError('assets.convert.amountTooSmall')
+    if (value > (balancesOf(mode)[from] || 0)) throw new ApiError('assets.convert.amountExceeds')
+    if (!debit(mode, from, value)) throw new ApiError('assets.convert.amountExceeds')
+    credit(mode, to, receive)
+    addWalletRecord(mode, 'exchange', {label: {key: 'assets.convert.recordLabel', params: {from, to, receive: String(receive)}}, amount: value, symbol: from})
+    return {from, to, amount: value, receive, rate}
+  })
+
+  return {getAssetsOverview, listWalletRecords, transferFunds, checkWithdrawal, requestWithdrawal, submitDepositVoucher, spendFunds, listFlashAssets, quoteFlashExchange, flashExchange}
 }

@@ -128,7 +128,15 @@
       "generic": "兌換失敗，請稍後重試",
       "genericWithId": "兌換失敗，請稍後重試。（追蹤碼：{{requestId}}）"
     },
-    "success": "已將 {{fromAmount}} {{fromAsset}} 兌換為 {{toAmount}} {{toAsset}}"
+    "success": "已將 {{fromAmount}} {{fromAsset}} 兌換為 {{toAmount}} {{toAsset}}",
+    "fromLabel": "兌出",
+    "toLabel": "兌入",
+    "quantity": "閃兌數量",
+    "swap": "交換兌出與兌入幣種",
+    "rateLabel": "參考匯率",
+    "assetsRequired": "請選擇兌出與兌入幣種",
+    "amountTooSmall": "兌換數量過小",
+    "recordLabel": "閃兌 {{from}} → {{to}}（獲得 {{receive}} {{to}}）"
   },
   "records": {
     "title": "交易記錄",
