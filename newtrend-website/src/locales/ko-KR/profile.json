@@ -219,5 +219,234 @@
     "currentTierLabel": "현재 등급",
     "baseTier": "기본",
     "tiersLabel": "등급 사다리"
+  },
+  "center": {
+    "nav": {
+      "label": "마이페이지",
+      "overview": "개요",
+      "preferences": "환경설정",
+      "security": "보안 센터",
+      "identity": "신원 인증",
+      "records": "계정 변동 내역",
+      "invite": "친구 초대",
+      "notifications": "알림",
+      "clearCache": "캐시 지우기",
+      "helpCenter": "고객센터"
+    },
+    "loadFailed": "불러오지 못했습니다. 다시 시도해 주세요.",
+    "overview": {
+      "uid": "UID: {{uid}}",
+      "credit": "신용 점수: {{score}}",
+      "vip": "VIP {{tier}}",
+      "copyUid": "UID 복사",
+      "quickLinks": "바로가기"
+    },
+    "preferences": {
+      "title": "환경설정",
+      "messageAlert": "메시지 알림",
+      "messageAlertHint": "고객센터가 답장하면 알림 표시",
+      "language": "언어",
+      "version": "버전",
+      "logout": "로그아웃",
+      "saved": "설정을 저장했습니다",
+      "saveFailed": "설정을 저장하지 못했습니다",
+      "selectLanguage": "선택해 주세요",
+      "searchLanguage": "언어 검색",
+      "noLanguage": "일치하는 언어가 없습니다"
+    },
+    "security": {
+      "title": "보안 센터",
+      "subtitle": "로그인 방법과 인증 연락처를 관리해 계정과 자산을 보호하세요.",
+      "loginPassword": "로그인 비밀번호",
+      "loginPasswordHint": "정기적으로 변경하고 다른 사이트와 같은 비밀번호를 쓰지 마세요.",
+      "changePassword": "비밀번호 변경",
+      "contacts": "인증 연락처",
+      "email": "이메일",
+      "phone": "휴대폰",
+      "bind": "연동",
+      "change": "변경",
+      "notBound": "미연동",
+      "back": "보안 센터로 돌아가기",
+      "passwordNotice": "계정 보안을 위해 기기와 네트워크가 신뢰할 수 있는지 확인한 뒤 변경하세요. 공용 기기에서는 변경하지 마세요.",
+      "confirmChange": "변경 확인"
+    },
+    "identity": {
+      "title": "신원 인증",
+      "subtitle": "기본 인증을 완료하고 심사를 통과한 뒤 목록에 따라 고급 인증 서류를 업로드하세요.",
+      "currentProgress": "현재 진행 상황",
+      "progress": "진행 단계",
+      "steps": {
+        "submitBasic": "기본 정보 제출",
+        "basicReview": "기본 심사",
+        "submitAdvanced": "고급 서류 제출",
+        "advancedReview": "고급 심사"
+      },
+      "stepHints": {
+        "submitBasic": "기본 정보와 신분증 입력",
+        "basicReview": "플랫폼이 기본 인증을 심사",
+        "submitAdvanced": "목록의 서류 업로드",
+        "advancedReview": "플랫폼이 고급 인증을 심사"
+      },
+      "status": {
+        "submitBasic": "기본 인증을 제출해 주세요",
+        "basicReview": "기본 인증 심사 중",
+        "submitAdvanced": "고급 인증을 제출해 주세요",
+        "advancedReview": "고급 인증 심사 중",
+        "done": "인증 완료"
+      },
+      "todo": "해야 할 일",
+      "todoItems": {
+        "basic": "기본 정보를 제출하고 심사를 기다리기",
+        "advanced": "기본 인증 승인 후 고급 서류 업로드",
+        "result": "고급 심사 결과 기다리기"
+      },
+      "stepOf": "단계 {{step}} / {{total}}",
+      "toSubmit": "제출 대기",
+      "inReview": "심사 중",
+      "basicTitle": "기본 인증",
+      "advancedTitle": "고급 인증",
+      "reviewHint": "제출한 내용이 심사 대기 중입니다. 결과는 알림으로 안내합니다.",
+      "simulateApprove": "승인 시뮬레이션(데모)",
+      "approved": "승인됨(데모)"
+    },
+    "records": {
+      "title": "계정 변동 내역",
+      "changeType": "변동 유형",
+      "accountType": "계정 유형",
+      "currency": "통화",
+      "all": "전체",
+      "reset": "초기화",
+      "columns": {
+        "type": "변동 유형",
+        "account": "계정",
+        "currency": "통화",
+        "amount": "변동 금액",
+        "balance": "잔액",
+        "time": "시간"
+      },
+      "accounts": {
+        "funding": "자금 계정",
+        "spot": "현물",
+        "futures": "선물",
+        "finance": "재테크"
+      },
+      "types": {
+        "deposit": "입금",
+        "withdraw": "출금",
+        "transfer": "이체",
+        "spotBuy": "현물 매수",
+        "spotSell": "현물 매도",
+        "tradeFee": "거래 수수료",
+        "marginFreeze": "증거금 동결",
+        "marginSettle": "증거금 정산",
+        "fundingFee": "펀딩 수수료",
+        "earnSubscribe": "Earn 가입",
+        "earnRedeem": "Earn 해지",
+        "earnInterest": "Earn 수익",
+        "loanDisbursement": "대출 실행",
+        "loanRepayment": "대출 상환",
+        "collateralFreeze": "담보 동결",
+        "collateralRelease": "담보 해제",
+        "strategySubscribe": "AI 전략 가입",
+        "strategySettle": "AI 전략 정산",
+        "quantFundSubscribe": "퀀트 펀드 가입",
+        "quantFundRedeem": "퀀트 펀드 환매",
+        "inviteCommission": "초대 수수료"
+      },
+      "empty": "조건에 맞는 내역이 없습니다",
+      "invalidFilter": "필터가 올바르지 않습니다. 초기화 후 다시 시도해 주세요.",
+      "back": "마이페이지로 돌아가기"
+    },
+    "invite": {
+      "title": "친구 초대",
+      "myCode": "나의 초대",
+      "code": "초대 코드",
+      "link": "초대 링크",
+      "copyCode": "코드 복사",
+      "copyLink": "링크 복사",
+      "qr": "스캔하여 가입",
+      "qrAlt": "초대 링크 QR 코드",
+      "invited": "초대함",
+      "pending": "정산 대기(USDT)",
+      "settled": "정산 완료(USDT)"
+    },
+    "notifications": {
+      "title": "알림",
+      "subtitle": "시스템, 보안, 이벤트 메시지가 여기에 표시됩니다.",
+      "all": "전체",
+      "categories": {
+        "security": "보안",
+        "system": "시스템",
+        "promo": "이벤트"
+      },
+      "markAllRead": "모두 읽음으로 표시",
+      "markedAllRead": "모든 메시지를 읽음으로 표시했습니다",
+      "nothingUnread": "읽지 않은 메시지가 없습니다",
+      "unread": "읽지 않음",
+      "empty": "메시지가 없습니다",
+      "notFound": "이 메시지는 더 이상 존재하지 않습니다",
+      "invalidCategory": "알 수 없는 메시지 분류입니다",
+      "headerLabel": "알림, 읽지 않음 {{count}}개",
+      "kinds": {
+        "loginNewIp": {
+          "title": "새 로그인 감지",
+          "body": "IP {{ip}}에서 계정에 로그인했습니다. 본인이 아니라면 즉시 비밀번호를 변경하세요."
+        },
+        "depositCredited": {
+          "title": "입금 완료",
+          "body": "{{amount}} {{currency}}가 자금 계정에 입금되었습니다."
+        },
+        "earnLaunch": {
+          "title": "Earn 신상품 출시",
+          "body": "최대 연 {{apy}}의 새 정기 상품 가입이 시작되었습니다."
+        },
+        "earnApproved": {
+          "title": "가입 승인",
+          "body": "{{product}} 가입이 승인되어 이자가 발생하기 시작했습니다."
+        },
+        "passwordChanged": {
+          "title": "로그인 비밀번호 변경됨",
+          "body": "로그인 비밀번호가 변경되었습니다. 본인이 아니라면 즉시 고객센터에 문의하세요."
+        },
+        "withdrawSubmitted": {
+          "title": "출금 신청 완료",
+          "body": "{{amount}} {{currency}} 출금을 처리하고 있습니다."
+        },
+        "inviteCommission": {
+          "title": "초대 수수료 정산",
+          "body": "{{amount}} {{currency}}의 초대 수수료가 정산되었습니다."
+        },
+        "tradingCompetition": {
+          "title": "트레이딩 대회",
+          "body": "이번 달 트레이딩 대회에 참가해 {{prize}} 상금을 나눠 가지세요."
+        },
+        "loanApproved": {
+          "title": "대출 승인",
+          "body": "{{amount}} {{currency}} 대출이 승인되어 실행되었습니다."
+        },
+        "kycSubmitted": {
+          "title": "인증 서류 제출됨",
+          "body": "신원 인증 서류가 제출되어 심사를 기다리고 있습니다."
+        },
+        "strategySettled": {
+          "title": "AI 전략 정산",
+          "body": "AI 전략이 정산되었습니다. 결과는 {{pnl}}입니다."
+        },
+        "vipUpgrade": {
+          "title": "VIP 승급 임박",
+          "body": "VIP {{tier}}까지 얼마 남지 않았습니다. 거래할수록 수수료가 낮아집니다."
+        },
+        "maintenance": {
+          "title": "정기 점검 안내",
+          "body": "{{window}} 동안 일부 서비스가 잠시 중단됩니다."
+        }
+      }
+    },
+    "clearCache": {
+      "title": "캐시 지우기",
+      "description": "캐시된 페이지 데이터를 지우고 서버에서 다시 불러옵니다. 언어와 로그인 상태는 유지됩니다.",
+      "confirm": "지우기",
+      "done": "캐시를 지웠습니다"
+    }
   }
 }

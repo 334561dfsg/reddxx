@@ -219,5 +219,234 @@
     "currentTierLabel": "Current tier",
     "baseTier": "Base",
     "tiersLabel": "Tier ladder"
+  },
+  "center": {
+    "nav": {
+      "label": "Personal center",
+      "overview": "Overview",
+      "preferences": "Preferences",
+      "security": "Security center",
+      "identity": "Identity verification",
+      "records": "Account change records",
+      "invite": "Invite friends",
+      "notifications": "Notifications",
+      "clearCache": "Clear cache",
+      "helpCenter": "Help center"
+    },
+    "loadFailed": "Couldn't load. Please try again.",
+    "overview": {
+      "uid": "UID: {{uid}}",
+      "credit": "Credit score: {{score}}",
+      "vip": "VIP {{tier}}",
+      "copyUid": "Copy UID",
+      "quickLinks": "Quick access"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "messageAlert": "Message alerts",
+      "messageAlertHint": "Show a reminder when customer service replies",
+      "language": "Language",
+      "version": "Version",
+      "logout": "Log out",
+      "saved": "Preference saved",
+      "saveFailed": "Couldn't save the preference",
+      "selectLanguage": "Please select",
+      "searchLanguage": "Search languages",
+      "noLanguage": "No matching language"
+    },
+    "security": {
+      "title": "Security center",
+      "subtitle": "Manage your sign-in methods and verification contacts to protect your account and funds.",
+      "loginPassword": "Login password",
+      "loginPasswordHint": "Change it regularly and never reuse it on other websites.",
+      "changePassword": "Change password",
+      "contacts": "Verification contacts",
+      "email": "Email",
+      "phone": "Phone",
+      "bind": "Bind",
+      "change": "Change",
+      "notBound": "Not bound",
+      "back": "Back to security center",
+      "passwordNotice": "For your account security, make sure this device and network are trusted before changing it. Do not do this on public equipment.",
+      "confirmChange": "Confirm change"
+    },
+    "identity": {
+      "title": "Identity verification",
+      "subtitle": "Complete basic verification and pass review, then upload the advanced verification documents.",
+      "currentProgress": "Current progress",
+      "progress": "Progress",
+      "steps": {
+        "submitBasic": "Submit basic information",
+        "basicReview": "Basic review",
+        "submitAdvanced": "Submit advanced documents",
+        "advancedReview": "Advanced review"
+      },
+      "stepHints": {
+        "submitBasic": "Fill in your details and ID documents",
+        "basicReview": "The platform reviews basic verification",
+        "submitAdvanced": "Upload the documents listed",
+        "advancedReview": "The platform reviews advanced verification"
+      },
+      "status": {
+        "submitBasic": "Please submit basic verification",
+        "basicReview": "Basic verification under review",
+        "submitAdvanced": "Please submit advanced verification",
+        "advancedReview": "Advanced verification under review",
+        "done": "Verification complete"
+      },
+      "todo": "What you need to do",
+      "todoItems": {
+        "basic": "Submit basic information and wait for review",
+        "advanced": "After basic approval, upload the advanced documents",
+        "result": "Wait for the advanced review result"
+      },
+      "stepOf": "Step {{step}} / {{total}}",
+      "toSubmit": "To submit",
+      "inReview": "In review",
+      "basicTitle": "Basic verification",
+      "advancedTitle": "Advanced verification",
+      "reviewHint": "Your submission is in the review queue. We'll notify you of the result.",
+      "simulateApprove": "Simulate approval (demo)",
+      "approved": "Approved (demo)"
+    },
+    "records": {
+      "title": "Account change records",
+      "changeType": "Change type",
+      "accountType": "Account type",
+      "currency": "Currency",
+      "all": "All",
+      "reset": "Reset",
+      "columns": {
+        "type": "Change type",
+        "account": "Account",
+        "currency": "Currency",
+        "amount": "Change amount",
+        "balance": "Balance",
+        "time": "Time"
+      },
+      "accounts": {
+        "funding": "Funding",
+        "spot": "Spot",
+        "futures": "Futures",
+        "finance": "Finance"
+      },
+      "types": {
+        "deposit": "Deposit",
+        "withdraw": "Withdrawal",
+        "transfer": "Transfer",
+        "spotBuy": "Spot buy",
+        "spotSell": "Spot sell",
+        "tradeFee": "Trading fee",
+        "marginFreeze": "Margin freeze",
+        "marginSettle": "Margin settlement",
+        "fundingFee": "Funding fee",
+        "earnSubscribe": "Earn subscription",
+        "earnRedeem": "Earn redemption",
+        "earnInterest": "Earn interest",
+        "loanDisbursement": "Loan disbursement",
+        "loanRepayment": "Loan repayment",
+        "collateralFreeze": "Collateral freeze",
+        "collateralRelease": "Collateral release",
+        "strategySubscribe": "AI strategy subscription",
+        "strategySettle": "AI strategy settlement",
+        "quantFundSubscribe": "Quant fund subscription",
+        "quantFundRedeem": "Quant fund redemption",
+        "inviteCommission": "Invite commission"
+      },
+      "empty": "No records match these filters",
+      "invalidFilter": "Invalid filter. Please reset and try again.",
+      "back": "Back to personal center"
+    },
+    "invite": {
+      "title": "Invite friends",
+      "myCode": "My invitation",
+      "code": "Invitation code",
+      "link": "Invitation link",
+      "copyCode": "Copy code",
+      "copyLink": "Copy link",
+      "qr": "Scan to register",
+      "qrAlt": "Invitation link QR code",
+      "invited": "Invited",
+      "pending": "Pending (USDT)",
+      "settled": "Settled (USDT)"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "System, security and campaign messages are listed here.",
+      "all": "All",
+      "categories": {
+        "security": "Security",
+        "system": "System",
+        "promo": "Promotions"
+      },
+      "markAllRead": "Mark all as read",
+      "markedAllRead": "All messages marked as read",
+      "nothingUnread": "No unread messages",
+      "unread": "Unread",
+      "empty": "No messages",
+      "notFound": "This message no longer exists",
+      "invalidCategory": "Unknown message category",
+      "headerLabel": "Notifications, {{count}} unread",
+      "kinds": {
+        "loginNewIp": {
+          "title": "New sign-in detected",
+          "body": "Your account signed in from IP {{ip}}. If this wasn't you, change your password now."
+        },
+        "depositCredited": {
+          "title": "Deposit credited",
+          "body": "{{amount}} {{currency}} has been credited to your funding account."
+        },
+        "earnLaunch": {
+          "title": "New Earn product",
+          "body": "A new fixed-term product with up to {{apy}} APY is now open for subscription."
+        },
+        "earnApproved": {
+          "title": "Subscription approved",
+          "body": "Your {{product}} subscription was approved and has started accruing."
+        },
+        "passwordChanged": {
+          "title": "Login password changed",
+          "body": "Your login password was changed. If this wasn't you, contact support immediately."
+        },
+        "withdrawSubmitted": {
+          "title": "Withdrawal submitted",
+          "body": "Your withdrawal of {{amount}} {{currency}} is being processed."
+        },
+        "inviteCommission": {
+          "title": "Invite commission settled",
+          "body": "Your invite commission of {{amount}} {{currency}} has been settled."
+        },
+        "tradingCompetition": {
+          "title": "Trading competition",
+          "body": "Join this month's trading competition and share a {{prize}} prize pool."
+        },
+        "loanApproved": {
+          "title": "Loan approved",
+          "body": "Your loan of {{amount}} {{currency}} was approved and disbursed."
+        },
+        "kycSubmitted": {
+          "title": "Verification submitted",
+          "body": "Your identity verification was submitted and is waiting for review."
+        },
+        "strategySettled": {
+          "title": "AI strategy settled",
+          "body": "Your AI strategy has been settled with a result of {{pnl}}."
+        },
+        "vipUpgrade": {
+          "title": "VIP upgrade available",
+          "body": "You're close to VIP {{tier}}. Trade more to unlock lower fees."
+        },
+        "maintenance": {
+          "title": "Scheduled maintenance",
+          "body": "Some services will be briefly unavailable during {{window}}."
+        }
+      }
+    },
+    "clearCache": {
+      "title": "Clear cache",
+      "description": "Cached page data will be cleared and reloaded from the server. Your language and sign-in stay as they are.",
+      "confirm": "Clear",
+      "done": "Cache cleared"
+    }
   }
 }

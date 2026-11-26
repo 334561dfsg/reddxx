@@ -1,114 +1,257 @@
-/* Account centre styles (formerly scoped in pages/Account.vue). Every rule is anchored to the account page roots
-   (.account-page / .account-center / .account-<route>) so it cannot leak into other pages. */
-.account-referrals .account-banner .section-gap{margin-top:16px}
-.account-referrals .account-banner .page-kicker{display:block;line-height:20px}
-:is(.account-page,.account-center) .profile-identity button .nt-icon{width:16px;height:16px}
-:is(.account-page,.account-center) .profile-identity button{padding:4px;min-width:32px;min-height:32px}
-:is(.account-page,.account-center) .account-heading h1{margin-top:24px}
-.account-center .account-heading h1{font-size:1.5rem;margin:0 0 20px}
-:is(.account-page,.account-center) .account-banner{margin-top:24px;border-radius:var(--nt-radius-panel);padding:36px 28px;border:1px solid #ffffff08;background:radial-gradient(ellipse at 100% 0,#a5ff4a0c,transparent 45%),#141619}
-.account-page .account-banner h1{margin:12px 0 16px;font-size:2.25rem;line-height:1.15}
-:is(.account-page,.account-center) .referral-bind,:is(.account-page,.account-center) .referral-share,:is(.account-page,.account-center) .referral-invitees,:is(.account-page,.account-center) .referral-stats>.card{border-radius:var(--nt-radius-panel);padding:20px}
-.account-referrals h2{font-size:.875rem;display:flex;align-items:center;gap:8px;font-family:inherit}
-:is(.account-page,.account-center) .referral-bind>p,:is(.account-page,.account-center) .referral-share>p{font-size:.75rem;margin:20px 0 16px}
-:is(.account-page,.account-center) .referral-bind-input{display:flex;gap:12px}
-:is(.account-page,.account-center) .referral-bind-input input{flex:1;min-width:0;min-height:36px;padding:6px 12px}
-:is(.account-page,.account-center) .referral-bind-input button{min-height:36px;padding:6px 16px;white-space:nowrap}
-:is(.account-page,.account-center) .referral-stats{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:12px}
-:is(.account-page,.account-center) .referral-code{grid-column:span 4}
-:is(.account-page,.account-center) .referral-code strong{font-size:1.5rem;letter-spacing:4px}
-:is(.account-page,.account-center) .referral-code .summary-line{margin-top:20px}
-:is(.account-page,.account-center) .referral-code .secondary-button,:is(.account-page,.account-center) .referral-share .secondary-button{font-size:.75rem;padding:6px 12px;min-height:32px}
-:is(.account-page,.account-center) .referral-stats small{font-size:.75rem;color:#fff6}
-:is(.account-page,.account-center) .referral-stats section>p{margin-top:16px}
-:is(.account-page,.account-center) .referral-share-content{display:flex;gap:16px;align-items:center}
-:is(.account-page,.account-center) .referral-share-content img{width:160px;height:160px;border-radius:var(--nt-radius-panel)}
-:is(.account-page,.account-center) .referral-share-content>div{flex:1;min-width:0}
-:is(.account-page,.account-center) .referral-share .demo-key{padding:10px 12px;margin:0 0 12px;background:#202226;font-size:.875rem}
-:is(.account-page,.account-center) .referral-invitees>h2{border-bottom:1px solid #ffffff08;margin:-20px -20px 0;padding:20px;font-size:1rem;font-weight:600}
-:is(.account-page,.account-center) .referral-invitees .empty{min-height:180px}
-.account-referrals .section-gap{margin-top:32px}
-@media(max-width:767px){:is(.account-page,.account-center) .account-banner{padding:28px 20px}
-:is(.account-page,.account-center) .account-banner h1{font-size:1.875rem}
-:is(.account-page,.account-center) .referral-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
-:is(.account-page,.account-center) .referral-stats>.card:not(.referral-code){padding:14px 8px}
-:is(.account-page,.account-center) .referral-share-content{flex-direction:column;align-items:stretch}
-:is(.account-page,.account-center) .referral-share-content img{margin:auto}
-:is(.account-page,.account-center) .referral-bind-input{flex-direction:column}
-:is(.account-page,.account-center) .referral-bind-input button{align-self:flex-end}
+/* Personal centre (pages/Account.vue and pages/account/*). Structure after gmxx.io/personal; look from the new skin:
+   #0c1017 cards with the #191b1f divider border, grey #a0a1a2 secondary text, lime accent, pill controls.
+   Every rule is anchored to .pc-shell so nothing leaks. Selection/focus use background and text, never rings. */
+.pc-shell{display:grid;grid-template-columns:248px minmax(0,1fr);gap:32px;align-items:start}
+
+/* Sidebar: member card + grouped nav. */
+.pc-shell .pc-side{position:sticky;top:88px;display:grid;gap:12px;min-width:0}
+.pc-shell .pc-member{display:flex;gap:12px;align-items:flex-start;padding:16px;border:1px solid #191b1f;border-radius:var(--nt-radius-panel);background:#0c1017}
+.pc-shell .pc-avatar{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#a5ff4a40,#1d2733 70%);color:#e6e7e9}
+.pc-shell .pc-avatar svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pc-shell .pc-avatar.large{width:72px;height:72px}
+.pc-shell .pc-avatar.large svg{width:34px;height:34px}
+.pc-shell .pc-member-text{display:grid;gap:4px;min-width:0}
+.pc-shell .pc-member-text strong{font-size:15px;line-height:22px;font-weight:600;overflow-wrap:anywhere}
+.pc-shell .pc-uid{display:inline-flex;align-items:center;gap:2px;font-size:12px;line-height:16px;color:#a0a1a2;font-variant-numeric:tabular-nums}
+.pc-shell .pc-uid button{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;color:#a0a1a2}
+.pc-shell .pc-uid button:hover,.pc-shell .pc-uid button:focus-visible{background:#ffffff0f;color:#fff;outline:none}
+.pc-shell .pc-uid svg,.pc-shell .pc-badge svg,.pc-shell .pc-link svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pc-shell .pc-badges{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.pc-shell .pc-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:#ffffff0f;color:#a0a1a2;font-size:11px;line-height:16px;font-weight:500}
+.pc-shell .pc-badge.vip{background:#f5b94a1a;color:#f5b94a}
+.pc-shell .pc-badge.ok{background:#2bc2871a;color:#2bc287}
+.pc-shell .pc-nav{padding:8px;border:1px solid #191b1f;border-radius:var(--nt-radius-panel);background:#0c1017}
+.pc-shell .pc-nav ul{display:grid;gap:2px;margin:0;padding:0;list-style:none}
+.pc-shell .pc-nav ul+ul{margin-top:8px;padding-top:8px;border-top:1px solid #191b1f}
+.pc-shell .pc-nav a,.pc-shell .pc-nav button{display:flex;align-items:center;gap:12px;width:100%;min-height:42px;padding:8px 12px;border-radius:12px;color:#a0a1a2;font-size:14px;line-height:20px;text-align:left}
+.pc-shell .pc-nav svg{width:18px;height:18px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pc-shell .pc-nav a:hover,.pc-shell .pc-nav button:hover{background:#ffffff08;color:#fff}
+.pc-shell .pc-nav a:focus-visible,.pc-shell .pc-nav button:focus-visible{outline:none;background:#ffffff0f;color:#fff;text-decoration:underline}
+.pc-shell .pc-nav a.active{background:#a5ff4a14;color:#fff;font-weight:600}
+.pc-shell .pc-nav a.active svg{color:var(--nt-accent)}
+
+/* Main column. */
+.pc-shell .pc-main{display:grid;gap:16px;min-width:0;align-content:start}
+.pc-shell .pc-title{margin:0;font-size:24px;line-height:32px;font-weight:600}
+.pc-shell .pc-subtitle{margin:-8px 0 0;color:#a0a1a2;font-size:14px;line-height:20px}
+.pc-shell .pc-section-label{margin:8px 0 -4px;font-size:12px;line-height:16px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:#a0a1a2}
+.pc-shell .pc-back{display:inline-flex;align-items:center;gap:6px;justify-self:start;color:#a0a1a2;font-size:14px;line-height:20px}
+.pc-shell .pc-back svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pc-shell .pc-back:hover,.pc-shell .pc-back:focus-visible{color:#fff;outline:none;text-decoration:underline}
+.pc-shell .pc-card{border:1px solid #191b1f;border-radius:var(--nt-radius-panel);background:#0c1017}
+.pc-shell .pc-muted{margin:0;color:#a0a1a2;font-size:13px;line-height:20px}
+.pc-shell .pc-muted.small{font-size:12px;line-height:18px}
+.pc-shell .pc-icon-tile{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#a5ff4a14;color:var(--nt-accent)}
+.pc-shell .pc-icon-tile.small{width:36px;height:36px;border-radius:10px;background:#ffffff0a;color:#e6e7e9}
+.pc-shell .pc-icon-tile.ok{width:56px;height:56px;border-radius:50%;background:#2bc2871a;color:#2bc287}
+.pc-shell .pc-icon-tile svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pc-shell .pc-icon-tile.small svg{width:17px;height:17px}
+
+/* Buttons: lime pill primary, dark pill default, lime text action. */
+.pc-shell .pc-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:7px 18px;border-radius:999px;background:#202326;color:#fff;font-size:14px;line-height:20px;font-weight:500;white-space:nowrap}
+.pc-shell .pc-button:hover:not(:disabled){background:#2a2e32}
+.pc-shell .pc-button.primary{background:var(--nt-accent);color:var(--nt-bg)}
+.pc-shell .pc-button.primary:hover:not(:disabled){background:#b6ff6a}
+.pc-shell .pc-button:focus-visible{outline:none;text-decoration:underline}
+.pc-shell .pc-button:disabled{opacity:.45;cursor:not-allowed}
+.pc-shell .pc-text-button{min-height:36px;padding:6px 4px;color:var(--nt-accent);font-size:14px;font-weight:500}
+.pc-shell .pc-text-button:disabled{color:#6b6d70;cursor:not-allowed}
+.pc-shell .pc-text-button:focus-visible{outline:none;text-decoration:underline}
+
+/* Overview. */
+.pc-shell .pc-hero{display:flex;align-items:center;gap:24px;padding:28px}
+.pc-shell .pc-hero-text{display:grid;gap:8px;min-width:0}
+.pc-shell .pc-hero-text h2{margin:0;font-size:20px;line-height:28px;font-weight:600;overflow-wrap:anywhere}
+.pc-shell .pc-hero .pc-uid{font-size:13px}
+.pc-shell .pc-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.pc-shell .pc-tile{display:grid;gap:8px;align-content:start;padding:20px;text-align:left;color:inherit}
+.pc-shell a.pc-tile:hover,.pc-shell button.pc-tile:hover{background:#11161e}
+.pc-shell .pc-tile:focus-visible{outline:none;background:#11161e}
+.pc-shell .pc-tile small{color:#a0a1a2;font-size:12px;line-height:16px}
+.pc-shell .pc-tile strong{font-size:18px;line-height:26px;font-weight:600}
+.pc-shell .pc-good{color:#2bc287;font-size:12px;font-weight:500}
+.pc-shell .pc-link{display:inline-flex;align-items:center;gap:2px;color:var(--nt-accent);font-size:13px;font-weight:500}
+.pc-shell .pc-progress{display:block;height:4px;border-radius:999px;background:#ffffff12;overflow:hidden}
+.pc-shell .pc-progress span{display:block;height:100%;border-radius:inherit;background:var(--nt-accent)}
+
+/* List rows (preferences, security contacts). */
+.pc-shell .pc-list{padding:4px 20px}
+.pc-shell .pc-row{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;padding:10px 0;font-size:14px;line-height:20px}
+.pc-shell .pc-row+.pc-row{border-top:1px solid #191b1f}
+.pc-shell .pc-row>div,.pc-shell .pc-row-lead>span:last-child{display:grid;gap:2px;min-width:0}
+.pc-shell .pc-row small{color:#a0a1a2;font-size:12px;line-height:16px;overflow-wrap:anywhere}
+.pc-shell .pc-row-lead{display:flex;align-items:center;gap:12px;min-width:0}
+.pc-shell .pc-select{width:200px}
+.pc-shell .pc-switch{position:relative;flex-shrink:0;width:44px;height:24px;border-radius:999px;background:#2a2e32;transition:background .15s ease-out}
+.pc-shell .pc-switch span{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s ease-out}
+.pc-shell .pc-switch[aria-checked=true]{background:var(--nt-accent)}
+.pc-shell .pc-switch[aria-checked=true] span{transform:translateX(20px);background:var(--nt-bg)}
+.pc-shell .pc-switch:focus-visible{outline:none;background:#3a3f45}
+.pc-shell .pc-switch[aria-checked=true]:focus-visible{background:#c4ff8a}
+.pc-shell .pc-switch:disabled{opacity:.6;cursor:progress}
+.pc-shell .pc-switch-skeleton{flex-shrink:0;border-radius:999px}
+.pc-shell .pc-logout{justify-self:center;width:min(320px,100%);min-height:44px;margin-top:8px;border-radius:999px;background:#202326;color:#ff6b84;font-size:14px;font-weight:500}
+.pc-shell .pc-logout:hover{background:#2a2e32}
+.pc-shell .pc-logout:focus-visible{outline:none;text-decoration:underline}
+@media(prefers-reduced-motion:reduce){.pc-shell .pc-switch,.pc-shell .pc-switch span{transition:none}}
+
+/* Security. */
+.pc-shell .pc-security{display:flex;align-items:center;gap:16px;padding:20px}
+.pc-shell .pc-security-text{flex:1;display:grid;gap:4px;min-width:0}
+.pc-shell .pc-security-text h2{margin:0;font-size:15px;line-height:22px;font-weight:600}
+
+/* Identity verification. */
+.pc-shell .pc-identity-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
+.pc-shell .pc-identity-head>div:first-child{display:grid;gap:16px;max-width:620px}
+.pc-shell .pc-identity-head .pc-subtitle{margin:0}
+.pc-shell .pc-current{display:grid;gap:4px;min-width:240px;padding:14px 16px}
+.pc-shell .pc-current small{color:#a0a1a2;font-size:12px}
+.pc-shell .pc-current strong{font-size:14px;line-height:20px;font-weight:600}
+.pc-shell .pc-steps-card{padding:20px}
+.pc-shell .pc-steps-card h2,.pc-shell .pc-todo h2{margin:0 0 16px;font-size:15px;line-height:22px;font-weight:600}
+.pc-shell .pc-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
+.pc-shell .pc-steps li{display:flex;gap:10px;min-width:0;color:#a0a1a2}
+.pc-shell .pc-steps li>span:last-child{display:grid;gap:2px;min-width:0}
+.pc-shell .pc-steps strong{font-size:13px;line-height:20px;font-weight:600}
+.pc-shell .pc-steps small{font-size:12px;line-height:16px}
+.pc-shell .pc-step-dot{display:grid;place-items:center;flex-shrink:0;width:28px;height:28px;border-radius:50%;background:#ffffff0f;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.pc-shell .pc-step-dot svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.pc-shell .pc-steps li.active{color:#fff}
+.pc-shell .pc-steps li.active .pc-step-dot{background:var(--nt-accent);color:var(--nt-bg)}
+.pc-shell .pc-steps li.done .pc-step-dot{background:#2bc2871f;color:#2bc287}
+.pc-shell .pc-steps li.done strong{color:#e6e7e9}
+.pc-shell .pc-identity-body{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;align-items:start}
+.pc-shell .pc-todo{padding:20px}
+.pc-shell .pc-todo ol{display:grid;gap:10px;margin:0;padding-left:18px;color:#a0a1a2;font-size:13px;line-height:20px}
+.pc-shell .pc-step-card{display:grid;gap:16px;padding:24px}
+.pc-shell .pc-step-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.pc-shell .pc-step-head h2{margin:2px 0 0;font-size:18px;line-height:26px;font-weight:600}
+.pc-shell .pc-chip{flex-shrink:0;padding:3px 10px;border-radius:999px;background:#ffffff0f;color:#a0a1a2;font-size:12px;line-height:18px}
+.pc-shell .pc-chip.warn{background:#f5b94a1a;color:#f5b94a}
+.pc-shell .pc-kyc-form{display:grid;gap:16px}
+.pc-shell .pc-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.pc-shell .pc-field{display:grid;gap:6px;min-width:0;font-size:13px;line-height:18px;color:#e6e7e9}
+.pc-shell .pc-field .pc-select{width:100%}
+.pc-shell .pc-input{height:44px;padding:0 16px;border:1px solid #191b1f;border-radius:999px;background:#0a0d12;color:#fff;font-size:14px}
+.pc-shell .pc-input::placeholder{color:#6b6d70}
+.pc-shell .pc-input:focus-visible{outline:none;background:#11161e}
+.pc-shell .pc-uploads{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.pc-shell .pc-upload{display:grid;gap:6px;font-size:13px;color:#e6e7e9}
+.pc-shell .pc-upload-box{position:relative;display:grid;place-items:center;gap:6px;min-height:112px;padding:16px;border:1px dashed #ffffff26;border-radius:16px;background:#0a0d12;color:#a0a1a2;text-align:center}
+.pc-shell .pc-upload-box svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pc-shell .pc-upload-box small{font-size:12px;line-height:16px;overflow-wrap:anywhere}
+.pc-shell .pc-upload-box input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.pc-shell .pc-upload:hover .pc-upload-box,.pc-shell .pc-upload-box:focus-within{background:#11161e;color:#fff}
+.pc-shell .pc-upload.filled .pc-upload-box{color:#2bc287}
+.pc-shell .pc-form-foot{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.pc-shell .pc-done{display:grid;justify-items:center;gap:12px;padding:24px 0}
+.pc-shell .pc-done h2{margin:0;font-size:16px;font-weight:600}
+
+/* Account change records. */
+.pc-shell .pc-filters{display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px}
+.pc-shell .pc-filters .pc-field{width:200px}
+.pc-shell .pc-filters .pc-field>span{color:#a0a1a2}
+.pc-shell .pc-table-card{overflow:hidden}
+.pc-shell .pc-table-scroll{overflow-x:auto}
+.pc-shell .pc-table{width:100%;min-width:760px;border-collapse:collapse;font-size:13px;line-height:20px}
+.pc-shell .pc-table th{padding:12px 16px;border-bottom:1px solid #191b1f;color:#a0a1a2;font-weight:500;text-align:left;white-space:nowrap}
+.pc-shell .pc-table td{height:48px;padding:10px 16px;border-bottom:1px solid #191b1f;white-space:nowrap}
+.pc-shell .pc-table tbody tr:last-child td{border-bottom:0}
+.pc-shell .pc-table tbody tr:hover td{background:#ffffff05}
+.pc-shell .pc-table .num{text-align:right;font-variant-numeric:tabular-nums}
+.pc-shell .pc-table .up{color:#2bc287}
+.pc-shell .pc-table .down{color:#ff6b84}
+.pc-shell .pc-time{color:#a0a1a2;font-variant-numeric:tabular-nums}
+.pc-shell .pc-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:200px;color:#a0a1a2;font-size:13px}
+.pc-shell .pc-empty svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* Invite friends. */
+.pc-shell .pc-invite{display:flex;gap:24px;align-items:center;padding:24px}
+.pc-shell .pc-invite-fields{flex:1;display:grid;gap:16px;min-width:0}
+.pc-shell .pc-invite-fields h2{margin:0;font-size:15px;line-height:22px;font-weight:600}
+.pc-shell .pc-invite .pc-field>span{color:#a0a1a2;font-size:12px}
+.pc-shell .pc-copy-row{display:flex;align-items:center;gap:8px;min-width:0}
+.pc-shell .pc-copy-row .pc-button{min-width:112px}
+.pc-shell .pc-copy-value{flex:1;display:flex;align-items:center;min-width:0;min-height:44px;padding:0 16px;border:1px solid #191b1f;border-radius:999px;background:#0a0d12;color:#e6e7e9;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc-shell .pc-copy-value.code{color:var(--nt-accent);font-size:18px;font-weight:700;letter-spacing:.12em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.pc-shell .pc-qr{display:grid;justify-items:center;gap:8px;margin:0;flex-shrink:0}
+.pc-shell .pc-qr img{display:block;width:152px;height:152px;border-radius:12px}
+.pc-shell .pc-qr figcaption{color:#a0a1a2;font-size:12px}
+.pc-shell .pc-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
+.pc-shell .pc-stat{display:grid;gap:8px;padding:20px}
+.pc-shell .pc-stat small{color:#a0a1a2;font-size:12px}
+.pc-shell .pc-stat strong{font-size:24px;line-height:32px;font-weight:600;font-variant-numeric:tabular-nums}
+.pc-shell .pc-stat.pending strong{color:#f5b94a}
+.pc-shell .pc-stat.settled strong{color:var(--nt-accent)}
+
+/* Notifications. */
+.pc-shell .pc-notice-head>div{display:grid;gap:16px}
+.pc-shell .pc-notice-head .pc-subtitle{margin:0}
+.pc-shell .pc-notice-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.pc-shell .pc-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.pc-shell .pc-tabs button{min-height:34px;padding:6px 16px;border-radius:999px;background:#141619;color:#a0a1a2;font-size:13px}
+.pc-shell .pc-tabs button:hover{color:#fff}
+.pc-shell .pc-tabs button.active{background:#a5ff4a1f;color:var(--nt-accent);font-weight:600}
+.pc-shell .pc-tabs button:focus-visible{outline:none;text-decoration:underline}
+.pc-shell .pc-notices{display:grid;gap:12px}
+.pc-shell .pc-notice{display:grid;gap:8px;width:100%;padding:18px 20px;text-align:left;color:inherit}
+.pc-shell button.pc-notice:hover,.pc-shell button.pc-notice:focus-visible{outline:none;background:#11161e}
+.pc-shell button.pc-notice:not(.unread){cursor:default}
+.pc-shell .pc-notice-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.pc-shell .pc-notice-top strong{display:inline-flex;align-items:center;gap:8px;font-size:14px;line-height:20px;font-weight:600}
+.pc-shell .pc-notice:not(.unread) .pc-notice-top strong{font-weight:500;color:#e6e7e9}
+.pc-shell .pc-notice-top time{flex-shrink:0;color:#a0a1a2;font-size:12px;font-variant-numeric:tabular-nums}
+.pc-shell .pc-dot{width:8px;height:8px;flex-shrink:0;border-radius:50%;background:var(--nt-accent)}
+.pc-shell .pc-notice-body,.pc-shell .pc-notice p{margin:0;color:#a0a1a2;font-size:13px;line-height:20px;overflow-wrap:anywhere}
+.pc-shell .pc-notice-tag{justify-self:start;padding:1px 8px;border-radius:999px;background:#ffffff0a;color:#87888a;font-size:11px;line-height:16px}
+
+/* Security sub-forms and help centre (existing markup, restyled for the shell). */
+.pc-shell .account-form{display:grid;gap:20px;max-width:560px;padding:24px;border:1px solid #191b1f;border-radius:var(--nt-radius-panel);background:#0c1017}
+.pc-shell .account-form label{display:grid;gap:6px;font-size:13px;line-height:20px}
+.pc-shell .account-form input,.pc-shell .account-form select{min-height:44px;padding:0 16px;border:1px solid #191b1f;border-radius:999px;background:#0a0d12;color:#fff;font-size:14px}
+.pc-shell .account-form .primary-button{min-height:44px;border-radius:999px}
+.pc-shell .account-form .primary-button:disabled{opacity:.5}
+.pc-shell .password-rules{margin:-8px 0 0;padding:0;list-style:none;color:#a0a1a2;font-size:12px;line-height:1.8}
+.pc-shell .password-rules li:before{content:'○';margin-right:8px}
+.pc-shell .phone-input{display:flex;gap:8px}
+.pc-shell .phone-input input{flex:1;min-width:0}
+.pc-shell .phone-input select{width:110px}
+.pc-shell .center{text-align:center}
+.pc-shell .account-faq{border-bottom:1px solid #191b1f;padding:20px 0;line-height:1.7}
+.pc-shell .account-faq summary{cursor:pointer}
+.pc-shell .account-faq p{margin-top:12px;color:#a0a1a2}
+.pc-shell.account-help-center .pc-main>input{min-height:44px;padding:0 16px;border:1px solid #191b1f;border-radius:999px;background:#0c1017}
+
+@media(max-width:1023px){
+ .pc-shell{grid-template-columns:1fr;gap:20px}
+ .pc-shell .pc-side{position:static}
+ .pc-shell .pc-nav ul{display:flex;flex-wrap:wrap}
+ .pc-shell .pc-nav ul+ul{margin-top:0;padding-top:0;border-top:0}
+ .pc-shell .pc-nav li{flex:0 0 auto}
+ .pc-shell .pc-identity-body{grid-template-columns:1fr}
+ .pc-shell .pc-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-:is(.account-page,.account-center) .account-form a.secondary-button{display:block;text-align:center}
-:is(.account-page,.account-center) .profile-group>a>span{overflow-wrap:anywhere;min-width:0}
-:is(.account-page,.account-center) .profile-group>a small{max-width:45%}
-.account-page{max-width:768px;padding:40px 24px;margin:auto}
-.account-page>.back-link{line-height:20px;display:inline-block}
-:is(.account-page,.account-center) .account-form label{line-height:20px;gap:6px}
-:is(.account-page,.account-center) .binding-form input,:is(.account-page,.account-center) .binding-form select{min-height:36px;padding:4px 12px}
-:is(.account-page,.account-center) .binding-form .phone-input select{width:132px}
-:is(.account-page,.account-center) .account-form .primary-button{font-size:1rem}
-:is(.account-page,.account-center) .binding-form .primary-button:disabled{opacity:.5}
-.account-center{max-width:1280px;margin:auto;padding:32px 24px}
-.account-help-center{max-width:1280px}
-.account-referrals{max-width:1080px;padding:56px 32px}
-.account-page h1{font-size:1.875rem;line-height:36px;margin:24px 0 8px}
-.account-center>h1{font-size:1.5rem;margin-bottom:20px}
-:is(.account-page,.account-center) .account-subtitle{color:#fff8;line-height:20px}
-:is(.account-page,.account-center) .account-form{display:grid;gap:24px;margin-top:32px}
-:is(.account-page,.account-center) .account-form input,:is(.account-page,.account-center) .account-form select{min-height:48px;border-radius:var(--nt-radius-control)}
-:is(.account-page,.account-center) .account-form .primary-button{min-height:48px}
-:is(.account-page,.account-center) .password-rules{margin:-12px 0 0;padding:0;list-style:none;color:#fff6;font-size:0.75rem;line-height:1.8}
-:is(.account-page,.account-center) .password-rules li:before{content:'○';margin-right:8px}
-:is(.account-page,.account-center) .phone-input{display:flex;gap:8px}
-:is(.account-page,.account-center) .phone-input input{min-width:0;flex:1}
-:is(.account-page,.account-center) .phone-input select{width:95px}
-:is(.account-page,.account-center) .center{text-align:center}
-:is(.account-page,.account-center) .profile-overview,:is(.account-page,.account-center) .profile-box{background:#0c1017;border:1px solid #ffffff09;border-radius:var(--nt-radius-panel);overflow:hidden}
-:is(.account-page,.account-center) .profile-identity{display:flex;align-items:center;gap:32px;padding:24px 32px}
-:is(.account-page,.account-center) .profile-identity>.nt-icon{width:28px;height:28px}
-:is(.account-page,.account-center) .profile-identity h2{font-size:1.5rem}
-:is(.account-page,.account-center) .profile-identity p{margin-top:8px}
-:is(.account-page,.account-center) .profile-metrics{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #ffffff09}
-:is(.account-page,.account-center) .profile-metrics>div,:is(.account-page,.account-center) .profile-metrics>a,:is(.account-page,.account-center) .profile-metrics>button{padding:18px 20px;text-align:left;border-right:1px solid #ffffff09}
-:is(.account-page,.account-center) .profile-metrics small{display:block;color:#fff6;font-size:0.75rem}
-:is(.account-page,.account-center) .profile-metrics strong{display:block;margin:10px 0;font-size:1.125rem}
-:is(.account-page,.account-center) .profile-metrics strong span{font-size:0.75rem}
-:is(.account-page,.account-center) .profile-metrics .progress{margin:10px 0;height:4px}
-:is(.account-page,.account-center) .profile-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
-:is(.account-page,.account-center) .profile-box{margin-bottom:16px}
-:is(.account-page,.account-center) .profile-box header{display:flex;justify-content:space-between;gap:16px;padding:16px 20px;border-bottom:1px solid #ffffff09;align-items:center}
-:is(.account-page,.account-center) .profile-box h2{font-size:1rem}
-:is(.account-page,.account-center) .profile-box header small{font-size:0.75rem;color:#fff6}
-:is(.account-page,.account-center) .profile-group{padding:16px 20px;border-bottom:1px solid #ffffff09}
-:is(.account-page,.account-center) .profile-group>small{display:block;color:#fff6;font-size:0.75rem;margin:2px 0 8px}
-:is(.account-page,.account-center) .profile-group>a,:is(.account-page,.account-center) .profile-group>button,:is(.account-page,.account-center) .profile-group>label{display:flex;align-items:center;gap:16px;width:100%;min-height:48px;text-align:left}
-:is(.account-page,.account-center) .profile-group>a small,:is(.account-page,.account-center) .profile-group>button small{margin-left:auto;color:#fff6}
-:is(.account-page,.account-center) .profile-group>span{flex:1}
-:is(.account-page,.account-center) .profile-group>a>.nt-icon:last-child,:is(.account-page,.account-center) .profile-group>button>.nt-icon:last-child{margin-left:auto;width:14px;opacity:.5}
-:is(.account-page,.account-center) .profile-group>a small+.nt-icon{margin-left:0}
-:is(.account-page,.account-center) .profile-group label{justify-content:space-between}
-:is(.account-page,.account-center) .profile-group select{max-width:60%;min-height:32px;font-size:0.75rem;background:transparent}
-:is(.account-page,.account-center) .demo-key{padding:20px;background:#141619;border-radius:var(--nt-radius-panel);margin:20px 0;overflow-wrap:anywhere;display:flex;justify-content:space-between;gap:12px}
-:is(.account-page,.account-center) .kyc-steps{display:flex;justify-content:space-between;color:#fff6;gap:20px}
-:is(.account-page,.account-center) .kyc-steps .active{color:var(--nt-accent)}
-:is(.account-page,.account-center) .upload-box{display:grid;place-items:center;gap:16px;border:1px dashed #ffffff30;border-radius:var(--nt-radius-panel);padding:32px;min-height:160px}
-:is(.account-page,.account-center) .upload-box input{width:100%;font-size:0.75rem}
-:is(.account-page,.account-center) .account-faq{border-bottom:1px solid #ffffff0b;padding:24px 0;line-height:1.7}
-:is(.account-page,.account-center) .account-faq summary{cursor:pointer}
-:is(.account-page,.account-center) .account-faq p{margin-top:16px;color:#fff8}
-:is(.account-page,.account-center) .profile-group .nt-icon{opacity:.7}
-@media(max-width:700px){.account-center{padding:24px 16px}
-:is(.account-page,.account-center) .profile-columns{grid-template-columns:1fr}
-:is(.account-page,.account-center) .profile-metrics{grid-template-columns:1fr 1fr}
-:is(.account-page,.account-center) .profile-metrics>div,:is(.account-page,.account-center) .profile-metrics>a,:is(.account-page,.account-center) .profile-metrics>button{padding:16px 12px}
-:is(.account-page,.account-center) .profile-identity{padding:24px;gap:20px}
-.account-page{padding:24px 20px 48px}
-.account-page h1{font-size:1.75rem}
-:is(.account-page,.account-center) .profile-box header{flex-wrap:wrap}
-:is(.account-page,.account-center) .profile-group>a{gap:10px}
-:is(.account-page,.account-center) .profile-group>a small{font-size:0.6875rem;overflow-wrap:anywhere}
-:is(.account-page,.account-center) .profile-group>a>span{white-space:normal}
-:is(.account-page,.account-center) .profile-metrics strong{font-size:1rem}
-:is(.account-page,.account-center) .account-form{gap:20px}
-:is(.account-page,.account-center) .account-form .two-cols{grid-template-columns:1fr 1fr}
+@media(max-width:640px){
+ .pc-shell .pc-tiles,.pc-shell .pc-stats,.pc-shell .pc-fields{grid-template-columns:1fr}
+ .pc-shell .pc-identity-head,.pc-shell .pc-invite,.pc-shell .pc-security{flex-direction:column;align-items:stretch}
+ .pc-shell .pc-hero{flex-direction:column;align-items:flex-start;padding:20px}
+ .pc-shell .pc-filters .pc-field{width:100%}
+ .pc-shell .pc-select{width:160px}
 }
 
+/* GMXX interactions (2026-11-26): the whole member card opens the overview (stretched name link; the copy button sits
+   above it); 帳變記錄 is a standalone full-width page; the language row is one button that opens the picker dialog. */
+.pc-shell .pc-member{position:relative}
+.pc-shell .pc-member:hover{background:#11161e}
+.pc-shell .pc-member.active{background:#a5ff4a0f}
+.pc-shell .pc-member-name{font-size:15px;line-height:22px;font-weight:600;color:#fff;overflow-wrap:anywhere}
+.pc-shell .pc-member-name::after{content:'';position:absolute;inset:0;border-radius:inherit}
+.pc-shell .pc-member-name:focus-visible{outline:none;text-decoration:underline}
+.pc-shell .pc-member .pc-uid button{position:relative;z-index:1}
+.pc-shell.pc-standalone{grid-template-columns:minmax(0,1fr)}
+.pc-shell .pc-row-button{width:100%;text-align:left;color:inherit}
+.pc-shell .pc-row-button:hover .pc-row-value,.pc-shell .pc-row-button:focus-visible .pc-row-value{color:#fff}
+.pc-shell .pc-row-button:focus-visible{outline:none}
+.pc-shell .pc-row-button:focus-visible>span:first-child{text-decoration:underline}
+.pc-shell .pc-row-value{display:inline-flex;align-items:center;gap:4px;color:#a0a1a2}
+.pc-shell .pc-row-value svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}

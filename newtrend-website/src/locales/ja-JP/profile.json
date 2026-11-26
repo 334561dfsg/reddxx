@@ -219,5 +219,234 @@
     "currentTierLabel": "現在のランク",
     "baseTier": "ベース",
     "tiersLabel": "ランク階段"
+  },
+  "center": {
+    "nav": {
+      "label": "マイページ",
+      "overview": "概要",
+      "preferences": "環境設定",
+      "security": "セキュリティセンター",
+      "identity": "本人確認",
+      "records": "口座変動履歴",
+      "invite": "友達を招待",
+      "notifications": "お知らせ",
+      "clearCache": "キャッシュを削除",
+      "helpCenter": "ヘルプセンター"
+    },
+    "loadFailed": "読み込みに失敗しました。もう一度お試しください。",
+    "overview": {
+      "uid": "UID：{{uid}}",
+      "credit": "信用スコア：{{score}}",
+      "vip": "VIP {{tier}}",
+      "copyUid": "UID をコピー",
+      "quickLinks": "クイックアクセス"
+    },
+    "preferences": {
+      "title": "環境設定",
+      "messageAlert": "メッセージ通知",
+      "messageAlertHint": "カスタマーサービスから返信があったときに通知する",
+      "language": "言語",
+      "version": "バージョン",
+      "logout": "ログアウト",
+      "saved": "設定を保存しました",
+      "saveFailed": "設定を保存できませんでした",
+      "selectLanguage": "選択してください",
+      "searchLanguage": "言語を検索",
+      "noLanguage": "一致する言語がありません"
+    },
+    "security": {
+      "title": "セキュリティセンター",
+      "subtitle": "ログイン方法と認証用連絡先を管理し、アカウントと資産を保護します。",
+      "loginPassword": "ログインパスワード",
+      "loginPasswordHint": "定期的に変更し、他のサイトと同じパスワードを使わないでください。",
+      "changePassword": "パスワードを変更",
+      "contacts": "認証用連絡先",
+      "email": "メール",
+      "phone": "電話番号",
+      "bind": "連携",
+      "change": "変更",
+      "notBound": "未連携",
+      "back": "セキュリティセンターに戻る",
+      "passwordNotice": "アカウントの安全のため、端末とネットワークが信頼できることを確認してから変更してください。公共の端末では操作しないでください。",
+      "confirmChange": "変更を確定"
+    },
+    "identity": {
+      "title": "本人確認",
+      "subtitle": "基本認証を完了して審査に通過した後、リストに沿って上級認証の書類をアップロードしてください。",
+      "currentProgress": "現在の進捗",
+      "progress": "手続きの流れ",
+      "steps": {
+        "submitBasic": "基本情報の提出",
+        "basicReview": "基本審査",
+        "submitAdvanced": "上級書類の提出",
+        "advancedReview": "上級審査"
+      },
+      "stepHints": {
+        "submitBasic": "基本情報と身分証を入力",
+        "basicReview": "プラットフォームが基本認証を審査",
+        "submitAdvanced": "リストの書類をアップロード",
+        "advancedReview": "プラットフォームが上級認証を審査"
+      },
+      "status": {
+        "submitBasic": "基本認証を提出してください",
+        "basicReview": "基本認証を審査中",
+        "submitAdvanced": "上級認証を提出してください",
+        "advancedReview": "上級認証を審査中",
+        "done": "認証完了"
+      },
+      "todo": "必要な手続き",
+      "todoItems": {
+        "basic": "基本情報を提出し、審査を待つ",
+        "advanced": "基本認証の承認後、上級書類をアップロード",
+        "result": "上級審査の結果を待つ"
+      },
+      "stepOf": "ステップ {{step}} / {{total}}",
+      "toSubmit": "未提出",
+      "inReview": "審査中",
+      "basicTitle": "基本認証",
+      "advancedTitle": "上級認証",
+      "reviewHint": "提出内容は審査待ちです。結果はお知らせでご連絡します。",
+      "simulateApprove": "承認をシミュレート（デモ）",
+      "approved": "承認済み（デモ）"
+    },
+    "records": {
+      "title": "口座変動履歴",
+      "changeType": "変動タイプ",
+      "accountType": "口座タイプ",
+      "currency": "通貨",
+      "all": "すべて",
+      "reset": "リセット",
+      "columns": {
+        "type": "変動タイプ",
+        "account": "口座",
+        "currency": "通貨",
+        "amount": "変動額",
+        "balance": "残高",
+        "time": "日時"
+      },
+      "accounts": {
+        "funding": "資金口座",
+        "spot": "現物",
+        "futures": "先物",
+        "finance": "資産運用"
+      },
+      "types": {
+        "deposit": "入金",
+        "withdraw": "出金",
+        "transfer": "振替",
+        "spotBuy": "現物買い",
+        "spotSell": "現物売り",
+        "tradeFee": "取引手数料",
+        "marginFreeze": "証拠金凍結",
+        "marginSettle": "証拠金決済",
+        "fundingFee": "資金調達手数料",
+        "earnSubscribe": "Earn 申込",
+        "earnRedeem": "Earn 解約",
+        "earnInterest": "Earn 収益",
+        "loanDisbursement": "ローン実行",
+        "loanRepayment": "ローン返済",
+        "collateralFreeze": "担保凍結",
+        "collateralRelease": "担保解除",
+        "strategySubscribe": "AI 戦略申込",
+        "strategySettle": "AI 戦略決済",
+        "quantFundSubscribe": "クオンツファンド申込",
+        "quantFundRedeem": "クオンツファンド解約",
+        "inviteCommission": "招待コミッション"
+      },
+      "empty": "条件に一致する履歴はありません",
+      "invalidFilter": "フィルターが無効です。リセットしてもう一度お試しください。",
+      "back": "マイページに戻る"
+    },
+    "invite": {
+      "title": "友達を招待",
+      "myCode": "マイ招待",
+      "code": "招待コード",
+      "link": "招待リンク",
+      "copyCode": "コードをコピー",
+      "copyLink": "リンクをコピー",
+      "qr": "スキャンして登録",
+      "qrAlt": "招待リンクの QR コード",
+      "invited": "招待済み",
+      "pending": "未決済（USDT）",
+      "settled": "決済済み（USDT）"
+    },
+    "notifications": {
+      "title": "お知らせ",
+      "subtitle": "システム、セキュリティ、キャンペーンのメッセージがここに表示されます。",
+      "all": "すべて",
+      "categories": {
+        "security": "セキュリティ",
+        "system": "システム",
+        "promo": "キャンペーン"
+      },
+      "markAllRead": "すべて既読にする",
+      "markedAllRead": "すべてのメッセージを既読にしました",
+      "nothingUnread": "未読メッセージはありません",
+      "unread": "未読",
+      "empty": "メッセージはありません",
+      "notFound": "このメッセージは存在しません",
+      "invalidCategory": "不明なメッセージ分類です",
+      "headerLabel": "お知らせ、未読 {{count}} 件",
+      "kinds": {
+        "loginNewIp": {
+          "title": "新しいログインを検出",
+          "body": "IP {{ip}} からアカウントにログインがありました。心当たりがない場合はすぐにパスワードを変更してください。"
+        },
+        "depositCredited": {
+          "title": "入金が反映されました",
+          "body": "{{amount}} {{currency}} が資金口座に入金されました。"
+        },
+        "earnLaunch": {
+          "title": "Earn 新商品",
+          "body": "最大年率 {{apy}} の新しい定期商品の申込が始まりました。"
+        },
+        "earnApproved": {
+          "title": "申込が承認されました",
+          "body": "{{product}} の申込が承認され、利息の計算が始まりました。"
+        },
+        "passwordChanged": {
+          "title": "ログインパスワードを変更しました",
+          "body": "ログインパスワードが変更されました。心当たりがない場合はサポートにご連絡ください。"
+        },
+        "withdrawSubmitted": {
+          "title": "出金を受け付けました",
+          "body": "{{amount}} {{currency}} の出金を処理中です。"
+        },
+        "inviteCommission": {
+          "title": "招待コミッション決済",
+          "body": "{{amount}} {{currency}} の招待コミッションが決済されました。"
+        },
+        "tradingCompetition": {
+          "title": "トレード大会",
+          "body": "今月のトレード大会に参加して、賞金総額 {{prize}} を山分けしましょう。"
+        },
+        "loanApproved": {
+          "title": "ローンが承認されました",
+          "body": "{{amount}} {{currency}} のローンが承認され、実行されました。"
+        },
+        "kycSubmitted": {
+          "title": "本人確認を提出しました",
+          "body": "本人確認書類が提出され、審査待ちです。"
+        },
+        "strategySettled": {
+          "title": "AI 戦略が決済されました",
+          "body": "AI 戦略が決済されました。結果は {{pnl}} です。"
+        },
+        "vipUpgrade": {
+          "title": "VIP アップグレード間近",
+          "body": "VIP {{tier}} まであと少しです。取引を増やして手数料を下げましょう。"
+        },
+        "maintenance": {
+          "title": "定期メンテナンス",
+          "body": "{{window}} の間、一部サービスが一時的に利用できません。"
+        }
+      }
+    },
+    "clearCache": {
+      "title": "キャッシュを削除",
+      "description": "キャッシュされたページデータを削除し、サーバーから再読み込みします。言語とログイン状態は変わりません。",
+      "confirm": "削除",
+      "done": "キャッシュを削除しました"
+    }
   }
 }

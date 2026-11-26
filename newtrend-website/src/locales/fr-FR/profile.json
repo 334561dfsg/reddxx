@@ -219,5 +219,234 @@
     "currentTierLabel": "Niveau actuel",
     "baseTier": "Base",
     "tiersLabel": "Paliers VIP"
+  },
+  "center": {
+    "nav": {
+      "label": "Espace personnel",
+      "overview": "Aperçu",
+      "preferences": "Préférences",
+      "security": "Centre de sécurité",
+      "identity": "Vérification d'identité",
+      "records": "Mouvements du compte",
+      "invite": "Inviter des amis",
+      "notifications": "Notifications",
+      "clearCache": "Vider le cache",
+      "helpCenter": "Centre d'aide"
+    },
+    "loadFailed": "Échec du chargement. Veuillez réessayer.",
+    "overview": {
+      "uid": "UID : {{uid}}",
+      "credit": "Score de crédit : {{score}}",
+      "vip": "VIP {{tier}}",
+      "copyUid": "Copier l'UID",
+      "quickLinks": "Accès rapide"
+    },
+    "preferences": {
+      "title": "Préférences",
+      "messageAlert": "Alertes de messages",
+      "messageAlertHint": "Afficher un rappel lorsque le service client répond",
+      "language": "Langue",
+      "version": "Version",
+      "logout": "Se déconnecter",
+      "saved": "Préférence enregistrée",
+      "saveFailed": "Impossible d'enregistrer la préférence",
+      "selectLanguage": "Veuillez choisir",
+      "searchLanguage": "Rechercher une langue",
+      "noLanguage": "Aucune langue correspondante"
+    },
+    "security": {
+      "title": "Centre de sécurité",
+      "subtitle": "Gérez vos méthodes de connexion et contacts de vérification pour protéger votre compte et vos fonds.",
+      "loginPassword": "Mot de passe de connexion",
+      "loginPasswordHint": "Changez-le régulièrement et ne le réutilisez pas sur d'autres sites.",
+      "changePassword": "Changer le mot de passe",
+      "contacts": "Contacts de vérification",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "bind": "Lier",
+      "change": "Modifier",
+      "notBound": "Non lié",
+      "back": "Retour au centre de sécurité",
+      "passwordNotice": "Pour la sécurité de votre compte, assurez-vous que cet appareil et ce réseau sont fiables avant de le modifier. Ne le faites pas sur un équipement public.",
+      "confirmChange": "Confirmer la modification"
+    },
+    "identity": {
+      "title": "Vérification d'identité",
+      "subtitle": "Terminez la vérification de base et sa validation, puis envoyez les documents de vérification avancée.",
+      "currentProgress": "Progression actuelle",
+      "progress": "Étapes",
+      "steps": {
+        "submitBasic": "Informations de base",
+        "basicReview": "Examen de base",
+        "submitAdvanced": "Documents avancés",
+        "advancedReview": "Examen avancé"
+      },
+      "stepHints": {
+        "submitBasic": "Renseignez vos informations et pièces d'identité",
+        "basicReview": "La plateforme examine la vérification de base",
+        "submitAdvanced": "Envoyez les documents listés",
+        "advancedReview": "La plateforme examine la vérification avancée"
+      },
+      "status": {
+        "submitBasic": "Veuillez soumettre la vérification de base",
+        "basicReview": "Vérification de base en cours d'examen",
+        "submitAdvanced": "Veuillez soumettre la vérification avancée",
+        "advancedReview": "Vérification avancée en cours d'examen",
+        "done": "Vérification terminée"
+      },
+      "todo": "Ce que vous devez faire",
+      "todoItems": {
+        "basic": "Soumettre les informations de base et attendre l'examen",
+        "advanced": "Après validation, envoyer les documents avancés",
+        "result": "Attendre le résultat de l'examen avancé"
+      },
+      "stepOf": "Étape {{step}} / {{total}}",
+      "toSubmit": "À soumettre",
+      "inReview": "En examen",
+      "basicTitle": "Vérification de base",
+      "advancedTitle": "Vérification avancée",
+      "reviewHint": "Votre dossier est en file d'examen. Le résultat vous sera notifié.",
+      "simulateApprove": "Simuler l'approbation (démo)",
+      "approved": "Approuvé (démo)"
+    },
+    "records": {
+      "title": "Mouvements du compte",
+      "changeType": "Type de mouvement",
+      "accountType": "Type de compte",
+      "currency": "Devise",
+      "all": "Tous",
+      "reset": "Réinitialiser",
+      "columns": {
+        "type": "Type de mouvement",
+        "account": "Compte",
+        "currency": "Devise",
+        "amount": "Montant",
+        "balance": "Solde",
+        "time": "Date"
+      },
+      "accounts": {
+        "funding": "Financement",
+        "spot": "Spot",
+        "futures": "Contrats",
+        "finance": "Épargne"
+      },
+      "types": {
+        "deposit": "Dépôt",
+        "withdraw": "Retrait",
+        "transfer": "Transfert",
+        "spotBuy": "Achat spot",
+        "spotSell": "Vente spot",
+        "tradeFee": "Frais de trading",
+        "marginFreeze": "Gel de marge",
+        "marginSettle": "Règlement de marge",
+        "fundingFee": "Frais de financement",
+        "earnSubscribe": "Souscription Earn",
+        "earnRedeem": "Rachat Earn",
+        "earnInterest": "Intérêts Earn",
+        "loanDisbursement": "Versement du prêt",
+        "loanRepayment": "Remboursement du prêt",
+        "collateralFreeze": "Gel de la garantie",
+        "collateralRelease": "Libération de la garantie",
+        "strategySubscribe": "Souscription stratégie IA",
+        "strategySettle": "Règlement stratégie IA",
+        "quantFundSubscribe": "Souscription fonds quant",
+        "quantFundRedeem": "Rachat fonds quant",
+        "inviteCommission": "Commission de parrainage"
+      },
+      "empty": "Aucun mouvement ne correspond à ces filtres",
+      "invalidFilter": "Filtre invalide. Réinitialisez et réessayez.",
+      "back": "Retour à l'espace personnel"
+    },
+    "invite": {
+      "title": "Inviter des amis",
+      "myCode": "Mon invitation",
+      "code": "Code d'invitation",
+      "link": "Lien d'invitation",
+      "copyCode": "Copier le code",
+      "copyLink": "Copier le lien",
+      "qr": "Scanner pour s'inscrire",
+      "qrAlt": "QR code du lien d'invitation",
+      "invited": "Invités",
+      "pending": "En attente (USDT)",
+      "settled": "Réglé (USDT)"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Les messages système, sécurité et campagnes sont listés ici.",
+      "all": "Toutes",
+      "categories": {
+        "security": "Sécurité",
+        "system": "Système",
+        "promo": "Promotions"
+      },
+      "markAllRead": "Tout marquer comme lu",
+      "markedAllRead": "Tous les messages sont marqués comme lus",
+      "nothingUnread": "Aucun message non lu",
+      "unread": "Non lu",
+      "empty": "Aucun message",
+      "notFound": "Ce message n'existe plus",
+      "invalidCategory": "Catégorie de message inconnue",
+      "headerLabel": "Notifications, {{count}} non lues",
+      "kinds": {
+        "loginNewIp": {
+          "title": "Nouvelle connexion détectée",
+          "body": "Votre compte s'est connecté depuis l'IP {{ip}}. Si ce n'était pas vous, changez votre mot de passe."
+        },
+        "depositCredited": {
+          "title": "Dépôt crédité",
+          "body": "{{amount}} {{currency}} ont été crédités sur votre compte de financement."
+        },
+        "earnLaunch": {
+          "title": "Nouveau produit Earn",
+          "body": "Un nouveau produit à terme jusqu'à {{apy}} APY est ouvert à la souscription."
+        },
+        "earnApproved": {
+          "title": "Souscription approuvée",
+          "body": "Votre souscription {{product}} est approuvée et génère des intérêts."
+        },
+        "passwordChanged": {
+          "title": "Mot de passe modifié",
+          "body": "Votre mot de passe de connexion a été modifié. Si ce n'était pas vous, contactez le support."
+        },
+        "withdrawSubmitted": {
+          "title": "Retrait soumis",
+          "body": "Votre retrait de {{amount}} {{currency}} est en cours de traitement."
+        },
+        "inviteCommission": {
+          "title": "Commission réglée",
+          "body": "Votre commission de parrainage de {{amount}} {{currency}} a été réglée."
+        },
+        "tradingCompetition": {
+          "title": "Compétition de trading",
+          "body": "Participez à la compétition du mois et partagez {{prize}} de prix."
+        },
+        "loanApproved": {
+          "title": "Prêt approuvé",
+          "body": "Votre prêt de {{amount}} {{currency}} a été approuvé et versé."
+        },
+        "kycSubmitted": {
+          "title": "Vérification soumise",
+          "body": "Votre vérification d'identité a été soumise et attend l'examen."
+        },
+        "strategySettled": {
+          "title": "Stratégie IA réglée",
+          "body": "Votre stratégie IA a été réglée avec un résultat de {{pnl}}."
+        },
+        "vipUpgrade": {
+          "title": "Passage VIP proche",
+          "body": "Vous approchez du VIP {{tier}}. Tradez davantage pour réduire vos frais."
+        },
+        "maintenance": {
+          "title": "Maintenance programmée",
+          "body": "Certains services seront brièvement indisponibles pendant {{window}}."
+        }
+      }
+    },
+    "clearCache": {
+      "title": "Vider le cache",
+      "description": "Les données de page en cache seront effacées et rechargées depuis le serveur. Votre langue et votre connexion sont conservées.",
+      "confirm": "Vider",
+      "done": "Cache vidé"
+    }
   }
 }

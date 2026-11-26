@@ -1,23 +1,78 @@
 <script setup>
-import {t} from '../../i18n'
-import {reactive,ref} from 'vue'
-import Icon from '../../components/Icon.vue'
+// 身份認證, after gmxx.io/personal?type=identity: a four-step progress (submit basic → basic review → submit
+// advanced → advanced review), the "what you need to do" list and the card for the current step. Basic = personal
+// details + ID images in one form; advanced = handheld photo + proof of assets. Review is local mock state: a
+// clearly-labelled demo button approves the pending level so the whole flow can be walked through.
+import {computed,reactive} from 'vue'
+import LineIcon from '../../components/ui/LineIcon.vue'
+import NtSelect from '../../components/ui/NtSelect.vue'
 import {account} from '../../account'
-import {path} from '../../data'
+import {t} from '../../i18n'
 import {notifyError,notifySuccess,useUploads} from './accountForm.js'
-// KYC centre (no id), basic two-step form, or advanced upload form.
-defineProps({id:{type:String,default:''}})
-const step=ref(1),form=reactive({fullName:'',idType:'',idNumber:'',country:''})
-const {files,selectFile}=useUploads()
-function nextKyc(){
- if(!form.fullName.trim()||!form.idType||!form.idNumber.trim()||!form.country)return notifyError('kyc.fillAllFields')
- step.value=2
+defineProps({id: {type: String, default: ''}})
+const STEPS = ['submitBasic', 'basicReview', 'submitAdvanced', 'advancedReview']
+const COUNTRIES = ['United States', 'United Kingdom', 'Taiwan', 'Hong Kong', 'Japan', 'Korea', 'Germany', 'France', 'Philippines', 'Singapore']
+const ID_TYPES = ['kyc.idCard', 'kyc.passport', 'kyc.driverLicense']
+// 0-based index of the current step; 4 = everything approved.
+const current = computed(() => account.kyc === 'none' ? 0 : account.kyc === 'pending' ? 1 : account.advanced === 'none' ? 2 : account.advanced === 'pending' ? 3 : 4)
+const statusKey = computed(() => 'profile.center.identity.status.' + (STEPS[current.value] || 'done'))
+const form = reactive({country: undefined, fullName: '', idType: undefined, idNumber: ''})
+const {files, selectFile} = useUploads()
+const countryOptions = COUNTRIES.map(value => ({value, label: value}))
+const idTypeOptions = computed(() => ID_TYPES.map(value => ({value, label: t(value)})))
+const uploads = computed(() => current.value === 0 ? [['front', 'kyc.idFront'], ['back', 'kyc.idBack'], ['selfie', 'kyc.selfie']] : [['handheld', 'kyc.advanced.handheldLabel'], ['proof', 'kyc.advanced.assetProofTitle']])
+function submit() {
+  if (current.value === 0 && (!form.fullName.trim() || !form.idType || !form.idNumber.trim() || !form.country)) return notifyError('kyc.fillAllFields')
+  if (uploads.value.some(([key]) => !files[key])) return notifyError('kyc.allUploadsRequired')
+  if (current.value === 0) account.kyc = 'pending'; else account.advanced = 'pending'
+  for (const key of Object.keys(files)) delete files[key]
+  notifySuccess('kyc.advanced.submitSuccess')
 }
-function submitKyc(level){
- const required=level==='advanced'?['handheld','proof']:['front','back','selfie']
- if(required.some(k=>!files[k]))return notifyError('kyc.allUploadsRequired')
- if(level==='advanced')account.advanced='pending';else account.kyc='pending'
- notifySuccess('kyc.advanced.submitSuccess')
+function approve() {
+  if (current.value === 1) account.kyc = 'approved'; else if (current.value === 3) account.advanced = 'approved'
+  notifySuccess('profile.center.identity.approved')
 }
 </script>
-<template><div v-if="!id" class="two-cols section-gap"><RouterLink class="card" :to="path('/kyc/basic')"><div class="summary-line"><span class="tag-chip">{{ $t("Level 1") }}</span><span>{{ $t(account.kyc==='none'?"common.kycUnverified":account.kyc==='pending'?"aiQuant.status.pending_review":"common.kycVerified") }}</span></div><h2 class="section-gap">{{ $t("kyc.basic.title") }}</h2><p class="muted section-gap">{{ $t("kyc.basic.description") }}</p><span class="green-link section-gap">{{ $t("c2c.common.goKyc") }}</span></RouterLink><div class="card"><span class="tag-chip">{{ $t("Level 2") }}</span><h2 class="section-gap">{{ $t("kyc.advanced.title") }}</h2><p class="muted section-gap">{{ $t("kyc.advanced.description") }}</p><RouterLink v-if="account.kyc==='approved'" class="green-link section-gap" :to="path('/kyc/advanced')">{{ $t("kyc.advanced.cta") }}</RouterLink><p v-else class="mini-label section-gap">{{ $t("kyc.advanced.lockedHint") }}</p></div></div><div v-else-if="(id==='basic'?account.kyc:account.advanced)==='pending'" class="card section-gap"><h2>{{ $t("aiQuant.status.pending_review") }}</h2><p class="muted section-gap">{{ $t(t('kyc.pendingTip')) }}</p><p class="mini-label section-gap">{{ $t(t('kyc.pendingHint')) }}</p></div><div v-else-if="id==='advanced'&&account.kyc!=='approved'" class="notice section-gap">{{ $t(t('kyc.advanced.lockedHint')) }}</div><form v-else class="account-form" @submit.prevent="step===1&&id==='basic'?nextKyc():submitKyc(id)"><div v-if="id==='basic'" class="kyc-steps"><span :class="{active:step===1}">{{ $t("account.ui.1PersonalInformation") }}</span><span :class="{active:step===2}">{{ $t("account.ui.2UploadDocuments") }}</span></div><template v-if="step===1&&id==='basic'"><label>{{ $t("kyc.fullName") }}<input v-model="form.fullName" :placeholder="$t(&quot;kyc.enterFullName&quot;)"/></label><label>{{ $t("kyc.idType") }}<select v-model="form.idType"><option disabled value="">{{ $t("kyc.selectIdType") }}</option><option :value="&quot;kyc.idCard&quot;">{{ $t("kyc.idCard") }}</option><option :value="&quot;kyc.passport&quot;">{{ $t("kyc.passport") }}</option><option :value="&quot;kyc.driverLicense&quot;">{{ $t("kyc.driverLicense") }}</option></select></label><label>{{ $t("kyc.idNumber") }}<input v-model="form.idNumber" :placeholder="$t(&quot;kyc.enterIdNumber&quot;)"/></label><label>{{ $t("kyc.country") }}<select v-model="form.country"><option disabled value="">{{ $t("kyc.enterCountry") }}</option><option v-for="c in ['United States','United Kingdom','Taiwan','Hong Kong','China','Japan','Korea','Germany','France','Philippines','Singapore']" :value="c">{{ $t(c) }}</option></select></label><button class="primary-button wide-button">{{ $t("kyc.nextStep") }}</button></template><template v-else><p class="notice">{{ $t("account.ui.useFictionalDetailsAndDemoImagesFilesStayOn") }}</p><label v-for="[key,label] in id==='basic'?[['front',&quot;kyc.idFront&quot;],['back',&quot;kyc.idBack&quot;],['selfie',&quot;kyc.selfie&quot;]]:[['handheld',&quot;kyc.advanced.handheldLabel&quot;],['proof',&quot;kyc.advanced.assetProofTitle&quot;]]" :key="key">{{ $t(label) }}<span class="upload-box"><Icon name="layers"/>{{ files[key]||t('kyc.clickToUpload') }}<input type="file" accept="image/png,image/jpeg,application/pdf" :aria-label="$t(label)" @change="selectFile(key,$event)"/></span></label><button v-if="id==='basic'" type="button" class="secondary-button" @click="step=1">{{ $t("aiQuant.quantFund.interestRecords.back") }}</button><button class="primary-button wide-button">{{ $t("kyc.submit") }}</button></template></form></template>
+<template>
+<header class="pc-identity-head">
+ <div><h1 class="pc-title">{{ $t('profile.center.identity.title') }}</h1><p class="pc-subtitle">{{ $t('profile.center.identity.subtitle') }}</p></div>
+ <div class="pc-card pc-current"><small>{{ $t('profile.center.identity.currentProgress') }}</small><strong>{{ $t(statusKey) }}</strong></div>
+</header>
+<section class="pc-card pc-steps-card" aria-labelledby="pc-steps-title">
+ <h2 id="pc-steps-title">{{ $t('profile.center.identity.progress') }}</h2>
+ <ol class="pc-steps">
+  <li v-for="(step, index) in STEPS" :key="step" :class="{done: index<current, active: index===current}" :aria-current="index===current?'step':undefined">
+   <span class="pc-step-dot"><LineIcon v-if="index<current" name="check"/><template v-else>{{ index+1 }}</template></span>
+   <span><strong>{{ $t('profile.center.identity.steps.'+step) }}</strong><small>{{ $t('profile.center.identity.stepHints.'+step) }}</small></span>
+  </li>
+ </ol>
+</section>
+<div class="pc-identity-body">
+ <section class="pc-card pc-todo"><h2>{{ $t('profile.center.identity.todo') }}</h2><ol><li v-for="key in ['basic','advanced','result']" :key="key">{{ $t('profile.center.identity.todoItems.'+key) }}</li></ol></section>
+ <section class="pc-card pc-step-card">
+  <template v-if="current===0||current===2">
+   <div class="pc-step-head"><div><small class="pc-muted">{{ $t('profile.center.identity.stepOf', {step: current===0?1:2, total: 2}) }}</small><h2>{{ $t('profile.center.identity.'+(current===0?'basicTitle':'advancedTitle')) }}</h2></div><span class="pc-chip">{{ $t('profile.center.identity.toSubmit') }}</span></div>
+   <p class="pc-muted">{{ $t(current===0?'kyc.basic.description':'kyc.advanced.description') }}</p>
+   <form class="pc-kyc-form" novalidate @submit.prevent="submit">
+    <div v-if="current===0" class="pc-fields">
+     <label class="pc-field"><span id="pc-kyc-country">{{ $t('kyc.country') }}</span><NtSelect variant="pill" v-model:value="form.country" class="pc-select" aria-labelledby="pc-kyc-country" :placeholder="$t('kyc.enterCountry')" :options="countryOptions" :show-search="false"/></label>
+     <label class="pc-field"><span>{{ $t('kyc.fullName') }}</span><input v-model="form.fullName" class="pc-input" autocomplete="off" :placeholder="$t('kyc.enterFullName')"/></label>
+     <label class="pc-field"><span id="pc-kyc-idtype">{{ $t('kyc.idType') }}</span><NtSelect variant="pill" v-model:value="form.idType" class="pc-select" aria-labelledby="pc-kyc-idtype" :placeholder="$t('kyc.selectIdType')" :options="idTypeOptions" :show-search="false"/></label>
+     <label class="pc-field"><span>{{ $t('kyc.idNumber') }}</span><input v-model="form.idNumber" class="pc-input" autocomplete="off" :placeholder="$t('kyc.enterIdNumber')"/></label>
+    </div>
+    <div class="pc-uploads">
+     <label v-for="[key, label] in uploads" :key="key" class="pc-upload" :class="{filled: files[key]}"><span>{{ $t(label) }}</span><span class="pc-upload-box"><LineIcon :name="files[key]?'check':'upload'"/><small>{{ files[key] || $t('kyc.clickToUpload') }}</small><input type="file" accept="image/png,image/jpeg,application/pdf" :aria-label="$t(label)" @change="selectFile(key,$event)"/></span></label>
+    </div>
+    <p class="pc-muted small">{{ $t('account.ui.useFictionalDetailsAndDemoImagesFilesStayOn') }}</p>
+    <div class="pc-form-foot"><span class="pc-muted">{{ $t('profile.center.identity.reviewHint') }}</span><button type="submit" class="pc-button primary">{{ $t('kyc.submit') }}</button></div>
+   </form>
+  </template>
+  <template v-else-if="current===1||current===3">
+   <div class="pc-step-head"><div><small class="pc-muted">{{ $t('profile.center.identity.stepOf', {step: current===1?1:2, total: 2}) }}</small><h2>{{ $t('profile.center.identity.'+(current===1?'basicTitle':'advancedTitle')) }}</h2></div><span class="pc-chip warn">{{ $t('profile.center.identity.inReview') }}</span></div>
+   <p class="pc-muted">{{ $t('profile.center.identity.reviewHint') }}</p>
+   <div class="pc-form-foot"><span></span><button type="button" class="pc-button" @click="approve">{{ $t('profile.center.identity.simulateApprove') }}</button></div>
+  </template>
+  <div v-else class="pc-done"><span class="pc-icon-tile ok" aria-hidden="true"><LineIcon name="check"/></span><h2>{{ $t('profile.center.identity.status.done') }}</h2></div>
+ </section>
+</div>
+</template>

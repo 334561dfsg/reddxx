@@ -41,7 +41,7 @@ export const routes=[
  {name:'assets',path:'/assets/:section(overview|transfer|records)?',component:Assets},
  {name:'auth',path:'/:auth(login|register|forgot-password)',component:Auth},
  {name:'news',path:'/news/:id?',component:News},
- {name:'account',path:'/:account(profile|bind-email|bind-phone|change-password|kyc|referrals|help-center)/:id?',component:Account},
+ {name:'account',path:'/:account(profile|preferences|security|records|notifications|bind-email|bind-phone|change-password|kyc|referrals|help-center)/:id?',component:Account},
  {name:'legal',path:'/:section(about|privacy|agreement|risk-disclosure|regulatory-information|content)/:id?',component:Legal},
  {name:'c2c',path:'/c2c/:c2cPage(buy|sell|orders|payment-accounts)',component:()=>import('./pages/C2CBuy.vue')},
  {path:'/c2c/accounts',redirect:'/c2c/payment-accounts'},

@@ -219,5 +219,234 @@
     "currentTierLabel": "當前等級",
     "baseTier": "起步",
     "tiersLabel": "等級階梯"
+  },
+  "center": {
+    "nav": {
+      "label": "個人中心",
+      "overview": "總覽",
+      "preferences": "偏好設定",
+      "security": "安全中心",
+      "identity": "身份認證",
+      "records": "帳變記錄",
+      "invite": "邀請好友",
+      "notifications": "消息通知",
+      "clearCache": "清除快取",
+      "helpCenter": "幫助中心"
+    },
+    "loadFailed": "載入失敗，請重試。",
+    "overview": {
+      "uid": "UID：{{uid}}",
+      "credit": "信用分：{{score}}",
+      "vip": "VIP {{tier}}",
+      "copyUid": "複製 UID",
+      "quickLinks": "快捷入口"
+    },
+    "preferences": {
+      "title": "偏好設定",
+      "messageAlert": "客服消息提醒",
+      "messageAlertHint": "客服回覆時顯示提醒",
+      "language": "語言",
+      "version": "版本號",
+      "logout": "登出",
+      "saved": "已儲存偏好設定",
+      "saveFailed": "偏好設定儲存失敗",
+      "selectLanguage": "請選擇",
+      "searchLanguage": "搜尋語言",
+      "noLanguage": "沒有符合的語言"
+    },
+    "security": {
+      "title": "安全中心",
+      "subtitle": "管理登入方式與驗證聯絡方式，保護帳戶與資金安全。",
+      "loginPassword": "登入密碼",
+      "loginPasswordHint": "建議定期更換，且不要與其他網站共用密碼。",
+      "changePassword": "修改密碼",
+      "contacts": "驗證聯絡方式",
+      "email": "郵箱",
+      "phone": "手機號碼",
+      "bind": "綁定",
+      "change": "更換",
+      "notBound": "未綁定",
+      "back": "返回安全中心",
+      "passwordNotice": "為確保帳戶安全，請確認目前裝置與網路環境可信後再修改，勿在公用設備上操作。",
+      "confirmChange": "確認修改"
+    },
+    "identity": {
+      "title": "身份認證",
+      "subtitle": "先完成初級認證並通過審核，再依清單上傳高級認證資料。",
+      "currentProgress": "目前進度",
+      "progress": "流程進度",
+      "steps": {
+        "submitBasic": "提交初級資料",
+        "basicReview": "初級審核",
+        "submitAdvanced": "提交高級資料",
+        "advancedReview": "高級審核"
+      },
+      "stepHints": {
+        "submitBasic": "填寫基本資料與證件",
+        "basicReview": "平台審核初級認證",
+        "submitAdvanced": "依清單上傳資料",
+        "advancedReview": "平台審核高級認證"
+      },
+      "status": {
+        "submitBasic": "請提交初級認證資料",
+        "basicReview": "初級認證審核中",
+        "submitAdvanced": "請提交高級認證資料",
+        "advancedReview": "高級認證審核中",
+        "done": "認證已完成"
+      },
+      "todo": "你需要做什麼",
+      "todoItems": {
+        "basic": "提交初級資料並等待審核",
+        "advanced": "初級通過後，上傳高級認證資料",
+        "result": "等待高級審核結果"
+      },
+      "stepOf": "步驟 {{step}} / {{total}}",
+      "toSubmit": "待提交",
+      "inReview": "審核中",
+      "basicTitle": "初級認證",
+      "advancedTitle": "高級認證",
+      "reviewHint": "資料已進入審核佇列，結果將以通知告知。",
+      "simulateApprove": "模擬審核通過（演示）",
+      "approved": "已通過（演示）"
+    },
+    "records": {
+      "title": "帳變記錄",
+      "changeType": "帳變類型",
+      "accountType": "帳戶類型",
+      "currency": "幣種",
+      "all": "全部",
+      "reset": "重設",
+      "columns": {
+        "type": "帳變類型",
+        "account": "帳戶",
+        "currency": "幣種",
+        "amount": "變動金額",
+        "balance": "帳戶餘額",
+        "time": "時間"
+      },
+      "accounts": {
+        "funding": "資金帳戶",
+        "spot": "現貨",
+        "futures": "合約",
+        "finance": "理財"
+      },
+      "types": {
+        "deposit": "充值",
+        "withdraw": "提現",
+        "transfer": "劃轉",
+        "spotBuy": "現貨買入",
+        "spotSell": "現貨賣出",
+        "tradeFee": "交易手續費",
+        "marginFreeze": "保證金凍結",
+        "marginSettle": "保證金結算",
+        "fundingFee": "資金費用",
+        "earnSubscribe": "理財申購",
+        "earnRedeem": "理財贖回",
+        "earnInterest": "理財收益",
+        "loanDisbursement": "借貸放款",
+        "loanRepayment": "借貸還款",
+        "collateralFreeze": "質押凍結",
+        "collateralRelease": "質押解凍",
+        "strategySubscribe": "AI 策略申購",
+        "strategySettle": "AI 策略結算",
+        "quantFundSubscribe": "量化基金申購",
+        "quantFundRedeem": "量化基金贖回",
+        "inviteCommission": "邀請佣金"
+      },
+      "empty": "沒有符合條件的記錄",
+      "invalidFilter": "篩選條件無效，請重設後再試。",
+      "back": "返回個人中心"
+    },
+    "invite": {
+      "title": "邀請好友",
+      "myCode": "我的邀請",
+      "code": "邀請碼",
+      "link": "邀請連結",
+      "copyCode": "複製邀請碼",
+      "copyLink": "複製連結",
+      "qr": "掃碼註冊",
+      "qrAlt": "邀請連結 QR Code",
+      "invited": "已邀請",
+      "pending": "待結算（USDT）",
+      "settled": "已結算（USDT）"
+    },
+    "notifications": {
+      "title": "消息通知",
+      "subtitle": "系統、安全與活動消息都會列在這裡。",
+      "all": "全部",
+      "categories": {
+        "security": "安全",
+        "system": "系統",
+        "promo": "活動"
+      },
+      "markAllRead": "全部標為已讀",
+      "markedAllRead": "已全部標為已讀",
+      "nothingUnread": "沒有未讀消息",
+      "unread": "未讀",
+      "empty": "暫無消息",
+      "notFound": "此消息已不存在",
+      "invalidCategory": "未知的消息分類",
+      "headerLabel": "消息通知，{{count}} 則未讀",
+      "kinds": {
+        "loginNewIp": {
+          "title": "偵測到新的登入",
+          "body": "你的帳戶已從 IP {{ip}} 登入。如非本人操作，請立即修改密碼。"
+        },
+        "depositCredited": {
+          "title": "充值已到帳",
+          "body": "{{amount}} {{currency}} 已存入你的資金帳戶。"
+        },
+        "earnLaunch": {
+          "title": "理財新品上線",
+          "body": "新的定期產品已開放申購，年化最高 {{apy}}。"
+        },
+        "earnApproved": {
+          "title": "申購已審核通過",
+          "body": "你的 {{product}} 申購已通過審核並開始計息。"
+        },
+        "passwordChanged": {
+          "title": "登入密碼已修改",
+          "body": "你的登入密碼已修改。如非本人操作，請立即聯絡客服。"
+        },
+        "withdrawSubmitted": {
+          "title": "提現已提交",
+          "body": "你提現的 {{amount}} {{currency}} 正在處理中。"
+        },
+        "inviteCommission": {
+          "title": "邀請佣金已結算",
+          "body": "你的邀請佣金 {{amount}} {{currency}} 已結算。"
+        },
+        "tradingCompetition": {
+          "title": "交易大賽",
+          "body": "參加本月交易大賽，瓜分 {{prize}} 獎池。"
+        },
+        "loanApproved": {
+          "title": "借貸已核准",
+          "body": "你申請的 {{amount}} {{currency}} 借款已核准並放款。"
+        },
+        "kycSubmitted": {
+          "title": "認證資料已提交",
+          "body": "你的身份認證資料已提交，正在等待審核。"
+        },
+        "strategySettled": {
+          "title": "AI 策略已結算",
+          "body": "你的 AI 策略已結算，結果為 {{pnl}}。"
+        },
+        "vipUpgrade": {
+          "title": "即將升級 VIP",
+          "body": "距離 VIP {{tier}} 只差一步，交易越多手續費越低。"
+        },
+        "maintenance": {
+          "title": "系統維護公告",
+          "body": "部分服務將於 {{window}} 短暫暫停。"
+        }
+      }
+    },
+    "clearCache": {
+      "title": "清除快取",
+      "description": "將清除頁面快取資料並重新向伺服器載入；語言與登入狀態不受影響。",
+      "confirm": "清除",
+      "done": "快取已清除"
+    }
   }
 }

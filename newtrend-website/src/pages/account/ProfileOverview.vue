@@ -1,13 +1,28 @@
 <script setup>
-import {useRouter} from 'vue-router'
-import Icon from '../../components/Icon.vue'
-import {account} from '../../account'
-import {openModal,logout} from '../../session'
+// 總覽: the member card (avatar, name, UID, VIP / verification badges, credit score) and the three status tiles.
+import LineIcon from '../../components/ui/LineIcon.vue'
+import {account,DEMO_UID} from '../../account'
+import {openModal} from '../../session'
 import {path} from '../../data'
-import {locale,languages,t} from '../../i18n'
-import {useLocaleSwitch} from '../../composables/useLocaleSwitch'
+import {t} from '../../i18n'
 import {copyText as copy} from './accountForm.js'
-const router=useRouter()
-const {switchTo:setLanguage}=useLocaleSwitch()
+const CREDIT = 100
+const kycLabel = () => account.kyc === 'approved' ? 'common.kycVerified' : account.kyc === 'pending' ? 'aiQuant.status.pending_review' : 'common.kycUnverified'
 </script>
-<template><section class="profile-overview"><div class="profile-identity"><Icon name="user"/><div><h2>{{ account.name }}</h2><p class="muted">{{ $t("UID 10000001 ") }}<button :aria-label="$t(&quot;account.ui.copyUid&quot;)" @click="copy('10000001')"><Icon name="copy"/></button></p></div></div><div class="profile-metrics"><RouterLink :to="path('/kyc')"><small>{{ $t("common.kyc") }}</small><strong>{{ $t(account.kyc==='none'?"common.kycUnverified":account.kyc==='pending'?"aiQuant.status.pending_review":"common.kycVerified") }}</strong><span class="green-link">{{ $t("margin.borrow.gate.advancedCta") }}</span></RouterLink><button @click="openModal('vip',&quot;profile.vipLevel&quot;)"><small>{{ $t("profile.vipLevel") }}</small><strong>{{ $t("VIP 0") }}</strong><div class="progress"><span style="width:0"></span></div><small>{{ t('profile.vip.amountToNext',{tier:1,amount:'100,000'}) }}</small></button><div><small>{{ $t("profile.creditScore") }}</small><strong>100 <span class="positive">{{ $t("profile.creditScoreLabel.good") }}</span></strong><div class="progress"><span style="width:100%"></span></div><small>{{ t('profile.creditScoreHint',{max:100}) }}</small></div></div></section><div class="profile-columns"><section class="profile-box"><header><h2>{{ $t("profile.personalSettings") }}</h2><small>{{ $t("profile.personalSettingsHint") }}</small></header><div v-for="[group,items] in [[&quot;profile.groupAccount&quot;,[[&quot;common.kyc&quot;,'/kyc',account.kyc==='none'?&quot;common.kycUnverified&quot;:&quot;aiQuant.status.pending_review&quot;,'shield'],[&quot;auth.email&quot;,'/bind-email',account.email||&quot;profile.notBound&quot;,'mail'],[&quot;auth.phone&quot;,'/bind-phone',account.phone||&quot;profile.notBound&quot;,'wallet']]],[&quot;common.security&quot;,[[&quot;profile.loginPassword&quot;,'/change-password',&quot;profile.set&quot;,'shield']]]]" :key="group" class="profile-group"><small>{{ $t(group) }}</small><RouterLink v-for="item in items" :key="item[0]" :to="path(item[1])"><Icon :name="item[3]"/><span>{{ $t(item[0]) }}</span><small>{{ $t(item[2]) }}</small><Icon name="chevron-right"/></RouterLink></div><div class="profile-group"><small>{{ $t("profile.groupPreferences") }}</small><label>{{ $t("common.language") }}<select :value="locale" @change="setLanguage($event.target.value)"><option v-for="[code,name] in languages" :value="code">{{ $t(name) }}</option></select></label></div></section><div><section class="profile-box"><header><h2>{{ $t("profile.myBusiness") }}</h2><small>{{ $t("profile.myBusinessHint") }}</small></header><div class="profile-group"><button @click="openModal('vip',&quot;profile.vipLevel&quot;)"><Icon name="trophy"/><span>{{ $t("profile.vipLevel") }}</span><small>{{ $t("VIP 0") }}</small><Icon name="chevron-right"/></button><RouterLink v-for="[name,to,icon] in [[&quot;promotion.cta.invite&quot;,'/referrals','users']]" :key="to" :to="path(to)"><Icon :name="icon"/><span>{{ $t(name) }}</span><Icon name="chevron-right"/></RouterLink></div></section><section class="profile-box"><header><h2>{{ $t("profile.support") }}</h2></header><div class="profile-group"><RouterLink :to="path('/help-center')">{{ $t("common.helpCenter") }}<Icon name="chevron-right"/></RouterLink><button @click="openModal('support',&quot;common.onlineSupport&quot;)">{{ $t("aiQuant.quantFund.topUp.contactSupport") }}<Icon name="chevron-right"/></button><RouterLink :to="path('/about')">{{ $t("common.aboutUs") }}<Icon name="chevron-right"/></RouterLink></div></section><button class="secondary-button wide-button" @click="openModal('account-confirm',&quot;profile.logoutConfirmTitle&quot;,{description:&quot;profile.logoutConfirmDescription&quot;,onConfirm:()=>{logout();router.push(path('/login'))}})">{{ $t("profile.logout") }}</button></div></div></template>
+<template>
+<h1 class="pc-title">{{ $t('profile.pageTitle') }}</h1>
+<section class="pc-card pc-hero">
+ <span class="pc-avatar large" aria-hidden="true"><LineIcon name="user"/></span>
+ <div class="pc-hero-text">
+  <h2>{{ account.name || $t('common.unnamed') }}</h2>
+  <p class="pc-uid">{{ $t('profile.center.overview.uid', {uid: DEMO_UID}) }}<button type="button" :aria-label="$t('profile.center.overview.copyUid')" :title="$t('profile.center.overview.copyUid')" @click="copy(DEMO_UID)"><LineIcon name="copy"/></button></p>
+  <p class="pc-badges"><span class="pc-badge vip"><LineIcon name="crown"/>{{ $t('profile.center.overview.vip', {tier: 0}) }}</span><span class="pc-badge" :class="{ok: account.kyc==='approved'}">{{ $t(kycLabel()) }}</span></p>
+  <p class="pc-muted">{{ $t('profile.center.overview.credit', {score: CREDIT}) }}</p>
+ </div>
+</section>
+<div class="pc-tiles">
+ <RouterLink class="pc-card pc-tile" :to="path('/kyc')"><small>{{ $t('common.kyc') }}</small><strong>{{ $t(kycLabel()) }}</strong><span class="pc-link">{{ $t('margin.borrow.gate.advancedCta') }}<LineIcon name="chevron-right"/></span></RouterLink>
+ <button type="button" class="pc-card pc-tile" @click="openModal('vip','profile.vipLevel')"><small>{{ $t('profile.vipLevel') }}</small><strong>{{ $t('profile.center.overview.vip', {tier: 0}) }}</strong><span class="pc-progress"><span style="width:0"></span></span><small>{{ t('profile.vip.amountToNext', {tier: 1, amount: '100,000'}) }}</small></button>
+ <div class="pc-card pc-tile"><small>{{ $t('profile.creditScore') }}</small><strong>{{ CREDIT }} <span class="pc-good">{{ $t('profile.creditScoreLabel.good') }}</span></strong><span class="pc-progress"><span style="width:100%"></span></span><small>{{ t('profile.creditScoreHint', {max: 100}) }}</small></div>
+</div>
+</template>

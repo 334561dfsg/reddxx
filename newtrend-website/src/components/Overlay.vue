@@ -23,6 +23,7 @@ import SupportChannels from './overlay/SupportChannels.vue'
 import VipTiers from './overlay/VipTiers.vue'
 import AmountForm from './overlay/AmountForm.vue'
 import AssetTransfer from './overlay/AssetTransfer.vue'
+import PasswordForm from '../pages/account/PasswordForm.vue'
 import Spinner from './ui/Spinner.vue'
 // State reported by the open flow's body component ({dirty, valid, done, confirmLabel}); drives the unsaved-work guard and footer.
 const flow=shallowRef({})
@@ -69,7 +70,7 @@ function keydown(e){if(e.key!=='Tab')return;const els=[...dialog.value.querySele
 watch(()=>route.fullPath,()=>{if(current.value)close()})
 onUnmounted(()=>{dialog.value?.close();cleanup()})
 </script>
-<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem','transfer'].includes(current?.type),'transfer-dialog':current?.type==='transfer'}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button></header><div class="overlay-body">
+<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem','transfer','language','change-password'].includes(current?.type),'transfer-dialog':['transfer','language','change-password'].includes(current?.type)}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button></header><div class="overlay-body">
 <MenuDrawer v-if="isDrawer" @close="close" @navigate="navigate" @switch-mode="switchFromMenu" @language="changeLanguage"/>
 
 <LanguageList v-else-if="current.type==='language'" @select="changeLanguage"/>
@@ -79,7 +80,6 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 
 </template>
 <template v-else-if="current.type==='wallet'"><p class="notice">{{ $t("overlay.ui.thisLocalDemoDoesNotRequestWalletPermissionsOr") }}</p><button class="primary-button wide-button section-gap" @click="login();done=true" :disabled="done">{{ $t("overlay.ui.connectDemoWallet") }}</button><FeedbackToast v-if="done" type="success" :source="() => (done) ? ($t('overlay.ui.localDemoAccountConnected')) : ''"/></template>
-<template v-else-if="current.type==='messages'"><div class="empty"><Icon name="mail"/><p>{{ $t("overlay.ui.noNewMessages") }}</p></div></template>
 <C2CAccountForm v-else-if="current.type==='c2c-account'" :account="current.data.account" @state="onFlowState" @saved="current.data.onSaved?.();close()"/>
 <C2COrderDetail v-else-if="current.type==='c2c-detail'" :id="current.data.id"/>
 <template v-else-if="current.type==='c2c-agreement'"><p class="muted">{{ $t('c2c.agreement.version',{version:'v1-draft'}) }}</p><p class="c2c-agreement-copy">{{ $t('c2c.agreement.body') }}</p><form id="account-action" @submit.prevent="accountAction"></form></template>
@@ -93,10 +93,11 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 <QuantFundSubscription v-else-if="current.type==='quant-fund-subscribe'" :product="current.data" :closing="closing" @state="onFlowState" @close="close"/>
 <EarnSubscription v-else-if="current.type==='earn-subscribe'" :product="current.data" :closing="closing" @state="onFlowState" @close="close"/>
 <AssetTransfer v-else-if="current.type==='transfer'" @state="onFlowState" @close="close"/>
+<PasswordForm v-else-if="current.type==='change-password'" in-dialog @state="onFlowState" @close="close"/>
 <AmountForm v-else-if="formType" :kind="current.type" :data="current.data" @state="onFlowState"/>
 <template v-else><p class="muted">{{ $t(current.data.description||"overlay.ui.localInterfaceDemoNotConnectedToTheOriginalAccount") }}</p></template>
 <FeedbackToast v-if="error" id="action-error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
-</div><footer v-if="!isDrawer&&!isSupport&&!['quant-fund-order','transfer'].includes(current.type)" class="overlay-footer"><button v-if="current.type!=='strategy-detail'" class="secondary-button" data-cancel :aria-disabled="busy||undefined" @click="!busy&&close()">{{ $t(cancelLabel) }}</button><button v-if="current.type==='strategy-detail'" class="strategy-cta" :disabled="closing" @click="openStrategySubscription">{{ $t('aiQuant.spotlight.subscribeNow') }}</button><button v-if="primary" :class="[primary.danger?'danger-button':'primary-button',{'is-busy':busy}]" :form="primary.form" type="submit" :disabled="primary.disabled&&!busy" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(primary.label) }}</button></footer></template></dialog></template>
+</div><footer v-if="!isDrawer&&!isSupport&&!['quant-fund-order','transfer','language','change-password'].includes(current.type)" class="overlay-footer"><button v-if="current.type!=='strategy-detail'" class="secondary-button" data-cancel :aria-disabled="busy||undefined" @click="!busy&&close()">{{ $t(cancelLabel) }}</button><button v-if="current.type==='strategy-detail'" class="strategy-cta" :disabled="closing" @click="openStrategySubscription">{{ $t('aiQuant.spotlight.subscribeNow') }}</button><button v-if="primary" :class="[primary.danger?'danger-button':'primary-button',{'is-busy':busy}]" :form="primary.form" type="submit" :disabled="primary.disabled&&!busy" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(primary.label) }}</button></footer></template></dialog></template>
 <style scoped>
 .c2c-agreement-copy{white-space:pre-line;line-height:1.7;color:#b2b5bb;margin-top:16px}
 

@@ -26,7 +26,7 @@ test('known pages resolve to their named routes', () => {
     '/ai-quant/strategy/mine/STR-1/stats': 'strategy-stats',
     '/assets': 'assets', '/assets/records': 'assets',
     '/login': 'auth', '/register': 'auth', '/news': 'news', '/news/42': 'news',
-    '/profile': 'account', '/kyc/basic': 'account', '/help-center': 'account',
+    '/profile': 'account', '/kyc/basic': 'account', '/help-center': 'account', '/preferences': 'account', '/security': 'account', '/records': 'account', '/notifications': 'account',
     '/about': 'legal', '/privacy': 'legal',
     '/c2c/buy': 'c2c', '/c2c/payment-accounts': 'c2c',
     '/charity': 'charity', '/deposit': 'deposit', '/withdraw': 'withdraw', '/messages': 'messages',

@@ -1,13 +1,13 @@
 /* Public-site design scale. Trading keeps its explicit compact layout. */
 #site-shell{font-size:var(--nt-text-body);line-height:var(--nt-line-body)}
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content){padding-top:var(--nt-page-block);padding-bottom:var(--nt-space-12)}
+#main-content :is(.page-wrap,.detail-wrap,.pc-shell,.legal-page,.article-content){padding-top:var(--nt-page-block);padding-bottom:var(--nt-space-12)}
 #main-content :is(.section-pad,.news-heading){padding-top:var(--nt-space-12);padding-bottom:var(--nt-space-12)}
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.news-heading,.article-content,.auth-layout) h1{
+#main-content :is(.page-wrap,.detail-wrap,.legal-page,.news-heading,.article-content,.auth-layout) h1{
  font-size:var(--nt-text-page);line-height:var(--nt-line-heading);font-weight:600;letter-spacing:-.02em;margin-top:0;margin-bottom:var(--nt-space-4);
 }
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content,.auth-layout) h2,
+#main-content :is(.page-wrap,.detail-wrap,.legal-page,.article-content,.auth-layout) h2,
 #main-content .section-heading{font-size:var(--nt-text-section);line-height:var(--nt-line-heading);font-weight:600;letter-spacing:-.01em}
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content) h3,
+#main-content :is(.page-wrap,.detail-wrap,.legal-page,.article-content) h3,
 #main-content :is(.card,.feature-card,.charity-card,.profile-group) h2{font-size:var(--nt-text-card-title);line-height:1.5;font-weight:600}
 #main-content .page-desc{font-size:var(--nt-text-body);line-height:var(--nt-line-body);color:var(--nt-text-secondary)}
 #main-content .page-kicker{font-size:var(--nt-text-caption);line-height:1.5;margin-bottom:var(--nt-space-2)}
@@ -21,11 +21,11 @@
 #main-content .form-stack{gap:var(--nt-space-4)}
 #main-content .subnav{gap:var(--nt-space-2);margin-bottom:var(--nt-section-gap);padding:var(--nt-space-1)}
 #main-content .subnav>a{font-size:var(--nt-text-body);line-height:20px;min-height:var(--nt-control-height);padding:10px 16px}
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.auth-layout) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select){min-height:var(--nt-control-height);font-size:var(--nt-text-body);line-height:20px;padding:9px 12px}
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.auth-layout) :is(.primary-button,.secondary-button){min-height:var(--nt-control-height);font-size:var(--nt-text-body);line-height:20px;padding:10px 16px}
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) .metric{font-size:28px;line-height:1.3;font-weight:600;font-variant-numeric:tabular-nums}
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) :is(.muted,small){line-height:1.5}
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) small{font-size:var(--nt-text-caption)}
+#main-content :is(.page-wrap,.detail-wrap,.auth-layout) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select){min-height:var(--nt-control-height);font-size:var(--nt-text-body);line-height:20px;padding:9px 12px}
+#main-content :is(.page-wrap,.detail-wrap,.auth-layout) :is(.primary-button,.secondary-button){min-height:var(--nt-control-height);font-size:var(--nt-text-body);line-height:20px;padding:10px 16px}
+#main-content :is(.page-wrap,.detail-wrap) .metric{font-size:28px;line-height:1.3;font-weight:600;font-variant-numeric:tabular-nums}
+#main-content :is(.page-wrap,.detail-wrap) :is(.muted,small){line-height:1.5}
+#main-content :is(.page-wrap,.detail-wrap) small{font-size:var(--nt-text-caption)}
 #main-content .account-header{margin-bottom:var(--nt-section-gap)}
 #main-content .legal-page{line-height:1.8}
 #main-content .legal-page :is(h2,h3){margin-top:var(--nt-section-gap);margin-bottom:var(--nt-space-3)}
@@ -43,8 +43,8 @@
 #main-content :is(.form-stack,.account-form,.auth-form) label{
  font-size:var(--nt-text-body);line-height:20px;
 }
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.news-feed) :is(td,.summary-line,.details-list){font-size:var(--nt-text-body);line-height:22px}
-#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) :is(th,.mini-label,.tag-chip,.form-error,.form-success,.notice){font-size:var(--nt-text-caption);line-height:18px}
+#main-content :is(.page-wrap,.detail-wrap,.news-feed) :is(td,.summary-line,.details-list){font-size:var(--nt-text-body);line-height:22px}
+#main-content :is(.page-wrap,.detail-wrap) :is(th,.mini-label,.tag-chip,.form-error,.form-success,.notice){font-size:var(--nt-text-caption);line-height:18px}
 #main-content .market-table td{font-size:var(--nt-text-body);line-height:22px}
 #main-content :is(.profile-box,.finance-table) h2{font-size:var(--nt-text-card-title);line-height:24px}
 #main-content :is(.news-item,.news-row,.insight-stack) h3{font-size:18px;line-height:27px;font-weight:600}

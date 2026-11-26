@@ -41,7 +41,7 @@
 
 - `src/routes.js`：命名路由表（无 DOM 依赖，供测试解析）；`src/main.js` 只负责创建应用。
 - `src/mock/`：时钟、ID、价格快照、账本与目录事实（`catalog.js`）；各业务 store（`earnPortfolio.js`、`quantFundPortfolio.js`、`strategyPortfolio.js`、`tradingFunds.js`、`c2cStore.js`、`walletRecords.js`）只通过账本改动资金。
-- `src/components/ui/`、`src/utils/format.js`、`src/utils/coinAssets.js`：共享组件与格式化；`src/components/overlay/` 为弹窗内容，`Overlay.vue` 只做外壳；`src/pages/account/` 为个人中心子页。
+- `src/components/ui/`、`src/utils/format.js`、`src/utils/coinAssets.js`：共享组件与格式化；`src/components/overlay/` 为弹窗内容，`Overlay.vue` 只做外壳；`src/pages/account/` 为个人中心子页（参照 gmxx.io/personal 的功能与交互：侧栏、偏好设定、安全中心、身份认证、帐变记录、邀请好友、消息通知、清除快取；数据来自 `src/api/profile.js` 的本地内存 Mock）。
 - `src/platform/`：引用仓库根目录共享模块（反馈 toast、借贷规则与客户端）的唯一入口。
 - `src/styles/index.css`：全局样式入口；`tokens.css` 是唯一的 `--nt-*` 定义处；领域样式由各页面引入。
 - 约定与历次决定记录在 `AGENTS.md`，重构说明见 `docs/designs/2026-11-26-frontend-review-and-refactor.md`。

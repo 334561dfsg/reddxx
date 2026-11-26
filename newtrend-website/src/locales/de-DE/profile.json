@@ -219,5 +219,234 @@
     "currentTierLabel": "Aktuelle Stufe",
     "baseTier": "Basis",
     "tiersLabel": "Stufenleiter"
+  },
+  "center": {
+    "nav": {
+      "label": "Persönlicher Bereich",
+      "overview": "Übersicht",
+      "preferences": "Einstellungen",
+      "security": "Sicherheitscenter",
+      "identity": "Identitätsprüfung",
+      "records": "Kontobewegungen",
+      "invite": "Freunde einladen",
+      "notifications": "Benachrichtigungen",
+      "clearCache": "Cache leeren",
+      "helpCenter": "Hilfecenter"
+    },
+    "loadFailed": "Laden fehlgeschlagen. Bitte erneut versuchen.",
+    "overview": {
+      "uid": "UID: {{uid}}",
+      "credit": "Kreditscore: {{score}}",
+      "vip": "VIP {{tier}}",
+      "copyUid": "UID kopieren",
+      "quickLinks": "Schnellzugriff"
+    },
+    "preferences": {
+      "title": "Einstellungen",
+      "messageAlert": "Nachrichtenhinweise",
+      "messageAlertHint": "Hinweis anzeigen, wenn der Kundenservice antwortet",
+      "language": "Sprache",
+      "version": "Version",
+      "logout": "Abmelden",
+      "saved": "Einstellung gespeichert",
+      "saveFailed": "Einstellung konnte nicht gespeichert werden",
+      "selectLanguage": "Bitte auswählen",
+      "searchLanguage": "Sprachen suchen",
+      "noLanguage": "Keine passende Sprache"
+    },
+    "security": {
+      "title": "Sicherheitscenter",
+      "subtitle": "Verwalten Sie Anmeldemethoden und Bestätigungskontakte, um Konto und Guthaben zu schützen.",
+      "loginPassword": "Anmeldepasswort",
+      "loginPasswordHint": "Ändern Sie es regelmäßig und verwenden Sie es nicht auf anderen Websites.",
+      "changePassword": "Passwort ändern",
+      "contacts": "Bestätigungskontakte",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "bind": "Verknüpfen",
+      "change": "Ändern",
+      "notBound": "Nicht verknüpft",
+      "back": "Zurück zum Sicherheitscenter",
+      "passwordNotice": "Stellen Sie zur Sicherheit Ihres Kontos sicher, dass Gerät und Netzwerk vertrauenswürdig sind, bevor Sie es ändern. Nicht auf öffentlichen Geräten durchführen.",
+      "confirmChange": "Änderung bestätigen"
+    },
+    "identity": {
+      "title": "Identitätsprüfung",
+      "subtitle": "Schließen Sie die Basisprüfung ab und lassen Sie sie prüfen; laden Sie danach die Unterlagen für die erweiterte Prüfung hoch.",
+      "currentProgress": "Aktueller Stand",
+      "progress": "Ablauf",
+      "steps": {
+        "submitBasic": "Basisdaten einreichen",
+        "basicReview": "Basisprüfung",
+        "submitAdvanced": "Erweiterte Unterlagen",
+        "advancedReview": "Erweiterte Prüfung"
+      },
+      "stepHints": {
+        "submitBasic": "Angaben und Ausweis ausfüllen",
+        "basicReview": "Die Plattform prüft die Basisdaten",
+        "submitAdvanced": "Aufgeführte Unterlagen hochladen",
+        "advancedReview": "Die Plattform prüft die erweiterten Unterlagen"
+      },
+      "status": {
+        "submitBasic": "Bitte Basisprüfung einreichen",
+        "basicReview": "Basisprüfung wird geprüft",
+        "submitAdvanced": "Bitte erweiterte Prüfung einreichen",
+        "advancedReview": "Erweiterte Prüfung wird geprüft",
+        "done": "Prüfung abgeschlossen"
+      },
+      "todo": "Was Sie tun müssen",
+      "todoItems": {
+        "basic": "Basisdaten einreichen und Prüfung abwarten",
+        "advanced": "Nach Freigabe die erweiterten Unterlagen hochladen",
+        "result": "Ergebnis der erweiterten Prüfung abwarten"
+      },
+      "stepOf": "Schritt {{step}} / {{total}}",
+      "toSubmit": "Einzureichen",
+      "inReview": "In Prüfung",
+      "basicTitle": "Basisprüfung",
+      "advancedTitle": "Erweiterte Prüfung",
+      "reviewHint": "Ihre Einreichung ist in der Prüfwarteschlange. Wir benachrichtigen Sie über das Ergebnis.",
+      "simulateApprove": "Freigabe simulieren (Demo)",
+      "approved": "Freigegeben (Demo)"
+    },
+    "records": {
+      "title": "Kontobewegungen",
+      "changeType": "Bewegungsart",
+      "accountType": "Kontotyp",
+      "currency": "Währung",
+      "all": "Alle",
+      "reset": "Zurücksetzen",
+      "columns": {
+        "type": "Bewegungsart",
+        "account": "Konto",
+        "currency": "Währung",
+        "amount": "Betrag",
+        "balance": "Saldo",
+        "time": "Zeit"
+      },
+      "accounts": {
+        "funding": "Funding",
+        "spot": "Spot",
+        "futures": "Futures",
+        "finance": "Finanzen"
+      },
+      "types": {
+        "deposit": "Einzahlung",
+        "withdraw": "Auszahlung",
+        "transfer": "Übertrag",
+        "spotBuy": "Spot-Kauf",
+        "spotSell": "Spot-Verkauf",
+        "tradeFee": "Handelsgebühr",
+        "marginFreeze": "Margin-Sperre",
+        "marginSettle": "Margin-Abrechnung",
+        "fundingFee": "Finanzierungsgebühr",
+        "earnSubscribe": "Earn-Zeichnung",
+        "earnRedeem": "Earn-Rücknahme",
+        "earnInterest": "Earn-Zinsen",
+        "loanDisbursement": "Kreditauszahlung",
+        "loanRepayment": "Kredittilgung",
+        "collateralFreeze": "Sicherheitensperre",
+        "collateralRelease": "Sicherheitenfreigabe",
+        "strategySubscribe": "KI-Strategie-Zeichnung",
+        "strategySettle": "KI-Strategie-Abrechnung",
+        "quantFundSubscribe": "Quant-Fonds-Zeichnung",
+        "quantFundRedeem": "Quant-Fonds-Rücknahme",
+        "inviteCommission": "Empfehlungsprovision"
+      },
+      "empty": "Keine Bewegungen für diese Filter",
+      "invalidFilter": "Ungültiger Filter. Bitte zurücksetzen und erneut versuchen.",
+      "back": "Zurück zum persönlichen Bereich"
+    },
+    "invite": {
+      "title": "Freunde einladen",
+      "myCode": "Meine Einladung",
+      "code": "Einladungscode",
+      "link": "Einladungslink",
+      "copyCode": "Code kopieren",
+      "copyLink": "Link kopieren",
+      "qr": "Zum Registrieren scannen",
+      "qrAlt": "QR-Code des Einladungslinks",
+      "invited": "Eingeladen",
+      "pending": "Ausstehend (USDT)",
+      "settled": "Abgerechnet (USDT)"
+    },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "subtitle": "System-, Sicherheits- und Aktionsnachrichten werden hier angezeigt.",
+      "all": "Alle",
+      "categories": {
+        "security": "Sicherheit",
+        "system": "System",
+        "promo": "Aktionen"
+      },
+      "markAllRead": "Alle als gelesen markieren",
+      "markedAllRead": "Alle Nachrichten als gelesen markiert",
+      "nothingUnread": "Keine ungelesenen Nachrichten",
+      "unread": "Ungelesen",
+      "empty": "Keine Nachrichten",
+      "notFound": "Diese Nachricht existiert nicht mehr",
+      "invalidCategory": "Unbekannte Nachrichtenkategorie",
+      "headerLabel": "Benachrichtigungen, {{count}} ungelesen",
+      "kinds": {
+        "loginNewIp": {
+          "title": "Neue Anmeldung erkannt",
+          "body": "Ihr Konto wurde von IP {{ip}} angemeldet. Falls Sie das nicht waren, ändern Sie sofort Ihr Passwort."
+        },
+        "depositCredited": {
+          "title": "Einzahlung gutgeschrieben",
+          "body": "{{amount}} {{currency}} wurden Ihrem Funding-Konto gutgeschrieben."
+        },
+        "earnLaunch": {
+          "title": "Neues Earn-Produkt",
+          "body": "Ein neues Festgeldprodukt mit bis zu {{apy}} APY ist zur Zeichnung geöffnet."
+        },
+        "earnApproved": {
+          "title": "Zeichnung genehmigt",
+          "body": "Ihre Zeichnung {{product}} wurde genehmigt und wird verzinst."
+        },
+        "passwordChanged": {
+          "title": "Anmeldepasswort geändert",
+          "body": "Ihr Anmeldepasswort wurde geändert. Falls Sie das nicht waren, kontaktieren Sie den Support."
+        },
+        "withdrawSubmitted": {
+          "title": "Auszahlung eingereicht",
+          "body": "Ihre Auszahlung von {{amount}} {{currency}} wird bearbeitet."
+        },
+        "inviteCommission": {
+          "title": "Provision abgerechnet",
+          "body": "Ihre Empfehlungsprovision von {{amount}} {{currency}} wurde abgerechnet."
+        },
+        "tradingCompetition": {
+          "title": "Trading-Wettbewerb",
+          "body": "Nehmen Sie am Monatswettbewerb teil und teilen Sie sich {{prize}} Preisgeld."
+        },
+        "loanApproved": {
+          "title": "Kredit genehmigt",
+          "body": "Ihr Kredit über {{amount}} {{currency}} wurde genehmigt und ausgezahlt."
+        },
+        "kycSubmitted": {
+          "title": "Prüfung eingereicht",
+          "body": "Ihre Identitätsprüfung wurde eingereicht und wartet auf Prüfung."
+        },
+        "strategySettled": {
+          "title": "KI-Strategie abgerechnet",
+          "body": "Ihre KI-Strategie wurde mit einem Ergebnis von {{pnl}} abgerechnet."
+        },
+        "vipUpgrade": {
+          "title": "VIP-Upgrade in Reichweite",
+          "body": "Sie sind kurz vor VIP {{tier}}. Mehr Handel senkt Ihre Gebühren."
+        },
+        "maintenance": {
+          "title": "Geplante Wartung",
+          "body": "Einige Dienste sind während {{window}} kurz nicht verfügbar."
+        }
+      }
+    },
+    "clearCache": {
+      "title": "Cache leeren",
+      "description": "Zwischengespeicherte Seitendaten werden gelöscht und neu vom Server geladen. Sprache und Anmeldung bleiben erhalten.",
+      "confirm": "Leeren",
+      "done": "Cache geleert"
+    }
   }
 }

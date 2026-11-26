@@ -11,11 +11,17 @@ import {computed, getCurrentScope, onScopeDispose, shallowRef, watch} from 'vue'
 //   the tab is hidden), for server state others change (admin review, generated P&L).
 // useMutation(action) — one call at a time; a repeat while pending resolves to undefined without calling.
 // invalidate(tag) — refreshes every live request that declared that tag (e.g. after a subscription).
+// invalidateAll() — refreshes every live tagged request once.
 
 const listeners = new Map()
 
 export function invalidate(tag) {
   for (const refresh of listeners.get(tag) || []) refresh()
+}
+
+/** Refreshes every live tagged request (the personal centre's "clear cache"). Each refresh runs once. */
+export function invalidateAll() {
+  for (const refresh of new Set([...listeners.values()].flatMap(set => [...set]))) refresh()
 }
 
 function subscribe(tags, refresh) {
