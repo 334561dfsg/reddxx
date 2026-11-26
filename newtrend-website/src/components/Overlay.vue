@@ -22,6 +22,7 @@ import LanguageList from './overlay/LanguageList.vue'
 import SupportChannels from './overlay/SupportChannels.vue'
 import VipTiers from './overlay/VipTiers.vue'
 import AmountForm from './overlay/AmountForm.vue'
+import AssetTransfer from './overlay/AssetTransfer.vue'
 import Spinner from './ui/Spinner.vue'
 // State reported by the open flow's body component ({dirty, valid, done, confirmLabel}); drives the unsaved-work guard and footer.
 const flow=shallowRef({})
@@ -68,7 +69,7 @@ function keydown(e){if(e.key!=='Tab')return;const els=[...dialog.value.querySele
 watch(()=>route.fullPath,()=>{if(current.value)close()})
 onUnmounted(()=>{dialog.value?.close();cleanup()})
 </script>
-<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem'].includes(current?.type)}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button></header><div class="overlay-body">
+<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem','transfer'].includes(current?.type),'transfer-dialog':current?.type==='transfer'}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button></header><div class="overlay-body">
 <MenuDrawer v-if="isDrawer" @close="close" @navigate="navigate" @switch-mode="switchFromMenu" @language="changeLanguage"/>
 
 <LanguageList v-else-if="current.type==='language'" @select="changeLanguage"/>
@@ -92,10 +93,11 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 <QuantFundOrderDetails v-else-if="current.type==='quant-fund-order'" :order="current.data" @close="close"/>
 <QuantFundSubscription v-else-if="current.type==='quant-fund-subscribe'" :product="current.data" :closing="closing" @state="onFlowState" @close="close"/>
 <EarnSubscription v-else-if="current.type==='earn-subscribe'" :product="current.data" :closing="closing" @state="onFlowState" @close="close"/>
+<AssetTransfer v-else-if="current.type==='transfer'" @state="onFlowState" @close="close"/>
 <AmountForm v-else-if="formType" :kind="current.type" :data="current.data" @state="onFlowState"/>
 <template v-else><p class="muted">{{ $t(current.data.description||"overlay.ui.localInterfaceDemoNotConnectedToTheOriginalAccount") }}</p></template>
 <FeedbackToast v-if="error" id="action-error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
-</div><footer v-if="!isDrawer&&!isSupport&&current.type!=='quant-fund-order'" class="overlay-footer"><button v-if="current.type!=='strategy-detail'" class="secondary-button" data-cancel :aria-disabled="busy||undefined" @click="!busy&&close()">{{ $t(cancelLabel) }}</button><button v-if="current.type==='strategy-detail'" class="strategy-cta" :disabled="closing" @click="openStrategySubscription">{{ $t('aiQuant.spotlight.subscribeNow') }}</button><button v-if="primary" :class="[primary.danger?'danger-button':'primary-button',{'is-busy':busy}]" :form="primary.form" type="submit" :disabled="primary.disabled&&!busy" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(primary.label) }}</button></footer></template></dialog></template>
+</div><footer v-if="!isDrawer&&!isSupport&&!['quant-fund-order','transfer'].includes(current.type)" class="overlay-footer"><button v-if="current.type!=='strategy-detail'" class="secondary-button" data-cancel :aria-disabled="busy||undefined" @click="!busy&&close()">{{ $t(cancelLabel) }}</button><button v-if="current.type==='strategy-detail'" class="strategy-cta" :disabled="closing" @click="openStrategySubscription">{{ $t('aiQuant.spotlight.subscribeNow') }}</button><button v-if="primary" :class="[primary.danger?'danger-button':'primary-button',{'is-busy':busy}]" :form="primary.form" type="submit" :disabled="primary.disabled&&!busy" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(primary.label) }}</button></footer></template></dialog></template>
 <style scoped>
 .c2c-agreement-copy{white-space:pre-line;line-height:1.7;color:#b2b5bb;margin-top:16px}
 
@@ -114,4 +116,6 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 .confirm-subtitle{margin-top:-4px}.confirm-danger{margin:12px 0 0;padding:10px 12px;border:1px solid color-mix(in srgb,#f46 30%,transparent);border-radius:4px;background:color-mix(in srgb,#f46 10%,transparent);color:#f46;font-size:14px;line-height:1.6}.danger-button{padding:10px 20px;border-radius:var(--nt-radius-panel);background:#f46;color:#fff;font-weight:600}.danger-button:hover{background:#ff5f7c;color:#fff}.danger-button:focus-visible{outline:none;text-decoration:underline}
 
 .overlay-footer .is-busy{cursor:progress}.overlay-close[aria-disabled=true],.overlay-footer .secondary-button[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+
+.nt-dialog.nt-dialog.transfer-dialog{width:min(440px,calc(100vw - 32px))}.transfer-dialog .overlay-body{padding-bottom:24px}.nt-dialog.nt-dialog.transfer-dialog .overlay-header h2{font-size:18px;font-weight:600}
 </style>

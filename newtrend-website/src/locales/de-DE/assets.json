@@ -261,5 +261,19 @@
     "allRecords": "Alle Einträge",
     "noRecordsYet": "Noch keine Einträge"
   },
-  "transferRecord": "Übertragung: {{from}} → {{to}}"
+  "transferRecord": "Übertragung: {{from}} → {{to}}",
+  "transferDialog": {
+    "from": "Von",
+    "to": "An",
+    "currency": "Währung",
+    "quantity": "Übertragungsmenge",
+    "select": "Bitte auswählen",
+    "quantityPlaceholder": "Menge eingeben",
+    "all": "Alles",
+    "available": "Verfügbar",
+    "submit": "Übertragen",
+    "swap": "Konten tauschen",
+    "accountsRequired": "Bitte Quell- und Zielkonto auswählen",
+    "currencyRequired": "Bitte eine Währung auswählen"
+  }
 }

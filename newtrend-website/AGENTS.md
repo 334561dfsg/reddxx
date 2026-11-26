@@ -349,3 +349,8 @@ The prototype keeps mock data, but pages must already behave like they call a se
 - The strategy catalogue (both modes) is the shared strategy Mock's listed templates (`/api/mock/strategy`, configured in the admin 「AI 策略」); take-profit/stop-loss ranges and defaults come from each template.
 - 真實 records, balance and subscribe/pause/resume/stop go through `platform/strategyClient.js` (user `USR-DEMO`); new subscriptions follow the admin policy (review on by default → 審核中). Do not keep 真實 strategy data locally. 模擬 stays on the local ledger and local records.
 - Pages using strategy data must run `useStrategyFeed()` (Strategy.vue does) and handle loading/error (catalogue shows 載入中 / 載入失敗 + 重試).
+
+## Transfer dialog (user decision, 2026-11-26)
+
+Transfer is a dialog (`components/overlay/AssetTransfer.vue`, Overlay type `transfer`), not a page. Layout follows the user's reference: From / To account selects joined by a green→red rail with a swap button, divider, currency select, quantity with an inline 全部 and the available line, full-width submit; no default footer. Fields start empty; choosing one account sets the other to the opposite. Keep the NewQuantCapital palette (lime submit) and the no-highlight-border rule (Select variant `dialog`). Selects inside native dialogs must portal their popups into the dialog (`getPopupContainer`), never `document.body`. `/assets/transfer` and the header menu link land on the assets overview and open the dialog. The trading account holds USDT margin only; the API validates the available amount per source account.
+

@@ -261,5 +261,19 @@
     "allRecords": "All records",
     "noRecordsYet": "No records yet"
   },
-  "transferRecord": "Transfer: {{from}} → {{to}}"
+  "transferRecord": "Transfer: {{from}} → {{to}}",
+  "transferDialog": {
+    "from": "From",
+    "to": "To",
+    "currency": "Currency",
+    "quantity": "Transfer quantity",
+    "select": "Please select",
+    "quantityPlaceholder": "Enter quantity",
+    "all": "All",
+    "available": "Available",
+    "submit": "Transfer",
+    "swap": "Swap accounts",
+    "accountsRequired": "Please select the source and destination accounts",
+    "currencyRequired": "Please select a currency"
+  }
 }

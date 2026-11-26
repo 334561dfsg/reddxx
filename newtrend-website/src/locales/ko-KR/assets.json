@@ -261,5 +261,19 @@
     "allRecords": "전체 내역",
     "noRecordsYet": "내역이 없습니다"
   },
-  "transferRecord": "이체: {{from}} → {{to}}"
+  "transferRecord": "이체: {{from}} → {{to}}",
+  "transferDialog": {
+    "from": "출금",
+    "to": "입금",
+    "currency": "통화",
+    "quantity": "이체 수량",
+    "select": "선택하세요",
+    "quantityPlaceholder": "수량 입력",
+    "all": "전체",
+    "available": "사용 가능",
+    "submit": "이체",
+    "swap": "출금/입금 계정 바꾸기",
+    "accountsRequired": "출금 계정과 입금 계정을 선택하세요",
+    "currencyRequired": "통화를 선택하세요"
+  }
 }

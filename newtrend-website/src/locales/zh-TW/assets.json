@@ -261,5 +261,19 @@
     "allRecords": "全部記錄",
     "noRecordsYet": "暫無記錄"
   },
-  "transferRecord": "劃轉：{{from}} → {{to}}"
+  "transferRecord": "劃轉：{{from}} → {{to}}",
+  "transferDialog": {
+    "from": "轉出",
+    "to": "轉入",
+    "currency": "幣種",
+    "quantity": "劃轉數量",
+    "select": "請選擇",
+    "quantityPlaceholder": "請輸入數量",
+    "all": "全部",
+    "available": "可用",
+    "submit": "劃轉",
+    "swap": "交換轉出與轉入帳戶",
+    "accountsRequired": "請選擇轉出與轉入帳戶",
+    "currencyRequired": "請選擇幣種"
+  }
 }

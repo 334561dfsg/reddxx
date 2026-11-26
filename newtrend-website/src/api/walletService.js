@@ -26,11 +26,13 @@ export function createWalletApi({accountValues, priceOf}) {
   /** GET /assets/records?mode= — deposits, withdrawals and transfers, newest first. */
   const listWalletRecords = mode => mockCall(SERVICE, () => snapshot(walletRecords[walletMode(mode)]))
 
-  /** POST /assets/transfers {mode, from, to, currency, amount} — records an internal transfer between accounts. */
+  /** POST /assets/transfers {mode, from, to, currency, amount} — records an internal transfer between accounts ('assets.tabs.funding' | 'assets.tabs.trading'). */
   const transferFunds = ({mode, from, to, currency, amount, labels}) => mockCall(SERVICE, () => {
     if (from === to) throw new ApiError('assets.ui.chooseDifferentSourceAndDestinationAccounts')
     if (!positive(amount)) throw new ApiError('aiQuant.quantFund.subscribe.errorAmountInvalid')
-    if (Number(amount) > (balancesOf(mode)[currency] || 0)) throw new ApiError(insufficient(mode))
+    // Funding holds every asset; the trading account holds USDT margin only.
+    const available = from === 'assets.tabs.trading' ? (currency === 'USDT' ? accountValues(mode)['assets.tabs.trading'] || 0 : 0) : balancesOf(mode)[currency] || 0
+    if (Number(amount) > available) throw new ApiError(insufficient(mode))
     return snapshot(addWalletRecord(mode, 'transfer', {label: {key: 'assets.transferRecord', params: labels}, amount, symbol: currency}))
   })
 

@@ -261,5 +261,19 @@
     "allRecords": "Tous les historiques",
     "noRecordsYet": "Aucun historique"
   },
-  "transferRecord": "Transfert : {{from}} → {{to}}"
+  "transferRecord": "Transfert : {{from}} → {{to}}",
+  "transferDialog": {
+    "from": "De",
+    "to": "Vers",
+    "currency": "Devise",
+    "quantity": "Quantité à transférer",
+    "select": "Veuillez sélectionner",
+    "quantityPlaceholder": "Saisir la quantité",
+    "all": "Tout",
+    "available": "Disponible",
+    "submit": "Transférer",
+    "swap": "Inverser les comptes",
+    "accountsRequired": "Veuillez sélectionner les comptes source et destination",
+    "currencyRequired": "Veuillez sélectionner une devise"
+  }
 }

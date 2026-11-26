@@ -6,7 +6,7 @@ import {balanceOf, balancesOf} from '../src/mock/ledger.js'
 
 const DEMO = 'common.demo.demo', REAL = 'common.demo.real'
 const prices = {BTC: 50000, USDT: 1}
-const api = createWalletApi({accountValues: mode => ({funding: balancesOf(mode).USDT || 0, trading: 10}), priceOf: symbol => prices[symbol] || 0})
+const api = createWalletApi({accountValues: mode => ({'assets.tabs.funding': balancesOf(mode).USDT || 0, 'assets.tabs.trading': 10}), priceOf: symbol => prices[symbol] || 0})
 
 test('overview totals account values and returns requested prices', async () => {
   const overview = await api.getAssetsOverview(DEMO, ['BTC', 'XRP'])
@@ -20,6 +20,8 @@ test('transfer validates and records per mode without moving funds', async () =>
   await assert.rejects(api.transferFunds({mode: DEMO, from: 'a', to: 'a', currency: 'USDT', amount: 1}), {code: 'assets.ui.chooseDifferentSourceAndDestinationAccounts'})
   await assert.rejects(api.transferFunds({mode: DEMO, from: 'a', to: 'b', currency: 'USDT', amount: 0}), {code: 'aiQuant.quantFund.subscribe.errorAmountInvalid'})
   await assert.rejects(api.transferFunds({mode: REAL, from: 'a', to: 'b', currency: 'USDT', amount: 1}), {code: 'assets.ui.insufficientBalanceSwitchToTheDemoAccount'})
+  await assert.rejects(api.transferFunds({mode: DEMO, from: 'assets.tabs.trading', to: 'assets.tabs.funding', currency: 'BTC', amount: 1}), {code: 'assets.withdraw.error.insufficientBalance'}, 'trading holds USDT only')
+  await api.transferFunds({mode: DEMO, from: 'assets.tabs.trading', to: 'assets.tabs.funding', currency: 'USDT', amount: 10, labels: {}})
   const before = balanceOf(DEMO, 'USDT')
   await api.transferFunds({mode: DEMO, from: 'a', to: 'b', currency: 'USDT', amount: 5, labels: {from: 'A', to: 'B'}})
   assert.equal(balanceOf(DEMO, 'USDT'), before)

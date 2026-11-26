@@ -261,5 +261,19 @@
     "allRecords": "すべての履歴",
     "noRecordsYet": "履歴はありません"
   },
-  "transferRecord": "振替：{{from}} → {{to}}"
+  "transferRecord": "振替：{{from}} → {{to}}",
+  "transferDialog": {
+    "from": "振替元",
+    "to": "振替先",
+    "currency": "通貨",
+    "quantity": "振替数量",
+    "select": "選択してください",
+    "quantityPlaceholder": "数量を入力",
+    "all": "全額",
+    "available": "利用可能",
+    "submit": "振替",
+    "swap": "振替元と振替先を入れ替える",
+    "accountsRequired": "振替元と振替先のアカウントを選択してください",
+    "currencyRequired": "通貨を選択してください"
+  }
 }
