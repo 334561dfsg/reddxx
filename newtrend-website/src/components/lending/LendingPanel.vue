@@ -1,4 +1,5 @@
 <script setup>
+import {lendingErrorKey} from '../../utils/lendingErrors.js'
 import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {computed,ref,watch} from 'vue'
 import {message} from 'ant-design-vue'
@@ -28,8 +29,8 @@ async function submitApplication(){
  failure.value=''
  const p=product.value,n=Number(amount.value)
  const code=!session.loggedIn?'login':p?.status!=='active'?'product':eligibility.value[0]||(!Number.isFinite(n)||n<p.minLoanAmount||n>p.maxLoanAmount?'amount':!selectedTerm.value?'term':p.collateralEnabled&&!p.collateralCurrencies.includes(collateral.value)?'collateral':p.collateralEnabled&&required.value>Number(wallet.value[collateral.value]||0)?'balance':null)
- if(code){failure.value=code;message.error(t('lending.errors.'+code));return}
- try{await lendingCommand('apply',{userId:uid,productId:p.productId,amount:n,days:Number(days.value),expectedDailyRate:selectedTerm.value.dailyRate,collateralCurrency:collateral.value});message.success(t('lending.success'));amount.value=''}catch(e){failure.value=e.message;message.error(t('lending.errors.'+e.message))}
+ if(code){failure.value=code;message.error(t(lendingErrorKey(code)));return}
+ try{await lendingCommand('apply',{userId:uid,productId:p.productId,amount:n,days:Number(days.value),expectedDailyRate:selectedTerm.value.dailyRate,collateralCurrency:collateral.value});message.success(t('lending.success'));amount.value=''}catch(e){failure.value=e.message;message.error(t(lendingErrorKey(e.message)))}
 }
 const eligibility=computed(()=>eligibilityFailures(product.value,state.value.profiles?.[uid]))
 const wallet=computed(()=>state.value.balances[uid]||{})

@@ -1,4 +1,5 @@
 // Mirrors the reference login redirect guard: only same-site absolute paths are allowed.
+import {readStorage,writeStorage,removeStorage} from './storage.js'
 const CONTROL = /[\u0000-\u001f\u007f]/
 
 export function safeRedirect(value) {
@@ -13,13 +14,11 @@ const PENDING_KEY = 'aiquant:pending-subscribe'
 
 // The reference remembers which strategy a signed-out visitor tried to subscribe to and reopens it after login.
 export function rememberPendingSubscribe(id) {
-  try { sessionStorage.setItem(PENDING_KEY, String(id)) } catch {}
+  writeStorage(PENDING_KEY, String(id), 'session')
 }
 
 export function takePendingSubscribe() {
-  try {
-    const value = sessionStorage.getItem(PENDING_KEY)
-    if (value !== null) sessionStorage.removeItem(PENDING_KEY)
-    return value
-  } catch { return null }
+  const value = readStorage(PENDING_KEY, 'session')
+  if (value !== null) removeStorage(PENDING_KEY, 'session')
+  return value
 }

@@ -270,3 +270,11 @@ Quant Fund positions, 派息明細, My Strategies and the strategy daily stats u
 ## Unified list pagination (user request, 2026-11-26)
 
 Every Finance and AI Quant list uses `FinancePagination` + `useFinancePagination`, now defaulting to 10 rows per page: Earn products, holdings, subscription/redemption/reward records, My Loans, loan repayment records, Quant Fund positions/payouts, My Strategies and daily stats. Card grids pass a multiple of their column count instead (Loan product cards: 6). Lists that are empty show their empty state without a pager.
+
+## Refactor phase 1 conventions (2026-11-26)
+
+- Browser storage only through `src/utils/storage.js` (guarded; the site must boot when storage is blocked). Allowed keys: `nt-locale`, market favorites, `nt-visitor` (session), `aiquant:pending-subscribe` (session). Never store mock business data; the mock account (`account.js`) is in memory and old `nt-account` values are removed on load.
+- Funding records (deposit vouchers, withdrawals, transfers) live in `src/walletRecords.js`, per account mode; never push them into `session.orders` (trading only).
+- Earn: per-mode, per-asset wallet in `earnPortfolio.js`; per-user quota is cumulative over pending orders + live holdings; `recordEarnSubscription` validates and reserves the balance; validation feedback appears only after a submit attempt.
+- Unknown routes, sections and ids render `pages/NotFound.vue` (no silent redirect home); unknown trading symbols rewrite the URL to the pair shown.
+- Lending errors go through `utils/lendingErrors.js` (unknown/network codes → `unavailable`).

@@ -10,6 +10,7 @@ const Finance=()=>import('./pages/Finance.vue')
 const Quant=()=>import('./pages/Quant.vue')
 const Assets=()=>import('./pages/Assets.vue')
 const Content=()=>import('./pages/Content.vue')
+const NotFound=()=>import('./pages/NotFound.vue')
 const Auth=()=>import('./pages/Auth.vue')
 const Legal=()=>import('./pages/Legal.vue')
 const News=()=>import('./pages/News.vue')
@@ -31,20 +32,21 @@ const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:
  // Copy trading is temporarily excluded from this prototype.
  {path:'/copytrade/:pathMatch(.*)*',redirect:'/'},
  {path:'/earn/loan/order/:orderId',component:()=>import('./pages/LendingOrder.vue')},
- {path:'/earn/:section?/:id?',component:Finance},
+ // Section params are constrained so unknown sections reach the not-found page instead of an empty shell.
+ {path:'/earn/:section(simple|my-earnings|loan)?/:id?',component:Finance},
  {path:'/ai-quant/quant-fund/products/:productId',component:Quant},
  {path:'/ai-quant/quant-fund/positions/:orderId/interest-records',component:Quant},
  {path:'/ai-quant/strategy/mine/:recordId/stats',component:Quant},
- {path:'/ai-quant/:section?/:id?',component:Quant},
- {path:'/assets/:section?',component:Assets},
+ {path:'/ai-quant/:section(strategy|quant-fund)?/:id(mine|positions)?',component:Quant},
+ {path:'/assets/:section(overview|transfer|records)?',component:Assets},
  {path:'/:auth(login|register|forgot-password)',component:Auth},
  {path:'/news/:id?',component:News},
  {path:'/:account(profile|bind-email|bind-phone|change-password|fund-password|2fa|devices|kyc|referrals|promotions|joint-account|survey|help-center)/:id?',component:Account},
  {path:'/:section(about|privacy|agreement|risk-disclosure|regulatory-information|content)/:id?',component:Legal},
  {path:'/c2c/:c2cPage(buy|sell|orders|payment-accounts)',component:()=>import('./pages/C2CBuy.vue')},
  {path:'/c2c/accounts',redirect:'/c2c/payment-accounts'},
- {path:'/:section/:id?',component:Content},
- {path:'/:pathMatch(.*)*',redirect:'/'}
+ {path:'/:section(charity|deposit|withdraw|messages)',component:Content},
+ {path:'/:pathMatch(.*)*',component:NotFound}
 ],scrollBehavior(to,from,saved){
   // A reload reuses history.state.scroll; only back/forward should restore it.
   if(from===START_LOCATION)return {left:0,top:0,behavior:'instant'}
@@ -56,6 +58,9 @@ router.beforeEach((to,from)=>{
     return {path:to.path,query:to.query,hash:'',replace:true}
 })
 async function start(){
- const app=createApp(App);app.config.globalProperties.$compact=formatCompact;app.config.globalProperties.$t=t;app.use(router);await Promise.all([applyLocale(locale.value),router.isReady()]);app.mount('#app')
+ const app=createApp(App);app.config.globalProperties.$compact=formatCompact;app.config.globalProperties.$t=t;app.use(router)
+ // A failed language chunk must not leave a blank page: mount anyway and fall back to the bundled default.
+ await Promise.all([applyLocale(locale.value).catch(error=>console.error('[i18n] locale load failed',error)),router.isReady()])
+ app.mount('#app')
 }
 start()

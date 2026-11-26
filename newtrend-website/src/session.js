@@ -1,11 +1,12 @@
 import { reactive, shallowRef } from 'vue'
 import {createCurrentTrades} from './utils/mockCurrentTrades'
-export const session = reactive({loggedIn:sessionStorage.getItem('nt-visitor')!=='true',mode:"common.demo.real",orders:createCurrentTrades(),subscriptions:[]})
+import {readStorage,writeStorage,removeStorage} from './utils/storage.js'
+export const session = reactive({loggedIn:readStorage('nt-visitor','session')!=='true',mode:"common.demo.real",orders:createCurrentTrades()})
 export const modal=shallowRef(null)
 export function openModal(type,title,data={}){if(!modal.value) modal.value={type,title,data}}
 export function closeModal(){modal.value=null}
-export function logout(){session.loggedIn=false;sessionStorage.setItem('nt-visitor','true')}
-export function login(){session.loggedIn=true;sessionStorage.removeItem('nt-visitor')}
+export function logout(){session.loggedIn=false;writeStorage('nt-visitor','true','session')}
+export function login(){session.loggedIn=true;removeStorage('nt-visitor','session')}
 
 export function requestModeSwitch(mode) {
   if (!session.loggedIn || mode === session.mode || !['common.demo.real', 'common.demo.demo'].includes(mode)) return

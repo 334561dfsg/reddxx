@@ -3,6 +3,7 @@ import {computed,h,onBeforeUnmount,ref,watch} from 'vue'
 import {ConfigProvider,Select,message,theme} from 'ant-design-vue'
 import {path} from '../../data'
 import {session} from '../../session'
+import {addWalletRecord} from '../../walletRecords'
 import {t} from '../../i18n'
 import '../../styles/deposit-fidelity.css'
 
@@ -54,7 +55,7 @@ function submit(){
  if(errors.length){message.error(errors.map(k=>t(k)).join(' '));document.querySelector('.deposit-page [aria-invalid="true"]')?.focus();return}
  busy.value=true
  const voucherId='DV'+Date.now().toString(36).toUpperCase()
- session.orders.push({name:'content.ui.demoDepositRequest',amount:amount.value,symbol:coin.value})
+ addWalletRecord(session.mode,'deposit',{label:'content.ui.demoDepositRequest',amount:amount.value,symbol:coin.value,status:'pending'})
  message.success(`${t('deposit.voucher.submittedTitle')} ${t('deposit.voucher.submittedDesc',{voucherId})}`)
  amount.value='';hash.value='';file.value=null;clearPreview();attempted.value=false;busy.value=false
 }

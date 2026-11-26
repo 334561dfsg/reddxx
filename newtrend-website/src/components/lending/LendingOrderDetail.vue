@@ -1,4 +1,5 @@
 <script setup>
+import {lendingErrorKey} from '../../utils/lendingErrors.js'
 import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {computed,nextTick,ref,watch} from 'vue'
 import {message} from 'ant-design-vue'
@@ -22,7 +23,7 @@ const date=n=>n?new Date(n).toLocaleString():'—'
 async function run(kind){
  if(busy.value||props.closing)return
  if(kind==='repay'&&(!Number.isFinite(Number(amount.value))||Number(amount.value)<=0||Number(amount.value)>order.value.totalDebt)){message.error(t('lending.errors.amount'));return}
- try{await lendingCommand(kind,{userId:'USR-DEMO',orderId:props.orderId,amount:Number(amount.value)});amount.value='';action.value='';message.success(t('lending.success'));await nextTick();detailHeader.value?.focus()}catch(e){message.error(t('lending.errors.'+e.message))}
+ try{await lendingCommand(kind,{userId:'USR-DEMO',orderId:props.orderId,amount:Number(amount.value)});amount.value='';action.value='';message.success(t('lending.success'));await nextTick();detailHeader.value?.focus()}catch(e){message.error(t(lendingErrorKey(e.message)))}
 }
 </script>
 <template>

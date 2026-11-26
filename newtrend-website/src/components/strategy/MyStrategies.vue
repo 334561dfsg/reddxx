@@ -30,7 +30,9 @@ const isBusy=(record,kind)=>busy.value?.id===record.id&&(!kind||busy.value.kind=
 async function apply(record,kind){
  if(busy.value)return
  busy.value={id:record.id,kind}
- try{await wait(ACTION_DELAY);changeStrategyStatus(account.value,record.id,kind);notify('success','aiQuant.actions.toast.'+kind+'Success')}
+ // Bind to the account that owned the row when clicked; a mode switch during the wait must not retarget it.
+ const target=account.value
+ try{await wait(ACTION_DELAY);changeStrategyStatus(target,record.id,kind);notify('success','aiQuant.actions.toast.'+kind+'Success')}
  catch{notify('error','aiQuant.actions.toast.'+kind+'Error')}
  finally{busy.value=null}
 }

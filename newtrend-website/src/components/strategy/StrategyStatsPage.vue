@@ -4,12 +4,14 @@ import {path} from '../../data'
 import {session} from '../../session'
 import {strategyAccountFor} from '../../strategyPortfolio'
 import StrategyDailyStats from './StrategyDailyStats.vue'
+import NotFound from '../../pages/NotFound.vue'
 // Standalone 查看統計 page (same pattern as Quant Fund 派息明細): back link, strategy name, daily stats panel.
 const props=defineProps({recordId:{type:String,required:true}})
 const record=computed(()=>strategyAccountFor(session.mode).records.find(item=>item.id===props.recordId)||null)
 </script>
 <template>
-<div class="strategy-container strategy-stats-page">
+<NotFound v-if="!record"/>
+<div v-else class="strategy-container strategy-stats-page">
  <RouterLink :to="path('/ai-quant/strategy/mine')" class="strategy-stats-back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7M19 12H5"/></svg>{{ $t('aiQuant.quantFund.interestRecords.back') }}</RouterLink>
  <header class="strategy-stats-head"><span>{{ $t('aiQuant.actions.viewStats') }}</span><h1>{{ record?.template.name||'—' }}</h1><p v-if="record">{{ $t(record.template.style) }} · {{ $t(record.template.market) }}</p></header>
  <section class="strategy-stats-card"><StrategyDailyStats :items="record?.dailyStats||[]"/></section>

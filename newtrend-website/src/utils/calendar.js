@@ -1,4 +1,0 @@
-export function dateKey(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`}
-export function parseDate(value){if(!/^\d{4}-\d{2}-\d{2}$/.test(value||''))return null;const [y,m,d]=value.split('-').map(Number);const date=new Date(y,m-1,d,12);return dateKey(date)===value?date:null}
-export function monthDays(year,month){const first=new Date(year,month,1,12),start=new Date(year,month,1-first.getDay(),12),count=Math.ceil((first.getDay()+new Date(year,month+1,0).getDate())/7)*7;return Array.from({length:count},(_,i)=>new Date(start.getFullYear(),start.getMonth(),start.getDate()+i,12))}
-export function shiftMonth(date,offset){const first=new Date(date.getFullYear(),date.getMonth()+offset,1,12);return new Date(first.getFullYear(),first.getMonth(),Math.min(date.getDate(),new Date(first.getFullYear(),first.getMonth()+1,0).getDate()),12)}

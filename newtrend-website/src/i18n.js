@@ -1,3 +1,4 @@
+import {readStorage,writeStorage} from './utils/storage.js'
 import { ref } from 'vue'
 
 export const languages = [
@@ -27,7 +28,7 @@ function flatten(object, prefix = '', result = {}) {
   return result
 }
 const messages = Object.fromEntries(Object.entries(resources).map(([language, data]) => [language, flatten(data)]))
-const storedLocale = localStorage.getItem('nt-locale')
+const storedLocale = readStorage('nt-locale')
 export const locale = ref(languages.some(([code])=>code===storedLocale) ? storedLocale : 'zh-TW')
 
 /** Keys are resolved directly. Raw API/user values are returned unchanged, never reverse-translated. */
@@ -47,7 +48,7 @@ export async function applyLocale(language) {
  await loadLocale(language)
  if(request!==languageRequest)return
  locale.value = language
- localStorage.setItem('nt-locale', language)
+ writeStorage('nt-locale', language)
  document.documentElement.lang = language
 }
 export function formatCompact(value) {

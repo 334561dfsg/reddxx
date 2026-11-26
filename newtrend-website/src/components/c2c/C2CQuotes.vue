@@ -2,16 +2,16 @@
 import {computed,ref,onMounted,onUnmounted} from 'vue'
 import Coin from './C2CCoin.vue'
 import C2CIcon from './C2CIcon.vue'
-import {c2cQuotes,formatQuote} from '../../utils/c2cQuotes'
+import {c2cQuotes,c2cSellQuotes,formatQuote} from '../../utils/c2cQuotes'
 const props=defineProps({selected:String,side:{type:String,default:'buy'}})
-const quotes=computed(()=>props.side==='sell'?[{symbol:'USDT',price:.99,min:3000,max:1e8,ttl:720,note:'Platform pays out to your verified bank account after review.'}]:c2cQuotes)
+const quotes=computed(()=>props.side==='sell'?c2cSellQuotes:c2cQuotes)
 const emit=defineEmits(['select'])
 const assets=ref([]),fiat=ref(false),now=ref(Date.now())
 const started=Date.now()
 let clock
 onMounted(()=>{clock=setInterval(()=>{now.value=Date.now()},1000)})
 onUnmounted(()=>clearInterval(clock))
-const filtered=computed(()=>quotes.value.filter(q=>!assets.value.length||assets.value.includes(q.symbol)))
+const filtered=computed(()=>quotes.value.filter(q=>(!assets.value.length||assets.value.includes(q.symbol))&&(!fiat.value||q.fiat==='USDT')))
 function toggle(symbol){assets.value=assets.value.includes(symbol)?assets.value.filter(s=>s!==symbol):[...assets.value,symbol]}
 function remaining(q){return q.ttl-Math.floor((now.value-started)/1000)%q.ttl}
 function countdown(q){const seconds=remaining(q);return `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`}

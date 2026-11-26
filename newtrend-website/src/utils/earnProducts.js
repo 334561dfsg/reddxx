@@ -12,16 +12,17 @@ export const earnTerms = {
 }
 export const remainingAmount = product => Number(String(product.remaining).replaceAll(',', ''))
 export const quotaPercent = product => Number((product.subscribed / (remainingAmount(product) + product.subscribed) * 100).toFixed(1))
-export function subscriptionError(product, raw, balance) {
+/** `committed` = this user's pending orders + live holdings in the product; the per-user quota is cumulative. */
+export function subscriptionError(product, raw, balance, committed = 0) {
  const amount=Number(raw)
  if (!Number.isFinite(amount)||amount<=0) return {code:'invalidAmount'}
  if (amount<product.min) return {code:'minAmount',amount:product.min}
  if (amount>product.max) return {code:'maxAmount',amount:product.max}
  if (amount>remainingAmount(product)) return {code:'availableQuota',amount:remainingAmount(product)}
- if (product.perUser!=null&&amount>product.perUser) return {code:'perUserQuota',amount:product.perUser}
+ if (product.perUser!=null&&amount+committed>product.perUser) return {code:'perUserQuota',amount:Math.max(0,product.perUser-committed)}
  if (amount>balance) return {code:'insufficientBalance',amount:balance}
  return null
 }
-export function maximumSubscription(product,balance) {
- return Math.max(0,Math.min(balance,product.max,product.perUser??Infinity,remainingAmount(product)))
+export function maximumSubscription(product,balance,committed=0) {
+ return Math.max(0,Math.min(balance,product.max,product.perUser==null?Infinity:product.perUser-committed,remainingAmount(product)))
 }

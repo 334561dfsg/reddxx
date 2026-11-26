@@ -4,7 +4,7 @@ import EarnConditions from './EarnConditions.vue'
 import {earnEligibilityError} from '../../utils/earnEligibility'
 import {computed,shallowRef,watch} from 'vue'
 import {session} from '../../session'
-import {recordEarnSubscription} from '../../earnPortfolio'
+import {recordEarnSubscription,earnBalance,earnCommitted} from '../../earnPortfolio'
 import {fmt,path} from '../../data'
 import {subscriptionError,maximumSubscription} from '../../utils/earnProducts'
 import Coin from '../Coin.vue'
@@ -13,18 +13,19 @@ import EarnTimeline from './EarnTimeline.vue'
 const props=defineProps({product:{type:Object,required:true},closing:Boolean})
 const emit=defineEmits(['state','close'])
 const amount=shallowRef(''),touched=shallowRef(false),done=shallowRef(false)
-const balance=computed(()=>session.mode==='common.demo.demo'?100000:0)
-const validation=computed(()=>{const code=earnEligibilityError(props.product);return code?{code}:subscriptionError(props.product,amount.value,balance.value)})
+const balance=computed(()=>earnBalance(session.mode,props.product.symbol)),committed=computed(()=>earnCommitted(props.product.id))
+const validation=computed(()=>{const code=earnEligibilityError(props.product);return code?{code}:subscriptionError(props.product,amount.value,balance.value,committed.value)})
 const error=computed(()=>touched.value&&validation.value?{key:(['verificationRequired','vipRequired'].includes(validation.value.code)?'lending.errors.':'earn.subscribe.errors.')+validation.value.code,params:{amount:fmt(validation.value.amount),asset:props.product.symbol}}:null)
 const estimate=computed(()=>Number(amount.value)*props.product.rate/100*(props.product.days||1))
 watch([amount,validation,done],()=>emit('state',{draft:amount.value,valid:!validation.value,done:done.value}),{immediate:true})
-function fillMax(){amount.value=String(maximumSubscription(props.product,balance.value));touched.value=true}
+// Errors appear only after a submit attempt (one toast per attempt); editing the amount clears them.
+function fillMax(){amount.value=String(maximumSubscription(props.product,balance.value,committed.value));touched.value=false}
 function submit(){
  if(done.value||props.closing)return
  touched.value=true
  if(validation.value)return
  // The existing prototype keeps subscriptions local; no reference-site request.
- recordEarnSubscription(props.product,Number(amount.value))
+ recordEarnSubscription(props.product,Number(amount.value),session.mode)
  done.value=true
 }
 </script>
@@ -33,7 +34,7 @@ function submit(){
 <EarnConditions :product="product" @navigate="emit('close')"/>
 <form id="earn-subscribe-form" class="earn-subscription-form" @submit.prevent="submit">
  <template v-if="!done"><div class="earn-amount-heading"><label for="earn-amount" :class="{'negative':error}">{{ $t('earn.subscribe.amountLabel') }}</label><button type="button" class="earn-balance" @click="fillMax"><Icon name="wallet"/><span>{{ $t('earn.subscribe.availableBalanceLabel') }}</span><b>{{ fmt(balance) }} {{ product.symbol }}</b></button></div>
- <div class="earn-amount-input"><input id="earn-amount" v-model="amount" data-earn-initial-focus inputmode="decimal" autocomplete="off" :placeholder="$t('earn.subscribe.amountPlaceholder')" :aria-invalid="Boolean(error)" aria-required="true" aria-describedby="earn-amount-hint" @input="touched=true"/><button type="button" @click="fillMax">{{ $t('earn.subscribe.maxButton') }}</button><span>{{ product.symbol }}</span></div>
+ <div class="earn-amount-input"><input id="earn-amount" v-model="amount" data-earn-initial-focus inputmode="decimal" autocomplete="off" :placeholder="$t('earn.subscribe.amountPlaceholder')" :aria-invalid="Boolean(error)" aria-required="true" aria-describedby="earn-amount-hint" @input="touched=false"/><button type="button" @click="fillMax">{{ $t('earn.subscribe.maxButton') }}</button><span>{{ product.symbol }}</span></div>
  <div id="earn-amount-hint" class="earn-amount-hint"><FeedbackToast v-if="error" type="error" :source="() => (error) ? (([String(($t(error)) ?? ''),&quot; &quot;,''].join(''))) : ''"></FeedbackToast><p v-else>{{ $t('earn.products.min',{amount:fmt(product.min)+' '+product.symbol}) }} · {{ $t('earn.products.max',{amount:fmt(product.max)+' '+product.symbol}) }}</p></div>
  <div class="earn-estimate"><p class="earn-caption">{{ $t('earn.subscribe.estReward') }}</p><p v-if="!validation" class="earn-accent earn-mono">{{ fmt(estimate) }} {{ product.symbol }}</p><p v-else class="earn-estimate-empty">{{ $t('earn.subscribe.estRewardEmpty') }}</p><EarnTimeline :days="product.days" vertical/></div></template>
  <div v-else class="earn-success"><FeedbackToast type="success" :source="() => $t('earn.subscribe.success.title')"/><RouterLink :to="path('/earn/my-earnings')+'?tab=orders'" @click="emit('close')">{{ $t('earn.subscribe.success.viewHoldings') }}</RouterLink></div>

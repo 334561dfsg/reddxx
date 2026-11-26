@@ -1,4 +1,5 @@
 <script setup>
+import {message} from 'ant-design-vue'
 import FeedbackToast from '../../../src/shared/feedback/FeedbackToast.vue'
 import {computed,reactive,ref,watch,onUnmounted} from 'vue'
 import {useRoute,useRouter} from 'vue-router'
@@ -29,7 +30,8 @@ function toggle2fa(){if(form.code!=='123456'){error.value="profile.bindEmailPage
 function selectFile(key,e){const file=e.target.files?.[0];error.value=fileError(file,20);if(!error.value)files[key]=file.name;else delete files[key]}
 function nextKyc(){if(!form.fullName.trim()||!form.idType||!form.idNumber.trim()||!form.country){error.value="kyc.fillAllFields";return}error.value='';step.value=2}
 function submitKyc(){const required=id.value==='advanced'?['handheld','proof']:['front','back','selfie'];if(required.some(k=>!files[k])){error.value="kyc.allUploadsRequired";return}if(id.value==='advanced')account.advanced='pending';else account.kyc='pending';success.value="kyc.advanced.submitSuccess";error.value=''}
-function copy(value){navigator.clipboard.writeText(value).then(()=>success.value="c2c.paymentAccount.copied").catch(()=>error.value="common.copyFailed")}
+// Toast per copy attempt so repeated copies re-announce.
+function copy(value){navigator.clipboard.writeText(value).then(()=>message.success(t('c2c.paymentAccount.copied'))).catch(()=>message.error(t('common.copyFailed')))}
 function rename(d){openModal('account-edit',"devices.renameTitle",{value:d.name,onSave:v=>d.name=v})}
 function revoke(d){openModal('account-confirm',"devices.revokeTitle",{description:d.current?"devices.revokeCurrentWarning":"devices.revokeBody",onConfirm:()=>{account.devices=account.devices.filter(x=>x.id!==d.id);if(d.current){logout();router.push(path('/login'))}}})}
 function saveName(){if(!draftName.value.trim()){error.value="profile.enterUsername";return}account.name=draftName.value.trim();editing.value=false;success.value="profile.usernameUpdated"}
