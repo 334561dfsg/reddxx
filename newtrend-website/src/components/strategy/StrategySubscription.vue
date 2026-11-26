@@ -39,7 +39,7 @@ function submit(){
  <section class="strategy-fees"><small>{{ $t('aiQuant.create.fees.title') }}</small><dl class="strategy-card-facts"><div><dt>{{ $t('aiQuant.create.fees.feePerTrade') }}</dt><dd>{{ product.fee }} USDT</dd></div><div><dt>{{ $t('aiQuant.create.fees.maxOpenTrades') }}</dt><dd>{{ $t('aiQuant.create.fees.maxOpenTradesValue',{n:product.maxOpenTrades}) }}</dd></div></dl></section>
  <p class="strategy-settlement">{{ $t('aiQuant.create.settlementNote') }}</p>
  <FeedbackToast v-if="error" id="strategy-validation" :source="()=>error?$t(error.key||'aiQuant.create.errors.'+error.code,error.params):''"/>
- <RouterLink v-if="error?.code==='paymentRequired'" :to="path('/deposit')" @click="emit('close')">{{ $t('earn.subscribe.goDeposit') }}</RouterLink>
+ 
  </template>
 </form>
 </template>

@@ -54,7 +54,7 @@ async function submit(){
  <span class="qf-success-icon" aria-hidden="true"><Icon name="check" green/></span>
  <h3>{{ $t('aiQuant.quantFund.subscribe.success') }}</h3>
  <p>{{ product.name }} · {{ fmt(done.principal) }} {{ asset }}</p>
- <p class="qf-success-status">{{ $t('aiQuant.quantFund.positions.tabs.pending_review') }} · {{ $t('aiQuant.quantFund.positions.maturityPending') }}</p>
+ <p class="qf-success-status">{{ $t('aiQuant.quantFund.positions.tabs.pending_review') }}</p>
  <RouterLink class="qf-success-link" :to="path('/ai-quant/quant-fund/positions')" @click="emit('close')">{{ $t('aiQuant.quantFund.hero.viewPositionsCta') }}</RouterLink>
 </div>
 <form v-else id="quant-fund-subscribe-form" class="qf-subscribe" novalidate @submit.prevent="submit">
@@ -67,7 +67,7 @@ async function submit(){
  <div class="qf-field">
   <div class="qf-amount-head"><label for="qf-subscribe-amount">{{ $t('aiQuant.quantFund.subscribe.amountLabel',{currency:asset}) }}</label><button type="button" class="qf-balance" :disabled="busy" @click="fillMax"><span>{{ $t('aiQuant.quantFund.subscribe.availableBalanceLabel') }}</span><b>{{ fmt(balance) }} {{ asset }}</b></button></div>
   <div class="qf-input"><input id="qf-subscribe-amount" data-fund-initial-focus :value="amount" inputmode="decimal" autocomplete="off" aria-required="true" :aria-invalid="Boolean(amountError)" aria-describedby="qf-subscribe-hint qf-subscribe-feedback" :disabled="busy" @input="onInput"/><button type="button" class="qf-max" :disabled="busy||maxAmount<=0" @click="fillMax">{{ $t('aiQuant.quantFund.subscribe.maxButton') }}</button><span class="qf-input-divider" aria-hidden="true"></span><span>{{ asset }}</span></div>
-  <p id="qf-subscribe-hint" class="qf-faint">{{ $t('aiQuant.quantFund.subscribe.amountHint',{min:fmt(product.minAmount),max:fmt(product.maxAmount),currency:asset}) }}<template v-if="validation?.kind==='insufficientBalance'"> · <RouterLink :to="path('/deposit')" class="qf-inline-link" @click="emit('close')">{{ $t('aiQuant.quantFund.subscribe.goDeposit') }}</RouterLink></template></p>
+  <p id="qf-subscribe-hint" class="qf-faint">{{ $t('aiQuant.quantFund.subscribe.amountHint',{min:fmt(product.minAmount),max:fmt(product.maxAmount),currency:asset}) }}</p>
  </div>
  <label class="qf-ack"><input id="qf-subscribe-ack" v-model="ack" type="checkbox" :disabled="busy" :aria-invalid="ackError" aria-describedby="qf-subscribe-feedback"/><span>{{ $t('aiQuant.quantFund.subscribe.riskAckPrefix') }}<a :href="riskHref" target="_blank" rel="noopener" class="qf-inline-link" @click.stop>{{ $t('aiQuant.quantFund.subscribe.riskAckLink') }}</a>{{ $t('aiQuant.quantFund.subscribe.riskAckSuffix') }}</span></label>
  <FeedbackToast v-if="feedback" id="qf-subscribe-feedback" type="error" :source="() => feedback ? $t(feedback[0],feedback[1]) : ''"/>

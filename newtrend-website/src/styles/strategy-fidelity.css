@@ -252,3 +252,21 @@
 .strategy-hero-chart .chart-faint{color:#6e6f71}
 .strategy-hero-chart .chart-muted{color:#a0a1a2}
 @media(prefers-reduced-motion:reduce){.strategy-hero-chart .chart-pulse{display:none}}
+
+/* My Strategies row actions = reference (78x32 pills, #05070b fill, #1e2023 border, 16px icons, 8px gap).
+   Loading: the clicked action swaps its icon for a spinner at the same size, so the row never reflows. */
+.my-strategies .ms-actions{gap:8px}
+.my-strategies .ms-button{gap:8px;min-width:78px;justify-content:center;border-color:#1e2023;background:#05070b;color:#fff;transition:background-color 150ms ease-out,opacity 150ms ease-out}
+.my-strategies .ms-button.danger{color:#fff}
+.my-strategies .ms-button:disabled{cursor:not-allowed;opacity:.55}
+.my-strategies .ms-button.loading:disabled{opacity:1;cursor:progress;background:#11161e}
+.my-strategies .ms-button.ghost{min-width:0;background:transparent;border-color:transparent;color:#87888a}
+.my-strategies .ms-button.ghost:hover{color:#fff;background:transparent}
+.my-strategies .ms-icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.my-strategies .ms-chevron{transition:transform 150ms ease-out}
+.my-strategies .ms-chevron.open{transform:rotate(180deg)}
+.my-strategies .ms-spin{animation:ms-spin .8s linear infinite}
+@keyframes ms-spin{to{transform:rotate(360deg)}}
+.my-strategies .ms-pulse{display:block;flex:none;align-self:center;width:6px;height:6px;min-width:6px;max-height:6px;padding:0;border:0}
+@media(prefers-reduced-motion:reduce){.my-strategies .ms-spin{animation-duration:2.4s}.my-strategies .ms-chevron{transition:none}}
+.my-strategies{padding-top:17px}

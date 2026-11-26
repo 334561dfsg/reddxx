@@ -127,11 +127,11 @@ export function fundSummary(orders) {
 }
 
 const pad = value => String(value).padStart(2, '0')
-/** Reference positions dates: ISO calendar date in tables, date + time in the order drawer. */
+/** Reference positions dates: ISO calendar date in tables, date + time in the order drawer; a missing date is a single em dash. */
 export function fundDate(value, withTime = false) {
-  if (!value) return '--'
+  if (!value) return '—'
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '--'
+  if (Number.isNaN(date.getTime())) return '—'
   const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
   return withTime ? `${day} ${pad(date.getHours())}:${pad(date.getMinutes())}` : day
 }

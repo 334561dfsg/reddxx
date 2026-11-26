@@ -5,22 +5,23 @@ import {useRouter} from 'vue-router'
 import {fmt,path} from '../../data'
 import {openModal,session} from '../../session'
 import {quantFundAccount,fundMode,findQuantFund} from '../../quantFundPortfolio'
-import {filterFundOrders,fundSummary,fundDate,interestProgress,HISTORY_STATUSES,PENDING_STATUSES,accruedInterestEstimate,canRedeemFund,redeemFund} from '../../utils/quantFund'
+import {filterFundOrders,fundSummary,fundDate,HISTORY_STATUSES,accruedInterestEstimate,canRedeemFund,redeemFund} from '../../utils/quantFund'
 import {t} from '../../i18n'
 import Coin from '../Coin.vue'
+import RecordFilter from '../RecordFilter.vue'
+import PortfolioSummaryCard from '../PortfolioSummaryCard.vue'
 import Icon from '../Icon.vue'
 // Reference positions page: tab groups, summary, order table. Orders belong to the current real/demo mode.
 const groups=['all','pending','active','history']
+// History status filter uses the shared select-only RecordFilter (no native select popup).
+const historyOptions=computed(()=>[{value:'all',label:t('aiQuant.quantFund.positions.historyFilter.all')},...HISTORY_STATUSES.map(status=>({value:status,label:t('aiQuant.quantFund.positions.tabs.'+status)}))])
 const group=shallowRef('all'),historyStatus=shallowRef('all')
 const orders=computed(()=>quantFundAccount.orders.filter(order=>order.mode===fundMode(session.mode)))
 const visible=computed(()=>filterFundOrders(orders.value,group.value,historyStatus.value))
 const summary=computed(()=>fundSummary(orders.value))
+// Reference table amounts: grouped, up to 2 decimals, no forced trailing zeros (4,999 / 0 / 21.9).
+const amount=value=>Number(value).toLocaleString('en-US',{maximumFractionDigits:2})
 const money=value=>Number(value).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
-const progress=computed(()=>interestProgress(summary.value.activeInterestPaidTotal,summary.value.totalProjectedInterest))
-// 30-day cumulative payout trend. Pending orders accrue nothing yet, so the local series stays flat at zero.
-const TREND_DAYS=30
-const trend=computed(()=>Array.from({length:TREND_DAYS},()=>summary.value.activeInterestPaidTotal))
-const trendPath=computed(()=>{const values=trend.value,max=Math.max(...values,0),step=120/(values.length-1);return values.map((v,i)=>`${i?'L':'M'}${(i*step).toFixed(1)} ${(max?32-v/max*28:30).toFixed(1)}`).join(' ')})
 const openOrder=order=>openModal('quant-fund-order','aiQuant.quantFund.positions.detail.title',order)
 const router=useRouter()
 const hasPayouts=order=>['active','settled','redeemed'].includes(order.status)
@@ -52,13 +53,12 @@ function selectGroup(event,index){
 <template>
 <div class="qf-positions">
  <header class="qf-positions-head"><h1>{{ $t('aiQuant.quantFund.positions.title') }}</h1><p>{{ $t('aiQuant.quantFund.positions.subtitle') }}</p></header>
- <section class="qf-panel qf-summary" aria-labelledby="qf-summary-principal">
-  <div class="qf-summary-main"><div><small id="qf-summary-principal">{{ $t('aiQuant.quantFund.positions.summary.totalPrincipal') }}</small><p class="qf-summary-value">{{ money(summary.totalPrincipal) }}<span>USDT</span></p></div><div><small>{{ $t('aiQuant.quantFund.positions.summary.activeInterestPaidTotal') }}</small><p class="qf-summary-value qf-success-text">{{ summary.activeInterestPaidTotal>0?'+':'' }}{{ money(summary.activeInterestPaidTotal) }}<span>USDT</span></p><div v-if="progress!==null" class="qf-summary-progress"><div class="qf-progress-track" role="progressbar" :aria-valuenow="Math.round(progress)" aria-valuemin="0" aria-valuemax="100" :aria-label="$t('aiQuant.quantFund.positions.summary.interestProgress',{percent:Math.round(progress)})"><span :style="{width:progress+'%'}"></span></div><small>{{ $t('aiQuant.quantFund.positions.summary.interestProgress',{percent:Math.round(progress)}) }}</small></div></div><figure class="qf-trend"><figcaption>{{ $t('aiQuant.quantFund.positions.summary.earningsTrend',{days:TREND_DAYS}) }}</figcaption><svg viewBox="0 0 120 34" preserveAspectRatio="none" role="img" :aria-label="$t('aiQuant.quantFund.positions.summary.earningsTrend',{days:TREND_DAYS})+': '+money(summary.activeInterestPaidTotal)+' USDT'"><path :d="trendPath" fill="none" stroke="#2bc287" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg></figure></div>
-  <dl class="qf-summary-stats"><div><dt>{{ $t('aiQuant.quantFund.positions.summary.totalProjectedInterest') }}</dt><dd class="qf-success-text">{{ money(summary.totalProjectedInterest) }} <span>USDT</span></dd></div><div><dt>{{ $t('aiQuant.quantFund.positions.summary.settledTotalReceived') }}</dt><dd>{{ money(summary.settledTotalReceived) }} <span>USDT</span></dd></div><div><dt>{{ $t('aiQuant.quantFund.positions.summary.activeCount') }}</dt><dd>{{ summary.activeCount }}</dd></div></dl>
- </section>
+ <PortfolioSummaryCard label-id="qf-summary-principal" :label="$t('aiQuant.quantFund.positions.summary.totalPrincipal')" :value="money(summary.totalPrincipal)" unit="USDT"
+  :accent="{value:(summary.activeInterestPaidTotal>0?'+':'')+money(summary.activeInterestPaidTotal),unit:'USDT',label:$t('aiQuant.quantFund.positions.summary.activeInterestPaidTotal'),tone:'success'}"
+  :stats="[{label:$t('aiQuant.quantFund.positions.summary.totalProjectedInterest'),value:money(summary.totalProjectedInterest),unit:'USDT',tone:'success'},{label:$t('aiQuant.quantFund.positions.summary.settledTotalReceived'),value:money(summary.settledTotalReceived),unit:'USDT'},{label:$t('aiQuant.quantFund.positions.summary.activeCount'),value:String(summary.activeCount),sensitive:false}]"/>
  <div class="qf-positions-toolbar">
-  <div class="qf-tabs" role="tablist" :aria-label="$t('aiQuant.quantFund.positions.title')"><button v-for="(item,index) in groups" :id="'qf-tab-'+item" :key="item" type="button" role="tab" :aria-selected="group===item" aria-controls="qf-positions-panel" :tabindex="group===item?0:-1" :class="{active:group===item}" @click="group=item" @keydown="selectGroup($event,index)">{{ $t('aiQuant.quantFund.positions.tabGroups.'+item) }}<span v-if="item==='pending'&&summary.pendingCount" class="qf-tab-count">{{ summary.pendingCount }}</span></button></div>
-  <label v-if="group==='history'" class="qf-history-filter"><span class="sr-only">{{ $t('aiQuant.quantFund.positions.historyFilter.all') }}</span><select v-model="historyStatus"><option value="all">{{ $t('aiQuant.quantFund.positions.historyFilter.all') }}</option><option v-for="status in HISTORY_STATUSES" :key="status" :value="status">{{ $t('aiQuant.quantFund.positions.tabs.'+status) }}</option></select></label>
+  <div class="qf-tabs" role="tablist" :aria-label="$t('aiQuant.quantFund.positions.title')"><button v-for="(item,index) in groups" :id="'qf-tab-'+item" :key="item" type="button" role="tab" :aria-selected="group===item" aria-controls="qf-positions-panel" :tabindex="group===item?0:-1" :class="{active:group===item}" @click="group=item" @keydown="selectGroup($event,index)">{{ $t('aiQuant.quantFund.positions.tabGroups.'+item) }}</button></div>
+  <div v-if="group==='history'" class="qf-history-filter"><RecordFilter id="qf-history-status" v-model="historyStatus" variant="field" :label="$t('aiQuant.quantFund.positions.historyFilter.all')" :options="historyOptions"/></div>
  </div>
  <div id="qf-positions-panel" role="tabpanel" :aria-labelledby="'qf-tab-'+group">
   <div v-if="!visible.length" class="qf-panel qf-positions-empty"><Icon name="briefcase"/><p>{{ $t('aiQuant.quantFund.positions.empty') }}</p><RouterLink :to="path('/ai-quant/quant-fund')" class="qf-inline-link">{{ $t('aiQuant.quantFund.title') }}</RouterLink></div>
@@ -67,11 +67,11 @@ function selectGroup(event,index){
    <tbody><tr v-for="order in visible" :key="order.id" class="qf-row" @click="openOrder(order)">
     <td><span class="qf-status" :class="order.status">{{ $t('aiQuant.quantFund.positions.tabs.'+order.status) }}</span></td>
     <td><div class="qf-table-product"><Coin :symbol="order.asset"/><button type="button" class="qf-row-link" aria-haspopup="dialog" @click.stop="openOrder(order)">{{ order.productName }}</button></div></td>
-    <td class="num mono">{{ fmt(order.principal) }} {{ order.asset }}</td>
-    <td class="num mono qf-success-text">{{ order.dailyReturnPercentSnapshot.toFixed(2) }}%</td>
+    <td class="num"><span class="qf-num">{{ amount(order.principal) }}</span><span class="qf-unit">{{ order.asset }}</span></td>
+    <td class="num qf-num qf-success-text">{{ order.dailyReturnPercentSnapshot.toFixed(2) }}%</td>
     <td>{{ $t(...term(order)) }}</td>
-    <td class="num mono"><div>{{ money(order.interestPaidTotal) }} {{ order.asset }}</div><small v-if="order.status==='active'" class="qf-accrued-estimate">{{ $t('aiQuant.quantFund.positions.table.accruedInterestEstimate') }} {{ money(accruedInterestEstimate(order)) }} {{ order.asset }}</small></td>
-    <td><div>{{ order.maturityDate?fundDate(order.maturityDate):PENDING_STATUSES.includes(order.status)?$t('aiQuant.quantFund.positions.maturityPending'):'—' }}</div><small>{{ $t('aiQuant.quantFund.positions.table.subscribedAt') }} {{ fundDate(order.subscribedAt) }}</small></td>
+    <td class="num"><div><span class="qf-num">{{ amount(order.interestPaidTotal) }}</span><span class="qf-unit">{{ order.asset }}</span></div><small v-if="order.status==='active'" class="qf-accrued-estimate">{{ $t('aiQuant.quantFund.positions.table.accruedInterestEstimate') }} {{ amount(accruedInterestEstimate(order)) }} {{ order.asset }}</small></td>
+    <td><div>{{ fundDate(order.maturityDate) }}</div><small>{{ $t('aiQuant.quantFund.positions.table.subscribedAt') }} {{ fundDate(order.subscribedAt) }}</small></td>
     <td class="num"><div class="qf-row-actions" @click.stop><button v-if="canRedeemFund(order)" type="button" class="qf-row-action primary" aria-haspopup="dialog" @click="confirmRedeem(order)">{{ $t('aiQuant.quantFund.redeem.button') }}</button><button v-if="hasPayouts(order)" type="button" class="qf-row-action" @click="openPayouts(order)">{{ $t('aiQuant.quantFund.interestRecords.entry') }}</button></div></td>
    </tr></tbody>
   </table></div>

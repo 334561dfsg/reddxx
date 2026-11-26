@@ -19,6 +19,7 @@ import './styles.css'
 import './styles/site-containers.css'
 import './styles/site-design-system.css'
 import './styles/ambient.css'
+import './styles/toast.css'
 const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:[
  {path:'/',component:Home},
  {path:'/:legacyLocale(en-US|zh-TW|fr-FR|de-DE|ja-JP|ko-KR)/:legacyPath(.*)*',redirect:to=>({path:'/'+(Array.isArray(to.params.legacyPath)?to.params.legacyPath.join('/'):to.params.legacyPath||''),query:to.query,hash:to.hash})},

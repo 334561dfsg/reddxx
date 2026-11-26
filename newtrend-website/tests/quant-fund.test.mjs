@@ -56,7 +56,7 @@ test('positions dates use ISO calendar format and interest progress needs a proj
  const at=new Date(2026,10,26,9,5).getTime()
  assert.equal(fundDate(at),'2026-11-26')
  assert.equal(fundDate(at,true),'2026-11-26 09:05')
- assert.equal(fundDate(null),'--')
+ assert.equal(fundDate(null),'—')
  assert.equal(interestProgress(0,0),null)
  assert.equal(interestProgress(25,100),25)
  assert.equal(interestProgress(150,100),100)

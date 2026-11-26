@@ -462,3 +462,82 @@
 .qf-interest-empty-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#ffffff0d;color:var(--qf-muted)}
 .qf-interest-empty-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media(pointer:coarse){.qf-row-action{height:44px}}
+
+/* Positions summary = reference PortfolioSummaryCard (2026-11-26): primary/accent/progress left, optional trend,
+   three stats right (bottom-aligned), collapsible per-asset breakdown below a divider. */
+#site-shell #main-content .quant-page .qf-summary{gap:20px;padding:28px}
+#site-shell #main-content .quant-page .qf-summary-row{display:flex;align-items:flex-end;justify-content:space-between;gap:40px}
+#site-shell #main-content .quant-page .qf-summary-primary{display:flex;flex-direction:column;gap:6px;min-width:0}
+#site-shell #main-content .quant-page .qf-summary-label{display:flex;align-items:center;gap:8px;font-size:12px;line-height:16px;letter-spacing:.04em;color:var(--qf-muted)}
+#site-shell #main-content .quant-page .qf-summary-eye{display:inline-grid;place-items:center;width:16px;height:16px;min-width:0;min-height:0;padding:0;color:var(--qf-muted)}
+#site-shell #main-content .quant-page .qf-summary-eye .nt-icon{width:16px;height:16px;opacity:.6}
+#site-shell #main-content .quant-page .qf-summary-eye:hover .nt-icon,#site-shell #main-content .quant-page .qf-summary-eye:focus-visible .nt-icon{opacity:1}
+#site-shell #main-content .quant-page .qf-summary-eye:focus-visible{outline:none;background:#ffffff14;border-radius:4px}
+#site-shell #main-content .quant-page .qf-summary-display{font-family:'IBM Plex Mono',monospace;font-size:36px;line-height:40px;font-weight:600;letter-spacing:-.025em;color:#fff;white-space:nowrap}
+#site-shell #main-content .quant-page .qf-summary-display>span{margin-left:8px;font-size:18px;line-height:28px;font-weight:400;letter-spacing:0;color:var(--qf-muted)}
+#site-shell #main-content .quant-page .qf-summary-accent{display:flex;align-items:baseline;gap:8px;font-size:15px;line-height:22px}
+#site-shell #main-content .quant-page .qf-summary-accent strong{font-family:'IBM Plex Mono',monospace;font-weight:600;color:#2bc287}
+#site-shell #main-content .quant-page .qf-summary-accent small{display:inline;font-size:12px;color:var(--qf-muted)}
+#site-shell #main-content .quant-page .qf-summary-progress{display:flex;align-items:center;gap:8px;margin-top:4px}
+#site-shell #main-content .quant-page .qf-summary-progress small{display:inline;white-space:nowrap}
+#site-shell #main-content .quant-page .qf-summary .qf-trend{display:flex;flex:1;flex-direction:column;gap:6px;min-width:0;max-width:320px;margin:0}
+#site-shell #main-content .quant-page .qf-summary .qf-trend figcaption{font-size:12px;line-height:18px;color:var(--qf-muted)}
+#site-shell #main-content .quant-page .qf-summary .qf-trend svg{width:100%;height:36px}
+#site-shell #main-content .quant-page .qf-summary-stats{display:grid;grid-template-columns:repeat(3,auto);gap:12px 40px;flex-shrink:0;margin:0;padding:0;border:0}
+#site-shell #main-content .quant-page .qf-summary-stats>div{display:flex;flex-direction:column;gap:4px}
+#site-shell #main-content .quant-page .qf-summary-stats dt{font-size:12px;line-height:18px;color:var(--qf-muted)}
+#site-shell #main-content .quant-page .qf-summary-stats dd{margin:0;font-family:'IBM Plex Mono',monospace;font-size:18px;line-height:28px;font-weight:600;white-space:nowrap}
+#site-shell #main-content .quant-page .qf-summary-stats dd span{margin-left:4px;font-size:12px;line-height:18px;font-weight:400;color:var(--qf-muted)}
+#site-shell #main-content .quant-page .qf-breakdown{display:flex;flex-direction:column;gap:12px;padding-top:12px;border-top:1px solid #191b1f}
+#site-shell #main-content .quant-page .qf-breakdown-toggle{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;padding:0;font-size:12px;line-height:18px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--qf-muted)}
+#site-shell #main-content .quant-page .qf-breakdown-toggle:hover,#site-shell #main-content .quant-page .qf-breakdown-toggle:focus-visible{outline:none;color:#fff}
+#site-shell #main-content .quant-page .qf-breakdown-toggle:focus-visible{text-decoration:underline}
+#site-shell #main-content .quant-page .qf-breakdown-toggle .nt-icon{width:14px;height:14px;opacity:.6;transition:transform 150ms ease-out}
+#site-shell #main-content .quant-page .qf-breakdown-toggle .nt-icon.open{transform:rotate(180deg)}
+#site-shell #main-content .quant-page .qf-breakdown-list{display:flex;flex-direction:column;gap:8px}
+#site-shell #main-content .quant-page .qf-breakdown-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:center;gap:12px;padding:12px;border:1px solid #191b1f;border-radius:12px;background:rgb(5 7 11/.4)}
+#site-shell #main-content .quant-page .qf-breakdown-row>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+#site-shell #main-content .quant-page .qf-breakdown-row small{font-size:12px;line-height:18px;color:var(--qf-muted)}
+#site-shell #main-content .quant-page .qf-breakdown-row span{font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:20px;font-variant-numeric:tabular-nums}
+#site-shell #main-content .quant-page .qf-breakdown-asset{flex-direction:row!important;align-items:center;gap:8px!important}
+#site-shell #main-content .quant-page .qf-breakdown-asset .coin{width:28px;height:28px}
+#site-shell #main-content .quant-page .qf-breakdown-asset strong{font-size:14px;font-weight:600}
+@media(max-width:1023px){#site-shell #main-content .quant-page .qf-summary-row{flex-direction:column;align-items:stretch;gap:24px}#site-shell #main-content .quant-page .qf-summary-stats{grid-template-columns:1fr}#site-shell #main-content .quant-page .qf-summary-stats>div{flex-direction:row;justify-content:space-between;align-items:baseline}}
+@media(max-width:767px){#site-shell #main-content .quant-page .qf-breakdown-row{grid-template-columns:repeat(2,minmax(0,1fr))}#site-shell #main-content .quant-page .qf-breakdown-asset{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){#site-shell #main-content .quant-page .qf-breakdown-toggle .nt-icon{transition:none}}
+#site-shell #main-content .quant-page .qf-panel>.nt-glow{position:absolute}
+
+/* Reference AiQuantSectionNav spacing (user: no divider line under the pill bar) + positions table (measured 1917px, 2026-11-26). */
+#site-shell #main-content .quant-sub:has(.qf-positions)>.subnav{margin-bottom:77px}
+#site-shell #main-content .quant-page .qf-positions-toolbar .qf-tabs{padding:4px;border-radius:16px;background:#141619}
+#site-shell #main-content .quant-page .qf-positions-toolbar .qf-tabs button{min-height:0;padding:4px 12px;border-radius:12px;font-size:14px;line-height:20px;font-weight:500}
+#site-shell #main-content .quant-page .qf-positions .qf-table{font-size:12px;line-height:18px}
+#site-shell #main-content .quant-page .qf-positions .qf-table th{font-size:12px;line-height:16px;font-weight:500}
+#site-shell #main-content .quant-page .qf-positions .qf-table :is(th,td){padding:16px 8px}
+#site-shell #main-content .quant-page .qf-positions .qf-table :is(th,td):first-child{padding-left:20px}
+#site-shell #main-content .quant-page .qf-positions .qf-table :is(th,td):last-child{padding-right:20px}
+#site-shell #main-content .quant-page .qf-positions .qf-table th:nth-child(1){width:10.19%}
+#site-shell #main-content .quant-page .qf-positions .qf-table th:nth-child(3){width:8.52%}
+#site-shell #main-content .quant-page .qf-positions .qf-table th:nth-child(4){width:8.01%}
+#site-shell #main-content .quant-page .qf-positions .qf-table th:nth-child(5){width:4.51%}
+#site-shell #main-content .quant-page .qf-positions .qf-table th:nth-child(6){width:8.15%}
+#site-shell #main-content .quant-page .qf-positions .qf-table th:nth-child(7){width:13.03%}
+#site-shell #main-content .quant-page .qf-positions .qf-table th:nth-child(8){width:14.56%}
+#site-shell #main-content .quant-page .qf-positions .qf-status{padding:2px 8px;font-size:12px;line-height:18px;font-weight:600}
+#site-shell #main-content .quant-page .qf-positions .qf-row-link{font-size:14px;line-height:20px;font-weight:500}
+#site-shell #main-content .quant-page .qf-positions .qf-num{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap}
+#site-shell #main-content .quant-page .qf-positions .qf-unit{margin-left:4px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#87888a}
+#site-shell #main-content .quant-page .qf-positions .qf-accrued-estimate{font-family:'IBM Plex Mono',monospace;color:#87888a}
+#site-shell #main-content .quant-page .qf-positions .qf-table td:nth-child(5){font-size:14px}
+#site-shell #main-content .quant-page .qf-positions .qf-table td:nth-child(7)>div{font-size:12px;color:#b4b5b6}
+#site-shell #main-content .quant-page .qf-positions .qf-table td:nth-child(7) small{color:#87888a}
+#site-shell #main-content .quant-page .qf-positions .qf-table th{padding-top:12px;padding-bottom:12px}
+#site-shell #main-content .quant-page .qf-positions .qf-table td small.qf-accrued-estimate{margin-top:0}
+/* Tab switching must not move anything: fixed table layout keeps the reference column proportions (1374px basis)
+   for every tab and row set, and the 歷史 status filter matches the 38px tab bar so the toolbar keeps its height. */
+#site-shell #main-content .quant-page .qf-positions .qf-table{table-layout:fixed;width:100%}
+#site-shell #main-content .quant-page .qf-positions .qf-table td{overflow-wrap:anywhere}
+#site-shell #main-content .quant-page .qf-positions-toolbar{min-height:38px}
+/* History status: shared RecordFilter field trigger, 38px like the tab bar, dark rounded surface. */
+#site-shell #main-content .quant-page .qf-history-filter{display:block}
+#site-shell #main-content .quant-page .qf-history-filter .record-filter{width:144px;height:38px!important;min-height:38px!important;padding:0 12px!important;border-radius:12px;background:#141619;font-size:14px;line-height:20px}

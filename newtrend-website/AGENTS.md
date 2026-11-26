@@ -229,3 +229,32 @@ User asked for the fainter reference strategy backdrop on strategy pages (templa
 ## Finance sub-navigation per module (user decision, 2026-11-26)
 
 Do not mix Earn and Loan in one Finance bar. Earn pages (`/earn/simple`, `/earn/my-earnings`) show only 理財產品 / 我的理財; Loan pages (`/earn/loan`, `/earn/loan/my`) show only 借貸 / 我的借貸. Cross-module access stays in the header 金融 menu.
+
+## AI Quant 真實-mode mock records (user request, 2026-11-26)
+
+The reference 真實 account has no strategies or fund positions (checked 2026-11-26 with the user's permission and switched back to 模擬). Locally, 模擬 mirrors the reference demo records and 真實 carries synthetic records so each state is visible: strategies running / paused / completed across stock, crypto and forex templates; fund orders pending review, active flexible VIP 0 and fixed VIP 1, redeemed and matured, with daily payout rows (amount = principal × snapshot rate) feeding 派息明細 and the summary. Seeds are fixed at 2026-11-26, never copied from a real account, and reset on reload.
+
+## Quant Fund positions summary (reference code, 2026-11-26)
+
+Mirror the reference PortfolioSummaryCard: 在持本金 label with an eye toggle that masks amounts (order count stays visible), 36px mono value, green 在持已派利息 line, interest progress only when projected interest > 0, an optional middle 近 30 天派息趨勢 sparkline, three bottom-aligned stats on the right, and a divider-separated 按資產明細 expander with per-asset rows. The trend is the cumulative payouts credited over 30 days and, like the source EarningsTrendSparkline, renders nothing for fewer than two points or a flat series; never draw a flat placeholder line.
+
+## No divider under AI Quant pill navigation (user decision, 2026-11-26)
+
+The reference draws a full-width border under the 量化基金 / 我的倉位 band; the user rejected it. Keep the reference spacing (title at the band's position) but never add that divider line. Positions table, tabs and amounts follow the reference measurements (12/18 rows, 41px header, fixed column widths, compact amounts with a small grey unit).
+The 近 30 天派息趨勢 sparkline is removed from the positions summary at the user's request (2026-11-26), even though the reference code can render it; do not restore it.
+The 派息進度 progress bar is also removed from the positions summary at the user's request (2026-11-26); do not restore it.
+The 按資產明細 per-asset expander is removed from the positions summary at the user's request (2026-11-26); do not restore it.
+Positions tabs are layout-stable: fixed table layout with reference column proportions, the 歷史 filter matches the 38px tab bar, and no pending-count badge on 處理中 (user request, 2026-11-26).
+The positions 歷史 status filter uses the shared select-only `RecordFilter` field variant (no native select popup), styled 144×38 on the dark tab-bar surface. RecordFilter field popups size themselves by their 36px option rows so short lists show every option without scrolling.
+Missing dates in Quant Fund positions, the order drawer and records show a single "—"; never show placeholder text such as 核准後確定 (user request, 2026-11-26). The subscription success line shows only the 審核中 status.
+My Strategies omits the 盈虧走勢 column (and its 績效曲線即將上線 placeholder) at the user's request (2026-11-26); do not restore it.
+My Strategies row actions follow the reference pills (78×32, #05070b, #1e2023 border, 16px pause/play/square icons, grey 查看統計 with chevron; 停止 keeps white text, its dialog stays destructive). Pause/resume/stop show a per-row loading state: the clicked button swaps its icon for a same-size spinner with aria-busy, the row's other actions are disabled, repeat clicks are ignored, and stop starts loading only after dialog confirmation.
+Both AI Quant summaries (Quant Fund positions, My Strategies) render the shared `src/components/PortfolioSummaryCard.vue`, a copy of the reference card: label + eye mask, 36px figure, toned accent line, equal-width bottom-aligned stats on the right (counts unmasked), corner glow. My Strategies: 總投入 / 總損益 accent / 運行中 + 策略總數; its page top spacing matches the reference (title y=235 at 1917px).
+
+## No inline prompts in dialogs/forms (user decision, 2026-11-26)
+
+Supersedes "deposit … links remain discoverable after toast dismissal" above for subscription flows: do not insert inline recovery prompts (e.g. 前往充值) into dialogs or forms after a validation error; they reflow the dialog. The toast alone carries the message. Funding stays reachable through the header Assets menu.
+
+## Toast appearance (user decision, 2026-11-26)
+
+Public-site toasts (Ant Design message, incl. the shared FeedbackToast adapter) use `src/styles/toast.css`: dark #14161a surface, 1px #232529 border, 12px panel corners, soft shadow, white 14px Exo 2 text, palette icons (success #a5ff4a, error #ff4466, warning #fcd34d, info #5fa3ff), positioned 76px from the top so they clear the 64px header. Loaded only by the public entry; the admin keeps its own Ant Design theme.

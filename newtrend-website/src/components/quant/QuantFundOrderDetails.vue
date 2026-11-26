@@ -9,7 +9,6 @@ import '../../styles/quant-fidelity.css'
 const props=defineProps({order:{type:Object,required:true}})
 const emit=defineEmits(['close'])
 const flexible=computed(()=>props.order.termDaysSnapshot===null)
-const pendingApproval=computed(()=>props.order.maturityDate===null)
 const settled=computed(()=>['settled','redeemed'].includes(props.order.status)&&props.order.settledAt)
 </script>
 <template>
@@ -22,7 +21,7 @@ const settled=computed(()=>['settled','redeemed'].includes(props.order.status)&&
  <section class="qf-order-section"><dl>
   <div><dt>{{ $t('aiQuant.quantFund.positions.fields.term') }}</dt><dd>{{ flexible?$t('aiQuant.quantFund.card.termFlexible'):$t('aiQuant.quantFund.card.termDaysValue',{days:order.termDaysSnapshot}) }}</dd></div>
   <div><dt>{{ $t('aiQuant.quantFund.positions.fields.subscribedAt') }}</dt><dd class="mono">{{ fundDate(order.subscribedAt,true) }}</dd></div>
-  <div><dt>{{ $t('aiQuant.quantFund.positions.fields.maturityDate') }}</dt><dd :class="{mono:!pendingApproval}">{{ pendingApproval?$t('aiQuant.quantFund.positions.maturityPending'):fundDate(order.maturityDate,true) }}</dd></div>
+  <div><dt>{{ $t('aiQuant.quantFund.positions.fields.maturityDate') }}</dt><dd :class="{mono:Boolean(order.maturityDate)}">{{ fundDate(order.maturityDate,true) }}</dd></div>
  </dl></section>
  <section class="qf-order-section"><h3>{{ $t('aiQuant.quantFund.positions.detail.sections.interest') }}</h3><dl>
   <div><dt>{{ $t('aiQuant.quantFund.positions.fields.interestPaidTotal') }}</dt><dd class="mono">{{ fmt(order.interestPaidTotal) }} {{ order.asset }}</dd></div>

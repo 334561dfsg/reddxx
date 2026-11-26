@@ -11,3 +11,21 @@ export const quantFundAccount=reactive(createFundAccount())
  quantFundAccount.balances.demo-=principal}}
 export const fundMode=mode=>mode==='common.demo.demo'?'demo':'real'
 export const findQuantFund=id=>quantFunds.find(product=>product.id===id)||null
+// Synthetic 真實-mode orders (the reference real account is empty), covering active flexible/fixed, pending review,
+// redeemed and matured orders. Daily payout rows feed the 派息明細 page; totals are derived from those rows.
+{const NOW=Date.parse('2026-11-26T10:00:00+08:00'),DAY=86400000,round2=v=>Math.round(v*100)/100
+ const payouts=(principal,rate,start,days)=>Array.from({length:days},(_,i)=>({interestDate:start+i*DAY,amount:round2(principal*rate/100),creditedAt:start+(i+1)*DAY+3600000})).reverse()
+ const seed=(id,productId,{principal,startDaysAgo,status,paidDays=0,settledDaysAgo})=>{const product=findQuantFund(productId);if(!product)return
+  const start=NOW-startDaysAgo*DAY,interestRecords=payouts(principal,product.averageDailyReturnPercent,start,paidDays)
+  const paid=round2(interestRecords.reduce((sum,r)=>sum+r.amount,0))
+  quantFundAccount.orders.push({id,productId,productName:product.name,asset:product.asset,principal,mode:'real',status,
+   dailyReturnPercentSnapshot:product.averageDailyReturnPercent,termDaysSnapshot:product.termDays,minHoldDaysSnapshot:product.minHoldDays,
+   subscribedAt:start-3600000,interestStartAt:status==='pending_review'?undefined:start,
+   maturityDate:product.termDays&&status!=='pending_review'?start+product.termDays*DAY:null,
+   interestPaidTotal:paid,interestPaidThrough:paidDays?start+(paidDays-1)*DAY:undefined,interestRecords,
+   ...(settledDaysAgo!=null?{settledAt:NOW-settledDaysAgo*DAY}:{})})}
+ seed('QFO-seed-real-3','qf-vip0',{principal:5000,startDaysAgo:0,status:'pending_review'})
+ seed('QFO-seed-real-2','qf-vip1',{principal:120000,startDaysAgo:3,status:'active',paidDays:3})
+ seed('QFO-seed-real-1','qf-vip0',{principal:8000,startDaysAgo:10,status:'active',paidDays:10})
+ seed('QFO-seed-real-4','qf-vip0',{principal:3000,startDaysAgo:25,status:'redeemed',paidDays:20,settledDaysAgo:5})
+ seed('QFO-seed-real-5','qf-vip1',{principal:100000,startDaysAgo:30,status:'settled',paidDays:7,settledDaysAgo:23})}
