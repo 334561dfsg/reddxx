@@ -27,10 +27,10 @@ export const routes=[
  {path:'/trade/:pathMatch(.*)*',redirect:'/trade/futures/BTCUSDT'},
  // Copy trading is temporarily excluded from this prototype.
  {path:'/copytrade/:pathMatch(.*)*',redirect:'/'},
- // Joint accounts, promotions (我的活動), the survey, fund password and 2FA were removed (user decision, 2026-11-26); old links land on the profile.
- {path:'/:removed(joint-account|promotions|survey|fund-password|2fa)/:pathMatch(.*)*',redirect:'/profile'},
- // Device management lives in the security centre's dialog now (restored 2026-11-26).
- {path:'/devices/:pathMatch(.*)*',redirect:'/security'},
+ // Joint accounts, promotions (我的活動), the survey and fund password were removed (user decision, 2026-11-26); old links land on the profile.
+ {path:'/:removed(joint-account|promotions|survey|fund-password)/:pathMatch(.*)*',redirect:'/profile'},
+ // Device management and Google Authenticator live in security-centre dialogs (restored 2026-11-26).
+ {path:'/:security(devices|2fa)/:pathMatch(.*)*',redirect:'/security'},
  {name:'loan-order',path:'/earn/loan/order/:orderId',component:()=>import('./pages/LendingOrder.vue')},
  // Section params are constrained so unknown sections reach the not-found page instead of an empty shell.
  // An id is only valid under a section, so /earn/x reaches not-found instead of an empty Finance shell.

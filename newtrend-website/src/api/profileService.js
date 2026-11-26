@@ -2,6 +2,10 @@
 // Pages import the bound functions from ./profile.js. State is in memory only and resets on reload; the seeds are
 // deterministic so filters, pagination and tests are stable. Every result is a JSON snapshot.
 import {ApiError, mockCall, snapshot} from './transport.js'
+import {otpauthUri, randomSecret, verifyTotp} from './totp.js'
+
+/** Local demo code accepted wherever the prototype asks for a verification code (same as the contact bindings). */
+export const DEMO_TOTP = '123456'
 
 const SERVICE = 'profile'
 const DAY = 86400000
@@ -160,5 +164,39 @@ export function createProfileApi({now = () => Date.now()} = {}) {
     return {id}
   })
 
-  return {listSessions, endSession, listAccountChanges, listNotifications, getUnreadCount, markNotificationRead, markAllNotificationsRead, getInviteSummary, getPreferences, updatePreferences}
+  // Google Authenticator (MFA). A bind starts with a pending secret; only a valid code for that secret enables it.
+  // Codes are real TOTP (so an authenticator app works) or the local demo code.
+  const authenticator = {enabled: false, secret: '', pending: '', boundAt: 0}
+  const codeOk = async (secret, code) => String(code) === DEMO_TOTP || await verifyTotp(secret, code, now())
+
+  /** GET /account/authenticator — {enabled, boundAt}. */
+  const getAuthenticator = () => mockCall(SERVICE, () => ({enabled: authenticator.enabled, boundAt: authenticator.boundAt}))
+
+  /** POST /account/authenticator/secret — a fresh pending secret and its otpauth URI (replaces any earlier pending one). */
+  const createAuthenticatorSecret = ({account = 'demo'} = {}) => mockCall(SERVICE, () => {
+    if (authenticator.enabled) throw new ApiError('profile.center.authenticator.alreadyBound')
+    authenticator.pending = randomSecret()
+    return {secret: authenticator.pending, uri: otpauthUri({issuer: 'NewQuantCapital', account, secret: authenticator.pending})}
+  })
+
+  /** POST /account/authenticator/bind {code} */
+  const bindAuthenticator = ({code}) => mockCall(SERVICE, async () => {
+    if (authenticator.enabled) throw new ApiError('profile.center.authenticator.alreadyBound')
+    if (!authenticator.pending) throw new ApiError('profile.center.authenticator.expired')
+    if (!/^\d{6}$/.test(String(code))) throw new ApiError('profile.center.authenticator.codeRequired')
+    if (!await codeOk(authenticator.pending, code)) throw new ApiError('profile.center.authenticator.invalidCode')
+    Object.assign(authenticator, {enabled: true, secret: authenticator.pending, pending: '', boundAt: now()})
+    return {enabled: true, boundAt: authenticator.boundAt}
+  })
+
+  /** POST /account/authenticator/unbind {code} — needs a current code from the bound authenticator. */
+  const unbindAuthenticator = ({code}) => mockCall(SERVICE, async () => {
+    if (!authenticator.enabled) throw new ApiError('profile.center.authenticator.notBound')
+    if (!/^\d{6}$/.test(String(code))) throw new ApiError('profile.center.authenticator.codeRequired')
+    if (!await codeOk(authenticator.secret, code)) throw new ApiError('profile.center.authenticator.invalidCode')
+    Object.assign(authenticator, {enabled: false, secret: '', pending: '', boundAt: 0})
+    return {enabled: false}
+  })
+
+  return {getAuthenticator, createAuthenticatorSecret, bindAuthenticator, unbindAuthenticator, listSessions, endSession, listAccountChanges, listNotifications, getUnreadCount, markNotificationRead, markAllNotificationsRead, getInviteSummary, getPreferences, updatePreferences}
 }

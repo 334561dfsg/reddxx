@@ -256,3 +256,7 @@
 .pc-shell .pc-row-value{display:inline-flex;align-items:center;gap:4px;color:#a0a1a2}
 .pc-shell .pc-row-value svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pc-shell .pc-actions{display:flex;flex-wrap:wrap;gap:8px;flex-shrink:0}
+.pc-shell .pc-actions{align-items:center}
+.pc-shell .pc-chip.ok{background:#2bc2871a;color:#2bc287}
+.pc-shell .pc-hint{padding:16px 20px}
+.pc-shell .pc-hint h2{margin:0 0 4px;font-size:13px;line-height:20px;font-weight:600;color:#e6e7e9}
