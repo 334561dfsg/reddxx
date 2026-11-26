@@ -64,7 +64,6 @@
   },
   "user": {
     "profile": "個人中心",
-    "survey": "問卷調查",
     "helpCenter": "幫助中心 — 常見問題與支援",
     "messages": "訊息中心",
     "messageDetail": "訊息詳情",
@@ -79,7 +78,6 @@
     "kycAdvanced": "進階認證",
     "bindEmail": "綁定信箱",
     "bindPhone": "綁定手機",
-    "twoFactor": "雙重驗證 (2FA)",
-    "jointAccount": "聯名帳戶"
+    "twoFactor": "雙重驗證 (2FA)"
   }
 }

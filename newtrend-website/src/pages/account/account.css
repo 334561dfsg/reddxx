@@ -8,8 +8,6 @@
 .account-center .account-heading h1{font-size:1.5rem;margin:0 0 20px}
 :is(.account-page,.account-center) .account-banner{margin-top:24px;border-radius:var(--nt-radius-panel);padding:36px 28px;border:1px solid #ffffff08;background:radial-gradient(ellipse at 100% 0,#a5ff4a0c,transparent 45%),#141619}
 .account-page .account-banner h1{margin:12px 0 16px;font-size:2.25rem;line-height:1.15}
-.account-promotions .account-banner{padding:56px 40px}
-.account-promotions .account-page .account-banner h1{font-size:3rem}
 :is(.account-page,.account-center) .referral-bind,:is(.account-page,.account-center) .referral-share,:is(.account-page,.account-center) .referral-invitees,:is(.account-page,.account-center) .referral-stats>.card{border-radius:var(--nt-radius-panel);padding:20px}
 .account-referrals h2{font-size:.875rem;display:flex;align-items:center;gap:8px;font-family:inherit}
 :is(.account-page,.account-center) .referral-bind>p,:is(.account-page,.account-center) .referral-share>p{font-size:.75rem;margin:20px 0 16px}
@@ -30,8 +28,8 @@
 :is(.account-page,.account-center) .referral-invitees>h2{border-bottom:1px solid #ffffff08;margin:-20px -20px 0;padding:20px;font-size:1rem;font-weight:600}
 :is(.account-page,.account-center) .referral-invitees .empty{min-height:180px}
 .account-referrals .section-gap{margin-top:32px}
-@media(max-width:767px){:is(.account-page,.account-center) .account-banner,.account-promotions .account-banner{padding:28px 20px}
-:is(.account-page,.account-center) .account-banner h1,.account-promotions .account-page .account-banner h1{font-size:1.875rem}
+@media(max-width:767px){:is(.account-page,.account-center) .account-banner{padding:28px 20px}
+:is(.account-page,.account-center) .account-banner h1{font-size:1.875rem}
 :is(.account-page,.account-center) .referral-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
 :is(.account-page,.account-center) .referral-stats>.card:not(.referral-code){padding:14px 8px}
 :is(.account-page,.account-center) .referral-share-content{flex-direction:column;align-items:stretch}
@@ -53,7 +51,6 @@
 .account-center{max-width:1280px;margin:auto;padding:32px 24px}
 .account-help-center{max-width:1280px}
 .account-referrals{max-width:1080px;padding:56px 32px}
-.account-promotions{max-width:1440px;padding:56px 32px}
 .account-page h1{font-size:1.875rem;line-height:36px;margin:24px 0 8px}
 .account-center>h1{font-size:1.5rem;margin-bottom:20px}
 :is(.account-page,.account-center) .account-subtitle{color:#fff8;line-height:20px}
@@ -74,7 +71,7 @@
 :is(.account-page,.account-center) .profile-identity>.nt-icon{width:28px;height:28px}
 :is(.account-page,.account-center) .profile-identity h2{font-size:1.5rem}
 :is(.account-page,.account-center) .profile-identity p{margin-top:8px}
-:is(.account-page,.account-center) .profile-metrics{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #ffffff09}
+:is(.account-page,.account-center) .profile-metrics{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #ffffff09}
 :is(.account-page,.account-center) .profile-metrics>div,:is(.account-page,.account-center) .profile-metrics>a,:is(.account-page,.account-center) .profile-metrics>button{padding:18px 20px;text-align:left;border-right:1px solid #ffffff09}
 :is(.account-page,.account-center) .profile-metrics small{display:block;color:#fff6;font-size:0.75rem}
 :is(.account-page,.account-center) .profile-metrics strong{display:block;margin:10px 0;font-size:1.125rem}
@@ -102,9 +99,6 @@
 :is(.account-page,.account-center) .account-faq{border-bottom:1px solid #ffffff0b;padding:24px 0;line-height:1.7}
 :is(.account-page,.account-center) .account-faq summary{cursor:pointer}
 :is(.account-page,.account-center) .account-faq p{margin-top:16px;color:#fff8}
-:is(.account-page,.account-center) .joint-points{padding-left:20px;line-height:2.5;margin:24px 0;color:#fffa}
-:is(.account-page,.account-center) .joint-holder{background:linear-gradient(130deg,#242629,#121419)}
-:is(.account-page,.account-center) .joint-holder .mini-label{border-top:1px solid #ffffff20;margin-top:12px;padding-top:12px}
 :is(.account-page,.account-center) .profile-group .nt-icon{opacity:.7}
 @media(max-width:700px){.account-center{padding:24px 16px}
 :is(.account-page,.account-center) .profile-columns{grid-template-columns:1fr}

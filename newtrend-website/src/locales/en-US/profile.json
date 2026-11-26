@@ -71,7 +71,6 @@
   "copy": "Copy",
   "copyFailed": "Copy failed",
   "startKyc": "Verify Now",
-  "securityLevel": "Security Level",
   "securityLevelLabel": {
     "low": "Low",
     "medium": "Medium",
@@ -93,7 +92,6 @@
   "groupSecurity": "Security",
   "groupPreferences": "Preferences",
   "vipLevel": "VIP Level",
-  "securityTodo": "To do: {{items}}",
   "securityAction": "Set up",
   "securityComplete": "All security items are set",
   "listSeparator": ", ",

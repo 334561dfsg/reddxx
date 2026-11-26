@@ -362,3 +362,8 @@ Transfer is a dialog (`components/overlay/AssetTransfer.vue`, Overlay type `tran
 ## No onboarding banner on Assets (user decision, 2026-11-26)
 
 The assets overview starts with the total-assets card. Do not restore the 「完成帳戶設定 1/3 · 建立帳戶 · 完成身分驗證 · 完成首次充值 · 立即充值」 setup banner (markup and `.setup-banner` styles removed).
+
+## Removed account features (user decision, 2026-11-26)
+
+Joint accounts (聯名帳戶), 我的活動 (promotions/tasks) and the investor survey (問卷調查) are removed: pages, routes, header/profile entries, styles and their locale strings. `/joint-account`, `/promotions/*` and `/survey/*` redirect to `/profile`. The profile header shows three metrics (實名認證, VIP 等級, 信用分); the 安全等級 tile is removed. `promotion.*` strings still used by 邀請好友 and Charity stay. Do not reintroduce these features.
+

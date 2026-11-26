@@ -1,6 +1,6 @@
 import {reactive} from 'vue'
 import {removeStorage} from './utils/storage.js'
-const defaults={name:'Demo User',email:'demo@example.com',phone:'',fundPasswordSet:false,twoFactor:false,kyc:'none',advanced:'none',fontScale:'standard',referrer:'',devices:[{id:1,name:'Current browser',current:true,trusted:true},{id:2,name:'Demo laptop',current:false,trusted:false}],joint:null}
+const defaults={name:'Demo User',email:'demo@example.com',phone:'',fundPasswordSet:false,twoFactor:false,kyc:'none',advanced:'none',fontScale:'standard',referrer:'',devices:[{id:1,name:'Current browser',current:true,trusted:true},{id:2,name:'Demo laptop',current:false,trusted:false}]}
 // Mock profile lives in memory only and resets on reload (no mock business data in browser storage).
 // Clear the profile that earlier builds persisted so stale KYC/2FA/device state cannot linger.
 removeStorage('nt-account')

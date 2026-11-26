@@ -64,7 +64,6 @@
   },
   "user": {
     "profile": "Kontocenter",
-    "survey": "Umfrage",
     "helpCenter": "Hilfecenter — FAQs & Support",
     "messages": "Nachrichten",
     "messageDetail": "Nachrichtendetails",
@@ -79,7 +78,6 @@
     "kycAdvanced": "Erweiterte Verifizierung",
     "bindEmail": "E-Mail verknüpfen",
     "bindPhone": "Telefon verknüpfen",
-    "twoFactor": "Zwei-Faktor-Authentifizierung (2FA)",
-    "jointAccount": "Gemeinschaftskonto"
+    "twoFactor": "Zwei-Faktor-Authentifizierung (2FA)"
   }
 }

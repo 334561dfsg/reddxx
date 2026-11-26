@@ -71,7 +71,6 @@
   "copy": "復制",
   "copyFailed": "復制失敗",
   "startKyc": "立即認證",
-  "securityLevel": "安全等級",
   "securityLevelLabel": {
     "low": "低",
     "medium": "中",
@@ -93,7 +92,6 @@
   "groupSecurity": "安全",
   "groupPreferences": "偏好",
   "vipLevel": "VIP 等級",
-  "securityTodo": "待完成：{{items}}",
   "securityAction": "去設置",
   "securityComplete": "安全項已全部完成",
   "listSeparator": "、",

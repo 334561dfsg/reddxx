@@ -64,7 +64,6 @@
   },
   "user": {
     "profile": "アカウントセンター",
-    "survey": "アンケート",
     "helpCenter": "ヘルプセンター — よくある質問とサポート",
     "messages": "メッセージ",
     "messageDetail": "メッセージ詳細",
@@ -79,7 +78,6 @@
     "kycAdvanced": "上級認証",
     "bindEmail": "メールアドレス連携",
     "bindPhone": "電話番号連携",
-    "twoFactor": "二要素認証 (2FA)",
-    "jointAccount": "共同名義口座"
+    "twoFactor": "二要素認証 (2FA)"
   }
 }

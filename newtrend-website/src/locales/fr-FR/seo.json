@@ -64,7 +64,6 @@
   },
   "user": {
     "profile": "Centre de compte",
-    "survey": "Sondage",
     "helpCenter": "Centre d'aide — FAQ & assistance",
     "messages": "Messages",
     "messageDetail": "Détails du message",
@@ -79,7 +78,6 @@
     "kycAdvanced": "Vérification avancée",
     "bindEmail": "Associer un e-mail",
     "bindPhone": "Associer un téléphone",
-    "twoFactor": "Authentification à deux facteurs (2FA)",
-    "jointAccount": "Compte joint"
+    "twoFactor": "Authentification à deux facteurs (2FA)"
   }
 }

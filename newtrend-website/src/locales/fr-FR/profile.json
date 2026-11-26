@@ -71,7 +71,6 @@
   "copy": "Copier",
   "copyFailed": "Échec de la copie",
   "startKyc": "Vérifier maintenant",
-  "securityLevel": "Niveau de sécurité",
   "securityLevelLabel": {
     "low": "Faible",
     "medium": "Moyen",
@@ -93,7 +92,6 @@
   "groupSecurity": "Sécurité",
   "groupPreferences": "Préférences",
   "vipLevel": "Niveau VIP",
-  "securityTodo": "À faire : {{items}}",
   "securityAction": "Configurer",
   "securityComplete": "Tous les éléments de sécurité sont configurés",
   "listSeparator": ", ",

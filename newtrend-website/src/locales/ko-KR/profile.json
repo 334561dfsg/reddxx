@@ -71,7 +71,6 @@
   "copy": "복사",
   "copyFailed": "복사에 실패했습니다",
   "startKyc": "지금 인증",
-  "securityLevel": "보안 수준",
   "securityLevelLabel": {
     "low": "낮음",
     "medium": "보통",
@@ -93,7 +92,6 @@
   "groupSecurity": "보안",
   "groupPreferences": "환경설정",
   "vipLevel": "VIP 등급",
-  "securityTodo": "미완료: {{items}}",
   "securityAction": "설정하기",
   "securityComplete": "모든 보안 항목이 설정되었습니다",
   "listSeparator": ", ",

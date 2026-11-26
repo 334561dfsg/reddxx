@@ -64,7 +64,6 @@
   },
   "user": {
     "profile": "계정 센터",
-    "survey": "설문조사",
     "helpCenter": "고객센터 — 자주 묻는 질문 및 지원",
     "messages": "메시지",
     "messageDetail": "메시지 상세",
@@ -79,7 +78,6 @@
     "kycAdvanced": "고급 인증",
     "bindEmail": "이메일 연동",
     "bindPhone": "휴대폰 연동",
-    "twoFactor": "2단계 인증 (2FA)",
-    "jointAccount": "공동명의 계정"
+    "twoFactor": "2단계 인증 (2FA)"
   }
 }

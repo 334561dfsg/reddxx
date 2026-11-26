@@ -71,7 +71,6 @@
   "copy": "コピー",
   "copyFailed": "コピーに失敗しました",
   "startKyc": "今すぐ認証",
-  "securityLevel": "セキュリティレベル",
   "securityLevelLabel": {
     "low": "低",
     "medium": "中",
@@ -93,7 +92,6 @@
   "groupSecurity": "セキュリティ",
   "groupPreferences": "環境設定",
   "vipLevel": "VIP レベル",
-  "securityTodo": "未完了：{{items}}",
   "securityAction": "設定する",
   "securityComplete": "セキュリティ項目はすべて設定済みです",
   "listSeparator": "、",
