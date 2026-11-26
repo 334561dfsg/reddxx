@@ -2,13 +2,8 @@
 import {useAmountMask} from '../../composables/useAmountMask.js'
 import LineIcon from '../ui/LineIcon.vue'
 import {money as formatMoney} from '../../utils/format.js'
-import {session} from '../../session'
-import {computed} from 'vue'
-import {products} from '../../data'
-import {earnPortfolioFor} from '../../earnPortfolio'
-import {earnSummary} from '../../utils/mockEarnPortfolio'
 const {hidden,toggle,masked}=useAmountMask()
-const summary=computed(()=>earnSummary(earnPortfolioFor(session.mode),products))
+defineProps({summary:{type:Object,required:true}})
 const metrics=[['principal','principal'],['accruedReward','accrued'],['cumulativeReward','cumulative']]
 const money=value=>masked(formatMoney(value)+' USDT')
 </script>

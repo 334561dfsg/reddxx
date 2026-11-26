@@ -4,17 +4,17 @@ import LineIcon from '../ui/LineIcon.vue'
 import FinancePagination from '../FinancePagination.vue'
 import {useFinancePagination} from '../../composables/useFinancePagination'
 import {computed} from 'vue'
-import {products,fmt,path} from '../../data'
-import {earnPortfolioFor} from '../../earnPortfolio'
-import {openModal,session} from '../../session'
+import {fmt,path} from '../../data'
+import {openModal} from '../../session'
 import Coin from '../Coin.vue'
-const holdings=computed(()=>earnPortfolioFor(session.mode).holdings.filter(row=>row.status!=='redeemed').map(row=>({row,product:products.find(p=>p.id===row.productId)})))
+const props=defineProps({holdings:{type:Array,required:true}})
+const rows=computed(()=>props.holdings.map(row=>({row,product:row.product})))
 const redeemDisabled=row=>row.status==='redeeming'||(row.maturityAt>Date.now()&&!row.earlyRedemption)
 function redeem(row){openModal('earn-redeem','earn.redeem.title',{holdingId:row.id,focusCancel:true})}
-const {page,total,shown}=useFinancePagination(holdings)
+const {page,total,shown}=useFinancePagination(rows)
 </script>
 <template>
-<div v-if="holdings.length" class="earn-panel portfolio-record-table portfolio-holdings-table"><table><thead><tr>
+<div v-if="rows.length" class="earn-panel portfolio-record-table portfolio-holdings-table"><table><thead><tr>
  <th scope="col">{{ $t('earn.myEarnings.table.productName') }}</th><th scope="col">{{ $t('earn.myEarnings.table.principal') }}</th><th scope="col">{{ $t('earn.myEarnings.summary.accruedReward') }}</th><th scope="col">{{ $t('earn.myEarnings.table.dailyRate') }}</th><th scope="col">{{ $t('earn.myEarnings.table.term') }}</th><th scope="col">{{ $t('earn.myEarnings.table.status') }}</th><th scope="col">{{ $t('earn.myEarnings.table.action') }}</th>
 </tr></thead><tbody>
 <tr v-for="{row,product} in shown" :key="row.id">

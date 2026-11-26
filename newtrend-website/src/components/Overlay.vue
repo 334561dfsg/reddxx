@@ -22,9 +22,12 @@ import LanguageList from './overlay/LanguageList.vue'
 import SupportChannels from './overlay/SupportChannels.vue'
 import VipTiers from './overlay/VipTiers.vue'
 import AmountForm from './overlay/AmountForm.vue'
+import Spinner from './ui/Spinner.vue'
 // State reported by the open flow's body component ({dirty, valid, done, confirmLabel}); drives the unsaved-work guard and footer.
 const flow=shallowRef({})
 const onFlowState=state=>{flow.value={...state,dirty:state.dirty??Boolean(state.draft)}}
+// While a flow's request is in flight ({busy:true}) every close path (×, cancel, Escape) is held so the result can be read.
+const busy=computed(()=>Boolean(flow.value.busy))
 const dialog=shallowRef(null),current=shallowRef(null),closing=shallowRef(false),error=shallowRef(''),done=shallowRef(false),message=shallowRef('')
 const route=useRoute(),router=useRouter();let trigger,previousOverflow,closeTimer,returnFocus
 const isSupport=computed(()=>current.value?.type==='support')
@@ -36,7 +39,7 @@ watch(modal,async(value)=>{if(!value)return;current.value=value;flow.value={};er
 function openStrategySubscription(){const product=current.value.data;const from=route.fullPath;close(()=>{if(route.fullPath===from)openModal('strategy-subscribe',{key:'aiQuant.create.title',params:{name:product.name}},product)})}
 function cleanup(){document.body.style.overflow=previousOverflow??'';if(trigger?.isConnected)trigger.focus();else returnFocus?.();clearTimeout(closeTimer)}
 function close(afterClose){if(closing.value||!current.value)return;closing.value=true;closeTimer=setTimeout(()=>{dialog.value?.close();current.value=null;closeModal();closing.value=false;cleanup();if(typeof afterClose==='function')afterClose()},matchMedia('(prefers-reduced-motion: reduce)').matches?0:150)}
-function cancel(e){e.preventDefault();if(((flow.value.dirty&&!flow.value.done)||(isSupport.value&&message.value.trim()))&&!done.value){error.value="overlay.ui.unsavedContentUseCloseOrCancelToLeave";return}close()}
+function cancel(e){e.preventDefault();if(busy.value)return;if(((flow.value.dirty&&!flow.value.done)||(isSupport.value&&message.value.trim()))&&!done.value){error.value="overlay.ui.unsavedContentUseCloseOrCancelToLeave";return}close()}
 const {switchTo:switchLocale}=useLocaleSwitch()
 async function changeLanguage(l){if(await switchLocale(l))close()}
 function accountAction(){if(done.value||closing.value)return;try{if(current.value.type==='account-edit'){if(!message.value.trim()){error.value="profile.enterUsername";return}current.value.data.onSave?.(message.value.trim())}else current.value.data.onConfirm?.();done.value=true;close()}catch(cause){error.value=cause.message||'c2c.error.generic'}}
@@ -63,7 +66,7 @@ function keydown(e){if(e.key!=='Tab')return;const els=[...dialog.value.querySele
 watch(()=>route.fullPath,()=>{if(current.value)close()})
 onUnmounted(()=>{dialog.value?.close();cleanup()})
 </script>
-<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem'].includes(current?.type)}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" @click="close">×</button></header><div class="overlay-body">
+<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem'].includes(current?.type)}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button></header><div class="overlay-body">
 <MenuDrawer v-if="isDrawer" @close="close" @navigate="navigate" @switch-mode="switchFromMenu" @language="changeLanguage"/>
 
 <LanguageList v-else-if="current.type==='language'" @select="changeLanguage"/>
@@ -90,7 +93,7 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 <AmountForm v-else-if="formType" :kind="current.type" :data="current.data" @state="onFlowState"/>
 <template v-else><p class="muted">{{ $t(current.data.description||"overlay.ui.localInterfaceDemoNotConnectedToTheOriginalAccount") }}</p></template>
 <FeedbackToast v-if="error" id="action-error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
-</div><footer v-if="!isDrawer&&!isSupport&&current.type!=='quant-fund-order'" class="overlay-footer"><button v-if="current.type!=='strategy-detail'" class="secondary-button" data-cancel @click="close">{{ $t(cancelLabel) }}</button><button v-if="current.type==='strategy-detail'" class="strategy-cta" :disabled="closing" @click="openStrategySubscription">{{ $t('aiQuant.spotlight.subscribeNow') }}</button><button v-if="primary" :class="primary.danger?'danger-button':'primary-button'" :form="primary.form" type="submit" :disabled="primary.disabled">{{ $t(primary.label) }}</button></footer></template></dialog></template>
+</div><footer v-if="!isDrawer&&!isSupport&&current.type!=='quant-fund-order'" class="overlay-footer"><button v-if="current.type!=='strategy-detail'" class="secondary-button" data-cancel :aria-disabled="busy||undefined" @click="!busy&&close()">{{ $t(cancelLabel) }}</button><button v-if="current.type==='strategy-detail'" class="strategy-cta" :disabled="closing" @click="openStrategySubscription">{{ $t('aiQuant.spotlight.subscribeNow') }}</button><button v-if="primary" :class="[primary.danger?'danger-button':'primary-button',{'is-busy':busy}]" :form="primary.form" type="submit" :disabled="primary.disabled&&!busy" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(primary.label) }}</button></footer></template></dialog></template>
 <style scoped>
 .c2c-agreement-copy{white-space:pre-line;line-height:1.7;color:#b2b5bb;margin-top:16px}
 
@@ -107,4 +110,6 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 .earn-subscribe-dialog{border-radius:16px;padding-top:0}.earn-subscribe-dialog .overlay-header{position:relative;padding:24px 60px 16px 24px}.nt-dialog.nt-dialog.earn-subscribe-dialog .overlay-header h2{line-height:18px}.earn-subscribe-dialog .overlay-close{position:absolute;right:2px;top:2px}.earn-subscribe-dialog .overlay-body{padding-top:0;padding-bottom:0}.earn-subscribe-dialog .overlay-footer{padding:16px 24px 24px;border-top:0;gap:16px}.earn-subscribe-dialog .overlay-footer button{border-radius:999px;padding:7px 16px;min-height:36px}.earn-subscribe-dialog .overlay-close{font-size:22px}.earn-subscribe-dialog .overlay-header h2{font-family:inherit}.earn-subscribe-dialog .overlay-body{scrollbar-gutter:auto}
 @media(pointer:coarse){.earn-subscribe-dialog .overlay-footer button{min-height:44px}}
 .confirm-subtitle{margin-top:-4px}.confirm-danger{margin:12px 0 0;padding:10px 12px;border:1px solid color-mix(in srgb,#f46 30%,transparent);border-radius:4px;background:color-mix(in srgb,#f46 10%,transparent);color:#f46;font-size:14px;line-height:1.6}.danger-button{padding:10px 20px;border-radius:var(--nt-radius-panel);background:#f46;color:#fff;font-weight:600}.danger-button:hover{background:#ff5f7c;color:#fff}.danger-button:focus-visible{outline:none;text-decoration:underline}
+
+.overlay-footer .is-busy{cursor:progress}.overlay-close[aria-disabled=true],.overlay-footer .secondary-button[aria-disabled=true]{opacity:.5;cursor:not-allowed}
 </style>

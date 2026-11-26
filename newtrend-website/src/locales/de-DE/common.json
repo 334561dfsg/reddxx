@@ -126,6 +126,8 @@
   "noMore": "Nicht mehr",
   "copyright": "© {{year}} {{brand}} Trading-Plattform. Alle Rechte vorbehalten.",
   "loading": "Wird geladen …",
+  "retry": "Erneut versuchen",
+  "requestFailed": "Anfrage fehlgeschlagen. Bitte versuche es erneut.",
   "logout": "Abmelden",
   "unnamed": "Unbenannt",
   "security": "Sicherheit",

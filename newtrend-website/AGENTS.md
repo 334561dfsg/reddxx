@@ -327,3 +327,12 @@ Removed the homepage 了解 AI Quant 運作機制 and strategy 運作機制 vide
 - Ant Design Selects go through `components/ui/NtSelect.vue` with a theme `variant` (`pill` = deposit, `field` = lending) defined in `components/ui/selectThemes.js`; all Select props, events and slots pass through. Do not wrap a Select in its own ConfigProvider.
 - Hide-amount toggles use `composables/useAmountMask.js` (local state per panel, reference glyph per page).
 - Not unified on purpose: the summary cards (PortfolioSummaryCard for AI Quant, EarnPortfolioSummary for Earn) and the record tables replicate different reference designs, so they stay separate components.
+
+## Async API layer and loading states (user decision, 2026-11-26)
+
+The prototype keeps mock data, but pages must already behave like they call a server API so real integration only swaps the transport. Migrate module by module (Earn done; next Quant Fund, AI strategy, C2C, assets/wallet, account; trading quotes separately).
+
+- Pages and components read and write business data only through `src/api/<module>.js` async functions, never by importing the reactive mock stores. Each service is a factory in `src/api/<module>Service.js` (Node-testable, documents the HTTP endpoint it stands in for) bound to the site catalogue in `src/api/<module>.js`. All calls go through `src/api/transport.js` `mockCall()`: simulated latency (300–800ms), JSON snapshots, `ApiError{code, params}`. Browser switches `?mock-delay=0|<ms>` and `?mock-fail=<service>|all` are read from the URL only (no storage).
+- Loads use `composables/useRequest.js` (`status` loading/error/ready, key change resets, `refresh`, stale-response guard, `tags` + `invalidate()` for in-place refresh after a mutation). Writes use `useMutation()` (one in flight). After a successful write, `invalidate('<module>')`.
+- Render loads with `components/ui/RequestState.vue`: skeletons (`components/ui/Skeleton.vue`) shaped like the real layout for the first load, toast + a neutral 重試 action for failures (no inline error text), data otherwise. Background refreshes keep current data on screen.
+- Dialog flows report `busy` in their `@state`; Overlay then shows `Spinner` on the primary action (`aria-busy`, `aria-disabled`, focus kept) and holds ×, cancel and Escape until the request settles. Inputs become read-only while submitting.

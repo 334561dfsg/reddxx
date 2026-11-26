@@ -4,38 +4,58 @@ import EarnConditions from './EarnConditions.vue'
 import {earnEligibilityError} from '../../utils/earnEligibility'
 import {computed,shallowRef,watch} from 'vue'
 import {session} from '../../session'
-import {recordEarnSubscription,earnBalance,earnCommitted} from '../../earnPortfolio'
 import {fmt,path} from '../../data'
 import {subscriptionError,maximumSubscription} from '../../utils/earnProducts'
 import Coin from '../Coin.vue'
 import Icon from '../Icon.vue'
+import Skeleton from '../ui/Skeleton.vue'
 import EarnTimeline from './EarnTimeline.vue'
+import {getEarnSubscriptionContext,subscribeEarn} from '../../api/earn.js'
+import {invalidate,useMutation,useRequest} from '../../composables/useRequest.js'
+import {t} from '../../i18n.js'
 const props=defineProps({product:{type:Object,required:true},closing:Boolean})
 const emit=defineEmits(['state','close'])
 const amount=shallowRef(''),touched=shallowRef(false),done=shallowRef(false)
-const balance=computed(()=>earnBalance(session.mode,props.product.symbol)),committed=computed(()=>earnCommitted(props.product.id,session.mode))
+// Balance and committed amount come from the API; the form stays usable but cannot submit until they load.
+const context=useRequest(()=>getEarnSubscriptionContext(props.product.id,session.mode),{key:()=>session.mode})
+const submission=useMutation(subscribeEarn)
+const ready=computed(()=>context.status.value==='ready')
+const balance=computed(()=>context.data.value?.balance??0),committed=computed(()=>context.data.value?.committed??0)
 const validation=computed(()=>{const code=earnEligibilityError(props.product);return code?{code}:subscriptionError(props.product,amount.value,balance.value,committed.value)})
-const error=computed(()=>touched.value&&validation.value?{key:(['verificationRequired','vipRequired'].includes(validation.value.code)?'lending.errors.':'earn.subscribe.errors.')+validation.value.code,params:{amount:fmt(validation.value.amount),asset:props.product.symbol}}:null)
+// Server rejection of the last attempt (same codes as local validation, or a transport failure).
+const failure=shallowRef(null)
+const errorKey=code=>['verificationRequired','vipRequired'].includes(code)?'lending.errors.'+code:['network','unknown','notFound'].includes(code)?'common.requestFailed':'earn.subscribe.errors.'+code
+const error=computed(()=>{const v=failure.value||(touched.value&&ready.value?validation.value:null);return v?{key:errorKey(v.code),params:{amount:fmt(v.amount??v.params?.amount),asset:props.product.symbol}}:null})
 const estimate=computed(()=>Number(amount.value)*props.product.rate/100*(props.product.days||1))
-watch([amount,validation,done],()=>emit('state',{draft:amount.value,valid:!validation.value,done:done.value}),{immediate:true})
+watch([amount,validation,done,ready,submission.pending],()=>emit('state',{draft:amount.value,valid:ready.value&&!validation.value,done:done.value,busy:submission.pending.value}),{immediate:true})
+// Context failure: toast per attempt, retry from the balance row.
+const contextFailure=computed(()=>context.status.value==='error'?t('common.loadFailed'):'')
 // Errors appear only after a submit attempt (one toast per attempt); editing the amount clears them.
-function fillMax(){amount.value=String(maximumSubscription(props.product,balance.value,committed.value));touched.value=false}
-function submit(){
- if(done.value||props.closing)return
+function edit(){touched.value=false;failure.value=null}
+function fillMax(){if(!ready.value||submission.pending.value)return;amount.value=String(maximumSubscription(props.product,balance.value,committed.value));edit()}
+async function submit(){
+ if(done.value||props.closing||submission.pending.value)return
+ failure.value=null
  touched.value=true
- if(validation.value)return
- // The existing prototype keeps subscriptions local; no reference-site request.
- recordEarnSubscription(props.product,Number(amount.value),session.mode)
- done.value=true
+ if(!ready.value||validation.value)return
+ try{
+  await submission.run({productId:props.product.id,amount:Number(amount.value),mode:session.mode})
+  done.value=true
+  invalidate('earn')
+ }catch(cause){
+  failure.value=cause
+  // A stale balance/quota is the usual cause of a server-side rejection: reload it in place.
+  context.refresh()
+ }
 }
 </script>
 <template>
 <div class="earn-subscription-summary"><div class="earn-product-line"><Coin :symbol="product.symbol"/><div><strong>{{ product.name }}</strong><small>{{ product.symbol }} · {{ product.days?$t('common.durationDays',{count:product.days}):$t('earn.tabs.flexible') }}</small></div></div><div class="earn-subscription-rate"><p><strong>{{ product.rate.toFixed(4) }}%</strong> <small>{{ $t('earn.dailyRate.suffix') }}</small></p><small>{{ $t('earn.apy.approx',{value:product.apy.toFixed(2)}) }}</small></div></div>
 <EarnConditions :product="product" @navigate="emit('close')"/>
 <form id="earn-subscribe-form" class="earn-subscription-form" @submit.prevent="submit">
- <template v-if="!done"><div class="earn-amount-heading"><label for="earn-amount" :class="{'negative':error}">{{ $t('earn.subscribe.amountLabel') }}</label><button type="button" class="earn-balance" @click="fillMax"><Icon name="wallet"/><span>{{ $t('earn.subscribe.availableBalanceLabel') }}</span><b>{{ fmt(balance) }} {{ product.symbol }}</b></button></div>
- <div class="earn-amount-input"><input id="earn-amount" v-model="amount" data-earn-initial-focus inputmode="decimal" autocomplete="off" :placeholder="$t('earn.subscribe.amountPlaceholder')" :aria-invalid="Boolean(error)" aria-required="true" aria-describedby="earn-amount-hint" @input="touched=false"/><button type="button" @click="fillMax">{{ $t('earn.subscribe.maxButton') }}</button><span>{{ product.symbol }}</span></div>
- <div id="earn-amount-hint" class="earn-amount-hint"><FeedbackToast v-if="error" type="error" :source="() => (error) ? (([String(($t(error)) ?? ''),&quot; &quot;,''].join(''))) : ''"></FeedbackToast><p v-else>{{ $t('earn.products.min',{amount:fmt(product.min)+' '+product.symbol}) }} · {{ $t('earn.products.max',{amount:fmt(product.max)+' '+product.symbol}) }}</p></div>
+ <template v-if="!done"><div class="earn-amount-heading"><label for="earn-amount" :class="{'negative':error}">{{ $t('earn.subscribe.amountLabel') }}</label><template v-if="context.status.value==='error'"><button type="button" class="earn-balance" @click="context.refresh"><Icon name="wallet"/><span>{{ $t('earn.subscribe.availableBalanceLabel') }}</span><b>{{ $t('common.retry') }}</b></button><FeedbackToast type="error" :source="() => contextFailure"/></template><button v-else type="button" class="earn-balance" :disabled="!ready||submission.pending.value" :aria-busy="!ready||undefined" @click="fillMax"><Icon name="wallet"/><span>{{ $t('earn.subscribe.availableBalanceLabel') }}</span><b v-if="ready">{{ fmt(balance) }} {{ product.symbol }}</b><Skeleton v-else width="96px" height="12px"/><span v-if="!ready" class="sr-only">{{ $t('common.loading') }}</span></button></div>
+ <div class="earn-amount-input"><input id="earn-amount" v-model="amount" data-earn-initial-focus inputmode="decimal" autocomplete="off" :placeholder="$t('earn.subscribe.amountPlaceholder')" :aria-invalid="Boolean(error)" aria-required="true" aria-describedby="earn-amount-hint" :readonly="submission.pending.value" @input="edit"/><button type="button" :disabled="!ready||submission.pending.value" @click="fillMax">{{ $t('earn.subscribe.maxButton') }}</button><span>{{ product.symbol }}</span></div>
+ <div id="earn-amount-hint" class="earn-amount-hint"><FeedbackToast v-if="error" type="error" :source="() => (error) ? (([String(($t(error.key,error.params)) ?? ''),&quot; &quot;,''].join(''))) : ''"></FeedbackToast><p v-else>{{ $t('earn.products.min',{amount:fmt(product.min)+' '+product.symbol}) }} · {{ $t('earn.products.max',{amount:fmt(product.max)+' '+product.symbol}) }}</p></div>
  <div class="earn-estimate"><p class="earn-caption">{{ $t('earn.subscribe.estReward') }}</p><p v-if="!validation" class="earn-accent earn-mono">{{ fmt(estimate) }} {{ product.symbol }}</p><p v-else class="earn-estimate-empty">{{ $t('earn.subscribe.estRewardEmpty') }}</p><EarnTimeline :days="product.days" vertical/></div></template>
  <div v-else class="earn-success"><FeedbackToast type="success" :source="() => $t('earn.subscribe.success.title')"/><RouterLink :to="path('/earn/my-earnings')+'?tab=orders'" @click="emit('close')">{{ $t('earn.subscribe.success.viewHoldings') }}</RouterLink></div>
 </form>

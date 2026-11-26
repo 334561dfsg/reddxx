@@ -3,14 +3,20 @@ import LineIcon from '../ui/LineIcon.vue'
 import FinancePagination from '../FinancePagination.vue'
 import {useFinancePagination} from '../../composables/useFinancePagination'
 import {computed,shallowRef,watch} from 'vue'
-import {products,path,fmt} from '../../data'
+import {path,fmt} from '../../data'
+import Skeleton from '../ui/Skeleton.vue'
+import RequestState from '../ui/RequestState.vue'
+import {listEarnProducts} from '../../api/earn.js'
+import {useRequest} from '../../composables/useRequest.js'
 import Coin from '../Coin.vue'
 import Icon from '../Icon.vue'
 import {session} from '../../session'
+const {data,error,status,refresh}=useRequest(listEarnProducts,{tags:['earn']})
+const products=computed(()=>data.value||[])
 const filter=shallowRef('all'),sort=shallowRef({key:'rate',direction:-1})
 const filters=[['all','zap'],['flexible','clock'],['fixed','lock']]
-const visible=computed(()=>products.filter(p=>filter.value==='all'||(filter.value==='fixed'?p.days>0:!p.days)).toSorted((a,b)=>sort.value.direction*(a[sort.value.key]-b[sort.value.key])))
-const featured=products.filter(p=>p.hot)
+const visible=computed(()=>products.value.filter(p=>filter.value==='all'||(filter.value==='fixed'?p.days>0:!p.days)).toSorted((a,b)=>sort.value.direction*(a[sort.value.key]-b[sort.value.key])))
+const featured=computed(()=>products.value.filter(p=>p.hot))
 const holdings=['totalHoldings','principal','accruedReward','cumulative','dailyEstimated']
 function toggleSort(key){sort.value={key,direction:sort.value.key===key?-sort.value.direction:1}}
 function ariaSort(key){return sort.value.key===key?(sort.value.direction===1?'ascending':'descending'):'none'}
@@ -22,6 +28,11 @@ const {page,total,shown}=useFinancePagination(visible)
  <div class="earn-hero-copy"><div class="earn-eyebrow">{{ $t('earn.header.subtitle') }}</div><h1>{{ $t('earn.header.title') }}</h1><p class="earn-description">{{ $t('earn.header.heroDescription') }}</p><div class="earn-chips"><span><Icon name="sparkles" green/>{{ $t('earn.educational.chip.dailyRateUpTo',{value:'0.0273'}) }}</span><span>{{ $t('earn.educational.chip.types') }}</span></div></div>
  <div v-if="session.loggedIn" class="earn-panel earn-holdings nt-glow-host"><span class="nt-glow" aria-hidden="true"></span><p class="earn-kicker"><LineIcon set="earn" name="sprout"/>{{ $t('earn.holdings.totalHoldings') }}</p><div class="earn-holdings-grid"><div v-for="(label,index) in holdings" :key="label"><p class="earn-kicker">{{ $t('earn.holdings.'+label) }}</p><strong :class="{'earn-accent':index>1}">{{ index===4?'+':'' }}$<span>0<span class="decimal">.00</span></span></strong></div></div></div>
 </section>
+<RequestState :status="status" :error="error" class="earn-request-frame" @retry="refresh">
+<template #loading>
+ <section class="earn-featured"><div class="earn-section-heading"><h2><LineIcon set="earn" name="flame"/>{{ $t('earn.featured.title') }}</h2></div><div class="earn-featured-grid"><div v-for="n in 3" :key="n" class="earn-panel earn-featured-card earn-skeleton-card"><div class="earn-product-line"><Skeleton width="32px" height="32px" round/><div class="earn-skeleton-lines"><Skeleton width="120px"/><Skeleton width="64px" height="12px"/></div></div><Skeleton width="140px" height="36px"/><Skeleton width="96px" height="12px"/></div></div></section>
+ <div class="earn-panel earn-table"><table><tbody><tr v-for="n in 5" :key="n"><td><div class="earn-product-line"><Skeleton width="32px" height="32px" round/><div class="earn-skeleton-lines"><Skeleton width="120px"/><Skeleton width="48px" height="12px"/></div></div></td><td v-for="c in 6" :key="c"><Skeleton width="72px"/></td><td><Skeleton width="72px" height="32px"/></td></tr></tbody></table></div>
+</template>
 <section class="earn-featured"><div class="earn-section-heading"><h2><LineIcon set="earn" name="flame"/>{{ $t('earn.featured.title') }}</h2><small>{{ $t('earn.featured.productCount',{count:featured.length}) }}</small></div><div class="earn-featured-grid">
  <RouterLink v-for="p in featured" :key="p.id" :to="path('/earn/simple/'+p.id)" class="earn-panel earn-featured-card nt-glow-host"><span class="nt-glow glow-earn-hot" aria-hidden="true"></span><span class="earn-hot"><LineIcon set="earn" name="flame"/>{{ $t('earn.badge.hot') }}</span><div class="earn-product-line"><Coin :symbol="p.symbol"/><div><strong>{{ p.name }}</strong><small><LineIcon set="earn" name="clock"/>{{ p.days?$t('common.durationDays',{count:p.days}):$t('earn.tabs.flexible') }}</small></div></div><p class="earn-featured-rate">{{ p.rate.toFixed(4) }}<small>%</small></p><p class="earn-caption">{{ $t('earn.dailyRate.label') }}</p><p class="earn-caption earn-mono">{{ $t('earn.apy.approx',{value:p.apy.toFixed(2)}) }}</p><span class="earn-featured-cta">{{ $t('earn.actions.subscribe') }}<Icon name="chevron-right" green/></span></RouterLink>
 </div></section>
@@ -31,5 +42,7 @@ const {page,total,shown}=useFinancePagination(visible)
 <tr v-for="p in shown" :key="p.id"><td><RouterLink :to="path('/earn/simple/'+p.id)" class="earn-product-line"><Coin :symbol="p.symbol"/><span><strong>{{ p.name }}</strong><small>{{ p.symbol }}</small></span></RouterLink></td><td :data-label="$t('earn.table.columns.category')"><span class="earn-type">{{ $t(p.days?'earn.tabs.fixed':'earn.tabs.flexible') }}</span></td><td :data-label="$t('earn.table.columns.term')">{{ p.days?$t('common.durationDays',{count:p.days}):$t('earn.tabs.flexible') }}</td><td class="earn-mono" :data-label="$t('earn.table.columns.minAmount')">{{ fmt(p.min) }} {{ p.symbol }}</td><td class="earn-mono" :data-label="$t('earn.table.columns.totalSubscribed')">{{ p.days?fmt(p.subscribed)+' '+p.symbol:'—' }}</td><td class="earn-mono" :data-label="$t('earn.table.columns.availableQuota')">{{ p.remaining }} {{ p.symbol }}</td><td :data-label="$t('earn.table.columns.dailyRate')"><strong class="earn-accent earn-mono">{{ p.rate.toFixed(4) }}%</strong><small class="earn-caption earn-mono">{{ $t('earn.apy.approx',{value:p.apy.toFixed(2)}) }}</small></td><td><RouterLink class="earn-buy" :to="path('/earn/simple/'+p.id)">{{ $t('earn.actions.subscribe') }}</RouterLink></td></tr>
 </tbody></table></div>
 <FinancePagination v-model:page="page" :total="total"/>
+</RequestState>
 <footer class="earn-page-footer"><span>{{ $t('earn.security.footer') }}</span><p>{{ $t('earn.security.disclaimer') }}</p></footer>
 </template>
+<style>.earn-skeleton-lines{display:grid;gap:8px;min-width:0}.earn-skeleton-card{display:grid;gap:12px}.earn-request-frame.nt-request-error{border:1px solid #ffffff0c;border-radius:var(--nt-radius-panel);margin-top:24px}</style>

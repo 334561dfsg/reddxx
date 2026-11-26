@@ -126,6 +126,8 @@
   "noMore": "No More",
   "copyright": "© {{year}} {{brand}} Trading Platform. All rights reserved.",
   "loading": "Loading...",
+  "retry": "Retry",
+  "requestFailed": "Request failed. Please try again.",
   "logout": "Logout",
   "unnamed": "Unnamed",
   "security": "Security",

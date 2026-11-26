@@ -126,6 +126,8 @@
   "noMore": "Plus rien",
   "copyright": "© {{year}} {{brand}} Trading Platform. Tous droits réservés.",
   "loading": "Chargement...",
+  "retry": "Réessayer",
+  "requestFailed": "La requête a échoué. Veuillez réessayer.",
   "logout": "Déconnexion",
   "unnamed": "Sans nom",
   "security": "Sécurité",

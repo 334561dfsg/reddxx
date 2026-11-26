@@ -126,6 +126,8 @@
   "noMore": "これ以上ありません",
   "copyright": "© {{year}} {{brand}} Trading Platform. All rights reserved.",
   "loading": "読み込み中...",
+  "retry": "再試行",
+  "requestFailed": "リクエストに失敗しました。もう一度お試しください。",
   "logout": "ログアウト",
   "unnamed": "名称未設定",
   "security": "セキュリティ",
