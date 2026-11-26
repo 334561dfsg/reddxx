@@ -24,6 +24,9 @@ function fields(o){
  f('trade.orderPrice',o.price),f('trade.history.filledQuantity',o.filledQuantity||0),
  f('trade.current.remaining',o.quantity-(o.filledQuantity||0)),f('trade.orderType',o.orderType,'key'),f('trade.status',o.recordStatus,'key')]
 }
+// One line per record (user decision, 2026-11-26): the same fields as before, as table columns; the close/cancel
+// action sits in the last column.
+const columns=computed(()=>liveRows.value.length?fields(liveRows.value[0]).map(({label,type})=>({label,type})):[])
 function value(f){if(f.value==null)return '—';if(f.type==='key')return t(f.value);if(f.type==='date')return isoDateTime(f.value);return (f.type==='pnl'&&f.value>0?'+':'')+fmt(f.value)}
 function act(o){
  const closing=o.bucket==='positions',action=closing?'trade.closePosition':'trade.cancelOrder'
@@ -40,8 +43,13 @@ function act(o){
 }
 </script>
 <template><div class="current-trades"><div ref="list" class="history-list">
-<article v-for="o in liveRows" :key="o.id" class="history-card"><header><strong>{{ o.marketName }}</strong><span class="direction" :class="o.direction==='buy'?'positive':'negative'">{{ $t(o.kind==='spot'?(o.direction==='buy'?'trade.buy':'trade.sell'):(o.direction==='buy'?'trade.buyLong':'trade.sellShort')) }}</span><span v-if="o.kind==='futures'" class="history-tag">{{ o.leverage }}x</span><button class="record-action" :aria-label="$t(o.bucket==='positions'?'trade.closePosition':'trade.cancelOrder')+' '+o.marketName" @click="act(o)">{{ $t(o.bucket==='positions'?'trade.closePosition':'trade.cancelOrder') }}</button></header>
-<dl><div v-for="f in fields(o)" :key="f.label"><dt>{{ $t(f.label) }}</dt><dd :class="f.type==='pnl'?(f.value>0?'positive':f.value<0?'negative':''):''">{{ value(f) }}<small v-if="f.unit"> {{ f.unit }}</small></dd></div></dl>
-</article></div></div></template>
+<table class="record-table">
+<thead><tr><th scope="col">{{ $t('trade.pair') }}</th><th v-for="c in columns" :key="c.label" scope="col" :class="{num:c.type!=='date'&&c.type!=='key'}">{{ $t(c.label) }}</th><th scope="col" class="record-action-cell">{{ $t('trade.action') }}</th></tr></thead>
+<tbody><tr v-for="o in liveRows" :key="o.id">
+<th scope="row" class="record-pair"><strong>{{ o.marketName }}</strong><span class="direction" :class="o.direction==='buy'?'positive':'negative'">{{ $t(o.kind==='spot'?(o.direction==='buy'?'trade.buy':'trade.sell'):(o.direction==='buy'?'trade.buyLong':'trade.sellShort')) }}</span><span v-if="o.kind==='futures'" class="history-tag">{{ o.leverage }}x</span></th>
+<td v-for="f in fields(o)" :key="f.label" :class="[{num:f.type!=='date'&&f.type!=='key'},f.type==='pnl'?(f.value>0?'positive':f.value<0?'negative':''):'']">{{ value(f) }}<small v-if="f.unit"> {{ f.unit }}</small></td>
+<td class="record-action-cell"><button class="record-action" :aria-label="$t(o.bucket==='positions'?'trade.closePosition':'trade.cancelOrder')+' '+o.marketName" @click="act(o)">{{ $t(o.bucket==='positions'?'trade.closePosition':'trade.cancelOrder') }}</button></td>
+</tr></tbody>
+</table></div></div></template>
 
 <style scoped src="../styles/trade-records.css"></style>

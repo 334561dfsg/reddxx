@@ -1,24 +1,29 @@
-/* Shared geometry: every record category uses the same card and scroll frame. */
+/* Trade records as one line per record (user decision, 2026-11-26; replaces the GMXX-style cards): a table with a
+   sticky header row, the pair + direction + tag in the first column, the same fields as before in the following
+   columns, and the close/cancel action last. Same data as the cards; the panel scrolls vertically and, when the
+   columns do not fit, horizontally. */
 .trade-history,.current-trades{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;overflow:hidden}
-.history-list{overflow-y:auto;min-height:0;flex:1;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#303236 transparent;overflow-anchor:none}
-.history-card{padding:16px;border-bottom:1px solid var(--terminal-divider,#ffffff14)}
-.history-card header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:32px;margin-bottom:16px;font-size:14px;line-height:20px}
-.history-card header strong{font-weight:600}
-.direction,.history-tag{font-size:12px;line-height:18px;padding:4px 8px;border-radius:var(--nt-radius-sm)}
-.direction.positive{background:#2bc2871a}.direction.negative{background:#ff44661a}
+.history-list{overflow:auto;min-height:0;flex:1;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#303236 transparent;overflow-anchor:none}
+.record-table{width:100%;min-width:880px;border-collapse:collapse;font-size:12px;line-height:18px}
+.record-table thead th{position:sticky;top:0;z-index:1;height:36px;padding:0 12px;background:var(--nt-bg);border-bottom:1px solid var(--terminal-divider,#ffffff14);color:#8c8f96;font-weight:400;text-align:left;white-space:nowrap}
+.record-table td,.record-table tbody th{height:44px;padding:6px 12px;border:0;border-bottom:1px solid var(--terminal-divider,#ffffff14);color:#d2d3d5;font-weight:400;text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
+.record-table tbody tr:hover td,.record-table tbody tr:hover th{background:#ffffff05}
+.record-table .num{text-align:right}
+.record-table td small{font-size:11px;color:#8c8f96}
+.record-table td.positive{color:#2bc287}.record-table td.negative{color:#ff4466}
+.record-pair{display:table-cell}
+.record-pair strong{margin-right:8px;color:#fff;font-size:13px;font-weight:600}
+.record-pair .direction,.record-pair .history-tag{margin-right:6px}
+.direction,.history-tag{display:inline-block;font-size:11px;line-height:16px;padding:1px 6px;border-radius:var(--nt-radius-sm);vertical-align:1px}
+.direction.positive{background:#2bc2871a;color:#2bc287}.direction.negative{background:#ff44661a;color:#ff4466}
 .history-tag{background:#ffffff0d;color:#a0a1a2}
-.history-card dl{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:16px;margin:0;font-size:12px;line-height:18px}
-.history-card dt{color:#8c8f96;margin-bottom:8px;overflow-wrap:anywhere}
-.history-card dd{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px;min-height:20px;line-height:20px;margin:0;color:#d2d3d5;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.history-card dd.positive{color:#2bc287}.history-card dd.negative{color:#ff4466}
-.history-card dd small{font-size:12px;line-height:inherit;vertical-align:baseline;color:#8c8f96}
+.record-action-cell{text-align:right!important;width:1%}
+.record-action{border:1px solid #ffffff24;border-radius:var(--nt-radius-sm);padding:2px 12px;min-height:26px;font-size:12px;line-height:20px;color:var(--nt-accent);white-space:nowrap}
+.record-action:hover{background:#ffffff0d}
 .history-pagination,.history-footer{display:flex;justify-content:center;align-items:center;gap:8px;padding:8px 16px;height:44px;flex:none;background:var(--nt-bg)}
 .history-pagination button{height:28px;min-width:28px;border-radius:var(--nt-radius-sm);font-size:12px;color:#a0a1a2;transform:none;transition:color 150ms,background-color 150ms}
 .history-pagination button[aria-current=page]{color:var(--nt-accent);background:#a5ff4a12}
 .history-pagination button:disabled{opacity:.3}
-.history-pagination button:focus-visible,.record-action:focus-visible{outline:none}
-.record-action{margin-left:auto;border:1px solid #ffffff24;border-radius:var(--nt-radius-sm);padding:5px 16px;min-height:32px;font-size:12px;line-height:20px;color:var(--nt-accent)}
-.record-action:hover{background:#ffffff0d}
-@media(max-width:1100px){.history-card dl{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media(max-width:600px){.history-card dl{grid-template-columns:repeat(2,minmax(0,1fr))}.history-card header{gap:6px;min-height:44px}.record-action{min-height:44px}.history-pagination,.history-footer{height:52px}.history-pagination button{min-width:36px;height:36px}}
+.history-pagination button:focus-visible,.record-action:focus-visible{outline:none;text-decoration:underline}
+@media(pointer:coarse){.record-action{min-height:36px}.history-pagination button{min-width:36px;height:36px}}
 @media(prefers-reduced-motion:reduce){.history-pagination button{transition:none}}
