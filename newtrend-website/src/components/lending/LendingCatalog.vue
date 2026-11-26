@@ -11,8 +11,8 @@ defineEmits(['borrow'])
 const {page,total,shown}=useFinancePagination(()=>props.products)
 </script>
 <template>
- <header class="loan-market-hero finance-heading">
-  <div><h1>{{$t('margin.market.title')}}</h1></div>
+ <header class="loan-market-hero">
+  <div><span class="loan-market-eyebrow">{{$t('margin.market.subtitle')}}</span><h1>{{$t('margin.market.title')}}</h1><p>{{$t('margin.market.description')}}</p></div>
   <RouterLink :to="path('/earn/loan/my')" class="loan-market-mine">{{$t('margin.market.myLoans')}}<Icon name="arrow-right"/></RouterLink>
  </header>
  <div class="loan-market-grid">

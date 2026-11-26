@@ -27,5 +27,15 @@
   "headset": "headset.svg",
   "bell": "bell.svg",
   "pencil": "pencil.svg",
-  "copy": "copy.svg"
+  "copy": "copy.svg",
+  "eye": "eye.svg",
+  "eye-off": "eye-off.svg",
+  "arrow-down-to-line": "arrow-down-to-line.svg",
+  "arrow-up-from-line": "arrow-up-from-line.svg",
+  "arrow-left-right": "arrow-left-right.svg",
+  "crown": "crown.svg",
+  "calendar-clock": "calendar-clock.svg",
+  "scale": "scale.svg",
+  "flame": "flame.svg",
+  "arrow-up-right": "arrow-up-right.svg"
 }

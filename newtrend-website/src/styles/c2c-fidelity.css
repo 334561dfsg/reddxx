@@ -7,7 +7,7 @@
 .c2c-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
 #site-shell #main-content .c2c-heading h1{font-size:24px;font-weight:600;line-height:32px;margin:0 0 4px;letter-spacing:-.02em}
 .c2c-heading p{color:#85888d;margin:0;font-size:14px}
-.c2c-merchant{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:#202226;flex-shrink:0;line-height:20px}
+
 .c2c-layout{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);gap:32px;align-items:start}
 #site-shell #main-content .c2c-page h2{font-size:16px;line-height:24px;font-weight:600;margin:0}
 .c2c-filters{display:grid;gap:8px;margin:20px 0 16px}
@@ -68,7 +68,7 @@
 .c2c-estimate strong{font-weight:500;color:#e3e5e9;text-align:right;overflow-wrap:anywhere}
 .c2c-page :is(button,a,input):focus-visible{outline:2px solid #b3ff60;outline-offset:3px}
 @media(max-width:1199px){.c2c-quote-grid{grid-template-columns:1fr}.c2c-layout{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px}}
-@media(max-width:767px){#site-shell #main-content .c2c-page{padding:32px max(24px,env(safe-area-inset-right)) 24px max(24px,env(safe-area-inset-left))}.c2c-layout{grid-template-columns:1fr}.c2c-nav{gap:0}.c2c-nav a{flex:1;padding:10px 8px;gap:6px;font-size:14px}.c2c-order-panel.is-empty{min-height:260px}.c2c-heading{gap:12px}.c2c-merchant{padding:8px 16px}.c2c-filters{margin-top:20px}}
+@media(max-width:767px){#site-shell #main-content .c2c-page{padding:32px max(24px,env(safe-area-inset-right)) 24px max(24px,env(safe-area-inset-left))}.c2c-layout{grid-template-columns:1fr}.c2c-nav{gap:0}.c2c-nav a{flex:1;padding:10px 8px;gap:6px;font-size:14px}.c2c-order-panel.is-empty{min-height:260px}.c2c-heading{gap:12px}.c2c-filters{margin-top:20px}}
 @media(max-width:420px){#site-shell #main-content .c2c-page{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}.c2c-nav a{white-space:normal;text-align:center;padding:8px 6px;font-size:12px}.c2c-nav a .c2c-icon{flex-shrink:0;width:14px}.c2c-pills button{padding:6px 9px}.c2c-quote-top{gap:8px}.c2c-price{font-size:22px}.c2c-heading{flex-wrap:wrap}}
 @media(pointer:coarse){.c2c-pills button{min-height:40px}.c2c-amount-field{min-height:44px}.c2c-agreement label,.c2c-agreement button{min-height:32px}}
 @media(prefers-reduced-motion:reduce){.c2c-quote{transition:none}}
@@ -84,7 +84,7 @@
 .c2c-order-form .c2c-mode{margin-bottom:20px}
 .c2c-order-form .c2c-agreement{line-height:20px}
 .c2c-order-form .c2c-submit:hover{color:#0b1306;background:#c4ff87}
-.c2c-merchant:hover{color:#f5f6f7;background:#292c30}
+
 .c2c-add{background:#b3ff60;color:#10170a;border-radius:999px;padding:8px 18px;min-height:36px;white-space:nowrap}
 .c2c-add:hover{color:#10170a;background:#c4ff87}
 .c2c-empty{background:#0c0f15;border:1px solid #ffffff08;border-radius:24px;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;color:#a0a4aa}

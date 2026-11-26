@@ -17,3 +17,52 @@
 @media(forced-colors:active){.earn-panel,.earn-buy,.earn-filters button,.earn-detail-action{border:1px solid CanvasText}.earn-quota span{background:Highlight}}
 
 .earn-sort-mobile{display:none}@media(max-width:900px){.earn-sort-mobile{display:flex;flex-wrap:wrap;gap:12px;margin:-4px 0 16px}.earn-sort-mobile button{padding:8px 12px;border:1px solid #ffffff12;border-radius:999px;color:#fff9;min-height:44px}}
+
+/* Re-measured against newtrendcapital.com/zh-TW/earn/simple (1440px, 2026-11-26):
+   weights, line heights and tracking that had drifted from the source. */
+.earn-hero-copy{max-width:672px;min-width:0}
+.earn-eyebrow{font-size:12px;line-height:16px;letter-spacing:.22em;text-transform:uppercase;color:#a0a1a2}
+#site-shell #main-content .earn-page .earn-hero-copy h1{font-size:48px;line-height:48px;letter-spacing:-.025em;margin:8px 0 0}
+.earn-hero-copy .earn-description{max-width:672px;color:#b4b5b6}
+.earn-section-heading{padding:0 4px}
+#site-shell #main-content .earn-page .earn-section-heading h2{font-weight:600;letter-spacing:-.025em}
+.earn-section-heading>small{line-height:16px}
+.earn-hot{padding:2px 8px;border:1px solid #ff446633;line-height:18px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#ff4466}
+.earn-product-line strong{font-weight:600}
+.earn-product-line small{line-height:16px}
+.earn-featured-rate{font-weight:700;line-height:40px;margin-bottom:8px}
+.earn-featured-rate small{font-size:16px;line-height:25.6px}
+.earn-featured-card .earn-caption:not(.earn-mono){letter-spacing:.16em;text-transform:uppercase}
+.earn-featured-card .earn-caption.earn-mono{margin-top:2px}
+.earn-featured-cta{line-height:16px;font-weight:600}
+#site-shell #main-content .earn-filters button{font-size:14px;line-height:20px;font-weight:500}
+.earn-filters button.active{color:#05070b;font-weight:500}
+#site-shell #main-content .earn-page .earn-table th{line-height:16px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+#site-shell #main-content .earn-page .earn-table td{line-height:20px}
+#site-shell #main-content .earn-page .earn-table td strong.earn-accent{display:block;line-height:25.6px;font-weight:700;letter-spacing:-.025em}
+#site-shell #main-content .earn-page .earn-table td .earn-caption{margin-top:0;line-height:18px}
+.earn-type{display:inline-block;line-height:18px;font-weight:500}
+.earn-buy{line-height:16px;letter-spacing:.025em}
+.earn-table .earn-buy{padding:6px 12px}
+.earn-page-footer{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:32px;padding-top:24px;border-top:1px solid #ffffff0d;text-align:center}
+.earn-page-footer span{font-size:12px;line-height:16px;letter-spacing:.025em;color:#87888a}
+.earn-page-footer p{margin:0;font-size:12px;line-height:18px;color:#6e6f72}
+@media(min-width:1101px){
+ .earn-table th,.earn-table td{padding-left:8px;padding-right:8px}
+ .earn-table th:first-child,.earn-table td:first-child{padding-left:20px}
+ .earn-table th:last-child,.earn-table td:last-child{padding-left:8px;padding-right:20px}
+}
+/* Product detail */
+.earn-back{line-height:20px;font-weight:500}
+#site-shell .earn-detail h2{font-family:Syne,'PingFang SC',sans-serif;font-size:15px;line-height:22.5px;font-weight:600;letter-spacing:-.03em}
+#site-shell .earn-detail .earn-risk h2{font-size:16px;line-height:24px}
+.earn-detail-summary .earn-product-line .earn-caption{font-size:14px;line-height:20px}
+.earn-detail-rate strong{font-weight:700;line-height:40px;letter-spacing:-.025em}
+.earn-detail-rate span{font-size:15px;line-height:22.5px}
+.earn-detail dl{font-size:15px;line-height:22.5px}
+.earn-detail dd{font:600 15px/22.5px 'IBM Plex Mono',monospace}
+.earn-detail .earn-timeline small{line-height:18px}
+.earn-detail .earn-timeline:not(.is-vertical) strong{font-size:15px;line-height:22.5px;font-weight:600}
+.earn-risk ul{line-height:22.75px}
+.earn-detail-action .earn-buy{line-height:20px;font-weight:500;letter-spacing:0}
+#site-shell #main-content .earn-page .earn-featured-rate small{font-size:16px;line-height:25.6px}

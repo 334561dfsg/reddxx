@@ -8,7 +8,7 @@
   flex-wrap: wrap;
   gap: 4px;
   padding: 4px;
-  margin: 0 0 24px;
+  margin: 0 0 40px;
   border-radius: 32px;
 }
 #site-shell #main-content .finance-page.finance-overview .subnav > a {
@@ -16,12 +16,13 @@
   align-items: center;
   justify-content: center;
   flex: none;
-  gap: 8px;
+  gap: 6px;
   padding: 10px 24px;
   font-size: 14px;
   line-height: 20px;
+  font-weight: 500;
 }
-#site-shell #main-content .finance-overview .earn-hero { display: block; }
+#site-shell #main-content .finance-page.finance-overview .subnav > .router-link-exact-active { color: #05070b; }
 #site-shell #main-content .finance-overview .finance-heading {
   display: flex;
   align-items: center;
@@ -29,7 +30,7 @@
   flex-wrap: wrap;
   gap: 12px 24px;
   min-height: 0;
-  margin: 0 0 24px;
+  margin: 0 0 40px;
 }
 #site-shell #main-content .finance-overview .finance-heading h1 {
   font-family: Syne, 'PingFang SC', sans-serif;
@@ -39,20 +40,19 @@
   letter-spacing: -.025em;
   margin: 0;
 }
-#site-shell #main-content .finance-overview .loan-market-hero > div { display: block; }
 #site-shell #main-content .finance-overview .loan-market-hero { position: relative; }
 #site-shell #main-content .finance-overview .loan-market-mine { margin: 0; }
 #site-shell #main-content .finance-overview .finance-heading .earn-chips { margin: 0; }
-/* These parents already supply the common section spacing. */
-#site-shell #main-content .finance-overview :is(.loan-module, .loan-portfolio) { gap: 24px; }
+/* These parents already supply the common section spacing (source: 40px between major blocks). */
+#site-shell #main-content .finance-overview :is(.loan-module, .loan-portfolio) { gap: 40px; }
 #site-shell #main-content .finance-overview :is(.loan-module, .loan-portfolio) > .finance-heading { margin-bottom: 0; }
-/* Major sections use 24px; filters belong to their result list at 16px. */
+/* Major sections use 40px (source); filters belong to their result list at 16px. */
 #site-shell #main-content .finance-overview .earn-featured,
-#site-shell #main-content .finance-overview .portfolio-tab-area { margin-top: 24px; }
-#site-shell #main-content .finance-overview .earn-filters { margin: 24px 0 16px; }
+#site-shell #main-content .finance-overview .portfolio-tab-area { margin-top: 40px; }
+#site-shell #main-content .finance-overview .earn-filters { margin: 40px 0 16px; }
 #site-shell #main-content .finance-overview .portfolio-tab-panel { margin-top: 16px; }
 #site-shell #main-content .finance-overview .loan-portfolio { row-gap: 0; }
-#site-shell #main-content .finance-overview .loan-portfolio > * + * { margin-top: 24px; }
+#site-shell #main-content .finance-overview .loan-portfolio > * + * { margin-top: 40px; }
 #site-shell #main-content .finance-overview .loan-portfolio-toolbar + :is(.loan-portfolio-table, .portfolio-empty) { margin-top: 16px; }
 @media (max-width: 640px) {
   #site-shell #main-content .finance-page.finance-overview {

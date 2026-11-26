@@ -73,3 +73,39 @@
 .loan-order-page .loan-order-pending{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px 28px;border:0;background:#ffffff03;border-radius:24px}.loan-order-pending p{margin:0;line-height:22px}.loan-order-pending>.earn-caption{max-width:640px}.loan-order-page .outline-button{border:1px solid #ffffff12;border-radius:999px;min-height:44px;padding:10px 24px;white-space:nowrap;background:transparent}.loan-order-page .loan-detail-confirm{flex-shrink:0;gap:8px}.loan-order-page .loan-detail-confirm p{font-size:12px;color:#ffffff99}.loan-order-page .earn-buy{padding:10px 28px}.loan-order-page .loan-records-empty{display:grid;justify-items:center;gap:8px;padding:20px;color:#ffffff59;font-size:13px}.loan-records-empty>span{font-size:24px;color:#ffffff33}.loan-records-empty p{margin:0}.loan-order-page .loan-detail-record{border-top:1px solid #ffffff0a;padding-top:20px}.loan-order-page .loan-detail-record p{margin:0}.loan-order-page .loan-detail-section input:focus{border-color:#ffffff12}
 @media(max-width:700px){#site-shell #main-content .loan-order-page{padding:24px max(24px,env(safe-area-inset-right)) 40px max(24px,env(safe-area-inset-left))}#site-shell #main-content .loan-order-page h1{font-size:28px;line-height:36px}.loan-detail-grid{grid-template-columns:minmax(0,1fr);gap:16px}.loan-order-page .loan-detail-card{padding:24px}.loan-order-page .loan-detail-header{padding:24px 24px 0}.loan-order-page .loan-detail-amounts{padding:24px;gap:20px}.loan-order-page .loan-detail-amounts strong{font-size:26px;line-height:36px}.loan-order-page .loan-detail-amounts>div+div{padding-left:0;border:0}.loan-order-page .loan-order-pending{flex-direction:column;align-items:stretch;padding:24px}.loan-order-page .loan-detail-confirm{flex-shrink:1}.loan-order-page .loan-detail-confirm button{flex:1}}
 @media(max-width:480px){.loan-order-page .loan-detail-amounts{grid-template-columns:minmax(0,1fr)}.loan-order-page .loan-detail-amounts>div+div{padding-top:20px;border-top:1px solid #ffffff0a}.loan-order-page .loan-detail-header strong{font-size:16px}}
+
+/* Re-measured against newtrendcapital.com (1440px, 2026-11-26): lending type scale
+   aligned with the source Earn/Loan pages; 13px/11px one-offs removed. */
+.loan-market-eyebrow{font-size:12px;line-height:16px;letter-spacing:.22em;text-transform:uppercase;color:#a0a1a2}
+.loan-market-rate>div>span{line-height:18px;text-transform:uppercase}
+#site-shell #main-content .loan-fidelity-page .loan-market-rate strong small{font-size:16px;line-height:24px}
+.loan-market-terms span{line-height:18px}
+/* Borrow application */
+#site-shell #main-content .loan-borrow-page{max-width:1024px}
+#site-shell #main-content .loan-application h1{font-family:Syne,'PingFang SC',sans-serif;line-height:36px}
+#site-shell #main-content .loan-application h2{font-family:Syne,'PingFang SC',sans-serif;font-size:15px;line-height:22.5px;font-weight:600;letter-spacing:-.03em}
+.loan-application-rate strong{font-weight:700;line-height:40px;letter-spacing:-.025em}
+#site-shell #main-content .loan-application-rate strong small{font-size:16px;line-height:25.6px}
+#site-shell .loan-application :is(.ant-select,.ant-select-selector,.ant-select-selection-item,.ant-select-selection-search-input){font-family:inherit}
+.loan-currency-popup,.loan-currency-popup .ant-select-item{font-family:'Exo 2','PingFang SC',Arial,sans-serif}
+#site-shell #main-content .loan-application :is(dt,dd){font-size:14px;line-height:22px}
+/* My loans: same summary, tab and table scale as My Earn */
+.loan-portfolio-summary .portfolio-total-value{font-size:36px;line-height:44px}
+.loan-portfolio .portfolio-tabs button{min-height:28px}
+.loan-portfolio-toolbar>.earn-buy{font-size:14px;line-height:20px;letter-spacing:0}
+.loan-portfolio-table td{font-size:14px}
+.loan-portfolio-table .earn-product-line small,.loan-detail-header small{font-size:12px}
+/* Order detail */
+#site-shell #main-content .loan-order-page{max-width:1024px}
+#site-shell #main-content .loan-order-page h1{font-family:Syne,'PingFang SC',sans-serif;font-size:30px;line-height:36px}
+.loan-order-page .loan-detail-card{padding:24px;border-radius:32px}
+#site-shell .loan-order-page .loan-detail-section h3{font-family:Syne,'PingFang SC',sans-serif;letter-spacing:-.03em}
+.loan-order-page .loan-detail-section dl{font-size:14px;line-height:22px}
+.loan-order-page .loan-detail-repay-label,.loan-order-page .loan-detail-record>div,.loan-order-page .loan-records-empty{font-size:14px;line-height:22px}
+.loan-order-page .loan-detail-amounts strong{font-size:36px;line-height:40px;letter-spacing:-.025em}
+.loan-order-page .earn-buy{font-size:14px;line-height:20px;letter-spacing:0}
+@media(max-width:700px){.loan-order-page .loan-detail-amounts strong{font-size:26px;line-height:36px}}
+@media(pointer:coarse){.loan-portfolio .portfolio-tabs button{min-height:44px}}
+@media(min-width:1101px){.loan-portfolio-table th{padding:12px 20px}.loan-portfolio-table td{padding:16px 20px}}
+.loan-borrow-back{line-height:20px;font-weight:500}
+.loan-application .earn-buy{line-height:20px;letter-spacing:0}

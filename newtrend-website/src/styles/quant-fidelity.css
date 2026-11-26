@@ -1,0 +1,228 @@
+/* AI Quant landing, Quant Fund and positions: source-fidelity geometry and type
+   (measured from newtrendcapital.com/zh-TW/ai-quant, 1440px desktop). */
+#site-shell #main-content .page-wrap.quant-page {
+  max-width: 1440px;
+  padding: 56px max(32px, env(safe-area-inset-right)) 56px max(32px, env(safe-area-inset-left));
+}
+#site-shell #main-content .page-wrap.quant-page.quant-sub { padding-top: 20px; }
+
+/* Page heading */
+#site-shell #main-content .quant-page .page-hero { padding: 0 0 32px; }
+#site-shell #main-content .quant-page .page-kicker {
+  display: block;
+  margin: 0 0 12px;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--nt-accent);
+}
+#site-shell #main-content .quant-page h1.page-title {
+  font-family: Syne, 'PingFang SC', sans-serif;
+  font-size: 36px;
+  line-height: 40px;
+  font-weight: 600;
+  letter-spacing: -.025em;
+  margin: 0;
+}
+#site-shell #main-content .quant-page .page-desc {
+  margin: 12px 0 0;
+  font-size: 16px;
+  line-height: 26px;
+  color: #b4b5b6;
+}
+
+/* Landing: two product-line cards */
+#site-shell #main-content .quant-page .quant-intro { padding: 0; gap: 20px; }
+#site-shell #main-content .quant-page .quant-intro .card.card-glow {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+  margin: 0;
+  padding: 32px;
+  border-radius: 24px;
+}
+#site-shell #main-content .quant-page .quant-intro .coin-label { gap: 16px; }
+#site-shell #main-content .quant-page .quant-intro .coin-label > .nt-icon {
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  padding: 13px;
+  border-radius: 16px;
+  border: 1px solid #a5ff4a33;
+  background: #a5ff4a14;
+}
+#site-shell #main-content .quant-page .quant-intro .page-kicker {
+  margin: 0 0 4px;
+  line-height: 16px;
+  letter-spacing: .18em;
+}
+#site-shell #main-content .quant-page .quant-intro h2 {
+  font-family: Syne, 'PingFang SC', sans-serif;
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: -.025em;
+  margin: 0;
+}
+#site-shell #main-content .quant-page .quant-intro .card > p {
+  max-width: 320px;
+  min-height: 78px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 26px;
+  color: #b4b5b6;
+}
+#site-shell #main-content .quant-page .quant-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+#site-shell #main-content .quant-page .tag-chip {
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: .04em;
+}
+#site-shell #main-content .quant-page .quant-intro .pill.primary {
+  align-self: flex-start;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 24px;
+  font-size: 15px;
+  line-height: 22.5px;
+  font-weight: 600;
+}
+#site-shell #main-content .quant-page .quant-intro .pill.primary .nt-icon { width: 16px; height: 16px; filter: brightness(0); }
+#site-shell #main-content .quant-page .quant-intro .card-footer {
+  align-items: center;
+  margin: 12px -8px 0;
+  padding: 16px 8px 4px;
+  font-size: 15px;
+  line-height: 22.5px;
+}
+#site-shell #main-content .quant-page .quant-intro .card-footer small { font-size: 12px; line-height: 18px; }
+
+/* Sub-navigation shared with Finance / Strategy */
+#site-shell #main-content .quant-page .subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  margin: 0 0 40px;
+  border-radius: 32px;
+}
+#site-shell #main-content .quant-page .subnav > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 24px;
+  border-radius: 32px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+#site-shell #main-content .quant-page .subnav > .router-link-exact-active { color: #05070b; }
+#site-shell #main-content .quant-page .subnav .nt-icon { width: 14px; height: 14px; opacity: .55; }
+#site-shell #main-content .quant-page .subnav .router-link-exact-active .nt-icon { filter: brightness(0); opacity: 1; }
+
+/* Quant Fund */
+#site-shell #main-content .quant-page .fund-hero.card {
+  margin: 0;
+  padding: 32px;
+  border-radius: 32px;
+}
+#site-shell #main-content .quant-page .fund-hero .page-desc { max-width: 672px; }
+#site-shell #main-content .quant-page .filter-row { gap: 8px; margin: 40px 0 16px; }
+#site-shell #main-content .quant-page .filter-row button {
+  min-height: 38px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+#site-shell #main-content .quant-page .filter-row button.active { color: #05070b; }
+#site-shell #main-content .quant-page .three-cols { gap: 16px; }
+/* Quant fund product card, matched to the reference QuantFundProductCard. */
+#site-shell #main-content .quant-page .qf-grid { gap: 20px; }
+#site-shell #main-content .quant-page .qf-card {
+  --qf-muted: color-mix(in srgb, #fff 52%, #05070b);
+  --qf-secondary: color-mix(in srgb, #fff 70%, #05070b);
+  --qf-elevated: color-mix(in srgb, #fff 10%, #05070b);
+  --qf-success: #2bc287;
+  position: relative; display: flex; flex-direction: column; gap: 20px; overflow: hidden;
+  padding: 20px; border: 1px solid color-mix(in srgb, #fff 8%, #05070b); border-radius: 32px;
+  background: color-mix(in srgb, #fff 6%, #05070b); transition: border-color 150ms, box-shadow 150ms;
+}
+#site-shell #main-content .quant-page .qf-card:hover { border-color: color-mix(in srgb, #fff 24%, #05070b); box-shadow: 0 0 80px color-mix(in srgb, #5eead4 12%, transparent); }
+#site-shell #main-content .quant-page .qf-card-glow {
+  position: absolute; top: -64px; right: -64px; width: 192px; height: 192px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, #a5ff4a 40%, transparent), transparent 70%);
+  filter: blur(64px); opacity: .5; transition: opacity 300ms;
+}
+#site-shell #main-content .quant-page .qf-card:hover .qf-card-glow { opacity: .8; }
+#site-shell #main-content .quant-page .qf-card > :not(.qf-card-glow) { position: relative; }
+#site-shell #main-content .quant-page .qf-card small {
+  display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 18px; color: var(--qf-muted); letter-spacing: 0; text-transform: none;
+}
+#site-shell #main-content .quant-page .qf-card small .nt-icon { width: 14px; height: 14px; opacity: .52; }
+#site-shell #main-content .quant-page .qf-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+#site-shell #main-content .quant-page .qf-card-title { display: flex; align-items: center; gap: 12px; min-width: 0; }
+#site-shell #main-content .quant-page .qf-card-title .coin { width: 36px; height: 36px; }
+#site-shell #main-content .quant-page .qf-card-title > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+#site-shell #main-content .quant-page .qf-card-title h3 { margin: 0; font-family: Syne, 'PingFang SC', sans-serif; font-size: 16px; line-height: 1.25; font-weight: 700; letter-spacing: 0; color: #fff; }
+#site-shell #main-content .quant-page .qf-card-title span { font-size: 12px; line-height: 18px; color: var(--qf-muted); text-transform: uppercase; letter-spacing: .05em; }
+#site-shell #main-content .quant-page .qf-risk {
+  display: inline-flex; align-items: center; flex-shrink: 0; padding: 2px 8px; border: 1px solid; border-radius: 999px;
+  font-size: 12px; line-height: 1; font-weight: 600; text-transform: uppercase; white-space: nowrap;
+}
+#site-shell #main-content .quant-page .qf-risk.low { border-color: color-mix(in srgb, #2bc287 30%, transparent); background: color-mix(in srgb, #2bc287 10%, transparent); color: #2bc287; }
+#site-shell #main-content .quant-page .qf-risk.medium { border-color: color-mix(in srgb, #a5ff4a 30%, transparent); background: color-mix(in srgb, #a5ff4a 10%, transparent); color: #a5ff4a; }
+#site-shell #main-content .quant-page .qf-card-rate { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+#site-shell #main-content .quant-page .qf-card-rate > div { display: flex; flex-direction: column; gap: 4px; }
+#site-shell #main-content .quant-page .qf-rate { display: flex; align-items: baseline; gap: 4px; margin: 0; font-family: Syne, 'PingFang SC', sans-serif; font-size: 30px; line-height: 1; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--qf-success); }
+#site-shell #main-content .quant-page .qf-rate span { font-size: 18px; line-height: 1; font-weight: 600; }
+#site-shell #main-content .quant-page .qf-term { align-items: flex-end; }
+#site-shell #main-content .quant-page :is(.qf-term, .qf-limit) p { margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 14px; line-height: 20px; font-weight: 600; font-variant-numeric: tabular-nums; color: #fff; }
+#site-shell #main-content .quant-page .qf-limit { display: flex; flex-direction: column; gap: 4px; }
+#site-shell #main-content .quant-page .qf-progress { display: flex; flex-direction: column; gap: 8px; }
+#site-shell #main-content .quant-page .qf-progress-track { height: 6px; overflow: hidden; border-radius: 999px; background: var(--qf-elevated); }
+#site-shell #main-content .quant-page .qf-progress-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(to right, #5eead4, #4ade80); }
+#site-shell #main-content .quant-page .qf-progress-meta { display: flex; justify-content: space-between; font-size: 12px; line-height: 18px; color: var(--qf-muted); }
+#site-shell #main-content .quant-page .qf-progress-meta strong { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--qf-secondary); }
+#site-shell #main-content .quant-page .qf-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+#site-shell #main-content .quant-page .qf-tags span {
+  display: inline-flex; align-items: center; padding: 2px 8px; border: 1px solid color-mix(in srgb, #fff 14%, #05070b); border-radius: 999px;
+  background: var(--qf-elevated); font-size: 12px; line-height: 18px; font-weight: 500; color: var(--qf-secondary);
+}
+#site-shell #main-content .quant-page .qf-tags span.accent { border-color: color-mix(in srgb, #a5ff4a 40%, transparent); background: color-mix(in srgb, #a5ff4a 10%, transparent); color: #a5ff4a; }
+#site-shell #main-content .quant-page .qf-cta {
+  display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 44px; margin-top: auto;
+  border-radius: 999px; background: linear-gradient(to right, #5eead4, #4ade80); color: #05070b;
+  font-size: 14px; line-height: 20px; font-weight: 600; transition: filter 150ms;
+}
+#site-shell #main-content .quant-page .qf-cta:hover { color: #05070b; filter: brightness(1.1); }
+#site-shell #main-content .quant-page .qf-cta:active { filter: brightness(.95); }
+#site-shell #main-content .quant-page .qf-cta:focus-visible { outline: none; filter: brightness(1.15); text-decoration: underline; text-underline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { #site-shell #main-content .quant-page :is(.qf-card, .qf-card-glow, .qf-cta) { transition: none; } }
+
+/* Positions */
+#site-shell #main-content .quant-page .card.empty { margin: 24px 0 0; border-radius: 32px; }
+#site-shell #main-content .quant-page .card.empty p { font-size: 14px; line-height: 20px; }
+
+@media (max-width: 1023px) {
+  #site-shell #main-content .page-wrap.quant-page { padding-top: 40px; padding-left: max(24px, env(safe-area-inset-left)); padding-right: max(24px, env(safe-area-inset-right)); }
+  #site-shell #main-content .page-wrap.quant-page.quant-sub { padding-top: 20px; }
+  #site-shell #main-content .quant-page .quant-intro .card > p { min-height: 0; }
+}
+@media (max-width: 767px) {
+  #site-shell #main-content .page-wrap.quant-page { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+  #site-shell #main-content .quant-page h1.page-title { font-size: 30px; line-height: 36px; }
+  #site-shell #main-content .quant-page .quant-intro .card.card-glow,
+  #site-shell #main-content .quant-page .fund-hero.card { padding: 24px; }
+  #site-shell #main-content .quant-page .subnav { margin-bottom: 24px; }
+  #site-shell #main-content .quant-page .subnav > a { flex: 1 1 auto; padding: 10px 16px; }
+}
