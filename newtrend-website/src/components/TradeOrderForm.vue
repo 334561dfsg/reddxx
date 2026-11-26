@@ -2,8 +2,10 @@
 import FeedbackToast from '../platform/FeedbackToast.js'
 import {computed,reactive,ref,watch} from 'vue'
 import {session,openModal} from '../session'
-import {balanceOf} from '../mock/ledger.js'
-import {orderFunding,placeTradeOrder} from '../tradingFunds.js'
+import Skeleton from './ui/Skeleton.vue'
+import {getTradeBalances,placeTradeOrder,tradeErrorKey} from '../api/trade.js'
+import {invalidate,useRequest} from '../composables/useRequest.js'
+import {streamStale} from '../composables/useMarket.js'
 import {fmt} from '../data'
 import {t} from '../i18n'
 import RecordFilter from './RecordFilter.vue'
@@ -12,9 +14,13 @@ import {deliveryPeriods,leverageOptions,orderEstimate,validStops,tradeFeeRate} f
 const props=defineProps({mode:String,pair:Object})
 const {futures,options,spot}=useOrderDrafts()
 const errors=reactive({futures:'',options:'',buy:'',sell:''}),notice=ref('')
-// Balances come from the shared mock ledger for the current account mode.
-const demo=computed(()=>session.mode==='common.demo.demo'),cash=computed(()=>balanceOf(session.mode,'USDT'))
-const base=computed(()=>props.pair.name.split('/')[0]),holdings=computed(()=>balanceOf(session.mode,base.value))
+// Balances come from the trade API for the current mode and pair (skeletons until loaded). `pair.price` is the
+// live stream price, null until the first ticker arrives.
+const demo=computed(()=>session.mode==='common.demo.demo')
+const base=computed(()=>props.pair.name.split('/')[0])
+const balances=useRequest(()=>getTradeBalances(session.mode,['USDT',base.value]),{key:()=>session.mode+'|'+base.value,tags:['trade','wallet']})
+const balancesReady=computed(()=>balances.status.value==='ready')
+const cash=computed(()=>balances.data.value?.USDT??0),holdings=computed(()=>balances.data.value?.[base.value]??0)
 const leverageItems=leverageOptions.map(value=>({value,label:`${value}x`}))
 const periodItems=computed(()=>deliveryPeriods.map(([value,payout])=>({value,label:`${period(value)} · ${payout}%`})))
 const rate=computed(()=>deliveryPeriods.find(p=>p[0]===options.duration)[1])
@@ -26,6 +32,7 @@ function spotPrice(side){return spot.type==='market'?props.pair.price:Number(spo
 function spotEstimate(side){return orderEstimate({kind:'spot',side,amount:spot[side].amount,price:spotPrice(side)})}
 function period(seconds){return seconds>=86400?t('trade.form.days',{value:seconds/86400}):t('trade.durationSeconds',{value:seconds})}
 function percentage(kind,percent,side='buy'){
+ if(!balancesReady.value)return
  const capacity=kind==='futures'?maxOpen.value:kind==='options'?cash.value:side==='buy'?cash.value/(1+tradeFeeRate):holdings.value
  const value=Math.floor(capacity*percent/100*1e6)/1e6
  if(kind==='futures')futures.amount=String(value)
@@ -38,6 +45,8 @@ function submit(side){
  const kind=props.mode,key=kind==='spot'?side:kind
  errors[key]='';notice.value=''
  if(!session.loggedIn){errors[key]='trade.ui.signInToTheLocalDemoFirst';return}
+ // No live price or a dropped market connection: hold the order (prices may be outdated).
+ if(streamStale.value||props.pair.price===null||!balancesReady.value){errors[key]='trade.stream.unavailable';return}
  const draft=kind==='futures'?futures:kind==='options'?options:spot[side],amount=Number(draft.amount)
  const price=kind==='futures'?futurePrice.value:kind==='spot'?spotPrice(side):props.pair.price
  if(!Number.isFinite(amount)||amount<=0){errors[key]='trade.ui.enterAValidOrderAmount';return}
@@ -59,9 +68,11 @@ function submit(side){
  let committed=false
  openModal('account-confirm',`${t(action)} · ${props.pair.name}`,{focusCancel:true,confirmLabel:'overlay.ui.confirmOrder',
   description:t('trade.form.confirm',{quantity:fmt(estimate.quantity),unit:kind==='options'?'USDT':base.value,price:fmt(price)})+(kind==='options'?` · ${period(options.duration)} · ${rate.value}%`:''),
-  onConfirm:()=>{if(committed)return;const mode=session.mode,funding=orderFunding({kind,side,pending,estimate,amount,base:base.value})
-   if(!placeTradeOrder(mode,{...record,createdAt:Date.now(),openedAt:Date.now()},funding)){errors[key]='assets.withdraw.error.insufficientBalance';return}
-   committed=true;notice.value=t('trade.orderSuccess');draft.amount=''}
+  // Async confirm: the dialog shows busy and holds its close paths; a rejection keeps it open with a toast.
+  onConfirm:async()=>{if(committed)return
+   try{await placeTradeOrder({mode:session.mode,order:record,sizing:{kind,side,pending,estimate,amount,base:base.value}})}
+   catch(cause){throw new Error(tradeErrorKey(cause))}
+   committed=true;notice.value=t('trade.orderSuccess');draft.amount='';invalidate('trade')}
  })
 }
 </script>
@@ -69,19 +80,19 @@ function submit(side){
 <div class="form-body" tabindex="0" role="region" :aria-label="$t(mode==='futures'?'trade.futuresOrder':mode==='options'?'trade.optionsOrder':'common.spot')">
 <template v-if="mode==='futures'">
 <div class="type-tabs price-tabs"><button v-for="type in ['market','limit']" :key="type" :class="{active:futures.type===type}" :aria-pressed="futures.type===type" @click="futures.type=type">{{ $t('trade.'+type) }}</button></div>
-<dl class="form-summary"><dt>{{ $t('trade.form.availableQuantity') }}</dt><dd>{{ fmt(cash) }} USDT</dd></dl>
+<dl class="form-summary"><dt>{{ $t('trade.form.availableQuantity') }}</dt><dd><template v-if="balancesReady">{{ fmt(cash) }}</template><Skeleton v-else inline width="72px"/> USDT</dd></dl>
 <label v-if="futures.type==='limit'">{{ $t('trade.price') }} (USDT)<input class="trade-field" v-model="futures.price" inputmode="decimal" :placeholder="$t('trade.enterPrice')"/></label>
 <label>{{ $t('trade.leverage') }}<RecordFilter id="order-leverage" v-model="futures.leverage" variant="field" :label="$t('trade.leverage')" :options="leverageItems"/></label>
 <label>{{ $t('trade.quantity') }} (USDT)<input class="trade-field" v-model="futures.amount" inputmode="decimal" :placeholder="$t('trade.enterQuantity')" :aria-invalid="!!errors.futures" :aria-describedby="errors.futures?'futures-form-error':undefined" @input="errors.futures=''"/></label>
 <div class="percentages"><button v-for="n in [25,50,75,100]" :key="n" @click="percentage('futures',n)">{{ n }}%</button></div>
-<dl class="form-summary"><dt class="positive">{{ $t('trade.form.maxOpen') }}</dt><dd class="positive">{{ fmt(maxOpen) }} USDT</dd><dt>{{ $t('trade.form.initialMargin') }}</dt><dd>{{ fmt(futureEstimate.margin) }} USDT</dd><dt>{{ $t('trade.fee') }}</dt><dd>{{ fmt(futureEstimate.fee) }} USDT</dd></dl>
+<dl class="form-summary"><dt class="positive">{{ $t('trade.form.maxOpen') }}</dt><dd class="positive"><template v-if="balancesReady&&pair.price!==null">{{ fmt(maxOpen) }}</template><Skeleton v-else inline width="72px"/> USDT</dd><dt>{{ $t('trade.form.initialMargin') }}</dt><dd>{{ fmt(futureEstimate.margin) }} USDT</dd><dt>{{ $t('trade.fee') }}</dt><dd>{{ fmt(futureEstimate.fee) }} USDT</dd></dl>
 <label class="check-label"><input v-model="futures.stops" type="checkbox"/>{{ $t('trade.form.stops') }}</label>
 <template v-if="futures.stops"><label>{{ $t('trade.tpPrice') }} (USDT)<input class="trade-field" v-model="futures.tp" inputmode="decimal" :placeholder="$t('trade.enterPrice')"/></label><label>{{ $t('trade.slPrice') }} (USDT)<input class="trade-field" v-model="futures.sl" inputmode="decimal" :placeholder="$t('trade.enterPrice')"/></label></template>
 <FeedbackToast v-if="errors.futures" id="futures-form-error" type="error" :source="() => (errors.futures) ? ($t(errors.futures)) : ''"></FeedbackToast>
 </template>
 <template v-else-if="mode==='options'">
 <div class="direction-tabs"><button v-for="side in ['buy','sell']" :key="side" :class="{active:options.side===side,buy:side==='buy',sell:side==='sell'}" :aria-pressed="options.side===side" @click="options.side=side">{{ $t(side==='buy'?'trade.buyLong':'trade.sellShort') }}</button></div>
-<dl class="form-summary"><dt>{{ $t('trade.form.tradingAsset') }}</dt><dd>USDT</dd><dt>{{ $t('trade.form.availableQuantity') }}</dt><dd>{{ fmt(cash) }}</dd><dt>{{ $t('trade.form.minimum') }}</dt><dd>100.00 USDT</dd><dt>{{ $t('trade.fee') }}</dt><dd>{{ fmt(optionEstimate.fee) }} USDT</dd></dl>
+<dl class="form-summary"><dt>{{ $t('trade.form.tradingAsset') }}</dt><dd>USDT</dd><dt>{{ $t('trade.form.availableQuantity') }}</dt><dd><template v-if="balancesReady">{{ fmt(cash) }}</template><Skeleton v-else inline width="72px"/></dd><dt>{{ $t('trade.form.minimum') }}</dt><dd>100.00 USDT</dd><dt>{{ $t('trade.fee') }}</dt><dd>{{ fmt(optionEstimate.fee) }} USDT</dd></dl>
 <label>{{ $t('trade.period') }} / {{ $t('trade.payoutRate') }}<RecordFilter id="order-period" v-model="options.duration" variant="field" :label="$t('trade.period')" :options="periodItems"/></label>
 <label>{{ $t('trade.quantity') }} (USDT)<input class="trade-field" v-model="options.amount" inputmode="decimal" :placeholder="$t('trade.enterQuantity')" :aria-invalid="!!errors.options" :aria-describedby="errors.options?'options-form-error':undefined" @input="errors.options=''"/></label>
 <div class="percentages"><button v-for="n in [25,50,75,100]" :key="n" @click="percentage('options',n)">{{ n }}%</button></div>
@@ -96,7 +107,7 @@ function submit(side){
 <label>{{ $t(side==='buy'?'trade.form.buyAmount':'trade.form.sellQuantity') }} ({{ side==='buy'?'USDT':base }})<span class="spot-amount-field"><input class="trade-field" v-model="spot[side].amount" inputmode="decimal" :placeholder="$t('trade.enterQuantity')" :aria-invalid="!!errors[side]" :aria-describedby="errors[side]?'spot-'+side+'-error':undefined" @input="errors[side]=''"/><span aria-hidden="true">{{ side==='buy'?'USDT':base }}</span></span></label>
 <div class="percentages"><button v-for="n in [25,50,75,100]" :key="n" @click="percentage('spot',n,side)">{{ n }}%</button></div>
 
-<dl class="form-summary"><dt>{{ $t('trade.available') }}</dt><dd>{{ fmt(side==='buy'?cash:holdings) }} {{ side==='buy'?'USDT':base }}</dd><dt>{{ $t(side==='buy'?'trade.form.canBuy':'trade.form.canSell') }}</dt><dd>{{ spotPrice(side)>0?fmt(side==='buy'?cash/(1+tradeFeeRate)/spotPrice(side):holdings*spotPrice(side)):'—' }} {{ side==='buy'?base:'USDT' }}</dd></dl>
+<dl class="form-summary"><dt>{{ $t('trade.available') }}</dt><dd><template v-if="balancesReady">{{ fmt(side==='buy'?cash:holdings) }}</template><Skeleton v-else inline width="72px"/> {{ side==='buy'?'USDT':base }}</dd><dt>{{ $t(side==='buy'?'trade.form.canBuy':'trade.form.canSell') }}</dt><dd>{{ spotPrice(side)>0?fmt(side==='buy'?cash/(1+tradeFeeRate)/spotPrice(side):holdings*spotPrice(side)):'—' }} {{ side==='buy'?base:'USDT' }}</dd></dl>
 <FeedbackToast v-if="errors[side]" :id="'spot-'+side+'-error'" type="error" :source="() => (errors[side]) ? ($t(errors[side])) : ''"></FeedbackToast>
 </section>
 </template>

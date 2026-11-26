@@ -443,5 +443,10 @@
     "metals": "貴金属",
     "availablePairs": "取引可能なペア",
     "energy": "エネルギー"
+  },
+  "stream": {
+    "connecting": "相場データに接続中…",
+    "reconnecting": "相場データが切断されました。再接続中…",
+    "unavailable": "相場データ未接続のため注文できません。しばらくしてからお試しください。"
   }
 }

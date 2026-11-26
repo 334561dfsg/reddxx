@@ -443,5 +443,10 @@
     "metals": "貴金屬",
     "availablePairs": "當前市場可交易對",
     "energy": "能源"
+  },
+  "stream": {
+    "connecting": "行情連線中…",
+    "reconnecting": "行情連線中斷，正在重新連線…",
+    "unavailable": "行情尚未連線，暫時無法下單，請稍後再試。"
   }
 }

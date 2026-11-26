@@ -443,5 +443,10 @@
     "metals": "Precious metals",
     "availablePairs": "Available trading pairs",
     "energy": "Energy"
+  },
+  "stream": {
+    "connecting": "Connecting to market data…",
+    "reconnecting": "Market data disconnected, reconnecting…",
+    "unavailable": "Market data is not connected yet. Please try again shortly."
   }
 }

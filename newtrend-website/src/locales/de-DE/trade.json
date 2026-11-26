@@ -443,5 +443,10 @@
     "metals": "Edelmetalle",
     "availablePairs": "Verfügbare Handelspaare",
     "energy": "Energie"
+  },
+  "stream": {
+    "connecting": "Verbindung zu Marktdaten wird hergestellt…",
+    "reconnecting": "Marktdaten getrennt, Verbindung wird wiederhergestellt…",
+    "unavailable": "Marktdaten sind noch nicht verbunden. Bitte versuche es gleich erneut."
   }
 }

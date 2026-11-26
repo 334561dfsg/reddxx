@@ -443,5 +443,10 @@
     "metals": "Métaux précieux",
     "availablePairs": "Paires disponibles",
     "energy": "Énergie"
+  },
+  "stream": {
+    "connecting": "Connexion aux cotations…",
+    "reconnecting": "Cotations déconnectées, reconnexion…",
+    "unavailable": "Les cotations ne sont pas encore connectées. Réessayez dans un instant."
   }
 }
