@@ -24,10 +24,10 @@ const trackStyle = computed(() => ({
 </template>
 <style scoped>
 .market-ticker{height:50px;overflow:hidden;border-bottom:1px solid var(--nt-border);background:#080b10;display:flex;align-items:center}
-.market-ticker:focus-visible{outline:2px solid var(--nt-accent);outline-offset:-2px}
+.market-ticker:focus-visible{outline:none}
 .market-ticker-track{display:flex;flex:none;width:max-content;animation:market-ticker-scroll var(--ticker-duration) linear infinite;will-change:transform}
 .market-ticker-group{display:flex;flex:none;width:var(--ticker-distance)}
-.market-ticker-item{display:grid;grid-template-columns:76px 84px 56px 12px;gap:12px;align-items:center;padding:0 12px;width:var(--ticker-item-width);flex:none;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:.8125rem;font-variant-numeric:tabular-nums}
+.market-ticker-item{display:grid;grid-template-columns:76px 84px 56px 12px;gap:12px;align-items:center;padding:0 12px;width:var(--ticker-item-width);flex:none;white-space:nowrap;font-family:var(--nt-font-mono);font-size:.8125rem;font-variant-numeric:tabular-nums}
 .market-ticker-item small{font:11px 'Exo 2',sans-serif;color:var(--nt-muted)}
 .market-ticker-item b,.market-ticker-item strong{text-align:right}
 .market-ticker-item strong{font-size:.75rem}.market-ticker-item i{text-align:center;color:var(--nt-muted)}

@@ -45,14 +45,14 @@ function key(event){
 .qf-slider-area{position:relative;width:100%;padding:12px 0;cursor:pointer}
 .qf-slider-track{position:relative;width:100%;height:2px;background:#303236}
 .qf-slider-fill{position:absolute;left:0;top:0;height:100%;background:#fff;transition:width 150ms ease-out}
-.qf-slider-dot{position:absolute;top:50%;width:6px;height:6px;border:1px solid color-mix(in srgb,#fff 62%,#05070b);border-radius:50%;background:#05070b;transform:translateY(-50%);transition:background-color 150ms,border-color 150ms}
+.qf-slider-dot{position:absolute;top:50%;width:6px;height:6px;border:1px solid color-mix(in srgb,#fff 62%,var(--nt-bg));border-radius:50%;background:var(--nt-bg);transform:translateY(-50%);transition:background-color 150ms,border-color 150ms}
 .qf-slider-dot.active{border-color:#fff;background:#fff}
-.qf-slider-thumb{position:absolute;top:50%;width:12px;height:12px;border:2px solid #fff;border-radius:50%;background:#05070b;transform:translate(-50%,-50%);transition:left 150ms ease-out,transform 150ms ease-out,background-color 150ms;outline:none;cursor:grab}
+.qf-slider-thumb{position:absolute;top:50%;width:12px;height:12px;border:2px solid #fff;border-radius:50%;background:var(--nt-bg);transform:translate(-50%,-50%);transition:left 150ms ease-out,transform 150ms ease-out,background-color 150ms;outline:none;cursor:grab}
 .qf-slider-thumb:focus-visible{background:#fff}
 .dragging .qf-slider-fill,.dragging .qf-slider-thumb{transition:transform 150ms ease-out,background-color 150ms}
 .dragging .qf-slider-thumb{transform:translate(-50%,-50%) scale(1.1);cursor:grabbing}
 .qf-slider-labels{position:relative;width:100%;height:20px;margin-top:4px}
-.qf-slider-labels button{position:absolute;top:0;padding:0;transform:translateX(-50%);font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,#05070b);white-space:nowrap}
+.qf-slider-labels button{position:absolute;top:0;padding:0;transform:translateX(-50%);font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,var(--nt-bg));white-space:nowrap}
 .qf-slider-labels button:hover{color:#fff}
 @media(prefers-reduced-motion:reduce){.qf-slider-fill,.qf-slider-thumb,.qf-slider-dot{transition:none}}
 </style>

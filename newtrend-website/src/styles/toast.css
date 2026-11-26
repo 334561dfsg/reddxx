@@ -3,13 +3,13 @@
    antd's generated rules are wrapped in :where(), so these plain selectors win without !important. */
 /* antd writes top:8px inline (global API and useMessage hook alike); sit below the 64px header instead. */
 .ant-message{top:76px!important}
-.ant-message,.ant-message .ant-message-notice-content,.ant-message .ant-message-custom-content{font-family:'Exo 2','PingFang SC',Arial,sans-serif}
+.ant-message,.ant-message .ant-message-notice-content,.ant-message .ant-message-custom-content{font-family:var(--nt-font-body)}
 .ant-message .ant-message-notice-wrapper{padding:0 16px}
 .ant-message .ant-message-notice-content{max-width:min(480px,calc(100vw - 32px));padding:10px 16px;border:1px solid #232529;border-radius:var(--nt-radius-panel,12px);background:#14161a;color:#fff;box-shadow:0 16px 40px rgb(0 0 0/.55),0 0 0 1px rgb(255 255 255/.02) inset;text-align:left}
 .ant-message .ant-message-custom-content{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:20px;font-weight:500;color:#fff}
 .ant-message .ant-message-custom-content>span:last-child{overflow-wrap:anywhere}
 .ant-message .ant-message-custom-content .anticon{flex:none;margin:2px 0 0;font-size:16px}
-.ant-message .ant-message-success .anticon{color:#a5ff4a}
+.ant-message .ant-message-success .anticon{color:var(--nt-accent)}
 .ant-message .ant-message-error .anticon{color:#ff4466}
 .ant-message .ant-message-warning .anticon{color:#fcd34d}
 .ant-message .ant-message-info .anticon,.ant-message .ant-message-loading .anticon{color:#5fa3ff}

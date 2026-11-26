@@ -1,15 +1,15 @@
 /* Scoped source fidelity: C2C buy is intentionally independent of generic cards. */
-#site-shell #main-content .c2c-page{max-width:1440px;margin:auto;padding:20px max(32px,env(safe-area-inset-right)) 20px max(32px,env(safe-area-inset-left));font-size:14px;line-height:1.6}
+#main-content .c2c-page{max-width:1440px;margin:auto;padding:20px max(32px,env(safe-area-inset-right)) 20px max(32px,env(safe-area-inset-left));font-size:14px;line-height:1.6}
 .c2c-page button,.c2c-page a{touch-action:manipulation}
 .c2c-nav{display:flex;gap:8px;padding:4px;background:#141619;border:1px solid #ffffff05;border-radius:999px;margin-bottom:24px}
 .c2c-nav a{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 24px;color:#85888d;border-radius:999px;min-height:40px;white-space:nowrap}
 .c2c-nav a.router-link-exact-active{background:#b3ff60;color:#0a1006}
 .c2c-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
-#site-shell #main-content .c2c-heading h1{font-size:24px;font-weight:600;line-height:32px;margin:0 0 4px;letter-spacing:-.02em}
+#main-content .c2c-heading h1{font-size:24px;font-weight:600;line-height:32px;margin:0 0 4px;letter-spacing:-.02em}
 .c2c-heading p{color:#85888d;margin:0;font-size:14px}
 
 .c2c-layout{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);gap:32px;align-items:start}
-#site-shell #main-content .c2c-page h2{font-size:16px;line-height:24px;font-weight:600;margin:0}
+#main-content .c2c-page h2{font-size:16px;line-height:24px;font-weight:600;margin:0}
 .c2c-filters{display:grid;gap:8px;margin:20px 0 16px}
 .c2c-filter{display:flex;align-items:center;gap:8px;min-width:0}
 .c2c-filter>span{font-size:12px;color:#85888d;flex-shrink:0}
@@ -26,10 +26,10 @@
 .c2c-coin-pair{position:relative;display:block;flex-shrink:0}
 .c2c-coin-pair>.coin:first-child{width:36px;height:36px}
 .c2c-coin-pair>.coin:last-child{position:absolute;width:16px;height:16px;right:-4px;bottom:-2px;border-radius:50%;box-shadow:0 0 0 2px #0c0f15}
-.c2c-pair-name{font-size:14px;font-weight:600;line-height:20px}
+.c2c-pair-name{font-weight:600}
 .c2c-pair-name span{font-weight:400;color:#92959b}
 .c2c-price{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:24px;font-weight:600;line-height:32px;overflow-wrap:anywhere}
-.c2c-price small{font-family:inherit;font-weight:400;font-size:12px;color:#85888d;margin-left:4px}
+.c2c-price small{font-weight:400;font-size:12px;color:#85888d;margin-left:4px}
 .c2c-timer{display:flex;align-items:center;gap:4px;color:#92959b;flex-shrink:0;font-size:12px;white-space:nowrap}
 .c2c-timer .c2c-icon{width:14px;height:14px}
 .c2c-timer.warning{color:#e7cf6b}
@@ -43,7 +43,7 @@
 .c2c-select-prompt p{margin:0}
 .c2c-order-form h2{display:flex;align-items:center;gap:8px}
 .c2c-order-form h2 .coin{width:24px;height:24px}
-.c2c-unit-price{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:24px 0;color:#85888d;font-size:12px}
+.c2c-unit-price{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#85888d;font-size:12px}
 .c2c-unit-price strong{display:flex;align-items:center;gap:4px;color:#e3e5e9;font-size:16px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .c2c-unit-price strong>span{font-size:14px;font-weight:400;color:#92959b}
 .c2c-unit-price .coin{width:16px;height:16px}
@@ -63,20 +63,19 @@
 .c2c-submit{width:100%;min-height:48px;padding:12px 20px;border-radius:999px;background:#b3ff60;color:#0b1306;font-weight:600;font-size:16px}
 .c2c-submit:disabled{opacity:.5;cursor:not-allowed}
 .c2c-error{color:#f87171;font-size:12px;margin:8px 0;overflow-wrap:anywhere}
-.c2c-success{color:#b3ff60;margin:12px 0}
 .c2c-estimate{display:flex;justify-content:space-between;gap:12px;font-size:12px;margin-top:12px;color:#92959b}
 .c2c-estimate strong{font-weight:500;color:#e3e5e9;text-align:right;overflow-wrap:anywhere}
-.c2c-page :is(button,a,input):focus-visible{outline:2px solid #b3ff60;outline-offset:3px}
+.c2c-page :is(button,a,input):focus-visible{outline:none}
 @media(max-width:1199px){.c2c-quote-grid{grid-template-columns:1fr}.c2c-layout{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px}}
-@media(max-width:767px){#site-shell #main-content .c2c-page{padding:32px max(24px,env(safe-area-inset-right)) 24px max(24px,env(safe-area-inset-left))}.c2c-layout{grid-template-columns:1fr}.c2c-nav{gap:0}.c2c-nav a{flex:1;padding:10px 8px;gap:6px;font-size:14px}.c2c-order-panel.is-empty{min-height:260px}.c2c-heading{gap:12px}.c2c-filters{margin-top:20px}}
-@media(max-width:420px){#site-shell #main-content .c2c-page{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}.c2c-nav a{white-space:normal;text-align:center;padding:8px 6px;font-size:12px}.c2c-nav a .c2c-icon{flex-shrink:0;width:14px}.c2c-pills button{padding:6px 9px}.c2c-quote-top{gap:8px}.c2c-price{font-size:22px}.c2c-heading{flex-wrap:wrap}}
+@media(max-width:767px){#main-content .c2c-page{padding:32px max(24px,env(safe-area-inset-right)) 24px max(24px,env(safe-area-inset-left))}.c2c-layout{grid-template-columns:1fr}.c2c-nav{gap:0}.c2c-nav a{flex:1;padding:10px 8px;gap:6px;font-size:14px}.c2c-order-panel.is-empty{min-height:260px}.c2c-heading{gap:12px}.c2c-filters{margin-top:20px}}
+@media(max-width:420px){#main-content .c2c-page{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}.c2c-nav a{white-space:normal;text-align:center;padding:8px 6px;font-size:12px}.c2c-nav a .c2c-icon{flex-shrink:0;width:14px}.c2c-pills button{padding:6px 9px}.c2c-quote-top{gap:8px}.c2c-price{font-size:22px}.c2c-heading{flex-wrap:wrap}}
 @media(pointer:coarse){.c2c-pills button{min-height:40px}.c2c-amount-field{min-height:44px}.c2c-agreement label,.c2c-agreement button{min-height:32px}}
 @media(prefers-reduced-motion:reduce){.c2c-quote{transition:none}}
 /* Explicit line boxes avoid global small-text rules changing source geometry. */
 .c2c-nav a{line-height:20px}
 .c2c-pair-name{font-size:15px;line-height:22.5px}
 .c2c-price{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:4px;color:#f5f6f7}
-.c2c-price small{font-family:'Exo 2','PingFang SC',Arial,sans-serif;line-height:18px;margin:0}
+.c2c-price small{font-family:var(--nt-font-body);line-height:18px;margin:0}
 .c2c-timer,.c2c-limits,.c2c-quote-note{line-height:18px}
 .c2c-quote:hover{color:#f5f6f7}
 .c2c-unit-price{margin:20px 0}
@@ -110,7 +109,6 @@
 .c2c-status{font-size:12px;color:#b3ff60}
 .c2c-danger{color:#e34a68}
 .c2c-text-button{color:#b3ff60;min-height:32px;display:inline-flex;align-items:center}
-.c2c-feedback{padding:12px 0;color:#b3ff60}
 .c2c-order-row{display:grid;grid-template-columns:.5fr 1fr 1fr 1.2fr 1.2fr 60px;gap:16px;padding:20px;border-bottom:1px solid #ffffff08;align-items:center;font-size:14px}
 .c2c-order-columns{color:#85888d;font-size:12px;padding-top:14px;padding-bottom:14px}
 .c2c-order-row>span{min-width:0;overflow-wrap:anywhere}

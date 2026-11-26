@@ -53,6 +53,13 @@ key claims were re-verified in code before inclusion. Tests 77/77 and locale che
    Overlay shell + `components/overlay/*` bodies with one `flow` state, Account shell + `pages/account/*`. Deferred to phase 4 with the CSS work: Icon registry, StatusTag, SummaryCard/RecordList, NtSelect, named routes.
 4. **CSS** — `styles/index.css` with `@layer` order and one tokens file; delete dead rules and unused vendor CSS;
    remove id prefixes and correction blocks domain by domain; single non-ring focus cue.
+   ✅ Done 2026-11-26 (see AGENTS.md "Refactor phase 4"). Verified with computed-style fingerprints of 36 routes on fresh loads at 1440×900
+   (39 properties per element, identical before/after except animation frames). Results: global + domain CSS 486 KB → 294 KB
+   (source theme 222 → 71 KB, unused `trade-fidelity.css` deleted); 224 overridden declarations removed; 433 double-id prefixes collapsed to `#main-content`;
+   tokens centralised (158 colour and 79 font literals replaced); 19 focus rings replaced by one non-ring cue.
+   Deliberately not done: `@layer` (Ant Design's unlayered CSS-in-JS would override all layered rules); full id removal (changes 12 routes —
+   ids are the base/domain cascade tiers); global import of domain sheets (changes 4 routes); ~100 single `#site-shell` rules, doubled-class
+   selectors and `!important` remain. Phase 3 leftovers (Icon registry, StatusTag, SummaryCard/RecordList, NtSelect, named routes) are still open.
 5. **Tests & docs** — kernel, routing table, seed validity, earn eligibility, mode switch; update AGENTS.md.
 
 Verification per phase: unit tests, locale/feedback checks, build, and before/after screenshots of every affected route at 1440/1917px.

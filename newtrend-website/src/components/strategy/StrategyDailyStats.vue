@@ -51,10 +51,10 @@ onMounted(()=>requestAnimationFrame(()=>{drawn.value=true}))
 .ds-net,.ds-counts>div{display:flex;flex-direction:column;gap:4px}
 .ds-counts{display:flex;align-items:center;gap:24px}
 .ds-label{font-size:12px;line-height:16px;letter-spacing:.04em;text-transform:uppercase;color:#6e6f71}
-.ds-net-value{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:24px;line-height:1;font-weight:700;color:#b4b5b6}
+.ds-net-value{display:flex;align-items:center;gap:6px;font-family:var(--nt-font-mono);font-size:24px;line-height:1;font-weight:700;color:#b4b5b6}
 .ds-net-value svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ds-caption{font-size:12px;line-height:18px;color:#6e6f71}
-.ds-count{font-family:'IBM Plex Mono',monospace;font-size:18px;line-height:1;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
+.ds-count{font-family:var(--nt-font-mono);font-size:18px;line-height:1;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
 .ds-grid{display:grid;grid-template-columns:6.5rem 3.5rem minmax(0,1fr) 8.5rem;align-items:center;column-gap:16px}
 .ds-head{font-size:12px;line-height:16px;letter-spacing:.04em;text-transform:uppercase;color:#6e6f71}
 .ds-head-bar{display:flex;justify-content:space-between}
@@ -65,14 +65,14 @@ onMounted(()=>requestAnimationFrame(()=>{drawn.value=true}))
 .ds-row:hover{background:#ffffff05}
 .ds-date{display:flex;align-items:baseline;gap:6px;font-size:15px;line-height:22px;color:#b4b5b6}
 .ds-date small{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#6e6f71}
-.ds-trades{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#87888a;font-variant-numeric:tabular-nums}
+.ds-trades{font-family:var(--nt-font-mono);font-size:12px;color:#87888a;font-variant-numeric:tabular-nums}
 .ds-bar{position:relative;height:20px;width:100%}
 .ds-axis{position:absolute;top:0;bottom:0;left:50%;width:1px;background:#191b1f;transform:translateX(-50%)}
 .ds-fill{position:absolute;top:6px;bottom:6px;transition:width 500ms ease-out}
 .ds-fill.up{left:50%;border-radius:0 999px 999px 0;background:#2bc287}
 .ds-fill.down{right:50%;border-radius:999px 0 0 999px;background:#ff4466}
 .ds-dot{position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;background:#6e6f71;transform:translate(-50%,-50%)}
-.ds-pnl{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;color:#87888a}
+.ds-pnl{font-family:var(--nt-font-mono);font-size:15px;font-weight:600;color:#87888a}
 .ds .up{color:#2bc287}.ds .down{color:#ff4466}
 .ds-fill.up,.ds-fill.down{color:inherit}
 .ds-more{margin:0;text-align:center;font-size:12px;color:#6e6f71}

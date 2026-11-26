@@ -37,15 +37,15 @@ const mask=value=>hidden.value?'****':value
 #site-shell #main-content .psc-eye .nt-icon{width:16px;height:16px;opacity:.6}
 #site-shell #main-content .psc-eye:hover .nt-icon,#site-shell #main-content .psc-eye:focus-visible .nt-icon{opacity:1}
 #site-shell #main-content .psc-eye:focus-visible{outline:none;background:#ffffff14;border-radius:4px}
-#site-shell #main-content .psc-display{margin:0;font-family:'IBM Plex Mono',monospace;font-size:36px;line-height:40px;font-weight:600;letter-spacing:-.025em;color:#fff;white-space:nowrap}
+#site-shell #main-content .psc-display{margin:0;font-family:var(--nt-font-mono);font-size:36px;line-height:40px;font-weight:600;letter-spacing:-.025em;color:#fff;white-space:nowrap}
 #site-shell #main-content .psc-display>span{margin-left:8px;font-size:18px;line-height:28px;font-weight:400;letter-spacing:0;color:#87888a}
 #site-shell #main-content .psc-accent{display:flex;align-items:baseline;gap:8px;font-size:15px;line-height:22.5px}
-#site-shell #main-content .psc-accent strong{font-family:'IBM Plex Mono',monospace;font-weight:600}
+#site-shell #main-content .psc-accent strong{font-family:var(--nt-font-mono);font-weight:600}
 #site-shell #main-content .psc-accent small{display:inline;margin:0;font-size:12px;line-height:18px;color:#87888a}
 #site-shell #main-content .psc-stats{display:grid;grid-template-columns:repeat(var(--psc-cols,3),minmax(0,1fr));gap:12px 40px;flex-shrink:0;margin:0;padding:0;border:0}
 #site-shell #main-content .psc-stats>div{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 #site-shell #main-content .psc-stats dt{margin:0;font-size:12px;line-height:18px;color:#87888a}
-#site-shell #main-content .psc-stats dd{margin:0;font-family:'IBM Plex Mono',monospace;font-size:18px;line-height:28px;font-weight:600;white-space:nowrap}
+#site-shell #main-content .psc-stats dd{margin:0;font-family:var(--nt-font-mono);font-size:18px;line-height:28px;font-weight:600;white-space:nowrap}
 #site-shell #main-content .psc-stats dd span{margin-left:4px;font-size:12px;line-height:18px;font-weight:400;color:#87888a}
 #site-shell #main-content .psc .tone-neutral{color:#fff}
 #site-shell #main-content .psc .tone-success,#site-shell #main-content .psc .tone-profit{color:#2bc287}

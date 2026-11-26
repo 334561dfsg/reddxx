@@ -1,17 +1,15 @@
 /* Shared public-site shell geometry; trading workspaces manage their own columns. */
-:root{--nt-page-max:1400px;--nt-page-gutter:24px;--nt-form-max:768px}
-@media(max-width:767px){:root{--nt-page-gutter:16px}}
-#site-shell #main-content :is(.page-wrap,.container,.site-container,.detail-wrap,.news-feed,.article-content,.legal-page,.account-center,.account-help-center,.account-referrals,.account-promotions){
+#main-content :is(.page-wrap,.container,.site-container,.detail-wrap,.news-feed,.article-content,.legal-page,.account-center,.account-help-center,.account-referrals,.account-promotions){
  width:100%;max-width:var(--nt-page-max);margin-left:auto;margin-right:auto;
  padding-left:max(var(--nt-page-gutter),env(safe-area-inset-left));
  padding-right:max(var(--nt-page-gutter),env(safe-area-inset-right));
 }
-#site-shell #main-content .account-page:not(.account-help-center):not(.account-referrals):not(.account-promotions){
+#main-content .account-page:not(.account-help-center):not(.account-referrals):not(.account-promotions){
  width:100%;max-width:var(--nt-form-max);margin-left:auto;margin-right:auto;
  padding-left:max(var(--nt-page-gutter),env(safe-area-inset-left));
  padding-right:max(var(--nt-page-gutter),env(safe-area-inset-right));
 }
-#site-shell #main-content .news-heading{padding-left:max(var(--nt-page-gutter),env(safe-area-inset-left));padding-right:max(var(--nt-page-gutter),env(safe-area-inset-right))}
-#site-shell #main-content .news-heading>*{max-width:calc(var(--nt-page-max) - 2 * var(--nt-page-gutter));margin-left:auto;margin-right:auto}
+#main-content .news-heading{padding-left:max(var(--nt-page-gutter),env(safe-area-inset-left));padding-right:max(var(--nt-page-gutter),env(safe-area-inset-right))}
+#main-content .news-heading>*{max-width:calc(var(--nt-page-max) - 2 * var(--nt-page-gutter));margin-left:auto;margin-right:auto}
 #site-shell .site-footer{padding-left:max(var(--nt-page-gutter),env(safe-area-inset-left));padding-right:max(var(--nt-page-gutter),env(safe-area-inset-right))}
 #site-shell .footer-columns,#site-shell .footer-bottom{width:100%;max-width:calc(var(--nt-page-max) - 2 * var(--nt-page-gutter));margin-left:auto;margin-right:auto}

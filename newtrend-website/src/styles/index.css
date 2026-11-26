@@ -1,0 +1,10 @@
+/* Global style entry, imported once by main.js. Order is the cascade order:
+   vendor theme → tokens → base → shared layout/design system → ambient → toast.
+   Domain sheets are still imported by their pages (see AGENTS.md "Refactor phase 4"). */
+@import '../source-theme.css';
+@import './tokens.css';
+@import '../styles.css';
+@import './site-containers.css';
+@import './site-design-system.css';
+@import './ambient.css';
+@import './toast.css';

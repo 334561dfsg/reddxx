@@ -24,10 +24,10 @@ const beams=[
 <style>
 /* Anchor to the full-width main region (page containers are capped at 1440px), like the reference's full-bleed layer. */
 #main-content:has(.qf-ambient){position:relative;isolation:isolate}
-/* Hosts must not paint over the layer (body already supplies the same #05070b), nor re-anchor it to their 1440px box. */
+/* Hosts must not paint over the layer (body already supplies the same var(--nt-bg)), nor re-anchor it to their 1440px box. */
 #site-shell #main-content :is(.strategy-page,.quant-page,.finance-page):has(>.qf-ambient){background-color:transparent;position:static}
 .qf-ambient{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
 .qf-aurora{position:absolute;inset:0 0 auto;height:640px;overflow:hidden;z-index:-1}
 .qf-aurora-flow{position:absolute;inset:0 auto 0 0;width:200%;background:linear-gradient(to right,rgb(165 255 74/.1),transparent 50%,rgb(165 255 74/.1));-webkit-mask-image:linear-gradient(#000 10%,transparent 80%);mask-image:linear-gradient(#000 10%,transparent 80%)}
-.qf-aurora-beam{position:absolute;top:0;height:100%;transform-origin:top;background:radial-gradient(ellipse 50% 100% at 50% 0%,color-mix(in srgb,#a5ff4a var(--beam-alpha),transparent),transparent 70%)}
+.qf-aurora-beam{position:absolute;top:0;height:100%;transform-origin:top;background:radial-gradient(ellipse 50% 100% at 50% 0%,color-mix(in srgb,var(--nt-accent) var(--beam-alpha),transparent),transparent 70%)}
 </style>

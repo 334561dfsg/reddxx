@@ -11,10 +11,10 @@
 .trading-terminal .order-panel :is(input,button).trade-field:hover{color:#fff;border-color:#ffffff14}
 .trading-terminal .order-panel :is(input,button).trade-field:focus,
 .trading-terminal .order-panel :is(input,button).trade-field:focus-visible,
-.trading-terminal .order-panel button.trade-field[aria-expanded=true]{border-color:#ffffff3d;box-shadow:0 0 0 1px #ffffff14;outline:none;outline-offset:0}
+.trading-terminal .order-panel button.trade-field[aria-expanded=true]{border-color:#ffffff3d;box-shadow:none;outline:none}
 .trading-terminal .order-panel input.trade-field[aria-invalid=true]{border-color:var(--nt-red,#ff4466)}
-.trading-terminal .order-panel input.trade-field[aria-invalid=true]:focus{box-shadow:0 0 0 1px #ff446626}
+.trading-terminal .order-panel input.trade-field[aria-invalid=true]:focus{box-shadow:none}
 .trading-terminal .order-panel :is(input,button).trade-field:disabled{cursor:not-allowed;color:#ffffff45;background:#ffffff05}
 @media(pointer:coarse){.trading-terminal .order-panel :is(input,button).trade-field{min-height:44px;padding-block:11px}}
 @media(prefers-reduced-motion:reduce){.trading-terminal .order-panel :is(input,button).trade-field{transition:none}}
-@media(forced-colors:active){.trading-terminal .order-panel :is(input,button).trade-field{border-color:ButtonText}.trading-terminal .order-panel :is(input,button).trade-field:focus-visible{outline:2px solid Highlight}}
+@media(forced-colors:active){.trading-terminal .order-panel :is(input,button).trade-field{border-color:ButtonText}.trading-terminal .order-panel :is(input,button).trade-field:focus-visible{outline:none}}

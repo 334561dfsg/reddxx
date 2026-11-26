@@ -1,0 +1,56 @@
+/* Site design tokens — the only place --nt-* values are defined. Components and domain sheets reference
+   these instead of literal colours, fonts, radii or spacing. --radius-* aliases bridge the source theme. */
+:root{
+ /* colour */
+ --nt-bg:#05070b;
+ --nt-card:#141619;
+ --nt-border:#ffffff0d;
+ --nt-muted:#ffffff80;
+ --nt-accent:#a5ff4a;
+ --nt-green:#5bbb91;
+ --nt-red:#e34a68;
+ --nt-text-primary:#ffffff;
+ --nt-text-secondary:#ffffff99;
+ --nt-text-muted:#ffffff66;
+ /* type */
+ --nt-font-body:'Exo 2','PingFang SC',Arial,sans-serif;
+ --nt-font-display:Syne,'PingFang SC',sans-serif;
+ --nt-font-mono:'IBM Plex Mono',monospace;
+ --nt-text-caption:12px;
+ --nt-text-body:14px;
+ --nt-text-label:14px;
+ --nt-text-card-title:16px;
+ --nt-text-section:24px;
+ --nt-text-page:32px;
+ --nt-line-body:1.6;
+ --nt-line-heading:1.3;
+ /* space & layout */
+ --nt-space-1:4px;
+ --nt-space-2:8px;
+ --nt-space-3:12px;
+ --nt-space-4:16px;
+ --nt-space-6:24px;
+ --nt-space-8:32px;
+ --nt-space-12:48px;
+ --nt-page-block:32px;
+ --nt-section-gap:32px;
+ --nt-card-padding:24px;
+ --nt-grid-gap:24px;
+ --nt-control-height:40px;
+ --nt-page-max:1400px;
+ --nt-page-gutter:24px;
+ --nt-form-max:768px;
+ /* radius */
+ --nt-radius-sm:4px;
+ --nt-radius-control:8px;
+ --nt-radius-panel:12px;
+ --radius-xs:var(--nt-radius-sm);
+ --radius-sm:var(--nt-radius-control);
+ --radius-md:var(--nt-radius-panel);
+ --radius-lg:var(--nt-radius-panel);
+ --radius-xl:var(--nt-radius-panel);
+ --radius-2xl:var(--nt-radius-panel);
+ --radius-3xl:var(--nt-radius-panel);
+}
+@media(max-width:767px){:root{--nt-page-gutter:16px;--nt-text-page:26px;--nt-text-section:20px;--nt-page-block:24px;--nt-section-gap:24px;--nt-card-padding:16px;--nt-grid-gap:16px}}
+@media(pointer:coarse){:root{--nt-control-height:44px}}

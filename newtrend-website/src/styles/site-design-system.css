@@ -1,45 +1,34 @@
 /* Public-site design scale. Trading keeps its explicit compact layout. */
-:root{
- --nt-space-1:4px;--nt-space-2:8px;--nt-space-3:12px;--nt-space-4:16px;
- --nt-space-6:24px;--nt-space-8:32px;--nt-space-12:48px;
- --nt-text-caption:12px;--nt-text-body:14px;--nt-text-label:14px;
- --nt-text-card-title:16px;--nt-text-section:24px;--nt-text-page:32px;
- --nt-page-block:32px;--nt-section-gap:32px;--nt-card-padding:24px;--nt-grid-gap:24px;
- --nt-control-height:40px;--nt-line-body:1.6;--nt-line-heading:1.3;
- --nt-text-primary:#ffffff;--nt-text-secondary:#ffffff99;--nt-text-muted:#ffffff66;
-}
-@media(max-width:767px){:root{--nt-text-page:26px;--nt-text-section:20px;--nt-page-block:24px;--nt-section-gap:24px;--nt-card-padding:16px;--nt-grid-gap:16px}}
 #site-shell{font-size:var(--nt-text-body);line-height:var(--nt-line-body)}
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content){padding-top:var(--nt-page-block);padding-bottom:var(--nt-space-12)}
-#site-shell #main-content :is(.section-pad,.news-heading){padding-top:var(--nt-space-12);padding-bottom:var(--nt-space-12)}
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.news-heading,.article-content,.auth-layout) h1{
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content){padding-top:var(--nt-page-block);padding-bottom:var(--nt-space-12)}
+#main-content :is(.section-pad,.news-heading){padding-top:var(--nt-space-12);padding-bottom:var(--nt-space-12)}
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.news-heading,.article-content,.auth-layout) h1{
  font-size:var(--nt-text-page);line-height:var(--nt-line-heading);font-weight:600;letter-spacing:-.02em;margin-top:0;margin-bottom:var(--nt-space-4);
 }
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content,.auth-layout) h2,
-#site-shell #main-content .section-heading{font-size:var(--nt-text-section);line-height:var(--nt-line-heading);font-weight:600;letter-spacing:-.01em}
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content) h3,
-#site-shell #main-content :is(.card,.feature-card,.charity-card,.profile-group) h2{font-size:var(--nt-text-card-title);line-height:1.5;font-weight:600}
-#site-shell #main-content .page-desc{font-size:var(--nt-text-body);line-height:var(--nt-line-body);color:var(--nt-text-secondary)}
-#site-shell #main-content .page-kicker{font-size:var(--nt-text-caption);line-height:1.5;margin-bottom:var(--nt-space-2)}
-#site-shell #main-content .page-hero{padding-top:0;padding-bottom:var(--nt-section-gap);gap:var(--nt-grid-gap)}
-#site-shell #main-content .section-gap{margin-top:var(--nt-section-gap)}
-#site-shell #main-content :is(.two-cols,.three-cols,.four-cols){gap:var(--nt-grid-gap)}
-#site-shell #main-content .card:not(.finance-table){padding:var(--nt-card-padding)}
-#site-shell #main-content :is(.feature-card,.charity-card)>div{padding:var(--nt-card-padding)}
-#site-shell #main-content :is(.feature-card,.charity-card) h3{margin-top:0;margin-bottom:var(--nt-space-2)}
-#site-shell #main-content :is(.feature-card,.charity-card) p{font-size:var(--nt-text-body);line-height:var(--nt-line-body)}
-#site-shell #main-content .form-stack{gap:var(--nt-space-4)}
-#site-shell #main-content .subnav{gap:var(--nt-space-2);margin-bottom:var(--nt-section-gap);padding:var(--nt-space-1)}
-#site-shell #main-content .subnav>a{font-size:var(--nt-text-body);line-height:20px;min-height:var(--nt-control-height);padding:10px 16px}
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.auth-layout) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select){min-height:var(--nt-control-height);font-size:var(--nt-text-body);line-height:20px;padding:9px 12px}
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.auth-layout) :is(.primary-button,.secondary-button){min-height:var(--nt-control-height);font-size:var(--nt-text-body);line-height:20px;padding:10px 16px}
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) .metric{font-size:28px;line-height:1.3;font-weight:600;font-variant-numeric:tabular-nums}
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) :is(.muted,small){line-height:1.5}
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) small{font-size:var(--nt-text-caption)}
-#site-shell #main-content .account-header{margin-bottom:var(--nt-section-gap)}
-#site-shell #main-content .legal-page{line-height:1.8}
-#site-shell #main-content .legal-page :is(h2,h3){margin-top:var(--nt-section-gap);margin-bottom:var(--nt-space-3)}
-@media(pointer:coarse){:root{--nt-control-height:44px}}
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content,.auth-layout) h2,
+#main-content .section-heading{font-size:var(--nt-text-section);line-height:var(--nt-line-heading);font-weight:600;letter-spacing:-.01em}
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.legal-page,.article-content) h3,
+#main-content :is(.card,.feature-card,.charity-card,.profile-group) h2{font-size:var(--nt-text-card-title);line-height:1.5;font-weight:600}
+#main-content .page-desc{font-size:var(--nt-text-body);line-height:var(--nt-line-body);color:var(--nt-text-secondary)}
+#main-content .page-kicker{font-size:var(--nt-text-caption);line-height:1.5;margin-bottom:var(--nt-space-2)}
+#main-content .page-hero{padding-top:0;padding-bottom:var(--nt-section-gap);gap:var(--nt-grid-gap)}
+#main-content .section-gap{margin-top:var(--nt-section-gap)}
+#main-content :is(.two-cols,.three-cols,.four-cols){gap:var(--nt-grid-gap)}
+#main-content .card:not(.finance-table){padding:var(--nt-card-padding)}
+#main-content :is(.feature-card,.charity-card)>div{padding:var(--nt-card-padding)}
+#main-content :is(.feature-card,.charity-card) h3{margin-top:0;margin-bottom:var(--nt-space-2)}
+#main-content :is(.feature-card,.charity-card) p{font-size:var(--nt-text-body);line-height:var(--nt-line-body)}
+#main-content .form-stack{gap:var(--nt-space-4)}
+#main-content .subnav{gap:var(--nt-space-2);margin-bottom:var(--nt-section-gap);padding:var(--nt-space-1)}
+#main-content .subnav>a{font-size:var(--nt-text-body);line-height:20px;min-height:var(--nt-control-height);padding:10px 16px}
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.auth-layout) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select){min-height:var(--nt-control-height);font-size:var(--nt-text-body);line-height:20px;padding:9px 12px}
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.auth-layout) :is(.primary-button,.secondary-button){min-height:var(--nt-control-height);font-size:var(--nt-text-body);line-height:20px;padding:10px 16px}
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) .metric{font-size:28px;line-height:1.3;font-weight:600;font-variant-numeric:tabular-nums}
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) :is(.muted,small){line-height:1.5}
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) small{font-size:var(--nt-text-caption)}
+#main-content .account-header{margin-bottom:var(--nt-section-gap)}
+#main-content .legal-page{line-height:1.8}
+#main-content .legal-page :is(h2,h3){margin-top:var(--nt-section-gap);margin-bottom:var(--nt-space-3)}
 /* One text family; numeric metrics retain their deliberate monospace treatment. */
 #site-shell :is(h1,h2,h3,h4,.page-title,.section-heading){font-family:inherit}
 
@@ -50,19 +39,19 @@
 }
 #site-shell .nav-popover>a,#site-shell .nav-popover>button{padding:10px 16px;min-height:40px}
 #site-shell .nav-popover :is(small,.nav-overview){font-size:var(--nt-text-caption);line-height:18px}
-#site-shell #main-content :is(.filter-row,.tabs,.news-filters,.auth-tabs) button,
-#site-shell #main-content :is(.form-stack,.account-form,.auth-form) label{
+#main-content :is(.filter-row,.tabs,.news-filters,.auth-tabs) button,
+#main-content :is(.form-stack,.account-form,.auth-form) label{
  font-size:var(--nt-text-body);line-height:20px;
 }
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.news-feed) :is(td,.summary-line,.details-list){font-size:var(--nt-text-body);line-height:22px}
-#site-shell #main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) :is(th,.mini-label,.tag-chip,.form-error,.form-success,.notice){font-size:var(--nt-text-caption);line-height:18px}
-#site-shell #main-content .market-table td{font-size:var(--nt-text-body);line-height:22px}
-#site-shell #main-content :is(.profile-box,.finance-table) h2{font-size:var(--nt-text-card-title);line-height:24px}
-#site-shell #main-content :is(.news-item,.news-row,.insight-stack) h3{font-size:18px;line-height:27px;font-weight:600}
-#site-shell #main-content :is(.feature-card,.charity-card,.auth-features) h3{font-size:var(--nt-text-card-title);line-height:24px}
-#site-shell #main-content :is(.news-row small,.profile-group>a small,.asset-account-button small,.mobile-market-details){font-size:var(--nt-text-caption);line-height:18px}
-#site-shell #main-content .finance-table td[data-label]::before{font-size:var(--nt-text-caption);line-height:18px}
-#site-shell #main-content :is(.news-row p,.auth-features p,.quant-intro p){font-size:var(--nt-text-body);line-height:var(--nt-line-body)}
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center,.news-feed) :is(td,.summary-line,.details-list){font-size:var(--nt-text-body);line-height:22px}
+#main-content :is(.page-wrap,.detail-wrap,.account-page,.account-center) :is(th,.mini-label,.tag-chip,.form-error,.form-success,.notice){font-size:var(--nt-text-caption);line-height:18px}
+#main-content .market-table td{font-size:var(--nt-text-body);line-height:22px}
+#main-content :is(.profile-box,.finance-table) h2{font-size:var(--nt-text-card-title);line-height:24px}
+#main-content :is(.news-item,.news-row,.insight-stack) h3{font-size:18px;line-height:27px;font-weight:600}
+#main-content :is(.feature-card,.charity-card,.auth-features) h3{font-size:var(--nt-text-card-title);line-height:24px}
+#main-content :is(.news-row small,.profile-group>a small,.asset-account-button small,.mobile-market-details){font-size:var(--nt-text-caption);line-height:18px}
+#main-content .finance-table td[data-label]::before{font-size:var(--nt-text-caption);line-height:18px}
+#main-content :is(.news-row p,.auth-features p,.quant-intro p){font-size:var(--nt-text-body);line-height:var(--nt-line-body)}
 /* Native root dialogs and teleported controls cannot rely on #main-content. */
 .nt-dialog.nt-dialog .overlay-header h2,.nt-dialog.nt-dialog.mode-confirm .overlay-header h2{font-size:var(--nt-text-card-title);line-height:24px;font-weight:600}
 .nt-dialog.nt-dialog :is(.overlay-body,.overlay-footer,.language-list,.drawer-nav){font-size:var(--nt-text-body);line-height:22px}
@@ -74,10 +63,8 @@
 
 /* Audit follow-ups: quote labels and secondary metadata stay readable. */
 #site-shell .market-ticker-item small{font-size:var(--nt-text-caption);line-height:18px}
-#site-shell #main-content .charity-banner h1{font-size:var(--nt-text-page);line-height:var(--nt-line-heading);font-weight:600}
-#site-shell #main-content .home-cta small{font-size:var(--nt-text-caption);line-height:18px}
-#site-shell #main-content .quote-card{padding:var(--nt-card-padding)}
-#site-shell #main-content .quote-card small{font-size:var(--nt-text-caption);line-height:18px}
+#main-content .charity-banner h1{font-size:var(--nt-text-page);line-height:var(--nt-line-heading);font-weight:600}
+#main-content .home-cta small{font-size:var(--nt-text-caption);line-height:18px}
 
 /* Header language dropdown, measured against the reference site: hover/click opens, 150ms fade, flush rows. */
 #site-shell .header-tools .language-menu{height:64px;display:flex;align-items:center}
@@ -89,8 +76,8 @@
 #site-shell .language-popover{top:100%;right:0;width:max-content;min-width:128px;padding:4px 0;border:1px solid #191b1e;border-radius:var(--nt-radius-panel);background:#131516;box-shadow:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;overflow:hidden;animation:language-menu-in 150ms cubic-bezier(.4,0,.2,1)}
 #site-shell .language-popover>button{justify-content:space-between;gap:16px;padding:8px 16px;min-height:0;border-radius:0;font-size:14px;line-height:20px;font-weight:400;color:#fff}
 #site-shell .language-popover>button>span{display:flex;flex-direction:column;align-items:flex-start;gap:2px;white-space:nowrap}
-#site-shell .language-popover>button small{margin:0;font-size:12px;line-height:18px;color:color-mix(in srgb,#fff 62%,#05070b)}
-#site-shell .language-popover>button:hover,#site-shell .language-popover>button:focus-visible{background:color-mix(in srgb,#fff 14%,#05070b);color:#fff;outline:none}
+#site-shell .language-popover>button small{margin:0;font-size:12px;line-height:18px;color:color-mix(in srgb,#fff 62%,var(--nt-bg))}
+#site-shell .language-popover>button:hover,#site-shell .language-popover>button:focus-visible{background:color-mix(in srgb,#fff 14%,var(--nt-bg));color:#fff;outline:none}
 #site-shell .language-popover>button:focus-visible>span>:first-child{text-decoration:underline;text-underline-offset:3px}
 #site-shell .language-popover>button:disabled{opacity:1;cursor:progress}
 #site-shell .language-popover .language-check{display:inline-flex;flex-shrink:0}
@@ -101,35 +88,35 @@
 
 /* Header assets/profile dropdowns, matched to the reference header menus. */
 #site-shell .account-actions .header-menu{height:64px;display:flex;align-items:center}
-#site-shell .account-actions .asset-link{gap:4px;padding:8px;color:color-mix(in srgb,#fff 70%,#05070b);font-size:14px;line-height:20px;transition:color 150ms}
+#site-shell .account-actions .asset-link{gap:4px;padding:8px;color:color-mix(in srgb,#fff 70%,var(--nt-bg));font-size:14px;line-height:20px;transition:color 150ms}
 #site-shell .account-actions .asset-link:hover,#site-shell .account-actions .asset-link[aria-expanded="true"]{color:#fff}
 #site-shell .account-actions .asset-link .nt-icon{width:20px;height:20px}
 #site-shell .account-actions .profile-trigger{display:flex;align-items:center;padding:8px}
-#site-shell .profile-avatar{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:32px;height:32px;border-radius:50%;background:color-mix(in srgb,#fff 12%,#05070b)}
+#site-shell .profile-avatar{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:32px;height:32px;border-radius:50%;background:color-mix(in srgb,#fff 12%,var(--nt-bg))}
 #site-shell .profile-avatar .nt-icon{width:16px;height:16px}
 #site-shell .profile-avatar.large{width:40px;height:40px}
 #site-shell .profile-avatar.large .nt-icon{width:20px;height:20px}
-#site-shell .header-dropdown{top:100%;right:0;padding:0;border:1px solid color-mix(in srgb,#fff 8%,#05070b);border-radius:16px;background:#131516;box-shadow:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;overflow:hidden;white-space:normal;animation:language-menu-in 150ms cubic-bezier(.4,0,.2,1)}
+#site-shell .header-dropdown{top:100%;right:0;padding:0;border:1px solid color-mix(in srgb,#fff 8%,var(--nt-bg));border-radius:16px;background:#131516;box-shadow:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;overflow:hidden;white-space:normal;animation:language-menu-in 150ms cubic-bezier(.4,0,.2,1)}
 #site-shell .assets-dropdown{width:288px}
 #site-shell .profile-dropdown{width:280px}
-#site-shell .header-dropdown .menu-divider{height:1px;background:color-mix(in srgb,#fff 8%,#05070b)}
+#site-shell .header-dropdown .menu-divider{height:1px;background:color-mix(in srgb,#fff 8%,var(--nt-bg))}
 #site-shell .header-dropdown .menu-row,#site-shell .header-dropdown>.menu-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:0;padding:8px 16px;border-radius:0;font-size:14px;line-height:20px;font-weight:400;color:#fff;text-align:left;white-space:nowrap;transition:background-color 150ms}
 #site-shell .header-dropdown>.menu-row.view-all,#site-shell .header-dropdown>.menu-row.logout{padding:12px 16px}
 #site-shell .header-dropdown>.menu-row.logout{color:#f46}
-#site-shell .header-dropdown .menu-row:hover,#site-shell .header-dropdown .menu-row:focus-visible,#site-shell .assets-quick-actions>a:hover,#site-shell .assets-quick-actions>a:focus-visible{background:color-mix(in srgb,#fff 14%,#05070b);outline:none}
+#site-shell .header-dropdown .menu-row:hover,#site-shell .header-dropdown .menu-row:focus-visible,#site-shell .assets-quick-actions>a:hover,#site-shell .assets-quick-actions>a:focus-visible{background:color-mix(in srgb,#fff 14%,var(--nt-bg));outline:none}
 #site-shell .header-dropdown .menu-row:hover:not(.logout){color:#fff}
 #site-shell .header-dropdown .menu-row.logout:hover{color:#f46}
 #site-shell .header-dropdown .menu-row:focus-visible,#site-shell .assets-quick-actions>a:focus-visible{text-decoration:underline;text-underline-offset:3px}
 #site-shell .header-dropdown .view-all .nt-icon{width:16px;height:16px;opacity:.62}
 #site-shell .header-dropdown .menu-list{padding:4px 0}
 #site-shell .assets-summary{padding:16px}
-#site-shell .assets-summary-label{display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,#05070b)}
+#site-shell .assets-summary-label{display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,var(--nt-bg))}
 #site-shell .assets-summary-label button{display:inline-flex;padding:0;color:inherit;opacity:.62}
 #site-shell .assets-summary-label button:hover{opacity:1}
 #site-shell .assets-summary-label .nt-icon{width:14px;height:14px}
 #site-shell .assets-summary-value{display:flex;align-items:baseline;gap:8px;margin-top:6px;color:#fff}
 #site-shell .assets-summary-value strong{font-size:24px;line-height:32px;font-weight:700}
-#site-shell .assets-summary-value span{font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,#05070b)}
+#site-shell .assets-summary-value span{font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,var(--nt-bg))}
 #site-shell .assets-quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px}
 #site-shell .assets-quick-actions>a{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;border-radius:var(--nt-radius-panel);font-size:12px;line-height:16px;color:#fff;transition:background-color 150ms}
 #site-shell .assets-quick-actions .nt-icon{width:16px;height:16px}
@@ -139,11 +126,11 @@
 #site-shell .profile-badges{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 #site-shell .menu-badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:var(--nt-radius-panel);font-size:12px;line-height:16px;font-weight:600}
 #site-shell .menu-badge.danger{background:color-mix(in srgb,#f46 20%,transparent);color:#f46}
-#site-shell .menu-badge.success{background:color-mix(in srgb,#a5ff4a 20%,transparent);color:#a5ff4a}
-#site-shell .menu-badge.secondary{background:color-mix(in srgb,#fff 12%,#05070b);color:#fff}
-#site-shell .menu-badge.vip{gap:2px;padding:0 6px;background:#fcd34d;color:#05070b;box-shadow:0 1px 3px #0000001a}
+#site-shell .menu-badge.success{background:color-mix(in srgb,var(--nt-accent) 20%,transparent);color:var(--nt-accent)}
+#site-shell .menu-badge.secondary{background:color-mix(in srgb,#fff 12%,var(--nt-bg));color:#fff}
+#site-shell .menu-badge.vip{gap:2px;padding:0 6px;background:#fcd34d;color:var(--nt-bg);box-shadow:0 1px 3px #0000001a}
 #site-shell .menu-badge.vip .nt-icon{width:12px;height:12px;filter:brightness(0)}
-#site-shell .profile-uid{display:flex;align-items:center;gap:4px;font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,#05070b)}
+#site-shell .profile-uid{display:flex;align-items:center;gap:4px;font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,var(--nt-bg))}
 #site-shell .profile-uid button{display:inline-flex;padding:0;color:inherit;opacity:.62}
 #site-shell .profile-uid button:hover{opacity:1}
 #site-shell .profile-uid .nt-icon{width:12px;height:12px}

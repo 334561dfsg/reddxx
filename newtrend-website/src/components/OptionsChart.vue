@@ -40,4 +40,4 @@ onMounted(()=>{observer=new ResizeObserver(draw);observer.observe(canvas.value)}
 watch(()=>[props.price,props.interval,locale.value],draw)
 </script>
 <template><canvas ref="canvas" class="options-chart" role="img" tabindex="0" :aria-label="$t('chart.ui.simulatedCandlestickChart')+' · '+price+' · '+$t(interval)" @pointermove="pointer" @pointerleave="active=null;draw()" @keydown="key" @blur="active=null;draw()"/></template>
-<style scoped>.options-chart{display:block;width:100%;height:100%;min-height:250px;min-width:0;flex:1}.options-chart:focus-visible{outline:1px solid var(--nt-accent);outline-offset:-1px}</style>
+<style scoped>.options-chart{display:block;width:100%;height:100%;min-height:250px;min-width:0;flex:1}.options-chart:focus-visible{outline:none}</style>

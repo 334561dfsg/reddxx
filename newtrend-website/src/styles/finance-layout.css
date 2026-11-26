@@ -1,9 +1,9 @@
 /* Shared overview geometry: all four Finance tabs start content on the same line. */
-#site-shell #main-content .finance-page.finance-overview {
+#main-content .finance-page.finance-overview {
   max-width: 1440px;
   padding: 20px max(32px, env(safe-area-inset-right)) 48px max(32px, env(safe-area-inset-left));
 }
-#site-shell #main-content .finance-page.finance-overview .subnav {
+#main-content .finance-page.finance-overview .subnav {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
@@ -11,7 +11,7 @@
   margin: 0 0 40px;
   border-radius: 32px;
 }
-#site-shell #main-content .finance-page.finance-overview .subnav > a {
+#main-content .finance-page.finance-overview .subnav > a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -22,8 +22,8 @@
   line-height: 20px;
   font-weight: 500;
 }
-#site-shell #main-content .finance-page.finance-overview .subnav > .router-link-exact-active { color: #05070b; }
-#site-shell #main-content .finance-overview .finance-heading {
+#main-content .finance-page.finance-overview .subnav > .router-link-exact-active { color: var(--nt-bg); }
+#main-content .finance-overview .finance-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -32,37 +32,37 @@
   min-height: 0;
   margin: 0 0 40px;
 }
-#site-shell #main-content .finance-overview .finance-heading h1 {
-  font-family: Syne, 'PingFang SC', sans-serif;
+#main-content .finance-overview .finance-heading h1 {
+  font-family:var(--nt-font-display);
   font-size: 36px;
   font-weight: 600;
   line-height: 44px;
   letter-spacing: -.025em;
   margin: 0;
 }
-#site-shell #main-content .finance-overview .loan-market-hero { position: relative; }
-#site-shell #main-content .finance-overview .loan-market-mine { margin: 0; }
-#site-shell #main-content .finance-overview .finance-heading .earn-chips { margin: 0; }
+#main-content .finance-overview .loan-market-hero { position: relative; }
+#main-content .finance-overview .loan-market-mine { margin: 0; }
+#main-content .finance-overview .finance-heading .earn-chips { margin: 0; }
 /* These parents already supply the common section spacing (source: 40px between major blocks). */
-#site-shell #main-content .finance-overview :is(.loan-module, .loan-portfolio) { gap: 40px; }
-#site-shell #main-content .finance-overview :is(.loan-module, .loan-portfolio) > .finance-heading { margin-bottom: 0; }
+#main-content .finance-overview :is(.loan-module, .loan-portfolio) { gap: 40px; }
+#main-content .finance-overview :is(.loan-module, .loan-portfolio) > .finance-heading { margin-bottom: 0; }
 /* Major sections use 40px (source); filters belong to their result list at 16px. */
-#site-shell #main-content .finance-overview .earn-featured,
-#site-shell #main-content .finance-overview .portfolio-tab-area { margin-top: 40px; }
-#site-shell #main-content .finance-overview .earn-filters { margin: 40px 0 16px; }
-#site-shell #main-content .finance-overview .portfolio-tab-panel { margin-top: 16px; }
-#site-shell #main-content .finance-overview .loan-portfolio { row-gap: 0; }
-#site-shell #main-content .finance-overview .loan-portfolio > * + * { margin-top: 40px; }
-#site-shell #main-content .finance-overview .loan-portfolio-toolbar + :is(.loan-portfolio-table, .portfolio-empty) { margin-top: 16px; }
+#main-content .finance-overview .earn-featured,
+#main-content .finance-overview .portfolio-tab-area { margin-top: 40px; }
+#main-content .finance-overview .earn-filters { margin: 40px 0 16px; }
+#main-content .finance-overview .portfolio-tab-panel { margin-top: 16px; }
+#main-content .finance-overview .loan-portfolio { row-gap: 0; }
+#main-content .finance-overview .loan-portfolio > * + * { margin-top: 40px; }
+#main-content .finance-overview .loan-portfolio-toolbar + :is(.loan-portfolio-table, .portfolio-empty) { margin-top: 16px; }
 @media (max-width: 640px) {
-  #site-shell #main-content .finance-page.finance-overview {
+  #main-content .finance-page.finance-overview {
     padding: 20px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left));
   }
-  #site-shell #main-content .finance-page.finance-overview .subnav { margin-bottom: 24px; border-radius: 999px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; user-select: none; }
-  #site-shell #main-content .finance-page.finance-overview .subnav::-webkit-scrollbar { display: none; }
-  #site-shell #main-content .finance-page.finance-overview .subnav:active { cursor: grabbing; }
-  #site-shell #main-content .finance-page.finance-overview .subnav > a { flex: 0 0 auto; white-space: nowrap; padding: 10px 16px; }
-  #site-shell #main-content .finance-overview .finance-heading { margin-bottom: 24px; }
-  #site-shell #main-content .finance-overview .finance-heading h1 { font-size: 30px; line-height: 36px; }
-  #site-shell #main-content .finance-overview .loan-module { gap: 24px; }
+  #main-content .finance-page.finance-overview .subnav { margin-bottom: 24px; border-radius: 999px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; user-select: none; }
+  #main-content .finance-page.finance-overview .subnav::-webkit-scrollbar { display: none; }
+  #main-content .finance-page.finance-overview .subnav:active { cursor: grabbing; }
+  #main-content .finance-page.finance-overview .subnav > a { flex: 0 0 auto; white-space: nowrap; padding: 10px 16px; }
+  #main-content .finance-overview .finance-heading { margin-bottom: 24px; }
+  #main-content .finance-overview .finance-heading h1 { font-size: 30px; line-height: 36px; }
+  #main-content .finance-overview .loan-module { gap: 24px; }
 }
