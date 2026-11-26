@@ -294,12 +294,6 @@
         "advancedReview": "Advanced verification under review",
         "done": "Verification complete"
       },
-      "todo": "What you need to do",
-      "todoItems": {
-        "basic": "Submit basic information and wait for review",
-        "advanced": "After basic approval, upload the advanced documents",
-        "result": "Wait for the advanced review result"
-      },
       "stepOf": "Step {{step}} / {{total}}",
       "toSubmit": "To submit",
       "inReview": "In review",

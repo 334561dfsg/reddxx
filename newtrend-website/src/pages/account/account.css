@@ -47,7 +47,7 @@
 .pc-shell .pc-current small{color:#a0a1a2;font-size:12px}
 .pc-shell .pc-current strong{font-size:14px;line-height:20px;font-weight:600}
 .pc-shell .pc-steps-card{padding:20px}
-.pc-shell .pc-steps-card h2,.pc-shell .pc-todo h2{margin:0 0 16px;font-size:15px;line-height:22px;font-weight:600}
+.pc-shell .pc-steps-card h2{margin:0 0 16px;font-size:15px;line-height:22px;font-weight:600}
 .pc-shell .pc-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
 .pc-shell .pc-steps li{display:flex;gap:10px;min-width:0;color:#a0a1a2}
 .pc-shell .pc-steps li>span:last-child{display:grid;gap:2px;min-width:0}
@@ -59,9 +59,7 @@
 .pc-shell .pc-steps li.active .pc-step-dot{background:var(--nt-accent);color:var(--nt-bg)}
 .pc-shell .pc-steps li.done .pc-step-dot{background:#2bc2871f;color:#2bc287}
 .pc-shell .pc-steps li.done strong{color:#e6e7e9}
-.pc-shell .pc-identity-body{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;align-items:start}
-.pc-shell .pc-todo{padding:20px}
-.pc-shell .pc-todo ol{display:grid;gap:10px;margin:0;padding-left:18px;color:#a0a1a2;font-size:13px;line-height:20px}
+.pc-shell .pc-identity-body{display:grid;gap:16px}
 .pc-shell .pc-step-card{display:grid;gap:16px;padding:24px}
 .pc-shell .pc-step-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
 .pc-shell .pc-step-head h2{margin:2px 0 0;font-size:18px;line-height:26px;font-weight:600}
@@ -162,7 +160,6 @@
 .pc-shell.account-help-center .pc-main>input{min-height:44px;padding:0 16px;border:1px solid #191b1f;border-radius:999px;background:#0c1017}
 
 @media(max-width:1023px){
- .pc-shell .pc-identity-body{grid-template-columns:1fr}
  .pc-shell .pc-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:640px){

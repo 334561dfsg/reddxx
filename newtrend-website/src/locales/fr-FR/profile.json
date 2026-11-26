@@ -294,12 +294,6 @@
         "advancedReview": "Vérification avancée en cours d'examen",
         "done": "Vérification terminée"
       },
-      "todo": "Ce que vous devez faire",
-      "todoItems": {
-        "basic": "Soumettre les informations de base et attendre l'examen",
-        "advanced": "Après validation, envoyer les documents avancés",
-        "result": "Attendre le résultat de l'examen avancé"
-      },
       "stepOf": "Étape {{step}} / {{total}}",
       "toSubmit": "À soumettre",
       "inReview": "En examen",

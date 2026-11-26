@@ -294,12 +294,6 @@
         "advancedReview": "Erweiterte Prüfung wird geprüft",
         "done": "Prüfung abgeschlossen"
       },
-      "todo": "Was Sie tun müssen",
-      "todoItems": {
-        "basic": "Basisdaten einreichen und Prüfung abwarten",
-        "advanced": "Nach Freigabe die erweiterten Unterlagen hochladen",
-        "result": "Ergebnis der erweiterten Prüfung abwarten"
-      },
       "stepOf": "Schritt {{step}} / {{total}}",
       "toSubmit": "Einzureichen",
       "inReview": "In Prüfung",

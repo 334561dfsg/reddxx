@@ -294,12 +294,6 @@
         "advancedReview": "고급 인증 심사 중",
         "done": "인증 완료"
       },
-      "todo": "해야 할 일",
-      "todoItems": {
-        "basic": "기본 정보를 제출하고 심사를 기다리기",
-        "advanced": "기본 인증 승인 후 고급 서류 업로드",
-        "result": "고급 심사 결과 기다리기"
-      },
       "stepOf": "단계 {{step}} / {{total}}",
       "toSubmit": "제출 대기",
       "inReview": "심사 중",

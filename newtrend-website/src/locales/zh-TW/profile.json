@@ -294,12 +294,6 @@
         "advancedReview": "高級認證審核中",
         "done": "認證已完成"
       },
-      "todo": "你需要做什麼",
-      "todoItems": {
-        "basic": "提交初級資料並等待審核",
-        "advanced": "初級通過後，上傳高級認證資料",
-        "result": "等待高級審核結果"
-      },
       "stepOf": "步驟 {{step}} / {{total}}",
       "toSubmit": "待提交",
       "inReview": "審核中",

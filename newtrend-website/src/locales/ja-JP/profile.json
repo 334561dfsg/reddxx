@@ -294,12 +294,6 @@
         "advancedReview": "上級認証を審査中",
         "done": "認証完了"
       },
-      "todo": "必要な手続き",
-      "todoItems": {
-        "basic": "基本情報を提出し、審査を待つ",
-        "advanced": "基本認証の承認後、上級書類をアップロード",
-        "result": "上級審査の結果を待つ"
-      },
       "stepOf": "ステップ {{step}} / {{total}}",
       "toSubmit": "未提出",
       "inReview": "審査中",

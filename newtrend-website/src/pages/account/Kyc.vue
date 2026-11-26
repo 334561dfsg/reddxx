@@ -1,6 +1,7 @@
 <script setup>
 // 身份認證, after gmxx.io/personal?type=identity: a four-step progress (submit basic → basic review → submit
-// advanced → advanced review), the "what you need to do" list and the card for the current step. Basic = personal
+// advanced → advanced review) and the card for the current step (the "what you need to do" list was removed at the
+// user's request, 2026-11-26). Basic = personal
 // details + ID images in one form; advanced = handheld photo + proof of assets. Review is local mock state: a
 // clearly-labelled demo button approves the pending level so the whole flow can be walked through.
 import {computed,reactive} from 'vue'
@@ -48,7 +49,6 @@ function approve() {
  </ol>
 </section>
 <div class="pc-identity-body">
- <section class="pc-card pc-todo"><h2>{{ $t('profile.center.identity.todo') }}</h2><ol><li v-for="key in ['basic','advanced','result']" :key="key">{{ $t('profile.center.identity.todoItems.'+key) }}</li></ol></section>
  <section class="pc-card pc-step-card">
   <template v-if="current===0||current===2">
    <div class="pc-step-head"><div><small class="pc-muted">{{ $t('profile.center.identity.stepOf', {step: current===0?1:2, total: 2}) }}</small><h2>{{ $t('profile.center.identity.'+(current===0?'basicTitle':'advancedTitle')) }}</h2></div><span class="pc-chip">{{ $t('profile.center.identity.toSubmit') }}</span></div>
