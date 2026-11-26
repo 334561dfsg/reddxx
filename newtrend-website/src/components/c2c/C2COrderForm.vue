@@ -6,12 +6,16 @@ import {formatQuote,quoteAmount} from '../../utils/c2cQuotes'
 import {openModal,session} from '../../session'
 import {t} from '../../i18n'
 import {path} from '../../data'
-import {createC2COrder} from '../../utils/c2cState'
-import {c2cState} from '../../c2cStore'
+import Skeleton from '../ui/Skeleton.vue'
+import {c2cErrorKey,createC2COrder,listPaymentAccounts} from '../../api/c2c.js'
+import {invalidate,useRequest} from '../../composables/useRequest.js'
 const props=defineProps({quote:{type:Object,required:true},side:{type:String,default:'buy'}})
 const accountId=ref(''),orderId=ref('')
 let requestId=crypto.randomUUID()
-const accounts=computed(()=>c2cState.accounts.filter(a=>a.active&&a.currency==='USDT'))
+// Payout accounts (sell only) come from the API; the select shows a skeleton until they load.
+const accountRequest=useRequest(()=>props.side==='sell'?listPaymentAccounts():Promise.resolve([]),{tags:['c2c']})
+const accountsReady=computed(()=>accountRequest.status.value==='ready')
+const accounts=computed(()=>(accountRequest.data.value||[]).filter(a=>a.active&&a.currency==='USDT'))
 const submitLabel=computed(()=>props.side==='sell'?'c2c.order.submitSell':'c2c.order.submitBuy')
 const mode=ref('asset'),amount=ref(''),agreed=ref(false),completed=ref(false),error=ref('')
 const result=computed(()=>quoteAmount(props.quote,amount.value,mode.value))
@@ -27,10 +31,15 @@ function submit(){
  if(session.mode!=='common.demo.demo'){error.value='overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally';return}
  error.value=''
  const snapshot={...result.value,symbol:props.quote.symbol,price:props.quote.price}
- openModal('account-confirm',submitLabel.value,{focusCancel:true,description:t(props.side==='sell'?'c2c.order.confirmSellSummary':'c2c.order.confirmSummary',{amount:formatQuote(snapshot.quantity),asset:snapshot.symbol,total:formatQuote(snapshot.total)}),confirmLabel:submitLabel.value,onConfirm:()=>{
-  if(completed.value)return
-  const order=createC2COrder(c2cState,{side:props.side,quote:props.quote,quantity:snapshot.quantity,accountId:accountId.value,requestId});orderId.value=order.id;completed.value=true;error.value=''
- }})
+ openModal('account-confirm',submitLabel.value,{focusCancel:true,description:t(props.side==='sell'?'c2c.order.confirmSellSummary':'c2c.order.confirmSummary',{amount:formatQuote(snapshot.quantity),asset:snapshot.symbol,total:formatQuote(snapshot.total)}),confirmLabel:submitLabel.value,
+  // Async confirm: the dialog shows busy and holds its close paths; a rejection keeps it open with a toast.
+  onConfirm:async()=>{
+   if(completed.value)return
+   try{
+    const order=await createC2COrder({mode:session.mode,side:props.side,symbol:props.quote.symbol,quantity:snapshot.quantity,accountId:accountId.value,requestId})
+    orderId.value=order.id;completed.value=true;error.value='';invalidate('c2c')
+   }catch(cause){throw new Error(c2cErrorKey(cause))}
+  }})
 }
 </script>
 <template>
@@ -41,7 +50,7 @@ function submit(){
  <label for="c2c-amount">{{ $t(mode==='asset'?'c2c.order.assetAmount':'c2c.order.fiatAmount',{asset:quote.symbol,fiat:'USDT'}) }}</label>
  <div class="c2c-amount-field"><input id="c2c-amount" v-model="amount" type="number" inputmode="decimal" min="0" step="any" :disabled="completed" :placeholder="$t(mode==='asset'?'c2c.order.assetAmountPlaceholder':'c2c.order.fiatAmountPlaceholder')" :aria-invalid="Boolean(amount&&result.error)" aria-describedby="c2c-amount-feedback"/><span><Coin set="logo" :symbol="unit"/>{{ unit }}</span></div>
  <div id="c2c-amount-feedback"><FeedbackToast v-if="amount&&result.error" type="error" :source="() => (amount&amp;&amp;result.error) ? ($t(result.error)) : ''"></FeedbackToast><div v-else-if="Number(amount)>0" class="c2c-estimate"><span>{{ $t(side==='sell'?'c2c.order.estimatedReceive':mode==='asset'?'c2c.order.estimatedPay':'c2c.order.estimatedReceive') }}</span><strong>{{ formatQuote(mode==='asset'?result.total:result.quantity) }} {{ mode==='asset'?'USDT':quote.symbol }}</strong></div></div>
- <div v-if="side==='sell'" class="c2c-payout-field"><label for="c2c-payout">{{ $t('c2c.order.payoutAccount') }}</label><select v-if="accounts.length" id="c2c-payout" v-model="accountId" :disabled="completed" required><option value="" disabled>{{ $t('c2c.order.payoutAccountPlaceholder') }}</option><option v-for="a in accounts" :key="a.id" :value="a.id">{{ a.bankName }} · {{ a.accountName }} · {{ a.accountNumber }}</option></select><p v-else class="muted">{{ $t('c2c.order.payoutAccountEmpty',{fiat:'USDT'}) }}</p><RouterLink class="c2c-text-button" :to="path('/c2c/payment-accounts')">{{ $t(accounts.length?'c2c.order.payoutAccountManage':'c2c.order.payoutAccountEmptyCta') }}</RouterLink></div>
+ <div v-if="side==='sell'" class="c2c-payout-field"><label for="c2c-payout">{{ $t('c2c.order.payoutAccount') }}</label><Skeleton v-if="!accountsReady" height="44px" class="c2c-skeleton-select"/><select v-else-if="accounts.length" id="c2c-payout" v-model="accountId" :disabled="completed" required><option value="" disabled>{{ $t('c2c.order.payoutAccountPlaceholder') }}</option><option v-for="a in accounts" :key="a.id" :value="a.id">{{ a.bankName }} · {{ a.accountName }} · {{ a.accountNumber }}</option></select><p v-else class="muted">{{ $t('c2c.order.payoutAccountEmpty',{fiat:'USDT'}) }}</p><RouterLink v-if="accountsReady" class="c2c-text-button" :to="path('/c2c/payment-accounts')">{{ $t(accounts.length?'c2c.order.payoutAccountManage':'c2c.order.payoutAccountEmptyCta') }}</RouterLink></div>
  <div class="c2c-agreement"><label><input v-model="agreed" type="checkbox" :disabled="completed"/>{{ $t('c2c.order.agreementCheckbox') }}</label><button type="button" @click="agreement">{{ $t('c2c.order.agreementLink') }}</button></div>
  <FeedbackToast v-if="error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
  <FeedbackToast v-if="completed" type="success" :source="() => (completed) ? ($t('overlay.ui.demoCompletedNoRealTransactionWasSent')) : ''"/>
@@ -50,3 +59,4 @@ function submit(){
 <button v-if="orderId" class="c2c-text-button" type="button" @click="openModal('c2c-detail','c2c.detail.title',{id:orderId})">{{ $t('c2c.order.viewOrder') }}</button>
 </form>
 </template>
+<style>.c2c-skeleton-select{border-radius:12px}</style>

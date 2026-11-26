@@ -1,17 +1,17 @@
 import {reactive} from 'vue'
-import {session} from './session'
 import {balanceOf,ledger,modeKey} from './mock/ledger.js'
 
-// C2C view used by the components: payment accounts are the user's (shared), orders are kept per account mode,
-// and `balances` reads/writes the shared ledger for the current mode (a sell locks USDT there).
+// C2C mock state (stands in for the server behind src/api/c2c.js): payment accounts are the user's (shared across
+// account modes), orders are kept per mode, and a mode's `balances` read/write the shared ledger (a sell locks USDT).
+// Mode is explicit so this module stays importable in Node tests. In memory only.
 const shared=reactive({accounts:[]})
 const orders=reactive({real:[],demo:[]})
-const balances=new Proxy({},{
- get:(_,asset)=>typeof asset==='string'?balanceOf(session.mode,asset):undefined,
- set:(_,asset,value)=>{ledger[modeKey(session.mode)][asset]=value;return true},
+const balanceViews={}
+const balancesFor=mode=>balanceViews[modeKey(mode)]||=new Proxy({},{
+ get:(_,asset)=>typeof asset==='string'?balanceOf(mode,asset):undefined,
+ set:(_,asset,value)=>{ledger[modeKey(mode)][asset]=value;return true},
 })
-export const c2cState={
- get accounts(){return shared.accounts},
- get orders(){return orders[modeKey(session.mode)]},
- balances,
-}
+/** {accounts, orders, balances} for one account mode, in the shape the rules in utils/c2cState.js expect. */
+export const c2cStateFor=mode=>({accounts:shared.accounts,orders:orders[modeKey(mode)],balances:balancesFor(mode)})
+/** Every mode's orders (payment-account deletion must not orphan an open order in any mode). */
+export const allC2COrders=()=>[...orders.real,...orders.demo]

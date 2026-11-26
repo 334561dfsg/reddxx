@@ -18,3 +18,4 @@ const nav=[['buy','c2c.nav.buy','buy'],['sell','c2c.nav.sell','sell'],['orders',
  <KeepAlive><component :is="content" :key="section" :side="section"/></KeepAlive>
 </div>
 </template>
+<style>.c2c-request-frame.nt-request-error{border:1px solid #ffffff12;border-radius:16px;background:#0d1014}</style>

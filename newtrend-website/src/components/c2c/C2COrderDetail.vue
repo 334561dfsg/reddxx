@@ -2,12 +2,20 @@
 import {dateTime} from '../../utils/format.js'
 import {locale} from '../../i18n'
 import {computed} from 'vue'
-import {c2cState} from '../../c2cStore'
+import {session} from '../../session'
+import Skeleton from '../ui/Skeleton.vue'
+import RequestState from '../ui/RequestState.vue'
+import {getC2COrder} from '../../api/c2c.js'
+import {useRequest} from '../../composables/useRequest.js'
 import {formatQuote} from '../../utils/c2cQuotes'
 const props=defineProps({id:String})
-const order=computed(()=>c2cState.orders.find(o=>o.id===props.id))
+const request=useRequest(()=>getC2COrder(props.id,session.mode),{tags:['c2c']})
+const order=computed(()=>request.data.value)
+const missing=computed(()=>request.status.value==='error'&&request.error.value?.code==='notFound')
 </script>
-<template><div v-if="order" class="c2c-detail">
+<template><div v-if="request.status.value==='loading'" class="c2c-detail"><span role="status" class="sr-only">{{ $t('common.loading') }}</span><div aria-hidden="true"><p class="c2c-status"><Skeleton inline width="96px"/></p><div class="c2c-detail-notice"><h3><Skeleton inline width="180px"/></h3><p><Skeleton inline width="100%"/><br/><Skeleton inline width="60%"/></p></div><dl><div v-for="n in 7" :key="n"><dt><Skeleton inline width="88px"/></dt><dd><Skeleton inline width="160px"/></dd></div></dl></div></div>
+<RequestState v-else-if="request.status.value==='error'&&!missing" :status="request.status.value" :error="request.error.value" @retry="request.refresh"/>
+<div v-else-if="order" class="c2c-detail">
  <p class="c2c-status">{{ $t('c2c.status.'+order.status) }}</p>
  <div v-if="order.status==='pending_match'" class="c2c-detail-notice"><h3>{{ $t('c2c.pendingMatch.title') }}</h3><p>{{ $t('c2c.pendingMatch.hint') }}</p></div>
  <div v-if="order.status==='asset_locked'" class="c2c-detail-notice"><h3>{{ $t('c2c.sellLocked.title') }}</h3><p>{{ $t('c2c.sellLocked.hint') }}</p></div>
