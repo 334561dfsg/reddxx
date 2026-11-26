@@ -18,6 +18,7 @@ import './source-theme.css'
 import './styles.css'
 import './styles/site-containers.css'
 import './styles/site-design-system.css'
+import './styles/ambient.css'
 const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:[
  {path:'/',component:Home},
  {path:'/:legacyLocale(en-US|zh-TW|fr-FR|de-DE|ja-JP|ko-KR)/:legacyPath(.*)*',redirect:to=>({path:'/'+(Array.isArray(to.params.legacyPath)?to.params.legacyPath.join('/'):to.params.legacyPath||''),query:to.query,hash:to.hash})},
@@ -31,6 +32,7 @@ const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:
  {path:'/earn/loan/order/:orderId',component:()=>import('./pages/LendingOrder.vue')},
  {path:'/earn/:section?/:id?',component:Finance},
  {path:'/ai-quant/quant-fund/products/:productId',component:Quant},
+ {path:'/ai-quant/quant-fund/positions/:orderId/interest-records',component:Quant},
  {path:'/ai-quant/:section?/:id?',component:Quant},
  {path:'/assets/:section?',component:Assets},
  {path:'/:auth(login|register|forgot-password)',component:Auth},

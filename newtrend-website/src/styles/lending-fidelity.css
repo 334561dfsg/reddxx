@@ -1,5 +1,5 @@
 /* Reference: /zh-TW/earn/loan. Scoped to lending; backend remains the data owner. */
-#site-shell #main-content .loan-fidelity-page{max-width:1440px;padding:20px max(32px,env(safe-area-inset-right)) 20px max(32px,env(safe-area-inset-left));position:relative;background:radial-gradient(ellipse 65% 280px at 50% 0,#a5ff4a05,transparent),linear-gradient(#ffffff02 1px,transparent 1px) 0 0/56px 56px,linear-gradient(90deg,#ffffff02 1px,transparent 1px) 0 0/56px 56px}
+#site-shell #main-content .loan-fidelity-page{max-width:1440px;padding:20px max(32px,env(safe-area-inset-right)) 20px max(32px,env(safe-area-inset-left));position:relative}
 #site-shell #main-content .loan-fidelity-page .subnav{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:4px;padding:4px;margin:0 0 40px;background:#141619;border:1px solid #191b1f;border-radius:32px}
 #site-shell #main-content .loan-fidelity-page .subnav>a{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;padding:10px 24px;border-radius:32px;font-size:14px;line-height:20px;white-space:nowrap}
 .loan-fidelity-page .subnav .loan-icon,.loan-fidelity-page .subnav .nt-icon,.loan-fidelity-page .subnav .earn-icon{width:14px;height:14px}.loan-fidelity-page .subnav .router-link-exact-active .nt-icon{filter:brightness(0)}

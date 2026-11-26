@@ -1,5 +1,5 @@
 /* Earn source fidelity is scoped here; shared public-site geometry is unchanged. */
-#site-shell #main-content .earn-page{max-width:1440px;padding:20px max(32px,env(safe-area-inset-right)) 48px max(32px,env(safe-area-inset-left));background:radial-gradient(ellipse 70% 360px at 50% 0,#a5ff4a05,transparent),linear-gradient(#ffffff02 1px,transparent 1px) 0 0/56px 56px;position:relative}
+#site-shell #main-content .earn-page{max-width:1440px;padding:20px max(32px,env(safe-area-inset-right)) 48px max(32px,env(safe-area-inset-left));position:relative}
 #site-shell #main-content .earn-page .subnav{border-radius:999px;margin-bottom:40px;gap:4px}.earn-page .subnav>a{display:inline-flex;align-items:center;gap:8px;border-radius:999px}.earn-page .subnav .nt-icon,.earn-page .subnav .earn-icon{width:14px;height:14px}.earn-page .subnav .router-link-exact-active .nt-icon{filter:brightness(0)}
 #site-shell #main-content .earn-page .subnav>a{padding:10px 24px}
 .earn-hero{display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:start}.earn-kicker{display:block;font-size:12px;line-height:18px;letter-spacing:.12em;color:#fff6}.earn-kicker .earn-icon{color:var(--nt-accent);margin-right:8px;width:14px}

@@ -9,7 +9,7 @@ const metrics=[['principal','principal'],['accruedReward','accrued'],['cumulativ
 const money=value=>hidden.value?'****':value.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' USDT'
 </script>
 <template>
-<section class="earn-panel portfolio-summary">
+<section class="earn-panel portfolio-summary nt-glow-host"><span class="nt-glow" aria-hidden="true"></span>
  <p class="earn-caption">{{ $t('earn.myEarnings.summary.usdNote') }}</p>
  <div class="portfolio-summary-body"><div class="portfolio-total">
   <div class="portfolio-total-label"><span>{{ $t('earn.myEarnings.summary.totalValue') }}</span><button type="button" :aria-label="$t(hidden?'assets.show':'assets.hide')" :title="$t(hidden?'assets.show':'assets.hide')" :aria-pressed="hidden" @click="hidden=!hidden"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path v-if="hidden" d="m2 2 20 20"/></svg></button></div>

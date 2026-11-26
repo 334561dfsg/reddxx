@@ -125,3 +125,57 @@ export function fundSummary(orders) {
     pendingCount: orders.filter(order => PENDING_STATUSES.includes(order.status)).length,
   }
 }
+
+const pad = value => String(value).padStart(2, '0')
+/** Reference positions dates: ISO calendar date in tables, date + time in the order drawer. */
+export function fundDate(value, withTime = false) {
+  if (!value) return '--'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return '--'
+  const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+  return withTime ? `${day} ${pad(date.getHours())}:${pad(date.getMinutes())}` : day
+}
+
+/** Interest progress shown in the positions summary; null when nothing is projected yet. */
+export function interestProgress(paid, projected) {
+  if (!(projected > 0)) return null
+  return Math.max(0, Math.min(100, paid / projected * 100))
+}
+
+const DAY_MS = 86400000
+const round2 = value => Math.round(value * 100) / 100
+
+/** Whole days an approved order has been earning, counted from interest start (approval) or subscription. */
+export function heldDays(order, now = Date.now()) {
+  return Math.max(0, Math.floor((now - (order.interestStartAt ?? order.subscribedAt)) / DAY_MS))
+}
+
+/** Reference "預估" line: interest accrued on an active order but not yet paid out. */
+export function accruedInterestEstimate(order, now = Date.now()) {
+  if (order.status !== 'active') return 0
+  return Math.max(0, round2(order.principal * order.dailyReturnPercentSnapshot / 100 * heldDays(order, now) - order.interestPaidTotal))
+}
+
+/** Only running flexible orders expose redemption, matching the reference positions row. */
+export const canRedeemFund = order => order.status === 'active' && order.termDaysSnapshot == null
+
+/**
+ * Settles a flexible redemption locally in one step: interest for whole held days (none below the minimum
+ * hold), minus interest already paid, credited with principal to the order's own account mode.
+ * The status guard makes a repeated call a no-op conflict instead of a second payout.
+ */
+export function redeemFund(account, order, product, now = Date.now()) {
+  if (!order || !canRedeemFund(order)) return {error: 'conflict'}
+  const days = heldDays(order, now)
+  const eligible = days > 0 && days >= (order.minHoldDaysSnapshot ?? 0)
+  const interest = eligible ? Math.max(0, round2(order.principal * order.dailyReturnPercentSnapshot / 100 * days - order.interestPaidTotal)) : 0
+  order.status = 'redeemed'
+  order.settledAt = now
+  order.heldDays = days
+  order.settledInterest = interest
+  order.interestPaidTotal = round2(order.interestPaidTotal + interest)
+  if (interest > 0) (order.interestRecords ||= []).unshift({interestDate: now, amount: interest, creditedAt: now})
+  account.balances[order.mode] = round2((account.balances[order.mode] || 0) + order.principal + interest)
+  if (product) product.subscribed = Math.max(0, product.subscribed - order.principal)
+  return {order, principal: order.principal, interest, days}
+}

@@ -2,23 +2,31 @@
 import {computed,reactive,ref,watch} from 'vue'
 import FeedbackToast from '../../../../src/shared/feedback/FeedbackToast.vue'
 import {session} from '../../session'
-import {strategyAccount} from '../../strategyPortfolio'
+import {strategyAccountFor,strategyNotice} from '../../strategyPortfolio'
 import {strategyValidation,subscribeStrategy} from '../../utils/strategyTemplates'
 import {fmt,path} from '../../data'
 const props=defineProps({product:{type:Object,required:true},closing:Boolean})
 const emit=defineEmits(['state','close'])
 const draft=reactive({capital:'',days:props.product.minDays,takeProfit:10,stopLoss:5}),error=ref(null),done=ref(false)
 const requestId=crypto.randomUUID()
-const balance=computed(()=>session.mode==='common.demo.demo'?strategyAccount.balance:0)
+const account=computed(()=>strategyAccountFor(session.mode)),demo=computed(()=>session.mode==='common.demo.demo')
+const balance=computed(()=>account.value.balance)
 watch([()=>JSON.stringify(draft),done],()=>emit('state',{dirty:!!draft.capital||draft.days!==props.product.minDays||draft.takeProfit!==10||draft.stopLoss!==5,done:done.value}),{immediate:true})
 function submit(){
  if(done.value||props.closing)return
  error.value=null
  if(!session.loggedIn){error.value={code:'unauthorized'};return}
- if(session.mode!=='common.demo.demo'){error.value={key:'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally'};return}
  const validation=strategyValidation(props.product,draft,balance.value)
- if(validation){error.value=validation;return}
- try{subscribeStrategy(strategyAccount,props.product,draft,requestId);done.value=true}catch(cause){error.value={code:cause.message}}
+ // Real accounts are validated against their own (empty) local balance; the hint points to the demo account.
+ if(validation){error.value=validation.code==='paymentRequired'&&!demo.value?{...validation,key:'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally'}:validation;return}
+ try{
+  const record=subscribeStrategy(account.value,props.product,draft,requestId)
+  record.mode=demo.value?'demo':'real'
+  done.value=true
+  // Reference behaviour: close the dialog and announce success with a toast on the page.
+  strategyNotice.key='aiQuant.create.submitSuccess';strategyNotice.at=Date.now()
+  emit('close')
+ }catch(cause){error.value={code:cause.message}}
 }
 </script>
 <template>
@@ -33,6 +41,5 @@ function submit(){
  <FeedbackToast v-if="error" id="strategy-validation" :source="()=>error?$t(error.key||'aiQuant.create.errors.'+error.code,error.params):''"/>
  <RouterLink v-if="error?.code==='paymentRequired'" :to="path('/deposit')" @click="emit('close')">{{ $t('earn.subscribe.goDeposit') }}</RouterLink>
  </template>
- <template v-else><FeedbackToast type="success" :source="()=>$t('aiQuant.create.submitSuccess')"/><RouterLink class="strategy-cta" :to="path('/ai-quant/strategy/mine')" @click="emit('close')">{{ $t('aiQuant.nav.myStrategies') }}</RouterLink></template>
 </form>
 </template>

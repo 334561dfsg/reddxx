@@ -50,3 +50,43 @@ test('position filters and summary keep pending orders out of active totals',()=
  assert.equal(filterFundOrders(orders,'all').length,3)
  assert.deepEqual(fundSummary(orders),{totalPrincipal:10000,totalProjectedInterest:1000,activeInterestPaidTotal:50,settledTotalReceived:2100,activeCount:1,pendingCount:1})
 })
+
+test('positions dates use ISO calendar format and interest progress needs a projection',async()=>{
+ const {fundDate,interestProgress}=await import('../src/utils/quantFund.js')
+ const at=new Date(2026,10,26,9,5).getTime()
+ assert.equal(fundDate(at),'2026-11-26')
+ assert.equal(fundDate(at,true),'2026-11-26 09:05')
+ assert.equal(fundDate(null),'--')
+ assert.equal(interestProgress(0,0),null)
+ assert.equal(interestProgress(25,100),25)
+ assert.equal(interestProgress(150,100),100)
+})
+
+test('redeemFund settles a running flexible order once and credits its own mode', async () => {
+  const {createFundAccount, redeemFund, accruedInterestEstimate, canRedeemFund} = await import('../src/utils/quantFund.js')
+  const DAY = 86400000, start = Date.UTC(2026, 10, 1)
+  const account = createFundAccount({real: 0, demo: 1000})
+  const product = {subscribed: 10000}
+  const order = {id: 'o1', mode: 'demo', status: 'active', principal: 1000, dailyReturnPercentSnapshot: 1, termDaysSnapshot: null, minHoldDaysSnapshot: 1, subscribedAt: start, interestPaidTotal: 2}
+  assert.equal(canRedeemFund(order), true)
+  assert.equal(accruedInterestEstimate(order, start + 3 * DAY), 28)
+  const result = redeemFund(account, order, product, start + 3 * DAY)
+  assert.equal(result.interest, 28) // 3 days × 10 minus 2 already paid
+  assert.equal(order.status, 'redeemed')
+  assert.equal(order.interestPaidTotal, 30)
+  assert.equal(account.balances.demo, 2028)
+  assert.equal(account.balances.real, 0)
+  assert.equal(product.subscribed, 9000)
+  assert.deepEqual(redeemFund(account, order, product, start + 4 * DAY), {error: 'conflict'})
+  assert.equal(account.balances.demo, 2028)
+})
+
+test('redeemFund pays no interest below the minimum hold and rejects fixed-term or pending orders', async () => {
+  const {createFundAccount, redeemFund} = await import('../src/utils/quantFund.js')
+  const account = createFundAccount({real: 0, demo: 0}), now = Date.UTC(2026, 10, 26)
+  const sameDay = {mode: 'demo', status: 'active', principal: 500, dailyReturnPercentSnapshot: 1, termDaysSnapshot: null, minHoldDaysSnapshot: 1, subscribedAt: now, interestPaidTotal: 0}
+  assert.equal(redeemFund(account, sameDay, null, now + 3600000).interest, 0)
+  assert.equal(account.balances.demo, 500)
+  assert.deepEqual(redeemFund(account, {...sameDay, status: 'active', termDaysSnapshot: 30}, null, now), {error: 'conflict'})
+  assert.deepEqual(redeemFund(account, {...sameDay, status: 'pending_review'}, null, now), {error: 'conflict'})
+})

@@ -175,3 +175,80 @@
 .sc-button-sm{height:32px;padding:0 12px;font-size:12px;line-height:16px;font-weight:500}
 @media(pointer:coarse){.sc-button-sm{height:44px}}
 @media(prefers-reduced-motion:reduce){.sc-card,.sc-button{transition:none}}
+
+/* Guide card sits inside the template grid as its last cell (reference ta component). */
+.strategy-grid>.strategy-guide{max-width:none;margin:0;padding:32px;align-items:center;justify-content:center;gap:16px;text-align:center;border:1px dashed color-mix(in srgb,#fff 8%,#05070b);border-radius:32px;background:transparent}
+.strategy-grid>.strategy-guide>div{display:flex;flex-direction:column;gap:6px;max-width:320px}
+.strategy-grid>.strategy-guide h3{margin:0}
+.strategy-grid>.strategy-guide p{line-height:1.625;color:color-mix(in srgb,#fff 52%,#05070b)}
+.strategy-guide-icon{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#0c1017}
+.strategy-guide-icon .nt-icon{width:20px;height:20px;opacity:.55}
+
+/* My strategies (reference index-CVyNHNOp): header, summary card, table with expandable stats. */
+.my-strategies{display:flex;flex-direction:column;gap:32px;padding:40px 0 56px}
+.my-strategies-head{display:flex;flex-direction:column;gap:8px}
+.my-strategies-head span{font-size:12px;line-height:16px;letter-spacing:.22em;text-transform:uppercase;color:color-mix(in srgb,#fff 62%,#05070b)}
+#site-shell .my-strategies-head h1{margin:0;font-family:Syne,'PingFang SC',sans-serif;font-size:36px;line-height:40px;font-weight:600;letter-spacing:-.025em}
+.my-strategies-empty{display:flex;flex-direction:column;align-items:center;gap:16px;padding:48px 24px;border:1px solid color-mix(in srgb,#fff 8%,#05070b);border-radius:32px;background:color-mix(in srgb,#fff 6%,#05070b);text-align:center;font-size:14px;color:color-mix(in srgb,#fff 52%,#05070b)}
+.my-strategies-empty p{margin:0}
+.my-strategies-summary{display:flex;flex-direction:column;gap:16px;padding:24px;border:1px solid color-mix(in srgb,#fff 8%,#05070b);border-radius:32px;background:color-mix(in srgb,#fff 6%,#05070b)}
+.my-strategies-primary{display:flex;flex-wrap:wrap;gap:16px 48px}
+.my-strategies-primary small,.my-strategies-summary dt{display:block;font-size:12px;line-height:18px;color:color-mix(in srgb,#fff 52%,#05070b)}
+.my-strategies-primary p{margin:6px 0 0;font-family:'IBM Plex Mono',monospace;font-size:30px;line-height:36px;font-weight:700;color:#fff}
+.my-strategies-primary p span,.ms-unit,.ms-pnl strong span{margin-left:6px;font-family:inherit;font-size:12px;font-weight:400;color:color-mix(in srgb,#fff 52%,#05070b)}
+.my-strategies .profit{color:#2bc287}
+.my-strategies .loss{color:#f46}
+.my-strategies-summary dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0;padding-top:16px;border-top:1px solid color-mix(in srgb,#fff 8%,#05070b)}
+.my-strategies-summary dd{margin:4px 0 0;font-family:'IBM Plex Mono',monospace;font-size:16px;line-height:24px;font-weight:600}
+.my-strategies-table{overflow:hidden;border:1px solid color-mix(in srgb,#fff 8%,#05070b);border-radius:32px;background:color-mix(in srgb,#fff 6%,#05070b)}
+.my-strategies-table table{width:100%;border-collapse:collapse;font-size:14px}
+.my-strategies-table th{padding:12px 16px;border-bottom:1px solid color-mix(in srgb,#fff 8%,#05070b);font-size:12px;line-height:16px;font-weight:400;letter-spacing:.03em;text-transform:uppercase;text-align:left;color:color-mix(in srgb,#fff 52%,#05070b);white-space:nowrap}
+.my-strategies-table td{padding:16px;border-top:0;border-bottom:1px solid color-mix(in srgb,#fff 8%,#05070b);vertical-align:middle;color:color-mix(in srgb,#fff 70%,#05070b)}
+.my-strategies-table tbody tr:last-child td{border-bottom:0}
+.my-strategies-table :is(th,td):first-child{padding-left:20px}
+.my-strategies-table :is(th,td):last-child{padding-right:20px}
+.my-strategies-table .num{text-align:right}
+.my-strategies-table .mono{font-family:'IBM Plex Mono',monospace;color:#fff;white-space:nowrap}
+.ms-name{display:flex;flex-direction:column;gap:6px;min-width:200px}
+.ms-name strong{font-size:15px;line-height:22px;font-weight:600;color:#fff}
+.ms-name small{font-size:12px;line-height:18px;color:color-mix(in srgb,#fff 52%,#05070b)}
+.ms-badges{display:flex;align-items:center;gap:8px}
+.ms-status,.ms-demo{display:inline-flex;padding:2px 8px;border:1px solid;border-radius:12px;font-size:12px;line-height:16px;font-weight:600;white-space:nowrap}
+.ms-status.running{border-color:#223959;background:#121d2d;color:#5fa3ff}
+.ms-status.paused{border-color:color-mix(in srgb,#fcd34d 35%,transparent);background:color-mix(in srgb,#fcd34d 10%,transparent);color:#fcd34d}
+.ms-status.completed{border-color:color-mix(in srgb,#fff 14%,#05070b);background:color-mix(in srgb,#fff 10%,#05070b);color:color-mix(in srgb,#fff 70%,#05070b)}
+.ms-demo{border-color:color-mix(in srgb,#fcd34d 40%,transparent);background:color-mix(in srgb,#fcd34d 10%,transparent);color:#fcd34d;letter-spacing:.05em}
+.ms-pulse{width:6px;height:6px;border-radius:50%;background:#5fa3ff;animation:ms-pulse 2s cubic-bezier(.4,0,.6,1) infinite}
+@keyframes ms-pulse{50%{opacity:.5}}
+.ms-faint{font-size:12px;color:#6e6f71}
+.ms-pnl{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.ms-pnl strong{font-family:'IBM Plex Mono',monospace;font-size:18px;line-height:1;font-weight:700;white-space:nowrap}
+.ms-return{padding:2px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:16px;font-weight:600}
+.ms-return.profit{background:#06221a}
+.ms-return.loss{background:#230e16}
+.ms-date{font-size:12px;color:color-mix(in srgb,#fff 52%,#05070b);white-space:nowrap}
+.ms-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px}
+.ms-button{display:inline-flex;align-items:center;height:32px;padding:0 12px;border:1px solid color-mix(in srgb,#fff 14%,#05070b);border-radius:999px;font-size:12px;line-height:16px;font-weight:500;color:#fff;white-space:nowrap}
+.ms-button:hover{background:color-mix(in srgb,#fff 10%,#05070b);color:#fff}
+.ms-button.danger{color:#f46}
+.ms-button.ghost{border-color:transparent;color:color-mix(in srgb,#fff 70%,#05070b)}
+.ms-button:focus-visible{outline:none;text-decoration:underline;text-underline-offset:3px}
+.ms-stats-row td{padding:0;background:#0c1017}
+.ms-stats-empty{margin:0;padding:20px;text-align:center;font-size:12px;color:color-mix(in srgb,#fff 52%,#05070b)}
+@media(pointer:coarse){.ms-button{height:44px}}
+@media(prefers-reduced-motion:reduce){.ms-pulse{animation:none}}
+@media(max-width:767px){
+ .my-strategies-table table,.my-strategies-table tbody,.my-strategies-table tr,.my-strategies-table td{display:block}
+ .my-strategies-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ .my-strategies-table tbody tr{padding:16px 20px;border-bottom:1px solid color-mix(in srgb,#fff 8%,#05070b)}
+ .my-strategies-table td{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0!important;border:0}
+ .my-strategies-table td[data-label]::before{content:attr(data-label);font-size:12px;color:color-mix(in srgb,#fff 52%,#05070b)}
+ .my-strategies-table td:first-child::before{display:none}
+ .ms-actions{justify-content:flex-start}
+}
+
+/* Hero chart: reference SVG (440px square, faint grid, grey traces, lime fit line). 2026-11-26 */
+.strategy-graph svg.strategy-hero-chart{width:100%;max-width:440px;height:auto;aspect-ratio:1;margin:28px auto 0}
+.strategy-hero-chart .chart-faint{color:#6e6f71}
+.strategy-hero-chart .chart-muted{color:#a0a1a2}
+@media(prefers-reduced-motion:reduce){.strategy-hero-chart .chart-pulse{display:none}}

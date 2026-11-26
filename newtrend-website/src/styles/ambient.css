@@ -1,0 +1,12 @@
+/* Reference corner glows on Finance / AI Quant cards (newtrendcapital.com, measured 2026-11-26).
+   Host: position + clip + isolation so the glow (z-index -1) paints above the card surface but below its content. */
+.nt-glow-host{position:relative;overflow:hidden;isolation:isolate}
+.nt-glow{position:absolute;z-index:-1;pointer-events:none;border-radius:50%;
+ top:var(--glow-offset,-64px);right:var(--glow-offset,-64px);width:var(--glow-size,240px);height:var(--glow-size,240px);
+ background:radial-gradient(circle,var(--glow-color,rgb(165 255 74/.4)),transparent 70%);filter:blur(var(--glow-blur,48px));opacity:var(--glow-opacity,1)}
+/* Earn: summary cards (240px, lime 40%, blur 48), hot product cards (192px, lime 12%, no blur), detail card (256px, coin colour 33%, blur 56). */
+.nt-glow.glow-earn-hot{--glow-size:192px;--glow-color:rgb(165 255 74/.12);--glow-blur:0px}
+.nt-glow.glow-earn-detail{--glow-size:256px;--glow-offset:-80px;--glow-blur:56px}
+/* AI Quant landing channel cards (256px, blur 64, 50% opacity; strategy lime 40%, quant fund green 34%). */
+.nt-glow.glow-quant-channel{--glow-size:256px;--glow-blur:64px;--glow-opacity:.5}
+.nt-glow.glow-quant-channel.green{--glow-color:rgb(43 194 135/.34)}

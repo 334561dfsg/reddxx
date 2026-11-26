@@ -1,6 +1,7 @@
 <script setup>
 import {computed,shallowRef,watch} from 'vue'
-import {useRouter} from 'vue-router'
+import {useRoute,useRouter} from 'vue-router'
+import {loginPath} from '../../utils/redirect'
 import {fmt,path} from '../../data'
 import {openModal,session} from '../../session'
 import {quantFunds,findQuantFund} from '../../quantFundPortfolio'
@@ -10,7 +11,7 @@ import QuantFundCard from './QuantFundCard.vue'
 import QuantSlider from './QuantSlider.vue'
 // Layout follows the reference product detail page: hero, calculator, flow, quota, sticky summary, more products.
 const props=defineProps({productId:{type:String,required:true}})
-const router=useRouter()
+const router=useRouter(),route=useRoute()
 const product=computed(()=>findQuantFund(props.productId))
 const calcAmount=shallowRef(''),calcDays=shallowRef(30)
 watch(product,value=>{if(value){calcAmount.value=String(value.minAmount);calcDays.value=value.termDays??30}},{immediate:true})
@@ -31,7 +32,7 @@ function onCalcInput(event){if(isAmountDraft(event.target.value))calcAmount.valu
 function openProduct(p){router.push(path(`/ai-quant/quant-fund/products/${p.id}`))}
 function subscribe(){
  if(soldOut.value)return
- if(!session.loggedIn){router.push(path('/login'));return}
+ if(!session.loggedIn){router.push(loginPath(route.fullPath));return}
  openModal('quant-fund-subscribe',{key:'aiQuant.quantFund.subscribe.title',params:{name:product.value.name}},product.value)
 }
 </script>

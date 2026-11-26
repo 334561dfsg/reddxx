@@ -366,3 +366,99 @@
 @media(max-width:1023px){#site-shell #main-content .quant-page .qf-detail-grid{grid-template-columns:1fr}#site-shell #main-content .quant-page .qf-detail-aside{position:static}#site-shell #main-content .quant-page .qf-quota{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:767px){#site-shell #main-content .quant-page .qf-calc-grid,#site-shell #main-content .quant-page .qf-flow{grid-template-columns:1fr}#site-shell #main-content .quant-page .qf-flow::before{display:none}#site-shell #main-content .quant-page .qf-flow li{flex-direction:row;align-items:flex-start;text-align:left}#site-shell #main-content .quant-page .qf-detail-hero h1{font-size:30px;line-height:36px}}
 #site-shell #main-content .quant-page .qf-table td:nth-child(5){white-space:nowrap}
+
+/* Quant fund list header (reference L/P components): hero with ring mark, pill asset filters, disclaimer footer. */
+#site-shell #main-content .quant-page .qf-list{display:flex;flex-direction:column;gap:40px}
+#site-shell #main-content .quant-page .qf-hero{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:56px 40px;border:1px solid var(--qf-divider);border-radius:24px;background:var(--qf-card)}
+#site-shell #main-content .quant-page .qf-hero-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,#a5ff4a 40%,transparent),transparent 70%);opacity:.4;filter:blur(64px);pointer-events:none}
+#site-shell #main-content .quant-page .qf-hero-copy{position:relative;display:flex;flex-direction:column;gap:16px;max-width:672px}
+#site-shell #main-content .quant-page .qf-hero-eyebrow{display:inline-flex;align-items:center;gap:6px;width:fit-content;font-size:12px;line-height:18px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#a5ff4a}
+#site-shell #main-content .quant-page .qf-hero-eyebrow .nt-icon{width:14px;height:14px}
+#site-shell #main-content .quant-page .qf-hero h1{margin:0;font-family:Syne,'PingFang SC',sans-serif;font-size:48px;line-height:1;font-weight:600;letter-spacing:-.025em}
+#site-shell #main-content .quant-page .qf-hero p{margin:0;max-width:576px;font-size:16px;line-height:1.625;color:var(--qf-secondary)}
+#site-shell #main-content .quant-page .qf-hero-mark{position:relative;flex-shrink:0;width:144px;height:144px}
+#site-shell #main-content .quant-page .qf-hero-mark>*{position:absolute}
+#site-shell #main-content .quant-page .qf-hero-mark-glow{inset:0;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,#a5ff4a 40%,transparent),transparent 70%);filter:blur(24px)}
+#site-shell #main-content .quant-page .qf-hero-ring{inset:0;border:1px solid var(--qf-divider);border-radius:50%}
+#site-shell #main-content .quant-page .qf-hero-ring.dashed{inset:10px;border:1px dashed color-mix(in srgb,#a5ff4a 40%,transparent);animation:qf-spin 24s linear infinite}
+#site-shell #main-content .quant-page .qf-hero-core{inset:0;display:grid;place-items:center;width:80px;height:80px;margin:auto;border:1px solid var(--qf-divider);border-radius:50%;background:var(--qf-elevated)}
+#site-shell #main-content .quant-page .qf-hero-core .nt-icon{width:40px;height:40px}
+#site-shell #main-content .quant-page .qf-hero-badge{display:grid;place-items:center;width:40px;height:40px;border:1px solid var(--qf-divider);border-radius:50%;background:var(--qf-card);box-shadow:0 4px 6px -1px #0000001a}
+#site-shell #main-content .quant-page .qf-hero-badge .nt-icon{width:20px;height:20px}
+#site-shell #main-content .quant-page .qf-hero-badge.bottom{right:-4px;bottom:4px}
+#site-shell #main-content .quant-page .qf-hero-badge.bottom .nt-icon{filter:brightness(0) saturate(100%) invert(62%) sepia(54%) saturate(512%) hue-rotate(104deg) brightness(92%)}
+#site-shell #main-content .quant-page .qf-hero-badge.top{left:-4px;top:4px}
+@keyframes qf-spin{to{transform:rotate(360deg)}}
+#site-shell #main-content .quant-page .qf-catalog{display:flex;flex-direction:column;gap:20px}
+#site-shell #main-content .quant-page .qf-filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+#site-shell #main-content .quant-page .qf-filters button{min-height:0;padding:4px 12px;border:1px solid var(--qf-subtle);border-radius:999px;background:transparent;font-size:12px;line-height:16px;font-weight:500;color:var(--qf-secondary)}
+#site-shell #main-content .quant-page .qf-filters button:hover{border-color:color-mix(in srgb,#fff 24%,#05070b);color:#fff}
+#site-shell #main-content .quant-page .qf-filters button.active{border-color:#a5ff4a;background:#a5ff4a;color:#05070b}
+#site-shell #main-content .quant-page .qf-filters button:focus-visible{outline:none;text-decoration:underline;text-underline-offset:3px}
+#site-shell #main-content .quant-page .qf-disclaimer{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;line-height:16px;letter-spacing:.025em;color:var(--qf-faint)}
+#site-shell #main-content .quant-page .qf-disclaimer .nt-icon{width:14px;height:14px;opacity:.42}
+@media(prefers-reduced-motion:reduce){#site-shell #main-content .quant-page .qf-hero-ring.dashed{animation:none}}
+@media(max-width:1023px){#site-shell #main-content .quant-page .qf-hero{padding:40px 28px}#site-shell #main-content .quant-page .qf-hero h1{font-size:30px;line-height:36px}#site-shell #main-content .quant-page .qf-hero-mark{width:112px;height:112px}#site-shell #main-content .quant-page .qf-hero-core{width:64px;height:64px}#site-shell #main-content .quant-page .qf-hero-core .nt-icon{width:32px;height:32px}}
+@media(max-width:639px){#site-shell #main-content .quant-page .qf-hero{padding:32px 20px}#site-shell #main-content .quant-page .qf-hero-mark{display:none}}
+
+/* Positions: summary progress + trend, clickable rows, order drawer. */
+#site-shell #main-content .quant-page .qf-summary-main{align-items:flex-start}
+#site-shell #main-content .quant-page .qf-summary-progress{display:flex;align-items:center;gap:8px;margin-top:6px}
+#site-shell #main-content .quant-page .qf-summary-progress .qf-progress-track{width:160px}
+#site-shell #main-content .quant-page .qf-trend{display:flex;flex-direction:column;gap:6px;margin:0 0 0 auto;min-width:160px}
+#site-shell #main-content .quant-page .qf-trend figcaption{font-size:12px;line-height:18px;color:var(--qf-muted);text-align:right}
+#site-shell #main-content .quant-page .qf-trend svg{width:160px;height:40px;margin-left:auto}
+#site-shell #main-content .quant-page .qf-row{cursor:pointer}
+#site-shell #main-content .quant-page .qf-row:hover td{background:color-mix(in srgb,#fff 4%,transparent)}
+#site-shell #main-content .quant-page .qf-row-link{padding:0;font:inherit;font-weight:500;color:#fff;text-align:left}
+#site-shell #main-content .quant-page .qf-row-link:hover{color:#fff}
+#site-shell #main-content .quant-page .qf-row-link:focus-visible{outline:none;text-decoration:underline;text-underline-offset:3px}
+.nt-dialog .qf-order{--qf-muted:color-mix(in srgb,#fff 52%,#05070b);--qf-secondary:color-mix(in srgb,#fff 70%,#05070b);--qf-divider:color-mix(in srgb,#fff 8%,#05070b);--qf-elevated:color-mix(in srgb,#fff 10%,#05070b);--qf-subtle:color-mix(in srgb,#fff 14%,#05070b);display:flex;flex-direction:column}
+.nt-dialog .qf-order>section{padding:20px;border-top:1px solid var(--qf-divider)}
+.nt-dialog .qf-order>section:first-child{border-top:0;padding-top:4px}
+.nt-dialog .qf-order-head{display:flex;flex-direction:column;gap:12px}
+.nt-dialog .qf-order-product{display:flex;align-items:center;gap:12px;min-width:0}
+.nt-dialog .qf-order-product .coin{width:36px;height:36px}
+.nt-dialog .qf-order-product>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.nt-dialog .qf-order-link{display:inline-flex;align-items:center;gap:6px;min-width:0;font-size:16px;line-height:24px;font-weight:600;color:#fff}
+.nt-dialog .qf-order-link span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nt-dialog .qf-order-link .nt-icon{width:16px;height:16px;opacity:.5}
+.nt-dialog .qf-order-link:hover{color:#a5ff4a}
+.nt-dialog .qf-order-link:focus-visible{outline:none;text-decoration:underline}
+.nt-dialog .qf-order-product small{font-size:12px;line-height:18px;letter-spacing:.05em;text-transform:uppercase;color:var(--qf-muted)}
+.nt-dialog .qf-order .qf-status{align-self:flex-start;display:inline-flex;padding:2px 8px;border:1px solid;border-radius:999px;font-size:12px;line-height:16px;font-weight:600}
+.nt-dialog .qf-order .qf-status.pending_review{border-color:color-mix(in srgb,#fcd34d 35%,transparent);background:color-mix(in srgb,#fcd34d 10%,transparent);color:#fcd34d}
+.nt-dialog .qf-order-amounts{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.nt-dialog .qf-order-amounts>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.nt-dialog .qf-order-amounts small,.nt-dialog .qf-order dt{font-size:12px;line-height:18px;color:var(--qf-muted)}
+.nt-dialog .qf-order-amounts strong{font-family:'IBM Plex Mono',monospace;font-size:24px;line-height:32px;font-weight:600;overflow-wrap:anywhere}
+.nt-dialog .qf-order-amounts strong span{margin-left:6px;font-family:inherit;font-size:15px;font-weight:400;color:var(--qf-muted)}
+.nt-dialog .qf-order-rate{align-items:flex-end}
+.nt-dialog .qf-order-rate strong{font-size:18px;line-height:28px;color:#2bc287}
+.nt-dialog .qf-order-section{display:flex;flex-direction:column;gap:12px}
+.nt-dialog .qf-order-section h3{margin:0;font-size:12px;line-height:16px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--qf-secondary)}
+.nt-dialog .qf-order-section dl{display:flex;flex-direction:column;gap:12px;margin:0}
+.nt-dialog .qf-order-section dl>div{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+.nt-dialog .qf-order-section dd{margin:0;text-align:right;font-size:15px;line-height:22px;color:#fff}
+.nt-dialog .qf-order-section dd.mono{font-family:'IBM Plex Mono',monospace}
+
+/* Positions row actions and payout records (reference measured, 2026-11-26). */
+.qf-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;white-space:nowrap}
+.qf-row-action{display:inline-flex;align-items:center;height:32px;padding:0 12px;border:1px solid #191b1f;border-radius:999px;font-size:12px;line-height:16px;font-weight:600;color:#b4b5b6;background:transparent}
+.qf-row-action:hover,.qf-row-action:focus-visible{outline:none;background:#ffffff0d;color:#fff}
+.qf-row-action.primary{border-color:rgba(165,255,74,.4);color:#a5ff4a}
+.qf-row-action.primary:hover,.qf-row-action.primary:focus-visible{background:rgba(165,255,74,.1);color:#a5ff4a}
+.qf-row-action:focus-visible{text-decoration:underline;text-underline-offset:3px}
+.qf-accrued-estimate{display:block;margin-top:2px;font-size:12px;line-height:16px;color:var(--qf-muted)}
+.qf-interest-records{display:flex;flex-direction:column;gap:16px;padding:40px 0 56px}
+.qf-back{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;font-size:14px;line-height:20px;color:var(--qf-muted)}
+.qf-back svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.qf-back:hover,.qf-back:focus-visible{outline:none;color:#fff;text-decoration:underline}
+.qf-interest-head{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.qf-interest-head h1{margin:0;font-family:Syne,'PingFang SC',sans-serif;font-size:30px;line-height:36px;font-weight:600;letter-spacing:-.025em}
+.qf-interest-head p{margin:0;font-size:14px;line-height:20px;color:var(--qf-muted)}
+.qf-interest-empty{align-items:center;gap:12px;padding:40px 24px;text-align:center}
+.qf-interest-empty p{margin:0;font-size:14px;color:var(--qf-muted)}
+.qf-interest-empty-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#ffffff0d;color:var(--qf-muted)}
+.qf-interest-empty-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media(pointer:coarse){.qf-row-action{height:44px}}
