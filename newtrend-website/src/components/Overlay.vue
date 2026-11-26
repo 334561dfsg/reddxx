@@ -45,7 +45,7 @@ const {switchTo:switchLocale}=useLocaleSwitch()
 async function changeLanguage(l){if(await switchLocale(l))close()}
 // onConfirm may return a promise (an API call): the confirm action then shows busy, close paths are held, and a
 // rejection keeps the dialog open with a toast (its message is a locale key).
-async function accountAction(){if(done.value||closing.value||busy.value)return;error.value='';try{if(current.value.type==='account-edit'){if(!message.value.trim()){error.value="profile.enterUsername";return}current.value.data.onSave?.(message.value.trim())}else{const pending=current.value.data.onConfirm?.();if(pending?.then){flow.value={...flow.value,busy:true};try{await pending}finally{flow.value={...flow.value,busy:false}}}}done.value=true;close()}catch(cause){error.value=cause.message||'c2c.error.generic'}}
+async function accountAction(){if(done.value||closing.value||busy.value)return;error.value='';try{const pending=current.value.data.onConfirm?.();if(pending?.then){flow.value={...flow.value,busy:true};try{await pending}finally{flow.value={...flow.value,busy:false}}}done.value=true;close()}catch(cause){error.value=cause.message||'c2c.error.generic'}}
 function switchFromMenu(mode){
   if(mode===session.mode||closing.value)return
   const from=route.fullPath
@@ -56,7 +56,7 @@ function openSupportChat(){supportView.value='chat';error.value='';nextTick(()=>
 // Footer primary action per flow type; null when the type has none.
 const primary=computed(()=>{
  const c=current.value,f=flow.value;if(!c)return null
- const confirmable=['account-edit','account-confirm','c2c-agreement']
+ const confirmable=['account-confirm','c2c-agreement']
  if(confirmable.includes(c.type))return {form:'account-action',label:c.data.confirmLabel||'earn.redeem.success.done',danger:c.data.destructive,disabled:done.value||closing.value}
  if(formType.value)return {form:'action-form',label:f.done?'assets.statusCompleted':'earn.redeem.success.done',disabled:f.done||!f.valid}
  if(c.type==='c2c-account')return {form:'c2c-account-form',label:c.data.account?'c2c.accounts.form.submitSave':'c2c.accounts.form.submitCreate',disabled:closing.value||!f.valid}
@@ -80,7 +80,6 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 </template>
 <template v-else-if="current.type==='wallet'"><p class="notice">{{ $t("overlay.ui.thisLocalDemoDoesNotRequestWalletPermissionsOr") }}</p><button class="primary-button wide-button section-gap" @click="login();done=true" :disabled="done">{{ $t("overlay.ui.connectDemoWallet") }}</button><FeedbackToast v-if="done" type="success" :source="() => (done) ? ($t('overlay.ui.localDemoAccountConnected')) : ''"/></template>
 <template v-else-if="current.type==='messages'"><div class="empty"><Icon name="mail"/><p>{{ $t("overlay.ui.noNewMessages") }}</p></div></template>
-<template v-else-if="current.type==='account-edit'"><form id="account-action" class="form-stack" @submit.prevent="accountAction"><label>{{ $t(current.title) }}<input v-model="message" maxlength="60" :aria-label="$t(current.title)"/></label></form></template>
 <C2CAccountForm v-else-if="current.type==='c2c-account'" :account="current.data.account" @state="onFlowState" @saved="current.data.onSaved?.();close()"/>
 <C2COrderDetail v-else-if="current.type==='c2c-detail'" :id="current.data.id"/>
 <template v-else-if="current.type==='c2c-agreement'"><p class="muted">{{ $t('c2c.agreement.version',{version:'v1-draft'}) }}</p><p class="c2c-agreement-copy">{{ $t('c2c.agreement.body') }}</p><form id="account-action" @submit.prevent="accountAction"></form></template>
