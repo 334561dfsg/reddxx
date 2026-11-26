@@ -154,10 +154,6 @@
 .pc-shell .phone-input input{flex:1;min-width:0}
 .pc-shell .phone-input select{width:110px}
 .pc-shell .center{text-align:center}
-.pc-shell .account-faq{border-bottom:1px solid #191b1f;padding:20px 0;line-height:1.7}
-.pc-shell .account-faq summary{cursor:pointer}
-.pc-shell .account-faq p{margin-top:12px;color:#a0a1a2}
-.pc-shell.account-help-center .pc-main>input{min-height:44px;padding:0 16px;border:1px solid #191b1f;border-radius:999px;background:#0c1017}
 
 @media(max-width:1023px){
  .pc-shell .pc-steps{grid-template-columns:repeat(2,minmax(0,1fr))}

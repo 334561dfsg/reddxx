@@ -209,7 +209,11 @@
       "security1Answer": "Allez dans Profil → Paramètres personnels → Authentification à deux facteurs pour la configurer.",
       "security2": "Que faire si mon compte est compromis ?",
       "security2Answer": "Contactez immédiatement le service client pour geler votre compte et fournissez les documents justificatifs."
-    }
+    },
+    "categoriesLabel": "Catégories de questions",
+    "resultCount": "{{count}} questions",
+    "contactTitle": "Vous n'avez pas trouvé de réponse ?",
+    "contactDescription": "Notre équipe support est en ligne pour vous aider, ou consultez les dernières annonces."
   },
   "vip": {
     "totalDeposited": "Dépôts cumulés",

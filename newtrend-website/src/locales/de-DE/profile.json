@@ -209,7 +209,11 @@
       "security1Answer": "Gehen Sie zu Profil → Persönliche Einstellungen → Zwei-Faktor-Authentifizierung, um sie einzurichten.",
       "security2": "Was tun, wenn mein Konto kompromittiert wurde?",
       "security2Answer": "Kontaktieren Sie sofort den Kundensupport, um Ihr Konto zu sperren, und legen Sie entsprechende Nachweise vor."
-    }
+    },
+    "categoriesLabel": "Fragekategorien",
+    "resultCount": "{{count}} Fragen",
+    "contactTitle": "Keine Antwort gefunden?",
+    "contactDescription": "Unser Support-Team hilft Ihnen online, oder lesen Sie die neuesten Ankündigungen."
   },
   "vip": {
     "totalDeposited": "Kumulierte Einzahlungen",

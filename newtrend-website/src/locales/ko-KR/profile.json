@@ -209,7 +209,11 @@
       "security1Answer": "프로필 → 개인 설정 → 2단계 인증에서 설정하세요.",
       "security2": "계정이 침해되면 어떻게 하나요?",
       "security2Answer": "즉시 고객 지원에 연락해 계정을 동결하고 증빙 서류를 제출하세요."
-    }
+    },
+    "categoriesLabel": "질문 분류",
+    "resultCount": "질문 {{count}}개",
+    "contactTitle": "답을 찾지 못하셨나요?",
+    "contactDescription": "고객지원팀이 온라인으로 도와드립니다. 최신 공지도 확인해 보세요."
   },
   "vip": {
     "totalDeposited": "누적 입금액",

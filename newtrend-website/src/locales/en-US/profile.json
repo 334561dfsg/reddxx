@@ -209,7 +209,11 @@
       "security1Answer": "Go to Profile → Personal Settings → Two-Factor Auth to set it up.",
       "security2": "What if my account is compromised?",
       "security2Answer": "Contact customer support immediately to freeze your account and provide supporting documentation."
-    }
+    },
+    "categoriesLabel": "Question categories",
+    "resultCount": "{{count}} questions",
+    "contactTitle": "Didn't find an answer?",
+    "contactDescription": "Our support team is online to help, or check the latest announcements."
   },
   "vip": {
     "totalDeposited": "Cumulative deposits",

@@ -209,7 +209,11 @@
       "security1Answer": "プロフィール → 個人設定 → 二段階認証から設定できます。",
       "security2": "アカウントが侵害された場合はどうすればよいですか?",
       "security2Answer": "すぐにカスタマーサポートに連絡してアカウントを凍結し、証明書類を提出してください。"
-    }
+    },
+    "categoriesLabel": "質問カテゴリ",
+    "resultCount": "{{count}} 件の質問",
+    "contactTitle": "答えが見つかりませんか？",
+    "contactDescription": "サポートチームがオンラインでお答えします。最新のお知らせもご確認いただけます。"
   },
   "vip": {
     "totalDeposited": "累計入金額",

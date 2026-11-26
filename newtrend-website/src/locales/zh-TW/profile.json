@@ -209,7 +209,11 @@
       "security1Answer": "進入「個人中心」→「個人設定」→「雙重認證」進行設定。",
       "security2": "帳戶被盜怎麼辦？",
       "security2Answer": "請立即聯絡客服凍結帳戶，並提供相關證明文件。"
-    }
+    },
+    "categoriesLabel": "問題分類",
+    "resultCount": "共 {{count}} 個問題",
+    "contactTitle": "沒有找到答案？",
+    "contactDescription": "客服團隊在線為你解答，也可以查看最新公告。"
   },
   "vip": {
     "totalDeposited": "累計入金",
