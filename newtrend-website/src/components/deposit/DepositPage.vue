@@ -1,7 +1,8 @@
 <script setup>
 import LineIcon from '../ui/LineIcon.vue'
-import {coinImage} from '../../utils/coinAssets'
-import {computed,h,onBeforeUnmount,ref,watch} from 'vue'
+import {networksOf} from '../../mock/chains.js'
+import {coinOptions as coinOptionsFor,networkOptions as networkOptionsFor} from './chainOptions.js'
+import {computed,onBeforeUnmount,ref,watch} from 'vue'
 import {message} from 'ant-design-vue'
 import NtSelect from '../ui/NtSelect.vue'
 import {path} from '../../data'
@@ -12,19 +13,11 @@ import {invalidate} from '../../composables/useRequest.js'
 import {t} from '../../i18n'
 import '../../styles/deposit-fidelity.css'
 
-// Coin → supported network list, measured from the source deposit page (2026-11-26).
-const coins=[
- {symbol:'USDT',networks:['ETH','TRX','SOL','BASE']},
- {symbol:'ETH',networks:['ETH']},
- {symbol:'BTC',networks:['BTC']},
- {symbol:'USDC',networks:['ETH','SOL','BASE']},
- {symbol:'SOL',networks:['SOL']},
- {symbol:'DAI',networks:['ETH']},
-]
+// Coin → network list and Select options are shared with the withdraw page (mock/chains.js, chainOptions.js).
 const MAX_FILE=10*1024*1024
 
 const coin=ref('USDT'),network=ref('ETH'),amount=ref(''),hash=ref(''),file=ref(null),preview=ref(''),busy=ref(false),attempted=ref(false)
-const networks=computed(()=>coins.find(c=>c.symbol===coin.value)?.networks||[])
+const networks=computed(()=>networksOf(coin.value))
 // Demo-only placeholder: intentionally not a valid on-chain address so nothing can be sent to it.
 const address=computed(()=>`DEMO-${network.value}-ADDRESS-NOT-FOR-TRANSFER`)
 const amountValue=computed(()=>Number(amount.value))
@@ -34,9 +27,8 @@ const ready=computed(()=>!amountInvalid.value&&!hashInvalid.value&&!!file.value)
 
 watch(coin,()=>{if(!networks.value.includes(network.value))network.value=networks.value[0]})
 
-const coinMark=symbol=>coinImage(symbol,'logo')?h('img',{class:'deposit-coin',src:coinImage(symbol,'logo'),alt:''}):h('span',{class:'deposit-coin deposit-coin-text','aria-hidden':'true'},symbol.slice(0,2))
-const coinOptions=computed(()=>coins.map(({symbol})=>({value:symbol,label:symbol,display:h('span',{class:'deposit-option'},[coinMark(symbol),h('span',{class:'deposit-option-text'},[h('strong',symbol),h('small',symbol)])])})))
-const networkOptions=computed(()=>networks.value.map(code=>({value:code,label:code,display:h('span',{class:'deposit-option deposit-network'},[h('span',{class:'deposit-dot','aria-hidden':'true'}),h('strong',code),h('small',code)])})))
+const coinOptions=coinOptionsFor()
+const networkOptions=computed(()=>networkOptionsFor(networks.value))
 
 async function copyAddress(){try{await navigator.clipboard.writeText(address.value);message.success(t('deposit.copySuccess'))}catch{message.error(t('deposit.copyFailed'))}}
 function clearPreview(){if(preview.value)URL.revokeObjectURL(preview.value);preview.value=''}

@@ -30,9 +30,16 @@ test('transfer validates and records per mode without moving funds', async () =>
 })
 
 test('withdrawal and deposit voucher stay pending and validate inputs', async () => {
-  await assert.rejects(api.requestWithdrawal({mode: DEMO, coin: 'USDT', address: ' ', amount: 1}), {code: 'assets.withdraw.error.addressRequired'})
-  const withdrawal = await api.requestWithdrawal({mode: DEMO, coin: 'USDT', address: 'demo', amount: 3})
+  const ethAddress = '0x' + 'a'.repeat(40)
+  await assert.rejects(api.requestWithdrawal({mode: DEMO, coin: 'USDT', network: 'ETH', address: ' ', amount: 1}), {code: 'assets.withdraw.error.addressRequired'})
+  await assert.rejects(api.requestWithdrawal({mode: DEMO, coin: 'USDT', network: 'ETH', address: 'demo', amount: 1}), {code: 'assets.withdraw.error.invalidAddress'})
+  await assert.rejects(api.requestWithdrawal({mode: DEMO, coin: 'BTC', network: 'ETH', address: ethAddress, amount: 1}), {code: 'assets.withdraw.error.disabled'})
+  await assert.rejects(api.requestWithdrawal({mode: REAL, coin: 'USDT', network: 'ETH', address: ethAddress, amount: 1}), {code: 'assets.withdraw.error.insufficientBalance'})
+  const before = balanceOf(DEMO, 'USDT')
+  const withdrawal = await api.requestWithdrawal({mode: DEMO, coin: 'USDT', network: 'ETH', address: ethAddress, amount: 3})
   assert.equal(withdrawal.status, 'pending')
+  assert.equal(withdrawal.received, 3)
+  assert.equal(balanceOf(DEMO, 'USDT'), before - 3, 'the requested amount is locked')
   await assert.rejects(api.submitDepositVoucher({mode: DEMO, coin: 'USDT', amount: 1}), {code: 'deposit.voucher.screenshotRequired'})
   await assert.rejects(api.submitDepositVoucher({mode: DEMO, coin: 'USDT', amount: 1, txHash: 'x'.repeat(129), fileName: 'a.png'}), {code: 'deposit.voucher.txHashTooLong'})
   const {voucherId, record} = await api.submitDepositVoucher({mode: DEMO, coin: 'USDT', amount: 1, fileName: 'a.png'})

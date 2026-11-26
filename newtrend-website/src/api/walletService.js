@@ -4,6 +4,7 @@
 // Validation failures reject with ApiError whose code is the locale key the form already shows.
 import {balancesOf, credit, debit} from '../mock/ledger.js'
 import {addWalletRecord, walletRecords, walletMode} from '../walletRecords.js'
+import {ADDRESS_MAX_LENGTH, networksOf, validAddress, withdrawFee} from '../mock/chains.js'
 import {ApiError, mockCall, snapshot} from './transport.js'
 
 const SERVICE = 'wallet'
@@ -36,11 +37,23 @@ export function createWalletApi({accountValues, priceOf}) {
     return snapshot(addWalletRecord(mode, 'transfer', {label: {key: 'assets.transferRecord', params: labels}, amount, symbol: currency}))
   })
 
-  /** POST /assets/withdrawals {mode, coin, network, address, amount} — a pending request; nothing is sent. */
-  const requestWithdrawal = ({mode, coin, address, amount}) => mockCall(SERVICE, () => {
-    if (!positive(amount)) throw new ApiError('aiQuant.quantFund.subscribe.errorAmountInvalid')
-    if (!String(address || '').trim()) throw new ApiError('assets.withdraw.error.addressRequired')
-    return snapshot(addWalletRecord(mode, 'withdraw', {label: 'content.ui.demoWithdrawalRequest', amount, symbol: coin, status: 'pending'}))
+  /**
+   * POST /assets/withdrawals {mode, coin, network, address, amount} — validates network, address format, amount and
+   * balance, then locks the amount (it leaves the available balance) and records a pending request; nothing is sent.
+   * The fee comes from the chain catalogue and is taken out of the amount (received = amount − fee).
+   */
+  const requestWithdrawal = ({mode, coin, network, address, amount}) => mockCall(SERVICE, () => {
+    const cleanAddress = String(address || '').trim(), value = Number(amount)
+    if (!networksOf(coin).includes(network)) throw new ApiError('assets.withdraw.error.disabled')
+    if (!cleanAddress) throw new ApiError('assets.withdraw.error.addressRequired')
+    if (cleanAddress.length > ADDRESS_MAX_LENGTH) throw new ApiError('assets.withdraw.error.addressTooLong', {max: ADDRESS_MAX_LENGTH})
+    if (!validAddress(network, cleanAddress)) throw new ApiError('assets.withdraw.error.invalidAddress')
+    if (!positive(amount)) throw new ApiError('assets.withdraw.error.amountPositive')
+    const fee = withdrawFee(coin, network)
+    if (fee > 0 && fee >= value) throw new ApiError('assets.withdraw.error.feeExceedsAmount')
+    if (value > (balancesOf(mode)[coin] || 0) || !debit(mode, coin, value)) throw new ApiError('assets.withdraw.error.insufficientBalance')
+    const record = addWalletRecord(mode, 'withdraw', {label: 'content.ui.demoWithdrawalRequest', amount: value, symbol: coin, status: 'pending'})
+    return {...snapshot(record), network, address: cleanAddress, fee, received: value - fee}
   })
 
   /** POST /assets/deposit-vouchers {mode, coin, network, amount, txHash, fileName} — a pending voucher: {voucherId, record}. */

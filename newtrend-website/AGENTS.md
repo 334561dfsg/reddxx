@@ -204,7 +204,7 @@ Both AI Quant channels follow the reference front-end logic (read from its publi
 
 ## Deposit page (reference measured, 2026-11-26)
 
-`/deposit` uses `src/components/deposit/DepositPage.vue`, matching newtrendcapital.com/zh-TW/deposit: 1152px container, coin/network Ant Design Selects (48px pill, coin icon + two-line label, dot network), yellow voucher warning, address card with copy action, amount/TXID fields and a dashed screenshot upload. Coin networks follow the source: USDT ETH/TRX/SOL/BASE, USDC ETH/SOL/BASE, ETH/BTC/SOL single-chain (DAI ETH assumed). The address stays a non-transferable `DEMO-<NETWORK>-ADDRESS-NOT-FOR-TRANSFER` placeholder; never show a realistic on-chain address. Omit the source's lime open-state border per the no-highlight-border rule. Withdraw keeps its separate form in `Content.vue`.
+`/deposit` uses `src/components/deposit/DepositPage.vue`, matching newtrendcapital.com/zh-TW/deposit: 1152px container, coin/network Ant Design Selects (48px pill, coin icon + two-line label, dot network), yellow voucher warning, address card with copy action, amount/TXID fields and a dashed screenshot upload. Coin networks follow the source: USDT ETH/TRX/SOL/BASE, USDC ETH/SOL/BASE, ETH/BTC/SOL single-chain (DAI ETH assumed). The address stays a non-transferable `DEMO-<NETWORK>-ADDRESS-NOT-FOR-TRANSFER` placeholder; never show a realistic on-chain address. Omit the source's lime open-state border per the no-highlight-border rule. Withdraw is `pages/Withdraw.vue` (see below).
 
 ## AI Quant seeded demo holdings (user request, 2026-11-26)
 
@@ -353,4 +353,8 @@ The prototype keeps mock data, but pages must already behave like they call a se
 ## Transfer dialog (user decision, 2026-11-26)
 
 Transfer is a dialog (`components/overlay/AssetTransfer.vue`, Overlay type `transfer`), not a page. Layout follows the user's reference: From / To account selects joined by a green→red rail with a swap button, divider, currency select, quantity with an inline 全部 and the available line, full-width submit; no default footer. Fields start empty; choosing one account sets the other to the opposite. Keep the NewQuantCapital palette (lime submit) and the no-highlight-border rule (Select variant `dialog`). Selects inside native dialogs must portal their popups into the dialog (`getPopupContainer`), never `document.body`. `/assets/transfer` and the header menu link land on the assets overview and open the dialog. The trading account holds USDT margin only; the API validates the available amount per source account.
+
+## Withdraw page (reference measured, 2026-11-26)
+
+`/withdraw` matches newtrendcapital.com/zh-TW/withdraw (measured at 1918px, positions identical): shared 1152px `.deposit-page` shell and top links; 可用餘額 card (44px lime icon, 18/28 value); two columns `minmax(0,1fr) 380px` gap 32 — coin and network pill Selects (network shows code + name without the deposit dot), address input with 粘貼 (and a clear ×), amount input with unit + 最大; right: 合計扣除 / 手續費 / 實際到帳 card and the 安全提示 card; full-width lime pill submit. Styles in `styles/withdraw-fidelity.css` (`.wd-` prefix). Coins, networks, withdraw fees (0, as on the reference) and address formats live in `mock/chains.js`, shared with deposit and the wallet service. The API validates network, address format, amount and balance and locks the amount (pending record); feedback is toast-only. Nothing is ever sent on-chain.
 

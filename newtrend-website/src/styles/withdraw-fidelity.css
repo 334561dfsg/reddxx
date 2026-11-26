@@ -1,0 +1,65 @@
+/* Withdraw page — newtrendcapital.com/zh-TW/withdraw, measured 2026-11-26 (computed styles).
+   Shares .deposit-page (1152px container, top links, title), .deposit-select (48px pill Select) and its option
+   markup with the deposit page; everything specific to withdraw is prefixed .wd-. */
+.withdraw-page .withdraw-subtitle{margin-bottom:32px}
+.withdraw-page .wd-num{font-variant-numeric:tabular-nums}
+
+/* Shared card: #0c1017, 1px divider border, 24px corners, 16px padding. */
+.withdraw-page .wd-card{border:1px solid #191b1f;border-radius:24px;background:#0c1017;padding:16px}
+
+/* Available balance: 44px lime-tinted icon, 12/16 caption, 18/28 600 value + 14px grey unit. */
+.withdraw-page .wd-balance{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.withdraw-page .wd-balance-icon{display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;border-radius:50%;background:#a5ff4a1a;color:var(--nt-accent)}
+.withdraw-page .wd-balance-icon svg{width:20px;height:20px}
+.withdraw-page .wd-caption{font-size:12px;line-height:16px;color:#a0a1a2}
+.withdraw-page .wd-balance-value{margin-top:4px;font-size:18px;line-height:28px;font-weight:600}
+.withdraw-page .wd-unit{margin-left:4px;font-size:14px;line-height:20px;font-weight:400;color:#a0a1a2}
+
+/* Two columns: fields | 380px summary + tips (32px gap); 24px between stacked blocks. */
+.withdraw-page .wd-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start}
+.withdraw-page .wd-main,.withdraw-page .wd-side{display:grid;gap:24px;min-width:0}
+.withdraw-page .wd-field{display:grid;gap:6px;min-width:0}
+.withdraw-page .wd-field>label{font-size:14px;line-height:19.25px;font-weight:500;color:#fff}
+.withdraw-page .wd-network-select .deposit-option strong{font-weight:600}
+
+/* Text inputs: 48px, 24px corners, #0c1017 with the divider border; actions sit inside on the right. */
+.withdraw-page .wd-input{position:relative}
+.deposit-page.withdraw-page .wd-input input:not(.ant-select-selection-search-input){height:48px;min-height:48px;padding:4px 112px 4px 12px;border:1px solid #191b1f;border-radius:24px;background:#0c1017;font-size:14px;line-height:20px}
+.deposit-page.withdraw-page .wd-input-address input:not(.ant-select-selection-search-input){padding-right:120px}
+.deposit-page.withdraw-page .wd-input input::placeholder{color:#a0a1a2}
+.deposit-page.withdraw-page .wd-input input:not(.ant-select-selection-search-input):focus-visible{background:#11161e}
+.deposit-page.withdraw-page .wd-input input[aria-invalid=true]{color:#ff6b84}
+.withdraw-page .wd-input-actions{position:absolute;top:50%;right:12px;display:flex;align-items:center;gap:8px;transform:translateY(-50%)}
+.withdraw-page .wd-input-amount .wd-unit{margin:0;font-size:12px;line-height:16px}
+.withdraw-page .wd-action{display:inline-flex;align-items:center;gap:4px;padding:2px 4px;border-radius:12px;font-size:12px;line-height:16px;font-weight:600;color:var(--nt-accent)}
+.withdraw-page .wd-action svg{width:14px;height:14px}
+.withdraw-page .wd-max{padding:2px 8px;border-radius:12px;font-size:12px;line-height:16px;font-weight:600;color:var(--nt-accent)}
+.withdraw-page .wd-action:hover:not(:disabled),.withdraw-page .wd-max:hover:not(:disabled){background:#a5ff4a1a}
+.withdraw-page .wd-action:focus-visible,.withdraw-page .wd-max:focus-visible,.withdraw-page .wd-clear:focus-visible{outline:none;text-decoration:underline}
+.withdraw-page .wd-max:disabled,.withdraw-page .wd-action:disabled{color:#a0a1a2;cursor:not-allowed}
+.withdraw-page .wd-clear{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#ffffff14;color:#a0a1a2;font-size:14px;line-height:1}
+.withdraw-page .wd-clear:hover{background:#ffffff24;color:#fff}
+
+/* Summary: 14/20 rows 8px apart, grey labels; 實際到帳 after a divider in green 600. */
+.withdraw-page .wd-summary{display:grid;gap:8px;margin:0}
+.withdraw-page .wd-summary>div{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;line-height:20px}
+.withdraw-page .wd-summary dt{color:#a0a1a2}
+.withdraw-page .wd-summary dd{margin:0;color:#fff;text-align:right}
+.withdraw-page .wd-summary .wd-summary-total{padding-top:8px;border-top:1px solid #191b1f}
+.withdraw-page .wd-summary .wd-summary-total dd{color:#2bc287;font-weight:600}
+
+/* Safety tips: 44px red-tinted icon, 14/20 600 title, 12/19.5 grey bullet list. */
+.withdraw-page .wd-tips{display:flex;gap:14px}
+.withdraw-page .wd-tips-icon{display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;border-radius:50%;background:#ff44661a;color:#f46}
+.withdraw-page .wd-tips-icon svg{width:20px;height:20px}
+.withdraw-page .wd-tips h2{margin:0 0 8px;font-size:14px;line-height:20px;font-weight:600;color:#fff}
+.withdraw-page .wd-tips ul{margin:0;padding-left:16px;list-style:disc;font-size:12px;line-height:19.5px;color:#a0a1a2}
+.withdraw-page .wd-tips li+li{margin-top:4px}
+
+/* Full-width lime pill submit, 24px below the columns. */
+.withdraw-page .wd-submit{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin-top:24px;padding:8px 16px;border-radius:999px;background:var(--nt-accent);color:var(--nt-bg);font-size:16px;line-height:24px;font-weight:500}
+.withdraw-page .wd-submit:hover{background:#b6ff6a}
+.withdraw-page .wd-submit.is-busy{opacity:.8;cursor:progress}
+.withdraw-page .wd-submit:focus-visible{outline:none;text-decoration:underline}
+
+@media (max-width:1023px){.withdraw-page .wd-grid{grid-template-columns:1fr;gap:24px}}
