@@ -61,5 +61,8 @@ key claims were re-verified in code before inclusion. Tests 77/77 and locale che
    ids are the base/domain cascade tiers); global import of domain sheets (changes 4 routes); ~100 single `#site-shell` rules, doubled-class
    selectors and `!important` remain. Phase 3 leftovers (Icon registry, StatusTag, SummaryCard/RecordList, NtSelect, named routes) are still open.
 5. **Tests & docs** — kernel, routing table, seed validity, earn eligibility, mode switch; update AGENTS.md.
+   ✅ Done 2026-11-26 (see AGENTS.md "Refactor phase 5"). Route table extracted to `src/routes.js` with names; new `routing.test.mjs` (found and fixed:
+   `/earn/x` rendered an empty Finance page) and `seeds-and-modes.test.mjs`; catalogue facts moved to `src/mock/catalog.js` so stores load in Node;
+   Earn subscriptions use the mock clock; README rewritten for the current structure. Tests 84 → 95.
 
 Verification per phase: unit tests, locale/feedback checks, build, and before/after screenshots of every affected route at 1440/1917px.

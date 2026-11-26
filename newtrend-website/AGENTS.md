@@ -312,3 +312,10 @@ Removed the homepage 了解 AI Quant 運作機制 and strategy 運作機制 vide
 - Cascade tiers use a single id: base/design-system rules are `#main-content …` (formerly `#site-shell #main-content …`) and domain sheets override them with `#main-content .page …`. Do not reintroduce the double-id prefix or add new id tiers.
 - Keep CSS lean with `npm run css:dead` (selectors whose classes/ids never appear in the source; runtime-built names are recognised by their string prefixes/suffixes) and `npm run css:overridden` (declarations a later identical selector always overrides; dvh/color-mix fallbacks are kept). Both are dry runs; `--write` applies. Verify visually after applying.
 - Focus: one cue defined in `styles.css` — underline + slight brightening for buttons/links/tabs/options, brightening for inputs and `tabindex="0"` containers, a light surface for icon-only buttons (`button[aria-label]`, `.icon-button`), nothing for `tabindex="-1"` targets. No rule may set a focus outline, ring or focus box-shadow.
+
+## Refactor phase 5 — tests and docs (2026-11-26)
+
+- Routes live in `src/routes.js` with a unique `name` per page route; `tests/routing.test.mjs` resolves the table (unknown sections → `not-found`, legacy and trade redirects). Add new pages there with a name and a test case. `/earn` and `/earn/:section/:id?` are separate records so `/earn/x` is not-found.
+- Catalogue facts shared by the UI and the stores (Earn products, strategy templates) live in `src/mock/catalog.js`; `data.js` only adds display names. Store modules must stay importable in Node (explicit `.js` extensions, no JSON/i18n/DOM imports) so seeds can be tested.
+- `tests/seeds-and-modes.test.mjs` guards seed validity (Earn holdings/orders vs product limits and terms, strategy seeds vs templates and lifecycle, daily-stats sums), Earn eligibility (simulated profile, blocked subscriptions have no side effects, eligibility snapshot) and per-mode isolation (Earn, trading, strategy balances). New seeds or modes must keep these passing.
+- The site README describes the current structure, mock boundaries and the check commands; keep it in step with structural changes.

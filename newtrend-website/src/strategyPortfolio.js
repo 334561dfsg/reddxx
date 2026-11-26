@@ -1,6 +1,6 @@
 import {reactive} from 'vue'
-import {strategies} from './data'
-import {createStrategyAccount,enrichStrategies,buildDailyStats,completeExpiredStrategies} from './utils/strategyTemplates'
+import {strategies} from './mock/catalog.js'
+import {createStrategyAccount,enrichStrategies,buildDailyStats,completeExpiredStrategies} from './utils/strategyTemplates.js'
 import {bindBalance} from './mock/ledger.js'
 import {bootAt,clock} from './mock/clock.js'
 export const strategyCatalog=enrichStrategies(strategies)

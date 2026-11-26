@@ -4,10 +4,11 @@ import { createEarnPortfolio, redeemLocalHolding } from './utils/mockEarnPortfol
 import { subscriptionError } from './utils/earnProducts.js'
 import { balanceOf, credit, debit, modeKey } from './mock/ledger.js'
 import { nextId } from './mock/ids.js'
+import { bootAt, clock } from './mock/clock.js'
 
 // Earn records are kept per account mode (independent instances of the synthetic fixtures); money moves only
 // through the shared mock ledger. In memory only.
-export const earnPortfolios = reactive({ real: createEarnPortfolio(), demo: createEarnPortfolio() })
+export const earnPortfolios = reactive({ real: createEarnPortfolio(bootAt), demo: createEarnPortfolio(bootAt) })
 export const earnPortfolioFor = mode => earnPortfolios[modeKey(mode)]
 export const earnBalance = (mode, symbol) => balanceOf(mode, symbol)
 
@@ -29,7 +30,7 @@ export function recordEarnSubscription(product, amount, mode) {
   const order = {
     eligibilitySnapshot: { minVerificationLevel: product.minVerificationLevel || 'none', minVipLevel: product.minVipLevel || 0, ...earnMockProfile },
     id: nextId('EARN'), productId: product.id, symbol: product.symbol, amount: value, mode: modeKey(mode),
-    status: 'pending_review', createdAt: Date.now(), completedAt: null,
+    status: 'pending_review', createdAt: clock.now(), completedAt: null,
   }
   earnPortfolioFor(mode).orders.unshift(order)
   return order
