@@ -50,3 +50,29 @@ export function changeStrategyStatus(account,id,action,now=Date.now()) {
  record.status={pause:'paused',resume:'running',stop:'completed'}[action]
  if(action==='stop'){account.balance=Number((account.balance+record.capital+record.pnl).toFixed(8));record.stoppedAt=now}
 }
+
+/**
+ * Synthetic per-day closed-trade stats for a mock strategy record (newest first), shaped like the reference
+ * daily-stats API: [{date:'YYYY-MM-DD', tradeCount, pnl}]. Deterministic for a given seed; only days with
+ * trades are listed and the daily P&L sums exactly to `totalPnl`.
+ */
+export function buildDailyStats({startAt,endAt,totalPnl,seed=1,tradeDayRatio=.75}) {
+ const DAY=86400000
+ let state=seed>>>0||1
+ const rand=()=>{state=(state*1664525+1013904223)>>>0;return state/4294967296}
+ const days=[]
+ for(let t=startAt;t<endAt;t+=DAY){if(rand()<tradeDayRatio)days.push(new Date(t).toISOString().slice(0,10))}
+ if(!days.length)return []
+ // Most days lean with the overall result; roughly a quarter go the other way with smaller moves.
+ const lean=totalPnl>=0?1:-1
+ const raw=days.map(()=>rand()<.27?-lean*rand()*.55:lean*(.25+rand()))
+ const sum=raw.reduce((a,b)=>a+b,0)||1
+ const cents=raw.map(v=>Math.round(v/sum*totalPnl*100))
+ cents[cents.length-1]+=Math.round(totalPnl*100)-cents.reduce((a,b)=>a+b,0)
+ return days.map((date,i)=>({date,tradeCount:1+Math.floor(rand()*4),pnl:cents[i]/100})).reverse()
+}
+
+/** Reference summary for the daily-stats panel. */
+export function summarizeDailyStats(items) {
+ return {totalPnl:Math.round(items.reduce((s,i)=>s+i.pnl,0)*100)/100,totalTradeCount:items.reduce((s,i)=>s+i.tradeCount,0),activeDays:items.length}
+}

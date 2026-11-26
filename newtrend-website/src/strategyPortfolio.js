@@ -1,6 +1,6 @@
 import {reactive} from 'vue'
 import {strategies} from './data'
-import {createStrategyAccount,enrichStrategies} from './utils/strategyTemplates'
+import {createStrategyAccount,enrichStrategies,buildDailyStats} from './utils/strategyTemplates'
 export const strategyCatalog=enrichStrategies(strategies)
 // Real and demo accounts are kept apart, like the reference lists strategies per account mode.
 export const strategyAccounts=reactive({real:createStrategyAccount(0),demo:createStrategyAccount()})
@@ -18,7 +18,10 @@ export const strategyFilters=reactive({style:'',market:'',sort:'sharpe_desc'})
 {const real=strategyAccounts.real,DAY=86400000,find=name=>strategyCatalog.find(s=>s.name===name)
  const seed=(id,name,{capital,days,startDaysAgo,status,pnl,stoppedDaysAgo})=>{const template=find(name);if(!template)return
   const createdAt=SEEDED_AT-startDaysAgo*DAY
-  real.records.push({id,template:{...template,symbols:[...template.symbols]},capital,days,takeProfit:20,stopLoss:10,status,mode:'real',pnl,createdAt,endAt:createdAt+days*DAY,...(stoppedDaysAgo!=null?{stoppedAt:SEEDED_AT-stoppedDaysAgo*DAY}:{})})}
+  const stoppedAt=stoppedDaysAgo!=null?SEEDED_AT-stoppedDaysAgo*DAY:null
+  // Synthetic closed-trade history up to today (or the stop date) that adds up to the record's P&L.
+  const dailyStats=buildDailyStats({startAt:createdAt,endAt:stoppedAt??SEEDED_AT,totalPnl:pnl,seed:id.length*7919+capital})
+  real.records.push({id,template:{...template,symbols:[...template.symbols]},capital,days,takeProfit:20,stopLoss:10,status,mode:'real',pnl,createdAt,endAt:createdAt+days*DAY,dailyStats,...(stoppedAt!=null?{stoppedAt}:{})})}
  seed('seed-real-strategy-2','Stable Crypto Income',{capital:1000,days:14,startDaysAgo:6,status:'paused',pnl:-8.5})
  seed('seed-real-strategy-1','Diversified Index Growth',{capital:2000,days:30,startDaysAgo:12,status:'running',pnl:36.2})
  seed('seed-real-strategy-3','FX Carry Conservative',{capital:800,days:30,startDaysAgo:40,status:'completed',pnl:12.4,stoppedDaysAgo:10})}

@@ -12,7 +12,7 @@ import QuantAmbient from '../components/quant/QuantAmbient.vue'
 import {quantFunds} from '../quantFundPortfolio'
 import '../styles/quant-fidelity.css'
 const route=useRoute(),router=useRouter(),market=shallowRef('all')
-const productId=computed(()=>route.params.productId||''),orderId=computed(()=>route.params.orderId||''),section=computed(()=>productId.value||orderId.value?'quant-fund':route.params.section),mine=computed(()=>['mine','positions'].includes(route.params.id)),isFund=computed(()=>section.value==='quant-fund')
+const productId=computed(()=>route.params.productId||''),orderId=computed(()=>route.params.orderId||''),section=computed(()=>route.params.recordId?'strategy':productId.value||orderId.value?'quant-fund':route.params.section),mine=computed(()=>['mine','positions'].includes(route.params.id)),isFund=computed(()=>section.value==='quant-fund')
 const assets=computed(()=>[...new Set(quantFunds.map(p=>p.asset))].sort())
 const funds=computed(()=>market.value==='all'?quantFunds:quantFunds.filter(p=>p.asset===market.value))
 function openFund(product){router.push(path(`/ai-quant/quant-fund/products/${product.id}`))}

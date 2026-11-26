@@ -17,7 +17,7 @@ const returnPercent=record=>record.capital?record.pnl/record.capital*100:0
 const endDate=record=>new Date(record.endAt).toLocaleDateString(locale.value,{year:'numeric',month:'2-digit',day:'2-digit'})
 const styleKey=record=>record.template.style
 const marketKey=record=>record.template.market
-const expanded=ref(''),feedback=ref(null),busy=ref(null)
+const feedback=ref(null),busy=ref(null)
 function notify(type,key){feedback.value=null;requestAnimationFrame(()=>{feedback.value={type,key}})}
 // Local mock settles after a short simulated round trip so the row shows a real loading state.
 // busy={id,kind}: the clicked button spins, the row's other actions are disabled, repeated clicks are ignored.
@@ -36,7 +36,6 @@ function act(record,kind){
  if(kind!=='stop')return apply(record,kind)
  openModal('account-confirm','aiQuant.actions.stopConfirm.title',{subtitle:record.template.name,danger:{key:'aiQuant.actions.stopConfirm.notice',params:{name:record.template.name}},cancelLabel:'aiQuant.actions.stopConfirm.cancel',confirmLabel:'aiQuant.actions.stopConfirm.confirm',destructive:true,focusCancel:true,onConfirm:()=>apply(record,'stop')})
 }
-const toggle=id=>{expanded.value=expanded.value===id?'':id}
 </script>
 <template>
 <div class="my-strategies">
@@ -63,10 +62,10 @@ const toggle=id=>{expanded.value=expanded.value===id?'':id}
        <svg v-else class="ms-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
        <span>{{ $t('aiQuant.actions.'+kind) }}</span>
       </button></template>
-      <button type="button" class="ms-button ghost" :aria-expanded="expanded===record.id" :aria-controls="'ms-stats-'+record.id" @click="toggle(record.id)">{{ $t(expanded===record.id?'aiQuant.actions.hideStats':'aiQuant.actions.viewStats') }}<svg class="ms-icon ms-chevron" :class="{open:expanded===record.id}" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <RouterLink class="ms-button ghost" :to="path('/ai-quant/strategy/mine/'+encodeURIComponent(record.id)+'/stats')">{{ $t('aiQuant.actions.viewStats') }}<svg class="ms-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></RouterLink>
      </div></td>
     </tr>
-    <tr v-if="expanded===record.id" :id="'ms-stats-'+record.id" class="ms-stats-row"><td colspan="5"><p class="ms-stats-empty">{{ $t('aiQuant.dailyStats.empty') }}</p></td></tr>
+    
    </template></tbody>
   </table></div>
  </template>

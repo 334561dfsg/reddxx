@@ -34,6 +34,7 @@ const router=createRouter({history:createWebHistory('/NewQuantCapital/'),routes:
  {path:'/earn/:section?/:id?',component:Finance},
  {path:'/ai-quant/quant-fund/products/:productId',component:Quant},
  {path:'/ai-quant/quant-fund/positions/:orderId/interest-records',component:Quant},
+ {path:'/ai-quant/strategy/mine/:recordId/stats',component:Quant},
  {path:'/ai-quant/:section?/:id?',component:Quant},
  {path:'/assets/:section?',component:Assets},
  {path:'/:auth(login|register|forgot-password)',component:Auth},

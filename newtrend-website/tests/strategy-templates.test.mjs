@@ -54,3 +54,17 @@ test('login redirect accepts only same-site absolute paths',async()=>{
  assert.equal(safeRedirect('/ai-quant/strategy'),'/ai-quant/strategy')
  for(const bad of ['//evil.example','https://evil.example','ai-quant','/a\\b','/a\nb',undefined,['//x']])assert.equal(safeRedirect(bad),null)
 })
+
+test('buildDailyStats lists trading days newest first and sums exactly to the strategy P&L', async () => {
+  const {buildDailyStats, summarizeDailyStats} = await import('../src/utils/strategyTemplates.js')
+  const DAY = 86400000, end = Date.UTC(2026, 10, 26), start = end - 30 * DAY
+  for (const totalPnl of [36.2, -8.5, 12.4]) {
+    const items = buildDailyStats({startAt: start, endAt: end, totalPnl, seed: 42})
+    assert.ok(items.length > 0)
+    assert.deepEqual([...items].sort((a, b) => b.date.localeCompare(a.date)), items)
+    assert.equal(summarizeDailyStats(items).totalPnl, totalPnl)
+    assert.ok(items.every(i => i.tradeCount >= 1))
+    assert.deepEqual(buildDailyStats({startAt: start, endAt: end, totalPnl, seed: 42}), items)
+  }
+  assert.deepEqual(buildDailyStats({startAt: end, endAt: end, totalPnl: 0}), [])
+})
