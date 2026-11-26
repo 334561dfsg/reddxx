@@ -24,4 +24,14 @@ export const strategyFilters=reactive({style:'',market:'',sort:'sharpe_desc'})
   real.records.push({id,template:{...template,symbols:[...template.symbols]},capital,days,takeProfit:20,stopLoss:10,status,mode:'real',pnl,createdAt,endAt:createdAt+days*DAY,dailyStats,...(stoppedAt!=null?{stoppedAt}:{})})}
  seed('seed-real-strategy-2','Stable Crypto Income',{capital:1000,days:14,startDaysAgo:6,status:'paused',pnl:-8.5})
  seed('seed-real-strategy-1','Diversified Index Growth',{capital:2000,days:30,startDaysAgo:12,status:'running',pnl:36.2})
- seed('seed-real-strategy-3','FX Carry Conservative',{capital:800,days:30,startDaysAgo:40,status:'completed',pnl:12.4,stoppedDaysAgo:10})}
+ seed('seed-real-strategy-3','FX Carry Conservative',{capital:800,days:30,startDaysAgo:40,status:'completed',pnl:12.4,stoppedDaysAgo:10})
+ // Older completed runs so the list spans more than one page (10 rows per page); one per catalog template.
+ seed('seed-real-strategy-4','Balanced Crypto Alpha',{capital:1500,days:21,startDaysAgo:44,status:'completed',pnl:-22.8,stoppedDaysAgo:23})
+ seed('seed-real-strategy-5','FX Momentum Balanced',{capital:1200,days:30,startDaysAgo:48,status:'completed',pnl:18.6,stoppedDaysAgo:18})
+ seed('seed-real-strategy-6','Nasdaq Tech Aggressive',{capital:3000,days:14,startDaysAgo:52,status:'completed',pnl:96.4,stoppedDaysAgo:38})
+ seed('seed-real-strategy-7','High Leverage Crypto Hunter',{capital:2500,days:7,startDaysAgo:55,status:'completed',pnl:-140.5,stoppedDaysAgo:48})
+ seed('seed-real-strategy-8','FX Scalper Aggressive',{capital:1000,days:14,startDaysAgo:60,status:'completed',pnl:31.2,stoppedDaysAgo:46})
+ seed('seed-real-strategy-9','Blue Chip Index Defender',{capital:5000,days:45,startDaysAgo:70,status:'completed',pnl:64.0,stoppedDaysAgo:25})
+ seed('seed-real-strategy-10','Stable Crypto Income',{capital:800,days:30,startDaysAgo:75,status:'completed',pnl:9.6,stoppedDaysAgo:45})
+ seed('seed-real-strategy-11','Diversified Index Growth',{capital:2200,days:30,startDaysAgo:82,status:'completed',pnl:-15.3,stoppedDaysAgo:52})
+ seed('seed-real-strategy-12','FX Carry Conservative',{capital:1000,days:60,startDaysAgo:90,status:'completed',pnl:21.7,stoppedDaysAgo:30})}

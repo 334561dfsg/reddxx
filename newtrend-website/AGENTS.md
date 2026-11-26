@@ -262,3 +262,7 @@ Public-site toasts (Ant Design message, incl. the shared FeedbackToast adapter) 
 ## My Strategies daily stats (reference code, 2026-11-26)
 
 查看統計 opens a standalone page `/ai-quant/strategy/mine/:recordId/stats` (`StrategyStatsPage.vue`, back link + strategy name, same pattern as Quant Fund 派息明細; the user rejected an inline table expander) rendering `StrategyDailyStats.vue`, following the reference: summary box (淨盈虧 with trend arrow, UTC date range of the listed days, 交易次數, 交易天數), header 日期 / 交易次數 / 虧損↔獲利 / 盈虧, one row per trading day newest first with a centred red/green bar scaled to the largest |P&L| (500ms grow, 25ms stagger capped at 250ms; no motion when reduced), latest 14 days plus 顯示最近 N / 共 M 天. Empty records keep 此區間內尚無已平倉交易。 真實 seeds get deterministic synthetic `dailyStats` from `buildDailyStats` that sum exactly to each record's P&L; the 模擬 record stays empty like the reference.
+
+## AI Quant list pagination (user request, 2026-11-26)
+
+Quant Fund positions, 派息明細, My Strategies and the strategy daily stats use the shared `FinancePagination` + `useFinancePagination` at 10 rows per page (like Loan records). Positions return to page 1 when the tab, history status or account mode changes. Daily stats page through every day (superseding the reference's latest-14 note) while the summary, date range and bar scale cover all days. 真實 seeds carry 12 fund orders and 12 strategies (older history incl. rejected/cancelled orders without interest start or maturity) so paging is exercised.

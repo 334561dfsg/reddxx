@@ -2,19 +2,22 @@
 import {computed,onMounted,ref} from 'vue'
 import {locale} from '../../i18n'
 import {summarizeDailyStats} from '../../utils/strategyTemplates'
+import FinancePagination from '../FinancePagination.vue'
+import {useFinancePagination} from '../../composables/useFinancePagination'
 // Reference "查看統計" panel (newtrendcapital.com index chunk, read 2026-11-26): net P&L summary with UTC date range,
 // trade count and active days, then one row per trading day (newest first) with a centred loss/profit bar scaled
-// to the largest |P&L|. Bars grow in with a 25ms stagger (capped at 250ms); the list shows the latest days only.
+// to the largest |P&L|. Bars grow in with a 25ms stagger (capped at 250ms); days are paged with the shared pager.
 const props=defineProps({items:{type:Array,default:()=>[]}})
-const LIMIT=14
-const shown=computed(()=>props.items.slice(0,LIMIT))
+// Shared list pager (10 days per page) instead of the reference's latest-N truncation (user request).
+const {page,total,shown}=useFinancePagination(()=>props.items,10)
 const summary=computed(()=>summarizeDailyStats(props.items))
-const maxAbs=computed(()=>shown.value.reduce((m,i)=>Math.max(m,Math.abs(i.pnl)),0))
+// Scale and range span every day, so bars and the caption stay stable across pages.
+const maxAbs=computed(()=>props.items.reduce((m,i)=>Math.max(m,Math.abs(i.pnl)),0))
 const sign=v=>!Number.isFinite(v)||v===0?'flat':v>0?'up':'down'
 const fixed=v=>Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
 const signed=v=>(sign(v)==='up'?'+':sign(v)==='down'?'-':'')+fixed(v)
 const parts=date=>{const [y,m,d]=date.split('-').map(Number),at=new Date(Date.UTC(y,m-1,d));return {day:new Intl.DateTimeFormat(locale.value,{month:'short',day:'numeric',timeZone:'UTC'}).format(at),weekday:new Intl.DateTimeFormat(locale.value,{weekday:'short',timeZone:'UTC'}).format(at)}}
-const range=computed(()=>{if(!shown.value.length)return '';const last=parts(shown.value[0].date).day,first=parts(shown.value.at(-1).date).day;return first===last?last:`${first} – ${last}`})
+const range=computed(()=>{if(!props.items.length)return '';const last=parts(props.items[0].date).day,first=parts(props.items.at(-1).date).day;return first===last?last:`${first} – ${last}`})
 const width=item=>drawn.value&&maxAbs.value>0?`${(Math.min(1,Math.abs(item.pnl)/maxAbs.value)*50).toFixed(2)}%`:'0%'
 const drawn=ref(false)
 onMounted(()=>requestAnimationFrame(()=>{drawn.value=true}))
@@ -37,7 +40,7 @@ onMounted(()=>requestAnimationFrame(()=>{drawn.value=true}))
    <span class="ds-pnl r" :class="sign(item.pnl)">{{ signed(item.pnl) }}</span>
   </li>
  </ul>
- <p v-if="items.length>shown.length" class="ds-more">{{ $t('aiQuant.dailyStats.showingLatest',{shown:shown.length,total:items.length}) }}</p>
+ <FinancePagination v-model:page="page" :total="total" :page-size="10"/>
 </div>
 </template>
 <style>

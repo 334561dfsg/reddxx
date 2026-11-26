@@ -1,5 +1,5 @@
 <script setup>
-import {computed,h,shallowRef} from 'vue'
+import {computed,h,shallowRef,watch} from 'vue'
 import {message} from 'ant-design-vue'
 import {useRouter} from 'vue-router'
 import {fmt,path} from '../../data'
@@ -10,6 +10,8 @@ import {t} from '../../i18n'
 import Coin from '../Coin.vue'
 import RecordFilter from '../RecordFilter.vue'
 import PortfolioSummaryCard from '../PortfolioSummaryCard.vue'
+import FinancePagination from '../FinancePagination.vue'
+import {useFinancePagination} from '../../composables/useFinancePagination'
 import Icon from '../Icon.vue'
 // Reference positions page: tab groups, summary, order table. Orders belong to the current real/demo mode.
 const groups=['all','pending','active','history']
@@ -18,6 +20,9 @@ const historyOptions=computed(()=>[{value:'all',label:t('aiQuant.quantFund.posit
 const group=shallowRef('all'),historyStatus=shallowRef('all')
 const orders=computed(()=>quantFundAccount.orders.filter(order=>order.mode===fundMode(session.mode)))
 const visible=computed(()=>filterFundOrders(orders.value,group.value,historyStatus.value))
+// Shared list pager (10 rows); a new tab, status filter or account mode starts again at page 1.
+const {page,total,shown}=useFinancePagination(visible,10)
+watch([group,historyStatus,()=>session.mode],()=>{page.value=1})
 const summary=computed(()=>fundSummary(orders.value))
 // Reference table amounts: grouped, up to 2 decimals, no forced trailing zeros (4,999 / 0 / 21.9).
 const amount=value=>Number(value).toLocaleString('en-US',{maximumFractionDigits:2})
@@ -64,7 +69,7 @@ function selectGroup(event,index){
   <div v-if="!visible.length" class="qf-panel qf-positions-empty"><Icon name="briefcase"/><p>{{ $t('aiQuant.quantFund.positions.empty') }}</p><RouterLink :to="path('/ai-quant/quant-fund')" class="qf-inline-link">{{ $t('aiQuant.quantFund.title') }}</RouterLink></div>
   <div v-else class="qf-panel qf-table-wrap"><table class="qf-table">
    <thead><tr><th scope="col">{{ $t('aiQuant.quantFund.positions.table.status') }}</th><th scope="col">{{ $t('aiQuant.quantFund.positions.table.productName') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.principal') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.dailyReturn') }}</th><th scope="col">{{ $t('aiQuant.quantFund.positions.table.term') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.interestPaidTotal') }}</th><th scope="col">{{ $t('aiQuant.quantFund.positions.table.maturityDate') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.positions.table.action') }}</th></tr></thead>
-   <tbody><tr v-for="order in visible" :key="order.id" class="qf-row" @click="openOrder(order)">
+   <tbody><tr v-for="order in shown" :key="order.id" class="qf-row" @click="openOrder(order)">
     <td><span class="qf-status" :class="order.status">{{ $t('aiQuant.quantFund.positions.tabs.'+order.status) }}</span></td>
     <td><div class="qf-table-product"><Coin :symbol="order.asset"/><button type="button" class="qf-row-link" aria-haspopup="dialog" @click.stop="openOrder(order)">{{ order.productName }}</button></div></td>
     <td class="num"><span class="qf-num">{{ amount(order.principal) }}</span><span class="qf-unit">{{ order.asset }}</span></td>
@@ -74,7 +79,7 @@ function selectGroup(event,index){
     <td><div>{{ fundDate(order.maturityDate) }}</div><small>{{ $t('aiQuant.quantFund.positions.table.subscribedAt') }} {{ fundDate(order.subscribedAt) }}</small></td>
     <td class="num"><div class="qf-row-actions" @click.stop><button v-if="canRedeemFund(order)" type="button" class="qf-row-action primary" aria-haspopup="dialog" @click="confirmRedeem(order)">{{ $t('aiQuant.quantFund.redeem.button') }}</button><button v-if="hasPayouts(order)" type="button" class="qf-row-action" @click="openPayouts(order)">{{ $t('aiQuant.quantFund.interestRecords.entry') }}</button></div></td>
    </tr></tbody>
-  </table></div>
+  </table></div><FinancePagination v-model:page="page" :total="total" :page-size="10"/>
  </div>
 </div>
 </template>

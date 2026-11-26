@@ -7,9 +7,12 @@ import {openModal,session} from '../../session'
 import {strategyAccountFor} from '../../strategyPortfolio'
 import {changeStrategyStatus} from '../../utils/strategyTemplates'
 import PortfolioSummaryCard from '../PortfolioSummaryCard.vue'
+import FinancePagination from '../FinancePagination.vue'
+import {useFinancePagination} from '../../composables/useFinancePagination'
 // Reference "my strategies": summary, per-mode table with status/demo badges, actions and expandable daily stats.
 const account=computed(()=>strategyAccountFor(session.mode))
 const records=computed(()=>account.value.records)
+const {page,total,shown}=useFinancePagination(records,10)
 const money=value=>Number(value).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})
 const summary=computed(()=>{const list=records.value,pnl=list.reduce((sum,r)=>sum+r.pnl,0);return {capital:list.reduce((sum,r)=>sum+r.capital,0),pnl,running:list.filter(r=>r.status==='running').length,total:list.length}})
 const signed=value=>(value>=0?'+':'-')+money(Math.abs(value))
@@ -47,7 +50,7 @@ function act(record,kind){
    :stats="[{label:$t('aiQuant.myStrategies.summary.running'),value:String(summary.running),sensitive:false},{label:$t('aiQuant.myStrategies.summary.total'),value:String(summary.total),sensitive:false}]"/>
   <div class="my-strategies-table"><table>
    <thead><tr><th scope="col">{{ $t('aiQuant.table.columns.strategyName') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.pnl') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.capital') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.endDate') }}</th><th scope="col" class="num">{{ $t('aiQuant.table.columns.action') }}</th></tr></thead>
-   <tbody><template v-for="record in records" :key="record.id">
+   <tbody><template v-for="record in shown" :key="record.id">
     <tr>
      <td :data-label="$t('aiQuant.table.columns.strategyName')"><div class="ms-name"><div class="ms-badges"><span class="ms-status" :class="record.status">{{ $t('aiQuant.status.'+record.status) }}</span><span v-if="record.status==='running'" class="ms-pulse" aria-hidden="true"></span><span v-if="record.mode==='demo'" class="ms-demo">{{ $t('common.demo.account') }}</span></div><strong>{{ record.template.name }}</strong><small>{{ $t(styleKey(record)) }} · {{ $t(marketKey(record)) }}</small></div></td>
      
@@ -68,6 +71,7 @@ function act(record,kind){
     
    </template></tbody>
   </table></div>
+  <FinancePagination v-model:page="page" :total="total" :page-size="10"/>
  </template>
  <FeedbackToast v-if="feedback" :type="feedback.type" :source="()=>feedback?$t(feedback.key):''"/>
 </div>
