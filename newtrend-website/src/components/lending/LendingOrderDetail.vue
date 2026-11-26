@@ -6,11 +6,14 @@ import {useLendingFeed,lendingCommand} from '../../../../src/shared/lending/clie
 import {fmt} from '../../data'
 import {t} from '../../i18n'
 import Coin from '../Coin.vue'
+import FinancePagination from '../FinancePagination.vue'
+import {useFinancePagination} from '../../composables/useFinancePagination'
 const props=defineProps({orderId:String,closing:Boolean})
 const emit=defineEmits(['state'])
 const {state,busy,error,refresh}=useLendingFeed(),amount=ref(''),action=ref('')
 const order=computed(()=>state.value.orders.find(o=>o.orderId===props.orderId&&o.userId==='USR-DEMO'))
 const records=computed(()=>state.value.repayments.filter(r=>r.orderId===props.orderId))
+const {page:recordPage,total:recordTotal,shown:shownRecords}=useFinancePagination(records)
 const cancelTrigger=ref(null),cancelBack=ref(null),detailHeader=ref(null)
 watch(action,async value=>{await nextTick();if(value==='cancel')cancelBack.value?.focus();else if(order.value?.status==='pending')cancelTrigger.value?.focus()})
 const canRepay=computed(()=>['active','repaying','overdue'].includes(order.value?.status))
@@ -36,7 +39,7 @@ async function run(kind){
    </div>
    <section v-if="order.status==='pending'" class="loan-detail-section loan-order-pending"><p class="earn-caption">{{$t('lending.pendingNote')}}</p><button ref="cancelTrigger" v-if="action!=='cancel'" class="outline-button" :disabled="busy||closing" @click="action='cancel'">{{$t('lending.cancel')}}</button><div v-else class="loan-detail-confirm"><p>{{$t('lending.confirm')}} · {{$t('lending.cancel')}}</p><button ref="cancelBack" :disabled="busy||closing" class="outline-button" @click="action=''">{{$t('lending.back')}}</button><button :disabled="busy||closing" class="earn-buy" @click="run('cancel')">{{$t('lending.confirm')}}</button></div></section>
    <form v-if="canRepay" class="loan-detail-section loan-detail-card" @submit.prevent="run('repay')" novalidate><div class="loan-detail-repay-label"><label for="loan-repayment">{{$t('lending.repayAmount')}} ({{order.loanCurrency}})</label><button type="button" class="green-link" :disabled="busy||closing" @click="amount=String(order.totalDebt)">{{$t('lending.full')}}</button></div><input id="loan-repayment" v-model="amount" type="number" inputmode="decimal" min="0.00000001" :max="order.totalDebt" step="0.00000001" :disabled="busy||closing" required/><p class="earn-caption">{{$t('lending.available')}}: {{fmt(state.balances['USR-DEMO']?.[order.loanCurrency]||0)}} {{order.loanCurrency}}</p><p class="earn-caption">{{$t('lending.repayNote')}}</p><button class="earn-buy" :disabled="busy||closing" :aria-busy="busy">{{$t('lending.repay')}}</button></form>
-   <section class="loan-detail-section loan-detail-card"><h3>{{$t('lending.records')}} <span class="earn-caption">{{records.length}}</span></h3><div v-if="!records.length" class="loan-records-empty"><span aria-hidden="true">—</span><p>{{$t('lending.empty')}}</p></div><article v-for="record in records" :key="record.repaymentId" class="loan-detail-record"><div><time>{{date(record.repaymentTime)}}</time><strong class="earn-mono">{{fmt(record.amount)}} {{record.loanCurrency}}</strong></div><p class="earn-caption">{{$t('lending.principal')}} {{fmt(record.principalPaid)}} · {{$t('lending.interest')}} {{fmt(record.interestPaid)}} · {{$t('lending.penalty')}} {{fmt(record.overduePenaltyPaid)}}</p></article></section>
+   <section class="loan-detail-section loan-detail-card"><h3>{{$t('lending.records')}} <span class="earn-caption">{{records.length}}</span></h3><div v-if="!records.length" class="loan-records-empty"><span aria-hidden="true">—</span><p>{{$t('lending.empty')}}</p></div><article v-for="record in shownRecords" :key="record.repaymentId" class="loan-detail-record"><div><time>{{date(record.repaymentTime)}}</time><strong class="earn-mono">{{fmt(record.amount)}} {{record.loanCurrency}}</strong></div><p class="earn-caption">{{$t('lending.principal')}} {{fmt(record.principalPaid)}} · {{$t('lending.interest')}} {{fmt(record.interestPaid)}} · {{$t('lending.penalty')}} {{fmt(record.overduePenaltyPaid)}}</p></article><FinancePagination v-if="records.length" v-model:page="recordPage" :total="recordTotal"/></section>
   </template><p v-else-if="!error">{{$t('lending.empty')}}</p>
  </div>
 </template>

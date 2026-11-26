@@ -1,6 +1,6 @@
 <script setup>
 import {computed} from 'vue'
-const props=defineProps({page:{type:Number,required:true},total:{type:Number,required:true},pageSize:{type:Number,default:6}})
+const props=defineProps({page:{type:Number,required:true},total:{type:Number,required:true},pageSize:{type:Number,default:10}})
 const emit=defineEmits(['update:page'])
 const pages=computed(()=>Math.max(1,Math.ceil(props.total/props.pageSize)))
 const numbers=computed(()=>{

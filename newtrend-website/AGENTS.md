@@ -266,3 +266,7 @@ Public-site toasts (Ant Design message, incl. the shared FeedbackToast adapter) 
 ## AI Quant list pagination (user request, 2026-11-26)
 
 Quant Fund positions, 派息明細, My Strategies and the strategy daily stats use the shared `FinancePagination` + `useFinancePagination` at 10 rows per page (like Loan records). Positions return to page 1 when the tab, history status or account mode changes. Daily stats page through every day (superseding the reference's latest-14 note) while the summary, date range and bar scale cover all days. 真實 seeds carry 12 fund orders and 12 strategies (older history incl. rejected/cancelled orders without interest start or maturity) so paging is exercised.
+
+## Unified list pagination (user request, 2026-11-26)
+
+Every Finance and AI Quant list uses `FinancePagination` + `useFinancePagination`, now defaulting to 10 rows per page: Earn products, holdings, subscription/redemption/reward records, My Loans, loan repayment records, Quant Fund positions/payouts, My Strategies and daily stats. Card grids pass a multiple of their column count instead (Loan product cards: 6). Lists that are empty show their empty state without a pager.

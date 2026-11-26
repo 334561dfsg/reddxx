@@ -1,6 +1,7 @@
 import {computed,ref,toValue,watch} from 'vue'
 
-export function useFinancePagination(source,pageSize=6){
+// Site-wide list paging: 10 rows per page for tables/lists; card grids pass a multiple of their column count.
+export function useFinancePagination(source,pageSize=10){
  const page=ref(1)
  const total=computed(()=>toValue(source).length)
  const pages=computed(()=>Math.max(1,Math.ceil(total.value/pageSize)))

@@ -8,7 +8,7 @@ import Icon from './LendingIcon.vue'
 const props=defineProps({products:{type:Array,default:()=>[]}})
 defineEmits(['borrow'])
 
-const {page,total,shown}=useFinancePagination(()=>props.products)
+const {page,total,shown}=useFinancePagination(()=>props.products,6)
 </script>
 <template>
  <header class="loan-market-hero">
@@ -23,5 +23,5 @@ const {page,total,shown}=useFinancePagination(()=>props.products)
    <RouterLink :to="path('/earn/loan/borrow')+'?product='+encodeURIComponent(p.productId)+'&currency='+encodeURIComponent(p.loanCurrency)" class="loan-market-cta" :aria-label="$t('margin.market.borrowCta')+' · '+p.productName" @click="$emit('borrow',p)">{{$t('margin.market.borrowCta')}}<Icon name="arrow-right"/></RouterLink>
   </article>
  </div>
- <FinancePagination v-model:page="page" :total="total"/>
+ <FinancePagination v-model:page="page" :total="total" :page-size="6"/>
 </template>
