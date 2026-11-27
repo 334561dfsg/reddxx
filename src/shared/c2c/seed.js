@@ -1,4 +1,5 @@
 import {createC2CState, transact, ADMIN} from './domain.js'
+import {seedAgreementContents} from './agreementSeed.js'
 
 // Seed for the C2C mock: the public site's quote snapshot (buy: ETH, USDC, BTC, USDT, SOL; sell: USDT) and an order
 // history replayed through the real commands (submit → approve / reject / cancel), so balances, locks and logs agree.
@@ -53,6 +54,8 @@ export function seedC2C(now = Date.now()) {
   let s = createC2CState({
     quotes: seedQuotes(now - 40 * DAY), profiles: structuredClone(users),
     balances: {'USR-DEMO': {USDT: 20000}, 'USR-1002': {USDT: 30000}, 'USR-1003': {USDT: 15000}, 'USR-1004': {USDT: 25000}},
+    // The public site shows this text as v1-draft.
+    agreement: {version: 1, versionLabel: 'v1-draft', contents: structuredClone(seedAgreementContents), updatedAt: now - 40 * DAY, updatedBy: ADMIN},
   })
   for (const [hoursAgo, userId, side, symbol, quantity, outcome] of history) {
     const at = now - hoursAgo * HOUR

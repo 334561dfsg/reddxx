@@ -29,7 +29,7 @@ const options = (labels, all) => [{value: 'all', label: all}, ...Object.entries(
 const fields = computed(() => ({
   orders: [{key: 'orderId', label: '订单号'}, {key: 'userId', label: '用户 ID'},
     {key: 'side', label: '方向', options: options(sideLabels, '全部方向')},
-    {key: 'symbol', label: '币种', options: [{value: 'all', label: '全部币种'}, ...ASSETS.map(value => ({value, label: value}))]},
+    {key: 'symbol', label: '币种', searchable: true, options: [{value: 'all', label: '全部币种'}, ...ASSETS.map(value => ({value, label: value}))]},
     {key: 'status', label: '状态', options: options(orderStatusLabels, '全部状态')}],
   logs: [{key: 'refId', label: '关联记录'}, {key: 'action', label: '操作', options: options(actionLabels, '全部操作')}, {key: 'operator', label: '操作人'}],
 })[mode.value])

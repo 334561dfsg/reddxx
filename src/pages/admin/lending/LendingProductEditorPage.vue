@@ -90,7 +90,7 @@ async function save(){
     </Row></Card>
     <Card title="质押设置" :bordered="false"><Row :gutter="24" class="lending-editor-fields">
      <Col :xs="24"><FormItem name="collateralEnabled" label="需要质押"><Switch v-model:checked="form.collateralEnabled" aria-label="需要质押" checked-children="需要" un-checked-children="不需要"/></FormItem></Col>
-     <Col v-if="form.collateralEnabled" :xs="24" :lg="12"><FormItem name="collateralCurrencies" label="允许质押币种" required><Select v-model:value="form.collateralCurrencies" mode="multiple" :options="Object.keys(lendingState.prices).map(value=>({value,label:value}))"/></FormItem></Col>
+     <Col v-if="form.collateralEnabled" :xs="24" :lg="12"><FormItem name="collateralCurrencies" label="允许质押币种" required><Select v-model:value="form.collateralCurrencies" mode="multiple" show-search option-filter-prop="label" placeholder="输入币种搜索" not-found-content="无匹配币种" :options="Object.keys(lendingState.prices).map(value=>({value,label:value}))"/></FormItem></Col>
      <Col v-if="form.collateralEnabled" :xs="24" :lg="12"><FormItem name="collateralMultiplier" label="初始质押比例（%）" required :help="collateralPercent==null?'质押价值 ÷ 借款本金 × 100%':`借款 1,000 ${form.loanCurrency}，需质押价值 ${Number((collateralPercent*10).toFixed(8)).toLocaleString()} ${form.loanCurrency} 的资产`"><InputNumber style="width:100%" v-model:value="collateralPercent" :min="100" :precision="4"/></FormItem></Col>
     </Row></Card>
    </Form>

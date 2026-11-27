@@ -32,7 +32,7 @@ const filterFields=computed(()=>[
  ...searchFields.value.map(([key,label])=>({key,label})),
  ...(props.section==='logs'?[]:[
   {key:'status',label:'状态',options:[{value:'all',label:'全部状态'},...statuses.value.map(value=>({value,label:props.section==='redemptions'&&value==='pending'?'待审核':statusMeta[value]?.[0]||value}))]},
-  {key:'currency',label:'币种',options:[{value:'all',label:'全部币种'},...['USDT','USDC','BTC','ETH'].map(value=>({value,label:value}))]},
+  {key:'currency',label:'币种',searchable:true,options:[{value:'all',label:'全部币种'},...['USDT','USDC','BTC','ETH'].map(value=>({value,label:value}))]},
  ]),
 ])
 function applyFilters(values){

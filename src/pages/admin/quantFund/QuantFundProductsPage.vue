@@ -21,7 +21,7 @@ const page = ref(Math.max(1, Number(route.query.page) || 1))
 const fields = [
   {key: 'name', label: '产品名称'},
   {key: 'code', label: '产品代码'},
-  {key: 'asset', label: '标识币种', options: [{value: 'all', label: '全部币种'}, ...ASSETS.map(value => ({value, label: value}))]},
+  {key: 'asset', label: '标识币种', searchable: true, options: [{value: 'all', label: '全部币种'}, ...ASSETS.map(value => ({value, label: value}))]},
   {key: 'term', label: '锁定期', options: [{value: 'all', label: '全部'}, {value: 'flexible', label: '无锁定期'}, {value: 'fixed', label: '有锁定期'}]},
   {key: 'status', label: '状态', options: [{value: 'all', label: '全部状态'}, ...Object.entries(productStatusLabels).map(([value, label]) => ({value, label}))]},
 ]

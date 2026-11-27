@@ -13,7 +13,11 @@
 //   (larger first). Orders snapshot the quote; later quote edits never change existing orders.
 
 export const SIDES = ['buy', 'sell']
-export const ASSETS = ['USDT', 'USDC', 'BTC', 'ETH', 'SOL']
+/** Agreement languages: English first and required (the public fallback), then the site's other five locales. */
+export const AGREEMENT_LOCALES = ['en-US', 'zh-TW', 'fr-FR', 'de-DE', 'ja-JP', 'ko-KR']
+export const AGREEMENT_FALLBACK = 'en-US'
+/** Coins a quote can be set up for (the public C2C shows the first five today). */
+export const ASSETS = ['USDT', 'USDC', 'BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'DOGE', 'TRX', 'LTC', 'ADA', 'TON']
 export const ADMIN = '管理员（模拟）'
 export const USER = '用户（模拟）'
 
@@ -22,8 +26,8 @@ const finite = value => typeof value === 'number' && Number.isFinite(value)
 /** Coin amounts keep 8 decimals; USDT totals keep 8 too (the quote price has up to 8). */
 export const round8 = value => Math.round((Number(value) + Number.EPSILON) * 1e8) / 1e8
 
-export function createC2CState({quotes = [], balances = {}, profiles = {}} = {}) {
-  return {version: 1, quotes, orders: [], logs: [], requests: [], balances, locked: {}, profiles}
+export function createC2CState({quotes = [], balances = {}, profiles = {}, agreement = null} = {}) {
+  return {version: 1, quotes, orders: [], logs: [], requests: [], balances, locked: {}, profiles, agreement}
 }
 
 function log(s, entry, now) {
@@ -71,6 +75,33 @@ function saveQuote(s, {quote, expectedVersion}, actor, now) {
   return created
 }
 export const quoteLabel = q => `${q.symbol} / USDT · ${q.side === 'buy' ? '用户买入' : '用户卖出'}`
+
+// ---------- agreement ----------
+
+/**
+ * Saves the C2C trading agreement (one record, six language versions). English title and body are required; another
+ * language left fully empty is dropped and falls back to English on the public site, a half-filled one is rejected.
+ * Each save is versioned (v1, v2 …), checked against the version the editor loaded, and logged before/after.
+ */
+function saveAgreement(s, {contents, expectedVersion}, actor, now) {
+  const current = s.agreement
+  fail(current, 'agreement')
+  fail(current.version === expectedVersion, 'stale')
+  const next = {}
+  for (const locale of AGREEMENT_LOCALES) {
+    const title = String(contents?.[locale]?.title || '').trim(), body = String(contents?.[locale]?.body || '').trim()
+    if (locale === AGREEMENT_FALLBACK) fail(title && body, 'agreementDefault')
+    if (!title && !body) continue
+    fail(title && body, 'agreementPartial')
+    fail(title.length <= 120 && body.length <= 20000, 'agreementLength')
+    next[locale] = {title, body}
+  }
+  const before = current.contents
+  Object.assign(current, {contents: next, version: current.version + 1, versionLabel: `v${current.version + 1}`, updatedAt: now, updatedBy: actor})
+  const changed = AGREEMENT_LOCALES.filter(l => JSON.stringify(before[l] || null) !== JSON.stringify(next[l] || null))
+  log(s, {module: 'agreement', action: 'saveAgreement', refId: current.versionLabel, targetLabel: next[AGREEMENT_FALLBACK].title,
+    summary: changed.length ? `保存交易协议 ${current.versionLabel}（修改：${changed.join('、')}）` : `保存交易协议 ${current.versionLabel}（内容未变）`, before, after: next, operator: actor}, now)
+}
 
 // ---------- orders ----------
 
@@ -131,6 +162,7 @@ export function transact(source, action, args = {}, now = Date.now()) {
   else if (action === 'cancel') cancel(s, args, now)
   else if (action === 'approve' || action === 'reject') review(s, args, action === 'approve', actor, now)
   else if (action === 'saveQuote') saveQuote(s, args, actor, now)
+  else if (action === 'saveAgreement') saveAgreement(s, args, actor, now)
   else if (action === 'setQuoteStatus') {
     const quote = s.quotes.find(q => q.quoteId === args.quoteId)
     fail(quote, 'quote')

@@ -21,7 +21,7 @@ const filters = ref({...blank(), ...Object.fromEntries(Object.keys(blank()).filt
 const page = ref(Math.max(1, Number(route.query.page) || 1))
 const options = (labels, all) => [{value: 'all', label: all}, ...Object.entries(labels).map(([value, label]) => ({value, label}))]
 const fields = [
-  {key: 'symbol', label: '币种', options: [{value: 'all', label: '全部币种'}, ...ASSETS.map(value => ({value, label: value}))]},
+  {key: 'symbol', label: '币种', searchable: true, options: [{value: 'all', label: '全部币种'}, ...ASSETS.map(value => ({value, label: value}))]},
   {key: 'side', label: '方向', options: options(sideLabels, '全部方向')},
   {key: 'status', label: '状态', options: options({enabled: '已启用', disabled: '已停用'}, '全部状态')},
 ]

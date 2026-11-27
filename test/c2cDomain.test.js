@@ -78,3 +78,20 @@ test('the seed covers every order status and keeps balances and locks consistent
   assert.ok(s.orders.every((o, i, all) => i === 0 || all[i - 1].createdAt >= o.createdAt))
   assert.ok(s.logs.length >= s.orders.length)
 })
+
+test('the agreement keeps six languages with English required, versions each save and logs the change', () => {
+  let s = seedC2C(NOW)
+  const {version, contents} = s.agreement
+  assert.equal(s.agreement.versionLabel, 'v1-draft')
+  assert.deepEqual(Object.keys(contents), ['en-US', 'zh-TW', 'fr-FR', 'de-DE', 'ja-JP', 'ko-KR'])
+  const edited = {...structuredClone(contents), 'zh-TW': {title: 'C2C 交易協議', body: '新條款'}, 'ko-KR': {title: '', body: ''}}
+  s = transact(s, 'saveAgreement', {contents: edited, expectedVersion: version}, NOW + 1)
+  assert.equal(s.agreement.version, version + 1)
+  assert.equal(s.agreement.versionLabel, 'v2')
+  assert.equal(s.agreement.contents['zh-TW'].body, '新條款')
+  assert.equal(s.agreement.contents['ko-KR'], undefined)
+  assert.match(s.logs[0].summary, /zh-TW.*ko-KR|ko-KR.*zh-TW/)
+  assert.throws(() => transact(s, 'saveAgreement', {contents: edited, expectedVersion: version}, NOW + 2), /stale/)
+  assert.throws(() => transact(s, 'saveAgreement', {contents: {...edited, 'en-US': {title: 'X', body: ' '}}, expectedVersion: s.agreement.version}, NOW + 2), /agreementDefault/)
+  assert.throws(() => transact(s, 'saveAgreement', {contents: {...edited, 'ja-JP': {title: 'T', body: ''}}, expectedVersion: s.agreement.version}, NOW + 2), /agreementPartial/)
+})

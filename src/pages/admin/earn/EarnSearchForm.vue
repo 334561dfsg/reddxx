@@ -4,7 +4,7 @@ import { Button, Card, Col, Form, FormItem, Input, RangePicker, Row, Select, Spa
 
 // Vue adapter for the ProTable query-card pattern; keeps draft input separate
 // from applied list filters and uses the application's Ant Design theme.
-// Field kinds: text (default), `options` → Select, `range: true` → date RangePicker with 'YYYY-MM-DD' strings (null when empty).
+// Field kinds: text (default), `options` → Select (`searchable: true` filters options by typed label), `range: true` → date RangePicker with 'YYYY-MM-DD' strings (null when empty).
 const props = defineProps({
   model: { type: Object, required: true },
   fields: { type: Array, required: true },
@@ -26,7 +26,7 @@ function reset() {
         <Col v-for="field in fields" :key="field.key" :xs="24" :md="12" :xl="8">
           <FormItem :name="field.key" :label="field.label">
             <RangePicker v-if="field.range" v-model:value="draft[field.key]" value-format="YYYY-MM-DD" :placeholder="['开始日期', '结束日期']" :aria-label="field.label" allow-clear class="earn-query-range" />
-            <Select v-else-if="field.options" v-model:value="draft[field.key]" :options="field.options" :aria-label="field.label" />
+            <Select v-else-if="field.options" v-model:value="draft[field.key]" :options="field.options" :aria-label="field.label" :show-search="!!field.searchable" option-filter-prop="label" :not-found-content="field.searchable ? '无匹配项' : undefined" />
             <Input v-else v-model:value="draft[field.key]" :placeholder="'请输入'+field.label" :aria-label="field.label" allow-clear />
           </FormItem>
         </Col>

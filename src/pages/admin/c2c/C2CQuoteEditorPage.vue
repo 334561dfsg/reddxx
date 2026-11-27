@@ -76,14 +76,14 @@ async function save() {
   <template v-else>
    <Form name="c2c-quote-editor" class="c2c-editor-form" layout="vertical" :model="form" :disabled="c2cBusy" :validate-trigger="[]" @finish="save">
     <Card title="基本信息" :bordered="false"><Row :gutter="24" class="c2c-editor-fields">
-     <Col :xs="24" :lg="8"><FormItem name="symbol" label="币种" required help="以 USDT 计价"><Select v-model:value="form.symbol" :options="assetOptions" :disabled="!!route.params.id"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="symbol" label="币种" required help="可输入币种搜索；以 USDT 计价"><Select v-model:value="form.symbol" :options="assetOptions" show-search option-filter-prop="label" placeholder="输入币种搜索" not-found-content="无匹配币种" :disabled="!!route.params.id"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="side" label="方向" required help="用户买入：平台卖币；用户卖出：平台收币"><RadioGroup v-model:value="form.side" button-style="solid" :disabled="!!route.params.id"><RadioButton v-for="(label, value) in sideLabels" :key="value" :value="value">{{ label }}</RadioButton></RadioGroup></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="sortWeight" label="排序权重" help="数值越大越靠前"><InputNumber v-model:value="form.sortWeight" :precision="0"/></FormItem></Col>
     </Row></Card>
     <Card title="价格与限额" :bordered="false"><Row :gutter="24" class="c2c-editor-fields">
-     <Col :xs="24" :lg="8"><FormItem name="price" label="价格" required :help="example"><InputNumber v-model:value="form.price" :min="0" :step="0.0001" addon-after="USDT"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="min" label="单笔最小数量" required><InputNumber v-model:value="form.min" :min="0" :step="0.0001" :addon-after="form.symbol"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="max" label="单笔最大数量" required><InputNumber v-model:value="form.max" :min="0" :step="0.0001" :addon-after="form.symbol"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="price" label="价格" required :help="example"><InputNumber v-model:value="form.price" :min="0" :step="0.01" addon-after="USDT"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="min" label="单笔最小数量" required><InputNumber v-model:value="form.min" :min="0" :step="1" :addon-after="form.symbol"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="max" label="单笔最大数量" required><InputNumber v-model:value="form.max" :min="0" :step="1" :addon-after="form.symbol"/></FormItem></Col>
     </Row></Card>
     <Card title="有效期与说明" :bordered="false"><Row :gutter="24" class="c2c-editor-fields">
      <Col :xs="24" :lg="8"><FormItem name="ttlSeconds" label="报价有效期" required help="前台倒计时结束后刷新报价；10–86400 秒"><InputNumber v-model:value="form.ttlSeconds" :min="10" :max="86400" :precision="0" addon-after="秒"/></FormItem></Col>

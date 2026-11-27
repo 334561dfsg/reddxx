@@ -145,6 +145,7 @@ export const navTree = [
     children: [
       { title: '订单审核', path: '/admin/c2c/orders' },
       { title: '报价管理', path: '/admin/c2c/quotes' },
+      { title: '交易协议', path: '/admin/c2c/agreement' },
       { title: '操作日志', path: '/admin/c2c/logs' },
     ]
   },

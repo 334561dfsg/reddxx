@@ -102,7 +102,7 @@ async function save() {
     <Card title="基本信息" :bordered="false"><Row :gutter="24" class="qf-editor-fields">
      <Col :xs="24" :lg="16"><FormItem name="name" label="产品名称" required><Input v-model:value="form.name" :maxlength="80" placeholder="请输入产品名称"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="code" label="产品代码" required help="大写字母、数字或短横线，如 QF-VIP0"><Input v-model:value="form.code" :maxlength="32" placeholder="QF-VIP0"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="asset" label="标识币种" required help="前台卡片图标与资产筛选使用；申购、计息和赎回均为 USDT"><Select v-model:value="form.asset" :options="assetOptions"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="asset" label="标识币种" required help="前台卡片图标与资产筛选使用；申购、计息和赎回均为 USDT"><Select v-model:value="form.asset" :options="assetOptions" show-search option-filter-prop="label" placeholder="输入币种搜索" not-found-content="无匹配币种"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="riskLevel" label="风险等级" required><Select v-model:value="form.riskLevel" :options="riskOptions"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="sortOrder" label="排序权重" help="数值越大越靠前"><InputNumber v-model:value="form.sortOrder" :min="0" :precision="0"/></FormItem></Col>
      <Col :xs="24"><FormItem name="tags" label="策略标签" help="输入后回车添加，例如 AI Strategy、US Equity"><Select v-model:value="form.tags" mode="tags" :token-separators="[',']" placeholder="添加策略标签" :open="false"/></FormItem></Col>

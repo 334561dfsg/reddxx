@@ -496,6 +496,7 @@ export const consoleRoutes = [
   { path: 'c2c/quotes', name: 'c2c-quotes', component: () => import('../../pages/admin/c2c/C2CQuotesPage.vue'), meta: { title: 'C2C 交易 / 报价管理' } },
   { path: 'c2c/quotes/new', name: 'c2c-quote-create', component: () => import('../../pages/admin/c2c/C2CQuoteEditorPage.vue'), meta: { title: 'C2C 交易 / 新增报价' } },
   { path: 'c2c/quotes/:id/edit', name: 'c2c-quote-edit', component: () => import('../../pages/admin/c2c/C2CQuoteEditorPage.vue'), meta: { title: 'C2C 交易 / 编辑报价' } },
+  { path: 'c2c/agreement', name: 'c2c-agreement', component: () => import('../../pages/admin/c2c/C2CAgreementPage.vue'), meta: { title: 'C2C 交易 / 交易协议' } },
   ...['orders', 'logs'].map((section) => ({
     path: `c2c/${section}`,
     name: `c2c-${section}`,

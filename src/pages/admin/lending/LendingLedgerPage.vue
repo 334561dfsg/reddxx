@@ -28,7 +28,7 @@ const filterModel=computed(()=>({q:applied.value,id:identifier.value,currency:cu
 const filterFields=computed(()=>[
  {key:'q',label:mode.value==='products'?'产品名称':'搜索内容'},
  {key:'id',label:mode.value==='products'?'产品编号':'关联单号'},
- ...(mode.value!=='operation-log'?[{key:'currency',label:'币种',options:[{value:'all',label:'全部币种'},...['USDT','USDC'].map(value=>({value,label:value}))]}]:[]),
+ ...(mode.value!=='operation-log'?[{key:'currency',label:'币种',searchable:true,options:[{value:'all',label:'全部币种'},...['USDT','USDC'].map(value=>({value,label:value}))]}]:[]),
  ...(['products','orders'].includes(mode.value)?[{key:'status',label:'状态',options:[{value:'all',label:'全部状态'},...Object.entries(mode.value==='products'?{active:'上架',inactive:'下架',suspended:'暂停'}:statusLabels).map(([value,label])=>({value,label}))]}]:[])
 ])
 watch(()=>rows.value.length,n=>page.value=Math.min(page.value,Math.max(1,Math.ceil(n/10))))
