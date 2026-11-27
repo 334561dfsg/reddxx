@@ -39,7 +39,7 @@
  #main-content#main-content .strategy-page .strategy-hero-grid :is(.strategy-eyebrow,.strategy-hero-description,.strategy-hero-actions){display:none}
  #main-content#main-content .strategy-page .strategy-hero-grid h1{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
  #main-content#main-content .strategy-page .strategy-hero-section{padding:0}
- #main-content#main-content .strategy-page .strategy-hero-grid{gap:24px}
+ #main-content#main-content .strategy-page .strategy-hero-grid{gap:0}
  /* The hero stats are not needed on phones either (user decision): the page opens on today's picks. */
  #main-content#main-content .strategy-page .strategy-stats{display:none}
  /* The decorative model chart is desktop-only. */
@@ -148,6 +148,9 @@
  #main-content#main-content .strategy-page .sc-featured .sc-featured-action{margin-top:auto;padding-top:0}
  #main-content#main-content .strategy-page .strategy-filters{gap:8px;margin:12px 0}
  #main-content#main-content .strategy-page :is(.strategy-featured-section,.strategy-catalog-section){padding:12px 0 16px}
+ /* Picks follow the sticky nav at 12px (its 8px padding + 4px) and the templates title follows the picks at 16px. */
+ #main-content#main-content .strategy-page .strategy-featured-section{padding:4px 0 12px}
+ #main-content#main-content .strategy-page .strategy-catalog-section{padding-top:0}
  #main-content#main-content .strategy-page h2{margin-bottom:12px}
  /* Phones drop the section intros and the picks' tinted band/glow (user request 2026-11-27): title, then cards. */
  #main-content#main-content .strategy-page :is(.strategy-featured-section,.strategy-catalog-section) .strategy-section-description{display:none}
