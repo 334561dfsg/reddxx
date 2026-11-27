@@ -37,7 +37,7 @@ const days = computed(() => heldDays(props.order, props.order.settledAt || Date.
    <DescriptionsItem label="风险等级">{{ riskLabels[t.riskLevel] }}</DescriptionsItem>
    <DescriptionsItem label="锁定期">{{ lockLabel(t.lockDays) }}</DescriptionsItem>
    <DescriptionsItem label="提前赎回手续费率">{{ t.lockDays == null ? '—' : t.earlyRedeemFeeRate + '%（按本金）' }}</DescriptionsItem>
-   <DescriptionsItem label="日收益率">{{ t.dailyRate }}%</DescriptionsItem>
+   <DescriptionsItem label="日收益率">{{ t.dailyRate.min === t.dailyRate.max ? `${t.dailyRate.min}%（固定）` : `${t.dailyRate.min}% ~ ${t.dailyRate.max}%（每天随机）` }}</DescriptionsItem>
   </Descriptions>
   <Descriptions v-if="redemption" bordered size="small" :column="2" title="赎回">
    <DescriptionsItem label="赎回单号">{{ redemption.redemptionId }}</DescriptionsItem>

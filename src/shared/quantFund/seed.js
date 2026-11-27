@@ -13,7 +13,8 @@ const users = {
 }
 const REVIEWER = '模拟审核员'
 
-// Client tiers (2026-11-27): [daily %, lock days (null = none), min, max, initial funding %, risk]
+// Client tiers (2026-11-27): [daily %, lock days (null = none), min, max, initial funding %, risk]. The client's rates
+// are fixed, so each range is seeded with equal bounds; operators can widen it in the admin.
 const tiers = [
   [0.73, null, 4999, 99999, 60, 'LOW'],
   [1.25, 7, 100000, 499999, 55, 'LOW'],
@@ -31,7 +32,7 @@ export function seedProducts(now) {
     description: 'AI-managed quantitative arbitrage strategy. Interest accrues daily inside the order and is paid out with the principal on redemption.',
     asset: 'USDT', riskLevel, tags: ['AI Strategy', 'US Equity'], sortOrder: (tiers.length - vip) * 10,
     lockDays, earlyRedeemFeeRate: lockDays === null ? 0 : EARLY_FEE, minAmount, maxAmount,
-    totalQuota: Math.ceil(maxAmount / 100000) * 100000 * 20, initialPercent, dailyRate,
+    totalQuota: Math.ceil(maxAmount / 100000) * 100000 * 20, initialPercent, dailyRate: {min: dailyRate, max: dailyRate},
     // Demo of the restricted list: this user sees VIP 5 as full.
     restrictedUserIds: vip === 5 ? ['USR-1004'] : [],
     minVerificationLevel: 'none', minVipLevel: vip, status: 'listed', version: 1, updatedAt: now,

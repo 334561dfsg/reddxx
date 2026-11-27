@@ -17,7 +17,7 @@ const form = ref(null), expectedVersion = ref(null), original = ref(''), loading
 const blank = () => ({
   name: '', code: '', asset: 'USDT', riskLevel: 'LOW', tags: ['AI Strategy'], description: '', sortOrder: 0,
   locked: true, lockDays: 30, earlyRedeemFeeRate: 0.73, minAmount: 5000, maxAmount: 100000, totalQuota: 2000000, initialPercent: 0,
-  dailyRate: 1, restrictedUserIds: [], minVerificationLevel: 'none', minVipLevel: 0,
+  dailyRate: {min: 1, max: 1}, restrictedUserIds: [], minVerificationLevel: 'none', minVipLevel: 0,
 })
 // JSON copies: reactive Proxies cannot go through structuredClone.
 const plain = value => JSON.parse(JSON.stringify(value))
@@ -31,9 +31,17 @@ const assetOptions = ASSETS.map(value => ({value, label: value}))
 const dirty = computed(() => !!form.value && JSON.stringify(form.value) !== original.value)
 const busy = computed(() => loading.value || quantFundBusy.value)
 const whole = value => Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits: 2})
+// Equal bounds = a fixed daily rate; different bounds = a rate drawn inside the range each day.
+const rateValid = computed(() => { const r = form.value?.dailyRate; return !!r && Number.isFinite(r.min) && Number.isFinite(r.max) })
 const rateExample = computed(() => {
-  const r = form.value?.dailyRate
-  return Number.isFinite(r) ? `本金 1 万 USDT：每天计息 ${(100 * r).toFixed(2)} USDT，累计在订单内，赎回时随本金返还` : '按本金计算，不复利'
+  if (!rateValid.value) return '按本金计算，不复利'
+  const {min, max} = form.value.dailyRate
+  return min === max ? `本金 1 万 USDT：每天计息 ${(100 * min).toFixed(2)} USDT` : `本金 1 万 USDT：每天计息 ${(100 * min).toFixed(2)} ~ ${(100 * max).toFixed(2)} USDT`
+})
+const rateMode = computed(() => {
+  if (!rateValid.value) return '上下限相同即为固定收益'
+  const {min, max} = form.value.dailyRate
+  return min === max ? '上下限相同：固定收益' : `每天在区间内随机，前台展示平均值 ${Number(((min + max) / 2).toFixed(4))}%`
 })
 const feeExample = computed(() => {
   const f = form.value?.earlyRedeemFeeRate
@@ -118,7 +126,8 @@ async function save() {
      <Col :xs="24" :lg="8"><FormItem name="initialPercent" label="初始募集比例" required><InputNumber v-model:value="form.initialPercent" :min="0" :max="100" :precision="2" addon-after="%"/></FormItem></Col>
     </Row></Card>
     <Card title="每日收益规则" :bordered="false"><Row :gutter="24" class="qf-editor-fields">
-     <Col :xs="24" :lg="8"><FormItem name="dailyRate" label="日收益率" required :help="rateExample"><InputNumber v-model:value="form.dailyRate" :min="0" :max="100" :step="0.01" :precision="4" addon-after="%"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem :name="['dailyRate', 'min']" label="日收益率下限" required :help="rateExample"><InputNumber v-model:value="form.dailyRate.min" :min="0" :max="100" :step="0.01" :precision="4" addon-after="%"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem :name="['dailyRate', 'max']" label="日收益率上限" required :help="rateMode"><InputNumber v-model:value="form.dailyRate.max" :min="0" :max="100" :step="0.01" :precision="4" addon-after="%"/></FormItem></Col>
     </Row></Card>
    </Form>
    <Card class="qf-editor-footer" :body-style="{padding: '12px 24px'}" :bordered="false"><div class="qf-editor-actions"><Space :size="8" wrap><Button :disabled="quantFundBusy" @click="back">取消</Button><Button type="primary" :loading="quantFundBusy" @click="save">保存产品</Button></Space></div></Card>

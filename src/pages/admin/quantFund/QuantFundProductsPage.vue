@@ -88,7 +88,7 @@ async function toggleStatus() {
      </Space>
     </Space>
     <template v-else-if="column.key === 'term'">{{ lockLabel(record.lockDays) }}</template>
-    <Space v-else-if="column.key === 'rate'" direction="vertical" :size="0" align="end"><span>{{ record.dailyRate }}%</span><TypographyText v-if="record.lockDays !== null" type="secondary">提前赎回 {{ record.earlyRedeemFeeRate }}%</TypographyText></Space>
+    <Space v-else-if="column.key === 'rate'" direction="vertical" :size="0" align="end"><span>{{ record.dailyRate.min === record.dailyRate.max ? `${record.dailyRate.min}%` : `${record.dailyRate.min}% ~ ${record.dailyRate.max}%` }}</span><TypographyText v-if="record.lockDays !== null" type="secondary">提前赎回 {{ record.earlyRedeemFeeRate }}%</TypographyText></Space>
     <template v-else-if="column.key === 'amount'">{{ whole(record.minAmount) }} ~ {{ whole(record.maxAmount) }}</template>
     <div v-else-if="column.key === 'funding'"><Progress :percent="progress(record)" size="small" :show-info="false"/><TypographyText type="secondary">{{ progress(record) }}% · 总额度 {{ whole(record.totalQuota) }}</TypographyText></div>
     <Space v-else-if="column.key === 'holdings'" direction="vertical" :size="0" align="end"><span>{{ holdings[record.productId]?.count || 0 }} 笔</span><TypographyText type="secondary">{{ whole(holdings[record.productId]?.principal || 0) }}</TypographyText></Space>

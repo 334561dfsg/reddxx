@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {transact, advance, raisedAmount, initialSubscribed, progressFor, redemptionFee, DAY, createQuantFundState} from '../src/shared/quantFund/domain.js'
+import {transact, advance, raisedAmount, initialSubscribed, progressFor, redemptionFee, dailyRateFor, displayRate, DAY, createQuantFundState} from '../src/shared/quantFund/domain.js'
 import {seedQuantFund, seedProducts} from '../src/shared/quantFund/seed.js'
 
 const T0 = Date.UTC(2026, 10, 1, 0, 0, 0)
@@ -13,7 +13,7 @@ const product = (s, id) => s.products.find(p => p.productId === id)
 
 test('seed matches the client tiers and covers every status, early and automatic redemption', () => {
   const s = seedQuantFund(T0)
-  assert.deepEqual(s.products.map(p => [p.dailyRate, p.lockDays, p.minAmount, p.maxAmount]), [
+  assert.deepEqual(s.products.map(p => [displayRate(p), p.lockDays, p.minAmount, p.maxAmount]), [
     [0.73, null, 4999, 99999], [1.25, 7, 100000, 499999], [1.79, 15, 500000, 999999],
     [2.35, 30, 1000000, 4999999], [2.93, 60, 5000000, 9999999], [3.55, 120, 10000000, 100000000]])
   const statuses = new Set(s.orders.map(o => o.status))
@@ -108,14 +108,29 @@ test('restricted users see the product full and cannot subscribe; others can', (
 test('product saves are versioned and validated; edits never rewrite existing orders', () => {
   let s = run(fresh(), 'subscribe', {userId: 'U1', productId: 'QF-VIP1', amount: 100000})
   const p = product(s, 'QF-VIP1')
-  s = run(s, 'saveProduct', {product: {...p, dailyRate: 2, earlyRedeemFeeRate: 1}, expectedVersion: p.version})
-  assert.equal(order(s).productSnapshot.dailyRate, 1.25)
+  s = run(s, 'saveProduct', {product: {...p, dailyRate: {min: 2, max: 3}, earlyRedeemFeeRate: 1}, expectedVersion: p.version})
+  assert.deepEqual(order(s).productSnapshot.dailyRate, {min: 1.25, max: 1.25})
   assert.equal(order(s).productSnapshot.earlyRedeemFeeRate, 0.73)
   assert.throws(() => run(s, 'saveProduct', {product: p, expectedVersion: p.version}), /stale/)
   const next = product(s, 'QF-VIP1')
   assert.throws(() => run(s, 'saveProduct', {product: {...next, lockDays: 0}, expectedVersion: next.version}), /productLock/)
+  assert.throws(() => run(s, 'saveProduct', {product: {...next, dailyRate: {min: 3, max: 2}}, expectedVersion: next.version}), /productRate/)
   assert.throws(() => run(s, 'saveProduct', {product: {...next, earlyRedeemFeeRate: 120}, expectedVersion: next.version}), /productFee/)
   assert.throws(() => run(s, 'saveProduct', {product: {...next, code: 'QF-VIP0'}, expectedVersion: next.version}), /productCodeTaken/)
   s = run(s, 'setProductStatus', {productId: 'QF-VIP1', expectedStatus: 'listed'})
   assert.throws(() => run(s, 'approve', {orderId: order(s).orderId}), /product/)
+})
+
+test('equal bounds give a fixed daily rate; a wider range draws each day inside it, stable per day', () => {
+  let s = fresh()
+  const p = product(s, 'QF-VIP0')
+  s = run(s, 'saveProduct', {product: {...p, dailyRate: {min: 0.5, max: 0.9}}, expectedVersion: p.version})
+  assert.equal(displayRate(product(s, 'QF-VIP0')), 0.7)
+  s = run(s, 'subscribe', {userId: 'U1', productId: 'QF-VIP0', amount: 10000})
+  s = run(s, 'approve', {orderId: order(s).orderId})
+  advance(s, T0 + 5 * DAY)
+  const rates = s.payouts.filter(x => x.orderId === order(s).orderId).map(x => x.rate)
+  assert.equal(rates.length, 5)
+  assert.ok(rates.every(r => r >= 0.5 && r <= 0.9))
+  assert.equal(dailyRateFor(order(s), T0), rates.at(-1), 'the same day always gets the same rate')
 })

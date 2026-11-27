@@ -6,8 +6,8 @@ import {eligibilityFailures, validateEligibility} from '../lending/eligibility.j
 //
 // Business rules (client requirements, confirmed 2026-11-27):
 // - Every subscription waits for admin review; only approval starts interest and the lock period.
-// - Interest accrues inside the order once per full day at the product's fixed daily rate (frozen into the order),
-//   always on principal (no compounding). It is not credited to the user's balance; it is paid out with the
+// - Interest accrues inside the order once per full day, always on principal (no compounding), at a rate inside the
+//   product's daily-rate range (frozen into the order; equal bounds give a fixed rate, user decision 2026-11-27). It is not credited to the user's balance; it is paid out with the
 //   principal when the order is redeemed.
 // - Products may have a lock period (VIP0 has none). Inside it the holder can still redeem early, paying the
 //   product's early-redemption fee: a fixed percentage of principal, whatever the days left; accrued interest is
@@ -63,7 +63,9 @@ export const isFull = (s, p) => raisedAmount(s, p) >= p.totalQuota
 export const isRestricted = (p, userId) => (p.restrictedUserIds || []).includes(String(userId))
 /** Progress (0–100) as a given user sees it: 100 for restricted users. */
 export const progressFor = (s, p, userId) => (isRestricted(p, userId) ? 100 : Math.min(100, Math.round(raisedAmount(s, p) / p.totalQuota * 1000) / 10))
-export const displayRate = p => p.dailyRate
+/** The single rate the public site displays: the middle of the range (the fixed rate when the bounds are equal). */
+export const displayRate = p => Number(((p.dailyRate.min + p.dailyRate.max) / 2).toFixed(4))
+export const isFixedRate = rate => rate.min === rate.max
 
 export function validateProduct(p) {
   fail(typeof p?.name === 'string' && p.name.trim(), 'productName')
@@ -76,7 +78,8 @@ export function validateProduct(p) {
   fail(finite(p.minAmount) && p.minAmount > 0 && finite(p.maxAmount) && p.maxAmount >= p.minAmount, 'productAmount')
   fail(finite(p.totalQuota) && p.totalQuota >= p.maxAmount, 'productQuota')
   fail(finite(p.initialPercent) && p.initialPercent >= 0 && p.initialPercent <= 100, 'productInitial')
-  fail(finite(p.dailyRate) && p.dailyRate >= 0 && p.dailyRate <= 100, 'productRate')
+  const r = p.dailyRate
+  fail(r && finite(r.min) && finite(r.max) && r.min >= 0 && r.min <= r.max && r.max <= 100, 'productRate')
   fail(Array.isArray(p.restrictedUserIds) && p.restrictedUserIds.every(x => typeof x === 'string' && x.trim()), 'productRestricted')
   fail(Number.isInteger(p.sortOrder), 'productSort')
   validateEligibility(p)
@@ -95,10 +98,21 @@ export const inLock = (order, now) => !!order.lockUntil && now < order.lockUntil
 /** Early-redemption fee for redeeming now: the product's rate on principal inside the lock period, none after. */
 export const redemptionFee = (order, now) => (inLock(order, now) ? money(order.principal * order.productSnapshot.earlyRedeemFeeRate / 100) : 0)
 
+function rng(seed) {
+  let h = 2166136261
+  for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619)
+  return () => { h += 0x6D2B79F5; let t = h; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
+}
+/** Rate for one order-day: fixed when the frozen bounds are equal, otherwise drawn inside them (same day → same rate). */
+export function dailyRateFor(order, dayStart) {
+  const {min, max} = order.productSnapshot.dailyRate
+  return min === max ? min : Number((min + (max - min) * rng(`${order.orderId}:${dayKey(dayStart)}`)()).toFixed(4))
+}
+
 /** Adds one interest record per completed day to the order (not to the user's balance). */
 function accrue(s, order, now) {
   while (order.lastAccruedAt + DAY <= now) {
-    const dayStart = order.lastAccruedAt, at = dayStart + DAY, rate = order.productSnapshot.dailyRate
+    const dayStart = order.lastAccruedAt, at = dayStart + DAY, rate = dailyRateFor(order, dayStart)
     const amount = money(order.principal * rate / 100)
     s.payouts.unshift({id: `QP-${order.orderId}-${dayKey(dayStart)}`, orderId: order.orderId, userId: order.userId, date: dayKey(dayStart), rate, amount, createdAt: at})
     order.accruedInterest = money(order.accruedInterest + amount)

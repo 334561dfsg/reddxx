@@ -67,6 +67,6 @@ export const errorLabels = {
   productAsset: '请选择标识币种', productRisk: '请选择风险等级', productTags: '策略标签不能为空白', productLock: '锁定期须为正整数天数',
   productFee: '提前赎回手续费率须在 0–100% 之间', productRestricted: '限购名单中的 UID 不能为空白', productAmount: '起投金额须大于 0，单笔上限不小于起投金额',
   productQuota: '产品总额度不能小于单笔上限', productInitial: '初始募集比例须在 0–100% 之间',
-  productRate: '日收益率须在 0–100% 之间', productSort: '排序权重须为整数', action: '不支持的操作',
+  productRate: '日收益率须满足 0 ≤ 下限 ≤ 上限 ≤ 100%', productSort: '排序权重须为整数', action: '不支持的操作',
 }
 export const errorText = error => errorLabels[error?.message || error] || String(error?.message || error || '操作失败')
