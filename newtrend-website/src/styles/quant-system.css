@@ -101,3 +101,49 @@
  #main-content#main-content .strategy-page .ds-pnl{font-size:13px;white-space:nowrap}
  #main-content#main-content .strategy-page .ds-bar{height:14px}
 }
+
+/* Phase 3 — one product-card language for strategy templates (.sc-card) and quant funds (.qf-card): 20px padding
+   (16px on phones), title 16/24 on up to two lines, the key figure in mono 28/32 (24/30 on phones), labels 12/18
+   muted, values 14/20, chips 12/18; the progress bar uses the solid accent like the actions. */
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card,.qf-card){padding:20px}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card .sc-title,.qf-card .qf-card-link){display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal;text-overflow:clip;font-size:16px;line-height:24px;font-weight:600;text-align:left}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-sharpe strong,.sc-metrics strong,.qf-card .qf-rate){font-family:var(--nt-font-mono);font-size:28px;line-height:32px;font-weight:600}
+#main-content#main-content .quant-page.quant-sub .qf-card .qf-rate span{font-size:14px}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card dt,.sc-card .sc-label,.sc-sharpe small,.sc-metrics small,.qf-card small,.qf-progress-meta span){font-size:12px;line-height:18px;font-weight:400;color:#8c8f96}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-facts dd,.qf-limit p,.qf-term p){font-size:14px;line-height:20px}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-chip,.qf-tags>span){padding:2px 8px;border-radius:6px;font-size:12px;line-height:18px}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) .sc-description{font-size:13px;line-height:20px}
+#main-content#main-content .quant-page.quant-sub .qf-progress-track span{background:var(--nt-accent);background-image:none}
+@media(max-width:767px){
+ #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card,.qf-card){padding:16px}
+ #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-sharpe strong,.sc-metrics strong,.qf-card .qf-rate){font-size:24px;line-height:30px}
+ /* The fund list opens on the products on phones; its marketing hero is desktop-only (same as the strategy page). */
+ #main-content#main-content .quant-page.quant-sub .qf-hero{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);border:0}
+}
+
+/* Phone spacing rhythm, matched to the AI Quant landing (user feedback 2026-11-27: sub-pages looked loose): 12px
+   between page blocks and between cards, 12px inside cards, 8–12px field gaps, compact filter rows. */
+@media(max-width:767px){
+ #main-content#main-content .page-wrap.quant-page.quant-sub{padding-top:12px;padding-bottom:32px}
+ #main-content#main-content .strategy-page{padding-top:12px}
+ #main-content#main-content .quant-page.quant-sub .subnav{margin-bottom:12px}
+ #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card,.qf-card){gap:12px}
+ #main-content#main-content .quant-page.quant-sub .qf-catalog,#main-content#main-content .strategy-page .strategy-catalog-section .strategy-grid{gap:12px}
+ #main-content#main-content .strategy-page :is(.sc-featured-head,.sc-metrics){gap:12px}
+ #main-content#main-content .strategy-page .sc-chip-fields{gap:10px 16px}
+ #main-content#main-content .strategy-page .sc-facts{gap:16px}
+ #main-content#main-content .strategy-page .strategy-filters{gap:8px;margin:12px 0}
+ #main-content#main-content .strategy-page :is(.strategy-featured-section,.strategy-catalog-section){padding:12px 0 16px}
+ #main-content#main-content .strategy-page h2{margin-bottom:4px}
+ #main-content#main-content .strategy-page .strategy-section-description{margin:0 0 12px}
+ #main-content#main-content .quant-page.quant-sub :is(.qf-card-head,.qf-card-rate){gap:10px}
+ #main-content#main-content .quant-page.quant-sub .qf-asset-filter,#main-content#main-content .quant-page.quant-sub .qf-filters{margin-bottom:12px}
+ #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.my-strategies-head,.qf-positions-head,.qf-interest-head,.strategy-stats-head){margin:12px 0 12px;padding:0}
+ #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.psc,.portfolio-summary-card){margin-bottom:12px;padding:16px}
+ #main-content#main-content .strategy-page .strategy-mine{padding:12px 16px 32px}
+ #main-content#main-content .strategy-page .my-strategies{gap:12px;padding:0}
+ #main-content#main-content .strategy-page .my-strategies-head{margin:0}
+ #main-content#main-content .quant-page.quant-sub .qf-positions{gap:12px}
+ #main-content#main-content .quant-page.quant-sub .qf-positions-head{margin-top:0}
+ #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) .psc{gap:14px}
+}
