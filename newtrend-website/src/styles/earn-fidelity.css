@@ -98,7 +98,7 @@
  #main-content .earn-page .earn-holdings-grid .earn-holdings-total strong{font-size:24px;line-height:32px}
  #main-content .earn-page .earn-featured{margin-top:24px}
  /* Featured products scroll sideways instead of stacking three tall cards. */
- #main-content .earn-page .earn-featured-grid{display:grid;grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:78%;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:0 16px 4px;scroll-padding:0 16px}
+ #main-content .earn-page .earn-featured-grid{display:grid;grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:78%;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:0 16px 4px;scroll-padding:0 16px}
  #main-content .earn-page .earn-featured-grid::-webkit-scrollbar{display:none}
  #main-content .earn-page .earn-featured-grid>*{scroll-snap-align:start}
  #main-content .earn-page .earn-featured-card{padding:16px}

@@ -17,6 +17,9 @@ const showTabbar=computed(()=>tabRoots.some(r=>r.test(route.path)))
 <style>
 /* Room for the fixed mobile tab bar so it never covers the end of a page (only where it is shown). */
 :root{--nt-tabbar-h:56px}
+/* The page itself never scrolls sideways: horizontal swipe rows (featured cards) scroll inside their own box, and a
+   transiently wide child must not let the whole page be dragged (user report, 2026-11-27). clip keeps sticky intact. */
+#site-shell{overflow-x:clip}
 /* Mobile trading pages drop the site header (user decision, 2026-11-27); the bottom tab bar and other pages keep the menu. */
 @media(max-width:760px){#site-shell.trade-route>.site-header{display:none}}
 @media(max-width:900px){#site-shell.has-tabbar{padding-bottom:calc(var(--nt-tabbar-h) + env(safe-area-inset-bottom))}}

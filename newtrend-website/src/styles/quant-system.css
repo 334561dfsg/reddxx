@@ -47,3 +47,57 @@
  #main-content#main-content .strategy-page :is(.strategy-featured-section,.strategy-catalog-section){padding:16px 0 24px}
  #main-content#main-content .strategy-page .strategy-section-description{margin-bottom:16px}
 }
+
+/* Phase 2 — my positions on phones: each order is a card (status + product head, two-column label/value fields,
+   dates across, actions at the foot) instead of a squeezed eight-column table. Labels come from data-label. */
+@media(max-width:767px){
+ #main-content#main-content .qf-positions .qf-table-wrap{overflow:visible;background:transparent;border:0;padding:0}
+ #main-content#main-content .qf-positions .qf-table,#main-content#main-content .qf-positions .qf-table tbody{display:block}
+ #main-content#main-content .qf-positions .qf-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ #main-content#main-content .qf-positions .qf-table tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0 0 12px;padding:16px;border-radius:20px;background:var(--qf-card,#15181c);border:1px solid #ffffff0a}
+ #main-content#main-content .qf-positions .qf-table td{display:block;padding:0!important;border:0;text-align:left;white-space:normal;width:auto;min-width:0}
+ #main-content#main-content .qf-positions .qf-table td:nth-child(1){grid-column:2;grid-row:1;justify-self:end;align-self:start}
+ #main-content#main-content .qf-positions .qf-table td:nth-child(2){grid-column:1;grid-row:1}
+ #main-content#main-content .qf-positions .qf-table .qf-table-product{min-width:0;align-items:flex-start}
+ #main-content#main-content .qf-positions .qf-table .qf-row-link{text-align:left;font-size:14px;line-height:20px;font-weight:600;color:#fff}
+ #main-content#main-content .qf-positions .qf-table td[data-label]:before{content:attr(data-label);display:block;margin-bottom:2px;font-size:12px;line-height:18px;color:var(--qf-muted,#8c8f96)}
+ #main-content#main-content .qf-positions .qf-table td[data-label]{font-size:14px;line-height:20px}
+ #main-content#main-content .qf-positions .qf-table td .qf-unit{margin-left:4px}
+ #main-content#main-content .qf-positions .qf-table td small{white-space:normal}
+ #main-content#main-content .qf-positions .qf-table .qf-cell-dates{grid-column:1/-1}
+ #main-content#main-content .qf-positions .qf-table .qf-cell-actions{grid-column:1/-1;padding-top:12px!important;border-top:1px solid #ffffff0d}
+ #main-content#main-content .qf-positions .qf-table .qf-cell-actions:empty,#main-content#main-content .qf-positions .qf-table .qf-cell-actions:has(.qf-row-actions:empty){display:none}
+ #main-content#main-content .qf-positions .qf-table .qf-row-actions{display:flex;justify-content:flex-end;gap:8px}
+ #main-content#main-content .qf-positions .qf-table .qf-skeleton-row-loading td:first-child{grid-column:auto;grid-row:auto}
+}
+
+/* Phase 2 — my strategies on phones: name/status head across, P&L and capital side by side, end date below, the
+   actions as one row at the foot (label hidden) — values no longer split from their units. */
+@media(max-width:767px){
+ #main-content#main-content .my-strategies-table{background:transparent;border:0;padding:0}
+ #main-content#main-content .my-strategies-table tbody>tr:not(.ms-skeleton-row){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0 0 12px;padding:16px;border-radius:20px;background:#15181c;border:1px solid #ffffff0a}
+ #main-content#main-content .my-strategies-table tbody>tr>td{display:block;padding:0!important;text-align:left;min-width:0}
+ #main-content#main-content .my-strategies-table td[data-label]::before{display:block;margin-bottom:2px;font-size:12px;line-height:18px}
+ #main-content#main-content .my-strategies-table td:first-child{grid-column:1/-1}
+ #main-content#main-content .my-strategies-table td:first-child::before{display:none}
+ #main-content#main-content .my-strategies-table .ms-pnl{align-items:flex-start}
+ #main-content#main-content .my-strategies-table td:last-child{grid-column:1/-1;padding-top:12px!important;border-top:1px solid #ffffff0d}
+ #main-content#main-content .my-strategies-table td:last-child::before{display:none}
+ #main-content#main-content .my-strategies-table .ms-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+ /* Today's picks scroll sideways (user request), like the finance featured row. */
+ #main-content#main-content .strategy-page .strategy-featured-grid{display:grid;grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:86%;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:0 16px 4px;scroll-padding:0 16px}
+ #main-content#main-content .strategy-page .strategy-featured-grid::-webkit-scrollbar{display:none}
+ #main-content#main-content .strategy-page .strategy-featured-grid>*{scroll-snap-align:start;min-width:0}
+}
+
+/* Phase 2 — strategy daily stats on phones: date over weekday (no wrapping), a narrow trade count, the loss/gain bar
+   takes the rest, P&L right-aligned; the stats card uses the phone padding. */
+@media(max-width:767px){
+ #main-content#main-content .strategy-page .strategy-stats-card{padding:16px}
+ #main-content#main-content .strategy-page .ds-grid{grid-template-columns:4.25rem 2.25rem minmax(0,1fr) auto;column-gap:10px}
+ #main-content#main-content .strategy-page .ds-head{font-size:11px;line-height:16px;white-space:nowrap}
+ #main-content#main-content .strategy-page .ds-date{flex-direction:column;align-items:flex-start;gap:0;font-size:13px;line-height:18px;white-space:nowrap}
+ #main-content#main-content .strategy-page .ds-date small{font-size:11px;line-height:16px}
+ #main-content#main-content .strategy-page .ds-pnl{font-size:13px;white-space:nowrap}
+ #main-content#main-content .strategy-page .ds-bar{height:14px}
+}
