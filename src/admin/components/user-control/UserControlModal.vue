@@ -289,7 +289,7 @@ const submit = () => {
                   rows="2"
                   maxlength="200"
                   placeholder="请填写点控原因，便于后续审计"
-                  class="mt-1.5 w-full rounded-lg border px-3 py-1.5 text-sm outline-none"
+                  class="mt-1.5 w-full"
                   :class="noteRequired && noteTouched && !form.note.trim() ? 'border-rose-400' : 'border-slate-300'"
                   :aria-invalid="noteRequired && noteTouched && !form.note.trim()"
                   aria-describedby="user-control-note-help"
@@ -346,13 +346,13 @@ const submit = () => {
         </div>
 
         <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-          <AdminButton type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" @click="close">
+          <AdminButton type="button" @click="close">
             取消
           </AdminButton>
           <AdminButton
             type="button"
             :disabled="phase !== 'open' || !isComplete"
-            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            variant="primary"
             @click="submit"
           >
             确认设置

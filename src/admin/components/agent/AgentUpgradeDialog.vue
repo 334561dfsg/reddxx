@@ -186,7 +186,7 @@ watch(() => props.visible, async (visible) => {
                     class="ant-input"
                     @keyup.enter="searchCandidates"
                   />
-                  <AdminButton type="button" class="ant-btn ant-btn-primary shrink-0" :disabled="searching" @click="searchCandidates">
+                  <AdminButton type="button" class="shrink-0" variant="primary" :disabled="searching" @click="searchCandidates">
                     {{ searching ? '搜索中…' : '搜索用户' }}
                   </AdminButton>
                 </div>
@@ -202,25 +202,25 @@ watch(() => props.visible, async (visible) => {
 
               <section class="grid gap-4 sm:grid-cols-2">
                 <label class="block sm:col-span-2">
-                  <span class="text-sm font-medium text-slate-700">登录账号 <span class="text-rose-500">*</span></span>
-                  <AdminInput v-model="form.loginAccount" type="text" autocomplete="off" class="ant-input mt-1.5" placeholder="建议使用邮箱或唯一账号名" />
+                  <span class="text-sm font-medium text-slate-700"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>登录账号</span>
+                  <AdminInput v-model="form.loginAccount" type="text" autocomplete="off" class="mt-1.5" placeholder="建议使用邮箱或唯一账号名" />
                 </label>
 
                 <div class="sm:col-span-2">
-                  <span class="text-sm font-medium text-slate-700">初始登录密码 <span class="text-rose-500">*</span></span>
+                  <span class="text-sm font-medium text-slate-700"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>初始登录密码</span>
                   <div class="mt-2 flex flex-wrap gap-2">
-                    <AdminButton type="button" class="ant-btn" :class="form.passwordMode === 'auto' ? 'ant-btn-primary' : ''" @click="setPasswordMode('auto')">自动生成</AdminButton>
-                    <AdminButton type="button" class="ant-btn" :class="form.passwordMode === 'manual' ? 'ant-btn-primary' : ''" @click="setPasswordMode('manual')">手动输入</AdminButton>
+                    <AdminButton type="button" :class="form.passwordMode === 'auto' ? 'ant-btn-primary' : ''" @click="setPasswordMode('auto')">自动生成</AdminButton>
+                    <AdminButton type="button" :class="form.passwordMode === 'manual' ? 'ant-btn-primary' : ''" @click="setPasswordMode('manual')">手动输入</AdminButton>
                   </div>
                 </div>
 
                 <label class="block">
                   <span class="text-sm font-medium text-slate-700">密码</span>
-                  <AdminInput v-model="form.password" type="password" autocomplete="new-password" class="ant-input mt-1.5" />
+                  <AdminInput v-model="form.password" type="password" autocomplete="new-password" class="mt-1.5" />
                 </label>
                 <label class="block">
                   <span class="text-sm font-medium text-slate-700">确认密码</span>
-                  <AdminInput v-model="form.confirmPassword" type="password" autocomplete="new-password" class="ant-input mt-1.5" />
+                  <AdminInput v-model="form.confirmPassword" type="password" autocomplete="new-password" class="mt-1.5" />
                 </label>
                 <p class="sm:col-span-2 text-xs leading-relaxed text-slate-500">
                   创建成功后可复制账号和初始密码，发送给代理。
@@ -230,8 +230,8 @@ watch(() => props.visible, async (visible) => {
           </div>
 
           <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-            <AdminButton type="button" class="ant-btn" @click="close">{{ delivery ? '关闭' : '取消' }}</AdminButton>
-            <AdminButton v-if="!delivery" type="button" class="ant-btn ant-btn-primary" :disabled="submitting" @click="submit">
+            <AdminButton type="button" @click="close">{{ delivery ? '关闭' : '取消' }}</AdminButton>
+            <AdminButton v-if="!delivery" type="button" variant="primary" :disabled="submitting" @click="submit">
               {{ submitting ? '提交中…' : '确认添加' }}
             </AdminButton>
           </footer>

@@ -411,7 +411,7 @@ const statusClass = (status) =>
                     id="template-name"
                     v-model:value="templateForm.name"
                     type="text"
-                    class="ant-input"
+                   
                     :class="getTemplateFieldError('template-name') ? 'border-rose-300' : ''"
                     placeholder="如：标准收益模板"
                     :aria-invalid="!!getTemplateFieldError('template-name')"
@@ -436,7 +436,7 @@ const statusClass = (status) =>
                 class="space-y-3 outline-none"
               >
                 <div class="flex items-center justify-between">
-                  <h3 class="text-sm font-semibold text-slate-900">周期配置 <span class="text-rose-500">*</span></h3>
+                  <h3 class="text-sm font-semibold text-slate-900"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>周期配置</h3>
                   <a-button type="primary"
                     id="delivery-template-add-cycle"
                     html-type="button"
@@ -480,7 +480,7 @@ const statusClass = (status) =>
                             inputmode="numeric"
                             :min="1"
                             :step="1"
-                            class="ant-input w-full"
+                            class="w-full"
                             :class="getTemplateFieldError(`cycle-${cycle.id}-durationSec`) ? 'border-rose-300' : ''"
                             :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-durationSec`)"
                             :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-durationSec-help`, getTemplateFieldError(`cycle-${cycle.id}-durationSec`) ? `cycle-${cycle.id}-durationSec-error` : '')"
@@ -498,7 +498,7 @@ const statusClass = (status) =>
                           inputmode="decimal"
                           :min="0"
                           :step="0.01"
-                          class="ant-input w-full"
+                          class="w-full"
                           :class="getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) ? 'border-rose-300' : ''"
                           :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-payoutPct`)"
                           :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-payoutPct-help`, getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) ? `cycle-${cycle.id}-payoutPct-error` : '')"
@@ -516,7 +516,7 @@ const statusClass = (status) =>
                           inputmode="decimal"
                           :min="0"
                           :step="0.00000001"
-                          class="ant-input w-full"
+                          class="w-full"
                           :class="getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) ? 'border-rose-300' : ''"
                           :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`)"
                           :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-actualPayoutPct-help`, getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) ? `cycle-${cycle.id}-actualPayoutPct-error` : '')"
@@ -549,7 +549,7 @@ const statusClass = (status) =>
           <footer class="flex justify-end gap-2 border-t border-slate-100 px-6 py-4">
             <a-button
               html-type="button"
-              class="ant-btn"
+             
               @click="requestTemplateClose"
             >
               取消
@@ -570,10 +570,10 @@ const statusClass = (status) =>
                   当前周期模板有未保存的修改，关闭后这些修改不会保存。
                 </div>
                 <footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4">
-                  <a-button html-type="button" class="ant-btn" @click="cancelTemplateUnsavedClose">
+                  <a-button html-type="button" @click="cancelTemplateUnsavedClose">
                     继续编辑
                   </a-button>
-                  <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary" @click="confirmTemplateUnsavedClose">
+                  <a-button type="primary" html-type="button" @click="confirmTemplateUnsavedClose">
                     确认关闭
                   </a-button>
                 </footer>

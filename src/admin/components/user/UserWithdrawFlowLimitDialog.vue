@@ -124,13 +124,13 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
 
             <template v-if="stage === 'edit'">
               <label class="block">
-                <span class="text-sm font-medium text-slate-800">流水范围 <span class="text-rose-500">*</span></span>
+                <span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>流水范围</span>
                 <AdminSelect id="user-withdraw-flow-scope" :ref="element => { scopeRef = nativeControl(element) }" v-model="form.flowScope" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none">
                   <option v-for="option in flowScopeOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
                 </AdminSelect>
                 <span class="mt-1 block text-xs text-slate-500">仅统计所选范围内产生的有效流水。</span>
               </label>
-              <label class="block"><span class="text-sm font-medium text-slate-800">流水要求金额 <span class="text-rose-500">*</span></span><div class="relative mt-1.5"><AdminInput :ref="element => { requiredRef = nativeControl(element) }" v-model="form.requiredTurnover" type="text" inputmode="decimal" class="h-10 w-full rounded-lg border border-slate-300 px-3 pr-16 text-sm outline-none" /><span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-slate-500">USDT</span></div></label>
+              <label class="block"><span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>流水要求金额</span><div class="relative mt-1.5"><AdminInput :ref="element => { requiredRef = nativeControl(element) }" v-model="form.requiredTurnover" type="text" inputmode="decimal" class="h-10 w-full rounded-lg border border-slate-300 px-3 pr-16 text-sm outline-none" /><span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-slate-500">USDT</span></div></label>
               <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
                 <dl class="grid grid-cols-2 gap-3 text-sm">
                   <div><dt class="text-xs text-slate-500">已完成有效流水</dt><dd class="mt-0.5 font-semibold text-slate-900">{{ money(completedTurnover) }} <span class="text-xs font-normal text-slate-500">USDT</span></dd></div>
@@ -141,22 +141,22 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
               <fieldset>
                 <legend class="text-sm font-medium text-slate-800">有效期</legend>
                 <div class="mt-1.5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <AdminRadio class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50" v-model="form.expiryMode" value="unlimited" @change="selectExpiryMode('unlimited')">
+                  <AdminRadio class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:bg-blue-50" v-model="form.expiryMode" value="unlimited" @change="selectExpiryMode('unlimited')">
 
                     <span>无限期</span>
                   </AdminRadio>
-                  <AdminRadio class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50" v-model="form.expiryMode" value="scheduled" @change="selectExpiryMode('scheduled')">
+                  <AdminRadio class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:bg-blue-50" v-model="form.expiryMode" value="scheduled" @change="selectExpiryMode('scheduled')">
 
                     <span>指定到期时间</span>
                   </AdminRadio>
                 </div>
               </fieldset>
-              <label v-if="form.expiryMode === 'scheduled'" class="block"><span class="text-sm font-medium text-slate-800">到期时间 <span class="text-rose-500">*</span></span><AdminInput v-model="form.expiresAt" type="datetime-local" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none" /></label>
-              <label class="block"><span class="text-sm font-medium text-slate-800">设置原因（可选）</span><AdminTextarea v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none" /></label>
+              <label v-if="form.expiryMode === 'scheduled'" class="block"><span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>到期时间</span><AdminInput v-model="form.expiresAt" type="datetime-local" class="mt-1.5 w-full" /></label>
+              <label class="block"><span class="text-sm font-medium text-slate-800">设置原因（可选）</span><AdminTextarea v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full" /></label>
               <div v-if="hasLimit" class="rounded-lg border border-rose-200 bg-rose-50 p-3">
                 <p class="text-sm font-medium text-rose-900">解除现有限制</p>
-                <AdminTextarea v-model="form.removeReason" rows="2" maxlength="200" class="mt-2 w-full rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm outline-none" placeholder="可填写解除原因" />
-                <AdminButton type="button" :disabled="busy" class="mt-2 rounded-lg border border-rose-300 bg-white px-3 py-2 text-sm font-medium text-rose-700 disabled:opacity-40" @click="startRemoveConfirm">解除限制</AdminButton>
+                <AdminTextarea v-model="form.removeReason" rows="2" maxlength="200" class="mt-2 w-full" placeholder="可填写解除原因" />
+                <AdminButton type="button" :disabled="busy" class="mt-2" @click="startRemoveConfirm">解除限制</AdminButton>
               </div>
             </template>
 
@@ -171,7 +171,7 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
           </div>
 
           <footer class="flex shrink-0 justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3 sm:px-5">
-            <template v-if="stage === 'edit'"><AdminButton type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="close">取消</AdminButton><AdminButton type="button" :disabled="busy" class="rounded-lg bg-amber-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-40" @click="startSetConfirm">下一步</AdminButton></template>
+            <template v-if="stage === 'edit'"><AdminButton type="button" :disabled="busy" @click="close">取消</AdminButton><AdminButton type="button" :disabled="busy" variant="primary" @click="startSetConfirm">下一步</AdminButton></template>
             <template v-else><AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="backToEdit">返回修改</AdminButton><AdminButton :ref="element => { submitButtonRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg bg-rose-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-40" @click="requestMfa">{{ busy ? '验证中…' : '提交并验证' }}</AdminButton></template>
           </footer>
     </AdminDialog>

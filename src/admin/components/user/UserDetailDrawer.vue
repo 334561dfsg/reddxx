@@ -308,7 +308,7 @@ const tabButtonClass = (id) => {
                 v-for="t in tabs"
                 :key="t.id"
                 type="button"
-                class="shrink-0 px-3 py-3 text-sm font-medium border-b-2 border-transparent transition-colors whitespace-nowrap"
+                class="shrink-0"
                 :class="tabButtonClass(t.id)"
                 @click="activeTab = t.id"
               >
@@ -505,7 +505,7 @@ const tabButtonClass = (id) => {
             <div class="flex justify-end gap-2">
               <AdminButton
                 type="button"
-                class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+               
                 @click="close"
               >
                 关闭

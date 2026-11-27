@@ -170,7 +170,7 @@ const close = () => {
                     v-model="form.newPassword"
                     type="password"
                     autocomplete="new-password"
-                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition"
+                    class="w-full"
                     :disabled="displayedDialog.saving"
                     :aria-invalid="Boolean(displayedDialog.fieldErrors.newPassword)"
                     :aria-describedby="displayedDialog.fieldErrors.newPassword ? 'admin-new-password-error admin-password-help' : 'admin-password-help'"
@@ -185,7 +185,7 @@ const close = () => {
                     v-model="form.confirmPassword"
                     type="password"
                     autocomplete="new-password"
-                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition"
+                    class="w-full"
                     :disabled="displayedDialog.saving"
                     :aria-invalid="Boolean(displayedDialog.fieldErrors.confirmPassword)"
                     :aria-describedby="displayedDialog.fieldErrors.confirmPassword ? 'admin-confirm-password-error' : undefined"
@@ -198,7 +198,7 @@ const close = () => {
             <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
               <AdminButton
                 type="button"
-                class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+               
                 :disabled="displayedDialog.saving"
                 @click="close"
               >

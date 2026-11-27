@@ -82,7 +82,6 @@ const confirm = () => {
   </AdminButton>
 
   <AdminDialog :open="showModal" title="确认操作" title-id="user-freeze-title" :return-focus="returnFocusRef" :width="448" plain ref="dialogFrame" @close="showModal = false">
-    <template #eyebrow>操作</template>
 
           <div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
             <div class="text-sm text-slate-700 leading-6">
@@ -92,25 +91,23 @@ const confirm = () => {
               <span class="font-semibold text-slate-900">{{ freezeDialog.targetText }}</span>
               吗？
             </div>
-
-            <div class="mt-5 flex justify-end gap-3">
-              <AdminButton
+          </div>
+    <footer>
+      <AdminButton
                 type="button"
-                class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                 @click="close"
               >
                 取消
               </AdminButton>
               <AdminButton
                 type="button"
-                class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors"
-                :class="freezeDialog.confirmButtonClass"
+                variant="primary"
+                :danger="!freezeDialog.isUnfreeze"
                 @click="confirm"
               >
                 {{ freezeDialog.confirmText }}
               </AdminButton>
-            </div>
-          </div>
+    </footer>
   </AdminDialog>
 </template>
 

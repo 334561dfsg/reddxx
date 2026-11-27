@@ -116,7 +116,7 @@ defineExpose({ phase, close, dialogEl: dialogRef, titleEl: titleRef })
 .admin-dialog .ant-modal { top: 0; padding-bottom: 0; max-width: calc(100vw - 24px); margin-block: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-bottom)); }
 /* Fixed frame: header and the slot's footer stay put, only the slot's body scrolls. */
 .admin-dialog .ant-modal-content { display: flex; flex-direction: column; max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow: hidden; padding: 0; }
-.admin-dialog .ant-modal-header { flex: none; margin: 0; padding: 12px 12px 12px 20px; border-bottom: 1px solid rgb(5 5 5 / 6%); }
+.admin-dialog .ant-modal-header { flex: none; margin: 0; border-bottom: 1px solid rgb(5 5 5 / 6%); }
 .admin-dialog .ant-modal-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 .admin-dialog-panel { display: contents; }
 .admin-dialog-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
@@ -128,4 +128,15 @@ defineExpose({ phase, close, dialogEl: dialogRef, titleEl: titleRef })
 .admin-dialog-close.ant-btn { flex: none; min-width: 44px; min-height: 44px; }
 .admin-dialog-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 16px 20px; }
 .admin-dialog-plain { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+/* Ant Design Pro metrics (2026-11-28): 16px/24px header, 24px horizontal content gutter, a right-aligned 10px/24px
+   footer bar with a hairline divider, 14px/32px controls. Plain slots bring their own body and footer elements; the
+   gutter and footer bar are applied to them here so every dialog and drawer lines up the same way. */
+.admin-dialog .ant-modal-header { padding: 12px 16px 12px 24px; }
+.admin-dialog-body { padding: 24px; }
+.admin-dialog-plain > :not(footer) { padding-left: 24px !important; padding-right: 24px !important; }
+.admin-dialog-plain > footer { padding: 10px 24px !important; border-top: 1px solid rgb(5 5 5 / 6%) !important; background: #fff !important; }
+.admin-dialog-plain > footer:has(> .ant-btn) { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
+.admin-dialog .admin-antd-control-button.ant-btn:not([aria-label]):not(.admin-tile) { height: 32px; min-height: 32px; padding: 4px 15px; font-size: 14px; line-height: 22px; border-radius: 6px; }
+.admin-dialog .admin-antd-control-input.ant-input { font-size: 14px; border-radius: 6px; }
 </style>

@@ -1,4 +1,5 @@
 <script setup>
+import AdminEmpty from '../antd/AdminEmpty.vue'
 import AdminDrawer from '../antd/AdminDrawer.vue'
 import { AdminButton } from '../antd/controls.js'
 
@@ -88,7 +89,7 @@ watch(totalPages, (nextTotalPages) => {
                       <div><dt class="text-slate-500">累计盈亏</dt><dd class="mt-0.5 font-medium" :class="branch.totalProfit >= 0 ? 'text-emerald-700' : 'text-rose-700'">{{ profitLabel(branch.totalProfit) }} {{ signedProfit(branch.totalProfit) }} USDT</dd></div>
                     </dl>
                   </article>
-                  <p v-if="!pagedBranches.length" class="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">当前没有直属裂变分支</p>
+                  <AdminEmpty v-if="!pagedBranches.length">当前没有直属裂变分支</AdminEmpty>
                 </div>
               </div>
               <footer v-if="branches.length" data-testid="team-report-pagination" class="shrink-0 border-t border-slate-200 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
@@ -96,9 +97,9 @@ watch(totalPages, (nextTotalPages) => {
               </footer>
             </template>
 
-            <div v-else data-testid="team-report-empty-state" class="grid min-h-0 flex-1 place-items-center overflow-y-auto rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 pb-[max(1rem,env(safe-area-inset-bottom))] text-center">
+            <AdminEmpty v-else data-testid="team-report-empty-state" class="grid min-h-0 flex-1 place-items-center overflow-y-auto pb-[max(1rem,env(safe-area-inset-bottom))]">
               <div><p class="font-medium text-slate-700">当前没有裂变团队成员</p><p class="mt-1 text-sm text-slate-500">该用户尚无可统计的裂变下级关系。</p></div>
-            </div>
+            </AdminEmpty>
           </div>
     </AdminDrawer>
 </template>

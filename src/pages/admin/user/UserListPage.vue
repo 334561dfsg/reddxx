@@ -1517,8 +1517,8 @@ const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unified
                   <p v-if="cancelControlItems.length" class="mt-2 text-xs text-amber-700">已执行、已取消和已覆盖的历史记录会保留。</p>
                 </div>
                 <label class="block">
-                  <span class="text-sm font-medium text-slate-800">取消点控备注 <span class="text-rose-500">*</span></span>
-                  <AdminTextarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-100" />
+                  <span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>取消点控备注</span>
+                  <AdminTextarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full" />
                   <span class="mt-1 block text-xs" :class="cancelNote.trim() ? 'text-slate-500' : 'text-rose-600'">
                     {{ cancelNote.trim() ? '确认后将直接取消点控' : '取消点控备注必填' }}
                   </span>
@@ -1526,7 +1526,7 @@ const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unified
               </div>
               <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
                 <AdminButton :ref="element => { unifiedCancelReturnRef = nativeControl(element) }" type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeControlCancel">返回</AdminButton>
-                <AdminButton type="button" :disabled="unifiedCancelPhase !== 'open' || !cancelControlItems.length || !cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmControlCancel">
+                <AdminButton type="button" :disabled="unifiedCancelPhase !== 'open' || !cancelControlItems.length || !cancelNote.trim()" variant="primary" danger @click="confirmControlCancel">
                   确认取消点控
                 </AdminButton>
               </footer>

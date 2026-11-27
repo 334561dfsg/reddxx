@@ -148,14 +148,14 @@ watch(() => [props.visible, userId.value], ([visible]) => {
             </div>
             <template v-else>
             <label class="block">
-              <span class="text-sm font-medium text-slate-800">用户名 <span class="text-rose-500">*</span></span>
+              <span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>用户名</span>
               <AdminInput :ref="element => { firstFieldRef = nativeControl(element) }" v-model="form.username" :disabled="submitting" type="text" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none disabled:bg-slate-100" />
               <FeedbackToast v-if="errors.username" type="error" :source="() => (errors.username) ? (errors.username) : ''"></FeedbackToast>
             </label>
 
             <label class="block">
-              <span class="text-sm font-medium text-slate-800">邮箱 <span class="text-rose-500">*</span></span>
-              <AdminInput v-model="form.email" :disabled="submitting" type="email" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none disabled:bg-slate-100" />
+              <span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>邮箱</span>
+              <AdminInput v-model="form.email" :disabled="submitting" type="email" autocomplete="off" class="mt-1.5 w-full" />
               <FeedbackToast v-if="errors.email" type="error" :source="() => (errors.email) ? (errors.email) : ''"></FeedbackToast>
             </label>
 
@@ -182,7 +182,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
                     maxlength="24"
                     autocomplete="off"
                     placeholder="不含区号"
-                    class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none disabled:bg-slate-100"
+                    class="w-full"
                     :aria-invalid="Boolean(errors.phone)"
                     :aria-describedby="errors.phone ? phoneErrorId : null"
                   />
@@ -198,19 +198,19 @@ watch(() => [props.visible, userId.value], ([visible]) => {
             </AdminCheckbox>
 
             <fieldset v-if="isPromotion" :disabled="submitting" class="space-y-3 rounded-lg border border-slate-200 p-3">
-              <legend class="px-1 text-sm font-medium text-slate-800">初始登录密码 <span class="text-rose-500">*</span></legend>
+              <legend class="px-1 text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>初始登录密码</legend>
               <div class="flex gap-2">
                 <AdminButton type="button" :aria-pressed="passwordMode === 'auto'" class="rounded-md border px-3 py-1.5 text-sm" :class="passwordMode === 'auto' ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300'" @click="setPasswordMode('auto')">自动生成</AdminButton>
                 <AdminButton type="button" :aria-pressed="passwordMode === 'manual'" class="rounded-md border px-3 py-1.5 text-sm" :class="passwordMode === 'manual' ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300'" @click="setPasswordMode('manual')">手动输入</AdminButton>
               </div>
               <label class="block text-sm text-slate-700">
                 密码
-                <AdminInput v-model="password" :readonly="passwordMode === 'auto'" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="128" required :aria-invalid="Boolean(errors.password)" aria-describedby="profile-password-hint profile-password-error" class="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 outline-none" />
+                <AdminInput v-model="password" :readonly="passwordMode === 'auto'" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="128" required :aria-invalid="Boolean(errors.password)" aria-describedby="profile-password-hint profile-password-error" class="mt-1 w-full" />
               </label>
               <p id="profile-password-error" class="text-xs text-rose-600">{{ errors.password }}</p>
               <label v-if="passwordMode === 'manual'" class="block text-sm text-slate-700">
                 确认密码
-                <AdminInput v-model="confirmPassword" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="128" required :aria-invalid="Boolean(errors.confirmPassword)" aria-describedby="profile-confirm-password-error" class="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 outline-none" />
+                <AdminInput v-model="confirmPassword" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="128" required :aria-invalid="Boolean(errors.confirmPassword)" aria-describedby="profile-confirm-password-error" class="mt-1 w-full" />
                 <span id="profile-confirm-password-error" class="mt-1 block text-xs text-rose-600">{{ errors.confirmPassword }}</span>
               </label>
               <AdminCheckbox class="flex items-center gap-2 text-sm text-slate-700" v-model="showPassword">显示密码</AdminCheckbox>
@@ -219,15 +219,15 @@ watch(() => [props.visible, userId.value], ([visible]) => {
 
             <label class="block">
               <span class="text-sm font-medium text-slate-800">操作原因（可选）</span>
-              <AdminTextarea v-model="form.reason" :disabled="submitting" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none disabled:bg-slate-100" placeholder="请填写为什么编辑用户资料" />
+              <AdminTextarea v-model="form.reason" :disabled="submitting" rows="3" maxlength="200" class="mt-1.5 w-full" placeholder="请填写为什么编辑用户资料" />
               <span class="mt-1 flex justify-between gap-3 text-xs"><span class="text-rose-600">{{ errors.reason || '' }}</span><span class="text-slate-500">{{ form.reason.length }}/200</span></span>
             </label>
             </template>
           </div>
 
           <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-            <AdminButton type="button" :disabled="submitting || copying" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40" @click="close">{{ delivery ? '完成' : '取消' }}</AdminButton>
-            <AdminButton v-if="!delivery" type="button" :disabled="submitting || phase !== 'open'" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" @click="submit">{{ submitting ? '保存中…' : '保存资料' }}</AdminButton>
+            <AdminButton type="button" :disabled="submitting || copying" @click="close">{{ delivery ? '完成' : '取消' }}</AdminButton>
+            <AdminButton v-if="!delivery" type="button" :disabled="submitting || phase !== 'open'" variant="primary" @click="submit">{{ submitting ? '保存中…' : '保存资料' }}</AdminButton>
           </footer>
     </AdminDialog>
 </template>

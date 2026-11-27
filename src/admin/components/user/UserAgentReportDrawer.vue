@@ -1,4 +1,5 @@
 <script setup>
+import AdminEmpty from '../antd/AdminEmpty.vue'
 import AdminDrawer from '../antd/AdminDrawer.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { Table } from 'ant-design-vue'
@@ -80,7 +81,7 @@ watch(totalPages, (nextTotalPages) => {
                 <AdminButton
                   id="agent-report-products-tab"
                   type="button"
-                  class="min-h-10 rounded-lg px-3 py-2 transition-colors focus:outline-none"
+                 
                   :class="activeTab === 'products' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
                   role="tab"
                   :aria-selected="activeTab === 'products' ? 'true' : 'false'"
@@ -90,7 +91,7 @@ watch(totalPages, (nextTotalPages) => {
                 <AdminButton
                   id="agent-report-daily-tab"
                   type="button"
-                  class="min-h-10 rounded-lg px-3 py-2 transition-colors focus:outline-none"
+                 
                   :class="activeTab === 'daily' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
                   role="tab"
                   :aria-selected="activeTab === 'daily' ? 'true' : 'false'"
@@ -115,7 +116,7 @@ watch(totalPages, (nextTotalPages) => {
                 <div v-if="productLines.length" class="mt-2 overflow-hidden rounded-xl border border-slate-200">
                   <Table :data-source="productLines" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="line => line.key" data-testid="agent-report-product-table" :custom-row="() => ({ 'data-testid': 'agent-report-product-row' })"><TableColumn key="column-0"><template #title>产品线</template><template #default="{ record: line, index: rowIndex }"><div scope="row" class="px-3 py-2 font-medium text-slate-900">{{ line.label }}</div></template></TableColumn><TableColumn key="column-1"><template #title>业务量</template><template #default="{ record: line, index: rowIndex }"><div class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.volume) }}</div></template></TableColumn><TableColumn key="column-2"><template #title>佣金</template><template #default="{ record: line, index: rowIndex }"><div class="px-3 py-2 font-medium text-slate-800">{{ formatMoney(line.commission) }}</div></template></TableColumn><TableColumn key="column-3"><template #title>订单</template><template #default="{ record: line, index: rowIndex }"><div class="px-3 py-2 text-right text-slate-600">{{ formatNumber(line.orderCount) }} 笔</div></template></TableColumn></Table>
                 </div>
-                <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无产品线汇总</p>
+                <AdminEmpty v-else class="mt-2">暂无产品线汇总</AdminEmpty>
               </section>
 
               <section
@@ -146,7 +147,7 @@ watch(totalPages, (nextTotalPages) => {
                     </dl>
                   </article>
                 </div>
-                <p v-else class="mt-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">暂无代理业绩明细</p>
+                <AdminEmpty v-else class="mt-2">暂无代理业绩明细</AdminEmpty>
               </section>
 
               <footer v-if="activeTab === 'daily' && dailyRows.length" data-testid="agent-report-pagination" class="shrink-0 border-t border-slate-200 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
@@ -154,9 +155,9 @@ watch(totalPages, (nextTotalPages) => {
               </footer>
             </template>
 
-            <div v-else-if="!error" data-testid="agent-report-empty-state" class="grid min-h-0 flex-1 place-items-center overflow-y-auto rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 pb-[max(1rem,env(safe-area-inset-bottom))] text-center">
+            <AdminEmpty v-else-if="!error" data-testid="agent-report-empty-state" class="grid min-h-0 flex-1 place-items-center overflow-y-auto pb-[max(1rem,env(safe-area-inset-bottom))]">
               <div><p class="font-medium text-slate-700">当前代理暂无业务报表数据</p><p class="mt-1 text-sm text-slate-500">该代理尚无可统计的客户与佣金记录。</p></div>
-            </div>
+            </AdminEmpty>
           </div>
     </AdminDrawer>
 </template>

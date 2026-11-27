@@ -1,4 +1,5 @@
 <script setup>
+import AdminEmpty from '../antd/AdminEmpty.vue'
 import AdminDrawer from '../antd/AdminDrawer.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton } from '../antd/controls.js'
@@ -140,7 +141,7 @@ watch(() => props.visible, (visible) => {
                 <AdminButton
                   type="button"
                   :disabled="!isRevealed(address.id) || copyInProgress"
-                  class="min-h-10 rounded-lg bg-blue-600 px-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  variant="primary"
                   @click="copyAddress(address)"
                 >
                   {{ isCopying(address.id) ? '复制中…' : '复制地址' }}
@@ -148,10 +149,10 @@ watch(() => props.visible, (visible) => {
               </div>
             </article>
 
-            <div v-if="!segmentAddresses.length" class="rounded-xl border border-dashed border-slate-300 px-4 py-10 text-center">
+            <AdminEmpty v-if="!segmentAddresses.length">
               <p class="text-sm font-medium text-slate-700">暂无{{ segmentLabel }}地址</p>
               <p class="mt-1 text-xs text-slate-500">该用户当前没有可展示的{{ segmentLabel }}地址记录。</p>
-            </div>
+            </AdminEmpty>
           </div>
     </AdminDrawer>
 </template>

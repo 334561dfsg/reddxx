@@ -1520,7 +1520,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                 :aria-selected="contractTab === tab.id"
                 :tabindex="contractTab === tab.id ? 0 : -1"
                 :aria-controls="`delivery-contract-panel-${tab.id}`"
-                class="relative shrink-0 py-3 text-sm transition-all focus:outline-none"
+                class="shrink-0"
                 :class="
                   contractTab === tab.id
                     ? 'text-blue-600 font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600'
@@ -1553,12 +1553,12 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                 class="grid gap-6 md:grid-cols-2"
               >
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900" :for="contractFieldId('name')">合约名称 <span class="text-rose-500">*</span></label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('name')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>合约名称</label>
                   <a-input
                     :id="contractFieldId('name')"
                     v-model:value="contractForm.name"
                     type="text"
-                    class="ant-input"
+                   
                     placeholder="如：BTC 周期合约"
                     required
                     aria-required="true"
@@ -1568,12 +1568,12 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                   <FeedbackToast v-if="contractErrors.name" :id="contractFieldErrorId('name')" type="error" :source="() => (contractErrors.name) ? (contractErrors.name) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900" :for="contractFieldId('code')">合约代码 <span class="text-rose-500">*</span></label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('code')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>合约代码</label>
                   <a-input
                     :id="contractFieldId('code')"
                     v-model:value="contractForm.code"
                     type="text"
-                    class="ant-input uppercase"
+                   
                     placeholder="如：BTC_DELIVERY"
                     required
                     aria-required="true"
@@ -1583,7 +1583,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                   <FeedbackToast v-if="contractErrors.code" :id="contractFieldErrorId('code')" type="error" :source="() => (contractErrors.code) ? (contractErrors.code) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5 md:col-span-2" :aria-busy="pairOptionsLoading ? 'true' : undefined">
-                  <label class="text-sm text-slate-900" :for="contractFieldId('spotSymbol')">选择交易对 <span class="text-rose-500">*</span></label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('spotSymbol')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>选择交易对</label>
                   <a-select :get-popup-container="(trigger) => trigger.parentElement"
                     :id="contractFieldId('spotSymbol')"
                     v-model:value="contractForm.spotSymbol"
@@ -1619,7 +1619,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                   <FeedbackToast v-if="contractErrors.spotSymbol" :id="contractFieldErrorId('spotSymbol')" type="error" :source="() => (contractErrors.spotSymbol) ? (contractErrors.spotSymbol) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5">
-                  <span id="delivery-contract-status-label" class="block text-sm text-slate-900">产品状态 <span class="text-rose-500">*</span></span>
+                  <span id="delivery-contract-status-label" class="block text-sm text-slate-900"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>产品状态</span>
                   <div
                     class="inline-flex flex-wrap rounded border border-slate-200 bg-slate-50 p-0.5"
                     role="radiogroup"
@@ -1637,7 +1637,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                       :aria-checked="contractForm.status === option.id"
                       :aria-disabled="option.disabled ? 'true' : undefined"
                       :tabindex="contractForm.status === option.id ? 0 : -1"
-                      class="min-h-8 px-4 py-1 text-xs rounded transition-all focus:outline-none"
+                     
                       :class="[
                         contractForm.status === option.id
                           ? 'bg-white shadow-sm text-blue-600 font-medium'
@@ -1652,14 +1652,14 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                   <p id="delivery-contract-status-help" class="text-xs text-slate-400">状态调整会随本次保存一起生效。</p>
                 </div>
                 <div class="space-y-1.5">
-                  <label class="block text-sm text-slate-900" :for="contractFieldId('sortOrder')">产品排序 <span class="text-rose-500">*</span></label>
+                  <label class="block text-sm text-slate-900" :for="contractFieldId('sortOrder')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>产品排序</label>
                   <a-input
                     :id="contractFieldId('sortOrder')"
                     v-model:value.number="contractForm.sortOrder"
                     type="number"
                     :min="0"
                     inputmode="numeric"
-                    class="ant-input font-mono"
+                    class="font-mono"
                     placeholder="数字越大越靠前"
                     required
                     aria-required="true"
@@ -1681,7 +1681,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                 class="space-y-6"
               >
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900" :for="contractFieldId('templateId')">选择周期模板 <span class="text-rose-500">*</span></label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('templateId')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>选择周期模板</label>
                   <a-select :get-popup-container="(trigger) => trigger.parentElement"
                     :id="contractFieldId('templateId')"
                     v-model:value="contractForm.templateId"
@@ -1736,7 +1736,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
               >
                 <div class="grid gap-6 md:grid-cols-3">
                   <div class="space-y-1.5">
-                    <label class="text-sm text-slate-900" :for="contractFieldId('minBuy')">最低买入额 (USDT) <span class="text-rose-500">*</span></label>
+                    <label class="text-sm text-slate-900" :for="contractFieldId('minBuy')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>最低买入额 (USDT)</label>
                     <a-input
                       :id="contractFieldId('minBuy')"
                       v-model:value="contractForm.minBuy"
@@ -1744,7 +1744,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                       :min="0"
                       :step="0.000001"
                       inputmode="decimal"
-                      class="ant-input font-mono"
+                      class="font-mono"
                       required
                       aria-required="true"
                       :aria-invalid="Boolean(contractErrors.minBuy)"
@@ -1755,7 +1755,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                     <FeedbackToast v-if="contractErrors.minBuy" :id="contractFieldErrorId('minBuy')" type="error" :source="() => (contractErrors.minBuy) ? (contractErrors.minBuy) : ''"></FeedbackToast>
                   </div>
                   <div class="space-y-1.5">
-                    <label class="text-sm text-slate-900" :for="contractFieldId('maxBuy')">最高买入额 (USDT) <span class="text-rose-500">*</span></label>
+                    <label class="text-sm text-slate-900" :for="contractFieldId('maxBuy')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>最高买入额 (USDT)</label>
                     <a-input
                       :id="contractFieldId('maxBuy')"
                       v-model:value="contractForm.maxBuy"
@@ -1763,7 +1763,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                       :min="0"
                       :step="0.000001"
                       inputmode="decimal"
-                      class="ant-input font-mono"
+                      class="font-mono"
                       required
                       aria-required="true"
                       :aria-invalid="Boolean(contractErrors.maxBuy)"
@@ -1774,7 +1774,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                     <FeedbackToast v-if="contractErrors.maxBuy" :id="contractFieldErrorId('maxBuy')" type="error" :source="() => (contractErrors.maxBuy) ? (contractErrors.maxBuy) : ''"></FeedbackToast>
                   </div>
                   <div class="space-y-1.5">
-                    <label class="text-sm text-slate-900" :for="contractFieldId('maxHold')">最大持仓额 (USDT) <span class="text-rose-500">*</span></label>
+                    <label class="text-sm text-slate-900" :for="contractFieldId('maxHold')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>最大持仓额 (USDT)</label>
                     <a-input
                       :id="contractFieldId('maxHold')"
                       v-model:value="contractForm.maxHold"
@@ -1782,7 +1782,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                       :min="0"
                       :step="0.000001"
                       inputmode="decimal"
-                      class="ant-input font-mono"
+                      class="font-mono"
                       required
                       aria-required="true"
                       :aria-invalid="Boolean(contractErrors.maxHold)"
@@ -1805,7 +1805,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                 class="grid gap-6 md:grid-cols-1"
               >
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900" :for="contractFieldId('sellFee')">交割手续费率 (%) <span class="text-rose-500">*</span></label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('sellFee')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>交割手续费率 (%)</label>
                   <div class="relative">
                     <a-input
                       :id="contractFieldId('sellFee')"
@@ -1815,7 +1815,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                       :max="100"
                       :step="0.01"
                       inputmode="decimal"
-                      class="ant-input font-mono pr-8"
+                      class="font-mono"
                       required
                       aria-required="true"
                       :aria-invalid="Boolean(contractErrors.sellFee)"
@@ -1844,7 +1844,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
               <div class="mt-3 flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
                 <a-button
                   html-type="button"
-                  class="ant-btn w-full sm:w-auto"
+                  class="w-full sm:w-auto"
                   @click="keepEditingContract"
                 >
                   继续编辑
@@ -1862,7 +1862,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
             <div class="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
               <a-button
                 html-type="button"
-                class="ant-btn w-full sm:w-auto"
+                class="w-full sm:w-auto"
                 @click="closeContractModal"
               >
                 取消

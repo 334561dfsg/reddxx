@@ -1,4 +1,5 @@
 <script setup>
+import AdminEmpty from '../antd/AdminEmpty.vue'
 import AdminDrawer from '../antd/AdminDrawer.vue'
 import { AdminButton } from '../antd/controls.js'
 
@@ -79,7 +80,7 @@ watch(() => [props.visible, props.summary, userId.value], ([visible]) => { if (v
                     <dl class="mt-3 grid grid-cols-[4.5rem_1fr] gap-y-1 text-xs"><dt class="text-slate-500">流水号</dt><dd class="break-all text-slate-700">{{ record.transactionId }}</dd><dt class="text-slate-500">充值时间</dt><dd class="text-slate-700">{{ formatTime(record.createdAt) }}</dd></dl>
                   </article>
                 </template>
-                <p v-else class="rounded-xl border border-dashed border-slate-300 px-4 py-8 text-center text-sm text-slate-500">暂无计入会员等级的充值记录</p>
+                <AdminEmpty v-else>暂无计入会员等级的充值记录</AdminEmpty>
               </div>
               <div data-testid="user-recharge-pagination" class="recharge-drawer-fixed-pagination shrink-0 pt-3" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
                 <CompactPagination

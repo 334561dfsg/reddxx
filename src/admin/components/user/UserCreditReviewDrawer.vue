@@ -1,4 +1,5 @@
 <script setup>
+import AdminEmpty from '../antd/AdminEmpty.vue'
 import { AdminButton } from '../antd/controls.js'
 import AdminDrawer from '../antd/AdminDrawer.vue'
 import { computed, ref, watch } from 'vue'
@@ -49,9 +50,9 @@ watch(() => props.visible, (visible) => { if (visible) filter.value = 'all' })
         <div class="flex flex-wrap items-start justify-between gap-2"><div><p class="text-sm font-semibold text-slate-900">{{ review.beforeScore }} → {{ review.proposedScore }} <span class="ml-1" :class="review.delta >= 0 ? 'text-emerald-700' : 'text-rose-700'">{{ review.delta >= 0 ? '+' : '' }}{{ review.delta }}</span></p><p class="mt-1 text-xs text-slate-500">{{ review.applicantName }} · {{ formatTime(review.appliedAt) }}</p></div><span class="rounded-full px-2 py-1 text-xs font-medium" :class="statusClass(review.status)">{{ statusLabel(review.status) }}</span></div>
         <p class="mt-3 break-words text-sm text-slate-700">{{ review.reason }}</p>
         <p v-if="review.decisionNote" class="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">审核备注：{{ review.decisionNote }}</p>
-        <div v-if="review.status === 'pending'" class="mt-3 flex justify-end"><AdminButton type="button" :disabled="busy" class="min-h-10 rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-40" @click="selectReview(review, $event)">处理审核</AdminButton></div>
+        <div v-if="review.status === 'pending'" class="mt-3 flex justify-end"><AdminButton type="button" :disabled="busy" variant="primary" @click="selectReview(review, $event)">处理审核</AdminButton></div>
       </article>
-      <div v-if="!filteredReviews.length" class="rounded-xl border border-dashed border-slate-300 px-4 py-10 text-center"><p class="text-sm font-medium text-slate-700">暂无{{ filter === 'pending' ? '待审核' : filter === 'processed' ? '已处理' : '' }}信用分申请</p><p class="mt-1 text-xs text-slate-500">该用户当前没有符合筛选条件的记录。</p></div>
+      <AdminEmpty v-if="!filteredReviews.length"><p class="text-sm font-medium text-slate-700">暂无{{ filter === 'pending' ? '待审核' : filter === 'processed' ? '已处理' : '' }}信用分申请</p><p class="mt-1 text-xs text-slate-500">该用户当前没有符合筛选条件的记录。</p></AdminEmpty>
     </div>
   </AdminDrawer>
 </template>

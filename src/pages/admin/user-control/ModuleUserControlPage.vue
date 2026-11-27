@@ -310,7 +310,7 @@ const addDialogLifecycle = { rendered: addDialogRendered, phase: addDialogPhase,
       <template #subtitle>按 UID、邮箱或手机号搜索并加入当前用户点控列表。</template>
       <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
                 <label class="block" for="module-user-control-add-user-id">
-                  <span class="text-sm font-medium text-slate-800">用户 UID <span class="text-rose-500">*</span></span>
+                  <span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>用户 UID</span>
                   <a-input id="module-user-control-add-user-id" :ref="el => { addInputRef = nativeControl(el) }" :value="addUserId" @update:value="addUserId = $event.trim()" type="search" autocomplete="off" placeholder="输入 UID、邮箱或手机号" :aria-invalid="addSearchAttempted && normalizedAddUserKeyword && !addSearchResult ? 'true' : 'false'" aria-describedby="module-user-control-add-help" class="mt-2 w-full" @input="clearAddSearchResult" @keydown.enter.prevent="confirmAddUser" />
                 </label>
                 <p id="module-user-control-add-help" class="text-xs leading-5 text-slate-500">
@@ -332,8 +332,8 @@ const addDialogLifecycle = { rendered: addDialogRendered, phase: addDialogPhase,
                 </div>
               </div>
               <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-                <a-button html-type="button" class="border border-slate-300 bg-white text-sm font-medium text-slate-700" @click="closeAddUser">取消</a-button>
-                <a-button html-type="button" :disabled="!canConfirmAddUser" class="bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmAddUser" type="primary">
+                <a-button html-type="button" @click="closeAddUser">取消</a-button>
+                <a-button html-type="button" :disabled="!canConfirmAddUser" @click="confirmAddUser" type="primary">
                   确定
                 </a-button>
               </footer>

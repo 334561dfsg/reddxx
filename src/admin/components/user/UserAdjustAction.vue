@@ -163,7 +163,6 @@ const confirm = () => {
   </AdminButton>
 
   <AdminDialog :open="showModal" title="手动调整" title-id="user-adjust-title" :return-focus="returnFocusRef" :width="672" plain ref="dialogFrame" @close="showModal = false">
-    <template #eyebrow>操作</template>
 
           <div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 pb-5">
             <section class="rounded-xl bg-slate-50 border border-slate-200 p-4">
@@ -178,7 +177,7 @@ const confirm = () => {
                 <fieldset class="min-w-0">
                   <legend class="mb-2 text-sm font-medium text-slate-700">调整为</legend>
                   <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <AdminRadio v-for="o in activeVipOptions" :key="o.level" class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-500" v-model="form.vipTargetLevel" name="vip-target-level" :value="o.level">
+                    <AdminRadio v-for="o in activeVipOptions" :key="o.level" class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm has-[:checked]:bg-blue-50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-500" v-model="form.vipTargetLevel" name="vip-target-level" :value="o.level">
 
                       <span class="min-w-0 break-words">{{ o.label }}</span>
                     </AdminRadio>
@@ -225,7 +224,7 @@ const confirm = () => {
                     type="text"
                     inputmode="numeric"
                     autocomplete="off"
-                    class="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none"
+                    class="w-full"
                     placeholder="请输入分数"
                   />
                 </label>
@@ -250,28 +249,26 @@ const confirm = () => {
               <AdminTextarea
                 v-model="form.remark"
                 rows="3"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none"
+                class="w-full"
                 placeholder="请输入本次调整原因/说明…"
               />
             </div>
-
-            <div class="flex justify-end gap-3 pt-1">
-              <AdminButton
+          </div>
+    <footer>
+      <AdminButton
                 type="button"
-                class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                 @click="close"
               >
                 取消
               </AdminButton>
               <AdminButton
                 type="button"
-                class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                variant="primary"
                 @click="confirm"
               >
                 确认调整
               </AdminButton>
-            </div>
-          </div>
+    </footer>
   </AdminDialog>
 </template>
 

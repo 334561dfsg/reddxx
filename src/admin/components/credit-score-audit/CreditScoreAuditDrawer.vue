@@ -209,23 +209,23 @@ const submitAudit = () => {
         <section class="shrink-0 border-t border-slate-200 bg-white px-5 py-4">
           <template v-if="readOnly">
             <div class="flex justify-end">
-              <AdminButton type="button" class="ant-btn" @click="handleClose">关闭</AdminButton>
+              <AdminButton type="button" @click="handleClose">关闭</AdminButton>
             </div>
           </template>
           <template v-else>
           <div class="text-xs text-slate-500">审核操作</div>
           <div class="mt-3 flex flex-wrap justify-end gap-2">
-            <AdminButton type="button" class="ant-btn" @click="handleClose">关闭</AdminButton>
+            <AdminButton type="button" @click="handleClose">关闭</AdminButton>
             <AdminButton
               v-if="audit.auditStatus === CREDIT_SCORE_AUDIT_STATUS.PENDING"
               type="button"
-              class="ant-btn ant-btn-primary"
+              variant="primary"
               @click="startAuditAction('approve')"
             >通过</AdminButton>
             <AdminButton
               v-if="audit.auditStatus === CREDIT_SCORE_AUDIT_STATUS.PENDING"
               type="button"
-              class="ant-btn ant-btn-danger"
+              danger
               @click="startAuditAction('reject')"
             >拒绝</AdminButton>
           </div>
@@ -240,7 +240,7 @@ const submitAudit = () => {
                 v-for="tpl in noteTemplates[auditAction]"
                 :key="tpl"
                 type="button"
-                class="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs text-slate-700 hover:bg-slate-100"
+               
                 @click="useNoteTemplate(tpl)"
               >
                 快捷填充
@@ -250,13 +250,13 @@ const submitAudit = () => {
             <AdminTextarea
               v-model="auditNote"
               rows="3"
-              class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none"
+              class="mt-2 w-full"
               :placeholder="auditAction === 'approve' ? '请输入通过备注（可选）...' : '请输入拒绝原因...'"
             />
 
             <div class="mt-3 flex justify-end gap-2">
-              <AdminButton type="button" class="ant-btn ant-btn-primary" @click="submitAudit">确认提交</AdminButton>
-              <AdminButton type="button" class="ant-btn" @click="auditAction = null">取消</AdminButton>
+              <AdminButton type="button" variant="primary" @click="submitAudit">确认提交</AdminButton>
+              <AdminButton type="button" @click="auditAction = null">取消</AdminButton>
             </div>
           </div>
           </template>

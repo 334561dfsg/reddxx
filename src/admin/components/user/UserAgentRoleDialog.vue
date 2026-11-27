@@ -176,12 +176,12 @@ watch(() => [props.visible, userId.value, props.user?.role], ([visible]) => {
 
           <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
             <template v-if="phaseName === 'form'">
-              <AdminButton type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" @click="close">取消</AdminButton>
-              <AdminButton type="button" class="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700" @click="startConfirm">下一步</AdminButton>
+              <AdminButton type="button" @click="close">取消</AdminButton>
+              <AdminButton type="button" variant="primary" @click="startConfirm">下一步</AdminButton>
             </template>
             <template v-else>
               <AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="submitting" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40" @click="backToForm">返回修改</AdminButton>
-              <AdminButton type="button" :disabled="submitting" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50" @click="confirmChange">{{ submitting ? '提交中…' : `确认${actionTitle}` }}</AdminButton>
+              <AdminButton type="button" :disabled="submitting" variant="primary" danger @click="confirmChange">{{ submitting ? '提交中…' : `确认${actionTitle}` }}</AdminButton>
             </template>
           </footer>
     </AdminDialog>

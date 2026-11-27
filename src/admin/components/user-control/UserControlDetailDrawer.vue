@@ -1,4 +1,5 @@
 <script setup>
+import AdminEmpty from '../antd/AdminEmpty.vue'
 import { Table } from 'ant-design-vue'
 const TableColumn = Table.Column
 
@@ -144,7 +145,7 @@ const summaryMeta = computed(() => {
                 <span class="w-fit rounded-full bg-violet-100 px-2.5 py-1 text-xs font-medium text-violet-700">已覆盖</span>
               </div>
             </div>
-            <p v-else class="mt-2 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400">暂无已覆盖规则</p>
+            <AdminEmpty v-else class="mt-2">暂无已覆盖规则</AdminEmpty>
           </section>
 
           <section>
@@ -158,7 +159,7 @@ const summaryMeta = computed(() => {
                 <time class="shrink-0 text-xs text-slate-400">{{ log.createdAt }}</time>
               </div>
             </div>
-            <p v-else class="mt-2 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400">暂无操作记录</p>
+            <AdminEmpty v-else class="mt-2">暂无操作记录</AdminEmpty>
           </section>
         </div>
   </AdminDrawer>

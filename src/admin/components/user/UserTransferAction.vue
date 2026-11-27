@@ -196,12 +196,11 @@ const confirm = () => {
                   v-model="form.amount"
                   type="number"
                   step="0.01"
-                  class="w-full rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none border border-slate-100 pr-20"
+                  class="w-full"
                   placeholder="请输入划转的数量"
                 />
                 <AdminButton
                   type="button"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-blue-600 hover:text-blue-700"
                   @click="setAll"
                 >
                   全部
@@ -211,15 +210,17 @@ const confirm = () => {
                 余额: {{ fromBalance !== null ? formatMoney(fromBalance, { min: 2, max: 2 }) : '-' }}
               </div>
             </div>
-
-            <AdminButton
+          </div>
+    <footer>
+      <AdminButton type="button" @click="close">取消</AdminButton>
+      <AdminButton
               type="button"
-              class="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-base font-medium py-4 transition-colors"
+              variant="primary"
               @click="confirm"
             >
               划转
             </AdminButton>
-          </div>
+    </footer>
   </AdminDialog>
 </template>
 

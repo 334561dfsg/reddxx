@@ -91,7 +91,7 @@ const riskBadgeClasses = (entry) => ({
                     v-for="entry in group.entries"
                     :key="entry.id"
                     type="button"
-                    class="min-h-16 rounded-lg border p-2.5 text-left transition-colors focus:outline-none"
+                    class="admin-tile min-h-16 rounded-lg border text-left"
                     :class="entryClasses(entry)"
                     @click="selectEntry(entry, $event)"
                   >
@@ -112,3 +112,8 @@ const riskBadgeClasses = (entry) => ({
     </AdminDrawer>
 </template>
 
+<style>
+/* Operation tiles are Ant buttons laid out as two-line cards (title row, wrapping description), Ant Pro list-card
+   density; Ant's single-line inline button layout would truncate and overflow the drawer. */
+.admin-tile.ant-btn { display: flex; flex-direction: column; align-items: stretch; height: auto; padding: 10px 12px; white-space: normal; text-align: left; border-radius: 8px; }
+</style>

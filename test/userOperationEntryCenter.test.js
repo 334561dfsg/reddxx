@@ -261,7 +261,7 @@ test('operation drawer uses compact, balanced action tiles without shrinking clo
   assert.match(source, /class="text-xs font-semibold/)
   assert.match(source, /ring-1 ring-slate-200/)
   assert.match(source, /grid grid-cols-1 gap-1\.5 sm:grid-cols-2/)
-  assert.match(source, /min-h-16[^"\n]*p-2\.5/)
+  assert.match(source, /class="admin-tile min-h-16[^"\n]*"/)
   assert.match(source, /rounded-full border px-1\.5 py-0\.5 text-\[10px\]/)
   assert.match(source, /text-sm font-medium text-slate-900/)
   assert.match(source, /mt-1 block text-xs leading-4/)

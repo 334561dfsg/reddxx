@@ -207,14 +207,14 @@ watch(
               <template v-if="mode === 'credit'">
                 <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">当前信用分</span><strong class="float-right text-slate-900">{{ currentScore }}</strong></div>
                 <fieldset aria-labelledby="credit-direction-label">
-                  <legend id="credit-direction-label" class="text-sm font-medium text-slate-800">调整方向 <span class="text-rose-500">*</span></legend>
+                  <legend id="credit-direction-label" class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>调整方向</legend>
                   <div class="mt-2 grid grid-cols-2 gap-2">
-                    <AdminRadio v-for="(option, index) in [{ value: 'increase', label: '增加信用分' }, { value: 'decrease', label: '扣减信用分' }]" :key="option.value" class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50" :ref="(element) => setDirectionRef(nativeControl(element), index)" v-model="form.direction" name="credit-direction" :value="option.value">
+                    <AdminRadio v-for="(option, index) in [{ value: 'increase', label: '增加信用分' }, { value: 'decrease', label: '扣减信用分' }]" :key="option.value" class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:bg-blue-50" :ref="(element) => setDirectionRef(nativeControl(element), index)" v-model="form.direction" name="credit-direction" :value="option.value">
                       {{ option.label }}
                     </AdminRadio>
                   </div>
                 </fieldset>
-                <label class="block"><span class="text-sm font-medium text-slate-800">调整分值 <span class="text-rose-500">*</span></span><AdminInput data-testid="membership-mutation-points" v-model="form.points" type="text" inputmode="numeric" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="请输入正整数" /></label>
+                <label class="block"><span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>调整分值</span><AdminInput data-testid="membership-mutation-points" v-model="form.points" type="text" inputmode="numeric" autocomplete="off" class="mt-1.5 w-full" placeholder="请输入正整数" /></label>
               </template>
 
               <template v-else-if="mode === 'vip'">
@@ -238,7 +238,7 @@ watch(
               <template v-else>
                 <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">入账账户</span><strong class="float-right text-slate-900">可用资金账户</strong></div>
                 <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">当前余额</span><strong class="float-right text-slate-900">{{ money(currentBalance) }} USDT</strong></div>
-                <label class="block"><span class="text-sm font-medium text-slate-800">返利金额 <span class="text-rose-500">*</span></span><AdminInput :ref="element => { amountRef = nativeControl(element) }" data-testid="membership-mutation-amount" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="最多两位小数" /></label>
+                <label class="block"><span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>返利金额</span><AdminInput :ref="element => { amountRef = nativeControl(element) }" data-testid="membership-mutation-amount" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="最多两位小数" /></label>
               </template>
 
               <label class="block"><span class="text-sm font-medium text-slate-800">操作原因（可选）</span><AdminTextarea :ref="element => { reasonRef = nativeControl(element) }" data-testid="membership-mutation-reason" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none" :placeholder="`可填写${config.action}原因`" /><span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span></label>
@@ -256,7 +256,7 @@ watch(
           </div>
 
           <footer class="flex shrink-0 justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3 sm:px-5">
-            <template v-if="stage === 'edit'"><AdminButton type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="close">取消</AdminButton><AdminButton type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="startConfirm">下一步</AdminButton></template>
+            <template v-if="stage === 'edit'"><AdminButton type="button" :disabled="busy" @click="close">取消</AdminButton><AdminButton type="button" :disabled="busy" :class="config.tone" @click="startConfirm">下一步</AdminButton></template>
             <template v-else><AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="backToEdit">返回修改</AdminButton><AdminButton :ref="element => { submitButtonRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="requestMfa">{{ busy ? '验证中…' : '提交并验证' }}</AdminButton></template>
           </footer>
     </AdminDialog>

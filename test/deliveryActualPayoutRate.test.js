@@ -26,7 +26,7 @@ test('delivery template cycles contain actual payout rates', () => {
 })
 
 test('period template editor saves and displays the actual payout rate', () => {
-  assert.match(templatePageSource, /周期配置 <span class="text-rose-500">\*<\/span>/)
+  assert.match(templatePageSource, /<span aria-hidden="true" class="text-rose-500 mr-1">\*<\/span>周期配置/)
   assert.match(templatePageSource, /周期\{\{ index \+ 1 \}\}/)
   assert.match(templatePageSource, /实际收益率/)
   assert.match(templatePageSource, /v-model:value\.number="cycle\.actualPayoutPct"/)

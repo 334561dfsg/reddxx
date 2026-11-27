@@ -1,4 +1,5 @@
 <script setup>
+import AdminEmpty from '../antd/AdminEmpty.vue'
 import AdminDrawer from '../antd/AdminDrawer.vue'
 import { AdminButton, AdminInput, nativeControl } from '../antd/controls.js'
 
@@ -321,7 +322,7 @@ onBeforeUnmount(() => {
               <div class="relative mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
                 <label>
                   <span class="sr-only">搜索裂变下级</span>
-                  <AdminInput v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
+                  <AdminInput v-model="keyword" type="search" class="w-full" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
                 </label>
                 <div class="mt-3 grid grid-cols-2 gap-2">
                   <AdminButton
@@ -384,12 +385,12 @@ onBeforeUnmount(() => {
                 </AdminButton>
               </div>
 
-              <div v-else class="grid min-h-52 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
+              <AdminEmpty v-else class="grid min-h-52 place-items-center">
                 <div>
                   <p class="font-medium text-slate-700">{{ hasFilters ? '筛选后没有裂变下级' : '当前没有裂变下级' }}</p>
                   <p class="mt-1 text-sm text-slate-500">{{ hasFilters ? '请调整裂变下级搜索关键词或筛选条件' : '该用户目前没有符合此范围的裂变下级成员' }}</p>
                 </div>
-              </div>
+              </AdminEmpty>
             </div>
 
             <footer v-if="filteredMembers.length" data-testid="relationship-drawer-pagination" class="shrink-0 border-t border-slate-200 px-4 py-3 sm:px-5" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">

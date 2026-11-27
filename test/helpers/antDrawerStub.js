@@ -87,3 +87,12 @@ export const Modal = defineComponent({
 // Stand-in for ant-design-vue's imperative message API: records each notice so tests can assert feedback.
 export const messageCalls = []
 export const message = Object.fromEntries(['success', 'error', 'info', 'warning'].map((type) => [type, (content) => { messageCalls.push({ type, content }) }]))
+
+// Stand-in for ant-design-vue's Empty (used by AdminEmpty.vue): renders the description slot as text.
+export const Empty = Object.assign(defineComponent({
+  name: 'AEmptyStub',
+  inheritAttrs: false,
+  setup(_, { slots, attrs }) {
+    return () => h('div', { ...attrs, class: ['ant-empty', attrs.class] }, slots.description?.())
+  }
+}), { PRESENTED_IMAGE_SIMPLE: 'simple' })

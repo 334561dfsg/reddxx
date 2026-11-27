@@ -102,7 +102,6 @@ const confirm = () => {
   </AdminButton>
 
   <AdminDialog :open="showModal" title="入金" title-id="user-deposit-title" :return-focus="returnFocusRef" :width="576" plain ref="dialogFrame" @close="showModal = false">
-    <template #eyebrow>操作</template>
 
           <div class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
             <section class="rounded-xl bg-slate-100 p-5">
@@ -140,7 +139,7 @@ const confirm = () => {
             <fieldset class="m-0 min-w-0 border-0 p-0">
               <legend class="mb-2 text-sm font-medium text-slate-700">选择入金账户</legend>
               <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <AdminRadio v-for="opt in depositAccountOptions" :key="opt.key" class="flex min-h-12 cursor-pointer items-center justify-between gap-3 rounded-xl border bg-white px-3 py-2 text-sm transition-colors" :class="form.depositAccountKey === opt.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 text-slate-700 hover:border-blue-300'" v-model="form.depositAccountKey" name="deposit-account" :value="opt.key">
+                <AdminRadio v-for="opt in depositAccountOptions" :key="opt.key" class="flex min-h-12 cursor-pointer items-center justify-between gap-3 rounded-xl border bg-white px-3 py-2 text-sm transition-colors" :class="form.depositAccountKey === opt.key ? 'border-slate-200 bg-blue-50 text-blue-900' : 'border-slate-200 text-slate-700 hover:border-blue-300'" v-model="form.depositAccountKey" name="deposit-account" :value="opt.key">
                   <span class="font-medium">{{ opt.label }}</span>
                   <span class="flex items-center gap-2">
                     <span class="text-xs tabular-nums text-slate-500">{{ formatMoney(opt.value, { min: 2, max: 2 }) }}</span>
@@ -155,36 +154,36 @@ const confirm = () => {
             </fieldset>
 
             <div>
-              <div class="text-sm font-medium text-slate-700 mb-2">操作入金数量：</div>
+              <div class="text-sm font-medium text-slate-700 mb-2">操作入金数量</div>
               <AdminInput
                 v-model="form.depositAmount"
                 type="number"
                 step="0.01"
-                class="w-full rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none focus:bg-white border border-slate-100"
+                class="w-full"
                 placeholder="请输入入金数量"
               />
             </div>
 
             <div>
-              <div class="text-sm font-medium text-slate-700 mb-2">备注：</div>
+              <div class="text-sm font-medium text-slate-700 mb-2">备注</div>
               <AdminTextarea
                 v-model="form.remark"
                 rows="4"
-                class="w-full rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none focus:bg-white border border-slate-100"
+                class="w-full"
                 placeholder="请输入备注信息（可选）"
               />
             </div>
-
-            <div class="mt-5 flex justify-end">
-              <AdminButton
+          </div>
+    <footer>
+      <AdminButton type="button" @click="close">取消</AdminButton>
+      <AdminButton
                 type="button"
-                class="px-7 py-3 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors"
+                variant="primary"
                 @click="confirm"
               >
                 确认入金操作
               </AdminButton>
-            </div>
-          </div>
+    </footer>
   </AdminDialog>
 </template>
 

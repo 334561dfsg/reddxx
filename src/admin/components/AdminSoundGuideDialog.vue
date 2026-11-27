@@ -116,7 +116,7 @@ const close = () => dialogFrame.value?.close()
             <footer class="flex shrink-0 justify-end border-t border-slate-200 bg-slate-50 px-6 py-4">
               <AdminButton
                 type="button"
-                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none"
+                variant="primary"
                 @click="close"
               >
                 我知道了

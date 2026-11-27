@@ -110,7 +110,7 @@ defineExpose({ phase, close, dialogEl: dialogRef })
 <style>
 .admin-drawer .ant-drawer-content-wrapper { max-width: 100vw; }
 .admin-drawer .ant-drawer-content { overflow: hidden; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
-.admin-drawer .ant-drawer-header { padding: 12px 16px 12px 20px; }
+
 .admin-drawer .ant-drawer-title { min-width: 0; }
 .admin-drawer-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .admin-drawer-eyebrow { margin: 0 0 2px; font-size: 12px; line-height: 18px; font-weight: 600; color: #1677ff; }
@@ -120,7 +120,7 @@ defineExpose({ phase, close, dialogEl: dialogRef })
 .admin-drawer-title:focus { outline: none; }
 .admin-drawer-subtitle { margin-top: 2px; font-size: 14px; font-weight: 400; color: rgb(0 0 0 / 45%); overflow-wrap: anywhere; }
 .admin-drawer-close.ant-btn { flex: none; min-width: 44px; min-height: 44px; }
-.admin-drawer-toolbar { margin: 12px -16px -12px -20px; padding: 8px 20px; border-top: 1px solid rgb(5 5 5 / 6%); background: #fafafa; font-weight: 400; }
+.admin-drawer-toolbar { margin: 12px -16px -12px -24px; padding: 8px 24px; border-top: 1px solid rgb(5 5 5 / 6%); background: #fafafa; font-weight: 400; }
 .admin-drawer-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 16px 20px; }
 .admin-drawer-plain { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 .admin-drawer-footer { display: flex; justify-content: flex-end; gap: 8px; }
@@ -130,4 +130,15 @@ defineExpose({ phase, close, dialogEl: dialogRef })
 @media (prefers-reduced-motion: reduce) {
   .admin-drawer .ant-drawer-content-wrapper, .admin-drawer .ant-drawer-mask { transition-duration: 50ms !important; }
 }
+
+/* Ant Design Pro metrics (2026-11-28): 16px/24px header, 24px horizontal content gutter, a right-aligned 10px/24px
+   footer bar with a hairline divider, 14px/32px controls. Plain slots bring their own body and footer elements; the
+   gutter and footer bar are applied to them here so every dialog and drawer lines up the same way. */
+.admin-drawer .ant-drawer-header { padding: 12px 16px 12px 24px; }
+.admin-drawer-body { padding: 24px; }
+.admin-drawer-plain > :not(footer) { padding-left: 24px !important; padding-right: 24px !important; }
+.admin-drawer-plain > footer { padding: 10px 24px !important; border-top: 1px solid rgb(5 5 5 / 6%) !important; background: #fff !important; }
+.admin-drawer-plain > footer:has(> .ant-btn) { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
+.admin-drawer .admin-antd-control-button.ant-btn:not([aria-label]):not(.admin-tile) { height: 32px; min-height: 32px; padding: 4px 15px; font-size: 14px; line-height: 22px; border-radius: 6px; }
+.admin-drawer .admin-antd-control-input.ant-input { font-size: 14px; border-radius: 6px; }
 </style>

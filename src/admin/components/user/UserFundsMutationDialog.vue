@@ -174,7 +174,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
                 <label for="user-funds-operation-amount" class="text-sm font-medium text-slate-800">{{ config.amountLabel }} <span class="text-rose-500">*</span></label>
                 <div class="mt-1.5 flex gap-2">
                   <AdminInput id="user-funds-operation-amount" :ref="element => { amountRef = nativeControl(element) }" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="最多两位小数" />
-                  <AdminButton type="button" class="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-blue-700 hover:bg-blue-50 focus:outline-none" @click="fillMaximum">全部</AdminButton>
+                  <AdminButton type="button" class="shrink-0" @click="fillMaximum">全部</AdminButton>
                 </div>
                 <p class="mt-1 text-xs text-slate-500">最多可操作 {{ money(maximumAmount) }}</p>
               </div>
@@ -203,8 +203,8 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
 
           <footer class="flex shrink-0 justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3 sm:px-5">
             <template v-if="stage === 'edit'">
-              <AdminButton type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="close">取消</AdminButton>
-              <AdminButton type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="startConfirm">下一步</AdminButton>
+              <AdminButton type="button" :disabled="busy" @click="close">取消</AdminButton>
+              <AdminButton type="button" :disabled="busy" :class="config.tone" @click="startConfirm">下一步</AdminButton>
             </template>
             <template v-else>
               <AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="backToEdit">返回修改</AdminButton>

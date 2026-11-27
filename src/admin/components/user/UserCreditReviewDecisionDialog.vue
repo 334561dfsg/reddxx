@@ -64,13 +64,13 @@ watch(() => [props.visible, props.review?.id], ([visible]) => { if (visible) res
 
             <template v-if="stage === 'edit'">
               <fieldset aria-labelledby="review-decision-label">
-                <legend id="review-decision-label" class="text-sm font-medium text-slate-800">审核决定 <span class="text-rose-500">*</span></legend>
+                <legend id="review-decision-label" class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>审核决定</legend>
                 <div class="mt-2 grid grid-cols-2 gap-2">
-                  <AdminRadio class="flex min-h-12 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50" v-model="form.decision" name="review-decision" value="approve">审核通过</AdminRadio>
-                  <AdminRadio class="flex min-h-12 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50" v-model="form.decision" name="review-decision" value="reject">审核拒绝</AdminRadio>
+                  <AdminRadio class="flex min-h-12 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:bg-emerald-50" v-model="form.decision" name="review-decision" value="approve">审核通过</AdminRadio>
+                  <AdminRadio class="flex min-h-12 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:bg-rose-50" v-model="form.decision" name="review-decision" value="reject">审核拒绝</AdminRadio>
                 </div>
               </fieldset>
-              <label class="block"><span class="text-sm font-medium text-slate-800">审核备注（可选）</span><AdminTextarea data-testid="credit-review-decision-note" v-model="form.note" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none" placeholder="可填写审核依据" /><span class="mt-1 block text-right text-xs text-slate-500">{{ form.note.length }}/200</span></label>
+              <label class="block"><span class="text-sm font-medium text-slate-800">审核备注（可选）</span><AdminTextarea data-testid="credit-review-decision-note" v-model="form.note" rows="3" maxlength="200" class="mt-1.5 w-full" placeholder="可填写审核依据" /><span class="mt-1 block text-right text-xs text-slate-500">{{ form.note.length }}/200</span></label>
             </template>
 
             <template v-else>
@@ -85,7 +85,7 @@ watch(() => [props.visible, props.review?.id], ([visible]) => { if (visible) res
           </div>
 
           <footer class="flex shrink-0 justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3 sm:px-5">
-            <template v-if="stage === 'edit'"><AdminButton type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="close">取消</AdminButton><AdminButton type="button" :disabled="busy" class="rounded-lg bg-amber-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-40" @click="startConfirm">下一步</AdminButton></template>
+            <template v-if="stage === 'edit'"><AdminButton type="button" :disabled="busy" @click="close">取消</AdminButton><AdminButton type="button" :disabled="busy" variant="primary" @click="startConfirm">下一步</AdminButton></template>
             <template v-else><AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="backToEdit">返回修改</AdminButton><AdminButton :ref="element => { submitButtonRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg bg-rose-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-40" @click="requestMfa">{{ busy ? '验证中…' : '提交并验证' }}</AdminButton></template>
           </footer>
     </AdminDialog>

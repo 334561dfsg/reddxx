@@ -430,7 +430,7 @@ const logDialogLifecycle = { rendered: logDialogRendered, phase: logDialogPhase,
 
           <label class="block space-y-2 text-sm font-medium text-slate-700">
             <span>备注</span>
-            <a-textarea v-model:value="form.remark" :rows="3" placeholder="填写地址用途或更换原因" class="w-full resize-none" />
+            <a-textarea v-model:value="form.remark" :rows="3" placeholder="填写地址用途或更换原因" class="w-full" />
           </label>
 
           <label class="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
@@ -445,8 +445,8 @@ const logDialogLifecycle = { rendered: logDialogRendered, phase: logDialogPhase,
           </div>
 
           <footer class="shrink-0 flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-            <a-button html-type="button" class="border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50" @click="closeModal">取消</a-button>
-            <a-button html-type="submit" class="bg-slate-900 text-sm font-semibold text-white hover:bg-slate-800">保存配置</a-button>
+            <a-button html-type="button" @click="closeModal">取消</a-button>
+            <a-button html-type="submit">保存配置</a-button>
           </footer>
         </form>
     </AdminDialog>
