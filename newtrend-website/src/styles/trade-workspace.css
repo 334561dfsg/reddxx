@@ -285,3 +285,9 @@
  .product-terminal.compact .book-body{padding:0 4px 8px 0}
  .product-terminal.compact .trade-order-form .compact-selects .record-filter,.product-terminal.compact .spot-order-form>.form-body>.record-filter{min-width:0}
 }
+/* Compact phone form controls (user feedback, 2026-11-27): lower side tabs and percentage chips, like GMXX. */
+@media(max-width:760px){
+ .product-terminal.compact .order-panel .trade-order-form .direction-tabs{padding:3px}
+ .product-terminal.compact .order-panel .trade-order-form .direction-tabs button{min-height:32px;padding:6px 4px;line-height:20px}
+ .product-terminal.compact .order-panel .trade-order-form .percentages button{min-height:28px;padding:4px 0;line-height:18px}
+}
