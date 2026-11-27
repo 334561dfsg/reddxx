@@ -461,8 +461,7 @@
   "ui": {
     "marketSnapshot": "Instantané du marché",
     "whyNewquantcapital": "Pourquoi NewQuantCapital",
-    "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "Quatre raisons pour lesquelles les traders passent à NewQuantCapital et y restent. Bâti autour de ce qui compte quand de l'argent réel est en jeu.",
-    "hoursAgo": " heures auparavant"
+    "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "Quatre raisons pour lesquelles les traders passent à NewQuantCapital et y restent. Bâti autour de ce qui compte quand de l'argent réel est en jeu."
   },
   "motion": {
     "pausePartners": "Suspendre le défilement",

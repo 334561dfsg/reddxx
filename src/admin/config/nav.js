@@ -176,6 +176,15 @@ export const navTree = [
   },
 
   {
+    title: '内容管理',
+    icon: 'contract',
+    children: [
+      { title: '新闻文章', path: '/admin/news' },
+      { title: '新闻分类', path: '/admin/news/categories' },
+      { title: '新闻资讯（旧前台）', path: '/admin/system/news' },
+    ]
+  },
+  {
     title: '平台配置',
     icon: 'spark',
     children: [
@@ -194,7 +203,6 @@ export const navTree = [
       { title: '社媒配置', path: '/admin/system/social-links' },
       { title: '内容页配置', path: '/admin/system/content-pages' },
       { title: '站内公告', path: '/admin/system/announcements' },
-      { title: '新闻资讯', path: '/admin/system/news' },
       { title: '语音提醒', path: '/admin/system/voice-alerts' },
       { title: '语言与区号', path: '/admin/system/locale-settings' }
     ]

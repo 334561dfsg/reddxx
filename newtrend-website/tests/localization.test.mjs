@@ -55,11 +55,15 @@ test('parameterized validation messages retranslate without losing their amount'
 })
 test('language switches preserve stable product identifiers and change product names and news content', async () => {
  await i18n.applyLocale('en-US')
- const p=data.products[0],id=p.id,type=p.type,englishName=p.name,englishNews=data.news[0].title
+ const p=data.products[0],id=p.id,type=p.type,englishName=p.name
  assert.match(englishName,/180-Day/)
  await i18n.applyLocale('de-DE')
  assert.equal(p.id,id);assert.equal(p.type,type)
- assert.notEqual(p.name,englishName);assert.notEqual(data.news[0].title,englishNews)
+ assert.notEqual(p.name,englishName)
+ // News: one article carries every language, so the id stays while the text follows the request locale.
+ const {listNews}=await import('../src/api/news.js')
+ const [english]=await listNews('en-US',1),[german]=await listNews('de-DE',1)
+ assert.equal(german.articleId,english.articleId);assert.notEqual(german.title,english.title)
  assert.equal(data.path('/news'),'/news')
 })
 test('six locales provide account titles and synchronize locale preference', async () => {

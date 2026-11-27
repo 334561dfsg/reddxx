@@ -1,6 +1,5 @@
 import {locale,t} from './i18n'
 import {earnProductFacts} from './mock/catalog.js'
-import newsContent from './content/news/articles.json'
 import marketSnapshot from './market-snapshot.json'
 export const asset = name => `/NewQuantCapital/assets/${name}`
 export const markets = [
@@ -21,16 +20,6 @@ export const tradingMarkets = [
 ]
 export const hotStocks=[['BABA','84.425','-0.345','-0.80%'],['COIN','107.64','+0.6','+0.53%'],['HYUNDAI','205.895','+21.02','+11.44%'],['MSTR','82.975','-1.12','-1.30%'],['RKLB','49.965','+1.51','+3.13%'],['SKHYNIX','873.105','+66.52','+7.87%'],['SNDK','86.995','+3.15','+3.62%'],['UBER','64.69','-0.07','-0.13%']]
 export const features=[["home.whyNvdx.features.multiAsset.title","home.whyNvdx.features.multiAsset.desc",'bbf6320a56018d43.webp','layers','/trade/futures/BTCUSD'],["home.whyNvdx.features.aiAssisted.title","home.whyNvdx.features.aiAssisted.desc",'541c9d203a4d25c5.webp','sparkles','/ai-quant'],["home.whyNvdx.features.web3Custody.title","auth.featureSecurityDesc",'d7f8014d43243489.webp','shield','/profile'],["home.whyNvdx.features.liquidity.title","home.whyNvdx.features.liquidity.desc",'b8253acd0b1b6b5d.webp','zap','/trade/futures/BTCUSD']]
-export const news = [
- ['google','57f1f70deea38fe3.webp','2','Macro'],
- ['ethereum','dc1e027e35b8d995.webp','5','Crypto'],
- ['cftc','88ee9fc20ae560b2.webp','6','Market Updates'],
- ['binance','dd8035c7363eb3d2.webp','8','Crypto'],
-].map(([id,image,hours,category],index)=>({
- id,image,hours,category,
- get title(){return newsContent[locale.value][index+1].title},
- get summary(){return newsContent[locale.value][index+1].summary},
-}))
 export const partners=['7f5c35ad0f0038a5.png','88fbedaedabe15c7.png','fd26306fe9d2e533.png','c8cca055873819b3.png','f954c7edc3293e10.png','44b3d92cb5e91132.png','f240e49d98ecac41.png','23faa236e84e0234.png','830a0a4b9640867e.png','8dfd0b3cdb8c20ac.png','134815be9ba10a2f.png','90a690f81ca1ea6c.png','4ee674b0221b11e5.png','e8ad1a7eca1a5831.png']
 export const partnerNames=['FIDELITY','UNIONINVESTMENT','BINANCE','GOLDMANSACHS','TRUST','STRIKE','KKR','JPMORGAN','INUESCO','IMTOKEN','FOREX','CRYPTO','BANK OF AMERICA','AMAZON']
 export const members=[["data.ui.markZuckerberg",'bf58070130c79d6d.jpg'],["data.ui.jeremyColler",'271b1d9b358466e8.jpg'],["data.ui.rayDalio",'ae16e66d7bd849f5.webp'],["data.ui.cathieWood",'09519cb75f09b26d.webp']]

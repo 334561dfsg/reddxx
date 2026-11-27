@@ -486,6 +486,12 @@ export const consoleRoutes = [
     name: 'strategy-risk-policy',
     component: () => import('../../pages/admin/strategy/StrategyRiskPolicyPage.vue')
   },
+  { path: 'news', name: 'news-articles', component: () => import('../../pages/admin/news/NewsArticlesPage.vue'), meta: { title: '内容管理 / 新闻文章' } },
+  { path: 'news/new', name: 'news-article-create', component: () => import('../../pages/admin/news/NewsArticleEditorPage.vue'), meta: { title: '内容管理 / 新增文章' } },
+  { path: 'news/categories', name: 'news-categories', component: () => import('../../pages/admin/news/NewsCategoriesPage.vue'), meta: { title: '内容管理 / 新闻分类' } },
+  { path: 'news/categories/new', name: 'news-category-create', component: () => import('../../pages/admin/news/NewsCategoryEditorPage.vue'), meta: { title: '内容管理 / 新增分类' } },
+  { path: 'news/categories/:id/edit', name: 'news-category-edit', component: () => import('../../pages/admin/news/NewsCategoryEditorPage.vue'), meta: { title: '内容管理 / 编辑分类' } },
+  { path: 'news/:id/edit', name: 'news-article-edit', component: () => import('../../pages/admin/news/NewsArticleEditorPage.vue'), meta: { title: '内容管理 / 编辑文章' } },
   {
     path: 'quant-fund',
     redirect: '/admin/quant-fund/products'
@@ -787,7 +793,7 @@ export const consoleRoutes = [
     name: 'system-front-news',
     component: () => import('../../pages/admin/system/NewsManagementPage.vue'),
     meta: {
-      title: '平台配置 / 新闻资讯',
+      title: '内容管理 / 新闻资讯（旧前台）',
       desc: '维护前台首页底部新闻模块与新闻资讯页面内容。'
     }
   },

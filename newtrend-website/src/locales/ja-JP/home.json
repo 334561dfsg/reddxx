@@ -461,8 +461,7 @@
   "ui": {
     "marketSnapshot": "市場スナップショット",
     "whyNewquantcapital": "NewQuantCapital を選ぶ理由",
-    "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "トレーダーが NewQuantCapital に移行し、留まる4つの理由。実際のお金がかかっているときに重要なことを中心に構築されています。",
-    "hoursAgo": " 時間前"
+    "fourReasonsTradersMoveToNewquantcapitalAndStayBuilt": "トレーダーが NewQuantCapital に移行し、留まる4つの理由。実際のお金がかかっているときに重要なことを中心に構築されています。"
   },
   "motion": {
     "pausePartners": "スクロールを一時停止",
