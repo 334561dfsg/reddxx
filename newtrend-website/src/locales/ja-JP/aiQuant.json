@@ -468,7 +468,12 @@
         "amount": "数量",
         "creditedAt": "入金日時"
       },
-      "empty": "収益はまだありません。"
+      "empty": "収益はまだありません。",
+      "summary": {
+        "total": "累計収益",
+        "days": "計息日数",
+        "rate": "日次利回り"
+      }
     },
     "status": {
       "product": {

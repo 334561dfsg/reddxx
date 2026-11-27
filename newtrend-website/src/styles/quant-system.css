@@ -255,12 +255,16 @@
 #main-content#main-content .qf-interest-records .qf-interest-scroll{display:contents}
 @media(max-width:767px){
  #main-content#main-content .quant-page.quant-sub:has(.qf-interest-records){padding-top:8px;padding-bottom:0}
- #main-content#main-content .quant-page.quant-sub .qf-interest-records{display:flex;flex-direction:column;height:calc(100vh - 56px - env(safe-area-inset-top));height:calc(100dvh - 56px - env(safe-area-inset-top));overflow:hidden}
- #main-content#main-content .quant-page.quant-sub .qf-interest-head{flex:none;margin:0 0 12px}
- #main-content#main-content .quant-page.quant-sub .qf-interest-head p{margin:0;font-size:12px;line-height:18px;color:#8c8f96}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-records{display:flex;flex-direction:column;padding:4px 0 0;gap:0;height:calc(100vh - 56px - env(safe-area-inset-top));height:calc(100dvh - 56px - env(safe-area-inset-top));overflow:hidden}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-records .qf-interest-head{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ #main-content#main-content .quant-page.quant-sub .qf-ir-summary{flex:none;margin:4px 0 12px;padding:12px 14px}
  #main-content#main-content .qf-interest-records .qf-interest-scroll{display:block;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom)}
- #main-content#main-content .quant-page.quant-sub .qf-interest-records .qf-panel.qf-table-wrap{overflow:visible}
- #main-content#main-content .qf-interest-records .qf-table thead th{position:sticky;top:0;z-index:1;background:var(--qf-card,#15181c)}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-records .qf-panel.qf-table-wrap{overflow:visible;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none}
+ #main-content#main-content .qf-interest-records .qf-table :is(th,td):first-child{padding-left:0}
+ #main-content#main-content .qf-interest-records .qf-table :is(th,td):last-child{padding-right:0}
+ #main-content#main-content .qf-interest-records .qf-interest-scroll{scrollbar-width:none}
+ #main-content#main-content .qf-interest-records .qf-interest-scroll::-webkit-scrollbar{display:none}
+ #main-content#main-content .qf-interest-records .qf-table thead th{position:sticky;top:0;z-index:1;background:var(--nt-bg,#05070b)}
 }
 
 /* Strategy stats on phones: no style/market line either (user decision) — the bar title names the strategy; the whole

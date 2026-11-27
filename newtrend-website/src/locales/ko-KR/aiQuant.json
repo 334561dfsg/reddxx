@@ -468,7 +468,12 @@
         "amount": "수량",
         "creditedAt": "입금 시각"
       },
-      "empty": "아직 수익이 없습니다."
+      "empty": "아직 수익이 없습니다.",
+      "summary": {
+        "total": "누적 수익",
+        "days": "이자 일수",
+        "rate": "일 수익률"
+      }
     },
     "status": {
       "product": {

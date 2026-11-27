@@ -468,7 +468,12 @@
         "amount": "數量",
         "creditedAt": "入帳時間"
       },
-      "empty": "暫無收益記錄。"
+      "empty": "暫無收益記錄。",
+      "summary": {
+        "total": "累計收益",
+        "days": "計息天數",
+        "rate": "日收益率"
+      }
     },
     "status": {
       "product": {

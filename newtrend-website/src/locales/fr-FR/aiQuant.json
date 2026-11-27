@@ -468,7 +468,12 @@
         "amount": "Quantité",
         "creditedAt": "Crédité le"
       },
-      "empty": "Aucun gain pour le moment."
+      "empty": "Aucun gain pour le moment.",
+      "summary": {
+        "total": "Intérêts cumulés",
+        "days": "Jours d’intérêts",
+        "rate": "Taux journalier"
+      }
     },
     "status": {
       "product": {

@@ -10,6 +10,8 @@ export function useFinancePagination(source,pageSize=10){
  const total=computed(()=>toValue(source).length)
  const pages=computed(()=>Math.max(1,Math.ceil(total.value/pageSize)))
  watch(pages,count=>{page.value=Math.min(page.value,count)},{flush:'sync'})
+ // Switching between phone (accumulated rows) and desktop (one page) starts again at the first page.
+ watch(phone,()=>{page.value=1})
  const shown=computed(()=>toValue(source).slice(phone.value?0:(page.value-1)*pageSize,page.value*pageSize))
  return {page,total,pages,shown,phone}
 }

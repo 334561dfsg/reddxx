@@ -468,7 +468,12 @@
         "amount": "Menge",
         "creditedAt": "Gutgeschrieben am"
       },
-      "empty": "Noch keine Erträge."
+      "empty": "Noch keine Erträge.",
+      "summary": {
+        "total": "Zinsen gesamt",
+        "days": "Zinstage",
+        "rate": "Tagessatz"
+      }
     },
     "status": {
       "product": {

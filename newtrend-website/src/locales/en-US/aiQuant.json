@@ -468,7 +468,12 @@
         "amount": "Quantity",
         "creditedAt": "Credited at"
       },
-      "empty": "No earnings yet."
+      "empty": "No earnings yet.",
+      "summary": {
+        "total": "Total interest",
+        "days": "Interest days",
+        "rate": "Daily rate"
+      }
     },
     "status": {
       "product": {
