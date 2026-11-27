@@ -131,7 +131,21 @@
  #main-content#main-content .quant-page.quant-sub .qf-catalog,#main-content#main-content .strategy-page .strategy-catalog-section .strategy-grid{gap:12px}
  #main-content#main-content .strategy-page :is(.sc-featured-head,.sc-metrics){gap:12px}
  #main-content#main-content .strategy-page .sc-chip-fields{gap:10px 16px}
- #main-content#main-content .strategy-page .sc-facts{gap:16px}
+ /* Picks card on phones: name sits with its header; facts become label/value rows instead of stacked blocks. */
+ #main-content#main-content .strategy-page .sc-featured .sc-featured-name{margin-top:-4px}
+ #main-content#main-content .strategy-page .sc-featured .sc-chip-fields{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:8px}
+ #main-content#main-content .strategy-page .sc-featured .sc-chip-fields>div{flex-direction:row;align-items:center;justify-content:space-between;gap:12px}
+ #main-content#main-content .strategy-page .sc-featured .sc-chip-fields dt{flex-shrink:0}
+ #main-content#main-content .strategy-page .sc-featured .sc-chip-fields dd{display:flex;flex:1 1 auto;flex-wrap:wrap;justify-content:flex-end;gap:6px;min-width:0;margin:0}
+ /* Template cards on phones: metrics tighter, capital/period/symbols as label/value rows, slimmer footer. */
+ #main-content#main-content .strategy-page .sc-catalog .sc-metrics>div{gap:2px}
+ #main-content#main-content .strategy-page .sc-catalog .sc-facts{display:flex;flex-direction:column;gap:8px}
+ #main-content#main-content .strategy-page .sc-catalog :is(.sc-facts>div,.sc-symbol-block){display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px}
+ #main-content#main-content .strategy-page .sc-catalog :is(.sc-facts dt,.sc-symbol-block .sc-label){flex-shrink:0;letter-spacing:0}
+ #main-content#main-content .strategy-page .sc-catalog .sc-facts dd{text-align:right}
+ #main-content#main-content .strategy-page .sc-catalog .sc-symbol-block .sc-symbols{justify-content:flex-end;margin:0}
+ #main-content#main-content .strategy-page .sc-catalog .sc-footer{padding-top:12px}
+ #main-content#main-content .strategy-page .sc-featured .sc-featured-action{margin-top:auto;padding-top:0}
  #main-content#main-content .strategy-page .strategy-filters{gap:8px;margin:12px 0}
  #main-content#main-content .strategy-page :is(.strategy-featured-section,.strategy-catalog-section){padding:12px 0 16px}
  #main-content#main-content .strategy-page h2{margin-bottom:12px}
