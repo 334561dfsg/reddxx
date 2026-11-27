@@ -24,7 +24,7 @@ const busy = computed(() => loading.value || strategyBusy.value)
 const tradeDayPercent = computed({get: () => form.value ? Math.round(form.value.tradeDayRatio * 100) : null, set: value => { form.value.tradeDayRatio = value == null ? null : value / 100 }})
 const exampleReturn = computed(() => {
   const r = form.value?.dailyReturn
-  return r && Number.isFinite(r.min) && Number.isFinite(r.max) ? `本金 1 万 USDT：日盈亏 ${(100 * r.min).toFixed(2)} ~ ${(100 * r.max).toFixed(2)}` : '按本金百分比计算'
+  return r && Number.isFinite(r.min) && Number.isFinite(r.max) ? `本金 1 万 USDT：单日盈亏 ${(100 * r.min).toFixed(2)} ~ ${(100 * r.max).toFixed(2)} USDT` : '按本金百分比计算'
 })
 
 let loadVersion = 0
@@ -94,7 +94,7 @@ async function save() {
     <Card title="额度与周期" :bordered="false"><Row :gutter="24" class="strategy-editor-fields">
      <Col :xs="24" :lg="8"><FormItem name="minCapital" label="起投资金" required><InputNumber v-model:value="form.minCapital" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="maxCapital" label="单笔上限" required><InputNumber v-model:value="form.maxCapital" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="capacity" label="模板容量" help="进行中订阅的本金合计上限，0 表示不限"><InputNumber v-model:value="form.capacity" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="capacity" label="策略总额度" help="进行中订阅的本金合计上限，0 表示不限"><InputNumber v-model:value="form.capacity" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="minDays" label="最短周期" required><InputNumber v-model:value="form.minDays" :min="1" :precision="0" addon-after="天"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="maxDays" label="最长周期" required><InputNumber v-model:value="form.maxDays" :min="1" :precision="0" addon-after="天"/></FormItem></Col>
     </Row></Card>
@@ -105,11 +105,11 @@ async function save() {
       <Col :xs="24" :lg="8"><FormItem :name="[key, 'max']" :label="'最大'+name" required :help="hint"><InputNumber v-model:value="form[key].max" :min="1" :max="100" addon-after="%"/></FormItem></Col>
      </template>
     </Row></Card>
-    <Card title="收益模拟" :bordered="false"><Row :gutter="24" class="strategy-editor-fields">
+    <Card title="每日收益规则" :bordered="false"><Row :gutter="24" class="strategy-editor-fields">
      <Col :xs="24" :lg="8"><FormItem :name="['dailyReturn', 'min']" label="日收益率下限" required :help="exampleReturn"><InputNumber v-model:value="form.dailyReturn.min" :min="-20" :max="20" :step="0.1" :precision="2" addon-after="%"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem :name="['dailyReturn', 'max']" label="日收益率上限" required><InputNumber v-model:value="form.dailyReturn.max" :min="-20" :max="20" :step="0.1" :precision="2" addon-after="%"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="tradeDayRatio" label="交易日比例" required help="无成交的日期不产生盈亏记录"><InputNumber v-model:value="tradeDayPercent" :min="1" :max="100" :precision="0" addon-after="%"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="tradesPerDay" label="日均交易数" required help="决定每日生成的成交笔数"><InputNumber v-model:value="form.tradesPerDay" :min="0.1" :step="1" :precision="1" addon-after="笔"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem :name="['dailyReturn', 'max']" label="日收益率上限" required help="每个交易日在上下限之间随机取值"><InputNumber v-model:value="form.dailyReturn.max" :min="-20" :max="20" :step="0.1" :precision="2" addon-after="%"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="tradeDayRatio" label="交易日比例" required help="每天产生交易的概率，无交易的日期不记盈亏"><InputNumber v-model:value="tradeDayPercent" :min="1" :max="100" :precision="0" addon-after="%"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="tradesPerDay" label="日均交易数" required help="交易日成交笔数在均值 50%–150% 间随机，至少 1 笔"><InputNumber v-model:value="form.tradesPerDay" :min="0.1" :step="1" :precision="1" addon-after="笔"/></FormItem></Col>
     </Row></Card>
     <Card title="前台展示" :bordered="false"><template #extra><TypographyText type="secondary">仅展示，不参与收益计算</TypographyText></template><Row :gutter="24" class="strategy-editor-fields">
      <Col :xs="24" :lg="8"><FormItem name="sharpe" label="夏普比率" required help="用于排序与推荐"><InputNumber v-model:value="form.sharpe" :step="0.1" :precision="2"/></FormItem></Col>

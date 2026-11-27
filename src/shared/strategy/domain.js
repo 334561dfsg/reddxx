@@ -86,7 +86,7 @@ export function dailyResult(sub, dayStart) {
   const t = sub.templateSnapshot, random = rng(`${sub.subscriptionId}:${dayKey(dayStart)}`)
   if (random() > t.tradeDayRatio) return null
   const percent = t.dailyReturn.min + (t.dailyReturn.max - t.dailyReturn.min) * random()
-  return {pnl: money(sub.capital * percent / 100), tradeCount: 1 + Math.floor(random() * Math.max(1, Math.round(t.tradesPerDay * 2)))}
+  return {pnl: money(sub.capital * percent / 100), tradeCount: Math.max(1, Math.round(t.tradesPerDay * (0.5 + random())))}
 }
 
 function settle(s, sub, reason, at, operator) {

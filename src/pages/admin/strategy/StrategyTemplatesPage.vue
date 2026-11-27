@@ -76,7 +76,7 @@ async function toggleStatus() {
     <template v-else-if="column.key === 'risk'">Lv.{{ record.risk }}</template>
     <template v-else-if="column.key === 'capital'">{{ amount(record.minCapital) }} – {{ amount(record.maxCapital) }}</template>
     <template v-else-if="column.key === 'days'">{{ record.minDays }} – {{ record.maxDays }} 天</template>
-    <template v-else-if="column.key === 'usage'">{{ usage[record.templateId]?.count || 0 }} / {{ amount(usage[record.templateId]?.capital || 0) }}<TypographyText v-if="record.capacity" type="secondary"> · 容量 {{ amount(record.capacity) }}</TypographyText></template>
+    <template v-else-if="column.key === 'usage'">{{ usage[record.templateId]?.count || 0 }} / {{ amount(usage[record.templateId]?.capital || 0) }}<TypographyText v-if="record.capacity" type="secondary"> · 总额度 {{ amount(record.capacity) }}</TypographyText></template>
     <Tag v-else-if="column.key === 'status'" :color="record.status === 'listed' ? 'green' : 'default'">{{ templateStatusLabels[record.status] }}</Tag>
     <Space v-else-if="column.key === 'actions'" :size="8"><Button type="link" @click="edit(record)">编辑</Button><Button type="link" :danger="record.status === 'listed'" @click="target = {...record}">{{ record.status === 'listed' ? '下架' : '上架' }}</Button></Space>
     <template v-else>{{ record[column.key] ?? '—' }}</template>
