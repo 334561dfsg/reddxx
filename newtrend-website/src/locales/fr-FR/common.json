@@ -264,5 +264,9 @@
     "verifyReminder": "Veuillez vérifier votre identité dès que possible",
     "verifyAction": "Vérifier",
     "accountMode": "Mode du compte"
+  },
+  "tabbar": {
+    "label": "Navigation inférieure",
+    "markets": "Marchés"
   }
 }

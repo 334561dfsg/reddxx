@@ -413,3 +413,7 @@ Supersedes maturity settlement and the immediate-redeem notes above. `termDays` 
 ## Mobile navigation drawer (user reference, 2026-11-27)
 
 The mobile drawer (`components/overlay/MenuDrawer.vue`) is full screen and follows the GMXX mobile sidebar in the NewQuantCapital style: a user card (name, UID copy, credit score chip), a verification reminder with a 去認證 link while KYC is not approved, icon rows (home, personal centre, deposit in real mode, language — closes the drawer and opens the language picker, a bottom sheet below 600px like GMXX —, the trading / finance / AI Quant groups listing only their pages, without subtitles or an overview entry (user decision), assets, news, charity), then account rows (account-mode toggle, security centre, clear cache, log out). Signed-out users see login/register buttons. Clear cache is shared with the header via `utils/clearCache.js`; the drawer closes before the confirmation opens.
+
+## Mobile bottom tab bar (user reference, 2026-11-27)
+
+Below 900px a fixed bottom tab bar (`components/layout/MobileTabBar.vue`, GMXX layout in the NewQuantCapital style) links 首頁 / 行情 / 交易 / 金融 / 資產. It shows only on top-level sections (home, `/markets`, trading, finance and AI Quant lists, assets overview — see `tabRoots` in `App.vue`); detail pages keep their own sticky actions. `#site-shell.has-tabbar` reserves `--nt-tabbar-h` plus the bottom safe area. `/markets` is the full market list (shared `Markets` table with search). Desktop is unchanged.

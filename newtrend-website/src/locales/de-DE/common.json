@@ -264,5 +264,9 @@
     "verifyReminder": "Bitte schließen Sie die Identitätsprüfung bald ab",
     "verifyAction": "Verifizieren",
     "accountMode": "Kontomodus"
+  },
+  "tabbar": {
+    "label": "Untere Navigation",
+    "markets": "Märkte"
   }
 }

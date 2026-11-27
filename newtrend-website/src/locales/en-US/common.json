@@ -264,5 +264,9 @@
     "verifyReminder": "Please complete identity verification soon",
     "verifyAction": "Verify",
     "accountMode": "Account mode"
+  },
+  "tabbar": {
+    "label": "Bottom navigation",
+    "markets": "Markets"
   }
 }

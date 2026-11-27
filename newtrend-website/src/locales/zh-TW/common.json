@@ -264,5 +264,9 @@
     "verifyReminder": "請盡快完成實名認證",
     "verifyAction": "去認證",
     "accountMode": "帳戶模式"
+  },
+  "tabbar": {
+    "label": "底部導覽",
+    "markets": "行情"
   }
 }

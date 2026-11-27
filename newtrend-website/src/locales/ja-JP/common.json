@@ -264,5 +264,9 @@
     "verifyReminder": "できるだけ早く本人確認を完了してください",
     "verifyAction": "認証する",
     "accountMode": "アカウントモード"
+  },
+  "tabbar": {
+    "label": "下部ナビゲーション",
+    "markets": "マーケット"
   }
 }
