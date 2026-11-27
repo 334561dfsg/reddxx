@@ -46,8 +46,9 @@ export const orderStatusColors = {pending_review: 'blue', active: 'green', redee
 export const redemptionStatusLabels = {pending_review: '待审核', approved: '已通过', rejected: '已拒绝', cancelled: '已取消'}
 export const redemptionStatusColors = {pending_review: 'blue', approved: 'green', rejected: 'red', cancelled: 'default'}
 export const productStatusLabels = {listed: '已上架', unlisted: '未上架'}
-export const riskLabels = {LOW: '低风险', MEDIUM: '中风险', HIGH: '高风险'}
-export const riskColors = {LOW: 'blue', MEDIUM: 'orange', HIGH: 'red'}
+export const riskLabels = {LOW: '低风险', MEDIUM: '中风险', HIGH: '高风险', EXTREME: '极高风险'}
+// Same semantic scale as the public card badge (quant-fidelity.css .qf-risk.*): green → brand accent → orange → red.
+export const riskColors = {LOW: 'green', MEDIUM: 'cyan', HIGH: 'orange', EXTREME: 'red'}
 export const termLabel = termDays => (termDays == null ? '活期' : `${termDays} 天`)
 export const actionLabels = {
   seed: '载入模拟数据', subscribe: '申购', approve: '审核通过', reject: '审核拒绝', mature: '到期结算',

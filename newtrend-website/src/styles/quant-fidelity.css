@@ -172,6 +172,9 @@
 }
 #main-content .quant-page .qf-risk.low { border-color: color-mix(in srgb, #2bc287 30%, transparent); background: color-mix(in srgb, #2bc287 10%, transparent); color: #2bc287; }
 #main-content .quant-page .qf-risk.medium { border-color: color-mix(in srgb, var(--nt-accent) 30%, transparent); background: color-mix(in srgb, var(--nt-accent) 10%, transparent); color: var(--nt-accent); }
+/* High and extreme tiers were configurable in the admin but had no badge colour (2026-11-27). */
+#main-content .quant-page .qf-risk.high { border-color: color-mix(in srgb, #f5a524 30%, transparent); background: color-mix(in srgb, #f5a524 10%, transparent); color: #f5a524; }
+#main-content .quant-page .qf-risk.extreme { border-color: color-mix(in srgb, var(--nt-red) 30%, transparent); background: color-mix(in srgb, var(--nt-red) 10%, transparent); color: var(--nt-red); }
 #main-content .quant-page .qf-card-rate { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
 #main-content .quant-page .qf-card-rate > div { display: flex; flex-direction: column; gap: 4px; }
 #main-content .quant-page .qf-rate { display: flex; align-items: baseline; gap: 4px; margin: 0; font-family:var(--nt-font-display); font-size: 30px; line-height: 1; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--qf-success); }

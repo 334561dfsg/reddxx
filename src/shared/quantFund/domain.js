@@ -13,7 +13,7 @@ import {eligibilityFailures, validateEligibility} from '../lending/eligibility.j
 // - Fixed-term orders settle automatically at maturity (principal returned; interest was already paid daily).
 
 export const DAY = 86400000
-export const RISK_LEVELS = ['LOW', 'MEDIUM', 'HIGH']
+export const RISK_LEVELS = ['LOW', 'MEDIUM', 'HIGH', 'EXTREME']
 /** Fund identifier coin shown on public cards (icon + asset filter). Display only: subscriptions, payouts and
  * redemptions are always USDT (user decision, 2026-11-27). */
 export const ASSETS = ['USDT', 'USDC', 'BTC', 'ETH', 'SOL']
