@@ -3,7 +3,7 @@
 //
 // Catalogue products are returned as the shared catalogue objects so their locale-aware `name` getter keeps
 // following the language switch; a real API returns the localized name per request locale instead.
-import {earnPortfolioFor, earnBalance, earnCommitted, recordEarnSubscription, redeemEarnHolding} from '../earnPortfolio.js'
+import {earnPortfolioFor, earnBalance, earnCommitted, recordEarnSubscription, redeemEarnHolding} from '../server/earnPortfolio.js'
 import {earnSummary} from '../utils/mockEarnPortfolio.js'
 import {ApiError, mockCall, snapshot} from './transport.js'
 

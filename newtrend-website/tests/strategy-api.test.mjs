@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {effectScope} from 'vue'
 import {configureMock} from '../src/api/transport.js'
 import {changeStrategyStatus, getMyStrategies, subscribeStrategy} from '../src/api/strategy.js'
-import {strategyAccounts} from '../src/strategyPortfolio.js'
+import {strategyAccounts} from '../src/server/strategyPortfolio.js'
 import {enrichStrategies} from '../src/utils/strategyTemplates.js'
 import {strategies} from '../src/mock/catalog.js'
 import {useRequest} from '../src/composables/useRequest.js'
@@ -26,7 +26,7 @@ test('demo subscribe validates, reserves capital and is idempotent per request i
   const record = await subscribeStrategy({mode: DEMO, product, draft, requestId: 'strategy-api-1'})
   assert.equal(record.status, 'running')
   assert.equal((await getMyStrategies(DEMO)).balance, before - product.min)
-  await assert.rejects(subscribeStrategy({mode: DEMO, product, draft, requestId: 'strategy-api-1'}), {code: 'conflict'})
+  assert.equal((await subscribeStrategy({mode: DEMO, product, draft, requestId: 'strategy-api-1'})).id, record.id)
 })
 
 test('status changes are guarded; stop returns capital plus P&L', async () => {

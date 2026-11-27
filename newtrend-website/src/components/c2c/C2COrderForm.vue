@@ -1,4 +1,5 @@
 <script setup>
+import {isDemo} from '../../utils/accountMode.js'
 import FeedbackToast from '../../platform/FeedbackToast.js'
 import {computed,ref,watch} from 'vue'
 import Coin from '../Coin.vue'
@@ -33,7 +34,7 @@ function submit(){
  const payerKey=payerError()
  if(payerKey){error.value=payerKey;return}
  if(!session.loggedIn){error.value='auth.login';return}
- if(session.mode!=='common.demo.demo'){error.value='overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally';return}
+ if(!isDemo(session.mode)){error.value='overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally';return}
  error.value=''
  const snapshot={...result.value,symbol:props.quote.symbol,fiat:props.quote.fiat,price:props.quote.price}
  openModal('account-confirm',submitLabel.value,{focusCancel:true,description:t(props.side==='sell'?'c2c.order.confirmSellSummary':'c2c.order.confirmSummary',{amount:formatQuote(snapshot.quantity),asset:snapshot.symbol,total:formatQuote(snapshot.total),fiat:snapshot.fiat}),confirmLabel:submitLabel.value,

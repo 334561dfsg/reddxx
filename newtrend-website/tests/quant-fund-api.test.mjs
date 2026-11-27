@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {ApiError, configureMock} from '../src/api/transport.js'
 import {getQuantFund, getQuantFundBalance, getQuantFundOrder, getQuantFundPositions, listQuantFunds, redeemQuantFund, subscribeQuantFund} from '../src/api/quantFund.js'
-import {quantFunds, quantFundAccount} from '../src/quantFundPortfolio.js'
+import {quantFunds, quantFundAccount} from '../src/server/quantFundPortfolio.js'
 
 test('catalogue and order reads are snapshots with not-found codes', async () => {
   const list = await listQuantFunds()

@@ -13,7 +13,7 @@ test('subscription atomically freezes funds and terms and rejects duplicate requ
  assert.equal(account.balance,99000);assert.equal(record.endAt,1000+14*86400000)
  p.symbols.push('ETHUSDT');p.minDays=30
  assert.deepEqual(record.template.symbols,['BTCUSDT']);assert.equal(record.days,14)
- assert.throws(()=>subscribeStrategy(account,p,draft,'one'),/conflict/)
+ assert.equal(subscribeStrategy(account,p,draft,'one').id,'one')
  assert.equal(account.records.length,1);assert.equal(account.balance,99000)
  assert.throws(()=>subscribeStrategy(account,product,{...draft,capital:100000},'two'),/paymentRequired/)
  assert.equal(account.records.length,1);assert.equal(account.balance,99000)

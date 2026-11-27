@@ -1,4 +1,5 @@
 <script setup>
+import {isDemo} from '../utils/accountMode.js'
 import FeedbackToast from '../platform/FeedbackToast.js'
 import {computed,reactive,ref,watch} from 'vue'
 import {session,openModal} from '../session'
@@ -19,7 +20,7 @@ const formRoot=ref(null)
 const errors=reactive({futures:'',options:'',buy:'',sell:''}),notice=ref('')
 // Balances come from the trade API for the current mode and pair (skeletons until loaded). `pair.price` is the
 // live stream price, null until the first ticker arrives.
-const demo=computed(()=>session.mode==='common.demo.demo')
+const demo=computed(()=>isDemo(session.mode))
 const base=computed(()=>props.pair.name.split('/')[0])
 const balances=useRequest(()=>getTradeBalances(session.mode,['USDT',base.value]),{key:()=>session.mode+'|'+base.value,tags:['trade','wallet']})
 const balancesReady=computed(()=>balances.status.value==='ready')
@@ -45,7 +46,8 @@ function percentage(kind,percent,side='buy'){
  else spot[side].amount=String(value)
  errors[kind==='spot'?side:kind]='';notice.value=''
 }
-watch(()=>[props.mode,props.pair.id,session.mode],()=>{Object.keys(errors).forEach(k=>errors[k]='');notice.value=''})
+// A string key: an array getter would fire on every price tick (new pair object) and wipe the success toast.
+watch(()=>`${props.mode}|${props.pair.id}|${session.mode}`,()=>{Object.keys(errors).forEach(k=>errors[k]='');notice.value=''})
 function submit(side){
  const kind=props.mode,key=kind==='spot'?side:kind
  errors[key]='';notice.value=''
@@ -64,19 +66,18 @@ function submit(side){
  if(cost>available+1e-6){errors[key]=demo.value?'assets.withdraw.error.insufficientBalance':'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally';return}
  const pending=kind!=='options'&&(kind==='futures'?futures.type:spot.type)==='limit'
  const action=kind==='spot'?(side==='buy'?'trade.buy':'trade.sell'):(side==='buy'?'trade.buyLong':'trade.sellShort')
- const record={id:crypto.randomUUID(),kind,marketName:props.pair.name,direction:side,price,markPrice:props.pair.price,amount,symbol:'USDT',...estimate,
-  leverage:kind==='futures'?futures.leverage:undefined,orderType:pending?'trade.limit':'trade.market',filledQuantity:pending?0:estimate.quantity,
-  bucket:kind==='options'?'optionsOrders':kind==='spot'?(pending?'spotOpenOrders':'spotOrdersHistory'):(pending?'openOrders':'positions'),
-  duration:kind==='options'?options.duration:undefined,rate:kind==='options'?rate.value:undefined,
-  takeProfit:kind==='futures'&&futures.stops?Number(futures.tp)||null:null,stopLoss:kind==='futures'&&futures.stops?Number(futures.sl)||null:null,
-  fee:pending?0:estimate.fee,recordStatus:pending?'trade.current.pending':'trade.filled',settled:kind==='spot'&&!pending}
+ // The server builds and prices the order (review 2026-11-27); the form only sends the parameters. One request id per
+ // confirmation, so a retried call cannot place a second order.
+ const params={kind,side,marketName:props.pair.name,type:pending?'limit':'market',amount,price:pending?price:undefined,
+  leverage:kind==='futures'?futures.leverage:undefined,duration:kind==='options'?options.duration:undefined,
+  takeProfit:kind==='futures'&&futures.stops?futures.tp:'',stopLoss:kind==='futures'&&futures.stops?futures.sl:'',requestId:crypto.randomUUID()}
  let committed=false,placed=null
  const placedMode=session.mode
  openModal('account-confirm',`${t(action)} · ${props.pair.name}`,{focusCancel:true,confirmLabel:'overlay.ui.confirmOrder',
   description:t('trade.form.confirm',{quantity:fmt(estimate.quantity),unit:kind==='options'?'USDT':base.value,price:fmt(price)})+(kind==='options'?` · ${period(options.duration)} · ${rate.value}%`:''),
   // Async confirm: the dialog shows busy and holds its close paths; a rejection keeps it open with a toast.
   onConfirm:async()=>{if(committed)return
-   try{placed=await placeTradeOrder({mode:session.mode,order:record,sizing:{kind,side,pending,estimate,amount,base:base.value}})}
+   try{placed=await placeTradeOrder({mode:session.mode,...params})}
    catch(cause){throw new Error(tradeErrorKey(cause))}
    committed=true;if(kind!=='options')notice.value=t('trade.orderSuccess');draft.amount='';invalidate('trade')},
   // Delivery orders (GMXX): once the confirmation has closed, open the order dialog with its countdown and result;

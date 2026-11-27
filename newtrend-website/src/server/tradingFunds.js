@@ -1,7 +1,8 @@
 import {reactive} from 'vue'
-import {createCurrentTrades,positionPnl} from './utils/mockCurrentTrades.js'
-import {deliveryPeriods,tradeFeeRate} from './utils/orderFormModel.js'
-import {balanceOf,credit,debit,modeKey} from './mock/ledger.js'
+import {createCurrentTrades,positionPnl} from '../utils/mockCurrentTrades.js'
+import {deliveryPeriods,tradeFeeRate} from '../utils/orderFormModel.js'
+import {balanceOf,credit,debit,modeKey} from '../mock/ledger.js'
+import {clock} from '../mock/clock.js'
 
 // Trading records per account mode (independent copies of the synthetic fixtures), funded through the shared ledger.
 export const tradeOrders=reactive({real:createCurrentTrades(),demo:createCurrentTrades()})
@@ -53,7 +54,7 @@ export function releaseTradeFunds(mode,original){
  * a correct call pays stake × payout rate, a wrong one loses stake × payout rate, an unchanged price returns the
  * stake. The stake plus the result is credited once; the record keeps its id and moves to the history tab.
  */
-export function settleDueOptions(mode,lastPrice,now=Date.now()){
+export function settleDueOptions(mode,lastPrice,now=clock.now()){
  for(const o of tradeOrdersFor(mode)){
   if(o.bucket!=='optionsOrders'||o.settled||!o.duration)continue
   const end=(o.openedAt??o.createdAt)+o.duration*1000

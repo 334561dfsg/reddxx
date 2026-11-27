@@ -1,10 +1,10 @@
-import {assertEarnEligibility,earnMockProfile} from './utils/earnEligibility.js'
+import {assertEarnEligibility,earnMockProfile} from '../utils/earnEligibility.js'
 import { reactive } from 'vue'
-import { createEarnPortfolio, redeemLocalHolding } from './utils/mockEarnPortfolio.js'
-import { subscriptionError } from './utils/earnProducts.js'
-import { balanceOf, credit, debit, modeKey } from './mock/ledger.js'
-import { nextId } from './mock/ids.js'
-import { bootAt, clock } from './mock/clock.js'
+import { createEarnPortfolio, redeemLocalHolding } from '../utils/mockEarnPortfolio.js'
+import { subscriptionError } from '../utils/earnProducts.js'
+import { balanceOf, credit, debit, modeKey } from '../mock/ledger.js'
+import { nextId } from '../mock/ids.js'
+import { bootAt, clock } from '../mock/clock.js'
 
 // Earn records are kept per account mode (independent instances of the synthetic fixtures); money moves only
 // through the shared mock ledger. In memory only.

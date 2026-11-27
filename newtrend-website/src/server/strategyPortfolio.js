@@ -1,9 +1,10 @@
 import {computed, reactive} from 'vue'
-import {strategies} from './mock/catalog.js'
-import {createStrategyAccount, enrichStrategies, subscribeStrategy, changeStrategyStatus, completeExpiredStrategies} from './utils/strategyTemplates.js'
-import {bindBalance} from './mock/ledger.js'
-import {bootAt, clock} from './mock/clock.js'
-import {strategyState, strategyCommand} from './platform/strategyClient.js'
+import {strategies} from '../mock/catalog.js'
+import {createStrategyAccount, enrichStrategies, subscribeStrategy, changeStrategyStatus, completeExpiredStrategies} from '../utils/strategyTemplates.js'
+import {walletOf} from '../mock/ledger.js'
+import {bootAt, clock} from '../mock/clock.js'
+import {strategyState, strategyCommand} from '../platform/strategyClient.js'
+import {isDemo} from '../utils/accountMode.js'
 
 // AI strategy data for both account modes.
 // - Catalogue: the listed templates of the strategy Mock (in-page static data seeded like the admin's).
@@ -25,14 +26,14 @@ export const strategyCatalog = computed(() => [...strategyState.value.templates]
 
 // ----- 模擬 (local) -----
 const localTemplates = enrichStrategies(strategies)
-export const strategyAccounts = reactive({demo: bindBalance(createStrategyAccount(0), 'demo', 'USDT')})
+export const strategyAccounts = reactive({demo: createStrategyAccount(0, walletOf('demo'))})
 // Seed mirroring the reference demo account's My Strategies: one running conservative stock strategy shown there as
 // "Conservative Stock Blue", 500 capital, 14-day term, no P&L yet. Placed relative to page load (single mock clock).
 {
   const template = localTemplates.find(s => s.name === 'Blue Chip Index Defender'), demo = strategyAccounts.demo, capital = 500, days = 14
   if (template) {
     demo.records.push({id: 'seed-demo-strategy-1', template: {...template, name: 'Conservative Stock Blue', symbols: [...template.symbols]}, capital, days, takeProfit: 20, stopLoss: 10, status: 'running', mode: 'demo', pnl: 0, createdAt: bootAt, endAt: bootAt + days * 86400000})
-    demo.balance -= capital
+    demo.wallet.debit('USDT', capital)
   }
 }
 
@@ -51,7 +52,7 @@ const realAccount = () => {
     })),
   }
 }
-const isReal = mode => mode !== 'common.demo.demo'
+const isReal = mode => !isDemo(mode)
 /** {balance, records} for a mode; reactive when read inside a computed. */
 export const strategyAccountFor = mode => (isReal(mode) ? realAccount() : strategyAccounts.demo)
 

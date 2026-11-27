@@ -1,9 +1,10 @@
+import {clock} from '../mock/clock.js'
 // Synthetic, session-local fixtures. No reference-account records or network writes.
 const DAY = 86400000
-export const earnPrices = { USDT: 1, USDC: 1, BTC: 60742.62, ETH: 1708.29 }
+import {priceOf} from '../mock/prices.js'
 const round = value => Math.round((value + Number.EPSILON) * 1e8) / 1e8
 
-export function createEarnPortfolio(now = Date.now()) {
+export function createEarnPortfolio(now = clock.now()) {
   const rows = [
     ['flex-usdt', 'usdt', 'USDT', 12000, 36.9, 'active', 25, 0, true],
     ['fixed-90', 'usdt90', 'USDT', 15000, 48.72, 'active', 14, 90, false],
@@ -59,17 +60,17 @@ export function createEarnPortfolio(now = Date.now()) {
 
 export function earnSummary(portfolio, products) {
   const owned = portfolio.holdings.filter(row => ['active', 'matured', 'redeeming'].includes(row.status))
-  const principal = owned.reduce((sum, row) => sum + row.principal * earnPrices[row.symbol], 0)
-  const accrued = owned.reduce((sum, row) => sum + row.accrued * earnPrices[row.symbol], 0)
+  const principal = owned.reduce((sum, row) => sum + row.principal * priceOf(row.symbol), 0)
+  const accrued = owned.reduce((sum, row) => sum + row.accrued * priceOf(row.symbol), 0)
   const daily = owned.filter(row => row.status === 'active').reduce((sum, row) => {
     const product = products.find(item => item.id === row.productId)
-    return sum + row.principal * (product?.rate || 0) / 100 * earnPrices[row.symbol]
+    return sum + row.principal * (product?.rate || 0) / 100 * priceOf(row.symbol)
   }, 0)
-  const cumulative = portfolio.rewards.filter(row => row.status === 'paid').reduce((sum, row) => sum + row.amount * earnPrices[row.symbol], 0)
+  const cumulative = portfolio.rewards.filter(row => row.status === 'paid').reduce((sum, row) => sum + row.amount * priceOf(row.symbol), 0)
   return { principal, accrued, total: principal + accrued, daily, cumulative }
 }
 
-export function redemptionQuote(holding, rawAmount, now = Date.now()) {
+export function redemptionQuote(holding, rawAmount, now = clock.now()) {
   if (!holding || !['active', 'matured'].includes(holding.status)) return { error: 'holdingInactive' }
   const amount = Number(rawAmount)
   if (!Number.isFinite(amount) || amount <= 0 || round(amount) !== amount) return { error: 'invalidAmount' }
@@ -89,7 +90,7 @@ export function redemptionQuote(holding, rawAmount, now = Date.now()) {
   }
 }
 
-export function redeemLocalHolding(portfolio, holdingId, amount, { id, now = Date.now(), acknowledgeEarly = false } = {}) {
+export function redeemLocalHolding(portfolio, holdingId, amount, { id, now = clock.now(), acknowledgeEarly = false } = {}) {
   // A repeated submission is idempotent, including when only part was redeemed.
   const existing = portfolio.redemptions.find(row => row.id === id)
   if (existing) return { record: existing }

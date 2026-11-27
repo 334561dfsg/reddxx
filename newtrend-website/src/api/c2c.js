@@ -1,16 +1,17 @@
 // C2C service. Pages call only these async functions; c2cStore.js stands in for the server.
 // Errors keep the existing locale-key codes (e.g. 'c2c.error.OTC_LIMIT_EXCEEDED_SINGLE'); transport failures are
 // 'network'. Use c2cErrorKey() to turn any rejection into a locale key.
-import {c2cStateFor} from '../c2cStore.js'
+import {c2cStateFor} from '../server/c2cStore.js'
 import {c2cQuotes, c2cSellQuotes} from '../utils/c2cQuotes.js'
 import {cancelC2COrder as cancelOrder, createC2COrder as createOrder} from '../utils/c2cState.js'
 import {ApiError, mockCall, snapshot} from './transport.js'
+import {errorKey} from './transport.js'
 
 const SERVICE = 'c2c'
 const quotesFor = side => side === 'sell' ? c2cSellQuotes : c2cQuotes
 
 /** Locale key for a C2C rejection (codes that already are keys pass through). */
-export const c2cErrorKey = error => String(error?.code || '').startsWith('c2c.') ? error.code : 'common.requestFailed'
+export const c2cErrorKey = error => errorKey(error, {prefix: 'c2c.'})
 
 /** GET /c2c/quotes?side=buy|sell — the current quote snapshot (each with its ttl). */
 export const listC2CQuotes = side => mockCall(SERVICE, () => snapshot(quotesFor(side)))

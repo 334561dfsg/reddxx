@@ -25,7 +25,9 @@ test('sell locks balance in its mode, prices from the server quote, cancel refun
   assert.deepEqual(order.payer, payer)
   assert.equal(order.amount, 2989.5)
   assert.equal(balanceOf('demo', 'USDT'), before - 3000)
-  await assert.rejects(createC2COrder({mode: DEMO, side: 'sell', quoteId: 'USDT-USD', quantity: 3000, requestId: 'c2c-api-1', payer}), {code: 'c2c.error.OTC_ORDER_NOT_OPERABLE'})
+  // A retry with the same requestId returns the same order and locks nothing more.
+  const again = await createC2COrder({mode: DEMO, side: 'sell', quoteId: 'USDT-USD', quantity: 3000, requestId: 'c2c-api-1', payer})
+  assert.equal(again.id, order.id)
   assert.equal((await listC2COrders(DEMO)).length, 1)
   assert.ok(!(await listC2COrders(REAL)).some(o => o.id === order.id), 'orders are per mode')
   assert.equal((await getC2COrder(order.id, DEMO)).id, order.id)

@@ -3,12 +3,13 @@
 //   every read fetches it again, so admin review, force stop and generated daily P&L appear on the next read/poll.
 // - 模擬: the local demo account in strategyPortfolio.js.
 // Both go through mockCall() so latency and ?mock-fail=strategy apply to either mode.
-import {strategyCatalog, strategyAccountFor, subscribeFor, changeStatusFor, refreshStrategies} from '../strategyPortfolio.js'
+import {strategyCatalog, strategyAccountFor, subscribeFor, changeStatusFor, refreshStrategies} from '../server/strategyPortfolio.js'
 import {refreshStrategy, strategyError} from '../platform/strategyClient.js'
 import {ApiError, mockCall, snapshot} from './transport.js'
+import {isDemo} from '../utils/accountMode.js'
 
 const SERVICE = 'strategy'
-const isReal = mode => mode !== 'common.demo.demo'
+const isReal = mode => !isDemo(mode)
 
 /**
  * Pulls the server state; the shared client keeps failures in strategyError instead of throwing. Concurrent callers

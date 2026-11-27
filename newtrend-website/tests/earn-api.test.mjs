@@ -4,7 +4,7 @@ import {effectScope, nextTick, ref} from 'vue'
 import {ApiError, configureMock, mockCall} from '../src/api/transport.js'
 import {createEarnApi} from '../src/api/earnService.js'
 import {earnProductFacts} from '../src/mock/catalog.js'
-import {earnPortfolios} from '../src/earnPortfolio.js'
+import {earnPortfolios} from '../src/server/earnPortfolio.js'
 import {balanceOf} from '../src/mock/ledger.js'
 import {invalidate, useMutation, useRequest} from '../src/composables/useRequest.js'
 

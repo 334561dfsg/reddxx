@@ -1,6 +1,7 @@
 import {validateEligibility} from '../../shared/lending/eligibility.js'
 import { earnTerms } from '../../../newtrend-website/src/utils/earnProducts.js'
-import { createEarnPortfolio, earnPrices } from '../../../newtrend-website/src/utils/mockEarnPortfolio.js'
+import { createEarnPortfolio } from '../../../newtrend-website/src/utils/mockEarnPortfolio.js'
+import { priceOf } from '../../../newtrend-website/src/mock/prices.js'
 
 const DAY = 86400000
 export const currencies = ['USDT', 'USDC', 'BTC', 'ETH']
@@ -193,5 +194,5 @@ export function getEarnHoldingRewards(state, holdingId) {
 }
 export function earnAdminStats(state) {
   const live = state.holdings.filter(row => row.status !== 'redeemed')
-  return { principal: live.reduce((sum,row) => sum + row.principal*earnPrices[row.symbol],0), pending: state.orders.filter(row => row.status === 'pending_review').length, redemptions: state.redemptions.filter(row => row.status === 'pending').length, enabled: state.products.filter(row => row.status === 'enabled').length }
+  return { principal: live.reduce((sum,row) => sum + row.principal*priceOf(row.symbol),0), pending: state.orders.filter(row => row.status === 'pending_review').length, redemptions: state.redemptions.filter(row => row.status === 'pending').length, enabled: state.products.filter(row => row.status === 'enabled').length }
 }

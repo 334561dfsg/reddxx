@@ -1,10 +1,12 @@
 import {locale,t} from './i18n'
 import {earnProductFacts} from './mock/catalog.js'
 import marketSnapshot from './market-snapshot.json'
+import {registerSnapshotPrices} from './mock/prices.js'
 export const asset = name => `/NewQuantCapital/assets/${name}`
 export const markets = [
  ['BTC','BTC/USD',60742.62,-1.35,1605000000,'b51de01bf12525db.png',"home.products.perpTag1"],['ETH','ETH/USD',1708.29,-1.40,731000000,'7165d5832d0bb5bc.png',"home.products.perpTag1"],['BNB','BNB/USD',555.78,-.9,84241100,'7416562e16eb23d8.png',"home.products.perpTag1"],['SOL','SOL/USD',71.96,.11,281000000,'42fe76cb3bb1504a.png',"home.products.perpTag1"],['USDC','USDC/USD',1.00109,-.02,2118000000,'44a08293319a58ea.svg',"home.products.perpTag1"],['SPCX','SPCX',134.83,2.22,1932000000,'aee701b4fc2167a7.webp',"aiQuant.market.stock"],['XRP','XRP/USD',.9615,2.46,168000000,'e9782e53bbd14c10.png',"home.products.perpTag1"],['ADA','ADA/USD',.1498,2.67,30711400,'9973f875c9ce0692.png',"home.products.perpTag1"],['EUR','EUR/USD',1.09121,.09,546800,null,"aiQuant.market.forex"],['GBP','GBP/USD',1.30462,.11,690500,null,"aiQuant.market.forex"],['USD','USD/JPY',159.191,.12,36189800,null,"aiQuant.market.forex"],['AAPL','AAPL',351.2,.86,121000000,null,"aiQuant.market.stock"],['MSFT','MSFT',496.35,-.45,245000000,null,"aiQuant.market.stock"],['NVIDIA','NVIDIA',164.24,21.56,356000000,null,"aiQuant.market.stock"]
 ].map(([symbol,name,price,change,volume,image,category])=>({symbol,name,id:name.replace('/',''),price,change,volume,image,category}))
+registerSnapshotPrices(markets.map(m=>[m.symbol,m.price]))
 const fiat=new Set(['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','TWD','THB','KRW','RUB'])
 for(const row of marketSnapshot){if(markets.some(m=>m.name===row.name))continue;const symbol=row.name.split('/')[0];markets.push({...row,symbol,id:row.name.replace('/',''),volume:'—',image:null,category:row.name.includes('/')?(fiat.has(symbol)?"aiQuant.market.forex":"home.products.perpTag1"):"aiQuant.market.stock"})}
 // Crypto instruments settle in USDT; retain legacy route IDs for existing links.

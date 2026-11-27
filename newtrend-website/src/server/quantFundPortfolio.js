@@ -1,14 +1,16 @@
 import {reactive} from 'vue'
-import {createQuantFundCatalog,createFundAccount,autoRedeemFullFunds} from './utils/quantFund.js'
-import {boundBalances} from './mock/ledger.js'
-import {bootAt,clock,DAY,HOUR} from './mock/clock.js'
+import {createQuantFundCatalog,createFundAccount,autoRedeemFullFunds} from '../utils/quantFund.js'
+import {walletOf} from '../mock/ledger.js'
+import {bootAt,clock,DAY,HOUR} from '../mock/clock.js'
+import {modeKey} from '../utils/accountMode.js'
 
 // Local mock state only: resets on reload and never contacts the reference site or a backend.
 // Balances are a live view of the shared ledger's USDT, so subscribe/redeem/maturity move the same money
 // the Assets page and other domains see.
 export const quantFunds=reactive(createQuantFundCatalog())
-export const quantFundAccount=reactive(Object.assign(createFundAccount(),{balances:boundBalances('USDT')}))
-export const fundMode=mode=>mode==='common.demo.demo'?'demo':'real'
+export const quantFundAccount=reactive(createFundAccount(undefined,{real:walletOf('real'),demo:walletOf('demo')}))
+/** Same as modeKey (kept for existing imports). */
+export const fundMode=modeKey
 export const findQuantFund=id=>quantFunds.find(product=>product.id===id)||null
 /** Auto-redeems orders past their lock period on products at 100% progress (call on view; idempotent). */
 export const refreshQuantFunds=()=>autoRedeemFullFunds(quantFundAccount,findQuantFund,clock.now())
@@ -29,7 +31,7 @@ function seed(id,productId,mode,{principal,startDaysAgo,status,paidDays=0,settle
 }
 // 模擬 mirrors the reference demo account: one running flexible VIP 0 order (4,999, no payouts yet), paid from demo funds.
 seed('QFO-seed-demo-1','qf-vip0','demo',{principal:4999,startDaysAgo:0,status:'active'})
-quantFundAccount.balances.demo-=4999
+quantFundAccount.wallets.demo.debit('USDT',4999)
 // 真實 carries synthetic history (the reference real account is empty) so every status and paging is exercised.
 seed('QFO-seed-real-3','qf-vip0','real',{principal:5000,startDaysAgo:0,status:'pending_review'})
 seed('QFO-seed-real-2','qf-vip1','real',{principal:120000,startDaysAgo:3,status:'active',paidDays:3})

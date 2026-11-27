@@ -1,6 +1,6 @@
 // Quant Fund service. Pages call only these async functions; quantFundPortfolio.js stands in for the server.
 // Product names are plain catalogue strings, so this module needs no locale binding and is Node-testable as is.
-import {quantFunds, quantFundAccount, fundMode, findQuantFund, refreshQuantFunds} from '../quantFundPortfolio.js'
+import {quantFunds, quantFundAccount, fundMode, findQuantFund, refreshQuantFunds} from '../server/quantFundPortfolio.js'
 import {fundSummary, requestRedeemFund, restrictedFor, subscribeFund} from '../utils/quantFund.js'
 import {DEMO_UID} from '../account.js'
 import {ApiError, mockCall, snapshot} from './transport.js'

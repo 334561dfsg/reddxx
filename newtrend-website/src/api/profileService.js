@@ -4,6 +4,7 @@
 import {ApiError, mockCall, snapshot} from './transport.js'
 import {otpauthUri, randomSecret, verifyTotp} from './totp.js'
 import {FUND_PASSWORD_PATTERN, createFundPasswordStore} from './fundPasswordStore.js'
+import {clock} from '../mock/clock.js'
 
 /** Local demo code accepted wherever the prototype asks for a verification code (same as the contact bindings). */
 export const DEMO_TOTP = '123456'
@@ -90,7 +91,7 @@ const page = (list, number = 1, size = 10) => {
   return {items: snapshot(list.slice((current - 1) * pageSize, current * pageSize)), total: list.length, page: current, pageSize}
 }
 
-export function createProfileApi({now = () => Date.now(), fundPassword = createFundPasswordStore()} = {}) {
+export function createProfileApi({now = () => clock.now(), fundPassword = createFundPasswordStore()} = {}) {
   const start = now()
   const ledger = seedLedger(start)
   const notifications = seedNotifications(start)

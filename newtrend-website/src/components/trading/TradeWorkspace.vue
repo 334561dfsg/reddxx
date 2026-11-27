@@ -1,4 +1,5 @@
 <script setup>
+import {isDemo,MODE_REAL,MODE_DEMO} from '../../utils/accountMode.js'
 import '../../styles/trade-workspace.css'
 import {computed,watch} from 'vue'
 import {useRoute,useRouter} from 'vue-router'
@@ -32,8 +33,8 @@ const productItems=computed(()=>[['futures','trade.pages.perpetual'],['options',
 function chooseProduct(next){if(next!==props.mode)router.push(path('/trade/'+next+'/'+pair.value.name.replace('/','')))}
 // Phone layout: the pair opens the left pair drawer (MarketPicker) instead of the dropdown.
 // Account badge (GMXX 真实账户): shows the current mode; tapping asks to switch to the other one (same confirmation as the header).
-const demoMode=computed(()=>session.mode==='common.demo.demo')
-const switchMode=()=>requestModeSwitch(demoMode.value?'common.demo.real':'common.demo.demo')
+const demoMode=computed(()=>isDemo(session.mode))
+const switchMode=()=>requestModeSwitch(demoMode.value?MODE_REAL:MODE_DEMO)
 // Product switch opens a bottom sheet (GMXX mobile reference) instead of a dropdown.
 const openProducts=()=>openModal('option-sheet','trade.pages.product',{options:productItems.value,current:props.mode,onSelect:chooseProduct})
 const openPairs=()=>openModal('market-picker','trade.pair',{current:pair.value.id,onSelect:choosePair})

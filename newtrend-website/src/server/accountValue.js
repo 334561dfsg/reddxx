@@ -1,5 +1,5 @@
-import {balancesOf} from './mock/ledger.js'
-import {priceOf,valueInUsdt} from './mock/prices.js'
+import {balancesOf} from '../mock/ledger.js'
+import {priceOf,valueInUsdt} from '../mock/prices.js'
 import {tradeOrdersFor} from './tradingFunds.js'
 import {earnPortfolioFor} from './earnPortfolio.js'
 import {quantFundAccount,fundMode} from './quantFundPortfolio.js'

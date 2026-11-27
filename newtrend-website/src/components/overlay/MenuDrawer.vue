@@ -1,4 +1,5 @@
 <script setup>
+import {isDemo,MODES} from '../../utils/accountMode.js'
 import {computed,shallowRef} from 'vue'
 import {message} from 'ant-design-vue'
 import LineIcon from '../ui/LineIcon.vue'
@@ -44,7 +45,7 @@ function signout(){logout();emit('close')}
   <RouterLink class="drawer-row" :to="path('/')" @click="$emit('close')"><LineIcon name="home"/><span>{{ $t('common.home') }}</span></RouterLink>
   <template v-if="session.loggedIn">
    <RouterLink class="drawer-row" :to="path('/profile')" @click="$emit('close')"><LineIcon name="user"/><span>{{ $t('profile.center.rows.backToProfile') }}</span></RouterLink>
-   <RouterLink v-if="session.mode!=='common.demo.demo'" class="drawer-row" :to="path('/deposit')" @click="$emit('close')"><LineIcon name="download"/><span>{{ $t('common.assetsMenu.deposit') }}</span></RouterLink>
+   <RouterLink v-if="!isDemo(session.mode)" class="drawer-row" :to="path('/deposit')" @click="$emit('close')"><LineIcon name="download"/><span>{{ $t('common.assetsMenu.deposit') }}</span></RouterLink>
   </template>
   <button type="button" class="drawer-row" aria-haspopup="dialog" @click="$emit('open-language')"><LineIcon name="globe"/><span>{{ $t('common.language') }}</span><em>{{ currentLanguage }}</em><LineIcon name="chevron-right" class="drawer-caret"/></button>
   <template v-for="g in navGroups" :key="g.label">
@@ -60,7 +61,7 @@ function signout(){logout();emit('close')}
 
  <div v-if="session.loggedIn" class="drawer-account">
   <div class="drawer-row static"><LineIcon name="repeat"/><span id="drawer-mode-label">{{ $t('common.drawer.accountMode') }}</span>
-   <div class="drawer-mode" role="group" aria-labelledby="drawer-mode-label"><button v-for="m in ['common.demo.real','common.demo.demo']" :key="m" type="button" :class="{active:session.mode===m}" :aria-pressed="session.mode===m" @click="$emit('switch-mode',m)">{{ $t(m) }}</button></div>
+   <div class="drawer-mode" role="group" aria-labelledby="drawer-mode-label"><button v-for="m in MODES" :key="m" type="button" :class="{active:session.mode===m}" :aria-pressed="session.mode===m" @click="$emit('switch-mode',m)">{{ $t(m) }}</button></div>
   </div>
   <RouterLink class="drawer-row" :to="{path:path('/profile'),hash:'#security'}" @click="$emit('close')"><LineIcon name="shield"/><span>{{ $t('profile.center.security.title') }}</span></RouterLink>
   <button type="button" class="drawer-row" aria-haspopup="dialog" @click="$emit('clear-cache')"><LineIcon name="eraser"/><span>{{ $t('profile.center.nav.clearCache') }}</span></button>

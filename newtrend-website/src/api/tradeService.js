@@ -2,14 +2,17 @@
 // lastPrice(marketName) so the service stays Node-testable. tradingFunds.js and the mock history stand in for
 // the server. Pages import the bound functions from ./trade.js.
 import {balanceOf} from '../mock/ledger.js'
-import {orderFunding, placeTradeOrder as placeOrder, releaseTradeFunds, settleDueOptions, tradeOrdersFor} from '../tradingFunds.js'
+import {orderFunding, placeTradeOrder as placeOrder, releaseTradeFunds, settleDueOptions, tradeOrdersFor} from '../server/tradingFunds.js'
 import {finishCurrentTrade} from '../utils/mockCurrentTrades.js'
 import {mockTradeHistory} from '../utils/mockTradeHistory.js'
 import {selectProductRecords} from '../utils/tradeProducts.js'
 import {ApiError, mockCall, snapshot} from './transport.js'
+import {isDemo} from '../utils/accountMode.js'
+import {deliveryPeriods, leverageOptions, orderEstimate, validStops} from '../utils/orderFormModel.js'
+import {nextId} from '../mock/ids.js'
+import {clock} from '../mock/clock.js'
 
 const SERVICE = 'trade'
-const DEMO = 'common.demo.demo'
 
 export function createTradeApi({lastPrice}) {
   /** GET /trade/balances?mode=&assets= — available amounts of the requested assets. */
@@ -26,16 +29,41 @@ export function createTradeApi({lastPrice}) {
   })
 
   /**
-   * POST /trade/orders {mode, order, sizing: {kind, side, pending, estimate, amount, base}} — locks the funds and
-   * records the order atomically. Market orders take the server's last price. Rejects 'insufficient' with the
-   * form's locale key.
+   * POST /trade/orders {mode, kind, side, marketName, type, amount, price?, leverage?, duration?, takeProfit?, stopLoss?,
+   * requestId} — the server owns the order (review 2026-11-27): it validates the parameters, prices market orders at
+   * its last price, estimates size/margin/fee, picks the record bucket and payout rate, locks the funds and records
+   * the order atomically. A repeated requestId returns the order it already created. Rejections use form locale keys.
    */
-  const placeTradeOrder = ({mode, order, sizing}) => mockCall(SERVICE, () => {
-    const live = lastPrice(order.marketName)
-    const filled = sizing.pending ? order : {...order, markPrice: live ?? order.markPrice}
-    const record = {...filled, createdAt: Date.now(), openedAt: Date.now()}
-    if (!placeOrder(mode, record, orderFunding(sizing))) {
-      throw new ApiError(mode === DEMO ? 'assets.withdraw.error.insufficientBalance' : 'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally')
+  const placeTradeOrder = ({mode, kind, side, marketName, type = 'market', amount, price, leverage = 1, duration, takeProfit = '', stopLoss = '', requestId}) => mockCall(SERVICE, () => {
+    if (!['futures', 'options', 'spot'].includes(kind) || !['buy', 'sell'].includes(side) || !marketName) throw new ApiError('trade.spotErrorInvalidSizingInput')
+    const seen = requestId && tradeOrdersFor(mode).find(o => o.requestId === requestId)
+    if (seen) return snapshot(seen)
+    const live = lastPrice(marketName)
+    const pending = kind !== 'options' && type === 'limit'
+    const fill = pending ? Number(price) : live
+    if (!pending && !(live > 0)) throw new ApiError('trade.stream.unavailable')
+    const value = Number(amount)
+    if (!Number.isFinite(value) || value <= 0) throw new ApiError('trade.ui.enterAValidOrderAmount')
+    if (kind === 'options' && value < 100) throw new ApiError('trade.amountBelowMinimum')
+    if (!Number.isFinite(fill) || fill <= 0) throw new ApiError('trade.spotErrorInvalidSizingInput')
+    const rate = kind === 'options' ? deliveryPeriods.find(([seconds]) => seconds === Number(duration))?.[1] : undefined
+    if (kind === 'options' && rate === undefined) throw new ApiError('trade.spotErrorInvalidSizingInput')
+    if (kind === 'futures' && !leverageOptions.includes(Number(leverage))) throw new ApiError('trade.spotErrorInvalidSizingInput')
+    const stops = kind === 'futures' && (String(takeProfit) !== '' || String(stopLoss) !== '')
+    if (stops && !validStops(side, fill, String(takeProfit), String(stopLoss))) throw new ApiError('trade.form.invalidStops')
+    const estimate = orderEstimate({kind, side, amount: value, price: fill, leverage: Number(leverage), rate})
+    const now = clock.now()
+    const record = {
+      id: nextId('T'), requestId: requestId || null, kind, marketName, direction: side, price: fill, markPrice: live ?? fill, amount: value, symbol: 'USDT', ...estimate,
+      leverage: kind === 'futures' ? Number(leverage) : undefined, orderType: pending ? 'trade.limit' : 'trade.market', filledQuantity: pending ? 0 : estimate.quantity,
+      bucket: kind === 'options' ? 'optionsOrders' : kind === 'spot' ? (pending ? 'spotOpenOrders' : 'spotOrdersHistory') : (pending ? 'openOrders' : 'positions'),
+      duration: kind === 'options' ? Number(duration) : undefined, rate,
+      takeProfit: stops ? Number(takeProfit) || null : null, stopLoss: stops ? Number(stopLoss) || null : null,
+      fee: pending ? 0 : estimate.fee, recordStatus: pending ? 'trade.current.pending' : 'trade.filled', settled: kind === 'spot' && !pending,
+      createdAt: now, openedAt: now,
+    }
+    if (!placeOrder(mode, record, orderFunding({kind, side, pending, estimate, amount: value, base: marketName.split('/')[0]}))) {
+      throw new ApiError(isDemo(mode) ? 'assets.withdraw.error.insufficientBalance' : 'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally')
     }
     return snapshot(record)
   })

@@ -1,9 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {ledger,balanceOf,debit,credit,modeKey,boundBalances,bindBalance,resetLedger,DEMO_FUNDS} from '../src/mock/ledger.js'
+import {ledger,balanceOf,debit,credit,modeKey,walletOf,resetLedger,DEMO_FUNDS} from '../src/mock/ledger.js'
 import {createFundAccount,createQuantFundCatalog,subscribeFund,autoRedeemFullFunds} from '../src/utils/quantFund.js'
 import {createStrategyAccount,completeExpiredStrategies} from '../src/utils/strategyTemplates.js'
-import {orderFunding} from '../src/tradingFunds.js'
+import {orderFunding} from '../src/server/tradingFunds.js'
 
 const DAY = 86400000
 
@@ -26,22 +26,22 @@ test('ledger keeps modes apart and never goes negative', () => {
 
 test('domain accounts bound to the ledger move the same money', () => {
   resetLedger()
-  const account = Object.assign(createFundAccount(), {balances: boundBalances('USDT')})
+  const account = createFundAccount(undefined, {real: walletOf('real'), demo: walletOf('demo')})
   const [product] = createQuantFundCatalog()
   const {order, error} = subscribeFund(account, product, String(product.minAmount), {mode: 'demo', requestId: 'r1', now: 0})
   assert.equal(error, undefined)
   assert.equal(order.status, 'pending_review')
   assert.equal(balanceOf('demo', 'USDT'), DEMO_FUNDS.USDT - product.minAmount)
-  const strategy = bindBalance(createStrategyAccount(0), 'demo', 'USDT')
+  const strategy = createStrategyAccount(0, walletOf('demo'))
   assert.equal(strategy.balance, DEMO_FUNDS.USDT - product.minAmount)
-  strategy.balance -= 500
+  assert.ok(strategy.wallet.debit('USDT', 500))
   assert.equal(balanceOf('demo', 'USDT'), DEMO_FUNDS.USDT - product.minAmount - 500)
   resetLedger()
 })
 
 test('orders past their lock keep running until the product is full, then auto-redeem once into the ledger', () => {
   resetLedger()
-  const account = Object.assign(createFundAccount(), {balances: boundBalances('USDT')})
+  const account = createFundAccount(undefined, {real: walletOf('real'), demo: walletOf('demo')})
   const product = {id: 'fx', subscribed: 1000, totalQuota: 2000}
   account.orders.push({id: 'a', productId: 'fx', mode: 'real', status: 'active', principal: 1000, dailyReturnPercentSnapshot: 1, termDaysSnapshot: 7, interestStartAt: 0, maturityDate: 7 * DAY, interestPaidTotal: 30, interestRecords: []})
   account.orders.push({id: 'b', productId: 'fx', mode: 'real', status: 'active', principal: 1000, dailyReturnPercentSnapshot: 1, termDaysSnapshot: 30, interestStartAt: 0, maturityDate: 30 * DAY, interestPaidTotal: 0})
@@ -79,7 +79,7 @@ test('order funding locks the right asset and pays out market fills', () => {
 })
 
 test('Quant Fund seeds satisfy product limits and never credit payouts in the future', async () => {
-  const {quantFundAccount, findQuantFund} = await import('../src/quantFundPortfolio.js')
+  const {quantFundAccount, findQuantFund} = await import('../src/server/quantFundPortfolio.js')
   const now = Date.now()
   assert.ok(quantFundAccount.orders.length >= 12)
   for (const order of quantFundAccount.orders) {

@@ -1,3 +1,6 @@
+import {memoryWallet} from '../mock/ledger.js'
+import {nextId} from '../mock/ids.js'
+import {clock} from '../mock/clock.js'
 // Quant fund prototype logic, modelled on the reference product/subscription flow.
 // Pure functions only: the reactive store lives in src/quantFundPortfolio.js.
 
@@ -74,8 +77,15 @@ export function fundEstimate(product, amount, days) {
   return {daily, total: roundDown(principal * product.dailyRate * days)}
 }
 
-export function createFundAccount(balances = {real: 0, demo: 100000}) {
-  return {balances: {...balances}, orders: [], requests: {}}
+/**
+ * Fund account: orders plus one wallet per mode (USDT). `balances` is a read-only view for display and tests; money
+ * moves only through the wallets. The default wallets are in-memory (pure tests); the app passes ledger wallets.
+ */
+export function createFundAccount(balances = {real: 0, demo: 100000}, wallets = {real: memoryWallet({USDT: balances.real}), demo: memoryWallet({USDT: balances.demo})}) {
+  return {
+    wallets, orders: [], requests: {},
+    balances: {get real() { return wallets.real.balance('USDT') }, get demo() { return wallets.demo.balance('USDT') }},
+  }
 }
 
 /**
@@ -83,15 +93,15 @@ export function createFundAccount(balances = {real: 0, demo: 100000}) {
  * no term countdown until an explicit approval (not part of this prototype).
  * Balance and product quota are reserved atomically; a repeated request id returns the first order.
  */
-export function subscribeFund(account, product, value, {mode, requestId, now = Date.now(), uid = null}) {
+export function subscribeFund(account, product, value, {mode, requestId, now = clock.now(), uid = null}) {
   if (requestId && account.requests[requestId]) return {order: account.orders.find(order => order.id === account.requests[requestId])}
   if (restrictedFor(product, uid)) return {error: {kind: 'exceedsAvailable', available: 0}}
-  const balance = account.balances[mode]
+  const balance = account.wallets[mode].balance('USDT')
   const error = fundSubscriptionError(product, value, balance)
   if (error) return {error}
   const principal = Number(value)
   const order = {
-    id: `QFO-${now}-${account.orders.length + 1}`,
+    id: nextId('QFO'),
     productId: product.id,
     productName: product.name,
     asset: product.asset,
@@ -106,7 +116,7 @@ export function subscribeFund(account, product, value, {mode, requestId, now = D
     maturityDate: null,
     interestPaidTotal: 0,
   }
-  account.balances[mode] = balance - principal
+  if (!account.wallets[mode].debit('USDT', principal)) return {error: {kind: 'insufficientBalance'}}
   // Funding progress counts approved principal only (pending orders do not, review 2026-11-27).
   account.orders.unshift(order)
   if (requestId) account.requests[requestId] = order.id
@@ -157,12 +167,12 @@ const DAY_MS = 86400000
 const round2 = value => Math.round(value * 100) / 100
 
 /** Whole days an approved order has been earning, counted from interest start (approval) or subscription. */
-export function heldDays(order, now = Date.now()) {
+export function heldDays(order, now = clock.now()) {
   return Math.max(0, Math.floor((now - (order.interestStartAt ?? order.subscribedAt)) / DAY_MS))
 }
 
 /** Reference "預估" line: interest accrued on an active order but not yet paid out. */
-export function accruedInterestEstimate(order, now = Date.now()) {
+export function accruedInterestEstimate(order, now = clock.now()) {
   if (!['active', 'redeem_pending_review'].includes(order.status)) return 0
   return Math.max(0, round2(order.principal * order.dailyReturnPercentSnapshot / 100 * heldDays(order, now) - order.interestPaidTotal))
 }
@@ -170,16 +180,16 @@ export function accruedInterestEstimate(order, now = Date.now()) {
 /** Any running order can be redeemed; inside the lock period the early-redemption fee applies. */
 export const canRedeemFund = order => order.status === 'active'
 /** maturityDate marks the end of the lock period; after it the order keeps earning until redeemed. */
-export const fundInLock = (order, now = Date.now()) => !!order.maturityDate && now < order.maturityDate
+export const fundInLock = (order, now = clock.now()) => !!order.maturityDate && now < order.maturityDate
 /** Early-redemption fee: the snapshot rate on principal while locked, whatever the days left; none after the lock. */
-export const earlyRedeemFee = (order, now = Date.now()) => (fundInLock(order, now) ? round2(order.principal * (order.earlyRedeemFeeRateSnapshot ?? 0) / 100) : 0)
+export const earlyRedeemFee = (order, now = clock.now()) => (fundInLock(order, now) ? round2(order.principal * (order.earlyRedeemFeeRateSnapshot ?? 0) / 100) : 0)
 
 /**
  * Redemption needs an admin review (user decision, 2026-11-27): the request only moves a running order to
  * redeem_pending_review and fixes the fee at that moment; interest keeps accruing until the review.
  * A repeated call is a conflict, not a second request.
  */
-export function requestRedeemFund(order, now = Date.now()) {
+export function requestRedeemFund(order, now = clock.now()) {
   if (!order || !canRedeemFund(order)) return {error: 'conflict'}
   order.redeemEarly = fundInLock(order, now)
   order.redeemFee = earlyRedeemFee(order, now)
@@ -192,7 +202,7 @@ export function requestRedeemFund(order, now = Date.now()) {
  * Closes an order: interest accrued in the order (whole held days, on principal) is paid out with the principal,
  * minus any fee, to the order's own account mode; the product quota is released. Status-guarded.
  */
-export function closeFundOrder(account, order, product, now = Date.now(), {fee = 0, auto = false} = {}) {
+export function closeFundOrder(account, order, product, now = clock.now(), {fee = 0, auto = false} = {}) {
   if (!order || !['active', 'redeem_pending_review'].includes(order.status)) return {error: 'conflict'}
   const days = heldDays(order, now)
   const interest = Math.max(0, round2(order.principal * order.dailyReturnPercentSnapshot / 100 * days - order.interestPaidTotal))
@@ -200,8 +210,7 @@ export function closeFundOrder(account, order, product, now = Date.now(), {fee =
   order.interestPaidTotal = round2(order.interestPaidTotal + interest)
   const returned = round2(order.principal + order.interestPaidTotal - fee)
   Object.assign(order, {status: 'redeemed', settledAt: now, heldDays: days, redeemFee: fee, returned, autoRedeemed: auto})
-  // Add the (already rounded) return without re-rounding the whole balance, which other products share.
-  account.balances[order.mode] = (account.balances[order.mode] || 0) + returned
+  account.wallets[order.mode].credit('USDT', returned)
   // Only approved principal was counted toward funding progress.
   if (product && order.interestStartAt != null) product.subscribed = Math.max(0, product.subscribed - order.principal)
   return {order, returned, days}
@@ -211,7 +220,7 @@ export function closeFundOrder(account, order, product, now = Date.now(), {fee =
  * While a product is at 100% progress, every order past its lock period is redeemed automatically (no fee) to
  * release quota; locked orders keep running. Returns the redeemed orders; safe to call repeatedly.
  */
-export function autoRedeemFullFunds(account, findProduct, now = Date.now()) {
+export function autoRedeemFullFunds(account, findProduct, now = clock.now()) {
   const redeemed = []
   for (const order of account.orders) {
     const product = findProduct?.(order.productId)

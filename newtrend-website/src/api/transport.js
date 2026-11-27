@@ -17,6 +17,17 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Locale key for any API failure (review 2026-11-27: one mapper instead of one per module). Codes that already are
+ * locale keys (namespace + dotted path) pass through; 'network' and unknown codes become `fallback`. With
+ * `prefix`, only keys in that namespace pass through.
+ */
+export function errorKey(error, {prefix = '', fallback = 'common.requestFailed'} = {}) {
+  const code = String(error?.code || '')
+  if (code === 'network' || !/^[a-z]\w*\.[\w.]+$/i.test(code)) return fallback
+  return prefix && !code.startsWith(prefix) ? fallback : code
+}
+
 const browser = typeof window !== 'undefined' && typeof location !== 'undefined'
 const config = {delay: browser ? [300, 800] : 0, fail: new Set()}
 

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {readStorage,writeStorage,removeStorage} from '../src/utils/storage.js'
 import {lendingErrorKey} from '../src/utils/lendingErrors.js'
 import {subscriptionError,maximumSubscription,earnTerms} from '../src/utils/earnProducts.js'
-import {walletRecords,addWalletRecord} from '../src/walletRecords.js'
+import {walletRecords,addWalletRecord} from '../src/server/walletRecords.js'
 
 test('storage helpers survive blocked storage', () => {
   const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')

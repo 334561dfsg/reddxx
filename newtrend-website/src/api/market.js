@@ -3,6 +3,7 @@
 // the connection every 20 s; ?mock-delay=<ms> also sets the connect/snapshot latency.
 import {hotStocks, markets, tradingMarkets} from '../data.js'
 import {createMarketStream} from './marketStreamService.js'
+import {setLivePrices} from '../mock/prices.js'
 
 const query = typeof location !== 'undefined' ? new URLSearchParams(location.search) : new URLSearchParams()
 const fail = (query.get('mock-fail') || '').split(',').some(name => ['market', 'all'].includes(name.trim()))
@@ -15,3 +16,6 @@ const hot = Object.fromEntries(hotStocks.map(([symbol, price, , change]) => [sym
 export const streamMarkets = [...new Map([...markets, ...tradingMarkets].map(m => [m.id, {...m, ...hot[m.symbol]}])).values()]
 
 export const marketStream = createMarketStream({markets: streamMarkets, latency, fail, flaky: query.get('mock-stream') === 'flaky'})
+// Valuation everywhere follows the live stream once a quote has arrived (mock/prices.js).
+const idBySymbol = Object.fromEntries(streamMarkets.map(m => [m.symbol, m.id]))
+setLivePrices(symbol => (idBySymbol[symbol] ? marketStream.lastPrice(idBySymbol[symbol]) : null))

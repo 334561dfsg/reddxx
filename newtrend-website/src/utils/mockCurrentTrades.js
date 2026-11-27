@@ -1,6 +1,7 @@
+import {clock} from '../mock/clock.js'
 // Local-only fixtures and deterministic lifecycle transitions. No remote account data.
 const round=(n,d=2)=>Number(n.toFixed(d))
-export function createCurrentTrades(now=Date.now()){
+export function createCurrentTrades(now=clock.now()){
  const markets=[['BTC/USDT',60120,.025],['ETH/USDT',1685,.8],['SOL/USDT',70.4,12],['BNB/USDT',546,2],['XRP/USDT',2.08,240],['DOGE/USDT',.3842,1200]]
  const rows=['positions','openOrders','spotOpenOrders'].flatMap((bucket,b)=>markets.map(([marketName,price,quantity],i)=>{
   const position=bucket==='positions',filledQuantity=position?quantity:i%3===1?round(quantity*.4,6):0
@@ -22,7 +23,7 @@ export function createCurrentTrades(now=Date.now()){
  }))]
 }
 export function positionPnl(o){return round((o.markPrice-o.price)*o.quantity*(o.direction==='buy'?1:-1))}
-export function finishCurrentTrade(orders,id,now=Date.now()){
+export function finishCurrentTrade(orders,id,now=clock.now()){
  const index=orders.findIndex(o=>o.id===id&&['positions','openOrders','spotOpenOrders'].includes(o.bucket))
  if(index<0)return false
  const o=orders[index],closing=o.bucket==='positions'

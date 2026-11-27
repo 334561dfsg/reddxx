@@ -3,12 +3,12 @@ import assert from 'node:assert/strict'
 import {earnProductFacts, findEarnProduct} from '../src/mock/catalog.js'
 import {balanceOf, resetLedger, DEMO_FUNDS} from '../src/mock/ledger.js'
 import {earnEligibilityError, earnMockProfile} from '../src/utils/earnEligibility.js'
-import {earnPortfolios, earnPortfolioFor, recordEarnSubscription} from '../src/earnPortfolio.js'
-import {strategyAccounts} from '../src/strategyPortfolio.js'
+import {earnPortfolios, earnPortfolioFor, recordEarnSubscription} from '../src/server/earnPortfolio.js'
+import {strategyAccounts} from '../src/server/strategyPortfolio.js'
 import {strategies} from '../src/mock/catalog.js'
 import {enrichStrategies} from '../src/utils/strategyTemplates.js'
 const localTemplates = enrichStrategies(strategies)
-import {tradeOrdersFor, placeTradeOrder} from '../src/tradingFunds.js'
+import {tradeOrdersFor, placeTradeOrder} from '../src/server/tradingFunds.js'
 
 const DAY = 86400000
 const now = Date.now()
@@ -104,7 +104,7 @@ test('strategy balances are live views of each mode’s ledger', () => {
   resetLedger()
   assert.equal(strategyAccounts.demo.balance, DEMO_FUNDS.USDT)
   assert.equal(balanceOf('real', 'USDT'), 0)
-  strategyAccounts.demo.balance -= 250
+  assert.ok(strategyAccounts.demo.wallet.debit('USDT', 250))
   assert.equal(balanceOf('demo', 'USDT'), DEMO_FUNDS.USDT - 250)
   assert.equal(balanceOf('real', 'USDT'), 0)
   resetLedger()

@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {createMarketStream, depthBook, klineHistory} from '../src/api/marketStreamService.js'
 import {createTradeApi} from '../src/api/tradeService.js'
-import {tradeOrdersFor} from '../src/tradingFunds.js'
+import {tradeOrdersFor} from '../src/server/tradingFunds.js'
 import {balanceOf} from '../src/mock/ledger.js'
 
 const markets = [{id: 'BTCUSD', name: 'BTC/USDT', symbol: 'BTC', price: 60000, change: 1}, {id: 'ETHUSD', name: 'ETH/USDT', symbol: 'ETH', price: 1700, change: -1}]
@@ -117,11 +117,21 @@ test('trade service fills market orders and closes positions at the live price',
   assert.equal(btc.markPrice, 61000, 'records mark positions to the live price')
 
   const cash = balanceOf(mode, 'USDT')
-  const order = {id: 'live-1', kind: 'futures', marketName: 'BTC/USDT', direction: 'buy', price: 61000, markPrice: 0, amount: 100, quantity: 100 / 61000, margin: 10, fee: .05, bucket: 'positions', recordStatus: 'trade.filled'}
-  const placed = await api.placeTradeOrder({mode, order, sizing: {kind: 'futures', side: 'buy', pending: false, estimate: {margin: 10, fee: .05}, amount: 100, base: 'BTC'}})
+  // The client sends parameters only; the server prices at its last price, sizes the order and locks the funds.
+  const params = {kind: 'futures', side: 'buy', marketName: 'BTC/USDT', type: 'market', amount: 100, leverage: 25, requestId: 'live-1'}
+  const placed = await api.placeTradeOrder({mode, ...params})
+  assert.equal(placed.price, 61000)
   assert.equal(placed.markPrice, 61000)
-  assert.equal(balanceOf(mode, 'USDT'), cash - 10.05)
-  await assert.rejects(api.placeTradeOrder({mode: 'common.demo.real', order: {...order, id: 'live-2'}, sizing: {kind: 'futures', side: 'buy', pending: false, estimate: {margin: 1e12, fee: 0}, amount: 1, base: 'BTC'}}), {code: 'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally'})
+  assert.equal(placed.bucket, 'positions')
+  assert.equal(placed.margin, 4)
+  assert.equal(balanceOf(mode, 'USDT'), cash - 4 - 0.05)
+  assert.equal((await api.placeTradeOrder({mode, ...params})).id, placed.id, 'a retried request returns the same order')
+  assert.equal(balanceOf(mode, 'USDT'), cash - 4.05)
+  await assert.rejects(api.placeTradeOrder({mode: 'common.demo.real', ...params, amount: 1e12, requestId: 'live-2'}), {code: 'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally'})
+  await assert.rejects(api.placeTradeOrder({mode, ...params, leverage: 7, requestId: 'live-3'}), {code: 'trade.spotErrorInvalidSizingInput'})
+  await assert.rejects(api.placeTradeOrder({mode, ...params, takeProfit: 60000, requestId: 'live-4'}), {code: 'trade.form.invalidStops'})
+  await assert.rejects(api.placeTradeOrder({mode, kind: 'options', side: 'buy', marketName: 'BTC/USDT', amount: 50, duration: 30, requestId: 'live-5'}), {code: 'trade.amountBelowMinimum'})
+  await assert.rejects(api.placeTradeOrder({mode, ...params, marketName: 'NOPE/USDT', requestId: 'live-6'}), {code: 'trade.stream.unavailable'})
 
   prices['BTC/USDT'] = 62000
   const closed = await api.finishTrade({mode, id: btc.id})

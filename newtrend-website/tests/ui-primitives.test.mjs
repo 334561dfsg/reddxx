@@ -5,9 +5,9 @@ import path from 'node:path'
 import {fileURLToPath} from 'node:url'
 import {iconSets, lineIcon} from '../src/icons/lineIcons.js'
 import {statusDomains, statusLabelKey} from '../src/utils/statusLabels.js'
-import {earnPortfolios} from '../src/earnPortfolio.js'
-import {quantFundAccount} from '../src/quantFundPortfolio.js'
-import {strategyAccounts} from '../src/strategyPortfolio.js'
+import {earnPortfolios} from '../src/server/earnPortfolio.js'
+import {quantFundAccount} from '../src/server/quantFundPortfolio.js'
+import {strategyAccounts} from '../src/server/strategyPortfolio.js'
 import {seedStrategy} from '../../src/shared/strategy/seed.js'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')

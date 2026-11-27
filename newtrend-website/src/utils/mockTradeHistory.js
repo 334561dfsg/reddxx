@@ -1,8 +1,9 @@
 import {deliveryPeriods} from './orderFormModel.js'
+import {clock} from '../mock/clock.js'
 // Synthetic fixtures; structure observed on GMXX delivery, perpetual and spot history.
 const round=(n,d=2)=>Number(n.toFixed(d))
 const symbols=[['BTC/USDT',60120,.025],['ETH/USDT',1685,.8],['SOL/USDT',70.4,12],['BNB/USDT',546,2]]
-const start=Date.now()-86400000
+const start=clock.now()-86400000
 export const historyBuckets=['positionHistory','orderHistory','optionsOrders','spotOrdersHistory']
 export const mockTradeHistory=historyBuckets.flatMap((bucket,b)=>Array.from({length:12},(_,i)=>{
  const [marketName,base,qty]=symbols[i%4],direction=i%3===0?'sell':'buy',price=round(base*(1-i*.0007)),close=round(price*(1+([.004,-.003,0][i%3]))),quantity=round(qty*(1+i%3),6),fee=round(price*quantity*.0005),duration=[30,60,120,86400][i%4],createdAt=start-i*8640000-b*1800000,cancelled=['orderHistory','spotOrdersHistory'].includes(bucket)&&i%4===3
@@ -28,4 +29,4 @@ export function historyFields(o){
 /** Delivery result of a settled order: the recorded result, or the P&L sign for older records. */
 export function deliveryResult(o){return o.result??(o.pnl>0?'win':o.pnl<0?'lose':'draw')}
 /** Seconds left in a delivery order's period at `now` (0 once it has ended). */
-export function deliveryRemaining(o,now=Date.now()){return Math.max(0,Math.ceil(((o.openedAt??o.createdAt)+o.duration*1000-now)/1000))}
+export function deliveryRemaining(o,now=clock.now()){return Math.max(0,Math.ceil(((o.openedAt??o.createdAt)+o.duration*1000-now)/1000))}

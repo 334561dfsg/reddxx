@@ -3,12 +3,14 @@
 // because the site's price snapshot is not Node-importable; tests pass simple stand-ins.
 // Validation failures reject with ApiError whose code is the locale key the form already shows.
 import {balancesOf, credit, debit} from '../mock/ledger.js'
-import {addWalletRecord, walletRecords, walletMode} from '../walletRecords.js'
+import {addWalletRecord, walletRecords, walletMode} from '../server/walletRecords.js'
 import {ADDRESS_MAX_LENGTH, networksOf, validAddress, withdrawFee} from '../mock/chains.js'
 import {ApiError, mockCall, snapshot} from './transport.js'
+import {MODE_DEMO} from '../utils/accountMode.js'
+import {clock} from '../mock/clock.js'
 
 const SERVICE = 'wallet'
-const DEMO = 'common.demo.demo'
+const DEMO = MODE_DEMO
 const insufficient = mode => mode === DEMO ? 'assets.withdraw.error.insufficientBalance' : 'assets.ui.insufficientBalanceSwitchToTheDemoAccount'
 const positive = value => Number.isFinite(Number(value)) && Number(value) > 0
 
@@ -84,7 +86,7 @@ export function createWalletApi({accountValues, priceOf, fundPassword = null}) {
     if (String(txHash).trim().length > 128) throw new ApiError('deposit.voucher.txHashTooLong')
     if (!fileName) throw new ApiError('deposit.voucher.screenshotRequired')
     const record = addWalletRecord(mode, 'deposit', {label: 'content.ui.demoDepositRequest', amount, symbol: coin, status: 'pending'})
-    return {voucherId: 'DV' + Date.now().toString(36).toUpperCase(), record: snapshot(record)}
+    return {voucherId: 'DV' + clock.now().toString(36).toUpperCase(), record: snapshot(record)}
   })
 
   /**

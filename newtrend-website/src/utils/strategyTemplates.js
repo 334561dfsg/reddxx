@@ -1,3 +1,5 @@
+import {memoryWallet} from '../mock/ledger.js'
+import {clock} from '../mock/clock.js'
 // Public catalog snapshot, 2026-11-26. Account records are never copied.
 export const strategyTerms = [
  [100000,14,180,1,['SPX500','US30']], [50000,7,90,1,['BTCUSDT','ETHUSDT']],
@@ -36,21 +38,25 @@ export function strategyValidation(product,draft,balance) {
  if(!Number.isFinite(sl)||sl<slr.min||sl>slr.max)return {code:'stopLossOutOfRange',field:'stopLoss',params:{min:slr.min,max:slr.max}}
  return null
 }
-export function createStrategyAccount(balance=100000){return {balance,records:[],requests:[]}}
-export function subscribeStrategy(account,product,draft,requestId,now=Date.now()) {
- if(account.requests.includes(requestId))throw new Error('conflict')
+/** Strategy account for one mode: records plus a USDT wallet (in-memory by default; the app passes walletOf(mode)).
+ * `balance` is read-only; capital moves only through the wallet. */
+export function createStrategyAccount(balance=100000,wallet=memoryWallet({USDT:balance})){return {wallet,records:[],requests:[],get balance(){return wallet.balance('USDT')}}}
+export function subscribeStrategy(account,product,draft,requestId,now=clock.now()) {
+ // Idempotent: a retried submission returns the strategy it already created.
+ if(account.requests.includes(requestId))return account.records.find(r=>r.id===requestId)
  const error=strategyValidation(product,draft,account.balance)
  if(error)throw Object.assign(new Error(error.code),error)
  const record={id:requestId,template:{...product,symbols:[...product.symbols]},capital:Number(draft.capital),days:Number(draft.days),takeProfit:Number(draft.takeProfit),stopLoss:Number(draft.stopLoss),status:'running',pnl:0,createdAt:now,endAt:now+Number(draft.days)*86400000}
- account.balance=Number((account.balance-record.capital).toFixed(8));account.records.unshift(record);account.requests.push(requestId)
+ if(!account.wallet.debit('USDT',record.capital))throw Object.assign(new Error('insufficientBalance'),{code:'insufficientBalance'})
+ account.records.unshift(record);account.requests.push(requestId)
  return record
 }
-export function changeStrategyStatus(account,id,action,now=Date.now()) {
+export function changeStrategyStatus(account,id,action,now=clock.now()) {
  const record=account.records.find(s=>s.id===id)
  const allowed={pause:['running'],resume:['paused'],stop:['running','paused']}
  if(!record||!allowed[action]?.includes(record.status))throw new Error('conflict')
  record.status={pause:'paused',resume:'running',stop:'completed'}[action]
- if(action==='stop'){account.balance=Number((account.balance+record.capital+record.pnl).toFixed(8));record.stoppedAt=now}
+ if(action==='stop'){account.wallet.credit('USDT',Number((record.capital+record.pnl).toFixed(8)));record.stoppedAt=now}
 }
 
 /**
@@ -80,13 +86,13 @@ export function summarizeDailyStats(items) {
 }
 
 /** Running/paused strategies past their end date complete and return capital + P&L to the account; idempotent. */
-export function completeExpiredStrategies(account, now = Date.now()) {
+export function completeExpiredStrategies(account, now = clock.now()) {
   const done = []
   for (const record of account.records) {
     if (!['running', 'paused'].includes(record.status) || record.endAt > now) continue
     record.status = 'completed'
     record.stoppedAt = record.endAt
-    account.balance = Number((account.balance + record.capital + record.pnl).toFixed(8))
+    account.wallet.credit('USDT', Number((record.capital + record.pnl).toFixed(8)))
     done.push(record)
   }
   return done
