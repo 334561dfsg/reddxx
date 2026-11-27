@@ -31,10 +31,6 @@ const assetOptions = ASSETS.map(value => ({value, label: value}))
 const dirty = computed(() => !!form.value && JSON.stringify(form.value) !== original.value)
 const busy = computed(() => loading.value || quantFundBusy.value)
 const whole = value => Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits: 2})
-const initialAmount = computed(() => {
-  const f = form.value
-  return f && Number.isFinite(f.totalQuota) && Number.isFinite(f.initialPercent) ? `折合 ${whole(f.totalQuota * f.initialPercent / 100)} USDT，修改总额度时按比例重算` : '按总额度的百分比计算'
-})
 const rateExample = computed(() => {
   const r = form.value?.dailyRate
   return r && Number.isFinite(r.min) && Number.isFinite(r.max) ? `本金 1 万 USDT：单日派息 ${(100 * r.min).toFixed(2)} ~ ${(100 * r.max).toFixed(2)} USDT` : '按本金百分比计算'
@@ -115,8 +111,8 @@ async function save() {
      <Col :xs="0" :lg="16"/>
      <Col :xs="24" :lg="8"><FormItem name="minAmount" label="起投金额" required><InputNumber v-model:value="form.minAmount" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="maxAmount" label="单笔上限" required><InputNumber v-model:value="form.maxAmount" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="totalQuota" label="产品总额度" required help="所有用户持有中本金加初始募集的合计上限"><InputNumber v-model:value="form.totalQuota" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="initialPercent" label="初始募集比例" required :help="initialAmount"><InputNumber v-model:value="form.initialPercent" :min="0" :max="100" :precision="2" addon-after="%"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="totalQuota" label="产品总额度" required><InputNumber v-model:value="form.totalQuota" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="initialPercent" label="初始募集比例" required><InputNumber v-model:value="form.initialPercent" :min="0" :max="100" :precision="2" addon-after="%"/></FormItem></Col>
     </Row></Card>
     <Card title="每日收益规则" :bordered="false"><Row :gutter="24" class="qf-editor-fields">
      <Col :xs="24" :lg="8"><FormItem :name="['dailyRate', 'min']" label="日收益率下限" required :help="rateExample"><InputNumber v-model:value="form.dailyRate.min" :min="0" :max="100" :step="0.01" :precision="4" addon-after="%"/></FormItem></Col>
