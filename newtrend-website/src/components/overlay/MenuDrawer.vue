@@ -8,7 +8,7 @@ import {account,DEMO_UID} from '../../account'
 import {languages,locale,t} from '../../i18n'
 // Mobile navigation drawer body, laid out after the GMXX mobile sidebar (user reference, 2026-11-27) in the
 // NewQuantCapital style: user card (name, UID copy, credit score), a verification reminder, icon rows for pages and
-// expandable groups (trading, finance, AI Quant); language opens the language picker sheet like GMXX; then account rows (mode, security, clear cache, log out).
+// expandable groups (trading, finance, AI Quant: only their pages, no subtitles or overview entry); language opens the language picker sheet like GMXX; then account rows (mode, security, clear cache, log out).
 // Navigation, mode switches, language changes and clearing the cache are reported to the overlay shell, which owns
 // the closing order (close first, then act) and the dialog lifecycle.
 const emit=defineEmits(['close','navigate','switch-mode','open-language','clear-cache'])
@@ -49,8 +49,7 @@ function signout(){logout();emit('close')}
   <template v-for="g in navGroups" :key="g.label">
    <button type="button" class="drawer-row" :aria-expanded="expanded===g.label" :aria-controls="'drawer-'+g.label" @click="toggle(g.label)"><LineIcon :name="groupIcons[g.label]||'chevron-right'"/><span>{{ $t(g.label) }}</span><LineIcon name="chevron-down" class="drawer-caret"/></button>
    <div v-if="expanded===g.label" :id="'drawer-'+g.label" class="drawer-sub">
-    <RouterLink v-if="g.path" :to="path(g.path)" @click="$emit('close')">{{ $t('common.aiQuantOverview') }}<small>{{ $t('common.aiQuantOverviewDesc') }}</small></RouterLink>
-    <RouterLink v-for="item in g.items" :key="item[0]" :to="path(item[2])" @click="$emit('close')">{{ $t(item[0]) }}<small>{{ $t(item[1]) }}</small></RouterLink>
+    <RouterLink v-for="item in g.items" :key="item[0]" :to="path(item[2])" @click="$emit('close')">{{ $t(item[0]) }}</RouterLink>
    </div>
   </template>
   <RouterLink v-if="session.loggedIn" class="drawer-row" :to="path('/assets')" @click="$emit('close')"><LineIcon name="wallet"/><span>{{ $t('assets.pageTitle') }}</span></RouterLink>
@@ -102,7 +101,6 @@ function signout(){logout();emit('close')}
 .drawer-sub{display:grid;padding:0 0 8px 38px}
 .drawer-sub>a{display:block;padding:10px 8px;border-radius:var(--nt-radius-control);color:#fffd}
 .drawer-sub>a:hover,.drawer-sub>a:focus-visible{outline:none;background:#ffffff08}
-.drawer-sub small{display:block;color:#fff6;margin-top:2px}
 .drawer-mode{display:flex;padding:3px;border-radius:999px;background:#ffffff0d;flex-shrink:0}
 .drawer-mode button{min-height:30px;padding:0 12px;border-radius:999px;color:#fff9;font-size:13px}
 .drawer-mode button.active{background:var(--nt-accent);color:#05070b;font-weight:600}
