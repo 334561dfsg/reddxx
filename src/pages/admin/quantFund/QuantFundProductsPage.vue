@@ -44,12 +44,12 @@ const rows = computed(() => [...state.value.products].sort((a, b) => b.sortOrder
 watch(() => rows.value.length, total => { page.value = Math.min(page.value, Math.max(1, Math.ceil(total / 10))) })
 const progress = p => Math.min(100, Math.round(raisedAmount(state.value, p) / p.totalQuota * 1000) / 10)
 const columns = [
-  {key: 'name', title: '产品', width: 230, fixed: 'left'},
+  {key: 'name', title: '产品', width: 250, fixed: 'left'},
   {key: 'term', title: '锁定期', width: 76},
-  {key: 'rate', title: '日收益率', width: 104, align: 'right'},
-  {key: 'amount', title: '申购金额（USDT）', width: 150, align: 'right'},
-  {key: 'funding', title: '募集进度', width: 140},
-  {key: 'holdings', title: '持有中', width: 100, align: 'right'},
+  {key: 'rate', title: '日收益率', width: 96, align: 'right'},
+  {key: 'amount', title: '申购金额（USDT）', width: 160, align: 'right'},
+  {key: 'funding', title: '募集进度', width: 130},
+  {key: 'holdings', title: '持有中', width: 90, align: 'right'},
   {key: 'status', title: '状态', width: 70},
   {key: 'sortOrder', title: '排序权重', width: 70, align: 'right'},
   {key: 'actions', title: '操作', width: 110, fixed: 'right'},

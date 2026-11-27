@@ -21,7 +21,7 @@ function reset() {
 
 <template>
   <Card :bordered="false" :body-style="{paddingBottom:0}">
-    <Form :name="name" :model="draft" layout="horizontal" :label-col="{flex:'80px'}" :wrapper-col="{flex:1}" label-align="right" label-wrap :required-mark="false" @finish="emit('search', {...draft})">
+    <Form :name="name" :model="draft" layout="horizontal" :label-col="{flex:'96px'}" :wrapper-col="{flex:'1 1 0'}" label-align="right" label-wrap :required-mark="false" @finish="emit('search', {...draft})">
       <Row :gutter="24">
         <Col v-for="field in fields" :key="field.key" :xs="24" :md="12" :xl="8">
           <FormItem :name="field.key" :label="field.label">
@@ -45,4 +45,7 @@ function reset() {
 <style scoped>
 .earn-query-actions{margin-left:auto;text-align:right}
 .earn-query-range{width:100%}
+/* Let range pickers shrink inside the control column instead of wrapping under the label. */
+:deep(.ant-form-item-control){min-width:0}
+:deep(.ant-picker-range){width:100%;min-width:0}
 </style>

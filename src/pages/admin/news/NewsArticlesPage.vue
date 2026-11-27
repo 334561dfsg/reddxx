@@ -39,7 +39,7 @@ const rows = computed(() => [...state.value.articles].sort((a, b) => b.published
 watch(() => rows.value.length, total => { page.value = Math.min(page.value, Math.max(1, Math.ceil(total / 10))) })
 const columns = [
   {key: 'cover', title: '封面', width: 84},
-  {key: 'title', title: '标题', width: 260},
+  {key: 'title', title: '标题', width: 236},
   {key: 'category', title: '分类', width: 80},
   {key: 'tags', title: '标签', width: 104},
   {key: 'languages', title: '语言版本', width: 80, align: 'right'},
