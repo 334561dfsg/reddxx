@@ -1,6 +1,6 @@
 import {strategies} from '../../../newtrend-website/src/mock/catalog.js'
 import {strategyTerms, buildDailyStats} from '../../../newtrend-website/src/utils/strategyTemplates.js'
-import {createStrategyState, templateSnapshot, DEFAULT_POLICY, DAY, INIT_MS, SYSTEM, ADMIN, money} from './domain.js'
+import {createStrategyState, templateSnapshot, DEFAULT_POLICY, DAY, INIT_MS, SYSTEM, ADMIN, USER, REASON_TEXT, money} from './domain.js'
 
 // Seed for the shared strategy mock: the public catalogue's nine templates, the 真實 records the public site
 // used to keep locally (USR-DEMO, the public demo user) and a few other users so review and settlement can be tried.
@@ -76,12 +76,19 @@ export function seedStrategy(now = Date.now()) {
       sub.tradeCount = days.reduce((total, d) => total + d.tradeCount, 0)
     }
     if (r.status === 'completed') s.settlements.push({settlementId: `SET-${id}`, subscriptionId: id, userId, userName: users[userId].name, templateName: t.name, reason: r.endReason, capital: r.capital, pnl: sub.pnl, returned: money(r.capital + sub.pnl), settledAt: stoppedAt, operator: r.endReason === 'user_stop' ? '用户（模拟）' : SYSTEM})
-    if (r.status === 'rejected') s.logs.push({id: `SL-seed-${id}`, module: 'subscription', action: 'reject', refId: id, targetLabel: t.name, summary: '审核拒绝，退回本金', operator: '模拟审核员', createdAt: approvedAt})
+    // Operation log as the live flow would have written it: submit → review → pause → settlement.
+    const entry = (action, summary, operator, createdAt) => s.logs.push({id: `SL-seed-${id}-${action}`, module: 'subscription', action, refId: id, targetLabel: t.name, summary, operator, createdAt})
+    entry('subscribe', `订阅策略 ${r.capital} USDT / ${r.days} 天`, USER, createdAt)
+    if (r.status === 'rejected') entry('reject', '审核拒绝，退回本金', '模拟审核员', approvedAt)
+    else if (reviewed) entry('approve', '审核通过，开始初始化', '模拟审核员', approvedAt)
+    if (r.status === 'paused') entry('pause', '暂停策略', USER, sub.pausedAt)
+    if (r.status === 'completed') entry('settle', `结算策略（${REASON_TEXT[r.endReason]}），返还 ${money(r.capital + sub.pnl)} USDT`, r.endReason === 'user_stop' ? USER : SYSTEM, stoppedAt)
     s.subscriptions.push(sub)
   })
   s.subscriptions.sort((a, b) => b.createdAt - a.createdAt)
   s.dailyPnl.sort((a, b) => b.createdAt - a.createdAt)
   s.settlements.sort((a, b) => b.settledAt - a.settledAt)
+  s.logs.sort((a, b) => b.createdAt - a.createdAt)
   s.logs.unshift({id: 'SL-seed-boot', module: 'system', action: 'seed', summary: '载入模拟数据', operator: ADMIN, createdAt: now})
   return s
 }

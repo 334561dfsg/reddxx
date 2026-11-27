@@ -43,7 +43,7 @@ const columns = computed(() => ({
     {key: 'subscriptionId', title: '订单 / 模板', width: 250, fixed: 'left'}, {key: 'user', title: '用户', width: 160},
     {key: 'capital', title: '本金（USDT）', width: 130, align: 'right'}, {key: 'pnl', title: '累计盈亏（USDT）', width: 170, align: 'right'},
     {key: 'terms', title: '周期 / 止盈 / 止损', width: 150}, {key: 'status', title: '状态', width: 150},
-    {key: 'createdAt', title: '提交时间', width: 170}, {key: 'reviewer', title: '审核人', width: 140}, {key: 'actions', title: '操作', width: 260, fixed: 'right'},
+    {key: 'createdAt', title: '提交时间', width: 170}, {key: 'reviewer', title: '审核人', width: 140}, {key: 'actions', title: '操作', width: 200, fixed: 'right'},
   ],
   'daily-pnl': [
     {key: 'date', title: '日期', width: 120, fixed: 'left'}, {key: 'subscriptionId', title: '订单 / 模板', width: 250}, {key: 'userId', title: '用户', width: 120},
@@ -70,11 +70,11 @@ const currentSettlement = computed(() => state.value.settlements.find(r => r.sub
 function open(row, kind) { selectedId.value = row.subscriptionId; rejecting.value = false; dialog.value = kind }
 function closeDialog() { dialog.value = '' }
 // Records drawer: its own selection so it never fights the detail/force-stop dialogs.
-const drawerOpen = ref(false), drawerId = ref(''), drawerReturnFocus = shallowRef(null)
+const drawerOpen = ref(false), drawerId = ref(''), drawerKind = ref('daily'), drawerReturnFocus = shallowRef(null)
 const drawerSub = computed(() => subById.value[drawerId.value] || null)
 const drawerDaily = computed(() => state.value.dailyPnl.filter(r => r.subscriptionId === drawerId.value))
 const drawerLogs = computed(() => state.value.logs.filter(r => r.refId === drawerId.value))
-function openRecords(row, event) { if (drawerOpen.value) return; drawerId.value = row.subscriptionId; drawerReturnFocus.value = event.currentTarget; drawerOpen.value = true }
+function openRecords(row, kind, event) { if (drawerOpen.value) return; drawerId.value = row.subscriptionId; drawerKind.value = kind; drawerReturnFocus.value = event.currentTarget; drawerOpen.value = true }
 const dialogTitle = computed(() => ({detail: current.value?.status === 'pending_review' ? '审核策略订阅' : '策略详情', forceStop: '强制停止策略'})[dialog.value] || '')
 async function run(action, args, success) {
   if (busy.value) return
@@ -99,11 +99,12 @@ async function run(action, args, success) {
     <template v-else-if="column.key === 'action'">{{ actionLabels[record.action] || record.action }}</template>
     <template v-else-if="['createdAt', 'settledAt'].includes(column.key)">{{ dateTime(record[column.key]) }}</template>
     <template v-else-if="column.key === 'reviewer'">{{ record.reviewer || '' }}</template>
-    <Space v-else-if="column.key === 'actions'" :size="8">
+    <Space v-else-if="column.key === 'actions'" :size="8" class="strategy-row-actions">
      <Button v-if="record.status === 'pending_review'" type="link" @click="open(record, 'detail')">审核</Button>
      <Button v-else type="link" @click="open(record, 'detail')">详情</Button>
-     <Button v-if="record.runningAt" type="link" @click="openRecords(record, $event)">收益记录</Button>
-     <Button v-if="['initializing', 'running', 'paused'].includes(record.status)" type="link" danger @click="open(record, 'forceStop')">强制停止</Button>
+     <Button v-if="record.runningAt" type="link" @click="openRecords(record, 'daily', $event)">收益</Button>
+     <Button type="link" @click="openRecords(record, 'logs', $event)">记录</Button>
+     <Button v-if="['initializing', 'running', 'paused'].includes(record.status)" type="link" danger @click="open(record, 'forceStop')">停止</Button>
     </Space>
     <template v-else>{{ record[column.key] ?? '—' }}</template>
    </template>
@@ -122,6 +123,11 @@ async function run(action, args, success) {
     <p>将立即结束该策略，按 本金 {{ amount(current.capital) }} + 累计盈亏 {{ signed(current.pnl) }} = {{ amount(Math.max(0, current.capital + current.pnl)) }} USDT 返还给用户，结束原因记为「后台强制停止」。此操作不能撤销。</p></div>
   </AdminModal>
 
-  <StrategyRecordsDrawer :open="drawerOpen" :sub="drawerSub" :daily="drawerDaily" :logs="drawerLogs" :return-focus="drawerReturnFocus" @close="drawerOpen = false" @closed="drawerId = ''; drawerReturnFocus = null"/>
+  <StrategyRecordsDrawer :open="drawerOpen" :kind="drawerKind" :sub="drawerSub" :daily="drawerDaily" :logs="drawerLogs" :return-focus="drawerReturnFocus" @close="drawerOpen = false" @closed="drawerId = ''; drawerReturnFocus = null"/>
  </PageShell>
 </template>
+
+<style scoped>
+/* Two-character link actions: trim the library's 15px link padding so four actions fit without wide gaps. */
+.strategy-row-actions :deep(.ant-btn-link){padding-inline:4px}
+</style>

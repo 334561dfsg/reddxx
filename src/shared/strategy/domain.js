@@ -11,7 +11,7 @@ export const MARKETS = ['stock', 'crypto', 'forex']
 export const STYLES = ['conservative', 'balanced', 'aggressive']
 export const LIVE = ['pending_review', 'initializing', 'running', 'paused']
 export const END_REASONS = ['user_stop', 'expired', 'take_profit', 'stop_loss', 'admin_stop']
-const REASON_TEXT = {user_stop: '用户停止', expired: '到期结束', take_profit: '止盈结束', stop_loss: '止损结束', admin_stop: '后台强制停止'}
+export const REASON_TEXT = {user_stop: '用户停止', expired: '到期结束', take_profit: '止盈结束', stop_loss: '止损结束', admin_stop: '后台强制停止'}
 export const DEFAULT_POLICY = {
   reviewRequired: true,
   maxRunningPerUser: 5,
