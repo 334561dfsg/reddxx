@@ -308,10 +308,12 @@
 /* Phones: the section switch (策略模板 / 我的策略, 量化基金 / 我的倉位) stays pinned under the 56px site header while the
    page scrolls (user request); a solid backdrop band keeps scrolled content from showing around it. */
 @media(max-width:767px){
- #main-content#main-content .strategy-page>.strategy-container:has(>.strategy-nav),#main-content#main-content .quant-page.quant-sub>.subnav{position:sticky;top:56px;z-index:20}
+ /* Pin each switch exactly where it already sits (header 56px + the page's top padding), so it never slides a few
+    pixels before sticking — that shift read as a jolt when scrolling starts. */
+ #main-content#main-content .strategy-page>.strategy-container:has(>.strategy-nav),#main-content#main-content .quant-page.quant-sub>.subnav{position:sticky;top:60px;z-index:20}
  #main-content#main-content .strategy-page>.strategy-container:has(>.strategy-nav){padding-top:8px;padding-bottom:8px;background:transparent}
  #main-content#main-content .strategy-page:has(>.strategy-container>.strategy-nav){padding-top:4px}
- #main-content#main-content .quant-page.quant-sub>.subnav{top:64px}
+ #main-content#main-content .quant-page.quant-sub>.subnav{top:68px}
 }
 
 /* My positions loading state on phones: the skeleton row takes the loaded card's shape — round 28px coin + name bar
@@ -333,4 +335,9 @@
    translucent blurred surface and a soft shadow; content scrolls visibly but softly behind it. */
 @media(max-width:767px){
  #main-content#main-content :is(.strategy-page .strategy-nav,.quant-page.quant-sub>.subnav){background:color-mix(in srgb,#15181c 82%,transparent);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
+}
+
+/* Quant Fund list/positions on phones: no aurora light beams behind the switch and filters (user request 2026-11-27). */
+@media(max-width:767px){
+ #main-content#main-content .quant-page.quant-sub .qf-aurora{display:none}
 }
