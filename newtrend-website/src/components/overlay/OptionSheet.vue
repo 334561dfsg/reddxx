@@ -11,9 +11,9 @@ defineEmits(['select'])
 </div>
 </template>
 <style scoped>
-.option-sheet{display:grid;gap:2px}
-.option-sheet button{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:10px 12px;border-radius:10px;text-align:left;font-size:15px;color:#fff}
-.option-sheet button:hover,.option-sheet button:focus-visible{outline:none;background:#ffffff0a}
-.option-sheet button.current{color:var(--nt-accent);font-weight:600;background:#a5ff4a0f}
-.option-check{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.option-sheet{display:grid}
+.option-sheet button{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:0 20px;text-align:left;font-size:15px;line-height:22px;color:#ffffffd9}
+.option-sheet button:hover,.option-sheet button:focus-visible{outline:none;background:#ffffff08}
+.option-sheet button.current{color:var(--nt-accent);font-weight:600;background:#ffffff0a}
+.option-check{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 </style>
