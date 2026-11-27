@@ -25,6 +25,11 @@ test('history and depth are shaped like exchange data', () => {
   const book = depthBook(100)
   assert.ok(book.asks.at(-1)[0] > 100 && book.bids[0][0] < 100, 'spread around the price')
   assert.ok(book.asks[0][0] > book.asks.at(-1)[0], 'asks farthest first')
+  for (const price of [1.0011, 0.05817, 60000]) {
+    const levels = depthBook(price)
+    const prices = [...levels.asks, ...levels.bids].map(([p]) => p)
+    assert.equal(new Set(prices).size, prices.length, `distinct levels at ${price}`)
+  }
 })
 
 test('connect → snapshot → pushes; unknown markets get nothing; last unsubscribe closes', () => {

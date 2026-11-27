@@ -43,7 +43,8 @@ export function klineHistory(price, interval, now = Date.now()) {
 
 /** Book levels around `price`; `levels` per side, nearest first for bids, farthest first for asks (display order). */
 export function depthBook(price, sequence = 0, levels = 14) {
-  const tick = price * .00002
+  // Never finer than the displayed precision, so levels stay distinct for low-priced markets (USDC ≈ 1).
+  const tick = Math.max(price * .00002, 10 ** -decimals(price))
   // Each level's size changes every 4th tick, staggered by level and side, so roughly a quarter of the book updates
   // per push (as on a live exchange) and the order book can flash just the levels that changed.
   const step = (n, side) => Math.floor((sequence + (n * 5 + side * 2) % 4) / 4)
