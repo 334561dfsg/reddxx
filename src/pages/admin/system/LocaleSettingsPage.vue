@@ -1,46 +1,27 @@
 <script setup>
-// 平台配置 → 语言与区号: Ant Design Pro config page (2026-11-28) — PageShell header, one Card per list (多语言 /
-// 手机区号) with Ant tables and inline weight/enable editing, sticky bottom action bar, toast feedback (Ant message).
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { Alert, Button, Card, Checkbox, Col, Form, FormItem, InputNumber, Radio, Row, Space, Spin, Switch, Table, Tag, TypographyText, message } from 'ant-design-vue'
-import { CloseOutlined, DownloadOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
 import { FRONT_LOCALE_CATALOG, PHONE_DIAL_PRESETS } from '../../../admin/constants/i18nCatalog'
 import { DEFAULT_SITE_CONFIG, normalizeSiteConfig, siteConfigApi } from '../../../admin/mock/siteConfig'
 
 const config = ref(normalizeSiteConfig({ ...DEFAULT_SITE_CONFIG }))
 const loading = ref(true)
 const isSaving = ref(false)
+const message = ref('')
+const messageType = ref('success')
 const customDialForm = ref({ dial: '', label: '', icon: '' })
 const dialFormOpen = ref(false)
 const editingCustomDial = ref('')
 const languageFormOpen = ref(false)
 const editingLocaleCode = ref('')
 const languageForm = ref({ code: '', label: '', short: '', icon: '', file: null, fileName: '' })
-const languageIconInput = ref(null)
-const languageFileInput = ref(null)
-const dialIconInput = ref(null)
 
-const localeColumns = [
-  { key: 'icon', title: '图标', width: 80 },
-  { key: 'label', title: '语言名称', width: 180 },
-  { key: 'code', title: '语言代码', width: 120 },
-  { key: 'sort', title: '排序权重', width: 130 },
-  { key: 'keyCount', title: 'Key 数', width: 90, align: 'right' },
-  { key: 'enabled', title: '启用', width: 80, align: 'center' },
-  { key: 'default', title: '默认', width: 80, align: 'center' },
-  { key: 'actions', title: '操作', width: 180, fixed: 'right' }
+/** 多语言 | 手机区号 */
+const activeTab = ref('language')
+const localeTabs = [
+  { key: 'language', label: '多语言' },
+  { key: 'dial', label: '手机区号' }
 ]
-const dialColumns = [
-  { key: 'icon', title: '图标', width: 80 },
-  { key: 'label', title: '地区与区号', width: 220 },
-  { key: 'dial', title: '国际区号', width: 120 },
-  { key: 'sort', title: '排序权重', width: 130 },
-  { key: 'enabled', title: '启用', width: 80, align: 'center' },
-  { key: 'actions', title: '操作', width: 130, fixed: 'right' }
-]
-const tableScroll = (columns) => ({ x: columns.reduce((total, column) => total + column.width, 0) })
 
 function isImageIcon(icon) {
   const s = String(icon || '').trim()
@@ -90,8 +71,11 @@ const dialsTableRows = computed(() => {
 })
 
 function showMessage(text, type = 'success') {
-  if (type === 'error') message.error(text)
-  else message.success(text)
+  message.value = text
+  messageType.value = type
+  window.setTimeout(() => {
+    if (message.value === text) message.value = ''
+  }, 2600)
 }
 
 function ensureLocaleSortMap() {
@@ -99,9 +83,8 @@ function ensureLocaleSortMap() {
     config.value.i18n.localeSortOrder = {}
   }
   const m = config.value.i18n.localeSortOrder
-  const total = localesTableRows.value.length
   localesTableRows.value.forEach((l, i) => {
-    if (!Number.isFinite(m[l.code])) m[l.code] = (total - i) * 10
+    if (!Number.isFinite(m[l.code])) m[l.code] = i * 10
   })
 }
 
@@ -110,9 +93,8 @@ function ensureDialSortMap() {
     config.value.dialSortOrder = {}
   }
   const m = config.value.dialSortOrder
-  const total = dialsTableRows.value.length
   dialsTableRows.value.forEach((p, i) => {
-    if (!Number.isFinite(m[p.dial])) m[p.dial] = (total - i) * 10
+    if (!Number.isFinite(m[p.dial])) m[p.dial] = i * 10
   })
 }
 
@@ -154,7 +136,7 @@ const loadConfig = async () => {
       config.value = normalizeSiteConfig({ ...DEFAULT_SITE_CONFIG, ...result.data })
     }
   } catch (e) {
-    showMessage('加载失败：' + (e?.message || '未知错误'), 'error')
+    console.error(e)
   } finally {
     loading.value = false
   }
@@ -165,20 +147,21 @@ const saveConfig = async () => {
   const i18n = config.value.i18n
   if (!i18n?.enabledLocales?.length) {
     showMessage('请至少在前台启用一种语言', 'error')
+    activeTab.value = 'language'
     return
   }
   if (!i18n.enabledLocales.includes(i18n.defaultLocale)) {
     showMessage('默认语言必须从已启用的语言中选择', 'error')
+    activeTab.value = 'language'
     return
   }
-  if (isSaving.value) return
   isSaving.value = true
   try {
     const result = await siteConfigApi.updateSiteConfig(config.value)
     if (result.success) {
       window.dispatchEvent(new CustomEvent('admin-site-config-updated'))
       config.value = normalizeSiteConfig(config.value)
-      showMessage(result.message || '语言与区号配置已保存')
+      showMessage(result.message)
     }
   } catch (e) {
     showMessage('保存失败：' + (e?.message || '未知错误'), 'error')
@@ -608,172 +591,290 @@ onMounted(() => {
 </script>
 
 <template>
-  <PageShell title="语言与区号">
-    <template #description>
-      <TypographyText type="secondary">维护前台可选语言、默认语言、语言文件与手机区号；排序权重数值越大越靠前，修改后需点击保存生效。</TypographyText>
-    </template>
-    <Card v-if="loading" :bordered="false"><Spin tip="加载中…" class="locale-loading" /></Card>
+  <div class="space-y-6">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">语言与区号</h1>
+    </div>
 
-    <template v-else>
-      <Card title="多语言" :bordered="false">
-        <template #extra>
-          <Space :size="8">
-            <Button @click="selectAllLocales">全部启用</Button>
-            <Button type="primary" @click="openAddLanguageForm"><template #icon><PlusOutlined /></template>添加语言</Button>
-          </Space>
-        </template>
-        <Table :columns="localeColumns" :data-source="localesTableRows" :pagination="false" row-key="code" size="middle" :scroll="tableScroll(localeColumns)" :locale="{ emptyText: '暂无语言' }">
-          <template #bodyCell="{ column, record: loc }">
-            <span v-if="column.key === 'icon'" class="locale-icon">
-              <img v-if="isImageIcon(loc.icon)" :src="loc.icon" :alt="loc.label" />
-              <span v-else>{{ loc.icon || '□' }}</span>
-            </span>
-            <Space v-else-if="column.key === 'label'" :size="4">
-              <span>{{ loc.label }}</span>
-              <Tag v-if="config.i18n.defaultLocale === loc.code" color="blue">默认</Tag>
-            </Space>
-            <span v-else-if="column.key === 'code'" class="font-mono">{{ loc.code }}</span>
-            <InputNumber v-else-if="column.key === 'sort'" :value="config.i18n.localeSortOrder?.[loc.code] ?? 0" :precision="0" :aria-label="`${loc.label} 排序权重`" class="locale-weight" @update:value="onLocaleSortInput(loc.code, $event)" />
-            <Checkbox v-else-if="column.key === 'enabled'" :checked="config.i18n.enabledLocales?.includes(loc.code)" :aria-label="`前台启用 ${loc.label}`" @change="toggleLocale(loc.code, $event.target.checked)" />
-            <Radio v-else-if="column.key === 'default'" name="admin-default-locale-pick" :value="loc.code" :checked="config.i18n.defaultLocale === loc.code" :disabled="!config.i18n.enabledLocales?.includes(loc.code)" :aria-label="`设为默认语言 ${loc.label}`" @change="setDefaultLocale(loc.code)" />
-            <Space v-else-if="column.key === 'actions'" :size="8" class="locale-row-actions">
-              <Button type="link" @click="editLanguage(loc)">编辑</Button>
-              <Button type="link" @click="downloadLocalePackage(loc.code)"><template #icon><DownloadOutlined /></template>下载</Button>
-              <Button v-if="loc.custom" type="link" danger @click="removeLanguage(loc)">删除</Button>
-              <TypographyText v-else type="secondary">内置</TypographyText>
-            </Space>
-            <template v-else>{{ loc[column.key] ?? '—' }}</template>
-          </template>
-        </Table>
-        <div class="locale-switch-row">
-          <Space direction="vertical" :size="0">
-            <TypographyText strong>前台显示语言切换</TypographyText>
-            <TypographyText type="secondary">关闭后顶栏与移动端菜单中的语言入口将隐藏（仍使用默认语言展示页面）。</TypographyText>
-          </Space>
-          <Switch v-model:checked="config.i18n.languageSwitcherEnabled" aria-label="前台语言切换" checked-children="显示" un-checked-children="隐藏" />
+    <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
+      加载中…
+    </div>
+
+    <div v-else class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div
+        class="flex flex-col gap-3 border-b border-slate-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div
+          class="flex flex-wrap gap-1 rounded-lg bg-slate-100/90 p-1"
+          role="tablist"
+          aria-label="语言与区号配置分区"
+        >
+          <a-button v-for="t in localeTabs" :key="t.key" html-type="button" role="tab" :aria-selected="activeTab === t.key" class="text-sm font-medium transition" :class="
+              activeTab === t.key
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            " @click="activeTab = t.key">
+            {{ t.label }}
+          </a-button>
         </div>
-      </Card>
-
-      <Card title="手机区号" :bordered="false">
-        <template #extra>
-          <Space :size="8">
-            <Button @click="selectAllDialCodes">全部启用</Button>
-            <Button type="primary" @click="openAddDialForm"><template #icon><PlusOutlined /></template>添加区号</Button>
-          </Space>
-        </template>
-        <Alert v-if="!config.phoneLoginEnabled" type="info" show-icon class="locale-alert">
-          <template #message>当前未启用「手机号码登录」，前台手机区号固定为 +86。需要按下方列表展示时，请前往 <RouterLink to="/admin/system/site-config">站点配置 → 登录方式</RouterLink> 开启。</template>
-        </Alert>
-        <Table :columns="dialColumns" :data-source="dialsTableRows" :pagination="false" row-key="dial" size="middle" :scroll="tableScroll(dialColumns)" :locale="{ emptyText: '暂无区号' }">
-          <template #bodyCell="{ column, record: row }">
-            <span v-if="column.key === 'icon'" class="locale-icon">
-              <img v-if="isImageIcon(row.icon)" :src="row.icon" :alt="row.label" />
-              <span v-else>{{ row.icon || '□' }}</span>
-            </span>
-            <span v-else-if="column.key === 'dial'" class="font-mono">{{ row.dial }}</span>
-            <InputNumber v-else-if="column.key === 'sort'" :value="config.dialSortOrder?.[row.dial] ?? 0" :precision="0" :aria-label="`${row.label} 排序权重`" class="locale-weight" @update:value="onDialSortInput(row.dial, $event)" />
-            <Checkbox v-else-if="column.key === 'enabled'" :checked="config.allowedDialCodes?.includes(row.dial)" :aria-label="`启用区号 ${row.label}`" @change="toggleDial(row.dial, $event.target.checked)" />
-            <Space v-else-if="column.key === 'actions'" :size="8" class="locale-row-actions">
-              <Button type="link" @click="editCustomDial(row)">编辑</Button>
-              <Button v-if="row.custom" type="link" danger @click="removeCustomDial(row)">删除</Button>
-              <TypographyText v-else type="secondary">内置</TypographyText>
-            </Space>
-            <template v-else>{{ row[column.key] ?? '—' }}</template>
-          </template>
-        </Table>
-      </Card>
-
-      <Card class="locale-footer" :bordered="false" :body-style="{ padding: '12px 24px' }">
-        <div class="locale-actions">
-          <Space :size="8" wrap>
-            <Button :disabled="isSaving" @click="loadConfig">重置</Button>
-            <Button type="primary" :loading="isSaving" @click="saveConfig">保存</Button>
-          </Space>
+        <div class="flex shrink-0 flex-wrap gap-2">
+          <a-button v-if="activeTab === 'language'" html-type="button" class="" @click="openAddLanguageForm">
+            添加语言
+          </a-button>
+          <a-button v-if="activeTab === 'dial'" html-type="button" class="" @click="openAddDialForm">
+            添加区号
+          </a-button>
+          <a-button html-type="button" class="" :disabled="isSaving" @click="saveConfig" type="primary">
+            {{ isSaving ? '保存中…' : '保存' }}
+          </a-button>
         </div>
-      </Card>
-    </template>
+      </div>
 
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(languageFormOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(640px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="resetLanguageForm"><template #title><template v-if="Boolean(languageFormOpen)"><div class="locale-modal-title"><span>{{ editingLocaleCode ? '编辑语言' : '添加语言' }}</span><a-button aria-label="关闭" type="text" html-type="button" @click="resetLanguageForm"><CloseOutlined /></a-button></div></template></template><template v-if="languageFormOpen">
-          <Form layout="vertical" name="locale-language-editor">
-            <Row :gutter="16">
-              <Col :span="12">
-                <FormItem label="语言代码" required extra="例如 en、zh-CN、vi">
-                  <a-input v-model:value="languageForm.code" placeholder="vi" :disabled="Boolean(editingLocaleCode)" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="语言名称" required>
-                  <a-input v-model:value="languageForm.label" placeholder="Tiếng Việt" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="简称">
-                  <a-input v-model:value="languageForm.short" placeholder="VI" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="图标">
-                  <Space :size="8">
-                    <span class="locale-icon">
-                      <img v-if="isImageIcon(languageForm.icon)" :src="languageForm.icon" alt="图标预览" />
-                      <span v-else>{{ languageForm.icon || '□' }}</span>
-                    </span>
-                    <a-button html-type="button" @click="languageIconInput?.click()"><UploadOutlined />上传图片</a-button>
-                    <input ref="languageIconInput" class="locale-file" type="file" accept="image/*" @change="onLanguageIconUpload" />
-                  </Space>
-                </FormItem>
-              </Col>
-            </Row>
-            <FormItem label="语言文件" :extra="languageForm.fileName || '可上传 JSON 文件；不上传则只保存语言信息。'">
-              <a-button html-type="button" @click="languageFileInput?.click()"><UploadOutlined />选择文件</a-button>
-              <input ref="languageFileInput" class="locale-file" type="file" accept=".json,application/json" @change="onLanguageFormFile" />
-            </FormItem>
-          </Form></template><template #footer><template v-if="Boolean(languageFormOpen)"><Space :size="8">
-            <a-button html-type="button" @click="resetLanguageForm">取消</a-button>
-            <a-button html-type="button" type="primary" @click="saveLanguage">{{ editingLocaleCode ? '确定' : '添加' }}</a-button>
-          </Space></template></template></a-modal>
+      <div class="space-y-6 p-6">
+        <div
+          v-if="message"
+          class="rounded-lg px-4 py-3 text-sm"
+          :class="messageType === 'error' ? 'border border-red-200 bg-red-50 text-red-700' : 'border border-emerald-200 bg-emerald-50 text-emerald-700'"
+        >
+          {{ message }}
+        </div>
 
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(dialFormOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(640px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="resetCustomDialForm"><template #title><template v-if="Boolean(dialFormOpen)"><div class="locale-modal-title"><span>{{ editingCustomDial ? '编辑区号' : '添加区号' }}</span><a-button aria-label="关闭" type="text" html-type="button" @click="resetCustomDialForm"><CloseOutlined /></a-button></div></template></template><template v-if="dialFormOpen">
-          <Form layout="vertical" name="locale-dial-editor">
-            <Row :gutter="16">
-              <Col :span="12">
-                <FormItem label="国际区号" required extra="+ 加数字，例如 +84">
-                  <a-input v-model:value="customDialForm.dial" placeholder="+84" :disabled="Boolean(editingCustomDial)" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="地区名称" required>
-                  <a-input v-model:value="customDialForm.label" placeholder="越南 +84" />
-                </FormItem>
-              </Col>
-            </Row>
-            <FormItem label="图标">
-              <Space :size="8">
-                <span class="locale-icon">
-                  <img v-if="isImageIcon(customDialForm.icon)" :src="customDialForm.icon" alt="图标预览" />
-                  <span v-else>{{ customDialForm.icon || '□' }}</span>
-                </span>
-                <a-button html-type="button" @click="dialIconInput?.click()"><UploadOutlined />上传图片</a-button>
-                <input ref="dialIconInput" class="locale-file" type="file" accept="image/*" @change="onCustomDialIconUpload" />
-              </Space>
-            </FormItem>
-          </Form></template><template #footer><template v-if="Boolean(dialFormOpen)"><Space :size="8">
-            <a-button html-type="button" @click="resetCustomDialForm">取消</a-button>
-            <a-button html-type="button" type="primary" @click="saveCustomDial">{{ editingCustomDial ? '确定' : '添加' }}</a-button>
-          </Space></template></template></a-modal>
-  </PageShell>
+        <!-- 多语言 -->
+        <section v-show="activeTab === 'language'" class="space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <label class="text-sm font-medium text-slate-700">语言列表</label>
+              <div class="flex flex-wrap gap-2 text-xs">
+	                <a-button html-type="button" class="text-blue-600 hover:underline" @click="selectAllLocales">
+	                  全选
+	                </a-button>
+	              </div>
+            </div>
+
+            <div class="overflow-x-auto overflow-hidden rounded-lg border border-slate-200">
+              <a-table  :data-source="localesTableRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(loc) => loc.code" :custom-row="(loc, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
+<a-table-column key="column-0" ><template #title>图标</template><template #default="{ record: loc, index: index }"><div class="">
+                      <span class="inline-flex h-8 w-12 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white text-base">
+                        <img
+                          v-if="isImageIcon(loc.icon)"
+                          :src="loc.icon"
+                          :alt="loc.label"
+                          class="h-full w-full object-cover"
+                        />
+                        <span v-else>{{ loc.icon || '□' }}</span>
+                      </span>
+                    </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>语言名称</template><template #default="{ record: loc, index: index }"><div class="text-slate-800">{{ loc.label }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>语言代码</template><template #default="{ record: loc, index: index }"><div class="font-mono text-xs text-slate-500">{{ loc.code }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: loc, index: index }"><div class="">
+                      <a-input type="number" :step="1" class="w-full max-w-[6.5rem] text-right tabular-nums" :value="config.i18n.localeSortOrder?.[loc.code] ?? 0" @input="onLocaleSortInput(loc.code, $event.target.value)" />
+                    </div></template></a-table-column>
+<a-table-column key="column-4" align="right"><template #title>Key 数</template><template #default="{ record: loc, index: index }"><div class="text-right tabular-nums text-slate-700">{{ loc.keyCount }}</div></template></a-table-column>
+<a-table-column key="column-5" align="center"><template #title>启用</template><template #default="{ record: loc, index: index }"><div class="text-center">
+                      <a-checkbox class="" :checked="config.i18n.enabledLocales?.includes(loc.code)" @change="toggleLocale(loc.code, $event.target.checked)" />
+                    </div></template></a-table-column>
+<a-table-column key="column-6" align="center"><template #title>默认</template><template #default="{ record: loc, index: index }"><div class="text-center">
+                      <a-radio class="" name="admin-default-locale-pick" :value="loc.code" :checked="config.i18n.defaultLocale === loc.code" :disabled="!config.i18n.enabledLocales?.includes(loc.code)" @change="setDefaultLocale(loc.code)" />
+	                    </div></template></a-table-column>
+<a-table-column key="column-7" align="right"><template #title>操作</template><template #default="{ record: loc, index: index }"><div class="text-right">
+                      <a-button html-type="button" class="mr-3 text-xs font-medium text-blue-600 hover:underline" @click="downloadLocalePackage(loc.code)">
+                        下载
+                      </a-button>
+		                      <a-button html-type="button" class="mr-3 text-xs font-medium text-blue-600 hover:underline" @click="editLanguage(loc)">
+                        编辑
+                      </a-button>
+                      <a-button v-if="loc.custom" html-type="button" class="text-xs font-medium text-red-600 hover:underline" @click="removeLanguage(loc)" danger>
+                        删除
+                      </a-button>
+                      <span v-else class="text-xs text-slate-400">内置</span>
+                    </div></template></a-table-column>
+</a-table>
+            </div>
+            <p class="text-xs text-slate-500">语言文件在添加/编辑弹窗中上传；「排序权重」填整数，数值越大在前台语言列表中越靠前。</p>
+
+            <div class="flex items-start justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-slate-900">前台显示语言切换</p>
+                <p class="mt-1 text-xs text-slate-500">
+                  关闭后顶栏与移动端菜单中的语言入口将隐藏（仍使用默认语言展示页面）。
+                </p>
+              </div>
+              <a-switch :checked="config.i18n.languageSwitcherEnabled" @click="config.i18n.languageSwitcherEnabled = !config.i18n.languageSwitcherEnabled" aria-label="前台语言切换" />
+            </div>
+        </section>
+
+        <!-- 手机区号 -->
+        <section v-show="activeTab === 'dial'" class="space-y-4">
+          <div
+            v-if="!config.phoneLoginEnabled"
+            class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          >
+            当前未启用「手机号码登录」，前台手机区号固定为 +86。需要按下方列表展示时，请前往
+            <RouterLink class="font-medium text-blue-800 underline-offset-2 hover:underline" to="/admin/system/site-config">
+              登录设置
+            </RouterLink>
+            开启。
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-sm font-medium text-slate-700">可选区号列表</span>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <a-button html-type="button" class="text-blue-600 hover:underline" @click="selectAllDialCodes">全选</a-button>
+            </div>
+          </div>
+          <div class="overflow-x-auto overflow-hidden rounded-lg border border-slate-200">
+            <a-table  :data-source="dialsTableRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.dial" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
+<a-table-column key="column-0" ><template #title>图标</template><template #default="{ record: row, index: index }"><div class="">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex h-8 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white text-base">
+                        <img
+                          v-if="isImageIcon(row.icon)"
+                          :src="row.icon"
+                          :alt="row.label"
+                          class="h-full w-full object-cover"
+                        />
+                        <span v-else>{{ row.icon || '□' }}</span>
+                      </span>
+                    </div>
+                  </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>地区与区号</template><template #default="{ record: row, index: index }"><div class="text-slate-800">{{ row.label }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>国际区号</template><template #default="{ record: row, index: index }"><div class="font-mono text-sm text-slate-600">{{ row.dial }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="">
+                    <a-input type="number" :step="1" class="w-full max-w-[6.5rem] text-right tabular-nums" :value="config.dialSortOrder?.[row.dial] ?? 0" @input="onDialSortInput(row.dial, $event.target.value)" />
+                  </div></template></a-table-column>
+<a-table-column key="column-4" align="center"><template #title>启用</template><template #default="{ record: row, index: index }"><div class="text-center">
+                    <a-checkbox class="" :checked="config.allowedDialCodes?.includes(row.dial)" @change="toggleDial(row.dial, $event.target.checked)" />
+                  </div></template></a-table-column>
+<a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="text-right">
+                    <a-button html-type="button" class="mr-3 text-xs font-medium text-blue-600 hover:underline" @click="editCustomDial(row)">
+                      编辑
+                    </a-button>
+                    <a-button v-if="row.custom" html-type="button" class="text-xs font-medium text-red-600 hover:underline" @click="removeCustomDial(row)" danger>
+                      删除
+                    </a-button>
+                    <span v-else class="text-xs text-slate-400">内置</span>
+                  </div></template></a-table-column>
+</a-table>
+          </div>
+          <p class="text-xs text-slate-500">「排序权重」填整数，数值越大在区号下拉中越靠前；保存后前台登录与绑定手机等处的区号顺序与此一致。</p>
+        </section>
+      </div>
+
+      <div class="flex justify-end border-t border-slate-200 bg-slate-50/50 px-4 py-4">
+        <a-button html-type="button" class="" :disabled="isSaving" @click="saveConfig" type="primary">
+          {{ isSaving ? '保存中…' : '保存' }}
+        </a-button>
+      </div>
+    </div>
+
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(languageFormOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="resetLanguageForm"><template #title><template v-if="Boolean(languageFormOpen)"><div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+            <div>
+              <h2 class="text-base font-semibold text-slate-900">
+                {{ editingLocaleCode ? '编辑语言' : '添加语言' }}
+              </h2>
+              <p class="mt-1 text-xs text-slate-500">维护语言名称、代码、图标和对应 JSON 文件。</p>
+            </div>
+            <a-button aria-label="关闭" html-type="button" class="text-xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700"  @click="resetLanguageForm">
+              ×
+            </a-button>
+          </div></template></template><template v-if="languageFormOpen"><div class="space-y-4 px-5 py-5">
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="block">
+                <span class="mb-1 block text-xs font-medium text-slate-600">语言代码</span>
+                <a-input v-model:value="languageForm.code" class="w-full" placeholder="vi" :disabled="Boolean(editingLocaleCode)" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-xs font-medium text-slate-600">语言名称</span>
+                <a-input v-model:value="languageForm.label" class="w-full" placeholder="Tiếng Việt" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-xs font-medium text-slate-600">简称</span>
+                <a-input v-model:value="languageForm.short" class="w-full" placeholder="VI" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-xs font-medium text-slate-600">图标</span>
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-9 w-11 shrink-0 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white text-base">
+                    <img
+                      v-if="isImageIcon(languageForm.icon)"
+                      :src="languageForm.icon"
+                      alt=""
+                      class="h-full w-full object-cover"
+                    />
+                    <span v-else>{{ languageForm.icon || '□' }}</span>
+                  </span>
+                  <label class="ant-btn cursor-pointer whitespace-nowrap">
+                    上传图片
+                    <input class="hidden" type="file" accept="image/*" @change="onLanguageIconUpload" />
+                  </label>
+                </div>
+              </label>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p class="text-sm font-medium text-slate-800">语言文件</p>
+                  <p class="mt-1 text-xs text-slate-500">
+                    {{ languageForm.fileName || '可上传 JSON 文件；不上传则只保存语言信息。' }}
+                  </p>
+                </div>
+                <label class="ant-btn cursor-pointer text-center">
+                  选择文件
+                  <input class="hidden" type="file" accept=".json,application/json" @change="onLanguageFormFile" />
+                </label>
+              </div>
+            </div>
+          </div></template><template #footer><template v-if="Boolean(languageFormOpen)"><div class="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
+            <a-button html-type="button" class="" @click="resetLanguageForm">取消</a-button>
+            <a-button html-type="button" class="" @click="saveLanguage" type="primary">
+              {{ editingLocaleCode ? '保存' : '添加' }}
+            </a-button>
+          </div></template></template></a-modal>
+    
+
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(dialFormOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="resetCustomDialForm"><template #title><template v-if="Boolean(dialFormOpen)"><div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+            <div>
+              <h2 class="text-base font-semibold text-slate-900">
+                {{ editingCustomDial ? '编辑区号' : '添加区号' }}
+              </h2>
+              <p class="mt-1 text-xs text-slate-500">维护国际区号、地区名称和显示图标。</p>
+            </div>
+            <a-button aria-label="关闭" html-type="button" class="text-xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700"  @click="resetCustomDialForm">
+              ×
+            </a-button>
+          </div></template></template><template v-if="dialFormOpen"><div class="space-y-4 px-5 py-5">
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="block">
+                <span class="mb-1 block text-xs font-medium text-slate-600">国际区号</span>
+                <a-input v-model:value="customDialForm.dial" class="w-full" placeholder="+84" :disabled="Boolean(editingCustomDial)" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-xs font-medium text-slate-600">地区名称</span>
+                <a-input v-model:value="customDialForm.label" class="w-full" placeholder="越南 +84" />
+              </label>
+              <label class="block sm:col-span-2">
+                <span class="mb-1 block text-xs font-medium text-slate-600">图标</span>
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-9 w-11 shrink-0 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white text-base">
+                    <img
+                      v-if="isImageIcon(customDialForm.icon)"
+                      :src="customDialForm.icon"
+                      alt=""
+                      class="h-full w-full object-cover"
+                    />
+                    <span v-else>{{ customDialForm.icon || '□' }}</span>
+                  </span>
+                  <label class="ant-btn cursor-pointer whitespace-nowrap">
+                    上传图片
+                    <input class="hidden" type="file" accept="image/*" @change="onCustomDialIconUpload" />
+                  </label>
+                </div>
+              </label>
+            </div>
+          </div></template><template #footer><template v-if="Boolean(dialFormOpen)"><div class="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
+            <a-button html-type="button" class="" @click="resetCustomDialForm">取消</a-button>
+            <a-button html-type="button" class="" @click="saveCustomDial" type="primary">
+              {{ editingCustomDial ? '保存' : '添加' }}
+            </a-button>
+          </div></template></template></a-modal>
+    
+  </div>
 </template>
-
-<style scoped>
-.locale-loading{display:block;padding:32px 0}
-.locale-icon{display:inline-flex;align-items:center;justify-content:center;width:44px;height:32px;overflow:hidden;border:1px solid rgb(5 5 5 / 6%);border-radius:6px;font-size:16px}
-.locale-icon img{width:100%;height:100%;object-fit:cover}
-.locale-weight{width:104px}
-.locale-file[type="file"]{display:none}
-.locale-alert{margin-bottom:16px}
-.locale-switch-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-top:24px}
-.locale-footer{position:sticky;bottom:0;z-index:10}
-.locale-actions{display:flex;justify-content:flex-end}
-.locale-modal-title{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.locale-row-actions :deep(.ant-btn-link){padding-inline:4px}
-</style>

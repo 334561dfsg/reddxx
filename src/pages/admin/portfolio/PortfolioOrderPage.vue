@@ -1,91 +1,114 @@
 <script setup>
-// 投资组合订单 — Ant Design Pro list page (2026-11-28): one query field per filter (the old combined
-// order/user/product keyword box is split), table card with right-aligned amounts and text status Tags.
 import { computed, ref } from 'vue'
-import { Space, Tag, TypographyText } from 'ant-design-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
+import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
+import { useAdminListPagination } from '../../../admin/composables/useAdminListPagination'
 import { portfolioOrders } from '../../../admin/state/portfolioOrders'
-import { COMMON_FILTER_ALL, ORDER_STATUS, orderStatusMeta } from '../../../admin/constants/portfolio'
+import { COMMON_FILTER_ALL, ORDER_STATUS, formatPortfolioAmount, orderStatusMeta } from '../../../admin/constants/portfolio'
 
-const page = ref(1)
-const blank = () => ({ orderId: '', user: '', product: COMMON_FILTER_ALL, status: COMMON_FILTER_ALL, startedAt: null, principal: [null, null] })
-const filters = ref(blank())
-const productOptions = computed(() => [...new Set(portfolioOrders.value.map((order) => order.productName))].map((value) => ({ value, label: value })))
-const fields = computed(() => [
-  { key: 'orderId', label: '订单号' },
-  { key: 'user', label: '用户' },
-  { key: 'product', label: '产品', searchable: true, options: [{ value: COMMON_FILTER_ALL, label: '全部产品' }, ...productOptions.value] },
-  { key: 'status', label: '状态', options: [{ value: COMMON_FILTER_ALL, label: '全部状态' }, ...Object.entries(orderStatusMeta).map(([value, meta]) => ({ value, label: meta.label }))] },
-  { key: 'startedAt', label: '开始日期', range: true },
-  { key: 'principal', label: '本金', numberRange: true, min: 0 }
-])
+const statusFilter = ref(COMMON_FILTER_ALL)
+const search = ref('')
 
-const statusColor = {
-  [ORDER_STATUS.RUNNING]: 'blue',
-  [ORDER_STATUS.COMPLETED]: 'green',
-  [ORDER_STATUS.SETTLED]: 'default',
-  [ORDER_STATUS.EARLY_REDEEMED]: 'purple',
-  [ORDER_STATUS.CANCELLED]: 'red'
+const filteredOrders = computed(() => {
+  const kw = search.value.trim().toLowerCase()
+  return portfolioOrders.value.filter((order) => {
+    const matchesSearch =
+      !kw ||
+      order.id.toLowerCase().includes(kw) ||
+      order.userName.toLowerCase().includes(kw) ||
+      order.productName.toLowerCase().includes(kw)
+    const matchesStatus = statusFilter.value === COMMON_FILTER_ALL || order.status === statusFilter.value
+    return matchesSearch && matchesStatus
+  })
+})
+
+const {
+  currentPage,
+  pageSize,
+  totalPages,
+  pagedRows: pagedOrders,
+  onPageSizeChange
+} = useAdminListPagination(filteredOrders, { resetSources: [search, statusFilter] })
+
+function statusClass(status) {
+  return orderStatusMeta[status]?.class ?? 'bg-slate-100 text-slate-600'
 }
-const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
-const inRange = (value, [min, max]) => (min === null || min === undefined || value >= min) && (max === null || max === undefined || value <= max)
-const money = (value) => Number(value || 0).toLocaleString('zh-CN', { maximumFractionDigits: 2 })
-
-const rows = computed(() => portfolioOrders.value.filter((order) => {
-  const f = filters.value
-  const day = String(order.startedAt || '').slice(0, 10)
-  return has(order.id, f.orderId) && (has(order.userName, f.user) || has(order.userId, f.user)) &&
-    (f.product === COMMON_FILTER_ALL || order.productName === f.product) &&
-    (f.status === COMMON_FILTER_ALL || order.status === f.status) &&
-    (!f.startedAt || (day >= f.startedAt[0] && day <= f.startedAt[1])) &&
-    inRange(Number(order.principal), f.principal)
-}))
-
-const columns = [
-  { key: 'id', title: '订单号', width: 180, fixed: 'left' },
-  { key: 'user', title: '用户', width: 200 },
-  { key: 'product', title: '产品', width: 240 },
-  { key: 'principal', title: '本金（USDT）', width: 140, align: 'right' },
-  { key: 'yield', title: '预估收益（USDT）', width: 170, align: 'right' },
-  { key: 'fee', title: '手续费（USDT）', width: 130, align: 'right' },
-  { key: 'time', title: '时间', width: 220 },
-  { key: 'status', title: '状态', width: 100 }
-]
-
-function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
-function reset() { filters.value = blank(); page.value = 1 }
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="portfolio-order-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
-    <AdminTable title="投资组合订单" v-model:page="page" :rows="rows" :columns="columns" row-key="id" desktop-only>
-      <template #cell="{ column, record }">
-        <span v-if="column.key === 'id'" class="font-mono">{{ record.id }}</span>
-        <Space v-else-if="column.key === 'user'" direction="vertical" :size="0">
-          <span>{{ record.userName }}</span>
-          <TypographyText type="secondary" class="font-mono">{{ record.userId }}</TypographyText>
-        </Space>
-        <Space v-else-if="column.key === 'product'" direction="vertical" :size="4">
-          <TypographyText strong>{{ record.productName }}</TypographyText>
-          <span><Tag v-for="asset in record.assets" :key="asset.symbol">{{ asset.symbol }}</Tag></span>
-        </Space>
-        <template v-else-if="column.key === 'principal'">{{ money(record.principal) }}</template>
-        <Space v-else-if="column.key === 'yield'" direction="vertical" :size="0" align="end">
-          <span>{{ money(record.minYield) }} - {{ money(record.maxYield) }}</span>
-          <TypographyText v-if="record.accumulatedYield != null" type="secondary">已产生 {{ money(record.accumulatedYield) }}</TypographyText>
-        </Space>
-        <template v-else-if="column.key === 'fee'">{{ money(record.fee) }}</template>
-        <Space v-else-if="column.key === 'time'" direction="vertical" :size="0">
-          <span>开始 {{ record.startedAt }}</span>
-          <TypographyText type="secondary">到期 {{ record.maturityAt }}</TypographyText>
-          <TypographyText v-if="record.redeemedAt" type="secondary">赎回 {{ record.redeemedAt }}</TypographyText>
-        </Space>
-        <Tag v-else-if="column.key === 'status'" :color="statusColor[record.status]">{{ orderStatusMeta[record.status]?.label ?? record.status }}</Tag>
-        <template v-else>{{ record[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
-  </PageShell>
+  <section class="space-y-5">
+    <header>
+      <h1 class="text-3xl font-semibold text-slate-900">投资组合订单管理</h1>
+      <p class="mt-1 text-sm text-slate-500">查看用户认购、运行、到期与提前赎回状态</p>
+    </header>
+
+    <div class="rounded-xl border border-slate-200 bg-white p-4">
+      <div class="grid gap-4 md:grid-cols-3">
+        <a-input v-model:value="search" placeholder="搜索订单、用户或产品" class="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+        <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="statusFilter" class="">
+          <a-select-option :value="COMMON_FILTER_ALL">全部状态</a-select-option>
+          <a-select-option v-for="(meta, key) in orderStatusMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
+        </a-select>
+        <div class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-500">当前 {{ filteredOrders.length }} 笔订单</div>
+      </div>
+    </div>
+
+    <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <a-table  size="small" :pagination="false" :data-source="pagedOrders" :row-key="(order) => order.id" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4 font-mono text-xs text-slate-500&quot;] })">
+<template #title>订单</template>
+<template #default="{ record: order, index: rowIndex }">{{ order.id }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-700&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: order, index: rowIndex }">
+              <div>{{ order.userName }}</div>
+              <div class="text-xs text-slate-400">{{ order.userId }}</div>
+            </template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>产品</template>
+<template #default="{ record: order, index: rowIndex }">
+              <div class="text-sm font-medium text-slate-900">{{ order.productName }}</div>
+              <div class="mt-1 flex flex-wrap gap-1">
+                <span v-for="asset in order.assets" :key="asset.symbol" class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600">
+                  {{ asset.symbol }}
+                </span>
+              </div>
+            </template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>金额收益</template>
+<template #default="{ record: order, index: rowIndex }">
+              <div>本金 {{ formatPortfolioAmount(order.principal, order.quoteCurrency) }}</div>
+              <div class="text-emerald-600">预估 {{ formatPortfolioAmount(order.minYield) }} - {{ formatPortfolioAmount(order.maxYield) }}</div>
+              <div>手续费 {{ formatPortfolioAmount(order.fee) }}</div>
+            </template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>时间</template>
+<template #default="{ record: order, index: rowIndex }">
+              <div>开始 {{ order.startedAt }}</div>
+              <div>到期 {{ order.maturityAt }}</div>
+              <div v-if="order.redeemedAt">赎回 {{ order.redeemedAt }}</div>
+            </template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: order, index: rowIndex }">
+              <span class="rounded-full px-2 py-1 text-xs" :class="statusClass(order.status)">
+                {{ orderStatusMeta[order.status]?.label }}
+              </span>
+            </template>
+</a-table-column>
+</a-table>
+      <AdminListPaginationBar
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        :total-count="filteredOrders.length"
+        :page-size="pageSize"
+        @update:current-page="currentPage = $event"
+        @update:page-size="onPageSizeChange"
+      />
+    </article>
+  </section>
 </template>

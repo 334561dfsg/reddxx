@@ -21,23 +21,19 @@ test('registers the user operation audit log route', () => {
   assert.equal(route.meta.title, '用户管理 / 用户操作日志')
 })
 
-test('renders explicit Pro query-card filters, pagination, and inline details', () => {
+test('renders explicit filters, visible applied filters, pagination, and inline details', () => {
   const source = readFileSync(
     new URL('../src/pages/admin/user/UserOperationLogPage.vue', import.meta.url),
     'utf8'
   )
 
   assert.match(source, /用户操作日志/)
-  // Pro list layout (2026-11-28): draft lives in the query card; 查询 applies it, 重置 restores the defaults.
-  assert.match(source, /<SearchForm name="user-operation-log-filters" :model="filters" :fields="fields" @search="search" @reset="reset"/)
-  assert.match(source, /function search\(values\) \{ filters\.value = \{ \.\.\.blank\(\), \.\.\.values \}; page\.value = 1/)
-  assert.match(source, /<AdminTable title="用户操作日志" v-model:page="page"/)
-  for (const label of ['用户 UID', '用户名', '用户邮箱', '用户手机号', '操作人', '业务分类', '操作类型', '操作结果', '操作原因', '关联 ID', '操作日期']) {
-    assert.match(source, new RegExp(`label: '${label}'`))
-  }
+  assert.match(source, /applyFilters/)
+  assert.match(source, /appliedFilters/)
+  assert.match(source, /removeAppliedFilter/)
   assert.match(source, /expandedLogId/)
+  assert.match(source, /createPageNumbers/)
   assert.match(source, /aria-expanded/)
-  assert.match(source, /<Tag v-else-if="column\.key === 'result'"/)
-  assert.doesNotMatch(source, /<h1|<form/)
+  assert.match(source, /md:hidden/)
   assert.doesNotMatch(source, /showModal|showDrawer|role="dialog"/)
 })

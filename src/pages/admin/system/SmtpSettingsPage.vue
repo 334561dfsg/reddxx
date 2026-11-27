@@ -1,13 +1,6 @@
 <script setup>
-// 平台配置 → 邮件服务 (SMTP): Ant Design Pro list page (2026-11-28) — query card, table card with toolbar and
-// pagination, link actions, status Tag, toast feedback; native confirm/prompt replaced with Ant dialogs.
 import { computed, onMounted, ref } from 'vue'
-import { Button, Col, Form, FormItem, Input, InputNumber, InputPassword, Row, Space, Tag, TypographyText, message } from 'ant-design-vue'
-import { CloseOutlined, PlusOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
-import AdminModal from '../earn/EarnAdminModal.vue'
+import { RouterLink } from 'vue-router'
 import { DEFAULT_I18N_BLOCK } from '../../../admin/constants/i18nCatalog'
 import {
   DEFAULT_SITE_CONFIG,
@@ -25,33 +18,6 @@ const isSaving = ref(false)
 const testingId = ref('')
 
 const rows = computed(() => config.value.smtpAccounts || [])
-const page = ref(1)
-const blank = () => ({ name: '', host: '', fromEmail: '', status: 'all' })
-const filters = ref(blank())
-const fields = [
-  { key: 'name', label: '名称' },
-  { key: 'host', label: '服务器' },
-  { key: 'fromEmail', label: '发件人邮箱' },
-  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, { value: 'enabled', label: '启用' }, { value: 'disabled', label: '停用' }] }
-]
-const has = (value, query) => !query || String(value || '').toLowerCase().includes(String(query).trim().toLowerCase())
-const filteredRows = computed(() => rows.value.filter((row) => {
-  const f = filters.value
-  return has(row.name, f.name) && has(row.host, f.host) && has(row.fromEmail, f.fromEmail) &&
-    (f.status === 'all' || (f.status === 'enabled') === Boolean(row.enabled))
-}))
-const columns = [
-  { key: 'name', title: '名称', width: 180 },
-  { key: 'server', title: '服务器', width: 260 },
-  { key: 'fromEmail', title: '发件人', width: 240 },
-  { key: 'enabled', title: '状态', width: 90 },
-  { key: 'actions', title: '操作', width: 180, fixed: 'right' }
-]
-function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
-function reset() { filters.value = blank(); page.value = 1 }
-const removeTarget = ref(null)
-const testTarget = ref(null)
-const testTo = ref('')
 
 const showModal = ref(false)
 /** @type {import('vue').Ref<string | null>} */
@@ -119,21 +85,20 @@ async function load() {
       )
     }
   } catch (e) {
-    message.error('加载失败：' + (e?.message || '未知错误'))
+    console.error(e)
   } finally {
     loading.value = false
   }
 }
 
 async function submitModal() {
-  if (isSaving.value) return
   if (formEnabled.value) {
     if (!String(formHost.value ?? '').trim()) {
-      message.warning('已启用时请填写 SMTP 服务器地址')
+      alert('已启用时请填写 SMTP 服务器地址')
       return
     }
     if (!String(formFromEmail.value ?? '').trim()) {
-      message.warning('已启用时请填写发件人邮箱')
+      alert('已启用时请填写发件人邮箱')
       return
     }
   }
@@ -172,60 +137,45 @@ async function submitModal() {
   }
 
   config.value.smtpAccounts = normalizeSmtpAccountsList(list, true, undefined)
-  if (await persist(editingId.value ? 'SMTP 账户已更新' : 'SMTP 账户已添加')) closeModal()
+  await persist()
+  closeModal()
 }
 
-async function persist(successText) {
+async function persist() {
   isSaving.value = true
   try {
     const result = await siteConfigApi.updateSiteConfig(config.value)
     if (result.success) {
       window.dispatchEvent(new CustomEvent('admin-site-config-updated'))
-      message.success(successText || result.message || 'SMTP 配置已保存')
       await load()
-      return true
     }
-    message.error(result.message || '保存失败')
   } catch (e) {
-    message.error('保存失败：' + (e?.message || '未知错误'))
-    await load()
+    alert('保存失败：' + (e?.message || '未知错误'))
   } finally {
     isSaving.value = false
   }
-  return false
 }
 
-async function removeRow() {
-  const row = removeTarget.value
-  if (!row || isSaving.value) return
+async function removeRow(row) {
+  if (!confirm(`确定删除该 SMTP 账户？${row.name ? `（${row.name}）` : ''}`)) return
   config.value.smtpAccounts = (config.value.smtpAccounts || []).filter((x) => x.id !== row.id)
-  if (await persist('SMTP 账户已删除')) removeTarget.value = null
+  await persist()
 }
 
-function openTest(row) {
-  testTo.value = ''
-  testTarget.value = row
-}
-
-async function testRow() {
-  const row = testTarget.value
-  if (!row || testingId.value) return
-  const trimmed = String(testTo.value || '').trim()
+async function testRow(row) {
+  const to = window.prompt('填写收件人邮箱以发送测试邮件（演示为模拟成功）', '')
+  if (to == null) return
+  const trimmed = String(to).trim()
   if (!trimmed) {
-    message.warning('请填写收件人邮箱')
+    alert('请填写收件人邮箱')
     return
   }
   testingId.value = row.id
   try {
     const result = await siteConfigApi.testSmtp({ to: trimmed, smtpAccountId: row.id })
-    if (result.success) {
-      message.success(result.message || '测试邮件已发送')
-      testTarget.value = null
-    } else {
-      message.error(result.message || '发送失败')
-    }
+    if (result.success) alert(result.message)
   } catch (e) {
-    message.error(e?.message || '发送失败')
+    alert(e?.message || '发送失败')
   } finally {
     testingId.value = ''
   }
@@ -237,110 +187,115 @@ onMounted(() => {
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="smtp-account-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
-    <AdminTable title="SMTP 账户" v-model:page="page" :rows="filteredRows" :columns="columns" row-key="id" :loading="loading" desktop-only>
-      <template #toolbar>
-        <Space :size="8">
-          <TypographyText type="secondary">同一时刻仅允许启用一条，启用某条时会自动关闭其余账户</TypographyText>
-          <Button type="primary" :disabled="loading" @click="openAdd"><template #icon><PlusOutlined /></template>添加 SMTP</Button>
-        </Space>
-      </template>
-      <template #cell="{ column, record }">
-        <TypographyText v-if="column.key === 'name'" strong>{{ record.name || '—' }}</TypographyText>
-        <span v-else-if="column.key === 'server'">
-          <span class="font-mono">{{ record.host || '—' }}</span><TypographyText v-if="record.port" type="secondary">:{{ record.port }}</TypographyText>
-        </span>
-        <template v-else-if="column.key === 'fromEmail'">{{ record.fromEmail || '—' }}</template>
-        <Tag v-else-if="column.key === 'enabled'" :color="record.enabled ? 'green' : 'default'">{{ record.enabled ? '启用' : '停用' }}</Tag>
-        <Space v-else-if="column.key === 'actions'" :size="8" class="smtp-row-actions">
-          <Button type="link" :disabled="isSaving" @click="openEdit(record)">编辑</Button>
-          <Button type="link" :loading="testingId === record.id" :disabled="isSaving" @click="openTest(record)">测试</Button>
-          <Button type="link" danger :disabled="isSaving" @click="removeTarget = record">删除</Button>
-        </Space>
-        <template v-else>{{ record[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
-
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(760px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(showModal)"><div class="smtp-modal-title"><span>{{ editingId ? '编辑 SMTP' : '添加 SMTP' }}</span><a-button aria-label="关闭" type="text" html-type="button" :disabled="isSaving" @click="closeModal"><CloseOutlined /></a-button></div></template></template><template v-if="showModal">
-          <Form layout="vertical" name="smtp-account-editor">
-            <Row :gutter="16">
-              <Col :span="12">
-                <FormItem label="显示名称（可选）">
-                  <a-input v-model:value="formName" placeholder="列表中区分多条账户" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="启用该账户" extra="启用后其他 SMTP 将自动关闭">
-                  <a-switch v-model:checked="formEnabled" checked-children="启用" un-checked-children="停用" aria-label="启用该账户" />
-                </FormItem>
-              </Col>
-              <Col :span="24">
-                <FormItem label="SMTP 服务器" :required="formEnabled">
-                  <a-input v-model:value="formHost" placeholder="例如：smtp.example.com" autocomplete="off" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="端口">
-                  <InputNumber v-model:value="formPort" :min="1" :max="65535" :precision="0" class="smtp-number" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="加密方式">
-                  <a-select v-model:value="formEncryption" :options="[{ value: 'none', label: '无' }, { value: 'tls', label: 'TLS（常用 587）' }, { value: 'ssl', label: 'SSL（常用 465）' }]" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="用户名">
-                  <a-input v-model:value="formUsername" autocomplete="off" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="密码" extra="演示存于浏览器本地；上线后请由后端加密保管。">
-                  <InputPassword v-model:value="formPassword" autocomplete="new-password" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="发件人名称">
-                  <a-input v-model:value="formFromName" />
-                </FormItem>
-              </Col>
-              <Col :span="12">
-                <FormItem label="发件人邮箱" :required="formEnabled">
-                  <a-input v-model:value="formFromEmail" type="email" />
-                </FormItem>
-              </Col>
-              <Col :span="24">
-                <FormItem label="回复地址（可选）">
-                  <a-input v-model:value="formReplyTo" type="email" />
-                </FormItem>
-              </Col>
-            </Row>
-          </Form></template><template #footer><template v-if="Boolean(showModal)"><Space :size="8">
-            <a-button html-type="button" :disabled="isSaving" @click="closeModal">取消</a-button>
-            <a-button html-type="button" type="primary" :loading="isSaving" @click="submitModal">保存</a-button>
-          </Space></template></template></a-modal>
-
-    <AdminModal :open="!!testTarget" title="发送测试邮件" :width="520" :busy="Boolean(testingId)" confirm-text="发送" @close="testTarget = null" @confirm="testRow">
-      <div v-if="testTarget">
-        <TypographyText type="secondary">使用「{{ testTarget.name || testTarget.host || 'SMTP 账户' }}」发送测试邮件（演示为模拟成功）。</TypographyText>
-        <Form layout="vertical" class="smtp-test-form">
-          <FormItem label="收件人邮箱" required>
-            <Input v-model:value="testTo" type="email" placeholder="name@example.com" aria-label="收件人邮箱" @press-enter="testRow" />
-          </FormItem>
-        </Form>
+  <div class="space-y-6">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">邮件服务 (SMTP)</h1>
+        <p class="mt-1 text-sm text-slate-500">
+          可配置多条 SMTP 备用；同一时刻仅允许启用一条，保存启用某条时会自动关闭其余账户。演示数据存于本地，生产环境应由服务端保管密码。品牌与站点信息仍在
+          <RouterLink to="/admin/system/site-config" class="text-indigo-600 hover:underline">站点配置</RouterLink>
+          。
+        </p>
       </div>
-    </AdminModal>
+      <a-button html-type="button" class="shrink-0" :disabled="loading" @click="openAdd" type="primary">
+        添加 SMTP
+      </a-button>
+    </div>
 
-    <AdminModal :open="!!removeTarget" title="删除 SMTP 账户" :busy="isSaving" confirm-text="确认删除" danger @close="removeTarget = null" @confirm="removeRow">
-      <div v-if="removeTarget"><TypographyText strong>{{ removeTarget.name || removeTarget.host || 'SMTP 账户' }}</TypographyText><p>删除后该账户的服务器与凭据配置将被移除。此操作不能撤销。</p></div>
-    </AdminModal>
-  </PageShell>
+    <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
+      加载中…
+    </div>
+
+    <div v-else class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div class="overflow-x-auto">
+        <a-table  :data-source="rows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" >
+<a-table-column key="column-0" ><template #title>名称</template><template #default="{ record: row, index: index }"><div class="  text-slate-900">{{ row.name || '—' }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>服务器</template><template #default="{ record: row, index: index }"><div class=" ">
+                <span class="font-mono text-xs text-slate-800">{{ row.host || '—' }}</span>
+                <span v-if="row.port" class="ml-1 text-xs text-slate-500">:{{ row.port }}</span>
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>发件人</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-700">{{ row.fromEmail || '—' }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
+                <span
+                  :class="
+                    row.enabled ? 'rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800' : 'text-slate-500'
+                  "
+                >
+                  {{ row.enabled ? '启用' : '停用' }}
+                </span>
+              </div></template></a-table-column>
+<a-table-column key="column-4" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="  text-right whitespace-nowrap">
+                <a-button html-type="button" class="text-slate-600 hover:underline" :disabled="testingId === row.id" @click="testRow(row)">
+                  {{ testingId === row.id ? '发送中…' : '测试' }}
+                </a-button>
+                <span class="mx-2 text-slate-300">|</span>
+                <a-button html-type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</a-button>
+                <span class="mx-2 text-slate-300">|</span>
+                <a-button html-type="button" class="text-red-600 hover:underline" @click="removeRow(row)" danger>删除</a-button>
+              </div></template></a-table-column><template #emptyText>
+                暂无 SMTP 账户，请点击「添加 SMTP」。
+              </template>
+</a-table>
+      </div>
+    </div>
+
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(showModal)"><div class="flex items-center justify-between gap-3"><span>{{ editingId ? '编辑 SMTP' : '添加 SMTP' }}</span><a-button aria-label="关闭" html-type="button"   @click="closeModal">×</a-button></div></template></template><template v-if="showModal"><div class="border-b border-slate-200 px-5 py-4">
+            <h2 class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑 SMTP' : '添加 SMTP' }}</h2>
+          </div>
+<div class="space-y-4 px-5 py-4">
+            <div>
+              <label class="mb-1.5 block text-sm font-medium text-slate-700">显示名称（可选）</label>
+              <a-input v-model:value="formName" type="text" class="w-full" placeholder="列表中区分多条账户" />
+            </div>
+            <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+              <a-checkbox v-model:checked="formEnabled" class="" />
+              启用该账户（启用后其他 SMTP 将自动关闭）
+            </label>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="md:col-span-2">
+                <label class="mb-1.5 block text-sm font-medium text-slate-700">SMTP 服务器</label>
+                <a-input v-model:value="formHost" type="text" class="w-full" placeholder="例如：smtp.example.com" autocomplete="off" />
+              </div>
+              <div>
+                <label class="mb-1.5 block text-sm font-medium text-slate-700">端口</label>
+                <a-input type="number" :min="1" :max="65535" class="w-full max-w-[10rem]" :value="formPort" @update:value="formPort = $event === '' ? '' : Number($event)" />
+              </div>
+              <div>
+                <label class="mb-1.5 block text-sm font-medium text-slate-700">加密方式</label>
+                <a-select v-model:value="formEncryption" class="w-full max-w-[10rem]">
+                  <a-select-option value="none">无</a-select-option>
+                  <a-select-option value="tls">TLS（常用 587）</a-select-option>
+                  <a-select-option value="ssl">SSL（常用 465）</a-select-option>
+                </a-select>
+              </div>
+              <div class="md:col-span-2">
+                <label class="mb-1.5 block text-sm font-medium text-slate-700">用户名</label>
+                <a-input v-model:value="formUsername" type="text" class="w-full" autocomplete="off" />
+              </div>
+              <div class="md:col-span-2">
+                <label class="mb-1.5 block text-sm font-medium text-slate-700">密码</label>
+                <a-input v-model:value="formPassword" type="password" class="w-full" autocomplete="new-password" />
+                <p class="mt-1 text-xs text-amber-800/90">演示存于浏览器本地；上线后请由后端加密保管。</p>
+              </div>
+              <div>
+                <label class="mb-1.5 block text-sm font-medium text-slate-700">发件人名称</label>
+                <a-input v-model:value="formFromName" type="text" class="w-full" />
+              </div>
+              <div>
+                <label class="mb-1.5 block text-sm font-medium text-slate-700">发件人邮箱</label>
+                <a-input v-model:value="formFromEmail" type="email" class="w-full" />
+              </div>
+              <div class="md:col-span-2">
+                <label class="mb-1.5 block text-sm font-medium text-slate-700">回复地址（可选）</label>
+                <a-input v-model:value="formReplyTo" type="email" class="w-full" />
+              </div>
+            </div>
+          </div></template><template #footer><template v-if="Boolean(showModal)"><div class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
+            <a-button html-type="button" class="" @click="closeModal">取消</a-button>
+            <a-button html-type="button" class="" :disabled="isSaving" @click="submitModal" type="primary">
+              {{ isSaving ? '保存中…' : '保存' }}
+            </a-button>
+          </div></template></template></a-modal>
+    
+  </div>
 </template>
-
-<style scoped>
-.smtp-number{width:100%}
-.smtp-test-form{margin-top:16px}
-.smtp-modal-title{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.smtp-row-actions :deep(.ant-btn-link){padding-inline:4px}
-</style>

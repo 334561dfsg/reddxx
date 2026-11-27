@@ -1,13 +1,5 @@
 <script setup>
-// 手动插线 — Ant Design Pro list page (2026-11-28): the combined code/name keyword box became query-card fields with
-// explicit 查询/重置 (plus 手动线控 state), the live board is an AdminTable card (10 rows per page, last refresh in the
-// toolbar), amounts right-aligned, link actions, and the manual-line state/summary (manualOverrideSummary, previously
-// computed but never shown) is a column. Dialogs and the MFA flow are unchanged; feedback is toast instead of alert().
-import { computed, ref, watch, onBeforeUnmount, onMounted } from 'vue'
-import { Button, Space, Tag, TypographyText, message } from 'ant-design-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
+import { computed, reactive, ref, watch, onBeforeUnmount, onMounted } from 'vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import ControlConfigModal from '../../../admin/components/ControlConfigModal.vue'
 import PerpetualManualLineModal from '../../../admin/components/PerpetualManualLineModal.vue'
@@ -18,30 +10,17 @@ import { createDefaultPerpetualControlConfig } from '../../../admin/mock/perpetu
 const clone = (value) => JSON.parse(JSON.stringify(value))
 
 const contracts = ref(createPerpetualControlContractsMock())
-const blank = () => ({ symbol: '', alias: '', manual: 'all' })
-const filters = ref(blank())
-const fields = [
-  { key: 'symbol', label: '合约代码' },
-  { key: 'alias', label: '合约名称' },
-  { key: 'manual', label: '手动线控', options: [{ value: 'all', label: '全部' }, { value: 'active', label: '插线中' }, { value: 'inactive', label: '未插线' }] }
-]
-const columns = [
-  { key: 'rank', title: '排名', width: 70 },
-  { key: 'contract', title: '合约', width: 160, fixed: 'left' },
-  { key: 'price', title: '市场价（USDT）', width: 140, align: 'right' },
-  { key: 'volume', title: '24h 交易量（USD）', width: 150, align: 'right' },
-  { key: 'position', title: '持仓 多/空/净（USD）', width: 210, align: 'right' },
-  { key: 'ratio', title: '多空比', width: 90, align: 'right' },
-  { key: 'platformPnl', title: '平台盈亏（USD）', width: 140, align: 'right' },
-  { key: 'manual', title: '手动线控', width: 260 },
-  { key: 'actions', title: '操作', width: 130, fixed: 'right' }
-]
+const keyword = ref('')
 
 const boardRefreshIntervalMs = ref(2000)
 const boardLastRefreshAt = ref('')
 const boardNow = ref(Date.now())
 
-const boardPage = ref(1)
+const boardPagination = reactive({
+  currentPage: 1,
+  pageSize: 20
+})
+const boardPageSizeOptions = [10, 20, 30, 50]
 
 const metricLabel = {
   LONG: '多头持仓',
@@ -301,22 +280,11 @@ onBeforeUnmount(() => {
   manualTimers.clear()
 })
 
-const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
 const filteredContracts = computed(() => {
-  const f = filters.value
-  return contracts.value.filter((item) =>
-    has(item.symbol, f.symbol) && has(item.alias, f.alias) &&
-    (f.manual === 'all' || isManualActive(item.id) === (f.manual === 'active'))
-  )
+  const kw = keyword.value.trim().toLowerCase()
+  if (!kw) return contracts.value
+  return contracts.value.filter((item) => `${item.symbol} ${item.alias}`.toLowerCase().includes(kw))
 })
-const applySearch = (values) => {
-  filters.value = { ...blank(), ...values }
-  boardPage.value = 1
-}
-const resetSearch = () => {
-  filters.value = blank()
-  boardPage.value = 1
-}
 
 const boardSortedContracts = computed(() => {
   const list = filteredContracts.value.slice()
@@ -328,12 +296,20 @@ const boardSortedContracts = computed(() => {
   return list
 })
 
-// Rank follows the live 24h-volume order across all filtered contracts.
-const boardRank = computed(() => new Map(boardSortedContracts.value.map((contract, index) => [contract.id, index + 1])))
-const boardTotalPages = computed(() => Math.max(1, Math.ceil(boardSortedContracts.value.length / 10)))
+const boardTotalPages = computed(() => {
+  const total = boardSortedContracts.value.length
+  return Math.max(1, Math.ceil(total / Number(boardPagination.pageSize || 20)))
+})
 
-watch(() => boardSortedContracts.value.length, () => {
-  if (boardPage.value > boardTotalPages.value) boardPage.value = boardTotalPages.value
+const boardPageContracts = computed(() => {
+  const start = (boardPagination.currentPage - 1) * boardPagination.pageSize
+  const end = start + boardPagination.pageSize
+  return boardSortedContracts.value.slice(start, end)
+})
+
+watch([() => boardSortedContracts.value.length, () => boardPagination.pageSize], () => {
+  if (boardPagination.currentPage > boardTotalPages.value) boardPagination.currentPage = boardTotalPages.value
+  if (boardPagination.currentPage < 1) boardPagination.currentPage = 1
 })
 
 const marketPriceText = (contract) => {
@@ -342,7 +318,7 @@ const marketPriceText = (contract) => {
   const price = Number((id && marketPrices.value[id]) || baseMarketPrice(symbol))
   if (!Number.isFinite(price) || price <= 0) return '-'
   const decimals = price >= 1000 ? 2 : price >= 1 ? 4 : 6
-  return price.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: decimals })
+  return `$${price.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: decimals })}`
 }
 
 const offsetDirectionLabel = (value) => {
@@ -375,6 +351,10 @@ const manualOverrideSummary = (contractId) => {
     remain
   ].join(' / ')
 }
+
+watch([keyword], () => {
+  boardPagination.currentPage = 1
+})
 
 const showConfigModal = ref(false)
 const activeConfigContractId = ref('')
@@ -498,7 +478,7 @@ const handleMfaVerify = async (code) => {
           contract.id === pendingSaveData.value.contractId ? { ...contract, config: { ...pendingSaveData.value.config } } : contract
         )
         showConfigModal.value = false
-        message.success('线控配置保存成功')
+        alert('线控配置保存成功！')
       } else if (currentSaveAction.value === 'manual') {
         const { contractId, baseConfig, baseStatus, overrideConfig, durationSec } = pendingSaveData.value
         manualOverrides.value = {
@@ -507,11 +487,11 @@ const handleMfaVerify = async (code) => {
         }
         contracts.value = contracts.value.map((c) => (c.id === contractId ? { ...c, status: PERP_CONTROL_CONTRACT_STATUS.RUNNING, config: clone(overrideConfig) } : c))
         scheduleManualExpiry(contractId, durationSec)
-        message.success('手动插线已生效')
+        alert('手动插线已生效！')
       } else if (currentSaveAction.value === 'manual_remove') {
         const { contractId } = pendingSaveData.value
         revertManual(contractId)
-        message.success('手动线控已解除')
+        alert('手动线控已解除！')
       }
 
       pendingSaveData.value = null
@@ -519,7 +499,7 @@ const handleMfaVerify = async (code) => {
       showMfaModal.value = false
     }
   } catch (error) {
-    message.error('MFA 验证失败：' + (error.message || '请稍后重试'))
+    alert('MFA 验证失败：' + (error.message || '请稍后重试'))
   } finally {
     mfaLoading.value = false
   }
@@ -527,38 +507,103 @@ const handleMfaVerify = async (code) => {
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="perpetual-manual-line-filters" :model="filters" :fields="fields" @search="applySearch" @reset="resetSearch" />
-    <AdminTable title="实时合约数据看板" v-model:page="boardPage" :rows="boardSortedContracts" :columns="columns" row-key="id" desktop-only>
-      <template #toolbar>
-        <TypographyText type="secondary">按 24h 交易量排序 · 最后刷新：{{ boardLastRefreshAt || '—' }}</TypographyText>
-      </template>
-      <template #cell="{ column, record: contract }">
-        <template v-if="column.key === 'rank'">{{ boardRank.get(contract.id) }}</template>
-        <Space v-else-if="column.key === 'contract'" direction="vertical" :size="0">
-          <TypographyText strong>{{ contract.symbol }}</TypographyText>
-          <TypographyText type="secondary">{{ contract.alias }}</TypographyText>
-        </Space>
-        <template v-else-if="column.key === 'price'">{{ marketPriceText(contract) }}</template>
-        <template v-else-if="column.key === 'volume'">{{ getMetric(contract, metricLabel.VOLUME)?.value || '—' }}</template>
-        <Space v-else-if="column.key === 'position'" direction="vertical" :size="0" align="end">
-          <span>多 {{ getMetric(contract, metricLabel.LONG)?.value || '—' }} / 空 {{ getMetric(contract, metricLabel.SHORT)?.value || '—' }}</span>
-          <TypographyText :type="parseCompactUsd(getMetric(contract, metricLabel.NET)?.value) >= 0 ? 'success' : 'danger'">净 {{ getMetric(contract, metricLabel.NET)?.value || '—' }}</TypographyText>
-        </Space>
-        <template v-else-if="column.key === 'ratio'">{{ getMetric(contract, metricLabel.RATIO)?.value || '—' }}</template>
-        <TypographyText v-else-if="column.key === 'platformPnl'" :type="parseCompactUsd(getMetric(contract, metricLabel.PLATFORM_PNL)?.value) >= 0 ? 'success' : 'danger'">{{ getMetric(contract, metricLabel.PLATFORM_PNL)?.value || '—' }}</TypographyText>
-        <Space v-else-if="column.key === 'manual'" direction="vertical" :size="0">
-          <Tag :color="isManualActive(contract.id) ? 'purple' : 'default'">{{ isManualActive(contract.id) ? '插线中' : '未插线' }}</Tag>
-          <TypographyText v-if="isManualActive(contract.id)" type="secondary">{{ manualOverrideSummary(contract.id) }}</TypographyText>
-        </Space>
-        <Space v-else-if="column.key === 'actions'" :size="8">
-          <Button type="link" class="px-0" @click="openManualLine(contract.id)">手动插线</Button>
-          <Button v-if="isManualActive(contract.id)" type="link" danger class="px-0" @click="requestRemoveManualLine(contract.id)">解除</Button>
-        </Space>
-        <template v-else>{{ contract[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
-  </PageShell>
+  <section class="space-y-5">
+    <header>
+      <h1 class="text-3xl font-semibold text-slate-900">手动插线</h1>
+      <p class="mt-1 text-sm text-slate-500">实时筛选合约并快速执行手动线控操作</p>
+    </header>
+
+    <div class="max-w-lg">
+      <a-input v-model:value="keyword" type="text" placeholder="搜索合约 (代码或名称)..." class="ant-input !py-2" />
+    </div>
+
+    <article class="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-5 py-4">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">实时合约数据看板</h2>
+          <p class="mt-0.5 text-xs text-slate-500">按 24h 交易量排序，支持手动插线与快速解除</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="text-xs text-slate-500">最后刷新：{{ boardLastRefreshAt || '-' }}</span>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <div class="max-h-[640px] overflow-auto">
+          <a-table  size="small" :pagination="false" :data-source="boardPageContracts" :row-key="(contract) => `board-${contract.id}`" :scroll="{ x: 'max-content' }" :custom-row="(contract, idx) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-sm font-semibold text-slate-900&quot;] })">
+<template #title>排名</template>
+<template #default="{ record: contract, index: idx }">
+                  {{ idx + 1 + (boardPagination.currentPage - 1) * boardPagination.pageSize }}
+                </template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4&quot;] })">
+<template #title>合约</template>
+<template #default="{ record: contract, index: idx }">
+                  <div>
+                    <p class="text-sm font-bold text-slate-900">{{ contract.symbol }}</p>
+                    <p class="text-xs text-slate-500">{{ contract.alias }}</p>
+                  </div>
+                </template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-slate-900&quot;] })">
+<template #title>市场价</template>
+<template #default="{ record: contract, index: idx }">{{ marketPriceText(contract) }}</template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-slate-900&quot;] })">
+<template #title>24h交易量</template>
+<template #default="{ record: contract, index: idx }">{{ getMetric(contract, metricLabel.VOLUME)?.value || '-' }}</template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right text-xs&quot;] })">
+<template #title>持仓(多/空/净)</template>
+<template #default="{ record: contract, index: idx }">
+                  <p class="font-semibold text-slate-900">
+                    {{ getMetric(contract, metricLabel.LONG)?.value || '-' }} /
+                    {{ getMetric(contract, metricLabel.SHORT)?.value || '-' }} /
+                    <span :class="parseCompactUsd(getMetric(contract, metricLabel.NET)?.value) >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+                      {{ getMetric(contract, metricLabel.NET)?.value || '-' }}
+                    </span>
+                  </p>
+                </template>
+</a-table-column>
+<a-table-column key="column-5" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-slate-900&quot;] })">
+<template #title>多空比</template>
+<template #default="{ record: contract, index: idx }">{{ getMetric(contract, metricLabel.RATIO)?.value || '-' }}</template>
+</a-table-column>
+<a-table-column key="column-6" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold&quot;] })">
+<template #title>平台盈亏</template>
+<template #default="{ record: contract, index: idx }">
+                  <span :class="parseCompactUsd(getMetric(contract, metricLabel.PLATFORM_PNL)?.value) >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+                    {{ getMetric(contract, metricLabel.PLATFORM_PNL)?.value || '-' }}
+                  </span>
+                </template>
+</a-table-column>
+<a-table-column key="column-7" align="right" :custom-cell="(contract, idx) => ({ class: [&quot;px-5 py-4 text-right&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: contract, index: idx }">
+                  <div class="flex items-center justify-end gap-2">
+                    <a-button html-type="button" class="ant-btn !h-9 !px-4" @click="openManualLine(contract.id)">手动插线</a-button>
+                    <a-button v-if="isManualActive(contract.id)" html-type="button" class="ant-btn !h-9 !px-4" @click="requestRemoveManualLine(contract.id)">解除</a-button>
+                    <!-- <button type="button" class="ant-btn ant-btn-primary !h-9 !px-4" @click="openConfig(contract.id)">配置</button> -->
+                  </div>
+                </template>
+</a-table-column>
+</a-table>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-white px-5 py-3">
+          <div class="text-sm text-slate-600">
+            共 <span class="font-medium">{{ boardSortedContracts.length }}</span> 条，第 <span class="font-medium">{{ boardPagination.currentPage }}</span> /
+            <span class="font-medium">{{ boardTotalPages }}</span> 页
+          </div>
+          <div class="flex items-center gap-2">
+            <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value.number="boardPagination.pageSize" class="">
+              <a-select-option v-for="size in boardPageSizeOptions" :key="`ps-${size}`" :value="size">{{ size }}/页</a-select-option>
+            </a-select>
+            <a-pagination size="small" :current="boardPagination.currentPage" :total="boardTotalPages" :page-size="1" :show-size-changer="false" @change="boardPagination.currentPage = $event" />
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
 
   <ControlConfigModal
     :open="showConfigModal"

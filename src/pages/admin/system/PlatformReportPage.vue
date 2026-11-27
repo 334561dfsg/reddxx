@@ -1,9 +1,5 @@
 <script setup>
-// 平台报表 — Ant Design Pro report page (2026-11-28): PageShell (no banner), one Card with Ant Tabs for the periods and
-// the month/day pickers in the tab bar, sections as Cards with Statistics and Ant Tables (amount columns right-aligned).
 import { computed, ref } from 'vue'
-import { Button, Card, Col, DatePicker, Row, Space, Statistic, Table, TabPane, Tabs, Tag, TypographyText } from 'ant-design-vue'
-import PageShell from '../earn/EarnPageShell.vue'
 
 const pageVersion = '1.0.0.2.1'
 
@@ -264,21 +260,21 @@ const dataRuleSections = [
   }
 ]
 
-// Asset/rule badge tones as Ant Tag colours (text always shown, colour is decorative only).
-const tagColorByTone = {
-  black: 'default',
-  blue: 'blue',
-  cyan: 'cyan',
-  red: 'red',
-  orange: 'orange',
-  green: 'green',
-  gray: 'default'
+const gridClassByColumns = {
+  full: 'grid-cols-1',
+  small: 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3',
+  asset: 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3'
 }
 
-const assetTableColumns = (section) => [
-  { key: 'asset', dataIndex: 'asset', title: '币种', width: 120, fixed: 'left' },
-  ...section.tableColumns.map((column) => ({ key: column.key, dataIndex: column.key, title: column.label, align: 'right', width: 200 }))
-]
+const badgeClassByTone = {
+  black: 'bg-slate-900 text-white',
+  blue: 'bg-blue-600 text-white',
+  cyan: 'bg-cyan-600 text-white',
+  red: 'bg-rose-600 text-white',
+  orange: 'bg-orange-500 text-white',
+  green: 'bg-emerald-600 text-white',
+  gray: 'bg-slate-500 text-white'
+}
 
 const reportTabs = [
   {
@@ -320,6 +316,17 @@ const selectedDate = ref(getTodayValue())
 const activeTab = computed(() => {
   return reportTabs.find((tab) => tab.id === activeTabId.value) || reportTabs[0]
 })
+
+const selectTab = (tabId) => {
+  activeTabId.value = tabId
+}
+
+const selectAdjacentTab = (event, direction) => {
+  const currentIndex = reportTabs.findIndex((tab) => tab.id === activeTabId.value)
+  const nextIndex = (currentIndex + direction + reportTabs.length) % reportTabs.length
+  activeTabId.value = reportTabs[nextIndex].id
+  event.preventDefault()
+}
 
 const appliedPeriodLabel = computed(() => {
   if (activeTabId.value === 'month') {
@@ -370,73 +377,139 @@ const resetPeriodFilter = () => {
 </script>
 
 <template>
-  <PageShell>
-    <h1 class="sr-only">平台报表</h1>
+  <div class="space-y-4" aria-labelledby="platform-report-title">
+    <h1 id="platform-report-title" class="sr-only">平台报表</h1>
     <span class="sr-only">当前版本号：{{ pageVersion }}</span>
 
-    <Card :bordered="false" :body-style="{ paddingTop: 0 }">
-      <Tabs v-model:activeKey="activeTabId" aria-label="平台报表周期">
-        <template v-if="activeTabId === 'month' || activeTabId === 'today'" #rightExtra>
-          <Space :size="8" wrap aria-label="时间筛选">
-            <TypographyText type="secondary">{{ periodFilterDescription }}</TypographyText>
-            <DatePicker v-if="activeTabId === 'month'" v-model:value="selectedMonth" picker="month" value-format="YYYY-MM" :allow-clear="false" aria-label="查询月份" placeholder="查询月份" />
-            <DatePicker v-else v-model:value="selectedDate" value-format="YYYY-MM-DD" :allow-clear="false" aria-label="查询日期" placeholder="查询日期" />
-            <Button @click="resetPeriodFilter">恢复当前时间</Button>
-          </Space>
-        </template>
-        <TabPane v-for="tab in reportTabs" :key="tab.id" :tab="tab.label" />
-      </Tabs>
+    <div class="rounded-md border border-slate-200 bg-white p-2 shadow-sm">
+      <div class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+        <div class="overflow-x-auto">
+          <div class="flex min-w-max gap-2" role="tablist" aria-label="平台报表周期">
+            <a-button v-for="tab in reportTabs" :id="tab.tabId" :key="tab.id" html-type="button" role="tab" :aria-selected="activeTabId === tab.id" :aria-controls="tab.panelId" class="text-sm font-medium transition focus:outline-none" :class="activeTabId === tab.id ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'" @click="selectTab(tab.id)" @keydown.left="selectAdjacentTab($event, -1)" @keydown.right="selectAdjacentTab($event, 1)">
+              {{ tab.label }}
+            </a-button>
+          </div>
+        </div>
 
-      <div :id="activeTab.panelId" class="platform-report-sections">
-        <Card
-          v-for="section in activeTab.sections"
-          :key="section.title"
-          size="small"
-          :title="displaySectionTitle(section.title)"
+        <div
+          v-if="activeTabId === 'month' || activeTabId === 'today'"
+          class="flex flex-col gap-2 border-t border-slate-200 pt-2 sm:flex-row sm:items-center lg:border-t-0 lg:pt-0"
+          aria-labelledby="platform-report-period-filter-title"
         >
-          <Row v-if="section.summaryItems?.length" :gutter="[24, 16]" class="platform-report-summary">
-            <Col v-for="item in section.summaryItems" :key="`${section.title}-${item.label}`" :xs="12" :md="8">
-              <Statistic :title="item.label" :value="item.value" />
-            </Col>
-          </Row>
+          <span id="platform-report-period-filter-title" class="sr-only">时间筛选</span>
+          <span class="text-sm text-slate-500">{{ periodFilterDescription }}</span>
 
-          <Table
-            v-if="section.kind === 'assetTable'"
-            :data-source="section.rows"
-            :columns="assetTableColumns(section)"
-            :pagination="false"
-            size="small"
-            row-key="asset"
-            :scroll="{ x: 'max-content' }"
-            :aria-label="section.tableLabel"
+          <label
+            v-if="activeTabId === 'month'"
+            class="flex items-center gap-2 text-sm font-medium text-slate-700"
           >
-            <template #bodyCell="{ column, record: row }">
-              <Tag v-if="column.key === 'asset'" :color="tagColorByTone[row.tone]">{{ row.asset }}</Tag>
-              <span v-else class="font-mono">{{ row[column.key] }}</span>
-            </template>
-          </Table>
+            <span class="whitespace-nowrap">查询月份</span>
+            <a-input v-model:value="selectedMonth" type="month" class="text-slate-900" aria-describedby="platform-report-period-filter-title" />
+          </label>
 
-          <Row v-else-if="section.kind === 'rule'" :gutter="[24, 16]">
-            <Col v-for="item in section.items" :key="`${section.title}-${item.label}`" :xs="24">
-              <Space direction="vertical" :size="4">
-                <Space :size="8"><Tag :color="tagColorByTone[item.tone]">{{ item.badge }}</Tag><TypographyText strong>{{ item.label }}</TypographyText></Space>
-                <TypographyText type="secondary">{{ item.value }}</TypographyText>
-              </Space>
-            </Col>
-          </Row>
+          <label
+            v-if="activeTabId === 'today'"
+            class="flex items-center gap-2 text-sm font-medium text-slate-700"
+          >
+            <span class="whitespace-nowrap">查询日期</span>
+            <a-input v-model:value="selectedDate" type="date" class="text-slate-900" aria-describedby="platform-report-period-filter-title" />
+          </label>
 
-          <Row v-else-if="section.items.length" :gutter="[24, 16]">
-            <Col v-for="item in section.items" :key="`${section.title}-${item.label}`" :xs="12" :md="8" :xl="section.columns === 'asset' ? 4 : 8">
-              <Statistic :title="item.label" :value="item.value" />
-            </Col>
-          </Row>
-        </Card>
+          <a-button html-type="button" class="border border-slate-300 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none" @click="resetPeriodFilter">
+            恢复当前时间
+          </a-button>
+        </div>
       </div>
-    </Card>
-  </PageShell>
-</template>
+    </div>
 
-<style scoped>
-.platform-report-sections { display: grid; gap: 16px; }
-.platform-report-summary { margin-bottom: 16px; }
-</style>
+    <div
+      :id="activeTab.panelId"
+      role="tabpanel"
+      :aria-labelledby="activeTab.tabId"
+      class="space-y-4"
+      tabindex="0"
+    >
+      <section
+        v-for="section in activeTab.sections"
+        :key="section.title"
+        class="overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm"
+        :aria-labelledby="`${section.title}-title`"
+      >
+        <div class="border-b border-slate-200 bg-white px-4 py-3">
+          <h2
+            :id="`${section.title}-title`"
+            class="text-base font-semibold text-slate-800"
+          >
+            <span class="mr-2 text-amber-500">!</span>{{ displaySectionTitle(section.title) }}
+          </h2>
+        </div>
+
+        <div class="space-y-4 p-4">
+          <div
+            v-if="section.summaryItems?.length"
+            class="grid gap-3"
+            :class="gridClassByColumns.small"
+          >
+            <article
+              v-for="item in section.summaryItems"
+              :key="`${section.title}-${item.label}-${item.badge || 'no-badge'}`"
+              class="rounded-md border border-slate-200 bg-slate-50 p-4"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="min-w-0 break-words text-sm font-medium text-slate-700">{{ item.label }}</h3>
+                <span
+                  v-if="item.badge"
+                  class="shrink-0 rounded px-2 py-0.5 text-xs font-medium"
+                  :class="badgeClassByTone[item.tone]"
+                >
+                  {{ item.badge }}
+                </span>
+              </div>
+              <p class="mt-3 break-words font-mono text-2xl font-semibold leading-tight text-slate-950">
+                {{ item.value }}
+              </p>
+            </article>
+          </div>
+
+          <div
+            v-if="section.kind === 'assetTable'"
+            class="overflow-x-auto rounded-md border border-slate-200"
+            tabindex="0"
+            :aria-label="`${section.tableLabel}，可横向滚动查看全部列`"
+          >
+            <a-table :data-source="section.rows" :pagination="false" size="small" row-key="asset" :scroll="{ x: 'max-content' }" :aria-label="section.tableLabel"><a-table-column title="币种" key="asset"><template #default="{ record: row }"><span class="inline-flex rounded px-2 py-0.5 text-xs font-medium" :class="badgeClassByTone[row.tone]">{{ row.asset }}</span></template></a-table-column><a-table-column v-for="column in section.tableColumns" :key="column.key" :title="column.label" :data-index="column.key" align="right" /></a-table>
+          </div>
+
+          <div
+            v-else-if="section.items.length"
+            class="grid gap-3"
+            :class="gridClassByColumns[section.columns]"
+          >
+            <article
+              v-for="item in section.items"
+              :key="`${section.title}-${item.label}-${item.badge || 'no-badge'}`"
+              class="rounded-md border border-slate-200 bg-slate-50 p-4"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="min-w-0 break-words text-sm font-medium text-slate-700">{{ item.label }}</h3>
+                <span
+                  v-if="item.badge"
+                  class="shrink-0 rounded px-2 py-0.5 text-xs font-medium"
+                  :class="badgeClassByTone[item.tone]"
+                >
+                  {{ item.badge }}
+                </span>
+              </div>
+              <p
+                class="mt-3 break-words leading-relaxed text-slate-950"
+                :class="section.kind === 'rule' ? 'text-sm' : 'font-mono text-2xl font-semibold leading-tight'"
+              >
+                {{ item.value }}
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</template>

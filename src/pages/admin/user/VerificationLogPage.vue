@@ -1,20 +1,29 @@
 <script setup>
-// 认证日志 — Ant Design Pro list page (2026-11-28): query card (one input per field, explicit 查询/重置),
-// overview Statistics, table card with toolbar and pagination, action type and levels as text Tags (the old type
-// badge prefixed an icon glyph). The read-only detail dialog is unchanged apart from its task-specific title.
-import { ref, computed } from 'vue'
-import { Button, Card, Col, Row, Space, Statistic, Tag, TypographyText, message } from 'ant-design-vue'
-import { ArrowRightOutlined, DownloadOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
+import { message } from 'ant-design-vue'
+import { ref, computed, onMounted, watch, reactive } from 'vue'
 import { verificationLogList } from '../../../admin/mock/verification'
-import {
+import { 
   LOG_ACTION_TYPE,
   LOG_ACTION_TYPE_OPTIONS
 } from '../../../constants/verification'
 
-const page = ref(1)
+// 日志列表数据
+const logList = ref([])
+const loading = ref(false)
+
+// 搜索和筛选
+const searchKeyword = ref('')
+const filterActionType = ref('all')
+const filterDateRange = ref({ start: '', end: '' })
+
+// 分页
+const pagination = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
+
+const totalPages = computed(() => Math.ceil(pagination.total / pagination.pageSize))
 const visibleActionTypes = [
   LOG_ACTION_TYPE.AUDIT_APPROVED,
   LOG_ACTION_TYPE.AUDIT_REJECTED,
@@ -40,75 +49,139 @@ const detailToneConfig = {
   }
 }
 
-const blank = () => ({ userId: '', username: '', operator: '', description: '', actionType: 'all', actionTime: null })
-const filters = ref(blank())
-const fields = [
-  { key: 'userId', label: '用户 ID' },
-  { key: 'username', label: '用户名' },
-  { key: 'operator', label: '操作人' },
-  { key: 'description', label: '描述' },
-  { key: 'actionType', label: '操作类型', options: [{ value: 'all', label: '全部类型' }, ...actionTypeOptions] },
-  { key: 'actionTime', label: '操作时间', range: true }
-]
+// 获取数据
+const fetchLogs = async () => {
+  loading.value = true
+  try {
+    const keyword = searchKeyword.value.trim().toLowerCase()
 
-const pad = (n) => String(n).padStart(2, '0')
-const localDay = (value) => {
-  const date = new Date(value)
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+    let filtered = verificationLogList.filter((log) => visibleActionTypes.includes(log.actionType))
+
+    if (keyword) {
+      filtered = filtered.filter((log) =>
+        String(log.username || '').toLowerCase().includes(keyword)
+        || String(log.userId || '').toLowerCase().includes(keyword)
+        || String(log.operator || '').toLowerCase().includes(keyword)
+        || String(log.description || '').toLowerCase().includes(keyword)
+      )
+    }
+
+    if (filterActionType.value !== 'all') {
+      filtered = filtered.filter((log) => log.actionType === filterActionType.value)
+    }
+
+    if (filterDateRange.value.start || filterDateRange.value.end) {
+      const startTs = filterDateRange.value.start ? new Date(filterDateRange.value.start).getTime() : null
+      const endTs = filterDateRange.value.end
+        ? new Date(`${filterDateRange.value.end}T23:59:59`).getTime()
+        : null
+      filtered = filtered.filter((log) => {
+        const t = new Date(log.actionTime).getTime()
+        if (startTs != null && t < startTs) return false
+        if (endTs != null && t > endTs) return false
+        return true
+      })
+    }
+
+    filtered.sort((a, b) => new Date(b.actionTime) - new Date(a.actionTime))
+    pagination.total = filtered.length
+    const start = (pagination.currentPage - 1) * pagination.pageSize
+    const end = start + pagination.pageSize
+    logList.value = filtered.slice(start, end)
+  } catch (error) {
+    console.error('获取认证日志失败:', error)
+  } finally {
+    loading.value = false
+  }
 }
-const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
 
-const visibleLogs = computed(() => verificationLogList
-  .filter((log) => visibleActionTypes.includes(log.actionType))
-  .sort((a, b) => new Date(b.actionTime) - new Date(a.actionTime)))
+// 监听筛选和分页变化
+watch(
+  [searchKeyword, filterActionType, filterDateRange, () => pagination.currentPage],
+  (newVal, oldVal) => {
+    // 如果是筛选条件变化，重置页码到1
+    const isPaginationChange = newVal[3] !== oldVal[3]
+    if (!isPaginationChange && pagination.currentPage !== 1) {
+      pagination.currentPage = 1
+    } else {
+      fetchLogs()
+    }
+  },
+  { deep: true }
+)
 
-const rows = computed(() => visibleLogs.value.filter((log) => {
-  const f = filters.value
-  const day = localDay(log.actionTime)
-  return has(log.userId, f.userId) && has(log.username, f.username) && has(log.operator, f.operator) &&
-    has(log.description, f.description) &&
-    (f.actionType === 'all' || log.actionType === f.actionType) &&
-    (!f.actionTime || (day >= f.actionTime[0] && day <= f.actionTime[1]))
-}))
+onMounted(fetchLogs)
 
-function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
-function reset() { filters.value = blank(); page.value = 1 }
-
+// 统计信息
 const statistics = computed(() => {
-  const today = new Date().toDateString()
+  const visibleLogs = verificationLogList.filter((log) => visibleActionTypes.includes(log.actionType))
+  const total = visibleLogs.length
+  const today = visibleLogs.filter(log => {
+    const logDate = new Date(log.actionTime).toDateString()
+    const nowDate = new Date().toDateString()
+    return logDate === nowDate
+  }).length
+  
+  const auditActions = visibleLogs.filter(log => 
+    log.actionType === LOG_ACTION_TYPE.AUDIT_APPROVED || 
+    log.actionType === LOG_ACTION_TYPE.AUDIT_REJECTED || 
+    log.actionType === LOG_ACTION_TYPE.AUDIT_RESUBMIT
+  ).length
+  
   return [
-    { label: '今日日志', value: visibleLogs.value.filter((log) => new Date(log.actionTime).toDateString() === today).length, suffix: '条' },
-    { label: '总日志数', value: visibleLogs.value.length, suffix: '条' },
-    { label: '审核操作', value: visibleLogs.value.length, suffix: '次' }
+    {
+      label: '今日日志',
+      value: today.toLocaleString(),
+      trend: '条记录',
+      color: 'blue'
+    },
+    {
+      label: '总日志数',
+      value: total.toLocaleString(),
+      trend: '所有记录',
+      color: 'gray'
+    },
+    {
+      label: '审核操作',
+      value: auditActions.toLocaleString(),
+      trend: '次审核',
+      color: 'emerald'
+    }
   ]
 })
 
 // 操作类型配置
 const actionTypeConfig = {
-  config_update: { text: '配置更新', color: 'purple' },
-  audit_approved: { text: '审核通过', color: 'green' },
-  audit_rejected: { text: '审核拒绝', color: 'red' },
-  audit_resubmit: { text: '要求补件', color: 'gold' },
-  level_upgrade: { text: '等级升级', color: 'blue' },
-  level_downgrade: { text: '等级降级', color: 'orange' }
+  'config_update': { 
+    text: '配置更新', 
+    class: 'bg-purple-100 text-purple-700',
+    icon: '⚙️'
+  },
+  'audit_approved': { 
+    text: '审核通过', 
+    class: 'bg-emerald-100 text-emerald-700',
+    icon: '✓'
+  },
+  'audit_rejected': { 
+    text: '审核拒绝', 
+    class: 'bg-rose-100 text-rose-700',
+    icon: '✗'
+  },
+  'audit_resubmit': { 
+    text: '要求补件', 
+    class: 'bg-amber-100 text-amber-700',
+    icon: '↩'
+  },
+  'level_upgrade': { text: '等级升级', class: 'bg-blue-100 text-blue-700', icon: '↑' },
+  'level_downgrade': { text: '等级降级', class: 'bg-orange-100 text-orange-700', icon: '↓' }
 }
 
 // 等级配置
 const levelConfig = {
-  none: { text: '未认证', color: 'default' },
-  basic: { text: '初级认证', color: 'blue' },
-  advanced: { text: '高级认证', color: 'purple' }
+  'none': { text: '未认证', class: 'bg-gray-100 text-gray-700' },
+  'basic': { text: '初级认证', class: 'bg-blue-100 text-blue-700' },
+  'advanced': { text: '高级认证', class: 'bg-purple-100 text-purple-700' }
 }
-
-const columns = [
-  { key: 'actionTime', title: '时间', width: 180, fixed: 'left' },
-  { key: 'actionType', title: '操作类型', width: 110 },
-  { key: 'user', title: '用户', width: 170 },
-  { key: 'levels', title: '等级变更', width: 230 },
-  { key: 'operator', title: '操作人', width: 110 },
-  { key: 'description', title: '描述', width: 240 },
-  { key: 'actions', title: '操作', width: 80, fixed: 'right' }
-]
 
 // 格式化日期
 const formatDate = (dateString) => {
@@ -158,6 +231,8 @@ const selectedSiteInfo = computed(() => {
   }
 })
 
+// Toast提示
+
 const viewDetail = (log) => {
   selectedLog.value = log
   showDetailModal.value = true
@@ -168,47 +243,170 @@ const closeDetail = () => {
   selectedLog.value = null
 }
 
-// Mock export: no file yet, so say so (operation feedback is toast-only).
+// 导出日志
 const exportLogs = () => {
-  message.info(`已按当前筛选条件准备导出 ${rows.value.length} 条认证日志（演示环境不生成文件）`)
+  showToast('导出功能开发中...', 'info')
+}
+
+// 重置筛选
+const resetFilters = () => {
+  searchKeyword.value = ''
+  filterActionType.value = 'all'
+  filterDateRange.value = { start: '', end: '' }
+  pagination.currentPage = 1
+}
+
+// 显示Toast提示
+// Operation feedback through Ant message (AGENTS.md toast rule) instead of a hand-built toast.
+function showToast(text, kind = 'success') {
+  ;(message[kind] || message.info)(String(text ?? ''))
 }
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="verification-log-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
-    <Card :bordered="false" title="日志概况">
-      <Row :gutter="24">
-        <Col v-for="stat in statistics" :key="stat.label" :xs="12" :md="6">
-          <Statistic :title="stat.label" :value="stat.value" :suffix="stat.suffix" />
-        </Col>
-      </Row>
-    </Card>
-    <AdminTable title="操作日志" v-model:page="page" :rows="rows" :columns="columns" row-key="id" desktop-only>
-      <template #toolbar>
-        <Button @click="exportLogs"><template #icon><DownloadOutlined /></template>导出</Button>
-      </template>
-      <template #cell="{ column, record }">
-        <template v-if="column.key === 'actionTime'">{{ formatDate(record.actionTime) }}</template>
-        <Tag v-else-if="column.key === 'actionType'" :color="actionTypeConfig[record.actionType]?.color">{{ actionTypeConfig[record.actionType]?.text || record.actionType }}</Tag>
-        <Space v-else-if="column.key === 'user'" direction="vertical" :size="0">
-          <TypographyText strong>{{ record.username }}</TypographyText>
-          <TypographyText type="secondary" class="font-mono">{{ record.userId }}</TypographyText>
-        </Space>
-        <template v-else-if="column.key === 'levels'">
-          <Space v-if="record.beforeLevel && record.afterLevel" :size="4" wrap>
-            <Tag :color="levelConfig[record.beforeLevel]?.color">{{ levelConfig[record.beforeLevel]?.text || record.beforeLevel }}</Tag>
-            <ArrowRightOutlined aria-label="变更为" />
-            <Tag :color="levelConfig[record.afterLevel]?.color">{{ levelConfig[record.afterLevel]?.text || record.afterLevel }}</Tag>
-          </Space>
-          <TypographyText v-else type="secondary">—</TypographyText>
-        </template>
-        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" @click="viewDetail(record)">详情</Button>
-        <template v-else>{{ record[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+  <div class="space-y-6">
+    <!-- 页面标题 -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">认证日志</h1>
+        <p class="mt-1 text-sm text-slate-500">查看所有认证相关的操作记录</p>
+      </div>
+    </div>
 
-    <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showDetailModal && selectedLog && selectedSiteInfo)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeDetail"><template #title><template v-if="Boolean(showDetailModal && selectedLog && selectedSiteInfo)"><div class="flex items-center justify-between gap-3"><span>认证日志详情</span><a-button aria-label="关闭" html-type="button"   @click="closeDetail">×</a-button></div></template></template><template v-if="showDetailModal && selectedLog && selectedSiteInfo"><div class="border-b border-slate-200 bg-gradient-to-r from-white to-slate-100 px-5 py-4">
+    <!-- 统计卡片 -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div 
+        v-for="stat in statistics" 
+        :key="stat.label"
+        class="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-slate-600">{{ stat.label }}</p>
+            <p :class="`text-2xl font-bold text-${stat.color}-600 mt-2`">{{ stat.value }}</p>
+            <p class="text-xs text-slate-500 mt-1">{{ stat.trend }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 日志列表卡片 -->
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden relative min-h-[400px] shadow-sm">
+      <div class="flex items-center justify-between border-b border-slate-200 p-4 bg-white">
+        <h3 class="text-base font-semibold text-slate-900">操作日志</h3>
+        <a-button @click="exportLogs" class="inline-flex items-center gap-2" html-type="button">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          导出日志
+        </a-button>
+      </div>
+
+      <!-- 筛选栏 -->
+      <div class="p-4 border-b border-slate-100 bg-slate-50/30">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- 搜索 -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1.5">搜索</label>
+            <a-input v-model:value="searchKeyword" type="text" placeholder="用户名、操作人..." class="" />
+          </div>
+          
+          <!-- 操作类型 -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1.5">操作类型</label>
+            <a-select v-model:value="filterActionType" class="">
+              <a-select-option value="all">全部类型</a-select-option>
+              <a-select-option v-for="option in actionTypeOptions" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </a-select-option>
+            </a-select>
+          </div>
+          
+          <!-- 时间范围 -->
+          <div class="flex items-end gap-2 lg:col-span-2">
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">申请时间范围</label>
+              <div class="flex items-center gap-2">
+                <a-input v-model:value="filterDateRange.start" type="date" class="" />
+                <span class="text-slate-400">至</span>
+                <a-input v-model:value="filterDateRange.end" type="date" class="" />
+              </div>
+            </div>
+            <a-button @click="resetFilters" title="重置筛选" class="text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors" html-type="button">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </a-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 加载遮罩 -->
+      <div v-if="loading" class="absolute inset-0 bg-white/60 z-10 flex items-center justify-center">
+        <div class="flex flex-col items-center">
+          <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+          <p class="mt-2 text-sm text-slate-500 font-medium">加载中...</p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <a-table  :data-source="logList" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(log) => log.id" :custom-row="(log, index) => ({ class: [&quot;hover:bg-gray-50&quot;] })">
+<a-table-column key="column-0" ><template #title>时间</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap text-sm text-gray-900">
+                {{ formatDate(log.actionTime) }}
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>操作类型</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap">
+                <span :class="actionTypeConfig[log.actionType].class" class="px-2 py-1 text-xs font-semibold rounded-full inline-flex items-center">
+                  <span class="mr-1">{{ actionTypeConfig[log.actionType].icon }}</span>
+                  {{ actionTypeConfig[log.actionType].text }}
+                </span>
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>用户</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{{ log.username }}</div>
+                <div class="text-xs text-gray-400">{{ log.userId }}</div>
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>等级变更</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap">
+                <div v-if="log.beforeLevel && log.afterLevel" class="flex items-center space-x-2">
+                  <span :class="levelConfig[log.beforeLevel].class" class="px-2 py-1 text-xs font-semibold rounded-full">
+                    {{ levelConfig[log.beforeLevel].text }}
+                  </span>
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                  <span :class="levelConfig[log.afterLevel].class" class="px-2 py-1 text-xs font-semibold rounded-full">
+                    {{ levelConfig[log.afterLevel].text }}
+                  </span>
+                </div>
+                <span v-else class="text-sm text-gray-400">-</span>
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>操作人</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap text-sm text-gray-500">
+                {{ log.operator }}
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>描述</template><template #default="{ record: log, index: index }"><div class="  text-sm text-gray-900">
+                {{ log.description }}
+              </div></template></a-table-column>
+<a-table-column key="column-6" ><template #title>操作</template><template #default="{ record: log, index: index }"><div class="  whitespace-nowrap text-sm font-medium">
+                <a-button @click="viewDetail(log)" class="text-blue-600 hover:text-blue-900" html-type="button">
+                  详情
+                </a-button>
+              </div></template></a-table-column>
+</a-table>
+      </div>
+
+      <div v-if="!loading && logList.length === 0" class="text-center py-12">
+        <p class="text-gray-500">暂无日志记录</p>
+      </div>
+
+      <!-- 分页 -->
+      <div v-if="totalPages > 1" class="border-t border-gray-200 px-6 py-3 flex items-center justify-between">
+        <div class="text-sm text-gray-600">
+          共 <span class="font-medium">{{ pagination.total }}</span> 条记录，第 <span class="font-medium">{{ pagination.currentPage }}</span> / <span class="font-medium">{{ totalPages }}</span> 页
+        </div>
+        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false"  :disabled="loading" @change="pagination.currentPage = $event" />
+      </div>
+    </div>
+
+    <transition name="audit-drawer">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showDetailModal && selectedLog && selectedSiteInfo)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeDetail"><template #title><template v-if="Boolean(showDetailModal && selectedLog && selectedSiteInfo)"><div class="flex items-center justify-between gap-3"><span>详情</span><a-button aria-label="关闭" html-type="button"   @click="closeDetail">×</a-button></div></template></template><template v-if="showDetailModal && selectedLog && selectedSiteInfo"><div class="border-b border-slate-200 bg-gradient-to-r from-white to-slate-100 px-5 py-4">
             <div class="flex items-start justify-between gap-4">
               <div>
                 <div class="text-xs font-medium tracking-wide text-slate-500">认证日志详情抽屉</div>
@@ -316,5 +514,30 @@ const exportLogs = () => {
               <a-button class="" @click="closeDetail" html-type="button">关闭</a-button>
             </div>
           </section></template></template></a-modal>
-  </PageShell>
+    </transition>
+
+  </div>
 </template>
+
+<style scoped>
+.audit-drawer-enter-active,
+.audit-drawer-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.audit-drawer-enter-from,
+.audit-drawer-leave-to {
+  opacity: 0;
+}
+
+.audit-drawer-enter-from > section,
+.audit-drawer-leave-to > section {
+  transform: translateY(-100%);
+}
+
+.audit-drawer-enter-active > section,
+.audit-drawer-leave-active > section {
+  transition: transform 0.25s ease;
+  transform: translateY(0);
+}
+</style>

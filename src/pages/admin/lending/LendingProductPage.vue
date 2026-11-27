@@ -302,14 +302,14 @@
                       </a-select>
                     </div>
                     <div>
-                      <label class="block text-sm font-medium text-slate-700 mb-1.5">排序权重</label>
+                      <label class="block text-sm font-medium text-slate-700 mb-1.5">产品排序</label>
                       <a-input
                         v-model:value.number="formData.sortOrder"
                         type="number"
-                        placeholder="数值越大越靠前"
+                        placeholder="数字越大越靠前"
                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none"
                       />
-                      <p class="mt-1 text-xs text-slate-500">数值越大越靠前</p>
+                      <p class="mt-1 text-xs text-slate-500">数字越大越靠前</p>
                     </div>
                   </div>
                 </div>

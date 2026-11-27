@@ -1,60 +1,23 @@
 <script setup>
-// 代理管理 — Ant Design Pro list page (2026-11-28): query card with one field per filter (the combined
-// UID/username/email box is split), table card with the 添加代理 button in its toolbar, link actions with the rest in a
-// 更多 menu, text status Tags, toast feedback (Ant message) instead of alert(), and a guarded suspend/activate dialog
-// instead of window.confirm. The list is loaded once from the mock and filtered/paginated by the shared table card.
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { Button, Descriptions, DescriptionsItem, Dropdown, Menu, MenuItem, Space, Tag, TypographyText, message } from 'ant-design-vue'
-import { DownOutlined, PlusOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
-import AdminModal from '../earn/EarnAdminModal.vue'
+import { ref, computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { agentApi, normalizeAgentProductCommission } from '../../../admin/mock/agent.js'
 import { AGENT_STATUS, AGENT_STATUS_OPTIONS, AGENT_ROLE_LABEL } from '../../../admin/constants/agent.js'
 import { AGENT_PRODUCT_LINE_DEFS, AGENT_PRODUCT_GROUPS, normalizeAgentLineRate } from '../../../admin/constants/agentCommission.js'
 import AgentDeliveryCard from '../../../admin/components/agent/AgentDeliveryCard.vue'
 import AgentUpgradeDialog from '../../../admin/components/agent/AgentUpgradeDialog.vue'
 
+const searchKeyword = ref('')
+const statusFilter = ref('all')
 const loading = ref(false)
-const page = ref(1)
-const blank = () => ({ uid: '', username: '', email: '', loginAccount: '', status: 'all', createdAt: null })
-const filters = ref(blank())
-const fields = [
-  { key: 'uid', label: 'UID' },
-  { key: 'username', label: '用户名' },
-  { key: 'email', label: '邮箱' },
-  { key: 'loginAccount', label: '登录账号' },
-  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, ...AGENT_STATUS_OPTIONS.map((status) => ({ value: status.value, label: status.label }))] },
-  { key: 'createdAt', label: '成为代理日期', range: true }
-]
-const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
-const localDay = (value) => {
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return ''
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-}
-const rows = computed(() => agentList.value.filter((agent) => {
-  const f = filters.value
-  const day = localDay(agent.createdAt)
-  return has(agent.uid, f.uid) && has(agent.username, f.username) && has(agent.email, f.email) &&
-    has(agent.loginAccount || agent.email, f.loginAccount) &&
-    (f.status === 'all' || agent.status === f.status) &&
-    (!f.createdAt || (day >= f.createdAt[0] && day <= f.createdAt[1]))
-}))
-const columns = [
-  { key: 'uid', title: 'UID', width: 120, fixed: 'left' },
-  { key: 'user', title: '用户信息', width: 260 },
-  { key: 'status', title: '状态', width: 90 },
-  { key: 'totalReferrals', title: '推荐人数', width: 100, align: 'right' },
-  { key: 'commission', title: '累计佣金（USDT）', width: 160, align: 'right' },
-  { key: 'createdAt', title: '成为代理时间', width: 170 },
-  { key: 'actions', title: '操作', width: 220, fixed: 'right' }
-]
 
-function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
-function reset() { filters.value = blank(); page.value = 1 }
+const pagination = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
+
+const totalPages = computed(() => Math.ceil(pagination.total / pagination.pageSize))
 
 const showUpgradeModal = ref(false)
 const showDetailModal = ref(false)
@@ -121,7 +84,7 @@ function validateDraftCommission() {
     if (!d[line.enabledKey]) continue
     d[line.rateKey] = normalizeAgentLineRate(d[line.rateKey])
     if (!validateOne(d[line.rateKey])) {
-      message.error(`「${line.title}」已开启记佣：比例须为 0～1 之间的小数。`)
+      alert(`「${line.title}」已开启记佣：比例须为 0～1 之间的小数。`)
       return false
     }
   }
@@ -129,7 +92,7 @@ function validateDraftCommission() {
     if (d[line.enabledKey]) continue
     const raw = d[line.rateKey]
     if (raw != null && String(raw).trim() && !validateOne(raw)) {
-      message.error(`「${line.title}」比例格式有误，请修正后再保存。`)
+      alert(`「${line.title}」比例格式有误，请修正后再保存。`)
       return false
     }
   }
@@ -139,28 +102,48 @@ function validateDraftCommission() {
 const loadAgentList = async () => {
   loading.value = true
   try {
-    // Load every agent once; the query card filters and the table card paginates them locally.
-    const result = await agentApi.getAgentList({ page: 1, pageSize: Number.MAX_SAFE_INTEGER, searchKeyword: '', status: 'all' })
+    const result = await agentApi.getAgentList({
+      page: pagination.currentPage,
+      pageSize: pagination.pageSize,
+      searchKeyword: searchKeyword.value,
+      status: statusFilter.value
+    })
     if (result.success) {
       agentList.value = result.data.list
+      pagination.total = result.data.total
     }
   } catch (error) {
-    message.error('代理列表加载失败：' + (error?.message || '请稍后重试'))
+    console.error('Failed to load agent list:', error)
   } finally {
     loading.value = false
   }
 }
 
+const handleSearch = () => {
+  pagination.currentPage = 1
+  loadAgentList()
+}
+
+const handleReset = () => {
+  searchKeyword.value = ''
+  statusFilter.value = 'all'
+  pagination.currentPage = 1
+  loadAgentList()
+}
+
+watch(() => pagination.currentPage, () => {
+  loadAgentList()
+})
+
 onMounted(() => {
   loadAgentList()
 })
 
-const STATUS_TAG_COLOR = { green: 'green', gray: 'default', red: 'red' }
 const getStatusConfig = (status) => {
   const config = AGENT_STATUS_OPTIONS.find((s) => s.value === status)
   return {
     text: config?.label || status,
-    color: STATUS_TAG_COLOR[config?.color] || 'default'
+    color: config?.color || 'gray'
   }
 }
 
@@ -244,7 +227,6 @@ const saveAccountSettings = async () => {
       const row = agentList.value.find((a) => a.uid === accountTarget.value.uid)
       if (row) row.loginAccount = res.data.credential.loginAccount
       loadAgentList()
-      message.success('账号设置已保存')
     }
   } catch (error) {
     accountError.value = error.message || '保存失败'
@@ -253,33 +235,20 @@ const saveAccountSettings = async () => {
   }
 }
 
-const statusTarget = ref(null)
-const statusSaving = ref(false)
-const updateStatus = (agent, newStatus) => {
-  statusTarget.value = { agent, newStatus }
-}
-const confirmStatus = async () => {
-  if (statusSaving.value || !statusTarget.value) return
-  const { agent, newStatus } = statusTarget.value
-  statusSaving.value = true
+const updateStatus = async (agent, newStatus) => {
+  if (!confirm(`确认${newStatus === AGENT_STATUS.SUSPENDED ? '暂停' : '激活'}该代理？`)) {
+    return
+  }
+
   try {
     const result = await agentApi.updateAgentStatus(agent.uid, newStatus)
     if (result.success) {
       agent.status = newStatus
-      message.success(result.message || '状态已更新')
-      statusTarget.value = null
-    } else {
-      message.error(result.message || '操作失败')
+      alert(result.message)
     }
   } catch (error) {
-    message.error('操作失败：' + error.message)
-  } finally {
-    statusSaving.value = false
+    alert('操作失败：' + error.message)
   }
-}
-function moreAction(agent, key) {
-  if (key === 'account') openAccountSettings(agent)
-  else if (key === 'status') updateStatus(agent, agent.status === AGENT_STATUS.ACTIVE ? AGENT_STATUS.SUSPENDED : AGENT_STATUS.ACTIVE)
 }
 
 const viewDetail = async (agent) => {
@@ -305,10 +274,11 @@ const openCommissionConfig = async (agent) => {
     if (res.success) {
       commissionDraft.value = normalizeAgentProductCommission(res.data.productCommission)
     } else {
-      message.error('加载代理记佣失败')
+      alert('加载失败')
     }
   } catch (e) {
-    message.error('加载代理记佣失败')
+    alert('加载代理记佣失败')
+    console.error(e)
   } finally {
     commissionLoading.value = false
   }
@@ -348,7 +318,7 @@ const saveCommissionConfig = async () => {
     const payload = normalizeAgentProductCommission({ ...commissionDraft.value })
     const res = await agentApi.updateAgentProductCommission(uid, payload)
     if (res.success) {
-      message.success(res.message || '记佣配置已保存')
+      alert(res.message)
       const row = agentList.value.find((a) => a.uid === uid)
       if (row && res.data?.productCommission) {
         row.productCommission = res.data.productCommission
@@ -360,7 +330,7 @@ const saveCommissionConfig = async () => {
       loadAgentList()
     }
   } catch (e) {
-    message.error(e.message || '保存失败')
+    alert(e.message || '保存失败')
   } finally {
     commissionSaving.value = false
   }
@@ -378,58 +348,114 @@ const formatDate = (dateString) => {
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="agent-management-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
-    <AdminTable title="代理列表" v-model:page="page" :rows="rows" :columns="columns" row-key="uid" :loading="loading" desktop-only>
-      <template #toolbar>
-        <Space :size="8">
-          <Button :loading="loading" @click="loadAgentList">刷新</Button>
-          <Button type="primary" @click="openUpgradeModal"><template #icon><PlusOutlined /></template>添加代理</Button>
-        </Space>
-      </template>
-      <template #cell="{ column, record: agent }">
-        <span v-if="column.key === 'uid'" class="font-mono">{{ agent.uid }}</span>
-        <Space v-else-if="column.key === 'user'" direction="vertical" :size="0">
-          <TypographyText strong>{{ agent.username }}</TypographyText>
-          <TypographyText type="secondary">{{ agent.email }}</TypographyText>
-          <TypographyText type="secondary">登录账号：{{ agent.loginAccount || agent.email }}</TypographyText>
-        </Space>
-        <Tag v-else-if="column.key === 'status'" :color="getStatusConfig(agent.status).color">{{ getStatusConfig(agent.status).text }}</Tag>
-        <Space v-else-if="column.key === 'commission'" direction="vertical" :size="0" align="end">
-          <TypographyText strong>{{ Number(agent.totalCommission || 0).toLocaleString() }}</TypographyText>
-          <TypographyText type="secondary">本月 {{ Number(agent.monthCommission || 0).toLocaleString() }}</TypographyText>
-        </Space>
-        <template v-else-if="column.key === 'createdAt'">{{ formatDate(agent.createdAt) }}</template>
-        <Space v-else-if="column.key === 'actions'" :size="8">
-          <Button type="link" class="px-0" @click="viewDetail(agent)">详情</Button>
-          <Button type="link" class="px-0" @click="openCommissionConfig(agent)">记佣配置</Button>
-          <Dropdown :trigger="['click']">
-            <Button type="link" class="px-0">更多 <DownOutlined /></Button>
-            <template #overlay>
-              <Menu @click="({ key }) => moreAction(agent, key)">
-                <MenuItem key="account">账号设置</MenuItem>
-                <MenuItem key="status" :danger="agent.status === AGENT_STATUS.ACTIVE">{{ agent.status === AGENT_STATUS.ACTIVE ? '暂停' : '激活' }}</MenuItem>
-              </Menu>
-            </template>
-          </Dropdown>
-        </Space>
-        <template v-else>{{ agent[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+  <div class="space-y-6">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">代理管理</h1>
+        <p class="mt-1 text-sm text-slate-500">
+          查看与管理后台代理：启用/暂停、各产品线一级记佣等。
+        </p>
+      </div>
+    </div>
 
-    <AdminModal
-      :open="!!statusTarget"
-      :title="statusTarget?.newStatus === AGENT_STATUS.SUSPENDED ? '暂停代理' : '激活代理'"
-      :confirm-text="statusTarget?.newStatus === AGENT_STATUS.SUSPENDED ? '确认暂停' : '确认激活'"
-      :danger="statusTarget?.newStatus === AGENT_STATUS.SUSPENDED"
-      :busy="statusSaving"
-      :width="480"
-      @close="statusTarget = null"
-      @confirm="confirmStatus"
-    >
-      <TypographyText>确认{{ statusTarget?.newStatus === AGENT_STATUS.SUSPENDED ? '暂停' : '激活' }}该代理？</TypographyText>
-      <TypographyText type="secondary">{{ statusTarget?.agent.username }} · UID {{ statusTarget?.agent.uid }}</TypographyText>
-    </AdminModal>
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm relative min-h-[400px]">
+      <div
+        class="flex flex-wrap items-center gap-3 justify-between border-b border-slate-200 p-4 md:px-6 bg-slate-50/30"
+      >
+        <div class="flex flex-wrap items-center gap-3 flex-1 min-w-0">
+          <h3 class="text-base font-semibold text-slate-900 shrink-0">代理列表</h3>
+          <a-select v-model:value="statusFilter" class="!w-36" @change="handleSearch">
+            <a-select-option value="all">全部状态</a-select-option>
+            <a-select-option v-for="status in AGENT_STATUS_OPTIONS" :key="status.value" :value="status.value">
+              {{ status.label }}
+            </a-select-option>
+          </a-select>
+
+          <div class="relative min-w-[180px] max-w-xl flex-1 basis-[200px]">
+            <a-input v-model:value="searchKeyword" type="text" placeholder="搜索 UID、用户名或邮箱…" class="pl-9" @keyup.enter="handleSearch" />
+            <svg
+              viewBox="0 0 20 20"
+              class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400"
+              fill="none"
+            >
+              <circle cx="9" cy="9" r="5.8" stroke="currentColor" stroke-width="1.6" />
+              <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <a-button html-type="button" class="shrink-0" @click="handleSearch" type="primary">搜索</a-button>
+          <a-button html-type="button" class="shrink-0" @click="handleReset">重置</a-button>
+        </div>
+        <a-button html-type="button" class="shrink-0" @click="openUpgradeModal" type="primary">+ 添加代理</a-button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <div
+          v-if="loading"
+          class="absolute inset-0 bg-white/60 z-10 flex items-center justify-center"
+        >
+          <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+        </div>
+
+        <a-table  :data-source="agentList" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(agent) => agent.id" :custom-row="(agent, index) => ({ class: [&quot;hover:bg-gray-50&quot;] })">
+<a-table-column key="column-0" ><template #title>UID</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap text-sm font-medium text-gray-900">
+                {{ agent.uid }}
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>用户信息</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{{ agent.username }}</div>
+                <div class="text-sm text-gray-500">{{ agent.email }}</div>
+                <div class="mt-0.5 text-xs text-slate-400">登录账号：{{ agent.loginAccount || agent.email }}</div>
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>状态</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap">
+                <span
+                  :class="`px-2 py-1 text-xs font-semibold rounded-full bg-${getStatusConfig(agent.status).color}-100 text-${getStatusConfig(agent.status).color}-800`"
+                >
+                  {{ getStatusConfig(agent.status).text }}
+                </span>
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>推荐人数</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap text-sm text-gray-900">
+                {{ agent.totalReferrals }}
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>累计佣金</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap text-sm text-gray-900">
+                <div class="font-semibold">${{ agent.totalCommission.toLocaleString() }}</div>
+                <div class="text-xs text-gray-500">本月: ${{ agent.monthCommission.toLocaleString() }}</div>
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>成为代理时间</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap text-sm text-gray-500">
+                {{ formatDate(agent.createdAt) }}
+              </div></template></a-table-column>
+<a-table-column key="column-6" align="right"><template #title>操作</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap text-right text-sm font-medium space-x-2">
+                <a-button html-type="button" class="text-blue-600 hover:text-blue-900" @click="viewDetail(agent)">详情</a-button>
+                <a-button html-type="button" class="text-emerald-600 hover:text-emerald-900" @click="openAccountSettings(agent)">账号设置</a-button>
+                <a-button html-type="button" class="text-violet-600 hover:text-violet-900" @click="openCommissionConfig(agent)">
+                  记佣配置
+                </a-button>
+                <a-button v-if="agent.status === AGENT_STATUS.ACTIVE" html-type="button" class="text-yellow-600 hover:text-yellow-900" @click="updateStatus(agent, AGENT_STATUS.SUSPENDED)">
+                  暂停
+                </a-button>
+                <a-button v-else html-type="button" class="text-green-600 hover:text-green-900" @click="updateStatus(agent, AGENT_STATUS.ACTIVE)">
+                  激活
+                </a-button>
+              </div></template></a-table-column><template #emptyText>暂无代理数据</template>
+</a-table>
+      </div>
+
+      <div
+        v-if="pagination.total > 0"
+        class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between"
+      >
+        <div class="text-sm text-slate-700">
+          共 <span class="font-medium">{{ pagination.total }}</span> 条记录， 每页显示
+          <a-select v-model:value="pagination.pageSize" class="!w-16" @change="handleSearch">
+            <a-select-option :value="10">10</a-select-option>
+            <a-select-option :value="20">20</a-select-option>
+            <a-select-option :value="50">50</a-select-option>
+            <a-select-option :value="100">100</a-select-option>
+          </a-select>
+          条
+        </div>
+        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false"  :disabled="loading" @change="pagination.currentPage = $event" />
+      </div>
+    </div>
 
     <AgentUpgradeDialog
       :visible="showUpgradeModal"
@@ -579,34 +605,72 @@ const formatDate = (dateString) => {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </a-button>
-        </div></template></template><template v-if="showDetailModal && selectedAgent"><Descriptions :column="2" size="small" bordered>
-          <DescriptionsItem label="UID"><span class="font-mono">{{ selectedAgent.uid }}</span></DescriptionsItem>
-          <DescriptionsItem label="身份"><Tag>{{ AGENT_ROLE_LABEL }}</Tag></DescriptionsItem>
-          <DescriptionsItem label="用户名">{{ selectedAgent.username }}</DescriptionsItem>
-          <DescriptionsItem label="邮箱">{{ selectedAgent.email }}</DescriptionsItem>
-          <DescriptionsItem label="手机">{{ selectedAgent.phone || '—' }}</DescriptionsItem>
-          <DescriptionsItem label="状态"><Tag :color="getStatusConfig(selectedAgent.status).color">{{ getStatusConfig(selectedAgent.status).text }}</Tag></DescriptionsItem>
-          <DescriptionsItem label="推荐人数">{{ selectedAgent.totalReferrals }}</DescriptionsItem>
-          <DescriptionsItem label="累计佣金（USDT）">{{ Number(selectedAgent.totalCommission || 0).toLocaleString() }}</DescriptionsItem>
-          <DescriptionsItem label="本月佣金（USDT）">{{ Number(selectedAgent.monthCommission || 0).toLocaleString() }}</DescriptionsItem>
-          <DescriptionsItem label="成为代理时间">{{ formatDate(selectedAgent.createdAt) }}</DescriptionsItem>
-          <DescriptionsItem label="最后活跃">{{ selectedAgent.lastActiveAt ? formatDate(selectedAgent.lastActiveAt) : '—' }}</DescriptionsItem>
-        </Descriptions>
-<div class="agent-detail-actions">
-          <a-button html-type="button" @click="showDetailModal = false">关闭</a-button>
-          <a-button html-type="button" type="primary" @click="
+        </div></template></template><template v-if="showDetailModal && selectedAgent"><div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">UID</span>
+            <p class="font-mono text-slate-900 font-semibold">{{ selectedAgent.uid }}</p>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">身份</span>
+            <span class="inline-flex w-fit px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-100 text-slate-800 border border-slate-200">
+              {{ AGENT_ROLE_LABEL }}
+            </span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">用户名</span>
+            <p class="text-slate-900 font-semibold">{{ selectedAgent.username }}</p>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">邮箱</span>
+            <p class="text-slate-900 font-semibold">{{ selectedAgent.email }}</p>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">手机</span>
+            <p class="text-slate-900 font-semibold">{{ selectedAgent.phone }}</p>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">状态</span>
+            <span
+              :class="`inline-flex w-fit px-2.5 py-1 text-xs font-bold rounded-lg bg-${getStatusConfig(selectedAgent.status).color}-50 text-${getStatusConfig(selectedAgent.status).color}-700 border border-${getStatusConfig(selectedAgent.status).color}-100`"
+            >
+              {{ getStatusConfig(selectedAgent.status).text }}
+            </span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">推荐人数</span>
+            <p class="text-slate-900 font-bold text-lg">{{ selectedAgent.totalReferrals }}</p>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">累计佣金</span>
+            <p class="text-emerald-600 font-bold text-lg">${{ selectedAgent.totalCommission.toLocaleString() }}</p>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">本月佣金</span>
+            <p class="text-emerald-600 font-bold text-lg">${{ selectedAgent.monthCommission.toLocaleString() }}</p>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">成为代理时间</span>
+            <p class="text-slate-900 font-medium text-sm">{{ formatDate(selectedAgent.createdAt) }}</p>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">最后活跃</span>
+            <p class="text-slate-900 font-medium text-sm">{{ formatDate(selectedAgent.lastActiveAt) }}</p>
+          </div>
+        </div>
+<div class="mt-8 flex flex-col gap-2 sm:flex-row">
+          <a-button html-type="button" class="flex-1" @click="
               showDetailModal = false;
               openCommissionConfig(selectedAgent);
-            ">
+            " type="primary">
             编辑产品线记佣
           </a-button>
+          <a-button html-type="button" class="flex-1" @click="showDetailModal = false">关闭</a-button>
         </div></template></a-modal>
-
-  </PageShell>
+    
+  </div>
 </template>
 
 <style scoped>
-.agent-detail-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; }
 button:focus {
   outline: none;
 }

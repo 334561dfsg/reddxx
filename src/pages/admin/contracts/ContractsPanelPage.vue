@@ -1,15 +1,6 @@
 <script setup>
-// 合约综合面板 — Ant Design Pro dashboard (2026-11-28): PageShell without h1, the product-line switch is a Card tab
-// list (last refresh in the tab bar), the summary is a Statistic row, and the contract overview is an AdminTable card
-// (amounts right-aligned in USD, product line as a Tag, link actions). The manual-line dialog and harvest panel are
-// unchanged; feedback is toast instead of alert(). Fixes: the 做多/做空 cards showed long/short P&L without saying so
-// (titles now read 做多盈亏/做空盈亏), and the shortcut buttons pushed legacy /perpetual and /delivery paths that only
-// worked through the redirect; they now push the /admin routes.
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Button, Card, Col, Row, Space, Statistic, Tag, TypographyText, message } from 'ant-design-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
 import { deliveryContractsData, deliveryMarketOverview } from '../../../admin/mock/deliveryReport'
 import { createPerpetualControlContractsMock } from '../../../admin/mock/perpetualControl'
 import { PERP_CONTROL_OFFSET_DIRECTION } from '../../../admin/constants/perpetualControl'
@@ -264,7 +255,7 @@ const applyPerpManual = ({ contractId, payload }) => {
 
   perpContracts.value = perpContracts.value.map((c) => (c.id === id ? { ...c, config: { ...overrideConfig } } : c))
   scheduleManualExpiry(id, durationSec)
-  message.success('手动插线已生效')
+  alert('手动插线已生效！')
   closePerpManualDialog()
 }
 
@@ -409,28 +400,14 @@ const filteredUnifiedContracts = computed(() => {
 const filteredLongTotal = computed(() => filteredUnifiedContracts.value.reduce((sum, row) => sum + Number(row.longAmount || 0), 0))
 const filteredShortTotal = computed(() => filteredUnifiedContracts.value.reduce((sum, row) => sum + Number(row.shortAmount || 0), 0))
 
-const cardTabs = [
-  { key: 'overview', tab: '综合概览' },
-  { key: 'perpetual', tab: '永续' },
-  { key: 'delivery', tab: '交割' }
-]
-const page = ref(1)
-watch(activeTab, () => { page.value = 1 })
-const upColor = '#389e0d'
-const downColor = '#cf1322'
-const columns = [
-  { key: 'product', title: '产品线', width: 90 },
-  { key: 'contract', title: '合约', width: 180 },
-  { key: 'volume', title: '24h 交易量（USD）', width: 160, align: 'right' },
-  { key: 'long', title: '做多总额（USD）', width: 150, align: 'right' },
-  { key: 'short', title: '做空总额（USD）', width: 150, align: 'right' },
-  { key: 'pnl', title: '平台盈亏（USD）', width: 140, align: 'right' },
-  { key: 'extra', title: '风险摘要', width: 180 },
-  { key: 'actions', title: '操作', width: 110, fixed: 'right' }
+const tabItems = [
+  { key: 'overview', label: '综合概览' },
+  { key: 'perpetual', label: '永续' },
+  { key: 'delivery', label: '交割' }
 ]
 
-const openPerpReport = () => router.push('/admin/perpetual/manual-line')
-const openDeliveryContracts = () => router.push('/admin/delivery/harvest-control')
+const openPerpReport = () => router.push('/perpetual/manual-line')
+const openDeliveryContracts = () => router.push('/delivery/harvest-control')
 
 const secondsOf = (tierSec) => {
   const n = Number(tierSec || 0)
@@ -478,55 +455,124 @@ const openDeliveryHarvestControl = (symbol) => {
 
 const onLockDeliveryHarvest = (payload) => {
   const modeLabel = payload?.mode === 'squeeze' ? '双向挤压' : payload?.mode === 'slippage' ? '滑点注入' : '强制结算价'
-  message.info(`已锁定：${payload?.label || '-'}，模式：${modeLabel}（示意页面：未接真实接口）`)
+  alert(`已锁定：${payload?.label || '-'}\n模式：${modeLabel}\n（示意页面：未接真实接口）`)
 }
 </script>
 
 <template>
-  <PageShell>
-    <Card :bordered="false" :tab-list="cardTabs" :active-tab-key="activeTab" @tab-change="(key) => (activeTab = key)">
-      <template #tabBarExtraContent><TypographyText type="secondary">最后刷新：{{ lastRefreshAt || '—' }}</TypographyText></template>
-      <Row :gutter="[24, 16]">
-        <Col :xs="12" :xl="6">
-          <Statistic :title="`平台盈亏（${activeFilterLabel}）`" :value="formatCompactUsd(selectedPlatformPnl, true)" :value-style="{ color: selectedPlatformPnl >= 0 ? upColor : downColor }" />
-        </Col>
-        <Col :xs="12" :xl="6">
-          <Statistic title="做多盈亏" :value="formatCompactUsd(totalLongPnl, true)" />
-          <TypographyText type="secondary">永续合约数 {{ formatNumber(perpContracts.length) }}</TypographyText>
-        </Col>
-        <Col :xs="12" :xl="6">
-          <Statistic title="做空盈亏" :value="formatCompactUsd(totalShortPnl, true)" />
-          <TypographyText type="secondary">交割临近到期 {{ formatNumber(deliveryOverview.nearExpiryContracts || 0) }}</TypographyText>
-        </Col>
-        <Col :xs="12" :xl="6">
-          <Statistic :title="`24h 交易量（${activeFilterLabel}，USD）`" :value="formatNumber(Math.round(selectedVolume))" />
-        </Col>
-      </Row>
-    </Card>
+  <section class="space-y-5">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-semibold text-slate-900">合约综合面板</h1>
+        <p class="mt-1 text-sm text-slate-500">汇总永续/交割平台盈亏与关键风控指标，并提供手动控制入口</p>
+      </div>
+    </header>
 
-    <AdminTable title="合约概览（按 24h 交易量排序）" v-model:page="page" :rows="filteredUnifiedContracts" :columns="columns" row-key="key" desktop-only>
-      <template #toolbar>
-        <Space :size="8">
-          <Button v-if="activeTab !== 'delivery'" @click="openPerpReport">永续线控</Button>
-          <Button v-if="activeTab !== 'perpetual'" @click="openDeliveryContracts">交割场控</Button>
-        </Space>
-      </template>
-      <template #cell="{ column, record: row }">
-        <Tag v-if="column.key === 'product'" :color="row.product === '永续' ? 'blue' : 'purple'">{{ row.product }}</Tag>
-        <Space v-else-if="column.key === 'contract'" direction="vertical" :size="0">
-          <TypographyText strong>{{ row.symbol }}</TypographyText>
-          <TypographyText type="secondary">{{ row.name }}</TypographyText>
-        </Space>
-        <template v-else-if="column.key === 'volume'">{{ formatNumber(Math.round(row.volume)) }}</template>
-        <template v-else-if="column.key === 'long'">{{ formatNumber(Math.round(row.longAmount || 0)) }}</template>
-        <template v-else-if="column.key === 'short'">{{ formatNumber(Math.round(row.shortAmount || 0)) }}</template>
-        <TypographyText v-else-if="column.key === 'pnl'" :type="row.platformPnl >= 0 ? 'success' : 'danger'">{{ formatCompactUsd(row.platformPnl, true) }}</TypographyText>
-        <TypographyText v-else-if="column.key === 'extra'" type="secondary">{{ row.extra }}</TypographyText>
-        <Button v-else-if="column.key === 'actions' && row.product === '永续'" type="link" class="px-0" @click="openPerpManualDialog(row.contractId)">手动插线</Button>
-        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" @click="openDeliveryHarvestControl(row.symbol)">场控设置</Button>
-        <template v-else>{{ row[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+    <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+      <div class="flex flex-wrap items-center gap-3 text-sm">
+        <a-button type="text" html-type="button" class="font-medium" :class="activeTab === t.key ? 'text-blue-600' : 'text-slate-500 hover:text-slate-900'" v-for="t in tabItems" :key="t.key" @click="activeTab = t.key">
+          {{ t.label }}
+        </a-button>
+      </div>
+      <div class="flex items-center gap-3 text-xs text-slate-500">
+        <!-- <span>实时刷新 {{ Number(refreshIntervalMs) / 1000 }}s</span> -->
+        <span>最后刷新：{{ lastRefreshAt || '-' }}</span>
+      </div>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500">平台盈亏</p>
+        <p class="mt-2 text-3xl font-bold font-mono" :class="selectedPlatformPnl >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+          {{ formatCompactUsd(selectedPlatformPnl, true) }}
+        </p>
+        <p class="mt-2 text-xs text-slate-400">筛选：{{ activeFilterLabel }}</p>
+      </article>
+
+      <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500">做多</p>
+        <p class="mt-2 text-3xl font-bold font-mono text-emerald-600">
+          {{ formatCompactUsd(totalLongPnl, true) }}
+        </p>
+        <div class="mt-3 flex items-center justify-between text-xs text-slate-400">
+          <span>合约数</span>
+          <span class="font-mono text-slate-600">{{ formatNumber(perpContracts.length) }}</span>
+        </div>
+      </article>
+
+      <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500">做空</p>
+        <p class="mt-2 text-3xl font-bold font-mono text-rose-600">
+          {{ formatCompactUsd(totalShortPnl, true) }}
+        </p>
+        <div class="mt-3 flex items-center justify-between text-xs text-slate-400">
+          <span>临近到期</span>
+          <span class="font-mono text-slate-600">{{ formatNumber(deliveryOverview.nearExpiryContracts || 0) }}</span>
+        </div>
+      </article>
+
+      <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p class="text-sm text-slate-500">当前筛选交易量</p>
+        <p class="mt-2 text-2xl font-bold font-mono text-slate-900">${{ formatNumber(Math.round(selectedVolume)) }}</p>
+      </article>
+    </div>
+
+    <article class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">合约概览</h2>
+          <p class="mt-0.5 text-xs text-slate-500">按 24h 交易量排序TOP 10，筛选仅影响列表展示</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a-button v-if="activeTab !== 'delivery'" html-type="button" class="ant-btn !h-9 !px-4" @click="openPerpReport">永续线控</a-button>
+          <a-button v-if="activeTab !== 'perpetual'" html-type="button" class="ant-btn !h-9 !px-4" @click="openDeliveryContracts">交割场控</a-button>
+        </div>
+      </div>
+      <div class="overflow-auto">
+        <a-table  size="small" :pagination="false" :data-source="filteredUnifiedContracts" :row-key="(row) => row.key" :scroll="{ x: 'max-content' }" :custom-row="(row, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-sm font-semibold text-slate-900&quot;] })">
+<template #title>产品线</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.product }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4&quot;] })">
+<template #title>合约</template>
+<template #default="{ record: row, index: rowIndex }">
+                <p class="text-sm font-bold text-slate-900">{{ row.symbol }}</p>
+                <p class="text-xs text-slate-500">{{ row.name }}</p>
+              </template>
+</a-table-column>
+<a-table-column key="column-2" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-slate-900&quot;] })">
+<template #title>24h交易量</template>
+<template #default="{ record: row, index: rowIndex }">${{ formatNumber(Math.round(row.volume)) }}</template>
+</a-table-column>
+<a-table-column key="column-3" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-emerald-700&quot;] })">
+<template #title>做多总额</template>
+<template #default="{ record: row, index: rowIndex }">${{ formatNumber(Math.round(row.longAmount || 0)) }}</template>
+</a-table-column>
+<a-table-column key="column-4" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold text-rose-700&quot;] })">
+<template #title>做空总额</template>
+<template #default="{ record: row, index: rowIndex }">${{ formatNumber(Math.round(row.shortAmount || 0)) }}</template>
+</a-table-column>
+<a-table-column key="column-5" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-right text-sm font-semibold&quot;] })">
+<template #title>平台盈亏</template>
+<template #default="{ record: row, index: rowIndex }">
+                <span :class="row.platformPnl >= 0 ? 'text-emerald-600' : 'text-rose-600'">{{ formatCompactUsd(row.platformPnl, true) }}</span>
+              </template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-sm text-slate-600&quot;] })">
+<template #title>风险摘要</template>
+<template #default="{ record: row, index: rowIndex }">{{ row.extra }}</template>
+</a-table-column>
+<a-table-column key="column-7" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-4 text-right&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: row, index: rowIndex }">
+                <a-button v-if="row.product === '永续'" html-type="button" class="ant-btn !h-9 !px-4" @click="openPerpManualDialog(row.contractId)">手动插线</a-button>
+                <a-button v-else html-type="button" class="ant-btn !h-9 !px-4" @click="openDeliveryHarvestControl(row.symbol)">场控设置</a-button>
+              </template>
+</a-table-column>
+</a-table>
+      </div>
+    </article>
 
     <PerpetualManualLineModal
       :open="showPerpManualModal"
@@ -545,5 +591,5 @@ const onLockDeliveryHarvest = (payload) => {
     />
 
     <HarvestControlPanel v-model="showDeliveryHarvestPanel" :row="deliveryHarvestRow" @lock="onLockDeliveryHarvest" />
-  </PageShell>
+  </section>
 </template>

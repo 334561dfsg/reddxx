@@ -27,12 +27,12 @@ test('spot products sort descending without mutating source', async () => {
 })
 
 test('spot product editor saves numeric sort and sorts before pagination', () => {
-  assert.match(pageSource, /状态[\s\S]*排序权重/)
+  assert.match(pageSource, /状态[\s\S]*产品排序/)
   assert.match(pageSource, /v-model:value\.number="formData\.sortOrder"/)
   assert.match(pageSource, /sortOrder: Number\(product\.sortOrder/)
   assert.match(pageSource, /sortOrder: Number\(formData\.value\.sortOrder\)/)
   assert.match(pageSource, /Math\.max\([\s\S]*sortOrder[\s\S]*\+ 10/)
   assert.match(pageSource, /sortSpotProducts/)
-  assert.match(pageSource, /数值越大越靠前/)
+  assert.match(pageSource, /数字越大越靠前/)
   assert.match(mockSource, /sortOrder:/)
 })

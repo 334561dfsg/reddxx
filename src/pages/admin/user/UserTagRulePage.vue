@@ -1,15 +1,5 @@
 <script setup>
-// 用户标签规则 — Ant Design Pro list page (2026-11-28): query card (one input per field, explicit 查询/重置),
-// rule overview Statistics, table card with create toolbar and pagination, link actions (更多 holds 复制/删除), text
-// Tags. The overview used to count enabled/disabled rules on the current page only; it now counts all rules.
-// Native alert/confirm are replaced by toasts and a confirmation dialog; submit is guarded against double clicks.
-import { computed, onMounted, reactive, ref } from 'vue'
-import { Button, Card, Col, Dropdown, Menu, MenuItem, Row, Space, Statistic, Tag, TypographyText, message } from 'ant-design-vue'
-import { DownOutlined, PlusOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
-import AdminModal from '../earn/EarnAdminModal.vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import {
   USER_STATUS_OPTIONS,
   USER_ROLE_OPTIONS,
@@ -26,61 +16,132 @@ import {
   updateUserTagRuleItem
 } from '../../../admin/mock/user'
 
+const keyword = ref('')
+const statusFilter = ref('all')
+
 const loading = ref(false)
 const rules = ref([])
-const page = ref(1)
 
-const blank = () => ({ name: '', tag: '', status: 'all' })
-const filters = ref(blank())
-const fields = [
-  { key: 'name', label: '规则名称' },
-  { key: 'tag', label: '标签标识' },
-  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, ...USER_TAG_RULE_STATUS_OPTIONS] }
-]
-const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
+const pagination = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
+
+const pageSizeOptions = [10, 20, 50]
+
+const totalPages = computed(() => Math.max(1, Math.ceil(pagination.total / pagination.pageSize)))
+const rangeStart = computed(() => {
+  if (pagination.total === 0) return 0
+  return (pagination.currentPage - 1) * pagination.pageSize + 1
+})
+const rangeEnd = computed(() => Math.min(pagination.currentPage * pagination.pageSize, pagination.total))
+
+const pageItems = computed(() => {
+  const total = totalPages.value
+  const current = pagination.currentPage
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+
+  const items = [1]
+  let start = Math.max(2, current - 1)
+  let end = Math.min(total - 1, current + 1)
+
+  if (current <= 3) {
+    start = 2
+    end = 4
+  }
+  if (current >= total - 2) {
+    start = total - 3
+    end = total - 1
+  }
+
+  if (start > 2) items.push('...')
+  for (let i = start; i <= end; i++) items.push(i)
+  if (end < total - 1) items.push('...')
+  items.push(total)
+  return items
+})
+
+const jumpTo = ref('')
+
+const goToPage = (page) => {
+  const p = Number(page)
+  if (!Number.isFinite(p)) return
+  const next = Math.min(Math.max(1, Math.floor(p)), totalPages.value)
+  if (next === pagination.currentPage) return
+  pagination.currentPage = next
+}
+
+const applyJump = () => {
+  if (!jumpTo.value) return
+  goToPage(jumpTo.value)
+  jumpTo.value = ''
+}
 
 const fetchRules = async () => {
   loading.value = true
   try {
-    const { list } = await getUserTagRules({ page: 1, pageSize: Number.MAX_SAFE_INTEGER })
+    const { list, total } = await getUserTagRules({
+      page: pagination.currentPage,
+      pageSize: pagination.pageSize,
+      keyword: keyword.value,
+      status: statusFilter.value
+    })
     rules.value = list
-  } catch (error) {
-    message.error('获取标签规则失败，请稍后重试')
+    pagination.total = total
+
+    const pageCount = Math.max(1, Math.ceil(total / pagination.pageSize))
+    if (pagination.currentPage > pageCount) {
+      pagination.currentPage = pageCount
+      return
+    }
   } finally {
     loading.value = false
   }
 }
 
+watch([keyword, statusFilter], () => {
+  if (pagination.currentPage !== 1) {
+    pagination.currentPage = 1
+    return
+  }
+  fetchRules()
+})
+
+watch(
+  () => pagination.pageSize,
+  () => {
+    if (pagination.currentPage !== 1) {
+      pagination.currentPage = 1
+      return
+    }
+    fetchRules()
+  }
+)
+
+watch(
+  () => pagination.currentPage,
+  () => {
+    fetchRules()
+  }
+)
+
 onMounted(fetchRules)
 
-const rows = computed(() => rules.value.filter((rule) => {
-  const f = filters.value
-  return has(rule.name, f.name) && has(rule.tag, f.tag) && (f.status === 'all' || rule.status === f.status)
-}))
-
-function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
-function reset() { filters.value = blank(); page.value = 1 }
-
-const summary = computed(() => [
-  { label: '规则总数', value: rules.value.length },
-  { label: '已启用', value: rules.value.filter((r) => r.status === USER_TAG_RULE_STATUS.ENABLED).length },
-  { label: '已禁用', value: rules.value.filter((r) => r.status === USER_TAG_RULE_STATUS.DISABLED).length }
-])
-
-const columns = [
-  { key: 'priority', title: '优先级', width: 90, align: 'right' },
-  { key: 'name', title: '规则名称', width: 180 },
-  { key: 'tag', title: '标签', width: 150 },
-  { key: 'matchMode', title: '匹配逻辑', width: 100 },
-  { key: 'conditions', title: '条件概览', width: 360 },
-  { key: 'status', title: '状态', width: 80 },
-  { key: 'actions', title: '操作', width: 200, fixed: 'right' }
-]
+const summary = computed(() => {
+  const total = pagination.total
+  const enabled = rules.value.filter((r) => r.status === USER_TAG_RULE_STATUS.ENABLED).length
+  const disabled = rules.value.filter((r) => r.status === USER_TAG_RULE_STATUS.DISABLED).length
+  return [
+    { label: '规则总数', value: total.toLocaleString() },
+    { label: '已启用', value: enabled.toLocaleString() },
+    { label: '已禁用', value: disabled.toLocaleString() }
+  ]
+})
 
 const modalOpen = ref(false)
 const modalMode = ref('create')
 const editingRuleId = ref(null)
-const submitting = ref(false)
 
 const previewLoading = ref(false)
 const previewResult = ref(null)
@@ -197,7 +258,6 @@ const openDuplicate = (rule) => {
 }
 
 const closeModal = () => {
-  if (submitting.value) return
   modalOpen.value = false
 }
 
@@ -209,10 +269,9 @@ const validateForm = () => {
 }
 
 const submit = async () => {
-  if (submitting.value) return
   const error = validateForm()
   if (error) {
-    message.error(error)
+    alert(error)
     return
   }
 
@@ -225,63 +284,33 @@ const submit = async () => {
     conditions: form.conditions.map((c) => ({ ...c }))
   }
 
-  submitting.value = true
-  try {
-    if (modalMode.value === 'edit' && editingRuleId.value) {
-      await updateUserTagRuleItem(editingRuleId.value, payload)
-      message.success('规则已保存')
-    } else {
-      await createUserTagRuleItem(payload)
-      message.success('规则已创建')
-    }
-    submitting.value = false
-    closeModal()
-    fetchRules()
-  } catch (cause) {
-    message.error(cause?.message || '保存失败，请稍后重试')
-  } finally {
-    submitting.value = false
+  if (modalMode.value === 'edit' && editingRuleId.value) {
+    await updateUserTagRuleItem(editingRuleId.value, payload)
+  } else {
+    await createUserTagRuleItem(payload)
   }
+
+  closeModal()
+  fetchRules()
 }
 
 const toggleStatus = async (rule) => {
-  const next = rule.status === USER_TAG_RULE_STATUS.ENABLED ? USER_TAG_RULE_STATUS.DISABLED : USER_TAG_RULE_STATUS.ENABLED
-  try {
-    await updateUserTagRuleItem(rule.id, { status: next })
-    message.success(next === USER_TAG_RULE_STATUS.ENABLED ? '规则已启用' : '规则已禁用')
-    fetchRules()
-  } catch (cause) {
-    message.error(cause?.message || '操作失败，请稍后重试')
-  }
+  await updateUserTagRuleItem(rule.id, {
+    status: rule.status === USER_TAG_RULE_STATUS.ENABLED ? USER_TAG_RULE_STATUS.DISABLED : USER_TAG_RULE_STATUS.ENABLED
+  })
+  fetchRules()
 }
 
-// 删除确认（EarnAdminModal，替代原生 confirm）
-const deleteTarget = ref(null)
-const deleting = ref(false)
-const confirmDelete = async () => {
-  if (!deleteTarget.value || deleting.value) return
-  deleting.value = true
-  try {
-    await deleteUserTagRuleItem(deleteTarget.value.id)
-    message.success('规则已删除')
-    deleteTarget.value = null
-    fetchRules()
-  } catch (cause) {
-    message.error(cause?.message || '删除失败，请稍后重试')
-  } finally {
-    deleting.value = false
-  }
-}
-
-function onMoreAction(rule, { key }) {
-  if (key === 'duplicate') openDuplicate(rule)
-  else if (key === 'delete') deleteTarget.value = rule
+const deleteRule = async (rule) => {
+  if (!confirm(`确定要删除规则「${rule.name}」吗？`)) return
+  await deleteUserTagRuleItem(rule.id)
+  fetchRules()
 }
 
 const preview = async () => {
   const error = validateForm()
   if (error) {
-    message.error(error)
+    alert(error)
     return
   }
   previewLoading.value = true
@@ -325,45 +354,100 @@ const conditionSummary = (conditions = []) => {
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="user-tag-rule-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
-    <Card :bordered="false" title="规则概况">
-      <Row :gutter="24">
-        <Col v-for="card in summary" :key="card.label" :xs="12" :md="6">
-          <Statistic :title="card.label" :value="card.value" />
-        </Col>
-      </Row>
-    </Card>
-    <AdminTable title="标签规则" v-model:page="page" :rows="rows" :columns="columns" row-key="id" :loading="loading" desktop-only>
-      <template #toolbar>
-        <Button type="primary" @click="openCreate"><template #icon><PlusOutlined /></template>新建规则</Button>
-      </template>
-      <template #cell="{ column, record }">
-        <TypographyText v-if="column.key === 'name'" strong>{{ record.name }}</TypographyText>
-        <Tag v-else-if="column.key === 'tag'" class="font-mono">{{ record.tag }}</Tag>
-        <template v-else-if="column.key === 'matchMode'">{{ matchModeLabel(record.matchMode) }}</template>
-        <TypographyText v-else-if="column.key === 'conditions'" type="secondary" :ellipsis="{ tooltip: conditionSummary(record.conditions) }" :content="conditionSummary(record.conditions) || '—'" />
-        <Tag v-else-if="column.key === 'status'" :color="record.status === USER_TAG_RULE_STATUS.ENABLED ? 'green' : 'default'">{{ statusLabel(record.status) }}</Tag>
-        <Space v-else-if="column.key === 'actions'" :size="8">
-          <Button type="link" class="px-0" @click="openEdit(record)">编辑</Button>
-          <Button type="link" class="px-0" @click="toggleStatus(record)">{{ record.status === USER_TAG_RULE_STATUS.ENABLED ? '禁用' : '启用' }}</Button>
-          <Dropdown :trigger="['click']">
-            <Button type="link" class="px-0">更多<DownOutlined /></Button>
-            <template #overlay>
-              <Menu @click="onMoreAction(record, $event)">
-                <MenuItem key="duplicate">复制</MenuItem>
-                <MenuItem key="delete" danger>删除</MenuItem>
-              </Menu>
-            </template>
-          </Dropdown>
-        </Space>
-        <template v-else>{{ record[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+  <section class="space-y-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">用户标签规则</h1>
+        <p class="text-sm text-slate-500 mt-1">配置用户打标签的规则，支持条件组合与优先级</p>
+      </div>
+      <a-button @click="openCreate" class="" html-type="button" type="primary">+ 新建规则</a-button>
+    </div>
 
-    <AdminModal :open="!!deleteTarget" title="删除标签规则" :width="448" confirm-text="确认删除" danger :busy="deleting" @close="deleteTarget = null" @confirm="confirmDelete">
-      <p>确定要删除规则「{{ deleteTarget?.name }}」吗？删除后将无法恢复。</p>
-    </AdminModal>
+    <div class="grid gap-4 sm:grid-cols-3">
+      <article
+        v-for="card in summary"
+        :key="card.label"
+        class="rounded-xl border border-slate-200 bg-white p-4"
+      >
+        <p class="text-sm text-slate-500">{{ card.label }}</p>
+        <p class="mt-2 text-2xl font-bold text-slate-900 font-mono">{{ card.value }}</p>
+      </article>
+    </div>
+
+    <div class="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+      <div class="grid gap-3 sm:grid-cols-3">
+        <div class="sm:col-span-2">
+          <a-input v-model:value="keyword" class="w-full" placeholder="搜索规则名称 / 标签" />
+        </div>
+        <div>
+          <a-select v-model:value="statusFilter" class="w-full">
+            <a-select-option value="all">全部状态</a-select-option>
+            <a-select-option v-for="opt in USER_TAG_RULE_STATUS_OPTIONS" :key="opt.value" :value="opt.value">
+              {{ opt.label }}
+            </a-select-option>
+          </a-select>
+        </div>
+      </div>
+
+      <div v-if="loading" class="py-10 text-center text-sm text-slate-500">加载中...</div>
+      <div v-else class="overflow-x-auto rounded-lg border border-slate-200">
+        <a-table  :data-source="rules" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(rule) => rule.id" :custom-row="(rule, index) => ({ class: [&quot;hover:bg-slate-50 transition-colors&quot;] })">
+<a-table-column key="column-0" ><template #title>优先级</template><template #default="{ record: rule, index: index }"><div class=" ">
+                <span class="text-sm font-mono text-slate-700">{{ rule.priority }}</span>
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>规则名称</template><template #default="{ record: rule, index: index }"><div class=" ">
+                <p class="text-sm font-medium text-slate-900">{{ rule.name }}</p>
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>标签</template><template #default="{ record: rule, index: index }"><div class=" ">
+                <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-700">
+                  {{ rule.tag }}
+                </span>
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>匹配逻辑</template><template #default="{ record: rule, index: index }"><div class=" ">
+                <span class="text-sm text-slate-700">{{ matchModeLabel(rule.matchMode) }}</span>
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>条件概览</template><template #default="{ record: rule, index: index }"><div class=" ">
+                <p class="text-sm text-slate-600 line-clamp-2 max-w-[520px]">{{ conditionSummary(rule.conditions) }}</p>
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>状态</template><template #default="{ record: rule, index: index }"><div class=" ">
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
+                  :class="rule.status === USER_TAG_RULE_STATUS.ENABLED ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'"
+                >
+                  {{ statusLabel(rule.status) }}
+                </span>
+              </div></template></a-table-column>
+<a-table-column key="column-6" align="right"><template #title>操作</template><template #default="{ record: rule, index: index }"><div class="  text-right">
+                <div class="inline-flex items-center gap-3">
+                  <a-button class="text-sm text-slate-600 hover:text-slate-800" @click="toggleStatus(rule)" html-type="button">
+                    {{ rule.status === USER_TAG_RULE_STATUS.ENABLED ? '禁用' : '启用' }}
+                  </a-button>
+                  <a-button class="text-sm text-blue-600 hover:text-blue-700 font-medium" @click="openEdit(rule)" html-type="button">编辑</a-button>
+                  <a-button class="text-sm text-slate-600 hover:text-slate-800" @click="openDuplicate(rule)" html-type="button">复制</a-button>
+                  <a-button class="text-sm text-rose-600 hover:text-rose-700 font-medium" @click="deleteRule(rule)" html-type="button">删除</a-button>
+                </div>
+              </div></template></a-table-column><template #emptyText>暂无规则</template>
+</a-table>
+      </div>
+
+      <div v-if="pagination.total > 0" class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+          <p class="text-sm text-slate-600">
+            显示 <span class="font-medium">{{ rangeStart }}</span>-<span class="font-medium">{{ rangeEnd }}</span> /
+            <span class="font-medium">{{ pagination.total }}</span> 条
+          </p>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-slate-600">每页</span>
+            <a-select v-model:value="pagination.pageSize" class="">
+              <a-select-option v-for="s in pageSizeOptions" :key="s" :value="s">{{ s }}</a-select-option>
+            </a-select>
+            <span class="text-sm text-slate-600">条</span>
+          </div>
+        </div>
+
+        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false" show-quick-jumper @change="goToPage" />
+      </div>
+    </div>
 
     <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="modalOpen"><header class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-violet-50 to-blue-50 px-6 py-4">
             <div>
@@ -560,11 +644,11 @@ const conditionSummary = (conditions = []) => {
           </div>
         </div></div></template><template #footer><template v-if="modalOpen"><footer class="border-t border-slate-200 bg-white px-6 py-4">
             <div class="flex items-center justify-end gap-3">
-              <a-button html-type="button" class="" :disabled="submitting" @click="closeModal">取消</a-button>
-              <a-button html-type="button" class="" :loading="submitting" @click="submit" type="primary">
+              <a-button html-type="button" class="" @click="closeModal">取消</a-button>
+              <a-button html-type="button" class="" @click="submit" type="primary">
                 {{ modalMode === 'edit' ? '保存规则' : '创建规则' }}
               </a-button>
             </div>
           </footer></template></template></a-modal>
-  </PageShell>
+  </section>
 </template>

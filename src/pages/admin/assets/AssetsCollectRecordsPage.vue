@@ -1,119 +1,207 @@
 <script setup>
-// 归集记录 — Ant Design Pro list page (2026-11-28): query card, status counts as Statistics, table card. The old
-// per-record card with an inline expandable 关联地址 list became a table row whose 关联地址 action opens a Drawer
-// with the full paginated list (same data, every related address still reachable).
 import { computed, ref } from 'vue'
-import { Button, Card, Col, Row, Space, Statistic, Table, Tag, TypographyText } from 'ant-design-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
-import AdminDrawer from '../../../admin/components/antd/AdminDrawer.vue'
 import { ASSET_COLLECT_MODE, ASSET_COLLECT_RECORD_STATUS, ASSET_COMMON_FILTER_ALL } from '../../../admin/constants/assets'
 import { createAssetsCollectRecordsMock } from '../../../admin/mock/assets'
 
+const statusTab = ref(ASSET_COMMON_FILTER_ALL)
+const statusFilter = ref(ASSET_COMMON_FILTER_ALL)
+const coinFilter = ref(ASSET_COMMON_FILTER_ALL)
+const keyword = ref('')
+
+// 分页相关
+const currentPage = ref(1)
+const pageSize = ref(5)
+
 const records = ref(createAssetsCollectRecordsMock())
-const page = ref(1)
 
-const statusMeta = {
-  [ASSET_COLLECT_RECORD_STATUS.PENDING]: { text: '待处理', color: 'orange' },
-  [ASSET_COLLECT_RECORD_STATUS.PROCESSING]: { text: '处理中', color: 'blue' },
-  [ASSET_COLLECT_RECORD_STATUS.DONE]: { text: '已完成', color: 'green' },
-  [ASSET_COLLECT_RECORD_STATUS.FAILED]: { text: '失败', color: 'red' }
-}
-const modeMeta = {
-  [ASSET_COLLECT_MODE.AUTO]: { text: '自动', color: 'purple' },
-  [ASSET_COLLECT_MODE.MANUAL]: { text: '手动', color: 'orange' }
+const relatedPageSize = 5
+const relatedState = ref({})
+
+const ensureRelatedState = (recordId) => {
+  if (!relatedState.value[recordId]) {
+    relatedState.value[recordId] = { expanded: false, page: 1 }
+  }
+  return relatedState.value[recordId]
 }
 
-const stat = computed(() => Object.keys(statusMeta).map((status) => ({ status, text: statusMeta[status].text, count: records.value.filter((r) => r.status === status).length })))
+const isExpanded = (recordId) => ensureRelatedState(recordId).expanded
+const toggleRelated = (recordId) => {
+  const state = ensureRelatedState(recordId)
+  state.expanded = !state.expanded
+  if (!state.expanded) state.page = 1
+}
 
-const coinOptions = computed(() => [...new Set(['USDT', 'BTC', ...records.value.map((r) => r.coin)])].map((value) => ({ value, label: value })))
-const blank = () => ({ status: ASSET_COMMON_FILTER_ALL, coin: ASSET_COMMON_FILTER_ALL, mode: ASSET_COMMON_FILTER_ALL, txHash: '', address: '' })
-const filters = ref(blank())
-const fields = computed(() => [
-  { key: 'status', label: '状态', options: [{ value: ASSET_COMMON_FILTER_ALL, label: '全部状态' }, ...Object.entries(statusMeta).map(([value, meta]) => ({ value, label: meta.text }))] },
-  { key: 'coin', label: '币种', searchable: true, options: [{ value: ASSET_COMMON_FILTER_ALL, label: '全部币种' }, ...coinOptions.value] },
-  { key: 'mode', label: '归集方式', options: [{ value: ASSET_COMMON_FILTER_ALL, label: '全部方式' }, ...Object.entries(modeMeta).map(([value, meta]) => ({ value, label: meta.text }))] },
-  { key: 'txHash', label: '交易哈希' },
-  { key: 'address', label: '地址' }
-])
-const has = (value, query) => !query || String(value).toLowerCase().includes(query.trim().toLowerCase())
+const relatedTotalPages = (record) => Math.max(1, Math.ceil(record.related.length / relatedPageSize))
+const relatedPage = (recordId) => ensureRelatedState(recordId).page
+const relatedItems = (record) => {
+  const state = ensureRelatedState(record.id)
+  const page = state.expanded ? state.page : 1
+  const size = state.expanded ? relatedPageSize : 3
+  const start = (page - 1) * size
+  return record.related.slice(start, start + size)
+}
 
-const rows = computed(() => records.value.filter((r) => {
-  const f = filters.value
-  return (f.status === ASSET_COMMON_FILTER_ALL || r.status === f.status) &&
-    (f.coin === ASSET_COMMON_FILTER_ALL || r.coin === f.coin) &&
-    (f.mode === ASSET_COMMON_FILTER_ALL || r.mode === f.mode) &&
-    has(r.txHash, f.txHash) && (!f.address || has(`${r.from} ${r.to}`, f.address))
+const nextRelatedPage = (record) => {
+  const state = ensureRelatedState(record.id)
+  const totalPages = relatedTotalPages(record)
+  if (state.page < totalPages) state.page += 1
+}
+
+const prevRelatedPage = (record) => {
+  const state = ensureRelatedState(record.id)
+  if (state.page > 1) state.page -= 1
+}
+
+const stat = computed(() => ({
+  pending: records.value.filter((r) => r.status === ASSET_COLLECT_RECORD_STATUS.PENDING).length,
+  processing: records.value.filter((r) => r.status === ASSET_COLLECT_RECORD_STATUS.PROCESSING).length,
+  done: records.value.filter((r) => r.status === ASSET_COLLECT_RECORD_STATUS.DONE).length,
+  failed: records.value.filter((r) => r.status === ASSET_COLLECT_RECORD_STATUS.FAILED).length
 }))
 
-const columns = [
-  { key: 'coin', title: '币种 / 网络', width: 170, fixed: 'left' },
-  { key: 'mode', title: '方式', width: 80 },
-  { key: 'amount', title: '归集金额', width: 150, align: 'right' },
-  { key: 'fee', title: '手续费', width: 110, align: 'right' },
-  { key: 'addresses', title: '发起 / 归集地址', width: 200 },
-  { key: 'txHash', title: '交易哈希', width: 180 },
-  { key: 'time', title: '创建 / 完成时间', width: 150 },
-  { key: 'status', title: '状态', width: 90 },
-  { key: 'actions', title: '操作', width: 130, fixed: 'right' }
-]
+const filtered = computed(() => {
+  const kw = keyword.value.trim().toLowerCase()
+  return records.value.filter((r) => {
+    const tabOk = statusTab.value === ASSET_COMMON_FILTER_ALL || r.status === statusTab.value
+    const filterOk = statusFilter.value === ASSET_COMMON_FILTER_ALL || r.status === statusFilter.value
+    const coinOk = coinFilter.value === ASSET_COMMON_FILTER_ALL || r.coin === coinFilter.value
+    const kwOk = !kw || `${r.txHash} ${r.from} ${r.to}`.toLowerCase().includes(kw)
+    return tabOk && filterOk && coinOk && kwOk
+  })
+})
 
-function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
-function reset() { filters.value = blank(); page.value = 1 }
+const totalPages = computed(() => Math.ceil(filtered.value.length / pageSize.value))
+const pagedRecords = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return filtered.value.slice(start, start + pageSize.value)
+})
 
-const relatedRecord = ref(null)
-const relatedOpen = ref(false)
-const relatedColumns = [
-  { key: 'address', dataIndex: 'address', title: '地址' },
-  { key: 'amount', dataIndex: 'amount', title: '金额', align: 'right', width: 160 },
-  { key: 'status', dataIndex: 'status', title: '状态', width: 90 }
-]
-function openRelated(record) { relatedRecord.value = record; relatedOpen.value = true }
+const goPrev = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
+const goNext = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++
+}
+
+// 当搜索或筛选状态改变时，重置页码
+const handleFilterChange = () => {
+  currentPage.value = 1
+}
+
+const badgeClass = (status) => ({
+  [ASSET_COLLECT_RECORD_STATUS.DONE]: 'bg-emerald-100 text-emerald-700',
+  [ASSET_COLLECT_RECORD_STATUS.PROCESSING]: 'bg-blue-100 text-blue-700',
+  [ASSET_COLLECT_RECORD_STATUS.PENDING]: 'bg-amber-100 text-amber-700',
+  [ASSET_COLLECT_RECORD_STATUS.FAILED]: 'bg-rose-100 text-rose-700'
+}[status] || 'bg-slate-200 text-slate-600')
+
+const modeClass = (mode) => (mode === ASSET_COLLECT_MODE.AUTO ? 'bg-violet-100 text-violet-700' : 'bg-orange-100 text-orange-700')
+const statusText = (status) => ({
+  [ASSET_COLLECT_RECORD_STATUS.DONE]: '已完成',
+  [ASSET_COLLECT_RECORD_STATUS.PROCESSING]: '处理中',
+  [ASSET_COLLECT_RECORD_STATUS.PENDING]: '待处理',
+  [ASSET_COLLECT_RECORD_STATUS.FAILED]: '失败'
+}[status] || '未知')
+const modeText = (mode) => (mode === ASSET_COLLECT_MODE.AUTO ? '自动' : '手动')
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="asset-collect-record-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
-    <Card :bordered="false" title="归集概况">
-      <Row :gutter="24">
-        <Col v-for="item in stat" :key="item.status" :xs="12" :md="6">
-          <Statistic :title="item.text" :value="item.count" suffix="笔" />
-        </Col>
-      </Row>
-    </Card>
-    <AdminTable title="归集记录" v-model:page="page" :rows="rows" :columns="columns" row-key="id" desktop-only>
-      <template #cell="{ column, record }">
-        <Space v-if="column.key === 'coin'" direction="vertical" :size="0">
-          <TypographyText strong>{{ record.coin }}</TypographyText>
-          <TypographyText type="secondary">{{ record.network }}</TypographyText>
-        </Space>
-        <Tag v-else-if="column.key === 'mode'" :color="modeMeta[record.mode]?.color">{{ modeMeta[record.mode]?.text }}</Tag>
-        <span v-else-if="column.key === 'amount'">{{ record.amount.toLocaleString() }} {{ record.coin }}</span>
-        <span v-else-if="column.key === 'fee'">{{ record.fee }} {{ record.coin }}</span>
-        <Space v-else-if="column.key === 'addresses'" direction="vertical" :size="0">
-          <span class="font-mono">{{ record.from }}</span>
-          <TypographyText type="secondary" class="font-mono">→ {{ record.to }}</TypographyText>
-        </Space>
-        <span v-else-if="column.key === 'txHash'" class="font-mono">{{ record.txHash }}</span>
-        <Space v-else-if="column.key === 'time'" direction="vertical" :size="0">
-          <span>{{ record.createdAt }}</span>
-          <TypographyText type="secondary">{{ record.finishedAt === '-' ? '未完成' : `完成于 ${record.finishedAt}` }}</TypographyText>
-        </Space>
-        <Tag v-else-if="column.key === 'status'" :color="statusMeta[record.status]?.color">{{ statusMeta[record.status]?.text || '未知' }}</Tag>
-        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" @click="openRelated(record)">关联地址（{{ record.related.length }}）</Button>
-        <template v-else>{{ record[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+  <section class="space-y-4">
+    <header class="flex items-start justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-semibold text-slate-900">归集记录</h1>
+        <p class="mt-1 text-sm text-slate-500">查看所有资金归集的交易记录</p>
+      </div>
+      <p class="text-sm text-slate-500">
+        待处理: <span class="text-amber-600">{{ stat.pending }}</span>
+        <span class="mx-2">|</span>
+        处理中: <span class="text-blue-600">{{ stat.processing }}</span>
+        <span class="mx-2">|</span>
+        已完成: <span class="text-emerald-600">{{ stat.done }}</span>
+        <span class="mx-2">|</span>
+        失败: <span class="text-rose-600">{{ stat.failed }}</span>
+      </p>
+    </header>
 
-    <AdminDrawer :open="relatedOpen" :title="relatedRecord ? `关联地址 · ${relatedRecord.coin} ${relatedRecord.network}` : '关联地址'" :width="640" @close="relatedOpen = false" @closed="relatedRecord = null">
-      <Table v-if="relatedRecord" :columns="relatedColumns" :data-source="relatedRecord.related" :row-key="(item) => item.address" size="small" :pagination="{ pageSize: 5, showSizeChanger: false, hideOnSinglePage: true, showTotal: (total) => '共 ' + total + ' 个地址' }">
-        <template #bodyCell="{ column, record: item }">
-          <span v-if="column.key === 'address'" class="font-mono">{{ item.address }}</span>
-          <span v-else-if="column.key === 'amount'">{{ item.amount.toLocaleString() }} {{ relatedRecord.coin }}</span>
-          <Tag v-else-if="column.key === 'status'" :color="statusMeta[item.status]?.color">{{ statusMeta[item.status]?.text || '未知' }}</Tag>
-        </template>
-      </Table>
-    </AdminDrawer>
-  </PageShell>
+    <article class="rounded-xl border border-slate-200 bg-white">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
+        <div class="inline-flex items-center gap-4 text-sm">
+          <a-button html-type="button" class="font-medium" :class="statusTab === ASSET_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_COMMON_FILTER_ALL; handleFilterChange()">全部</a-button>
+          <a-button html-type="button" class="font-medium" :class="statusTab === ASSET_COLLECT_RECORD_STATUS.PENDING ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_COLLECT_RECORD_STATUS.PENDING; handleFilterChange()">待处理</a-button>
+          <a-button html-type="button" class="font-medium" :class="statusTab === ASSET_COLLECT_RECORD_STATUS.PROCESSING ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_COLLECT_RECORD_STATUS.PROCESSING; handleFilterChange()">处理中</a-button>
+          <a-button html-type="button" class="font-medium" :class="statusTab === ASSET_COLLECT_RECORD_STATUS.DONE ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_COLLECT_RECORD_STATUS.DONE; handleFilterChange()">已完成</a-button>
+          <a-button html-type="button" class="font-medium" :class="statusTab === ASSET_COLLECT_RECORD_STATUS.FAILED ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = ASSET_COLLECT_RECORD_STATUS.FAILED; handleFilterChange()">失败</a-button>
+        </div>
+        <div class="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap">
+          <a-select v-model:value="statusFilter" class="" @change="handleFilterChange">
+            <a-select-option :value="ASSET_COMMON_FILTER_ALL">全部状态</a-select-option>
+            <a-select-option :value="ASSET_COLLECT_RECORD_STATUS.PENDING">待处理</a-select-option>
+            <a-select-option :value="ASSET_COLLECT_RECORD_STATUS.PROCESSING">处理中</a-select-option>
+            <a-select-option :value="ASSET_COLLECT_RECORD_STATUS.DONE">已完成</a-select-option>
+            <a-select-option :value="ASSET_COLLECT_RECORD_STATUS.FAILED">失败</a-select-option>
+          </a-select>
+          <a-select v-model:value="coinFilter" class="" @change="handleFilterChange">
+            <a-select-option :value="ASSET_COMMON_FILTER_ALL">全部币种</a-select-option>
+            <a-select-option value="USDT">USDT</a-select-option>
+            <a-select-option value="BTC">BTC</a-select-option>
+          </a-select>
+          <a-input v-model:value="keyword" type="text" placeholder="搜索交易哈希或地址..." class="w-full lg:w-72" @input="handleFilterChange" />
+        </div>
+      </div>
+
+      <div class="space-y-3 p-4">
+        <article v-for="record in pagedRecords" :key="record.id" class="rounded-xl border border-slate-200 bg-white p-4">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <h3 class="text-3xl font-semibold text-slate-900">{{ record.coin }}</h3>
+                <span class="text-xl text-slate-500">{{ record.network }}</span>
+                <span class="rounded-md px-2 py-0.5 text-xs" :class="modeClass(record.mode)">{{ modeText(record.mode) }}</span>
+                <span class="rounded-md px-2 py-0.5 text-xs" :class="badgeClass(record.status)">{{ statusText(record.status) }}</span>
+              </div>
+              <div class="mt-3 grid gap-3 md:grid-cols-2 text-sm text-slate-600">
+                <p>发起地址<br /><span class="text-base font-medium text-slate-800">{{ record.from }}</span></p>
+                <p>归集地址<br /><span class="text-base font-medium text-slate-800">{{ record.to }}</span></p>
+              </div>
+              <p class="mt-3 text-sm text-slate-500">TxHash: {{ record.txHash }}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-3xl font-semibold text-slate-900">{{ record.amount.toLocaleString() }} {{ record.coin }}</p>
+              <p class="text-sm text-slate-500">手续费: {{ record.fee }} {{ record.coin }}</p>
+              <p class="mt-4 text-sm text-slate-500">{{ record.createdAt }}<br /><span class="text-emerald-600">{{ record.finishedAt === '-' ? '-' : `完成于 ${record.finishedAt}` }}</span></p>
+            </div>
+          </div>
+
+          <div class="mt-4 border-t border-slate-200 pt-3">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-sm font-medium text-slate-700">关联地址 ({{ record.related.length }})</p>
+              <a-button v-if="record.related.length > 3" html-type="button" class="text-xs text-blue-600" @click="toggleRelated(record.id)">
+                {{ isExpanded(record.id) ? '收起' : `查看更多 (${record.related.length - 3})` }}
+              </a-button>
+            </div>
+            <div class="mt-2 space-y-1">
+              <div v-for="(item, idx) in relatedItems(record)" :key="`${record.id}-${idx}`" class="flex items-center justify-between rounded-md bg-slate-50 px-3 py-2 text-sm">
+                <span class="text-slate-700">{{ item.address }}</span>
+                <div class="flex items-center gap-3">
+                  <span class="font-medium text-slate-900">{{ item.amount.toLocaleString() }} {{ record.coin }}</span>
+                  <span class="rounded-md px-2 py-0.5 text-xs" :class="badgeClass(item.status)">{{ statusText(item.status) }}</span>
+                </div>
+              </div>
+            </div>
+            <a-pagination v-if="isExpanded(record.id) && relatedTotalPages(record) > 1" size="small" :current="relatedPage(record.id)" :page-size="relatedPageSize" :total="record.related.length" :show-size-changer="false"  @change="ensureRelatedState(record.id).page = $event" />
+          </div>
+        </article>
+
+        <div v-if="filtered.length === 0" class="p-8 text-center text-sm text-slate-500">
+          未找到匹配的归集记录
+        </div>
+      </div>
+
+      <!-- 分页栏 -->
+      <footer v-if="totalPages > 1" class="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm">
+        <p class="text-slate-500">共 {{ filtered.length }} 条记录</p>
+        <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="filtered.length" :show-size-changer="false"  @change="currentPage = $event" />
+      </footer>
+    </article>
+  </section>
 </template>

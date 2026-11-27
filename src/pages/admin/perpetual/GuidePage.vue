@@ -1,9 +1,5 @@
 <script setup>
-// 永续线控使用帮助 — guide page on the Ant Design Pro shell (2026-11-28): PageShell title + Card with tab list;
-// the active tab still lives in the ?tab= query.
 import { computed } from 'vue'
-import { Card, TypographyText } from 'ant-design-vue'
-import PageShell from '../earn/EarnPageShell.vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   basicConceptTerms,
@@ -28,7 +24,6 @@ const route = useRoute()
 const router = useRouter()
 
 const tabs = guideTabs
-const cardTabs = tabs.map((t) => ({ key: t.key, tab: t.label }))
 
 const activeTab = computed(() => {
   const key = String(route.query.tab || 'overview')
@@ -39,13 +34,36 @@ const onTabChange = (key) => {
   router.replace({ query: { ...route.query, tab: key } })
 }
 
+const sectionTitle = computed(() => tabs.find((t) => t.key === activeTab.value)?.label || '功能概览')
 </script>
 
 <template>
-  <PageShell title="永续线控使用帮助">
-    <template #description><TypographyText type="secondary">按模块整理永续线控能力、参数定义与实操建议</TypographyText></template>
-    <Card :bordered="false" :tab-list="cardTabs" :active-tab-key="activeTab" @tab-change="onTabChange">
-      <div v-if="activeTab === 'overview'" class="space-y-5 text-sm leading-7 text-slate-700">
+  <section class="space-y-5">
+    <header>
+      <h1 class="text-3xl font-semibold text-slate-900">永续线控使用帮助</h1>
+      <p class="mt-1 text-sm text-slate-500">按模块整理永续线控能力、参数定义与实操建议</p>
+    </header>
+
+    <div class="border-b border-slate-200">
+      <div class="flex flex-wrap gap-5 text-sm">
+        <a-button type="text"
+          v-for="tab in tabs"
+          :key="tab.key"
+          html-type="button"
+          class="relative py-2 text-slate-500 transition hover:text-slate-800"
+          :class="{ 'font-medium text-blue-600': activeTab === tab.key }"
+          @click="onTabChange(tab.key)"
+        >
+          {{ tab.label }}
+          <span v-if="activeTab === tab.key" class="absolute inset-x-0 -bottom-px h-0.5 bg-blue-600"></span>
+        </a-button>
+      </div>
+    </div>
+
+    <article class="rounded-xl border border-slate-200 bg-white p-6">
+      <h2 class="text-xl font-semibold text-slate-900">{{ sectionTitle }}</h2>
+
+      <div v-if="activeTab === 'overview'" class="mt-4 space-y-5 text-sm leading-7 text-slate-700">
         <article class="rounded-xl border border-slate-200 bg-slate-50 p-5">
           <h3 class="text-xl font-semibold text-slate-900">什么是永续线控</h3>
           <p class="mt-3">
@@ -96,7 +114,7 @@ const onTabChange = (key) => {
         </article>
       </div>
 
-      <div v-else-if="activeTab === 'terms'" class="space-y-6">
+      <div v-else-if="activeTab === 'terms'" class="mt-4 space-y-6">
         <section class="rounded-xl border border-slate-200 bg-slate-50 p-4">
           <h3 class="text-lg font-semibold text-slate-900">基础概念</h3>
           <div class="mt-4 space-y-3">
@@ -178,7 +196,7 @@ const onTabChange = (key) => {
         </section>
       </div>
 
-      <div v-else-if="activeTab === 'contract-control'" class="space-y-4 text-sm leading-7 text-slate-700">
+      <div v-else-if="activeTab === 'contract-control'" class="mt-4 space-y-4 text-sm leading-7 text-slate-700">
         <section class="rounded-xl border border-slate-200 bg-slate-50 p-5">
           <h3 class="text-xl font-semibold text-slate-900">合约级线控概述</h3>
           <p class="mt-2">
@@ -240,7 +258,7 @@ const onTabChange = (key) => {
         </section>
       </div>
 
-      <div v-else-if="activeTab === 'examples'" class="space-y-4 text-sm leading-7 text-slate-700">
+      <div v-else-if="activeTab === 'examples'" class="mt-4 space-y-4 text-sm leading-7 text-slate-700">
         <article
           v-for="scene in operationScenarios"
           :key="scene.title"
@@ -254,7 +272,7 @@ const onTabChange = (key) => {
         </article>
       </div>
 
-      <div v-else class="space-y-4 text-sm leading-7 text-slate-700">
+      <div v-else class="mt-4 space-y-4 text-sm leading-7 text-slate-700">
         <article
           v-for="item in faqItems"
           :key="item.q"
@@ -264,6 +282,6 @@ const onTabChange = (key) => {
           <p class="mt-1 text-slate-700">A: {{ item.a }}</p>
         </article>
       </div>
-    </Card>
-  </PageShell>
+    </article>
+  </section>
 </template>

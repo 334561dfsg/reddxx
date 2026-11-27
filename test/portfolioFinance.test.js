@@ -442,7 +442,7 @@ test('portfolio admin redeem mode select only shows two demo options', () => {
   assert.match(source, /const earlyRedeemModeOptions = \[/)
   assert.match(source, /label: '扣除全部收益和手续费'/)
   assert.match(source, /label: '保留收益扣除手续费'/)
-  assert.match(source, /:options="earlyRedeemModeOptions"/)
+  assert.match(source, /v-for="option in earlyRedeemModeOptions"/)
   assert.doesNotMatch(source, /v-for="\(meta, key\) in earlyRedeemModeMeta"/)
 })
 
@@ -454,7 +454,7 @@ test('portfolio admin selects min VIP level from configured VIP levels', () => {
 
   assert.match(source, /getActiveVipLevels/)
   assert.match(source, /activeVipLevels/)
-  assert.match(source, /<Select[^>]*v-model:value="productForm\.minVipLevel"[^>]*:options="vipOptions"/)
+  assert.match(source, /<a-select[\s\S]*?v-model:value\.number="productForm\.minVipLevel"/)
   assert.doesNotMatch(source, /<a-input[^>]*v-model:value\.number="productForm\.minVipLevel"/)
 })
 
@@ -508,13 +508,10 @@ test('portfolio admin requires confirmation before enabling or disabling product
     'utf8'
   )
 
-  // Ant Design Pro migration (2026-11-28): the native window.confirm became a guarded confirmation dialog.
-  assert.doesNotMatch(source, /window\.confirm/)
-  assert.match(source, /<AdminModal[\s\S]*?:open="!!statusTarget"[\s\S]*?@confirm="toggleStatus"/)
+  assert.match(source, /window\.confirm/)
   assert.match(source, /确认禁用/)
   assert.match(source, /确认启用/)
-  assert.match(source, /@click="statusTarget = \{ \.\.\.record \}"/)
-  assert.match(source, /function toggleStatus\(\) \{[\s\S]*?if \(!product\) \{ statusTarget\.value = null; return \}/)
+  assert.match(source, /if \(!confirmed\) return/)
 })
 
 test('front portfolio list places daily yield in the lower metrics grid', () => {
@@ -597,7 +594,7 @@ test('portfolio admin selects composition assets from supported exchange coins',
 
   assert.match(source, /createAssetsCoinsMock/)
   assert.match(source, /supportedTradeCoins/)
-  assert.match(source, /<Select[^>]*v-model:value="asset\.symbol"[^>]*:options="coinOptions"[^>]*show-search/)
+  assert.match(source, /<a-select[\s\S]*?v-model:value="asset\.symbol"/)
   assert.doesNotMatch(source, /<a-input[^>]*v-model:value="asset\.symbol"/)
 })
 
@@ -635,29 +632,47 @@ test('portfolio admin provides yield control and adjustment log pages', () => {
   assert.match(controlSource, /调整原因/)
   assert.match(logSource, /portfolioYieldAdjustmentLogs/)
   assert.match(logSource, /收益调整日志/)
-  assert.match(logSource, /<AdminTable title="收益调整日志"[^>]*v-model:page="page"[^>]*:rows="rows"/)
+  assert.match(logSource, /AdminListPaginationBar/)
   assert.match(stateSource, /portfolioYieldAdjustmentLogs/)
   assert.match(stateSource, /appendPortfolioYieldAdjustmentLog/)
 })
 
 test('portfolio admin list pages use pagination', () => {
-  // Ant Design Pro migration (2026-11-28): every list uses the shared query card and the paginated table card.
   const pages = [
-    { path: '../src/pages/admin/portfolio/PortfolioProductPage.vue', source: 'products' },
-    { path: '../src/pages/admin/portfolio/PortfolioYieldControlPage.vue', source: 'products' },
-    { path: '../src/pages/admin/portfolio/PortfolioOrderPage.vue', source: 'portfolioOrders' },
-    { path: '../src/pages/admin/portfolio/PortfolioYieldRecordsPage.vue', source: 'portfolioYieldRecords' },
-    { path: '../src/pages/admin/portfolio/PortfolioOperationLogPage.vue', source: 'portfolioOperationLogs' }
+    {
+      path: '../src/pages/admin/portfolio/PortfolioProductPage.vue',
+      rows: 'pagedProducts',
+      sourceRows: 'filteredProducts'
+    },
+    {
+      path: '../src/pages/admin/portfolio/PortfolioYieldControlPage.vue',
+      rows: 'pagedProducts',
+      sourceRows: 'filteredProducts'
+    },
+    {
+      path: '../src/pages/admin/portfolio/PortfolioOrderPage.vue',
+      rows: 'pagedOrders',
+      sourceRows: 'filteredOrders'
+    },
+    {
+      path: '../src/pages/admin/portfolio/PortfolioYieldRecordsPage.vue',
+      rows: 'pagedRecords',
+      sourceRows: 'portfolioYieldRecords'
+    },
+    {
+      path: '../src/pages/admin/portfolio/PortfolioOperationLogPage.vue',
+      rows: 'pagedLogs',
+      sourceRows: 'portfolioOperationLogs'
+    }
   ]
 
   for (const page of pages) {
     const source = readFileSync(new URL(page.path, import.meta.url), 'utf8')
-    assert.match(source, /import AdminTable from '\.\.\/earn\/EarnAdminTable\.vue'/, page.path)
-    assert.match(source, /import SearchForm from '\.\.\/earn\/EarnSearchForm\.vue'/, page.path)
-    assert.match(source, /<AdminTable [^>]*v-model:page="page"[^>]*:rows="rows"/, page.path)
-    assert.match(source, new RegExp(`const rows = computed\\(\\(\\) => [\\s\\S]*?${page.source}\\.value`), page.path)
-    assert.match(source, /function search\(values\) \{ filters\.value = \{ \.\.\.blank\(\), \.\.\.values \}; page\.value = 1 \}/, page.path)
-    assert.doesNotMatch(source, /AdminListPaginationBar|<h1/, page.path)
+    assert.match(source, /AdminListPaginationBar/)
+    assert.match(source, /useAdminListPagination/)
+    assert.match(source, new RegExp(`:data-source="${page.rows}"`))
+    assert.match(source, new RegExp(`total-count="${page.sourceRows}\\.length"`))
+    assert.match(source, /@update:page-size="onPageSizeChange"/)
   }
 })
 

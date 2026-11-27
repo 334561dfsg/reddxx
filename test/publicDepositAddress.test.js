@@ -93,9 +93,7 @@ test('page exposes editable sort order for public deposit addresses', () => {
 
   assert.match(source, /排序/)
   assert.match(source, /form\.sortOrder/)
-  assert.match(source, /<InputNumber v-model:value="form\.sortOrder"[^>]*:precision="0"/)
-  assert.match(source, /排序权重/)
-  assert.match(source, /数值越大越靠前/)
+  assert.match(source, /type="number"/)
   assert.match(source, /const sortOrder = normalizeSortOrder\(form\.sortOrder\)/)
   assert.match(source, /sortOrder,/)
 })

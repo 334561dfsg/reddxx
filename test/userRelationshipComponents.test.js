@@ -148,8 +148,7 @@ test('agent parent entry opens an independent agent ownership Dialog', () => {
   assert.match(listSource, /UserAgentParentDialog/)
   assert.match(listSource, /agentParentOpen/)
   assert.match(listSource, /id === 'set-agent-parent'/)
-  // Row entry lives in the 更多 Dropdown of the Pro list (2026-11-28).
-  assert.match(listSource, /\{ id: 'set-agent-parent', label: '设置上级代理' \}/)
+  assert.match(listSource, /aria-label="设置用户上级代理"/)
 })
 
 test('team report entry renders approved metrics and branch details in a child Drawer', () => {

@@ -1,17 +1,12 @@
 <script setup>
-// 周期模板 — Ant Design Pro list (2026-11-28): query card + table card; the editor and unsaved-change AdminDialogs are unchanged.
 import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { Button, Space, Tag, TypographyText } from 'ant-design-vue'
-import { PlusOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
 import { COMMON_FILTER_ALL, DELIVERY_STATUS } from '../../../admin/constants/delivery'
 import { createDeliveryTemplatesMock, saveDeliveryTemplatesMock } from '../../../admin/mock/delivery'
 
-const CYCLE_PREVIEW_LIMIT = 8
+const statusTab = ref(COMMON_FILTER_ALL)
+const search = ref('')
 const expandedTemplateIds = ref(new Set())
 
 const toggleExpand = (id) => {
@@ -23,37 +18,37 @@ const toggleExpand = (id) => {
 }
 
 const isExpanded = (id) => expandedTemplateIds.value.has(id)
-const visibleCycles = (tpl) => (isExpanded(tpl.id) ? tpl.cycles : tpl.cycles.slice(0, CYCLE_PREVIEW_LIMIT))
 
 const templates = ref(createDeliveryTemplatesMock())
 
-const blankFilters = () => ({ name: '', status: COMMON_FILTER_ALL })
-const filters = ref(blankFilters())
-const page = ref(1)
-const queryFields = [
-  { key: 'name', label: '模板名称' },
-  { key: 'status', label: '状态', options: [{ value: COMMON_FILTER_ALL, label: '全部状态' }, { value: DELIVERY_STATUS.ENABLED, label: '已启用' }, { value: DELIVERY_STATUS.DISABLED, label: '已禁用' }] }
-]
+// 分页状态
+const pagination = reactive({
+  currentPage: 1,
+  pageSize: 5,
+  total: 0
+})
 
 const allFilteredTemplates = computed(() => {
-  const kw = filters.value.name.trim().toLowerCase()
+  const kw = search.value.trim().toLowerCase()
   return templates.value.filter((t) => {
-    const hitStatus = filters.value.status === COMMON_FILTER_ALL || t.status === filters.value.status
+    const hitStatus = statusTab.value === COMMON_FILTER_ALL || t.status === statusTab.value
     const hitKw = !kw || t.name.toLowerCase().includes(kw)
     return hitStatus && hitKw
   })
 })
 
-const applySearch = (values) => { filters.value = { ...blankFilters(), ...values }; page.value = 1 }
-const resetSearch = () => { filters.value = blankFilters(); page.value = 1 }
+const filteredTemplates = computed(() => {
+  const start = (pagination.currentPage - 1) * pagination.pageSize
+  const end = start + pagination.pageSize
+  return allFilteredTemplates.value.slice(start, end)
+})
 
-const templateColumns = [
-  { key: 'name', title: '模板名称', width: 200, fixed: 'left' },
-  { key: 'cycles', title: '预设周期（时长 · 收益率）', width: 520 },
-  { key: 'cycleCount', title: '周期数', width: 90, align: 'right' },
-  { key: 'status', title: '状态', width: 90 },
-  { key: 'actions', title: '操作', width: 90, fixed: 'right' }
-]
+const totalPages = computed(() => Math.ceil(allFilteredTemplates.value.length / pagination.pageSize))
+
+// 监听筛选变化，重置页码
+watch([statusTab, search], () => {
+  pagination.currentPage = 1
+})
 
 const durationLabel = (sec) => {
   if (sec < 60) return `${sec}秒`
@@ -250,31 +245,158 @@ const saveTemplate = () => {
   requestTemplateClose({ force: true })
 }
 
+const statusClass = (status) =>
+  status === DELIVERY_STATUS.ENABLED
+    ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
+    : 'bg-rose-50 text-rose-600 border-rose-100'
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="delivery-template-filters" :model="filters" :fields="queryFields" @search="applySearch" @reset="resetSearch" />
-    <AdminTable title="周期模板" v-model:page="page" :rows="allFilteredTemplates" :columns="templateColumns" row-key="id" desktop-only>
-      <template #toolbar>
-        <Button type="primary" @click="openCreateTemplate"><template #icon><PlusOutlined /></template>新增模板</Button>
-      </template>
-      <template #cell="{ column, record }">
-        <Space v-if="column.key === 'name'" direction="vertical" :size="0">
-          <TypographyText strong>{{ record.name }}</TypographyText>
-          <TypographyText type="secondary" class="font-mono">{{ record.id }}</TypographyText>
-        </Space>
-        <Space v-else-if="column.key === 'cycles'" :size="[8, 8]" wrap>
-          <Tag v-for="cycle in visibleCycles(record)" :key="cycle.id">{{ durationLabel(cycle.durationSec) }} · 收益 {{ Number(cycle.payoutPct).toFixed(1) }}%</Tag>
-          <Button v-if="record.cycles.length > CYCLE_PREVIEW_LIMIT" type="link" size="small" class="px-0" :aria-expanded="isExpanded(record.id)" @click="toggleExpand(record.id)">{{ isExpanded(record.id) ? '收起' : `展开全部（还有 ${record.cycles.length - CYCLE_PREVIEW_LIMIT} 个）` }}</Button>
-          <TypographyText v-if="!record.cycles.length" type="secondary">无预设周期</TypographyText>
-        </Space>
-        <template v-else-if="column.key === 'cycleCount'">{{ record.cycles.length }}</template>
-        <Tag v-else-if="column.key === 'status'" :color="record.status === DELIVERY_STATUS.ENABLED ? 'green' : 'default'">{{ record.status === DELIVERY_STATUS.ENABLED ? '已启用' : '已禁用' }}</Tag>
-        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" :aria-label="`编辑周期模板 ${record.name}`" @click="openEditTemplate(record)">编辑</Button>
-        <template v-else>{{ record[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+  <section class="space-y-4">
+    <!-- Page Header -->
+    <header class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-semibold text-slate-900">周期模板管理</h1>
+        <p class="mt-1 text-sm text-slate-500">统一管理交割合约产品的结算周期与对应的收益率预设模板</p>
+      </div>
+    </header>
+
+    <article class="rounded-xl border border-slate-200 bg-white">
+      <!-- 筛选栏 -->
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-4">
+        <div class="flex flex-wrap items-center gap-6">
+          <div class="inline-flex items-center gap-6 text-sm">
+            <a-button type="text"
+              html-type="button"
+              class="relative py-2 font-medium transition-colors"
+              :class="statusTab === COMMON_FILTER_ALL ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
+              @click="statusTab = COMMON_FILTER_ALL"
+            >
+              全部
+            </a-button>
+            <a-button type="text"
+              html-type="button"
+              class="relative py-2 font-medium transition-colors"
+              :class="statusTab === DELIVERY_STATUS.ENABLED ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
+              @click="statusTab = DELIVERY_STATUS.ENABLED"
+            >
+              已启用
+            </a-button>
+            <a-button type="text"
+              html-type="button"
+              class="relative py-2 font-medium transition-colors"
+              :class="statusTab === DELIVERY_STATUS.DISABLED ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
+              @click="statusTab = DELIVERY_STATUS.DISABLED"
+            >
+              已禁用
+            </a-button>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="relative w-64">
+            <a-input
+              v-model:value="search"
+              type="text"
+              class="ant-input w-full pl-9"
+              placeholder="搜索模板名称..."
+            />
+            <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none">
+              <circle cx="9" cy="9" r="5.8" stroke="currentColor" stroke-width="1.6" />
+              <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </div>
+          <a-button type="primary"
+            html-type="button"
+            class="ant-btn ant-btn-primary inline-flex items-center gap-1.5"
+            @click="openCreateTemplate"
+          >
+            <span class="text-lg leading-none">+</span>
+            <span>新增模板</span>
+          </a-button>
+        </div>
+      </div>
+
+      <!-- 列表内容 -->
+      <div class="p-4 space-y-4">
+        <article
+          v-for="tpl in filteredTemplates"
+          :key="tpl.id"
+          class="rounded-lg border border-slate-200 bg-white transition-all hover:border-blue-500/30 hover:shadow-md"
+        >
+          <div class="flex items-center justify-between border-b border-slate-100 p-4">
+            <div class="flex items-center gap-3">
+              <h3 class="text-base font-semibold text-slate-900">{{ tpl.name }}</h3>
+              <span
+                class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded border"
+                :class="statusClass(tpl.status)"
+              >
+                {{ tpl.status === DELIVERY_STATUS.ENABLED ? '已启用' : '已禁用' }}
+              </span>
+              <span class="text-xs text-slate-500">{{ tpl.cycles.length }} 个预设周期</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <a-button
+                v-if="tpl.cycles.length > 8"
+                html-type="button"
+                class="ant-btn ant-btn-link text-xs flex items-center gap-1"
+                @click="toggleExpand(tpl.id)"
+              >
+                <span>{{ isExpanded(tpl.id) ? '收起' : '展开全部' }}</span>
+                <svg
+                  class="w-3 h-3 transition-transform duration-200"
+                  :class="{ 'rotate-180': isExpanded(tpl.id) }"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </a-button>
+              <div class="w-px h-3 bg-slate-200 mx-1"></div>
+              <a-button
+                html-type="button"
+                class="ant-btn"
+                @click="openEditTemplate(tpl)"
+              >
+                编辑
+              </a-button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 p-4 bg-slate-50/30">
+            <div
+              v-for="cycle in isExpanded(tpl.id) ? tpl.cycles : tpl.cycles.slice(0, 8)"
+              :key="cycle.id"
+              class="inline-flex items-center gap-2 rounded border border-slate-200 bg-white px-3 py-2 text-xs"
+            >
+              <span class="text-slate-500">时长:</span>
+              <span class="font-medium text-slate-900">{{ durationLabel(cycle.durationSec) }}</span>
+              <span class="text-slate-200">|</span>
+              <span class="text-slate-500">收益:</span>
+              <span class="font-bold text-emerald-600">{{ cycle.payoutPct.toFixed(1) }}%</span>
+            </div>
+            <div
+              v-if="!isExpanded(tpl.id) && tpl.cycles.length > 8"
+              class="inline-flex items-center justify-center rounded border border-dashed border-slate-300 bg-slate-50 px-3 py-2 cursor-pointer hover:bg-slate-100 transition-all text-xs text-slate-500"
+              @click="toggleExpand(tpl.id)"
+            >
+              还有 {{ tpl.cycles.length - 8 }} 个周期...
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- 分页组件 -->
+      <div v-if="totalPages > 1" class="flex items-center justify-between border-t border-slate-100 p-4">
+        <div class="text-sm text-slate-500">
+          共 <span class="font-medium text-slate-900">{{ allFilteredTemplates.length }}</span> 个模板
+        </div>
+        <div class="flex items-center gap-2">
+          <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="pagination.currentPage = $event" />
+        </div>
+      </div>
+    </article>
 
     <AdminDialog ref="templateFrame" :open="showTemplateModal" :title="editingTemplateId ? '编辑周期模板' : '新增周期模板'" title-id="delivery-template-dialog-title" :width="768" plain :request-close="templateRequestClose" @closed="handleTemplateAfterLeave">
 
@@ -456,6 +578,6 @@ const saveTemplate = () => {
                   </a-button>
                 </footer>
     </AdminDialog>
-  </PageShell>
+  </section>
 </template>
 

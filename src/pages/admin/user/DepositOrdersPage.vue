@@ -1,13 +1,6 @@
 <script setup>
-// 入金审核 — Ant Design Pro list page (2026-11-28): query card (one input per field instead of the old combined
-// keyword box and status pills), business statistics card, table card with pagination, status as a text Tag and link
-// actions. The review drawer (chain-event / manual confirmation), voucher preview and address dialog are unchanged;
-// operation feedback uses Ant message instead of the inline header toast.
-import { computed, onMounted, reactive, ref } from 'vue'
-import { Button, Card, Col, Row, Space, Statistic, Tag, TypographyText, message } from 'ant-design-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
+import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
 import DepositAddressRotationDialog from '../../../admin/components/user/DepositAddressRotationDialog.vue'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import { getUserById } from '../../../admin/mock/user'
@@ -18,9 +11,12 @@ import {
   fundOrderApi
 } from '../../../admin/mock/fundOrders'
 
+const keyword = ref('')
+const statusFilter = ref(FUND_ORDER_FILTER_ALL)
+const coinFilter = ref(FUND_ORDER_FILTER_ALL)
 const loading = ref(false)
-const orders = ref([])
-const page = ref(1)
+const rows = ref([])
+const aggregates = ref(null)
 const addressDialogOpen = ref(false)
 const addressUser = ref(null)
 const addressOrder = ref(null)
@@ -48,63 +44,37 @@ const manualConfirmation = reactive({
 const actionType = ref('')
 const actionNote = ref('')
 const previewVoucher = ref(null)
+const toast = ref({ show: false, text: '', kind: 'info' })
+
+const pagination = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
 
 const coins = ['USDT', 'BTC', 'ETH', 'USDC', 'TRX']
-const blank = () => ({ orderId: '', user: '', status: FUND_ORDER_FILTER_ALL, coin: FUND_ORDER_FILTER_ALL, address: '', txHash: '', submitDate: null })
-const filters = ref(blank())
-const fields = [
-  { key: 'orderId', label: '订单号' },
-  { key: 'user', label: '用户' },
-  { key: 'status', label: '状态', options: [{ value: FUND_ORDER_FILTER_ALL, label: '全部状态' }, ...depositStatusOptions.map(({ value, label }) => ({ value, label }))] },
-  { key: 'coin', label: '币种', searchable: true, options: [{ value: FUND_ORDER_FILTER_ALL, label: '全部币种' }, ...coins.map((coin) => ({ value: coin, label: coin }))] },
-  { key: 'address', label: '地址' },
-  { key: 'txHash', label: 'TxHash' },
-  { key: 'submitDate', label: '提交日期', range: true }
-]
 
-const has = (value, query) => !String(query || '').trim() || String(value || '').toLowerCase().includes(String(query).trim().toLowerCase())
-const localDate = (value) => {
-  const date = new Date(value)
-  const pad = (n) => String(n).padStart(2, '0')
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
-}
-// Status and coin go to the mock API; the remaining single-attribute fields are matched on the returned rows.
-const rows = computed(() => orders.value.filter((order) => {
-  const f = filters.value
-  return has(order.id, f.orderId) &&
-    (has(order.userId, f.user) || has(order.username, f.user)) &&
-    (has(order.toAddress, f.address) || has(order.fromAddress, f.address)) && has(order.txHash, f.txHash) &&
-    (!f.submitDate || (localDate(order.submitTime) >= f.submitDate[0] && localDate(order.submitTime) <= f.submitDate[1]))
-}))
-
-const columns = [
-  { key: 'order', title: '订单', width: 170 },
-  { key: 'user', title: '用户', width: 170 },
-  { key: 'amount', title: '入金金额', width: 190, align: 'right' },
-  { key: 'match', title: '匹配状态', width: 240 },
-  { key: 'voucher', title: '凭证', width: 200 },
-  { key: 'status', title: '状态', width: 90 },
-  { key: 'submitTime', title: '提交时间', width: 170 },
-  { key: 'actions', title: '操作', width: 170, fixed: 'right' }
-]
-const statusColor = { [DEPOSIT_ORDER_STATUS.REVIEW]: 'orange', [DEPOSIT_ORDER_STATUS.CREDITED]: 'green', [DEPOSIT_ORDER_STATUS.REJECTED]: 'red' }
+const totalPages = computed(() => Math.max(1, Math.ceil(pagination.total / pagination.pageSize)))
 const canProcessSelectedOrder = computed(() => (
   selectedOrder.value &&
   selectedOrder.value.status === DEPOSIT_ORDER_STATUS.REVIEW
 ))
 
 const stats = computed(() => {
-  const count = (status) => rows.value.filter((order) => order.status === status).length
+  const byStatus = aggregates.value?.byStatus || {}
   return [
-    { label: '待确认', value: count(DEPOSIT_ORDER_STATUS.REVIEW) },
-    { label: '已入账', value: count(DEPOSIT_ORDER_STATUS.CREDITED) },
-    { label: '已驳回', value: count(DEPOSIT_ORDER_STATUS.REJECTED) },
-    { label: '筛选金额（USDT）', value: formatMoney(rows.value.reduce((total, order) => total + Number(order.usdtValue || 0), 0)) }
+    { label: '待确认', value: byStatus[DEPOSIT_ORDER_STATUS.REVIEW] || 0, class: 'text-amber-600' },
+    { label: '已入账', value: byStatus[DEPOSIT_ORDER_STATUS.CREDITED] || 0, class: 'text-emerald-600' },
+    { label: '已驳回', value: byStatus[DEPOSIT_ORDER_STATUS.REJECTED] || 0, class: 'text-rose-600' },
+    { label: '筛选金额', value: formatMoney(aggregates.value?.totalUsdt || 0), class: 'text-slate-900' }
   ]
 })
 
 function statusMeta(status) {
-  return depositStatusOptions.find((item) => item.value === status) || { label: status }
+  return depositStatusOptions.find((item) => item.value === status) || {
+    label: status,
+    badgeClass: 'bg-slate-100 text-slate-700'
+  }
 }
 
 function formatMoney(value) {
@@ -117,6 +87,12 @@ function formatMoney(value) {
 function formatTime(value) {
   if (!value) return '-'
   return new Date(value).toLocaleString('zh-CN', { hour12: false })
+}
+
+function confirmationClass(order) {
+  if (order.confirmations >= order.requiredConfirmations) return 'text-emerald-600'
+  if (order.confirmations > 0) return 'text-amber-600'
+  return 'text-rose-600'
 }
 
 function eventConfirmationClass(event) {
@@ -132,12 +108,6 @@ function matchText(order) {
   return '待人工选择'
 }
 
-function matchColor(order) {
-  if (order.linkedChainEventId) return 'green'
-  if (order.status === DEPOSIT_ORDER_STATUS.REJECTED) return 'default'
-  return 'orange'
-}
-
 function matchClass(order) {
   if (order.linkedChainEventId) return 'text-emerald-600'
   if (order.status === DEPOSIT_ORDER_STATUS.REJECTED) return 'text-slate-500'
@@ -145,33 +115,46 @@ function matchClass(order) {
 }
 
 function showToast(text, kind = 'info') {
-  if (kind === 'error') message.error(text)
-  else if (kind === 'success') message.success(text)
-  else message.info(text)
+  toast.value = { show: true, text, kind }
+  setTimeout(() => {
+    toast.value.show = false
+  }, 2600)
 }
 
 async function loadList() {
   loading.value = true
   try {
     const res = await fundOrderApi.listDepositOrders({
-      page: 1,
-      pageSize: Number.MAX_SAFE_INTEGER,
-      status: filters.value.status,
-      coin: filters.value.coin
+      page: pagination.currentPage,
+      pageSize: pagination.pageSize,
+      status: statusFilter.value,
+      coin: coinFilter.value,
+      keyword: keyword.value
     })
     if (res.success) {
-      orders.value = res.data.list
+      rows.value = res.data.list
+      pagination.total = res.data.total
+      aggregates.value = res.data.aggregates
       if (selectedOrder.value) {
-        selectedOrder.value = orders.value.find((item) => item.id === selectedOrder.value.id) || selectedOrder.value
+        selectedOrder.value = rows.value.find((item) => item.id === selectedOrder.value.id) || selectedOrder.value
       }
-    } else showToast(res.message || '入金审核记录加载失败', 'error')
+    }
   } finally {
     loading.value = false
   }
 }
 
-function search(values) { filters.value = { ...blank(), ...values }; page.value = 1; loadList() }
-function reset() { filters.value = blank(); page.value = 1; loadList() }
+function handleSearch() {
+  pagination.currentPage = 1
+  loadList()
+}
+
+function resetFilters() {
+  keyword.value = ''
+  statusFilter.value = FUND_ORDER_FILTER_ALL
+  coinFilter.value = FUND_ORDER_FILTER_ALL
+  handleSearch()
+}
 
 function openDetail(order) {
   selectedOrder.value = order
@@ -288,58 +271,104 @@ async function submitAction(action) {
     selectedChainEventId.value = ''
     Object.assign(manualConfirmation, { txHash: '', fromAddress: '', amount: '' })
     await loadList()
-    const latest = orders.value.find((item) => item.id === selectedOrder.value.id)
+    const latest = rows.value.find((item) => item.id === selectedOrder.value.id)
     if (latest) selectedOrder.value = latest
     await loadChainEvents()
   }
 }
 
+watch(
+  () => [pagination.currentPage, pagination.pageSize],
+  () => loadList()
+)
+
 onMounted(loadList)
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="deposit-order-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+  <section class="space-y-6">
+    <header class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">入金审核</h1>
+        <p class="mt-1 text-sm text-slate-500">核对用户入金申请、上传凭证，并手动选择链上通知记录确认入账。</p>
+      </div>
+      <div v-if="toast.show" class="rounded-lg border bg-white px-4 py-2 text-sm shadow-sm" :class="toast.kind === 'error' ? 'border-rose-200 text-rose-700' : 'border-emerald-200 text-emerald-700'">
+        {{ toast.text }}
+      </div>
+    </header>
 
-    <Card :bordered="false">
-      <Row :gutter="24">
-        <Col v-for="stat in stats" :key="stat.label" :span="6"><Statistic :title="stat.label" :value="stat.value" /></Col>
-      </Row>
-    </Card>
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <article v-for="stat in stats" :key="stat.label" class="rounded-xl border border-slate-200 bg-white p-4">
+        <p class="text-sm text-slate-500">{{ stat.label }}</p>
+        <p class="mt-2 text-2xl font-semibold tabular-nums" :class="stat.class">{{ stat.value }}</p>
+      </article>
+    </div>
 
-    <AdminTable title="入金审核" v-model:page="page" :rows="rows" :columns="columns" :loading="loading" row-key="id" desktop-only>
-      <template #cell="{ column, record: order }">
-        <Space v-if="column.key === 'order'" direction="vertical" :size="0">
-          <span class="font-mono">{{ order.id }}</span>
-          <TypographyText type="secondary">{{ order.source || '用户提交凭证' }}</TypographyText>
-        </Space>
-        <Space v-else-if="column.key === 'user'" direction="vertical" :size="0">
-          <Button type="link" class="px-0" @click="openUserPanel(order)">{{ order.username }}</Button>
-          <TypographyText type="secondary" class="font-mono">{{ order.userId }}</TypographyText>
-        </Space>
-        <Space v-else-if="column.key === 'amount'" direction="vertical" :size="0" align="end">
-          <span>{{ formatMoney(order.amount) }} {{ order.coin }}</span>
-          <TypographyText type="secondary">折合 {{ formatMoney(order.usdtValue) }} USDT</TypographyText>
-        </Space>
-        <Space v-else-if="column.key === 'match'" direction="vertical" :size="0">
-          <Tag :color="matchColor(order)">{{ matchText(order) }}</Tag>
-          <TypographyText type="secondary" class="font-mono" :ellipsis="{ tooltip: order.linkedChainEventId || order.toAddress }" :content="order.linkedChainEventId || order.toAddress" />
-        </Space>
-        <Space v-else-if="column.key === 'voucher'" :size="8">
-          <Button type="text" class="voucher-thumb" :aria-label="`查看充值凭证 ${order.voucherName}`" @click="openVoucherPreview(order)">
-            <img :src="order.voucherUrl" alt="" />
-          </Button>
-          <TypographyText type="secondary" :ellipsis="{ tooltip: order.voucherName }" :content="order.voucherName" class="voucher-name" />
-        </Space>
-        <Tag v-else-if="column.key === 'status'" :color="statusColor[order.status]">{{ statusMeta(order.status).label }}</Tag>
-        <TypographyText v-else-if="column.key === 'submitTime'" type="secondary">{{ formatTime(order.submitTime) }}</TypographyText>
-        <Space v-else-if="column.key === 'actions'" :size="8">
-          <Button type="link" class="px-0" @click="openDetail(order)">{{ order.status === DEPOSIT_ORDER_STATUS.REVIEW ? '处理' : '详情' }}</Button>
-          <Button type="link" class="px-0" :aria-label="`修改入金地址 ${order.id}`" @click="openAddressEditor(order, $event.currentTarget)">修改入金地址</Button>
-        </Space>
-        <template v-else>{{ order[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+    <article class="rounded-xl border border-slate-200 bg-white">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
+        <div class="flex flex-wrap gap-2">
+          <a-button v-for="opt in [{ value: FUND_ORDER_FILTER_ALL, label: '全部' }, ...depositStatusOptions]" :key="opt.value" html-type="button" class="text-sm font-medium transition" :class="statusFilter === opt.value ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" @click="statusFilter = opt.value; handleSearch()">
+            {{ opt.label }}
+          </a-button>
+        </div>
+        <div class="flex w-full flex-wrap gap-2 lg:w-auto">
+          <a-select v-model:value="coinFilter" class="" @change="handleSearch">
+            <a-select-option :value="FUND_ORDER_FILTER_ALL">全部币种</a-select-option>
+            <a-select-option v-for="coin in coins" :key="coin" :value="coin">{{ coin }}</a-select-option>
+          </a-select>
+          <a-input v-model:value="keyword" type="text" placeholder="搜索订单、用户、地址、哈希" class="w-full lg:w-72" @keyup.enter="handleSearch" />
+          <a-button html-type="button" class="" @click="handleSearch" type="primary">查询</a-button>
+          <a-button html-type="button" class="" @click="resetFilters">重置</a-button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <a-table  :data-source="rows" :loading="loading" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(order) => order.id" :custom-row="(order, index) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" ><template #title>订单</template><template #default="{ record: order, index: index }"><div class=" ">
+                <div class="font-mono text-xs text-slate-500">{{ order.id }}</div>
+                <div class="mt-1 text-xs text-slate-400">用户提交凭证</div>
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>用户</template><template #default="{ record: order, index: index }"><div class=" ">
+                <a-button html-type="button" class="font-medium text-blue-600 hover:text-blue-700 hover:underline" @click="openUserPanel(order)">
+                  {{ order.username }}
+                </a-button>
+                <div class="text-xs text-slate-500">{{ order.userId }}</div>
+              </div></template></a-table-column>
+<a-table-column key="column-2" align="right"><template #title>入金金额</template><template #default="{ record: order, index: index }"><div class="  text-right">
+                <div class="font-semibold text-slate-900">{{ formatMoney(order.amount) }} {{ order.coin }}</div>
+                <div class="text-xs text-slate-500">折合 {{ formatMoney(order.usdtValue) }} USDT</div>
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>匹配状态</template><template #default="{ record: order, index: index }"><div class="max-w-[260px]  ">
+                <div class="text-sm font-medium" :class="matchClass(order)">{{ matchText(order) }}</div>
+                <div class="mt-1 truncate font-mono text-xs text-slate-500">{{ order.linkedChainEventId || order.toAddress }}</div>
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>凭证</template><template #default="{ record: order, index: index }"><div class=" ">
+                <div class="flex items-center gap-2">
+                  <a-button html-type="button" class="border border-slate-200 transition hover:border-blue-400" :aria-label="`查看充值凭证 ${order.voucherName}`" @click="openVoucherPreview(order)">
+                    <img :src="order.voucherUrl" alt="" class="h-10 w-14 rounded object-cover" />
+                  </a-button>
+                  <span class="max-w-[120px] truncate text-xs text-slate-500">{{ order.voucherName }}</span>
+                </div>
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>状态</template><template #default="{ record: order, index: index }"><div class=" ">
+                <span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="statusMeta(order.status).badgeClass">{{ statusMeta(order.status).label }}</span>
+              </div></template></a-table-column>
+<a-table-column key="column-6" ><template #title>提交时间</template><template #default="{ record: order, index: index }"><div class="  text-xs text-slate-500">{{ formatTime(order.submitTime) }}</div></template></a-table-column>
+<a-table-column key="column-7" align="right"><template #title>操作</template><template #default="{ record: order, index: index }"><div class="  text-right">
+                <div class="flex flex-wrap justify-end gap-2">
+                  <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:underline" @click="openDetail(order)">详情</a-button>
+                  <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:underline" :aria-label="`修改入金地址 ${order.id}`" @click="openAddressEditor(order, $event.currentTarget)">修改入金地址</a-button>
+                </div>
+              </div></template></a-table-column><template #emptyText>暂无入金审核记录</template>
+</a-table>
+      </div>
+      <AdminListPaginationBar
+        v-model:current-page="pagination.currentPage"
+        v-model:page-size="pagination.pageSize"
+        :total-pages="totalPages"
+        :total-count="pagination.total"
+      />
+    </article>
 
     <DepositAddressRotationDialog :visible="addressDialogOpen" :user="addressUser" :order="addressOrder" :return-focus="addressReturnFocus" @close="addressDialogOpen = false" />
 
@@ -526,11 +555,5 @@ onMounted(loadList)
       :user="selectedUser"
       @close="closeUserPanel"
     />
-  </PageShell>
+  </section>
 </template>
-
-<style scoped>
-.voucher-thumb { height: auto; padding: 2px; }
-.voucher-thumb img { display: block; width: 56px; height: 40px; object-fit: cover; border-radius: 4px; }
-.voucher-name { max-width: 120px; }
-</style>

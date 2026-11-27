@@ -1,39 +1,137 @@
 <template>
-  <PageShell>
-    <SearchForm name="spot-order-filters" :model="filters" :fields="fields" @search="search" @reset="resetFilters" />
-    <AdminTable title="现货订单" v-model:page="currentPage" :rows="filteredOrders" :columns="columns" row-key="orderId" desktop-only>
-      <template #toolbar>
-        <Button @click="exportOrders"><template #icon><DownloadOutlined /></template>导出</Button>
-      </template>
-      <template #cell="{ column, record: order }">
-        <Space v-if="column.key === 'order'" direction="vertical" :size="0">
-          <span class="font-mono">{{ order.orderId }}</span>
-          <TypographyText type="secondary">{{ order.createTime }}</TypographyText>
-        </Space>
-        <Space v-else-if="column.key === 'user'" direction="vertical" :size="0">
-          <span class="font-mono">{{ order.userId }}</span>
-          <TypographyText type="secondary">{{ order.userEmail }}</TypographyText>
-        </Space>
-        <Space v-else-if="column.key === 'product'" direction="vertical" :size="0">
-          <TypographyText strong>{{ order.productName }}</TypographyText>
-          <TypographyText type="secondary">{{ order.productCode }}</TypographyText>
-        </Space>
-        <Tag v-else-if="column.key === 'type'" :color="order.type === 'buy' ? 'green' : 'red'">{{ order.type === 'buy' ? '买入' : '卖出' }}</Tag>
-        <Space v-else-if="column.key === 'quantity'" direction="vertical" :size="0" align="end">
-          <span>{{ order.quantity }} {{ order.baseCurrency }}</span>
-          <TypographyText type="secondary">价格 {{ formatPrice(order.price) }} {{ order.quoteCurrency }}</TypographyText>
-        </Space>
-        <span v-else-if="column.key === 'total'">{{ formatAmount(order.totalValue) }} {{ order.quoteCurrency }}</span>
-        <Space v-else-if="column.key === 'filled'" direction="vertical" :size="0" align="end">
-          <span>{{ order.filledQuantity }} {{ order.baseCurrency }}</span>
-          <TypographyText type="secondary">成交率 {{ calculateFillRate(order) }}%</TypographyText>
-        </Space>
-        <Tag v-else-if="column.key === 'status'" :color="statusColor[order.status]">{{ statusLabel(order.status) }}</Tag>
-        <TypographyText v-else-if="column.key === 'updateTime'" type="secondary">{{ order.updateTime || '—' }}</TypographyText>
-        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" @click="viewOrder(order)">详情</Button>
-        <template v-else>{{ order[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+  <section class="space-y-4">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-semibold text-slate-900">现货订单管理</h1>
+        <p class="mt-1 text-sm text-slate-500">监控现货交易订单状态、成交价格与交易量</p>
+      </div>
+      <a-button type="text" html-type="button" class="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2" @click="exportOrders">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        <span>导出订单</span>
+      </a-button>
+    </header>
+
+    <article class="rounded-xl border border-slate-200 bg-white">
+      <div class="flex flex-wrap items-center gap-3 border-b border-slate-200 p-4">
+        <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.type" class="">
+          <a-select-option value="">全部类型</a-select-option>
+          <a-select-option value="buy">买入</a-select-option>
+          <a-select-option value="sell">卖出</a-select-option>
+        </a-select>
+        <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.status" class="">
+          <a-select-option value="">全部状态</a-select-option>
+          <a-select-option value="pending">待成交</a-select-option>
+          <a-select-option value="filled">已成交</a-select-option>
+          <a-select-option value="cancelled">已取消</a-select-option>
+        </a-select>
+        <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.productCode" class="">
+          <a-select-option value="">全部产品</a-select-option>
+          <a-select-option v-for="product in productOptions" :key="product.code" :value="product.code">
+            {{ product.name }} ({{ product.code }})
+          </a-select-option>
+        </a-select>
+        <a-input v-model:value="filters.orderId" type="text" placeholder="搜索订单 ID..." class="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
+        <a-input v-model:value="filters.userId" type="text" placeholder="搜索用户 ID/邮箱..." class="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
+        <a-button type="text" html-type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="resetFilters">重置</a-button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <a-table  size="small" :pagination="false" :data-source="filteredOrders" :row-key="(order) => order.orderId" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
+<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>订单 ID</template>
+<template #default="{ record: order, index: rowIndex }">
+                <div class="font-mono text-xs text-slate-600">{{ order.orderId }}</div>
+                <div class="text-xs text-slate-500">{{ formatDate(order.createTime) }}</div>
+              </template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>用户信息</template>
+<template #default="{ record: order, index: rowIndex }">
+                <div class="text-slate-700">{{ order.userId }}</div>
+                <div class="text-xs text-slate-500">{{ order.userEmail }}</div>
+              </template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>产品</template>
+<template #default="{ record: order, index: rowIndex }">
+                <div class="font-medium text-slate-900">{{ order.productName }}</div>
+                <div class="text-xs text-slate-500">{{ order.productCode }}</div>
+              </template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>类型/方向</template>
+<template #default="{ record: order, index: rowIndex }">
+                <div class="flex items-center gap-2">
+                  <span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="{
+                    'bg-emerald-50 text-emerald-700': order.type === 'buy',
+                    'bg-rose-50 text-rose-700': order.type === 'sell'
+                  }">
+                    {{ order.type === 'buy' ? '买入' : '卖出' }}
+                  </span>
+                </div>
+              </template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>价格/数量</template>
+<template #default="{ record: order, index: rowIndex }">
+                <div class="text-xs text-slate-600">价格：{{ formatPrice(order.price) }}</div>
+                <div class="font-medium text-slate-900">{{ order.quantity }} {{ order.baseCurrency }}</div>
+              </template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>成交额</template>
+<template #default="{ record: order, index: rowIndex }">
+                <div class="font-medium text-slate-900">{{ formatCurrency(order.totalValue) }}</div>
+                <div class="text-xs text-slate-500">{{ order.quoteCurrency }}</div>
+              </template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>成交量</template>
+<template #default="{ record: order, index: rowIndex }">
+                <div class="mb-1 font-medium text-slate-700">{{ order.filledQuantity }} {{ order.baseCurrency }}</div>
+                <div class="text-xs text-slate-500">成交率：{{ calculateFillRate(order) }}%</div>
+              </template>
+</a-table-column>
+<a-table-column key="column-7" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: order, index: rowIndex }">
+                <span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="{
+                  'bg-blue-50 text-blue-700': order.status === 'pending',
+                  'bg-emerald-50 text-emerald-700': order.status === 'filled',
+                  'bg-slate-100 text-slate-600': order.status === 'cancelled'
+                }">
+                  {{ statusLabel(order.status) }}
+                </span>
+              </template>
+</a-table-column>
+<a-table-column key="column-8" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>时间</template>
+<template #default="{ record: order, index: rowIndex }">
+                <div class="text-xs text-slate-600">创建：{{ formatTime(order.createTime) }}</div>
+                <div v-if="order.updateTime" class="text-xs text-slate-500">更新：{{ formatTime(order.updateTime) }}</div>
+              </template>
+</a-table-column>
+<a-table-column key="column-9" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: order, index: rowIndex }">
+                <a-button type="text"
+                  html-type="button"
+                  class="rounded border border-slate-200 px-2 py-1 text-xs text-slate-700 hover:bg-slate-50 font-medium transition-colors whitespace-nowrap"
+                  @click="viewOrder(order)"
+                >
+                  详情
+                </a-button>
+              </template>
+</a-table-column>
+</a-table>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
+        <a-pagination size="small" :current="currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="currentPage = $event" />
+      </div>
+    </article>
 
     <!-- 订单详情模态框 -->
     <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDetailModal &amp;&amp; selectedOrder)" :mask-closable="false" :closable="false" :keyboard="true" :width="1024"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showDetailModal = false">
@@ -381,53 +479,35 @@
           </div>
         </footer></template></template>
 </a-modal>
-  </PageShell>
+  </section>
 </template>
 
 <script setup>
-// 现货订单 — Ant Design Pro list page (2026-11-28): query card (one input per field; user ID and email are now
-// separate fields), table card with export toolbar and pagination, side/status as text Tags, right-aligned amounts.
-// Fixes: the old table rendered every filtered row on one page (pagination never sliced) and showed quote amounts
-// with a "$" currency format; amounts are now shown in the order's quote currency.
 import { ref, computed, onMounted } from 'vue'
-import { Button, Space, Tag, TypographyText, message } from 'ant-design-vue'
-import { DownloadOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
 import { mockSpotOrders } from '../../../admin/mock/spot'
 
 const orders = ref([])
 const currentPage = ref(1)
+const pageSize = ref(10)
 
-const blank = () => ({ orderId: '', userId: '', email: '', type: 'all', status: 'all', productCode: 'all', createDate: null })
-const filters = ref(blank())
-const productOptions = computed(() => [...new Map(orders.value.map((o) => [o.productCode, o.productName])).entries()].sort().map(([code, name]) => ({ value: code, label: `${name} (${code})` })))
-const fields = computed(() => [
-  { key: 'orderId', label: '订单号' },
-  { key: 'userId', label: '用户 ID' },
-  { key: 'type', label: '方向', options: [{ value: 'all', label: '全部方向' }, { value: 'buy', label: '买入' }, { value: 'sell', label: '卖出' }] },
-  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, { value: 'pending', label: '待成交' }, { value: 'filled', label: '已成交' }, { value: 'cancelled', label: '已取消' }] },
-  { key: 'productCode', label: '产品', searchable: true, options: [{ value: 'all', label: '全部产品' }, ...productOptions.value] },
-  { key: 'email', label: '用户邮箱' },
-  { key: 'createDate', label: '创建日期', range: true }
+const filters = ref({
+  type: '',
+  status: '',
+  productCode: '',
+  orderId: '',
+  userId: ''
+})
+
+const productOptions = ref([
+  { code: 'BTCUSDT', name: 'BTC/USDT' },
+  { code: 'ETHUSDT', name: 'ETH/USDT' },
+  { code: 'BNBUSDT', name: 'BNB/USDT' },
+  { code: 'XRPUSDT', name: 'XRP/USDT' },
+  { code: 'ADAUSDT', name: 'ADA/USDT' },
+  { code: 'SOLUSDT', name: 'SOL/USDT' },
+  { code: 'DOGEUSDT', name: 'DOGE/USDT' },
+  { code: 'DOTUSDT', name: 'DOT/USDT' }
 ])
-
-const columns = [
-  { key: 'order', title: '订单', width: 190, fixed: 'left' },
-  { key: 'user', title: '用户', width: 190 },
-  { key: 'product', title: '产品', width: 130 },
-  { key: 'type', title: '方向', width: 80 },
-  { key: 'quantity', title: '委托数量', width: 190, align: 'right' },
-  { key: 'total', title: '订单金额', width: 160, align: 'right' },
-  { key: 'filled', title: '成交量', width: 150, align: 'right' },
-  { key: 'status', title: '状态', width: 90 },
-  { key: 'updateTime', title: '更新时间', width: 170 },
-  { key: 'actions', title: '操作', width: 80, fixed: 'right' }
-]
-const statusColor = { pending: 'blue', filled: 'green', cancelled: 'default' }
-const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
-const formatAmount = (value) => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 onMounted(() => {
   orders.value = mockSpotOrders
@@ -437,21 +517,43 @@ const showDetailModal = ref(false)
 const selectedOrder = ref(null)
 const detailTab = ref('overview')
 
-const filteredOrders = computed(() => orders.value.filter((o) => {
-  const f = filters.value
-  const day = String(o.createTime).slice(0, 10)
-  return has(o.orderId, f.orderId) && has(o.userId, f.userId) && has(o.userEmail, f.email) &&
-    (f.type === 'all' || o.type === f.type) &&
-    (f.status === 'all' || o.status === f.status) &&
-    (f.productCode === 'all' || o.productCode === f.productCode) &&
-    (!f.createDate || (day >= f.createDate[0] && day <= f.createDate[1]))
-}))
+const filteredOrders = computed(() => {
+  let result = orders.value
 
-function search(values) { filters.value = { ...blank(), ...values }; currentPage.value = 1 }
-function resetFilters() { filters.value = blank(); currentPage.value = 1 }
+  if (filters.value.type) {
+    result = result.filter(o => o.type === filters.value.type)
+  }
+  if (filters.value.status) {
+    result = result.filter(o => o.status === filters.value.status)
+  }
+  if (filters.value.productCode) {
+    result = result.filter(o => o.productCode === filters.value.productCode)
+  }
+  if (filters.value.orderId) {
+    result = result.filter(o => o.orderId.includes(filters.value.orderId))
+  }
+  if (filters.value.userId) {
+    const keyword = filters.value.userId.toLowerCase()
+    result = result.filter(o => o.userId.toLowerCase().includes(keyword) || o.userEmail.toLowerCase().includes(keyword))
+  }
 
-// Detail amounts are in the order's quote currency (was a USD "$" format).
-const formatCurrency = (value) => `${formatAmount(value)} ${selectedOrder.value?.quoteCurrency || 'USDT'}`
+  return result
+})
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredOrders.value.length / pageSize.value)
+})
+
+const formatCurrency = (value) => {
+  if (value === null || value === undefined || isNaN(value)) {
+    return '$0'
+  }
+  return new Intl.NumberFormat('zh-CN', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2
+  }).format(value)
+}
 
 const formatPrice = (price) => {
   if (price === null || price === undefined || isNaN(price)) {
@@ -461,6 +563,16 @@ const formatPrice = (price) => {
     minimumFractionDigits: 2,
     maximumFractionDigits: 8
   })
+}
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-'
+  return dateStr.split(' ')[0]
+}
+
+const formatTime = (dateStr) => {
+  if (!dateStr) return '-'
+  return dateStr.split(' ')[1] || dateStr
 }
 
 const statusLabel = (status) => {
@@ -477,14 +589,36 @@ const calculateFillRate = (order) => {
   return ((order.filledQuantity / order.quantity) * 100).toFixed(2)
 }
 
-// Mock export: no file yet, so say so instead of a native alert (operation feedback is toast-only).
+const resetFilters = () => {
+  filters.value = {
+    type: '',
+    status: '',
+    productCode: '',
+    orderId: '',
+    userId: ''
+  }
+}
+
 const exportOrders = () => {
-  message.info(`已按当前筛选条件准备导出 ${filteredOrders.value.length} 条订单（演示环境不生成文件）`)
+  alert('导出订单数据')
 }
 
 const viewOrder = (order) => {
   selectedOrder.value = order
   detailTab.value = 'overview'
   showDetailModal.value = true
+}
+
+const cancelOrder = (order) => {
+  // 平台对手交易模式下不支持撤单
+  alert('平台对手交易模式不支持撤单功能')
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++
 }
 </script>

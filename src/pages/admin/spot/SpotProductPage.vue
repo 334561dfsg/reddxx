@@ -1,35 +1,187 @@
 <template>
-  <PageShell>
-    <SearchForm name="spot-product-filters" :model="filters" :fields="fields" @search="applySearch" @reset="resetAll" />
-    <AdminTable title="现货产品" v-model:page="currentPage" :rows="filteredProducts" :columns="columns" row-key="productId" desktop-only>
-      <template #toolbar>
-        <Button type="primary" @click="showAddProduct"><template #icon><PlusOutlined /></template>新增产品</Button>
-      </template>
-      <template #cell="{ column, record: product }">
-        <Space v-if="column.key === 'product'" direction="vertical" :size="0">
-          <TypographyText strong>{{ product.productName }}</TypographyText>
-          <TypographyText type="secondary" class="font-mono">{{ product.productId }}</TypographyText>
-        </Space>
-        <template v-else-if="column.key === 'pair'">{{ product.baseCurrency }}/{{ product.quoteCurrency }}</template>
-        <span v-else-if="column.key === 'precision'" class="font-mono">{{ product.pricePrecision }} / {{ product.quantityPrecision }}</span>
-        <span v-else-if="column.key === 'minQty'">{{ formatAmount(product.minOrderQuantity) }} {{ product.baseCurrency }}</span>
-        <Space v-else-if="column.key === 'orderValue'" direction="vertical" :size="0" align="end">
-          <span>{{ formatAmount(product.minOrderValue) }} – {{ formatAmount(product.maxOrderValue) }}</span>
-          <TypographyText type="secondary">{{ product.quoteCurrency }}</TypographyText>
-        </Space>
-        <Space v-else-if="column.key === 'fee'" direction="vertical" :size="0" align="end">
-          <span>买入 {{ formatRate(product.buyFee) }}</span>
-          <span>卖出 {{ formatRate(product.sellFee) }}</span>
-        </Space>
-        <template v-else-if="column.key === 'sortOrder'">{{ Number(product.sortOrder ?? 0) }}</template>
-        <Tag v-else-if="column.key === 'status'" :color="statusColor[product.status]">{{ statusLabel(product.status) }}</Tag>
-        <Space v-else-if="column.key === 'actions'" :size="8">
-          <Button type="link" class="px-0" @click="editProduct(product)">编辑</Button>
-          <Button type="link" class="px-0" :danger="product.status === 'trading'" :disabled="product.status === 'delisted'" @click="togglePause(product)">{{ product.status === 'trading' ? '暂停' : '恢复' }}</Button>
-        </Space>
-        <template v-else>{{ product[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+  <section class="space-y-4">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-semibold text-slate-900">现货产品管理</h1>
+        <p class="mt-1 text-sm text-slate-500">管理现货交易产品、交易对及费率配置，支持产品的上下架和费率调整。</p>
+      </div>
+    </header>
+
+    <article class="rounded-xl border border-slate-200 bg-white p-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex w-full flex-wrap items-center gap-2 md:w-auto">
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <span class="text-sm text-slate-600 whitespace-nowrap">产品名称</span>
+            <div class="relative w-full sm:w-80">
+              <a-input
+                v-model:value="searchKeywordDraft"
+                type="text"
+                class="ant-input w-full pl-9 !h-8"
+                placeholder="搜索产品名称 / 产品ID / 币种..."
+                @keyup.enter="applySearch"
+              />
+              <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2 h-4 w-4 text-slate-400" fill="none">
+                <circle cx="9" cy="9" r="5.8" stroke="currentColor" stroke-width="1.6" />
+                <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a-button html-type="button" class="ant-btn !h-8" @click="resetSearch">
+            <span>重置</span>
+          </a-button>
+          <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-8" @click="applySearch">
+            <span>搜索</span>
+          </a-button>
+        </div>
+      </div>
+    </article>
+
+    <article class="rounded-xl border border-slate-200 bg-white">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-4">
+        <div class="inline-flex items-center gap-6 text-sm">
+          <a-button type="text"
+            html-type="button"
+            class="relative py-2 font-medium transition-colors"
+            :class="filters.status === '' ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
+            @click="filters.status = ''"
+          >
+            全部
+          </a-button>
+          <a-button type="text"
+            html-type="button"
+            class="relative py-2 font-medium transition-colors"
+            :class="filters.status === 'trading' ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
+            @click="filters.status = 'trading'"
+          >
+            交易中
+          </a-button>
+          <a-button type="text"
+            html-type="button"
+            class="relative py-2 font-medium transition-colors"
+            :class="filters.status === 'suspended' ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
+            @click="filters.status = 'suspended'"
+          >
+            已暂停
+          </a-button>
+          <a-button type="text"
+            html-type="button"
+            class="relative py-2 font-medium transition-colors"
+            :class="filters.status === 'delisted' ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
+            @click="filters.status = 'delisted'"
+          >
+            已下架
+          </a-button>
+          <span class="text-slate-400">|</span>
+          <span class="text-slate-500">共 <span class="font-medium text-slate-700">{{ totalItems }}</span> 条</span>
+        </div>
+
+        <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-8 shrink-0" @click="showAddProduct">
+          <span>+ 新增产品</span>
+        </a-button>
+      </div>
+
+      <div class="p-4 space-y-4">
+        <article
+          v-for="product in paginatedProducts"
+          :key="product.productId"
+          class="rounded-lg border border-slate-200 bg-white transition-all hover:border-blue-500/30 hover:shadow-md"
+        >
+          <div class="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 p-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 flex-wrap">
+                <h3 class="text-base font-semibold text-slate-900">{{ product.productName }}</h3>
+                <span class="text-sm font-mono text-slate-500">{{ product.productId }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded border" :class="statusTagClass(product.status)">
+                  {{ statusLabel(product.status) }}
+                </span>
+                <span class="px-2 py-0.5 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded">
+                  {{ product.baseCurrency }}/{{ product.quoteCurrency }}
+                </span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <a-button html-type="button" class="ant-btn text-xs" @click="editProduct(product)">编辑</a-button>
+              <a-button
+                html-type="button"
+                class="ant-btn text-xs"
+                :disabled="product.status === 'delisted'"
+                :class="product.status === 'trading' ? '!text-orange-500 hover:!text-orange-600 disabled:!text-slate-300' : '!text-emerald-600 hover:!text-emerald-700 disabled:!text-slate-300'"
+                @click="togglePause(product)"
+              >
+                {{ product.status === 'trading' ? '暂停' : '恢复' }}
+              </a-button>
+
+            </div>
+          </div>
+
+          <div class="grid gap-0 md:grid-cols-2 bg-slate-50/30">
+            <div class="border-b border-slate-100 p-4 md:border-b-0 md:border-r">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">交易限制</p>
+              <ul class="mt-3 grid grid-cols-4 gap-4 text-sm">
+                <li class="flex flex-col gap-1">
+                  <span class="text-slate-500 text-xs">精度</span>
+                  <span class="text-slate-900 font-semibold font-mono">{{ product.pricePrecision }} / {{ product.quantityPrecision }}</span>
+                </li>
+                <li class="flex flex-col gap-1">
+                  <span class="text-slate-500 text-xs">最小下单量</span>
+                  <span class="text-slate-900 font-semibold font-mono">{{ formatAmount(product.minOrderQuantity) }}</span>
+                </li>
+                <li class="flex flex-col gap-1">
+                  <span class="text-slate-500 text-xs">最小下单额</span>
+                  <span class="text-slate-900 font-semibold font-mono">{{ formatAmount(product.minOrderValue) }}</span>
+                </li>
+                <li class="flex flex-col gap-1">
+                  <span class="text-slate-500 text-xs">最大下单额</span>
+                  <span class="text-slate-900 font-semibold font-mono">{{ formatAmount(product.maxOrderValue) }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="p-4">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">费率</p>
+              <ul class="mt-3 grid grid-cols-2 gap-4 text-sm">
+                <li class="flex flex-col gap-1">
+                  <span class="text-slate-500 text-xs">买入费率</span>
+                  <span class="text-emerald-600 font-bold font-mono">{{ formatRate(product.buyFee) }}</span>
+                </li>
+                <li class="flex flex-col gap-1">
+                  <span class="text-slate-500 text-xs">卖出费率</span>
+                  <span class="text-rose-600 font-bold font-mono">{{ formatRate(product.sellFee) }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <p v-if="paginatedProducts.length === 0" class="rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">暂无数据</p>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 p-4">
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+          <div>
+            共 <span class="font-medium text-slate-900">{{ totalItems }}</span> 条记录
+          </div>
+          <div class="flex items-center gap-2">
+            <span>每页</span>
+            <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value.number="pagination.pageSize" class="!w-20" @change="handlePageSizeChange">
+              <a-select-option :value="5">5</a-select-option>
+              <a-select-option :value="10">10</a-select-option>
+              <a-select-option :value="20">20</a-select-option>
+              <a-select-option :value="50">50</a-select-option>
+            </a-select>
+            <span>条</span>
+          </div>
+        </div>
+
+        <div v-if="totalPages > 1" class="flex items-center gap-2">
+          <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="goToPage($event)" />
+        </div>
+      </div>
+    </article>
 
     <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="showModal" :mask-closable="false" :closable="false" :keyboard="false" :width="1152" :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeModal"><template #title><header class="flex items-center justify-between border-b border-black/[0.06] bg-white px-6 py-4">
             <div>
@@ -68,16 +220,19 @@
                     </a-select>
                   </div>
                   <div class="space-y-1.5">
-                    <label class="text-sm text-black/85 font-medium">排序权重</label>
-                    <p class="text-sm text-black/45">数值越大越靠前。</p>
-                    <a-input v-model:value.number="formData.sortOrder" type="number" placeholder="数值越大越靠前" class="ant-input font-mono" />
+                    <label class="text-sm text-black/85 font-medium">产品排序</label>
+                    <p class="text-sm text-black/45">数字越大越靠前。</p>
+                    <a-input v-model:value.number="formData.sortOrder" type="number" placeholder="数字越大越靠前" class="ant-input font-mono" />
                   </div>
                 </div>
 
                 <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">交易对 <span class="text-rose-500">*</span></label>
                     <p class="text-sm text-black/45">选择交易对</p>
-                    <a-select :get-popup-container="(trigger) => trigger.parentElement" :value="formData.spotSymbol || undefined" :options="spotSymbolOptions" show-search option-filter-prop="label" not-found-content="无匹配项" :placeholder="spotSymbolLoading ? '加载中...' : '请选择交易对'" :disabled="spotSymbolLoading" @update:value="(value) => (formData.spotSymbol = value ?? '')" />
+                    <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="formData.spotSymbol" class="" :disabled="spotSymbolLoading">
+                      <a-select-option value="" disabled>{{ spotSymbolLoading ? '加载中...' : '请选择交易对' }}</a-select-option>
+                      <a-select-option v-for="opt in spotSymbolOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</a-select-option>
+                    </a-select>
                 </div>
               </div>
             </section>
@@ -166,7 +321,9 @@
                       {{ String(formData.baseCurrency || '-').toUpperCase() }}/{{ String(formData.quoteCurrency || '-').toUpperCase() }}
                     </p>
                   </div>
-                  <Tag :color="statusColor[formData.status]">{{ statusLabel(formData.status) }}</Tag>
+                  <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded border" :class="statusTagClass(formData.status)">
+                    {{ statusLabel(formData.status) }}
+                  </span>
                 </div>
 
                 <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-black/65">
@@ -225,21 +382,11 @@
             <a-button html-type="button" class="ant-btn" @click="closeModal">取消</a-button>
             <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary" @click="saveProduct">保存</a-button>
           </footer></template></a-modal>
-  </PageShell>
+  </section>
 </template>
 
 <script setup>
-// 现货产品 — Ant Design Pro list page (2026-11-28): the status tabs and the combined name/ID/coin keyword box became
-// query-card fields (one input each), the product cards became a table card with a create toolbar, pagination, status
-// Tags and link actions. Fixes: sortSpotProducts was applied to the page-number buttons instead of the products, so the
-// list never followed the sort weight; it now sorts the filtered products before pagination. The editor's 交易对 select
-// is searchable, and validation/saves use toast instead of alert().
 import { ref, computed, onMounted, watch } from 'vue'
-import { Button, Space, Tag, TypographyText, message } from 'ant-design-vue'
-import { PlusOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
 import { mockSpotProducts, symbolApi } from '../../../admin/mock/spot'
 import { sortSpotProducts } from '../../../admin/constants/spotProduct'
 
@@ -247,32 +394,21 @@ const products = ref([])
 const showModal = ref(false)
 const isEditing = ref(false)
 const editingProductId = ref(null)
+const searchKeywordDraft = ref('')
+const searchKeywordApplied = ref('')
 const spotSymbolLoading = ref(false)
 const spotSymbols = ref([])
 const lastSyncedSpotSymbol = ref('')
 
-const blank = () => ({ productName: '', productId: '', status: 'all', currency: 'all' })
-const filters = ref(blank())
-const currentPage = ref(1)
-const currencyOptions = computed(() => [...new Set(products.value.flatMap((p) => [p.baseCurrency, p.quoteCurrency]))].filter(Boolean).sort().map((value) => ({ value, label: value })))
-const fields = computed(() => [
-  { key: 'productName', label: '产品名称' },
-  { key: 'productId', label: '产品 ID' },
-  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, { value: 'trading', label: '交易中' }, { value: 'suspended', label: '暂停交易' }, { value: 'delisted', label: '已下架' }] },
-  { key: 'currency', label: '币种', searchable: true, options: [{ value: 'all', label: '全部币种' }, ...currencyOptions.value] }
-])
-const columns = [
-  { key: 'product', title: '产品', width: 180, fixed: 'left' },
-  { key: 'pair', title: '交易对', width: 120 },
-  { key: 'precision', title: '价格 / 数量精度', width: 140 },
-  { key: 'minQty', title: '最小下单量', width: 150, align: 'right' },
-  { key: 'orderValue', title: '下单额范围', width: 180, align: 'right' },
-  { key: 'fee', title: '费率', width: 140, align: 'right' },
-  { key: 'sortOrder', title: '排序权重', width: 100, align: 'right' },
-  { key: 'status', title: '状态', width: 100 },
-  { key: 'actions', title: '操作', width: 120, fixed: 'right' }
-]
-const statusColor = { trading: 'green', suspended: 'orange', delisted: 'default' }
+const filters = ref({
+  status: ''
+})
+
+// 分页
+const pagination = ref({
+  currentPage: 1,
+  pageSize: 10
+})
 
 const formData = ref({
   productName: '',
@@ -299,9 +435,25 @@ onMounted(() => {
   loadSpotSymbols()
 })
 
-const applySearch = (values) => {
-  filters.value = { ...blank(), ...values }
-  currentPage.value = 1
+watch(
+  () => filters.value.status,
+  () => {
+    pagination.value.currentPage = 1
+  }
+)
+
+watch(searchKeywordApplied, () => {
+  pagination.value.currentPage = 1
+})
+
+const applySearch = () => {
+  searchKeywordApplied.value = searchKeywordDraft.value
+  pagination.value.currentPage = 1
+}
+
+const resetSearch = () => {
+  searchKeywordDraft.value = ''
+  applySearch()
 }
 
 const spotSymbolOptions = computed(() => {
@@ -388,18 +540,68 @@ watch(
   }
 )
 
-const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
-// Sort by weight (larger first) before pagination.
-const filteredProducts = computed(() => sortSpotProducts(products.value.filter((p) => {
-  const f = filters.value
-  return has(p.productName, f.productName) && has(p.productId, f.productId) &&
-    (f.status === 'all' || p.status === f.status) &&
-    (f.currency === 'all' || p.baseCurrency === f.currency || p.quoteCurrency === f.currency)
-})))
+const pageButtons = computed(() => {
+  const total = totalPages.value
+  const current = pagination.value.currentPage
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+
+  const pages = new Set([1, total, current - 1, current, current + 1])
+  const normalized = Array.from(pages).filter(p => p >= 1 && p <= total).sort((a, b) => a - b)
+
+  const result = []
+  for (let i = 0; i < normalized.length; i++) {
+    const p = normalized[i]
+    const prev = normalized[i - 1]
+    if (prev !== undefined && p - prev > 1) result.push('...')
+    result.push(p)
+  }
+  return sortSpotProducts(result)
+})
+
+const filteredProducts = computed(() => {
+  let result = products.value
+
+  if (filters.value.status) {
+    result = result.filter(p => p.status === filters.value.status)
+  }
+
+  // 搜索关键词过滤
+  const keyword = searchKeywordApplied.value.trim().toLowerCase()
+  if (keyword) {
+    result = result.filter(p =>
+      p.productName.toLowerCase().includes(keyword) ||
+      p.productId.toLowerCase().includes(keyword) ||
+      p.baseCurrency.toLowerCase().includes(keyword) ||
+      p.quoteCurrency.toLowerCase().includes(keyword)
+    )
+  }
+
+  return result
+})
+
+const totalItems = computed(() => filteredProducts.value.length)
+const totalPages = computed(() => Math.ceil(totalItems.value / pagination.value.pageSize))
+
+const paginatedProducts = computed(() => {
+  const start = (pagination.value.currentPage - 1) * pagination.value.pageSize
+  const end = start + pagination.value.pageSize
+  return filteredProducts.value.slice(start, end)
+})
 
 const resetAll = () => {
-  filters.value = blank()
-  currentPage.value = 1
+  filters.value = { status: '' }
+  searchKeywordDraft.value = ''
+  searchKeywordApplied.value = ''
+  pagination.value.currentPage = 1
+}
+
+const handlePageSizeChange = () => {
+  pagination.value.currentPage = 1
+}
+
+const goToPage = (page) => {
+  const next = Math.min(Math.max(1, page), totalPages.value || 1)
+  pagination.value.currentPage = next
 }
 
 const formatAmount = (value) => {
@@ -417,6 +619,13 @@ const formatSignedPercent = (value) => {
   const n = Number(value)
   const sign = n > 0 ? '+' : ''
   return `${sign}${n.toFixed(2)}%`
+}
+
+const statusTagClass = (status) => {
+  if (status === 'trading') return 'bg-emerald-50 text-emerald-600 border-emerald-100'
+  if (status === 'suspended') return 'bg-orange-50 text-orange-600 border-orange-100'
+  if (status === 'delisted') return 'bg-slate-50 text-slate-500 border-slate-200'
+  return 'bg-slate-50 text-slate-500 border-slate-200'
 }
 
 const formatCurrency = (value) => {
@@ -447,6 +656,12 @@ const statusLabel = (status) => {
     delisted: '已下架'
   }
   return labels[status] || status
+}
+
+const resetFilters = () => {
+  filters.value = {
+    status: ''
+  }
 }
 
 const resetFormData = () => {
@@ -513,15 +728,15 @@ const closeModal = () => {
 
 const saveProduct = () => {
   if (!formData.value.productName) {
-    message.error('请输入产品名称')
+    alert('请输入产品名称')
     return
   }
   if (!formData.value.spotSymbol) {
-    message.error('请选择交易对')
+    alert('请选择交易对')
     return
   }
   if (!formData.value.baseCurrency || !formData.value.quoteCurrency) {
-    message.error('交易对信息不完整，请重新选择')
+    alert('交易对信息不完整，请重新选择')
     return
   }
   const pricePrecision = Number(formData.value.pricePrecision)
@@ -535,27 +750,27 @@ const saveProduct = () => {
   const isNonNegativeInt = (n) => Number.isFinite(n) && n >= 0 && Math.floor(n) === n
 
   if (!isNonNegativeInt(pricePrecision) || !isNonNegativeInt(quantityPrecision)) {
-    message.error('精度必须为非负整数')
+    alert('精度必须为非负整数')
     return
   }
   if (!Number.isFinite(minOrderQuantity) || minOrderQuantity <= 0) {
-    message.error('最小下单量必须大于 0')
+    alert('最小下单量必须大于 0')
     return
   }
   if (!Number.isFinite(minOrderValue) || minOrderValue < 0 || !Number.isFinite(maxOrderValue) || maxOrderValue <= 0) {
-    message.error('请输入有效的下单额限制')
+    alert('请输入有效的下单额限制')
     return
   }
   if (minOrderValue >= maxOrderValue) {
-    message.error('最大下单额必须大于最小下单额')
+    alert('最大下单额必须大于最小下单额')
     return
   }
   if (!Number.isFinite(buyFee) || !Number.isFinite(sellFee) || buyFee < 0 || sellFee < 0) {
-    message.error('费率不能为负数')
+    alert('费率不能为负数')
     return
   }
   if (buyFee > 100 || sellFee > 100) {
-    message.error('费率不能超过 100%')
+    alert('费率不能超过 100%')
     return
   }
 
@@ -573,7 +788,7 @@ const saveProduct = () => {
         ...products.value[index],
         ...payload
       }
-      message.success('产品修改成功')
+      alert('产品修改成功')
     }
   } else {
     // 新增产品
@@ -586,7 +801,7 @@ const saveProduct = () => {
       askDepth: Math.random() * 1000000
     }
     products.value.unshift(newProduct)
-    message.success('产品创建成功')
+    alert('产品创建成功')
   }
 
   closeModal()
@@ -605,5 +820,14 @@ const togglePause = (product) => {
   if (index === -1) return
   if (products.value[index].status === 'delisted') return
   products.value[index].status = products.value[index].status === 'trading' ? 'suspended' : 'trading'
+}
+
+const toggleListing = (product) => {
+  const index = products.value.findIndex(p => p.productId === product.productId)
+  if (index === -1) return
+  const next = products.value[index].status === 'delisted' ? 'trading' : 'delisted'
+  const ok = window.confirm(next === 'delisted' ? '确认下架该产品？' : '确认上架该产品？')
+  if (!ok) return
+  products.value[index].status = next
 }
 </script>

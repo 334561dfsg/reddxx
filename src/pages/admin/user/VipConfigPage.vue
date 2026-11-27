@@ -1,14 +1,5 @@
 <script setup>
-// VIP 等级配置 — Ant Design Pro list page (2026-11-28): no filters, so the page starts with the table card; create in
-// the toolbar, status as a text Tag, link actions (启用/禁用 moved out of the status badge; 删除 is danger and
-// confirmed in a dialog instead of a native confirm). Native alerts are replaced by toasts, and a new level can no
-// longer reuse an existing level number (the old form allowed duplicate levels).
 import { ref, computed } from 'vue'
-import { Button, Image, Space, Tag, TypographyText, message } from 'ant-design-vue'
-import { PlusOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
-import AdminModal from '../earn/EarnAdminModal.vue'
 import { vipLevels } from '../../../admin/mock/vip'
 import { VIP_LEVEL_STATUS } from '../../../admin/constants/vip'
 
@@ -16,7 +7,6 @@ import { VIP_LEVEL_STATUS } from '../../../admin/constants/vip'
 const showModal = ref(false)
 const editingVip = ref(null)
 const isEditing = ref(false)
-const page = ref(1)
 
 // 表单数据
 const formData = ref({
@@ -37,18 +27,9 @@ const localVipLevels = ref([...vipLevels])
 
 // 状态配置
 const statusConfig = {
-  [VIP_LEVEL_STATUS.ENABLED]: { text: '启用', color: 'green' },
-  [VIP_LEVEL_STATUS.DISABLED]: { text: '禁用', color: 'default' }
+  [VIP_LEVEL_STATUS.ENABLED]: { text: '启用', class: 'bg-emerald-100 text-emerald-700' },
+  [VIP_LEVEL_STATUS.DISABLED]: { text: '禁用', class: 'bg-gray-100 text-gray-700' }
 }
-
-const columns = [
-  { key: 'level', title: '等级', width: 80, align: 'right' },
-  { key: 'name', title: '系统名称', width: 140 },
-  { key: 'displayName', title: '显示名称', width: 180 },
-  { key: 'icon', title: '图标', width: 90 },
-  { key: 'status', title: '状态', width: 90 },
-  { key: 'actions', title: '操作', width: 180, fixed: 'right' }
-]
 
 // 触发文件选择
 const triggerFileSelect = () => {
@@ -62,15 +43,13 @@ const handleIconUpload = (event) => {
 
   // 验证文件类型
   if (!file.type.startsWith('image/')) {
-    message.error('请上传图片文件')
-    event.target.value = ''
+    alert('请上传图片文件')
     return
   }
 
   // 验证文件大小（限制为1MB）
   if (file.size > 1024 * 1024) {
-    message.error('图片大小不能超过1MB')
-    event.target.value = ''
+    alert('图片大小不能超过1MB')
     return
   }
 
@@ -92,16 +71,13 @@ const clearIcon = () => {
   }
 }
 
-const nextLevel = () => localVipLevels.value.reduce((max, vip) => Math.max(max, Number(vip.level) || 0), -1) + 1
-
 // 打开新增模态框
 const openAddModal = () => {
   isEditing.value = false
   editingVip.value = null
-  const level = nextLevel()
   formData.value = {
-    level,
-    name: `VIP${level}`,
+    level: localVipLevels.value.length,
+    name: `VIP${localVipLevels.value.length}`,
     displayName: '',
     iconUrl: '',
     status: VIP_LEVEL_STATUS.ENABLED,
@@ -135,8 +111,8 @@ const closeModal = () => {
 
 // 保存VIP配置
 const saveVip = () => {
-  if (!String(formData.value.displayName || '').trim()) {
-    message.error('请输入显示名称')
+  if (!formData.value.displayName.trim()) {
+    alert('请输入显示名称')
     return
   }
 
@@ -151,65 +127,49 @@ const saveVip = () => {
         updatedAt: new Date().toISOString()
       }
     }
-    message.success('VIP 等级已保存')
   } else {
-    const level = Number(formData.value.level)
-    if (formData.value.level === '' || !Number.isInteger(level) || level < 0) {
-      message.error('等级编号须为不小于 0 的整数')
-      return
-    }
-    if (localVipLevels.value.some((v) => Number(v.level) === level)) {
-      message.error(`等级编号 ${level} 已存在`)
-      return
-    }
     // 新增
     const newVip = {
       id: `vip_${Date.now()}`,
       ...formData.value,
-      level,
       benefits: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }
     localVipLevels.value.push(newVip)
-    message.success('VIP 等级已创建')
   }
 
   closeModal()
 }
 
-// 删除VIP配置（确认对话框替代原生 confirm）
-const deleteTarget = ref(null)
-const requestDelete = (vip) => {
+// 删除VIP配置
+const deleteVip = (vip) => {
   if (vip.level === 0) {
-    message.warning('普通用户等级不能删除')
+    alert('普通用户等级不能删除')
     return
   }
-  deleteTarget.value = vip
-}
-const confirmDelete = () => {
-  const vip = deleteTarget.value
-  if (!vip) return
-  const index = localVipLevels.value.findIndex(v => v.id === vip.id)
-  if (index !== -1) {
-    localVipLevels.value.splice(index, 1)
-    message.success(`已删除 ${vip.displayName}`)
+
+  if (confirm(`确定要删除 ${vip.displayName} 吗？`)) {
+    const index = localVipLevels.value.findIndex(v => v.id === vip.id)
+    if (index !== -1) {
+      localVipLevels.value.splice(index, 1)
+    }
   }
-  deleteTarget.value = null
 }
 
 // 切换状态
 const toggleStatus = (vip) => {
   if (vip.level === 0) {
-    message.warning('普通用户等级不能禁用')
+    alert('普通用户等级不能禁用')
     return
   }
 
   const index = localVipLevels.value.findIndex(v => v.id === vip.id)
   if (index !== -1) {
-    const next = vip.status === VIP_LEVEL_STATUS.ENABLED ? VIP_LEVEL_STATUS.DISABLED : VIP_LEVEL_STATUS.ENABLED
-    localVipLevels.value[index].status = next
-    message.success(next === VIP_LEVEL_STATUS.ENABLED ? `${vip.displayName} 已启用` : `${vip.displayName} 已禁用`)
+    localVipLevels.value[index].status =
+      vip.status === VIP_LEVEL_STATUS.ENABLED
+        ? VIP_LEVEL_STATUS.DISABLED
+        : VIP_LEVEL_STATUS.ENABLED
   }
 }
 
@@ -220,35 +180,67 @@ const sortedVipLevels = computed(() => {
 </script>
 
 <template>
-  <PageShell>
-    <AdminTable title="VIP 等级" v-model:page="page" :rows="sortedVipLevels" :columns="columns" row-key="id" desktop-only>
-      <template #toolbar>
-        <Button type="primary" @click="openAddModal"><template #icon><PlusOutlined /></template>添加 VIP 等级</Button>
-      </template>
-      <template #cell="{ column, record }">
-        <TypographyText v-if="column.key === 'name'" strong>{{ record.name }}</TypographyText>
-        <template v-else-if="column.key === 'icon'">
-          <Image v-if="record.iconUrl" :src="record.iconUrl" :alt="`${record.displayName}图标`" :width="32" :height="32" :preview="false" />
-          <TypographyText v-else type="secondary">—</TypographyText>
-        </template>
-        <Tag v-else-if="column.key === 'status'" :color="statusConfig[record.status]?.color">{{ statusConfig[record.status]?.text || record.status }}</Tag>
-        <Space v-else-if="column.key === 'actions'" :size="8">
-          <Button type="link" class="px-0" @click="openEditModal(record)">编辑</Button>
-          <template v-if="record.level !== 0">
-            <Button type="link" class="px-0" @click="toggleStatus(record)">{{ record.status === VIP_LEVEL_STATUS.ENABLED ? '禁用' : '启用' }}</Button>
-            <Button type="link" danger class="px-0" @click="requestDelete(record)">删除</Button>
-          </template>
-        </Space>
-        <template v-else>{{ record[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+  <section class="space-y-6">
+    <!-- 页面标题 -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">VIP等级配置</h1>
+        <p class="text-sm text-slate-500 mt-1">配置平台VIP等级、图标等信息</p>
+      </div>
+    </div>
 
-    <AdminModal :open="!!deleteTarget" title="删除 VIP 等级" :width="448" confirm-text="确认删除" danger @close="deleteTarget = null" @confirm="confirmDelete">
-      <p>确定要删除 {{ deleteTarget?.displayName }} 吗？删除后将无法恢复。</p>
-    </AdminModal>
+    <!-- VIP等级列表 -->
+    <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-200 p-4 bg-white">
+        <h3 class="text-base font-semibold text-slate-900">等级列表</h3>
+        <a-button @click="openAddModal" class="" html-type="button" type="primary">
+          + 添加VIP等级
+        </a-button>
+      </div>
+      <div class="overflow-x-auto">
+        <a-table  :data-source="sortedVipLevels" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(vip) => vip.id" :custom-row="(vip, index) => ({ class: [&quot;hover:bg-slate-50 transition-colors&quot;] })">
+<a-table-column key="column-0" ><template #title>等级</template><template #default="{ record: vip, index: index }"><div class=" ">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
+                  {{ vip.level }}
+                </span>
+              </div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>名称</template><template #default="{ record: vip, index: index }"><div class=" ">
+                <span class="text-sm font-medium text-slate-900">{{ vip.name }}</span>
+              </div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>显示名称</template><template #default="{ record: vip, index: index }"><div class=" ">
+                <span class="text-sm text-slate-700">{{ vip.displayName }}</span>
+              </div></template></a-table-column>
+<a-table-column key="column-3" align="center"><template #title>图标</template><template #default="{ record: vip, index: index }"><div class="  text-center">
+                <div v-if="vip.iconUrl" class="inline-flex items-center justify-center">
+                  <img
+                    :src="vip.iconUrl"
+                    alt="VIP图标"
+                    class="h-8 w-8 object-contain"
+                  />
+                </div>
+                <span v-else class="text-xs text-slate-400">-</span>
+              </div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>状态</template><template #default="{ record: vip, index: index }"><div class=" ">
+                <a-button @click="toggleStatus(vip)" :class="statusConfig[vip.status].class" class="inline-flex text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity" html-type="button">
+                  {{ statusConfig[vip.status].text }}
+                </a-button>
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>操作</template><template #default="{ record: vip, index: index }"><div class=" ">
+                <div class="flex items-center gap-2">
+                  <a-button @click="openEditModal(vip)" class="text-sm text-blue-600 hover:text-blue-700 font-medium" html-type="button">
+                    编辑
+                  </a-button>
+                  <a-button v-if="vip.level !== 0" @click="deleteVip(vip)" class="text-sm text-rose-600 hover:text-rose-700 font-medium" html-type="button">
+                    删除
+                  </a-button>
+                </div>
+              </div></template></a-table-column>
+</a-table>
+      </div>
+    </div>
 
     <!-- 编辑/新增模态框 -->
-    <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(showModal)"><div class="border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+        <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(showModal)"><div class="border-b border-slate-200 px-6 py-4 flex items-center justify-between">
                 <div>
                   <h2 class="text-lg font-bold text-slate-900">
                     {{ isEditing ? '编辑VIP等级' : '创建VIP等级' }}
@@ -304,7 +296,7 @@ const sortedVipLevels = computed(() => {
                           ref="fileInput"
                           type="file"
                           accept="image/*"
-                          style="display: none"
+                          class="hidden"
                           @change="handleIconUpload"
                         />
                         <div class="flex flex-wrap items-center gap-4 rounded-lg border border-slate-200 bg-white px-3 py-2.5">
@@ -366,12 +358,14 @@ const sortedVipLevels = computed(() => {
                   </div>
                 </div>
               </div></template><template #footer><template v-if="Boolean(showModal)"><div class="bg-slate-50 border-t border-slate-200 px-6 py-4 flex justify-end gap-3">
-                <a-button html-type="button" @click="closeModal" >
+                <a-button html-type="button" @click="closeModal" class="text-sm font-medium text-slate-700 bg-white border-2 border-slate-300 hover:bg-slate-50 transition-colors">
                   取消
                 </a-button>
-                <a-button html-type="button" type="primary" @click="saveVip">
-                  {{ isEditing ? '保存修改' : '创建等级' }}
+                <a-button html-type="button" @click="saveVip" class="text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg transition-all">
+                  {{ isEditing ? '💾 保存修改' : '✨ 创建等级' }}
                 </a-button>
               </div></template></template></a-modal>
-  </PageShell>
+
+    
+  </section>
 </template>

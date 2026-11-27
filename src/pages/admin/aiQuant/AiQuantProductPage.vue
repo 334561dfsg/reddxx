@@ -1,50 +1,137 @@
 <template>
-	<PageShell>
-		<SearchForm name="ai-quant-product-filters" :model="filters" :fields="fields" @search="searchProducts" @reset="resetFilters" />
-		<AdminTable title="AI 量化产品" v-model:page="page" :rows="filteredProducts" :columns="columns" row-key="id" desktop-only>
-			<template #toolbar>
-				<Button type="primary" @click="openCreateProduct"><template #icon><PlusOutlined /></template>创建产品</Button>
-			</template>
-			<template #cell="{ column, record: product }">
-				<Space v-if="column.key === 'product'" direction="vertical" :size="0">
-					<TypographyText strong>{{ product.name }}</TypographyText>
-					<span>
-						<TypographyText type="secondary" class="font-mono">{{ product.id }}</TypographyText>
-						<Button type="link" size="small" aria-label="复制产品ID" title="复制产品ID" @click="copyProductId(product.id)"><template #icon><CopyOutlined /></template></Button>
-					</span>
-					<TypographyText type="secondary">{{ product.currency }} · {{ vipLevelMeta[product.minVipLevel]?.label ?? 'VIP0' }}+</TypographyText>
-				</Space>
-				<Space v-else-if="column.key === 'mode'" direction="vertical" :size="0">
-					<span>{{ operationModeMeta[product.operationMode]?.label ?? product.operationMode }}</span>
-					<TypographyText type="secondary">托管 {{ formatAiQuantDurationLabel(product.durationDays) }}</TypographyText>
-					<TypographyText type="secondary">{{ settlementPeriodMeta[product.settlementPeriod]?.label ?? '—' }}</TypographyText>
-				</Space>
-				<Space v-else-if="column.key === 'tiers'" direction="vertical" :size="0" align="end">
-					<span v-for="(tier, idx) in product.tiers" :key="idx">
-						<TypographyText type="secondary">{{ tier.minAmount }}-{{ tier.maxAmount }} USDT</TypographyText>
-						{{ tier.dailyRate }}%
-					</span>
-				</Space>
-				<Space v-else-if="column.key === 'limits'" direction="vertical" :size="0" align="end">
-					<span>单用户: {{ product.limitAmount }} USDT</span>
-					<TypographyText type="secondary">产品总额: {{ product.limitCount }} USDT</TypographyText>
-					<TypographyText type="secondary">次数: {{ product.monthlyLimitCount }}/月</TypographyText>
-				</Space>
-				<Space v-else-if="column.key === 'stats'" direction="vertical" :size="0" align="end">
-					<span>锁定: {{ product.totalLocked }} USDT</span>
-					<TypographyText type="secondary">收益: {{ product.totalYield }} USDT</TypographyText>
-					<TypographyText type="secondary">订单: {{ product.totalOrders }} 笔</TypographyText>
-				</Space>
-				<Tag v-else-if="column.key === 'status'" :color="productStatusColor[product.status]">{{ productStatusMeta[product.status]?.label ?? product.status }}</Tag>
-				<Space v-else-if="column.key === 'actions'" :size="8">
-					<Button type="link" class="px-0" @click="openEditProduct(product)">编辑</Button>
-					<Button type="link" class="px-0" :danger="product.status === PRODUCT_STATUS.ENABLED" @click="toggleProductStatus(product)">
-						{{ product.status === PRODUCT_STATUS.ENABLED ? '禁用' : '启用' }}
-					</Button>
-				</Space>
-				<template v-else>{{ product[column.key] ?? '—' }}</template>
-			</template>
-		</AdminTable>
+	<section class="space-y-5">
+		<header class="flex justify-between items-center">
+			<div>
+				<h1 class="text-3xl font-semibold text-slate-900">AI量化产品管理</h1>
+				<p class="mt-1 text-sm text-slate-500">配置理财产品、收益阶梯及准入门槛</p>
+			</div>
+			<a-button type="text" @click="openCreateProduct" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">
+				+ 创建产品
+			</a-button>
+		</header>
+
+		<!-- 筛选器 -->
+		<div class="rounded-xl border border-slate-200 bg-white p-4">
+			<div class="grid grid-cols-4 gap-4">
+				<div>
+					<a-input v-model:value="search" placeholder="搜索产品名称或币种" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
+				</div>
+				<div>
+					<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="statusFilter" class="w-full transition">
+						<a-select-option :value="COMMON_FILTER_ALL">全部状态</a-select-option>
+						<a-select-option v-for="(meta, key) in productStatusMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
+					</a-select>
+				</div>
+				<div>
+					<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="currencyFilter" class="w-full transition">
+						<a-select-option :value="COMMON_FILTER_ALL">全部币种</a-select-option>
+						<a-select-option v-for="currency in SUPPORTED_CURRENCIES" :key="currency" :value="currency">{{ currency }}</a-select-option>
+					</a-select>
+				</div>
+				<div>
+					<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="modeFilter" class="w-full transition">
+						<a-select-option :value="COMMON_FILTER_ALL">全部模式</a-select-option>
+						<a-select-option v-for="(meta, key) in operationModeMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
+					</a-select>
+				</div>
+			</div>
+		</div>
+
+		<!-- 产品列表 -->
+		<article class="rounded-xl border border-slate-200 bg-white overflow-hidden">
+			<a-table  size="small" :pagination="false" :data-source="pagedProducts" :row-key="(product) => product.id" :scroll="{ x: 'max-content' }" :custom-row="(product, rowIndex) => ({ class: [&quot;transition hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>产品信息</template>
+<template #default="{ record: product, index: rowIndex }">
+							<div>
+								<div class="font-medium text-slate-900">{{ product.name }}</div>
+								<div class="flex items-center gap-1.5 mt-0.5">
+									<span class="text-xs text-slate-400 font-mono">{{ product.id }}</span>
+									<a-button type="text"
+										@click="copyProductId(product.id)"
+										class="text-slate-400 hover:text-blue-600 transition p-0.5 rounded hover:bg-blue-50"
+										title="复制产品ID"
+									>
+										<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+										</svg>
+									</a-button>
+								</div>
+								<div class="text-sm text-slate-500 mt-1">{{ product.currency }} · {{ vipLevelMeta[product.minVipLevel].label }}+</div>
+							</div>
+						</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>运营模式</template>
+<template #default="{ record: product, index: rowIndex }">
+							<div class="text-sm">
+								<div class="font-medium text-slate-900">{{ operationModeMeta[product.operationMode].label }}</div>
+								<div class="text-xs text-slate-500">托管 {{ formatAiQuantDurationLabel(product.durationDays) }}</div>
+								<div class="text-xs text-slate-400">{{ settlementPeriodMeta[product.settlementPeriod].label }}</div>
+							</div>
+						</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>收益阶梯</template>
+<template #default="{ record: product, index: rowIndex }">
+							<div class="text-xs space-y-1">
+								<div v-for="(tier, idx) in product.tiers" :key="idx" class="flex items-center justify-between">
+									<span class="text-slate-600">{{ tier.minAmount }}-{{ tier.maxAmount }} USDT</span>
+									<span class="font-medium text-green-600">{{ tier.dailyRate }}%</span>
+								</div>
+							</div>
+						</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>限购规则</template>
+<template #default="{ record: product, index: rowIndex }">
+							<div class="text-sm text-slate-600">
+								<div>单用户: {{ product.limitAmount }} USDT</div>
+								<div>产品总额: {{ product.limitCount }} USDT</div>
+								<div>次数: {{ product.monthlyLimitCount }}/月</div>
+							</div>
+						</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>运营数据</template>
+<template #default="{ record: product, index: rowIndex }">
+							<div class="text-sm text-slate-600">
+								<div>锁定: {{ product.totalLocked }} USDT</div>
+								<div>订单: {{ product.totalOrders }} 笔</div>
+								<div class="text-green-600">收益: {{ product.totalYield }} USDT</div>
+							</div>
+						</template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: product, index: rowIndex }">
+							<span :class="['px-2 py-1 text-xs rounded-full', productStatusMeta[product.status].color]">
+								{{ productStatusMeta[product.status].label }}
+							</span>
+						</template>
+</a-table-column>
+<a-table-column key="column-6" align="right" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
+<template #title>操作</template>
+<template #default="{ record: product, index: rowIndex }">
+							<a-button type="text" @click="openEditProduct(product)" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition mr-3">编辑</a-button>
+							<a-button type="text" @click="toggleProductStatus(product)" class="text-sm font-medium text-slate-600 transition hover:text-slate-800">
+								{{ product.status === PRODUCT_STATUS.ENABLED ? '禁用' : '启用' }}
+							</a-button>
+						</template>
+</a-table-column>
+</a-table>
+
+			<AdminListPaginationBar
+				v-model:current-page="productCurrentPage"
+				v-model:page-size="productPageSize"
+				:total-pages="productTotalPages"
+				:total-count="productTotalCount"
+			/>
+
+			<div v-if="filteredProducts.length === 0" class="text-center py-12 text-slate-500">
+				暂无产品数据
+			</div>
+		</article>
 
 			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showProductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showProductModal = false">
 <template #title><template v-if="showProductModal"><div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
@@ -237,8 +324,8 @@
 									</a-select>
 								</div>
 								<div>
-									<label class="block text-sm font-medium text-slate-700 mb-1">排序权重</label>
-									<a-input v-model:value.number="productForm.sortOrder" type="number" placeholder="数值越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
+									<label class="block text-sm font-medium text-slate-700 mb-1">产品排序</label>
+									<a-input v-model:value.number="productForm.sortOrder" type="number" placeholder="数字越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 								</div>
 							</div>
 						</div>
@@ -448,23 +535,19 @@
 
 				<!-- 底部操作栏 -->
 				</template>
-<template #footer><template v-if="showProductModal"><Space :size="8">
-					<Button @click="showProductModal = false">取消</Button>
-					<Button type="primary" @click="saveProduct">保存产品</Button>
-				</Space></template></template>
+<template #footer><template v-if="showProductModal"><div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 flex-shrink-0">
+					<a-button type="text" @click="showProductModal = false" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">取消</a-button>
+					<a-button type="text" @click="saveProduct" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">保存产品</a-button>
+				</div></template></template>
 </a-modal>
-	</PageShell>
+		
+	</section>
 </template>
 
 <script setup>
-// AI 量化产品 — Ant Design Pro list page (2026-11-28): query card, table card with toolbar/pagination, link actions,
-// status as a text Tag. The create/edit dialog keeps its business logic; copy feedback moved from alert() to toast.
 import { ref, reactive, computed } from 'vue'
-import { Button, Space, Tag, TypographyText, message } from 'ant-design-vue'
-import { CopyOutlined, PlusOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
+import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
+import { useAgentPagedList } from '../../../composables/useAgentListPagination'
 import {
 	PRODUCT_STATUS,
 	productStatusMeta,
@@ -489,28 +572,10 @@ import { appendAiQuantOperationLog } from '../../../admin/state/aiQuantOperation
 import { aiQuantProductsCatalog } from '../../../admin/state/financeCatalogs'
 
 const products = aiQuantProductsCatalog
-const page = ref(1)
-const blank = () => ({ name: '', productId: '', status: COMMON_FILTER_ALL, currency: COMMON_FILTER_ALL, mode: COMMON_FILTER_ALL })
-const filters = ref(blank())
-const fields = [
-	{ key: 'name', label: '产品名称' },
-	{ key: 'productId', label: '产品 ID' },
-	{ key: 'status', label: '状态', options: [{ value: COMMON_FILTER_ALL, label: '全部状态' }, ...Object.entries(productStatusMeta).map(([value, meta]) => ({ value, label: meta.label }))] },
-	{ key: 'currency', label: '币种', searchable: true, options: [{ value: COMMON_FILTER_ALL, label: '全部币种' }, ...SUPPORTED_CURRENCIES.map((value) => ({ value, label: value }))] },
-	{ key: 'mode', label: '运营模式', options: [{ value: COMMON_FILTER_ALL, label: '全部模式' }, ...Object.entries(operationModeMeta).map(([value, meta]) => ({ value, label: meta.label }))] }
-]
-const columns = [
-	{ key: 'product', title: '产品信息', width: 240, fixed: 'left' },
-	{ key: 'mode', title: '运营模式', width: 150 },
-	{ key: 'tiers', title: '收益阶梯（日收益率）', width: 200, align: 'right' },
-	{ key: 'limits', title: '限购规则', width: 180, align: 'right' },
-	{ key: 'stats', title: '运营数据', width: 180, align: 'right' },
-	{ key: 'status', title: '状态', width: 90 },
-	{ key: 'actions', title: '操作', width: 120, fixed: 'right' }
-]
-const productStatusColor = { [PRODUCT_STATUS.ENABLED]: 'green', [PRODUCT_STATUS.DISABLED]: 'default', [PRODUCT_STATUS.SOLD_OUT]: 'orange', [PRODUCT_STATUS.MAINTENANCE]: 'blue' }
-function searchProducts(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
-function resetFilters() { filters.value = blank(); page.value = 1 }
+const search = ref('')
+const statusFilter = ref(COMMON_FILTER_ALL)
+const currencyFilter = ref(COMMON_FILTER_ALL)
+const modeFilter = ref(COMMON_FILTER_ALL)
 
 const showProductModal = ref(false)
 const editingProductId = ref('')
@@ -648,7 +713,7 @@ const toggleProductStatus = (product) => {
 const copyProductId = async (productId) => {
 	try {
 		await navigator.clipboard.writeText(productId)
-		message.success('产品ID已复制到剪贴板')
+		alert('产品ID已复制到剪贴板')
 	} catch (err) {
 		console.error('复制失败:', err)
 		// 降级方案：使用传统方法
@@ -660,22 +725,30 @@ const copyProductId = async (productId) => {
 		textarea.select()
 		try {
 			document.execCommand('copy')
-			message.success('产品ID已复制到剪贴板')
+			alert('产品ID已复制到剪贴板')
 		} catch (e) {
-			message.error('复制失败，请手动复制')
+			alert('复制失败，请手动复制')
 		}
 		document.body.removeChild(textarea)
 	}
 }
 
-const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
 const filteredProducts = computed(() => {
-	const f = filters.value
-	return sortAiQuantProducts(products.value.filter((p) =>
-		(f.status === COMMON_FILTER_ALL || p.status === f.status) &&
-		(f.currency === COMMON_FILTER_ALL || p.currency === f.currency) &&
-		(f.mode === COMMON_FILTER_ALL || p.operationMode === f.mode) &&
-		has(p.name, f.name) && has(p.id, f.productId)
-	))
+	const kw = search.value.trim().toLowerCase()
+	return sortAiQuantProducts(products.value.filter(p => {
+		const matchStatus = statusFilter.value === COMMON_FILTER_ALL || p.status === statusFilter.value
+		const matchCurrency = currencyFilter.value === COMMON_FILTER_ALL || p.currency === currencyFilter.value
+		const matchMode = modeFilter.value === COMMON_FILTER_ALL || p.operationMode === modeFilter.value
+		const matchKeyword = !kw || `${p.name} ${p.currency}`.toLowerCase().includes(kw)
+		return matchStatus && matchCurrency && matchMode && matchKeyword
+	}))
 })
+
+const {
+	pageSize: productPageSize,
+	currentPage: productCurrentPage,
+	totalCount: productTotalCount,
+	totalPages: productTotalPages,
+	pagedList: pagedProducts
+} = useAgentPagedList(filteredProducts, { pageSize: 8 })
 </script>

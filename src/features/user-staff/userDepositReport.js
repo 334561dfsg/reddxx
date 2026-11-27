@@ -25,9 +25,7 @@ export function defaultUserReportFilters(now = new Date()) {
   return { startDate: new Date(end.getTime() - 29 * DAY_MS).toISOString().slice(0, 10), endDate: end.toISOString().slice(0, 10), agentId: '', employeeId: '', keyword: '', userType: '' }
 }
 export function buildUserDepositReport(users, orders, input, now = new Date()) {
-  // `userId` and `nickname` are the admin query card's separate single-attribute fields (2026-11-28); `keyword`
-  // (either attribute) stays for existing callers.
-  const filters = Object.fromEntries(['startDate', 'endDate', 'agentId', 'employeeId', 'keyword', 'userId', 'nickname', 'userType'].map(key => [key, text(input[key])]))
+  const filters = Object.fromEntries(['startDate', 'endDate', 'agentId', 'employeeId', 'keyword', 'userType'].map(key => [key, text(input[key])]))
   if (!validDate(filters.startDate) || !validDate(filters.endDate) || filters.startDate > filters.endDate) throw new Error('请选择有效日期，开始日期不能晚于结束日期')
   if (filters.userType && !depositUserTypeOptions.some(option => option.value === filters.userType)) throw new Error('用户类型不可用，请重新选择')
   const userById = new Map(users.map(user => [user.id, user]))
@@ -37,8 +35,6 @@ export function buildUserDepositReport(users, orders, input, now = new Date()) {
   if (filters.employeeId && filters.employeeId !== 'unassigned' && !employee?.isSalesperson) throw new Error('所选业务员不可用，请重新选择')
   if (employee && filters.agentId && (employee.agentParentId || 'unassigned') !== filters.agentId) throw new Error('所选业务员不属于当前代理，请更改代理或业务员')
   const keyword = filters.keyword.toLocaleLowerCase()
-  const userIdQuery = filters.userId.toLocaleLowerCase()
-  const nicknameQuery = filters.nickname.toLocaleLowerCase()
   const matchesOwner = (value, filter) => !filter || (value || 'unassigned') === filter
   const rows = orders.filter(order => {
     if (order.status !== 'credited') return false
@@ -49,8 +45,6 @@ export function buildUserDepositReport(users, orders, input, now = new Date()) {
       && matchesOwner(user?.agentParentId, filters.agentId)
       && matchesOwner(user?.employeeId, filters.employeeId)
       && (!keyword || [order.userId, user?.username || order.username].some(value => text(value).toLocaleLowerCase().includes(keyword)))
-      && (!userIdQuery || text(order.userId).toLocaleLowerCase().includes(userIdQuery))
-      && (!nicknameQuery || text(user?.username || order.username).toLocaleLowerCase().includes(nicknameQuery))
   }).sort((a, b) => Date.parse(b.submitTime) - Date.parse(a.submitTime) || a.id.localeCompare(b.id))
     .map(order => {
       const user = userById.get(order.userId)

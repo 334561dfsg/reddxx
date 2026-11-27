@@ -1,16 +1,6 @@
 <script setup>
-// 裂变佣金结算 — Ant Design Pro list page (2026-11-28): query card with one field per filter (the combined
-// 结算单号/UID/账号/账期 keyword box is split), the settlement arrangement and counts as a Statistic card, table card
-// with the 裂变分销设置 shortcut in its toolbar, link actions and text status Tags. Payout keeps its confirmation
-// dialog (shared confirmation modal); the detail Drawer clears its content after the close animation.
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { Button, Card, Col, Descriptions, DescriptionsItem, Row, Space, Statistic, Table, Tag, TypographyText, message } from 'ant-design-vue'
-import { CloseOutlined } from '@ant-design/icons-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
-import AdminModal from '../earn/EarnAdminModal.vue'
+import { message } from 'ant-design-vue'
+import { ref, computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { referralApi } from '../../../admin/mock/referral'
 import {
   COMMISSION_STATUS,
@@ -18,32 +8,39 @@ import {
   REFERRAL_TYPE_OPTIONS
 } from '../../../admin/constants/referral'
 
-const router = useRouter()
+const searchKeyword = ref('')
+const statusFilter = ref('all')
 const loading = ref(false)
-const page = ref(1)
+
+const pagination = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
+
 const recordList = ref([])
 const aggregates = ref(null)
 const settlementGlobal = ref(null)
+const detailDrawer = ref({
+  visible: false,
+  loading: false,
+  batch: null,
+  list: []
+})
 
-const blank = () => ({ batchNo: '', agentUid: '', agentUsername: '', period: 'all', status: 'all', mode: 'all' })
-const filters = ref(blank())
-const periodOptions = computed(() => [...new Set(recordList.value.map((row) => row.period))].sort().reverse().map((value) => ({ value, label: value })))
-const fields = computed(() => [
-  { key: 'batchNo', label: '结算单号' },
-  { key: 'agentUid', label: '代理 UID' },
-  { key: 'agentUsername', label: '代理账号' },
-  { key: 'period', label: '账期', searchable: true, options: [{ value: 'all', label: '全部账期' }, ...periodOptions.value] },
-  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, ...COMMISSION_STATUS_OPTIONS.map((o) => ({ value: o.value, label: o.label }))] },
-  { key: 'mode', label: '入账方式', options: [{ value: 'all', label: '全部方式' }, { value: 'auto', label: '自动入账' }, { value: 'manual', label: '手动发放' }] }
+const confirmDialog = ref({
+  visible: false,
+  message: '',
+  loading: false,
+  onConfirm: null
+})
+
+
+const totalPages = computed(() => Math.max(1, Math.ceil(pagination.total / pagination.pageSize)))
+const statusOptions = computed(() => [
+  { value: 'all', label: '全部状态', color: 'gray' },
+  ...COMMISSION_STATUS_OPTIONS
 ])
-const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
-const rows = computed(() => recordList.value.filter((row) => {
-  const f = filters.value
-  return has(row.batchNo, f.batchNo) && has(row.agentUid, f.agentUid) && has(row.agentUsername, f.agentUsername) &&
-    (f.period === 'all' || row.period === f.period) &&
-    (f.status === 'all' || row.status === f.status) &&
-    (f.mode === 'all' || Boolean(row.autoCredit) === (f.mode === 'auto'))
-}))
 
 const formatMoney = (n) => Number(n || 0).toLocaleString('zh-CN', {
   minimumFractionDigits: 2,
@@ -63,13 +60,24 @@ const formatDate = (dateString) => {
   })
 }
 
-const STATUS_TAG_COLOR = { yellow: 'orange', green: 'green', blue: 'blue', red: 'red', gray: 'default' }
 const getStatusConfig = (status) => {
   const config = COMMISSION_STATUS_OPTIONS.find((s) => s.value === status)
   return {
     text: config?.label || status,
-    color: STATUS_TAG_COLOR[config?.color] || 'default'
+    color: config?.color || 'gray'
   }
+}
+
+const statusBadgeClass = (status) => {
+  const color = getStatusConfig(status).color
+  const map = {
+    yellow: 'bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200',
+    green: 'bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-200',
+    blue: 'bg-blue-50 text-blue-800 ring-1 ring-inset ring-blue-200',
+    red: 'bg-red-50 text-red-800 ring-1 ring-inset ring-red-200',
+    gray: 'bg-slate-50 text-slate-700 ring-1 ring-inset ring-slate-200'
+  }
+  return map[color] || map.gray
 }
 
 const getTypeLabel = (type) => {
@@ -80,58 +88,104 @@ const settlementModeLabel = (row) => (row.autoCredit ? '自动入账' : '手动�
 
 const stats = computed(() => {
   const a = aggregates.value
+  if (!a) {
+    return [
+      { label: '待发放', value: '—' },
+      { label: '已入账', value: '—' },
+      { label: '已入账佣金', value: '—' }
+    ]
+  }
   return [
-    { label: '待发放', value: a ? a.pendingCount : '—' },
-    { label: '已入账', value: a ? a.completedCount : '—' },
-    { label: '已入账佣金（USDT）', value: a ? formatMoney(a.completedAmount) : '—' }
+    { label: '待发放', value: a.pendingCount },
+    { label: '已入账', value: a.completedCount },
+    { label: '已入账佣金', value: `${formatMoney(a.completedAmount)} USDT` }
   ]
 })
 
-// The whole list is read once (unfiltered, so the counts cover every batch); the query card filters it locally.
 async function loadList() {
   loading.value = true
   try {
-    const res = await referralApi.getSettlementBatches({ page: 1, pageSize: Number.MAX_SAFE_INTEGER, searchKeyword: '', status: 'all' })
+    const res = await referralApi.getSettlementBatches({
+      page: pagination.currentPage,
+      pageSize: pagination.pageSize,
+      searchKeyword: searchKeyword.value,
+      status: statusFilter.value
+    })
     if (res.success) {
       recordList.value = res.data.list
+      pagination.total = res.data.total
       aggregates.value = res.data.aggregates
       settlementGlobal.value = res.data.settlementGlobal
-    } else {
-      message.error(res.message || '结算单加载失败')
     }
   } catch (error) {
-    message.error(error?.message || '结算单加载失败')
+    showToast(error?.message || '结算单加载失败', 'error')
   } finally {
     loading.value = false
   }
 }
 
-function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
-function reset() { filters.value = blank(); page.value = 1 }
+const handleSearch = () => {
+  pagination.currentPage = 1
+  loadList()
+}
+
+const handleReset = () => {
+  searchKeyword.value = ''
+  statusFilter.value = 'all'
+  pagination.currentPage = 1
+  loadList()
+}
+
+watch(
+  () => pagination.currentPage,
+  () => {
+    loadList()
+  }
+)
 
 onMounted(() => {
   loadList()
 })
 
-const columns = [
-  { key: 'batchNo', title: '结算单号', width: 190, fixed: 'left' },
-  { key: 'period', title: '账期', width: 110 },
-  { key: 'agent', title: '代理', width: 180 },
-  { key: 'source', title: '汇总来源', width: 160 },
-  { key: 'amount', title: '结算佣金（USDT）', width: 160, align: 'right' },
-  { key: 'mode', title: '入账方式', width: 110 },
-  { key: 'status', title: '状态', width: 90 },
-  { key: 'creditTxnId', title: '入账流水', width: 180, ellipsis: true },
-  { key: 'actions', title: '操作', width: 120, fixed: 'right' }
-]
+// Operation feedback through Ant message (AGENTS.md toast rule) instead of a hand-built toast.
+function showToast(text, kind = 'info') {
+  ;(message[kind] || message.info)(String(text ?? ''))
+}
 
-// ---- detail drawer ------------------------------------------------------------------------------------------
-const detailDrawer = ref({
-  visible: false,
-  loading: false,
-  batch: null,
-  list: []
-})
+
+
+function openConfirm(message, onConfirm) {
+  confirmDialog.value = {
+    visible: true,
+    message,
+    loading: false,
+    onConfirm
+  }
+}
+
+function closeConfirm() {
+  if (confirmDialog.value.loading) return
+  confirmDialog.value.visible = false
+  confirmDialog.value.message = ''
+  confirmDialog.value.onConfirm = null
+}
+
+async function submitConfirm() {
+  const fn = confirmDialog.value.onConfirm
+  if (!fn) {
+    closeConfirm()
+    return
+  }
+  confirmDialog.value.loading = true
+  try {
+    await fn()
+  } catch (error) {
+    showToast(error?.message || '操作失败', 'error')
+  } finally {
+    confirmDialog.value.loading = false
+    closeConfirm()
+  }
+}
 
 const openDetails = async (row) => {
   detailDrawer.value = {
@@ -142,17 +196,16 @@ const openDetails = async (row) => {
   }
   try {
     const res = await referralApi.getSettlementBatchDetails(row.id)
-    if (detailDrawer.value.batch?.id !== row.id) return
     if (res.success) {
       detailDrawer.value.batch = res.data.batch
       detailDrawer.value.list = res.data.list
     } else {
-      message.error(res.message || '明细加载失败')
+      showToast(res.message || '明细加载失败', 'error')
     }
   } catch (error) {
-    message.error(error?.message || '明细加载失败')
+    showToast(error?.message || '明细加载失败', 'error')
   } finally {
-    if (detailDrawer.value.batch?.id === row.id) detailDrawer.value.loading = false
+    detailDrawer.value.loading = false
   }
 }
 
@@ -160,148 +213,183 @@ const closeDetails = () => {
   detailDrawer.value.visible = false
 }
 
-function onDetailsAfterOpenChange(open) {
-  if (open) return
-  detailDrawer.value = { visible: false, loading: false, batch: null, list: [] }
-}
-
-const detailColumns = [
-  { key: 'id', dataIndex: 'id', title: '明细记录', width: 160 },
-  { key: 'createdAt', dataIndex: 'createdAt', title: '产生时间', width: 160 },
-  { key: 'referral', title: '被邀请用户', width: 180 },
-  { key: 'type', dataIndex: 'type', title: '业务类型', width: 110 },
-  { key: 'amount', dataIndex: 'amount', title: '计佣基数（USDT）', width: 150, align: 'right' },
-  { key: 'level', title: '层级 / 比例', width: 120, align: 'right' },
-  { key: 'commission', dataIndex: 'commission', title: '佣金（USDT）', width: 130, align: 'right' }
-]
-
-// ---- payout confirmation ------------------------------------------------------------------------------------
-const confirmDialog = ref({ visible: false, batch: null, loading: false })
-
-function settleBatch(row) {
-  confirmDialog.value = { visible: true, batch: row, loading: false }
-}
-
-function closeConfirm() {
-  if (confirmDialog.value.loading) return
-  confirmDialog.value = { visible: false, batch: null, loading: false }
-}
-
-async function submitConfirm() {
-  const row = confirmDialog.value.batch
-  if (!row || confirmDialog.value.loading) return
-  confirmDialog.value.loading = true
-  try {
+const settleBatch = (row) => {
+  openConfirm(`确认发放结算单 ${row.batchNo}？`, async () => {
     const res = await referralApi.settleBatch(row.id)
+    showToast(res.message || (res.success ? '发放成功' : '发放失败'), res.success ? 'success' : 'error')
     if (res.success) {
-      message.success(res.message || '发放成功')
-      confirmDialog.value.loading = false
-      closeConfirm()
       await loadList()
       if (detailDrawer.value.visible && detailDrawer.value.batch?.id === row.id) {
         await openDetails(res.data)
       }
-    } else {
-      message.error(res.message || '发放失败')
     }
-  } catch (error) {
-    message.error(error?.message || '操作失败')
-  } finally {
-    confirmDialog.value.loading = false
-  }
+  })
 }
+
+onUnmounted(() => {
+})
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="referral-commission-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+  <div class="space-y-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">裂变佣金结算</h1>
+        <p class="mt-1 text-sm text-slate-500">
+          被邀请用户充值或交易产生返佣明细；系统按结算配置定期汇总成结算单，再由运营发放或自动入账。
+        </p>
+      </div>
+      <router-link
+        to="/admin/agent/referral-config"
+        class="ant-btn inline-flex shrink-0 items-center justify-center no-underline"
+      >
+        裂变分销设置
+      </router-link>
+    </div>
 
-    <Card :bordered="false">
-      <Row :gutter="24">
-        <Col v-for="stat in stats" :key="stat.label" :span="6">
-          <Statistic :title="stat.label" :value="stat.value" />
-        </Col>
-        <Col :span="6">
-          <Statistic title="当前入账账户" :value="settlementGlobal?.creditLabel || '—'" />
-        </Col>
-      </Row>
-      <TypographyText v-if="settlementGlobal" type="secondary" class="referral-settlement-schedule">
-        结算安排：{{ settlementGlobal.settlementScheduleLabel }} {{ settlementGlobal.settlementNotifyLine }}
-      </TypographyText>
-    </Card>
+    <div v-if="settlementGlobal" class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+      当前入账：<span class="font-medium text-slate-900">{{ settlementGlobal.creditLabel }}</span>
+      <span class="mx-2 text-slate-300">·</span>
+      <span class="text-slate-500">结算安排：</span>
+      <span class="font-medium text-slate-900">{{ settlementGlobal.settlementScheduleLabel }}</span>
+      <p class="mt-1 text-xs text-slate-500">{{ settlementGlobal.settlementNotifyLine }}</p>
+    </div>
 
-    <AdminTable title="结算单列表" v-model:page="page" :rows="rows" :columns="columns" row-key="id" :loading="loading" desktop-only>
-      <template #toolbar>
-        <Space :size="8">
-          <Button :loading="loading" @click="loadList">刷新</Button>
-          <Button @click="router.push('/admin/agent/referral-config')">裂变分销设置</Button>
-        </Space>
-      </template>
-      <template #cell="{ column, record }">
-        <span v-if="column.key === 'batchNo'" class="font-mono">{{ record.batchNo }}</span>
-        <span v-else-if="column.key === 'period'" class="font-mono">{{ record.period }}</span>
-        <Space v-else-if="column.key === 'agent'" direction="vertical" :size="0">
-          <TypographyText strong>{{ record.agentUsername }}</TypographyText>
-          <TypographyText type="secondary">UID {{ record.agentUid }}</TypographyText>
-        </Space>
-        <Space v-else-if="column.key === 'source'" direction="vertical" :size="0">
-          <span>{{ record.detailCount }} 条返佣明细</span>
-          <TypographyText type="secondary">{{ record.invitedUserCount }} 个被邀请用户</TypographyText>
-        </Space>
-        <template v-else-if="column.key === 'amount'">{{ formatMoney(record.amount) }}</template>
-        <Tag v-else-if="column.key === 'mode'" :color="record.autoCredit ? 'blue' : 'default'">{{ settlementModeLabel(record) }}</Tag>
-        <Tag v-else-if="column.key === 'status'" :color="getStatusConfig(record.status).color">{{ getStatusConfig(record.status).text }}</Tag>
-        <span v-else-if="column.key === 'creditTxnId'" class="font-mono" :title="record.creditTxnId || undefined">{{ record.creditTxnId || '—' }}</span>
-        <Space v-else-if="column.key === 'actions'" :size="8">
-          <Button type="link" class="px-0" @click="openDetails(record)">明细</Button>
-          <Button v-if="record.status === COMMISSION_STATUS.PENDING" type="link" class="px-0" @click="settleBatch(record)">发放</Button>
-        </Space>
-        <template v-else>{{ record[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div
+        v-for="stat in stats"
+        :key="stat.label"
+        class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+      >
+        <p class="text-xs font-medium text-slate-500">{{ stat.label }}</p>
+        <p class="mt-1 text-xl font-bold tabular-nums text-slate-900">{{ stat.value }}</p>
+      </div>
+    </div>
 
-    <a-drawer :open="Boolean(detailDrawer.visible)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay" @close="closeDetails" @after-open-change="onDetailsAfterOpenChange">
-      <template #title>
-        <div class="referral-drawer-header">
-          <div class="referral-drawer-heading">
-            <div class="referral-drawer-title">返佣明细</div>
-            <TypographyText type="secondary">{{ detailDrawer.batch?.batchNo }} · {{ detailDrawer.batch?.period }} · UID {{ detailDrawer.batch?.agentUid }}</TypographyText>
+    <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div class="flex flex-col gap-3 border-b border-slate-200 bg-slate-50/30 p-4 md:px-6 lg:flex-row lg:items-end lg:justify-between">
+        <div class="flex flex-wrap items-center gap-3">
+          <h3 class="shrink-0 text-base font-semibold text-slate-900">结算单列表</h3>
+          <a-select v-model:value="statusFilter" class="!w-32" @change="handleSearch">
+            <a-select-option v-for="status in statusOptions" :key="status.value" :value="status.value">
+              {{ status.label }}
+            </a-select-option>
+          </a-select>
+          <div class="relative min-w-[220px] max-w-md flex-1">
+            <a-input v-model:value="searchKeyword" type="text" placeholder="结算单号、代理 UID、代理账号、账期" class="pl-9" @keyup.enter="handleSearch" />
+            <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none">
+              <circle cx="9" cy="9" r="5.8" stroke="currentColor" stroke-width="1.6" />
+              <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
           </div>
-          <Button type="text" aria-label="关闭" @click="closeDetails"><CloseOutlined /></Button>
         </div>
-      </template>
-      <Descriptions v-if="detailDrawer.batch" :column="3" size="small" bordered class="referral-drawer-summary">
-        <DescriptionsItem label="结算佣金（USDT）">{{ formatMoney(detailDrawer.batch.amount) }}</DescriptionsItem>
-        <DescriptionsItem label="返佣明细">{{ detailDrawer.batch.detailCount }} 条</DescriptionsItem>
-        <DescriptionsItem label="入账账户">{{ detailDrawer.batch.creditLabel || '—' }}</DescriptionsItem>
-      </Descriptions>
-      <Table :columns="detailColumns" :data-source="detailDrawer.list" :loading="detailDrawer.loading" :pagination="false" size="middle" row-key="id" :scroll="{ x: 1010 }" :locale="{ emptyText: '暂无明细' }">
-        <template #bodyCell="{ column, record }">
-          <span v-if="column.key === 'id'" class="font-mono">{{ record.id }}</span>
-          <template v-else-if="column.key === 'createdAt'">{{ formatDate(record.createdAt) }}</template>
-          <Space v-else-if="column.key === 'referral'" direction="vertical" :size="0">
-            <span>{{ record.referralUsername }}</span>
-            <TypographyText type="secondary">UID {{ record.referralUid }}</TypographyText>
-          </Space>
-          <template v-else-if="column.key === 'type'">{{ getTypeLabel(record.type) }}</template>
-          <template v-else-if="column.key === 'amount'">{{ formatMoney(record.amount) }}</template>
-          <template v-else-if="column.key === 'level'">{{ record.level }} 级 / {{ (Number(record.commissionRate || 0) * 100).toFixed(2) }}%</template>
-          <template v-else-if="column.key === 'commission'">{{ formatMoney(record.commission) }}</template>
-        </template>
-      </Table>
-    </a-drawer>
+        <div class="flex flex-wrap gap-2">
+          <a-button html-type="button" class="" @click="handleSearch" type="primary">查询</a-button>
+          <a-button html-type="button" class="" @click="handleReset">重置</a-button>
+        </div>
+      </div>
 
-    <AdminModal :open="confirmDialog.visible" title="发放裂变佣金" confirm-text="确认发放" :busy="confirmDialog.loading" :width="480" @close="closeConfirm" @confirm="submitConfirm">
-      <TypographyText>确认发放结算单 {{ confirmDialog.batch?.batchNo }}？</TypographyText>
-      <TypographyText type="secondary">{{ confirmDialog.batch?.agentUsername }} · {{ formatMoney(confirmDialog.batch?.amount) }} USDT</TypographyText>
-    </AdminModal>
-  </PageShell>
+      <div class="relative overflow-x-auto">
+        <div v-if="loading" class="absolute inset-0 z-10 flex items-center justify-center bg-white/60">
+          <div class="h-10 w-10 animate-spin rounded-full border-b-2 border-blue-600"></div>
+        </div>
+
+        <a-table  :data-source="recordList" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" ><template #title>结算单号</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   font-mono text-xs font-medium text-slate-900">{{ row.batchNo }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>账期</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   font-mono text-sm text-slate-700">{{ row.period }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>代理</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap  ">
+                <div class="text-sm font-medium text-slate-900">{{ row.agentUsername }}</div>
+                <div class="text-xs text-slate-500">UID: {{ row.agentUid }}</div>
+              </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>汇总来源</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap  ">
+                <div class="text-sm text-slate-900">{{ row.detailCount }} 条返佣明细</div>
+                <div class="text-xs text-slate-500">{{ row.invitedUserCount }} 个被邀请用户</div>
+              </div></template></a-table-column>
+<a-table-column key="column-4" align="right"><template #title>结算佣金</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   text-right font-semibold tabular-nums text-slate-900">
+                {{ formatMoney(row.amount) }} USDT
+              </div></template></a-table-column>
+<a-table-column key="column-5" ><template #title>入账方式</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap  ">
+                <span
+                  class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  :class="row.autoCredit ? 'bg-blue-50 text-blue-800 ring-1 ring-inset ring-blue-200' : 'bg-slate-50 text-slate-700 ring-1 ring-inset ring-slate-200'"
+                >
+                  {{ settlementModeLabel(row) }}
+                </span>
+              </div></template></a-table-column>
+<a-table-column key="column-6" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap  ">
+                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="statusBadgeClass(row.status)">
+                  {{ getStatusConfig(row.status).text }}
+                </span>
+              </div></template></a-table-column>
+<a-table-column key="column-7" ><template #title>入账流水</template><template #default="{ record: row, index: index }"><div class="max-w-[12rem] truncate   font-mono text-xs text-slate-600">{{ row.creditTxnId || '—' }}</div></template></a-table-column>
+<a-table-column key="column-8" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   text-right text-sm font-medium">
+                <a-button html-type="button" class="text-blue-600 hover:text-blue-900" @click="openDetails(row)">
+                  明细
+                </a-button>
+                <a-button v-if="row.status === COMMISSION_STATUS.PENDING" html-type="button" class="ml-3 text-green-600 hover:text-green-900" @click="settleBatch(row)">
+                  发放
+                </a-button>
+              </div></template></a-table-column><template #emptyText>暂无结算单</template>
+</a-table>
+      </div>
+
+      <div v-if="pagination.total > 0" class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-6 py-4 text-sm text-slate-700">
+        <span>共 <span class="font-medium">{{ pagination.total }}</span> 条结算单</span>
+        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false"  :disabled="loading" @change="pagination.currentPage = $event" />
+      </div>
+    </div>
+
+      <a-drawer :open="Boolean(detailDrawer.visible)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeDetails"><template #title><template v-if="Boolean(detailDrawer.visible)"><div class="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
+            <div>
+              <p class="text-base font-semibold text-slate-900">返佣明细</p>
+              <p class="mt-1 text-xs text-slate-500">
+                {{ detailDrawer.batch?.batchNo }} · {{ detailDrawer.batch?.period }} · UID {{ detailDrawer.batch?.agentUid }}
+              </p>
+            </div>
+            <a-button aria-label="关闭" html-type="button" class="border border-slate-300 text-sm text-slate-600 hover:bg-slate-50" @click="closeDetails">
+              关闭
+            </a-button>
+          </div></template></template><template v-if="detailDrawer.visible"><div v-if="detailDrawer.batch" class="grid gap-3 border-b border-slate-100 bg-slate-50 px-5 py-4 sm:grid-cols-3">
+            <div>
+              <p class="text-xs text-slate-500">结算佣金</p>
+              <p class="mt-1 text-lg font-semibold text-slate-900">{{ formatMoney(detailDrawer.batch.amount) }} USDT</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500">返佣明细</p>
+              <p class="mt-1 text-lg font-semibold text-slate-900">{{ detailDrawer.batch.detailCount }} 条</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500">入账账户</p>
+              <p class="mt-1 text-lg font-semibold text-slate-900">{{ detailDrawer.batch.creditLabel }}</p>
+            </div>
+          </div>
+<div class="min-h-0 flex-1 overflow-auto">
+            <div v-if="detailDrawer.loading" class="px-5 py-10 text-center text-sm text-slate-500">加载明细中…</div>
+            <a-table v-else :data-source="detailDrawer.list" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(item) => item.id" :custom-row="(item, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
+<a-table-column key="column-0" ><template #title>明细记录</template><template #default="{ record: item, index: index }"><div class="  font-mono text-xs text-slate-700">{{ item.id }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>产生时间</template><template #default="{ record: item, index: index }"><div class="  text-xs text-slate-600">{{ formatDate(item.createdAt) }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>被邀请用户</template><template #default="{ record: item, index: index }"><div class=" ">
+                    <div class="font-medium text-slate-900">{{ item.referralUsername }}</div>
+                    <div class="text-xs text-slate-500">UID: {{ item.referralUid }}</div>
+                  </div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>业务类型</template><template #default="{ record: item, index: index }"><div class="  text-slate-700">{{ getTypeLabel(item.type) }}</div></template></a-table-column>
+<a-table-column key="column-4" align="right"><template #title>计佣基数</template><template #default="{ record: item, index: index }"><div class="  text-right tabular-nums">{{ formatMoney(item.amount) }}</div></template></a-table-column>
+<a-table-column key="column-5" align="right"><template #title>层级 / 比例</template><template #default="{ record: item, index: index }"><div class="  text-right tabular-nums">{{ item.level }} 级 / {{ (item.commissionRate * 100).toFixed(2) }}%</div></template></a-table-column>
+<a-table-column key="column-6" align="right"><template #title>佣金</template><template #default="{ record: item, index: index }"><div class="  text-right tabular-nums font-medium text-slate-900">{{ formatMoney(item.commission) }}</div></template></a-table-column><template #emptyText>暂无明细</template>
+</a-table>
+          </div></template></a-drawer>
+
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(confirmDialog.visible)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeConfirm"><template #title><template v-if="Boolean(confirmDialog.visible)"><div class="flex items-center justify-between gap-3"><span>请确认</span><a-button aria-label="关闭" html-type="button"  :disabled="confirmDialog.loading" @click="closeConfirm">×</a-button></div></template></template><template v-if="confirmDialog.visible"><p class="text-base font-semibold text-slate-900">请确认</p>
+<p class="mt-2 text-sm leading-relaxed text-slate-600">{{ confirmDialog.message }}</p></template><template #footer><template v-if="Boolean(confirmDialog.visible)"><div class="mt-6 flex justify-end gap-2">
+            <a-button html-type="button" class="" :disabled="confirmDialog.loading" @click="closeConfirm">
+              取消
+            </a-button>
+            <a-button html-type="button" class="" :disabled="confirmDialog.loading" @click="submitConfirm" type="primary">
+              {{ confirmDialog.loading ? '处理中…' : '确定' }}
+            </a-button>
+          </div></template></template></a-modal>
+
+    
+
+  </div>
 </template>
-
-<style scoped>
-.referral-settlement-schedule { display: block; margin-top: 16px; }
-.referral-drawer-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.referral-drawer-heading { min-width: 0; }
-.referral-drawer-title { font-size: 16px; line-height: 24px; font-weight: 600; }
-.referral-drawer-summary { margin-bottom: 16px; }
-</style>

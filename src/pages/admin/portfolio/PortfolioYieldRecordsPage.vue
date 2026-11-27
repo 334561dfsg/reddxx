@@ -1,67 +1,67 @@
 <script setup>
-// 投资组合收益记录 — Ant Design Pro list page (2026-11-28): query card + table card, amounts right-aligned.
-import { computed, ref } from 'vue'
-import { Space, Tag, TypographyText } from 'ant-design-vue'
-import PageShell from '../earn/EarnPageShell.vue'
-import SearchForm from '../earn/EarnSearchForm.vue'
-import AdminTable from '../earn/EarnAdminTable.vue'
+import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
+import { useAdminListPagination } from '../../../admin/composables/useAdminListPagination'
 import { portfolioYieldRecords } from '../../../admin/state/portfolioOrders'
+import { formatPortfolioAmount } from '../../../admin/constants/portfolio'
 
-const page = ref(1)
-const blank = () => ({ orderId: '', userName: '', product: 'all', status: 'all', recordDate: null })
-const filters = ref(blank())
-const distinct = (key) => [...new Set(portfolioYieldRecords.value.map((row) => row[key]).filter(Boolean))].map((value) => ({ value, label: value }))
-const fields = computed(() => [
-  { key: 'orderId', label: '订单号' },
-  { key: 'userName', label: '用户' },
-  { key: 'product', label: '产品', searchable: true, options: [{ value: 'all', label: '全部产品' }, ...distinct('productName')] },
-  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, ...distinct('status')] },
-  { key: 'recordDate', label: '收益日期', range: true }
-])
-
-const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
-const money = (value) => Number(value || 0).toLocaleString('zh-CN', { maximumFractionDigits: 2 })
-
-const rows = computed(() => portfolioYieldRecords.value.filter((row) => {
-  const f = filters.value
-  return has(row.orderId, f.orderId) && has(row.userName, f.userName) &&
-    (f.product === 'all' || row.productName === f.product) &&
-    (f.status === 'all' || row.status === f.status) &&
-    (!f.recordDate || (row.recordDate >= f.recordDate[0] && row.recordDate <= f.recordDate[1]))
-}))
-
-const columns = [
-  { key: 'id', title: '记录', width: 200 },
-  { key: 'product', title: '产品', width: 240 },
-  { key: 'userName', title: '用户', width: 200 },
-  { key: 'principal', title: '本金（USDT）', width: 140, align: 'right' },
-  { key: 'yield', title: '收益（USDT）', width: 160, align: 'right' },
-  { key: 'recordDate', title: '收益日期', width: 120 },
-  { key: 'status', title: '状态', width: 100 }
-]
-
-function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
-function reset() { filters.value = blank(); page.value = 1 }
+const {
+  currentPage,
+  pageSize,
+  totalPages,
+  pagedRows: pagedRecords,
+  onPageSizeChange
+} = useAdminListPagination(portfolioYieldRecords)
 </script>
 
 <template>
-  <PageShell>
-    <SearchForm name="portfolio-yield-record-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
-    <AdminTable title="投资组合收益记录" v-model:page="page" :rows="rows" :columns="columns" row-key="id" desktop-only>
-      <template #cell="{ column, record }">
-        <Space v-if="column.key === 'id'" direction="vertical" :size="0">
-          <span class="font-mono">{{ record.id }}</span>
-          <TypographyText type="secondary" class="font-mono">订单 {{ record.orderId }}</TypographyText>
-        </Space>
-        <template v-else-if="column.key === 'product'">{{ record.productName }}</template>
-        <template v-else-if="column.key === 'principal'">{{ money(record.principal) }}</template>
-        <Space v-else-if="column.key === 'yield'" direction="vertical" :size="0" align="end">
-          <TypographyText type="success">+{{ money(record.yieldAmount) }}</TypographyText>
-          <TypographyText type="secondary">日收益率 {{ record.dailyRatePct }}%</TypographyText>
-        </Space>
-        <Tag v-else-if="column.key === 'status'" color="green">{{ record.status }}</Tag>
-        <template v-else>{{ record[column.key] ?? '—' }}</template>
-      </template>
-    </AdminTable>
-  </PageShell>
+  <section class="space-y-5">
+    <header>
+      <h1 class="text-3xl font-semibold text-slate-900">投资组合收益记录</h1>
+      <p class="mt-1 text-sm text-slate-500">展示每日收益、订单收益和模拟入账记录</p>
+    </header>
+
+    <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <a-table  size="small" :pagination="false" :data-source="pagedRecords" :row-key="(record) => record.id" :scroll="{ x: 'max-content' }" :custom-row="(record, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
+<a-table-column key="column-0" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 font-mono text-xs text-slate-500&quot;] })">
+<template #title>记录 ID</template>
+<template #default="{ record: record, index: rowIndex }">{{ record.id }}</template>
+</a-table-column>
+<a-table-column key="column-1" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 font-mono text-xs text-slate-500&quot;] })">
+<template #title>订单</template>
+<template #default="{ record: record, index: rowIndex }">{{ record.orderId }}</template>
+</a-table-column>
+<a-table-column key="column-2" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-900&quot;] })">
+<template #title>产品</template>
+<template #default="{ record: record, index: rowIndex }">{{ record.productName }}</template>
+</a-table-column>
+<a-table-column key="column-3" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>用户</template>
+<template #default="{ record: record, index: rowIndex }">{{ record.userName }}</template>
+</a-table-column>
+<a-table-column key="column-4" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm&quot;] })">
+<template #title>收益</template>
+<template #default="{ record: record, index: rowIndex }">
+              <div class="font-medium text-emerald-600">{{ formatPortfolioAmount(record.yieldAmount) }}</div>
+              <div class="text-xs text-slate-500">日收益率 {{ record.dailyRatePct }}%</div>
+            </template>
+</a-table-column>
+<a-table-column key="column-5" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
+<template #title>日期</template>
+<template #default="{ record: record, index: rowIndex }">{{ record.recordDate }}</template>
+</a-table-column>
+<a-table-column key="column-6" :custom-cell="(record, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
+<template #title>状态</template>
+<template #default="{ record: record, index: rowIndex }"><span class="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-700">{{ record.status }}</span></template>
+</a-table-column>
+</a-table>
+      <AdminListPaginationBar
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        :total-count="portfolioYieldRecords.length"
+        :page-size="pageSize"
+        @update:current-page="currentPage = $event"
+        @update:page-size="onPageSizeChange"
+      />
+    </article>
+  </section>
 </template>

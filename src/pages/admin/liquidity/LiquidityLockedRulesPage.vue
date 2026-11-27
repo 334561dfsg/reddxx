@@ -1,10 +1,6 @@
+
 <script setup>
-// 规则说明（静态指南页）— Ant Design Pro shell (2026-11-28): PageShell title + Card with Ant Tabs as the section switch;
-// section content is unchanged apart from data fixes: the early-redemption scenario title now matches its 3-day holding,
-// and the BTC/ETH interest examples are recomputed (amount × daily rate × days).
 import { ref } from 'vue'
-import { Card, Tabs, TabPane } from 'ant-design-vue'
-import PageShell from '../earn/EarnPageShell.vue'
 
 const activeSection = ref('intro')
 
@@ -19,13 +15,24 @@ const sections = [
 </script>
 
 <template>
-	<PageShell title="规则说明">
-		<template #description>详细了解流动性挖矿锁仓版的规则、使用方式与收益计算</template>
-		<Card :bordered="false" :body-style="{ paddingTop: 0, paddingBottom: 0 }">
-			<Tabs v-model:active-key="activeSection" aria-label="规则说明分区">
-				<TabPane v-for="section in sections" :key="section.key" :tab="section.label" />
-			</Tabs>
-		</Card>
+	<section class="space-y-5">
+		<header>
+			<h1 class="text-3xl font-semibold text-slate-900">规则说明</h1>
+			<p class="mt-1 text-sm text-slate-500">详细了解流动性挖矿锁仓版的规则、使用方式与收益计算</p>
+		</header>
+
+		<!-- 导航栏 -->
+		<article class="rounded-xl border border-slate-200 bg-white p-4">
+			<nav class="flex flex-wrap gap-2">
+				<a-button type="text" v-for="section in sections" :key="section.key" @click="activeSection = section.key"
+						:class="['px-4 py-2 text-sm font-medium rounded-lg transition',
+								activeSection === section.key
+								? 'bg-blue-600 text-white'
+								: 'bg-slate-100 text-slate-700 hover:bg-slate-200']">
+					{{ section.label }}
+				</a-button>
+			</nav>
+		</article>
 
 		<!-- 产品简介 -->
 		<article v-if="activeSection === 'intro'" class="space-y-4">
@@ -251,8 +258,8 @@ const sections = [
 				<div class="mt-4 space-y-4">
 					<div v-for="(example, idx) in [
 						{ product: 'USDT 定期理财', amount: 5000, currency: 'USDT', days: 10, rate: 0.3, interest: 150, total: 5150 },
-						{ product: 'BTC 锁仓挖矿', amount: 0.5, currency: 'BTC', days: 30, rate: 0.35, interest: 0.0525, total: 0.5525 },
-						{ product: 'ETH 流动性质押', amount: 10, currency: 'ETH', days: 20, rate: 0.4, interest: 0.8, total: 10.8 }
+						{ product: 'BTC 锁仓挖矿', amount: 0.5, currency: 'BTC', days: 30, rate: 0.35, interest: 0.00525, total: 0.50525 },
+						{ product: 'ETH 流动性质押', amount: 10, currency: 'ETH', days: 20, rate: 0.4, interest: 0.08, total: 10.08 }
 					]" :key="idx" class="rounded-lg border border-slate-200 p-4">
 						<h3 class="font-semibold text-slate-900">案例{{ idx + 1 }}：{{ example.product }}</h3>
 						<div class="mt-3 grid gap-2 md:grid-cols-2">
@@ -292,7 +299,7 @@ const sections = [
 				</h2>
 				<div class="mt-4 space-y-4">
 					<div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
-						<h3 class="font-semibold text-amber-900">场景：10 天周期持有 3 天后提前赎回</h3>
+						<h3 class="font-semibold text-amber-900">场景：锁仓10天后提前赎回</h3>
 						<div class="mt-3 space-y-2 text-sm">
 							<p><span class="text-slate-600">初始锁仓：</span><strong>5000 USDT</strong> × 日利率 <strong>0.3%</strong> × 周期 <strong>10天</strong></p>
 							<p><span class="text-slate-600">已持有：</span><strong>3天</strong></p>
@@ -331,5 +338,5 @@ const sections = [
 				<p class="mt-2 text-sm leading-relaxed text-slate-700">{{ faq.a }}</p>
 			</div>
 		</article>
-	</PageShell>
+	</section>
 </template>
