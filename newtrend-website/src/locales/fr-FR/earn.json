@@ -47,7 +47,6 @@
   },
   "featured": {
     "title": "Produits à la une",
-    "productCount": "{{count}} produits",
     "totalSubscribed": "{{amount}} souscrits",
     "quotaRemaining": "Plus que {{amount}} restants",
     "subscribeNow": "Souscrire"

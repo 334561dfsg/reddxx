@@ -47,7 +47,6 @@
   },
   "featured": {
     "title": "추천 상품",
-    "productCount": "{{count}}개 상품",
     "totalSubscribed": "{{amount}} 구독됨",
     "quotaRemaining": "{{amount}}만 남음",
     "subscribeNow": "구독"

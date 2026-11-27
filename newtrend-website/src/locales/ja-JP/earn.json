@@ -47,7 +47,6 @@
   },
   "featured": {
     "title": "注目商品",
-    "productCount": "{{count}} 商品",
     "totalSubscribed": "{{amount}} 購読済み",
     "quotaRemaining": "残り {{amount}} のみ",
     "subscribeNow": "購読"

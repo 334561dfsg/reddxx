@@ -47,7 +47,6 @@
   },
   "featured": {
     "title": "Hervorgehobene Produkte",
-    "productCount": "{{count}} Produkte",
     "totalSubscribed": "{{amount}} gezeichnet",
     "quotaRemaining": "Nur noch {{amount}} übrig",
     "subscribeNow": "Zeichnen"

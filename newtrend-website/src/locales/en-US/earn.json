@@ -47,7 +47,6 @@
   },
   "featured": {
     "title": "Featured Products",
-    "productCount": "{{count}} products",
     "totalSubscribed": "{{amount}} subscribed",
     "quotaRemaining": "Only {{amount}} left",
     "subscribeNow": "Subscribe"

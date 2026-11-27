@@ -47,7 +47,6 @@
   },
   "featured": {
     "title": "熱門精選",
-    "productCount": "{{count}} 款產品",
     "totalSubscribed": "已認購 {{amount}}",
     "quotaRemaining": "僅剩 {{amount}}",
     "subscribeNow": "申購"
