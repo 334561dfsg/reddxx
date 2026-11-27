@@ -83,7 +83,7 @@ function act(record,kind){
     
    </template></tbody>
   </table></div>
-  <FinancePagination v-if="!loading" v-model:page="page" :total="total" :page-size="10"/>
+  <FinancePagination scroll v-if="!loading" v-model:page="page" :total="total" :page-size="10"/>
  </template>
  <FeedbackToast v-if="feedback" :type="feedback.type" :source="()=>feedback?$t(feedback.key):''"/>
 </div>

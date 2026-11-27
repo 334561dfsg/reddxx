@@ -109,7 +109,7 @@ function selectGroup(event,index){
     <td class="qf-cell-dates" :data-label="$t('aiQuant.quantFund.positions.table.maturityDate')"><div>{{ fundDate(order.maturityDate) }}</div><small>{{ $t('aiQuant.quantFund.positions.table.subscribedAt') }} {{ fundDate(order.subscribedAt) }}</small></td>
     <td class="num qf-cell-actions"><div class="qf-row-actions" @click.stop><button v-if="canRedeemFund(order)" type="button" class="qf-row-action primary" aria-haspopup="dialog" @click="confirmRedeem(order)">{{ $t('aiQuant.quantFund.redeem.button') }}</button><button v-if="hasPayouts(order)" type="button" class="qf-row-action" @click="openPayouts(order)">{{ $t('aiQuant.quantFund.interestRecords.entry') }}</button></div></td>
    </tr></tbody>
-  </table></div><FinancePagination v-if="!loading" v-model:page="page" :total="total" :page-size="10"/>
+  </table></div><FinancePagination scroll v-if="!loading" v-model:page="page" :total="total" :page-size="10"/>
  </div>
  </template>
 </div>

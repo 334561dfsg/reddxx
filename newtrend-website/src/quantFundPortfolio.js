@@ -33,7 +33,7 @@ quantFundAccount.balances.demo-=4999
 // 真實 carries synthetic history (the reference real account is empty) so every status and paging is exercised.
 seed('QFO-seed-real-3','qf-vip0','real',{principal:5000,startDaysAgo:0,status:'pending_review'})
 seed('QFO-seed-real-2','qf-vip1','real',{principal:120000,startDaysAgo:3,status:'active',paidDays:3})
-seed('QFO-seed-real-1','qf-vip0','real',{principal:8000,startDaysAgo:10,status:'active',paidDays:10})
+seed('QFO-seed-real-1','qf-vip0','real',{principal:8000,startDaysAgo:33,status:'active',paidDays:33})
 seed('QFO-seed-real-4','qf-vip0','real',{principal:5000,startDaysAgo:25,status:'redeemed',paidDays:20,settledDaysAgo:5})
 seed('QFO-seed-real-5','qf-vip1','real',{principal:100000,startDaysAgo:30,status:'redeemed',paidDays:7,settledDaysAgo:23})
 seed('QFO-seed-real-6','qf-vip0','real',{principal:6500,startDaysAgo:34,status:'redeemed',paidDays:12,settledDaysAgo:22})

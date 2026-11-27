@@ -33,6 +33,6 @@ const {page,total,shown}=useFinancePagination(rows)
 
 </div>
 <div v-else class="earn-panel portfolio-empty"><LineIcon set="earn" name="inbox"/><p>{{ $t('earn.myEarnings.empty.'+tab) }}</p><RouterLink class="earn-buy" :to="path('/earn/simple')">{{ $t('earn.myEarnings.empty.browseProducts') }}</RouterLink></div>
-<FinancePagination v-if="!loading" v-model:page="page" :total="total"/>
+<FinancePagination scroll v-if="!loading" v-model:page="page" :total="total"/>
 </template>
 <style>.portfolio-skeleton-lines{display:grid;gap:8px;min-width:0}.portfolio-records .portfolio-skeleton-row td{height:73px}.portfolio-records .portfolio-skeleton-row.orders td{height:84px}@media(max-width:1100px){.portfolio-records .portfolio-skeleton-row td{height:auto}}</style>

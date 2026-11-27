@@ -23,5 +23,5 @@ const {page,total,shown}=useFinancePagination(()=>props.products,6)
    <RouterLink :to="path('/earn/loan/borrow')+'?product='+encodeURIComponent(p.productId)+'&currency='+encodeURIComponent(p.loanCurrency)" class="loan-market-cta" :aria-label="$t('margin.market.borrowCta')+' · '+p.productName" @click="$emit('borrow',p)">{{$t('margin.market.borrowCta')}}<LineIcon set="lending" name="arrow-right"/></RouterLink>
   </article>
  </div>
- <FinancePagination v-model:page="page" :total="total" :page-size="6"/>
+ <FinancePagination scroll v-model:page="page" :total="total" :page-size="6"/>
 </template>

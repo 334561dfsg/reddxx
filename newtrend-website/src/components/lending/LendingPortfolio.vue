@@ -1,4 +1,5 @@
 <script setup>
+import {useMediaQuery} from '../../composables/useMediaQuery.js'
 import StatusTag from '../ui/StatusTag.vue'
 import FinancePagination from '../FinancePagination.vue'
 import {computed,ref,watch} from 'vue'
@@ -13,7 +14,9 @@ const filter=ref(['ongoing','completed','other'].includes(route.query.group)?rou
 const groups={ongoing:['pending','active','repaying','overdue'],completed:['completed'],other:['rejected','cancelled','liquidated']}
 const filtered=computed(()=>props.orders.filter(o=>groups[filter.value].includes(o.status)))
 const pages=computed(()=>Math.max(1,Math.ceil(filtered.value.length/10)))
-const shown=computed(()=>filtered.value.slice((page.value-1)*10,page.value*10))
+// Phones load on scroll (FinancePagination scroll): keep every page up to the current one.
+const phone=useMediaQuery('(max-width: 767px)')
+const shown=computed(()=>filtered.value.slice(phone.value?0:(page.value-1)*10,page.value*10))
 watch(filter,()=>page.value=1);watch(pages,n=>page.value=Math.min(page.value,n))
 const totals=computed(()=>['USDT','USDC'].map(currency=>({currency,debt:props.orders.filter(o=>o.loanCurrency===currency).reduce((n,o)=>n+o.totalDebt,0)})))
 const pending=computed(()=>props.orders.filter(o=>o.status==='pending').length)
@@ -27,6 +30,6 @@ function detail(o){router.push({path:path('/earn/loan/order/'+encodeURIComponent
   <div class="loan-portfolio-toolbar"><div class="portfolio-tabs" :aria-label="$t('lending.status')"><button v-for="group in Object.keys(groups)" :key="group" :aria-pressed="filter===group" @click="filter=group">{{$t('lending.groups.'+group)}}</button></div><RouterLink class="earn-buy" :to="path('/earn/loan')">{{$t('lending.apply')}}</RouterLink></div>
   <div v-if="shown.length" class="earn-panel portfolio-table loan-portfolio-table"><table><thead><tr><th>{{$t('earn.myEarnings.table.productName')}}</th><th>{{$t('lending.amount')}}</th><th>{{$t('lending.debt')}}</th><th>{{$t('lending.daily')}}</th><th>{{$t('lending.term')}}</th><th>{{$t('lending.status')}}</th><th>{{$t('earn.myEarnings.table.action')}}</th></tr></thead><tbody><tr v-for="order in shown" :key="order.orderId"><td><div class="earn-product-line"><Coin :symbol="order.loanCurrency"/><div><strong>{{order.productName}}</strong><small>{{order.orderId}}</small></div></div></td><td :data-label="$t('lending.amount')"><strong class="earn-mono">{{fmt(order.loanAmount)}} {{order.loanCurrency}}</strong></td><td :data-label="$t('lending.debt')"><strong class="earn-mono">{{fmt(order.totalDebt)}} {{order.loanCurrency}}</strong></td><td :data-label="$t('lending.daily')"><span class="earn-accent earn-mono">{{Number((order.dailyRate??order.interestRate/365).toFixed(8))}}%</span></td><td :data-label="$t('lending.term')">{{$t('margin.market.termDays',{days:order.loanDuration})}}</td><td :data-label="$t('lending.status')"><StatusTag domain="lending" :status="order.status"/></td><td class="portfolio-row-action"><button class="earn-buy" @click="detail(order)">{{$t('lending.details')}}</button></td></tr></tbody></table></div>
   <div v-else class="earn-panel portfolio-empty"><Icon name="wallet"/><p>{{$t('lending.empty')}}</p><RouterLink class="earn-buy" :to="path('/earn/loan')">{{$t('lending.apply')}}</RouterLink></div>
-  <FinancePagination v-model:page="page" :total="filtered.length" :page-size="10"/>
+  <FinancePagination scroll v-model:page="page" :total="filtered.length" :page-size="10"/>
  </div>
 </template>

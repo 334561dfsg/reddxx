@@ -16,14 +16,16 @@ import {useFinancePagination} from '../../composables/useFinancePagination'
 const props=defineProps({items:{type:Array,default:()=>[]},loading:Boolean})
 // Shared list pager (10 days per page) instead of the reference's latest-N truncation (user request).
 const {page,total,shown}=useFinancePagination(()=>props.items,10)
-// Phones (user request 2026-11-27): no pager — the list grows by 10 days as the end scrolls into view.
+// Phones (user request 2026-11-27): no pager — the list grows by 10 days as the end scrolls into view. The sentinel is
+// keyed by the loaded count, so a sentinel still in view after a load is a new element and is observed again.
 const phone=useMediaQuery('(max-width: 767px)')
 const loaded=ref(10),sentinel=ref(null)
 const rows=computed(()=>phone.value?props.items.slice(0,loaded.value):shown.value)
 const more=computed(()=>phone.value&&loaded.value<props.items.length)
 let observer=null
 watch(sentinel,el=>{observer?.disconnect();observer=null;if(!el||typeof IntersectionObserver!=='function')return;observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))loaded.value+=10},{rootMargin:'200px 0px'});observer.observe(el)})
-watch(()=>props.items,()=>{loaded.value=10})
+// Start over only for a different record (its first trading day changes), not when a refresh hands in a new array.
+watch(()=>props.items.at(-1)?.date,()=>{loaded.value=10})
 onBeforeUnmount(()=>observer?.disconnect())
 const summary=computed(()=>summarizeDailyStats(props.items))
 // Scale and range span every day, so bars and the caption stay stable across pages.
@@ -58,8 +60,10 @@ watch(()=>props.loading,(now,before)=>{if(before&&!now)grow()})
    <span class="ds-bar" aria-hidden="true"><span class="ds-axis"></span><span v-if="sign(item.pnl)!=='flat'" :class="['ds-fill',sign(item.pnl)]" :style="{width:width(item),transitionDelay:Math.min(index*25,250)+'ms'}"></span><span v-else class="ds-dot"></span></span>
    <span class="ds-pnl r" :class="sign(item.pnl)">{{ signed(item.pnl) }}</span>
   </li>
+  <li v-if="!loading&&more" :key="'more-'+loaded" ref="sentinel" class="ds-more-sentinel" role="status">{{ $t('common.loading') }}</li>
+  <li v-else-if="!loading&&phone&&items.length>10" class="ds-no-more">{{ $t('common.noMore') }}</li>
  </ul>
- <FinancePagination v-if="!loading&&!phone" v-model:page="page" :total="total" :page-size="10"/><div v-if="!loading&&more" ref="sentinel" class="ds-more-sentinel" role="status">{{ $t('common.loading') }}</div><p v-else-if="!loading&&phone&&items.length>10" class="ds-no-more">{{ $t('common.noMore') }}</p>
+ <FinancePagination v-if="!loading&&!phone" v-model:page="page" :total="total" :page-size="10"/>
 </div>
 </template>
 <style>

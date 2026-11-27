@@ -31,6 +31,6 @@ const {page,total,shown}=useFinancePagination(rows)
  <td class="portfolio-row-action"><button class="earn-buy" :disabled="redeemDisabled(row)" :aria-describedby="redeemDisabled(row)?'redeem-hint-'+row.id:undefined" @click="redeem(row)">{{ $t('earn.actions.redeem') }}</button><p v-if="redeemDisabled(row)" :id="'redeem-hint-'+row.id" class="earn-caption portfolio-disabled-hint">{{ $t(row.status==='redeeming'?'earn.myEarnings.holdings.settlingLabel':'earn.myEarnings.redeemDisabledTooltip') }}</p></td>
 </tr></tbody></table></div>
 <div v-else class="earn-panel portfolio-empty"><LineIcon set="earn" name="inbox"/><p>{{ $t('earn.myEarnings.empty.holdings') }}</p><RouterLink class="earn-buy" :to="path('/earn/simple')">{{ $t('earn.myEarnings.empty.browseProducts') }}</RouterLink></div>
-<FinancePagination v-if="!loading" v-model:page="page" :total="total"/>
+<FinancePagination scroll v-if="!loading" v-model:page="page" :total="total"/>
 </template>
 <style>.portfolio-skeleton-lines{display:grid;gap:8px;min-width:0}.portfolio-skeleton-row td{height:95px}@media(max-width:1100px){.portfolio-skeleton-row td{height:auto}}</style>

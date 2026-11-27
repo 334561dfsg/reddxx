@@ -237,3 +237,28 @@
  #main-content#main-content .strategy-page .ds-summary{margin:0 0 12px;padding:12px 14px}
  #main-content#main-content .strategy-page :is(.ds-more-sentinel,.ds-no-more){margin:0;padding:16px 0;text-align:center;font-size:12px;line-height:18px;color:#8c8f96}
 }
+
+/* Strategy stats on phones (user request): the bar, style line, summary and column header stay put; only the daily list
+   scrolls (and loads more inside its own scroll box). The page fills the viewport below the 48px top bar. */
+@media(max-width:767px){
+ #main-content#main-content .strategy-page:has(.strategy-stats-page){padding-top:0}
+ #main-content#main-content .strategy-page .strategy-stats-page{display:flex;flex-direction:column;height:calc(100vh - 48px - env(safe-area-inset-top));height:calc(100dvh - 48px - env(safe-area-inset-top));padding-top:8px;padding-bottom:env(safe-area-inset-bottom);overflow:hidden}
+ #main-content#main-content .strategy-page .strategy-stats-head{flex:none}
+ #main-content#main-content .strategy-page .strategy-stats-card{display:flex;flex-direction:column;flex:1;min-height:0}
+ #main-content#main-content .strategy-page .strategy-stats-card>.ds{flex:1;min-height:0;gap:0}
+ #main-content#main-content .strategy-page :is(.ds-summary,.ds-head){flex:none}
+ #main-content#main-content .strategy-page .ds-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin:0;padding:0 0 12px}
+}
+
+/* Same app layout on the interest records page (phones): description and column header stay fixed, only the rows scroll
+   and load more; on desktop the scroll wrapper is transparent. */
+#main-content#main-content .qf-interest-records .qf-interest-scroll{display:contents}
+@media(max-width:767px){
+ #main-content#main-content .quant-page.quant-sub:has(.qf-interest-records){padding-top:8px;padding-bottom:0}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-records{display:flex;flex-direction:column;height:calc(100vh - 56px - env(safe-area-inset-top));height:calc(100dvh - 56px - env(safe-area-inset-top));overflow:hidden}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-head{flex:none;margin:0 0 12px}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-head p{margin:0;font-size:12px;line-height:18px;color:#8c8f96}
+ #main-content#main-content .qf-interest-records .qf-interest-scroll{display:block;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom)}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-records .qf-panel.qf-table-wrap{overflow:visible}
+ #main-content#main-content .qf-interest-records .qf-table thead th{position:sticky;top:0;z-index:1;background:var(--qf-card,#15181c)}
+}
