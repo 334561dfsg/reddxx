@@ -445,7 +445,6 @@
     "energy": "能源",
     "product": "交易產品",
     "showChart": "展開K線",
-    "hideChart": "收起K線",
     "usePrice": "帶入價格 {{price}}",
     "noMarketMatch": "沒有符合的交易對"
   },
@@ -461,5 +460,10 @@
     "positionHistory": "歷史倉位",
     "current": "當前訂單",
     "history": "歷史訂單"
+  },
+  "chartPage": {
+    "back": "返回",
+    "orderBook": "委託訂單",
+    "emptyTrades": "暫無成交"
   }
 }

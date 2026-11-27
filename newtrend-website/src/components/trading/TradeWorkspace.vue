@@ -25,7 +25,9 @@ const product=tradeProducts[props.mode]
 // header with a product switch and a chart toggle (chart and 24h stats collapsed by default, kept in page state), the
 // order form and a compact book side by side, records as cards below. Desktop and tablet keep the grid layout.
 const compact=useMediaQuery(COMPACT_TRADE_QUERY)
-const showChart=computed(()=>!compact.value||state.chartOpen)
+// The phone layout has no inline chart: its chart button opens the chart page (TradeChart, GMXX reference).
+const showChart=computed(()=>!compact.value)
+const openChart=()=>router.push(path('/trade/'+props.mode+'/'+pair.value.name.replace('/','')+'/chart'))
 const productItems=computed(()=>[['futures','trade.pages.perpetual'],['options','trade.pages.delivery'],['spot','common.spotTrading']].map(([value,label])=>({value,label:t(label)})))
 function chooseProduct(next){if(next!==props.mode)router.push(path('/trade/'+next+'/'+pair.value.name.replace('/','')))}
 // Phone layout: the pair opens the left pair drawer (MarketPicker) instead of the dropdown.
@@ -59,11 +61,11 @@ watch(()=>route.params.symbol,symbol=>{if(symbol&&pair.value.id!==symbol&&pair.v
 const hasVolume=computed(()=>Number.isFinite(Number(pair.value.volume))&&Number(pair.value.volume)>0&&Number(pair.value.price)>0)
 </script>
 <template>
-<div class="trading-terminal product-terminal" :class="[mode==='spot'?'spot-three-column':mode+'-workspace',{compact,'chart-open':showChart}]">
+<div class="trading-terminal product-terminal" :class="[mode==='spot'?'spot-three-column':mode+'-workspace',{compact}]">
   <h1 class="terminal-accessible-title">{{ $t(product.title) }}</h1>
   <section class="instrument-bar" :aria-label="$t('trade.pages.marketOverview')">
     <div class="instrument-identity"><template v-if="compact"><button type="button" class="pair-trigger" aria-haspopup="dialog" :aria-label="$t('trade.form.tradingAsset')+' '+pair.name" @click="openPairs"><Coin :symbol="pair.symbol"/><strong>{{ pair.name }}</strong><LineIcon name="caret-down"/></button></template><RecordFilter v-else variant="market" :categories="pairCategories" :id="mode+'-market'" :model-value="pair.id" :label="$t('trade.form.tradingAsset')" :search-label="$t('trade.searchSymbol')" :options="pairs" @update:model-value="choosePair"><template #leading><Coin :symbol="pair.symbol"/></template></RecordFilter><button class="instrument-favorite" :aria-label="$t(favorites.includes(pair.id)?'common.unfavoriteMarket':'common.favoriteMarket',{symbol:pair.name})" :aria-pressed="favorites.includes(pair.id)" @click="favorite(pair.id)">{{ favorites.includes(pair.id)?'★':'☆' }}</button></div>
-    <div v-if="compact" class="instrument-tools"><RecordFilter :id="mode+'-product'" :model-value="mode" :label="$t('trade.pages.product')" :options="productItems" @update:model-value="chooseProduct"/><button type="button" class="chart-toggle" :aria-expanded="state.chartOpen" :aria-controls="mode+'-chart'" :aria-label="$t(state.chartOpen?'trade.pages.hideChart':'trade.pages.showChart')" :title="$t(state.chartOpen?'trade.pages.hideChart':'trade.pages.showChart')" @click="state.chartOpen=!state.chartOpen"><LineIcon name="candlestick"/></button></div>
+    <div v-if="compact" class="instrument-tools"><RecordFilter :id="mode+'-product'" :model-value="mode" :label="$t('trade.pages.product')" :options="productItems" @update:model-value="chooseProduct"/><button type="button" class="chart-toggle" :aria-label="$t('trade.pages.showChart')" :title="$t('trade.pages.showChart')" @click="openChart"><LineIcon name="candlestick"/></button></div>
     <strong class="instrument-price" :class="livePair.change<0?'negative':'positive'"><template v-if="live">{{ fmt(livePair.price) }}<small v-if="compact" class="instrument-change">{{ livePair.change>0?'+':'' }}{{ livePair.change }}%</small></template><Skeleton v-else inline width="120px"/></strong>
     <dl v-if="showChart" class="instrument-stats"><div><dt>{{ $t('home.markets.colChange') }}</dt><dd :class="livePair.change<0?'negative':'positive'"><template v-if="live">{{ livePair.change }}%</template><Skeleton v-else inline width="48px"/></dd></div><div><dt>{{ $t('trade.24hHigh') }}</dt><dd><template v-if="live">{{ fmt(livePair.high) }}</template><Skeleton v-else inline width="72px"/></dd></div><div><dt>{{ $t('trade.24hLow') }}</dt><dd><template v-if="live">{{ fmt(livePair.low) }}</template><Skeleton v-else inline width="72px"/></dd></div><div><dt>{{ $t('home.markets.colVolume') }}</dt><dd>{{ hasVolume?`${$compact(pair.volume/pair.price)} ${pair.symbol}`:'—' }}</dd></div><div><dt>{{ $t('trade.turnover') }}</dt><dd>{{ hasVolume?`${$compact(pair.volume)} USDT`:'—' }}</dd></div></dl>
     <span v-if="streamStatus!=='open'" class="stream-status" role="status"><span class="stream-dot" aria-hidden="true"></span>{{ $t(streamStatus==='reconnecting'?'trade.stream.reconnecting':'trade.stream.connecting') }}</span>

@@ -445,7 +445,6 @@
     "energy": "エネルギー",
     "product": "取引商品",
     "showChart": "チャートを表示",
-    "hideChart": "チャートを閉じる",
     "usePrice": "価格 {{price}} を入力",
     "noMarketMatch": "一致する取引ペアはありません"
   },
@@ -461,5 +460,10 @@
     "positionHistory": "ポジション履歴",
     "current": "進行中の注文",
     "history": "履歴"
+  },
+  "chartPage": {
+    "back": "戻る",
+    "orderBook": "板情報",
+    "emptyTrades": "約定はまだありません"
   }
 }

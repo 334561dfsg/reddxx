@@ -4,6 +4,7 @@ const Home=()=>import('./pages/Home.vue')
 const FuturesTrade=()=>import('./pages/trading/FuturesTrade.vue')
 const OptionsTrade=()=>import('./pages/trading/OptionsTrade.vue')
 const SpotTrade=()=>import('./pages/trading/SpotTrade.vue')
+const TradeChart=()=>import('./pages/trading/TradeChart.vue')
 const Finance=()=>import('./pages/Finance.vue')
 const Quant=()=>import('./pages/Quant.vue')
 const Assets=()=>import('./pages/Assets.vue')
@@ -24,6 +25,8 @@ export const routes=[
  {name:'trade-futures',path:'/trade/futures/:symbol?',component:FuturesTrade},
  {name:'trade-options',path:'/trade/options/:symbol?',component:OptionsTrade},
  {name:'trade-spot',path:'/trade/spot/:symbol?',component:SpotTrade},
+ // Phone chart view opened from the compact trading header (GMXX reference); wider screens go back to the trade page.
+ {name:'trade-chart',path:'/trade/:mode(futures|options|spot)/:symbol/chart',component:TradeChart},
  {path:'/trade/:pathMatch(.*)*',redirect:'/trade/futures/BTCUSDT'},
  // Copy trading is temporarily excluded from this prototype.
  {path:'/copytrade/:pathMatch(.*)*',redirect:'/'},

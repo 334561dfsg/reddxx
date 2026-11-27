@@ -37,6 +37,9 @@ export const useTickers = () => useChannel('tickers', () => ({}), (current, mess
 /** Order book for one market (each push is the full book). */
 export const useDepth = id => useChannel('depth', () => id() && {id: id()})
 
+/** Recent public trades for one market, newest first (snapshot, then new trades prepended; keeps the latest 30). */
+export const useTrades = id => useChannel('trades', () => id() && {id: id()}, (current, message) => message.replace || !current ? message.trades : [...message.trades, ...current].slice(0, 30))
+
 /** Candles for a market and interval: a history snapshot, then updates of the last candle(s). */
 export const useKline = (id, interval) => useChannel('kline', () => id() && {id: id(), interval: interval()}, (current, message) => {
   if (message.replace || !current) return message.candles

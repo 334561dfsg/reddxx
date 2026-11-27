@@ -445,7 +445,6 @@
     "energy": "에너지",
     "product": "거래 상품",
     "showChart": "차트 보기",
-    "hideChart": "차트 닫기",
     "usePrice": "가격 {{price}} 입력",
     "noMarketMatch": "일치하는 거래쌍이 없습니다"
   },
@@ -461,5 +460,10 @@
     "positionHistory": "포지션 내역",
     "current": "진행 중 주문",
     "history": "내역"
+  },
+  "chartPage": {
+    "back": "뒤로",
+    "orderBook": "호가창",
+    "emptyTrades": "체결 내역이 없습니다"
   }
 }

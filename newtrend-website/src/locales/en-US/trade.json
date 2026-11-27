@@ -445,7 +445,6 @@
     "energy": "Energy",
     "product": "Product",
     "showChart": "Show chart",
-    "hideChart": "Hide chart",
     "usePrice": "Use price {{price}}",
     "noMarketMatch": "No matching pairs"
   },
@@ -461,5 +460,10 @@
     "positionHistory": "Position history",
     "current": "Current orders",
     "history": "History"
+  },
+  "chartPage": {
+    "back": "Back",
+    "orderBook": "Order book",
+    "emptyTrades": "No trades yet"
   }
 }

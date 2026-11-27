@@ -63,6 +63,23 @@ test('kline pushes update the last candle; depth pushes the full book', () => {
   assert.equal(depth.at(-1).asks.length, 14)
 })
 
+test('trades: a snapshot of recent trades, then each tick pushes the new trade at the live price', () => {
+  const {m, s} = stream()
+  const got = [], tickers = []
+  s.subscribe('trades', {id: 'BTCUSD'}, message => got.push(message))
+  s.subscribe('ticker', {id: 'BTCUSD'}, message => tickers.push(message))
+  m.flush(); m.flush()
+  assert.equal(got[0].replace, true)
+  assert.equal(got[0].trades.length, 20)
+  assert.ok(got[0].trades.every((t, i) => t.qty > 0 && ['buy', 'sell'].includes(t.side) && (!i || t.time <= got[0].trades[i - 1].time)), 'newest first')
+  s.step()
+  const pushed = got.at(-1)
+  assert.equal(pushed.replace, false)
+  assert.equal(pushed.trades.length, 1)
+  assert.equal(pushed.trades[0].price, s.lastPrice('BTCUSD'))
+  assert.equal('side' in tickers.at(-1), false, 'tickers keep their documented shape')
+})
+
 test('a dropped connection reconnects and re-sends snapshots; a failing one keeps retrying', () => {
   const {m, s} = stream()
   const got = []

@@ -8,8 +8,10 @@
 //   'ticker'  {id}             → Ticker                               one market
 //   'depth'   {id}             → {asks: [[price, qty]], bids, price} best levels, full book each push
 //   'kline'   {id, interval}   → {candles: Candle[], replace: bool}   history snapshot, then the updated last candle(s)
+//   'trades'  {id}             → {trades: Trade[], replace: bool}     recent public trades (newest first), then new ones
 // Ticker = {id, name, symbol, price, change, high, low, volume, reference}
 // Candle = {time, open, high, low, close, volume}
+// Trade = {id, time, price, qty, side: 'buy'|'sell'}
 import {shallowRef} from 'vue'
 
 export const INTERVAL_MS = {
@@ -51,6 +53,15 @@ export function depthBook(price, sequence = 0, levels = 14) {
   return {asks, bids, price}
 }
 
+/** Deterministic recent public trades ending at `price` (newest first), for the trades snapshot. */
+export function recentTrades(price, now = Date.now(), count = 20) {
+  return Array.from({length: count}, (_, i) => {
+    const side = Math.sin(i * 2.1 + price) > 0 ? 'buy' : 'sell'
+    return {id: `${now}-${i}`, time: now - i * 2300 - Math.round(Math.abs(Math.sin(i * 1.3)) * 1500),
+      price: round(price * (1 + Math.sin(i * 1.7) * .00015 * (i ? 1 : 0)), price), qty: Number((.002 + Math.abs(Math.sin(i * 3.1 + price)) * .08).toFixed(4)), side}
+  })
+}
+
 export function createMarketStream({markets, random = Math.random, tickMs = 1000, latency = () => 400, schedule = setTimeout, cancel = clearTimeout, clock = () => Date.now(), fail = false, flaky = false}) {
   const status = shallowRef('idle')
   const quotes = new Map(markets.map(m => [m.id, {
@@ -62,7 +73,7 @@ export function createMarketStream({markets, random = Math.random, tickMs = 1000
   const klines = new Map() // `${id}|${interval}` → candles (server-side history, kept while subscribed)
   let sequence = 0, tickTimer = null, connectTimer = null, flakyTimer = null
 
-  const ticker = id => quotes.get(id) && {...quotes.get(id)}
+  const ticker = id => { const quote = quotes.get(id); if (!quote) return quote; const {side, ...rest} = quote; return rest }
   const send = (sub, message) => { if (sub.active) sub.onMessage(message) }
   function snapshotFor(sub) {
     const {channel, params} = sub
@@ -71,6 +82,7 @@ export function createMarketStream({markets, random = Math.random, tickMs = 1000
     if (!quote) return null
     if (channel === 'ticker') return ticker(params.id)
     if (channel === 'depth') return depthBook(quote.price, sequence)
+    if (channel === 'trades') return {trades: recentTrades(quote.price, clock()), replace: true}
     if (channel === 'kline') {
       const key = params.id + '|' + params.interval
       if (!klines.has(key)) klines.set(key, klineHistory(quote.price, params.interval, clock()))
@@ -95,6 +107,7 @@ export function createMarketStream({markets, random = Math.random, tickMs = 1000
         const drift = (quote.reference - quote.price) / quote.reference * 8
         const direction = random() < .5 + Math.max(-.2, Math.min(.2, drift)) ? 1 : -1
         const tick = 10 ** -decimals(quote.price)
+        quote.side = direction > 0 ? 'buy' : 'sell'
         quote.price = round(Math.max(tick, quote.price + direction * Math.max(tick, quote.price * .00012 * (.5 + random() * 2))), quote.price)
         quote.change = (quote.price / quote.reference - 1) * 100
         quote.high = Math.max(quote.high, quote.price); quote.low = Math.min(quote.low, quote.price)
@@ -108,6 +121,10 @@ export function createMarketStream({markets, random = Math.random, tickMs = 1000
       if (sub.channel === 'tickers') send(sub, Object.fromEntries(changed.map(id => [id, ticker(id)])))
       else if (sub.channel === 'ticker' && changed.includes(sub.params.id)) send(sub, ticker(sub.params.id))
       else if (sub.channel === 'depth') send(sub, depthBook(quotes.get(sub.params.id).price, sequence))
+      else if (sub.channel === 'trades' && changed.includes(sub.params.id)) {
+        const quote = quotes.get(sub.params.id)
+        send(sub, {trades: [{id: `${now}-${sequence}`, time: now, price: quote.price, qty: Number((.001 + random() * .12).toFixed(4)), side: quote.side || 'buy'}], replace: false})
+      }
       else if (sub.channel === 'kline') {
         const candles = klines.get(sub.params.id + '|' + sub.params.interval), price = quotes.get(sub.params.id).price
         const last = candles.at(-1), span = INTERVAL_MS[sub.params.interval] || 3600e3
