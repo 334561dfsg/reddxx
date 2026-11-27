@@ -33,8 +33,7 @@
     "buy": "C2C-Kauf — Schnelle Fiat-Einzahlung",
     "sell": "C2C-Verkauf — Sichere Fiat-Auszahlung",
     "orders": "C2C-Aufträge",
-    "orderDetail": "C2C-Auftragsdetails",
-    "paymentAccounts": "Zahlungsmethoden"
+    "orderDetail": "C2C-Auftragsdetails"
   },
   "copytrade": {
     "index": "Copy Trading — Top-Tradern folgen",

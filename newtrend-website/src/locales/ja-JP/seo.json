@@ -33,8 +33,7 @@
     "buy": "C2C 購入 — 法定通貨からすばやく入金",
     "sell": "C2C 売却 — 安全な法定通貨への出金",
     "orders": "C2C 注文",
-    "orderDetail": "C2C 注文詳細",
-    "paymentAccounts": "支払い方法の管理"
+    "orderDetail": "C2C 注文詳細"
   },
   "copytrade": {
     "index": "コピートレード — トップトレーダーに追随",

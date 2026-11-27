@@ -49,8 +49,9 @@ export const routes=[
  {name:'news',path:'/news/:id?',component:News},
  {name:'account',path:'/:account(profile|records|notifications|bind-email|bind-phone|change-password|kyc|referrals)/:id?',component:Account},
  {name:'legal',path:'/:section(about|privacy|agreement|risk-disclosure|regulatory-information|content)/:id?',component:Legal},
- {name:'c2c',path:'/c2c/:c2cPage(buy|sell|orders|payment-accounts)',component:()=>import('./pages/C2CBuy.vue')},
- {path:'/c2c/accounts',redirect:'/c2c/payment-accounts'},
+ {name:'c2c',path:'/c2c/:c2cPage(buy|sell|orders)',component:()=>import('./pages/C2CBuy.vue')},
+ // Payment accounts were removed (user decision, 2026-11-27): orders go straight to back-office review.
+ {path:'/c2c/:old(payment-accounts|accounts)',redirect:'/c2c/buy'},
  {name:'charity',path:'/charity',component:Charity},
  {name:'deposit',path:'/deposit',component:DepositPage},
  {name:'withdraw',path:'/withdraw',component:Withdraw},

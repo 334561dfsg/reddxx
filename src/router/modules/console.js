@@ -492,6 +492,16 @@ export const consoleRoutes = [
   { path: 'news/categories/new', name: 'news-category-create', component: () => import('../../pages/admin/news/NewsCategoryEditorPage.vue'), meta: { title: '内容管理 / 新增分类' } },
   { path: 'news/categories/:id/edit', name: 'news-category-edit', component: () => import('../../pages/admin/news/NewsCategoryEditorPage.vue'), meta: { title: '内容管理 / 编辑分类' } },
   { path: 'news/:id/edit', name: 'news-article-edit', component: () => import('../../pages/admin/news/NewsArticleEditorPage.vue'), meta: { title: '内容管理 / 编辑文章' } },
+  { path: 'c2c', redirect: '/admin/c2c/orders' },
+  { path: 'c2c/quotes', name: 'c2c-quotes', component: () => import('../../pages/admin/c2c/C2CQuotesPage.vue'), meta: { title: 'C2C 交易 / 报价管理' } },
+  { path: 'c2c/quotes/new', name: 'c2c-quote-create', component: () => import('../../pages/admin/c2c/C2CQuoteEditorPage.vue'), meta: { title: 'C2C 交易 / 新增报价' } },
+  { path: 'c2c/quotes/:id/edit', name: 'c2c-quote-edit', component: () => import('../../pages/admin/c2c/C2CQuoteEditorPage.vue'), meta: { title: 'C2C 交易 / 编辑报价' } },
+  ...['orders', 'logs'].map((section) => ({
+    path: `c2c/${section}`,
+    name: `c2c-${section}`,
+    component: () => import('../../pages/admin/c2c/C2CRecordsPage.vue'),
+    meta: { title: `C2C 交易 / ${{ orders: '订单审核', logs: '操作日志' }[section]}`, c2cSection: section }
+  })),
   {
     path: 'quant-fund',
     redirect: '/admin/quant-fund/products'

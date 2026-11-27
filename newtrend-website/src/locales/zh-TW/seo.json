@@ -33,8 +33,7 @@
     "buy": "C2C 買幣 — 快捷法幣入金",
     "sell": "C2C 賣幣 — 安全法幣出金",
     "orders": "C2C 訂單",
-    "orderDetail": "C2C 訂單詳情",
-    "paymentAccounts": "收款方式管理"
+    "orderDetail": "C2C 訂單詳情"
   },
   "copytrade": {
     "index": "跟單交易 — 跟隨頂尖交易員",

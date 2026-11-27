@@ -48,7 +48,7 @@ test('every LineIcon used in the templates resolves', () => {
   }
   assert.deepEqual(missing, [])
   // Names passed in through variables (tabs, catalogue icons) are checked against their sources here.
-  for (const name of ['buy', 'sell', 'orders', 'bank']) assert.ok(lineIcon('c2c', name), `c2c/${name}`) // C2CBuy nav
+  for (const name of ['buy', 'sell', 'orders']) assert.ok(lineIcon('c2c', name), `c2c/${name}`) // C2CBuy nav
   for (const name of ['clock', 'lock']) assert.ok(lineIcon('earn', name), `earn/${name}`) // EarnCatalog filters
 })
 

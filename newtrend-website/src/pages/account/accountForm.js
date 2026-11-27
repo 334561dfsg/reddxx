@@ -10,7 +10,7 @@ export const notifySuccess=key=>message.success(t(key))
 
 /** Copies to the clipboard with a toast per attempt. */
 export function copyText(value){
- navigator.clipboard.writeText(value).then(()=>notifySuccess('c2c.paymentAccount.copied')).catch(()=>notifyError('common.copyFailed'))
+ navigator.clipboard.writeText(value).then(()=>notifySuccess('common.copied')).catch(()=>notifyError('common.copyFailed'))
 }
 
 /** Local file pickers: keeps only the file name of valid picks (≤20MB images/PDF), toasts invalid ones. */

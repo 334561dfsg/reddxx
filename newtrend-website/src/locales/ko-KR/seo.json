@@ -33,8 +33,7 @@
     "buy": "C2C 구매 — 빠른 법정화폐 입금",
     "sell": "C2C 판매 — 안전한 법정화폐 출금",
     "orders": "C2C 주문",
-    "orderDetail": "C2C 주문 상세",
-    "paymentAccounts": "결제 수단 관리"
+    "orderDetail": "C2C 주문 상세"
   },
   "copytrade": {
     "index": "카피 트레이딩 — 톱 트레이더 따라하기",

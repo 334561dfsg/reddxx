@@ -7,7 +7,6 @@ import {path} from '../data'
 import Icon from './Icon.vue'
 import {useLocaleSwitch} from '../composables/useLocaleSwitch'
 import SupportChat from './SupportChat.vue'
-import C2CAccountForm from './c2c/C2CAccountForm.vue'
 import C2COrderDetail from './c2c/C2COrderDetail.vue'
 import EarnSubscription from './earn/EarnSubscription.vue'
 import StrategyDetails from './strategy/StrategyDetails.vue'
@@ -81,7 +80,6 @@ const primary=computed(()=>{
  const confirmable=['account-confirm','c2c-agreement']
  if(confirmable.includes(c.type))return {form:'account-action',label:c.data.confirmLabel||'earn.redeem.success.done',danger:c.data.destructive,disabled:done.value||closing.value}
  if(formType.value)return {form:'action-form',label:f.done?'assets.statusCompleted':'earn.redeem.success.done',disabled:f.done||!f.valid}
- if(c.type==='c2c-account')return {form:'c2c-account-form',label:c.data.account?'c2c.accounts.form.submitSave':'c2c.accounts.form.submitCreate',disabled:closing.value||!f.valid}
  const flows={'strategy-subscribe':['strategy-subscribe-form','aiQuant.create.submit',false],'quant-fund-subscribe':['quant-fund-subscribe-form','aiQuant.quantFund.subscribe.submit',false],'earn-subscribe':['earn-subscribe-form','earn.subscribe.submit',true],'earn-redeem':['earn-redeem-form',f.confirmLabel||'earn.redeem.submit',true]}
  const entry=flows[c.type];if(!entry||f.done)return null
  return {form:entry[0],label:entry[1],disabled:closing.value||!!f.busy||(entry[2]&&!f.valid)}
@@ -104,7 +102,6 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 
 </template>
 <template v-else-if="current.type==='wallet'"><p class="notice">{{ $t("overlay.ui.thisLocalDemoDoesNotRequestWalletPermissionsOr") }}</p><button class="primary-button wide-button section-gap" @click="login();done=true" :disabled="done">{{ $t("overlay.ui.connectDemoWallet") }}</button><FeedbackToast v-if="done" type="success" :source="() => (done) ? ($t('overlay.ui.localDemoAccountConnected')) : ''"/></template>
-<C2CAccountForm v-else-if="current.type==='c2c-account'" :account="current.data.account" @state="onFlowState" @saved="current.data.onSaved?.();close()"/>
 <C2COrderDetail v-else-if="current.type==='c2c-detail'" :id="current.data.id"/>
 <template v-else-if="current.type==='c2c-agreement'"><p class="muted">{{ $t('c2c.agreement.version',{version:'v1-draft'}) }}</p><p class="c2c-agreement-copy">{{ $t('c2c.agreement.body') }}</p><form id="account-action" @submit.prevent="accountAction"></form></template>
 <template v-else-if="current.type==='account-confirm'"><p v-if="current.data.subtitle" class="muted confirm-subtitle">{{ current.data.subtitle }}</p><p v-if="current.data.danger" class="confirm-danger">{{ $t(current.data.danger) }}</p><p v-if="current.data.description" class="muted">{{ $t(current.data.description) }}</p><form id="account-action" @submit.prevent="accountAction"></form></template>

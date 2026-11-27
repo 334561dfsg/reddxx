@@ -33,8 +33,7 @@
     "buy": "Achat C2C — Dépôt fiat rapide",
     "sell": "Vente C2C — Retrait fiat sécurisé",
     "orders": "Ordres C2C",
-    "orderDetail": "Détails de l'ordre C2C",
-    "paymentAccounts": "Moyens de paiement"
+    "orderDetail": "Détails de l'ordre C2C"
   },
   "copytrade": {
     "index": "Copy trading — Suivez les meilleurs traders",

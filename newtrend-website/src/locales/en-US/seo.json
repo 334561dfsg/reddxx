@@ -33,8 +33,7 @@
     "buy": "C2C Buy — Fast Fiat On-Ramp",
     "sell": "C2C Sell — Secure Fiat Off-Ramp",
     "orders": "C2C Orders",
-    "orderDetail": "C2C Order Details",
-    "paymentAccounts": "Payment Methods"
+    "orderDetail": "C2C Order Details"
   },
   "copytrade": {
     "index": "Copy Trading — Follow Top Traders",

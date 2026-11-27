@@ -140,6 +140,15 @@ export const navTree = [
     ]
   },
   {
+    title: 'C2C 交易',
+    icon: 'swap',
+    children: [
+      { title: '订单审核', path: '/admin/c2c/orders' },
+      { title: '报价管理', path: '/admin/c2c/quotes' },
+      { title: '操作日志', path: '/admin/c2c/logs' },
+    ]
+  },
+  {
     title: '量化基金',
     icon: 'wallet',
     children: [

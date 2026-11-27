@@ -23,8 +23,7 @@
  #main-content#main-content :is(.earn-hero-copy,.loan-market-hero>div:first-child,.finance-heading,.c2c-heading>div:first-child,.loan-order-page>h1){position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
  #main-content#main-content .loan-market-hero .loan-market-mine{display:none}
  #main-content#main-content .loan-market-hero{margin:0;padding:0;min-height:0}
- #main-content#main-content .c2c-heading:not(:has(.c2c-add)){display:none}
- #main-content#main-content .c2c-heading{margin:0 0 12px}
+ #main-content#main-content .c2c-heading{display:none}
  /* Sticky section switch under the 56px header, floating on a translucent blurred surface; 12px rhythm below it. */
  #main-content#main-content .finance-page>.subnav,#main-content#main-content .c2c-page>.c2c-nav{position:sticky;top:64px;z-index:20;margin-bottom:12px;background:color-mix(in srgb,#15181c 82%,transparent);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
  #main-content#main-content .finance-page{padding-top:12px}
@@ -148,7 +147,6 @@
  #main-content#main-content .c2c-page .c2c-filter .c2c-pills::-webkit-scrollbar{display:none}
  #main-content#main-content .c2c-page .c2c-filter .c2c-pills>*{flex:none}
  #main-content#main-content .c2c-page .c2c-order-panel.is-empty{display:none}
- #main-content#main-content .c2c-page .c2c-status-filter:has(.c2c-status-hint){display:none}
  /* C2C orders: one card per order — side and status on top, amounts, then time and 查看. */
  #main-content#main-content .c2c-page .c2c-orders-list{background:transparent;border:0;border-radius:0;overflow:visible}
  #main-content#main-content .c2c-page article.c2c-order-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0 0 12px;padding:16px;border:1px solid #ffffff0a;border-radius:20px;background:#15181c}
@@ -157,8 +155,9 @@
  #main-content#main-content .c2c-page article.c2c-order-row>span:nth-child(4) small{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
  #main-content#main-content .c2c-page article.c2c-order-row>span{font-size:14px;line-height:20px}
  #main-content#main-content .c2c-page article.c2c-order-row>span small{margin:0 0 2px;font-size:12px;line-height:18px;color:#8c8f96}
- #main-content#main-content .c2c-page article.c2c-order-row>span:nth-child(5){grid-column:1/-1;grid-row:3;padding:12px 88px 0 0;border-top:1px solid #ffffff0d}
- #main-content#main-content .c2c-page article.c2c-order-row>button{grid-column:2;grid-row:3;align-self:end;justify-self:end;min-height:32px}
+ #main-content#main-content .c2c-page article.c2c-order-row>span:nth-child(5){grid-column:1/-1;grid-row:3;padding:12px 132px 0 0;border-top:1px solid #ffffff0d}
+ #main-content#main-content .c2c-page article.c2c-order-row>.c2c-order-actions{grid-column:2;grid-row:3;align-self:end;justify-self:end;gap:16px}
+ #main-content#main-content .c2c-page article.c2c-order-row>.c2c-order-actions button{min-height:32px}
 }
 
 /* C2C on phones: the order form opens in a bottom sheet (C2CTradePanel + ui/BottomSheet.vue), so the side column is
