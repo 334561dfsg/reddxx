@@ -24,13 +24,15 @@ onBeforeUnmount(()=>{window.removeEventListener('beforeunload',beforeUnload);res
   <FeedbackToast v-if="error" type="error" :source="() => (error) ? ((error)) : ''"><Button v-if="!form" @click="load">重试</Button></FeedbackToast>
   <Spin v-if="loading"/>
   <Card v-if="form" title="质押风险规则" :bordered="false">
-   <Form layout="vertical" :model="form" :disabled="lendingBusy" style="max-width:640px" @finish="save">
+   <Form id="lending-risk-policy-form" layout="vertical" :model="form" :disabled="lendingBusy" style="max-width:640px" @finish="save">
     <FormItem label="预警质押率（%）" required help="待还本息 ÷ 质押资产当前价值 × 100%，达到后显示风险预警。"><InputNumber v-model:value="form.collateralWarningThreshold" aria-label="预警质押率（%）" :min="0" :max="100" style="width:100%"/></FormItem>
     <FormItem label="处置质押率（%）" required help="必须高于预警质押率，达到后才允许人工处置，不自动扣除质押。"><InputNumber v-model:value="form.collateralDisposalThreshold" aria-label="处置质押率（%）" :min="0" :max="100" style="width:100%"/></FormItem>
     <FormItem label="允许人工处置质押" help="以上设置适用于所有产品的新申请，已有订单保留申请时的规则。"><Switch v-model:checked="form.overdueDeductEnabled" aria-label="允许人工处置质押"/></FormItem>
-    <Space :size="8"><Button type="primary" html-type="submit" :loading="lendingBusy">保存设置</Button><Button :disabled="lendingBusy" @click="form=JSON.parse(original);error=''">重置</Button></Space>
    </Form>
   </Card>
+  <Card v-if="form" class="policy-actions" :bordered="false" :body-style="{padding:'12px 24px'}"><div class="policy-actions-row"><Space :size="8"><Button :disabled="lendingBusy" @click="form=JSON.parse(original);error=''">重置</Button><Button type="primary" form="lending-risk-policy-form" html-type="submit" :loading="lendingBusy">保存设置</Button></Space></div></Card>
   <AdminModal :width="520" :open="leaveOpen" title="放弃未保存的修改？" confirm-text="放弃修改并离开" danger @close="closeLeave(false)" @confirm="closeLeave(true)" @closed="finishLeave">当前风控设置尚未保存，离开后将丢失修改。</AdminModal>
  </PageShell>
 </template>
+
+<style scoped>.policy-actions{position:sticky;bottom:0;z-index:10}.policy-actions-row{display:flex;justify-content:flex-end}</style>

@@ -46,10 +46,10 @@ onBeforeUnmount(() => { window.removeEventListener('beforeunload', beforeUnload)
     <FormItem label="单用户进行中策略上限（个）" required help="待审核、初始化中、运行中和已暂停的策略都计入"><InputNumber v-model:value="form.maxRunningPerUser" :min="1" :precision="0" style="width:240px"/></FormItem>
     <FormItem label="单用户在管资金上限（USDT）" required><InputNumber v-model:value="form.maxCapitalPerUser" :min="1" :precision="2" style="width:240px"/></FormItem>
    </Card>
-   <Card :bordered="false" :body-style="{padding: '12px 24px'}"><Space :size="8"><Button type="primary" html-type="submit" :loading="strategyBusy">保存设置</Button><Button :disabled="strategyBusy || !dirty" @click="form = JSON.parse(original)">重置</Button><TypographyText type="secondary">设置只对之后提交的订阅生效，已有订阅保留提交时的规则。</TypographyText></Space></Card>
+   <Card class="policy-actions" :bordered="false" :body-style="{padding: '12px 24px'}"><div class="policy-actions-row"><TypographyText type="secondary">设置只对之后提交的订阅生效，已有订阅保留提交时的规则。</TypographyText><Space :size="8"><Button :disabled="strategyBusy || !dirty" @click="form = JSON.parse(original)">重置</Button><Button type="primary" html-type="submit" :loading="strategyBusy">保存设置</Button></Space></div></Card>
   </Form>
   <AdminModal :width="520" :open="leaveOpen" title="放弃未保存的修改？" confirm-text="放弃修改并离开" danger @close="closeLeave(false)" @confirm="closeLeave(true)" @closed="finishLeave">当前风控设置尚未保存，离开后将丢失修改。</AdminModal>
  </PageShell>
 </template>
 
-<style scoped>.strategy-policy{display:grid;gap:24px}</style>
+<style scoped>.strategy-policy{display:grid;gap:24px}.policy-actions{position:sticky;bottom:0;z-index:10}.policy-actions-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}</style>

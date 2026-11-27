@@ -25,7 +25,10 @@ const currentEntry = computed(() => {
 })
 
 /** 前台窄屏有底部 Tab，抬高快捷菜单避免遮挡 */
-const liftAboveEarnFooter = computed(() => /^\/admin\/(earn|lending)\/products\/(new|[^/]+\/edit)\/?$/.test(route.path))
+// Admin editor and settings pages keep a sticky action bar at the bottom right; lift the quick menu above it so it
+// never covers the primary save action.
+const liftAboveEarnFooter = computed(() => /^\/admin\/((earn|lending|quant-fund)\/products|strategy\/templates|c2c\/quotes|news(\/categories)?)\/(new|[^/]+\/edit)\/?$/.test(route.path)
+  || /^\/admin\/(c2c\/agreement|lending\/risk-policy|strategy\/risk-policy)\/?$/.test(route.path))
 
 const liftAboveTabBar = computed(() => currentEntry.value === 'front')
 
