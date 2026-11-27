@@ -11,16 +11,17 @@ import SearchForm from '../earn/EarnSearchForm.vue'
 import AdminTable from '../earn/EarnAdminTable.vue'
 import AdminModal from '../earn/EarnAdminModal.vue'
 import {useQuantFundFeed, quantFundCommand, errorText, productStatusLabels, riskLabels, termLabel} from '../../../shared/quantFund/client.js'
-import {FUNDED, displayRate, raisedAmount} from '../../../shared/quantFund/domain.js'
+import {ASSETS, FUNDED, displayRate, raisedAmount} from '../../../shared/quantFund/domain.js'
 
 const whole = value => Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits: 2})
 const route = useRoute(), router = useRouter(), {state, error, busy, loaded, refresh} = useQuantFundFeed()
-const blank = () => ({name: '', code: '', term: 'all', status: 'all'})
+const blank = () => ({name: '', code: '', asset: 'all', term: 'all', status: 'all'})
 const filters = ref({...blank(), ...Object.fromEntries(Object.keys(blank()).filter(k => route.query[k] != null).map(k => [k, String(route.query[k])]))})
 const page = ref(Math.max(1, Number(route.query.page) || 1))
 const fields = [
   {key: 'name', label: '产品名称'},
   {key: 'code', label: '产品代码'},
+  {key: 'asset', label: '标识币种', options: [{value: 'all', label: '全部币种'}, ...ASSETS.map(value => ({value, label: value}))]},
   {key: 'term', label: '期限类型', options: [{value: 'all', label: '全部类型'}, {value: 'flexible', label: '活期'}, {value: 'fixed', label: '定期'}]},
   {key: 'status', label: '状态', options: [{value: 'all', label: '全部状态'}, ...Object.entries(productStatusLabels).map(([value, label]) => ({value, label}))]},
 ]
@@ -37,7 +38,7 @@ const holdings = computed(() => {
 })
 const rows = computed(() => [...state.value.products].sort((a, b) => b.sortOrder - a.sortOrder).filter(p => {
   const f = filters.value
-  return has(p.name, f.name) && has(p.code, f.code) && (f.status === 'all' || p.status === f.status) &&
+  return has(p.name, f.name) && has(p.code, f.code) && (f.asset === 'all' || p.asset === f.asset) && (f.status === 'all' || p.status === f.status) &&
     (f.term === 'all' || (f.term === 'flexible') === (p.termDays === null))
 }))
 watch(() => rows.value.length, total => { page.value = Math.min(page.value, Math.max(1, Math.ceil(total / 10))) })
@@ -77,7 +78,7 @@ async function toggleStatus() {
   <AdminTable title="量化基金产品" v-model:page="page" :rows="rows" :columns="columns" row-key="productId" :loading="!loaded && !error" desktop-only>
    <template #toolbar><Space :size="8"><Button @click="refresh">刷新</Button><Button type="primary" @click="edit()"><template #icon><PlusOutlined/></template>新增产品</Button></Space></template>
    <template #cell="{column, record}">
-    <Space v-if="column.key === 'name'" direction="vertical" :size="0"><TypographyText strong>{{ record.name }}</TypographyText><TypographyText type="secondary">{{ record.code }} · v{{ record.version }} · {{ riskLabels[record.riskLevel] }}</TypographyText></Space>
+    <Space v-if="column.key === 'name'" direction="vertical" :size="0"><TypographyText strong>{{ record.name }}</TypographyText><TypographyText type="secondary">{{ record.code }} · {{ record.asset }} · v{{ record.version }} · {{ riskLabels[record.riskLevel] }}</TypographyText></Space>
     <template v-else-if="column.key === 'term'">{{ termLabel(record.termDays) }}</template>
     <Space v-else-if="column.key === 'rate'" direction="vertical" :size="0" align="end"><span>{{ record.dailyRate.min }}% ~ {{ record.dailyRate.max }}%</span><TypographyText type="secondary">前台展示 {{ displayRate(record) }}%</TypographyText></Space>
     <template v-else-if="column.key === 'amount'">{{ whole(record.minAmount) }} ~ {{ whole(record.maxAmount) }}</template>

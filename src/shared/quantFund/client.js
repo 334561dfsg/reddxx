@@ -61,7 +61,7 @@ export const errorLabels = {
   owner: '不能操作其他用户的订单', fixedTerm: '定期产品不能提前赎回', minHold: '未达到最短持有天数',
   verificationRequired: '认证等级未达到申购要求', vipRequired: 'VIP 等级未达到申购要求', eligibilityConfig: '请选择有效的认证等级和 VIP 等级',
   productName: '请输入产品名称', productCode: '产品代码须为 2–32 位大写字母、数字或短横线', productCodeTaken: '产品代码已被使用',
-  productRisk: '请选择风险等级', productTags: '策略标签不能为空白', productTerm: '定期产品的期限须为正整数天数',
+  productAsset: '请选择标识币种', productRisk: '请选择风险等级', productTags: '策略标签不能为空白', productTerm: '定期产品的期限须为正整数天数',
   productMinHold: '活期产品的最短持有天数须为非负整数', productAmount: '起投金额须大于 0，单笔上限不小于起投金额',
   productQuota: '产品总额度不能小于单笔上限', productInitial: '初始募集比例须在 0–100% 之间',
   productRate: '日收益率须满足 0 ≤ 下限 ≤ 上限 ≤ 100%', productSort: '排序权重须为整数', action: '不支持的操作',

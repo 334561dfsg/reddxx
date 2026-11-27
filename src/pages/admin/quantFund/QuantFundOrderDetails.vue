@@ -33,10 +33,11 @@ const days = computed(() => heldDays(props.order, props.order.settledAt || Date.
   </Descriptions>
   <Descriptions bordered size="small" :column="2" title="申购时产品条款">
    <DescriptionsItem label="产品">{{ t.name }}（{{ t.code }} · v{{ t.version }}）</DescriptionsItem>
+   <DescriptionsItem label="标识币种">{{ t.asset || 'USDT' }}</DescriptionsItem>
    <DescriptionsItem label="风险等级">{{ riskLabels[t.riskLevel] }}</DescriptionsItem>
    <DescriptionsItem label="期限">{{ termLabel(t.termDays) }}</DescriptionsItem>
    <DescriptionsItem label="最短持有">{{ t.termDays == null ? `${t.minHoldDays} 天` : '—' }}</DescriptionsItem>
-   <DescriptionsItem label="日收益率区间" :span="2">{{ t.dailyRate.min }}% ~ {{ t.dailyRate.max }}%</DescriptionsItem>
+   <DescriptionsItem label="日收益率区间">{{ t.dailyRate.min }}% ~ {{ t.dailyRate.max }}%</DescriptionsItem>
   </Descriptions>
   <Descriptions v-if="redemption" bordered size="small" :column="2" title="赎回">
    <DescriptionsItem label="赎回单号">{{ redemption.redemptionId }}</DescriptionsItem>

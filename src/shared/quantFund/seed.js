@@ -27,7 +27,7 @@ export function seedProducts(now) {
   return tiers.map(([rate, termDays, minAmount, maxAmount, initialPercent, riskLevel], vip) => ({
     productId: `QF-VIP${vip}`, code: `QF-VIP${vip}`, name: `AI Fund (Quant Automated Arbitrage) VIP ${vip}`,
     description: 'AI-managed quantitative arbitrage strategy. Principal is locked for the stated term and earns the published average daily return.',
-    riskLevel, tags: ['AI Strategy', 'US Equity'], sortOrder: (tiers.length - vip) * 10,
+    asset: 'USDT', riskLevel, tags: ['AI Strategy', 'US Equity'], sortOrder: (tiers.length - vip) * 10,
     termDays, minHoldDays: termDays === null ? 1 : null, minAmount, maxAmount,
     totalQuota: Math.ceil(maxAmount / 100000) * 100000 * 20, initialPercent,
     // A ±20% band around the published rate keeps the displayed average equal to the catalogue figure.

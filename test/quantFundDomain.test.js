@@ -88,3 +88,14 @@ test('product saves are versioned and validated; edits never rewrite existing or
   assert.equal(s.products[0].status, 'unlisted')
   assert.throws(() => run(s, 'approve', {orderId: order(s).orderId}), /product/)
 })
+
+test('the identifier coin is display only: subscriptions stay in USDT and the coin is frozen into the order', () => {
+  let s = fresh()
+  const p = structuredClone(s.products[0])
+  s = run(s, 'saveProduct', {product: {...p, asset: 'BTC'}, expectedVersion: p.version})
+  s = run(s, 'subscribe', {userId: 'U1', productId: p.productId, amount: 10000})
+  assert.equal(order(s).productSnapshot.asset, 'BTC')
+  assert.equal(s.balances.U1.USDT, 990000, 'principal leaves the USDT balance')
+  const next = s.products[0]
+  assert.throws(() => run(s, 'saveProduct', {product: {...next, asset: 'DOGE'}, expectedVersion: next.version}), /productAsset/)
+})

@@ -8,13 +8,14 @@ import {ArrowLeftOutlined} from '@ant-design/icons-vue'
 import PageShell from '../earn/EarnPageShell.vue'
 import AdminModal from '../earn/EarnAdminModal.vue'
 import {verificationOptions, vipOptions} from '../../../shared/lending/eligibility.js'
+import {ASSETS} from '../../../shared/quantFund/domain.js'
 import {quantFundState, quantFundError, quantFundBusy, refreshQuantFund, quantFundCommand, errorText, riskLabels} from '../../../shared/quantFund/client.js'
 
 const route = useRoute(), router = useRouter()
 const form = ref(null), expectedVersion = ref(null), original = ref(''), loading = ref(true), found = ref(true)
 // The form keeps both type-specific drafts; only the active type's value is saved.
 const blank = () => ({
-  name: '', code: '', riskLevel: 'LOW', tags: ['AI Strategy'], description: '', sortOrder: 0,
+  name: '', code: '', asset: 'USDT', riskLevel: 'LOW', tags: ['AI Strategy'], description: '', sortOrder: 0,
   kind: 'flexible', termDays: 30, minHoldDays: 1, minAmount: 5000, maxAmount: 100000, totalQuota: 2000000, initialPercent: 0,
   dailyRate: {min: 0.5, max: 0.9}, minVerificationLevel: 'none', minVipLevel: 0,
 })
@@ -26,6 +27,7 @@ const toProduct = f => {
   return {...product, code: product.code.trim().toUpperCase(), termDays: kind === 'fixed' ? product.termDays : null, minHoldDays: kind === 'flexible' ? product.minHoldDays : null}
 }
 const riskOptions = Object.entries(riskLabels).map(([value, label]) => ({value, label}))
+const assetOptions = ASSETS.map(value => ({value, label: value}))
 const dirty = computed(() => !!form.value && JSON.stringify(form.value) !== original.value)
 const busy = computed(() => loading.value || quantFundBusy.value)
 const whole = value => Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits: 2})
@@ -59,7 +61,7 @@ async function load() {
 }
 watch(() => route.params.id, load, {immediate: true})
 
-const listQuery = () => Object.fromEntries(['name', 'code', 'term', 'status', 'page'].filter(k => route.query[k] != null).map(k => [k, route.query[k]]))
+const listQuery = () => Object.fromEntries(['name', 'code', 'asset', 'term', 'status', 'page'].filter(k => route.query[k] != null).map(k => [k, route.query[k]]))
 function back() { router.push({path: '/admin/quant-fund/products', query: listQuery()}) }
 
 const leaveOpen = ref(false)
@@ -96,6 +98,7 @@ async function save() {
     <Card title="基本信息" :bordered="false"><Row :gutter="24" class="qf-editor-fields">
      <Col :xs="24" :lg="16"><FormItem name="name" label="产品名称" required><Input v-model:value="form.name" :maxlength="80" placeholder="请输入产品名称"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="code" label="产品代码" required help="大写字母、数字或短横线，如 QF-VIP0"><Input v-model:value="form.code" :maxlength="32" placeholder="QF-VIP0"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="asset" label="标识币种" required help="前台卡片图标与资产筛选使用；申购、派息和赎回均为 USDT"><Select v-model:value="form.asset" :options="assetOptions"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="riskLevel" label="风险等级" required><Select v-model:value="form.riskLevel" :options="riskOptions"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="sortOrder" label="排序权重" help="数值越大越靠前"><InputNumber v-model:value="form.sortOrder" :min="0" :precision="0"/></FormItem></Col>
      <Col :xs="24"><FormItem name="tags" label="策略标签" help="输入后回车添加，例如 AI Strategy、US Equity"><Select v-model:value="form.tags" mode="tags" :token-separators="[',']" placeholder="添加策略标签" :open="false"/></FormItem></Col>

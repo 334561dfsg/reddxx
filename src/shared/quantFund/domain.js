@@ -14,6 +14,9 @@ import {eligibilityFailures, validateEligibility} from '../lending/eligibility.j
 
 export const DAY = 86400000
 export const RISK_LEVELS = ['LOW', 'MEDIUM', 'HIGH']
+/** Fund identifier coin shown on public cards (icon + asset filter). Display only: subscriptions, payouts and
+ * redemptions are always USDT (user decision, 2026-11-27). */
+export const ASSETS = ['USDT', 'USDC', 'BTC', 'ETH', 'SOL']
 /** Statuses whose principal is approved and counts toward the product's funded amount. */
 export const FUNDED = ['active', 'redeem_pending_review']
 export const ADMIN = '管理员（模拟）'
@@ -55,6 +58,7 @@ export const displayRate = p => Number(((p.dailyRate.min + p.dailyRate.max) / 2)
 export function validateProduct(p) {
   fail(typeof p?.name === 'string' && p.name.trim(), 'productName')
   fail(typeof p.code === 'string' && /^[A-Z0-9-]{2,32}$/.test(p.code.trim()), 'productCode')
+  fail(ASSETS.includes(p.asset), 'productAsset')
   fail(RISK_LEVELS.includes(p.riskLevel), 'productRisk')
   fail(Array.isArray(p.tags) && p.tags.every(x => typeof x === 'string' && x.trim()), 'productTags')
   fail(p.termDays === null || (Number.isInteger(p.termDays) && p.termDays >= 1), 'productTerm')
@@ -70,7 +74,7 @@ export function validateProduct(p) {
 
 /** Terms frozen into an order; later product edits never reach existing orders. */
 export const productSnapshot = p => structuredClone({
-  productId: p.productId, version: p.version, code: p.code, name: p.name, riskLevel: p.riskLevel,
+  productId: p.productId, version: p.version, code: p.code, name: p.name, asset: p.asset, riskLevel: p.riskLevel,
   termDays: p.termDays, minHoldDays: p.termDays === null ? p.minHoldDays : null, dailyRate: p.dailyRate,
 })
 
