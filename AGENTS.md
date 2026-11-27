@@ -141,3 +141,7 @@ The new public site's AI Quant → Quant Fund (`/NewQuantCapital/ai-quant/quant-
 ## Content management: new-site news (user decision, 2026-11-27)
 
 A top-level 「内容管理」 menu holds 新闻文章 (`/admin/news`), 新闻分类 (`/admin/news/categories`) and the legacy 新闻资讯（旧前台） (`/admin/system/news`, moved out of 平台配置). New-site news lives in `src/shared/news/*` (in-page static mock, no persistence, no live sync with the public site). One article holds all six language versions; English is required as the fallback and comes first in every language list and tab set. Editors are dedicated single pages (no dialogs). Categories are managed with per-language names, sort weight and an enabled switch; a category in use can only be disabled. There is no news operation-log page. Design: `docs/designs/2026-11-27-news-center-admin.md`.
+
+## Public finance & AI Quant channels (user decision, 2026-11-27)
+
+The public site's 金融 and AI 量化 channels (`newtrend-website`, `/earn`, `/c2c`, lending, `/ai-quant`) follow the binding standard in `newtrend-website/AGENTS.md` → "Finance & AI Quant channel conventions": channel landings, one type/shape system (`styles/quant-system.css`), app-style phones (trimmed blocks, record cards, swipe rows, sticky section switch, footer only on home), BackLink top bar on secondary pages with fixed summary/header and scrolling list, and load-on-scroll lists via `useFinancePagination` + `<FinancePagination scroll>`. Apply it to every new or changed page in these channels.

@@ -426,26 +426,45 @@ Trading record tabs drop the product name (user decision, 2026-11-27): 倉位 / 
 
 Picker overlays close on a backdrop tap (user decision, 2026-11-27): the mobile product sheet (`option-sheet`), the pair drawer (`market-picker`) and the language sheet hold no unsaved input, so tapping outside closes them like the × button (focus returns to the trigger). This is the only exception to the no-backdrop-close rule; forms, confirmations, detail drawers and every other dialog keep ignoring backdrop taps.
 
-AI Quant landing type and spacing (user feedback, 2026-11-27): one scale in the `.quant-landing` block at the end of `styles/quant-fidelity.css` — hero kicker 12/18, title 36/44, lead 15/24 (phones hide the hero visually, keeping it as an accessible heading); product cards 24px padding (20px on phones) with a 16px rhythm, card title 18/26 with a 12/16 kicker, copy 14/22, one 40px action (full width on phones), footer 14/20 with a 12/18 note. Adjust that block instead of adding per-element overrides.
+## Finance & AI Quant channel conventions (user decision, 2026-11-27)
 
-Finance landing (理財中心) follows the same scale (user feedback, 2026-11-27; block at the end of `styles/earn-fidelity.css`): eyebrow 12/18, title 36/44 (28/36 on phones), lead 15/24, no letter-spacing on Chinese labels; the holdings panel leads with the total (no repeated heading); featured cards 20px padding with a 28px rate and become a horizontal swipe row on phones; compact 36px filters and 32px sort chips on phones.
+The binding standard for every page of the 金融 (`/earn`, `/c2c`, lending) and AI 量化 (`/ai-quant`) channels, and for new pages added to them. Follow it instead of page-specific fidelity tweaks; when a page needs something new, extend the shared files named here.
 
-Finance home (user request, 2026-11-27): `/earn` is a landing of its own (`components/finance/FinanceLanding.vue`) instead of opening Earn directly. It reuses the AI Quant landing markup and scale (`.quant-landing`): hero (hidden on phones) and one card per product line — 理財 (`/earn/simple`, mine `/earn/my-earnings`), C2C (`/c2c/buy`, mine `/c2c/orders`), 借貸 (`/earn/loan`, mine `/earn/loan/my`) — three columns on desktop, one column below 1024px. Copy lives under `finance.landing.*` in all six locales.
+### 1. Structure
+- Each channel has its own home: `/earn` → `components/finance/FinanceLanding.vue`, `/ai-quant` → the `.quant-landing` view in `pages/Quant.vue`. Both use the same markup and scale (`.quant-landing` block at the end of `styles/quant-fidelity.css`): hero (kicker, title, lead) and one card per product line (icon, kicker, name, value line, two chips, browse action, "mine" footer). Finance cards: 理財 `/earn/simple` (mine `/earn/my-earnings`), C2C `/c2c/buy` (mine `/c2c/orders`), 借貸 `/earn/loan` (mine `/earn/loan/my`); copy under `finance.landing.*`. Three columns on desktop, one below 1024px.
+- Product lines open list pages with a section switch (策略模板 / 我的策略, 量化基金 / 我的倉位 …); records, details and statistics are secondary pages.
 
-AI Quant sub-pages share one visual system in `styles/quant-system.css` (user request, 2026-11-27; imported by `Quant.vue` and `Strategy.vue` after the fidelity sheets, with a doubled `#main-content` id so it wins without `!important`): page title 30/38 (24/32 on phones), section title 20/28, card title 16/24, kicker 12/18, body 14/22, the body font instead of Syne, numbers in the mono face, no letter-spacing, 20px card radius, 40px solid-accent primary actions (no gradient) and 32px row actions. Phones get a trimmed, mobile-first version (user decision): decorative or marketing blocks may be dropped and operations adapted for touch, as long as data and actions stay reachable — the strategy page drops the whole hero (copy, stats and decorative model chart; the title stays as a visually hidden heading) and opens on today's picks. Tune these pages there rather than adding per-page overrides.
+### 2. Type, shape and colour (desktop and phones)
+- Page title 30/38 (24/32 on phones), section title 20/28, card title 16/24 (two lines max, no truncation to one line), kicker 12/18, body 14/22, labels 12/18 muted, values 14/20; key figures (rates, Sharpe, win rate, amounts) in the mono face at 28/32 (24/30 on phones).
+- Body font everywhere — never Syne; no letter-spacing (it scatters Chinese).
+- Cards 20px radius, 20–24px padding (16px on phones); pill switches stay pill-shaped.
+- Primary actions 40px, solid accent, no gradients; row actions 32px; phone dialog footers split actions into equal 44px buttons.
+- Landings: hero title 36/44, lead 15/24, card copy 14/22, one 40px action (full width on phones). Finance landing (理財中心) follows the same scale; its holdings panel leads with the total.
+- Files: `styles/quant-system.css` (AI Quant sub-pages and overlays, doubled `#main-content` id so it wins without `!important`), the `.quant-landing` block in `styles/quant-fidelity.css`, the finance block at the end of `styles/earn-fidelity.css`.
 
-Phase 2 of the AI Quant sub-page cleanup (2026-11-27, `styles/quant-system.css`): on phones my fund positions and my strategies render each record as a card (head, two-column label/value fields, actions at the foot; position cells carry `data-label`), the strategy daily stats keep date over weekday without wrapping, and today's picks are a horizontal swipe row. `#site-shell` uses `overflow-x: clip` so no child can make the whole page drag sideways, and swipe rows use `overscroll-behavior-x: contain`.
+### 3. Phones are an app, not a shrunk website (≤767px)
+- Trim, don't shrink: marketing heroes, decorative charts, repeated headings and stat strips are dropped on phones (headings stay visually hidden for assistive technology); data and actions must stay reachable.
+- Spacing rhythm 12px between blocks, between cards and inside cards; no large section padding.
+- Lists of records become cards: head (name + status), two-column label/value fields with units inline, actions in a row at the foot. Never squeeze a wide table.
+- Product rows that compete for attention (today's picks, featured products) are a horizontal swipe row (`scroll-snap`, ~80–86% card width, `overscroll-behavior-x: contain`).
+- The section switch is sticky under the 56px site header with a solid backdrop band.
+- The site footer appears only on the home page; `#site-shell` uses `overflow-x: clip` so the page never drags sideways.
+- Detail pages put the primary action right after the product summary (e.g. fund detail: rate, term, progress, 立即申購 before calculator and flow).
 
-Phase 3 (2026-11-27): strategy template cards and quant-fund cards share one card language (title on up to two lines, key figure in mono 28/32, labels 12/18, values 14/20, chips 12/18, solid-accent progress), the fund list hero is desktop-only, and phone spacing follows the AI Quant landing rhythm (12px between blocks, cards and inside cards) — all in `styles/quant-system.css`.
+### 4. Secondary pages (phones)
+- `components/ui/BackLink.vue` is the only back control: desktop shows the in-page "← back" link; phones get a fixed app top bar (back arrow, centred `title`, safe-area aware) and `html.nt-has-page-bar` hides the site header, footer, in-page link and list section tabs. Every secondary page passes a `title`.
+- No outer card around the page; one summary card, then the list.
+- List pages fill the viewport: bar, summary and column header stay fixed, only the list scrolls (strategy stats `.ds-list`, interest records `.qf-interest-scroll` with a sticky table header); hide the list scrollbar when it would cover figures.
 
-Phase 4 (2026-11-27): on phones the fund detail shows the summary aside (rate, term, progress, subscribe) right after the product intro, panels use 16px padding, quota figures keep their unit inline, and interest records stack the credited date over time. The strategy detail drawer, strategy/fund subscription dialogs and fund order drawer use the same system (body font, no letter-spacing, 20/28 title, two-line product names) and phone footers split the actions into equal 44px buttons. On phones the two "mine" pages (my strategies, my fund positions) also drop their page heading (visually hidden; the tab names the page).
+### 5. Lists and loading
+- Phones never page: `useFinancePagination` accumulates pages at ≤767px and `<FinancePagination scroll>` becomes a load-more sentinel (keyed by page so a still-visible sentinel fires again) followed by 沒有更多了. Every client-side list passes `scroll`. Reset the loaded count only when the record changes, not on every refresh.
+- Server-paged lists (notifications, account records) keep the compact `‹ 共 X 條，第 n/m 頁 ›` row; a single page shows no pager. Desktop keeps numbered paging.
+- Mock data must be long enough to exercise scrolling (e.g. 30+ days on running strategies and active flexible fund orders).
 
-Mobile secondary pages (user decision, 2026-11-27): `components/ui/BackLink.vue` is the single back control. On desktop it is the in-page "← back" link; at ≤767px it renders an app-style top bar (teleported, fixed: back arrow, centred `title` prop, safe-area aware) and marks `html.nt-has-page-bar`, which hides the site header, the in-page link and list section tabs. Every secondary page passes a `title` (quant fund detail, interest records, strategy stats, earn product detail, lending borrow, lending order); add the same to new secondary pages instead of building another bar.
+### 6. Overlays
+- Strategy detail drawer, strategy/fund subscription dialogs and fund order drawer use the same type system (20/28 title, body font, two-line product names).
+- Pure pickers (bottom option sheet, pair drawer, language sheet) close on backdrop tap; forms, confirmations and detail drawers do not (see the picker rule above).
+- Product/option switches on phones open a bottom sheet (`option-sheet`), not a dropdown.
 
-App-style phones (2026-11-27): secondary pages also hide the site footer; the strategy stats page has no outer card (summary card + plain divided daily list); `FinancePagination` shows one compact `‹ info ›` row on phones and nothing for a single page.
-
-Phones hide the site footer on every page except home (footer links stay reachable there). The strategy stats daily list loads 10 more days as its end scrolls into view on phones (IntersectionObserver sentinel, then 沒有更多了) instead of the pager; desktop keeps the pager. On phones the stats page fills the viewport: bar, style line, summary and column header stay fixed and only the daily list scrolls (its load-more sentinel lives inside the list).
-
-Mobile list convention (user decision, 2026-11-27): on phones every client-side paged list loads on scroll instead of paging. `useFinancePagination` accumulates pages at ≤767px and `<FinancePagination scroll>` turns into a load-more sentinel (keyed by page) plus 沒有更多了; all lists built on them pass `scroll` (quant positions, my strategies, interest records, earn catalog/holdings/records, lending catalog/portfolio/order records). Server-paged lists (notifications, account records) keep the compact ‹ info › pager. Secondary list pages use the app layout: top bar, fixed description/summary and column header, only the list scrolls (strategy stats, interest records — the latter with a sticky table header inside `.qf-interest-scroll`). Desktop keeps numbered paging.
-
-On phones the AI Quant section switches (策略模板/我的策略, 量化基金/我的倉位) are sticky under the 56px site header with a solid backdrop band; the strategy stats page also drops its style/market line and hides the list scrollbar.
+### 7. Verification
+Check every change at 393px and 360px and at 1440px; confirm no horizontal overflow, sticky elements and fixed headers, load-more to 沒有更多了, and that desktop is unchanged. Record new channel decisions in this section.
