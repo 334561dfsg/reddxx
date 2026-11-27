@@ -465,5 +465,12 @@
     "back": "Zurück",
     "orderBook": "Orderbuch",
     "emptyTrades": "Noch keine Trades"
-  }
+  },
+  "deliveryResult": {
+    "win": "Gewinn",
+    "lose": "Verlust",
+    "draw": "Unentschieden"
+  },
+  "deliveryRemaining": "Noch {{time}}",
+  "deliverySettling": "Wird abgerechnet…"
 }

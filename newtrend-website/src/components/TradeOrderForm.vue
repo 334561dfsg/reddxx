@@ -15,6 +15,7 @@ import {deliveryPeriods,leverageOptions,orderEstimate,validStops,tradeFeeRate} f
 // spot and options; the desktop form keeps both futures actions side by side.
 const props=defineProps({mode:String,pair:Object,compact:Boolean})
 const {futures,options,spot}=useOrderDrafts()
+const formRoot=ref(null)
 const errors=reactive({futures:'',options:'',buy:'',sell:''}),notice=ref('')
 // Balances come from the trade API for the current mode and pair (skeletons until loaded). `pair.price` is the
 // live stream price, null until the first ticker arrives.
@@ -69,18 +70,22 @@ function submit(side){
   duration:kind==='options'?options.duration:undefined,rate:kind==='options'?rate.value:undefined,
   takeProfit:kind==='futures'&&futures.stops?Number(futures.tp)||null:null,stopLoss:kind==='futures'&&futures.stops?Number(futures.sl)||null:null,
   fee:pending?0:estimate.fee,recordStatus:pending?'trade.current.pending':'trade.filled',settled:kind==='spot'&&!pending}
- let committed=false
+ let committed=false,placed=null
+ const placedMode=session.mode
  openModal('account-confirm',`${t(action)} · ${props.pair.name}`,{focusCancel:true,confirmLabel:'overlay.ui.confirmOrder',
   description:t('trade.form.confirm',{quantity:fmt(estimate.quantity),unit:kind==='options'?'USDT':base.value,price:fmt(price)})+(kind==='options'?` · ${period(options.duration)} · ${rate.value}%`:''),
   // Async confirm: the dialog shows busy and holds its close paths; a rejection keeps it open with a toast.
   onConfirm:async()=>{if(committed)return
-   try{await placeTradeOrder({mode:session.mode,order:record,sizing:{kind,side,pending,estimate,amount,base:base.value}})}
+   try{placed=await placeTradeOrder({mode:session.mode,order:record,sizing:{kind,side,pending,estimate,amount,base:base.value}})}
    catch(cause){throw new Error(tradeErrorKey(cause))}
-   committed=true;notice.value=t('trade.orderSuccess');draft.amount='';invalidate('trade')}
+   committed=true;if(kind!=='options')notice.value=t('trade.orderSuccess');draft.amount='';invalidate('trade')},
+  // Delivery orders (GMXX): once the confirmation has closed, open the order dialog with its countdown and result;
+  // its 下單成功 toast is shown there so it sits in the dialog's top layer.
+  afterDone:kind==='options'?()=>{if(placed)openModal('delivery-order',props.pair.name,{mode:placedMode,order:placed,returnFocus:()=>formRoot.value?.querySelector('input.trade-field')?.focus()})}:undefined
  })
 }
 </script>
-<template><div class="trade-order-form" :class="{'spot-order-form':mode==='spot',compact}">
+<template><div ref="formRoot" class="trade-order-form" :class="{'spot-order-form':mode==='spot',compact}">
 <div class="form-body" tabindex="0" role="region" :aria-label="$t(mode==='futures'?'trade.futuresOrder':mode==='options'?'trade.optionsOrder':'common.spot')">
 <template v-if="mode==='futures'">
 <div v-if="compact" class="direction-tabs"><button v-for="side in ['buy','sell']" :key="side" :class="[side,{active:(futures.side||'buy')===side}]" :aria-pressed="(futures.side||'buy')===side" @click="futures.side=side;errors.futures='';notice=''">{{ $t(side==='buy'?'trade.buyLong':'trade.sellShort') }}</button></div>

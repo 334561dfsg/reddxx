@@ -2,7 +2,7 @@
 // lastPrice(marketName) so the service stays Node-testable. tradingFunds.js and the mock history stand in for
 // the server. Pages import the bound functions from ./trade.js.
 import {balanceOf} from '../mock/ledger.js'
-import {orderFunding, placeTradeOrder as placeOrder, releaseTradeFunds, tradeOrdersFor} from '../tradingFunds.js'
+import {orderFunding, placeTradeOrder as placeOrder, releaseTradeFunds, settleDueOptions, tradeOrdersFor} from '../tradingFunds.js'
 import {finishCurrentTrade} from '../utils/mockCurrentTrades.js'
 import {mockTradeHistory} from '../utils/mockTradeHistory.js'
 import {selectProductRecords} from '../utils/tradeProducts.js'
@@ -20,6 +20,7 @@ export function createTradeApi({lastPrice}) {
    * server's current mark price (pushed prices keep it live on screen afterwards).
    */
   const listTradeRecords = (mode, product, tabId) => mockCall(SERVICE, () => {
+    settleDueOptions(mode, lastPrice)
     const rows = selectProductRecords([...tradeOrdersFor(mode), ...mockTradeHistory], product, tabId)
     return snapshot(rows.map(row => row.bucket === 'positions' ? {...row, markPrice: lastPrice(row.marketName) ?? row.markPrice} : row))
   })
@@ -53,5 +54,16 @@ export function createTradeApi({lastPrice}) {
     return snapshot(orders.find(o => o.id === 'closed-' + id))
   })
 
-  return {getTradeBalances, listTradeRecords, placeTradeOrder, finishTrade}
+  /**
+   * GET /trade/orders/:id?mode= — one order of the account; a delivery order past its period is settled first
+   * (result, close price, P&L). ApiError('notFound') when the account has no such order.
+   */
+  const getTradeOrder = ({mode, id}) => mockCall(SERVICE, () => {
+    settleDueOptions(mode, lastPrice)
+    const order = tradeOrdersFor(mode).find(o => o.id === id)
+    if (!order) throw new ApiError('notFound')
+    return snapshot(order)
+  })
+
+  return {getTradeBalances, listTradeRecords, placeTradeOrder, finishTrade, getTradeOrder}
 }

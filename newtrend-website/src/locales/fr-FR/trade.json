@@ -465,5 +465,12 @@
     "back": "Retour",
     "orderBook": "Carnet d’ordres",
     "emptyTrades": "Aucune transaction"
-  }
+  },
+  "deliveryResult": {
+    "win": "Gagné",
+    "lose": "Perdu",
+    "draw": "Égalité"
+  },
+  "deliveryRemaining": "Reste {{time}}",
+  "deliverySettling": "Règlement…"
 }

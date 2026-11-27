@@ -16,7 +16,7 @@ export function createCurrentTrades(now=Date.now()){
  }))
  return [...rows,...markets.slice(0,3).map(([marketName,price],i)=>({
   id:`current-options-${i}`,kind:'options',bucket:'optionsOrders',marketName,
-  direction:i%2?'sell':'buy',price,amount:[100,300,500][i],duration:[300,600,900][i],
+  direction:i%2?'sell':'buy',price,amount:[100,300,500][i],duration:[300,600,900][i],rate:[15,20,30][i],
   createdAt:now-(i+1)*10000,openedAt:now-(i+1)*10000,
   fee:0,settled:false,recordStatus:'trade.inProgress'
  }))]

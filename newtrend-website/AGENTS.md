@@ -426,6 +426,10 @@ Trading record tabs drop the product name (user decision, 2026-11-27): 倉位 / 
 
 Picker overlays close on a backdrop tap (user decision, 2026-11-27): the mobile product sheet (`option-sheet`), the pair drawer (`market-picker`) and the language sheet hold no unsaved input, so tapping outside closes them like the × button (focus returns to the trigger). This is the only exception to the no-backdrop-close rule; forms, confirmations, detail drawers and every other dialog keep ignoring backdrop taps.
 
+## Delivery order dialog (user request, 2026-11-27)
+
+After a delivery (交割) order is confirmed, the order dialog from GMXX opens (Overlay type `delivery-order`, `components/trading/DeliveryOrderStatus.vue`): pair title, 買漲/買跌 tag, a countdown ring for the period, then the settled result tag (贏 / 輸 / 平) with 數量, 盈虧, 開倉/平倉價格, 週期, 收益率, short 訂單 ID with copy, 開倉/平倉時間. The 下單成功 toast is shown inside that dialog. Settlement is server-side in the mock (`settleDueOptions` in `tradingFunds.js`, run by `getTradeOrder` and `listTradeRecords`): at the end of the period the last price decides; a correct call pays stake × payout rate, a wrong one loses stake × payout rate, an unchanged price returns the stake; the stake plus result is credited once. Closing the dialog early is fine — the records panel refreshes when the earliest open delivery order expires. `account-confirm` accepts `afterDone` to open a follow-up dialog after it closes.
+
 ## Finance & AI Quant channel conventions (user decision, 2026-11-27)
 
 The binding standard for every page of the 金融 (`/earn`, `/c2c`, lending) and AI 量化 (`/ai-quant`) channels, and for new pages added to them. Follow it instead of page-specific fidelity tweaks; when a page needs something new, extend the shared files named here.

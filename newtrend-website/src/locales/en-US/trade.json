@@ -465,5 +465,12 @@
     "back": "Back",
     "orderBook": "Order book",
     "emptyTrades": "No trades yet"
-  }
+  },
+  "deliveryResult": {
+    "win": "Win",
+    "lose": "Loss",
+    "draw": "Draw"
+  },
+  "deliveryRemaining": "{{time}} remaining",
+  "deliverySettling": "Settling…"
 }

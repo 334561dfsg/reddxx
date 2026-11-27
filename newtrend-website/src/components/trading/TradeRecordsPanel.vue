@@ -1,7 +1,7 @@
 <script setup>
 import EmptyState from '../ui/EmptyState.vue'
 import {message} from 'ant-design-vue'
-import {computed} from 'vue'
+import {computed,onBeforeUnmount,watch} from 'vue'
 import {session} from '../../session'
 import {tradeProducts} from '../../utils/tradeProducts'
 import {historyBuckets} from '../../utils/mockTradeHistory'
@@ -21,6 +21,16 @@ const records=useRequest(()=>listTradeRecords(session.mode,props.mode,selected.v
 const rows=computed(()=>records.data.value||[])
 const loading=computed(()=>records.status.value==='loading')
 const page=computed({get:()=>props.state.pages[selected.value.id]||1,set:value=>props.state.pages[selected.value.id]=value})
+// Delivery orders settle when their period ends: refresh the list just after the earliest open one expires.
+let expiryTimer=null
+watch(rows,list=>{
+ clearTimeout(expiryTimer)
+ const ends=list.filter(o=>o.bucket==='optionsOrders'&&!o.settled&&o.duration).map(o=>(o.openedAt??o.createdAt)+o.duration*1000)
+ if(!ends.length)return
+ const delay=Math.min(...ends)-Date.now()+500
+ if(delay<2147483647)expiryTimer=setTimeout(()=>records.refresh(),Math.max(500,delay))
+})
+onBeforeUnmount(()=>clearTimeout(expiryTimer))
 // One toast per completed close/cancel, even when the text repeats (AGENTS: call toast explicitly per attempt).
 const announce=text=>message.success(text)
 </script>
