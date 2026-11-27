@@ -26,7 +26,7 @@ async function afterClose() { if (await onAfterLeave()) emit('closed') }
   <template #modalRender="{originVNode}"><div ref="dialogRef" :aria-busy="busy"><component :is="originVNode"/></div></template>
   <template #title><div class="earn-modal-title"><span>{{ title }}</span><Button type="text" aria-label="关闭" :disabled="busy" @click="close"><CloseOutlined/></Button></div></template>
   <div class="earn-modal-body"><Alert v-if="discard" type="warning" show-icon message="有未保存的内容，确定放弃吗？"/><slot/></div>
-  <template #footer><div class="earn-modal-footer"><Space :size="8" wrap><template v-if="discard"><Button @click="discard=false">继续编辑</Button><Button danger @click="discardAndClose">放弃修改并关闭</Button></template><template v-else><slot name="actions"/><Button ref="cancelRef" :disabled="busy" @click="close">{{ confirmText?'取消':'关闭' }}</Button><Button v-if="confirmText" type="primary" :danger="danger" :loading="busy" :disabled="phase!=='open'" @click="emit('confirm')">{{ confirmText }}</Button></template></Space></div></template>
+  <template #footer><div class="earn-modal-footer"><Space :size="8"><template v-if="discard"><Button @click="discard=false">继续编辑</Button><Button danger @click="discardAndClose">放弃修改并关闭</Button></template><template v-else><slot name="actions"/><Button ref="cancelRef" :disabled="busy" @click="close">{{ confirmText?'取消':'关闭' }}</Button><Button v-if="confirmText" type="primary" :danger="danger" :loading="busy" :disabled="phase!=='open'" @click="emit('confirm')">{{ confirmText }}</Button></template></Space></div></template>
  </Modal>
 </template>
 <style>
