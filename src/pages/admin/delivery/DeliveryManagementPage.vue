@@ -1,4 +1,5 @@
 <script setup>
+import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
@@ -1228,6 +1229,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', handleContractBeforeUnload)
 })
+
+// The shared Ant frames (AdminDialog) drive these page-owned lifecycles (dialog migration 2026-11-27). Defined last so
+// every handler they reference is initialised.
+const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contractDialogPhase, layerStyle: contractDialogLayerStyle, requestDialogClose: requestContractDialogClose, onAfterEnter: onContractDialogAfterEnter, onAfterLeave: handleContractModalAfterLeave, dialogRef: contractDialogRef }
 </script>
 
 <template>
@@ -1497,44 +1502,8 @@ onBeforeUnmount(() => {
     </article>
 
     <!-- 编辑模态框 -->
-    <Teleport to="body">
-      <Transition name="modal" appear @after-enter="onContractDialogAfterEnter" @after-leave="handleContractModalAfterLeave">
-        <div
-          v-if="contractDialogRendered"
-          v-show="contractDialogPhase !== 'closing'"
-          class="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 [padding-bottom:max(1rem,env(safe-area-inset-bottom))] [padding-left:max(1rem,env(safe-area-inset-left))] [padding-right:max(1rem,env(safe-area-inset-right))] [padding-top:max(1rem,env(safe-area-inset-top))] backdrop-blur-sm"
-          :style="contractDialogLayerStyle"
-          role="presentation"
-        >
-          <section
-            ref="contractDialogRef"
-            role="dialog"
-            aria-modal="true"
-            :aria-labelledby="contractDialogTitleId"
-            class="flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white shadow-xl sm:max-h-[calc(100dvh-2rem)]"
-          >
-          <header class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 px-6 py-4">
-            <div class="min-w-0 flex-1">
-              <h2
-                :id="contractDialogTitleId"
-                ref="contractDialogTitleRef"
-                tabindex="-1"
-                class="break-words text-lg font-semibold text-slate-900 outline-none"
-              >
-                {{ editingContractId ? '编辑交割合约' : '新增交割合约' }}
-              </h2>
-            </div>
-            <a-button type="text"
-              html-type="button"
-              class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none"
-              aria-label="关闭"
-              @click="closeContractModal"
-            >
-              ×
-            </a-button>
-          </header>
-
-          <div class="shrink-0 border-b border-slate-100 bg-white px-6">
+    <AdminDialog :open="contractDialogRendered" :lifecycle="contractDialogLifecycle" :title="editingContractId ? '编辑交割合约' : '新增交割合约'" :title-id="contractDialogTitleId" :width="768" plain>
+      <div class="shrink-0 border-b border-slate-100 bg-white px-6">
             <div
               class="flex gap-8 overflow-x-auto"
               role="tablist"
@@ -1908,49 +1877,7 @@ onBeforeUnmount(() => {
             </div>
           </footer>
           </form>
-          </section>
-        </div>
-      </Transition>
-    </Teleport>
+    </AdminDialog>
   </section>
 </template>
 
-<style scoped>
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 200ms ease-out;
-}
-.modal-leave-active {
-  transition-duration: 150ms;
-  transition-timing-function: ease-in;
-}
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-.modal-enter-active > section,
-.modal-leave-active > section {
-  transition: opacity 200ms ease-out, transform 200ms ease-out;
-}
-.modal-leave-active > section {
-  transition-duration: 150ms;
-  transition-timing-function: ease-in;
-}
-.modal-enter-from > section,
-.modal-leave-to > section {
-  opacity: 0;
-  transform: scale(0.96);
-}
-@media (prefers-reduced-motion: reduce) {
-  .modal-enter-active,
-  .modal-leave-active,
-  .modal-enter-active > section,
-  .modal-leave-active > section {
-    transition-duration: 50ms;
-  }
-  .modal-enter-from > section,
-  .modal-leave-to > section {
-    transform: none;
-  }
-}
-</style>

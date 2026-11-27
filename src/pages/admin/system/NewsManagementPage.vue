@@ -540,7 +540,6 @@ onMounted(load)
       </footer>
     </section>
 
-    <Teleport to="body">
       <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-4">
             <h2 id="front-news-editor-title" class="text-lg font-semibold text-slate-900">
               {{ editingId ? '编辑新闻' : '发布新闻' }}
@@ -651,7 +650,7 @@ onMounted(load)
               {{ isSaving ? '保存中…' : '保存新闻' }}
             </a-button>
           </footer></template></template></a-modal>
-    </Teleport>
+    
   </main>
 </template>
 

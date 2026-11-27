@@ -83,3 +83,7 @@ export const Modal = defineComponent({
       : [])
   }
 })
+
+// Stand-in for ant-design-vue's imperative message API: records each notice so tests can assert feedback.
+export const messageCalls = []
+export const message = Object.fromEntries(['success', 'error', 'info', 'warning'].map((type) => [type, (content) => { messageCalls.push({ type, content }) }]))

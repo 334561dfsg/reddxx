@@ -448,7 +448,6 @@ const validUntilMin = computed(() => {
 		</article>
 
 		<!-- 收益控制弹窗 -->
-		<Teleport to="body">
 			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showControlModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1024"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showControlModal = false">
 <template #title><template v-if="showControlModal"><div class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 bg-slate-50/90 px-5 py-4">
 						<div>
@@ -877,9 +876,8 @@ const validUntilMin = computed(() => {
 						</div>
 					</div></template></template>
 </a-modal>
-		</Teleport>
+		
 
-		<Teleport to="body">
 			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showHistoryModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="768"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showHistoryModal = false">
 <template #title><template v-if="showHistoryModal"><div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
 						<h3 class="text-lg font-semibold text-slate-900">调整历史</h3>
@@ -944,6 +942,6 @@ const validUntilMin = computed(() => {
 						</a-button>
 					</div></template></template>
 </a-modal>
-		</Teleport>
+		
 	</section>
 </template>

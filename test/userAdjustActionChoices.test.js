@@ -5,7 +5,7 @@ import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import test from 'node:test'
 import { compileScript, parse } from '@vue/compiler-sfc'
-import { createSfcHarness } from './helpers/vueSfcHarness.js'
+import { antStubUrl, createSfcHarness, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
 
 const adjustFile = resolve(process.cwd(), 'src/admin/components/user/UserAdjustAction.vue')
 const creditScoreMockFile = resolve(process.cwd(), 'src/admin/mock/creditScore.js')
@@ -38,7 +38,9 @@ const loadAdjustAction = async () => {
     ['../../mock/vip', pathToFileURL(resolve(dirname(adjustFile), '../../mock/vip.js')).href],
     ['../../mock/creditScore', creditScoreModuleUrl],
     ['../../constants/creditScore', pathToFileURL(creditScoreConstantsFile).href],
-    ['../../composables/useDialogLifecycle.js', pathToFileURL(resolve(dirname(adjustFile), '../../composables/useDialogLifecycle.js')).href]
+    ['../../composables/useDialogLifecycle.js', pathToFileURL(resolve(dirname(adjustFile), '../../composables/useDialogLifecycle.js')).href],
+    ['../antd/AdminDialog.vue', loadVueSfcModuleUrl(resolve(dirname(adjustFile), '../antd/AdminDialog.vue'), { vueImports: { 'ant-design-vue': antStubUrl, '@ant-design/icons-vue': antStubUrl } })],
+    ['ant-design-vue', antStubUrl]
   ])
   code = code.replace(
     /(from\s+)(['"])([^'"]+)(\2)/g,

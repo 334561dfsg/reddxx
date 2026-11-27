@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
-import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
+import { assertAdminDialogFrame, assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
 const root = new URL('../', import.meta.url)
 const actionFiles = [
   'src/admin/components/user/UserDepositAction.vue',
@@ -11,28 +11,17 @@ const actionFiles = [
   'src/admin/components/user/UserFreezeAction.vue'
 ]
 
-test('legacy user action dialogs use the shared layer lifecycle', () => {
+test('legacy user action dialogs use the shared Ant dialog frame and its layer lifecycle', () => {
+  // Migrated onto AdminDialog (2026-11-27): the frame owns the layer, dialog semantics, close button and motion.
   for (const file of actionFiles) {
     const source = readFileSync(new URL(file, root), 'utf8')
-    assert.match(source, /useDialogLifecycle/)
-    assert.match(source, /:style="layerStyle"/)
-    assert.match(source, /ref="dialogRef"/)
-    assert.match(source, /role="dialog"/)
-    assert.match(source, /aria-modal="true"/)
-    assert.match(source, /aria-label="关闭"/)
+    assertAdminDialogFrame(source)
+    assert.match(source, /<AdminDialog\b[^>]*:open="showModal"[^>]*:return-focus="returnFocusRef"/)
+    assert.match(source, /if \(phase\.value !== 'closed'\) return false/)
     assert.doesNotMatch(source, /fixed inset-0 z-\[(?:50|60|70)\]|fixed inset-0 z-(?:50|60|70)/)
-  }
-})
-
-test('legacy user action dialogs retain their shared layer through leave animation', () => {
-  for (const file of actionFiles) {
-    const source = readFileSync(new URL(file, root), 'utf8')
-    assert.match(source, /v-if="rendered"/)
-    assert.match(source, /@after-enter="onAfterEnter"/)
-    assert.match(source, /@after-leave="onAfterLeave"/)
-    assert.match(source, /requestDialogClose/)
-    assert.match(source, /200ms ease-out/)
-    assert.match(source, /150ms ease-in/)
+    // Operation feedback through Ant message, not a hand-built toast.
+    assert.doesNotMatch(source, /toast\.visible/)
+    assert.match(source, /import \{ message \} from 'ant-design-vue'/)
   }
 })
 

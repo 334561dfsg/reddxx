@@ -29,6 +29,9 @@ const resolveImport = (specifier, filename, vueImports) => {
   return pathToFileURL(resolved).href
 }
 
+// Module URL of the Ant stand-ins (Drawer, Modal, Button, message) for components tested without a real DOM.
+export const antStubUrl = pathToFileURL(resolve('test/helpers/antDrawerStub.js')).href
+
 export const loadVueSfcModuleUrl = (filename, { vueImports = {} } = {}) => {
   const absoluteFilename = resolve(filename)
   const source = readFileSync(absoluteFilename, 'utf8')

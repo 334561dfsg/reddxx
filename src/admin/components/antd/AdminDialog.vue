@@ -10,7 +10,7 @@
 // Ant has no "opened" event: an appear transition inside modalRender reports when the panel content is in place.
 // Ant is driven by the lifecycle's `rendered` flag, not by `open` directly: a reopen during the close animation
 // lets the close finish first and then opens again with the new content (queued reopen), as the hand-built frames did.
-import { computed, ref, useId, watchEffect } from 'vue'
+import { computed, nextTick, ref, useId, watchEffect } from 'vue'
 import { Button, Modal } from 'ant-design-vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
@@ -60,6 +60,9 @@ async function afterEnter() {
   if (!dialogRef.value?.contains?.(document.activeElement)) (props.initialFocus || titleRef.value)?.focus?.()
 }
 async function afterClose() {
+  // Ant calls afterClose while it is still tearing the panel down; let that finish before the caller clears its data,
+  // or components inside (tables, pagination) re-render against removed DOM.
+  await nextTick()
   if (await onAfterLeave()) emit('closed')
 }
 watchEffect(() => {

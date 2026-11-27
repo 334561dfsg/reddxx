@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import * as deliveryConstants from '../src/admin/constants/delivery.js'
 
+import { assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const pageSource = readFileSync(
   new URL('../src/pages/admin/delivery/DeliveryManagementPage.vue', import.meta.url),
   'utf8'
@@ -102,15 +103,10 @@ test('delivery contract editor dialog follows modal semantics', () => {
   assert.match(pageSource, /import \{ createDialogCloseAction, useDialogLifecycle \} from '..\/..\/..\/admin\/composables\/useDialogLifecycle\.js'/)
   assert.match(pageSource, /useDialogLifecycle\(\{[\s\S]*open: showContractModal[\s\S]*dialogRef: contractDialogRef[\s\S]*initialFocusRef: contractDialogTitleRef[\s\S]*returnFocusRef: computed\(\(\) => lastContractTrigger\.value\)[\s\S]*requestClose: requestContractModalClose/)
   assert.match(pageSource, /const closeContractModal = createDialogCloseAction\(requestContractDialogClose\)/)
-  assert.match(pageSource, /<Teleport to="body">/)
-  assert.match(pageSource, /<Transition name="modal" appear[\s\S]*@after-enter="onContractDialogAfterEnter"[\s\S]*@after-leave="handleContractModalAfterLeave"/)
-  assert.match(pageSource, /v-if="contractDialogRendered"/)
-  assert.match(pageSource, /v-show="contractDialogPhase !== 'closing'"/)
-  assert.match(pageSource, /:style="contractDialogLayerStyle"/)
-  assert.match(pageSource, /role="dialog"/)
-  assert.match(pageSource, /aria-modal="true"/)
-  assert.match(pageSource, /:aria-labelledby="contractDialogTitleId"/)
-  assert.match(pageSource, /aria-label="关闭"/)
+  // The shared Ant frame (AdminDialog) drives this page-owned lifecycle (dialog migration 2026-11-27).
+  assertAdminDialogFrame(pageSource)
+  assert.match(pageSource, /<AdminDialog :open="contractDialogRendered" :lifecycle="contractDialogLifecycle"[^>]*:title-id="contractDialogTitleId"/)
+  assert.match(pageSource, /const contractDialogLifecycle = \{ rendered: contractDialogRendered, phase: contractDialogPhase, layerStyle: contractDialogLayerStyle, requestDialogClose: requestContractDialogClose, onAfterEnter: onContractDialogAfterEnter, onAfterLeave: handleContractModalAfterLeave, dialogRef: contractDialogRef \}/)
   assert.doesNotMatch(pageSource, /@click\.self="showContractModal = false"/)
   assert.doesNotMatch(pageSource, /@keydown="handleContractDialogKeydown"/)
   assert.match(dialogLifecycleSource, /document\.body\.style\.overflow = 'hidden'/)
@@ -121,8 +117,6 @@ test('delivery contract editor dialog follows modal semantics', () => {
   assert.match(dialogLifecycleSource, /event\.key === 'Escape'/)
   assert.match(dialogLifecycleSource, /event\.key !== 'Tab'/)
   assert.match(dialogLifecycleSource, /onAfterLeave/)
-  assert.match(pageSource, /\.modal-enter-from > section[\s\S]*transform: scale\(0\.96\)/)
-  assert.match(pageSource, /prefers-reduced-motion: reduce/)
 })
 
 test('delivery contract editor declares interaction owner states required by standards', () => {
@@ -316,9 +310,7 @@ test('delivery contract list provides reset, empty, card action, and pagination 
 })
 
 test('delivery contract dialog keeps a fixed frame with scrollable content', () => {
-  assert.match(pageSource, /class="fixed inset-0 z-\[100\] flex items-center justify-center bg-black\/45 p-4 \[padding-bottom:max\(1rem,env\(safe-area-inset-bottom\)\)\] \[padding-left:max\(1rem,env\(safe-area-inset-left\)\)\] \[padding-right:max\(1rem,env\(safe-area-inset-right\)\)\] \[padding-top:max\(1rem,env\(safe-area-inset-top\)\)\] backdrop-blur-sm"/)
-  assert.match(pageSource, /<header class="flex shrink-0 items-start justify-between/)
-  assert.match(pageSource, /class="inline-flex h-11 w-11 shrink-0/)
+  assertAdminDialogFrame(pageSource)
   assert.match(pageSource, /<div class="shrink-0 border-b border-slate-100 bg-white px-6">/)
   assert.match(pageSource, /<div class="min-h-0 flex-1 space-y-6 overflow-y-auto bg-white p-6">/)
   assert.match(pageSource, /<footer class="shrink-0 border-t border-slate-100 px-6 py-4 \[padding-bottom:max\(1rem,env\(safe-area-inset-bottom\)\)\]">/)

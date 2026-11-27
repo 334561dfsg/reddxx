@@ -8,7 +8,7 @@
 // (role, aria-modal, title label, busy state, test id) are set on that element once it exists.
 // Ant is driven by the lifecycle's `rendered` flag, not by `open` directly: a reopen during the close animation
 // lets the close finish first and then opens again with the new content (queued reopen), as the hand-built frames did.
-import { computed, ref, useId, watchEffect } from 'vue'
+import { computed, nextTick, ref, useId, watchEffect } from 'vue'
 import { Button, Drawer } from 'ant-design-vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
@@ -30,7 +30,9 @@ const props = defineProps({
   // full-height flex column. Otherwise the frame pads the slot and scrolls it.
   plain: { type: Boolean, default: false },
   // Element to focus on open instead of the title (e.g. an error summary).
-  initialFocus: { type: Object, default: null }
+  initialFocus: { type: Object, default: null },
+  // Optional close request handler; returning false keeps the drawer open. Without it the frame emits `close`.
+  requestClose: { type: Function, default: null }
 })
 const emit = defineEmits(['close', 'closed'])
 const generatedId = useId()
@@ -42,7 +44,7 @@ const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLe
   dialogRef,
   initialFocusRef: computed(() => props.initialFocus || titleRef.value),
   returnFocusRef: computed(() => props.returnFocus),
-  requestClose: () => emit('close'),
+  requestClose: () => (props.requestClose ? props.requestClose() : emit('close')),
   closeDisabled: computed(() => props.busy)
 })
 const close = createDialogCloseAction(requestDialogClose)
@@ -52,7 +54,11 @@ async function afterOpenChange(open) {
     // Ant renders the content only once it opens, after the lifecycle's first focus attempt: focus the title now
     // unless focus already moved inside (e.g. the user started typing).
     if (!dialogRef.value?.contains?.(document.activeElement)) (props.initialFocus || titleRef.value)?.focus?.()
-  } else if (await onAfterLeave()) emit('closed')
+  } else {
+    // Let Ant finish removing the panel before the caller clears its data (see AdminDialog).
+    await nextTick()
+    if (await onAfterLeave()) emit('closed')
+  }
 }
 watchEffect(() => {
   const el = dialogRef.value

@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, reactive, watch } from 'vue'
+import { message } from 'ant-design-vue'
+import { ref, computed, onMounted, reactive, watch } from 'vue'
 import { agentSettlementApi } from '../../../admin/mock/agentSettlement'
 import {
   AGENT_SETTLEMENT_ACTION,
@@ -127,34 +128,13 @@ const closeDetails = () => {
 }
 
 /** 非原生提示（右上角 Toast） */
-const toast = ref({ visible: false, message: '', kind: 'info' })
-let toastHideTimer = null
 
-function showToast(message, kind = 'info') {
-  if (toastHideTimer) {
-    clearTimeout(toastHideTimer)
-    toastHideTimer = null
-  }
-  toast.value = { visible: true, message: String(message ?? ''), kind }
-  toastHideTimer = setTimeout(() => {
-    toast.value.visible = false
-    toastHideTimer = null
-  }, 3800)
+// Operation feedback through Ant message (AGENTS.md toast rule) instead of a hand-built toast.
+function showToast(text, kind = 'info') {
+  ;(message[kind] || message.info)(String(text ?? ''))
 }
 
-const toastBorderClass = computed(() => {
-  const k = toast.value.kind
-  if (k === 'success') return 'border-emerald-200'
-  if (k === 'error') return 'border-red-200'
-  return 'border-blue-200'
-})
 
-const toastIconBgClass = computed(() => {
-  const k = toast.value.kind
-  if (k === 'success') return 'bg-emerald-500'
-  if (k === 'error') return 'bg-red-500'
-  return 'bg-blue-500'
-})
 
 /** 非原生确认框 */
 const confirmDialog = ref({
@@ -197,10 +177,6 @@ async function submitConfirm() {
     closeConfirm()
   }
 }
-
-onUnmounted(() => {
-  if (toastHideTimer) clearTimeout(toastHideTimer)
-})
 
 const doAdvance = (batchId, action, label) => {
   openConfirm(`确认${label}？`, async () => {
@@ -305,7 +281,6 @@ const doAdvance = (batchId, action, label) => {
     </div>
   </div>
 
-  <Teleport to="body">
     <!-- 汇总明细 -->
     <a-drawer :open="Boolean(detailDrawer.visible)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeDetails"><template #title><template v-if="Boolean(detailDrawer.visible)"><div class="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
           <div>
@@ -354,24 +329,6 @@ const doAdvance = (batchId, action, label) => {
           </a-button>
         </div></template></template></a-modal>
 
-    <!-- 结果提示 -->
-    <div
-      v-if="toast.visible"
-      class="fixed right-4 top-4 z-[110] flex max-w-sm items-center gap-3 rounded-lg border bg-white px-4 py-3 shadow-lg"
-      :class="toastBorderClass"
-    >
-      <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full" :class="toastIconBgClass">
-        <svg v-if="toast.kind === 'success'" class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-        </svg>
-        <svg v-else-if="toast.kind === 'error'" class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-        <svg v-else class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
-      <span class="text-sm font-medium text-slate-900">{{ toast.message }}</span>
-    </div>
-  </Teleport>
+  
+
 </template>

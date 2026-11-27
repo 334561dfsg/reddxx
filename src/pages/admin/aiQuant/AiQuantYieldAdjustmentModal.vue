@@ -1,5 +1,4 @@
 <template>
-	<Teleport to="body">
 		<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showAdjustmentModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="512"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showAdjustmentModal = false">
 <template #title><template v-if="showAdjustmentModal"><header class="flex items-center justify-between border-b border-slate-200 px-5 py-4 flex-shrink-0">
 					<div>
@@ -141,7 +140,7 @@
 					</a-button>
 				</footer></template></template>
 </a-modal>
-	</Teleport>
+	
 </template>
 
 <script setup>

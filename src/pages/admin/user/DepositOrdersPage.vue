@@ -372,7 +372,6 @@ onMounted(loadList)
 
     <DepositAddressRotationDialog :visible="addressDialogOpen" :user="addressUser" :order="addressOrder" :return-focus="addressReturnFocus" @close="addressDialogOpen = false" />
 
-    <Teleport to="body">
       <a-drawer :open="Boolean(selectedOrder)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeDetail"><template #title><template v-if="Boolean(selectedOrder)"><header class="border-b border-slate-200 px-6 py-4">
             <div class="flex items-start justify-between gap-4">
               <div>
@@ -541,16 +540,15 @@ onMounted(loadList)
               </div>
             </div>
           </div></template></a-drawer>
-    </Teleport>
+    
 
-    <Teleport to="body">
       <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(previewVoucher)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeVoucherPreview"><template #title><template v-if="Boolean(previewVoucher)"><header class="flex items-center justify-between gap-4 border-b border-slate-200 px-5 py-3">
             <p class="truncate text-sm font-semibold text-slate-900">{{ previewVoucher.name }}</p>
             <a-button aria-label="关闭" html-type="button" class="text-sm text-slate-500 hover:bg-slate-100" @click="closeVoucherPreview">关闭</a-button>
           </header></template></template><template v-if="previewVoucher"><div class="min-h-0 overflow-auto bg-slate-100 p-4">
             <img :src="previewVoucher.url" :alt="previewVoucher.name" class="mx-auto max-h-[78vh] max-w-full rounded-lg bg-white object-contain shadow-sm" />
           </div></template></a-modal>
-    </Teleport>
+    
 
     <UserDetailDrawer
       :visible="showUserDrawer"

@@ -277,8 +277,6 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- 添加/编辑：Teleport 到 body，避免 main overflow 导致 fixed 遮罩只盖住内容区 -->
-    <Teleport to="body">
       <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(showModal)"><div class="flex items-center justify-between gap-3"><span>{{ editingId ? '编辑通道' : '添加通道' }}</span><a-button aria-label="关闭" html-type="button"   @click="closeModal">×</a-button></div></template></template><template v-if="showModal"><div class="border-b border-slate-200 px-5 py-4">
           <h2 class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑通道' : '添加通道' }}</h2>
         </div>
@@ -347,6 +345,6 @@ onMounted(() => {
             {{ isSaving ? '保存中…' : '保存' }}
           </a-button>
         </div></template></template></a-modal>
-    </Teleport>
+    
   </div>
 </template>

@@ -1,4 +1,5 @@
 <script setup>
+import { message } from 'ant-design-vue'
 import { ref } from 'vue'
 import { verificationConfig } from '../../../admin/mock/verification'
 import { VERIFICATION_LEVEL, VERIFICATION_DOC_TYPE_OPTIONS } from '../../../constants/verification'
@@ -24,10 +25,6 @@ const editingLevel = ref(null)
 const tempConfig = ref(null)
 
 // Toast提示
-const toast = ref({
-  visible: false,
-  message: ''
-})
 
 // 开始编辑
 const startEdit = (level) => {
@@ -86,12 +83,9 @@ const requiresDocument = (level, docType) => {
 }
 
 // 显示Toast提示
-const showToast = (message) => {
-  toast.value.message = message
-  toast.value.visible = true
-  setTimeout(() => {
-    toast.value.visible = false
-  }, 3000)
+// Operation feedback through Ant message (AGENTS.md toast rule) instead of a hand-built toast.
+function showToast(text, kind = 'success') {
+  ;(message[kind] || message.info)(String(text ?? ''))
 }
 </script>
 
@@ -342,18 +336,6 @@ const showToast = (message) => {
       </ul>
     </div>
 
-    <!-- 成功提示 Toast -->
-    <div 
-      v-if="toast.visible"
-      class="fixed top-4 right-4 z-50 bg-white border border-emerald-200 rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 animate-slide-in"
-    >
-      <div class="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
-        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-        </svg>
-      </div>
-      <span class="text-sm font-medium text-slate-900">{{ toast.message }}</span>
-    </div>
   </div>
 </template>
 

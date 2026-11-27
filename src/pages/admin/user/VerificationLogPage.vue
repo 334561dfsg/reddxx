@@ -1,4 +1,5 @@
 <script setup>
+import { message } from 'ant-design-vue'
 import { ref, computed, onMounted, watch, reactive } from 'vue'
 import { verificationLogList } from '../../../admin/mock/verification'
 import { 
@@ -231,10 +232,6 @@ const selectedSiteInfo = computed(() => {
 })
 
 // Toast提示
-const toast = ref({
-  visible: false,
-  message: ''
-})
 
 const viewDetail = (log) => {
   selectedLog.value = log
@@ -248,7 +245,7 @@ const closeDetail = () => {
 
 // 导出日志
 const exportLogs = () => {
-  showToast('导出功能开发中...')
+  showToast('导出功能开发中...', 'info')
 }
 
 // 重置筛选
@@ -260,12 +257,9 @@ const resetFilters = () => {
 }
 
 // 显示Toast提示
-const showToast = (message) => {
-  toast.value.message = message
-  toast.value.visible = true
-  setTimeout(() => {
-    toast.value.visible = false
-  }, 3000)
+// Operation feedback through Ant message (AGENTS.md toast rule) instead of a hand-built toast.
+function showToast(text, kind = 'success') {
+  ;(message[kind] || message.info)(String(text ?? ''))
 }
 </script>
 
@@ -522,18 +516,6 @@ const showToast = (message) => {
           </section></template></template></a-modal>
     </transition>
 
-    <!-- 成功提示 Toast -->
-    <div 
-      v-if="toast.visible"
-      class="fixed top-4 right-4 z-50 bg-white border border-blue-200 rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 animate-slide-in"
-    >
-      <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      </div>
-      <span class="text-sm font-medium text-slate-900">{{ toast.message }}</span>
-    </div>
   </div>
 </template>
 

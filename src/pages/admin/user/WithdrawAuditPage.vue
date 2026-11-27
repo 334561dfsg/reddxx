@@ -234,7 +234,6 @@ onMounted(loadList)
       />
     </article>
 
-    <Teleport to="body">
       <a-drawer :open="Boolean(selectedOrder)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeDetail"><template #title><template v-if="Boolean(selectedOrder)"><header class="border-b border-slate-200 px-6 py-4">
             <div class="flex items-start justify-between gap-4">
               <div>
@@ -294,7 +293,7 @@ onMounted(loadList)
             </div>
 
           </div></template></a-drawer>
-    </Teleport>
+    
 
     <UserDetailDrawer
       :visible="showUserDrawer"

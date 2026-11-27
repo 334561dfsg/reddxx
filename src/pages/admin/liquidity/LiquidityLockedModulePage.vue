@@ -574,8 +574,6 @@ const fmtSignedCurrency = (val, currency) => {
       </article>
     </template>
 
-    <!-- 产品编辑弹窗：Teleport 到 body，遮罩铺满视口 -->
-    <Teleport to="body">
       <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showProductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="672"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showProductModal = false">
 <template #title><template v-if="showProductModal"><header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <h2 class="text-xl font-semibold text-slate-900">{{ editingProductId ? '编辑产品' : '新增产品' }}</h2>
@@ -724,10 +722,9 @@ const fmtSignedCurrency = (val, currency) => {
           <a-button type="text" html-type="button" class="h-10 rounded-md bg-blue-600 px-5 text-sm font-medium text-white shadow-sm hover:bg-blue-700" @click="saveProduct">保存</a-button>
         </footer></template></template>
 </a-modal>
-    </Teleport>
+    
 
     <!-- 调整申请弹窗 -->
-    <Teleport to="body">
       <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showAdjustmentModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="448"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showAdjustmentModal = false">
 <template #title><template v-if="showAdjustmentModal"><header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <h2 class="text-xl font-semibold text-slate-900">新建调整</h2>
@@ -768,7 +765,7 @@ const fmtSignedCurrency = (val, currency) => {
           <a-button type="text" html-type="button" class="h-10 rounded-md bg-blue-600 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700" @click="saveAdjustment">提交</a-button>
         </footer></template></template>
 </a-modal>
-    </Teleport>
+    
 
     <!-- MFA 验证弹窗 -->
     <MfaVerificationModal

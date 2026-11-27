@@ -133,8 +133,6 @@
 			</div>
 		</article>
 
-		<!-- 产品编辑弹窗：Teleport 到 body，避免落在 main overflow 内导致 fixed 遮罩无法全屏 -->
-		<Teleport to="body">
 			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showProductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showProductModal = false">
 <template #title><template v-if="showProductModal"><div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
 					<div>
@@ -542,7 +540,7 @@
 					<a-button type="text" @click="saveProduct" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">保存产品</a-button>
 				</div></template></template>
 </a-modal>
-		</Teleport>
+		
 	</section>
 </template>
 

@@ -202,8 +202,6 @@
       </div>
     </article>
 
-    <!-- 审核/详情模态框：Teleport 到 body，避免落在 main overflow 内导致 fixed 遮罩无法全屏 -->
-    <Teleport to="body">
       <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showReviewModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1024"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeReviewModal">
 <template #title><template v-if="showReviewModal"><header class="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div class="flex items-center gap-4">
@@ -686,9 +684,8 @@
           </div>
         </footer></template></template>
 </a-modal>
-    </Teleport>
+    
 
-    <Teleport to="body">
       <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDeductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="672"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeDeductDialog">
 <template #title><template v-if="showDeductModal"><header class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-4">
             <div>
@@ -755,9 +752,8 @@
             </a-button>
           </footer></template></template>
 </a-modal>
-    </Teleport>
+    
 
-    <Teleport to="body">
       <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showBatchDeductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="896"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeBatchDeductDialog">
 <template #title><template v-if="showBatchDeductModal"><header class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-200 px-6 py-4">
             <div>
@@ -833,7 +829,7 @@
             </a-button>
           </footer></template></template>
 </a-modal>
-    </Teleport>
+    
 
     <UserDetailDrawer
       :visible="showUserDrawer"

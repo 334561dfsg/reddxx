@@ -13,9 +13,10 @@ import {
 
 import { assertAdminDrawerFrame, assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
-const openingTag = (source, testId) => source.match(new RegExp(`<[^>]+data-testid="${testId}"[^>]*>`))?.[0] || ''
+// Elements are matched by data-testid, or by the testid prop of the shared Ant frames (AdminDialog/AdminDrawer).
+const openingTag = (source, testId) => source.match(new RegExp(`<[^>]+(?:data-)?testid="${testId}"[^>]*>`))?.[0] || ''
 const elementByTestId = (source, testId) => source.match(
-  new RegExp(`<([a-z]+)[^>]*data-testid="${testId}"[^>]*>[\\s\\S]*?<\\/\\1>`)
+  new RegExp(`<([A-Za-z][\\w-]*)\\b[^>]*(?:data-)?testid="${testId}"[^>]*>[\\s\\S]*?<\\/\\1>`)
 )?.[0] || ''
 
 test('form helper exposes only trading outcomes for trade modules', () => {
@@ -379,7 +380,7 @@ test('user list moves point-control actions into the complete operation drawer a
   assert.match(source, /确认取消点控/)
   assert.doesNotMatch(source, /继续 MFA 验证/)
   assert.doesNotMatch(source, /@mousedown\.self="closeControlCancel"/)
-  assert.match(source, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
+  assert.match(source, /<AdminDialog\b[^>]*testid="unified-user-control-cancel-dialog"/)
   assert.match(source, /data-testid="unified-user-control-cancel-body"[^>]*overflow-y-auto/)
   assert.match(productDocument, /用户列表只展示“点控”入口/)
   assert.doesNotMatch(productDocument, /互斥展示/)
@@ -641,7 +642,7 @@ test('unified point-control cancellation dialog and detail drawer keep overlays 
   assert.doesNotMatch(moduleSource, /module-user-control-cancel-dialog/)
   assert.doesNotMatch(moduleSource, /@mousedown\.self="closeCancel"|@click\.self="closeCancel"/)
   assert.doesNotMatch(userListSource, /@mousedown\.self="closeControlCancel"|@click\.self="closeControlCancel"/)
-  assert.match(userListSource, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
+  assert.match(userListSource, /<AdminDialog\b[^>]*testid="unified-user-control-cancel-dialog"/)
   assert.match(userListSource, /data-testid="unified-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.doesNotMatch(detailSource, /@mousedown\.self|@click\.self/)
   assertAdminDrawerFrame(detailSource)
@@ -652,7 +653,7 @@ test('unified cancel dialog uses compact spacing while module page omits standal
   const moduleSource = read('../src/pages/admin/user-control/ModuleUserControlPage.vue')
   const userSource = read('../src/pages/admin/user/UserListPage.vue')
   assert.doesNotMatch(moduleSource, /data-testid="module-user-control-cancel-dialog"/)
-  assert.match(userSource, /data-testid="unified-user-control-cancel-dialog"[\s\S]*?px-5 py-4/)
+  assert.match(userSource, /testid="unified-user-control-cancel-dialog"[\s\S]*?px-5 py-4/)
 })
 
 test('point-control setting and detail surfaces use the shared dialog lifecycle contracts', () => {
@@ -687,20 +688,16 @@ test('unified point-control cancellation dialog retains its layer, focus target,
   ]) {
     assert.match(source, /useDialogLifecycle/)
     assert.match(source, /useDialogContentSnapshot/)
-    assert.match(source, new RegExp(`v-if="${rendered}"`))
-    assert.match(source, /name="dialog-overlay"/)
-    assert.match(source, /name="dialog-panel"/)
-    assert.match(source, new RegExp(`ref="${dialogRef}"`))
-    assert.match(source, new RegExp(`aria-labelledby="${title}"`))
-    assert.match(source, new RegExp(`id="${title}"`))
+    // The shared Ant frame drives the page lifecycle and hands it the dialog element (dialog migration 2026-11-27).
+    assert.match(source, new RegExp(`:open="${rendered}" :lifecycle="unifiedCancelLifecycle"`))
+    assert.match(source, new RegExp(`dialogRef: ${dialogRef}`))
+    assert.match(source, new RegExp(`title-id="${title}"`))
     assert.match(source, new RegExp(`${returnRef} = nativeControl`))
     assert.doesNotMatch(source, /@mousedown\.self="(?:closeCancel|closeControlCancel)"|@click\.self="(?:closeCancel|closeControlCancel)"/)
   }
 
-  const unifiedFrame = openingTag(unifiedSource, 'unified-user-control-cancel-dialog')
-  assert.match(unifiedFrame, /max-h-\[calc\(100vh-2rem\)\]/)
-  assert.match(unifiedFrame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-2rem\)\]/)
-  assert.match(unifiedFrame, /overflow-hidden/)
+  // Fixed frame and viewport limit come from the shared Ant frame; only the body scrolls.
+  assertAdminDialogFrame(unifiedSource)
   assert.match(unifiedSource, /data-testid="unified-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
 })
 
@@ -709,8 +706,12 @@ test('ordinary point-control dialogs keep a safe close button in the fixed heade
   const unifiedSource = read('../src/pages/admin/user/UserListPage.vue')
   const mfaSource = read('../src/admin/components/MfaVerificationModal.vue')
 
-  assert.match(moduleSource, /<header[^>]*>[\s\S]*?<a-button[^>]*aria-label="关闭"[^>]*@click="closeAddUser"/)
-  assert.match(unifiedSource, /<header[^>]*>[\s\S]*?<AdminButton[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*@click="closeControlCancel"/)
+  // The add dialog's fixed-header close button is the shared frame's, driving the page lifecycle (same close path
+  // as closeAddUser: createDialogCloseAction(requestAddDialogClose)).
+  assert.match(moduleSource, /<AdminDialog\b[^>]*:lifecycle="addDialogLifecycle"/)
+  assert.match(moduleSource, /requestDialogClose: requestAddDialogClose/)
+  assert.match(unifiedSource, /<AdminDialog\b[^>]*:lifecycle="unifiedCancelLifecycle"/)
+  assert.match(unifiedSource, /requestDialogClose: requestUnifiedCancelClose/)
   // MFA uses the shared Ant frame: its fixed header close button is disabled while verifying, with a reason.
   assert.match(mfaSource, /<AdminDialog\b[^>]*:busy="displayedDialog\.loading \|\| displayedDialog\.verifyRequested"[^>]*busy-close-hint="验证进行中，暂时无法关闭"/)
   assert.match(read('../src/admin/components/antd/AdminDialog.vue'), /class="admin-dialog-close" aria-label="关闭" :disabled="busy"/)
