@@ -676,7 +676,7 @@ const rowTone = (row) => {
                       v-model:value.number="manualPrice"
                       :step="tickSize"
                       :disabled="locked"
-                      class="flex-1 rounded border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-200"
+                      class="flex-1 rounded border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none"
                       :class="deviationWarn ? 'flash-warn border-rose-300' : ''"
                     />
                     <a-button html-type="button" class="ant-btn ant-btn-default !h-10 !px-3 !text-xs" :disabled="locked" @click="manualPrice = roundToTick(marketPrice, tickSize)">

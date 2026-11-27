@@ -54,9 +54,9 @@
 							<a-input
 								v-model:value.number="adjustmentForm.amount"
 								type="number"
-								step="0.01"
-								min="0"
-								class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+								:step="0.01"
+								:min="0"
+								class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none"
 								:placeholder="activeTypeConfig.amountPlaceholder"
 							/>
 							<span class="flex w-20 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
@@ -85,9 +85,9 @@
 							<a-input
 								v-model:value.number="adjustmentForm.percentage"
 								type="number"
-								step="0.01"
-								min="0"
-								class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+								:step="0.01"
+								:min="0"
+								class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none"
 								:placeholder="activeTypeConfig.percentagePlaceholder"
 							/>
 							<span class="flex w-20 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
@@ -112,9 +112,9 @@
 						</div>
 						<a-textarea
 							v-model:value="adjustmentForm.reason"
-							rows="3"
-							maxlength="200"
-							class="w-full resize-none rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+							:rows="3"
+							:maxlength="200"
+							class="w-full resize-none rounded-lg border px-3 py-2 text-sm outline-none"
 							:class="adjustmentForm.reason.trim() ? 'border-slate-300' : 'border-red-200 bg-red-50/50'"
 							:placeholder="activeTypeConfig.reasonPlaceholder"
 						/>

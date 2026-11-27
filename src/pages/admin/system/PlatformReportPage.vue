@@ -385,7 +385,7 @@ const resetPeriodFilter = () => {
       <div class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
         <div class="overflow-x-auto">
           <div class="flex min-w-max gap-2" role="tablist" aria-label="平台报表周期">
-            <a-button v-for="tab in reportTabs" :id="tab.tabId" :key="tab.id" html-type="button" role="tab" :aria-selected="activeTabId === tab.id" :aria-controls="tab.panelId" class="text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" :class="activeTabId === tab.id ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'" @click="selectTab(tab.id)" @keydown.left="selectAdjacentTab($event, -1)" @keydown.right="selectAdjacentTab($event, 1)">
+            <a-button v-for="tab in reportTabs" :id="tab.tabId" :key="tab.id" html-type="button" role="tab" :aria-selected="activeTabId === tab.id" :aria-controls="tab.panelId" class="text-sm font-medium transition focus:outline-none" :class="activeTabId === tab.id ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'" @click="selectTab(tab.id)" @keydown.left="selectAdjacentTab($event, -1)" @keydown.right="selectAdjacentTab($event, 1)">
               {{ tab.label }}
             </a-button>
           </div>
@@ -415,7 +415,7 @@ const resetPeriodFilter = () => {
             <a-input v-model:value="selectedDate" type="date" class="text-slate-900" aria-describedby="platform-report-period-filter-title" />
           </label>
 
-          <a-button html-type="button" class="border border-slate-300 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" @click="resetPeriodFilter">
+          <a-button html-type="button" class="border border-slate-300 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none" @click="resetPeriodFilter">
             恢复当前时间
           </a-button>
         </div>

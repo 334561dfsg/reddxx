@@ -168,7 +168,6 @@ onBeforeUnmount(() => { disposed = true; session.cancel(); window.removeEventLis
 .minimum-deposit-panel :deep(button) { min-height: 44px; height: auto; white-space: normal; }
 .minimum-deposit-panel :deep(input) { min-height: 44px; font-size: 16px; }
 .minimum-deposit-close { min-width: 44px; font-size: 24px; }
-.minimum-deposit-panel :deep(:focus-visible) { outline: 2px solid #2563eb; outline-offset: 2px; }
 .minimum-deposit-enter-active { transition: opacity 200ms ease-out; }
 .minimum-deposit-leave-active { transition: opacity 150ms ease-in; }
 .minimum-deposit-enter-active .minimum-deposit-panel { transition: transform 200ms ease-out; }

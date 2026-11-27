@@ -214,7 +214,7 @@ onUnmounted(() => {
 
 /** 与提币页一致 */
 const fieldBase =
-  'w-full min-w-0 rounded-xl border border-white/[0.08] bg-white/[0.04] text-[#eaecef] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] outline-none transition placeholder:text-white/35 hover:border-white/[0.12] focus:border-lime-400/50 focus:ring-1 focus:ring-lime-400/30'
+  'w-full min-w-0 rounded-xl border border-white/[0.08] bg-white/[0.04] text-[#eaecef] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] outline-none transition placeholder:text-white/35 hover:border-white/[0.12]'
 const inputBase = `${fieldBase} h-[2.75rem] min-h-[2.75rem] box-border px-3 text-base font-medium leading-normal sm:px-4 sm:text-[15px] lg:rounded-lg`
 const labelBase =
   'mb-1 block text-xs font-medium text-white/45 sm:text-[13px] lg:mb-2 lg:text-sm lg:text-white/50'
@@ -339,7 +339,7 @@ const addressShell =
             />
             <p id="deposit-minimum-hint" role="status" class="mt-2 break-words text-xs leading-5 text-white/65 sm:text-sm">
               <template v-if="minimumQuantity !== null">最低充值数量：<span class="font-medium text-lime-300">{{ minimumQuantity }} {{ coinMeta.symbol }}</span>（约 {{ minimumUsdt }} USDT）</template>
-              <template v-else>{{ minimumLoadError ? '最低充值金额暂时无法加载' : '当前币种汇率暂不可用，无法计算最低充值数量' }}<button type="button" class="ml-2 inline-flex min-h-11 items-center text-lime-300 underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-lime-300" @click="refreshMinimumDeposit">重试</button></template>
+              <template v-else>{{ minimumLoadError ? '最低充值金额暂时无法加载' : '当前币种汇率暂不可用，无法计算最低充值数量' }}<button type="button" class="ml-2 inline-flex min-h-11 items-center text-lime-300 underline underline-offset-4" @click="refreshMinimumDeposit">重试</button></template>
             </p>
           </div>
 

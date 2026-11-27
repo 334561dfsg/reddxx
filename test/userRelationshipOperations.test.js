@@ -280,8 +280,8 @@ test('team report drawer paginates direct fission branches', async (t) => {
   assert.equal(branchScroll.classList.contains('min-h-20'), true)
   for (const region of [overview, branchScroll]) {
     assert.equal(region.classList.contains('outline-none'), true)
-    assert.equal(region.classList.contains('focus-visible:ring-2'), true)
-    assert.equal(region.classList.contains('focus-visible:ring-blue-500'), true)
+    // No focus rings (AGENTS.md); the global focus cue in theme.css marks the focused region.
+    assert.equal(region.classList.contains('focus-visible:ring-2'), false)
   }
   const overviewMetrics = harness.allNodes().filter((node) => (
     overview.contains(node) && node.getAttribute?.('data-testid') === 'team-report-metric'

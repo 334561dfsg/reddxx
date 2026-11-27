@@ -133,7 +133,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               <h2 id="parent-reset-title" class="text-lg font-semibold text-slate-900">重设裂变上级</h2>
               <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p>
             </div>
-            <AdminButton type="button" :disabled="submitting" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
+            <AdminButton type="button" :disabled="submitting" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
@@ -164,7 +164,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
 
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">变更原因（可选）</span>
-                <AdminTextarea :ref="element => { reasonRef = nativeControl(element) }" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="可填写重设裂变上级的原因" />
+                <AdminTextarea :ref="element => { reasonRef = nativeControl(element) }" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none" placeholder="可填写重设裂变上级的原因" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>

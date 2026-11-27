@@ -582,11 +582,11 @@ onMounted(() => {
         <div v-if="contractStep === PERPETUAL_CONTRACT_STEP.BASE" class="grid gap-4 md:grid-cols-2">
           <label class="space-y-2">
             <span class="text-sm font-medium">产品名称 <span class="text-rose-500">*</span></span>
-            <a-input v-model:value="contractForm.productName" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+            <a-input v-model:value="contractForm.productName" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none" />
           </label>
           <label class="space-y-2">
             <span class="text-sm font-medium">产品代码 <span class="text-rose-500">*</span></span>
-            <a-input v-model:value="contractForm.productCode" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+            <a-input v-model:value="contractForm.productCode" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none" />
           </label>
           <label class="space-y-2 md:col-span-2">
             <span class="text-sm font-medium">选择交易对 <span class="text-rose-500">*</span></span>
@@ -617,7 +617,7 @@ onMounted(() => {
           </div>
           <label class="space-y-2">
             <span class="text-sm font-medium">产品排序</span>
-            <a-input v-model:value.number="contractForm.sortOrder" type="number" placeholder="数字越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+            <a-input v-model:value.number="contractForm.sortOrder" type="number" placeholder="数字越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none" />
           </label>
         </div>
 
@@ -651,17 +651,17 @@ onMounted(() => {
           <div class="grid gap-4 md:grid-cols-3">
             <label class="space-y-2">
               <span class="text-sm font-medium">最低买入量 (USDT) <span class="text-rose-500">*</span></span>
-              <a-input v-model:value="contractForm.minBuy" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+              <a-input v-model:value="contractForm.minBuy" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none" />
               <span class="block text-xs leading-5 text-slate-500">输入 0 表示最低买入量不限制。</span>
             </label>
             <label class="space-y-2">
               <span class="text-sm font-medium">最大买入量 (USDT) <span class="text-rose-500">*</span></span>
-              <a-input v-model:value="contractForm.maxBuy" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+              <a-input v-model:value="contractForm.maxBuy" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none" />
               <span class="block text-xs leading-5 text-slate-500">输入 0 表示最大买入量不限制。</span>
             </label>
             <label class="space-y-2">
               <span class="text-sm font-medium">最大持仓量 (USDT) <span class="text-rose-500">*</span></span>
-              <a-input v-model:value="contractForm.maxPosition" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+              <a-input v-model:value="contractForm.maxPosition" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none" />
               <span class="block text-xs leading-5 text-slate-500">输入 0 表示最大持仓量不限制。</span>
             </label>
           </div>
@@ -679,11 +679,11 @@ onMounted(() => {
           <div class="grid gap-4 md:grid-cols-2">
             <label class="space-y-2">
               <span class="text-sm font-medium">买入费率 <span class="text-rose-500">*</span></span>
-              <a-input v-model:value="contractForm.buyFee" type="number" step="0.001" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+              <a-input v-model:value="contractForm.buyFee" type="number" :step="0.001" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none" />
             </label>
             <label class="space-y-2">
               <span class="text-sm font-medium">卖出费率 <span class="text-rose-500">*</span></span>
-              <a-input v-model:value="contractForm.sellFee" type="number" step="0.001" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-500" />
+              <a-input v-model:value="contractForm.sellFee" type="number" :step="0.001" class="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none" />
             </label>
           </div>
 

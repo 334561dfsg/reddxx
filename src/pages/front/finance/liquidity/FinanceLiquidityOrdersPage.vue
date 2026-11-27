@@ -15,7 +15,7 @@ const prefix = '/front'
     >
       <RouterLink
         :to="`${prefix}/finance/liquidity`"
-        class="absolute left-3 inline-flex h-11 w-11 items-center justify-center rounded-full text-white transition hover:bg-white/[0.06] focus:outline-none focus:ring-2 focus:ring-lime-300/60"
+        class="absolute left-3 inline-flex h-11 w-11 items-center justify-center rounded-full text-white transition hover:bg-white/[0.06] focus:outline-none"
         aria-label="返回流动性挖矿"
       >
         <span class="text-3xl leading-none" aria-hidden="true">‹</span>

@@ -105,8 +105,6 @@
 }
 
 .ant-input:not([class*="css-"]):focus, select.ant-select:focus {
-  border-color: var(--antd-primary);
-  box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
   outline: 0;
 }
 
@@ -242,4 +240,31 @@ body {
   .admin-trading-mask-enter-active,
   .admin-trading-mask-appear-active,
   .admin-trading-mask-leave-active { animation-duration: 50ms; }
+}
+
+/* One focus cue without rings or highlighted borders (AGENTS.md "No highlighted selection/focus borders"; legacy
+   focus:ring / focus:border utilities and library outlines removed 2026-11-27). Borders keep their resting colour;
+   keyboard focus shows a light surface wash on fields and an underline plus wash on buttons, links and tabs.
+   background-image is used for the wash so it layers over any background colour (light admin, dark legacy front). */
+:focus-visible { outline: none; }
+html body :is(.ant-btn, .ant-switch, .ant-tabs-tab-btn, .ant-pagination-item, .ant-pagination-item-link, .ant-radio-button-wrapper, .ant-checkbox-input, .ant-radio-input):focus-visible { outline: none; box-shadow: none; }
+html body .ant-btn.ant-btn:not(:disabled):focus-visible { outline: none; }
+html body :is(.ant-input, .ant-input-affix-wrapper, .ant-input-number, .ant-picker):not([class*="-status-error"]):not([class*="-status-warning"]):is(:focus, :focus-within, .ant-input-affix-wrapper-focused, .ant-input-number-focused, .ant-picker-focused),
+html body .ant-select-focused:not(.ant-select-disabled):not([class*="-status-error"]):not([class*="-status-warning"]).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: #d9d9d9;
+  box-shadow: none;
+}
+html body :is(.ant-input-status-error, .ant-input-affix-wrapper-status-error, .ant-input-number-status-error, .ant-picker-status-error, .ant-select-status-error .ant-select-selector, [class*="-status-warning"]):is(:focus, :focus-within, [class*="-focused"]),
+html body .ant-select-focused.ant-select-status-error .ant-select-selector { box-shadow: none; }
+:where(input:not([type=checkbox], [type=radio], [type=range], [type=color], [type=file]), textarea, [contenteditable="true"]):focus-visible,
+html body :is(.ant-input-affix-wrapper-focused, .ant-input-number-focused, .ant-picker-focused, .ant-select-focused .ant-select-selector) {
+  background-image: linear-gradient(rgb(128 128 128 / .08), rgb(128 128 128 / .08));
+}
+:where(button, a[href], summary, [role=button], [role=tab], [role=option], [role=menuitem], [role=switch], [tabindex]:not([tabindex="-1"])):focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background-image: linear-gradient(rgb(128 128 128 / .14), rgb(128 128 128 / .14));
+}
+@media (forced-colors: active) {
+  :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
 }

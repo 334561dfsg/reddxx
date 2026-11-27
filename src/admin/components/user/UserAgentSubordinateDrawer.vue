@@ -91,7 +91,7 @@ watch(() => props.error, async (error) => {
               <h2 id="user-agent-subordinate-title" ref="titleRef" tabindex="-1" class="break-words text-lg font-semibold text-slate-900 outline-none">代理下级用户</h2>
               <p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知代理' }} · UID {{ userId || '—' }}</p>
             </div>
-            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</AdminButton>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="user-agent-subordinate-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
@@ -117,7 +117,7 @@ watch(() => props.error, async (error) => {
               </div>
             </div>
 
-            <div data-testid="agent-subordinate-list-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:px-5" role="region" aria-label="代理直属客户列表" tabindex="0">
+            <div data-testid="agent-subordinate-list-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 outline-none sm:px-5" role="region" aria-label="代理直属客户列表" tabindex="0">
               <FeedbackToast v-if="error" ref="errorRef" data-testid="agent-subordinate-error" type="error" :source="() => (error) ? (([[&quot;代理下级用户加载失败&quot;].join(''),[String((error) ?? '')].join(''),''].join(''))) : ''"><AdminButton data-testid="agent-subordinate-retry" type="button" class="ant-btn mt-3" :disabled="loading" @click="emit('retry')">{{ loading ? '重试中…' : '重试' }}</AdminButton></FeedbackToast>
 
               <div v-else-if="loading" class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50" role="status">

@@ -78,7 +78,7 @@ const handleAfterLeave = async () => {
             </div>
             <AdminButton
               type="button"
-              class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none"
               aria-label="关闭"
               @click="requestDialogClose"
             >

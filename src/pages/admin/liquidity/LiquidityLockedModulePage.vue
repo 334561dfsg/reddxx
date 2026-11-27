@@ -304,7 +304,7 @@ const fmtSignedCurrency = (val, currency) => {
             <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === PRODUCT_STATUS.DISABLED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = PRODUCT_STATUS.DISABLED">已下架</a-button>
             <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === PRODUCT_STATUS.SOLD_OUT ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = PRODUCT_STATUS.SOLD_OUT">已售罄</a-button>
           </div>
-          <a-input v-model:value="search" type="text" placeholder="搜索产品名称或币种..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+          <a-input v-model:value="search" type="text" placeholder="搜索产品名称或币种..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
         </div>
 
         <div class="space-y-3 p-4">
@@ -379,7 +379,7 @@ const fmtSignedCurrency = (val, currency) => {
             <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.COMPLETED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.COMPLETED">已完成</a-button>
             <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ORDER_STATUS.EARLY_REDEEMED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ORDER_STATUS.EARLY_REDEEMED">提前赎回</a-button>
           </div>
-          <a-input v-model:value="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+          <a-input v-model:value="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
         </div>
 
         <div class="overflow-x-auto">
@@ -453,7 +453,7 @@ const fmtSignedCurrency = (val, currency) => {
             <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ADJUSTMENT_STATUS.APPROVED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ADJUSTMENT_STATUS.APPROVED">已批准</a-button>
             <a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ADJUSTMENT_STATUS.EXECUTED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ADJUSTMENT_STATUS.EXECUTED">已执行</a-button>
           </div>
-          <a-input v-model:value="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+          <a-input v-model:value="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
         </div>
 
         <div class="space-y-3 p-4">
@@ -613,7 +613,7 @@ const fmtSignedCurrency = (val, currency) => {
             <div class="space-y-2">
               <div v-for="(period, idx) in productForm.periods" :key="idx" class="flex flex-wrap items-center gap-2">
                 <a-input v-model:value.number="period.days" type="number" placeholder="天数" inputmode="numeric" class="lb-cell-in w-[4.5rem]" />
-                <a-input v-model:value.number="period.annualRate" type="number" step="0.01" min="0" placeholder="年化%" inputmode="decimal" class="lb-cell-in w-[6.25rem]" />
+                <a-input v-model:value.number="period.annualRate" type="number" :step="0.01" :min="0" placeholder="年化%" inputmode="decimal" class="lb-cell-in w-[6.25rem]" />
                 <a-input v-model:value.number="period.minAmount" type="number" placeholder="单笔最小" inputmode="decimal" class="lb-cell-in min-w-[6rem] flex-1" />
                 <a-input v-model:value.number="period.maxAmount" type="number" placeholder="单笔最大" inputmode="decimal" class="lb-cell-in min-w-[6rem] flex-1" />
                 <a-button type="text" html-type="button" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 text-rose-600 hover:border-rose-200 hover:bg-rose-50" title="删除" @click="removePeriod(idx)">×</a-button>
@@ -698,9 +698,9 @@ const fmtSignedCurrency = (val, currency) => {
               <a-input
                 v-model:value.number="productForm.lendableRatio"
                 type="number"
-                min="0"
-                max="100"
-                step="0.1"
+                :min="0"
+                :max="100"
+                :step="0.1"
                 class="lb-ctrl w-32 tabular-nums"
               />
             </div>
@@ -753,12 +753,12 @@ const fmtSignedCurrency = (val, currency) => {
 
           <label class="space-y-1">
             <span class="text-sm font-medium">金额</span>
-            <a-input v-model:value.number="adjustmentForm.amount" type="number" step="0.0001" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+            <a-input v-model:value.number="adjustmentForm.amount" type="number" :step="0.0001" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
           </label>
 
           <label class="space-y-1">
             <span class="text-sm font-medium">原因说明</span>
-            <a-textarea v-model:value="adjustmentForm.reason" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2"></a-textarea>
+            <a-textarea v-model:value="adjustmentForm.reason" :rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2"></a-textarea>
           </label>
         </div>
 
@@ -798,7 +798,7 @@ const fmtSignedCurrency = (val, currency) => {
 .lb-ctrl {
   @apply h-10 w-full min-w-0 rounded-md border border-slate-300 bg-white px-3 text-sm leading-5 text-slate-900 shadow-sm;
   @apply transition-[border-color,box-shadow] placeholder:text-slate-400;
-  @apply focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20;
+  @apply focus:outline-none
 }
 .lb-select {
   @apply cursor-pointer bg-white pr-9;
@@ -811,6 +811,6 @@ const fmtSignedCurrency = (val, currency) => {
 }
 .lb-cell-in {
   @apply h-9 w-full min-w-0 rounded-md border border-slate-300 bg-white px-2.5 text-sm tabular-nums text-slate-900 shadow-sm;
-  @apply focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/30;
+  @apply focus:outline-none
 }
 </style>

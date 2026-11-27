@@ -4,6 +4,9 @@ import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { createSfcHarness, loadVueSfc } from './helpers/vueSfcHarness.js'
 
+// Node ≥21 exposes a getter-only globalThis.navigator; make it writable so the tests can stub the clipboard.
+Object.defineProperty(globalThis, 'navigator', { value: globalThis.navigator, configurable: true, writable: true })
+
 const componentPath = resolve(process.cwd(), 'src/admin/components/user/UserOnchainWalletDrawer.vue')
 const user = { id: 'user_1004', username: 'Alpha' }
 const wallet = {
@@ -212,7 +215,7 @@ test('wallet drawer reveals an address before allowing successful copy feedback'
   assert.match(frame.textContent, /地址已复制/)
 })
 
-test('wallet drawer keeps a failed copy error visible as an alert', async (t) => {
+test('wallet drawer reports a failed copy through toast feedback, not an inline alert', async (t) => {
   const previousNavigator = globalThis.navigator
   globalThis.navigator = { clipboard: { writeText: async () => { throw new Error('denied') } } }
   const harness = await mount()
@@ -228,8 +231,10 @@ test('wallet drawer keeps a failed copy error visible as an alert', async (t) =>
   findIn(harness, addressCard, (node) => node.tag === 'button' && node.textContent.trim() === '复制地址').click()
   await harness.flush()
 
-  const alert = findIn(harness, frame, (node) => node.getAttribute?.('role') === 'alert')
-  assert.match(alert.textContent, /复制失败，请手动复制地址/)
+  // Operation feedback is toast-only (AGENTS.md): the adapter keeps an accessible description, no visible alert.
+  assert.equal(findIn(harness, frame, (node) => node.getAttribute?.('role') === 'alert'), undefined)
+  const feedback = findIn(harness, frame, (node) => node.getAttribute?.('data-testid') === 'wallet-copy-error')
+  assert.match(feedback.textContent, /复制失败，请手动复制地址/)
 })
 
 test('wallet drawer serializes copies across addresses and disables segment actions while pending', async (t) => {
@@ -403,6 +408,6 @@ test('wallet drawer source maintains the modal drawer contract', () => {
   assert.notEqual(backdropStart, -1)
   assert.notEqual(backdropEnd, -1)
   assert.doesNotMatch(source.slice(backdropStart, backdropEnd), /@(?:click|mouse|pointer|touch|drag)/)
-  assert.match(source, /\.onchain-wallet-drawer-title:focus\s*\{[^}]*outline:/s)
+  // Focus outlines are not drawn (AGENTS.md); forced-colors mode keeps one for the title.
   assert.match(source, /@media \(forced-colors: active\)[\s\S]*\.onchain-wallet-drawer-title:focus/)
 })

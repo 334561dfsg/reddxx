@@ -27,7 +27,7 @@ const inputAttrs = computed(() => {
 
 const inputClass = computed(() => {
   const base =
-    'mt-1.5 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-3 text-white placeholder:text-white/25 focus:border-lime-400/50 focus:outline-none focus:ring-1 focus:ring-lime-400/30'
+    'mt-1.5 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-3 text-white placeholder:text-white/25 focus:outline-none'
   if (props.variant === 'otp') {
     return `${base} text-center font-mono text-lg tracking-[0.35em]`
   }

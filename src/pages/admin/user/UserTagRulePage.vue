@@ -485,7 +485,7 @@ const conditionSummary = (conditions = []) => {
                 </label>
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">优先级（越小越先执行）</span>
-                  <a-input type="number" min="1" class="" @input="resetPreview" :value="form.priority" @update:value="form.priority = $event === '' ? '' : Number($event)" />
+                  <a-input type="number" :min="1" class="" @input="resetPreview" :value="form.priority" @update:value="form.priority = $event === '' ? '' : Number($event)" />
                 </label>
                 <div class="sm:col-span-2">
                   <p class="text-sm font-medium text-slate-700 mb-2">匹配逻辑</p>

@@ -462,7 +462,7 @@ onUnmounted(() => {
       :aria-readonly="readonly ? 'true' : null"
       :aria-invalid="effectiveInvalid ? 'true' : 'false'"
       :aria-describedby="describedBy"
-      class="flex min-h-10 w-full items-center justify-between gap-3 rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-900 outline-none transition focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/30"
+      class="flex min-h-10 w-full items-center justify-between gap-3 rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-900 outline-none transition"
       :class="disabled ? 'cursor-not-allowed bg-gray-100 text-gray-500' : 'cursor-pointer'"
       @click="open ? closePopup('trigger') : openPopup()"
       @keydown="handleKeydown"
@@ -501,7 +501,7 @@ onUnmounted(() => {
                 :aria-disabled="open ? (option.disabled ? 'true' : 'false') : null"
                 :aria-selected="open ? (!option.disabled && valuesEqual(option.value, activeValue) ? 'true' : 'false') : null"
                 :data-committed="valuesEqual(option.value, modelValue) ? 'true' : null"
-                class="flex min-h-10 w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-800 outline-none hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:text-gray-400"
+                class="flex min-h-10 w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-800 outline-none hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
                 :class="valuesEqual(option.value, activeValue) ? 'bg-blue-50 text-blue-900' : ''"
                 @mouseenter="open && !option.disabled && (activeValue = option.value)"
                 @pointerdown="handleOptionPointerDown"
@@ -521,7 +521,6 @@ onUnmounted(() => {
 .select-only-combobox[data-theme='agent'] .select-only-combobox__label { color: rgb(255 255 255 / .45); font-size: .75rem; font-weight: 400; }
 .select-only-combobox[data-theme='agent'] [role='combobox'] { border-color: rgb(255 255 255 / .1); background: #0c1219; color: #f1f5f9; }
 .select-only-combobox[data-theme='agent'] [role='combobox']:hover { border-color: rgb(255 255 255 / .2); }
-.select-only-combobox[data-theme='agent'] [role='combobox']:focus-visible { border-color: #34d399; box-shadow: 0 0 0 2px rgb(52 211 153 / .25); }
 .select-only-combobox[data-theme='agent'] [aria-disabled='true'] { opacity: .5; }
 .select-only-combobox[data-theme='agent'] [role='alert'] { color: #fda4af; }
 .select-only-combobox__popup[data-theme='agent'] { border-color: rgb(255 255 255 / .12); background: #101923; color: #f1f5f9; box-shadow: 0 12px 32px rgb(0 0 0 / .4); }

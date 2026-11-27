@@ -215,7 +215,7 @@ const goToPage = (page) => {
 
     <div v-if="hasAppliedFilters" class="flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
       <span class="text-slate-500">已应用条件</span>
-      <a-button v-for="item in appliedFilterItems" :key="item.key" html-type="button" class="border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" @click="removeAppliedFilter(item.key)">
+      <a-button v-for="item in appliedFilterItems" :key="item.key" html-type="button" class="border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600 focus:outline-none" @click="removeAppliedFilter(item.key)">
         {{ item.label }}：{{ item.value }} ×
       </a-button>
     </div>
@@ -248,7 +248,7 @@ const goToPage = (page) => {
                   </template></a-table-column><a-table-column key="column-4"><template #title>变更摘要</template><template #default="{ record: log }">{{ log.summary }}</template></a-table-column><a-table-column key="column-5"><template #title>原因</template><template #default="{ record: log }">{{ log.reason }}</template></a-table-column><a-table-column key="column-6"><template #title>结果</template><template #default="{ record: log }">
                     <span class="rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">{{ log.resultLabel }}</span>
                   </template></a-table-column><a-table-column key="column-7"><template #title>详情</template><template #default="{ record: log }">
-                    <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" :aria-expanded="expandedLogId === log.id" :aria-controls="`audit-detail-${log.id}`" @click="toggleDetail(log.id)">
+                    <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:text-blue-700 focus:outline-none" :aria-expanded="expandedLogId === log.id" :aria-controls="`audit-detail-${log.id}`" @click="toggleDetail(log.id)">
                       {{ expandedLogId === log.id ? '收起' : '查看' }}
                     </a-button>
                   </template></a-table-column><template #expandedRowRender="{ record: log }"><div :id="`audit-detail-${log.id}`">
@@ -290,7 +290,7 @@ const goToPage = (page) => {
               <p>原因：{{ log.reason }}</p>
               <p>摘要：{{ log.summary }}</p>
             </div>
-            <a-button html-type="button" class="mt-3 text-sm font-medium text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" :aria-expanded="expandedLogId === log.id" :aria-controls="`mobile-audit-detail-${log.id}`" @click="toggleDetail(log.id)">
+            <a-button html-type="button" class="mt-3 text-sm font-medium text-blue-600 focus:outline-none" :aria-expanded="expandedLogId === log.id" :aria-controls="`mobile-audit-detail-${log.id}`" @click="toggleDetail(log.id)">
               {{ expandedLogId === log.id ? '收起详情' : '查看详情' }}
             </a-button>
             <div v-if="expandedLogId === log.id" :id="`mobile-audit-detail-${log.id}`" class="mt-3 rounded-md bg-slate-50 p-3 text-sm text-slate-600">

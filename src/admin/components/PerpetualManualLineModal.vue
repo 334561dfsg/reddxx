@@ -676,7 +676,7 @@ const emitSave = () =>
                           max="50"
                           step="1"
                           inputmode="numeric"
-                          class="h-8 w-20 rounded-lg border border-slate-200 bg-white px-2 text-right font-mono text-sm font-semibold text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-0"
+                          class="h-8 w-20 rounded-lg border border-slate-200 bg-white px-2 text-right font-mono text-sm font-semibold text-slate-900 focus:outline-none"
                           @focus="onPriceOffsetDraftFocus"
                           @input="onPriceOffsetDraftInput"
                           @blur="onPriceOffsetDraftBlur"
@@ -718,7 +718,7 @@ const emitSave = () =>
                     <div class="text-xs font-semibold text-slate-900">持续时间</div>
                     <div class="font-mono text-[11px] text-slate-500">{{ Number(form.durationSec || 0) === 0 ? '持续' : `${Number(form.durationSec || 0)}s` }}</div>
                   </div>
-                  <AdminSelect v-model.number="form.durationSec" class="mt-2 h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-0">
+                  <AdminSelect v-model.number="form.durationSec" class="mt-2 h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none">
                     <option v-for="v in quickManualInputs.durationSec" :key="`dur-${v}`" :value="v">{{ v === 0 ? '持续' : `${v}s` }}</option>
                   </AdminSelect>
                 </div>

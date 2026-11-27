@@ -446,11 +446,11 @@ const handleMfaVerify = async (code) => {
             <div class="grid gap-3.5 md:grid-cols-2 rounded-lg bg-white p-4">
               <label class="space-y-1.5">
                   <span class="text-sm font-medium text-slate-700">回兑费率加成 (目标币 → 基础币, %)</span>
-                  <a-input type="number" step="0.001" @input="updateBaseMarkup" class="w-full transition" :value="templateForm.baseMarkup.buy" @update:value="templateForm.baseMarkup.buy = $event === '' ? '' : Number($event)" />
+                  <a-input type="number" :step="0.001" @input="updateBaseMarkup" class="w-full transition" :value="templateForm.baseMarkup.buy" @update:value="templateForm.baseMarkup.buy = $event === '' ? '' : Number($event)" />
                 </label>
                 <label class="space-y-1.5">
                   <span class="text-sm font-medium text-slate-700">兑换费率加成 (基础币 → 目标币, %)</span>
-                  <a-input type="number" step="0.001" @input="updateBaseMarkup" class="w-full transition" :value="templateForm.baseMarkup.sell" @update:value="templateForm.baseMarkup.sell = $event === '' ? '' : Number($event)" />
+                  <a-input type="number" :step="0.001" @input="updateBaseMarkup" class="w-full transition" :value="templateForm.baseMarkup.sell" @update:value="templateForm.baseMarkup.sell = $event === '' ? '' : Number($event)" />
                 </label>
             </div>
           </section>
@@ -483,11 +483,11 @@ const handleMfaVerify = async (code) => {
                 <div class="grid gap-3 md:grid-cols-2">
                   <label class="space-y-1.5">
                     <span class="text-xs text-slate-600">回兑费率 (%)</span>
-                    <a-input type="number" step="0.001" class="w-full transition" :value="templateForm.userLevelRates[`vip${vip.level}`].buy" @update:value="templateForm.userLevelRates[`vip${vip.level}`].buy = $event === '' ? '' : Number($event)" />
+                    <a-input type="number" :step="0.001" class="w-full transition" :value="templateForm.userLevelRates[`vip${vip.level}`].buy" @update:value="templateForm.userLevelRates[`vip${vip.level}`].buy = $event === '' ? '' : Number($event)" />
                   </label>
                   <label class="space-y-1.5">
                     <span class="text-xs text-slate-600">兑换费率 (%)</span>
-                    <a-input type="number" step="0.001" class="w-full transition" :value="templateForm.userLevelRates[`vip${vip.level}`].sell" @update:value="templateForm.userLevelRates[`vip${vip.level}`].sell = $event === '' ? '' : Number($event)" />
+                    <a-input type="number" :step="0.001" class="w-full transition" :value="templateForm.userLevelRates[`vip${vip.level}`].sell" @update:value="templateForm.userLevelRates[`vip${vip.level}`].sell = $event === '' ? '' : Number($event)" />
                   </label>
                 </div>
               </div>

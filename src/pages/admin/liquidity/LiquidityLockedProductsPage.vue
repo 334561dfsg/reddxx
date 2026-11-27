@@ -248,7 +248,7 @@ const applyPresetDays = (days) => {
 						v-model:value="search"
 						type="search"
 						placeholder="搜索产品名称或币种"
-						class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+						class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 					/>
 				</div>
 				<div>
@@ -428,7 +428,7 @@ const applyPresetDays = (days) => {
 												v-model:value="productForm.name"
 												type="text"
 												placeholder="例如：USDT 稳健锁仓"
-												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 											/>
 										</div>
 										<div>
@@ -466,7 +466,7 @@ const applyPresetDays = (days) => {
 												v-model:value.number="productForm.sortOrder"
 												type="number"
 												placeholder="数字越大越靠前"
-												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 											/>
 											<p class="mt-1 text-xs text-slate-500">数字越大越靠前</p>
 										</div>
@@ -509,9 +509,9 @@ const applyPresetDays = (days) => {
 														<a-input
 															v-model:value.number="period.days"
 															type="number"
-															min="1"
+															:min="1"
 															placeholder="请输入天数"
-															class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+															class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 														/>
 													</label>
 													<label class="block">
@@ -519,10 +519,10 @@ const applyPresetDays = (days) => {
 														<a-input
 															v-model:value.number="period.annualRate"
 															type="number"
-															min="0"
-															step="0.01"
+															:min="0"
+															:step="0.01"
 															placeholder="请输入年化收益率"
-															class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+															class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 														/>
 													</label>
 												</div>
@@ -532,10 +532,10 @@ const applyPresetDays = (days) => {
 														<a-input
 															v-model:value.number="period.minAmount"
 															type="number"
-															min="0"
-															step="0.01"
+															:min="0"
+															:step="0.01"
 															placeholder="请输入最低申购金额"
-															class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+															class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 														/>
 													</label>
 													<label class="block">
@@ -543,10 +543,10 @@ const applyPresetDays = (days) => {
 														<a-input
 															v-model:value.number="period.maxAmount"
 															type="number"
-															min="0"
-															step="0.01"
+															:min="0"
+															:step="0.01"
 															placeholder="请输入最高申购金额"
-															class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+															class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 														/>
 													</label>
 												</div>
@@ -574,9 +574,9 @@ const applyPresetDays = (days) => {
 											<a-input
 												v-model:value.number="productForm.earlyRedeemFee"
 												type="number"
-												min="0"
-												step="0.1"
-												class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+												:min="0"
+												:step="0.1"
+												class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 											/>
 										</div>
 									</div>
@@ -627,8 +627,8 @@ const applyPresetDays = (days) => {
 										<a-input
 											v-model:value.number="productForm.lifetimeLimit"
 											type="number"
-											min="0"
-											class="w-full max-w-md rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+											:min="0"
+											class="w-full max-w-md rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 										/>
 									</div>
 									<div v-if="productForm.purchaseLimitType === PURCHASE_LIMIT_TYPE.PERIOD" class="mt-4 grid grid-cols-2 gap-4">
@@ -637,8 +637,8 @@ const applyPresetDays = (days) => {
 											<a-input
 												v-model:value.number="productForm.periodDays"
 												type="number"
-												min="1"
-												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+												:min="1"
+												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 											/>
 										</div>
 										<div>
@@ -646,8 +646,8 @@ const applyPresetDays = (days) => {
 											<a-input
 												v-model:value.number="productForm.periodLimit"
 												type="number"
-												min="0"
-												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+												:min="0"
+												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 											/>
 										</div>
 									</div>

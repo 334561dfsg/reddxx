@@ -46,7 +46,7 @@ const currentLabel = computed(() => {
 
 /** compact：列表/筛选；comfortable：与大表单输入统一 44px 行高（全断点一致，避免带前缀图标顶高） */
 const triggerClassShared =
-  'flex w-full items-center justify-between gap-2 border border-white/[0.08] bg-white/[0.04] text-left font-medium text-[#eaecef] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] [-webkit-tap-highlight-color:transparent] transition active:bg-white/[0.06] hover:border-white/[0.14] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0e11]'
+  'flex w-full items-center justify-between gap-2 border border-white/[0.08] bg-white/[0.04] text-left font-medium text-[#eaecef] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] [-webkit-tap-highlight-color:transparent] transition active:bg-white/[0.06] hover:border-white/[0.14] focus:outline-none'
 
 const triggerClassCompact =
   `${triggerClassShared} min-h-9 rounded-lg px-2.5 py-1.5 text-sm leading-snug`
@@ -59,7 +59,7 @@ const triggerClass = computed(() =>
 )
 
 const desktopSelectClass =
-  'mt-1 w-full cursor-pointer appearance-none rounded-lg border border-white/[0.08] bg-white/[0.04] py-1.5 pl-2.5 pr-8 text-sm font-medium text-[#eaecef] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] transition focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/30'
+  'mt-1 w-full cursor-pointer appearance-none rounded-lg border border-white/[0.08] bg-white/[0.04] py-1.5 pl-2.5 pr-8 text-sm font-medium text-[#eaecef] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] transition focus:outline-none'
 
 const triggerWrapClass = computed(() => {
   if (props.hideLabel) return ['mt-0', props.nativeDesktop ? 'lg:hidden' : ''].filter(Boolean).join(' ')
@@ -86,7 +86,7 @@ const labelClass =
 
 function optionRowClass(selected) {
   return [
-    'flex w-full min-h-10 items-center justify-between gap-2 rounded-lg border px-2.5 py-2 text-left text-sm font-medium leading-snug transition [-webkit-tap-highlight-color:transparent] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/28 focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]',
+    'flex w-full min-h-10 items-center justify-between gap-2 rounded-lg border px-2.5 py-2 text-left text-sm font-medium leading-snug transition [-webkit-tap-highlight-color:transparent] focus:outline-none',
     selected
       ? 'border-lime-400/35 bg-lime-400/[0.06] text-[#eaecef]'
       : 'border-transparent text-[#eaecef] active:bg-white/[0.06]'

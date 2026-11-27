@@ -259,7 +259,7 @@ onMounted(() => {
               </div>
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">端口</label>
-                <a-input type="number" min="1" max="65535" class="w-full max-w-[10rem]" :value="formPort" @update:value="formPort = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="1" :max="65535" class="w-full max-w-[10rem]" :value="formPort" @update:value="formPort = $event === '' ? '' : Number($event)" />
               </div>
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">加密方式</label>

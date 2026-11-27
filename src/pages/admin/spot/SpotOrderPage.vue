@@ -32,8 +32,8 @@
             {{ product.name }} ({{ product.code }})
           </a-select-option>
         </a-select>
-        <a-input v-model:value="filters.orderId" type="text" placeholder="搜索订单 ID..." class="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
-        <a-input v-model:value="filters.userId" type="text" placeholder="搜索用户 ID/邮箱..." class="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+        <a-input v-model:value="filters.orderId" type="text" placeholder="搜索订单 ID..." class="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
+        <a-input v-model:value="filters.userId" type="text" placeholder="搜索用户 ID/邮箱..." class="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
         <a-button type="text" html-type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="resetFilters">重置</a-button>
       </div>
 

@@ -538,7 +538,7 @@ const statusClass = (status) =>
             </div>
             <a-button type="text"
               html-type="button"
-              class="inline-flex h-9 w-9 items-center justify-center rounded text-2xl leading-none text-slate-400 transition-colors hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              class="inline-flex h-9 w-9 items-center justify-center rounded text-2xl leading-none text-slate-400 transition-colors hover:text-slate-600 focus:outline-none"
               aria-label="关闭"
               @click="requestTemplateClose"
             >
@@ -558,7 +558,7 @@ const statusClass = (status) =>
                     v-model:value="templateForm.name"
                     type="text"
                     class="ant-input"
-                    :class="getTemplateFieldError('template-name') ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : ''"
+                    :class="getTemplateFieldError('template-name') ? 'border-rose-300' : ''"
                     placeholder="如：标准收益模板"
                     :aria-invalid="!!getTemplateFieldError('template-name')"
                     :aria-describedby="getTemplateFieldDescribedBy('template-name-help', getTemplateFieldError('template-name') ? 'template-name-error' : '')"
@@ -608,7 +608,7 @@ const statusClass = (status) =>
                       </div>
                       <a-button type="text"
                         html-type="button"
-                        class="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-300 text-xs leading-none text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+                        class="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-300 text-xs leading-none text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500 focus:outline-none"
                         :aria-label="`删除周期${index + 1}`"
                         @click="removeCycle(cycle.id)"
                       >
@@ -624,10 +624,10 @@ const statusClass = (status) =>
                             v-model:value.number="cycle.durationSec"
                             type="number"
                             inputmode="numeric"
-                            min="1"
-                            step="1"
+                            :min="1"
+                            :step="1"
                             class="ant-input w-full"
-                            :class="getTemplateFieldError(`cycle-${cycle.id}-durationSec`) ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : ''"
+                            :class="getTemplateFieldError(`cycle-${cycle.id}-durationSec`) ? 'border-rose-300' : ''"
                             :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-durationSec`)"
                             :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-durationSec-help`, getTemplateFieldError(`cycle-${cycle.id}-durationSec`) ? `cycle-${cycle.id}-durationSec-error` : '')"
                             @wheel.prevent
@@ -642,10 +642,10 @@ const statusClass = (status) =>
                           v-model:value.number="cycle.payoutPct"
                           type="number"
                           inputmode="decimal"
-                          min="0"
-                          step="0.01"
+                          :min="0"
+                          :step="0.01"
                           class="ant-input w-full"
-                          :class="getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : ''"
+                          :class="getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) ? 'border-rose-300' : ''"
                           :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-payoutPct`)"
                           :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-payoutPct-help`, getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) ? `cycle-${cycle.id}-payoutPct-error` : '')"
                           @wheel.prevent
@@ -660,10 +660,10 @@ const statusClass = (status) =>
                           v-model:value.number="cycle.actualPayoutPct"
                           type="number"
                           inputmode="decimal"
-                          min="0"
-                          step="0.00000001"
+                          :min="0"
+                          :step="0.00000001"
                           class="ant-input w-full"
-                          :class="getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500' : ''"
+                          :class="getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) ? 'border-rose-300' : ''"
                           :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`)"
                           :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-actualPayoutPct-help`, getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) ? `cycle-${cycle.id}-actualPayoutPct-error` : '')"
                           @wheel.prevent
@@ -734,7 +734,7 @@ const statusClass = (status) =>
                   </h3>
                   <a-button type="text"
                     html-type="button"
-                    class="inline-flex h-9 w-9 items-center justify-center rounded text-2xl leading-none text-slate-400 transition-colors hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded text-2xl leading-none text-slate-400 transition-colors hover:text-slate-600 focus:outline-none"
                     aria-label="关闭未保存确认"
                     @click="cancelTemplateUnsavedClose"
                   >

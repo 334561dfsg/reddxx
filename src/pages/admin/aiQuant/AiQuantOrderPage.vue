@@ -17,7 +17,7 @@
 							type="text"
 							autocomplete="off"
 							placeholder="订单号、用户ID、用户名、邮箱、产品名…"
-							class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+							class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
 							@keydown.enter.prevent="applySearch"
 						/>
 					</div>
@@ -60,7 +60,7 @@
 							autocomplete="off"
 							inputmode="decimal"
 							placeholder="最小本金"
-							class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
+							class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none"
 						/>
 					</div>
 					<div>
@@ -71,16 +71,16 @@
 							autocomplete="off"
 							inputmode="decimal"
 							placeholder="最大本金"
-							class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
+							class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none"
 						/>
 					</div>
 					<div>
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">下单日起</label>
-						<a-input v-model:value="filterDraft.startDateFrom" type="date" autocomplete="off" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500" />
+						<a-input v-model:value="filterDraft.startDateFrom" type="date" autocomplete="off" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none" />
 					</div>
 					<div>
 						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">下单日止</label>
-						<a-input v-model:value="filterDraft.startDateTo" type="date" autocomplete="off" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500" />
+						<a-input v-model:value="filterDraft.startDateTo" type="date" autocomplete="off" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none" />
 					</div>
 					<div class="flex flex-col justify-end gap-2 sm:col-span-2 lg:col-span-2 xl:col-span-2">
 						<div class="flex flex-wrap gap-2">

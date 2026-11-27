@@ -614,7 +614,7 @@ function submitBorrowApplication() {
               </p>
               <button
                 type="button"
-                class="shrink-0 touch-manipulation rounded-md p-1 text-white/35 transition hover:bg-white/[0.06] hover:text-lime-300/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505]"
+                class="shrink-0 touch-manipulation rounded-md p-1 text-white/35 transition hover:bg-white/[0.06] hover:text-lime-300/90 focus:outline-none"
                 aria-label="选择借出币种"
                 @click="currencyPickerOpen = true"
               >
@@ -630,7 +630,7 @@ function submitBorrowApplication() {
           </div>
           <button
             type="button"
-            class="flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-xl border border-white/[0.12] bg-white/[0.02] text-white/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition hover:border-lime-400/30 hover:bg-lime-400/[0.08] hover:text-lime-300/95 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40 active:scale-[0.96]"
+            class="flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-xl border border-white/[0.12] bg-white/[0.02] text-white/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition hover:border-lime-400/30 hover:bg-lime-400/[0.08] hover:text-lime-300/95 focus:outline-none active:scale-[0.96]"
             aria-label="选择借出币种"
             @click="currencyPickerOpen = true"
           >
@@ -1184,7 +1184,7 @@ function submitBorrowApplication() {
                 type="button"
                 role="option"
                 :aria-selected="loanCurrencyFilter === ''"
-                class="flex w-full min-h-[3.25rem] touch-manipulation items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-semibold transition focus:outline-none focus-visible:bg-white/[0.04] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-lime-400/30"
+                class="flex w-full min-h-[3.25rem] touch-manipulation items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-semibold transition focus:outline-none focus-visible:bg-white/[0.04]"
                 :class="
                   loanCurrencyFilter === ''
                     ? 'bg-lime-400/[0.1] text-lime-50'
@@ -1205,7 +1205,7 @@ function submitBorrowApplication() {
                 type="button"
                 role="option"
                 :aria-selected="loanCurrencyFilter === c"
-                class="flex w-full min-h-[3.25rem] touch-manipulation items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-semibold tabular-nums transition focus:outline-none focus-visible:bg-white/[0.04] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-lime-400/30"
+                class="flex w-full min-h-[3.25rem] touch-manipulation items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-semibold tabular-nums transition focus:outline-none focus-visible:bg-white/[0.04]"
                 :class="
                   loanCurrencyFilter === c
                     ? 'bg-lime-400/[0.1] text-lime-50'
@@ -1328,7 +1328,7 @@ function submitBorrowApplication() {
                     <span class="text-sm font-medium text-white/75">质押币种</span>
                     <select
                       v-model="borrowCollateralCurrency"
-                      class="rounded-lg border border-white/[0.12] bg-[#111] px-3 py-2 text-sm text-white outline-none focus:border-lime-400/50"
+                      class="rounded-lg border border-white/[0.12] bg-[#111] px-3 py-2 text-sm text-white outline-none"
                     >
                       <option v-for="coin in borrowCollateralConfig.currencies" :key="coin" :value="coin">{{ coin }}</option>
                     </select>

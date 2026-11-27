@@ -17,11 +17,6 @@
   font-size: 12px;
 }
 textarea.admin-antd-control-input.ant-input { height: auto; }
-.admin-antd-control-button.ant-btn:focus-visible,
-.admin-antd-control-input.ant-input:focus-visible {
-  outline: 2px solid #1677ff;
-  outline-offset: 2px;
-}
 @media (forced-colors: active) {
   .admin-antd-control-button.ant-btn { border: 1px solid ButtonText; }
 }

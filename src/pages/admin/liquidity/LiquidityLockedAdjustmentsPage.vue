@@ -105,7 +105,7 @@ const fmtCurrency = (val, currency, decimals = 2) => {
 					<a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ADJUSTMENT_STATUS.APPROVED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ADJUSTMENT_STATUS.APPROVED">已批准</a-button>
 					<a-button type="text" html-type="button" class="font-medium" :class="statusFilter === ADJUSTMENT_STATUS.EXECUTED ? 'text-blue-600' : 'text-slate-500'" @click="statusFilter = ADJUSTMENT_STATUS.EXECUTED">已执行</a-button>
 				</div>
-				<a-input v-model:value="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+				<a-input v-model:value="search" type="text" placeholder="搜索订单ID、用户名..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
 			</div>
 
 			<div class="space-y-3 p-4">
@@ -163,12 +163,12 @@ const fmtCurrency = (val, currency, decimals = 2) => {
 
 					<label class="space-y-1">
 						<span class="text-sm font-medium">金额</span>
-						<a-input v-model:value.number="adjustmentForm.amount" type="number" step="0.0001" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+						<a-input v-model:value.number="adjustmentForm.amount" type="number" :step="0.0001" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
 					</label>
 
 					<label class="space-y-1">
 						<span class="text-sm font-medium">原因说明</span>
-						<a-textarea v-model:value="adjustmentForm.reason" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2"></a-textarea>
+						<a-textarea v-model:value="adjustmentForm.reason" :rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2"></a-textarea>
 					</label>
 				</div>
 

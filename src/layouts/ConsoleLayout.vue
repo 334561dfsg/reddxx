@@ -23,7 +23,7 @@ watch(
 </script>
 
 <template>
-  <a-config-provider :auto-insert-space-in-button="false" :locale="zhCN" :theme="{ token: { colorPrimary: '#1677ff', borderRadius: 6, controlHeight: 40 } }">
+  <a-config-provider :auto-insert-space-in-button="false" :locale="zhCN" :theme="{ token: { colorPrimary: '#1677ff', borderRadius: 6, controlHeight: 40, controlOutlineWidth: 0 } }">
   <a-layout class="admin-antd-shell" style="height: 100dvh; min-height: 0; flex-direction: row">
     <AppSidebar :mobile-open="mobileMenuOpen" @close="mobileMenuOpen = false" />
 

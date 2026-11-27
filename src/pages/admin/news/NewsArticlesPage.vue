@@ -83,7 +83,7 @@ async function confirmTarget() {
    <template #cell="{column, record}">
     <img v-if="column.key === 'cover' && record.image" :src="record.image" alt="" class="news-cover"/>
     <span v-else-if="column.key === 'cover'" class="news-cover empty" aria-hidden="true"/>
-    <Space v-else-if="column.key === 'title'" direction="vertical" :size="0" class="news-title"><TypographyText strong :ellipsis="true">{{ enTitle(record) }}</TypographyText><TypographyText v-if="zhTitle(record)" type="secondary" :ellipsis="true">{{ zhTitle(record) }}</TypographyText></Space>
+    <Space v-else-if="column.key === 'title'" direction="vertical" :size="0" class="news-title"><TypographyText strong :ellipsis="true" :content="enTitle(record)"/><TypographyText v-if="zhTitle(record)" type="secondary" :ellipsis="true" :content="zhTitle(record)"/></Space>
     <template v-else-if="column.key === 'category'">{{ record.category ? catName(record.category) : '未分类' }}</template>
     <Space v-else-if="column.key === 'tags'" :size="[4, 4]" wrap class="news-tags"><Tag v-for="tag in record.tags" :key="tag">{{ tag }}</Tag><TypographyText v-if="!record.tags.length" type="secondary">—</TypographyText></Space>
     <template v-else-if="column.key === 'languages'">{{ Object.keys(record.locales).length }} / {{ LOCALES.length }}</template>

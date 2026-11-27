@@ -110,7 +110,7 @@ watch(
     >
       <RouterLink
         :to="ordersReturnLocation"
-        class="absolute left-3 inline-flex h-11 w-11 items-center justify-center rounded-full text-white transition hover:bg-white/[0.06] focus:outline-none focus:ring-2 focus:ring-lime-300/60"
+        class="absolute left-3 inline-flex h-11 w-11 items-center justify-center rounded-full text-white transition hover:bg-white/[0.06] focus:outline-none"
         aria-label="返回 AI 量化订单"
       >
         <span class="text-3xl leading-none" aria-hidden="true">‹</span>
@@ -230,7 +230,7 @@ watch(
         <div v-if="hasMoreDailyRows" class="mt-4 flex justify-center">
           <button
             type="button"
-            class="inline-flex min-h-11 min-w-32 items-center justify-center rounded-lg border border-lime-400/35 bg-lime-400/10 px-5 py-2.5 text-sm font-semibold text-lime-200 transition hover:bg-lime-400/15 focus:outline-none focus:ring-2 focus:ring-lime-300/60 focus:ring-offset-2 focus:ring-offset-[#050505]"
+            class="inline-flex min-h-11 min-w-32 items-center justify-center rounded-lg border border-lime-400/35 bg-lime-400/10 px-5 py-2.5 text-sm font-semibold text-lime-200 transition hover:bg-lime-400/15 focus:outline-none"
             @click="loadMoreDailyRows"
           >
             加载更多

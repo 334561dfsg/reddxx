@@ -360,7 +360,7 @@ onBeforeUnmount(() => {
                 {{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · 共 {{ allMembers.length }} 人
               </p>
             </div>
-            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</AdminButton>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="relationship-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
@@ -368,14 +368,14 @@ onBeforeUnmount(() => {
               <div class="relative mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
                 <label>
                   <span class="sr-only">搜索裂变下级</span>
-                  <AdminInput v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
+                  <AdminInput v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
                 </label>
                 <div class="mt-3 grid grid-cols-2 gap-2">
                   <AdminButton
                     :ref="element => { statusFilterToggleRef = nativeControl(element) }"
                     data-testid="relationship-drawer-status-filter-toggle"
                     type="button"
-                    class="flex min-h-11 items-center rounded-lg px-2 text-left text-sm font-medium text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    class="flex min-h-11 items-center rounded-lg px-2 text-left text-sm font-medium text-slate-700 outline-none"
                     :aria-expanded="openFilter === 'status' ? 'true' : 'false'"
                     aria-controls="relationship-drawer-status-filter-panel"
                     @click="toggleFilter('status')"
@@ -387,7 +387,7 @@ onBeforeUnmount(() => {
                     :ref="element => { roleFilterToggleRef = nativeControl(element) }"
                     data-testid="relationship-drawer-role-filter-toggle"
                     type="button"
-                    class="flex min-h-11 items-center rounded-lg px-2 text-left text-sm font-medium text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    class="flex min-h-11 items-center rounded-lg px-2 text-left text-sm font-medium text-slate-700 outline-none"
                     :aria-expanded="openFilter === 'role' ? 'true' : 'false'"
                     aria-controls="relationship-drawer-role-filter-panel"
                     @click="toggleFilter('role')"
@@ -409,7 +409,7 @@ onBeforeUnmount(() => {
                   v-for="member in pagedMembers"
                   :key="member.id || member.userId"
                   type="button"
-                  class="w-full rounded-xl border border-slate-200 bg-white p-3 text-left transition hover:border-blue-300 hover:bg-blue-50/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full rounded-xl border border-slate-200 bg-white p-3 text-left transition hover:border-blue-300 hover:bg-blue-50/40 focus:outline-none"
                   @click="selectedMember = member"
                 >
                   <span class="flex flex-wrap items-start justify-between gap-2">
@@ -464,7 +464,7 @@ onBeforeUnmount(() => {
                     v-for="item in filterItems"
                     :key="item.value"
                     type="button"
-                    class="min-h-9 rounded-md px-2.5 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500"
+                    class="min-h-9 rounded-md px-2.5 text-sm font-medium outline-none transition"
                     :class="selectedFilterValue === item.value ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
                     :aria-pressed="selectedFilterValue === item.value ? 'true' : 'false'"
                     @click="selectFilter(item.value)"

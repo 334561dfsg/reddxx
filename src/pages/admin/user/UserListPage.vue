@@ -1198,59 +1198,59 @@ const clearDetailDrawer = () => {
               </template>
 <template v-if="column.key === 'col11'">
                 <div data-testid="user-row-action-bar" class="flex max-w-[20rem] flex-wrap items-center gap-2" @click.stop>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none"
                     html-type="button"
 
                     aria-label="查看用户详情"
                     @click="selectUserDetail(user, $event.currentTarget)"
                   >
                     详情</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-16 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-16 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none"
                     html-type="button"
 
                     aria-label="编辑用户资料"
                     @click="handleOperationDrawerAction({ id: 'edit-profile', user, trigger: $event.currentTarget })"
                   >
                     编辑资料</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs bg-blue-50/70 font-medium text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs bg-blue-50/70 font-medium text-blue-700 hover:bg-blue-100 focus:outline-none"
                     html-type="button"
 
                     aria-label="客服入金"
                     @click="openRegularAction(user, 'deposit', $event.currentTarget)"
                   >
                     入金</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg px-2.5 text-xs font-medium focus:outline-none focus:ring-2"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg px-2.5 text-xs font-medium focus:outline-none"
                     html-type="button"
 
                     :class="isLocked(user)
-                      ? 'bg-emerald-50/80 text-emerald-700 hover:bg-emerald-100 focus:ring-emerald-500'
-                      : 'bg-rose-50/80 text-rose-700 hover:bg-rose-100 focus:ring-rose-500'"
+                      ? 'bg-emerald-50/80 text-emerald-700 hover:bg-emerald-100'
+                      : 'bg-rose-50/80 text-rose-700 hover:bg-rose-100'"
                     :aria-label="isLocked(user) ? '解封用户' : '封禁用户'"
                     @click="handleOperationDrawerAction({ id: 'freeze-account', user, trigger: $event.currentTarget })"
                   >
                     {{ isLocked(user) ? '解封' : '封户' }}</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg bg-amber-50/80 px-2.5 text-xs font-medium text-amber-700 hover:bg-amber-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg bg-amber-50/80 px-2.5 text-xs font-medium text-amber-700 hover:bg-amber-100 focus:outline-none"
                     html-type="button"
 
                     aria-label="设置用户点控"
                     @click="handleOperationDrawerAction({ id: 'point-control', user, trigger: $event.currentTarget })"
                   >
                     点控</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-rose-50/80 font-medium text-rose-700 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-rose-50/80 font-medium text-rose-700 hover:bg-rose-100 focus:outline-none"
                     html-type="button"
 
                     aria-label="修改用户信用分"
                     @click="handleOperationDrawerAction({ id: 'credit-adjust', user, trigger: $event.currentTarget })"
                   >
                     修改信用分</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-violet-50/80 font-medium text-violet-700 hover:bg-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-violet-50/80 font-medium text-violet-700 hover:bg-violet-100 focus:outline-none"
                     html-type="button"
 
                     aria-label="查看用户信用分审核"
                     @click="handleOperationDrawerAction({ id: 'credit-review', user, trigger: $event.currentTarget })"
                   >
                     信用分审核</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-emerald-50/80 px-2.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-emerald-50/80 px-2.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 focus:outline-none"
                     v-if="!isAgentUser(user)"
                     html-type="button"
 
@@ -1258,14 +1258,14 @@ const clearDetailDrawer = () => {
                     @click="handleOperationDrawerAction({ id: 'reset-agent', user, trigger: $event.currentTarget })"
                   >
                     设为代理</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-cyan-50/80 px-2.5 text-xs font-medium text-cyan-700 hover:bg-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-cyan-50/80 px-2.5 text-xs font-medium text-cyan-700 hover:bg-cyan-100 focus:outline-none"
                     html-type="button"
 
                     aria-label="设置用户上级代理"
                     @click="handleOperationDrawerAction({ id: 'set-agent-parent', user, trigger: $event.currentTarget })"
                   >
                     设置上级代理</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-indigo-50/80 px-2.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-indigo-50/80 px-2.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 focus:outline-none disabled:opacity-50"
                     v-if="user.role === 'user'"
                     html-type="button"
 
@@ -1273,7 +1273,7 @@ const clearDetailDrawer = () => {
                     aria-label="设置上级业务员"
                     @click="handleOperationDrawerAction({ id: 'set-employee', user, trigger: $event.currentTarget })"
                   >设置上级业务员</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none"
                     :ref="(element) => setActionMenuTriggerRef(user, element?.$el || element)"
                     html-type="button"
                     aria-label="更多用户操作"
@@ -1541,7 +1541,7 @@ const clearDetailDrawer = () => {
                 </div>
                 <label class="block">
                   <span class="text-sm font-medium text-slate-800">取消点控备注 <span class="text-rose-500">*</span></span>
-                  <AdminTextarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100" />
+                  <AdminTextarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-100" />
                   <span class="mt-1 block text-xs" :class="cancelNote.trim() ? 'text-slate-500' : 'text-rose-600'">
                     {{ cancelNote.trim() ? '确认后将直接取消点控' : '取消点控备注必填' }}
                   </span>
@@ -1593,7 +1593,6 @@ const clearDetailDrawer = () => {
   border-radius: 8px; box-shadow: none;
 }
 [data-testid="user-row-action-bar"] :deep(.ant-btn:not([aria-label="更多用户操作"])) { border-color: transparent; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn:focus-visible) { outline: 2px solid #1677ff; outline-offset: 2px; }
 [data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="客服入金"]) { background: #eff6ff; color: #1d4ed8; }
 [data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="客服入金"]:hover:not(:disabled)) { background: #dbeafe; }
 [data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="封禁用户"]) { background: #fff1f2; color: #be123c; }

@@ -149,7 +149,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
               <h2 id="user-funds-mutation-title" class="text-lg font-semibold text-slate-900">{{ config.title }}</h2>
               <p class="mt-0.5 truncate text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p>
             </div>
-            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
+            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="user-funds-mutation-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
@@ -188,14 +188,14 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
               <div>
                 <label for="user-funds-operation-amount" class="text-sm font-medium text-slate-800">{{ config.amountLabel }} <span class="text-rose-500">*</span></label>
                 <div class="mt-1.5 flex gap-2">
-                  <AdminInput id="user-funds-operation-amount" :ref="element => { amountRef = nativeControl(element) }" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="最多两位小数" />
-                  <AdminButton type="button" class="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500" @click="fillMaximum">全部</AdminButton>
+                  <AdminInput id="user-funds-operation-amount" :ref="element => { amountRef = nativeControl(element) }" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="最多两位小数" />
+                  <AdminButton type="button" class="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-blue-700 hover:bg-blue-50 focus:outline-none" @click="fillMaximum">全部</AdminButton>
                 </div>
                 <p class="mt-1 text-xs text-slate-500">最多可操作 {{ money(maximumAmount) }}</p>
               </div>
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">操作原因（可选）</span>
-                <AdminTextarea :ref="element => { reasonRef = nativeControl(element) }" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" :placeholder="`可填写${config.action}原因`" />
+                <AdminTextarea :ref="element => { reasonRef = nativeControl(element) }" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none" :placeholder="`可填写${config.action}原因`" />
                 <span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span>
               </label>
             </template>

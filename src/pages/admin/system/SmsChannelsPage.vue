@@ -339,7 +339,7 @@ onMounted(() => {
           </label>
           <div>
             <label class="mb-1.5 block text-sm font-medium text-slate-700">接口配置（JSON 对象）</label>
-            <a-textarea v-model:value="formConfigJson" rows="10" spellcheck="false" class="w-full resize-y font-mono leading-relaxed" placeholder='例如：{ "accessKeyId": "", "signName": "", "templateCode": "" }' />
+            <a-textarea v-model:value="formConfigJson" :rows="10" spellcheck="false" class="w-full resize-y font-mono leading-relaxed" placeholder='例如：{ "accessKeyId": "", "signName": "", "templateCode": "" }' />
           </div>
         </div></template><template #footer><template v-if="Boolean(showModal)"><div class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
           <a-button html-type="button" class="" @click="closeModal">取消</a-button>

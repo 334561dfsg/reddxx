@@ -662,7 +662,7 @@ onUnmounted(() => {
       :ref="element => { triggerRef = nativeControl(element) }"
       type="button"
       data-testid="panel-single-select-trigger"
-      class="flex min-h-10 w-full items-center justify-between gap-3 rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-900 outline-none transition focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/30 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500"
+      class="flex min-h-10 w-full items-center justify-between gap-3 rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-900 outline-none transition disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500"
       :disabled="disabled"
       :aria-label="triggerLabel"
       :aria-expanded="expanded ? 'true' : 'false'"
@@ -715,7 +715,7 @@ onUnmounted(() => {
               :aria-controls="listboxId"
               :aria-activedescendant="activeDescendant"
               :readonly="readonly"
-              class="min-h-10 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/30"
+              class="min-h-10 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none"
               @keydown="handleSearchKeydown"
              />
             <p
@@ -758,7 +758,7 @@ onUnmounted(() => {
                 :aria-disabled="option.disabled ? 'true' : 'false'"
                 :aria-selected="optionIsExposedActive(option) ? 'true' : 'false'"
                 :data-committed="valuesEqual(option.value, modelValue) ? 'true' : null"
-                class="flex min-h-10 w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-800 outline-none hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:text-gray-400"
+                class="flex min-h-10 w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-800 outline-none hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
                 :class="[
                   optionIsExposedActive(option) ? 'bg-blue-50 text-blue-900' : '',
                   valuesEqual(option.value, modelValue) ? 'font-semibold' : ''

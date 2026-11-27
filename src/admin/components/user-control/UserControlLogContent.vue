@@ -176,18 +176,18 @@ const clearFilters = () => {
       <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
         <label v-if="showUserFilter" data-testid="user-control-log-user-filter" class="space-y-1 text-xs font-medium text-slate-600">
           <span>UID</span>
-          <AdminInput v-model.trim="filters.userId" type="search" placeholder="输入 UID" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500" />
+          <AdminInput v-model.trim="filters.userId" type="search" placeholder="输入 UID" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none" />
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">
           <span>模块</span>
-          <AdminSelect v-model="filters.module" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500">
+          <AdminSelect v-model="filters.module" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none">
             <option value="">全部模块</option>
             <option v-for="module in USER_CONTROL_MODULES" :key="module.key" :value="module.key">{{ module.label }}</option>
           </AdminSelect>
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">
           <span>规则来源</span>
-          <AdminSelect v-model="filters.source" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500">
+          <AdminSelect v-model="filters.source" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none">
             <option value="">全部来源</option>
             <option value="global">用户点控设置</option>
             <option value="module">当前模块点控</option>
@@ -195,7 +195,7 @@ const clearFilters = () => {
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">
           <span>操作类型</span>
-          <AdminSelect v-model="filters.action" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500">
+          <AdminSelect v-model="filters.action" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none">
             <option value="">全部操作</option>
             <option value="apply">设置控制</option>
             <option value="cancel">取消控制</option>
@@ -204,11 +204,11 @@ const clearFilters = () => {
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">
           <span>开始日期</span>
-          <AdminInput v-model="filters.dateFrom" data-testid="user-control-log-date-from" type="date" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500" />
+          <AdminInput v-model="filters.dateFrom" data-testid="user-control-log-date-from" type="date" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none" />
         </label>
         <label class="space-y-1 text-xs font-medium text-slate-600">
           <span>结束日期</span>
-          <AdminInput v-model="filters.dateTo" data-testid="user-control-log-date-to" type="date" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none focus:border-blue-500" />
+          <AdminInput v-model="filters.dateTo" data-testid="user-control-log-date-to" type="date" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-900 outline-none" />
         </label>
         <div class="flex items-end">
           <AdminButton type="button" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50" @click="clearFilters">清除筛选</AdminButton>

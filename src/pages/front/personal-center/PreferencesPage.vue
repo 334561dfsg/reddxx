@@ -104,7 +104,7 @@ onUnmounted(() => document.body.removeEventListener('keydown', onPrefsKeydown))
           <input
             v-model="nickname"
             type="text"
-            class="mt-1.5 w-full max-w-md rounded-lg border border-white/15 bg-black/40 px-3 py-3 text-sm text-white focus:border-lime-400/50 focus:outline-none focus:ring-1 focus:ring-lime-400/30"
+            class="mt-1.5 w-full max-w-md rounded-lg border border-white/15 bg-black/40 px-3 py-3 text-sm text-white focus:outline-none"
           />
         </label>
       </div>
@@ -138,7 +138,7 @@ onUnmounted(() => document.body.removeEventListener('keydown', onPrefsKeydown))
             <label class="mt-1.5 hidden md:block">
               <select
                 v-model="language"
-                class="w-full rounded-lg border border-white/15 bg-black/40 px-3 py-3 text-sm text-white focus:border-lime-400/50 focus:outline-none"
+                class="w-full rounded-lg border border-white/15 bg-black/40 px-3 py-3 text-sm text-white focus:outline-none"
               >
                 <option v-for="o in languages" :key="o.value" :value="o.value">
                   {{ o.label }}
@@ -172,7 +172,7 @@ onUnmounted(() => document.body.removeEventListener('keydown', onPrefsKeydown))
             <label class="mt-1.5 hidden md:block">
               <select
                 v-model="timezone"
-                class="w-full rounded-lg border border-white/15 bg-black/40 px-3 py-3 text-sm text-white focus:border-lime-400/50 focus:outline-none"
+                class="w-full rounded-lg border border-white/15 bg-black/40 px-3 py-3 text-sm text-white focus:outline-none"
               >
                 <option v-for="o in timezones" :key="o.value" :value="o.value">
                   {{ o.label }}
@@ -190,7 +190,7 @@ onUnmounted(() => document.body.removeEventListener('keydown', onPrefsKeydown))
           <input
             v-model="orderConfirm"
             type="checkbox"
-            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400 focus:ring-lime-400/40"
+            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400"
           />
         </label>
         <label class="mt-4 flex cursor-pointer items-center justify-between gap-3">
@@ -198,7 +198,7 @@ onUnmounted(() => document.body.removeEventListener('keydown', onPrefsKeydown))
           <input
             v-model="priceAlertSound"
             type="checkbox"
-            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400 focus:ring-lime-400/40"
+            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400"
           />
         </label>
       </div>

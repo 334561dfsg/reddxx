@@ -44,7 +44,7 @@
           <a-input
             v-model:value="filters.searchText"
             type="search"
-            class="min-w-[10rem] max-w-md flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
+            class="min-w-[10rem] max-w-md flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
             placeholder="还款单号、订单号、用户…"
             autocomplete="off"
           />

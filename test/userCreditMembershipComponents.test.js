@@ -148,7 +148,7 @@ test('recharge Drawer keeps its fixed overview in a content-driven two-column la
 test('recharge Drawer keeps its record scroller keyboard-accessible and compacts fixed regions by height', async () => {
   const source = await readFile(rechargeDrawerFile, 'utf8')
 
-  assert.match(source, /data-testid="user-recharge-record-list"[^>]*tabindex="0"[^>]*aria-labelledby="recharge-records-title"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto[^>]*focus-visible:ring-2/)
+  assert.match(source, /data-testid="user-recharge-record-list"[^>]*tabindex="0"[^>]*aria-labelledby="recharge-records-title"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.doesNotMatch(source, /data-testid="user-recharge-summary-body"[^>]*overflow-y-auto/)
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
   assert.match(source, /@media \(max-height: 44rem\)/)

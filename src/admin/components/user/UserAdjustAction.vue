@@ -270,7 +270,7 @@ const confirm = () => {
                     type="text"
                     inputmode="numeric"
                     autocomplete="off"
-                    class="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    class="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none"
                     placeholder="请输入分数"
                   />
                 </label>
@@ -295,7 +295,7 @@ const confirm = () => {
               <AdminTextarea
                 v-model="form.remark"
                 rows="3"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
+                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none"
                 placeholder="请输入本次调整原因/说明…"
               />
             </div>

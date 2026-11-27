@@ -446,13 +446,13 @@ async function copyAddress(row) {
 
           <label class="block space-y-2 text-sm font-medium text-slate-700">
             <span>排序</span>
-            <a-input type="number" inputmode="numeric" min="0" step="1" placeholder="数值越大展示越靠前" class="w-full" :value="form.sortOrder" @update:value="form.sortOrder = $event === '' ? '' : Number($event)" />
+            <a-input type="number" inputmode="numeric" :min="0" :step="1" placeholder="数值越大展示越靠前" class="w-full" :value="form.sortOrder" @update:value="form.sortOrder = $event === '' ? '' : Number($event)" />
             <span class="block text-xs font-normal text-slate-500">列表按排序值从大到小展示，相同排序按更新时间降序。</span>
           </label>
 
           <label class="block space-y-2 text-sm font-medium text-slate-700">
             <span>备注</span>
-            <a-textarea v-model:value="form.remark" rows="3" placeholder="填写地址用途或更换原因" class="w-full resize-none" />
+            <a-textarea v-model:value="form.remark" :rows="3" placeholder="填写地址用途或更换原因" class="w-full resize-none" />
           </label>
 
           <label class="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">

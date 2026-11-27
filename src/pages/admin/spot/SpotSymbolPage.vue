@@ -327,10 +327,10 @@ const goNext = () => {
 <template #title>操作</template>
 <template #default="{ record: row, index: rowIndex }">
                 <div class="inline-flex items-center gap-2">
-                  <a-button html-type="button" class="ant-btn ant-btn-sm" :disabled="Number(row.deleted_at)" @click="openEdit(row)">编辑</a-button>
-                  <!-- <button type="button" class="ant-btn ant-btn-sm" :disabled="Number(row.deleted_at)" @click="toggleOpen(row)">{{ Number(row.is_open) ? '关闭' : '开启' }}</button>
-                  <button type="button" class="ant-btn ant-btn-sm" :disabled="Number(row.deleted_at)" @click="toggleShowMarket(row)">{{ Number(row.is_show_market) ? '隐藏行情' : '显示行情' }}</button> -->
-                  <a-button html-type="button" class="ant-btn ant-btn-sm !text-rose-600" :disabled="Number(row.deleted_at)" @click="removeSymbol(row)">删除</a-button>
+                  <a-button html-type="button" class="ant-btn ant-btn-sm" :disabled="Boolean(Number(row.deleted_at))" @click="openEdit(row)">编辑</a-button>
+                  <!-- <button type="button" class="ant-btn ant-btn-sm" :disabled="Boolean(Number(row.deleted_at))" @click="toggleOpen(row)">{{ Number(row.is_open) ? '关闭' : '开启' }}</button>
+                  <a-button html-type="button" size="small" :disabled="Boolean(Number(row.deleted_at))" @click="toggleShowMarket(row)">{{ Number(row.is_show_market) ? '隐藏行情' : '显示行情' }}</a-button> -->
+                  <a-button html-type="button" class="ant-btn ant-btn-sm !text-rose-600" :disabled="Boolean(Number(row.deleted_at))" @click="removeSymbol(row)">删除</a-button>
                 </div>
               </template>
 </a-table-column>

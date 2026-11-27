@@ -133,7 +133,6 @@ watch(dialogRef, async (element, previous, onCleanup) => {
 .wallet-holdings-summary { flex-shrink: 0; }
 .wallet-holdings-table-viewport { flex: 1; min-height: 0; min-width: 0; overflow: hidden; }
 .wallet-holdings-table-viewport .ant-table-body { overscroll-behavior: contain; }
-.wallet-holdings-table-viewport .ant-table-body:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
 .wallet-holdings-summary .ant-statistic-title { margin-bottom: 0; }
 .wallet-holdings-content .ant-table-cell, .wallet-holdings-content .ant-typography, .wallet-holdings-content .ant-statistic-content { overflow-wrap: anywhere; }
 /* Ant renders enter-prepare before attaching the running animation class. */

@@ -31,7 +31,6 @@ defineExpose({close})
 .staff-overlay{padding-top:max(.75rem,env(safe-area-inset-top));padding-bottom:max(.75rem,env(safe-area-inset-bottom));padding-left:max(.75rem,env(safe-area-inset-left));padding-right:max(.75rem,env(safe-area-inset-right))}
 .staff-dialog-panel{max-height:calc(100vh - 2rem);max-height:calc(100dvh - 2rem)}
 .staff-drawer-panel{height:calc(100vh - 1.5rem);height:calc(100dvh - 1.5rem);border-radius:.75rem}
-.staff-focus:focus-visible{outline:2px solid #2563eb;outline-offset:3px}
 .staff-dialog-enter-active,.staff-drawer-enter-active{transition:opacity 200ms ease-out}.staff-dialog-leave-active,.staff-drawer-leave-active{transition:opacity 150ms ease-in}
 .staff-dialog-enter-active .staff-surface,.staff-drawer-enter-active .staff-surface{transition:transform 200ms ease-out,opacity 200ms ease-out}.staff-dialog-leave-active .staff-surface,.staff-drawer-leave-active .staff-surface{transition:transform 150ms ease-in,opacity 150ms ease-in}
 .staff-dialog-enter-from,.staff-dialog-leave-to,.staff-drawer-enter-from,.staff-drawer-leave-to{opacity:0}.staff-dialog-enter-from .staff-surface,.staff-dialog-leave-to .staff-surface{transform:scale(.96);opacity:0}.staff-drawer-enter-from .staff-surface,.staff-drawer-leave-to .staff-surface{transform:translateX(100%)}

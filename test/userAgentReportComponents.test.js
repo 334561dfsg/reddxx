@@ -85,7 +85,8 @@ test('agent report Drawer keeps overview outside tabs and separates products fro
   assert.equal(dailyPanel.getAttribute('aria-labelledby'), 'agent-report-daily-tab')
   assert.equal(dailyPanel.getAttribute('tabindex'), '0')
   assert.equal(dailyPanel.classList.contains('overflow-y-auto'), true)
-  assert.equal(dailyPanel.classList.contains('focus-visible:ring-2'), true)
+  // No focus rings (AGENTS.md); the global focus cue in theme.css marks the focused panel.
+  assert.equal(dailyPanel.classList.contains('focus-visible:ring-2'), false)
   assert.equal(overview.contains(summaryCards[0]), true)
   assert.equal(dailyPanel.contains(summaryCards[0]), false)
   assert.equal(dailyPanel.contains(dailyHeader), true)

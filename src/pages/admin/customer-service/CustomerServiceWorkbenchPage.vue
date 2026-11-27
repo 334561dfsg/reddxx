@@ -207,7 +207,7 @@ onUnmounted(() => unsubscribe?.())
 
           <footer class="border-t border-slate-200 bg-white p-3 md:p-4">
             <div class="flex items-end gap-2">
-              <a-textarea v-model:value="draft" rows="2" class="min-w-0 flex-1 resize-none transition" placeholder="输入回复内容，Enter 发送" aria-label="客服回复" @keydown="onReplyKeydown" />
+              <a-textarea v-model:value="draft" :rows="2" class="min-w-0 flex-1 resize-none transition" placeholder="输入回复内容，Enter 发送" aria-label="客服回复" @keydown="onReplyKeydown" />
               <a-button html-type="button" class="bg-blue-600 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-300" :disabled="!canReply" @click="sendReply" type="primary">发送</a-button>
             </div>
           </footer>

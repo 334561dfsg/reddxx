@@ -84,12 +84,12 @@ watch(totalPages, (nextTotalPages) => {
               <h2 id="team-report-title" ref="titleRef" tabindex="-1" class="text-xl font-semibold text-slate-900 outline-none">裂变团队报表</h2>
               <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · 裂变统计范围不包含本人</p>
             </div>
-            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</AdminButton>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="team-report-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <template v-if="hasMembers">
-              <section data-testid="team-report-overview-scroll" class="min-h-0 max-h-[min(18rem,38vh)] shrink overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" role="region" tabindex="0" aria-labelledby="team-report-overview-title">
+              <section data-testid="team-report-overview-scroll" class="min-h-0 max-h-[min(18rem,38vh)] shrink overflow-y-auto overscroll-y-contain outline-none" role="region" tabindex="0" aria-labelledby="team-report-overview-title">
                 <h3 id="team-report-overview-title" class="text-sm font-semibold text-slate-900">裂变团队概览</h3>
                 <div class="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                   <div v-for="metric in metricCards" :key="metric.label" data-testid="team-report-metric" class="rounded-xl border border-slate-200 bg-slate-50 p-3">
@@ -102,7 +102,7 @@ watch(totalPages, (nextTotalPages) => {
               <section data-testid="team-report-branch-header" class="mt-5 shrink-0" aria-labelledby="team-report-branch-title">
                 <h3 id="team-report-branch-title" class="text-sm font-semibold text-slate-900">直属裂变分支明细</h3>
               </section>
-              <div data-testid="team-report-branch-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset" role="region" :tabindex="branches.length ? 0 : undefined" aria-labelledby="team-report-branch-title">
+              <div data-testid="team-report-branch-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain outline-none" role="region" :tabindex="branches.length ? 0 : undefined" aria-labelledby="team-report-branch-title">
                 <div class="mt-2 space-y-2">
                   <article v-for="branch in pagedBranches" :key="branch.user.id" class="rounded-xl border border-slate-200 bg-white p-3">
                     <div class="flex flex-wrap items-start gap-2">

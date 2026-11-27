@@ -1,4 +1,4 @@
-import { computed, nextTick, onBeforeUnmount, ref, unref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, toRaw, unref, watch } from 'vue'
 
 const dialogLayers = []
 const layerVersion = ref(0)
@@ -288,6 +288,8 @@ export const useDialogLifecycle = ({
     const dialog = dialogRef?.value
     const initialTarget = initialFocusRef?.value
     const target = initialTarget || getFocusableElements(dialog)[0] || dialog
+    // Rendering and the enter transition both ask for the initial focus; focus once.
+    if (typeof document !== 'undefined' && target && document.activeElement === toRaw(target)) return
     target?.focus?.()
   }
 

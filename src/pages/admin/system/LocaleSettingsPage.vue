@@ -652,7 +652,7 @@ onMounted(() => {
 
             <div class="overflow-x-auto overflow-hidden rounded-lg border border-slate-200">
               <a-table  :data-source="localesTableRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(loc) => loc.code" :custom-row="(loc, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
-<a-table-column key="column-0" ><template #title>图标</template><template #default="{ record: loc, index: index }"><div class=" .5">
+<a-table-column key="column-0" ><template #title>图标</template><template #default="{ record: loc, index: index }"><div class="">
                       <span class="inline-flex h-8 w-12 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white text-base">
                         <img
                           v-if="isImageIcon(loc.icon)"
@@ -663,19 +663,19 @@ onMounted(() => {
                         <span v-else>{{ loc.icon || '□' }}</span>
                       </span>
                     </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>语言名称</template><template #default="{ record: loc, index: index }"><div class=" .5 text-slate-800">{{ loc.label }}</div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>语言代码</template><template #default="{ record: loc, index: index }"><div class=" .5 font-mono text-xs text-slate-500">{{ loc.code }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: loc, index: index }"><div class=" .5">
-                      <a-input type="number" step="1" class="w-full max-w-[6.5rem] text-right tabular-nums" :value="config.i18n.localeSortOrder?.[loc.code] ?? 0" @input="onLocaleSortInput(loc.code, $event.target.value)" />
+<a-table-column key="column-1" ><template #title>语言名称</template><template #default="{ record: loc, index: index }"><div class="text-slate-800">{{ loc.label }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>语言代码</template><template #default="{ record: loc, index: index }"><div class="font-mono text-xs text-slate-500">{{ loc.code }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: loc, index: index }"><div class="">
+                      <a-input type="number" :step="1" class="w-full max-w-[6.5rem] text-right tabular-nums" :value="config.i18n.localeSortOrder?.[loc.code] ?? 0" @input="onLocaleSortInput(loc.code, $event.target.value)" />
                     </div></template></a-table-column>
-<a-table-column key="column-4" align="right"><template #title>Key 数</template><template #default="{ record: loc, index: index }"><div class=" .5 text-right tabular-nums text-slate-700">{{ loc.keyCount }}</div></template></a-table-column>
-<a-table-column key="column-5" align="center"><template #title>启用</template><template #default="{ record: loc, index: index }"><div class=" .5 text-center">
+<a-table-column key="column-4" align="right"><template #title>Key 数</template><template #default="{ record: loc, index: index }"><div class="text-right tabular-nums text-slate-700">{{ loc.keyCount }}</div></template></a-table-column>
+<a-table-column key="column-5" align="center"><template #title>启用</template><template #default="{ record: loc, index: index }"><div class="text-center">
                       <a-checkbox class="" :checked="config.i18n.enabledLocales?.includes(loc.code)" @change="toggleLocale(loc.code, $event.target.checked)" />
                     </div></template></a-table-column>
-<a-table-column key="column-6" align="center"><template #title>默认</template><template #default="{ record: loc, index: index }"><div class=" .5 text-center">
+<a-table-column key="column-6" align="center"><template #title>默认</template><template #default="{ record: loc, index: index }"><div class="text-center">
                       <a-radio class="" name="admin-default-locale-pick" :value="loc.code" :checked="config.i18n.defaultLocale === loc.code" :disabled="!config.i18n.enabledLocales?.includes(loc.code)" @change="setDefaultLocale(loc.code)" />
 	                    </div></template></a-table-column>
-<a-table-column key="column-7" align="right"><template #title>操作</template><template #default="{ record: loc, index: index }"><div class=" .5 text-right">
+<a-table-column key="column-7" align="right"><template #title>操作</template><template #default="{ record: loc, index: index }"><div class="text-right">
                       <a-button html-type="button" class="mr-3 text-xs font-medium text-blue-600 hover:underline" @click="downloadLocalePackage(loc.code)">
                         下载
                       </a-button>
@@ -722,7 +722,7 @@ onMounted(() => {
           </div>
           <div class="overflow-x-auto overflow-hidden rounded-lg border border-slate-200">
             <a-table  :data-source="dialsTableRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.dial" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
-<a-table-column key="column-0" ><template #title>图标</template><template #default="{ record: row, index: index }"><div class=" .5">
+<a-table-column key="column-0" ><template #title>图标</template><template #default="{ record: row, index: index }"><div class="">
                     <div class="flex items-center gap-2">
                       <span class="inline-flex h-8 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white text-base">
                         <img
@@ -735,15 +735,15 @@ onMounted(() => {
                       </span>
                     </div>
                   </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>地区与区号</template><template #default="{ record: row, index: index }"><div class=" .5 text-slate-800">{{ row.label }}</div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>国际区号</template><template #default="{ record: row, index: index }"><div class=" .5 font-mono text-sm text-slate-600">{{ row.dial }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class=" .5">
-                    <a-input type="number" step="1" class="w-full max-w-[6.5rem] text-right tabular-nums" :value="config.dialSortOrder?.[row.dial] ?? 0" @input="onDialSortInput(row.dial, $event.target.value)" />
+<a-table-column key="column-1" ><template #title>地区与区号</template><template #default="{ record: row, index: index }"><div class="text-slate-800">{{ row.label }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>国际区号</template><template #default="{ record: row, index: index }"><div class="font-mono text-sm text-slate-600">{{ row.dial }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="">
+                    <a-input type="number" :step="1" class="w-full max-w-[6.5rem] text-right tabular-nums" :value="config.dialSortOrder?.[row.dial] ?? 0" @input="onDialSortInput(row.dial, $event.target.value)" />
                   </div></template></a-table-column>
-<a-table-column key="column-4" align="center"><template #title>启用</template><template #default="{ record: row, index: index }"><div class=" .5 text-center">
+<a-table-column key="column-4" align="center"><template #title>启用</template><template #default="{ record: row, index: index }"><div class="text-center">
                     <a-checkbox class="" :checked="config.allowedDialCodes?.includes(row.dial)" @change="toggleDial(row.dial, $event.target.checked)" />
                   </div></template></a-table-column>
-<a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class=" .5 text-right">
+<a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="text-right">
                     <a-button html-type="button" class="mr-3 text-xs font-medium text-blue-600 hover:underline" @click="editCustomDial(row)">
                       编辑
                     </a-button>

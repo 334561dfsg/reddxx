@@ -99,6 +99,5 @@ onBeforeUnmount(()=>{disposed=true;session++;form.password='';form.confirmPasswo
 </template>
 <style scoped>
 .staff-input{margin-top:.375rem}
-button:focus-visible{outline:2px solid #1677ff;outline-offset:3px}
 button:disabled{cursor:not-allowed;opacity:.5}
 </style>

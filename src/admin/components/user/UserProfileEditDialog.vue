@@ -159,7 +159,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               <h2 id="profile-edit-title" class="text-lg font-semibold text-slate-900">{{ delivery ? '业务员设置成功' : '编辑用户资料' }}</h2>
               <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p>
             </div>
-            <AdminButton type="button" :disabled="submitting || copying" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
+            <AdminButton type="button" :disabled="submitting || copying" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
@@ -171,13 +171,13 @@ watch(() => [props.visible, userId.value], ([visible]) => {
             <template v-else>
             <label class="block">
               <span class="text-sm font-medium text-slate-800">用户名 <span class="text-rose-500">*</span></span>
-              <AdminInput :ref="element => { firstFieldRef = nativeControl(element) }" v-model="form.username" :disabled="submitting" type="text" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" />
+              <AdminInput :ref="element => { firstFieldRef = nativeControl(element) }" v-model="form.username" :disabled="submitting" type="text" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none disabled:bg-slate-100" />
               <FeedbackToast v-if="errors.username" type="error" :source="() => (errors.username) ? (errors.username) : ''"></FeedbackToast>
             </label>
 
             <label class="block">
               <span class="text-sm font-medium text-slate-800">邮箱 <span class="text-rose-500">*</span></span>
-              <AdminInput v-model="form.email" :disabled="submitting" type="email" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" />
+              <AdminInput v-model="form.email" :disabled="submitting" type="email" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none disabled:bg-slate-100" />
               <FeedbackToast v-if="errors.email" type="error" :source="() => (errors.email) ? (errors.email) : ''"></FeedbackToast>
             </label>
 
@@ -204,7 +204,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
                     maxlength="24"
                     autocomplete="off"
                     placeholder="不含区号"
-                    class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100"
+                    class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none disabled:bg-slate-100"
                     :aria-invalid="Boolean(errors.phone)"
                     :aria-describedby="errors.phone ? phoneErrorId : null"
                   />
@@ -227,12 +227,12 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               </div>
               <label class="block text-sm text-slate-700">
                 密码
-                <AdminInput v-model="password" :readonly="passwordMode === 'auto'" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="128" required :aria-invalid="Boolean(errors.password)" aria-describedby="profile-password-hint profile-password-error" class="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                <AdminInput v-model="password" :readonly="passwordMode === 'auto'" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="128" required :aria-invalid="Boolean(errors.password)" aria-describedby="profile-password-hint profile-password-error" class="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 outline-none" />
               </label>
               <p id="profile-password-error" class="text-xs text-rose-600">{{ errors.password }}</p>
               <label v-if="passwordMode === 'manual'" class="block text-sm text-slate-700">
                 确认密码
-                <AdminInput v-model="confirmPassword" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="128" required :aria-invalid="Boolean(errors.confirmPassword)" aria-describedby="profile-confirm-password-error" class="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                <AdminInput v-model="confirmPassword" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" maxlength="128" required :aria-invalid="Boolean(errors.confirmPassword)" aria-describedby="profile-confirm-password-error" class="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 outline-none" />
                 <span id="profile-confirm-password-error" class="mt-1 block text-xs text-rose-600">{{ errors.confirmPassword }}</span>
               </label>
               <AdminCheckbox class="flex items-center gap-2 text-sm text-slate-700" v-model="showPassword">显示密码</AdminCheckbox>
@@ -241,7 +241,7 @@ watch(() => [props.visible, userId.value], ([visible]) => {
 
             <label class="block">
               <span class="text-sm font-medium text-slate-800">操作原因（可选）</span>
-              <AdminTextarea v-model="form.reason" :disabled="submitting" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100" placeholder="请填写为什么编辑用户资料" />
+              <AdminTextarea v-model="form.reason" :disabled="submitting" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none disabled:bg-slate-100" placeholder="请填写为什么编辑用户资料" />
               <span class="mt-1 flex justify-between gap-3 text-xs"><span class="text-rose-600">{{ errors.reason || '' }}</span><span class="text-slate-500">{{ form.reason.length }}/200</span></span>
             </label>
             </template>

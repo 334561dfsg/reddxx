@@ -420,13 +420,13 @@ const openRiskHelpModal = () => {
           <a-input
             v-model:value="customDateRange.start"
             type="date"
-            class="px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none"
           />
           <span class="text-slate-500">至</span>
           <a-input
             v-model:value="customDateRange.end"
             type="date"
-            class="px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none"
           />
         </div>
       </div>

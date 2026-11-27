@@ -191,7 +191,7 @@ function logSecurity(msg) {
           <input
             v-model="simulateMfaBound"
             type="checkbox"
-            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400 focus:ring-lime-400/40"
+            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400"
           />
           模拟账号已绑定 MFA（勾选后仅提示到账，不弹窗）
         </label>
@@ -242,7 +242,7 @@ function logSecurity(msg) {
           <input
             v-model="secPhoneBound"
             type="checkbox"
-            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400 focus:ring-lime-400/40"
+            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400"
           />
           模拟手机已绑定（总览标签）
         </label>
@@ -250,7 +250,7 @@ function logSecurity(msg) {
           <input
             v-model="secEmailBound"
             type="checkbox"
-            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400 focus:ring-lime-400/40"
+            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400"
           />
           模拟邮箱已绑定
         </label>
@@ -258,7 +258,7 @@ function logSecurity(msg) {
           <input
             v-model="secMfaBound"
             type="checkbox"
-            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400 focus:ring-lime-400/40"
+            class="h-4 w-4 rounded border-white/25 bg-black/40 text-lime-400"
           />
           模拟 MFA 已开启
         </label>

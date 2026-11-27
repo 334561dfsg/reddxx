@@ -463,7 +463,7 @@ const showToast = (message) => {
                   v-if="auditAction !== 'approve'"
                   v-model="auditNote"
                   rows="3"
-                  class="mt-2 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2 text-sm text-white outline-none placeholder:text-white/30 focus:border-emerald-500/50"
+                  class="mt-2 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2 text-sm text-white outline-none placeholder:text-white/30"
                   :placeholder="auditAction === 'reject' ? '请填写拒绝原因' : '请填写补件说明'"
                 />
                 <div class="mt-3 flex flex-wrap justify-end gap-2">

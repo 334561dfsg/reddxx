@@ -581,12 +581,12 @@ const tabs = [
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">最大分数</label>
-                    <a-input type="number" min="0" max="1000" class="" :value="formData.maxScore" @update:value="formData.maxScore = $event === '' ? '' : Number($event)" />
+                    <a-input type="number" :min="0" :max="1000" class="" :value="formData.maxScore" @update:value="formData.maxScore = $event === '' ? '' : Number($event)" />
                     <p class="text-xs text-slate-500 mt-1">信用分上限</p>
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">初始分数</label>
-                    <a-input type="number" min="0" :max="formData.maxScore" class="" :class="{'!border-rose-500': validationErrors.initialScore}" :value="formData.initialScore" @update:value="formData.initialScore = $event === '' ? '' : Number($event)" />
+                    <a-input type="number" :min="0" :max="formData.maxScore" class="" :class="{'!border-rose-500': validationErrors.initialScore}" :value="formData.initialScore" @update:value="formData.initialScore = $event === '' ? '' : Number($event)" />
                     <FeedbackToast v-if="validationErrors.initialScore" type="error" :source="() => (validationErrors.initialScore) ? (validationErrors.initialScore) : ''"></FeedbackToast>
                     <p v-else class="text-xs text-slate-500 mt-1">新用户默认分数</p>
                   </div>
@@ -606,7 +606,7 @@ const tabs = [
                 <div v-if="formData.autoUpgradeVip1Enabled" class="space-y-4">
                   <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">升级到VIP1所需信用分</label>
-                    <a-input type="number" min="0" :max="formData.maxScore" class="" :class="{'!border-rose-500': validationErrors.autoUpgradeVip1Score}" :value="formData.autoUpgradeVip1Score" @update:value="formData.autoUpgradeVip1Score = $event === '' ? '' : Number($event)" />
+                    <a-input type="number" :min="0" :max="formData.maxScore" class="" :class="{'!border-rose-500': validationErrors.autoUpgradeVip1Score}" :value="formData.autoUpgradeVip1Score" @update:value="formData.autoUpgradeVip1Score = $event === '' ? '' : Number($event)" />
                     <FeedbackToast v-if="validationErrors.autoUpgradeVip1Score" type="error" :source="() => (validationErrors.autoUpgradeVip1Score) ? (validationErrors.autoUpgradeVip1Score) : ''"></FeedbackToast>
                     <p v-else class="text-xs text-slate-500 mt-1">普通用户达到此分数自动升级为VIP1</p>
                   </div>
@@ -615,7 +615,7 @@ const tabs = [
                     <label class="block text-sm font-medium text-slate-700 mb-2">VIP升级充值金额</label>
                     <div class="flex items-center gap-2 flex-wrap">
                       <span class="text-sm text-slate-600">VIP + 用户每充值</span>
-                      <a-input type="number" min="0" step="1000" class="!w-32" :value="formData.vipUpgradeRechargeAmount" @update:value="formData.vipUpgradeRechargeAmount = $event === '' ? '' : Number($event)" />
+                      <a-input type="number" :min="0" :step="1000" class="!w-32" :value="formData.vipUpgradeRechargeAmount" @update:value="formData.vipUpgradeRechargeAmount = $event === '' ? '' : Number($event)" />
                       <span class="text-sm text-slate-600">USDT 升一级</span>
                     </div>
                     <p class="text-xs text-slate-500 mt-2">例如：VIP1用户充值该金额后自动升级为VIP2</p>
@@ -635,7 +635,7 @@ const tabs = [
                 <label class="block text-sm font-medium text-slate-700 mb-2">充值规则</label>
                 <div class="flex items-center gap-2 flex-wrap">
                   <span class="text-sm text-slate-600">每充值</span>
-                  <a-input type="number" min="0" step="1000" class="!w-32" :class="{'!border-rose-500': validationErrors.rechargeAmount}" :value="formData.rechargeAmount" @update:value="formData.rechargeAmount = $event === '' ? '' : Number($event)" />
+                  <a-input type="number" :min="0" :step="1000" class="!w-32" :class="{'!border-rose-500': validationErrors.rechargeAmount}" :value="formData.rechargeAmount" @update:value="formData.rechargeAmount = $event === '' ? '' : Number($event)" />
                   <span class="text-sm text-slate-600">USDT，获得</span>
                   <span class="px-3 py-2 bg-blue-50 text-blue-700 font-semibold rounded-lg">+1</span>
                   <span class="text-sm text-slate-600">信用分</span>
@@ -651,14 +651,14 @@ const tabs = [
                 <div>
                   <label class="block text-sm font-medium text-slate-700 mb-2">初级认证奖励</label>
                   <div class="flex items-center gap-2">
-                    <a-input type="number" min="0" :max="formData.maxScore" class="!w-24" :value="formData.primaryKycScore" @update:value="formData.primaryKycScore = $event === '' ? '' : Number($event)" />
+                    <a-input type="number" :min="0" :max="formData.maxScore" class="!w-24" :value="formData.primaryKycScore" @update:value="formData.primaryKycScore = $event === '' ? '' : Number($event)" />
                     <span class="text-sm text-slate-600">信用分</span>
                   </div>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-slate-700 mb-2">高级认证奖励</label>
                   <div class="flex items-center gap-2">
-                    <a-input type="number" min="0" :max="formData.maxScore" class="!w-24" :value="formData.advancedKycScore" @update:value="formData.advancedKycScore = $event === '' ? '' : Number($event)" />
+                    <a-input type="number" :min="0" :max="formData.maxScore" class="!w-24" :value="formData.advancedKycScore" @update:value="formData.advancedKycScore = $event === '' ? '' : Number($event)" />
                     <span class="text-sm text-slate-600">信用分</span>
                   </div>
                 </div>
@@ -680,7 +680,7 @@ const tabs = [
                     <label class="block text-sm font-medium text-slate-700 mb-2">加分</label>
                     <div class="flex items-center gap-2">
                       <span class="text-emerald-600">+</span>
-                      <a-input type="number" min="0" :max="formData.maxScore" class="!w-24" :value="customEarnDraft.score" @update:value="customEarnDraft.score = $event === '' ? '' : Number($event)" />
+                      <a-input type="number" :min="0" :max="formData.maxScore" class="!w-24" :value="customEarnDraft.score" @update:value="customEarnDraft.score = $event === '' ? '' : Number($event)" />
                       <span class="text-sm text-slate-600">分</span>
                     </div>
                   </div>
@@ -702,7 +702,7 @@ const tabs = [
 <a-table-column key="column-1" ><template #title>加分</template><template #default="{ record: rule, index: index }"><div class=" pr-2 w-44">
                             <div class="flex items-center gap-2">
                               <span class="text-emerald-600">+</span>
-                              <a-input type="number" min="0" :max="formData.maxScore" class="w-24" :value="rule.score" @update:value="rule.score = $event === '' ? '' : Number($event)" />
+                              <a-input type="number" :min="0" :max="formData.maxScore" class="w-24" :value="rule.score" @update:value="rule.score = $event === '' ? '' : Number($event)" />
                               <span class="text-slate-500">分</span>
                             </div>
                           </div></template></a-table-column>
@@ -740,7 +740,7 @@ const tabs = [
                         <label class="block text-sm font-medium text-slate-700 mb-2">扣分</label>
                         <div class="flex items-center gap-2">
                           <span class="text-rose-600">-</span>
-                          <a-input type="number" min="0" :max="formData.maxScore" class="!w-24" :value="customDeductionDraft.score" @update:value="customDeductionDraft.score = $event === '' ? '' : Number($event)" />
+                          <a-input type="number" :min="0" :max="formData.maxScore" class="!w-24" :value="customDeductionDraft.score" @update:value="customDeductionDraft.score = $event === '' ? '' : Number($event)" />
                           <span class="text-sm text-slate-600">分</span>
                         </div>
                       </div>
@@ -762,7 +762,7 @@ const tabs = [
 <a-table-column key="column-1" ><template #title>扣分</template><template #default="{ record: rule, index: index }"><div class=" pr-2 w-44">
                                 <div class="flex items-center gap-2">
                                   <span class="text-rose-600">-</span>
-                                  <a-input type="number" min="0" :max="formData.maxScore" class="w-24" :value="rule.score" @update:value="rule.score = $event === '' ? '' : Number($event)" />
+                                  <a-input type="number" :min="0" :max="formData.maxScore" class="w-24" :value="rule.score" @update:value="rule.score = $event === '' ? '' : Number($event)" />
                                   <span class="text-slate-500">分</span>
                                 </div>
                               </div></template></a-table-column>
@@ -783,7 +783,7 @@ const tabs = [
                 <!-- 最低分数 -->
                 <div class="pt-4 border-t border-slate-200">
                   <label class="block text-sm font-medium text-slate-700 mb-2">最低分数保护</label>
-                  <a-input type="number" min="0" :max="formData.maxScore" class="" :value="formData.minScore" @update:value="formData.minScore = $event === '' ? '' : Number($event)" />
+                  <a-input type="number" :min="0" :max="formData.maxScore" class="" :value="formData.minScore" @update:value="formData.minScore = $event === '' ? '' : Number($event)" />
                   <p class="text-xs text-slate-500 mt-1">扣分后不会低于此值（0表示无保护）</p>
                 </div>
 
@@ -813,7 +813,7 @@ const tabs = [
                   <label class="block text-sm font-medium text-slate-700 mb-2">审核阈值</label>
                   <div class="flex items-center gap-2 flex-wrap">
                     <span class="text-sm text-slate-600">积分变动绝对值超过</span>
-                    <a-input type="number" min="0" :max="formData.maxScore" class="!w-24" :value="formData.manualAuditThreshold" @update:value="formData.manualAuditThreshold = $event === '' ? '' : Number($event)" />
+                    <a-input type="number" :min="0" :max="formData.maxScore" class="!w-24" :value="formData.manualAuditThreshold" @update:value="formData.manualAuditThreshold = $event === '' ? '' : Number($event)" />
                     <span class="text-sm text-slate-600">分时需要审核</span>
                   </div>
                   <p class="text-xs text-slate-500 mt-2">
@@ -906,7 +906,7 @@ const tabs = [
             <!-- 充值金额 -->
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-2">充值金额(USDT)</label>
-              <a-input type="number" min="0" step="10000" class="" :value="calculatorInputs.rechargeAmount" @update:value="calculatorInputs.rechargeAmount = $event === '' ? '' : Number($event)" />
+              <a-input type="number" :min="0" :step="10000" class="" :value="calculatorInputs.rechargeAmount" @update:value="calculatorInputs.rechargeAmount = $event === '' ? '' : Number($event)" />
               <p class="text-xs text-slate-500 mt-1">当前输入：{{ formatNumber(calculatorInputs.rechargeAmount) }} USDT</p>
             </div>
 

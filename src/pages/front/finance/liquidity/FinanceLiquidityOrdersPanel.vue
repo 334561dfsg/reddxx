@@ -385,7 +385,7 @@ onUnmounted(() => {
     <div v-if="hasMoreOrders" class="pt-1">
       <button
         type="button"
-        class="flex min-h-11 w-full items-center justify-center rounded-lg border border-white/[0.1] bg-white/[0.04] text-sm font-semibold text-white/70 transition hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+        class="flex min-h-11 w-full items-center justify-center rounded-lg border border-white/[0.1] bg-white/[0.04] text-sm font-semibold text-white/70 transition hover:bg-white/[0.08] focus:outline-none"
         @click="loadMoreOrders"
       >
         加载更多

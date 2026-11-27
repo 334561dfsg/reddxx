@@ -35,7 +35,7 @@
             {{ option.label }}
           </a-select-option>
         </a-select>
-        <a-input v-model:value="filters.userId" type="text" placeholder="搜索用户ID..." class="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+        <a-input v-model:value="filters.userId" type="text" placeholder="搜索用户ID..." class="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
         <a-button type="text" html-type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="resetFilters">重置</a-button>
         <div v-if="selectedDeductOrders.length" class="ml-auto flex flex-wrap items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2">
           <span class="text-xs font-medium text-rose-700">已选 {{ selectedDeductOrders.length }} 笔可处理订单</span>
@@ -623,9 +623,9 @@
               </h3>
               <a-textarea
                 v-model:value="reviewComment"
-                rows="8"
+                :rows="8"
                 placeholder="请输入审核意见和理由（批准时选填，拒绝时必填）..."
-                class="w-full rounded-lg border-2 border-slate-300 bg-slate-50 px-4 py-3 text-sm leading-relaxed outline-none transition-colors focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-200"
+                class="w-full rounded-lg border-2 border-slate-300 bg-slate-50 px-4 py-3 text-sm leading-relaxed outline-none transition-colors focus:bg-white"
               ></a-textarea>
               <p class="mt-2 flex items-center gap-1 text-xs text-slate-500">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

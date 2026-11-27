@@ -242,7 +242,7 @@ const card = 'rounded-2xl border border-white/[0.06] bg-white/[0.025]'
 const label = 'text-[10px] font-medium uppercase tracking-[0.08em] text-white/38'
 
 const actionPillBase =
-  'inline-flex items-center justify-center gap-2 rounded-xl border text-left font-medium transition [-webkit-tap-highlight-color:transparent] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505]'
+  'inline-flex items-center justify-center gap-2 rounded-xl border text-left font-medium transition [-webkit-tap-highlight-color:transparent] focus:outline-none'
 const actionPillOn =
   'border-lime-400/45 bg-lime-400/[0.13] text-lime-50 shadow-[0_0_0_1px_rgba(190,242,100,0.22)]'
 const actionPillOff =
@@ -311,7 +311,7 @@ const actionPillOff =
               <button
                 v-if="a.command"
                 type="button"
-                class="flex min-h-[4.25rem] flex-col items-center justify-center gap-1 px-1 py-2.5 text-center text-white/78 transition focus:outline-none focus-visible:z-[1] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-lime-400/35 active:bg-white/[0.04] hover:bg-white/[0.035]"
+                class="flex min-h-[4.25rem] flex-col items-center justify-center gap-1 px-1 py-2.5 text-center text-white/78 transition focus:outline-none focus-visible:z-[1] active:bg-white/[0.04] hover:bg-white/[0.035]"
                 :aria-label="a.label"
                 @click="runAssetAction(a)"
               >
@@ -326,7 +326,7 @@ const actionPillOff =
                 v-else
                 :to="a.to"
                 :aria-current="actionActive(a) ? 'page' : undefined"
-                class="flex min-h-[4.25rem] flex-col items-center justify-center gap-1 px-1 py-2.5 text-center transition focus:outline-none focus-visible:z-[1] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-lime-400/35 active:bg-white/[0.04]"
+                class="flex min-h-[4.25rem] flex-col items-center justify-center gap-1 px-1 py-2.5 text-center transition focus:outline-none focus-visible:z-[1] active:bg-white/[0.04]"
                 :class="
                   actionActive(a)
                     ? 'bg-lime-400/[0.09] text-lime-100'
@@ -427,7 +427,7 @@ const actionPillOff =
             v-for="acc in visibleSubAccounts"
             :key="acc.key"
             :to="`${prefix}/personal-center/assets/account/${acc.key}`"
-            :class="`${card} group block p-4 transition hover:border-white/[0.12] hover:bg-white/[0.045] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 md:p-5`"
+            :class="`${card} group block p-4 transition hover:border-white/[0.12] hover:bg-white/[0.045] focus:outline-none md:p-5`"
             :aria-label="`查看${acc.title}持有币种`"
           >
             <p class="text-sm font-medium text-white/72">{{ acc.title }}</p>

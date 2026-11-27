@@ -26,7 +26,7 @@ function openCustomerService() {
   <button
     v-if="visible"
     type="button"
-    class="fixed bottom-[calc(0.5rem+3.5rem+0.6rem+env(safe-area-inset-bottom,0px)+1rem)] right-[8.75rem] z-40 inline-flex h-11 items-center gap-2 rounded-full border border-sky-300/25 bg-[#1597e5] px-3.5 text-sm font-semibold text-white shadow-xl shadow-sky-950/30 transition hover:-translate-y-0.5 hover:bg-sky-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black lg:bottom-4 lg:right-[9.5rem]"
+    class="fixed bottom-[calc(0.5rem+3.5rem+0.6rem+env(safe-area-inset-bottom,0px)+1rem)] right-[8.75rem] z-40 inline-flex h-11 items-center gap-2 rounded-full border border-sky-300/25 bg-[#1597e5] px-3.5 text-sm font-semibold text-white shadow-xl shadow-sky-950/30 transition hover:-translate-y-0.5 hover:bg-sky-400 focus:outline-none lg:bottom-4 lg:right-[9.5rem]"
     aria-label="联系在线客服"
     @click="openCustomerService"
   >

@@ -302,7 +302,7 @@ function openNavigationMenu() {
         >
           <button
             type="button"
-            class="absolute left-4 inline-flex h-10 w-10 items-center justify-center rounded-md text-white/86 transition hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 sm:left-8 lg:hidden"
+            class="absolute left-4 inline-flex h-10 w-10 items-center justify-center rounded-md text-white/86 transition hover:bg-white/[0.06] focus:outline-none sm:left-8 lg:hidden"
             aria-haspopup="dialog"
             aria-controls="front-nav-drawer"
             :aria-expanded="navMenuOpen"
@@ -316,7 +316,7 @@ function openNavigationMenu() {
           <h1 class="text-base font-semibold text-white">AI 量化</h1>
           <RouterLink
             :to="`${prefix}/finance/ai-quant/orders`"
-            class="absolute right-4 inline-flex min-h-10 items-center justify-center rounded-lg border border-lime-400/45 bg-lime-400/10 px-3 text-sm font-semibold text-lime-200 transition hover:bg-lime-400/15 focus:outline-none focus:ring-2 focus:ring-lime-300/60 sm:right-8 lg:hidden"
+            class="absolute right-4 inline-flex min-h-10 items-center justify-center rounded-lg border border-lime-400/45 bg-lime-400/10 px-3 text-sm font-semibold text-lime-200 transition hover:bg-lime-400/15 focus:outline-none sm:right-8 lg:hidden"
             aria-label="查看 AI 量化订单"
           >
             订单

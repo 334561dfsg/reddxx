@@ -14,7 +14,7 @@
 		<div class="rounded-xl border border-slate-200 bg-white p-4">
 			<div class="grid grid-cols-4 gap-4">
 				<div>
-					<a-input v-model:value="search" placeholder="搜索产品名称或币种" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+					<a-input v-model:value="search" placeholder="搜索产品名称或币种" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 				</div>
 				<div>
 					<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="statusFilter" class="w-full transition">
@@ -189,7 +189,7 @@
 								<div class="grid grid-cols-2 gap-4">
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">产品名称</label>
-										<a-input v-model:value="productForm.name" placeholder="例如：BTC 智能量化基金 A" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value="productForm.name" placeholder="例如：BTC 智能量化基金 A" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 									</div>
 								<div>
 									<label class="block text-sm font-medium text-slate-700 mb-1">计价币种</label>
@@ -236,7 +236,7 @@
 									</div>
 									<div v-if="productForm.settlementPeriod === SETTLEMENT_PERIOD.CUSTOM">
 										<label class="block text-sm font-medium text-slate-700 mb-1">自定义天数</label>
-										<a-input v-model:value.number="productForm.customDays" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value.number="productForm.customDays" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 									</div>
 								</div>
 							</div>
@@ -261,11 +261,11 @@
 											<div class="grid grid-cols-2 gap-3">
 												<label class="block">
 													<span class="mb-1 block text-xs font-medium text-slate-600">档位名称</span>
-													<a-input v-model:value="tier.label" placeholder="例如：标准级" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+													<a-input v-model:value="tier.label" placeholder="例如：标准级" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 												</label>
 												<label class="block">
 													<span class="mb-1 block text-xs font-medium text-slate-600">日收益率（%）</span>
-													<a-input v-model:value.number="tier.dailyRate" placeholder="例如：0.15" type="number" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+													<a-input v-model:value.number="tier.dailyRate" placeholder="例如：0.15" type="number" :step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 												</label>
 											</div>
 											<div>
@@ -274,9 +274,9 @@
 													<span class="text-xs text-slate-400">单位：USDT</span>
 												</div>
 												<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-													<a-input v-model:value.number="tier.minAmount" placeholder="最低金额" type="number" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+													<a-input v-model:value.number="tier.minAmount" placeholder="最低金额" type="number" :step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 													<span class="text-xs text-slate-400">至</span>
-													<a-input v-model:value.number="tier.maxAmount" placeholder="最高金额" type="number" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+													<a-input v-model:value.number="tier.maxAmount" placeholder="最高金额" type="number" :step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 												</div>
 											</div>
 										</div>
@@ -293,7 +293,7 @@
 									</label>
 									<div v-if="productForm.earlyRedeemEnabled">
 										<label class="block text-sm font-medium text-slate-700 mb-1">提前赎回手续费 (%)</label>
-										<a-input v-model:value.number="productForm.earlyRedeemFeePercent" type="number" step="0.1" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value.number="productForm.earlyRedeemFeePercent" type="number" :step="0.1" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 									</div>
 								</div>
 							</div>
@@ -304,15 +304,15 @@
 								<div class="grid grid-cols-3 gap-4">
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">单用户最大持仓（USDT）</label>
-										<a-input v-model:value.number="productForm.limitAmount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value.number="productForm.limitAmount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 									</div>
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">产品总限额（USDT）</label>
-										<a-input v-model:value.number="productForm.limitCount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value.number="productForm.limitCount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 									</div>
 									<div>
 										<label class="block text-sm font-medium text-slate-700 mb-1">月限购次数</label>
-										<a-input v-model:value.number="productForm.monthlyLimitCount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+										<a-input v-model:value.number="productForm.monthlyLimitCount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 									</div>
 								</div>
 							</div>
@@ -327,7 +327,7 @@
 								</div>
 								<div>
 									<label class="block text-sm font-medium text-slate-700 mb-1">产品排序</label>
-									<a-input v-model:value.number="productForm.sortOrder" type="number" placeholder="数字越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+									<a-input v-model:value.number="productForm.sortOrder" type="number" placeholder="数字越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none" />
 								</div>
 							</div>
 						</div>

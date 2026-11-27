@@ -956,7 +956,7 @@ const klineSvg = computed(() => {
                         </div></template></TableColumn><TableColumn key="column-5"><template #title>选择</template><template #default="{ record: pos, index: rowIndex }"><div class="px-3 py-2 align-top text-right">
                           <AdminCheckbox
                             :aria-label="`选择 ${pos.uid} 的持仓`"
-                            class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 disabled:opacity-40"
+                            class="h-4 w-4 rounded border-slate-300 text-slate-900 disabled:opacity-40"
                             :disabled="locked"
                             :value="pos.uid"
                             v-model="selectedUids"
@@ -1052,7 +1052,7 @@ const klineSvg = computed(() => {
                     </div>
                     <AdminInput
                       type="number"
-                      class="h-9 w-full rounded-lg border border-slate-200 px-3 font-mono text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-0 disabled:bg-slate-50"
+                      class="h-9 w-full rounded-lg border border-slate-200 px-3 font-mono text-sm text-slate-900 focus:outline-none disabled:bg-slate-50"
                       v-model.number="squeezePoints"
                       min="0"
                       :disabled="locked || !ready"
@@ -1114,7 +1114,7 @@ const klineSvg = computed(() => {
                           </AdminButton>
                           <AdminInput
                             type="number"
-                            class="h-9 min-w-0 flex-1 rounded-lg border border-slate-200 px-3 font-mono text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-0 disabled:bg-slate-50"
+                            class="h-9 min-w-0 flex-1 rounded-lg border border-slate-200 px-3 font-mono text-sm text-slate-900 focus:outline-none disabled:bg-slate-50"
                             v-model.number="controlPrice"
                             :step="tickSize"
                             :min="priceMin"
@@ -1142,7 +1142,7 @@ const klineSvg = computed(() => {
                           </AdminButton>
                           <AdminInput
                             type="number"
-                            class="h-9 min-w-0 flex-1 rounded-lg border border-slate-200 px-3 font-mono text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-0 disabled:bg-slate-50"
+                            class="h-9 min-w-0 flex-1 rounded-lg border border-slate-200 px-3 font-mono text-sm text-slate-900 focus:outline-none disabled:bg-slate-50"
                             v-model.number="squeezeCenter"
                             :step="tickSize"
                             :min="squeezeCenterMin"

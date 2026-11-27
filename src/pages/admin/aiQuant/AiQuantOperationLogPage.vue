@@ -19,7 +19,7 @@
         <a-input
           v-model:value="search"
           type="search"
-          class="min-w-[12rem] flex-1 max-w-md rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          class="min-w-[12rem] flex-1 max-w-md rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
           placeholder="摘要、关联编号、对象、操作人…"
           autocomplete="off"
         />

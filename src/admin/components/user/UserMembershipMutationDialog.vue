@@ -210,7 +210,7 @@ watch(
         <section ref="dialogRef" data-testid="user-membership-mutation-dialog" class="membership-mutation-dialog-panel flex max-h-[calc(100vh-1.5rem)] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-1.5rem)]" role="dialog" aria-modal="true" aria-labelledby="user-membership-mutation-title" :aria-busy="busy">
           <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5 sm:py-4">
             <div class="min-w-0 flex-1"><h2 id="user-membership-mutation-title" class="text-lg font-semibold text-slate-900">{{ config.title }}</h2><p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p></div>
-            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
+            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="user-membership-mutation-body" class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5">
@@ -227,7 +227,7 @@ watch(
                     </AdminRadio>
                   </div>
                 </fieldset>
-                <label class="block"><span class="text-sm font-medium text-slate-800">调整分值 <span class="text-rose-500">*</span></span><AdminInput data-testid="membership-mutation-points" v-model="form.points" type="text" inputmode="numeric" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="请输入正整数" /></label>
+                <label class="block"><span class="text-sm font-medium text-slate-800">调整分值 <span class="text-rose-500">*</span></span><AdminInput data-testid="membership-mutation-points" v-model="form.points" type="text" inputmode="numeric" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="请输入正整数" /></label>
               </template>
 
               <template v-else-if="mode === 'vip'">
@@ -251,10 +251,10 @@ watch(
               <template v-else>
                 <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">入账账户</span><strong class="float-right text-slate-900">可用资金账户</strong></div>
                 <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">当前余额</span><strong class="float-right text-slate-900">{{ money(currentBalance) }} USDT</strong></div>
-                <label class="block"><span class="text-sm font-medium text-slate-800">返利金额 <span class="text-rose-500">*</span></span><AdminInput :ref="element => { amountRef = nativeControl(element) }" data-testid="membership-mutation-amount" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" placeholder="最多两位小数" /></label>
+                <label class="block"><span class="text-sm font-medium text-slate-800">返利金额 <span class="text-rose-500">*</span></span><AdminInput :ref="element => { amountRef = nativeControl(element) }" data-testid="membership-mutation-amount" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="最多两位小数" /></label>
               </template>
 
-              <label class="block"><span class="text-sm font-medium text-slate-800">操作原因（可选）</span><AdminTextarea :ref="element => { reasonRef = nativeControl(element) }" data-testid="membership-mutation-reason" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" :placeholder="`可填写${config.action}原因`" /><span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span></label>
+              <label class="block"><span class="text-sm font-medium text-slate-800">操作原因（可选）</span><AdminTextarea :ref="element => { reasonRef = nativeControl(element) }" data-testid="membership-mutation-reason" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none" :placeholder="`可填写${config.action}原因`" /><span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span></label>
             </template>
 
             <template v-else>

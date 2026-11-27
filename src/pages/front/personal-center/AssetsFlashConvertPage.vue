@@ -77,9 +77,9 @@ function onSubmit() {
 const card = 'rounded-2xl border border-white/[0.06] bg-white/[0.025]'
 const fieldLabel = 'text-[10px] font-medium uppercase tracking-[0.08em] text-white/38'
 const amtInputClass =
-  'w-full min-h-[2.25rem] border-0 bg-transparent px-0 py-px text-lg font-medium font-mono tabular-nums tracking-tight text-white placeholder:text-white/38 focus:outline-none focus:ring-0 sm:min-h-10 sm:text-xl lg:text-xl'
+  'w-full min-h-[2.25rem] border-0 bg-transparent px-0 py-px text-lg font-medium font-mono tabular-nums tracking-tight text-white placeholder:text-white/38 focus:outline-none sm:min-h-10 sm:text-xl lg:text-xl'
 const amtFieldWrap =
-  'mt-2 rounded-lg border border-white/[0.1] bg-black/25 px-2.5 py-1.5 transition-[border-color,box-shadow,background-color] focus-within:border-lime-400/40 focus-within:bg-black/35 focus-within:shadow-[0_0_0_2px_rgba(163,230,53,0.1)] sm:px-3 sm:py-2 lg:rounded-lg'
+  'mt-2 rounded-lg border border-white/[0.1] bg-black/25 px-2.5 py-1.5 transition-[border-color,box-shadow,background-color] focus-within:bg-black/35,230,53,0.1)] sm:px-3 sm:py-2 lg:rounded-lg'
 const outDisplayWrap =
   'mt-2 rounded-lg border border-white/[0.08] bg-black/20 px-2.5 py-1.5 sm:px-3 sm:py-2'
 

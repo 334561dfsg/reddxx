@@ -573,7 +573,7 @@ const formatDate = (dateString) => {
                           class="inline-flex h-8 max-w-full items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 shadow-sm"
                         >
                           <span class="select-none text-[11px] font-medium text-slate-400">r</span>
-                          <a-input :id="'ac-rate-' + line.key" type="number" min="0" max="1" step="0.001" class="w-[5.5rem] max-w-full text-right font-medium tabular-nums text-slate-800 [appearance:textfield] placeholder:text-slate-300 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" :value="rateNumForDraft(line)" @input="setDraftRate(line, $event.target.value)" />
+                          <a-input :id="'ac-rate-' + line.key" type="number" :min="0" :max="1" :step="0.001" class="w-[5.5rem] max-w-full text-right font-medium tabular-nums text-slate-800 [appearance:textfield] placeholder:text-slate-300 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" :value="rateNumForDraft(line)" @input="setDraftRate(line, $event.target.value)" />
                         </div>
                         <span class="shrink-0 text-xs tabular-nums text-slate-500" title="折算百分比">
                           ≈ {{ (rateNumForDraft(line) * 100).toFixed(2) }}%

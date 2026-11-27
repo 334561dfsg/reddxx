@@ -150,13 +150,13 @@ onMounted(() => {
         <div v-show="activeTab === 'basic'" class="space-y-6">
         <div>
           <label class="mb-2 block text-sm font-medium text-slate-700">站点名称</label>
-          <a-input v-model:value="config.siteName" type="text" class="max-w-xl" placeholder="例如：CryptoX Pro" maxlength="64" />
+          <a-input v-model:value="config.siteName" type="text" class="max-w-xl" placeholder="例如：CryptoX Pro" :maxlength="64" />
           <p class="mt-1.5 text-xs text-slate-500">用于页头、页脚等位置的品牌名称展示。</p>
         </div>
 
         <div>
           <label class="mb-2 block text-sm font-medium text-slate-700">副标题 / Slogan（可选）</label>
-          <a-input v-model:value="config.tagline" type="text" class="max-w-xl" placeholder="一句话描述你的平台" maxlength="200" />
+          <a-input v-model:value="config.tagline" type="text" class="max-w-xl" placeholder="一句话描述你的平台" :maxlength="200" />
         </div>
 
         <div>
@@ -286,31 +286,31 @@ onMounted(() => {
               <div v-if="row.enabled" class="space-y-2 border-t border-slate-200/80 pt-3">
                 <div>
                   <label class="mb-1 block text-xs font-medium text-slate-600">自定义展示名（可选）</label>
-                  <a-input v-model:value="row.customLabel" type="text" class="w-full" :placeholder="`默认：${walletBuiltinLabel(row.key)}`" maxlength="48" />
+                  <a-input v-model:value="row.customLabel" type="text" class="w-full" :placeholder="`默认：${walletBuiltinLabel(row.key)}`" :maxlength="48" />
                 </div>
                 <div v-if="row.key === 'metamask' || row.key === 'rabby'" class="grid gap-2 sm:grid-cols-2">
                   <div>
                     <label class="mb-1 block text-xs font-medium text-slate-600">默认链 ID（可选）</label>
-                    <a-input v-model:value="row.chainId" type="text" class="w-full" placeholder="如 1、56、137…" maxlength="32" />
+                    <a-input v-model:value="row.chainId" type="text" class="w-full" placeholder="如 1、56、137…" :maxlength="32" />
                   </div>
                   <div>
                     <label class="mb-1 block text-xs font-medium text-slate-600">RPC URL（可选）</label>
-                    <a-input v-model:value="row.rpcUrl" type="url" class="w-full" placeholder="https://…" maxlength="512" />
+                    <a-input v-model:value="row.rpcUrl" type="url" class="w-full" placeholder="https://…" :maxlength="512" />
                   </div>
                 </div>
                 <div v-else-if="row.key === 'walletconnect'" class="space-y-2">
                   <div>
                     <label class="mb-1 block text-xs font-medium text-slate-600">WalletConnect Project ID</label>
-                    <a-input v-model:value="row.walletConnectProjectId" type="text" class="w-full" placeholder="Cloud 控制台 Project ID" maxlength="128" />
+                    <a-input v-model:value="row.walletConnectProjectId" type="text" class="w-full" placeholder="Cloud 控制台 Project ID" :maxlength="128" />
                   </div>
                   <div>
                     <label class="mb-1 block text-xs font-medium text-slate-600">说明 / Universal Link（可选）</label>
-                    <a-input v-model:value="row.appUniversalLink" type="text" class="w-full" placeholder="https://…" maxlength="512" />
+                    <a-input v-model:value="row.appUniversalLink" type="text" class="w-full" placeholder="https://…" :maxlength="512" />
                   </div>
                 </div>
                 <div v-else>
                   <label class="mb-1 block text-xs font-medium text-slate-600">应用链接 / 备注（可选）</label>
-                  <a-input v-model:value="row.appUniversalLink" type="text" class="w-full" placeholder="深度链接或对接说明" maxlength="512" />
+                  <a-input v-model:value="row.appUniversalLink" type="text" class="w-full" placeholder="深度链接或对接说明" :maxlength="512" />
                 </div>
               </div>
             </div>
@@ -342,19 +342,19 @@ onMounted(() => {
 
           <div>
             <label class="mb-2 block text-sm font-medium text-slate-700">默认页面标题</label>
-            <a-input v-model:value="config.documentTitle" type="text" class="max-w-xl" placeholder="留空则使用站点名称作为浏览器标签标题" maxlength="120" />
+            <a-input v-model:value="config.documentTitle" type="text" class="max-w-xl" placeholder="留空则使用站点名称作为浏览器标签标题" :maxlength="120" />
             <p class="mt-1.5 text-xs text-slate-500">用于浏览器标签标题，各路由可单独覆盖。</p>
           </div>
 
           <div>
             <label class="mb-2 block text-sm font-medium text-slate-700">Meta 描述</label>
-            <a-textarea v-model:value="config.seoDescription" rows="3" class="max-w-xl resize-y" placeholder="简要描述站点，建议 80～160 字" maxlength="320" />
+            <a-textarea v-model:value="config.seoDescription" :rows="3" class="max-w-xl resize-y" placeholder="简要描述站点，建议 80～160 字" :maxlength="320" />
             <p class="mt-1.5 text-xs text-slate-500">输出为 meta description。</p>
           </div>
 
           <div>
             <label class="mb-2 block text-sm font-medium text-slate-700">Meta 关键词</label>
-            <a-input v-model:value="config.seoKeywords" type="text" class="max-w-xl" placeholder="关键词用英文逗号分隔，例如：合约, 现货, 数字货币" maxlength="200" />
+            <a-input v-model:value="config.seoKeywords" type="text" class="max-w-xl" placeholder="关键词用英文逗号分隔，例如：合约, 现货, 数字货币" :maxlength="200" />
             <p class="mt-1.5 text-xs text-slate-500">输出为 meta keywords。</p>
           </div>
 

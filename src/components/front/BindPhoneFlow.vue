@@ -134,7 +134,7 @@ function onFinish() {
               inputmode="numeric"
               autocomplete="tel-national"
               placeholder="不含区号的本地号码"
-              class="min-w-0 flex-1 rounded-lg border border-white/15 bg-black/40 px-3 text-sm text-white placeholder:text-white/25 focus:border-lime-400/50 focus:outline-none focus:ring-1 focus:ring-lime-400/30 min-h-[2.75rem] h-[2.75rem]"
+              class="min-w-0 flex-1 rounded-lg border border-white/15 bg-black/40 px-3 text-sm text-white placeholder:text-white/25 focus:outline-none min-h-[2.75rem] h-[2.75rem]"
             />
           </div>
         </div>

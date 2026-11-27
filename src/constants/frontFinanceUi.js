@@ -23,7 +23,7 @@ export const FINANCE_FX = {
   heroSegmentWrap:
     'inline-flex w-full max-w-full rounded-xl border border-white/[0.07] bg-black/40 p-1 shadow-inner shadow-black/20 sm:w-fit',
   heroTab:
-    'min-h-[2.75rem] min-w-0 flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-semibold tracking-tight transition focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505] sm:min-h-[3rem] sm:flex-none sm:px-6 sm:py-2.5 sm:text-[15px] md:text-base',
+    'min-h-[2.75rem] min-w-0 flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-semibold tracking-tight transition focus:outline-none sm:min-h-[3rem] sm:flex-none sm:px-6 sm:py-2.5 sm:text-[15px] md:text-base',
   heroTabOn: 'bg-white/[0.1] text-lime-200 shadow-sm',
   heroTabOff: 'text-white/45 hover:text-white/75',
 
@@ -35,7 +35,7 @@ export const FINANCE_FX = {
   filterChipWrap:
     'flex w-full min-w-0 max-w-full flex-nowrap gap-1 overflow-x-auto rounded-xl border border-white/[0.08] bg-black/35 p-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:flex-wrap sm:overflow-x-visible [&::-webkit-scrollbar]:hidden',
   filterChip:
-    'min-h-[2.5rem] shrink-0 touch-manipulation rounded-lg px-3 py-2 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40 sm:min-h-0 sm:px-4 sm:text-sm',
+    'min-h-[2.5rem] shrink-0 touch-manipulation rounded-lg px-3 py-2 text-xs font-semibold transition focus:outline-none sm:min-h-0 sm:px-4 sm:text-sm',
   filterChipOn: 'bg-white/[0.12] text-white shadow-sm',
   filterChipOff: 'text-white/45 hover:bg-white/[0.05] hover:text-white/75',
 
@@ -83,9 +83,9 @@ export const FINANCE_FX = {
 
   /** 表单输入 */
   input:
-    'min-w-0 rounded-lg border border-white/[0.12] bg-black/40 px-3 py-2.5 text-[15px] text-white placeholder:text-white/30 focus:border-lime-400/45 focus:outline-none focus:ring-2 focus:ring-lime-400/25',
+    'min-w-0 rounded-lg border border-white/[0.12] bg-black/40 px-3 py-2.5 text-[15px] text-white placeholder:text-white/30 focus:outline-none',
   inputFlex:
-    'min-w-0 flex-1 rounded-lg border border-white/[0.12] bg-black/40 px-3 py-2.5 text-[15px] text-white placeholder:text-white/30 focus:border-lime-400/45 focus:outline-none focus:ring-2 focus:ring-lime-400/25 sm:px-4 sm:py-3',
+    'min-w-0 flex-1 rounded-lg border border-white/[0.12] bg-black/40 px-3 py-2.5 text-[15px] text-white placeholder:text-white/30 focus:outline-none sm:px-4 sm:py-3',
   /** 表单旁「全部」等小号线框 */
   inputSideBtn:
     'shrink-0 rounded-lg border border-lime-400/45 px-3 py-2.5 text-xs font-semibold text-lime-200 transition hover:bg-lime-400/10 sm:px-4 sm:text-sm',
@@ -103,7 +103,7 @@ export const FINANCE_FX = {
   recordTablist4:
     'grid w-full grid-cols-4 gap-0 rounded-lg border border-white/[0.06] bg-black/40 p-0.5 sm:flex sm:w-auto sm:max-w-full sm:shrink-0 sm:overflow-x-auto sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
   recordTab:
-    'min-h-[2.5rem] rounded-md border-b-2 border-transparent px-1 py-2 text-center text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40 sm:min-h-0 sm:rounded-none sm:border-transparent sm:px-4 sm:pb-2.5 sm:text-left sm:text-sm sm:text-[15px]',
+    'min-h-[2.5rem] rounded-md border-b-2 border-transparent px-1 py-2 text-center text-xs font-semibold transition focus:outline-none sm:min-h-0 sm:rounded-none sm:border-transparent sm:px-4 sm:pb-2.5 sm:text-left sm:text-sm sm:text-[15px]',
   recordTabOn:
     'border-b-2 border-lime-400 text-white max-sm:border-transparent max-sm:bg-white/[0.12] max-sm:text-lime-200 sm:bg-transparent',
   recordTabOff: 'border-b-2 border-transparent text-white/45 hover:text-white/75 sm:text-white/45',

@@ -359,7 +359,7 @@ const validUntilMin = computed(() => {
 					v-model:value="keyword"
 					type="search"
 					placeholder="搜索产品名称、币种、天数或规则ID…"
-					class="h-10 w-full max-w-sm rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none ring-blue-500/20 transition-shadow focus:border-blue-500 focus:ring-2"
+					class="h-10 w-full max-w-sm rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none ring-blue-500/20 transition-shadow"
 				/>
 				<div class="flex shrink-0 flex-wrap items-center gap-2">
 					<RouterLink
@@ -573,10 +573,10 @@ const validUntilMin = computed(() => {
 										<a-input
 											v-model:value.number="controlForm.adjustmentRate"
 											type="number"
-											step="1"
+											:step="1"
 											min="-100"
-											max="100"
-											class="h-10 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm tabular-nums text-slate-900 outline-none ring-blue-500/20 focus:border-blue-500 focus:ring-2"
+											:max="100"
+											class="h-10 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm tabular-nums text-slate-900 outline-none ring-blue-500/20"
 											placeholder="−100～100"
 										/>
 										<a-button type="text"
@@ -600,7 +600,7 @@ const validUntilMin = computed(() => {
 												type="date"
 												:min="validUntilMin"
 												autocomplete="off"
-												class="h-10 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none ring-blue-500/20 focus:border-blue-500 focus:ring-2"
+												class="h-10 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none ring-blue-500/20"
 											/>
 											<a-button type="text"
 												v-if="controlForm.validUntil"
@@ -656,13 +656,13 @@ const validUntilMin = computed(() => {
 									</div>
 									<a-textarea
 										v-model:value="controlForm.reason"
-										rows="5"
-										maxlength="200"
-										class="mt-2 w-full resize-none rounded-lg border px-3 py-2.5 text-sm leading-relaxed outline-none ring-blue-500/20 focus:ring-2"
+										:rows="5"
+										:maxlength="200"
+										class="mt-2 w-full resize-none rounded-lg border px-3 py-2.5 text-sm leading-relaxed outline-none ring-blue-500/20"
 										:class="
 											!controlForm.reason.trim()
-												? 'border-rose-200 bg-rose-50/50 text-slate-900 focus:border-rose-400'
-												: 'border-slate-200 bg-white text-slate-900 focus:border-blue-500'
+												? 'border-rose-200 bg-rose-50/50 text-slate-900'
+												: 'border-slate-200 bg-white text-slate-900'
 										"
 										placeholder="说明背景、目的与预期持续影响，便于审计追溯。"
 									/>

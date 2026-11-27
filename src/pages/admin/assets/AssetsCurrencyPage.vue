@@ -557,7 +557,7 @@ const badgeClass = (status) => (status === ASSET_STATUS.ENABLED ? 'bg-emerald-10
                 </label>
                 <label class="space-y-1">
                   <span class="text-sm">归集间隔 (分钟)</span>
-                  <a-input :disabled="!form.autoCollect" type="number" min="0" class="w-full" :value="network.intervalMin" @update:value="network.intervalMin = $event === '' ? '' : Number($event)" />
+                  <a-input :disabled="!form.autoCollect" type="number" :min="0" class="w-full" :value="network.intervalMin" @update:value="network.intervalMin = $event === '' ? '' : Number($event)" />
                 </label>
                 <label class="space-y-1">
                   <span class="text-sm">合约地址</span>

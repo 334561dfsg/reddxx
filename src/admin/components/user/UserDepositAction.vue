@@ -185,7 +185,7 @@ const confirm = () => {
             <fieldset class="m-0 min-w-0 border-0 p-0">
               <legend class="mb-2 text-sm font-medium text-slate-700">选择入金账户</legend>
               <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <AdminRadio v-for="opt in depositAccountOptions" :key="opt.key" class="flex min-h-12 cursor-pointer items-center justify-between gap-3 rounded-xl border bg-white px-3 py-2 text-sm transition-colors focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2" :class="form.depositAccountKey === opt.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 text-slate-700 hover:border-blue-300'" v-model="form.depositAccountKey" name="deposit-account" :value="opt.key">
+                <AdminRadio v-for="opt in depositAccountOptions" :key="opt.key" class="flex min-h-12 cursor-pointer items-center justify-between gap-3 rounded-xl border bg-white px-3 py-2 text-sm transition-colors" :class="form.depositAccountKey === opt.key ? 'border-blue-600 bg-blue-50 text-blue-900' : 'border-slate-200 text-slate-700 hover:border-blue-300'" v-model="form.depositAccountKey" name="deposit-account" :value="opt.key">
                   <span class="font-medium">{{ opt.label }}</span>
                   <span class="flex items-center gap-2">
                     <span class="text-xs tabular-nums text-slate-500">{{ formatMoney(opt.value, { min: 2, max: 2 }) }}</span>

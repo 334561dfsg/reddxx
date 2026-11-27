@@ -572,7 +572,7 @@ onMounted(load)
                     <div
                       id="front-news-content-editor"
                       ref="editorRef"
-                      class="news-editor min-h-56 bg-white p-4 text-sm leading-7 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/25"
+                      class="news-editor min-h-56 bg-white p-4 text-sm leading-7 text-slate-800 focus:outline-none"
                       contenteditable="true"
                       role="textbox"
                       aria-multiline="true"
@@ -638,7 +638,7 @@ onMounted(load)
                 </div>
                 <div>
                   <label for="front-news-sort-input" class="mb-1.5 block text-sm font-medium text-slate-700">排序权重</label>
-                  <a-input id="front-news-sort-input" class="w-full" type="number" min="0" step="1" :value="formSort" @update:value="formSort = $event === '' ? '' : Number($event)" />
+                  <a-input id="front-news-sort-input" class="w-full" type="number" :min="0" :step="1" :value="formSort" @update:value="formSort = $event === '' ? '' : Number($event)" />
                   <p class="mt-2 text-xs leading-5 text-slate-500">
                     数值越大越靠前；权重相同则按发布时间倒序展示。
                   </p>

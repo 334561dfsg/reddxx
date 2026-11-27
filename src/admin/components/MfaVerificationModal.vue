@@ -113,7 +113,7 @@ const {
                   autocomplete="one-time-code"
                   maxlength="6"
                   placeholder="请输入 6 位验证码"
-                  class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-center text-lg tracking-widest outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-center text-lg tracking-widest outline-none"
                   :disabled="displayedDialog.loading"
                   :aria-invalid="Boolean(displayedDialog.errorMessage)"
                   :aria-describedby="displayedDialog.errorMessage ? 'mfa-error mfa-help' : 'mfa-help'"

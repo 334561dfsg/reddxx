@@ -347,7 +347,7 @@ onMounted(() => {
         <div class="flex flex-col gap-1 sm:items-end">
           <label class="flex items-center gap-2 text-sm text-slate-600">
             <span class="whitespace-nowrap">示例手续费基数（USDT）</span>
-            <a-input type="number" min="0" step="100" class="w-36 text-right" :value="demoBaseAmount" @update:value="demoBaseAmount = $event === '' ? '' : Number($event)" />
+            <a-input type="number" :min="0" :step="100" class="w-36 text-right" :value="demoBaseAmount" @update:value="demoBaseAmount = $event === '' ? '' : Number($event)" />
           </label>
           <span class="text-xs text-slate-400">示例佣金 = 基数 × r</span>
         </div>
@@ -388,7 +388,7 @@ onMounted(() => {
 
                 <template v-if="isLineEnabled(line)">
                   <label class="mt-4 block text-xs font-medium text-slate-700" :for="'agcr-' + line.key">比例 r（0～1）</label>
-                  <a-input :id="'agcr-' + line.key" type="number" min="0" max="1" step="0.001" class="mt-1 w-full max-w-[220px]" :value="rateNum(line)" @input="setRate(line, $event.target.value)" />
+                  <a-input :id="'agcr-' + line.key" type="number" :min="0" :max="1" :step="0.001" class="mt-1 w-full max-w-[220px]" :value="rateNum(line)" @input="setRate(line, $event.target.value)" />
                   <div class="mt-3 flex flex-wrap gap-1.5">
                     <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-700">
                       r = {{ (rateNum(line) * 100).toFixed(2) }}%
@@ -458,7 +458,7 @@ onMounted(() => {
             <div>
               <label class="block text-sm font-medium text-slate-800">结算触发时刻</label>
               <p class="mt-1 text-xs text-slate-500">24 小时制，与平台默认时区一致（与裂变日结时刻配置方式相同）。</p>
-              <a-input v-model:value="config.agentSettlementTimeLocal" type="time" step="60" class="mt-2 w-full max-w-[12rem]" />
+              <a-input v-model:value="config.agentSettlementTimeLocal" type="time" :step="60" class="mt-2 w-full max-w-[12rem]" />
             </div>
           </div>
 
@@ -477,7 +477,7 @@ onMounted(() => {
           <div v-else class="max-w-md">
             <label class="block text-sm font-medium text-slate-800">结算日 · 每月几号</label>
             <p class="mt-1 text-xs text-slate-500">按自然月；若某月无该日（如 31 号），由账务任务按月末规则处理。</p>
-            <a-input type="number" min="1" max="31" step="1" class="mt-2 w-full max-w-[8rem]" :value="config.agentSettlementMonthDay" @update:value="config.agentSettlementMonthDay = $event === '' ? '' : Number($event)" />
+            <a-input type="number" :min="1" :max="31" :step="1" class="mt-2 w-full max-w-[8rem]" :value="config.agentSettlementMonthDay" @update:value="config.agentSettlementMonthDay = $event === '' ? '' : Number($event)" />
           </div>
 
           <div class="max-w-md">

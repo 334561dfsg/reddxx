@@ -344,8 +344,8 @@ onMounted(loadList)
               </div></template></a-table-column>
 <a-table-column key="column-4" ><template #title>凭证</template><template #default="{ record: order, index: index }"><div class=" ">
                 <div class="flex items-center gap-2">
-                  <a-button html-type="button" class="border border-slate-200 transition hover:border-blue-400" @click="openVoucherPreview(order)">
-                    <img :src="order.voucherUrl" :alt="order.voucherName" class="h-10 w-14 rounded object-cover" />
+                  <a-button html-type="button" class="border border-slate-200 transition hover:border-blue-400" :aria-label="`查看充值凭证 ${order.voucherName}`" @click="openVoucherPreview(order)">
+                    <img :src="order.voucherUrl" alt="" class="h-10 w-14 rounded object-cover" />
                   </a-button>
                   <span class="max-w-[120px] truncate text-xs text-slate-500">{{ order.voucherName }}</span>
                 </div>
@@ -356,8 +356,8 @@ onMounted(loadList)
 <a-table-column key="column-6" ><template #title>提交时间</template><template #default="{ record: order, index: index }"><div class="  text-xs text-slate-500">{{ formatTime(order.submitTime) }}</div></template></a-table-column>
 <a-table-column key="column-7" align="right"><template #title>操作</template><template #default="{ record: order, index: index }"><div class="  text-right">
                 <div class="flex flex-wrap justify-end gap-2">
-                  <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:underline focus-visible:ring-2 focus-visible:ring-blue-500" @click="openDetail(order)">详情</a-button>
-                  <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:underline focus-visible:ring-2 focus-visible:ring-blue-500" :aria-label="`修改入金地址 ${order.id}`" @click="openAddressEditor(order, $event.currentTarget)">修改入金地址</a-button>
+                  <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:underline" @click="openDetail(order)">详情</a-button>
+                  <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:underline" :aria-label="`修改入金地址 ${order.id}`" @click="openAddressEditor(order, $event.currentTarget)">修改入金地址</a-button>
                 </div>
               </div></template></a-table-column><template #emptyText>暂无入金审核记录</template>
 </a-table>
@@ -489,8 +489,8 @@ onMounted(loadList)
                   </label>
                   <label class="block space-y-1.5">
                     <span class="text-sm font-medium text-slate-700">实际到账金额 <span class="text-rose-500">*</span></span>
-                    <div class="flex overflow-hidden rounded-md border border-slate-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20">
-                      <a-input type="number" min="0" step="any" inputmode="decimal" placeholder="请输入实际到账金额" class="min-w-0 flex-1" :value="manualConfirmation.amount" @update:value="manualConfirmation.amount = $event === '' ? '' : Number($event)" />
+                    <div class="flex overflow-hidden rounded-md border border-slate-300">
+                      <a-input type="number" :min="0" step="any" inputmode="decimal" placeholder="请输入实际到账金额" class="min-w-0 flex-1" :value="manualConfirmation.amount" @update:value="manualConfirmation.amount = $event === '' ? '' : Number($event)" />
                       <span class="flex items-center border-l border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-600">{{ selectedOrder.coin }}</span>
                     </div>
                   </label>
@@ -506,7 +506,7 @@ onMounted(loadList)
                     <a-button html-type="button" class="" @click="actionType = 'reject'">驳回</a-button>
                   </div>
                   <div v-if="actionType" class="mt-3">
-                    <a-textarea v-model:value="actionNote" rows="3" class="w-full" :placeholder="actionType === 'reject' ? '请输入驳回原因' : '请输入入账备注（可选）'"></a-textarea>
+                    <a-textarea v-model:value="actionNote" :rows="3" class="w-full" :placeholder="actionType === 'reject' ? '请输入驳回原因' : '请输入入账备注（可选）'"></a-textarea>
                     <div class="mt-3 flex justify-end gap-2">
                       <a-button html-type="button" class="" @click="actionType = ''">取消</a-button>
                       <a-button html-type="button" class="" @click="submitAction(actionType)" type="primary">确认提交</a-button>

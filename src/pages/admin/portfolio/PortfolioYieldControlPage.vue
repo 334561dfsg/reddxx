@@ -193,7 +193,7 @@ const validUntilMin = computed(() => {
           v-model:value="keyword"
           type="search"
           placeholder="搜索产品名称、ID 或币种"
-          class="w-full max-w-md rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
+          class="w-full max-w-md rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none"
         />
       </div>
       <a-table  size="small" :pagination="false" :data-source="pagedProducts" :row-key="(product) => product.id" :scroll="{ x: 'max-content' }" :custom-row="(product, rowIndex) => ({ class: [&quot;border-t border-slate-100 hover:bg-slate-50&quot;] })">
@@ -297,7 +297,7 @@ const validUntilMin = computed(() => {
 
             <label class="block">
               <span class="mb-1 block text-sm font-medium text-slate-700">调整原因</span>
-              <a-textarea v-model:value="controlForm.reason" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="请输入调整原因，便于日志追溯"></a-textarea>
+              <a-textarea v-model:value="controlForm.reason" :rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="请输入调整原因，便于日志追溯"></a-textarea>
             </label>
           </div>
           </template>

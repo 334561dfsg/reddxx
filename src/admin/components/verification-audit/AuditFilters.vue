@@ -24,7 +24,7 @@ const agentLabel =
   'mb-1.5 block text-[10px] font-medium uppercase tracking-[0.14em] text-white/36'
 /** 与按钮统一高度，padding 收紧 */
 const agentField =
-  'box-border h-9 w-full rounded-lg border border-white/[0.09] bg-[#080c10]/90 px-3 text-[13px] text-white/90 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] outline-none transition placeholder:text-white/26 focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/25 hover:border-white/[0.14]'
+  'box-border h-9 w-full rounded-lg border border-white/[0.09] bg-[#080c10]/90 px-3 text-[13px] text-white/90 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] outline-none transition placeholder:text-white/26 hover:border-white/[0.14]'
 const agentBtnGhost =
   'box-border inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-white/[0.1] bg-white/[0.04] px-3 text-[13px] font-medium text-white/68 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] transition hover:border-emerald-500/30 hover:bg-emerald-500/[0.07] hover:text-emerald-50 active:scale-[0.98]'
 const agentBtnPrimary =

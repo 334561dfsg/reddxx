@@ -330,7 +330,7 @@ function isFinanceSectionActive() {
 function linkNavClass(active) {
   return [
     'inline-flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 lg:px-3.5 lg:text-[0.9375rem]',
-    'focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0e11]',
+    'focus:outline-none',
     active ? 'text-lime-300' : 'text-[#eaecef] hover:text-lime-300'
   ]
 }
@@ -836,7 +836,7 @@ function drawerRowActive(item) {
 function drawerRowClass(item) {
   const on = drawerRowActive(item)
   return [
-    'drawer-nav-row flex w-full min-h-[2.5rem] items-center gap-2.5 rounded-lg px-2.5 py-2 text-[14px] leading-snug font-medium no-underline transition focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/28 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0e11] sm:min-h-0 sm:py-1.5 sm:text-[13px]',
+    'drawer-nav-row flex w-full min-h-[2.5rem] items-center gap-2.5 rounded-lg px-2.5 py-2 text-[14px] leading-snug font-medium no-underline transition focus:outline-none sm:min-h-0 sm:py-1.5 sm:text-[13px]',
     on
       ? 'bg-gradient-to-r from-lime-400/[0.09] via-white/[0.03] to-transparent text-lime-100 visited:text-lime-100'
       : 'text-[#eaecef] visited:text-[#eaecef] hover:bg-white/[0.04] hover:text-white'
@@ -859,7 +859,7 @@ function drawerRowClass(item) {
       <div class="flex min-w-0 flex-1 items-center gap-4 lg:gap-10">
         <RouterLink
           :to="homeTo"
-          class="group flex shrink-0 items-center gap-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0e11]"
+          class="group flex shrink-0 items-center gap-2.5 focus:outline-none"
           @click="mobileOpen = false"
         >
           <span class="relative grid h-8 w-8 place-items-center" aria-hidden="true">
@@ -1317,7 +1317,7 @@ function drawerRowClass(item) {
         <template v-if="isLoggedIn">
           <RouterLink
             :to="customerServicePath"
-            class="hidden h-9 w-9 items-center justify-center rounded-full bg-[#1f2429] text-[#eaecef] transition hover:bg-[#3f4652] hover:text-sky-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/45 lg:inline-flex"
+            class="hidden h-9 w-9 items-center justify-center rounded-full bg-[#1f2429] text-[#eaecef] transition hover:bg-[#3f4652] hover:text-sky-300 focus:outline-none lg:inline-flex"
             :class="isActivePath(customerServicePath) ? 'bg-[#3f4652] text-sky-300' : ''"
             aria-label="在线客服"
             title="在线客服"
@@ -1332,7 +1332,7 @@ function drawerRowClass(item) {
           >
             <button
               type="button"
-              class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#1f2429] text-[#eaecef] transition hover:bg-[#3f4652] hover:text-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/45"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#1f2429] text-[#eaecef] transition hover:bg-[#3f4652] hover:text-lime-300 focus:outline-none"
               :class="accountOpen || isPersonalCenterNavActive() ? 'bg-[#3f4652] text-white' : ''"
               :title="authEmail || undefined"
               aria-label="账户菜单"
@@ -1417,7 +1417,7 @@ function drawerRowClass(item) {
                       :key="item.key"
                       :to="item.to"
                       role="menuitem"
-                      class="block px-5 py-2.5 text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                      class="block px-5 py-2.5 text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none"
                       @click="accountOpen = false"
                     >
                       {{ item.label }}
@@ -1430,7 +1430,7 @@ function drawerRowClass(item) {
                       :key="item.key"
                       type="button"
                       role="menuitem"
-                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none"
                       @click="accountOpen = false"
                     >
                       {{ item.label }}
@@ -1441,7 +1441,7 @@ function drawerRowClass(item) {
                     <button
                       type="button"
                       role="menuitem"
-                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none"
                       @click="openAccountSwitchDialog"
                     >
                       切换为{{ nextAccountModeLabel }}
@@ -1449,7 +1449,7 @@ function drawerRowClass(item) {
                     <button
                       type="button"
                       role="menuitem"
-                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none"
                       @click="clearFrontCache"
                     >
                       清除缓存
@@ -1460,7 +1460,7 @@ function drawerRowClass(item) {
                     <button
                       type="button"
                       role="menuitem"
-                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                      class="block w-full px-5 py-2.5 text-left text-[15px] leading-tight text-white/90 transition hover:bg-white/[0.06] hover:text-white focus:outline-none"
                       @click="logoutFront"
                     >
                       退出登录
@@ -1828,7 +1828,7 @@ function drawerRowClass(item) {
             >
               <button
                 type="button"
-                class="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-3 text-left transition [-webkit-tap-highlight-color:transparent] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/28 active:bg-white/[0.04]"
+                class="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-3 text-left transition [-webkit-tap-highlight-color:transparent] focus:outline-none active:bg-white/[0.04]"
                 aria-haspopup="dialog"
                 :aria-expanded="mobileLangSheetOpen"
                 aria-controls="front-mobile-lang-sheet"
@@ -1940,7 +1940,7 @@ function drawerRowClass(item) {
                 :key="opt.code"
                 type="button"
                 role="option"
-                class="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-3 text-left text-[15px] font-medium transition [-webkit-tap-highlight-color:transparent] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/28 active:bg-white/[0.04] sm:text-[14px]"
+                class="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-3 text-left text-[15px] font-medium transition [-webkit-tap-highlight-color:transparent] focus:outline-none active:bg-white/[0.04] sm:text-[14px]"
                 :class="
                   localeCode === opt.code
                     ? 'bg-lime-400/[0.09] text-lime-100'
@@ -2005,7 +2005,7 @@ function drawerRowClass(item) {
               </h2>
               <button
                 type="button"
-                class="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-lg text-white/50 transition hover:bg-white/[0.07] hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                class="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-lg text-white/50 transition hover:bg-white/[0.07] hover:text-white/90 focus:outline-none"
                 aria-label="关闭"
                 @click="closeAccountSwitchDialog"
               >
@@ -2030,14 +2030,14 @@ function drawerRowClass(item) {
               <button
                 ref="accountSwitchCancelRef"
                 type="button"
-                class="inline-flex min-h-[2.5rem] min-w-[6.25rem] items-center justify-center rounded-lg border border-white/[0.12] px-4 text-sm font-medium text-white/75 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+                class="inline-flex min-h-[2.5rem] min-w-[6.25rem] items-center justify-center rounded-lg border border-white/[0.12] px-4 text-sm font-medium text-white/75 transition hover:bg-white/[0.06] hover:text-white focus:outline-none"
                 @click="closeAccountSwitchDialog"
               >
                 取消
               </button>
               <button
                 type="button"
-                class="inline-flex min-h-[2.5rem] min-w-[6.25rem] items-center justify-center rounded-lg bg-lime-400 px-4 text-sm font-semibold text-[#11150d] transition hover:bg-lime-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-200 focus-visible:ring-offset-2 focus-visible:ring-offset-[#181923]"
+                class="inline-flex min-h-[2.5rem] min-w-[6.25rem] items-center justify-center rounded-lg bg-lime-400 px-4 text-sm font-semibold text-[#11150d] transition hover:bg-lime-300 focus:outline-none"
                 @click="confirmAccountSwitch"
               >
                 确定
@@ -2108,7 +2108,7 @@ function drawerRowClass(item) {
                   autocorrect="off"
                   spellcheck="false"
                   placeholder="输入代码或名称，如 BTC、ETH/USDT、黄金…"
-                  class="w-full rounded-lg border border-white/[0.08] bg-black/30 py-2.5 pl-10 pr-3 text-sm text-[#eaecef] placeholder:text-[#848e9c]/85 focus:border-lime-400/40 focus:outline-none focus:ring-2 focus:ring-lime-400/25"
+                  class="w-full rounded-lg border border-white/[0.08] bg-black/30 py-2.5 pl-10 pr-3 text-sm text-[#eaecef] placeholder:text-[#848e9c]/85 focus:outline-none"
                 />
               </div>
               <ul
@@ -2126,7 +2126,7 @@ function drawerRowClass(item) {
                   <button
                     type="button"
                     role="option"
-                    class="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-sm transition [-webkit-tap-highlight-color:transparent] hover:bg-white/[0.05] focus:outline-none focus-visible:bg-white/[0.06] focus-visible:ring-2 focus-visible:ring-lime-400/25"
+                    class="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-sm transition [-webkit-tap-highlight-color:transparent] hover:bg-white/[0.05] focus:outline-none focus-visible:bg-white/[0.06]"
                     @click="pickTradePairRow(row)"
                   >
                     <span class="min-w-0 font-medium text-[#eaecef]">{{ row.symbolLabel }}</span>

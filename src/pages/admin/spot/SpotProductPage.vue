@@ -250,12 +250,12 @@
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">价格精度</label>
                     <p class="text-sm text-black/45">价格允许的小数位数。</p>
-                    <a-input v-model:value.number="formData.pricePrecision" type="number" min="0" step="1" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.pricePrecision" type="number" :min="0" :step="1" class="ant-input font-mono" />
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">数量精度</label>
                     <p class="text-sm text-black/45">数量允许的小数位数。</p>
-                    <a-input v-model:value.number="formData.quantityPrecision" type="number" min="0" step="1" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.quantityPrecision" type="number" :min="0" :step="1" class="ant-input font-mono" />
                   </div>
                 </div>
 
@@ -263,17 +263,17 @@
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">最小下单量</label>
                     <p class="text-sm text-black/45">单笔最小基础币数量。</p>
-                    <a-input v-model:value.number="formData.minOrderQuantity" type="number" min="0" step="0.00000001" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.minOrderQuantity" type="number" :min="0" :step="0.00000001" class="ant-input font-mono" />
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">最小下单额</label>
                     <p class="text-sm text-black/45">单笔最小计价币金额。</p>
-                    <a-input v-model:value.number="formData.minOrderValue" type="number" min="0" step="0.01" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.minOrderValue" type="number" :min="0" :step="0.01" class="ant-input font-mono" />
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-black/85 font-medium">最大下单额</label>
                     <p class="text-sm text-black/45">单笔最大计价币金额。</p>
-                    <a-input v-model:value.number="formData.maxOrderValue" type="number" min="0" step="0.01" class="ant-input font-mono" />
+                    <a-input v-model:value.number="formData.maxOrderValue" type="number" :min="0" :step="0.01" class="ant-input font-mono" />
                   </div>
                 </div>
               </div>
@@ -291,12 +291,12 @@
                 <div class="space-y-1.5">
                   <label class="text-sm text-black/85 font-medium">买入费率 (%)</label>
                   <p class="text-sm text-black/45">对买入成交额收取的费率。</p>
-                  <a-input v-model:value.number="formData.buyFee" type="number" min="0" step="0.001" class="ant-input font-mono" />
+                  <a-input v-model:value.number="formData.buyFee" type="number" :min="0" :step="0.001" class="ant-input font-mono" />
                 </div>
                 <div class="space-y-1.5">
                   <label class="text-sm text-black/85 font-medium">卖出费率 (%)</label>
                   <p class="text-sm text-black/45">对卖出成交额收取的费率。</p>
-                  <a-input v-model:value.number="formData.sellFee" type="number" min="0" step="0.001" class="ant-input font-mono" />
+                  <a-input v-model:value.number="formData.sellFee" type="number" :min="0" :step="0.001" class="ant-input font-mono" />
                 </div>
               </div>
             </section>

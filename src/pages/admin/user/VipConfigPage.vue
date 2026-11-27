@@ -274,7 +274,7 @@ const sortedVipLevels = computed(() => {
                           等级编号
                           <span v-if="isEditing" class="text-xs font-normal text-slate-500">（不可改）</span>
                         </label>
-                        <a-input type="number" min="0" :disabled="isEditing" class="w-full disabled:cursor-not-allowed" :value="formData.level" @update:value="formData.level = $event === '' ? '' : Number($event)" />
+                        <a-input type="number" :min="0" :disabled="isEditing" class="w-full disabled:cursor-not-allowed" :value="formData.level" @update:value="formData.level = $event === '' ? '' : Number($event)" />
                       </div>
 
                       <!-- 系统名称 -->
@@ -356,7 +356,7 @@ const sortedVipLevels = computed(() => {
                       等级说明
                     </h3>
                     <p class="text-xs text-slate-500 mb-3">面向用户或运营展示的文案，可选填。</p>
-                    <a-textarea v-model:value="formData.description" rows="5" placeholder="简要说明该等级的权益亮点、适用人群或升级提示等…" class="w-full resize-y leading-relaxed"></a-textarea>
+                    <a-textarea v-model:value="formData.description" :rows="5" placeholder="简要说明该等级的权益亮点、适用人群或升级提示等…" class="w-full resize-y leading-relaxed"></a-textarea>
                   </div>
                 </div>
               </div></template><template #footer><template v-if="Boolean(showModal)"><div class="bg-slate-50 border-t border-slate-200 px-6 py-4 flex justify-end gap-3">

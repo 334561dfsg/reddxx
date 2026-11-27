@@ -64,7 +64,10 @@ const endDate = ref(defaultEndDate())
 const loading = ref(false)
 const dailyRows = ref([])
 
+// The drawer's open state is separate from the selected day so the content stays during the close animation;
+// the day and its rows are cleared once the drawer has finished closing.
 const selectedDate = ref(null)
+const drawerOpen = ref(false)
 const detailLoading = ref(false)
 const dayAgents = ref([])
 
@@ -101,8 +104,7 @@ const loadDaily = async () => {
         selectedDate.value &&
         !dailyRows.value.some((r) => r.date === selectedDate.value)
       ) {
-        selectedDate.value = null
-        dayAgents.value = []
+        drawerOpen.value = false
       }
     }
   } catch (e) {
@@ -113,29 +115,35 @@ const loadDaily = async () => {
 }
 
 const selectDay = async (date) => {
-  if (selectedDate.value === date) {
-    selectedDate.value = null
-    dayAgents.value = []
+  if (selectedDate.value === date && drawerOpen.value) {
+    closeAgentDrawer()
     return
   }
   selectedDate.value = date
+  drawerOpen.value = true
   detailLoading.value = true
   dayAgents.value = []
   try {
     const res = await agentReportApi.getAgentsForDate(date)
+    if (selectedDate.value !== date) return // a newer day was selected meanwhile
     if (res.success) {
       dayAgents.value = res.data.list || []
     }
   } catch (e) {
     console.error(e)
   } finally {
-    detailLoading.value = false
+    if (selectedDate.value === date) detailLoading.value = false
   }
 }
 
 const isRowActive = (date) => selectedDate.value === date
 
 function closeAgentDrawer() {
+  drawerOpen.value = false
+}
+
+function onDrawerAfterOpenChange(open) {
+  if (open) return
   selectedDate.value = null
   dayAgents.value = []
 }
@@ -144,7 +152,7 @@ function onDrawerEscape(e) {
   if (e.key === 'Escape') closeAgentDrawer()
 }
 
-watch(selectedDate, (v) => {
+watch(drawerOpen, (v) => {
   if (v) document.addEventListener('keydown', onDrawerEscape)
   else document.removeEventListener('keydown', onDrawerEscape)
 })
@@ -249,7 +257,7 @@ onUnmounted(() => {
     <!-- 当日代理明细：右侧抽屉（Teleport 到 body，避免主内容区 overflow 裁切 fixed 遮罩） -->
     <Teleport to="body">
       <Transition name="agent-report-drawer">
-        <a-drawer :open="Boolean(selectedDate)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeAgentDrawer"><template #title><template v-if="Boolean(selectedDate)"><div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/90 px-4 py-3 sm:px-5">
+        <a-drawer :open="drawerOpen" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeAgentDrawer" @after-open-change="onDrawerAfterOpenChange"><template #title><div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/90 px-4 py-3 sm:px-5">
               <div class="min-w-0">
                 <h2 id="agent-report-drawer-title" class="text-base font-semibold text-slate-900">
                   {{ selectedLabel }} · 产生佣金的代理
@@ -261,7 +269,7 @@ onUnmounted(() => {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </a-button>
-            </div></template></template><template v-if="selectedDate"><div class="relative min-h-0 flex-1 overflow-x-auto overflow-y-auto">
+            </div></template><div class="relative min-h-0 flex-1 overflow-x-auto overflow-y-auto">
               <div
                 v-if="detailLoading"
                 class="absolute inset-0 z-10 flex items-center justify-center bg-white/80"
@@ -270,15 +278,15 @@ onUnmounted(() => {
               </div>
 
               <a-table  :data-source="dayAgents" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(a) => a.uid" :custom-row="(a, index) => ({ class: [&quot;hover:bg-slate-50/80&quot;] })">
-<a-table-column key="column-0" ><template #title>UID</template><template #default="{ record: a, index: index }"><div class=" .5 font-mono text-slate-900">{{ a.uid }}</div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>用户名</template><template #default="{ record: a, index: index }"><div class=" .5 font-medium text-slate-900">{{ a.username }}</div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>邮箱</template><template #default="{ record: a, index: index }"><div class=" .5 text-slate-600">{{ a.email }}</div></template></a-table-column>
-<a-table-column key="column-3" align="right"><template #title>当日佣金 (USDT)</template><template #default="{ record: a, index: index }"><div class=" .5 text-right font-mono tabular-nums text-emerald-700">
+<a-table-column key="column-0" ><template #title>UID</template><template #default="{ record: a, index: index }"><div class="font-mono text-slate-900">{{ a.uid }}</div></template></a-table-column>
+<a-table-column key="column-1" ><template #title>用户名</template><template #default="{ record: a, index: index }"><div class="font-medium text-slate-900">{{ a.username }}</div></template></a-table-column>
+<a-table-column key="column-2" ><template #title>邮箱</template><template #default="{ record: a, index: index }"><div class="text-slate-600">{{ a.email }}</div></template></a-table-column>
+<a-table-column key="column-3" align="right"><template #title>当日佣金 (USDT)</template><template #default="{ record: a, index: index }"><div class="text-right font-mono tabular-nums text-emerald-700">
                       ${{ a.commission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
                     </div></template></a-table-column>
-<a-table-column key="column-4" align="right"><template #title>关联笔数</template><template #default="{ record: a, index: index }"><div class=" .5 text-right tabular-nums text-slate-600">{{ a.orderCount }}</div></template></a-table-column><template #emptyText>暂无代理数据</template>
+<a-table-column key="column-4" align="right"><template #title>关联笔数</template><template #default="{ record: a, index: index }"><div class="text-right tabular-nums text-slate-600">{{ a.orderCount }}</div></template></a-table-column><template #emptyText>暂无代理数据</template>
 </a-table>
-            </div></template></a-drawer>
+            </div></a-drawer>
       </Transition>
     </Teleport>
   </div>

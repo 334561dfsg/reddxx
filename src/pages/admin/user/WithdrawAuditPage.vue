@@ -285,7 +285,7 @@ onMounted(loadList)
                 <a-button html-type="button" class="danger" @click="auditAction = 'reject'">拒绝</a-button>
               </div>
               <div v-if="auditAction" class="mt-3">
-                <a-textarea v-model:value="auditNote" rows="3" class="w-full" :placeholder="auditAction === 'reject' ? '请输入拒绝原因' : '请输入审核备注（可选）'"></a-textarea>
+                <a-textarea v-model:value="auditNote" :rows="3" class="w-full" :placeholder="auditAction === 'reject' ? '请输入拒绝原因' : '请输入审核备注（可选）'"></a-textarea>
                 <div class="mt-3 flex justify-end gap-2">
                   <a-button html-type="button" class="" @click="auditAction = ''">取消</a-button>
                   <a-button html-type="button" class="" @click="submitAction(auditAction)" type="primary">确认提交</a-button>

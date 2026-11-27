@@ -82,7 +82,7 @@ const nextPage = () => {
           v-model:value="keyword"
           type="text"
           placeholder="搜索日志ID/规则/操作人..."
-          class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none"
         />
       </div>
     </article>

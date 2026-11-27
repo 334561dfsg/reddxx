@@ -357,7 +357,7 @@ function confirmSubscribe() {
             </div>
             <p class="mt-3 text-xs text-white/45">账户余额: {{ formatPortfolioAmount(availableBalance) }}</p>
 
-            <div class="mt-5 flex min-h-[3.25rem] items-center gap-2 rounded-xl border border-white/[0.12] bg-black/40 px-2 focus-within:border-lime-400/45 focus-within:ring-2 focus-within:ring-lime-400/25">
+            <div class="mt-5 flex min-h-[3.25rem] items-center gap-2 rounded-xl border border-white/[0.12] bg-black/40 px-2">
               <button
                 type="button"
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/[0.08] text-xl font-semibold text-white transition hover:bg-white/[0.12]"

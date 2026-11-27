@@ -394,7 +394,7 @@ onMounted(() => {
         <div class="flex flex-col gap-1 sm:items-end">
           <label class="flex items-center gap-2 text-sm text-slate-600">
             <span class="whitespace-nowrap">示例手续费基数（USDT）</span>
-            <a-input type="number" min="0" step="100" class="w-36 text-right" :value="demoBaseAmount" @update:value="demoBaseAmount = $event === '' ? '' : Number($event)" />
+            <a-input type="number" :min="0" :step="100" class="w-36 text-right" :value="demoBaseAmount" @update:value="demoBaseAmount = $event === '' ? '' : Number($event)" />
           </label>
           <span class="text-xs text-slate-400">下方各线「示例佣金」均按此基数 × rᵢ 计算</span>
         </div>
@@ -443,7 +443,7 @@ onMounted(() => {
                       class="block"
                     >
                       <span class="text-xs text-slate-600">{{ idx + 1 }} 级上级</span>
-                      <a-input :id="line.key + '-rate-' + idx" type="number" min="0" max="1" step="0.001" class="mt-1 w-full" :value="ratesFor(line)[idx]" @input="setRateAt(line, idx, $event.target.value)" />
+                      <a-input :id="line.key + '-rate-' + idx" type="number" :min="0" :max="1" :step="0.001" class="mt-1 w-full" :value="ratesFor(line)[idx]" @input="setRateAt(line, idx, $event.target.value)" />
                     </label>
                   </div>
 
@@ -526,7 +526,7 @@ onMounted(() => {
             <div>
               <label class="block text-sm font-medium text-slate-800">结算触发时刻</label>
               <p class="mt-1 text-xs text-slate-500">24 小时制，与平台默认时区一致（与代理账期结算配置方式一致）。</p>
-              <a-input v-model:value="config.referralSettlementTimeLocal" type="time" step="60" class="mt-2 w-full max-w-[12rem]" />
+              <a-input v-model:value="config.referralSettlementTimeLocal" type="time" :step="60" class="mt-2 w-full max-w-[12rem]" />
             </div>
           </div>
 

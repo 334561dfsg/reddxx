@@ -1333,7 +1333,7 @@ onUnmounted(() => {
           <button
             id="pc-trade-pair-trigger"
             type="button"
-            class="flex min-w-[11rem] items-center gap-2 rounded-lg border border-[#1f2429] bg-[#1e2329] py-1.5 pl-2.5 pr-2 text-left transition hover:border-[#00b464]/35 hover:bg-[#232a31] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00b464]/40"
+            class="flex min-w-[11rem] items-center gap-2 rounded-lg border border-[#1f2429] bg-[#1e2329] py-1.5 pl-2.5 pr-2 text-left transition hover:border-[#00b464]/35 hover:bg-[#232a31] focus:outline-none"
             :aria-expanded="pcPairPickerOpen"
             aria-haspopup="listbox"
             aria-controls="pc-trade-pair-listbox"
@@ -1400,7 +1400,7 @@ onUnmounted(() => {
                 type="search"
                 autocomplete="off"
                 placeholder="搜索代码，如 ETH、USD…"
-                class="w-full rounded-md border border-[#2b3139] bg-[#0b0e11] px-2.5 py-2 text-xs text-white placeholder:text-[#5e6673] focus:border-[#00b464]/45 focus:outline-none focus:ring-1 focus:ring-[#00b464]/25"
+                class="w-full rounded-md border border-[#2b3139] bg-[#0b0e11] px-2.5 py-2 text-xs text-white placeholder:text-[#5e6673] focus:outline-none"
                 @keydown.escape.stop="pcPairPickerOpen = false"
               />
             </div>
@@ -2149,7 +2149,7 @@ onUnmounted(() => {
               type="button"
               role="tab"
               :aria-selected="obSideMode === seg.id"
-              class="min-w-0 flex-1 rounded-md px-1.5 py-2 text-center text-[11px] font-medium leading-none tracking-tight transition-[color,background-color,box-shadow] duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00b464]/40 focus-visible:ring-offset-1 focus-visible:ring-offset-[#12141a]"
+              class="min-w-0 flex-1 rounded-md px-1.5 py-2 text-center text-[11px] font-medium leading-none tracking-tight transition-[color,background-color,box-shadow] duration-150 ease-out focus:outline-none"
               :class="
                 obSideMode === seg.id
                   ? 'bg-[#2f333c] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]'
@@ -2357,7 +2357,7 @@ onUnmounted(() => {
             <label class="block text-[11px] font-medium text-[#8e8e93]">合约周期</label>
             <select
               v-model="selectedDeliveryPeriod"
-              class="w-full rounded-lg border border-[#24252b] bg-[#1a1b1f] py-2 pl-2.5 pr-8 text-xs text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:border-[#4d7c59]/50 focus:outline-none focus:ring-1 focus:ring-[#4d7c59]/35"
+              class="w-full rounded-lg border border-[#24252b] bg-[#1a1b1f] py-2 pl-2.5 pr-8 text-xs text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none"
             >
               <option v-for="o in deliveryPeriods" :key="o" :value="o">{{ o }}</option>
             </select>
@@ -2366,7 +2366,7 @@ onUnmounted(() => {
               v-model="quantity"
               type="text"
               placeholder="请输入数量"
-              class="w-full rounded-lg border border-[#24252b] bg-[#1a1b1f] py-2 px-2.5 text-sm text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] placeholder:text-[#6b6b70] focus:border-[#4d7c59]/45 focus:outline-none focus:ring-1 focus:ring-[#4d7c59]/30"
+              class="w-full rounded-lg border border-[#24252b] bg-[#1a1b1f] py-2 px-2.5 text-sm text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] placeholder:text-[#6b6b70] focus:outline-none"
             />
             <div class="grid grid-cols-4 gap-1.5">
               <button
@@ -2392,7 +2392,7 @@ onUnmounted(() => {
               <button
                 id="pc-leverage-trigger"
                 type="button"
-                class="flex w-full items-center justify-between gap-2 rounded-lg border border-[#24252b] bg-[#1a1b1f] py-2 pl-2.5 pr-2 text-left text-xs text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] transition hover:border-[#4d7c59]/35 focus:border-[#4d7c59]/50 focus:outline-none focus:ring-1 focus:ring-[#4d7c59]/35"
+                class="flex w-full items-center justify-between gap-2 rounded-lg border border-[#24252b] bg-[#1a1b1f] py-2 pl-2.5 pr-2 text-left text-xs text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] transition hover:border-[#4d7c59]/35 focus:outline-none"
                 :aria-expanded="pcLeveragePickerOpen"
                 aria-haspopup="listbox"
                 aria-controls="pc-leverage-listbox"
@@ -2446,14 +2446,14 @@ onUnmounted(() => {
               type="text"
               :placeholder="lastPrice"
               :disabled="orderType === 'market'"
-              class="w-full rounded-lg border border-[#24252b] bg-[#1a1b1f] py-2 px-2.5 text-sm text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] placeholder:text-[#6b6b70] focus:border-[#4d7c59]/45 focus:outline-none focus:ring-1 focus:ring-[#4d7c59]/30 disabled:cursor-not-allowed disabled:opacity-45"
+              class="w-full rounded-lg border border-[#24252b] bg-[#1a1b1f] py-2 px-2.5 text-sm text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] placeholder:text-[#6b6b70] focus:outline-none disabled:cursor-not-allowed disabled:opacity-45"
             />
             <label class="block text-[11px] font-medium text-[#8e8e93]">数量 (张)</label>
             <input
               v-model="quantity"
               type="text"
               placeholder="请输入数量(张)"
-              class="w-full rounded-lg border border-[#24252b] bg-[#1a1b1f] py-2 px-2.5 text-sm text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] placeholder:text-[#6b6b70] focus:border-[#4d7c59]/45 focus:outline-none focus:ring-1 focus:ring-[#4d7c59]/30"
+              class="w-full rounded-lg border border-[#24252b] bg-[#1a1b1f] py-2 px-2.5 text-sm text-white shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] placeholder:text-[#6b6b70] focus:outline-none"
             />
             <div class="grid grid-cols-4 gap-1.5">
               <button
@@ -2484,7 +2484,7 @@ onUnmounted(() => {
               <input
                 v-model="tpSl"
                 type="checkbox"
-                class="h-4 w-4 shrink-0 rounded border-[#2a2b31] bg-[#1a1b1f] accent-[#84cc16] focus:ring-2 focus:ring-[#84cc16]/30"
+                class="h-4 w-4 shrink-0 rounded border-[#2a2b31] bg-[#1a1b1f] accent-[#84cc16]"
               />
               <span class="font-medium hover:text-[#b4b4b8]">止盈止损</span>
             </label>
@@ -2505,7 +2505,7 @@ onUnmounted(() => {
                   type="text"
                   inputmode="decimal"
                   :placeholder="`请输入止盈价格(${activePair.quote})`"
-                  class="min-w-0 flex-1 border-0 bg-transparent px-2 text-center text-xs text-white placeholder:text-[#6b6b70] focus:outline-none focus:ring-0"
+                  class="min-w-0 flex-1 border-0 bg-transparent px-2 text-center text-xs text-white placeholder:text-[#6b6b70] focus:outline-none"
                 />
                 <button
                   type="button"
@@ -2532,7 +2532,7 @@ onUnmounted(() => {
                   type="text"
                   inputmode="decimal"
                   :placeholder="`请输入止损价格(${activePair.quote})`"
-                  class="min-w-0 flex-1 border-0 bg-transparent px-2 text-center text-xs text-white placeholder:text-[#6b6b70] focus:outline-none focus:ring-0"
+                  class="min-w-0 flex-1 border-0 bg-transparent px-2 text-center text-xs text-white placeholder:text-[#6b6b70] focus:outline-none"
                 />
                 <button
                   type="button"
@@ -3129,7 +3129,7 @@ onUnmounted(() => {
                 type="text"
                 inputmode="decimal"
                 :placeholder="lastPrice"
-                class="w-full rounded-md border border-white/[0.05] bg-[#141414] px-2.5 py-2.5 font-mono text-[14px] font-semibold tabular-nums text-white placeholder:text-white/25 focus:border-[#4ade80]/50 focus:outline-none"
+                class="w-full rounded-md border border-white/[0.05] bg-[#141414] px-2.5 py-2.5 font-mono text-[14px] font-semibold tabular-nums text-white placeholder:text-white/25 focus:outline-none"
               />
               <input
                 v-else
@@ -3148,7 +3148,7 @@ onUnmounted(() => {
                   type="text"
                   inputmode="decimal"
                   placeholder="请输入数量"
-                  class="w-full rounded-md border border-white/[0.05] bg-[#141414] py-2.5 pl-2.5 pr-10 text-[13px] text-white placeholder:text-white/25 focus:border-[#4ade80]/50 focus:outline-none"
+                  class="w-full rounded-md border border-white/[0.05] bg-[#141414] py-2.5 pl-2.5 pr-10 text-[13px] text-white placeholder:text-white/25 focus:outline-none"
                 />
                 <span
                   class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] text-white/35"
@@ -3164,7 +3164,7 @@ onUnmounted(() => {
                   type="text"
                   inputmode="decimal"
                   :placeholder="tradeMode === 'perpetual' ? '数量(张)' : '请输入数量'"
-                  class="w-full rounded-md border border-white/[0.05] bg-[#141414] py-2.5 pl-2.5 pr-9 text-[13px] text-white placeholder:text-white/25 focus:border-[#4ade80]/50 focus:outline-none"
+                  class="w-full rounded-md border border-white/[0.05] bg-[#141414] py-2.5 pl-2.5 pr-9 text-[13px] text-white placeholder:text-white/25 focus:outline-none"
                 />
                 <span
                   class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-white/35"
@@ -3201,14 +3201,14 @@ onUnmounted(() => {
                   type="text"
                   inputmode="decimal"
                   :placeholder="`止盈 ${activePair.quote}`"
-                  class="w-full rounded-md border border-white/[0.05] bg-[#141414] px-2 py-1.5 text-center text-[11px] text-white placeholder:text-white/25 focus:border-[#4ade80]/45 focus:outline-none"
+                  class="w-full rounded-md border border-white/[0.05] bg-[#141414] px-2 py-1.5 text-center text-[11px] text-white placeholder:text-white/25 focus:outline-none"
                 />
                 <input
                   v-model="stopLossPrice"
                   type="text"
                   inputmode="decimal"
                   :placeholder="`止损 ${activePair.quote}`"
-                  class="w-full rounded-md border border-white/[0.05] bg-[#141414] px-2 py-1.5 text-center text-[11px] text-white placeholder:text-white/25 focus:border-[#4ade80]/45 focus:outline-none"
+                  class="w-full rounded-md border border-white/[0.05] bg-[#141414] px-2 py-1.5 text-center text-[11px] text-white placeholder:text-white/25 focus:outline-none"
                 />
               </div>
             </template>
@@ -3485,7 +3485,7 @@ onUnmounted(() => {
                 type="button"
                 role="tab"
                 :aria-selected="pickerDraftAssetClass === t.key"
-                class="touch-manipulation rounded-md py-2 text-center text-[11px] font-semibold leading-none transition [-webkit-tap-highlight-color:transparent] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/40 focus-visible:ring-offset-1 focus-visible:ring-offset-[#141414] active:opacity-90"
+                class="touch-manipulation rounded-md py-2 text-center text-[11px] font-semibold leading-none transition [-webkit-tap-highlight-color:transparent] focus:outline-none active:opacity-90"
                 :class="
                   pickerDraftAssetClass === t.key
                     ? 'bg-white/[0.1] text-lime-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]'

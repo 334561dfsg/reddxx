@@ -120,7 +120,7 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
         <section ref="dialogRef" class="withdraw-flow-dialog-panel flex max-h-[calc(100vh-1.5rem)] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-1.5rem)]" role="dialog" aria-modal="true" aria-labelledby="user-withdraw-flow-limit-title" :aria-busy="busy">
           <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5 sm:py-4">
             <div class="min-w-0"><h2 id="user-withdraw-flow-limit-title" class="text-lg font-semibold text-slate-900">出金流水限制</h2><p class="mt-0.5 truncate text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p></div>
-            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
+            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="user-withdraw-flow-limit-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
@@ -133,12 +133,12 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
             <template v-if="stage === 'edit'">
               <label class="block">
                 <span class="text-sm font-medium text-slate-800">流水范围 <span class="text-rose-500">*</span></span>
-                <AdminSelect id="user-withdraw-flow-scope" :ref="element => { scopeRef = nativeControl(element) }" v-model="form.flowScope" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+                <AdminSelect id="user-withdraw-flow-scope" :ref="element => { scopeRef = nativeControl(element) }" v-model="form.flowScope" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none">
                   <option v-for="option in flowScopeOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
                 </AdminSelect>
                 <span class="mt-1 block text-xs text-slate-500">仅统计所选范围内产生的有效流水。</span>
               </label>
-              <label class="block"><span class="text-sm font-medium text-slate-800">流水要求金额 <span class="text-rose-500">*</span></span><div class="relative mt-1.5"><AdminInput :ref="element => { requiredRef = nativeControl(element) }" v-model="form.requiredTurnover" type="text" inputmode="decimal" class="h-10 w-full rounded-lg border border-slate-300 px-3 pr-16 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /><span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-slate-500">USDT</span></div></label>
+              <label class="block"><span class="text-sm font-medium text-slate-800">流水要求金额 <span class="text-rose-500">*</span></span><div class="relative mt-1.5"><AdminInput :ref="element => { requiredRef = nativeControl(element) }" v-model="form.requiredTurnover" type="text" inputmode="decimal" class="h-10 w-full rounded-lg border border-slate-300 px-3 pr-16 text-sm outline-none" /><span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-slate-500">USDT</span></div></label>
               <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
                 <dl class="grid grid-cols-2 gap-3 text-sm">
                   <div><dt class="text-xs text-slate-500">已完成有效流水</dt><dd class="mt-0.5 font-semibold text-slate-900">{{ money(completedTurnover) }} <span class="text-xs font-normal text-slate-500">USDT</span></dd></div>
@@ -159,11 +159,11 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
                   </AdminRadio>
                 </div>
               </fieldset>
-              <label v-if="form.expiryMode === 'scheduled'" class="block"><span class="text-sm font-medium text-slate-800">到期时间 <span class="text-rose-500">*</span></span><AdminInput v-model="form.expiresAt" type="datetime-local" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /></label>
-              <label class="block"><span class="text-sm font-medium text-slate-800">设置原因（可选）</span><AdminTextarea v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" /></label>
+              <label v-if="form.expiryMode === 'scheduled'" class="block"><span class="text-sm font-medium text-slate-800">到期时间 <span class="text-rose-500">*</span></span><AdminInput v-model="form.expiresAt" type="datetime-local" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none" /></label>
+              <label class="block"><span class="text-sm font-medium text-slate-800">设置原因（可选）</span><AdminTextarea v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none" /></label>
               <div v-if="hasLimit" class="rounded-lg border border-rose-200 bg-rose-50 p-3">
                 <p class="text-sm font-medium text-rose-900">解除现有限制</p>
-                <AdminTextarea v-model="form.removeReason" rows="2" maxlength="200" class="mt-2 w-full rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-rose-100" placeholder="可填写解除原因" />
+                <AdminTextarea v-model="form.removeReason" rows="2" maxlength="200" class="mt-2 w-full rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm outline-none" placeholder="可填写解除原因" />
                 <AdminButton type="button" :disabled="busy" class="mt-2 rounded-lg border border-rose-300 bg-white px-3 py-2 text-sm font-medium text-rose-700 disabled:opacity-40" @click="startRemoveConfirm">解除限制</AdminButton>
               </div>
             </template>

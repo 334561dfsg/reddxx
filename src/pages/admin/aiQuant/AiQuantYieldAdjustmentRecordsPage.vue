@@ -11,7 +11,7 @@
 					<div class="text-sm text-slate-600">
 						命中 {{ filteredAdjustments.length }} 条（第 {{ adjCurrentPage }} / {{ adjTotalPages }} 页，每页 {{ adjPageSize }} 条）
 					</div>
-					<a-input v-model:value="search" type="text" placeholder="搜索用户、订单或产品..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500" />
+					<a-input v-model:value="search" type="text" placeholder="搜索用户、订单或产品..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
 				</div>
 			</div>
 

@@ -151,7 +151,7 @@ onUnmounted(() => {
   <div ref="rootRef" class="relative min-w-0">
     <button
       type="button"
-      class="flex h-[2.75rem] w-full min-h-[2.75rem] items-center justify-between gap-2 rounded-lg border border-white/[0.12] bg-black/40 px-3 text-left text-sm font-medium text-white/90 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] transition [-webkit-tap-highlight-color:transparent] hover:border-white/[0.18] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0e11]"
+      class="flex h-[2.75rem] w-full min-h-[2.75rem] items-center justify-between gap-2 rounded-lg border border-white/[0.12] bg-black/40 px-3 text-left text-sm font-medium text-white/90 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] transition [-webkit-tap-highlight-color:transparent] hover:border-white/[0.18] focus:outline-none"
       :class="open ? 'border-lime-400/35 text-lime-200' : ''"
       :aria-expanded="open"
       aria-haspopup="listbox"

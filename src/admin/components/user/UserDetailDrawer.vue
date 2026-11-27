@@ -288,7 +288,7 @@ const tabButtonClass = (id) => {
             </h2>
             <AdminButton
               type="button"
-              class="absolute right-4 top-[max(0.75rem,env(safe-area-inset-top))] z-10 flex min-h-11 min-w-11 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:right-6"
+              class="absolute right-4 top-[max(0.75rem,env(safe-area-inset-top))] z-10 flex min-h-11 min-w-11 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none sm:right-6"
               @click="close"
               aria-label="关闭"
             >
@@ -431,7 +431,7 @@ const tabButtonClass = (id) => {
                       <div class="mt-3 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
                         <button
                           v-for="wallet in USER_WALLETS" :key="wallet.key" type="button"
-                          class="min-w-0 rounded-lg border border-slate-200 bg-white px-4 py-3 text-left transition-colors hover:border-blue-300 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                          class="min-w-0 rounded-lg border border-slate-200 bg-white px-4 py-3 text-left transition-colors hover:border-blue-300 hover:bg-blue-50"
                           aria-haspopup="dialog" :aria-label="`查看${wallet.label}持有币种明细`"
                           @click="openWalletDetail(wallet, $event)"
                         >
@@ -642,7 +642,7 @@ const tabButtonClass = (id) => {
                         <div class="text-sm font-medium text-slate-700 mb-2">选择入金账户：</div>
                         <AdminSelect
                           v-model="actionForm.depositAccountKey"
-                          class="w-full rounded-xl border-2 border-blue-600 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                          class="w-full rounded-xl border-2 border-blue-600 bg-white px-4 py-3 text-sm outline-none"
                         >
                           <option v-for="opt in depositAccountOptions" :key="opt.key" :value="opt.key">
                             {{ opt.label }}
@@ -677,7 +677,7 @@ const tabButtonClass = (id) => {
                         <div class="text-sm font-medium text-slate-700 mb-2">从</div>
                         <AdminSelect
                           v-model="actionForm.transferFromAccountKey"
-                          class="w-full rounded-xl border-2 border-blue-600 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-100"
+                          class="w-full rounded-xl border-2 border-blue-600 bg-white px-4 py-3 text-sm outline-none"
                         >
                           <option v-for="opt in transferAccountOptions" :key="opt.key" :value="opt.key">
                             {{ opt.label }}

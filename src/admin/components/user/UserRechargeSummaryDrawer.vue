@@ -73,7 +73,7 @@ watch(() => [props.visible, props.summary, userId.value], ([visible]) => { if (v
               <h2 id="user-recharge-summary-title" ref="titleRef" tabindex="-1" class="text-lg font-semibold text-slate-900 outline-none">会员累计充值</h2>
               <p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · VIP{{ displaySummary?.currentVipLevel ?? user?.vipLevel ?? 0 }}</p>
             </div>
-            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</AdminButton>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="user-recharge-summary-body" class="recharge-drawer-body min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right));">
@@ -97,7 +97,7 @@ watch(() => [props.visible, props.summary, userId.value], ([visible]) => { if (v
 
             <section class="recharge-drawer-records-section mt-4 min-h-0 flex flex-1 flex-col" aria-labelledby="recharge-records-title">
               <div class="flex shrink-0 items-center justify-between"><h3 id="recharge-records-title" class="text-sm font-semibold text-slate-900">充值记录</h3><span class="text-xs text-slate-500">共 {{ displaySummary?.records?.length || 0 }} 笔</span></div>
-              <div ref="recordListRef" data-testid="user-recharge-record-list" tabindex="0" aria-labelledby="recharge-records-title" class="recharge-drawer-record-list min-h-0 flex flex-1 flex-col gap-2 overflow-y-auto pt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600">
+              <div ref="recordListRef" data-testid="user-recharge-record-list" tabindex="0" aria-labelledby="recharge-records-title" class="recharge-drawer-record-list min-h-0 flex flex-1 flex-col gap-2 overflow-y-auto pt-2 focus-visible:outline-none">
                 <template v-if="records.length">
                   <article v-for="record in pagedRecords" :key="record.id" class="rounded-xl border border-slate-200 p-3 text-sm">
                     <div class="flex flex-wrap items-start justify-between gap-2"><div><p class="font-semibold text-slate-900">{{ money(record.amount) }} USDT</p></div><span class="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">{{ record.source }}</span></div>

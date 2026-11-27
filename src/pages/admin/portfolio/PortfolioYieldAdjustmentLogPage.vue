@@ -23,7 +23,7 @@
         <a-input
           v-model:value="search"
           type="search"
-          class="min-w-[12rem] max-w-md flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          class="min-w-[12rem] max-w-md flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
           placeholder="产品、币种、原因、操作人…"
         />
       </div>

@@ -357,7 +357,6 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
 .report-button:hover:not(:disabled) { background: #f8fafc; }
 .report-primary, .report-primary:hover:not(:disabled) { background: #2563eb; color: white; border-color: #2563eb; }
 .report-button:disabled { cursor: not-allowed; opacity: .45; }
-.user-deposit-report :deep(:focus-visible) { outline: 2px solid #2563eb; outline-offset: 3px; }
 .export-file-card { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid #e8ecef; border-radius: 8px; background: #fafcfb; flex-wrap: wrap; }
 .export-file-icon { display: grid; place-items: center; width: 48px; height: 56px; flex-shrink: 0; border-radius: 8px; background: #e8f5ed; color: #217346; font-size: 30px; }
 .report-field { display: flex; min-width: 0; flex-direction: column; gap: .25rem; font-size: .875rem; font-weight: 500; color: #374151; }

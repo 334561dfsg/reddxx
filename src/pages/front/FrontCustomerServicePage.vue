@@ -141,7 +141,7 @@ onUnmounted(() => unsubscribe?.())
   <main class="customer-service-page bg-[#f5f6f8] text-[#161a1e] lg:bg-[#050505] lg:px-6 lg:py-8 lg:text-white">
     <section class="mx-auto flex h-full min-h-0 w-full flex-col overflow-hidden bg-white lg:max-w-4xl lg:rounded-2xl lg:border lg:border-white/[0.08] lg:bg-[#0b0e11] lg:shadow-2xl lg:shadow-black/40">
       <header class="relative flex h-14 shrink-0 items-center justify-center border-b border-black/[0.06] bg-black px-4 text-white lg:h-16 lg:border-white/[0.08] lg:bg-[#11151a]">
-        <button type="button" class="absolute left-3 grid h-10 w-10 place-items-center rounded-full text-white transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400" aria-label="返回" @click="goBack">
+        <button type="button" class="absolute left-3 grid h-10 w-10 place-items-center rounded-full text-white transition hover:bg-white/10 focus:outline-none" aria-label="返回" @click="goBack">
           <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
         </button>
         <div class="text-center">
@@ -172,13 +172,13 @@ onUnmounted(() => unsubscribe?.())
         </div>
 
         <div class="flex items-end gap-2.5">
-          <div class="flex min-w-0 flex-1 items-end rounded-[1.65rem] border border-black/20 bg-white px-4 py-1.5 focus-within:border-sky-400 lg:border-white/15 lg:bg-black/20">
+          <div class="flex min-w-0 flex-1 items-end rounded-[1.65rem] border border-black/20 bg-white px-4 py-1.5 lg:border-white/15 lg:bg-black/20">
             <textarea v-model="draft" rows="1" class="max-h-28 min-h-10 min-w-0 flex-1 resize-none bg-transparent py-2 text-[15px] leading-6 text-black outline-none placeholder:text-black/40 lg:text-white lg:placeholder:text-white/35" placeholder="请输入" aria-label="输入客服消息" @keydown="onComposerKeydown" />
             <button type="button" class="mb-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#1597e5] text-white transition disabled:cursor-not-allowed disabled:opacity-35" :disabled="!canSend" aria-label="发送消息" @click="sendMessage">
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6.5 10.5 12 5l5.5 5.5" /></svg>
             </button>
           </div>
-          <button type="button" class="mb-1 grid h-11 w-11 shrink-0 place-items-center rounded-full text-[#1597e5] transition hover:bg-sky-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 lg:hover:bg-white/[0.06]" aria-label="选择图片" @click="openImagePicker">
+          <button type="button" class="mb-1 grid h-11 w-11 shrink-0 place-items-center rounded-full text-[#1597e5] transition hover:bg-sky-50 focus:outline-none lg:hover:bg-white/[0.06]" aria-label="选择图片" @click="openImagePicker">
             <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20.5 11.5-8.9 8.9a5 5 0 0 1-7.1-7.1l9.6-9.6a3.5 3.5 0 0 1 5 5l-9.7 9.7a2 2 0 0 1-2.8-2.8l8.9-8.9" /></svg>
           </button>
           <input ref="fileInputRef" type="file" accept="image/*" class="sr-only" @change="onImageSelected" />

@@ -147,12 +147,10 @@ onBeforeUnmount(() => { disposed = true; repository.cancel(pending.value) })
 .address-input--order { border-color: #d97706; background: #fffbeb; color: #78350f; }
 .address-input--changed { border-color: #3b82f6; background: #eff6ff; color: #1e3a8a; }
 .address-input[aria-invalid="true"] { border-color: #e11d48; background: #fff1f2; color: #881337; }
-.address-input[aria-invalid="true"]:focus-visible { outline-color: #e11d48; }
 .primary, .secondary { min-height: 44px; border: 1px solid #cbd5e1; border-radius: .5rem; padding: .625rem 1rem; font-size: .875rem; }
 .primary { background: #2563eb; color: white; border-color: #2563eb; }
 .secondary { background: white; color: #334155; }
 .close-button { min-width: 44px; min-height: 44px; font-size: 1.5rem; flex-shrink: 0; border-radius: .5rem; }
-button:focus-visible, input:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
 button:disabled { opacity: .5; cursor: not-allowed; }
 .address-rotation-enter-active { transition: opacity 200ms ease-out; }
 .address-rotation-leave-active { transition: opacity 150ms ease-in; }

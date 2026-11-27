@@ -93,7 +93,7 @@ function latestPriceText(row) {
     <header class="mb-4 flex min-h-12 items-center gap-3 md:mb-5">
       <button
         type="button"
-        class="-ml-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white/75 transition hover:bg-white/[0.06] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+        class="-ml-2 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white/75 transition hover:bg-white/[0.06] hover:text-white focus:outline-none"
         aria-label="返回资产中心"
         @click="goBack"
       >
@@ -151,7 +151,7 @@ function latestPriceText(row) {
             v-for="action in visibleDetailActions"
             :key="action.key"
             :to="action.to"
-            class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/[0.14] px-3 text-sm font-semibold text-white/85 transition hover:border-cyan-300/75 hover:text-cyan-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/45"
+            class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/[0.14] px-3 text-sm font-semibold text-white/85 transition hover:border-cyan-300/75 hover:text-cyan-200 focus:outline-none"
             :class="action.key === 'transfer' ? 'bg-cyan-300 text-black hover:text-black' : 'bg-transparent'"
           >
             <FrontStrokeIcon :name="action.icon" size-class="h-4 w-4" />

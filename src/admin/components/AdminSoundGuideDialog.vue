@@ -98,7 +98,7 @@ const close = () => requestDialogClose()
                 </div>
                 <AdminButton
                   type="button"
-                  class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-antd-primary/30"
+                  class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none"
                   aria-label="关闭"
                   title="关闭"
                   @click="close"
@@ -122,7 +122,7 @@ const close = () => requestDialogClose()
                     </code>
                     <AdminButton
                       type="button"
-                      class="shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-antd-primary/30"
+                      class="shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus:outline-none"
                       aria-label="复制 Chrome 声音设置地址"
                       @click="copySettingUrl"
                     >
@@ -144,7 +144,7 @@ const close = () => requestDialogClose()
                     </code>
                     <AdminButton
                       type="button"
-                      class="shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-antd-primary/30"
+                      class="shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus:outline-none"
                       aria-label="复制当前后台域名"
                       @click="copyDomain"
                     >
@@ -170,7 +170,7 @@ const close = () => requestDialogClose()
             <footer class="flex shrink-0 justify-end border-t border-slate-200 bg-slate-50 px-6 py-4">
               <AdminButton
                 type="button"
-                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none"
                 @click="close"
               >
                 我知道了

@@ -286,7 +286,7 @@ const showToast = (message) => {
                         : '填写拒绝原因'
                   }}
                 </div>
-                <a-textarea v-if="auditAction !== 'approve'" v-model:value="auditNote" rows="3" class="mt-2 w-full" :placeholder="auditAction === 'reject' ? '请填写拒绝原因' : '请填写补件说明'" />
+                <a-textarea v-if="auditAction !== 'approve'" v-model:value="auditNote" :rows="3" class="mt-2 w-full" :placeholder="auditAction === 'reject' ? '请填写拒绝原因' : '请填写补件说明'" />
                 <div class="mt-3 flex justify-end gap-2">
                   <a-button class="" @click="submitAudit" html-type="button" type="primary">确认提交</a-button>
                   <a-button class="" @click="auditAction = null" html-type="button">取消</a-button>

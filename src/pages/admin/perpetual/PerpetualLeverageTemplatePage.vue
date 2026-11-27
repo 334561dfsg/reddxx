@@ -236,7 +236,7 @@ const submitTemplate = () => {
             <a-input
               v-model:value="search"
               type="text"
-              class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500"
+              class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none"
               placeholder="搜索模板名称..."
             />
             <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none">
@@ -367,9 +367,9 @@ const submitTemplate = () => {
                   id="custom-leverage"
                   v-model:value="customLeverageInput"
                   type="number"
-                  min="1"
-                  max="1000"
-                  step="1"
+                  :min="1"
+                  :max="1000"
+                  :step="1"
                   class="ant-input pr-8"
                   :class="customLeverageError ? '!border-rose-400' : ''"
                   placeholder="请输入 1–1000"
@@ -402,7 +402,7 @@ const submitTemplate = () => {
                 <span class="px-2 py-1 font-medium text-blue-600">{{ lv }}x</span>
                 <a-button type="text"
                   html-type="button"
-                  class="grid h-7 w-7 place-items-center border-l border-rose-100 bg-rose-50 text-rose-500 transition hover:bg-rose-100 hover:text-rose-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-rose-300"
+                  class="grid h-7 w-7 place-items-center border-l border-rose-100 bg-rose-50 text-rose-500 transition hover:bg-rose-100 hover:text-rose-700 focus:outline-none"
                   :aria-label="`删除 ${lv}x 杠杆档位`"
                   title="删除该档位"
                   @click="toggleLeverage(lv)"
@@ -445,8 +445,8 @@ const submitTemplate = () => {
             <a-input
               v-model:value.number="templateContractFaceValueUsdt"
               type="number"
-              min="1"
-              step="1"
+              :min="1"
+              :step="1"
               class="ant-input"
               placeholder="默认 1000"
             />
@@ -458,9 +458,9 @@ const submitTemplate = () => {
               <a-input
                 v-model:value.number="templateMaintenanceMarginRate"
                 type="number"
-                min="0.01"
-                max="100"
-                step="0.01"
+                :min="0.01"
+                :max="100"
+                :step="0.01"
                 class="ant-input"
                 placeholder="默认 0.5"
               />
@@ -471,9 +471,9 @@ const submitTemplate = () => {
               <a-input
                 v-model:value.number="templateLiquidationFeeRate"
                 type="number"
-                min="0"
-                max="100"
-                step="0.01"
+                :min="0"
+                :max="100"
+                :step="0.01"
                 class="ant-input"
                 placeholder="默认 0"
               />

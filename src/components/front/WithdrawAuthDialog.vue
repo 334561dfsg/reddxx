@@ -286,7 +286,7 @@ function submit() {
                 type="button"
                 role="tab"
                 :aria-selected="activeMethod === key"
-                class="group relative flex min-h-[2.75rem] flex-row items-center justify-center gap-2 overflow-hidden rounded-[11px] px-2 py-2 [-webkit-tap-highlight-color:transparent] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/45 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 sm:min-h-[2.875rem] sm:gap-2.5 sm:px-2.5"
+                class="group relative flex min-h-[2.75rem] flex-row items-center justify-center gap-2 overflow-hidden rounded-[11px] px-2 py-2 [-webkit-tap-highlight-color:transparent] focus-visible:outline-none sm:min-h-[2.875rem] sm:gap-2.5 sm:px-2.5"
                 :class="methodTabClass(key)"
                 @click="selectMethod(key)"
               >

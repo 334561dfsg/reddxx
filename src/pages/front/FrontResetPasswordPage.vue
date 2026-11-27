@@ -201,7 +201,7 @@ function goLogin() {
                   autocomplete="email"
                   required
                   placeholder="name@example.com"
-                  class="h-[2.75rem] min-h-[2.75rem] w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:text-sm"
+                  class="h-[2.75rem] min-h-[2.75rem] w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:outline-none sm:text-sm"
                 />
               </div>
               <div v-else>
@@ -224,7 +224,7 @@ function goLogin() {
                     autocomplete="tel-national"
                     required
                     placeholder="不含区号的本地号码"
-                    class="h-[2.75rem] min-h-[2.75rem] min-w-0 flex-1 rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:text-sm"
+                    class="h-[2.75rem] min-h-[2.75rem] min-w-0 flex-1 rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:outline-none sm:text-sm"
                   />
                 </div>
               </div>
@@ -243,7 +243,7 @@ function goLogin() {
                   autocomplete="one-time-code"
                   required
                   placeholder="6 位数字"
-                  class="h-[2.75rem] min-h-[2.75rem] w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:text-sm tabular-nums"
+                  class="h-[2.75rem] min-h-[2.75rem] w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:outline-none sm:text-sm tabular-nums"
                 />
               </div>
               <button
@@ -270,7 +270,7 @@ function goLogin() {
                 required
                 minlength="6"
                 placeholder="至少 6 位"
-                class="w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-3 text-base text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:py-2 sm:text-sm"
+                class="w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-3 text-base text-white placeholder:text-white/35 focus:outline-none sm:py-2 sm:text-sm"
               />
             </div>
             <div>
@@ -284,7 +284,7 @@ function goLogin() {
                 required
                 minlength="6"
                 placeholder="再次输入新密码"
-                class="w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-3 text-base text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:py-2 sm:text-sm"
+                class="w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-3 text-base text-white placeholder:text-white/35 focus:outline-none sm:py-2 sm:text-sm"
               />
             </div>
 

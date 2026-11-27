@@ -26,7 +26,7 @@
           <a-input
             v-model:value="searchKeyword"
             type="text"
-            class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500"
+            class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none"
             placeholder="搜索产品名称或代码..."
           />
           <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none">
@@ -199,7 +199,7 @@
                       <a-input
                         v-model:value="formData.productName"
                         type="text"
-                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none"
                         placeholder="例如：USDT 灵活借贷"
                       />
                     </div>
@@ -235,7 +235,7 @@
                       <a-input
                         v-model:value.number="formData.minLoanAmount"
                         type="number"
-                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none"
                         placeholder="1000"
                       />
                     </div>
@@ -244,7 +244,7 @@
                       <a-input
                         v-model:value.number="formData.maxLoanAmount"
                         type="number"
-                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none"
                         placeholder="500000"
                       />
                     </div>
@@ -265,7 +265,7 @@
                       <a-input
                         v-model:value.number="formData.minLoanDuration"
                         type="number"
-                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none"
                         placeholder="7"
                       />
                     </div>
@@ -274,7 +274,7 @@
                       <a-input
                         v-model:value.number="formData.maxLoanDuration"
                         type="number"
-                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none"
                         placeholder="90"
                       />
                     </div>
@@ -307,7 +307,7 @@
                         v-model:value.number="formData.sortOrder"
                         type="number"
                         placeholder="数字越大越靠前"
-                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none"
                       />
                       <p class="mt-1 text-xs text-slate-500">数字越大越靠前</p>
                     </div>
@@ -322,9 +322,9 @@
                     <a-input
                       v-model:value.number="formData.collateralMultiplier"
                       type="number"
-                      step="0.1"
-                      min="1"
-                      class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      :step="0.1"
+                      :min="1"
+                      class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none"
                       placeholder="例如 1.5"
                     />
                     <p class="mt-1 text-xs text-slate-500">需锁定资产价值 = 借款金额 × 质押倍数。</p>
@@ -354,7 +354,7 @@
                       <a-input
                         v-model:value="collateralCurrencyKeyword"
                         type="text"
-                        class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                        class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
                         placeholder="搜索币种，例如 BTC / USDT"
                       />
                       <div v-if="formData.collateralCurrencies.length" class="mt-3 flex flex-wrap gap-1.5">
@@ -405,9 +405,9 @@
                   <a-input
                     v-model:value.number="formData.interestRate"
                     type="number"
-                    step="0.01"
-                    min="0"
-                    class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    :step="0.01"
+                    :min="0"
+                    class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 focus:outline-none"
                     placeholder="例如 8.5"
                   />
                   <p class="mt-2 text-xs text-slate-500">按年化展示；保存后产品统一为固定利率，与列表、订单计息一致。</p>
@@ -424,9 +424,9 @@
                   <a-input
                     v-model:value.number="formData.overduePenaltyRate"
                     type="number"
-                    step="0.01"
-                    min="0"
-                    class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    :step="0.01"
+                    :min="0"
+                    class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 focus:outline-none"
                     placeholder="例如 0.08"
                   />
                   <p class="mt-2 text-xs text-slate-500">
@@ -445,9 +445,9 @@
                   <a-input
                     v-model:value.number="formData.collateralWarningThreshold"
                     type="number"
-                    step="1"
-                    min="1"
-                    class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    :step="1"
+                    :min="1"
+                    class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 focus:outline-none"
                     placeholder="例如 85"
                   />
                   <p class="mt-2 text-xs text-slate-500">
@@ -460,9 +460,9 @@
                   <a-input
                     v-model:value.number="formData.collateralDisposalThreshold"
                     type="number"
-                    step="1"
-                    min="1"
-                    class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    :step="1"
+                    :min="1"
+                    class="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 focus:outline-none"
                     placeholder="例如 95"
                   />
                   <p class="mt-2 text-xs text-slate-500">
@@ -481,7 +481,7 @@
                   <a-input
                     v-model:value.number="formData.availableLiquidity"
                     type="number"
-                    class="w-full max-w-md rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full max-w-md rounded-lg border border-slate-300 px-3 py-2 focus:outline-none"
                     placeholder="1000000"
                   />
                   <p class="mt-1 text-xs text-slate-500">该产品可用于借贷的资金池规模（演示字段）。</p>
@@ -492,8 +492,8 @@
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">产品描述</label>
                   <a-textarea
                     v-model:value="formData.description"
-                    rows="3"
-                    class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    :rows="3"
+                    class="w-full resize-none rounded-lg border border-slate-300 px-3 py-2 focus:outline-none"
                     placeholder="可选：产品特点、适用场景等"
                   ></a-textarea>
                 </div>

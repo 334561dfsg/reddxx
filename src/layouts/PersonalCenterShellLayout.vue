@@ -75,7 +75,7 @@ function navActive(item) {
                 v-for="item in primaryNav"
                 :key="item.key"
                 :to="item.to"
-                class="group flex items-stretch gap-3 rounded-xl py-2 pl-2 pr-3 text-left transition-colors duration-200 [-webkit-tap-highlight-color:transparent] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505]"
+                class="group flex items-stretch gap-3 rounded-xl py-2 pl-2 pr-3 text-left transition-colors duration-200 [-webkit-tap-highlight-color:transparent] focus:outline-none"
                 :class="
                   navActive(item)
                     ? 'bg-white/[0.055]'
@@ -141,7 +141,7 @@ function navActive(item) {
             v-for="item in mobileQuickNav"
             :key="`m-${item.key}`"
             :to="item.to"
-            class="group flex min-h-[4.5rem] flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 text-center transition [-webkit-tap-highlight-color:transparent] active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505]"
+            class="group flex min-h-[4.5rem] flex-col items-center justify-center gap-1 rounded-lg px-1 py-2 text-center transition [-webkit-tap-highlight-color:transparent] active:scale-[0.99] focus:outline-none"
             :class="
               navActive(item)
                 ? 'bg-lime-400/[0.09] text-lime-50'

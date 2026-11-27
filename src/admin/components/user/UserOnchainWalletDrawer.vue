@@ -131,7 +131,7 @@ watch(() => props.visible, (visible) => {
             <AdminButton
               type="button"
               :disabled="copyInProgress"
-              class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none"
               aria-label="关闭"
               @click="close"
             >
@@ -145,7 +145,7 @@ watch(() => props.visible, (visible) => {
               :key="segment.id"
               type="button"
               :disabled="copyInProgress"
-              class="min-h-10 rounded-lg px-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+              class="min-h-10 rounded-lg px-3 text-sm font-medium focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               :class="activeSegment === segment.id ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:bg-white'"
               :aria-pressed="activeSegment === segment.id"
               @click="activeSegment = segment.id; copyMessage = ''; copyError = ''"
@@ -162,10 +162,8 @@ watch(() => props.visible, (visible) => {
             <p v-if="copyInProgress" class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800" role="status">
               地址复制中，其他复制、分组和关闭操作暂不可用
             </p>
-            <p v-if="copyMessage" class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800" aria-live="polite">
-              {{ copyMessage }}
-            </p>
-            <FeedbackToast v-if="copyError" type="error" :source="() => (copyError) ? (copyError) : ''"></FeedbackToast>
+            <FeedbackToast v-if="copyMessage" type="success" data-testid="wallet-copy-success" :source="() => copyMessage"></FeedbackToast>
+            <FeedbackToast v-if="copyError" type="error" data-testid="wallet-copy-error" :source="() => copyError"></FeedbackToast>
 
             <article
               v-for="address in segmentAddresses"
@@ -183,7 +181,7 @@ watch(() => props.visible, (visible) => {
                   :data-testid="`wallet-address-${address.id}-reveal-toggle`"
                   :aria-controls="`wallet-address-${address.id}-value`"
                   :aria-pressed="isRevealed(address.id) ? 'true' : 'false'"
-                  class="min-h-10 rounded-lg border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="min-h-10 rounded-lg border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none"
                   @click="toggleAddressReveal(address.id)"
                 >
                   {{ isRevealed(address.id) ? '隐藏完整地址' : '查看完整地址' }}
@@ -191,7 +189,7 @@ watch(() => props.visible, (visible) => {
                 <AdminButton
                   type="button"
                   :disabled="!isRevealed(address.id) || copyInProgress"
-                  class="min-h-10 rounded-lg bg-blue-600 px-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                  class="min-h-10 rounded-lg bg-blue-600 px-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   @click="copyAddress(address)"
                 >
                   {{ isCopying(address.id) ? '复制中…' : '复制地址' }}
@@ -211,11 +209,6 @@ watch(() => props.visible, (visible) => {
 </template>
 
 <style scoped>
-.onchain-wallet-drawer-title:focus {
-  outline: 3px solid #1d4ed8;
-  outline-offset: 4px;
-}
-
 .onchain-wallet-drawer-enter-active { transition: opacity 200ms ease-out; }
 .onchain-wallet-drawer-leave-active { transition: opacity 150ms ease-in; }
 .onchain-wallet-drawer-enter-active .onchain-wallet-drawer-panel { transition: transform 200ms ease-out; }

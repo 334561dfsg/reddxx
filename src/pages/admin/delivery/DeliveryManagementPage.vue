@@ -1318,7 +1318,7 @@ onBeforeUnmount(() => {
               :aria-selected="statusTab === tab.id"
               :tabindex="statusTab === tab.id ? 0 : -1"
               aria-controls="delivery-contract-product-list"
-              class="relative py-2 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              class="relative py-2 font-medium transition-colors focus:outline-none"
               :class="statusTab === tab.id ? 'text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600' : 'text-slate-500 hover:text-slate-700'"
               @click="setStatusFilterTab(tab.id)"
             >
@@ -1526,7 +1526,7 @@ onBeforeUnmount(() => {
             </div>
             <a-button type="text"
               html-type="button"
-              class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none"
               aria-label="关闭"
               @click="closeContractModal"
             >
@@ -1551,7 +1551,7 @@ onBeforeUnmount(() => {
                 :aria-selected="contractTab === tab.id"
                 :tabindex="contractTab === tab.id ? 0 : -1"
                 :aria-controls="`delivery-contract-panel-${tab.id}`"
-                class="relative shrink-0 py-3 text-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                class="relative shrink-0 py-3 text-sm transition-all focus:outline-none"
                 :class="
                   contractTab === tab.id
                     ? 'text-blue-600 font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600'
@@ -1668,7 +1668,7 @@ onBeforeUnmount(() => {
                       :aria-checked="contractForm.status === option.id"
                       :aria-disabled="option.disabled ? 'true' : undefined"
                       :tabindex="contractForm.status === option.id ? 0 : -1"
-                      class="min-h-8 px-4 py-1 text-xs rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      class="min-h-8 px-4 py-1 text-xs rounded transition-all focus:outline-none"
                       :class="[
                         contractForm.status === option.id
                           ? 'bg-white shadow-sm text-blue-600 font-medium'
@@ -1688,7 +1688,7 @@ onBeforeUnmount(() => {
                     :id="contractFieldId('sortOrder')"
                     v-model:value.number="contractForm.sortOrder"
                     type="number"
-                    min="0"
+                    :min="0"
                     inputmode="numeric"
                     class="ant-input font-mono"
                     placeholder="数字越大越靠前"
@@ -1772,8 +1772,8 @@ onBeforeUnmount(() => {
                       :id="contractFieldId('minBuy')"
                       v-model:value="contractForm.minBuy"
                       type="number"
-                      min="0"
-                      step="0.000001"
+                      :min="0"
+                      :step="0.000001"
                       inputmode="decimal"
                       class="ant-input font-mono"
                       required
@@ -1791,8 +1791,8 @@ onBeforeUnmount(() => {
                       :id="contractFieldId('maxBuy')"
                       v-model:value="contractForm.maxBuy"
                       type="number"
-                      min="0"
-                      step="0.000001"
+                      :min="0"
+                      :step="0.000001"
                       inputmode="decimal"
                       class="ant-input font-mono"
                       required
@@ -1810,8 +1810,8 @@ onBeforeUnmount(() => {
                       :id="contractFieldId('maxHold')"
                       v-model:value="contractForm.maxHold"
                       type="number"
-                      min="0"
-                      step="0.000001"
+                      :min="0"
+                      :step="0.000001"
                       inputmode="decimal"
                       class="ant-input font-mono"
                       required
@@ -1842,9 +1842,9 @@ onBeforeUnmount(() => {
                       :id="contractFieldId('sellFee')"
                       v-model:value="contractForm.sellFee"
                       type="number"
-                      min="0"
-                      max="100"
-                      step="0.01"
+                      :min="0"
+                      :max="100"
+                      :step="0.01"
                       inputmode="decimal"
                       class="ant-input font-mono pr-8"
                       required

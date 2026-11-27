@@ -278,7 +278,7 @@ const saveRule = (ruleData) => {
                 v-model:value="keyword"
                 type="text"
                 placeholder="搜索规则名称或描述..."
-                class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500"
+                class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none"
               />
               <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none">
                 <circle cx="9" cy="9" r="5.8" stroke="currentColor" stroke-width="1.6" />

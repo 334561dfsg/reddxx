@@ -624,7 +624,7 @@ async function onPickWalletProvider(providerKey) {
                 autocomplete="email"
                 required
                 placeholder="name@example.com"
-                class="h-[2.75rem] min-h-[2.75rem] w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:text-sm sm:placeholder:text-white/30"
+                class="h-[2.75rem] min-h-[2.75rem] w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:outline-none sm:text-sm sm:placeholder:text-white/30"
               />
             </div>
             <div v-else>
@@ -647,7 +647,7 @@ async function onPickWalletProvider(providerKey) {
                   autocomplete="tel-national"
                   required
                   placeholder="不含区号的本地号码"
-                  class="min-h-[2.75rem] h-[2.75rem] min-w-0 flex-1 rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:text-sm sm:placeholder:text-white/30"
+                  class="min-h-[2.75rem] h-[2.75rem] min-w-0 flex-1 rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:outline-none sm:text-sm sm:placeholder:text-white/30"
                 />
               </div>
             </div>
@@ -667,7 +667,7 @@ async function onPickWalletProvider(providerKey) {
                   autocomplete="one-time-code"
                   required
                   placeholder="6 位数字"
-                  class="h-[2.75rem] min-h-[2.75rem] w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:text-sm tabular-nums"
+                  class="h-[2.75rem] min-h-[2.75rem] w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:outline-none sm:text-sm tabular-nums"
                 />
               </div>
               <button
@@ -697,7 +697,7 @@ async function onPickWalletProvider(providerKey) {
                 autocomplete="email"
                 required
                 placeholder="name@example.com"
-                class="h-[2.75rem] min-h-[2.75rem] w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:text-sm sm:placeholder:text-white/30"
+                class="h-[2.75rem] min-h-[2.75rem] w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:outline-none sm:text-sm sm:placeholder:text-white/30"
               />
             </div>
             <div v-else>
@@ -720,7 +720,7 @@ async function onPickWalletProvider(providerKey) {
                   autocomplete="tel-national"
                   required
                   placeholder="不含区号的本地号码"
-                  class="min-h-[2.75rem] h-[2.75rem] min-w-0 flex-1 rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:text-sm sm:placeholder:text-white/30"
+                  class="min-h-[2.75rem] h-[2.75rem] min-w-0 flex-1 rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:outline-none sm:text-sm sm:placeholder:text-white/30"
                 />
               </div>
             </div>
@@ -735,7 +735,7 @@ async function onPickWalletProvider(providerKey) {
               required
               minlength="6"
               placeholder="至少 6 位"
-              class="w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-3 text-base text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:py-2 sm:text-sm sm:placeholder:text-white/30"
+              class="w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-3 text-base text-white placeholder:text-white/35 focus:outline-none sm:py-2 sm:text-sm sm:placeholder:text-white/30"
             />
             <div v-if="!isRegister" class="mt-1.5 flex justify-end">
               <button
@@ -759,7 +759,7 @@ async function onPickWalletProvider(providerKey) {
               required
               minlength="6"
               placeholder="再次输入"
-              class="w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-3 text-base text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:py-2 sm:text-sm sm:placeholder:text-white/30"
+              class="w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-3 text-base text-white placeholder:text-white/35 focus:outline-none sm:py-2 sm:text-sm sm:placeholder:text-white/30"
             />
           </div>
 
@@ -810,7 +810,7 @@ async function onPickWalletProvider(providerKey) {
                 autocomplete="off"
                 maxlength="8"
                 placeholder="右侧输入，不区分大小写"
-                class="h-[2.75rem] min-h-[2.75rem] min-w-0 flex-1 rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:text-sm sm:placeholder:text-white/30"
+                class="h-[2.75rem] min-h-[2.75rem] min-w-0 flex-1 rounded-lg border border-white/[0.1] bg-black/40 px-3 py-0 text-base leading-normal text-white placeholder:text-white/35 focus:outline-none sm:text-sm sm:placeholder:text-white/30"
               />
             </div>
           </div>
@@ -829,7 +829,7 @@ async function onPickWalletProvider(providerKey) {
                   ? '请输入邀请码'
                   : '邀请码 / 推荐码（选填，可从推广链接带入）'
               "
-              class="w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-3 text-base text-white placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25 sm:py-2 sm:text-sm sm:placeholder:text-white/30"
+              class="w-full rounded-lg border border-white/[0.1] bg-black/40 px-3 py-3 text-base text-white placeholder:text-white/35 focus:outline-none sm:py-2 sm:text-sm sm:placeholder:text-white/30"
             />
           </div>
 

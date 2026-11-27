@@ -67,11 +67,11 @@
             <a-input
               v-model:value.number="lendingCreditScorecard.minScale"
               type="number"
-              min="0.05"
-              max="0.95"
-              step="0.05"
+              :min="0.05"
+              :max="0.95"
+              :step="0.05"
               :disabled="!canEditLimits"
-              class="w-28 rounded-lg border px-2 py-1.5 text-right font-mono text-sm outline-none focus:border-blue-500 disabled:cursor-not-allowed disabled:bg-slate-50"
+              class="w-28 rounded-lg border px-2 py-1.5 text-right font-mono text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-50"
               :class="minScaleValid ? 'border-slate-200' : 'border-amber-400 bg-amber-50'"
             />
           </div>
@@ -91,10 +91,10 @@
           <a-input
             v-model:value.number="lendingCreditScorecard.baseAccountCapMax"
             type="number"
-            min="0"
-            step="10000"
+            :min="0"
+            :step="10000"
             :disabled="!canEditLimits"
-            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-blue-500 disabled:cursor-not-allowed disabled:bg-slate-50"
+            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-50"
           />
         </div>
 
@@ -336,8 +336,8 @@
                       <a-input
                         v-model:value.number="row.points"
                         type="number"
-                        min="0"
-                        step="1"
+                        :min="0"
+                        :step="1"
                         :disabled="ruleFieldsLocked(dim)"
                         class="w-full rounded-md border border-slate-200 px-2 py-1.5 font-mono text-sm disabled:bg-slate-50 sm:max-w-[5rem]"
                       />
@@ -395,8 +395,8 @@
                       <a-input
                         v-model:value.number="row.points"
                         type="number"
-                        min="0"
-                        step="1"
+                        :min="0"
+                        :step="1"
                         :disabled="ruleFieldsLocked(dim)"
                         class="w-full rounded-md border border-slate-200 px-2 py-1.5 font-mono text-sm disabled:bg-slate-50 sm:max-w-[5rem]"
                       />
@@ -445,11 +445,11 @@
                   <a-input
                     v-model:value.number="dim.maxPoints"
                     type="number"
-                    min="1"
-                    max="100"
-                    step="1"
+                    :min="1"
+                    :max="100"
+                    :step="1"
                     :disabled="!canEditScorecard"
-                    class="w-full max-w-[8rem] rounded-lg border border-slate-200 px-3 py-2 font-mono text-sm outline-none focus:border-blue-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                    class="w-full max-w-[8rem] rounded-lg border border-slate-200 px-3 py-2 font-mono text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
                     @blur="onDimMaxBlur(dim)"
                   />
                   <p class="text-[11px] text-slate-400">占整卡约 {{ weightPercent(dim).toFixed(1) }}%；单项得分在取到指标值后按规则表匹配。</p>

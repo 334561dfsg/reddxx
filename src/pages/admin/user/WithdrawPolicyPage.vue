@@ -174,12 +174,12 @@ function toggleDimensionEnabled(dim) {
       <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1.5">单笔最低出金（USDT）</label>
-          <a-input type="number" min="0" step="0.01" class="w-full" :value="policy.defaultPolicy.minWithdrawUsdt" @update:value="policy.defaultPolicy.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
+          <a-input type="number" :min="0" :step="0.01" class="w-full" :value="policy.defaultPolicy.minWithdrawUsdt" @update:value="policy.defaultPolicy.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
           <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制单笔最低出金。</p>
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1.5">每日出金上限（USDT）</label>
-          <a-input type="number" min="0" step="1" class="w-full" :value="policy.defaultPolicy.dailyCapUsdt" @update:value="policy.defaultPolicy.dailyCapUsdt = $event === '' ? '' : Number($event)" />
+          <a-input type="number" :min="0" :step="1" class="w-full" :value="policy.defaultPolicy.dailyCapUsdt" @update:value="policy.defaultPolicy.dailyCapUsdt = $event === '' ? '' : Number($event)" />
           <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制每日出金上限。</p>
         </div>
       </div>
@@ -227,11 +227,11 @@ function toggleDimensionEnabled(dim) {
         <a-table  :data-source="policy.vipRules" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50/50&quot;] })">
 <a-table-column key="column-0" ><template #title>VIP（mock）</template><template #default="{ record: row, index: index }"><div class="  text-slate-900 font-medium">{{ vipRowLabel(row.vipLevel) }}</div></template></a-table-column>
 <a-table-column key="column-1" ><template #title>单笔最低 (U)</template><template #default="{ record: row, index: index }"><div class=" ">
-                <a-input type="number" min="0" step="0.01" class="w-32" :value="row.minWithdrawUsdt" @update:value="row.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="0" :step="0.01" class="w-32" :value="row.minWithdrawUsdt" @update:value="row.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </div></template></a-table-column>
 <a-table-column key="column-2" ><template #title>每日上限 (U)</template><template #default="{ record: row, index: index }"><div class=" ">
-                <a-input type="number" min="0" step="1" class="w-36" :value="row.dailyCapUsdt" @update:value="row.dailyCapUsdt = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="0" :step="1" class="w-36" :value="row.dailyCapUsdt" @update:value="row.dailyCapUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </div></template></a-table-column>
 </a-table>
@@ -246,10 +246,10 @@ function toggleDimensionEnabled(dim) {
       </div>
       <div class="overflow-x-auto">
         <a-table :data-source="[policy.agentRule]" :row-key="() => 'agent'" :pagination="false" size="small" :scroll="{ x: 'max-content' }"><a-table-column key="column-0"><template #title>用户身份</template><template #default="{ record: log }">代理</template></a-table-column><a-table-column key="column-1"><template #title>单笔最低 (U)</template><template #default="{ record: log }">
-                <a-input type="number" min="0" step="0.01" class="w-32" :value="policy.agentRule.minWithdrawUsdt" @update:value="policy.agentRule.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="0" :step="0.01" class="w-32" :value="policy.agentRule.minWithdrawUsdt" @update:value="policy.agentRule.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </template></a-table-column><a-table-column key="column-2"><template #title>每日上限 (U)</template><template #default="{ record: log }">
-                <a-input type="number" min="0" step="1" class="w-36" :value="policy.agentRule.dailyCapUsdt" @update:value="policy.agentRule.dailyCapUsdt = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="0" :step="1" class="w-36" :value="policy.agentRule.dailyCapUsdt" @update:value="policy.agentRule.dailyCapUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </template></a-table-column></a-table>
       </div>
@@ -265,7 +265,7 @@ function toggleDimensionEnabled(dim) {
         <a-table  :data-source="policy.verificationRules" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50/50&quot;] })">
 <a-table-column key="column-0" ><template #title>认证等级</template><template #default="{ record: row, index: index }"><div class="  text-slate-900 font-medium">{{ verificationRowLabel(row.verificationLevel) }}</div></template></a-table-column>
 <a-table-column key="column-1" ><template #title>单笔最低 (U)</template><template #default="{ record: row, index: index }"><div class=" ">
-                <a-input type="number" min="0" step="0.01" class="w-32" :value="row.minWithdrawUsdt" @update:value="row.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="0" :step="0.01" class="w-32" :value="row.minWithdrawUsdt" @update:value="row.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </div></template></a-table-column>
 <a-table-column key="column-2" ><template #title>每日上限</template><template #default="{ record: row, index: index }"><div class=" ">
@@ -274,7 +274,7 @@ function toggleDimensionEnabled(dim) {
                     <a-checkbox :checked="row.dailyCapUsdt === null" @change="setVerificationDailyUnlimited(row, $event)" />
                     无限制
                   </label>
-                  <a-input v-if="row.dailyCapUsdt !== null" type="number" min="0" step="1" class="w-36" :value="row.dailyCapUsdt" @update:value="row.dailyCapUsdt = $event === '' ? '' : Number($event)" />
+                  <a-input v-if="row.dailyCapUsdt !== null" type="number" :min="0" :step="1" class="w-36" :value="row.dailyCapUsdt" @update:value="row.dailyCapUsdt = $event === '' ? '' : Number($event)" />
                 </div>
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </div></template></a-table-column>
@@ -294,17 +294,17 @@ function toggleDimensionEnabled(dim) {
       <div class="overflow-x-auto">
         <a-table  :data-source="policy.creditScoreRules" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50/50&quot;] })">
 <a-table-column key="column-0" ><template #title>分数下限</template><template #default="{ record: row, index: index }"><div class=" ">
-                <a-input type="number" min="0" max="100" class="w-24" :value="row.minScore" @update:value="row.minScore = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="0" :max="100" class="w-24" :value="row.minScore" @update:value="row.minScore = $event === '' ? '' : Number($event)" />
               </div></template></a-table-column>
 <a-table-column key="column-1" ><template #title>分数上限</template><template #default="{ record: row, index: index }"><div class=" ">
-                <a-input type="number" min="0" max="100" class="w-24" :value="row.maxScore" @update:value="row.maxScore = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="0" :max="100" class="w-24" :value="row.maxScore" @update:value="row.maxScore = $event === '' ? '' : Number($event)" />
               </div></template></a-table-column>
 <a-table-column key="column-2" ><template #title>单笔最低 (U)</template><template #default="{ record: row, index: index }"><div class=" ">
-                <a-input type="number" min="0" step="0.01" class="w-32" :value="row.minWithdrawUsdt" @update:value="row.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="0" :step="0.01" class="w-32" :value="row.minWithdrawUsdt" @update:value="row.minWithdrawUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </div></template></a-table-column>
 <a-table-column key="column-3" ><template #title>每日上限 (U)</template><template #default="{ record: row, index: index }"><div class=" ">
-                <a-input type="number" min="0" step="1" class="w-36" :value="row.dailyCapUsdt" @update:value="row.dailyCapUsdt = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="0" :step="1" class="w-36" :value="row.dailyCapUsdt" @update:value="row.dailyCapUsdt = $event === '' ? '' : Number($event)" />
                 <p class="mt-1 text-xs leading-5 text-slate-500">输入 0 表示不限制</p>
               </div></template></a-table-column>
 <a-table-column key="column-4" ><template #title>操作</template><template #default="{ record: row, index: index }"><div class=" ">
@@ -338,7 +338,7 @@ function toggleDimensionEnabled(dim) {
                 <label class="block text-xs font-medium text-slate-600 mb-1">代理身份</label>
                 <label class="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
                   <span>{{ sim.isAgent ? '是代理' : '非代理' }}</span>
-                  <a-switch :checked="sim.isAgent" @click="sim.isAgent = !sim.isAgent" />
+                  <a-switch :checked="sim.isAgent" aria-label="代理身份" @click="sim.isAgent = !sim.isAgent" />
                 </label>
               </div>
               <div>
@@ -351,7 +351,7 @@ function toggleDimensionEnabled(dim) {
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-600 mb-1">信用分</label>
-                <a-input type="number" min="0" max="100" class="w-full" :value="sim.creditScore" @update:value="sim.creditScore = $event === '' ? '' : Number($event)" />
+                <a-input type="number" :min="0" :max="100" class="w-full" :value="sim.creditScore" @update:value="sim.creditScore = $event === '' ? '' : Number($event)" />
               </div>
             </div>
             <div v-if="preview" class="rounded-lg border border-slate-200 bg-white p-4 text-sm">

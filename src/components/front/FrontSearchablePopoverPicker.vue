@@ -56,7 +56,7 @@ const filteredOptions = computed(() => {
 })
 
 const triggerClass =
-  'flex h-[2.75rem] w-full min-h-[2.75rem] shrink-0 items-center justify-between gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-0 text-left text-base font-medium leading-none text-[#eaecef] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] transition [-webkit-tap-highlight-color:transparent] hover:border-white/[0.14] active:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505] sm:px-4 sm:text-[15px] lg:rounded-lg'
+  'flex h-[2.75rem] w-full min-h-[2.75rem] shrink-0 items-center justify-between gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-0 text-left text-base font-medium leading-none text-[#eaecef] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] transition [-webkit-tap-highlight-color:transparent] hover:border-white/[0.14] active:bg-white/[0.06] focus:outline-none sm:px-4 sm:text-[15px] lg:rounded-lg'
 
 function syncMq() {
   if (typeof window === 'undefined') return
@@ -188,7 +188,7 @@ function optionBtnClass(selected) {
           type="search"
           autocomplete="off"
           :placeholder="searchPlaceholder"
-          class="w-full rounded-lg border border-white/[0.1] bg-[#0b0c0e] px-2.5 py-2 text-sm text-[#eaecef] placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25"
+          class="w-full rounded-lg border border-white/[0.1] bg-[#0b0c0e] px-2.5 py-2 text-sm text-[#eaecef] placeholder:text-white/35 focus:outline-none"
           @keydown.escape.stop="open = false"
         />
       </div>
@@ -277,7 +277,7 @@ function optionBtnClass(selected) {
                 type="search"
                 autocomplete="off"
                 :placeholder="searchPlaceholder"
-                class="w-full rounded-lg border border-white/[0.1] bg-[#0b0c0e] px-2.5 py-2 text-sm text-[#eaecef] placeholder:text-white/35 focus:border-lime-400/45 focus:outline-none focus:ring-1 focus:ring-lime-400/25"
+                class="w-full rounded-lg border border-white/[0.1] bg-[#0b0c0e] px-2.5 py-2 text-sm text-[#eaecef] placeholder:text-white/35 focus:outline-none"
                 @keydown.escape.stop="close"
               />
             </div>

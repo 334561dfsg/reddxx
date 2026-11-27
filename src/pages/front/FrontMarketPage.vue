@@ -202,7 +202,7 @@ function formatChange(pct) {
             type="button"
             role="tab"
             :aria-selected="activeTab === t.key"
-            class="min-w-0 flex-1 rounded-md px-3 py-2 text-center text-xs font-medium transition [-webkit-tap-highlight-color:transparent] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505] sm:flex-none sm:px-4 sm:text-sm"
+            class="min-w-0 flex-1 rounded-md px-3 py-2 text-center text-xs font-medium transition [-webkit-tap-highlight-color:transparent] focus:outline-none sm:flex-none sm:px-4 sm:text-sm"
             :class="
               activeTab === t.key
                 ? 'bg-white/[0.08] text-lime-300'
@@ -221,7 +221,7 @@ function formatChange(pct) {
             type="search"
             autocomplete="off"
             placeholder="搜索代码或名称"
-            class="w-full rounded-lg border border-white/[0.05] bg-[#090b0e] py-2.5 pl-9 pr-3 text-sm text-[#eaecef] placeholder:text-[#848e9c] transition-colors [-webkit-tap-highlight-color:transparent] focus:border-lime-400/25 focus:bg-[#0c0f14] focus:outline-none focus:ring-1 focus:ring-lime-400/12"
+            class="w-full rounded-lg border border-white/[0.05] bg-[#090b0e] py-2.5 pl-9 pr-3 text-sm text-[#eaecef] placeholder:text-[#848e9c] transition-colors [-webkit-tap-highlight-color:transparent] focus:bg-[#0c0f14] focus:outline-none"
           />
           <svg
             class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#848e9c]"
@@ -279,7 +279,7 @@ function formatChange(pct) {
           <div class="flex justify-end">
             <button
               type="button"
-              class="rounded-lg border border-lime-400/25 bg-lime-400/[0.08] px-3 py-1.5 text-xs font-semibold text-lime-200 transition [-webkit-tap-highlight-color:transparent] hover:bg-lime-400/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0e11]"
+              class="rounded-lg border border-lime-400/25 bg-lime-400/[0.08] px-3 py-1.5 text-xs font-semibold text-lime-200 transition [-webkit-tap-highlight-color:transparent] hover:bg-lime-400/15 focus:outline-none"
               aria-haspopup="dialog"
               :aria-expanded="tradeChoiceRow === row"
               @click="openTradeChoice(row)"
@@ -326,7 +326,7 @@ function formatChange(pct) {
         <div class="mt-3 flex justify-end border-t border-white/[0.06] pt-3">
           <button
             type="button"
-            class="rounded-lg border border-lime-400/25 bg-lime-400/[0.08] px-4 py-2 text-xs font-semibold text-lime-200 transition [-webkit-tap-highlight-color:transparent] hover:bg-lime-400/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0e11]"
+            class="rounded-lg border border-lime-400/25 bg-lime-400/[0.08] px-4 py-2 text-xs font-semibold text-lime-200 transition [-webkit-tap-highlight-color:transparent] hover:bg-lime-400/15 focus:outline-none"
             aria-haspopup="dialog"
             :aria-expanded="tradeChoiceRow === row"
             @click="openTradeChoice(row)"
@@ -369,7 +369,7 @@ function formatChange(pct) {
             v-for="entry in tradeChoiceEntries"
             :key="entry.key"
             :to="entry.to"
-            class="flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-left transition [-webkit-tap-highlight-color:transparent] hover:border-lime-400/25 hover:bg-lime-400/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-lime-400/35"
+            class="flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-left transition [-webkit-tap-highlight-color:transparent] hover:border-lime-400/25 hover:bg-lime-400/[0.08] focus:outline-none"
             @click="closeTradeChoice"
           >
             <span>

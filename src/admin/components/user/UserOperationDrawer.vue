@@ -110,7 +110,7 @@ const riskBadgeClasses = (entry) => ({
               </div>
               <AdminButton
                 type="button"
-                class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none"
                 aria-label="关闭"
                 @click="close"
               >
@@ -145,7 +145,7 @@ const riskBadgeClasses = (entry) => ({
                     v-for="entry in group.entries"
                     :key="entry.id"
                     type="button"
-                    class="min-h-16 rounded-lg border p-2.5 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    class="min-h-16 rounded-lg border p-2.5 text-left transition-colors focus:outline-none"
                     :class="entryClasses(entry)"
                     @click="selectEntry(entry, $event)"
                   >

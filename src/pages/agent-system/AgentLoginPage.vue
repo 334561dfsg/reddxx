@@ -84,7 +84,7 @@ async function submit() {
             v-model="loginAccount"
             type="text"
             autocomplete="username"
-            class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2.5 text-sm text-white outline-none ring-emerald-500/30 focus:border-emerald-500/50 focus:ring-2"
+            class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2.5 text-sm text-white outline-none ring-emerald-500/30"
             :placeholder="loginHintAccount"
           />
         </div>
@@ -94,7 +94,7 @@ async function submit() {
             v-model="password"
             type="password"
             autocomplete="current-password"
-            class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2.5 text-sm text-white outline-none ring-emerald-500/30 focus:border-emerald-500/50 focus:ring-2"
+            class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2.5 text-sm text-white outline-none ring-emerald-500/30"
             placeholder="至少 6 位"
           />
         </div>
@@ -106,7 +106,7 @@ async function submit() {
             inputmode="numeric"
             maxlength="6"
             autocomplete="one-time-code"
-            class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2.5 text-sm text-white outline-none ring-emerald-500/30 focus:border-emerald-500/50 focus:ring-2"
+            class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#0c1219] px-3 py-2.5 text-sm text-white outline-none ring-emerald-500/30"
             placeholder="请输入 6 位验证码"
           />
         </div>
@@ -127,6 +127,5 @@ async function submit() {
 <style scoped>
 .demo-role-button{border:1px solid rgb(255 255 255 / .12);border-radius:.75rem;padding:1rem;text-align:left;font-size:.875rem;background:rgb(255 255 255 / .03)}
 .demo-role-button:hover{border-color:rgb(52 211 153 / .6);background:rgb(16 185 129 / .12)}
-.demo-role-button:focus-visible{outline:2px solid #34d399;outline-offset:3px}
 .demo-role-button:disabled{opacity:.5;cursor:wait}
 </style>

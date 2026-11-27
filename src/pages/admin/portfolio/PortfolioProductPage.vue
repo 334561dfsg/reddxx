@@ -198,7 +198,7 @@ function statusClass(status) {
         <a-input
           v-model:value="search"
           placeholder="搜索产品名称、ID 或币种"
-          class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition"
         />
         <a-select :get-popup-container="(trigger) => trigger.parentElement"
           v-model:value="statusFilter"

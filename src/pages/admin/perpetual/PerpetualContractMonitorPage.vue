@@ -820,7 +820,7 @@ const handleMfaVerify = async (code) => {
               <div class="grid gap-3.5 sm:grid-cols-2">
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">{{ triggerMeta.thresholdLabel }} <span class="text-rose-500">*</span></span>
-                  <a-input v-model:value.number="ruleForm.thresholdValue" type="number" min="0" class="ant-input" />
+                  <a-input v-model:value.number="ruleForm.thresholdValue" type="number" :min="0" class="ant-input" />
                 </label>
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">触发方向</span>
@@ -836,7 +836,7 @@ const handleMfaVerify = async (code) => {
                     <span class="text-sm font-medium text-slate-700">
                       {{ ruleForm.triggerDirection === PERP_CONTROL_RULE_DIRECTION.LONG_HEAVY ? '多头' : '空头' }}占比阈值 (%)
                     </span>
-                    <a-input v-model:value.number="ruleForm.positionRatio" type="number" min="50" max="100" step="1" class="ant-input !w-20 !h-8 !px-2 !text-right" />
+                    <a-input v-model:value.number="ruleForm.positionRatio" type="number" :min="50" :max="100" :step="1" class="ant-input !w-20 !h-8 !px-2 !text-right" />
                   </div>
                   <a-slider v-model:value.number="ruleForm.positionRatio" :min="50" :max="100" :step="1" class="w-full" />
                   <div class="flex items-start gap-1.5 rounded-md bg-blue-50 px-3 py-2">
@@ -887,7 +887,7 @@ const handleMfaVerify = async (code) => {
                 <label class="block space-y-3">
                   <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-slate-700">价格偏移 (点)</span>
-                    <a-input v-model:value.number="ruleForm.priceOffset" type="number" min="0" max="50" step="1" class="ant-input !w-20 !h-8 !px-2 !text-right" />
+                    <a-input v-model:value.number="ruleForm.priceOffset" type="number" :min="0" :max="50" :step="1" class="ant-input !w-20 !h-8 !px-2 !text-right" />
                   </div>
                   <a-slider v-model:value.number="ruleForm.priceOffset" :min="0" :max="50" :step="1" class="w-full" />
                   <div class="flex items-start gap-1.5 rounded-md bg-violet-50 px-3 py-2">
@@ -909,7 +909,7 @@ const handleMfaVerify = async (code) => {
 
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">持续时间 (秒)</span>
-                  <a-input v-model:value.number="ruleForm.durationSec" type="number" min="0" class="ant-input" placeholder="0 为持续生效" />
+                  <a-input v-model:value.number="ruleForm.durationSec" type="number" :min="0" class="ant-input" placeholder="0 为持续生效" />
                 </label>
               </div>
 
@@ -917,7 +917,7 @@ const handleMfaVerify = async (code) => {
                 <label class="block space-y-3">
                   <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-slate-700">滑点率 (%)</span>
-                    <a-input v-model:value.number="ruleForm.slippagePct" type="number" min="0" max="2" step="0.01" class="ant-input !w-20 !h-8 !px-2 !text-right" />
+                    <a-input v-model:value.number="ruleForm.slippagePct" type="number" :min="0" :max="2" :step="0.01" class="ant-input !w-20 !h-8 !px-2 !text-right" />
                   </div>
                   <a-slider v-model:value.number="ruleForm.slippagePct" :min="0" :max="2" :step="0.01" class="w-full" />
                   <div class="flex items-start gap-1.5 rounded-md bg-violet-50 px-3 py-2">

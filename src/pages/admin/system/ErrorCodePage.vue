@@ -304,7 +304,7 @@ const nextPage = () => {
 
           <label class="block space-y-1">
             <span class="text-xs font-medium text-slate-600">文案</span>
-            <a-textarea v-model:value="form.error_code_name" rows="3" class="w-full"></a-textarea>
+            <a-textarea v-model:value="form.error_code_name" :rows="3" class="w-full"></a-textarea>
           </label>
         </div></template><template #footer><template v-if="Boolean(modalOpen)"><div class="flex items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
           <a-button html-type="button" class="!text-sm" :disabled="submitting" @click="closeModal">取消</a-button>

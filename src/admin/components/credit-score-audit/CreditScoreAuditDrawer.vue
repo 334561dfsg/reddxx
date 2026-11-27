@@ -266,7 +266,7 @@ const submitAudit = () => {
             <AdminTextarea
               v-model="auditNote"
               rows="3"
-              class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+              class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none"
               :placeholder="auditAction === 'approve' ? '请输入通过备注（可选）...' : '请输入拒绝原因...'"
             />
 

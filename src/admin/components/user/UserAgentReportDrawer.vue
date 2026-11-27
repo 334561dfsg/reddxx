@@ -85,7 +85,7 @@ watch(totalPages, (nextTotalPages) => {
               <h2 id="user-agent-report-title" ref="titleRef" tabindex="-1" class="break-words text-lg font-semibold text-slate-900 outline-none">代理业务报表</h2>
               <p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知代理' }} · UID {{ userId || '—' }}</p>
             </div>
-            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="关闭" @click="close">×</AdminButton>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</AdminButton>
           </header>
 
           <div data-testid="user-agent-report-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
@@ -106,7 +106,7 @@ watch(totalPages, (nextTotalPages) => {
                 <AdminButton
                   id="agent-report-products-tab"
                   type="button"
-                  class="min-h-10 rounded-lg px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="min-h-10 rounded-lg px-3 py-2 transition-colors focus:outline-none"
                   :class="activeTab === 'products' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
                   role="tab"
                   :aria-selected="activeTab === 'products' ? 'true' : 'false'"
@@ -116,7 +116,7 @@ watch(totalPages, (nextTotalPages) => {
                 <AdminButton
                   id="agent-report-daily-tab"
                   type="button"
-                  class="min-h-10 rounded-lg px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="min-h-10 rounded-lg px-3 py-2 transition-colors focus:outline-none"
                   :class="activeTab === 'daily' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
                   role="tab"
                   :aria-selected="activeTab === 'daily' ? 'true' : 'false'"
@@ -129,7 +129,7 @@ watch(totalPages, (nextTotalPages) => {
                 v-if="activeTab === 'products'"
                 id="agent-report-products-panel"
                 data-testid="agent-report-products-panel"
-                class="mt-3 min-h-0 flex-1 overflow-y-auto overscroll-y-contain pb-[max(1rem,env(safe-area-inset-bottom))] outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset"
+                class="mt-3 min-h-0 flex-1 overflow-y-auto overscroll-y-contain pb-[max(1rem,env(safe-area-inset-bottom))] outline-none"
                 role="tabpanel"
                 tabindex="0"
                 aria-labelledby="agent-report-products-tab"
@@ -148,7 +148,7 @@ watch(totalPages, (nextTotalPages) => {
                 v-else
                 id="agent-report-daily-panel"
                 data-testid="agent-report-daily-panel"
-                class="mt-3 min-h-0 flex-1 overflow-y-auto overscroll-y-contain outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset"
+                class="mt-3 min-h-0 flex-1 overflow-y-auto overscroll-y-contain outline-none"
                 :class="dailyRows.length ? '' : 'pb-[max(1rem,env(safe-area-inset-bottom))]'"
                 role="tabpanel"
                 tabindex="0"
