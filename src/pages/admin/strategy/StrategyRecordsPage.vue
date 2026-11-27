@@ -94,7 +94,7 @@ async function run(action, args, success) {
     <template v-else-if="['capital', 'returned'].includes(column.key)">{{ amount(record[column.key]) }}</template>
     <Space v-else-if="column.key === 'pnl'" direction="vertical" :size="0" align="end"><TypographyText :type="tone(record.pnl)">{{ signed(record.pnl) }}</TypographyText><TypographyText v-if="mode === 'subscriptions'" type="secondary">{{ percent(record.pnl, record.capital) }}</TypographyText></Space>
     <template v-else-if="column.key === 'terms'">{{ record.days }} 天 / {{ record.takeProfit }}% / {{ record.stopLoss }}%</template>
-    <Space v-else-if="column.key === 'status'" :size="4" wrap><Tag :color="statusColors[record.status]">{{ statusLabels[record.status] }}</Tag><TypographyText v-if="record.endReason" type="secondary">{{ endReasonLabels[record.endReason] }}</TypographyText></Space>
+    <Tag v-else-if="column.key === 'status'" :color="statusColors[record.status]">{{ statusLabels[record.status] }}</Tag>
     <template v-else-if="column.key === 'reason'">{{ endReasonLabels[record.reason] }}</template>
     <template v-else-if="column.key === 'action'">{{ actionLabels[record.action] || record.action }}</template>
     <template v-else-if="['createdAt', 'settledAt'].includes(column.key)">{{ dateTime(record[column.key]) }}</template>
