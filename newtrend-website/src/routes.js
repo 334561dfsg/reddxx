@@ -6,7 +6,9 @@ const OptionsTrade=()=>import('./pages/trading/OptionsTrade.vue')
 const SpotTrade=()=>import('./pages/trading/SpotTrade.vue')
 const TradeChart=()=>import('./pages/trading/TradeChart.vue')
 const Finance=()=>import('./pages/Finance.vue')
-const Quant=()=>import('./pages/Quant.vue')
+const QuantLanding=()=>import('./pages/quant/QuantLanding.vue')
+const Strategy=()=>import('./pages/Strategy.vue')
+const QuantFundPage=()=>import('./pages/quant/QuantFundPage.vue')
 const Assets=()=>import('./pages/Assets.vue')
 const Charity=()=>import('./pages/Charity.vue')
 const Withdraw=()=>import('./pages/Withdraw.vue')
@@ -40,10 +42,13 @@ export const routes=[
  // An id is only valid under a section, so /earn/x reaches not-found instead of an empty Finance shell.
  {name:'finance-home',path:'/earn',component:Finance},
  {name:'finance',path:'/earn/:section(simple|my-earnings|loan)/:id?',component:Finance},
- {name:'quant-fund-product',path:'/ai-quant/quant-fund/products/:productId',component:Quant},
- {name:'quant-fund-interest',path:'/ai-quant/quant-fund/positions/:orderId/interest-records',component:Quant},
- {name:'strategy-stats',path:'/ai-quant/strategy/mine/:recordId/stats',component:Quant},
- {name:'ai-quant',path:'/ai-quant/:section(strategy|quant-fund)?/:id(mine|positions)?',component:Quant},
+ // AI 量化: one page component per route (channel home, strategy list/mine + stats, fund list/positions, detail, payouts).
+ {name:'ai-quant',path:'/ai-quant',component:QuantLanding},
+ {name:'strategy',path:'/ai-quant/strategy/:id(mine)?',component:Strategy},
+ {name:'strategy-stats',path:'/ai-quant/strategy/mine/:recordId/stats',component:Strategy},
+ {name:'quant-fund',path:'/ai-quant/quant-fund/:id(positions)?',component:QuantFundPage},
+ {name:'quant-fund-product',path:'/ai-quant/quant-fund/products/:productId',component:()=>import('./pages/quant/QuantFundProductPage.vue')},
+ {name:'quant-fund-interest',path:'/ai-quant/quant-fund/positions/:orderId/interest-records',component:()=>import('./pages/quant/QuantFundInterestPage.vue')},
  {name:'assets',path:'/assets/:section(overview|transfer|records)?',component:Assets},
  {name:'auth',path:'/:auth(login|register|forgot-password)',component:Auth},
  {name:'news',path:'/news/:id?',component:News},

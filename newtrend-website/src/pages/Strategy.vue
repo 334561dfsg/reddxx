@@ -1,12 +1,11 @@
 <script setup>
 import QuantAmbient from '../components/quant/QuantAmbient.vue'
 import StrategyStatsPage from '../components/strategy/StrategyStatsPage.vue'
-import {computed,nextTick,onMounted,onUnmounted,ref,watch} from 'vue'
+import {computed,nextTick,onMounted,watch} from 'vue'
 import {useRoute,useRouter} from 'vue-router'
-import FeedbackToast from '../platform/FeedbackToast.js'
 import {path} from '../data'
 import {openModal,session} from '../session'
-import {strategyFilters as filters,strategyNotice} from '../server/strategyPortfolio'
+import {strategyFilters as filters} from '../server/strategyPortfolio'
 import {getMyStrategies,listStrategyTemplates} from '../api/strategy.js'
 import {useRequest} from '../composables/useRequest.js'
 import RequestState from '../components/ui/RequestState.vue'
@@ -19,6 +18,8 @@ import {t} from '../i18n'
 import StrategyCard from '../components/strategy/StrategyCard.vue'
 import RecordFilter from '../components/RecordFilter.vue'
 import Icon from '../components/Icon.vue'
+import ChannelSectionSwitch from '../components/ui/ChannelSectionSwitch.vue'
+import '../styles/quant-fidelity.css'
 import '../styles/strategy-fidelity.css'
 import '../styles/quant-system.css'
 const route=useRoute(),router=useRouter(),mine=computed(()=>route.params.id==='mine'),recordId=computed(()=>route.params.recordId||'')
@@ -41,11 +42,10 @@ const catalogCount=computed(()=>strategyCatalog.value.length)
 const heroReady=computed(()=>catalogReady.value&&mineRequest.status.value!=='loading')
 // Hero stat switches to the running count once the current account has a running strategy (reference behaviour).
 const runningCount=computed(()=>account.value?.records.filter(r=>r.status==='running').length||0)
-const notice=ref(null)
-let noticeTimer
-// Shown after the subscribe dialog's close animation so the toast is not left under the dialog layer.
-watch(()=>strategyNotice.at,at=>{if(!at)return;clearTimeout(noticeTimer);notice.value=null;noticeTimer=setTimeout(()=>{notice.value={key:strategyNotice.key,at}},220)})
-onUnmounted(()=>clearTimeout(noticeTimer))
+const sections=computed(()=>[
+ {to:path('/ai-quant/strategy'),label:t('aiQuant.nav.strategy'),icon:'bot',active:!mine.value},
+ {to:path('/ai-quant/strategy/mine'),label:t('aiQuant.nav.myStrategies'),icon:'chart-candlestick',active:mine.value},
+])
 function subscribe(product){
  if(!session.loggedIn){rememberPendingSubscribe(product.id);router.push(loginPath(route.fullPath));return}
  openModal('strategy-subscribe',{key:'aiQuant.create.title',params:{name:product.name}},product)
@@ -62,7 +62,9 @@ onMounted(()=>{
 <template>
 <div class="strategy-page"><QuantAmbient/>
 <NotFound v-if="statsMissing"/><div v-else-if="recordId&&mineRequest.status.value==='error'" class="strategy-container strategy-stats-page"><RequestState :status="mineRequest.status.value" :error="mineRequest.error.value" class="strategy-request-frame" @retry="mineRequest.refresh"/></div><StrategyStatsPage v-else-if="recordId" :record="statsRecord"/><template v-else>
- <div class="strategy-container"><nav class="strategy-nav" :aria-label="$t('aiQuant.nav.ariaLabel')"><RouterLink :class="{active:!mine}" :to="path('/ai-quant/strategy')"><Icon name="bot"/>{{ $t('aiQuant.nav.strategy') }}</RouterLink><RouterLink :class="{active:mine}" :to="path('/ai-quant/strategy/mine')"><Icon name="chart-candlestick"/>{{ $t('aiQuant.nav.myStrategies') }}</RouterLink></nav></div>
+ <div class="strategy-container">
+  <ChannelSectionSwitch class="strategy-nav" :items="sections" :aria-label="$t('aiQuant.nav.ariaLabel')"/>
+ </div>
  <template v-if="!mine">
  <section class="strategy-hero-section"><div class="strategy-container strategy-hero-grid"><div><p class="strategy-eyebrow">{{ $t('aiQuant.hero.subtitle') }}</p><h1>{{ $t('aiQuant.hero.title') }}</h1><p class="strategy-hero-description">{{ $t('aiQuant.hero.description') }}</p><div class="strategy-hero-actions"><a href="#templates" class="strategy-cta">{{ $t('aiQuant.hero.browseStrategies') }}<Icon name="arrow-right"/></a></div><div class="strategy-stats"><div><small>{{ $t(heroReady&&runningCount?'aiQuant.hero.statActive':'aiQuant.hero.statActiveFallback') }}</small><strong><template v-if="heroReady">{{ runningCount||catalogCount }}</template><Skeleton v-else inline width="48px"/></strong><small>{{ $t(heroReady&&runningCount?'aiQuant.hero.statActiveSub':'aiQuant.hero.statActiveFallbackSub') }}</small></div><div><small>{{ $t('aiQuant.hero.statAvgSharpe') }}</small><strong><template v-if="catalogReady">{{ median }}</template><Skeleton v-else inline width="72px"/></strong><small>{{ $t('aiQuant.hero.statAvgSharpeSub') }}</small></div></div></div><div class="strategy-graph"><p class="strategy-eyebrow">{{ $t('aiQuant.hero.modelsRunning') }}</p><svg class="strategy-hero-chart" viewBox="0 0 360 320" role="img" :aria-label="$t('aiQuant.hero.modelsRunning')"><defs><pattern id="strategy-chart-grid" width="36" height="32" patternUnits="userSpaceOnUse"><path d="M36 0H0V32" fill="none" stroke="currentColor" stroke-width="0.5"/></pattern><linearGradient id="strategy-fit-fade" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#a5ff4a" stop-opacity="0"/><stop offset="22%" stop-color="#a5ff4a" stop-opacity="0.9"/><stop offset="100%" stop-color="#a5ff4a" stop-opacity="1"/></linearGradient><linearGradient id="strategy-trace-fade" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="currentColor" stop-opacity="0"/><stop offset="40%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0.7"/></linearGradient></defs><g class="chart-faint" opacity="0.55"><rect x="22" y="34" width="316" height="232" fill="url(#strategy-chart-grid)" opacity="0.35"/><line x1="22" y1="266" x2="338" y2="266" stroke="currentColor" stroke-width="0.7"/><line x1="22" y1="34" x2="22" y2="266" stroke="currentColor" stroke-width="0.7"/></g><g class="chart-muted" fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M28 220 L70 208 L112 200 L160 190 L208 196 L256 180 L304 168 L334 150" stroke="url(#strategy-trace-fade)" opacity="0.35"/><path d="M28 232 L70 224 L112 212 L160 206 L208 200 L256 198 L304 190 L334 178" stroke="url(#strategy-trace-fade)" opacity="0.28"/><path d="M28 244 L70 236 L112 230 L160 222 L208 220 L256 212 L304 206 L334 196" stroke="url(#strategy-trace-fade)" opacity="0.22"/><path d="M28 198 L70 184 L112 192 L160 178 L208 166 L256 172 L304 158 L334 142" stroke="url(#strategy-trace-fade)" opacity="0.42"/><path d="M28 252 L70 256 L112 246 L160 238 L208 230 L256 224 L304 218 L334 212" stroke="url(#strategy-trace-fade)" opacity="0.18"/></g><g class="chart-muted" fill="currentColor" opacity="0.55"><circle cx="70" cy="200" r="1.6"/><circle cx="112" cy="186" r="1.6"/><circle cx="160" cy="172" r="1.6"/><circle cx="208" cy="156" r="1.6"/><circle cx="256" cy="138" r="1.6"/><circle cx="304" cy="118" r="1.6"/></g><g><path d="M28 216 Q90 200 160 168 T334 92" fill="none" stroke="#a5ff4a" stroke-width="2.4" stroke-linecap="round" opacity="0.18"/><path d="M28 216 Q90 200 160 168 T334 92" fill="none" stroke="url(#strategy-fit-fade)" stroke-width="1.5" stroke-linecap="round"/></g><g><circle class="chart-pulse" cx="334" cy="92" r="11" fill="#a5ff4a" opacity="0.18"><animate attributeName="r" values="9;14;9" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.18;0.05;0.18" dur="2.6s" repeatCount="indefinite"/></circle><circle cx="334" cy="92" r="4" fill="#a5ff4a"/></g><g class="chart-faint" font-family="'IBM Plex Mono',monospace" font-size="7.5" text-anchor="middle" opacity="0.5"><text x="70" y="282" fill="currentColor">D-60</text><text x="160" y="282" fill="currentColor">D-30</text><text x="256" y="282" fill="currentColor">D-10</text><text x="328" y="282" fill="currentColor">NOW</text></g></svg></div></div></section>
  <section class="strategy-featured-section"><div class="strategy-container"><h2>{{ $t('aiQuant.sections.featured') }}</h2><p class="strategy-section-description">{{ $t('aiQuant.spotlight.subtitle') }}</p><RequestState v-if="catalog.status.value==='error'" :status="catalog.status.value" :error="catalog.error.value" class="strategy-request-frame" @retry="catalog.refresh"/><div v-else class="strategy-grid strategy-featured-grid"><template v-if="!catalogReady"><span role="status" class="sr-only">{{ $t('common.loading') }}</span><div v-for="n in 3" :key="n" class="sc-card sc-featured sc-skeleton-featured" aria-hidden="true"><div class="sc-skeleton-row"><Skeleton width="44px" height="44px" round/><div class="sc-skeleton-lines"><Skeleton width="140px" height="20px"/><Skeleton width="180px" height="22px"/></div></div><div class="sc-skeleton-lines"><Skeleton/><Skeleton width="70%"/></div><div class="sc-skeleton-grid"><Skeleton v-for="c in 4" :key="c" height="44px"/></div><Skeleton height="44px" class="sc-skeleton-button"/></div></template><StrategyCard v-else v-for="product in featured" :key="product.id" :product="product" featured @detail="detail" @subscribe="subscribe"/></div></div></section>
@@ -71,7 +73,6 @@ onMounted(()=>{
  </template>
  <div v-else class="strategy-container strategy-mine"><MyStrategies :account="account" :status="mineRequest.status.value" :error="mineRequest.error.value" @retry="mineRequest.refresh"/></div>
 </template>
-<FeedbackToast v-if="notice" :key="notice.at" type="success" :source="()=>notice?$t(notice.key):''"/>
 </div>
 </template>
 <style>.sc-skeleton-featured,.sc-skeleton-catalog{display:flex;flex-direction:column;gap:16px;pointer-events:none;box-sizing:border-box;overflow:hidden}.sc-skeleton-featured{height:329px}.sc-skeleton-catalog{height:414px}.sc-skeleton-row{display:flex;gap:12px;align-items:center}.sc-skeleton-lines{display:grid;gap:8px;flex:1;min-width:0}.sc-skeleton-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.sc-skeleton-button{margin-top:auto;border-radius:999px}.strategy-request-frame.nt-request-error{border:1px solid #191b1f;border-radius:32px;background:#14161a}</style>

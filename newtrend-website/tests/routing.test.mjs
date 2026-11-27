@@ -20,7 +20,8 @@ test('known pages resolve to their named routes', () => {
     '/trade/futures/BTCUSDT': 'trade-futures', '/trade/options/ETHUSDT': 'trade-options', '/trade/spot': 'trade-spot',
     '/earn': 'finance-home', '/earn/simple': 'finance', '/earn/simple/usdt90': 'finance', '/earn/my-earnings': 'finance', '/earn/loan': 'finance',
     '/earn/loan/order/LN-1': 'loan-order', '/earn/loan/borrow': 'finance',
-    '/ai-quant': 'ai-quant', '/ai-quant/strategy/mine': 'ai-quant', '/ai-quant/quant-fund/positions': 'ai-quant',
+    '/ai-quant': 'ai-quant', '/ai-quant/strategy': 'strategy', '/ai-quant/strategy/mine': 'strategy',
+    '/ai-quant/quant-fund': 'quant-fund', '/ai-quant/quant-fund/positions': 'quant-fund',
     '/ai-quant/quant-fund/products/qf-vip0': 'quant-fund-product',
     '/ai-quant/quant-fund/positions/QFO-1/interest-records': 'quant-fund-interest',
     '/ai-quant/strategy/mine/STR-1/stats': 'strategy-stats',
@@ -35,7 +36,7 @@ test('known pages resolve to their named routes', () => {
 })
 
 test('unknown sections and pages reach the not-found page instead of an empty shell', () => {
-  for (const path of ['/earn/x', '/ai-quant/x', '/ai-quant/strategy/x', '/assets/x', '/c2c', '/c2c/x', '/kyc-x', '/copytrade-x', '/nope/deeper'])
+  for (const path of ['/earn/x', '/ai-quant/x', '/ai-quant/strategy/x', '/ai-quant/strategy/positions', '/ai-quant/quant-fund/mine', '/assets/x', '/c2c', '/c2c/x', '/kyc-x', '/copytrade-x', '/nope/deeper'])
     assert.equal(nameOf(path), 'not-found', path)
 })
 

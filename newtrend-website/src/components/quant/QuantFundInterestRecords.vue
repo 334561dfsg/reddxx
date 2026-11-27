@@ -9,7 +9,7 @@ import {fundDate} from '../../utils/quantFund'
 import FinancePagination from '../FinancePagination.vue'
 import {useFinancePagination} from '../../composables/useFinancePagination'
 // Reference /quant-fund/positions/:orderId/interest-records: back link, title, subtitle, then records or an empty card.
-// The order (with its interest records) is loaded by pages/Quant.vue.
+// The order (with its interest records) is loaded by pages/quant/QuantFundInterestPage.vue.
 // null while loading: the heading and table header stay, rows become skeletons (same row height).
 const props=defineProps({order:{type:Object,default:null}})
 const order=computed(()=>props.order)

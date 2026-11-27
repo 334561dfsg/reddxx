@@ -3,8 +3,7 @@ import LineIcon from '../ui/LineIcon.vue'
 import EmptyState from '../ui/EmptyState.vue'
 import Skeleton from '../ui/Skeleton.vue'
 import {signedMoney} from '../../utils/format.js'
-import {computed,onBeforeUnmount,onMounted,ref,watch} from 'vue'
-import {useMediaQuery} from '../../composables/useMediaQuery.js'
+import {computed,onMounted,ref,watch} from 'vue'
 import {locale} from '../../i18n'
 import {summarizeDailyStats} from '../../utils/strategyTemplates'
 import FinancePagination from '../FinancePagination.vue'
@@ -14,19 +13,11 @@ import {useFinancePagination} from '../../composables/useFinancePagination'
 // to the largest |P&L|. Bars grow in with a 25ms stagger (capped at 250ms); days are paged with the shared pager.
 // loading: labels and the column header stay; figures and day rows are skeletons of the loaded size.
 const props=defineProps({items:{type:Array,default:()=>[]},loading:Boolean})
-// Shared list pager (10 days per page) instead of the reference's latest-N truncation (user request).
-const {page,total,shown}=useFinancePagination(()=>props.items,10)
-// Phones (user request 2026-11-27): no pager — the list grows by 10 days as the end scrolls into view. The sentinel is
-// keyed by the loaded count, so a sentinel still in view after a load is a new element and is observed again.
-const phone=useMediaQuery('(max-width: 767px)')
-const loaded=ref(10),sentinel=ref(null)
-const rows=computed(()=>phone.value?props.items.slice(0,loaded.value):shown.value)
-const more=computed(()=>phone.value&&loaded.value<props.items.length)
-let observer=null
-watch(sentinel,el=>{observer?.disconnect();observer=null;if(!el||typeof IntersectionObserver!=='function')return;observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))loaded.value+=10},{rootMargin:'200px 0px'});observer.observe(el)})
+// Shared list paging, 10 days per page (instead of the reference's latest-N truncation, user request). Phones never
+// page: `rows` accumulates and the <FinancePagination scroll> sentinel at the end of the scrolling .ds-list loads more.
+const {page,total,shown:rows,phone}=useFinancePagination(()=>props.items,10)
 // Start over only for a different record (its first trading day changes), not when a refresh hands in a new array.
-watch(()=>props.items.at(-1)?.date,()=>{loaded.value=10})
-onBeforeUnmount(()=>observer?.disconnect())
+watch(()=>props.items.at(-1)?.date,()=>{page.value=1})
 const summary=computed(()=>summarizeDailyStats(props.items))
 // Scale and range span every day, so bars and the caption stay stable across pages.
 const maxAbs=computed(()=>props.items.reduce((m,i)=>Math.max(m,Math.abs(i.pnl)),0))
@@ -46,24 +37,65 @@ watch(()=>props.loading,(now,before)=>{if(before&&!now)grow()})
 <EmptyState v-if="!loading&&!items.length" class="ms-stats-empty" :text="$t('aiQuant.dailyStats.empty')"/>
 <div v-else class="ds">
  <div class="ds-summary">
-  <div class="ds-net"><span class="ds-label">{{ $t('aiQuant.dailyStats.netPnl') }}</span>
-   <span class="ds-net-value" :class="sign(summary.totalPnl)"><Skeleton v-if="loading" inline width="160px"/><template v-else><LineIcon v-if="sign(summary.totalPnl)!=='flat'" :name="sign(summary.totalPnl)==='up'?'trend-up':'trend-down'" aria-hidden="true"/>{{ signed(summary.totalPnl) }}</template></span>
-   <span class="ds-caption"><Skeleton v-if="loading" inline width="180px"/><template v-else>{{ $t('aiQuant.dailyStats.rangeCaption',{range}) }}</template></span></div>
-  <div class="ds-counts"><div><span class="ds-label">{{ $t('aiQuant.dailyStats.tradesLabel') }}</span><span class="ds-count"><Skeleton v-if="loading" inline width="40px"/><template v-else>{{ summary.totalTradeCount }}</template></span></div><div><span class="ds-label">{{ $t('aiQuant.dailyStats.activeDays') }}</span><span class="ds-count"><Skeleton v-if="loading" inline width="32px"/><template v-else>{{ summary.activeDays }}</template></span></div></div>
+  <div class="ds-net">
+   <span class="ds-label">{{ $t('aiQuant.dailyStats.netPnl') }}</span>
+   <span class="ds-net-value" :class="sign(summary.totalPnl)">
+    <Skeleton v-if="loading" inline width="160px"/>
+    <template v-else>
+     <LineIcon v-if="sign(summary.totalPnl)!=='flat'" :name="sign(summary.totalPnl)==='up'?'trend-up':'trend-down'" aria-hidden="true"/>{{ signed(summary.totalPnl) }}
+    </template>
+   </span>
+   <span class="ds-caption">
+    <Skeleton v-if="loading" inline width="180px"/>
+    <template v-else>{{ $t('aiQuant.dailyStats.rangeCaption',{range}) }}</template>
+   </span>
+  </div>
+  <div class="ds-counts">
+   <div>
+    <span class="ds-label">{{ $t('aiQuant.dailyStats.tradesLabel') }}</span>
+    <span class="ds-count"><Skeleton v-if="loading" inline width="40px"/><template v-else>{{ summary.totalTradeCount }}</template></span>
+   </div>
+   <div>
+    <span class="ds-label">{{ $t('aiQuant.dailyStats.activeDays') }}</span>
+    <span class="ds-count"><Skeleton v-if="loading" inline width="32px"/><template v-else>{{ summary.activeDays }}</template></span>
+   </div>
+  </div>
  </div>
- <div class="ds-grid ds-head" aria-hidden="true"><span>{{ $t('aiQuant.dailyStats.date') }}</span><span class="r">{{ $t('aiQuant.dailyStats.tradesLabel') }}</span><span class="ds-head-bar"><span>{{ $t('aiQuant.dailyStats.loss') }}</span><span>{{ $t('aiQuant.dailyStats.profit') }}</span></span><span class="r">{{ $t('aiQuant.dailyStats.pnl') }}</span></div>
+ <div class="ds-grid ds-head" aria-hidden="true">
+  <span>{{ $t('aiQuant.dailyStats.date') }}</span>
+  <span class="r">{{ $t('aiQuant.dailyStats.tradesLabel') }}</span>
+  <span class="ds-head-bar"><span>{{ $t('aiQuant.dailyStats.loss') }}</span><span>{{ $t('aiQuant.dailyStats.profit') }}</span></span>
+  <span class="r">{{ $t('aiQuant.dailyStats.pnl') }}</span>
+ </div>
  <ul class="ds-list">
-  <template v-if="loading"><li v-for="n in 6" :key="n" class="ds-grid ds-row" aria-hidden="true"><span class="ds-date"><Skeleton width="48px" height="14px"/><Skeleton width="28px" height="12px"/></span><span class="ds-trades r"><Skeleton width="24px" class="ds-skeleton-end"/></span><span class="ds-bar"><span class="ds-axis"></span></span><span class="ds-pnl r"><Skeleton width="80px" class="ds-skeleton-end"/></span></li></template>
+  <template v-if="loading">
+   <li v-for="n in 6" :key="n" class="ds-grid ds-row" aria-hidden="true">
+    <span class="ds-date"><Skeleton width="48px" height="14px"/><Skeleton width="28px" height="12px"/></span>
+    <span class="ds-trades r"><Skeleton width="24px" class="ds-skeleton-end"/></span>
+    <span class="ds-bar"><span class="ds-axis"></span></span>
+    <span class="ds-pnl r"><Skeleton width="80px" class="ds-skeleton-end"/></span>
+   </li>
+  </template>
   <li v-else v-for="(item,index) in rows" :key="item.date" class="ds-grid ds-row">
    <span class="ds-date"><span>{{ parts(item.date).day }}</span><small>{{ parts(item.date).weekday }}</small></span>
    <span class="ds-trades r"><span class="sr-only">{{ $t('aiQuant.dailyStats.tradesLabel') }} </span>{{ item.tradeCount }}</span>
-   <span class="ds-bar" aria-hidden="true"><span class="ds-axis"></span><span v-if="sign(item.pnl)!=='flat'" :class="['ds-fill',sign(item.pnl)]" :style="{width:width(item),transitionDelay:Math.min(index*25,250)+'ms'}"></span><span v-else class="ds-dot"></span></span>
+   <span class="ds-bar" aria-hidden="true">
+    <span class="ds-axis"></span>
+    <span
+     v-if="sign(item.pnl)!=='flat'"
+     :class="['ds-fill',sign(item.pnl)]"
+     :style="{width:width(item),transitionDelay:Math.min(index*25,250)+'ms'}"
+    ></span>
+    <span v-else class="ds-dot"></span>
+   </span>
    <span class="ds-pnl r" :class="sign(item.pnl)">{{ signed(item.pnl) }}</span>
   </li>
-  <li v-if="!loading&&more" :key="'more-'+loaded" ref="sentinel" class="ds-more-sentinel" role="status">{{ $t('common.loading') }}</li>
-  <li v-else-if="!loading&&phone&&items.length>10" class="ds-no-more">{{ $t('common.noMore') }}</li>
+  <!-- Phones: the load-more sentinel sits inside the scrolling list so it is observed as the list scrolls. -->
+  <li v-if="!loading&&phone" class="ds-load-more">
+   <FinancePagination v-model:page="page" :total="total" :page-size="10" scroll/>
+  </li>
  </ul>
- <FinancePagination v-if="!loading&&!phone" v-model:page="page" :total="total" :page-size="10"/>
+ <FinancePagination v-if="!loading&&!phone" v-model:page="page" :total="total" :page-size="10" scroll/>
 </div>
 </template>
 <style>
@@ -97,7 +129,6 @@ watch(()=>props.loading,(now,before)=>{if(before&&!now)grow()})
 .ds-pnl{font-family:var(--nt-font-mono);font-size:15px;font-weight:600;color:#87888a}
 .ds .up{color:#2bc287}.ds .down{color:#ff4466}
 .ds-fill.up,.ds-fill.down{color:inherit}
-.ds-more{margin:0;text-align:center;font-size:12px;color:#6e6f71}
 .ds .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media(prefers-reduced-motion:reduce){.ds-fill{transition:none}}
 @media(max-width:767px){.ds-grid{grid-template-columns:5rem 2.5rem minmax(0,1fr) 6rem;column-gap:8px}}

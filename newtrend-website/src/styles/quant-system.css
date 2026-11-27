@@ -255,7 +255,6 @@
  #main-content#main-content .strategy-page .strategy-stats-page{padding-top:8px}
  #main-content#main-content .strategy-page .strategy-stats-head{margin:0 0 8px}
  #main-content#main-content .strategy-page .ds-summary{margin:0 0 12px;padding:12px 14px}
- #main-content#main-content .strategy-page :is(.ds-more-sentinel,.ds-no-more){margin:0;padding:16px 0;text-align:center;font-size:12px;line-height:18px;color:#8c8f96}
 }
 
 /* Strategy stats on phones (user request): the bar, style line, summary and column header stay put; only the daily list

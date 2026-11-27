@@ -120,22 +120,6 @@
 #main-content .quant-page .subnav .router-link-exact-active .nt-icon { filter: brightness(0); opacity: 1; }
 
 /* Quant Fund */
-#main-content .quant-page .fund-hero.card {
-  margin: 0;
-  padding: 32px;
-  border-radius: 32px;
-}
-#main-content .quant-page .fund-hero .page-desc { max-width: 672px; }
-#main-content .quant-page .filter-row { gap: 8px; margin: 40px 0 16px; }
-#main-content .quant-page .filter-row button {
-  min-height: 38px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 500;
-}
-#main-content .quant-page .filter-row button.active { color: var(--nt-bg); }
 #main-content .quant-page .three-cols { gap: 16px; }
 /* Quant fund product card, matched to the reference QuantFundProductCard. */
 #main-content .quant-page .qf-grid { gap: 20px; }
@@ -215,7 +199,6 @@
 @media (max-width: 767px) {
   #main-content .page-wrap.quant-page { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
   #main-content .quant-page h1.page-title { font-size: 30px; line-height: 36px; }
-  #main-content .quant-page .fund-hero.card { padding: 24px; }
   #main-content .quant-page .subnav { margin-bottom: 24px; }
   #main-content .quant-page .subnav > a { flex: 1 1 auto; padding: 10px 16px; }
 }

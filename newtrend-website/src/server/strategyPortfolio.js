@@ -69,8 +69,6 @@ export async function changeStatusFor(mode, record, kind) {
   await strategyCommand(kind, {subscriptionId: record.id, userId: REAL_USER})
 }
 
-// One-shot success notice raised by the subscribe dialog and shown by the strategy page after the dialog closes.
-export const strategyNotice = reactive({key: '', at: 0})
 export const strategyFilters = reactive({style: '', market: '', sort: 'sharpe_desc'})
 /** Completes local demo strategies whose end date has passed (the server settles 真實 ones itself). */
 export const refreshStrategies = () => { completeExpiredStrategies(strategyAccounts.demo, clock.now()) }
