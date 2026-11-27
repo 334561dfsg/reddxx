@@ -7,10 +7,11 @@ import {balanceOf,ledger,modeKey} from './mock/ledger.js'
 // 真實 starts with finished buy history (completed / cancelled / rejected) so 我的訂單 has enough rows to load
 // on scroll (user request 2026-11-27); these never touch the ledger. Demo starts empty.
 const DAY=86400000
+const PAYERS=[['HK','Chan Tai Man','chan.taiman@example.com'],['SG','Tan Wei Ming','weiming.tan@example.com'],['GB','Oliver Smith','oliver.smith@example.com'],['DE','Lena Fischer','lena.fischer@example.com'],['US','Emily Johnson','emily.johnson@example.com'],['JP','Sato Yuki','yuki.sato@example.com']]
 const seedOrders=(now=Date.now())=>Array.from({length:24},(_,i)=>{
- const [symbol,price,quantity]=[['USDT',1,1500],['ETH',1650,0.8],['BTC',59000,0.03],['USDC',1.01,2000],['SOL',68,25]][i%5]
+ const [symbol,fiat,price,quantity]=[['USDT','USD',1.0012,1500],['ETH','USD',1656.63,0.8],['BTC','USD',59125.34,0.03],['USDT','EUR',0.9235,2000],['SOL','USD',68.18,25],['USDC','USD',1.0008,2000]][i%6]
  const status=['completed','completed','cancelled','completed','rejected','completed','cancelled'][i%7],createdAt=now-(2+i*3)*DAY-i*3600000
- return {id:`c2c-seed-${i+1}`,requestId:`c2c-seed-${i+1}`,side:'buy',symbol,quantity,amount:Number((quantity*price).toFixed(8)),price,status,createdAt,updatedAt:createdAt+1800000,locked:0,agreementVersion:'v1-draft'}
+ return {id:`c2c-seed-${i+1}`,requestId:`c2c-seed-${i+1}`,side:'buy',symbol,fiat,quoteId:`${symbol}-${fiat}`,payer:(([country,name,email])=>({country,name,email}))(PAYERS[i%PAYERS.length]),paymentMethod:'bank_transfer',quantity,amount:Number((quantity*price).toFixed(2)),price,status,createdAt,updatedAt:createdAt+1800000,locked:0,agreementVersion:'v1-draft'}
 })
 const orders=reactive({real:seedOrders(),demo:[]})
 const balanceViews={}

@@ -25,7 +25,7 @@
 .c2c-quote-identity{display:flex;align-items:center;gap:12px;min-width:0}
 .c2c-coin-pair{position:relative;display:block;flex-shrink:0}
 .c2c-coin-pair>.coin:first-child{width:36px;height:36px}
-.c2c-coin-pair>.coin:last-child{position:absolute;width:16px;height:16px;right:-4px;bottom:-2px;border-radius:50%;box-shadow:0 0 0 2px #0c0f15}
+.c2c-coin-pair>.coin:last-child:not(:first-child){position:absolute;width:16px;height:16px;right:-4px;bottom:-2px;border-radius:50%;box-shadow:0 0 0 2px #0c0f15}
 .c2c-pair-name{font-weight:600}
 .c2c-pair-name span{font-weight:400;color:#92959b}
 .c2c-price{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:24px;font-weight:600;line-height:32px;overflow-wrap:anywhere}
@@ -51,7 +51,7 @@
 .c2c-mode button{font-size:12px;min-height:24px;padding:3px 12px}
 .c2c-order-form>label{display:block;font-weight:500;margin-bottom:6px}
 .c2c-amount-field{display:flex;align-items:center;border:1px solid transparent;border-radius:12px;background:#202226;min-width:0}
-.c2c-amount-field:focus-within{border-color:#b3ff60}
+.c2c-amount-field:focus-within{background:#272a2f;border-color:transparent}
 #site-shell .c2c-amount-field input{width:100%;min-width:0;height:36px;min-height:36px;border:0;outline:0;background:transparent;padding:8px 12px;font-size:16px;box-shadow:none;color:#f5f6f7;appearance:textfield}
 .c2c-amount-field input::-webkit-inner-spin-button{appearance:none}
 .c2c-amount-field>span{display:flex;align-items:center;gap:6px;color:#92959b;padding-right:12px;flex-shrink:0}
@@ -109,3 +109,18 @@
 @media(max-width:600px){.c2c-orders-filters{gap:8px}.c2c-detail dl>div{flex-wrap:wrap;gap:4px}.c2c-detail dd{flex:1;text-align:right}}
 /* Pending orders carry 取消 beside 查看 (user cancel, 2026-11-27). */
 .c2c-order-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;white-space:nowrap}
+
+/* Real fiat (2026-11-27): a neutral code chip (USD, EUR …) where the USDT coin icon used to sit; no flags or logos. */
+.c2c-fiat-code{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:20px;padding:0 6px;border-radius:6px;background:#ffffff14;color:#e6e7e9;font-size:12px;line-height:16px;font-weight:600;letter-spacing:0;vertical-align:middle}
+/* Payer details (2026-11-27): country (searchable), remitter name, email; payment method is fixed to bank transfer.
+   Same surface as the amount field; focus lightens the background (no highlighted border). */
+.c2c-payer{display:grid;gap:6px;margin-top:16px}
+.c2c-payer>label{display:block;font-weight:500;line-height:20px;margin-top:6px}
+.c2c-payer>label:first-child{margin-top:0}
+#site-shell .c2c-payer .c2c-text-field{width:100%;min-width:0;height:40px;border:1px solid transparent;border-radius:12px;background:#202226;padding:8px 12px;font-size:16px;color:#f5f6f7;outline:0;box-shadow:none}
+#site-shell .c2c-payer .c2c-text-field:focus{background:#272a2f;border-color:transparent}
+#site-shell .c2c-payer .c2c-text-field[aria-invalid=true]{background:color-mix(in srgb,#ff4466 12%,#202226)}
+.c2c-payer .ant-select{width:100%}
+.c2c-payment-method{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:10px 12px;border-radius:12px;background:#ffffff08;font-size:14px;line-height:20px}
+.c2c-payment-method span{color:#85888d}
+@media(pointer:coarse){#site-shell .c2c-payer .c2c-text-field{min-height:44px}}

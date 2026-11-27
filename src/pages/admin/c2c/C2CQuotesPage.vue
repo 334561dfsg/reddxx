@@ -11,30 +11,31 @@ import SearchForm from '../earn/EarnSearchForm.vue'
 import AdminTable from '../earn/EarnAdminTable.vue'
 import AdminModal from '../earn/EarnAdminModal.vue'
 import {useC2CFeed, c2cCommand, errorText, sideLabels, sideColors} from '../../../shared/c2c/client.js'
-import {ASSETS, quoteLabel} from '../../../shared/c2c/domain.js'
+import {ASSETS, FIATS, quoteLabel} from '../../../shared/c2c/domain.js'
 import {dateTime} from '../strategy/strategyFormat.js'
 
 const number = value => Number(value || 0).toLocaleString('en-US', {maximumFractionDigits: 8})
 const route = useRoute(), router = useRouter(), {state, error, busy, loaded, refresh} = useC2CFeed()
-const blank = () => ({symbol: 'all', side: 'all', status: 'all'})
+const blank = () => ({symbol: 'all', fiat: 'all', side: 'all', status: 'all'})
 const filters = ref({...blank(), ...Object.fromEntries(Object.keys(blank()).filter(k => route.query[k] != null).map(k => [k, String(route.query[k])]))})
 const page = ref(Math.max(1, Number(route.query.page) || 1))
 const options = (labels, all) => [{value: 'all', label: all}, ...Object.entries(labels).map(([value, label]) => ({value, label}))]
 const fields = [
   {key: 'symbol', label: '币种', searchable: true, options: [{value: 'all', label: '全部币种'}, ...ASSETS.map(value => ({value, label: value}))]},
+  {key: 'fiat', label: '法币', searchable: true, options: [{value: 'all', label: '全部法币'}, ...FIATS.map(value => ({value, label: value}))]},
   {key: 'side', label: '方向', options: options(sideLabels, '全部方向')},
   {key: 'status', label: '状态', options: options({enabled: '已启用', disabled: '已停用'}, '全部状态')},
 ]
 const rows = computed(() => [...state.value.quotes].sort((a, b) => b.sortWeight - a.sortWeight || a.quoteId.localeCompare(b.quoteId)).filter(q => {
   const f = filters.value
-  return (f.symbol === 'all' || q.symbol === f.symbol) && (f.side === 'all' || q.side === f.side) && (f.status === 'all' || (f.status === 'enabled') === q.enabled)
+  return (f.symbol === 'all' || q.symbol === f.symbol) && (f.fiat === 'all' || q.fiat === f.fiat) && (f.side === 'all' || q.side === f.side) && (f.status === 'all' || (f.status === 'enabled') === q.enabled)
 }))
 watch(() => rows.value.length, total => { page.value = Math.min(page.value, Math.max(1, Math.ceil(total / 10))) })
 const pending = computed(() => Object.fromEntries(state.value.quotes.map(q => [q.quoteId, state.value.orders.filter(o => o.quoteSnapshot.quoteId === q.quoteId && o.status === 'pending_review').length])))
 const columns = [
   {key: 'pair', title: '交易对', width: 150, fixed: 'left'},
   {key: 'side', title: '方向', width: 96},
-  {key: 'price', title: '价格（USDT）', width: 140, align: 'right'},
+  {key: 'price', title: '价格', width: 150, align: 'right'},
   {key: 'limits', title: '单笔限额', width: 220, align: 'right'},
   {key: 'ttlSeconds', title: '报价有效期', width: 110, align: 'right'},
   {key: 'note', title: '备注', width: 280},
@@ -68,9 +69,9 @@ async function toggle() {
   <AdminTable title="C2C 报价" v-model:page="page" :rows="rows" :columns="columns" row-key="quoteId" :loading="!loaded && !error" desktop-only>
    <template #toolbar><Space :size="8"><Button @click="refresh">刷新</Button><Button type="primary" @click="edit()"><template #icon><PlusOutlined/></template>新增报价</Button></Space></template>
    <template #cell="{column, record}">
-    <span v-if="column.key === 'pair'"><TypographyText strong>{{ record.symbol }}</TypographyText><TypographyText type="secondary"> / USDT</TypographyText></span>
+    <span v-if="column.key === 'pair'"><TypographyText strong>{{ record.symbol }}</TypographyText><TypographyText type="secondary"> / {{ record.fiat }}</TypographyText></span>
     <Tag v-else-if="column.key === 'side'" :color="sideColors[record.side]">{{ sideLabels[record.side] }}</Tag>
-    <template v-else-if="column.key === 'price'">{{ number(record.price) }}</template>
+    <template v-else-if="column.key === 'price'">{{ number(record.price) }} {{ record.fiat }}</template>
     <template v-else-if="column.key === 'limits'">{{ number(record.min) }} ~ {{ number(record.max) }} {{ record.symbol }}</template>
     <template v-else-if="column.key === 'ttlSeconds'">{{ record.ttlSeconds }} 秒</template>
     <TypographyText v-else-if="column.key === 'note'" :ellipsis="{tooltip: record.note}" :content="record.note || '—'" class="c2c-note"/>

@@ -53,10 +53,22 @@
     "submitting": "Envoi en cours…",
     "viewOrder": "Voir l'ordre",
     "selectPrompt": "Sélectionnez une cotation à gauche pour continuer",
-    "confirmSummary": "Acheter {{amount}} {{asset}} pour environ {{total}} USDT. La confirmation crée uniquement un ordre simulé local ; aucun fonds ne sera transféré.",
-    "confirmSellSummary": "Vendre {{amount}} {{asset}} pour environ {{total}} USDT. Seuls les actifs simulés locaux seront bloqués ; aucun fonds ne sera transféré.",
+    "confirmSummary": "Acheter {{amount}} {{asset}} pour environ {{total}} {{fiat}}. La confirmation crée uniquement un ordre simulé local ; aucun fonds ne sera transféré.",
+    "confirmSellSummary": "Vendre {{amount}} {{asset}} pour environ {{total}} {{fiat}}. Seuls les actifs simulés locaux seront bloqués ; aucun fonds ne sera transféré.",
     "newOrder": "Nouvel ordre",
-    "submitted": "Ordre soumis à la validation de la plateforme"
+    "submitted": "Ordre soumis à la validation de la plateforme",
+    "countryLabel": "Votre pays",
+    "countryPlaceholder": "Choisissez un pays ou une région",
+    "countryEmpty": "Aucun pays ou région correspondant",
+    "payerNameLabel": "Nom du donneur d'ordre",
+    "payerNamePlaceholder": "Saisissez le nom du donneur d'ordre",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "Saisissez votre e-mail",
+    "paymentMethod": "Moyen de paiement",
+    "bankTransfer": "Virement bancaire",
+    "countryRequired": "Choisissez votre pays ou région",
+    "payerNameRequired": "Saisissez le nom du donneur d'ordre (64 caractères max.)",
+    "emailInvalid": "Saisissez une adresse e-mail valide"
   },
   "agreement": {
     "title": "Contrat de trading C2C",
@@ -135,7 +147,8 @@
     "OTC_LIMIT_EXCEEDED_DAILY": "Limite glissante sur 24 h dépassée. Veuillez réessayer plus tard.",
     "OTC_LIMIT_EXCEEDED_MONTHLY": "Limite glissante sur 30 jours dépassée. Veuillez réessayer plus tard.",
     "generic": "Échec de l'opération, veuillez réessayer plus tard",
-    "genericWithId": "Échec de l'opération, veuillez réessayer plus tard (id de requête : {{requestId}})"
+    "genericWithId": "Échec de l'opération, veuillez réessayer plus tard (id de requête : {{requestId}})",
+    "payerInvalid": "Renseignez votre pays, le nom du donneur d'ordre et l'e-mail"
   },
   "common": {
     "goKyc": "Vérifier maintenant",

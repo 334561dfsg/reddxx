@@ -53,10 +53,22 @@
     "submitting": "送信中…",
     "viewOrder": "注文を表示",
     "selectPrompt": "続行するには左側のクォートを選択してください",
-    "confirmSummary": "{{amount}} {{asset}} を約 {{total}} USDT で購入します。確認後はローカルの模擬注文のみ作成され、資金は移動しません。",
-    "confirmSellSummary": "{{amount}} {{asset}} を約 {{total}} USDT で売却します。ローカルの模擬資産のみ凍結され、資金は移動しません。",
+    "confirmSummary": "{{amount}} {{asset}} を約 {{total}} {{fiat}} で購入します。確認後はローカルの模擬注文のみ作成され、資金は移動しません。",
+    "confirmSellSummary": "{{amount}} {{asset}} を約 {{total}} {{fiat}} で売却します。ローカルの模擬資産のみ凍結され、資金は移動しません。",
     "newOrder": "新規注文",
-    "submitted": "注文を提出しました。プラットフォームの審査をお待ちください"
+    "submitted": "注文を提出しました。プラットフォームの審査をお待ちください",
+    "countryLabel": "居住国",
+    "countryPlaceholder": "国または地域を選択",
+    "countryEmpty": "該当する国または地域がありません",
+    "payerNameLabel": "送金人氏名",
+    "payerNamePlaceholder": "送金人氏名を入力",
+    "emailLabel": "メールアドレス",
+    "emailPlaceholder": "メールアドレスを入力",
+    "paymentMethod": "支払方法",
+    "bankTransfer": "銀行振込",
+    "countryRequired": "居住国または地域を選択してください",
+    "payerNameRequired": "送金人氏名を入力してください（64 文字以内）",
+    "emailInvalid": "有効なメールアドレスを入力してください"
   },
   "agreement": {
     "title": "C2C取引規約",
@@ -135,7 +147,8 @@
     "OTC_LIMIT_EXCEEDED_DAILY": "過去24時間の限度額を超えました。後ほどお試しください。",
     "OTC_LIMIT_EXCEEDED_MONTHLY": "過去30日間の限度額を超えました。後ほどお試しください。",
     "generic": "操作に失敗しました。後ほどお試しください",
-    "genericWithId": "操作に失敗しました。後ほどお試しください(リクエストID: {{requestId}})"
+    "genericWithId": "操作に失敗しました。後ほどお試しください(リクエストID: {{requestId}})",
+    "payerInvalid": "居住国、送金人氏名、メールアドレスを入力してください"
   },
   "common": {
     "goKyc": "今すぐ認証",

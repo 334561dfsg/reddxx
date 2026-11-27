@@ -53,10 +53,22 @@
     "submitting": "提交中…",
     "viewOrder": "查看訂單",
     "selectPrompt": "請從左側選擇一個報價以繼續",
-    "confirmSummary": "買入 {{amount}} {{asset}}，預計支付 {{total}} USDT。確認後僅建立本地模擬訂單，不會轉移資金。",
-    "confirmSellSummary": "賣出 {{amount}} {{asset}}，預計收到 {{total}} USDT。確認後僅凍結本地模擬資產，不會轉移資金。",
+    "confirmSummary": "買入 {{amount}} {{asset}}，預計支付 {{total}} {{fiat}}。確認後僅建立本地模擬訂單，不會轉移資金。",
+    "confirmSellSummary": "賣出 {{amount}} {{asset}}，預計收到 {{total}} {{fiat}}。確認後僅凍結本地模擬資產，不會轉移資金。",
     "newOrder": "再下一單",
-    "submitted": "訂單已提交，等待平台審核"
+    "submitted": "訂單已提交，等待平台審核",
+    "countryLabel": "您的國家",
+    "countryPlaceholder": "選擇國家或地區",
+    "countryEmpty": "沒有符合的國家或地區",
+    "payerNameLabel": "匯款人姓名",
+    "payerNamePlaceholder": "請輸入匯款人姓名",
+    "emailLabel": "郵箱",
+    "emailPlaceholder": "請輸入郵箱",
+    "paymentMethod": "支付方式",
+    "bankTransfer": "銀行轉賬",
+    "countryRequired": "請選擇您的國家或地區",
+    "payerNameRequired": "請輸入匯款人姓名（不超過 64 字）",
+    "emailInvalid": "請輸入有效的郵箱地址"
   },
   "agreement": {
     "title": "C2C 交易協議",
@@ -135,7 +147,8 @@
     "OTC_LIMIT_EXCEEDED_DAILY": "已超過 24 小時累計限額，請稍後再試",
     "OTC_LIMIT_EXCEEDED_MONTHLY": "已超過 30 天累計限額，請稍後再試",
     "generic": "操作失敗，請稍後重試",
-    "genericWithId": "操作失敗，請稍後重試（請求編號：{{requestId}}）"
+    "genericWithId": "操作失敗，請稍後重試（請求編號：{{requestId}}）",
+    "payerInvalid": "請完整填寫國家、匯款人姓名與郵箱"
   },
   "common": {
     "goKyc": "前往認證",

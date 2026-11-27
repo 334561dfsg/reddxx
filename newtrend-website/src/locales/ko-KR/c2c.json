@@ -53,10 +53,22 @@
     "submitting": "제출 중…",
     "viewOrder": "주문 보기",
     "selectPrompt": "계속하려면 왼쪽에서 견적을 선택하세요",
-    "confirmSummary": "{{amount}} {{asset}}을 약 {{total}} USDT에 구매합니다. 확인하면 로컬 모의 주문만 생성되며 자금은 이체되지 않습니다.",
-    "confirmSellSummary": "{{amount}} {{asset}}을 약 {{total}} USDT에 판매합니다. 로컬 모의 자산만 동결되며 자금은 이체되지 않습니다.",
+    "confirmSummary": "{{amount}} {{asset}}을 약 {{total}} {{fiat}}에 구매합니다. 확인하면 로컬 모의 주문만 생성되며 자금은 이체되지 않습니다.",
+    "confirmSellSummary": "{{amount}} {{asset}}을 약 {{total}} {{fiat}}에 판매합니다. 로컬 모의 자산만 동결되며 자금은 이체되지 않습니다.",
     "newOrder": "새 주문",
-    "submitted": "주문이 제출되었습니다. 플랫폼 심사를 기다려 주세요"
+    "submitted": "주문이 제출되었습니다. 플랫폼 심사를 기다려 주세요",
+    "countryLabel": "거주 국가",
+    "countryPlaceholder": "국가 또는 지역 선택",
+    "countryEmpty": "일치하는 국가 또는 지역이 없습니다",
+    "payerNameLabel": "송금인 이름",
+    "payerNamePlaceholder": "송금인 이름을 입력하세요",
+    "emailLabel": "이메일",
+    "emailPlaceholder": "이메일을 입력하세요",
+    "paymentMethod": "결제 방법",
+    "bankTransfer": "은행 송금",
+    "countryRequired": "거주 국가 또는 지역을 선택하세요",
+    "payerNameRequired": "송금인 이름을 입력하세요(최대 64자)",
+    "emailInvalid": "올바른 이메일 주소를 입력하세요"
   },
   "agreement": {
     "title": "C2C 거래 약관",
@@ -135,7 +147,8 @@
     "OTC_LIMIT_EXCEEDED_DAILY": "최근 24시간 한도를 초과했습니다. 나중에 다시 시도하세요.",
     "OTC_LIMIT_EXCEEDED_MONTHLY": "최근 30일 한도를 초과했습니다. 나중에 다시 시도하세요.",
     "generic": "작업에 실패했습니다. 나중에 다시 시도하세요",
-    "genericWithId": "작업에 실패했습니다. 나중에 다시 시도하세요 (요청 id: {{requestId}})"
+    "genericWithId": "작업에 실패했습니다. 나중에 다시 시도하세요 (요청 id: {{requestId}})",
+    "payerInvalid": "거주 국가, 송금인 이름, 이메일을 입력하세요"
   },
   "common": {
     "goKyc": "지금 인증",

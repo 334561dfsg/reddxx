@@ -26,14 +26,14 @@ export const getC2COrder = (id, mode) => mockCall(SERVICE, () => {
 })
 
 /**
- * POST /c2c/orders {mode, side, symbol, quantity, requestId} — prices from the server's current quote for that side
- * and symbol. Every order waits for back-office review (pending_review); a sell locks the asset. A repeated
+ * POST /c2c/orders {mode, side, quoteId, quantity, requestId, payer: {country, name, email}} — prices from the server's current quote (coin + fiat)
+ * for that side; price and amount are in the quote's fiat. Every order waits for back-office review (pending_review); a sell locks the asset. A repeated
  * requestId is rejected.
  */
-export const createC2COrder = ({mode, side, symbol, quantity, requestId}) => mockCall(SERVICE, () => {
-  const quote = quotesFor(side).find(item => item.symbol === symbol)
+export const createC2COrder = ({mode, side, quoteId, quantity, requestId, payer}) => mockCall(SERVICE, () => {
+  const quote = quotesFor(side).find(item => item.id === quoteId)
   if (!quote) throw new ApiError('c2c.error.OTC_LIMIT_EXCEEDED_SINGLE')
-  return snapshot(createOrder(c2cStateFor(mode), {side, quote, quantity, requestId}))
+  return snapshot(createOrder(c2cStateFor(mode), {side, quote, quantity, requestId, payer}))
 })
 
 /**

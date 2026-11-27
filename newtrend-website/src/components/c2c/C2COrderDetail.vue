@@ -1,4 +1,5 @@
 <script setup>
+import {countryName} from '../../utils/countries.js'
 import {dateTime} from '../../utils/format.js'
 import {locale} from '../../i18n'
 import {computed} from 'vue'
@@ -18,5 +19,5 @@ const missing=computed(()=>request.status.value==='error'&&request.error.value?.
 <div v-else-if="order" class="c2c-detail">
  <p class="c2c-status">{{ $t('c2c.status.'+order.status) }}</p>
  <p v-if="order.status==='pending_review'" class="muted">{{ $t(order.side==='sell'?'c2c.detail.pendingSellHint':'c2c.detail.pendingBuyHint') }}</p>
- <dl><div><dt>{{ $t('c2c.detail.orderId') }}</dt><dd>{{ order.id }}</dd></div><div><dt>{{ $t('c2c.detail.side') }}</dt><dd>{{ $t('c2c.side.'+order.side) }}</dd></div><div><dt>{{ $t('c2c.detail.assetAmount') }}</dt><dd>{{ formatQuote(order.quantity) }} {{ order.symbol }}</dd></div><div><dt>{{ $t('c2c.detail.fiatAmount') }}</dt><dd>{{ formatQuote(order.amount) }} USDT</dd></div><div><dt>{{ $t('c2c.detail.priceSnapshot') }}</dt><dd>{{ formatQuote(order.price) }} USDT</dd></div><div><dt>{{ $t('c2c.detail.createdAt') }}</dt><dd>{{ dateTime(order.createdAt,locale) }}</dd></div><div><dt>{{ $t('c2c.detail.agreementVersion') }}</dt><dd>{{ order.agreementVersion }}</dd></div></dl>
+ <dl><div><dt>{{ $t('c2c.detail.orderId') }}</dt><dd>{{ order.id }}</dd></div><div><dt>{{ $t('c2c.detail.side') }}</dt><dd>{{ $t('c2c.side.'+order.side) }}</dd></div><div><dt>{{ $t('c2c.detail.assetAmount') }}</dt><dd>{{ formatQuote(order.quantity) }} {{ order.symbol }}</dd></div><div><dt>{{ $t('c2c.detail.fiatAmount') }}</dt><dd>{{ formatQuote(order.amount) }} {{ order.fiat||'USD' }}</dd></div><div><dt>{{ $t('c2c.detail.priceSnapshot') }}</dt><dd>{{ formatQuote(order.price) }} {{ order.fiat||'USD' }}</dd></div><div><dt>{{ $t('c2c.detail.createdAt') }}</dt><dd>{{ dateTime(order.createdAt,locale) }}</dd></div><div><dt>{{ $t('c2c.detail.agreementVersion') }}</dt><dd>{{ order.agreementVersion }}</dd></div><template v-if="order.payer"><div><dt>{{ $t('c2c.order.countryLabel') }}</dt><dd>{{ countryName(order.payer.country,locale) }}</dd></div><div><dt>{{ $t('c2c.order.payerNameLabel') }}</dt><dd>{{ order.payer.name }}</dd></div><div><dt>{{ $t('c2c.order.emailLabel') }}</dt><dd>{{ order.payer.email }}</dd></div></template><div><dt>{{ $t('c2c.order.paymentMethod') }}</dt><dd>{{ $t('c2c.order.bankTransfer') }}</dd></div></dl>
 </div><p v-else>{{ $t('c2c.detail.notFoundHint') }}</p></template>

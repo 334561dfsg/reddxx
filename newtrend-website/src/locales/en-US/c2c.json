@@ -53,10 +53,22 @@
     "submitting": "Submitting…",
     "viewOrder": "View Order",
     "selectPrompt": "Select a quote on the left to continue",
-    "confirmSummary": "Buy {{amount}} {{asset}} for an estimated {{total}} USDT. Confirmation creates a local simulated order only; no funds are transferred.",
-    "confirmSellSummary": "Sell {{amount}} {{asset}} for approximately {{total}} USDT. Confirmation locks local simulated assets only; no funds are transferred.",
+    "confirmSummary": "Buy {{amount}} {{asset}} for an estimated {{total}} {{fiat}}. Confirmation creates a local simulated order only; no funds are transferred.",
+    "confirmSellSummary": "Sell {{amount}} {{asset}} for approximately {{total}} {{fiat}}. Confirmation locks local simulated assets only; no funds are transferred.",
     "newOrder": "New order",
-    "submitted": "Order submitted for platform review"
+    "submitted": "Order submitted for platform review",
+    "countryLabel": "Your country",
+    "countryPlaceholder": "Select a country or region",
+    "countryEmpty": "No matching country or region",
+    "payerNameLabel": "Remitter name",
+    "payerNamePlaceholder": "Enter the remitter name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "paymentMethod": "Payment method",
+    "bankTransfer": "Bank transfer",
+    "countryRequired": "Select your country or region",
+    "payerNameRequired": "Enter the remitter name (up to 64 characters)",
+    "emailInvalid": "Enter a valid email address"
   },
   "agreement": {
     "title": "C2C Trading Agreement",
@@ -135,7 +147,8 @@
     "OTC_LIMIT_EXCEEDED_DAILY": "Rolling 24h limit exceeded. Please try again later.",
     "OTC_LIMIT_EXCEEDED_MONTHLY": "Rolling 30-day limit exceeded. Please try again later.",
     "generic": "Operation failed, please try again later",
-    "genericWithId": "Operation failed, please try again later (request id: {{requestId}})"
+    "genericWithId": "Operation failed, please try again later (request id: {{requestId}})",
+    "payerInvalid": "Complete your country, remitter name and email"
   },
   "common": {
     "goKyc": "Verify now",

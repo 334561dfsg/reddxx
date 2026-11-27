@@ -53,10 +53,22 @@
     "submitting": "Wird gesendet …",
     "viewOrder": "Order anzeigen",
     "selectPrompt": "Wählen Sie links ein Angebot aus, um fortzufahren",
-    "confirmSummary": "{{amount}} {{asset}} für voraussichtlich {{total}} USDT kaufen. Die Bestätigung erstellt nur eine lokale simulierte Order; es wird kein Geld übertragen.",
-    "confirmSellSummary": "{{amount}} {{asset}} für etwa {{total}} USDT verkaufen. Nur lokale simulierte Vermögenswerte werden gesperrt; es wird kein Geld übertragen.",
+    "confirmSummary": "{{amount}} {{asset}} für voraussichtlich {{total}} {{fiat}} kaufen. Die Bestätigung erstellt nur eine lokale simulierte Order; es wird kein Geld übertragen.",
+    "confirmSellSummary": "{{amount}} {{asset}} für etwa {{total}} {{fiat}} verkaufen. Nur lokale simulierte Vermögenswerte werden gesperrt; es wird kein Geld übertragen.",
     "newOrder": "Neue Order",
-    "submitted": "Auftrag zur Prüfung durch die Plattform eingereicht"
+    "submitted": "Auftrag zur Prüfung durch die Plattform eingereicht",
+    "countryLabel": "Ihr Land",
+    "countryPlaceholder": "Land oder Region wählen",
+    "countryEmpty": "Kein passendes Land und keine passende Region",
+    "payerNameLabel": "Name des Auftraggebers",
+    "payerNamePlaceholder": "Name des Auftraggebers eingeben",
+    "emailLabel": "E-Mail",
+    "emailPlaceholder": "E-Mail-Adresse eingeben",
+    "paymentMethod": "Zahlungsmethode",
+    "bankTransfer": "Banküberweisung",
+    "countryRequired": "Wählen Sie Ihr Land oder Ihre Region",
+    "payerNameRequired": "Name des Auftraggebers eingeben (max. 64 Zeichen)",
+    "emailInvalid": "Geben Sie eine gültige E-Mail-Adresse ein"
   },
   "agreement": {
     "title": "C2C-Handelsvereinbarung",
@@ -135,7 +147,8 @@
     "OTC_LIMIT_EXCEEDED_DAILY": "Rollendes 24-Stunden-Limit überschritten. Bitte versuchen Sie es später erneut.",
     "OTC_LIMIT_EXCEEDED_MONTHLY": "Rollendes 30-Tage-Limit überschritten. Bitte versuchen Sie es später erneut.",
     "generic": "Vorgang fehlgeschlagen, bitte versuchen Sie es später erneut",
-    "genericWithId": "Vorgang fehlgeschlagen, bitte versuchen Sie es später erneut (Anfrage-ID: {{requestId}})"
+    "genericWithId": "Vorgang fehlgeschlagen, bitte versuchen Sie es später erneut (Anfrage-ID: {{requestId}})",
+    "payerInvalid": "Bitte Land, Name des Auftraggebers und E-Mail angeben"
   },
   "common": {
     "goKyc": "Jetzt verifizieren",
