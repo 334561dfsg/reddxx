@@ -5,6 +5,7 @@ import { resolve } from 'node:path'
 import test from 'node:test'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
 import { getLatestDialogLifecycle } from './helpers/userControlLogDrawerLifecycleHarness.js'
+import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
 
 const drawerFile = resolve(process.cwd(), 'src/admin/components/user-control/UserControlLogDrawer.vue')
 const contentFile = resolve(process.cwd(), 'src/admin/components/user-control/UserControlLogContent.vue')
@@ -110,10 +111,12 @@ test('root leave transition keeps the log panel mounted while applying its right
   closeButton(harness, drawer).click()
   await harness.flush()
 
-  const overlay = drawer.parent
+  // The Ant frame keeps the panel mounted through its exit animation and marks the closing phase.
+  const frame = drawer.parent
   assert.equal(drawer.isConnected, true)
-  assert.equal(overlay.classList.contains('user-control-log-drawer-leave-active'), true)
-  assert.equal(overlay.contains(drawer), true)
+  assert.equal(frame.classList.contains('admin-drawer-closing'), true)
+  assert.equal(frame.classList.contains('ant-drawer-open'), false)
+  assert.equal(frame.contains(drawer), true)
 })
 
 test('Escape closes only after entry and Tab remains trapped in the open Drawer', async (t) => {
@@ -212,24 +215,8 @@ test('a newer user context survives an older leave callback without stale cleanu
 test('log Drawer keeps a fixed frame, one body scroller, safe areas, and compliant motion', () => {
   assert.equal(existsSync(drawerFile), true, 'UserControlLogDrawer.vue must exist')
   const source = readFileSync(drawerFile, 'utf8')
-  assert.match(source, /useDialogLifecycle/)
-  assert.match(source, /:style="layerStyle"/)
+  assertAdminDrawerFrame(source)
   assert.match(source, /data-testid="user-control-log-drawer-body"[^>]*overflow-y-auto/)
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
-  assert.match(source, /overflow-hidden/)
-  assert.match(source, /100vh/)
-  assert.match(source, /100dvh/)
-  assert.match(source, /safe-area-inset-top/)
-  assert.match(source, /safe-area-inset-right/)
-  assert.match(source, /safe-area-inset-bottom/)
-  assert.match(source, /safe-area-inset-left/)
-  assert.match(source, /200ms ease-out/)
-  assert.match(source, /150ms ease-in/)
-  assert.match(source, /\.user-control-log-drawer-leave-active \.user-control-log-drawer-panel/)
-  assert.match(source, /\.user-control-log-drawer-leave-to \.user-control-log-drawer-panel/)
-  assert.doesNotMatch(source, /Transition name="user-control-log-drawer-panel"/)
-  assert.match(source, /prefers-reduced-motion: reduce/)
-  assert.match(source, /transition-duration: 50ms/)
-  assert.match(source, /transform: none/)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self|@pointerup\.self/)
 })

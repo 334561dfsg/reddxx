@@ -10,7 +10,7 @@ import {
   summarizeUserControl,
   USER_CONTROL_MODULES
 } from '../../../features/user-control/userControl.js'
-import { useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
+import AdminDrawer from '../antd/AdminDrawer.vue'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -24,24 +24,8 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const dialogRef = ref(null)
-const titleRef = ref(null)
-const {
-  rendered,
-  phase,
-  layerStyle,
-  requestDialogClose,
-  onAfterEnter,
-  onAfterLeave
-} = useDialogLifecycle({
-  open: computed(() => props.open),
-  dialogRef,
-  initialFocusRef: titleRef,
-  returnFocusRef: computed(() => props.returnFocus),
-  requestClose: () => emit('close')
-})
-
-const close = () => requestDialogClose()
+// Frame: AdminDrawer (Ant Drawer + useDialogLifecycle), drawer migration 2026-11-27.
+const drawerFrame = ref(null)
 
 const userId = computed(() => String(props.user?.userId ?? props.user?.id ?? ''))
 const summary = computed(() => summarizeUserControl({ rules: { [userId.value]: props.rules } }, userId.value))
@@ -111,19 +95,9 @@ const summaryMeta = computed(() => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="dialog-overlay" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
-      <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 flex justify-end bg-slate-950/40" role="presentation" :style="layerStyle">
-        <Transition name="dialog-drawer" appear>
-          <aside v-show="phase !== 'closing'" ref="dialogRef" class="flex h-full w-full max-w-5xl flex-col overflow-hidden bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="user-control-detail-title">
-        <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-6 py-5">
-          <div class="min-w-0 flex-1">
-            <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">用户点控详情</p>
-            <h2 id="user-control-detail-title" ref="titleRef" tabindex="-1" class="mt-1 break-words text-xl font-semibold text-slate-900">{{ user?.username || '用户' }}</h2>
-            <p class="mt-1 break-all text-sm text-slate-500">UID {{ userId || '—' }} · {{ user?.email || '—' }}</p>
-          </div>
-          <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="close">×</AdminButton>
-        </header>
+  <AdminDrawer :open="open" :title="user?.username || '用户'" title-id="user-control-detail-title" :return-focus="returnFocus" :width="1024" plain ref="drawerFrame" @close="emit('close')">
+    <template #eyebrow>用户点控详情</template>
+    <template #subtitle><span class="break-all">UID {{ userId || '—' }} · {{ user?.email || '—' }}</span></template>
 
         <div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
           <section class="rounded-xl border p-4" :class="summaryMeta.classes">
@@ -187,9 +161,5 @@ const summaryMeta = computed(() => {
             <p v-else class="mt-2 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-sm text-slate-400">暂无操作记录</p>
           </section>
         </div>
-          </aside>
-        </Transition>
-      </div>
-    </Transition>
-  </Teleport>
+  </AdminDrawer>
 </template>

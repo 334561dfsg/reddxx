@@ -8,6 +8,7 @@ import {
   resolveUserOperationReturnFocus
 } from '../src/admin/config/userOperations.js'
 
+import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
 const elementByTestId = (source, testId) => source.match(
   new RegExp(`<([a-z]+)[^>]*data-testid="${testId}"[^>]*>[\\s\\S]*?<\\/\\1>`)
@@ -189,22 +190,11 @@ test('operation focus falls back to the row trigger when no action card is avail
 test('operation drawer uses the shared modal lifecycle and a fixed scrolling frame', () => {
   const source = read('../src/admin/components/user/UserOperationDrawer.vue')
 
-  assert.match(source, /<Teleport to="body">/)
-  assert.match(source, /useDialogLifecycle/)
-  assert.match(source, /role="dialog"/)
-  assert.match(source, /aria-modal="true"/)
-  assert.match(source, /aria-labelledby="user-operation-drawer-title"/)
-  assert.match(source, /fixed inset-0/)
-  assert.match(source, /data-testid="user-operation-drawer"[^>]*overflow-hidden/)
+  assertAdminDrawerFrame(source)
+  assert.match(source, /title-id="user-operation-drawer-title"/)
+  assert.match(source, /<AdminDrawer\b[^>]*testid="user-operation-drawer"/)
   assert.match(source, /data-testid="user-operation-drawer-body"[^>]*overflow-y-auto/)
-  assert.match(source, /aria-label="关闭"/)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self/)
-  assert.match(source, /drawer-overlay-enter-active[^}]*200ms ease-out/)
-  assert.match(source, /drawer-overlay-leave-active[^}]*150ms ease-in/)
-  assert.match(source, /drawer-panel-enter-active[^}]*200ms ease-out/)
-  assert.match(source, /drawer-panel-leave-active[^}]*150ms ease-in/)
-  assert.match(source, /prefers-reduced-motion: reduce/)
-  assert.match(source, /transition-duration: 50ms/)
 })
 
 test('operation drawer renders grouped actions and explains planned entries without mutation', () => {
@@ -275,5 +265,6 @@ test('operation drawer uses compact, balanced action tiles without shrinking clo
   assert.match(source, /rounded-full border px-1\.5 py-0\.5 text-\[10px\]/)
   assert.match(source, /text-sm font-medium text-slate-900/)
   assert.match(source, /mt-1 block text-xs leading-4/)
-  assert.match(source, /min-h-11 min-w-11/)
+  // The close target lives in the shared frame: a 44px Ant button.
+  assert.match(read('../src/admin/components/antd/AdminDrawer.vue'), /\.admin-drawer-close\.ant-btn \{[^}]*min-width: 44px; min-height: 44px/)
 })

@@ -1,5 +1,6 @@
 <script setup>
 import { AdminButton, AdminTextarea } from '../antd/controls.js'
+import AdminDrawer from '../antd/AdminDrawer.vue'
 
 import { ref, computed, watch } from 'vue'
 import { CREDIT_SCORE_CHANGE_TYPE, CREDIT_SCORE_AUDIT_STATUS } from '../../constants/creditScore'
@@ -95,10 +96,11 @@ const useNoteTemplate = (text) => {
   auditNote.value = text
 }
 
-const handleClose = () => {
-  resetActionState()
-  emit('close')
-}
+// Frame: AdminDrawer (Ant Drawer + useDialogLifecycle), drawer migration 2026-11-27. It joins the shared layer stack
+// (it used a fixed z-[100] before); in-drawer 关闭 buttons go through the frame's guarded close path, and the
+// action state resets after the close animation.
+const drawerFrame = ref(null)
+const handleClose = () => drawerFrame.value?.close()
 
 const submitAudit = () => {
   if (!props.audit || !auditAction.value) return
@@ -107,20 +109,9 @@ const submitAudit = () => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="audit-drawer">
-      <div
-        v-if="visible && audit && selectedAuditContext"
-        class="fixed inset-0 z-[100] min-h-[100dvh] w-screen max-w-[100vw] bg-slate-900/35"
-      >
-      <section class="audit-drawer-panel flex h-[88vh] w-full flex-col overflow-hidden rounded-b-2xl border-b border-slate-200 bg-slate-50 shadow-2xl">
-        <div class="border-b border-slate-200 bg-gradient-to-r from-white to-slate-100 px-5 py-4">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-xs font-medium tracking-wide text-slate-500">信用分审核详情抽屉</div>
-              <div class="mt-1 text-xl font-semibold text-slate-900">
-                {{ audit.username }}（{{ audit.userId }}）的信用分审核
-              </div>
+  <AdminDrawer :open="visible && !!audit && !!selectedAuditContext" :title="audit ? `${audit.username}（${audit.userId}）的信用分审核` : '信用分审核'" placement="top" height="88vh" plain ref="drawerFrame" @close="emit('close')" @closed="resetActionState">
+    <template #eyebrow>信用分审核详情</template>
+    <template v-if="audit" #subtitle>
               <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
                 <span class="rounded-full bg-slate-900 px-2.5 py-1 text-white">
                   状态：{{ statusConfig[audit.auditStatus]?.text || audit.auditStatus }}
@@ -136,15 +127,8 @@ const submitAudit = () => {
                   申请时间：{{ formatDate(audit.applyTime) }}
                 </span>
               </div>
-            </div>
-            <AdminButton type="button" class="text-slate-400 hover:text-slate-600 transition-colors" @click="handleClose">
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </AdminButton>
-          </div>
-        </div>
-
+    </template>
+    <template v-if="audit && selectedAuditContext">
         <div class="min-h-0 flex-1 overflow-y-auto p-4">
           <div class="space-y-4">
             <section class="rounded-xl border border-slate-200 bg-white p-4">
@@ -277,36 +261,7 @@ const submitAudit = () => {
           </div>
           </template>
         </section>
-      </section>
-      </div>
-    </Transition>
-  </Teleport>
+    </template>
+  </AdminDrawer>
 </template>
 
-<style scoped>
-.audit-drawer-enter-active,
-.audit-drawer-leave-active {
-  transition: opacity 0.25s ease;
-}
-
-.audit-drawer-enter-from,
-.audit-drawer-leave-to {
-  opacity: 0;
-}
-
-.audit-drawer-enter-to,
-.audit-drawer-leave-from {
-  opacity: 1;
-}
-
-.audit-drawer-enter-from > section,
-.audit-drawer-leave-to > section {
-  transform: translateY(-100%);
-}
-
-.audit-drawer-enter-active > section,
-.audit-drawer-leave-active > section {
-  transition: transform 0.25s ease;
-  transform: translateY(0);
-}
-</style>

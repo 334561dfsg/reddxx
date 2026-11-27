@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import test from 'node:test'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
+import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
 
 const projectFile = (path) => resolve(process.cwd(), path)
 const drawerFile = projectFile('src/admin/components/user/UserAgentReportDrawer.vue')
@@ -419,9 +420,7 @@ test('agent report Drawer preserves a newer context through an older leave callb
 test('agent report Drawer uses the shared fixed layer, fixed report regions, and required motion safeguards', async () => {
   const source = await readFile(drawerFile, 'utf8')
 
-  assert.match(source, /useDialogLifecycle/)
-  assert.match(source, /:style="layerStyle"/)
-  assert.match(source, /class="fixed inset-0/)
+  assertAdminDrawerFrame(source)
   assert.match(source, /data-testid="user-agent-report-body"[^>]*flex-col[^>]*overflow-hidden/)
   assert.match(source, /data-testid="agent-report-overview"/)
   assert.match(source, /data-testid="agent-report-tablist"/)
@@ -438,17 +437,5 @@ test('agent report Drawer uses the shared fixed layer, fixed report regions, and
   assert.match(source, /activeTab === 'daily' && dailyRows\.length/)
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 3)
   assert.match(source, /overflow-hidden/)
-  assert.match(source, /aria-label="关闭"/)
-  assert.match(source, /200ms ease-out/)
-  assert.match(source, /150ms ease-in/)
-  assert.match(source, /prefers-reduced-motion: reduce/)
-  assert.match(source, /transition-duration: 50ms/)
-  assert.match(source, /transform: none/)
-  assert.match(source, /100vh/)
-  assert.match(source, /100dvh/)
-  assert.match(source, /safe-area-inset-top/)
-  assert.match(source, /safe-area-inset-right/)
-  assert.match(source, /safe-area-inset-bottom/)
-  assert.match(source, /safe-area-inset-left/)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
 })

@@ -1,4 +1,5 @@
 <script setup>
+import AdminDrawer from '../antd/AdminDrawer.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { Table } from 'ant-design-vue'
 const TableColumn = Table.Column
@@ -6,7 +7,6 @@ const TableColumn = Table.Column
 import { AdminButton } from '../antd/controls.js'
 
 import { computed, ref, watch } from 'vue'
-import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import CompactPagination from '../CompactPagination.vue'
 
 const PAGE_SIZE = 10
@@ -19,8 +19,6 @@ const props = defineProps({
   returnFocus: { type: [Object, Function], default: null }
 })
 const emit = defineEmits(['close', 'closed'])
-const drawerRef = ref(null)
-const titleRef = ref(null)
 const errorRef = ref(null)
 const currentPage = ref(1)
 const activeTab = ref('daily')
@@ -43,18 +41,11 @@ const summaryCards = computed(() => [
   { label: '累计佣金', value: formatMoney(props.report?.summary?.totalCommission) }
 ])
 
-const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
-  open: computed(() => props.visible),
-  dialogRef: drawerRef,
-  initialFocusRef: computed(() => props.error ? errorRef.value : titleRef.value),
-  returnFocusRef: computed(() => props.returnFocus),
-  requestClose: () => emit('close')
-})
-const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = async () => {
-  if (!await onAfterLeave()) return
-  emit('closed')
-}
+// Frame: AdminDrawer (Ant Drawer + useDialogLifecycle), drawer migration 2026-11-27.
+const drawerFrame = ref(null)
+const initialFocus = computed(() => props.error ? errorRef.value : null)
+
+const handleClosed = () => emit('closed')
 
 watch(() => [props.visible, userId.value], ([visible]) => {
   if (visible) {
@@ -69,26 +60,9 @@ watch(totalPages, (nextTotalPages) => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="agent-report-drawer" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
-      <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 flex justify-end bg-slate-950/50" :style="layerStyle" role="presentation">
-        <aside
-          ref="drawerRef"
-          data-testid="user-agent-report-drawer"
-          class="agent-report-drawer-panel flex h-[100vh] max-h-[100vh] w-full max-w-3xl flex-col overflow-hidden bg-white shadow-2xl supports-[height:100dvh]:h-[100dvh] supports-[height:100dvh]:max-h-[100dvh]"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="user-agent-report-title"
-        >
-          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5 sm:py-4" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left)); padding-top: max(0.75rem, env(safe-area-inset-top));">
-            <div class="min-w-0 flex-1">
-              <h2 id="user-agent-report-title" ref="titleRef" tabindex="-1" class="break-words text-lg font-semibold text-slate-900 outline-none">代理业务报表</h2>
-              <p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知代理' }} · UID {{ userId || '—' }}</p>
-            </div>
-            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</AdminButton>
-          </header>
-
-          <div data-testid="user-agent-report-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
+  <AdminDrawer :open="visible" title="代理业务报表" title-id="user-agent-report-title" :return-focus="returnFocus" testid="user-agent-report-drawer" :width="768" plain ref="drawerFrame" :initial-focus="initialFocus" @close="emit('close')" @closed="handleClosed">
+      <template #subtitle>{{ user?.username || '未知代理' }} · UID {{ userId || '—' }}</template>
+      <div data-testid="user-agent-report-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
             <FeedbackToast v-if="error" ref="errorRef" data-testid="agent-report-error-state" type="error" :source="() => (error) ? (([[&quot;代理报表加载失败&quot;].join(''),[String((error) ?? '')].join('')].join(''))) : ''"></FeedbackToast>
 
             <template v-if="report">
@@ -184,27 +158,6 @@ watch(totalPages, (nextTotalPages) => {
               <div><p class="font-medium text-slate-700">当前代理暂无业务报表数据</p><p class="mt-1 text-sm text-slate-500">该代理尚无可统计的客户与佣金记录。</p></div>
             </div>
           </div>
-        </aside>
-      </div>
-    </Transition>
-  </Teleport>
+    </AdminDrawer>
 </template>
 
-<style scoped>
-.agent-report-drawer-enter-active { transition: opacity 200ms ease-out; }
-.agent-report-drawer-leave-active { transition: opacity 150ms ease-in; }
-.agent-report-drawer-enter-active .agent-report-drawer-panel { transition: transform 200ms ease-out; }
-.agent-report-drawer-leave-active .agent-report-drawer-panel { transition: transform 150ms ease-in; }
-.agent-report-drawer-enter-from,
-.agent-report-drawer-leave-to { opacity: 0; }
-.agent-report-drawer-enter-from .agent-report-drawer-panel,
-.agent-report-drawer-leave-to .agent-report-drawer-panel { transform: translateX(100%); }
-@media (prefers-reduced-motion: reduce) {
-  .agent-report-drawer-enter-active,
-  .agent-report-drawer-leave-active,
-  .agent-report-drawer-enter-active .agent-report-drawer-panel,
-  .agent-report-drawer-leave-active .agent-report-drawer-panel { transition-duration: 50ms; }
-  .agent-report-drawer-enter-from .agent-report-drawer-panel,
-  .agent-report-drawer-leave-to .agent-report-drawer-panel { transform: none; }
-}
-</style>

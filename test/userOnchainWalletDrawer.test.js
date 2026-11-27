@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { createSfcHarness, loadVueSfc } from './helpers/vueSfcHarness.js'
+import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
 
 // Node ≥21 exposes a getter-only globalThis.navigator; make it writable so the tests can stub the clipboard.
 Object.defineProperty(globalThis, 'navigator', { value: globalThis.navigator, configurable: true, writable: true })
@@ -383,31 +384,13 @@ test('wallet drawer source maintains the modal drawer contract', () => {
   assert.equal(existsSync(componentPath), true)
   const source = readFileSync(componentPath, 'utf8')
 
-  assert.match(source, /<Teleport to="body">/)
-  assert.match(source, /useDialogLifecycle/)
-  assert.match(source, /role="dialog"/)
-  assert.match(source, /aria-modal="true"/)
-  assert.match(source, /aria-labelledby="user-onchain-wallet-title"/)
-  assert.match(source, /aria-label="关闭"/)
+  assertAdminDrawerFrame(source)
+  assert.match(source, /title-id="user-onchain-wallet-title"/)
   const verticalScrollerClasses = source.match(/\boverflow-y-(?:auto|scroll)\b/g) || []
   assert.equal(verticalScrollerClasses.length, 1)
   assert.match(source, /data-testid="user-onchain-wallet-body"[^>]*overflow-y-auto/)
-  assert.match(source, /data-testid="user-onchain-wallet-drawer"[^>]*overflow-hidden/)
-  assert.match(source, /h-\[100vh\]/)
-  assert.match(source, /h-\[100dvh\]/)
-  assert.match(source, /safe-area-inset-top/)
-  assert.match(source, /safe-area-inset-bottom/)
-  assert.match(source, /<header[^>]*safe-area-inset-left/)
-  assert.match(source, /<nav[^>]*safe-area-inset-left/)
-  assert.match(source, /data-testid="user-onchain-wallet-body"[^>]*safe-area-inset-left/)
-  assert.match(source, /200ms ease-out/)
-  assert.match(source, /150ms ease-in/)
-  assert.match(source, /transition-duration: 50ms/)
-  const backdropStart = source.indexOf('<div\n        v-if="rendered')
-  const backdropEnd = source.indexOf('>\n        <aside', backdropStart)
-  assert.notEqual(backdropStart, -1)
-  assert.notEqual(backdropEnd, -1)
-  assert.doesNotMatch(source.slice(backdropStart, backdropEnd), /@(?:click|mouse|pointer|touch|drag)/)
+  assert.match(source, /<AdminDrawer\b[^>]*testid="user-onchain-wallet-drawer"/)
+  // The backdrop belongs to the Ant frame, which never closes on mask clicks (checked by assertAdminDrawerFrame).
   // Focus outlines are not drawn (AGENTS.md); forced-colors mode keeps one for the title.
   assert.match(source, /@media \(forced-colors: active\)[\s\S]*\.onchain-wallet-drawer-title:focus/)
 })

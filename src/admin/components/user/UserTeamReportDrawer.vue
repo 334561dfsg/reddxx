@@ -1,9 +1,9 @@
 <script setup>
+import AdminDrawer from '../antd/AdminDrawer.vue'
 import { AdminButton } from '../antd/controls.js'
 
 import { computed, ref, watch } from 'vue'
 import { getTeamReport } from '../../repositories/userRelationshipRepository.js'
-import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import CompactPagination from '../CompactPagination.vue'
 
 const PAGE_SIZE = 10
@@ -14,8 +14,6 @@ const props = defineProps({
   returnFocus: { type: [Object, Function], default: null }
 })
 const emit = defineEmits(['close', 'closed'])
-const drawerRef = ref(null)
-const titleRef = ref(null)
 const currentPage = ref(1)
 const userId = computed(() => String(props.user?.id ?? props.user?.userId ?? ''))
 const report = computed(() => {
@@ -45,25 +43,10 @@ const metricCards = computed(() => report.value ? [
   { label: '裂变团队累计盈亏', value: `${profitLabel(report.value.totalProfit)} ${signedProfit(report.value.totalProfit)} USDT`, profit: true, positive: report.value.totalProfit >= 0 }
 ] : [])
 
-const {
-  rendered,
-  phase,
-  layerStyle,
-  requestDialogClose,
-  onAfterEnter,
-  onAfterLeave
-} = useDialogLifecycle({
-  open: computed(() => props.visible),
-  dialogRef: drawerRef,
-  initialFocusRef: titleRef,
-  returnFocusRef: computed(() => props.returnFocus),
-  requestClose: () => emit('close')
-})
-const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = async () => {
-  if (!await onAfterLeave()) return
-  emit('closed')
-}
+// Frame: AdminDrawer (Ant Drawer + useDialogLifecycle), drawer migration 2026-11-27.
+const drawerFrame = ref(null)
+
+const handleClosed = () => emit('closed')
 
 watch(() => [props.visible, userId.value], ([visible]) => {
   if (visible) currentPage.value = 1
@@ -75,19 +58,9 @@ watch(totalPages, (nextTotalPages) => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="team-report-overlay" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
-      <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 flex justify-end bg-slate-950/50" :style="layerStyle" role="presentation">
-        <section ref="drawerRef" class="team-report-panel flex h-screen max-h-screen w-full max-w-3xl flex-col overflow-hidden bg-white shadow-2xl supports-[height:100dvh]:h-dvh supports-[height:100dvh]:max-h-dvh" role="dialog" aria-modal="true" aria-labelledby="team-report-title">
-          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
-            <div class="min-w-0 flex-1">
-              <h2 id="team-report-title" ref="titleRef" tabindex="-1" class="text-xl font-semibold text-slate-900 outline-none">裂变团队报表</h2>
-              <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · 裂变统计范围不包含本人</p>
-            </div>
-            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</AdminButton>
-          </header>
-
-          <div data-testid="team-report-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
+  <AdminDrawer :open="visible" title="裂变团队报表" title-id="team-report-title" :return-focus="returnFocus" :width="768" plain ref="drawerFrame" @close="emit('close')" @closed="handleClosed">
+      <template #subtitle>{{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · 裂变统计范围不包含本人</template>
+      <div data-testid="team-report-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden px-4 py-4 sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <template v-if="hasMembers">
               <section data-testid="team-report-overview-scroll" class="min-h-0 max-h-[min(18rem,38vh)] shrink overflow-y-auto overscroll-y-contain outline-none" role="region" tabindex="0" aria-labelledby="team-report-overview-title">
                 <h3 id="team-report-overview-title" class="text-sm font-semibold text-slate-900">裂变团队概览</h3>
@@ -127,27 +100,6 @@ watch(totalPages, (nextTotalPages) => {
               <div><p class="font-medium text-slate-700">当前没有裂变团队成员</p><p class="mt-1 text-sm text-slate-500">该用户尚无可统计的裂变下级关系。</p></div>
             </div>
           </div>
-        </section>
-      </div>
-    </Transition>
-  </Teleport>
+    </AdminDrawer>
 </template>
 
-<style scoped>
-.team-report-overlay-enter-active { transition: opacity 200ms ease-out; }
-.team-report-overlay-leave-active { transition: opacity 150ms ease-in; }
-.team-report-overlay-enter-active .team-report-panel { transition: opacity 200ms ease-out, transform 200ms ease-out; }
-.team-report-overlay-leave-active .team-report-panel { transition: opacity 150ms ease-in, transform 150ms ease-in; }
-.team-report-overlay-enter-from,
-.team-report-overlay-leave-to { opacity: 0; }
-.team-report-overlay-enter-from .team-report-panel,
-.team-report-overlay-leave-to .team-report-panel { opacity: 0; transform: translateX(100%); }
-@media (prefers-reduced-motion: reduce) {
-  .team-report-overlay-enter-active,
-  .team-report-overlay-leave-active,
-  .team-report-overlay-enter-active .team-report-panel,
-  .team-report-overlay-leave-active .team-report-panel { transition-duration: 50ms; }
-  .team-report-overlay-enter-from .team-report-panel,
-  .team-report-overlay-leave-to .team-report-panel { transform: none; }
-}
-</style>

@@ -1,4 +1,5 @@
 import test from 'node:test'
+import { readFileSync } from 'node:fs'
 import assert from 'node:assert/strict'
 import { resolve } from 'node:path'
 import { createSfcHarness, loadVueSfc } from './helpers/vueSfcHarness.js'
@@ -58,7 +59,9 @@ for (const surface of [
     },
     testId: null,
     role: 'dialog',
-    enterClass: 'dialog-drawer-enter-from',
+    // Migrated onto AdminDrawer: the Ant frame (its parent) carries the opening phase.
+    enterClass: 'admin-drawer-opening',
+    enterOnFrameParent: true,
     closeEvent: 'onClose'
   },
   {
@@ -93,7 +96,7 @@ for (const surface of [
       : harness.allNodes().find((node) => node.getAttribute?.('role') === surface.role)
 
     assert.ok(frame)
-    assert.equal(frame.classList.contains(surface.enterClass), true)
+    assert.equal((surface.enterOnFrameParent ? frame.parent : frame).classList.contains(surface.enterClass), true)
     await harness.finishTransitions()
     harness.findByText('×', 'button')?.click()
     await harness.flush()
@@ -192,8 +195,9 @@ test('user operation Drawer runs both right-edge enter transitions', async (t) =
   await harness.flush()
   const frame = harness.findByTestId('user-operation-drawer')
   assert.ok(frame)
-  assert.equal(frame.parent.classList.contains('drawer-overlay-enter-from'), true)
-  assert.equal(frame.classList.contains('drawer-panel-enter-from'), true)
+  // Entered through the shared Ant Drawer frame, which runs the right-edge enter motion (AdminDrawer).
+  assert.equal(frame.parent.classList.contains('admin-drawer-opening'), true)
+  assert.equal(frame.parent.classList.contains('ant-drawer-open'), true)
 })
 
 test('user operation Drawer returns focus to the stable row action after close', async (t) => {
@@ -332,6 +336,21 @@ for (const surface of [
     const frame = surface.testId
       ? harness.findByTestId(surface.testId)
       : harness.allNodes().find((node) => node.getAttribute?.('role') === 'dialog')
+    const adminFrame = frame.classList.contains('ant-drawer-content')
+    if (adminFrame) {
+      // AdminDrawer header: shrinkable heading beside a fixed 44px close button (sizes in its stylesheet).
+      const header = harness.allNodes().find((node) => node.classList?.contains('admin-drawer-header') && frame.contains(node))
+      const heading = header.children.find((node) => node.classList?.contains('admin-drawer-heading'))
+      const title = heading.children.find((node) => node.tag === 'h2')
+      const close = header.children.find((node) => node.getAttribute?.('aria-label') === '关闭')
+      assert.ok(title.classList.contains('admin-drawer-title'))
+      assert.ok(close.classList.contains('admin-drawer-close'))
+      const css = readFileSync(projectFile('src/admin/components/antd/AdminDrawer.vue'), 'utf8')
+      assert.match(css, /\.admin-drawer-heading \{ min-width: 0; flex: 1; \}/)
+      assert.match(css, /\.admin-drawer-title \{[^}]*overflow-wrap: anywhere/)
+      assert.match(css, /\.admin-drawer-close\.ant-btn \{ flex: none; min-width: 44px; min-height: 44px; \}/)
+      return
+    }
     const header = frame.children.find((node) => node.tag === 'header')
     const text = header.children.find((node) => node.tag === 'div')
     const title = harness.allNodes().find((node) => node.tag === 'h2' && header.contains(node))

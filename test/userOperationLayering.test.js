@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
+import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
 const root = new URL('../', import.meta.url)
 const actionFiles = [
   'src/admin/components/user/UserDepositAction.vue',
@@ -47,19 +48,9 @@ test('operation orchestrator forwards the originating card as child return focus
 test('user detail drawer uses the shared layer stack and a fixed scrolling frame', () => {
   const source = readFileSync(new URL('src/admin/components/user/UserDetailDrawer.vue', root), 'utf8')
 
-  assert.match(source, /useDialogLifecycle/)
-  assert.match(source, /:style="layerStyle"/)
-  assert.match(source, /v-if="rendered"/)
-  assert.match(source, /@after-enter="onAfterEnter"/)
-  assert.match(source, /@after-leave="handleAfterLeave"/)
-  assert.match(source, /role="dialog"/)
-  assert.match(source, /aria-modal="true"/)
-  assert.match(source, /aria-labelledby="user-detail-drawer-title"/)
-  assert.match(source, /data-testid="user-detail-drawer"[^>]*overflow-hidden/)
+  // Top drawer on the shared Ant frame (AdminDrawer): layer stack, dialog semantics, close button and motion there.
+  assertAdminDrawerFrame(source)
+  assert.match(source, /<AdminDrawer\b[^>]*title-id="user-detail-drawer-title"[^>]*testid="user-detail-drawer"[^>]*placement="top"/)
+  assert.match(source, /@closed="handleClosed"/)
   assert.match(source, /data-testid="user-detail-drawer-body"[^>]*overflow-y-auto/)
-  assert.match(source, /aria-label="关闭"/)
-  assert.doesNotMatch(source, /fixed inset-0 z-50/)
-  assert.match(source, /200ms ease-out/)
-  assert.match(source, /150ms ease-in/)
-  assert.match(source, /prefers-reduced-motion: reduce/)
 })

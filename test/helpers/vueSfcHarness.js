@@ -16,7 +16,7 @@ const resolveImport = (specifier, filename, vueImports) => {
   const resolved = resolve(dirname(filename), specifier)
   if (vueImports[resolved]) return vueImports[resolved]
   // The shared Ant Drawer frame renders for real, over a Drawer stand-in, so tests see the migrated dialogs' content.
-  if (resolved.endsWith('/src/admin/components/antd/AdminDrawer.vue')) return loadVueSfcModuleUrl(resolved, {vueImports: {'ant-design-vue': pathToFileURL(resolve('test/helpers/antDrawerStub.js')).href, '@ant-design/icons-vue': pathToFileURL(resolve('test/helpers/antDrawerStub.js')).href}})
+  if (resolved.endsWith('/src/admin/components/antd/AdminDrawer.vue')) return loadVueSfcModuleUrl(resolved, {vueImports: {...vueImports, 'ant-design-vue': pathToFileURL(resolve('test/helpers/antDrawerStub.js')).href, '@ant-design/icons-vue': pathToFileURL(resolve('test/helpers/antDrawerStub.js')).href}})
   if (resolved.endsWith('/src/shared/feedback/FeedbackToast.vue')) return loadVueSfcModuleUrl(resolved, {vueImports: {'ant-design-vue': pathToFileURL(resolve('test/helpers/feedbackAntStub.js')).href}})
   if (extname(resolved) === '.vue') return vueImports[resolved] || stubComponentUrl
   if (!extname(resolved) && existsSync(`${resolved}.js`)) {

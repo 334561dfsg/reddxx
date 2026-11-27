@@ -4,6 +4,7 @@ import { resolve } from 'node:path'
 import test from 'node:test'
 import { h } from 'vue'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
+import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
 
 const projectFile = (path) => resolve(process.cwd(), path)
 const rechargeDrawerFile = projectFile('src/admin/components/user/UserRechargeSummaryDrawer.vue')
@@ -48,7 +49,7 @@ test('recharge Drawer opens above its trigger, exposes the complete summary, and
   assert.match(frame.textContent, /170,000\.00/)
   assert.match(frame.textContent, /VIP2/)
   assert.match(frame.textContent, /DEP-001/)
-  assert.equal(frame.parent.classList.contains('recharge-drawer-enter-from'), true)
+  assert.equal(frame.parent.classList.contains('admin-drawer-opening'), true)
 
   await harness.finishTransitions()
   frame.parent.click()
@@ -141,7 +142,7 @@ test('recharge Drawer returns to page one when the open Drawer switches users wi
 test('recharge Drawer keeps its fixed overview in a content-driven two-column layout', async () => {
   const source = await readFile(rechargeDrawerFile, 'utf8')
 
-  assert.match(source, /max-w-2xl/)
+  assert.match(source, /<AdminDrawer\b[^>]*:width="672"/)
   assert.match(source, /data-testid="user-recharge-summary-overview"[^>]*grid-cols-1[^>]*min-\[520px\]:grid-cols-\[220px_minmax\(0,1fr\)\]/)
 })
 
@@ -160,15 +161,7 @@ test('recharge Drawer keeps its record scroller keyboard-accessible and compacts
 test('recharge Drawer retains responsive motion safeguards', async () => {
   const source = await readFile(rechargeDrawerFile, 'utf8')
 
-  assert.match(source, /overflow-hidden/)
-  assert.match(source, /200ms ease-out/)
-  assert.match(source, /150ms ease-in/)
-  assert.match(source, /prefers-reduced-motion: reduce/)
-  assert.match(source, /transition-duration: 50ms/)
-  assert.match(source, /transform: none/)
-  assert.match(source, /100vh/)
-  assert.match(source, /100dvh/)
-  assert.match(source, /safe-area-inset-right/)
+  assertAdminDrawerFrame(source)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
 })
 

@@ -11,6 +11,7 @@ import {
   createUserControlState
 } from '../src/features/user-control/userControl.js'
 
+import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
 const openingTag = (source, testId) => source.match(new RegExp(`<[^>]+data-testid="${testId}"[^>]*>`))?.[0] || ''
 const elementByTestId = (source, testId) => source.match(
@@ -319,7 +320,7 @@ test('module page uses the user-list style point-control badge column', () => {
   assert.doesNotMatch(source, /processing:\s*\{\s*label:\s*'处理中'/)
   assert.doesNotMatch(detailSource, /processing:\s*\{\s*label:\s*'处理中'/)
   assert.doesNotMatch(detailSource, /@mousedown\.self="emit\('close'\)"/)
-  assert.match(detailSource, /max-w-5xl[^"\n]*overflow-hidden/)
+  assert.match(detailSource, /<AdminDrawer\b[^>]*:width="1024"/)
 })
 
 test('user list moves point-control actions into the complete operation drawer and safeguards empty cancellation', () => {
@@ -651,9 +652,7 @@ test('unified point-control cancellation dialog and detail drawer keep overlays 
   assert.match(userListSource, /data-testid="unified-user-control-cancel-dialog"[^>]*overflow-hidden/)
   assert.match(userListSource, /data-testid="unified-user-control-cancel-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
   assert.doesNotMatch(detailSource, /@mousedown\.self|@click\.self/)
-  assert.match(detailSource, /fixed inset-0/)
-  assert.match(detailSource, /<aside[^>]*h-full[^>]*overflow-hidden/)
-  assert.match(detailSource, /max-w-5xl[^>]*overflow-hidden/)
+  assertAdminDrawerFrame(detailSource)
   assert.match(detailSource, /flex-1[^>]*overflow-y-auto/)
 })
 
@@ -685,11 +684,8 @@ test('point-control setting and detail surfaces use the shared dialog lifecycle 
   assert.match(settingSource, /name="dialog-panel"/)
   assert.doesNotMatch(settingSource, /@click\.self|@mousedown\.self|backdrop-click/)
 
-  assert.match(detailSource, /useDialogLifecycle/)
-  assert.match(detailSource, /aria-labelledby="user-control-detail-title"/)
-  assert.match(detailSource, /id="user-control-detail-title"[^>]*tabindex="-1"/)
-  assert.match(detailSource, /name="dialog-drawer"/)
-  assert.doesNotMatch(detailSource, /@click\.self|@mousedown\.self|backdrop-click/)
+  assertAdminDrawerFrame(detailSource)
+  assert.match(detailSource, /title-id="user-control-detail-title"/)
 })
 
 test('unified point-control cancellation dialog retains its layer, focus target, and closing content', () => {

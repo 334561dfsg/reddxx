@@ -1,9 +1,9 @@
 <script setup>
+import AdminDrawer from '../antd/AdminDrawer.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton } from '../antd/controls.js'
 
 import { computed, ref, watch } from 'vue'
-import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -12,8 +12,6 @@ const props = defineProps({
   returnFocus: { type: [Object, Function], default: null }
 })
 const emit = defineEmits(['close', 'closed'])
-const drawerRef = ref(null)
-const titleRef = ref(null)
 const activeSegment = ref('deposit')
 const revealedIds = ref(new Set())
 const copyingId = ref(null)
@@ -26,23 +24,10 @@ const segmentAddresses = computed(() => addresses.value.filter((address) => addr
 const segmentLabel = computed(() => activeSegment.value === 'deposit' ? '入金' : '提现')
 const copyInProgress = computed(() => copyingId.value !== null)
 
-const {
-  rendered,
-  phase,
-  layerStyle,
-  requestDialogClose,
-  onAfterEnter,
-  onAfterLeave
-} = useDialogLifecycle({
-  open: computed(() => props.visible),
-  dialogRef: drawerRef,
-  initialFocusRef: titleRef,
-  returnFocusRef: computed(() => props.returnFocus),
-  requestClose: () => emit('close'),
-  closeDisabled: copyInProgress
-})
+// Frame: AdminDrawer (Ant Drawer + useDialogLifecycle), drawer migration 2026-11-27.
+const drawerFrame = ref(null)
+const phase = computed(() => drawerFrame.value?.phase ?? 'closed')
 
-const close = createDialogCloseAction(requestDialogClose)
 const resetLocalState = () => {
   openingVersion += 1
   activeSegment.value = 'deposit'
@@ -90,8 +75,7 @@ const copyAddress = async (address) => {
     copyingId.value = null
   }
 }
-const handleAfterLeave = async () => {
-  if (!await onAfterLeave()) return
+const handleClosed = () => {
   resetLocalState()
   emit('closed')
 }
@@ -102,44 +86,11 @@ watch(() => props.visible, (visible) => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="onchain-wallet-drawer" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
-      <div
-        v-if="rendered && phase !== 'closing'"
-        class="fixed inset-0 flex justify-end bg-slate-950/50"
-        role="presentation"
-        :style="layerStyle"
-      >
-        <aside
-          ref="drawerRef"
-          data-testid="user-onchain-wallet-drawer"
-          class="onchain-wallet-drawer-panel flex h-[100vh] max-h-[100vh] w-full max-w-xl flex-col overflow-hidden bg-white shadow-2xl supports-[height:100dvh]:h-[100dvh] supports-[height:100dvh]:max-h-[100dvh]"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="user-onchain-wallet-title"
-          :aria-busy="copyInProgress"
-        >
-          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
-            <div class="min-w-0 flex-1">
-              <h2 id="user-onchain-wallet-title" ref="titleRef" tabindex="-1" class="onchain-wallet-drawer-title break-words rounded-sm text-xl font-semibold text-slate-900">
-                链上钱包
-              </h2>
-              <p class="mt-1 break-words text-sm text-slate-500">
+  <AdminDrawer :open="visible" title="链上钱包" title-id="user-onchain-wallet-title" :busy="Boolean(copyInProgress)" :return-focus="returnFocus" testid="user-onchain-wallet-drawer" :width="576" plain ref="drawerFrame" @close="emit('close')" @closed="handleClosed">
+      <template #subtitle>
                 {{ user?.username || '未知用户' }} · UID {{ userId || '—' }}
-              </p>
-            </div>
-            <AdminButton
-              type="button"
-              :disabled="copyInProgress"
-              class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none"
-              aria-label="关闭"
-              @click="close"
-            >
-              ×
-            </AdminButton>
-          </header>
-
-          <nav class="flex shrink-0 gap-1 border-b border-slate-200 bg-slate-50 px-4 py-2 sm:px-5" aria-label="链上钱包地址类型" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
+              </template>
+      <nav class="flex shrink-0 gap-1 border-b border-slate-200 bg-slate-50 px-4 py-2 sm:px-5" aria-label="链上钱包地址类型" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <AdminButton
               v-for="segment in [{ id: 'deposit', label: '入金地址' }, { id: 'withdrawal', label: '提现地址' }]"
               :key="segment.id"
@@ -202,31 +153,10 @@ watch(() => props.visible, (visible) => {
               <p class="mt-1 text-xs text-slate-500">该用户当前没有可展示的{{ segmentLabel }}地址记录。</p>
             </div>
           </div>
-        </aside>
-      </div>
-    </Transition>
-  </Teleport>
+    </AdminDrawer>
 </template>
 
 <style scoped>
-.onchain-wallet-drawer-enter-active { transition: opacity 200ms ease-out; }
-.onchain-wallet-drawer-leave-active { transition: opacity 150ms ease-in; }
-.onchain-wallet-drawer-enter-active .onchain-wallet-drawer-panel { transition: transform 200ms ease-out; }
-.onchain-wallet-drawer-leave-active .onchain-wallet-drawer-panel { transition: transform 150ms ease-in; }
-.onchain-wallet-drawer-enter-from,
-.onchain-wallet-drawer-leave-to { opacity: 0; }
-.onchain-wallet-drawer-enter-from .onchain-wallet-drawer-panel,
-.onchain-wallet-drawer-leave-to .onchain-wallet-drawer-panel { transform: translateX(100%); }
-
-@media (prefers-reduced-motion: reduce) {
-  .onchain-wallet-drawer-enter-active,
-  .onchain-wallet-drawer-leave-active,
-  .onchain-wallet-drawer-enter-active .onchain-wallet-drawer-panel,
-  .onchain-wallet-drawer-leave-active .onchain-wallet-drawer-panel { transition-duration: 50ms; }
-  .onchain-wallet-drawer-enter-from .onchain-wallet-drawer-panel,
-  .onchain-wallet-drawer-leave-to .onchain-wallet-drawer-panel { transform: none; }
-}
-
 @media (forced-colors: active) {
   .onchain-wallet-drawer-title:focus {
     outline-color: Highlight;
