@@ -38,7 +38,7 @@ async function load(){
  original.value=JSON.stringify(form.value);loading.value=false
 }
 watch(()=>route.params.id,load,{immediate:true})
-const returnQuery=()=>Object.fromEntries(['q','page','size','productId','currency','status'].filter(k=>route.query[k]!=null).map(k=>[k,route.query[k]]))
+const returnQuery=()=>Object.fromEntries(['productName','page','size','productId','currency','status'].filter(k=>route.query[k]!=null).map(k=>[k,route.query[k]]))
 function back(){router.push({path:'/admin/lending/products',query:returnQuery()})}
 const leaveOpen=ref(false);let resolveLeave=null,allowLeave=false
 function guard(){if(busy.value)return false;if(allowLeave||!dirty.value)return true;if(resolveLeave)return false;leaveOpen.value=true;return new Promise(resolve=>{resolveLeave=resolve})}

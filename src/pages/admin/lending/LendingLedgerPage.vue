@@ -14,20 +14,27 @@ import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vu
 import LedgerModal from '../earn/EarnAdminModal.vue'
 const route=useRoute(),router=useRouter(),{state,error,busy,refresh}=useLendingFeed()
 const mode=computed(()=>route.path.split('/').pop())
-const applied=ref(String(route.query.q||'')),appliedStatus=ref(String(route.query.status||'')),selected=ref(null),action=ref(''),failure=ref(''),statusProduct=ref(null)
-const page=ref(Math.max(1,Number(route.query.page)||1)),identifier=ref(String(route.query.productId||'')),currency=ref(String(route.query.currency||'all'))
+const texts=ref(Object.fromEntries(['productName','productId'].filter(k=>route.query[k]).map(k=>[k,String(route.query[k])]))),appliedStatus=ref(String(route.query.status||'')),selected=ref(null),action=ref(''),failure=ref(''),statusProduct=ref(null)
+const page=ref(Math.max(1,Number(route.query.page)||1)),currency=ref(String(route.query.currency||'all'))
 const labels={products:'产品管理',orders:'订单管理',repayment:'还款记录','operation-log':'操作日志'}
 const rows=computed(()=>{
  const source=mode.value==='products'?state.value.products:mode.value==='orders'?state.value.orders:mode.value==='repayment'?state.value.repayments:state.value.logs
- return source.filter(r=>(!identifier.value||String(r.productId||r.orderId||r.refId||'').toLowerCase().includes(identifier.value.toLowerCase()))&&(currency.value==='all'||r.loanCurrency===currency.value)&&(!appliedStatus.value||r.status===appliedStatus.value)&&(!applied.value||[r.orderId,r.productId,r.productName,r.userId,r.refId,r.operator].some(v=>String(v||'').toLowerCase().includes(applied.value.toLowerCase()))))
+ return source.filter(r=>textFields.value.every(([key,,value])=>!texts.value[key]||String(value(r)??'').toLowerCase().includes(texts.value[key].toLowerCase()))&&(currency.value==='all'||r.loanCurrency===currency.value)&&(!appliedStatus.value||r.status===appliedStatus.value))
 })
 const columns=computed(()=>mode.value==='products'?[['productId','产品ID'],['productName','产品名称'],['loanCurrency','币种'],['dailyRateRange','日利率区间 (%)'],['loanTerms','可借期限'],['status','状态'],['actions','操作']]:mode.value==='orders'?[['orderId','订单 / 产品'],['userId','UID'],['loanAmount','申请金额'],['terms','期限 / 日利率'],['collateral','质押资产'],['status','状态'],['createTime','申请时间'],['reviewer','审核人'],['actions','操作']]:mode.value==='repayment'?[['repaymentId','还款ID'],['orderId','订单ID'],['userId','UID'],['loanCurrency','币种'],['amount','还款金额'],['principalPaid','本金'],['interestPaid','利息'],['overduePenaltyPaid','逾期利息'],['repaymentTime','还款时间']]:[['refId','关联记录'],['action','操作'],['operator','操作人'],['createdAt','时间']])
 const amountKeys=['loanAmount','totalDebt','interestRate','amount','principalPaid','interestPaid','overduePenaltyPaid']
 const tableColumns=computed(()=>columns.value.map(([key,title],i)=>({key,dataIndex:key,title,width:mode.value==='orders'?({orderId:260,userId:140,loanAmount:160,terms:130,collateral:170,status:100,createTime:180,reviewer:150,actions:160})[key]:mode.value==='products'?({productId:110,productName:160,loanCurrency:80,dailyRateRange:130,loanTerms:340,status:80,actions:130})[key]:key==='actions'?180:key==='orderId'||key==='repaymentId'?240:key==='productName'?210:160,align:amountKeys.includes(key)?'right':undefined,fixed:key==='actions'?'right':i===0?'left':undefined})))
-const filterModel=computed(()=>({q:applied.value,id:identifier.value,currency:currency.value,status:appliedStatus.value||'all'}))
+// One input per field (no combined keyword box): each list filters on its own identifiers.
+const textFieldDefs={
+ products:[['productName','产品名称',r=>r.productName],['productId','产品编号',r=>r.productId]],
+ orders:[['orderId','订单号',r=>r.orderId],['userId','用户 ID',r=>r.userId],['productName','产品名称',r=>r.productName]],
+ repayment:[['repaymentId','还款单号',r=>r.repaymentId],['orderId','订单号',r=>r.orderId],['userId','用户 ID',r=>r.userId]],
+ 'operation-log':[['refId','关联记录',r=>r.refId],['summary','操作',r=>r.summary],['operator','操作人',r=>r.operator]]
+}
+const textFields=computed(()=>textFieldDefs[mode.value]||[])
+const filterModel=computed(()=>({...Object.fromEntries(textFields.value.map(([key])=>[key,texts.value[key]||''])),currency:currency.value,status:appliedStatus.value||'all'}))
 const filterFields=computed(()=>[
- {key:'q',label:mode.value==='products'?'产品名称':'搜索内容'},
- {key:'id',label:mode.value==='products'?'产品编号':'关联单号'},
+ ...textFields.value.map(([key,label])=>({key,label})),
  ...(mode.value!=='operation-log'?[{key:'currency',label:'币种',searchable:true,options:[{value:'all',label:'全部币种'},...['USDT','USDC'].map(value=>({value,label:value}))]}]:[]),
  ...(['products','orders'].includes(mode.value)?[{key:'status',label:'状态',options:[{value:'all',label:'全部状态'},...Object.entries(mode.value==='products'?{active:'上架',inactive:'下架',suspended:'暂停'}:statusLabels).map(([value,label])=>({value,label}))]}]:[])
 ])
@@ -51,10 +58,10 @@ async function saveStatus(){
  failure.value=''
  try{await lendingCommand('setProductStatus',{productId:statusProduct.value.productId,expectedStatus:statusProduct.value.status});message.success('产品状态已更新');action.value=''}catch(e){failure.value=errorLabels[e.message]||e.message}
 }
-function edit(p){router.push({path:p?`/admin/lending/products/${encodeURIComponent(p.productId)}/edit`:'/admin/lending/products/new',query:{q:applied.value,page:page.value,productId:identifier.value,currency:currency.value,status:appliedStatus.value}})}
+function edit(p){router.push({path:p?`/admin/lending/products/${encodeURIComponent(p.productId)}/edit`:'/admin/lending/products/new',query:{productName:texts.value.productName,productId:texts.value.productId,page:page.value,currency:currency.value,status:appliedStatus.value}})}
 async function run(kind){if(busy.value)return;failure.value='';try{await lendingCommand(kind,{orderId:current.value?.orderId,actor:'管理员（模拟）'});message.success(`${actionLabels[kind]||'操作'}成功`);action.value=''}catch(e){failure.value=errorLabels[e.message]||e.message}}
-function search(values){applied.value=values.q.trim();identifier.value=values.id.trim();currency.value=values.currency||'all';appliedStatus.value=values.status==='all'?'':values.status||'';page.value=1}
-function reset(){applied.value='';identifier.value='';currency.value='all';appliedStatus.value='';page.value=1}
+function search(values){texts.value=Object.fromEntries(textFields.value.map(([key])=>[key,String(values[key]||'').trim()]));currency.value=values.currency||'all';appliedStatus.value=values.status==='all'?'':values.status||'';page.value=1}
+function reset(){texts.value={};currency.value='all';appliedStatus.value='';page.value=1}
 watch(mode,()=>{reset();action.value='';selected.value=null})
 
 </script>
