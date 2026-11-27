@@ -13,5 +13,40 @@
     "714306090180Days": "7 / 14 / 30 / 60 / 90 / 180일",
     "usdSecuredLoan": "USDT 담보 대출",
     "browseEarnProducts": "금융 상품 보기 →"
+  },
+  "landing": {
+    "eyebrow": "금융",
+    "title": "자산을 굴리거나, 담보로 빌리세요",
+    "subtitle": "Earn, C2C, 대출 세 가지 상품. 필요에 맞게 선택하세요.",
+    "earn": {
+      "kicker": "안정 수익 · 자유 & 정기",
+      "name": "Earn",
+      "valueProp": "유휴 자산에 매일 이자가 붙습니다. 자유형은 언제든 인출, 정기형은 더 높은 이율.",
+      "chipA": "일일 이자",
+      "chipB": "자유 & 정기",
+      "browse": "Earn 보기",
+      "mine": "내 Earn",
+      "mineHint": "비공개 · 보유 및 수익"
+    },
+    "c2c": {
+      "kicker": "P2P · 법정화폐 입출금",
+      "name": "C2C",
+      "valueProp": "인증된 판매자와 USDT를 직접 사고팔며, 모든 거래는 에스크로로 보호됩니다.",
+      "chipA": "인증 판매자",
+      "chipB": "에스크로",
+      "browse": "C2C로 이동",
+      "mine": "내 주문",
+      "mineHint": "비공개 · 매수·매도 주문"
+    },
+    "loan": {
+      "kicker": "담보 대출 · 일일 이자",
+      "name": "대출",
+      "valueProp": "보유한 암호화폐를 담보로 대출받아 팔지 않고 자금을 확보하세요.",
+      "chipA": "담보 대출",
+      "chipB": "언제든 상환",
+      "browse": "대출 보기",
+      "mine": "내 대출",
+      "mineHint": "비공개 · 대출 및 담보"
+    }
   }
 }

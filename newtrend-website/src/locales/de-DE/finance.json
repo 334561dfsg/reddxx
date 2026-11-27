@@ -13,5 +13,40 @@
     "714306090180Days": "7 / 14 / 30 / 60 / 90 / 180 Tage",
     "usdSecuredLoan": "Besicherter USDT-Kredit",
     "browseEarnProducts": "Earn-Produkte ansehen →"
+  },
+  "landing": {
+    "eyebrow": "Finanzen",
+    "title": "Vermögen arbeiten lassen oder dagegen leihen",
+    "subtitle": "Drei Produktlinien – Earn, C2C und Kredite. Wählen Sie, was Sie brauchen.",
+    "earn": {
+      "kicker": "Stabile Rendite · Flexibel & fest",
+      "name": "Earn",
+      "valueProp": "Ungenutzte Assets verzinsen sich täglich. Flexibel jederzeit verfügbar, feste Laufzeiten mit höherem Zins.",
+      "chipA": "Tägliche Zinsen",
+      "chipB": "Flexibel & fest",
+      "browse": "Earn ansehen",
+      "mine": "Mein Earn",
+      "mineHint": "Privat · Positionen und Ertrag"
+    },
+    "c2c": {
+      "kicker": "Peer-to-Peer · Fiat ein und aus",
+      "name": "C2C",
+      "valueProp": "USDT direkt mit verifizierten Händlern kaufen und verkaufen, jeder Handel mit Treuhand.",
+      "chipA": "Verifizierte Händler",
+      "chipB": "Treuhand",
+      "browse": "Zu C2C",
+      "mine": "Meine Orders",
+      "mineHint": "Privat · Kauf- und Verkaufsorders"
+    },
+    "loan": {
+      "kicker": "Besicherte Kredite · Tägliche Zinsen",
+      "name": "Kredite",
+      "valueProp": "Leihen Sie gegen Ihre Kryptowerte – Liquidität, ohne zu verkaufen.",
+      "chipA": "Besichert",
+      "chipB": "Jederzeit tilgbar",
+      "browse": "Kredite ansehen",
+      "mine": "Meine Kredite",
+      "mineHint": "Privat · Kredite und Sicherheiten"
+    }
   }
 }

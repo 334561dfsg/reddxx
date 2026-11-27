@@ -13,5 +13,40 @@
     "714306090180Days": "7 / 14 / 30 / 60 / 90 / 180 天",
     "usdSecuredLoan": "USDT 抵押借貸",
     "browseEarnProducts": "瀏覽理財產品 →"
+  },
+  "landing": {
+    "eyebrow": "金融",
+    "title": "讓資產持續生息，或靈活周轉",
+    "subtitle": "理財、C2C 與借貸三條產品線，按需求選擇。",
+    "earn": {
+      "kicker": "穩健生息 · 活期與定期",
+      "name": "理財",
+      "valueProp": "閒置資產按日計息，活期隨存隨取，定期鎖定更高收益。",
+      "chipA": "按日計息",
+      "chipB": "活期 & 定期",
+      "browse": "瀏覽理財",
+      "mine": "我的理財",
+      "mineHint": "私人 · 持倉與收益"
+    },
+    "c2c": {
+      "kicker": "點對點 · 法幣出入金",
+      "name": "C2C",
+      "valueProp": "與認證商家直接買賣 USDT，多種收款方式，平台擔保成交。",
+      "chipA": "商家認證",
+      "chipB": "平台擔保",
+      "browse": "前往 C2C",
+      "mine": "我的訂單",
+      "mineHint": "私人 · 買賣訂單"
+    },
+    "loan": {
+      "kicker": "抵押借款 · 按日計息",
+      "name": "借貸",
+      "valueProp": "以持有的加密資產作抵押借出資金，不必賣出也能周轉。",
+      "chipA": "抵押借款",
+      "chipB": "隨借隨還",
+      "browse": "瀏覽借貸",
+      "mine": "我的借款",
+      "mineHint": "私人 · 借款與抵押"
+    }
   }
 }

@@ -66,3 +66,47 @@
 .earn-risk ul{line-height:22.75px}
 .earn-detail-action .earn-buy{line-height:20px;font-weight:500;letter-spacing:0}
 #main-content .earn-page .earn-featured-rate small{font-size:16px;line-height:25.6px}
+
+/* Finance landing (理財中心) type and spacing, matched to the AI Quant landing (user feedback, 2026-11-27): eyebrow
+   12/18 at .12em, title 36/44 (28/36 on phones) in the display face, lead 15/24; no letter-spacing on Chinese labels;
+   holdings lead with the total; featured cards 20px padding with a 28px rate, a swipe row on phones. */
+#main-content .earn-page .earn-eyebrow{font-size:12px;line-height:18px;letter-spacing:.12em;color:var(--nt-accent)}
+#main-content .earn-page .earn-hero h1{margin:12px 0 0;font-size:36px;line-height:44px;letter-spacing:-.02em}
+#main-content .earn-page .earn-description{margin:12px 0 0;font-size:15px;line-height:24px}
+#main-content .earn-page .earn-chips{margin-top:16px;gap:8px}
+#main-content .earn-page .earn-chips span{font-size:12px;line-height:18px}
+#main-content .earn-page :is(.earn-holdings .earn-kicker,.earn-featured-card .earn-caption){letter-spacing:0;text-transform:none}
+#main-content .earn-page .earn-holdings{padding:24px;border-radius:24px}
+#main-content .earn-page .earn-holdings-grid{gap:16px 24px;margin-top:0}
+#main-content .earn-page .earn-holdings-grid>div{display:grid;gap:4px}
+#main-content .earn-page .earn-holdings-grid strong{margin:0;font-size:18px;line-height:26px}
+#main-content .earn-page .earn-holdings-total{grid-column:1/-1}
+#main-content .earn-page .earn-holdings-total .earn-kicker{display:flex;align-items:center;gap:6px;color:#ffffffb3}
+#main-content .earn-page .earn-holdings-grid .earn-holdings-total strong{font-size:28px;line-height:36px}
+#main-content .earn-page .earn-featured{margin-top:32px}
+#main-content .earn-page .earn-section-heading h2{font-size:16px;line-height:24px}
+#main-content .earn-page .earn-featured-card{padding:20px;border-radius:24px}
+#main-content .earn-page .earn-featured-card .earn-product-line{margin:12px 0 16px}
+#main-content .earn-page .earn-featured-rate{margin:0 0 4px;font-size:28px;line-height:36px;letter-spacing:-.02em}
+#main-content .earn-page .earn-featured-rate small{font-size:14px;line-height:20px}
+#main-content .earn-page .earn-featured-card .earn-caption{font-size:12px;line-height:18px}
+@media(max-width:640px){
+ #main-content .earn-page .earn-hero{gap:16px}
+ #main-content .earn-page .earn-hero h1{font-size:28px;line-height:36px}
+ #main-content .earn-page .earn-description{font-size:14px;line-height:22px}
+ #main-content .earn-page .earn-holdings{padding:20px}
+ #main-content .earn-page .earn-holdings-grid .earn-holdings-total strong{font-size:24px;line-height:32px}
+ #main-content .earn-page .earn-featured{margin-top:24px}
+ /* Featured products scroll sideways instead of stacking three tall cards. */
+ #main-content .earn-page .earn-featured-grid{display:grid;grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:78%;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -16px;padding:0 16px 4px;scroll-padding:0 16px}
+ #main-content .earn-page .earn-featured-grid::-webkit-scrollbar{display:none}
+ #main-content .earn-page .earn-featured-grid>*{scroll-snap-align:start}
+ #main-content .earn-page .earn-featured-card{padding:16px}
+ #main-content .earn-page .earn-featured-rate{font-size:24px;line-height:32px}
+ /* Filters and sort sit in one compact band above the product cards. */
+ #main-content .earn-page .earn-filters{gap:8px;margin-top:24px}
+ #main-content .earn-page .earn-filters button{min-height:36px;padding:0 14px;font-size:13px;line-height:18px}
+ #main-content .earn-page .earn-sort-mobile{gap:8px;margin-top:8px}
+ #main-content .earn-page .earn-sort-mobile button{min-height:32px;padding:0 12px;font-size:12px;line-height:18px}
+ #main-content .earn-page .earn-table tr{border-radius:20px;padding:16px}
+}

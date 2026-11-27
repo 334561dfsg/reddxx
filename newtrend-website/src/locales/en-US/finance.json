@@ -13,5 +13,40 @@
     "714306090180Days": "7 / 14 / 30 / 60 / 90 / 180 days",
     "usdSecuredLoan": "USDT secured loan",
     "browseEarnProducts": "Browse Earn products →"
+  },
+  "landing": {
+    "eyebrow": "Finance",
+    "title": "Put idle assets to work, or borrow against them",
+    "subtitle": "Three product lines — Earn, C2C and Loans. Pick what you need.",
+    "earn": {
+      "kicker": "Steady yield · Flexible & fixed",
+      "name": "Earn",
+      "valueProp": "Idle assets earn interest daily. Flexible for instant access, fixed terms for higher rates.",
+      "chipA": "Daily interest",
+      "chipB": "Flexible & fixed",
+      "browse": "Browse Earn",
+      "mine": "My Earn",
+      "mineHint": "Private · holdings and yield"
+    },
+    "c2c": {
+      "kicker": "Peer to peer · Fiat on/off-ramp",
+      "name": "C2C",
+      "valueProp": "Buy and sell USDT directly with verified merchants, with escrow on every trade.",
+      "chipA": "Verified merchants",
+      "chipB": "Escrow",
+      "browse": "Go to C2C",
+      "mine": "My orders",
+      "mineHint": "Private · buy and sell orders"
+    },
+    "loan": {
+      "kicker": "Collateral loans · Daily interest",
+      "name": "Loans",
+      "valueProp": "Borrow against the crypto you hold — get liquidity without selling.",
+      "chipA": "Collateralised",
+      "chipB": "Repay anytime",
+      "browse": "Browse Loans",
+      "mine": "My loans",
+      "mineHint": "Private · loans and collateral"
+    }
   }
 }

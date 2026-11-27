@@ -13,5 +13,40 @@
     "714306090180Days": "7 / 14 / 30 / 60 / 90 / 180 jours",
     "usdSecuredLoan": "Prêt garanti en USDT",
     "browseEarnProducts": "Voir les produits Earn →"
+  },
+  "landing": {
+    "eyebrow": "Finance",
+    "title": "Faites fructifier vos actifs, ou empruntez en les gardant",
+    "subtitle": "Trois lignes de produits : Earn, C2C et Prêts. Choisissez selon vos besoins.",
+    "earn": {
+      "kicker": "Rendement stable · Flexible et à terme",
+      "name": "Earn",
+      "valueProp": "Vos actifs inactifs génèrent des intérêts chaque jour. Flexible pour un accès immédiat, à terme pour un meilleur taux.",
+      "chipA": "Intérêts quotidiens",
+      "chipB": "Flexible et à terme",
+      "browse": "Voir Earn",
+      "mine": "Mon Earn",
+      "mineHint": "Privé · positions et rendement"
+    },
+    "c2c": {
+      "kicker": "Pair à pair · Dépôts et retraits fiat",
+      "name": "C2C",
+      "valueProp": "Achetez et vendez de l’USDT directement avec des marchands vérifiés, avec séquestre à chaque échange.",
+      "chipA": "Marchands vérifiés",
+      "chipB": "Séquestre",
+      "browse": "Aller au C2C",
+      "mine": "Mes ordres",
+      "mineHint": "Privé · ordres d’achat et de vente"
+    },
+    "loan": {
+      "kicker": "Prêts garantis · Intérêts quotidiens",
+      "name": "Prêts",
+      "valueProp": "Empruntez en garantie de vos cryptos et obtenez des liquidités sans vendre.",
+      "chipA": "Garanti",
+      "chipB": "Remboursement libre",
+      "browse": "Voir les prêts",
+      "mine": "Mes prêts",
+      "mineHint": "Privé · prêts et garanties"
+    }
   }
 }
