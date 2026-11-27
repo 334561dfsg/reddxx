@@ -268,3 +268,16 @@ html body :is(.ant-input-affix-wrapper-focused, .ant-input-number-focused, .ant-
 @media (forced-colors: active) {
   :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
 }
+
+/* Overlay close buttons in the newer admin modules (2026-11-28): one 32px Ant text button with a grey icon,
+   darker on hover/keyboard focus; 44px on coarse pointers. */
+html body :is(.earn-modal-title, .earn-rewards-title, .qf-records-title, .strategy-records-title) .ant-btn.ant-btn {
+  flex: none; width: 32px; height: 32px; min-width: 32px; min-height: 32px; padding: 0;
+  border-radius: 6px; color: rgb(0 0 0 / 45%); background: transparent;
+}
+html body :is(.earn-modal-title, .earn-rewards-title, .qf-records-title, .strategy-records-title) .ant-btn.ant-btn:is(:hover, :focus-visible):not(:disabled) {
+  color: rgb(0 0 0 / 88%); background: rgb(0 0 0 / 6%);
+}
+@media (pointer: coarse) {
+  html body :is(.earn-modal-title, .earn-rewards-title, .qf-records-title, .strategy-records-title) .ant-btn.ant-btn { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+}

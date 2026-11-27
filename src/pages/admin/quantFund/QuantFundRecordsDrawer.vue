@@ -63,7 +63,6 @@ const logColumns = [{key: 'createdAt', title: '时间', width: 180}, {key: 'acti
 .qf-records-drawer .ant-drawer-content-wrapper{max-width:100vw}
 .qf-records-drawer .ant-drawer-content{overflow:hidden}
 .qf-records-title{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.qf-records-title .ant-btn{min-width:44px;min-height:44px}
 .qf-records-footer{display:flex;justify-content:flex-end}
 .qf-records-count{display:block;margin:16px 0 8px}
 .qf-records-drawer .ant-table-cell,.qf-records-drawer .ant-descriptions-item-content{overflow-wrap:anywhere}

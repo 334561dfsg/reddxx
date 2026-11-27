@@ -63,7 +63,6 @@ const tone = value => (value > 0 ? 'success' : value < 0 ? 'danger' : undefined)
 .strategy-records-drawer .ant-drawer-content-wrapper{max-width:100vw}
 .strategy-records-drawer .ant-drawer-content{overflow:hidden}
 .strategy-records-title{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.strategy-records-title .ant-btn{min-width:44px;min-height:44px}
 .strategy-records-footer{display:flex;justify-content:flex-end}
 .strategy-records-count{display:block;margin:16px 0 8px}
 .strategy-records-drawer .ant-table-cell,.strategy-records-drawer .ant-descriptions-item-content{overflow-wrap:anywhere}
