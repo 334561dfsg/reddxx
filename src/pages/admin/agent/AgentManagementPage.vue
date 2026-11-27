@@ -464,6 +464,7 @@ const formatDate = (dateString) => {
     />
 
     <!-- 代理登录账号设置 -->
+    <Teleport to="body">
       <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showAccountModal && accountTarget)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeAccountModal"><template #title><template v-if="Boolean(showAccountModal && accountTarget)"><header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
             <div class="min-w-0">
               <h3 id="agent-account-title" class="text-lg font-semibold text-slate-900">代理登录账号设置</h3>
@@ -516,9 +517,10 @@ const formatDate = (dateString) => {
               {{ accountSaving ? '保存中…' : '保存设置' }}
             </a-button>
           </footer></template></template></a-modal>
-    
+    </Teleport>
 
     <!-- 产品线记佣（紧凑行式布局；底栏固定，避免无法取消） -->
+    <Teleport to="body">
     <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showCommissionModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeCommissionModal"><template #title><template v-if="Boolean(showCommissionModal)"><div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 sm:px-5">
           <div class="min-w-0">
             <h3 id="commission-modal-title" class="text-base font-semibold text-slate-900">代理产品线记佣</h3>
@@ -595,9 +597,10 @@ const formatDate = (dateString) => {
             {{ commissionSaving ? '保存中…' : '保存' }}
           </a-button>
         </div></template></template></a-modal>
-    
+    </Teleport>
 
     <!-- 详情 -->
+    <Teleport to="body">
     <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showDetailModal && selectedAgent)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="showDetailModal = false"><template #title><template v-if="Boolean(showDetailModal && selectedAgent)"><div class="flex justify-between items-start mb-6 border-b border-slate-100 pb-4">
           <h3 class="text-lg font-semibold text-slate-900">代理详情</h3>
           <a-button aria-label="关闭" html-type="button" class="text-slate-400 hover:text-slate-600 transition-colors" @click="showDetailModal = false">
@@ -666,7 +669,7 @@ const formatDate = (dateString) => {
           </a-button>
           <a-button html-type="button" class="flex-1" @click="showDetailModal = false">关闭</a-button>
         </div></template></a-modal>
-    
+    </Teleport>
   </div>
 </template>
 

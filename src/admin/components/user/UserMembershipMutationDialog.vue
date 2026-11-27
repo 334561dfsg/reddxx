@@ -1,9 +1,9 @@
 <script setup>
-import AdminDialog from '../antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, AdminRadio, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import PanelSingleSelect from '../form/PanelSingleSelect.vue'
 
 const props = defineProps({
@@ -20,6 +20,7 @@ const configs = {
   vip: { title: '编辑会员等级', action: '调整会员等级', type: 'vip-level-set', tone: 'bg-amber-600 hover:bg-amber-700' },
   rebate: { title: '添加返利奖励', action: '发放返利奖励', type: 'rebate-grant', tone: 'bg-rose-600 hover:bg-rose-700' }
 }
+const dialogRef = ref(null)
 const directionFirstRef = ref(null)
 const vipSelectRef = ref(null)
 const amountRef = ref(null)
@@ -93,12 +94,17 @@ const initialFocusRef = computed(() => {
   return directionFirstRef.value
 })
 const closeDisabled = computed(() => props.busy)
-// Frame: AdminDialog (Ant Modal + useDialogLifecycle), dialog migration 2026-11-27.
-const dialogFrame = ref(null)
-const phase = computed(() => dialogFrame.value?.phase ?? 'closed')
-
-const close = () => dialogFrame.value?.close()
-const handleClosed = () => {
+const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
+  open: computed(() => props.visible),
+  dialogRef,
+  initialFocusRef,
+  returnFocusRef: computed(() => props.returnFocus),
+  requestClose: () => emit('close'),
+  closeDisabled
+})
+const close = createDialogCloseAction(requestDialogClose)
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   resetForm()
   emit('closed')
 }
@@ -198,23 +204,30 @@ watch(
 </script>
 
 <template>
-  <AdminDialog :open="visible" :title="config.title" title-id="user-membership-mutation-title" :busy="closeDisabled" :return-focus="returnFocus" testid="user-membership-mutation-dialog" :width="576" plain ref="dialogFrame" :initial-focus="initialFocusRef" @close="emit('close')" @closed="handleClosed">
-      <template #subtitle>{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</template>
-      <div data-testid="user-membership-mutation-body" class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5">
+  <Teleport to="body">
+    <Transition name="membership-mutation-dialog" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
+      <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 grid place-items-center bg-slate-950/50 p-3 sm:p-4" :style="layerStyle" role="presentation">
+        <section ref="dialogRef" data-testid="user-membership-mutation-dialog" class="membership-mutation-dialog-panel flex max-h-[calc(100vh-1.5rem)] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-1.5rem)]" role="dialog" aria-modal="true" aria-labelledby="user-membership-mutation-title" :aria-busy="busy">
+          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5 sm:py-4">
+            <div class="min-w-0 flex-1"><h2 id="user-membership-mutation-title" class="text-lg font-semibold text-slate-900">{{ config.title }}</h2><p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p></div>
+            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
+          </header>
+
+          <div data-testid="user-membership-mutation-body" class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5">
             <FeedbackToast v-if="errorMessage" :id="vipSelectionInvalid ? 'membership-vip-level-error' : null" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
 
             <template v-if="stage === 'edit'">
               <template v-if="mode === 'credit'">
                 <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">当前信用分</span><strong class="float-right text-slate-900">{{ currentScore }}</strong></div>
                 <fieldset aria-labelledby="credit-direction-label">
-                  <legend id="credit-direction-label" class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>调整方向</legend>
+                  <legend id="credit-direction-label" class="text-sm font-medium text-slate-800">调整方向 <span class="text-rose-500">*</span></legend>
                   <div class="mt-2 grid grid-cols-2 gap-2">
-                    <AdminRadio v-for="(option, index) in [{ value: 'increase', label: '增加信用分' }, { value: 'decrease', label: '扣减信用分' }]" :key="option.value" class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:bg-blue-50" :ref="(element) => setDirectionRef(nativeControl(element), index)" v-model="form.direction" name="credit-direction" :value="option.value">
+                    <AdminRadio v-for="(option, index) in [{ value: 'increase', label: '增加信用分' }, { value: 'decrease', label: '扣减信用分' }]" :key="option.value" class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50" :ref="(element) => setDirectionRef(nativeControl(element), index)" v-model="form.direction" name="credit-direction" :value="option.value">
                       {{ option.label }}
                     </AdminRadio>
                   </div>
                 </fieldset>
-                <label class="block"><span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>调整分值</span><AdminInput data-testid="membership-mutation-points" v-model="form.points" type="text" inputmode="numeric" autocomplete="off" class="mt-1.5 w-full" placeholder="请输入正整数" /></label>
+                <label class="block"><span class="text-sm font-medium text-slate-800">调整分值 <span class="text-rose-500">*</span></span><AdminInput data-testid="membership-mutation-points" v-model="form.points" type="text" inputmode="numeric" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="请输入正整数" /></label>
               </template>
 
               <template v-else-if="mode === 'vip'">
@@ -238,7 +251,7 @@ watch(
               <template v-else>
                 <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">入账账户</span><strong class="float-right text-slate-900">可用资金账户</strong></div>
                 <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><span class="text-slate-500">当前余额</span><strong class="float-right text-slate-900">{{ money(currentBalance) }} USDT</strong></div>
-                <label class="block"><span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>返利金额</span><AdminInput :ref="element => { amountRef = nativeControl(element) }" data-testid="membership-mutation-amount" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="最多两位小数" /></label>
+                <label class="block"><span class="text-sm font-medium text-slate-800">返利金额 <span class="text-rose-500">*</span></span><AdminInput :ref="element => { amountRef = nativeControl(element) }" data-testid="membership-mutation-amount" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="mt-1.5 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="最多两位小数" /></label>
               </template>
 
               <label class="block"><span class="text-sm font-medium text-slate-800">操作原因（可选）</span><AdminTextarea :ref="element => { reasonRef = nativeControl(element) }" data-testid="membership-mutation-reason" v-model="form.reason" rows="3" maxlength="200" class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none" :placeholder="`可填写${config.action}原因`" /><span class="mt-1 block text-right text-xs text-slate-500">{{ form.reason.length }}/200</span></label>
@@ -256,9 +269,25 @@ watch(
           </div>
 
           <footer class="flex shrink-0 justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3 sm:px-5">
-            <template v-if="stage === 'edit'"><AdminButton type="button" :disabled="busy" @click="close">取消</AdminButton><AdminButton type="button" :disabled="busy" :class="config.tone" @click="startConfirm">下一步</AdminButton></template>
+            <template v-if="stage === 'edit'"><AdminButton type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="close">取消</AdminButton><AdminButton type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="startConfirm">下一步</AdminButton></template>
             <template v-else><AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="backToEdit">返回修改</AdminButton><AdminButton :ref="element => { submitButtonRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="requestMfa">{{ busy ? '验证中…' : '提交并验证' }}</AdminButton></template>
           </footer>
-    </AdminDialog>
+        </section>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
+<style scoped>
+.membership-mutation-dialog-enter-active { transition: opacity 200ms ease-out; }
+.membership-mutation-dialog-leave-active { transition: opacity 150ms ease-in; }
+.membership-mutation-dialog-enter-active .membership-mutation-dialog-panel { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.membership-mutation-dialog-leave-active .membership-mutation-dialog-panel { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.membership-mutation-dialog-enter-from, .membership-mutation-dialog-leave-to { opacity: 0; }
+.membership-mutation-dialog-enter-from .membership-mutation-dialog-panel, .membership-mutation-dialog-leave-to .membership-mutation-dialog-panel { opacity: 0; transform: scale(0.96); }
+@media (prefers-reduced-motion: reduce) {
+  .membership-mutation-dialog-enter-active, .membership-mutation-dialog-leave-active,
+  .membership-mutation-dialog-enter-active .membership-mutation-dialog-panel, .membership-mutation-dialog-leave-active .membership-mutation-dialog-panel { transition-duration: 50ms; }
+  .membership-mutation-dialog-enter-from .membership-mutation-dialog-panel, .membership-mutation-dialog-leave-to .membership-mutation-dialog-panel { transform: none; }
+}
+</style>

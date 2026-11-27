@@ -15,22 +15,13 @@ const resolveImport = (specifier, filename, vueImports) => {
 
   const resolved = resolve(dirname(filename), specifier)
   if (vueImports[resolved]) return vueImports[resolved]
-  // The shared Ant Drawer frame renders for real, over a Drawer stand-in, so tests see the migrated dialogs' content.
-  if (resolved.endsWith('/src/admin/components/antd/AdminDrawer.vue') || resolved.endsWith('/src/admin/components/antd/AdminDialog.vue') || resolved.endsWith('/src/admin/components/antd/AdminEmpty.vue')) return loadVueSfcModuleUrl(resolved, {vueImports: {...vueImports, 'ant-design-vue': pathToFileURL(resolve('test/helpers/antDrawerStub.js')).href, '@ant-design/icons-vue': pathToFileURL(resolve('test/helpers/antDrawerStub.js')).href}})
   if (resolved.endsWith('/src/shared/feedback/FeedbackToast.vue')) return loadVueSfcModuleUrl(resolved, {vueImports: {'ant-design-vue': pathToFileURL(resolve('test/helpers/feedbackAntStub.js')).href}})
-  if (extname(resolved) === '.vue') {
-    // Nested components render as stubs, but a missing file is a broken import, not something to stub.
-    if (!vueImports[resolved] && !existsSync(resolved)) throw new Error(`${filename} imports missing component ${specifier}`)
-    return vueImports[resolved] || stubComponentUrl
-  }
+  if (extname(resolved) === '.vue') return vueImports[resolved] || stubComponentUrl
   if (!extname(resolved) && existsSync(`${resolved}.js`)) {
     return pathToFileURL(`${resolved}.js`).href
   }
   return pathToFileURL(resolved).href
 }
-
-// Module URL of the Ant stand-ins (Drawer, Modal, Button, message) for components tested without a real DOM.
-export const antStubUrl = pathToFileURL(resolve('test/helpers/antDrawerStub.js')).href
 
 export const loadVueSfcModuleUrl = (filename, { vueImports = {} } = {}) => {
   const absoluteFilename = resolve(filename)
@@ -213,7 +204,6 @@ const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
       while (candidate) {
         if (selector.includes('[role="dialog"]') && candidate.getAttribute?.('role') === 'dialog') return candidate
         if (selector.includes('dialog[open]') && candidate.tag === 'dialog' && candidate.hasAttribute('open')) return candidate
-        if (selector.split(',').some((part) => /^\.[\w-]+$/.test(part.trim()) && candidate.classList?.contains(part.trim().slice(1)))) return candidate
         candidate = candidate.parent
       }
       return null

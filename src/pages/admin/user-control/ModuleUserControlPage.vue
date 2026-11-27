@@ -1,5 +1,4 @@
 <script setup>
-import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
 import { nativeControl } from '../../../admin/components/antd/controls.js'
 import { computed, ref } from 'vue'
 import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
@@ -207,10 +206,6 @@ const resetFilters = () => {
   query.value = ''
   valueFilter.value = ''
 }
-
-// The shared Ant frames (AdminDialog) drive these page-owned lifecycles (dialog migration 2026-11-27). Defined last so
-// every handler they reference is initialised.
-const addDialogLifecycle = { rendered: addDialogRendered, phase: addDialogPhase, layerStyle: addDialogLayerStyle, requestDialogClose: requestAddDialogClose, onAfterEnter: onAddDialogAfterEnter, onAfterLeave: handleAddDialogAfterLeave, dialogRef: addDialogRef }
 </script>
 
 <template>
@@ -306,11 +301,21 @@ const addDialogLifecycle = { rendered: addDialogRendered, phase: addDialogPhase,
       @submit="submitSetting"
     />
 
-    <AdminDialog :open="addDialogRendered" :lifecycle="addDialogLifecycle" :title="`添加${moduleMeta.label}点控用户`" title-id="module-user-control-add-title" testid="module-user-control-add-dialog" :width="448" plain>
-      <template #subtitle>按 UID、邮箱或手机号搜索并加入当前用户点控列表。</template>
-      <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+    <Teleport to="body">
+      <Transition name="dialog-overlay" appear @after-enter="onAddDialogAfterEnter" @after-leave="handleAddDialogAfterLeave">
+        <div v-if="addDialogRendered" v-show="addDialogPhase !== 'closing'" class="fixed inset-0 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" :style="addDialogLayerStyle">
+          <Transition name="dialog-panel" appear>
+            <section v-show="addDialogPhase !== 'closing'" ref="addDialogRef" data-testid="module-user-control-add-dialog" class="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="module-user-control-add-title">
+              <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+                <div class="min-w-0 flex-1">
+                  <h2 id="module-user-control-add-title" class="break-words text-lg font-semibold text-slate-900">添加{{ moduleMeta.label }}点控用户</h2>
+                  <p class="mt-1 break-words text-sm text-slate-500">按 UID、邮箱或手机号搜索并加入当前用户点控列表。</p>
+                </div>
+                <a-button html-type="button" class="flex min-w-11 shrink-0 items-center justify-center text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeAddUser">×</a-button>
+              </header>
+              <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
                 <label class="block" for="module-user-control-add-user-id">
-                  <span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>用户 UID</span>
+                  <span class="text-sm font-medium text-slate-800">用户 UID <span class="text-rose-500">*</span></span>
                   <a-input id="module-user-control-add-user-id" :ref="el => { addInputRef = nativeControl(el) }" :value="addUserId" @update:value="addUserId = $event.trim()" type="search" autocomplete="off" placeholder="输入 UID、邮箱或手机号" :aria-invalid="addSearchAttempted && normalizedAddUserKeyword && !addSearchResult ? 'true' : 'false'" aria-describedby="module-user-control-add-help" class="mt-2 w-full" @input="clearAddSearchResult" @keydown.enter.prevent="confirmAddUser" />
                 </label>
                 <p id="module-user-control-add-help" class="text-xs leading-5 text-slate-500">
@@ -332,12 +337,37 @@ const addDialogLifecycle = { rendered: addDialogRendered, phase: addDialogPhase,
                 </div>
               </div>
               <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-                <a-button html-type="button" @click="closeAddUser">取消</a-button>
-                <a-button html-type="button" :disabled="!canConfirmAddUser" @click="confirmAddUser" type="primary">
+                <a-button html-type="button" class="border border-slate-300 bg-white text-sm font-medium text-slate-700" @click="closeAddUser">取消</a-button>
+                <a-button html-type="button" :disabled="!canConfirmAddUser" class="bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmAddUser" type="primary">
                   确定
                 </a-button>
               </footer>
-    </AdminDialog>
+            </section>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
   </section>
 </template>
 
+<style scoped>
+.dialog-overlay-enter-active { transition: opacity 200ms ease-out; }
+.dialog-overlay-leave-active { transition: opacity 150ms ease-in; }
+.dialog-panel-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.dialog-panel-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.dialog-overlay-enter-from,
+.dialog-overlay-leave-to,
+.dialog-panel-enter-from,
+.dialog-panel-leave-to { opacity: 0; }
+.dialog-panel-enter-from,
+.dialog-panel-leave-to { transform: scale(0.96); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog-overlay-enter-active,
+  .dialog-overlay-leave-active,
+  .dialog-panel-enter-active,
+  .dialog-panel-leave-active { transition-duration: 50ms; }
+  .dialog-panel-enter-from,
+  .dialog-panel-leave-to { transform: none; }
+}
+</style>

@@ -551,6 +551,7 @@ onMounted(load)
       </footer>
     </section>
 
+    <Teleport to="body">
       <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-4">
             <h2 id="announcement-editor-title" class="text-lg font-semibold text-slate-900">
               {{ editingId ? '编辑公告' : '发布公告' }}
@@ -601,8 +602,7 @@ onMounted(load)
                   <p class="mt-1.5 text-xs text-slate-500">选择公告语言后，本次只发布该语言的一条公告。</p>
                 </div>
                 <label id="announcement-status-label" class="block text-sm font-medium text-slate-700">状态</label>
-                <!-- Ant Select values cannot be booleans: show the status as 'true'/'false' strings and commit the boolean. -->
-                <a-select class="w-full" id="announcement-status-combobox" aria-labelledby="announcement-status-label" :value="String(getCustomSelectedOption('formEnabled')?.value)" :options="enabledOptions.map((option) => ({ ...option, value: String(option.value) }))" @change="commitCustomSelect('formEnabled', $event === 'true')" />
+                <a-select class="w-full" id="announcement-status-combobox" aria-labelledby="announcement-status-label" :value="getCustomSelectedOption('formEnabled')?.value" :options="enabledOptions" @change="commitCustomSelect('formEnabled', $event)" />
                 <div>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700" for="announcement-published-at">发布时间</label>
                   <a-input id="announcement-published-at" v-model:value="formPublishedAt" class="w-full font-mono" placeholder="2026-08-24 10:00" />
@@ -622,7 +622,7 @@ onMounted(load)
               {{ isSaving ? '保存中…' : '保存公告' }}
             </a-button>
           </footer></template></template></a-modal>
-    
+    </Teleport>
   </main>
 </template>
 

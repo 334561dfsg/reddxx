@@ -1,10 +1,9 @@
 <script setup>
-import AdminEmpty from '../antd/AdminEmpty.vue'
-import AdminDrawer from '../antd/AdminDrawer.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, AdminSelect, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, ref, watch } from 'vue'
+import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import CompactPagination from '../CompactPagination.vue'
 
 const PAGE_SIZE = 10
@@ -18,6 +17,8 @@ const props = defineProps({
   returnFocus: { type: [Object, Function], default: null }
 })
 const emit = defineEmits(['close', 'closed', 'retry'])
+const drawerRef = ref(null)
+const titleRef = ref(null)
 const errorRef = ref(null)
 const query = ref('')
 const status = ref('all')
@@ -41,11 +42,18 @@ const formatNumber = (value, digits = 0) => Number(value || 0).toLocaleString('z
 })
 const formatMoney = (value) => `${formatNumber(value, 2)} USDT`
 
-// Frame: AdminDrawer (Ant Drawer + useDialogLifecycle), drawer migration 2026-11-27.
-const drawerFrame = ref(null)
-const initialFocus = computed(() => props.error ? errorRef.value : null)
-
-const handleClosed = () => emit('closed')
+const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
+  open: computed(() => props.visible),
+  dialogRef: drawerRef,
+  initialFocusRef: computed(() => props.error ? errorRef.value : titleRef.value),
+  returnFocusRef: computed(() => props.returnFocus),
+  requestClose: () => emit('close')
+})
+const close = createDialogCloseAction(requestDialogClose)
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
+  emit('closed')
+}
 
 watch([query, status], () => {
   currentPage.value = 1
@@ -67,9 +75,26 @@ watch(() => props.error, async (error) => {
 </script>
 
 <template>
-  <AdminDrawer :open="visible" title="代理下级用户" title-id="user-agent-subordinate-title" :return-focus="returnFocus" testid="user-agent-subordinate-drawer" :width="768" plain ref="drawerFrame" :initial-focus="initialFocus" @close="emit('close')" @closed="handleClosed">
-      <template #subtitle>{{ user?.username || '未知代理' }} · UID {{ userId || '—' }}</template>
-      <div data-testid="user-agent-subordinate-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
+  <Teleport to="body">
+    <Transition name="agent-subordinate-drawer" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
+      <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 flex justify-end bg-slate-950/50" :style="layerStyle" role="presentation">
+        <aside
+          ref="drawerRef"
+          data-testid="user-agent-subordinate-drawer"
+          class="agent-subordinate-drawer-panel flex h-[100vh] max-h-[100vh] w-full max-w-3xl flex-col overflow-hidden bg-white shadow-2xl supports-[height:100dvh]:h-[100dvh] supports-[height:100dvh]:max-h-[100dvh]"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="user-agent-subordinate-title"
+        >
+          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5 sm:py-4" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left)); padding-top: max(0.75rem, env(safe-area-inset-top));">
+            <div class="min-w-0 flex-1">
+              <h2 id="user-agent-subordinate-title" ref="titleRef" tabindex="-1" class="break-words text-lg font-semibold text-slate-900 outline-none">代理下级用户</h2>
+              <p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知代理' }} · UID {{ userId || '—' }}</p>
+            </div>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</AdminButton>
+          </header>
+
+          <div data-testid="user-agent-subordinate-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-right: max(1rem, env(safe-area-inset-right)); padding-left: max(1rem, env(safe-area-inset-left));">
             <div data-testid="agent-subordinate-controls" class="shrink-0 space-y-3 px-4 pt-4 sm:px-5">
               <div class="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 min-[520px]:grid-cols-[minmax(0,1fr)_10rem]">
                 <label class="block min-w-0 text-xs font-medium text-slate-600">
@@ -93,7 +118,7 @@ watch(() => props.error, async (error) => {
             </div>
 
             <div data-testid="agent-subordinate-list-scroll" class="min-h-20 flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 outline-none sm:px-5" role="region" aria-label="代理直属客户列表" tabindex="0">
-              <FeedbackToast v-if="error" ref="errorRef" data-testid="agent-subordinate-error" type="error" :source="() => (error) ? (([[&quot;代理下级用户加载失败&quot;].join(''),[String((error) ?? '')].join(''),''].join(''))) : ''"><AdminButton data-testid="agent-subordinate-retry" type="button" class="mt-3" :disabled="loading" @click="emit('retry')">{{ loading ? '重试中…' : '重试' }}</AdminButton></FeedbackToast>
+              <FeedbackToast v-if="error" ref="errorRef" data-testid="agent-subordinate-error" type="error" :source="() => (error) ? (([[&quot;代理下级用户加载失败&quot;].join(''),[String((error) ?? '')].join(''),''].join(''))) : ''"><AdminButton data-testid="agent-subordinate-retry" type="button" class="ant-btn mt-3" :disabled="loading" @click="emit('retry')">{{ loading ? '重试中…' : '重试' }}</AdminButton></FeedbackToast>
 
               <div v-else-if="loading" class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50" role="status">
                 <p class="text-sm text-slate-600">正在加载代理下级用户…</p>
@@ -115,18 +140,39 @@ watch(() => props.error, async (error) => {
                     </dl>
                   </article>
                 </div>
-                <AdminEmpty v-else>没有符合当前条件的下级用户</AdminEmpty>
+                <p v-else class="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">没有符合当前条件的下级用户</p>
               </template>
 
-              <AdminEmpty v-else class="grid min-h-48 place-items-center">
+              <div v-else class="grid min-h-48 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
                 <div><p class="font-medium text-slate-700">该代理暂无下级用户</p><p class="mt-1 text-sm text-slate-500">当前没有归属于该代理的直属客户。</p></div>
-              </AdminEmpty>
+              </div>
             </div>
 
             <footer v-if="!error && rows.length && filteredRows.length" data-testid="agent-subordinate-pagination" class="shrink-0 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-5">
               <CompactPagination v-model:current-page="currentPage" :total-count="filteredRows.length" :page-size="PAGE_SIZE" />
             </footer>
           </div>
-    </AdminDrawer>
+        </aside>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
+<style scoped>
+.agent-subordinate-drawer-enter-active { transition: opacity 200ms ease-out; }
+.agent-subordinate-drawer-leave-active { transition: opacity 150ms ease-in; }
+.agent-subordinate-drawer-enter-active .agent-subordinate-drawer-panel { transition: transform 200ms ease-out; }
+.agent-subordinate-drawer-leave-active .agent-subordinate-drawer-panel { transition: transform 150ms ease-in; }
+.agent-subordinate-drawer-enter-from,
+.agent-subordinate-drawer-leave-to { opacity: 0; }
+.agent-subordinate-drawer-enter-from .agent-subordinate-drawer-panel,
+.agent-subordinate-drawer-leave-to .agent-subordinate-drawer-panel { transform: translateX(100%); }
+@media (prefers-reduced-motion: reduce) {
+  .agent-subordinate-drawer-enter-active,
+  .agent-subordinate-drawer-leave-active,
+  .agent-subordinate-drawer-enter-active .agent-subordinate-drawer-panel,
+  .agent-subordinate-drawer-leave-active .agent-subordinate-drawer-panel { transition-duration: 50ms; }
+  .agent-subordinate-drawer-enter-from .agent-subordinate-drawer-panel,
+  .agent-subordinate-drawer-leave-to .agent-subordinate-drawer-panel { transform: none; }
+}
+</style>

@@ -1,9 +1,9 @@
 <script setup>
-import AdminDialog from '../antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
 
 const props = defineProps({
@@ -21,6 +21,7 @@ const configs = {
   unfreeze: { title: '解冻资金', action: '解冻', amountLabel: '解冻金额', tone: 'bg-amber-600 hover:bg-amber-700', hint: '仅解冻由管理员冻结的资金，不影响订单、风控等业务冻结资金。' },
   deduct: { title: '扣减资金', action: '扣减', amountLabel: '扣减金额', tone: 'bg-rose-600 hover:bg-rose-700', hint: '操作成功后用户总资产将减少，不能通过解冻恢复。' }
 }
+const dialogRef = ref(null)
 const accountRef = ref(null)
 const amountRef = ref(null)
 const reasonRef = ref(null)
@@ -89,13 +90,17 @@ const resetForm = () => {
   form.reason = ''
 }
 const closeDisabled = computed(() => props.busy)
-// Frame: AdminDialog (Ant Modal + useDialogLifecycle), dialog migration 2026-11-27.
-const dialogFrame = ref(null)
-const phase = computed(() => dialogFrame.value?.phase ?? 'closed')
-const initialFocus = computed(() => accountRef.value)
-
-const close = () => dialogFrame.value?.close()
-const handleClosed = () => {
+const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
+  open: computed(() => props.visible),
+  dialogRef,
+  initialFocusRef: accountRef,
+  returnFocusRef: computed(() => props.returnFocus),
+  requestClose: () => emit('close'),
+  closeDisabled
+})
+const close = createDialogCloseAction(requestDialogClose)
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   resetForm()
   emit('closed')
 }
@@ -135,9 +140,19 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
 </script>
 
 <template>
-  <AdminDialog :open="visible" :title="config.title" title-id="user-funds-mutation-title" :busy="closeDisabled" :return-focus="returnFocus" testid="user-funds-mutation-dialog" :width="512" plain ref="dialogFrame" :initial-focus="initialFocus" @close="emit('close')" @closed="handleClosed">
-      <template #subtitle>{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</template>
-      <div data-testid="user-funds-mutation-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
+  <Teleport to="body">
+    <Transition name="funds-mutation-dialog" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
+      <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 grid place-items-center bg-slate-950/50 p-3 sm:p-4" :style="layerStyle" role="presentation">
+        <section ref="dialogRef" data-testid="user-funds-mutation-dialog" class="funds-mutation-dialog-panel flex max-h-[calc(100vh-1.5rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100vh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="user-funds-mutation-title" :aria-busy="busy">
+          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5 sm:py-4">
+            <div class="min-w-0 flex-1">
+              <h2 id="user-funds-mutation-title" class="text-lg font-semibold text-slate-900">{{ config.title }}</h2>
+              <p class="mt-0.5 truncate text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p>
+            </div>
+            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
+          </header>
+
+          <div data-testid="user-funds-mutation-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
             <FeedbackToast v-if="errorMessage" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
             <p class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">{{ config.hint }}</p>
 
@@ -174,7 +189,7 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
                 <label for="user-funds-operation-amount" class="text-sm font-medium text-slate-800">{{ config.amountLabel }} <span class="text-rose-500">*</span></label>
                 <div class="mt-1.5 flex gap-2">
                   <AdminInput id="user-funds-operation-amount" :ref="element => { amountRef = nativeControl(element) }" v-model="form.amount" type="text" inputmode="decimal" autocomplete="off" class="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 text-sm outline-none" placeholder="最多两位小数" />
-                  <AdminButton type="button" class="shrink-0" @click="fillMaximum">全部</AdminButton>
+                  <AdminButton type="button" class="min-h-11 shrink-0 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-blue-700 hover:bg-blue-50 focus:outline-none" @click="fillMaximum">全部</AdminButton>
                 </div>
                 <p class="mt-1 text-xs text-slate-500">最多可操作 {{ money(maximumAmount) }}</p>
               </div>
@@ -203,14 +218,35 @@ watch(() => [props.visible, userId.value, props.mode], ([visible]) => { if (visi
 
           <footer class="flex shrink-0 justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3 sm:px-5">
             <template v-if="stage === 'edit'">
-              <AdminButton type="button" :disabled="busy" @click="close">取消</AdminButton>
-              <AdminButton type="button" :disabled="busy" :class="config.tone" @click="startConfirm">下一步</AdminButton>
+              <AdminButton type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="close">取消</AdminButton>
+              <AdminButton type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="startConfirm">下一步</AdminButton>
             </template>
             <template v-else>
               <AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="backToEdit">返回修改</AdminButton>
               <AdminButton :ref="element => { submitButtonRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg px-3.5 py-2 text-sm font-medium text-white disabled:opacity-40" :class="config.tone" @click="requestMfa">{{ busy ? '验证中…' : '提交并验证' }}</AdminButton>
             </template>
           </footer>
-    </AdminDialog>
+        </section>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
+<style scoped>
+.funds-mutation-dialog-enter-active { transition: opacity 200ms ease-out; }
+.funds-mutation-dialog-leave-active { transition: opacity 150ms ease-in; }
+.funds-mutation-dialog-enter-active .funds-mutation-dialog-panel { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.funds-mutation-dialog-leave-active .funds-mutation-dialog-panel { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.funds-mutation-dialog-enter-from,
+.funds-mutation-dialog-leave-to { opacity: 0; }
+.funds-mutation-dialog-enter-from .funds-mutation-dialog-panel,
+.funds-mutation-dialog-leave-to .funds-mutation-dialog-panel { opacity: 0; transform: scale(0.96); }
+@media (prefers-reduced-motion: reduce) {
+  .funds-mutation-dialog-enter-active,
+  .funds-mutation-dialog-leave-active,
+  .funds-mutation-dialog-enter-active .funds-mutation-dialog-panel,
+  .funds-mutation-dialog-leave-active .funds-mutation-dialog-panel { transition-duration: 50ms; }
+  .funds-mutation-dialog-enter-from .funds-mutation-dialog-panel,
+  .funds-mutation-dialog-leave-to .funds-mutation-dialog-panel { transform: none; }
+}
+</style>

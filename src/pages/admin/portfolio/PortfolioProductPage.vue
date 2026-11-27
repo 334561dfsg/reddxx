@@ -296,6 +296,7 @@ function statusClass(status) {
       />
     </article>
 
+    <Teleport to="body">
       <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showModal = false">
 <template #title><template v-if="showModal"><div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
             <div>
@@ -430,6 +431,6 @@ function statusClass(status) {
             <a-button type="text" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="saveProduct">保存产品</a-button>
           </div></template></template>
 </a-modal>
-    
+    </Teleport>
   </section>
 </template>

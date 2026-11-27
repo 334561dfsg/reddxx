@@ -1,5 +1,4 @@
 <script setup>
-import AdminDialog from '../antd/AdminDialog.vue'
 import { AdminButton, AdminTextarea } from '../antd/controls.js'
 
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
@@ -12,7 +11,7 @@ import {
   isUserControlFormComplete
 } from '../../../features/user-control/userControlForm.js'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
-import { useDialogContentSnapshot } from '../../composables/useDialogLifecycle.js'
+import { useDialogContentSnapshot, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -32,15 +31,26 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'submit'])
 
+const dialogRef = ref(null)
 const firstControlSelect = ref(null)
 const leftPanelRef = ref(null)
 const helpPanelMaxHeight = ref('')
 let leftPanelResizeObserver = null
 const initialFocusTarget = computed(() => firstControlSelect.value)
-// Frame: AdminDialog (Ant Modal + useDialogLifecycle), dialog migration 2026-11-27.
-const dialogFrame = ref(null)
-const phase = computed(() => dialogFrame.value?.phase ?? 'closed')
-const initialFocus = computed(() => initialFocusTarget.value)
+const {
+  rendered,
+  phase,
+  layerStyle,
+  requestDialogClose,
+  onAfterEnter,
+  onAfterLeave
+} = useDialogLifecycle({
+  open: computed(() => props.open),
+  dialogRef,
+  initialFocusRef: initialFocusTarget,
+  returnFocusRef: computed(() => props.returnFocus),
+  requestClose: () => emit('close')
+})
 
 const dialogData = computed(() => ({
   scope: props.scope,
@@ -67,7 +77,8 @@ const displayScope = computed(() => displayedDialogData.value.scope)
 const isGlobalScope = computed(() => displayScope.value === 'global')
 const displayModuleKey = computed(() => displayedDialogData.value.moduleKey)
 const displayUser = computed(() => displayedDialogData.value.user)
-const handleClosed = () => {
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
   clearDialogSnapshot()
 }
 
@@ -210,7 +221,7 @@ watch(
   { immediate: true, deep: true }
 )
 
-watch(() => phase.value !== 'closed', (isRendered) => {
+watch(rendered, (isRendered) => {
   if (!isRendered) {
     helpPanelMaxHeight.value = ''
     leftPanelResizeObserver?.disconnect?.()
@@ -243,7 +254,7 @@ onBeforeUnmount(() => {
   leftPanelResizeObserver?.disconnect?.()
 })
 
-const close = () => dialogFrame.value?.close()
+const close = () => requestDialogClose()
 
 const submit = () => {
   if (phase.value !== 'open' || !isComplete.value) return
@@ -252,12 +263,48 @@ const submit = () => {
 </script>
 
 <template>
-  <AdminDialog :open="open" :title="displayScope === 'global' ? '设置用户点控' : moduleMeta?.actionLabel" title-id="user-control-dialog-title" :return-focus="returnFocus" testid="user-control-dialog-frame" :width="shouldShowHelpPanel ? 1080 : 720" plain ref="dialogFrame" :initial-focus="initialFocus" @close="emit('close')" @closed="handleClosed">
-      <template #subtitle><div data-testid="user-control-target-user" class="mt-0.5 flex min-w-0 flex-wrap gap-x-2 break-words text-sm text-slate-500">
+  <Teleport to="body">
+    <Transition name="dialog-overlay" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
+      <div
+        v-if="rendered"
+        v-show="phase !== 'closing'"
+        class="fixed inset-0 flex items-start justify-center bg-slate-950/50 p-3 sm:items-center"
+        role="presentation"
+        :style="layerStyle"
+      >
+        <Transition name="dialog-panel" appear>
+          <section
+            v-show="phase !== 'closing'"
+            ref="dialogRef"
+            data-testid="user-control-dialog-frame"
+            class="flex max-h-[calc(100vh-1.5rem)] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-1.5rem)]"
+            :class="shouldShowHelpPanel ? 'max-w-[1080px]' : 'max-w-[720px]'"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="user-control-dialog-title"
+          >
+        <header class="flex shrink-0 items-start justify-between border-b border-slate-200 px-5 py-3">
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">
+              {{ displayScope === 'global' ? '用户点控设置' : `${moduleMeta?.label || '当前模块'}点控` }}
+            </p>
+            <h2 id="user-control-dialog-title" class="mt-0.5 break-words text-lg font-semibold text-slate-900">
+              {{ displayScope === 'global' ? '设置用户点控' : moduleMeta?.actionLabel }}
+            </h2>
+            <div data-testid="user-control-target-user" class="mt-0.5 flex min-w-0 flex-wrap gap-x-2 break-words text-sm text-slate-500">
               <span>{{ selectedUserName }}</span>
               <span>UID {{ selectedUserId || '—' }}</span>
-              <span class="break-all">{{ selectedUserEmail }}</span></div></template>
-      <div data-testid="user-control-dialog-body" class="min-h-0 flex-1 overflow-y-auto px-5 py-3 lg:flex-none lg:overflow-hidden">
+              <span class="break-all">{{ selectedUserEmail }}</span>
+            </div>
+          </div>
+          <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="关闭" @click="close">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </AdminButton>
+        </header>
+
+        <div data-testid="user-control-dialog-body" class="min-h-0 flex-1 overflow-y-auto px-5 py-3 lg:flex-none lg:overflow-hidden">
           <div
             class="grid items-start gap-4"
             :class="shouldShowHelpPanel ? 'lg:grid-cols-[minmax(0,1fr)_400px]' : ''"
@@ -289,7 +336,7 @@ const submit = () => {
                   rows="2"
                   maxlength="200"
                   placeholder="请填写点控原因，便于后续审计"
-                  class="mt-1.5 w-full"
+                  class="mt-1.5 w-full rounded-lg border px-3 py-1.5 text-sm outline-none"
                   :class="noteRequired && noteTouched && !form.note.trim() ? 'border-rose-400' : 'border-slate-300'"
                   :aria-invalid="noteRequired && noteTouched && !form.note.trim()"
                   aria-describedby="user-control-note-help"
@@ -346,17 +393,21 @@ const submit = () => {
         </div>
 
         <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-          <AdminButton type="button" @click="close">
+          <AdminButton type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100" @click="close">
             取消
           </AdminButton>
           <AdminButton
             type="button"
             :disabled="phase !== 'open' || !isComplete"
-            variant="primary"
+            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             @click="submit"
           >
             确认设置
           </AdminButton>
         </footer>
-    </AdminDialog>
+          </section>
+        </Transition>
+      </div>
+    </Transition>
+  </Teleport>
 </template>

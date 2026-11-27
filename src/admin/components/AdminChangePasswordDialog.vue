@@ -1,5 +1,4 @@
 <script setup>
-import AdminDialog from './antd/AdminDialog.vue'
 import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, nativeControl } from './antd/controls.js'
 
@@ -27,6 +26,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:open', 'request-mfa'])
 
+const dialogRef = ref(null)
 const currentPasswordInput = ref(null)
 const errorSummary = ref(null)
 const submitButton = ref(null)
@@ -51,10 +51,21 @@ const requestClose = () => {
   emit('update:open', false)
 }
 
-// Frame: AdminDialog (Ant Modal + useDialogLifecycle), dialog migration 2026-11-27.
-const dialogFrame = ref(null)
-const phase = computed(() => dialogFrame.value?.phase ?? 'closed')
-const initialFocus = computed(() => currentPasswordInput.value)
+const {
+  rendered,
+  phase,
+  layerStyle,
+  requestDialogClose,
+  onAfterEnter,
+  onAfterLeave
+} = useDialogLifecycle({
+  open: computed(() => props.open),
+  dialogRef,
+  initialFocusRef: currentPasswordInput,
+  returnFocusRef: computed(() => props.returnFocus),
+  closeDisabled,
+  requestClose
+})
 
 const displayedDialogSource = computed(() => ({
   saving: props.saving,
@@ -138,14 +149,52 @@ const submit = async () => {
 
 const close = () => {
   if (props.saving) return
-  dialogFrame.value?.close()
+  requestDialogClose()
 }
 </script>
 
 <template>
-  <AdminDialog :open="open" title="修改登录密码" title-id="admin-change-password-title" :busy="closeDisabled" :return-focus="returnFocus" testid="admin-change-password-dialog-frame" :width="512" plain :request-close="requestClose" ref="dialogFrame" :initial-focus="initialFocus" @close="emit('close')">
-      <template #subtitle>提交后需要完成 MFA 验证才会生效</template>
-      <form class="min-h-0 flex-1 overflow-y-auto px-6 py-5" @submit.prevent="submit">
+  <Teleport to="body">
+    <Transition name="dialog-overlay" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
+      <div
+        v-if="rendered"
+        v-show="phase !== 'closing'"
+        class="fixed inset-0 flex min-h-[100vh] w-full items-center justify-center bg-black/50 p-4 supports-[height:100dvh]:min-h-[100dvh] sm:p-6"
+        role="presentation"
+        :style="layerStyle"
+      >
+        <Transition name="dialog-panel" appear>
+          <section
+            v-show="phase !== 'closing'"
+            ref="dialogRef"
+            data-testid="admin-change-password-dialog-frame"
+            class="flex max-h-[calc(100vh-2rem)] w-full max-w-lg flex-col overflow-hidden rounded-xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-change-password-title"
+            :aria-busy="displayedDialog.saving"
+          >
+            <header class="shrink-0 border-b border-slate-200 bg-slate-50 px-6 py-4">
+              <div class="flex items-center justify-between gap-4">
+                <div class="min-w-0 flex-1">
+                  <h2 id="admin-change-password-title" class="break-words text-xl font-semibold text-slate-900">修改登录密码</h2>
+                  <p class="mt-0.5 break-words text-xs text-slate-500">提交后需要完成 MFA 验证才会生效</p>
+                </div>
+                <AdminButton
+                  type="button"
+                  class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-label="关闭"
+                  :disabled="displayedDialog.saving"
+                  :aria-disabled="displayedDialog.saving"
+                  :title="displayedDialog.saving ? '提交中，暂时无法关闭' : '关闭'"
+                  @click="close"
+                >
+                  ×
+                </AdminButton>
+              </div>
+            </header>
+
+            <form class="min-h-0 flex-1 overflow-y-auto px-6 py-5" @submit.prevent="submit">
               <FeedbackToast v-if="displayedDialog.hasSubmitted && (displayedDialog.submitErrorMessage || displayedDialog.fieldErrors.currentPassword || displayedDialog.fieldErrors.newPassword || displayedDialog.fieldErrors.confirmPassword)" ref="errorSummary" type="error" :source="() => (displayedDialog.hasSubmitted &amp;&amp; (displayedDialog.submitErrorMessage || displayedDialog.fieldErrors.currentPassword || displayedDialog.fieldErrors.newPassword || displayedDialog.fieldErrors.confirmPassword)) ? (displayedDialog.submitErrorMessage || '请修复表单中的错误后再继续') : ''"></FeedbackToast>
 
               <div class="space-y-4">
@@ -170,7 +219,7 @@ const close = () => {
                     v-model="form.newPassword"
                     type="password"
                     autocomplete="new-password"
-                    class="w-full"
+                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition"
                     :disabled="displayedDialog.saving"
                     :aria-invalid="Boolean(displayedDialog.fieldErrors.newPassword)"
                     :aria-describedby="displayedDialog.fieldErrors.newPassword ? 'admin-new-password-error admin-password-help' : 'admin-password-help'"
@@ -185,7 +234,7 @@ const close = () => {
                     v-model="form.confirmPassword"
                     type="password"
                     autocomplete="new-password"
-                    class="w-full"
+                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition"
                     :disabled="displayedDialog.saving"
                     :aria-invalid="Boolean(displayedDialog.fieldErrors.confirmPassword)"
                     :aria-describedby="displayedDialog.fieldErrors.confirmPassword ? 'admin-confirm-password-error' : undefined"
@@ -198,7 +247,7 @@ const close = () => {
             <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
               <AdminButton
                 type="button"
-               
+                class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
                 :disabled="displayedDialog.saving"
                 @click="close"
               >
@@ -216,5 +265,9 @@ const close = () => {
                 <span v-else>提交中...</span>
               </AdminButton>
             </footer>
-    </AdminDialog>
+          </section>
+        </Transition>
+      </div>
+    </Transition>
+  </Teleport>
 </template>

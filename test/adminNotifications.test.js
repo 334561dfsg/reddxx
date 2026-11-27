@@ -11,7 +11,6 @@ import {
   useAdminAccountStore
 } from '../src/admin/stores/adminAccount.js'
 
-import { assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const headerSource = readFileSync(
   new URL('../src/admin/components/AppHeader.vue', import.meta.url),
   'utf8'
@@ -147,8 +146,11 @@ test('app header exposes accessible notification, account, and MFA password flow
 })
 
 test('admin sound guide dialog provides Chrome sound allow-list copy guidance', () => {
-  assertAdminDialogFrame(soundGuideDialogSource)
-  assert.match(soundGuideDialogSource, /title-id="admin-sound-guide-title"/)
+  assert.match(soundGuideDialogSource, /useDialogLifecycle/)
+  assert.match(soundGuideDialogSource, /role="dialog"/)
+  assert.match(soundGuideDialogSource, /aria-modal="true"/)
+  assert.match(soundGuideDialogSource, /aria-labelledby="admin-sound-guide-title"/)
+  assert.match(soundGuideDialogSource, /aria-label="关闭"/)
   assert.doesNotMatch(soundGuideDialogSource, /@click="close"[^>]*role="presentation"/)
   assert.match(soundGuideDialogSource, /chrome:\/\/settings\/content\/sound/)
   assert.match(soundGuideDialogSource, /window\.location\.host/)

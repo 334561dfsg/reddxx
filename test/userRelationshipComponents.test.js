@@ -3,7 +3,6 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { getUserOperationEntry } from '../src/admin/config/userOperations.js'
 
-import { assertAdminDrawerFrame, assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const root = new URL('../', import.meta.url)
 const read = (path) => readFileSync(new URL(path, root), 'utf8')
 
@@ -22,7 +21,8 @@ test('direct and all referral entries are available with dedicated handlers', ()
 
 test('relationship member Drawer uses shared layering with a fixed control and pagination frame', () => {
   const source = read('src/admin/components/user/UserRelationshipDrawer.vue')
-  assertAdminDrawerFrame(source)
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /:style="layerStyle"/)
   assert.doesNotMatch(source, /data-testid="relationship-drawer-body"[^>]*class="[^"]*overflow-y-auto/)
   assert.match(source, /data-testid="relationship-drawer-body"[^>]*class="[^"]*min-h-0[^"]*flex[^"]*flex-1[^"]*flex-col[^"]*overflow-hidden/)
   assert.match(source, /data-testid="relationship-member-scroll"[^>]*class="[^"]*min-h-20[^"]*flex-1[^"]*overflow-y-auto[^"]*overscroll-y-contain[^"]*pb-\[max\(1rem,env\(safe-area-inset-bottom\)\)\]/)
@@ -41,6 +41,9 @@ test('relationship member Drawer uses shared layering with a fixed control and p
   assert.match(source, /grid-cols-2 gap-1/)
   assert.match(source, /@keydown="handleFilterPanelKeydown"/)
   assert.doesNotMatch(source, /data-testid="relationship-drawer-controls"[^>]*class="[^"]*overflow-y-auto/)
+  assert.match(source, /role="dialog"/)
+  assert.match(source, /aria-modal="true"/)
+  assert.match(source, /aria-label="关闭"/)
   assert.match(source, /getDirectReferrals/)
   assert.match(source, /getDescendants/)
   assert.doesNotMatch(source, /statusLabel\(member\.status\)/)
@@ -72,8 +75,10 @@ test('edit profile entry opens an accessible validated child Dialog', () => {
   assert.match(source, /updateProfile/)
   assert.match(source, /type="tel"[\s\S]*inputmode="numeric"[\s\S]*pattern="\[0-9\]\*"[\s\S]*maxlength="24"/)
   assert.match(source, /<FeedbackToast/)
-  assert.match(source, /:busy="(?:submitting|dialogBusy)"/)
-  assertAdminDialogFrame(source)
+  assert.match(source, /:aria-busy="submitting"/)
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /:style="layerStyle"/)
+  assert.match(source, /aria-label="关闭"/)
 })
 
 test('user list keeps the operation Drawer mounted while editing profile', () => {
@@ -168,8 +173,8 @@ test('team report entry renders approved metrics and branch details in a child D
   assert.match(source, /data-testid="team-report-branch-header"[^>]*class="[^"]*shrink-0/)
   assert.match(source, /data-testid="team-report-branch-scroll"[^>]*class="[^"]*min-h-20[^"]*flex-1[^"]*overflow-y-auto/)
   assert.match(source, /<footer v-if="branches.length" data-testid="team-report-pagination" class="shrink-0 border-t/)
-  // Frame: the shared Ant Drawer adapter owns layering, focus and motion (drawer migration 2026-11-27).
-  assert.match(source, /<AdminDrawer\b[^>]*:open="visible"/)
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /:style="layerStyle"/)
 })
 
 test('all six relationship entries are available after the first batch', () => {

@@ -4,7 +4,6 @@ import { resolve } from 'node:path'
 import test from 'node:test'
 import { h } from 'vue'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
-import { assertAdminDrawerFrame, assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 
 const projectFile = (path) => resolve(process.cwd(), path)
 const rechargeDrawerFile = projectFile('src/admin/components/user/UserRechargeSummaryDrawer.vue')
@@ -49,7 +48,7 @@ test('recharge Drawer opens above its trigger, exposes the complete summary, and
   assert.match(frame.textContent, /170,000\.00/)
   assert.match(frame.textContent, /VIP2/)
   assert.match(frame.textContent, /DEP-001/)
-  assert.equal(frame.parent.classList.contains('admin-drawer-opening'), true)
+  assert.equal(frame.parent.classList.contains('recharge-drawer-enter-from'), true)
 
   await harness.finishTransitions()
   frame.parent.click()
@@ -142,7 +141,7 @@ test('recharge Drawer returns to page one when the open Drawer switches users wi
 test('recharge Drawer keeps its fixed overview in a content-driven two-column layout', async () => {
   const source = await readFile(rechargeDrawerFile, 'utf8')
 
-  assert.match(source, /<AdminDrawer\b[^>]*:width="672"/)
+  assert.match(source, /max-w-2xl/)
   assert.match(source, /data-testid="user-recharge-summary-overview"[^>]*grid-cols-1[^>]*min-\[520px\]:grid-cols-\[220px_minmax\(0,1fr\)\]/)
 })
 
@@ -161,7 +160,15 @@ test('recharge Drawer keeps its record scroller keyboard-accessible and compacts
 test('recharge Drawer retains responsive motion safeguards', async () => {
   const source = await readFile(rechargeDrawerFile, 'utf8')
 
-  assertAdminDrawerFrame(source)
+  assert.match(source, /overflow-hidden/)
+  assert.match(source, /200ms ease-out/)
+  assert.match(source, /150ms ease-in/)
+  assert.match(source, /prefers-reduced-motion: reduce/)
+  assert.match(source, /transition-duration: 50ms/)
+  assert.match(source, /transform: none/)
+  assert.match(source, /100vh/)
+  assert.match(source, /100dvh/)
+  assert.match(source, /safe-area-inset-right/)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
 })
 
@@ -617,7 +624,11 @@ test('membership mutation Dialog follows modal, select-choice, and responsive co
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
   assert.match(source, /closeDisabled/)
   assert.match(source, /<FeedbackToast/)
-  assertAdminDialogFrame(source)
+  assert.match(source, /200ms ease-out/)
+  assert.match(source, /150ms ease-in/)
+  assert.match(source, /prefers-reduced-motion: reduce/)
+  assert.match(source, /transition-duration: 50ms/)
+  assert.match(source, /transform: none/)
 })
 
 const reviews = [
@@ -663,18 +674,14 @@ test('credit review Drawer filters status without mutating input and follows Dra
   assert.deepEqual(input, reviews)
 
   const source = await readFile(reviewDrawerFile, 'utf8')
-  // Migrated to the shared Ant Drawer frame: it owns the scrolling body, close blocking, motion and the
-  // no-backdrop-close rule; the drawer only passes its busy state and test ids.
-  assert.match(source, /<AdminDrawer[^>]*:busy="busy"[^>]*testid="user-credit-review-drawer"[^>]*body-testid="user-credit-review-body"/)
-  assert.doesNotMatch(source, /overflow-y-auto|<Teleport|@click\.self|@mousedown\.self|@touchend\.self/)
-  const frameSource = await readFile(projectFile('src/admin/components/antd/AdminDrawer.vue'), 'utf8')
-  assert.match(frameSource, /:mask-closable="false"/)
-  assert.match(frameSource, /:keyboard="false"/)
-  assert.match(frameSource, /closeDisabled: computed\(\(\) => props\.busy\)/)
-  assert.match(frameSource, /\.admin-drawer-body \{[^}]*overflow-y: auto/)
-  assert.match(frameSource, /200ms !important; transition-timing-function: ease-out/)
-  assert.match(frameSource, /150ms !important; transition-timing-function: ease-in/)
-  assert.match(frameSource, /prefers-reduced-motion: reduce/)
+  assert.match(source, /data-testid="user-credit-review-body"[^>]*overflow-y-auto/)
+  assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
+  assert.match(source, /closeDisabled/)
+  assert.match(source, /translateX\(100%\)/)
+  assert.match(source, /200ms ease-out/)
+  assert.match(source, /150ms ease-in/)
+  assert.match(source, /prefers-reduced-motion: reduce/)
+  assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
 })
 
 test('credit review Drawer keeps top-layer ownership and new context through a queued reopen', async (t) => {
@@ -807,7 +814,8 @@ test('credit review decision requires an explicit choice and emits exact MFA int
 test('credit review decision Dialog is a guarded third layer with accessible motion', async () => {
   const source = await readFile(reviewDecisionFile, 'utf8')
 
-  assertAdminDialogFrame(source)
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /:style="layerStyle"/)
   assert.match(source, /aria-labelledby="review-decision-label"/)
   assert.match(source, /<AdminRadio\b/)
   assert.doesNotMatch(source, /<select\b|role="combobox"/)
@@ -815,4 +823,8 @@ test('credit review decision Dialog is a guarded third layer with accessible mot
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
   assert.match(source, /closeDisabled/)
   assert.match(source, /<FeedbackToast/)
+  assert.match(source, /200ms ease-out/)
+  assert.match(source, /150ms ease-in/)
+  assert.match(source, /prefers-reduced-motion: reduce/)
+  assert.match(source, /transform: none/)
 })

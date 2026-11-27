@@ -268,22 +268,3 @@ html body :is(.ant-input-affix-wrapper-focused, .ant-input-number-focused, .ant-
 @media (forced-colors: active) {
   :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
 }
-
-/* One close button for every admin overlay frame (AdminDialog, AdminDrawer, Earn modal and drawer; 2026-11-28): Ant's
-   32px icon button with a 45% grey icon, no resting background, a light surface on hover/focus. Desktop-only admin;
-   coarse pointers keep 44px through the frames' pointer:coarse rules. */
-html body :is(.admin-dialog-close, .admin-drawer-close, .earn-modal-title .ant-btn, .earn-rewards-title .ant-btn).ant-btn {
-  flex: none; width: 32px; height: 32px; min-width: 32px; min-height: 32px; padding: 0;
-  border-radius: 6px; color: rgb(0 0 0 / 45%); background: transparent; background-image: none;
-}
-html body :is(.admin-dialog-close, .admin-drawer-close, .earn-modal-title .ant-btn, .earn-rewards-title .ant-btn).ant-btn:is(:hover, :focus-visible):not(:disabled) {
-  color: rgb(0 0 0 / 88%); background: rgb(0 0 0 / 6%);
-}
-@media (pointer: coarse) {
-  html body :is(.admin-dialog-close, .admin-drawer-close, .earn-modal-title .ant-btn, .earn-rewards-title .ant-btn).ant-btn { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
-}
-
-/* Link buttons used as values inside Descriptions (e.g. a user UID that opens the user drawer) align with the other
-   values instead of carrying Ant's button padding. */
-html body .ant-descriptions .ant-descriptions-item-content > .ant-btn-link,
-html body .ant-descriptions .ant-descriptions-item-content .ant-btn-link:only-child { height: auto; padding: 0; }

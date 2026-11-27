@@ -1116,6 +1116,14 @@ const openRiskHelpModal = () => {
     </div>
 
     <!-- 风险评估标准帮助模态框 -->
+    <Transition
+      enter-active-class="transition ease-out duration-200"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
       <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showRiskHelpModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="1024" :footer="null" :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showRiskHelpModal = false">
 <template #title><template v-if="showRiskHelpModal"><div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
             <div class="flex items-center gap-3">
@@ -1244,5 +1252,6 @@ const openRiskHelpModal = () => {
         </template>
 
 </a-modal>
+    </Transition>
   </section>
 </template>

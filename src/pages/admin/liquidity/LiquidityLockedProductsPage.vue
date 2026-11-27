@@ -372,6 +372,7 @@ const applyPresetDays = (days) => {
 			<div v-if="filteredProducts.length === 0" class="py-12 text-center text-slate-500">暂无产品数据</div>
 		</article>
 
+		<Teleport to="body">
 			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showProductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showProductModal = false">
 <template #title><template v-if="showProductModal"><div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
 						<div>
@@ -896,6 +897,6 @@ const applyPresetDays = (days) => {
 						</a-button>
 					</div></template></template>
 </a-modal>
-		
+		</Teleport>
 	</section>
 </template>

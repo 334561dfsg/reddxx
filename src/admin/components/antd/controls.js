@@ -15,8 +15,7 @@ export const AdminButton = defineComponent({
         ...attrs,
         type: attrs.variant || (primary ? 'primary' : 'default'),
         htmlType: attrs.type || 'button',
-        // An explicit danger attribute wins; otherwise legacy colour classes still imply it.
-        danger: attrs.danger === '' || attrs.danger === true || /(?:bg-(?:rose|red)-[56]00|ant-btn-danger)/.test(classes),
+        danger: /(?:bg-(?:rose|red)-[56]00|ant-btn-danger)/.test(classes),
         class: [attrs.class, 'admin-antd-control-button']
       }, slots)
     }

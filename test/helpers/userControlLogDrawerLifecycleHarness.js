@@ -1,12 +1,11 @@
 import {
-  createDialogCloseAction,
   useDialogContentSnapshot,
   useDialogLifecycle as useRealDialogLifecycle
 } from '../../src/admin/composables/useDialogLifecycle.js'
 
 let latestLifecycle = null
 
-export { createDialogCloseAction, useDialogContentSnapshot }
+export { useDialogContentSnapshot }
 
 export const useDialogLifecycle = (options) => {
   latestLifecycle = useRealDialogLifecycle(options)

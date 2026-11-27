@@ -1,5 +1,4 @@
 <script setup>
-import AdminDrawer from '../antd/AdminDrawer.vue'
 import { Table } from 'ant-design-vue'
 const TableColumn = Table.Column
 
@@ -7,6 +6,7 @@ import { AdminButton, AdminInput, AdminSelect, AdminTextarea, nativeControl } fr
 
 import { computed, ref, watch } from 'vue'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../constants/user'
+import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import { userDepositAddressRepository, userDepositAddressVersion } from '../../repositories/userDepositAddressRepository.js'
 import UserOperations from './UserOperations.vue'
 import UserWalletHoldingsDialog from './UserWalletHoldingsDialog.vue'
@@ -22,13 +22,29 @@ const props = defineProps({
 const depositAddresses = computed(() => { userDepositAddressVersion.value; return userDepositAddressRepository.list(props.user?.id) })
 
 const emit = defineEmits(['close', 'closed'])
+const drawerRef = ref(null)
+const titleRef = ref(null)
 
-// Frame: AdminDrawer (Ant Drawer + useDialogLifecycle), drawer migration 2026-11-27.
-const drawerFrame = ref(null)
-const phase = computed(() => drawerFrame.value?.phase ?? 'closed')
+const {
+  rendered,
+  phase,
+  layerStyle,
+  requestDialogClose,
+  onAfterEnter,
+  onAfterLeave
+} = useDialogLifecycle({
+  open: computed(() => props.visible && Boolean(props.user)),
+  dialogRef: drawerRef,
+  initialFocusRef: titleRef,
+  returnFocusRef: computed(() => props.returnFocus),
+  requestClose: () => emit('close')
+})
 
-const close = () => drawerFrame.value?.close()
-const handleClosed = () => emit('closed')
+const close = createDialogCloseAction(requestDialogClose)
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
+  emit('closed')
+}
 
 const statusConfig = {
   [USER_STATUS.ACTIVE]: { text: '正常', class: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' },
@@ -246,9 +262,40 @@ const tabButtonClass = (id) => {
 </script>
 
 <template>
-  <AdminDrawer :open="visible" title="用户详情" title-id="user-detail-drawer-title" :return-focus="returnFocus" testid="user-detail-drawer" placement="top" height="92vh" plain ref="drawerFrame" @close="emit('close')" @closed="handleClosed">
-    <template v-if="user">
-          <div class="shrink-0 border-b border-slate-200 bg-white px-4 pb-3 sm:px-6">
+  <Teleport to="body">
+    <Transition name="drawer-detail-overlay" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
+      <div
+        v-if="rendered"
+        v-show="phase !== 'closing'"
+        class="fixed inset-0 flex items-start bg-black/40"
+        role="presentation"
+        :style="layerStyle"
+      >
+        <Transition name="drawer-detail-panel" appear>
+          <section
+            v-show="phase !== 'closing'"
+            ref="drawerRef"
+            data-testid="user-detail-drawer"
+            class="flex h-[92vh] max-h-[92vh] w-full flex-col overflow-hidden rounded-b-2xl border-b border-slate-200 bg-slate-50 shadow-2xl supports-[height:100dvh]:h-[92dvh] supports-[height:100dvh]:max-h-[92dvh]"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="user-detail-drawer-title"
+          >
+          <!-- Header -->
+          <header class="relative shrink-0 border-b border-slate-200 bg-white px-4 pb-3 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6">
+            <h2 id="user-detail-drawer-title" ref="titleRef" tabindex="-1" class="mb-3 text-lg font-semibold text-slate-900 outline-none">
+              用户详情
+            </h2>
+            <AdminButton
+              type="button"
+              class="absolute right-4 top-[max(0.75rem,env(safe-area-inset-top))] z-10 flex min-h-11 min-w-11 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none sm:right-6"
+              @click="close"
+              aria-label="关闭"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </AdminButton>
               <div class="flex w-full flex-col gap-4 pr-0 lg:flex-row lg:items-start lg:justify-between lg:gap-6 lg:pr-16">
               <div class="flex min-w-0 items-start gap-4 pr-4">
                 <div class="shrink-0 h-16 w-16 rounded-full overflow-hidden bg-slate-200">
@@ -308,14 +355,14 @@ const tabButtonClass = (id) => {
                 v-for="t in tabs"
                 :key="t.id"
                 type="button"
-                class="shrink-0"
+                class="shrink-0 px-3 py-3 text-sm font-medium border-b-2 border-transparent transition-colors whitespace-nowrap"
                 :class="tabButtonClass(t.id)"
                 @click="activeTab = t.id"
               >
                 {{ t.label }}
               </AdminButton>
             </nav>
-          </div>
+          </header>
 
           <!-- Body -->
           <div data-testid="user-detail-drawer-body" class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain p-4 sm:p-6">
@@ -500,23 +547,275 @@ const tabButtonClass = (id) => {
           </div>
 
           <!-- 操作弹窗与 Toast -->
+          <!-- <Teleport to="body">
+            <Transition
+              enter-active-class="transition ease-out duration-200"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+              leave-active-class="transition ease-in duration-150"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            >
+              <div
+                v-if="showActionModal"
+                class="fixed inset-0 z-[60] bg-black/40 grid place-items-center p-4"
+              >
+                <section class="w-full max-w-md rounded-xl border border-slate-200 bg-white shadow-lg overflow-hidden">
+                  <header class="px-5 py-3 border-b border-slate-100 bg-white">
+                    <div class="flex items-start justify-between gap-4">
+                      <div>
+                        <div class="text-xs font-medium tracking-wide text-slate-500">操作</div>
+                        <div class="mt-1 text-base font-semibold text-slate-900">
+                          {{
+                            actionType === 'freeze'
+                              ? '确认操作'
+                              : actionType === 'deposit'
+                                ? '入金'
+                                : actionType === 'transfer'
+                                  ? '划转'
+                                  : '操作'
+                          }}
+                        </div>
+                      </div>
+                      <AdminButton
+                        type="button"
+                        class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors"
+                        @click="closeActionModal"
+                        aria-label="关闭弹窗"
+                      >
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </AdminButton>
+                    </div>
+                  </header>
+
+                  <form class="px-5 py-4" @submit.prevent="submitAction">
+                    <div v-if="actionType === 'freeze'" class="space-y-3">
+                      <div class="text-sm text-slate-700 leading-6">
+                        您确定要将账户
+                        <span class="font-semibold text-slate-900">{{ user.username }}</span>
+                        的状态更改为
+                        <span class="font-semibold text-slate-900">{{ freezeDialog.targetText }}</span>
+                        吗？
+                      </div>
+                    </div>
+
+                    <div v-else-if="actionType === 'deposit'" class="space-y-3">
+                      <section class="rounded-xl bg-slate-100 p-5">
+                        <div class="flex items-start justify-between gap-4">
+                          <div>
+                            <div class="text-base font-semibold text-slate-900">
+                              {{ user.username }} 账户资产
+                            </div>
+                            <div class="mt-4 grid grid-cols-2 gap-y-3">
+                              <div class="flex items-center gap-2">
+                                <div class="text-sm text-slate-600 whitespace-nowrap">市币账户：</div>
+                                <div class="text-sm font-semibold text-slate-900">
+                                  {{ computedAssets ? formatMoney(computedAssets.marketAccount, { min: 2, max: 2 }) : '-' }}
+                                </div>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                <div class="text-sm text-slate-600 whitespace-nowrap">理财账户：</div>
+                                <div class="text-sm font-semibold text-slate-900">
+                                  {{ computedAssets ? formatMoney(computedAssets.wealthAccount, { min: 2, max: 2 }) : '-' }}
+                                </div>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                <div class="text-sm text-slate-600 whitespace-nowrap">交易合约：</div>
+                                <div class="text-sm font-semibold text-slate-900">
+                                  {{ computedAssets ? formatMoney(computedAssets.tradingContract, { min: 2, max: 2 }) : '-' }}
+                                </div>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                <div class="text-sm text-slate-600 whitespace-nowrap">永续合约：</div>
+                                <div class="text-sm font-semibold text-slate-900">
+                                  {{ computedAssets ? formatMoney(computedAssets.perpetualContract, { min: 2, max: 2 }) : '-' }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </section>
+
+                      <div>
+                        <div class="text-sm font-medium text-slate-700 mb-2">选择入金账户：</div>
+                        <AdminSelect
+                          v-model="actionForm.depositAccountKey"
+                          class="w-full rounded-xl border-2 border-blue-600 bg-white px-4 py-3 text-sm outline-none"
+                        >
+                          <option v-for="opt in depositAccountOptions" :key="opt.key" :value="opt.key">
+                            {{ opt.label }}
+                          </option>
+                        </AdminSelect>
+                      </div>
+
+                      <div>
+                        <div class="text-sm font-medium text-slate-700 mb-2">操作入金数量：</div>
+                        <AdminInput
+                          v-model="actionForm.depositAmount"
+                          type="number"
+                          step="0.01"
+                          class="w-full rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none focus:bg-white border border-slate-100"
+                          placeholder="请输入入金数量"
+                        />
+                      </div>
+
+                      <div>
+                        <div class="text-sm font-medium text-slate-700 mb-2">备注：</div>
+                        <AdminTextarea
+                          v-model="actionForm.remark"
+                          rows="4"
+                          class="w-full rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none focus:bg-white border border-slate-100"
+                          placeholder="请输入备注信息（可选）"
+                        />
+                      </div>
+                    </div>
+
+                    <div v-else-if="actionType === 'transfer'" class="space-y-4">
+                      <div>
+                        <div class="text-sm font-medium text-slate-700 mb-2">从</div>
+                        <AdminSelect
+                          v-model="actionForm.transferFromAccountKey"
+                          class="w-full rounded-xl border-2 border-blue-600 bg-white px-4 py-3 text-sm outline-none"
+                        >
+                          <option v-for="opt in transferAccountOptions" :key="opt.key" :value="opt.key">
+                            {{ opt.label }}
+                          </option>
+                        </AdminSelect>
+                      </div>
+
+                      <div>
+                        <div class="text-sm font-medium text-slate-700 mb-2">到</div>
+                        <AdminSelect
+                          v-model="actionForm.transferToAccountKey"
+                          class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm outline-none"
+                        >
+                          <option v-for="opt in transferAccountOptions" :key="opt.key" :value="opt.key">
+                            {{ opt.label }}
+                          </option>
+                        </AdminSelect>
+                      </div>
+
+                      <div>
+                        <div class="text-sm font-medium text-slate-700 mb-2">币种</div>
+                        <AdminSelect
+                          v-model="actionForm.transferCoinKey"
+                          class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm outline-none"
+                        >
+                          <option disabled value="">请选择</option>
+                          <option v-for="c in coinOptions" :key="c.key" :value="c.key">
+                            {{ c.label }}
+                          </option>
+                        </AdminSelect>
+                      </div>
+
+                      <div>
+                        <div class="flex items-center justify-between mb-2">
+                          <div class="text-sm font-medium text-slate-700">划转数量</div>
+                        </div>
+
+                        <div class="relative">
+                          <AdminInput
+                            v-model="actionForm.transferAmount"
+                            type="number"
+                            step="0.01"
+                            class="w-full rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none border border-slate-100 pr-28"
+                            placeholder="请输入划转的数量"
+                          />
+                          <AdminButton
+                            type="button"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-blue-600 hover:text-blue-700"
+                            @click="setTransferAll"
+                          >
+                            全部
+                          </AdminButton>
+                        </div>
+
+                        <div class="mt-2 text-sm text-slate-600">
+                          余额: {{ transferFromBalance !== null ? formatMoney(transferFromBalance, { min: 2, max: 2 }) : '-' }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mt-5" :class="actionType === 'transfer' ? '' : 'flex justify-end gap-3'">
+                      <AdminButton
+                        v-if="actionType !== 'transfer'"
+                        type="button"
+                        class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                        @click="closeActionModal"
+                      >
+                        取消
+                      </AdminButton>
+                      <AdminButton
+                        type="submit"
+                        class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors"
+                        :class="actionType === 'transfer'
+                          ? 'w-full px-6 py-4 rounded-xl text-base'
+                          : actionConfirmButtonClass"
+                      >
+                        {{ actionConfirmText }}
+                      </AdminButton>
+                    </div>
+                  </form>
+                </section>
+              </div>
+            </Transition>
+
+            <div
+              v-if="toast.visible"
+              class="fixed top-4 right-4 z-[70] bg-white border border-blue-200 rounded-lg shadow-lg px-4 py-3 flex items-center gap-3"
+            >
+              <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-slate-900">{{ toast.message }}</span>
+            </div>
+          </Teleport> -->
+
           <!-- Footer -->
           <footer class="shrink-0 border-t border-slate-200 bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 sm:px-6">
             <div class="flex justify-end gap-2">
               <AdminButton
                 type="button"
-               
+                class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
                 @click="close"
               >
                 关闭
               </AdminButton>
             </div>
           </footer>
-    </template>
-  </AdminDrawer>
+          </section>
+        </Transition>
+      </div>
+    </Transition>
+  </Teleport>
   <UserWalletHoldingsDialog
     :visible="walletDetailOpen" :wallet="walletDetail" :return-focus="walletReturnFocus"
     @close="walletDetailOpen = false" @closed="clearWalletDetail"
   />
 </template>
 
+<style scoped>
+.drawer-detail-overlay-enter-active { transition: opacity 200ms ease-out; }
+.drawer-detail-overlay-leave-active { transition: opacity 150ms ease-in; }
+.drawer-detail-panel-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.drawer-detail-panel-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.drawer-detail-overlay-enter-from,
+.drawer-detail-overlay-leave-to,
+.drawer-detail-panel-enter-from,
+.drawer-detail-panel-leave-to { opacity: 0; }
+.drawer-detail-panel-enter-from,
+.drawer-detail-panel-leave-to { transform: translateY(-100%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-detail-overlay-enter-active,
+  .drawer-detail-overlay-leave-active,
+  .drawer-detail-panel-enter-active,
+  .drawer-detail-panel-leave-active { transition-duration: 50ms; }
+  .drawer-detail-panel-enter-from,
+  .drawer-detail-panel-leave-to { transform: none; }
+}
+</style>

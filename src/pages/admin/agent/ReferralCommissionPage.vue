@@ -1,5 +1,4 @@
 <script setup>
-import { message } from 'ant-design-vue'
 import { ref, computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { referralApi } from '../../../admin/mock/referral'
 import {
@@ -28,6 +27,7 @@ const detailDrawer = ref({
   list: []
 })
 
+const toast = ref({ visible: false, message: '', kind: 'info' })
 const confirmDialog = ref({
   visible: false,
   message: '',
@@ -35,6 +35,7 @@ const confirmDialog = ref({
   onConfirm: null
 })
 
+let toastTimer = null
 
 const totalPages = computed(() => Math.max(1, Math.ceil(pagination.total / pagination.pageSize)))
 const statusOptions = computed(() => [
@@ -147,12 +148,29 @@ onMounted(() => {
   loadList()
 })
 
-// Operation feedback through Ant message (AGENTS.md toast rule) instead of a hand-built toast.
-function showToast(text, kind = 'info') {
-  ;(message[kind] || message.info)(String(text ?? ''))
+function showToast(message, kind = 'info') {
+  if (toastTimer) {
+    clearTimeout(toastTimer)
+    toastTimer = null
+  }
+  toast.value = { visible: true, message: String(message || ''), kind }
+  toastTimer = setTimeout(() => {
+    toast.value.visible = false
+    toastTimer = null
+  }, 3600)
 }
 
+const toastBorderClass = computed(() => {
+  if (toast.value.kind === 'success') return 'border-emerald-200'
+  if (toast.value.kind === 'error') return 'border-red-200'
+  return 'border-blue-200'
+})
 
+const toastIconBgClass = computed(() => {
+  if (toast.value.kind === 'success') return 'bg-emerald-500'
+  if (toast.value.kind === 'error') return 'bg-red-500'
+  return 'bg-blue-500'
+})
 
 function openConfirm(message, onConfirm) {
   confirmDialog.value = {
@@ -227,6 +245,7 @@ const settleBatch = (row) => {
 }
 
 onUnmounted(() => {
+  if (toastTimer) clearTimeout(toastTimer)
 })
 </script>
 
@@ -339,6 +358,7 @@ onUnmounted(() => {
       </div>
     </div>
 
+    <Teleport to="body">
       <a-drawer :open="Boolean(detailDrawer.visible)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeDetails"><template #title><template v-if="Boolean(detailDrawer.visible)"><div class="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
             <div>
               <p class="text-base font-semibold text-slate-900">返佣明细</p>
@@ -389,7 +409,24 @@ onUnmounted(() => {
             </a-button>
           </div></template></template></a-modal>
 
-    
-
+      <div
+        v-if="toast.visible"
+        class="fixed right-4 top-4 z-[110] flex max-w-sm items-center gap-3 rounded-lg border bg-white px-4 py-3 shadow-lg"
+        :class="toastBorderClass"
+      >
+        <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full" :class="toastIconBgClass">
+          <svg v-if="toast.kind === 'success'" class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+          </svg>
+          <svg v-else-if="toast.kind === 'error'" class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <svg v-else class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <span class="text-sm font-medium text-slate-900">{{ toast.message }}</span>
+      </div>
+    </Teleport>
   </div>
 </template>

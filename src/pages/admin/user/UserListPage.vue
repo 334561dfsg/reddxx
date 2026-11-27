@@ -1,6 +1,4 @@
 <script setup>
-import { message } from 'ant-design-vue'
-import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminTextarea, nativeControl } from '../../../admin/components/antd/controls.js'
 import { ref, computed, nextTick, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
@@ -146,8 +144,20 @@ const staffReportOpen = ref(false)
 const staffReportUser = ref(null)
 const staffReportReturnFocus = ref(null)
 const staffMessage = ref('')
-// Success feedback through Ant message (AGENTS.md toast rule); no account or password details in the notice.
-function showUserCreatedToast() { message.success('添加成功') }
+const staffToast = ref(null)
+let staffToastTimer = null
+function showUserCreatedToast(user) {
+  clearTimeout(staffToastTimer)
+  staffToast.value = {
+    messageId: `user-created-${user.id}`, channel: 'toast', severity: 'success',
+    sourceOwner: 'user-list.create', resultBinding: user.id,
+    durationPolicy: 'auto-dismiss', dismissPolicy: 'preserve-created-user',
+    announcementPolicy: 'polite-no-focus', dedupeKey: `user-created-${user.id}`,
+    sensitiveBoundary: 'no-account-or-password', recoveryActions: [], message: '添加成功'
+  }
+  staffToastTimer = setTimeout(() => { staffToast.value = null }, 3000)
+}
+onBeforeUnmount(() => { clearTimeout(staffToastTimer); staffToast.value = null })
 const staffError = ref('')
 const staffRevision = ref(0)
 const roleFilter = ref('')
@@ -1052,10 +1062,6 @@ const clearDetailDrawer = () => {
   detailInitialTab.value = 'overview'
   detailReturnFocus.value = null
 }
-
-// The shared Ant frames (AdminDialog) drive these page-owned lifecycles (dialog migration 2026-11-27). Defined last so
-// every handler they reference is initialised.
-const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unifiedCancelPhase, layerStyle: unifiedCancelLayerStyle, requestDialogClose: requestUnifiedCancelClose, onAfterEnter: onUnifiedCancelAfterEnter, onAfterLeave: handleUnifiedCancelAfterLeave, dialogRef: unifiedCancelDialogRef }
 </script>
 
 <template>
@@ -1070,6 +1076,13 @@ const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unified
         <a-button type="primary" html-type="button" :disabled="!!staffError" @click="openStaffEditor('create', null, $event.currentTarget)">添加用户</a-button>
       </div>
     </div>
+    <Teleport to="body">
+      <div class="pointer-events-none fixed inset-x-0 top-5 z-[10000] flex justify-center" role="status" aria-live="polite" aria-atomic="true">
+        <div v-if="staffToast" class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 shadow-lg">
+          <span aria-hidden="true" class="text-emerald-600">✓</span>{{ staffToast.message }}
+        </div>
+      </div>
+    </Teleport>
     <p v-if="staffMessage" role="status" class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">{{ staffMessage }}</p>
     <FeedbackToast v-if="staffError" type="error" :source="() => (staffError) ? (([String((staffError) ?? ''),''].join(''))) : ''"><a-button html-type="button" @click="initializeStaff">重试</a-button></FeedbackToast>
 
@@ -1500,9 +1513,19 @@ const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unified
       @closed="clearTeamReport"
     />
 
-    <AdminDialog :open="unifiedCancelRendered" :lifecycle="unifiedCancelLifecycle" title="取消用户点控" title-id="unified-user-control-cancel-title" testid="unified-user-control-cancel-dialog" :width="448" plain>
-      <template #subtitle>{{ displayedUnifiedCancelData.user?.username }} · UID {{ userIdOf(displayedUnifiedCancelData.user) }}</template>
-      <div data-testid="unified-user-control-cancel-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+    <Teleport to="body">
+      <Transition name="dialog-overlay" appear @after-enter="onUnifiedCancelAfterEnter" @after-leave="handleUnifiedCancelAfterLeave">
+        <div v-if="unifiedCancelRendered" v-show="unifiedCancelPhase !== 'closing'" class="fixed inset-0 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" :style="unifiedCancelLayerStyle">
+          <Transition name="dialog-panel" appear>
+            <section v-show="unifiedCancelPhase !== 'closing'" ref="unifiedCancelDialogRef" data-testid="unified-user-control-cancel-dialog" class="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="unified-user-control-cancel-title">
+              <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+                <div class="min-w-0 flex-1">
+                  <h2 id="unified-user-control-cancel-title" class="break-words text-lg font-semibold text-slate-900">取消用户点控</h2>
+                  <p class="mt-1 break-words text-sm text-slate-500">{{ displayedUnifiedCancelData.user?.username }} · UID {{ userIdOf(displayedUnifiedCancelData.user) }}</p>
+                </div>
+                <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeControlCancel">×</AdminButton>
+              </header>
+              <div data-testid="unified-user-control-cancel-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
                 <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
                   <p class="font-medium">将取消以下 {{ cancelControlItems.length }} 个当前有效模块</p>
                   <ul v-if="cancelControlItems.length" class="mt-2 space-y-1" aria-label="待取消模块规则">
@@ -1517,8 +1540,8 @@ const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unified
                   <p v-if="cancelControlItems.length" class="mt-2 text-xs text-amber-700">已执行、已取消和已覆盖的历史记录会保留。</p>
                 </div>
                 <label class="block">
-                  <span class="text-sm font-medium text-slate-800"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>取消点控备注</span>
-                  <AdminTextarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full" />
+                  <span class="text-sm font-medium text-slate-800">取消点控备注 <span class="text-rose-500">*</span></span>
+                  <AdminTextarea v-model="cancelNote" :disabled="!cancelControlItems.length" rows="2" maxlength="200" placeholder="请填写取消点控原因，便于后续审计" class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-100" />
                   <span class="mt-1 block text-xs" :class="cancelNote.trim() ? 'text-slate-500' : 'text-rose-600'">
                     {{ cancelNote.trim() ? '确认后将直接取消点控' : '取消点控备注必填' }}
                   </span>
@@ -1526,11 +1549,15 @@ const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unified
               </div>
               <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
                 <AdminButton :ref="element => { unifiedCancelReturnRef = nativeControl(element) }" type="button" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700" @click="closeControlCancel">返回</AdminButton>
-                <AdminButton type="button" :disabled="unifiedCancelPhase !== 'open' || !cancelControlItems.length || !cancelNote.trim()" variant="primary" danger @click="confirmControlCancel">
+                <AdminButton type="button" :disabled="unifiedCancelPhase !== 'open' || !cancelControlItems.length || !cancelNote.trim()" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50" @click="confirmControlCancel">
                   确认取消点控
                 </AdminButton>
               </footer>
-    </AdminDialog>
+            </section>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
 
     <MfaVerificationModal
       v-model:open="fundsMfaOpen"
@@ -1559,6 +1586,7 @@ const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unified
 </template>
 
 <style scoped>
+
 [data-testid="user-row-action-bar"] :deep(.ant-btn) {
   display: inline-flex; align-items: center; justify-content: center;
   height: 32px; padding: 0 10px; font-size: 12px; font-weight: 500;
@@ -1583,4 +1611,24 @@ const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unified
 [data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户上级代理"]:hover:not(:disabled)) { background: #cffafe; }
 [data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置上级业务员"]) { background: #eef2ff; color: #4338ca; }
 [data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置上级业务员"]:hover:not(:disabled)) { background: #e0e7ff; }
+
+.dialog-overlay-enter-active { transition: opacity 200ms ease-out; }
+.dialog-overlay-leave-active { transition: opacity 150ms ease-in; }
+.dialog-panel-enter-active { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.dialog-panel-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.dialog-overlay-enter-from,
+.dialog-overlay-leave-to,
+.dialog-panel-enter-from,
+.dialog-panel-leave-to { opacity: 0; }
+.dialog-panel-enter-from,
+.dialog-panel-leave-to { transform: scale(0.96); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog-overlay-enter-active,
+  .dialog-overlay-leave-active,
+  .dialog-panel-enter-active,
+  .dialog-panel-leave-active { transition-duration: 50ms; }
+  .dialog-panel-enter-from,
+  .dialog-panel-leave-to { transform: none; }
+}
 </style>

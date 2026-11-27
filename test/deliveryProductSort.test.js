@@ -3,7 +3,6 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import * as deliveryConstants from '../src/admin/constants/delivery.js'
 
-import { assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const pageSource = readFileSync(
   new URL('../src/pages/admin/delivery/DeliveryManagementPage.vue', import.meta.url),
   'utf8'
@@ -103,10 +102,15 @@ test('delivery contract editor dialog follows modal semantics', () => {
   assert.match(pageSource, /import \{ createDialogCloseAction, useDialogLifecycle \} from '..\/..\/..\/admin\/composables\/useDialogLifecycle\.js'/)
   assert.match(pageSource, /useDialogLifecycle\(\{[\s\S]*open: showContractModal[\s\S]*dialogRef: contractDialogRef[\s\S]*initialFocusRef: contractDialogTitleRef[\s\S]*returnFocusRef: computed\(\(\) => lastContractTrigger\.value\)[\s\S]*requestClose: requestContractModalClose/)
   assert.match(pageSource, /const closeContractModal = createDialogCloseAction\(requestContractDialogClose\)/)
-  // The shared Ant frame (AdminDialog) drives this page-owned lifecycle (dialog migration 2026-11-27).
-  assertAdminDialogFrame(pageSource)
-  assert.match(pageSource, /<AdminDialog :open="contractDialogRendered" :lifecycle="contractDialogLifecycle"[^>]*:title-id="contractDialogTitleId"/)
-  assert.match(pageSource, /const contractDialogLifecycle = \{ rendered: contractDialogRendered, phase: contractDialogPhase, layerStyle: contractDialogLayerStyle, requestDialogClose: requestContractDialogClose, onAfterEnter: onContractDialogAfterEnter, onAfterLeave: handleContractModalAfterLeave, dialogRef: contractDialogRef \}/)
+  assert.match(pageSource, /<Teleport to="body">/)
+  assert.match(pageSource, /<Transition name="modal" appear[\s\S]*@after-enter="onContractDialogAfterEnter"[\s\S]*@after-leave="handleContractModalAfterLeave"/)
+  assert.match(pageSource, /v-if="contractDialogRendered"/)
+  assert.match(pageSource, /v-show="contractDialogPhase !== 'closing'"/)
+  assert.match(pageSource, /:style="contractDialogLayerStyle"/)
+  assert.match(pageSource, /role="dialog"/)
+  assert.match(pageSource, /aria-modal="true"/)
+  assert.match(pageSource, /:aria-labelledby="contractDialogTitleId"/)
+  assert.match(pageSource, /aria-label="关闭"/)
   assert.doesNotMatch(pageSource, /@click\.self="showContractModal = false"/)
   assert.doesNotMatch(pageSource, /@keydown="handleContractDialogKeydown"/)
   assert.match(dialogLifecycleSource, /document\.body\.style\.overflow = 'hidden'/)
@@ -117,6 +121,8 @@ test('delivery contract editor dialog follows modal semantics', () => {
   assert.match(dialogLifecycleSource, /event\.key === 'Escape'/)
   assert.match(dialogLifecycleSource, /event\.key !== 'Tab'/)
   assert.match(dialogLifecycleSource, /onAfterLeave/)
+  assert.match(pageSource, /\.modal-enter-from > section[\s\S]*transform: scale\(0\.96\)/)
+  assert.match(pageSource, /prefers-reduced-motion: reduce/)
 })
 
 test('delivery contract editor declares interaction owner states required by standards', () => {
@@ -192,7 +198,7 @@ test('delivery contract status radio group supports selection-control keyboard b
   assert.match(pageSource, /const handleContractStatusKeydown = \(event\) =>/)
   assert.match(pageSource, /const keys = \['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'\]/)
   assert.match(pageSource, /setContractStatus\(enabledOptions\[nextIndex\]\.id, \{ focus: true \}\)/)
-  assert.match(pageSource, /id="delivery-contract-status-label"[\s\S]*<span aria-hidden="true" class="text-rose-500 mr-1">\*<\/span>产品状态/)
+  assert.match(pageSource, /id="delivery-contract-status-label"[\s\S]*产品状态 <span class="text-rose-500">\*<\/span>/)
   assert.match(pageSource, /role="radiogroup"[\s\S]*aria-labelledby="delivery-contract-status-label"[\s\S]*aria-describedby="delivery-contract-status-help"[\s\S]*aria-required="true"[\s\S]*@keydown="handleContractStatusKeydown"/)
   assert.match(pageSource, /id="delivery-contract-status-help"[\s\S]*状态调整会随本次保存一起生效/)
   assert.match(pageSource, /v-for="option in contractStatusOptionRegistry"/)
@@ -310,11 +316,13 @@ test('delivery contract list provides reset, empty, card action, and pagination 
 })
 
 test('delivery contract dialog keeps a fixed frame with scrollable content', () => {
-  assertAdminDialogFrame(pageSource)
+  assert.match(pageSource, /class="fixed inset-0 z-\[100\] flex items-center justify-center bg-black\/45 p-4 \[padding-bottom:max\(1rem,env\(safe-area-inset-bottom\)\)\] \[padding-left:max\(1rem,env\(safe-area-inset-left\)\)\] \[padding-right:max\(1rem,env\(safe-area-inset-right\)\)\] \[padding-top:max\(1rem,env\(safe-area-inset-top\)\)\] backdrop-blur-sm"/)
+  assert.match(pageSource, /<header class="flex shrink-0 items-start justify-between/)
+  assert.match(pageSource, /class="inline-flex h-11 w-11 shrink-0/)
   assert.match(pageSource, /<div class="shrink-0 border-b border-slate-100 bg-white px-6">/)
   assert.match(pageSource, /<div class="min-h-0 flex-1 space-y-6 overflow-y-auto bg-white p-6">/)
   assert.match(pageSource, /<footer class="shrink-0 border-t border-slate-100 px-6 py-4 \[padding-bottom:max\(1rem,env\(safe-area-inset-bottom\)\)\]">/)
-  assert.match(pageSource, /<div class="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">[\s\S]*class="w-full sm:w-auto"[\s\S]*<a-button type="primary"[\s\S]*?class="[^"]*w-full sm:w-auto"/)
+  assert.match(pageSource, /<div class="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">[\s\S]*class="ant-btn w-full sm:w-auto"[\s\S]*class="ant-btn ant-btn-primary w-full sm:w-auto"/)
 })
 
 test('delivery contract template preview wraps selected template details', () => {
@@ -401,7 +409,7 @@ test('delivery contract form protects dirty edits before closing the dialog', ()
   assert.match(pageSource, /contractInitialSnapshot\.value = createContractFormSnapshot\(\)[\s\S]*closeContractModal\(\)/)
   assert.match(pageSource, /v-if="contractDiscardConfirmVisible"[\s\S]*role="alert"[\s\S]*\{\{ contractDiscardConfirmState\.title \}\}/)
   assert.match(pageSource, /\{\{ contractDiscardConfirmState\.body \}\}/)
-  assert.match(pageSource, /<div class="mt-3 flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">[\s\S]*class="w-full sm:w-auto"[\s\S]*<a-button type="primary"[\s\S]*?class="[^"]*w-full sm:w-auto"/)
+  assert.match(pageSource, /<div class="mt-3 flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">[\s\S]*class="ant-btn w-full sm:w-auto"[\s\S]*class="ant-btn ant-btn-primary w-full sm:w-auto"/)
   assert.match(pageSource, /@click="keepEditingContract"/)
   assert.match(pageSource, /:aria-label="contractDiscardConfirmState\.confirmAriaLabel"/)
   assert.match(pageSource, /@click="discardContractChanges"/)

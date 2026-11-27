@@ -3,7 +3,6 @@ import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import test from 'node:test'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
-import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
 
 const projectFile = (path) => resolve(process.cwd(), path)
 const drawerFile = projectFile('src/admin/components/user/UserAgentSubordinateDrawer.vue')
@@ -166,7 +165,9 @@ test('agent subordinate Drawer resists backdrop and restores focus after intenti
 test('agent subordinate Drawer source keeps the fixed-frame modal and motion contract', async () => {
   const source = await readFile(drawerFile, 'utf8')
 
-  assertAdminDrawerFrame(source)
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /:style="layerStyle"/)
+  assert.match(source, /class="fixed inset-0/)
   assert.match(source, /data-testid="user-agent-subordinate-body"[^>]*overflow-hidden/)
   assert.match(source, /data-testid="agent-subordinate-controls"[^>]*shrink-0/)
   assert.match(source, /data-testid="agent-subordinate-list-scroll"[^>]*overflow-y-auto/)
@@ -175,6 +176,19 @@ test('agent subordinate Drawer source keeps the fixed-frame modal and motion con
   assert.match(source, /data-testid="agent-subordinate-pagination"[^>]*shrink-0/)
   assert.doesNotMatch(source, /<CompactPagination[\s\S]*?data-testid="agent-subordinate-list-scroll"/)
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
+  assert.match(source, /overflow-hidden/)
+  assert.match(source, /aria-label="关闭"/)
+  assert.match(source, /200ms ease-out/)
+  assert.match(source, /150ms ease-in/)
+  assert.match(source, /prefers-reduced-motion: reduce/)
+  assert.match(source, /transition-duration: 50ms/)
+  assert.match(source, /transform: none/)
   assert.doesNotMatch(source, /STATUS_LABELS\[row\.status\]/)
+  assert.match(source, /100vh/)
+  assert.match(source, /100dvh/)
+  assert.match(source, /safe-area-inset-top/)
+  assert.match(source, /safe-area-inset-right/)
+  assert.match(source, /safe-area-inset-bottom/)
+  assert.match(source, /safe-area-inset-left/)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
 })

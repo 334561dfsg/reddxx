@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import test from 'node:test'
-import { antStubUrl, createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
+import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
 
 const depositFile = resolve(process.cwd(), 'src/admin/components/user/UserDepositAction.vue')
 const transferFile = resolve(process.cwd(), 'src/admin/components/user/UserTransferAction.vue')
@@ -60,7 +60,7 @@ const fieldsetSummary = (harness) => harness.allNodes()
 const radioCard = (harness, radio) => harness.allNodes().find((node) => node.tag === 'label' && node.contains(radio))
 
 const loadTransfer = async () => loadVueSfc(transferFile, {
-  vueImports: { [selectOnlyComboboxFile]: loadVueSfcModuleUrl(selectOnlyComboboxFile), 'ant-design-vue': antStubUrl }
+  vueImports: { [selectOnlyComboboxFile]: loadVueSfcModuleUrl(selectOnlyComboboxFile) }
 })
 
 const findCombobox = (harness, idBase) => {
@@ -148,7 +148,7 @@ test('deposit uses Ant radios while transfer uses select-only comboboxes', () =>
 })
 
 test('deposit keeps its fieldset radio group while transfer renders compact comboboxes', async (t) => {
-  const deposit = await createSfcHarness(await loadVueSfc(depositFile, { vueImports: { 'ant-design-vue': antStubUrl } }), { user, assets })
+  const deposit = await createSfcHarness(await loadVueSfc(depositFile), { user, assets })
   try {
     await openDialog(deposit, '入金')
 
@@ -181,7 +181,7 @@ test('deposit keeps its fieldset radio group while transfer renders compact comb
 })
 
 test('deposit radio choice emits the existing deposit payload', async (t) => {
-  const component = await loadVueSfc(depositFile, { vueImports: { 'ant-design-vue': antStubUrl } })
+  const component = await loadVueSfc(depositFile)
   const harness = await createSfcHarness(component, { user, assets }, { onSubmit: () => {} })
   t.after(harness.cleanup)
 
@@ -318,7 +318,10 @@ test('transfer gives the required coin a field-owned error after submit and clea
   const closeButton = harness.allNodes().find((node) => node.tag === 'button' && node.getAttribute?.('aria-label') === '关闭')
   closeButton.click()
   await harness.flush()
-  // The Ant frame finishes its close through the harness's animation frames.
+  const closingOverlay = harness.allNodes().find((node) => (
+    node.tag === 'div' && node.getAttribute?.('class').includes('fixed inset-0 grid place-items-center')
+  ))
+  closingOverlay.dispatchEvent({ type: 'transitionend', target: closingOverlay })
   await harness.finishTransitions()
   await openDialog(harness, '划转')
   assert.equal(findCombobox(harness, 'transfer-coin').getAttribute('aria-invalid'), 'false')

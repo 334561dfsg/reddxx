@@ -1,12 +1,16 @@
 <script setup>
-import AdminEmpty from '../antd/AdminEmpty.vue'
-import AdminDrawer from '../antd/AdminDrawer.vue'
 import { AdminButton, AdminInput, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { USER_ROLE_OPTIONS, USER_STATUS_OPTIONS } from '../../constants/user.js'
 import { getDescendants, getDirectReferrals } from '../../repositories/userRelationshipRepository.js'
-import { getFocusableElements, registerDialogPopupHost, unregisterDialogPopupHost } from '../../composables/useDialogLifecycle.js'
+import {
+  createDialogCloseAction,
+  getFocusableElements,
+  registerDialogPopupHost,
+  unregisterDialogPopupHost,
+  useDialogLifecycle
+} from '../../composables/useDialogLifecycle.js'
 import CompactPagination from '../CompactPagination.vue'
 
 const PAGE_SIZE = 10
@@ -21,6 +25,8 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'closed'])
 const popupLayerRef = shallowRef(null)
+const drawerRef = shallowRef(null)
+const titleRef = shallowRef(null)
 const statusFilterToggleRef = shallowRef(null)
 const roleFilterToggleRef = shallowRef(null)
 const filterPanelRef = shallowRef(null)
@@ -83,10 +89,22 @@ const formatMoney = (value) => new Intl.NumberFormat('en-US', { maximumFractionD
 const formatTime = (value) => value ? new Date(value).toLocaleString('zh-CN', { hour12: false }) : '—'
 const pathLabel = (member) => (member.path || []).map((row) => row?.username || row?.id).filter(Boolean).join(' → ')
 
-// Frame: AdminDrawer (Ant Drawer + useDialogLifecycle), drawer migration 2026-11-27.
-const drawerFrame = ref(null)
-const drawerRef = computed(() => drawerFrame.value?.dialogEl ?? null)
+const {
+  rendered,
+  phase,
+  layerStyle,
+  requestDialogClose,
+  onAfterEnter,
+  onAfterLeave
+} = useDialogLifecycle({
+  open: computed(() => props.visible),
+  dialogRef: drawerRef,
+  initialFocusRef: titleRef,
+  returnFocusRef: computed(() => props.returnFocus),
+  requestClose: () => emit('close')
+})
 
+const close = createDialogCloseAction(requestDialogClose)
 
 const filterTriggerRef = (filter = openFilter.value) => (
   filter === 'status' ? statusFilterToggleRef : roleFilterToggleRef
@@ -260,7 +278,10 @@ const selectFilter = async (value) => {
   else if (openFilter.value === 'role') role.value = value
   await closeFilters()
 }
-const handleClosed = () => emit('closed')
+const handleAfterLeave = async () => {
+  if (!await onAfterLeave()) return
+  emit('closed')
+}
 
 watch(() => [props.visible, userId.value, props.mode], ([visible]) => {
   filterSessionVersion += 1
@@ -313,16 +334,41 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <AdminDrawer :open="visible" :title="title" title-id="relationship-drawer-title" :return-focus="returnFocus" :width="768" plain ref="drawerFrame" @close="emit('close')" @closed="handleClosed">
-      <template #subtitle>
+  <Teleport to="body">
+    <Transition name="relationship-overlay" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
+      <div
+        v-if="rendered"
+        v-show="phase !== 'closing'"
+        class="fixed inset-0 flex justify-end bg-slate-950/50"
+        style="position: fixed; inset: 0; overflow: visible; transform: none;"
+        :style="layerStyle"
+        role="presentation"
+      >
+        <section
+          ref="drawerRef"
+          class="relationship-panel flex h-screen max-h-screen w-full max-w-3xl flex-col overflow-hidden bg-white shadow-2xl supports-[height:100dvh]:h-dvh supports-[height:100dvh]:max-h-dvh"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="relationship-drawer-title"
+        >
+          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
+            <div class="min-w-0 flex-1">
+              <h2 id="relationship-drawer-title" ref="titleRef" tabindex="-1" class="text-xl font-semibold text-slate-900 outline-none">
+                {{ title }}
+              </h2>
+              <p class="mt-1 break-words text-sm text-slate-500">
                 {{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · 共 {{ allMembers.length }} 人
-              </template>
-      <div data-testid="relationship-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
+              </p>
+            </div>
+            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</AdminButton>
+          </header>
+
+          <div data-testid="relationship-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
             <div data-testid="relationship-drawer-controls" class="shrink-0 px-4 pt-4 sm:px-5">
               <div class="relative mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
                 <label>
                   <span class="sr-only">搜索裂变下级</span>
-                  <AdminInput v-model="keyword" type="search" class="w-full" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
+                  <AdminInput v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
                 </label>
                 <div class="mt-3 grid grid-cols-2 gap-2">
                   <AdminButton
@@ -385,12 +431,12 @@ onBeforeUnmount(() => {
                 </AdminButton>
               </div>
 
-              <AdminEmpty v-else class="grid min-h-52 place-items-center">
+              <div v-else class="grid min-h-52 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
                 <div>
                   <p class="font-medium text-slate-700">{{ hasFilters ? '筛选后没有裂变下级' : '当前没有裂变下级' }}</p>
                   <p class="mt-1 text-sm text-slate-500">{{ hasFilters ? '请调整裂变下级搜索关键词或筛选条件' : '该用户目前没有符合此范围的裂变下级成员' }}</p>
                 </div>
-              </AdminEmpty>
+              </div>
             </div>
 
             <footer v-if="filteredMembers.length" data-testid="relationship-drawer-pagination" class="shrink-0 border-t border-slate-200 px-4 py-3 sm:px-5" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
@@ -429,14 +475,34 @@ onBeforeUnmount(() => {
               </fieldset>
             </div>
           </Teleport>
-      <!-- Viewport-fixed layer for the filter popups: outside the scrolling body, so they are not clipped by it. -->
-      <div
-        ref="popupLayerRef"
-        data-testid="relationship-drawer-popup-layer"
-        class="pointer-events-none fixed inset-0"
-        style="position: fixed; inset: 0; overflow: visible; transform: none;"
-        role="presentation"
-      ></div>
-    </AdminDrawer>
+        </section>
+        <div
+          ref="popupLayerRef"
+          data-testid="relationship-drawer-popup-layer"
+          class="pointer-events-none fixed inset-0"
+          style="position: fixed; inset: 0; overflow: visible; transform: none;"
+          role="presentation"
+        ></div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
+<style scoped>
+.relationship-overlay-enter-active { transition: opacity 200ms ease-out; }
+.relationship-overlay-leave-active { transition: opacity 150ms ease-in; }
+.relationship-overlay-enter-active .relationship-panel { transition: opacity 200ms ease-out, transform 200ms ease-out; }
+.relationship-overlay-leave-active .relationship-panel { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.relationship-overlay-enter-from,
+.relationship-overlay-leave-to { opacity: 0; }
+.relationship-overlay-enter-from .relationship-panel,
+.relationship-overlay-leave-to .relationship-panel { opacity: 0; transform: translateX(100%); }
+@media (prefers-reduced-motion: reduce) {
+  .relationship-overlay-enter-active,
+  .relationship-overlay-leave-active,
+  .relationship-overlay-enter-active .relationship-panel,
+  .relationship-overlay-leave-active .relationship-panel { transition-duration: 50ms; }
+  .relationship-overlay-enter-from .relationship-panel,
+  .relationship-overlay-leave-to .relationship-panel { transform: none; }
+}
+</style>

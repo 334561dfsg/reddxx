@@ -1,5 +1,4 @@
 <script setup>
-import { message } from 'ant-design-vue'
 import { ref, computed, onMounted, watch, reactive } from 'vue'
 import { getVerificationAudits, verificationAuditList } from '../../../admin/mock/verification'
 import AuditStatsCards from '../../../admin/components/verification-audit/AuditStatsCards.vue'
@@ -24,6 +23,7 @@ const showDetailModal = ref(false)
 const selectedAudit = ref(null)
 const auditAction = ref(null)
 const auditNote = ref('')
+const toast = ref({ visible: false, message: '' })
 
 const statusConfig = {
   [VERIFICATION_STATUS.PENDING]: { text: '待审核', class: 'bg-blue-100 text-blue-700' },
@@ -172,10 +172,11 @@ const resetFilters = () => {
   pagination.currentPage = 1
 }
 
-const exportData = () => showToast('正在导出审核记录数据...', 'info')
-// Operation feedback through Ant message (AGENTS.md toast rule) instead of a hand-built toast.
-function showToast(text, kind = 'success') {
-  ;(message[kind] || message.info)(String(text ?? ''))
+const exportData = () => showToast('正在导出审核记录数据...')
+const showToast = (message) => {
+  toast.value.message = message
+  toast.value.visible = true
+  setTimeout(() => { toast.value.visible = false }, 3000)
 }
 </script>
 
@@ -332,6 +333,14 @@ function showToast(text, kind = 'success') {
       />
     </div>
 
+    <div v-if="toast.visible" class="animate-slide-in fixed top-4 right-4 z-50 flex items-center gap-3 rounded-lg border border-emerald-200 bg-white px-4 py-3 shadow-lg">
+      <div class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500">
+        <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <span class="text-sm font-medium text-slate-900">{{ toast.message }}</span>
+    </div>
   </div>
 </template>
 

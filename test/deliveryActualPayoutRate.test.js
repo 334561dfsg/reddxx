@@ -1,7 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const deliveryMockSource = readFileSync(
   new URL('../src/admin/mock/delivery.js', import.meta.url),
   'utf8'
@@ -26,7 +25,7 @@ test('delivery template cycles contain actual payout rates', () => {
 })
 
 test('period template editor saves and displays the actual payout rate', () => {
-  assert.match(templatePageSource, /<span aria-hidden="true" class="text-rose-500 mr-1">\*<\/span>周期配置/)
+  assert.match(templatePageSource, /周期配置 <span class="text-rose-500">\*<\/span>/)
   assert.match(templatePageSource, /周期\{\{ index \+ 1 \}\}/)
   assert.match(templatePageSource, /实际收益率/)
   assert.match(templatePageSource, /v-model:value\.number="cycle\.actualPayoutPct"/)
@@ -46,22 +45,32 @@ test('period template editor keeps trade limits out of period templates', () => 
 })
 
 test('period template dialog follows modal and tab interaction semantics', () => {
-  // Migrated onto the shared Ant frame (AdminDialog, 2026-11-27): it owns dialog semantics, background isolation,
-  // scroll lock, focus trap, Escape and motion, so the page no longer hand-builds them.
-  assertAdminDialogFrame(templatePageSource)
-  assert.match(templatePageSource, /<AdminDialog\b[^>]*ref="templateFrame"[^>]*title-id="delivery-template-dialog-title"[^>]*:request-close="templateRequestClose"[^>]*@closed="handleTemplateAfterLeave"/)
-  assert.match(templatePageSource, /<AdminDialog\b[^>]*:open="showTemplateUnsavedConfirm"[^>]*title-id="delivery-template-unsaved-title"[^>]*:request-close="cancelTemplateUnsavedClose"/)
-  assert.doesNotMatch(templatePageSource, /isolateTemplateDialogBackground|lockPageScroll|handleTemplateDialogKeydown|appRoot\.inert/)
+  assert.match(templatePageSource, /<Teleport to="body">/)
+  assert.match(templatePageSource, /role="dialog"/)
+  assert.match(templatePageSource, /aria-modal="true"/)
+  assert.match(templatePageSource, /aria-labelledby="delivery-template-dialog-title"/)
+  assert.match(templatePageSource, /aria-label="关闭"/)
+  assert.match(templatePageSource, /isolateTemplateDialogBackground/)
+  assert.match(templatePageSource, /releaseTemplateDialogBackground/)
+  assert.match(templatePageSource, /appRoot\.inert = true/)
+  assert.match(templatePageSource, /appRoot\.inert = false/)
   assert.match(templatePageSource, /isTemplateClosing/)
+  assert.match(templatePageSource, /@after-leave="handleTemplateAfterLeave"/)
+  assert.match(templatePageSource, /@keydown="handleTemplateDialogKeydown"/)
   assert.match(templatePageSource, /requestTemplateClose/)
   assert.match(templatePageSource, /performTemplateClose/)
+  assert.match(templatePageSource, /lockPageScroll/)
+  assert.match(templatePageSource, /unlockPageScroll/)
   assert.match(templatePageSource, /showTemplateUnsavedConfirm/)
+  assert.match(templatePageSource, /delivery-template-unsaved-title/)
   assert.match(templatePageSource, /confirmTemplateUnsavedClose/)
   assert.match(templatePageSource, /cancelTemplateUnsavedClose/)
   assert.doesNotMatch(templatePageSource, /role="tablist"/)
   assert.doesNotMatch(templatePageSource, /role="tab"/)
   assert.doesNotMatch(templatePageSource, /role="tabpanel"/)
   assert.doesNotMatch(templatePageSource, /handleTemplateTabKeydown/)
+  assert.match(templatePageSource, /prefers-reduced-motion: reduce/)
+  assert.doesNotMatch(templatePageSource, /@click\.self="requestTemplateClose"/)
   assert.doesNotMatch(templatePageSource, /window\.confirm/)
 })
 

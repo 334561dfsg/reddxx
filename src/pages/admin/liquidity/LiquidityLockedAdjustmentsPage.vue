@@ -136,6 +136,8 @@ const fmtCurrency = (val, currency, decimals = 2) => {
 			</div>
 		</article>
 
+		<!-- 调整申请弹窗：Teleport 到 body，遮罩铺满视口 -->
+		<Teleport to="body">
 			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showAdjustmentModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="448"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showAdjustmentModal = false">
 <template #title><template v-if="showAdjustmentModal"><header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
 					<h2 class="text-xl font-semibold text-slate-900">新建调整</h2>
@@ -176,6 +178,6 @@ const fmtCurrency = (val, currency, decimals = 2) => {
 					<a-button type="text" html-type="button" class="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white" @click="saveAdjustment">提交</a-button>
 				</footer></template></template>
 </a-modal>
-		
+		</Teleport>
 	</section>
 </template>

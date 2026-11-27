@@ -1,7 +1,6 @@
 <script setup>
-import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { COMMON_FILTER_ALL, DELIVERY_STATUS } from '../../../admin/constants/delivery'
 import { createDeliveryTemplatesMock, saveDeliveryTemplatesMock } from '../../../admin/mock/delivery'
 
@@ -58,10 +57,17 @@ const durationLabel = (sec) => {
 
 const showTemplateModal = ref(false)
 const editingTemplateId = ref('')
+const templateDialogTitleRef = ref(null)
+const templateDialogPanelRef = ref(null)
+const templateUnsavedDialogTitleRef = ref(null)
+const templateUnsavedDialogPanelRef = ref(null)
+const templateTriggerRef = ref(null)
 const templateInitialSnapshot = ref('')
 const templateHasSubmitted = ref(false)
 const showTemplateUnsavedConfirm = ref(false)
 const isTemplateClosing = ref(false)
+const previousBodyOverflow = ref('')
+const previousAppAriaHidden = ref(null)
 const templateForm = reactive({
   name: '',
   status: DELIVERY_STATUS.ENABLED,
@@ -126,62 +132,165 @@ const focusTemplateErrorTarget = (error) => {
   })
 }
 
+const lockPageScroll = () => {
+  if (typeof document === 'undefined') return
+  previousBodyOverflow.value = document.body.style.overflow
+  document.body.style.overflow = 'hidden'
+}
+
+const unlockPageScroll = () => {
+  if (typeof document === 'undefined') return
+  document.body.style.overflow = previousBodyOverflow.value
+}
+
+const isolateTemplateDialogBackground = () => {
+  if (typeof document === 'undefined') return
+  const appRoot = document.getElementById('app')
+  if (!appRoot) return
+  previousAppAriaHidden.value = appRoot.getAttribute('aria-hidden')
+  appRoot.setAttribute('aria-hidden', 'true')
+  appRoot.inert = true
+}
+
+const releaseTemplateDialogBackground = () => {
+  if (typeof document === 'undefined') return
+  const appRoot = document.getElementById('app')
+  if (!appRoot) return
+  if (previousAppAriaHidden.value === null) {
+    appRoot.removeAttribute('aria-hidden')
+  } else {
+    appRoot.setAttribute('aria-hidden', previousAppAriaHidden.value)
+  }
+  appRoot.inert = false
+  previousAppAriaHidden.value = null
+}
+
+const rememberTemplateTrigger = () => {
+  if (typeof document === 'undefined') return
+  const activeElement = document.activeElement
+  templateTriggerRef.value = activeElement instanceof HTMLElement ? activeElement : null
+}
+
+const focusTemplateDialogTitle = () => {
+  nextTick(() => {
+    templateDialogTitleRef.value?.focus()
+  })
+}
+
+const focusTemplateUnsavedDialogTitle = () => {
+  nextTick(() => {
+    templateUnsavedDialogTitleRef.value?.focus()
+  })
+}
+
 const performTemplateClose = () => {
   if (isTemplateClosing.value) return
   isTemplateClosing.value = true
   showTemplateModal.value = false
 }
 
-// Close requests go through the shared Ant frame (AdminDialog), which owns focus, Escape, background isolation and
-// scroll lock (dialog migration 2026-11-27). Unsaved edits open the confirmation instead of closing.
-const templateFrame = ref(null)
-let forceTemplateClose = false
-const templateRequestClose = () => {
-  if (isTemplateClosing.value) return false
-  if (!forceTemplateClose && isTemplateDirty.value) {
-    showTemplateUnsavedConfirm.value = true
-    return false
-  }
-  forceTemplateClose = false
-  performTemplateClose()
-}
 const requestTemplateClose = ({ force = false } = {}) => {
   if (isTemplateClosing.value) return
-  forceTemplateClose = force
-  if (force) performTemplateClose()
-  else templateFrame.value?.close()
+  if (!force && isTemplateDirty.value) {
+    showTemplateUnsavedConfirm.value = true
+    focusTemplateUnsavedDialogTitle()
+    return
+  }
+  performTemplateClose()
 }
 
 const cancelTemplateUnsavedClose = () => {
-  // Focus returns to the control that asked to close (the confirmation frame restores it).
   showTemplateUnsavedConfirm.value = false
+  nextTick(() => {
+    templateDialogTitleRef.value?.focus()
+  })
 }
 
-// Close the confirmation first and the editor after it, so focus returns through each layer to the page trigger.
-let closeTemplateAfterConfirm = false
 const confirmTemplateUnsavedClose = () => {
-  closeTemplateAfterConfirm = true
   showTemplateUnsavedConfirm.value = false
-}
-const handleTemplateUnsavedClosed = () => {
-  if (!closeTemplateAfterConfirm) return
-  closeTemplateAfterConfirm = false
   performTemplateClose()
 }
 
 const handleTemplateAfterLeave = () => {
+  unlockPageScroll()
+  releaseTemplateDialogBackground()
   isTemplateClosing.value = false
   showTemplateUnsavedConfirm.value = false
+  templateTriggerRef.value?.focus?.()
+  templateTriggerRef.value = null
+}
+
+const getFocusableElements = (panel) => {
+  if (!panel) return []
+  return Array.from(
+    panel.querySelectorAll(
+      'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+  ).filter((el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true')
+}
+
+const getTemplateFocusableElements = () => getFocusableElements(templateDialogPanelRef.value)
+
+const getTemplateUnsavedFocusableElements = () => getFocusableElements(templateUnsavedDialogPanelRef.value)
+
+const trapFocus = (event, focusableElements, fallback) => {
+  if (focusableElements.length === 0) {
+    event.preventDefault()
+    fallback?.focus()
+    return
+  }
+
+  const first = focusableElements[0]
+  const last = focusableElements[focusableElements.length - 1]
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault()
+    first.focus()
+  }
+}
+
+const handleTemplateDialogKeydown = (event) => {
+  if (showTemplateUnsavedConfirm.value) {
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      cancelTemplateUnsavedClose()
+      return
+    }
+    if (event.key === 'Tab') {
+      trapFocus(event, getTemplateUnsavedFocusableElements(), templateUnsavedDialogTitleRef.value)
+    }
+    return
+  }
+
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    requestTemplateClose()
+    return
+  }
+  if (event.key !== 'Tab') return
+
+  trapFocus(event, getTemplateFocusableElements(), templateDialogTitleRef.value)
 }
 
 watch(showTemplateModal, (visible) => {
   if (visible) {
+    lockPageScroll()
+    isolateTemplateDialogBackground()
     isTemplateClosing.value = false
     showTemplateUnsavedConfirm.value = false
+    focusTemplateDialogTitle()
   }
 })
 
+onBeforeUnmount(() => {
+  unlockPageScroll()
+  releaseTemplateDialogBackground()
+})
+
 const openCreateTemplate = () => {
+  rememberTemplateTrigger()
   editingTemplateId.value = ''
   templateHasSubmitted.value = false
   templateForm.name = ''
@@ -192,6 +301,7 @@ const openCreateTemplate = () => {
 }
 
 const openEditTemplate = (tpl) => {
+  rememberTemplateTrigger()
   editingTemplateId.value = tpl.id
   templateHasSubmitted.value = false
   templateForm.name = tpl.name
@@ -398,7 +508,43 @@ const statusClass = (status) =>
       </div>
     </article>
 
-    <AdminDialog ref="templateFrame" :open="showTemplateModal" :title="editingTemplateId ? '编辑周期模板' : '新增周期模板'" title-id="delivery-template-dialog-title" :width="768" plain :request-close="templateRequestClose" @closed="handleTemplateAfterLeave">
+    <Teleport to="body">
+      <!-- 编辑模态框 -->
+      <Transition name="modal" @after-leave="handleTemplateAfterLeave">
+        <div
+          v-if="showTemplateModal"
+          class="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
+          @keydown="handleTemplateDialogKeydown"
+        >
+          <section
+            ref="templateDialogPanelRef"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delivery-template-dialog-title"
+            :aria-hidden="showTemplateUnsavedConfirm ? 'true' : undefined"
+            :inert="showTemplateUnsavedConfirm ? true : undefined"
+            class="modal-panel flex max-h-[min(90vh,calc(100dvh-2rem))] w-full max-w-3xl flex-col overflow-hidden rounded-xl bg-white shadow-xl"
+          >
+          <header class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+            <div>
+              <h2
+                id="delivery-template-dialog-title"
+                ref="templateDialogTitleRef"
+                tabindex="-1"
+                class="text-lg font-semibold text-slate-900 outline-none"
+              >
+                {{ editingTemplateId ? '编辑周期模板' : '新增周期模板' }}
+              </h2>
+            </div>
+            <a-button type="text"
+              html-type="button"
+              class="inline-flex h-9 w-9 items-center justify-center rounded text-2xl leading-none text-slate-400 transition-colors hover:text-slate-600 focus:outline-none"
+              aria-label="关闭"
+              @click="requestTemplateClose"
+            >
+              ×
+            </a-button>
+          </header>
 
           <div class="flex-1 overflow-y-auto bg-white p-6 space-y-6">
             <div class="space-y-6">
@@ -411,7 +557,7 @@ const statusClass = (status) =>
                     id="template-name"
                     v-model:value="templateForm.name"
                     type="text"
-                   
+                    class="ant-input"
                     :class="getTemplateFieldError('template-name') ? 'border-rose-300' : ''"
                     placeholder="如：标准收益模板"
                     :aria-invalid="!!getTemplateFieldError('template-name')"
@@ -436,7 +582,7 @@ const statusClass = (status) =>
                 class="space-y-3 outline-none"
               >
                 <div class="flex items-center justify-between">
-                  <h3 class="text-sm font-semibold text-slate-900"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>周期配置</h3>
+                  <h3 class="text-sm font-semibold text-slate-900">周期配置 <span class="text-rose-500">*</span></h3>
                   <a-button type="primary"
                     id="delivery-template-add-cycle"
                     html-type="button"
@@ -480,7 +626,7 @@ const statusClass = (status) =>
                             inputmode="numeric"
                             :min="1"
                             :step="1"
-                            class="w-full"
+                            class="ant-input w-full"
                             :class="getTemplateFieldError(`cycle-${cycle.id}-durationSec`) ? 'border-rose-300' : ''"
                             :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-durationSec`)"
                             :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-durationSec-help`, getTemplateFieldError(`cycle-${cycle.id}-durationSec`) ? `cycle-${cycle.id}-durationSec-error` : '')"
@@ -498,7 +644,7 @@ const statusClass = (status) =>
                           inputmode="decimal"
                           :min="0"
                           :step="0.01"
-                          class="w-full"
+                          class="ant-input w-full"
                           :class="getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) ? 'border-rose-300' : ''"
                           :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-payoutPct`)"
                           :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-payoutPct-help`, getTemplateFieldError(`cycle-${cycle.id}-payoutPct`) ? `cycle-${cycle.id}-payoutPct-error` : '')"
@@ -516,7 +662,7 @@ const statusClass = (status) =>
                           inputmode="decimal"
                           :min="0"
                           :step="0.00000001"
-                          class="w-full"
+                          class="ant-input w-full"
                           :class="getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) ? 'border-rose-300' : ''"
                           :aria-invalid="!!getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`)"
                           :aria-describedby="getTemplateFieldDescribedBy(`cycle-${cycle.id}-actualPayoutPct-help`, getTemplateFieldError(`cycle-${cycle.id}-actualPayoutPct`) ? `cycle-${cycle.id}-actualPayoutPct-error` : '')"
@@ -549,7 +695,7 @@ const statusClass = (status) =>
           <footer class="flex justify-end gap-2 border-t border-slate-100 px-6 py-4">
             <a-button
               html-type="button"
-             
+              class="ant-btn"
               @click="requestTemplateClose"
             >
               取消
@@ -563,21 +709,90 @@ const statusClass = (status) =>
               保存模板
             </a-button>
           </footer>
-    </AdminDialog>
+          </section>
 
-    <AdminDialog :open="showTemplateUnsavedConfirm" title="关闭周期模板编辑？" title-id="delivery-template-unsaved-title" :width="448" plain :request-close="cancelTemplateUnsavedClose" @closed="handleTemplateUnsavedClosed">
+          <Transition name="modal">
+            <div
+              v-if="showTemplateUnsavedConfirm"
+              class="fixed inset-0 z-[110] flex items-center justify-center bg-black/35 p-4"
+            >
+              <section
+                ref="templateUnsavedDialogPanelRef"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="delivery-template-unsaved-title"
+                class="modal-panel flex w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-xl"
+              >
+                <header class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+                  <h3
+                    id="delivery-template-unsaved-title"
+                    ref="templateUnsavedDialogTitleRef"
+                    tabindex="-1"
+                    class="text-base font-semibold text-slate-900 outline-none"
+                  >
+                    关闭周期模板编辑？
+                  </h3>
+                  <a-button type="text"
+                    html-type="button"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded text-2xl leading-none text-slate-400 transition-colors hover:text-slate-600 focus:outline-none"
+                    aria-label="关闭未保存确认"
+                    @click="cancelTemplateUnsavedClose"
+                  >
+                    ×
+                  </a-button>
+                </header>
                 <div class="px-5 py-4 text-sm leading-6 text-slate-600">
                   当前周期模板有未保存的修改，关闭后这些修改不会保存。
                 </div>
                 <footer class="flex justify-end gap-2 border-t border-slate-100 px-5 py-4">
-                  <a-button html-type="button" @click="cancelTemplateUnsavedClose">
+                  <a-button html-type="button" class="ant-btn" @click="cancelTemplateUnsavedClose">
                     继续编辑
                   </a-button>
-                  <a-button type="primary" html-type="button" @click="confirmTemplateUnsavedClose">
+                  <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary" @click="confirmTemplateUnsavedClose">
                     确认关闭
                   </a-button>
                 </footer>
-    </AdminDialog>
+              </section>
+            </div>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
   </section>
 </template>
 
+<style scoped>
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.2s ease-out;
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+.modal-enter-active .modal-panel {
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+.modal-leave-active .modal-panel {
+  transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+}
+.modal-enter-from .modal-panel,
+.modal-leave-to .modal-panel {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-enter-active,
+  .modal-leave-active,
+  .modal-enter-active .modal-panel,
+  .modal-leave-active .modal-panel {
+    transition-duration: 0.05s;
+  }
+
+  .modal-enter-from .modal-panel,
+  .modal-leave-to .modal-panel {
+    transform: none;
+  }
+}
+</style>

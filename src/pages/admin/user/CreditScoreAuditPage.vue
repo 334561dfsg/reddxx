@@ -1,5 +1,4 @@
 <script setup>
-import { message } from 'ant-design-vue'
 import { ref, computed, onMounted, watch, reactive } from 'vue'
 import { getCreditScoreAudits, creditScoreAuditList } from '../../../admin/mock/creditScore'
 import CreditScoreAuditDrawer from '../../../admin/components/credit-score-audit/CreditScoreAuditDrawer.vue'
@@ -71,6 +70,10 @@ const showDetailModal = ref(false)
 const selectedAudit = ref(null)
 
 // Toast提示
+const toast = ref({
+  visible: false,
+  message: ''
+})
 
 // 统计信息
 const statistics = computed(() => {
@@ -194,9 +197,12 @@ const resetFilters = () => {
 }
 
 // 显示Toast提示
-// Operation feedback through Ant message (AGENTS.md toast rule) instead of a hand-built toast.
-function showToast(text, kind = 'success') {
-  ;(message[kind] || message.info)(String(text ?? ''))
+const showToast = (message) => {
+  toast.value.message = message
+  toast.value.visible = true
+  setTimeout(() => {
+    toast.value.visible = false
+  }, 3000)
 }
 
 // 导出数据
@@ -375,5 +381,20 @@ const exportData = () => {
     />
 
     <!-- Toast 提示 -->
+    <Transition
+      enter-active-class="transition ease-out duration-200"
+      enter-from-class="opacity-0 translate-y-1"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 translate-y-1"
+    >
+      <div
+        v-if="toast.visible"
+        class="fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-lg shadow-lg z-50"
+      >
+        {{ toast.message }}
+      </div>
+    </Transition>
   </section>
 </template>

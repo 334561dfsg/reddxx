@@ -1,5 +1,4 @@
 <script setup>
-import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
@@ -1229,10 +1228,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', handleContractBeforeUnload)
 })
-
-// The shared Ant frames (AdminDialog) drive these page-owned lifecycles (dialog migration 2026-11-27). Defined last so
-// every handler they reference is initialised.
-const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contractDialogPhase, layerStyle: contractDialogLayerStyle, requestDialogClose: requestContractDialogClose, onAfterEnter: onContractDialogAfterEnter, onAfterLeave: handleContractModalAfterLeave, dialogRef: contractDialogRef }
 </script>
 
 <template>
@@ -1502,8 +1497,44 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
     </article>
 
     <!-- 编辑模态框 -->
-    <AdminDialog :open="contractDialogRendered" :lifecycle="contractDialogLifecycle" :title="editingContractId ? '编辑交割合约' : '新增交割合约'" :title-id="contractDialogTitleId" :width="768" plain>
-      <div class="shrink-0 border-b border-slate-100 bg-white px-6">
+    <Teleport to="body">
+      <Transition name="modal" appear @after-enter="onContractDialogAfterEnter" @after-leave="handleContractModalAfterLeave">
+        <div
+          v-if="contractDialogRendered"
+          v-show="contractDialogPhase !== 'closing'"
+          class="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 [padding-bottom:max(1rem,env(safe-area-inset-bottom))] [padding-left:max(1rem,env(safe-area-inset-left))] [padding-right:max(1rem,env(safe-area-inset-right))] [padding-top:max(1rem,env(safe-area-inset-top))] backdrop-blur-sm"
+          :style="contractDialogLayerStyle"
+          role="presentation"
+        >
+          <section
+            ref="contractDialogRef"
+            role="dialog"
+            aria-modal="true"
+            :aria-labelledby="contractDialogTitleId"
+            class="flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white shadow-xl sm:max-h-[calc(100dvh-2rem)]"
+          >
+          <header class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 px-6 py-4">
+            <div class="min-w-0 flex-1">
+              <h2
+                :id="contractDialogTitleId"
+                ref="contractDialogTitleRef"
+                tabindex="-1"
+                class="break-words text-lg font-semibold text-slate-900 outline-none"
+              >
+                {{ editingContractId ? '编辑交割合约' : '新增交割合约' }}
+              </h2>
+            </div>
+            <a-button type="text"
+              html-type="button"
+              class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none"
+              aria-label="关闭"
+              @click="closeContractModal"
+            >
+              ×
+            </a-button>
+          </header>
+
+          <div class="shrink-0 border-b border-slate-100 bg-white px-6">
             <div
               class="flex gap-8 overflow-x-auto"
               role="tablist"
@@ -1520,7 +1551,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                 :aria-selected="contractTab === tab.id"
                 :tabindex="contractTab === tab.id ? 0 : -1"
                 :aria-controls="`delivery-contract-panel-${tab.id}`"
-                class="shrink-0"
+                class="relative shrink-0 py-3 text-sm transition-all focus:outline-none"
                 :class="
                   contractTab === tab.id
                     ? 'text-blue-600 font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600'
@@ -1553,12 +1584,12 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                 class="grid gap-6 md:grid-cols-2"
               >
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900" :for="contractFieldId('name')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>合约名称</label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('name')">合约名称 <span class="text-rose-500">*</span></label>
                   <a-input
                     :id="contractFieldId('name')"
                     v-model:value="contractForm.name"
                     type="text"
-                   
+                    class="ant-input"
                     placeholder="如：BTC 周期合约"
                     required
                     aria-required="true"
@@ -1568,12 +1599,12 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                   <FeedbackToast v-if="contractErrors.name" :id="contractFieldErrorId('name')" type="error" :source="() => (contractErrors.name) ? (contractErrors.name) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900" :for="contractFieldId('code')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>合约代码</label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('code')">合约代码 <span class="text-rose-500">*</span></label>
                   <a-input
                     :id="contractFieldId('code')"
                     v-model:value="contractForm.code"
                     type="text"
-                   
+                    class="ant-input uppercase"
                     placeholder="如：BTC_DELIVERY"
                     required
                     aria-required="true"
@@ -1583,7 +1614,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                   <FeedbackToast v-if="contractErrors.code" :id="contractFieldErrorId('code')" type="error" :source="() => (contractErrors.code) ? (contractErrors.code) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5 md:col-span-2" :aria-busy="pairOptionsLoading ? 'true' : undefined">
-                  <label class="text-sm text-slate-900" :for="contractFieldId('spotSymbol')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>选择交易对</label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('spotSymbol')">选择交易对 <span class="text-rose-500">*</span></label>
                   <a-select :get-popup-container="(trigger) => trigger.parentElement"
                     :id="contractFieldId('spotSymbol')"
                     v-model:value="contractForm.spotSymbol"
@@ -1619,7 +1650,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                   <FeedbackToast v-if="contractErrors.spotSymbol" :id="contractFieldErrorId('spotSymbol')" type="error" :source="() => (contractErrors.spotSymbol) ? (contractErrors.spotSymbol) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5">
-                  <span id="delivery-contract-status-label" class="block text-sm text-slate-900"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>产品状态</span>
+                  <span id="delivery-contract-status-label" class="block text-sm text-slate-900">产品状态 <span class="text-rose-500">*</span></span>
                   <div
                     class="inline-flex flex-wrap rounded border border-slate-200 bg-slate-50 p-0.5"
                     role="radiogroup"
@@ -1637,7 +1668,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                       :aria-checked="contractForm.status === option.id"
                       :aria-disabled="option.disabled ? 'true' : undefined"
                       :tabindex="contractForm.status === option.id ? 0 : -1"
-                     
+                      class="min-h-8 px-4 py-1 text-xs rounded transition-all focus:outline-none"
                       :class="[
                         contractForm.status === option.id
                           ? 'bg-white shadow-sm text-blue-600 font-medium'
@@ -1652,14 +1683,14 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                   <p id="delivery-contract-status-help" class="text-xs text-slate-400">状态调整会随本次保存一起生效。</p>
                 </div>
                 <div class="space-y-1.5">
-                  <label class="block text-sm text-slate-900" :for="contractFieldId('sortOrder')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>产品排序</label>
+                  <label class="block text-sm text-slate-900" :for="contractFieldId('sortOrder')">产品排序 <span class="text-rose-500">*</span></label>
                   <a-input
                     :id="contractFieldId('sortOrder')"
                     v-model:value.number="contractForm.sortOrder"
                     type="number"
                     :min="0"
                     inputmode="numeric"
-                    class="font-mono"
+                    class="ant-input font-mono"
                     placeholder="数字越大越靠前"
                     required
                     aria-required="true"
@@ -1681,7 +1712,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                 class="space-y-6"
               >
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900" :for="contractFieldId('templateId')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>选择周期模板</label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('templateId')">选择周期模板 <span class="text-rose-500">*</span></label>
                   <a-select :get-popup-container="(trigger) => trigger.parentElement"
                     :id="contractFieldId('templateId')"
                     v-model:value="contractForm.templateId"
@@ -1736,7 +1767,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
               >
                 <div class="grid gap-6 md:grid-cols-3">
                   <div class="space-y-1.5">
-                    <label class="text-sm text-slate-900" :for="contractFieldId('minBuy')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>最低买入额 (USDT)</label>
+                    <label class="text-sm text-slate-900" :for="contractFieldId('minBuy')">最低买入额 (USDT) <span class="text-rose-500">*</span></label>
                     <a-input
                       :id="contractFieldId('minBuy')"
                       v-model:value="contractForm.minBuy"
@@ -1744,7 +1775,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                       :min="0"
                       :step="0.000001"
                       inputmode="decimal"
-                      class="font-mono"
+                      class="ant-input font-mono"
                       required
                       aria-required="true"
                       :aria-invalid="Boolean(contractErrors.minBuy)"
@@ -1755,7 +1786,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                     <FeedbackToast v-if="contractErrors.minBuy" :id="contractFieldErrorId('minBuy')" type="error" :source="() => (contractErrors.minBuy) ? (contractErrors.minBuy) : ''"></FeedbackToast>
                   </div>
                   <div class="space-y-1.5">
-                    <label class="text-sm text-slate-900" :for="contractFieldId('maxBuy')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>最高买入额 (USDT)</label>
+                    <label class="text-sm text-slate-900" :for="contractFieldId('maxBuy')">最高买入额 (USDT) <span class="text-rose-500">*</span></label>
                     <a-input
                       :id="contractFieldId('maxBuy')"
                       v-model:value="contractForm.maxBuy"
@@ -1763,7 +1794,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                       :min="0"
                       :step="0.000001"
                       inputmode="decimal"
-                      class="font-mono"
+                      class="ant-input font-mono"
                       required
                       aria-required="true"
                       :aria-invalid="Boolean(contractErrors.maxBuy)"
@@ -1774,7 +1805,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                     <FeedbackToast v-if="contractErrors.maxBuy" :id="contractFieldErrorId('maxBuy')" type="error" :source="() => (contractErrors.maxBuy) ? (contractErrors.maxBuy) : ''"></FeedbackToast>
                   </div>
                   <div class="space-y-1.5">
-                    <label class="text-sm text-slate-900" :for="contractFieldId('maxHold')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>最大持仓额 (USDT)</label>
+                    <label class="text-sm text-slate-900" :for="contractFieldId('maxHold')">最大持仓额 (USDT) <span class="text-rose-500">*</span></label>
                     <a-input
                       :id="contractFieldId('maxHold')"
                       v-model:value="contractForm.maxHold"
@@ -1782,7 +1813,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                       :min="0"
                       :step="0.000001"
                       inputmode="decimal"
-                      class="font-mono"
+                      class="ant-input font-mono"
                       required
                       aria-required="true"
                       :aria-invalid="Boolean(contractErrors.maxHold)"
@@ -1805,7 +1836,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                 class="grid gap-6 md:grid-cols-1"
               >
                 <div class="space-y-1.5">
-                  <label class="text-sm text-slate-900" :for="contractFieldId('sellFee')"><span aria-hidden="true" class="text-rose-500 mr-1">*</span>交割手续费率 (%)</label>
+                  <label class="text-sm text-slate-900" :for="contractFieldId('sellFee')">交割手续费率 (%) <span class="text-rose-500">*</span></label>
                   <div class="relative">
                     <a-input
                       :id="contractFieldId('sellFee')"
@@ -1815,7 +1846,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
                       :max="100"
                       :step="0.01"
                       inputmode="decimal"
-                      class="font-mono"
+                      class="ant-input font-mono pr-8"
                       required
                       aria-required="true"
                       :aria-invalid="Boolean(contractErrors.sellFee)"
@@ -1844,7 +1875,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
               <div class="mt-3 flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
                 <a-button
                   html-type="button"
-                  class="w-full sm:w-auto"
+                  class="ant-btn w-full sm:w-auto"
                   @click="keepEditingContract"
                 >
                   继续编辑
@@ -1862,7 +1893,7 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
             <div class="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
               <a-button
                 html-type="button"
-                class="w-full sm:w-auto"
+                class="ant-btn w-full sm:w-auto"
                 @click="closeContractModal"
               >
                 取消
@@ -1877,7 +1908,49 @@ const contractDialogLifecycle = { rendered: contractDialogRendered, phase: contr
             </div>
           </footer>
           </form>
-    </AdminDialog>
+          </section>
+        </div>
+      </Transition>
+    </Teleport>
   </section>
 </template>
 
+<style scoped>
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 200ms ease-out;
+}
+.modal-leave-active {
+  transition-duration: 150ms;
+  transition-timing-function: ease-in;
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+.modal-enter-active > section,
+.modal-leave-active > section {
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+.modal-leave-active > section {
+  transition-duration: 150ms;
+  transition-timing-function: ease-in;
+}
+.modal-enter-from > section,
+.modal-leave-to > section {
+  opacity: 0;
+  transform: scale(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal-enter-active,
+  .modal-leave-active,
+  .modal-enter-active > section,
+  .modal-leave-active > section {
+    transition-duration: 50ms;
+  }
+  .modal-enter-from > section,
+  .modal-leave-to > section {
+    transform: none;
+  }
+}
+</style>

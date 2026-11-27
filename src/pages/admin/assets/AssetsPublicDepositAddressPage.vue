@@ -1,5 +1,4 @@
 <script setup>
-import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { nativeControl } from '../../../admin/components/antd/controls.js'
 import { computed, reactive, ref } from 'vue'
@@ -127,9 +126,11 @@ const {
   open: logDialogOpen,
   dialogRef: logDialogRef,
   initialFocusRef: logInitialFocusRef,
-  // The log content stays visible through the close animation; it is cleared once the dialog has closed.
   requestClose: () => {
     logDialogOpen.value = false
+    logRow.value = null
+    addressLogs.value = []
+    logPage.value = 1
   }
 })
 
@@ -283,11 +284,6 @@ async function copyAddress(row) {
     copiedId.value = ''
   }
 }
-
-// The shared Ant frames (AdminDialog) drive these page-owned lifecycles (dialog migration 2026-11-27). Defined last so
-// every handler they reference is initialised.
-const addressDialogLifecycle = { rendered: addressDialogRendered, phase: addressDialogPhase, layerStyle: addressDialogLayerStyle, requestDialogClose: requestAddressDialogClose, onAfterEnter: onAddressDialogAfterEnter, onAfterLeave: onAddressDialogAfterLeave, dialogRef: addressDialogRef }
-const logDialogLifecycle = { rendered: logDialogRendered, phase: logDialogPhase, layerStyle: logDialogLayerStyle, requestDialogClose: requestLogDialogClose, onAfterEnter: onLogDialogAfterEnter, onAfterLeave: async () => { const done = await onLogDialogAfterLeave(); if (done) { logRow.value = null; addressLogs.value = []; logPage.value = 1 } return done }, dialogRef: logDialogRef }
 </script>
 
 <template>
@@ -390,9 +386,35 @@ const logDialogLifecycle = { rendered: logDialogRendered, phase: logDialogPhase,
       </div>
     </section>
 
-    <AdminDialog :open="addressDialogRendered" :lifecycle="addressDialogLifecycle" :title="form.id ? '编辑收款地址' : '新增收款地址'" title-id="public-deposit-address-dialog-title" :width="672" plain>
-      <template #subtitle>更换地址会生成新记录，原地址自动停用并保留。</template>
-      <form class="flex min-h-0 flex-1 flex-col" @submit.prevent="saveAddress">
+    <Teleport to="body">
+      <Transition name="dialog-overlay" appear @after-enter="onAddressDialogAfterEnter" @after-leave="onAddressDialogAfterLeave">
+        <div
+          v-if="addressDialogRendered"
+          v-show="addressDialogPhase !== 'closing'"
+          class="fixed inset-0 z-50 flex min-h-[100vh] w-full items-center justify-center bg-slate-950/45 p-4 supports-[height:100dvh]:min-h-[100dvh]"
+          role="presentation"
+          :style="addressDialogLayerStyle"
+        >
+      <Transition name="dialog-panel" appear>
+      <section
+        v-show="addressDialogPhase !== 'closing'"
+        ref="addressDialogRef"
+        class="flex max-h-[calc(100vh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="public-deposit-address-dialog-title"
+      >
+        <header class="shrink-0 border-b border-slate-200 px-6 py-5">
+          <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 id="public-deposit-address-dialog-title" class="text-lg font-bold text-slate-900">{{ form.id ? '编辑收款地址' : '新增收款地址' }}</h2>
+            <p class="mt-1 text-xs text-slate-500">更换地址会生成新记录，原地址自动停用并保留。</p>
+          </div>
+          <a-button html-type="button" class="flex min-w-11 shrink-0 items-center justify-center text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeModal">×</a-button>
+          </div>
+        </header>
+
+        <form class="flex min-h-0 flex-1 flex-col" @submit.prevent="saveAddress">
           <div class="min-h-0 flex-1 space-y-5 overflow-y-auto p-6">
           <div class="grid gap-4 sm:grid-cols-2">
             <PanelSingleSelect
@@ -430,7 +452,7 @@ const logDialogLifecycle = { rendered: logDialogRendered, phase: logDialogPhase,
 
           <label class="block space-y-2 text-sm font-medium text-slate-700">
             <span>备注</span>
-            <a-textarea v-model:value="form.remark" :rows="3" placeholder="填写地址用途或更换原因" class="w-full" />
+            <a-textarea v-model:value="form.remark" :rows="3" placeholder="填写地址用途或更换原因" class="w-full resize-none" />
           </label>
 
           <label class="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
@@ -445,15 +467,47 @@ const logDialogLifecycle = { rendered: logDialogRendered, phase: logDialogPhase,
           </div>
 
           <footer class="shrink-0 flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-            <a-button html-type="button" @click="closeModal">取消</a-button>
-            <a-button html-type="submit">保存配置</a-button>
+            <a-button html-type="button" class="border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50" @click="closeModal">取消</a-button>
+            <a-button html-type="submit" class="bg-slate-900 text-sm font-semibold text-white hover:bg-slate-800">保存配置</a-button>
           </footer>
         </form>
-    </AdminDialog>
+      </section>
+      </Transition>
+        </div>
+      </Transition>
+    </Teleport>
 
-    <AdminDialog :open="logDialogRendered" :lifecycle="logDialogLifecycle" title="修改日志" title-id="public-deposit-address-log-title" :width="896" plain>
-      <template #subtitle>{{ logRow?.coin }} · {{ logRow?.network }} · {{ logRow?.id }}</template>
-      <div class="overflow-y-auto p-6">
+    <Teleport to="body">
+      <Transition name="dialog-overlay" appear @after-enter="onLogDialogAfterEnter" @after-leave="onLogDialogAfterLeave">
+        <div
+          v-if="logDialogRendered"
+          v-show="logDialogPhase !== 'closing'"
+          class="fixed inset-0 z-50 flex min-h-[100vh] w-full items-center justify-center bg-slate-950/45 p-4 supports-[height:100dvh]:min-h-[100dvh]"
+          role="presentation"
+          :style="logDialogLayerStyle"
+        >
+      <Transition name="dialog-panel" appear>
+      <section
+        v-show="logDialogPhase !== 'closing'"
+        ref="logDialogRef"
+        class="flex max-h-[calc(100vh-2rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="public-deposit-address-log-title"
+      >
+        <header class="shrink-0 border-b border-slate-200 px-6 py-5">
+          <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 id="public-deposit-address-log-title" ref="logInitialFocusRef" tabindex="-1" class="text-lg font-bold text-slate-900">修改日志</h2>
+            <p v-if="logRow" class="mt-1 text-xs text-slate-500">
+              {{ logRow.coin }} · {{ logRow.network }} · {{ logRow.id }}
+            </p>
+          </div>
+          <a-button html-type="button" class="flex min-w-11 shrink-0 items-center justify-center text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeLogDialog">×</a-button>
+          </div>
+        </header>
+
+        <div class="overflow-y-auto p-6">
           <div class="mb-5 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
             <p class="text-xs leading-5 text-blue-700">
               系统会在新增、编辑、启用、停用或更换公共收款地址成功后自动生成日志，记录操作类型、操作人、操作时间以及变更前后内容。日志按地址独立归档，仅用于审计追溯，不支持修改或删除。
@@ -497,7 +551,11 @@ const logDialogLifecycle = { rendered: logDialogRendered, phase: logDialogPhase,
             <p class="mt-1 text-xs text-slate-400">该地址尚未发生配置变更</p>
           </div>
         </div>
-    </AdminDialog>
+      </section>
+      </Transition>
+        </div>
+      </Transition>
+    </Teleport>
 
     <MfaVerificationModal
       v-model:open="showMfaModal"

@@ -8,7 +8,6 @@ import {
   resolveUserOperationReturnFocus
 } from '../src/admin/config/userOperations.js'
 
-import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
 const elementByTestId = (source, testId) => source.match(
   new RegExp(`<([a-z]+)[^>]*data-testid="${testId}"[^>]*>[\\s\\S]*?<\\/\\1>`)
@@ -190,11 +189,22 @@ test('operation focus falls back to the row trigger when no action card is avail
 test('operation drawer uses the shared modal lifecycle and a fixed scrolling frame', () => {
   const source = read('../src/admin/components/user/UserOperationDrawer.vue')
 
-  assertAdminDrawerFrame(source)
-  assert.match(source, /title-id="user-operation-drawer-title"/)
-  assert.match(source, /<AdminDrawer\b[^>]*testid="user-operation-drawer"/)
+  assert.match(source, /<Teleport to="body">/)
+  assert.match(source, /useDialogLifecycle/)
+  assert.match(source, /role="dialog"/)
+  assert.match(source, /aria-modal="true"/)
+  assert.match(source, /aria-labelledby="user-operation-drawer-title"/)
+  assert.match(source, /fixed inset-0/)
+  assert.match(source, /data-testid="user-operation-drawer"[^>]*overflow-hidden/)
   assert.match(source, /data-testid="user-operation-drawer-body"[^>]*overflow-y-auto/)
+  assert.match(source, /aria-label="关闭"/)
   assert.doesNotMatch(source, /@click\.self|@mousedown\.self/)
+  assert.match(source, /drawer-overlay-enter-active[^}]*200ms ease-out/)
+  assert.match(source, /drawer-overlay-leave-active[^}]*150ms ease-in/)
+  assert.match(source, /drawer-panel-enter-active[^}]*200ms ease-out/)
+  assert.match(source, /drawer-panel-leave-active[^}]*150ms ease-in/)
+  assert.match(source, /prefers-reduced-motion: reduce/)
+  assert.match(source, /transition-duration: 50ms/)
 })
 
 test('operation drawer renders grouped actions and explains planned entries without mutation', () => {
@@ -261,10 +271,9 @@ test('operation drawer uses compact, balanced action tiles without shrinking clo
   assert.match(source, /class="text-xs font-semibold/)
   assert.match(source, /ring-1 ring-slate-200/)
   assert.match(source, /grid grid-cols-1 gap-1\.5 sm:grid-cols-2/)
-  assert.match(source, /class="admin-tile min-h-16[^"\n]*"/)
+  assert.match(source, /min-h-16[^"\n]*p-2\.5/)
   assert.match(source, /rounded-full border px-1\.5 py-0\.5 text-\[10px\]/)
   assert.match(source, /text-sm font-medium text-slate-900/)
   assert.match(source, /mt-1 block text-xs leading-4/)
-  // The close target lives in the shared frame: a 32px Ant button (44px on coarse pointers), set in theme.css.
-  assert.match(read('../src/styles/theme.css'), /\.admin-drawer-close[\s\S]*?\{[^}]*width: 32px; height: 32px/)
+  assert.match(source, /min-h-11 min-w-11/)
 })

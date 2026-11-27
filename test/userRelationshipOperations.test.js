@@ -18,7 +18,6 @@ import {
 } from '../src/admin/composables/useDialogLifecycle.js'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
 
-import { assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const read = (path) => readFileSync(resolve(process.cwd(), path), 'utf8')
 const parentResetSource = () => read('src/admin/components/user/UserParentResetDialog.vue')
 const agentRoleSource = () => read('src/admin/components/user/UserAgentRoleDialog.vue')
@@ -34,7 +33,6 @@ const agentRoleFile = resolve(process.cwd(), 'src/admin/components/user/UserAgen
 const agentParentFile = resolve(process.cwd(), 'src/admin/components/user/UserAgentParentDialog.vue')
 const relationshipDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserRelationshipDrawer.vue')
 const teamReportDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserTeamReportDrawer.vue')
-const adminDrawerFile = new URL('../src/admin/components/antd/AdminDrawer.vue', import.meta.url)
 const operationDrawerFile = resolve(process.cwd(), 'src/admin/components/user/UserOperationDrawer.vue')
 const compactPaginationFile = resolve(process.cwd(), 'src/admin/components/CompactPagination.vue')
 
@@ -353,12 +351,8 @@ test('team report Drawer pads the whole-report empty region for the bottom safe 
 test('operation and paginated fission Drawers protect both landscape safe-area edges', () => {
   for (const file of [operationDrawerFile, relationshipDrawerFile, teamReportDrawerFile]) {
     const source = readFileSync(file, 'utf8')
-    // Header safe areas belong to the shared frame (AdminDrawer pads the Ant content element on every edge).
-    if (/<AdminDrawer\b/.test(source)) assert.match(readFileSync(adminDrawerFile, 'utf8'), /\.ant-drawer-content \{[^}]*safe-area-inset-right[^}]*safe-area-inset-left/)
-    else {
-      assert.match(source, /<header[^>]*safe-area-inset-left/)
-      assert.match(source, /<header[^>]*safe-area-inset-right/)
-    }
+    assert.match(source, /<header[^>]*safe-area-inset-left/)
+    assert.match(source, /<header[^>]*safe-area-inset-right/)
     assert.match(source, /data-testid="[^"]*(?:drawer-body|report-drawer-body)"[^>]*safe-area-inset-left/)
     assert.match(source, /data-testid="[^"]*(?:drawer-body|report-drawer-body)"[^>]*safe-area-inset-right/)
   }
@@ -567,7 +561,7 @@ test('relationship surfaces consistently identify fission relationships without 
   assert.match(parentReset, /重设裂变上级失败/)
   assert.match(parentReset, /parentId: form\.parentId \|\| null/)
 
-  assert.match(teamReport, /title="裂变团队报表"|>裂变团队报表</)
+  assert.match(teamReport, />裂变团队报表</)
   assert.match(teamReport, /裂变团队概览/)
   assert.match(teamReport, /直属裂变分支明细/)
   assert.match(teamReport, /当前没有裂变团队成员/)
@@ -601,7 +595,8 @@ test('agent creation entries reuse the shared upgrade dialog and delivery card',
   assert.match(userListPageSource(), /if \(!isAgentUser\(user\)\)[\s\S]*agentUpgradeOpen\.value = true/)
   assert.match(agentManagementSource(), /import AgentUpgradeDialog/)
   assert.match(agentManagementSource(), /<AgentUpgradeDialog/)
-  assertAdminDialogFrame(agentUpgradeSource())
+  assert.match(agentUpgradeSource(), /useDialogLifecycle/)
+  assert.match(agentUpgradeSource(), /:style="layerStyle"/)
   assert.doesNotMatch(agentUpgradeSource(), /z-\[100\]/)
   assert.doesNotMatch(agentRoleSource(), /import AgentDeliveryCard/)
   assert.doesNotMatch(agentRoleSource(), /<AgentDeliveryCard/)
