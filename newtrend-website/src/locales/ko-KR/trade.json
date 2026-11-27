@@ -472,5 +472,6 @@
     "draw": "무승부"
   },
   "deliveryRemaining": "남은 시간 {{time}}",
-  "deliverySettling": "정산 중…"
+  "deliverySettling": "정산 중…",
+  "deliveryResultLabel": "결과"
 }

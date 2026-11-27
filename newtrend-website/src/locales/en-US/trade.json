@@ -472,5 +472,6 @@
     "draw": "Draw"
   },
   "deliveryRemaining": "{{time}} remaining",
-  "deliverySettling": "Settling…"
+  "deliverySettling": "Settling…",
+  "deliveryResultLabel": "Result"
 }

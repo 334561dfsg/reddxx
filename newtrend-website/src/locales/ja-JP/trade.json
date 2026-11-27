@@ -472,5 +472,6 @@
     "draw": "引き分け"
   },
   "deliveryRemaining": "残り {{time}}",
-  "deliverySettling": "決済中…"
+  "deliverySettling": "決済中…",
+  "deliveryResultLabel": "結果"
 }

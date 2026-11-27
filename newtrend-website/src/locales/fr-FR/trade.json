@@ -472,5 +472,6 @@
     "draw": "Égalité"
   },
   "deliveryRemaining": "Reste {{time}}",
-  "deliverySettling": "Règlement…"
+  "deliverySettling": "Règlement…",
+  "deliveryResultLabel": "Résultat"
 }

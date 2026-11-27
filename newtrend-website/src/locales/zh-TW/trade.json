@@ -472,5 +472,6 @@
     "draw": "平"
   },
   "deliveryRemaining": "剩餘 {{time}}",
-  "deliverySettling": "結算中…"
+  "deliverySettling": "結算中…",
+  "deliveryResultLabel": "結果"
 }

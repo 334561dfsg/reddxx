@@ -6,6 +6,7 @@ import {invalidate} from '../../composables/useRequest.js'
 import {fmt} from '../../data'
 import {t} from '../../i18n'
 import {isoDateTime} from '../../utils/format.js'
+import {deliveryCountdown as countdown} from '../../utils/deliveryCountdown.js'
 // Delivery (交割) order dialog after GMXX: opens right after a delivery order is placed with a countdown ring for
 // its period, then asks the server for the order once the period ends and shows the settled result (贏 / 輸 / 平),
 // close price, P&L and close time. Closing it early is fine — the order still settles and the records refresh.
@@ -31,12 +32,6 @@ async function settle(){
 function stop(){clearInterval(timer);timer=null}
 timer=setInterval(tick,250)
 onBeforeUnmount(stop)
-function countdown(seconds){
- if(seconds<60)return t('trade.durationSeconds',{value:seconds})
- const d=Math.floor(seconds/86400),h=Math.floor(seconds%86400/3600),m=Math.floor(seconds%3600/60),s=seconds%60
- const clock=[h,m,s].map(v=>String(v).padStart(2,'0')).join(':')
- return d?`${t('trade.form.days',{value:d})} ${clock}`:clock
-}
 function period(seconds){return seconds>=86400?t('trade.form.days',{value:seconds/86400}):t('trade.durationSeconds',{value:seconds})}
 const shortId=computed(()=>{const id=String(order.value.id);return id.length>8?`${id.slice(0,3)}…${id.slice(-3)}`:id})
 const pnl=computed(()=>order.value.settled?order.value.pnl:null)

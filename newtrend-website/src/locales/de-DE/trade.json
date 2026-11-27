@@ -472,5 +472,6 @@
     "draw": "Unentschieden"
   },
   "deliveryRemaining": "Noch {{time}}",
-  "deliverySettling": "Wird abgerechnet…"
+  "deliverySettling": "Wird abgerechnet…",
+  "deliveryResultLabel": "Ergebnis"
 }

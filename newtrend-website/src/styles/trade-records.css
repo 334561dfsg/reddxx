@@ -41,3 +41,9 @@
 .record-card dd{margin:0;color:#d2d3d5;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .record-card dd small{font-size:11px;color:#8c8f96}
 .record-card dd.positive{color:#2bc287}.record-card dd.negative{color:#ff4466}
+
+/* Delivery 結果 (GMXX): 贏 / 輸 / 平 tag once settled, a yellow countdown while the period runs. */
+.result-tag{display:inline-block;min-width:36px;padding:1px 8px;border-radius:6px;font-size:12px;line-height:20px;font-weight:600;text-align:center}
+.result-tag.win{background:#2bc2871f;color:#2bc287}.result-tag.lose{background:#ff44661f;color:#ff4466}.result-tag.draw{background:#ffffff14;color:#c5c7cb}
+.result-countdown{font-size:13px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums;color:#f5b72b}
+.record-card-result{margin-left:auto}
