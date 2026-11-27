@@ -1,6 +1,4 @@
 <script setup>
-import { AdminButton, AdminInput, nativeControl } from '../antd/controls.js'
-
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { USER_ROLE_OPTIONS, USER_STATUS_OPTIONS } from '../../constants/user.js'
 import { getDescendants, getDirectReferrals } from '../../repositories/userRelationshipRepository.js'
@@ -360,7 +358,7 @@ onBeforeUnmount(() => {
                 {{ user?.username || '未知用户' }} · UID {{ userId || '—' }} · 共 {{ allMembers.length }} 人
               </p>
             </div>
-            <AdminButton type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</AdminButton>
+            <button type="button" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none" aria-label="关闭" @click="close">×</button>
           </header>
 
           <div data-testid="relationship-drawer-body" class="min-h-0 flex flex-1 flex-col overflow-hidden" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
@@ -368,11 +366,11 @@ onBeforeUnmount(() => {
               <div class="relative mb-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
                 <label>
                   <span class="sr-only">搜索裂变下级</span>
-                  <AdminInput v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
+                  <input v-model="keyword" type="search" class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none" placeholder="搜索裂变下级的用户名、邮箱或 UID" />
                 </label>
                 <div class="mt-3 grid grid-cols-2 gap-2">
-                  <AdminButton
-                    :ref="element => { statusFilterToggleRef = nativeControl(element) }"
+                  <button
+                    ref="statusFilterToggleRef"
                     data-testid="relationship-drawer-status-filter-toggle"
                     type="button"
                     class="flex min-h-11 items-center rounded-lg px-2 text-left text-sm font-medium text-slate-700 outline-none"
@@ -382,9 +380,9 @@ onBeforeUnmount(() => {
                     @keydown="handleFilterTriggerKeydown"
                   >
                     账户状态
-                  </AdminButton>
-                  <AdminButton
-                    :ref="element => { roleFilterToggleRef = nativeControl(element) }"
+                  </button>
+                  <button
+                    ref="roleFilterToggleRef"
                     data-testid="relationship-drawer-role-filter-toggle"
                     type="button"
                     class="flex min-h-11 items-center rounded-lg px-2 text-left text-sm font-medium text-slate-700 outline-none"
@@ -394,7 +392,7 @@ onBeforeUnmount(() => {
                     @keydown="handleFilterTriggerKeydown"
                   >
                     用户角色
-                  </AdminButton>
+                  </button>
                 </div>
               </div>
             </div>
@@ -405,7 +403,7 @@ onBeforeUnmount(() => {
               </div>
 
               <div v-if="filteredMembers.length" class="space-y-2">
-                <AdminButton
+                <button
                   v-for="member in pagedMembers"
                   :key="member.id || member.userId"
                   type="button"
@@ -428,7 +426,7 @@ onBeforeUnmount(() => {
                   </span>
                   <span v-if="isAllMode" class="mt-1.5 block break-words text-xs text-slate-500">裂变关系路径：{{ pathLabel(member) }}</span>
                   <span class="mt-1.5 block text-xs text-slate-500">注册时间：{{ formatTime(member.registerTime) }}</span>
-                </AdminButton>
+                </button>
               </div>
 
               <div v-else class="grid min-h-52 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
@@ -460,7 +458,7 @@ onBeforeUnmount(() => {
               <fieldset>
                 <legend class="sr-only">{{ filterLegend }}</legend>
                 <div class="grid grid-cols-2 gap-1">
-                  <AdminButton
+                  <button
                     v-for="item in filterItems"
                     :key="item.value"
                     type="button"
@@ -470,7 +468,7 @@ onBeforeUnmount(() => {
                     @click="selectFilter(item.value)"
                   >
                     {{ item.label }}
-                  </AdminButton>
+                  </button>
                 </div>
               </fieldset>
             </div>

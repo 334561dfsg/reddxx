@@ -417,9 +417,9 @@ onMounted(load)
           可无限添加前台公开内容页，适用于关于我们、公司资质、白皮书、公告说明等页面。
         </p>
       </div>
-      <a-button html-type="button" class="shrink-0" :disabled="loading" @click="openAdd" type="primary">
+      <button type="button" class="ant-btn ant-btn-primary shrink-0" :disabled="loading" @click="openAdd">
         添加页面
-      </a-button>
+      </button>
     </div>
 
     <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
@@ -429,54 +429,85 @@ onMounted(load)
     <div v-else class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div class="flex flex-col gap-3 border-b border-slate-200 px-4 py-3 md:flex-row md:items-center md:justify-between">
         <div class="flex flex-1 flex-col gap-3 sm:flex-row">
-          <a-input v-model:value="keyword" type="search" class="w-full sm:max-w-xs" placeholder="搜索标题、路径、摘要" @input="resetListPage" />
-          <a-select v-model:value="parentFilter" class="w-full sm:max-w-xs" @change="resetListPage">
-            <a-select-option value="">全部页面</a-select-option>
-            <a-select-option value="__root__">仅一级页面</a-select-option>
-            <a-select-option v-for="p in parentOptions" :key="p.id" :value="p.id">{{ p.title }} 及其子页面</a-select-option>
-          </a-select>
+          <input
+            v-model="keyword"
+            type="search"
+            class="ant-input w-full sm:max-w-xs"
+            placeholder="搜索标题、路径、摘要"
+            @input="resetListPage"
+          />
+          <select v-model="parentFilter" class="ant-input w-full sm:max-w-xs" @change="resetListPage">
+            <option value="">全部页面</option>
+            <option value="__root__">仅一级页面</option>
+            <option v-for="p in parentOptions" :key="p.id" :value="p.id">{{ p.title }} 及其子页面</option>
+          </select>
         </div>
         <p class="text-xs text-slate-500">
           共 {{ filteredRows.length }} 条，当前第 {{ currentPage }} / {{ totalPages }} 页
         </p>
       </div>
       <div class="overflow-x-auto">
-        <a-table  :data-source="pagedRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" >
-<a-table-column key="column-0" ><template #title>页面</template><template #default="{ record: row, index: index }"><div class=" ">
+        <table class="min-w-full divide-y divide-slate-200 text-sm">
+          <thead class="bg-slate-50/80">
+            <tr>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">页面</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">父级</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">路径</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">排序权重</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">状态</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">多语言</th>
+              <th class="px-4 py-3 text-right font-medium text-slate-700">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 bg-white">
+            <tr v-for="row in pagedRows" :key="row.id">
+              <td class="px-4 py-3">
                 <div class="font-medium text-slate-900">
                   <span v-if="row.parentId" class="mr-1 text-slate-400">└</span>{{ row.title }}
                 </div>
                 <div class="mt-1 max-w-md truncate text-xs text-slate-500">{{ row.summary || '—' }}</div>
-              </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>父级</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-600">{{ pageById(row.parentId)?.title || '—' }}</div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>路径</template><template #default="{ record: row, index: index }"><div class="  font-mono text-xs text-indigo-700">{{ pagePath(row) }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
+              </td>
+              <td class="px-4 py-3 text-xs text-slate-600">{{ pageById(row.parentId)?.title || '—' }}</td>
+              <td class="px-4 py-3 font-mono text-xs text-indigo-700">{{ pagePath(row) }}</td>
+              <td class="px-4 py-3 tabular-nums text-slate-600">{{ row.sort }}</td>
+              <td class="px-4 py-3">
                 <span :class="row.enabled ? 'rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800' : 'text-slate-500'">
                   {{ row.enabled ? '已启用' : '已禁用' }}
                 </span>
-              </div></template></a-table-column>
-<a-table-column key="column-5" ><template #title>多语言</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-600">{{ localeCompletion(row) }}</div></template></a-table-column>
-<a-table-column key="column-6" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   text-right">
-                <a-button html-type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</a-button>
+              </td>
+              <td class="px-4 py-3 text-xs text-slate-600">{{ localeCompletion(row) }}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-right">
+                <button type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</button>
                 <span class="mx-2 text-slate-300">|</span>
-                <a-button html-type="button" class="text-red-600 hover:underline" @click="removeRow(row)" danger>删除</a-button>
-              </div></template></a-table-column><template #emptyText>
+                <button type="button" class="text-red-600 hover:underline" @click="removeRow(row)">删除</button>
+              </td>
+            </tr>
+            <tr v-if="pagedRows.length === 0">
+              <td colspan="7" class="px-4 py-10 text-center text-sm text-slate-500">
                 暂无匹配内容页。
-              </template>
-</a-table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <footer class="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm">
         <span class="text-xs text-slate-500">每页 {{ pageSize }} 条</span>
-        <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="filteredRows.length" :show-size-changer="false"  @change="currentPage = $event" />
+        <div class="flex items-center gap-2">
+          <button type="button" class="ant-btn ant-btn-sm" :disabled="currentPage <= 1" @click="goPrev">上一页</button>
+          <span class="text-xs font-medium text-slate-600">{{ currentPage }} / {{ totalPages }}</span>
+          <button type="button" class="ant-btn ant-btn-sm" :disabled="currentPage >= totalPages" @click="goNext">下一页</button>
+        </div>
       </footer>
     </div>
 
     <Teleport to="body">
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="flex items-center justify-between gap-3"><span>{{ editingId ? '编辑页面' : '添加页面' }}</span><a-button aria-label="关闭" html-type="button"   @click="closeModal">×</a-button></div></template></template><template v-if="modalOpen"><div class="shrink-0 border-b border-slate-200 px-5 py-4">
-            <h2 class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑页面' : '添加页面' }}</h2>
+      <div v-if="modalOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4" role="dialog" aria-modal="true" aria-labelledby="content-page-modal-title">
+        <div class="flex h-[min(92vh,820px)] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+          <div class="shrink-0 flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+            <h2 id="content-page-modal-title" class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑页面' : '添加页面' }}</h2>
+            <button type="button" class="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeModal">×</button>
           </div>
-<div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+          <div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
             <div class="grid min-h-full gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
             <div class="flex min-h-0 flex-col gap-4">
               <div class="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50/70 p-3 sm:flex-row sm:items-center sm:justify-between">
@@ -487,52 +518,56 @@ onMounted(load)
                   </p>
                 </div>
                 <div class="shrink-0 sm:w-64">
-                  <a-select :value="activeLocale" class="w-full" @change="switchLocale($event)">
-                    <a-select-option v-for="loc in localeOptions" :key="loc.code" :value="loc.code">
+                  <select
+                    :value="activeLocale"
+                    class="ant-input w-full"
+                    @change="switchLocale($event.target.value)"
+                  >
+                    <option v-for="loc in localeOptions" :key="loc.code" :value="loc.code">
                       {{ loc.label }}{{ loc.code === defaultLocale ? '（默认）' : '' }} - {{ loc.code }}
-                    </a-select-option>
-                  </a-select>
+                    </option>
+                  </select>
                 </div>
               </div>
               <div class="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">页面标题</label>
-                  <a-input v-model:value="formTitle" class="w-full" placeholder="例如：关于我们" @blur="fillSlugFromTitle" />
+                  <input v-model="formTitle" class="ant-input w-full" placeholder="例如：关于我们" @blur="fillSlugFromTitle" />
                 </div>
                 <div>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">页面路径 slug</label>
-                  <a-input v-model:value="formSlug" class="w-full font-mono" placeholder="about-us" />
+                  <input v-model="formSlug" class="ant-input w-full font-mono text-xs" placeholder="about-us" />
                 </div>
               </div>
               <div class="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">父级页面</label>
-                  <a-select v-model:value="formParentId" class="w-full">
-                    <a-select-option value="">无，作为一级页面</a-select-option>
-                    <a-select-option v-for="p in parentOptions" :key="p.id" :value="p.id">{{ p.title }}</a-select-option>
-                  </a-select>
+                  <select v-model="formParentId" class="ant-input w-full">
+                    <option value="">无，作为一级页面</option>
+                    <option v-for="p in parentOptions" :key="p.id" :value="p.id">{{ p.title }}</option>
+                  </select>
                 </div>
                 <div>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700">导航标题</label>
-                  <a-input v-model:value="formNavTitle" class="w-full" placeholder="留空则使用页面标题" />
+                  <input v-model="formNavTitle" class="ant-input w-full" placeholder="留空则使用页面标题" />
                 </div>
               </div>
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">摘要</label>
-                <a-textarea v-model:value="formSummary" class="w-full" placeholder="用于页面头部和列表展示" />
+                <textarea v-model="formSummary" class="ant-input min-h-16 w-full" placeholder="用于页面头部和列表展示" />
               </div>
 
               <div class="flex min-h-[22rem] flex-1 flex-col">
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">富文本内容</label>
                 <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
                   <div class="shrink-0 flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 px-3 py-2">
-                    <a-button html-type="button" class="text-xs" @click="setBlock('h2')">H2</a-button>
-                    <a-button html-type="button" class="text-xs" @click="setBlock('p')">正文</a-button>
-                    <a-button html-type="button" class="text-xs font-bold" @click="exec('bold')">B</a-button>
-                    <a-button html-type="button" class="text-xs italic" @click="exec('italic')">I</a-button>
-                    <a-button html-type="button" class="text-xs" @click="exec('insertUnorderedList')">列表</a-button>
-                    <a-button html-type="button" class="text-xs" @click="insertLink">链接</a-button>
-                    <a-button html-type="button" class="text-xs" @click="insertImage">图片</a-button>
+                    <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="setBlock('h2')">H2</button>
+                    <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="setBlock('p')">正文</button>
+                    <button type="button" class="ant-btn !px-2 !py-1 text-xs font-bold" @click="exec('bold')">B</button>
+                    <button type="button" class="ant-btn !px-2 !py-1 text-xs italic" @click="exec('italic')">I</button>
+                    <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="exec('insertUnorderedList')">列表</button>
+                    <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="insertLink">链接</button>
+                    <button type="button" class="ant-btn !px-2 !py-1 text-xs" @click="insertImage">图片</button>
                   </div>
                   <div
                     ref="editorRef"
@@ -548,13 +583,13 @@ onMounted(load)
             <aside class="h-fit space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4 lg:sticky lg:top-0">
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">状态</label>
-                <a-select v-model:value="formEnabled" class="w-full">
-                  <a-select-option :value="true">启用</a-select-option>
-                  <a-select-option :value="false">禁用</a-select-option>
-                </a-select>
+                <select v-model="formEnabled" class="ant-input w-full">
+                  <option :value="true">启用</option>
+                  <option :value="false">禁用</option>
+                </select>
               </div>
               <label v-if="formParentId" class="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
-                <a-checkbox v-model:checked="formShowInNav" class="" />
+                <input v-model="formShowInNav" type="checkbox" class="rounded border-slate-300" />
                 在父级子导航中显示
               </label>
               <p v-else class="rounded-lg bg-white p-3 text-xs leading-relaxed text-slate-500">
@@ -562,7 +597,7 @@ onMounted(load)
               </p>
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">排序权重</label>
-                <a-input type="number" class="w-full" :value="formSort" @update:value="formSort = $event === '' ? '' : Number($event)" />
+                <input v-model.number="formSort" type="number" class="ant-input w-full" />
                 <p class="mt-1 text-xs text-slate-500">数值越大越靠前，同级页面之间比较</p>
               </div>
               <div class="rounded-lg bg-white p-3 text-xs leading-relaxed text-slate-500">
@@ -574,12 +609,15 @@ onMounted(load)
               </div>
             </aside>
             </div>
-          </div></template><template #footer><template v-if="Boolean(modalOpen)"><div class="shrink-0 flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
-            <a-button html-type="button" class="" @click="closeModal">取消</a-button>
-            <a-button html-type="button" class="" :disabled="isSaving" @click="submitModal" type="primary">
+          </div>
+          <div class="shrink-0 flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
+            <button type="button" class="ant-btn" @click="closeModal">取消</button>
+            <button type="button" class="ant-btn ant-btn-primary" :disabled="isSaving" @click="submitModal">
               {{ isSaving ? '保存中…' : '保存' }}
-            </a-button>
-          </div></template></template></a-modal>
+            </button>
+          </div>
+        </div>
+      </div>
     </Teleport>
   </div>
 </template>

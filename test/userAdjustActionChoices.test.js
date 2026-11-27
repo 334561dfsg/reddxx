@@ -34,7 +34,6 @@ const loadAdjustAction = async () => {
   }).content
   const imports = new Map([
     ['vue', import.meta.resolve('vue')],
-    ['../antd/controls.js', pathToFileURL(resolve(dirname(adjustFile), '../antd/controls.js')).href],
     ['../../mock/vip', pathToFileURL(resolve(dirname(adjustFile), '../../mock/vip.js')).href],
     ['../../mock/creditScore', creditScoreModuleUrl],
     ['../../constants/creditScore', pathToFileURL(creditScoreConstantsFile).href],

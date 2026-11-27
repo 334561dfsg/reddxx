@@ -1,5 +1,4 @@
 <script setup>
-import { Card, Statistic } from 'ant-design-vue'
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -39,13 +38,7 @@ function agentGlowClass(color) {
 </script>
 
 <template>
-  <div v-if="!isAgent" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-    <Card v-for="stat in statistics" :key="stat.label" size="small">
-      <Statistic :title="stat.label" :value="stat.value" />
-      <p class="mt-1 text-xs text-slate-500">{{ stat.trend }}</p>
-    </Card>
-  </div>
-  <div v-else
+  <div
     :class="
       isAgent
         ? 'grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4'

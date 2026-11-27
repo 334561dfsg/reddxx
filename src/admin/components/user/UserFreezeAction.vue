@@ -1,6 +1,4 @@
 <script setup>
-import { AdminButton } from '../antd/controls.js'
-
 import { computed, ref } from 'vue'
 import { USER_STATUS } from '../../constants/user'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
@@ -87,7 +85,7 @@ const confirm = () => {
 </script>
 
 <template>
-  <AdminButton
+  <button
     v-if="showTrigger"
     type="button"
     class="inline-flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg ring-1 bg-white transition-colors"
@@ -99,7 +97,7 @@ const confirm = () => {
       <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
     {{ freezeDialog.isUnfreeze ? '解封' : '封户' }}
-  </AdminButton>
+  </button>
 
   <Teleport to="body">
     <Transition name="user-action-dialog" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
@@ -116,7 +114,7 @@ const confirm = () => {
                 <div class="text-xs font-medium tracking-wide text-slate-500">操作</div>
                 <div id="user-freeze-title" ref="titleRef" tabindex="-1" class="mt-1 text-base font-semibold text-slate-900 outline-none">确认操作</div>
               </div>
-              <AdminButton
+              <button
                 type="button"
                 class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors"
                 @click="close"
@@ -125,7 +123,7 @@ const confirm = () => {
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </AdminButton>
+              </button>
             </div>
           </header>
 
@@ -139,21 +137,21 @@ const confirm = () => {
             </div>
 
             <div class="mt-5 flex justify-end gap-3">
-              <AdminButton
+              <button
                 type="button"
                 class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                 @click="close"
               >
                 取消
-              </AdminButton>
-              <AdminButton
+              </button>
+              <button
                 type="button"
                 class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors"
                 :class="freezeDialog.confirmButtonClass"
                 @click="confirm"
               >
                 {{ freezeDialog.confirmText }}
-              </AdminButton>
+              </button>
             </div>
           </div>
         </section>

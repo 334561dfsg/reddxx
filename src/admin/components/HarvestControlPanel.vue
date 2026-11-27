@@ -1,9 +1,4 @@
 <script setup>
-import { Table } from 'ant-design-vue'
-const TableColumn = Table.Column
-
-import { AdminButton, AdminCheckbox, AdminInput, AdminRadio, AdminSlider } from './antd/controls.js'
-
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
 const clamp = (n, min, max) => Math.min(max, Math.max(min, n))
@@ -878,13 +873,13 @@ const klineSvg = computed(() => {
                 <span>设置结算策略并预览影响，确认后执行场控</span>
               </div>
             </div>
-          <AdminButton
+          <button
             type="button"
             class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
             @click="close"
           >
             关闭
-          </AdminButton>
+          </button>
           </div>
 
           <div class="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-2.5">
@@ -938,30 +933,52 @@ const klineSvg = computed(() => {
 
               <div class="space-y-4 h-full">
                 <div class="max-h-[90%] overflow-auto">
-                  <Table :data-source="topProfitUsers" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="pos => pos.uid"  ><TableColumn key="column-0"><template #title>UID</template><template #default="{ record: pos, index: rowIndex }"><div class="px-3 py-2 align-top font-mono text-slate-900">{{ pos.uid }}</div></template></TableColumn><TableColumn key="column-1"><template #title>方向</template><template #default="{ record: pos, index: rowIndex }"><div class="px-3 py-2 align-top">
+                  <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-50 text-[11px] text-slate-500">
+                      <tr>
+                        <th class="px-3 py-2 font-medium">UID</th>
+                        <th class="px-3 py-2 font-medium">方向</th>
+                        <th class="px-3 py-2 font-medium">本金 / 开仓价</th>
+                        <th class="px-3 py-2 font-medium">当前盈亏</th>
+                        <th class="px-3 py-2 font-medium">爆仓/止损</th>
+                        <th class="px-3 py-2 font-medium text-right">选择</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                      <tr v-for="pos in topProfitUsers" :key="pos.uid" class="hover:bg-slate-50/60">
+                        <td class="px-3 py-2 align-top font-mono text-slate-900">{{ pos.uid }}</td>
+                        <td class="px-3 py-2 align-top">
                           <span
                             class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold"
                             :class="pos.side === 'long' ? 'bg-blue-100 text-blue-700' : 'bg-rose-100 text-rose-700'"
                           >
                             {{ pos.side === 'long' ? '多' : '空' }}
                           </span>
-                        </div></template></TableColumn><TableColumn key="column-2"><template #title>本金 / 开仓价</template><template #default="{ record: pos, index: rowIndex }"><div class="px-3 py-2 align-top">
+                        </td>
+                        <td class="px-3 py-2 align-top">
                           <div class="font-mono text-slate-700">{{ formatCompactUsd(pos.principal) }}</div>
                           <div class="mt-1 font-mono text-[11px] text-slate-500">{{ formatPrice(pos.entryPrice) }}</div>
-                        </div></template></TableColumn><TableColumn key="column-3"><template #title>当前盈亏</template><template #default="{ record: pos, index: rowIndex }"><div class="px-3 py-2 align-top font-mono" :class="pos.pnlNow < 0 ? 'text-rose-700' : 'text-emerald-700'">
+                        </td>
+                        <td class="px-3 py-2 align-top font-mono" :class="pos.pnlNow < 0 ? 'text-rose-700' : 'text-emerald-700'">
                           {{ formatCompactUsd(pos.pnlNow, true) }}
-                        </div></template></TableColumn><TableColumn key="column-4"><template #title>爆仓/止损</template><template #default="{ record: pos, index: rowIndex }"><div class="px-3 py-2 align-top">
+                        </td>
+                        <td class="px-3 py-2 align-top">
                           <div class="font-mono text-[11px] text-slate-700">{{ formatPrice(pos.liquidationPrice) }}</div>
                           <div class="mt-1 font-mono text-[11px] text-slate-500">{{ formatPrice(pos.stopLossPrice) }}</div>
-                        </div></template></TableColumn><TableColumn key="column-5"><template #title>选择</template><template #default="{ record: pos, index: rowIndex }"><div class="px-3 py-2 align-top text-right">
-                          <AdminCheckbox
+                        </td>
+                        <td class="px-3 py-2 align-top text-right">
+                          <input
+                            type="checkbox"
                             :aria-label="`选择 ${pos.uid} 的持仓`"
                             class="h-4 w-4 rounded border-slate-300 text-slate-900 disabled:opacity-40"
                             :disabled="locked"
                             :value="pos.uid"
                             v-model="selectedUids"
                           />
-                        </div></template></TableColumn></Table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </section>
@@ -980,20 +997,34 @@ const klineSvg = computed(() => {
                 <div class="space-y-2">
                   <div class="text-xs font-semibold text-slate-900">结算策略</div>
                   <div class="grid grid-cols-2 gap-2">
-                    <AdminRadio class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2" name="mode" value="force" v-model="mode" :disabled="locked || !ready">
-
+                    <label class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2">
+                      <input
+                        type="radio"
+                        name="mode"
+                        value="force"
+                        class="h-4 w-4 text-slate-900"
+                        v-model="mode"
+                        :disabled="locked || !ready"
+                      />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-slate-900">统一结算</div>
                         <div class="text-[11px] text-slate-500">多空同价，易解释</div>
                       </div>
-                    </AdminRadio>
-                    <AdminRadio class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2" name="mode" value="squeeze" v-model="mode" :disabled="locked || !ready">
-
+                    </label>
+                    <label class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2">
+                      <input
+                        type="radio"
+                        name="mode"
+                        value="squeeze"
+                        class="h-4 w-4 text-slate-900"
+                        v-model="mode"
+                        :disabled="locked || !ready"
+                      />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-slate-900">双向挤压</div>
                         <div class="text-[11px] text-slate-500">多空不同价，强度更高</div>
                       </div>
-                    </AdminRadio>
+                    </label>
                   </div>
                 </div>
 
@@ -1008,18 +1039,39 @@ const klineSvg = computed(() => {
                   <div class="space-y-2">
                     <div class="text-xs font-semibold text-slate-900">目标偏好</div>
                     <div class="grid grid-cols-3 gap-2 text-[11px]">
-                      <AdminRadio class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2" name="outcomeBias" value="user_win" v-model="outcomeBias" :disabled="locked || !ready">
-
+                      <label class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2">
+                        <input
+                          type="radio"
+                          name="outcomeBias"
+                          value="user_win"
+                          class="h-4 w-4 text-slate-900"
+                          v-model="outcomeBias"
+                          :disabled="locked || !ready"
+                        />
                         <div class="text-slate-900">偏向用户</div>
-                      </AdminRadio>
-                      <AdminRadio class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2" name="outcomeBias" value="balanced" v-model="outcomeBias" :disabled="locked || !ready">
-
+                      </label>
+                      <label class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2">
+                        <input
+                          type="radio"
+                          name="outcomeBias"
+                          value="balanced"
+                          class="h-4 w-4 text-slate-900"
+                          v-model="outcomeBias"
+                          :disabled="locked || !ready"
+                        />
                         <div class="text-slate-900">中性</div>
-                      </AdminRadio>
-                      <AdminRadio class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2" name="outcomeBias" value="user_lose" v-model="outcomeBias" :disabled="locked || !ready">
-
+                      </label>
+                      <label class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2">
+                        <input
+                          type="radio"
+                          name="outcomeBias"
+                          value="user_lose"
+                          class="h-4 w-4 text-slate-900"
+                          v-model="outcomeBias"
+                          :disabled="locked || !ready"
+                        />
                         <div class="text-slate-900">偏向平台</div>
-                      </AdminRadio>
+                      </label>
                     </div>
                     <div class="text-[11px] text-slate-500">通过选择结算价，让整体胜率趋势靠近目标值；不保证每单命中</div>
                   </div>
@@ -1029,9 +1081,17 @@ const klineSvg = computed(() => {
                       <div class="text-[11px] font-semibold text-slate-700">偏向程度</div>
                       <div class="font-mono text-[11px] text-slate-700">目标胜率 {{ Math.round(targetWinRate * 100) }}%</div>
                     </div>
-                    <AdminSlider min="0" max="100" step="1" v-model.number="outcomeIntensity" :disabled="locked || !ready || outcomeBias === 'balanced'" class="w-full accent-slate-900 disabled:opacity-40" />
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="1"
+                      v-model.number="outcomeIntensity"
+                      :disabled="locked || !ready || outcomeBias === 'balanced'"
+                      class="w-full accent-slate-900 disabled:opacity-40"
+                    />
                     <div class="flex flex-wrap items-center gap-2">
-                      <AdminButton
+                      <button
                         v-for="p in intensityPresets"
                         :key="`preset-${p.value}`"
                         type="button"
@@ -1040,7 +1100,7 @@ const klineSvg = computed(() => {
                         @click="outcomeIntensity = p.value"
                       >
                         {{ p.label }}
-                      </AdminButton>
+                      </button>
                       <div v-if="outcomeBias === 'balanced'" class="text-[11px] text-slate-400">中性模式不启用偏向</div>
                     </div>
                   </div>
@@ -1050,7 +1110,7 @@ const klineSvg = computed(() => {
                       <div class="text-[11px] font-semibold text-slate-700">挤压跨度（Points）</div>
                       <div class="font-mono text-[11px] text-slate-700">Gap {{ formatPrice(squeezeGap) }}</div>
                     </div>
-                    <AdminInput
+                    <input
                       type="number"
                       class="h-9 w-full rounded-lg border border-slate-200 px-3 font-mono text-sm text-slate-900 focus:outline-none disabled:bg-slate-50"
                       v-model.number="squeezePoints"
@@ -1060,18 +1120,23 @@ const klineSvg = computed(() => {
                   </div>
 
                   <div class="flex items-center justify-between gap-3">
-                    <AdminCheckbox class="flex items-center gap-2 text-[11px] text-slate-500" v-model="autoApplyRecommendation" :disabled="locked || !ready">
-
+                    <label class="flex items-center gap-2 text-[11px] text-slate-500">
+                      <input
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-slate-300 text-slate-900 disabled:opacity-40"
+                        v-model="autoApplyRecommendation"
+                        :disabled="locked || !ready"
+                      />
                       自动应用推荐
-                    </AdminCheckbox>
-                    <AdminButton
+                    </label>
+                    <button
                       type="button"
                       class="text-[11px] font-semibold text-slate-700 hover:text-slate-900 disabled:opacity-40"
                       :disabled="locked || !ready"
                       @click="showAdvanced = !showAdvanced"
                     >
                       {{ showAdvanced ? '收起高级设置' : '展开高级设置' }}
-                    </AdminButton>
+                    </button>
                   </div>
 
                   <div v-if="showAdvanced" class="space-y-3 pt-1">
@@ -1080,39 +1145,57 @@ const klineSvg = computed(() => {
                         <div class="text-[11px] font-semibold text-slate-700">价格偏离上限</div>
                         <div class="font-mono text-[11px] text-slate-700">±{{ Number(deviationPctLimit || 0).toFixed(1) }}%</div>
                       </div>
-                      <AdminSlider min="0.2" max="8" step="0.1" v-model.number="deviationPctLimit" :disabled="locked || !ready" class="w-full accent-slate-900 disabled:opacity-40" />
+                      <input
+                        type="range"
+                        min="0.2"
+                        max="8"
+                        step="0.1"
+                        v-model.number="deviationPctLimit"
+                        :disabled="locked || !ready"
+                        class="w-full accent-slate-900 disabled:opacity-40"
+                      />
                       <div class="text-[11px] text-slate-500">
                         推荐区间 {{ formatPrice(recommendRange.min) }} ~ {{ formatPrice(recommendRange.max) }} · Tick {{ formatPrice(tickSize) }}
                       </div>
                     </div>
 
-                    <AdminCheckbox class="flex items-center justify-between gap-3" v-model="windowPriceEnabled" :disabled="locked || !ready">
+                    <label class="flex items-center justify-between gap-3">
                       <div class="min-w-0">
                         <div class="text-[11px] font-semibold text-slate-700">时间窗口修正</div>
                         <div class="text-[11px] text-slate-500">以窗口均价作为参考标记价（{{ Math.round(contractWindowSec) }}s）</div>
                       </div>
-
-                    </AdminCheckbox>
+                      <input
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-slate-300 text-slate-900 disabled:opacity-40"
+                        v-model="windowPriceEnabled"
+                        :disabled="locked || !ready"
+                      />
+                    </label>
 
                     <div class="space-y-2">
-                      <AdminCheckbox class="flex items-center justify-between gap-3" v-model="advancedTune" :disabled="locked || !ready">
+                      <label class="flex items-center justify-between gap-3">
                         <span class="text-[11px] font-semibold text-slate-700">高级微调</span>
-
-                      </AdminCheckbox>
+                        <input
+                          type="checkbox"
+                          class="h-4 w-4 rounded border-slate-300 text-slate-900 disabled:opacity-40"
+                          v-model="advancedTune"
+                          :disabled="locked || !ready"
+                        />
+                      </label>
 
                       <div v-if="advancedTune" class="space-y-2">
                         <div class="text-[11px] text-slate-500">仅用于最后 1-2 Tick 校正</div>
 
                         <div v-if="mode === 'force'" class="flex items-center gap-2">
-                          <AdminButton
+                          <button
                             type="button"
                             class="h-9 w-9 shrink-0 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 flex items-center justify-center leading-none"
                             :disabled="locked || !ready"
                             @click="nudge(-1)"
                           >
                             -
-                          </AdminButton>
-                          <AdminInput
+                          </button>
+                          <input
                             type="number"
                             class="h-9 min-w-0 flex-1 rounded-lg border border-slate-200 px-3 font-mono text-sm text-slate-900 focus:outline-none disabled:bg-slate-50"
                             v-model.number="controlPrice"
@@ -1121,26 +1204,26 @@ const klineSvg = computed(() => {
                             :max="priceMax"
                             :disabled="locked || !ready"
                           />
-                          <AdminButton
+                          <button
                             type="button"
                             class="h-9 w-9 shrink-0 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 flex items-center justify-center leading-none"
                             :disabled="locked || !ready"
                             @click="nudge(1)"
                           >
                             +
-                          </AdminButton>
+                          </button>
                         </div>
 
                         <div v-else class="flex items-center gap-2">
-                          <AdminButton
+                          <button
                             type="button"
                             class="h-9 w-9 shrink-0 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 flex items-center justify-center leading-none"
                             :disabled="locked || !ready"
                             @click="squeezeNudge(-1)"
                           >
                             -
-                          </AdminButton>
-                          <AdminInput
+                          </button>
+                          <input
                             type="number"
                             class="h-9 min-w-0 flex-1 rounded-lg border border-slate-200 px-3 font-mono text-sm text-slate-900 focus:outline-none disabled:bg-slate-50"
                             v-model.number="squeezeCenter"
@@ -1149,14 +1232,14 @@ const klineSvg = computed(() => {
                             :max="squeezeCenterMax"
                             :disabled="locked || !ready"
                           />
-                          <AdminButton
+                          <button
                             type="button"
                             class="h-9 w-9 shrink-0 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 flex items-center justify-center leading-none"
                             :disabled="locked || !ready"
                             @click="squeezeNudge(1)"
                           >
                             +
-                          </AdminButton>
+                          </button>
                         </div>
 
                         <div v-if="mode === 'squeeze'" class="grid grid-cols-2 gap-2 text-[11px]">
@@ -1176,14 +1259,14 @@ const klineSvg = computed(() => {
                   <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 space-y-1.5">
                     <div class="flex items-center justify-between gap-2">
                       <div class="text-[11px] text-slate-500">推荐结算</div>
-                      <AdminButton
+                      <button
                         type="button"
                         class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40"
                         :disabled="locked || !ready"
                         @click="applyRecommended"
                       >
                         应用
-                      </AdminButton>
+                      </button>
                     </div>
                     <div class="font-mono text-sm text-slate-900">
                       <span v-if="mode === 'squeeze'">{{ formatPrice(recommendedSettlementPrices.long) }} / {{ formatPrice(recommendedSettlementPrices.short) }}</span>
@@ -1215,14 +1298,14 @@ const klineSvg = computed(() => {
               </div>
 
               <div class="border-t border-slate-200 bg-white p-5">
-                <AdminButton
+                <button
                   type="button"
                   class="w-full rounded-xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white hover:bg-rose-500 disabled:opacity-50"
                   :disabled="locked || !ready"
                   @click="lockPlan"
                 >
                   执行方案
-                </AdminButton>
+                </button>
               </div>
             </section>
 
@@ -1370,25 +1453,25 @@ const klineSvg = computed(() => {
                   <div class="mt-3 grid grid-cols-3 gap-2 text-[11px] text-slate-500">
                     <div>
                       <div class="text-slate-400">盈亏平衡</div>
-                      <AdminButton
+                      <button
                         type="button"
                         class="font-mono text-slate-900 hover:underline disabled:opacity-40"
                         :disabled="locked"
                         @click="fillSettlementPrice(breakevenPoint.price, '盈亏平衡')"
                       >
                         {{ formatPrice(breakevenPoint.price) }}
-                      </AdminButton>
+                      </button>
                     </div>
                     <div>
                       <div class="text-slate-400">最大利润点</div>
-                      <AdminButton
+                      <button
                         type="button"
                         class="font-mono text-slate-900 hover:underline disabled:opacity-40"
                         :disabled="locked"
                         @click="fillSettlementPrice(bestPoint.price, '最大利润点')"
                       >
                         {{ formatPrice(bestPoint.price) }}
-                      </AdminButton>
+                      </button>
                     </div>
                     <div>
                       <div class="text-slate-400">预演结算价</div>

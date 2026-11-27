@@ -1,11 +1,11 @@
 <script setup>
-import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { ref, computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { agentApi, normalizeAgentProductCommission } from '../../../admin/mock/agent.js'
 import { AGENT_STATUS, AGENT_STATUS_OPTIONS, AGENT_ROLE_LABEL } from '../../../admin/constants/agent.js'
 import { AGENT_PRODUCT_LINE_DEFS, AGENT_PRODUCT_GROUPS, normalizeAgentLineRate } from '../../../admin/constants/agentCommission.js'
 import AgentDeliveryCard from '../../../admin/components/agent/AgentDeliveryCard.vue'
 import AgentUpgradeDialog from '../../../admin/components/agent/AgentUpgradeDialog.vue'
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 
 const searchKeyword = ref('')
 const statusFilter = ref('all')
@@ -364,15 +364,21 @@ const formatDate = (dateString) => {
       >
         <div class="flex flex-wrap items-center gap-3 flex-1 min-w-0">
           <h3 class="text-base font-semibold text-slate-900 shrink-0">代理列表</h3>
-          <a-select v-model:value="statusFilter" class="!w-36" @change="handleSearch">
-            <a-select-option value="all">全部状态</a-select-option>
-            <a-select-option v-for="status in AGENT_STATUS_OPTIONS" :key="status.value" :value="status.value">
+          <select v-model="statusFilter" class="ant-select !w-36" @change="handleSearch">
+            <option value="all">全部状态</option>
+            <option v-for="status in AGENT_STATUS_OPTIONS" :key="status.value" :value="status.value">
               {{ status.label }}
-            </a-select-option>
-          </a-select>
+            </option>
+          </select>
 
           <div class="relative min-w-[180px] max-w-xl flex-1 basis-[200px]">
-            <a-input v-model:value="searchKeyword" type="text" placeholder="搜索 UID、用户名或邮箱…" class="pl-9" @keyup.enter="handleSearch" />
+            <input
+              v-model="searchKeyword"
+              type="text"
+              placeholder="搜索 UID、用户名或邮箱…"
+              class="ant-input pl-9"
+              @keyup.enter="handleSearch"
+            />
             <svg
               viewBox="0 0 20 20"
               class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400"
@@ -383,10 +389,10 @@ const formatDate = (dateString) => {
             </svg>
           </div>
 
-          <a-button html-type="button" class="shrink-0" @click="handleSearch" type="primary">搜索</a-button>
-          <a-button html-type="button" class="shrink-0" @click="handleReset">重置</a-button>
+          <button type="button" class="ant-btn ant-btn-primary shrink-0" @click="handleSearch">搜索</button>
+          <button type="button" class="ant-btn shrink-0" @click="handleReset">重置</button>
         </div>
-        <a-button html-type="button" class="shrink-0" @click="openUpgradeModal" type="primary">+ 添加代理</a-button>
+        <button type="button" class="ant-btn ant-btn-primary shrink-0" @click="openUpgradeModal">+ 添加代理</button>
       </div>
 
       <div class="overflow-x-auto">
@@ -397,46 +403,69 @@ const formatDate = (dateString) => {
           <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
         </div>
 
-        <a-table  :data-source="agentList" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(agent) => agent.id" :custom-row="(agent, index) => ({ class: [&quot;hover:bg-gray-50&quot;] })">
-<a-table-column key="column-0" ><template #title>UID</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap text-sm font-medium text-gray-900">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">UID</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">用户信息</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">状态</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">推荐人数</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">累计佣金</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">成为代理时间</th>
+              <th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-slate-200">
+            <tr v-for="agent in agentList" :key="agent.id" class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {{ agent.uid }}
-              </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>用户信息</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap">
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-medium text-gray-900">{{ agent.username }}</div>
                 <div class="text-sm text-gray-500">{{ agent.email }}</div>
                 <div class="mt-0.5 text-xs text-slate-400">登录账号：{{ agent.loginAccount || agent.email }}</div>
-              </div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>状态</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap">
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
                 <span
                   :class="`px-2 py-1 text-xs font-semibold rounded-full bg-${getStatusConfig(agent.status).color}-100 text-${getStatusConfig(agent.status).color}-800`"
                 >
                   {{ getStatusConfig(agent.status).text }}
                 </span>
-              </div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>推荐人数</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap text-sm text-gray-900">
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {{ agent.totalReferrals }}
-              </div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>累计佣金</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap text-sm text-gray-900">
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 <div class="font-semibold">${{ agent.totalCommission.toLocaleString() }}</div>
                 <div class="text-xs text-gray-500">本月: ${{ agent.monthCommission.toLocaleString() }}</div>
-              </div></template></a-table-column>
-<a-table-column key="column-5" ><template #title>成为代理时间</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap text-sm text-gray-500">
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ formatDate(agent.createdAt) }}
-              </div></template></a-table-column>
-<a-table-column key="column-6" align="right"><template #title>操作</template><template #default="{ record: agent, index: index }"><div class="  whitespace-nowrap text-right text-sm font-medium space-x-2">
-                <a-button html-type="button" class="text-blue-600 hover:text-blue-900" @click="viewDetail(agent)">详情</a-button>
-                <a-button html-type="button" class="text-emerald-600 hover:text-emerald-900" @click="openAccountSettings(agent)">账号设置</a-button>
-                <a-button html-type="button" class="text-violet-600 hover:text-violet-900" @click="openCommissionConfig(agent)">
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                <button type="button" class="text-blue-600 hover:text-blue-900" @click="viewDetail(agent)">详情</button>
+                <button type="button" class="text-emerald-600 hover:text-emerald-900" @click="openAccountSettings(agent)">账号设置</button>
+                <button type="button" class="text-violet-600 hover:text-violet-900" @click="openCommissionConfig(agent)">
                   记佣配置
-                </a-button>
-                <a-button v-if="agent.status === AGENT_STATUS.ACTIVE" html-type="button" class="text-yellow-600 hover:text-yellow-900" @click="updateStatus(agent, AGENT_STATUS.SUSPENDED)">
+                </button>
+                <button
+                  v-if="agent.status === AGENT_STATUS.ACTIVE"
+                  type="button"
+                  class="text-yellow-600 hover:text-yellow-900"
+                  @click="updateStatus(agent, AGENT_STATUS.SUSPENDED)"
+                >
                   暂停
-                </a-button>
-                <a-button v-else html-type="button" class="text-green-600 hover:text-green-900" @click="updateStatus(agent, AGENT_STATUS.ACTIVE)">
+                </button>
+                <button v-else type="button" class="text-green-600 hover:text-green-900" @click="updateStatus(agent, AGENT_STATUS.ACTIVE)">
                   激活
-                </a-button>
-              </div></template></a-table-column><template #emptyText>暂无代理数据</template>
-</a-table>
+                </button>
+              </td>
+            </tr>
+            <tr v-if="agentList.length === 0 && !loading">
+              <td colspan="7" class="px-6 py-10 text-center text-gray-500">暂无代理数据</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div
@@ -445,15 +474,58 @@ const formatDate = (dateString) => {
       >
         <div class="text-sm text-slate-700">
           共 <span class="font-medium">{{ pagination.total }}</span> 条记录， 每页显示
-          <a-select v-model:value="pagination.pageSize" class="!w-16" @change="handleSearch">
-            <a-select-option :value="10">10</a-select-option>
-            <a-select-option :value="20">20</a-select-option>
-            <a-select-option :value="50">50</a-select-option>
-            <a-select-option :value="100">100</a-select-option>
-          </a-select>
+          <select
+            v-model="pagination.pageSize"
+            class="ant-select !w-16 !h-7 !py-0 !px-1 text-xs"
+            @change="handleSearch"
+          >
+            <option :value="10">10</option>
+            <option :value="20">20</option>
+            <option :value="50">50</option>
+            <option :value="100">100</option>
+          </select>
           条
         </div>
-        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false"  :disabled="loading" @change="pagination.currentPage = $event" />
+        <div class="flex items-center space-x-2">
+          <button
+            type="button"
+            class="ant-btn !h-8 !px-3 !text-xs disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            :disabled="pagination.currentPage === 1 || loading"
+            @click="pagination.currentPage--"
+          >
+            上一页
+          </button>
+
+          <div class="flex items-center space-x-1">
+            <template v-for="page in totalPages" :key="page">
+              <button
+                v-if="page === 1 || page === totalPages || (page >= pagination.currentPage - 1 && page <= pagination.currentPage + 1)"
+                type="button"
+                :class="[
+                  'ant-btn !h-8 !w-8 !p-0 !text-xs transition-colors',
+                  pagination.currentPage === page ? 'ant-btn-primary' : ''
+                ]"
+                @click="pagination.currentPage = page"
+              >
+                {{ page }}
+              </button>
+              <span v-else-if="page === 2 && pagination.currentPage > 3" class="text-slate-400 text-xs px-1">...</span>
+              <span
+                v-else-if="page === totalPages - 1 && pagination.currentPage < totalPages - 2"
+                class="text-slate-400 text-xs px-1"
+              >...</span>
+            </template>
+          </div>
+
+          <button
+            type="button"
+            class="ant-btn !h-8 !px-3 !text-xs disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            :disabled="pagination.currentPage === totalPages || loading"
+            @click="pagination.currentPage++"
+          >
+            下一页
+          </button>
+        </div>
       </div>
     </div>
 
@@ -465,13 +537,25 @@ const formatDate = (dateString) => {
 
     <!-- 代理登录账号设置 -->
     <Teleport to="body">
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showAccountModal && accountTarget)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeAccountModal"><template #title><template v-if="Boolean(showAccountModal && accountTarget)"><header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+      <div
+        v-if="showAccountModal && accountTarget"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+      >
+        <div
+          class="flex max-h-[calc(100vh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="agent-account-title"
+        >
+          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
             <div class="min-w-0">
               <h3 id="agent-account-title" class="text-lg font-semibold text-slate-900">代理登录账号设置</h3>
               <p class="mt-1 break-words text-sm text-slate-500">{{ accountTarget.username }} · UID {{ accountTarget.uid }}</p>
             </div>
-            <a-button aria-label="关闭" html-type="button" class="flex min-w-10 items-center justify-center text-2xl text-slate-400 hover:bg-slate-100"  @click="closeAccountModal">×</a-button>
-          </header></template></template><template v-if="showAccountModal && accountTarget"><div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+            <button type="button" class="flex min-h-10 min-w-10 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100" aria-label="关闭" @click="closeAccountModal">×</button>
+          </header>
+
+          <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
             <FeedbackToast v-if="accountError" type="error" :source="() => (accountError) ? (accountError) : ''"></FeedbackToast>
 
             <AgentDeliveryCard
@@ -483,11 +567,11 @@ const formatDate = (dateString) => {
             <template v-else>
               <label class="block">
                 <span class="text-sm font-medium text-slate-700">登录账号 <span class="text-rose-500">*</span></span>
-                <a-input v-model:value="accountForm.loginAccount" type="text" autocomplete="off" class="mt-1.5" />
+                <input v-model="accountForm.loginAccount" type="text" autocomplete="off" class="ant-input mt-1.5" />
               </label>
 
               <label class="flex items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                <a-checkbox v-model:checked="accountForm.resetPassword" class="mt-1" @change="accountForm.resetPassword && setAccountPasswordMode('auto')" />
+                <input v-model="accountForm.resetPassword" type="checkbox" class="mt-1" @change="accountForm.resetPassword && setAccountPasswordMode('auto')" />
                 <span>
                   <span class="block font-medium text-slate-900">重置登录密码</span>
                   <span class="mt-0.5 block text-xs text-slate-500">不会展示旧密码；重置后只在本次结果中展示新密码。</span>
@@ -495,47 +579,69 @@ const formatDate = (dateString) => {
               </label>
 
 
-
               <div v-if="accountForm.resetPassword" class="grid gap-4 sm:grid-cols-2">
                 <div class="sm:col-span-2 flex flex-wrap gap-2">
-                  <a-button html-type="button" class="" :class="accountForm.passwordMode === 'auto' ? 'ant-btn-primary' : ''" @click="setAccountPasswordMode('auto')">自动生成</a-button>
-                  <a-button html-type="button" class="" :class="accountForm.passwordMode === 'manual' ? 'ant-btn-primary' : ''" @click="setAccountPasswordMode('manual')">手动输入</a-button>
+                  <button type="button" class="ant-btn" :class="accountForm.passwordMode === 'auto' ? 'ant-btn-primary' : ''" @click="setAccountPasswordMode('auto')">自动生成</button>
+                  <button type="button" class="ant-btn" :class="accountForm.passwordMode === 'manual' ? 'ant-btn-primary' : ''" @click="setAccountPasswordMode('manual')">手动输入</button>
                 </div>
                 <label class="block">
                   <span class="text-sm font-medium text-slate-700">新密码</span>
-                  <a-input v-model:value="accountForm.password" type="password" autocomplete="new-password" class="mt-1.5" />
+                  <input v-model="accountForm.password" type="password" autocomplete="new-password" class="ant-input mt-1.5" />
                 </label>
                 <label class="block">
                   <span class="text-sm font-medium text-slate-700">确认新密码</span>
-                  <a-input v-model:value="accountForm.confirmPassword" type="password" autocomplete="new-password" class="mt-1.5" />
+                  <input v-model="accountForm.confirmPassword" type="password" autocomplete="new-password" class="ant-input mt-1.5" />
                 </label>
               </div>
             </template>
-          </div></template><template #footer><template v-if="Boolean(showAccountModal && accountTarget)"><footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
-            <a-button html-type="button" class="" @click="closeAccountModal">{{ accountDelivery ? '关闭' : '取消' }}</a-button>
-            <a-button v-if="!accountDelivery" html-type="button" class="" :disabled="accountSaving" @click="saveAccountSettings" type="primary">
+          </div>
+
+          <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-3">
+            <button type="button" class="ant-btn" @click="closeAccountModal">{{ accountDelivery ? '关闭' : '取消' }}</button>
+            <button v-if="!accountDelivery" type="button" class="ant-btn ant-btn-primary" :disabled="accountSaving" @click="saveAccountSettings">
               {{ accountSaving ? '保存中…' : '保存设置' }}
-            </a-button>
-          </footer></template></template></a-modal>
+            </button>
+          </footer>
+        </div>
+      </div>
     </Teleport>
 
     <!-- 产品线记佣（紧凑行式布局；底栏固定，避免无法取消） -->
     <Teleport to="body">
-    <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showCommissionModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeCommissionModal"><template #title><template v-if="Boolean(showCommissionModal)"><div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 sm:px-5">
+    <div
+      v-if="showCommissionModal"
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-3 sm:p-4"
+    >
+      <div
+        class="flex max-h-[min(88vh,920px)] w-full max-w-3xl flex-col overflow-hidden rounded-xl bg-white shadow-xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="commission-modal-title"
+        @click.stop
+      >
+        <div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 sm:px-5">
           <div class="min-w-0">
             <h3 id="commission-modal-title" class="text-base font-semibold text-slate-900">代理产品线记佣</h3>
             <p class="mt-0.5 font-mono text-xs text-slate-500">UID {{ commissionTargetUid }}</p>
           </div>
-          <a-button aria-label="关闭" html-type="button" class="shrink-0 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"  @click="closeCommissionModal">
+          <button
+            type="button"
+            class="shrink-0 rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            aria-label="关闭"
+            @click="closeCommissionModal"
+          >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </a-button>
-        </div></template></template><template v-if="showCommissionModal"><div v-if="commissionLoading" class="flex min-h-[12rem] flex-1 flex-col items-center justify-center px-4 py-10">
+          </button>
+        </div>
+
+        <div v-if="commissionLoading" class="flex min-h-[12rem] flex-1 flex-col items-center justify-center px-4 py-10">
           <div class="h-9 w-9 animate-spin rounded-full border-2 border-slate-200 border-t-violet-600"></div>
           <p class="mt-3 text-xs text-slate-500">加载中…</p>
         </div>
-<div v-else-if="commissionDraft" class="min-h-0 flex-1 overflow-y-auto px-4 py-3 sm:px-5">
+
+        <div v-else-if="commissionDraft" class="min-h-0 flex-1 overflow-y-auto px-4 py-3 sm:px-5">
           <div class="space-y-3">
             <div v-for="group in AGENT_PRODUCT_GROUPS" :key="group.id" class="overflow-hidden rounded-lg border border-slate-200">
               <div
@@ -561,7 +667,17 @@ const formatDate = (dateString) => {
                     <!-- 开关单独一区，与比例输入用竖线隔开，避免视觉上「开关跑进输入框」 -->
                     <div class="flex shrink-0 items-center gap-2">
                       <span class="w-7 shrink-0 text-right text-[11px] text-slate-400">记佣</span>
-                      <a-switch :checked="isLineEnabledDraft(line)" @change="toggleLineDraft(line)" @click="(_checked, event) => event.stopPropagation()" :aria-label="line.title || line.label || line.key" />
+                      <button
+                        type="button"
+                        :class="isLineEnabledDraft(line) ? 'bg-blue-600' : 'bg-slate-200'"
+                        class="relative z-[1] inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none"
+                        @click.stop="toggleLineDraft(line)"
+                      >
+                        <span
+                          :class="isLineEnabledDraft(line) ? 'translate-x-4' : 'translate-x-0'"
+                          class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition"
+                        />
+                      </button>
                     </div>
 
                     <div
@@ -573,7 +689,16 @@ const formatDate = (dateString) => {
                           class="inline-flex h-8 max-w-full items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 shadow-sm"
                         >
                           <span class="select-none text-[11px] font-medium text-slate-400">r</span>
-                          <a-input :id="'ac-rate-' + line.key" type="number" :min="0" :max="1" :step="0.001" class="w-[5.5rem] max-w-full text-right font-medium tabular-nums text-slate-800 [appearance:textfield] placeholder:text-slate-300 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" :value="rateNumForDraft(line)" @input="setDraftRate(line, $event.target.value)" />
+                          <input
+                            :id="'ac-rate-' + line.key"
+                            type="number"
+                            min="0"
+                            max="1"
+                            step="0.001"
+                            class="h-6 w-[5.5rem] max-w-full border-0 bg-transparent p-0 text-right text-sm font-medium tabular-nums text-slate-800 outline-none ring-0 [appearance:textfield] placeholder:text-slate-300 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                            :value="rateNumForDraft(line)"
+                            @input="setDraftRate(line, $event.target.value)"
+                          />
                         </div>
                         <span class="shrink-0 text-xs tabular-nums text-slate-500" title="折算百分比">
                           ≈ {{ (rateNumForDraft(line) * 100).toFixed(2) }}%
@@ -589,26 +714,44 @@ const formatDate = (dateString) => {
             </div>
           </div>
         </div>
-<div v-else class="flex min-h-[8rem] flex-1 flex-col items-center justify-center px-4 py-8 text-center">
+
+        <div v-else class="flex min-h-[8rem] flex-1 flex-col items-center justify-center px-4 py-8 text-center">
           <p class="text-sm text-slate-500">未能加载记佣数据，请关闭后重试。</p>
-        </div></template><template #footer><template v-if="Boolean(showCommissionModal)"><div class="flex shrink-0 justify-end gap-2 border-t border-slate-100 bg-slate-50/50 px-4 py-3 sm:px-5">
-          <a-button html-type="button" class="" @click="closeCommissionModal">取消</a-button>
-          <a-button v-if="commissionDraft" html-type="button" class="min-w-[5.5rem]" :disabled="commissionSaving || commissionLoading" @click="saveCommissionConfig" type="primary">
+        </div>
+
+        <div class="flex shrink-0 justify-end gap-2 border-t border-slate-100 bg-slate-50/50 px-4 py-3 sm:px-5">
+          <button type="button" class="ant-btn !h-9" @click="closeCommissionModal">取消</button>
+          <button
+            v-if="commissionDraft"
+            type="button"
+            class="ant-btn ant-btn-primary !h-9 min-w-[5.5rem]"
+            :disabled="commissionSaving || commissionLoading"
+            @click="saveCommissionConfig"
+          >
             {{ commissionSaving ? '保存中…' : '保存' }}
-          </a-button>
-        </div></template></template></a-modal>
+          </button>
+        </div>
+      </div>
+    </div>
     </Teleport>
 
     <!-- 详情 -->
     <Teleport to="body">
-    <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showDetailModal && selectedAgent)" :mask-closable="false" :keyboard="false" :closable="false" :footer="null" width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="showDetailModal = false"><template #title><template v-if="Boolean(showDetailModal && selectedAgent)"><div class="flex justify-between items-start mb-6 border-b border-slate-100 pb-4">
+    <div
+      v-if="showDetailModal && selectedAgent"
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+    >
+      <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-start mb-6 border-b border-slate-100 pb-4">
           <h3 class="text-lg font-semibold text-slate-900">代理详情</h3>
-          <a-button aria-label="关闭" html-type="button" class="text-slate-400 hover:text-slate-600 transition-colors" @click="showDetailModal = false">
+          <button type="button" class="text-slate-400 hover:text-slate-600 transition-colors" @click="showDetailModal = false">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </a-button>
-        </div></template></template><template v-if="showDetailModal && selectedAgent"><div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
           <div class="flex flex-col">
             <span class="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">UID</span>
             <p class="font-mono text-slate-900 font-semibold">{{ selectedAgent.uid }}</p>
@@ -660,15 +803,22 @@ const formatDate = (dateString) => {
             <p class="text-slate-900 font-medium text-sm">{{ formatDate(selectedAgent.lastActiveAt) }}</p>
           </div>
         </div>
-<div class="mt-8 flex flex-col gap-2 sm:flex-row">
-          <a-button html-type="button" class="flex-1" @click="
+
+        <div class="mt-8 flex flex-col gap-2 sm:flex-row">
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary flex-1 !h-10"
+            @click="
               showDetailModal = false;
               openCommissionConfig(selectedAgent);
-            " type="primary">
+            "
+          >
             编辑产品线记佣
-          </a-button>
-          <a-button html-type="button" class="flex-1" @click="showDetailModal = false">关闭</a-button>
-        </div></template></a-modal>
+          </button>
+          <button type="button" class="ant-btn flex-1 !h-10" @click="showDetailModal = false">关闭</button>
+        </div>
+      </div>
+    </div>
     </Teleport>
   </div>
 </template>

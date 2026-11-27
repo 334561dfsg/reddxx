@@ -43,8 +43,7 @@ const setControlValue = async (harness, node, value, eventType = 'change') => {
 const fieldControl = (harness, label) => {
   const labelText = harness.findByText(label, 'span')
   assert.ok(labelText, `${label} label must be rendered`)
-  const findControl = (node) => ['input', 'select'].includes(node.tag) ? node : (node.children || []).map(findControl).find(Boolean)
-  return findControl(labelText.parent)
+  return labelText.parent.children.find((node) => ['input', 'select'].includes(node.tag))
 }
 
 const mountPage = async () => {
@@ -111,23 +110,20 @@ test('route query changes update only UID/module while preserving local filters 
   const harness = await mountPage()
   t.after(harness.cleanup)
 
-  const source = harness.findComponent('AdminSelect', instance => instance.slots.default().some(option => option.props?.value === 'global'))
-  const action = harness.findComponent('AdminSelect', instance => instance.slots.default().some(option => option.props?.value === 'apply'))
+  const source = fieldControl(harness, '规则来源')
+  const action = fieldControl(harness, '操作类型')
   const dateFrom = fieldControl(harness, '开始日期')
   const dateTo = fieldControl(harness, '结束日期')
-  const pagination = harness.findComponent('APagination')
-  assert.ok(source && action && pagination, 'Ant filter and pagination components must be rendered')
+  const pageSize = fieldControl(harness, '每页')
 
-  source.emit('update:modelValue', 'global')
-  action.emit('update:modelValue', 'apply')
-  await harness.flush()
+  await setControlValue(harness, source, 'global')
+  await setControlValue(harness, action, 'apply')
   await setControlValue(harness, dateFrom, '2026-07-01', 'input')
   await setControlValue(harness, dateTo, '2026-07-31', 'input')
-  pagination.emit('change', 1, 5)
+  await setControlValue(harness, pageSize, 5)
+  harness.findByText('下一页', 'button').click()
   await harness.flush()
-  pagination.emit('change', 2, 5)
-  await harness.flush()
-  assert.match(harness.findByTestId('user-control-log-content').textContent, /第 2 \/ 3 页/)
+  assert.ok(harness.findByText('第 2 / 3 页', 'span'))
 
   await harness.router.replace({
     name: 'users-control-log',
@@ -144,5 +140,5 @@ test('route query changes update only UID/module while preserving local filters 
   assert.doesNotMatch(content, /must stay hidden by source filter/)
   assert.doesNotMatch(content, /must stay hidden by action filter/)
   assert.doesNotMatch(content, /must stay hidden by date filter/)
-  assert.match(content, /第 1 \/ 3 页/)
+  assert.ok(harness.findByText('第 1 / 3 页', 'span'))
 })

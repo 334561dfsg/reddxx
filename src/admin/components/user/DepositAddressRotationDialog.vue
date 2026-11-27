@@ -1,7 +1,5 @@
 <script setup>
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
-import { AdminButton, AdminInput, nativeControl } from '../antd/controls.js'
-
 import { computed, inject, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { matchedRouteKey, onBeforeRouteLeave } from 'vue-router'
 import MfaVerificationModal from '../MfaVerificationModal.vue'
@@ -99,12 +97,12 @@ onBeforeUnmount(() => { disposed = true; repository.cancel(pending.value) })
         <section ref="dialogRef" data-testid="rotation-dialog" role="dialog" aria-modal="true" aria-labelledby="rotation-title" :aria-busy="verifying" class="rotation-panel flex w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl">
           <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
             <div class="min-w-0"><h2 id="rotation-title" ref="titleRef" tabindex="-1" class="text-lg font-semibold text-slate-900">修改入金地址</h2><p class="mt-1 break-all text-sm text-slate-500">{{ user?.username }} · {{ user?.id }}</p></div>
-            <AdminButton type="button" aria-label="关闭" class="close-button" :disabled="verifying" @click="close">×</AdminButton>
+            <button type="button" aria-label="关闭" class="close-button" :disabled="verifying" @click="close">×</button>
           </header>
           <div class="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-5">
             <div v-if="discard" ref="errorRef" tabindex="-1" class="rounded-lg bg-amber-50 p-4">
               <h3 class="font-semibold">放弃尚未保存的地址修改？</h3>
-              <div class="mt-3 flex flex-wrap gap-2"><AdminButton class="secondary" type="button" @click="discard = false; nextTick(() => submitRef?.focus())">继续编辑</AdminButton><AdminButton class="primary" type="button" @click="discardChanges">放弃修改</AdminButton></div>
+              <div class="mt-3 flex flex-wrap gap-2"><button class="secondary" type="button" @click="discard = false; nextTick(() => submitRef?.focus())">继续编辑</button><button class="primary" type="button" @click="discardChanges">放弃修改</button></div>
             </div>
             <template v-else-if="result">
               <div role="status" class="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-900"><h3 class="font-semibold">修改成功</h3><p class="mt-1">原地址已保留给该用户，公共收款地址已更新。</p></div>
@@ -120,7 +118,7 @@ onBeforeUnmount(() => { disposed = true; repository.cancel(pending.value) })
                   <span v-if="isOrderAddress(row) && row.address.trim() === row.original" class="rounded bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">当前订单使用</span>
                   <span v-if="row.address.trim() !== row.original" class="rounded bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">已修改</span>
                 </div>
-                <AdminInput :id="`rotation-${row.id}`" v-model="row.address" :aria-label="`${row.coin} ${row.network} 公共收款地址`" type="text" required autocomplete="off" spellcheck="false" :aria-invalid="!!fieldErrors[row.id]" :aria-describedby="fieldErrors[row.id] ? `rotation-error-${row.id}` : undefined" class="address-input" :class="{ 'address-input--order': isOrderAddress(row) && row.address.trim() === row.original, 'address-input--changed': row.address.trim() !== row.original }" />
+                <input :id="`rotation-${row.id}`" v-model="row.address" :aria-label="`${row.coin} ${row.network} 公共收款地址`" type="text" required autocomplete="off" spellcheck="false" :aria-invalid="!!fieldErrors[row.id]" :aria-describedby="fieldErrors[row.id] ? `rotation-error-${row.id}` : undefined" class="address-input" :class="{ 'address-input--order': isOrderAddress(row) && row.address.trim() === row.original, 'address-input--changed': row.address.trim() !== row.original }" />
                 <FeedbackToast v-if="fieldErrors[row.id]" :id="`rotation-error-${row.id}`" type="error" :source="() => (fieldErrors[row.id]) ? (fieldErrors[row.id]) : ''"></FeedbackToast>
                 <p v-if="row.address.trim() !== row.original && session.dedicated.some(own => own.coin === row.coin && own.network === row.network && own.address !== row.original)" class="text-xs text-amber-700">该用户已有专属配置，本次将替换为上方原公共地址。</p>
               </div>
@@ -129,8 +127,8 @@ onBeforeUnmount(() => { disposed = true; repository.cancel(pending.value) })
           <footer class="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
             <template v-if="!discard">
               <span v-if="!result" class="mr-auto text-xs text-slate-500">已修改 {{ changedCount }} 项</span>
-              <AdminButton v-if="!result" type="button" class="secondary" :disabled="verifying" @click="close">取消</AdminButton>
-              <AdminButton :ref="element => { submitRef = nativeControl(element) }" type="button" class="primary" :disabled="verifying || phase !== 'open' || (!result && !entries.length)" @click="result ? close() : requestVerification()">{{ result ? '完成' : verifying ? '验证中…' : '确认修改' }}</AdminButton>
+              <button v-if="!result" type="button" class="secondary" :disabled="verifying" @click="close">取消</button>
+              <button ref="submitRef" type="button" class="primary" :disabled="verifying || phase !== 'open' || (!result && !entries.length)" @click="result ? close() : requestVerification()">{{ result ? '完成' : verifying ? '验证中…' : '确认修改' }}</button>
             </template>
           </footer>
         </section>

@@ -156,12 +156,15 @@ const exportData = () => {
     <div class="rounded-xl border border-slate-200 bg-white overflow-hidden relative min-h-[400px]">
       <div class="flex items-center justify-between border-b border-slate-200 p-4 bg-white">
         <h3 class="text-base font-semibold text-slate-900">日志列表</h3>
-        <a-button @click="exportData" class="inline-flex items-center gap-2" html-type="button">
+        <button
+          @click="exportData"
+          class="ant-btn inline-flex items-center gap-2"
+        >
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           导出数据
-        </a-button>
+        </button>
       </div>
 
       <div class="p-4 border-b border-slate-100 bg-slate-50/30">
@@ -169,59 +172,97 @@ const exportData = () => {
           <!-- 搜索 -->
           <div class="xl:col-span-1">
             <label class="block text-sm font-medium text-slate-700 mb-1.5">搜索</label>
-            <a-input v-model:value="searchKeyword" type="text" placeholder="用户名/ID..." class="" />
+            <input
+              v-model="searchKeyword"
+              type="text"
+              placeholder="用户名/ID..."
+              class="ant-input !py-1.5"
+            />
           </div>
 
           <!-- 升级原因 -->
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1.5">升级原因</label>
-            <a-select v-model:value="selectedUpgradeReason" class="">
-              <a-select-option value="all">全部原因</a-select-option>
-              <a-select-option v-for="option in VIP_UPGRADE_REASON_OPTIONS" :key="option.value" :value="option.value">
+            <select
+              v-model="selectedUpgradeReason"
+              class="ant-select !py-1.5"
+            >
+              <option value="all">全部原因</option>
+              <option
+                v-for="option in VIP_UPGRADE_REASON_OPTIONS"
+                :key="option.value"
+                :value="option.value"
+              >
                 {{ option.label }}
-              </a-select-option>
-            </a-select>
+              </option>
+            </select>
           </div>
 
           <!-- 起始等级 -->
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1.5">起始等级</label>
-            <a-select v-model:value="selectedFromVipLevel" class="">
-              <a-select-option value="all">全部</a-select-option>
-              <a-select-option v-for="level in vipLevelOptions" :key="level" :value="level">
+            <select
+              v-model="selectedFromVipLevel"
+              class="ant-select !py-1.5"
+            >
+              <option value="all">全部</option>
+              <option
+                v-for="level in vipLevelOptions"
+                :key="level"
+                :value="level"
+              >
                 {{ level === 0 ? '普通用户' : `VIP${level}` }}
-              </a-select-option>
-            </a-select>
+              </option>
+            </select>
           </div>
 
           <!-- 目标等级 -->
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1.5">目标等级</label>
-            <a-select v-model:value="selectedToVipLevel" class="">
-              <a-select-option value="all">全部</a-select-option>
-              <a-select-option v-for="level in vipLevelOptions" :key="level" :value="level">
+            <select
+              v-model="selectedToVipLevel"
+              class="ant-select !py-1.5"
+            >
+              <option value="all">全部</option>
+              <option
+                v-for="level in vipLevelOptions"
+                :key="level"
+                :value="level"
+              >
                 {{ level === 0 ? '普通用户' : `VIP${level}` }}
-              </a-select-option>
-            </a-select>
+              </option>
+            </select>
           </div>
 
           <!-- 开始日期 -->
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1.5">开始日期</label>
-            <a-input v-model:value="dateRange.start" type="date" class="" />
+            <input
+              v-model="dateRange.start"
+              type="date"
+              class="ant-input !py-1.5"
+            />
           </div>
 
           <!-- 结束日期 -->
           <div class="flex items-end gap-2">
             <div class="flex-1">
               <label class="block text-sm font-medium text-slate-700 mb-1.5">结束日期</label>
-              <a-input v-model:value="dateRange.end" type="date" class="" />
+              <input
+                v-model="dateRange.end"
+                type="date"
+                class="ant-input !py-1.5"
+              />
             </div>
-            <a-button @click="resetFilters" title="重置筛选" class="text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors" html-type="button">
+            <button
+              @click="resetFilters"
+              title="重置筛选"
+              class="p-2 text-slate-500 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+            >
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-            </a-button>
+            </button>
           </div>
         </div>
       </div>
@@ -235,14 +276,33 @@ const exportData = () => {
       </div>
 
       <div class="overflow-x-auto">
-        <a-table  :data-source="logs" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(upgrade) => upgrade.id" :custom-row="(upgrade, index) => ({ class: [&quot;hover:bg-slate-50 transition-colors&quot;] })">
-<a-table-column key="column-0" ><template #title>用户</template><template #default="{ record: upgrade, index: index }"><div class=" ">
+        <table class="w-full">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">用户</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">等级变化</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">升级原因</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">充值金额</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">备注</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">时间</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr
+              v-for="upgrade in logs"
+              :key="upgrade.id"
+              class="hover:bg-slate-50 transition-colors"
+            >
+              <!-- 用户 -->
+              <td class="px-4 py-3">
                 <div>
                   <p class="text-sm font-medium text-slate-900">{{ upgrade.username }}</p>
                   <p class="text-xs text-slate-500">{{ upgrade.userId }}</p>
                 </div>
-              </div></template></a-table-column>
-<a-table-column key="column-1" align="center"><template #title>等级变化</template><template #default="{ record: upgrade, index: index }"><div class=" ">
+              </td>
+
+              <!-- 等级变化 -->
+              <td class="px-4 py-3">
                 <div class="flex items-center justify-center gap-2">
                   <div class="text-center">
                     <p class="text-xs text-slate-500">{{ upgrade.fromVipName }}</p>
@@ -256,8 +316,10 @@ const exportData = () => {
                     <p class="text-sm font-semibold text-emerald-700">{{ upgrade.toVipLevel === 0 ? '普通' : `VIP${upgrade.toVipLevel}` }}</p>
                   </div>
                 </div>
-              </div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>升级原因</template><template #default="{ record: upgrade, index: index }"><div class=" ">
+              </td>
+
+              <!-- 升级原因 -->
+              <td class="px-4 py-3">
                 <span
                   v-if="upgradeReasonConfig[upgrade.upgradeReason]"
                   :class="upgradeReasonConfig[upgrade.upgradeReason].class"
@@ -265,25 +327,38 @@ const exportData = () => {
                 >
                   {{ upgradeReasonConfig[upgrade.upgradeReason].text }}
                 </span>
-              </div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>充值金额</template><template #default="{ record: upgrade, index: index }"><div class=" ">
+              </td>
+
+              <!-- 充值金额 -->
+              <td class="px-4 py-3">
                 <span v-if="upgrade.rechargeAmount" class="text-sm text-slate-700 font-medium">
                   {{ formatAmount(upgrade.rechargeAmount) }}
                 </span>
                 <span v-else class="text-sm text-slate-400">-</span>
-              </div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>备注</template><template #default="{ record: upgrade, index: index }"><div class=" ">
+              </td>
+
+              <!-- 备注 -->
+              <td class="px-4 py-3">
                 <span class="text-sm text-slate-700">{{ upgrade.remarks }}</span>
-              </div></template></a-table-column>
-<a-table-column key="column-5" ><template #title>时间</template><template #default="{ record: upgrade, index: index }"><div class=" ">
+              </td>
+
+              <!-- 时间 -->
+              <td class="px-4 py-3">
                 <span class="text-sm text-slate-600">{{ formatDateTime(upgrade.createdAt) }}</span>
-              </div></template></a-table-column><template #emptyText>
+              </td>
+            </tr>
+
+            <!-- 空状态 -->
+            <tr v-if="!loading && logs.length === 0">
+              <td colspan="6" class="px-4 py-12 text-center">
                 <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <p class="mt-2 text-sm text-slate-600">暂无数据</p>
-              </template>
-</a-table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <!-- 分页 -->
@@ -291,7 +366,22 @@ const exportData = () => {
         <div class="text-sm text-slate-600">
           共 <span class="font-medium">{{ pagination.total }}</span> 条记录，第 <span class="font-medium">{{ pagination.currentPage }}</span> / <span class="font-medium">{{ totalPages }}</span> 页
         </div>
-        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false"  :disabled="loading" @change="pagination.currentPage = $event" />
+        <div class="flex items-center gap-2">
+          <button
+            @click="pagination.currentPage--"
+            :disabled="pagination.currentPage === 1 || loading"
+            class="px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            上一页
+          </button>
+          <button
+            @click="pagination.currentPage++"
+            :disabled="pagination.currentPage === totalPages || loading"
+            class="px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            下一页
+          </button>
+        </div>
       </div>
     </div>
   </section>

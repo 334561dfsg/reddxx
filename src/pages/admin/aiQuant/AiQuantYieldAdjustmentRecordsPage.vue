@@ -11,65 +11,57 @@
 					<div class="text-sm text-slate-600">
 						命中 {{ filteredAdjustments.length }} 条（第 {{ adjCurrentPage }} / {{ adjTotalPages }} 页，每页 {{ adjPageSize }} 条）
 					</div>
-					<a-input v-model:value="search" type="text" placeholder="搜索用户、订单或产品..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
+					<input v-model="search" type="text" placeholder="搜索用户、订单或产品..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
 				</div>
 			</div>
 
 			<div class="overflow-x-auto">
-				<a-table  size="small" :pagination="false" :data-source="pagedAdjustments" :row-key="(adj) => adj.id" :scroll="{ x: 'max-content' }" :custom-row="(adj, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
-<a-table-column key="column-0" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3 font-mono text-xs text-slate-600&quot;] })">
-<template #title>调整ID</template>
-<template #default="{ record: adj, index: rowIndex }">{{ adj.id }}</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>类型</template>
-<template #default="{ record: adj, index: rowIndex }">
+				<table class="w-full text-sm">
+					<thead class="bg-slate-50 text-slate-500">
+						<tr>
+							<th class="px-4 py-3 text-left font-medium">调整ID</th>
+							<th class="px-4 py-3 text-left font-medium">类型</th>
+							<th class="px-4 py-3 text-left font-medium">目标</th>
+							<th class="px-4 py-3 text-left font-medium">产品</th>
+							<th class="px-4 py-3 text-left font-medium">金额</th>
+							<th class="px-4 py-3 text-left font-medium">原因</th>
+							<th class="px-4 py-3 text-left font-medium">操作人</th>
+							<th class="px-4 py-3 text-left font-medium">调整时间</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="adj in pagedAdjustments" :key="adj.id" class="border-t border-slate-100">
+							<td class="px-4 py-3 font-mono text-xs text-slate-600">{{ adj.id }}</td>
+							<td class="px-4 py-3">
 								<div class="flex items-center gap-1.5">
 									<component :is="getAdjustmentIcon(adj.type)" class="w-4 h-4" :class="getIconColor(adj.type)" />
 									<span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="adjustmentTypeMeta[adj.type].class">{{ adjustmentTypeMeta[adj.type].label }}</span>
 								</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>目标</template>
-<template #default="{ record: adj, index: rowIndex }">
+							</td>
+							<td class="px-4 py-3">
 								<div class="text-slate-700">{{ adj.targetName }}</div>
 								<div class="text-xs text-slate-500">{{ adj.targetType === 'user' ? '用户' : adj.targetType === 'product' ? '产品' : '订单' }}</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>产品</template>
-<template #default="{ record: adj, index: rowIndex }">
+							</td>
+							<td class="px-4 py-3">
 								<div class="text-slate-700">{{ adj.productName }}</div>
 								<div v-if="adj.orderId" class="text-xs text-slate-500 font-mono">{{ adj.orderId }}</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>金额</template>
-<template #default="{ record: adj, index: rowIndex }">
+							</td>
+							<td class="px-4 py-3">
 								<div class="font-medium text-slate-900">{{ fmtCurrency(adj.amount, adj.currency) }}</div>
 								<div v-if="adj.percentage" class="text-xs text-slate-500">{{ adj.percentage }}%</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>原因</template>
-<template #default="{ record: adj, index: rowIndex }">
+							</td>
+							<td class="px-4 py-3">
 								<div class="text-slate-700 max-w-xs truncate">{{ adj.reason }}</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-6" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>操作人</template>
-<template #default="{ record: adj, index: rowIndex }">
+							</td>
+							<td class="px-4 py-3">
 								<div class="text-slate-700">{{ adj.operatorName }}</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-7" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>调整时间</template>
-<template #default="{ record: adj, index: rowIndex }">
+							</td>
+							<td class="px-4 py-3">
 								<div class="text-slate-700">{{ adj.createdAt }}</div>
-							</template>
-</a-table-column>
-</a-table>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 			<AdminListPaginationBar
 				v-model:current-page="adjCurrentPage"

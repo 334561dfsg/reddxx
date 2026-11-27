@@ -1,7 +1,7 @@
 <script setup>
-import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, ref, watch } from 'vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
+import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { ASSET_WALLET_STATUS } from '../../../admin/constants/assets'
 import { createManualCollectConfigMock } from '../../../admin/mock/assets'
 
@@ -219,15 +219,15 @@ const handleMfaVerify = async (code) => {
           <div class="space-y-4 p-4">
             <label class="block space-y-1">
               <span class="text-sm text-slate-600">选择币种</span>
-              <a-select v-model:value="selectedCoin" class="w-full">
-                <a-select-option v-for="coin in coinOptions" :key="coin">{{ coin }}</a-select-option>
-              </a-select>
+              <select v-model="selectedCoin" class="w-full rounded-lg border border-slate-300 px-3 py-2">
+                <option v-for="coin in coinOptions" :key="coin">{{ coin }}</option>
+              </select>
             </label>
             <label class="block space-y-1">
               <span class="text-sm text-slate-600">选择网络</span>
-              <a-select v-model:value="selectedNetwork" class="w-full">
-                <a-select-option v-for="network in currentNetworkOptions" :key="network">{{ network }}</a-select-option>
-              </a-select>
+              <select v-model="selectedNetwork" class="w-full rounded-lg border border-slate-300 px-3 py-2">
+                <option v-for="network in currentNetworkOptions" :key="network">{{ network }}</option>
+              </select>
             </label>
 
             <div class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
@@ -237,11 +237,17 @@ const handleMfaVerify = async (code) => {
             </div>
 
             <div class="space-y-2">
-              <a-button html-type="button" class="w-full border border-slate-200 text-sm" :class="loading ? 'bg-slate-100 text-slate-500' : 'bg-white text-slate-700 hover:bg-slate-50'" :disabled="loading" @click="loadWallets">
+              <button
+                type="button"
+                class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                :class="loading ? 'bg-slate-100 text-slate-500' : 'bg-white text-slate-700 hover:bg-slate-50'"
+                :disabled="loading"
+                @click="loadWallets"
+              >
                 {{ loading ? '加载中...' : '加载钱包余额' }}
-              </a-button>
+              </button>
               <p v-if="lastLoadedAt" class="text-xs text-slate-500">最近加载时间：{{ lastLoadedAt }}</p>
-              <FeedbackToast v-if="loadError" type="error" :source="() => (loadError) ? (([String((loadError) ?? ''),&quot;，请重试。&quot;].join(''))) : ''"></FeedbackToast>
+              <FeedbackToast v-if="loadError" type="error" :source="() => (loadError) ? `${loadError}，请重试。` : ''"></FeedbackToast>
             </div>
           </div>
         </article>
@@ -252,7 +258,7 @@ const handleMfaVerify = async (code) => {
           </div>
           <div class="space-y-3 p-4">
             <label class="inline-flex items-center gap-2 text-sm">
-              <a-checkbox v-model:checked="confirmCollect" class="w-4" />
+              <input v-model="confirmCollect" type="checkbox" class="h-4 w-4" />
               我已确认归集操作
             </label>
             <p class="text-xs text-slate-500">请确认地址与金额无误后再执行归集。低于阈值地址不可归集。</p>
@@ -260,9 +266,14 @@ const handleMfaVerify = async (code) => {
               <p class="flex items-center justify-between"><span class="text-slate-600">已选地址</span><span>{{ selectedCount }} 个</span></p>
               <p class="mt-2 flex items-center justify-between"><span class="text-slate-600">归集总额</span><span class="font-semibold text-blue-700">{{ selectedTotal.toFixed(4) }} {{ selectedCoin }}</span></p>
             </div>
-            <a-button html-type="button" class="w-full bg-blue-600 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300" :disabled="selectedCount === 0 || selectedTotal <= 0 || loading || !confirmCollect" @click="handleCollectClick" type="primary">
+            <button
+              type="button"
+              class="w-full rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+              :disabled="selectedCount === 0 || selectedTotal <= 0 || loading || !confirmCollect"
+              @click="handleCollectClick"
+            >
               开始归集
-            </a-button>
+            </button>
           </div>
         </article>
       </div>
@@ -272,15 +283,15 @@ const handleMfaVerify = async (code) => {
           <h3 class="text-lg font-semibold text-slate-900">钱包列表 ({{ total }})</h3>
           <div class="flex items-center gap-3 text-sm">
             <label class="inline-flex items-center gap-1.5">
-              <a-checkbox v-model:checked="globalAllChecked" class="w-4" /> 全选
+              <input v-model="globalAllChecked" type="checkbox" class="h-4 w-4" /> 全选
             </label>
             <label class="inline-flex items-center gap-1.5">
               每页
-              <a-select v-model:value="pageSize" class="">
-                <a-select-option :value="10">10</a-select-option>
-                <a-select-option :value="20">20</a-select-option>
-                <a-select-option :value="50">50</a-select-option>
-              </a-select>
+              <select v-model.number="pageSize" class="rounded border border-slate-300 px-1.5 py-0.5 text-xs">
+                <option :value="10">10</option>
+                <option :value="20">20</option>
+                <option :value="50">50</option>
+              </select>
             </label>
           </div>
         </div>
@@ -290,13 +301,20 @@ const handleMfaVerify = async (code) => {
         </div>
 
         <div v-else-if="loadError" class="p-8 text-center text-sm text-slate-500">
-          <a-button html-type="button" class="mt-3 border border-slate-300 text-xs" @click="loadWallets">重试加载</a-button>
+          <button type="button" class="mt-3 rounded-lg border border-slate-300 px-3 py-1.5 text-xs" @click="loadWallets">重试加载</button>
         </div>
 
         <template v-else>
           <div class="flex items-center justify-between border-b border-slate-100 px-4 py-2 text-xs text-slate-500">
             <label class="inline-flex items-center gap-1.5">
-              <a-checkbox :checked="pageAllChecked" :indeterminate="pageIndeterminate" class="w-4" :disabled="collectablePagedWallets.length === 0" @change="pageAllChecked = !pageAllChecked" />
+              <input
+                :checked="pageAllChecked"
+                :indeterminate.prop="pageIndeterminate"
+                type="checkbox"
+                class="h-4 w-4"
+                :disabled="collectablePagedWallets.length === 0"
+                @change="pageAllChecked = !pageAllChecked"
+              />
               仅当前页全选
             </label>
             <p>第 {{ currentPage }} / {{ totalPages }} 页</p>
@@ -305,7 +323,7 @@ const handleMfaVerify = async (code) => {
           <div class="divide-y divide-slate-200">
             <article v-for="wallet in pagedWallets" :key="wallet.id" class="flex items-center justify-between gap-3 px-4 py-3">
               <div class="flex items-center gap-3">
-                <a-checkbox v-model:checked="wallet.checked" :disabled="wallet.status !== ASSET_WALLET_STATUS.COLLECTABLE" class="w-4 disabled:cursor-not-allowed disabled:opacity-50" />
+                <input v-model="wallet.checked" :disabled="wallet.status !== ASSET_WALLET_STATUS.COLLECTABLE" type="checkbox" class="h-4 w-4 disabled:cursor-not-allowed disabled:opacity-50" />
                 <div>
                   <p class="font-medium text-slate-800">{{ wallet.name }}</p>
                   <p class="text-sm text-slate-600">{{ wallet.address }}</p>
@@ -321,7 +339,11 @@ const handleMfaVerify = async (code) => {
 
           <div class="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm">
             <p class="text-slate-500">共 {{ total }} 条地址</p>
-            <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="total" :show-size-changer="false"  @change="currentPage = $event" />
+            <div class="flex items-center gap-2">
+              <button type="button" class="rounded border border-slate-300 px-2.5 py-1 text-xs disabled:opacity-40" :disabled="currentPage === 1" @click="goPrev">上一页</button>
+              <span class="text-xs text-slate-600">{{ currentPage }} / {{ totalPages }}</span>
+              <button type="button" class="rounded border border-slate-300 px-2.5 py-1 text-xs disabled:opacity-40" :disabled="currentPage === totalPages" @click="goNext">下一页</button>
+            </div>
           </div>
         </template>
       </article>

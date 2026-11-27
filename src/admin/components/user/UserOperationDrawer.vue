@@ -1,6 +1,4 @@
 <script setup>
-import { AdminButton } from '../antd/controls.js'
-
 import { computed, ref, watch } from 'vue'
 import { getUserOperationGroups } from '../../config/userOperations.js'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
@@ -108,14 +106,14 @@ const riskBadgeClasses = (entry) => ({
                   {{ user?.username || '未知用户' }} · UID {{ userId || '—' }}
                 </p>
               </div>
-              <AdminButton
+              <button
                 type="button"
                 class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none"
                 aria-label="关闭"
                 @click="close"
               >
                 ×
-              </AdminButton>
+              </button>
             </header>
 
             <div
@@ -141,7 +139,7 @@ const riskBadgeClasses = (entry) => ({
                   </span>
                 </div>
                 <div class="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                  <AdminButton
+                  <button
                     v-for="entry in group.entries"
                     :key="entry.id"
                     type="button"
@@ -159,7 +157,7 @@ const riskBadgeClasses = (entry) => ({
                       </span>
                     </span>
                     <span class="mt-1 block text-xs leading-4 text-slate-500">{{ entry.description }}</span>
-                  </AdminButton>
+                  </button>
                 </div>
               </section>
             </div>

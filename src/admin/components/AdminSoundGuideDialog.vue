@@ -1,6 +1,4 @@
 <script setup>
-import { AdminButton } from './antd/controls.js'
-
 import { computed, ref } from 'vue'
 import { useDialogLifecycle } from '../composables/useDialogLifecycle.js'
 
@@ -96,7 +94,7 @@ const close = () => requestDialogClose()
                     刷新页面后如果新消息提示音没有播放，请把当前后台域名加入 Chrome 声音允许列表。
                   </p>
                 </div>
-                <AdminButton
+                <button
                   type="button"
                   class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none"
                   aria-label="关闭"
@@ -104,7 +102,7 @@ const close = () => requestDialogClose()
                   @click="close"
                 >
                   ×
-                </AdminButton>
+                </button>
               </div>
             </header>
 
@@ -120,14 +118,14 @@ const close = () => requestDialogClose()
                     <code class="min-w-0 flex-1 break-all rounded-md bg-slate-100 px-2 py-1.5 text-xs text-slate-700">
                       {{ CHROME_SOUND_SETTINGS_URL }}
                     </code>
-                    <AdminButton
+                    <button
                       type="button"
                       class="shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus:outline-none"
                       aria-label="复制 Chrome 声音设置地址"
                       @click="copySettingUrl"
                     >
                       复制地址
-                    </AdminButton>
+                    </button>
                   </div>
                 </li>
                 <li class="rounded-lg border border-slate-200 bg-white p-3">
@@ -142,14 +140,14 @@ const close = () => requestDialogClose()
                     <code class="min-w-0 flex-1 break-all rounded-md bg-slate-100 px-2 py-1.5 text-xs text-slate-700">
                       {{ siteDomain }}
                     </code>
-                    <AdminButton
+                    <button
                       type="button"
                       class="shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus:outline-none"
                       aria-label="复制当前后台域名"
                       @click="copyDomain"
                     >
                       复制域名
-                    </AdminButton>
+                    </button>
                   </div>
                 </li>
               </ol>
@@ -168,13 +166,13 @@ const close = () => requestDialogClose()
             </div>
 
             <footer class="flex shrink-0 justify-end border-t border-slate-200 bg-slate-50 px-6 py-4">
-              <AdminButton
+              <button
                 type="button"
                 class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none"
                 @click="close"
               >
                 我知道了
-              </AdminButton>
+              </button>
             </footer>
           </section>
         </Transition>

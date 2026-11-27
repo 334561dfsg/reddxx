@@ -4,7 +4,6 @@ let panelSingleSelectSequence = 0
 
 <script setup>
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
-import { AdminButton, AdminInput, nativeControl } from '../antd/controls.js'
 import { computed, nextTick, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
 import {
   registerDialogPopupHost,
@@ -658,8 +657,8 @@ onUnmounted(() => {
       >（必填）</span>
     </span>
 
-    <AdminButton
-      :ref="element => { triggerRef = nativeControl(element) }"
+    <button
+      ref="triggerRef"
       type="button"
       data-testid="panel-single-select-trigger"
       class="flex min-h-10 w-full items-center justify-between gap-3 rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-900 outline-none transition disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500"
@@ -676,7 +675,7 @@ onUnmounted(() => {
       <span class="shrink-0 text-xs text-gray-500">
         {{ readonly ? '只读' : '更改' }}
       </span>
-    </AdminButton>
+    </button>
 
     <FeedbackToast v-if="orphaned" :id="orphanedId" data-testid="panel-single-select-orphaned" type="error" :source="() => (orphaned) ? (([&quot; 所选项“&quot;,String((displayText) ?? ''),&quot;”已失效，请重新选择。 &quot;].join(''))) : ''"></FeedbackToast>
 
@@ -701,9 +700,9 @@ onUnmounted(() => {
             <label :for="searchId" class="mb-1 block text-xs font-medium text-gray-700">
               {{ resolvedSearchLabel }}
             </label>
-            <AdminInput
+            <input
               :id="searchId"
-              :ref="element => { searchRef = nativeControl(element) }"
+              ref="searchRef"
               v-model="query"
               data-testid="panel-single-select-search"
               type="search"
@@ -716,8 +715,7 @@ onUnmounted(() => {
               :aria-activedescendant="activeDescendant"
               :readonly="readonly"
               class="min-h-10 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none"
-              @keydown="handleSearchKeydown"
-             />
+              @keydown="handleSearchKeydown" />
             <p
               data-testid="panel-single-select-status"
               role="status"
@@ -749,7 +747,7 @@ onUnmounted(() => {
               :key="optionKey(option)"
               role="none"
             >
-              <AdminButton
+              <button
                 :id="optionId(option)"
                 type="button"
                 role="option"
@@ -779,7 +777,7 @@ onUnmounted(() => {
                 >
                   {{ option.status }}
                 </span>
-              </AdminButton>
+              </button>
             </li>
           </ul>
         </div>

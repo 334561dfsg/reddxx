@@ -12,49 +12,49 @@
     <article class="rounded-xl border border-slate-200 bg-white">
       <div class="flex flex-wrap items-center gap-3 border-b border-slate-200 p-4">
         <div class="flex min-w-0 flex-1 flex-wrap items-center gap-3">
-          <a-select :get-popup-container="(trigger) => trigger.parentElement"
-            v-model:value="filters.status"
-            class="min-w-[8.5rem]"
+          <select
+            v-model="filters.status"
+            class="min-w-[8.5rem] rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
           >
-            <a-select-option value="">全部状态</a-select-option>
-            <a-select-option value="pending">待还款</a-select-option>
-            <a-select-option value="processing">处理中</a-select-option>
-            <a-select-option value="completed">已完成</a-select-option>
-            <a-select-option value="failed">失败</a-select-option>
-            <a-select-option value="overdue">逾期</a-select-option>
-          </a-select>
-          <a-select :get-popup-container="(trigger) => trigger.parentElement"
-            v-model:value="filters.repaymentType"
-            class="min-w-[8.5rem]"
+            <option value="">全部状态</option>
+            <option value="pending">待还款</option>
+            <option value="processing">处理中</option>
+            <option value="completed">已完成</option>
+            <option value="failed">失败</option>
+            <option value="overdue">逾期</option>
+          </select>
+          <select
+            v-model="filters.repaymentType"
+            class="min-w-[8.5rem] rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
           >
-            <a-select-option value="">全部类型</a-select-option>
-            <a-select-option value="partial">部分还款</a-select-option>
-            <a-select-option value="full">全额还款</a-select-option>
-            <a-select-option value="auto">自动还款</a-select-option>
-          </a-select>
-          <a-select :get-popup-container="(trigger) => trigger.parentElement"
-            v-model:value="filters.timeRange"
-            class="min-w-[7.5rem]"
+            <option value="">全部类型</option>
+            <option value="partial">部分还款</option>
+            <option value="full">全额还款</option>
+            <option value="auto">自动还款</option>
+          </select>
+          <select
+            v-model="filters.timeRange"
+            class="min-w-[7.5rem] rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
           >
-            <a-select-option value="today">今天</a-select-option>
-            <a-select-option value="week">本周</a-select-option>
-            <a-select-option value="month">本月</a-select-option>
-            <a-select-option value="all">全部时间</a-select-option>
-          </a-select>
-          <a-input
-            v-model:value="filters.searchText"
+            <option value="today">今天</option>
+            <option value="week">本周</option>
+            <option value="month">本月</option>
+            <option value="all">全部时间</option>
+          </select>
+          <input
+            v-model="filters.searchText"
             type="search"
             class="min-w-[10rem] max-w-md flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
             placeholder="还款单号、订单号、用户…"
             autocomplete="off"
           />
-          <a-button type="text"
-            html-type="button"
+          <button
+            type="button"
             class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
             @click="resetFilters"
           >
             重置
-          </a-button>
+          </button>
         </div>
         <div
           v-if="selectedRepaymentIds.length"
@@ -62,89 +62,101 @@
         >
           <span class="font-medium text-slate-700">已选 {{ selectedRepaymentIds.length }} 条</span>
           <span class="text-slate-300">|</span>
-          <a-button type="text"
-            html-type="button"
+          <button
+            type="button"
             class="rounded border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800 transition-colors hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-45"
             :disabled="selectedFailedRows.length === 0"
             @click="batchRetrySelected"
           >
             批量重试
             <span v-if="selectedFailedRows.length" class="tabular-nums">（{{ selectedFailedRows.length }}）</span>
-          </a-button>
-          <a-button type="text"
-            html-type="button"
+          </button>
+          <button
+            type="button"
             class="rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-45"
             :disabled="selectedRemindRows.length === 0"
             @click="openRemindModalForBatch"
           >
             批量提醒
             <span v-if="selectedRemindRows.length" class="tabular-nums">（{{ selectedRemindRows.length }}）</span>
-          </a-button>
-          <a-button type="text"
-            html-type="button"
+          </button>
+          <button
+            type="button"
             class="rounded border border-transparent px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100"
             @click="clearSelection"
           >
             清除选择
-          </a-button>
+          </button>
         </div>
       </div>
 
       <div class="overflow-x-auto">
-        <a-table  size="small" :pagination="false" :data-source="repaymentsPaged" :row-key="(repayment) => repayment.repaymentId" :scroll="{ x: 'max-content' }" :custom-row="(repayment, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
-<a-table-column key="column-0" :custom-cell="(repayment, rowIndex) => ({ class: [&quot;px-3 py-3 align-top&quot;] })">
-<template #title>
-                <a-checkbox
-                  :indeterminate="partPageSelected"
-                  class=""
+        <table class="w-full min-w-[58rem] text-sm">
+          <thead class="bg-slate-50 text-slate-500">
+            <tr>
+              <th class="w-10 px-3 py-3 text-left font-medium">
+                <input
+                  ref="headerCheckboxRef"
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-slate-300 text-blue-600"
                   title="全选本页"
                   aria-label="全选本页"
                   :checked="allPageSelected"
                   @change="onToggleSelectAllPage"
                 />
-              </template>
-<template #default="{ record: repayment, index: rowIndex }">
-                <a-checkbox
-                  class=""
+              </th>
+              <th class="px-4 py-3 text-left font-medium">还款单</th>
+              <th class="px-4 py-3 text-left font-medium">订单 / 用户</th>
+              <th class="px-4 py-3 text-left font-medium">产品</th>
+              <th class="px-4 py-3 text-left font-medium">还款明细</th>
+              <th class="px-4 py-3 text-left font-medium">状态</th>
+              <th class="min-w-[9rem] px-4 py-3 text-left font-medium">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="!repaymentsPaged.length">
+              <td colspan="7" class="px-4 py-12 text-center">
+                <div class="mx-auto max-w-sm rounded-lg border border-dashed border-slate-300 px-6 py-8 text-sm text-slate-500">
+                  暂无符合条件的还款记录
+                </div>
+              </td>
+            </tr>
+            <tr
+              v-for="repayment in repaymentsPaged"
+              :key="repayment.repaymentId"
+              class="border-t border-slate-100"
+            >
+              <td class="px-3 py-3 align-top">
+                <input
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-slate-300 text-blue-600"
                   :checked="isRepaymentSelected(repayment.repaymentId)"
                   @change="toggleRepaymentSelect(repayment.repaymentId)"
                 />
-              </template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(repayment, rowIndex) => ({ class: [&quot;px-4 py-3 align-top&quot;] })">
-<template #title>还款单</template>
-<template #default="{ record: repayment, index: rowIndex }">
+              </td>
+              <td class="px-4 py-3 align-top">
                 <div class="font-mono text-xs text-slate-600">{{ repayment.repaymentId }}</div>
                 <div class="mt-0.5 text-xs text-slate-500 tabular-nums">
                   {{ repayment.repaymentTime ? formatDateTime(repayment.repaymentTime) : `创建 ${formatDateTime(repayment.createTime)}` }}
                 </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(repayment, rowIndex) => ({ class: [&quot;px-4 py-3 align-top&quot;] })">
-<template #title>订单 / 用户</template>
-<template #default="{ record: repayment, index: rowIndex }">
+              </td>
+              <td class="px-4 py-3 align-top">
                 <div class="font-mono text-xs text-slate-600">{{ repayment.orderId }}</div>
                 <div class="mt-0.5 text-xs text-slate-600">
                   <span class="text-slate-500">{{ repayment.userId }}</span>
                   <span class="text-slate-300"> · </span>
                   <span class="font-medium text-slate-900">{{ repayment.userName }}</span>
                 </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(repayment, rowIndex) => ({ class: [&quot;max-w-[11rem] px-4 py-3 align-top&quot;] })">
-<template #title>产品</template>
-<template #default="{ record: repayment, index: rowIndex }">
+              </td>
+              <td class="max-w-[11rem] px-4 py-3 align-top">
                 <div class="truncate font-medium text-slate-900" :title="repayment.productName">{{ repayment.productName }}</div>
                 <span
                   class="mt-1 inline-flex rounded px-1.5 py-0.5 font-mono text-[11px] font-medium text-slate-700 bg-slate-100"
                 >
                   {{ repayment.loanCurrency || '—' }}
                 </span>
-              </template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(repayment, rowIndex) => ({ class: [&quot;min-w-[14rem] px-4 py-3 align-top&quot;] })">
-<template #title>还款明细</template>
-<template #default="{ record: repayment, index: rowIndex }">
+              </td>
+              <td class="min-w-[14rem] px-4 py-3 align-top">
                 <div class="flex flex-wrap items-center gap-2">
                   <span
                     class="inline-flex shrink-0 items-center rounded-md px-2 py-0.5 text-[11px] font-medium"
@@ -171,11 +183,8 @@
                     {{ truncateMiddle(repayment.transactionId, 10) }}
                   </span>
                 </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(repayment, rowIndex) => ({ class: [&quot;px-4 py-3 align-top&quot;] })">
-<template #title>状态</template>
-<template #default="{ record: repayment, index: rowIndex }">
+              </td>
+              <td class="px-4 py-3 align-top">
                 <span
                   class="inline-flex rounded-md px-2 py-0.5 text-xs font-medium"
                   :class="{
@@ -191,44 +200,37 @@
                 <p v-if="repayment.failureReason" class="mt-1 line-clamp-2 text-[11px] text-rose-600" :title="repayment.failureReason">
                   {{ repayment.failureReason }}
                 </p>
-              </template>
-</a-table-column>
-<a-table-column key="column-6" :custom-cell="(repayment, rowIndex) => ({ class: [&quot;px-4 py-3 align-top&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: repayment, index: rowIndex }">
+              </td>
+              <td class="px-4 py-3 align-top">
                 <div class="flex flex-wrap items-center gap-2">
-                  <a-button type="text"
-                    html-type="button"
+                  <button
+                    type="button"
                     class="whitespace-nowrap rounded border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50"
                     @click="viewDetails(repayment)"
                   >
                     详情
-                  </a-button>
-                  <a-button type="text"
+                  </button>
+                  <button
                     v-if="repayment.status === 'failed'"
-                    html-type="button"
+                    type="button"
                     class="whitespace-nowrap rounded border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800 transition-colors hover:bg-amber-100"
                     @click="retryRepayment(repayment)"
                   >
                     重试
-                  </a-button>
-                  <a-button type="text"
+                  </button>
+                  <button
                     v-if="repayment.status === 'pending' || repayment.status === 'overdue'"
-                    html-type="button"
+                    type="button"
                     class="whitespace-nowrap rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100"
                     @click="sendReminder(repayment)"
                   >
                     提醒用户
-                  </a-button>
+                  </button>
                 </div>
-              </template>
-</a-table-column>
-<template #emptyText>
-                <div class="mx-auto max-w-sm rounded-lg border border-dashed border-slate-300 px-6 py-8 text-sm text-slate-500">
-                  暂无符合条件的还款记录
-                </div>
-              </template>
-</a-table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <AdminListPaginationBar
@@ -242,8 +244,14 @@
     </article>
 
     <!-- 还款详情 -->
-    <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDetailModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="896"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeDetailModal">
-<template #title><template v-if="showDetailModal"><header class="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
+    <div
+      v-if="showDetailModal"
+      class="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4"
+    >
+      <article
+        class="relative flex max-h-[min(90vh,56rem)] w-full max-w-4xl min-h-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl"
+      >
+        <header class="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div class="flex items-center gap-4">
             <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
               <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -260,13 +268,12 @@
               <p class="mt-0.5 font-mono text-sm text-slate-500">{{ currentDetailRepayment?.repaymentId }}</p>
             </div>
           </div>
-          <a-button aria-label="关闭" type="text" html-type="button" class="text-slate-400 transition-colors hover:text-slate-600" @click="closeDetailModal">
+          <button aria-label="关闭" type="button" class="text-slate-400 transition-colors hover:text-slate-600" @click="closeDetailModal">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </a-button>
-        </header></template></template>
-<template v-if="showDetailModal">
+          </button>
+        </header>
 
         <div class="min-h-0 flex-1 space-y-4 overflow-y-auto bg-slate-50 p-6">
           <div class="rounded-lg border border-slate-200 bg-white p-5">
@@ -368,24 +375,27 @@
           </section>
         </div>
 
-        </template>
-<template #footer><template v-if="showDetailModal"><footer class="shrink-0 border-t border-slate-200 bg-white px-6 py-4">
+        <footer class="shrink-0 border-t border-slate-200 bg-white px-6 py-4">
           <div class="flex items-center justify-end">
-            <a-button type="text"
-              html-type="button"
+            <button
+              type="button"
               class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
               @click="closeDetailModal"
             >
               关闭
-            </a-button>
+            </button>
           </div>
-        </footer></template></template>
-</a-modal>
+        </footer>
+      </article>
+    </div>
 
     <!-- 提醒方式（单条 / 批量） -->
-    <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(remindModalOpen)" :mask-closable="false" :closable="false" :keyboard="false" :width="448"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeRemindModal">
-<template #title><template v-if="remindModalOpen"><div class="flex items-start justify-between gap-3"><h2 class="text-xl font-semibold text-slate-900">发送还款提醒</h2><a-button type="text" aria-label="关闭"  @click="closeRemindModal">×</a-button></div></template></template>
-<template v-if="remindModalOpen">
+    <div
+      v-if="remindModalOpen"
+      class="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4"
+    >
+      <article class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-2xl">
+        <h2 class="text-xl font-semibold text-slate-900">发送还款提醒</h2>
         <p class="mt-1 text-sm text-slate-500">
           将对 <span class="font-medium tabular-nums text-slate-800">{{ remindTargets.length }}</span> 笔还款关联用户发送提醒
         </p>
@@ -396,35 +406,38 @@
             :key="opt.value"
             class="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm transition-colors hover:bg-slate-50 has-[:checked]:border-blue-400 has-[:checked]:bg-blue-50/60"
           >
-            <a-radio :checked="remindChannel === opt.value" @change="remindChannel = opt.value" name="remindChannel" class="" :value="opt.value" />
+            <input v-model="remindChannel" type="radio" name="remindChannel" class="text-blue-600" :value="opt.value" />
             <span class="text-slate-800">{{ opt.label }}</span>
           </label>
         </fieldset>
-        </template>
-<template #footer><template v-if="remindModalOpen"><footer class="mt-6 flex justify-end gap-2">
-          <a-button type="text"
-            html-type="button"
+        <footer class="mt-6 flex justify-end gap-2">
+          <button
+            type="button"
             class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
             @click="closeRemindModal"
           >
             取消
-          </a-button>
-          <a-button type="text"
-            html-type="button"
+          </button>
+          <button
+            type="button"
             class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
             @click="confirmRemindSend"
           >
             发送
-          </a-button>
-        </footer></template></template>
-</a-modal>
+          </button>
+        </footer>
+      </article>
+    </div>
 
     <!-- 重试还款：确认（单条 / 批量） -->
-    <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(retryConfirmOpen)" :mask-closable="false" :closable="false" :keyboard="false" :width="448"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeRetryConfirm">
-<template #title><template v-if="retryConfirmOpen"><div class="flex items-start justify-between gap-3"><h2 class="text-xl font-semibold text-slate-900">
+    <div
+      v-if="retryConfirmOpen"
+      class="fixed inset-0 z-50 flex min-h-[100dvh] items-center justify-center overflow-y-auto bg-black/50 p-4"
+    >
+      <article class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-2xl" @click.stop>
+        <h2 class="text-xl font-semibold text-slate-900">
           {{ retryConfirmScope === 'batch' ? '批量重新发起还款' : '重新发起还款' }}
-        </h2><a-button type="text" aria-label="关闭"  @click="closeRetryConfirm">×</a-button></div></template></template>
-<template v-if="retryConfirmOpen">
+        </h2>
         <p v-if="retryConfirmScope === 'batch'" class="mt-2 text-sm leading-relaxed text-slate-600">
           确定对
           <span class="font-semibold tabular-nums text-amber-900">{{ pendingBatchRetryCount }}</span>
@@ -435,46 +448,49 @@
           <span class="font-mono text-sm font-semibold text-slate-900">{{ pendingSingleRetryId }}</span>
           ？提交后状态将变为「处理中」并清空失败原因（演示环境）。
         </p>
-        </template>
-<template #footer><template v-if="retryConfirmOpen"><footer class="mt-6 flex justify-end gap-2">
-          <a-button type="text"
-            html-type="button"
+        <footer class="mt-6 flex justify-end gap-2">
+          <button
+            type="button"
             class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
             @click="closeRetryConfirm"
           >
             取消
-          </a-button>
-          <a-button type="text"
-            html-type="button"
+          </button>
+          <button
+            type="button"
             class="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
             @click="confirmRetry"
           >
             确定重新发起
-          </a-button>
-        </footer></template></template>
-</a-modal>
+          </button>
+        </footer>
+      </article>
+    </div>
 
     <!-- 重试：提示 / 成功 -->
-    <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(retryFeedback.open)" :mask-closable="false" :closable="false" :keyboard="false" :width="448"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeRetryFeedback">
-<template #title><template v-if="retryFeedback.open"><div class="flex items-start justify-between gap-3"><h2 class="text-xl font-semibold text-slate-900">{{ retryFeedback.title }}</h2><a-button type="text" aria-label="关闭"  @click="closeRetryFeedback">×</a-button></div></template></template>
-<template v-if="retryFeedback.open">
+    <div
+      v-if="retryFeedback.open"
+      class="fixed inset-0 z-[60] flex min-h-[100dvh] items-center justify-center overflow-y-auto bg-black/50 p-4"
+    >
+      <article class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-2xl" @click.stop>
+        <h2 class="text-xl font-semibold text-slate-900">{{ retryFeedback.title }}</h2>
         <p class="mt-2 text-sm text-slate-600">{{ retryFeedback.message }}</p>
-        </template>
-<template #footer><template v-if="retryFeedback.open"><footer class="mt-6 flex justify-end">
-          <a-button type="text"
-            html-type="button"
+        <footer class="mt-6 flex justify-end">
+          <button
+            type="button"
             class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
             @click="closeRetryFeedback"
           >
             知道了
-          </a-button>
-        </footer></template></template>
-</a-modal>
+          </button>
+        </footer>
+      </article>
+    </div>
   </section>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, watchEffect, onMounted } from 'vue'
 import { mockRepayments } from '../../../admin/mock/cryptoLending'
 import {
   REPAYMENT_STATUS_LABELS,
@@ -492,6 +508,7 @@ const showDetailModal = ref(false)
 const currentDetailRepayment = ref(null)
 
 const selectedRepaymentIds = ref([])
+const headerCheckboxRef = ref(null)
 const remindModalOpen = ref(false)
 const remindTargets = ref([])
 const remindChannel = ref(REPAYMENT_REMINDER_CHANNEL.IN_APP)
@@ -652,11 +669,13 @@ function clearSelection() {
   selectedRepaymentIds.value = []
 }
 
-const partPageSelected = computed(() => {
+watchEffect(() => {
+  const el = headerCheckboxRef.value
+  if (!el) return
   const ids = pageRepaymentIds.value
   const sel = selectedRepaymentIds.value
   const onPage = ids.filter((id) => sel.includes(id)).length
-  return ids.length > 0 && onPage > 0 && onPage < ids.length
+  el.indeterminate = ids.length > 0 && onPage > 0 && onPage < ids.length
 })
 
 watch(

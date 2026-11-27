@@ -470,9 +470,9 @@ onMounted(load)
           管理前台首页底部新闻模块与新闻资讯独立路由展示内容。
         </p>
       </div>
-      <a-button html-type="button" class="shrink-0" :disabled="loading" @click="openAdd" type="primary">
+      <button type="button" class="ant-btn ant-btn-primary shrink-0" :disabled="loading" @click="openAdd">
         发布新闻
-      </a-button>
+      </button>
     </header>
 
     <div class="grid gap-3 sm:grid-cols-2">
@@ -501,9 +501,112 @@ onMounted(load)
     <section v-else class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm" aria-label="新闻资讯列表">
       <div class="flex flex-col gap-3 border-b border-slate-200 px-4 py-3 md:flex-row md:items-center md:justify-between">
         <div class="flex flex-1 flex-col gap-3 sm:flex-row">
-          <a-input v-model:value="keyword" type="search" class="w-full sm:max-w-xs" placeholder="搜索标题、摘要、语言、发布时间" aria-label="搜索新闻" @input="resetListPage" />
-          <a-select class="w-full" id="front-news-status-filter-combobox" aria-label="筛选新闻状态" :value="getCustomSelectedOption('statusFilter')?.value" :options="statusFilterOptions" @change="commitCustomSelect('statusFilter', $event)" />
-          <a-select class="w-full" id="front-news-language-filter-combobox" aria-label="按新闻语言筛选" :value="getCustomSelectedOption('languageFilter')?.value" :options="languageFilterOptions" @change="commitCustomSelect('languageFilter', $event)" />
+          <input
+            v-model="keyword"
+            type="search"
+            class="ant-input w-full sm:max-w-xs"
+            placeholder="搜索标题、摘要、语言、发布时间"
+            aria-label="搜索新闻"
+            @input="resetListPage"
+          />
+          <div class="relative w-full sm:max-w-xs">
+            <div
+              id="front-news-status-filter-combobox"
+              role="combobox"
+              tabindex="0"
+              aria-haspopup="listbox"
+              aria-controls="front-news-status-filter-listbox"
+              aria-label="筛选新闻状态"
+              :aria-expanded="customSelectOpen === 'statusFilter' ? 'true' : 'false'"
+              :aria-activedescendant="
+                customSelectOpen === 'statusFilter'
+                  ? `front-news-status-filter-option-${getCustomActiveIndex('statusFilter')}`
+                  : undefined
+              "
+              class="ant-input admin-select-trigger w-full cursor-pointer gap-3"
+              @click="toggleCustomSelect('statusFilter')"
+              @keydown="onCustomSelectKeydown('statusFilter', $event)"
+              @blur="closeCustomSelect('statusFilter')"
+            >
+              <span class="min-w-0 truncate">{{ getCustomSelectedOption('statusFilter')?.label }}</span>
+              <span aria-hidden="true" class="admin-select-chevron" :class="customSelectOpen === 'statusFilter' ? 'rotate-180' : ''">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none">
+                  <path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+            <ul
+              v-if="customSelectOpen === 'statusFilter'"
+              id="front-news-status-filter-listbox"
+              role="listbox"
+              aria-label="筛选新闻状态"
+              class="news-select-popup"
+            >
+              <li
+                v-for="(option, index) in statusFilterOptions"
+                :id="`front-news-status-filter-option-${index}`"
+                :key="String(option.value)"
+                role="option"
+                :aria-selected="index === getCustomActiveIndex('statusFilter') ? 'true' : 'false'"
+                class="news-select-option"
+                :class="index === getCustomActiveIndex('statusFilter') ? 'bg-blue-50 text-blue-700' : 'hover:bg-slate-50'"
+                @mousedown.prevent
+                @mouseenter="setCustomActiveIndex('statusFilter', index)"
+                @click="commitCustomSelect('statusFilter', option.value)"
+              >
+                {{ option.label }}
+              </li>
+            </ul>
+          </div>
+          <div class="relative w-full sm:max-w-xs">
+            <div
+              id="front-news-language-filter-combobox"
+              role="combobox"
+              tabindex="0"
+              aria-haspopup="listbox"
+              aria-controls="front-news-language-filter-listbox"
+              aria-label="按新闻语言筛选"
+              :aria-expanded="customSelectOpen === 'languageFilter' ? 'true' : 'false'"
+              :aria-activedescendant="
+                customSelectOpen === 'languageFilter'
+                  ? `front-news-language-filter-option-${getCustomActiveIndex('languageFilter')}`
+                  : undefined
+              "
+              class="ant-input admin-select-trigger w-full cursor-pointer gap-3"
+              @click="toggleCustomSelect('languageFilter')"
+              @keydown="onCustomSelectKeydown('languageFilter', $event)"
+              @blur="closeCustomSelect('languageFilter')"
+            >
+              <span class="min-w-0 truncate">{{ getCustomSelectedOption('languageFilter')?.label }}</span>
+              <span aria-hidden="true" class="admin-select-chevron" :class="customSelectOpen === 'languageFilter' ? 'rotate-180' : ''">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none">
+                  <path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+            <ul
+              v-if="customSelectOpen === 'languageFilter'"
+              id="front-news-language-filter-listbox"
+              role="listbox"
+              aria-label="按新闻语言筛选"
+              class="news-select-popup max-h-64 overflow-y-auto"
+            >
+              <li
+                v-for="(option, index) in languageFilterOptions"
+                :id="`front-news-language-filter-option-${index}`"
+                :key="String(option.value)"
+                role="option"
+                :aria-selected="index === getCustomActiveIndex('languageFilter') ? 'true' : 'false'"
+                class="news-select-option"
+                :class="index === getCustomActiveIndex('languageFilter') ? 'bg-blue-50 text-blue-700' : 'hover:bg-slate-50'"
+                @mousedown.prevent
+                @mouseenter="setCustomActiveIndex('languageFilter', index)"
+                @click="commitCustomSelect('languageFilter', option.value)"
+              >
+                {{ option.label }}
+              </li>
+            </ul>
+          </div>
         </div>
         <p class="text-xs text-slate-500">
           共 {{ filteredRows.length }} 条，当前第 {{ currentPage }} / {{ totalPages }} 页
@@ -511,63 +614,104 @@ onMounted(load)
       </div>
 
       <div class="overflow-x-auto">
-        <a-table  :data-source="pagedRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" >
-<a-table-column key="column-0" ><template #title>新闻</template><template #default="{ record: row, index: index }"><div class=" ">
+        <table class="min-w-full divide-y divide-slate-200 text-sm">
+          <thead class="bg-slate-50/80">
+            <tr>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">新闻</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">语言</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">发布时间</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">状态</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">排序权重</th>
+              <th class="px-4 py-3 text-right font-medium text-slate-700">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 bg-white">
+            <tr v-for="row in pagedRows" :key="row.id">
+              <td class="px-4 py-3">
                 <div class="font-medium text-slate-900">{{ row.title }}</div>
                 <div class="mt-1 max-w-xl truncate text-xs text-slate-500">{{ row.summary || '-' }}</div>
-              </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>语言</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-600">{{ localeLabel(row.locale) }}</div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>发布时间</template><template #default="{ record: row, index: index }"><div class="  font-mono text-xs text-slate-600">{{ row.publishedAt }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
+              </td>
+              <td class="px-4 py-3 text-xs text-slate-600">{{ localeLabel(row.locale) }}</td>
+              <td class="px-4 py-3 font-mono text-xs text-slate-600">{{ row.publishedAt }}</td>
+              <td class="px-4 py-3">
                 <span :class="row.enabled ? 'rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800' : 'text-slate-500'">
                   {{ row.enabled ? '展示中' : '已停用' }}
                 </span>
-              </div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
-<a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   text-right">
-                <a-button html-type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</a-button>
+              </td>
+              <td class="px-4 py-3 tabular-nums text-slate-600">{{ row.sort }}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-right">
+                <button type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</button>
                 <span class="mx-2 text-slate-300">|</span>
-                <a-button html-type="button" class="text-red-600 hover:underline" @click="removeRow(row)" danger>删除</a-button>
-              </div></template></a-table-column><template #emptyText>
+                <button type="button" class="text-red-600 hover:underline" @click="removeRow(row)">删除</button>
+              </td>
+            </tr>
+            <tr v-if="pagedRows.length === 0">
+              <td colspan="6" class="px-4 py-10 text-center text-sm text-slate-500">
                 暂无匹配新闻。
-              </template>
-</a-table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <footer class="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm">
         <span class="text-xs text-slate-500">每页 {{ pageSize }} 条</span>
-        <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="filteredRows.length" :show-size-changer="false"  @change="currentPage = $event" />
+        <div class="flex items-center gap-2">
+          <button type="button" class="ant-btn ant-btn-sm" :disabled="currentPage <= 1" @click="goPrev">上一页</button>
+          <span class="text-xs font-medium text-slate-600">{{ currentPage }} / {{ totalPages }}</span>
+          <button type="button" class="ant-btn ant-btn-sm" :disabled="currentPage >= totalPages" @click="goNext">下一页</button>
+        </div>
       </footer>
     </section>
 
     <Teleport to="body">
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-4">
+      <div v-if="modalOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4">
+        <section
+          class="flex max-h-[calc(100vh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="front-news-editor-title"
+        >
+          <div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-4">
             <h2 id="front-news-editor-title" class="text-lg font-semibold text-slate-900">
               {{ editingId ? '编辑新闻' : '发布新闻' }}
             </h2>
-            <a-button aria-label="关闭" html-type="button" class="text-slate-500 hover:bg-slate-100 hover:text-slate-800"  @click="closeModal">
+            <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800" aria-label="关闭" @click="closeModal">
               <span aria-hidden="true">×</span>
-            </a-button>
-          </div></template></template><template v-if="modalOpen"><div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+            </button>
+          </div>
+          <div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
             <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
               <div class="space-y-4">
                 <div>
                   <label for="front-news-title-input" class="mb-1.5 block text-sm font-medium text-slate-700">新闻标题</label>
-                  <a-input id="front-news-title-input" v-model:value="formTitle" class="w-full" type="text" placeholder="请输入新闻标题" required />
+                  <input
+                    id="front-news-title-input"
+                    v-model="formTitle"
+                    class="ant-input w-full"
+                    type="text"
+                    placeholder="请输入新闻标题"
+                    required
+                  />
                 </div>
                 <div>
                   <label for="front-news-summary-input" class="mb-1.5 block text-sm font-medium text-slate-700">摘要</label>
-                  <a-textarea id="front-news-summary-input" v-model:value="formSummary" class="w-full resize-y" placeholder="用于首页和列表展示的一句话摘要" />
+                  <textarea
+                    id="front-news-summary-input"
+                    v-model="formSummary"
+                    class="ant-input min-h-20 w-full resize-y"
+                    placeholder="用于首页和列表展示的一句话摘要"
+                  />
                 </div>
                 <div>
                   <label for="front-news-content-editor" class="mb-1.5 block text-sm font-medium text-slate-700">新闻内容</label>
                   <div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
                     <div class="flex flex-wrap gap-2 border-b border-slate-200 p-3">
-                      <a-button html-type="button" class="" @click="setBlock('H2')">H2</a-button>
-                      <a-button html-type="button" class="" @click="setBlock('P')">正文</a-button>
-                      <a-button html-type="button" class="" @click="exec('bold')">B</a-button>
-                      <a-button html-type="button" class="italic" @click="exec('italic')">I</a-button>
-                      <a-button html-type="button" class="" @click="exec('insertUnorderedList')">列表</a-button>
+                      <button type="button" class="ant-btn ant-btn-sm" @click="setBlock('H2')">H2</button>
+                      <button type="button" class="ant-btn ant-btn-sm" @click="setBlock('P')">正文</button>
+                      <button type="button" class="ant-btn ant-btn-sm" @click="exec('bold')">B</button>
+                      <button type="button" class="ant-btn ant-btn-sm italic" @click="exec('italic')">I</button>
+                      <button type="button" class="ant-btn ant-btn-sm" @click="exec('insertUnorderedList')">列表</button>
                     </div>
                     <div
                       id="front-news-content-editor"
@@ -587,7 +731,55 @@ onMounted(load)
               <aside class="space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
                 <div>
                   <label id="front-news-locale-label" class="mb-1.5 block text-sm font-medium text-slate-700">新闻语言</label>
-                  <a-select class="w-full" id="front-news-locale-combobox" aria-labelledby="front-news-locale-label" :value="getCustomSelectedOption('formLocale')?.value" :options="selectOptionMap.formLocale" @change="commitCustomSelect('formLocale', $event)" />
+                  <div class="relative">
+                    <div
+                      id="front-news-locale-combobox"
+                      role="combobox"
+                      tabindex="0"
+                      aria-haspopup="listbox"
+                      aria-controls="front-news-locale-listbox"
+                      aria-labelledby="front-news-locale-label"
+                      :aria-expanded="customSelectOpen === 'formLocale' ? 'true' : 'false'"
+                      :aria-activedescendant="
+                        customSelectOpen === 'formLocale'
+                          ? `front-news-locale-option-${getCustomActiveIndex('formLocale')}`
+                          : undefined
+                      "
+                      class="ant-input admin-select-trigger w-full cursor-pointer gap-3"
+                      @click="toggleCustomSelect('formLocale')"
+                      @keydown="onCustomSelectKeydown('formLocale', $event)"
+                      @blur="closeCustomSelect('formLocale')"
+                    >
+                      <span class="min-w-0 truncate">{{ getCustomSelectedOption('formLocale')?.label }}</span>
+                      <span aria-hidden="true" class="admin-select-chevron" :class="customSelectOpen === 'formLocale' ? 'rotate-180' : ''">
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none">
+                          <path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                    </div>
+                    <ul
+                      v-if="customSelectOpen === 'formLocale'"
+                      id="front-news-locale-listbox"
+                      role="listbox"
+                      aria-labelledby="front-news-locale-label"
+                      class="news-select-popup max-h-64 overflow-y-auto"
+                    >
+                      <li
+                        v-for="(option, index) in selectOptionMap.formLocale"
+                        :id="`front-news-locale-option-${index}`"
+                        :key="String(option.value)"
+                        role="option"
+                        :aria-selected="index === getCustomActiveIndex('formLocale') ? 'true' : 'false'"
+                        class="news-select-option"
+                        :class="index === getCustomActiveIndex('formLocale') ? 'bg-blue-50 text-blue-700' : 'hover:bg-slate-50'"
+                        @mousedown.prevent
+                        @mouseenter="setCustomActiveIndex('formLocale', index)"
+                        @click="commitCustomSelect('formLocale', option.value)"
+                      >
+                        {{ option.label }}
+                      </li>
+                    </ul>
+                  </div>
                   <p class="mt-2 text-xs leading-5 text-slate-500">
                     每次发布只保存当前选择语言的一条新闻。
                   </p>
@@ -595,10 +787,15 @@ onMounted(load)
                 <div>
                   <label for="front-news-image-url-input" class="mb-1.5 block text-sm font-medium text-slate-700">新闻图片</label>
                   <div class="mb-2 flex flex-wrap items-center gap-2">
-                    <a-button html-type="button" class="" @click="openImagePicker">上传图片</a-button>
-                    <a-button v-if="formImageUrl" html-type="button" class="" @click="removeImage">
+                    <button type="button" class="ant-btn ant-btn-sm" @click="openImagePicker">上传图片</button>
+                    <button
+                      v-if="formImageUrl"
+                      type="button"
+                      class="ant-btn ant-btn-sm"
+                      @click="removeImage"
+                    >
                       移除图片
-                    </a-button>
+                    </button>
                     <span v-if="formImageFileName" class="max-w-full truncate text-xs text-slate-500">
                       {{ formImageFileName }}
                     </span>
@@ -611,7 +808,16 @@ onMounted(load)
                     :aria-describedby="formImageError ? 'front-news-image-help front-news-image-error' : 'front-news-image-help'"
                     @change="onImageSelected"
                   />
-                  <a-input id="front-news-image-url-input" v-model:value="formImageUrl" class="w-full" type="text" placeholder="上传图片后自动填入，也可粘贴 https:// 或 data:image 地址" :aria-describedby="formImageError ? 'front-news-image-help front-news-image-error' : 'front-news-image-help'" :aria-invalid="formImageError ? 'true' : 'false'" @input="onImageUrlInput" />
+                  <input
+                    id="front-news-image-url-input"
+                    v-model="formImageUrl"
+                    class="ant-input w-full"
+                    type="text"
+                    placeholder="上传图片后自动填入，也可粘贴 https:// 或 data:image 地址"
+                    :aria-describedby="formImageError ? 'front-news-image-help front-news-image-error' : 'front-news-image-help'"
+                    :aria-invalid="formImageError ? 'true' : 'false'"
+                    @input="onImageUrlInput"
+                  />
                   <div
                     v-if="formImageUrl"
                     class="mt-2 aspect-[16/9] overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
@@ -630,27 +836,91 @@ onMounted(load)
                 </div>
                 <div>
                   <label id="front-news-enabled-label" class="mb-1.5 block text-sm font-medium text-slate-700">状态</label>
-                  <a-select class="w-full" id="front-news-enabled-combobox" aria-labelledby="front-news-enabled-label" :value="getCustomSelectedOption('enabled')?.value" :options="enabledOptions" @change="commitCustomSelect('enabled', $event)" />
+                  <div class="relative">
+                    <div
+                      id="front-news-enabled-combobox"
+                      role="combobox"
+                      tabindex="0"
+                      aria-haspopup="listbox"
+                      aria-controls="front-news-enabled-listbox"
+                      aria-labelledby="front-news-enabled-label"
+                      :aria-expanded="customSelectOpen === 'enabled' ? 'true' : 'false'"
+                      :aria-activedescendant="
+                        customSelectOpen === 'enabled'
+                          ? `front-news-enabled-option-${getCustomActiveIndex('enabled')}`
+                          : undefined
+                      "
+                      class="ant-input admin-select-trigger w-full cursor-pointer gap-3"
+                      @click="toggleCustomSelect('enabled')"
+                      @keydown="onCustomSelectKeydown('enabled', $event)"
+                      @blur="closeCustomSelect('enabled')"
+                    >
+                      <span class="min-w-0 truncate">{{ getCustomSelectedOption('enabled')?.label }}</span>
+                      <span aria-hidden="true" class="admin-select-chevron" :class="customSelectOpen === 'enabled' ? 'rotate-180' : ''">
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none">
+                          <path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                    </div>
+                    <ul
+                      v-if="customSelectOpen === 'enabled'"
+                      id="front-news-enabled-listbox"
+                      role="listbox"
+                      aria-labelledby="front-news-enabled-label"
+                      class="news-select-popup"
+                    >
+                      <li
+                        v-for="(option, index) in enabledOptions"
+                        :id="`front-news-enabled-option-${index}`"
+                        :key="String(option.value)"
+                        role="option"
+                        :aria-selected="index === getCustomActiveIndex('enabled') ? 'true' : 'false'"
+                        class="news-select-option"
+                        :class="index === getCustomActiveIndex('enabled') ? 'bg-blue-50 text-blue-700' : 'hover:bg-slate-50'"
+                        @mousedown.prevent
+                        @mouseenter="setCustomActiveIndex('enabled', index)"
+                        @click="commitCustomSelect('enabled', option.value)"
+                      >
+                        {{ option.label }}
+                      </li>
+                    </ul>
+                  </div>
                 </div>
                 <div>
                   <label for="front-news-published-at-input" class="mb-1.5 block text-sm font-medium text-slate-700">发布时间</label>
-                  <a-input id="front-news-published-at-input" v-model:value="formPublishedAt" class="w-full" type="text" placeholder="2026-08-24 10:00" />
+                  <input
+                    id="front-news-published-at-input"
+                    v-model="formPublishedAt"
+                    class="ant-input w-full"
+                    type="text"
+                    placeholder="2026-08-24 10:00"
+                  />
                 </div>
                 <div>
                   <label for="front-news-sort-input" class="mb-1.5 block text-sm font-medium text-slate-700">排序权重</label>
-                  <a-input id="front-news-sort-input" class="w-full" type="number" :min="0" :step="1" :value="formSort" @update:value="formSort = $event === '' ? '' : Number($event)" />
+                  <input
+                    id="front-news-sort-input"
+                    v-model.number="formSort"
+                    class="ant-input w-full"
+                    type="number"
+                    min="0"
+                    step="1"
+                  />
                   <p class="mt-2 text-xs leading-5 text-slate-500">
                     数值越大越靠前；权重相同则按发布时间倒序展示。
                   </p>
                 </div>
               </aside>
             </div>
-          </div></template><template #footer><template v-if="Boolean(modalOpen)"><footer class="flex shrink-0 flex-col-reverse gap-2 border-t border-slate-200 px-5 py-4 sm:flex-row sm:justify-end">
-            <a-button html-type="button" class="" :disabled="isSaving" @click="closeModal">取消</a-button>
-            <a-button html-type="button" class="" :disabled="isSaving" @click="submitModal" type="primary">
+          </div>
+          <footer class="flex shrink-0 flex-col-reverse gap-2 border-t border-slate-200 px-5 py-4 sm:flex-row sm:justify-end">
+            <button type="button" class="ant-btn" :disabled="isSaving" @click="closeModal">取消</button>
+            <button type="button" class="ant-btn ant-btn-primary" :disabled="isSaving" @click="submitModal">
               {{ isSaving ? '保存中…' : '保存新闻' }}
-            </a-button>
-          </footer></template></template></a-modal>
+            </button>
+          </footer>
+        </section>
+      </div>
     </Teleport>
   </main>
 </template>

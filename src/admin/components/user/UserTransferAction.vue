@@ -1,7 +1,5 @@
 <script setup>
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
-import { AdminButton, AdminInput } from '../antd/controls.js'
-
 import { computed, ref } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import SelectOnlyCombobox from '../form/SelectOnlyCombobox.vue'
@@ -159,7 +157,7 @@ const confirm = () => {
 </script>
 
 <template>
-  <AdminButton
+  <button
     v-if="showTrigger"
     type="button"
     class="inline-flex items-center justify-center gap-2 h-8 px-3 text-sm font-medium rounded-lg ring-1 ring-blue-200 text-blue-700 bg-white hover:bg-blue-50 transition-colors"
@@ -170,7 +168,7 @@ const confirm = () => {
       <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h10v10" />
     </svg>
     划转
-  </AdminButton>
+  </button>
 
   <Teleport to="body">
     <Transition name="user-action-dialog" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
@@ -184,7 +182,7 @@ const confirm = () => {
           <header class="px-5 py-4 bg-white">
             <div class="flex items-start justify-between gap-4">
               <div id="user-transfer-title" ref="titleRef" tabindex="-1" class="text-lg font-semibold text-slate-900 outline-none">划转</div>
-              <AdminButton
+              <button
                 type="button"
                 class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors"
                 @click="close"
@@ -193,7 +191,7 @@ const confirm = () => {
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </AdminButton>
+              </button>
             </div>
           </header>
 
@@ -235,33 +233,33 @@ const confirm = () => {
             <div>
               <div class="text-sm font-medium text-slate-700 mb-2">划转数量</div>
               <div class="relative">
-                <AdminInput
+                <input
                   v-model="form.amount"
                   type="number"
                   step="0.01"
                   class="w-full rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none border border-slate-100 pr-20"
                   placeholder="请输入划转的数量"
                 />
-                <AdminButton
+                <button
                   type="button"
                   class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-blue-600 hover:text-blue-700"
                   @click="setAll"
                 >
                   全部
-                </AdminButton>
+                </button>
               </div>
               <div class="mt-2 text-sm text-slate-600">
                 余额: {{ fromBalance !== null ? formatMoney(fromBalance, { min: 2, max: 2 }) : '-' }}
               </div>
             </div>
 
-            <AdminButton
+            <button
               type="button"
               class="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-base font-medium py-4 transition-colors"
               @click="confirm"
             >
               划转
-            </AdminButton>
+            </button>
           </div>
         </section>
       </div>

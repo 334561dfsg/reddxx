@@ -176,9 +176,9 @@ onMounted(() => {
         <h1 class="text-2xl font-bold text-slate-900">社媒配置</h1>
         <p class="mt-1 text-sm text-slate-500">维护前台首页页脚展示的国内外社媒链接；仅已启用的链接会在前台展示。</p>
       </div>
-      <a-button html-type="button" class="shrink-0" :disabled="loading" @click="openAdd" type="primary">
+      <button type="button" class="ant-btn ant-btn-primary shrink-0" :disabled="loading" @click="openAdd">
         添加社媒
-      </a-button>
+      </button>
     </div>
 
     <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
@@ -187,17 +187,29 @@ onMounted(() => {
 
     <div v-else class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div class="overflow-x-auto">
-        <a-table  :data-source="rows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" >
-<a-table-column key="column-0" ><template #title>名称</template><template #default="{ record: row, index: index }"><div class="  font-medium text-slate-900">{{ row.name || '—' }}</div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>图标</template><template #default="{ record: row, index: index }"><div class=" ">
+        <table class="min-w-full divide-y divide-slate-200 text-sm">
+          <thead class="bg-slate-50/80">
+            <tr>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">名称</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">图标</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">链接</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">排序权重</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">状态</th>
+              <th class="px-4 py-3 text-right font-medium text-slate-700">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 bg-white">
+            <tr v-for="row in rows" :key="row.id">
+              <td class="px-4 py-3 font-medium text-slate-900">{{ row.name || '—' }}</td>
+              <td class="px-4 py-3">
                 <div
                   class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
                 >
                   <img v-if="row.iconUrl" :src="row.iconUrl" alt="" class="h-full w-full object-cover" />
                   <span v-else class="text-xs font-semibold text-slate-400">{{ row.name?.slice(0, 1) || '-' }}</span>
                 </div>
-              </div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>链接</template><template #default="{ record: row, index: index }"><div class=" ">
+              </td>
+              <td class="px-4 py-3">
                 <a
                   v-if="row.url"
                   :href="row.url"
@@ -208,9 +220,9 @@ onMounted(() => {
                   {{ row.url }}
                 </a>
                 <span v-else class="text-slate-400">—</span>
-              </div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
+              </td>
+              <td class="px-4 py-3 tabular-nums text-slate-600">{{ row.sort }}</td>
+              <td class="px-4 py-3">
                 <span
                   :class="
                     row.enabled ? 'rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800' : 'text-slate-500'
@@ -218,34 +230,48 @@ onMounted(() => {
                 >
                   {{ row.enabled ? '已启用' : '已禁用' }}
                 </span>
-              </div></template></a-table-column>
-<a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   text-right">
-                <a-button html-type="button" class="text-slate-600 hover:underline" @click="toggleEnabled(row)">
+              </td>
+              <td class="whitespace-nowrap px-4 py-3 text-right">
+                <button type="button" class="text-slate-600 hover:underline" @click="toggleEnabled(row)">
                   {{ row.enabled ? '禁用' : '启用' }}
-                </a-button>
+                </button>
                 <span class="mx-2 text-slate-300">|</span>
-                <a-button html-type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</a-button>
+                <button type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</button>
                 <span class="mx-2 text-slate-300">|</span>
-                <a-button html-type="button" class="text-red-600 hover:underline" @click="removeRow(row)" danger>删除</a-button>
-              </div></template></a-table-column><template #emptyText>
+                <button type="button" class="text-red-600 hover:underline" @click="removeRow(row)">删除</button>
+              </td>
+            </tr>
+            <tr v-if="rows.length === 0">
+              <td colspan="6" class="px-4 py-10 text-center text-sm text-slate-500">
                 暂无社媒链接，请点击「添加社媒」。
-              </template>
-</a-table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
     <Teleport to="body">
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(showModal)"><div class="flex items-center justify-between gap-3"><span>{{ editingId ? '编辑社媒' : '添加社媒' }}</span><a-button aria-label="关闭" html-type="button"   @click="closeModal">×</a-button></div></template></template><template v-if="showModal"><div class="border-b border-slate-200 px-5 py-4">
-            <h2 class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑社媒' : '添加社媒' }}</h2>
+      <div
+        v-if="showModal"
+        class="fixed inset-0 z-[100] grid place-items-center bg-black/45 p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="social-link-modal-title"
+      >
+        <div class="w-full max-w-xl rounded-xl border border-slate-200 bg-white shadow-xl">
+          <div class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+            <h2 id="social-link-modal-title" class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑社媒' : '添加社媒' }}</h2>
+            <button type="button" class="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeModal">×</button>
           </div>
-<div class="space-y-4 px-5 py-4">
+          <div class="space-y-4 px-5 py-4">
             <div>
               <label class="mb-1.5 block text-sm font-medium text-slate-700">名称</label>
-              <a-input v-model:value="formName" type="text" class="w-full" placeholder="例如：X / Twitter、Telegram、微信公众号" />
+              <input v-model="formName" type="text" class="ant-input w-full" placeholder="例如：X / Twitter、Telegram、微信公众号" />
             </div>
             <div>
               <label class="mb-1.5 block text-sm font-medium text-slate-700">链接</label>
-              <a-input v-model:value="formUrl" type="url" class="w-full" placeholder="https://example.com" />
+              <input v-model="formUrl" type="url" class="ant-input w-full" placeholder="https://example.com" />
             </div>
             <div>
               <label class="mb-1.5 block text-sm font-medium text-slate-700">社媒图标</label>
@@ -265,10 +291,15 @@ onMounted(() => {
                     @change="readIconFile"
                   />
                   <div class="flex flex-wrap gap-2">
-                    <a-button html-type="button" class="" @click="triggerIconUpload" type="primary">上传图标</a-button>
-                    <a-button v-if="formIconUrl" html-type="button" class="" @click="clearIcon">清除</a-button>
+                    <button type="button" class="ant-btn ant-btn-primary" @click="triggerIconUpload">上传图标</button>
+                    <button v-if="formIconUrl" type="button" class="ant-btn" @click="clearIcon">清除</button>
                   </div>
-                  <a-input v-model:value="formIconUrl" type="text" class="w-full" placeholder="也可以填写图片 URL 或 data URL" />
+                  <input
+                    v-model="formIconUrl"
+                    type="text"
+                    class="ant-input w-full"
+                    placeholder="也可以填写图片 URL 或 data URL"
+                  />
                   <p class="text-xs text-slate-500">支持 PNG / JPG / SVG / WebP，单张不超过 1MB。</p>
                 </div>
               </div>
@@ -276,20 +307,23 @@ onMounted(() => {
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">排序权重</label>
-                <a-input type="number" class="w-full" :value="formSort" @update:value="formSort = $event === '' ? '' : Number($event)" />
+                <input v-model.number="formSort" type="number" class="ant-input w-full" />
                 <p class="mt-1 text-xs text-slate-500">数值越大越靠前</p>
               </div>
               <label class="flex cursor-pointer items-center gap-2 pt-7 text-sm text-slate-700">
-                <a-checkbox v-model:checked="formEnabled" class="" />
+                <input v-model="formEnabled" type="checkbox" class="rounded border-slate-300" />
                 启用该社媒链接
               </label>
             </div>
-          </div></template><template #footer><template v-if="Boolean(showModal)"><div class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
-            <a-button html-type="button" class="" @click="closeModal">取消</a-button>
-            <a-button html-type="button" class="" :disabled="isSaving" @click="submitModal" type="primary">
+          </div>
+          <div class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
+            <button type="button" class="ant-btn" @click="closeModal">取消</button>
+            <button type="button" class="ant-btn ant-btn-primary" :disabled="isSaving" @click="submitModal">
               {{ isSaving ? '保存中…' : '保存' }}
-            </a-button>
-          </div></template></template></a-modal>
+            </button>
+          </div>
+        </div>
+      </div>
     </Teleport>
   </div>
 </template>

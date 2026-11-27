@@ -192,7 +192,7 @@ test('relationship drawer paginates members and resets selection and page for ch
   await harness.flush()
   assert.ok(harness.allNodes().some((node) => node.textContent.includes('已选择裂变下级 pagination_member_01')))
 
-  const nextPage = harness.allNodes().find(node => node.classList?.contains('ant-pagination-next'))
+  const nextPage = harness.findByText('下一页', 'button')
   assert.ok(nextPage, 'pagination exposes a next-page control when more members exist')
   nextPage.click()
   await harness.flush()
@@ -210,7 +210,7 @@ test('relationship drawer paginates members and resets selection and page for ch
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
   assert.equal(harness.allNodes().some((node) => node.textContent.includes('已选择裂变下级')), false)
 
-  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
+  harness.findByText('下一页', 'button').click()
   await harness.flush()
   statusFilterToggle.click()
   await harness.flush()
@@ -218,7 +218,7 @@ test('relationship drawer paginates members and resets selection and page for ch
   await harness.flush()
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
 
-  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
+  harness.findByText('下一页', 'button').click()
   await harness.flush()
   roleFilterToggle.click()
   await harness.flush()
@@ -226,13 +226,13 @@ test('relationship drawer paginates members and resets selection and page for ch
   await harness.flush()
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
 
-  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
+  harness.findByText('下一页', 'button').click()
   await harness.flush()
   harness.props.mode = 'all'
   await harness.flush()
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
 
-  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
+  harness.findByText('下一页', 'button').click()
   await harness.flush()
   harness.props.user = tree.members[0]
   await harness.flush()
@@ -306,7 +306,7 @@ test('team report drawer paginates direct fission branches', async (t) => {
   ])
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 1 / 3 页')
 
-  const nextPage = harness.allNodes().find(node => node.classList?.contains('ant-pagination-next'))
+  const nextPage = harness.findByText('下一页', 'button')
   assert.ok(nextPage, 'pagination exposes a next-page control when more branches exist')
   nextPage.click()
   await harness.flush()
@@ -315,7 +315,7 @@ test('team report drawer paginates direct fission branches', async (t) => {
     'pagination_member_16', 'pagination_member_17', 'pagination_member_18', 'pagination_member_19', 'pagination_member_20'
   ])
 
-  harness.allNodes().find(node => node.classList?.contains('ant-pagination-next')).click()
+  harness.findByText('下一页', 'button').click()
   await harness.flush()
   assert.deepEqual(visibleBranches(), ['pagination_member_21', 'pagination_member_22'])
   assert.equal(harness.findByTestId('compact-pagination-summary')?.textContent.trim(), '共 22 条 · 第 3 / 3 页')
@@ -641,7 +641,7 @@ test('agent parent Dialog keeps agent ownership separate from fission wording', 
 test('agent account settings keep account delivery without MFA controls', () => {
   const source = agentManagementSource()
   assert.doesNotMatch(source, /resetMfa|MFA|mfaSetup/)
-  assert.match(source, /<a-modal[\s\S]*代理登录账号设置/)
+  assert.match(source, /代理登录账号设置/)
   assert.match(source, /<AgentDeliveryCard[\s\S]*title="账号设置已保存，以下信息可发送给代理"/)
 })
 

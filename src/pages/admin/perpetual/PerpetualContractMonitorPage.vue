@@ -598,7 +598,7 @@ const handleMfaVerify = async (code) => {
     </div>
 
     <div class="max-w-lg">
-      <a-input v-model:value="keyword" type="text" placeholder="搜索合约 (代码或名称)..." class="ant-input !py-2" />
+      <input v-model="keyword" type="text" placeholder="搜索合约 (代码或名称)..." class="ant-input !py-2" />
     </div>
 
     <div class="flex gap-2 flex-col">
@@ -624,10 +624,10 @@ const handleMfaVerify = async (code) => {
           </div>
 
           <div class="flex items-center gap-2">
-            <a-button html-type="button" class="ant-btn !h-9 !px-4" @click="toggleContractStatus(contract.id)">
+            <button type="button" class="ant-btn !h-9 !px-4" @click="toggleContractStatus(contract.id)">
               {{ contract.status === PERP_CONTROL_CONTRACT_STATUS.RUNNING ? '暂停线控' : '启动线控' }}
-            </a-button>
-            <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-9 !px-4" @click="openConfig(contract.id)">线控配置</a-button>
+            </button>
+            <button type="button" class="ant-btn ant-btn-primary !h-9 !px-4" @click="openConfig(contract.id)">线控配置</button>
           </div>
         </div>
 
@@ -656,9 +656,9 @@ const handleMfaVerify = async (code) => {
                 </svg>
                 自动线控规则
               </p>
-              <a-button type="text" html-type="button" class="text-xs font-bold text-violet-600 hover:text-violet-700 flex items-center gap-1" @click="openAddRule(contract.id)">
+              <button type="button" class="text-xs font-bold text-violet-600 hover:text-violet-700 flex items-center gap-1" @click="openAddRule(contract.id)">
                 <span class="text-base">+</span> 添加规则
-              </a-button>
+              </button>
             </div>
 
             <div class="space-y-3">
@@ -666,8 +666,8 @@ const handleMfaVerify = async (code) => {
                 <div class="flex items-start justify-between gap-3">
                   <div class="flex items-start gap-4">
                     <div class="mt-1 flex flex-col items-center">
-                      <a-button type="text"
-                        html-type="button"
+                      <button
+                        type="button"
                         class="relative inline-flex cursor-pointer items-center"
                         @click="toggleRule(contract.id, rule.id)"
                       >
@@ -679,7 +679,7 @@ const handleMfaVerify = async (code) => {
                           class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition"
                           :class="rule.enabled ? 'translate-x-5' : 'translate-x-0'"
                         ></span>
-                      </a-button>
+                      </button>
                       <span class="mt-1 text-[10px] font-bold" :class="rule.enabled ? 'text-violet-600' : 'text-slate-400'">
                         {{ rule.enabled ? '启用' : '停用' }}
                       </span>
@@ -713,8 +713,8 @@ const handleMfaVerify = async (code) => {
                   </div>
 
                   <div class="flex items-center gap-3">
-                    <a-button type="text" html-type="button" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" @click="openEditRule(contract.id, rule)">编辑</a-button>
-                    <a-button type="text" html-type="button" class="text-xs font-bold text-rose-400 hover:text-rose-600 transition-colors" @click="deleteRule(contract.id, rule.id)">删除</a-button>
+                    <button type="button" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" @click="openEditRule(contract.id, rule)">编辑</button>
+                    <button type="button" class="text-xs font-bold text-rose-400 hover:text-rose-600 transition-colors" @click="deleteRule(contract.id, rule.id)">删除</button>
                   </div>
                 </div>
               </article>
@@ -729,7 +729,22 @@ const handleMfaVerify = async (code) => {
           <span class="font-medium">{{ totalPages }}</span> 页
         </div>
         <div class="flex items-center gap-2">
-          <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="pagination.currentPage = $event" />
+          <button
+            type="button"
+            class="ant-btn !h-9 !px-4 !text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            :disabled="pagination.currentPage === 1"
+            @click="pagination.currentPage--"
+          >
+            上一页
+          </button>
+          <button
+            type="button"
+            class="ant-btn !h-9 !px-4 !text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            :disabled="pagination.currentPage === totalPages"
+            @click="pagination.currentPage++"
+          >
+            下一页
+          </button>
         </div>
       </div>
 
@@ -745,15 +760,16 @@ const handleMfaVerify = async (code) => {
     @save="saveConfig"
   />
 
-  <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="showRuleModal" :mask-closable="false" :closable="false" :keyboard="false" :width="1024" :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showRuleModal = false"><template #title><header class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-violet-50 to-blue-50 px-6 py-4">
+  <div v-if="showRuleModal" class="fixed inset-0 z-50 grid place-items-center bg-black/45 p-4">
+    <section class="flex h-[88vh] w-full max-w-5xl overflow-hidden rounded-xl bg-white shadow-2xl">
+      <div class="flex w-3/5 flex-col border-r border-slate-200">
+        <header class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-violet-50 to-blue-50 px-6 py-4">
           <div>
             <h2 class="text-xl font-semibold text-slate-900">{{ editingRuleId ? '编辑线控规则' : '新增线控规则' }}</h2>
             <p class="mt-0.5 text-xs text-slate-500">配置规则的触发条件和执行动作</p>
           </div>
-          <a-button aria-label="关闭" type="text" html-type="button" class="text-2xl text-slate-400 hover:text-slate-600 transition-colors" @click="showRuleModal = false">×</a-button>
-        </header></template><section class="flex flex-col md:flex-row  w-full max-w-5xl overflow-hidden rounded-xl bg-white shadow-2xl">
-      <div class="flex w-full md:w-3/5 flex-col border-r border-slate-200">
-
+          <button aria-label="关闭" type="button" class="text-2xl text-slate-400 hover:text-slate-600 transition-colors" @click="showRuleModal = false">×</button>
+        </header>
 
         <div class="flex-1 space-y-5 overflow-y-auto px-6 py-5">
           <section class="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -769,7 +785,7 @@ const handleMfaVerify = async (code) => {
             <div class="space-y-4">
               <label class="block space-y-2">
                 <span class="text-sm font-medium text-slate-700">规则名称 <span class="text-rose-500">*</span></span>
-                <a-input v-model:value="ruleForm.name" type="text" class="ant-input" placeholder="如：多头过重自动调整" />
+                <input v-model="ruleForm.name" type="text" class="ant-input" placeholder="如：多头过重自动调整" />
               </label>
 
               <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
@@ -779,7 +795,12 @@ const handleMfaVerify = async (code) => {
                   </svg>
                   <span class="text-sm text-slate-700 font-medium">保存后立即启用</span>
                 </div>
-                <a-switch v-model:checked="ruleForm.enabled" aria-label="保存后立即启用" />
+                <label class="relative inline-flex cursor-pointer items-center">
+                  <input v-model="ruleForm.enabled" type="checkbox" class="peer sr-only" aria-label="保存后立即启用" />
+                  <div
+                    class="peer h-6 w-11 rounded-full bg-slate-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-violet-600 peer-checked:after:translate-x-full peer-checked:after:border-white"
+                  ></div>
+                </label>
               </div>
 
               <div class="rounded-lg border border-blue-100 bg-blue-50/50 px-4 py-3">
@@ -812,21 +833,21 @@ const handleMfaVerify = async (code) => {
             <div class="space-y-3.5">
               <label class="block space-y-2">
                 <span class="text-sm font-medium text-slate-700">触发类型</span>
-                <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="ruleForm.triggerType" class="">
-                  <a-select-option v-for="opt in triggerOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</a-select-option>
-                </a-select>
+                <select v-model="ruleForm.triggerType" class="ant-select">
+                  <option v-for="opt in triggerOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                </select>
               </label>
 
               <div class="grid gap-3.5 sm:grid-cols-2">
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">{{ triggerMeta.thresholdLabel }} <span class="text-rose-500">*</span></span>
-                  <a-input v-model:value.number="ruleForm.thresholdValue" type="number" :min="0" class="ant-input" />
+                  <input v-model.number="ruleForm.thresholdValue" type="number" min="0" class="ant-input" />
                 </label>
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">触发方向</span>
-                  <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="ruleForm.triggerDirection" class="">
-                    <a-select-option v-for="d in triggerMeta.directionOptions" :key="d.value" :value="d.value">{{ d.label }}</a-select-option>
-                  </a-select>
+                  <select v-model="ruleForm.triggerDirection" class="ant-select">
+                    <option v-for="d in triggerMeta.directionOptions" :key="d.value" :value="d.value">{{ d.label }}</option>
+                  </select>
                 </label>
               </div>
 
@@ -836,9 +857,9 @@ const handleMfaVerify = async (code) => {
                     <span class="text-sm font-medium text-slate-700">
                       {{ ruleForm.triggerDirection === PERP_CONTROL_RULE_DIRECTION.LONG_HEAVY ? '多头' : '空头' }}占比阈值 (%)
                     </span>
-                    <a-input v-model:value.number="ruleForm.positionRatio" type="number" :min="50" :max="100" :step="1" class="ant-input !w-20 !h-8 !px-2 !text-right" />
+                    <input v-model.number="ruleForm.positionRatio" type="number" min="50" max="100" step="1" class="ant-input !w-20 !h-8 !px-2 !text-right" />
                   </div>
-                  <a-slider v-model:value.number="ruleForm.positionRatio" :min="50" :max="100" :step="1" class="w-full" />
+                  <input v-model.number="ruleForm.positionRatio" type="range" min="50" max="100" step="1" class="w-full accent-blue-600" />
                   <div class="flex items-start gap-1.5 rounded-md bg-blue-50 px-3 py-2">
                     <svg class="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -853,9 +874,9 @@ const handleMfaVerify = async (code) => {
               <div v-if="needsTimeWindow" class="rounded-lg border border-blue-200 bg-white p-4">
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">统计时间区间</span>
-                  <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="ruleForm.timeWindow" class="">
-                    <a-select-option v-for="tw in availableTimeWindows" :key="tw.value" :value="tw.value">{{ tw.label }}</a-select-option>
-                  </a-select>
+                  <select v-model="ruleForm.timeWindow" class="ant-select">
+                    <option v-for="tw in availableTimeWindows" :key="tw.value" :value="tw.value">{{ tw.label }}</option>
+                  </select>
                   <div class="flex items-start gap-1.5 rounded-md bg-blue-50 px-3 py-2">
                     <svg class="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -887,9 +908,9 @@ const handleMfaVerify = async (code) => {
                 <label class="block space-y-3">
                   <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-slate-700">价格偏移 (点)</span>
-                    <a-input v-model:value.number="ruleForm.priceOffset" type="number" :min="0" :max="50" :step="1" class="ant-input !w-20 !h-8 !px-2 !text-right" />
+                    <input v-model.number="ruleForm.priceOffset" type="number" min="0" max="50" step="1" class="ant-input !w-20 !h-8 !px-2 !text-right" />
                   </div>
-                  <a-slider v-model:value.number="ruleForm.priceOffset" :min="0" :max="50" :step="1" class="w-full" />
+                  <input v-model.number="ruleForm.priceOffset" type="range" min="0" max="50" step="1" class="w-full accent-violet-600" />
                   <div class="flex items-start gap-1.5 rounded-md bg-violet-50 px-3 py-2">
                     <svg class="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -902,14 +923,14 @@ const handleMfaVerify = async (code) => {
               <div class="grid gap-4 sm:grid-cols-2">
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">偏移方向</span>
-                  <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="ruleForm.offsetDirection" class="">
-                    <a-select-option v-for="d in offsetDirections" :key="d.value" :value="d.value">{{ d.label }}</a-select-option>
-                  </a-select>
+                  <select v-model="ruleForm.offsetDirection" class="ant-select">
+                    <option v-for="d in offsetDirections" :key="d.value" :value="d.value">{{ d.label }}</option>
+                  </select>
                 </label>
 
                 <label class="block space-y-2">
                   <span class="text-sm font-medium text-slate-700">持续时间 (秒)</span>
-                  <a-input v-model:value.number="ruleForm.durationSec" type="number" :min="0" class="ant-input" placeholder="0 为持续生效" />
+                  <input v-model.number="ruleForm.durationSec" type="number" min="0" class="ant-input" placeholder="0 为持续生效" />
                 </label>
               </div>
 
@@ -917,9 +938,9 @@ const handleMfaVerify = async (code) => {
                 <label class="block space-y-3">
                   <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-slate-700">滑点率 (%)</span>
-                    <a-input v-model:value.number="ruleForm.slippagePct" type="number" :min="0" :max="2" :step="0.01" class="ant-input !w-20 !h-8 !px-2 !text-right" />
+                    <input v-model.number="ruleForm.slippagePct" type="number" min="0" max="2" step="0.01" class="ant-input !w-20 !h-8 !px-2 !text-right" />
                   </div>
-                  <a-slider v-model:value.number="ruleForm.slippagePct" :min="0" :max="2" :step="0.01" class="w-full" />
+                  <input v-model.number="ruleForm.slippagePct" type="range" min="0" max="2" step="0.01" class="w-full accent-violet-600" />
                   <div class="flex items-start gap-1.5 rounded-md bg-violet-50 px-3 py-2">
                     <svg class="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -932,10 +953,20 @@ const handleMfaVerify = async (code) => {
           </section>
         </div>
 
-
+        <footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+          <button type="button" class="ant-btn !h-10 !px-6" @click="showRuleModal = false">取消</button>
+          <button type="button" class="ant-btn ant-btn-primary !h-10 !px-8" :disabled="!ruleForm.name.trim() || Number(ruleForm.thresholdValue) <= 0" @click="saveRule">
+            <span class="flex items-center gap-2">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              保存规则
+            </span>
+          </button>
+        </footer>
       </div>
 
-      <div class="flex w-full md:w-2/5 flex-col bg-gradient-to-br from-slate-50 to-slate-100">
+      <div class="flex w-2/5 flex-col bg-gradient-to-br from-slate-50 to-slate-100">
         <header class="border-b border-slate-200 px-5 py-4">
           <h3 class="text-lg font-semibold text-slate-900">实时预览</h3>
           <p class="mt-0.5 text-xs text-slate-500">调整参数后即时显示效果</p>
@@ -1066,17 +1097,8 @@ const handleMfaVerify = async (code) => {
           </div>
         </div>
       </div>
-    </section><template #footer><footer class="flex justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-          <a-button html-type="button" class="ant-btn !h-10 !px-6" @click="showRuleModal = false">取消</a-button>
-          <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-10 !px-8" :disabled="!ruleForm.name.trim() || Number(ruleForm.thresholdValue) <= 0" @click="saveRule">
-            <span class="flex items-center gap-2">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-              保存规则
-            </span>
-          </a-button>
-        </footer></template></a-modal>
+    </section>
+  </div>
 
   <MfaVerificationModal
     v-model:open="showMfaModal"

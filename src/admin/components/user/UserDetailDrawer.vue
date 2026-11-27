@@ -1,9 +1,4 @@
 <script setup>
-import { Table } from 'ant-design-vue'
-const TableColumn = Table.Column
-
-import { AdminButton, AdminInput, AdminSelect, AdminTextarea, nativeControl } from '../antd/controls.js'
-
 import { computed, ref, watch } from 'vue'
 import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../constants/user'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
@@ -286,7 +281,7 @@ const tabButtonClass = (id) => {
             <h2 id="user-detail-drawer-title" ref="titleRef" tabindex="-1" class="mb-3 text-lg font-semibold text-slate-900 outline-none">
               用户详情
             </h2>
-            <AdminButton
+            <button
               type="button"
               class="absolute right-4 top-[max(0.75rem,env(safe-area-inset-top))] z-10 flex min-h-11 min-w-11 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none sm:right-6"
               @click="close"
@@ -295,7 +290,7 @@ const tabButtonClass = (id) => {
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </AdminButton>
+            </button>
               <div class="flex w-full flex-col gap-4 pr-0 lg:flex-row lg:items-start lg:justify-between lg:gap-6 lg:pr-16">
               <div class="flex min-w-0 items-start gap-4 pr-4">
                 <div class="shrink-0 h-16 w-16 rounded-full overflow-hidden bg-slate-200">
@@ -351,7 +346,7 @@ const tabButtonClass = (id) => {
 
             <!-- Tabs -->
             <nav class="mt-3 flex items-center gap-0 overflow-x-auto bg-slate-50 border-b border-slate-200">
-              <AdminButton
+              <button
                 v-for="t in tabs"
                 :key="t.id"
                 type="button"
@@ -360,7 +355,7 @@ const tabButtonClass = (id) => {
                 @click="activeTab = t.id"
               >
                 {{ t.label }}
-              </AdminButton>
+              </button>
             </nav>
           </header>
 
@@ -482,9 +477,24 @@ const tabButtonClass = (id) => {
                 </div>
 
                 <div class="mt-4 overflow-x-auto">
-                  <Table :data-source="incomeList" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="row => row.address + row.createdAt"  ><TableColumn key="column-0"><template #title>公链</template><template #default="{ record: row, index: rowIndex }"><div class="px-4 py-3 text-sm text-slate-700">{{ row.chain }}</div></template></TableColumn><TableColumn key="column-1"><template #title>地址</template><template #default="{ record: row, index: rowIndex }"><div class="px-4 py-3 text-sm">
+                  <table class="min-w-[520px] w-full">
+                    <thead class="bg-slate-50 border-b border-slate-200">
+                      <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">公链</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">地址</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">创建时间</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                      <tr v-for="row in incomeList" :key="row.address + row.createdAt" class="hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-3 text-sm text-slate-700">{{ row.chain }}</td>
+                        <td class="px-4 py-3 text-sm">
                           <span class="font-mono text-slate-800">{{ formatAddress(row.address) }}</span>
-                        </div></template></TableColumn><TableColumn key="column-2"><template #title>创建时间</template><template #default="{ record: row, index: rowIndex }"><div class="px-4 py-3 text-sm text-slate-700">{{ formatDateTime(row.createdAt) }}</div></template></TableColumn></Table>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-slate-700">{{ formatDateTime(row.createdAt) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </section>
             </template>
@@ -501,9 +511,24 @@ const tabButtonClass = (id) => {
                 </div>
 
                 <div class="mt-4 overflow-x-auto">
-                  <Table :data-source="incomeList" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="row => row.address + row.createdAt"  ><TableColumn key="column-0"><template #title>公链</template><template #default="{ record: row, index: rowIndex }"><div class="px-4 py-3 text-sm text-slate-700">{{ row.chain }}</div></template></TableColumn><TableColumn key="column-1"><template #title>地址</template><template #default="{ record: row, index: rowIndex }"><div class="px-4 py-3 text-sm">
+                  <table class="min-w-[520px] w-full">
+                    <thead class="bg-slate-50 border-b border-slate-200">
+                      <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">公链</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">地址</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">创建时间</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                      <tr v-for="row in incomeList" :key="row.address + row.createdAt" class="hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-3 text-sm text-slate-700">{{ row.chain }}</td>
+                        <td class="px-4 py-3 text-sm">
                           <span class="font-mono text-slate-800">{{ formatAddress(row.address) }}</span>
-                        </div></template></TableColumn><TableColumn key="column-2"><template #title>创建时间</template><template #default="{ record: row, index: rowIndex }"><div class="px-4 py-3 text-sm text-slate-700">{{ formatDateTime(row.createdAt) }}</div></template></TableColumn></Table>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-slate-700">{{ formatDateTime(row.createdAt) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </section>
             </template>
@@ -577,7 +602,7 @@ const tabButtonClass = (id) => {
                           }}
                         </div>
                       </div>
-                      <AdminButton
+                      <button
                         type="button"
                         class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors"
                         @click="closeActionModal"
@@ -586,7 +611,7 @@ const tabButtonClass = (id) => {
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                      </AdminButton>
+                      </button>
                     </div>
                   </header>
 
@@ -640,19 +665,19 @@ const tabButtonClass = (id) => {
 
                       <div>
                         <div class="text-sm font-medium text-slate-700 mb-2">选择入金账户：</div>
-                        <AdminSelect
+                        <select
                           v-model="actionForm.depositAccountKey"
                           class="w-full rounded-xl border-2 border-blue-600 bg-white px-4 py-3 text-sm outline-none"
                         >
                           <option v-for="opt in depositAccountOptions" :key="opt.key" :value="opt.key">
                             {{ opt.label }}
                           </option>
-                        </AdminSelect>
+                        </select>
                       </div>
 
                       <div>
                         <div class="text-sm font-medium text-slate-700 mb-2">操作入金数量：</div>
-                        <AdminInput
+                        <input
                           v-model="actionForm.depositAmount"
                           type="number"
                           step="0.01"
@@ -663,7 +688,7 @@ const tabButtonClass = (id) => {
 
                       <div>
                         <div class="text-sm font-medium text-slate-700 mb-2">备注：</div>
-                        <AdminTextarea
+                        <textarea
                           v-model="actionForm.remark"
                           rows="4"
                           class="w-full rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none focus:bg-white border border-slate-100"
@@ -675,31 +700,31 @@ const tabButtonClass = (id) => {
                     <div v-else-if="actionType === 'transfer'" class="space-y-4">
                       <div>
                         <div class="text-sm font-medium text-slate-700 mb-2">从</div>
-                        <AdminSelect
+                        <select
                           v-model="actionForm.transferFromAccountKey"
                           class="w-full rounded-xl border-2 border-blue-600 bg-white px-4 py-3 text-sm outline-none"
                         >
                           <option v-for="opt in transferAccountOptions" :key="opt.key" :value="opt.key">
                             {{ opt.label }}
                           </option>
-                        </AdminSelect>
+                        </select>
                       </div>
 
                       <div>
                         <div class="text-sm font-medium text-slate-700 mb-2">到</div>
-                        <AdminSelect
+                        <select
                           v-model="actionForm.transferToAccountKey"
                           class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm outline-none"
                         >
                           <option v-for="opt in transferAccountOptions" :key="opt.key" :value="opt.key">
                             {{ opt.label }}
                           </option>
-                        </AdminSelect>
+                        </select>
                       </div>
 
                       <div>
                         <div class="text-sm font-medium text-slate-700 mb-2">币种</div>
-                        <AdminSelect
+                        <select
                           v-model="actionForm.transferCoinKey"
                           class="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm outline-none"
                         >
@@ -707,7 +732,7 @@ const tabButtonClass = (id) => {
                           <option v-for="c in coinOptions" :key="c.key" :value="c.key">
                             {{ c.label }}
                           </option>
-                        </AdminSelect>
+                        </select>
                       </div>
 
                       <div>
@@ -716,20 +741,20 @@ const tabButtonClass = (id) => {
                         </div>
 
                         <div class="relative">
-                          <AdminInput
+                          <input
                             v-model="actionForm.transferAmount"
                             type="number"
                             step="0.01"
                             class="w-full rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none border border-slate-100 pr-28"
                             placeholder="请输入划转的数量"
                           />
-                          <AdminButton
+                          <button
                             type="button"
                             class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-blue-600 hover:text-blue-700"
                             @click="setTransferAll"
                           >
                             全部
-                          </AdminButton>
+                          </button>
                         </div>
 
                         <div class="mt-2 text-sm text-slate-600">
@@ -739,15 +764,15 @@ const tabButtonClass = (id) => {
                     </div>
 
                     <div class="mt-5" :class="actionType === 'transfer' ? '' : 'flex justify-end gap-3'">
-                      <AdminButton
+                      <button
                         v-if="actionType !== 'transfer'"
                         type="button"
                         class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                         @click="closeActionModal"
                       >
                         取消
-                      </AdminButton>
-                      <AdminButton
+                      </button>
+                      <button
                         type="submit"
                         class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors"
                         :class="actionType === 'transfer'
@@ -755,7 +780,7 @@ const tabButtonClass = (id) => {
                           : actionConfirmButtonClass"
                       >
                         {{ actionConfirmText }}
-                      </AdminButton>
+                      </button>
                     </div>
                   </form>
                 </section>
@@ -778,13 +803,13 @@ const tabButtonClass = (id) => {
           <!-- Footer -->
           <footer class="shrink-0 border-t border-slate-200 bg-white px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 sm:px-6">
             <div class="flex justify-end gap-2">
-              <AdminButton
+              <button
                 type="button"
                 class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
                 @click="close"
               >
                 关闭
-              </AdminButton>
+              </button>
             </div>
           </footer>
           </section>

@@ -22,10 +22,10 @@
           role="tablist"
           aria-label="授信中心分区"
         >
-          <a-button type="text"
+          <button
             v-for="t in visibleTabs"
             :key="t.id"
-            html-type="button"
+            type="button"
             role="tab"
             :aria-selected="mainTab === t.id"
             class="whitespace-nowrap px-4 py-3 text-sm font-medium transition-colors"
@@ -33,11 +33,11 @@
               mainTab === t.id
                 ? 'border-b-2 border-blue-600 text-blue-600'
                 : 'border-b-2 border-transparent text-slate-600 hover:text-slate-900'
-            "
+"
             @click="mainTab = t.id"
           >
             {{ t.label }}
-          </a-button>
+          </button>
         </div>
       </div>
 
@@ -56,16 +56,17 @@
             得分率 0 时，scale 不低于该值；得分率 1 时，scale 为 1。建议 0.2～0.5。
           </p>
           <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a-slider
-              v-model:value.number="lendingCreditScorecard.minScale"
-              :min="0.05"
-              :max="0.95"
-              :step="0.05"
+            <input
+              v-model.number="lendingCreditScorecard.minScale"
+              type="range"
+              min="0.05"
+              max="0.95"
+              step="0.05"
               :disabled="!canEditLimits"
-              class="flex-1 disabled:opacity-50"
+              class="h-2 flex-1 cursor-pointer accent-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
             />
-            <a-input
-              v-model:value.number="lendingCreditScorecard.minScale"
+            <input
+              v-model.number="lendingCreditScorecard.minScale"
               type="number"
               :min="0.05"
               :max="0.95"
@@ -79,17 +80,32 @@
         </div>
 
         <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-          <a-table size="small" :pagination="false" :data-source="[{ key: 0 }]" row-key="key" :scroll="{ x: 'max-content' }"><a-table-column key="static-0"><template #title>项目</template><template #default="{ record }"><div v-if="record.key === 0" class="px-4 py-3 font-medium text-slate-800">账户总授信</div></template></a-table-column><a-table-column key="static-1" align="right"><template #title>模板（满分时）</template><template #default="{ record }"><div v-if="record.key === 0" class="px-4 py-3 text-right font-mono tabular-nums text-slate-700">
+          <table class="w-full text-left text-sm">
+            <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <tr>
+                <th class="px-4 py-3">项目</th>
+                <th class="px-4 py-3 text-right">模板（满分时）</th>
+                <th class="px-4 py-3 text-right">按当前得分折算</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="px-4 py-3 font-medium text-slate-800">账户总授信</td>
+                <td class="px-4 py-3 text-right font-mono tabular-nums text-slate-700">
                   {{ Number(lendingCreditScorecard.baseAccountCapMax || 0).toLocaleString() }}
-                </div></template></a-table-column><a-table-column key="static-2" align="right"><template #title>按当前得分折算</template><template #default="{ record }"><div v-if="record.key === 0" class="px-4 py-3 text-right font-mono tabular-nums text-blue-700">
+                </td>
+                <td class="px-4 py-3 text-right font-mono tabular-nums text-blue-700">
                   {{ scaledAccountPreview.toLocaleString() }}
-                </div></template></a-table-column></a-table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <div class="max-w-md space-y-2">
           <label class="text-sm font-medium text-slate-700">账户总授信上限（满分时）</label>
-          <a-input
-            v-model:value.number="lendingCreditScorecard.baseAccountCapMax"
+          <input
+            v-model.number="lendingCreditScorecard.baseAccountCapMax"
             type="number"
             :min="0"
             :step="10000"
@@ -102,13 +118,13 @@
           v-if="canEditLimits"
           class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 pt-4"
         >
-          <a-button type="text"
-            html-type="button"
+          <button
+            type="button"
             class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
             @click="saveLimitsTemplate"
           >
             保存
-          </a-button>
+          </button>
           <span v-if="limitsSaveHint" class="text-sm font-medium text-emerald-600">{{ limitsSaveHint }}</span>
         </div>
       </div>
@@ -128,13 +144,13 @@
         </p>
 
         <div v-if="canEditLimits" class="flex flex-wrap items-center gap-2">
-          <a-button type="text"
-            html-type="button"
+          <button
+            type="button"
             class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
             @click="mainTab = 'limits'"
           >
             ← {{ LIMITS_TAB_LABEL }}
-          </a-button>
+          </button>
         </div>
 
         <div class="space-y-4">
@@ -165,7 +181,7 @@
                       isScorecardEditing(dim)
                         ? 'bg-amber-50 text-amber-900 ring-amber-200'
                         : 'bg-slate-100 text-slate-600 ring-slate-200'
-                    "
+"
                   >
                     {{ isScorecardEditing(dim) ? '编辑中' : '预览' }}
                   </span>
@@ -178,29 +194,29 @@
                   class="flex flex-wrap justify-end gap-2"
                 >
                   <template v-if="!isScorecardEditing(dim)">
-                    <a-button type="text"
-                      html-type="button"
+                    <button
+                      type="button"
                       class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-100"
                       @click="enterScorecardEdit(dim)"
                     >
                       编辑
-                    </a-button>
+                    </button>
                   </template>
                   <template v-else>
-                    <a-button type="text"
-                      html-type="button"
+                    <button
+                      type="button"
                       class="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
                       @click="saveScorecardEdit(dim)"
                     >
                       保存
-                    </a-button>
-                    <a-button type="text"
-                      html-type="button"
+                    </button>
+                    <button
+                      type="button"
                       class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
                       @click="cancelScorecardEdit(dim)"
                     >
                       取消
-                    </a-button>
+                    </button>
                   </template>
                 </div>
                 <p
@@ -236,41 +252,43 @@
 
                 <div v-if="dim.scoreRule.evaluator === SCORE_RULE_EVALUATOR.RANGE" class="mt-4 overflow-x-auto">
                   <p class="mb-2 text-[11px] font-medium text-slate-500">数值分档</p>
-                  <a-table  size="small" :pagination="false" :data-source="dim.scoreRule.ranges || []" :row-key="(row) => dim.key + '-pv-rg-' + row.min" :scroll="{ x: 'max-content' }">
-<a-table-column key="column-0" :custom-cell="(row, ri) => ({ class: [&quot;py-1.5 pr-2 font-mono tabular-nums&quot;] })">
-<template #title>下限 ≥</template>
-<template #default="{ record: row, index: ri }">{{ row.min }}</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(row, ri) => ({ class: [&quot;py-1.5 pr-2 font-mono tabular-nums&quot;] })">
-<template #title>上限 &lt;</template>
-<template #default="{ record: row, index: ri }">{{ row.max == null ? '∞' : row.max }}</template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(row, ri) => ({ class: [&quot;py-1.5 pr-2 font-mono tabular-nums&quot;] })">
-<template #title>得分</template>
-<template #default="{ record: row, index: ri }">{{ row.points }}</template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(row, ri) => ({ class: [&quot;py-1.5 text-slate-600&quot;] })">
-<template #title>备注</template>
-<template #default="{ record: row, index: ri }">{{ row.caption || '—' }}</template>
-</a-table-column>
-</a-table>
+                  <table class="w-full min-w-[20rem] border-collapse text-left text-xs">
+                    <thead>
+                      <tr class="border-b border-slate-200 text-slate-500">
+                        <th class="py-1.5 pr-2 font-medium">下限 ≥</th>
+                        <th class="py-1.5 pr-2 font-medium">上限 &lt;</th>
+                        <th class="py-1.5 pr-2 font-medium">得分</th>
+                        <th class="py-1.5 font-medium">备注</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                      <tr v-for="(row, ri) in dim.scoreRule.ranges || []" :key="dim.key + '-pv-rg-' + ri">
+                        <td class="py-1.5 pr-2 font-mono tabular-nums">{{ row.min }}</td>
+                        <td class="py-1.5 pr-2 font-mono tabular-nums">{{ row.max == null ? '∞' : row.max }}</td>
+                        <td class="py-1.5 pr-2 font-mono tabular-nums">{{ row.points }}</td>
+                        <td class="py-1.5 text-slate-600">{{ row.caption || '—' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
                 <div v-else class="mt-4 overflow-x-auto">
                   <p class="mb-2 text-[11px] font-medium text-slate-500">枚举映射</p>
-                  <a-table  size="small" :pagination="false" :data-source="dim.scoreRule.enumCases || []" :row-key="(row) => dim.key + '-pv-en-' + row.value" :scroll="{ x: 'max-content' }">
-<a-table-column key="column-0" :custom-cell="(row, ei) => ({ class: [&quot;py-1.5 pr-2 font-mono&quot;] })">
-<template #title>取值</template>
-<template #default="{ record: row, index: ei }">{{ row.value }}</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(row, ei) => ({ class: [&quot;py-1.5 pr-2 font-mono tabular-nums&quot;] })">
-<template #title>得分</template>
-<template #default="{ record: row, index: ei }">{{ row.points }}</template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(row, ei) => ({ class: [&quot;py-1.5 text-slate-600&quot;] })">
-<template #title>说明</template>
-<template #default="{ record: row, index: ei }">{{ row.caption || '—' }}</template>
-</a-table-column>
-</a-table>
+                  <table class="w-full min-w-[16rem] border-collapse text-left text-xs">
+                    <thead>
+                      <tr class="border-b border-slate-200 text-slate-500">
+                        <th class="py-1.5 pr-2 font-medium">取值</th>
+                        <th class="py-1.5 pr-2 font-medium">得分</th>
+                        <th class="py-1.5 font-medium">说明</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                      <tr v-for="(row, ei) in dim.scoreRule.enumCases || []" :key="dim.key + '-pv-en-' + ei">
+                        <td class="py-1.5 pr-2 font-mono">{{ row.value }}</td>
+                        <td class="py-1.5 pr-2 font-mono tabular-nums">{{ row.points }}</td>
+                        <td class="py-1.5 text-slate-600">{{ row.caption || '—' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
                 <p v-if="canEditScorecard" class="mt-3 text-[11px] text-slate-500">
                   点右上角「编辑」可修改规则与分档表，完成后点「保存」回到预览。
@@ -290,8 +308,9 @@
                     </span>
                   </div>
                   <label class="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-700">
-                    <a-checkbox
-                      class="disabled:opacity-50"
+                    <input
+                      type="checkbox"
+                      class="h-4 w-4 rounded border-slate-300 text-blue-600  disabled:opacity-50"
                       :checked="dim.scoreRule.enabled !== false"
                       :disabled="!canEditScorecard"
                       @change="onScoreRuleEnabledChange(dim, $event)"
@@ -315,15 +334,15 @@
                       class="flex flex-col gap-2 p-3 sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_5rem_minmax(0,2fr)_auto] sm:items-center sm:gap-2 sm:py-2 sm:pl-2 sm:pr-1"
                     >
                       <label class="text-[11px] text-slate-400 sm:hidden">下限 ≥</label>
-                      <a-input
-                        v-model:value.number="row.min"
+                      <input
+                        v-model.number="row.min"
                         type="number"
                         step="any"
                         :disabled="ruleFieldsLocked(dim)"
                         class="w-full rounded-md border border-slate-200 px-2 py-1.5 font-mono text-sm disabled:bg-slate-50"
                       />
                       <label class="text-[11px] text-slate-400 sm:hidden">上限 &lt;</label>
-                      <a-input
+                      <input
                         :value="row.max == null || row.max === '' ? '' : row.max"
                         type="number"
                         step="any"
@@ -333,8 +352,8 @@
                         @input="onScoreRangeMaxInput(row, $event)"
                       />
                       <label class="text-[11px] text-slate-400 sm:hidden">得分</label>
-                      <a-input
-                        v-model:value.number="row.points"
+                      <input
+                        v-model.number="row.points"
                         type="number"
                         :min="0"
                         :step="1"
@@ -342,33 +361,33 @@
                         class="w-full rounded-md border border-slate-200 px-2 py-1.5 font-mono text-sm disabled:bg-slate-50 sm:max-w-[5rem]"
                       />
                       <label class="text-[11px] text-slate-400 sm:hidden">备注</label>
-                      <a-input
-                        v-model:value="row.caption"
+                      <input
+                        v-model="row.caption"
                         type="text"
                         :disabled="ruleFieldsLocked(dim)"
                         placeholder="档位说明"
                         class="w-full rounded-md border border-slate-200 px-2 py-1.5 text-sm disabled:bg-slate-50"
                       />
                       <div class="flex justify-end sm:justify-center">
-                        <a-button type="text"
-                          html-type="button"
+                        <button
+                          type="button"
                           :disabled="ruleFieldsLocked(dim)"
                           class="rounded-md px-2 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 disabled:text-slate-300"
                           @click="removeScoreRangeRow(dim, ri)"
                         >
                           删除
-                        </a-button>
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <a-button type="text"
+                  <button
                     v-if="canEditScorecard && dim.scoreRule.enabled !== false"
-                    html-type="button"
+                    type="button"
                     class="mt-2 text-xs font-medium text-blue-600 hover:text-blue-800"
                     @click="addScoreRangeRow(dim)"
                   >
                     + 添加分档
-                  </a-button>
+                  </button>
                 </template>
 
                 <template v-else>
@@ -385,15 +404,15 @@
                       class="flex flex-col gap-2 p-3 sm:grid sm:grid-cols-[minmax(0,1fr)_5rem_minmax(0,2fr)_auto] sm:items-center sm:gap-2 sm:py-2 sm:pl-2 sm:pr-1"
                     >
                       <label class="text-[11px] text-slate-400 sm:hidden">取值</label>
-                      <a-input
-                        v-model:value="row.value"
+                      <input
+                        v-model="row.value"
                         type="text"
                         :disabled="ruleFieldsLocked(dim)"
                         class="w-full rounded-md border border-slate-200 px-2 py-1.5 font-mono text-sm disabled:bg-slate-50"
                       />
                       <label class="text-[11px] text-slate-400 sm:hidden">得分</label>
-                      <a-input
-                        v-model:value.number="row.points"
+                      <input
+                        v-model.number="row.points"
                         type="number"
                         :min="0"
                         :step="1"
@@ -401,33 +420,33 @@
                         class="w-full rounded-md border border-slate-200 px-2 py-1.5 font-mono text-sm disabled:bg-slate-50 sm:max-w-[5rem]"
                       />
                       <label class="text-[11px] text-slate-400 sm:hidden">说明</label>
-                      <a-input
-                        v-model:value="row.caption"
+                      <input
+                        v-model="row.caption"
                         type="text"
                         :disabled="ruleFieldsLocked(dim)"
                         placeholder="可选"
                         class="w-full rounded-md border border-slate-200 px-2 py-1.5 text-sm disabled:bg-slate-50"
                       />
                       <div class="flex justify-end sm:justify-center">
-                        <a-button type="text"
-                          html-type="button"
+                        <button
+                          type="button"
                           :disabled="ruleFieldsLocked(dim)"
                           class="rounded-md px-2 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 disabled:text-slate-300"
                           @click="removeEnumCaseRow(dim, ei)"
                         >
                           删除
-                        </a-button>
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <a-button type="text"
+                  <button
                     v-if="canEditScorecard && dim.scoreRule.enabled !== false"
-                    html-type="button"
+                    type="button"
                     class="mt-2 text-xs font-medium text-blue-600 hover:text-blue-800"
                     @click="addEnumCaseRow(dim)"
                   >
                     + 添加枚举项
-                  </a-button>
+                  </button>
                 </template>
               </div>
 
@@ -442,8 +461,8 @@
                 </div>
                 <div v-else class="max-w-md space-y-2">
                   <label class="text-xs font-medium text-slate-600">本项满分（卡内权重）</label>
-                  <a-input
-                    v-model:value.number="dim.maxPoints"
+                  <input
+                    v-model.number="dim.maxPoints"
                     type="number"
                     :min="1"
                     :max="100"

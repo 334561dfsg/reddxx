@@ -222,9 +222,9 @@ onMounted(() => {
           。
         </p>
       </div>
-      <a-button html-type="button" class="shrink-0" :disabled="loading" @click="openAdd" type="primary">
+      <button type="button" class="ant-btn ant-btn-primary shrink-0" :disabled="loading" @click="openAdd">
         添加通道
-      </a-button>
+      </button>
     </div>
 
     <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
@@ -234,17 +234,28 @@ onMounted(() => {
     <div v-else class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div class="flex flex-wrap items-center gap-3 border-b border-slate-200 px-4 py-3">
         <label class="text-sm font-medium text-slate-700">按区号筛选</label>
-        <a-select v-model:value="dialFilter" class="max-w-xs">
-          <a-select-option value="">全部区号</a-select-option>
-          <a-select-option v-for="p in PHONE_DIAL_PRESETS" :key="p.dial" :value="p.dial">{{ p.label }}</a-select-option>
-        </a-select>
+        <select v-model="dialFilter" class="ant-input max-w-xs text-sm">
+          <option value="">全部区号</option>
+          <option v-for="p in PHONE_DIAL_PRESETS" :key="p.dial" :value="p.dial">{{ p.label }}</option>
+        </select>
         <span class="text-xs text-slate-500">一个通道可同时适用于多个国际区号。</span>
       </div>
 
       <div class="overflow-x-auto">
-        <a-table  :data-source="filteredRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" >
-<a-table-column key="column-0" ><template #title>名称</template><template #default="{ record: row, index: index }"><div class="  text-slate-900">{{ row.name || '—' }}</div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>适用区号</template><template #default="{ record: row, index: index }"><div class=" ">
+        <table class="min-w-full divide-y divide-slate-200 text-sm">
+          <thead class="bg-slate-50/80">
+            <tr>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">名称</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">适用区号</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">通道类型</th>
+              <th class="px-4 py-3 text-left font-medium text-slate-700">状态</th>
+              <th class="px-4 py-3 text-right font-medium text-slate-700">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 bg-white">
+            <tr v-for="row in filteredRows" :key="row.id">
+              <td class="px-4 py-3 text-slate-900">{{ row.name || '—' }}</td>
+              <td class="px-4 py-3">
                 <div class="flex max-w-xl flex-wrap gap-1.5">
                   <span
                     v-for="dial in rowDials(row)"
@@ -255,9 +266,9 @@ onMounted(() => {
                     <span class="ml-1 font-sans text-slate-500">{{ dialLabelMap[dial] || '' }}</span>
                   </span>
                 </div>
-              </div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>通道类型</template><template #default="{ record: row, index: index }"><div class="  font-mono text-xs text-slate-800">{{ row.provider || '—' }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
+              </td>
+              <td class="px-4 py-3 font-mono text-xs text-slate-800">{{ row.provider || '—' }}</td>
+              <td class="px-4 py-3">
                 <span
                   :class="
                     row.enabled ? 'rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800' : 'text-slate-500'
@@ -265,24 +276,38 @@ onMounted(() => {
                 >
                   {{ row.enabled ? '启用' : '停用' }}
                 </span>
-              </div></template></a-table-column>
-<a-table-column key="column-4" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="  text-right">
-                <a-button html-type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</a-button>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <button type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</button>
                 <span class="mx-2 text-slate-300">|</span>
-                <a-button html-type="button" class="text-red-600 hover:underline" @click="removeRow(row)" danger>删除</a-button>
-              </div></template></a-table-column><template #emptyText>
+                <button type="button" class="text-red-600 hover:underline" @click="removeRow(row)">删除</button>
+              </td>
+            </tr>
+            <tr v-if="filteredRows.length === 0">
+              <td colspan="5" class="px-4 py-10 text-center text-sm text-slate-500">
                 暂无通道，请点击「添加通道」。
-              </template>
-</a-table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
     <!-- 添加/编辑：Teleport 到 body，避免 main overflow 导致 fixed 遮罩只盖住内容区 -->
     <Teleport to="body">
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(showModal)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(showModal)"><div class="flex items-center justify-between gap-3"><span>{{ editingId ? '编辑通道' : '添加通道' }}</span><a-button aria-label="关闭" html-type="button"   @click="closeModal">×</a-button></div></template></template><template v-if="showModal"><div class="border-b border-slate-200 px-5 py-4">
-          <h2 class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑通道' : '添加通道' }}</h2>
+      <div
+        v-if="showModal"
+        class="fixed inset-0 z-[100] grid place-items-center bg-black/45 p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="system-modal-title"
+      >
+      <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl">
+        <div class="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
+            <h2 id="system-modal-title" class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑通道' : '添加通道' }}</h2>
+            <button type="button" class="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="关闭" @click="closeModal">×</button>
         </div>
-<div class="space-y-4 px-5 py-4">
+        <div class="space-y-4 px-5 py-4">
           <div>
             <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
               <label class="block text-sm font-medium text-slate-700">国际区号</label>
@@ -290,32 +315,53 @@ onMounted(() => {
             </div>
             <div class="rounded-lg border border-slate-200 bg-slate-50/50 p-3">
               <div v-if="selectedDialOptions.length" class="flex flex-wrap gap-1.5">
-                <a-button v-for="p in selectedDialOptions" :key="'selected-' + p.dial" html-type="button" class="inline-flex items-center gap-1 bg-indigo-50 text-xs text-indigo-800 ring-1 ring-inset ring-indigo-100" @click="removeFormDial(p.dial)">
+                <button
+                  v-for="p in selectedDialOptions"
+                  :key="'selected-' + p.dial"
+                  type="button"
+                  class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-xs text-indigo-800 ring-1 ring-inset ring-indigo-100"
+                  @click="removeFormDial(p.dial)"
+                >
                   <span class="font-mono">{{ p.dial }}</span>
                   <span>{{ p.label.replace(p.dial, '').trim() }}</span>
                   <span class="text-indigo-400">×</span>
-                </a-button>
+                </button>
               </div>
               <p v-else class="text-sm text-slate-500">未选择区号</p>
 
               <div class="relative mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
-                <a-button html-type="button" class="text-sm" @click="showDialPicker = !showDialPicker">
+                <button
+                  type="button"
+                  class="ant-btn !h-9 !px-3 text-sm"
+                  @click="showDialPicker = !showDialPicker"
+                >
                   添加区号
-                </a-button>
-                <a-button html-type="button" class="!text-xs" @click="clearFormDials">
+                </button>
+                <button type="button" class="ant-btn !h-9 !px-3 !text-xs" @click="clearFormDials">
                   清空
-                </a-button>
+                </button>
 
                 <div
                   v-if="showDialPicker"
                   class="absolute left-0 top-10 z-10 w-full max-w-md rounded-lg border border-slate-200 bg-white p-2 shadow-lg"
                 >
-                  <a-input v-model:value="dialSearch" type="search" class="mb-2 w-full" placeholder="搜索国家/地区或区号" />
+                  <input
+                    v-model="dialSearch"
+                    type="search"
+                    class="ant-input mb-2 w-full text-sm"
+                    placeholder="搜索国家/地区或区号"
+                  />
                   <div class="max-h-56 overflow-y-auto">
-                    <a-button v-for="p in filteredDialOptions" :key="p.dial" html-type="button" class="flex w-full items-center justify-between text-left text-sm text-slate-700 hover:bg-slate-50" @click="addFormDial(p.dial)">
+                    <button
+                      v-for="p in filteredDialOptions"
+                      :key="p.dial"
+                      type="button"
+                      class="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+                      @click="addFormDial(p.dial)"
+                    >
                       <span>{{ p.label }}</span>
                       <span class="font-mono text-xs text-slate-400">{{ p.dial }}</span>
-                    </a-button>
+                    </button>
                     <div v-if="filteredDialOptions.length === 0" class="px-2 py-6 text-center text-sm text-slate-500">
                       无可添加区号
                     </div>
@@ -327,26 +373,41 @@ onMounted(() => {
           </div>
           <div>
             <label class="mb-1.5 block text-sm font-medium text-slate-700">通道名称（可选）</label>
-            <a-input v-model:value="formName" type="text" class="w-full" placeholder="列表中展示用" />
+            <input v-model="formName" type="text" class="ant-input w-full" placeholder="列表中展示用" />
           </div>
           <div>
             <label class="mb-1.5 block text-sm font-medium text-slate-700">通道类型</label>
-            <a-input v-model:value="formProvider" type="text" class="w-full" placeholder="如 aliyun、twilio、custom" autocomplete="off" />
+            <input
+              v-model="formProvider"
+              type="text"
+              class="ant-input w-full"
+              placeholder="如 aliyun、twilio、custom"
+              autocomplete="off"
+            />
           </div>
           <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
-            <a-checkbox v-model:checked="formEnabled" class="" />
+            <input v-model="formEnabled" type="checkbox" class="rounded border-slate-300" />
             启用
           </label>
           <div>
             <label class="mb-1.5 block text-sm font-medium text-slate-700">接口配置（JSON 对象）</label>
-            <a-textarea v-model:value="formConfigJson" :rows="10" spellcheck="false" class="w-full resize-y font-mono leading-relaxed" placeholder='例如：{ "accessKeyId": "", "signName": "", "templateCode": "" }' />
+            <textarea
+              v-model="formConfigJson"
+              rows="10"
+              spellcheck="false"
+              class="ant-input w-full resize-y font-mono text-xs leading-relaxed"
+              placeholder='例如：{ "accessKeyId": "", "signName": "", "templateCode": "" }'
+            />
           </div>
-        </div></template><template #footer><template v-if="Boolean(showModal)"><div class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
-          <a-button html-type="button" class="" @click="closeModal">取消</a-button>
-          <a-button html-type="button" class="" :disabled="isSaving" @click="submitModal" type="primary">
+        </div>
+        <div class="flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
+          <button type="button" class="ant-btn" @click="closeModal">取消</button>
+          <button type="button" class="ant-btn ant-btn-primary" :disabled="isSaving" @click="submitModal">
             {{ isSaving ? '保存中…' : '保存' }}
-          </a-button>
-        </div></template></template></a-modal>
+          </button>
+        </div>
+      </div>
+      </div>
     </Teleport>
   </div>
 </template>

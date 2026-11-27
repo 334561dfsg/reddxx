@@ -1,4 +1,3 @@
-import ResizeObserver from 'resize-observer-polyfill'
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, extname, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -187,9 +186,6 @@ const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
       if (node.disabled || !node.isConnected) return
       document.eventLog?.push({ type: 'focus', node })
       document.activeElement = node
-    },
-    blur() {
-      if (document.activeElement === node) document.activeElement = document.body
     },
     contains(target) {
       if (target === node) return true
@@ -382,11 +378,7 @@ const createHostRenderer = (document) => createRenderer({
       return
     }
     if (key === 'value' || key === 'checked' || key === 'disabled' || key === 'hidden' || key === 'tabIndex') {
-      node[key] = ['checked', 'disabled', 'hidden'].includes(key) ? next === '' || Boolean(next) : next
-    }
-    if (key.startsWith('aria-') && typeof next === 'boolean') {
-      node.setAttribute(key, String(next))
-      return
+      node[key] = next
     }
     if (next == null || next === false) node.removeAttribute(key)
     else node.setAttribute(key, next === true ? '' : next)
@@ -455,8 +447,6 @@ const flushVue = async () => {
 
 export const createSfcHarness = async (component, initialProps = {}, listeners = {}, options = {}) => {
   const previousGlobals = {
-    resizeObserve: ResizeObserver.prototype.observe,
-    Element: globalThis.Element,
     document: globalThis.document,
     window: globalThis.window,
     requestAnimationFrame: globalThis.requestAnimationFrame,
@@ -465,9 +455,6 @@ export const createSfcHarness = async (component, initialProps = {}, listeners =
   const document = createDocument()
   const animationFrames = new Map()
   let animationFrameSequence = 0
-  // This renderer has no layout engine; resize observations are exercised in browser QA.
-  ResizeObserver.prototype.observe = () => {}
-  globalThis.Element = class HarnessElement {}
   globalThis.document = document
   const visualViewport = options.visualViewport
     ? createEventTarget(options.visualViewport)
@@ -476,11 +463,6 @@ export const createSfcHarness = async (component, initialProps = {}, listeners =
     innerWidth: options.innerWidth,
     innerHeight: options.innerHeight,
     visualViewport,
-    matchMedia: (media) => ({
-      media, matches: false,
-      addListener() {}, removeListener() {},
-      addEventListener() {}, removeEventListener() {}
-    }),
     getComputedStyle: () => ({
       transitionDelay: '0s',
       transitionDuration: '0.001s',
@@ -538,23 +520,9 @@ export const createSfcHarness = async (component, initialProps = {}, listeners =
     walk(document.body, (node) => nodes.push(node))
     return nodes
   }
-  const findComponent = (name, predicate = () => true) => {
-    let found = null
-    const visit = vnode => {
-      if (!vnode || found) return
-      const instance = vnode.component
-      if (instance) {
-        if (instance.type.name === name && predicate(instance)) { found = instance; return }
-        visit(instance.subTree)
-      }
-      if (Array.isArray(vnode.children)) vnode.children.forEach(visit)
-    }
-    visit(app._instance?.subTree)
-    return found
-  }
   const findByTestId = (testId) => allNodes().find((node) => node.getAttribute?.('data-testid') === testId)
   const findByText = (text, tag) => allNodes().find((node) => (
-    (!tag || node.tag === tag) && (node.textContent.trim() === text || (tag === 'button' && /^[\u4e00-\u9fff]{2}$/.test(text) && node.textContent.replace(/\s/g, '') === text))
+    (!tag || node.tag === tag) && node.textContent.trim() === text
   ))
   const keydown = (key, shiftKey = false) => {
     const event = {
@@ -581,8 +549,6 @@ export const createSfcHarness = async (component, initialProps = {}, listeners =
     if (cleanedUp) return
     cleanedUp = true
     app.unmount()
-    ResizeObserver.prototype.observe = previousGlobals.resizeObserve
-    globalThis.Element = previousGlobals.Element
     globalThis.document = previousGlobals.document
     globalThis.window = previousGlobals.window
     globalThis.requestAnimationFrame = previousGlobals.requestAnimationFrame
@@ -596,7 +562,6 @@ export const createSfcHarness = async (component, initialProps = {}, listeners =
     document,
     emitted,
     findByTestId,
-    findComponent,
     findByText,
     finishTransitions,
     flush: flushVue,

@@ -58,7 +58,7 @@ const keyword = ref('')
 const filteredProducts = computed(() => {
   const kw = keyword.value.trim().toLowerCase()
   if (!kw) return products.value
-  return products.value.filter((item) =>
+  return products.value.filter((item) => 
     `${item.name} ${item.currency} ${productRuleLabel(item)} ${item.ruleId} ${fmtApr(item.baseRate)}`.toLowerCase().includes(kw)
   )
 })
@@ -69,7 +69,7 @@ const summary = computed(() => {
   const active = products.value.filter((item) => item.status === 'active').length
   const adjusted = products.value.filter((item) => item.adjustmentRate !== 0).length
   const totalAmount = products.value.reduce((sum, item) => sum + item.totalAmount, 0)
-
+  
   return [
     { label: '产品总数', value: String(total) },
     { label: '运行中', value: String(active) },
@@ -81,7 +81,7 @@ const summary = computed(() => {
 // 控制弹窗
 const showControlModal = ref(false)
 const activeProductId = ref('')
-const activeProduct = computed(() =>
+const activeProduct = computed(() => 
   products.value.find((item) => item.id === activeProductId.value)
 )
 
@@ -355,8 +355,8 @@ const validUntilMin = computed(() => {
 
 		<article class="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
 			<div class="flex flex-col gap-3 border-b border-slate-100 bg-slate-50/80 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-				<a-input
-					v-model:value="keyword"
+				<input
+					v-model="keyword"
 					type="search"
 					placeholder="搜索产品名称、币种、天数或规则ID…"
 					class="h-10 w-full max-w-sm rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none ring-blue-500/20 transition-shadow"
@@ -368,21 +368,35 @@ const validUntilMin = computed(() => {
 					>
 						收益调整日志
 					</RouterLink>
-					<a-button type="text"
-						html-type="button"
+					<button
+						type="button"
 						class="h-10 rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50"
 						@click="openHistory('')"
 					>
 						弹窗历史
-					</a-button>
+					</button>
 				</div>
 			</div>
 
 			<div class="overflow-x-auto">
-				<a-table  size="small" :pagination="false" :data-source="filteredProducts" :row-key="(product) => product.id" :scroll="{ x: 'max-content' }" :custom-row="(product, rowIndex) => ({ class: [&quot;transition-colors hover:bg-slate-50/80&quot;] })">
-<a-table-column key="column-0" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5&quot;] })">
-<template #title>产品</template>
-<template #default="{ record: product, index: rowIndex }">
+				<table class="w-full min-w-[640px] text-left text-sm">
+					<thead class="border-b border-slate-100 bg-slate-50/90">
+						<tr>
+							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">产品</th>
+							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">调整比例</th>
+							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">订单数</th>
+							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">资金规模</th>
+							<th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">状态</th>
+							<th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">操作</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-slate-100">
+						<tr
+							v-for="product in filteredProducts"
+							:key="product.id"
+							class="transition-colors hover:bg-slate-50/80"
+						>
+							<td class="whitespace-nowrap px-4 py-3.5">
 								<div class="font-medium text-slate-900">{{ product.name }}</div>
 								<div class="mt-1 flex max-w-[24rem] flex-wrap gap-1.5 text-xs">
 									<span class="rounded-md bg-slate-100 px-2 py-0.5 font-medium text-slate-600">{{ product.currency }}</span>
@@ -390,55 +404,41 @@ const validUntilMin = computed(() => {
 									<span class="rounded-md bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">收益率 {{ fmtApr(product.baseRate) }}</span>
 									<span class="rounded-md bg-slate-50 px-2 py-0.5 font-mono text-slate-500">ID {{ product.ruleId }}</span>
 								</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5&quot;] })">
-<template #title>调整比例</template>
-<template #default="{ record: product, index: rowIndex }">
+							</td>
+							<td class="whitespace-nowrap px-4 py-3.5">
 								<span :class="['font-medium tabular-nums', getRateColor(product.adjustmentRate)]">
 									{{ formatRate(product.adjustmentRate) }}
 								</span>
-							</template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5 tabular-nums text-slate-700&quot;] })">
-<template #title>订单数</template>
-<template #default="{ record: product, index: rowIndex }">{{ product.totalOrders }}</template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5 tabular-nums text-slate-700&quot;] })">
-<template #title>资金规模</template>
-<template #default="{ record: product, index: rowIndex }">${{ product.totalAmount.toLocaleString() }}</template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5&quot;] })">
-<template #title>状态</template>
-<template #default="{ record: product, index: rowIndex }">
+							</td>
+							<td class="whitespace-nowrap px-4 py-3.5 tabular-nums text-slate-700">{{ product.totalOrders }}</td>
+							<td class="whitespace-nowrap px-4 py-3.5 tabular-nums text-slate-700">${{ product.totalAmount.toLocaleString() }}</td>
+							<td class="whitespace-nowrap px-4 py-3.5">
 								<span
 									class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium"
 									:class="product.status === 'active' ? 'bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600/15' : 'bg-slate-100 text-slate-600'"
 								>
 									{{ product.status === 'active' ? '运行中' : '已停用' }}
 								</span>
-							</template>
-</a-table-column>
-<a-table-column key="column-5" align="right" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5 text-right&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: product, index: rowIndex }">
-								<a-button type="text" html-type="button" class="font-medium text-blue-600 hover:text-blue-700" @click="openControl(product.id)">调整</a-button>
+							</td>
+							<td class="whitespace-nowrap px-4 py-3.5 text-right">
+								<button type="button" class="font-medium text-blue-600 hover:text-blue-700" @click="openControl(product.id)">调整</button>
 								<span class="mx-2 text-slate-200">|</span>
-								<a-button type="text"
+								<button
 									v-if="product.adjustmentRate !== 0"
-									html-type="button"
+									type="button"
 									class="font-medium text-slate-600 hover:text-slate-800"
 									@click="resetControl(product.id)"
 								>
 									重置
-								</a-button>
+								</button>
 								<template v-if="product.adjustmentRate !== 0">
 									<span class="mx-2 text-slate-200">|</span>
 								</template>
-								<a-button type="text" html-type="button" class="font-medium text-slate-600 hover:text-slate-800" @click="openHistory(product.id)">历史</a-button>
-							</template>
-</a-table-column>
-</a-table>
+								<button type="button" class="font-medium text-slate-600 hover:text-slate-800" @click="openHistory(product.id)">历史</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 
 			<div v-if="filteredProducts.length === 0" class="px-4 py-14 text-center text-slate-500">
@@ -449,14 +449,20 @@ const validUntilMin = computed(() => {
 
 		<!-- 收益控制弹窗 -->
 		<Teleport to="body">
-			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showControlModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1024"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showControlModal = false">
-<template #title><template v-if="showControlModal"><div class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 bg-slate-50/90 px-5 py-4">
+			<div
+				v-if="showControlModal"
+				class="fixed inset-0 z-[100] flex min-h-[100dvh] w-full items-center justify-center overflow-y-auto bg-black/50 p-4 sm:p-6"
+				role="dialog"
+				aria-modal="true"
+			>
+				<div class="flex max-h-[min(92dvh,920px)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-2xl shadow-slate-900/10">
+					<div class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 bg-slate-50/90 px-5 py-4">
 						<div>
 							<h3 class="text-lg font-semibold text-slate-900">收益倍数调整</h3>
 							<p class="mt-0.5 text-sm text-slate-500">{{ productControlIdentity(activeProduct) }} · ID {{ activeProduct?.ruleId || '—' }}</p>
 						</div>
-						<a-button type="text"
-							html-type="button"
+						<button
+							type="button"
 							class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-200/60 hover:text-slate-700"
 							aria-label="关闭"
 							@click="showControlModal = false"
@@ -464,9 +470,8 @@ const validUntilMin = computed(() => {
 							<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 							</svg>
-						</a-button>
-					</div></template></template>
-<template v-if="showControlModal">
+						</button>
+					</div>
 
 					<div class="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
 						<div class="flex min-h-0 flex-1 flex-col border-slate-100 lg:w-[58%] lg:border-r">
@@ -484,12 +489,13 @@ const validUntilMin = computed(() => {
 										</div>
 									</div>
 									<div class="relative mt-2">
-										<a-slider
-											v-model:value.number="controlForm.adjustmentRate"
-											:min="-100"
-											:max="100"
-											:step="5"
-											class="slider w-full"
+										<input
+											v-model.number="controlForm.adjustmentRate"
+											type="range"
+											min="-100"
+											max="100"
+											step="5"
+											class="slider h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200"
 										/>
 										<div class="mt-1 flex justify-between text-[11px] text-slate-400">
 											<span>−100%（0×）</span>
@@ -511,8 +517,8 @@ const validUntilMin = computed(() => {
 								<div>
 									<h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">快捷场景</h4>
 									<div class="mt-3 grid grid-cols-2 gap-2 sm:gap-3">
-										<a-button type="text"
-											html-type="button"
+										<button
+											type="button"
 											class="rounded-xl border px-3 py-2.5 text-left text-sm transition-all"
 											:class="
 												controlForm.adjustmentRate === 50
@@ -523,9 +529,9 @@ const validUntilMin = computed(() => {
 										>
 											<div class="font-medium text-slate-900">强激励</div>
 											<div class="mt-0.5 text-xs text-slate-500">+50%，拉新或竞品跟进</div>
-										</a-button>
-										<a-button type="text"
-											html-type="button"
+										</button>
+										<button
+											type="button"
 											class="rounded-xl border px-3 py-2.5 text-left text-sm transition-all"
 											:class="
 												controlForm.adjustmentRate === 20
@@ -536,9 +542,9 @@ const validUntilMin = computed(() => {
 										>
 											<div class="font-medium text-slate-900">温和上调</div>
 											<div class="mt-0.5 text-xs text-slate-500">+20%，常规运营</div>
-										</a-button>
-										<a-button type="text"
-											html-type="button"
+										</button>
+										<button
+											type="button"
 											class="rounded-xl border px-3 py-2.5 text-left text-sm transition-all"
 											:class="
 												controlForm.adjustmentRate === -20
@@ -549,9 +555,9 @@ const validUntilMin = computed(() => {
 										>
 											<div class="font-medium text-slate-900">成本回收</div>
 											<div class="mt-0.5 text-xs text-slate-500">−20%，缓和平台贴息</div>
-										</a-button>
-										<a-button type="text"
-											html-type="button"
+										</button>
+										<button
+											type="button"
 											class="rounded-xl border px-3 py-2.5 text-left text-sm transition-all"
 											:class="
 												controlForm.adjustmentRate === -40
@@ -562,7 +568,7 @@ const validUntilMin = computed(() => {
 										>
 											<div class="font-medium text-slate-900">紧急控费</div>
 											<div class="mt-0.5 text-xs text-slate-500">−40%，压力情景</div>
-										</a-button>
+										</button>
 									</div>
 								</div>
 
@@ -570,8 +576,8 @@ const validUntilMin = computed(() => {
 									<h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">精确输入</h4>
 									<label class="mt-3 block text-sm font-medium text-slate-700">调整比例（%）</label>
 									<div class="mt-1.5 flex gap-2">
-										<a-input
-											v-model:value.number="controlForm.adjustmentRate"
+										<input
+											v-model.number="controlForm.adjustmentRate"
 											type="number"
 											:step="1"
 											min="-100"
@@ -579,13 +585,13 @@ const validUntilMin = computed(() => {
 											class="h-10 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm tabular-nums text-slate-900 outline-none ring-blue-500/20"
 											placeholder="−100～100"
 										/>
-										<a-button type="text"
-											html-type="button"
+										<button
+											type="button"
 											class="h-10 shrink-0 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-600 hover:bg-slate-50"
 											@click="controlForm.adjustmentRate = 0"
 										>
 											清零
-										</a-button>
+										</button>
 									</div>
 									<p class="mt-1.5 text-xs text-slate-500">
 										倍数约 {{ (1 + controlForm.adjustmentRate / 100).toFixed(2) }}×；展示年化约
@@ -595,21 +601,21 @@ const validUntilMin = computed(() => {
 									<div class="mt-5 space-y-1.5">
 										<label class="text-sm font-medium text-slate-700">有效期至</label>
 										<div class="flex gap-2">
-											<a-input
-												v-model:value="controlForm.validUntil"
+											<input
+												v-model="controlForm.validUntil"
 												type="date"
 												:min="validUntilMin"
 												autocomplete="off"
 												class="h-10 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none ring-blue-500/20"
 											/>
-											<a-button type="text"
+											<button
 												v-if="controlForm.validUntil"
-												html-type="button"
+												type="button"
 												class="h-10 shrink-0 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-600 hover:bg-slate-50"
 												@click="controlForm.validUntil = ''"
 											>
 												清空
-											</a-button>
+											</button>
 										</div>
 										<p class="text-xs leading-relaxed text-slate-500">
 											留空表示持续生效（需手动恢复基准）；选择日期表示该自然日结束后（按服务器日切）恢复基准。
@@ -625,39 +631,39 @@ const validUntilMin = computed(() => {
 										<span class="text-xs text-slate-400">{{ controlForm.reason.length }} / 200</span>
 									</div>
 									<div class="flex flex-wrap gap-2">
-										<a-button type="text"
-											html-type="button"
+										<button
+											type="button"
 											class="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:bg-blue-50/60"
 											@click="controlForm.reason = '根据资金与风险情况，适度上调平台对手方报价以提升竞争力'"
 										>
 											策略调价
-										</a-button>
-										<a-button type="text"
-											html-type="button"
+										</button>
+										<button
+											type="button"
 											class="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:bg-blue-50/60"
 											@click="controlForm.reason = '为控制平台对手方成本，下调对用户展示的收益率'"
 										>
 											成本压降
-										</a-button>
-										<a-button type="text"
-											html-type="button"
+										</button>
+										<button
+											type="button"
 											class="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:bg-blue-50/60"
 											@click="controlForm.reason = '活动期临时上浮收益倍数，活动结束后按计划恢复'"
 										>
 											活动期
-										</a-button>
-										<a-button type="text"
-											html-type="button"
+										</button>
+										<button
+											type="button"
 											class="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:bg-blue-50/60"
 											@click="controlForm.reason = '风险与流动性管控需要，暂时下调收益倍数'"
 										>
 											风控收敛
-										</a-button>
+										</button>
 									</div>
-									<a-textarea
-										v-model:value="controlForm.reason"
-										:rows="5"
-										:maxlength="200"
+									<textarea
+										v-model="controlForm.reason"
+										rows="5"
+										maxlength="200"
 										class="mt-2 w-full resize-none rounded-lg border px-3 py-2.5 text-sm leading-relaxed outline-none ring-blue-500/20"
 										:class="
 											!controlForm.reason.trim()
@@ -853,38 +859,46 @@ const validUntilMin = computed(() => {
 						</div>
 					</div>
 
-					</template>
-<template #footer><template v-if="showControlModal"><div
+					<div
 						class="flex shrink-0 flex-col gap-3 border-t border-slate-100 bg-white px-5 py-3 sm:flex-row sm:items-center sm:justify-between"
 					>
 						<p class="text-xs text-slate-500">提交前请确认「有效期至」符合运营与风控预期。</p>
 						<div class="flex justify-end gap-2">
-							<a-button type="text"
-								html-type="button"
+							<button
+								type="button"
 								class="h-10 rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
 								@click="showControlModal = false"
 							>
 								取消
-							</a-button>
-							<a-button type="text"
-								html-type="button"
+							</button>
+							<button
+								type="button"
 								class="h-10 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
 								:disabled="!controlForm.reason.trim()"
 								@click="saveControl"
 							>
 								确认调整
-							</a-button>
+							</button>
 						</div>
-					</div></template></template>
-</a-modal>
+					</div>
+				</div>
+			</div>
 		</Teleport>
 
 		<Teleport to="body">
-			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showHistoryModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="768"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showHistoryModal = false">
-<template #title><template v-if="showHistoryModal"><div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+			<div
+				v-if="showHistoryModal"
+				class="fixed inset-0 z-[100] flex min-h-[100dvh] w-full items-center justify-center overflow-y-auto bg-black/50 p-4"
+				role="dialog"
+				aria-modal="true"
+			>
+				<div
+					class="flex max-h-[min(85dvh,720px)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-2xl"
+				>
+					<div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
 						<h3 class="text-lg font-semibold text-slate-900">调整历史</h3>
-						<a-button type="text"
-							html-type="button"
+						<button
+							type="button"
 							class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
 							aria-label="关闭"
 							@click="showHistoryModal = false"
@@ -892,9 +906,8 @@ const validUntilMin = computed(() => {
 							<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 							</svg>
-						</a-button>
-					</div></template></template>
-<template v-if="showHistoryModal">
+						</button>
+					</div>
 					<div class="flex-1 overflow-y-auto p-5">
 						<div class="space-y-3">
 							<article
@@ -933,17 +946,17 @@ const validUntilMin = computed(() => {
 						</div>
 						<div v-if="filteredHistory.length === 0" class="py-12 text-center text-sm text-slate-500">暂无记录</div>
 					</div>
-					</template>
-<template #footer><template v-if="showHistoryModal"><div class="border-t border-slate-100 px-5 py-3 text-right">
-						<a-button type="text"
-							html-type="button"
+					<div class="border-t border-slate-100 px-5 py-3 text-right">
+						<button
+							type="button"
 							class="h-10 rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
 							@click="showHistoryModal = false"
 						>
 							关闭
-						</a-button>
-					</div></template></template>
-</a-modal>
+						</button>
+					</div>
+				</div>
+			</div>
 		</Teleport>
 	</section>
 </template>

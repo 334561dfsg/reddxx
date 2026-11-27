@@ -1,7 +1,5 @@
 <script setup>
 import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
-import { AdminButton, AdminInput, nativeControl } from './antd/controls.js'
-
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useDialogContentSnapshot, useDialogLifecycle } from '../composables/useDialogLifecycle.js'
 
@@ -180,7 +178,7 @@ const close = () => {
                   <h2 id="admin-change-password-title" class="break-words text-xl font-semibold text-slate-900">修改登录密码</h2>
                   <p class="mt-0.5 break-words text-xs text-slate-500">提交后需要完成 MFA 验证才会生效</p>
                 </div>
-                <AdminButton
+                <button
                   type="button"
                   class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
                   aria-label="关闭"
@@ -190,7 +188,7 @@ const close = () => {
                   @click="close"
                 >
                   ×
-                </AdminButton>
+                </button>
               </div>
             </header>
 
@@ -200,8 +198,8 @@ const close = () => {
               <div class="space-y-4">
                 <label class="block space-y-1.5">
                   <span class="text-sm font-medium text-slate-700">当前密码</span>
-                  <AdminInput
-                    :ref="element => { currentPasswordInput = nativeControl(element) }"
+                  <input
+                    ref="currentPasswordInput"
                     v-model="form.currentPassword"
                     type="password"
                     autocomplete="current-password"
@@ -215,7 +213,7 @@ const close = () => {
 
                 <label class="block space-y-1.5">
                   <span class="text-sm font-medium text-slate-700">新密码</span>
-                  <AdminInput
+                  <input
                     v-model="form.newPassword"
                     type="password"
                     autocomplete="new-password"
@@ -230,7 +228,7 @@ const close = () => {
 
                 <label class="block space-y-1.5">
                   <span class="text-sm font-medium text-slate-700">确认新密码</span>
-                  <AdminInput
+                  <input
                     v-model="form.confirmPassword"
                     type="password"
                     autocomplete="new-password"
@@ -245,16 +243,16 @@ const close = () => {
             </form>
 
             <footer class="flex shrink-0 justify-end gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
-              <AdminButton
+              <button
                 type="button"
                 class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
                 :disabled="displayedDialog.saving"
                 @click="close"
               >
                 取消
-              </AdminButton>
-              <AdminButton
-                :ref="element => { submitButton = nativeControl(element) }"
+              </button>
+              <button
+                ref="submitButton"
                 type="button"
                 class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                 :disabled="displayedDialog.saving"
@@ -263,7 +261,7 @@ const close = () => {
               >
                 <span v-if="!displayedDialog.saving">继续 MFA 验证</span>
                 <span v-else>提交中...</span>
-              </AdminButton>
+              </button>
             </footer>
           </section>
         </Transition>

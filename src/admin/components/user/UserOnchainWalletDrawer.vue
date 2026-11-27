@@ -1,7 +1,5 @@
 <script setup>
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
-import { AdminButton } from '../antd/controls.js'
-
 import { computed, ref, watch } from 'vue'
 import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
@@ -128,7 +126,7 @@ watch(() => props.visible, (visible) => {
                 {{ user?.username || '未知用户' }} · UID {{ userId || '—' }}
               </p>
             </div>
-            <AdminButton
+            <button
               type="button"
               :disabled="copyInProgress"
               class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none"
@@ -136,11 +134,11 @@ watch(() => props.visible, (visible) => {
               @click="close"
             >
               ×
-            </AdminButton>
+            </button>
           </header>
 
           <nav class="flex shrink-0 gap-1 border-b border-slate-200 bg-slate-50 px-4 py-2 sm:px-5" aria-label="链上钱包地址类型" style="padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));">
-            <AdminButton
+            <button
               v-for="segment in [{ id: 'deposit', label: '入金地址' }, { id: 'withdrawal', label: '提现地址' }]"
               :key="segment.id"
               type="button"
@@ -151,7 +149,7 @@ watch(() => props.visible, (visible) => {
               @click="activeSegment = segment.id; copyMessage = ''; copyError = ''"
             >
               {{ segment.label }}
-            </AdminButton>
+            </button>
           </nav>
 
           <div
@@ -176,7 +174,7 @@ watch(() => props.visible, (visible) => {
                 {{ isRevealed(address.id) ? address.address : maskAddress(address.address) }}
               </p>
               <div class="mt-3 flex flex-wrap gap-2">
-                <AdminButton
+                <button
                   type="button"
                   :data-testid="`wallet-address-${address.id}-reveal-toggle`"
                   :aria-controls="`wallet-address-${address.id}-value`"
@@ -185,15 +183,15 @@ watch(() => props.visible, (visible) => {
                   @click="toggleAddressReveal(address.id)"
                 >
                   {{ isRevealed(address.id) ? '隐藏完整地址' : '查看完整地址' }}
-                </AdminButton>
-                <AdminButton
+                </button>
+                <button
                   type="button"
                   :disabled="!isRevealed(address.id) || copyInProgress"
                   class="min-h-10 rounded-lg bg-blue-600 px-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   @click="copyAddress(address)"
                 >
                   {{ isCopying(address.id) ? '复制中…' : '复制地址' }}
-                </AdminButton>
+                </button>
               </div>
             </article>
 

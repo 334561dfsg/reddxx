@@ -1256,9 +1256,9 @@ onBeforeUnmount(() => {
           <div class="flex items-center gap-2 w-full sm:w-auto">
             <label class="text-sm text-slate-600 whitespace-nowrap" for="delivery-contract-search">产品名称</label>
             <div class="relative w-full sm:w-80">
-              <a-input
+              <input
                 id="delivery-contract-search"
-                v-model:value="searchDraft"
+                v-model="searchDraft"
                 type="text"
                 class="ant-input w-full pl-9 !h-8"
                 placeholder="搜索产品名称或代码..."
@@ -1279,22 +1279,22 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
-          <a-button
-            html-type="button"
+          <button
+            type="button"
             class="ant-btn !h-8"
             aria-label="重置交割合约筛选条件"
             @click="resetSearch"
           >
             <span>重置</span>
-          </a-button>
-          <a-button type="primary"
-            html-type="button"
+          </button>
+          <button
+            type="button"
             class="ant-btn ant-btn-primary !h-8"
             aria-label="应用交割合约筛选条件"
             @click="applySearch"
           >
             <span>搜索</span>
-          </a-button>
+          </button>
         </div>
       </div>
     </article>
@@ -1309,10 +1309,10 @@ onBeforeUnmount(() => {
             aria-orientation="horizontal"
             @keydown="handleStatusFilterTabKeydown"
           >
-            <a-button type="text"
+            <button
               v-for="tab in statusFilterTabRegistry"
               :key="tab.id"
-              html-type="button"
+              type="button"
               role="tab"
               :id="`delivery-contract-status-tab-${tab.id}`"
               :aria-selected="statusTab === tab.id"
@@ -1323,7 +1323,7 @@ onBeforeUnmount(() => {
               @click="setStatusFilterTab(tab.id)"
             >
               {{ tab.title }}
-            </a-button>
+            </button>
           </div>
           <span
             id="delivery-contract-result-summary"
@@ -1335,14 +1335,14 @@ onBeforeUnmount(() => {
           </span>
         </div>
 
-        <a-button type="primary"
-          html-type="button"
+        <button
+          type="button"
           class="ant-btn ant-btn-primary !h-8 shrink-0"
           aria-label="新增交割合约"
           @click="openCreateContract($event)"
         >
           <span>+ 新增合约</span>
-        </a-button>
+        </button>
       </div>
 
       <div id="delivery-contract-product-list" class="p-4 space-y-4" role="tabpanel" :aria-labelledby="`delivery-contract-status-tab-${statusTab}`">
@@ -1356,15 +1356,15 @@ onBeforeUnmount(() => {
           <p class="mt-1 text-sm text-slate-500">
             可调整产品名称、币种类型或状态筛选后重新查询。
           </p>
-          <a-button
+          <button
             v-if="hasAppliedDeliveryFilters"
-            html-type="button"
+            type="button"
             class="ant-btn mt-4"
             aria-label="重置交割合约筛选条件并查看全部产品"
             @click="resetSearch"
           >
             重置筛选
-          </a-button>
+          </button>
         </div>
         <template v-else>
           <article
@@ -1415,14 +1415,14 @@ onBeforeUnmount(() => {
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <a-button
-                html-type="button"
-                class="ant-btn "
+              <button
+                type="button"
+                class="ant-btn"
                 :aria-label="`编辑交割合约 ${item.name}`"
                 @click="openEditContract(item, $event)"
               >
                 编辑
-              </a-button>
+              </button>
             </div>
           </div>
 
@@ -1491,7 +1491,38 @@ onBeforeUnmount(() => {
           </span>
         </div>
         <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
-          <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="pagination.currentPage = $event" />
+          <button
+            type="button"
+            class="ant-btn ant-btn-sm flex-1 sm:flex-none"
+            :disabled="pagination.currentPage === 1"
+            aria-label="上一页交割合约产品"
+            @click="pagination.currentPage--"
+          >
+            上一页
+          </button>
+          <div class="flex flex-wrap items-center justify-center gap-1">
+            <button
+              v-for="p in totalPages"
+              :key="p"
+              type="button"
+              class="ant-btn ant-btn-sm w-8 p-0"
+              :class="pagination.currentPage === p ? 'ant-btn-primary' : ''"
+              :aria-label="`第 ${p} 页交割合约产品`"
+              :aria-current="pagination.currentPage === p ? 'page' : undefined"
+              @click="pagination.currentPage = p"
+            >
+              {{ p }}
+            </button>
+          </div>
+          <button
+            type="button"
+            class="ant-btn ant-btn-sm flex-1 sm:flex-none"
+            :disabled="pagination.currentPage === totalPages"
+            aria-label="下一页交割合约产品"
+            @click="pagination.currentPage++"
+          >
+            下一页
+          </button>
         </div>
       </nav>
     </article>
@@ -1524,14 +1555,14 @@ onBeforeUnmount(() => {
                 {{ editingContractId ? '编辑交割合约' : '新增交割合约' }}
               </h2>
             </div>
-            <a-button type="text"
-              html-type="button"
+            <button
+              type="button"
               class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none"
               aria-label="关闭"
               @click="closeContractModal"
             >
               ×
-            </a-button>
+            </button>
           </header>
 
           <div class="shrink-0 border-b border-slate-100 bg-white px-6">
@@ -1542,10 +1573,10 @@ onBeforeUnmount(() => {
               aria-orientation="horizontal"
               @keydown="handleContractTabKeydown"
             >
-              <a-button type="text"
+              <button
                 v-for="tab in contractTabRegistry"
                 :key="tab.id"
-                html-type="button"
+                type="button"
                 role="tab"
                 :id="`delivery-contract-tab-${tab.id}`"
                 :aria-selected="contractTab === tab.id"
@@ -1556,11 +1587,11 @@ onBeforeUnmount(() => {
                   contractTab === tab.id
                     ? 'text-blue-600 font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600'
                     : 'text-slate-500 hover:text-slate-700'
-                "
+"
                 @click="setContractTab(tab.id)"
               >
                 {{ tab.title }}
-              </a-button>
+              </button>
             </div>
           </div>
 
@@ -1572,7 +1603,7 @@ onBeforeUnmount(() => {
             @submit.prevent="saveContract"
           >
           <div class="min-h-0 flex-1 space-y-6 overflow-y-auto bg-white p-6">
-            <FeedbackToast v-if="contractErrorItems.length" :id="contractErrorSummaryId" ref="contractErrorSummaryRef" type="error" :source="() => (contractErrorItems.length) ? (contractErrorItems.map(item => item.message).join('；')) : ''"><a-button type="link" @click="focusContractField(contractErrorItems[0].field)">定位首个错误</a-button></FeedbackToast>
+            <FeedbackToast v-if="contractErrorItems.length" :id="contractErrorSummaryId" ref="contractErrorSummaryRef" type="error" :source="() => (contractErrorItems.length) ? (contractErrorItems.map(item => item.message).join('；')) : ''"><button type="button" class="text-sm text-blue-600 underline underline-offset-2 hover:text-blue-800" @click="focusContractField(contractErrorItems[0].field)">定位首个错误</button></FeedbackToast>
 
             <div class="space-y-6">
               <div
@@ -1585,9 +1616,9 @@ onBeforeUnmount(() => {
               >
                 <div class="space-y-1.5">
                   <label class="text-sm text-slate-900" :for="contractFieldId('name')">合约名称 <span class="text-rose-500">*</span></label>
-                  <a-input
+                  <input
                     :id="contractFieldId('name')"
-                    v-model:value="contractForm.name"
+                    v-model="contractForm.name"
                     type="text"
                     class="ant-input"
                     placeholder="如：BTC 周期合约"
@@ -1600,9 +1631,9 @@ onBeforeUnmount(() => {
                 </div>
                 <div class="space-y-1.5">
                   <label class="text-sm text-slate-900" :for="contractFieldId('code')">合约代码 <span class="text-rose-500">*</span></label>
-                  <a-input
+                  <input
                     :id="contractFieldId('code')"
-                    v-model:value="contractForm.code"
+                    v-model="contractForm.code"
                     type="text"
                     class="ant-input uppercase"
                     placeholder="如：BTC_DELIVERY"
@@ -1615,38 +1646,38 @@ onBeforeUnmount(() => {
                 </div>
                 <div class="space-y-1.5 md:col-span-2" :aria-busy="pairOptionsLoading ? 'true' : undefined">
                   <label class="text-sm text-slate-900" :for="contractFieldId('spotSymbol')">选择交易对 <span class="text-rose-500">*</span></label>
-                  <a-select :get-popup-container="(trigger) => trigger.parentElement"
+                  <select
                     :id="contractFieldId('spotSymbol')"
-                    v-model:value="contractForm.spotSymbol"
-                    class="w-full"
+                    v-model="contractForm.spotSymbol"
+                    class="ant-select w-full"
                     required
                     aria-required="true"
                     :disabled="pairOptionsLoading"
                     :aria-invalid="Boolean(contractErrors.spotSymbol)"
                     :aria-describedby="contractFieldDescribedBy('spotSymbol', 'delivery-contract-spot-symbol-help')"
                   >
-                    <a-select-option v-if="pairOptionsLoading" value="">交易对加载中...</a-select-option>
-                    <a-select-option v-else-if="contractForm.spotSymbol && !pairOptions.includes(contractForm.spotSymbol)" :value="contractForm.spotSymbol">
+                    <option v-if="pairOptionsLoading" value="">交易对加载中...</option>
+                    <option v-else-if="contractForm.spotSymbol && !pairOptions.includes(contractForm.spotSymbol)" :value="contractForm.spotSymbol">
                       {{ contractForm.spotSymbol }}（当前不可用）
-                    </a-select-option>
-                    <a-select-option v-for="opt in pairOptions" :key="`pair-${opt}`" :value="opt">{{ opt }}</a-select-option>
-                  </a-select>
+                    </option>
+                    <option v-for="opt in pairOptions" :key="`pair-${opt}`" :value="opt">{{ opt }}</option>
+                  </select>
                   <p id="delivery-contract-spot-symbol-help" class="text-xs text-slate-400" aria-live="polite">
                     <template v-if="pairOptionsLoading">正在加载可用交易对。</template>
                     <FeedbackToast v-else-if="pairOptionsError" :source="() => (pairOptionsError) ? (pairOptionsError) : ''"/>
                     <template v-else-if="selectedSpotSymbolUnavailable">当前交易对已不在可用列表中，请重新选择后保存。</template>
                     <template v-else>保存时会同步合约的基础币种和计价币种。</template>
                   </p>
-                  <a-button
+                  <button
                     v-if="pairOptionsError"
-                    html-type="button"
+                    type="button"
                     class="ant-btn ant-btn-sm"
                     :disabled="pairOptionsLoading"
                     aria-label="重新加载交割合约可用交易对"
                     @click="loadSpotSymbols"
                   >
                     重新加载交易对
-                  </a-button>
+                  </button>
                   <FeedbackToast v-if="contractErrors.spotSymbol" :id="contractFieldErrorId('spotSymbol')" type="error" :source="() => (contractErrors.spotSymbol) ? (contractErrors.spotSymbol) : ''"></FeedbackToast>
                 </div>
                 <div class="space-y-1.5">
@@ -1659,11 +1690,11 @@ onBeforeUnmount(() => {
                     aria-required="true"
                     @keydown="handleContractStatusKeydown"
                   >
-                    <a-button type="text"
+                    <button
                       v-for="option in contractStatusOptionRegistry"
                       :id="`delivery-contract-status-${option.id}`"
                       :key="option.id"
-                      html-type="button"
+                      type="button"
                       role="radio"
                       :aria-checked="contractForm.status === option.id"
                       :aria-disabled="option.disabled ? 'true' : undefined"
@@ -1678,15 +1709,15 @@ onBeforeUnmount(() => {
                       @click="setContractStatus(option.id)"
                     >
                       {{ option.label }}
-                    </a-button>
+                    </button>
                   </div>
                   <p id="delivery-contract-status-help" class="text-xs text-slate-400">状态调整会随本次保存一起生效。</p>
                 </div>
                 <div class="space-y-1.5">
                   <label class="block text-sm text-slate-900" :for="contractFieldId('sortOrder')">产品排序 <span class="text-rose-500">*</span></label>
-                  <a-input
+                  <input
                     :id="contractFieldId('sortOrder')"
-                    v-model:value.number="contractForm.sortOrder"
+                    v-model.number="contractForm.sortOrder"
                     type="number"
                     :min="0"
                     inputmode="numeric"
@@ -1713,24 +1744,24 @@ onBeforeUnmount(() => {
               >
                 <div class="space-y-1.5">
                   <label class="text-sm text-slate-900" :for="contractFieldId('templateId')">选择周期模板 <span class="text-rose-500">*</span></label>
-                  <a-select :get-popup-container="(trigger) => trigger.parentElement"
+                  <select
                     :id="contractFieldId('templateId')"
-                    v-model:value="contractForm.templateId"
-                    class=""
+                    v-model="contractForm.templateId"
+                    class="ant-select"
                     required
                     aria-required="true"
                     :aria-invalid="Boolean(contractErrors.templateId)"
                     :aria-describedby="contractFieldDescribedBy('templateId', 'delivery-contract-template-help')"
                   >
-                    <a-select-option
+                    <option
                       v-for="tpl in templates"
                       :key="tpl.id"
                       :value="tpl.id"
                       :disabled="tpl.status === DELIVERY_STATUS.DISABLED"
                     >
                       {{ tpl.name }}{{ tpl.status === DELIVERY_STATUS.DISABLED ? '（已禁用）' : '' }}
-                    </a-select-option>
-                  </a-select>
+                    </option>
+                  </select>
                   <p id="delivery-contract-template-help" class="text-xs leading-5 text-slate-400" aria-live="polite">
                     {{ selectedTemplatePolicyText }}
                   </p>
@@ -1768,9 +1799,9 @@ onBeforeUnmount(() => {
                 <div class="grid gap-6 md:grid-cols-3">
                   <div class="space-y-1.5">
                     <label class="text-sm text-slate-900" :for="contractFieldId('minBuy')">最低买入额 (USDT) <span class="text-rose-500">*</span></label>
-                    <a-input
+                    <input
                       :id="contractFieldId('minBuy')"
-                      v-model:value="contractForm.minBuy"
+                      v-model="contractForm.minBuy"
                       type="number"
                       :min="0"
                       :step="0.000001"
@@ -1787,9 +1818,9 @@ onBeforeUnmount(() => {
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-slate-900" :for="contractFieldId('maxBuy')">最高买入额 (USDT) <span class="text-rose-500">*</span></label>
-                    <a-input
+                    <input
                       :id="contractFieldId('maxBuy')"
-                      v-model:value="contractForm.maxBuy"
+                      v-model="contractForm.maxBuy"
                       type="number"
                       :min="0"
                       :step="0.000001"
@@ -1806,9 +1837,9 @@ onBeforeUnmount(() => {
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-sm text-slate-900" :for="contractFieldId('maxHold')">最大持仓额 (USDT) <span class="text-rose-500">*</span></label>
-                    <a-input
+                    <input
                       :id="contractFieldId('maxHold')"
-                      v-model:value="contractForm.maxHold"
+                      v-model="contractForm.maxHold"
                       type="number"
                       :min="0"
                       :step="0.000001"
@@ -1838,9 +1869,9 @@ onBeforeUnmount(() => {
                 <div class="space-y-1.5">
                   <label class="text-sm text-slate-900" :for="contractFieldId('sellFee')">交割手续费率 (%) <span class="text-rose-500">*</span></label>
                   <div class="relative">
-                    <a-input
+                    <input
                       :id="contractFieldId('sellFee')"
-                      v-model:value="contractForm.sellFee"
+                      v-model="contractForm.sellFee"
                       type="number"
                       :min="0"
                       :max="100"
@@ -1873,38 +1904,38 @@ onBeforeUnmount(() => {
               <p class="font-medium">{{ contractDiscardConfirmState.title }}</p>
               <p class="mt-1 text-xs text-amber-700">{{ contractDiscardConfirmState.body }}</p>
               <div class="mt-3 flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
-                <a-button
-                  html-type="button"
+                <button
+                  type="button"
                   class="ant-btn w-full sm:w-auto"
                   @click="keepEditingContract"
                 >
                   继续编辑
-                </a-button>
-                <a-button type="primary"
-                  html-type="button"
+                </button>
+                <button
+                  type="button"
                   class="ant-btn ant-btn-primary w-full sm:w-auto"
                   :aria-label="contractDiscardConfirmState.confirmAriaLabel"
                   @click="discardContractChanges"
                 >
                   {{ contractDiscardConfirmState.confirmLabel }}
-                </a-button>
+                </button>
               </div>
             </div>
             <div class="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
-              <a-button
-                html-type="button"
+              <button
+                type="button"
                 class="ant-btn w-full sm:w-auto"
                 @click="closeContractModal"
               >
                 取消
-              </a-button>
-              <a-button type="primary"
-                html-type="submit"
+              </button>
+              <button
+                type="submit"
                 class="ant-btn ant-btn-primary w-full sm:w-auto"
                 aria-label="保存交割合约"
               >
                 保存合约
-              </a-button>
+              </button>
             </div>
           </footer>
           </form>
