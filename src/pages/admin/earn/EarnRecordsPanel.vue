@@ -12,6 +12,7 @@ import { earnAdmin } from '../../../admin/state/earn.js'
 import { clone, dateText, money, quoteEarnRedemption, redemptionTypes, reviewEarnOrder, reviewEarnRedemption, statusMeta } from '../../../admin/domain/earn.js'
 const props=defineProps({section:{type:String,required:true}})
 const titles={orders:'申购订单',holdings:'持仓管理',redemptions:'赎回记录',rewards:'收益记录',logs:'操作日志'}
+const detailTitles={orders:'申购订单详情',holdings:'持仓详情',redemptions:'赎回详情',rewards:'收益详情',logs:'操作日志详情'}
 const fields={
  orders:[['id','订单号'],['userId','用户 UID'],['productName','产品名称'],['amount','申购金额'],['status','状态'],['createdAt','申购时间'],['reviewer','审核人'],['completedAt','审核时间']],
  holdings:[['id','持仓编号'],['userId','用户 UID'],['productName','产品名称'],['principal','持仓本金'],['accrued','应计收益'],['status','状态'],['startedAt','起息时间']],
@@ -93,7 +94,7 @@ async function submit(){if(busy.value)return;busy.value=true;error.value='';try{
    <Space v-else-if="column.key==='actions'" :size="0"><Button :type="recordAction(record).type" :danger="recordAction(record).danger" @click="show(record)">{{ recordAction(record).text }}</Button><Button v-if="section==='holdings'" type="link" @click="showRewards(record,$event)">收益</Button></Space>
    <template v-else>{{ label(record,column.key) }}</template>
   </template></EarnAdminTable>
- <EarnAdminModal :open="open" :title="reviewable?'审核申购':settleable?'审核赎回':titles[section]+'详情'" :confirm-text="confirmText" :danger="(reviewable||settleable)&&decision==='reject'" :busy="busy" @close="open=false" @confirm="submit">
+ <EarnAdminModal :open="open" :title="reviewable?'审核申购':settleable?'审核赎回':detailTitles[section]" :confirm-text="confirmText" :danger="(reviewable||settleable)&&decision==='reject'" :busy="busy" @close="open=false" @confirm="submit">
   <div v-if="error" ref="errorRef" tabindex="-1"><FeedbackToast  type="error" :source="() => (error)"></FeedbackToast></div>
   <Descriptions v-if="selected" bordered size="small" :column="2"><DescriptionsItem v-for="[key,title] in [...fields[section],...extraFields]" :key="key" :label="title"><Tag v-if="key==='status'" :color="statusMeta[selected.status]?.[1]">{{ section==='redemptions'&&selected.status==='pending'?'待审核':statusMeta[selected.status]?.[0] }}</Tag><Button v-else-if="key==='userId'" type="link" :aria-label="'查看用户 '+selected.userId" @click.stop="showUser(selected,$event)">{{ selected.userId }}</Button><template v-else>{{ label(selected,key) }}</template></DescriptionsItem></Descriptions>
   <template v-if="section==='logs'&&selected"><TypographyText strong>变更前</TypographyText><pre class="earn-log-snapshot">{{ selected.before }}</pre><TypographyText strong>变更后</TypographyText><pre class="earn-log-snapshot">{{ selected.after }}</pre></template>

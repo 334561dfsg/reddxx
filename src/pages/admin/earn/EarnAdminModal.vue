@@ -39,4 +39,8 @@ async function afterClose() { if (await onAfterLeave()) emit('closed') }
 .earn-admin-modal .ant-modal-footer{margin:0;padding:10px 24px;border-top:1px solid rgb(5 5 5 / 6%)}
 .earn-modal-title{font-size:16px;line-height:24px;font-weight:600}
 .earn-modal-footer{align-items:center}
+/* Bordered detail tables in one dialog share the same grid: fixed layout and one label width, so sections line up. */
+.earn-admin-modal .ant-descriptions-bordered .ant-descriptions-view > table{table-layout:fixed}
+.earn-admin-modal .ant-descriptions-bordered .ant-descriptions-item-label{width:20%}
+.earn-admin-modal .ant-descriptions-bordered .ant-descriptions-item-content{overflow-wrap:anywhere}
 </style>
