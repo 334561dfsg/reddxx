@@ -40,7 +40,6 @@ seed('QFO-seed-real-6','qf-vip0','real',{principal:6500,startDaysAgo:34,status:'
 seed('QFO-seed-real-7','qf-vip1','real',{principal:150000,startDaysAgo:38,status:'settled',paidDays:7,settledDaysAgo:31})
 seed('QFO-seed-real-8','qf-vip0','real',{principal:5000,startDaysAgo:41,status:'rejected'})
 seed('QFO-seed-real-9','qf-vip0','real',{principal:12000,startDaysAgo:45,status:'redeemed',paidDays:9,settledDaysAgo:36})
-seed('QFO-seed-real-10','qf-vip1','real',{principal:200000,startDaysAgo:50,status:'cancelled'})
 seed('QFO-seed-real-11','qf-vip1','real',{principal:120000,startDaysAgo:56,status:'settled',paidDays:7,settledDaysAgo:49})
 seed('QFO-seed-real-12','qf-vip0','real',{principal:4999,startDaysAgo:62,status:'redeemed',paidDays:15,settledDaysAgo:47})
 refreshQuantFunds()

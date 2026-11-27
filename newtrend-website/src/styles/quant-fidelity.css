@@ -349,10 +349,10 @@
 #main-content .quant-page .qf-table-product{display:flex;align-items:center;gap:10px;min-width:220px;color:#fff;font-weight:500}
 #main-content .quant-page .qf-table-product .coin{width:28px;height:28px}
 #main-content .quant-page .qf-status{display:inline-flex;padding:2px 8px;border:1px solid;border-radius:999px;font-size:12px;line-height:16px;font-weight:600;white-space:nowrap}
-#main-content .quant-page .qf-status.pending_review,#main-content .quant-page .qf-status.redeem_pending_review,#main-content .quant-page .qf-status.awaiting_top_up{border-color:color-mix(in srgb,#fcd34d 35%,transparent);background:color-mix(in srgb,#fcd34d 10%,transparent);color:#fcd34d}
+#main-content .quant-page .qf-status.pending_review,#main-content .quant-page .qf-status.redeem_pending_review{border-color:color-mix(in srgb,#fcd34d 35%,transparent);background:color-mix(in srgb,#fcd34d 10%,transparent);color:#fcd34d}
 #main-content .quant-page .qf-status.active{border-color:color-mix(in srgb,#2bc287 30%,transparent);background:color-mix(in srgb,#2bc287 10%,transparent);color:#2bc287}
 #main-content .quant-page .qf-status:is(.settled,.redeemed){border-color:var(--qf-subtle);background:var(--qf-elevated);color:var(--qf-secondary)}
-#main-content .quant-page .qf-status:is(.rejected,.cancelled){border-color:color-mix(in srgb,#f46 30%,transparent);background:color-mix(in srgb,#f46 10%,transparent);color:#f46}
+#main-content .quant-page .qf-status.rejected{border-color:color-mix(in srgb,#f46 30%,transparent);background:color-mix(in srgb,#f46 10%,transparent);color:#f46}
 @media(max-width:1023px){#main-content .quant-page .qf-detail-grid{grid-template-columns:1fr}#main-content .quant-page .qf-detail-aside{position:static}#main-content .quant-page .qf-quota{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:767px){#main-content .quant-page .qf-calc-grid,#main-content .quant-page .qf-flow{grid-template-columns:1fr}#main-content .quant-page .qf-flow::before{display:none}#main-content .quant-page .qf-flow li{flex-direction:row;align-items:flex-start;text-align:left}#main-content .quant-page .qf-detail-hero h1{font-size:30px;line-height:36px}}
 #main-content .quant-page .qf-table td:nth-child(5){white-space:nowrap}

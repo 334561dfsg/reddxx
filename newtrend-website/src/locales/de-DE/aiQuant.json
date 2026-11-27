@@ -395,51 +395,6 @@
       "needVip": "VIP {{tier}} für vorzeitige Rückzahlung erforderlich",
       "penaltyEstimate": "Geschätzte Vertragsstrafe"
     },
-    "topUp": {
-      "button": "Aufstocken",
-      "title": "Zeichnung aufstocken",
-      "description": "Aufstocken, um die Prüfung fortzusetzen",
-      "countdownLabel": "Aufstockung in",
-      "countdownDaysHours": "{{days}}T {{hours}}Std",
-      "countdownDaysHoursMinutes": "{{days}}T {{hours}}Std {{minutes}}Min",
-      "expired": "Abgelaufen",
-      "overdue": "Überfällig",
-      "overdueDays": "{{days}} Tage überfällig",
-      "deadlineNotice": "Erfolgt die Aufstockung nicht vor Ablauf der Frist, wird der Auftrag automatisch storniert und Ihr Kapital freigegeben.",
-      "lateFeeDeadlineNotice": "Wenn Sie nicht vor Ablauf der Frist aufstocken, wird Ihrem Konto eine Säumnisgebühr berechnet.",
-      "lockedNotice": "Aufstocken und Ablehnen sind geschlossen. Wenden Sie sich an den Support, um die Säumnisgebühr zu begleichen.",
-      "contactSupport": "Support kontaktieren",
-      "noticeWithTarget": "Der Prüfer hat den Zielbetrag für diese Order auf {{target}} {{currency}} festgelegt. Stocken Sie unten die Differenz auf, um die Prüfung fortzusetzen.",
-      "noticeGeneric": "Der Prüfer hat den Zielbetrag für diese Order angepasst. Bestätigen Sie, um die Differenz aufzustocken und die Prüfung fortzusetzen.",
-      "currentPrincipal": "Aktueller Betrag",
-      "targetAmount": "Zielbetrag",
-      "shortfall": "Aufzustockender Betrag",
-      "availableBalanceLabel": "Verfügbar",
-      "errorInsufficientBalance": "Unzureichendes Guthaben für die Aufstockung.",
-      "goDeposit": "Einzahlen",
-      "confirm": "Aufstockung bestätigen",
-      "submitting": "Wird verarbeitet…",
-      "cancel": "Abbrechen",
-      "resultTitle": "Aufstockung abgeschlossen",
-      "resultPrincipal": "Neuer Zeichnungsbetrag",
-      "resultProjectedInterest": "Erwartete Zinsen",
-      "resultStatusNotice": "Ihre Order wird erneut geprüft.",
-      "done": "Fertig"
-    },
-    "decline": {
-      "button": "Ablehnen",
-      "title": "Anpassung ablehnen",
-      "notice": "Durch die Ablehnung wird diese Order storniert und {{principal}} {{currency}} werden auf Ihr verfügbares Guthaben freigegeben. Dies kann nicht rückgängig gemacht werden.",
-      "reasonLabel": "Grund (optional)",
-      "reasonPlaceholder": "Teilen Sie uns den Grund mit (optional)",
-      "confirm": "Ablehnen & Order stornieren",
-      "submitting": "Wird verarbeitet…",
-      "cancel": "Order behalten",
-      "resultTitle": "Order storniert",
-      "resultReleased": "Auf Guthaben freigegeben",
-      "resultNotice": "Die Mittel wurden auf Ihr verfügbares Guthaben zurückgebucht.",
-      "done": "Fertig"
-    },
     "positions": {
       "title": "Meine Quant-Fonds-Positionen",
       "subtitle": "Alle Quant-Fonds-Orders und der Abrechnungsstatus Ihres Kontos.",
@@ -448,10 +403,8 @@
         "active": "Aktiv",
         "pending_review": "In Prüfung",
         "redeem_pending_review": "Rückzahlung in Prüfung",
-        "awaiting_top_up": "Aufstockung nötig",
         "rejected": "Abgelehnt",
         "settled": "Abgerechnet",
-        "cancelled": "Storniert",
         "redeemed": "Eingelöst"
       },
       "tabGroups": {
@@ -508,8 +461,7 @@
         "settledAt": "Abgerechnet am",
         "settledInterest": "Abgerechnete Zinsen",
         "settledPrincipal": "Abgerechnetes Kapital",
-        "settledTotal": "Abrechnung gesamt",
-        "cancelReason": "Stornogrund"
+        "settledTotal": "Abrechnung gesamt"
       },
       "detail": {
         "title": "Auftragsdetails",
@@ -520,13 +472,6 @@
           "interest": "Zinsen",
           "settlement": "Abrechnung"
         }
-      },
-      "topUpReminder": {
-        "title": "{{count}} Auftrag/Aufträge erwarten Aufstockung",
-        "description": "Vor Fristablauf aufstocken, sonst wird der Auftrag storniert und Ihr Kapital freigegeben.",
-        "overdueDescription": "{{count}} davon sind über der Frist. Handeln Sie jetzt, oder wenden Sie sich an den Support, wenn die Optionen geschlossen sind.",
-        "overdueLockedDescription": "{{count}} davon sind überfällig. Aufstocken und Ablehnen sind geschlossen – wenden Sie sich an den Support, um die Säumnisgebühr zu begleichen.",
-        "cta": "Aufstocken"
       }
     },
     "interestRecords": {
@@ -548,11 +493,9 @@
       "order": {
         "active": "Aktiv",
         "settled": "Abgerechnet",
-        "cancelled": "Storniert",
         "redeemed": "Eingelöst",
         "redeem_pending_review": "Rückzahlung in Prüfung",
         "pending_review": "In Prüfung",
-        "awaiting_top_up": "Aufstockung nötig",
         "rejected": "Abgelehnt"
       }
     },
@@ -561,8 +504,6 @@
       "quotaExhausted": "Dieses Produkt ist ausverkauft und derzeit nicht zur Zeichnung verfügbar.",
       "exceedsRemainingQuota": "Ihr Zeichnungsbetrag übersteigt das verbleibende Kontingent des Produkts. Bitte passen Sie Ihren Betrag an.",
       "perUserQuotaExceeded": "Ihr Zeichnungsbetrag übersteigt Ihr persönliches Zeichnungslimit. Bitte passen Sie Ihren Betrag an.",
-      "notAwaitingTopUp": "Diese Order wartet nicht mehr auf eine Aufstockung. Möglicherweise wurde sie bereits aktualisiert.",
-      "topUpLockedOverdue": "Dieser Auftrag ist überfällig. Aufstocken und Ablehnen sind geschlossen – wenden Sie sich an den Support.",
       "insufficientBalance": "Unzureichendes Guthaben für die Aufstockung. Bitte zahlen Sie ein und versuchen Sie es erneut.",
       "insufficientCreditScore": "Ihr Kredit-Score liegt unter dem für dieses Produkt erforderlichen Mindestwert."
     },

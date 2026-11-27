@@ -399,3 +399,5 @@ Following newtrendcapital.com/zh-TW/trade (read-only DOM inspection): each order
 ## Quant fund redemption review (user decision, 2026-11-27)
 
 Supersedes the immediate local settlement in "Quant fund redeem and payout records" above: 贖回 now submits a review request (`requestRedeemFund`). The confirm dialog shows `redeem.reviewNotice`, the toast uses `redeem.pendingTitle` / `pendingDescription`, and the order becomes 贖回審核中 with 派息明細 still available; nothing is credited until an admin approves in 量化基金 → 赎回审核. The public ledger is separate from the admin mock, so public requests stay pending.
+
+Quant fund orders use the same six statuses as the admin (pending_review, active, redeem_pending_review, redeemed, settled, rejected; user decision 2026-11-27). The reference-derived 已取消 (`cancelled`) and 待補足 (`awaiting_top_up`) statuses, their seed record and the unused top-up / decline / top-up reminder / cancel-reason strings were removed from all six locales; do not reintroduce them without a real flow.

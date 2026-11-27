@@ -395,51 +395,6 @@
       "needVip": "需 VIP {{tier}} 可提前贖回",
       "penaltyEstimate": "預估違約金"
     },
-    "topUp": {
-      "button": "補足",
-      "title": "補足申購金額",
-      "description": "補足後恢復審核",
-      "countdownLabel": "補足倒數",
-      "countdownDaysHours": "{{days}}天 {{hours}}時",
-      "countdownDaysHoursMinutes": "{{days}}天 {{hours}}時 {{minutes}}分",
-      "expired": "已過期",
-      "overdue": "已逾期",
-      "overdueDays": "已逾期 {{days}} 天",
-      "deadlineNotice": "逾期未補足，系統將自動取消訂單並退回本金。",
-      "lateFeeDeadlineNotice": "逾期未補足，你的帳戶屆時會產生相應的滯納金。",
-      "lockedNotice": "入口已關閉，請聯絡客服繳納滯納金。",
-      "contactSupport": "聯絡客服",
-      "noticeWithTarget": "審核員已將此訂單的目標金額設為 {{target}} {{currency}}，請於下方補足差額以恢復審核。",
-      "noticeGeneric": "審核員已調整此訂單的目標金額，確認後將補足差額並恢復審核。",
-      "currentPrincipal": "目前金額",
-      "targetAmount": "目標金額",
-      "shortfall": "需補足金額",
-      "availableBalanceLabel": "可用餘額",
-      "errorInsufficientBalance": "餘額不足，無法完成補足。",
-      "goDeposit": "前往充值",
-      "confirm": "確認補足",
-      "submitting": "處理中…",
-      "cancel": "取消",
-      "resultTitle": "補足完成",
-      "resultPrincipal": "新申購金額",
-      "resultProjectedInterest": "預期利息",
-      "resultStatusNotice": "您的訂單已重新進入審核。",
-      "done": "完成"
-    },
-    "decline": {
-      "button": "拒絕",
-      "title": "拒絕補足",
-      "notice": "拒絕將取消此訂單，並把 {{principal}} {{currency}} 釋放回您的可用餘額。此操作無法復原。",
-      "reasonLabel": "原因（選填）",
-      "reasonPlaceholder": "告訴我們原因（選填）",
-      "confirm": "拒絕並取消訂單",
-      "submitting": "處理中…",
-      "cancel": "保留訂單",
-      "resultTitle": "訂單已取消",
-      "resultReleased": "已釋放至餘額",
-      "resultNotice": "資金已退回您的可用餘額。",
-      "done": "完成"
-    },
     "positions": {
       "title": "我的量化基金持倉",
       "subtitle": "你在量化基金上的所有訂單與結算狀態。",
@@ -448,10 +403,8 @@
         "active": "運行中",
         "pending_review": "審核中",
         "redeem_pending_review": "贖回審核中",
-        "awaiting_top_up": "待補足",
         "rejected": "已拒絕",
         "settled": "已結算",
-        "cancelled": "已取消",
         "redeemed": "已贖回"
       },
       "tabGroups": {
@@ -508,8 +461,7 @@
         "settledAt": "結算時間",
         "settledInterest": "結算利息",
         "settledPrincipal": "結算本金",
-        "settledTotal": "結算合計",
-        "cancelReason": "取消原因"
+        "settledTotal": "結算合計"
       },
       "detail": {
         "title": "訂單詳情",
@@ -520,13 +472,6 @@
           "interest": "利息",
           "settlement": "結算"
         }
-      },
-      "topUpReminder": {
-        "title": "有 {{count}} 筆訂單待補足",
-        "description": "請於期限前補足，逾期訂單將自動取消並退回本金。",
-        "overdueDescription": "其中 {{count}} 筆已過補足期限。請盡快處理；入口已關閉請聯絡客服。",
-        "overdueLockedDescription": "其中 {{count}} 筆已過補足期限。補足與拒絕入口已關閉，請聯絡客服繳納滯納金。",
-        "cta": "去補足"
       }
     },
     "interestRecords": {
@@ -548,11 +493,9 @@
       "order": {
         "active": "運行中",
         "settled": "已結算",
-        "cancelled": "已取消",
         "redeemed": "已贖回",
         "redeem_pending_review": "贖回審核中",
         "pending_review": "審核中",
-        "awaiting_top_up": "待補足",
         "rejected": "已拒絕"
       }
     },
@@ -561,8 +504,6 @@
       "quotaExhausted": "該產品額度已售罄，暫時無法申購。",
       "exceedsRemainingQuota": "申購金額超過產品目前的剩餘額度，請調整申購金額。",
       "perUserQuotaExceeded": "申購金額超過你的個人可申購上限，請調整申購金額。",
-      "notAwaitingTopUp": "此訂單已不在待補足狀態，可能已被更新。",
-      "topUpLockedOverdue": "此訂單已逾期，補足與拒絕入口已關閉，請聯絡客服。",
       "insufficientBalance": "餘額不足，無法完成補足，請充值後重試。",
       "insufficientCreditScore": "您的信用分未達到此產品的申購門檻。"
     },

@@ -395,51 +395,6 @@
       "needVip": "早期償還には VIP {{tier}} が必要です",
       "penaltyEstimate": "違約金（予想）"
     },
-    "topUp": {
-      "button": "追加する",
-      "title": "申込金額を追加",
-      "description": "追加して審査を再開",
-      "countdownLabel": "補足期限",
-      "countdownDaysHours": "{{days}}日 {{hours}}時間",
-      "countdownDaysHoursMinutes": "{{days}}日 {{hours}}時間 {{minutes}}分",
-      "expired": "期限切れ",
-      "overdue": "期限超過",
-      "overdueDays": "{{days}}日超過",
-      "deadlineNotice": "期限までに補足されない場合、注文は自動的にキャンセルされ、元本の保留が解除されます。",
-      "lateFeeDeadlineNotice": "期限までに追加入金がない場合、お客様のアカウントに延滞金が発生します。",
-      "lockedNotice": "追加入金と辞退の受付は終了しました。延滞金のお支払いはサポートへご連絡ください。",
-      "contactSupport": "サポートに連絡",
-      "noticeWithTarget": "審査担当者がこの注文の目標金額を {{target}} {{currency}} に設定しました。以下で差額を追加して審査を再開してください。",
-      "noticeGeneric": "審査担当者がこの注文の目標金額を調整しました。確認すると差額を追加して審査を再開します。",
-      "currentPrincipal": "現在の金額",
-      "targetAmount": "目標金額",
-      "shortfall": "追加が必要な金額",
-      "availableBalanceLabel": "利用可能",
-      "errorInsufficientBalance": "残高が不足しているため追加できません。",
-      "goDeposit": "入金する",
-      "confirm": "追加を確定",
-      "submitting": "処理中…",
-      "cancel": "キャンセル",
-      "resultTitle": "追加が完了しました",
-      "resultPrincipal": "新しい申込金額",
-      "resultProjectedInterest": "予想利息",
-      "resultStatusNotice": "ご注文は再び審査中です。",
-      "done": "完了"
-    },
-    "decline": {
-      "button": "拒否する",
-      "title": "調整を拒否",
-      "notice": "拒否するとこの注文はキャンセルされ、{{principal}} {{currency}} が利用可能残高に返却されます。この操作は取り消せません。",
-      "reasonLabel": "理由（任意）",
-      "reasonPlaceholder": "理由をお聞かせください（任意）",
-      "confirm": "拒否して注文をキャンセル",
-      "submitting": "処理中…",
-      "cancel": "注文を維持",
-      "resultTitle": "注文をキャンセルしました",
-      "resultReleased": "残高に返却",
-      "resultNotice": "資金は利用可能残高に返却されました。",
-      "done": "完了"
-    },
     "positions": {
       "title": "マイクオントファンドポジション",
       "subtitle": "アカウント内のすべてのクオントファンド注文と決済状況。",
@@ -448,10 +403,8 @@
         "active": "アクティブ",
         "pending_review": "審査中",
         "redeem_pending_review": "償還審査中",
-        "awaiting_top_up": "追加入金待ち",
         "rejected": "却下",
         "settled": "決済済み",
-        "cancelled": "キャンセル済み",
         "redeemed": "償還済み"
       },
       "tabGroups": {
@@ -508,8 +461,7 @@
         "settledAt": "決済日時",
         "settledInterest": "決済利息",
         "settledPrincipal": "決済元本",
-        "settledTotal": "決済合計",
-        "cancelReason": "キャンセル理由"
+        "settledTotal": "決済合計"
       },
       "detail": {
         "title": "注文詳細",
@@ -520,13 +472,6 @@
           "interest": "利息",
           "settlement": "決済"
         }
-      },
-      "topUpReminder": {
-        "title": "追加入金待ちの注文が {{count}} 件あります",
-        "description": "期限までに補足してください。期限切れの注文は自動的にキャンセルされ、元本の保留が解除されます。",
-        "overdueDescription": "うち {{count}} 件が補足期限を過ぎています。早めにご対応ください。受付が終了している場合はサポートへ。",
-        "overdueLockedDescription": "うち {{count}} 件が期限切れです。追加入金と辞退の受付は終了しました。延滞金はサポートへご連絡ください。",
-        "cta": "追加する"
       }
     },
     "interestRecords": {
@@ -548,11 +493,9 @@
       "order": {
         "active": "アクティブ",
         "settled": "決済済み",
-        "cancelled": "キャンセル済み",
         "redeemed": "償還済み",
         "redeem_pending_review": "償還審査中",
         "pending_review": "審査中",
-        "awaiting_top_up": "追加入金待ち",
         "rejected": "却下"
       }
     },
@@ -561,8 +504,6 @@
       "quotaExhausted": "この商品は完売しており、現在購読いただけません。",
       "exceedsRemainingQuota": "購読金額が商品の残り枠を超えています。金額を調整してください。",
       "perUserQuotaExceeded": "購読金額が個人の購読上限を超えています。金額を調整してください。",
-      "notAwaitingTopUp": "この注文は追加入金待ちではなくなりました。すでに更新された可能性があります。",
-      "topUpLockedOverdue": "この注文は期限を超過しています。補足と辞退の受付は終了しました。サポートへご連絡ください。",
       "insufficientBalance": "残高が不足しているため追加を完了できません。入金してから再度お試しください。",
       "insufficientCreditScore": "信用スコアがこの商品の申込条件を満たしていません。"
     },

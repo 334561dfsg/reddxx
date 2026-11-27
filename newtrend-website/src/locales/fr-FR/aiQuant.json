@@ -395,51 +395,6 @@
       "needVip": "Niveau VIP {{tier}} requis pour le rachat anticipé",
       "penaltyEstimate": "Pénalité estimée"
     },
-    "topUp": {
-      "button": "Compléter",
-      "title": "Compléter la souscription",
-      "description": "Complétez pour reprendre l'examen",
-      "countdownLabel": "Compléter sous",
-      "countdownDaysHours": "{{days}}j {{hours}}h",
-      "countdownDaysHoursMinutes": "{{days}}j {{hours}}h {{minutes}}min",
-      "expired": "Expiré",
-      "overdue": "En retard",
-      "overdueDays": "En retard de {{days}} j",
-      "deadlineNotice": "Sans complément avant l'échéance, la commande est automatiquement annulée et votre capital est libéré.",
-      "lateFeeDeadlineNotice": "Sans recharge avant l'échéance, des frais de retard seront imputés à votre compte.",
-      "lockedNotice": "La recharge et le refus sont fermés. Contactez le support pour régler les frais de retard.",
-      "contactSupport": "Contacter le support",
-      "noticeWithTarget": "L'examinateur a fixé le montant cible de cette commande à {{target}} {{currency}}. Complétez la différence ci-dessous pour reprendre l'examen.",
-      "noticeGeneric": "L'examinateur a ajusté le montant cible de cette commande. Confirmez pour compléter la différence et reprendre l'examen.",
-      "currentPrincipal": "Montant actuel",
-      "targetAmount": "Montant cible",
-      "shortfall": "Montant à compléter",
-      "availableBalanceLabel": "Disponible",
-      "errorInsufficientBalance": "Solde insuffisant pour effectuer le complément.",
-      "goDeposit": "Déposer",
-      "confirm": "Confirmer le complément",
-      "submitting": "Traitement…",
-      "cancel": "Annuler",
-      "resultTitle": "Complément effectué",
-      "resultPrincipal": "Nouveau montant de souscription",
-      "resultProjectedInterest": "Intérêts prévus",
-      "resultStatusNotice": "Votre commande est de nouveau en cours d'examen.",
-      "done": "Terminé"
-    },
-    "decline": {
-      "button": "Refuser",
-      "title": "Refuser l'ajustement",
-      "notice": "Le refus annule cette commande et libère {{principal}} {{currency}} vers votre solde disponible. Cette action est irréversible.",
-      "reasonLabel": "Motif (facultatif)",
-      "reasonPlaceholder": "Indiquez-nous pourquoi (facultatif)",
-      "confirm": "Refuser et annuler la commande",
-      "submitting": "Traitement…",
-      "cancel": "Conserver la commande",
-      "resultTitle": "Commande annulée",
-      "resultReleased": "Libéré vers le solde",
-      "resultNotice": "Les fonds ont été restitués sur votre solde disponible.",
-      "done": "Terminé"
-    },
     "positions": {
       "title": "Mes positions Fonds Quant",
       "subtitle": "Tous les ordres Fonds Quant et leur statut de règlement sous votre compte.",
@@ -448,10 +403,8 @@
         "active": "Actifs",
         "pending_review": "En cours d'examen",
         "redeem_pending_review": "Rachat en cours d'examen",
-        "awaiting_top_up": "Complément requis",
         "rejected": "Rejetés",
         "settled": "Réglés",
-        "cancelled": "Annulés",
         "redeemed": "Rachetés"
       },
       "tabGroups": {
@@ -508,8 +461,7 @@
         "settledAt": "Réglé le",
         "settledInterest": "Intérêts réglés",
         "settledPrincipal": "Principal réglé",
-        "settledTotal": "Total réglé",
-        "cancelReason": "Motif d'annulation"
+        "settledTotal": "Total réglé"
       },
       "detail": {
         "title": "Détail de l'ordre",
@@ -520,13 +472,6 @@
           "interest": "Intérêts",
           "settlement": "Règlement"
         }
-      },
-      "topUpReminder": {
-        "title": "{{count}} commande(s) en attente de complément",
-        "description": "Complétez avant l'échéance, sinon la commande est annulée et votre capital est libéré.",
-        "overdueDescription": "{{count}} au-delà de l'échéance de complément. Agissez maintenant, ou contactez le support si les options sont fermées.",
-        "overdueLockedDescription": "{{count}} ont dépassé l'échéance. La recharge et le refus sont fermés : contactez le support pour régler les frais de retard.",
-        "cta": "Compléter"
       }
     },
     "interestRecords": {
@@ -548,11 +493,9 @@
       "order": {
         "active": "Actif",
         "settled": "Réglé",
-        "cancelled": "Annulé",
         "redeemed": "Racheté",
         "redeem_pending_review": "Rachat en cours d'examen",
         "pending_review": "En cours d'examen",
-        "awaiting_top_up": "Complément requis",
         "rejected": "Rejeté"
       }
     },
@@ -561,8 +504,6 @@
       "quotaExhausted": "Ce produit est épuisé et n'est actuellement pas disponible à la souscription.",
       "exceedsRemainingQuota": "Votre montant de souscription dépasse le quota restant du produit. Veuillez ajuster votre montant.",
       "perUserQuotaExceeded": "Votre montant de souscription dépasse votre limite de souscription personnelle. Veuillez ajuster votre montant.",
-      "notAwaitingTopUp": "Cette commande n'attend plus de complément. Elle a peut-être déjà été mise à jour.",
-      "topUpLockedOverdue": "Cette commande est en retard. Le complément et le refus sont fermés — contactez le support pour continuer.",
       "insufficientBalance": "Solde insuffisant pour effectuer le complément. Veuillez déposer des fonds et réessayer.",
       "insufficientCreditScore": "Votre score de crédit est inférieur au minimum requis pour ce produit."
     },

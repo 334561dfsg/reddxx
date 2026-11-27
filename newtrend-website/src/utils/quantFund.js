@@ -103,8 +103,9 @@ export function subscribeFund(account, product, value, {mode, requestId, now = D
   return {order}
 }
 
-export const PENDING_STATUSES = ['awaiting_top_up', 'pending_review', 'redeem_pending_review']
-export const HISTORY_STATUSES = ['settled', 'redeemed', 'rejected', 'cancelled']
+// Same six order statuses as the admin 量化基金 (no cancelled / awaiting top-up flow exists, 2026-11-27).
+export const PENDING_STATUSES = ['pending_review', 'redeem_pending_review']
+export const HISTORY_STATUSES = ['settled', 'redeemed', 'rejected']
 
 export function filterFundOrders(orders, group, historyStatus = 'all') {
   if (group === 'pending') return orders.filter(order => PENDING_STATUSES.includes(order.status))

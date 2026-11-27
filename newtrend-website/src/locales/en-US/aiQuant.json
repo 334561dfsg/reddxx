@@ -395,51 +395,6 @@
       "needVip": "VIP {{tier}} required for early redemption",
       "penaltyEstimate": "Estimated penalty"
     },
-    "topUp": {
-      "button": "Top up",
-      "title": "Top up subscription",
-      "description": "Top up to resume review",
-      "countdownLabel": "Top up in",
-      "countdownDaysHours": "{{days}}d {{hours}}h",
-      "countdownDaysHoursMinutes": "{{days}}d {{hours}}h {{minutes}}m",
-      "expired": "Expired",
-      "overdue": "Overdue",
-      "overdueDays": "Overdue by {{days}}d",
-      "deadlineNotice": "If you don't top up before the deadline, the order is automatically cancelled and your principal is released.",
-      "lateFeeDeadlineNotice": "If you don't top up before the deadline, a late fee will be charged to your account.",
-      "lockedNotice": "Top-up and decline are closed. Contact support to settle the late fee.",
-      "contactSupport": "Contact support",
-      "noticeWithTarget": "The reviewer set the target amount for this order to {{target}} {{currency}}. Top up the difference below to resume review.",
-      "noticeGeneric": "The reviewer adjusted the target amount for this order. Confirm to top up the difference and resume review.",
-      "currentPrincipal": "Current amount",
-      "targetAmount": "Target amount",
-      "shortfall": "Amount to top up",
-      "availableBalanceLabel": "Available",
-      "errorInsufficientBalance": "Insufficient balance to complete the top-up.",
-      "goDeposit": "Deposit",
-      "confirm": "Confirm top-up",
-      "submitting": "Processing…",
-      "cancel": "Cancel",
-      "resultTitle": "Top-up complete",
-      "resultPrincipal": "New subscription amount",
-      "resultProjectedInterest": "Projected interest",
-      "resultStatusNotice": "Your order is back under review.",
-      "done": "Done"
-    },
-    "decline": {
-      "button": "Decline",
-      "title": "Decline adjustment",
-      "notice": "Declining cancels this order and releases {{principal}} {{currency}} back to your available balance. This can't be undone.",
-      "reasonLabel": "Reason (optional)",
-      "reasonPlaceholder": "Let us know why (optional)",
-      "confirm": "Decline & cancel order",
-      "submitting": "Processing…",
-      "cancel": "Keep order",
-      "resultTitle": "Order cancelled",
-      "resultReleased": "Released to balance",
-      "resultNotice": "Funds have been returned to your available balance.",
-      "done": "Done"
-    },
     "positions": {
       "title": "My Quant Fund positions",
       "subtitle": "All Quant Fund orders and settlement status under your account.",
@@ -448,10 +403,8 @@
         "active": "Active",
         "pending_review": "Under review",
         "redeem_pending_review": "Redemption review",
-        "awaiting_top_up": "Top-up needed",
         "rejected": "Rejected",
         "settled": "Settled",
-        "cancelled": "Cancelled",
         "redeemed": "Redeemed"
       },
       "tabGroups": {
@@ -508,8 +461,7 @@
         "settledAt": "Settled at",
         "settledInterest": "Settled interest",
         "settledPrincipal": "Settled principal",
-        "settledTotal": "Settled total",
-        "cancelReason": "Cancel reason"
+        "settledTotal": "Settled total"
       },
       "detail": {
         "title": "Order details",
@@ -520,13 +472,6 @@
           "interest": "Interest",
           "settlement": "Settlement"
         }
-      },
-      "topUpReminder": {
-        "title": "{{count}} order(s) awaiting top-up",
-        "description": "Top up before the deadline, or the order is cancelled and your principal is released.",
-        "overdueDescription": "{{count}} past the top-up deadline. Act now, or contact support if the options are closed.",
-        "overdueLockedDescription": "{{count}} past the top-up deadline. Top-up and decline are closed — contact support to settle the late fee.",
-        "cta": "Top up"
       }
     },
     "interestRecords": {
@@ -548,11 +493,9 @@
       "order": {
         "active": "Active",
         "settled": "Settled",
-        "cancelled": "Cancelled",
         "redeemed": "Redeemed",
         "redeem_pending_review": "Redemption review",
         "pending_review": "Under review",
-        "awaiting_top_up": "Top-up needed",
         "rejected": "Rejected"
       }
     },
@@ -561,8 +504,6 @@
       "quotaExhausted": "This product is sold out and is currently unavailable for subscription.",
       "exceedsRemainingQuota": "Your subscription amount exceeds the product's remaining quota. Please adjust your amount.",
       "perUserQuotaExceeded": "Your subscription amount exceeds your personal subscription limit. Please adjust your amount.",
-      "notAwaitingTopUp": "This order is no longer awaiting a top-up. It may have already been updated.",
-      "topUpLockedOverdue": "This order is overdue. Top-up and decline are closed — contact support to continue.",
       "insufficientBalance": "Insufficient balance to complete the top-up. Please deposit and try again.",
       "insufficientCreditScore": "Your credit score is below the minimum required for this product."
     },

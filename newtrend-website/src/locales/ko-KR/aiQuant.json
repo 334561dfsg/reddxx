@@ -395,51 +395,6 @@
       "needVip": "조기 상환은 VIP {{tier}} 이상 필요",
       "penaltyEstimate": "예상 위약금"
     },
-    "topUp": {
-      "button": "추가하기",
-      "title": "청약 금액 추가",
-      "description": "추가하여 심사 재개",
-      "countdownLabel": "추가 납입 마감",
-      "countdownDaysHours": "{{days}}일 {{hours}}시간",
-      "countdownDaysHoursMinutes": "{{days}}일 {{hours}}시간 {{minutes}}분",
-      "expired": "기한 만료",
-      "overdue": "기한 초과",
-      "overdueDays": "{{days}}일 초과",
-      "deadlineNotice": "기한까지 추가 납입하지 않으면 주문이 자동으로 취소되고 원금이 반환됩니다.",
-      "lateFeeDeadlineNotice": "기한 내에 추가 납입하지 않으면 계정에 연체료가 부과됩니다.",
-      "lockedNotice": "추가 납입과 거절이 마감되었습니다. 연체료 납부는 고객센터로 문의해 주세요.",
-      "contactSupport": "고객센터 문의",
-      "noticeWithTarget": "심사자가 이 주문의 목표 금액을 {{target}} {{currency}}(으)로 설정했습니다. 아래에서 차액을 추가하여 심사를 재개하세요.",
-      "noticeGeneric": "심사자가 이 주문의 목표 금액을 조정했습니다. 확인하면 차액을 추가하고 심사를 재개합니다.",
-      "currentPrincipal": "현재 금액",
-      "targetAmount": "목표 금액",
-      "shortfall": "추가 필요 금액",
-      "availableBalanceLabel": "사용 가능",
-      "errorInsufficientBalance": "잔액이 부족하여 추가를 완료할 수 없습니다.",
-      "goDeposit": "입금하기",
-      "confirm": "추가 확인",
-      "submitting": "처리 중…",
-      "cancel": "취소",
-      "resultTitle": "추가 완료",
-      "resultPrincipal": "새 청약 금액",
-      "resultProjectedInterest": "예상 이자",
-      "resultStatusNotice": "주문이 다시 심사 중입니다.",
-      "done": "완료"
-    },
-    "decline": {
-      "button": "거절",
-      "title": "조정 거절",
-      "notice": "거절하면 이 주문이 취소되고 {{principal}} {{currency}}이(가) 사용 가능 잔액으로 반환됩니다. 이 작업은 되돌릴 수 없습니다.",
-      "reasonLabel": "사유 (선택)",
-      "reasonPlaceholder": "사유를 알려주세요 (선택)",
-      "confirm": "거절 및 주문 취소",
-      "submitting": "처리 중…",
-      "cancel": "주문 유지",
-      "resultTitle": "주문이 취소됨",
-      "resultReleased": "잔액으로 반환됨",
-      "resultNotice": "자금이 사용 가능 잔액으로 반환되었습니다.",
-      "done": "완료"
-    },
     "positions": {
       "title": "내 퀀트 펀드 포지션",
       "subtitle": "계정의 모든 퀀트 펀드 주문 및 정산 상태.",
@@ -448,10 +403,8 @@
         "active": "활성",
         "pending_review": "검토 중",
         "redeem_pending_review": "환매 검토 중",
-        "awaiting_top_up": "추가 입금 대기",
         "rejected": "거부됨",
         "settled": "정산됨",
-        "cancelled": "취소됨",
         "redeemed": "환매됨"
       },
       "tabGroups": {
@@ -508,8 +461,7 @@
         "settledAt": "정산 시각",
         "settledInterest": "정산 이자",
         "settledPrincipal": "정산 원금",
-        "settledTotal": "정산 합계",
-        "cancelReason": "취소 사유"
+        "settledTotal": "정산 합계"
       },
       "detail": {
         "title": "주문 상세",
@@ -520,13 +472,6 @@
           "interest": "이자",
           "settlement": "정산"
         }
-      },
-      "topUpReminder": {
-        "title": "추가 입금 대기 주문 {{count}}건",
-        "description": "기한까지 추가 납입하세요. 기한이 지나면 주문이 자동으로 취소되고 원금이 반환됩니다.",
-        "overdueDescription": "이 중 {{count}}건이 추가 납입 기한을 넘겼습니다. 지금 처리하시고, 접수가 종료된 경우 고객센터로 문의하세요.",
-        "overdueLockedDescription": "그중 {{count}}건이 기한을 넘겼습니다. 추가 납입과 거절이 마감되었으니 고객센터로 문의해 주세요.",
-        "cta": "추가하기"
       }
     },
     "interestRecords": {
@@ -548,11 +493,9 @@
       "order": {
         "active": "활성",
         "settled": "정산됨",
-        "cancelled": "취소됨",
         "redeemed": "환매됨",
         "redeem_pending_review": "환매 검토 중",
         "pending_review": "검토 중",
-        "awaiting_top_up": "추가 입금 대기",
         "rejected": "거부됨"
       }
     },
@@ -561,8 +504,6 @@
       "quotaExhausted": "이 상품은 매진되어 현재 구독할 수 없습니다.",
       "exceedsRemainingQuota": "구독 금액이 상품의 남은 한도를 초과합니다. 금액을 조정해 주세요.",
       "perUserQuotaExceeded": "구독 금액이 개인 구독 한도를 초과합니다. 금액을 조정해 주세요.",
-      "notAwaitingTopUp": "이 주문은 더 이상 추가 입금 대기 상태가 아닙니다. 이미 업데이트되었을 수 있습니다.",
-      "topUpLockedOverdue": "이 주문은 기한이 지났습니다. 추가 납입과 거절 접수가 종료되었으니 고객센터로 문의하세요.",
       "insufficientBalance": "잔액이 부족하여 추가를 완료할 수 없습니다. 입금 후 다시 시도하세요.",
       "insufficientCreditScore": "신용 점수가 이 상품의 청약 기준에 미달합니다."
     },
