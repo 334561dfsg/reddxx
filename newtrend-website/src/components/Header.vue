@@ -3,8 +3,7 @@ import {useAmountMask} from '../composables/useAmountMask.js'
 import {money} from '../utils/format.js'
 import Skeleton from './ui/Skeleton.vue'
 import {getAssetsOverview} from '../api/wallet.js'
-import {invalidateAll,useRequest} from '../composables/useRequest.js'
-import {message} from 'ant-design-vue'
+import {useRequest} from '../composables/useRequest.js'
 import { computed, shallowRef, watch, onMounted,onUnmounted,nextTick } from 'vue'
 import { useRoute,useRouter } from 'vue-router'
 import Icon from './Icon.vue'
@@ -15,6 +14,7 @@ import {useLocaleSwitch} from '../composables/useLocaleSwitch'
 import {account,DEMO_UID} from '../account'
 import {getUnreadCount} from '../api/profile.js'
 import FeedbackToast from '../platform/FeedbackToast.js'
+import {openClearCache} from '../utils/clearCache.js'
 const route=useRoute(),router=useRouter(),expanded=shallowRef(''),nav=shallowRef(null)
 let hoverCloseTimer
 function cancelHoverClose(){clearTimeout(hoverCloseTimer)}
@@ -66,7 +66,7 @@ function openOnKeyboardFocus(event,label){if(event.target.matches?.(':focus-visi
 function notify(type,key){feedback.value=null;nextTick(()=>{feedback.value={type,key}})}
 async function copyUid(){try{await navigator.clipboard.writeText(DEMO_UID);notify('success','common.copied')}catch{notify('error','common.copyFailed')}}
 function signout(){logout();expanded.value='';router.push(path('/'))}
-function clearCache(){expanded.value='';openModal('account-confirm','profile.center.clearCache.title',{description:'profile.center.clearCache.description',confirmLabel:'profile.center.clearCache.confirm',onConfirm:()=>{invalidateAll();message.success(t('profile.center.clearCache.done'))}})}
+function clearCache(){expanded.value='';openClearCache()}
 // 劃轉 opens the transfer dialog in place (user decision, 2026-11-26) instead of navigating to the assets page.
 function openTransfer(){expanded.value='';openModal('transfer','assets.transfer')}
 </script>

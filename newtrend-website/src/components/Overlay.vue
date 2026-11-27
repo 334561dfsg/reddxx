@@ -18,6 +18,7 @@ import QuantFundOrderDetails from './quant/QuantFundOrderDetails.vue'
 import EarnRedemption from './earn/EarnRedemption.vue'
 import EarnHoldingDetails from './earn/EarnHoldingDetails.vue'
 import MenuDrawer from './overlay/MenuDrawer.vue'
+import {openClearCache} from '../utils/clearCache.js'
 import LanguageList from './overlay/LanguageList.vue'
 import SupportChannels from './overlay/SupportChannels.vue'
 import VipTiers from './overlay/VipTiers.vue'
@@ -58,6 +59,8 @@ function switchFromMenu(mode){
   close(()=>{if(route.fullPath===from)requestModeSwitch(mode)})
 }
 function navigate(to){close();router.push(path(to))}
+// From the mobile drawer: close it first, then open the language picker (a bottom sheet on narrow screens).
+const openLanguage=()=>openModal('language','profile.center.preferences.selectLanguage')
 function openSupportChat(){supportView.value='chat';error.value='';nextTick(()=>dialog.value?.querySelector('textarea')?.focus())}
 // Footer primary action per flow type; null when the type has none.
 const primary=computed(()=>{
@@ -75,8 +78,8 @@ function keydown(e){if(e.key!=='Tab')return;const els=[...dialog.value.querySele
 watch(()=>route.fullPath,()=>{if(current.value)close()})
 onUnmounted(()=>{dialog.value?.close();cleanup()})
 </script>
-<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem','transfer','language','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current?.type),'transfer-dialog':['transfer','language','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current?.type)}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button></header><div class="overlay-body">
-<MenuDrawer v-if="isDrawer" @close="close" @navigate="navigate" @switch-mode="switchFromMenu" @language="changeLanguage"/>
+<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem','transfer','language','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current?.type),'language-sheet':current?.type==='language','transfer-dialog':['transfer','language','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current?.type)}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button></header><div class="overlay-body">
+<MenuDrawer v-if="isDrawer" @close="close" @navigate="navigate" @switch-mode="switchFromMenu" @open-language="close(openLanguage)" @clear-cache="close(openClearCache)"/>
 
 <LanguageList v-else-if="current.type==='language'" @select="changeLanguage"/>
 <template v-else-if="isSupport">
@@ -127,5 +130,9 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 
 .overlay-footer .is-busy{cursor:progress}.overlay-close[aria-disabled=true],.overlay-footer .secondary-button[aria-disabled=true]{opacity:.5;cursor:not-allowed}
 
-.nt-dialog.nt-dialog.transfer-dialog{width:min(440px,calc(100vw - 32px))}.transfer-dialog .overlay-body{padding-bottom:24px}.nt-dialog.nt-dialog.transfer-dialog .overlay-header h2{font-size:18px;font-weight:600}.nt-dialog.nt-dialog.transfer-dialog .overlay-header{padding:22px 60px 18px 24px}.nt-dialog.nt-dialog.transfer-dialog .overlay-header h2{line-height:28px}.nt-dialog.nt-dialog.transfer-dialog .overlay-close{top:14px;right:10px;display:grid;place-items:center}
+.nt-dialog.nt-dialog.transfer-dialog{width:min(440px,calc(100vw - 32px))}
+/* Language picker: a bottom sheet on narrow screens, after the GMXX mobile picker (2026-11-27). */
+@media(max-width:600px){.nt-dialog.nt-dialog.language-sheet{margin:auto 0 0;width:100vw;max-width:100vw;max-height:80vh;max-height:80dvh;border-radius:16px 16px 0 0;border-bottom:0}.nt-dialog.language-sheet[open]{animation:sheet-in 200ms ease-out}.nt-dialog.language-sheet.closing{animation:sheet-out 150ms ease-in forwards}.language-sheet .overlay-body{padding-bottom:max(24px,env(safe-area-inset-bottom))}}
+@keyframes sheet-in{from{transform:translateY(100%)}to{transform:translateY(0)}}@keyframes sheet-out{to{transform:translateY(100%)}}
+@media(prefers-reduced-motion:reduce){.nt-dialog.language-sheet[open]{animation:fade-in 40ms linear}.nt-dialog.language-sheet.closing{animation:fade-out 40ms linear}}.transfer-dialog .overlay-body{padding-bottom:24px}.nt-dialog.nt-dialog.transfer-dialog .overlay-header h2{font-size:18px;font-weight:600}.nt-dialog.nt-dialog.transfer-dialog .overlay-header{padding:22px 60px 18px 24px}.nt-dialog.nt-dialog.transfer-dialog .overlay-header h2{line-height:28px}.nt-dialog.nt-dialog.transfer-dialog .overlay-close{top:14px;right:10px;display:grid;place-items:center}
 </style>

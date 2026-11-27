@@ -30,6 +30,7 @@
   "c2cDesc": "개인 간 암호화폐 거래",
   "aiQuant": "AI 퀀트",
   "aiQuantOverview": "개요",
+  "aiQuantOverviewDesc": "AI 전략과 퀀트 펀드 알아보기",
   "aiQuantStrategy": "전략",
   "aiQuantStrategyDesc": "퀀트 전략으로 거래 자동화",
   "aiQuantQuantFund": "퀀트 펀드",
@@ -259,5 +260,10 @@
   "tradeMarket": "{{symbol}} 거래",
   "favoriteMarket": "{{symbol}} 즐겨찾기 추가",
   "unfavoriteMarket": "{{symbol}} 즐겨찾기 제거",
-  "durationSeconds": "{{count}}초"
+  "durationSeconds": "{{count}}초",
+  "drawer": {
+    "verifyReminder": "가능한 한 빨리 본인 인증을 완료해 주세요",
+    "verifyAction": "인증하기",
+    "accountMode": "계정 모드"
+  }
 }

@@ -30,6 +30,7 @@
   "c2cDesc": "個人間で暗号資産を売買",
   "aiQuant": "AIクオント",
   "aiQuantOverview": "概要",
+  "aiQuantOverviewDesc": "AI戦略とクオンツファンドを知る",
   "aiQuantStrategy": "ストラテジー",
   "aiQuantStrategyDesc": "クオンツ戦略で取引を自動化",
   "aiQuantQuantFund": "クオントファンド",
@@ -259,5 +260,10 @@
   "tradeMarket": "{{symbol}} を取引",
   "favoriteMarket": "{{symbol}} をお気に入りに追加",
   "unfavoriteMarket": "{{symbol}} をお気に入りから削除",
-  "durationSeconds": "{{count}} 秒"
+  "durationSeconds": "{{count}} 秒",
+  "drawer": {
+    "verifyReminder": "できるだけ早く本人確認を完了してください",
+    "verifyAction": "認証する",
+    "accountMode": "アカウントモード"
+  }
 }

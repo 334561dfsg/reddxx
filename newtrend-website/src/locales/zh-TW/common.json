@@ -30,6 +30,7 @@
   "c2cDesc": "點對點買賣加密貨幣",
   "aiQuant": "AI 量化",
   "aiQuantOverview": "總覽",
+  "aiQuantOverviewDesc": "了解 AI 策略與量化基金",
   "aiQuantStrategy": "策略",
   "aiQuantStrategyDesc": "以量化策略自動交易",
   "aiQuantQuantFund": "量化基金",
@@ -259,5 +260,10 @@
   "tradeMarket": "交易 {{symbol}}",
   "favoriteMarket": "加入自選 {{symbol}}",
   "unfavoriteMarket": "取消自選 {{symbol}}",
-  "durationSeconds": "{{count}} 秒"
+  "durationSeconds": "{{count}} 秒",
+  "drawer": {
+    "verifyReminder": "請盡快完成實名認證",
+    "verifyAction": "去認證",
+    "accountMode": "帳戶模式"
+  }
 }

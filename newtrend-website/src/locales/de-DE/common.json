@@ -30,6 +30,7 @@
   "c2cDesc": "Krypto direkt zwischen Nutzern handeln",
   "aiQuant": "KI-Quant",
   "aiQuantOverview": "Übersicht",
+  "aiQuantOverviewDesc": "KI-Strategien und Quant-Fonds entdecken",
   "aiQuantStrategy": "Strategie",
   "aiQuantStrategyDesc": "Trades mit Quant-Strategien automatisieren",
   "aiQuantQuantFund": "Quant-Fonds",
@@ -259,5 +260,10 @@
   "tradeMarket": "{{symbol}} handeln",
   "favoriteMarket": "{{symbol}} zu Favoriten hinzufügen",
   "unfavoriteMarket": "{{symbol}} aus Favoriten entfernen",
-  "durationSeconds": "{{count}} Sekunden"
+  "durationSeconds": "{{count}} Sekunden",
+  "drawer": {
+    "verifyReminder": "Bitte schließen Sie die Identitätsprüfung bald ab",
+    "verifyAction": "Verifizieren",
+    "accountMode": "Kontomodus"
+  }
 }
