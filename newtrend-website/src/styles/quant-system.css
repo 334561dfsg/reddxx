@@ -134,8 +134,11 @@
  #main-content#main-content .strategy-page .sc-facts{gap:16px}
  #main-content#main-content .strategy-page .strategy-filters{gap:8px;margin:12px 0}
  #main-content#main-content .strategy-page :is(.strategy-featured-section,.strategy-catalog-section){padding:12px 0 16px}
- #main-content#main-content .strategy-page h2{margin-bottom:4px}
- #main-content#main-content .strategy-page .strategy-section-description{margin:0 0 12px}
+ #main-content#main-content .strategy-page h2{margin-bottom:12px}
+ /* Phones drop the section intros and the picks' tinted band/glow (user request 2026-11-27): title, then cards. */
+ #main-content#main-content .strategy-page :is(.strategy-featured-section,.strategy-catalog-section) .strategy-section-description{display:none}
+ #main-content#main-content .strategy-page .strategy-featured-section{background:none;border-top:0}
+ #main-content#main-content .strategy-page .strategy-featured-section::before{content:none}
  #main-content#main-content .quant-page.quant-sub :is(.qf-card-head,.qf-card-rate){gap:10px}
  #main-content#main-content .quant-page.quant-sub .qf-asset-filter,#main-content#main-content .quant-page.quant-sub .qf-filters{margin-bottom:12px}
  #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.my-strategies-head,.qf-positions-head,.qf-interest-head,.strategy-stats-head){margin:12px 0 12px;padding:0}

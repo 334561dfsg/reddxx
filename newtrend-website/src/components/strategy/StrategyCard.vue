@@ -19,15 +19,14 @@ const mask=name=>({'--sc-icon':`url(/NewQuantCapital/assets/${icons[name]})`})
 <article v-if="featured" class="sc-card sc-featured" :class="'sc-'+style" @click="emit('detail',product)">
  <div class="sc-glow" aria-hidden="true"></div>
  <div class="sc-featured-head">
-  <div class="sc-featured-identity">
-   <span class="sc-style-icon" aria-hidden="true"><span class="sc-icon" :style="mask(styleIcon)"></span></span>
-   <div class="sc-featured-copy">
-    <div class="sc-badges"><span class="sc-style-name">{{ $t('aiQuant.spotlight.styleBadge.'+style) }}</span><span class="sc-badge sc-style-badge">{{ $t(product.style) }}</span><span class="sc-badge sc-risk" :title="$t('aiQuant.templates.fields.riskLevel')">{{ $t('aiQuant.templates.riskLevelValue',{level:product.risk}) }}</span></div>
-    <h3><button class="sc-title" :aria-label="$t('aiQuant.detail.openAria',{name:product.name})" @click.stop="emit('detail',product)">{{ product.name }}</button></h3>
-   </div>
+  <span class="sc-style-icon" aria-hidden="true"><span class="sc-icon" :style="mask(styleIcon)"></span></span>
+  <div class="sc-featured-copy">
+   <span class="sc-style-name">{{ $t('aiQuant.spotlight.styleBadge.'+style) }}</span>
+   <div class="sc-badges"><span class="sc-badge sc-style-badge">{{ $t(product.style) }}</span><span class="sc-badge sc-risk" :title="$t('aiQuant.templates.fields.riskLevel')">{{ $t('aiQuant.templates.riskLevelValue',{level:product.risk}) }}</span></div>
   </div>
   <div class="sc-sharpe"><strong>{{ product.sharpe.toFixed(2) }}</strong><small>{{ $t('aiQuant.templates.fields.sharpeRatio') }}</small></div>
  </div>
+ <h3 class="sc-featured-name"><button class="sc-title" :aria-label="$t('aiQuant.detail.openAria',{name:product.name})" @click.stop="emit('detail',product)">{{ product.name }}</button></h3>
  <p class="sc-description sc-clamp-2">{{ product.description }}</p>
  <dl class="sc-chip-fields">
   <div><dt>{{ $t('aiQuant.templates.fields.supportedSymbols') }}</dt><dd class="sc-symbols"><span v-for="symbol in shownSymbols" :key="symbol" class="sc-chip">{{ symbol }}</span><span v-if="hiddenSymbols" class="sc-chip sc-more">+{{ hiddenSymbols }}</span></dd></div>

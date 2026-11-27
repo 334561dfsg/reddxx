@@ -136,13 +136,14 @@
 .sc-accent{color:var(--sc-accent)}
 .sc-signal{color:var(--sc-signal)}
 /* Featured */
-.sc-featured-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
-.sc-featured-identity{display:flex;align-items:center;gap:12px;min-width:0}
+/* One header for PC and phones: icon · pick name + style/risk badges · Sharpe, then the full-width strategy name. */
+.sc-featured-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px}
 .sc-style-icon{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:44px;height:44px;border:1px solid var(--sc-tone-border);border-radius:50%;background:var(--sc-tone-dim);color:var(--sc-tone)}
 .sc-style-icon .sc-icon{width:20px;height:20px}
-.sc-featured-copy{min-width:0}
+.sc-featured-copy{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+.sc-featured-copy .sc-badges{flex-wrap:nowrap}
 .sc-style-name{font-size:15px;line-height:22.5px;font-weight:500;color:var(--sc-secondary);white-space:nowrap}
-#site-shell .sc-featured h3{margin-top:4px;line-height:1}
+#site-shell .sc-featured h3.sc-featured-name{margin:0}
 .sc-sharpe{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
 .sc-sharpe strong{font-family:var(--nt-font-mono);font-size:36px;line-height:1;font-weight:700;color:var(--sc-accent)}
 .sc-sharpe small{font-size:12px;line-height:1;color:var(--sc-faint);white-space:nowrap}
