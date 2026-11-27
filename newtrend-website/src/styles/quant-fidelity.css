@@ -530,3 +530,33 @@
 /* History status: shared RecordFilter field trigger, 38px like the tab bar, dark rounded surface. */
 #main-content .quant-page .qf-history-filter{display:block}
 #main-content .quant-page .qf-history-filter .record-filter{width:144px;height:38px!important;min-height:38px!important;padding:0 12px!important;border-radius:12px;background:#141619;font-size:14px;line-height:20px}
+
+/* AI Quant landing: one type and spacing scale (user feedback, 2026-11-27). Hero kicker 12/18, title 36/44 (28/36 on
+   phones), lead 15/24; cards share 24px padding (20px on phones) and a 16px rhythm between head, copy, chips, action
+   and footer; card title 18/26 with a 12/16 kicker; copy 14/22; one 40px action; footer 14/20 with a 12/18 note. */
+#main-content .quant-landing .page-hero{padding:0 0 32px}
+#main-content .quant-landing .page-hero .page-kicker{margin:0 0 12px;font-size:12px;line-height:18px;letter-spacing:.12em}
+#main-content .quant-landing h1.page-title{font-size:36px;line-height:44px;letter-spacing:-.02em}
+#main-content .quant-landing .page-desc{margin:12px 0 0;font-size:15px;line-height:24px}
+#main-content .quant-landing .quant-intro{gap:16px}
+#main-content .quant-landing .quant-intro .card{display:flex;flex-direction:column;gap:16px;min-height:0;padding:24px;border-radius:20px}
+#main-content .quant-landing .quant-intro .coin-label{display:flex;align-items:center;gap:12px;margin:0}
+#main-content .quant-landing .quant-intro .coin-label>.nt-icon{width:44px;height:44px;padding:11px;border-radius:12px;flex:none}
+#main-content .quant-landing .quant-intro .coin-label .page-kicker{margin:0 0 2px;font-size:12px;line-height:16px;letter-spacing:.08em}
+#main-content .quant-landing .quant-intro h2{font-size:18px;line-height:26px;letter-spacing:0}
+#main-content .quant-landing .quant-intro .card>p{max-width:none;min-height:44px;font-size:14px;line-height:22px}
+#main-content .quant-landing .quant-chips{gap:8px;margin:0}
+#main-content .quant-landing .quant-intro .tag-chip{padding:3px 10px;font-size:12px;line-height:18px;letter-spacing:0}
+#main-content .quant-landing .quant-intro .pill.primary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin:0;padding:0 20px;border-radius:999px;font-size:14px;line-height:20px}
+#main-content .quant-landing .quant-intro .card-footer{display:flex;justify-content:space-between;gap:12px;margin:0 -24px -8px;padding:14px 24px 0;border-top:1px solid #ffffff0f;font-size:14px;line-height:20px}
+#main-content .quant-landing .quant-intro .card-footer small{font-size:12px;line-height:18px;color:var(--nt-text-secondary,#8c8f96);text-align:right}
+@media (max-width:767px){
+ /* Phones skip the hero (user decision): it stays as a visually hidden page heading for assistive technology. */
+ #main-content .quant-landing .page-hero{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ #main-content .page-wrap.quant-page.quant-landing{padding-top:16px}
+ #main-content .quant-landing .quant-intro{gap:12px}
+ #main-content .quant-landing .quant-intro .card{gap:14px;padding:20px}
+ #main-content .quant-landing .quant-intro .card>p{min-height:0}
+ #main-content .quant-landing .quant-intro .pill.primary{align-self:stretch}
+ #main-content .quant-landing .quant-intro .card-footer{margin:0 -20px -6px;padding:12px 20px 0}
+}
