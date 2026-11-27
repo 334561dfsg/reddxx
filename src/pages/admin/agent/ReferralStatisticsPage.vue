@@ -224,8 +224,6 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <Teleport to="body">
-      <Transition name="referral-stats-drawer">
         <a-drawer :open="drawerOpen" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeReferralDrawer" @after-open-change="onDrawerAfterOpenChange"><template #title><div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/90 px-4 py-3 sm:px-5">
               <div class="min-w-0">
                 <h2 id="referral-stats-drawer-title" class="text-base font-semibold text-slate-900">
@@ -256,26 +254,5 @@ onUnmounted(() => {
 <a-table-column key="column-4" align="right"><template #title>分佣笔数</template><template #default="{ record: u, index: index }"><div class="text-right tabular-nums text-slate-600">{{ u.orderCount }}</div></template></a-table-column><template #emptyText>暂无数据</template>
 </a-table>
             </div></a-drawer>
-      </Transition>
-    </Teleport>
   </div>
 </template>
-
-<style scoped>
-.referral-stats-drawer-enter-active,
-.referral-stats-drawer-leave-active {
-  transition: opacity 0.2s ease;
-}
-.referral-stats-drawer-enter-active .referral-stats-drawer-panel,
-.referral-stats-drawer-leave-active .referral-stats-drawer-panel {
-  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
-}
-.referral-stats-drawer-enter-from,
-.referral-stats-drawer-leave-to {
-  opacity: 0;
-}
-.referral-stats-drawer-enter-from .referral-stats-drawer-panel,
-.referral-stats-drawer-leave-to .referral-stats-drawer-panel {
-  transform: translateX(100%);
-}
-</style>

@@ -254,9 +254,6 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- 当日代理明细：右侧抽屉（Teleport 到 body，避免主内容区 overflow 裁切 fixed 遮罩） -->
-    <Teleport to="body">
-      <Transition name="agent-report-drawer">
         <a-drawer :open="drawerOpen" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeAgentDrawer" @after-open-change="onDrawerAfterOpenChange"><template #title><div class="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/90 px-4 py-3 sm:px-5">
               <div class="min-w-0">
                 <h2 id="agent-report-drawer-title" class="text-base font-semibold text-slate-900">
@@ -287,26 +284,5 @@ onUnmounted(() => {
 <a-table-column key="column-4" align="right"><template #title>关联笔数</template><template #default="{ record: a, index: index }"><div class="text-right tabular-nums text-slate-600">{{ a.orderCount }}</div></template></a-table-column><template #emptyText>暂无代理数据</template>
 </a-table>
             </div></a-drawer>
-      </Transition>
-    </Teleport>
   </div>
 </template>
-
-<style scoped>
-.agent-report-drawer-enter-active,
-.agent-report-drawer-leave-active {
-  transition: opacity 0.2s ease;
-}
-.agent-report-drawer-enter-active .agent-report-drawer-panel,
-.agent-report-drawer-leave-active .agent-report-drawer-panel {
-  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
-}
-.agent-report-drawer-enter-from,
-.agent-report-drawer-leave-to {
-  opacity: 0;
-}
-.agent-report-drawer-enter-from .agent-report-drawer-panel,
-.agent-report-drawer-leave-to .agent-report-drawer-panel {
-  transform: translateX(100%);
-}
-</style>

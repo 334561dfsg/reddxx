@@ -674,14 +674,18 @@ test('credit review Drawer filters status without mutating input and follows Dra
   assert.deepEqual(input, reviews)
 
   const source = await readFile(reviewDrawerFile, 'utf8')
-  assert.match(source, /data-testid="user-credit-review-body"[^>]*overflow-y-auto/)
-  assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
-  assert.match(source, /closeDisabled/)
-  assert.match(source, /translateX\(100%\)/)
-  assert.match(source, /200ms ease-out/)
-  assert.match(source, /150ms ease-in/)
-  assert.match(source, /prefers-reduced-motion: reduce/)
-  assert.doesNotMatch(source, /@click\.self|@mousedown\.self|@touchend\.self/)
+  // Migrated to the shared Ant Drawer frame: it owns the scrolling body, close blocking, motion and the
+  // no-backdrop-close rule; the drawer only passes its busy state and test ids.
+  assert.match(source, /<AdminDrawer[^>]*:busy="busy"[^>]*testid="user-credit-review-drawer"[^>]*body-testid="user-credit-review-body"/)
+  assert.doesNotMatch(source, /overflow-y-auto|<Teleport|@click\.self|@mousedown\.self|@touchend\.self/)
+  const frameSource = await readFile(projectFile('src/admin/components/antd/AdminDrawer.vue'), 'utf8')
+  assert.match(frameSource, /:mask-closable="false"/)
+  assert.match(frameSource, /:keyboard="false"/)
+  assert.match(frameSource, /closeDisabled: computed\(\(\) => props\.busy\)/)
+  assert.match(frameSource, /\.admin-drawer-body \{[^}]*overflow-y: auto/)
+  assert.match(frameSource, /200ms !important; transition-timing-function: ease-out/)
+  assert.match(frameSource, /150ms !important; transition-timing-function: ease-in/)
+  assert.match(frameSource, /prefers-reduced-motion: reduce/)
 })
 
 test('credit review Drawer keeps top-layer ownership and new context through a queued reopen', async (t) => {

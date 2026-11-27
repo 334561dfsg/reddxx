@@ -411,7 +411,6 @@ const nextPage = () => {
     </article>
 
     <!-- 订单详情模态框 -->
-    <Transition name="modal">
       <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDetailModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="896"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeDetailModal">
 <template #title><template v-if="showDetailModal"><header class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
             <div>
@@ -611,7 +610,6 @@ const nextPage = () => {
             </a-button>
           </footer></template></template>
 </a-modal>
-    </Transition>
   </section>
 </template>
 

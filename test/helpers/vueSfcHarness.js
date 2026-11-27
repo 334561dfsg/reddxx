@@ -15,6 +15,8 @@ const resolveImport = (specifier, filename, vueImports) => {
 
   const resolved = resolve(dirname(filename), specifier)
   if (vueImports[resolved]) return vueImports[resolved]
+  // The shared Ant Drawer frame renders for real, over a Drawer stand-in, so tests see the migrated dialogs' content.
+  if (resolved.endsWith('/src/admin/components/antd/AdminDrawer.vue')) return loadVueSfcModuleUrl(resolved, {vueImports: {'ant-design-vue': pathToFileURL(resolve('test/helpers/antDrawerStub.js')).href, '@ant-design/icons-vue': pathToFileURL(resolve('test/helpers/antDrawerStub.js')).href}})
   if (resolved.endsWith('/src/shared/feedback/FeedbackToast.vue')) return loadVueSfcModuleUrl(resolved, {vueImports: {'ant-design-vue': pathToFileURL(resolve('test/helpers/feedbackAntStub.js')).href}})
   if (extname(resolved) === '.vue') return vueImports[resolved] || stubComponentUrl
   if (!extname(resolved) && existsSync(`${resolved}.js`)) {
@@ -204,6 +206,7 @@ const createHostNode = (document, tag, { connectedRoot = false } = {}) => {
       while (candidate) {
         if (selector.includes('[role="dialog"]') && candidate.getAttribute?.('role') === 'dialog') return candidate
         if (selector.includes('dialog[open]') && candidate.tag === 'dialog' && candidate.hasAttribute('open')) return candidate
+        if (selector.split(',').some((part) => /^\.[\w-]+$/.test(part.trim()) && candidate.classList?.contains(part.trim().slice(1)))) return candidate
         candidate = candidate.parent
       }
       return null
