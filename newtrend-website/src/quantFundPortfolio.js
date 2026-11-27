@@ -1,5 +1,5 @@
 import {reactive} from 'vue'
-import {createQuantFundCatalog,createFundAccount,settleMaturedFunds} from './utils/quantFund.js'
+import {createQuantFundCatalog,createFundAccount,autoRedeemFullFunds} from './utils/quantFund.js'
 import {boundBalances} from './mock/ledger.js'
 import {bootAt,clock,DAY,HOUR} from './mock/clock.js'
 
@@ -10,8 +10,8 @@ export const quantFunds=reactive(createQuantFundCatalog())
 export const quantFundAccount=reactive(Object.assign(createFundAccount(),{balances:boundBalances('USDT')}))
 export const fundMode=mode=>mode==='common.demo.demo'?'demo':'real'
 export const findQuantFund=id=>quantFunds.find(product=>product.id===id)||null
-/** Settles fixed-term orders whose maturity has passed (call on view; idempotent). */
-export const refreshQuantFunds=()=>settleMaturedFunds(quantFundAccount,findQuantFund,clock.now())
+/** Auto-redeems orders past their lock period on products at 100% progress (call on view; idempotent). */
+export const refreshQuantFunds=()=>autoRedeemFullFunds(quantFundAccount,findQuantFund,clock.now())
 
 // Seeds are placed relative to page load so dates, accrual and maturity stay coherent on any day.
 const round2=v=>Math.round(v*100)/100
@@ -19,13 +19,13 @@ const payouts=(principal,rate,start,days)=>Array.from({length:days},(_,i)=>({int
 function seed(id,productId,mode,{principal,startDaysAgo,status,paidDays=0,settledDaysAgo}){
  const product=findQuantFund(productId);if(!product)return
  if(principal<product.minAmount||principal>product.maxAmount)throw new Error(`seed ${id} violates ${productId} limits`)
- const approved=['active','settled','redeemed'].includes(status),start=bootAt-startDaysAgo*DAY,interestRecords=payouts(principal,product.averageDailyReturnPercent,start,paidDays)
+ const approved=['active','redeemed'].includes(status),start=bootAt-startDaysAgo*DAY,interestRecords=payouts(principal,product.averageDailyReturnPercent,start,paidDays)
  quantFundAccount.orders.push({id,productId,productName:product.name,asset:product.asset,principal,mode,status,
-  dailyReturnPercentSnapshot:product.averageDailyReturnPercent,termDaysSnapshot:product.termDays,minHoldDaysSnapshot:product.minHoldDays,
+  dailyReturnPercentSnapshot:product.averageDailyReturnPercent,termDaysSnapshot:product.termDays,minHoldDaysSnapshot:null,earlyRedeemFeeRateSnapshot:product.earlyRedeemFeeRate,
   subscribedAt:start-HOUR,interestStartAt:approved?start:undefined,
   maturityDate:product.termDays&&approved?start+product.termDays*DAY:null,
   interestPaidTotal:round2(interestRecords.reduce((sum,r)=>sum+r.amount,0)),interestPaidThrough:paidDays?start+(paidDays-1)*DAY:undefined,interestRecords,
-  ...(settledDaysAgo!=null?{settledAt:bootAt-settledDaysAgo*DAY}:{})})
+  ...(settledDaysAgo!=null?{settledAt:bootAt-settledDaysAgo*DAY,returned:round2(principal+interestRecords.reduce((sum,r)=>sum+r.amount,0)),redeemFee:0}:{})})
 }
 // 模擬 mirrors the reference demo account: one running flexible VIP 0 order (4,999, no payouts yet), paid from demo funds.
 seed('QFO-seed-demo-1','qf-vip0','demo',{principal:4999,startDaysAgo:0,status:'active'})
@@ -35,11 +35,11 @@ seed('QFO-seed-real-3','qf-vip0','real',{principal:5000,startDaysAgo:0,status:'p
 seed('QFO-seed-real-2','qf-vip1','real',{principal:120000,startDaysAgo:3,status:'active',paidDays:3})
 seed('QFO-seed-real-1','qf-vip0','real',{principal:8000,startDaysAgo:10,status:'active',paidDays:10})
 seed('QFO-seed-real-4','qf-vip0','real',{principal:5000,startDaysAgo:25,status:'redeemed',paidDays:20,settledDaysAgo:5})
-seed('QFO-seed-real-5','qf-vip1','real',{principal:100000,startDaysAgo:30,status:'settled',paidDays:7,settledDaysAgo:23})
+seed('QFO-seed-real-5','qf-vip1','real',{principal:100000,startDaysAgo:30,status:'redeemed',paidDays:7,settledDaysAgo:23})
 seed('QFO-seed-real-6','qf-vip0','real',{principal:6500,startDaysAgo:34,status:'redeemed',paidDays:12,settledDaysAgo:22})
-seed('QFO-seed-real-7','qf-vip1','real',{principal:150000,startDaysAgo:38,status:'settled',paidDays:7,settledDaysAgo:31})
+seed('QFO-seed-real-7','qf-vip1','real',{principal:150000,startDaysAgo:38,status:'redeemed',paidDays:7,settledDaysAgo:31})
 seed('QFO-seed-real-8','qf-vip0','real',{principal:5000,startDaysAgo:41,status:'rejected'})
 seed('QFO-seed-real-9','qf-vip0','real',{principal:12000,startDaysAgo:45,status:'redeemed',paidDays:9,settledDaysAgo:36})
-seed('QFO-seed-real-11','qf-vip1','real',{principal:120000,startDaysAgo:56,status:'settled',paidDays:7,settledDaysAgo:49})
+seed('QFO-seed-real-11','qf-vip1','real',{principal:120000,startDaysAgo:56,status:'redeemed',paidDays:7,settledDaysAgo:49})
 seed('QFO-seed-real-12','qf-vip0','real',{principal:4999,startDaysAgo:62,status:'redeemed',paidDays:15,settledDaysAgo:47})
 refreshQuantFunds()

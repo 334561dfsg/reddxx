@@ -1,7 +1,8 @@
 // Quant Fund service. Pages call only these async functions; quantFundPortfolio.js stands in for the server.
 // Product names are plain catalogue strings, so this module needs no locale binding and is Node-testable as is.
 import {quantFunds, quantFundAccount, fundMode, findQuantFund, refreshQuantFunds} from '../quantFundPortfolio.js'
-import {fundSummary, requestRedeemFund, subscribeFund} from '../utils/quantFund.js'
+import {fundSummary, requestRedeemFund, restrictedFor, subscribeFund} from '../utils/quantFund.js'
+import {DEMO_UID} from '../account.js'
 import {ApiError, mockCall, snapshot} from './transport.js'
 
 const SERVICE = 'quantFund'
@@ -11,11 +12,14 @@ const requireProduct = id => {
   return product
 }
 
+// The signed-in user's view: a product whose restricted list holds this UID shows as full (100%).
+const viewFor = product => (restrictedFor(product, DEMO_UID) ? {...product, subscribed: product.totalQuota} : product)
+
 /** GET /quant-fund/products */
-export const listQuantFunds = () => mockCall(SERVICE, () => snapshot(quantFunds))
+export const listQuantFunds = () => mockCall(SERVICE, () => snapshot(quantFunds.map(viewFor)))
 
 /** GET /quant-fund/products/:id — ApiError('notFound') for an unknown id. */
-export const getQuantFund = id => mockCall(SERVICE, () => snapshot(requireProduct(id)))
+export const getQuantFund = id => mockCall(SERVICE, () => snapshot(viewFor(requireProduct(id))))
 
 /** GET /quant-fund/positions?mode= — this mode's orders (newest first) and the summary card figures. Settles matured orders first. */
 export const getQuantFundPositions = mode => mockCall(SERVICE, () => {
@@ -41,7 +45,7 @@ export const getQuantFundBalance = mode => mockCall(SERVICE, () => ({balance: qu
  * fundSubscriptionError() kind as code ('invalid' | 'range' | 'exceedsAvailable' | 'insufficientBalance') and its fields.
  */
 export const subscribeQuantFund = ({productId, amount, mode, requestId}) => mockCall(SERVICE, () => {
-  const result = subscribeFund(quantFundAccount, requireProduct(productId), amount, {mode: fundMode(mode), requestId})
+  const result = subscribeFund(quantFundAccount, requireProduct(productId), amount, {mode: fundMode(mode), requestId, uid: DEMO_UID})
   if (result.error) {
     const {kind, ...params} = result.error
     throw new ApiError(kind, params)

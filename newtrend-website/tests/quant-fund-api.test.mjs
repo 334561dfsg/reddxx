@@ -41,7 +41,9 @@ test('redeem submits an active flexible order for review once; balance waits for
   assert.equal(result.order.status, 'redeem_pending_review')
   assert.equal(quantFundAccount.balances.real, before, 'nothing is credited until the admin approves')
   await assert.rejects(redeemQuantFund('QFO-seed-real-1'), {code: 'conflict'})
-  await assert.rejects(redeemQuantFund('QFO-seed-real-2'), {code: 'conflict'}, 'fixed-term orders are not redeemable')
+  const locked = await redeemQuantFund('QFO-seed-real-2')
+  assert.equal(locked.order.status, 'redeem_pending_review', 'orders inside the lock can redeem early')
+  assert.ok(locked.order.redeemFee > 0, 'with the early-redemption fee')
 })
 
 test('an injected outage rejects with network', async () => {

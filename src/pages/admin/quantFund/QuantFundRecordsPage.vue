@@ -1,5 +1,5 @@
 <script setup>
-// 量化基金 ledgers on one page, chosen by route: 申购订单, 赎回审核, 派息记录, 操作日志.
+// 量化基金 ledgers on one page, chosen by route: 申购订单, 赎回审核, 收益记录, 操作日志.
 // Follows the strategy ledger conventions: one input per search field, one fact per single-line column,
 // review/detail in a modal, payouts and logs per order in a drawer, user IDs open the shared user drawer.
 import {computed, ref, shallowRef, watch} from 'vue'
@@ -15,13 +15,13 @@ import QuantFundRecordsDrawer from './QuantFundRecordsDrawer.vue'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import {getUserById} from '../../../admin/mock/user.js'
 import {USER_KYC_STATUS, USER_ROLE, USER_STATUS} from '../../../admin/constants/user.js'
-import {useQuantFundFeed, quantFundCommand, errorText, orderStatusLabels, orderStatusColors, redemptionStatusLabels, redemptionStatusColors, actionLabels, termLabel} from '../../../shared/quantFund/client.js'
+import {useQuantFundFeed, quantFundCommand, errorText, orderStatusLabels, orderStatusColors, redemptionStatusLabels, redemptionStatusColors, actionLabels, endReasonLabels, lockLabel} from '../../../shared/quantFund/client.js'
 import {heldDays} from '../../../shared/quantFund/domain.js'
 import {amount, dateTime} from '../strategy/strategyFormat.js'
 
 const route = useRoute(), {state, error, busy, loaded, refresh} = useQuantFundFeed()
 const mode = computed(() => route.meta.quantFundSection)
-const titles = {orders: '申购订单', redemptions: '赎回审核', payouts: '派息记录', logs: '操作日志'}
+const titles = {orders: '申购订单', redemptions: '赎回审核', payouts: '收益记录', logs: '操作日志'}
 // One input per field (user decision, 2026-11-27): no combined keyword search.
 const blankFilters = () => ({orderId: '', redemptionId: '', userId: '', product: '', date: '', refId: '', operator: '', status: 'all', action: 'all'})
 const filters = ref(blankFilters())
@@ -33,7 +33,7 @@ const options = (labels, all) => [{value: 'all', label: all}, ...Object.entries(
 const fields = computed(() => ({
   orders: [orderField, userField, {key: 'product', label: '产品名称'}, {key: 'status', label: '状态', options: options(orderStatusLabels, '全部状态')}],
   redemptions: [{key: 'redemptionId', label: '赎回单号'}, orderField, userField, {key: 'status', label: '状态', options: options(redemptionStatusLabels, '全部状态')}],
-  payouts: [orderField, userField, {key: 'date', label: '派息日期'}],
+  payouts: [orderField, userField, {key: 'date', label: '计息日期'}],
   logs: [{key: 'refId', label: '关联记录'}, {key: 'action', label: '操作', options: options(actionLabels, '全部操作')}, {key: 'operator', label: '操作人'}],
 })[mode.value])
 const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
@@ -54,19 +54,21 @@ const right = {align: 'right'}
 const orderCols = [col('orderId', '订单号', 210), col('productName', '产品', 310), col('userName', '用户名', 120), col('userId', '用户 ID', 120)]
 const columns = computed(() => ({
   orders: [
-    {...orderCols[0], fixed: 'left'}, ...orderCols.slice(1), col('term', '期限', 80),
-    col('principal', '本金（USDT）', 140, right), col('interestPaidTotal', '已派息（USDT）', 140, right), col('payoutCount', '派息次数', 100, right),
-    col('status', '状态', 110), col('createdAt', '提交时间', 170), col('interestStartAt', '起息时间', 170), col('maturityAt', '到期时间', 170),
+    {...orderCols[0], fixed: 'left'}, ...orderCols.slice(1), col('term', '锁定期', 90),
+    col('principal', '本金（USDT）', 140, right), col('accruedInterest', '累计收益（USDT）', 150, right), col('accrualCount', '计息天数', 100, right),
+    col('status', '状态', 110), col('endReason', '赎回方式', 100), col('returned', '实际返还（USDT）', 150, right),
+    col('createdAt', '提交时间', 170), col('interestStartAt', '起息时间', 170), col('lockUntil', '锁定到期', 170),
     col('reviewer', '审核人', 120), col('actions', '操作', 170, {fixed: 'right'}),
   ],
   redemptions: [
     col('requestedAt', '申请时间', 170, {fixed: 'left'}), col('redemptionId', '赎回单号', 210), ...orderCols,
-    col('principal', '返还本金（USDT）', 150, right), col('heldDays', '持有天数', 100, right), col('interestPaidTotal', '已派息（USDT）', 140, right),
-    col('status', '状态', 100), col('reviewer', '审核人', 120), col('reviewedAt', '审核时间', 170), col('actions', '操作', 90, {fixed: 'right'}),
+    col('kind', '类型', 100), col('principal', '本金（USDT）', 140, right), col('heldDays', '持有天数', 100, right),
+    col('feeRate', '手续费率', 100, right), col('fee', '手续费（USDT）', 130, right), col('accruedInterest', '累计收益（USDT）', 150, right),
+    col('returned', '实际返还（USDT）', 150, right), col('status', '状态', 100), col('reviewer', '审核人', 120), col('reviewedAt', '审核时间', 170), col('actions', '操作', 90, {fixed: 'right'}),
   ],
   payouts: [
-    col('date', '派息日期', 120, {fixed: 'left'}), ...orderCols, col('principal', '本金（USDT）', 140, right),
-    col('rate', '日收益率', 100, right), col('amount', '派息（USDT）', 130, right), col('createdAt', '到账时间', 170),
+    col('date', '计息日期', 120, {fixed: 'left'}), ...orderCols, col('principal', '本金（USDT）', 140, right),
+    col('rate', '日收益率', 100, right), col('amount', '当日收益（USDT）', 140, right), col('createdAt', '计入时间', 170),
   ],
   logs: [
     col('createdAt', '时间', 170, {fixed: 'left'}), col('module', '模块', 90), col('action', '操作', 110), col('targetLabel', '对象', 280),
@@ -125,11 +127,18 @@ function showUser(row, event) {
    <template #cell="{column, record}">
     <TypographyText v-if="['orderId', 'redemptionId', 'refId'].includes(column.key) && record[column.key]" copyable>{{ record[column.key] }}</TypographyText>
     <template v-else-if="column.key === 'productName'">{{ orderOf(record).productSnapshot?.name || record.productName || '—' }}</template>
-    <template v-else-if="column.key === 'term'">{{ termLabel(record.productSnapshot.termDays) }}</template>
+    <template v-else-if="column.key === 'term'">{{ lockLabel(record.productSnapshot.lockDays) }}</template>
     <template v-else-if="column.key === 'userName'">{{ record.userName || orderOf(record).userName || '—' }}</template>
     <Button v-else-if="column.key === 'userId'" type="link" class="qf-user-link" :aria-label="'查看用户 ' + record.userId" @click.stop="showUser(record, $event)">{{ record.userId }}</Button>
     <template v-else-if="column.key === 'principal'">{{ amount(record.principal ?? orderOf(record).principal) }}</template>
-    <TypographyText v-else-if="column.key === 'interestPaidTotal'" :type="orderOf(record).interestPaidTotal ? 'success' : undefined">{{ amount(orderOf(record).interestPaidTotal) }}</TypographyText>
+    <!-- Redemptions show the interest settled at approval; while pending, the order's running total. -->
+    <TypographyText v-else-if="column.key === 'accruedInterest'" :type="(record.interest ?? orderOf(record).accruedInterest) ? 'success' : undefined">{{ amount(record.interest ?? orderOf(record).accruedInterest) }}</TypographyText>
+    <template v-else-if="column.key === 'accrualCount'">{{ record.accrualCount }} 天</template>
+    <template v-else-if="column.key === 'endReason'">{{ endReasonLabels[record.endReason] || '—' }}</template>
+    <template v-else-if="column.key === 'returned'">{{ record.returned == null ? '—' : amount(record.returned) }}</template>
+    <Tag v-else-if="column.key === 'kind'" :color="record.early ? 'orange' : 'default'">{{ record.early ? '提前赎回' : '正常赎回' }}</Tag>
+    <template v-else-if="column.key === 'feeRate'">{{ record.early ? record.feeRate + '%' : '—' }}</template>
+    <template v-else-if="column.key === 'fee'">{{ record.fee ? amount(record.fee) : '—' }}</template>
     <TypographyText v-else-if="column.key === 'amount'" type="success">+{{ amount(record.amount) }}</TypographyText>
     <template v-else-if="column.key === 'rate'">{{ record.rate }}%</template>
     <template v-else-if="column.key === 'heldDays'">{{ heldDays(orderOf(record), record.reviewedAt || Date.now()) }} 天</template>
@@ -138,14 +147,14 @@ function showUser(row, event) {
     <template v-else-if="column.key === 'module'">{{ moduleLabels[record.module] || record.module || '—' }}</template>
     <template v-else-if="column.key === 'action'">{{ actionLabels[record.action] || record.action }}</template>
     <template v-else-if="['createdAt', 'interestStartAt', 'requestedAt', 'reviewedAt'].includes(column.key)">{{ dateTime(record[column.key]) }}</template>
-    <template v-else-if="column.key === 'maturityAt'">{{ record.productSnapshot.termDays == null ? '活期' : dateTime(record.maturityAt) }}</template>
+    <template v-else-if="column.key === 'lockUntil'">{{ record.productSnapshot.lockDays == null ? '无锁定期' : dateTime(record.lockUntil) }}</template>
     <template v-else-if="column.key === 'reviewer'">{{ record.reviewer || '' }}</template>
     <Space v-else-if="column.key === 'actions' && mode === 'redemptions'" :size="8" class="qf-row-actions">
      <Button type="link" @click="open(record, 'redemption')">{{ record.status === 'pending_review' ? '审核' : '详情' }}</Button>
     </Space>
     <Space v-else-if="column.key === 'actions'" :size="8" class="qf-row-actions">
      <Button type="link" @click="open(record, 'detail')">{{ record.status === 'pending_review' ? '审核' : '详情' }}</Button>
-     <Button v-if="record.interestStartAt" type="link" @click="openRecords(record, 'daily', $event)">派息</Button>
+     <Button v-if="record.interestStartAt" type="link" @click="openRecords(record, 'daily', $event)">收益</Button>
      <Button v-if="record.status !== 'pending_review'" type="link" @click="openRecords(record, 'logs', $event)">记录</Button>
     </Space>
     <template v-else>{{ record[column.key] ?? '—' }}</template>
@@ -163,8 +172,8 @@ function showUser(row, event) {
   <AdminModal :open="dialog === 'redemption'" :width="1000" :title="dialogTitle" :busy="busy" @close="closeDialog">
    <QuantFundOrderDetails v-if="current" :key="current.orderId" :order="current" :redemption="currentRedemption" :balance="state.balances[current.userId]?.USDT ?? null"/>
    <template #actions><template v-if="currentRedemption?.status === 'pending_review'">
-    <template v-if="rejecting"><TypographyText type="secondary">拒绝后订单恢复持有中，继续每日派息。</TypographyText><Button :disabled="busy" @click="rejecting = false">返回审核</Button><Button danger type="primary" :loading="busy" @click="run('rejectRedeem', {redemptionId: currentRedemption.redemptionId}, '已拒绝，订单恢复持有')">确认拒绝</Button></template>
-    <template v-else><TypographyText type="secondary">通过后返还本金 {{ amount(currentRedemption.principal) }} USDT，已派利息不变。</TypographyText><Button danger :disabled="busy" @click="rejecting = true">拒绝</Button><Button type="primary" :loading="busy" @click="run('approveRedeem', {redemptionId: currentRedemption.redemptionId}, '赎回已通过，本金已返还')">通过</Button></template>
+    <template v-if="rejecting"><TypographyText type="secondary">拒绝后订单恢复持有中，继续每日计息。</TypographyText><Button :disabled="busy" @click="rejecting = false">返回审核</Button><Button danger type="primary" :loading="busy" @click="run('rejectRedeem', {redemptionId: currentRedemption.redemptionId}, '已拒绝，订单恢复持有')">确认拒绝</Button></template>
+    <template v-else><TypographyText type="secondary">通过后返还 本金 {{ amount(currentRedemption.principal) }} + 累计收益 {{ amount(current.accruedInterest) }}<template v-if="currentRedemption.fee"> − 手续费 {{ amount(currentRedemption.fee) }}</template> USDT。</TypographyText><Button danger :disabled="busy" @click="rejecting = true">拒绝</Button><Button type="primary" :loading="busy" @click="run('approveRedeem', {redemptionId: currentRedemption.redemptionId}, '赎回已通过，本金与收益已返还')">通过</Button></template>
    </template></template>
   </AdminModal>
 

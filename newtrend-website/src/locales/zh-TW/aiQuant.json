@@ -289,8 +289,8 @@
     "hero": {
       "subtitle": "AI 全託管量化基金",
       "title": "量化基金 — AI 託管定期收益",
-      "description": "由 AI 量化團隊全程託管的定期產品。鎖定指定週期、按日均收益率計息，到期由系統自動結算。",
-      "disclaimer": "AI 全託管 · 定期結算",
+      "description": "由 AI 量化團隊全程託管。審核通過後按日收益率計息，收益累計在訂單內，贖回時連同本金返還；鎖定期結束後持續計息，直到您贖回。",
+      "disclaimer": "AI 全託管 · 審核後計息",
       "viewPositionsCta": "我的持倉"
     },
     "filters": {
@@ -332,9 +332,9 @@
       "flowStep2Title": "開始計息",
       "flowStep2Desc": "申購確認後開始累計收益。",
       "flowStep3Title": "收益發放",
-      "flowStep3Desc": "收益定期結算並發放至您的帳戶。",
+      "flowStep3Desc": "收益每日累計在訂單內，贖回時連同本金一起返還。",
       "flowStep4Title": "贖回",
-      "flowStep4DescFixed": "到期後本金與收益自動返還。",
+      "flowStep4DescFixed": "鎖定期結束後持續計息，可隨時贖回；產品額度滿時自動贖回並返還本金與收益。",
       "flowStep4DescFlexible": "隨時可贖回，資金返還至資金帳戶。",
       "quotaTitle": "額度詳情",
       "quotaTotal": "總額度",
@@ -372,28 +372,12 @@
     "redeem": {
       "button": "贖回",
       "title": "贖回訂單",
-      "confirmNotice": "利息按實際持有天數結算；持有不足最短 {{minHoldDays}} 天則無利息，最終以結算為準。",
-      "confirmNoticeNoMin": "利息按實際持有天數結算，最終以結算為準。",
       "reviewNotice": "本次贖回需經後台審核。提交後將由管理員審核通過後才會結算出帳；在此之前本金留在基金內繼續計息。",
       "confirm": "確認贖回",
-      "submitting": "提交中…",
       "cancel": "取消",
-      "resultTitle": "贖回成功",
       "pendingTitle": "贖回申請已提交",
       "pendingDescription": "你的贖回正在等待後台審核。在審核通過前，本金將繼續留在基金內計息。",
-      "settledPrincipal": "結算本金",
-      "settledInterest": "結算利息",
-      "heldDaysLabel": "持有天數",
-      "heldDays": "{{days}} 天",
-      "fundsReturned": "本金與利息已返回你的資金帳戶。",
-      "done": "完成",
-      "confirmNoticeEarlyRedeem": "此為鎖定期產品,提前贖回將按剩餘鎖定天數扣收違約金,最終金額以結算為準。",
-      "penaltyAmount": "提前贖回違約金",
-      "remainingLockDays": "剩餘鎖定天數",
-      "remainingLockDaysValue": "{{days}} 天",
-      "notSupported": "未開放提前贖回",
-      "needVip": "需 VIP {{tier}} 可提前贖回",
-      "penaltyEstimate": "預估違約金"
+      "earlyFeeNotice": "鎖定期內提前贖回，手續費為本金的 {{rate}}%（{{fee}} {{currency}}），與剩餘天數無關；累計收益照常返還。贖回需經後台審核，審核通過前繼續計息。"
     },
     "positions": {
       "title": "我的量化基金持倉",
@@ -419,12 +403,12 @@
       "summary": {
         "totalPrincipal": "在持本金",
         "totalProjectedInterest": "預計利息",
-        "activeInterestPaidTotal": "在持已派利息",
+        "activeInterestPaidTotal": "在持累計收益",
         "settledTotalReceived": "已結算到賬",
         "activeCount": "在持訂單數",
         "breakdownToggle": "按資產明細",
-        "interestProgress": "派息進度 {{percent}}%",
-        "earningsTrend": "近 {{days}} 天派息趨勢",
+        "interestProgress": "收益進度 {{percent}}%",
+        "earningsTrend": "近 {{days}} 天收益趨勢",
         "usdPrice": "@ {{price}} USDT",
         "partialValuation": "{{assets}} 暫無 USDT 報價，總計僅包含可估值資產。"
       },
@@ -436,12 +420,12 @@
         "dailyReturn": "日均收益率",
         "term": "週期",
         "projectedInterest": "預計利息",
-        "interestPaidTotal": "已派發利息",
+        "interestPaidTotal": "累計收益",
         "interestPaidThrough": "已派息至",
         "interestRemaining": "待派",
         "accruedInterestEstimate": "預估",
         "subscribedAt": "申購時間",
-        "maturityDate": "到期時間",
+        "maturityDate": "鎖定到期",
         "action": "操作"
       },
       "maturityPending": "核准後確定",
@@ -451,13 +435,13 @@
         "dailyReturn": "日均收益率",
         "term": "週期",
         "projectedInterest": "預計利息",
-        "interestPaidTotal": "已派發利息",
+        "interestPaidTotal": "累計收益",
         "interestPaidThrough": "已派息至",
         "interestRemaining": "待派利息",
         "accruedInterestEstimate": "預估利息",
         "minHoldDays": "起息門檻",
         "subscribedAt": "申購時間",
-        "maturityDate": "到期時間",
+        "maturityDate": "鎖定到期",
         "settledAt": "結算時間",
         "settledInterest": "結算利息",
         "settledPrincipal": "結算本金",
@@ -475,16 +459,16 @@
       }
     },
     "interestRecords": {
-      "title": "派息明細",
-      "subtitle": "此訂單的逐筆派息記錄。",
+      "title": "收益明細",
+      "subtitle": "此訂單每日累計的收益記錄。",
       "back": "返回",
-      "entry": "派息明細",
+      "entry": "收益明細",
       "table": {
         "interestDate": "計息日",
         "amount": "數量",
         "creditedAt": "入帳時間"
       },
-      "empty": "暫無派息記錄。"
+      "empty": "暫無收益記錄。"
     },
     "status": {
       "product": {

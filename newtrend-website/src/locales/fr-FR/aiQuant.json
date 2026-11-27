@@ -289,8 +289,8 @@
     "hero": {
       "subtitle": "Fonds Quant géré par IA",
       "title": "Fonds Quant — rendement à terme géré par IA",
-      "description": "Des produits à terme gérés par notre book quantitatif IA. Bloquez sur une fenêtre définie, accumulez des intérêts à un rendement quotidien et laissez le règlement s'exécuter automatiquement à l'échéance.",
-      "disclaimer": "Géré par IA · Règlement à terme",
+      "description": "Géré de bout en bout par notre équipe quant IA. Les intérêts s'accumulent chaque jour dans votre ordre dès l'approbation et sont versés avec le capital au rachat ; après la période de blocage, ils continuent de courir jusqu'à votre rachat.",
+      "disclaimer": "Géré par IA · Intérêts après approbation",
       "viewPositionsCta": "Mes positions"
     },
     "filters": {
@@ -332,9 +332,9 @@
       "flowStep2Title": "Début des intérêts",
       "flowStep2Desc": "Les gains commencent à courir après la confirmation de la souscription.",
       "flowStep3Title": "Versement des gains",
-      "flowStep3Desc": "Les gains sont réglés et crédités périodiquement sur votre compte.",
+      "flowStep3Desc": "Les gains s'accumulent chaque jour dans l'ordre et sont versés avec le capital lors du rachat.",
       "flowStep4Title": "Rachat",
-      "flowStep4DescFixed": "Le capital et les gains sont restitués automatiquement à l'échéance.",
+      "flowStep4DescFixed": "Après la période de blocage, l'ordre continue de rapporter et peut être racheté à tout moment ; lorsque le produit est entièrement souscrit, il est racheté automatiquement.",
       "flowStep4DescFlexible": "Rachetez à tout moment ; les fonds retournent sur votre compte de financement.",
       "quotaTitle": "Détails du quota",
       "quotaTotal": "Quota total",
@@ -372,28 +372,12 @@
     "redeem": {
       "button": "Racheter",
       "title": "Racheter l'ordre",
-      "confirmNotice": "Les intérêts s'accumulent selon le nombre de jours de détention réels. Aucun intérêt si la détention est inférieure au minimum de {{minHoldDays}} jours. Le montant final est fixé au règlement.",
-      "confirmNoticeNoMin": "Les intérêts s'accumulent selon le nombre de jours de détention réels. Le montant final est fixé au règlement.",
       "reviewNotice": "Ce rachat doit être examiné. Après votre soumission, un administrateur l'examine avant tout versement ; d'ici là, votre principal reste investi et continue de générer des intérêts.",
       "confirm": "Confirmer le rachat",
-      "submitting": "Envoi en cours…",
       "cancel": "Annuler",
-      "resultTitle": "Rachat terminé",
       "pendingTitle": "Demande de rachat envoyée",
       "pendingDescription": "Votre rachat est en attente d'examen. Votre principal reste dans le fonds et continue de générer des intérêts jusqu'à son approbation par un administrateur.",
-      "settledPrincipal": "Principal réglé",
-      "settledInterest": "Intérêts réglés",
-      "heldDaysLabel": "Durée de détention",
-      "heldDays": "{{days}} jours",
-      "fundsReturned": "Le principal et les intérêts ont été reversés sur votre compte Financement.",
-      "done": "Terminé",
-      "confirmNoticeEarlyRedeem": "Il s'agit d'un produit à terme bloqué. Un rachat anticipé entraînera une pénalité calculée selon le nombre de jours de blocage restants. Le montant final est fixé au règlement.",
-      "penaltyAmount": "Pénalité de rachat anticipé",
-      "remainingLockDays": "Blocage restant",
-      "remainingLockDaysValue": "{{days}} jours",
-      "notSupported": "Rachat anticipé non pris en charge",
-      "needVip": "Niveau VIP {{tier}} requis pour le rachat anticipé",
-      "penaltyEstimate": "Pénalité estimée"
+      "earlyFeeNotice": "Un rachat pendant la période de blocage entraîne des frais de {{rate}} % du capital ({{fee}} {{currency}}), quel que soit le nombre de jours restants ; les gains accumulés restent versés. Les rachats sont examinés par un administrateur et les intérêts continuent de courir jusqu'à l'approbation."
     },
     "positions": {
       "title": "Mes positions Fonds Quant",
@@ -419,12 +403,12 @@
       "summary": {
         "totalPrincipal": "Principal total",
         "totalProjectedInterest": "Intérêts projetés",
-        "activeInterestPaidTotal": "Intérêts versés (en cours)",
+        "activeInterestPaidTotal": "Gains accumulés (actifs)",
         "settledTotalReceived": "Total réglé reçu",
         "activeCount": "Ordres actifs",
         "breakdownToggle": "Détail par actif",
-        "interestProgress": "Progression des intérêts {{percent}} %",
-        "earningsTrend": "Tendance des intérêts sur {{days}} jours",
+        "interestProgress": "Progression des gains {{percent}} %",
+        "earningsTrend": "Tendance des gains sur {{days}} jours",
         "usdPrice": "@ {{price}} USDT",
         "partialValuation": "Pas de prix USDT pour {{assets}} ; les totaux n'incluent que les actifs valorisables."
       },
@@ -436,12 +420,12 @@
         "dailyReturn": "Rendement quotidien",
         "term": "Durée",
         "projectedInterest": "Intérêts projetés",
-        "interestPaidTotal": "Intérêts versés",
+        "interestPaidTotal": "Gains accumulés",
         "interestPaidThrough": "Payé jusqu'au",
         "interestRemaining": "À verser",
         "accruedInterestEstimate": "Est. couru",
         "subscribedAt": "Souscrit le",
-        "maturityDate": "Échéance",
+        "maturityDate": "Fin du blocage",
         "action": "Action"
       },
       "maturityPending": "Fixée à l'approbation",
@@ -451,13 +435,13 @@
         "dailyReturn": "Rendement quotidien",
         "term": "Durée",
         "projectedInterest": "Intérêts projetés",
-        "interestPaidTotal": "Intérêts versés",
+        "interestPaidTotal": "Gains accumulés",
         "interestPaidThrough": "Payé jusqu'au",
         "interestRemaining": "Intérêts à verser",
         "accruedInterestEstimate": "Intérêts courus estimés",
         "minHoldDays": "Détention min.",
         "subscribedAt": "Souscrit le",
-        "maturityDate": "Échéance",
+        "maturityDate": "Fin du blocage",
         "settledAt": "Réglé le",
         "settledInterest": "Intérêts réglés",
         "settledPrincipal": "Principal réglé",
@@ -475,16 +459,16 @@
       }
     },
     "interestRecords": {
-      "title": "Détails des versements d'intérêts",
-      "subtitle": "Relevé des intérêts versés pour cet ordre.",
+      "title": "Détail des gains",
+      "subtitle": "Gains quotidiens accumulés dans cet ordre.",
       "back": "Retour",
-      "entry": "Détail des intérêts",
+      "entry": "Détail des gains",
       "table": {
         "interestDate": "Date d'intérêt",
         "amount": "Quantité",
         "creditedAt": "Crédité le"
       },
-      "empty": "Aucun versement d'intérêts pour le moment."
+      "empty": "Aucun gain pour le moment."
     },
     "status": {
       "product": {

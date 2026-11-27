@@ -289,8 +289,8 @@
     "hero": {
       "subtitle": "AI運用のクオントファンド",
       "title": "クオントファンド — AI運用の確定期間利回り",
-      "description": "AIクオントブックが運用する確定期間商品。定められた期間ロックし、日次利回りで利息を蓄積、満期時に決済を自動で実行します。",
-      "disclaimer": "AI運用 · 確定期間決済",
+      "description": "AIクオンツチームが一貫して運用します。承認後は日次で注文内に収益が積み上がり、償還時に元本と一緒に返還されます。ロック期間終了後も、償還するまで収益は発生し続けます。",
+      "disclaimer": "AI運用 · 承認後に利息発生",
       "viewPositionsCta": "マイポジション"
     },
     "filters": {
@@ -332,9 +332,9 @@
       "flowStep2Title": "利息計算開始",
       "flowStep2Desc": "購読確定後に収益の計算が始まります。",
       "flowStep3Title": "収益の支払い",
-      "flowStep3Desc": "収益は定期的に精算され、アカウントに入金されます。",
+      "flowStep3Desc": "収益は毎日注文内に積み上がり、償還時に元本と一緒に返還されます。",
       "flowStep4Title": "償還",
-      "flowStep4DescFixed": "満期時に元本と収益が自動的に返還されます。",
+      "flowStep4DescFixed": "ロック期間終了後も収益は発生し続け、いつでも償還できます。商品の募集枠が満額になると自動で償還されます。",
       "flowStep4DescFlexible": "いつでも償還可能。資金は資金アカウントに返還されます。",
       "quotaTitle": "枠の詳細",
       "quotaTotal": "総枠",
@@ -372,28 +372,12 @@
     "redeem": {
       "button": "償還",
       "title": "注文を償還",
-      "confirmNotice": "利息は実際の保有日数に応じて発生します。最低 {{minHoldDays}} 日未満の保有では利息は発生しません。最終金額は決済時に確定します。",
-      "confirmNoticeNoMin": "利息は実際の保有日数に応じて発生します。最終金額は決済時に確定します。",
       "reviewNotice": "この償還には審査が必要です。送信後、管理者の承認を経てから支払われます。それまで元本はファンド内に留まり利息が発生し続けます。",
       "confirm": "償還を確定",
-      "submitting": "送信中…",
       "cancel": "キャンセル",
-      "resultTitle": "償還が完了しました",
       "pendingTitle": "償還申請を送信しました",
       "pendingDescription": "償還は審査待ちです。承認されるまで、元本はファンド内に留まり利息が発生し続けます。",
-      "settledPrincipal": "決済元本",
-      "settledInterest": "決済利息",
-      "heldDaysLabel": "保有期間",
-      "heldDays": "{{days}} 日",
-      "fundsReturned": "元本と利息がファンディングアカウントに返還されました。",
-      "done": "完了",
-      "confirmNoticeEarlyRedeem": "これはロック期間のある商品です。早期償還では残りのロック日数に応じて違約金が差し引かれます。最終金額は決済時に確定します。",
-      "penaltyAmount": "早期償還違約金",
-      "remainingLockDays": "残りロック期間",
-      "remainingLockDaysValue": "{{days}} 日",
-      "notSupported": "早期償還は対応していません",
-      "needVip": "早期償還には VIP {{tier}} が必要です",
-      "penaltyEstimate": "違約金（予想）"
+      "earlyFeeNotice": "ロック期間中の早期償還には、残り日数に関係なく元本の {{rate}}%（{{fee}} {{currency}}）の手数料がかかります。累積収益はそのまま返還されます。償還は管理者の審査が必要で、承認されるまで利息は引き続き発生します。"
     },
     "positions": {
       "title": "マイクオントファンドポジション",
@@ -419,12 +403,12 @@
       "summary": {
         "totalPrincipal": "元本合計",
         "totalProjectedInterest": "予想利息",
-        "activeInterestPaidTotal": "支払済み利息（保有中）",
+        "activeInterestPaidTotal": "累積収益（保有中）",
         "settledTotalReceived": "決済受取合計",
         "activeCount": "アクティブ注文",
         "breakdownToggle": "資産別内訳",
-        "interestProgress": "利息進捗 {{percent}}%",
-        "earningsTrend": "直近 {{days}} 日間の利息推移",
+        "interestProgress": "収益進捗 {{percent}}%",
+        "earningsTrend": "直近 {{days}} 日間の収益推移",
         "usdPrice": "@ {{price}} USDT",
         "partialValuation": "{{assets}} のUSDT価格が取得できないため、合計には評価可能な資産のみ含まれます。"
       },
@@ -436,12 +420,12 @@
         "dailyReturn": "日次利回り",
         "term": "期間",
         "projectedInterest": "予想利息",
-        "interestPaidTotal": "支払利息",
+        "interestPaidTotal": "累積収益",
         "interestPaidThrough": "支払済み日",
         "interestRemaining": "未払分",
         "accruedInterestEstimate": "見込み",
         "subscribedAt": "購読日",
-        "maturityDate": "満期",
+        "maturityDate": "ロック終了",
         "action": "操作"
       },
       "maturityPending": "承認後に確定",
@@ -451,13 +435,13 @@
         "dailyReturn": "日次利回り",
         "term": "期間",
         "projectedInterest": "予想利息",
-        "interestPaidTotal": "支払利息",
+        "interestPaidTotal": "累積収益",
         "interestPaidThrough": "利息支払済み日",
         "interestRemaining": "未払利息",
         "accruedInterestEstimate": "見込み利息",
         "minHoldDays": "最低保有期間",
         "subscribedAt": "購読日",
-        "maturityDate": "満期",
+        "maturityDate": "ロック終了",
         "settledAt": "決済日時",
         "settledInterest": "決済利息",
         "settledPrincipal": "決済元本",
@@ -475,16 +459,16 @@
       }
     },
     "interestRecords": {
-      "title": "配当明細",
-      "subtitle": "この注文の配当明細（1件ごと）。",
+      "title": "収益明細",
+      "subtitle": "この注文に日次で積み上がった収益の記録。",
       "back": "戻る",
-      "entry": "配当明細",
+      "entry": "収益明細",
       "table": {
         "interestDate": "利息計算日",
         "amount": "数量",
         "creditedAt": "入金日時"
       },
-      "empty": "配当明細はまだありません。"
+      "empty": "収益はまだありません。"
     },
     "status": {
       "product": {

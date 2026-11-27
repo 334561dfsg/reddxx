@@ -289,8 +289,8 @@
     "hero": {
       "subtitle": "AI-managed Quant Fund",
       "title": "Quant Fund — AI-managed fixed-term yield",
-      "description": "Fixed-term products run by our AI quant book. Lock in for a defined window, accrue interest at a daily yield, and let settlement run automatically at maturity.",
-      "disclaimer": "AI-managed · Fixed-term settlement",
+      "description": "Run end to end by our AI quant team. Interest accrues daily inside your order from approval and is paid out with the principal on redemption; after the lock period it keeps accruing until you redeem.",
+      "disclaimer": "AI-managed · Interest after approval",
       "viewPositionsCta": "My positions"
     },
     "filters": {
@@ -332,9 +332,9 @@
       "flowStep2Title": "Interest accrual",
       "flowStep2Desc": "Earnings start accruing after the subscription is confirmed.",
       "flowStep3Title": "Earnings paid",
-      "flowStep3Desc": "Earnings are settled and credited to your account periodically.",
+      "flowStep3Desc": "Earnings accrue daily inside the order and are paid out with the principal when you redeem.",
       "flowStep4Title": "Redeem",
-      "flowStep4DescFixed": "Principal and earnings are returned automatically at maturity.",
+      "flowStep4DescFixed": "After the lock period the order keeps earning and can be redeemed any time; when the product is fully subscribed it is redeemed automatically.",
       "flowStep4DescFlexible": "Redeem anytime; funds are returned to your funding account.",
       "quotaTitle": "Quota details",
       "quotaTotal": "Total quota",
@@ -372,28 +372,12 @@
     "redeem": {
       "button": "Redeem",
       "title": "Redeem order",
-      "confirmNotice": "Interest accrues by actual holding days. No interest if held under the minimum {{minHoldDays}} days. The final amount is set at settlement.",
-      "confirmNoticeNoMin": "Interest accrues by actual holding days. The final amount is set at settlement.",
       "reviewNotice": "This redemption requires review. After you submit, an administrator reviews it before any payout — your principal stays invested and keeps earning until then.",
       "confirm": "Confirm redemption",
-      "submitting": "Submitting…",
       "cancel": "Cancel",
-      "resultTitle": "Redemption complete",
       "pendingTitle": "Redemption request submitted",
       "pendingDescription": "Your redemption is awaiting review. Your principal stays in the fund and keeps earning interest until an administrator approves it.",
-      "settledPrincipal": "Settled principal",
-      "settledInterest": "Settled interest",
-      "heldDaysLabel": "Holding period",
-      "heldDays": "{{days}} days",
-      "fundsReturned": "Principal and interest have been returned to your Funding account.",
-      "done": "Done",
-      "confirmNoticeEarlyRedeem": "This is a locked-term product. Early redemption will incur a penalty based on the remaining lock-up days. The final amount is set at settlement.",
-      "penaltyAmount": "Early redemption penalty",
-      "remainingLockDays": "Remaining lock-up",
-      "remainingLockDaysValue": "{{days}} days",
-      "notSupported": "Early redemption not supported",
-      "needVip": "VIP {{tier}} required for early redemption",
-      "penaltyEstimate": "Estimated penalty"
+      "earlyFeeNotice": "Redeeming inside the lock period costs a fee of {{rate}}% of principal ({{fee}} {{currency}}), whatever the days left; accrued earnings are still paid out. Redemptions are reviewed by an administrator, and interest keeps accruing until approval."
     },
     "positions": {
       "title": "My Quant Fund positions",
@@ -419,12 +403,12 @@
       "summary": {
         "totalPrincipal": "Total principal",
         "totalProjectedInterest": "Projected interest",
-        "activeInterestPaidTotal": "Interest paid (active)",
+        "activeInterestPaidTotal": "Accrued earnings (active)",
         "settledTotalReceived": "Settled total received",
         "activeCount": "Active orders",
         "breakdownToggle": "Breakdown by asset",
-        "interestProgress": "Interest progress {{percent}}%",
-        "earningsTrend": "{{days}}-day interest trend",
+        "interestProgress": "Earnings progress {{percent}}%",
+        "earningsTrend": "{{days}}-day earnings trend",
         "usdPrice": "@ {{price}} USDT",
         "partialValuation": "No USDT price for {{assets}}; totals only include assets that could be valued."
       },
@@ -436,12 +420,12 @@
         "dailyReturn": "Daily yield",
         "term": "Term",
         "projectedInterest": "Projected interest",
-        "interestPaidTotal": "Interest paid",
+        "interestPaidTotal": "Accrued earnings",
         "interestPaidThrough": "Paid through",
         "interestRemaining": "Pending",
         "accruedInterestEstimate": "Est. accrued",
         "subscribedAt": "Subscribed",
-        "maturityDate": "Matures",
+        "maturityDate": "Lock ends",
         "action": "Action"
       },
       "maturityPending": "Set on approval",
@@ -451,13 +435,13 @@
         "dailyReturn": "Daily yield",
         "term": "Term",
         "projectedInterest": "Projected interest",
-        "interestPaidTotal": "Interest paid",
+        "interestPaidTotal": "Accrued earnings",
         "interestPaidThrough": "Paid through",
         "interestRemaining": "Pending interest",
         "accruedInterestEstimate": "Est. accrued interest",
         "minHoldDays": "Min. hold",
         "subscribedAt": "Subscribed",
-        "maturityDate": "Matures",
+        "maturityDate": "Lock ends",
         "settledAt": "Settled at",
         "settledInterest": "Settled interest",
         "settledPrincipal": "Settled principal",
@@ -475,16 +459,16 @@
       }
     },
     "interestRecords": {
-      "title": "Interest payout details",
-      "subtitle": "Per-payout interest records for this order.",
+      "title": "Earnings details",
+      "subtitle": "Daily earnings accrued in this order.",
       "back": "Back",
-      "entry": "Payout details",
+      "entry": "Earnings details",
       "table": {
         "interestDate": "Interest date",
         "amount": "Quantity",
         "creditedAt": "Credited at"
       },
-      "empty": "No interest payouts yet."
+      "empty": "No earnings yet."
     },
     "status": {
       "product": {

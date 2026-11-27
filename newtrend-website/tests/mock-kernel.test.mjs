@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {ledger,balanceOf,debit,credit,modeKey,boundBalances,bindBalance,resetLedger,DEMO_FUNDS} from '../src/mock/ledger.js'
-import {createFundAccount,createQuantFundCatalog,subscribeFund,settleMaturedFunds} from '../src/utils/quantFund.js'
+import {createFundAccount,createQuantFundCatalog,subscribeFund,autoRedeemFullFunds} from '../src/utils/quantFund.js'
 import {createStrategyAccount,completeExpiredStrategies} from '../src/utils/strategyTemplates.js'
 import {orderFunding} from '../src/tradingFunds.js'
 
@@ -39,19 +39,20 @@ test('domain accounts bound to the ledger move the same money', () => {
   resetLedger()
 })
 
-test('matured fixed-term fund orders settle once with the full term interest', () => {
+test('orders past their lock keep running until the product is full, then auto-redeem once into the ledger', () => {
   resetLedger()
   const account = Object.assign(createFundAccount(), {balances: boundBalances('USDT')})
-  const product = {id: 'fx', subscribed: 1000}
-  account.orders.push({id: 'a', productId: 'fx', mode: 'real', status: 'active', principal: 1000, dailyReturnPercentSnapshot: 1, termDaysSnapshot: 7, maturityDate: 7 * DAY, interestPaidTotal: 30, interestRecords: []})
-  account.orders.push({id: 'b', productId: 'fx', mode: 'real', status: 'active', principal: 1000, dailyReturnPercentSnapshot: 1, termDaysSnapshot: null, maturityDate: null, interestPaidTotal: 0})
-  assert.deepEqual(settleMaturedFunds(account, () => product, 6 * DAY).map(o => o.id), [])
-  assert.deepEqual(settleMaturedFunds(account, () => product, 8 * DAY).map(o => o.id), ['a'])
-  assert.equal(account.orders[0].status, 'settled')
-  assert.equal(account.orders[0].interestPaidTotal, 70)
-  assert.equal(balanceOf('real', 'USDT'), 1040) // principal + remaining 40 interest
-  assert.equal(product.subscribed, 0)
-  assert.deepEqual(settleMaturedFunds(account, () => product, 9 * DAY), [])
+  const product = {id: 'fx', subscribed: 1000, totalQuota: 2000}
+  account.orders.push({id: 'a', productId: 'fx', mode: 'real', status: 'active', principal: 1000, dailyReturnPercentSnapshot: 1, termDaysSnapshot: 7, interestStartAt: 0, maturityDate: 7 * DAY, interestPaidTotal: 30, interestRecords: []})
+  account.orders.push({id: 'b', productId: 'fx', mode: 'real', status: 'active', principal: 1000, dailyReturnPercentSnapshot: 1, termDaysSnapshot: 30, interestStartAt: 0, maturityDate: 30 * DAY, interestPaidTotal: 0})
+  assert.deepEqual(autoRedeemFullFunds(account, () => product, 8 * DAY).map(o => o.id), [], 'not full: past-lock orders keep earning')
+  product.subscribed = 2000
+  assert.deepEqual(autoRedeemFullFunds(account, () => product, 8 * DAY).map(o => o.id), ['a'], 'full: only the unlocked order')
+  assert.equal(account.orders[0].status, 'redeemed')
+  assert.equal(account.orders[0].interestPaidTotal, 80)
+  assert.equal(balanceOf('real', 'USDT'), 1080) // principal + 8 days of accrued interest, no fee
+  assert.equal(product.subscribed, 1000)
+  assert.deepEqual(autoRedeemFullFunds(account, () => product, 9 * DAY), [])
   assert.equal(account.orders[1].status, 'active')
   resetLedger()
 })

@@ -43,12 +43,12 @@ test('subscription stays pending review, reserves balance and quota, and is idem
 })
 
 test('position filters and summary keep pending orders out of active totals',()=>{
- const orders=[{status:'pending_review',principal:5000,dailyReturnPercentSnapshot:1,termDaysSnapshot:7,interestPaidTotal:0},{status:'active',principal:10000,dailyReturnPercentSnapshot:1,termDaysSnapshot:10,interestPaidTotal:50},{status:'settled',principal:2000,dailyReturnPercentSnapshot:1,termDaysSnapshot:5,interestPaidTotal:100}]
+ const orders=[{status:'pending_review',principal:5000,dailyReturnPercentSnapshot:1,termDaysSnapshot:7,interestPaidTotal:0},{status:'active',principal:10000,dailyReturnPercentSnapshot:1,termDaysSnapshot:10,interestPaidTotal:50},{status:'redeemed',principal:2000,dailyReturnPercentSnapshot:1,termDaysSnapshot:5,interestPaidTotal:100,returned:2085}]
  assert.equal(filterFundOrders(orders,'pending').length,1)
  assert.equal(filterFundOrders(orders,'active').length,1)
- assert.equal(filterFundOrders(orders,'history','settled').length,1)
+ assert.equal(filterFundOrders(orders,'history','redeemed').length,1)
  assert.equal(filterFundOrders(orders,'all').length,3)
- assert.deepEqual(fundSummary(orders),{totalPrincipal:10000,totalProjectedInterest:1000,activeInterestPaidTotal:50,settledTotalReceived:2100,activeCount:1,pendingCount:1})
+ assert.deepEqual(fundSummary(orders),{totalPrincipal:10000,totalProjectedInterest:1000,activeInterestPaidTotal:50,settledTotalReceived:2085,activeCount:1,pendingCount:1})
 })
 
 test('positions dates use ISO calendar format and interest progress needs a projection',async()=>{
@@ -62,31 +62,42 @@ test('positions dates use ISO calendar format and interest progress needs a proj
  assert.equal(interestProgress(150,100),100)
 })
 
-test('redeemFund settles a running flexible order once and credits its own mode', async () => {
-  const {createFundAccount, redeemFund, accruedInterestEstimate, canRedeemFund} = await import('../src/utils/quantFund.js')
+test('any running order can ask for redemption; inside the lock the fee is a fixed share of principal', async () => {
+  const {requestRedeemFund, earlyRedeemFee, fundInLock, canRedeemFund} = await import('../src/utils/quantFund.js')
   const DAY = 86400000, start = Date.UTC(2026, 10, 1)
-  const account = createFundAccount({real: 0, demo: 1000})
-  const product = {subscribed: 10000}
-  const order = {id: 'o1', mode: 'demo', status: 'active', principal: 1000, dailyReturnPercentSnapshot: 1, termDaysSnapshot: null, minHoldDaysSnapshot: 1, subscribedAt: start, interestPaidTotal: 2}
-  assert.equal(canRedeemFund(order), true)
-  assert.equal(accruedInterestEstimate(order, start + 3 * DAY), 28)
-  const result = redeemFund(account, order, product, start + 3 * DAY)
-  assert.equal(result.interest, 28) // 3 days × 10 minus 2 already paid
-  assert.equal(order.status, 'redeemed')
-  assert.equal(order.interestPaidTotal, 30)
-  assert.equal(account.balances.demo, 2028)
-  assert.equal(account.balances.real, 0)
-  assert.equal(product.subscribed, 9000)
-  assert.deepEqual(redeemFund(account, order, product, start + 4 * DAY), {error: 'conflict'})
-  assert.equal(account.balances.demo, 2028)
+  const locked = {status: 'active', principal: 150000, dailyReturnPercentSnapshot: 1.25, earlyRedeemFeeRateSnapshot: 0.73, subscribedAt: start, interestStartAt: start, maturityDate: start + 7 * DAY, interestPaidTotal: 0}
+  assert.equal(canRedeemFund(locked), true, 'fixed-lock orders are redeemable too')
+  assert.equal(fundInLock(locked, start + DAY), true)
+  assert.equal(earlyRedeemFee(locked, start + DAY), 1095)
+  assert.equal(earlyRedeemFee(locked, start + 6 * DAY), 1095, 'whatever the days left')
+  assert.equal(earlyRedeemFee(locked, start + 8 * DAY), 0, 'no fee after the lock')
+  const result = requestRedeemFund(locked, start + 2 * DAY)
+  assert.equal(result.order.status, 'redeem_pending_review')
+  assert.equal(locked.redeemFee, 1095)
+  assert.equal(locked.redeemEarly, true)
+  assert.deepEqual(requestRedeemFund(locked, start + 2 * DAY), {error: 'conflict'})
 })
 
-test('redeemFund pays no interest below the minimum hold and rejects fixed-term or pending orders', async () => {
-  const {createFundAccount, redeemFund} = await import('../src/utils/quantFund.js')
-  const account = createFundAccount({real: 0, demo: 0}), now = Date.UTC(2026, 10, 26)
-  const sameDay = {mode: 'demo', status: 'active', principal: 500, dailyReturnPercentSnapshot: 1, termDaysSnapshot: null, minHoldDaysSnapshot: 1, subscribedAt: now, interestPaidTotal: 0}
-  assert.equal(redeemFund(account, sameDay, null, now + 3600000).interest, 0)
-  assert.equal(account.balances.demo, 500)
-  assert.deepEqual(redeemFund(account, {...sameDay, status: 'active', termDaysSnapshot: 30}, null, now), {error: 'conflict'})
-  assert.deepEqual(redeemFund(account, {...sameDay, status: 'pending_review'}, null, now), {error: 'conflict'})
+test('closing pays accrued interest with principal minus the fee; full products auto-redeem unlocked orders', async () => {
+  const {createFundAccount, closeFundOrder, autoRedeemFullFunds} = await import('../src/utils/quantFund.js')
+  const DAY = 86400000, start = Date.UTC(2026, 10, 1)
+  const account = createFundAccount({real: 0, demo: 0})
+  const product = {id: 'p', subscribed: 100000, totalQuota: 100000}
+  const order = {id: 'o1', productId: 'p', mode: 'demo', status: 'redeem_pending_review', principal: 1000, dailyReturnPercentSnapshot: 1, subscribedAt: start, interestStartAt: start, interestPaidTotal: 2}
+  const closed = closeFundOrder(account, order, product, start + 3 * DAY, {fee: 5})
+  assert.equal(order.interestPaidTotal, 30, '3 days × 10 accrued in the order')
+  assert.equal(closed.returned, 1025)
+  assert.equal(account.balances.demo, 1025)
+  assert.equal(product.subscribed, 99000)
+  assert.deepEqual(closeFundOrder(account, order, product, start + 4 * DAY), {error: 'conflict'})
+
+  const full = {id: 'f', subscribed: 50000, totalQuota: 50000}
+  const unlocked = {id: 'u', productId: 'f', mode: 'demo', status: 'active', principal: 1000, dailyReturnPercentSnapshot: 1, interestStartAt: start, maturityDate: start + 7 * DAY, interestPaidTotal: 0}
+  const stillLocked = {...unlocked, id: 'l', maturityDate: start + 30 * DAY}
+  account.orders.push(unlocked, stillLocked)
+  autoRedeemFullFunds(account, id => (id === 'f' ? full : null), start + 10 * DAY)
+  assert.equal(unlocked.status, 'redeemed')
+  assert.equal(unlocked.autoRedeemed, true)
+  assert.equal(unlocked.redeemFee, 0)
+  assert.equal(stillLocked.status, 'active', 'locked orders keep running')
 })

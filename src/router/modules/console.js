@@ -518,7 +518,7 @@ export const consoleRoutes = [
     path: `quant-fund/${section}`,
     name: `quant-fund-${section}`,
     component: () => import('../../pages/admin/quantFund/QuantFundRecordsPage.vue'),
-    meta: { title: `量化基金 / ${{ orders: '申购订单', redemptions: '赎回审核', payouts: '派息记录', logs: '操作日志' }[section]}`, quantFundSection: section }
+    meta: { title: `量化基金 / ${{ orders: '申购订单', redemptions: '赎回审核', payouts: '收益记录', logs: '操作日志' }[section]}`, quantFundSection: section }
   })),
   {
     path: 'ai-quant',

@@ -1,6 +1,6 @@
 <script setup>
 // 量化基金 → 新增/编辑产品: dedicated single-page grouped form (Earn/strategy editor conventions), sticky actions,
-// right-side return, unsaved-change guard. Switching 活期/定期 keeps the other type's draft values.
+// right-side return, unsaved-change guard. Turning the lock period off keeps its days and fee as a draft.
 import {computed, onBeforeUnmount, ref, watch} from 'vue'
 import {onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter} from 'vue-router'
 import {message, Button, Card, Col, Empty, Form, FormItem, Input, InputNumber, RadioButton, RadioGroup, Row, Select, Space, Spin, Textarea, TypographyText} from 'ant-design-vue'
@@ -13,18 +13,18 @@ import {quantFundState, quantFundError, quantFundBusy, refreshQuantFund, quantFu
 
 const route = useRoute(), router = useRouter()
 const form = ref(null), expectedVersion = ref(null), original = ref(''), loading = ref(true), found = ref(true)
-// The form keeps both type-specific drafts; only the active type's value is saved.
+// The form keeps the lock days and fee while the lock is off; only an active lock is saved.
 const blank = () => ({
   name: '', code: '', asset: 'USDT', riskLevel: 'LOW', tags: ['AI Strategy'], description: '', sortOrder: 0,
-  kind: 'flexible', termDays: 30, minHoldDays: 1, minAmount: 5000, maxAmount: 100000, totalQuota: 2000000, initialPercent: 0,
-  dailyRate: {min: 0.5, max: 0.9}, minVerificationLevel: 'none', minVipLevel: 0,
+  locked: true, lockDays: 30, earlyRedeemFeeRate: 0.73, minAmount: 5000, maxAmount: 100000, totalQuota: 2000000, initialPercent: 0,
+  dailyRate: 1, restrictedUserIds: [], minVerificationLevel: 'none', minVipLevel: 0,
 })
 // JSON copies: reactive Proxies cannot go through structuredClone.
 const plain = value => JSON.parse(JSON.stringify(value))
-const toForm = p => ({...plain(p), kind: p.termDays === null ? 'flexible' : 'fixed', termDays: p.termDays ?? 30, minHoldDays: p.minHoldDays ?? 1})
+const toForm = p => ({...plain(p), restrictedUserIds: p.restrictedUserIds || [], locked: p.lockDays !== null, lockDays: p.lockDays ?? 30, earlyRedeemFeeRate: p.lockDays === null ? 0.73 : p.earlyRedeemFeeRate})
 const toProduct = f => {
-  const {kind, ...product} = plain(f)
-  return {...product, code: product.code.trim().toUpperCase(), termDays: kind === 'fixed' ? product.termDays : null, minHoldDays: kind === 'flexible' ? product.minHoldDays : null}
+  const {locked, ...product} = plain(f)
+  return {...product, code: product.code.trim().toUpperCase(), lockDays: locked ? product.lockDays : null, earlyRedeemFeeRate: locked ? product.earlyRedeemFeeRate : 0}
 }
 const riskOptions = Object.entries(riskLabels).map(([value, label]) => ({value, label}))
 const assetOptions = ASSETS.map(value => ({value, label: value}))
@@ -33,11 +33,11 @@ const busy = computed(() => loading.value || quantFundBusy.value)
 const whole = value => Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits: 2})
 const rateExample = computed(() => {
   const r = form.value?.dailyRate
-  return r && Number.isFinite(r.min) && Number.isFinite(r.max) ? `本金 1 万 USDT：单日派息 ${(100 * r.min).toFixed(2)} ~ ${(100 * r.max).toFixed(2)} USDT` : '按本金百分比计算'
+  return Number.isFinite(r) ? `本金 1 万 USDT：每天计息 ${(100 * r).toFixed(2)} USDT，累计在订单内，赎回时随本金返还` : '按本金计算，不复利'
 })
-const average = computed(() => {
-  const r = form.value?.dailyRate
-  return r && Number.isFinite(r.min) && Number.isFinite(r.max) ? `前台展示平均值 ${Number(((r.min + r.max) / 2).toFixed(4))}%` : '前台展示上下限的平均值'
+const feeExample = computed(() => {
+  const f = form.value?.earlyRedeemFeeRate
+  return Number.isFinite(f) ? `本金 10 万 USDT 提前赎回扣 ${whole(1000 * f)} USDT，与剩余天数无关` : '按本金计算'
 })
 
 let loadVersion = 0
@@ -94,7 +94,7 @@ async function save() {
     <Card title="基本信息" :bordered="false"><Row :gutter="24" class="qf-editor-fields">
      <Col :xs="24" :lg="16"><FormItem name="name" label="产品名称" required><Input v-model:value="form.name" :maxlength="80" placeholder="请输入产品名称"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="code" label="产品代码" required help="大写字母、数字或短横线，如 QF-VIP0"><Input v-model:value="form.code" :maxlength="32" placeholder="QF-VIP0"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="asset" label="标识币种" required help="前台卡片图标与资产筛选使用；申购、派息和赎回均为 USDT"><Select v-model:value="form.asset" :options="assetOptions"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="asset" label="标识币种" required help="前台卡片图标与资产筛选使用；申购、计息和赎回均为 USDT"><Select v-model:value="form.asset" :options="assetOptions"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="riskLevel" label="风险等级" required><Select v-model:value="form.riskLevel" :options="riskOptions"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="sortOrder" label="排序权重" help="数值越大越靠前"><InputNumber v-model:value="form.sortOrder" :min="0" :precision="0"/></FormItem></Col>
      <Col :xs="24"><FormItem name="tags" label="策略标签" help="输入后回车添加，例如 AI Strategy、US Equity"><Select v-model:value="form.tags" mode="tags" :token-separators="[',']" placeholder="添加策略标签" :open="false"/></FormItem></Col>
@@ -103,21 +103,22 @@ async function save() {
     <Card title="申购条件" :bordered="false"><Row :gutter="24" class="qf-editor-fields">
      <Col :xs="24" :lg="8"><FormItem name="minVerificationLevel" label="最低认证等级" help="达到所选等级及以上可申购"><Select v-model:value="form.minVerificationLevel" :options="verificationOptions"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="minVipLevel" label="最低 VIP 等级" help="两项条件需同时满足"><Select v-model:value="form.minVipLevel" :options="vipOptions"/></FormItem></Col>
+     <Col :xs="24"><FormItem name="restrictedUserIds" label="限购名单（UID）" help="名单内用户看到该产品进度已满（100%），不能申购"><Select v-model:value="form.restrictedUserIds" mode="tags" :token-separators="[',', ' ']" placeholder="输入 UID 后回车添加" :open="false"/></FormItem></Col>
     </Row></Card>
     <Card title="期限与额度" :bordered="false"><Row :gutter="24" class="qf-editor-fields">
-     <Col :xs="24"><FormItem name="kind" label="产品类型" required><RadioGroup v-model:value="form.kind" button-style="solid"><RadioButton value="flexible">活期</RadioButton><RadioButton value="fixed">定期</RadioButton></RadioGroup></FormItem></Col>
-     <Col v-if="form.kind === 'fixed'" :xs="24" :lg="8"><FormItem name="termDays" label="期限" required help="审核通过后开始计息，到期自动返还本金"><InputNumber v-model:value="form.termDays" :min="1" :precision="0" addon-after="天"/></FormItem></Col>
-     <Col v-else :xs="24" :lg="8"><FormItem name="minHoldDays" label="最短持有天数" required help="持有满该天数后才能申请赎回，赎回需后台审核"><InputNumber v-model:value="form.minHoldDays" :min="0" :precision="0" addon-after="天"/></FormItem></Col>
-     <Col :xs="0" :lg="16"/>
+     <Col :xs="24"><FormItem name="locked" label="锁定期" required><RadioGroup v-model:value="form.locked" button-style="solid"><RadioButton :value="false">无锁定期</RadioButton><RadioButton :value="true">有锁定期</RadioButton></RadioGroup></FormItem></Col>
+     <template v-if="form.locked">
+      <Col :xs="24" :lg="8"><FormItem name="lockDays" label="锁定天数" required help="审核通过后开始计算；结束后继续计息，直到赎回"><InputNumber v-model:value="form.lockDays" :min="1" :precision="0" addon-after="天"/></FormItem></Col>
+      <Col :xs="24" :lg="8"><FormItem name="earlyRedeemFeeRate" label="提前赎回手续费率" required :help="feeExample"><InputNumber v-model:value="form.earlyRedeemFeeRate" :min="0" :max="100" :step="0.01" :precision="4" addon-after="%"/></FormItem></Col>
+      <Col :xs="0" :lg="8"/>
+     </template>
      <Col :xs="24" :lg="8"><FormItem name="minAmount" label="起投金额" required><InputNumber v-model:value="form.minAmount" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="maxAmount" label="单笔上限" required><InputNumber v-model:value="form.maxAmount" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="totalQuota" label="产品总额度" required><InputNumber v-model:value="form.totalQuota" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="initialPercent" label="初始募集比例" required><InputNumber v-model:value="form.initialPercent" :min="0" :max="100" :precision="2" addon-after="%"/></FormItem></Col>
     </Row></Card>
     <Card title="每日收益规则" :bordered="false"><Row :gutter="24" class="qf-editor-fields">
-     <Col :xs="24" :lg="8"><FormItem :name="['dailyRate', 'min']" label="日收益率下限" required :help="rateExample"><InputNumber v-model:value="form.dailyRate.min" :min="0" :max="100" :step="0.01" :precision="4" addon-after="%"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem :name="['dailyRate', 'max']" label="日收益率上限" required :help="average"><InputNumber v-model:value="form.dailyRate.max" :min="0" :max="100" :step="0.01" :precision="4" addon-after="%"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem label="派息方式"><TypographyText>审核通过后每满一天派息一次，当日收益率在上下限之间随机，申购时的区间冻结到订单</TypographyText></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="dailyRate" label="日收益率" required :help="rateExample"><InputNumber v-model:value="form.dailyRate" :min="0" :max="100" :step="0.01" :precision="4" addon-after="%"/></FormItem></Col>
     </Row></Card>
    </Form>
    <Card class="qf-editor-footer" :body-style="{padding: '12px 24px'}" :bordered="false"><div class="qf-editor-actions"><Space :size="8" wrap><Button :disabled="quantFundBusy" @click="back">取消</Button><Button type="primary" :loading="quantFundBusy" @click="save">保存产品</Button></Space></div></Card>

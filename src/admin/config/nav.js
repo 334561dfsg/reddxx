@@ -146,7 +146,7 @@ export const navTree = [
       { title: '产品管理', path: '/admin/quant-fund/products' },
       { title: '申购订单', path: '/admin/quant-fund/orders' },
       { title: '赎回审核', path: '/admin/quant-fund/redemptions' },
-      { title: '派息记录', path: '/admin/quant-fund/payouts' },
+      { title: '收益记录', path: '/admin/quant-fund/payouts' },
       { title: '操作日志', path: '/admin/quant-fund/logs' },
     ]
   },

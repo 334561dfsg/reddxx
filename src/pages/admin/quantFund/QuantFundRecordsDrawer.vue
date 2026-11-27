@@ -1,5 +1,5 @@
 <script setup>
-// Daily payouts or operation log of one Quant Fund order, each opened by its own button in the 申购订单 list.
+// Daily interest records or operation log of one Quant Fund order, each opened by its own button in the 申购订单 list.
 // Same structure as StrategyRecordsDrawer: shared layer lifecycle, no backdrop/Escape close, header close button. Follows EarnHoldingRewardsDrawer: shared layer lifecycle, no
 // backdrop/Escape close, fixed header close button, body-only scrolling.
 import {computed, ref, watch} from 'vue'
@@ -22,8 +22,8 @@ function markDialog() { const el = dialogRef.value; if (!el) return; el.setAttri
 async function afterOpenChange(open) { if (open) { markDialog(); await onAfterEnter() } else if (await onAfterLeave()) emit('closed') }
 const page = ref(1)
 watch(() => [props.order?.orderId, props.kind], () => { page.value = 1 })
-const title = computed(() => (props.kind === 'logs' ? '操作记录' : '派息记录'))
-const dailyColumns = [{key: 'date', title: '日期', width: 140}, {key: 'rate', title: '日收益率', width: 120, align: 'right'}, {key: 'amount', title: '派息（USDT）', align: 'right'}]
+const title = computed(() => (props.kind === 'logs' ? '操作记录' : '收益记录'))
+const dailyColumns = [{key: 'date', title: '日期', width: 140}, {key: 'rate', title: '日收益率', width: 120, align: 'right'}, {key: 'amount', title: '当日收益（USDT）', align: 'right'}]
 const logColumns = [{key: 'createdAt', title: '时间', width: 180}, {key: 'action', title: '操作', width: 120}, {key: 'summary', title: '说明'}, {key: 'operator', title: '操作人', width: 140}]
 </script>
 
@@ -36,11 +36,11 @@ const logColumns = [{key: 'createdAt', title: '时间', width: 180}, {key: 'acti
     <DescriptionsItem label="产品">{{ order.productSnapshot.name }}</DescriptionsItem>
     <DescriptionsItem label="用户">{{ order.userName }}（{{ order.userId }}）</DescriptionsItem>
     <DescriptionsItem label="本金">{{ amount(order.principal) }} USDT</DescriptionsItem>
-    <DescriptionsItem label="已派息"><TypographyText type="success">{{ amount(order.interestPaidTotal) }} USDT</TypographyText></DescriptionsItem>
-    <DescriptionsItem label="派息次数">{{ order.payoutCount }} 次</DescriptionsItem>
+    <DescriptionsItem label="累计收益"><TypographyText type="success">{{ amount(order.accruedInterest) }} USDT</TypographyText></DescriptionsItem>
+    <DescriptionsItem label="计息天数">{{ order.accrualCount }} 天</DescriptionsItem>
    </Descriptions>
    <TypographyText type="secondary" class="qf-records-count">共 {{ kind === 'logs' ? logs.length : daily.length }} 条</TypographyText>
-     <Table v-if="kind !== 'logs'" size="middle" :columns="dailyColumns" :data-source="daily" row-key="id" :pagination="{current: page, pageSize: 10, total: daily.length, showSizeChanger: false, onChange: v => page = v, hideOnSinglePage: true}" :locale="{emptyText: '暂无派息记录'}">
+     <Table v-if="kind !== 'logs'" size="middle" :columns="dailyColumns" :data-source="daily" row-key="id" :pagination="{current: page, pageSize: 10, total: daily.length, showSizeChanger: false, onChange: v => page = v, hideOnSinglePage: true}" :locale="{emptyText: '暂无收益记录'}">
       <template #bodyCell="{column, record}">
        <template v-if="column.key === 'rate'">{{ record.rate }}%</template>
        <TypographyText v-else-if="column.key === 'amount'" type="success">+{{ amount(record.amount) }}</TypographyText>

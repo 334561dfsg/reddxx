@@ -405,3 +405,7 @@ Quant fund orders use the same six statuses as the admin (pending_review, active
 ## News centre data (user decision, 2026-11-27)
 
 The news centre and home insights read `src/api/news.js`, backed by the shared admin news module (`../src/shared/news`), instead of the bundled JSON directly (the JSON remains the seed). Category pills come from enabled categories in the current language; the home shows featured articles; old per-language article ids and the home aliases redirect to the canonical article id. Relative times use `Intl.RelativeTimeFormat`; `home.ui.hoursAgo` and `data.news` were removed.
+
+## Quant fund lock period and earnings (client requirements, 2026-11-27)
+
+Supersedes maturity settlement and the immediate-redeem notes above. `termDays` / `maturityDate` now mean the lock period: no automatic settlement at its end, the order keeps earning. Any running order can request redemption (admin review); inside the lock the fee is `earlyRedeemFeeRate`% of principal (snapshot), whatever the days left. Earnings accrue in the order and are paid with principal on close (`closeFundOrder`). Products at 100% progress auto-redeem orders past their lock (`autoRedeemFullFunds`). `restrictedUids` makes a product look full to that UID. Tiers: VIP4 max 9,999,999, VIP5 lock 120 days. Text in all six languages says 累計收益 / 鎖定到期 / 收益明細; obsolete redeem penalty/settlement strings were removed.

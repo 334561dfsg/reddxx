@@ -289,8 +289,8 @@
     "hero": {
       "subtitle": "KI-verwalteter Quant-Fonds",
       "title": "Quant-Fonds – KI-verwaltete Festzinsrendite",
-      "description": "Festlaufzeit-Produkte, die von unserem KI-Quant-Buch betrieben werden. Binden Sie sich für ein festgelegtes Zeitfenster, erzielen Sie Zinsen zu einer Tagesrendite und lassen Sie die Abrechnung bei Fälligkeit automatisch erfolgen.",
-      "disclaimer": "KI-verwaltet · Festlaufzeit-Abrechnung",
+      "description": "Vollständig von unserem KI-Quant-Team verwaltet. Zinsen laufen ab der Freigabe täglich in Ihrer Order auf und werden bei der Rücknahme mit dem Kapital ausgezahlt; nach der Sperrfrist laufen sie weiter, bis Sie zurücknehmen.",
+      "disclaimer": "KI-verwaltet · Zinsen nach Freigabe",
       "viewPositionsCta": "Meine Positionen"
     },
     "filters": {
@@ -332,9 +332,9 @@
       "flowStep2Title": "Zinslauf beginnt",
       "flowStep2Desc": "Erträge laufen nach Bestätigung der Zeichnung auf.",
       "flowStep3Title": "Ertragsauszahlung",
-      "flowStep3Desc": "Erträge werden periodisch abgerechnet und Ihrem Konto gutgeschrieben.",
+      "flowStep3Desc": "Erträge laufen täglich in der Order auf und werden bei der Rücknahme mit dem Kapital ausgezahlt.",
       "flowStep4Title": "Rücknahme",
-      "flowStep4DescFixed": "Kapital und Erträge werden bei Fälligkeit automatisch zurückgezahlt.",
+      "flowStep4DescFixed": "Nach der Sperrfrist erzielt die Order weiter Erträge und kann jederzeit zurückgenommen werden; ist das Produkt voll gezeichnet, wird sie automatisch zurückgenommen.",
       "flowStep4DescFlexible": "Jederzeit rücknehmbar; die Mittel fließen auf Ihr Funding-Konto zurück.",
       "quotaTitle": "Kontingentdetails",
       "quotaTotal": "Gesamtkontingent",
@@ -372,28 +372,12 @@
     "redeem": {
       "button": "Einlösen",
       "title": "Order einlösen",
-      "confirmNotice": "Zinsen werden nach tatsächlichen Haltetagen berechnet. Keine Zinsen bei einer Haltedauer unter der Mindestdauer von {{minHoldDays}} Tagen. Der endgültige Betrag wird bei der Abrechnung festgelegt.",
-      "confirmNoticeNoMin": "Zinsen werden nach tatsächlichen Haltetagen berechnet. Der endgültige Betrag wird bei der Abrechnung festgelegt.",
       "reviewNotice": "Diese Einlösung muss geprüft werden. Nach dem Absenden prüft ein Administrator die Anfrage vor jeder Auszahlung – bis dahin bleibt Ihr Kapital investiert und verzinst sich weiter.",
       "confirm": "Einlösung bestätigen",
-      "submitting": "Wird gesendet …",
       "cancel": "Abbrechen",
-      "resultTitle": "Einlösung abgeschlossen",
       "pendingTitle": "Einlösungsantrag eingereicht",
       "pendingDescription": "Ihre Einlösung wird geprüft. Ihr Kapital bleibt im Fonds und verzinst sich weiter, bis ein Administrator sie genehmigt.",
-      "settledPrincipal": "Abgerechnetes Kapital",
-      "settledInterest": "Abgerechnete Zinsen",
-      "heldDaysLabel": "Haltedauer",
-      "heldDays": "{{days}} Tage",
-      "fundsReturned": "Kapital und Zinsen wurden auf Ihr Funding-Konto zurückgebucht.",
-      "done": "Fertig",
-      "confirmNoticeEarlyRedeem": "Dies ist ein Produkt mit fester Laufzeit. Eine vorzeitige Rückzahlung führt zu einer Vertragsstrafe basierend auf den verbleibenden Sperrtagen. Der endgültige Betrag wird bei der Abrechnung festgelegt.",
-      "penaltyAmount": "Vorfälligkeitsentschädigung",
-      "remainingLockDays": "Verbleibende Sperrfrist",
-      "remainingLockDaysValue": "{{days}} Tage",
-      "notSupported": "Vorzeitige Rückzahlung nicht möglich",
-      "needVip": "VIP {{tier}} für vorzeitige Rückzahlung erforderlich",
-      "penaltyEstimate": "Geschätzte Vertragsstrafe"
+      "earlyFeeNotice": "Eine Rücknahme während der Sperrfrist kostet eine Gebühr von {{rate}} % des Kapitals ({{fee}} {{currency}}), unabhängig von den verbleibenden Tagen; aufgelaufene Erträge werden weiterhin ausgezahlt. Rücknahmen werden von einem Administrator geprüft; bis zur Freigabe laufen die Zinsen weiter."
     },
     "positions": {
       "title": "Meine Quant-Fonds-Positionen",
@@ -419,12 +403,12 @@
       "summary": {
         "totalPrincipal": "Gesamtkapital",
         "totalProjectedInterest": "Prognostizierte Zinsen",
-        "activeInterestPaidTotal": "Ausgezahlte Zinsen (aktiv)",
+        "activeInterestPaidTotal": "Aufgelaufene Erträge (aktiv)",
         "settledTotalReceived": "Abgerechnet erhalten gesamt",
         "activeCount": "Aktive Orders",
         "breakdownToggle": "Aufschlüsselung nach Asset",
-        "interestProgress": "Zinsfortschritt {{percent}} %",
-        "earningsTrend": "Zinsverlauf über {{days}} Tage",
+        "interestProgress": "Ertragsfortschritt {{percent}} %",
+        "earningsTrend": "Ertragstrend ({{days}} Tage)",
         "usdPrice": "@ {{price}} USDT",
         "partialValuation": "Kein USDT-Preis für {{assets}}; die Summen enthalten nur bewertbare Assets."
       },
@@ -436,12 +420,12 @@
         "dailyReturn": "Tagesrendite",
         "term": "Laufzeit",
         "projectedInterest": "Prognostizierte Zinsen",
-        "interestPaidTotal": "Gezahlte Zinsen",
+        "interestPaidTotal": "Aufgelaufene Erträge",
         "interestPaidThrough": "Gezahlt bis",
         "interestRemaining": "Ausstehend",
         "accruedInterestEstimate": "Gesch. aufgelaufen",
         "subscribedAt": "Gezeichnet",
-        "maturityDate": "Fällig",
+        "maturityDate": "Sperrfrist endet",
         "action": "Aktion"
       },
       "maturityPending": "Nach Freigabe festgelegt",
@@ -451,13 +435,13 @@
         "dailyReturn": "Tagesrendite",
         "term": "Laufzeit",
         "projectedInterest": "Prognostizierte Zinsen",
-        "interestPaidTotal": "Gezahlte Zinsen",
+        "interestPaidTotal": "Aufgelaufene Erträge",
         "interestPaidThrough": "Gezahlt bis",
         "interestRemaining": "Ausstehende Zinsen",
         "accruedInterestEstimate": "Gesch. aufgelaufene Zinsen",
         "minHoldDays": "Mindesthaltedauer",
         "subscribedAt": "Gezeichnet",
-        "maturityDate": "Fällig",
+        "maturityDate": "Sperrfrist endet",
         "settledAt": "Abgerechnet am",
         "settledInterest": "Abgerechnete Zinsen",
         "settledPrincipal": "Abgerechnetes Kapital",
@@ -475,16 +459,16 @@
       }
     },
     "interestRecords": {
-      "title": "Zinsausschüttungs-Details",
-      "subtitle": "Einzelne Zinsausschüttungen für diese Order.",
+      "title": "Ertragsdetails",
+      "subtitle": "Täglich aufgelaufene Erträge dieser Order.",
       "back": "Zurück",
-      "entry": "Ausschüttungsdetails",
+      "entry": "Ertragsdetails",
       "table": {
         "interestDate": "Zinsdatum",
         "amount": "Menge",
         "creditedAt": "Gutgeschrieben am"
       },
-      "empty": "Noch keine Zinsausschüttungen."
+      "empty": "Noch keine Erträge."
     },
     "status": {
       "product": {

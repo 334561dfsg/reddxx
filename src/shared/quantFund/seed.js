@@ -13,25 +13,27 @@ const users = {
 }
 const REVIEWER = '模拟审核员'
 
-// [published average daily %, term days (null = flexible), min, max, initial funding %, risk]
+// Client tiers (2026-11-27): [daily %, lock days (null = none), min, max, initial funding %, risk]
 const tiers = [
   [0.73, null, 4999, 99999, 60, 'LOW'],
   [1.25, 7, 100000, 499999, 55, 'LOW'],
   [1.79, 15, 500000, 999999, 50, 'LOW'],
   [2.35, 30, 1000000, 4999999, 45, 'LOW'],
-  [2.93, 60, 5000000, 10000000, 40, 'LOW'],
-  [3.55, 90, 10000000, 100000000, 35, 'MEDIUM'],
+  [2.93, 60, 5000000, 9999999, 40, 'LOW'],
+  [3.55, 120, 10000000, 100000000, 35, 'MEDIUM'],
 ]
+/** The client's example early-redemption rate; each product's rate is configurable in the admin. */
+const EARLY_FEE = 0.73
 
 export function seedProducts(now) {
-  return tiers.map(([rate, termDays, minAmount, maxAmount, initialPercent, riskLevel], vip) => ({
+  return tiers.map(([dailyRate, lockDays, minAmount, maxAmount, initialPercent, riskLevel], vip) => ({
     productId: `QF-VIP${vip}`, code: `QF-VIP${vip}`, name: `AI Fund (Quant Automated Arbitrage) VIP ${vip}`,
-    description: 'AI-managed quantitative arbitrage strategy. Principal is locked for the stated term and earns the published average daily return.',
+    description: 'AI-managed quantitative arbitrage strategy. Interest accrues daily inside the order and is paid out with the principal on redemption.',
     asset: 'USDT', riskLevel, tags: ['AI Strategy', 'US Equity'], sortOrder: (tiers.length - vip) * 10,
-    termDays, minHoldDays: termDays === null ? 1 : null, minAmount, maxAmount,
-    totalQuota: Math.ceil(maxAmount / 100000) * 100000 * 20, initialPercent,
-    // A ±20% band around the published rate keeps the displayed average equal to the catalogue figure.
-    dailyRate: {min: Number((rate * 0.8).toFixed(2)), max: Number((rate * 1.2).toFixed(2))},
+    lockDays, earlyRedeemFeeRate: lockDays === null ? 0 : EARLY_FEE, minAmount, maxAmount,
+    totalQuota: Math.ceil(maxAmount / 100000) * 100000 * 20, initialPercent, dailyRate,
+    // Demo of the restricted list: this user sees VIP 5 as full.
+    restrictedUserIds: vip === 5 ? ['USR-1004'] : [],
     minVerificationLevel: 'none', minVipLevel: vip, status: 'listed', version: 1, updatedAt: now,
   }))
 }
@@ -46,11 +48,13 @@ export function seedQuantFund(now = Date.now()) {
   // Each story: [start (days ago), user, product, amount, steps]; steps run in global time order below.
   const stories = [
     [20, 'USR-DEMO', 'QF-VIP0', 8000, [['approve', 1], ['requestRedeem', 15 * 24], ['approveRedeem', 15 * 24 + 2]]],
+    // Lock ended 10 days ago and it kept earning, until VIP 2 reached 100% (see the funding step) and it was auto-redeemed.
     [25, 'USR-1002', 'QF-VIP2', 600000, [['approve', 1]]],
     [12, 'USR-1002', 'QF-VIP0', 20000, [['approve', 1], ['requestRedeem', 11 * 24]]],
     [10, 'USR-1004', 'QF-VIP3', 2000000, [['approve', 2]]],
     [6, 'USR-1004', 'QF-VIP0', 50000, [['approve', 1]]],
-    [3, 'USR-DEMO', 'QF-VIP1', 120000, [['approve', 1]]],
+    // Inside the 7-day lock: an early redemption waiting for review (fee = principal × 0.73%).
+    [3, 'USR-DEMO', 'QF-VIP1', 120000, [['approve', 1], ['requestRedeem', 2 * 24]]],
     [1, 'USR-1003', 'QF-VIP0', 6000, [['reject', 1]]],
     [8 / 24, 'USR-1002', 'QF-VIP1', 150000, []],
     [3 / 24, 'USR-1003', 'QF-VIP0', 5000, []],
@@ -64,7 +68,16 @@ export function seedQuantFund(now = Date.now()) {
   })
   events.sort((a, b) => a.at - b.at || a.story - b.story || a.step - b.step)
   const orderOf = {}, redemptionOf = {}
+  // Three days ago an operator raised VIP 2's initial funding to 97%: with the 600,000 order it reached 100%,
+  // so that order (past its lock period) was redeemed automatically and the quota was released.
+  events.push({at: now - 3 * DAY, story: 99, step: 0, action: 'fill'})
+  events.sort((a, b) => a.at - b.at || a.story - b.story || a.step - b.step)
   for (const e of events) {
+    if (e.action === 'fill') {
+      const p = s.products.find(x => x.productId === 'QF-VIP2')
+      run('saveProduct', {product: {...p, initialPercent: 97}, expectedVersion: p.version, actor: '模拟运营'}, e.at)
+      continue
+    }
     if (e.action === 'subscribe') { run('subscribe', e.args, e.at); orderOf[e.story] = lastOrder(); continue }
     if (e.action === 'requestRedeem') { run('requestRedeem', {orderId: orderOf[e.story], userId: s.orders.find(o => o.orderId === orderOf[e.story]).userId}, e.at); redemptionOf[e.story] = lastRedemption(); continue }
     if (e.action === 'approveRedeem') { run('approveRedeem', {redemptionId: redemptionOf[e.story], actor: REVIEWER}, e.at); continue }

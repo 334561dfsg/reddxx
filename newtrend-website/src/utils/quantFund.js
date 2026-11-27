@@ -3,15 +3,19 @@
 
 const TAGS = ['AI Strategy', 'US Equity']
 
-/** Public catalog snapshot (2026-11-26). Quota figures are local mock values. */
+/**
+ * Client tiers (confirmed 2026-11-27). termDays is the lock period (null = none, redeemable any time): inside it a
+ * redemption pays a fee of earlyRedeemFeeRate% of principal; after it the order keeps earning until redeemed.
+ * Quota figures are local mock values; restrictedUids see the product as full.
+ */
 export function createQuantFundCatalog() {
   return [
     [0.73, null, 4999, 99999, 83.6, 'LOW'],
     [1.25, 7, 100000, 499999, 79.8, 'LOW'],
     [1.79, 15, 500000, 999999, 75.9, 'LOW'],
     [2.35, 30, 1000000, 4999999, 69.6, 'LOW'],
-    [2.93, 60, 5000000, 10000000, 52.8, 'LOW'],
-    [3.55, 90, 10000000, 100000000, 43.6, 'MEDIUM'],
+    [2.93, 60, 5000000, 9999999, 52.8, 'LOW'],
+    [3.55, 120, 10000000, 100000000, 43.6, 'MEDIUM'],
   ].map(([rate, termDays, minAmount, maxAmount, progress, riskLevel], vip) => {
     const totalQuota = Math.ceil(maxAmount / 100000) * 100000 * 20
     return {
@@ -22,7 +26,9 @@ export function createQuantFundCatalog() {
       averageDailyReturnPercent: rate,
       dailyRate: rate / 100,
       termDays,
-      minHoldDays: termDays === null ? 1 : null,
+      minHoldDays: null,
+      earlyRedeemFeeRate: termDays === null ? 0 : 0.73,
+      restrictedUids: [],
       minAmount,
       maxAmount,
       totalQuota,
@@ -30,12 +36,14 @@ export function createQuantFundCatalog() {
       perUserQuota: maxAmount,
       riskLevel,
       strategyTags: [...TAGS],
-      description: 'AI-managed quantitative arbitrage strategy. Principal is locked for the stated term and earns the published average daily return.',
+      description: 'AI-managed quantitative arbitrage strategy. Interest accrues daily inside the order and is paid out with the principal on redemption.',
     }
   })
 }
 
 export const availableQuota = product => Math.max(0, product.totalQuota - product.subscribed)
+/** A user on the product's restricted list sees it full: nothing available to them. */
+export const restrictedFor = (product, uid) => uid != null && (product.restrictedUids || []).includes(String(uid))
 export const fundProgress = product => Math.min(100, product.subscribed / product.totalQuota * 100)
 export const isAmountDraft = value => value === '' || /^\d*(\.\d*)?$/.test(value)
 
@@ -75,8 +83,9 @@ export function createFundAccount(balances = {real: 0, demo: 100000}) {
  * no term countdown until an explicit approval (not part of this prototype).
  * Balance and product quota are reserved atomically; a repeated request id returns the first order.
  */
-export function subscribeFund(account, product, value, {mode, requestId, now = Date.now()}) {
+export function subscribeFund(account, product, value, {mode, requestId, now = Date.now(), uid = null}) {
   if (requestId && account.requests[requestId]) return {order: account.orders.find(order => order.id === account.requests[requestId])}
+  if (restrictedFor(product, uid)) return {error: {kind: 'exceedsAvailable', available: 0}}
   const balance = account.balances[mode]
   const error = fundSubscriptionError(product, value, balance)
   if (error) return {error}
@@ -91,7 +100,8 @@ export function subscribeFund(account, product, value, {mode, requestId, now = D
     status: 'pending_review',
     dailyReturnPercentSnapshot: product.averageDailyReturnPercent,
     termDaysSnapshot: product.termDays,
-    minHoldDaysSnapshot: product.minHoldDays,
+    minHoldDaysSnapshot: null,
+    earlyRedeemFeeRateSnapshot: product.earlyRedeemFeeRate ?? 0,
     subscribedAt: now,
     maturityDate: null,
     interestPaidTotal: 0,
@@ -105,7 +115,7 @@ export function subscribeFund(account, product, value, {mode, requestId, now = D
 
 // Same six order statuses as the admin 量化基金 (no cancelled / awaiting top-up flow exists, 2026-11-27).
 export const PENDING_STATUSES = ['pending_review', 'redeem_pending_review']
-export const HISTORY_STATUSES = ['settled', 'redeemed', 'rejected']
+export const HISTORY_STATUSES = ['redeemed', 'rejected']
 
 export function filterFundOrders(orders, group, historyStatus = 'all') {
   if (group === 'pending') return orders.filter(order => PENDING_STATUSES.includes(order.status))
@@ -116,12 +126,12 @@ export function filterFundOrders(orders, group, historyStatus = 'all') {
 
 export function fundSummary(orders) {
   const active = orders.filter(order => order.status === 'active')
-  const settled = orders.filter(order => ['settled', 'redeemed'].includes(order.status))
+  const settled = orders.filter(order => order.status === 'redeemed')
   return {
     totalPrincipal: active.reduce((sum, order) => sum + order.principal, 0),
     totalProjectedInterest: active.reduce((sum, order) => sum + order.principal * order.dailyReturnPercentSnapshot / 100 * (order.termDaysSnapshot ?? 0), 0),
     activeInterestPaidTotal: active.reduce((sum, order) => sum + order.interestPaidTotal, 0),
-    settledTotalReceived: settled.reduce((sum, order) => sum + order.principal + order.interestPaidTotal, 0),
+    settledTotalReceived: settled.reduce((sum, order) => sum + (order.returned ?? order.principal + order.interestPaidTotal), 0),
     activeCount: active.length,
     pendingCount: orders.filter(order => PENDING_STATUSES.includes(order.status)).length,
   }
@@ -153,64 +163,59 @@ export function heldDays(order, now = Date.now()) {
 
 /** Reference "預估" line: interest accrued on an active order but not yet paid out. */
 export function accruedInterestEstimate(order, now = Date.now()) {
-  if (order.status !== 'active') return 0
+  if (!['active', 'redeem_pending_review'].includes(order.status)) return 0
   return Math.max(0, round2(order.principal * order.dailyReturnPercentSnapshot / 100 * heldDays(order, now) - order.interestPaidTotal))
 }
 
-/** Only running flexible orders expose redemption, matching the reference positions row. */
-export const canRedeemFund = order => order.status === 'active' && order.termDaysSnapshot == null
+/** Any running order can be redeemed; inside the lock period the early-redemption fee applies. */
+export const canRedeemFund = order => order.status === 'active'
+/** maturityDate marks the end of the lock period; after it the order keeps earning until redeemed. */
+export const fundInLock = (order, now = Date.now()) => !!order.maturityDate && now < order.maturityDate
+/** Early-redemption fee: the snapshot rate on principal while locked, whatever the days left; none after the lock. */
+export const earlyRedeemFee = (order, now = Date.now()) => (fundInLock(order, now) ? round2(order.principal * (order.earlyRedeemFeeRateSnapshot ?? 0) / 100) : 0)
 
 /**
- * Redemption needs an admin review (user decision, 2026-11-27): the request only moves a running flexible order to
- * redeem_pending_review; interest keeps accruing until the review. A repeated call is a conflict, not a second request.
+ * Redemption needs an admin review (user decision, 2026-11-27): the request only moves a running order to
+ * redeem_pending_review and fixes the fee at that moment; interest keeps accruing until the review.
+ * A repeated call is a conflict, not a second request.
  */
 export function requestRedeemFund(order, now = Date.now()) {
   if (!order || !canRedeemFund(order)) return {error: 'conflict'}
+  order.redeemEarly = fundInLock(order, now)
+  order.redeemFee = earlyRedeemFee(order, now)
   order.status = 'redeem_pending_review'
   order.redeemRequestedAt = now
   return {order}
 }
 
 /**
- * Settlement applied once a redemption is approved (the admin's 赎回审核 owns approval; the public mock never reaches it): interest for whole held days (none below the minimum
- * hold), minus interest already paid, credited with principal to the order's own account mode.
- * The status guard makes a repeated call a no-op conflict instead of a second payout.
+ * Closes an order: interest accrued in the order (whole held days, on principal) is paid out with the principal,
+ * minus any fee, to the order's own account mode; the product quota is released. Status-guarded.
  */
-export function redeemFund(account, order, product, now = Date.now()) {
-  if (!order || !canRedeemFund(order)) return {error: 'conflict'}
+export function closeFundOrder(account, order, product, now = Date.now(), {fee = 0, auto = false} = {}) {
+  if (!order || !['active', 'redeem_pending_review'].includes(order.status)) return {error: 'conflict'}
   const days = heldDays(order, now)
-  const eligible = days > 0 && days >= (order.minHoldDaysSnapshot ?? 0)
-  const interest = eligible ? Math.max(0, round2(order.principal * order.dailyReturnPercentSnapshot / 100 * days - order.interestPaidTotal)) : 0
-  order.status = 'redeemed'
-  order.settledAt = now
-  order.heldDays = days
-  order.settledInterest = interest
-  order.interestPaidTotal = round2(order.interestPaidTotal + interest)
+  const interest = Math.max(0, round2(order.principal * order.dailyReturnPercentSnapshot / 100 * days - order.interestPaidTotal))
   if (interest > 0) (order.interestRecords ||= []).unshift({interestDate: now, amount: interest, creditedAt: now})
-  account.balances[order.mode] = round2((account.balances[order.mode] || 0) + order.principal + interest)
+  order.interestPaidTotal = round2(order.interestPaidTotal + interest)
+  const returned = round2(order.principal + order.interestPaidTotal - fee)
+  Object.assign(order, {status: 'redeemed', settledAt: now, heldDays: days, redeemFee: fee, returned, autoRedeemed: auto})
+  account.balances[order.mode] = round2((account.balances[order.mode] || 0) + returned)
   if (product) product.subscribed = Math.max(0, product.subscribed - order.principal)
-  return {order, principal: order.principal, interest, days}
+  return {order, returned, days}
 }
 
 /**
- * Fixed-term orders whose maturity has passed settle automatically: the remaining term interest is paid as a final
- * payout row, principal + interest are credited to the order's mode and the product quota is released.
- * Returns the settled orders; safe to call repeatedly.
+ * While a product is at 100% progress, every order past its lock period is redeemed automatically (no fee) to
+ * release quota; locked orders keep running. Returns the redeemed orders; safe to call repeatedly.
  */
-export function settleMaturedFunds(account, findProduct, now = Date.now()) {
-  const settled = []
+export function autoRedeemFullFunds(account, findProduct, now = Date.now()) {
+  const redeemed = []
   for (const order of account.orders) {
-    if (order.status !== 'active' || order.termDaysSnapshot == null || !order.maturityDate || order.maturityDate > now) continue
-    const due = round2(order.principal * order.dailyReturnPercentSnapshot / 100 * order.termDaysSnapshot)
-    const interest = Math.max(0, round2(due - order.interestPaidTotal))
-    if (interest > 0) (order.interestRecords ||= []).unshift({interestDate: order.maturityDate, amount: interest, creditedAt: order.maturityDate})
-    order.interestPaidTotal = round2(order.interestPaidTotal + interest)
-    order.status = 'settled'
-    order.settledAt = order.maturityDate
-    account.balances[order.mode] = round2((account.balances[order.mode] || 0) + order.principal + interest)
     const product = findProduct?.(order.productId)
-    if (product) product.subscribed = Math.max(0, product.subscribed - order.principal)
-    settled.push(order)
+    if (!product || fundProgress(product) < 100 || order.status !== 'active' || fundInLock(order, now)) continue
+    closeFundOrder(account, order, product, now, {auto: true})
+    redeemed.push(order)
   }
-  return settled
+  return redeemed
 }

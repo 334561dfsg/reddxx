@@ -8,7 +8,7 @@ import {message} from 'ant-design-vue'
 import {useRouter} from 'vue-router'
 import {fmt,path} from '../../data'
 import {openModal,session} from '../../session'
-import {filterFundOrders,fundDate,HISTORY_STATUSES,accruedInterestEstimate,canRedeemFund} from '../../utils/quantFund'
+import {filterFundOrders,fundDate,HISTORY_STATUSES,accruedInterestEstimate,canRedeemFund,earlyRedeemFee,fundInLock} from '../../utils/quantFund'
 import RequestState from '../ui/RequestState.vue'
 import Skeleton from '../ui/Skeleton.vue'
 import {getQuantFundPositions,redeemQuantFund} from '../../api/quantFund.js'
@@ -57,7 +57,8 @@ function confirmRedeem(order){
  openModal('account-confirm','aiQuant.quantFund.redeem.title',{
   returnFocus:()=>focusRow(order.id),
   subtitle:`${fmt(order.principal)} ${order.asset}`,
-  description:'aiQuant.quantFund.redeem.reviewNotice',
+  // Inside the lock period the notice states the fixed fee (principal × rate, whatever the days left).
+  description:fundInLock(order)?{key:'aiQuant.quantFund.redeem.earlyFeeNotice',params:{rate:order.earlyRedeemFeeRateSnapshot,fee:fmt(earlyRedeemFee(order)),currency:order.asset}}:'aiQuant.quantFund.redeem.reviewNotice',
   cancelLabel:'aiQuant.quantFund.redeem.cancel',confirmLabel:'aiQuant.quantFund.redeem.confirm',
   // Async confirm: the dialog shows a busy confirm action and keeps every close path held until this settles.
   async onConfirm(){
