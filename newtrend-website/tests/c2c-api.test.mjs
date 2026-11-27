@@ -31,7 +31,7 @@ test('sell locks balance in its mode, prices from the server quote, blocks delet
   assert.equal(balanceOf('demo', 'USDT'), before - 3000)
   await assert.rejects(createC2COrder({mode: DEMO, side: 'sell', symbol: 'USDT', quantity: 3000, accountId: account.id, requestId: 'c2c-api-1'}), {code: 'c2c.error.OTC_ORDER_NOT_OPERABLE'})
   assert.equal((await listC2COrders(DEMO)).length, 1)
-  assert.equal((await listC2COrders(REAL)).length, 0, 'orders are per mode')
+  assert.ok(!(await listC2COrders(REAL)).some(o => o.id === order.id), 'orders are per mode')
   assert.equal((await getC2COrder(order.id, DEMO)).id, order.id)
   await assert.rejects(getC2COrder(order.id, REAL), {code: 'notFound'})
   await assert.rejects(deletePaymentAccount(account.id), {code: 'c2c.error.OTC_USER_PAYMENT_ACCOUNT_IN_USE'})

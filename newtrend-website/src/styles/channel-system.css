@@ -24,10 +24,21 @@
  #main-content#main-content .loan-market-hero{margin:0;padding:0;min-height:0}
  #main-content#main-content .c2c-heading:not(:has(.c2c-add)){display:none}
  #main-content#main-content .c2c-heading{margin:0 0 12px}
- /* Sticky section switch under the 56px header with a solid backdrop band; 12px rhythm below it. */
- #main-content#main-content .finance-page>.subnav,#main-content#main-content .c2c-page>.c2c-nav{position:sticky;top:64px;z-index:20;margin-bottom:12px;box-shadow:0 0 0 8px var(--nt-bg,#05070b),0 -8px 0 8px var(--nt-bg,#05070b)}
+ /* Sticky section switch under the 56px header, floating on a translucent blurred surface; 12px rhythm below it. */
+ #main-content#main-content .finance-page>.subnav,#main-content#main-content .c2c-page>.c2c-nav{position:sticky;top:64px;z-index:20;margin-bottom:12px;background:color-mix(in srgb,#15181c 82%,transparent);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
  #main-content#main-content .finance-page{padding-top:12px}
  #main-content#main-content .c2c-page{padding-top:12px}
  #main-content#main-content .finance-page .earn-hero{gap:12px}
  #main-content#main-content .finance-page .earn-featured{margin-top:16px}
+ /* One phone section switch for both channels: equal-width segments filling the row, 40px tall (4px track + 32px
+    tabs), no shadow band — only the translucent track. Covers 理財/借貸, C2C, 量化基金 and AI 策略. */
+ #main-content#main-content :is(.finance-page>.subnav,.c2c-page>.c2c-nav,.quant-page>.subnav,.strategy-page .strategy-nav){display:flex;flex-wrap:nowrap;gap:2px;padding:4px;border:1px solid #ffffff0d;border-radius:999px;box-shadow:none;overflow:visible;cursor:auto}
+ #main-content#main-content :is(.finance-page>.subnav,.c2c-page>.c2c-nav,.quant-page>.subnav,.strategy-page .strategy-nav)>a{flex:1 1 0;min-width:0;min-height:32px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:14px;line-height:20px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #main-content#main-content :is(.finance-page>.subnav,.c2c-page>.c2c-nav,.quant-page>.subnav,.strategy-page .strategy-nav)>a :is(.nt-icon,.earn-icon,.c2c-icon,svg){width:14px;height:14px;flex:none}
+ #main-content#main-content :is(.finance-page>.subnav,.c2c-page>.c2c-nav,.quant-page>.subnav,.strategy-page .strategy-nav)>a:is(.router-link-exact-active,.active){font-weight:600}
+ /* C2C has four sections: on narrow phones the labels alone fit without clipping (the icons are decorative). */
+ #main-content#main-content .c2c-page>.c2c-nav>a{padding:6px 4px}
+}
+@media(max-width:420px){
+ #main-content#main-content .c2c-page>.c2c-nav>a :is(.c2c-icon,svg){display:none}
 }

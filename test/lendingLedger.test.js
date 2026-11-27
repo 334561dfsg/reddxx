@@ -71,7 +71,7 @@ test('Mock service isolates instances, rejects invalid config and returns copies
  a.command('saveProduct',{product:{...p,productName:'Changed'}})
  assert.notEqual(b.read().products[0].productName,'Changed')
  assert.throws(()=>a.command('saveProduct',{product:{...p,loanTerms:[]}}),/terms/)
- const snapshot=a.read();snapshot.orders.push({});assert.equal(a.read().orders.length,0)
+ const snapshot=a.read(),count=snapshot.orders.length;snapshot.orders.push({});assert.equal(a.read().orders.length,count)
 })
 test('config save detects a stale product draft after another edit',()=>{
  const service=createLendingService(),p=service.read().products[0]
@@ -155,11 +155,12 @@ test('shared risk settings validate atomically, log and snapshot only new applic
 })
 test('unsecured products skip collateral validation and reservation; secured products require valid collateral',()=>{
  const service=createLendingService(),p=service.read().products[0]
+ const btcBefore=service.read().balances['USR-DEMO'].BTC
  service.command('saveProduct',{product:{...p,collateralEnabled:false,collateralMultiplier:null,collateralCurrencies:[],collateralWarningThreshold:1}})
  assert.equal('collateralWarningThreshold' in service.read().products[0],false)
  service.command('apply',{requestId:'unsecured',userId:'USR-DEMO',productId:p.productId,amount:1000,days:7})
  const s=service.read();assert.equal(s.orders[0].collateralStatus,'none');assert.equal(s.orders[0].collateralAmount,0)
- assert.equal(s.balances['USR-DEMO'].BTC,10)
+ assert.equal(s.balances['USR-DEMO'].BTC,btcBefore)
  assert.throws(()=>service.command('saveProduct',{product:{...p,collateralMultiplier:null}}),/product/)
  assert.throws(()=>service.command('saveProduct',{product:{...p,collateralCurrencies:[]}}),/product/)
 })

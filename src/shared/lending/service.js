@@ -1,10 +1,10 @@
 import {validateEligibility} from './eligibility.js'
 import { normalizeLoanTerms } from './terms.js'
-import { seedLending } from './seed.js'
+import { seedLending, seedLendingOrders } from './seed.js'
 import { transact, accrue } from './domain.js'
 // One in-memory instance per page (resets on reload). No disk or browser persistence.
 export function createLendingService() {
- let state = seedLending()
+ let state = seedLendingOrders(seedLending())
  return {
   read() { accrue(state);return structuredClone(state) },
   command(action,args) {

@@ -447,19 +447,19 @@ The binding standard for every page of the 金融 (`/earn`, `/c2c`, lending) and
 - Spacing rhythm 12px between blocks, between cards and inside cards; no large section padding.
 - Lists of records become cards: head (name + status), two-column label/value fields with units inline, actions in a row at the foot. Never squeeze a wide table.
 - Product rows that compete for attention (today's picks, featured products) are a horizontal swipe row (`scroll-snap`, ~80–86% card width, `overscroll-behavior-x: contain`).
-- The section switch (AI Quant, 理財/我的理財, 借貸/我的借貸, C2C) is sticky under the 56px site header with a solid backdrop band; page headings it repeats (我的收益, 我的借款, C2C 交易 …) and channel heroes (理財中心, 加密借貸) are visually hidden; actions in a heading (C2C 新增帳戶) stay.
+- The section switch (AI Quant, 理財/我的理財, 借貸/我的借貸, C2C) is sticky under the 56px site header as a floating pill (translucent blurred track, no shadow band) with equal-width segments that fill the row (40px: 4px track + 32px tabs, one shared rule in `channel-system.css`); C2C's four segments drop their icons below 420px so labels never clip; page headings it repeats (我的收益, 我的借款, C2C 交易 …) and channel heroes (理財中心, 加密借貸) are visually hidden; actions in a heading (C2C 新增帳戶) stay.
 - The site footer appears only on the home page; `#site-shell` uses `overflow-x: clip` so the page never drags sideways.
 - Detail pages put the primary action right after the product summary (e.g. fund detail: rate, term, progress, 立即申購 before calculator and flow).
 
 ### 4. Secondary pages (phones)
 - `components/ui/BackLink.vue` is the only back control: desktop shows the in-page "← back" link; phones get a fixed app top bar (back arrow, centred `title`, safe-area aware) and `html.nt-has-page-bar` hides the site header, footer, in-page link and list section tabs. Every secondary page passes a `title`.
 - No outer card around the page; one summary card, then the list.
-- List pages fill the viewport: bar, summary and column header stay fixed, only the list scrolls (strategy stats `.ds-list`, interest records `.qf-interest-scroll` with a sticky table header); hide the list scrollbar when it would cover figures.
+- List pages fill the viewport: bar, summary and column header stay fixed, only the list scrolls (strategy stats `.ds-list`; interest records `.qf-interest-scroll` with a `.qf-ir-head` column row outside the scroller and a `<colgroup>` fixing the column widths so header and rows align — the table's own thead stays for assistive technology only); hide the list scrollbar when it would cover figures.
 
 ### 5. Lists and loading
 - Phones never page: `useFinancePagination` accumulates pages at ≤767px and `<FinancePagination scroll>` becomes a load-more sentinel (keyed by page so a still-visible sentinel fires again) followed by 沒有更多了. Every client-side list passes `scroll`. Reset the loaded count only when the record changes, not on every refresh.
 - Server-paged lists (notifications, account records) keep the compact `‹ 共 X 條，第 n/m 頁 ›` row; a single page shows no pager. Desktop keeps numbered paging.
-- Mock data must be long enough to exercise scrolling (e.g. 30+ days on running strategies and active flexible fund orders).
+- Mock data must be long enough to exercise scrolling: 30–90 days on running strategies and active flexible fund orders, and 20+ records in each history list (fund orders, strategies, Earn orders/redemptions/rewards, lending orders, C2C orders). C2C orders use the same `useFinancePagination` + `<FinancePagination scroll>` pair. Tests assert seeds relatively (counts and balances derived from the seed), not as fixed totals.
 
 ### 6. Overlays
 - Strategy detail drawer, strategy/fund subscription dialogs and fund order drawer use the same type system (20/28 title, body font, two-line product names).

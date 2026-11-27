@@ -29,13 +29,22 @@ export function createEarnPortfolio(now = Date.now()) {
     { id: 'mock-order-review', productId: 'usdc', symbol: 'USDC', amount: 3200, status: 'pending_review', createdAt: now - 2 * 3600000, completedAt: null },
     { id: 'mock-order-rejected', productId: 'usdt30', symbol: 'USDT', amount: 1800, status: 'rejected', createdAt: now - 2 * DAY, completedAt: now - DAY },
   )
+  // Older finished subscriptions (redeemed since) so the order list has enough rows to load on scroll (2026-11-27).
+  const history = [['usdt', 'USDT', 3000], ['usdt30', 'USDT', 5000], ['btc', 'BTC', .05], ['usdt90', 'USDT', 8000], ['eth', 'ETH', 1.5], ['usdt', 'USDT', 1200], ['usdc', 'USDC', 2500], ['usdt180', 'USDT', 10000]]
+  for (let i = 0; i < 16; i++) {
+    const [productId, symbol, amount] = history[i % history.length], at = now - (40 + i * 5) * DAY
+    orders.push({ id: `mock-order-history-${i + 1}`, productId, symbol, amount, status: 'completed', createdAt: at, completedAt: at + 3600000 })
+  }
   const redemptions = [
     { id: 'mock-redeem-pending', holdingId: 'mock-redeeming-eth', productId: 'eth', symbol: 'ETH', amount: 2, reward: .0012, type: 'flexibleFull', status: 'pending', createdAt: now - 3600000, completedAt: null },
     { id: 'mock-redeem-usdt', productId: 'usdt', symbol: 'USDT', amount: 2500, reward: 8.61, type: 'flexiblePartial', status: 'completed', createdAt: now - 3 * DAY, completedAt: now - 3 * DAY + 600000 },
     { id: 'mock-redeem-maturity', productId: 'usdt30', symbol: 'USDT', amount: 3000, reward: 14.76, type: 'fixedMatured', status: 'completed', createdAt: now - 7 * DAY, completedAt: now - 7 * DAY + 600000 },
     { id: 'mock-redeem-early', productId: 'usdt180', symbol: 'USDT', amount: 1000, reward: 0, type: 'fixedEarly', status: 'completed', createdAt: now - 12 * DAY, completedAt: now - 12 * DAY + 600000 },
+    ...Array.from({ length: 14 }, (_, i) => ({ id: `mock-redeem-history-${i + 1}`, productId: i % 2 ? 'usdt' : 'usdt30', symbol: 'USDT',
+      amount: [1500, 2000, 800, 5000][i % 4], reward: [4.2, 6.9, 2.1, 24.6][i % 4], type: i % 2 ? 'flexiblePartial' : 'fixedMatured', status: 'completed',
+      createdAt: now - (16 + i * 4) * DAY, completedAt: now - (16 + i * 4) * DAY + 600000 })),
   ]
-  const rewards = Array.from({ length: 8 }, (_, index) => ({
+  const rewards = Array.from({ length: 40 }, (_, index) => ({
     id: `mock-reward-${index + 1}`, productId: index % 3 === 0 ? 'btc' : 'usdt',
     symbol: index % 3 === 0 ? 'BTC' : 'USDT', amount: index % 3 === 0 ? .00000882 : 1.476,
     status: index === 0 ? 'accrued' : 'paid', rewardAt: now - (index + 1) * DAY,
