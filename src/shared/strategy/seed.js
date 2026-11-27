@@ -4,7 +4,8 @@ import {createStrategyState, templateSnapshot, DEFAULT_POLICY, DAY, INIT_MS, SYS
 
 // Seed for the shared strategy mock: the public catalogue's nine templates, the 真實 records the public site
 // used to keep locally (USR-DEMO, the public demo user) and a few other users so review and settlement can be tried.
-// Dates are relative to service start; daily P&L rows sum exactly to each record's P&L.
+// Dates are relative to service start; daily P&L rows sum exactly to each record's P&L. The demo user's running and
+// paused strategies carry 30+ trading days so the stats list has enough rows to page / load on scroll (user request).
 const code = key => key.split('.').pop()
 const returnRange = {conservative: {min: -0.3, max: 0.5}, balanced: {min: -0.6, max: 1}, aggressive: {min: -1.5, max: 2.2}}
 
@@ -30,8 +31,8 @@ const users = {
 
 // [id, user, template, {capital, days, startDaysAgo, status, pnl, stoppedDaysAgo, endReason, takeProfit?, stopLoss?}]
 const records = [
-  ['seed-real-strategy-2', 'USR-DEMO', 'Stable Crypto Income', {capital: 1000, days: 14, startDaysAgo: 6, status: 'paused', pnl: -8.5}],
-  ['seed-real-strategy-1', 'USR-DEMO', 'Diversified Index Growth', {capital: 2000, days: 30, startDaysAgo: 12, status: 'running', pnl: 36.2}],
+  ['seed-real-strategy-2', 'USR-DEMO', 'Stable Crypto Income', {capital: 1000, days: 90, startDaysAgo: 48, status: 'paused', pnl: -8.5}],
+  ['seed-real-strategy-1', 'USR-DEMO', 'Diversified Index Growth', {capital: 2000, days: 90, startDaysAgo: 55, status: 'running', pnl: 36.2}],
   ['seed-real-strategy-3', 'USR-DEMO', 'FX Carry Conservative', {capital: 800, days: 30, startDaysAgo: 40, status: 'completed', pnl: 12.4, stoppedDaysAgo: 10, endReason: 'user_stop'}],
   ['seed-real-strategy-4', 'USR-DEMO', 'Balanced Crypto Alpha', {capital: 1500, days: 21, startDaysAgo: 44, status: 'completed', pnl: -22.8, stoppedDaysAgo: 23, endReason: 'expired'}],
   ['seed-real-strategy-5', 'USR-DEMO', 'FX Momentum Balanced', {capital: 1200, days: 30, startDaysAgo: 48, status: 'completed', pnl: 18.6, stoppedDaysAgo: 18, endReason: 'expired'}],
