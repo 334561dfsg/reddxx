@@ -1,2 +1,2 @@
-// Client for the shared in-memory lending mock served by the root dev server (/api/mock/lending), also used by admin.
+// Client for the lending Mock (in-page static data, see src/shared/lending/client.js), same module as the admin.
 export {useLendingFeed,lendingCommand} from '../../../src/shared/lending/client.js'

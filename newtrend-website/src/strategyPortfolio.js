@@ -6,7 +6,7 @@ import {bootAt, clock} from './mock/clock.js'
 import {strategyState, strategyCommand} from './platform/strategyClient.js'
 
 // AI strategy data for both account modes.
-// - Catalogue: the listed templates of the shared strategy Mock (/api/mock/strategy), configured in the admin (AI 策略).
+// - Catalogue: the listed templates of the strategy Mock (in-page static data seeded like the admin's).
 // - 真實: records, balance and commands live on the shared Mock (user USR-DEMO), so admin review, force stop and
 //   generated daily P&L show up here. Nothing is kept in the browser.
 // - 模擬: a local account bound to the demo ledger, as before (the admin does not manage demo play money).

@@ -1,14 +1,17 @@
 import {ref,onMounted,onUnmounted} from 'vue'
 import {createLedger} from './domain.js'
+import {createLendingService} from './service.js'
+// Static data (user decision, 2026-11-27): the lending Mock runs in this page's memory, so a static deploy needs no
+// server. Each page load starts from the seed; nothing is persisted and admin/public no longer share live state.
 export const lendingState=ref(createLedger())
 export const lendingError=ref(''), lendingBusy=ref(false)
 let revision=0
+let service=null
 async function request(options) {
- const response=await fetch('/api/mock/lending',{...options,headers:{'Content-Type':'application/json'},cache:'no-store'})
- if(!response.headers.get('content-type')?.includes('application/json'))throw new Error('unavailable')
- const result=await response.json()
- if(!response.ok)throw new Error(result.error||'unavailable')
- return result
+ service||=createLendingService()
+ if(!options)return service.read()
+ const {action,args}=JSON.parse(options.body)
+ return service.command(action,args)
 }
 export async function refreshLending() {
  const version=++revision

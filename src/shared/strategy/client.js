@@ -1,18 +1,21 @@
 import {ref, onMounted, onUnmounted} from 'vue'
 import {createStrategyState} from './domain.js'
+import {createStrategyService} from './service.js'
 
-// Browser client for the shared strategy Mock (/api/mock/strategy), used by the admin and the public 真實 mode.
-// State lives on the dev/preview server only; there is no browser fallback copy.
+// Client for the strategy Mock, used by the admin and the public 真實 mode. Static data (user decision, 2026-11-27):
+// the Mock runs in this page's memory, so a static deploy needs no server. Each page load starts from the seed;
+// nothing is persisted and the admin and public site no longer share live state.
 export const strategyState = ref(createStrategyState())
 export const strategyError = ref(''), strategyBusy = ref(false), strategyLoaded = ref(false)
 let revision = 0
 
+let service = null
+/** Same contract as the old HTTP endpoint: no body reads the state, {action, args} runs one command. */
 async function request(options) {
-  const response = await fetch('/api/mock/strategy', {...options, headers: {'Content-Type': 'application/json'}, cache: 'no-store'})
-  if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('unavailable')
-  const result = await response.json()
-  if (!response.ok) throw new Error(result.error || 'unavailable')
-  return result
+  service ||= createStrategyService()
+  if (!options) return service.read()
+  const {action, args} = JSON.parse(options.body)
+  return service.command(action, args)
 }
 export async function refreshStrategy() {
   const version = ++revision

@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { lendingMockPlugin } from './mock/lendingPlugin.js'
-import { strategyMockPlugin } from './mock/strategyPlugin.js'
 import { cp, mkdir, copyFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 
@@ -73,7 +71,7 @@ function tradeV2Prototype() {
 }
 
 export default defineConfig({
-  plugins: [vue(), lendingMockPlugin(), strategyMockPlugin(), newTrendPrototype(), tradeV2Prototype()],
+  plugins: [vue(), newTrendPrototype(), tradeV2Prototype()],
   build: {
     rollupOptions: { output:{manualChunks(id){
       const match=id.match(/newtrend-website\/src\/locales\/([^/]+)\//)

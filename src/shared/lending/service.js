@@ -2,7 +2,7 @@ import {validateEligibility} from './eligibility.js'
 import { normalizeLoanTerms } from './terms.js'
 import { seedLending } from './seed.js'
 import { transact, accrue } from './domain.js'
-// One service instance per dev/preview server. No disk or browser persistence.
+// One in-memory instance per page (resets on reload). No disk or browser persistence.
 export function createLendingService() {
  let state = seedLending()
  return {

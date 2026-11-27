@@ -1,5 +1,5 @@
 // AI strategy service. Pages call only these async functions.
-// - 真實: the shared strategy Mock on the dev/preview server (/api/mock/strategy), the same data the admin manages;
+// - 真實: the strategy Mock running in this page (static seed data, same domain as the admin);
 //   every read fetches it again, so admin review, force stop and generated daily P&L appear on the next read/poll.
 // - 模擬: the local demo account in strategyPortfolio.js.
 // Both go through mockCall() so latency and ?mock-fail=strategy apply to either mode.

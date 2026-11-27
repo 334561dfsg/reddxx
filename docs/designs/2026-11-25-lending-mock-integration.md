@@ -4,7 +4,7 @@
 
 ## 边界与运行
 
-- `/api/mock/lending` 是根 Vite dev / preview 服务中的内存 Mock 接口。无需另起子服务。
+- 2026-11-27 起改为静态数据：Mock 服务在页面内存中运行（`src/shared/lending/client.js` 直接调用 `service.js`），不再有 `/api/mock/lending` 接口，静态发布也可用；刷新即重置，后台与前台不再共享实时状态。
 - 不使用 localStorage、sessionStorage、文件或数据库保存借贷业务数据。浏览器刷新保留服务内存，重启开发/预览服务重置。
 - 根 `npm run dev` 或 `npm run build && npm run preview` 支持前后台跨标签页联动；界面每 3 秒刷新一次，离开页面停止订阅。
 - 纯静态托管不包含 Mock 接口，必须另行提供同契约服务；接口缺失时显示错误并可重试，不暗中切换浏览器本地数据。
