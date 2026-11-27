@@ -1,0 +1,33 @@
+/* Finance channel (理財, 借貸, C2C) and the two channel landings, aligned with the Finance & AI Quant channel conventions
+   (newtrend-website/AGENTS.md). Loaded globally after the design system; the doubled id outranks the per-page fidelity
+   sheets without !important. AI Quant sub-pages keep their rules in quant-system.css. */
+
+/* Landings (/earn, /ai-quant): body font, no letter-spacing on kickers. */
+#main-content#main-content .quant-landing :is(h1,h2){font-family:var(--nt-font-body)}
+#main-content#main-content .quant-landing .page-kicker{letter-spacing:0}
+
+/* Finance pages: body font instead of Syne, no letter-spacing, page title 30/38, 20px cards. */
+#main-content#main-content :is(.finance-page,.earn-detail,.loan-order-page,.c2c-page){--nt-font-display:var(--nt-font-body)}
+#main-content#main-content :is(.finance-page,.earn-detail,.loan-order-page,.c2c-page) *{letter-spacing:0}
+#main-content#main-content :is(.finance-page,.earn-detail,.loan-order-page,.c2c-page) :is(h1,h2,h3){font-family:var(--nt-font-body)}
+#main-content#main-content :is(.finance-page,.loan-order-page,.c2c-page) h1{font-size:30px;line-height:38px;font-weight:600}
+#main-content#main-content .earn-detail h1{font-size:28px;line-height:36px;font-weight:600}
+#main-content#main-content :is(.finance-page,.earn-detail,.loan-order-page) :is(.earn-panel,.loan-market-card,.earn-detail-action){border-radius:20px}
+
+@media(max-width:767px){
+ #main-content#main-content :is(.finance-page,.loan-order-page,.c2c-page) h1{font-size:24px;line-height:32px}
+ #main-content#main-content .earn-detail h1{font-size:20px;line-height:28px}
+ /* Phones trim repeated headings and marketing copy: the section switch (or the top bar) already names the page.
+    The text stays as a visually hidden heading for assistive technology. */
+ #main-content#main-content :is(.earn-hero-copy,.loan-market-hero>div:first-child,.finance-heading,.c2c-heading>div:first-child,.loan-order-page>h1){position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+ #main-content#main-content .loan-market-hero .loan-market-mine{display:none}
+ #main-content#main-content .loan-market-hero{margin:0;padding:0;min-height:0}
+ #main-content#main-content .c2c-heading:not(:has(.c2c-add)){display:none}
+ #main-content#main-content .c2c-heading{margin:0 0 12px}
+ /* Sticky section switch under the 56px header with a solid backdrop band; 12px rhythm below it. */
+ #main-content#main-content .finance-page>.subnav,#main-content#main-content .c2c-page>.c2c-nav{position:sticky;top:64px;z-index:20;margin-bottom:12px;box-shadow:0 0 0 8px var(--nt-bg,#05070b),0 -8px 0 8px var(--nt-bg,#05070b)}
+ #main-content#main-content .finance-page{padding-top:12px}
+ #main-content#main-content .c2c-page{padding-top:12px}
+ #main-content#main-content .finance-page .earn-hero{gap:12px}
+ #main-content#main-content .finance-page .earn-featured{margin-top:16px}
+}

@@ -440,14 +440,14 @@ The binding standard for every page of the 金融 (`/earn`, `/c2c`, lending) and
 - Cards 20px radius, 20–24px padding (16px on phones); pill switches stay pill-shaped.
 - Primary actions 40px, solid accent, no gradients; row actions 32px; phone dialog footers split actions into equal 44px buttons.
 - Landings: hero title 36/44, lead 15/24, card copy 14/22, one 40px action (full width on phones). Finance landing (理財中心) follows the same scale; its holdings panel leads with the total.
-- Files: `styles/quant-system.css` (AI Quant sub-pages and overlays, doubled `#main-content` id so it wins without `!important`), the `.quant-landing` block in `styles/quant-fidelity.css`, the finance block at the end of `styles/earn-fidelity.css`.
+- Files: `styles/quant-system.css` (AI Quant sub-pages and overlays), `styles/channel-system.css` (global: finance pages — `.finance-page`, `.earn-detail`, `.loan-order-page`, `.c2c-page` — and both landings), the `.quant-landing` block in `styles/quant-fidelity.css`, the finance block at the end of `styles/earn-fidelity.css`. Both system files use a doubled `#main-content` id so they win without `!important`.
 
 ### 3. Phones are an app, not a shrunk website (≤767px)
 - Trim, don't shrink: marketing heroes, decorative charts, repeated headings and stat strips are dropped on phones (headings stay visually hidden for assistive technology); data and actions must stay reachable.
 - Spacing rhythm 12px between blocks, between cards and inside cards; no large section padding.
 - Lists of records become cards: head (name + status), two-column label/value fields with units inline, actions in a row at the foot. Never squeeze a wide table.
 - Product rows that compete for attention (today's picks, featured products) are a horizontal swipe row (`scroll-snap`, ~80–86% card width, `overscroll-behavior-x: contain`).
-- The section switch is sticky under the 56px site header with a solid backdrop band.
+- The section switch (AI Quant, 理財/我的理財, 借貸/我的借貸, C2C) is sticky under the 56px site header with a solid backdrop band; page headings it repeats (我的收益, 我的借款, C2C 交易 …) and channel heroes (理財中心, 加密借貸) are visually hidden; actions in a heading (C2C 新增帳戶) stay.
 - The site footer appears only on the home page; `#site-shell` uses `overflow-x: clip` so the page never drags sideways.
 - Detail pages put the primary action right after the product summary (e.g. fund detail: rate, term, progress, 立即申購 before calculator and flow).
 
