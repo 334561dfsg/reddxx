@@ -168,3 +168,16 @@
 /* In the sheet the title bar names the order, so the form's own heading is dropped. */
 .c2c-order-sheet .c2c-order-form>h2{display:none}
 .c2c-order-sheet .c2c-order-form>.c2c-unit-price{margin-top:0}
+
+/* Phones (user decision 2026-11-27): a detail page's primary action floats at the bottom of the screen, above the
+   safe area, on a translucent blurred bar (Finance and AI Quant). `.nt-float-bar` turns its container into the bar
+   (summary + action, confirm rows); a lone `.nt-float-action` button floats over a bar drawn by #main-content::after.
+   The page reserves the bar's height so the last content is never covered; desktop keeps the in-flow layout. */
+@media(max-width:767px){
+ #main-content:has(.nt-float-action){padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+ #main-content:has(.nt-float-bar){padding-bottom:calc(124px + env(safe-area-inset-bottom))}
+ #main-content:has(.nt-float-action:not(.nt-float-bar .nt-float-action))::after{content:"";position:fixed;left:0;right:0;bottom:0;z-index:24;height:calc(68px + env(safe-area-inset-bottom));background:color-mix(in srgb,#0b0d10 88%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid #ffffff12;pointer-events:none}
+ #main-content#main-content .nt-float-action{position:fixed;left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right));bottom:calc(12px + env(safe-area-inset-bottom));z-index:25;width:auto;min-height:44px;margin:0}
+ #main-content#main-content :is(div,section,aside,form).nt-float-bar.nt-float-bar{position:fixed;left:0;right:0;bottom:0;z-index:25;margin:0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px max(16px,env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));border:0;border-top:1px solid #ffffff12;border-radius:0;background:color-mix(in srgb,#0b0d10 88%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:none}
+ #main-content#main-content .nt-float-bar .nt-float-action{position:static}
+}

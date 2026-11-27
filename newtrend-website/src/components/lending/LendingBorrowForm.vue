@@ -32,7 +32,7 @@ const term=computed(()=>props.product.loanTerms.find(t=>t.days===Number(props.da
     <dl><dt>{{$t('lending.amount')}}</dt><dd>{{amount?fmt(Number(amount)):'—'}} {{product.loanCurrency}}</dd><dt>{{$t('lending.term')}}</dt><dd>{{$t('margin.market.termDays',{days})}}</dd><dt>{{$t('lending.daily')}}</dt><dd>{{term?loanRateRange([term]):'—'}}%</dd><dt>{{$t('lending.apr')}}</dt><dd>{{term?Number(annualLoanRate(term.dailyRate).toFixed(2)):'—'}}%</dd><dt>{{$t('lending.penalty')}}</dt><dd>{{product.overduePenaltyRate}}%</dd><template v-if="product.collateralEnabled"><dt>{{$t('lending.reserve')}}</dt><dd>{{fmt(required)}} {{collateral}}</dd></template></dl>
     <p class="earn-caption">{{$t('lending.estimateNote')}}</p><p class="loan-application-note">{{$t('lending.pendingNote')}}</p>
 
-    <button class="earn-buy" type="submit" :disabled="busy" :aria-busy="busy">{{$t('lending.submit')}}</button>
+    <button class="earn-buy nt-float-action" type="submit" :disabled="busy" :aria-busy="busy">{{$t('lending.submit')}}</button>
    </aside>
   </form>
  </div>
