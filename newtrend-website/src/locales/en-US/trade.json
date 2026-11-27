@@ -446,7 +446,8 @@
     "product": "Product",
     "showChart": "Show chart",
     "hideChart": "Hide chart",
-    "usePrice": "Use price {{price}}"
+    "usePrice": "Use price {{price}}",
+    "noMarketMatch": "No matching pairs"
   },
   "stream": {
     "connecting": "Connecting to market data…",

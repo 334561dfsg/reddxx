@@ -13,9 +13,11 @@ const route=useRoute()
 const tabRoots=[/^\/$/,/^\/trade\//,/^\/earn(\/(simple|loan))?$/,/^\/c2c\/(buy|sell)$/,/^\/ai-quant(\/(strategy|quant-fund))?$/,/^\/assets(\/overview)?$/]
 const showTabbar=computed(()=>tabRoots.some(r=>r.test(route.path)))
 </script>
-<template><div id="site-shell" :class="{'has-tabbar':showTabbar}"><Header/><main id="main-content"><RouterView/></main><Footer v-if="!route.path.includes('/trade/')"/></div><MobileTabBar v-if="showTabbar"/><Overlay/></template>
+<template><div id="site-shell" :class="{'has-tabbar':showTabbar,'trade-route':route.path.includes('/trade/')}"><Header/><main id="main-content"><RouterView/></main><Footer v-if="!route.path.includes('/trade/')"/></div><MobileTabBar v-if="showTabbar"/><Overlay/></template>
 <style>
 /* Room for the fixed mobile tab bar so it never covers the end of a page (only where it is shown). */
 :root{--nt-tabbar-h:56px}
+/* Mobile trading pages drop the site header (user decision, 2026-11-27); the bottom tab bar and other pages keep the menu. */
+@media(max-width:760px){#site-shell.trade-route>.site-header{display:none}}
 @media(max-width:900px){#site-shell.has-tabbar{padding-bottom:calc(var(--nt-tabbar-h) + env(safe-area-inset-bottom))}}
 </style>

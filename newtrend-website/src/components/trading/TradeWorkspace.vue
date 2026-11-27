@@ -3,11 +3,12 @@ import '../../styles/trade-workspace.css'
 import {computed,watch} from 'vue'
 import {useRoute,useRouter} from 'vue-router'
 import {tradingMarkets as markets,path,fmt} from '../../data'
-import {tradeProducts} from '../../utils/tradeProducts'
+import {tradeProducts,tradeMarketCategory as marketCategory,tradeMarketCategories} from '../../utils/tradeProducts'
 import {useMarketFavorites} from '../../composables/useMarketFavorites'
 import {useTradePageState,useOrderDrafts} from '../../composables/tradePageState'
 import {useMediaQuery,COMPACT_TRADE_QUERY} from '../../composables/useMediaQuery.js'
 import {t} from '../../i18n'
+import {openModal} from '../../session'
 import LineIcon from '../ui/LineIcon.vue'
 import Coin from '../Coin.vue'
 import RecordFilter from '../RecordFilter.vue'
@@ -27,6 +28,8 @@ const compact=useMediaQuery(COMPACT_TRADE_QUERY)
 const showChart=computed(()=>!compact.value||state.chartOpen)
 const productItems=computed(()=>[['futures','trade.pages.perpetual'],['options','trade.pages.delivery'],['spot','common.spotTrading']].map(([value,label])=>({value,label:t(label)})))
 function chooseProduct(next){if(next!==props.mode)router.push(path('/trade/'+next+'/'+pair.value.name.replace('/','')))}
+// Phone layout: the pair opens the left pair drawer (MarketPicker) instead of the dropdown.
+const openPairs=()=>openModal('market-picker','trade.pair',{current:pair.value.id,onSelect:choosePair})
 // Tapping a book price on the phone layout fills the limit price of the futures or spot form (options trade at market).
 const drafts=useOrderDrafts()
 function usePrice(price){
@@ -37,7 +40,6 @@ function usePrice(price){
 const pair=computed(()=>markets.find(m=>m.id===(route.params.symbol||state.symbol)||m.name.replace('/','')===route.params.symbol)||markets[0])
 watch(()=>pair.value.id,id=>state.symbol=id,{immediate:true})
 const {favorites,favorite}=useMarketFavorites('nt-trade-favorites')
-const marketCategory=m=>['XAU','XAG','XAUT','PAXG'].includes(m.symbol)?'trade.pages.metals':m.category
 // Live data from the market stream: the selected pair's ticker and every market for the pair picker. Until the
 // first snapshot the price is null and the figures render as skeletons; order actions are held (see TradeOrderForm).
 const ticker=useTicker(()=>pair.value.id),tickers=useTickers()
@@ -47,7 +49,7 @@ const livePair=computed(()=>({...pair.value,price:live.value?.price??null,change
 const pairs=computed(()=>markets.map(m=>{const q=tickers.data.value?.[m.id];return {value:m.id,label:m.name,category:marketCategory(m),price:fmt(q?.price??m.price),change:q?Number(q.change.toFixed(2)):m.change}}))
 // Live prices by market name, for current positions' unrealised P&L.
 const livePrices=computed(()=>Object.fromEntries(Object.values(tickers.data.value||{}).map(q=>[q.name,q.price])))
-const pairCategories=computed(()=>['home.products.perpTag1','aiQuant.market.forex','trade.pages.metals','trade.pages.energy'].filter(value=>pairs.value.some(m=>m.category===value)).map(value=>({value})))
+const pairCategories=computed(()=>tradeMarketCategories.filter(value=>pairs.value.some(m=>m.category===value)).map(value=>({value})))
 function choosePair(id){router.push(path('/trade/'+props.mode+'/'+id))}
 // Unknown symbols fall back to the default pair; make the URL say which pair is actually shown.
 watch(()=>route.params.symbol,symbol=>{if(symbol&&pair.value.id!==symbol&&pair.value.name.replace('/','')!==symbol)router.replace(path('/trade/'+props.mode+'/'+pair.value.name.replace('/','')))},{immediate:true})
@@ -58,7 +60,7 @@ const hasVolume=computed(()=>Number.isFinite(Number(pair.value.volume))&&Number(
 <div class="trading-terminal product-terminal" :class="[mode==='spot'?'spot-three-column':mode+'-workspace',{compact,'chart-open':showChart}]">
   <h1 class="terminal-accessible-title">{{ $t(product.title) }}</h1>
   <section class="instrument-bar" :aria-label="$t('trade.pages.marketOverview')">
-    <div class="instrument-identity"><RecordFilter variant="market" :categories="pairCategories" :id="mode+'-market'" :model-value="pair.id" :label="$t('trade.form.tradingAsset')" :search-label="$t('trade.searchSymbol')" :options="pairs" @update:model-value="choosePair"><template #leading><Coin :symbol="pair.symbol"/></template></RecordFilter><button class="instrument-favorite" :aria-label="$t(favorites.includes(pair.id)?'common.unfavoriteMarket':'common.favoriteMarket',{symbol:pair.name})" :aria-pressed="favorites.includes(pair.id)" @click="favorite(pair.id)">{{ favorites.includes(pair.id)?'★':'☆' }}</button></div>
+    <div class="instrument-identity"><template v-if="compact"><button type="button" class="pair-trigger" aria-haspopup="dialog" :aria-label="$t('trade.form.tradingAsset')+' '+pair.name" @click="openPairs"><Coin :symbol="pair.symbol"/><strong>{{ pair.name }}</strong><LineIcon name="caret-down"/></button></template><RecordFilter v-else variant="market" :categories="pairCategories" :id="mode+'-market'" :model-value="pair.id" :label="$t('trade.form.tradingAsset')" :search-label="$t('trade.searchSymbol')" :options="pairs" @update:model-value="choosePair"><template #leading><Coin :symbol="pair.symbol"/></template></RecordFilter><button class="instrument-favorite" :aria-label="$t(favorites.includes(pair.id)?'common.unfavoriteMarket':'common.favoriteMarket',{symbol:pair.name})" :aria-pressed="favorites.includes(pair.id)" @click="favorite(pair.id)">{{ favorites.includes(pair.id)?'★':'☆' }}</button></div>
     <div v-if="compact" class="instrument-tools"><RecordFilter :id="mode+'-product'" :model-value="mode" :label="$t('trade.pages.product')" :options="productItems" @update:model-value="chooseProduct"/><button type="button" class="chart-toggle" :aria-expanded="state.chartOpen" :aria-controls="mode+'-chart'" :aria-label="$t(state.chartOpen?'trade.pages.hideChart':'trade.pages.showChart')" :title="$t(state.chartOpen?'trade.pages.hideChart':'trade.pages.showChart')" @click="state.chartOpen=!state.chartOpen"><LineIcon name="candlestick"/></button></div>
     <strong class="instrument-price" :class="livePair.change<0?'negative':'positive'"><template v-if="live">{{ fmt(livePair.price) }}<small v-if="compact" class="instrument-change">{{ livePair.change>0?'+':'' }}{{ livePair.change }}%</small></template><Skeleton v-else inline width="120px"/></strong>
     <dl v-if="showChart" class="instrument-stats"><div><dt>{{ $t('home.markets.colChange') }}</dt><dd :class="livePair.change<0?'negative':'positive'"><template v-if="live">{{ livePair.change }}%</template><Skeleton v-else inline width="48px"/></dd></div><div><dt>{{ $t('trade.24hHigh') }}</dt><dd><template v-if="live">{{ fmt(livePair.high) }}</template><Skeleton v-else inline width="72px"/></dd></div><div><dt>{{ $t('trade.24hLow') }}</dt><dd><template v-if="live">{{ fmt(livePair.low) }}</template><Skeleton v-else inline width="72px"/></dd></div><div><dt>{{ $t('home.markets.colVolume') }}</dt><dd>{{ hasVolume?`${$compact(pair.volume/pair.price)} ${pair.symbol}`:'—' }}</dd></div><div><dt>{{ $t('trade.turnover') }}</dt><dd>{{ hasVolume?`${$compact(pair.volume)} USDT`:'—' }}</dd></div></dl>

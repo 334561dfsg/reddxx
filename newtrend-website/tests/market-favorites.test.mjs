@@ -16,14 +16,16 @@ test('favorites survive page recreation, removal persists, and namespaces stay s
 })
 
 test('corrupt storage and browser storage restrictions do not break favorites', () => {
+  // One shared list per key (read once), so each case uses its own key.
   for (const raw of ['invalid-json', '{}', 'null']) {
     globalThis.localStorage = { getItem: () => raw }
-    assert.deepEqual([...useMarketFavorites('terminal').favorites.value], [])
+    assert.deepEqual([...useMarketFavorites('terminal-' + raw).favorites.value], [])
   }
   globalThis.localStorage = { getItem: () => '["BTCUSD",null,123,"BTCUSD",""]' }
-  assert.deepEqual([...useMarketFavorites('terminal').favorites.value], ['BTCUSD'])
+  assert.deepEqual([...useMarketFavorites('terminal-dedupe').favorites.value], ['BTCUSD'])
   globalThis.localStorage = { getItem: () => { throw new Error('blocked') }, setItem: () => { throw new Error('quota') } }
-  const terminal = useMarketFavorites('terminal')
+  const terminal = useMarketFavorites('terminal-blocked')
   terminal.favorite('ETHUSD')
   assert.deepEqual([...terminal.favorites.value], ['ETHUSD'])
+  assert.deepEqual([...useMarketFavorites('terminal-blocked').favorites.value], ['ETHUSD'], 'every user of a key shares the list')
 })

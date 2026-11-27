@@ -446,7 +446,8 @@
     "product": "Produit",
     "showChart": "Afficher le graphique",
     "hideChart": "Masquer le graphique",
-    "usePrice": "Utiliser le prix {{price}}"
+    "usePrice": "Utiliser le prix {{price}}",
+    "noMarketMatch": "Aucune paire correspondante"
   },
   "stream": {
     "connecting": "Connexion aux cotations…",

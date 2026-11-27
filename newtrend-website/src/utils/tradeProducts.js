@@ -21,3 +21,7 @@ export function selectProductRecords(rows,mode,tabId) {
   return rows.filter(row=>row.kind===mode&&row.bucket===tab.bucket&&(tab.settled===undefined||Boolean(row.settled)===tab.settled))
     .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))
 }
+
+// Category shown for a trading pair (metals are split out of the crypto list), shared by the pair pickers.
+export const tradeMarketCategory=m=>['XAU','XAG','XAUT','PAXG'].includes(m.symbol)?'trade.pages.metals':m.category
+export const tradeMarketCategories=['home.products.perpTag1','aiQuant.market.forex','trade.pages.metals','trade.pages.energy']

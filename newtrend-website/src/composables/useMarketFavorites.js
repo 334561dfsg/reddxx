@@ -1,7 +1,11 @@
 import { readonly, ref } from 'vue'
 import { readStorage, writeStorage } from '../utils/storage.js'
 
-export function useMarketFavorites(storageKey) {
+// One shared list per storage key, so every star bound to the same key (trading header, mobile pair drawer) stays in
+// sync without a reload.
+const lists = new Map()
+
+function load(storageKey) {
   let saved = []
   try {
     const value = JSON.parse(readStorage(storageKey) || '[]')
@@ -9,7 +13,12 @@ export function useMarketFavorites(storageKey) {
   } catch {
     // Invalid or unavailable storage must not prevent opening the terminal.
   }
-  const favorites = ref(saved)
+  return ref(saved)
+}
+
+export function useMarketFavorites(storageKey) {
+  if (!lists.has(storageKey)) lists.set(storageKey, load(storageKey))
+  const favorites = lists.get(storageKey)
 
   function favorite(id) {
     favorites.value = favorites.value.includes(id)

@@ -446,7 +446,8 @@
     "product": "Produkt",
     "showChart": "Chart anzeigen",
     "hideChart": "Chart ausblenden",
-    "usePrice": "Preis {{price}} übernehmen"
+    "usePrice": "Preis {{price}} übernehmen",
+    "noMarketMatch": "Keine passenden Paare"
   },
   "stream": {
     "connecting": "Verbindung zu Marktdaten wird hergestellt…",

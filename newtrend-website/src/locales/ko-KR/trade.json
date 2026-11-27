@@ -446,7 +446,8 @@
     "product": "거래 상품",
     "showChart": "차트 보기",
     "hideChart": "차트 닫기",
-    "usePrice": "가격 {{price}} 입력"
+    "usePrice": "가격 {{price}} 입력",
+    "noMarketMatch": "일치하는 거래쌍이 없습니다"
   },
   "stream": {
     "connecting": "시세 연결 중…",
