@@ -34,7 +34,7 @@ const {hidden,toggle,masked:mask}=useAmountMask()
 #site-shell #main-content .psc-row{display:flex;align-items:flex-end;justify-content:space-between;gap:40px}
 #site-shell #main-content .psc-primary{display:flex;flex-direction:column;gap:6px;min-width:0}
 #site-shell #main-content .psc-label{display:flex;align-items:center;gap:8px;font-size:12px;line-height:16px;letter-spacing:.04em;color:#87888a}
-#site-shell #main-content .psc-eye{display:inline-grid;place-items:center;width:16px;height:16px;min-width:0;min-height:0;padding:0;border:0;background:none;color:#87888a}
+#site-shell #main-content .psc-eye{display:inline-grid;place-items:center;width:32px;height:32px;margin:-8px;min-width:0;min-height:0;padding:0;border:0;background:none;color:#87888a}
 #site-shell #main-content .psc-eye .nt-icon{width:16px;height:16px;opacity:.6}
 #site-shell #main-content .psc-eye:hover .nt-icon,#site-shell #main-content .psc-eye:focus-visible .nt-icon{opacity:1}
 #site-shell #main-content .psc-eye:focus-visible{outline:none;background:#ffffff14;border-radius:4px}

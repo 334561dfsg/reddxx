@@ -5,6 +5,7 @@
 /* Landings (/earn, /ai-quant): body font, no letter-spacing on kickers. */
 #main-content#main-content .quant-landing :is(h1,h2){font-family:var(--nt-font-body)}
 #main-content#main-content .quant-landing .page-kicker{letter-spacing:0}
+#main-content#main-content .quant-landing h1.page-title{letter-spacing:0}
 
 /* Finance pages: body font instead of Syne, no letter-spacing, page title 30/38, 20px cards. */
 #main-content#main-content :is(.finance-page,.earn-detail,.loan-order-page,.c2c-page){--nt-font-display:var(--nt-font-body)}
@@ -41,4 +42,121 @@
 }
 @media(max-width:420px){
  #main-content#main-content .c2c-page>.c2c-nav>a :is(.c2c-icon,svg){display:none}
+}
+
+/* Phone review (2026-11-27): finance records follow the AI Quant position cards — one card per record, head with the
+   name and the status tag top-right, two-column fields, actions as compact buttons in a footer row. Detail and form
+   pages use 16px gutters and padding, 20px corners and a 12px rhythm. */
+@media(max-width:767px){
+ /* Record cards: 我的理財 (持倉, 申購單, 贖回單, 收益明細) and 我的借貸. */
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table){padding:0;overflow:visible;background:transparent;border:0;border-radius:0;box-shadow:none}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) :is(table,tbody){display:block;width:100%}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) tr{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0 0 12px;padding:16px;border:1px solid #ffffff0a;border-radius:20px;background:#15181c}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) td{display:block;min-width:0;padding:0;border:0;font-size:14px;line-height:20px;text-align:left}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) td:first-child{grid-column:1/-1;padding-right:76px}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) td[data-label]:before{content:attr(data-label);display:block;margin:0 0 2px;font-size:12px;line-height:18px;color:#8c8f96}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) td:has(>.portfolio-status){position:absolute;top:16px;right:16px}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) td:has(>.portfolio-status):before{display:none}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) .earn-product-line{gap:10px}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) .earn-product-line .coin{width:28px;height:28px}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) .earn-product-line strong{font-size:14px;line-height:20px;font-weight:600}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) .earn-product-line small{font-size:12px;line-height:16px}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) .earn-mono{font-size:14px;line-height:20px}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) .earn-caption{margin-top:2px;font-size:12px;line-height:16px}
+ #main-content#main-content .portfolio-record-table .portfolio-term{display:flex;align-items:center;gap:4px}
+ #main-content#main-content .portfolio-record-table .portfolio-info{display:grid;place-items:center;width:28px;height:28px;min-width:28px;min-height:28px;margin:-4px 0;padding:0}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) td.portfolio-row-action{grid-column:1/-1;display:flex!important;align-items:center;justify-content:flex-end;gap:12px;padding-top:12px;border-top:1px solid #ffffff0d}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) .portfolio-row-action .earn-buy{width:auto;min-width:72px;min-height:32px;padding:6px 16px;font-size:13px;line-height:20px}
+ #main-content#main-content .loan-portfolio-table .portfolio-row-action .earn-buy{background:transparent;border:1px solid #ffffff1f;color:#fff}
+ #main-content#main-content .portfolio-record-table .portfolio-row-action .portfolio-disabled-hint{order:-1;flex:1;margin:0;text-align:left}
+ #main-content#main-content .portfolio-record-table .portfolio-row-action .earn-buy:disabled{background:#ffffff14;color:#ffffff66;opacity:1}
+ #main-content#main-content :is(.portfolio-record-table,.loan-portfolio-table) .portfolio-skeleton-row td:first-child{padding-right:0}
+
+ /* Inner record tabs fill the row as equal segments (理財 持倉/申購單…, 借貸 進行中/已結清/其他). */
+ #main-content#main-content .finance-page .portfolio-tabs{display:flex;flex-wrap:nowrap;width:100%;border-radius:999px}
+ #main-content#main-content .finance-page .portfolio-tabs button{flex:1 1 0;min-width:0;min-height:32px;padding:6px 8px;border-radius:999px;white-space:nowrap}
+ #main-content#main-content .finance-page .portfolio-tab-area{margin-top:12px}
+ #main-content#main-content .finance-page .portfolio-tab-panel{margin-top:12px}
+ #main-content#main-content .loan-portfolio{gap:12px}
+ #main-content#main-content .loan-portfolio>:is(.portfolio-summary,.loan-portfolio-toolbar){margin-top:0}
+ #main-content#main-content .loan-portfolio-summary :is(strong,.earn-mono){font-size:24px;line-height:30px}
+ #main-content#main-content .loan-portfolio-toolbar{gap:12px}
+ #main-content#main-content .loan-portfolio-toolbar>.earn-buy{min-height:40px;padding:8px 16px}
+ #main-content#main-content .finance-overview .loan-portfolio-toolbar + :is(.loan-portfolio-table,.portfolio-empty){margin-top:0}
+
+ /* Summary cards: key figure 24/30, label/value rows, no extra air. */
+ #main-content#main-content .finance-page .portfolio-summary{padding:16px}
+ #main-content#main-content .finance-page .portfolio-summary-body{margin-top:12px;gap:12px}
+ #main-content#main-content .finance-page .portfolio-total-value{font-size:28px;line-height:34px}
+ #main-content#main-content .finance-page .portfolio-metrics{gap:8px}
+ #main-content#main-content .finance-page .portfolio-metrics>div{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+ #main-content#main-content .finance-page .portfolio-metrics :is(dt,dd){margin:0;font-size:14px;line-height:20px}
+ #main-content#main-content .loan-portfolio-summary{gap:12px}
+
+ /* 理財產品 list: one card per product — name and 申購 on top, then 日利率 / 期限 / 起投. Type, total subscribed and
+    remaining quota stay on the product page. */
+ #main-content#main-content .earn-page .earn-table{padding:0;overflow:visible;background:transparent;border:0;border-radius:0;box-shadow:none}
+ #main-content#main-content .earn-page .earn-table tr{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 12px;padding:16px;border:1px solid #ffffff0a;border-radius:20px;background:#15181c}
+ #main-content#main-content .earn-page .earn-table td:nth-child(1){grid-column:1/3;grid-row:1;align-self:center}
+ #main-content#main-content .earn-page .earn-table td:nth-child(8){grid-column:3;grid-row:1;align-self:center;justify-self:end}
+ #main-content#main-content .earn-page .earn-table td:nth-child(7){grid-column:1;grid-row:2}
+ #main-content#main-content .earn-page .earn-table td:nth-child(3){grid-column:2;grid-row:2}
+ #main-content#main-content .earn-page .earn-table td:nth-child(4){grid-column:3;grid-row:2}
+ #main-content#main-content .earn-page .earn-table td:is(:nth-child(2),:nth-child(5),:nth-child(6)){display:none}
+ #main-content#main-content .earn-page .earn-table td[data-label]:before{margin-bottom:2px;color:#8c8f96}
+ #main-content#main-content .earn-page .earn-table .earn-product-line{gap:10px}
+ #main-content#main-content .earn-page .earn-table .earn-product-line .coin{width:32px;height:32px}
+ #main-content#main-content .earn-page .earn-table .earn-buy{min-height:32px;padding:6px 16px;font-size:13px}
+ #main-content#main-content .earn-page .earn-table td strong.earn-accent{font-size:16px;line-height:22px}
+ #main-content#main-content .finance-page .earn-featured{margin-top:12px}
+ #main-content#main-content .finance-page .earn-filters{margin-top:16px}
+ #main-content#main-content .finance-page .earn-section-heading{margin-bottom:12px}
+
+ /* Loan market: term chips start on the left under their label. */
+ #main-content#main-content .loan-market-card{gap:16px;padding:16px;border-radius:20px}
+ #main-content#main-content .loan-market-facts>div:has(.loan-market-terms){flex-direction:column;gap:8px}
+ #main-content#main-content .loan-market-terms{justify-content:flex-start}
+
+ /* Detail and form pages: 16px gutters, 16px card padding, 20px corners, 12px between blocks. */
+ #main-content#main-content .loan-order-page{padding:12px max(16px,env(safe-area-inset-right)) 24px max(16px,env(safe-area-inset-left))}
+ #main-content#main-content .loan-order-page .loan-detail-content{gap:12px}
+ #main-content#main-content .loan-order-page .loan-detail-header{padding:16px 16px 0;border-radius:20px 20px 0 0;margin-bottom:-12px}
+ #main-content#main-content .loan-order-page .loan-detail-amounts{padding:16px;border-radius:0 0 20px 20px;gap:12px}
+ #main-content#main-content .loan-order-page .loan-detail-amounts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #main-content#main-content .loan-order-page .loan-detail-amounts>div+div{padding:0 0 0 12px;border-top:0;border-left:1px solid #ffffff0a}
+ #main-content#main-content .loan-order-page .loan-detail-amounts strong{font-size:22px;line-height:28px}
+ #main-content#main-content .loan-order-page :is(.loan-detail-card,.loan-detail-grid>*,.loan-order-pending){padding:16px;border-radius:20px}
+ #main-content#main-content .loan-order-page .loan-detail-grid{gap:12px}
+ #main-content#main-content .loan-fidelity-page{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+ #main-content#main-content .loan-application,#main-content#main-content .loan-application-grid,#main-content#main-content .loan-application-main{gap:12px}
+ #main-content#main-content .loan-application :is(.earn-panel,.loan-application-hero){padding:16px;border-radius:20px}
+ #main-content#main-content .loan-application .loan-amount-control{padding:2px 12px 2px 4px;min-height:48px}
+ #main-content#main-content .loan-application .loan-field{gap:8px}
+ #main-content#main-content .loan-application-main>.earn-panel{gap:16px}
+ #main-content#main-content .earn-detail{padding-top:12px}
+ #main-content#main-content .earn-detail .earn-detail-summary{gap:16px}
+ #main-content#main-content .earn-detail .earn-detail-rate{margin-left:0;text-align:left}
+ #main-content#main-content .earn-detail>*{margin-bottom:12px}
+ #main-content#main-content .earn-detail>.earn-detail-action{margin-top:0}
+ #main-content#main-content .earn-detail .earn-detail-columns{gap:12px}
+ #main-content#main-content .earn-detail .earn-panel{padding:16px;border-radius:20px}
+
+ /* C2C: asset/fiat pills scroll sideways in one row; the empty order panel is a desktop column, not a phone block. */
+ #main-content#main-content .c2c-page .c2c-filter{align-items:center}
+ #main-content#main-content .c2c-page .c2c-filter .c2c-pills{flex-wrap:nowrap;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+ #main-content#main-content .c2c-page .c2c-filter .c2c-pills::-webkit-scrollbar{display:none}
+ #main-content#main-content .c2c-page .c2c-filter .c2c-pills>*{flex:none}
+ #main-content#main-content .c2c-page .c2c-order-panel.is-empty{display:none}
+ #main-content#main-content .c2c-page .c2c-status-filter:has(.c2c-status-hint){display:none}
+ /* C2C orders: one card per order — side and status on top, amounts, then time and 查看. */
+ #main-content#main-content .c2c-page .c2c-orders-list{background:transparent;border:0;border-radius:0;overflow:visible}
+ #main-content#main-content .c2c-page article.c2c-order-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0 0 12px;padding:16px;border:1px solid #ffffff0a;border-radius:20px;background:#15181c}
+ #main-content#main-content .c2c-page article.c2c-order-row>strong{grid-column:1;grid-row:1;font-size:14px;line-height:20px}
+ #main-content#main-content .c2c-page article.c2c-order-row>span:nth-child(4){grid-column:2;grid-row:1;justify-self:end;align-self:start;padding:1px 8px;border-radius:6px;background:#ffffff0d;font-size:12px;line-height:20px;color:#c5c7cb}
+ #main-content#main-content .c2c-page article.c2c-order-row>span:nth-child(4) small{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ #main-content#main-content .c2c-page article.c2c-order-row>span{font-size:14px;line-height:20px}
+ #main-content#main-content .c2c-page article.c2c-order-row>span small{margin:0 0 2px;font-size:12px;line-height:18px;color:#8c8f96}
+ #main-content#main-content .c2c-page article.c2c-order-row>span:nth-child(5){grid-column:1/-1;grid-row:3;padding:12px 88px 0 0;border-top:1px solid #ffffff0d}
+ #main-content#main-content .c2c-page article.c2c-order-row>button{grid-column:2;grid-row:3;align-self:end;justify-self:end;min-height:32px}
 }
