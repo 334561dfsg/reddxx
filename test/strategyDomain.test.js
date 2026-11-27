@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {transact, advance, validateTemplate, money, lossAlert, DAY, INIT_MS, LIVE} from '../src/shared/strategy/domain.js'
+import {transact, advance, validateTemplate, money, DAY, INIT_MS, LIVE} from '../src/shared/strategy/domain.js'
 import {seedStrategy} from '../src/shared/strategy/seed.js'
 
 const T0 = Date.parse('2026-11-20T00:00:00Z')
@@ -163,28 +163,20 @@ test('limits: terms, balance, per-user count and capital, template capacity, eli
   assert.throws(() => run(vip, 'subscribe', order), /vipRequired/)
 })
 
-test('manual P&L adjustments are appended records; policy saves are version-checked', () => {
+test('P&L cannot be adjusted manually; policy saves are version-checked', () => {
   let s = fresh()
   const running = s.subscriptions.find(x => x.subscriptionId === 'seed-run-1004')
-  s = run(s, 'adjustPnl', {subscriptionId: running.subscriptionId, amount: -12.5, note: '修正'})
-  const after = s.subscriptions.find(x => x.subscriptionId === 'seed-run-1004')
-  assert.equal(after.pnl, money(running.pnl - 12.5))
-  assert.equal(s.dailyPnl[0].source, 'manual')
-  assert.throws(() => run(s, 'adjustPnl', {subscriptionId: running.subscriptionId, amount: 0}), /adjustAmount/)
-  assert.throws(() => run(s, 'adjustPnl', {subscriptionId: 'seed-real-strategy-3', amount: 5}), /status/)
+  assert.throws(() => run(s, 'adjustPnl', {subscriptionId: running.subscriptionId, amount: -12.5, note: '修正'}))
+  assert.equal(s.subscriptions.find(x => x.subscriptionId === 'seed-run-1004').pnl, running.pnl)
 
   const policy = {...s.policy, reviewRequired: false}
   s = run(s, 'savePolicy', {policy, expectedPolicy: s.policy})
   assert.equal(s.policy.reviewRequired, false)
   assert.throws(() => run(s, 'savePolicy', {policy, expectedPolicy: {...policy, reviewRequired: true}}), /stale/)
-  assert.throws(() => run(s, 'savePolicy', {policy: {...policy, lossAlertPercent: 0}, expectedPolicy: s.policy}), /policy/)
+  assert.throws(() => run(s, 'savePolicy', {policy: {...policy, maxRunningPerUser: 0}, expectedPolicy: s.policy}), /policy/)
   assert.equal(s.logs.filter(l => l.action === 'savePolicy').length, 1)
 })
 
-test('loss alert follows the policy threshold', () => {
-  const s = fresh()
-  const losing = s.subscriptions.find(x => x.subscriptionId === 'seed-run-1002')
-  assert.equal(lossAlert(losing, s.policy), true)
-  assert.equal(lossAlert(losing, {...s.policy, lossAlertPercent: 30}), false)
+test('pending reviews count as live subscriptions for limits', () => {
   assert.ok(LIVE.includes('pending_review'))
 })

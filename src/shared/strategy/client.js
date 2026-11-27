@@ -48,7 +48,7 @@ export const styleLabels = {conservative: '保守', balanced: '平衡', aggressi
 export const templateStatusLabels = {listed: '已上架', unlisted: '未上架'}
 export const actionLabels = {
   seed: '载入模拟数据', subscribe: '订阅策略', approve: '审核通过', reject: '审核拒绝', pause: '暂停策略', resume: '恢复策略', settle: '结算',
-  forceStop: '强制停止', adjustPnl: '调整盈亏', saveTemplate: '保存模板', listTemplate: '上架模板', unlistTemplate: '下架模板', savePolicy: '保存风控设置',
+  forceStop: '强制停止', saveTemplate: '保存模板', listTemplate: '上架模板', unlistTemplate: '下架模板', savePolicy: '保存风控设置',
 }
 export const errorLabels = {
   unavailable: 'Mock 服务不可用，请通过根开发或预览服务打开页面', busy: '操作处理中', duplicate: '请勿重复提交', stale: '数据已被修改，请刷新后再试',
@@ -56,7 +56,7 @@ export const errorLabels = {
   owner: '不能操作其他用户的策略', balance: '可用余额不足', capital: '资金不在模板允许范围内', days: '运行周期不在模板允许范围内',
   takeProfit: '止盈比例不在允许范围内', stopLoss: '止损比例不在允许范围内', userLimit: '已达到单用户运行中策略数量上限', userCapital: '已达到单用户在管资金上限',
   capacity: '该策略总额度已满', verificationRequired: '认证等级未达到订阅要求', vipRequired: 'VIP 等级未达到订阅要求', eligibilityConfig: '请选择有效的认证等级和 VIP 等级',
-  adjustAmount: '调整金额须为非零的两位小数，且不超过本金', policy: '请检查风控设置：数量与资金上限须为正数，亏损预警为 1–100%',
+  policy: '请检查风控设置：数量与资金上限须为正数',
   templateName: '请填写模板名称', templateCategory: '请选择市场与风格', templateRisk: '风险等级须为 1–5 的整数', templateMetrics: '请填写有效的夏普比率、胜率（0–100）与日均交易数',
   templateSymbols: '请至少填写一个交易品种', templateCapital: '起投资金须大于 0，且不高于单笔上限', templateDays: '运行周期须为正整数天，且最短不超过最长',
   templateTakeProfit: '止盈范围须满足 1 ≤ 最小 ≤ 默认 ≤ 最大 ≤ 100', templateStopLoss: '止损范围须满足 1 ≤ 最小 ≤ 默认 ≤ 最大 ≤ 100', templateFee: '手续费率须为 0–5%',

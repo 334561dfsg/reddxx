@@ -10,7 +10,7 @@ const levelLabel = value => verificationOptions.find(o => o.value === value)?.la
 const props = defineProps({sub: {type: Object, required: true}, daily: {type: Array, default: () => []}, settlement: {type: Object, default: null}, logs: {type: Array, default: () => []}, balance: {type: Number, default: null}})
 const page = ref(1)
 const t = computed(() => props.sub.templateSnapshot)
-const dailyColumns = [{key: 'date', title: '日期', width: 120}, {key: 'tradeCount', title: '成交笔数', width: 100, align: 'right'}, {key: 'pnl', title: '盈亏（USDT）', width: 140, align: 'right'}, {key: 'source', title: '来源', width: 160}]
+const dailyColumns = [{key: 'date', title: '日期', width: 120}, {key: 'tradeCount', title: '成交笔数', width: 100, align: 'right'}, {key: 'pnl', title: '盈亏（USDT）', width: 140, align: 'right'}]
 const logColumns = [{key: 'createdAt', title: '时间', width: 180}, {key: 'action', title: '操作', width: 140}, {key: 'summary', title: '说明'}, {key: 'operator', title: '操作人', width: 150}]
 const tone = value => (value > 0 ? 'success' : value < 0 ? 'danger' : undefined)
 </script>
@@ -53,7 +53,6 @@ const tone = value => (value > 0 ? 'success' : value < 0 ? 'danger' : undefined)
    <Table size="small" :columns="dailyColumns" :data-source="daily" row-key="id" :pagination="{current: page, pageSize: 10, total: daily.length, showSizeChanger: false, onChange: v => page = v, hideOnSinglePage: true}" :locale="{emptyText: '暂无收益记录'}">
     <template #bodyCell="{column, record}">
      <TypographyText v-if="column.key === 'pnl'" :type="tone(record.pnl)">{{ signed(record.pnl) }}</TypographyText>
-     <template v-else-if="column.key === 'source'">{{ record.source === 'manual' ? `人工调整 · ${record.operator}` : '系统生成' }}<TypographyText v-if="record.note" type="secondary"> · {{ record.note }}</TypographyText></template>
      <template v-else>{{ record[column.key] }}</template>
     </template>
    </Table>

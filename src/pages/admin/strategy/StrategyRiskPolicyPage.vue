@@ -49,7 +49,6 @@ onBeforeUnmount(() => { window.removeEventListener('beforeunload', beforeUnload)
    <Card title="自动处理" :bordered="false">
     <FormItem label="止盈止损自动结束" help="每日收益生成后检查累计盈亏，达到用户设定的止盈或止损比例即结算"><Switch v-model:checked="form.autoTakeProfitStopLoss" aria-label="止盈止损自动结束" checked-children="开启" un-checked-children="关闭"/></FormItem>
     <FormItem label="到期自动结算" help="关闭后到期策略停止生成收益，等待后台强制停止结算"><Switch v-model:checked="form.autoSettleOnExpiry" aria-label="到期自动结算" checked-children="开启" un-checked-children="关闭"/></FormItem>
-    <FormItem label="亏损预警线（% 本金）" required help="运行中或暂停的策略累计亏损达到该比例时，在用户策略列表标记「亏损预警」"><InputNumber v-model:value="form.lossAlertPercent" :min="1" :max="100" :precision="2" style="width:240px"/></FormItem>
    </Card>
    <Card :bordered="false" :body-style="{padding: '12px 24px'}"><Space :size="8"><Button type="primary" html-type="submit" :loading="strategyBusy">保存设置</Button><Button :disabled="strategyBusy || !dirty" @click="form = JSON.parse(original)">重置</Button><TypographyText type="secondary">设置只对之后提交的订阅生效，已有订阅保留提交时的规则。</TypographyText></Space></Card>
   </Form>

@@ -18,7 +18,6 @@ export const DEFAULT_POLICY = {
   maxCapitalPerUser: 1000000,
   autoSettleOnExpiry: true,
   autoTakeProfitStopLoss: true,
-  lossAlertPercent: 20,
 }
 export const ADMIN = '管理员（模拟）'
 export const SYSTEM = '系统'
@@ -209,15 +208,6 @@ export function transact(source, action, args = {}, now = Date.now()) {
     const sub = findSub(s, args)
     fail(['initializing', 'running', 'paused'].includes(sub.status), 'status')
     settle(s, sub, 'admin_stop', now, actor)
-  } else if (action === 'adjustPnl') {
-    const sub = findSub(s, args)
-    fail(['running', 'paused'].includes(sub.status), 'status')
-    const amount = Number(args.amount)
-    fail(finite(amount) && amount !== 0 && money(amount) === amount && Math.abs(amount) <= sub.capital, 'adjustAmount')
-    s.dailyPnl.unshift({id: `ADJ-${now}-${s.dailyPnl.length + 1}`, subscriptionId: sub.subscriptionId, userId: sub.userId, date: dayKey(now), tradeCount: 0, pnl: amount, source: 'manual', operator: actor, note: String(args.note || '').slice(0, 200), createdAt: now})
-    const before = sub.pnl
-    sub.pnl = money(sub.pnl + amount)
-    log(s, {module: 'pnl', action, refId: sub.subscriptionId, targetLabel: sub.templateSnapshot.name, summary: `调整盈亏 ${amount > 0 ? '+' : ''}${amount} USDT`, before: {pnl: before}, after: {pnl: sub.pnl}, operator: actor}, now)
   } else if (action === 'saveTemplate') {
     const draft = structuredClone(args.template)
     draft.minVerificationLevel ??= 'none'
@@ -243,8 +233,8 @@ export function transact(source, action, args = {}, now = Date.now()) {
     const p = args.policy, before = structuredClone(s.policy)
     fail(JSON.stringify(args.expectedPolicy) === JSON.stringify(before), 'stale')
     fail(p && ['reviewRequired', 'autoSettleOnExpiry', 'autoTakeProfitStopLoss'].every(k => typeof p[k] === 'boolean'), 'policy')
-    fail(Number.isInteger(p.maxRunningPerUser) && p.maxRunningPerUser >= 1 && finite(p.maxCapitalPerUser) && p.maxCapitalPerUser > 0 && finite(p.lossAlertPercent) && p.lossAlertPercent > 0 && p.lossAlertPercent <= 100, 'policy')
-    s.policy = {reviewRequired: p.reviewRequired, maxRunningPerUser: p.maxRunningPerUser, maxCapitalPerUser: p.maxCapitalPerUser, autoSettleOnExpiry: p.autoSettleOnExpiry, autoTakeProfitStopLoss: p.autoTakeProfitStopLoss, lossAlertPercent: p.lossAlertPercent}
+    fail(Number.isInteger(p.maxRunningPerUser) && p.maxRunningPerUser >= 1 && finite(p.maxCapitalPerUser) && p.maxCapitalPerUser > 0, 'policy')
+    s.policy = {reviewRequired: p.reviewRequired, maxRunningPerUser: p.maxRunningPerUser, maxCapitalPerUser: p.maxCapitalPerUser, autoSettleOnExpiry: p.autoSettleOnExpiry, autoTakeProfitStopLoss: p.autoTakeProfitStopLoss}
     log(s, {module: 'policy', action, summary: '保存风控设置', before, after: structuredClone(s.policy), operator: actor}, now)
   } else throw new Error('action')
   s.requests.push(args.requestId)
@@ -252,4 +242,3 @@ export function transact(source, action, args = {}, now = Date.now()) {
 }
 
 /** Loss alert for the admin lists: open subscriptions whose loss reached the policy threshold of their capital. */
-export const lossAlert = (sub, policy) => ['running', 'paused'].includes(sub.status) && sub.pnl < 0 && -sub.pnl >= sub.capital * policy.lossAlertPercent / 100
