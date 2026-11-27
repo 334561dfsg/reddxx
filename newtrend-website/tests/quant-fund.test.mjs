@@ -26,14 +26,15 @@ test('estimates round down to cents',()=>{
  assert.equal(fundEstimate(product(),'0',30),null)
 })
 
-test('subscription stays pending review, reserves balance and quota, and is idempotent',()=>{
+test('subscription stays pending review, reserves the balance (not quota) and is idempotent',()=>{
  const account=createFundAccount(),p=product(),quota=availableQuota(p)
  const {order}=subscribeFund(account,p,'5000',{mode:'demo',requestId:'r1',now:1})
  assert.equal(order.status,'pending_review')
  assert.equal(order.maturityDate,null)
  assert.equal(order.interestPaidTotal,0)
  assert.equal(account.balances.demo,95000)
- assert.equal(availableQuota(p),quota-5000)
+ // Funding progress and quota count approved principal only; a pending order does not take quota.
+ assert.equal(availableQuota(p),quota)
  const again=subscribeFund(account,p,'5000',{mode:'demo',requestId:'r1',now:2})
  assert.equal(again.order.id,order.id)
  assert.equal(account.orders.length,1)

@@ -1,17 +1,18 @@
 <script setup>
+import {message} from 'ant-design-vue'
 import FeedbackToast from '../../platform/FeedbackToast.js'
 import {computed,nextTick,shallowRef,watch} from 'vue'
 import {useRouter} from 'vue-router'
 import {fmt,path} from '../../data'
 import {session} from '../../session'
+import {t} from '../../i18n'
 import {fundSubscriptionError,maxFundSubscription,fundEstimate,isAmountDraft} from '../../utils/quantFund'
 import Skeleton from '../ui/Skeleton.vue'
 import {getQuantFundBalance,subscribeQuantFund} from '../../api/quantFund.js'
 import {invalidate,useMutation,useRequest} from '../../composables/useRequest.js'
 import Coin from '../Coin.vue'
-import Icon from '../Icon.vue'
 import '../../styles/quant-fidelity.css'
-// Reference subscribe dialog: summary, amount with balance/MAX, risk acknowledgement, success view.
+// Reference subscribe dialog: summary, amount with balance/MAX, risk acknowledgement; success closes it with a toast.
 // Errors are reported by toast (project rule) while the field keeps aria-invalid and its static range hint.
 const props=defineProps({product:{type:Object,required:true},closing:Boolean})
 const emit=defineEmits(['state','close'])
@@ -54,6 +55,9 @@ async function submit(){
  try{
   done.value=await submission.run({productId:props.product.id,amount:amount.value,mode:session.mode,requestId})
   invalidate('quantFund')
+  // Toast-only feedback (review 2026-11-27): close, then confirm after the close animation; the new order shows
+  // as pending review in 我的倉位.
+  emit('close',()=>message.success(t('aiQuant.quantFund.subscribe.success')))
  }catch(cause){
   failure.value=cause
   // Business rejections reuse the local validation codes: reload the balance so the field shows the current reason.
@@ -62,14 +66,7 @@ async function submit(){
 }
 </script>
 <template>
-<div v-if="done" class="qf-success">
- <span class="qf-success-icon" aria-hidden="true"><Icon name="check" green/></span>
- <h3>{{ $t('aiQuant.quantFund.subscribe.success') }}</h3>
- <p>{{ product.name }} · {{ fmt(done.principal) }} {{ asset }}</p>
- <p class="qf-success-status">{{ $t('aiQuant.quantFund.positions.tabs.pending_review') }}</p>
- <RouterLink class="qf-success-link" :to="path('/ai-quant/quant-fund/positions')" @click="emit('close')">{{ $t('aiQuant.quantFund.hero.viewPositionsCta') }}</RouterLink>
-</div>
-<form v-else id="quant-fund-subscribe-form" class="qf-subscribe" novalidate @submit.prevent="submit">
+<form id="quant-fund-subscribe-form" class="qf-subscribe" novalidate @submit.prevent="submit">
  <div class="qf-subscribe-product"><Coin :symbol="asset"/><p>{{ product.name }} · {{ asset }} · {{ $t(term,{days:product.termDays}) }}</p></div>
  <div class="qf-subscribe-summary">
   <div><span>{{ $t('aiQuant.quantFund.card.dailyReturn') }}</span><strong class="qf-success-mono">{{ product.averageDailyReturnPercent.toFixed(2) }}%</strong></div>

@@ -19,6 +19,8 @@ const amount=shallowRef(''),touched=shallowRef(false),done=shallowRef(false)
 // Balance and committed amount come from the API; the form stays usable but cannot submit until they load.
 const context=useRequest(()=>getEarnSubscriptionContext(props.product.id,session.mode),{key:()=>session.mode})
 const submission=useMutation(subscribeEarn)
+// One request id per dialog: a retry after a network failure cannot create a second order.
+const requestId=crypto.randomUUID()
 const ready=computed(()=>context.status.value==='ready')
 const balance=computed(()=>context.data.value?.balance??0),committed=computed(()=>context.data.value?.committed??0)
 const validation=computed(()=>{const code=earnEligibilityError(props.product);return code?{code}:subscriptionError(props.product,amount.value,balance.value,committed.value)})
@@ -39,7 +41,7 @@ async function submit(){
  touched.value=true
  if(!ready.value||validation.value)return
  try{
-  await submission.run({productId:props.product.id,amount:Number(amount.value),mode:session.mode})
+  await submission.run({productId:props.product.id,amount:Number(amount.value),mode:session.mode,requestId})
   done.value=true
   invalidate('earn')
  }catch(cause){

@@ -21,7 +21,11 @@ export function earnCommitted(productId, mode) {
 }
 
 /** Validates against balance, product and cumulative per-user quota, then reserves the balance; nothing changes on error. */
-export function recordEarnSubscription(product, amount, mode) {
+export function recordEarnSubscription(product, amount, mode, requestId) {
+  // Idempotent per requestId (review 2026-11-27): a retried submission returns the order it already created.
+  const portfolio = earnPortfolioFor(mode)
+  const seen = requestId && portfolio.orders.find(o => o.requestId === requestId)
+  if (seen) return seen
   assertEarnEligibility(product)
   const value = Number(amount)
   const error = subscriptionError(product, value, earnBalance(mode, product.symbol), earnCommitted(product.id, mode))
@@ -30,9 +34,9 @@ export function recordEarnSubscription(product, amount, mode) {
   const order = {
     eligibilitySnapshot: { minVerificationLevel: product.minVerificationLevel || 'none', minVipLevel: product.minVipLevel || 0, ...earnMockProfile },
     id: nextId('EARN'), productId: product.id, symbol: product.symbol, amount: value, mode: modeKey(mode),
-    status: 'pending_review', createdAt: clock.now(), completedAt: null,
+    status: 'pending_review', createdAt: clock.now(), completedAt: null, requestId: requestId || null,
   }
-  earnPortfolioFor(mode).orders.unshift(order)
+  portfolio.orders.unshift(order)
   return order
 }
 

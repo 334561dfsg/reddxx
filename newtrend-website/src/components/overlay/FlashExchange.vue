@@ -4,7 +4,7 @@
 // balance, the live rate and the estimated amount received. Assets, quote and the exchange go through the wallet API
 // (local mock, price snapshot, no fee); choosing the same asset on both sides swaps them. Toast-only feedback;
 // close paths are held while submitting; success closes the dialog.
-import {computed,h,shallowRef,watch} from 'vue'
+import {computed,h,onBeforeUnmount,shallowRef,watch} from 'vue'
 import {message} from 'ant-design-vue'
 import Coin from '../Coin.vue'
 import NtSelect from '../ui/NtSelect.vue'
@@ -28,6 +28,7 @@ const hasAmount=computed(()=>amount.value.trim()!==''&&Number.isFinite(value.val
 const quoteKey=shallowRef('')
 let timer
 watch([from,to,amount],()=>{clearTimeout(timer);timer=setTimeout(()=>{quoteKey.value=from.value&&to.value?`${from.value}|${to.value}|${hasAmount.value?value.value:0}`:''},250)},{immediate:true})
+onBeforeUnmount(()=>clearTimeout(timer))
 const quote=useRequest(()=>quoteKey.value?quoteFlashExchange({from:from.value,to:to.value,amount:hasAmount.value?value.value:0}):Promise.resolve(null),{key:()=>quoteKey.value})
 const submitting=useMutation(flashExchange),busy=submitting.pending
 watch([amount,from,to,busy],()=>emit('state',{dirty:Boolean(amount.value||from.value||to.value),busy:busy.value}),{immediate:true})

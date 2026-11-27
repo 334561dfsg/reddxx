@@ -440,6 +440,13 @@ After a delivery (交割) order is confirmed, the order dialog from GMXX opens (
 
 The 模擬 account does not offer C2C or lending. `utils/demoAccess.js` (`availableInMode`) hides their entries in the header and side-menu navigation and on the Finance landing (only the 理財 card remains, with the `finance.landing.subtitleDemo` line); the router guard sends `/c2c/*` and `/earn/loan/*` to `/earn` while demo is active, and switching to demo on one of those pages leaves it the same way. The 真實 account is unchanged.
 
+## Refactor phase 1 — correctness fixes (review 2026-11-27)
+
+- Asset totals (`accountValue.js`) count money that left the available balance but still belongs to the user: Earn subscriptions waiting for review, Quant Fund orders in review or redemption review, open-order and running delivery locks (unfilled share), C2C sell locks and pending withdrawals. Covered by `tests/account-value.test.mjs` (loaded through Vite SSR because `data.js` is Vite-only).
+- Quant Fund funding progress counts approved principal only (a pending order takes no quota); fund order lookup and redemption are scoped to the account mode (`getQuantFundOrder(id, mode)`, `redeemQuantFund(id, mode)`); settlements add the rounded return without re-rounding the shared balance.
+- Earn subscribe is idempotent per `requestId` (one id per dialog); the Quant Fund subscribe dialog closes with a 申購成功 toast instead of an in-dialog success view.
+- `useFinancePagination` keeps the page across breakpoint changes; RecordFilter's search focus uses a background cue (no ring); Overlay re-announces the unsaved-work warning on every Escape; locale packs build as one chunk per language.
+
 ## Finance & AI Quant channel conventions (user decision, 2026-11-27)
 
 The binding standard for every page of the 金融 (`/earn`, `/c2c`, lending) and AI 量化 (`/ai-quant`) channels, and for new pages added to them. Follow it instead of page-specific fidelity tweaks; when a page needs something new, extend the shared files named here.

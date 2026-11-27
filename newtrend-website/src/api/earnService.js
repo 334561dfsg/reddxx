@@ -55,13 +55,14 @@ export function createEarnApi(products) {
   })
 
   /**
-   * POST /earn/subscriptions {productId, amount, mode} — creates a pending-review order (no holding yet).
+   * POST /earn/subscriptions {productId, amount, mode, requestId} — creates a pending-review order (no holding yet);
+   * a repeated requestId returns the order it already created.
    * Validation failures reject with the same codes as subscriptionError() plus eligibility codes.
    */
-  const subscribeEarn = ({productId, amount, mode}) => mockCall(SERVICE, () => {
+  const subscribeEarn = ({productId, amount, mode, requestId}) => mockCall(SERVICE, () => {
     const product = productById(productId)
     if (!product) throw new ApiError('notFound')
-    return snapshot(recordEarnSubscription(product, Number(amount), mode))
+    return snapshot(recordEarnSubscription(product, Number(amount), mode, requestId))
   })
 
   /**

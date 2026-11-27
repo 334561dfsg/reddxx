@@ -10,8 +10,8 @@ test('catalogue and order reads are snapshots with not-found codes', async () =>
   assert.notEqual(quantFunds[0].subscribed, -1)
   assert.equal((await getQuantFund('qf-vip1')).id, 'qf-vip1')
   await assert.rejects(getQuantFund('nope'), {code: 'notFound'})
-  await assert.rejects(getQuantFundOrder('nope'), {code: 'notFound'})
-  const order = await getQuantFundOrder('QFO-seed-real-1')
+  await assert.rejects(getQuantFundOrder('nope', 'common.demo.real'), {code: 'notFound'})
+  const order = await getQuantFundOrder('QFO-seed-real-1', 'common.demo.real')
   assert.ok(order.interestRecords.length > 0)
 })
 
@@ -37,11 +37,11 @@ test('subscribe validates server-side, reserves funds once per request id', asyn
 
 test('redeem submits an active flexible order for review once; balance waits for approval; a repeat is a conflict', async () => {
   const before = quantFundAccount.balances.real
-  const result = await redeemQuantFund('QFO-seed-real-1')
+  const result = await redeemQuantFund('QFO-seed-real-1', 'common.demo.real')
   assert.equal(result.order.status, 'redeem_pending_review')
   assert.equal(quantFundAccount.balances.real, before, 'nothing is credited until the admin approves')
-  await assert.rejects(redeemQuantFund('QFO-seed-real-1'), {code: 'conflict'})
-  const locked = await redeemQuantFund('QFO-seed-real-2')
+  await assert.rejects(redeemQuantFund('QFO-seed-real-1', 'common.demo.real'), {code: 'conflict'})
+  const locked = await redeemQuantFund('QFO-seed-real-2', 'common.demo.real')
   assert.equal(locked.order.status, 'redeem_pending_review', 'orders inside the lock can redeem early')
   assert.ok(locked.order.redeemFee > 0, 'with the early-redemption fee')
 })
@@ -49,4 +49,9 @@ test('redeem submits an active flexible order for review once; balance waits for
 test('an injected outage rejects with network', async () => {
   const previous = configureMock({fail: ['quantFund']})
   try { await assert.rejects(listQuantFunds(), {code: 'network'}) } finally { configureMock(previous) }
+})
+
+test('fund orders resolve only within their account mode', async () => {
+  await assert.rejects(getQuantFundOrder('QFO-seed-real-1', 'common.demo.demo'), {code: 'notFound'})
+  await assert.rejects(redeemQuantFund('QFO-seed-real-3', 'common.demo.demo'), {code: 'notFound'})
 })

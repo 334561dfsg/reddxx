@@ -62,7 +62,7 @@ function confirmRedeem(order){
   cancelLabel:'aiQuant.quantFund.redeem.cancel',confirmLabel:'aiQuant.quantFund.redeem.confirm',
   // Async confirm: the dialog shows a busy confirm action and keeps every close path held until this settles.
   async onConfirm(){
-   try{await redeemQuantFund(order.id)}
+   try{await redeemQuantFund(order.id,session.mode)}
    catch(cause){invalidate('quantFund');throw new Error(cause.code==='conflict'?'c2c.error.generic':'common.requestFailed')}
    refocusOrder=order.id
    invalidate('quantFund')

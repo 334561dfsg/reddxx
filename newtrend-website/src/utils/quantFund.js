@@ -107,7 +107,7 @@ export function subscribeFund(account, product, value, {mode, requestId, now = D
     interestPaidTotal: 0,
   }
   account.balances[mode] = balance - principal
-  product.subscribed += principal
+  // Funding progress counts approved principal only (pending orders do not, review 2026-11-27).
   account.orders.unshift(order)
   if (requestId) account.requests[requestId] = order.id
   return {order}
@@ -200,8 +200,10 @@ export function closeFundOrder(account, order, product, now = Date.now(), {fee =
   order.interestPaidTotal = round2(order.interestPaidTotal + interest)
   const returned = round2(order.principal + order.interestPaidTotal - fee)
   Object.assign(order, {status: 'redeemed', settledAt: now, heldDays: days, redeemFee: fee, returned, autoRedeemed: auto})
-  account.balances[order.mode] = round2((account.balances[order.mode] || 0) + returned)
-  if (product) product.subscribed = Math.max(0, product.subscribed - order.principal)
+  // Add the (already rounded) return without re-rounding the whole balance, which other products share.
+  account.balances[order.mode] = (account.balances[order.mode] || 0) + returned
+  // Only approved principal was counted toward funding progress.
+  if (product && order.interestStartAt != null) product.subscribed = Math.max(0, product.subscribed - order.principal)
   return {order, returned, days}
 }
 

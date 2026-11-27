@@ -28,10 +28,13 @@ export const getQuantFundPositions = mode => mockCall(SERVICE, () => {
   return {orders, summary: fundSummary(orders)}
 })
 
-/** GET /quant-fund/orders/:id — one order with its interest records; ApiError('notFound') for an unknown id. */
-export const getQuantFundOrder = orderId => mockCall(SERVICE, () => {
+/** Finds an order of this account mode only (review 2026-11-27: ids never resolve across real/demo). */
+const findOrder = (orderId, mode) => quantFundAccount.orders.find(item => item.id === orderId && item.mode === fundMode(mode))
+
+/** GET /quant-fund/orders/:id?mode= — one order with its interest records; ApiError('notFound') for an unknown id. */
+export const getQuantFundOrder = (orderId, mode) => mockCall(SERVICE, () => {
   refreshQuantFunds()
-  const order = quantFundAccount.orders.find(item => item.id === orderId)
+  const order = findOrder(orderId, mode)
   if (!order) throw new ApiError('notFound')
   return snapshot(order)
 })
@@ -54,12 +57,12 @@ export const subscribeQuantFund = ({productId, amount, mode, requestId}) => mock
 })
 
 /**
- * POST /quant-fund/orders/:id/redeem — submits a redemption for admin review: the order moves to redeem_pending_review
+ * POST /quant-fund/orders/:id/redeem {mode} — submits a redemption for admin review: the order moves to redeem_pending_review
  * and keeps earning until approved. ApiError('conflict') when the order is not redeemable (already requested,
  * fixed term, not active).
  */
-export const redeemQuantFund = orderId => mockCall(SERVICE, () => {
-  const order = quantFundAccount.orders.find(item => item.id === orderId)
+export const redeemQuantFund = (orderId, mode) => mockCall(SERVICE, () => {
+  const order = findOrder(orderId, mode)
   if (!order) throw new ApiError('notFound')
   const result = requestRedeemFund(order)
   if (result.error) throw new ApiError(result.error)
