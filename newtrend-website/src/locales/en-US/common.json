@@ -166,7 +166,8 @@
     "confirmCancel": "Cancel",
     "realModeRequired": "This page is only available in real mode",
     "confirmRealTitle": "Switch to real mode",
-    "confirmRealMessage": "Switching will show the real account’s assets and trading interface."
+    "confirmRealMessage": "Switching will show the real account’s assets and trading interface.",
+    "realAccount": "Real account"
   },
   "accountSuspended": {
     "banner": "Your account has been suspended — related data and features are unavailable. Contact support if you think this is a mistake.",

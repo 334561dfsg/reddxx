@@ -166,7 +166,8 @@
     "confirmCancel": "Annuler",
     "realModeRequired": "Cette page n'est disponible qu'en mode réel",
     "confirmRealTitle": "Passer au mode réel",
-    "confirmRealMessage": "Le changement affichera les actifs et l’interface de trading du compte réel."
+    "confirmRealMessage": "Le changement affichera les actifs et l’interface de trading du compte réel.",
+    "realAccount": "Compte réel"
   },
   "accountSuspended": {
     "banner": "Votre compte a été suspendu — les données et fonctionnalités associées sont indisponibles. En cas de doute, contactez le support.",

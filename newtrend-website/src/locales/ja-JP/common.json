@@ -166,7 +166,8 @@
     "confirmCancel": "キャンセル",
     "realModeRequired": "このページはリアルモードでのみご利用いただけます",
     "confirmRealTitle": "リアルモードに切り替え",
-    "confirmRealMessage": "切り替えると、リアル口座の資産と取引画面が表示されます。"
+    "confirmRealMessage": "切り替えると、リアル口座の資産と取引画面が表示されます。",
+    "realAccount": "リアル口座"
   },
   "accountSuspended": {
     "banner": "お客様のアカウントは停止されています。関連するデータと機能はご利用いただけません。ご不明な点はサポートまでお問い合わせください。",

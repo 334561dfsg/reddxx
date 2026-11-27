@@ -166,7 +166,8 @@
     "confirmCancel": "Abbrechen",
     "realModeRequired": "Diese Seite ist nur im Echt-Modus verfügbar",
     "confirmRealTitle": "Zum Echtgeldmodus wechseln",
-    "confirmRealMessage": "Nach dem Wechsel werden die Vermögenswerte und die Handelsoberfläche des Echtgeldkontos angezeigt."
+    "confirmRealMessage": "Nach dem Wechsel werden die Vermögenswerte und die Handelsoberfläche des Echtgeldkontos angezeigt.",
+    "realAccount": "Echtes Konto"
   },
   "accountSuspended": {
     "banner": "Dein Konto wurde gesperrt – zugehörige Daten und Funktionen sind nicht verfügbar. Bei Fragen wende dich an den Support.",

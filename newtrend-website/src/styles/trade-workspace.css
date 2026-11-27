@@ -218,25 +218,30 @@
    Panels grow with the page; nothing scrolls inside itself except the chart canvas. */
 @media(max-width:760px){
  .product-terminal.compact .instrument-bar{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-height:0;padding:max(6px,env(safe-area-inset-top)) 8px 8px 12px}
- .product-terminal.compact .instrument-identity{order:1;flex:0 1 auto;min-width:0;gap:4px}
+ .product-terminal.compact .instrument-identity{order:1;flex:1 1 auto;min-width:0;gap:6px;flex-wrap:nowrap}
  .product-terminal.compact .instrument-identity .record-filter{font-size:16px;min-height:40px;min-width:0;padding-right:6px}
  .product-terminal.compact .instrument-identity .coin{width:24px;height:24px}
- .product-terminal.compact .pair-trigger{display:inline-flex;align-items:center;gap:8px;min-width:0;min-height:40px;padding:0 4px;color:#fff}
- .product-terminal.compact .pair-trigger strong{font-size:16px;line-height:22px;font-weight:600;overflow-wrap:anywhere;text-align:left}
+ .product-terminal.compact .pair-trigger{flex:0 1 auto;display:inline-flex;align-items:center;gap:8px;min-width:0;min-height:40px;padding:0 4px;color:#fff}
+ .product-terminal.compact .pair-trigger strong{min-width:0;font-size:16px;line-height:22px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
  .product-terminal.compact .pair-trigger svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6}
  .product-terminal.compact .pair-trigger:focus-visible strong{text-decoration:underline}
+ .product-terminal.compact .account-badge{flex:none;display:inline-flex;align-items:center;min-height:24px;padding:0 6px;border-radius:4px;background:color-mix(in srgb,var(--nt-green) 16%,transparent);color:var(--nt-green);font-size:11px;line-height:16px;white-space:nowrap}
+ .product-terminal.compact .account-badge.demo{background:color-mix(in srgb,#f5a524 16%,transparent);color:#f5a524}
+ .product-terminal.compact .account-badge:focus-visible{outline:none;text-decoration:underline}
  .product-terminal.compact .instrument-tools{order:2;margin-left:auto;display:flex;align-items:center;gap:4px;flex:none}
- .product-terminal.compact .instrument-tools .record-filter{min-height:36px;padding:0 10px;border-radius:999px;background:var(--terminal-input);font-size:13px;line-height:18px;color:#fff;gap:4px}
+ .product-terminal.compact .instrument-tools .record-filter{min-height:34px;padding:0 8px 0 10px;border-radius:999px;background:var(--terminal-input);font-size:13px;line-height:18px;color:#fff;gap:4px}
  .product-terminal.compact .instrument-tools .filter-caption{display:none}
- .product-terminal.compact .chart-toggle{display:grid;place-items:center;width:40px;height:40px;border-radius:var(--nt-radius-control);color:var(--terminal-muted)}
+ .product-terminal.compact .chart-toggle{display:grid;place-items:center;width:36px;height:40px;border-radius:var(--nt-radius-control);color:var(--terminal-muted)}
  .product-terminal.compact .chart-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
- .product-terminal.compact .instrument-price{order:3;width:100%;display:flex;align-items:baseline;gap:8px;min-height:28px;font-size:22px;line-height:28px}
+ .product-terminal.compact .instrument-price{order:3;flex:1 0 calc(100% - 56px);min-width:0;display:flex;align-items:baseline;gap:8px;min-height:28px;font-size:22px;line-height:28px}
  .product-terminal.compact .instrument-price>.nt-skeleton{align-self:center}
+ /* The favourite star sits at the end of the price row so the top row fits pair, account badge, product and chart. */
+ .product-terminal.compact .compact-favorite{order:3;margin-left:auto;min-width:40px;min-height:32px}
  .product-terminal.compact .instrument-change{font-size:13px;line-height:18px;font-weight:500}
  .product-terminal.compact .instrument-stats{order:4;width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px;padding-top:4px}
  /* Connection status floats over the price row's empty right side instead of adding a line (no layout jump). */
  .product-terminal.compact .instrument-bar{position:relative}
- .product-terminal.compact .stream-status{position:absolute;right:12px;top:54px;max-width:42%;margin:0;padding:3px 8px;border-radius:12px;white-space:normal;text-align:right;font-size:11px;line-height:14px;background:color-mix(in srgb,#f5a524 14%,var(--nt-bg));pointer-events:none}
+ .product-terminal.compact .stream-status{position:absolute;right:52px;top:54px;max-width:38%;margin:0;padding:3px 8px;border-radius:12px;white-space:normal;text-align:right;font-size:11px;line-height:14px;background:color-mix(in srgb,#f5a524 14%,var(--nt-bg));pointer-events:none}
  .product-terminal.compact .workspace-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:none;grid-template-areas:"form book" "records records";gap:4px;align-items:start}
  .product-terminal.compact .chart-panel{height:340px}
  .product-terminal.compact .order-panel{grid-area:form;height:auto;max-height:none;min-height:0;overflow:visible;order:0}
@@ -288,4 +293,20 @@
  .product-terminal.compact .order-panel .trade-order-form .direction-tabs{padding:3px}
  .product-terminal.compact .order-panel .trade-order-form .direction-tabs button{min-height:32px;padding:6px 4px;line-height:20px}
  .product-terminal.compact .order-panel .trade-order-form .percentages button{min-height:28px;padding:4px 0;line-height:18px}
+}
+/* Phone header grid: pair + account badge shrink (ellipsis) before the product switch and chart button wrap; the price
+   row carries the favourite star at its end. */
+@media(max-width:760px){
+ .product-terminal.compact .instrument-bar{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"id tools" "price fav";align-items:center;column-gap:8px}
+ .product-terminal.compact .instrument-identity{grid-area:id}
+ .product-terminal.compact .instrument-tools{grid-area:tools;margin-left:0}
+ .product-terminal.compact .instrument-price{grid-area:price;flex:none}
+ .product-terminal.compact .compact-favorite{grid-area:fav;margin-left:0;justify-self:end}
+}
+@media(max-width:400px){
+ .product-terminal.compact .instrument-identity{gap:4px}
+ .product-terminal.compact .pair-trigger{gap:5px;padding:0 2px}
+ .product-terminal.compact .pair-trigger .coin{width:22px;height:22px}
+ .product-terminal.compact .account-badge{padding:0 5px}
+ .product-terminal.compact .instrument-bar{padding-left:10px;padding-right:6px;column-gap:6px}
 }

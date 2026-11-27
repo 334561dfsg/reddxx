@@ -166,7 +166,8 @@
     "confirmCancel": "取消",
     "realModeRequired": "此頁面僅限真實帳戶訪問",
     "confirmRealTitle": "切換到真實模式",
-    "confirmRealMessage": "切換後將顯示真實帳戶的資產與交易介面。"
+    "confirmRealMessage": "切換後將顯示真實帳戶的資產與交易介面。",
+    "realAccount": "真實帳戶"
   },
   "accountSuspended": {
     "banner": "您的帳號已被停用，相關資料與功能暫時無法使用。如有疑問，請聯絡客服。",
