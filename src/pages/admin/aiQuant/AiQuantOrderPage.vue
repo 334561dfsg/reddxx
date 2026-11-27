@@ -1,195 +1,37 @@
 <template>
-	<section class="space-y-4">
-		<header>
-			<h1 class="text-3xl font-semibold text-slate-900">订单管理</h1>
-			<p class="mt-1 text-sm text-slate-500">查看用户订单、收益状态及订单详情；收益调整在订单行或详情中发起，强制赎回在订单行发起</p>
-		</header>
-
-		<FeedbackToast v-if="redemptionNotice" type="success" :source="() => (redemptionNotice) ? ((redemptionNotice)) : ''"></FeedbackToast>
-
-		<article class="rounded-xl border border-slate-200 bg-white">
-			<div class="space-y-4 border-b border-slate-200 p-4">
-				<div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
-					<div class="md:col-span-2 xl:col-span-2">
-						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">关键词</label>
-						<a-input
-							v-model:value="filterDraft.search"
-							type="text"
-							autocomplete="off"
-							placeholder="订单号、用户ID、用户名、邮箱、产品名…"
-							class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
-							@keydown.enter.prevent="applySearch"
-						/>
-					</div>
-					<div>
-						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">币种</label>
-						<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filterDraft.currency" class="w-full">
-							<a-select-option value="">全部币种</a-select-option>
-							<a-select-option v-for="c in uniqueCurrencies" :key="c" :value="c">{{ c }}</a-select-option>
-						</a-select>
-					</div>
-					<div>
-						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">VIP</label>
-						<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filterDraft.vip" class="w-full">
-							<a-select-option value="">全部等级</a-select-option>
-							<a-select-option v-for="lv in vipSelectLevels" :key="lv" :value="String(lv)">{{ vipLevelMeta[lv].label }}</a-select-option>
-						</a-select>
-					</div>
-					<div>
-						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">状态</label>
-						<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filterDraft.status" class="w-full">
-							<a-select-option value="">全部状态</a-select-option>
-							<a-select-option v-for="st in orderStatusSelectValues" :key="st" :value="st">{{ orderStatusMeta[st].label }}</a-select-option>
-						</a-select>
-					</div>
-					<div class="md:col-span-2 xl:col-span-2">
-						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">产品</label>
-						<a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filterDraft.product" class="w-full">
-							<a-select-option value="">全部产品</a-select-option>
-							<a-select-option v-for="p in uniqueProducts" :key="p" :value="p">{{ p }}</a-select-option>
-						</a-select>
-					</div>
-				</div>
-
-				<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
-					<div>
-						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">本金 ≥</label>
-						<a-input
-							v-model:value="filterDraft.principalMin"
-							type="text"
-							autocomplete="off"
-							inputmode="decimal"
-							placeholder="最小本金"
-							class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none"
-						/>
-					</div>
-					<div>
-						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">本金 ≤</label>
-						<a-input
-							v-model:value="filterDraft.principalMax"
-							type="text"
-							autocomplete="off"
-							inputmode="decimal"
-							placeholder="最大本金"
-							class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none"
-						/>
-					</div>
-					<div>
-						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">下单日起</label>
-						<a-input v-model:value="filterDraft.startDateFrom" type="date" autocomplete="off" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none" />
-					</div>
-					<div>
-						<label class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">下单日止</label>
-						<a-input v-model:value="filterDraft.startDateTo" type="date" autocomplete="off" class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none" />
-					</div>
-					<div class="flex flex-col justify-end gap-2 sm:col-span-2 lg:col-span-2 xl:col-span-2">
-						<div class="flex flex-wrap gap-2">
-							<a-button type="text"
-								html-type="button"
-								class="min-w-[7rem] flex-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 sm:flex-none"
-								@click="applySearch"
-							>
-								搜索
-							</a-button>
-							<a-button type="text"
-								html-type="button"
-								class="min-w-[7rem] flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:flex-none"
-								@click="resetFilters"
-							>
-								重置条件
-							</a-button>
-						</div>
-					</div>
-				</div>
-
-				<p class="text-xs text-slate-400">
-					默认条件为「全部」（不限状态/币种/VIP/产品/日期/本金）；修改后请点击「搜索」更新列表，关键词框支持回车。
-				</p>
-
-				<div class="text-xs text-slate-500">
-					命中 <span class="font-semibold text-slate-700">{{ filteredOrders.length }}</span> 条（当前第 {{ listCurrentPage }} 页，每页 {{ listPageSize }} 条）
-					<span v-if="filteredOrders.length !== orders.length" class="text-slate-400">（数据源 {{ orders.length }} 条）</span>
-				</div>
-			</div>
-
-			<div class="overflow-x-auto">
-				<a-table  size="small" :pagination="false" :data-source="pagedOrders" :row-key="(order) => order.id" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
-<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-mono text-xs text-slate-600&quot;] })">
-<template #title>订单ID</template>
-<template #default="{ record: order, index: rowIndex }">{{ order.id }}</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>用户</template>
-<template #default="{ record: order, index: rowIndex }">
-								<div class="text-slate-700">{{ order.userName }}</div>
-								<span :class="['text-xs px-2 py-0.5 rounded-md font-medium', vipLevelMeta[order.vipLevel].class]">
-									{{ vipLevelMeta[order.vipLevel].label }}
-								</span>
-							</template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
-<template #title>产品</template>
-<template #default="{ record: order, index: rowIndex }">{{ order.productName }}</template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-slate-900&quot;] })">
-<template #title>本金</template>
-<template #default="{ record: order, index: rowIndex }">{{ fmtCurrency(order.principal, order.currency) }}</template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-emerald-600&quot;] })">
-<template #title>日利率</template>
-<template #default="{ record: order, index: rowIndex }">{{ order.dailyRate.toFixed(2) }}%</template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
-<template #title>周期</template>
-<template #default="{ record: order, index: rowIndex }">{{ formatAiQuantOrderCycleLabel(order) }}</template>
-</a-table-column>
-<a-table-column key="column-6" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-blue-600&quot;] })">
-<template #title>累计收益</template>
-<template #default="{ record: order, index: rowIndex }">{{ fmtCurrency(order.accumulatedYield, order.currency) }}</template>
-</a-table-column>
-<a-table-column key="column-7" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>状态</template>
-<template #default="{ record: order, index: rowIndex }"><span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="orderStatusMeta[order.status].class">{{ orderStatusMeta[order.status].label }}</span></template>
-</a-table-column>
-<a-table-column key="column-8" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: order, index: rowIndex }">
-								<a-button type="link" danger :disabled="!canForceRedeemAiQuantOrder(order)" @click="openForceRedeem(order)">强制赎回</a-button>
-								<a-button type="text" html-type="button" @click="viewOrderDetail(order)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">详情</a-button>
-								<template v-if="isAiQuantUserPointControlled(order)">
-									<span class="text-slate-300 mx-1.5">|</span>
-									<span
-										class="inline-flex rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700"
-										aria-label="用户点控中，订单收益调整不可用"
-									>
-										点控中
-									</span>
-								</template>
-								<template v-else-if="canYieldAdjust(order)">
-									<span class="text-slate-300 mx-1.5">|</span>
-									<a-button type="text"
-										html-type="button"
-										@click="openYieldAdjustForOrder(order)"
-										class="text-emerald-600 hover:text-emerald-800 text-sm font-medium"
-									>
-										收益调整
-									</a-button>
-								</template>
-							</template>
-</a-table-column>
-<template #emptyText>
-								<template v-if="!orders.length">暂无订单数据源（mock 未加载）。请检查控制台报错。</template>
-								<template v-else>无符合条件的订单。请调整筛选后点击「搜索」，或「重置条件」。</template>
-							</template>
-</a-table>
-			</div>
-			<AdminListPaginationBar
-				v-model:current-page="listCurrentPage"
-				v-model:page-size="listPageSize"
-				:total-pages="listTotalPages"
-				:total-count="listTotalCount"
-			/>
-		</article>
+	<PageShell>
+		<SearchForm name="ai-quant-order-filters" :model="searchModel" :fields="fields" @search="search" @reset="resetFilters" />
+		<AdminTable title="AI 量化订单" v-model:page="page" :rows="filteredOrders" :columns="columns" row-key="id" desktop-only>
+			<template #cell="{ column, record: order }">
+				<Space v-if="column.key === 'order'" direction="vertical" :size="0">
+					<TypographyText strong>{{ order.productName }}</TypographyText>
+					<TypographyText type="secondary" class="font-mono">{{ order.id }}</TypographyText>
+					<TypographyText type="secondary">{{ order.startDate }}</TypographyText>
+				</Space>
+				<Space v-else-if="column.key === 'user'" direction="vertical" :size="0">
+					<span>{{ order.userName }} <Tag class="ml-1">{{ vipLevelMeta[order.vipLevel]?.label ?? '—' }}</Tag></span>
+					<TypographyText type="secondary" class="font-mono">{{ order.userId }}</TypographyText>
+				</Space>
+				<template v-else-if="column.key === 'principal'">{{ fmtCurrency(order.principal, order.currency) }}</template>
+				<template v-else-if="column.key === 'dailyRate'">{{ order.dailyRate.toFixed(2) }}%</template>
+				<template v-else-if="column.key === 'cycle'">{{ formatAiQuantOrderCycleLabel(order) }}</template>
+				<TypographyText v-else-if="column.key === 'yield'" strong>{{ fmtCurrency(order.accumulatedYield, order.currency) }}</TypographyText>
+				<Tag v-else-if="column.key === 'status'" :color="orderStatusColor[order.status]">{{ orderStatusMeta[order.status]?.label ?? order.status }}</Tag>
+				<Space v-else-if="column.key === 'actions'" :size="8">
+					<Button type="link" class="px-0" @click="viewOrderDetail(order)">详情</Button>
+					<Tag
+						v-if="isAiQuantUserPointControlled(order)"
+						color="purple"
+						aria-label="用户点控中，订单收益调整不可用"
+					>
+						点控中
+					</Tag>
+					<Button v-else-if="canYieldAdjust(order)" type="link" class="px-0" @click="openYieldAdjustForOrder(order)">收益调整</Button>
+					<Button type="link" class="px-0" danger :disabled="!canForceRedeemAiQuantOrder(order)" @click="openForceRedeem(order)">强制赎回</Button>
+				</Space>
+				<template v-else>{{ order[column.key] ?? '—' }}</template>
+			</template>
+		</AdminTable>
 
 		<AiQuantYieldAdjustmentModal ref="yieldModalRef" />
     <AiQuantForceRedeemModal :open="redeemOpen" :order="redeemOrder" @close="redeemOpen = false" @closed="redeemOrder = null" @saved="handleRedeemed" />
@@ -238,9 +80,7 @@
 									</div>
 									<div class="flex justify-between items-center">
 										<span class="text-sm text-slate-600">VIP等级</span>
-										<span :class="['text-xs px-2 py-0.5 rounded-md font-medium', vipLevelMeta[selectedOrder.vipLevel].class]">
-											{{ vipLevelMeta[selectedOrder.vipLevel].label }}
-										</span>
+										<Tag>{{ vipLevelMeta[selectedOrder.vipLevel]?.label ?? '—' }}</Tag>
 									</div>
 									<div class="flex justify-between items-center pt-2 border-t border-slate-200">
 										<span class="text-sm text-slate-600">产品名称</span>
@@ -469,91 +309,45 @@
 
 				<!-- 底部操作栏 -->
 				</template>
-<template #footer><template v-if="showDetailModal &amp;&amp; selectedOrder"><div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 flex-shrink-0 bg-slate-50">
-					<a-button type="text"
+<template #footer><template v-if="showDetailModal &amp;&amp; selectedOrder"><Space :size="8">
+					<Button
 						v-if="selectedOrder && isAiQuantUserPointControlled(selectedOrder)"
-						html-type="button"
 						disabled
-						class="cursor-not-allowed rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700"
 						aria-label="用户点控中，订单收益调整不可用"
 					>
 						点控中
-					</a-button>
-					<a-button type="text"
+					</Button>
+					<Button
 						v-else-if="selectedOrder && canYieldAdjust(selectedOrder)"
-						html-type="button"
 						@click="openYieldAdjustForOrder(selectedOrder); showDetailModal = false"
-						class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-800 transition hover:bg-emerald-100"
 					>
 						收益调整
-					</a-button>
-					<a-button type="text" html-type="button" @click="showDetailModal = false" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">关闭</a-button>
-				</div></template></template>
+					</Button>
+					<Button @click="showDetailModal = false">关闭</Button>
+				</Space></template></template>
 </a-modal>
-	</section>
+	</PageShell>
 </template>
 
 <script setup>
-import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
-import { ref, shallowRef, reactive, computed, nextTick, onMounted } from 'vue'
+// AI 量化订单 — Ant Design Pro list page (2026-11-28): query card with one input per field (the combined keyword box was
+// split into 订单号 / 用户 ID / 用户名或邮箱 / 产品 ID), table card with pagination, status as a text Tag, link actions.
+// Forced-redemption success now calls the Ant message toast directly per attempt.
+import { ref, shallowRef, computed, nextTick, onMounted } from 'vue'
+import { Button, Space, Tag, TypographyText, message } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import { ORDER_STATUS, orderStatusMeta, vipLevelMeta, VIP_LEVEL } from '../../../admin/constants/aiQuant'
 import { getAiQuantAdminOrdersSnapshot } from '../../../admin/state/aiQuantOrders'
 import { userControlState } from '../../../admin/state/userControlState.js'
-import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
-import { useAgentPagedList } from '../../../composables/useAgentListPagination'
 import AiQuantForceRedeemModal from './AiQuantForceRedeemModal.vue'
 import { canForceRedeemAiQuantOrder } from '../../../admin/domain/aiQuantRedemption.js'
 import AiQuantYieldAdjustmentModal from './AiQuantYieldAdjustmentModal.vue'
 
 /** 页面内快照，避免全局 ref 在热更新等场景被清空；演示数据仅本页持有 */
 const orders = shallowRef(getAiQuantAdminOrdersSnapshot())
-
-function emptyFilterFields() {
-	return {
-		search: '',
-		status: '',
-		currency: '',
-		vip: '',
-		product: '',
-		principalMin: '',
-		principalMax: '',
-		startDateFrom: '',
-		startDateTo: ''
-	}
-}
-
-/** 表单草稿；点「搜索」后写入 filterApplied（ref 整对象替换，保证列表计算属性稳定更新） */
-const filterDraft = reactive(emptyFilterFields())
-const filterApplied = ref(emptyFilterFields())
-
-const yieldModalRef = ref(null)
-const redeemOpen = ref(false)
-const redeemOrder = ref(null)
-const redemptionNotice = ref('')
-function openForceRedeem(order) {
-  if (redeemOrder.value || !canForceRedeemAiQuantOrder(order)) return
-  redeemOrder.value = order
-  redeemOpen.value = true
-}
-function handleRedeemed(updated) {
-  orders.value = orders.value.map((order) => order.id === updated.id ? updated : order)
-  if (selectedOrder.value?.id === updated.id) selectedOrder.value = updated
-  redemptionNotice.value = `订单 ${updated.id} 已强制赎回（演示），操作日志已记录。`
-}
-
-function applySearch() {
-	filterApplied.value = {
-		search: filterDraft.search,
-		status: filterDraft.status,
-		currency: filterDraft.currency,
-		vip: filterDraft.vip,
-		product: filterDraft.product,
-		principalMin: filterDraft.principalMin,
-		principalMax: filterDraft.principalMax,
-		startDateFrom: filterDraft.startDateFrom,
-		startDateTo: filterDraft.startDateTo
-	}
-}
+const page = ref(1)
 
 const orderStatusSelectValues = [
 	ORDER_STATUS.RUNNING,
@@ -564,6 +358,64 @@ const orderStatusSelectValues = [
 	ORDER_STATUS.LOCKED,
 	ORDER_STATUS.CANCELLED
 ]
+const orderStatusColor = {
+	[ORDER_STATUS.RUNNING]: 'blue',
+	[ORDER_STATUS.COMPLETED]: 'green',
+	[ORDER_STATUS.SETTLED]: 'default',
+	[ORDER_STATUS.EARLY_REDEEMED]: 'purple',
+	[ORDER_STATUS.FORCE_REDEEMED]: 'purple',
+	[ORDER_STATUS.LOCKED]: 'orange',
+	[ORDER_STATUS.CANCELLED]: 'red'
+}
+const vipSelectLevels = [VIP_LEVEL.VIP0, VIP_LEVEL.VIP1, VIP_LEVEL.VIP2, VIP_LEVEL.VIP3, VIP_LEVEL.VIP4, VIP_LEVEL.VIP5]
+const uniqueCurrencies = computed(() => [...new Set(orders.value.map((o) => o.currency))].sort())
+const uniqueProducts = computed(() => [...new Set(orders.value.map((o) => o.productName))].sort())
+
+/** 默认条件为「全部」；草稿在查询卡内，点「查询」后写入 filters */
+const blank = () => ({ orderId: '', userId: '', user: '', productId: '', product: 'all', currency: 'all', vip: 'all', status: 'all', principal: [null, null], startDate: null })
+const filters = ref(blank())
+const fields = computed(() => [
+	{ key: 'orderId', label: '订单号' },
+	{ key: 'userId', label: '用户 ID' },
+	{ key: 'user', label: '用户名/邮箱' },
+	{ key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, ...orderStatusSelectValues.map((value) => ({ value, label: orderStatusMeta[value].label }))] },
+	{ key: 'product', label: '产品', searchable: true, options: [{ value: 'all', label: '全部产品' }, ...uniqueProducts.value.map((value) => ({ value, label: value }))] },
+	{ key: 'productId', label: '产品 ID' },
+	{ key: 'currency', label: '币种', searchable: true, options: [{ value: 'all', label: '全部币种' }, ...uniqueCurrencies.value.map((value) => ({ value, label: value }))] },
+	{ key: 'vip', label: 'VIP', options: [{ value: 'all', label: '全部等级' }, ...vipSelectLevels.map((lv) => ({ value: String(lv), label: vipLevelMeta[lv].label }))] },
+	{ key: 'principal', label: '本金', numberRange: true, min: 0 },
+	{ key: 'startDate', label: '下单日期', range: true }
+])
+const columns = [
+	{ key: 'order', title: '订单', width: 220, fixed: 'left' },
+	{ key: 'user', title: '用户', width: 190 },
+	{ key: 'principal', title: '本金', width: 150, align: 'right' },
+	{ key: 'dailyRate', title: '日利率', width: 100, align: 'right' },
+	{ key: 'cycle', title: '周期', width: 160 },
+	{ key: 'yield', title: '累计收益', width: 150, align: 'right' },
+	{ key: 'status', title: '状态', width: 100 },
+	{ key: 'actions', title: '操作', width: 220, fixed: 'right' }
+]
+// The query card edits its number-range array in place; give it its own model and copy arrays on 查询 so the applied
+// filters never share an array with the draft (otherwise typing a principal bound would filter before 查询).
+const searchModel = blank()
+const snapshot = (values) => Object.fromEntries(Object.entries(values).map(([key, value]) => [key, Array.isArray(value) ? [...value] : value]))
+function search(values) { filters.value = { ...blank(), ...snapshot(values) }; page.value = 1 }
+function resetFilters() { filters.value = blank(); page.value = 1 }
+
+const yieldModalRef = ref(null)
+const redeemOpen = ref(false)
+const redeemOrder = ref(null)
+function openForceRedeem(order) {
+  if (redeemOrder.value || !canForceRedeemAiQuantOrder(order)) return
+  redeemOrder.value = order
+  redeemOpen.value = true
+}
+function handleRedeemed(updated) {
+  orders.value = orders.value.map((order) => order.id === updated.id ? updated : order)
+  if (selectedOrder.value?.id === updated.id) selectedOrder.value = updated
+  message.success(`订单 ${updated.id} 已强制赎回（演示），操作日志已记录。`)
+}
 
 /** 仅运行中可发起收益调整；已完成/已结算/提前赎回等为终态，不可调 */
 const YIELD_ADJUST_ALLOWED_STATUSES = new Set([ORDER_STATUS.RUNNING])
@@ -585,21 +437,10 @@ const aiQuantPointControlRule = (order) => {
 const isAiQuantUserPointControlled = (order) => Boolean(aiQuantPointControlRule(order))
 const canYieldAdjust = (order) => Boolean(order?.status && YIELD_ADJUST_ALLOWED_STATUSES.has(order.status) && !isAiQuantUserPointControlled(order))
 
-const vipSelectLevels = [VIP_LEVEL.VIP0, VIP_LEVEL.VIP1, VIP_LEVEL.VIP2, VIP_LEVEL.VIP3, VIP_LEVEL.VIP4, VIP_LEVEL.VIP5]
-
-const uniqueCurrencies = computed(() => [...new Set(orders.value.map((o) => o.currency))].sort())
-const uniqueProducts = computed(() => [...new Set(orders.value.map((o) => o.productName))].sort())
-
-const resetFilters = () => {
-	Object.assign(filterDraft, emptyFilterFields())
-	applySearch()
-}
-
 onMounted(() => {
 	if (!orders.value.length) {
 		orders.value = getAiQuantAdminOrdersSnapshot()
 	}
-	applySearch()
 })
 
 const showDetailModal = ref(false)
@@ -615,65 +456,27 @@ const openYieldAdjustForOrder = (order) => {
 	nextTick(() => yieldModalRef.value?.openForOrder(order))
 }
 
-/** 空字符串不得当成 0，否则「本金≤」会变成 principal<=0 滤掉全部订单 */
-const parseNum = (s) => {
-	const t = String(s ?? '')
-		.trim()
-		.replace(/,/g, '')
-	if (t === '') return null
-	const n = Number(t)
-	return Number.isFinite(n) ? n : null
-}
-
-const isYmd = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s ?? '').trim())
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
+/** 本金区间两端为空（null）时不限制，避免把空值当成 0 */
+const inRange = (value, [min, max] = [null, null]) => (min === null || min === undefined || value >= min) && (max === null || max === undefined || value <= max)
 
 const filteredOrders = computed(() => {
 	const list = Array.isArray(orders.value) ? orders.value : []
-	const q = filterApplied.value
-	const kw = String(q.search ?? '').trim().toLowerCase()
-	const st = String(q.status ?? '').trim()
-	const cur = String(q.currency ?? '').trim()
-	const vip = String(q.vip ?? '').trim()
-	const prod = String(q.product ?? '').trim()
-	const dFrom = String(q.startDateFrom ?? '').trim()
-	const dTo = String(q.startDateTo ?? '').trim()
-	const pMin = parseNum(q.principalMin)
-	const pMax = parseNum(q.principalMax)
+	const f = filters.value
 	return list.filter((o) => {
 		if (!o || typeof o !== 'object') return false
-		const matchStatus = !st || o.status === st
-		const hay = `${o.id ?? ''} ${o.userId ?? ''} ${o.userName ?? ''} ${o.userEmail ?? ''} ${o.productName ?? ''} ${o.productId ?? ''}`.toLowerCase()
-		const matchKeyword = !kw || hay.includes(kw)
-		const matchCurrency = !cur || o.currency === cur
-		const matchVip = !vip || String(o.vipLevel) === vip
-		const matchProduct = !prod || o.productName === prod
-		const matchPrincipalMin = pMin == null || Number(o.principal) >= pMin
-		const matchPrincipalMax = pMax == null || Number(o.principal) <= pMax
-		const matchDateFrom = !dFrom || !isYmd(dFrom) || String(o.startDate || '') >= dFrom
-		const matchDateTo = !dTo || !isYmd(dTo) || String(o.startDate || '') <= dTo
-		return (
-			matchStatus &&
-			matchKeyword &&
-			matchCurrency &&
-			matchVip &&
-			matchProduct &&
-			matchPrincipalMin &&
-			matchPrincipalMax &&
-			matchDateFrom &&
-			matchDateTo
-		)
+		const day = String(o.startDate || '')
+		return has(o.id, f.orderId) && has(o.userId, f.userId) &&
+			(has(o.userName, f.user) || has(o.userEmail, f.user)) &&
+			has(o.productId, f.productId) &&
+			(f.status === 'all' || o.status === f.status) &&
+			(f.product === 'all' || o.productName === f.product) &&
+			(f.currency === 'all' || o.currency === f.currency) &&
+			(f.vip === 'all' || String(o.vipLevel) === f.vip) &&
+			inRange(Number(o.principal), f.principal) &&
+			(!f.startDate || (day >= f.startDate[0] && day <= f.startDate[1]))
 	})
 })
-
-const {
-	pageSize: listPageSize,
-	currentPage: listCurrentPage,
-	totalCount: listTotalCount,
-	totalPages: listTotalPages,
-	pagedList: pagedOrders
-} = useAgentPagedList(filteredOrders, { pageSize: 10 })
-
-applySearch()
 
 const fmtNumber = (val, decimals = 2) => Number(val).toFixed(decimals)
 const fmtCurrency = (val, currency, decimals = 2) => {

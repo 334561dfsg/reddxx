@@ -1,10 +1,15 @@
 <script setup>
+// 杠杆模板管理 — Ant Design Pro list page (2026-11-28): status tabs and the name search became query-card fields with
+// explicit 查询/重置, the template cards became a table card with a create toolbar, pagination, status Tags and a link
+// action. The template editor dialog is unchanged.
+import { Button, Space, Tag, TypographyText } from 'ant-design-vue'
+import { PlusOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
-import { computed, reactive, ref, watch } from 'vue'
-import {
-  PERPETUAL_COMMON_FILTER_ALL,
-  PERPETUAL_STATUS
-} from '../../../admin/constants/perpetual'
+import { computed, ref } from 'vue'
+import { PERPETUAL_STATUS } from '../../../admin/constants/perpetual'
 import {
   createPerpetualProductsMock,
   createPerpetualTemplatesMock,
@@ -12,13 +17,30 @@ import {
   savePerpetualTemplatesMock
 } from '../../../admin/mock/perpetual'
 
-const statusTab = ref(PERPETUAL_COMMON_FILTER_ALL)
-const search = ref('')
-
-const pagination = reactive({
-  currentPage: 1,
-  pageSize: 5
-})
+const blank = () => ({ name: '', status: 'all', contract: '' })
+const filters = ref(blank())
+const currentPage = ref(1)
+const fields = [
+  { key: 'name', label: '模板名称' },
+  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, { value: PERPETUAL_STATUS.ENABLED, label: '已启用' }, { value: PERPETUAL_STATUS.DISABLED, label: '已禁用' }] },
+  { key: 'contract', label: '使用合约' }
+]
+const columns = [
+  { key: 'name', title: '模板', width: 240, fixed: 'left' },
+  { key: 'levels', title: '可用杠杆档位', width: 320 },
+  { key: 'contract', title: '合约模板', width: 300 },
+  { key: 'contracts', title: '使用此模板的合约', width: 220 },
+  { key: 'status', title: '状态', width: 90 },
+  { key: 'actions', title: '操作', width: 80, fixed: 'right' }
+]
+const applySearch = (values) => {
+  filters.value = { ...blank(), ...values }
+  currentPage.value = 1
+}
+const resetSearch = () => {
+  filters.value = blank()
+  currentPage.value = 1
+}
 
 const leverageLevels = perpetualLeverageLevels
 
@@ -60,25 +82,14 @@ const refreshTemplateUsage = () => {
 
 refreshTemplateUsage()
 
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
 const filteredTemplates = computed(() => {
-  const keyword = search.value.trim().toLowerCase()
-  return templates.value.filter((item) => {
-    const matchesStatus = statusTab.value === PERPETUAL_COMMON_FILTER_ALL || item.status === statusTab.value
-    const matchesKeyword = !keyword || item.name.toLowerCase().includes(keyword)
-    return matchesStatus && matchesKeyword
-  })
-})
-
-const paginatedTemplates = computed(() => {
-  const start = (pagination.currentPage - 1) * pagination.pageSize
-  const end = start + pagination.pageSize
-  return filteredTemplates.value.slice(start, end)
-})
-
-const totalPages = computed(() => Math.ceil(filteredTemplates.value.length / pagination.pageSize))
-
-watch([search, statusTab], () => {
-  pagination.currentPage = 1
+  const f = filters.value
+  return templates.value.filter((item) =>
+    has(item.name, f.name) &&
+    (f.status === 'all' || item.status === f.status) &&
+    (!f.contract.trim() || (item.contracts || []).some((name) => has(name, f.contract)))
+  )
 })
 
 const showTemplateModal = ref(false)
@@ -199,111 +210,32 @@ const submitTemplate = () => {
 </script>
 
 <template>
-  <section class="space-y-4">
-    <header class="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-semibold text-slate-900">杠杆模板管理</h1>
-        <p class="mt-1 text-sm text-slate-500">管理永续合约可用的杠杆倍数档位模板</p>
-      </div>
-    </header>
-
-    <article class="rounded-xl border border-slate-200 bg-white">
-      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-4">
-        <div class="flex flex-wrap items-center gap-4">
-          <div class="inline-flex items-center gap-2 text-sm">
-            <a-button type="text" html-type="button" class="font-medium" :class="statusTab === PERPETUAL_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="statusTab = PERPETUAL_COMMON_FILTER_ALL">全部</a-button>
-            <a-button type="text"
-              html-type="button"
-              class="font-medium"
-              :class="statusTab === PERPETUAL_STATUS.ENABLED ? 'text-blue-600' : 'text-slate-500'"
-              @click="statusTab = PERPETUAL_STATUS.ENABLED"
-            >
-              已启用
-            </a-button>
-            <a-button type="text"
-              html-type="button"
-              class="font-medium"
-              :class="statusTab === PERPETUAL_STATUS.DISABLED ? 'text-blue-600' : 'text-slate-500'"
-              @click="statusTab = PERPETUAL_STATUS.DISABLED"
-            >
-              已禁用
-            </a-button>
-          </div>
-        </div>
-
-        <div class="flex w-full max-w-2xl flex-wrap items-center justify-end gap-2">
-          <div class="relative w-full max-w-sm">
-            <a-input
-              v-model:value="search"
-              type="text"
-              class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none"
-              placeholder="搜索模板名称..."
-            />
-            <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none">
-              <circle cx="9" cy="9" r="5.8" stroke="currentColor" stroke-width="1.6" />
-              <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-            </svg>
-          </div>
-          <a-button type="primary"
-            html-type="button"
-            class="ant-btn ant-btn-primary"
-            @click="openCreateTemplate"
-          >
-            <span>+ 新增模板</span>
-          </a-button>
-        </div>
-      </div>
-
-      <div class="space-y-4 p-4">
-        <article v-for="tpl in paginatedTemplates" :key="tpl.id" class="rounded-xl border border-slate-200 p-4">
-          <div class="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <div class="flex flex-wrap items-center gap-2">
-                <h3 class="text-lg font-semibold text-slate-900">{{ tpl.name }}</h3>
-                <span class="rounded-md bg-blue-50 px-2 py-0.5 text-xs text-blue-600">{{ tpl.leverageCount }} 个档位</span>
-                <span class="rounded-md bg-emerald-50 px-2 py-0.5 text-xs text-emerald-600">{{ tpl.inUseCount }} 个合约使用中</span>
-              </div>
-              <p class="mt-3 text-sm text-slate-600">杠杆范围: <span class="font-medium text-slate-900">{{ tpl.leverageRange }}</span></p>
-            </div>
-            <a-button html-type="button" class="ant-btn !h-8 !px-3 " @click="openEditTemplate(tpl)">编辑模板</a-button>
-          </div>
-
-          <div class="mt-4">
-            <p class="text-sm text-slate-500">可用杠杆档位:</p>
-            <div class="mt-2 flex flex-wrap gap-2">
-              <span v-for="lv in tpl.levels" :key="lv" class="rounded-md bg-blue-50 px-3 py-1 text-sm font-medium text-blue-600">{{ lv }}</span>
-            </div>
-          </div>
-
-          <div class="mt-4">
-            <p class="text-sm text-slate-500">使用此模板的合约:</p>
-            <div class="mt-2 flex flex-wrap gap-2">
-              <span
-                v-for="contract in tpl.contracts"
-                :key="contract"
-                class="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-700"
-              >
-                {{ contract }}
-              </span>
-              <span v-if="tpl.contracts.length === 0" class="text-sm text-slate-400">暂无</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- 分页 -->
-        <div v-if="totalPages > 1" class="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
-          <div class="text-sm text-slate-500">
-            共 <span class="font-medium">{{ filteredTemplates.length }}</span> 个模板，第 <span class="font-medium">{{ pagination.currentPage }}</span> / <span class="font-medium">{{ totalPages }}</span> 页
-          </div>
-          <div class="flex items-center gap-2">
-            <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="pagination.currentPage = $event" />
-          </div>
-        </div>
-
-        <p v-if="filteredTemplates.length === 0" class="rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">没有匹配的杠杆模板</p>
-      </div>
-    </article>
-  </section>
+  <PageShell>
+    <SearchForm name="perpetual-template-filters" :model="filters" :fields="fields" @search="applySearch" @reset="resetSearch" />
+    <AdminTable title="杠杆模板" v-model:page="currentPage" :rows="filteredTemplates" :columns="columns" row-key="id" desktop-only>
+      <template #toolbar>
+        <Button type="primary" @click="openCreateTemplate"><template #icon><PlusOutlined /></template>新增模板</Button>
+      </template>
+      <template #cell="{ column, record: tpl }">
+        <Space v-if="column.key === 'name'" direction="vertical" :size="0">
+          <TypographyText strong>{{ tpl.name }}</TypographyText>
+          <TypographyText type="secondary">杠杆范围 {{ tpl.leverageRange }} · {{ tpl.leverageCount }} 个档位</TypographyText>
+        </Space>
+        <span v-else-if="column.key === 'levels'"><Tag v-for="lv in tpl.levels" :key="lv">{{ lv }}</Tag></span>
+        <Space v-else-if="column.key === 'contract'" direction="vertical" :size="0">
+          <span>{{ tpl.orderMode === 'quantity' ? '按数量(张数=币价)下单' : '按成本(USDT)下单' }}</span>
+          <TypographyText type="secondary">面值 {{ Number(tpl.contractFaceValueUsdt ?? 1000).toLocaleString() }} USDT · 维持保证金率 {{ Number(tpl.maintenanceMarginRate ?? 0.5) }}% · 强平手续费率 {{ Number(tpl.liquidationFeeRate ?? 0) }}%</TypographyText>
+        </Space>
+        <template v-else-if="column.key === 'contracts'">
+          <span v-if="tpl.contracts.length"><Tag v-for="contract in tpl.contracts" :key="contract">{{ contract }}</Tag></span>
+          <TypographyText v-else type="secondary">暂无</TypographyText>
+        </template>
+        <Tag v-else-if="column.key === 'status'" :color="tpl.status === PERPETUAL_STATUS.ENABLED ? 'green' : 'default'">{{ tpl.status === PERPETUAL_STATUS.ENABLED ? '已启用' : '已禁用' }}</Tag>
+        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" @click="openEditTemplate(tpl)">编辑</Button>
+        <template v-else>{{ tpl[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
+  </PageShell>
 
   <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showTemplateModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="768"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showTemplateModal = false">
 <template #title><template v-if="showTemplateModal"><header class="flex items-center justify-between border-b border-slate-200 px-6 py-4">

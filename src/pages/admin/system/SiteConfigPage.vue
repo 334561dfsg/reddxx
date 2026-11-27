@@ -1,5 +1,11 @@
 <script setup>
+// 平台配置 → 站点配置: Ant Design Pro config page (2026-11-28) — PageShell header, grouped Cards with Ant Form,
+// sticky bottom action bar, toast feedback (Ant message) and an Ant confirmation dialog instead of native dialogs.
 import { computed, onMounted, ref } from 'vue'
+import { Button, Card, Col, Form, FormItem, Input, Row, Space, Spin, Switch, Textarea, TypographyText, message } from 'ant-design-vue'
+import { UploadOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import AdminModal from '../earn/EarnAdminModal.vue'
 import { DEFAULT_I18N_BLOCK } from '../../../admin/constants/i18nCatalog'
 import { DEFAULT_SITE_CONFIG, siteConfigApi } from '../../../admin/mock/siteConfig'
 import { FRONT_WALLET_LOGIN_PROVIDERS } from '../../../stores/frontAuth'
@@ -20,12 +26,7 @@ const fileInputMobile = ref(null)
 const logoPreviewPc = computed(() => config.value.logoUrlPc || '')
 const logoPreviewMobile = computed(() => config.value.logoUrlMobile || '')
 
-const activeTab = ref('basic')
-const tabs = [
-  { key: 'basic', label: '基础设置' },
-  { key: 'login', label: '登录设置' },
-  { key: 'seo', label: 'SEO 设置' }
-]
+const resetOpen = ref(false)
 
 const loadConfig = async () => {
   loading.value = true
@@ -36,15 +37,16 @@ const loadConfig = async () => {
       config.value.i18n = { ...DEFAULT_I18N_BLOCK, ...(config.value.i18n || {}) }
     }
   } catch (e) {
-    console.error(e)
+    message.error('加载失败：' + (e?.message || '未知错误'))
   } finally {
     loading.value = false
   }
 }
 
 const saveConfig = async () => {
-  if (!config.value.siteName.trim()) {
-    alert('请输入站点名称')
+  if (isSaving.value) return
+  if (!String(config.value.siteName || '').trim()) {
+    message.warning('请输入站点名称')
     return
   }
 
@@ -53,27 +55,32 @@ const saveConfig = async () => {
     const result = await siteConfigApi.updateSiteConfig(config.value)
     if (result.success) {
       window.dispatchEvent(new CustomEvent('admin-site-config-updated'))
-      alert(result.message)
+      message.success(result.message || '站点配置已保存')
     }
   } catch (e) {
-    alert('保存失败：' + (e?.message || '未知错误'))
+    message.error('保存失败：' + (e?.message || '未知错误'))
   } finally {
     isSaving.value = false
   }
 }
 
-const resetToDefault = () => {
-  if (!confirm('确认恢复为默认配置？将清空已保存的本地站点信息。')) return
-  config.value = {
-    ...DEFAULT_SITE_CONFIG,
-    i18n: { ...DEFAULT_I18N_BLOCK }
-  }
-  siteConfigApi.updateSiteConfig(config.value).then((r) => {
+const resetToDefault = async () => {
+  if (isSaving.value) return
+  isSaving.value = true
+  try {
+    const next = { ...DEFAULT_SITE_CONFIG, i18n: { ...DEFAULT_I18N_BLOCK } }
+    const r = await siteConfigApi.updateSiteConfig(next)
     if (r.success) {
+      config.value = next
       window.dispatchEvent(new CustomEvent('admin-site-config-updated'))
-      alert(r.message)
+      message.success(r.message || '已恢复默认配置')
+      resetOpen.value = false
     }
-  })
+  } catch (e) {
+    message.error('恢复默认失败：' + (e?.message || '未知错误'))
+  } finally {
+    isSaving.value = false
+  }
 }
 
 const triggerFilePc = () => fileInputPc.value?.click()
@@ -83,11 +90,13 @@ function readLogoFile(event, key) {
   const file = event.target.files?.[0]
   if (!file) return
   if (!file.type.startsWith('image/')) {
-    alert('请上传图片文件')
+    message.warning('请上传图片文件')
+    event.target.value = ''
     return
   }
   if (file.size > 2 * 1024 * 1024) {
-    alert('图片大小不能超过 2MB')
+    message.warning('图片大小不能超过 2MB')
+    event.target.value = ''
     return
   }
   const reader = new FileReader()
@@ -114,258 +123,194 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div>
-      <h1 class="text-2xl font-bold text-slate-900">站点配置</h1>
-      <p class="mt-1 text-sm text-slate-500">设置平台展示名称与 Logo，当前为本地持久化示例，可替换为后端接口。</p>
-    </div>
+  <PageShell title="站点配置">
+    <template #description>
+      <TypographyText type="secondary">设置平台展示名称、Logo、登录方式与 SEO 信息；当前为本地持久化示例，可替换为后端接口。</TypographyText>
+    </template>
+    <Card v-if="loading" :bordered="false"><Spin tip="加载中…" class="site-config-loading" /></Card>
 
-    <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
-      加载中…
-    </div>
+    <template v-else>
+      <Form name="site-config" layout="vertical" :model="config" class="site-config-form" @finish="saveConfig">
+        <Card title="基础信息" :bordered="false">
+          <Row :gutter="24" class="site-config-fields">
+            <Col :xs="24" :lg="12">
+              <FormItem label="站点名称" name="siteName" required extra="用于页头、页脚等位置的品牌名称展示。">
+                <Input v-model:value="config.siteName" placeholder="例如：CryptoX Pro" :maxlength="64" />
+              </FormItem>
+            </Col>
+            <Col :xs="24" :lg="12">
+              <FormItem label="副标题 / Slogan（可选）" name="tagline">
+                <Input v-model:value="config.tagline" placeholder="一句话描述你的平台" :maxlength="200" />
+              </FormItem>
+            </Col>
+          </Row>
+        </Card>
 
-    <div v-else class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div
-        class="flex flex-col gap-4 border-b border-slate-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
-      >
-        <div class="flex flex-wrap gap-1 rounded-lg bg-slate-100/90 p-1">
-          <a-button v-for="t in tabs" :key="t.key" html-type="button" class="text-sm font-medium transition" :class="
-              activeTab === t.key
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
-            " @click="activeTab = t.key">
-            {{ t.label }}
-          </a-button>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <a-button html-type="button" class="" @click="resetToDefault">恢复默认</a-button>
-          <a-button html-type="button" class="" :disabled="isSaving" @click="saveConfig" type="primary">
-            {{ isSaving ? '保存中…' : '保存' }}
-          </a-button>
-        </div>
-      </div>
-
-      <div class="space-y-6 p-6">
-        <!-- 基础设置 -->
-        <div v-show="activeTab === 'basic'" class="space-y-6">
-        <div>
-          <label class="mb-2 block text-sm font-medium text-slate-700">站点名称</label>
-          <a-input v-model:value="config.siteName" type="text" class="max-w-xl" placeholder="例如：CryptoX Pro" :maxlength="64" />
-          <p class="mt-1.5 text-xs text-slate-500">用于页头、页脚等位置的品牌名称展示。</p>
-        </div>
-
-        <div>
-          <label class="mb-2 block text-sm font-medium text-slate-700">副标题 / Slogan（可选）</label>
-          <a-input v-model:value="config.tagline" type="text" class="max-w-xl" placeholder="一句话描述你的平台" :maxlength="200" />
-        </div>
-
-        <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">站点 Logo</label>
-          <p class="mb-4 text-xs text-slate-500">
-            区分 PC 端与移动端；移动端未设置时，前台会使用 PC 端 Logo。支持 PNG / JPG / SVG / WebP，单张不超过 2MB。
-          </p>
-
-          <div class="grid gap-6 md:grid-cols-2">
-            <div class="rounded-lg border border-slate-100 bg-slate-50/50 p-4">
-              <p class="mb-3 text-sm font-medium text-slate-800">PC 端</p>
-              <div class="flex flex-wrap items-start gap-4">
-                <div
-                  class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-dashed border-slate-200 bg-white"
-                >
-                  <img
-                    v-if="logoPreviewPc"
-                    :src="logoPreviewPc"
-                    alt="PC Logo"
-                    class="max-h-full max-w-full object-contain"
-                  />
-                  <span v-else class="text-xs text-slate-400">无图</span>
-                </div>
-                <div class="min-w-0 flex-1 space-y-2">
-                  <div class="flex flex-wrap gap-2">
-                    <input
-                      ref="fileInputPc"
-                      type="file"
-                      accept="image/*"
-                      class="hidden"
-                      @change="readLogoFile($event, 'logoUrlPc')"
-                    />
-                    <a-button html-type="button" class="" @click="triggerFilePc" type="primary">上传</a-button>
-                    <a-button v-if="logoPreviewPc" html-type="button" class="" @click="clearLogoPc">清除</a-button>
+        <Card title="站点 Logo" :bordered="false">
+          <TypographyText type="secondary">区分 PC 端与移动端；移动端未设置时，前台会使用 PC 端 Logo。支持 PNG / JPG / SVG / WebP，单张不超过 2MB。</TypographyText>
+          <Row :gutter="24" class="site-config-fields site-config-logos">
+            <Col :xs="24" :lg="12">
+              <FormItem label="PC 端 Logo" name="logoUrlPc">
+                <div class="site-config-logo">
+                  <div class="site-config-logo-preview">
+                    <img v-if="logoPreviewPc" :src="logoPreviewPc" alt="PC Logo" />
+                    <TypographyText v-else type="secondary">无图</TypographyText>
                   </div>
-                  <a-input v-model:value="config.logoUrlPc" type="url" class="w-full" placeholder="或填写图片 URL" />
+                  <Space direction="vertical" :size="8" class="site-config-logo-input">
+                    <input ref="fileInputPc" type="file" accept="image/*" class="site-config-file" @change="readLogoFile($event, 'logoUrlPc')" />
+                    <Space :size="8" wrap>
+                      <Button @click="triggerFilePc"><template #icon><UploadOutlined /></template>上传</Button>
+                      <Button v-if="logoPreviewPc" @click="clearLogoPc">清除</Button>
+                    </Space>
+                    <Input v-model:value="config.logoUrlPc" type="url" placeholder="或填写图片 URL" aria-label="PC 端 Logo 图片 URL" />
+                  </Space>
                 </div>
-              </div>
-            </div>
-
-            <div class="rounded-lg border border-slate-100 bg-slate-50/50 p-4">
-              <p class="mb-3 text-sm font-medium text-slate-800">移动端</p>
-              <div class="flex flex-wrap items-start gap-4">
-                <div
-                  class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-dashed border-slate-200 bg-white"
-                >
-                  <img
-                    v-if="logoPreviewMobile"
-                    :src="logoPreviewMobile"
-                    alt="移动端 Logo"
-                    class="max-h-full max-w-full object-contain"
-                  />
-                  <span v-else class="text-xs text-slate-400">无图</span>
-                </div>
-                <div class="min-w-0 flex-1 space-y-2">
-                  <div class="flex flex-wrap gap-2">
-                    <input
-                      ref="fileInputMobile"
-                      type="file"
-                      accept="image/*"
-                      class="hidden"
-                      @change="readLogoFile($event, 'logoUrlMobile')"
-                    />
-                    <a-button html-type="button" class="" @click="triggerFileMobile" type="primary">上传</a-button>
-                    <a-button v-if="logoPreviewMobile" html-type="button" class="" @click="clearLogoMobile">清除</a-button>
+              </FormItem>
+            </Col>
+            <Col :xs="24" :lg="12">
+              <FormItem label="移动端 Logo" name="logoUrlMobile">
+                <div class="site-config-logo">
+                  <div class="site-config-logo-preview">
+                    <img v-if="logoPreviewMobile" :src="logoPreviewMobile" alt="移动端 Logo" />
+                    <TypographyText v-else type="secondary">无图</TypographyText>
                   </div>
-                  <a-input v-model:value="config.logoUrlMobile" type="url" class="w-full" placeholder="或填写图片 URL" />
+                  <Space direction="vertical" :size="8" class="site-config-logo-input">
+                    <input ref="fileInputMobile" type="file" accept="image/*" class="site-config-file" @change="readLogoFile($event, 'logoUrlMobile')" />
+                    <Space :size="8" wrap>
+                      <Button @click="triggerFileMobile"><template #icon><UploadOutlined /></template>上传</Button>
+                      <Button v-if="logoPreviewMobile" @click="clearLogoMobile">清除</Button>
+                    </Space>
+                    <Input v-model:value="config.logoUrlMobile" type="url" placeholder="或填写图片 URL" aria-label="移动端 Logo 图片 URL" />
+                  </Space>
                 </div>
-              </div>
-            </div>
-          </div>
+              </FormItem>
+            </Col>
+          </Row>
+        </Card>
+
+        <Card title="登录方式" :bordered="false">
+          <Row :gutter="24" class="site-config-fields">
+            <Col :xs="24" :lg="8">
+              <FormItem label="邮箱登录" name="emailLoginEnabled" extra="关闭后前台隐藏邮箱登录与邮箱注册；若邮箱和手机号都关闭，登录页只显示钱包登录按钮。">
+                <Switch v-model:checked="config.emailLoginEnabled" aria-label="切换邮箱登录" checked-children="开启" un-checked-children="关闭" />
+              </FormItem>
+            </Col>
+            <Col :xs="24" :lg="8">
+              <FormItem label="手机号码登录" name="phoneLoginEnabled" extra="关闭后前台隐藏手机号登录与手机号注册；若邮箱和手机号都关闭，登录页只显示钱包登录按钮。">
+                <Switch v-model:checked="config.phoneLoginEnabled" aria-label="切换手机号码登录" checked-children="开启" un-checked-children="关闭" />
+              </FormItem>
+            </Col>
+            <Col :xs="24" :lg="8">
+              <FormItem label="区块链钱包登录" name="walletLoginEnabled" extra="关闭后，前台登录页将隐藏 MetaMask、WalletConnect 等钱包入口。">
+                <Switch v-model:checked="config.walletLoginEnabled" aria-label="切换区块链钱包登录" checked-children="开启" un-checked-children="关闭" />
+              </FormItem>
+            </Col>
+          </Row>
+        </Card>
+
+        <Card v-if="config.walletLoginEnabled" title="钱包登录配置" :bordered="false">
+          <TypographyText type="secondary">各钱包独立开关；开启某个钱包后才显示其连接参数。保存后前台仅展示已启用的钱包；自定义名称为空时使用默认展示名。接入真实 Web3 后，可由前端读取 RPC、链 ID、WalletConnect Project ID 等字段。</TypographyText>
+          <Row :gutter="[24, 16]" class="site-config-wallets">
+            <Col v-for="row in config.walletLoginProviders" :key="row.key" :xs="24" :lg="12">
+              <Card size="small" type="inner">
+                <template #title>
+                  <Space :size="8"><span>{{ walletBuiltinLabel(row.key) }}</span><TypographyText type="secondary" class="font-mono">{{ row.key }}</TypographyText></Space>
+                </template>
+                <template #extra>
+                  <Switch v-model:checked="row.enabled" :aria-label="`切换${walletBuiltinLabel(row.key)}`" size="small" />
+                </template>
+                <template v-if="row.enabled">
+                  <FormItem label="自定义展示名（可选）">
+                    <Input v-model:value="row.customLabel" :placeholder="`默认：${walletBuiltinLabel(row.key)}`" :maxlength="48" />
+                  </FormItem>
+                  <Row v-if="row.key === 'metamask' || row.key === 'rabby'" :gutter="16">
+                    <Col :xs="24" :md="12">
+                      <FormItem label="默认链 ID（可选）"><Input v-model:value="row.chainId" placeholder="如 1、56、137…" :maxlength="32" /></FormItem>
+                    </Col>
+                    <Col :xs="24" :md="12">
+                      <FormItem label="RPC URL（可选）"><Input v-model:value="row.rpcUrl" type="url" placeholder="https://…" :maxlength="512" /></FormItem>
+                    </Col>
+                  </Row>
+                  <template v-else-if="row.key === 'walletconnect'">
+                    <FormItem label="WalletConnect Project ID"><Input v-model:value="row.walletConnectProjectId" placeholder="Cloud 控制台 Project ID" :maxlength="128" /></FormItem>
+                    <FormItem label="说明 / Universal Link（可选）"><Input v-model:value="row.appUniversalLink" placeholder="https://…" :maxlength="512" /></FormItem>
+                  </template>
+                  <FormItem v-else label="应用链接 / 备注（可选）"><Input v-model:value="row.appUniversalLink" placeholder="深度链接或对接说明" :maxlength="512" /></FormItem>
+                </template>
+                <TypographyText v-else type="secondary">未启用，前台不展示该钱包。</TypographyText>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+
+        <Card title="登录安全" :bordered="false">
+          <Row :gutter="24" class="site-config-fields">
+            <Col :xs="24" :lg="12">
+              <FormItem label="登录图形验证码" name="loginCaptchaEnabled" extra="开启后，前台邮箱登录/注册需填写图片验证码（当前为前端模拟，可接服务端点）。">
+                <Switch v-model:checked="config.loginCaptchaEnabled" aria-label="切换登录图形验证码" checked-children="开启" un-checked-children="关闭" />
+              </FormItem>
+            </Col>
+            <Col :xs="24" :lg="12">
+              <FormItem label="必填邀请码" name="inviteCodeRequired" extra="开启后，用户登录与注册时都必须填写邀请码（演示环境不校验码是否有效）。">
+                <Switch v-model:checked="config.inviteCodeRequired" aria-label="切换必填邀请码" checked-children="开启" un-checked-children="关闭" />
+              </FormItem>
+            </Col>
+          </Row>
+        </Card>
+
+        <Card title="SEO 设置" :bordered="false">
+          <Row :gutter="24" class="site-config-fields">
+            <Col :xs="24" :lg="12">
+              <FormItem label="默认页面标题" name="documentTitle" extra="用于浏览器标签标题，各路由可单独覆盖。">
+                <Input v-model:value="config.documentTitle" placeholder="留空则使用站点名称作为浏览器标签标题" :maxlength="120" />
+              </FormItem>
+            </Col>
+            <Col :xs="24" :lg="12">
+              <FormItem label="Meta 关键词" name="seoKeywords" extra="输出为 meta keywords。">
+                <Input v-model:value="config.seoKeywords" placeholder="关键词用英文逗号分隔，例如：合约, 现货, 数字货币" :maxlength="200" />
+              </FormItem>
+            </Col>
+            <Col :xs="24" :lg="12">
+              <FormItem label="Meta 描述" name="seoDescription" extra="输出为 meta description。">
+                <Textarea v-model:value="config.seoDescription" :rows="3" placeholder="简要描述站点，建议 80～160 字" :maxlength="320" />
+              </FormItem>
+            </Col>
+            <Col :xs="24" :lg="12">
+              <FormItem label="Open Graph 图片 URL" name="seoOgImage" extra="og:image，用于链接分享预览。">
+                <Input v-model:value="config.seoOgImage" type="url" placeholder="https://... 建议 1200×630" />
+              </FormItem>
+            </Col>
+          </Row>
+        </Card>
+      </Form>
+
+      <Card class="site-config-footer" :bordered="false" :body-style="{ padding: '12px 24px' }">
+        <div class="site-config-actions">
+          <Space :size="8" wrap>
+            <Button danger :disabled="isSaving" @click="resetOpen = true">恢复默认</Button>
+            <Button :disabled="isSaving" @click="loadConfig">重置</Button>
+            <Button type="primary" :loading="isSaving" @click="saveConfig">保存</Button>
+          </Space>
         </div>
-        </div>
+      </Card>
+    </template>
 
-        <!-- 登录设置 -->
-        <div v-show="activeTab === 'login'" class="space-y-4">
-          <p class="text-sm text-slate-500">
-            配置邮箱登录、手机号登录、钱包登录、图形验证码与邀请码等。
-          </p>
-
-          <div class="flex items-start justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">
-            <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-slate-900">邮箱登录</p>
-              <p class="mt-1 text-xs text-slate-500">关闭后前台隐藏邮箱登录与邮箱注册；若邮箱和手机号都关闭，登录页只显示钱包登录按钮。</p>
-            </div>
-            <a-switch :checked="config.emailLoginEnabled" aria-label="切换邮箱登录" @click="config.emailLoginEnabled = !config.emailLoginEnabled" />
-          </div>
-
-          <div class="flex items-start justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">
-            <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-slate-900">手机号码登录</p>
-              <p class="mt-1 text-xs text-slate-500">关闭后前台隐藏手机号登录与手机号注册；若邮箱和手机号都关闭，登录页只显示钱包登录按钮。</p>
-            </div>
-            <a-switch :checked="config.phoneLoginEnabled" aria-label="切换手机号码登录" @click="config.phoneLoginEnabled = !config.phoneLoginEnabled" />
-          </div>
-
-          <div class="flex items-start justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">
-            <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-slate-900">区块链钱包登录</p>
-              <p class="mt-1 text-xs text-slate-500">
-                关闭后，前台登录页将隐藏 MetaMask、WalletConnect 等钱包入口。
-              </p>
-            </div>
-            <a-switch :checked="config.walletLoginEnabled" aria-label="切换区块链钱包登录" @click="config.walletLoginEnabled = !config.walletLoginEnabled" />
-          </div>
-
-          <div
-            v-if="config.walletLoginEnabled"
-            class="space-y-3 rounded-lg border border-slate-200 bg-white px-4 py-4"
-          >
-            <p class="text-xs leading-relaxed text-slate-600">
-              各钱包独立开关；开启某个钱包后才显示其连接参数。保存后前台仅展示已启用的钱包；自定义名称为空时使用默认展示名。接入真实
-              Web3 后，可由前端读取 RPC、链 ID、WalletConnect Project ID 等字段。
-            </p>
-            <div
-              v-for="row in config.walletLoginProviders"
-              :key="row.key"
-              class="space-y-2 rounded-lg border border-slate-100 bg-slate-50/70 p-3"
-            >
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <p class="text-sm font-medium text-slate-900">{{ walletBuiltinLabel(row.key) }}</p>
-                  <p class="mt-0.5 font-mono text-[11px] text-slate-500">{{ row.key }}</p>
-                </div>
-                <a-switch :checked="row.enabled" :aria-label="`切换${walletBuiltinLabel(row.key)}`" @click="row.enabled = !row.enabled" />
-              </div>
-              <div v-if="row.enabled" class="space-y-2 border-t border-slate-200/80 pt-3">
-                <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-600">自定义展示名（可选）</label>
-                  <a-input v-model:value="row.customLabel" type="text" class="w-full" :placeholder="`默认：${walletBuiltinLabel(row.key)}`" :maxlength="48" />
-                </div>
-                <div v-if="row.key === 'metamask' || row.key === 'rabby'" class="grid gap-2 sm:grid-cols-2">
-                  <div>
-                    <label class="mb-1 block text-xs font-medium text-slate-600">默认链 ID（可选）</label>
-                    <a-input v-model:value="row.chainId" type="text" class="w-full" placeholder="如 1、56、137…" :maxlength="32" />
-                  </div>
-                  <div>
-                    <label class="mb-1 block text-xs font-medium text-slate-600">RPC URL（可选）</label>
-                    <a-input v-model:value="row.rpcUrl" type="url" class="w-full" placeholder="https://…" :maxlength="512" />
-                  </div>
-                </div>
-                <div v-else-if="row.key === 'walletconnect'" class="space-y-2">
-                  <div>
-                    <label class="mb-1 block text-xs font-medium text-slate-600">WalletConnect Project ID</label>
-                    <a-input v-model:value="row.walletConnectProjectId" type="text" class="w-full" placeholder="Cloud 控制台 Project ID" :maxlength="128" />
-                  </div>
-                  <div>
-                    <label class="mb-1 block text-xs font-medium text-slate-600">说明 / Universal Link（可选）</label>
-                    <a-input v-model:value="row.appUniversalLink" type="text" class="w-full" placeholder="https://…" :maxlength="512" />
-                  </div>
-                </div>
-                <div v-else>
-                  <label class="mb-1 block text-xs font-medium text-slate-600">应用链接 / 备注（可选）</label>
-                  <a-input v-model:value="row.appUniversalLink" type="text" class="w-full" placeholder="深度链接或对接说明" :maxlength="512" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-3 flex items-start justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">
-            <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-slate-900">登录图形验证码</p>
-              <p class="mt-1 text-xs text-slate-500">
-                开启后，前台邮箱登录/注册需填写图片验证码（当前为前端模拟，可接服务端点）。
-              </p>
-            </div>
-            <a-switch :checked="config.loginCaptchaEnabled" aria-label="切换登录图形验证码" @click="config.loginCaptchaEnabled = !config.loginCaptchaEnabled" />
-          </div>
-
-          <div class="mt-3 flex items-start justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">
-            <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-slate-900">必填邀请码</p>
-              <p class="mt-1 text-xs text-slate-500">
-                开启后，用户登录与注册时都必须填写邀请码（演示环境不校验码是否有效）。
-              </p>
-            </div>
-            <a-switch :checked="config.inviteCodeRequired" aria-label="切换必填邀请码" @click="config.inviteCodeRequired = !config.inviteCodeRequired" />
-          </div>
-        </div>
-
-        <!-- SEO 设置 -->
-        <div v-show="activeTab === 'seo'" class="space-y-6">
-
-          <div>
-            <label class="mb-2 block text-sm font-medium text-slate-700">默认页面标题</label>
-            <a-input v-model:value="config.documentTitle" type="text" class="max-w-xl" placeholder="留空则使用站点名称作为浏览器标签标题" :maxlength="120" />
-            <p class="mt-1.5 text-xs text-slate-500">用于浏览器标签标题，各路由可单独覆盖。</p>
-          </div>
-
-          <div>
-            <label class="mb-2 block text-sm font-medium text-slate-700">Meta 描述</label>
-            <a-textarea v-model:value="config.seoDescription" :rows="3" class="max-w-xl resize-y" placeholder="简要描述站点，建议 80～160 字" :maxlength="320" />
-            <p class="mt-1.5 text-xs text-slate-500">输出为 meta description。</p>
-          </div>
-
-          <div>
-            <label class="mb-2 block text-sm font-medium text-slate-700">Meta 关键词</label>
-            <a-input v-model:value="config.seoKeywords" type="text" class="max-w-xl" placeholder="关键词用英文逗号分隔，例如：合约, 现货, 数字货币" :maxlength="200" />
-            <p class="mt-1.5 text-xs text-slate-500">输出为 meta keywords。</p>
-          </div>
-
-          <div>
-            <label class="mb-2 block text-sm font-medium text-slate-700">Open Graph 图片 URL</label>
-            <a-input v-model:value="config.seoOgImage" type="url" class="max-w-xl" placeholder="https://... 建议 1200×630" />
-            <p class="mt-1.5 text-xs text-slate-500">og:image，用于链接分享预览。</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
+    <AdminModal :open="resetOpen" title="恢复默认站点配置" :busy="isSaving" confirm-text="确认恢复默认" danger @close="resetOpen = false" @confirm="resetToDefault">
+      <TypographyText>确认恢复为默认配置？将清空已保存的本地站点信息，此操作不能撤销。</TypographyText>
+    </AdminModal>
+  </PageShell>
 </template>
+
+<style scoped>
+.site-config-loading{display:block;padding:32px 0}
+.site-config-form{display:grid;gap:24px}
+.site-config-fields{max-width:1100px}
+.site-config-logos,.site-config-wallets{margin-top:16px}
+.site-config-logo{display:flex;align-items:flex-start;gap:16px;min-width:0}
+.site-config-logo-preview{display:flex;flex-shrink:0;align-items:center;justify-content:center;width:80px;height:80px;overflow:hidden;border:1px dashed rgb(5 5 5 / 15%);border-radius:8px}
+.site-config-logo-preview img{max-width:100%;max-height:100%;object-fit:contain}
+.site-config-logo-input{flex:1;min-width:0}
+.site-config-file[type="file"]{display:none}
+.site-config-footer{position:sticky;bottom:0;z-index:10}
+.site-config-actions{display:flex;justify-content:flex-end}
+</style>

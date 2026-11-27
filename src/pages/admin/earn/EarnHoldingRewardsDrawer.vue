@@ -46,7 +46,6 @@ const columns=[{title:'收益流水号',key:'id',dataIndex:'id'},{title:'收益�
 .earn-holding-rewards .ant-drawer-content-wrapper{max-width:100vw}
 .earn-holding-rewards .ant-drawer-content{overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 .earn-rewards-title{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.earn-rewards-title .ant-btn{min-width:44px;min-height:44px}
 .earn-rewards-footer{display:flex;justify-content:flex-end}
 .earn-holding-rewards .ant-table-cell,.earn-holding-rewards .ant-descriptions-item-content{overflow-wrap:anywhere}
 .earn-holding-rewards .ant-drawer-content-wrapper,.earn-holding-rewards .ant-drawer-mask{transition-duration:200ms!important;transition-timing-function:ease-out!important}

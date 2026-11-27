@@ -119,7 +119,6 @@ defineExpose({ phase, close, dialogEl: dialogRef })
 .admin-drawer-title { margin: 0; font-size: 16px; line-height: 24px; font-weight: 600; overflow-wrap: anywhere; }
 .admin-drawer-title:focus { outline: none; }
 .admin-drawer-subtitle { margin-top: 2px; font-size: 14px; font-weight: 400; color: rgb(0 0 0 / 45%); overflow-wrap: anywhere; }
-.admin-drawer-close.ant-btn { flex: none; min-width: 44px; min-height: 44px; }
 .admin-drawer-toolbar { margin: 12px -16px -12px -24px; padding: 8px 24px; border-top: 1px solid rgb(5 5 5 / 6%); background: #fafafa; font-weight: 400; }
 .admin-drawer-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 16px 20px; }
 .admin-drawer-plain { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }

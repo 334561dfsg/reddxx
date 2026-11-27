@@ -350,7 +350,10 @@ for (const surface of [
       const css = readFileSync(projectFile(`src/admin/components/antd/Admin${kind === 'dialog' ? 'Dialog' : 'Drawer'}.vue`), 'utf8')
       assert.match(css, new RegExp(`\\.admin-${kind}-heading \\{ min-width: 0; flex: 1; \\}`))
       assert.match(css, new RegExp(`\\.admin-${kind}-title \\{[^}]*overflow-wrap: anywhere`))
-      assert.match(css, new RegExp(`\\.admin-${kind}-close\\.ant-btn \\{ flex: none; min-width: 44px; min-height: 44px; \\}`))
+      // Shared close button (theme.css): Ant's 32px icon button on desktop, 44px for coarse pointers.
+      const theme = readFileSync(projectFile('src/styles/theme.css'), 'utf8')
+      assert.match(theme, new RegExp(`\\.admin-${kind}-close[\\s\\S]*?\\{[^}]*flex: none; width: 32px; height: 32px`))
+      assert.match(theme, /pointer: coarse[\s\S]*?admin-dialog-close[\s\S]*?width: 44px; height: 44px/)
       return
     }
     const header = frame.children.find((node) => node.tag === 'header')

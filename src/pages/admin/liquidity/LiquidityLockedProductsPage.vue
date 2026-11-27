@@ -1,6 +1,12 @@
-
 <script setup>
+// 锁仓产品 — Ant Design Pro list page (2026-11-28): query card, table card with toolbar/pagination, link actions,
+// status as a text Tag. The create/edit dialog keeps its business logic; copy feedback moved from alert() to toast.
 import { ref, reactive, computed } from 'vue'
+import { Button, Space, Tag, TypographyText, message } from 'ant-design-vue'
+import { CopyOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import {
 	PRODUCT_STATUS,
 	productStatusMeta,
@@ -23,9 +29,27 @@ import { appendLiquidityLockedOperationLog } from '../../../admin/state/liquidit
 import { lockedProductsCatalog } from '../../../admin/state/financeCatalogs'
 
 const products = lockedProductsCatalog
-const search = ref('')
-const statusFilter = ref(COMMON_FILTER_ALL)
-const currencyFilter = ref(COMMON_FILTER_ALL)
+const page = ref(1)
+const blank = () => ({ name: '', productId: '', status: COMMON_FILTER_ALL, currency: COMMON_FILTER_ALL })
+const filters = ref(blank())
+const fields = [
+	{ key: 'name', label: '产品名称' },
+	{ key: 'productId', label: '产品 ID' },
+	{ key: 'status', label: '状态', options: [{ value: COMMON_FILTER_ALL, label: '全部状态' }, ...Object.entries(productStatusMeta).map(([value, meta]) => ({ value, label: meta.label }))] },
+	{ key: 'currency', label: '币种', searchable: true, options: [{ value: COMMON_FILTER_ALL, label: '全部币种' }, ...SUPPORTED_CURRENCIES.map((value) => ({ value, label: value }))] }
+]
+const columns = [
+	{ key: 'product', title: '产品信息', width: 240, fixed: 'left' },
+	{ key: 'periods', title: '锁仓天数 / 年化', width: 150, align: 'right' },
+	{ key: 'earlyRedeem', title: '提前赎回', width: 120 },
+	{ key: 'limit', title: '限购与门槛', width: 200 },
+	{ key: 'stats', title: '累计锁仓', width: 170, align: 'right' },
+	{ key: 'status', title: '状态', width: 90 },
+	{ key: 'actions', title: '操作', width: 120, fixed: 'right' }
+]
+const productStatusColor = { [PRODUCT_STATUS.ENABLED]: 'green', [PRODUCT_STATUS.DISABLED]: 'default', [PRODUCT_STATUS.SOLD_OUT]: 'orange' }
+function searchProducts(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function resetFilters() { filters.value = blank(); page.value = 1 }
 
 const showProductModal = ref(false)
 const editingProductId = ref('')
@@ -156,14 +180,14 @@ const saveProduct = () => {
 	showProductModal.value = false
 }
 
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
 const filteredProducts = computed(() => {
-	const kw = search.value.trim().toLowerCase()
-	return sortLiquidityLockedProducts(products.value.filter((p) => {
-		const matchStatus = statusFilter.value === COMMON_FILTER_ALL || p.status === statusFilter.value
-		const matchCurrency = currencyFilter.value === COMMON_FILTER_ALL || p.currency === currencyFilter.value
-		const matchKeyword = !kw || `${p.name} ${p.currency}`.toLowerCase().includes(kw)
-		return matchStatus && matchCurrency && matchKeyword
-	}))
+	const f = filters.value
+	return sortLiquidityLockedProducts(products.value.filter((p) =>
+		(f.status === COMMON_FILTER_ALL || p.status === f.status) &&
+		(f.currency === COMMON_FILTER_ALL || p.currency === f.currency) &&
+		has(p.name, f.name) && has(p.id, f.productId)
+	))
 })
 
 const toggleProductStatus = (product) => {
@@ -183,7 +207,7 @@ const toggleProductStatus = (product) => {
 const copyProductId = async (productId) => {
 	try {
 		await navigator.clipboard.writeText(productId)
-		alert('产品ID已复制到剪贴板')
+		message.success('产品ID已复制到剪贴板')
 	} catch {
 		const textarea = document.createElement('textarea')
 		textarea.value = productId
@@ -193,9 +217,9 @@ const copyProductId = async (productId) => {
 		textarea.select()
 		try {
 			document.execCommand('copy')
-			alert('产品ID已复制到剪贴板')
+			message.success('产品ID已复制到剪贴板')
 		} catch {
-			alert('复制失败，请手动复制')
+			message.error('复制失败，请手动复制')
 		}
 		document.body.removeChild(textarea)
 	}
@@ -226,151 +250,51 @@ const applyPresetDays = (days) => {
 </script>
 
 <template>
-	<section class="space-y-5">
-		<header class="flex items-center justify-between">
-			<div>
-				<h1 class="text-3xl font-semibold text-slate-900">产品管理</h1>
-				<p class="mt-1 text-sm text-slate-500">配置锁仓产品、多档年化收益、赎回与限购及申购门槛</p>
-			</div>
-			<a-button type="text"
-				html-type="button"
-				class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-				@click="openCreateProduct"
-			>
-				+ 创建产品
-			</a-button>
-		</header>
-
-		<div class="rounded-xl border border-slate-200 bg-white p-4">
-			<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-				<div>
-					<a-input
-						v-model:value="search"
-						type="search"
-						placeholder="搜索产品名称或币种"
-						class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
-					/>
-				</div>
-				<div>
-					<a-select :get-popup-container="(trigger) => trigger.parentElement"
-						v-model:value="statusFilter"
-						class="w-full transition"
-					>
-						<a-select-option :value="COMMON_FILTER_ALL">全部状态</a-select-option>
-						<a-select-option v-for="(meta, key) in productStatusMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
-					</a-select>
-				</div>
-				<div>
-					<a-select :get-popup-container="(trigger) => trigger.parentElement"
-						v-model:value="currencyFilter"
-						class="w-full transition"
-					>
-						<a-select-option :value="COMMON_FILTER_ALL">全部币种</a-select-option>
-						<a-select-option v-for="currency in SUPPORTED_CURRENCIES" :key="currency" :value="currency">{{ currency }}</a-select-option>
-					</a-select>
-				</div>
-			</div>
-		</div>
-
-		<article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-			<a-table  size="small" :pagination="false" :data-source="filteredProducts" :row-key="(product) => product.id" :scroll="{ x: 'max-content' }" :custom-row="(product, rowIndex) => ({ class: [&quot;transition hover:bg-slate-50&quot;] })">
-<a-table-column key="column-0" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>产品信息</template>
-<template #default="{ record: product, index: rowIndex }">
-							<div class="font-medium text-slate-900">{{ product.name }}</div>
-							<div class="mt-0.5 flex items-center gap-1.5">
-								<span class="font-mono text-xs text-slate-400">{{ product.id }}</span>
-								<a-button type="text"
-									html-type="button"
-									class="rounded p-0.5 text-slate-400 transition hover:bg-blue-50 hover:text-blue-600"
-									title="复制产品ID"
-									@click="copyProductId(product.id)"
-								>
-									<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-										/>
-									</svg>
-								</a-button>
-							</div>
-							<div class="mt-1 text-sm text-slate-500">{{ product.currency }} · {{ product.periods.length }} 档</div>
-						</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>锁仓与年化</template>
-<template #default="{ record: product, index: rowIndex }">
-							<div class="space-y-1 text-xs">
-								<div
-									v-for="(period, idx) in product.periods"
-									:key="idx"
-									class="flex items-center justify-between gap-2"
-								>
-									<span class="text-slate-600">{{ period.days }} 天</span>
-									<span class="font-medium text-emerald-600">{{ lockYieldAnnualPct(period).toFixed(2) }}%</span>
-								</div>
-							</div>
-						</template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
-<template #title>提前赎回</template>
-<template #default="{ record: product, index: rowIndex }">
-							<span v-if="product.earlyRedeemEnabled" class="text-amber-700">违约金 {{ product.earlyRedeemFee }}%</span>
-							<span v-else>不支持</span>
-						</template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
-<template #title>限购与门槛</template>
-<template #default="{ record: product, index: rowIndex }">
-							<div v-if="product.purchaseLimitType === PURCHASE_LIMIT_TYPE.LIFETIME">终身 {{ fmtCurrency(product.lifetimeLimit, product.currency) }}</div>
-							<div v-else-if="product.purchaseLimitType === PURCHASE_LIMIT_TYPE.PERIOD">
-								{{ product.periodDays }} 天 / {{ fmtCurrency(product.periodLimit, product.currency) }}
-							</div>
-							<div v-else>不限购</div>
-							<div class="mt-1 text-xs text-slate-500">
-								{{ minVipOptionLabel(product.minVipLevel) }} · {{ lockedMinKycLabel(product.minKycLevel) }}
-							</div>
-						</template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
-<template #title>运营数据</template>
-<template #default="{ record: product, index: rowIndex }">
-							<div>锁仓 {{ fmtCurrency(product.totalLocked, product.currency) }}</div>
-							<div>订单 {{ product.totalOrders }} 笔</div>
-						</template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>状态</template>
-<template #default="{ record: product, index: rowIndex }">
-							<span :class="['rounded-full px-2 py-1 text-xs font-medium', productStatusMeta[product.status].class]">
-								{{ productStatusMeta[product.status].label }}
-							</span>
-						</template>
-</a-table-column>
-<a-table-column key="column-6" align="right" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: product, index: rowIndex }">
-							<a-button type="text"
-								html-type="button"
-								class="mr-3 text-sm font-medium text-blue-600 transition hover:text-blue-800"
-								@click="openEditProduct(product)"
-							>
-								编辑
-							</a-button>
-							<a-button type="text"
-								html-type="button"
-								class="text-sm font-medium text-slate-600 transition hover:text-slate-800"
-								@click="toggleProductStatus(product)"
-							>
-								{{ product.status === PRODUCT_STATUS.ENABLED ? '下架' : '上架' }}
-							</a-button>
-						</template>
-</a-table-column>
-</a-table>
-			<div v-if="filteredProducts.length === 0" class="py-12 text-center text-slate-500">暂无产品数据</div>
-		</article>
+	<PageShell>
+		<SearchForm name="liquidity-locked-product-filters" :model="filters" :fields="fields" @search="searchProducts" @reset="resetFilters" />
+		<AdminTable title="锁仓产品" v-model:page="page" :rows="filteredProducts" :columns="columns" row-key="id" desktop-only>
+			<template #toolbar>
+				<Button type="primary" @click="openCreateProduct"><template #icon><PlusOutlined /></template>创建产品</Button>
+			</template>
+			<template #cell="{ column, record: product }">
+				<Space v-if="column.key === 'product'" direction="vertical" :size="0">
+					<TypographyText strong>{{ product.name }}</TypographyText>
+					<span>
+						<TypographyText type="secondary" class="font-mono">{{ product.id }}</TypographyText>
+						<Button type="link" size="small" aria-label="复制产品ID" title="复制产品ID" @click="copyProductId(product.id)"><template #icon><CopyOutlined /></template></Button>
+					</span>
+					<TypographyText type="secondary">{{ product.currency }} · {{ product.periods.length }} 档</TypographyText>
+				</Space>
+				<Space v-else-if="column.key === 'periods'" direction="vertical" :size="0" align="end">
+					<span v-for="(period, idx) in product.periods" :key="idx">
+						<TypographyText type="secondary">{{ period.days }} 天</TypographyText>
+						{{ lockYieldAnnualPct(period).toFixed(2) }}%
+					</span>
+				</Space>
+				<template v-else-if="column.key === 'earlyRedeem'">
+					<span v-if="product.earlyRedeemEnabled">违约金 {{ product.earlyRedeemFee }}%</span>
+					<TypographyText v-else type="secondary">不支持</TypographyText>
+				</template>
+				<Space v-else-if="column.key === 'limit'" direction="vertical" :size="0">
+					<span v-if="product.purchaseLimitType === PURCHASE_LIMIT_TYPE.LIFETIME">终身 {{ fmtCurrency(product.lifetimeLimit, product.currency) }}</span>
+					<span v-else-if="product.purchaseLimitType === PURCHASE_LIMIT_TYPE.PERIOD">{{ product.periodDays }} 天 / {{ fmtCurrency(product.periodLimit, product.currency) }}</span>
+					<span v-else>不限购</span>
+					<TypographyText type="secondary">{{ minVipOptionLabel(product.minVipLevel) }} · {{ lockedMinKycLabel(product.minKycLevel) }}</TypographyText>
+				</Space>
+				<Space v-else-if="column.key === 'stats'" direction="vertical" :size="0" align="end">
+					<span>{{ fmtCurrency(product.totalLocked, product.currency) }}</span>
+					<TypographyText type="secondary">订单 {{ product.totalOrders }} 笔</TypographyText>
+				</Space>
+				<Tag v-else-if="column.key === 'status'" :color="productStatusColor[product.status]">{{ productStatusMeta[product.status]?.label ?? product.status }}</Tag>
+				<Space v-else-if="column.key === 'actions'" :size="8">
+					<Button type="link" class="px-0" @click="openEditProduct(product)">编辑</Button>
+					<Button type="link" class="px-0" :danger="product.status === PRODUCT_STATUS.ENABLED" @click="toggleProductStatus(product)">
+						{{ product.status === PRODUCT_STATUS.ENABLED ? '下架' : '上架' }}
+					</Button>
+				</Space>
+				<template v-else>{{ product[column.key] ?? '—' }}</template>
+			</template>
+		</AdminTable>
 
 			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showProductModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showProductModal = false">
 <template #title><template v-if="showProductModal"><div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
@@ -460,14 +384,14 @@ const applyPresetDays = (days) => {
 											</a-select>
 										</div>
 										<div>
-											<label class="mb-1 block text-sm font-medium text-slate-700">产品排序</label>
+											<label class="mb-1 block text-sm font-medium text-slate-700">排序权重</label>
 											<a-input
 												v-model:value.number="productForm.sortOrder"
 												type="number"
-												placeholder="数字越大越靠前"
+												placeholder="数值越大越靠前"
 												class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:outline-none"
 											/>
-											<p class="mt-1 text-xs text-slate-500">数字越大越靠前</p>
+											<p class="mt-1 text-xs text-slate-500">数值越大越靠前</p>
 										</div>
 									</div>
 								</div>
@@ -879,23 +803,10 @@ const applyPresetDays = (days) => {
 					</div>
 
 					</template>
-<template #footer><template v-if="showProductModal"><div class="flex shrink-0 justify-end gap-3 border-t border-slate-200 px-6 py-4">
-						<a-button type="text"
-							html-type="button"
-							class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
-							@click="showProductModal = false"
-						>
-							取消
-						</a-button>
-						<a-button type="text"
-							html-type="button"
-							class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-							@click="saveProduct"
-						>
-							保存产品
-						</a-button>
-					</div></template></template>
+<template #footer><template v-if="showProductModal"><Space :size="8">
+						<Button @click="showProductModal = false">取消</Button>
+						<Button type="primary" @click="saveProduct">保存产品</Button>
+					</Space></template></template>
 </a-modal>
-		
-	</section>
+	</PageShell>
 </template>

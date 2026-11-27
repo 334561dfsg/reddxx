@@ -1,6 +1,10 @@
 <script setup>
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
+// 模拟账户配置 — Ant Design Pro config page (2026-11-28): PageShell title, grouped Cards with an Ant Form and a sticky
+// bottom action bar (重置 restores the saved values, 保存配置 saves). Status text moved to toasts.
 import { computed, onMounted, ref } from 'vue'
+import { Button, Card, Col, Descriptions, DescriptionsItem, Form, FormItem, Input, Row, Skeleton, Space, TypographyText, message } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
 import {
   DEFAULT_SITE_CONFIG,
   normalizeFrontDemoAccountAssetConfig,
@@ -52,7 +56,7 @@ const demoAccountSettingsState = computed(() => ({
     canRestoreSaved: isDirty.value && !isSaving.value
   },
   resetPolicy: {
-    restoreSaved: '当前页面不提供独立恢复入口',
+    restoreSaved: '重置按钮恢复为已保存配置',
     resetDefault: '当前页面不提供独立恢复默认入口'
   },
   permissionBoundary: '当前演示管理台默认允许平台配置管理员读写',
@@ -122,6 +126,7 @@ async function loadConfig() {
     }
   } catch (error) {
     statusMessage.value = `加载失败：${error?.message || '未知错误'}`
+    message.error(statusMessage.value)
   } finally {
     loading.value = false
   }
@@ -132,6 +137,7 @@ async function saveConfig() {
   statusMessage.value = ''
   if (!validateDraft()) {
     statusMessage.value = '请修正表单错误后再保存。'
+    message.error([fieldErrors.value.claimAmountUsd, fieldErrors.value.monthlyClaimLimit].filter(Boolean).join(' ') || statusMessage.value)
     return
   }
 
@@ -150,98 +156,77 @@ async function saveConfig() {
       }
       setDraftFromConfig(nextDemoConfig)
       statusMessage.value = '模拟账户配置已保存'
+      message.success(statusMessage.value)
       window.dispatchEvent(new CustomEvent('admin-site-config-updated'))
     }
   } catch (error) {
     statusMessage.value = `保存失败：${error?.message || '未知错误'}`
+    message.error(statusMessage.value)
   } finally {
     isSaving.value = false
   }
+}
+
+function restoreSaved() {
+  if (isSaving.value) return
+  setDraftFromConfig(savedDemoConfig.value)
+  statusMessage.value = ''
 }
 
 onMounted(loadConfig)
 </script>
 
 <template>
-  <main class="space-y-6" aria-labelledby="demo-account-config-title">
-    <header class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-      <div class="min-w-0">
-        <h1 id="demo-account-config-title" class="text-2xl font-bold text-slate-900">模拟账户配置</h1>
-        <p class="mt-1 text-sm text-slate-500">
-          配置前台模拟账户获取资金的单次金额和月度次数限制。
-        </p>
-      </div>
-      <div class="flex flex-wrap gap-2">
-        <a-button html-type="button" class="" :disabled="loading || isSaving || !isDirty" @click="saveConfig" type="primary">
-          {{ isSaving ? '保存中…' : '保存配置' }}
-        </a-button>
-      </div>
-    </header>
+  <PageShell title="模拟账户配置" class="demo-account-config" :style="{ paddingBottom: 0 }">
+    <template #description>
+      <TypographyText type="secondary">配置前台模拟账户获取资金的单次金额和月度次数限制。保存后，前台模拟账户点击“获取资产”会按这里的金额到账，并按自然月统计可获取次数。</TypographyText>
+    </template>
 
-    <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
-      加载中…
-    </div>
+    <Card v-if="loading" :bordered="false"><Skeleton active :paragraph="{ rows: 4 }" /></Card>
 
-    <section v-else class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div class="mb-5 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm leading-6 text-blue-800">
-        保存后，前台模拟账户点击“获取资产”会按这里的金额到账，并按自然月统计可获取次数。
-      </div>
+    <template v-else>
+      <Card title="领取规则" :bordered="false">
+        <Form layout="vertical" name="demo-account-config" :model="draftText" @finish="saveConfig">
+          <Row :gutter="24" class="demo-account-fields">
+            <Col :xs="24" :lg="12">
+              <FormItem label="每次获取金额" :validate-status="fieldErrors.claimAmountUsd ? 'error' : undefined" extra="资金单位固定为 USDT，最多支持 2 位小数。">
+                <Input id="demo-claim-amount" v-model:value="draftText.claimAmountUsd" inputmode="decimal" suffix="USDT" class="font-mono" :aria-invalid="Boolean(fieldErrors.claimAmountUsd)" aria-describedby="demo-claim-amount-error" placeholder="例如：500000" />
+                <FeedbackToast v-if="fieldErrors.claimAmountUsd" id="demo-claim-amount-error" type="error" :source="() => (fieldErrors.claimAmountUsd) ? (fieldErrors.claimAmountUsd) : ''"></FeedbackToast>
+              </FormItem>
+            </Col>
+            <Col :xs="24" :lg="12">
+              <FormItem label="每月获取次数" :validate-status="fieldErrors.monthlyClaimLimit ? 'error' : undefined" extra="按用户和自然月统计；填 0 表示本月不可获取。">
+                <Input id="demo-monthly-claim-limit" v-model:value="draftText.monthlyClaimLimit" inputmode="numeric" suffix="次" class="font-mono" :aria-invalid="Boolean(fieldErrors.monthlyClaimLimit)" aria-describedby="demo-monthly-claim-limit-error" placeholder="例如：3" />
+                <FeedbackToast v-if="fieldErrors.monthlyClaimLimit" id="demo-monthly-claim-limit-error" type="error" :source="() => (fieldErrors.monthlyClaimLimit) ? (fieldErrors.monthlyClaimLimit) : ''"></FeedbackToast>
+              </FormItem>
+            </Col>
+          </Row>
+        </Form>
+      </Card>
 
-      <div
-        v-if="statusMessage"
-        class="mb-5 rounded-lg border px-4 py-3 text-sm"
-        :class="Object.keys(fieldErrors).length ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-emerald-200 bg-emerald-50 text-emerald-800'"
-        role="status"
-      >
-        {{ statusMessage }}
-      </div>
+      <Card title="当前生效配置" :bordered="false">
+        <Descriptions :column="{ xs: 1, md: 3 }">
+          <DescriptionsItem label="当前生效金额"><span class="font-mono">{{ savedDemoConfig.claimAmountUsd }} USDT</span></DescriptionsItem>
+          <DescriptionsItem label="当前生效次数"><span class="font-mono">{{ savedDemoConfig.monthlyClaimLimit }} 次/月</span></DescriptionsItem>
+          <DescriptionsItem label="生效方式">保存后前台刷新配置生效</DescriptionsItem>
+        </Descriptions>
+        <span class="sr-only">{{ JSON.stringify(demoAccountSettingsState) }}</span>
+      </Card>
 
-      <div class="grid gap-5 md:grid-cols-2">
-        <div>
-          <label for="demo-claim-amount" class="mb-2 block text-sm font-medium text-slate-700">
-            每次获取金额
-          </label>
-          <div class="relative max-w-xl">
-            <a-input id="demo-claim-amount" v-model:value="draftText.claimAmountUsd" type="text" inputmode="decimal" class="w-full pr-16 font-mono" :aria-invalid="Boolean(fieldErrors.claimAmountUsd)" aria-describedby="demo-claim-amount-help demo-claim-amount-error" placeholder="例如：500000" />
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">USDT</span>
-          </div>
-          <p id="demo-claim-amount-help" class="mt-1.5 text-xs text-slate-500">
-            资金单位固定为 USDT，最多支持 2 位小数。
-          </p>
-          <FeedbackToast v-if="fieldErrors.claimAmountUsd" id="demo-claim-amount-error" type="error" :source="() => (fieldErrors.claimAmountUsd) ? (fieldErrors.claimAmountUsd) : ''"></FeedbackToast>
+      <Card class="demo-account-footer" :bordered="false" :body-style="{ padding: '12px 24px' }">
+        <div class="demo-account-actions">
+          <Space :size="8" wrap>
+            <Button :disabled="isSaving || !isDirty" @click="restoreSaved">重置</Button>
+            <Button type="primary" :loading="isSaving" :disabled="!isDirty" @click="saveConfig">保存配置</Button>
+          </Space>
         </div>
-
-        <div>
-          <label for="demo-monthly-claim-limit" class="mb-2 block text-sm font-medium text-slate-700">
-            每月获取次数
-          </label>
-          <div class="relative max-w-xl">
-            <a-input id="demo-monthly-claim-limit" v-model:value="draftText.monthlyClaimLimit" type="text" inputmode="numeric" class="w-full pr-12 font-mono" :aria-invalid="Boolean(fieldErrors.monthlyClaimLimit)" aria-describedby="demo-monthly-claim-limit-help demo-monthly-claim-limit-error" placeholder="例如：3" />
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">次</span>
-          </div>
-          <p id="demo-monthly-claim-limit-help" class="mt-1.5 text-xs text-slate-500">
-            按用户和自然月统计；填 0 表示本月不可获取。
-          </p>
-          <FeedbackToast v-if="fieldErrors.monthlyClaimLimit" id="demo-monthly-claim-limit-error" type="error" :source="() => (fieldErrors.monthlyClaimLimit) ? (fieldErrors.monthlyClaimLimit) : ''"></FeedbackToast>
-        </div>
-      </div>
-
-      <dl class="mt-6 grid gap-3 rounded-lg border border-slate-100 bg-slate-50 p-4 text-sm sm:grid-cols-3">
-        <div>
-          <dt class="text-xs text-slate-500">当前生效金额</dt>
-          <dd class="mt-1 font-mono text-slate-900">{{ savedDemoConfig.claimAmountUsd }} USDT</dd>
-        </div>
-        <div>
-          <dt class="text-xs text-slate-500">当前生效次数</dt>
-          <dd class="mt-1 font-mono text-slate-900">{{ savedDemoConfig.monthlyClaimLimit }} 次/月</dd>
-        </div>
-        <div>
-          <dt class="text-xs text-slate-500">生效方式</dt>
-          <dd class="mt-1 text-slate-900">保存后前台刷新配置生效</dd>
-        </div>
-      </dl>
-
-      <span class="sr-only">{{ JSON.stringify(demoAccountSettingsState) }}</span>
-    </section>
-  </main>
+      </Card>
+    </template>
+  </PageShell>
 </template>
+
+<style scoped>
+.demo-account-fields { max-width: 1100px; }
+.demo-account-footer { position: sticky; bottom: 0; z-index: 10; }
+.demo-account-actions { display: flex; justify-content: flex-end; padding-bottom: env(safe-area-inset-bottom); }
+</style>

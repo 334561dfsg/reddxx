@@ -1,55 +1,59 @@
 <script setup>
-import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
-import { useAdminListPagination } from '../../../admin/composables/useAdminListPagination'
+// 投资组合操作日志 — Ant Design Pro list page (2026-11-28): query card + table card with pagination.
+import { computed, ref } from 'vue'
+import { Tag, TypographyText } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import { portfolioOperationLogs } from '../../../admin/state/portfolioOperationLogs'
 
-const {
-  currentPage,
-  pageSize,
-  totalPages,
-  pagedRows: pagedLogs,
-  onPageSizeChange
-} = useAdminListPagination(portfolioOperationLogs)
+const page = ref(1)
+const blank = () => ({ target: '', operator: '', action: 'all', createdAt: null })
+const filters = ref(blank())
+const actionOptions = computed(() => [...new Set(portfolioOperationLogs.value.map((log) => log.action))].map((value) => ({ value, label: value })))
+const fields = computed(() => [
+  { key: 'target', label: '对象' },
+  { key: 'operator', label: '操作人' },
+  { key: 'action', label: '动作', options: [{ value: 'all', label: '全部动作' }, ...actionOptions.value] },
+  { key: 'createdAt', label: '操作日期', range: true }
+])
+
+// Seed logs use 'YYYY-MM-DD HH:mm:ss' while new logs use the zh-CN locale string ('YYYY/M/D HH:mm:ss'); normalise both.
+const dayOf = (value) => {
+  const match = String(value || '').match(/(\d{4})\D(\d{1,2})\D(\d{1,2})/)
+  return match ? `${match[1]}-${match[2].padStart(2, '0')}-${match[3].padStart(2, '0')}` : ''
+}
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
+
+const rows = computed(() => portfolioOperationLogs.value.filter((log) => {
+  const f = filters.value
+  const day = dayOf(log.createdAt)
+  return has(log.target, f.target) && has(log.operator, f.operator) &&
+    (f.action === 'all' || log.action === f.action) &&
+    (!f.createdAt || (day >= f.createdAt[0] && day <= f.createdAt[1]))
+}))
+
+const columns = [
+  { key: 'createdAt', title: '时间', width: 180 },
+  { key: 'operator', title: '操作人', width: 140 },
+  { key: 'action', title: '动作', width: 140 },
+  { key: 'target', title: '对象', width: 240 },
+  { key: 'summary', title: '操作描述', width: 360 }
+]
+
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
 </script>
 
 <template>
-  <section class="space-y-5">
-    <header>
-      <h1 class="text-3xl font-semibold text-slate-900">投资组合操作日志</h1>
-      <p class="mt-1 text-sm text-slate-500">审计产品配置、上下架、收益与赎回规则调整</p>
-    </header>
-
-    <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <a-table  size="small" :pagination="false" :data-source="pagedLogs" :row-key="(log) => log.id" :scroll="{ x: 'max-content' }" :custom-row="(log, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
-<a-table-column key="column-0" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
-<template #title>时间</template>
-<template #default="{ record: log, index: rowIndex }">{{ log.createdAt }}</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-900&quot;] })">
-<template #title>操作人</template>
-<template #default="{ record: log, index: rowIndex }">{{ log.operator }}</template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-blue-600&quot;] })">
-<template #title>动作</template>
-<template #default="{ record: log, index: rowIndex }">{{ log.action }}</template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-700&quot;] })">
-<template #title>对象</template>
-<template #default="{ record: log, index: rowIndex }">{{ log.target }}</template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(log, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
-<template #title>摘要</template>
-<template #default="{ record: log, index: rowIndex }">{{ log.summary }}</template>
-</a-table-column>
-</a-table>
-      <AdminListPaginationBar
-        :current-page="currentPage"
-        :total-pages="totalPages"
-        :total-count="portfolioOperationLogs.length"
-        :page-size="pageSize"
-        @update:current-page="currentPage = $event"
-        @update:page-size="onPageSizeChange"
-      />
-    </article>
-  </section>
+  <PageShell>
+    <SearchForm name="portfolio-operation-log-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+    <AdminTable title="投资组合操作日志" v-model:page="page" :rows="rows" :columns="columns" row-key="id" desktop-only>
+      <template #cell="{ column, record }">
+        <Tag v-if="column.key === 'action'">{{ record.action }}</Tag>
+        <TypographyText v-else-if="column.key === 'createdAt'" type="secondary">{{ record.createdAt }}</TypographyText>
+        <template v-else>{{ record[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
+  </PageShell>
 </template>

@@ -1,5 +1,13 @@
 <script setup>
+// 模块用户点控 — Ant Design Pro list (2026-11-28): query card with one field per filter (UID / 用户名 / 邮箱 / 手机号 /
+// 点控内容, replacing the combined keyword box), table card with text Tags and link actions. The add-user AdminDialog
+// and its page-owned lifecycle are unchanged.
 import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
+import { Alert, Button, Space, Tag, TypographyText } from 'ant-design-vue'
+import { PlusOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import { nativeControl } from '../../../admin/components/antd/controls.js'
 import { computed, ref } from 'vue'
 import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
@@ -19,8 +27,9 @@ const props = defineProps({
   moduleKey: { type: String, required: true }
 })
 
-const query = ref('')
-const valueFilter = ref('')
+const blankFilters = () => ({ userId: '', username: '', email: '', phone: '', value: 'all' })
+const filters = ref(blankFilters())
+const page = ref(1)
 const addOpen = ref(false)
 const addUserId = ref('')
 const addSearchAttempted = ref(false)
@@ -103,10 +112,30 @@ const rows = computed(() => allUsers.value.map((user) => ({
   rule: currentRule(user)
 })))
 
+const queryFields = computed(() => [
+  { key: 'userId', label: 'UID' },
+  { key: 'username', label: '用户名' },
+  { key: 'email', label: '邮箱' },
+  { key: 'phone', label: '手机号' },
+  { key: 'value', label: '点控内容', options: [{ value: 'all', label: '全部控制内容' }, ...valueOptions.value] }
+])
+
+// Email and phone stay searchable but are never displayed in the list.
+const fieldHit = (value, keyword) => !keyword.trim() || String(value ?? '').toLowerCase().includes(keyword.trim().toLowerCase())
+const valueFilter = computed(() => (filters.value.value === 'all' ? '' : filters.value.value))
 const filteredRows = computed(() => filterUserControlRows(rows.value, {
-  query: query.value,
   value: valueFilter.value
-}))
+}).filter((user) => fieldHit(user.userId, filters.value.userId) && fieldHit(user.username, filters.value.username) &&
+  fieldHit(user.email, filters.value.email) && fieldHit(user.phone, filters.value.phone)))
+
+const columns = [
+  { key: 'user', title: '用户', width: 220 },
+  { key: 'pointControl', title: '点控', width: 120 },
+  { key: 'updatedAt', title: '更新时间', width: 180 },
+  { key: 'actions', title: '操作', width: 140, fixed: 'right' }
+]
+
+function search(values) { filters.value = { ...blankFilters(), ...values }; page.value = 1 }
 
 const pointControlLabel = (rule) => {
   if (!['active', 'processing'].includes(rule?.status)) return '-'
@@ -117,10 +146,11 @@ const pointControlLabel = (rule) => {
       : '-'
 }
 
-const pointControlBadgeClass = (label) => ({
-  永久盈利: 'bg-orange-100 text-orange-700 ring-orange-200',
-  永久亏损: 'bg-emerald-100 text-emerald-700 ring-emerald-200'
-}[label] || 'bg-slate-100 text-slate-500 ring-slate-200')
+// Same colours as the user list badge, as text Tags (no ring borders).
+const pointControlTagColor = (label) => ({
+  永久盈利: 'orange',
+  永久亏损: 'green'
+}[label] || 'default')
 
 const formatTime = (date = new Date()) => {
   const pad = (value) => String(value).padStart(2, '0')
@@ -156,8 +186,9 @@ const confirmAddUser = () => {
   if (!addUserAlreadyListed.value) {
     addedUserIds.value = [userId, ...addedUserIds.value]
   }
-  query.value = userId
-  valueFilter.value = ''
+  // Clear the other filters and locate the added user.
+  filters.value = { ...blankFilters(), userId }
+  page.value = 1
   closeAddUser()
 }
 
@@ -204,8 +235,8 @@ const submitSetting = (payload) => {
 }
 
 const resetFilters = () => {
-  query.value = ''
-  valueFilter.value = ''
+  filters.value = blankFilters()
+  page.value = 1
 }
 
 // The shared Ant frames (AdminDialog) drive these page-owned lifecycles (dialog migration 2026-11-27). Defined last so
@@ -214,85 +245,34 @@ const addDialogLifecycle = { rendered: addDialogRendered, phase: addDialogPhase,
 </script>
 
 <template>
-  <section class="space-y-6">
-    <header>
-      <div>
-        <p class="text-sm font-medium text-blue-600">{{ moduleMeta.label }}</p>
-        <h1 class="mt-1 text-3xl font-semibold text-slate-900">{{ moduleMeta.actionLabel }}</h1>
-        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
-          {{ moduleMeta.family === 'trade'
-            ? '针对单个用户设置最终结算盈亏方向，不改变其他用户的自然结果。'
-            : '针对单个用户设置实际入账或最终结算的收益档位，不直接输入金额或收益率。' }}
-        </p>
-      </div>
-    </header>
+  <PageShell>
+    <SearchForm name="module-user-control-filters" :model="filters" :fields="queryFields" @search="search" @reset="resetFilters" />
 
-    <div v-if="moduleMeta.family === 'trade'" class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-800">
-      用户点控只作用于目标用户的到期结算，不改变全局行情、K线或实时盈亏。
-      单笔订单或持仓控制优先于用户级控制。
-    </div>
+    <Alert v-if="moduleMeta.family === 'trade'" type="info" show-icon message="用户点控只作用于目标用户的到期结算，不改变全局行情、K线或实时盈亏。单笔订单或持仓控制优先于用户级控制。" />
 
-    <article class="rounded-xl border border-slate-200 bg-white p-5">
-      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <label class="relative xl:col-span-2">
-          <span class="sr-only">搜索用户</span>
-          <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <a-input v-model:value="query" type="search" placeholder="搜索 UID、用户名、邮箱或手机号" class="w-full pl-9 pr-3" />
-        </label>
-        <a-select v-model:value="valueFilter" class="">
-          <a-select-option value="">全部控制内容</a-select-option>
-          <a-select-option v-for="option in valueOptions" :key="option.value" :value="option.value">{{ option.label }}</a-select-option>
-        </a-select>
-      </div>
-      <div class="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-        <span>共 {{ filteredRows.length }} 位用户</span>
-        <div class="flex items-center gap-4">
-          <a-button html-type="button" class="font-medium text-blue-600 hover:text-blue-700" @click="resetFilters">重置筛选</a-button>
-          <a-button html-type="button" class="bg-blue-600 text-sm font-medium text-white hover:bg-blue-700" @click="openAddUser" type="primary">添加用户</a-button>
-        </div>
-      </div>
-    </article>
-
-    <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <div class="overflow-x-auto">
-        <a-table  :data-source="filteredRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.userId" :custom-row="(row, index) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
-<a-table-column key="column-0" ><template #title>用户</template><template #default="{ record: row, index: index }"><div class=" ">
-                <p class="font-medium text-slate-900">{{ row.username }}</p>
-                <p class="mt-0.5 text-xs text-slate-500">UID {{ row.userId }}</p>
-              </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>点控</template><template #default="{ record: row, index: index }"><div class="  whitespace-nowrap">
-                <span
-                  v-if="pointControlLabel(row.rule) !== '-'"
-                  class="inline-flex rounded-md px-2.5 py-1 text-xs font-semibold ring-1"
-                  :class="pointControlBadgeClass(pointControlLabel(row.rule))"
-                >
-                  {{ pointControlLabel(row.rule) }}
-                </span>
-                <span v-else class="text-xs text-slate-400">-</span>
-              </div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>更新时间</template><template #default="{ record: row, index: index }"><div class="  text-slate-500">{{ row.rule?.updatedAt || '—' }}</div></template></a-table-column>
-<a-table-column key="column-3" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class=" ">
-                <div class="flex items-center justify-end gap-3 whitespace-nowrap text-sm font-medium">
-                  <a-button html-type="button" class="text-blue-600 hover:text-blue-800" @click="openSetting(row)">
-                    {{ row.rule ? '修改' : '设置' }}
-                  </a-button>
-                  <RouterLink
-                    :to="{ name: 'users-control-log', query: { userId: row.userId, module: moduleKey } }"
-                    class="text-slate-600 hover:text-slate-900"
-                  >
-                    日志
-                  </RouterLink>
-                </div>
-              </div></template></a-table-column>
-</a-table>
-      </div>
-      <div v-if="filteredRows.length === 0" class="px-6 py-14 text-center">
-        <p class="text-sm font-medium text-slate-700">没有符合筛选条件的用户</p>
-        <a-button html-type="button" class="mt-2 text-sm font-medium text-blue-600" @click="resetFilters">清除筛选条件</a-button>
-      </div>
-    </article>
+    <AdminTable :title="`${moduleMeta.label}${moduleMeta.actionLabel}`" v-model:page="page" :rows="filteredRows" :columns="columns" row-key="userId" desktop-only>
+      <template #toolbar>
+        <Button type="primary" @click="openAddUser"><template #icon><PlusOutlined /></template>添加用户</Button>
+      </template>
+      <template #cell="{ column, record: row }">
+        <Space v-if="column.key === 'user'" direction="vertical" :size="0">
+          <span>{{ row.username }}</span>
+          <TypographyText type="secondary" class="font-mono">UID {{ row.userId }}</TypographyText>
+        </Space>
+        <template v-else-if="column.key === 'pointControl'">
+          <Tag v-if="pointControlLabel(row.rule) !== '-'" :color="pointControlTagColor(pointControlLabel(row.rule))">{{ pointControlLabel(row.rule) }}</Tag>
+          <TypographyText v-else type="secondary">-</TypographyText>
+        </template>
+        <TypographyText v-else-if="column.key === 'updatedAt'" type="secondary">{{ row.rule?.updatedAt || '—' }}</TypographyText>
+        <Space v-else-if="column.key === 'actions'" :size="8">
+          <Button type="link" class="px-0" @click="openSetting(row)">{{ row.rule ? '修改' : '设置' }}</Button>
+          <RouterLink v-slot="{ href, navigate }" :to="{ name: 'users-control-log', query: { userId: row.userId, module: moduleKey } }" custom>
+            <Button type="link" class="px-0" :href="href" @click="navigate">日志</Button>
+          </RouterLink>
+        </Space>
+        <template v-else>{{ row[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
 
     <UserControlModal
       :open="modalOpen"
@@ -338,6 +318,6 @@ const addDialogLifecycle = { rendered: addDialogRendered, phase: addDialogPhase,
                 </a-button>
               </footer>
     </AdminDialog>
-  </section>
+  </PageShell>
 </template>
 

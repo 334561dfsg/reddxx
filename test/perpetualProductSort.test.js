@@ -26,9 +26,9 @@ test('perpetual products sort by descending configured number without mutating s
 })
 
 test('perpetual product editor places numeric sort input beside status and saves it', () => {
-  assert.match(pageSource, /产品状态[\s\S]*产品排序/)
+  assert.match(pageSource, /产品状态[\s\S]*排序权重/)
   assert.match(pageSource, /v-model:value\.number="contractForm\.sortOrder"/)
-  assert.match(pageSource, /数字越大越靠前/)
+  assert.match(pageSource, /数值越大越靠前/)
   assert.match(pageSource, /sortOrder: Number\(contractForm\.sortOrder\)/)
   assert.match(pageSource, /contractForm\.sortOrder = Number\(item\.sortOrder/)
   assert.match(pageSource, /sortPerpetualProducts/)
@@ -53,5 +53,5 @@ test('perpetual product cards show trade limits from product fields only', () =>
   assert.match(pageSource, /maxPosition: tradeLimitUsdtText\(contractForm\.maxPosition\)/)
   assert.match(pageSource, /minBuy: tradeLimitUsdtText\(contractForm\.minBuy\)/)
   assert.match(pageSource, /maxBuy: tradeLimitUsdtText\(contractForm\.maxBuy\)/)
-  assert.match(pageSource, /<ul class="mt-2 space-y-1 text-sm text-slate-700">[\s\S]*最低买入:[\s\S]*最大买入:[\s\S]*最大持仓:/)
+  assert.match(pageSource, /column\.key === 'limits'[\s\S]*最低买入: \{\{ item\.minBuy \}\}[\s\S]*最大买入: \{\{ item\.maxBuy \}\}[\s\S]*最大持仓: \{\{ item\.maxPosition \}\}/)
 })

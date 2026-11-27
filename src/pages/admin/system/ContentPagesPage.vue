@@ -1,5 +1,13 @@
 <script setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+// 平台配置 → 内容页配置: Ant Design Pro list page (2026-11-28) — query card (标题, 路径, 层级), table card with toolbar
+// and pagination, link actions, status Tag, toast feedback and an Ant delete confirmation. The editor dialog is kept.
+import { computed, nextTick, onMounted, ref } from 'vue'
+import { Button, Space, Tag, TypographyText, message } from 'ant-design-vue'
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
+import AdminModal from '../earn/EarnAdminModal.vue'
 import {
   DEFAULT_SITE_CONFIG,
   normalizeContentPages,
@@ -13,10 +21,27 @@ const isSaving = ref(false)
 const editorRef = ref(null)
 
 const rows = computed(() => config.value.contentPages?.pages || [])
-const keyword = ref('')
-const parentFilter = ref('')
-const currentPage = ref(1)
-const pageSize = 10
+const page = ref(1)
+const blank = () => ({ title: '', slug: '', parent: 'all', status: 'all' })
+const filters = ref(blank())
+const fields = computed(() => [
+  { key: 'title', label: '页面标题' },
+  { key: 'slug', label: '页面路径' },
+  { key: 'parent', label: '层级', searchable: true, options: [{ value: 'all', label: '全部页面' }, { value: '__root__', label: '仅一级页面' }, ...rows.value.filter((row) => !row.parentId).map((p) => ({ value: p.id, label: `${p.title} 及其子页面` }))] },
+  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, { value: 'enabled', label: '已启用' }, { value: 'disabled', label: '已禁用' }] }
+])
+const columns = [
+  { key: 'page', title: '页面', width: 300 },
+  { key: 'parent', title: '父级', width: 140 },
+  { key: 'path', title: '前台路径', width: 260 },
+  { key: 'sort', title: '排序权重', width: 100, align: 'right' },
+  { key: 'locales', title: '多语言', width: 90, align: 'right' },
+  { key: 'enabled', title: '状态', width: 90 },
+  { key: 'actions', title: '操作', width: 130, fixed: 'right' }
+]
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
+const removeTarget = ref(null)
 const displayRows = computed(() => {
   const byParent = new Map()
   const roots = []
@@ -48,41 +73,17 @@ const displayRows = computed(() => {
   return out
 })
 const filteredRows = computed(() => {
-  const q = keyword.value.trim().toLowerCase()
+  const f = filters.value
+  const title = String(f.title || '').trim().toLowerCase()
+  const slug = String(f.slug || '').trim().toLowerCase()
   return displayRows.value.filter((row) => {
-    if (parentFilter.value === '__root__' && row.parentId) return false
-    if (parentFilter.value && parentFilter.value !== '__root__' && row.parentId !== parentFilter.value && row.id !== parentFilter.value) {
-      return false
-    }
-    if (!q) return true
-    const parent = row.parentId ? pageById(row.parentId) : null
-    return [row.title, row.navTitle, row.slug, row.summary, parent?.title]
-      .filter(Boolean)
-      .some((text) => String(text).toLowerCase().includes(q))
+    if (f.parent === '__root__' && row.parentId) return false
+    if (f.parent !== 'all' && f.parent !== '__root__' && row.parentId !== f.parent && row.id !== f.parent) return false
+    if (f.status !== 'all' && (f.status === 'enabled') !== Boolean(row.enabled)) return false
+    if (title && ![row.title, row.navTitle].some((text) => String(text || '').toLowerCase().includes(title))) return false
+    if (slug && !pagePath(row).toLowerCase().includes(slug)) return false
+    return true
   })
-})
-const totalPages = computed(() => Math.max(1, Math.ceil(filteredRows.value.length / pageSize)))
-const pagedRows = computed(() => {
-  const page = Math.min(currentPage.value, totalPages.value)
-  const start = (page - 1) * pageSize
-  return filteredRows.value.slice(start, start + pageSize)
-})
-
-function resetListPage() {
-  currentPage.value = 1
-}
-
-function goPrev() {
-  currentPage.value = Math.max(1, currentPage.value - 1)
-}
-
-function goNext() {
-  currentPage.value = Math.min(totalPages.value, currentPage.value + 1)
-}
-
-watch(totalPages, () => {
-  if (currentPage.value > totalPages.value) currentPage.value = totalPages.value
-  if (currentPage.value < 1) currentPage.value = 1
 })
 
 const modalOpen = ref(false)
@@ -287,7 +288,7 @@ function insertLink() {
   const url = window.prompt('请输入链接地址（http:// 或 https://）', '')
   if (!url) return
   if (!/^https?:\/\//i.test(url.trim())) {
-    alert('链接必须以 http:// 或 https:// 开头')
+    message.warning('链接必须以 http:// 或 https:// 开头')
     return
   }
   exec('createLink', url.trim())
@@ -298,7 +299,7 @@ function insertImage() {
   if (!url) return
   const text = url.trim()
   if (!/^https?:\/\//i.test(text) && !/^data:image\//i.test(text)) {
-    alert('图片地址必须是 http://、https:// 或 data:image/ 开头')
+    message.warning('图片地址必须是 http://、https:// 或 data:image/ 开头')
     return
   }
   exec('insertImage', text)
@@ -326,28 +327,34 @@ async function load() {
       config.value.contentPages = normalizeContentPages(config.value.contentPages, config.value.i18n?.defaultLocale || 'zh-CN')
     }
   } catch (e) {
-    console.error(e)
+    message.error('加载失败：' + (e?.message || '未知错误'))
   } finally {
     loading.value = false
   }
 }
 
-async function persist() {
+async function persist(successText) {
   isSaving.value = true
   try {
     const result = await siteConfigApi.updateSiteConfig(config.value)
     if (result.success) {
       window.dispatchEvent(new CustomEvent('admin-site-config-updated'))
+      message.success(successText || result.message || '内容页已保存')
       await load()
+      return true
     }
+    message.error(result.message || '保存失败')
   } catch (e) {
-    alert('保存失败：' + (e?.message || '未知错误'))
+    message.error('保存失败：' + (e?.message || '未知错误'))
+    await load()
   } finally {
     isSaving.value = false
   }
+  return false
 }
 
 async function submitModal() {
+  if (isSaving.value) return
   saveActiveLocaleFields()
   const slug = formSlug.value.trim().toLowerCase()
   const locales = Object.fromEntries(
@@ -356,16 +363,16 @@ async function submitModal() {
   const primaryLocale = locales[defaultLocale.value] || locales[activeLocale.value] || emptyLocalePayload()
   const title = primaryLocale.title.trim()
   if (!title) {
-    alert('请填写页面标题')
+    message.warning('请填写页面标题')
     return
   }
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-    alert('页面路径只支持小写字母、数字和中划线，例如 about-us')
+    message.warning('页面路径只支持小写字母、数字和中划线，例如 about-us')
     return
   }
   const duplicated = rows.value.some((row) => row.slug === slug && row.id !== editingId.value)
   if (duplicated) {
-    alert('页面路径已存在')
+    message.warning('页面路径已存在')
     return
   }
 
@@ -392,90 +399,47 @@ async function submitModal() {
     ...config.value.contentPages,
     pages: list
   }, defaultLocale.value)
-  await persist()
-  closeModal()
+  if (await persist(editingId.value ? '页面已更新' : '页面已添加')) closeModal()
 }
 
-async function removeRow(row) {
-  if (!confirm(`确定删除该页面？（${row.title}）`)) return
+async function removeRow() {
+  const row = removeTarget.value
+  if (!row || isSaving.value) return
   config.value.contentPages = normalizeContentPages({
     ...config.value.contentPages,
     pages: rows.value.filter((item) => item.id !== row.id)
-  })
-  await persist()
+  }, defaultLocale.value)
+  if (await persist('页面已删除')) removeTarget.value = null
 }
 
 onMounted(load)
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-slate-900">内容页配置</h1>
-        <p class="mt-1 text-sm text-slate-500">
-          可无限添加前台公开内容页，适用于关于我们、公司资质、白皮书、公告说明等页面。
-        </p>
-      </div>
-      <a-button html-type="button" class="shrink-0" :disabled="loading" @click="openAdd" type="primary">
-        添加页面
-      </a-button>
-    </div>
+  <PageShell>
+    <SearchForm name="content-page-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+    <AdminTable title="内容页" v-model:page="page" :rows="filteredRows" :columns="columns" row-key="id" :loading="loading" desktop-only>
+      <template #toolbar>
+        <Button type="primary" :disabled="loading" @click="openAdd"><template #icon><PlusOutlined /></template>添加页面</Button>
+      </template>
+      <template #cell="{ column, record }">
+        <Space v-if="column.key === 'page'" direction="vertical" :size="0" class="content-page-cell">
+          <TypographyText strong><TypographyText v-if="record.parentId" type="secondary" aria-hidden="true">└ </TypographyText>{{ record.title }}</TypographyText>
+          <TypographyText type="secondary" :ellipsis="{ tooltip: record.summary }" class="content-page-summary">{{ record.summary || '—' }}</TypographyText>
+        </Space>
+        <template v-else-if="column.key === 'parent'">{{ pageById(record.parentId)?.title || '—' }}</template>
+        <span v-else-if="column.key === 'path'" class="font-mono">{{ pagePath(record) }}</span>
+        <template v-else-if="column.key === 'locales'">{{ localeCompletion(record) }}</template>
+        <Tag v-else-if="column.key === 'enabled'" :color="record.enabled ? 'green' : 'default'">{{ record.enabled ? '已启用' : '已禁用' }}</Tag>
+        <Space v-else-if="column.key === 'actions'" :size="8" class="content-page-row-actions">
+          <Button type="link" :disabled="isSaving" @click="openEdit(record)">编辑</Button>
+          <Button type="link" danger :disabled="isSaving" @click="removeTarget = record">删除</Button>
+        </Space>
+        <template v-else>{{ record[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
 
-    <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
-      加载中…
-    </div>
-
-    <div v-else class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div class="flex flex-col gap-3 border-b border-slate-200 px-4 py-3 md:flex-row md:items-center md:justify-between">
-        <div class="flex flex-1 flex-col gap-3 sm:flex-row">
-          <a-input v-model:value="keyword" type="search" class="w-full sm:max-w-xs" placeholder="搜索标题、路径、摘要" @input="resetListPage" />
-          <a-select v-model:value="parentFilter" class="w-full sm:max-w-xs" @change="resetListPage">
-            <a-select-option value="">全部页面</a-select-option>
-            <a-select-option value="__root__">仅一级页面</a-select-option>
-            <a-select-option v-for="p in parentOptions" :key="p.id" :value="p.id">{{ p.title }} 及其子页面</a-select-option>
-          </a-select>
-        </div>
-        <p class="text-xs text-slate-500">
-          共 {{ filteredRows.length }} 条，当前第 {{ currentPage }} / {{ totalPages }} 页
-        </p>
-      </div>
-      <div class="overflow-x-auto">
-        <a-table  :data-source="pagedRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" >
-<a-table-column key="column-0" ><template #title>页面</template><template #default="{ record: row, index: index }"><div class=" ">
-                <div class="font-medium text-slate-900">
-                  <span v-if="row.parentId" class="mr-1 text-slate-400">└</span>{{ row.title }}
-                </div>
-                <div class="mt-1 max-w-md truncate text-xs text-slate-500">{{ row.summary || '—' }}</div>
-              </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>父级</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-600">{{ pageById(row.parentId)?.title || '—' }}</div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>路径</template><template #default="{ record: row, index: index }"><div class="  font-mono text-xs text-indigo-700">{{ pagePath(row) }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
-                <span :class="row.enabled ? 'rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800' : 'text-slate-500'">
-                  {{ row.enabled ? '已启用' : '已禁用' }}
-                </span>
-              </div></template></a-table-column>
-<a-table-column key="column-5" ><template #title>多语言</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-600">{{ localeCompletion(row) }}</div></template></a-table-column>
-<a-table-column key="column-6" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   text-right">
-                <a-button html-type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</a-button>
-                <span class="mx-2 text-slate-300">|</span>
-                <a-button html-type="button" class="text-red-600 hover:underline" @click="removeRow(row)" danger>删除</a-button>
-              </div></template></a-table-column><template #emptyText>
-                暂无匹配内容页。
-              </template>
-</a-table>
-      </div>
-      <footer class="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm">
-        <span class="text-xs text-slate-500">每页 {{ pageSize }} 条</span>
-        <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="filteredRows.length" :show-size-changer="false"  @change="currentPage = $event" />
-      </footer>
-    </div>
-
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="flex items-center justify-between gap-3"><span>{{ editingId ? '编辑页面' : '添加页面' }}</span><a-button aria-label="关闭" html-type="button"   @click="closeModal">×</a-button></div></template></template><template v-if="modalOpen"><div class="shrink-0 border-b border-slate-200 px-5 py-4">
-            <h2 class="text-lg font-semibold text-slate-900">{{ editingId ? '编辑页面' : '添加页面' }}</h2>
-          </div>
-<div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="content-page-modal-title"><span>{{ editingId ? '编辑页面' : '添加页面' }}</span><a-button aria-label="关闭" type="text" html-type="button" :disabled="isSaving" @click="closeModal"><CloseOutlined /></a-button></div></template></template><template v-if="modalOpen"><div class="min-h-0 flex-1">
             <div class="grid min-h-full gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
             <div class="flex min-h-0 flex-col gap-4">
               <div class="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50/70 p-3 sm:flex-row sm:items-center sm:justify-between">
@@ -573,17 +537,23 @@ onMounted(load)
               </div>
             </aside>
             </div>
-          </div></template><template #footer><template v-if="Boolean(modalOpen)"><div class="shrink-0 flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
-            <a-button html-type="button" class="" @click="closeModal">取消</a-button>
-            <a-button html-type="button" class="" :disabled="isSaving" @click="submitModal" type="primary">
-              {{ isSaving ? '保存中…' : '保存' }}
-            </a-button>
-          </div></template></template></a-modal>
-    
-  </div>
+          </div></template><template #footer><template v-if="Boolean(modalOpen)"><Space :size="8">
+            <a-button html-type="button" :disabled="isSaving" @click="closeModal">取消</a-button>
+            <a-button html-type="button" type="primary" :loading="isSaving" @click="submitModal">保存</a-button>
+          </Space></template></template></a-modal>
+
+    <AdminModal :open="!!removeTarget" title="删除内容页" :busy="isSaving" confirm-text="确认删除" danger @close="removeTarget = null" @confirm="removeRow">
+      <div v-if="removeTarget"><TypographyText strong>{{ removeTarget.title }}</TypographyText><p>删除后前台 {{ pagePath(removeTarget) }} 将无法访问。此操作不能撤销。</p></div>
+    </AdminModal>
+  </PageShell>
 </template>
 
 <style scoped>
+.content-page-cell{max-width:100%;min-width:0}
+.content-page-summary{max-width:280px}
+.content-page-modal-title{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.content-page-row-actions :deep(.ant-btn-link){padding-inline:4px}
+
 .content-editor :deep(h2) {
   margin: 1rem 0 0.5rem;
   font-size: 1.25rem;

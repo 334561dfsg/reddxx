@@ -24,7 +24,7 @@ test('lending products sort descending without mutating source', () => {
 })
 
 test('lending product sorting is configured in admin and applied to client list', () => {
-  assert.match(adminSource, /产品状态[\s\S]*产品排序/)
+  assert.match(adminSource, /产品状态[\s\S]*排序权重/)
   assert.match(adminSource, /v-model:value\.number="formData\.sortOrder"/)
   assert.match(adminSource, /sortOrder: Number\(product\.sortOrder/)
   assert.match(adminSource, /sortOrder: Number\(formData\.value\.sortOrder\)/)

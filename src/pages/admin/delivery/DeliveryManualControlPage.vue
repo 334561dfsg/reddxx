@@ -1,5 +1,9 @@
 <script setup>
+// 手动场控 — dashboard on the Ant Design Pro shell (2026-11-28): PageShell + Cards, Ant Table/Slider/InputNumber,
+// Statistic/Descriptions for values; action feedback is a toast (the old native alert and inline action line are gone).
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { Button, Card, Checkbox, Col, Descriptions, DescriptionsItem, Empty, InputNumber, Row, Slider, Space, Statistic, Table, Tag, TypographyText, message } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
 import { deliveryContractsData, deliveryWhalesList } from '../../../admin/mock/deliveryReport'
 
 const formatCompactNumber = (n, digits) => {
@@ -380,6 +384,12 @@ watch(
   { flush: 'post' }
 )
 
+// Operation feedback is toast-only; lastAction keeps the latest step for the page state.
+const recordAction = (text) => {
+  lastAction.value = text
+  message.info(text)
+}
+
 const pickRow = (row) => {
   if (!row?.key) return
   selectedKey.value = row.key
@@ -388,19 +398,19 @@ const pickRow = (row) => {
 const oneClickFlatten = () => {
   if (locked.value) return
   manualPrice.value = bestPrice.value
-  lastAction.value = `一键抹平：${formatPrice(bestPrice.value)}（平台利润峰值 ${formatCompactUsd(bestProfit.value, true)}）`
+  recordAction(`一键抹平：${formatPrice(bestPrice.value)}（平台利润峰值 ${formatCompactUsd(bestProfit.value, true)}）`)
 }
 
 const lockResult = () => {
   locked.value = true
-  lastAction.value = `锁定结果：${formatPrice(manualPrice.value)}`
+  recordAction(`锁定结果：${formatPrice(manualPrice.value)}`)
 }
 
 const undoIntervention = () => {
   locked.value = false
   manualPrice.value = roundToTick(marketPrice.value, tickSize.value)
   spoofOrders.value = []
-  lastAction.value = '撤销干预：回到市价'
+  recordAction('撤销干预：回到市价')
 }
 
 const confirmHarvest = () => {
@@ -408,14 +418,14 @@ const confirmHarvest = () => {
   if (!row) return
   row.lastManualAt = now.value
   lastAction.value = `确定收割：${row.key} 结算价 ${formatPrice(manualPrice.value)}`
-  alert(`已提交：${row.key} 结算价 ${formatPrice(manualPrice.value)}\n（示意页面：未接真实接口）`)
+  message.success(`已提交：${row.key} 结算价 ${formatPrice(manualPrice.value)}（示意页面：未接真实接口）`)
 }
 
 const harvestAll = () => {
   if (locked.value) return
   manualPrice.value = bestPrice.value
   locked.value = true
-  lastAction.value = `一键收割以上所有人：${formatPrice(manualPrice.value)}`
+  recordAction(`一键收割以上所有人：${formatPrice(manualPrice.value)}`)
 }
 
 const harvestOneWhale = (pos) => {
@@ -423,7 +433,7 @@ const harvestOneWhale = (pos) => {
   const tick = tickSize.value
   const target = pos.side === 'long' ? pos.entryPrice - tick : pos.entryPrice + tick
   manualPrice.value = roundToTick(clamp(target, priceMin.value, priceMax.value), tick)
-  lastAction.value = `精准插针：${pos.uid} → ${formatPrice(manualPrice.value)}`
+  recordAction(`精准插针：${pos.uid} → ${formatPrice(manualPrice.value)}`)
 }
 
 const toggleFlag = (pos) => {
@@ -431,6 +441,7 @@ const toggleFlag = (pos) => {
   if (set.has(pos.uid)) set.delete(pos.uid)
   else set.add(pos.uid)
   flaggedUsers.value = set
+  message.success(set.has(pos.uid) ? `已标记用户 ${pos.uid}` : `已取消标记用户 ${pos.uid}`)
 }
 
 let timer = null
@@ -480,95 +491,70 @@ const heatStyle = (row) => {
   return { background: `linear-gradient(90deg, rgba(16,185,129,${0.08 + 0.18 * k}) 0%, rgba(16,185,129,0.03) 72%, rgba(255,255,255,0) 100%)` }
 }
 
-const rowTone = (row) => {
-  const v = Number(row.platformDelta || 0)
-  return v < 0 ? 'text-rose-600' : v > 0 ? 'text-emerald-600' : 'text-slate-600'
-}
+const deltaType = (value) => (Number(value || 0) < 0 ? 'danger' : Number(value || 0) > 0 ? 'success' : undefined)
+const clockText = computed(() => new Date(now.value).toISOString().replace('T', ' ').split('.')[0])
+
+const spoofColumns = [
+  { key: 'label', title: '类型', width: 80 },
+  { key: 'price', title: '价格', width: 120, align: 'right' },
+  { key: 'size', title: '数量（USDT）', width: 120, align: 'right' }
+]
+const whaleColumns = [
+  { key: 'user', title: '用户', width: 150 },
+  { key: 'side', title: '方向', width: 70 },
+  { key: 'holding', title: '持仓（USD）', width: 110, align: 'right' },
+  { key: 'pnl', title: '盈亏（USD）', width: 110, align: 'right' },
+  { key: 'actions', title: '操作', width: 150 }
+]
 </script>
 
 <template>
-  <section class="space-y-4">
-    <header class="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-semibold text-slate-900">交割合约 · 手动场控</h1>
-        <p class="mt-1 text-sm text-slate-500">左：全盘风险热力｜中：深度作战区｜右：元凶追踪与精准场控</p>
-      </div>
-      <div class="flex items-center gap-2 text-xs text-slate-500">
-        <span>刷新：1s</span>
-        <span class="font-mono">{{ new Date(now).toISOString().replace('T', ' ').split('.')[0] }}</span>
-      </div>
-    </header>
-
-    <div class="grid gap-4 lg:grid-cols-12">
-      <aside class="lg:col-span-3 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4 bg-slate-50/40">
-          <div>
-            <h2 class="text-sm font-semibold text-slate-900">全盘风险实时榜</h2>
-            <p class="mt-0.5 text-[11px] text-slate-500">按平台即时亏损额倒序，点红联动右侧</p>
+  <PageShell>
+    <Row :gutter="[24, 24]">
+      <Col :xs="24" :xl="6">
+        <Card :bordered="false" title="全盘风险实时榜" :body-style="{ padding: 0 }">
+          <template #extra><TypographyText type="secondary">刷新 1s · <span class="font-mono">{{ clockText }}</span></TypographyText></template>
+          <div class="risk-board" role="list" aria-label="按平台即时亏损额倒序的合约，点选后联动作战区">
+            <Button
+              v-for="row in sortedRiskBoard"
+              :key="row.key"
+              type="text"
+              block
+              role="listitem"
+              class="risk-row"
+              :style="heatStyle(row)"
+              :aria-pressed="row.key === selectedKey"
+              @click="pickRow(row)"
+            >
+              <span class="risk-row__main">
+                <TypographyText :strong="row.key === selectedKey">{{ row.asset }}-{{ row.tierSec }}s</TypographyText>
+                <Tag v-if="row.key === selectedKey" color="blue">当前</Tag>
+                <Tag v-if="row.lastManualAt">已干预</Tag>
+              </span>
+              <span class="risk-row__meta">
+                <TypographyText :type="deltaType(row.platformDelta)" class="font-mono">{{ formatCompactUsd(row.platformDelta, true) }}</TypographyText>
+                <TypographyText type="secondary" class="font-mono">倒计时 {{ row.remainSec }}s · {{ formatPrice(row.marketPrice) }}</TypographyText>
+              </span>
+            </Button>
           </div>
-          <div class="text-[11px] text-slate-400 font-mono">Global Risk Heatmap</div>
-        </div>
-        <div class="max-h-[36rem] overflow-y-auto divide-y divide-slate-100">
-          <a-button type="text"
-            v-for="row in sortedRiskBoard"
-            :key="row.key"
-            html-type="button"
-            class="w-full text-left px-4 py-3 transition-all hover:bg-slate-50/60"
-            :class="row.key === selectedKey ? 'bg-slate-50 ring-1 ring-inset ring-blue-200' : ''"
-            :style="heatStyle(row)"
-            @click="pickRow(row)"
-          >
-            <div class="flex items-start justify-between gap-3">
-              <div class="min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="font-semibold text-slate-900">{{ row.asset }}-{{ row.tierSec }}s</span>
-                  <span v-if="row.lastManualAt" class="text-[10px] text-blue-600 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5">已干预</span>
-                </div>
-                <div class="mt-1 text-xs text-slate-500">
-                  <span class="font-mono" :class="rowTone(row)">{{ formatCompactUsd(row.platformDelta, true) }}</span>
-                  <span class="mx-2 text-slate-300">|</span>
-                  <span class="font-mono">倒计时 {{ row.remainSec }}s</span>
-                </div>
-              </div>
-              <div class="flex flex-col items-end">
-                <span class="text-[11px] text-slate-400">Delta</span>
-                <span class="text-xs font-mono text-slate-700">{{ formatPrice(row.marketPrice) }}</span>
-              </div>
-            </div>
-          </a-button>
-        </div>
-      </aside>
+        </Card>
+      </Col>
 
-      <main class="lg:col-span-6 space-y-4">
-        <article
-          class="rounded-xl border border-slate-200 bg-white shadow-sm p-5 transition-all"
-          :class="isSprint ? 'ring-2 ring-rose-500 bg-rose-50/40 scale-[1.01]' : ''"
-        >
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <h2 class="text-sm font-semibold text-slate-900">深度作战区</h2>
-              <p class="mt-0.5 text-[11px] text-slate-500">拨盘直接落点到 K 线，且联动利润曲线峰值</p>
-            </div>
-            <div class="text-right">
-              <div class="text-[11px] text-slate-400 font-mono">The Kill Zone</div>
-              <div class="mt-1 text-xs text-slate-600">
-                <span class="font-semibold text-slate-900">{{ selectedRow?.key || '-' }}</span>
-                <span class="mx-2 text-slate-300">|</span>
-                <span class="font-mono">倒计时 {{ selectedRow?.remainSec ?? '-' }}s</span>
-              </div>
-            </div>
-          </div>
+      <Col :xs="24" :xl="12">
+        <Card :bordered="false" title="深度作战区">
+          <template #extra>
+            <Space :size="8">
+              <TypographyText strong>{{ selectedRow?.key || '-' }}</TypographyText>
+              <TypographyText type="secondary" class="font-mono">倒计时 {{ selectedRow?.remainSec ?? '-' }}s</TypographyText>
+              <Tag v-if="isSprint" color="red">结算冲刺</Tag>
+            </Space>
+          </template>
 
-          <div class="mt-4 grid gap-4 md:grid-cols-12">
-            <div class="md:col-span-7">
-              <div class="rounded-lg border border-slate-200 bg-slate-50/40 p-3">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="text-xs text-slate-600">实时 K 线 + 场控落点</div>
-                  <div class="text-[11px] text-slate-500 font-mono">
-                    市价 <span class="text-slate-900">{{ formatPrice(marketPrice) }}</span>
-                  </div>
-                </div>
-                <svg :viewBox="`0 0 ${klineSvg.w} ${klineSvg.h}`" class="w-full h-36">
+          <Row :gutter="[24, 24]">
+            <Col :xs="24" :xxl="14">
+              <Card size="small" title="实时 K 线 + 场控落点">
+                <template #extra><TypographyText type="secondary" class="font-mono">市价 {{ formatPrice(marketPrice) }}</TypographyText></template>
+                <svg :viewBox="`0 0 ${klineSvg.w} ${klineSvg.h}`" class="w-full h-36" role="img" :aria-label="`${selectedRow?.key || ''} K 线，市价 ${formatPrice(marketPrice)}，场控落点 ${formatPrice(manualPrice)}`">
                   <rect x="0" y="0" :width="klineSvg.w" :height="klineSvg.h" fill="white" rx="8" />
                   <g>
                     <line x1="0" :y1="klineSvg.marketY" :x2="klineSvg.w" :y2="klineSvg.marketY" stroke="rgba(148,163,184,0.8)" stroke-dasharray="4 4" />
@@ -595,261 +581,155 @@ const rowTone = (row) => {
                     />
                   </g>
                 </svg>
-
-                <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
-                  <label class="inline-flex items-center gap-2 text-xs text-slate-600">
-                    <a-checkbox v-model:checked="spoofEnabled" class="" :disabled="locked" />
-                    <span>同步产生虚假成交</span>
-                  </label>
-                  <div class="flex items-center gap-2">
-                    <a-button html-type="button" class="ant-btn ant-btn-default !h-9 !px-3 !text-xs" :disabled="locked" @click="oneClickFlatten">
-                      一键抹平
-                    </a-button>
-                    <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-9 !px-3 !text-xs" :disabled="locked" @click="confirmHarvest">
-                      确定收割
-                    </a-button>
-                    <a-button html-type="button" class="ant-btn !h-9 !px-3 !text-xs" @click="undoIntervention">撤销干预</a-button>
-                  </div>
+                <div class="control-bar">
+                  <Checkbox v-model:checked="spoofEnabled" :disabled="locked">同步产生虚假成交</Checkbox>
+                  <Space :size="8" wrap>
+                    <Button :disabled="locked" @click="oneClickFlatten">一键抹平</Button>
+                    <Button type="primary" :disabled="locked" @click="confirmHarvest">确定收割</Button>
+                    <Button @click="undoIntervention">撤销干预</Button>
+                  </Space>
                 </div>
-              </div>
+              </Card>
 
-              <div v-if="spoofEnabled && spoofOrders.length" class="mt-3 rounded-lg border border-slate-200 bg-white overflow-hidden">
-                <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                  <h3 class="text-xs font-semibold text-slate-900">虚假量能联动（示意）</h3>
-                  <span class="text-[11px] text-slate-500">Orderbook Spoofing</span>
-                </div>
-                <a-table  size="small" :pagination="false" :data-source="spoofOrders" :row-key="(o) => o.id" :scroll="{ x: 'max-content' }">
-<a-table-column key="column-0" :custom-cell="(o, rowIndex) => ({ class: [&quot;px-4 py-2&quot;, o.side === 'buy' ? 'text-emerald-700' : o.side === 'sell' ? 'text-rose-700' : 'text-slate-700'] })">
-<template #title>类型</template>
-<template #default="{ record: o, index: rowIndex }">
-                        {{ o.label }}
-                      </template>
-</a-table-column>
-<a-table-column key="column-1" align="right" :custom-cell="(o, rowIndex) => ({ class: [&quot;px-4 py-2 text-right font-mono&quot;] })">
-<template #title>价格</template>
-<template #default="{ record: o, index: rowIndex }">{{ formatPrice(o.price) }}</template>
-</a-table-column>
-<a-table-column key="column-2" align="right" :custom-cell="(o, rowIndex) => ({ class: [&quot;px-4 py-2 text-right font-mono&quot;] })">
-<template #title>数量(USDT)</template>
-<template #default="{ record: o, index: rowIndex }">{{ formatCompactUsd(o.sizeUsd) }}</template>
-</a-table-column>
-</a-table>
-              </div>
-            </div>
+              <Card v-if="spoofEnabled && spoofOrders.length" size="small" title="虚假量能联动（示意）" class="mt-6">
+                <Table size="small" :pagination="false" :columns="spoofColumns" :data-source="spoofOrders" row-key="id">
+                  <template #bodyCell="{ column, record }">
+                    <Tag v-if="column.key === 'label'" :color="record.side === 'buy' ? 'green' : record.side === 'sell' ? 'red' : 'default'">{{ record.label }}</Tag>
+                    <span v-else-if="column.key === 'price'" class="font-mono">{{ formatPrice(record.price) }}</span>
+                    <span v-else-if="column.key === 'size'" class="font-mono">{{ formatCompactUsd(record.sizeUsd) }}</span>
+                  </template>
+                </Table>
+              </Card>
+            </Col>
 
-            <div class="md:col-span-5 space-y-4">
-              <div class="rounded-lg border border-slate-200 bg-white p-4">
-                <div class="flex items-start justify-between">
-                  <div>
-                    <h3 class="text-xs font-semibold text-slate-900">手动拨盘</h3>
-                    <p class="mt-0.5 text-[11px] text-slate-500">偏离过大将闪烁预警</p>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-[11px] text-slate-400">偏离</p>
-                    <p class="text-xs font-mono" :class="deviationWarn ? 'text-rose-600' : 'text-slate-700'">{{ (deviationPct * 100).toFixed(2) }}%</p>
-                  </div>
-                </div>
-
-                <div class="mt-3 space-y-3">
-                  <a-slider
+            <Col :xs="24" :xxl="10">
+              <Card size="small" title="手动拨盘">
+                <template #extra>
+                  <Space :size="8">
+                    <TypographyText type="secondary">偏离</TypographyText>
+                    <TypographyText :type="deviationWarn ? 'danger' : undefined" class="font-mono">{{ (deviationPct * 100).toFixed(2) }}%</TypographyText>
+                    <Tag v-if="deviationWarn" color="red">偏离过大</Tag>
+                  </Space>
+                </template>
+                <Slider v-model:value="manualPrice" :min="priceMin" :max="priceMax" :step="tickSize" :disabled="locked" aria-label="场控结算价拨盘" />
+                <Descriptions :column="2" size="small">
+                  <DescriptionsItem label="范围"><span class="font-mono">{{ formatPrice(priceMin) }} ~ {{ formatPrice(priceMax) }}</span></DescriptionsItem>
+                  <DescriptionsItem label="建议峰值"><span class="font-mono">{{ formatPrice(bestPrice) }}</span></DescriptionsItem>
+                </Descriptions>
+                <Space.Compact class="w-full">
+                  <InputNumber
+                    v-model:value="manualPrice"
                     :min="priceMin"
                     :max="priceMax"
                     :step="tickSize"
-                    v-model:value.number="manualPrice"
-                    class="w-full"
                     :disabled="locked"
+                    aria-label="场控结算价"
+                    class="flex-1 font-mono"
+                    :class="{ 'flash-warn': deviationWarn }"
                   />
-                  <div class="grid grid-cols-2 gap-2">
-                    <div class="rounded border border-slate-200 px-3 py-2">
-                      <p class="text-[11px] text-slate-500">范围</p>
-                      <p class="mt-1 text-xs font-mono text-slate-900">{{ formatPrice(priceMin) }} ~ {{ formatPrice(priceMax) }}</p>
-                    </div>
-                    <div class="rounded border border-slate-200 px-3 py-2">
-                      <p class="text-[11px] text-slate-500">建议峰值</p>
-                      <p class="mt-1 text-xs font-mono text-slate-900">{{ formatPrice(bestPrice) }}</p>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center gap-2">
-                    <a-input
-                      type="number"
-                      v-model:value.number="manualPrice"
-                      :step="tickSize"
-                      :disabled="locked"
-                      class="flex-1 rounded border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none"
-                      :class="deviationWarn ? 'flash-warn border-rose-300' : ''"
-                    />
-                    <a-button html-type="button" class="ant-btn ant-btn-default !h-10 !px-3 !text-xs" :disabled="locked" @click="manualPrice = roundToTick(marketPrice, tickSize)">
-                      贴近市价
-                    </a-button>
-                  </div>
-
-                  <div class="flex items-center justify-between gap-2">
-                    <a-button html-type="button" class="ant-btn ant-btn-default !h-9 !px-3 !text-xs" :disabled="locked" @click="harvestAll">
-                      一键收割以上所有人
-                    </a-button>
-                    <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-9 !px-3 !text-xs" :disabled="locked || !isSprint" @click="lockResult">
-                      锁定结果
-                    </a-button>
-                  </div>
+                  <Button :disabled="locked" @click="manualPrice = roundToTick(marketPrice, tickSize)">贴近市价</Button>
+                </Space.Compact>
+                <div class="control-bar">
+                  <Button :disabled="locked" @click="harvestAll">一键收割以上所有人</Button>
+                  <Button type="primary" :disabled="locked || !isSprint" @click="lockResult">锁定结果</Button>
                 </div>
-              </div>
+              </Card>
 
-              <div class="rounded-lg border border-slate-200 bg-white p-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <h3 class="text-xs font-semibold text-slate-900">盈亏平衡点与利润曲线</h3>
-                    <p class="mt-0.5 text-[11px] text-slate-500">横轴价格，纵轴平台利润</p>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-[11px] text-slate-400">峰值利润</p>
-                    <p class="text-xs font-mono" :class="bestProfit >= 0 ? 'text-emerald-600' : 'text-rose-600'">{{ formatCompactUsd(bestProfit, true) }}</p>
-                  </div>
-                </div>
-                <div class="mt-3 rounded-md border border-slate-200 bg-slate-50/40 p-2">
-                  <svg v-if="svgCurve.path" :viewBox="`0 0 ${svgCurve.w} ${svgCurve.h}`" class="w-full h-32">
-                    <rect x="0" y="0" :width="svgCurve.w" :height="svgCurve.h" fill="white" rx="8" />
-                    <path :d="svgCurve.path" fill="none" stroke="rgba(37,99,235,0.9)" stroke-width="2" />
-                    <line
-                      :x1="markerX(marketPrice)"
-                      :x2="markerX(marketPrice)"
-                      y1="8"
-                      :y2="svgCurve.h - 8"
-                      stroke="rgba(148,163,184,0.85)"
-                      stroke-dasharray="4 4"
-                    />
-                    <line
-                      :x1="markerX(manualPrice)"
-                      :x2="markerX(manualPrice)"
-                      y1="8"
-                      :y2="svgCurve.h - 8"
-                      stroke="rgba(37,99,235,0.55)"
-                    />
-                    <line
-                      :x1="markerX(bestPrice)"
-                      :x2="markerX(bestPrice)"
-                      y1="8"
-                      :y2="svgCurve.h - 8"
-                      stroke="rgba(16,185,129,0.8)"
-                    />
-                    <circle :cx="markerX(manualPrice)" :cy="markerY(platformProfitAt(manualPrice))" r="4" fill="rgba(37,99,235,0.95)" />
-                    <circle :cx="markerX(bestPrice)" :cy="markerY(platformProfitAt(bestPrice))" r="4" fill="rgba(16,185,129,0.95)" />
-                  </svg>
-                  <div v-else class="h-32 flex items-center justify-center text-xs text-slate-500">暂无利润曲线数据</div>
-                </div>
-                <div class="mt-3 grid grid-cols-3 gap-2 text-xs">
-                  <div class="rounded border border-slate-200 px-3 py-2">
-                    <p class="text-[11px] text-slate-500">市价</p>
-                    <p class="mt-1 font-mono text-slate-900">{{ formatPrice(marketPrice) }}</p>
-                  </div>
-                  <div class="rounded border border-slate-200 px-3 py-2">
-                    <p class="text-[11px] text-slate-500">当前拨盘</p>
-                    <p class="mt-1 font-mono text-slate-900">{{ formatPrice(manualPrice) }}</p>
-                  </div>
-                  <div class="rounded border border-slate-200 px-3 py-2">
-                    <p class="text-[11px] text-slate-500">峰值点</p>
-                    <p class="mt-1 font-mono text-slate-900">{{ formatPrice(bestPrice) }}</p>
-                  </div>
-                </div>
-              </div>
+              <Card size="small" title="盈亏平衡点与利润曲线" class="mt-6">
+                <template #extra>
+                  <Space :size="8">
+                    <TypographyText type="secondary">峰值利润</TypographyText>
+                    <TypographyText :type="bestProfit >= 0 ? 'success' : 'danger'" class="font-mono">{{ formatCompactUsd(bestProfit, true) }}</TypographyText>
+                  </Space>
+                </template>
+                <svg v-if="svgCurve.path" :viewBox="`0 0 ${svgCurve.w} ${svgCurve.h}`" class="w-full h-32" role="img" aria-label="横轴价格、纵轴平台利润的利润曲线">
+                  <rect x="0" y="0" :width="svgCurve.w" :height="svgCurve.h" fill="white" rx="8" />
+                  <path :d="svgCurve.path" fill="none" stroke="rgba(37,99,235,0.9)" stroke-width="2" />
+                  <line :x1="markerX(marketPrice)" :x2="markerX(marketPrice)" y1="8" :y2="svgCurve.h - 8" stroke="rgba(148,163,184,0.85)" stroke-dasharray="4 4" />
+                  <line :x1="markerX(manualPrice)" :x2="markerX(manualPrice)" y1="8" :y2="svgCurve.h - 8" stroke="rgba(37,99,235,0.55)" />
+                  <line :x1="markerX(bestPrice)" :x2="markerX(bestPrice)" y1="8" :y2="svgCurve.h - 8" stroke="rgba(16,185,129,0.8)" />
+                  <circle :cx="markerX(manualPrice)" :cy="markerY(platformProfitAt(manualPrice))" r="4" fill="rgba(37,99,235,0.95)" />
+                  <circle :cx="markerX(bestPrice)" :cy="markerY(platformProfitAt(bestPrice))" r="4" fill="rgba(16,185,129,0.95)" />
+                </svg>
+                <Empty v-else description="暂无利润曲线数据" />
+                <Row :gutter="16" class="mt-4">
+                  <Col :span="8"><Statistic title="市价" :value="formatPrice(marketPrice)" :value-style="{ fontSize: '16px' }" /></Col>
+                  <Col :span="8"><Statistic title="当前拨盘" :value="formatPrice(manualPrice)" :value-style="{ fontSize: '16px' }" /></Col>
+                  <Col :span="8"><Statistic title="峰值点" :value="formatPrice(bestPrice)" :value-style="{ fontSize: '16px' }" /></Col>
+                </Row>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      </Col>
 
-              <div v-if="lastAction" class="rounded-lg border border-slate-200 bg-slate-50/40 px-4 py-3 text-xs text-slate-700">
-                <span class="font-semibold text-slate-900">动作</span>
-                <span class="ml-2 font-mono">{{ lastAction }}</span>
-              </div>
-            </div>
-          </div>
-        </article>
-      </main>
-
-      <aside class="lg:col-span-3 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4 bg-slate-50/40">
-          <div>
-            <h2 class="text-sm font-semibold text-slate-900">亏损源分析与精准收割</h2>
-            <p class="mt-0.5 text-[11px] text-slate-500">直接定位导致平台亏损的大户</p>
-          </div>
-          <div class="text-[11px] text-slate-400 font-mono">Whale Hunter Panel</div>
-        </div>
-
-        <div class="p-4 space-y-3">
-          <div v-if="relevantWhales.length === 0" class="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
-            <p class="text-sm text-slate-600">该档位暂无元凶大户</p>
-            <p class="mt-1 text-[11px] text-slate-400">切换左侧红色合约查看</p>
-          </div>
-
-          <div v-else class="space-y-2">
-            <div class="rounded-lg border border-slate-200 overflow-hidden">
-              <a-table  size="small" :pagination="false" :data-source="relevantWhales.slice(0, 8)" :row-key="(u) => u.uid" :scroll="{ x: 'max-content' }" :custom-row="(u, idx) => ({ class: [&quot;hover:bg-slate-50/70&quot;] })">
-<a-table-column key="column-0" :custom-cell="(u, idx) => ({ class: [&quot;px-4 py-2&quot;] })">
-<template #title>用户</template>
-<template #default="{ record: u, index: idx }">
-                      <div class="flex items-center gap-2">
-                        <span class="text-slate-400 font-mono">#{{ idx + 1 }}</span>
-                        <span class="font-semibold text-slate-900 font-mono">{{ u.uid }}</span>
-                        <span v-if="flaggedUsers.has(u.uid)" class="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5">已标记</span>
-                      </div>
-                    </template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(u, idx) => ({ class: [&quot;px-4 py-2&quot;] })">
-<template #title>方向</template>
-<template #default="{ record: u, index: idx }">
-                      <span class="inline-flex items-center gap-1 rounded px-2 py-1 border text-[11px]"
-                        :class="u.side === 'long' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-rose-50 border-rose-200 text-rose-700'"
-                      >
-                        {{ u.side === 'long' ? '多' : '空' }}
-                      </span>
-                    </template>
-</a-table-column>
-<a-table-column key="column-2" align="right" :custom-cell="(u, idx) => ({ class: [&quot;px-4 py-2 text-right font-mono&quot;] })">
-<template #title>持仓</template>
-<template #default="{ record: u, index: idx }">{{ formatCompactUsd(u.holdingUsd) }}</template>
-</a-table-column>
-<a-table-column key="column-3" align="right" :custom-cell="(u, idx) => ({ class: [&quot;px-4 py-2 text-right font-mono&quot;, u.pnl >= 0 ? 'text-rose-600' : 'text-emerald-600'] })">
-<template #title>盈亏</template>
-<template #default="{ record: u, index: idx }">
-                      {{ formatCompactUsd(u.pnl, true) }}
-                    </template>
-</a-table-column>
-<a-table-column key="column-4" align="right" :custom-cell="(u, idx) => ({ class: [&quot;px-4 py-2&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: u, index: idx }">
-                      <div class="flex justify-end gap-2">
-                        <a-button html-type="button" class="ant-btn ant-btn-default !h-8 !px-2 !text-xs" :disabled="locked" @click="harvestOneWhale(u)">
-                          收割
-                        </a-button>
-                        <a-button html-type="button" class="ant-btn !h-8 !px-2 !text-xs" @click="toggleFlag(u)">
-                          禁封/滑点
-                        </a-button>
-                      </div>
-                    </template>
-</a-table-column>
-</a-table>
-            </div>
-
-            <div class="rounded-lg border border-slate-200 bg-slate-50/40 p-4 text-xs text-slate-700 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-900">精准插针提示</span>
-                <span class="text-[11px] text-slate-500">最小位移使目标用户转亏（示意）</span>
-              </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div class="rounded border border-slate-200 bg-white px-3 py-2">
-                  <p class="text-[11px] text-slate-500">当前结算价</p>
-                  <p class="mt-1 font-mono text-slate-900">{{ formatPrice(manualPrice) }}</p>
-                </div>
-                <div class="rounded border border-slate-200 bg-white px-3 py-2">
-                  <p class="text-[11px] text-slate-500">锁定状态</p>
-                  <p class="mt-1 font-mono" :class="locked ? 'text-rose-600' : 'text-emerald-600'">{{ locked ? 'LOCKED' : 'OPEN' }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </section>
+      <Col :xs="24" :xl="6">
+        <Card :bordered="false" title="亏损源分析与精准收割">
+          <Empty v-if="relevantWhales.length === 0" description="该档位暂无元凶大户，切换左侧合约查看" />
+          <template v-else>
+            <Table size="small" :pagination="false" :columns="whaleColumns" :data-source="relevantWhales.slice(0, 8)" row-key="uid" :scroll="{ x: 590 }">
+              <template #bodyCell="{ column, record, index }">
+                <Space v-if="column.key === 'user'" :size="4">
+                  <TypographyText type="secondary" class="font-mono">#{{ index + 1 }}</TypographyText>
+                  <TypographyText strong class="font-mono">{{ record.uid }}</TypographyText>
+                  <Tag v-if="flaggedUsers.has(record.uid)" color="orange">已标记</Tag>
+                </Space>
+                <Tag v-else-if="column.key === 'side'" :color="record.side === 'long' ? 'blue' : 'red'">{{ record.side === 'long' ? '多' : '空' }}</Tag>
+                <span v-else-if="column.key === 'holding'" class="font-mono">{{ formatCompactUsd(record.holdingUsd) }}</span>
+                <TypographyText v-else-if="column.key === 'pnl'" :type="record.pnl >= 0 ? 'danger' : 'success'" class="font-mono">{{ formatCompactUsd(record.pnl, true) }}</TypographyText>
+                <Space v-else-if="column.key === 'actions'" :size="8">
+                  <Button type="link" class="px-0" :disabled="locked" @click="harvestOneWhale(record)">收割</Button>
+                  <Button type="link" class="px-0" @click="toggleFlag(record)">{{ flaggedUsers.has(record.uid) ? '取消标记' : '禁封/滑点' }}</Button>
+                </Space>
+              </template>
+            </Table>
+            <Descriptions title="精准插针提示" :column="1" size="small" class="mt-6">
+              <DescriptionsItem label="说明">最小位移使目标用户转亏（示意）</DescriptionsItem>
+              <DescriptionsItem label="当前结算价"><span class="font-mono">{{ formatPrice(manualPrice) }}</span></DescriptionsItem>
+              <DescriptionsItem label="锁定状态"><Tag :color="locked ? 'red' : 'green'">{{ locked ? '已锁定' : '未锁定' }}</Tag></DescriptionsItem>
+            </Descriptions>
+          </template>
+        </Card>
+      </Col>
+    </Row>
+  </PageShell>
 </template>
 
 <style scoped>
+.risk-board {
+  max-height: 36rem;
+  overflow-y: auto;
+}
+.risk-board :deep(.risk-row) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  height: auto;
+  padding: 12px 16px;
+  border-radius: 0;
+  text-align: left;
+  white-space: normal;
+}
+.risk-board :deep(.risk-row + .risk-row) {
+  border-top: 1px solid rgb(5 5 5 / 6%);
+}
+.risk-row__main,
+.risk-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 8px;
+}
+.control-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
 .flash-warn {
   animation: warnFlash 0.9s ease-in-out infinite;
 }
@@ -865,5 +745,10 @@ const rowTone = (row) => {
     background: rgba(254, 226, 226, 0.25);
   }
 }
+@media (prefers-reduced-motion: reduce) {
+  .flash-warn {
+    animation: none;
+    background: rgba(244, 63, 94, 0.12);
+  }
+}
 </style>
-

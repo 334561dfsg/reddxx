@@ -1,127 +1,67 @@
-<template>
-  <section class="space-y-4">
-    <header>
-      <h1 class="text-3xl font-semibold text-slate-900">操作日志</h1>
-      <p class="mt-1 text-sm text-slate-500">
-        记录锁仓产品与收益调控等关键操作，便于审计与追溯（演示数据可随页面操作追加）。
-      </p>
-    </header>
-
-    <article class="rounded-xl border border-slate-200 bg-white">
-      <div class="flex flex-wrap items-center gap-3 border-b border-slate-200 p-4">
-        <a-select :get-popup-container="(trigger) => trigger.parentElement"
-          v-model:value="moduleFilter"
-          class="min-w-[10rem]"
-        >
-          <a-select-option value="">全部模块</a-select-option>
-          <a-select-option v-for="(label, key) in LIQUIDITY_LOCKED_OP_MODULE_LABEL" :key="key" :value="key">{{ label }}</a-select-option>
-        </a-select>
-        <a-input
-          v-model:value="search"
-          type="search"
-          class="min-w-[12rem] flex-1 max-w-md rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
-          placeholder="摘要、关联编号、对象、操作人…"
-          autocomplete="off"
-        />
-      </div>
-
-      <div v-if="filteredRows.length" class="overflow-x-auto">
-        <a-table  size="small" :pagination="false" :data-source="pagedRows" :row-key="(row) => row.id" :scroll="{ x: 'max-content' }" :custom-row="(row, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
-<a-table-column key="column-0" :custom-cell="(row, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3 text-slate-600&quot;] })">
-<template #title>时间</template>
-<template #default="{ record: row, index: rowIndex }">{{ row.createdAt }}</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>模块</template>
-<template #default="{ record: row, index: rowIndex }">
-                <span class="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
-                  {{ LIQUIDITY_LOCKED_OP_MODULE_LABEL[row.module] || row.module }}
-                </span>
-              </template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-800&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: row, index: rowIndex }">{{ LIQUIDITY_LOCKED_OP_ACTION_LABEL[row.action] || row.action }}</template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
-<template #title>对象</template>
-<template #default="{ record: row, index: rowIndex }">{{ row.targetLabel }}</template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 font-mono text-xs text-slate-600&quot;] })">
-<template #title>关联编号</template>
-<template #default="{ record: row, index: rowIndex }">{{ row.refId || '—' }}</template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>摘要</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="max-w-md text-slate-700" :title="row.summary">{{ row.summary }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-6" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-600&quot;] })">
-<template #title>操作人</template>
-<template #default="{ record: row, index: rowIndex }">{{ row.operator }}</template>
-</a-table-column>
-</a-table>
-      </div>
-      <div v-else class="px-4 py-12 text-center text-sm text-slate-500">暂无日志</div>
-
-      <AdminListPaginationBar
-        :current-page="listPage"
-        :total-pages="totalPages"
-        :total-count="filteredRows.length"
-        :page-size="pageSize"
-        @update:current-page="listPage = $event"
-        @update:page-size="onPageSizeChange"
-      />
-    </article>
-  </section>
-</template>
-
 <script setup>
-import { ref, computed, watch } from 'vue'
+// 锁仓操作日志 — Ant Design Pro list page (2026-11-28): one query input per field (no combined keyword box),
+// table card with 10-row pagination, module/action as text Tags.
+import { ref, computed } from 'vue'
+import { Tag, TypographyText } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import {
   LIQUIDITY_LOCKED_OP_MODULE_LABEL,
   LIQUIDITY_LOCKED_OP_ACTION_LABEL
 } from '../../../admin/constants/liquidityLockedOperationLog'
 import { liquidityLockedOperationLogs } from '../../../admin/state/liquidityLockedOperationLogs'
-import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
 
-const search = ref('')
-const moduleFilter = ref('')
-const listPage = ref(1)
-const pageSize = ref(10)
+const page = ref(1)
+const blank = () => ({ module: 'all', action: 'all', refId: '', target: '', operator: '', summary: '', createdAt: null })
+const filters = ref(blank())
+const fields = [
+  { key: 'module', label: '模块', options: [{ value: 'all', label: '全部模块' }, ...Object.entries(LIQUIDITY_LOCKED_OP_MODULE_LABEL).map(([value, label]) => ({ value, label }))] },
+  { key: 'action', label: '操作', options: [{ value: 'all', label: '全部操作' }, ...Object.entries(LIQUIDITY_LOCKED_OP_ACTION_LABEL).map(([value, label]) => ({ value, label }))] },
+  { key: 'refId', label: '关联编号' },
+  { key: 'target', label: '对象' },
+  { key: 'operator', label: '操作人' },
+  { key: 'summary', label: '摘要' },
+  { key: 'createdAt', label: '操作日期', range: true }
+]
 
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
 const filteredRows = computed(() => {
-  const kw = search.value.trim().toLowerCase()
+  const f = filters.value
   return liquidityLockedOperationLogs.value.filter((row) => {
-    const modOk = !moduleFilter.value || row.module === moduleFilter.value
-    const blob =
-      `${row.summary} ${row.refId ?? ''} ${row.targetLabel} ${row.operator} ${row.action} ${row.id}`.toLowerCase()
-    const kwOk = !kw || blob.includes(kw)
-    return modOk && kwOk
+    const day = String(row.createdAt || '').slice(0, 10)
+    return (f.module === 'all' || row.module === f.module) &&
+      (f.action === 'all' || row.action === f.action) &&
+      has(row.refId, f.refId) && has(row.targetLabel, f.target) &&
+      has(row.operator, f.operator) && has(row.summary, f.summary) &&
+      (!f.createdAt || (day >= f.createdAt[0] && day <= f.createdAt[1]))
   })
 })
 
-const totalPages = computed(() => Math.max(1, Math.ceil(filteredRows.value.length / pageSize.value)))
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
 
-const pagedRows = computed(() => {
-  const list = filteredRows.value
-  const page = Math.min(listPage.value, totalPages.value)
-  const start = (page - 1) * pageSize.value
-  return list.slice(start, start + pageSize.value)
-})
-
-watch([search, moduleFilter], () => {
-  listPage.value = 1
-})
-
-watch([() => filteredRows.value.length, pageSize], () => {
-  const tp = Math.max(1, Math.ceil(filteredRows.value.length / pageSize.value))
-  if (listPage.value > tp) listPage.value = tp
-})
-
-function onPageSizeChange(n) {
-  pageSize.value = n
-  listPage.value = 1
-}
+const columns = [
+  { key: 'createdAt', title: '时间', width: 170 },
+  { key: 'module', title: '模块', width: 110 },
+  { key: 'action', title: '操作', width: 160 },
+  { key: 'targetLabel', title: '对象', width: 160 },
+  { key: 'refId', title: '关联编号', width: 140 },
+  { key: 'summary', title: '摘要', width: 320 },
+  { key: 'operator', title: '操作人', width: 100 }
+]
 </script>
+
+<template>
+  <PageShell>
+    <SearchForm name="liquidity-locked-operation-log-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+    <AdminTable title="操作日志" v-model:page="page" :rows="filteredRows" :columns="columns" row-key="id" desktop-only>
+      <template #cell="{ column, record: row }">
+        <Tag v-if="column.key === 'module'">{{ LIQUIDITY_LOCKED_OP_MODULE_LABEL[row.module] || row.module }}</Tag>
+        <template v-else-if="column.key === 'action'">{{ LIQUIDITY_LOCKED_OP_ACTION_LABEL[row.action] || row.action }}</template>
+        <TypographyText v-else-if="column.key === 'refId'" class="font-mono">{{ row.refId || '—' }}</TypographyText>
+        <template v-else>{{ row[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
+  </PageShell>
+</template>

@@ -1,5 +1,15 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+// 线控决策报表 — Ant Design Pro report page (2026-11-28): PageShell without h1, a filter Card (searchable 合约 select,
+// 时间 radio buttons, RangePicker for 自定义; 刷新/导出 on the right), a Card tab list for the four sections, Statistic rows
+// instead of gradient KPI tiles, Ant Tables with built-in pagination, Progress bars for the P&L distribution, and the
+// 要点 notes as a small KeyPoints block. The hidden (v-if="false") 操作建议 / 风险预警 blocks are no longer in the
+// template; their computed data is kept. Fixes: 平台盈亏 was always green even when negative; 盈利/亏损用户占比 were
+// hard-coded (26.4% / 32.4%) and disagreed with the distribution — they are now summed from pnlDistribution; the
+// custom date inputs were plain text-like date inputs (now a RangePicker bound to customDateRange); export uses a toast.
+import { ref, computed, watch, h } from 'vue'
+import { Button, Card, Col, Form, FormItem, Progress, RadioGroup, RangePicker, Row, Select, Space, Statistic, Table, Tag, TypographyText, message } from 'ant-design-vue'
+import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
 import {
   REPORT_TIME_RANGE,
   REPORT_TIME_RANGE_OPTIONS,
@@ -260,7 +270,7 @@ const formatAmount = (value) => {
 // 格式化金额（带符号和货币）
 const formatCurrency = (value) => {
   const sign = value >= 0 ? '+' : ''
-  return `${sign}$${formatAmount(value)}`
+  return `${sign}${formatAmount(value)}`
 }
 
 // 格式化百分比
@@ -321,6 +331,48 @@ const reportModuleKeyPoints = {
 }
 
 // 刷新数据
+const cardTabs = tabs.map((tab) => ({ key: tab.id, tab: tab.name }))
+const upColor = '#389e0d'
+const downColor = '#cf1322'
+const pnlColor = (value) => (Number(value) >= 0 ? upColor : downColor)
+const customRange = computed({
+  get: () => (customDateRange.value.start && customDateRange.value.end ? [customDateRange.value.start, customDateRange.value.end] : null),
+  set: (value) => { customDateRange.value = { start: value?.[0] || '', end: value?.[1] || '' } }
+})
+const shareOf = (prefix) => pnlDistribution.filter((item) => item.range.startsWith(prefix)).reduce((sum, item) => sum + item.percentage, 0)
+const profitUserShare = computed(() => shareOf('盈利'))
+const lossUserShare = computed(() => shareOf('亏损'))
+const contractColumns = [
+  { key: 'contract', title: '合约', width: 180 },
+  { key: 'volume', title: '24h 交易量（USDT）', width: 150, align: 'right' },
+  { key: 'position', title: '持仓（USDT）', width: 200, align: 'right' },
+  { key: 'ratio', title: '多空比', width: 90, align: 'right' },
+  { key: 'pnl', title: '平台盈亏（USDT）', width: 150, align: 'right' },
+  { key: 'control', title: '线控', width: 200 }
+]
+const leverageColumns = [
+  { key: 'leverage', dataIndex: 'leverage', title: '杠杆区间', width: 110 },
+  { key: 'longCount', dataIndex: 'longCount', title: '多头人数', width: 100, align: 'right' },
+  { key: 'shortCount', dataIndex: 'shortCount', title: '空头人数', width: 100, align: 'right' },
+  { key: 'longVolume', title: '多头持仓（USDT）', width: 150, align: 'right' },
+  { key: 'shortVolume', title: '空头持仓（USDT）', width: 150, align: 'right' },
+  { key: 'net', title: '净持仓（USDT）', width: 150, align: 'right' }
+]
+const whaleColumns = computed(() => [
+  { key: 'user', title: '用户', width: 160 },
+  ...(selectedContract.value === 'ALL' ? [{ key: 'contracts', title: '交易合约', width: 200 }] : []),
+  { key: 'totalPosition', title: '总持仓（USDT）', width: 140, align: 'right' },
+  { key: 'sides', title: '多头/空头（USDT）', width: 150, align: 'right' },
+  { key: 'leverage', title: '杠杆', width: 80, align: 'right' },
+  { key: 'pnl', title: '24h 盈亏（USDT）', width: 150, align: 'right' }
+])
+// 要点 notes: a small titled list under each section.
+const KeyPoints = (props) => h('div', { class: 'report-points' }, [
+  h(TypographyText, { strong: true }, () => '要点'),
+  h('ul', props.items.map((item) => h('li', item)))
+])
+KeyPoints.props = ['items']
+
 const refreshData = () => {
   console.log('刷新数据', { timeRange: timeRange.value, contract: selectedContract.value })
 }
@@ -332,8 +384,9 @@ watch(selectedContract, () => {
 })
 
 // 导出报表
+// Export is not implemented in the demo; say so with a toast (operation feedback is toast-only).
 const exportReport = () => {
-  alert('导出报表功能待实现')
+  message.info('导出报表功能待实现（演示环境不生成文件）')
 }
 
 // 打开风险评估帮助模态框
@@ -344,778 +397,164 @@ const openRiskHelpModal = () => {
 </script>
 
 <template>
-  <section class="space-y-6">
-    <!-- 页面标题 -->
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-slate-900">线控决策报表</h1>
-        <p class="text-sm text-slate-500 mt-1">提供全面的市场数据分析，辅助线控调控决策</p>
-      </div>
-      <div class="flex items-center gap-3">
-        <a-button type="text"
-          @click="refreshData"
-          class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors inline-flex items-center gap-2"
-        >
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          刷新
-        </a-button>
-        <a-button type="text"
-          @click="exportReport"
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
-        >
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          导出报表
-        </a-button>
-      </div>
-    </div>
-
-    <!-- 筛选条件 -->
+  <PageShell>
     <!--
       用途：把“线控调控”从全局决策切换到“按合约/按时间窗口”的精细化决策。
       - 合约=ALL：用于挑出需要重点干预的合约池（优先处理亏损/单边/高杠杆集中的合约）。
       - 合约=单一：用于落到具体参数（价格偏移/滑点/延迟/最大杠杆）和规则阈值的微调。
       - 时间范围：对应线控规则的时间窗（如 1/5/15min），用于判断触发是否“短时异常”还是“持续结构性风险”。
     -->
-    <div class="bg-white rounded-xl border border-slate-200 p-4">
-      <div class="flex items-center gap-6 flex-wrap">
-        <!-- 合约选择 -->
-        <div class="flex items-center gap-3">
-          <span class="text-sm font-medium text-slate-700">合约：</span>
-          <a-select :get-popup-container="(trigger) => trigger.parentElement"
-            v-model:value="selectedContract"
-            class="font-medium"
-          >
-            <a-select-option v-for="option in contractOptions" :key="option.value" :value="option.value">
-              {{ option.label }}
-            </a-select-option>
-          </a-select>
-        </div>
-
-        <!-- 时间范围 -->
-        <div class="flex items-center gap-3">
-          <span class="text-sm font-medium text-slate-700">时间：</span>
-          <div class="flex items-center gap-2">
-          <a-button type="text"
-            v-for="option in REPORT_TIME_RANGE_OPTIONS"
-            :key="option.value"
-            @click="timeRange = option.value"
-            :class="[
-              'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
-              timeRange === option.value
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            ]"
-          >
-            {{ option.label }}
-          </a-button>
-        </div>
-        </div>
-
-        <!-- 自定义日期范围 -->
-        <div v-if="timeRange === REPORT_TIME_RANGE.CUSTOM" class="flex items-center gap-2">
-          <a-input
-            v-model:value="customDateRange.start"
-            type="date"
-            class="px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none"
-          />
-          <span class="text-slate-500">至</span>
-          <a-input
-            v-model:value="customDateRange.end"
-            type="date"
-            class="px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none"
-          />
-        </div>
+    <Card :bordered="false">
+      <div class="report-filter-bar">
+        <Form layout="inline" name="perpetual-report-filters" class="report-filter-form">
+          <FormItem label="合约">
+            <Select v-model:value="selectedContract" :options="contractOptions" show-search option-filter-prop="label" not-found-content="无匹配项" aria-label="合约" class="report-contract-select" />
+          </FormItem>
+          <FormItem label="时间">
+            <RadioGroup v-model:value="timeRange" option-type="button" :options="REPORT_TIME_RANGE_OPTIONS" aria-label="时间范围" />
+          </FormItem>
+          <FormItem v-if="timeRange === REPORT_TIME_RANGE.CUSTOM" label="自定义日期">
+            <RangePicker v-model:value="customRange" value-format="YYYY-MM-DD" :placeholder="['开始日期', '结束日期']" aria-label="自定义日期" />
+          </FormItem>
+        </Form>
+        <Space :size="8">
+          <Button @click="refreshData"><template #icon><ReloadOutlined /></template>刷新</Button>
+          <Button type="primary" @click="exportReport"><template #icon><DownloadOutlined /></template>导出报表</Button>
+        </Space>
       </div>
-    </div>
-    <!-- <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-      <div class="flex items-start gap-3">
-        <svg class="h-5 w-5 text-slate-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-        </svg>
-        <div class="flex-1">
-          <p class="font-semibold text-slate-900 mb-1">要点</p>
-          <ul class="list-disc list-inside space-y-1">
-            <li v-for="(item, idx) in reportModuleKeyPoints.filter" :key="idx">{{ item }}</li>
-          </ul>
-        </div>
-      </div>
-    </div> -->
+    </Card>
 
-    <!-- 标签导航 -->
-    <div class="bg-white rounded-xl border border-slate-200">
-      <div class="border-b border-slate-200">
-        <div class="flex overflow-x-auto">
-          <a-button type="text"
-            v-for="tab in tabs"
-            :key="tab.id"
-            @click="activeTab = tab.id"
-            :class="[
-              'flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap',
-              activeTab === tab.id
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
-            ]"
-          >
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="tab.icon" />
-            </svg>
-            {{ tab.name }}
-          </a-button>
-        </div>
-      </div>
+    <Card :bordered="false" :tab-list="cardTabs" :active-tab-key="activeTab" @tab-change="(key) => (activeTab = key)">
+      <!-- 市场概览 -->
+      <Space v-show="activeTab === 'overview'" direction="vertical" :size="24" class="report-block">
+        <!--
+          关键指标用于“是否需要启用/加码线控”的快速判定；次要指标（总持仓/多空比/平均杠杆）用于解释原因、校准参数。
+          风险等级卡已隐藏，让运营人员根据数据自行判断（风险评估标准弹窗保留）。
+        -->
+        <Row :gutter="[24, 16]">
+          <Col :xs="12" :xl="6"><Statistic title="24h 交易量（USDT）" :value="formatAmount(filteredOverview.totalVolume24h)" /></Col>
+          <Col :xs="12" :xl="6"><Statistic title="平台盈亏（24h，USDT）" :value="formatCurrency(filteredOverview.platformPnl24h)" :value-style="{ color: pnlColor(filteredOverview.platformPnl24h) }" /></Col>
+          <Col :xs="12" :xl="4"><Statistic title="总持仓（USDT）" :value="formatAmount(filteredOverview.totalPosition)" /></Col>
+          <Col :xs="12" :xl="4"><Statistic title="多空比" :value="filteredOverview.longShortRatio.toFixed(2)" /></Col>
+          <Col :xs="12" :xl="4"><Statistic title="平均杠杆" :value="`${filteredOverview.avgLeverage.toFixed(1)}x`" /></Col>
+        </Row>
+        <KeyPoints :items="reportModuleKeyPoints.overviewSecondary" />
 
-      <!-- 标签内容 -->
-      <div class="p-6">
-        <!-- 市场概览 -->
-        <div v-show="activeTab === 'overview'" class="space-y-6">
-          <!-- 关键指标卡片 -->
-          <!--
-            这组指标用于“是否需要启用/加码线控”的快速判定：
-            - 24h 交易量：衡量流动性与可承受的交易摩擦；低流动性时，过高的滑点/偏移更容易造成用户流失与异常成交。
-            - 平台盈亏：线控目标函数的直接反馈；平台亏损扩大时，通常需要提高逆势偏移/滑点或降低最大杠杆来止损。
-            - 风险等级：把多维指标压缩成档位，便于选择“温和/中等/强力/紧急”的线控强度（详见风险评估标准弹窗）。
-          -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6">
-              <div class="flex items-center justify-between mb-4">
-                <h3 class="text-sm font-semibold text-slate-900">24h 交易量</h3>
-                <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
-              <p class="text-3xl font-bold text-slate-900 mb-2">${{ formatAmount(filteredOverview.totalVolume24h) }}</p>
-              <p class="text-sm text-slate-600">USDT</p>
-            </div>
-
-            <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-200 p-6">
-              <div class="flex items-center justify-between mb-4">
-                <h3 class="text-sm font-semibold text-slate-900">平台盈亏</h3>
-                <svg class="h-8 w-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <p class="text-3xl font-bold text-emerald-600 mb-2">{{ formatCurrency(filteredOverview.platformPnl24h) }}</p>
-              <p class="text-sm text-slate-600">24小时</p>
-            </div>
-
-            <!-- 风险等级 - 已隐藏，让运营人员根据数据自行判断 -->
-            <!-- <div
-              :class="[
-                'rounded-xl p-6 bg-gradient-to-br hidden',
-                RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'emerald'
-                  ? 'from-emerald-50 to-teal-50 border border-emerald-200'
-                  : RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'amber'
-                  ? 'from-amber-50 to-yellow-50 border border-amber-200'
-                  : RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'orange'
-                  ? 'from-orange-50 to-amber-50 border border-orange-200'
-                  : 'from-rose-50 to-red-50 border border-rose-200'
-              ]"
-            >
-              <div class="flex items-center justify-between mb-4 hi">
-                <div class="flex items-center gap-2">
-                  <h3 class="text-sm font-semibold text-slate-900">风险等级</h3>
-                  <button
-                    @click="openRiskHelpModal"
-                    :class="[
-                      'p-1 rounded-full transition-colors',
-                      RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'emerald'
-                        ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100'
-                        : RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'amber'
-                        ? 'text-amber-600 hover:text-amber-700 hover:bg-amber-100'
-                        : RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'orange'
-                        ? 'text-orange-600 hover:text-orange-700 hover:bg-orange-100'
-                        : 'text-rose-600 hover:text-rose-700 hover:bg-rose-100'
-                    ]"
-                    title="查看风险评估标准"
-                  >
-                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                    </svg>
-                  </button>
-                </div>
-                <svg
-                  :class="[
-                    'h-8 w-8',
-                    RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'emerald'
-                      ? 'text-emerald-600'
-                      : RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'amber'
-                      ? 'text-amber-600'
-                      : RISK_LEVEL_CONFIG[filteredOverview.riskLevel].color === 'orange'
-                      ? 'text-orange-600'
-                      : 'text-rose-600'
-                  ]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <div class="flex items-center gap-3">
-                <span
-                  :class="RISK_LEVEL_CONFIG[filteredOverview.riskLevel].class"
-                  class="inline-flex items-center px-4 py-2 rounded-lg text-lg font-bold border-2"
-                >
-                  {{ RISK_LEVEL_CONFIG[filteredOverview.riskLevel].text }}
+        <!--
+          这张表用于“找出需要优先调控的合约 + 复核线控是否已覆盖”：交易量判断重要性，持仓/多空比决定偏移方向，
+          平台盈亏决定线控强度，线控状态/自动触发/规则数确认可执行性。
+        -->
+        <div>
+          <div class="report-section-head">
+            <TypographyText strong>{{ selectedContract === 'ALL' ? '各合约数据' : '合约详情' }}</TypographyText>
+            <TypographyText v-if="selectedContract !== 'ALL'" type="secondary">当前仅显示 {{ contractOptions.find(c => c.value === selectedContract)?.label }} 的数据</TypographyText>
+          </div>
+          <Table :columns="contractColumns" :data-source="filteredContractsWithControl" row-key="symbol" size="middle" :scroll="{ x: 900 }" :locale="{ emptyText: '暂无合约数据' }" :pagination="{ current: contractsCurrentPage, pageSize: 10, showSizeChanger: false, hideOnSinglePage: true, showTotal: (total) => `共 ${total} 个合约`, onChange: (value) => (contractsCurrentPage = value) }">
+            <template #bodyCell="{ column, record: contract }">
+              <Space v-if="column.key === 'contract'" direction="vertical" :size="0">
+                <TypographyText strong>{{ contract.name }}</TypographyText>
+                <TypographyText type="secondary">{{ contract.symbol }}</TypographyText>
+              </Space>
+              <template v-else-if="column.key === 'volume'">{{ formatAmount(contract.volume24h) }}</template>
+              <Space v-else-if="column.key === 'position'" direction="vertical" :size="0" align="end">
+                <span>{{ formatAmount(contract.position) }}</span>
+                <TypographyText type="secondary">多 {{ formatAmount(contract.longPosition) }} / 空 {{ formatAmount(contract.shortPosition) }}</TypographyText>
+              </Space>
+              <template v-else-if="column.key === 'ratio'">{{ contract.longShortRatio.toFixed(2) }}</template>
+              <TypographyText v-else-if="column.key === 'pnl'" :type="contract.platformPnl24h >= 0 ? 'success' : 'danger'">{{ formatCurrency(contract.platformPnl24h) }}</TypographyText>
+              <Tag v-else-if="column.key === 'control' && !contract.controlConfigured">未配置</Tag>
+              <Space v-else-if="column.key === 'control'" direction="vertical" :size="4">
+                <span>
+                  <Tag :color="contract.controlRunning ? 'blue' : 'orange'">{{ contract.controlRunning ? '线控中' : '暂停' }}</Tag>
+                  <Tag :color="contract.controlAutoTriggerEnabled ? 'purple' : 'default'">{{ contract.controlAutoTriggerEnabled ? '自动触发开' : '自动触发关' }}</Tag>
                 </span>
-              </div>
-            </div> -->
-          </div>
-          <!-- <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <p class="font-semibold text-slate-900 mb-1">要点</p>
-            <ul class="list-disc list-inside space-y-1">
-              <li v-for="(item, idx) in reportModuleKeyPoints.overviewKeyMetrics" :key="idx">{{ item }}</li>
-            </ul>
-          </div> -->
-
-          <!-- 次要指标 -->
-          <!--
-            次要指标用于“解释原因 + 校准参数”的辅助判断：
-            - 总持仓：决定风险敞口规模；持仓越大，偏移/滑点同等幅度带来的盈亏影响越大。
-            - 多空比：判断单边风险；多头过重/空头过重时，优先使用“逆势偏移”引导对手盘、降低净敞口。
-            - 平均杠杆：判断爆仓链式风险与平台穿仓风险；杠杆偏高时可下调最大杠杆、增加延迟/滑点抑制冲动交易。
-          -->
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div class="bg-white border border-slate-200 rounded-lg p-4">
-              <p class="text-sm text-slate-600 mb-1">总持仓</p>
-              <p class="text-xl font-bold text-slate-900">${{ formatAmount(filteredOverview.totalPosition) }}</p>
-            </div>
-            <div class="bg-white border border-slate-200 rounded-lg p-4">
-              <p class="text-sm text-slate-600 mb-1">多空比</p>
-              <p class="text-xl font-bold text-slate-900">{{ filteredOverview.longShortRatio.toFixed(2) }}</p>
-            </div>
-            <div class="bg-white border border-slate-200 rounded-lg p-4">
-              <p class="text-sm text-slate-600 mb-1">平均杠杆</p>
-              <p class="text-xl font-bold text-slate-900">{{ filteredOverview.avgLeverage.toFixed(1) }}x</p>
-            </div>
-          </div>
-          <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <p class="font-semibold text-slate-900 mb-1">要点</p>
-            <ul class="list-disc list-inside space-y-1">
-              <li v-for="(item, idx) in reportModuleKeyPoints.overviewSecondary" :key="idx">{{ item }}</li>
-            </ul>
-          </div>
-
-          <!-- 各合约数据 -->
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold text-slate-900">
-                <span v-if="selectedContract === 'ALL'">各合约数据</span>
-                <span v-else>合约详情</span>
-              </h3>
-              <span v-if="selectedContract !== 'ALL'" class="text-sm text-slate-500">
-                当前仅显示 {{ contractOptions.find(c => c.value === selectedContract)?.label }} 的数据
-              </span>
-            </div>
-            <!--
-              这张表用于“找出需要优先调控的合约 + 复核线控是否已覆盖”：
-              - 24h交易量：判断该合约的业务重要性与可接受摩擦上限。
-              - 持仓(多/空)/多空比：决定偏移方向（逆势）与净敞口止损优先级。
-              - 平台盈亏：决定线控强度；持续亏损合约优先加大滑点/偏移或降低最大杠杆。
-              - 线控状态/自动触发/规则数：确认“可执行性”，避免只看风控侧指标却未落地到线控配置。
-            -->
-            <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
-              <div class="max-h-96 overflow-y-auto">
-                <a-table  size="small" :pagination="false" :data-source="paginatedContractsWithControl" :row-key="(contract) => contract.symbol" :scroll="{ x: 'max-content' }" :custom-row="(contract, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
-<a-table-column key="column-0" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>合约</template>
-<template #default="{ record: contract, index: rowIndex }">
-                      <div>
-                        <p class="text-sm font-medium text-slate-900">{{ contract.name }}</p>
-                        <p class="text-xs text-slate-500">{{ contract.symbol }}</p>
-                      </div>
-                    </template>
-</a-table-column>
-<a-table-column key="column-1" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
-<template #title>24h交易量</template>
-<template #default="{ record: contract, index: rowIndex }">
-                      <p class="text-sm font-medium text-slate-900">${{ formatAmount(contract.volume24h) }}</p>
-                    </template>
-</a-table-column>
-<a-table-column key="column-2" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
-<template #title>持仓</template>
-<template #default="{ record: contract, index: rowIndex }">
-                      <p class="text-sm font-medium text-slate-900">${{ formatAmount(contract.position) }}</p>
-                      <p class="text-xs text-slate-500">
-                        多: ${{ formatAmount(contract.longPosition) }} /
-                        空: ${{ formatAmount(contract.shortPosition) }}
-                      </p>
-                    </template>
-</a-table-column>
-<a-table-column key="column-3" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
-<template #title>多空比</template>
-<template #default="{ record: contract, index: rowIndex }">
-                      <p class="text-sm font-medium text-slate-900">{{ contract.longShortRatio.toFixed(2) }}</p>
-                    </template>
-</a-table-column>
-<a-table-column key="column-4" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
-<template #title>平台盈亏</template>
-<template #default="{ record: contract, index: rowIndex }">
-                      <p :class="contract.platformPnl24h >= 0 ? 'text-emerald-600' : 'text-rose-600'" class="text-sm font-medium">
-                        {{ formatCurrency(contract.platformPnl24h) }}
-                      </p>
-                    </template>
-</a-table-column>
-<a-table-column key="column-5" align="center" :custom-cell="(contract, rowIndex) => ({ class: [&quot;px-6 py-4 text-center&quot;] })">
-<template #title>线控</template>
-<template #default="{ record: contract, index: rowIndex }">
-                      <div class="flex flex-col items-center gap-1">
-                        <span
-                          v-if="!contract.controlConfigured"
-                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600"
-                        >
-                          未配置
-                        </span>
-                        <span
-                          v-else
-                          :class="contract.controlRunning ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'"
-                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                        >
-                          {{ contract.controlRunning ? '线控中' : '暂停' }}
-                        </span>
-                        <span
-                          v-if="contract.controlConfigured"
-                          :class="contract.controlAutoTriggerEnabled ? 'bg-violet-100 text-violet-700' : 'bg-slate-100 text-slate-600'"
-                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                        >
-                          {{ contract.controlAutoTriggerEnabled ? '自动触发开' : '自动触发关' }}
-                        </span>
-                        <span
-                          v-if="contract.controlConfigured"
-                          class="text-[11px] text-slate-500"
-                        >
-                          规则 {{ contract.controlEnabledRules }}/{{ contract.controlRuleCount }}
-                        </span>
-                      </div>
-                    </template>
-</a-table-column>
-</a-table>
-              </div>
-            </div>
-            <div v-if="selectedContract === 'ALL'" class="mt-2 flex items-center justify-between text-xs text-slate-500">
-              <span>共 {{ filteredContractsWithControl.length }} 个合约</span>
-              <span>第 {{ contractsCurrentPage }} / {{ contractsTotalPages }} 页</span>
-            </div>
-
-            <div v-if="selectedContract === 'ALL'" class="mt-3 flex items-center justify-end gap-2">
-              <a-pagination size="small" :current="contractsCurrentPage" :total="contractsTotalPages" :page-size="1" :show-size-changer="false" @change="contractsCurrentPage = $event" />
-            </div>
-            <div class="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <p class="font-semibold text-slate-900 mb-1">要点</p>
-              <ul class="list-disc list-inside space-y-1">
-                <li v-for="(item, idx) in reportModuleKeyPoints.overviewContractsTable" :key="idx">{{ item }}</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- 操作建议 - 已隐藏，让运营人员根据数据自行决策 -->
-          <div v-if="false">
-            <!--
-              用途（当前隐藏）：把报表信号直接翻译成“可执行的线控动作清单”，用于降低决策门槛与缩短响应时间。
-              - reason/expectedEffect：解释为什么要调控，以及调控后平台盈亏/风险的预期变化。
-              - affects：对应要调整的线控参数（偏移/滑点/延迟/杠杆限制等），便于一键落地到线控配置页。
-            -->
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold text-slate-900">
-                <span v-if="selectedContract === 'ALL'">操作建议（全部合约）</span>
-                <span v-else>操作建议（{{ contractOptions.find(c => c.value === selectedContract)?.label }}）</span>
-              </h3>
-              <div class="flex items-center gap-3">
-                <span v-if="filteredActionSuggestions.length > 0" class="text-sm text-slate-500">
-                  显示 {{ displayedActionSuggestions.length }} / {{ filteredActionSuggestions.length }} 条
-                </span>
-                <a-button type="text"
-                  v-if="filteredActionSuggestions.length > 3"
-                  @click="showAllSuggestions = !showAllSuggestions"
-                  class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-                >
-                  {{ showAllSuggestions ? '收起' : '显示全部' }}
-                  <svg class="h-4 w-4" :class="{ 'rotate-180': showAllSuggestions }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </a-button>
-              </div>
-            </div>
-            <div v-if="filteredActionSuggestions.length === 0" class="bg-slate-50 border border-slate-200 rounded-lg p-8 text-center">
-              <svg class="h-12 w-12 text-slate-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p class="text-slate-600">该合约暂无操作建议</p>
-            </div>
-            <div v-else class="space-y-3">
-              <div
-                v-for="suggestion in displayedActionSuggestions"
-                :key="suggestion.title"
-                :class="[
-                  'border-l-4 rounded-lg p-4',
-                  suggestion.priority === 'critical' ? 'bg-rose-100 border-rose-600' :
-                  suggestion.priority === 'high' ? 'bg-rose-50 border-rose-500' :
-                  suggestion.priority === 'medium' ? 'bg-amber-50 border-amber-500' :
-                  'bg-blue-50 border-blue-500'
-                ]"
-              >
-                <div class="flex items-start justify-between">
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span
-                        :class="[
-                          'px-2 py-0.5 rounded text-xs font-medium',
-                          suggestion.priority === 'critical' ? 'bg-rose-200 text-rose-900 font-bold' :
-                          suggestion.priority === 'high' ? 'bg-rose-100 text-rose-700' :
-                          suggestion.priority === 'medium' ? 'bg-amber-100 text-amber-700' :
-                          'bg-blue-100 text-blue-700'
-                        ]"
-                      >
-                        {{ suggestion.priority === 'critical' ? '🚨 紧急' :
-                           suggestion.priority === 'high' ? '高优先级' :
-                           suggestion.priority === 'medium' ? '中优先级' : '低优先级' }}
-                      </span>
-                      <span v-if="selectedContract === 'ALL'" class="text-xs text-slate-600">{{ suggestion.contract }}</span>
-                    </div>
-                    <h4 class="text-sm font-semibold text-slate-900 mb-2">{{ suggestion.title }}</h4>
-                    <p class="text-sm text-slate-700 mb-2">{{ suggestion.reason }}</p>
-                    <p class="text-xs text-emerald-700 font-medium mb-2">预期效果: {{ suggestion.expectedEffect }}</p>
-                    <div class="flex items-start gap-1.5 text-xs text-slate-600 bg-white/70 rounded px-2 py-1.5">
-                      <svg class="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span><span class="font-medium text-slate-700">影响参数:</span> {{ suggestion.affects }}</span>
-                    </div>
-                  </div>
-                  <a-button type="text"
-                    :class="[
-                      'ml-4 px-3 py-1.5 text-xs font-medium text-white rounded-lg transition-colors whitespace-nowrap',
-                      suggestion.priority === 'critical' ? 'bg-rose-600 hover:bg-rose-700' :
-                      suggestion.priority === 'high' ? 'bg-orange-600 hover:bg-orange-700' :
-                      'bg-blue-600 hover:bg-blue-700'
-                    ]"
-                  >
-                    执行操作
-                  </a-button>
-                </div>
-              </div>
-            </div>
-          </div>
+                <TypographyText type="secondary">规则 {{ contract.controlEnabledRules }}/{{ contract.controlRuleCount }}</TypographyText>
+              </Space>
+            </template>
+          </Table>
         </div>
+        <KeyPoints :items="reportModuleKeyPoints.overviewContractsTable" />
+      </Space>
 
-        <!-- 持仓分析 -->
-        <div v-show="activeTab === 'position'" class="space-y-6">
-          <div class="bg-white border border-slate-200 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-slate-900 mb-4">持仓分布（按杠杆倍数）</h3>
-            <!--
-              用途：把“风险来自哪里”拆到不同杠杆层级，帮助做两类线控动作：
-              1) 结构性调控：当高杠杆层净持仓单边时，优先降低最大杠杆/增加延迟/提高滑点，避免爆仓链式反应。
-              2) 触发阈值校准：净持仓/占比阈值应参考主力杠杆区间的持仓量与人数分布，避免阈值过紧导致频繁触发。
-              字段含义：
-              - 多头/空头人数：反映参与者结构（大户/散户）与情绪偏向。
-              - 多头/空头持仓：反映真实资金敞口（线控偏移需要跟敞口规模匹配）。
-              - 净持仓：是“净敞口”核心指标，常用于净持仓触发类规则。
-            -->
-            <div class="overflow-x-auto">
-              <a-table  size="small" :pagination="false" :data-source="leverageDistribution" :row-key="(item) => item.leverage" :scroll="{ x: 'max-content' }" :custom-row="(item, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
-<a-table-column key="column-0" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-sm font-medium text-slate-900&quot;] })">
-<template #title>杠杆区间</template>
-<template #default="{ record: item, index: rowIndex }">{{ item.leverage }}</template>
-</a-table-column>
-<a-table-column key="column-1" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-right text-sm text-slate-700&quot;] })">
-<template #title>多头人数</template>
-<template #default="{ record: item, index: rowIndex }">{{ item.longCount }}</template>
-</a-table-column>
-<a-table-column key="column-2" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-right text-sm text-slate-700&quot;] })">
-<template #title>空头人数</template>
-<template #default="{ record: item, index: rowIndex }">{{ item.shortCount }}</template>
-</a-table-column>
-<a-table-column key="column-3" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-right text-sm text-emerald-600 font-medium&quot;] })">
-<template #title>多头持仓</template>
-<template #default="{ record: item, index: rowIndex }">${{ formatAmount(item.longVolume) }}</template>
-</a-table-column>
-<a-table-column key="column-4" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-right text-sm text-rose-600 font-medium&quot;] })">
-<template #title>空头持仓</template>
-<template #default="{ record: item, index: rowIndex }">${{ formatAmount(item.shortVolume) }}</template>
-</a-table-column>
-<a-table-column key="column-5" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;px-4 py-3 text-right text-sm font-medium&quot;, (item.longVolume - item.shortVolume) >= 0 ? 'text-emerald-600' : 'text-rose-600'] })">
-<template #title>净持仓</template>
-<template #default="{ record: item, index: rowIndex }">
-                      {{ formatCurrency(item.longVolume - item.shortVolume) }}
-                    </template>
-</a-table-column>
-</a-table>
-            </div>
-          </div>
+      <!-- 持仓分析 -->
+      <Space v-show="activeTab === 'position'" direction="vertical" :size="24" class="report-block">
+        <!--
+          用途：把“风险来自哪里”拆到不同杠杆层级：高杠杆层净持仓单边时优先降低最大杠杆/增加延迟/提高滑点；
+          净持仓/占比阈值应参考主力杠杆区间的持仓量与人数分布，避免阈值过紧导致频繁触发。
+        -->
+        <TypographyText strong>持仓分布（按杠杆倍数）</TypographyText>
+        <Table :columns="leverageColumns" :data-source="leverageDistribution" row-key="leverage" size="middle" :pagination="false" :scroll="{ x: 760 }">
+          <template #bodyCell="{ column, record: item }">
+            <template v-if="column.key === 'longVolume'">{{ formatAmount(item.longVolume) }}</template>
+            <template v-else-if="column.key === 'shortVolume'">{{ formatAmount(item.shortVolume) }}</template>
+            <TypographyText v-else-if="column.key === 'net'" :type="item.longVolume - item.shortVolume >= 0 ? 'success' : 'danger'">{{ formatCurrency(item.longVolume - item.shortVolume) }}</TypographyText>
+            <template v-else>{{ item[column.key] }}</template>
+          </template>
+        </Table>
+        <KeyPoints :items="reportModuleKeyPoints.positionLeverageDistribution" />
+      </Space>
 
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div class="flex items-start gap-3">
-              <svg class="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-              </svg>
-              <div class="text-sm text-blue-800">
-                <p class="font-semibold mb-1">要点</p>
-                <ul class="list-disc list-inside space-y-1">
-                  <li v-for="(item, idx) in reportModuleKeyPoints.positionLeverageDistribution" :key="idx">{{ item }}</li>
-                </ul>
+      <!-- 盈亏分析 -->
+      <Row v-show="activeTab === 'pnl'" :gutter="[24, 24]">
+        <Col :xs="24" :xl="12">
+          <!-- 用途：识别“平台亏损来自少数用户还是整体结构”。 -->
+          <Card title="用户盈亏分布" size="small">
+            <Space direction="vertical" :size="12" class="report-block">
+              <div v-for="item in pnlDistribution" :key="item.range">
+                <div class="report-dist-row">
+                  <span>{{ item.range }}</span>
+                  <span>{{ item.count }} 人（{{ item.percentage.toFixed(1) }}%）<TypographyText :type="item.totalPnl >= 0 ? 'success' : 'danger'" class="report-dist-pnl">{{ formatCurrency(item.totalPnl) }}</TypographyText></span>
+                </div>
+                <Progress :percent="item.percentage" :show-info="false" :stroke-color="item.totalPnl >= 0 ? upColor : downColor" size="small" />
               </div>
-            </div>
-          </div>
+            </Space>
+            <KeyPoints :items="reportModuleKeyPoints.pnlUserDistribution" class="report-card-points" />
+          </Card>
+        </Col>
+        <Col :xs="24" :xl="12">
+          <!-- 用途：平台与用户盈亏是镜像关系，用来验证线控是否“把风险/收益拉回平台可控区间”。 -->
+          <Card title="平台盈亏统计" size="small">
+            <Row :gutter="[24, 16]">
+              <Col :span="12"><Statistic title="平台盈亏（USDT）" :value="formatCurrency(filteredOverview.platformPnl24h)" :value-style="{ color: pnlColor(filteredOverview.platformPnl24h) }" /></Col>
+              <Col :span="12"><Statistic title="用户盈亏（USDT）" :value="formatCurrency(filteredOverview.userPnl24h)" :value-style="{ color: pnlColor(filteredOverview.userPnl24h) }" /></Col>
+              <Col :span="12"><Statistic title="盈利用户占比" :value="profitUserShare" :precision="1" suffix="%" /></Col>
+              <Col :span="12"><Statistic title="亏损用户占比" :value="lossUserShare" :precision="1" suffix="%" /></Col>
+            </Row>
+            <KeyPoints :items="reportModuleKeyPoints.pnlPlatformStats" class="report-card-points" />
+          </Card>
+        </Col>
+      </Row>
+
+      <!-- 风险监控（风险预警事件流已隐藏，数据计算保留） -->
+      <Space v-show="activeTab === 'risk'" direction="vertical" :size="24" class="report-block">
+        <!-- 用途：把“风险/收益”落到用户维度，支撑精细化线控（特别是高频/大户/高盈利账户）。 -->
+        <div class="report-section-head">
+          <TypographyText strong>{{ selectedContract === 'ALL' ? '大户监控（全部合约）' : `大户监控（${contractOptions.find(c => c.value === selectedContract)?.label}）` }}</TypographyText>
+          <TypographyText v-if="filteredWhalesList.length" type="secondary">共 {{ filteredWhalesList.length }} 个大户</TypographyText>
         </div>
+        <Table :columns="whaleColumns" :data-source="filteredWhalesList" row-key="userId" size="middle" :scroll="{ x: 900 }" :locale="{ emptyText: '该合约暂无大户交易' }" :pagination="{ current: whalesCurrentPage, pageSize: 10, showSizeChanger: false, hideOnSinglePage: true, showTotal: (total) => `共 ${total} 个大户`, onChange: (value) => (whalesCurrentPage = value) }">
+          <template #bodyCell="{ column, record: whale }">
+            <Space v-if="column.key === 'user'" direction="vertical" :size="0">
+              <span>{{ whale.username }}</span>
+              <TypographyText type="secondary" class="font-mono">{{ whale.userId }}</TypographyText>
+            </Space>
+            <span v-else-if="column.key === 'contracts'"><Tag v-for="contract in whale.contracts" :key="contract">{{ contract }}</Tag></span>
+            <template v-else-if="column.key === 'totalPosition'">{{ formatAmount(whale.totalPosition) }}</template>
+            <Space v-else-if="column.key === 'sides'" direction="vertical" :size="0" align="end">
+              <span>多 {{ formatAmount(whale.longPosition) }}</span>
+              <span>空 {{ formatAmount(whale.shortPosition) }}</span>
+            </Space>
+            <template v-else-if="column.key === 'leverage'">{{ whale.leverage }}x</template>
+            <Space v-else-if="column.key === 'pnl'" direction="vertical" :size="0" align="end">
+              <TypographyText :type="whale.pnl24h >= 0 ? 'success' : 'danger'">{{ formatCurrency(whale.pnl24h) }}</TypographyText>
+              <TypographyText :type="whale.pnlRate >= 0 ? 'success' : 'danger'">{{ whale.pnlRate >= 0 ? '+' : '' }}{{ whale.pnlRate.toFixed(2) }}%</TypographyText>
+            </Space>
+          </template>
+        </Table>
+        <KeyPoints :items="reportModuleKeyPoints.riskWhales" />
+      </Space>
+    </Card>
 
-        <!-- 盈亏分析 -->
-        <div v-show="activeTab === 'pnl'" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white border border-slate-200 rounded-lg p-6">
-              <h3 class="text-lg font-semibold text-slate-900 mb-4">用户盈亏分布</h3>
-              <!--
-                用途：识别“平台亏损来自少数用户还是整体结构”，对应两种线控思路：
-                - 盈利集中（少数区间/少数用户拿走大部分利润）：倾向启用“盈亏比触发”规则，在短时间窗内对高盈利行为增加摩擦。
-                - 普遍亏损/普遍盈利：更多是行情结构问题，优先用净持仓/波动率/成交异常类规则做整体保护。
-                字段含义：
-                - range/count/percentage：定位人群分布与集中度。
-                - totalPnl：衡量该区间对平台整体盈亏压力（与平台盈亏方向相反）。
-              -->
-              <div class="space-y-3">
-                <div v-for="item in pnlDistribution" :key="item.range" class="flex items-center justify-between">
-                  <div class="flex-1">
-                    <div class="flex items-center justify-between mb-1">
-                      <span class="text-sm text-slate-700">{{ item.range }}</span>
-                      <span class="text-sm font-medium text-slate-900">{{ item.count }} 人 ({{ item.percentage.toFixed(1) }}%)</span>
-                    </div>
-                    <div class="w-full bg-slate-200 rounded-full h-2">
-                      <div
-                        :class="item.totalPnl >= 0 ? 'bg-emerald-500' : 'bg-rose-500'"
-                        class="h-2 rounded-full transition-all"
-                        :style="{ width: `${item.percentage * 2}%` }"
-                      ></div>
-                    </div>
-                  </div>
-                  <span
-                    :class="item.totalPnl >= 0 ? 'text-emerald-600' : 'text-rose-600'"
-                    class="ml-4 text-sm font-medium min-w-[80px] text-right"
-                  >
-                    {{ formatCurrency(item.totalPnl) }}
-                  </span>
-                </div>
-              </div>
-              <div class="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-                <p class="font-semibold text-slate-900 mb-1">要点</p>
-                <ul class="list-disc list-inside space-y-1">
-                  <li v-for="(item, idx) in reportModuleKeyPoints.pnlUserDistribution" :key="idx">{{ item }}</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-6">
-              <h3 class="text-lg font-semibold text-slate-900 mb-4">平台盈亏统计</h3>
-              <!--
-                用途：平台与用户盈亏是镜像关系，用来验证线控是否“把风险/收益拉回平台可控区间”。
-                - 平台盈亏为负：通常需要提升逆势偏移/滑点、缩短自动触发时间窗、下调最大杠杆等止损措施。
-                - 平台盈亏为正但活跃度下滑：可能线控过严，可逐步回撤摩擦参数以换取交易量。
-              -->
-              <div class="space-y-4">
-                <div class="flex items-center justify-between p-4 bg-white rounded-lg">
-                  <span class="text-sm text-slate-700">平台盈亏</span>
-                  <span class="text-xl font-bold text-emerald-600">{{ formatCurrency(filteredOverview.platformPnl24h) }}</span>
-                </div>
-                <div class="flex items-center justify-between p-4 bg-white rounded-lg">
-                  <span class="text-sm text-slate-700">用户盈亏</span>
-                  <span class="text-xl font-bold text-rose-600">{{ formatCurrency(filteredOverview.userPnl24h) }}</span>
-                </div>
-                <div class="flex items-center justify-between p-4 bg-white rounded-lg">
-                  <span class="text-sm text-slate-700">盈利用户占比</span>
-                  <span class="text-xl font-bold text-slate-900">26.4%</span>
-                </div>
-                <div class="flex items-center justify-between p-4 bg-white rounded-lg">
-                  <span class="text-sm text-slate-700">亏损用户占比</span>
-                  <span class="text-xl font-bold text-slate-900">32.4%</span>
-                </div>
-              </div>
-              <div class="mt-4 rounded-lg border border-emerald-200 bg-white/70 p-4 text-sm text-slate-700">
-                <p class="font-semibold text-slate-900 mb-1">要点</p>
-                <ul class="list-disc list-inside space-y-1">
-                  <li v-for="(item, idx) in reportModuleKeyPoints.pnlPlatformStats" :key="idx">{{ item }}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 风险监控 -->
-        <div v-show="activeTab === 'risk'" class="space-y-6">
-          <!-- 风险预警 - 已隐藏 -->
-          <div v-if="false">
-            <!--
-              用途（当前隐藏）：把关键风险信号（单边、多空失衡、异常波动、成交异常等）做成“事件流”，用于触发人工/自动联动。
-              - message/type/time：用于快速定位发生了什么、何时发生、属于哪类风险。
-              - suggestion：对应建议采取的线控动作（加大偏移/提高滑点/增加延迟/降杠杆/暂停高风险交易等）。
-              这类数据通常与自动规则触发记录联动，用于复盘阈值是否合理。
-            -->
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold text-slate-900">
-                <span v-if="selectedContract === 'ALL'">风险预警（全部合约）</span>
-                <span v-else>风险预警（{{ contractOptions.find(c => c.value === selectedContract)?.label }}）</span>
-              </h3>
-              <div class="flex items-center gap-3">
-                <span v-if="filteredRiskAlerts.length > 0" class="text-sm text-slate-500">
-                  共 {{ filteredRiskAlerts.length }} 条预警
-                </span>
-                <a-button type="text"
-                  v-if="filteredRiskAlerts.length > 5"
-                  @click="showAllRiskAlerts = !showAllRiskAlerts"
-                  class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  <span>{{ showAllRiskAlerts ? '收起' : '展开全部' }}</span>
-                  <svg
-                    class="h-4 w-4 transition-transform duration-200"
-                    :class="{ 'rotate-180': showAllRiskAlerts }"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                  <span v-if="!showAllRiskAlerts" class="text-slate-500">(显示 5 / {{ filteredRiskAlerts.length }})</span>
-                </a-button>
-              </div>
-            </div>
-            <div v-if="filteredRiskAlerts.length === 0" class="bg-slate-50 border border-slate-200 rounded-lg p-8 text-center">
-              <svg class="h-12 w-12 text-emerald-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p class="text-slate-600">该合约暂无风险预警</p>
-            </div>
-            <div v-else class="space-y-3">
-              <div
-                v-for="alert in displayedRiskAlerts"
-                :key="alert.id"
-                :class="[
-                  'border-l-4 rounded-lg p-4',
-                  RISK_LEVEL_CONFIG[alert.level].color === 'rose' ? 'bg-rose-50 border-rose-500' :
-                  RISK_LEVEL_CONFIG[alert.level].color === 'orange' ? 'bg-orange-50 border-orange-500' :
-                  RISK_LEVEL_CONFIG[alert.level].color === 'amber' ? 'bg-amber-50 border-amber-500' :
-                  'bg-emerald-50 border-emerald-500'
-                ]"
-              >
-                <div class="flex items-start justify-between">
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="text-xs text-slate-600">{{ alert.type }}</span>
-                      <span v-if="selectedContract === 'ALL'" class="text-xs text-slate-500">{{ alert.contract }}</span>
-                      <span class="text-xs text-slate-400">{{ alert.time }}</span>
-                    </div>
-                    <p class="text-sm text-slate-900 font-medium mb-2">{{ alert.message }}</p>
-                    <p class="text-xs text-slate-600">💡 建议: {{ alert.suggestion }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 大户监控 -->
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold text-slate-900">
-                <span v-if="selectedContract === 'ALL'">大户监控（全部合约）</span>
-                <span v-else>大户监控（{{ contractOptions.find(c => c.value === selectedContract)?.label }}）</span>
-              </h3>
-              <span v-if="filteredWhalesList.length > 0" class="text-sm text-slate-500">
-                共 {{ filteredWhalesList.length }} 个大户
-              </span>
-            </div>
-            <!--
-              用途：把“风险/收益”落到用户维度，支撑精细化线控（特别是高频/大户/高盈利账户）：
-              - 总持仓 + 多/空：识别能左右净敞口的关键账户；当单边集中时可提高该合约摩擦或调整偏移方向。
-              - 杠杆：识别潜在连环爆仓源头；高杠杆大户需要优先考虑下调最大杠杆、增加延迟。
-              - 24h盈亏 + 盈亏率：识别“持续高盈利/高回撤”账户特征，可配合盈亏比触发类规则设置更贴近真实分布的阈值。
-            -->
-            <div v-if="filteredWhalesList.length === 0" class="bg-slate-50 border border-slate-200 rounded-lg p-8 text-center">
-              <svg class="h-12 w-12 text-slate-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              <p class="text-slate-600">该合约暂无大户交易</p>
-            </div>
-            <div v-else>
-              <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
-              <a-table  size="small" :pagination="false" :data-source="paginatedWhalesList" :row-key="(whale) => whale.userId" :scroll="{ x: 'max-content' }" :custom-row="(whale, rowIndex) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
-<a-table-column key="column-0" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>用户</template>
-<template #default="{ record: whale, index: rowIndex }">
-                      <p class="text-sm font-medium text-slate-900">{{ whale.username }}</p>
-                      <p class="text-xs text-slate-500">{{ whale.userId }}</p>
-                    </template>
-</a-table-column>
-<a-table-column key="column-1" v-if="selectedContract === 'ALL'" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>交易合约</template>
-<template #default="{ record: whale, index: rowIndex }">
-                      <div class="flex flex-wrap gap-1">
-                        <span
-                          v-for="contract in whale.contracts"
-                          :key="contract"
-                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700"
-                        >
-                          {{ contract }}
-                        </span>
-                      </div>
-                    </template>
-</a-table-column>
-<a-table-column key="column-2" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
-<template #title>总持仓</template>
-<template #default="{ record: whale, index: rowIndex }">
-                      <p class="text-sm font-medium text-slate-900">${{ formatAmount(whale.totalPosition) }}</p>
-                    </template>
-</a-table-column>
-<a-table-column key="column-3" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
-<template #title>多头/空头</template>
-<template #default="{ record: whale, index: rowIndex }">
-                      <p class="text-xs text-emerald-600">${{ formatAmount(whale.longPosition) }}</p>
-                      <p class="text-xs text-rose-600">${{ formatAmount(whale.shortPosition) }}</p>
-                    </template>
-</a-table-column>
-<a-table-column key="column-4" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
-<template #title>杠杆</template>
-<template #default="{ record: whale, index: rowIndex }">
-                      <p class="text-sm font-medium text-slate-900">{{ whale.leverage }}x</p>
-                    </template>
-</a-table-column>
-<a-table-column key="column-5" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
-<template #title>24h盈亏</template>
-<template #default="{ record: whale, index: rowIndex }">
-                      <p :class="whale.pnl24h >= 0 ? 'text-emerald-600' : 'text-rose-600'" class="text-sm font-medium">
-                        {{ formatCurrency(whale.pnl24h) }}
-                      </p>
-                      <p :class="whale.pnlRate >= 0 ? 'text-emerald-600' : 'text-rose-600'" class="text-xs">
-                        ({{ whale.pnlRate >= 0 ? '+' : '' }}{{ whale.pnlRate.toFixed(2) }}%)
-                      </p>
-                    </template>
-</a-table-column>
-</a-table>
-
-              <!-- 分页控件 -->
-              <div v-if="whalesTotalPages > 1" class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                <div class="text-sm text-slate-600">
-                  共 {{ filteredWhalesList.length }} 个大户，第 {{ whalesCurrentPage }} / {{ whalesTotalPages }} 页
-                </div>
-                <div class="flex items-center gap-2">
-                  <a-pagination size="small" :current="whalesCurrentPage" :total="whalesTotalPages" :page-size="1" :show-size-changer="false" @change="whalesCurrentPage = $event" />
-                </div>
-              </div>
-            </div>
-              <div class="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-                <p class="font-semibold text-slate-900 mb-1">要点</p>
-                <ul class="list-disc list-inside space-y-1">
-                  <li v-for="(item, idx) in reportModuleKeyPoints.riskWhales" :key="idx">{{ item }}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 线控效果标签页已移除 -->
-      </div>
-    </div>
-
-    <!-- 风险评估标准帮助模态框 -->
       <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showRiskHelpModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="1024" :footer="null" :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showRiskHelpModal = false">
 <template #title><template v-if="showRiskHelpModal"><div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
             <div class="flex items-center gap-3">
@@ -1244,5 +683,17 @@ const openRiskHelpModal = () => {
         </template>
 
 </a-modal>
-  </section>
+  </PageShell>
 </template>
+
+<style scoped>
+.report-filter-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.report-filter-form{row-gap:12px}
+.report-contract-select{width:200px}
+.report-block{width:100%}
+.report-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.report-dist-row{display:flex;justify-content:space-between;gap:12px}
+.report-dist-pnl{display:inline-block;min-width:88px;margin-left:12px;text-align:right}
+.report-card-points{margin-top:16px}
+.report-points ul{margin:4px 0 0;padding-left:20px;list-style:disc}
+</style>

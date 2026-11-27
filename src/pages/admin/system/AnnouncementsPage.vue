@@ -1,5 +1,14 @@
 <script setup>
+// 平台配置 → 站内公告: Ant Design Pro list page (2026-11-28) — query card (标题, 摘要, 状态, 公告语言, 发布日期),
+// table card with toolbar and pagination, link actions, status Tag, toast feedback (Ant message) and an Ant delete
+// confirmation. The hand-built combobox keyboard handling is gone: every select is an Ant Select.
 import { computed, nextTick, onMounted, ref } from 'vue'
+import { Button, InputNumber, Space, Tag, TypographyText, message } from 'ant-design-vue'
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
+import AdminModal from '../earn/EarnAdminModal.vue'
 import {
   DEFAULT_SITE_CONFIG,
   normalizeSiteAnnouncements,
@@ -10,34 +19,35 @@ import { FRONT_LOCALE_CATALOG } from '../../../admin/constants/i18nCatalog'
 const config = ref({ ...DEFAULT_SITE_CONFIG })
 const loading = ref(true)
 const isSaving = ref(false)
-const keyword = ref('')
-const statusFilter = ref('')
-const languageFilter = ref('')
-const currentPage = ref(1)
-const pageSize = 10
-const resultMessage = ref('')
+const page = ref(1)
 const editorRef = ref(null)
+const blank = () => ({ title: '', summary: '', status: 'all', language: 'all', publishedAt: null })
+const filters = ref(blank())
+const statusFilter = computed(() => filters.value.status)
+const languageFilter = computed(() => (filters.value.language === 'all' ? '' : filters.value.language))
+const has = (value, query) => !query || String(value || '').toLowerCase().includes(String(query).trim().toLowerCase())
 
 const rows = computed(() => config.value.announcements || [])
 const filteredRows = computed(() => {
-  const q = keyword.value.trim().toLowerCase()
+  const f = filters.value
   return rows.value.filter((row) => {
     if (statusFilter.value === 'enabled' && !row.enabled) return false
     if (statusFilter.value === 'disabled' && row.enabled) return false
     if (languageFilter.value && row.locale !== languageFilter.value) return false
-    if (!q) return true
-    return [row.title, row.summary, row.publishedAt, row.locale]
-      .filter(Boolean)
-      .some((text) => String(text).toLowerCase().includes(q))
+    const day = String(row.publishedAt || '').slice(0, 10)
+    if (f.publishedAt && (day < f.publishedAt[0] || day > f.publishedAt[1])) return false
+    return has(row.title, f.title) && has(row.summary, f.summary)
   })
 })
-const totalPages = computed(() => Math.max(1, Math.ceil(filteredRows.value.length / pageSize)))
-const pagedRows = computed(() => {
-  const page = Math.min(currentPage.value, totalPages.value)
-  const start = (page - 1) * pageSize
-  return filteredRows.value.slice(start, start + pageSize)
-})
-const enabledCount = computed(() => rows.value.filter((row) => row.enabled).length)
+const columns = [
+  { key: 'announcement', title: '公告', width: 340 },
+  { key: 'locale', title: '语言', width: 150 },
+  { key: 'publishedAt', title: '发布时间', width: 160 },
+  { key: 'sort', title: '排序权重', width: 100, align: 'right' },
+  { key: 'enabled', title: '状态', width: 90 },
+  { key: 'actions', title: '操作', width: 130, fixed: 'right' }
+]
+const removeTarget = ref(null)
 
 const modalOpen = ref(false)
 const editingId = ref(null)
@@ -48,13 +58,9 @@ const formEnabled = ref(true)
 const formPublishedAt = ref('')
 const formSort = ref(0)
 const formLocale = ref('zh-CN')
-const localeSelectOpen = ref(false)
-const localeActiveIndex = ref(0)
-const customSelectOpen = ref('')
-const customSelectActiveIndexes = ref({})
 
 const statusFilterOptions = [
-  { value: '', label: '全部公告' },
+  { value: 'all', label: '全部公告' },
   { value: 'enabled', label: '仅展示中' },
   { value: 'disabled', label: '仅停用' }
 ]
@@ -90,157 +96,23 @@ const defaultLocale = computed(() => {
   const code = config.value.i18n?.defaultLocale
   return localeOptions.value.some((item) => item.code === code) ? code : localeOptions.value[0]?.code || 'zh-CN'
 })
-const selectedLocaleOption = computed(
-  () => localeOptions.value.find((item) => item.code === formLocale.value) || localeOptions.value[0] || {
-    code: formLocale.value,
-    label: formLocale.value,
-    short: formLocale.value
-  }
-)
-const activeLocaleOption = computed(() => localeOptions.value[localeActiveIndex.value] || selectedLocaleOption.value)
 const languageFilterOptions = computed(() => [
-  { value: '', label: '全部语言' },
+  { value: 'all', label: '全部语言' },
   ...localeOptions.value.map((loc) => ({
     value: loc.code,
     label: `${loc.label}（${loc.short || loc.code}）`
   }))
 ])
 
-function getCustomSelectOptions(name) {
-  if (name === 'statusFilter') return statusFilterOptions
-  if (name === 'languageFilter') return languageFilterOptions.value
-  if (name === 'formEnabled') return enabledOptions
-  return []
-}
-
-function getCustomSelectValue(name) {
-  if (name === 'statusFilter') return statusFilter.value
-  if (name === 'languageFilter') return languageFilter.value
-  if (name === 'formEnabled') return formEnabled.value
-  return ''
-}
-
-function setCustomSelectValue(name, value) {
-  if (name === 'statusFilter') {
-    statusFilter.value = value
-    resetListPage()
-  } else if (name === 'languageFilter') {
-    languageFilter.value = value
-    resetListPage()
-  } else if (name === 'formEnabled') {
-    formEnabled.value = value
-  }
-}
-
-function getCustomSelectedOption(name) {
-  const value = getCustomSelectValue(name)
-  return getCustomSelectOptions(name).find((option) => option.value === value) || getCustomSelectOptions(name)[0]
-}
-
-function getCustomActiveIndex(name) {
-  const options = getCustomSelectOptions(name)
-  const saved = customSelectActiveIndexes.value[name]
-  if (Number.isInteger(saved) && saved >= 0 && saved < options.length) return saved
-  return Math.max(0, options.findIndex((option) => option.value === getCustomSelectValue(name)))
-}
-
-function setCustomActiveIndex(name, index) {
-  customSelectActiveIndexes.value = {
-    ...customSelectActiveIndexes.value,
-    [name]: index
-  }
-}
-
-function syncCustomActiveIndex(name) {
-  const index = getCustomSelectOptions(name).findIndex((option) => option.value === getCustomSelectValue(name))
-  setCustomActiveIndex(name, Math.max(0, index))
-}
-
-function openCustomSelect(name) {
-  syncCustomActiveIndex(name)
-  customSelectOpen.value = name
-}
-
-function closeCustomSelect(name) {
-  if (!name || customSelectOpen.value === name) customSelectOpen.value = ''
-}
-
-function toggleCustomSelect(name) {
-  if (customSelectOpen.value === name) {
-    closeCustomSelect(name)
-  } else {
-    openCustomSelect(name)
-  }
-}
-
-function commitCustomSelect(name, value) {
-  const options = getCustomSelectOptions(name)
-  if (!options.some((option) => option.value === value)) return
-  setCustomSelectValue(name, value)
-  syncCustomActiveIndex(name)
-  closeCustomSelect(name)
-}
-
-function moveCustomActive(name, delta) {
-  const options = getCustomSelectOptions(name)
-  if (!options.length) return
-  const nextIndex = (getCustomActiveIndex(name) + delta + options.length) % options.length
-  setCustomActiveIndex(name, nextIndex)
-}
-
-function onCustomSelectKeydown(name, event) {
-  const options = getCustomSelectOptions(name)
-  if (!options.length) return
-  if (event.key === 'ArrowDown') {
-    event.preventDefault()
-    if (customSelectOpen.value !== name) openCustomSelect(name)
-    else moveCustomActive(name, 1)
-    return
-  }
-  if (event.key === 'ArrowUp') {
-    event.preventDefault()
-    if (customSelectOpen.value !== name) openCustomSelect(name)
-    else moveCustomActive(name, -1)
-    return
-  }
-  if (event.key === 'Home') {
-    event.preventDefault()
-    setCustomActiveIndex(name, 0)
-    openCustomSelect(name)
-    return
-  }
-  if (event.key === 'End') {
-    event.preventDefault()
-    setCustomActiveIndex(name, options.length - 1)
-    openCustomSelect(name)
-    return
-  }
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault()
-    if (customSelectOpen.value !== name) {
-      openCustomSelect(name)
-    } else {
-      commitCustomSelect(name, options[getCustomActiveIndex(name)]?.value)
-    }
-    return
-  }
-  if (event.key === 'Escape' && customSelectOpen.value === name) {
-    event.preventDefault()
-    closeCustomSelect(name)
-  }
-}
-
-function resetListPage() {
-  currentPage.value = 1
-}
-
-function goPrev() {
-  currentPage.value = Math.max(1, currentPage.value - 1)
-}
-
-function goNext() {
-  currentPage.value = Math.min(totalPages.value, currentPage.value + 1)
-}
+const fields = computed(() => [
+  { key: 'title', label: '公告标题' },
+  { key: 'summary', label: '摘要' },
+  { key: 'status', label: '状态', options: statusFilterOptions },
+  { key: 'language', label: '公告语言', searchable: true, options: languageFilterOptions.value },
+  { key: 'publishedAt', label: '发布日期', range: true }
+])
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
 
 function nowText() {
   const d = new Date()
@@ -256,8 +128,6 @@ function resetForm() {
   formPublishedAt.value = nowText()
   formSort.value = Math.max(0, ...rows.value.map((row) => Number(row.sort) || 0)) + 10
   formLocale.value = defaultLocale.value
-  localeSelectOpen.value = false
-  syncLocaleActiveIndex()
 }
 
 async function openAdd() {
@@ -276,16 +146,14 @@ async function openEdit(row) {
   formEnabled.value = row.enabled !== false
   formPublishedAt.value = row.publishedAt || nowText()
   formSort.value = Number(row.sort) || 0
-  localeSelectOpen.value = false
-  syncLocaleActiveIndex()
   modalOpen.value = true
   await nextTick()
   syncEditor()
 }
 
 function closeModal() {
+  if (isSaving.value) return
   modalOpen.value = false
-  localeSelectOpen.value = false
 }
 
 function syncEditor() {
@@ -301,79 +169,9 @@ function localeLabel(code) {
   return option ? `${option.label} (${option.short || option.code})` : code || '未设置'
 }
 
-function syncLocaleActiveIndex(code = formLocale.value) {
-  const index = localeOptions.value.findIndex((item) => item.code === code)
-  localeActiveIndex.value = Math.max(0, index)
-}
-
-function openLocaleSelect() {
-  syncLocaleActiveIndex()
-  localeSelectOpen.value = true
-}
-
-function closeLocaleSelect() {
-  localeSelectOpen.value = false
-}
-
-function toggleLocaleSelect() {
-  if (localeSelectOpen.value) {
-    closeLocaleSelect()
-  } else {
-    openLocaleSelect()
-  }
-}
-
 function commitLocale(code) {
-  if (!code) return
+  if (!code || !localeOptions.value.some((item) => item.code === code)) return
   formLocale.value = code
-  syncLocaleActiveIndex(code)
-  closeLocaleSelect()
-}
-
-function moveLocaleActive(delta) {
-  const total = localeOptions.value.length
-  if (!total) return
-  localeActiveIndex.value = (localeActiveIndex.value + delta + total) % total
-}
-
-function onLocaleSelectKeydown(event) {
-  if (event.key === 'ArrowDown') {
-    event.preventDefault()
-    if (!localeSelectOpen.value) openLocaleSelect()
-    else moveLocaleActive(1)
-    return
-  }
-  if (event.key === 'ArrowUp') {
-    event.preventDefault()
-    if (!localeSelectOpen.value) openLocaleSelect()
-    else moveLocaleActive(-1)
-    return
-  }
-  if (event.key === 'Home') {
-    event.preventDefault()
-    localeActiveIndex.value = 0
-    openLocaleSelect()
-    return
-  }
-  if (event.key === 'End') {
-    event.preventDefault()
-    localeActiveIndex.value = Math.max(0, localeOptions.value.length - 1)
-    openLocaleSelect()
-    return
-  }
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault()
-    if (!localeSelectOpen.value) {
-      openLocaleSelect()
-    } else {
-      commitLocale(activeLocaleOption.value?.code)
-    }
-    return
-  }
-  if (event.key === 'Escape' && localeSelectOpen.value) {
-    event.preventDefault()
-    closeLocaleSelect()
-  }
 }
 
 function exec(command, value = null) {
@@ -388,7 +186,6 @@ function setBlock(tag) {
 
 async function load() {
   loading.value = true
-  resultMessage.value = ''
   try {
     const result = await siteConfigApi.getSiteConfig()
     if (result.success) {
@@ -399,34 +196,38 @@ async function load() {
       )
     }
   } catch (error) {
-    resultMessage.value = `加载失败：${error?.message || '未知错误'}`
+    message.error(`加载失败：${error?.message || '未知错误'}`)
   } finally {
     loading.value = false
   }
 }
 
-async function persist(message) {
+async function persist(successText) {
   isSaving.value = true
-  resultMessage.value = ''
   try {
     const result = await siteConfigApi.updateSiteConfig(config.value)
     if (result.success) {
       window.dispatchEvent(new CustomEvent('admin-site-config-updated'))
-      resultMessage.value = message || result.message || '公告配置已保存'
+      message.success(successText || result.message || '公告配置已保存')
       await load()
+      return true
     }
+    message.error(result.message || '保存失败')
   } catch (error) {
-    resultMessage.value = `保存失败：${error?.message || '未知错误'}`
+    message.error(`保存失败：${error?.message || '未知错误'}`)
+    await load()
   } finally {
     isSaving.value = false
   }
+  return false
 }
 
 async function submitModal() {
+  if (isSaving.value) return
   pullEditorHtml()
   const title = formTitle.value.trim()
   if (!title) {
-    resultMessage.value = '请填写公告标题'
+    message.warning('请填写公告标题')
     return
   }
   const locale = formLocale.value || defaultLocale.value
@@ -456,109 +257,49 @@ async function submitModal() {
     ? rows.value.map((item) => (item.id === editingId.value ? row : item))
     : [...rows.value, row]
   config.value.announcements = normalizeSiteAnnouncements(list, defaultLocale.value)
-  await persist(editingId.value ? '公告已更新' : '公告已发布')
-  closeModal()
+  if (await persist(editingId.value ? '公告已更新' : '公告已发布')) closeModal()
 }
 
-async function removeRow(row) {
-  if (!confirm(`确定删除该公告？（${row.title}）`)) return
+async function removeRow() {
+  const row = removeTarget.value
+  if (!row || isSaving.value) return
   config.value.announcements = normalizeSiteAnnouncements(
     rows.value.filter((item) => item.id !== row.id),
     defaultLocale.value
   )
-  await persist('公告已删除')
+  if (await persist('公告已删除')) removeTarget.value = null
 }
 
 onMounted(load)
 </script>
 
 <template>
-  <main class="space-y-6" aria-labelledby="announcements-title">
-    <header class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div class="min-w-0">
-        <h1 id="announcements-title" class="text-2xl font-bold text-slate-900">站内公告</h1>
-        <p class="mt-1 text-sm text-slate-500">
-          发布后将在前台右上角公告中心展示，适合维护通知、费率说明和运营公告。
-        </p>
-      </div>
-      <a-button html-type="button" class="shrink-0" :disabled="loading" @click="openAdd" type="primary">
-        发布公告
-      </a-button>
-    </header>
+  <PageShell>
+    <SearchForm name="announcement-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+    <AdminTable title="站内公告列表" v-model:page="page" :rows="filteredRows" :columns="columns" row-key="id" :loading="loading" desktop-only>
+      <template #toolbar>
+        <Button type="primary" :disabled="loading" @click="openAdd"><template #icon><PlusOutlined /></template>发布公告</Button>
+      </template>
+      <template #cell="{ column, record }">
+        <Space v-if="column.key === 'announcement'" direction="vertical" :size="0" class="announcement-cell">
+          <TypographyText strong>{{ record.title }}</TypographyText>
+          <TypographyText type="secondary" :ellipsis="{ tooltip: record.summary }" class="announcement-summary">{{ record.summary || '—' }}</TypographyText>
+        </Space>
+        <template v-else-if="column.key === 'locale'">{{ localeLabel(record.locale) }}</template>
+        <span v-else-if="column.key === 'publishedAt'" class="font-mono">{{ record.publishedAt }}</span>
+        <Tag v-else-if="column.key === 'enabled'" :color="record.enabled ? 'green' : 'default'">{{ record.enabled ? '展示中' : '已停用' }}</Tag>
+        <Space v-else-if="column.key === 'actions'" :size="8" class="announcement-row-actions">
+          <Button type="link" :disabled="isSaving" @click="openEdit(record)">编辑</Button>
+          <Button type="link" danger :disabled="isSaving" @click="removeTarget = record">删除</Button>
+        </Space>
+        <template v-else>{{ record[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
 
-    <div class="grid gap-3 sm:grid-cols-2">
-      <div class="rounded-xl border border-slate-200 bg-white p-4">
-        <p class="text-xs text-slate-500">全部公告</p>
-        <p class="mt-2 text-2xl font-bold text-slate-900">{{ rows.length }}</p>
-      </div>
-      <div class="rounded-xl border border-slate-200 bg-white p-4">
-        <p class="text-xs text-slate-500">前台展示中</p>
-        <p class="mt-2 text-2xl font-bold text-emerald-700">{{ enabledCount }}</p>
-      </div>
-    </div>
-
-    <p
-      v-if="resultMessage"
-      class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700"
-      role="status"
-    >
-      {{ resultMessage }}
-    </p>
-
-    <div v-if="loading" class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
-      加载中…
-    </div>
-
-    <section v-else class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm" aria-label="站内公告列表">
-      <div class="flex flex-col gap-3 border-b border-slate-200 px-4 py-3 md:flex-row md:items-center md:justify-between">
-        <div class="flex flex-1 flex-col gap-3 sm:flex-row">
-          <a-input v-model:value="keyword" type="search" class="w-full sm:max-w-xs" placeholder="搜索标题、摘要、发布时间" aria-label="搜索公告" @input="resetListPage" />
-          <a-select class="w-full" id="announcement-status-filter-combobox" aria-label="筛选公告状态" :value="getCustomSelectedOption('statusFilter')?.value" :options="statusFilterOptions" @change="commitCustomSelect('statusFilter', $event)" />
-          <a-select class="w-full" id="announcement-language-filter-combobox" aria-label="按公告语言筛选" :value="getCustomSelectedOption('languageFilter')?.value" :options="languageFilterOptions" @change="commitCustomSelect('languageFilter', $event)" />
-        </div>
-        <p class="text-xs text-slate-500">
-          共 {{ filteredRows.length }} 条，当前第 {{ currentPage }} / {{ totalPages }} 页
-        </p>
-      </div>
-
-      <div class="overflow-x-auto">
-        <a-table  :data-source="pagedRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" >
-<a-table-column key="column-0" ><template #title>公告</template><template #default="{ record: row, index: index }"><div class=" ">
-                <div class="font-medium text-slate-900">{{ row.title }}</div>
-                <div class="mt-1 max-w-xl truncate text-xs text-slate-500">{{ row.summary || '—' }}</div>
-              </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>语言</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-600">{{ localeLabel(row.locale) }}</div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>发布时间</template><template #default="{ record: row, index: index }"><div class="  font-mono text-xs text-slate-600">{{ row.publishedAt }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
-                <span :class="row.enabled ? 'rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800' : 'text-slate-500'">
-                  {{ row.enabled ? '展示中' : '已停用' }}
-                </span>
-              </div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
-<a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   text-right">
-                <a-button html-type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</a-button>
-                <span class="mx-2 text-slate-300">|</span>
-                <a-button html-type="button" class="text-red-600 hover:underline" @click="removeRow(row)" danger>删除</a-button>
-              </div></template></a-table-column><template #emptyText>
-                暂无匹配公告。
-              </template>
-</a-table>
-      </div>
-
-      <footer class="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm">
-        <span class="text-xs text-slate-500">每页 {{ pageSize }} 条</span>
-        <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="filteredRows.length" :show-size-changer="false"  @change="currentPage = $event" />
-      </footer>
-    </section>
-
-      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-4">
-            <h2 id="announcement-editor-title" class="text-lg font-semibold text-slate-900">
-              {{ editingId ? '编辑公告' : '发布公告' }}
-            </h2>
-            <a-button aria-label="关闭" html-type="button" class="text-slate-500 hover:bg-slate-100 hover:text-slate-800"  @click="closeModal">
-              <span aria-hidden="true">×</span>
-            </a-button>
-          </div></template></template><template v-if="modalOpen"><div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+      <a-modal transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :wrap-props="{ 'aria-modal': true }" :open="Boolean(modalOpen)" :mask-closable="false" :keyboard="false" :closable="false"  width="min(960px, calc(100vw - 32px))" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @cancel="closeModal"><template #title><template v-if="Boolean(modalOpen)"><div class="announcement-modal-title">
+            <span id="announcement-editor-title">{{ editingId ? '编辑公告' : '发布公告' }}</span>
+            <a-button aria-label="关闭" type="text" html-type="button" :disabled="isSaving" @click="closeModal"><CloseOutlined /></a-button>
+          </div></template></template><template v-if="modalOpen"><div class="min-h-0 flex-1">
             <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
               <div class="space-y-4">
                 <div>
@@ -602,37 +343,37 @@ onMounted(load)
                 </div>
                 <label id="announcement-status-label" class="block text-sm font-medium text-slate-700">状态</label>
                 <!-- Ant Select values cannot be booleans: show the status as 'true'/'false' strings and commit the boolean. -->
-                <a-select class="w-full" id="announcement-status-combobox" aria-labelledby="announcement-status-label" :value="String(getCustomSelectedOption('formEnabled')?.value)" :options="enabledOptions.map((option) => ({ ...option, value: String(option.value) }))" @change="commitCustomSelect('formEnabled', $event === 'true')" />
+                <a-select class="w-full" id="announcement-status-combobox" aria-labelledby="announcement-status-label" :value="String(formEnabled)" :options="enabledOptions.map((option) => ({ ...option, value: String(option.value) }))" @change="formEnabled = $event === 'true'" />
                 <div>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700" for="announcement-published-at">发布时间</label>
                   <a-input id="announcement-published-at" v-model:value="formPublishedAt" class="w-full font-mono" placeholder="2026-08-24 10:00" />
                 </div>
                 <div>
                   <label class="mb-1.5 block text-sm font-medium text-slate-700" for="announcement-sort">排序权重</label>
-                  <a-input id="announcement-sort" type="number" class="w-full" :value="formSort" @update:value="formSort = $event === '' ? '' : Number($event)" />
+                  <InputNumber id="announcement-sort" v-model:value="formSort" :precision="0" class="w-full" />
+                  <p class="mt-1.5 text-xs text-slate-500">数值越大越靠前</p>
                 </div>
                 <div class="rounded-lg bg-white p-3 text-xs leading-relaxed text-slate-500">
                   前台公告按排序权重从大到小展示；权重相同时，发布时间越新的越靠前。停用公告保留在后台，但不会出现在前台公告中心。
                 </div>
               </aside>
             </div>
-          </div></template><template #footer><template v-if="Boolean(modalOpen)"><footer class="shrink-0 flex justify-end gap-2 border-t border-slate-200 px-5 py-4">
-            <a-button html-type="button" class="" :disabled="isSaving" @click="closeModal">取消</a-button>
-            <a-button html-type="button" class="" :disabled="isSaving" @click="submitModal" type="primary">
-              {{ isSaving ? '保存中…' : '保存公告' }}
-            </a-button>
-          </footer></template></template></a-modal>
-    
-  </main>
+          </div></template><template #footer><template v-if="Boolean(modalOpen)"><Space :size="8">
+            <a-button html-type="button" :disabled="isSaving" @click="closeModal">取消</a-button>
+            <a-button html-type="button" type="primary" :loading="isSaving" @click="submitModal">保存公告</a-button>
+          </Space></template></template></a-modal>
+
+    <AdminModal :open="!!removeTarget" title="删除公告" :busy="isSaving" confirm-text="确认删除" danger @close="removeTarget = null" @confirm="removeRow">
+      <div v-if="removeTarget"><TypographyText strong>{{ removeTarget.title }}</TypographyText><p>删除后前台公告中心不再展示该公告。此操作不能撤销。</p></div>
+    </AdminModal>
+  </PageShell>
 </template>
 
 <style scoped>
-.admin-select-trigger {
-  display: flex;
-  min-height: 2rem;
-  align-items: center;
-  justify-content: space-between;
-}
+.announcement-cell{max-width:100%;min-width:0}
+.announcement-summary{max-width:320px}
+.announcement-modal-title{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.announcement-row-actions :deep(.ant-btn-link){padding-inline:4px}
 
 .announcement-editor :deep(h2) {
   margin: 1rem 0 0.5rem;

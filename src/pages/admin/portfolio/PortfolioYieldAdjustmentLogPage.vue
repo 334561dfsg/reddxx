@@ -1,157 +1,63 @@
-<template>
-  <section class="space-y-4">
-    <header class="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-semibold text-slate-900">收益调整日志</h1>
-        <p class="mt-1 text-sm text-slate-500">查询投资组合收益调控记录；发起调整请在「收益调控」中操作。</p>
-      </div>
-      <RouterLink
-        :to="{ name: 'portfolio-yield-control' }"
-        class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-      >
-        去收益调控
-      </RouterLink>
-    </header>
-
-    <article class="rounded-xl border border-slate-200 bg-white">
-      <div class="flex flex-wrap items-center gap-3 border-b border-slate-200 p-4">
-        <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="actionFilter" class="">
-          <a-select-option value="">全部类型</a-select-option>
-          <a-select-option value="adjust">调整</a-select-option>
-          <a-select-option value="reset">重置</a-select-option>
-        </a-select>
-        <a-input
-          v-model:value="search"
-          type="search"
-          class="min-w-[12rem] max-w-md flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none"
-          placeholder="产品、币种、原因、操作人…"
-        />
-      </div>
-
-      <div v-if="filteredLogs.length" class="overflow-x-auto">
-        <a-table  size="small" :pagination="false" :data-source="pagedLogs" :row-key="(row) => row.id" :scroll="{ x: 'max-content' }" :custom-row="(row, rowIndex) => ({ class: [&quot;border-t border-slate-100 hover:bg-slate-50&quot;] })">
-<a-table-column key="column-0" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 font-mono text-xs text-slate-600&quot;] })">
-<template #title>日志ID</template>
-<template #default="{ record: row, index: rowIndex }">{{ row.id }}</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>类型</template>
-<template #default="{ record: row, index: rowIndex }">
-                <span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="row.actionType === 'reset' ? 'bg-slate-100 text-slate-700' : 'bg-blue-50 text-blue-700'">
-                  {{ row.actionType === 'reset' ? '重置' : '调整' }}
-                </span>
-              </template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>产品</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="font-medium text-slate-900">{{ row.assetsLabel }}</div>
-                <div class="text-xs text-slate-500">{{ row.productId }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 tabular-nums&quot;] })">
-<template #title>调整比例</template>
-<template #default="{ record: row, index: rowIndex }">
-                <span class="text-slate-600">{{ formatPortfolioAdjustmentRate(row.beforeRate) }}</span>
-                <span class="mx-1 text-slate-300">→</span>
-                <span :class="rateClass(row.afterRate)">{{ formatPortfolioAdjustmentRate(row.afterRate) }}</span>
-              </template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 tabular-nums text-slate-700&quot;] })">
-<template #title>倍数</template>
-<template #default="{ record: row, index: rowIndex }">
-                {{ fmtMult(row.beforeMultiplier) }}
-                <span class="mx-1 text-slate-300">→</span>
-                {{ fmtMult(row.afterMultiplier) }}
-              </template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-600&quot;] })">
-<template #title>收益区间</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div>{{ row.beforeRange }}</div>
-                <div class="text-emerald-600">→ {{ row.afterRange }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-6" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-600&quot;] })">
-<template #title>生效策略</template>
-<template #default="{ record: row, index: rowIndex }">{{ row.durationLabel || '—' }}</template>
-</a-table-column>
-<a-table-column key="column-7" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>原因</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="max-w-[14rem] truncate text-slate-700" :title="row.reason">{{ row.reason }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-8" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-700&quot;] })">
-<template #title>操作人</template>
-<template #default="{ record: row, index: rowIndex }">{{ row.operator }}</template>
-</a-table-column>
-<a-table-column key="column-9" :custom-cell="(row, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3 text-slate-600&quot;] })">
-<template #title>时间</template>
-<template #default="{ record: row, index: rowIndex }">{{ row.createdAt }}</template>
-</a-table-column>
-</a-table>
-      </div>
-      <div v-else class="px-4 py-12 text-center text-sm text-slate-500">暂无日志</div>
-
-      <AdminListPaginationBar
-        :current-page="listPage"
-        :total-pages="totalPages"
-        :total-count="filteredLogs.length"
-        :page-size="pageSize"
-        @update:current-page="listPage = $event"
-        @update:page-size="onPageSizeChange"
-      />
-    </article>
-  </section>
-</template>
-
 <script setup>
-import { computed, ref, watch } from 'vue'
-import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
+// 收益调整日志 — Ant Design Pro list page (2026-11-28): the combined keyword box is split into one field per
+// filter; the "去收益调控" shortcut moves to the table toolbar.
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { Button, Space, Tag, TypographyText } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import { formatPortfolioAdjustmentRate } from '../../../admin/constants/portfolio'
 import { portfolioYieldAdjustmentLogs } from '../../../admin/state/portfolioYieldAdjustmentLogs'
 
-const search = ref('')
-const actionFilter = ref('')
-const listPage = ref(1)
-const pageSize = ref(10)
+const router = useRouter()
+const page = ref(1)
+const blank = () => ({ id: '', product: '', operator: '', reason: '', actionType: 'all', createdAt: null })
+const filters = ref(blank())
+const fields = [
+  { key: 'id', label: '日志 ID' },
+  { key: 'product', label: '产品' },
+  { key: 'operator', label: '操作人' },
+  { key: 'reason', label: '原因' },
+  { key: 'actionType', label: '类型', options: [{ value: 'all', label: '全部类型' }, { value: 'adjust', label: '调整' }, { value: 'reset', label: '重置' }] },
+  { key: 'createdAt', label: '操作日期', range: true }
+]
 
-const filteredLogs = computed(() => {
-  const kw = search.value.trim().toLowerCase()
-  return portfolioYieldAdjustmentLogs.value.filter((row) => {
-    const typeOk = !actionFilter.value || row.actionType === actionFilter.value
-    const text = `${row.id} ${row.productId} ${row.productName} ${row.assetsLabel} ${row.reason} ${row.operator}`.toLowerCase()
-    const kwOk = !kw || text.includes(kw)
-    return typeOk && kwOk
-  })
-})
-
-const totalPages = computed(() => Math.max(1, Math.ceil(filteredLogs.value.length / pageSize.value)))
-const pagedLogs = computed(() => {
-  const page = Math.min(listPage.value, totalPages.value)
-  const start = (page - 1) * pageSize.value
-  return filteredLogs.value.slice(start, start + pageSize.value)
-})
-
-watch([search, actionFilter], () => {
-  listPage.value = 1
-})
-
-watch([() => filteredLogs.value.length, pageSize], () => {
-  if (listPage.value > totalPages.value) listPage.value = totalPages.value
-})
-
-function onPageSizeChange(n) {
-  pageSize.value = n
-  listPage.value = 1
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
+// Seed logs use 'YYYY-MM-DD HH:mm:ss', new ones the zh-CN locale string ('YYYY/M/D HH:mm:ss'); normalise both.
+const dayOf = (value) => {
+  const match = String(value || '').match(/(\d{4})\D(\d{1,2})\D(\d{1,2})/)
+  return match ? `${match[1]}-${match[2].padStart(2, '0')}-${match[3].padStart(2, '0')}` : ''
 }
 
-function rateClass(rate) {
+const rows = computed(() => portfolioYieldAdjustmentLogs.value.filter((row) => {
+  const f = filters.value
+  const day = dayOf(row.createdAt)
+  return has(row.id, f.id) &&
+    (has(row.productId, f.product) || has(row.productName, f.product) || has(row.assetsLabel, f.product)) &&
+    has(row.operator, f.operator) && has(row.reason, f.reason) &&
+    (f.actionType === 'all' || row.actionType === f.actionType) &&
+    (!f.createdAt || (day >= f.createdAt[0] && day <= f.createdAt[1]))
+}))
+
+const columns = [
+  { key: 'id', title: '日志 ID', width: 140 },
+  { key: 'actionType', title: '类型', width: 80 },
+  { key: 'product', title: '产品', width: 220 },
+  { key: 'rate', title: '调整比例', width: 140, align: 'right' },
+  { key: 'multiplier', title: '倍数', width: 130, align: 'right' },
+  { key: 'range', title: '收益区间', width: 200 },
+  { key: 'durationLabel', title: '生效策略', width: 160 },
+  { key: 'reason', title: '原因', width: 220, ellipsis: true },
+  { key: 'operator', title: '操作人', width: 120 },
+  { key: 'createdAt', title: '时间', width: 180 }
+]
+
+function rateType(rate) {
   const n = Number(rate)
-  if (n > 0) return 'font-medium text-emerald-600'
-  if (n < 0) return 'font-medium text-rose-600'
-  return 'font-medium text-slate-600'
+  if (n > 0) return 'success'
+  if (n < 0) return 'danger'
+  return undefined
 }
 
 function fmtMult(value) {
@@ -159,4 +65,38 @@ function fmtMult(value) {
   if (!Number.isFinite(n)) return '—'
   return `${n.toFixed(2)}×`
 }
+
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
 </script>
+
+<template>
+  <PageShell>
+    <SearchForm name="portfolio-yield-adjustment-log-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+    <AdminTable title="收益调整日志" v-model:page="page" :rows="rows" :columns="columns" row-key="id" desktop-only>
+      <template #toolbar>
+        <Button @click="router.push({ name: 'portfolio-yield-control' })">去收益调控</Button>
+      </template>
+      <template #cell="{ column, record }">
+        <span v-if="column.key === 'id'" class="font-mono">{{ record.id }}</span>
+        <Tag v-else-if="column.key === 'actionType'" :color="record.actionType === 'reset' ? 'default' : 'blue'">{{ record.actionType === 'reset' ? '重置' : '调整' }}</Tag>
+        <Space v-else-if="column.key === 'product'" direction="vertical" :size="0">
+          <TypographyText strong>{{ record.assetsLabel }}</TypographyText>
+          <TypographyText type="secondary" class="font-mono">{{ record.productId }}</TypographyText>
+        </Space>
+        <span v-else-if="column.key === 'rate'">
+          <TypographyText type="secondary">{{ formatPortfolioAdjustmentRate(record.beforeRate) }} → </TypographyText>
+          <TypographyText :type="rateType(record.afterRate)" strong>{{ formatPortfolioAdjustmentRate(record.afterRate) }}</TypographyText>
+        </span>
+        <span v-else-if="column.key === 'multiplier'">{{ fmtMult(record.beforeMultiplier) }} → {{ fmtMult(record.afterMultiplier) }}</span>
+        <Space v-else-if="column.key === 'range'" direction="vertical" :size="0">
+          <TypographyText type="secondary">{{ record.beforeRange }}</TypographyText>
+          <span>→ {{ record.afterRange }}</span>
+        </Space>
+        <span v-else-if="column.key === 'reason'" :title="record.reason">{{ record.reason || '—' }}</span>
+        <TypographyText v-else-if="column.key === 'createdAt'" type="secondary">{{ record.createdAt }}</TypographyText>
+        <template v-else>{{ record[column.key] || '—' }}</template>
+      </template>
+    </AdminTable>
+  </PageShell>
+</template>

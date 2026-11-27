@@ -1,5 +1,10 @@
 <script setup>
+// 场控决策报表 — report page on the Ant Design Pro shell (2026-11-28): filter card, Ant Tabs, Statistics and Ant
+// tables with text Tags. Refresh/export give toast feedback (the old export used a native alert).
 import { ref, computed, watch } from 'vue'
+import { Button, Card, Col, Descriptions, DescriptionsItem, Form, FormItem, Progress, RangePicker, Row, Select, Space, Statistic, Table, TabPane, Tabs, Tag, TypographyText, message } from 'ant-design-vue'
+import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
 import {
   DELIVERY_REPORT_TIME_RANGE,
   DELIVERY_REPORT_TIME_RANGE_OPTIONS,
@@ -23,7 +28,7 @@ import {
 
 // 时间范围
 const timeRange = ref(DELIVERY_REPORT_TIME_RANGE.TODAY)
-const customDateRange = ref({ start: '', end: '' })
+const customDateRange = ref(null)
 
 // 合约选择
 const selectedContract = ref('ALL') // ALL 或具体合约symbol
@@ -81,14 +86,6 @@ const filteredWhalesList = computed(() => {
 // 大户监控分页
 const whalesCurrentPage = ref(1)
 const whalesPageSize = ref(10)
-const paginatedWhalesList = computed(() => {
-  const start = (whalesCurrentPage.value - 1) * whalesPageSize.value
-  const end = start + whalesPageSize.value
-  return filteredWhalesList.value.slice(start, end)
-})
-const whalesTotalPages = computed(() => {
-  return Math.ceil(filteredWhalesList.value.length / whalesPageSize.value)
-})
 
 // 格式化金额
 const formatAmount = (value) => {
@@ -108,16 +105,72 @@ const formatCurrency = (value) => {
 
 // 标签配置
 const tabs = [
-  { id: 'overview', name: '市场概览', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-  { id: 'position', name: '持仓分析', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-  { id: 'pnl', name: '盈亏分析', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-  { id: 'risk', name: '风险监控', icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' },
-  { id: 'auto-rules', name: '自动化效果', icon: 'M13 10V3L4 14h7v7l9-11h-7z' }
+  { id: 'overview', name: '市场概览' },
+  { id: 'position', name: '持仓分析' },
+  { id: 'pnl', name: '盈亏分析' },
+  { id: 'risk', name: '风险监控' },
+  { id: 'auto-rules', name: '自动化效果' }
 ]
 
-// 刷新数据
+// Config objects name Tailwind palette colours; map them onto Ant Tag preset colours.
+const TAG_COLORS = { emerald: 'green', amber: 'gold', orange: 'orange', rose: 'red', blue: 'blue', slate: 'default' }
+const tagColor = (config) => TAG_COLORS[config?.color] || 'default'
+// actionsByType still reports legacy action types that DELIVERY_RULE_ACTION_CONFIG no longer lists.
+const LEGACY_ACTION_LABELS = { price_adjust: '价格调整', reject_order: '订单拒绝', limit_position: '仓位限制' }
+const actionLabel = (action) => DELIVERY_RULE_ACTION_CONFIG[action]?.text || LEGACY_ACTION_LABELS[action] || action
+
+const profitableUserShare = computed(() => {
+  const total = deliveryPnlDistribution.reduce((sum, d) => sum + d.count, 0)
+  const profitable = deliveryPnlDistribution.filter(d => d.range.includes('盈利')).reduce((sum, d) => sum + d.count, 0)
+  return total ? ((profitable / total) * 100).toFixed(1) : '0.0'
+})
+const ruleSuccessRate = computed(() => (deliveryAutoRuleStats.totalTriggers24h
+  ? ((deliveryAutoRuleStats.successTriggers / deliveryAutoRuleStats.totalTriggers24h) * 100).toFixed(1)
+  : '0.0'))
+
+const contractColumns = [
+  { key: 'name', title: '合约名称', width: 160 },
+  { key: 'expiry', title: '交割时间', width: 130 },
+  { key: 'status', title: '状态', width: 100 },
+  { key: 'position', title: '总持仓（USD）', width: 220, align: 'right' },
+  { key: 'ratio', title: '多空比', width: 90, align: 'right' },
+  { key: 'pnl', title: '平台盈亏（USD）', width: 140, align: 'right' },
+  { key: 'risk', title: '风险', width: 100 }
+]
+const expiryColumns = [
+  { key: 'range', dataIndex: 'range', title: '到期范围', width: 140 },
+  { key: 'longCount', dataIndex: 'longCount', title: '多头人数', width: 100, align: 'right' },
+  { key: 'shortCount', dataIndex: 'shortCount', title: '空头人数', width: 100, align: 'right' },
+  { key: 'longVolume', title: '多头持仓（USD）', width: 150, align: 'right' },
+  { key: 'shortVolume', title: '空头持仓（USD）', width: 150, align: 'right' },
+  { key: 'delta', title: '净持仓 Delta（USD）', width: 170, align: 'right' }
+]
+const whaleColumns = [
+  { key: 'user', title: '用户信息', width: 160 },
+  { key: 'type', title: '账号类型', width: 100 },
+  { key: 'position', title: '总持仓（USD）', width: 220, align: 'right' },
+  { key: 'pnl', title: '24h 盈亏（USD）', width: 140, align: 'right' },
+  { key: 'nearExpiry', title: '临期敞口（USD）', width: 140, align: 'right' },
+  { key: 'contracts', title: '主要合约', width: 200 },
+  { key: 'risk', title: '风险等级', width: 100 }
+]
+const rulePerformanceColumns = [
+  { key: 'rule', title: '规则名称', width: 220 },
+  { key: 'triggers', dataIndex: 'triggers', title: '触发次数', width: 100, align: 'right' },
+  { key: 'successRate', title: '成功率', width: 100, align: 'right' },
+  { key: 'totalImpact', title: '总影响（USD）', width: 140, align: 'right' },
+  { key: 'avgImpact', title: '平均影响（USD）', width: 140, align: 'right' },
+  { key: 'lastTrigger', dataIndex: 'lastTrigger', title: '最近触发', width: 170 }
+]
+const actionColumns = [
+  { key: 'action', title: '类型', width: 140 },
+  { key: 'count', dataIndex: 'count', title: '次数', width: 90, align: 'right' },
+  { key: 'impact', title: '影响（USD）', width: 140, align: 'right' }
+]
+
+// 刷新数据（演示数据为静态 Mock）
 const refreshData = () => {
-  console.log('刷新数据', { timeRange: timeRange.value, contract: selectedContract.value })
+  message.success('报表已刷新（演示数据）')
 }
 
 // 监听合约切换，重置页码
@@ -127,346 +180,249 @@ watch(selectedContract, () => {
 
 // 导出报表
 const exportReport = () => {
-  alert('导出报表功能待实现')
+  message.info('导出报表功能待实现（演示环境不生成文件）')
 }
 </script>
 
 <template>
-  <section class="space-y-5">
-    <header class="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-semibold text-slate-900">场控操作决策报表</h1>
-        <p class="mt-1 text-sm text-slate-500">提供交割合约场控数据分析，辅助交割前后的调控决策。</p>
+  <PageShell>
+    <Card :bordered="false">
+      <Form layout="inline" class="report-filters">
+        <FormItem label="合约">
+          <Select v-model:value="selectedContract" :options="contractOptions" show-search option-filter-prop="label" not-found-content="无匹配项" aria-label="合约" class="report-select" />
+        </FormItem>
+        <FormItem label="统计周期">
+          <Select v-model:value="timeRange" :options="DELIVERY_REPORT_TIME_RANGE_OPTIONS" aria-label="统计周期" class="report-select" />
+        </FormItem>
+        <FormItem v-if="timeRange === DELIVERY_REPORT_TIME_RANGE.CUSTOM" label="自定义日期">
+          <RangePicker v-model:value="customDateRange" value-format="YYYY-MM-DD" :placeholder="['开始日期', '结束日期']" aria-label="自定义日期" />
+        </FormItem>
+        <FormItem class="report-actions">
+          <Space :size="8">
+            <Button @click="refreshData"><template #icon><ReloadOutlined /></template>刷新</Button>
+            <Button @click="exportReport"><template #icon><DownloadOutlined /></template>导出报表</Button>
+          </Space>
+        </FormItem>
+      </Form>
+    </Card>
+
+    <Card :bordered="false" :body-style="{ paddingTop: '8px' }">
+      <Tabs v-model:active-key="activeTab">
+        <TabPane v-for="tab in tabs" :key="tab.id" :tab="tab.name" />
+      </Tabs>
+
+      <div v-show="activeTab === 'overview'" class="report-section">
+        <Row :gutter="[24, 24]">
+          <Col :xs="12" :xl="8" :xxl="4"><Statistic title="24h 交易量（USDT）" :value="`$${formatAmount(filteredOverview.totalVolume24h)}`" /></Col>
+          <Col :xs="12" :xl="8" :xxl="4"><Statistic title="平台总盈亏（24h）" :value="formatCurrency(filteredOverview.platformPnl24h)" /></Col>
+          <Col :xs="12" :xl="8" :xxl="4"><Statistic title="临近交割（3 天内）" :value="filteredOverview.nearExpiryContracts" /></Col>
+          <Col :xs="12" :xl="8" :xxl="4"><Statistic title="当前总持仓" :value="`$${formatAmount(filteredOverview.totalPosition)}`" /></Col>
+          <Col :xs="12" :xl="8" :xxl="4"><Statistic title="全场多空比" :value="filteredOverview.longShortRatio.toFixed(2)" /></Col>
+          <Col :xs="12" :xl="8" :xxl="4">
+            <div class="report-stat-title">系统风险等级</div>
+            <Tag :color="tagColor(DELIVERY_RISK_LEVEL_CONFIG[filteredOverview.riskLevel])">{{ DELIVERY_RISK_LEVEL_CONFIG[filteredOverview.riskLevel]?.text }}</Tag>
+            <div><TypographyText type="secondary">基于全平台持仓分布计算</TypographyText></div>
+          </Col>
+        </Row>
+
+        <Card size="small" title="交割合约明细">
+          <Table size="middle" :pagination="false" :columns="contractColumns" :data-source="filteredContracts" row-key="symbol" :scroll="{ x: 960 }">
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'name'">
+                <div>{{ record.name }}</div>
+                <Tag>{{ DELIVERY_CYCLE_TYPE_CONFIG[record.cycleType]?.text || record.cycleType }}</Tag>
+              </template>
+              <template v-else-if="column.key === 'expiry'">
+                <div class="font-mono">{{ record.expiryDate.split(' ')[0] }}</div>
+                <TypographyText type="secondary">{{ record.daysToExpiry }} 天后</TypographyText>
+              </template>
+              <Tag v-else-if="column.key === 'status'" :color="tagColor(DELIVERY_CONTRACT_STATUS_CONFIG[record.status])">{{ DELIVERY_CONTRACT_STATUS_CONFIG[record.status]?.text || record.status }}</Tag>
+              <template v-else-if="column.key === 'position'">
+                <div class="font-mono">${{ formatAmount(record.position) }}</div>
+                <TypographyText type="secondary" class="font-mono">多 ${{ formatAmount(record.longPosition) }} / 空 ${{ formatAmount(record.shortPosition) }}</TypographyText>
+              </template>
+              <span v-else-if="column.key === 'ratio'" class="font-mono">{{ record.longShortRatio.toFixed(2) }}</span>
+              <TypographyText v-else-if="column.key === 'pnl'" :type="record.platformPnl24h >= 0 ? 'success' : 'danger'" class="font-mono">{{ formatCurrency(record.platformPnl24h) }}</TypographyText>
+              <Tag v-else-if="column.key === 'risk'" :color="tagColor(DELIVERY_RISK_LEVEL_CONFIG[record.riskLevel])">{{ DELIVERY_RISK_LEVEL_CONFIG[record.riskLevel]?.text }}</Tag>
+            </template>
+          </Table>
+        </Card>
       </div>
 
-      <div class="flex items-center gap-3">
-        <a-button html-type="button" class="ant-btn inline-flex items-center gap-2" @click="refreshData">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-          刷新
-        </a-button>
-        <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary inline-flex items-center gap-2" @click="exportReport">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-          导出报表
-        </a-button>
-      </div>
-    </header>
-
-    <div class="pro-card p-4">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="space-y-1.5">
-          <label class="block text-sm font-medium text-slate-700">合约</label>
-          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="selectedContract" class="">
-            <a-select-option v-for="option in contractOptions" :key="option.value" :value="option.value">{{ option.label }}</a-select-option>
-          </a-select>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="block text-sm font-medium text-slate-700">统计周期</label>
-          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="timeRange" class="">
-            <a-select-option v-for="option in DELIVERY_REPORT_TIME_RANGE_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</a-select-option>
-          </a-select>
-        </div>
-
-        <div v-if="timeRange === DELIVERY_REPORT_TIME_RANGE.CUSTOM" class="space-y-1.5">
-          <label class="block text-sm font-medium text-slate-700">自定义日期</label>
-          <div class="flex items-center gap-2">
-            <a-input v-model:value="customDateRange.start" type="date" class="ant-input !py-1.5" />
-            <span class="text-slate-400">-</span>
-            <a-input v-model:value="customDateRange.end" type="date" class="ant-input !py-1.5" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <article class="pro-card overflow-hidden">
-      <div class="border-b border-black/[0.06] bg-white px-6">
-        <div class="flex gap-8">
-          <a-button type="text"
-            v-for="tab in tabs"
-            :key="tab.id"
-            html-type="button"
-            class="relative px-1 py-4 text-sm transition-all"
-            :class="activeTab === tab.id ? 'text-antd-primary font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-antd-primary' : 'text-black/45 hover:text-black/85'"
-            @click="activeTab = tab.id"
-          >
-            <div class="flex items-center gap-2">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="tab.icon" /></svg>
-              <span>{{ tab.name }}</span>
-            </div>
-          </a-button>
-        </div>
+      <!-- 持仓分析 -->
+      <div v-show="activeTab === 'position'" class="report-section">
+        <Card size="small" title="持仓到期分布">
+          <Table size="middle" :pagination="false" :columns="expiryColumns" :data-source="deliveryExpiryDistribution" row-key="range" :scroll="{ x: 820 }">
+            <template #bodyCell="{ column, record }">
+              <span v-if="column.key === 'longVolume'" class="font-mono">${{ formatAmount(record.longVolume) }}</span>
+              <span v-else-if="column.key === 'shortVolume'" class="font-mono">${{ formatAmount(record.shortVolume) }}</span>
+              <TypographyText v-else-if="column.key === 'delta'" :type="(record.longVolume - record.shortVolume) >= 0 ? 'success' : 'danger'" class="font-mono">{{ formatCurrency(record.longVolume - record.shortVolume) }}</TypographyText>
+            </template>
+          </Table>
+        </Card>
       </div>
 
-      <div class="bg-[#f0f2f5] p-6">
-        <div v-show="activeTab === 'overview'" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="pro-card p-5">
-              <div class="flex items-center justify-between mb-3 text-black/45"><h3 class="text-xs font-medium uppercase tracking-wider">24h 交易量</h3><svg class="h-5 w-5 text-antd-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg></div>
-              <p class="text-2xl font-bold text-black/85 font-mono">${{ formatAmount(filteredOverview.totalVolume24h) }}</p>
-              <p class="mt-2 text-[11px] text-black/25">当前结算币种: USDT</p>
-            </div>
-
-            <div class="pro-card p-5">
-              <div class="flex items-center justify-between mb-3 text-black/45"><h3 class="text-xs font-medium uppercase tracking-wider">平台总盈亏</h3><svg class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
-              <p class="text-2xl font-bold font-mono" :class="filteredOverview.platformPnl24h >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatCurrency(filteredOverview.platformPnl24h) }}</p>
-              <p class="mt-2 text-[11px] text-black/25">统计周期: 24小时</p>
-            </div>
-
-            <div class="pro-card p-5">
-              <div class="flex items-center justify-between mb-3 text-black/45"><h3 class="text-xs font-medium uppercase tracking-wider">临近交割</h3><svg class="h-5 w-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
-              <p class="text-2xl font-bold text-black/85 font-mono">{{ filteredOverview.nearExpiryContracts }}</p>
-              <p class="mt-2 text-[11px] text-black/25">3天内到期的活跃合约</p>
-            </div>
-
-            <div class="pro-card p-5">
-              <div class="flex items-center justify-between mb-3 text-black/45"><h3 class="text-xs font-medium uppercase tracking-wider">系统风险等级</h3><svg class="h-5 w-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg></div>
-              <span :class="DELIVERY_RISK_LEVEL_CONFIG[filteredOverview.riskLevel].class" class="inline-flex items-center px-2 py-1 rounded text-xs font-medium border">{{ DELIVERY_RISK_LEVEL_CONFIG[filteredOverview.riskLevel].text }}</span>
-              <p class="mt-2 text-[11px] text-black/25">基于全平台持仓分布计算</p>
-            </div>
-          </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-white p-4 rounded border border-black/[0.06]"><p class="text-[11px] text-black/45 mb-1 uppercase">当前总持仓</p><p class="text-lg font-bold text-black/85 font-mono">${{ formatAmount(filteredOverview.totalPosition) }}</p></div>
-              <div class="bg-white p-4 rounded border border-black/[0.06]"><p class="text-[11px] text-black/45 mb-1 uppercase">全场多空比</p><p class="text-lg font-bold text-black/85 font-mono">{{ filteredOverview.longShortRatio.toFixed(2) }}</p></div>
-            </div>
-
-            <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm">
-              <header class="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between"><h3 class="text-sm font-semibold text-black/85">交割合约明细</h3><a-button class="ant-btn ant-btn-link !text-xs">查看全部</a-button></header>
-              <div class="overflow-x-auto">
-                <a-table  size="small" :pagination="false" :data-source="filteredContracts" :row-key="(contract) => contract.symbol" :scroll="{ x: 'max-content' }" :custom-row="(contract, rowIndex) => ({ class: [&quot;group transition-all hover:bg-black/[0.01]&quot;] })">
-<a-table-column key="column-0">
-<template #title>合约名称</template>
-<template #default="{ record: contract, index: rowIndex }">
-                        <div class="text-sm font-medium text-black/85">{{ contract.name }}</div>
-                        <span :class="DELIVERY_CYCLE_TYPE_CONFIG[contract.cycleType].class" class="inline-flex items-center px-1.5 py-0.5 mt-1 rounded text-[10px] font-medium">{{ DELIVERY_CYCLE_TYPE_CONFIG[contract.cycleType].text }}</span>
-                      </template>
-</a-table-column>
-<a-table-column key="column-1" align="center" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-center&quot;] })">
-<template #title>交割时间</template>
-<template #default="{ record: contract, index: rowIndex }">
-                        <div class="text-sm text-black/85 font-mono">{{ contract.expiryDate.split(' ')[0] }}</div>
-                        <div class="text-[11px] text-black/25">{{ contract.daysToExpiry }}天后</div>
-                      </template>
-</a-table-column>
-<a-table-column key="column-2" align="center" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-center&quot;] })">
-<template #title>状态</template>
-<template #default="{ record: contract, index: rowIndex }">
-                        <span :class="DELIVERY_CONTRACT_STATUS_CONFIG[contract.status].class" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium">{{ DELIVERY_CONTRACT_STATUS_CONFIG[contract.status].text }}</span>
-                      </template>
-</a-table-column>
-<a-table-column key="column-3" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-right&quot;] })">
-<template #title>总持仓</template>
-<template #default="{ record: contract, index: rowIndex }">
-                        <div class="text-sm font-medium text-black/85 font-mono">${{ formatAmount(contract.position) }}</div>
-                        <div class="text-[11px] text-black/45 font-mono">L: ${{ formatAmount(contract.longPosition) }} / S: ${{ formatAmount(contract.shortPosition) }}</div>
-                      </template>
-</a-table-column>
-<a-table-column key="column-4" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;] })">
-<template #title>多空比</template>
-<template #default="{ record: contract, index: rowIndex }">{{ contract.longShortRatio.toFixed(2) }}</template>
-</a-table-column>
-<a-table-column key="column-5" align="right" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;, contract.platformPnl24h >= 0 ? 'text-emerald-500' : 'text-rose-500'] })">
-<template #title>平台盈亏</template>
-<template #default="{ record: contract, index: rowIndex }">{{ formatCurrency(contract.platformPnl24h) }}</template>
-</a-table-column>
-<a-table-column key="column-6" align="center" :custom-cell="(contract, rowIndex) => ({ class: [&quot;text-center&quot;] })">
-<template #title>风险</template>
-<template #default="{ record: contract, index: rowIndex }"><span :class="DELIVERY_RISK_LEVEL_CONFIG[contract.riskLevel].class" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border">{{ DELIVERY_RISK_LEVEL_CONFIG[contract.riskLevel].text }}</span></template>
-</a-table-column>
-</a-table>
+      <!-- 盈亏分析 -->
+      <div v-show="activeTab === 'pnl'" class="report-section">
+        <Row :gutter="[24, 24]">
+          <Col :xs="24" :xl="12">
+            <Card size="small" title="用户盈亏分布">
+              <div v-for="item in deliveryPnlDistribution" :key="item.range" class="pnl-row">
+                <div class="pnl-row__head">
+                  <span>{{ item.range }}</span>
+                  <TypographyText type="secondary">{{ item.count }} 人（{{ item.percentage.toFixed(1) }}%）</TypographyText>
+                </div>
+                <div class="pnl-row__bar">
+                  <Progress :percent="Math.min(100, item.percentage * 2)" :show-info="false" :status="item.totalPnl >= 0 ? 'success' : 'exception'" />
+                  <TypographyText :type="item.totalPnl >= 0 ? 'success' : 'danger'" class="font-mono pnl-row__value">{{ formatCurrency(item.totalPnl) }}</TypographyText>
+                </div>
               </div>
-            </section>
-          </div>
+            </Card>
+          </Col>
+          <Col :xs="24" :xl="12">
+            <Card size="small" title="盈亏汇总">
+              <Row :gutter="[24, 24]">
+                <Col :span="12"><Statistic title="平台盈利（结算）" :value="formatCurrency(filteredOverview.platformPnl24h)" /></Col>
+                <Col :span="12"><Statistic title="用户亏损（返还）" :value="formatCurrency(filteredOverview.userPnl24h)" /></Col>
+                <Col :span="12"><Statistic title="盈利用户占比" :value="profitableUserShare" suffix="%" /></Col>
+              </Row>
+            </Card>
+          </Col>
+        </Row>
+      </div>
 
-          <!-- 持仓分析 -->
-          <div v-show="activeTab === 'position'" class="space-y-6">
-            <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm">
-              <header class="px-6 py-4 border-b border-black/[0.06]"><h3 class="text-sm font-semibold text-black/85">持仓到期分布</h3></header>
-              <div class="overflow-x-auto">
-                <a-table  size="small" :pagination="false" :data-source="deliveryExpiryDistribution" :row-key="(item) => item.range" :scroll="{ x: 'max-content' }" :custom-row="(item, rowIndex) => ({ class: [&quot;hover:bg-black/[0.01]&quot;] })">
-<a-table-column key="column-0" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-sm font-medium text-black/85&quot;] })">
-<template #title>到期范围</template>
-<template #default="{ record: item, index: rowIndex }">{{ item.range }}</template>
-</a-table-column>
-<a-table-column key="column-1" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-black/45&quot;] })">
-<template #title>多头人数</template>
-<template #default="{ record: item, index: rowIndex }">{{ item.longCount }}</template>
-</a-table-column>
-<a-table-column key="column-2" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-black/45&quot;] })">
-<template #title>空头人数</template>
-<template #default="{ record: item, index: rowIndex }">{{ item.shortCount }}</template>
-</a-table-column>
-<a-table-column key="column-3" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-emerald-500&quot;] })">
-<template #title>多头持仓</template>
-<template #default="{ record: item, index: rowIndex }">${{ formatAmount(item.longVolume) }}</template>
-</a-table-column>
-<a-table-column key="column-4" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-rose-500&quot;] })">
-<template #title>空头持仓</template>
-<template #default="{ record: item, index: rowIndex }">${{ formatAmount(item.shortVolume) }}</template>
-</a-table-column>
-<a-table-column key="column-5" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono font-medium&quot;, (item.longVolume - item.shortVolume) >= 0 ? 'text-emerald-500' : 'text-rose-500'] })">
-<template #title>净持仓 (Delta)</template>
-<template #default="{ record: item, index: rowIndex }">{{ formatCurrency(item.longVolume - item.shortVolume) }}</template>
-</a-table-column>
-</a-table>
-              </div>
-            </section>
-          </div>
+      <!-- 风险监控 -->
+      <div v-show="activeTab === 'risk'" class="report-section">
+        <Card size="small" title="大户异常监控">
+          <Table size="middle" :columns="whaleColumns" :data-source="filteredWhalesList" row-key="userId" :scroll="{ x: 1100 }" :locale="{ emptyText: '暂无记录' }"
+            :pagination="{ current: whalesCurrentPage, pageSize: whalesPageSize, total: filteredWhalesList.length, showSizeChanger: false, showTotal: (total) => `共 ${total} 条`, onChange: (value) => { whalesCurrentPage = value } }">
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'user'">
+                <div>{{ record.username }}</div>
+                <TypographyText type="secondary" class="font-mono">{{ record.userId }}</TypographyText>
+              </template>
+              <Tag v-else-if="column.key === 'type'">{{ DELIVERY_USER_TYPE_CONFIG[record.type]?.text || record.type }}</Tag>
+              <template v-else-if="column.key === 'position'">
+                <div class="font-mono">${{ formatAmount(record.totalPosition) }}</div>
+                <TypographyText type="secondary" class="font-mono">多 ${{ formatAmount(record.longPosition) }} / 空 ${{ formatAmount(record.shortPosition) }}</TypographyText>
+              </template>
+              <template v-else-if="column.key === 'pnl'">
+                <div><TypographyText :type="record.pnl24h >= 0 ? 'success' : 'danger'" class="font-mono">{{ formatCurrency(record.pnl24h) }}</TypographyText></div>
+                <TypographyText :type="record.pnlRate >= 0 ? 'success' : 'danger'" class="font-mono">{{ record.pnlRate >= 0 ? '+' : '' }}{{ record.pnlRate.toFixed(1) }}%</TypographyText>
+              </template>
+              <span v-else-if="column.key === 'nearExpiry'" class="font-mono">${{ formatAmount(record.nearExpiryPositions) }}</span>
+              <Space v-else-if="column.key === 'contracts'" :size="[4, 4]" wrap>
+                <Tag v-for="contract in record.contracts.slice(0, 2)" :key="contract">{{ contract }}</Tag>
+                <TypographyText v-if="record.contracts.length > 2" type="secondary">+{{ record.contracts.length - 2 }}</TypographyText>
+              </Space>
+              <Tag v-else-if="column.key === 'risk'" :color="tagColor(DELIVERY_RISK_LEVEL_CONFIG[record.riskLevel])">{{ DELIVERY_RISK_LEVEL_CONFIG[record.riskLevel]?.text }}</Tag>
+            </template>
+          </Table>
+        </Card>
+      </div>
 
-          <!-- 盈亏分析 -->
-          <div v-show="activeTab === 'pnl'" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm p-6">
-                <h3 class="text-sm font-semibold text-black/85 mb-6">用户盈亏分布图</h3>
-                <div class="space-y-4">
-                  <div v-for="item in deliveryPnlDistribution" :key="item.range" class="space-y-1.5">
-                    <div class="flex items-center justify-between text-[11px]"><span class="text-black/85">{{ item.range }}</span><span class="text-black/45">{{ item.count }} 人 ({{ item.percentage.toFixed(1) }}%)</span></div>
-                    <div class="flex items-center gap-4">
-                      <div class="flex-1 h-1.5 bg-black/[0.04] rounded-full overflow-hidden">
-                        <div :class="item.totalPnl >= 0 ? 'bg-emerald-500' : 'bg-rose-500'" class="h-full rounded-full transition-all" :style="{ width: `${item.percentage * 2}%` }"></div>
-                      </div>
-                      <span :class="item.totalPnl >= 0 ? 'text-emerald-500' : 'text-rose-500'" class="text-xs font-mono font-medium min-w-[70px] text-right">{{ formatCurrency(item.totalPnl) }}</span>
-                    </div>
-                  </div>
-                </div>
-              </section>
+      <!-- 自动化规则效果 -->
+      <div v-show="activeTab === 'auto-rules'" class="report-section">
+        <Row :gutter="[24, 24]">
+          <Col :xs="12" :xl="6">
+            <Statistic title="24h 触发次数" :value="deliveryAutoRuleStats.totalTriggers24h" />
+            <TypographyText type="secondary">成功 {{ deliveryAutoRuleStats.successTriggers }} / 失败 {{ deliveryAutoRuleStats.failedTriggers }}</TypographyText>
+          </Col>
+          <Col :xs="12" :xl="6">
+            <Statistic title="规则总影响（24h）" :value="formatCurrency(deliveryAutoRuleStats.totalImpact24h)" />
+            <TypographyText type="secondary">平台盈利净增额</TypographyText>
+          </Col>
+          <Col :xs="12" :xl="6">
+            <Statistic title="启用规则数" :value="deliveryAutoRuleStats.activeRules" />
+            <TypographyText type="secondary">总规则数 {{ deliveryAutoRuleStats.totalRules }}</TypographyText>
+          </Col>
+          <Col :xs="12" :xl="6">
+            <Statistic title="执行成功率" :value="ruleSuccessRate" suffix="%" />
+            <TypographyText type="secondary">24 小时规则运行健康度</TypographyText>
+          </Col>
+        </Row>
 
-              <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm p-6 flex flex-col justify-center gap-6">
-                <div class="p-4 bg-black/[0.01] rounded-lg border border-black/[0.03] flex items-center justify-between">
-                  <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-emerald-500"></div><span class="text-sm text-black/45">平台盈利 (结算)</span></div>
-                  <span class="text-xl font-bold text-emerald-500 font-mono">{{ formatCurrency(filteredOverview.platformPnl24h) }}</span>
-                </div>
-                <div class="p-4 bg-black/[0.01] rounded-lg border border-black/[0.03] flex items-center justify-between">
-                  <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-rose-500"></div><span class="text-sm text-black/45">用户亏损 (返还)</span></div>
-                  <span class="text-xl font-bold text-rose-500 font-mono">{{ formatCurrency(filteredOverview.userPnl24h) }}</span>
-                </div>
-                <div class="p-4 bg-black/[0.01] rounded-lg border border-black/[0.03] flex items-center justify-between">
-                  <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-antd-primary"></div><span class="text-sm text-black/45">盈利用户占比</span></div>
-                  <span class="text-xl font-bold text-black/85 font-mono">{{ ((deliveryPnlDistribution.filter(d => d.range.includes('盈利')).reduce((sum, d) => sum + d.count, 0) / deliveryPnlDistribution.reduce((sum, d) => sum + d.count, 0)) * 100).toFixed(1) }}%</span>
-                </div>
-              </section>
-            </div>
-          </div>
+        <Card size="small" title="规则性能排行榜">
+          <Table size="middle" :pagination="false" :columns="rulePerformanceColumns" :data-source="deliveryAutoRuleStats.rulePerformance" row-key="ruleId" :scroll="{ x: 900 }">
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'rule'">
+                <div>{{ record.ruleName }}</div>
+                <TypographyText type="secondary" class="font-mono">{{ record.ruleId }}</TypographyText>
+              </template>
+              <TypographyText v-else-if="column.key === 'successRate'" :type="record.successRate >= 95 ? 'success' : 'warning'" class="font-mono">{{ record.successRate.toFixed(1) }}%</TypographyText>
+              <span v-else-if="column.key === 'totalImpact'" class="font-mono">{{ formatCurrency(record.totalImpact) }}</span>
+              <span v-else-if="column.key === 'avgImpact'" class="font-mono">{{ formatCurrency(record.avgImpact) }}</span>
+            </template>
+          </Table>
+        </Card>
 
-          <!-- 风险监控 -->
-          <div v-show="activeTab === 'risk'" class="space-y-6">
-            <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm">
-              <header class="px-6 py-4 border-b border-black/[0.06]"><h3 class="text-sm font-semibold text-black/85">大户异常监控</h3></header>
-              <div class="overflow-x-auto">
-                <a-table  size="small" :pagination="false" :data-source="paginatedWhalesList" :row-key="(whale) => whale.userId" :scroll="{ x: 'max-content' }" :custom-row="(whale, rowIndex) => ({ class: [&quot;hover:bg-black/[0.01]&quot;] })">
-<a-table-column key="column-0">
-<template #title>用户信息</template>
-<template #default="{ record: whale, index: rowIndex }"><div class="text-sm font-medium text-black/85">{{ whale.username }}</div><div class="text-[11px] text-black/45 font-mono">{{ whale.userId }}</div></template>
-</a-table-column>
-<a-table-column key="column-1" align="center" :custom-cell="(whale, rowIndex) => ({ class: [&quot;text-center&quot;] })">
-<template #title>账号类型</template>
-<template #default="{ record: whale, index: rowIndex }"><span :class="DELIVERY_USER_TYPE_CONFIG[whale.type].class" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium">{{ DELIVERY_USER_TYPE_CONFIG[whale.type].icon }} {{ DELIVERY_USER_TYPE_CONFIG[whale.type].text }}</span></template>
-</a-table-column>
-<a-table-column key="column-2" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;text-right&quot;] })">
-<template #title>总持仓</template>
-<template #default="{ record: whale, index: rowIndex }"><div class="text-sm font-medium text-black/85 font-mono">${{ formatAmount(whale.totalPosition) }}</div><div class="text-[11px] text-black/45 font-mono">L: ${{ formatAmount(whale.longPosition) }} / S: ${{ formatAmount(whale.shortPosition) }}</div></template>
-</a-table-column>
-<a-table-column key="column-3" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;text-right&quot;] })">
-<template #title>24h 盈亏</template>
-<template #default="{ record: whale, index: rowIndex }"><div :class="whale.pnl24h >= 0 ? 'text-emerald-500' : 'text-rose-500'" class="text-sm font-medium font-mono">{{ formatCurrency(whale.pnl24h) }}</div><div :class="whale.pnlRate >= 0 ? 'text-emerald-500' : 'text-rose-500'" class="text-[11px] font-mono">{{ whale.pnlRate >= 0 ? '+' : '' }}{{ whale.pnlRate.toFixed(1) }}%</div></template>
-</a-table-column>
-<a-table-column key="column-4" align="right" :custom-cell="(whale, rowIndex) => ({ class: [&quot;text-right font-mono text-sm font-medium&quot;] })">
-<template #title>临期敞口</template>
-<template #default="{ record: whale, index: rowIndex }">${{ formatAmount(whale.nearExpiryPositions) }}</template>
-</a-table-column>
-<a-table-column key="column-5">
-<template #title>主要合约</template>
-<template #default="{ record: whale, index: rowIndex }"><div class="flex flex-wrap gap-1"><span v-for="contract in whale.contracts.slice(0, 2)" :key="contract" class="text-[10px] text-black/45 bg-black/[0.02] px-1.5 py-0.5 rounded border border-black/[0.05]">{{ contract }}</span><span v-if="whale.contracts.length > 2" class="text-[10px] text-black/25">+{{ whale.contracts.length - 2 }}</span></div></template>
-</a-table-column>
-<a-table-column key="column-6" align="center" :custom-cell="(whale, rowIndex) => ({ class: [&quot;text-center&quot;] })">
-<template #title>风险等级</template>
-<template #default="{ record: whale, index: rowIndex }"><span :class="DELIVERY_RISK_LEVEL_CONFIG[whale.riskLevel].class" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border">{{ DELIVERY_RISK_LEVEL_CONFIG[whale.riskLevel].text }}</span></template>
-</a-table-column>
-</a-table>
-              </div>
-              <footer v-if="whalesTotalPages > 1" class="px-6 py-4 border-t border-black/[0.06] flex items-center justify-center gap-4">
-                <a-pagination size="small" :current="whalesCurrentPage" :total="whalesTotalPages" :page-size="1" :show-size-changer="false" @change="whalesCurrentPage = $event" />
-              </footer>
-            </section>
-          </div>
-
-          <!-- 自动化规则效果 -->
-          <div v-show="activeTab === 'auto-rules'" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div class="bg-white p-5 rounded-lg border border-black/[0.06] shadow-sm"><div class="flex items-center justify-between mb-3 text-black/45"><h3 class="text-xs font-medium uppercase tracking-wider">24h 触发次数</h3><svg class="h-5 w-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div><p class="text-2xl font-bold text-black/85 font-mono">{{ deliveryAutoRuleStats.totalTriggers24h }}</p><p class="mt-2 text-[11px] text-black/25">成功: {{ deliveryAutoRuleStats.successTriggers }} / 失败: {{ deliveryAutoRuleStats.failedTriggers }}</p></div>
-              <div class="bg-white p-5 rounded-lg border border-black/[0.06] shadow-sm"><div class="flex items-center justify-between mb-3 text-black/45"><h3 class="text-xs font-medium uppercase tracking-wider">规则总影响</h3><svg class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><p class="text-2xl font-bold text-emerald-500 font-mono">{{ formatCurrency(deliveryAutoRuleStats.totalImpact24h) }}</p><p class="mt-2 text-[11px] text-black/25">平台盈利净增额 (24h)</p></div>
-              <div class="bg-white p-5 rounded-lg border border-black/[0.06] shadow-sm"><div class="flex items-center justify-between mb-3 text-black/45"><h3 class="text-xs font-medium uppercase tracking-wider">启用规则数</h3><svg class="h-5 w-5 text-antd-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></div><p class="text-2xl font-bold text-black/85 font-mono">{{ deliveryAutoRuleStats.activeRules }}</p><p class="mt-2 text-[11px] text-black/25">总规则数: {{ deliveryAutoRuleStats.totalRules }}</p></div>
-              <div class="bg-white p-5 rounded-lg border border-black/[0.06] shadow-sm"><div class="flex items-center justify-between mb-3 text-black/45"><h3 class="text-xs font-medium uppercase tracking-wider">执行成功率</h3><svg class="h-5 w-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><p class="text-2xl font-bold text-black/85 font-mono">{{ ((deliveryAutoRuleStats.successTriggers / deliveryAutoRuleStats.totalTriggers24h) * 100).toFixed(1) }}%</p><p class="mt-2 text-[11px] text-black/25">24小时规则运行健康度</p></div>
-            </div>
-
-            <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm">
-              <header class="px-6 py-4 border-b border-black/[0.06]"><h3 class="text-sm font-semibold text-black/85">规则性能排行榜</h3></header>
-              <div class="overflow-x-auto">
-                <a-table  size="small" :pagination="false" :data-source="deliveryAutoRuleStats.rulePerformance" :row-key="(rule) => rule.ruleId" :scroll="{ x: 'max-content' }" :custom-row="(rule, rowIndex) => ({ class: [&quot;hover:bg-black/[0.01]&quot;] })">
-<a-table-column key="column-0">
-<template #title>规则名称</template>
-<template #default="{ record: rule, index: rowIndex }"><div class="text-sm font-medium text-black/85">{{ rule.ruleName }}</div><div class="text-[11px] text-black/45 font-mono">{{ rule.ruleId }}</div></template>
-</a-table-column>
-<a-table-column key="column-1" align="right" :custom-cell="(rule, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;] })">
-<template #title>触发次数</template>
-<template #default="{ record: rule, index: rowIndex }">{{ rule.triggers }}</template>
-</a-table-column>
-<a-table-column key="column-2" align="right" :custom-cell="(rule, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;, rule.successRate >= 95 ? 'text-emerald-500' : 'text-amber-500'] })">
-<template #title>成功率</template>
-<template #default="{ record: rule, index: rowIndex }">{{ rule.successRate.toFixed(1) }}%</template>
-</a-table-column>
-<a-table-column key="column-3" align="right" :custom-cell="(rule, rowIndex) => ({ class: [&quot;text-right font-mono text-sm text-emerald-500 font-medium&quot;] })">
-<template #title>总影响</template>
-<template #default="{ record: rule, index: rowIndex }">{{ formatCurrency(rule.totalImpact) }}</template>
-</a-table-column>
-<a-table-column key="column-4" align="right" :custom-cell="(rule, rowIndex) => ({ class: [&quot;text-right font-mono text-sm text-black/45&quot;] })">
-<template #title>平均影响</template>
-<template #default="{ record: rule, index: rowIndex }">{{ formatCurrency(rule.avgImpact) }}</template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(rule, rowIndex) => ({ class: [&quot;text-xs text-black/45&quot;] })">
-<template #title>最近触发</template>
-<template #default="{ record: rule, index: rowIndex }">{{ rule.lastTrigger }}</template>
-</a-table-column>
-</a-table>
-              </div>
-            </section>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm">
-                <header class="px-6 py-4 border-b border-black/[0.06]"><h3 class="text-sm font-semibold text-black/85">操作类型分布</h3></header>
-                <div class="overflow-x-auto">
-                  <a-table  size="small" :pagination="false" :data-source="deliveryAutoRuleStats.actionsByType" :row-key="(item) => item.action" :scroll="{ x: 'max-content' }">
-<a-table-column key="column-0">
-<template #title>类型</template>
-<template #default="{ record: item, index: rowIndex }"><span :class="DELIVERY_RULE_ACTION_CONFIG[item.action]?.class || 'bg-black/5 text-black/45'" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium">{{ DELIVERY_RULE_ACTION_CONFIG[item.action]?.text || item.action }}</span></template>
-</a-table-column>
-<a-table-column key="column-1" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;] })">
-<template #title>次数</template>
-<template #default="{ record: item, index: rowIndex }">{{ item.count }}</template>
-</a-table-column>
-<a-table-column key="column-2" align="right" :custom-cell="(item, rowIndex) => ({ class: [&quot;text-right font-mono text-sm&quot;, item.impact >= 0 ? 'text-emerald-500' : 'text-rose-500'] })">
-<template #title>影响</template>
-<template #default="{ record: item, index: rowIndex }">{{ formatCurrency(item.impact) }}</template>
-</a-table-column>
-</a-table>
-                </div>
-              </section>
-
-              <section class="bg-white rounded-lg border border-black/[0.06] shadow-sm p-6">
-                <h3 class="text-sm font-semibold text-black/85 mb-4">规则应用效果对比</h3>
-                <div class="space-y-4">
-                  <div v-for="item in deliveryAutoRuleEffectComparison" :key="item.contract" class="p-4 border border-black/[0.06] rounded-lg bg-black/[0.01]">
-                    <div class="flex items-center justify-between mb-3"><h4 class="text-sm font-bold text-black/85">{{ item.contract }}</h4><span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">改善 {{ formatCurrency(item.improvement) }}</span></div>
-                    <div class="grid grid-cols-2 gap-4 text-[11px]">
-                      <div class="space-y-1"><p class="text-black/25 mb-1">规则启用前</p><div class="flex justify-between"><span>平台盈亏:</span><span :class="item.beforeRules.platformPnl >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatCurrency(item.beforeRules.platformPnl) }}</span></div><div class="flex justify-between"><span>风险等级:</span><span :class="DELIVERY_RISK_LEVEL_CONFIG[item.beforeRules.riskLevel].class" class="px-1.5 py-0.5 rounded">{{ DELIVERY_RISK_LEVEL_CONFIG[item.beforeRules.riskLevel].text }}</span></div></div>
-                      <div class="space-y-1"><p class="text-black/25 mb-1">规则启用后</p><div class="flex justify-between"><span>平台盈亏:</span><span :class="item.afterRules.platformPnl >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatCurrency(item.afterRules.platformPnl) }}</span></div><div class="flex justify-between"><span>风险等级:</span><span :class="DELIVERY_RISK_LEVEL_CONFIG[item.afterRules.riskLevel].class" class="px-1.5 py-0.5 rounded">{{ DELIVERY_RISK_LEVEL_CONFIG[item.afterRules.riskLevel].text }}</span></div></div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
-        </div>
-    </article>
-  </section>
+        <Row :gutter="[24, 24]">
+          <Col :xs="24" :xl="12">
+            <Card size="small" title="操作类型分布">
+              <Table size="middle" :pagination="false" :columns="actionColumns" :data-source="deliveryAutoRuleStats.actionsByType" row-key="action">
+                <template #bodyCell="{ column, record }">
+                  <Tag v-if="column.key === 'action'" :color="tagColor(DELIVERY_RULE_ACTION_CONFIG[record.action])">{{ actionLabel(record.action) }}</Tag>
+                  <TypographyText v-else-if="column.key === 'impact'" :type="record.impact >= 0 ? 'success' : 'danger'" class="font-mono">{{ formatCurrency(record.impact) }}</TypographyText>
+                </template>
+              </Table>
+            </Card>
+          </Col>
+          <Col :xs="24" :xl="12">
+            <Card size="small" title="规则应用效果对比">
+              <Descriptions v-for="item in deliveryAutoRuleEffectComparison" :key="item.contract" :column="2" size="small" bordered class="effect-block">
+                <template #title>{{ item.contract }} <Tag color="green">改善 {{ formatCurrency(item.improvement) }}</Tag></template>
+                <DescriptionsItem label="启用前平台盈亏"><TypographyText :type="item.beforeRules.platformPnl >= 0 ? 'success' : 'danger'" class="font-mono">{{ formatCurrency(item.beforeRules.platformPnl) }}</TypographyText></DescriptionsItem>
+                <DescriptionsItem label="启用后平台盈亏"><TypographyText :type="item.afterRules.platformPnl >= 0 ? 'success' : 'danger'" class="font-mono">{{ formatCurrency(item.afterRules.platformPnl) }}</TypographyText></DescriptionsItem>
+                <DescriptionsItem label="启用前风险"><Tag :color="tagColor(DELIVERY_RISK_LEVEL_CONFIG[item.beforeRules.riskLevel])">{{ DELIVERY_RISK_LEVEL_CONFIG[item.beforeRules.riskLevel]?.text }}</Tag></DescriptionsItem>
+                <DescriptionsItem label="启用后风险"><Tag :color="tagColor(DELIVERY_RISK_LEVEL_CONFIG[item.afterRules.riskLevel])">{{ DELIVERY_RISK_LEVEL_CONFIG[item.afterRules.riskLevel]?.text }}</Tag></DescriptionsItem>
+              </Descriptions>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    </Card>
+  </PageShell>
 </template>
+
+<style scoped>
+.report-select {
+  width: 200px;
+}
+.report-filters {
+  row-gap: 16px;
+}
+.report-actions {
+  margin-left: auto;
+  margin-inline-end: 0;
+}
+.report-section {
+  display: grid;
+  gap: 24px;
+  padding-top: 8px;
+}
+.report-stat-title {
+  margin-bottom: 4px;
+  color: rgb(0 0 0 / 45%);
+}
+.pnl-row + .pnl-row {
+  margin-top: 12px;
+}
+.pnl-row__head,
+.pnl-row__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.pnl-row__bar :deep(.ant-progress) {
+  flex: 1;
+  margin: 0;
+}
+.pnl-row__value {
+  min-width: 80px;
+  text-align: right;
+}
+.effect-block + .effect-block {
+  margin-top: 16px;
+}
+</style>

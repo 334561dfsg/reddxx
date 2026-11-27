@@ -1,142 +1,62 @@
-<template>
-	<section class="space-y-4">
-		<header>
-			<h1 class="text-3xl font-semibold text-slate-900">收益调整记录</h1>
-			<p class="mt-1 text-sm text-slate-500">查询历史收益调整；发起调整请在「订单管理」中点击对应订单的「收益调整」</p>
-		</header>
-
-		<article class="rounded-xl border border-slate-200 bg-white">
-			<div class="space-y-2 border-b border-slate-200 p-4">
-				<div class="flex flex-wrap items-center justify-between gap-3">
-					<div class="text-sm text-slate-600">
-						命中 {{ filteredAdjustments.length }} 条（第 {{ adjCurrentPage }} / {{ adjTotalPages }} 页，每页 {{ adjPageSize }} 条）
-					</div>
-					<a-input v-model:value="search" type="text" placeholder="搜索用户、订单或产品..." class="w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none" />
-				</div>
-			</div>
-
-			<div class="overflow-x-auto">
-				<a-table  size="small" :pagination="false" :data-source="pagedAdjustments" :row-key="(adj) => adj.id" :scroll="{ x: 'max-content' }" :custom-row="(adj, rowIndex) => ({ class: [&quot;border-t border-slate-100&quot;] })">
-<a-table-column key="column-0" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3 font-mono text-xs text-slate-600&quot;] })">
-<template #title>调整ID</template>
-<template #default="{ record: adj, index: rowIndex }">{{ adj.id }}</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>类型</template>
-<template #default="{ record: adj, index: rowIndex }">
-								<div class="flex items-center gap-1.5">
-									<component :is="getAdjustmentIcon(adj.type)" class="w-4 h-4" :class="getIconColor(adj.type)" />
-									<span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="adjustmentTypeMeta[adj.type].class">{{ adjustmentTypeMeta[adj.type].label }}</span>
-								</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>目标</template>
-<template #default="{ record: adj, index: rowIndex }">
-								<div class="text-slate-700">{{ adj.targetName }}</div>
-								<div class="text-xs text-slate-500">{{ adj.targetType === 'user' ? '用户' : adj.targetType === 'product' ? '产品' : '订单' }}</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>产品</template>
-<template #default="{ record: adj, index: rowIndex }">
-								<div class="text-slate-700">{{ adj.productName }}</div>
-								<div v-if="adj.orderId" class="text-xs text-slate-500 font-mono">{{ adj.orderId }}</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>金额</template>
-<template #default="{ record: adj, index: rowIndex }">
-								<div class="font-medium text-slate-900">{{ fmtCurrency(adj.amount, adj.currency) }}</div>
-								<div v-if="adj.percentage" class="text-xs text-slate-500">{{ adj.percentage }}%</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>原因</template>
-<template #default="{ record: adj, index: rowIndex }">
-								<div class="text-slate-700 max-w-xs truncate">{{ adj.reason }}</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-6" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>操作人</template>
-<template #default="{ record: adj, index: rowIndex }">
-								<div class="text-slate-700">{{ adj.operatorName }}</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-7" :custom-cell="(adj, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>调整时间</template>
-<template #default="{ record: adj, index: rowIndex }">
-								<div class="text-slate-700">{{ adj.createdAt }}</div>
-							</template>
-</a-table-column>
-</a-table>
-			</div>
-			<AdminListPaginationBar
-				v-model:current-page="adjCurrentPage"
-				v-model:page-size="adjPageSize"
-				:total-pages="adjTotalPages"
-				:total-count="adjTotalCount"
-			/>
-		</article>
-	</section>
-</template>
-
 <script setup>
-import { ref, computed, h } from 'vue'
+// 收益调整记录 — Ant Design Pro list page (2026-11-28): one query input per field (the combined keyword box was split),
+// table card with pagination, adjustment type as a text Tag (decorative per-type icons removed).
+import { ref, computed } from 'vue'
+import { Space, Tag, TypographyText } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import { ADJUSTMENT_TYPE, adjustmentTypeMeta } from '../../../admin/constants/aiQuant'
 import { aiQuantYieldAdjustments } from '../../../admin/state/aiQuantYieldAdjustments'
-import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
-import { useAgentPagedList } from '../../../composables/useAgentListPagination'
 
-const search = ref('')
-
-const getAdjustmentIcon = (type) => {
-	const icons = {
-		[ADJUSTMENT_TYPE.BONUS]: (props) => h('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
-			h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7' })
-		]),
-		[ADJUSTMENT_TYPE.PENALTY]: (props) => h('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
-			h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' })
-		]),
-		[ADJUSTMENT_TYPE.CORRECTION]: (props) => h('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
-			h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' }),
-			h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z' })
-		]),
-		[ADJUSTMENT_TYPE.INCREASE]: (props) => h('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
-			h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' })
-		]),
-		[ADJUSTMENT_TYPE.DECREASE]: (props) => h('svg', { ...props, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
-			h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6' })
-		])
-	}
-	return icons[type] || icons[ADJUSTMENT_TYPE.BONUS]
+const page = ref(1)
+const targetTypeLabel = { user: '用户', product: '产品', order: '订单' }
+const typeColor = {
+	[ADJUSTMENT_TYPE.BONUS]: 'green',
+	[ADJUSTMENT_TYPE.PENALTY]: 'red',
+	[ADJUSTMENT_TYPE.CORRECTION]: 'blue',
+	[ADJUSTMENT_TYPE.INCREASE]: 'purple',
+	[ADJUSTMENT_TYPE.DECREASE]: 'orange'
 }
 
-const getIconColor = (type) => {
-	const colors = {
-		[ADJUSTMENT_TYPE.BONUS]: 'text-green-600',
-		[ADJUSTMENT_TYPE.PENALTY]: 'text-red-600',
-		[ADJUSTMENT_TYPE.CORRECTION]: 'text-blue-600',
-		[ADJUSTMENT_TYPE.INCREASE]: 'text-purple-600',
-		[ADJUSTMENT_TYPE.DECREASE]: 'text-orange-600'
-	}
-	return colors[type] || 'text-slate-600'
-}
+const blank = () => ({ type: 'all', targetType: 'all', target: '', product: '', orderId: '', operator: '', createdAt: null })
+const filters = ref(blank())
+const fields = [
+	{ key: 'type', label: '调整类型', options: [{ value: 'all', label: '全部类型' }, ...Object.entries(adjustmentTypeMeta).map(([value, meta]) => ({ value, label: meta.label }))] },
+	{ key: 'targetType', label: '目标类型', options: [{ value: 'all', label: '全部目标' }, ...Object.entries(targetTypeLabel).map(([value, label]) => ({ value, label }))] },
+	{ key: 'target', label: '目标名称' },
+	{ key: 'product', label: '产品名称' },
+	{ key: 'orderId', label: '订单号' },
+	{ key: 'operator', label: '操作人' },
+	{ key: 'createdAt', label: '调整日期', range: true }
+]
 
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
 const filteredAdjustments = computed(() => {
-	const kw = search.value.trim().toLowerCase()
-	return aiQuantYieldAdjustments.value.filter(adj => {
-		return !kw || `${adj.targetName} ${adj.productName} ${adj.orderId || ''}`.toLowerCase().includes(kw)
+	const f = filters.value
+	return aiQuantYieldAdjustments.value.filter((adj) => {
+		const day = String(adj.createdAt || '').slice(0, 10)
+		return (f.type === 'all' || adj.type === f.type) &&
+			(f.targetType === 'all' || adj.targetType === f.targetType) &&
+			has(adj.targetName, f.target) && has(adj.productName, f.product) &&
+			has(adj.orderId, f.orderId) && has(adj.operatorName, f.operator) &&
+			(!f.createdAt || (day >= f.createdAt[0] && day <= f.createdAt[1]))
 	})
 })
 
-const {
-	pageSize: adjPageSize,
-	currentPage: adjCurrentPage,
-	totalCount: adjTotalCount,
-	totalPages: adjTotalPages,
-	pagedList: pagedAdjustments
-} = useAgentPagedList(filteredAdjustments, { pageSize: 10 })
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
+
+const columns = [
+	{ key: 'id', title: '调整 ID', width: 120 },
+	{ key: 'type', title: '类型', width: 110 },
+	{ key: 'target', title: '目标', width: 180 },
+	{ key: 'product', title: '产品', width: 200 },
+	{ key: 'amount', title: '金额', width: 150, align: 'right' },
+	{ key: 'reason', title: '原因', width: 240 },
+	{ key: 'operatorName', title: '操作人', width: 130 },
+	{ key: 'createdAt', title: '调整时间', width: 170 }
+]
 
 const fmtNumber = (val, decimals = 2) => Number(val).toFixed(decimals)
 const fmtCurrency = (val, currency, decimals = 2) => {
@@ -144,3 +64,28 @@ const fmtCurrency = (val, currency, decimals = 2) => {
 	return `${Number(val).toLocaleString()} ${currency}`
 }
 </script>
+
+<template>
+	<PageShell>
+		<SearchForm name="ai-quant-yield-record-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+		<AdminTable title="收益调整记录" v-model:page="page" :rows="filteredAdjustments" :columns="columns" row-key="id" desktop-only>
+			<template #cell="{ column, record: adj }">
+				<TypographyText v-if="column.key === 'id'" class="font-mono">{{ adj.id }}</TypographyText>
+				<Tag v-else-if="column.key === 'type'" :color="typeColor[adj.type]">{{ adjustmentTypeMeta[adj.type]?.label ?? adj.type }}</Tag>
+				<Space v-else-if="column.key === 'target'" direction="vertical" :size="0">
+					<span>{{ adj.targetName }}</span>
+					<TypographyText type="secondary">{{ targetTypeLabel[adj.targetType] ?? '订单' }}</TypographyText>
+				</Space>
+				<Space v-else-if="column.key === 'product'" direction="vertical" :size="0">
+					<span>{{ adj.productName }}</span>
+					<TypographyText v-if="adj.orderId" type="secondary" class="font-mono">{{ adj.orderId }}</TypographyText>
+				</Space>
+				<Space v-else-if="column.key === 'amount'" direction="vertical" :size="0" align="end">
+					<span>{{ fmtCurrency(adj.amount, adj.currency) }}</span>
+					<TypographyText v-if="adj.percentage" type="secondary">{{ adj.percentage }}%</TypographyText>
+				</Space>
+				<template v-else>{{ adj[column.key] ?? '—' }}</template>
+			</template>
+		</AdminTable>
+	</PageShell>
+</template>

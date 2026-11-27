@@ -1,15 +1,22 @@
 <script setup>
-import { message } from 'ant-design-vue'
+// 用户列表 — Ant Design Pro list page (2026-11-28): query card (EarnSearchForm, one input per field, explicit 查询/重置),
+// table card (EarnAdminTable) with the 添加用户 toolbar action, text Tags, right-aligned amounts and link row actions:
+// 详情 / 编辑资料 / 入金 visible, every other row action in the 更多 Dropdown, whose last entry opens the complete
+// operation Drawer (focus returns to the row's 更多 trigger). All drawers, dialogs and MFA flows are unchanged.
+import { Button, Dropdown, Menu, MenuDivider, MenuItem, Space, Tag, TypographyText, message } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminTextarea, nativeControl } from '../../../admin/components/antd/controls.js'
-import { ref, computed, nextTick, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
-import { BarChartOutlined } from '@ant-design/icons-vue'
+import { ref, computed, nextTick, onMounted } from 'vue'
+import { DownOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import UserStaffEditorDialog from '../../../admin/components/user/UserStaffEditorDialog.vue'
 import UserStaffReportDrawer from '../../../admin/components/user/UserStaffReportDrawer.vue'
 import { getUserStaffRepository } from '../../../admin/repositories/userStaffRepository.js'
 import { getUsers, usersList } from '../../../admin/mock/user'
-import { USER_STATUS, USER_ROLE, USER_KYC_STATUS } from '../../../admin/constants/user'
+import { USER_STATUS, USER_ROLE } from '../../../admin/constants/user'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import UserControlModal from '../../../admin/components/user-control/UserControlModal.vue'
 import UserOperations from '../../../admin/components/user/UserOperations.vue'
@@ -31,7 +38,6 @@ import UserCreditReviewDrawer from '../../../admin/components/user/UserCreditRev
 import UserCreditReviewDecisionDialog from '../../../admin/components/user/UserCreditReviewDecisionDialog.vue'
 import UserMembershipMutationDialog from '../../../admin/components/user/UserMembershipMutationDialog.vue'
 import UserRechargeSummaryDrawer from '../../../admin/components/user/UserRechargeSummaryDrawer.vue'
-import UserListSearchField from '../../../admin/components/user/UserListSearchField.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import {
   cancelUnifiedUserControl,
@@ -67,76 +73,19 @@ import {
   setUserVipLevel
 } from '../../../admin/repositories/userCreditMembershipRepository.js'
 
-const userColumnDefinitions = [
-  {
-    "title": "ID",
-    "key": "col0",
-    "width": 150
-  },
-  {
-    "title": "用户名",
-    "key": "col1",
-    "width": 150
-  },
-  {
-    "title": "邮箱",
-    "key": "col2",
-    "width": 150
-  },
-  {
-    "title": "角色",
-    "key": "col3",
-    "width": 150
-  },
-  {
-    "title": "是否为业务员",
-    "key": "col4",
-    "width": 150
-  },
-  {
-    "title": "所属代理",
-    "key": "col5",
-    "width": 150
-  },
-  {
-    "title": "VIP",
-    "key": "col6",
-    "width": 150
-  },
-  {
-    "title": "信用分",
-    "key": "col7",
-    "width": 150
-  },
-  {
-    "title": "账户余额",
-    "key": "col8",
-    "width": 150
-  },
-  {
-    "title": "裂变上级",
-    "key": "col9",
-    "width": 150
-  },
-  {
-    "title": "点控",
-    "key": "col10",
-    "width": 150
-  },
-  {
-    "title": "操作",
-    "key": "col11",
-    "width": 352
-  }
+const userColumns = [
+  { key: 'user', title: '用户', width: 200, fixed: 'left' },
+  { key: 'email', title: '邮箱', width: 220 },
+  { key: 'role', title: '角色', width: 100 },
+  { key: 'salesperson', title: '业务员', width: 90 },
+  { key: 'agent', title: '所属代理', width: 140 },
+  { key: 'vip', title: 'VIP', width: 90 },
+  { key: 'credit', title: '信用分', width: 90, align: 'right' },
+  { key: 'balance', title: '账户余额（USD）', width: 150, align: 'right' },
+  { key: 'parent', title: '裂变上级', width: 130 },
+  { key: 'pointControl', title: '点控', width: 130 },
+  { key: 'actions', title: '操作', width: 230, fixed: 'right' }
 ]
-const actionColumnMedia = typeof window !== 'undefined' ? window.matchMedia?.('(min-width: 768px)') : null
-const pinActions = ref(actionColumnMedia?.matches ?? true)
-const updateActionPinning = event => { pinActions.value = event.matches }
-onMounted(() => actionColumnMedia?.addEventListener('change', updateActionPinning))
-onBeforeUnmount(() => actionColumnMedia?.removeEventListener('change', updateActionPinning))
-const userColumns = computed(() => userColumnDefinitions.map(column => column.key === 'col11'
-  ? { ...column, fixed: pinActions.value ? 'right' : undefined }
-  : column))
 
 const staffEditorOpen = ref(false)
 const staffEditorMode = ref('create')
@@ -145,17 +94,13 @@ const staffReturnFocus = ref(null)
 const staffReportOpen = ref(false)
 const staffReportUser = ref(null)
 const staffReportReturnFocus = ref(null)
-const staffMessage = ref('')
 // Success feedback through Ant message (AGENTS.md toast rule); no account or password details in the notice.
 function showUserCreatedToast() { message.success('添加成功') }
 const staffError = ref('')
 const staffRevision = ref(0)
-const roleFilter = ref('')
-const agentFilter = ref('')
-const employeeFilter = ref('')
 const staffEmployees = computed(() => {
   staffRevision.value
-  try { return getUserStaffRepository().employees(agentFilter.value) } catch { return [] }
+  try { return getUserStaffRepository().employees() } catch { return [] }
 })
 const staffAgents = computed(() => { staffRevision.value; try { return getUserStaffRepository().agents() } catch { return [] } })
 const staffName = (id) => usersList.find(user => user.id === id)?.username || '—'
@@ -163,73 +108,62 @@ function openStaffEditor(mode, user, trigger) { if (staffEditorOpen.value) retur
 function openStaffReport(user, trigger) { if (staffReportOpen.value) return; staffReportUser.value = user; staffReportReturnFocus.value = trigger; staffReportOpen.value = true }
 function staffSaved({ user, created }) {
   staffRevision.value++
-  staffMessage.value = created ? '' : `已更新 ${user.username} 的上级业务员，历史业绩保持原归属。`
   if (created) showUserCreatedToast(user)
-  if (created) { userIdKeyword.value = user.id; phoneKeyword.value = ''; emailKeyword.value = ''; walletAddressKeyword.value = ''; roleFilter.value = ''; agentFilter.value = ''; employeeFilter.value = '' }
+  else message.success(`已更新 ${user.username} 的上级业务员，历史业绩保持原归属。`)
+  // A new account is shown on its own: the applied query becomes its user ID.
+  if (created) { filters.value = { ...blankFilters(), userIdKeyword: user.id }; page.value = 1 }
   fetchUsers()
 }
 function initializeStaff() { try { getUserStaffRepository().seedDemo(); staffError.value = ''; staffRevision.value++; fetchUsers() } catch (error) { staffError.value = error.message; fetchUsers() } }
-watch(agentFilter, () => { employeeFilter.value = '' })
-watch([roleFilter, agentFilter, employeeFilter], () => { pagination.currentPage = 1; fetchUsers() })
 
-// 搜索关键词
-const userIdKeyword = ref('')
-const phoneKeyword = ref('')
-const emailKeyword = ref('')
-const walletAddressKeyword = ref('')
-const hasSearchFilters = computed(() =>
-  [userIdKeyword, phoneKeyword, emailKeyword, walletAddressKeyword].some((item) => item.value.trim())
-)
+// Applied query (the query card keeps its own draft). One input per field; the agent/salesperson selects are
+// searchable by name or UID. All salespeople are listed; an agent/salesperson pair that does not match returns no rows.
+const blankFilters = () => ({ userIdKeyword: '', phoneKeyword: '', emailKeyword: '', walletAddressKeyword: '', role: 'all', agentParentId: 'all', employeeId: 'all' })
+const filters = ref(blankFilters())
+const page = ref(1)
+const searchFields = computed(() => [
+  { key: 'userIdKeyword', label: '用户 ID' },
+  { key: 'phoneKeyword', label: '手机号' },
+  { key: 'emailKeyword', label: '邮箱' },
+  { key: 'walletAddressKeyword', label: '钱包地址' },
+  { key: 'role', label: '用户类型', options: [{ value: 'all', label: '全部类型' }, { value: 'user', label: '普通用户' }, { value: 'agent', label: '代理' }] },
+  { key: 'agentParentId', label: '所属代理', searchable: true, options: [{ value: 'all', label: '全部代理' }, ...staffAgents.value.map(agent => ({ value: agent.id, label: `${agent.username} · ${agent.id}` }))] },
+  { key: 'employeeId', label: '业务员', searchable: true, options: [{ value: 'all', label: '全部业务员' }, { value: 'unassigned', label: '未分配业务员' }, ...staffEmployees.value.map(person => ({ value: person.id, label: `${person.username} · ${person.id}` }))] }
+])
+const allToBlank = value => (value === 'all' ? '' : value)
+function searchUsers(values) { filters.value = { ...blankFilters(), ...values }; page.value = 1; fetchUsers() }
+function resetUsers() { filters.value = blankFilters(); page.value = 1; fetchUsers() }
 
 // 用户数据
 const users = ref([])
 const loading = ref(false)
 
-// 分页
-const pagination = reactive({
-  currentPage: 1,
-  pageSize: 10,
-  total: 0
-})
-
-const totalPages = computed(() => Math.ceil(pagination.total / pagination.pageSize))
-
-// 获取用户数据
+// 获取用户数据（全部匹配记录，表格卡片在前端分页）
 let userQueryGeneration = 0
 const fetchUsers = async () => {
   const generation = ++userQueryGeneration
+  const f = filters.value
   loading.value = true
   try {
-    const { list, total } = await getUsers({
-      page: pagination.currentPage,
-      pageSize: pagination.pageSize,
-      userIdKeyword: userIdKeyword.value,
-      phoneKeyword: phoneKeyword.value,
-      emailKeyword: emailKeyword.value,
-      walletAddressKeyword: walletAddressKeyword.value,
-      role: roleFilter.value,
-      agentParentId: agentFilter.value,
-      employeeId: employeeFilter.value
+    const { list } = await getUsers({
+      page: 1,
+      pageSize: Number.MAX_SAFE_INTEGER,
+      userIdKeyword: f.userIdKeyword,
+      phoneKeyword: f.phoneKeyword,
+      emailKeyword: f.emailKeyword,
+      walletAddressKeyword: f.walletAddressKeyword,
+      role: allToBlank(f.role),
+      agentParentId: allToBlank(f.agentParentId),
+      employeeId: allToBlank(f.employeeId)
     })
     if (generation !== userQueryGeneration) return
     users.value = list
-    pagination.total = total
   } catch (error) {
-    console.error('获取用户列表失败:', error)
-    // 在这里可以添加错误提示，例如使用一个通知组件
+    if (generation === userQueryGeneration) message.error(error instanceof Error && error.message ? error.message : '用户列表加载失败，请重试')
   } finally {
     if (generation === userQueryGeneration) loading.value = false
   }
 }
-
-// 监听搜索和分页变化
-watch([userIdKeyword, phoneKeyword, emailKeyword, walletAddressKeyword, () => pagination.currentPage], () => {
-  if (hasSearchFilters.value && pagination.currentPage !== 1) {
-    pagination.currentPage = 1
-  } else {
-    fetchUsers()
-  }
-}, { deep: true })
 
 // 组件加载时获取数据
 onMounted(initializeStaff)
@@ -397,11 +331,11 @@ const resolveControlReturnFocus = () => {
 }
 const rulesOf = (user) => userControlState.value.rules[userIdOf(user)] || {}
 const controlMetaOf = (user) => getUserControlListMeta(userControlState.value, userIdOf(user))
-const pointControlBadgeClass = (label) => ({
-  永久盈利: 'bg-orange-100 text-orange-700 ring-orange-200',
-  永久亏损: 'bg-emerald-100 text-emerald-700 ring-emerald-200',
-  存在模块差异: 'bg-amber-100 text-amber-700 ring-amber-200'
-}[label] || 'bg-sky-100 text-sky-700 ring-sky-200')
+const pointControlTagColor = (label) => ({
+  永久盈利: 'orange',
+  永久亏损: 'green',
+  存在模块差异: 'gold'
+}[label] || 'blue')
 const isLocked = (user) => [USER_STATUS.SUSPENDED, USER_STATUS.BANNED].includes(user?.status)
 const isAgentUser = (user) => user?.role === USER_ROLE.AGENT
 const cancelControlItems = computed(() => getUnifiedControlCancelItems(controlUser.value ? rulesOf(controlUser.value) : {}, USER_LIST_CONTROL_MODULE_KEYS))
@@ -731,7 +665,10 @@ const clearProfileEdit = () => {
 
 const handleProfileSaved = (updatedUser) => {
   staffRevision.value++
-  if (employeeFilter.value === updatedUser.id && !updatedUser.isSalesperson) employeeFilter.value = ''
+  if (filters.value.employeeId === updatedUser.id && !updatedUser.isSalesperson) {
+    filters.value = { ...filters.value, employeeId: 'all' }
+    fetchUsers()
+  }
   const updatedId = userIdOf(updatedUser)
   users.value = users.value.map((user) => userIdOf(user) === updatedId ? { ...updatedUser } : user)
   operationDrawerUser.value = { ...updatedUser }
@@ -1004,35 +941,28 @@ const handleUnifiedCancelAfterLeave = async () => {
 }
 
 const roleConfig = {
-  [USER_ROLE.USER]: { text: '普通用户', class: 'bg-blue-100 text-blue-700' },
-  [USER_ROLE.AGENT]: { text: '代理', class: 'bg-purple-100 text-purple-700' }
+  [USER_ROLE.USER]: { text: '普通用户', color: 'blue' },
+  [USER_ROLE.AGENT]: { text: '代理', color: 'purple' }
 }
 
-const kycConfig = {
-  [USER_KYC_STATUS.NOT_VERIFIED]: { text: '未认证', class: 'bg-gray-100 text-gray-700' },
-  [USER_KYC_STATUS.PENDING]: { text: '审核中', class: 'bg-blue-100 text-blue-700' },
-  [USER_KYC_STATUS.VERIFIED]: { text: '已认证', class: 'bg-emerald-100 text-emerald-700' },
-  [USER_KYC_STATUS.REJECTED]: { text: '已拒绝', class: 'bg-rose-100 text-rose-700' }
+// Row actions beyond the three visible links, in their former order; the last entry opens the operation Drawer.
+const moreRowActions = (user) => [
+  { id: 'freeze-account', label: isLocked(user) ? '解封' : '封户', danger: !isLocked(user) },
+  { id: 'point-control', label: '点控' },
+  { id: 'credit-adjust', label: '修改信用分' },
+  { id: 'credit-review', label: '信用分审核' },
+  ...(!isAgentUser(user) ? [{ id: 'reset-agent', label: '设为代理' }] : []),
+  { id: 'set-agent-parent', label: '设置上级代理' },
+  ...(user.role === 'user' ? [{ id: 'set-employee', label: '设置上级业务员', disabled: !!staffError.value }] : [])
+]
+const runMoreRowAction = (user, id) => {
+  const trigger = actionMenuTriggerRefs.get(userIdOf(user)) || null
+  if (id === 'all-operations') { openOperationDrawer(user); return }
+  handleOperationDrawerAction({ id, user, trigger })
 }
 
 // 格式化货币
-const formatCurrency = (value) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(value)
-}
-
-// 格式化日期
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  })
-}
+const formatCurrency = (value) => Number(value || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
 
 // 打开用户详情
 const openUserDetail = (user, initialTab = 'overview', returnFocus = null) => {
@@ -1059,237 +989,63 @@ const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unified
 </script>
 
 <template>
-  <section class="space-y-6">
-    <!-- 页面标题 -->
-    <div class="flex flex-wrap items-start justify-between gap-4">
-      <div><h1 class="text-2xl font-bold text-slate-900">用户管理</h1><p class="text-sm text-slate-500 mt-1">管理系统用户、查看用户信息和操作记录</p></div>
-      <div class="flex flex-wrap gap-3">
-        <RouterLink to="/admin/users/deposit-report" custom v-slot="{ href, navigate }">
-          <a-button :href="href" @click="navigate"><template #icon><BarChartOutlined /></template>用户充值报表</a-button>
-        </RouterLink>
-        <a-button type="primary" html-type="button" :disabled="!!staffError" @click="openStaffEditor('create', null, $event.currentTarget)">添加用户</a-button>
-      </div>
-    </div>
-    <p v-if="staffMessage" role="status" class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">{{ staffMessage }}</p>
-    <FeedbackToast v-if="staffError" type="error" :source="() => (staffError) ? (([String((staffError) ?? ''),''].join(''))) : ''"><a-button html-type="button" @click="initializeStaff">重试</a-button></FeedbackToast>
-
-    <!-- 筛选和搜索区域 -->
-    <a-card :bordered="false">
-      <div class="mb-4 grid gap-3 sm:grid-cols-3">
-        <label class="text-xs font-medium text-slate-600">用户类型<a-select v-model:value="roleFilter" class="mt-1 w-full"><a-select-option value="">全部类型</a-select-option><a-select-option value="user">普通用户</a-select-option><a-select-option value="agent">代理</a-select-option></a-select></label>
-        <label class="text-xs font-medium text-slate-600">所属代理<a-select v-model:value="agentFilter" class="mt-1 w-full"><a-select-option value="">全部代理</a-select-option><a-select-option v-for="agent in staffAgents" :key="agent.id" :value="agent.id">{{ agent.username }} · {{ agent.id }}</a-select-option></a-select></label>
-        <label class="text-xs font-medium text-slate-600">业务员<a-select v-model:value="employeeFilter" class="mt-1 w-full"><a-select-option value="">全部业务员</a-select-option><a-select-option value="unassigned">未分配业务员</a-select-option><a-select-option v-for="person in staffEmployees" :key="person.id" :value="person.id">{{ person.username }} · {{ person.id }}</a-select-option></a-select></label>
-      </div>
-      <!-- 搜索框 -->
-      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <UserListSearchField
-          v-model="userIdKeyword"
-          label="用户 ID"
-          placeholder="搜索用户 ID"
-          icon-path="M15 7a3 3 0 11-6 0 3 3 0 016 0zM5 19a7 7 0 0114 0"
-        />
-        <UserListSearchField
-          v-model="phoneKeyword"
-          label="手机号"
-          placeholder="搜索手机号"
-          input-mode="tel"
-          autocomplete="tel"
-          icon-path="M3 5.5A2.5 2.5 0 015.5 3h1A1.5 1.5 0 018 4.2l.6 2.4a1.5 1.5 0 01-.4 1.4l-.7.7a11 11 0 005.8 5.8l.7-.7a1.5 1.5 0 011.4-.4l2.4.6a1.5 1.5 0 011.2 1.5v1A2.5 2.5 0 0116.5 19h-1C8.6 19 3 13.4 3 6.5v-1z"
-        />
-        <UserListSearchField
-          v-model="emailKeyword"
-          label="邮箱"
-          placeholder="搜索邮箱"
-          input-mode="email"
-          autocomplete="email"
-          icon-path="M4 6h16v12H4V6zm0 0l8 7 8-7"
-        />
-        <UserListSearchField
-          v-model="walletAddressKeyword"
-          label="钱包地址"
-          placeholder="搜索钱包地址"
-          icon-path="M17 9V7a5 5 0 00-10 0v2M5 9h14v10H5V9z"
-        />
-      </div>
-    </a-card>
-
-    <a-card v-if="loading" :bordered="false" class="text-center"><a-spin tip="正在加载用户数据…"><div class="h-24" /></a-spin></a-card>
+  <PageShell>
+    <SearchForm name="user-list-filters" :model="filters" :fields="searchFields" @search="searchUsers" @reset="resetUsers" />
 
     <!-- 用户表格 -->
-    <div v-else-if="!loading && users.length > 0" class="rounded-xl border border-slate-200 bg-white overflow-hidden">
-      <div class="overflow-x-auto">
-<a-table :columns="userColumns" :data-source="users" row-key="id" :pagination="false" :scroll="{ x: 1970 }" size="middle" :custom-row="user => ({ onClick: event => openUserDetail(user, 'overview', event.currentTarget) })">
-<template #bodyCell="{ column, record: user }">
-<template v-if="column.key === 'col0'">
-                <span class="text-xs font-mono text-slate-600">{{ user.id }}</span>
-              </template>
-<template v-if="column.key === 'col1'">
-                <p class="text-sm font-medium text-slate-900">{{ user.username }}</p>
-              </template>
-<template v-if="column.key === 'col2'">
-                <p class="text-sm text-slate-600">{{ user.email }}</p>
-              </template>
-<template v-if="column.key === 'col3'">
-                <span
-                  :class="roleConfig[user.role].class"
-                  class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
-                >
-                  {{ roleConfig[user.role].text }}
-                </span>
-              </template>
-<template v-if="column.key === 'col4'">
-                <span :class="user.isSalesperson === true ? 'text-blue-700 bg-blue-50' : 'text-slate-500 bg-slate-100'" class="inline-flex rounded-full px-2 py-1 font-medium">{{ user.isSalesperson === true ? '是' : '否' }}</span>
-              </template>
-<template v-if="column.key === 'col5'"><p>{{ user.role === 'agent' ? '代理账号' : user.agentParentId ? staffName(user.agentParentId) : '未设置代理' }}</p></template>
-<template v-if="column.key === 'col6'">
-                <span v-if="user.isVip" class="inline-flex items-center justify-center">
-                  <svg class="h-5 w-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                  </svg>
-                </span>
-                <span v-else class="text-xs text-slate-400">-</span>
-              </template>
-<template v-if="column.key === 'col7'">
-                <span
-                  class="inline-flex px-2 py-1 text-sm font-semibold rounded-md"
-                  :class="{
-                    'bg-emerald-100 text-emerald-700': user.creditScore >= 700,
-                    'bg-blue-100 text-blue-700': user.creditScore >= 600 && user.creditScore < 700,
-                    'bg-amber-100 text-amber-700': user.creditScore >= 500 && user.creditScore < 600,
-                    'bg-rose-100 text-rose-700': user.creditScore < 500
-                  }"
-                >
-                  {{ user.creditScore }}
-                </span>
-              </template>
-<template v-if="column.key === 'col8'">
-                <span class="text-sm font-medium text-slate-900">
-                  {{ formatCurrency(user.balance) }}
-                </span>
-              </template>
-<template v-if="column.key === 'col9'">
-                <span v-if="user.parentUsername" class="text-sm text-slate-600">
-                  {{ user.parentUsername }}
-                </span>
-                <span v-else class="text-xs text-slate-400">-</span>
-              </template>
-<template v-if="column.key === 'col10'">
-                <span
-                  v-if="controlMetaOf(user).hasCurrent"
-                  class="inline-flex rounded-md px-2.5 py-1 text-xs font-semibold ring-1"
-                  :class="pointControlBadgeClass(controlMetaOf(user).controlLabel)"
-                >
-                  {{ controlMetaOf(user).controlLabel }}
-                </span>
-                <span v-else class="text-xs text-slate-400">-</span>
-              </template>
-<template v-if="column.key === 'col11'">
-                <div data-testid="user-row-action-bar" class="flex max-w-[20rem] flex-wrap items-center gap-2" @click.stop>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none"
-                    html-type="button"
-
-                    aria-label="查看用户详情"
-                    @click="selectUserDetail(user, $event.currentTarget)"
-                  >
-                    详情</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-16 items-center justify-center rounded-lg px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-100 focus:outline-none"
-                    html-type="button"
-
-                    aria-label="编辑用户资料"
-                    @click="handleOperationDrawerAction({ id: 'edit-profile', user, trigger: $event.currentTarget })"
-                  >
-                    编辑资料</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg px-2.5 text-xs bg-blue-50/70 font-medium text-blue-700 hover:bg-blue-100 focus:outline-none"
-                    html-type="button"
-
-                    aria-label="客服入金"
-                    @click="openRegularAction(user, 'deposit', $event.currentTarget)"
-                  >
-                    入金</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg px-2.5 text-xs font-medium focus:outline-none"
-                    html-type="button"
-
-                    :class="isLocked(user)
-                      ? 'bg-emerald-50/80 text-emerald-700 hover:bg-emerald-100'
-                      : 'bg-rose-50/80 text-rose-700 hover:bg-rose-100'"
-                    :aria-label="isLocked(user) ? '解封用户' : '封禁用户'"
-                    @click="handleOperationDrawerAction({ id: 'freeze-account', user, trigger: $event.currentTarget })"
-                  >
-                    {{ isLocked(user) ? '解封' : '封户' }}</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-12 items-center justify-center rounded-lg bg-amber-50/80 px-2.5 text-xs font-medium text-amber-700 hover:bg-amber-100 focus:outline-none"
-                    html-type="button"
-
-                    aria-label="设置用户点控"
-                    @click="handleOperationDrawerAction({ id: 'point-control', user, trigger: $event.currentTarget })"
-                  >
-                    点控</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-rose-50/80 font-medium text-rose-700 hover:bg-rose-100 focus:outline-none"
-                    html-type="button"
-
-                    aria-label="修改用户信用分"
-                    @click="handleOperationDrawerAction({ id: 'credit-adjust', user, trigger: $event.currentTarget })"
-                  >
-                    修改信用分</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg px-2.5 text-xs bg-violet-50/80 font-medium text-violet-700 hover:bg-violet-100 focus:outline-none"
-                    html-type="button"
-
-                    aria-label="查看用户信用分审核"
-                    @click="handleOperationDrawerAction({ id: 'credit-review', user, trigger: $event.currentTarget })"
-                  >
-                    信用分审核</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-emerald-50/80 px-2.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 focus:outline-none"
-                    v-if="!isAgentUser(user)"
-                    html-type="button"
-
-                    aria-label="设置用户为代理"
-                    @click="handleOperationDrawerAction({ id: 'reset-agent', user, trigger: $event.currentTarget })"
-                  >
-                    设为代理</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-cyan-50/80 px-2.5 text-xs font-medium text-cyan-700 hover:bg-cyan-100 focus:outline-none"
-                    html-type="button"
-
-                    aria-label="设置用户上级代理"
-                    @click="handleOperationDrawerAction({ id: 'set-agent-parent', user, trigger: $event.currentTarget })"
-                  >
-                    设置上级代理</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-20 items-center justify-center rounded-lg bg-indigo-50/80 px-2.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 focus:outline-none disabled:opacity-50"
-                    v-if="user.role === 'user'"
-                    html-type="button"
-
-                    :disabled="!!staffError"
-                    aria-label="设置上级业务员"
-                    @click="handleOperationDrawerAction({ id: 'set-employee', user, trigger: $event.currentTarget })"
-                  >设置上级业务员</a-button>
-                  <a-button type="text" size="small" class="inline-flex h-8 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none"
-                    :ref="(element) => setActionMenuTriggerRef(user, element?.$el || element)"
-                    html-type="button"
-                    aria-label="更多用户操作"
-                    @click="openOperationDrawer(user)"
-                  >
-                    更多
-                  </a-button>
-                </div>
-              </template>
-</template></a-table>
-      </div>
-      <div class="p-4 flex justify-end"><a-pagination v-model:current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false" :show-total="total => `共 ${total} 条`" /></div>
-    </div>
-
-    <!-- 空状态 -->
-    <div v-else-if="!loading && users.length === 0" class="rounded-xl border border-slate-200 bg-white p-12 text-center">
-      <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-      </svg>
-      <h3 class="mt-4 text-lg font-semibold text-slate-900">未找到用户</h3>
-      <p class="mt-2 text-sm text-slate-500">请尝试调整用户 ID、手机号、邮箱或钱包地址</p>
-      <a-button type="primary"
-        v-if="hasSearchFilters"
-        @click="userIdKeyword = ''; phoneKeyword = ''; emailKeyword = ''; walletAddressKeyword = ''"
-
-      >
-        清空搜索
-      </a-button>
-    </div>
+    <AdminTable title="用户列表" v-model:page="page" :rows="users" :columns="userColumns" :loading="loading" row-key="id" desktop-only>
+      <template #toolbar>
+        <Space :size="8">
+          <FeedbackToast v-if="staffError" type="error" :source="() => (staffError) ? (([String((staffError) ?? ''),''].join(''))) : ''"><Button @click="initializeStaff">重试</Button></FeedbackToast>
+          <Button type="primary" :disabled="!!staffError" @click="openStaffEditor('create', null, $event.currentTarget)"><template #icon><PlusOutlined /></template>添加用户</Button>
+        </Space>
+      </template>
+      <template #cell="{ column, record: user }">
+        <Space v-if="column.key === 'user'" direction="vertical" :size="0">
+          <TypographyText strong>{{ user.username }}</TypographyText>
+          <TypographyText type="secondary" class="font-mono">{{ user.id }}</TypographyText>
+        </Space>
+        <template v-else-if="column.key === 'email'">{{ user.email || '—' }}</template>
+        <Tag v-else-if="column.key === 'role'" :color="roleConfig[user.role]?.color">{{ roleConfig[user.role]?.text || user.role }}</Tag>
+        <template v-else-if="column.key === 'salesperson'">{{ user.isSalesperson === true ? '是' : '否' }}</template>
+        <template v-else-if="column.key === 'agent'">{{ user.role === 'agent' ? '代理账号' : user.agentParentId ? staffName(user.agentParentId) : '未设置代理' }}</template>
+        <template v-else-if="column.key === 'vip'">
+          <Tag v-if="user.isVip" color="gold">VIP{{ user.vipLevel || '' }}</Tag>
+          <TypographyText v-else type="secondary">—</TypographyText>
+        </template>
+        <template v-else-if="column.key === 'credit'">{{ user.creditScore ?? '—' }}</template>
+        <template v-else-if="column.key === 'balance'">{{ formatCurrency(user.balance) }}</template>
+        <template v-else-if="column.key === 'parent'">
+          <template v-if="user.parentUsername">{{ user.parentUsername }}</template>
+          <TypographyText v-else type="secondary">—</TypographyText>
+        </template>
+        <template v-else-if="column.key === 'pointControl'">
+          <Tag v-if="controlMetaOf(user).hasCurrent" :color="pointControlTagColor(controlMetaOf(user).controlLabel)">{{ controlMetaOf(user).controlLabel }}</Tag>
+          <TypographyText v-else type="secondary">—</TypographyText>
+        </template>
+        <Space v-else-if="column.key === 'actions'" data-testid="user-row-action-bar" :size="8">
+          <Button type="link" class="px-0" aria-label="查看用户详情" @click="selectUserDetail(user, $event.currentTarget)">详情</Button>
+          <Button type="link" class="px-0" aria-label="编辑用户资料" @click="handleOperationDrawerAction({ id: 'edit-profile', user, trigger: $event.currentTarget })">编辑资料</Button>
+          <Button type="link" class="px-0" aria-label="客服入金" @click="openRegularAction(user, 'deposit', $event.currentTarget)">入金</Button>
+          <Dropdown :trigger="['click']" placement="bottomRight">
+            <Button
+              type="link"
+              class="px-0"
+              :ref="(element) => setActionMenuTriggerRef(user, element?.$el || element)"
+              aria-label="更多用户操作"
+            >更多<DownOutlined /></Button>
+            <template #overlay>
+              <Menu>
+                <MenuItem v-for="action in moreRowActions(user)" :key="action.id" :disabled="action.disabled" :danger="action.danger" @click="runMoreRowAction(user, action.id)">{{ action.label }}</MenuItem>
+                <MenuDivider />
+                <MenuItem key="all-operations" @click="runMoreRowAction(user, 'all-operations')">全部操作</MenuItem>
+              </Menu>
+            </template>
+          </Dropdown>
+        </Space>
+        <template v-else>{{ user[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
 
     <!-- 用户详情抽屉 -->
     <UserDetailDrawer
@@ -1555,32 +1311,9 @@ const unifiedCancelLifecycle = { rendered: unifiedCancelRendered, phase: unified
       @verify="verifyMembershipMfa"
       @cancel="handleMembershipMfaCancel"
     />
-  </section>
+  </PageShell>
 </template>
 
 <style scoped>
-[data-testid="user-row-action-bar"] :deep(.ant-btn) {
-  display: inline-flex; align-items: center; justify-content: center;
-  height: 32px; padding: 0 10px; font-size: 12px; font-weight: 500;
-  border-radius: 8px; box-shadow: none;
-}
-[data-testid="user-row-action-bar"] :deep(.ant-btn:not([aria-label="更多用户操作"])) { border-color: transparent; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="客服入金"]) { background: #eff6ff; color: #1d4ed8; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="客服入金"]:hover:not(:disabled)) { background: #dbeafe; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="封禁用户"]) { background: #fff1f2; color: #be123c; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="封禁用户"]:hover:not(:disabled)) { background: #ffe4e6; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="解封用户"]) { background: #ecfdf5; color: #047857; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="解封用户"]:hover:not(:disabled)) { background: #d1fae5; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户点控"]) { background: #fffbeb; color: #b45309; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户点控"]:hover:not(:disabled)) { background: #fef3c7; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="修改用户信用分"]) { background: #fff1f2; color: #be123c; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="修改用户信用分"]:hover:not(:disabled)) { background: #ffe4e6; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="查看用户信用分审核"]) { background: #f5f3ff; color: #6d28d9; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="查看用户信用分审核"]:hover:not(:disabled)) { background: #ede9fe; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户为代理"]) { background: #ecfdf5; color: #047857; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户为代理"]:hover:not(:disabled)) { background: #d1fae5; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户上级代理"]) { background: #ecfeff; color: #0e7490; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置用户上级代理"]:hover:not(:disabled)) { background: #cffafe; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置上级业务员"]) { background: #eef2ff; color: #4338ca; }
-[data-testid="user-row-action-bar"] :deep(.ant-btn[aria-label="设置上级业务员"]:hover:not(:disabled)) { background: #e0e7ff; }
+[data-testid="user-row-action-bar"] :deep(.ant-btn-link) { height: auto; }
 </style>

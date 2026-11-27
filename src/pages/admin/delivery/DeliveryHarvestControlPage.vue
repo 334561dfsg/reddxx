@@ -1,5 +1,11 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+// 全局收割监控 — Ant Design Pro list (2026-11-28): query card (币种 / 档位), table card with link action; the lock
+// result is a toast instead of a native alert. HarvestControlPanel (the L2 drawer) is unchanged.
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { Button, Space, Tag, TypographyText, message } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import { deliveryContractsData } from '../../../admin/mock/deliveryReport'
 import HarvestControlPanel from '../../../admin/components/HarvestControlPanel.vue'
 
@@ -181,36 +187,34 @@ const sortedRadar = computed(() => {
   })
 })
 
-const pageSize = ref(10)
+const blankFilters = () => ({ asset: 'all', tier: 'all' })
+const filters = ref(blankFilters())
 const page = ref(1)
+const assetOptions = computed(() => [...new Set(radarRows.value.map((row) => row.asset))].sort().map((value) => ({ value, label: value })))
+const tierOptions = computed(() => [...new Set(radarRows.value.map((row) => row.tierSec))].sort((a, b) => a - b).map((value) => ({ value: String(value), label: `${value} 秒` })))
+const queryFields = computed(() => [
+  { key: 'asset', label: '币种', searchable: true, options: [{ value: 'all', label: '全部币种' }, ...assetOptions.value] },
+  { key: 'tier', label: '档位', options: [{ value: 'all', label: '全部档位' }, ...tierOptions.value] }
+])
+const filteredRadar = computed(() => sortedRadar.value.filter((row) => (
+  (filters.value.asset === 'all' || row.asset === filters.value.asset) &&
+  (filters.value.tier === 'all' || String(row.tierSec) === filters.value.tier)
+)))
+function search(values) { filters.value = { ...blankFilters(), ...values }; page.value = 1 }
+function reset() { filters.value = blankFilters(); page.value = 1 }
 
-const totalItems = computed(() => sortedRadar.value.length)
-const totalPages = computed(() => Math.max(1, Math.ceil(totalItems.value / Number(pageSize.value || 10))))
-
-watch([totalItems, pageSize], () => {
-  page.value = 1
-})
-
-watch(
-  () => page.value,
-  (next) => {
-    const n = Math.floor(Number(next || 1))
-    page.value = clamp(n, 1, totalPages.value)
-  },
-  { immediate: true }
-)
-
-const pageStart = computed(() => (page.value - 1) * Number(pageSize.value || 10))
-const pageEnd = computed(() => Math.min(totalItems.value, pageStart.value + Number(pageSize.value || 10)))
-const pagedRadar = computed(() => sortedRadar.value.slice(pageStart.value, pageEnd.value))
-
-const goPrev = () => {
-  page.value = Math.max(1, page.value - 1)
-}
-
-const goNext = () => {
-  page.value = Math.min(totalPages.value, page.value + 1)
-}
+const columns = [
+  { key: 'label', title: '币种/档位', width: 150, fixed: 'left' },
+  { key: 'marketPrice', title: '市价', width: 120, align: 'right' },
+  { key: 'remainSec', title: '结算倒计时', width: 120 },
+  { key: 'volume24h', title: '24h 成交量（USD）', width: 150, align: 'right' },
+  { key: 'position', title: '总持仓（USD）', width: 130, align: 'right' },
+  { key: 'longShortRatio', title: '多空比', width: 90, align: 'right' },
+  { key: 'estimatedLoss', title: '平台预估亏损额（USD）', width: 180, align: 'right' },
+  { key: 'platformDelta', title: '平台净头寸 Delta（USD）', width: 190, align: 'right' },
+  { key: 'pnlNow', title: '实时盈亏 PnL（USD）', width: 170, align: 'right' },
+  { key: 'actions', title: '操作', width: 110, fixed: 'right' }
+]
 
 const selectedKey = ref(sortedRadar.value[0]?.key || '')
 const drawerOpen = ref(false)
@@ -230,10 +234,10 @@ const onLock = (payload) => {
     payload?.mode === 'squeeze'
       ? `多 ${formatPrice(payload?.settlementPriceLong)} / 空 ${formatPrice(payload?.settlementPriceShort)}`
       : formatPrice(payload?.settlementPrice)
-  alert(
-    `已锁定：${payload?.label || '-'}\n模式：${modeLabel}\n结算价：${settlementLabel}\n用户：${
+  message.success(
+    `已锁定：${payload?.label || '-'}，模式：${modeLabel}，结算价：${settlementLabel}，用户：${
       picked?.length ? `已选 ${picked.length}` : '全部'
-    }\n平台预估盈亏：${formatCompactUsd(payload?.estPlatformPnl, true)}\n（示意页面：未接真实接口）`
+    }，平台预估盈亏：${formatCompactUsd(payload?.estPlatformPnl, true)}（示意页面：未接真实接口）`
   )
 }
 
@@ -259,153 +263,55 @@ onBeforeUnmount(() => {
 
 const flashCountdown = (row) => secondsOf(row?.tierSec) === 10 && Number(row?.remainSec || 0) <= 3
 
-const deltaTone = (delta) => {
-  const v = Number(delta || 0)
-  return v > 0 ? 'text-blue-700' : v < 0 ? 'text-rose-700' : 'text-slate-600'
-}
+const clockText = computed(() => new Date(now.value).toISOString().replace('T', ' ').split('.')[0])
 </script>
 
 <template>
-  <section class="space-y-4">
-    <header class="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-semibold text-slate-900">交割合约 · 手动场控（全局监控）</h1>
-        <p class="mt-1 text-sm text-slate-500">查看全局风险档位，选择目标进入实施场控</p>
-      </div>
-      <div class="flex items-center gap-2 text-xs text-slate-500">
-        <span>刷新：1s</span>
-        <span class="font-mono">{{ new Date(now).toISOString().replace('T', ' ').split('.')[0] }}</span>
-      </div>
-    </header>
-
-    <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-      <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4 bg-slate-50/40">
-        <div>
-          <h2 class="text-sm font-semibold text-slate-900">全局收割监控（L1 - The Radar）</h2>
-          <p class="mt-0.5 text-[11px] text-slate-500">默认按平台预估亏损额倒序，点击整行进入 L2</p>
-        </div>
-        <div class="text-[11px] text-slate-400 font-mono">Global Harvest Radar</div>
-      </div>
-
-      <div class="overflow-x-auto">
-        <a-table  size="small" :pagination="false" :data-source="pagedRadar" :row-key="(row) => row.key" :scroll="{ x: 'max-content' }" :custom-row="(row, rowIndex) => ({ class: [&quot;group cursor-pointer hover:bg-slate-50/60&quot;], onClick: () => (pickRow(row)) })">
-<a-table-column key="column-0" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
-<template #title>币种/档位</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="font-semibold text-slate-900">{{ row.label }}</div>
-                <div class="mt-0.5 text-[11px] text-slate-500 font-mono">{{ row.key }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
-<template #title>市价</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="font-mono text-slate-900">{{ formatPrice(row.marketPrice) }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
-<template #title>结算倒计时</template>
-<template #default="{ record: row, index: rowIndex }">
-                <span
-                  class="inline-flex items-center rounded-lg border px-2.5 py-1 font-mono text-xs"
-                  :class="flashCountdown(row) ? 'flash-bg border-rose-200 text-rose-700' : 'border-slate-200 text-slate-700 bg-white'"
-                >
-                  {{ formatCountdown(row.remainSec) }}
-                </span>
-              </template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
-<template #title>24h成交量</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="font-mono text-slate-700">{{ formatCompactUsd(row.volume24h) }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
-<template #title>总持仓</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="font-mono text-slate-700">{{ formatCompactUsd(row.position) }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
-<template #title>多空比</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="font-mono text-slate-700">{{ Number(row.longShortRatio || 0).toFixed(2) }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-6" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
-<template #title>平台预估亏损额</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="font-mono text-rose-700">{{ formatCompactUsd(row.estimatedLoss) }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-7" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
-<template #title>平台净头寸 (Delta)</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="font-mono" :class="deltaTone(row.platformDelta)">
-                  {{ formatCompactUsd(row.platformDelta, true) }}
-                </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-8" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3&quot;] })">
-<template #title>实时盈亏 (PnL)</template>
-<template #default="{ record: row, index: rowIndex }">
-                <div class="font-mono" :class="row.pnlNow < 0 ? 'text-rose-700' : 'text-emerald-700'">
-                  {{ formatCompactUsd(row.pnlNow, true) }}
-                </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-9" align="right" :custom-cell="(row, rowIndex) => ({ class: [&quot;px-5 py-3 text-right&quot;] })">
-<template #title>进入</template>
-<template #default="{ record: row, index: rowIndex }">
-                <a-button type="text"
-                  html-type="button"
-                  class="inline-flex items-center rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
-                  @click.stop="pickRow(row)"
-                >
-                  实施场控
-                </a-button>
-              </template>
-</a-table-column>
-</a-table>
-      </div>
-
-      <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-white px-5 py-3">
-        <div class="text-xs text-slate-500">
-          显示 <span class="font-mono text-slate-700">{{ totalItems === 0 ? 0 : pageStart + 1 }}</span> -
-          <span class="font-mono text-slate-700">{{ pageEnd }}</span> / <span class="font-mono text-slate-700">{{ totalItems }}</span>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <a-select :get-popup-container="(trigger) => trigger.parentElement"
-            class=""
-            v-model:value.number="pageSize"
-          >
-            <a-select-option :value="10">10 / 页</a-select-option>
-            <a-select-option :value="20">20 / 页</a-select-option>
-            <a-select-option :value="50">50 / 页</a-select-option>
-          </a-select>
-
-          <a-pagination size="small" :current="page" :total="totalPages" :page-size="1" :show-size-changer="false" @change="page = $event" />
-        </div>
-      </div>
-    </div>
+  <PageShell>
+    <SearchForm name="delivery-harvest-filters" :model="filters" :fields="queryFields" @search="search" @reset="reset" />
+    <AdminTable title="全局收割监控" v-model:page="page" :rows="filteredRadar" :columns="columns" row-key="key" desktop-only>
+      <template #toolbar>
+        <TypographyText type="secondary">按平台预估亏损额倒序 · 刷新 1s · <span class="font-mono">{{ clockText }}</span></TypographyText>
+      </template>
+      <template #cell="{ column, record }">
+        <Space v-if="column.key === 'label'" direction="vertical" :size="0">
+          <TypographyText strong>{{ record.label }}</TypographyText>
+          <TypographyText type="secondary" class="font-mono">{{ record.key }}</TypographyText>
+        </Space>
+        <span v-else-if="column.key === 'marketPrice'" class="font-mono">{{ formatPrice(record.marketPrice) }}</span>
+        <Tag v-else-if="column.key === 'remainSec'" :color="flashCountdown(record) ? 'red' : 'default'" class="font-mono" :class="{ 'flash-bg': flashCountdown(record) }">{{ formatCountdown(record.remainSec) }}{{ flashCountdown(record) ? ' 即将结算' : '' }}</Tag>
+        <span v-else-if="column.key === 'volume24h'" class="font-mono">{{ formatCompactUsd(record.volume24h) }}</span>
+        <span v-else-if="column.key === 'position'" class="font-mono">{{ formatCompactUsd(record.position) }}</span>
+        <span v-else-if="column.key === 'longShortRatio'" class="font-mono">{{ Number(record.longShortRatio || 0).toFixed(2) }}</span>
+        <TypographyText v-else-if="column.key === 'estimatedLoss'" type="danger" class="font-mono">{{ formatCompactUsd(record.estimatedLoss) }}</TypographyText>
+        <TypographyText v-else-if="column.key === 'platformDelta'" :type="record.platformDelta < 0 ? 'danger' : undefined" class="font-mono">{{ formatCompactUsd(record.platformDelta, true) }}</TypographyText>
+        <TypographyText v-else-if="column.key === 'pnlNow'" :type="record.pnlNow < 0 ? 'danger' : 'success'" class="font-mono">{{ formatCompactUsd(record.pnlNow, true) }}</TypographyText>
+        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" :aria-label="`对 ${record.label} 实施场控`" @click="pickRow(record)">实施场控</Button>
+        <template v-else>{{ record[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
 
     <HarvestControlPanel v-model="drawerOpen" :row="selectedRow" @lock="onLock" />
-  </section>
+  </PageShell>
 </template>
 
 <style scoped>
 .flash-bg {
-  background: rgba(244, 63, 94, 0.12);
   animation: flash 0.8s ease-in-out infinite;
 }
 
 @keyframes flash {
   0%,
   100% {
-    background: rgba(244, 63, 94, 0.12);
+    opacity: 1;
   }
   50% {
-    background: rgba(244, 63, 94, 0.3);
+    opacity: 0.55;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flash-bg {
+    animation: none;
   }
 }
 </style>

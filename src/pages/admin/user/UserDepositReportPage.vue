@@ -1,7 +1,15 @@
 <script setup>
+// 用户充值报表 — Ant Design Pro report page (2026-11-28): query card (EarnSearchForm; the old combined 用户 ID / 昵称
+// box is split into two fields, the two dates into one required range), per-type USDT totals as a Statistic card, and
+// the detail table card (EarnAdminTable) with export, export-file and column-setting tools in its toolbar. Export
+// tasks, column preferences and the error/retry toast are unchanged.
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { DownloadOutlined, FileExcelOutlined, SettingOutlined } from '@ant-design/icons-vue'
+import { Button, Card, Col, Row, Space, Statistic, Tag, TypographyText } from 'ant-design-vue'
+import { DownloadOutlined, FileExcelOutlined, ReloadOutlined, SettingOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import { getUserStaffRepository } from '../../../admin/repositories/userStaffRepository.js'
 import { defaultUserReportFilters, depositUserTypeOptions, depositUserTypeLabel, depositReportStatus, userReportTime } from '../../../features/user-staff/userDepositReport.js'
 import { getUserDepositReport } from '../../../admin/repositories/userDepositReportRepository.js'
@@ -26,7 +34,8 @@ const tableColumnLayoutState = reactive({
   appliedLayout: defaultColumns(),
   persistedLayout: null
 })
-const reportColumns = computed(() => columnRegistry.filter(column => tableColumnLayoutState.appliedLayout.includes(column.id)).map(column => ({ key: column.id, title: column.label, width: column.id === 'amount' ? 160 : 180 })))
+const columnLayout = { order: { width: 200 }, user: { width: 200 }, agent: { width: 200 }, employee: { width: 200 }, amount: { width: 170, align: 'right' }, usdt: { width: 150, align: 'right', title: '折合（USDT）' }, status: { width: 170 } }
+const reportColumns = computed(() => columnRegistry.filter(column => tableColumnLayoutState.appliedLayout.includes(column.id)).map(column => ({ key: column.id, title: column.label, ...columnLayout[column.id] })))
 const columnsOpen = ref(false)
 const columnsRoot = ref(null)
 const columnsTrigger = ref(null)
@@ -67,16 +76,17 @@ function selectAllColumns(event) {
 function outsideColumns(event) {
   if (columnsOpen.value && !columnsRoot.value?.contains(event.target)) closeColumns(false)
 }
-const draft = reactive(defaultUserReportFilters())
+// Applied query: the query card keeps its own draft; 查询 replaces this, 重置 restores the last-30-days default.
+const blank = () => {
+  const defaults = defaultUserReportFilters()
+  return { date: [defaults.startDate, defaults.endDate], userType: 'all', userId: '', nickname: '', agentId: 'all', employeeId: 'all' }
+}
+const filters = ref(blank())
 const report = ref(null)
 const agents = ref([])
 const employees = ref([])
 const error = ref('')
-const dateError = computed(() => error.value.includes('日期'))
-const errorRef = ref(null)
-const headingRef = ref(null)
 const page = ref(1)
-const pageSize = ref(10)
 const receipt = ref('')
 const exportError = ref('')
 const exporting = ref(false)
@@ -140,21 +150,33 @@ function retryTask(task) {
 let live = true
 const loading = ref(false)
 let queryGeneration = 0
-const pages = computed(() => Math.max(1, Math.ceil((report.value?.rows.length || 0) / pageSize.value)))
-const rows = computed(() => report.value?.rows.slice((page.value - 1) * pageSize.value, page.value * pageSize.value) || [])
-const dirty = computed(() => report.value && Object.keys(draft).some(key => draft[key].trim() !== report.value.filters[key]))
-const agentOptions = computed(() => [{ value: '', label: '全部代理' }, { value: 'unassigned', label: '未分配代理' }, ...agents.value.map(userOption)])
+const rows = computed(() => report.value?.rows || [])
 // Keep the full option set, so changing the agent never silently replaces a
 // selected salesperson. Incompatible combinations receive a query error.
-const employeeOptions = computed(() => [{ value: '', label: '全部业务员' }, { value: 'unassigned', label: '未分配业务员' }, ...employees.value.map(userOption)])
-const userTypeOptions = [{ value: '', label: '全部类型' }, ...depositUserTypeOptions]
+const agentOptions = computed(() => [{ value: 'all', label: '全部代理' }, { value: 'unassigned', label: '未分配代理' }, ...agents.value.map(userOption)])
+const employeeOptions = computed(() => [{ value: 'all', label: '全部业务员' }, { value: 'unassigned', label: '未分配业务员' }, ...employees.value.map(userOption)])
+const userTypeOptions = [{ value: 'all', label: '全部类型' }, ...depositUserTypeOptions]
+const fields = computed(() => [
+  { key: 'date', label: '充值日期', range: true },
+  { key: 'userType', label: '用户类型', options: userTypeOptions },
+  { key: 'userId', label: '用户 ID' },
+  { key: 'nickname', label: '昵称' },
+  { key: 'agentId', label: '所属代理', searchable: true, options: agentOptions.value },
+  { key: 'employeeId', label: '所属业务员', searchable: true, options: employeeOptions.value }
+])
 const format = (value, precision = 8) => value == null ? '—' : Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: precision })
+// The label carries UID and email, so typing either one finds the person (Select filters by label).
 function userOption(user) {
   const uid = String(user.uid ?? user.id).replace(/^user_/, '')
-  return { value: user.id, label: `${user.username} · UID ${uid}`, description: user.email || '未设置邮箱', searchText: `${user.id} UID ${uid} ${user.username} ${user.email || ''}` }
+  return { value: user.id, label: `${user.username} · UID ${uid} · ${user.email || '未设置邮箱'}` }
 }
-function filterUserOption(input, option) {
-  return String(option.searchText || option.label).toLowerCase().includes(input.trim().toLowerCase())
+const allToBlank = value => (value === 'all' ? '' : value || '')
+function loadStaffOptions() {
+  try {
+    const repository = getUserStaffRepository()
+    agents.value = repository.agents()
+    employees.value = repository.employees()
+  } catch { /* the query reports repository failures */ }
 }
 function clearArtifact() {
   receipt.value = ''
@@ -162,7 +184,11 @@ function clearArtifact() {
 }
 async function query() {
   const generation = ++queryGeneration
-  const snapshot = { ...draft }
+  const f = filters.value
+  const snapshot = {
+    startDate: f.date?.[0] || '', endDate: f.date?.[1] || '', userType: allToBlank(f.userType),
+    agentId: allToBlank(f.agentId), employeeId: allToBlank(f.employeeId), keyword: '', userId: f.userId || '', nickname: f.nickname || ''
+  }
   error.value = ''
   loading.value = true
   clearArtifact()
@@ -177,16 +203,12 @@ async function query() {
   } catch (cause) {
     if (!live || generation !== queryGeneration) return
     error.value = cause.message || '充值报表加载失败，请重试'
-    await nextTick()
-    if (live && generation === queryGeneration) errorRef.value?.focus()
   } finally {
     if (live && generation === queryGeneration) loading.value = false
   }
 }
-function reset() {
-  Object.assign(draft, defaultUserReportFilters())
-  query()
-}
+function search(values) { filters.value = { ...blank(), ...values }; query() }
+function reset() { filters.value = blank(); query() }
 async function exportCsv() {
   if (!report.value?.rows.length || error.value || loading.value || exporting.value) return
   exporting.value = true
@@ -200,22 +222,16 @@ async function exportCsv() {
   } catch (cause) { exportError.value = cause.message || '任务创建失败，请重试' }
   finally { exporting.value = false }
 }
+loadStaffOptions()
 onMounted(async () => {
   document.addEventListener('pointerdown', outsideColumns)
   await query()
-  if (live && !error.value) headingRef.value?.focus()
 })
 onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); clearArtifact(); document.removeEventListener('pointerdown', outsideColumns) })
 </script>
 
 <template>
-  <section class="user-deposit-report space-y-5" aria-labelledby="user-deposit-report-title">
-    <header class="flex flex-wrap items-start justify-between gap-3">
-      <div class="min-w-0">
-        <h1 id="user-deposit-report-title" ref="headingRef" tabindex="-1" class="text-2xl font-bold text-slate-900">用户充值报表</h1>
-        <p class="mt-1 text-sm text-slate-500">每笔充值单独展示，支持按用户类型、所属代理、所属业务员和充值时间查询。用户类型按当前账号身份展示。</p>
-      </div>
-    </header>
+  <PageShell class="user-deposit-report">
     <a-modal v-model:open="exportProgressOpen" :title="exportProgressTitle" :width="560" :mask-closable="false" class="deposit-export-modal" :after-close="() => releaseTaskBackground(exportTrigger)">
       <div class="py-6 text-center">
         <template v-if="activeExport?.status === 'succeeded'">
@@ -249,121 +265,89 @@ onUnmounted(() => { live = false; unsubscribeTasks(); releaseTaskBackground(); c
       <span role="status" class="sr-only">{{ runningTasks ? `${runningTasks} 个任务生成中` : '任务列表已更新' }}</span>
     </a-modal>
 
-    <a-card :bordered="false"><a-form :model="draft" layout="vertical" aria-label="用户充值查询" @finish="query">
-      <div class="grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <label class="report-field">所属代理
-          <a-select v-model:value="draft.agentId" :options="agentOptions" show-search :filter-option="filterUserOption" :virtual="false" placeholder="输入 UID 或邮箱搜索" aria-label="所属代理，可按 UID 或邮箱搜索" not-found-content="未找到匹配的 UID 或邮箱">
-            <template #option="option">
-              <div>{{ option.label }}</div>
-              <div v-if="option.description" class="text-xs font-normal text-slate-500">{{ option.description }}</div>
-            </template>
-          </a-select>
-        </label>
-        <label class="report-field">所属业务员
-          <a-select v-model:value="draft.employeeId" :options="employeeOptions" show-search :filter-option="filterUserOption" :virtual="false" placeholder="输入 UID 或邮箱搜索" aria-label="所属业务员，可按 UID 或邮箱搜索" not-found-content="未找到匹配的 UID 或邮箱">
-            <template #option="option">
-              <div>{{ option.label }}</div>
-              <div v-if="option.description" class="text-xs font-normal text-slate-500">{{ option.description }}</div>
-            </template>
-          </a-select>
-        </label>
-        <label class="report-field">用户类型
-          <a-select v-model:value="draft.userType" :options="userTypeOptions" :virtual="false" aria-label="用户类型" />
-        </label>
-        <label class="report-field">用户 ID / 昵称<a-input v-model:value="draft.keyword" type="search" placeholder="输入用户 ID 或昵称" autocomplete="off" @keydown.enter="event => event.isComposing && event.preventDefault()" /></label>
-        <label class="report-field">开始日期（UTC+8）<a-date-picker v-model:value="draft.startDate" value-format="YYYY-MM-DD" format="YYYY-MM-DD" :allow-clear="false" required :aria-invalid="dateError" :aria-describedby="dateError ? 'user-report-error' : undefined" /></label>
-        <label class="report-field">结束日期（UTC+8）<a-date-picker v-model:value="draft.endDate" value-format="YYYY-MM-DD" format="YYYY-MM-DD" :allow-clear="false" required :aria-invalid="dateError" :aria-describedby="dateError ? 'user-report-error' : undefined" /></label>
-        <div class="flex flex-wrap gap-2">
-          <a-button html-type="submit" type="primary" :disabled="loading">{{ loading ? '正在查询…' : '查询报表' }}</a-button>
-          <a-button html-type="button" @click="reset">重置为近 30 天</a-button>
-        </div>
-      </div>
-      <p v-if="dirty" class="mt-2 text-sm text-amber-800">筛选条件尚未应用，请点击“查询报表”更新列表和导出数据。</p>
-    </a-form></a-card>
+    <SearchForm name="user-deposit-report-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
 
-    <FeedbackToast v-if="error" id="user-report-error" ref="errorRef" type="error" :source="() => (error) ? (([String((error) ?? ''),((report) ? [&quot;。以下保留上次成功查询结果，重新查询成功后可导出。&quot;].join('') : ''),''].join(''))) : ''"><a-button html-type="button" @click="query">重试查询</a-button></FeedbackToast>
+    <Card v-if="report" :bordered="false" title="按用户类型汇总（当前查询结果）">
+      <Row :gutter="24">
+        <Col v-for="item in report.typeTotals" :key="item.userType" :span="6">
+          <Statistic :title="`${item.label}充值（USDT）`" :value="format(item.totalUsdt, 2)" />
+          <TypographyText v-if="item.missingCount" type="warning">{{ item.missingCount }} 笔缺少折合金额，未计入</TypographyText>
+        </Col>
+      </Row>
+    </Card>
 
-    <p v-if="loading" role="status" class="text-sm text-slate-600">正在加载充值订单<span v-if="report">，下方暂为上次查询结果</span>…</p>
-    <template v-if="report">
-      <section class="min-w-0 rounded-xl border border-slate-200 bg-white" aria-labelledby="report-results-title" data-capability-tier="display" :aria-busy="loading">
-        <div class="space-y-3 border-b border-slate-200 p-4 sm:p-5">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="min-w-0 flex-1">
-              <div class="flex flex-wrap items-baseline gap-x-5 gap-y-2">
-                <h2 id="report-results-title" class="font-semibold text-slate-900">充值明细 <span class="ml-1 text-sm font-normal text-slate-500">{{ report.rows.length }} 笔充值</span></h2>
-                <dl class="flex min-w-0 flex-wrap items-baseline gap-x-1 gap-y-1 text-sm font-normal text-slate-500" aria-label="当前查询结果按用户类型汇总充值 USDT">
-                  <div v-for="(item, index) in report.typeTotals" :key="item.userType" class="flex min-w-0 flex-wrap items-baseline gap-y-1">
-                    <dt><span v-if="index" class="mx-1" aria-hidden="true">/</span>{{ item.label }}：</dt>
-                    <dd class="m-0"><span class="tabular-nums" :class="item.totalUsdt == null ? '' : 'font-semibold text-red-500'">{{ format(item.totalUsdt, 2) }}</span> USDT</dd>
-                    <dd v-if="item.missingCount" class="m-0 ml-1 text-xs font-normal text-amber-800">（{{ item.missingCount }} 笔缺少折合金额，未计入）</dd>
-                  </div>
-                </dl>
-              </div>
-            </div>
-            <div class="flex flex-wrap items-center gap-2">
-              <a-button ref="exportTrigger" html-type="button" :disabled="!report.rows.length || !!error || loading || exporting" :aria-busy="exporting" @click="exportCsv">{{ exporting ? '正在创建任务…' : '导出全部查询结果' }}</a-button>
-              <a-button ref="taskTrigger" @click="taskError = ''; tasksOpen = true"><template #icon><DownloadOutlined /></template>导出文件下载<span v-if="runningTasks">（{{ runningTasks }}）</span></a-button>
-              <RouterLink to="/admin/users/list" custom v-slot="{ href, navigate }"><a-button :href="href" @click="navigate">用户列表</a-button></RouterLink>
-              <div ref="columnsRoot" class="column-settings" @keydown.esc.stop.prevent="closeColumns()" @focusout="event => { if (columnsOpen && event.relatedTarget && !columnsRoot?.contains(event.relatedTarget)) closeColumns(false) }">
-                <a-popover :open="columnsOpen" :arrow="false" placement="bottomRight" :get-popup-container="trigger => trigger.parentElement">
-                <a-button ref="columnsTrigger" type="text" size="small" aria-label="列设置" title="列设置" html-type="button" :aria-expanded="columnsOpen" aria-controls="report-column-settings" @click="toggleColumns">
-                  <template #icon><SettingOutlined /></template>
-                </a-button>
-                <template #content>
-                <section id="report-column-settings" class="column-panel" aria-label="充值报表列设置">
-                  <div class="flex items-center justify-between gap-3 pb-2">
-                    <a-checkbox ref="columnsAll" class="column-option font-semibold" :checked="allColumnsSelected" :indeterminate="someColumnsSelected && !allColumnsSelected" @change="selectAllColumns">列显示</a-checkbox>
-                    <a-button type="link" size="small" html-type="button" @click="resetColumns">重置</a-button>
-                  </div>
-                  <fieldset class="column-options">
-                    <legend class="sr-only">显示的报表字段</legend>
-                    <a-checkbox v-for="column in columnRegistry" :key="column.id" class="column-option" :checked="tableColumnLayoutState.draftLayout.includes(column.id)" :disabled="column.required" @change="event => setColumnVisible(column.id, event.target.checked)">
-                      <span>{{ column.label }}<span v-if="column.required" class="ml-1 text-xs text-slate-400">必显</span></span>
-                    </a-checkbox>
-                  </fieldset>
-                </section>
-                </template>
-                </a-popover>
-              </div>
-            </div>
-          </div>
-          <p class="text-sm text-slate-500">用户类型：{{ report.userTypeLabel }}</p>
-          <p role="status" class="sr-only">{{ columnsNotice }}</p>
-          <p v-if="receipt" role="status" class="text-sm text-emerald-800">{{ receipt }}</p>
+    <AdminTable title="充值明细" v-model:page="page" :rows="rows" :columns="reportColumns" :loading="loading" row-key="orderId" desktop-only :aria-busy="loading">
+      <template #toolbar>
+        <Space :size="8">
+          <FeedbackToast v-if="error" id="user-report-error" type="error" :source="() => (error) ? (([String((error) ?? ''),((report) ? [&quot;。以下保留上次成功查询结果，重新查询成功后可导出。&quot;].join('') : ''),''].join(''))) : ''"><Button @click="query"><template #icon><ReloadOutlined /></template>重试查询</Button></FeedbackToast>
           <FeedbackToast v-if="exportError" type="error" :source="() => (exportError) ? (exportError) : ''"></FeedbackToast>
-        </div>
-
-        <div v-if="!rows.length" class="px-4 py-10 text-center">
-          <p class="font-medium text-slate-800">当前条件没有充值记录</p>
-          <p class="mt-2 text-sm text-slate-500">可调整用户类型、充值日期、代理、业务员或用户关键词后重新查询。</p>
-          <a-button html-type="button" @click="reset">重置筛选条件</a-button>
-        </div>
-        <a-table v-else :columns="reportColumns" :data-source="rows" row-key="orderId" :pagination="false" :scroll="{ x: 1100 }" size="middle"><template #bodyCell="{ column, record: row }"><template v-if="column.key === 'order'"><span class="block font-semibold text-slate-900">{{ row.orderId }}</span><span class="mt-1 block text-xs text-slate-500">{{ userReportTime(row.submitTime) }}</span></template>
-          <template v-if="column.key === 'user'"><div><span class="block font-medium text-slate-900">{{ row.nickname }}</span><div class="mt-1 flex flex-wrap items-center gap-1"><span class="text-xs text-slate-500">{{ row.userId }}</span><a-tag :color="row.userType === 'agent' ? 'purple' : row.userType === 'salesperson' ? 'blue' : undefined">{{ depositUserTypeLabel(row.userType) }}</a-tag></div></div></template>
-          <template v-if="column.key === 'agent'"><div><span class="block">{{ row.agentId || '未分配代理' }}</span><span class="mt-1 block text-xs text-slate-500">{{ row.agentEmail || (row.agentId ? '未设置邮箱' : '—') }}</span></div></template>
-          <template v-if="column.key === 'employee'"><div><span class="block">{{ row.employeeId || '未分配业务员' }}</span><span class="mt-1 block text-xs text-slate-500">{{ row.employeeEmail || (row.employeeId ? '未设置邮箱' : '—') }}</span></div></template>
-          <template v-if="column.key === 'amount'"><div><span>{{ format(row.amount) }}</span><span class="mt-1 block text-xs text-slate-500">{{ row.coin }}</span></div></template>
-          <template v-if="column.key === 'usdt'"><span>{{ format(row.usdtValue, 2) }}</span></template>
-          <template v-if="column.key === 'status'"><div><a-tag color="success">{{ depositReportStatus(row.status) }}</a-tag><span class="mt-1 block text-xs text-slate-500">{{ userReportTime(row.creditedTime) }}</span></div></template></template></a-table>
-        <div class="flex justify-end border-t border-slate-200 p-4"><a-pagination v-model:current="page" v-model:page-size="pageSize" :total="report.rows.length" :page-size-options="['10', '20', '50']" show-size-changer :show-total="total => `共 ${total} 条`" @show-size-change="page = 1" /></div>
-      </section>
-    </template>
-  </section>
+          <Button ref="exportTrigger" type="primary" :disabled="!report?.rows.length || !!error || loading || exporting" :aria-busy="exporting" @click="exportCsv"><template #icon><FileExcelOutlined /></template>{{ exporting ? '正在创建任务…' : '导出全部查询结果' }}</Button>
+          <Button ref="taskTrigger" @click="taskError = ''; tasksOpen = true"><template #icon><DownloadOutlined /></template>导出文件下载<span v-if="runningTasks">（{{ runningTasks }}）</span></Button>
+          <div ref="columnsRoot" class="column-settings" @keydown.esc.stop.prevent="closeColumns()" @focusout="event => { if (columnsOpen && event.relatedTarget && !columnsRoot?.contains(event.relatedTarget)) closeColumns(false) }">
+            <a-popover :open="columnsOpen" :arrow="false" placement="bottomRight" :get-popup-container="trigger => trigger.parentElement">
+            <Button ref="columnsTrigger" type="text" aria-label="列设置" title="列设置" :aria-expanded="columnsOpen" aria-controls="report-column-settings" @click="toggleColumns">
+              <template #icon><SettingOutlined /></template>
+            </Button>
+            <template #content>
+            <section id="report-column-settings" class="column-panel" aria-label="充值报表列设置">
+              <div class="column-panel-header">
+                <a-checkbox ref="columnsAll" class="column-option" :checked="allColumnsSelected" :indeterminate="someColumnsSelected && !allColumnsSelected" @change="selectAllColumns">列显示</a-checkbox>
+                <Button type="link" size="small" @click="resetColumns">重置</Button>
+              </div>
+              <fieldset class="column-options">
+                <legend class="sr-only">显示的报表字段</legend>
+                <a-checkbox v-for="column in columnRegistry" :key="column.id" class="column-option" :checked="tableColumnLayoutState.draftLayout.includes(column.id)" :disabled="column.required" @change="event => setColumnVisible(column.id, event.target.checked)">
+                  <span>{{ column.label }}<TypographyText v-if="column.required" type="secondary"> 必显</TypographyText></span>
+                </a-checkbox>
+              </fieldset>
+            </section>
+            </template>
+            </a-popover>
+          </div>
+        </Space>
+        <span role="status" class="sr-only">{{ columnsNotice }}</span>
+        <span v-if="receipt" role="status" class="sr-only">{{ receipt }}</span>
+      </template>
+      <template #cell="{ column, record: row }">
+        <Space v-if="column.key === 'order'" direction="vertical" :size="0">
+          <span class="font-mono">{{ row.orderId }}</span>
+          <TypographyText type="secondary">{{ userReportTime(row.submitTime) }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'user'" direction="vertical" :size="0">
+          <span>{{ row.nickname }} <Tag :color="row.userType === 'agent' ? 'purple' : row.userType === 'salesperson' ? 'blue' : undefined">{{ depositUserTypeLabel(row.userType) }}</Tag></span>
+          <TypographyText type="secondary" class="font-mono">{{ row.userId }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'agent'" direction="vertical" :size="0">
+          <span class="font-mono">{{ row.agentId || '未分配代理' }}</span>
+          <TypographyText type="secondary">{{ row.agentEmail || (row.agentId ? '未设置邮箱' : '—') }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'employee'" direction="vertical" :size="0">
+          <span class="font-mono">{{ row.employeeId || '未分配业务员' }}</span>
+          <TypographyText type="secondary">{{ row.employeeEmail || (row.employeeId ? '未设置邮箱' : '—') }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'amount'" direction="vertical" :size="0" align="end">
+          <span>{{ format(row.amount) }}</span>
+          <TypographyText type="secondary">{{ row.coin }}</TypographyText>
+        </Space>
+        <span v-else-if="column.key === 'usdt'">{{ format(row.usdtValue, 2) }}</span>
+        <Space v-else-if="column.key === 'status'" direction="vertical" :size="0">
+          <Tag color="success">{{ depositReportStatus(row.status) }}</Tag>
+          <TypographyText type="secondary">{{ userReportTime(row.creditedTime) }}</TypographyText>
+        </Space>
+        <template v-else>{{ row[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
+  </PageShell>
 </template>
 
 <style scoped>
-.user-deposit-report { min-width: 0; padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) max(1rem, env(safe-area-inset-bottom, 0)) env(safe-area-inset-left, 0); overflow-wrap: anywhere; }
-.report-button { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: .5rem; border: 1px solid #cbd5e1; border-radius: .5rem; padding: .5rem .875rem; background: #fff; color: #334155; font-size: .875rem; font-weight: 500; }
-.report-button:hover:not(:disabled) { background: #f8fafc; }
-.report-primary, .report-primary:hover:not(:disabled) { background: #2563eb; color: white; border-color: #2563eb; }
-.report-button:disabled { cursor: not-allowed; opacity: .45; }
 .export-file-card { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid #e8ecef; border-radius: 8px; background: #fafcfb; flex-wrap: wrap; }
 .export-file-icon { display: grid; place-items: center; width: 48px; height: 56px; flex-shrink: 0; border-radius: 8px; background: #e8f5ed; color: #217346; font-size: 30px; }
-.report-field { display: flex; min-width: 0; flex-direction: column; gap: .25rem; font-size: .875rem; font-weight: 500; color: #374151; }
 .column-settings { position: relative; }
 .column-panel { width: 216px; max-width: calc(100vw - 4rem); }
+.column-panel-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 8px; }
 .column-options { padding: 0; max-height: 60vh; max-height: 60dvh; overflow-y: auto; }
-.column-option { display: flex; align-items: center; min-height: 30px; margin-inline-start: 0; font-size: .875rem; color: #334155; cursor: pointer; }
+.column-option { display: flex; align-items: center; min-height: 30px; margin-inline-start: 0; cursor: pointer; }
 
 @media (pointer: coarse) { .column-option { min-height: 44px; } }
 </style>

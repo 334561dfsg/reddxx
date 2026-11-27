@@ -100,7 +100,7 @@ test('AI quant products sort by descending configured order and keep missing val
 
 test('AI quant product editor exposes numeric sort order beside product status', () => {
   assert.match(adminProductSource, /v-model:value\.number="productForm\.sortOrder"/)
-  assert.match(adminProductSource, /产品状态[\s\S]*产品排序/)
+  assert.match(adminProductSource, /产品状态[\s\S]*排序权重/)
   assert.match(adminProductSource, /sortAiQuantProducts/)
   assert.match(frontListSource, /sortAiQuantProducts/)
   assert.match(mockCatalogSource, /sortOrder:/)

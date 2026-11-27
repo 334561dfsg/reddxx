@@ -1,153 +1,88 @@
 <script setup>
+// 地址日志 — Ant Design Pro list page (2026-11-28): query card, type counts as Statistics, table card with pagination.
+// The old type tabs are now the 类型 query field; search applies on 查询 instead of instantly.
 import { computed, ref } from 'vue'
+import { Card, Col, Row, Space, Statistic, Tag, TypographyText } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import { ASSET_ADDRESS_LOG_STATUS, ASSET_ADDRESS_LOG_TYPE, ASSET_COMMON_FILTER_ALL } from '../../../admin/constants/assets'
 import { createAssetsAddressLogsMock } from '../../../admin/mock/assets'
 
-const typeTab = ref(ASSET_COMMON_FILTER_ALL)
-const coinFilter = ref(ASSET_COMMON_FILTER_ALL)
-const statusFilter = ref(ASSET_COMMON_FILTER_ALL)
-const keyword = ref('')
-
-// 分页相关
-const currentPage = ref(1)
-const pageSize = ref(5)
-
 const logs = ref(createAssetsAddressLogsMock())
+const page = ref(1)
 
-const countByType = computed(() => ({
-  deposit: logs.value.filter((i) => i.type === ASSET_ADDRESS_LOG_TYPE.DEPOSIT).length,
-  withdraw: logs.value.filter((i) => i.type === ASSET_ADDRESS_LOG_TYPE.WITHDRAW).length,
-  collect: logs.value.filter((i) => i.type === ASSET_ADDRESS_LOG_TYPE.COLLECT).length,
-  transfer: logs.value.filter((i) => i.type === ASSET_ADDRESS_LOG_TYPE.TRANSFER).length
+const typeMeta = {
+  [ASSET_ADDRESS_LOG_TYPE.DEPOSIT]: { text: '充值', color: 'green' },
+  [ASSET_ADDRESS_LOG_TYPE.WITHDRAW]: { text: '提现', color: 'red' },
+  [ASSET_ADDRESS_LOG_TYPE.COLLECT]: { text: '归集', color: 'blue' },
+  [ASSET_ADDRESS_LOG_TYPE.TRANSFER]: { text: '转账', color: 'purple' }
+}
+const statusMeta = {
+  [ASSET_ADDRESS_LOG_STATUS.CONFIRMED]: { text: '已确认', color: 'green' },
+  [ASSET_ADDRESS_LOG_STATUS.PENDING]: { text: '待确认', color: 'orange' },
+  [ASSET_ADDRESS_LOG_STATUS.FAILED]: { text: '失败', color: 'red' }
+}
+
+const countByType = computed(() => Object.keys(typeMeta).map((type) => ({ type, text: typeMeta[type].text, count: logs.value.filter((i) => i.type === type).length })))
+
+const coinOptions = computed(() => [...new Set(['USDT', 'BTC', 'ETH', ...logs.value.map((i) => i.coin)])].map((value) => ({ value, label: value })))
+const blank = () => ({ type: ASSET_COMMON_FILTER_ALL, coin: ASSET_COMMON_FILTER_ALL, status: ASSET_COMMON_FILTER_ALL, txHash: '', address: '' })
+const filters = ref(blank())
+const fields = computed(() => [
+  { key: 'type', label: '类型', options: [{ value: ASSET_COMMON_FILTER_ALL, label: '全部类型' }, ...Object.entries(typeMeta).map(([value, meta]) => ({ value, label: meta.text }))] },
+  { key: 'coin', label: '币种', searchable: true, options: [{ value: ASSET_COMMON_FILTER_ALL, label: '全部币种' }, ...coinOptions.value] },
+  { key: 'status', label: '状态', options: [{ value: ASSET_COMMON_FILTER_ALL, label: '全部状态' }, ...Object.entries(statusMeta).map(([value, meta]) => ({ value, label: meta.text }))] },
+  { key: 'txHash', label: '交易哈希' },
+  { key: 'address', label: '地址' }
+])
+const has = (value, query) => !query || String(value).toLowerCase().includes(query.trim().toLowerCase())
+
+const rows = computed(() => logs.value.filter((item) => {
+  const f = filters.value
+  return (f.type === ASSET_COMMON_FILTER_ALL || item.type === f.type) &&
+    (f.coin === ASSET_COMMON_FILTER_ALL || item.coin === f.coin) &&
+    (f.status === ASSET_COMMON_FILTER_ALL || item.status === f.status) &&
+    has(item.txHash, f.txHash) && has(item.address, f.address)
 }))
 
-const filtered = computed(() => {
-  const kw = keyword.value.trim().toLowerCase()
-  return logs.value.filter((item) => {
-    const tabOk = typeTab.value === ASSET_COMMON_FILTER_ALL || item.type === typeTab.value
-    const coinOk = coinFilter.value === ASSET_COMMON_FILTER_ALL || item.coin === coinFilter.value
-    const statusOk = statusFilter.value === ASSET_COMMON_FILTER_ALL || item.status === statusFilter.value
-    const kwOk = !kw || `${item.txHash} ${item.address}`.toLowerCase().includes(kw)
-    return tabOk && coinOk && statusOk && kwOk
-  })
-})
+const columns = [
+  { key: 'type', title: '类型', width: 90 },
+  { key: 'coin', title: '币种 / 网络', width: 170 },
+  { key: 'address', title: '地址', width: 190 },
+  { key: 'amount', title: '金额', width: 160, align: 'right' },
+  { key: 'txHash', title: '交易哈希', width: 190 },
+  { key: 'block', title: '区块 / 确认数', width: 190 },
+  { key: 'status', title: '状态', width: 90 },
+  { key: 'time', title: '时间', width: 150 }
+]
 
-const totalPages = computed(() => Math.ceil(filtered.value.length / pageSize.value))
-const pagedLogs = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  return filtered.value.slice(start, start + pageSize.value)
-})
-
-const goPrev = () => {
-  if (currentPage.value > 1) currentPage.value--
-}
-const goNext = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++
-}
-
-// 当搜索或筛选状态改变时，重置页码
-const handleFilterChange = () => {
-  currentPage.value = 1
-}
-
-const typeText = (type) => ({
-  [ASSET_ADDRESS_LOG_TYPE.DEPOSIT]: '充值',
-  [ASSET_ADDRESS_LOG_TYPE.WITHDRAW]: '提现',
-  [ASSET_ADDRESS_LOG_TYPE.COLLECT]: '归集',
-  [ASSET_ADDRESS_LOG_TYPE.TRANSFER]: '转账'
-}[type] || '-')
-const typeIcon = (type) => ({
-  [ASSET_ADDRESS_LOG_TYPE.DEPOSIT]: '↙',
-  [ASSET_ADDRESS_LOG_TYPE.WITHDRAW]: '↗',
-  [ASSET_ADDRESS_LOG_TYPE.COLLECT]: '⟳',
-  [ASSET_ADDRESS_LOG_TYPE.TRANSFER]: '⇄'
-}[type] || '·')
-const typeColor = (type) => ({
-  [ASSET_ADDRESS_LOG_TYPE.DEPOSIT]: 'text-emerald-600',
-  [ASSET_ADDRESS_LOG_TYPE.WITHDRAW]: 'text-rose-600',
-  [ASSET_ADDRESS_LOG_TYPE.COLLECT]: 'text-blue-600',
-  [ASSET_ADDRESS_LOG_TYPE.TRANSFER]: 'text-violet-600'
-}[type] || 'text-slate-500')
-const amountColor = (amount) => (String(amount).startsWith('+') ? 'text-emerald-600' : 'text-rose-600')
-const statusClass = (status) => ({
-  [ASSET_ADDRESS_LOG_STATUS.CONFIRMED]: 'bg-emerald-100 text-emerald-700',
-  [ASSET_ADDRESS_LOG_STATUS.PENDING]: 'bg-amber-100 text-amber-700',
-  [ASSET_ADDRESS_LOG_STATUS.FAILED]: 'bg-rose-100 text-rose-700'
-}[status] || 'bg-slate-200 text-slate-600')
-const statusText = (status) => ({
-  [ASSET_ADDRESS_LOG_STATUS.CONFIRMED]: '已确认',
-  [ASSET_ADDRESS_LOG_STATUS.PENDING]: '待确认',
-  [ASSET_ADDRESS_LOG_STATUS.FAILED]: '失败'
-}[status] || '-')
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
 </script>
 
 <template>
-  <section class="space-y-4">
-    <header class="flex items-start justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-semibold text-slate-900">地址日志</h1>
-        <p class="mt-1 text-sm text-slate-500">查看所有地址的交易操作日志</p>
-      </div>
-      <p class="text-sm text-slate-500">
-        充值: <span class="text-emerald-600">{{ countByType.deposit }}</span>
-        <span class="mx-2">|</span>
-        提现: <span class="text-rose-600">{{ countByType.withdraw }}</span>
-        <span class="mx-2">|</span>
-        归集: <span class="text-blue-600">{{ countByType.collect }}</span>
-        <span class="mx-2">|</span>
-        转账: <span class="text-violet-600">{{ countByType.transfer }}</span>
-      </p>
-    </header>
-
-    <article class="rounded-xl border border-slate-200 bg-white">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
-        <div class="inline-flex items-center gap-4 text-sm">
-          <a-button html-type="button" class="font-medium" :class="typeTab === ASSET_COMMON_FILTER_ALL ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_COMMON_FILTER_ALL; handleFilterChange()">全部</a-button>
-          <a-button html-type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.DEPOSIT ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.DEPOSIT; handleFilterChange()">充值</a-button>
-          <a-button html-type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.WITHDRAW ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.WITHDRAW; handleFilterChange()">提现</a-button>
-          <a-button html-type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.COLLECT ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.COLLECT; handleFilterChange()">归集</a-button>
-          <a-button html-type="button" class="font-medium" :class="typeTab === ASSET_ADDRESS_LOG_TYPE.TRANSFER ? 'text-blue-600' : 'text-slate-500'" @click="typeTab = ASSET_ADDRESS_LOG_TYPE.TRANSFER; handleFilterChange()">转账</a-button>
-        </div>
-        <div class="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap">
-          <a-select v-model:value="coinFilter" class="" @change="handleFilterChange">
-            <a-select-option :value="ASSET_COMMON_FILTER_ALL">全部币种</a-select-option>
-            <a-select-option value="USDT">USDT</a-select-option>
-            <a-select-option value="BTC">BTC</a-select-option>
-            <a-select-option value="ETH">ETH</a-select-option>
-          </a-select>
-          <a-select v-model:value="statusFilter" class="" @change="handleFilterChange">
-            <a-select-option :value="ASSET_COMMON_FILTER_ALL">全部状态</a-select-option>
-            <a-select-option :value="ASSET_ADDRESS_LOG_STATUS.CONFIRMED">已确认</a-select-option>
-            <a-select-option :value="ASSET_ADDRESS_LOG_STATUS.PENDING">待确认</a-select-option>
-            <a-select-option :value="ASSET_ADDRESS_LOG_STATUS.FAILED">失败</a-select-option>
-          </a-select>
-          <a-input v-model:value="keyword" type="text" placeholder="搜索交易哈希或地址..." class="w-full lg:w-72" @input="handleFilterChange" />
-        </div>
-      </div>
-
-      <div class="overflow-x-auto p-4">
-        <a-table  :data-source="pagedLogs" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;border-b border-slate-100&quot;] })">
-<a-table-column key="column-0" ><template #title>类型</template><template #default="{ record: row, index: index }"><div class=" ">
-                <span class="font-medium" :class="typeColor(row.type)">{{ typeIcon(row.type) }} {{ typeText(row.type) }}</span>
-              </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>币种/网络</template><template #default="{ record: row, index: index }"><div class=" ">
-                <p class="font-medium text-slate-800">{{ row.coin }}</p>
-                <p class="text-slate-500">{{ row.network }}</p>
-              </div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>地址</template><template #default="{ record: row, index: index }"><div class="  text-slate-700">{{ row.address }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>金额</template><template #default="{ record: row, index: index }"><div class="  font-semibold" :class="amountColor(row.amount)">{{ row.amount }}</div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>TxHash</template><template #default="{ record: row, index: index }"><div class="  text-slate-700">{{ row.txHash }}</div></template></a-table-column>
-<a-table-column key="column-5" ><template #title>区块/确认数</template><template #default="{ record: row, index: index }"><div class="  text-slate-700">{{ row.block }}</div></template></a-table-column>
-<a-table-column key="column-6" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" "><span class="rounded-md px-2 py-0.5 text-xs" :class="statusClass(row.status)">{{ statusText(row.status) }}</span></div></template></a-table-column>
-<a-table-column key="column-7" ><template #title>时间</template><template #default="{ record: row, index: index }"><div class="  text-slate-700">{{ row.time }}</div></template></a-table-column>
-</a-table>
-      </div>
-
-      <!-- 分页栏 -->
-      <footer v-if="totalPages > 1" class="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm">
-        <p class="text-slate-500">共 {{ filtered.length }} 条日志</p>
-        <a-pagination  size="small" :current="currentPage" :page-size="pageSize" :total="filtered.length" :show-size-changer="false"  @change="currentPage = $event" />
-      </footer>
-    </article>
-  </section>
+  <PageShell>
+    <SearchForm name="asset-address-log-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+    <Card :bordered="false" title="日志概况">
+      <Row :gutter="24">
+        <Col v-for="item in countByType" :key="item.type" :xs="12" :md="6">
+          <Statistic :title="item.text + '笔数'" :value="item.count" />
+        </Col>
+      </Row>
+    </Card>
+    <AdminTable title="地址日志" v-model:page="page" :rows="rows" :columns="columns" row-key="id" desktop-only>
+      <template #cell="{ column, record }">
+        <Tag v-if="column.key === 'type'" :color="typeMeta[record.type]?.color">{{ typeMeta[record.type]?.text || '—' }}</Tag>
+        <Space v-else-if="column.key === 'coin'" direction="vertical" :size="0">
+          <TypographyText strong>{{ record.coin }}</TypographyText>
+          <TypographyText type="secondary">{{ record.network }}</TypographyText>
+        </Space>
+        <span v-else-if="column.key === 'address' || column.key === 'txHash'" class="font-mono">{{ record[column.key] }}</span>
+        <TypographyText v-else-if="column.key === 'amount'" :type="String(record.amount).startsWith('+') ? 'success' : 'danger'">{{ record.amount }}</TypographyText>
+        <Tag v-else-if="column.key === 'status'" :color="statusMeta[record.status]?.color">{{ statusMeta[record.status]?.text || '—' }}</Tag>
+        <template v-else>{{ record[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
+  </PageShell>
 </template>

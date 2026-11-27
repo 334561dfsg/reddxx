@@ -2,6 +2,7 @@
 import { AdminButton, AdminCheckbox, AdminInput, AdminSelect, AdminSlider, AdminTextarea, nativeControl } from './antd/controls.js'
 
 import { computed, reactive, ref, watch } from "vue";
+import { message } from "ant-design-vue";
 import {
   DELIVERY_RULE_TRIGGER_TYPE,
   DELIVERY_RULE_ACTION,
@@ -300,9 +301,9 @@ const close = () => {
 const save = () => {
   normalize();
 
-  if (!form.name.trim()) { alert("请输入规则名称"); return; }
-  if (!form.description.trim()) { alert("请输入规则描述"); return; }
-  if (!form.trigger.threshold || form.trigger.threshold <= 0) { alert("请设置有效的触发阈值"); return; }
+  if (!form.name.trim()) { message.error("请输入规则名称"); return; }
+  if (!form.description.trim()) { message.error("请输入规则描述"); return; }
+  if (!form.trigger.threshold || form.trigger.threshold <= 0) { message.error("请设置有效的触发阈值"); return; }
 
   if (form.action.type === DELIVERY_RULE_ACTION.PROFIT_CONTROL) {
     const pc = form.action.params.profitControl;
@@ -311,10 +312,10 @@ const save = () => {
     const winFluct = Number(pc.winFluctuationPercent);
     const lossFluct = Number(pc.lossFluctuationPercent);
 
-    if (!Number.isFinite(winAmount) || winAmount <= 0) { alert("请设置有效的单笔净盈利（大于 0）"); return; }
-    if (!Number.isFinite(lossAmount) || lossAmount >= 0) { alert("请设置有效的单笔亏损（小于 0）"); return; }
-    if (!Number.isFinite(winFluct) || winFluct < 0 || winFluct > 10) { alert("单笔净盈利波动比例需在 0 ~ 10 之间"); return; }
-    if (!Number.isFinite(lossFluct) || lossFluct < 0 || lossFluct > 10) { alert("单笔亏损波动比例需在 0 ~ 10 之间"); return; }
+    if (!Number.isFinite(winAmount) || winAmount <= 0) { message.error("请设置有效的单笔净盈利（大于 0）"); return; }
+    if (!Number.isFinite(lossAmount) || lossAmount >= 0) { message.error("请设置有效的单笔亏损（小于 0）"); return; }
+    if (!Number.isFinite(winFluct) || winFluct < 0 || winFluct > 10) { message.error("单笔净盈利波动比例需在 0 ~ 10 之间"); return; }
+    if (!Number.isFinite(lossFluct) || lossFluct < 0 || lossFluct > 10) { message.error("单笔亏损波动比例需在 0 ~ 10 之间"); return; }
   }
 
   emit("save", { ...form });

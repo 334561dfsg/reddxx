@@ -1,7 +1,16 @@
 <script setup>
+// 收益调控 — Ant Design Pro list page (2026-11-28): query card (the combined keyword box is split into one field per
+// filter), the summary as a Statistic card, table card with the 收益调整日志 shortcut in its toolbar, link actions.
+// Dialogs use the shared AdminDialog / confirmation modal; reset now asks for confirmation and every change toasts.
 import { computed, reactive, ref } from 'vue'
-import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
-import { useAdminListPagination } from '../../../admin/composables/useAdminListPagination'
+import { useRouter } from 'vue-router'
+import { Button, Card, Col, DatePicker, Descriptions, DescriptionsItem, Form, FormItem, Input, Row, Slider, Space, Statistic, Tag, TypographyText, message } from 'ant-design-vue'
+import dayjs from 'dayjs'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
+import AdminModal from '../earn/EarnAdminModal.vue'
+import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
 import { portfolioProductsCatalog } from '../../../admin/state/financeCatalogs'
 import { appendPortfolioOperationLog } from '../../../admin/state/portfolioOperationLogs'
 import { appendPortfolioYieldAdjustmentLog } from '../../../admin/state/portfolioYieldAdjustmentLogs'
@@ -14,8 +23,9 @@ import {
   sortPortfolioProducts
 } from '../../../admin/constants/portfolio'
 
+const router = useRouter()
 const products = portfolioProductsCatalog
-const keyword = ref('')
+const page = ref(1)
 const showControlModal = ref(false)
 const activeProductId = ref('')
 const controlForm = reactive({
@@ -24,41 +34,49 @@ const controlForm = reactive({
   validUntil: ''
 })
 
-const filteredProducts = computed(() => {
-  const kw = keyword.value.trim().toLowerCase()
-  const rows = sortPortfolioProducts(products.value)
-  if (!kw) return rows
-  return rows.filter((product) => {
-    const text = `${product.name} ${product.id} ${product.assets.map((asset) => asset.symbol).join(' ')}`.toLowerCase()
-    return text.includes(kw)
-  })
-})
+const blank = () => ({ name: '', id: '', asset: 'all', adjusted: 'all' })
+const filters = ref(blank())
+const assetOptions = computed(() => [...new Set(products.value.flatMap((product) => product.assets.map((asset) => asset.symbol)))].map((value) => ({ value, label: value })))
+const fields = computed(() => [
+  { key: 'name', label: '产品名称' },
+  { key: 'id', label: '产品 ID' },
+  { key: 'asset', label: '组合币种', searchable: true, options: [{ value: 'all', label: '全部币种' }, ...assetOptions.value] },
+  { key: 'adjusted', label: '调控状态', options: [{ value: 'all', label: '全部' }, { value: 'adjusted', label: '调控中' }, { value: 'base', label: '基准收益' }] }
+])
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
+const isAdjusted = (product) => Number(product.yieldAdjustmentRate || 0) !== 0
 
-const {
-  currentPage,
-  pageSize,
-  totalPages,
-  pagedRows: pagedProducts,
-  onPageSizeChange
-} = useAdminListPagination(filteredProducts, { resetSources: [keyword] })
-
-const summary = computed(() => {
-  const total = products.value.length
-  const adjusted = products.value.filter((product) => Number(product.yieldAdjustmentRate || 0) !== 0).length
-  const hot = products.value.filter((product) => product.isHot).length
-  return [
-    { label: '产品总数', value: String(total) },
-    { label: '调控中', value: String(adjusted) },
-    { label: 'HOT 产品', value: String(hot) },
-    { label: '平均倍数', value: `${averageMultiplier.value.toFixed(2)}×` }
-  ]
-})
+const rows = computed(() => sortPortfolioProducts(products.value).filter((product) => {
+  const f = filters.value
+  return has(product.name, f.name) && has(product.id, f.id) &&
+    (f.asset === 'all' || product.assets.some((asset) => asset.symbol === f.asset)) &&
+    (f.adjusted === 'all' || isAdjusted(product) === (f.adjusted === 'adjusted'))
+}))
 
 const averageMultiplier = computed(() => {
   if (!products.value.length) return 1
   const sum = products.value.reduce((acc, product) => acc + Number(product.currentYieldMultiplier || 1), 0)
   return sum / products.value.length
 })
+
+const summary = computed(() => [
+  { label: '产品总数', value: products.value.length },
+  { label: '调控中', value: products.value.filter(isAdjusted).length },
+  { label: 'HOT 产品', value: products.value.filter((product) => product.isHot).length },
+  { label: '平均倍数', value: averageMultiplier.value.toFixed(2), suffix: '×' }
+])
+
+const columns = [
+  { key: 'product', title: '产品', width: 260, fixed: 'left' },
+  { key: 'base', title: '基准收益', width: 190, align: 'right' },
+  { key: 'current', title: '当前收益', width: 190, align: 'right' },
+  { key: 'rate', title: '调整比例', width: 110, align: 'right' },
+  { key: 'multiplier', title: '倍数', width: 90, align: 'right' },
+  { key: 'actions', title: '操作', width: 120, fixed: 'right' }
+]
+
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
 
 const activeProduct = computed(() => products.value.find((product) => product.id === activeProductId.value) ?? null)
 
@@ -78,11 +96,11 @@ function formatLogTime() {
   return new Date().toLocaleString('zh-CN', { hour12: false })
 }
 
-function rateClass(rate) {
+function rateType(rate) {
   const n = Number(rate)
-  if (n > 0) return 'text-emerald-600'
-  if (n < 0) return 'text-rose-600'
-  return 'text-slate-600'
+  if (n > 0) return 'success'
+  if (n < 0) return 'danger'
+  return undefined
 }
 
 function saveControl() {
@@ -118,8 +136,10 @@ function saveControl() {
     summary: `收益调控：${formatPortfolioAdjustmentRate(before.yieldAdjustmentRate || 0)} → ${formatPortfolioAdjustmentRate(next.yieldAdjustmentRate)}；${durationLabel}；${reason}`
   })
   showControlModal.value = false
+  message.success('收益调控已保存')
 }
 
+const resetTarget = ref(null)
 function resetControl(product) {
   if (!product || Number(product.yieldAdjustmentRate || 0) === 0) return
   const before = { ...product }
@@ -149,6 +169,12 @@ function resetControl(product) {
     target: product.name,
     summary: `收益调控重置：${formatPortfolioAdjustmentRate(before.yieldAdjustmentRate || 0)} → 0%`
   })
+  message.success('已重置为基准收益')
+}
+function confirmReset() {
+  const product = products.value.find((item) => item.id === resetTarget.value?.id)
+  resetTarget.value = null
+  resetControl(product)
 }
 
 function baseRateRange(product) {
@@ -156,155 +182,90 @@ function baseRateRange(product) {
   return formatPortfolioRateRange({ minDailyRatePct: base.min, maxDailyRatePct: base.max })
 }
 
-const validUntilMin = computed(() => {
-  const d = new Date()
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
-})
+const disabledPastDate = (current) => current && current < dayjs().startOf('day')
+const presets = [
+  { label: '强激励 +50%', value: 50 },
+  { label: '温和上调 +20%', value: 20 },
+  { label: '成本回收 -20%', value: -20 },
+  { label: '恢复基准', value: 0 }
+]
 </script>
 
 <template>
-  <section class="space-y-5">
-    <header class="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-semibold text-slate-900">收益调控</h1>
-        <p class="mt-1 text-sm text-slate-500">按投资组合产品调整日收益区间，前台展示与申购预估同步使用调整后的收益。</p>
+  <PageShell>
+    <SearchForm name="portfolio-yield-control-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+
+    <Card :bordered="false">
+      <Row :gutter="24">
+        <Col v-for="item in summary" :key="item.label" :span="6">
+          <Statistic :title="item.label" :value="item.value" :suffix="item.suffix" />
+        </Col>
+      </Row>
+    </Card>
+
+    <AdminTable title="收益调控" v-model:page="page" :rows="rows" :columns="columns" row-key="id" desktop-only>
+      <template #toolbar>
+        <Button @click="router.push({ name: 'portfolio-yield-adjustment-log' })">收益调整日志</Button>
+      </template>
+      <template #cell="{ column, record }">
+        <Space v-if="column.key === 'product'" direction="vertical" :size="0">
+          <TypographyText strong>{{ productTitle(record) }}</TypographyText>
+          <TypographyText type="secondary">{{ record.name }}</TypographyText>
+          <TypographyText type="secondary" class="font-mono">{{ record.id }}</TypographyText>
+        </Space>
+        <template v-else-if="column.key === 'base'">{{ baseRateRange(record) }}</template>
+        <template v-else-if="column.key === 'current'">{{ formatPortfolioRateRange(record) }}</template>
+        <Tag v-else-if="column.key === 'rate'" :color="Number(record.yieldAdjustmentRate || 0) > 0 ? 'green' : Number(record.yieldAdjustmentRate || 0) < 0 ? 'red' : 'default'">{{ formatPortfolioAdjustmentRate(record.yieldAdjustmentRate || 0) }}</Tag>
+        <template v-else-if="column.key === 'multiplier'">{{ Number(record.currentYieldMultiplier || 1).toFixed(2) }}×</template>
+        <Space v-else-if="column.key === 'actions'" :size="8">
+          <Button type="link" class="px-0" @click="openControl(record)">调整</Button>
+          <Button v-if="isAdjusted(record)" type="link" class="px-0" danger @click="resetTarget = { ...record }">重置</Button>
+        </Space>
+        <template v-else>{{ record[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
+
+    <AdminModal :open="!!resetTarget" title="重置收益调控" confirm-text="确认重置" danger :width="480" @close="resetTarget = null" @confirm="confirmReset">
+      <TypographyText>确认将 {{ resetTarget ? productTitle(resetTarget) : '' }} 恢复为基准收益？当前调整比例 {{ formatPortfolioAdjustmentRate(resetTarget?.yieldAdjustmentRate || 0) }} 将被清除。</TypographyText>
+    </AdminModal>
+
+    <AdminDialog :open="showControlModal" title="收益调控" :width="672" plain @close="showControlModal = false">
+      <template #subtitle>{{ activeProduct ? productTitle(activeProduct) : '' }}</template>
+      <div class="yield-control-body">
+        <Descriptions :column="2" size="small" bordered>
+          <DescriptionsItem label="基准收益">{{ activeProduct ? baseRateRange(activeProduct) : '—' }}</DescriptionsItem>
+          <DescriptionsItem label="调整后收益">
+            <TypographyText type="success" strong>{{ activeProduct ? formatPortfolioRateRange(applyPortfolioYieldAdjustment(activeProduct, controlForm.adjustmentRate)) : '—' }}</TypographyText>
+          </DescriptionsItem>
+        </Descriptions>
+        <Form layout="vertical" :model="controlForm" name="portfolio-yield-control-form">
+          <FormItem label="调整比例（%）">
+            <Slider v-model:value="controlForm.adjustmentRate" :min="-100" :max="100" :step="5" :marks="{ '-100': '-100%', 0: '0', 100: '+100%' }" aria-label="调整比例" />
+            <TypographyText :type="rateType(controlForm.adjustmentRate)" strong>
+              {{ formatPortfolioAdjustmentRate(controlForm.adjustmentRate) }} · {{ (1 + controlForm.adjustmentRate / 100).toFixed(2) }}×
+            </TypographyText>
+          </FormItem>
+          <FormItem label="快捷设置">
+            <Space :size="8" wrap>
+              <Button v-for="preset in presets" :key="preset.value" @click="controlForm.adjustmentRate = preset.value">{{ preset.label }}</Button>
+            </Space>
+          </FormItem>
+          <FormItem label="有效期至" extra="留空表示持续生效，后续可手动重置。">
+            <DatePicker v-model:value="controlForm.validUntil" value-format="YYYY-MM-DD" :disabled-date="disabledPastDate" placeholder="持续生效" style="width: 100%" />
+          </FormItem>
+          <FormItem label="调整原因">
+            <Input.TextArea v-model:value="controlForm.reason" :rows="3" :maxlength="200" placeholder="请输入调整原因，便于日志追溯" />
+          </FormItem>
+        </Form>
       </div>
-      <RouterLink
-        :to="{ name: 'portfolio-yield-adjustment-log' }"
-        class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-      >
-        收益调整日志
-      </RouterLink>
-    </header>
-
-    <div class="grid gap-3 md:grid-cols-4">
-      <div v-for="item in summary" :key="item.label" class="rounded-xl border border-slate-200 bg-white p-4">
-        <div class="text-xs text-slate-500">{{ item.label }}</div>
-        <div class="mt-2 text-2xl font-semibold text-slate-900">{{ item.value }}</div>
-      </div>
-    </div>
-
-    <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <div class="border-b border-slate-200 bg-slate-50 p-4">
-        <a-input
-          v-model:value="keyword"
-          type="search"
-          placeholder="搜索产品名称、ID 或币种"
-          class="w-full max-w-md rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none"
-        />
-      </div>
-      <a-table  size="small" :pagination="false" :data-source="pagedProducts" :row-key="(product) => product.id" :scroll="{ x: 'max-content' }" :custom-row="(product, rowIndex) => ({ class: [&quot;border-t border-slate-100 hover:bg-slate-50&quot;] })">
-<a-table-column key="column-0" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>产品</template>
-<template #default="{ record: product, index: rowIndex }">
-              <div class="font-medium text-slate-900">{{ productTitle(product) }}</div>
-              <div class="font-mono text-xs text-slate-400">{{ product.id }}</div>
-            </template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3 text-slate-600&quot;] })">
-<template #title>基准收益</template>
-<template #default="{ record: product, index: rowIndex }">{{ baseRateRange(product) }}</template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3 font-medium text-emerald-600&quot;] })">
-<template #title>当前收益</template>
-<template #default="{ record: product, index: rowIndex }">{{ formatPortfolioRateRange(product) }}</template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>调整比例</template>
-<template #default="{ record: product, index: rowIndex }">
-              <span :class="['font-medium', rateClass(product.yieldAdjustmentRate)]">
-                {{ formatPortfolioAdjustmentRate(product.yieldAdjustmentRate || 0) }}
-              </span>
-            </template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3 tabular-nums text-slate-700&quot;] })">
-<template #title>倍数</template>
-<template #default="{ record: product, index: rowIndex }">{{ Number(product.currentYieldMultiplier || 1).toFixed(2) }}×</template>
-</a-table-column>
-<a-table-column key="column-5" align="right" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-4 py-3 text-right&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: product, index: rowIndex }">
-              <a-button type="text" class="text-sm font-medium text-blue-600 hover:text-blue-800" @click="openControl(product)">调整</a-button>
-              <template v-if="Number(product.yieldAdjustmentRate || 0) !== 0">
-                <span class="mx-2 text-slate-200">|</span>
-                <a-button type="text" class="text-sm font-medium text-slate-600 hover:text-slate-900" @click="resetControl(product)">重置</a-button>
-              </template>
-            </template>
-</a-table-column>
-</a-table>
-      <div v-if="filteredProducts.length === 0" class="py-12 text-center text-sm text-slate-500">暂无产品</div>
-      <AdminListPaginationBar
-        :current-page="currentPage"
-        :total-pages="totalPages"
-        :total-count="filteredProducts.length"
-        :page-size="pageSize"
-        @update:current-page="currentPage = $event"
-        @update:page-size="onPageSizeChange"
-      />
-    </article>
-
-      <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showControlModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="672"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showControlModal = false">
-<template #title><template v-if="showControlModal"><div class="flex items-start justify-between border-b border-slate-200 px-6 py-4">
-            <div>
-              <h2 class="text-xl font-semibold text-slate-900">收益调控</h2>
-              <p class="mt-1 text-sm text-slate-500">{{ activeProduct ? productTitle(activeProduct) : '' }}</p>
-            </div>
-            <a-button aria-label="关闭" type="text" class="text-2xl leading-none text-slate-400 hover:text-slate-700" @click="showControlModal = false">×</a-button>
-          </div></template></template>
-<template v-if="showControlModal">
-          <div class="space-y-5 p-6">
-            <div class="grid gap-3 rounded-xl bg-slate-50 p-4 text-sm md:grid-cols-2">
-              <div>
-                <div class="text-slate-500">基准收益</div>
-                <div class="mt-1 font-semibold text-slate-900">{{ activeProduct ? baseRateRange(activeProduct) : '—' }}</div>
-              </div>
-              <div>
-                <div class="text-slate-500">调整后收益</div>
-                <div class="mt-1 font-semibold text-emerald-600">
-                  {{ activeProduct ? formatPortfolioRateRange(applyPortfolioYieldAdjustment(activeProduct, controlForm.adjustmentRate)) : '—' }}
-                </div>
-              </div>
-            </div>
-
-            <label class="block">
-              <span class="mb-1 block text-sm font-medium text-slate-700">调整比例（%）</span>
-              <a-slider v-model:value.number="controlForm.adjustmentRate" :min="-100" :max="100" :step="5" class="w-full" />
-              <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
-                <span>-100%</span>
-                <span :class="['text-base font-semibold', rateClass(controlForm.adjustmentRate)]">
-                  {{ formatPortfolioAdjustmentRate(controlForm.adjustmentRate) }} · {{ (1 + controlForm.adjustmentRate / 100).toFixed(2) }}×
-                </span>
-                <span>+100%</span>
-              </div>
-            </label>
-
-            <div class="grid gap-3 md:grid-cols-4">
-              <a-button type="text" class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = 50">强激励 +50%</a-button>
-              <a-button type="text" class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = 20">温和上调 +20%</a-button>
-              <a-button type="text" class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = -20">成本回收 -20%</a-button>
-              <a-button type="text" class="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50" @click="controlForm.adjustmentRate = 0">恢复基准</a-button>
-            </div>
-
-            <label class="block">
-              <span class="mb-1 block text-sm font-medium text-slate-700">有效期至</span>
-              <a-input v-model:value="controlForm.validUntil" type="date" :min="validUntilMin" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-              <span class="mt-1 block text-xs text-slate-500">留空表示持续生效，后续可手动重置。</span>
-            </label>
-
-            <label class="block">
-              <span class="mb-1 block text-sm font-medium text-slate-700">调整原因</span>
-              <a-textarea v-model:value="controlForm.reason" :rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="请输入调整原因，便于日志追溯"></a-textarea>
-            </label>
-          </div>
-          </template>
-<template #footer><template v-if="showControlModal"><div class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
-            <a-button type="text" class="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700" @click="showControlModal = false">取消</a-button>
-            <a-button type="text" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="saveControl">保存调控</a-button>
-          </div></template></template>
-</a-modal>
-    
-  </section>
+      <footer>
+        <Button @click="showControlModal = false">取消</Button>
+        <Button type="primary" @click="saveControl">保存调控</Button>
+      </footer>
+    </AdminDialog>
+  </PageShell>
 </template>
+
+<style scoped>
+.yield-control-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding-top:24px;display:grid;gap:24px}
+</style>

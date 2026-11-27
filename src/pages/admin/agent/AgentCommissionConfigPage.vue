@@ -1,5 +1,11 @@
 <script setup>
+// 代理记佣配置 — Ant Design Pro config page (2026-11-28): PageShell title, grouped Cards with Ant Form controls and a
+// sticky bottom action bar (重置为默认 / 保存配置). The former 记佣规则 / 佣金结算 tabs are one grouped page; feedback is
+// toast-only (Ant message) and the reset asks for confirmation in a dialog instead of window.confirm.
 import { ref, computed, onMounted } from 'vue'
+import { Button, Card, Checkbox, Col, Form, FormItem, InputNumber, Row, Select, Space, Switch, Tag, TimePicker, TypographyParagraph, TypographyText, message } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import AdminModal from '../earn/EarnAdminModal.vue'
 import {
   mockAgentCommissionConfig,
   agentCommissionApi,
@@ -17,16 +23,23 @@ import {
 import { REFERRAL_COMMISSION_CREDIT_TO_OPTIONS } from '../../../admin/constants/referral'
 
 const config = ref(normalizeAgentGlobalCommission({ ...mockAgentCommissionConfig }))
-/** 记佣规则 | 佣金结算 */
-const activeTab = ref('rules')
 const isSaving = ref(false)
 const demoBaseAmount = ref(10000)
+const resetOpen = ref(false)
 
 const settlementScheduleLine = computed(() => getAgentSettlementScheduleSummary(config.value))
 const settlementNotifyLine = computed(() => getAgentSettlementNotifyLine(config.value))
 const currentCycleOption = computed(() =>
   AGENT_SETTLEMENT_CYCLE_OPTIONS.find((o) => o.value === config.value.agentSettlementCycle)
 )
+const cycleOptions = AGENT_SETTLEMENT_CYCLE_OPTIONS.map((o) => ({ value: o.value, label: o.label }))
+const weekdayOptions = AGENT_SETTLEMENT_WEEKDAY_OPTIONS.map((o) => ({ value: o.value, label: o.label }))
+// The shared option hint speaks of the referral upline; on the agent page the commission goes to the agent.
+const creditToOptions = REFERRAL_COMMISSION_CREDIT_TO_OPTIONS.map((o) => ({ value: o.value, label: o.label }))
+const creditToHint = computed(() => {
+  const option = REFERRAL_COMMISSION_CREDIT_TO_OPTIONS.find((o) => o.value === config.value.agentCommissionCreditTo)
+  return option ? `记入代理人${option.label}余额。` : ''
+})
 
 const PRODUCT_LINES = [
   {
@@ -118,17 +131,6 @@ const PRODUCT_GROUPS = [
   { id: 'fin', name: '产品与策略', blurb: '量化、投资组合、理财、借贷', lineKeys: ['aiQuant', 'portfolio', 'lending', 'borrowing'] }
 ]
 
-const BORDER_ACCENT = {
-  blue: 'border-l-blue-500',
-  indigo: 'border-l-indigo-500',
-  violet: 'border-l-violet-500',
-  orange: 'border-l-orange-500',
-  amber: 'border-l-amber-500',
-  cyan: 'border-l-cyan-500',
-  emerald: 'border-l-emerald-500',
-  rose: 'border-l-rose-500'
-}
-
 function lineByKey(key) {
   return PRODUCT_LINES.find((p) => p.key === key)
 }
@@ -137,19 +139,12 @@ function linesInGroup(group) {
   return group.lineKeys.map((k) => lineByKey(k)).filter(Boolean)
 }
 
-function groupGridClass(group) {
-  const n = group.lineKeys.length
-  if (n <= 1) return 'grid-cols-1'
-  if (n === 2) return 'grid-cols-1 md:grid-cols-2'
-  return 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
-}
-
 function rateNum(line) {
   return parseFloat(normalizeAgentLineRate(config.value[line.rateKey]))
 }
 
 function setRate(line, raw) {
-  config.value[line.rateKey] = normalizeAgentLineRate(raw)
+  config.value[line.rateKey] = normalizeAgentLineRate(raw ?? 0)
 }
 
 function formatUsdt(n) {
@@ -169,10 +164,6 @@ function isLineEnabled(line) {
   return config.value[line.enabledKey] === true
 }
 
-function toggleLine(line) {
-  config.value[line.enabledKey] = !config.value[line.enabledKey]
-}
-
 const loadConfig = async () => {
   try {
     const result = await agentCommissionApi.getAgentCommissionConfig()
@@ -180,11 +171,12 @@ const loadConfig = async () => {
       config.value = normalizeAgentGlobalCommission(result.data)
     }
   } catch (error) {
-    console.error('Failed to load agent commission config:', error)
+    message.error('代理记佣配置加载失败：' + (error?.message || '请稍后重试'))
   }
 }
 
 const saveConfig = async () => {
+  if (isSaving.value) return
   const validateOne = (rateStr) => {
     const n = parseFloat(normalizeAgentLineRate(rateStr))
     return !Number.isNaN(n) && n >= 0 && n <= 1
@@ -194,7 +186,7 @@ const saveConfig = async () => {
     if (!config.value[line.enabledKey]) continue
     config.value[line.rateKey] = normalizeAgentLineRate(config.value[line.rateKey])
     if (!validateOne(config.value[line.rateKey])) {
-      alert(`「${line.title}」已开启记佣：比例须为 0～1 之间的小数。`)
+      message.error(`「${line.title}」已开启记佣：比例须为 0～1 之间的小数。`)
       return
     }
   }
@@ -203,7 +195,7 @@ const saveConfig = async () => {
     if (config.value[line.enabledKey]) continue
     const raw = config.value[line.rateKey]
     if (raw != null && String(raw).trim() && !validateOne(raw)) {
-      alert(`「${line.title}」比例格式有误，请修正后再保存。`)
+      message.error(`「${line.title}」比例格式有误，请修正后再保存。`)
       return
     }
   }
@@ -214,19 +206,21 @@ const saveConfig = async () => {
   try {
     const result = await agentCommissionApi.updateAgentCommissionConfig(payload)
     if (result.success) {
-      alert(result.message)
+      message.success(result.message || '代理记佣配置已保存')
+    } else {
+      message.error(result.message || '保存失败')
     }
   } catch (error) {
-    alert('保存失败：' + error.message)
+    message.error('保存失败：' + error.message)
   } finally {
     isSaving.value = false
   }
 }
 
-const resetConfig = () => {
-  if (confirm('确认重置为代理记佣默认配置？')) {
-    config.value = normalizeAgentGlobalCommission({ ...DEFAULT_AGENT_GLOBAL_COMMISSION })
-  }
+const confirmReset = () => {
+  config.value = normalizeAgentGlobalCommission({ ...DEFAULT_AGENT_GLOBAL_COMMISSION })
+  resetOpen.value = false
+  message.success('已恢复默认配置，保存后生效')
 }
 
 onMounted(() => {
@@ -235,300 +229,139 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full min-w-0 space-y-8 pb-8">
-    <header class="flex flex-col gap-4 border-b border-slate-200/80 pb-6 sm:flex-row sm:items-start sm:justify-between">
-      <div class="min-w-0 flex-1">
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">代理记佣配置</h1>
-        <p class="mt-2 text-sm leading-relaxed text-slate-600">
-          配置各产品线代理一级分佣比例 r、代理线全局开关，以及账期佣金结算（单周/双周/月度）、入账与结算后通知。使用下方 Tab 切换；本页为全站默认，单个代理可在代理列表「记佣配置」中覆盖。
-        </p>
-        <p class="mt-2 text-sm leading-relaxed text-slate-600">
-          「记佣规则」步骤：<span class="font-medium text-slate-800">① 理解计佣公式</span> →
-          <span class="font-medium text-slate-800">② 代理线全局规则</span> →
-          <span class="font-medium text-slate-800">③ 各产品线一级比例</span>。
-        </p>
-      </div>
-      <div class="flex shrink-0 gap-2">
-        <a-button html-type="button" class="" @click="resetConfig">重置为默认</a-button>
-        <a-button html-type="button" class="" :disabled="isSaving" @click="saveConfig" type="primary">
-          {{ isSaving ? '保存中…' : '保存配置' }}
-        </a-button>
-      </div>
-    </header>
+  <PageShell class="agent-config-page" :style="{ paddingBottom: 0 }" title="代理记佣配置">
+    <template #description>
+      <TypographyText type="secondary">本页为全站默认，单个代理可在代理列表「记佣配置」中覆盖。</TypographyText>
+    </template>
+    <Form class="agent-config-form" name="agent-commission-config" layout="vertical" :model="config" @finish="saveConfig">
+      <Card title="计佣公式" :bordered="false">
+        <Row :gutter="24">
+          <Col :xs="24" :lg="12">
+            <TypographyParagraph><TypographyText code>佣金 = A × r</TypographyText></TypographyParagraph>
+            <TypographyParagraph type="secondary">
+              A：本条业务单实收手续费形成的计佣基数，币种为 USDT；各产品线对 A 的取值定义见下方对应产品线，每条订单对应一个 A。
+              r：该产品线下代理的一级分佣比例，取值范围为闭区间 [0, 1]；例如 0.1 表示 10%。
+            </TypographyParagraph>
+          </Col>
+          <Col :xs="24" :lg="12">
+            <TypographyParagraph type="secondary">每条产品线可单独关闭记佣；关闭后该业务不产生代理线佣金（比例可保留）。</TypographyParagraph>
+            <TypographyParagraph type="secondary">下方示例使用统一的假设基数，仅用于核对「A × r」的乘法关系；线上环境每一条真实订单单独计算，其 A 取自账务系统为该笔订单记录的实收手续费。</TypographyParagraph>
+          </Col>
+        </Row>
+      </Card>
 
-    <nav class="flex gap-0 border-b border-slate-200" aria-label="代理记佣配置分区">
-      <a-button html-type="button" class="-mb-px border-b-2 text-sm font-medium transition-colors" :class="
-          activeTab === 'rules'
-            ? 'border-blue-600 text-blue-700'
-            : 'border-transparent text-slate-500 hover:text-slate-800'
-        " @click="activeTab = 'rules'">
-        记佣规则
-      </a-button>
-      <a-button html-type="button" class="-mb-px border-b-2 text-sm font-medium transition-colors" :class="
-          activeTab === 'settlement'
-            ? 'border-blue-600 text-blue-700'
-            : 'border-transparent text-slate-500 hover:text-slate-800'
-        " @click="activeTab = 'settlement'">
-        佣金结算
-      </a-button>
-    </nav>
+      <Card title="代理线全局规则" :bordered="false">
+        <FormItem label="仅首笔充值参与代理线记佣" extra="仅作用于「充值」产品线：开启时，代理名下客户仅其第一笔充值成功订单参与本条线的 A 与佣金计算；该客户后续充值订单不参与本条线记佣。">
+          <Switch v-model:checked="config.agentCommissionDepositFirstOnly" aria-label="代理仅首充返佣" checked-children="开启" un-checked-children="关闭" />
+        </FormItem>
+      </Card>
 
-    <div v-show="activeTab === 'rules'" class="space-y-8">
-    <section class="rounded-xl border border-slate-200 bg-white">
-      <div class="flex items-baseline gap-2 border-b border-slate-100 px-5 py-4">
-        <span class="text-xs font-semibold text-slate-400">①</span>
-        <h2 class="text-base font-semibold text-slate-900">计佣公式</h2>
-      </div>
-      <div class="grid gap-6 p-5 lg:grid-cols-2 lg:gap-8">
-        <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-4">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500">核心式（代理线）</p>
-          <p class="mt-3 font-mono text-sm leading-relaxed text-slate-900">
-            <span class="text-violet-600">佣金</span>
-            <span class="mx-2 text-slate-400">=</span>
-            <span class="text-sky-600">A</span>
-            <span class="mx-2 text-slate-400">×</span>
-            <span class="text-emerald-600">r</span>
-          </p>
-          <p class="mt-3 text-xs leading-relaxed text-slate-600">
-            <strong class="text-slate-700">A</strong>：本条业务单实收手续费形成的计佣基数，币种为 USDT；各产品线对 A 的取值定义见下方对应卡片，每条订单对应一个 A。<br />
-            <strong class="text-slate-700">r</strong>：该产品线下代理的一级分佣比例，取值范围为闭区间 [0, 1]；例如 0.1 表示 10%。
-          </p>
-        </div>
-        <div class="text-sm leading-relaxed text-slate-600">
-          <p class="font-medium text-slate-800">操作要点</p>
-          <ul class="mt-3 space-y-2.5">
-            <li class="flex gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-300" />
-              <span>每条产品线可单独关闭记佣；关闭后该业务不产生代理线佣金（比例可保留）。</span>
-            </li>
-
-            <li class="flex gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-300" />
-              <span>
-                下方示例使用统一的假设基数，仅用于核对「A × r」的乘法关系；线上环境每一条真实订单单独计算，其 A
-                取自账务系统为该笔订单记录的实收手续费。
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="rounded-xl border border-slate-200 bg-white">
-      <div class="flex items-baseline gap-2 border-b border-slate-100 px-5 py-4">
-        <span class="text-xs font-semibold text-slate-400">②</span>
-        <h2 class="text-base font-semibold text-slate-900">代理线全局规则</h2>
-        <p class="mt-1 text-xs text-slate-500">仅影响代理渠道分佣与结算。</p>
-      </div>
-      <div class="divide-y divide-slate-100">
-        <div class="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm font-medium text-slate-900">仅首笔充值参与代理线记佣</p>
-            <p class="mt-1 text-sm text-slate-500">
-              仅作用于「充值」产品线：开启时，代理名下客户仅其第一笔充值成功订单参与本条线的 A 与佣金计算；该客户后续充值订单不参与本条线记佣。
-            </p>
-          </div>
-          <a-switch :checked="config.agentCommissionDepositFirstOnly" @click="config.agentCommissionDepositFirstOnly = !config.agentCommissionDepositFirstOnly" aria-label="代理仅首充返佣" />
-        </div>
-      </div>
-    </section>
-
-    <section class="rounded-xl border border-slate-200 bg-white">
-      <div class="flex flex-col gap-4 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-baseline gap-2">
-          <span class="text-xs font-semibold text-slate-400">③</span>
-          <div>
-            <h2 class="text-base font-semibold text-slate-900">产品线 · 代理记佣（全局默认）</h2>
-            <p class="mt-0.5 text-sm text-slate-500">
-              代理线仅一级分佣：每条产品线一个比例 r。新代理默认使用本页数值；单个代理可在代理列表中覆盖。
-            </p>
-          </div>
-        </div>
-        <div class="flex flex-col gap-1 sm:items-end">
-          <label class="flex items-center gap-2 text-sm text-slate-600">
-            <span class="whitespace-nowrap">示例手续费基数（USDT）</span>
-            <a-input type="number" :min="0" :step="100" class="w-36 text-right" :value="demoBaseAmount" @update:value="demoBaseAmount = $event === '' ? '' : Number($event)" />
-          </label>
-          <span class="text-xs text-slate-400">示例佣金 = 基数 × r</span>
-        </div>
-      </div>
-
-      <div class="space-y-10 p-5">
-        <div v-for="group in PRODUCT_GROUPS" :key="group.id">
-          <div class="mb-4 flex flex-wrap items-end gap-2 border-b border-slate-100 pb-2">
-            <h3 class="text-sm font-semibold text-slate-900">{{ group.name }}</h3>
-            <span class="text-xs text-slate-500">{{ group.blurb }}</span>
-          </div>
-
-          <div class="grid w-full gap-4" :class="groupGridClass(group)">
-            <div
-              v-for="line in linesInGroup(group)"
-              :key="line.key"
-              class="flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
-              :class="['border-l-4', BORDER_ACCENT[line.theme]]"
-            >
-              <div class="flex items-start justify-between gap-3 border-b border-slate-100 bg-slate-50/50 px-4 py-3">
-                <div class="min-w-0">
-                  <h4 class="text-sm font-semibold text-slate-900">{{ line.title }}</h4>
-                  <p class="mt-1 text-xs leading-snug text-slate-600">{{ line.baseDesc }}</p>
-                </div>
-                <div class="flex shrink-0 flex-col items-end gap-0.5">
-                  <span class="text-[10px] font-medium uppercase tracking-wide text-slate-400">记佣</span>
-                  <a-switch :checked="isLineEnabled(line)" @click="toggleLine(line)" :aria-label="line.title || line.label || line.key" />
-                </div>
-              </div>
-
-              <div class="flex flex-1 flex-col p-4" :class="{ 'bg-slate-50/40': !isLineEnabled(line) }">
-                <div class="rounded border border-slate-100 bg-white px-3 py-2 font-mono text-[11px] leading-relaxed text-slate-700">
-                  {{ line.formula }}
-                  <span v-if="line.firstDepositExtra && line.key === 'deposit'" class="mt-1 block text-slate-500">
-                    已开启「仅首笔充值」时：仅代理名下客户第一笔充值成功订单产生本条线的 A 与佣金；其余充值不产生本条线佣金。
-                  </span>
-                </div>
-
-                <template v-if="isLineEnabled(line)">
-                  <label class="mt-4 block text-xs font-medium text-slate-700" :for="'agcr-' + line.key">比例 r（0～1）</label>
-                  <a-input :id="'agcr-' + line.key" type="number" :min="0" :max="1" :step="0.001" class="mt-1 w-full max-w-[220px]" :value="rateNum(line)" @input="setRate(line, $event.target.value)" />
-                  <div class="mt-3 flex flex-wrap gap-1.5">
-                    <span class="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-700">
-                      r = {{ (rateNum(line) * 100).toFixed(2) }}%
-                    </span>
-                  </div>
-                  <div class="mt-3 rounded-md border border-slate-100 bg-slate-50 px-3 py-2 text-[11px] text-slate-800">
-                    <p class="font-medium text-slate-700">示例 · 基数 {{ formatUsdt(demoBaseAmount) }} USDT</p>
-                    <p class="mt-1 font-mono">
-                      佣金 ≈ {{ formatUsdt(previewCommission(line, demoBaseAmount) ?? 0) }} USDT
-                    </p>
-                  </div>
+      <Card title="产品线 · 代理记佣（全局默认）" :bordered="false">
+        <template #extra>
+          <Space :size="8">
+            <TypographyText type="secondary">示例手续费基数（USDT）</TypographyText>
+            <InputNumber v-model:value="demoBaseAmount" :min="0" :step="100" aria-label="示例手续费基数（USDT）" style="width: 144px" />
+          </Space>
+        </template>
+        <TypographyParagraph type="secondary">代理线仅一级分佣：每条产品线一个比例 r。新代理默认使用本页数值；示例佣金 = 基数 × r。</TypographyParagraph>
+        <div v-for="group in PRODUCT_GROUPS" :key="group.id" class="agent-config-group">
+          <TypographyText strong>{{ group.name }}</TypographyText>
+          <TypographyText type="secondary"> · {{ group.blurb }}</TypographyText>
+          <Row :gutter="[16, 16]" class="agent-config-lines">
+            <Col v-for="line in linesInGroup(group)" :key="line.key" :xs="24" :md="12" :xl="8">
+              <Card size="small" :title="line.title" class="agent-config-line">
+                <template #extra>
+                  <Switch v-model:checked="config[line.enabledKey]" :aria-label="`${line.title}记佣`" checked-children="记佣" un-checked-children="关闭" />
                 </template>
-                <p v-else class="mt-3 text-sm text-slate-500">未参与记佣，不产生代理线佣金。</p>
-              </div>
-            </div>
-          </div>
+                <TypographyParagraph type="secondary">{{ line.baseDesc }}</TypographyParagraph>
+                <TypographyParagraph><TypographyText code>{{ line.formula }}</TypographyText></TypographyParagraph>
+                <TypographyParagraph v-if="line.firstDepositExtra && line.key === 'deposit'" type="secondary">
+                  已开启「仅首笔充值」时：仅代理名下客户第一笔充值成功订单产生本条线的 A 与佣金；其余充值不产生本条线佣金。
+                </TypographyParagraph>
+                <template v-if="isLineEnabled(line)">
+                  <FormItem :label="`比例 r（0～1）`" :html-for="'agcr-' + line.key" class="agent-config-rate">
+                    <InputNumber :id="'agcr-' + line.key" :value="rateNum(line)" :min="0" :max="1" :step="0.001" style="width: 100%" @update:value="setRate(line, $event)" />
+                  </FormItem>
+                  <Space :size="8" wrap>
+                    <Tag>r = {{ (rateNum(line) * 100).toFixed(2) }}%</Tag>
+                    <TypographyText type="secondary">示例基数 {{ formatUsdt(demoBaseAmount) }} USDT，佣金 ≈ {{ formatUsdt(previewCommission(line, demoBaseAmount) ?? 0) }} USDT</TypographyText>
+                  </Space>
+                </template>
+                <TypographyText v-else type="secondary">未参与记佣，不产生代理线佣金。</TypographyText>
+              </Card>
+            </Col>
+          </Row>
         </div>
+      </Card>
+
+      <Card title="佣金结算" :bordered="false">
+        <TypographyParagraph type="secondary">{{ settlementScheduleLine }} {{ settlementNotifyLine }}</TypographyParagraph>
+        <Row :gutter="24" class="agent-config-fields">
+          <Col :xs="24">
+            <FormItem label="自动入账" extra="开启后：账期汇总单生成后系统自动划转至代理人账户。关闭后：汇总单进入「佣金结算」，由运营审核通过后入账。">
+              <Switch v-model:checked="config.agentCommissionAutoExecute" aria-label="自动发放代理佣金" checked-children="开启" un-checked-children="关闭" />
+            </FormItem>
+          </Col>
+          <Col :xs="24" :lg="12">
+            <FormItem label="结算周期" :extra="currentCycleOption?.desc">
+              <Select v-model:value="config.agentSettlementCycle" :options="cycleOptions" />
+            </FormItem>
+          </Col>
+          <Col :xs="24" :lg="12">
+            <FormItem label="结算触发时刻" extra="24 小时制，与平台默认时区一致（与裂变日结时刻配置方式相同）。">
+              <TimePicker v-model:value="config.agentSettlementTimeLocal" format="HH:mm" value-format="HH:mm" :allow-clear="false" style="width: 100%" />
+            </FormItem>
+          </Col>
+          <Col v-if="config.agentSettlementCycle !== AGENT_SETTLEMENT_CYCLE.MONTHLY" :xs="24" :lg="12">
+            <FormItem label="结算日 · 星期" :extra="config.agentSettlementCycle === AGENT_SETTLEMENT_CYCLE.WEEKLY ? '单周：每个自然周在指定星期触发上一完整周账期。' : '双周：每两个自然周在指定星期触发账期汇总（与账务双周历对齐）。'">
+              <Select v-model:value="config.agentSettlementWeekday" :options="weekdayOptions" />
+            </FormItem>
+          </Col>
+          <Col v-else :xs="24" :lg="12">
+            <FormItem label="结算日 · 每月几号" extra="按自然月；若某月无该日（如 31 号），由账务任务按月末规则处理。">
+              <InputNumber v-model:value="config.agentSettlementMonthDay" :min="1" :max="31" :precision="0" style="width: 100%" />
+            </FormItem>
+          </Col>
+          <Col :xs="24" :lg="12">
+            <FormItem label="佣金入账账户" :extra="creditToHint">
+              <Select v-model:value="config.agentCommissionCreditTo" :options="creditToOptions" />
+            </FormItem>
+          </Col>
+          <Col :xs="24">
+            <FormItem label="结算完成后通知代理" extra="账期批次完成入账后，按勾选渠道向对应代理发送通知（需站内消息 / 短信 / 邮件服务已开通；与裂变「结算完成后通知用户」一致）。">
+              <Space :size="16" wrap>
+                <Checkbox id="agent-notify-email" v-model:checked="config.agentNotifyAfterSettlementEmail">发送邮件</Checkbox>
+                <Checkbox id="agent-notify-site" v-model:checked="config.agentNotifyAfterSettlementSite">发送站内信</Checkbox>
+                <Checkbox id="agent-notify-sms" v-model:checked="config.agentNotifyAfterSettlementSms">发送手机短信</Checkbox>
+              </Space>
+            </FormItem>
+          </Col>
+        </Row>
+      </Card>
+    </Form>
+
+    <Card class="agent-config-footer" :body-style="{ padding: '12px 24px' }" :bordered="false">
+      <div class="agent-config-actions">
+        <Space :size="8" wrap>
+          <Button :disabled="isSaving" @click="resetOpen = true">重置为默认</Button>
+          <Button type="primary" :loading="isSaving" @click="saveConfig">保存配置</Button>
+        </Space>
       </div>
-    </section>
+    </Card>
 
-    <footer class="rounded-lg border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
-      <p class="font-medium text-slate-800">保存前请确认</p>
-      <ul class="mt-2 list-inside list-disc space-y-1 text-slate-600">
-        <li>已开启记佣的产品线须填写比例 r（0～1）。</li>
-        <li>账期结算周期、发放方式与结算后通知请在「佣金结算」Tab 配置。</li>
-        <li>此处为代理体系全局默认；单个代理的覆盖请在代理列表「记佣配置」中维护。</li>
-      </ul>
-      <p class="mt-3 text-xs text-slate-500">与「佣金结算」共用右上角保存与重置。</p>
-    </footer>
-    </div>
-
-    <div v-show="activeTab === 'settlement'" class="space-y-6">
-      <section class="rounded-xl border border-slate-200 bg-white">
-        <div class="border-b border-slate-100 px-5 py-4">
-          <h2 class="text-base font-semibold text-slate-900">佣金结算</h2>
-          <p class="mt-1 text-sm text-slate-500">
-            配置代理账期佣金的汇总周期、发放方式、入账账户与结算完成后通知；默认入账至代理人币币账户。
-          </p>
-        </div>
-        <div class="space-y-6 p-5">
-          <div class="rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3 text-sm text-slate-700">
-            <p class="font-medium text-slate-800">当前规则摘要</p>
-            <p class="mt-1 text-xs leading-relaxed text-slate-600">{{ settlementScheduleLine }}</p>
-            <p class="mt-1 text-xs leading-relaxed text-slate-600">{{ settlementNotifyLine }}</p>
-          </div>
-
-          <div class="flex max-w-2xl flex-col gap-3 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p class="text-sm font-medium text-slate-900">自动入账</p>
-              <p class="mt-1 text-xs leading-relaxed text-slate-500">
-                开启后：账期汇总单生成后系统自动划转至代理人账户。关闭后：汇总单进入「佣金结算」，由运营审核通过后入账。
-              </p>
-            </div>
-            <a-switch :checked="config.agentCommissionAutoExecute" @click="config.agentCommissionAutoExecute = !config.agentCommissionAutoExecute" aria-label="自动发放代理佣金" />
-          </div>
-
-          <div class="grid gap-6 lg:grid-cols-2">
-            <div>
-              <label class="block text-sm font-medium text-slate-800">结算周期</label>
-              <a-select v-model:value="config.agentSettlementCycle" class="mt-2 w-full max-w-md">
-                <a-select-option v-for="opt in AGENT_SETTLEMENT_CYCLE_OPTIONS" :key="opt.value" :value="opt.value">
-                  {{ opt.label }}
-                </a-select-option>
-              </a-select>
-              <p class="mt-1 text-xs text-slate-500">{{ currentCycleOption?.desc }}</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-800">结算触发时刻</label>
-              <p class="mt-1 text-xs text-slate-500">24 小时制，与平台默认时区一致（与裂变日结时刻配置方式相同）。</p>
-              <a-input v-model:value="config.agentSettlementTimeLocal" type="time" :step="60" class="mt-2 w-full max-w-[12rem]" />
-            </div>
-          </div>
-
-          <div v-if="config.agentSettlementCycle !== AGENT_SETTLEMENT_CYCLE.MONTHLY" class="max-w-md">
-            <label class="block text-sm font-medium text-slate-800">结算日 · 星期</label>
-            <p class="mt-1 text-xs text-slate-500">
-              <template v-if="config.agentSettlementCycle === AGENT_SETTLEMENT_CYCLE.WEEKLY">单周：每个自然周在指定星期触发上一完整周账期。</template>
-              <template v-else>双周：每两个自然周在指定星期触发账期汇总（与账务双周历对齐）。</template>
-            </p>
-            <a-select v-model:value="config.agentSettlementWeekday" class="mt-2 w-full">
-              <a-select-option v-for="d in AGENT_SETTLEMENT_WEEKDAY_OPTIONS" :key="d.value" :value="d.value">
-                {{ d.label }}
-              </a-select-option>
-            </a-select>
-          </div>
-          <div v-else class="max-w-md">
-            <label class="block text-sm font-medium text-slate-800">结算日 · 每月几号</label>
-            <p class="mt-1 text-xs text-slate-500">按自然月；若某月无该日（如 31 号），由账务任务按月末规则处理。</p>
-            <a-input type="number" :min="1" :max="31" :step="1" class="mt-2 w-full max-w-[8rem]" :value="config.agentSettlementMonthDay" @update:value="config.agentSettlementMonthDay = $event === '' ? '' : Number($event)" />
-          </div>
-
-          <div class="max-w-md">
-            <label class="block text-sm font-medium text-slate-800">佣金入账账户</label>
-            <a-select v-model:value="config.agentCommissionCreditTo" class="mt-2 w-full">
-              <a-select-option v-for="opt in REFERRAL_COMMISSION_CREDIT_TO_OPTIONS" :key="opt.value" :value="opt.value">
-                {{ opt.label }}
-              </a-select-option>
-            </a-select>
-            <p class="mt-1.5 text-xs leading-relaxed text-slate-500">
-              {{
-                REFERRAL_COMMISSION_CREDIT_TO_OPTIONS.find((o) => o.value === config.agentCommissionCreditTo)?.hint
-              }}
-            </p>
-          </div>
-
-          <div class="rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">
-            <p class="text-sm font-medium text-slate-800">结算完成后通知代理</p>
-            <p class="mt-1 text-xs text-slate-500">
-              账期批次完成入账后，按勾选渠道向对应代理发送通知（需站内消息 / 短信 / 邮件服务已开通；与裂变「结算完成后通知用户」一致）。
-            </p>
-            <ul class="mt-3 space-y-2 text-sm text-slate-700">
-              <li class="flex items-center gap-2">
-                <a-checkbox id="agent-notify-email" v-model:checked="config.agentNotifyAfterSettlementEmail" class="text-blue-600" />
-                <label for="agent-notify-email" class="cursor-pointer select-none">发送邮件</label>
-              </li>
-              <li class="flex items-center gap-2">
-                <a-checkbox id="agent-notify-site" v-model:checked="config.agentNotifyAfterSettlementSite" class="text-blue-600" />
-                <label for="agent-notify-site" class="cursor-pointer select-none">发送站内信</label>
-              </li>
-              <li class="flex items-center gap-2">
-                <a-checkbox id="agent-notify-sms" v-model:checked="config.agentNotifyAfterSettlementSms" class="text-blue-600" />
-                <label for="agent-notify-sms" class="cursor-pointer select-none">发送手机短信</label>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-      <footer class="rounded-lg border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600">
-        <p class="font-medium text-slate-800">保存前请确认</p>
-        <ul class="mt-2 list-inside list-disc space-y-1 text-slate-600">
-          <li>结算周期、星期或月内日期、触发时刻与通知渠道保存后由账务与消息服务按平台时区调度（演示为前端 mock）。</li>
-        </ul>
-        <p class="mt-3 text-xs text-slate-500">与「记佣规则」共用右上角保存与重置。</p>
-      </footer>
-    </div>
-  </div>
+    <AdminModal :open="resetOpen" title="重置代理记佣配置" confirm-text="确认重置" danger :width="480" @close="resetOpen = false" @confirm="confirmReset">
+      <TypographyText>确认重置为代理记佣默认配置？当前未保存的修改将被覆盖，重置后需保存才会生效。</TypographyText>
+    </AdminModal>
+  </PageShell>
 </template>
 
 <style scoped>
-button:focus {
-  outline: none;
-}
+.agent-config-form { display: grid; gap: 24px; }
+.agent-config-group + .agent-config-group { margin-top: 24px; }
+.agent-config-lines { margin-top: 12px; }
+.agent-config-line { height: 100%; }
+.agent-config-rate { margin-bottom: 12px; }
+.agent-config-fields { max-width: 1100px; }
+.agent-config-footer { position: sticky; bottom: 0; z-index: 10; }
+.agent-config-actions { display: flex; justify-content: flex-end; padding-bottom: env(safe-area-inset-bottom); }
 </style>

@@ -3,6 +3,12 @@ import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { nativeControl } from '../../../admin/components/antd/controls.js'
 import { computed, reactive, ref } from 'vue'
+import { Button, Card, Col, Empty, Form, FormItem, Input, InputNumber, Row, Space, Statistic, Switch, Table, Tag, TypographyParagraph, TypographyText, message } from 'ant-design-vue'
+import { PlusOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
+import EarnAdminModal from '../earn/EarnAdminModal.vue'
 import { publicDepositAddressRepository } from '../../../admin/repositories/publicDepositAddressRepository.js'
 import MinimumDepositDialog from '../../../admin/components/assets/MinimumDepositDialog.vue'
 import PanelSingleSelect from '../../../admin/components/form/PanelSingleSelect.vue'
@@ -15,12 +21,9 @@ import {
 
 const minimumDepositTrigger = ref(null)
 const minimumDepositOpen = ref(false)
-const minimumDepositReceipt = ref('')
 const repository = publicDepositAddressRepository
 const rows = ref(repository.list())
-const keyword = ref('')
-const networkFilter = ref('all')
-const statusFilter = ref('all')
+const page = ref(1)
 const modalOpen = ref(false)
 const showMfaModal = ref(false)
 const mfaLoading = ref(false)
@@ -28,7 +31,6 @@ const pendingMutation = ref(null)
 const editingAddress = ref('')
 const formError = ref('')
 const revealedIds = ref(new Set())
-const copiedId = ref('')
 const logDialogOpen = ref(false)
 const logRow = ref(null)
 const addressLogs = ref([])
@@ -37,7 +39,6 @@ const addressDialogRef = ref(null)
 const addressInitialFocusRef = ref(null)
 const logDialogRef = ref(null)
 const logInitialFocusRef = ref(null)
-let copiedTimer = null
 
 const LOG_PAGE_SIZE = 5
 
@@ -80,16 +81,35 @@ const networkOptions = computed(() => PUBLIC_DEPOSIT_NETWORKS.map((network) => (
   searchText: network
 })))
 
+// Query card (Ant Design Pro, 2026-11-28): the old combined keyword box is split into one field per column.
+const blankFilters = () => ({ coin: 'all', network: 'all', status: 'all', address: '', remark: '' })
+const filters = ref(blankFilters())
+const filterFields = [
+  { key: 'coin', label: '币种', searchable: true, options: [{ value: 'all', label: '全部币种' }, ...PUBLIC_DEPOSIT_COINS.map((value) => ({ value, label: value }))] },
+  { key: 'network', label: '网络', searchable: true, options: [{ value: 'all', label: '全部网络' }, ...PUBLIC_DEPOSIT_NETWORKS.map((value) => ({ value, label: value }))] },
+  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, { value: 'enabled', label: '已启用' }, { value: 'disabled', label: '已停用' }] },
+  { key: 'address', label: '收款地址' },
+  { key: 'remark', label: '备注' }
+]
+const contains = (value, query) => !query || String(value || '').toLowerCase().includes(query.trim().toLowerCase())
 const filteredRows = computed(() => {
-  const search = keyword.value.trim().toLowerCase()
+  const f = filters.value
   return rows.value.filter((row) => {
-    const matchesNetwork = networkFilter.value === 'all' || row.network === networkFilter.value
-    const matchesStatus = statusFilter.value === 'all'
-      || (statusFilter.value === 'enabled' ? row.enabled : !row.enabled)
-    const haystack = `${row.coin} ${row.network} ${row.address} ${row.remark || ''}`.toLowerCase()
-    return matchesNetwork && matchesStatus && (!search || haystack.includes(search))
+    const matchesStatus = f.status === 'all' || (f.status === 'enabled' ? row.enabled : !row.enabled)
+    return (f.coin === 'all' || row.coin === f.coin) && (f.network === 'all' || row.network === f.network) &&
+      matchesStatus && contains(row.address, f.address) && contains(row.remark, f.remark)
   })
 })
+function searchRows(values) { filters.value = { ...blankFilters(), ...values }; page.value = 1 }
+function resetRows() { filters.value = blankFilters(); page.value = 1 }
+const columns = [
+  { key: 'coin', title: '币种 / 网络', width: 140, fixed: 'left' },
+  { key: 'address', title: '收款地址', width: 320 },
+  { key: 'status', title: '状态', width: 90 },
+  { key: 'sortOrder', title: '排序权重', width: 100, align: 'right' },
+  { key: 'updated', title: '更新信息', width: 180 },
+  { key: 'actions', title: '操作', width: 200, fixed: 'right' }
+]
 
 const enabledCount = computed(() => rows.value.filter((row) => row.enabled).length)
 const coveredNetworkCount = computed(
@@ -214,6 +234,7 @@ async function handleMfaVerify() {
     await new Promise((resolve) => setTimeout(resolve, 600))
     repository.save(pendingMutation.value.payload)
     refreshRows()
+    message.success(pendingMutation.value.type === 'save' ? '收款地址配置已保存' : (pendingMutation.value.payload.enabled ? '收款地址已启用' : '收款地址已停用'))
     if (pendingMutation.value.type === 'save') {
       modalOpen.value = false
       formError.value = ''
@@ -253,9 +274,17 @@ function saveAddress() {
   })
 }
 
+// Enable/disable asks in an Ant confirmation dialog (was window.confirm), then goes through MFA as before.
+const statusConfirmRow = ref(null)
+const statusConfirmOpen = ref(false)
 function toggleStatus(row) {
-  const verb = row.enabled ? '停用' : '启用'
-  if (!window.confirm(`确认${verb}该收款地址？停用后仍保留历史记录。`)) return
+  statusConfirmRow.value = row
+  statusConfirmOpen.value = true
+}
+function confirmToggleStatus() {
+  const row = statusConfirmRow.value
+  statusConfirmOpen.value = false
+  if (!row) return
   requestMfa({
     type: 'status',
     payload: { ...row, enabled: !row.enabled, operator: 'admin_current', updatedAt: nowText() }
@@ -276,11 +305,9 @@ function toggleReveal(id) {
 async function copyAddress(row) {
   try {
     await navigator.clipboard.writeText(row.address)
-    copiedId.value = row.id
-    if (copiedTimer) clearTimeout(copiedTimer)
-    copiedTimer = setTimeout(() => { copiedId.value = '' }, 1600)
+    message.success('收款地址已复制')
   } catch {
-    copiedId.value = ''
+    message.error('复制失败，请手动选择地址复制')
   }
 }
 
@@ -291,212 +318,146 @@ const logDialogLifecycle = { rendered: logDialogRendered, phase: logDialogPhase,
 </script>
 
 <template>
-  <main class="space-y-6">
-    <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-      <div>
-        <p class="text-sm font-medium text-slate-500">资产管理</p>
-        <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">公共收款地址</h1>
-        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
-          按币种与网络维护用户充值时展示的平台地址。同一币种和网络只能启用一个地址，未配置地址的充值入口应暂停展示。
-        </p>
-      </div>
-      <div class="flex shrink-0 flex-wrap items-center gap-3">
-        <a-button :ref="el => { minimumDepositTrigger = nativeControl(el) }" html-type="button" aria-haspopup="dialog" class="min-h-11" @click="minimumDepositOpen = true">最低充值金额</a-button>
-        <a-button html-type="button" class="inline-flex shrink-0 items-center justify-center bg-slate-900 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800" @click="openCreate">
-          <span class="mr-1.5 text-lg leading-none">＋</span>新增地址
-        </a-button>
-      </div>
-    </header>
-    <p v-if="minimumDepositReceipt" role="status" class="text-sm text-emerald-700">{{ minimumDepositReceipt }}</p>
-    <MinimumDepositDialog :return-focus="minimumDepositTrigger" :open="minimumDepositOpen" @close="minimumDepositOpen = false" @saved="value => { minimumDepositReceipt = `最低充值金额已保存：${value.amountUsdt} USDT（当前浏览器演示配置）` }" />
+  <PageShell>
+    <SearchForm name="public-deposit-address-filters" :model="filters" :fields="filterFields" @search="searchRows" @reset="resetRows" />
 
-    <section class="grid gap-4 sm:grid-cols-3">
-      <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-slate-500">当前启用</p>
-        <p class="mt-2 text-2xl font-bold text-slate-900">{{ enabledCount }}</p>
-        <p class="mt-1 text-xs text-emerald-600">可用于前台充值展示</p>
-      </article>
-      <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-slate-500">已覆盖币种网络</p>
-        <p class="mt-2 text-2xl font-bold text-slate-900">{{ coveredPairCount }}</p>
-        <p class="mt-1 text-xs text-slate-500">按币种与网络精确匹配</p>
-      </article>
-      <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-slate-500">已覆盖网络</p>
-        <p class="mt-2 text-2xl font-bold text-slate-900">{{ coveredNetworkCount }}</p>
-        <p class="mt-1 text-xs text-slate-500">至少一个启用地址的网络</p>
-      </article>
-    </section>
+    <Card :bordered="false" title="地址覆盖">
+      <Row :gutter="24">
+        <Col :xs="24" :md="8"><Statistic title="当前启用" :value="enabledCount" /><TypographyText type="secondary">可用于前台充值展示</TypographyText></Col>
+        <Col :xs="24" :md="8"><Statistic title="已覆盖币种网络" :value="coveredPairCount" /><TypographyText type="secondary">按币种与网络精确匹配</TypographyText></Col>
+        <Col :xs="24" :md="8"><Statistic title="已覆盖网络" :value="coveredNetworkCount" /><TypographyText type="secondary">至少一个启用地址的网络</TypographyText></Col>
+      </Row>
+    </Card>
 
-    <section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div class="flex flex-col gap-3 border-b border-slate-200 p-4 lg:flex-row lg:items-center">
-        <div class="relative min-w-0 flex-1 lg:max-w-md">
-          <a-input v-model:value="keyword" type="search" placeholder="搜索币种、网络、地址或备注" class="w-full transition" />
-        </div>
-        <a-select v-model:value="networkFilter" class="text-slate-700">
-          <a-select-option value="all">全部网络</a-select-option>
-          <a-select-option v-for="network in PUBLIC_DEPOSIT_NETWORKS" :key="network" :value="network">{{ network }}</a-select-option>
-        </a-select>
-        <a-select v-model:value="statusFilter" class="text-slate-700">
-          <a-select-option value="all">全部状态</a-select-option>
-          <a-select-option value="enabled">已启用</a-select-option>
-          <a-select-option value="disabled">已停用</a-select-option>
-        </a-select>
-      </div>
+    <AdminTable title="公共收款地址" v-model:page="page" :rows="filteredRows" :columns="columns" row-key="id" desktop-only>
+      <template #toolbar>
+        <Space :size="8">
+          <Button :ref="el => { minimumDepositTrigger = nativeControl(el) }" aria-haspopup="dialog" @click="minimumDepositOpen = true">最低充值金额</Button>
+          <Button type="primary" @click="openCreate"><template #icon><PlusOutlined /></template>新增地址</Button>
+        </Space>
+      </template>
+      <template #cell="{ column, record: row }">
+        <Space v-if="column.key === 'coin'" direction="vertical" :size="0">
+          <TypographyText strong>{{ row.coin }}</TypographyText>
+          <TypographyText type="secondary">{{ row.network }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'address'" direction="vertical" :size="0">
+          <span class="font-mono break-all" :title="row.address">{{ maskedAddress(row) }}</span>
+          <Space :size="8">
+            <Button type="link" size="small" class="px-0" @click="toggleReveal(row.id)">{{ revealedIds.has(row.id) ? '隐藏' : '查看完整地址' }}</Button>
+            <Button type="link" size="small" class="px-0" @click="copyAddress(row)">复制</Button>
+          </Space>
+        </Space>
+        <Tag v-else-if="column.key === 'status'" :color="row.enabled ? 'green' : 'default'">{{ row.enabled ? '已启用' : '已停用' }}</Tag>
+        <template v-else-if="column.key === 'sortOrder'">{{ row.sortOrder ?? 0 }}</template>
+        <Space v-else-if="column.key === 'updated'" direction="vertical" :size="0">
+          <span>{{ row.updatedAt || '—' }}</span>
+          <TypographyText type="secondary">{{ row.operator || '—' }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'actions'" :size="8">
+          <Button type="link" class="px-0" @click="openEdit(row)">编辑</Button>
+          <Button type="link" class="px-0" @click="openLogDialog(row)">修改日志</Button>
+          <Button type="link" class="px-0" :danger="row.enabled" @click="toggleStatus(row)">{{ row.enabled ? '停用' : '启用' }}</Button>
+        </Space>
+        <template v-else>{{ row[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
 
-      <div class="overflow-x-auto">
-        <a-table  :data-source="filteredRows" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(row) => row.id" :custom-row="(row, index) => ({ class: [&quot;transition hover:bg-slate-50/70&quot;] })">
-<a-table-column key="column-0" ><template #title>币种 / 网络</template><template #default="{ record: row, index: index }"><div class=" ">
-                <p class="font-semibold text-slate-900">{{ row.coin }}</p>
-                <p class="mt-1 text-xs text-slate-500">{{ row.network }}</p>
-              </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>收款地址</template><template #default="{ record: row, index: index }"><div class="max-w-md  ">
-                <p class="break-all font-mono text-xs text-slate-700" :title="row.address">{{ maskedAddress(row) }}</p>
-                <div class="mt-2 flex gap-3 text-xs font-medium">
-                  <a-button html-type="button" class="text-slate-500 hover:text-slate-900" @click="toggleReveal(row.id)">
-                    {{ revealedIds.has(row.id) ? '隐藏' : '查看完整地址' }}
-                  </a-button>
-                  <a-button html-type="button" class="text-blue-600 hover:text-blue-700" @click="copyAddress(row)">
-                    {{ copiedId === row.id ? '已复制' : '复制' }}
-                  </a-button>
-                </div>
-              </div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
-                <span class="inline-flex items-center gap-1.5 text-xs font-semibold" :class="row.enabled ? 'text-emerald-700' : 'text-slate-400'">
-                  <span class="h-2 w-2 rounded-full" :class="row.enabled ? 'bg-emerald-500' : 'bg-slate-300'" />
-                  {{ row.enabled ? '已启用' : '已停用' }}
-                </span>
-              </div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>排序</template><template #default="{ record: row, index: index }"><div class="  text-sm font-semibold text-slate-700">
-                {{ row.sortOrder ?? 0 }}
-              </div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>更新信息</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-500">
-                <p>{{ row.updatedAt || '—' }}</p>
-                <p class="mt-1">{{ row.operator || '—' }}</p>
-              </div></template></a-table-column>
-<a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="  text-right">
-                <div class="flex justify-end gap-3 text-xs font-semibold">
-                  <a-button html-type="button" class="text-blue-600 hover:text-blue-800" @click="openEdit(row)">编辑</a-button>
-                  <a-button html-type="button" class="text-violet-600 hover:text-violet-800" @click="openLogDialog(row)">修改日志</a-button>
-                  <a-button html-type="button" :class="row.enabled ? 'text-rose-600 hover:text-rose-800' : 'text-emerald-600 hover:text-emerald-800'" @click="toggleStatus(row)">
-                    {{ row.enabled ? '停用' : '启用' }}
-                  </a-button>
-                </div>
-              </div></template></a-table-column>
-</a-table>
-      </div>
-      <div class="border-t border-slate-100 px-5 py-3 text-xs text-slate-500">
-        共 {{ filteredRows.length }} 条记录 · 地址停用后仍保留历史记录，不支持物理删除
-      </div>
-    </section>
+    <MinimumDepositDialog :return-focus="minimumDepositTrigger" :open="minimumDepositOpen" @close="minimumDepositOpen = false" @saved="value => message.success(`最低充值金额已保存：${value.amountUsdt} USDT（当前浏览器演示配置）`)" />
+
+    <EarnAdminModal :open="statusConfirmOpen" :width="480" :title="statusConfirmRow?.enabled ? '停用收款地址' : '启用收款地址'" :confirm-text="statusConfirmRow?.enabled ? '确认停用' : '确认启用'" :danger="Boolean(statusConfirmRow?.enabled)" @close="statusConfirmOpen = false" @confirm="confirmToggleStatus" @closed="statusConfirmOpen || (statusConfirmRow = null)">
+      <TypographyParagraph>确认{{ statusConfirmRow?.enabled ? '停用' : '启用' }}该收款地址？停用后仍保留历史记录，不支持物理删除。</TypographyParagraph>
+      <TypographyText v-if="statusConfirmRow" type="secondary">{{ statusConfirmRow.coin }} · {{ statusConfirmRow.network }} · <span class="font-mono break-all">{{ statusConfirmRow.address }}</span></TypographyText>
+    </EarnAdminModal>
 
     <AdminDialog :open="addressDialogRendered" :lifecycle="addressDialogLifecycle" :title="form.id ? '编辑收款地址' : '新增收款地址'" title-id="public-deposit-address-dialog-title" :width="672" plain>
       <template #subtitle>更换地址会生成新记录，原地址自动停用并保留。</template>
-      <form class="flex min-h-0 flex-1 flex-col" @submit.prevent="saveAddress">
-          <div class="min-h-0 flex-1 space-y-5 overflow-y-auto p-6">
-          <div class="grid gap-4 sm:grid-cols-2">
-            <PanelSingleSelect
-              :ref="el => { addressInitialFocusRef = nativeControl(el) }"
-              v-model="form.coin"
-              label="币种"
-              search-label="搜索币种"
-              placeholder="请选择币种"
-              id-base="public-deposit-address-coin"
-              required
-              :options="coinOptions"
-            />
-            <PanelSingleSelect
-              v-model="form.network"
-              label="网络"
-              search-label="搜索网络"
-              placeholder="请选择网络"
-              id-base="public-deposit-address-network"
-              required
-              :options="networkOptions"
-            />
-          </div>
+      <Form class="public-deposit-form" layout="vertical" name="public-deposit-address-form" :model="form" @finish="saveAddress">
+        <div class="public-deposit-form-body">
+          <Row :gutter="16">
+            <Col :xs="24" :sm="12">
+              <PanelSingleSelect
+                :ref="el => { addressInitialFocusRef = nativeControl(el) }"
+                v-model="form.coin"
+                label="币种"
+                search-label="搜索币种"
+                placeholder="请选择币种"
+                id-base="public-deposit-address-coin"
+                required
+                :options="coinOptions"
+              />
+            </Col>
+            <Col :xs="24" :sm="12">
+              <PanelSingleSelect
+                v-model="form.network"
+                label="网络"
+                search-label="搜索网络"
+                placeholder="请选择网络"
+                id-base="public-deposit-address-network"
+                required
+                :options="networkOptions"
+              />
+            </Col>
+          </Row>
 
-          <label class="block space-y-2 text-sm font-medium text-slate-700">
-            <span>收款地址</span>
-            <a-input v-model:value="form.address" type="text" spellcheck="false" placeholder="请输入完整链上地址" class="w-full font-mono" />
-            <span v-if="form.id && editingAddress !== form.address" class="block text-xs font-normal text-amber-600">检测到地址变更：保存后将新建记录并停用原地址。</span>
-          </label>
+          <FormItem label="收款地址" required :extra="form.id && editingAddress !== form.address ? '检测到地址变更：保存后将新建记录并停用原地址。' : undefined">
+            <Input v-model:value="form.address" spellcheck="false" placeholder="请输入完整链上地址" class="font-mono" />
+          </FormItem>
 
-          <label class="block space-y-2 text-sm font-medium text-slate-700">
-            <span>排序</span>
-            <a-input type="number" inputmode="numeric" :min="0" :step="1" placeholder="数值越大展示越靠前" class="w-full" :value="form.sortOrder" @update:value="form.sortOrder = $event === '' ? '' : Number($event)" />
-            <span class="block text-xs font-normal text-slate-500">列表按排序值从大到小展示，相同排序按更新时间降序。</span>
-          </label>
+          <FormItem label="排序权重" required extra="数值越大越靠前；相同排序按更新时间降序。">
+            <InputNumber v-model:value="form.sortOrder" :min="0" :precision="0" placeholder="数值越大越靠前" class="public-deposit-number" />
+          </FormItem>
 
-          <label class="block space-y-2 text-sm font-medium text-slate-700">
-            <span>备注</span>
-            <a-textarea v-model:value="form.remark" :rows="3" placeholder="填写地址用途或更换原因" class="w-full" />
-          </label>
+          <FormItem label="备注">
+            <Input.TextArea v-model:value="form.remark" :rows="3" placeholder="填写地址用途或更换原因" />
+          </FormItem>
 
-          <label class="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
-            <span>
-              <span class="block text-sm font-semibold text-slate-800">启用状态</span>
-              <span class="mt-0.5 block text-xs text-slate-500">启用后可参与前台充值地址匹配</span>
-            </span>
-            <a-checkbox v-model:checked="form.enabled" class="w-5 text-slate-900" />
-          </label>
+          <FormItem label="启用状态" extra="启用后可参与前台充值地址匹配">
+            <Switch v-model:checked="form.enabled" aria-label="启用状态" checked-children="启用" un-checked-children="停用" />
+          </FormItem>
 
           <FeedbackToast v-if="formError" type="error" :source="() => (formError) ? (formError) : ''"></FeedbackToast>
-          </div>
+        </div>
 
-          <footer class="shrink-0 flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-            <a-button html-type="button" @click="closeModal">取消</a-button>
-            <a-button html-type="submit">保存配置</a-button>
-          </footer>
-        </form>
+        <footer class="public-deposit-form-footer">
+          <Button @click="closeModal">取消</Button>
+          <Button type="primary" html-type="submit">保存配置</Button>
+        </footer>
+      </Form>
     </AdminDialog>
 
     <AdminDialog :open="logDialogRendered" :lifecycle="logDialogLifecycle" title="修改日志" title-id="public-deposit-address-log-title" :width="896" plain>
       <template #subtitle>{{ logRow?.coin }} · {{ logRow?.network }} · {{ logRow?.id }}</template>
-      <div class="overflow-y-auto p-6">
-          <div class="mb-5 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
-            <p class="text-xs leading-5 text-blue-700">
-              系统会在新增、编辑、启用、停用或更换公共收款地址成功后自动生成日志，记录操作类型、操作人、操作时间以及变更前后内容。日志按地址独立归档，仅用于审计追溯，不支持修改或删除。
-            </p>
-          </div>
+      <div class="public-deposit-log-body">
+        <TypographyParagraph type="secondary">
+          系统会在新增、编辑、启用、停用或更换公共收款地址成功后自动生成日志，记录操作类型、操作人、操作时间以及变更前后内容。日志按地址独立归档，仅用于审计追溯，不支持修改或删除。
+        </TypographyParagraph>
 
-          <div v-if="addressLogs.length" class="space-y-4">
-            <article v-for="log in paginatedAddressLogs" :key="log.id" class="overflow-hidden rounded-xl border border-slate-200">
-              <div class="flex flex-col gap-2 bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="rounded-full bg-violet-100 px-2.5 py-1 text-xs font-semibold text-violet-700">
-                    {{ LOG_ACTION_LABELS[log.action] || log.action }}
-                  </span>
-                  <span class="text-xs text-slate-500">{{ log.occurredAt }}</span>
-                </div>
-                <span class="text-xs text-slate-500">操作人：{{ log.operator }}</span>
-              </div>
+        <Space v-if="addressLogs.length" direction="vertical" :size="16" class="public-deposit-log-list">
+          <Card v-for="log in paginatedAddressLogs" :key="log.id" size="small">
+            <template #title>
+              <Space :size="8" wrap>
+                <Tag color="purple">{{ LOG_ACTION_LABELS[log.action] || log.action }}</Tag>
+                <TypographyText type="secondary">{{ log.occurredAt }}</TypographyText>
+              </Space>
+            </template>
+            <template #extra><TypographyText type="secondary">操作人：{{ log.operator }}</TypographyText></template>
+            <Table :data-source="changedLogFields(log)" :pagination="false" size="small" :row-key="(field) => field" :columns="[{ key: 'field', title: '变更字段', width: 120 }, { key: 'before', title: '变更前' }, { key: 'after', title: '变更后' }]">
+              <template #bodyCell="{ column, record: field }">
+                <TypographyText v-if="column.key === 'field'" strong>{{ LOG_FIELD_LABELS[field] }}</TypographyText>
+                <TypographyText v-else-if="column.key === 'before'" type="secondary" class="break-all" :class="field === 'address' ? 'font-mono' : ''">{{ formatLogValue(field, log.before?.[field]) }}</TypographyText>
+                <span v-else class="break-all" :class="field === 'address' ? 'font-mono' : ''">{{ formatLogValue(field, log.after?.[field]) }}</span>
+              </template>
+            </Table>
+          </Card>
 
-              <div class="overflow-x-auto">
-                <a-table  :data-source="changedLogFields(log)" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(field) => field" >
-<a-table-column key="column-0" ><template #title>变更字段</template><template #default="{ record: field, index: index }"><div class="  font-semibold text-slate-600">{{ LOG_FIELD_LABELS[field] }}</div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>变更前</template><template #default="{ record: field, index: index }"><div class="max-w-xs break-all   text-slate-500" :class="field === 'address' ? 'font-mono' : ''">
-                        {{ formatLogValue(field, log.before?.[field]) }}
-                      </div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>变更后</template><template #default="{ record: field, index: index }"><div class="max-w-xs break-all bg-emerald-50/40   text-slate-800" :class="field === 'address' ? 'font-mono' : ''">
-                        {{ formatLogValue(field, log.after?.[field]) }}
-                      </div></template></a-table-column>
-</a-table>
-              </div>
-            </article>
-
-            <footer class="flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
-              <p class="text-xs text-slate-500">
-                共 {{ addressLogs.length }} 条 · 第 {{ logPage }} / {{ logPageCount }} 页
-              </p>
-              <a-pagination size="small" v-model:current="logPage" :page-size="LOG_PAGE_SIZE" :total="addressLogs.length" :show-size-changer="false" />
-            </footer>
+          <div class="public-deposit-log-pagination">
+            <TypographyText type="secondary">共 {{ addressLogs.length }} 条 · 第 {{ logPage }} / {{ logPageCount }} 页</TypographyText>
+            <a-pagination size="small" v-model:current="logPage" :page-size="LOG_PAGE_SIZE" :total="addressLogs.length" :show-size-changer="false" />
           </div>
-          <div v-else class="py-14 text-center">
-            <p class="text-sm font-medium text-slate-500">暂无修改日志</p>
-            <p class="mt-1 text-xs text-slate-400">该地址尚未发生配置变更</p>
-          </div>
-        </div>
+        </Space>
+        <Empty v-else description="暂无修改日志：该地址尚未发生配置变更" />
+      </div>
     </AdminDialog>
 
     <MfaVerificationModal
@@ -507,5 +468,15 @@ const logDialogLifecycle = { rendered: logDialogRendered, phase: logDialogPhase,
       @verify="handleMfaVerify"
       @cancel="cancelMfa"
     />
-  </main>
+  </PageShell>
 </template>
+
+<style scoped>
+.public-deposit-form { display: flex; flex: 1 1 auto; min-height: 0; flex-direction: column; }
+.public-deposit-form-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-top: 24px; padding-bottom: 8px; }
+.public-deposit-form-footer { flex: none; display: flex; justify-content: flex-end; gap: 8px; margin: 0 -24px; padding: 10px 24px; border-top: 1px solid rgb(5 5 5 / 6%); }
+.public-deposit-number { width: 100%; }
+.public-deposit-log-body { overflow-y: auto; padding-top: 24px; padding-bottom: 24px; }
+.public-deposit-log-list { width: 100%; }
+.public-deposit-log-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+</style>

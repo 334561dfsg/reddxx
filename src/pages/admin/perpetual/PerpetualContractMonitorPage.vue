@@ -1,5 +1,15 @@
 <script setup>
+// 合约线控 — Ant Design Pro layout (2026-11-28): the combined code/name keyword box became query-card fields with
+// explicit 查询/重置 (plus 线控状态 / 自动触发), summary counts are a Statistic card, each contract is an Ant Card with
+// Statistic metrics and a rule Table (Switch for enabled, link actions; deletion now confirms in AdminModal). The config,
+// rule and MFA dialogs are unchanged; feedback is toast instead of alert(). Fix: 当前线控参数 showed 逆势/顺势 offsets
+// as 随机偏移 because formatParams only knew random/up/down.
 import { computed, reactive, ref, watch } from 'vue'
+import { Button, Card, Col, Descriptions, DescriptionsItem, Empty, Pagination, Row, Space, Statistic, Switch, Table, Tag, TypographyText, message } from 'ant-design-vue'
+import { PlusOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminModal from '../earn/EarnAdminModal.vue'
 import MfaVerificationModal from '../../../admin/components/MfaVerificationModal.vue'
 import ControlConfigModal from '../../../admin/components/ControlConfigModal.vue'
 import {
@@ -21,7 +31,25 @@ import { createDefaultPerpetualControlConfig } from '../../../admin/mock/perpetu
 const clone = (value) => JSON.parse(JSON.stringify(value))
 
 const contracts = ref(createPerpetualControlContractsMock())
-const keyword = ref('')
+const blank = () => ({ symbol: '', alias: '', status: 'all', autoTrigger: 'all' })
+const filters = ref(blank())
+const fields = [
+  { key: 'symbol', label: '合约代码' },
+  { key: 'alias', label: '合约名称' },
+  { key: 'status', label: '线控状态', options: [{ value: 'all', label: '全部状态' }, { value: PERP_CONTROL_CONTRACT_STATUS.RUNNING, label: '线控中' }, { value: PERP_CONTROL_CONTRACT_STATUS.PAUSED, label: '暂停' }] },
+  { key: 'autoTrigger', label: '自动触发', options: [{ value: 'all', label: '全部' }, { value: 'on', label: '自动触发开' }, { value: 'off', label: '自动触发关' }] }
+]
+const ruleColumns = [
+  { key: 'enabled', title: '状态', width: 110 },
+  { key: 'name', title: '规则名称', width: 180 },
+  { key: 'condition', title: '触发条件', width: 220 },
+  { key: 'action', title: '执行动作', width: 200 },
+  { key: 'affects', title: '影响', width: 160 },
+  { key: 'hitCount', title: '已触发次数', width: 110, align: 'right' },
+  { key: 'actions', title: '操作', width: 110 }
+]
+const toneColor = { up: '#389e0d', down: '#cf1322', neutral: undefined }
+const ruleToDelete = ref(null)
 
 const summary = computed(() => {
   const total = contracts.value.length
@@ -169,38 +197,41 @@ const ensureMetrics = (contract) => {
 
 contracts.value = contracts.value.map((contract) => ({ ...contract, metrics: ensureMetrics(contract) }))
 
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
 const filteredContracts = computed(() => {
-  const kw = keyword.value.trim().toLowerCase()
-  if (!kw) return contracts.value
-  return contracts.value.filter((item) => `${item.symbol} ${item.alias}`.toLowerCase().includes(kw))
+  const f = filters.value
+  return contracts.value.filter((item) =>
+    has(item.symbol, f.symbol) && has(item.alias, f.alias) &&
+    (f.status === 'all' || item.status === f.status) &&
+    (f.autoTrigger === 'all' || Boolean(item.config?.autoTriggerEnabled) === (f.autoTrigger === 'on'))
+  )
 })
 
-const pagination = reactive({
-  currentPage: 1,
-  pageSize: 5
-})
+const currentPage = ref(1)
+const pageSize = 5
 
-const paginatedContracts = computed(() => {
-  const start = (pagination.currentPage - 1) * pagination.pageSize
-  const end = start + pagination.pageSize
-  return filteredContracts.value.slice(start, end)
-})
+const paginatedContracts = computed(() => filteredContracts.value.slice((currentPage.value - 1) * pageSize, currentPage.value * pageSize))
 
-const totalPages = computed(() => Math.ceil(filteredContracts.value.length / pagination.pageSize))
-
-watch([keyword], () => {
-  pagination.currentPage = 1
-})
+const applySearch = (values) => {
+  filters.value = { ...blank(), ...values }
+  currentPage.value = 1
+}
+const resetSearch = () => {
+  filters.value = blank()
+  currentPage.value = 1
+}
 
 const formatParams = (config) => {
   const direction = {
+    [PERP_CONTROL_OFFSET_DIRECTION.AGAINST]: '逆势',
+    [PERP_CONTROL_OFFSET_DIRECTION.FOLLOW]: '顺势',
     [PERP_CONTROL_OFFSET_DIRECTION.RANDOM]: '随机偏移',
     [PERP_CONTROL_OFFSET_DIRECTION.UP]: '向上偏移',
     [PERP_CONTROL_OFFSET_DIRECTION.DOWN]: '向下偏移'
   }[config.offsetDirection] || '随机偏移'
   return [
     `价格偏移: ${config.priceOffset} 点 (${direction})`,
-    `滑点率: ${config.slippagePct.toFixed(2)}%`,
+    `滑点率: ${Number(config.slippagePct || 0).toFixed(2)}%`,
     `成交延迟: ${config.latencyMs}ms`,
     `杠杆限制: ${config.maxLeverage}x`,
     `自动触发: ${config.autoTriggerEnabled ? '启用' : '关闭'}`
@@ -422,12 +453,6 @@ const liveRuleActionText = computed(
     `偏移 ${ruleForm.priceOffset} 点（${currentOffsetDirectionLabel.value}） | 滑点 ${ruleForm.slippagePct.toFixed(2)}% | ${durationText.value}`
 )
 
-const toneClass = {
-  up: 'text-emerald-600',
-  down: 'text-rose-600',
-  neutral: 'text-slate-900'
-}
-
 const resetRuleForm = () => {
   ruleForm.name = ''
   ruleForm.triggerType = PERP_CONTROL_RULE_TRIGGER_TYPE.NET_POSITION
@@ -504,6 +529,13 @@ const saveRule = () => {
   showMfaModal.value = true
 }
 
+const confirmDeleteRule = () => {
+  if (!ruleToDelete.value) return
+  deleteRule(ruleToDelete.value.contractId, ruleToDelete.value.rule.id)
+  message.success('线控规则已删除')
+  ruleToDelete.value = null
+}
+
 const deleteRule = (contractId, ruleId) => {
   contracts.value = contracts.value.map((contract) =>
     contract.id === contractId ? { ...contract, rules: contract.rules.filter((rule) => rule.id !== ruleId) } : contract
@@ -542,7 +574,7 @@ const handleMfaVerify = async (code) => {
           contract.id === pendingSaveData.value.contractId ? { ...contract, config: { ...pendingSaveData.value.config } } : contract
         )
         showConfigModal.value = false
-        alert('线控配置保存成功！')
+        message.success('线控配置保存成功')
       } else if (currentSaveAction.value === 'rule') {
         contracts.value = contracts.value.map((contract) => {
           if (contract.id !== pendingSaveData.value.contractId) return contract
@@ -568,7 +600,7 @@ const handleMfaVerify = async (code) => {
         showRuleModal.value = false
         resetRuleForm()
         editingRuleId.value = null
-        alert('线控规则保存成功！')
+        message.success('线控规则保存成功')
       }
 
       pendingSaveData.value = null
@@ -576,7 +608,7 @@ const handleMfaVerify = async (code) => {
       showMfaModal.value = false
     }
   } catch (error) {
-    alert('MFA 验证失败：' + (error.message || '请稍后重试'))
+    message.error('MFA 验证失败：' + (error.message || '请稍后重试'))
   } finally {
     mfaLoading.value = false
   }
@@ -584,158 +616,71 @@ const handleMfaVerify = async (code) => {
 </script>
 
 <template>
-  <section class="space-y-5">
-    <header>
-      <h1 class="text-3xl font-semibold text-slate-900">合约线控</h1>
-      <p class="mt-1 text-sm text-slate-500">管理永续合约线控参数、自动规则与运行状态</p>
-    </header>
+  <PageShell>
+    <SearchForm name="perpetual-contract-monitor-filters" :model="filters" :fields="fields" @search="applySearch" @reset="resetSearch" />
 
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <article v-for="card in summary" :key="card.label" class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md">
-        <p class="text-sm text-slate-500 font-medium">{{ card.label }}</p>
-        <p class="mt-2 text-2xl font-bold text-slate-900">{{ card.value }}</p>
-      </article>
-    </div>
+    <Card :bordered="false">
+      <Row :gutter="24">
+        <Col v-for="card in summary" :key="card.label" :xs="12" :xl="6"><Statistic :title="card.label" :value="card.value" /></Col>
+      </Row>
+    </Card>
 
-    <div class="max-w-lg">
-      <a-input v-model:value="keyword" type="text" placeholder="搜索合约 (代码或名称)..." class="ant-input !py-2" />
-    </div>
+    <Card v-for="contract in paginatedContracts" :key="contract.id" :bordered="false">
+      <template #title>
+        <Space :size="8" wrap>
+          <span>{{ contract.symbol }}</span>
+          <TypographyText type="secondary">{{ contract.alias }}</TypographyText>
+          <Tag :color="contract.status === PERP_CONTROL_CONTRACT_STATUS.RUNNING ? 'blue' : 'orange'">{{ contract.status === PERP_CONTROL_CONTRACT_STATUS.RUNNING ? '线控中' : '暂停' }}</Tag>
+          <Tag :color="contract.config.autoTriggerEnabled ? 'purple' : 'default'">{{ contract.config.autoTriggerEnabled ? '自动触发开' : '自动触发关' }}</Tag>
+        </Space>
+      </template>
+      <template #extra>
+        <Space :size="8">
+          <Button :danger="contract.status === PERP_CONTROL_CONTRACT_STATUS.RUNNING" @click="toggleContractStatus(contract.id)">{{ contract.status === PERP_CONTROL_CONTRACT_STATUS.RUNNING ? '暂停线控' : '启动线控' }}</Button>
+          <Button type="primary" @click="openConfig(contract.id)">线控配置</Button>
+        </Space>
+      </template>
 
-    <div class="flex gap-2 flex-col">
-      <article v-for="contract in paginatedContracts" :key="contract.id" class=" rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/30 px-5 py-4">
-          <div class="flex items-center gap-3">
-            <h3 class="text-2xl font-bold text-slate-900">{{ contract.symbol }}</h3>
-            <p class="text-sm text-slate-500 font-medium">{{ contract.alias }}</p>
-            <div class="flex items-center gap-2 ml-2">
-              <span
-                class="rounded-md px-2 py-0.5 text-xs font-bold border"
-                :class="contract.status === PERP_CONTROL_CONTRACT_STATUS.RUNNING ? 'bg-blue-50 text-blue-700 border-blue-100' : 'bg-amber-50 text-amber-700 border-amber-100'"
-              >
-                {{ contract.status === PERP_CONTROL_CONTRACT_STATUS.RUNNING ? '线控中' : '暂停' }}
-              </span>
-              <span
-                class="rounded-md px-2 py-0.5 text-xs font-bold border"
-                :class="contract.config.autoTriggerEnabled ? 'bg-violet-50 text-violet-700 border-violet-100' : 'bg-slate-100 text-slate-600 border-slate-200'"
-              >
-                {{ contract.config.autoTriggerEnabled ? '自动触发开' : '自动触发关' }}
-              </span>
-            </div>
-          </div>
+      <Row :gutter="[24, 16]">
+        <Col v-for="metric in contract.metrics" :key="metric.label" :xs="12" :md="6" :xl="3">
+          <Statistic :title="metric.label" :value="metric.value" :value-style="{ fontSize: '16px', color: toneColor[metric.tone] }" />
+        </Col>
+      </Row>
 
-          <div class="flex items-center gap-2">
-            <a-button html-type="button" class="ant-btn !h-9 !px-4" @click="toggleContractStatus(contract.id)">
-              {{ contract.status === PERP_CONTROL_CONTRACT_STATUS.RUNNING ? '暂停线控' : '启动线控' }}
-            </a-button>
-            <a-button type="primary" html-type="button" class="ant-btn ant-btn-primary !h-9 !px-4" @click="openConfig(contract.id)">线控配置</a-button>
-          </div>
-        </div>
+      <Descriptions class="monitor-params" :column="1" size="small">
+        <DescriptionsItem label="当前线控参数"><span><Tag v-for="param in formatParams(contract.config)" :key="param">{{ param }}</Tag></span></DescriptionsItem>
+      </Descriptions>
 
-        <div class="p-5 space-y-5">
-          <div class="grid gap-2 md:grid-cols-4 xl:grid-cols-8">
-            <div v-for="metric in contract.metrics" :key="metric.label" class="rounded-lg border border-slate-100 bg-slate-50/50 p-2.5 transition-colors hover:bg-slate-50">
-              <p class="text-[12px] text-slate-400 uppercase tracking-wider">{{ metric.label }}</p>
-              <p class="mt-1 text-sm font-bold" :class="toneClass[metric.tone]">{{ metric.value }}</p>
-            </div>
-          </div>
-
-          <div class="rounded-lg border border-slate-100 bg-white p-4">
-            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">当前线控参数</p>
-            <div class="flex flex-wrap gap-2">
-              <span v-for="param in formatParams(contract.config)" :key="param" class="rounded-md bg-slate-100 px-2 py-1 text-xs text-slate-600 font-medium border border-slate-200/50">
-                {{ param }}
-              </span>
-            </div>
-          </div>
-
-          <div class="rounded-xl border border-violet-100 bg-violet-50/20 p-4">
-            <div class="flex items-center justify-between mb-3">
-              <p class="text-sm font-bold text-violet-700 flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                自动线控规则
-              </p>
-              <a-button type="text" html-type="button" class="text-xs font-bold text-violet-600 hover:text-violet-700 flex items-center gap-1" @click="openAddRule(contract.id)">
-                <span class="text-base">+</span> 添加规则
-              </a-button>
-            </div>
-
-            <div class="space-y-3">
-              <article v-for="rule in contract.rules" :key="rule.id" class="rounded-lg border border-violet-100/50 bg-white p-4 shadow-sm transition-all hover:shadow-md">
-                <div class="flex items-start justify-between gap-3">
-                  <div class="flex items-start gap-4">
-                    <div class="mt-1 flex flex-col items-center">
-                      <a-button type="text"
-                        html-type="button"
-                        class="relative inline-flex cursor-pointer items-center"
-                        @click="toggleRule(contract.id, rule.id)"
-                      >
-                        <span
-                          class="h-5 w-10 rounded-full transition"
-                          :class="rule.enabled ? 'bg-violet-600' : 'bg-slate-300'"
-                        ></span>
-                        <span
-                          class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition"
-                          :class="rule.enabled ? 'translate-x-5' : 'translate-x-0'"
-                        ></span>
-                      </a-button>
-                      <span class="mt-1 text-[10px] font-bold" :class="rule.enabled ? 'text-violet-600' : 'text-slate-400'">
-                        {{ rule.enabled ? '启用' : '停用' }}
-                      </span>
-                    </div>
-
-                    <div class="min-w-0">
-                      <div class="flex flex-wrap items-center gap-2">
-                        <h4 class="text-sm font-bold text-slate-900">{{ rule.name }}</h4>
-                        <span class="rounded-md bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                          {{ ruleConditionText(rule) }}
-                        </span>
-                        <span class="rounded-md bg-violet-100 px-2 py-0.5 text-[10px] font-bold text-violet-700">
-                          {{ ruleActionText(rule) }}
-                        </span>
-                      </div>
-                      <div class="mt-2 flex flex-wrap items-center gap-4 text-xs text-slate-500">
-                        <div class="flex items-center gap-1">
-                          <svg class="h-3 w-3 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <span>影响: {{ ruleAffectsText(rule) }}</span>
-                        </div>
-                        <div class="flex items-center gap-1 text-[10px] text-slate-400 font-bold">
-                          <svg class="h-3 w-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4" />
-                          </svg>
-                          <span>已触发 {{ rule.hitCount }} 次</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center gap-3">
-                    <a-button type="text" html-type="button" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" @click="openEditRule(contract.id, rule)">编辑</a-button>
-                    <a-button type="text" html-type="button" class="text-xs font-bold text-rose-400 hover:text-rose-600 transition-colors" @click="deleteRule(contract.id, rule.id)">删除</a-button>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <div v-if="totalPages > 1" class="mt-6 flex items-center justify-between border-t border-slate-200 pt-6">
-        <div class="text-sm text-slate-500">
-          共 <span class="font-medium">{{ filteredContracts.length }}</span> 个合约，第 <span class="font-medium">{{ pagination.currentPage }}</span> /
-          <span class="font-medium">{{ totalPages }}</span> 页
-        </div>
-        <div class="flex items-center gap-2">
-          <a-pagination size="small" :current="pagination.currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="pagination.currentPage = $event" />
-        </div>
+      <div class="monitor-rules-head">
+        <TypographyText strong>自动线控规则</TypographyText>
+        <Button type="link" @click="openAddRule(contract.id)"><template #icon><PlusOutlined /></template>添加规则</Button>
       </div>
+      <Table :columns="ruleColumns" :data-source="contract.rules" row-key="id" size="middle" :pagination="false" :locale="{ emptyText: '暂无规则' }" :scroll="{ x: 900 }">
+        <template #bodyCell="{ column, record: rule }">
+          <Space v-if="column.key === 'enabled'" :size="8">
+            <Switch :checked="rule.enabled" size="small" :aria-label="`${rule.name} ${rule.enabled ? '已启用' : '已停用'}`" @change="toggleRule(contract.id, rule.id)" />
+            <span>{{ rule.enabled ? '启用' : '停用' }}</span>
+          </Space>
+          <TypographyText v-else-if="column.key === 'name'" strong>{{ rule.name }}</TypographyText>
+          <template v-else-if="column.key === 'condition'">{{ ruleConditionText(rule) }}</template>
+          <template v-else-if="column.key === 'action'">{{ ruleActionText(rule) }}</template>
+          <template v-else-if="column.key === 'affects'">{{ ruleAffectsText(rule) }}</template>
+          <template v-else-if="column.key === 'hitCount'">{{ rule.hitCount }}</template>
+          <Space v-else-if="column.key === 'actions'" :size="8">
+            <Button type="link" class="px-0" @click="openEditRule(contract.id, rule)">编辑</Button>
+            <Button type="link" danger class="px-0" @click="ruleToDelete = { contractId: contract.id, rule }">删除</Button>
+          </Space>
+        </template>
+      </Table>
+    </Card>
 
-      <p v-if="filteredContracts.length === 0" class="py-20 text-center text-slate-400">没有匹配的合约</p>
-    </div>
-  </section>
+    <Card v-if="filteredContracts.length === 0" :bordered="false"><Empty description="没有匹配的合约" /></Card>
+    <Pagination v-else class="monitor-pagination" :current="currentPage" :page-size="pageSize" :total="filteredContracts.length" :show-size-changer="false" :show-total="(total) => `共 ${total} 个合约`" @change="currentPage = $event" />
+  </PageShell>
+
+  <AdminModal :open="!!ruleToDelete" title="删除线控规则" :width="480" confirm-text="确认删除" danger @close="ruleToDelete = null" @confirm="confirmDeleteRule">
+    <p v-if="ruleToDelete">确认删除规则 <TypographyText strong>{{ ruleToDelete.rule.name }}</TypographyText>？删除后该规则不再自动触发。</p>
+  </AdminModal>
 
   <ControlConfigModal
     :open="showConfigModal"
@@ -1087,3 +1032,9 @@ const handleMfaVerify = async (code) => {
     @cancel="pendingSaveData = null; currentSaveAction = null"
   />
 </template>
+
+<style scoped>
+.monitor-params{margin-top:16px}
+.monitor-rules-head{display:flex;align-items:center;justify-content:space-between;margin:8px 0}
+.monitor-pagination{text-align:right}
+</style>

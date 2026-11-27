@@ -125,7 +125,6 @@ defineExpose({ phase, close, dialogEl: dialogRef, titleEl: titleRef })
 .admin-dialog-title { margin: 0; font-size: 16px; line-height: 24px; font-weight: 600; overflow-wrap: anywhere; }
 .admin-dialog-title:focus { outline: none; }
 .admin-dialog-subtitle { margin-top: 2px; font-size: 14px; font-weight: 400; color: rgb(0 0 0 / 45%); overflow-wrap: anywhere; }
-.admin-dialog-close.ant-btn { flex: none; min-width: 44px; min-height: 44px; }
 .admin-dialog-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 16px 20px; }
 .admin-dialog-plain { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 

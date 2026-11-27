@@ -418,10 +418,11 @@ export const deliveryAutoRuleStats = {
   actionsByType: [
     { action: DELIVERY_RULE_ACTION.FORCE_WIN, count: 28, impact: 58000, avgResponseTime: 0.12 },
     { action: DELIVERY_RULE_ACTION.FORCE_LOSS, count: 45, impact: 92000, avgResponseTime: 0.08 },
-    { action: DELIVERY_RULE_ACTION.PRICE_ADJUST, count: 22, impact: 28000, avgResponseTime: 0.05 },
+    // Legacy action types that are no longer in DELIVERY_RULE_ACTION (the constants resolved to undefined; 2026-11-28).
+    { action: 'price_adjust', count: 22, impact: 28000, avgResponseTime: 0.05 },
     { action: DELIVERY_RULE_ACTION.PROFIT_CONTROL, count: 18, impact: 15000, avgResponseTime: 0.15 },
-    { action: DELIVERY_RULE_ACTION.REJECT_ORDER, count: 10, impact: -5000, avgResponseTime: 0.02 },
-    { action: DELIVERY_RULE_ACTION.LIMIT_POSITION, count: 5, impact: -3000, avgResponseTime: 0.03 }
+    { action: 'reject_order', count: 10, impact: -5000, avgResponseTime: 0.02 },
+    { action: 'limit_position', count: 5, impact: -3000, avgResponseTime: 0.03 }
   ],
   rulePerformance: [
     {

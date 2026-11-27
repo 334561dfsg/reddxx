@@ -1,219 +1,45 @@
 <template>
-  <section class="space-y-4">
-    <header class="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-semibold text-slate-900">永续合约订单</h1>
-        <p class="mt-1 text-sm text-slate-500">监控用户永续合约仓位、盈亏与风险状态</p>
-      </div>
-    </header>
-
-    <article class="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm relative min-h-[400px]">
-      <div class="flex items-center justify-between border-b border-slate-200 p-4 bg-white">
-        <h3 class="text-base font-semibold text-slate-900">订单列表</h3>
-        <a-button
-          html-type="button"
-          class="ant-btn inline-flex items-center gap-2"
-          @click="exportOrders"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-          </svg>
-          <span>导出订单</span>
-        </a-button>
-      </div>
-
-      <!-- 筛选区域 -->
-      <div class="p-4 border-b border-slate-100 bg-slate-50/30">
-        <div class="flex flex-wrap items-center gap-3">
-          <!-- 基础筛选 -->
-          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.status" class="!w-32">
-            <a-select-option value="">全部状态</a-select-option>
-            <a-select-option :value="PERPETUAL_ORDER_STATUS.HOLDING">持仓中</a-select-option>
-            <a-select-option :value="PERPETUAL_ORDER_STATUS.CLOSED">已平仓</a-select-option>
-            <a-select-option :value="PERPETUAL_ORDER_STATUS.LIQUIDATED">已爆仓</a-select-option>
-          </a-select>
-
-          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.symbol" class="!w-40">
-            <a-select-option value="">全部交易对</a-select-option>
-            <a-select-option value="BTC/USDT">BTC/USDT</a-select-option>
-            <a-select-option value="ETH/USDT">ETH/USDT</a-select-option>
-            <a-select-option value="BNB/USDT">BNB/USDT</a-select-option>
-            <a-select-option value="SOL/USDT">SOL/USDT</a-select-option>
-          </a-select>
-
-          <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="filters.side" class="!w-32">
-            <a-select-option value="">全部方向</a-select-option>
-            <a-select-option :value="PERPETUAL_ORDER_SIDE.LONG">多</a-select-option>
-            <a-select-option :value="PERPETUAL_ORDER_SIDE.SHORT">空</a-select-option>
-          </a-select>
-
-          <a-input v-model:value="filters.userId" type="text" placeholder="搜索用户 ID..." class="ant-input !w-64 !py-1.5" />
-
-          <!-- 高级筛选展开按钮 -->
-          <a-button html-type="button" class="ant-btn flex items-center gap-1 !py-1.5" @click="showAdvancedFilters = !showAdvancedFilters">
-            <span>{{ showAdvancedFilters ? '收起' : '高级筛选' }}</span>
-            <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': showAdvancedFilters }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </a-button>
-
-          <a-button html-type="button" class="ant-btn !py-1.5" @click="resetFilters">重置</a-button>
-        </div>
-      </div>
-
-      <!-- 高级筛选 -->
-      <div v-show="showAdvancedFilters" class="border-b border-slate-200 bg-slate-50/50 px-4 py-3">
-        <div class="grid gap-3 md:grid-cols-4">
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">杠杆倍数范围</label>
-            <div class="flex items-center gap-2">
-              <a-input v-model:value="filters.minLeverage" type="number" placeholder="最小" class="ant-input !py-1.5" />
-              <span class="text-slate-500">-</span>
-              <a-input v-model:value="filters.maxLeverage" type="number" placeholder="最大" class="ant-input !py-1.5" />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">仓位价值范围 (USDT)</label>
-            <div class="flex items-center gap-2">
-              <a-input v-model:value="filters.minPositionValue" type="number" placeholder="最小" class="ant-input !py-1.5" />
-              <span class="text-slate-500">-</span>
-              <a-input v-model:value="filters.maxPositionValue" type="number" placeholder="最大" class="ant-input !py-1.5" />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">盈亏范围 (USDT)</label>
-            <div class="flex items-center gap-2">
-              <a-input v-model:value="filters.minPnl" type="number" placeholder="最小" class="ant-input !py-1.5" />
-              <span class="text-slate-500">-</span>
-              <a-input v-model:value="filters.maxPnl" type="number" placeholder="最大" class="ant-input !py-1.5" />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">开仓时间范围</label>
-            <a-input v-model:value="filters.dateRange" type="date" class="ant-input !py-1.5" />
-          </div>
-        </div>
-      </div>
-
-      <!-- 订单表格 -->
-      <div class="overflow-x-auto">
-        <a-table  size="small" :pagination="false" :data-source="paginatedOrders" :row-key="(order) => order.id" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;border-t border-slate-100 hover:bg-slate-50&quot;, {
-              'bg-emerald-50': order.unrealizedPnl > 0 &amp;&amp; order.status === PERPETUAL_ORDER_STATUS.HOLDING,
-              'bg-rose-50': order.unrealizedPnl < 0 &amp;&amp; order.status === PERPETUAL_ORDER_STATUS.HOLDING
-            }] })">
-<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>订单 ID</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="font-mono text-xs text-slate-600">{{ order.orderId }}</div>
-                <div class="text-xs text-slate-500">{{ order.openTime.split(' ')[0] }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>用户信息</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="text-slate-700 font-medium">{{ order.userName }}</div>
-                <div class="text-xs text-slate-500">{{ order.userId }}</div>
-                <span :class="['text-xs px-2 py-0.5 rounded-md font-medium', vipLevelMeta[order.vipLevel]?.class || 'bg-slate-100 text-slate-600']">
-                  {{ vipLevelMeta[order.vipLevel]?.label || order.vipLevel }}
-                </span>
-              </template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>交易对 / 方向</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="font-medium text-slate-900 mb-1">{{ order.productName }}</div>
-                <span :class="['text-xs px-2 py-0.5 rounded-md font-medium', perpetualOrderSideMeta[order.side]?.badgeClass]">
-                  {{ perpetualOrderSideMeta[order.side]?.text }}
-                </span>
-              </template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>杠杆 / 仓位</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="text-slate-700">{{ order.leverage }}x</div>
-                <div class="text-xs text-slate-500">${{ order.positionValue?.toLocaleString() }}</div>
-              </template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>价格信息</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="text-xs">
-                  <div class="text-slate-600">入场：${{ order.entryPrice?.toLocaleString() }}</div>
-                  <div class="text-slate-600">当前：${{ order.currentPrice?.toLocaleString() }}</div>
-                  <div class="text-slate-500">强平：${{ order.liquidationPrice?.toLocaleString() }}</div>
-                </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>盈亏</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="font-medium" :class="{
-                  'text-emerald-600': order.unrealizedPnl > 0,
-                  'text-rose-600': order.unrealizedPnl < 0,
-                  'text-slate-600': order.unrealizedPnl === 0
-                }">
-                  {{ order.unrealizedPnl >= 0 ? '+' : '' }}{{ order.unrealizedPnl?.toFixed(2) }} USDT
-                </div>
-                <div class="text-xs" :class="{
-                  'text-emerald-600': order.unrealizedPnlRate > 0,
-                  'text-rose-600': order.unrealizedPnlRate < 0,
-                  'text-slate-500': order.unrealizedPnlRate === 0
-                }">
-                  {{ order.unrealizedPnlRate?.toFixed(2) }}%
-                </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-6" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>保证金率</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="mb-1">
-                  <span class="text-xs font-medium" :class="{
-                    'text-emerald-600': order.marginRatio <= 20,
-                    'text-amber-600': order.marginRatio > 20 && order.marginRatio <= 50,
-                    'text-rose-600': order.marginRatio > 50
-                  }">{{ order.marginRatio?.toFixed(2) }}%</span>
-                </div>
-                <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
-                  <div class="h-full transition-all" :class="{
-                    'bg-emerald-500': order.marginRatio <= 20,
-                    'bg-amber-500': order.marginRatio > 20 && order.marginRatio <= 50,
-                    'bg-rose-500': order.marginRatio > 50
-                  }" :style="{width: `${Math.min(order.marginRatio, 100)}%`}"></div>
-                </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-7" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>状态</template>
-<template #default="{ record: order, index: rowIndex }">
-                <span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="perpetualOrderStatusMeta[order.status]?.badgeClass">
-                  {{ perpetualOrderStatusMeta[order.status]?.text }}
-                </span>
-              </template>
-</a-table-column>
-<a-table-column key="column-8" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-4 py-3&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: order, index: rowIndex }">
-                <a-button html-type="button" class="ant-btn !h-8 !px-3 " @click="viewOrder(order)">
-                  详情
-                </a-button>
-              </template>
-</a-table-column>
-</a-table>
-      </div>
-
-      <!-- 分页 -->
-      <div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-        <div class="text-sm text-slate-600">
-          共 {{ filteredOrders.length }} 条订单 · 第 {{ currentPage }} / {{ totalPages }} 页
-        </div>
-        <div class="flex items-center gap-3">
-          <a-pagination size="small" :current="currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="currentPage = $event" />
-        </div>
-      </div>
-    </article>
+  <PageShell>
+    <SearchForm name="perpetual-order-filters" :model="filters" :fields="fields" @search="search" @reset="resetFilters" />
+    <AdminTable title="永续合约订单" v-model:page="currentPage" :rows="filteredOrders" :columns="columns" row-key="id" desktop-only>
+      <template #toolbar>
+        <Button @click="exportOrders"><template #icon><DownloadOutlined /></template>导出</Button>
+      </template>
+      <template #cell="{ column, record: order }">
+        <Space v-if="column.key === 'order'" direction="vertical" :size="0">
+          <span class="font-mono">{{ order.orderId }}</span>
+          <TypographyText type="secondary">{{ order.openTime }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'user'" direction="vertical" :size="0">
+          <span>{{ order.userName }} <Tag v-if="order.vipLevel">{{ order.vipLevel }}</Tag></span>
+          <TypographyText type="secondary" class="font-mono">{{ order.userId }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'product'" direction="vertical" :size="0">
+          <TypographyText strong>{{ order.productName }}</TypographyText>
+          <span><Tag :color="order.side === PERPETUAL_ORDER_SIDE.LONG ? 'green' : 'red'">{{ perpetualOrderSideMeta[order.side]?.text }}</Tag><TypographyText type="secondary">{{ order.leverage }}x</TypographyText></span>
+        </Space>
+        <Space v-else-if="column.key === 'position'" direction="vertical" :size="0" align="end">
+          <span>{{ money(order.positionValue) }}</span>
+          <TypographyText type="secondary">保证金 {{ money(order.margin) }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'price'" direction="vertical" :size="0" align="end">
+          <span>入场 {{ money(order.entryPrice) }}</span>
+          <TypographyText type="secondary">当前 {{ money(order.currentPrice) }}</TypographyText>
+          <TypographyText type="secondary">强平 {{ money(order.liquidationPrice) }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'pnl'" direction="vertical" :size="0" align="end">
+          <TypographyText :type="order.unrealizedPnl > 0 ? 'success' : order.unrealizedPnl < 0 ? 'danger' : undefined">{{ order.unrealizedPnl > 0 ? '+' : '' }}{{ money(order.unrealizedPnl) }}</TypographyText>
+          <TypographyText type="secondary">{{ order.unrealizedPnlRate?.toFixed(2) }}%</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'marginRatio'" direction="vertical" :size="0" align="end">
+          <span>{{ order.marginRatio?.toFixed(2) }}%</span>
+          <TypographyText :type="marginRisk(order).type">{{ marginRisk(order).text }}</TypographyText>
+        </Space>
+        <Tag v-else-if="column.key === 'status'" :color="statusColor[order.status]">{{ perpetualOrderStatusMeta[order.status]?.text }}</Tag>
+        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" @click="viewOrder(order)">详情</Button>
+        <template v-else>{{ order[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
 
     <!-- 详情弹窗 -->
     <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDetailModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeDetailModal">
@@ -473,9 +299,7 @@
                 </div>
                 <div class="space-y-1">
                   <label class="text-xs font-medium text-slate-500">VIP 等级</label>
-                  <span :class="['text-xs px-2 py-0.5 rounded-md font-medium', vipLevelMeta[currentOrder?.vipLevel]?.class]">
-                    {{ vipLevelMeta[currentOrder?.vipLevel]?.label }}
-                  </span>
+                  <div><Tag>{{ currentOrder?.vipLevel || '—' }}</Tag></div>
                 </div>
               </div>
             </section>
@@ -599,41 +423,58 @@
           </div>
         </footer></template></template>
 </a-modal>
-  </section>
+  </PageShell>
 </template>
 
 <script setup>
+// 永续合约订单 — Ant Design Pro list page (2026-11-28): query card (one field per filter, ranges as number/date
+// ranges), table card with export toolbar and pagination, side/status as text Tags, right-aligned amounts.
+// The old 开仓时间 filter took a single date; it is now a date range. Export is a toast (no file in the demo).
 import { ref, computed, onMounted } from 'vue'
+import { Button, Space, Tag, TypographyText, message } from 'ant-design-vue'
+import { DownloadOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import { createPerpetualOrdersMock, PERPETUAL_ORDER_STATUS, PERPETUAL_ORDER_SIDE, perpetualOrderStatusMeta, perpetualOrderSideMeta } from '../../../admin/mock/perpetualOrder'
 
 const orders = ref([])
 const currentPage = ref(1)
-const pageSize = ref(10)
-const showAdvancedFilters = ref(false)
 const showDetailModal = ref(false)
 const currentOrder = ref(null)
 const currentTab = ref('overview')
 
-const filters = ref({
-  status: '',
-  symbol: '',
-  side: '',
-  userId: '',
-  minLeverage: null,
-  maxLeverage: null,
-  minPositionValue: null,
-  maxPositionValue: null,
-  minPnl: null,
-  maxPnl: null,
-  dateRange: ''
-})
+const blank = () => ({ orderId: '', userId: '', status: 'all', symbol: 'all', side: 'all', leverage: [null, null], positionValue: [null, null], pnl: [null, null], openDate: null })
+const filters = ref(blank())
+const fields = computed(() => [
+  { key: 'orderId', label: '订单号' },
+  { key: 'userId', label: '用户 ID' },
+  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, ...Object.entries(perpetualOrderStatusMeta).map(([value, meta]) => ({ value, label: meta.text }))] },
+  { key: 'symbol', label: '交易对', searchable: true, options: [{ value: 'all', label: '全部交易对' }, ...[...new Set(orders.value.map((o) => o.symbol))].sort().map((value) => ({ value, label: value }))] },
+  { key: 'side', label: '方向', options: [{ value: 'all', label: '全部方向' }, ...Object.entries(perpetualOrderSideMeta).map(([value, meta]) => ({ value, label: meta.text }))] },
+  { key: 'leverage', label: '杠杆倍数', numberRange: true, min: 1 },
+  { key: 'positionValue', label: '仓位价值', numberRange: true, min: 0 },
+  { key: 'pnl', label: '未实现盈亏', numberRange: true },
+  { key: 'openDate', label: '开仓日期', range: true }
+])
 
-const vipLevelMeta = {
-  VIP0: { label: 'VIP0', class: 'bg-slate-100 text-slate-600' },
-  VIP1: { label: 'VIP1', class: 'bg-blue-100 text-blue-700' },
-  VIP2: { label: 'VIP2', class: 'bg-purple-100 text-purple-700' },
-  VIP3: { label: 'VIP3', class: 'bg-amber-100 text-amber-700' }
-}
+const statusColor = { [PERPETUAL_ORDER_STATUS.HOLDING]: 'blue', [PERPETUAL_ORDER_STATUS.CLOSED]: 'default', [PERPETUAL_ORDER_STATUS.LIQUIDATED]: 'red' }
+const money = (value) => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const marginRisk = (order) => order.marginRatio > 50 ? { type: 'danger', text: '高风险' } : order.marginRatio > 20 ? { type: 'warning', text: '关注' } : { type: 'success', text: '正常' }
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
+const inRange = (value, range) => { const [min, max] = range || []; return (min === null || min === undefined || value >= min) && (max === null || max === undefined || value <= max) }
+
+const columns = [
+  { key: 'order', title: '订单', width: 190, fixed: 'left' },
+  { key: 'user', title: '用户', width: 150 },
+  { key: 'product', title: '交易对 / 方向', width: 160 },
+  { key: 'position', title: '仓位价值（USDT）', width: 170, align: 'right' },
+  { key: 'price', title: '价格（USDT）', width: 170, align: 'right' },
+  { key: 'pnl', title: '未实现盈亏（USDT）', width: 170, align: 'right' },
+  { key: 'marginRatio', title: '保证金率', width: 110, align: 'right' },
+  { key: 'status', title: '状态', width: 90 },
+  { key: 'actions', title: '操作', width: 80, fixed: 'right' }
+]
 
 const detailTabs = [
   { id: 'overview', label: '概览', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
@@ -647,54 +488,19 @@ onMounted(() => {
   orders.value = createPerpetualOrdersMock()
 })
 
-const filteredOrders = computed(() => {
-  let result = [...orders.value]
+const filteredOrders = computed(() => orders.value.filter((o) => {
+  const f = filters.value
+  const day = String(o.openTime).slice(0, 10)
+  return has(o.orderId, f.orderId) && has(o.userId, f.userId) &&
+    (f.status === 'all' || o.status === f.status) &&
+    (f.symbol === 'all' || o.symbol === f.symbol) &&
+    (f.side === 'all' || o.side === f.side) &&
+    inRange(o.leverage, f.leverage) && inRange(o.positionValue, f.positionValue) && inRange(o.unrealizedPnl, f.pnl) &&
+    (!f.openDate || (day >= f.openDate[0] && day <= f.openDate[1]))
+}))
 
-  if (filters.value.status) {
-    result = result.filter(o => o.status === filters.value.status)
-  }
-  if (filters.value.symbol) {
-    result = result.filter(o => o.symbol === filters.value.symbol)
-  }
-  if (filters.value.side) {
-    result = result.filter(o => o.side === filters.value.side)
-  }
-  if (filters.value.userId) {
-    result = result.filter(o => o.userId.includes(filters.value.userId))
-  }
-  if (filters.value.minLeverage) {
-    result = result.filter(o => o.leverage >= filters.value.minLeverage)
-  }
-  if (filters.value.maxLeverage) {
-    result = result.filter(o => o.leverage <= filters.value.maxLeverage)
-  }
-  if (filters.value.minPositionValue) {
-    result = result.filter(o => o.positionValue >= filters.value.minPositionValue)
-  }
-  if (filters.value.maxPositionValue) {
-    result = result.filter(o => o.positionValue <= filters.value.maxPositionValue)
-  }
-  if (filters.value.minPnl !== null && filters.value.minPnl !== '') {
-    result = result.filter(o => o.unrealizedPnl >= filters.value.minPnl)
-  }
-  if (filters.value.maxPnl !== null && filters.value.maxPnl !== '') {
-    result = result.filter(o => o.unrealizedPnl <= filters.value.maxPnl)
-  }
-  if (filters.value.dateRange) {
-    const date = filters.value.dateRange
-    result = result.filter(o => o.openTime.startsWith(date))
-  }
-
-  return result
-})
-
-const paginatedOrders = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return filteredOrders.value.slice(start, end)
-})
-
-const totalPages = computed(() => Math.ceil(filteredOrders.value.length / pageSize.value))
+function search(values) { filters.value = { ...blank(), ...values }; currentPage.value = 1 }
+function resetFilters() { filters.value = blank(); currentPage.value = 1 }
 
 const viewOrder = (order) => {
   currentOrder.value = order
@@ -707,32 +513,8 @@ const closeDetailModal = () => {
   currentOrder.value = null
 }
 
-const resetFilters = () => {
-  filters.value = {
-    status: '',
-    symbol: '',
-    side: '',
-    userId: '',
-    minLeverage: null,
-    maxLeverage: null,
-    minPositionValue: null,
-    maxPositionValue: null,
-    minPnl: null,
-    maxPnl: null,
-    dateRange: ''
-  }
-  showAdvancedFilters.value = false
-}
-
+// Mock export: no file yet, so say so instead of a native alert (operation feedback is toast-only).
 const exportOrders = () => {
-  alert('导出永续合约订单数据')
-}
-
-const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
-}
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++
+  message.info(`已按当前筛选条件准备导出 ${filteredOrders.value.length} 条订单（演示环境不生成文件）`)
 }
 </script>

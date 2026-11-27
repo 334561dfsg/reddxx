@@ -1,5 +1,12 @@
 <script setup>
+// 收益调控 — Ant Design Pro list page (2026-11-28): query card (one input per field instead of the combined keyword box),
+// overview Statistics card, table card with toolbar/pagination and link actions. Dialog business logic is unchanged.
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { Button, Card, Col, Row, Space, Statistic, Tag, TypographyText } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import {
 	LIQUIDITY_LOCKED_OP_ACTION,
 	LIQUIDITY_LOCKED_OP_MODULE
@@ -53,17 +60,41 @@ const products = ref([
 	}
 ])
 
-// 搜索
-const keyword = ref('')
-const filteredProducts = computed(() => {
-  const kw = keyword.value.trim().toLowerCase()
-  if (!kw) return products.value
-  return products.value.filter((item) =>
-    `${item.name} ${item.currency} ${productRuleLabel(item)} ${item.ruleId} ${fmtApr(item.baseRate)}`.toLowerCase().includes(kw)
-  )
-})
+const router = useRouter()
+const page = ref(1)
 
-// 汇总数据
+// 查询：产品名称、币种、锁仓天数（周期规则）与规则 ID 各自一个输入框，可区分同名产品的不同周期规则
+const blank = () => ({ name: '', currency: 'all', lockDays: 'all', ruleId: '' })
+const filters = ref(blank())
+const fields = computed(() => [
+	{ key: 'name', label: '产品名称' },
+	{ key: 'currency', label: '币种', searchable: true, options: [{ value: 'all', label: '全部币种' }, ...[...new Set(products.value.map((item) => item.currency))].map((value) => ({ value, label: value }))] },
+	{ key: 'lockDays', label: '周期规则', options: [{ value: 'all', label: '全部规则' }, ...[...new Set(products.value.map((item) => item.lockDays))].sort((a, b) => a - b).map((days) => ({ value: String(days), label: productRuleLabel({ lockDays: days }) }))] },
+	{ key: 'ruleId', label: '规则 ID' }
+])
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
+const filteredProducts = computed(() => {
+	const f = filters.value
+	return products.value.filter((item) =>
+		has(item.name, f.name) && has(item.ruleId, f.ruleId) &&
+		(f.currency === 'all' || item.currency === f.currency) &&
+		(f.lockDays === 'all' || String(item.lockDays) === f.lockDays)
+	)
+})
+function searchProducts(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function resetFilters() { filters.value = blank(); page.value = 1 }
+
+const columns = [
+	{ key: 'product', title: '产品', width: 300, fixed: 'left' },
+	{ key: 'adjustmentRate', title: '调整比例', width: 110, align: 'right' },
+	{ key: 'multiplier', title: '当前倍数', width: 110, align: 'right' },
+	{ key: 'totalOrders', title: '订单数', width: 100, align: 'right' },
+	{ key: 'totalAmount', title: '资金规模（USDT）', width: 170, align: 'right' },
+	{ key: 'status', title: '状态', width: 90 },
+	{ key: 'actions', title: '操作', width: 160, fixed: 'right' }
+]
+
+// 汇总数据（业务概览，资金规模按产品计价币种 USDT 展示，不再用 $ 前缀）
 const summary = computed(() => {
   const total = products.value.length
   const active = products.value.filter((item) => item.status === 'active').length
@@ -71,10 +102,10 @@ const summary = computed(() => {
   const totalAmount = products.value.reduce((sum, item) => sum + item.totalAmount, 0)
 
   return [
-    { label: '产品总数', value: String(total) },
-    { label: '运行中', value: String(active) },
-    { label: '已调整', value: String(adjusted) },
-    { label: '资金规模', value: `$${(totalAmount / 1000000).toFixed(2)}M` }
+    { label: '产品总数', value: total },
+    { label: '运行中', value: active },
+    { label: '已调整', value: adjusted },
+    { label: '资金规模', value: totalAmount, suffix: 'USDT', precision: 0 }
   ]
 })
 
@@ -243,6 +274,26 @@ const getRateColor = (rate) => {
 	return 'text-slate-600'
 }
 
+const rateType = (rate) => {
+	if (rate > 0) return 'success'
+	if (rate < 0) return 'danger'
+	return undefined
+}
+
+// 快捷场景（以按钮类型区分当前选中，不使用高亮描边）
+const presetScenarios = [
+	{ rate: 50, title: '强激励', hint: '+50%，拉新或竞品跟进' },
+	{ rate: 20, title: '温和上调', hint: '+20%，常规运营' },
+	{ rate: -20, title: '成本回收', hint: '−20%，缓和平台贴息' },
+	{ rate: -40, title: '紧急控费', hint: '−40%，压力情景' }
+]
+const reasonPresets = [
+	{ label: '策略调价', text: '根据资金与风险情况，适度上调平台对手方报价以提升竞争力' },
+	{ label: '成本压降', text: '为控制平台对手方成本，下调对用户展示的收益率' },
+	{ label: '活动期', text: '活动期临时上浮收益倍数，活动结束后按计划恢复' },
+	{ label: '风控收敛', text: '风险与流动性管控需要，暂时下调收益倍数' }
+]
+
 const YEAR_DAYS = 365
 
 /** 收益率 × 倍数 → 展示用有效年化（%） */
@@ -279,173 +330,49 @@ const validUntilMin = computed(() => {
 })
 </script>
 
-<style scoped>
-/* 美化滑块样式 */
-.slider {
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s;
-}
-
-.slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s;
-}
-
-.slider::-moz-range-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* 滑块轨道增强 */
-.slider::-webkit-slider-runnable-track {
-	height: 8px;
-	border-radius: 9999px;
-	background: linear-gradient(to right, #fecdd3 0%, #e2e8f0 50%, #bbf7d0 100%);
-}
-
-.slider::-moz-range-track {
-	height: 8px;
-	border-radius: 9999px;
-	background: linear-gradient(to right, #fecdd3 0%, #e2e8f0 50%, #bbf7d0 100%);
-}
-</style>
-
 <template>
-	<section class="space-y-6">
-		<header>
-			<h1 class="text-3xl font-semibold tracking-tight text-slate-900">收益调控</h1>
-			<p class="mt-1 max-w-2xl text-sm leading-relaxed text-slate-500">
-				平台作为对手方时，通过倍数调整报价侧收益；作用范围以「产品 / 同币种池」为准，与外部撮合市场无关。
-			</p>
-		</header>
+	<PageShell>
+		<SearchForm name="liquidity-locked-yield-control-filters" :model="filters" :fields="fields" @search="searchProducts" @reset="resetFilters" />
 
-		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-			<div
-				v-for="item in summary"
-				:key="item.label"
-				class="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm"
-			>
-				<div class="text-xs font-medium uppercase tracking-wide text-slate-500">{{ item.label }}</div>
-				<div class="mt-2 text-2xl font-semibold tabular-nums text-slate-900">{{ item.value }}</div>
-			</div>
-		</div>
+		<Card :bordered="false" title="调控概览">
+			<Row :gutter="24">
+				<Col v-for="item in summary" :key="item.label" :xs="12" :xl="6">
+					<Statistic :title="item.label" :value="item.value" :suffix="item.suffix" :precision="item.precision" />
+				</Col>
+			</Row>
+		</Card>
 
-		<article class="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
-			<div class="flex flex-col gap-3 border-b border-slate-100 bg-slate-50/80 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-				<a-input
-					v-model:value="keyword"
-					type="search"
-					placeholder="搜索产品名称、币种、天数或规则ID…"
-					class="h-10 w-full max-w-sm rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none ring-blue-500/20 transition-shadow"
-				/>
-				<div class="flex shrink-0 flex-wrap items-center gap-2">
-					<RouterLink
-						:to="{ name: 'liquidity-locked-yield-adjustment-log' }"
-						class="inline-flex h-10 items-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-50/80 hover:text-blue-800"
-					>
-						收益调整日志
-					</RouterLink>
-					<a-button type="text"
-						html-type="button"
-						class="h-10 rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50"
-						@click="openHistory('')"
-					>
-						弹窗历史
-					</a-button>
-				</div>
-			</div>
-
-			<div class="overflow-x-auto">
-				<a-table  size="small" :pagination="false" :data-source="filteredProducts" :row-key="(product) => product.id" :scroll="{ x: 'max-content' }" :custom-row="(product, rowIndex) => ({ class: [&quot;transition-colors hover:bg-slate-50/80&quot;] })">
-<a-table-column key="column-0" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5&quot;] })">
-<template #title>产品</template>
-<template #default="{ record: product, index: rowIndex }">
-								<div class="font-medium text-slate-900">{{ product.name }}</div>
-								<div class="mt-1 flex max-w-[24rem] flex-wrap gap-1.5 text-xs">
-									<span class="rounded-md bg-slate-100 px-2 py-0.5 font-medium text-slate-600">{{ product.currency }}</span>
-									<span class="rounded-md bg-blue-50 px-2 py-0.5 font-medium text-blue-700">{{ productRuleLabel(product) }}</span>
-									<span class="rounded-md bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">收益率 {{ fmtApr(product.baseRate) }}</span>
-									<span class="rounded-md bg-slate-50 px-2 py-0.5 font-mono text-slate-500">ID {{ product.ruleId }}</span>
-								</div>
-							</template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5&quot;] })">
-<template #title>调整比例</template>
-<template #default="{ record: product, index: rowIndex }">
-								<span :class="['font-medium tabular-nums', getRateColor(product.adjustmentRate)]">
-									{{ formatRate(product.adjustmentRate) }}
-								</span>
-							</template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5 tabular-nums text-slate-700&quot;] })">
-<template #title>订单数</template>
-<template #default="{ record: product, index: rowIndex }">{{ product.totalOrders }}</template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5 tabular-nums text-slate-700&quot;] })">
-<template #title>资金规模</template>
-<template #default="{ record: product, index: rowIndex }">${{ product.totalAmount.toLocaleString() }}</template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5&quot;] })">
-<template #title>状态</template>
-<template #default="{ record: product, index: rowIndex }">
-								<span
-									class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium"
-									:class="product.status === 'active' ? 'bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600/15' : 'bg-slate-100 text-slate-600'"
-								>
-									{{ product.status === 'active' ? '运行中' : '已停用' }}
-								</span>
-							</template>
-</a-table-column>
-<a-table-column key="column-5" align="right" :custom-cell="(product, rowIndex) => ({ class: [&quot;whitespace-nowrap px-4 py-3.5 text-right&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: product, index: rowIndex }">
-								<a-button type="text" html-type="button" class="font-medium text-blue-600 hover:text-blue-700" @click="openControl(product.id)">调整</a-button>
-								<span class="mx-2 text-slate-200">|</span>
-								<a-button type="text"
-									v-if="product.adjustmentRate !== 0"
-									html-type="button"
-									class="font-medium text-slate-600 hover:text-slate-800"
-									@click="resetControl(product.id)"
-								>
-									重置
-								</a-button>
-								<template v-if="product.adjustmentRate !== 0">
-									<span class="mx-2 text-slate-200">|</span>
-								</template>
-								<a-button type="text" html-type="button" class="font-medium text-slate-600 hover:text-slate-800" @click="openHistory(product.id)">历史</a-button>
-							</template>
-</a-table-column>
-</a-table>
-			</div>
-
-			<div v-if="filteredProducts.length === 0" class="px-4 py-14 text-center text-slate-500">
-				<p class="text-sm font-medium text-slate-700">未找到匹配的产品</p>
-				<p class="mt-1 text-xs text-slate-500">请更换搜索关键词</p>
-			</div>
-		</article>
+		<AdminTable title="收益调控" v-model:page="page" :rows="filteredProducts" :columns="columns" row-key="id" desktop-only>
+			<template #toolbar>
+				<Space :size="8">
+					<Button @click="router.push({ name: 'liquidity-locked-yield-adjustment-log' })">收益调整日志</Button>
+					<Button @click="openHistory('')">全部调整历史</Button>
+				</Space>
+			</template>
+			<template #cell="{ column, record: product }">
+				<Space v-if="column.key === 'product'" direction="vertical" :size="4">
+					<TypographyText strong>{{ product.name }}</TypographyText>
+					<span>
+						<Tag>{{ product.currency }}</Tag>
+						<Tag color="blue">{{ productRuleLabel(product) }}</Tag>
+						<Tag>收益率 {{ fmtApr(product.baseRate) }}</Tag>
+					</span>
+					<TypographyText type="secondary" class="font-mono">ID {{ product.ruleId }}</TypographyText>
+				</Space>
+				<TypographyText v-else-if="column.key === 'adjustmentRate'" :type="rateType(product.adjustmentRate)" strong>
+					{{ formatRate(product.adjustmentRate) }}
+				</TypographyText>
+				<template v-else-if="column.key === 'multiplier'">{{ Number(product.currentMultiplier).toFixed(2) }}×</template>
+				<template v-else-if="column.key === 'totalAmount'">{{ product.totalAmount.toLocaleString() }}</template>
+				<Tag v-else-if="column.key === 'status'" :color="product.status === 'active' ? 'green' : 'default'">{{ product.status === 'active' ? '运行中' : '已停用' }}</Tag>
+				<Space v-else-if="column.key === 'actions'" :size="8">
+					<Button type="link" class="px-0" @click="openControl(product.id)">调整</Button>
+					<Button v-if="product.adjustmentRate !== 0" type="link" class="px-0" @click="resetControl(product.id)">重置</Button>
+					<Button type="link" class="px-0" @click="openHistory(product.id)">历史</Button>
+				</Space>
+				<template v-else>{{ product[column.key] ?? '—' }}</template>
+			</template>
+		</AdminTable>
 
 		<!-- 收益控制弹窗 -->
 			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showControlModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1024"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showControlModal = false">
@@ -510,58 +437,17 @@ const validUntilMin = computed(() => {
 								<div>
 									<h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">快捷场景</h4>
 									<div class="mt-3 grid grid-cols-2 gap-2 sm:gap-3">
-										<a-button type="text"
-											html-type="button"
-											class="rounded-xl border px-3 py-2.5 text-left text-sm transition-all"
-											:class="
-												controlForm.adjustmentRate === 50
-													? 'border-emerald-400 bg-emerald-50/80 ring-1 ring-emerald-500/20'
-													: 'border-slate-200 bg-white hover:border-slate-300'
-											"
-											@click="controlForm.adjustmentRate = 50"
+										<Button
+											v-for="preset in presetScenarios"
+											:key="preset.rate"
+											:type="controlForm.adjustmentRate === preset.rate ? 'primary' : 'default'"
+											:aria-pressed="controlForm.adjustmentRate === preset.rate"
+											class="h-auto text-left"
+											@click="controlForm.adjustmentRate = preset.rate"
 										>
-											<div class="font-medium text-slate-900">强激励</div>
-											<div class="mt-0.5 text-xs text-slate-500">+50%，拉新或竞品跟进</div>
-										</a-button>
-										<a-button type="text"
-											html-type="button"
-											class="rounded-xl border px-3 py-2.5 text-left text-sm transition-all"
-											:class="
-												controlForm.adjustmentRate === 20
-													? 'border-blue-400 bg-blue-50/80 ring-1 ring-blue-500/20'
-													: 'border-slate-200 bg-white hover:border-slate-300'
-											"
-											@click="controlForm.adjustmentRate = 20"
-										>
-											<div class="font-medium text-slate-900">温和上调</div>
-											<div class="mt-0.5 text-xs text-slate-500">+20%，常规运营</div>
-										</a-button>
-										<a-button type="text"
-											html-type="button"
-											class="rounded-xl border px-3 py-2.5 text-left text-sm transition-all"
-											:class="
-												controlForm.adjustmentRate === -20
-													? 'border-amber-400 bg-amber-50/80 ring-1 ring-amber-500/20'
-													: 'border-slate-200 bg-white hover:border-slate-300'
-											"
-											@click="controlForm.adjustmentRate = -20"
-										>
-											<div class="font-medium text-slate-900">成本回收</div>
-											<div class="mt-0.5 text-xs text-slate-500">−20%，缓和平台贴息</div>
-										</a-button>
-										<a-button type="text"
-											html-type="button"
-											class="rounded-xl border px-3 py-2.5 text-left text-sm transition-all"
-											:class="
-												controlForm.adjustmentRate === -40
-													? 'border-rose-400 bg-rose-50/80 ring-1 ring-rose-500/20'
-													: 'border-slate-200 bg-white hover:border-slate-300'
-											"
-											@click="controlForm.adjustmentRate = -40"
-										>
-											<div class="font-medium text-slate-900">紧急控费</div>
-											<div class="mt-0.5 text-xs text-slate-500">−40%，压力情景</div>
-										</a-button>
+											<div class="font-medium">{{ preset.title }}</div>
+											<div class="mt-0.5 text-xs opacity-75">{{ preset.hint }}</div>
+										</Button>
 									</div>
 								</div>
 
@@ -575,16 +461,10 @@ const validUntilMin = computed(() => {
 											:step="1"
 											min="-100"
 											:max="100"
-											class="h-10 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm tabular-nums text-slate-900 outline-none ring-blue-500/20"
+											class="min-w-0 flex-1"
 											placeholder="−100～100"
 										/>
-										<a-button type="text"
-											html-type="button"
-											class="h-10 shrink-0 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-600 hover:bg-slate-50"
-											@click="controlForm.adjustmentRate = 0"
-										>
-											清零
-										</a-button>
+										<Button class="shrink-0" @click="controlForm.adjustmentRate = 0">清零</Button>
 									</div>
 									<p class="mt-1.5 text-xs text-slate-500">
 										倍数约 {{ (1 + controlForm.adjustmentRate / 100).toFixed(2) }}×；展示年化约
@@ -599,16 +479,9 @@ const validUntilMin = computed(() => {
 												type="date"
 												:min="validUntilMin"
 												autocomplete="off"
-												class="h-10 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none ring-blue-500/20"
+												class="min-w-0 flex-1"
 											/>
-											<a-button type="text"
-												v-if="controlForm.validUntil"
-												html-type="button"
-												class="h-10 shrink-0 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-600 hover:bg-slate-50"
-												@click="controlForm.validUntil = ''"
-											>
-												清空
-											</a-button>
+											<Button v-if="controlForm.validUntil" class="shrink-0" @click="controlForm.validUntil = ''">清空</Button>
 										</div>
 										<p class="text-xs leading-relaxed text-slate-500">
 											留空表示持续生效（需手动恢复基准）；选择日期表示该自然日结束后（按服务器日切）恢复基准。
@@ -623,55 +496,20 @@ const validUntilMin = computed(() => {
 										</h4>
 										<span class="text-xs text-slate-400">{{ controlForm.reason.length }} / 200</span>
 									</div>
-									<div class="flex flex-wrap gap-2">
-										<a-button type="text"
-											html-type="button"
-											class="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:bg-blue-50/60"
-											@click="controlForm.reason = '根据资金与风险情况，适度上调平台对手方报价以提升竞争力'"
-										>
-											策略调价
-										</a-button>
-										<a-button type="text"
-											html-type="button"
-											class="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:bg-blue-50/60"
-											@click="controlForm.reason = '为控制平台对手方成本，下调对用户展示的收益率'"
-										>
-											成本压降
-										</a-button>
-										<a-button type="text"
-											html-type="button"
-											class="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:bg-blue-50/60"
-											@click="controlForm.reason = '活动期临时上浮收益倍数，活动结束后按计划恢复'"
-										>
-											活动期
-										</a-button>
-										<a-button type="text"
-											html-type="button"
-											class="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:bg-blue-50/60"
-											@click="controlForm.reason = '风险与流动性管控需要，暂时下调收益倍数'"
-										>
-											风控收敛
-										</a-button>
-									</div>
+									<Space :size="8" wrap>
+										<Button v-for="preset in reasonPresets" :key="preset.label" size="small" @click="controlForm.reason = preset.text">{{ preset.label }}</Button>
+									</Space>
 									<a-textarea
 										v-model:value="controlForm.reason"
 										:rows="5"
 										:maxlength="200"
-										class="mt-2 w-full resize-none rounded-lg border px-3 py-2.5 text-sm leading-relaxed outline-none ring-blue-500/20"
-										:class="
-											!controlForm.reason.trim()
-												? 'border-rose-200 bg-rose-50/50 text-slate-900'
-												: 'border-slate-200 bg-white text-slate-900'
-										"
+										class="mt-2 w-full resize-none"
+										aria-label="调整原因"
+										aria-required="true"
+										aria-describedby="liquidity-yield-reason-hint"
 										placeholder="说明背景、目的与预期持续影响，便于审计追溯。"
 									/>
-									<p
-										v-if="!controlForm.reason.trim()"
-										class="mt-2 flex items-center gap-1 rounded-md bg-rose-50 px-2.5 py-1.5 text-xs text-rose-700"
-									>
-										须填写原因后方可提交
-									</p>
-									<p v-else class="mt-2 text-xs text-emerald-700">已填写，可提交</p>
+									<TypographyText id="liquidity-yield-reason-hint" type="secondary" class="mt-2 block text-xs">须填写原因后方可提交</TypographyText>
 								</div>
 							</div>
 						</div>
@@ -853,30 +691,14 @@ const validUntilMin = computed(() => {
 					</div>
 
 					</template>
-<template #footer><template v-if="showControlModal"><div
-						class="flex shrink-0 flex-col gap-3 border-t border-slate-100 bg-white px-5 py-3 sm:flex-row sm:items-center sm:justify-between"
-					>
-						<p class="text-xs text-slate-500">提交前请确认「有效期至」符合运营与风控预期。</p>
-						<div class="flex justify-end gap-2">
-							<a-button type="text"
-								html-type="button"
-								class="h-10 rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
-								@click="showControlModal = false"
-							>
-								取消
-							</a-button>
-							<a-button type="text"
-								html-type="button"
-								class="h-10 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
-								:disabled="!controlForm.reason.trim()"
-								@click="saveControl"
-							>
-								确认调整
-							</a-button>
-						</div>
+<template #footer><template v-if="showControlModal"><div class="flex items-center justify-between gap-3">
+						<TypographyText type="secondary">提交前请确认「有效期至」符合运营与风控预期。</TypographyText>
+						<Space :size="8">
+							<Button @click="showControlModal = false">取消</Button>
+							<Button type="primary" :disabled="!controlForm.reason.trim()" @click="saveControl">确认调整</Button>
+						</Space>
 					</div></template></template>
 </a-modal>
-		
 
 			<a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showHistoryModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="768"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showHistoryModal = false">
 <template #title><template v-if="showHistoryModal"><div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
@@ -924,7 +746,7 @@ const validUntilMin = computed(() => {
 								<p v-if="record.durationLabel && record.durationLabel !== '—'" class="mt-2 text-xs text-slate-500">
 									生效策略：{{ record.durationLabel }}
 								</p>
-								<p class="mt-3 rounded-lg bg-white px-3 py-2 text-sm text-slate-700 ring-1 ring-slate-100">
+								<p class="mt-3 rounded-lg bg-white px-3 py-2 text-sm text-slate-700">
 									<span class="font-medium text-slate-600">原因</span> {{ record.reason }}
 								</p>
 							</article>
@@ -932,16 +754,7 @@ const validUntilMin = computed(() => {
 						<div v-if="filteredHistory.length === 0" class="py-12 text-center text-sm text-slate-500">暂无记录</div>
 					</div>
 					</template>
-<template #footer><template v-if="showHistoryModal"><div class="border-t border-slate-100 px-5 py-3 text-right">
-						<a-button type="text"
-							html-type="button"
-							class="h-10 rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
-							@click="showHistoryModal = false"
-						>
-							关闭
-						</a-button>
-					</div></template></template>
+<template #footer><template v-if="showHistoryModal"><Button @click="showHistoryModal = false">关闭</Button></template></template>
 </a-modal>
-		
-	</section>
+	</PageShell>
 </template>

@@ -1,8 +1,9 @@
 <script setup>
+// 规则说明（静态指南页）— Ant Design Pro shell (2026-11-28): PageShell title + Card with Ant Tabs as the section switch.
+// Content unchanged except the compound-interest example, whose figures are recomputed (10,000 × 1.002^n).
 import { ref } from 'vue'
-import {
-	vipLevelMeta
-} from '../../../admin/constants/aiQuant'
+import { Card, Tabs, TabPane } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
 
 const activeSection = ref('intro')
 
@@ -17,30 +18,13 @@ const sections = [
 </script>
 
 <template>
-	<section class="space-y-5">
-		<header>
-			<h1 class="text-3xl font-semibold text-slate-900">规则说明</h1>
-			<p class="mt-1 text-sm text-slate-500">详细了解AI量化交易产品的规则、使用方式与收益计算</p>
-		</header>
-
-		<!-- 导航栏 -->
-		<article class="rounded-xl border border-slate-200 bg-white p-4">
-			<nav class="flex flex-wrap gap-2">
-				<a-button type="text"
-					v-for="section in sections"
-					:key="section.key"
-					@click="activeSection = section.key"
-					:class="[
-						'px-4 py-2 text-sm font-medium rounded-lg transition',
-						activeSection === section.key
-							? 'bg-blue-600 text-white'
-							: 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-					]"
-				>
-					{{ section.label }}
-				</a-button>
-			</nav>
-		</article>
+	<PageShell title="规则说明">
+		<template #description>详细了解AI量化交易产品的规则、使用方式与收益计算</template>
+		<Card :bordered="false" :body-style="{ paddingTop: 0, paddingBottom: 0 }">
+			<Tabs v-model:active-key="activeSection" aria-label="规则说明分区">
+				<TabPane v-for="section in sections" :key="section.key" :tab="section.label" />
+			</Tabs>
+		</Card>
 
 		<!-- 产品简介 -->
 		<article v-if="activeSection === 'intro'" class="space-y-4">
@@ -342,16 +326,16 @@ const sections = [
 						<p><span class="text-slate-600">日化收益率：</span><strong class="text-blue-600">0.2%</strong></p>
 						<p><span class="text-slate-600">投资方式：</span>每日收益自动复投</p>
 						<div class="mt-3 pt-3 border-t border-emerald-300">
-							<p><span class="text-slate-600">持有30天后本息：</span><strong class="text-emerald-900 text-lg">10,061.80 USDT</strong>（收益率 0.618%）</p>
-							<p class="mt-1"><span class="text-slate-600">持有90天后本息：</span><strong class="text-emerald-900 text-lg">11,974.41 USDT</strong>（收益率 19.74%）</p>
-							<p class="mt-1"><span class="text-slate-600">持有365天后本息：</span><strong class="text-emerald-900 text-lg">20,711.5 USDT</strong>（收益率 107.1%）</p>
+							<p><span class="text-slate-600">持有30天后本息：</span><strong class="text-emerald-900 text-lg">10,617.73 USDT</strong>（收益率 6.18%）</p>
+							<p class="mt-1"><span class="text-slate-600">持有90天后本息：</span><strong class="text-emerald-900 text-lg">11,970.02 USDT</strong>（收益率 19.70%）</p>
+							<p class="mt-1"><span class="text-slate-600">持有365天后本息：</span><strong class="text-emerald-900 text-lg">20,735.68 USDT</strong>（收益率 107.36%）</p>
 						</div>
 					</div>
 				</div>
 				<div class="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
 					<h3 class="font-semibold text-blue-900">相比单利（不复投）的优势</h3>
 					<p class="mt-2 text-sm text-blue-800">如果不复投，365天收益仅为：10,000 × 0.2% × 365 = <strong>7,300 USDT</strong></p>
-					<p class="mt-1 text-sm text-blue-700">复利多赚：<strong>20,711.5 - 17,300 = 3,411.5 USDT（</strong>增加46.7%）</p>
+					<p class="mt-1 text-sm text-blue-700">复利多赚：<strong>20,735.68 - 17,300 = 3,435.68 USDT</strong>（较单利收益增加 47.1%）</p>
 				</div>
 			</div>
 		</article>
@@ -379,5 +363,5 @@ const sections = [
 				<p class="mt-2 text-sm leading-relaxed text-slate-700">{{ faq.a }}</p>
 			</div>
 		</article>
-	</section>
+	</PageShell>
 </template>

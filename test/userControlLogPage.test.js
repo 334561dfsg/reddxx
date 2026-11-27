@@ -4,11 +4,20 @@ import test from 'node:test'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { createUserControlState } from '../src/features/user-control/userControl.js'
 import { userControlState } from '../src/admin/state/userControlState.js'
-import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
+import { createSfcHarness, loadVueSfc } from './helpers/vueSfcHarness.js'
 
 const pageFile = resolve(process.cwd(), 'src/pages/admin/user-control/UserControlLogPage.vue')
-const contentFile = resolve(process.cwd(), 'src/admin/components/user-control/UserControlLogContent.vue')
-const paginationFile = resolve(process.cwd(), 'src/admin/components/AdminListPaginationBar.vue')
+const earnDir = resolve(process.cwd(), 'src/pages/admin/earn')
+
+// Stand-ins for the shared Pro list parts: the page shell renders its slot, the query card and table card expose
+// their props/events so the test drives the applied filters and reads the rows the page hands to the table.
+const vueUrl = import.meta.resolve('vue')
+const moduleUrl = (code) => `data:text/javascript;base64,${Buffer.from(code).toString('base64')}`
+const standIns = {
+  [resolve(earnDir, 'EarnPageShell.vue')]: moduleUrl(`import { h } from '${vueUrl}'; export default { name: 'PageShellStandIn', inheritAttrs: false, setup(_, { slots, attrs }) { return () => h('section', attrs, slots.default?.()) } }`),
+  [resolve(earnDir, 'EarnSearchForm.vue')]: moduleUrl(`export default { name: 'SearchFormStandIn', props: ['model', 'fields', 'name'], emits: ['search', 'reset'], render() { return null } }`),
+  [resolve(earnDir, 'EarnAdminTable.vue')]: moduleUrl(`import { h } from '${vueUrl}'; export default { name: 'AdminTableStandIn', props: ['title', 'rows', 'columns', 'page', 'rowKey', 'desktopOnly'], emits: ['update:page'], setup(props, { slots }) { return () => h('table', props.rows.slice((props.page - 1) * 10, props.page * 10).map(record => h('tr', props.columns.map(column => h('td', slots.cell?.({ column, record })))))) } }`)
+}
 
 const makeLogs = (userId, moduleKey, prefix) => Array.from({ length: 12 }, (_, index) => ({
   id: `${prefix}-${index + 1}`,
@@ -25,78 +34,27 @@ const makeLogs = (userId, moduleKey, prefix) => Array.from({ length: 12 }, (_, i
   createdAt: `2026-07-${String(index + 1).padStart(2, '0')} 10:00:00`
 }))
 
-const setControlValue = async (harness, node, value, eventType = 'change') => {
-  node.value = value
-  if (node.tag === 'select') {
-    for (const option of node.options) option.selected = String(option.value) === String(value)
-  }
-  node.dispatchEvent({
-    type: eventType,
-    target: node,
-    currentTarget: node,
-    defaultPrevented: false,
-    preventDefault() { this.defaultPrevented = true }
-  })
-  await harness.flush()
-}
-
-const fieldControl = (harness, label) => {
-  const labelText = harness.findByText(label, 'span')
-  assert.ok(labelText, `${label} label must be rendered`)
-  const findControl = (node) => ['input', 'select'].includes(node.tag) ? node : (node.children || []).map(findControl).find(Boolean)
-  return findControl(labelText.parent)
-}
-
 const mountPage = async () => {
   const previousState = userControlState.value
+  const decoy = (id, overrides) => ({ ...makeLogs('user_2002', 'delivery', id)[0], id, batchId: id, ...overrides })
   userControlState.value = {
     ...createUserControlState(),
     operationLogs: [
-      ...makeLogs('user_1001', 'perpetual', 'alpha'),
-      ...makeLogs('user_2002', 'spot', 'beta'),
-      {
-        ...makeLogs('user_2002', 'spot', 'decoy-source')[0],
-        id: 'decoy-source',
-        batchId: 'decoy-source',
-        scope: 'module',
-        note: 'must stay hidden by source filter',
-        createdAt: '2026-07-31 12:00:00'
-      },
-      {
-        ...makeLogs('user_2002', 'spot', 'decoy-action')[0],
-        id: 'decoy-action',
-        batchId: 'decoy-action',
-        action: 'cancel',
-        note: 'must stay hidden by action filter',
-        createdAt: '2026-07-30 12:00:00'
-      },
-      {
-        ...makeLogs('user_2002', 'spot', 'decoy-date')[0],
-        id: 'decoy-date',
-        batchId: 'decoy-date',
-        note: 'must stay hidden by date filter',
-        createdAt: '2026-08-01 12:00:00'
-      }
+      ...makeLogs('user_1001', 'delivery', 'alpha'),
+      ...makeLogs('user_2002', 'delivery', 'beta'),
+      decoy('decoy-source', { scope: 'module', note: 'must stay hidden by source filter', createdAt: '2026-07-31 12:00:00' }),
+      decoy('decoy-action', { action: 'cancel', note: 'must stay hidden by action filter', createdAt: '2026-07-30 12:00:00' }),
+      decoy('decoy-date', { note: 'must stay hidden by date filter', createdAt: '2026-08-01 12:00:00' }),
+      decoy('decoy-module', { modules: ['spot'], note: 'must stay hidden by module filter', createdAt: '2026-07-29 12:00:00' })
     ]
   }
 
-  const page = await loadVueSfc(pageFile, {
-    vueImports: {
-      [contentFile]: loadVueSfcModuleUrl(contentFile, {
-        vueImports: {
-          [paginationFile]: loadVueSfcModuleUrl(paginationFile)
-        }
-      })
-    }
-  })
+  const page = await loadVueSfc(pageFile, { vueImports: standIns })
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [{ path: '/admin/users/control-log', name: 'users-control-log', component: page }]
   })
-  await router.push({
-    name: 'users-control-log',
-    query: { userId: 'user_1001', module: 'perpetual' }
-  })
+  await router.push({ name: 'users-control-log', query: { userId: 'user_1001', module: 'delivery' } })
   await router.isReady()
 
   const harness = await createSfcHarness(page, {}, {}, { plugins: [router] })
@@ -107,42 +65,55 @@ const mountPage = async () => {
   return { ...harness, cleanup, router }
 }
 
-test('route query changes update only UID/module while preserving local filters and page size', async (t) => {
+const notes = (table) => table.props.rows.map(row => row.note).join('\n')
+
+test('route query seeds UID/module; later route changes update only those and keep the other applied filters', async (t) => {
   const harness = await mountPage()
   t.after(harness.cleanup)
 
-  const source = harness.findComponent('AdminSelect', instance => instance.slots.default().some(option => option.props?.value === 'global'))
-  const action = harness.findComponent('AdminSelect', instance => instance.slots.default().some(option => option.props?.value === 'apply'))
-  const dateFrom = fieldControl(harness, '开始日期')
-  const dateTo = fieldControl(harness, '结束日期')
-  const pagination = harness.findComponent('APagination')
-  assert.ok(source && action && pagination, 'Ant filter and pagination components must be rendered')
+  const form = harness.findComponent('SearchFormStandIn')
+  const table = harness.findComponent('AdminTableStandIn')
+  assert.ok(form && table, 'query card and table card must be rendered')
+  assert.equal(form.props.model.userId, 'user_1001')
+  assert.equal(form.props.model.module, 'delivery')
+  assert.deepEqual(form.props.fields.map(field => field.label), ['UID', '模块', '规则来源', '操作类型', '操作日期'])
+  assert.equal(table.props.rows.length, 12)
+  assert.match(notes(table), /alpha route filter row/)
 
-  source.emit('update:modelValue', 'global')
-  action.emit('update:modelValue', 'apply')
+  form.emit('search', { ...form.props.model, source: 'global', action: 'apply', date: ['2026-07-01', '2026-07-31'] })
   await harness.flush()
-  await setControlValue(harness, dateFrom, '2026-07-01', 'input')
-  await setControlValue(harness, dateTo, '2026-07-31', 'input')
-  pagination.emit('change', 1, 5)
+  table.emit('update:page', 2)
   await harness.flush()
-  pagination.emit('change', 2, 5)
-  await harness.flush()
-  assert.match(harness.findByTestId('user-control-log-content').textContent, /第 2 \/ 3 页/)
+  assert.equal(table.props.page, 2)
 
-  await harness.router.replace({
-    name: 'users-control-log',
-    query: { userId: 'user_2002', module: 'spot' }
-  })
+  await harness.router.replace({ name: 'users-control-log', query: { userId: 'user_2002', module: 'delivery' } })
   await harness.flush()
 
-  assert.equal(fieldControl(harness, 'UID').value, 'user_2002')
-  assert.equal(fieldControl(harness, '开始日期').value, '2026-07-01')
-  assert.equal(fieldControl(harness, '结束日期').value, '2026-07-31')
-  const content = harness.findByTestId('user-control-log-content').textContent
+  assert.equal(form.props.model.userId, 'user_2002')
+  assert.equal(form.props.model.module, 'delivery')
+  assert.equal(form.props.model.source, 'global')
+  assert.equal(form.props.model.action, 'apply')
+  assert.deepEqual(form.props.model.date, ['2026-07-01', '2026-07-31'])
+  assert.equal(table.props.page, 1)
+  const content = notes(table)
+  assert.equal(table.props.rows.length, 12)
   assert.match(content, /beta route filter row/)
   assert.doesNotMatch(content, /alpha route filter row/)
-  assert.doesNotMatch(content, /must stay hidden by source filter/)
-  assert.doesNotMatch(content, /must stay hidden by action filter/)
-  assert.doesNotMatch(content, /must stay hidden by date filter/)
-  assert.match(content, /第 1 \/ 3 页/)
+  assert.doesNotMatch(content, /must stay hidden/)
+  assert.ok(harness.findByTestId('user-control-unified-operator-value'))
+  assert.ok(harness.findByTestId('user-control-unified-reference-value'))
+  assert.ok(harness.findByTestId('user-control-unified-duration-value'))
+})
+
+test('reset clears the applied filters and the route query', async (t) => {
+  const harness = await mountPage()
+  t.after(harness.cleanup)
+
+  harness.findComponent('SearchFormStandIn').emit('reset')
+  await new Promise(resolvePromise => setTimeout(resolvePromise, 10))
+  await harness.flush()
+
+  assert.deepEqual(harness.router.currentRoute.value.query, {})
+  assert.equal(harness.findComponent('SearchFormStandIn').props.model.userId, '')
+  assert.equal(harness.findComponent('AdminTableStandIn').props.rows.length, 28)
 })

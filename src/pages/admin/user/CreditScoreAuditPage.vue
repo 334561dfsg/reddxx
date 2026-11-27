@@ -1,6 +1,14 @@
 <script setup>
-import { message } from 'ant-design-vue'
-import { ref, computed, onMounted, watch, reactive } from 'vue'
+// 信用分变动审核 — Ant Design Pro list page (2026-11-28): query card (one input per field, explicit 查询/重置),
+// audit overview Statistics, pending table card with toolbar and pagination, link review action, text Tags.
+// The list stays limited to pending applications; review happens in CreditScoreAuditDrawer as before.
+// The mock's date filter excluded the end day (compared at 00:00); dates now filter by whole local days.
+import { ref, computed, onMounted } from 'vue'
+import { Button, Card, Col, Row, Space, Statistic, Tag, TypographyText, message } from 'ant-design-vue'
+import { DownloadOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import { getCreditScoreAudits, creditScoreAuditList } from '../../../admin/mock/creditScore'
 import CreditScoreAuditDrawer from '../../../admin/components/credit-score-audit/CreditScoreAuditDrawer.vue'
 import {
@@ -9,142 +17,121 @@ import {
   CREDIT_SCORE_AUDIT_STATUS
 } from '../../../admin/constants/creditScore'
 
-// 审核列表数据
 const auditList = ref([])
 const loading = ref(false)
+const page = ref(1)
+// Bumped after each review so the overview re-reads the mutated mock list.
+const revision = ref(0)
 
-// 搜索和筛选
-const searchKeyword = ref('')
-const filterChangeType = ref('all')
-const filterStatus = ref(CREDIT_SCORE_AUDIT_STATUS.PENDING)
-const dateRange = ref({ start: '', end: '' })
+const blank = () => ({ userId: '', username: '', email: '', reason: '', changeType: 'all', applyTime: null })
+const filters = ref(blank())
+const fields = [
+  { key: 'userId', label: '用户 ID' },
+  { key: 'username', label: '用户名' },
+  { key: 'email', label: '邮箱' },
+  { key: 'reason', label: '原因' },
+  { key: 'changeType', label: '变动类型', options: [{ value: 'all', label: '全部类型' }, ...CREDIT_SCORE_CHANGE_TYPE_OPTIONS] },
+  { key: 'applyTime', label: '申请时间', range: true }
+]
 
-// 分页
-const pagination = reactive({
-  currentPage: 1,
-  pageSize: 10,
-  total: 0
-})
+const pad = (n) => String(n).padStart(2, '0')
+const localDay = (value) => {
+  const date = new Date(value)
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+}
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
 
-const totalPages = computed(() => Math.ceil(pagination.total / pagination.pageSize))
-
-// 获取数据
 const fetchAudits = async () => {
   loading.value = true
   try {
-    const { list, total } = await getCreditScoreAudits({
-      page: pagination.currentPage,
-      pageSize: pagination.pageSize,
-      searchKeyword: searchKeyword.value,
-      changeType: filterChangeType.value,
-      auditStatus: CREDIT_SCORE_AUDIT_STATUS.PENDING,
-      dateRange: dateRange.value
+    const { list } = await getCreditScoreAudits({
+      page: 1,
+      pageSize: Number.MAX_SAFE_INTEGER,
+      auditStatus: CREDIT_SCORE_AUDIT_STATUS.PENDING
     })
     auditList.value = list
-    pagination.total = total
   } catch (error) {
-    console.error('获取积分审核列表失败:', error)
+    message.error('获取信用分审核列表失败，请稍后重试')
   } finally {
     loading.value = false
   }
 }
 
-// 监听筛选和分页变化
-watch(
-  [searchKeyword, filterChangeType, filterStatus, dateRange, () => pagination.currentPage],
-  (newVal, oldVal) => {
-    // 如果是筛选条件变化，重置页码到1
-    const isPaginationChange = newVal[4] !== oldVal[4]
-    if (!isPaginationChange && pagination.currentPage !== 1) {
-      pagination.currentPage = 1
-    } else {
-      fetchAudits()
-    }
-  },
-  { deep: true }
-)
-
 onMounted(fetchAudits)
+
+const rows = computed(() => auditList.value.filter((audit) => {
+  const f = filters.value
+  const day = localDay(audit.applyTime)
+  return has(audit.userId, f.userId) && has(audit.username, f.username) && has(audit.email, f.email) &&
+    has(audit.reason, f.reason) &&
+    (f.changeType === 'all' || audit.changeType === f.changeType) &&
+    (!f.applyTime || (day >= f.applyTime[0] && day <= f.applyTime[1]))
+}))
+
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
 
 // 审核抽屉
 const showDetailModal = ref(false)
 const selectedAudit = ref(null)
 
-// Toast提示
-
-// 统计信息
 const statistics = computed(() => {
+  void revision.value
   const total = creditScoreAuditList.length
-  const pending = creditScoreAuditList.filter(a => a.auditStatus === CREDIT_SCORE_AUDIT_STATUS.PENDING).length
-  const approved = creditScoreAuditList.filter(a => a.auditStatus === CREDIT_SCORE_AUDIT_STATUS.APPROVED).length
-  const rejected = creditScoreAuditList.filter(a => a.auditStatus === CREDIT_SCORE_AUDIT_STATUS.REJECTED).length
-  
+  const count = (status) => creditScoreAuditList.filter((a) => a.auditStatus === status).length
+  const approved = count(CREDIT_SCORE_AUDIT_STATUS.APPROVED)
+  const rejected = count(CREDIT_SCORE_AUDIT_STATUS.REJECTED)
+  const rate = (value) => (total > 0 ? ((value / total) * 100).toFixed(1) : '0')
   return [
-    {
-      label: '待审核',
-      value: pending.toLocaleString(),
-      trend: '需处理',
-      color: 'amber'
-    },
-    {
-      label: '已通过',
-      value: approved.toLocaleString(),
-      trend: `${total > 0 ? ((approved / total) * 100).toFixed(1) : 0}% 通过率`,
-      color: 'emerald'
-    },
-    {
-      label: '已拒绝',
-      value: rejected.toLocaleString(),
-      trend: `${total > 0 ? ((rejected / total) * 100).toFixed(1) : 0}% 拒绝率`,
-      color: 'rose'
-    },
-    {
-      label: '总申请',
-      value: total.toLocaleString(),
-      trend: '本月',
-      color: 'blue'
-    }
+    { label: '待审核', value: count(CREDIT_SCORE_AUDIT_STATUS.PENDING), hint: '需处理' },
+    { label: '已通过', value: approved, hint: `通过率 ${rate(approved)}%` },
+    { label: '已拒绝', value: rejected, hint: `拒绝率 ${rate(rejected)}%` },
+    { label: '总申请', value: total, hint: '全部申请' }
   ]
 })
 
-// 状态配置
 const statusConfig = {
-  [CREDIT_SCORE_AUDIT_STATUS.PENDING]: { text: '待审核', class: 'bg-amber-100 text-amber-700' },
-  [CREDIT_SCORE_AUDIT_STATUS.APPROVED]: { text: '已通过', class: 'bg-emerald-100 text-emerald-700' },
-  [CREDIT_SCORE_AUDIT_STATUS.REJECTED]: { text: '已拒绝', class: 'bg-rose-100 text-rose-700' },
-  [CREDIT_SCORE_AUDIT_STATUS.AUTO_APPROVED]: { text: '自动通过', class: 'bg-blue-100 text-blue-700' }
+  [CREDIT_SCORE_AUDIT_STATUS.PENDING]: { text: '待审核', color: 'orange' },
+  [CREDIT_SCORE_AUDIT_STATUS.APPROVED]: { text: '已通过', color: 'green' },
+  [CREDIT_SCORE_AUDIT_STATUS.REJECTED]: { text: '已拒绝', color: 'red' },
+  [CREDIT_SCORE_AUDIT_STATUS.AUTO_APPROVED]: { text: '自动通过', color: 'blue' }
 }
 
-// 变动类型配置
 const changeTypeConfig = {
-  [CREDIT_SCORE_CHANGE_TYPE.RECHARGE]: { text: '充值', class: 'bg-blue-100 text-blue-700' },
-  [CREDIT_SCORE_CHANGE_TYPE.PRIMARY_KYC]: { text: '初级认证', class: 'bg-emerald-100 text-emerald-700' },
-  [CREDIT_SCORE_CHANGE_TYPE.ADVANCED_KYC]: { text: '高级认证', class: 'bg-purple-100 text-purple-700' },
-  [CREDIT_SCORE_CHANGE_TYPE.MANUAL_ADJUST]: { text: '手动调整', class: 'bg-amber-100 text-amber-700' },
-  [CREDIT_SCORE_CHANGE_TYPE.AUTO_UPGRADE]: { text: '自动升级', class: 'bg-indigo-100 text-indigo-700' },
-  [CREDIT_SCORE_CHANGE_TYPE.PENALTY]: { text: '惩罚', class: 'bg-rose-100 text-rose-700' },
-  [CREDIT_SCORE_CHANGE_TYPE.REWARD]: { text: '奖励', class: 'bg-teal-100 text-teal-700' }
+  [CREDIT_SCORE_CHANGE_TYPE.RECHARGE]: { text: '充值', color: 'blue' },
+  [CREDIT_SCORE_CHANGE_TYPE.PRIMARY_KYC]: { text: '初级认证', color: 'green' },
+  [CREDIT_SCORE_CHANGE_TYPE.ADVANCED_KYC]: { text: '高级认证', color: 'purple' },
+  [CREDIT_SCORE_CHANGE_TYPE.MANUAL_ADJUST]: { text: '手动调整', color: 'gold' },
+  [CREDIT_SCORE_CHANGE_TYPE.AUTO_UPGRADE]: { text: '自动升级', color: 'geekblue' },
+  [CREDIT_SCORE_CHANGE_TYPE.PENALTY]: { text: '惩罚', color: 'red' },
+  [CREDIT_SCORE_CHANGE_TYPE.REWARD]: { text: '奖励', color: 'cyan' }
 }
 
-// 格式化日期
+const columns = [
+  { key: 'user', title: '用户信息', width: 220, fixed: 'left' },
+  { key: 'changeType', title: '变动类型', width: 110 },
+  { key: 'beforeScore', title: '变动前', width: 90, align: 'right' },
+  { key: 'changeAmount', title: '变动值', width: 90, align: 'right' },
+  { key: 'afterScore', title: '变动后', width: 90, align: 'right' },
+  { key: 'reason', title: '原因', width: 220 },
+  { key: 'applyOperatorName', title: '申请人', width: 120 },
+  { key: 'applyTime', title: '申请时间', width: 170 },
+  { key: 'status', title: '状态', width: 90 },
+  { key: 'actions', title: '操作', width: 80, fixed: 'right' }
+]
+
 const formatDate = (dateString) => {
-  if (!dateString) return '-'
+  if (!dateString) return '—'
   return new Date(dateString).toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
+    year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
   })
 }
 
-// 查看详情
 const viewDetail = (audit) => {
   selectedAudit.value = audit
   showDetailModal.value = true
 }
 
-// 关闭详情
 const closeDetail = () => {
   showDetailModal.value = false
   selectedAudit.value = null
@@ -154,11 +141,18 @@ const closeDetail = () => {
 const submitAudit = ({ action, note }) => {
   if (!selectedAudit.value || !action) return
 
-  const auditIndex = creditScoreAuditList.findIndex(a => a.id === selectedAudit.value.id)
+  const auditIndex = creditScoreAuditList.findIndex((a) => a.id === selectedAudit.value.id)
   if (auditIndex === -1) return
 
   const now = new Date().toISOString()
   const audit = creditScoreAuditList[auditIndex]
+  // State guard: an application that is no longer pending cannot be reviewed again.
+  if (audit.auditStatus !== CREDIT_SCORE_AUDIT_STATUS.PENDING) {
+    closeDetail()
+    message.warning('该申请已处理，请勿重复审核')
+    fetchAudits()
+    return
+  }
 
   switch (action) {
     case 'approve':
@@ -168,8 +162,7 @@ const submitAudit = ({ action, note }) => {
       audit.auditorName = '当前管理员'
       audit.auditNote = note || null
       closeDetail()
-      showToast('审核通过，积分变动已生效！')
-      fetchAudits()
+      message.success('审核通过，积分变动已生效！')
       break
     case 'reject':
       audit.auditStatus = CREDIT_SCORE_AUDIT_STATUS.REJECTED
@@ -178,194 +171,50 @@ const submitAudit = ({ action, note }) => {
       audit.auditorName = '当前管理员'
       audit.auditNote = note || '审核未通过'
       closeDetail()
-      showToast('已拒绝申请，积分变动不生效！')
-      fetchAudits()
+      message.success('已拒绝申请，积分变动不生效！')
       break
+    default:
+      return
   }
+  revision.value += 1
+  fetchAudits()
 }
 
-// 重置筛选
-const resetFilters = () => {
-  searchKeyword.value = ''
-  filterChangeType.value = 'all'
-  filterStatus.value = CREDIT_SCORE_AUDIT_STATUS.PENDING
-  dateRange.value = { start: '', end: '' }
-  pagination.currentPage = 1
-}
-
-// 显示Toast提示
-// Operation feedback through Ant message (AGENTS.md toast rule) instead of a hand-built toast.
-function showToast(text, kind = 'success') {
-  ;(message[kind] || message.info)(String(text ?? ''))
-}
-
-// 导出数据
+// Mock export: no file yet, so say so instead of a native alert (operation feedback is toast-only).
 const exportData = () => {
-  alert('导出功能待实现')
+  message.info(`已按当前筛选条件准备导出 ${rows.value.length} 条待审核申请（演示环境不生成文件）`)
 }
 </script>
 
 <template>
-  <section class="space-y-6">
-    <!-- 页面标题 -->
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-slate-900">信用分变动审核</h1>
-        <p class="text-sm text-slate-500 mt-1">审核用户信用分变动申请</p>
-      </div>
-    </div>
-
-    <!-- 统计卡片 -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div
-        v-for="(stat, index) in statistics"
-        :key="index"
-        class="bg-white rounded-xl border p-4 shadow-sm transition-all hover:shadow-md"
-        :class="`border-${stat.color}-100 bg-${stat.color}-50/10`"
-      >
-        <p class="text-sm text-slate-600 mb-1 font-medium">{{ stat.label }}</p>
-        <div class="flex items-end justify-between">
-          <p :class="`text-2xl font-bold text-${stat.color}-600`">{{ stat.value }}</p>
-          <p class="text-xs text-slate-400 font-medium mb-1">{{ stat.trend }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- 审核列表卡片 -->
-    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden relative min-h-[400px] shadow-sm">
-      <div class="flex items-center justify-between border-b border-slate-200 p-4 bg-white">
-        <h3 class="text-base font-semibold text-slate-900">待审核列表</h3>
-        <a-button @click="exportData" class="inline-flex items-center gap-2" html-type="button">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          导出数据
-        </a-button>
-      </div>
-
-      <!-- 筛选栏 -->
-      <div class="p-4 border-b border-slate-100 bg-slate-50/30">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- 搜索框 -->
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1.5">搜索</label>
-            <a-input v-model:value="searchKeyword" type="text" placeholder="用户名/ID/原因..." class="" />
-          </div>
-          
-          <!-- 变动类型筛选 -->
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1.5">变动类型</label>
-            <a-select v-model:value="filterChangeType" class="">
-              <a-select-option value="all">全部类型</a-select-option>
-              <a-select-option v-for="option in CREDIT_SCORE_CHANGE_TYPE_OPTIONS" :key="option.value" :value="option.value">
-                {{ option.label }}
-              </a-select-option>
-            </a-select>
-          </div>
-          
-          <!-- 开始日期 -->
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1.5">开始日期</label>
-            <a-input v-model:value="dateRange.start" type="date" class="" />
-          </div>
-
-          <!-- 结束日期 -->
-          <div class="flex items-end gap-2">
-            <div class="flex-1">
-              <label class="block text-sm font-medium text-slate-700 mb-1.5">结束日期</label>
-              <a-input v-model:value="dateRange.end" type="date" class="" />
-            </div>
-            <a-button @click="resetFilters" title="重置筛选" class="text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors" html-type="button">
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </a-button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 加载遮罩 -->
-      <div v-if="loading" class="absolute inset-0 bg-white/60 z-10 flex items-center justify-center">
-        <div class="flex flex-col items-center">
-          <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
-          <p class="mt-2 text-sm text-slate-500 font-medium">加载中...</p>
-        </div>
-      </div>
-
-      <div class="overflow-x-auto">
-        <a-table  :data-source="auditList" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(audit) => audit.id" :custom-row="(audit, index) => ({ class: [&quot;hover:bg-slate-50 transition-colors&quot;] })">
-<a-table-column key="column-0" ><template #title>用户信息</template><template #default="{ record: audit, index: index }"><div class=" ">
-                <div>
-                  <p class="text-sm font-medium text-slate-900">{{ audit.username }}</p>
-                  <p class="text-xs text-slate-500">{{ audit.email }}</p>
-                </div>
-              </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>变动类型</template><template #default="{ record: audit, index: index }"><div class=" ">
-                <span
-                  v-if="changeTypeConfig[audit.changeType]"
-                  :class="changeTypeConfig[audit.changeType].class"
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                >
-                  {{ changeTypeConfig[audit.changeType].text }}
-                </span>
-              </div></template></a-table-column>
-<a-table-column key="column-2" ><template #title>积分变动</template><template #default="{ record: audit, index: index }"><div class=" ">
-                <div class="text-sm">
-                  <span class="text-slate-600">{{ audit.beforeScore }}</span>
-                  <svg class="inline-block h-4 w-4 mx-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                  <span class="text-slate-900 font-semibold">{{ audit.afterScore }}</span>
-                  <span 
-                    :class="audit.changeAmount > 0 ? 'text-emerald-600' : 'text-rose-600'"
-                    class="ml-2 font-semibold"
-                  >
-                    {{ audit.changeAmount > 0 ? '+' : '' }}{{ audit.changeAmount }}
-                  </span>
-                </div>
-              </div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>申请人</template><template #default="{ record: audit, index: index }"><div class=" ">
-                <p class="text-sm text-slate-700">{{ audit.applyOperatorName }}</p>
-              </div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>申请时间</template><template #default="{ record: audit, index: index }"><div class=" ">
-                <p class="text-sm text-slate-700">{{ formatDate(audit.applyTime) }}</p>
-              </div></template></a-table-column>
-<a-table-column key="column-5" ><template #title>状态</template><template #default="{ record: audit, index: index }"><div class=" ">
-                <span
-                  :class="statusConfig[audit.auditStatus].class"
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                >
-                  {{ statusConfig[audit.auditStatus].text }}
-                </span>
-              </div></template></a-table-column>
-<a-table-column key="column-6" ><template #title>操作</template><template #default="{ record: audit, index: index }"><div class=" ">
-                <a-button @click="viewDetail(audit)" class="text-sm text-blue-600 hover:text-blue-700 font-medium" html-type="button">
-                  {{ audit.auditStatus === CREDIT_SCORE_AUDIT_STATUS.PENDING ? '审核' : '查看' }}
-                </a-button>
-              </div></template></a-table-column>
-</a-table>
-      </div>
-
-      <!-- 空状态 -->
-      <div
-        v-if="!loading && auditList.length === 0"
-        class="text-center py-12"
-      >
-        <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-        <h3 class="mt-2 text-sm font-medium text-slate-900">没有找到记录</h3>
-        <p class="mt-1 text-sm text-slate-500">尝试调整筛选条件</p>
-      </div>
-
-      <!-- 分页 -->
-      <div v-if="totalPages > 1" class="border-t border-slate-200 px-6 py-3 flex items-center justify-between">
-        <div class="text-sm text-slate-600">
-          共 <span class="font-medium">{{ pagination.total }}</span> 条记录，第 <span class="font-medium">{{ pagination.currentPage }}</span> / <span class="font-medium">{{ totalPages }}</span> 页
-        </div>
-        <a-pagination  size="small" :current="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.total" :show-size-changer="false"  :disabled="loading" @change="pagination.currentPage = $event" />
-      </div>
-    </div>
+  <PageShell>
+    <SearchForm name="credit-score-audit-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+    <Card :bordered="false" title="审核概况">
+      <Row :gutter="24">
+        <Col v-for="stat in statistics" :key="stat.label" :xs="12" :md="6">
+          <Statistic :title="stat.label" :value="stat.value" />
+          <TypographyText type="secondary">{{ stat.hint }}</TypographyText>
+        </Col>
+      </Row>
+    </Card>
+    <AdminTable title="待审核列表" v-model:page="page" :rows="rows" :columns="columns" row-key="id" :loading="loading" desktop-only>
+      <template #toolbar>
+        <Button @click="exportData"><template #icon><DownloadOutlined /></template>导出</Button>
+      </template>
+      <template #cell="{ column, record }">
+        <Space v-if="column.key === 'user'" direction="vertical" :size="0">
+          <TypographyText strong>{{ record.username }}</TypographyText>
+          <TypographyText type="secondary">{{ record.email }}</TypographyText>
+          <TypographyText type="secondary" class="font-mono">{{ record.userId }}</TypographyText>
+        </Space>
+        <Tag v-else-if="column.key === 'changeType'" :color="changeTypeConfig[record.changeType]?.color">{{ changeTypeConfig[record.changeType]?.text || record.changeType }}</Tag>
+        <TypographyText v-else-if="column.key === 'changeAmount'" :type="record.changeAmount > 0 ? 'success' : record.changeAmount < 0 ? 'danger' : undefined" strong>{{ record.changeAmount > 0 ? '+' : '' }}{{ record.changeAmount }}</TypographyText>
+        <template v-else-if="column.key === 'applyTime'">{{ formatDate(record.applyTime) }}</template>
+        <Tag v-else-if="column.key === 'status'" :color="statusConfig[record.auditStatus]?.color">{{ statusConfig[record.auditStatus]?.text || record.auditStatus }}</Tag>
+        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" @click="viewDetail(record)">{{ record.auditStatus === CREDIT_SCORE_AUDIT_STATUS.PENDING ? '审核' : '详情' }}</Button>
+        <template v-else>{{ record[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
 
     <CreditScoreAuditDrawer
       :visible="showDetailModal"
@@ -373,7 +222,5 @@ const exportData = () => {
       @close="closeDetail"
       @submit="submitAudit"
     />
-
-    <!-- Toast 提示 -->
-  </section>
+  </PageShell>
 </template>

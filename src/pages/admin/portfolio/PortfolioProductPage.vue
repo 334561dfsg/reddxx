@@ -1,10 +1,19 @@
 <script setup>
+// 投资组合产品 — Ant Design Pro list page (2026-11-28): query card (one field per filter), table card with the
+// create button in its toolbar, link actions and a guarded enable/disable confirmation dialog (replaces the native confirm box).
+// The editor edits the *base* daily-rate range; the current range is always base × the yield-control multiplier,
+// so saving no longer leaves a stale base that a later yield adjustment/reset would silently restore.
 import { computed, reactive, ref } from 'vue'
+import { Button, Card, Checkbox, Col, Descriptions, DescriptionsItem, Form, FormItem, Input, InputNumber, Row, Select, Space, Switch, Tabs, TabPane, Tag, TypographyText, message } from 'ant-design-vue'
+import { PlusOutlined } from '@ant-design/icons-vue'
+import AdminDialog from '../../../admin/components/antd/AdminDialog.vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
+import AdminModal from '../earn/EarnAdminModal.vue'
 import { ASSET_CURRENCY_TYPE, ASSET_STATUS } from '../../../admin/constants/assets'
 import { createAssetsCoinsMock } from '../../../admin/mock/assets'
 import { getActiveVipLevels } from '../../../admin/mock/vip'
-import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
-import { useAdminListPagination } from '../../../admin/composables/useAdminListPagination'
 import { portfolioProductsCatalog } from '../../../admin/state/financeCatalogs'
 import { appendPortfolioOperationLog } from '../../../admin/state/portfolioOperationLogs'
 import {
@@ -12,18 +21,19 @@ import {
   EARLY_REDEEM_MODE,
   PRODUCT_STATUS,
   REDEEM_ARRIVAL_MODE,
+  applyPortfolioYieldAdjustment,
   earlyRedeemModeMeta,
-  formatPortfolioAmount,
+  formatPortfolioAdjustmentRate,
   formatPortfolioDuration,
   formatPortfolioRateRange,
+  getPortfolioBaseRates,
   productStatusMeta,
   redeemArrivalModeMeta,
   sortPortfolioProducts
 } from '../../../admin/constants/portfolio'
 
 const products = portfolioProductsCatalog
-const search = ref('')
-const statusFilter = ref(COMMON_FILTER_ALL)
+const page = ref(1)
 const showModal = ref(false)
 const editingId = ref('')
 const activeTab = ref('base')
@@ -42,6 +52,10 @@ const supportedTradeCoins = computed(() =>
       disabled: coin.status !== ASSET_STATUS.ENABLED
     }))
 )
+const coinOptions = computed(() => supportedTradeCoins.value.map((coin) => ({ value: coin.symbol, label: `${coin.symbol} · ${coin.name}${coin.disabled ? '（已禁用）' : ''}` })))
+const vipOptions = computed(() => activeVipLevels.value.map((vip) => ({ value: vip.level, label: vipLevelLabel(vip.level) })))
+const statusOptions = Object.entries(productStatusMeta).map(([value, meta]) => ({ value, label: meta.label }))
+const arrivalOptions = Object.entries(redeemArrivalModeMeta).map(([value, meta]) => ({ value, label: meta.label }))
 
 function vipLevelLabel(level) {
   const vip = activeVipLevels.value.find((item) => item.level === Number(level))
@@ -49,6 +63,43 @@ function vipLevelLabel(level) {
   return vip.displayName && vip.displayName !== vip.name ? `${vip.name}（${vip.displayName}）` : vip.name
 }
 
+// ---- list -------------------------------------------------------------------------------------------------
+const blank = () => ({ name: '', id: '', asset: COMMON_FILTER_ALL, status: COMMON_FILTER_ALL, recommended: COMMON_FILTER_ALL })
+const filters = ref(blank())
+const assetOptions = computed(() => [...new Set(products.value.flatMap((product) => product.assets.map((asset) => asset.symbol)))].map((value) => ({ value, label: value })))
+const fields = computed(() => [
+  { key: 'name', label: '产品名称' },
+  { key: 'id', label: '产品 ID' },
+  { key: 'asset', label: '组合币种', searchable: true, options: [{ value: COMMON_FILTER_ALL, label: '全部币种' }, ...assetOptions.value] },
+  { key: 'status', label: '状态', options: [{ value: COMMON_FILTER_ALL, label: '全部状态' }, ...statusOptions] },
+  { key: 'recommended', label: '推荐', options: [{ value: COMMON_FILTER_ALL, label: '全部' }, { value: 'yes', label: '推荐' }, { value: 'no', label: '未推荐' }] }
+])
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
+const money = (value) => Number(value || 0).toLocaleString('zh-CN', { maximumFractionDigits: 2 })
+
+const rows = computed(() => sortPortfolioProducts(products.value.filter((product) => {
+  const f = filters.value
+  return has(product.name, f.name) && has(product.id, f.id) &&
+    (f.asset === COMMON_FILTER_ALL || product.assets.some((asset) => asset.symbol === f.asset)) &&
+    (f.status === COMMON_FILTER_ALL || product.status === f.status) &&
+    (f.recommended === COMMON_FILTER_ALL || Boolean(product.isRecommended) === (f.recommended === 'yes'))
+})))
+
+const columns = [
+  { key: 'name', title: '产品', width: 260, fixed: 'left' },
+  { key: 'assets', title: '组合币种', width: 180 },
+  { key: 'yield', title: '日收益率', width: 190, align: 'right' },
+  { key: 'amount', title: '申购金额（USDT）', width: 190, align: 'right' },
+  { key: 'redeem', title: '赎回规则', width: 190 },
+  { key: 'sortOrder', title: '排序权重', width: 100, align: 'right' },
+  { key: 'status', title: '状态', width: 90 },
+  { key: 'actions', title: '操作', width: 130, fixed: 'right' }
+]
+
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
+
+// ---- editor dialog ----------------------------------------------------------------------------------------
 const defaultForm = () => ({
   id: `pf-${Date.now()}`,
   name: '',
@@ -82,30 +133,13 @@ const defaultForm = () => ({
 })
 
 const productForm = reactive(defaultForm())
-
-const filteredProducts = computed(() => {
-  const kw = search.value.trim().toLowerCase()
-  return sortPortfolioProducts(products.value.filter((product) => {
-    const matchesSearch =
-      !kw ||
-      product.name.toLowerCase().includes(kw) ||
-      product.id.toLowerCase().includes(kw) ||
-      product.assets.some((asset) => asset.symbol.toLowerCase().includes(kw))
-    const matchesStatus = statusFilter.value === COMMON_FILTER_ALL || product.status === statusFilter.value
-    return matchesSearch && matchesStatus
-  }))
-})
-
-const {
-  currentPage,
-  pageSize,
-  totalPages,
-  pagedRows: pagedProducts,
-  onPageSizeChange
-} = useAdminListPagination(filteredProducts, { resetSources: [search, statusFilter] })
+const previewProduct = computed(() => applyPortfolioYieldAdjustment(productForm, productForm.yieldAdjustmentRate))
 
 function resetForm(next = defaultForm()) {
   Object.assign(productForm, JSON.parse(JSON.stringify(next)))
+  const base = getPortfolioBaseRates(productForm)
+  productForm.baseMinDailyRatePct = base.min
+  productForm.baseMaxDailyRatePct = base.max
 }
 
 function openCreate() {
@@ -136,15 +170,35 @@ function removeAsset(index) {
   productForm.assets.splice(index, 1)
 }
 
+function validateProduct() {
+  if (!String(productForm.id || '').trim()) return ['base', '请输入产品 ID']
+  if (!editingId.value && products.value.some((product) => product.id === productForm.id.trim())) return ['base', '产品 ID 已存在']
+  if (!String(productForm.name || '').trim()) return ['base', '请输入产品名称']
+  const symbols = productForm.assets.map((asset) => asset.symbol)
+  if (!symbols.length || symbols.some((symbol) => !symbol)) return ['assets', '请至少选择一个组合币种']
+  if (new Set(symbols).size !== symbols.length) return ['assets', '组合币种不能重复']
+  if (!(Number(productForm.durationDays) > 0)) return ['yield', '运行天数须大于 0']
+  if (Number(productForm.baseMinDailyRatePct) < 0 || Number(productForm.baseMaxDailyRatePct) < Number(productForm.baseMinDailyRatePct)) return ['yield', '最高日收益率不能低于最低日收益率']
+  if (Number(productForm.maxAmount) < Number(productForm.minAmount)) return ['redeem', '最高金额不能低于最低金额']
+  return null
+}
+
 function saveProduct() {
-  const row = {
+  const invalid = validateProduct()
+  if (invalid) {
+    activeTab.value = invalid[0]
+    message.error(invalid[1])
+    return
+  }
+  const draft = {
     ...JSON.parse(JSON.stringify(productForm)),
+    id: productForm.id.trim(),
+    name: productForm.name.trim(),
     sortOrder: Number(productForm.sortOrder)
   }
-  row.baseMinDailyRatePct = Number(row.baseMinDailyRatePct ?? row.minDailyRatePct) || 0
-  row.baseMaxDailyRatePct = Number(row.baseMaxDailyRatePct ?? row.maxDailyRatePct) || 0
-  row.yieldAdjustmentRate = Number(row.yieldAdjustmentRate || 0)
-  row.currentYieldMultiplier = Number(row.currentYieldMultiplier || 1)
+  draft.baseMinDailyRatePct = Number(draft.baseMinDailyRatePct) || 0
+  draft.baseMaxDailyRatePct = Number(draft.baseMaxDailyRatePct) || 0
+  const row = applyPortfolioYieldAdjustment(draft, Number(draft.yieldAdjustmentRate || 0))
   const idx = products.value.findIndex((product) => product.id === editingId.value)
   if (idx >= 0) {
     products.value[idx] = row
@@ -158,15 +212,15 @@ function saveProduct() {
     summary: `保存投资组合产品：${row.name}`
   })
   showModal.value = false
+  message.success(idx >= 0 ? '产品已保存' : '产品已创建')
 }
 
-function toggleStatus(product) {
+// ---- enable / disable -------------------------------------------------------------------------------------
+const statusTarget = ref(null)
+function toggleStatus() {
+  const product = products.value.find((item) => item.id === statusTarget.value?.id)
+  if (!product) { statusTarget.value = null; return }
   const nextStatus = product.status === PRODUCT_STATUS.ENABLED ? PRODUCT_STATUS.DISABLED : PRODUCT_STATUS.ENABLED
-  const confirmMessage =
-    nextStatus === PRODUCT_STATUS.DISABLED ? '确认禁用该投资组合产品？' : '确认启用该投资组合产品？'
-  const confirmed = window.confirm(confirmMessage)
-  if (!confirmed) return
-
   product.status = nextStatus
   appendPortfolioOperationLog({
     operator: 'admin',
@@ -174,262 +228,142 @@ function toggleStatus(product) {
     target: product.name,
     summary: `状态切换为 ${productStatusMeta[nextStatus]?.label}`
   })
-}
-
-function statusClass(status) {
-  return productStatusMeta[status]?.color ?? 'text-gray-600 bg-gray-50'
+  statusTarget.value = null
+  message.success(nextStatus === PRODUCT_STATUS.ENABLED ? '产品已启用' : '产品已禁用')
 }
 </script>
 
 <template>
-  <section class="space-y-5">
-    <header class="flex items-center justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-semibold text-slate-900">投资组合产品管理</h1>
-        <p class="mt-1 text-sm text-slate-500">配置组合币种、收益区间、费用与提前赎回规则</p>
+  <PageShell>
+    <SearchForm name="portfolio-product-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+    <AdminTable title="投资组合产品" v-model:page="page" :rows="rows" :columns="columns" row-key="id" desktop-only>
+      <template #toolbar>
+        <Button type="primary" @click="openCreate"><template #icon><PlusOutlined /></template>创建组合</Button>
+      </template>
+      <template #cell="{ column, record }">
+        <Space v-if="column.key === 'name'" direction="vertical" :size="0">
+          <span><TypographyText strong>{{ record.name }}</TypographyText> <Tag v-if="record.isHot" color="red">HOT</Tag><Tag v-if="record.isRecommended" color="gold">推荐</Tag></span>
+          <TypographyText type="secondary" class="font-mono">{{ record.id }}</TypographyText>
+          <TypographyText type="secondary">{{ vipLevelLabel(record.minVipLevel) }} 及以上 · {{ formatPortfolioDuration(record.durationDays) }}</TypographyText>
+        </Space>
+        <span v-else-if="column.key === 'assets'"><Tag v-for="asset in record.assets" :key="asset.symbol">{{ asset.symbol }}</Tag></span>
+        <Space v-else-if="column.key === 'yield'" direction="vertical" :size="0" align="end">
+          <span>{{ formatPortfolioRateRange(record) }}</span>
+          <TypographyText type="secondary">手续费 {{ record.subscriptionFeePct }}%<template v-if="Number(record.yieldAdjustmentRate || 0) !== 0"> · 调控 {{ formatPortfolioAdjustmentRate(record.yieldAdjustmentRate) }}</template></TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'amount'" direction="vertical" :size="0" align="end">
+          <span>{{ money(record.minAmount) }} ~ {{ money(record.maxAmount) }}</span>
+          <TypographyText type="secondary">单用户上限 {{ money(record.userLimitAmount) }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'redeem'" direction="vertical" :size="0">
+          <span>{{ record.earlyRedeemEnabled ? earlyRedeemModeMeta[record.earlyRedeemMode]?.label : '不支持提前赎回' }}</span>
+          <TypographyText type="secondary"><template v-if="record.earlyRedeemEnabled">{{ record.earlyRedeemFeePct }}% · </template>{{ redeemArrivalModeMeta[record.redeemArrivalMode]?.label }}</TypographyText>
+        </Space>
+        <template v-else-if="column.key === 'sortOrder'">{{ Number(record.sortOrder) || 0 }}</template>
+        <Tag v-else-if="column.key === 'status'" :color="record.status === PRODUCT_STATUS.ENABLED ? 'green' : 'default'">{{ productStatusMeta[record.status]?.label ?? record.status }}</Tag>
+        <Space v-else-if="column.key === 'actions'" :size="8">
+          <Button type="link" class="px-0" @click="openEdit(record)">编辑</Button>
+          <Button type="link" class="px-0" :danger="record.status === PRODUCT_STATUS.ENABLED" @click="statusTarget = { ...record }">{{ record.status === PRODUCT_STATUS.ENABLED ? '禁用' : '启用' }}</Button>
+        </Space>
+        <template v-else>{{ record[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
+
+    <AdminModal
+      :open="!!statusTarget"
+      :title="statusTarget?.status === PRODUCT_STATUS.ENABLED ? '禁用投资组合产品' : '启用投资组合产品'"
+      :confirm-text="statusTarget?.status === PRODUCT_STATUS.ENABLED ? '确认禁用' : '确认启用'"
+      :danger="statusTarget?.status === PRODUCT_STATUS.ENABLED"
+      :width="480"
+      @close="statusTarget = null"
+      @confirm="toggleStatus"
+    >
+      <TypographyText>{{ statusTarget?.status === PRODUCT_STATUS.ENABLED ? '确认禁用该投资组合产品？禁用后前台不可认购。' : '确认启用该投资组合产品？' }}</TypographyText>
+      <TypographyText type="secondary">{{ statusTarget?.name }}</TypographyText>
+    </AdminModal>
+
+    <AdminDialog :open="showModal" :title="editingId ? '编辑组合产品' : '创建组合产品'" :width="1152" plain @close="showModal = false">
+      <div class="portfolio-editor-body">
+      <Row :gutter="24" :wrap="false">
+        <Col flex="3" class="portfolio-editor-main">
+          <Form layout="vertical" :model="productForm" name="portfolio-product-editor">
+            <Tabs v-model:activeKey="activeTab">
+              <TabPane key="base" tab="基础信息">
+                <Row :gutter="16">
+                  <Col :span="12"><FormItem label="产品 ID" required><Input v-model:value="productForm.id" :disabled="Boolean(editingId)" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="计价币种"><Input v-model:value="productForm.quoteCurrency" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="产品名称" required><Input v-model:value="productForm.name" :maxlength="80" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="最低 VIP 等级"><Select v-model:value="productForm.minVipLevel" :options="vipOptions" show-search option-filter-prop="label" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="产品状态"><Select v-model:value="productForm.status" :options="statusOptions" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="排序权重" extra="数值越大越靠前"><InputNumber v-model:value.number="productForm.sortOrder" :precision="0" placeholder="数值越大越靠前" style="width: 100%" /></FormItem></Col>
+                  <Col :span="12"><FormItem><Checkbox v-model:checked="productForm.isHot">HOT 角标</Checkbox></FormItem></Col>
+                  <Col :span="12"><FormItem><Checkbox v-model:checked="productForm.isRecommended">加到推荐</Checkbox></FormItem></Col>
+                </Row>
+              </TabPane>
+              <TabPane key="assets" tab="组合币种">
+                <TypographyText type="secondary">组合币种从资产管理 / 币种管理中已配置的虚拟币选择，最多选择 {{ MAX_PORTFOLIO_ASSETS }} 个币种。</TypographyText>
+                <Space direction="vertical" :size="8" class="portfolio-asset-list">
+                  <Space v-for="(asset, idx) in productForm.assets" :key="idx" :size="8" class="portfolio-asset-row">
+                    <Select v-model:value="asset.symbol" :options="coinOptions" show-search option-filter-prop="label" not-found-content="无匹配币种" :aria-label="`组合币种 ${idx + 1}`" class="portfolio-asset-select" />
+                    <Button type="link" danger :disabled="productForm.assets.length <= 1" @click="removeAsset(idx)">删除</Button>
+                  </Space>
+                  <Button :disabled="productForm.assets.length >= MAX_PORTFOLIO_ASSETS" @click="addAsset"><template #icon><PlusOutlined /></template>添加资产</Button>
+                </Space>
+              </TabPane>
+              <TabPane key="yield" tab="收益费用">
+                <Row :gutter="16">
+                  <Col :span="12"><FormItem label="运行天数" required><InputNumber v-model:value="productForm.durationDays" :min="1" :precision="0" style="width: 100%" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="认购手续费（%）"><InputNumber v-model:value="productForm.subscriptionFeePct" :min="0" :max="100" style="width: 100%" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="基准最低日收益率（%）" required><InputNumber v-model:value="productForm.baseMinDailyRatePct" :min="0" style="width: 100%" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="基准最高日收益率（%）" required><InputNumber v-model:value="productForm.baseMaxDailyRatePct" :min="0" style="width: 100%" /></FormItem></Col>
+                </Row>
+                <TypographyText type="secondary">当前收益调控 {{ formatPortfolioAdjustmentRate(productForm.yieldAdjustmentRate || 0) }}，前台展示 {{ formatPortfolioRateRange(previewProduct) }}；调控比例在「收益调控」中修改。</TypographyText>
+              </TabPane>
+              <TabPane key="redeem" tab="赎回限额">
+                <Row :gutter="16">
+                  <Col :span="12"><FormItem label="最低金额"><InputNumber v-model:value="productForm.minAmount" :min="0" style="width: 100%" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="最高金额"><InputNumber v-model:value="productForm.maxAmount" :min="0" style="width: 100%" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="单用户持仓上限"><InputNumber v-model:value="productForm.userLimitAmount" :min="0" style="width: 100%" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="每月申购次数"><InputNumber v-model:value="productForm.monthlyLimitCount" :min="0" :precision="0" style="width: 100%" /></FormItem></Col>
+                  <Col :span="24"><FormItem label="允许提前赎回"><Switch v-model:checked="productForm.earlyRedeemEnabled" checked-children="允许" un-checked-children="不允许" aria-label="允许提前赎回" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="赎回模式"><Select v-model:value="productForm.earlyRedeemMode" :options="earlyRedeemModeOptions" :disabled="!productForm.earlyRedeemEnabled" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="赎回费率（%）"><InputNumber v-model:value="productForm.earlyRedeemFeePct" :min="0" :max="100" :disabled="!productForm.earlyRedeemEnabled" style="width: 100%" /></FormItem></Col>
+                  <Col :span="12"><FormItem label="到账时间"><Select v-model:value="productForm.redeemArrivalMode" :options="arrivalOptions" /></FormItem></Col>
+                </Row>
+              </TabPane>
+            </Tabs>
+          </Form>
+        </Col>
+        <Col flex="2" class="portfolio-editor-preview">
+          <Card size="small" title="前台展示预览">
+            <template #extra><Tag v-if="productForm.isHot" color="red">HOT</Tag></template>
+            <TypographyText strong>{{ productForm.name || '未命名组合' }}</TypographyText>
+            <div class="portfolio-preview-assets"><Tag v-for="asset in productForm.assets" :key="asset.symbol">{{ asset.symbol }}</Tag></div>
+            <Descriptions :column="2" size="small">
+              <DescriptionsItem label="周期">{{ formatPortfolioDuration(productForm.durationDays) }}</DescriptionsItem>
+              <DescriptionsItem label="收益">{{ formatPortfolioRateRange(previewProduct) }}</DescriptionsItem>
+              <DescriptionsItem label="区间">{{ money(productForm.minAmount) }} - {{ money(productForm.maxAmount) }}</DescriptionsItem>
+              <DescriptionsItem label="单用户上限">{{ money(productForm.userLimitAmount) }}</DescriptionsItem>
+            </Descriptions>
+          </Card>
+        </Col>
+      </Row>
       </div>
-      <a-button type="text" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700" @click="openCreate">
-        + 创建组合
-      </a-button>
-    </header>
-
-    <div class="rounded-xl border border-slate-200 bg-white p-4">
-      <div class="grid gap-4 md:grid-cols-3">
-        <a-input
-          v-model:value="search"
-          placeholder="搜索产品名称、ID 或币种"
-          class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition"
-        />
-        <a-select :get-popup-container="(trigger) => trigger.parentElement"
-          v-model:value="statusFilter"
-          class="transition"
-        >
-          <a-select-option :value="COMMON_FILTER_ALL">全部状态</a-select-option>
-          <a-select-option v-for="(meta, key) in productStatusMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
-        </a-select>
-        <div class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-500">
-          当前 {{ filteredProducts.length }} 款组合产品
-        </div>
-      </div>
-    </div>
-
-    <article class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <a-table  size="small" :pagination="false" :data-source="pagedProducts" :row-key="(product) => product.id" :scroll="{ x: 'max-content' }" :custom-row="(product, rowIndex) => ({ class: [&quot;transition hover:bg-slate-50&quot;] })">
-<a-table-column key="column-0" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>产品信息</template>
-<template #default="{ record: product, index: rowIndex }">
-              <div class="font-medium text-slate-900">{{ product.name }}</div>
-              <div class="mt-1 font-mono text-xs text-slate-400">{{ product.id }}</div>
-              <div class="mt-1 text-xs text-slate-500">{{ vipLevelLabel(product.minVipLevel) }}+</div>
-            </template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
-<template #title>排序/推荐</template>
-<template #default="{ record: product, index: rowIndex }">
-              <div>{{ Number(product.sortOrder) || 0 }}</div>
-              <span
-                v-if="product.isRecommended"
-                class="mt-1 inline-flex rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-600"
-              >
-                推荐
-              </span>
-            </template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>组合币种</template>
-<template #default="{ record: product, index: rowIndex }">
-              <div class="flex max-w-xs flex-wrap gap-1.5">
-                <span v-for="asset in product.assets" :key="asset.symbol" class="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-700">
-                  {{ asset.symbol }}
-                </span>
-              </div>
-            </template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
-<template #title>收益与费用</template>
-<template #default="{ record: product, index: rowIndex }">
-              <div>{{ formatPortfolioDuration(product.durationDays) }}</div>
-              <div class="font-medium text-emerald-600">{{ formatPortfolioRateRange(product) }}</div>
-              <div>手续费 {{ product.subscriptionFeePct }}%</div>
-            </template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
-<template #title>限额规则</template>
-<template #default="{ record: product, index: rowIndex }">
-              <div>{{ formatPortfolioAmount(product.minAmount) }} - {{ formatPortfolioAmount(product.maxAmount) }}</div>
-              <div>单用户上限 {{ formatPortfolioAmount(product.userLimitAmount) }}</div>
-            </template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-sm text-slate-600&quot;] })">
-<template #title>赎回规则</template>
-<template #default="{ record: product, index: rowIndex }">
-              <div>{{ product.earlyRedeemEnabled ? earlyRedeemModeMeta[product.earlyRedeemMode]?.label : '不支持' }}</div>
-              <div>{{ product.earlyRedeemFeePct }}% · {{ redeemArrivalModeMeta[product.redeemArrivalMode]?.label }}</div>
-            </template>
-</a-table-column>
-<a-table-column key="column-6" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>状态</template>
-<template #default="{ record: product, index: rowIndex }">
-              <span class="rounded-full px-2 py-1 text-xs" :class="statusClass(product.status)">
-                {{ productStatusMeta[product.status]?.label }}
-              </span>
-            </template>
-</a-table-column>
-<a-table-column key="column-7" align="right" :custom-cell="(product, rowIndex) => ({ class: [&quot;px-6 py-4 text-right&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: product, index: rowIndex }">
-              <a-button type="text" class="mr-3 text-sm font-medium text-blue-600 transition hover:text-blue-800" @click="openEdit(product)">编辑</a-button>
-              <a-button type="text" class="text-sm font-medium text-slate-600 transition hover:text-slate-900" @click="toggleStatus(product)">
-                {{ product.status === PRODUCT_STATUS.ENABLED ? '禁用' : '启用' }}
-              </a-button>
-            </template>
-</a-table-column>
-</a-table>
-      <div v-if="filteredProducts.length === 0" class="py-12 text-center text-slate-500">暂无产品数据</div>
-      <AdminListPaginationBar
-        :current-page="currentPage"
-        :total-pages="totalPages"
-        :total-count="filteredProducts.length"
-        :page-size="pageSize"
-        @update:current-page="currentPage = $event"
-        @update:page-size="onPageSizeChange"
-      />
-    </article>
-
-      <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showModal)" :mask-closable="false" :closable="false" :keyboard="false" :width="1152"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="showModal = false">
-<template #title><template v-if="showModal"><div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-            <div>
-              <h2 class="text-xl font-semibold text-slate-900">{{ editingId ? '编辑组合产品' : '创建组合产品' }}</h2>
-              <p class="mt-1 text-sm text-slate-500">左侧配置，右侧实时预览前台展示口径</p>
-            </div>
-            <a-button aria-label="关闭" type="text" class="text-2xl leading-none text-slate-400 hover:text-slate-700" @click="showModal = false">×</a-button>
-          </div></template></template>
-<template v-if="showModal">
-          <div class="flex min-h-0 flex-1">
-            <div class="w-3/5 border-r border-slate-200">
-              <div class="border-b border-slate-200 px-6">
-                <a-button type="text"
-                  v-for="tab in [
-                    ['base', '基础信息'],
-                    ['assets', '组合币种'],
-                    ['yield', '收益费用'],
-                    ['redeem', '赎回限额']
-                  ]"
-                  :key="tab[0]"
-                  class="border-b-2 px-4 py-3 text-sm font-medium transition"
-                  :class="activeTab === tab[0] ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-600'"
-                  @click="activeTab = tab[0]"
-                >
-                  {{ tab[1] }}
-                </a-button>
-              </div>
-              <div class="max-h-[66vh] overflow-y-auto p-6">
-                <div v-show="activeTab === 'base'" class="grid grid-cols-2 gap-4">
-                  <label class="block">
-                    <span class="mb-1 block text-sm font-medium text-slate-700">产品 ID</span>
-                    <a-input v-model:value="productForm.id" :disabled="Boolean(editingId)" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-100 disabled:text-slate-500" />
-                  </label>
-                  <label class="block">
-                    <span class="mb-1 block text-sm font-medium text-slate-700">计价币种</span>
-                    <a-input v-model:value="productForm.quoteCurrency" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-                  </label>
-                  <label class="block">
-                    <span class="mb-1 block text-sm font-medium text-slate-700">产品名称</span>
-                    <a-input v-model:value="productForm.name" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-                  </label>
-                  <label class="block">
-                    <span class="mb-1 block text-sm font-medium text-slate-700">最低 VIP 等级</span>
-                    <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value.number="productForm.minVipLevel" class="w-full">
-                      <a-select-option v-for="vip in activeVipLevels" :key="vip.id" :value="vip.level">
-                        {{ vipLevelLabel(vip.level) }}
-                      </a-select-option>
-                    </a-select>
-                  </label>
-                  <label class="flex items-center gap-2 text-sm text-slate-700">
-                    <a-checkbox v-model:checked="productForm.isHot" class="" />
-                    HOT 角标
-                  </label>
-                  <label class="flex items-center gap-2 text-sm text-slate-700">
-                    <a-checkbox v-model:checked="productForm.isRecommended" class="" />
-                    加到推荐
-                  </label>
-                  <label class="block">
-                    <span class="mb-1 block text-sm font-medium text-slate-700">产品状态</span>
-                    <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.status" class="w-full">
-                      <a-select-option v-for="(meta, key) in productStatusMeta" :key="key" :value="key">{{ meta.label }}</a-select-option>
-                    </a-select>
-                  </label>
-                  <label class="block">
-                    <span class="mb-1 block text-sm font-medium text-slate-700">产品排序</span>
-                    <a-input v-model:value.number="productForm.sortOrder" type="number" placeholder="数字越大越靠前" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-                    <span class="mt-1 block text-xs text-slate-500">数字越大越靠前</span>
-                  </label>
-                </div>
-
-                <div v-show="activeTab === 'assets'" class="space-y-3">
-                  <p class="text-xs text-slate-500">组合币种从资产管理 / 币种管理中已配置的虚拟币选择，最多选择 {{ MAX_PORTFOLIO_ASSETS }} 个币种。</p>
-                  <div v-for="(asset, idx) in productForm.assets" :key="idx" class="grid grid-cols-[1fr_auto] gap-3 rounded-lg bg-slate-50 p-3">
-                    <a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="asset.symbol" class="">
-                      <a-select-option v-for="coin in supportedTradeCoins" :key="coin.symbol" :value="coin.symbol">
-                        {{ coin.symbol }} · {{ coin.name }}{{ coin.disabled ? '（已禁用）' : '' }}
-                      </a-select-option>
-                    </a-select>
-                    <a-button type="text" class="text-sm text-red-600" @click="removeAsset(idx)">删除</a-button>
-                  </div>
-                  <a-button type="text"
-                    class="text-sm font-medium text-blue-600 disabled:cursor-not-allowed disabled:text-slate-400"
-                    :disabled="productForm.assets.length >= MAX_PORTFOLIO_ASSETS"
-                    @click="addAsset"
-                  >
-                    + 添加资产
-                  </a-button>
-                </div>
-
-                <div v-show="activeTab === 'yield'" class="grid grid-cols-2 gap-4">
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">运行天数</span><a-input v-model:value.number="productForm.durationDays" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">最低日收益率 %</span><a-input v-model:value.number="productForm.minDailyRatePct" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">最高日收益率 %</span><a-input v-model:value.number="productForm.maxDailyRatePct" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">认购手续费 %</span><a-input v-model:value.number="productForm.subscriptionFeePct" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
-                </div>
-
-                <div v-show="activeTab === 'redeem'" class="grid grid-cols-2 gap-4">
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">最低金额</span><a-input v-model:value.number="productForm.minAmount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">最高金额</span><a-input v-model:value.number="productForm.maxAmount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">单用户持仓上限</span><a-input v-model:value.number="productForm.userLimitAmount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">每月申购次数</span><a-input v-model:value.number="productForm.monthlyLimitCount" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
-                  <label class="flex items-center gap-2 text-sm text-slate-700"><a-checkbox v-model:checked="productForm.earlyRedeemEnabled" />允许提前赎回</label>
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">赎回模式</span><a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.earlyRedeemMode" class="w-full"><a-select-option v-for="option in earlyRedeemModeOptions" :key="option.value" :value="option.value">{{ option.label }}</a-select-option></a-select></label>
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">赎回费率 %</span><a-input v-model:value.number="productForm.earlyRedeemFeePct" type="number" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" /></label>
-                  <label class="block"><span class="mb-1 block text-sm font-medium text-slate-700">到账时间</span><a-select :get-popup-container="(trigger) => trigger.parentElement" v-model:value="productForm.redeemArrivalMode" class="w-full"><a-select-option v-for="(meta, key) in redeemArrivalModeMeta" :key="key" :value="key">{{ meta.label }}</a-select-option></a-select></label>
-                </div>
-
-              </div>
-            </div>
-
-            <aside class="flex-1 bg-slate-50 p-6">
-              <div class="relative rounded-xl border border-slate-200 bg-white p-5">
-                <span v-if="productForm.isHot" class="absolute right-4 top-4 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">HOT</span>
-                <h3 class="pr-12 text-xl font-semibold text-slate-900">{{ productForm.name || '未命名组合' }}</h3>
-                <div class="mt-4 flex flex-wrap gap-2">
-                  <span v-for="asset in productForm.assets" :key="asset.symbol" class="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-700">
-                    {{ asset.symbol }}
-                  </span>
-                </div>
-                <dl class="mt-5 grid grid-cols-2 gap-3 text-sm">
-                  <div><dt class="text-slate-500">周期</dt><dd class="font-semibold text-slate-900">{{ formatPortfolioDuration(productForm.durationDays) }}</dd></div>
-                  <div><dt class="text-slate-500">收益</dt><dd class="font-semibold text-emerald-600">{{ formatPortfolioRateRange(productForm) }}</dd></div>
-                  <div><dt class="text-slate-500">区间</dt><dd class="font-semibold text-slate-900">{{ productForm.minAmount }} - {{ productForm.maxAmount }}</dd></div>
-                  <div><dt class="text-slate-500">单用户上限</dt><dd class="font-semibold text-slate-900">{{ productForm.userLimitAmount }}</dd></div>
-                </dl>
-              </div>
-            </aside>
-          </div>
-          </template>
-<template #footer><template v-if="showModal"><div class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
-            <a-button type="text" class="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700" @click="showModal = false">取消</a-button>
-            <a-button type="text" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700" @click="saveProduct">保存产品</a-button>
-          </div></template></template>
-</a-modal>
-    
-  </section>
+      <footer>
+        <Button @click="showModal = false">取消</Button>
+        <Button type="primary" @click="saveProduct">保存产品</Button>
+      </footer>
+    </AdminDialog>
+  </PageShell>
 </template>
+
+<style scoped>
+.portfolio-editor-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding-bottom:24px}
+.portfolio-editor-main{min-width:0}
+.portfolio-editor-preview{min-width:0;padding-top:16px}
+.portfolio-asset-list{width:100%;margin-top:12px}
+.portfolio-asset-row{width:100%}
+.portfolio-asset-row :deep(.ant-space-item:first-child){flex:1}
+.portfolio-asset-select{width:100%;min-width:240px}
+.portfolio-preview-assets{margin:12px 0}
+</style>

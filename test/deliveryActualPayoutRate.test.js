@@ -86,8 +86,9 @@ test('period template editor validates fields and links errors to controls', () 
 
 test('existing template and contract previews keep their original display layout', () => {
   assert.doesNotMatch(managementPageSource, /cycle\.actualPayoutPct/)
-  assert.match(templatePageSource, /<span class="text-slate-500">收益:<\/span>/)
-  assert.doesNotMatch(templatePageSource, /<span class="text-slate-500">展示:<\/span>/)
+  // The list shows each cycle's configured payout as 收益 (not the actual payout rate) in a table Tag (Pro list 2026-11-28).
+  assert.match(templatePageSource, /<Tag v-for="cycle in visibleCycles\(record\)"[^>]*>\{\{ durationLabel\(cycle\.durationSec\) \}\} · 收益 \{\{ Number\(cycle\.payoutPct\)\.toFixed\(1\) \}\}%<\/Tag>/)
+  assert.doesNotMatch(templatePageSource, /展示:/)
 })
 
 test('demo orders use the actual payout rate', () => {

@@ -1,6 +1,11 @@
 <script setup>
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
+// 客服操作面板 (2026-11-28 Ant Design Pro pass): wrapped in the shared PageShell (Ant seed typography, no page banner);
+// the chat layout and behaviour are unchanged. The 新消息/全部用户 switch is an Ant Segmented (selection by background,
+// no highlight rings) and the selected thread is marked by background only, per the no-highlight-border rule.
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { Segmented } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import { USER_KYC_STATUS, USER_ROLE, USER_STATUS } from '../../../admin/constants/user.js'
 import CustomerServiceImagePreview from '../../../components/customer-service/CustomerServiceImagePreview.vue'
@@ -58,6 +63,14 @@ const detailUser = computed(() => {
     remark: ''
   }
 })
+const inboxFilter = computed({
+  get: () => (unreadOnly.value ? 'unread' : 'all'),
+  set: (value) => { unreadOnly.value = value === 'unread' }
+})
+const inboxFilterOptions = computed(() => [
+  { value: 'unread', label: `新消息 ${summary.value.unread}` },
+  { value: 'all', label: `全部用户 ${summary.value.all}` }
+])
 const canReply = computed(() => Boolean(selected.value && draft.value.trim()))
 
 function formatTime(value) {
@@ -137,6 +150,7 @@ onUnmounted(() => unsubscribe?.())
 </script>
 
 <template>
+  <PageShell :style="{ height: '100%', minHeight: 0, paddingBottom: 0, gridTemplateRows: 'minmax(0, 1fr)' }">
   <section class="relative h-full min-h-0">
     <FeedbackToast v-if="errorMessage" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
 
@@ -151,15 +165,12 @@ onUnmounted(() => unsubscribe?.())
             <h2 class="font-semibold text-slate-900">用户消息</h2>
             <a-button html-type="button" class="text-xl text-slate-400 lg:hidden" aria-label="关闭用户消息列表" @click="listOpen = false">×</a-button>
           </div>
-          <div class="mt-3 grid grid-cols-2 gap-2 text-center text-xs">
-            <a-button style="height: auto !important; padding: 8px !important" html-type="button" class="" :class="unreadOnly ? 'bg-rose-50 text-rose-700 ring-1 ring-rose-200' : 'bg-slate-50 text-slate-600'" @click="unreadOnly = true"><b class="block text-base">{{ summary.unread }}</b>新消息</a-button>
-            <a-button style="height: auto !important; padding: 8px !important" html-type="button" class="" :class="!unreadOnly ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200' : 'bg-slate-50 text-slate-600'" @click="unreadOnly = false"><b class="block text-base">{{ summary.all }}</b>全部用户</a-button>
-          </div>
+          <Segmented v-model:value="inboxFilter" :options="inboxFilterOptions" block class="mt-3" aria-label="用户消息筛选" />
           <a-input v-model:value="query" type="search" placeholder="搜索邮箱、UID 或消息" class="mt-3 w-full transition" />
         </div>
 
         <div class="min-h-0 flex-1 overflow-y-auto p-2">
-          <a-button style="height: auto !important; padding: 12px !important; white-space: normal" v-for="thread in threads" :key="thread.id" html-type="button" class="mb-1 w-full border text-left transition" :class="selectedId === thread.id ? 'border-blue-200 bg-blue-50/70' : 'border-transparent hover:bg-slate-50'" @click="selectThread(thread)">
+          <a-button style="height: auto !important; padding: 12px !important; white-space: normal" v-for="thread in threads" :key="thread.id" html-type="button" class="mb-1 w-full border text-left transition" :class="selectedId === thread.id ? 'border-transparent bg-blue-50' : 'border-transparent hover:bg-slate-50'" :aria-current="selectedId === thread.id ? 'true' : undefined" @click="selectThread(thread)">
             <div class="flex items-start gap-3">
               <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-800 text-sm font-semibold text-white">{{ (thread.user.nickname || thread.user.email || '?').slice(0, 1).toUpperCase() }}</span>
               <span class="min-w-0 flex-1">
@@ -223,4 +234,5 @@ onUnmounted(() => unsubscribe?.())
     <UserDetailDrawer :visible="profileOpen" :user="detailUser" @close="profileOpen = false" />
     <CustomerServiceImagePreview :src="previewImageUrl" @close="previewImageUrl = ''" />
   </section>
+  </PageShell>
 </template>

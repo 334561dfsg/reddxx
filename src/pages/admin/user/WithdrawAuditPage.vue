@@ -1,6 +1,12 @@
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue'
-import AdminListPaginationBar from '../../../admin/components/AdminListPaginationBar.vue'
+// 出金审核 — Ant Design Pro list page (2026-11-28): query card (one input per field instead of the old combined
+// keyword box and status pills), business statistics card, table card with pagination, status as a text Tag and a
+// link 处理/详情 action. The review drawer and its validation are unchanged; feedback uses Ant message.
+import { computed, onMounted, ref } from 'vue'
+import { Button, Card, Col, Row, Space, Statistic, Tag, TypographyText, message } from 'ant-design-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import { getUserById } from '../../../admin/mock/user'
 import {
@@ -10,44 +16,66 @@ import {
   withdrawStatusOptions
 } from '../../../admin/mock/fundOrders'
 
-const keyword = ref('')
-const statusFilter = ref(FUND_ORDER_FILTER_ALL)
-const coinFilter = ref(FUND_ORDER_FILTER_ALL)
 const loading = ref(false)
-const rows = ref([])
-const aggregates = ref(null)
+const orders = ref([])
+const page = ref(1)
 const selectedOrder = ref(null)
 const selectedUser = ref(null)
 const showUserDrawer = ref(false)
 const auditAction = ref('')
 const auditNote = ref('')
-const toast = ref({ show: false, text: '', kind: 'info' })
-
-const pagination = reactive({
-  currentPage: 1,
-  pageSize: 10,
-  total: 0
-})
-
-const totalPages = computed(() => Math.max(1, Math.ceil(pagination.total / pagination.pageSize)))
 
 const coins = ['USDT', 'BTC', 'ETH', 'USDC', 'TRX']
+const blank = () => ({ orderId: '', user: '', status: FUND_ORDER_FILTER_ALL, coin: FUND_ORDER_FILTER_ALL, address: '', txHash: '', applyDate: null })
+const filters = ref(blank())
+const fields = [
+  { key: 'orderId', label: '订单号' },
+  { key: 'user', label: '用户' },
+  { key: 'status', label: '状态', options: [{ value: FUND_ORDER_FILTER_ALL, label: '全部状态' }, ...withdrawStatusOptions.map(({ value, label }) => ({ value, label }))] },
+  { key: 'coin', label: '币种', searchable: true, options: [{ value: FUND_ORDER_FILTER_ALL, label: '全部币种' }, ...coins.map((coin) => ({ value: coin, label: coin }))] },
+  { key: 'address', label: '出金地址' },
+  { key: 'txHash', label: 'TxHash' },
+  { key: 'applyDate', label: '申请日期', range: true }
+]
+
+const has = (value, query) => !String(query || '').trim() || String(value || '').toLowerCase().includes(String(query).trim().toLowerCase())
+const localDate = (value) => {
+  const date = new Date(value)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+}
+const rows = computed(() => orders.value.filter((order) => {
+  const f = filters.value
+  return has(order.id, f.orderId) &&
+    (has(order.userId, f.user) || has(order.username, f.user)) &&
+    has(order.address, f.address) && has(order.txHash, f.txHash) &&
+    (!f.applyDate || (localDate(order.applyTime) >= f.applyDate[0] && localDate(order.applyTime) <= f.applyDate[1]))
+}))
 
 const stats = computed(() => {
-  const byStatus = aggregates.value?.byStatus || {}
+  const count = (status) => rows.value.filter((order) => order.status === status).length
   return [
-    { label: '待审核', value: byStatus[WITHDRAW_AUDIT_STATUS.PENDING] || 0, class: 'text-amber-600' },
-    { label: '已通过', value: byStatus[WITHDRAW_AUDIT_STATUS.APPROVED] || 0, class: 'text-blue-600' },
-    { label: '已拒绝', value: byStatus[WITHDRAW_AUDIT_STATUS.REJECTED] || 0, class: 'text-rose-600' },
-    { label: '筛选金额', value: formatMoney(aggregates.value?.totalUsdt || 0), class: 'text-slate-900' }
+    { label: '待审核', value: count(WITHDRAW_AUDIT_STATUS.PENDING) },
+    { label: '已通过', value: count(WITHDRAW_AUDIT_STATUS.APPROVED) },
+    { label: '已拒绝', value: count(WITHDRAW_AUDIT_STATUS.REJECTED) },
+    { label: '筛选金额（USDT）', value: formatMoney(rows.value.reduce((total, order) => total + Number(order.usdtValue || 0), 0)) }
   ]
 })
 
+const columns = [
+  { key: 'order', title: '订单', width: 180 },
+  { key: 'user', title: '用户', width: 170 },
+  { key: 'amount', title: '出金金额', width: 170, align: 'right' },
+  { key: 'usdt', title: '折合（USDT）', width: 150, align: 'right' },
+  { key: 'address', title: '地址 / 网络', width: 260 },
+  { key: 'status', title: '状态', width: 90 },
+  { key: 'applyTime', title: '申请时间', width: 170 },
+  { key: 'actions', title: '操作', width: 80, fixed: 'right' }
+]
+const statusColor = { [WITHDRAW_AUDIT_STATUS.PENDING]: 'orange', [WITHDRAW_AUDIT_STATUS.APPROVED]: 'blue', [WITHDRAW_AUDIT_STATUS.REJECTED]: 'red' }
+
 function statusMeta(status) {
-  return withdrawStatusOptions.find((item) => item.value === status) || {
-    label: status,
-    badgeClass: 'bg-slate-100 text-slate-700'
-  }
+  return withdrawStatusOptions.find((item) => item.value === status) || { label: status }
 }
 
 function formatMoney(value) {
@@ -63,46 +91,34 @@ function formatTime(value) {
 }
 
 function showToast(text, kind = 'info') {
-  toast.value = { show: true, text, kind }
-  setTimeout(() => {
-    toast.value.show = false
-  }, 2600)
+  if (kind === 'error') message.error(text)
+  else if (kind === 'success') message.success(text)
+  else message.info(text)
 }
 
+// Status and coin go to the mock API; the remaining single-attribute fields are matched on the returned rows.
 async function loadList() {
   loading.value = true
   try {
     const res = await fundOrderApi.listWithdrawOrders({
-      page: pagination.currentPage,
-      pageSize: pagination.pageSize,
-      status: statusFilter.value,
-      coin: coinFilter.value,
-      keyword: keyword.value
+      page: 1,
+      pageSize: Number.MAX_SAFE_INTEGER,
+      status: filters.value.status,
+      coin: filters.value.coin
     })
     if (res.success) {
-      rows.value = res.data.list
-      pagination.total = res.data.total
-      aggregates.value = res.data.aggregates
+      orders.value = res.data.list
       if (selectedOrder.value) {
-        selectedOrder.value = rows.value.find((item) => item.id === selectedOrder.value.id) || selectedOrder.value
+        selectedOrder.value = orders.value.find((item) => item.id === selectedOrder.value.id) || selectedOrder.value
       }
-    }
+    } else showToast(res.message || '出金审核记录加载失败', 'error')
   } finally {
     loading.value = false
   }
 }
 
-function handleSearch() {
-  pagination.currentPage = 1
-  loadList()
-}
-
-function resetFilters() {
-  keyword.value = ''
-  statusFilter.value = FUND_ORDER_FILTER_ALL
-  coinFilter.value = FUND_ORDER_FILTER_ALL
-  handleSearch()
-}
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1; loadList() }
+function reset() { filters.value = blank(); page.value = 1; loadList() }
 
 function openDetail(order) {
   selectedOrder.value = order
@@ -144,95 +160,49 @@ async function submitAction(action) {
     auditAction.value = ''
     auditNote.value = ''
     await loadList()
-    const latest = rows.value.find((item) => item.id === selectedOrder.value.id)
+    const latest = orders.value.find((item) => item.id === selectedOrder.value.id)
     if (latest) selectedOrder.value = latest
   }
 }
-
-watch(
-  () => [pagination.currentPage, pagination.pageSize],
-  () => loadList()
-)
 
 onMounted(loadList)
 </script>
 
 <template>
-  <section class="space-y-6">
-    <header class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-slate-900">出金审核</h1>
-        <p class="mt-1 text-sm text-slate-500">审核用户出金申请，处理通过和拒绝状态。</p>
-      </div>
-      <div v-if="toast.show" class="rounded-lg border bg-white px-4 py-2 text-sm shadow-sm" :class="toast.kind === 'error' ? 'border-rose-200 text-rose-700' : 'border-emerald-200 text-emerald-700'">
-        {{ toast.text }}
-      </div>
-    </header>
+  <PageShell>
+    <SearchForm name="withdraw-audit-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
 
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <article v-for="stat in stats" :key="stat.label" class="rounded-xl border border-slate-200 bg-white p-4">
-        <p class="text-sm text-slate-500">{{ stat.label }}</p>
-        <p class="mt-2 text-2xl font-semibold tabular-nums" :class="stat.class">{{ stat.value }}</p>
-      </article>
-    </div>
+    <Card :bordered="false">
+      <Row :gutter="24">
+        <Col v-for="stat in stats" :key="stat.label" :span="6"><Statistic :title="stat.label" :value="stat.value" /></Col>
+      </Row>
+    </Card>
 
-    <article class="rounded-xl border border-slate-200 bg-white">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4">
-        <div class="flex flex-wrap gap-2">
-          <a-button v-for="opt in [{ value: FUND_ORDER_FILTER_ALL, label: '全部' }, ...withdrawStatusOptions]" :key="opt.value" html-type="button" class="text-sm font-medium transition" :class="statusFilter === opt.value ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" @click="statusFilter = opt.value; handleSearch()">
-            {{ opt.label }}
-          </a-button>
-        </div>
-        <div class="flex w-full flex-wrap gap-2 lg:w-auto">
-          <a-select v-model:value="coinFilter" class="" @change="handleSearch">
-            <a-select-option :value="FUND_ORDER_FILTER_ALL">全部币种</a-select-option>
-            <a-select-option v-for="coin in coins" :key="coin" :value="coin">{{ coin }}</a-select-option>
-          </a-select>
-          <a-input v-model:value="keyword" type="text" placeholder="搜索订单、用户、地址或哈希" class="w-full lg:w-72" @keyup.enter="handleSearch" />
-          <a-button html-type="button" class="" @click="handleSearch" type="primary">查询</a-button>
-          <a-button html-type="button" class="" @click="resetFilters">重置</a-button>
-        </div>
-      </div>
-
-      <div class="overflow-x-auto">
-        <a-table  :data-source="rows" :loading="loading" :pagination="false" size="small" :scroll="{ x: 'max-content' }" :row-key="(order) => order.id" :custom-row="(order, index) => ({ class: [&quot;hover:bg-slate-50&quot;] })">
-<a-table-column key="column-0" ><template #title>订单</template><template #default="{ record: order, index: index }"><div class=" ">
-                <div class="font-mono text-xs text-slate-500">{{ order.id }}</div>
-                <div class="mt-1 text-xs text-slate-400">VIP{{ order.vipLevel }}</div>
-              </div></template></a-table-column>
-<a-table-column key="column-1" ><template #title>用户</template><template #default="{ record: order, index: index }"><div class=" ">
-                <a-button html-type="button" class="font-medium text-blue-600 hover:text-blue-700 hover:underline" @click="openUserPanel(order)">
-                  {{ order.username }}
-                </a-button>
-                <div class="text-xs text-slate-500">{{ order.userId }}</div>
-              </div></template></a-table-column>
-<a-table-column key="column-2" align="right"><template #title>出金金额</template><template #default="{ record: order, index: index }"><div class="  text-right">
-                <div class="font-semibold text-slate-900">{{ formatMoney(order.amount) }} {{ order.coin }}</div>
-                <div class="text-xs text-slate-500">手续费 {{ order.fee }} {{ order.coin }}</div>
-              </div></template></a-table-column>
-<a-table-column key="usdt-value" title="折合 USDT" align="right"><template #default="{ record: order }">
-                <span class="whitespace-nowrap tabular-nums">{{ order.usdtValue == null ? '—' : formatMoney(order.usdtValue) }}</span>
-              </template></a-table-column>
-<a-table-column key="column-3" ><template #title>地址 / 网络</template><template #default="{ record: order, index: index }"><div class="max-w-[260px]  ">
-                <div class="truncate font-mono text-xs text-slate-700">{{ order.address }}</div>
-                <div class="mt-1 text-xs text-slate-500">{{ order.network }}</div>
-              </div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>状态</template><template #default="{ record: order, index: index }"><div class=" ">
-                <span class="rounded-md px-2 py-0.5 text-xs font-medium" :class="statusMeta(order.status).badgeClass">{{ statusMeta(order.status).label }}</span>
-              </div></template></a-table-column>
-<a-table-column key="column-5" ><template #title>申请时间</template><template #default="{ record: order, index: index }"><div class="  text-xs text-slate-500">{{ formatTime(order.applyTime) }}</div></template></a-table-column>
-<a-table-column key="column-6" align="right"><template #title>操作</template><template #default="{ record: order, index: index }"><div class="  text-right">
-                <a-button html-type="button" class="text-sm font-medium text-blue-600 hover:underline" @click="openDetail(order)">处理</a-button>
-              </div></template></a-table-column><template #emptyText>暂无出金审核记录</template>
-</a-table>
-      </div>
-      <AdminListPaginationBar
-        v-model:current-page="pagination.currentPage"
-        v-model:page-size="pagination.pageSize"
-        :total-pages="totalPages"
-        :total-count="pagination.total"
-      />
-    </article>
+    <AdminTable title="出金审核" v-model:page="page" :rows="rows" :columns="columns" :loading="loading" row-key="id" desktop-only>
+      <template #cell="{ column, record: order }">
+        <Space v-if="column.key === 'order'" direction="vertical" :size="0">
+          <span class="font-mono">{{ order.id }}</span>
+          <TypographyText type="secondary">VIP{{ order.vipLevel }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'user'" direction="vertical" :size="0">
+          <Button type="link" class="px-0" @click="openUserPanel(order)">{{ order.username }}</Button>
+          <TypographyText type="secondary" class="font-mono">{{ order.userId }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'amount'" direction="vertical" :size="0" align="end">
+          <span>{{ formatMoney(order.amount) }} {{ order.coin }}</span>
+          <TypographyText type="secondary">手续费 {{ order.fee }} {{ order.coin }}</TypographyText>
+        </Space>
+        <span v-else-if="column.key === 'usdt'">{{ order.usdtValue == null ? '—' : formatMoney(order.usdtValue) }}</span>
+        <Space v-else-if="column.key === 'address'" direction="vertical" :size="0">
+          <TypographyText class="font-mono" :ellipsis="{ tooltip: order.address }" :content="order.address" />
+          <TypographyText type="secondary">{{ order.network }}</TypographyText>
+        </Space>
+        <Tag v-else-if="column.key === 'status'" :color="statusColor[order.status]">{{ statusMeta(order.status).label }}</Tag>
+        <TypographyText v-else-if="column.key === 'applyTime'" type="secondary">{{ formatTime(order.applyTime) }}</TypographyText>
+        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" @click="openDetail(order)">{{ order.status === WITHDRAW_AUDIT_STATUS.PENDING ? '处理' : '详情' }}</Button>
+        <template v-else>{{ order[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
 
       <a-drawer :open="Boolean(selectedOrder)" :mask-closable="false" :keyboard="false" :closable="false" placement="right" width="min(960px, 100vw)" class="admin-ant-business-overlay admin-trading-modal" :body-style="{ maxHeight: 'calc(100dvh - 180px)', overflowY: 'auto' }" @close="closeDetail"><template #title><template v-if="Boolean(selectedOrder)"><header class="border-b border-slate-200 px-6 py-4">
             <div class="flex items-start justify-between gap-4">
@@ -300,5 +270,5 @@ onMounted(loadList)
       :user="selectedUser"
       @close="closeUserPanel"
     />
-  </section>
+  </PageShell>
 </template>

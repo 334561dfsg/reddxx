@@ -1,5 +1,13 @@
 <script setup>
+// 交割合约订单 — Ant Design Pro list page (2026-11-28): query card (EarnSearchForm), table card with toolbar and
+// pagination (EarnAdminTable), link actions, status as a text Tag. Reads the mock's real fields (status/result/
+// direction meta use `text`; profit = actualReturn − investAmount; VIP from vipLevel), which the old table missed.
 import { ref, computed, onMounted } from 'vue'
+import { Button, Space, Tag, TypographyText, message } from 'ant-design-vue'
+import { DownloadOutlined } from '@ant-design/icons-vue'
+import PageShell from '../earn/EarnPageShell.vue'
+import SearchForm from '../earn/EarnSearchForm.vue'
+import AdminTable from '../earn/EarnAdminTable.vue'
 import {
   createDeliveryOrdersMock,
   DELIVERY_ORDER_STATUS,
@@ -10,95 +18,63 @@ import {
 } from '../../../admin/mock/deliveryOrder'
 
 const orders = ref([])
-const currentPage = ref(1)
-const pageSize = ref(10)
-const showAdvancedFilters = ref(false)
+const page = ref(1)
 const showDetailModal = ref(false)
 const currentOrder = ref(null)
 const currentTab = ref('overview')
 
-const filters = ref({
-  status: '',
-  product: '',
-  result: '',
-  userId: '',
-  minInvest: null,
-  maxInvest: null,
-  minYield: null,
-  maxYield: null,
-  cycleType: '',
-  dateRange: ''
-})
+const blank = () => ({ orderId: '', userId: '', status: 'all', product: 'all', result: 'all', cycle: 'all', betDate: null, invest: [null, null], yield: [null, null] })
+const filters = ref(blank())
+const productOptions = computed(() => [...new Set(orders.value.map((o) => o.productName))].map((value) => ({ value, label: value })))
+const fields = computed(() => [
+  { key: 'orderId', label: '订单号' },
+  { key: 'userId', label: '用户 ID' },
+  { key: 'status', label: '状态', options: [{ value: 'all', label: '全部状态' }, ...Object.entries(deliveryOrderStatusMeta).map(([value, meta]) => ({ value, label: meta.text }))] },
+  { key: 'product', label: '产品', searchable: true, options: [{ value: 'all', label: '全部产品' }, ...productOptions.value] },
+  { key: 'result', label: '结算结果', options: [{ value: 'all', label: '全部结果' }, ...Object.entries(deliveryOrderResultMeta).map(([value, meta]) => ({ value, label: meta.text }))] },
+  { key: 'cycle', label: '周期', options: [{ value: 'all', label: '全部周期' }, { value: 'short', label: '短周期（≤60 秒）' }, { value: 'medium', label: '中周期（61–180 秒）' }, { value: 'long', label: '长周期（>180 秒）' }] },
+  { key: 'betDate', label: '下单日期', range: true },
+  { key: 'invest', label: '投资金额', numberRange: true, min: 0 },
+  { key: 'yield', label: '实际收益率', numberRange: true }
+])
 
-const vipLevelMeta = {
-  VIP0: { label: 'VIP0', class: 'bg-slate-100 text-slate-500' },
-  VIP1: { label: 'VIP1', class: 'bg-blue-100 text-blue-600' },
-  VIP2: { label: 'VIP2', class: 'bg-violet-100 text-violet-600' },
-  VIP3: { label: 'VIP3', class: 'bg-amber-100 text-amber-700' }
-}
-
-const detailTabs = [
-  { id: 'overview', label: '概览' },
-  { id: 'details', label: '订单详情' },
-  { id: 'user', label: '用户信息' },
-  { id: 'settlement', label: '结算记录' }
-]
+const vipLabel = (order) => (order.vipLevel === undefined || order.vipLevel === null ? '' : String(order.vipLevel).startsWith('VIP') ? String(order.vipLevel) : `VIP${order.vipLevel}`)
+const profitOf = (order) => Number((order.actualReturn - order.investAmount).toFixed(2))
+const isSettled = (order) => order.status !== DELIVERY_ORDER_STATUS.PENDING
+const money = (value) => Number(value || 0).toLocaleString('zh-CN', { maximumFractionDigits: 2 })
+const statusColor = { [DELIVERY_ORDER_STATUS.PENDING]: 'orange', [DELIVERY_ORDER_STATUS.SETTLED]: 'default', [DELIVERY_ORDER_STATUS.EXERCISED]: 'blue' }
+const has = (value, query) => !query || String(value).toLowerCase().includes(query.trim().toLowerCase())
+const inRange = (value, [min, max]) => (min === null || min === undefined || value >= min) && (max === null || max === undefined || value <= max)
+const cycleOf = (seconds) => (seconds <= 60 ? 'short' : seconds <= 180 ? 'medium' : 'long')
 
 onMounted(() => {
   orders.value = createDeliveryOrdersMock()
 })
 
-const filteredOrders = computed(() => {
-  let result = [...orders.value]
+const rows = computed(() => orders.value.filter((o) => {
+  const f = filters.value
+  const day = o.betTime.slice(0, 10)
+  return has(o.id, f.orderId) && has(o.userId, f.userId) &&
+    (f.status === 'all' || o.status === f.status) &&
+    (f.product === 'all' || o.productName === f.product) &&
+    (f.result === 'all' || (isSettled(o) && o.result === f.result)) &&
+    (f.cycle === 'all' || cycleOf(o.cycleSeconds) === f.cycle) &&
+    (!f.betDate || (day >= f.betDate[0] && day <= f.betDate[1])) &&
+    inRange(o.investAmount, f.invest) && inRange(o.actualYield, f.yield)
+}))
 
-  if (filters.value.status) {
-    result = result.filter((o) => o.status === filters.value.status)
-  }
-  if (filters.value.product) {
-    result = result.filter((o) => o.productName === filters.value.product)
-  }
-  if (filters.value.result) {
-    result = result.filter((o) => o.result === filters.value.result)
-  }
-  if (filters.value.userId) {
-    result = result.filter((o) => o.userId.includes(filters.value.userId))
-  }
-  if (filters.value.minInvest) {
-    result = result.filter((o) => o.investAmount >= filters.value.minInvest)
-  }
-  if (filters.value.maxInvest) {
-    result = result.filter((o) => o.investAmount <= filters.value.maxInvest)
-  }
-  if (filters.value.minYield) {
-    result = result.filter((o) => o.actualYield >= filters.value.minYield)
-  }
-  if (filters.value.maxYield) {
-    result = result.filter((o) => o.actualYield <= filters.value.maxYield)
-  }
-  if (filters.value.cycleType) {
-    if (filters.value.cycleType === 'short') {
-      result = result.filter((o) => o.cycleSeconds <= 60)
-    } else if (filters.value.cycleType === 'medium') {
-      result = result.filter((o) => o.cycleSeconds > 60 && o.cycleSeconds <= 180)
-    } else if (filters.value.cycleType === 'long') {
-      result = result.filter((o) => o.cycleSeconds > 180)
-    }
-  }
-  if (filters.value.dateRange) {
-    const date = filters.value.dateRange
-    result = result.filter((o) => o.betTime.startsWith(date))
-  }
+const columns = [
+  { key: 'order', title: '订单', width: 200, fixed: 'left' },
+  { key: 'user', title: '用户', width: 160 },
+  { key: 'invest', title: '投资金额（USDT）', width: 170, align: 'right' },
+  { key: 'expected', title: '预期收益率', width: 120, align: 'right' },
+  { key: 'pnl', title: '结算盈亏（USDT）', width: 160, align: 'right' },
+  { key: 'status', title: '状态', width: 90 },
+  { key: 'actions', title: '操作', width: 80, fixed: 'right' }
+]
 
-  return result
-})
-
-const paginatedOrders = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return filteredOrders.value.slice(start, end)
-})
-
-const totalPages = computed(() => Math.ceil(filteredOrders.value.length / pageSize.value))
+function search(values) { filters.value = { ...blank(), ...values }; page.value = 1 }
+function reset() { filters.value = blank(); page.value = 1 }
 
 const viewOrder = (order) => {
   currentOrder.value = order
@@ -111,304 +87,56 @@ const closeDetailModal = () => {
   currentOrder.value = null
 }
 
-const resetFilters = () => {
-  filters.value = {
-    status: '',
-    product: '',
-    result: '',
-    userId: '',
-    minInvest: null,
-    maxInvest: null,
-    minYield: null,
-    maxYield: null,
-    cycleType: '',
-    dateRange: ''
-  }
-  showAdvancedFilters.value = false
-}
-
+// Mock export: no file yet, so say so instead of a native alert (operation feedback is toast-only).
 const exportOrders = () => {
-  alert('导出交割合约订单数据')
+  message.info(`已按当前筛选条件准备导出 ${rows.value.length} 条订单（演示环境不生成文件）`)
 }
 
-const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
-}
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++
-}
+const detailTabs = [
+  { id: 'overview', label: '概览' },
+  { id: 'details', label: '订单详情' },
+  { id: 'user', label: '用户信息' },
+  { id: 'settlement', label: '结算记录' }
+]
 </script>
 
 <template>
-  <section class="space-y-4">
-    <!-- Page Header -->
-    <header class="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-semibold text-slate-900">交割合约订单</h1>
-        <p class="mt-1 text-sm text-slate-500">监控用户交割合约投资、收益与结算状态，支持多维度订单筛选与导出</p>
-      </div>
-    </header>
-
-    <article class="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
-      <!-- 筛选区域 -->
-      <div class="flex flex-wrap items-center gap-3 border-b border-slate-200 p-4 md:px-6 bg-slate-50/30">
-        <a-select :get-popup-container="(trigger) => trigger.parentElement"
-          v-model:value="filters.status"
-          class="!w-36"
-        >
-          <a-select-option value="">全部状态</a-select-option>
-          <a-select-option :value="DELIVERY_ORDER_STATUS.PENDING">待结算</a-select-option>
-          <a-select-option :value="DELIVERY_ORDER_STATUS.SETTLED">已结算</a-select-option>
-          <a-select-option :value="DELIVERY_ORDER_STATUS.EXERCISED">已行权</a-select-option>
-        </a-select>
-
-        <a-select :get-popup-container="(trigger) => trigger.parentElement"
-          v-model:value="filters.product"
-          class="!w-36"
-        >
-          <a-select-option value="">全部产品</a-select-option>
-          <a-select-option value="BTC 期权">BTC 期权</a-select-option>
-          <a-select-option value="ETH 期权">ETH 期权</a-select-option>
-        </a-select>
-
-        <a-select :get-popup-container="(trigger) => trigger.parentElement"
-          v-model:value="filters.result"
-          class="!w-32"
-        >
-          <a-select-option value="">全部结果</a-select-option>
-          <a-select-option :value="DELIVERY_ORDER_RESULT.WIN">赢利</a-select-option>
-          <a-select-option :value="DELIVERY_ORDER_RESULT.LOSS">亏损</a-select-option>
-        </a-select>
-
-        <div class="relative w-full max-w-xs">
-          <a-input
-            v-model:value="filters.userId"
-            type="text"
-            placeholder="搜索用户 ID..."
-            class="ant-input pl-9"
-          />
-          <svg viewBox="0 0 20 20" class="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none">
-            <circle cx="9" cy="9" r="5.8" stroke="currentColor" stroke-width="1.6" />
-            <path d="M13.6 13.6L16.4 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-          </svg>
-        </div>
-
-        <a-button
-          html-type="button"
-          class="ant-btn inline-flex items-center gap-1.5"
-          @click="showAdvancedFilters = !showAdvancedFilters"
-        >
-          <span>{{ showAdvancedFilters ? '收起' : '高级筛选' }}</span>
-          <svg
-            class="w-3 h-3 transition-transform"
-            :class="{ 'rotate-180': showAdvancedFilters }"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </a-button>
-
-        <a-button
-          html-type="button"
-          class="ant-btn"
-          @click="resetFilters"
-        >
-          重置
-        </a-button>
-
-        <div class="flex-1"></div>
-
-        <a-button
-          html-type="button"
-          class="ant-btn inline-flex items-center gap-2"
-          @click="exportOrders"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-            />
-          </svg>
-          <span>导出订单</span>
-        </a-button>
-      </div>
-
-      <!-- 高级筛选 -->
-      <div v-show="showAdvancedFilters" class="border-b border-slate-200 bg-slate-50/50 p-4 md:px-6">
-        <div class="grid gap-6 md:grid-cols-4">
-          <div class="space-y-1.5">
-            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">投资金额 (USDT)</label>
-            <div class="flex items-center gap-2">
-              <a-input
-                v-model:value.number="filters.minInvest"
-                type="number"
-                placeholder="最小"
-                class="ant-input !py-1 text-xs"
-              />
-              <span class="text-slate-300">-</span>
-              <a-input
-                v-model:value.number="filters.maxInvest"
-                type="number"
-                placeholder="最大"
-                class="ant-input !py-1 text-xs"
-              />
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">实际收益 (%)</label>
-            <div class="flex items-center gap-2">
-              <a-input
-                v-model:value.number="filters.minYield"
-                type="number"
-                placeholder="最小"
-                class="ant-input !py-1 text-xs"
-              />
-              <span class="text-slate-300">-</span>
-              <a-input
-                v-model:value.number="filters.maxYield"
-                type="number"
-                placeholder="最大"
-                class="ant-input !py-1 text-xs"
-              />
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">周期类型</label>
-            <a-select :get-popup-container="(trigger) => trigger.parentElement"
-              v-model:value="filters.cycleType"
-              class=""
-            >
-              <a-select-option value="">全部周期</a-select-option>
-              <a-select-option value="short">短周期 (≤60s)</a-select-option>
-              <a-select-option value="medium">中周期 (60s-180s)</a-select-option>
-              <a-select-option value="long">长周期 (>180s)</a-select-option>
-            </a-select>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">下单日期</label>
-            <a-input
-              v-model:value="filters.dateRange"
-              type="date"
-              class="ant-input !py-1 text-xs"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- 表格内容 -->
-      <div class="overflow-x-auto">
-        <a-table  size="small" :pagination="false" :data-source="paginatedOrders" :row-key="(order) => order.id" :scroll="{ x: 'max-content' }" :custom-row="(order, rowIndex) => ({ class: [&quot;text-sm group&quot;] })">
-<a-table-column key="column-0" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>订单信息</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="flex flex-col">
-                  <span class="font-bold text-slate-900">{{ order.productName }}</span>
-                  <span class="mt-0.5 font-mono text-[11px] text-slate-400">{{ order.id }}</span>
-                  <span class="mt-1 text-[11px] text-slate-500">{{ order.betTime }}</span>
-                </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-1" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>用户信息</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="flex flex-col">
-                  <div class="flex items-center gap-2">
-                    <span class="font-medium text-slate-700">{{ order.userName }}</span>
-                    <span
-                      class="inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold uppercase"
-                      :class="vipLevelMeta[order.userVip]?.class"
-                    >
-                      {{ vipLevelMeta[order.userVip]?.label }}
-                    </span>
-                  </div>
-                  <span class="mt-0.5 font-mono text-[11px] text-slate-400">{{ order.userId }}</span>
-                </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-2" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>投资明细</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="flex flex-col">
-                  <div class="flex items-center gap-1.5">
-                    <span
-                      class="h-2 w-2 rounded-full"
-                      :class="order.direction === 'up' ? 'bg-emerald-500' : 'bg-rose-500'"
-                    ></span>
-                    <span class="font-bold text-slate-900">{{ Number(order.investAmount).toLocaleString() }} USDT</span>
-                  </div>
-                  <span class="mt-0.5 text-[11px] text-slate-500">周期: {{ order.cycleSeconds }}s</span>
-                </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-3" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>预期收益</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div class="flex flex-col">
-                  <span class="font-bold text-blue-600">{{ order.expectedYield }}%</span>
-                  <span class="mt-0.5 text-[11px] text-slate-400">手续费: {{ order.fee }} USDT</span>
-                </div>
-              </template>
-</a-table-column>
-<a-table-column key="column-4" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>结算结果</template>
-<template #default="{ record: order, index: rowIndex }">
-                <div v-if="order.status !== DELIVERY_ORDER_STATUS.PEND" class="flex flex-col">
-                  <span
-                    class="font-bold"
-                    :class="order.result === DELIVERY_ORDER_RESULT.WIN ? 'text-emerald-600' : 'text-rose-600'"
-                  >
-                    {{ order.result === DELIVERY_ORDER_RESULT.WIN ? '+' : '' }}{{ order.pnlAmount }} USDT
-                  </span>
-                  <span class="mt-0.5 text-[11px] text-slate-500">实际收益: {{ order.actualYield }}%</span>
-                </div>
-                <span v-else class="text-slate-300 italic">待结算</span>
-              </template>
-</a-table-column>
-<a-table-column key="column-5" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4&quot;] })">
-<template #title>状态</template>
-<template #default="{ record: order, index: rowIndex }">
-                <span
-                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border"
-                  :class="deliveryOrderStatusMeta[order.status]?.class"
-                >
-                  <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                  {{ deliveryOrderStatusMeta[order.status]?.label }}
-                </span>
-              </template>
-</a-table-column>
-<a-table-column key="column-6" align="center" :custom-cell="(order, rowIndex) => ({ class: [&quot;px-6 py-4 text-center&quot;] })">
-<template #title>操作</template>
-<template #default="{ record: order, index: rowIndex }">
-                <a-button
-                  html-type="button"
-                  class="ant-btn ant-btn-sm"
-                  @click="viewOrder(order)"
-                >
-                  详情
-                </a-button>
-              </template>
-</a-table-column>
-</a-table>
-      </div>
-
-      <!-- 分页 -->
-      <div v-if="totalPages > 1" class="flex items-center justify-between border-t border-slate-100 p-4 md:px-6">
-        <div class="text-sm text-slate-500">
-          共 <span class="font-medium text-slate-900">{{ filteredOrders.length }}</span> 条订单
-        </div>
-        <div class="flex items-center gap-2">
-          <a-pagination size="small" :current="currentPage" :total="totalPages" :page-size="1" :show-size-changer="false" @change="currentPage = $event" />
-        </div>
-      </div>
-    </article>
+  <PageShell>
+    <SearchForm name="delivery-order-filters" :model="filters" :fields="fields" @search="search" @reset="reset" />
+    <AdminTable title="交割合约订单" v-model:page="page" :rows="rows" :columns="columns" row-key="id" desktop-only>
+      <template #toolbar>
+        <Button @click="exportOrders"><template #icon><DownloadOutlined /></template>导出</Button>
+      </template>
+      <template #cell="{ column, record }">
+        <Space v-if="column.key === 'order'" direction="vertical" :size="0">
+          <TypographyText strong>{{ record.productName }}</TypographyText>
+          <TypographyText type="secondary" class="font-mono">{{ record.id }}</TypographyText>
+          <TypographyText type="secondary">{{ record.betTime }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'user'" direction="vertical" :size="0">
+          <span>{{ record.userName }} <Tag v-if="vipLabel(record)" class="ml-1">{{ vipLabel(record) }}</Tag></span>
+          <TypographyText type="secondary" class="font-mono">{{ record.userId }}</TypographyText>
+        </Space>
+        <Space v-else-if="column.key === 'invest'" direction="vertical" :size="0" align="end">
+          <span>{{ money(record.investAmount) }}</span>
+          <span><Tag :color="record.direction === 'CALL' ? 'green' : 'red'">{{ deliveryOrderDirectionMeta[record.direction]?.text }}</Tag><TypographyText type="secondary">{{ record.cycleSeconds }} 秒</TypographyText></span>
+        </Space>
+        <Space v-else-if="column.key === 'expected'" direction="vertical" :size="0" align="end">
+          <span>{{ record.expectedYield }}%</span>
+          <TypographyText type="secondary">手续费 {{ money(record.fee) }}</TypographyText>
+        </Space>
+        <template v-else-if="column.key === 'pnl'">
+          <Space v-if="isSettled(record)" direction="vertical" :size="0" align="end">
+            <TypographyText :type="profitOf(record) >= 0 ? 'success' : 'danger'">{{ profitOf(record) > 0 ? '+' : '' }}{{ money(profitOf(record)) }}</TypographyText>
+            <TypographyText type="secondary">{{ deliveryOrderResultMeta[record.result]?.text }} · 收益率 {{ record.actualYield }}%</TypographyText>
+          </Space>
+          <TypographyText v-else type="secondary">待结算</TypographyText>
+        </template>
+        <Tag v-else-if="column.key === 'status'" :color="statusColor[record.status]">{{ deliveryOrderStatusMeta[record.status]?.text }}</Tag>
+        <Button v-else-if="column.key === 'actions'" type="link" class="px-0" @click="viewOrder(record)">详情</Button>
+        <template v-else>{{ record[column.key] ?? '—' }}</template>
+      </template>
+    </AdminTable>
 
     <!-- 订单详情模态框 -->
       <a-modal :wrap-props="{ 'aria-modal': true }" transition-name="admin-trading-dialog" mask-transition-name="admin-trading-mask" :open="Boolean(showDetailModal)" :mask-closable="false" :closable="false" :keyboard="true" :width="896"  :destroy-on-close="true" wrap-class-name="admin-trading-modal" :body-style="{ padding: 0, overflowY: 'auto', maxHeight: 'calc(100dvh - 180px)' }" @cancel="closeDetailModal">
@@ -456,9 +184,9 @@ const nextPage = () => {
                   <div class="flex items-center gap-4">
                     <div
                       class="h-12 w-12 rounded-lg flex items-center justify-center text-xl shadow-inner"
-                      :class="currentOrder.direction === 'up' ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'"
+                      :class="currentOrder.direction === 'CALL' ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'"
                     >
-                      <svg v-if="currentOrder.direction === 'up'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg v-if="currentOrder.direction === 'CALL'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
                       </svg>
                       <svg v-else class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -469,9 +197,9 @@ const nextPage = () => {
                       <p class="text-xl font-bold text-slate-900">{{ currentOrder.productName }}</p>
                       <p
                         class="mt-0.5 font-bold text-xs"
-                        :class="currentOrder.direction === 'up' ? 'text-emerald-600' : 'text-rose-600'"
+                        :class="currentOrder.direction === 'CALL' ? 'text-emerald-600' : 'text-rose-600'"
                       >
-                        {{ currentOrder.direction === 'up' ? '看涨 (Buy Up)' : '看跌 (Buy Down)' }}
+                        {{ currentOrder.direction === 'CALL' ? '看涨 (Buy Up)' : '看跌 (Buy Down)' }}
                       </p>
                     </div>
                   </div>
@@ -502,7 +230,7 @@ const nextPage = () => {
                         class="mt-1 text-base font-black"
                         :class="currentOrder.result === 'win' ? 'text-emerald-600' : 'text-rose-600'"
                       >
-                        {{ currentOrder.result === 'win' ? '+' : '' }}{{ currentOrder.pnlAmount }} USDT
+                        {{ profitOf(currentOrder) > 0 ? '+' : '' }}{{ money(profitOf(currentOrder)) }} USDT
                       </p>
                     </div>
                     <div class="p-4 rounded border border-slate-100 bg-slate-50/50">
@@ -544,12 +272,7 @@ const nextPage = () => {
                     <p class="text-base font-bold text-slate-900">{{ currentOrder.userName }}</p>
                     <div class="flex items-center gap-2 mt-0.5">
                       <span class="text-[11px] text-slate-500 font-mono">UID: {{ currentOrder.userId }}</span>
-                      <span
-                        class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase"
-                        :class="vipLevelMeta[currentOrder.userVip]?.class"
-                      >
-                        {{ vipLevelMeta[currentOrder.userVip]?.label }}
-                      </span>
+                      <Tag v-if="vipLabel(currentOrder)">{{ vipLabel(currentOrder) }}</Tag>
                     </div>
                   </div>
                 </div>
@@ -590,7 +313,7 @@ const nextPage = () => {
                     <div class="flex flex-col">
                       <span class="text-[11px] font-bold text-slate-400 uppercase">{{ currentOrder.settleTime }}</span>
                       <span class="mt-0.5 text-sm font-medium text-slate-900">
-                        结算完成，结果: {{ currentOrder.result === 'win' ? '赢利' : '亏损' }}，返还资金 {{ currentOrder.pnlAmount }} USDT
+                        结算完成，结果: {{ currentOrder.result === 'win' ? '赢利' : '亏损' }}，返还资金 {{ money(currentOrder.actualReturn) }} USDT
                       </span>
                     </div>
                   </div>
@@ -610,7 +333,7 @@ const nextPage = () => {
             </a-button>
           </footer></template></template>
 </a-modal>
-  </section>
+  </PageShell>
 </template>
 
 <style scoped>
