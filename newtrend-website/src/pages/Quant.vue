@@ -16,6 +16,7 @@ import {getQuantFund,getQuantFundOrder,listQuantFunds} from '../api/quantFund.js
 import {useRequest} from '../composables/useRequest.js'
 import NotFound from './NotFound.vue'
 import '../styles/quant-fidelity.css'
+import '../styles/quant-system.css'
 const route=useRoute(),router=useRouter(),market=shallowRef('all')
 const productId=computed(()=>route.params.productId||''),orderId=computed(()=>route.params.orderId||''),section=computed(()=>route.params.recordId?'strategy':productId.value||orderId.value?'quant-fund':route.params.section),mine=computed(()=>['mine','positions'].includes(route.params.id)),isFund=computed(()=>section.value==='quant-fund')
 // The routed product or order is loaded here: an unknown id renders the not-found page, and the loaded record is

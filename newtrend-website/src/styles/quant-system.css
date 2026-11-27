@@ -1,0 +1,49 @@
+/* AI Quant sub-pages: one visual system (user request 2026-11-27, phase 1 of the sub-page cleanup).
+   Applies to the strategy pages (.strategy-page) and the quant-fund pages (.quant-page.quant-sub); the landing keeps
+   its own block in quant-fidelity.css. The doubled id outranks the older per-page fidelity rules without !important,
+   so this file is the single place to tune titles, labels, fonts, card shape and buttons for these pages.
+   Scale: page title 30/38 (24/32 on phones), section title 20/28, card title 16/24, kicker 12/18, body 14/22,
+   numbers in the mono face, no letter-spacing (it scatters Chinese), cards 20px radius, primary actions 40px solid
+   accent, row actions 32px. */
+
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub){--nt-font-display:var(--nt-font-body)}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) *{letter-spacing:0}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(h1,h2,h3,h4){font-family:var(--nt-font-body)}
+
+/* Page titles, kickers and leads */
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) h1{margin:0;font-size:30px;line-height:38px;font-weight:600}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.strategy-eyebrow,.qf-hero-eyebrow,.my-strategies-head>span,.strategy-stats-head>span){margin:0 0 8px;font-family:var(--nt-font-body);font-size:12px;line-height:18px;font-weight:500;text-transform:none}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.strategy-hero-description,.qf-hero-copy>p,.qf-positions-head>p,.qf-interest-head>p,.strategy-section-description){margin-top:8px;font-size:14px;line-height:22px}
+#main-content#main-content .strategy-page h2,#main-content#main-content .quant-page.quant-sub .qf-more h2{font-size:20px;line-height:28px;font-weight:600}
+
+/* Numbers use the mono face */
+#main-content#main-content .quant-page.quant-sub :is(.qf-rate,.qf-estimate-total strong){font-family:var(--nt-font-mono)}
+
+/* Card shape */
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card,.strategy-guide,.psc,.my-strategies-table,.strategy-stats-card,.qf-hero,.qf-card,.qf-panel,.strategy-stats>div){border-radius:20px}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card h3,.qf-card-title h3){font-size:16px;line-height:24px;font-weight:600}
+
+/* Actions: primary 40px solid accent, row actions 32px */
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.strategy-cta,.sc-button-lg,.qf-cta,.qf-cta-lg){min-height:40px;height:auto;padding:0 20px;border-radius:999px;background:var(--nt-accent);background-image:none;color:#081000;font-size:14px;line-height:20px;font-weight:600}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-button-sm,.ms-button,.qf-row-action){min-height:32px;height:auto;font-size:13px;line-height:18px}
+
+@media(max-width:767px){
+ #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) h1{font-size:24px;line-height:32px}
+ #main-content#main-content .strategy-page h2,#main-content#main-content .quant-page.quant-sub .qf-more h2{font-size:18px;line-height:26px}
+ #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) .strategy-container{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+}
+
+/* Strategy page on phones (user decision): drop the hero copy (eyebrow, title, lead, browse action) so the stats and
+   strategies come first; the title stays as a visually hidden page heading. */
+@media(max-width:767px){
+ #main-content#main-content .strategy-page .strategy-hero-grid :is(.strategy-eyebrow,.strategy-hero-description,.strategy-hero-actions){display:none}
+ #main-content#main-content .strategy-page .strategy-hero-grid h1{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ #main-content#main-content .strategy-page .strategy-hero-section{padding:0}
+ #main-content#main-content .strategy-page .strategy-hero-grid{gap:24px}
+ /* The hero stats are not needed on phones either (user decision): the page opens on today's picks. */
+ #main-content#main-content .strategy-page .strategy-stats{display:none}
+ /* The decorative model chart is desktop-only. */
+ #main-content#main-content .strategy-page .strategy-hero-chart{display:none}
+ #main-content#main-content .strategy-page :is(.strategy-featured-section,.strategy-catalog-section){padding:16px 0 24px}
+ #main-content#main-content .strategy-page .strategy-section-description{margin-bottom:16px}
+}

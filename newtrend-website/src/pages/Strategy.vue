@@ -20,6 +20,7 @@ import StrategyCard from '../components/strategy/StrategyCard.vue'
 import RecordFilter from '../components/RecordFilter.vue'
 import Icon from '../components/Icon.vue'
 import '../styles/strategy-fidelity.css'
+import '../styles/quant-system.css'
 const route=useRoute(),router=useRouter(),mine=computed(()=>route.params.id==='mine'),recordId=computed(()=>route.params.recordId||'')
 // Catalogue (list view only) and the current mode's account (records, balance, daily stats). Both poll while shown so
 // admin changes (listing, review, force stop, generated P&L) appear without a reload.
