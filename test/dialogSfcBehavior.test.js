@@ -25,10 +25,10 @@ test('setting SFC runs both enter transitions before internal close and Escape b
   harness.props.open = true
   await harness.flush()
   const frame = harness.findByTestId('user-control-dialog-frame')
-  const overlay = frame.parent
 
-  assert.equal(overlay.classList.contains('dialog-overlay-enter-from'), true)
-  assert.equal(frame.classList.contains('dialog-panel-enter-from'), true)
+  // Entered through the shared Ant Modal frame (AdminDialog): the wrap carries the opening phase until the enter
+  // transition reports, and internal close stays inactive until then.
+  assert.equal(frame.classList.contains('admin-dialog-opening'), true)
   await harness.finishTransitions()
 
   harness.findByText('取消', 'button').click()
@@ -76,7 +76,8 @@ for (const surface of [
       errorAttempt: 0
     },
     testId: 'mfa-dialog-frame',
-    enterClass: 'dialog-panel-enter-from',
+    // Migrated onto AdminDialog: the Ant wrap (the test-id element) carries the opening phase.
+    enterClass: 'admin-dialog-opening',
     closeEvent: 'onUpdate:open'
   }
 ]) {
@@ -336,19 +337,20 @@ for (const surface of [
     const frame = surface.testId
       ? harness.findByTestId(surface.testId)
       : harness.allNodes().find((node) => node.getAttribute?.('role') === 'dialog')
-    const adminFrame = frame.classList.contains('ant-drawer-content')
+    const adminFrame = frame.classList.contains('ant-drawer-content') || frame.classList.contains('ant-modal-wrap')
+    const kind = frame.classList.contains('ant-modal-wrap') ? 'dialog' : 'drawer'
     if (adminFrame) {
       // AdminDrawer header: shrinkable heading beside a fixed 44px close button (sizes in its stylesheet).
-      const header = harness.allNodes().find((node) => node.classList?.contains('admin-drawer-header') && frame.contains(node))
-      const heading = header.children.find((node) => node.classList?.contains('admin-drawer-heading'))
+      const header = harness.allNodes().find((node) => node.classList?.contains(`admin-${kind}-header`) && frame.contains(node))
+      const heading = header.children.find((node) => node.classList?.contains(`admin-${kind}-heading`))
       const title = heading.children.find((node) => node.tag === 'h2')
       const close = header.children.find((node) => node.getAttribute?.('aria-label') === '关闭')
-      assert.ok(title.classList.contains('admin-drawer-title'))
-      assert.ok(close.classList.contains('admin-drawer-close'))
-      const css = readFileSync(projectFile('src/admin/components/antd/AdminDrawer.vue'), 'utf8')
-      assert.match(css, /\.admin-drawer-heading \{ min-width: 0; flex: 1; \}/)
-      assert.match(css, /\.admin-drawer-title \{[^}]*overflow-wrap: anywhere/)
-      assert.match(css, /\.admin-drawer-close\.ant-btn \{ flex: none; min-width: 44px; min-height: 44px; \}/)
+      assert.ok(title.classList.contains(`admin-${kind}-title`))
+      assert.ok(close.classList.contains(`admin-${kind}-close`))
+      const css = readFileSync(projectFile(`src/admin/components/antd/Admin${kind === 'dialog' ? 'Dialog' : 'Drawer'}.vue`), 'utf8')
+      assert.match(css, new RegExp(`\\.admin-${kind}-heading \\{ min-width: 0; flex: 1; \\}`))
+      assert.match(css, new RegExp(`\\.admin-${kind}-title \\{[^}]*overflow-wrap: anywhere`))
+      assert.match(css, new RegExp(`\\.admin-${kind}-close\\.ant-btn \\{ flex: none; min-width: 44px; min-height: 44px; \\}`))
       return
     }
     const header = frame.children.find((node) => node.tag === 'header')

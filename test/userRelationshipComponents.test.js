@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { getUserOperationEntry } from '../src/admin/config/userOperations.js'
 
-import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
+import { assertAdminDrawerFrame, assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const root = new URL('../', import.meta.url)
 const read = (path) => readFileSync(new URL(path, root), 'utf8')
 
@@ -72,10 +72,8 @@ test('edit profile entry opens an accessible validated child Dialog', () => {
   assert.match(source, /updateProfile/)
   assert.match(source, /type="tel"[\s\S]*inputmode="numeric"[\s\S]*pattern="\[0-9\]\*"[\s\S]*maxlength="24"/)
   assert.match(source, /<FeedbackToast/)
-  assert.match(source, /:aria-busy="submitting"/)
-  assert.match(source, /useDialogLifecycle/)
-  assert.match(source, /:style="layerStyle"/)
-  assert.match(source, /aria-label="关闭"/)
+  assert.match(source, /:busy="(?:submitting|dialogBusy)"/)
+  assertAdminDialogFrame(source)
 })
 
 test('user list keeps the operation Drawer mounted while editing profile', () => {

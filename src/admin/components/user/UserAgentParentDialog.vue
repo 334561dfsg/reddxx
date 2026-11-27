@@ -1,11 +1,11 @@
 <script setup>
+import AdminDialog from '../antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import PanelSingleSelect from '../form/PanelSingleSelect.vue'
 import { getAgentParentCandidates, getUserById, setAgentParent } from '../../repositories/userRelationshipRepository.js'
-import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -14,7 +14,6 @@ const props = defineProps({
 })
 const emit = defineEmits(['close', 'closed', 'saved'])
 
-const dialogRef = ref(null)
 const agentSelectRef = ref(null)
 const reasonRef = ref(null)
 const backRef = ref(null)
@@ -54,25 +53,14 @@ const resetForm = () => {
   form.reason = ''
 }
 
-const {
-  rendered,
-  phase,
-  layerStyle,
-  requestDialogClose,
-  onAfterEnter,
-  onAfterLeave
-} = useDialogLifecycle({
-  open: computed(() => props.visible),
-  dialogRef,
-  initialFocusRef: agentSelectRef,
-  returnFocusRef: computed(() => props.returnFocus),
-  requestClose: () => emit('close'),
-  closeDisabled: submitting
-})
-const close = createDialogCloseAction(requestDialogClose)
+// Frame: AdminDialog (Ant Modal + useDialogLifecycle), dialog migration 2026-11-27.
+const dialogFrame = ref(null)
+const phase = computed(() => dialogFrame.value?.phase ?? 'closed')
+const initialFocus = computed(() => agentSelectRef.value)
 
-const handleAfterLeave = async () => {
-  if (!await onAfterLeave()) return
+const close = () => dialogFrame.value?.close()
+
+const handleClosed = () => {
   resetForm()
   emit('closed')
 }
@@ -125,19 +113,9 @@ watch(() => [props.visible, userId.value], ([visible]) => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="agent-parent-dialog" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
-      <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 grid place-items-center bg-slate-950/50 p-4" :style="layerStyle" role="presentation">
-        <section ref="dialogRef" class="agent-parent-dialog-panel flex max-h-[calc(100vh-2rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]" role="dialog" aria-modal="true" aria-labelledby="agent-parent-title" :aria-busy="submitting">
-          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
-            <div class="min-w-0 flex-1">
-              <h2 id="agent-parent-title" class="text-lg font-semibold text-slate-900">设置上级代理</h2>
-              <p class="mt-1 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '-' }}</p>
-            </div>
-            <AdminButton type="button" :disabled="submitting" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:outline-none disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
-          </header>
-
-          <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+  <AdminDialog :open="visible" title="设置上级代理" title-id="agent-parent-title" :busy="submitting" :return-focus="returnFocus" :width="512" plain ref="dialogFrame" :initial-focus="initialFocus" @close="emit('close')" @closed="handleClosed">
+      <template #subtitle>{{ user?.username || '未知用户' }} · UID {{ userId || '-' }}</template>
+      <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
             <FeedbackToast v-if="errorMessage" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
 
             <template v-if="phaseName === 'form'">
@@ -192,27 +170,6 @@ watch(() => [props.visible, userId.value], ([visible]) => {
               <AdminButton type="button" :disabled="submitting" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50" @click="confirmSet">{{ submitting ? '提交中...' : '确认设置上级代理' }}</AdminButton>
             </template>
           </footer>
-        </section>
-      </div>
-    </Transition>
-  </Teleport>
+    </AdminDialog>
 </template>
 
-<style scoped>
-.agent-parent-dialog-enter-active { transition: opacity 200ms ease-out; }
-.agent-parent-dialog-leave-active { transition: opacity 150ms ease-in; }
-.agent-parent-dialog-enter-active .agent-parent-dialog-panel { transition: opacity 200ms ease-out, transform 200ms ease-out; }
-.agent-parent-dialog-leave-active .agent-parent-dialog-panel { transition: opacity 150ms ease-in, transform 150ms ease-in; }
-.agent-parent-dialog-enter-from,
-.agent-parent-dialog-leave-to { opacity: 0; }
-.agent-parent-dialog-enter-from .agent-parent-dialog-panel,
-.agent-parent-dialog-leave-to .agent-parent-dialog-panel { opacity: 0; transform: scale(0.96); }
-@media (prefers-reduced-motion: reduce) {
-  .agent-parent-dialog-enter-active,
-  .agent-parent-dialog-leave-active,
-  .agent-parent-dialog-enter-active .agent-parent-dialog-panel,
-  .agent-parent-dialog-leave-active .agent-parent-dialog-panel { transition-duration: 50ms; }
-  .agent-parent-dialog-enter-from .agent-parent-dialog-panel,
-  .agent-parent-dialog-leave-to .agent-parent-dialog-panel { transform: none; }
-}
-</style>

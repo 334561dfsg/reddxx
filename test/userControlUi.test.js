@@ -11,7 +11,7 @@ import {
   createUserControlState
 } from '../src/features/user-control/userControl.js'
 
-import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
+import { assertAdminDrawerFrame, assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8')
 const openingTag = (source, testId) => source.match(new RegExp(`<[^>]+data-testid="${testId}"[^>]*>`))?.[0] || ''
 const elementByTestId = (source, testId) => source.match(
@@ -534,15 +534,11 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
   const source = read('../src/admin/components/user-control/UserControlModal.vue')
   const helperSource = read('../src/features/user-control/userControlForm.js')
   const frame = openingTag(source, 'user-control-dialog-frame')
-  assert.match(source, /:class="shouldShowHelpPanel \? 'max-w-\[1080px\]' : 'max-w-\[720px\]'"/)
+  assert.match(source, /:width="shouldShowHelpPanel \? 1080 : 720"/)
   assert.doesNotMatch(frame.match(/class="([^"]*)"/)?.[1] || '', /max-w-\[1080px\]/)
-  assert.match(source, /<Teleport to="body">/)
-  assert.match(source, /fixed inset-0/)
+  assertAdminDialogFrame(source)
   assert.doesNotMatch(source, /@mousedown\.self|@click\.self/)
   assert.doesNotMatch(source, /fixed inset-0[^"\n]*overflow-auto/)
-  assert.match(frame, /max-h-\[calc\(100vh-1\.5rem\)\]/)
-  assert.match(frame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-1\.5rem\)\]/)
-  assert.match(frame, /overflow-hidden/)
   assert.match(source, /data-testid="user-control-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto[^>]*lg:flex-none[^>]*lg:overflow-hidden/)
   assert.match(source, /px-5 py-3/)
   assert.match(source, /rows="2"/)
@@ -598,12 +594,9 @@ test('shared setting modal keeps only its body scrollable and keeps result copy 
 
 test('MFA modal keeps only its body scrollable', () => {
   const mfaSource = read('../src/admin/components/MfaVerificationModal.vue')
-  const frame = openingTag(mfaSource, 'mfa-dialog-frame')
-
   assert.doesNotMatch(mfaSource, /fixed inset-0[^"\n]*overflow-y-auto/)
-  assert.match(frame, /max-h-\[calc\(100vh-2rem\)\]/)
-  assert.match(frame, /supports-\[height:100dvh\]:max-h-\[calc\(100dvh-2rem\)\]/)
-  assert.match(frame, /overflow-hidden/)
+  assertAdminDialogFrame(mfaSource)
+  assert.match(mfaSource, /testid="mfa-dialog-frame"/)
   assert.match(mfaSource, /data-testid="mfa-dialog-body"[^>]*min-h-0[^>]*flex-1[^>]*overflow-y-auto/)
 })
 
@@ -613,8 +606,8 @@ test('MFA modal prevents duplicate verification and exposes loading and errors a
 
   assert.match(mfaSource, /useMfaVerification/)
   assert.match(mfaController, /useDialogLifecycle/)
-  assert.match(mfaSource, /aria-labelledby="mfa-dialog-title"/)
-  assert.match(mfaSource, /:aria-busy="displayedDialog\.loading"/)
+  assert.match(mfaSource, /(?:aria-labelledby|title-id)="mfa-dialog-title"/)
+  assert.match(mfaSource, /:busy="displayedDialog\.loading \|\| displayedDialog\.verifyRequested"/)
   assert.match(mfaSource, /verificationInput = nativeControl\(element\)/)
   assert.match(mfaSource, /ref="errorSummary"/)
   assert.match(mfaSource, /<FeedbackToast/)
@@ -623,9 +616,8 @@ test('MFA modal prevents duplicate verification and exposes loading and errors a
   assert.match(mfaController, /if \(!props\.loading\) verifyRequested\.value = false/)
   assert.match(mfaController, /props\.errorAttempt/)
   assert.match(mfaSource, /:aria-label="displayedDialog\.loading \? '验证并继续，验证中' : '验证并继续'"/)
-  assert.match(mfaSource, /name="dialog-overlay"/)
-  assert.match(mfaSource, /name="dialog-panel"/)
-  assert.match(mfaSource, /v-if="rendered"/)
+  // The Ant frame drives the composable's own lifecycle instead of a hand-built Transition pair.
+  assert.match(mfaSource, /:lifecycle="mfaLifecycle"/)
   assert.doesNotMatch(mfaSource, /v-show="open"/)
   assert.doesNotMatch(mfaSource, /@click\.self|@mousedown\.self|backdrop-click/)
 })
@@ -667,10 +659,10 @@ test('point-control setting and detail surfaces use the shared dialog lifecycle 
   const settingSource = read('../src/admin/components/user-control/UserControlModal.vue')
   const detailSource = read('../src/admin/components/user-control/UserControlDetailDrawer.vue')
 
-  assert.match(settingSource, /useDialogLifecycle/)
+  assertAdminDialogFrame(settingSource)
   assert.match(settingSource, /useDialogContentSnapshot/)
-  assert.match(settingSource, /handleAfterLeave/)
-  assert.match(settingSource, /aria-labelledby="user-control-dialog-title"/)
+  assert.match(settingSource, /handleClosed/)
+  assert.match(settingSource, /(?:aria-labelledby|title-id)="user-control-dialog-title"/)
   assert.match(settingSource, /id="user-control-dialog-title"/)
   assert.match(settingSource, /SelectOnlyCombobox/)
   assert.match(settingSource, /ref="firstControlSelect"/)
@@ -679,9 +671,6 @@ test('point-control setting and detail surfaces use the shared dialog lifecycle 
   assert.doesNotMatch(settingSource, /id-base="user-control-duration"/)
   assert.match(settingSource, /duration: 'permanent'/)
   assert.doesNotMatch(settingSource, /type="radio" name="strategy"|type="radio" name="method"|type="radio" name="duration"/)
-  assert.match(settingSource, /v-if="rendered"/)
-  assert.match(settingSource, /name="dialog-overlay"/)
-  assert.match(settingSource, /name="dialog-panel"/)
   assert.doesNotMatch(settingSource, /@click\.self|@mousedown\.self|backdrop-click/)
 
   assertAdminDrawerFrame(detailSource)
@@ -722,7 +711,9 @@ test('ordinary point-control dialogs keep a safe close button in the fixed heade
 
   assert.match(moduleSource, /<header[^>]*>[\s\S]*?<a-button[^>]*aria-label="关闭"[^>]*@click="closeAddUser"/)
   assert.match(unifiedSource, /<header[^>]*>[\s\S]*?<AdminButton[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*@click="closeControlCancel"/)
-  assert.match(mfaSource, /<header[^>]*>[\s\S]*?<AdminButton[^>]*min-h-11[^>]*min-w-11[^>]*aria-label="关闭"[^>]*:disabled="displayedDialog\.loading \|\| displayedDialog\.verifyRequested"[^>]*@click="close"/)
+  // MFA uses the shared Ant frame: its fixed header close button is disabled while verifying, with a reason.
+  assert.match(mfaSource, /<AdminDialog\b[^>]*:busy="displayedDialog\.loading \|\| displayedDialog\.verifyRequested"[^>]*busy-close-hint="验证进行中，暂时无法关闭"/)
+  assert.match(read('../src/admin/components/antd/AdminDialog.vue'), /class="admin-dialog-close" aria-label="关闭" :disabled="busy"/)
 })
 
 test('unified cancellation keeps the leaving dialog mounted before clearing user state', () => {

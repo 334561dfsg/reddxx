@@ -4,7 +4,7 @@ import { resolve } from 'node:path'
 import test from 'node:test'
 import { h } from 'vue'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
-import { assertAdminDrawerFrame } from './helpers/adminDrawerFrame.js'
+import { assertAdminDrawerFrame, assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 
 const projectFile = (path) => resolve(process.cwd(), path)
 const rechargeDrawerFile = projectFile('src/admin/components/user/UserRechargeSummaryDrawer.vue')
@@ -617,11 +617,7 @@ test('membership mutation Dialog follows modal, select-choice, and responsive co
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
   assert.match(source, /closeDisabled/)
   assert.match(source, /<FeedbackToast/)
-  assert.match(source, /200ms ease-out/)
-  assert.match(source, /150ms ease-in/)
-  assert.match(source, /prefers-reduced-motion: reduce/)
-  assert.match(source, /transition-duration: 50ms/)
-  assert.match(source, /transform: none/)
+  assertAdminDialogFrame(source)
 })
 
 const reviews = [
@@ -811,8 +807,7 @@ test('credit review decision requires an explicit choice and emits exact MFA int
 test('credit review decision Dialog is a guarded third layer with accessible motion', async () => {
   const source = await readFile(reviewDecisionFile, 'utf8')
 
-  assert.match(source, /useDialogLifecycle/)
-  assert.match(source, /:style="layerStyle"/)
+  assertAdminDialogFrame(source)
   assert.match(source, /aria-labelledby="review-decision-label"/)
   assert.match(source, /<AdminRadio\b/)
   assert.doesNotMatch(source, /<select\b|role="combobox"/)
@@ -820,8 +815,4 @@ test('credit review decision Dialog is a guarded third layer with accessible mot
   assert.equal((source.match(/overflow-y-auto/g) || []).length, 1)
   assert.match(source, /closeDisabled/)
   assert.match(source, /<FeedbackToast/)
-  assert.match(source, /200ms ease-out/)
-  assert.match(source, /150ms ease-in/)
-  assert.match(source, /prefers-reduced-motion: reduce/)
-  assert.match(source, /transform: none/)
 })

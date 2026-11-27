@@ -5,8 +5,6 @@ import postcss from 'postcss'
 import tailwindcss from 'tailwindcss'
 
 const sourceFiles = [
-  '../src/admin/components/user-control/UserControlModal.vue',
-  '../src/admin/components/MfaVerificationModal.vue',
   '../src/pages/admin/user/UserListPage.vue',
   '../src/pages/admin/user-control/ModuleUserControlPage.vue'
 ]
@@ -32,9 +30,7 @@ test('compiled dialog utilities keep vh fallbacks and place dvh overrides inside
   })
 
   for (const [property, fallback, dynamic] of [
-    ['max-height', 'calc(100vh - 1.5rem)', 'calc(100dvh - 1.5rem)'],
-    ['max-height', 'calc(100vh - 2rem)', 'calc(100dvh - 2rem)'],
-    ['min-height', '100vh', '100dvh']
+    ['max-height', 'calc(100vh - 2rem)', 'calc(100dvh - 2rem)']
   ]) {
     const fallbackIndex = declarations.findIndex((item) => (
       item.property === property && item.value === fallback && !item.supports
@@ -49,4 +45,10 @@ test('compiled dialog utilities keep vh fallbacks and place dvh overrides inside
     assert.notEqual(dynamicIndex, -1, `missing supported ${property} ${dynamic} override`)
     assert.ok(dynamicIndex > fallbackIndex, `${dynamic} must compile after ${fallback}`)
   }
+})
+
+test('the shared Ant dialog frame keeps a vh fallback before its dvh viewport limit', () => {
+  // UserControlModal moved onto AdminDialog (2026-11-27); the frame's stylesheet owns the viewport limit now.
+  const frame = readFileSync(new URL('../src/admin/components/antd/AdminDialog.vue', import.meta.url), 'utf8')
+  assert.match(frame, /max-height: calc\(100vh - 24px\); max-height: calc\(100dvh - 24px/)
 })

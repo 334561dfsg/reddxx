@@ -1,9 +1,9 @@
 <script setup>
+import AdminDialog from '../antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminRadio, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -13,8 +13,6 @@ const props = defineProps({
   returnFocus: { type: [Object, Function], default: null }
 })
 const emit = defineEmits(['close', 'closed', 'request-mfa'])
-const dialogRef = ref(null)
-const titleRef = ref(null)
 const backRef = ref(null)
 const submitButtonRef = ref(null)
 const errorRef = ref(null)
@@ -26,13 +24,13 @@ const notePreview = computed(() => form.note.trim() || '未填写')
 const formatTime = (value) => value ? new Date(value).toLocaleString('zh-CN', { hour12: false }) : '—'
 const resetForm = () => { stage.value = 'edit'; errorMessage.value = ''; form.decision = ''; form.note = '' }
 const closeDisabled = computed(() => props.busy)
-const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
-  open: computed(() => props.visible), dialogRef, initialFocusRef: titleRef,
-  returnFocusRef: computed(() => props.returnFocus), requestClose: () => emit('close'), closeDisabled
-})
-const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = async () => {
-  if (!await onAfterLeave()) return
+// Frame: AdminDialog (Ant Modal + useDialogLifecycle), dialog migration 2026-11-27.
+const dialogFrame = ref(null)
+const phase = computed(() => dialogFrame.value?.phase ?? 'closed')
+const titleRef = computed(() => dialogFrame.value?.titleEl ?? null)
+
+const close = () => dialogFrame.value?.close()
+const handleClosed = () => {
   resetForm()
   emit('closed')
 }
@@ -56,16 +54,9 @@ watch(() => [props.visible, props.review?.id], ([visible]) => { if (visible) res
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="credit-review-decision-dialog" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
-      <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 grid place-items-center bg-slate-950/50 p-3 sm:p-4" :style="layerStyle" role="presentation">
-        <section ref="dialogRef" data-testid="user-credit-review-decision-dialog" class="credit-review-decision-dialog-panel flex max-h-[calc(100vh-1.5rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-1.5rem)]" role="dialog" aria-modal="true" aria-labelledby="user-credit-review-decision-title" :aria-busy="busy">
-          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5 sm:py-4">
-            <div class="min-w-0 flex-1"><h2 id="user-credit-review-decision-title" ref="titleRef" tabindex="-1" class="text-lg font-semibold text-slate-900 outline-none">处理信用分审核</h2><p class="mt-0.5 break-words text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p></div>
-            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
-          </header>
-
-          <div data-testid="user-credit-review-decision-body" class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5">
+  <AdminDialog :open="visible" title="处理信用分审核" title-id="user-credit-review-decision-title" :busy="Boolean(busy)" :return-focus="returnFocus" testid="user-credit-review-decision-dialog" :width="512" plain ref="dialogFrame" @close="emit('close')" @closed="handleClosed">
+      <template #subtitle>{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</template>
+      <div data-testid="user-credit-review-decision-body" class="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5">
             <FeedbackToast v-if="errorMessage" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
             <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
               <dl class="grid grid-cols-[5rem_1fr] gap-y-2"><dt class="text-slate-500">信用分</dt><dd class="font-semibold text-slate-900">{{ review?.beforeScore }} → {{ review?.proposedScore }} <span :class="review?.delta >= 0 ? 'text-emerald-700' : 'text-rose-700'">({{ review?.delta >= 0 ? '+' : '' }}{{ review?.delta }})</span></dd><dt class="text-slate-500">申请原因</dt><dd class="break-words text-slate-700">{{ review?.reason || '—' }}</dd><dt class="text-slate-500">申请人</dt><dd class="text-slate-700">{{ review?.applicantName || review?.applicantId || '—' }}</dd><dt class="text-slate-500">申请时间</dt><dd class="text-slate-700">{{ formatTime(review?.appliedAt) }}</dd></dl>
@@ -97,22 +88,6 @@ watch(() => [props.visible, props.review?.id], ([visible]) => { if (visible) res
             <template v-if="stage === 'edit'"><AdminButton type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="close">取消</AdminButton><AdminButton type="button" :disabled="busy" class="rounded-lg bg-amber-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-40" @click="startConfirm">下一步</AdminButton></template>
             <template v-else><AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="backToEdit">返回修改</AdminButton><AdminButton :ref="element => { submitButtonRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg bg-rose-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-40" @click="requestMfa">{{ busy ? '验证中…' : '提交并验证' }}</AdminButton></template>
           </footer>
-        </section>
-      </div>
-    </Transition>
-  </Teleport>
+    </AdminDialog>
 </template>
 
-<style scoped>
-.credit-review-decision-dialog-enter-active { transition: opacity 200ms ease-out; }
-.credit-review-decision-dialog-leave-active { transition: opacity 150ms ease-in; }
-.credit-review-decision-dialog-enter-active .credit-review-decision-dialog-panel { transition: opacity 200ms ease-out, transform 200ms ease-out; }
-.credit-review-decision-dialog-leave-active .credit-review-decision-dialog-panel { transition: opacity 150ms ease-in, transform 150ms ease-in; }
-.credit-review-decision-dialog-enter-from, .credit-review-decision-dialog-leave-to { opacity: 0; }
-.credit-review-decision-dialog-enter-from .credit-review-decision-dialog-panel, .credit-review-decision-dialog-leave-to .credit-review-decision-dialog-panel { opacity: 0; transform: scale(0.96); }
-@media (prefers-reduced-motion: reduce) {
-  .credit-review-decision-dialog-enter-active, .credit-review-decision-dialog-leave-active,
-  .credit-review-decision-dialog-enter-active .credit-review-decision-dialog-panel, .credit-review-decision-dialog-leave-active .credit-review-decision-dialog-panel { transition-duration: 50ms; }
-  .credit-review-decision-dialog-enter-from .credit-review-decision-dialog-panel, .credit-review-decision-dialog-leave-to .credit-review-decision-dialog-panel { transform: none; }
-}
-</style>

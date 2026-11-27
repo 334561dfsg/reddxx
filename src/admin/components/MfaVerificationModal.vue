@@ -1,4 +1,5 @@
 <script setup>
+import AdminDialog from './antd/AdminDialog.vue'
 import FeedbackToast from '../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, nativeControl } from './antd/controls.js'
 
@@ -48,51 +49,27 @@ const {
   onAfterLeave,
   phase,
   rendered,
+  requestDialogClose,
   verificationCode,
   verificationInput
 } = useMfaVerification(props, emit)
+const mfaLifecycle = { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave, dialogRef }
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="dialog-overlay" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
-      <div
-        v-if="rendered"
-        v-show="phase !== 'closing'"
-        class="fixed inset-0 flex min-h-[100vh] w-full items-center justify-center bg-black/50 p-4 supports-[height:100dvh]:min-h-[100dvh] sm:p-6"
-        role="presentation"
-        :style="layerStyle"
-      >
-        <Transition name="dialog-panel" appear>
-          <section
-            v-show="phase !== 'closing'"
-            ref="dialogRef"
-            data-testid="mfa-dialog-frame"
-            class="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-2rem)]"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="mfa-dialog-title"
-            :aria-busy="displayedDialog.loading"
-          >
-            <header class="shrink-0 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-violet-50 px-6 py-4">
-              <div class="flex items-center justify-between gap-4">
-                <div class="min-w-0 flex-1">
-                  <h2 id="mfa-dialog-title" class="break-words text-xl font-semibold text-slate-900">{{ displayedDialog.title }}</h2>
-                  <p class="mt-0.5 break-words text-xs text-slate-500">{{ displayedDialog.description }}</p>
-                </div>
-                <AdminButton
-                  type="button"
-                  class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg p-2 text-2xl text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
-                  aria-label="关闭"
-                  :disabled="displayedDialog.loading || displayedDialog.verifyRequested"
-                  :aria-disabled="displayedDialog.loading || displayedDialog.verifyRequested"
-                  :title="displayedDialog.loading || displayedDialog.verifyRequested ? '验证进行中，暂时无法关闭' : '关闭'"
-                  @click="close"
-                >
-                  ×
-                </AdminButton>
-              </div>
-            </header>
+  <!-- Frame: AdminDialog (Ant Modal) driving the lifecycle owned by useMfaVerification (dialog migration 2026-11-27). -->
+  <AdminDialog
+    :open="open"
+    :lifecycle="mfaLifecycle"
+    :title="displayedDialog.title"
+    title-id="mfa-dialog-title"
+    :busy="displayedDialog.loading || displayedDialog.verifyRequested"
+    busy-close-hint="验证进行中，暂时无法关闭"
+    testid="mfa-dialog-frame"
+    :width="448"
+    plain
+  >
+    <template #subtitle>{{ displayedDialog.description }}</template>
 
             <div data-testid="mfa-dialog-body" class="min-h-0 flex-1 overflow-y-auto px-6 py-5">
               <div class="mb-4 flex justify-center" aria-hidden="true">
@@ -155,9 +132,5 @@ const {
                 </span>
               </AdminButton>
             </footer>
-          </section>
-        </Transition>
-      </div>
-    </Transition>
-  </Teleport>
+  </AdminDialog>
 </template>

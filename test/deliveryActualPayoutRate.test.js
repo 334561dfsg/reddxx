@@ -48,7 +48,7 @@ test('period template dialog follows modal and tab interaction semantics', () =>
   assert.match(templatePageSource, /<Teleport to="body">/)
   assert.match(templatePageSource, /role="dialog"/)
   assert.match(templatePageSource, /aria-modal="true"/)
-  assert.match(templatePageSource, /aria-labelledby="delivery-template-dialog-title"/)
+  assert.match(templatePageSource, /(?:aria-labelledby|title-id)="delivery-template-dialog-title"/)
   assert.match(templatePageSource, /aria-label="关闭"/)
   assert.match(templatePageSource, /isolateTemplateDialogBackground/)
   assert.match(templatePageSource, /releaseTemplateDialogBackground/)

@@ -1,9 +1,9 @@
 <script setup>
+import AdminDialog from '../antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { AdminButton, AdminInput, AdminRadio, AdminSelect, AdminTextarea, nativeControl } from '../antd/controls.js'
 
 import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { createDialogCloseAction, useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
@@ -13,7 +13,6 @@ const props = defineProps({
   returnFocus: { type: [Object, Function], default: null }
 })
 const emit = defineEmits(['close', 'closed', 'request-mfa'])
-const dialogRef = ref(null)
 const scopeRef = ref(null)
 const requiredRef = ref(null)
 const backRef = ref(null)
@@ -63,13 +62,13 @@ const selectExpiryMode = (mode) => {
   if (form.expiryMode === 'unlimited') form.expiresAt = ''
 }
 const closeDisabled = computed(() => props.busy)
-const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
-  open: computed(() => props.visible), dialogRef, initialFocusRef: scopeRef,
-  returnFocusRef: computed(() => props.returnFocus), requestClose: () => emit('close'), closeDisabled
-})
-const close = createDialogCloseAction(requestDialogClose)
-const handleAfterLeave = async () => {
-  if (!await onAfterLeave()) return
+// Frame: AdminDialog (Ant Modal + useDialogLifecycle), dialog migration 2026-11-27.
+const dialogFrame = ref(null)
+const phase = computed(() => dialogFrame.value?.phase ?? 'closed')
+const initialFocus = computed(() => scopeRef.value)
+
+const close = () => dialogFrame.value?.close()
+const handleClosed = () => {
   resetForm()
   emit('closed')
 }
@@ -114,16 +113,9 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="withdraw-flow-dialog" appear @after-enter="onAfterEnter" @after-leave="handleAfterLeave">
-      <div v-if="rendered" v-show="phase !== 'closing'" class="fixed inset-0 grid place-items-center bg-slate-950/50 p-3 sm:p-4" :style="layerStyle" role="presentation">
-        <section ref="dialogRef" class="withdraw-flow-dialog-panel flex max-h-[calc(100vh-1.5rem)] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl supports-[height:100dvh]:max-h-[calc(100dvh-1.5rem)]" role="dialog" aria-modal="true" aria-labelledby="user-withdraw-flow-limit-title" :aria-busy="busy">
-          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5 sm:py-4">
-            <div class="min-w-0"><h2 id="user-withdraw-flow-limit-title" class="text-lg font-semibold text-slate-900">出金流水限制</h2><p class="mt-0.5 truncate text-sm text-slate-500">{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</p></div>
-            <AdminButton type="button" :disabled="busy" class="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg text-2xl text-slate-400 hover:bg-slate-100 focus:outline-none disabled:opacity-40" aria-label="关闭" @click="close">×</AdminButton>
-          </header>
-
-          <div data-testid="user-withdraw-flow-limit-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
+  <AdminDialog :open="visible" title="出金流水限制" title-id="user-withdraw-flow-limit-title" :busy="closeDisabled" :return-focus="returnFocus" :width="576" plain ref="dialogFrame" :initial-focus="initialFocus" @close="emit('close')" @closed="handleClosed">
+      <template #subtitle>{{ user?.username || '未知用户' }} · UID {{ userId || '—' }}</template>
+      <div data-testid="user-withdraw-flow-limit-body" class="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
             <FeedbackToast v-if="errorMessage" ref="errorRef" type="error" :source="() => (errorMessage) ? (errorMessage) : ''"></FeedbackToast>
             <div class="grid gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm sm:grid-cols-2">
               <div class="flex items-center justify-between gap-3"><span class="text-slate-500">当前状态</span><strong class="text-slate-900">{{ statusText }}</strong></div>
@@ -182,22 +174,6 @@ watch(() => [props.visible, userId.value, props.limit], ([visible]) => { if (vis
             <template v-if="stage === 'edit'"><AdminButton type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="close">取消</AdminButton><AdminButton type="button" :disabled="busy" class="rounded-lg bg-amber-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-40" @click="startSetConfirm">下一步</AdminButton></template>
             <template v-else><AdminButton :ref="element => { backRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 disabled:opacity-40" @click="backToEdit">返回修改</AdminButton><AdminButton :ref="element => { submitButtonRef = nativeControl(element) }" type="button" :disabled="busy" class="rounded-lg bg-rose-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-40" @click="requestMfa">{{ busy ? '验证中…' : '提交并验证' }}</AdminButton></template>
           </footer>
-        </section>
-      </div>
-    </Transition>
-  </Teleport>
+    </AdminDialog>
 </template>
 
-<style scoped>
-.withdraw-flow-dialog-enter-active { transition: opacity 200ms ease-out; }
-.withdraw-flow-dialog-leave-active { transition: opacity 150ms ease-in; }
-.withdraw-flow-dialog-enter-active .withdraw-flow-dialog-panel { transition: opacity 200ms ease-out, transform 200ms ease-out; }
-.withdraw-flow-dialog-leave-active .withdraw-flow-dialog-panel { transition: opacity 150ms ease-in, transform 150ms ease-in; }
-.withdraw-flow-dialog-enter-from, .withdraw-flow-dialog-leave-to { opacity: 0; }
-.withdraw-flow-dialog-enter-from .withdraw-flow-dialog-panel, .withdraw-flow-dialog-leave-to .withdraw-flow-dialog-panel { opacity: 0; transform: scale(0.96); }
-@media (prefers-reduced-motion: reduce) {
-  .withdraw-flow-dialog-enter-active, .withdraw-flow-dialog-leave-active,
-  .withdraw-flow-dialog-enter-active .withdraw-flow-dialog-panel, .withdraw-flow-dialog-leave-active .withdraw-flow-dialog-panel { transition-duration: 50ms; }
-  .withdraw-flow-dialog-enter-from .withdraw-flow-dialog-panel, .withdraw-flow-dialog-leave-to .withdraw-flow-dialog-panel { transform: none; }
-}
-</style>

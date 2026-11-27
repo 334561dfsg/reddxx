@@ -6,6 +6,8 @@
 // destroyed after the close animation, as the hand-built frames did, so callers may clear their data on `closed`.
 // Ant's Drawer renders no dialog role and passes only class/style to its content element, so the dialog semantics
 // (role, aria-modal, title label, busy state, test id) are set on that element once it exists.
+// Ant is driven by the lifecycle's `rendered` flag, not by `open` directly: a reopen during the close animation
+// lets the close finish first and then opens again with the new content (queued reopen), as the hand-built frames did.
 import { computed, ref, useId, watchEffect } from 'vue'
 import { Button, Drawer } from 'ant-design-vue'
 import { CloseOutlined } from '@ant-design/icons-vue'
@@ -35,7 +37,7 @@ const generatedId = useId()
 const titleId = computed(() => props.titleId || generatedId)
 const titleRef = ref(null)
 const dialogRef = computed(() => titleRef.value?.closest?.('.ant-drawer-content') || null)
-const { phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
+const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
   open: computed(() => props.open),
   dialogRef,
   initialFocusRef: computed(() => props.initialFocus || titleRef.value),
@@ -67,7 +69,7 @@ defineExpose({ phase, close, dialogEl: dialogRef })
 
 <template>
   <Drawer
-    :open="open"
+    :open="rendered"
     :placement="placement"
     :width="placement === 'top' ? undefined : width"
     :height="placement === 'top' ? height : undefined"

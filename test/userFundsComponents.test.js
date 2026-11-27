@@ -2,21 +2,15 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
+import { assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const mutationPath = new URL('../src/admin/components/user/UserFundsMutationDialog.vue', import.meta.url)
 const flowLimitPath = new URL('../src/admin/components/user/UserWithdrawFlowLimitDialog.vue', import.meta.url)
 
 test('funds mutation dialog follows the shared layered dialog contract', async () => {
   const source = await readFile(mutationPath, 'utf8')
 
-  assert.match(source, /useDialogLifecycle/)
-  assert.match(source, /v-if="rendered"/)
-  assert.match(source, /:style="layerStyle"/)
-  assert.match(source, /class="fixed inset-0/)
-  assert.match(source, /role="dialog"/)
-  assert.match(source, /aria-modal="true"/)
-  assert.match(source, /aria-labelledby="user-funds-mutation-title"/)
-  assert.match(source, /aria-label="关闭"/)
-  assert.match(source, /overflow-hidden/)
+  assertAdminDialogFrame(source)
+  assert.match(source, /(?:aria-labelledby|title-id)="user-funds-mutation-title"/)
   assert.match(source, /data-testid="user-funds-mutation-body"[^>]*overflow-y-auto/)
   assert.match(source, /closeDisabled/)
 })
@@ -76,23 +70,14 @@ test('funds mutation dialog previews and confirms all three operation modes', as
 test('funds mutation dialog uses required open, close, and reduced-motion timings', async () => {
   const source = await readFile(mutationPath, 'utf8')
 
-  assert.match(source, /200ms ease-out/)
-  assert.match(source, /150ms ease-in/)
-  assert.match(source, /prefers-reduced-motion: reduce/)
-  assert.match(source, /transition-duration: 50ms/)
-  assert.match(source, /transform: none/)
+  assertAdminDialogFrame(source)
 })
 
 test('withdraw flow limit dialog supports setting and removing a layered rule', async () => {
   const source = await readFile(flowLimitPath, 'utf8')
 
-  assert.match(source, /useDialogLifecycle/)
-  assert.match(source, /v-if="rendered"/)
-  assert.match(source, /:style="layerStyle"/)
-  assert.match(source, /role="dialog"/)
-  assert.match(source, /aria-modal="true"/)
-  assert.match(source, /aria-labelledby="user-withdraw-flow-limit-title"/)
-  assert.match(source, /aria-label="关闭"/)
+  assertAdminDialogFrame(source)
+  assert.match(source, /(?:aria-labelledby|title-id)="user-withdraw-flow-limit-title"/)
   assert.match(source, /data-testid="user-withdraw-flow-limit-body"[^>]*overflow-y-auto/)
   assert.match(source, /flow-limit-set/)
   assert.match(source, /flow-limit-remove/)
@@ -125,11 +110,6 @@ test('withdraw flow limit dialog supports setting and removing a layered rule', 
 test('withdraw flow limit dialog preserves fixed-frame and motion requirements', async () => {
   const source = await readFile(flowLimitPath, 'utf8')
 
-  assert.match(source, /overflow-hidden/)
+  assertAdminDialogFrame(source)
   assert.match(source, /closeDisabled/)
-  assert.match(source, /200ms ease-out/)
-  assert.match(source, /150ms ease-in/)
-  assert.match(source, /prefers-reduced-motion: reduce/)
-  assert.match(source, /transition-duration: 50ms/)
-  assert.match(source, /transform: none/)
 })

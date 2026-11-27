@@ -46,3 +46,40 @@ export const Button = defineComponent({
 })
 
 export const CloseOutlined = defineComponent({ name: 'CloseOutlinedStub', render: () => h('span', { 'aria-hidden': 'true' }, '×') })
+
+// Stand-in for ant-design-vue's Modal as used by src/admin/components/antd/AdminDialog.vue: portalled to <body>, the
+// full-screen wrap carries role="dialog", the panel holds modalRender(content), and afterClose fires from an animation
+// frame once the panel is gone (harness.finishTransitions()).
+export const Modal = defineComponent({
+  name: 'AModalStub',
+  inheritAttrs: false,
+  // afterClose is a function prop, exactly as in ant-design-vue (a listener would never be called there either).
+  props: { open: Boolean, wrapClassName: String, zIndex: Number, afterClose: Function },
+  setup(props, { slots }) {
+    const rendered = ref(props.open)
+    watch(() => props.open, (open) => {
+      if (open) { rendered.value = true; return }
+      requestAnimationFrame(async () => {
+        if (props.open) return
+        rendered.value = false
+        await nextTick()
+        props.afterClose?.()
+      })
+    })
+    return () => h(Teleport, { to: 'body' }, rendered.value
+      ? [h('div', { class: 'ant-modal-root' }, [
+        h('div', { class: ['ant-modal-wrap', props.wrapClassName], role: 'dialog' }, [
+          h('div', { class: 'ant-modal', role: 'document' }, [
+            (() => {
+              const content = h('div', { class: 'ant-modal-content' }, [
+                h('div', { class: 'ant-modal-header' }, slots.title?.()),
+                h('div', { class: 'ant-modal-body' }, slots.default?.())
+              ])
+              return slots.modalRender ? slots.modalRender({ originVNode: content }) : content
+            })()
+          ])
+        ])
+      ])]
+      : [])
+  }
+})

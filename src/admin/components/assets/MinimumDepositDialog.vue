@@ -1,16 +1,15 @@
 <script setup>
+import AdminDialog from '../antd/AdminDialog.vue'
 import FeedbackToast from '../../../shared/feedback/FeedbackToast.vue'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import MfaVerificationModal from '../MfaVerificationModal.vue'
 import { nativeControl } from '../antd/controls.js'
-import { useDialogLifecycle } from '../../composables/useDialogLifecycle.js'
 import { minimumDepositRepository as repository } from '../../repositories/minimumDepositRepository.js'
 import { normalizeMinimumUsdt } from '../../../features/minimum-deposit/model.js'
 
 const props = defineProps({ open: Boolean, returnFocus: { type: Object, default: null } })
 const emit = defineEmits(['close', 'saved'])
-const dialogRef = ref(null)
 const inputRef = ref(null)
 const errorRef = ref(null)
 const discardRef = ref(null)
@@ -37,7 +36,6 @@ const parsed = computed(() => {
 const dirty = computed(() => !!saved.value && (parsed.value.value ?? draft.value) !== saved.value.amountUsdt)
 const fieldError = computed(() => (attempted.value || touched.value) && !composing.value ? parsed.value.error : '')
 
-
 function load() {
   session.cancel(); mfaOpen.value = false; mfaError.value = ''; mfaErrorAttempt.value = 0
   loadError.value = ''; saved.value = null; draft.value = ''
@@ -52,23 +50,24 @@ async function retryLoad() {
 }
 watch(() => props.open, open => { if (open) load() }, { immediate: true })
 watch(draft, () => { discard.value = false })
-const { rendered, phase, layerStyle, requestDialogClose, onAfterEnter, onAfterLeave } = useDialogLifecycle({
-  open: computed(() => props.open), dialogRef,
-  returnFocusRef: computed(() => props.returnFocus),
-  initialFocusRef: computed(() => loadError.value ? errorRef.value : inputRef.value),
-  closeDisabled: computed(() => saving.value || mfaOpen.value),
-  requestClose: () => {
-    if (dirty.value && !discardAuthorized) {
-      discard.value = true
-      nextTick(() => { if (!disposed) discardRef.value?.focus() })
-      return false
-    }
-    emit('close')
+// Frame: AdminDialog (Ant Modal + useDialogLifecycle), dialog migration 2026-11-27.
+const dialogFrame = ref(null)
+const phase = computed(() => dialogFrame.value?.phase ?? 'closed')
+const initialFocus = computed(() => loadError.value ? errorRef.value : inputRef.value)
+const dialogBusy = computed(() => saving.value || mfaOpen.value)
+// Unsaved edits ask before discarding; returning false keeps the dialog open.
+const requestDialogCloseHandler = () => {
+  if (dirty.value && !discardAuthorized) {
+    discard.value = true
+    nextTick(() => { if (!disposed) discardRef.value?.focus() })
+    return false
   }
-})
+  emit('close')
+}
+
 function discardChanges() {
   discardAuthorized = true
-  requestDialogClose()
+  dialogFrame.value?.close()
   discardAuthorized = false
 }
 function save() {
@@ -115,15 +114,8 @@ onBeforeUnmount(() => { disposed = true; session.cancel(); window.removeEventLis
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="minimum-deposit" appear @after-enter="onAfterEnter" @after-leave="onAfterLeave">
-      <div v-if="rendered" class="minimum-deposit-overlay fixed inset-0 grid place-items-center bg-slate-950/45" :style="layerStyle">
-        <section ref="dialogRef" role="dialog" aria-modal="true" aria-labelledby="minimum-deposit-title" :aria-busy="saving" class="minimum-deposit-panel flex w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
-          <header class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
-            <h2 id="minimum-deposit-title" class="min-w-0 break-words text-lg font-bold text-slate-900">最低充值金额设置</h2>
-            <a-button html-type="button" aria-label="关闭" class="minimum-deposit-close shrink-0" :disabled="saving" @click="requestDialogClose">×</a-button>
-          </header>
-          <form novalidate class="flex min-h-0 flex-1 flex-col" @submit.prevent="save" @keydown.enter="($event.isComposing || composing) && $event.preventDefault()">
+  <AdminDialog :open="open" title="最低充值金额设置" title-id="minimum-deposit-title" :busy="dialogBusy" :return-focus="returnFocus" :width="576" plain :request-close="requestDialogCloseHandler" ref="dialogFrame" :initial-focus="initialFocus" @close="emit('close')">
+      <form novalidate class="flex min-h-0 flex-1 flex-col" @submit.prevent="save" @keydown.enter="($event.isComposing || composing) && $event.preventDefault()">
             <div class="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-5">
               <FeedbackToast v-if="loadError" ref="errorRef" type="error" :source="() => (loadError) ? (([[String((loadError) ?? '')].join(''),''].join(''))) : ''"><a-button html-type="button" class="mt-3" @click="retryLoad">重新读取</a-button></FeedbackToast>
               <template v-else>
@@ -144,14 +136,11 @@ onBeforeUnmount(() => { disposed = true; session.cancel(); window.removeEventLis
               </template>
             </div>
             <footer class="flex shrink-0 flex-wrap justify-end gap-3 border-t border-slate-200 px-5 py-4">
-              <a-button html-type="button" :disabled="saving" @click="requestDialogClose">取消</a-button>
+              <a-button html-type="button" :disabled="saving" @click="dialogFrame?.close()">取消</a-button>
               <a-button :ref="el => { submitRef = nativeControl(el) }" html-type="submit" type="primary" @focus="afterMfaClose" :disabled="!saved || phase !== 'open' || saving" :loading="saving">保存设置</a-button>
             </footer>
           </form>
-        </section>
-      </div>
-    </Transition>
-  </Teleport>
+    </AdminDialog>
   <MfaVerificationModal :open="mfaOpen" title="MFA 验证" description="修改最低充值金额前，请输入 MFA 验证码" :loading="saving" :error="mfaError" :error-attempt="mfaErrorAttempt" :return-focus="submitRef" @cancel="cancelVerification" @update:open="value => { if (!value) cancelVerification() }" @verify="verifyAndSave" />
 </template>
 
@@ -168,15 +157,4 @@ onBeforeUnmount(() => { disposed = true; session.cancel(); window.removeEventLis
 .minimum-deposit-panel :deep(button) { min-height: 44px; height: auto; white-space: normal; }
 .minimum-deposit-panel :deep(input) { min-height: 44px; font-size: 16px; }
 .minimum-deposit-close { min-width: 44px; font-size: 24px; }
-.minimum-deposit-enter-active { transition: opacity 200ms ease-out; }
-.minimum-deposit-leave-active { transition: opacity 150ms ease-in; }
-.minimum-deposit-enter-active .minimum-deposit-panel { transition: transform 200ms ease-out; }
-.minimum-deposit-leave-active .minimum-deposit-panel { transition: transform 150ms ease-in; }
-.minimum-deposit-enter-from, .minimum-deposit-leave-to { opacity: 0; }
-.minimum-deposit-enter-from .minimum-deposit-panel, .minimum-deposit-leave-to .minimum-deposit-panel { transform: scale(.96); }
-@media (prefers-reduced-motion: reduce) {
-  .minimum-deposit-enter-active, .minimum-deposit-leave-active { transition-duration: 50ms; }
-  .minimum-deposit-enter-active .minimum-deposit-panel, .minimum-deposit-leave-active .minimum-deposit-panel { transition: none; }
-  .minimum-deposit-enter-from .minimum-deposit-panel, .minimum-deposit-leave-to .minimum-deposit-panel { transform: none; }
-}
 </style>

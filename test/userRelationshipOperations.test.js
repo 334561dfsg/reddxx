@@ -18,6 +18,7 @@ import {
 } from '../src/admin/composables/useDialogLifecycle.js'
 import { createSfcHarness, loadVueSfc, loadVueSfcModuleUrl } from './helpers/vueSfcHarness.js'
 
+import { assertAdminDialogFrame } from './helpers/adminDrawerFrame.js'
 const read = (path) => readFileSync(resolve(process.cwd(), path), 'utf8')
 const parentResetSource = () => read('src/admin/components/user/UserParentResetDialog.vue')
 const agentRoleSource = () => read('src/admin/components/user/UserAgentRoleDialog.vue')
@@ -600,8 +601,7 @@ test('agent creation entries reuse the shared upgrade dialog and delivery card',
   assert.match(userListPageSource(), /if \(!isAgentUser\(user\)\)[\s\S]*agentUpgradeOpen\.value = true/)
   assert.match(agentManagementSource(), /import AgentUpgradeDialog/)
   assert.match(agentManagementSource(), /<AgentUpgradeDialog/)
-  assert.match(agentUpgradeSource(), /useDialogLifecycle/)
-  assert.match(agentUpgradeSource(), /:style="layerStyle"/)
+  assertAdminDialogFrame(agentUpgradeSource())
   assert.doesNotMatch(agentUpgradeSource(), /z-\[100\]/)
   assert.doesNotMatch(agentRoleSource(), /import AgentDeliveryCard/)
   assert.doesNotMatch(agentRoleSource(), /<AgentDeliveryCard/)
