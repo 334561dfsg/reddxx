@@ -12,11 +12,14 @@ import {useStrategyFeed, strategyCommand, errorText, marketLabels, styleLabels, 
 import {LIVE} from '../../../shared/strategy/domain.js'
 import {amount} from './strategyFormat.js'
 
+const whole = value => Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits: 2})
+const riskColor = risk => (risk >= 4 ? 'red' : risk === 3 ? 'orange' : 'blue')
+
 const route = useRoute(), router = useRouter(), {state, error, busy, loaded, refresh} = useStrategyFeed()
 const filters = ref({q: String(route.query.q || ''), market: String(route.query.market || 'all'), style: String(route.query.style || 'all'), status: String(route.query.status || 'all')})
 const page = ref(Math.max(1, Number(route.query.page) || 1))
 const fields = [
-  {key: 'q', label: '模板名称'},
+  {key: 'q', label: '名称/ID'},
   {key: 'market', label: '市场', options: [{value: 'all', label: '全部市场'}, ...Object.entries(marketLabels).map(([value, label]) => ({value, label}))]},
   {key: 'style', label: '风格', options: [{value: 'all', label: '全部风格'}, ...Object.entries(styleLabels).map(([value, label]) => ({value, label}))]},
   {key: 'status', label: '状态', options: [{value: 'all', label: '全部状态'}, ...Object.entries(templateStatusLabels).map(([value, label]) => ({value, label}))]},
@@ -31,21 +34,21 @@ const usage = computed(() => {
   }
   return map
 })
-const rows = computed(() => [...state.value.templates].sort((a, b) => a.sortOrder - b.sortOrder).filter(t =>
+const rows = computed(() => [...state.value.templates].sort((a, b) => b.sortOrder - a.sortOrder).filter(t =>
   (!filters.value.q || t.name.toLowerCase().includes(filters.value.q.toLowerCase()) || t.templateId.toLowerCase().includes(filters.value.q.toLowerCase())) &&
   (filters.value.market === 'all' || t.market === filters.value.market) &&
   (filters.value.style === 'all' || t.style === filters.value.style) &&
   (filters.value.status === 'all' || t.status === filters.value.status)))
 watch(() => rows.value.length, total => { page.value = Math.min(page.value, Math.max(1, Math.ceil(total / 10))) })
 const columns = [
-  {key: 'sortOrder', title: '排序', width: 70, fixed: 'left'},
-  {key: 'name', title: '模板', width: 240, fixed: 'left'},
-  {key: 'category', title: '市场 / 风格', width: 130},
-  {key: 'risk', title: '风险等级', width: 90},
-  {key: 'capital', title: '起投 – 单笔上限（USDT）', width: 200, align: 'right'},
-  {key: 'days', title: '运行周期', width: 110},
-  {key: 'usage', title: '进行中订阅 / 资金（USDT）', width: 210, align: 'right'},
-  {key: 'status', title: '状态', width: 90},
+  {key: 'name', title: '策略模板', width: 180, fixed: 'left'},
+  {key: 'category', title: '市场 / 风格', width: 100},
+  {key: 'risk', title: '风险等级', width: 75},
+  {key: 'capital', title: '投资金额（USDT）', width: 150, align: 'right'},
+  {key: 'days', title: '运行周期', width: 95, align: 'right'},
+  {key: 'usage', title: '进行中订阅', width: 135, align: 'right'},
+  {key: 'status', title: '状态', width: 80},
+  {key: 'sortOrder', title: '排序权重', width: 80, align: 'right'},
   {key: 'actions', title: '操作', width: 150, fixed: 'right'},
 ]
 function search(values) { filters.value = {q: values.q.trim(), market: values.market || 'all', style: values.style || 'all', status: values.status || 'all'}; page.value = 1 }
@@ -72,11 +75,14 @@ async function toggleStatus() {
    <template #toolbar><Space :size="8"><Button @click="refresh">刷新</Button><Button type="primary" @click="edit()"><template #icon><PlusOutlined/></template>新增模板</Button></Space></template>
    <template #cell="{column, record}">
     <Space v-if="column.key === 'name'" direction="vertical" :size="0"><TypographyText strong>{{ record.name }}</TypographyText><TypographyText type="secondary">{{ record.templateId }} · v{{ record.version }}</TypographyText></Space>
-    <template v-else-if="column.key === 'category'">{{ marketLabels[record.market] }} / {{ styleLabels[record.style] }}</template>
-    <template v-else-if="column.key === 'risk'">Lv.{{ record.risk }}</template>
-    <template v-else-if="column.key === 'capital'">{{ amount(record.minCapital) }} – {{ amount(record.maxCapital) }}</template>
-    <template v-else-if="column.key === 'days'">{{ record.minDays }} – {{ record.maxDays }} 天</template>
-    <template v-else-if="column.key === 'usage'">{{ usage[record.templateId]?.count || 0 }} / {{ amount(usage[record.templateId]?.capital || 0) }}<TypographyText v-if="record.capacity" type="secondary"> · 总额度 {{ amount(record.capacity) }}</TypographyText></template>
+    <Space v-else-if="column.key === 'category'" direction="vertical" :size="0"><span>{{ marketLabels[record.market] }}</span><TypographyText type="secondary">{{ styleLabels[record.style] }}</TypographyText></Space>
+    <Tag v-else-if="column.key === 'risk'" :color="riskColor(record.risk)">Lv.{{ record.risk }}</Tag>
+    <template v-else-if="column.key === 'capital'">{{ whole(record.minCapital) }} ~ {{ whole(record.maxCapital) }}</template>
+    <template v-else-if="column.key === 'days'">{{ record.minDays }} ~ {{ record.maxDays }} 天</template>
+    <Space v-else-if="column.key === 'usage'" direction="vertical" :size="0" class="strategy-usage">
+     <span>{{ usage[record.templateId]?.count || 0 }} 笔 · {{ amount(usage[record.templateId]?.capital || 0) }}</span>
+     <TypographyText type="secondary">{{ record.capacity ? `总额度 ${whole(record.capacity)}` : '总额度不限' }}</TypographyText>
+    </Space>
     <Tag v-else-if="column.key === 'status'" :color="record.status === 'listed' ? 'green' : 'default'">{{ templateStatusLabels[record.status] }}</Tag>
     <Space v-else-if="column.key === 'actions'" :size="8"><Button type="link" @click="edit(record)">编辑</Button><Button type="link" :danger="record.status === 'listed'" @click="target = {...record}">{{ record.status === 'listed' ? '下架' : '上架' }}</Button></Space>
     <template v-else>{{ record[column.key] ?? '—' }}</template>

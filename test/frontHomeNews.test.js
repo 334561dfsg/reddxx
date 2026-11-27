@@ -113,12 +113,12 @@ test('front news config normalizes editable admin records for the public module'
 
   assert.deepEqual(
     normalized.frontNews.map((row) => row.id),
-    ['disabled-news', 'custom-news']
+    ['custom-news', 'disabled-news']
   )
-  assert.equal(normalized.frontNews[1].locale, 'en')
-  assert.equal(normalized.frontNews[1].title, '新资产专区上线')
-  assert.equal(normalized.frontNews[1].imageUrl, 'https://cdn.example.com/news/custom.jpg')
-  assert.equal(normalized.frontNews[1].sort, 3)
+  assert.equal(normalized.frontNews[0].locale, 'en')
+  assert.equal(normalized.frontNews[0].title, '新资产专区上线')
+  assert.equal(normalized.frontNews[0].imageUrl, 'https://cdn.example.com/news/custom.jpg')
+  assert.equal(normalized.frontNews[0].sort, 3)
   assert.equal(getFrontNewsList(normalized.frontNews).length, 1)
   assert.equal(getFrontNewsList(normalized.frontNews)[0].id, 'custom-news')
   assert.equal(getLocalizedFrontNewsList(normalized.frontNews, 'vi', 'en')[0].id, 'custom-news')

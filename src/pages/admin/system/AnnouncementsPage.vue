@@ -71,9 +71,9 @@ const localeOptions = computed(() => {
   const order = config.value.i18n?.localeSortOrder || {}
   return [...enabled]
     .sort((a, b) => {
-      const da = Number.isFinite(order[a]) ? order[a] : 999999
-      const db = Number.isFinite(order[b]) ? order[b] : 999999
-      if (da !== db) return da - db
+      const da = Number.isFinite(order[a]) ? order[a] : -Infinity
+      const db = Number.isFinite(order[b]) ? order[b] : -Infinity
+      if (da !== db) return db - da
       return catalog.findIndex((x) => x.code === a) - catalog.findIndex((x) => x.code === b)
     })
     .map((code) => {
@@ -254,7 +254,7 @@ function resetForm() {
   formHtml.value = '<p></p>'
   formEnabled.value = true
   formPublishedAt.value = nowText()
-  formSort.value = rows.value.length * 10
+  formSort.value = Math.max(0, ...rows.value.map((row) => Number(row.sort) || 0)) + 10
   formLocale.value = defaultLocale.value
   localeSelectOpen.value = false
   syncLocaleActiveIndex()
@@ -534,7 +534,7 @@ onMounted(load)
                   {{ row.enabled ? '展示中' : '已停用' }}
                 </span>
               </div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>排序</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
 <a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   text-right">
                 <a-button html-type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</a-button>
                 <span class="mx-2 text-slate-300">|</span>
@@ -608,11 +608,11 @@ onMounted(load)
                   <a-input id="announcement-published-at" v-model:value="formPublishedAt" class="w-full font-mono" placeholder="2026-08-24 10:00" />
                 </div>
                 <div>
-                  <label class="mb-1.5 block text-sm font-medium text-slate-700" for="announcement-sort">排序</label>
+                  <label class="mb-1.5 block text-sm font-medium text-slate-700" for="announcement-sort">排序权重</label>
                   <a-input id="announcement-sort" type="number" class="w-full" :value="formSort" @update:value="formSort = $event === '' ? '' : Number($event)" />
                 </div>
                 <div class="rounded-lg bg-white p-3 text-xs leading-relaxed text-slate-500">
-                  前台公告按排序值从小到大展示；排序相同时，发布时间越新的越靠前。停用公告保留在后台，但不会出现在前台公告中心。
+                  前台公告按排序权重从大到小展示；权重相同时，发布时间越新的越靠前。停用公告保留在后台，但不会出现在前台公告中心。
                 </div>
               </aside>
             </div>

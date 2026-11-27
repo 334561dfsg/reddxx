@@ -50,7 +50,7 @@ const childPages = computed(() => {
   return pages.value
     .filter((row) => row.parentId === parent.id && row.enabled && row.showInNav)
     .sort((a, b) => {
-      if (a.sort !== b.sort) return a.sort - b.sort
+      if (a.sort !== b.sort) return b.sort - a.sort
       return a.slug.localeCompare(b.slug)
     })
 })

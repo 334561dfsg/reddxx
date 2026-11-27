@@ -83,9 +83,9 @@ test('site announcement normalization keeps only publishable public announcement
   assert.equal(DEFAULT_SITE_CONFIG.announcements.length >= 1, true)
   assert.deepEqual(
     normalized.announcements.map((row) => `${row.id}:${row.locale}`),
-    ['ann-valid:zh-CN', 'ann-i18n:en', 'ann-i18n-zh-CN:zh-CN', 'ann-disabled:en']
+    ['ann-i18n:en', 'ann-i18n-zh-CN:zh-CN', 'ann-valid:zh-CN', 'ann-disabled:en']
   )
-  assert.deepEqual(normalized.announcements[0], {
+  assert.deepEqual(normalized.announcements[2], {
     id: 'ann-valid',
     locale: 'zh-CN',
     title: '合约系统维护',
@@ -102,9 +102,9 @@ test('site announcement normalization keeps only publishable public announcement
     publishedAt: '2026-08-24 10:00',
     sort: 5
   })
-  assert.equal('priority' in normalized.announcements[0], false)
-  assert.equal(normalized.announcements[1].title, 'API frequency limit update')
-  assert.equal(normalized.announcements[2].title, 'API 频率限制优化公告')
+  assert.equal('priority' in normalized.announcements[2], false)
+  assert.equal(normalized.announcements[0].title, 'API frequency limit update')
+  assert.equal(normalized.announcements[1].title, 'API 频率限制优化公告')
 })
 
 test('default site announcement mocks cover every configured front locale', () => {

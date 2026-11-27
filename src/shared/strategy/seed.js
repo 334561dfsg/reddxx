@@ -12,7 +12,7 @@ export function seedTemplates(now) {
   return strategies.map((s, index) => {
     const [maxCapital, minDays, maxDays, tradesPerDay, symbols] = strategyTerms[index]
     return {
-      templateId: `STG-${String(index + 1).padStart(3, '0')}`, sortOrder: index, name: s.name, market: code(s.market), style: code(s.style),
+      templateId: `STG-${String(index + 1).padStart(3, '0')}`, sortOrder: (strategies.length - index) * 10, name: s.name, market: code(s.market), style: code(s.style),
       risk: s.risk, sharpe: s.sharpe, winRate: s.win, tradesPerDay, symbols: [...symbols], description: s.description,
       minCapital: s.min, maxCapital, minDays, maxDays, takeProfit: {min: 1, max: 100, default: 10}, stopLoss: {min: 1, max: 50, default: 5},
       feeRate: 0.1, maxOpenTrades: 3, capacity: 0, dailyReturn: {...returnRange[code(s.style)]}, tradeDayRatio: 0.75,

@@ -33,7 +33,7 @@ const displayRows = computed(() => {
     [...list].sort((a, b) => {
       const sa = Number(a.sort) || 0
       const sb = Number(b.sort) || 0
-      if (sa !== sb) return sa - sb
+      if (sa !== sb) return sb - sa
       return a.slug.localeCompare(b.slug)
     })
   const out = []
@@ -107,9 +107,9 @@ const localeOptions = computed(() => {
   const order = config.value.i18n?.localeSortOrder || {}
   return [...enabled]
     .sort((a, b) => {
-      const da = Number.isFinite(order[a]) ? order[a] : 999999
-      const db = Number.isFinite(order[b]) ? order[b] : 999999
-      if (da !== db) return da - db
+      const da = Number.isFinite(order[a]) ? order[a] : -Infinity
+      const db = Number.isFinite(order[b]) ? order[b] : -Infinity
+      if (da !== db) return db - da
       return catalog.findIndex((x) => x.code === a) - catalog.findIndex((x) => x.code === b)
     })
     .map((code) => {
@@ -146,7 +146,7 @@ function resetForm() {
   formHtml.value = '<p></p>'
   formEnabled.value = true
   formShowInNav.value = true
-  formSort.value = rows.value.length * 10
+  formSort.value = Math.max(0, ...rows.value.map((row) => Number(row.sort) || 0)) + 10
   activeLocale.value = defaultLocale.value
   formLocales.value = {
     [activeLocale.value]: emptyLocalePayload()
@@ -450,7 +450,7 @@ onMounted(load)
               </div></template></a-table-column>
 <a-table-column key="column-1" ><template #title>父级</template><template #default="{ record: row, index: index }"><div class="  text-xs text-slate-600">{{ pageById(row.parentId)?.title || '—' }}</div></template></a-table-column>
 <a-table-column key="column-2" ><template #title>路径</template><template #default="{ record: row, index: index }"><div class="  font-mono text-xs text-indigo-700">{{ pagePath(row) }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>排序</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
 <a-table-column key="column-4" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
                 <span :class="row.enabled ? 'rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800' : 'text-slate-500'">
                   {{ row.enabled ? '已启用' : '已禁用' }}
@@ -561,8 +561,9 @@ onMounted(load)
                 当前为一级页面。只有子页面需要配置是否显示在父级子导航中。
               </p>
               <div>
-                <label class="mb-1.5 block text-sm font-medium text-slate-700">排序</label>
+                <label class="mb-1.5 block text-sm font-medium text-slate-700">排序权重</label>
                 <a-input type="number" class="w-full" :value="formSort" @update:value="formSort = $event === '' ? '' : Number($event)" />
+                <p class="mt-1 text-xs text-slate-500">数值越大越靠前，同级页面之间比较</p>
               </div>
               <div class="rounded-lg bg-white p-3 text-xs leading-relaxed text-slate-500">
                 <p class="font-medium text-slate-700">前台地址</p>

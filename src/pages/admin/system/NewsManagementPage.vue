@@ -59,9 +59,9 @@ const localeOptions = computed(() => {
   const order = config.value.i18n?.localeSortOrder || {}
   return [...enabled]
     .sort((a, b) => {
-      const da = Number.isFinite(order[a]) ? order[a] : 999999
-      const db = Number.isFinite(order[b]) ? order[b] : 999999
-      if (da !== db) return da - db
+      const da = Number.isFinite(order[a]) ? order[a] : -Infinity
+      const db = Number.isFinite(order[b]) ? order[b] : -Infinity
+      if (da !== db) return db - da
       return catalog.findIndex((x) => x.code === a) - catalog.findIndex((x) => x.code === b)
     })
     .map((code) => {
@@ -339,7 +339,7 @@ function resetForm() {
   formHtml.value = '<p></p>'
   formEnabled.value = true
   formPublishedAt.value = nowText()
-  formSort.value = rows.value.length * 10
+  formSort.value = Math.max(0, ...rows.value.map((row) => Number(row.sort) || 0)) + 10
   customSelectOpen.value = ''
 }
 
@@ -523,7 +523,7 @@ onMounted(load)
                   {{ row.enabled ? '展示中' : '已停用' }}
                 </span>
               </div></template></a-table-column>
-<a-table-column key="column-4" ><template #title>排序</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
+<a-table-column key="column-4" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
 <a-table-column key="column-5" align="right"><template #title>操作</template><template #default="{ record: row, index: index }"><div class="whitespace-nowrap   text-right">
                 <a-button html-type="button" class="text-indigo-600 hover:underline" @click="openEdit(row)">编辑</a-button>
                 <span class="mx-2 text-slate-300">|</span>
@@ -637,10 +637,10 @@ onMounted(load)
                   <a-input id="front-news-published-at-input" v-model:value="formPublishedAt" class="w-full" type="text" placeholder="2026-08-24 10:00" />
                 </div>
                 <div>
-                  <label for="front-news-sort-input" class="mb-1.5 block text-sm font-medium text-slate-700">排序</label>
+                  <label for="front-news-sort-input" class="mb-1.5 block text-sm font-medium text-slate-700">排序权重</label>
                   <a-input id="front-news-sort-input" class="w-full" type="number" min="0" step="1" :value="formSort" @update:value="formSort = $event === '' ? '' : Number($event)" />
                   <p class="mt-2 text-xs leading-5 text-slate-500">
-                    数字越小越靠前；排序相同则按发布时间倒序展示。
+                    数值越大越靠前；权重相同则按发布时间倒序展示。
                   </p>
                 </div>
               </aside>

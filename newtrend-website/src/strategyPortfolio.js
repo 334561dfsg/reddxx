@@ -21,7 +21,7 @@ const toProduct = (t, index) => ({
 })
 /** Listed templates in admin order, shaped like the former local catalogue. Empty until the Mock has answered. */
 export const strategyCatalog = computed(() => [...strategyState.value.templates]
-  .filter(t => t.status === 'listed').sort((a, b) => a.sortOrder - b.sortOrder).map(toProduct))
+  .filter(t => t.status === 'listed').sort((a, b) => b.sortOrder - a.sortOrder).map(toProduct))
 
 // ----- 模擬 (local) -----
 const localTemplates = enrichStrategies(strategies)

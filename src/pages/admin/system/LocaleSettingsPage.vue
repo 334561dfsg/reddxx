@@ -43,9 +43,9 @@ const localesTableRows = computed(() => {
     custom: Boolean(loc.custom),
     keyCount: countTranslationKeys(config.value.i18n?.translationFiles?.[loc.code])
   })).sort((a, b) => {
-    const da = Number.isFinite(order[a.code]) ? order[a.code] : 999999
-    const db = Number.isFinite(order[b.code]) ? order[b.code] : 999999
-    if (da !== db) return da - db
+    const da = Number.isFinite(order[a.code]) ? order[a.code] : -Infinity
+    const db = Number.isFinite(order[b.code]) ? order[b.code] : -Infinity
+    if (da !== db) return db - da
     return catalog.findIndex((x) => x.code === a.code) - catalog.findIndex((x) => x.code === b.code)
   })
 })
@@ -63,9 +63,9 @@ const dialsTableRows = computed(() => {
     icon: overrides[row.dial]?.icon || row.icon || '',
     custom: Boolean(row.custom)
   })).sort((a, b) => {
-    const da = Number.isFinite(order[a.dial]) ? order[a.dial] : 999999
-    const db = Number.isFinite(order[b.dial]) ? order[b.dial] : 999999
-    if (da !== db) return da - db
+    const da = Number.isFinite(order[a.dial]) ? order[a.dial] : -Infinity
+    const db = Number.isFinite(order[b.dial]) ? order[b.dial] : -Infinity
+    if (da !== db) return db - da
     return catalog.findIndex((x) => x.dial === a.dial) - catalog.findIndex((x) => x.dial === b.dial)
   })
 })
@@ -177,8 +177,8 @@ function toggleLocale(code, checked) {
     ensureLocaleSortMap()
     if (!Number.isFinite(config.value.i18n.localeSortOrder[code])) {
       const vals = Object.values(config.value.i18n.localeSortOrder).filter((n) => Number.isFinite(n))
-      const max = vals.length ? Math.max(...vals) : 0
-      config.value.i18n.localeSortOrder[code] = max + 10
+      // Newly enabled languages go last: below the smallest existing weight.
+      config.value.i18n.localeSortOrder[code] = vals.length ? Math.max(0, Math.min(...vals) - 10) : 0
     }
   } else {
     cur.delete(code)
@@ -198,8 +198,8 @@ function toggleDial(dial, checked) {
     ensureDialSortMap()
     if (!Number.isFinite(config.value.dialSortOrder[dial])) {
       const vals = Object.values(config.value.dialSortOrder).filter((n) => Number.isFinite(n))
-      const max = vals.length ? Math.max(...vals) : 0
-      config.value.dialSortOrder[dial] = max + 10
+      // Newly enabled dial codes go last: below the smallest existing weight.
+      config.value.dialSortOrder[dial] = vals.length ? Math.max(0, Math.min(...vals) - 10) : 0
     }
   } else {
     cur.delete(dial)
@@ -217,7 +217,7 @@ function selectAllLocales() {
   ensureLocaleSortMap()
   localesTableRows.value.forEach((l, i) => {
     if (!Number.isFinite(config.value.i18n.localeSortOrder[l.code])) {
-      config.value.i18n.localeSortOrder[l.code] = i * 10
+      config.value.i18n.localeSortOrder[l.code] = (localesTableRows.value.length - i) * 10
     }
   })
   if (!config.value.i18n.enabledLocales.includes(config.value.i18n.defaultLocale)) {
@@ -230,7 +230,7 @@ function selectAllDialCodes() {
   ensureDialSortMap()
   dialsTableRows.value.forEach((p, i) => {
     if (!Number.isFinite(config.value.dialSortOrder[p.dial])) {
-      config.value.dialSortOrder[p.dial] = i * 10
+      config.value.dialSortOrder[p.dial] = (dialsTableRows.value.length - i) * 10
     }
   })
 }
@@ -665,7 +665,7 @@ onMounted(() => {
                     </div></template></a-table-column>
 <a-table-column key="column-1" ><template #title>语言名称</template><template #default="{ record: loc, index: index }"><div class=" .5 text-slate-800">{{ loc.label }}</div></template></a-table-column>
 <a-table-column key="column-2" ><template #title>语言代码</template><template #default="{ record: loc, index: index }"><div class=" .5 font-mono text-xs text-slate-500">{{ loc.code }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>排序</template><template #default="{ record: loc, index: index }"><div class=" .5">
+<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: loc, index: index }"><div class=" .5">
                       <a-input type="number" step="1" class="w-full max-w-[6.5rem] text-right tabular-nums" :value="config.i18n.localeSortOrder?.[loc.code] ?? 0" @input="onLocaleSortInput(loc.code, $event.target.value)" />
                     </div></template></a-table-column>
 <a-table-column key="column-4" align="right"><template #title>Key 数</template><template #default="{ record: loc, index: index }"><div class=" .5 text-right tabular-nums text-slate-700">{{ loc.keyCount }}</div></template></a-table-column>
@@ -689,7 +689,7 @@ onMounted(() => {
                     </div></template></a-table-column>
 </a-table>
             </div>
-            <p class="text-xs text-slate-500">语言文件在添加/编辑弹窗中上传；「排序」填整数，数字越小在前台语言列表中越靠前。</p>
+            <p class="text-xs text-slate-500">语言文件在添加/编辑弹窗中上传；「排序权重」填整数，数值越大在前台语言列表中越靠前。</p>
 
             <div class="flex items-start justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">
               <div class="min-w-0 flex-1">
@@ -737,7 +737,7 @@ onMounted(() => {
                   </div></template></a-table-column>
 <a-table-column key="column-1" ><template #title>地区与区号</template><template #default="{ record: row, index: index }"><div class=" .5 text-slate-800">{{ row.label }}</div></template></a-table-column>
 <a-table-column key="column-2" ><template #title>国际区号</template><template #default="{ record: row, index: index }"><div class=" .5 font-mono text-sm text-slate-600">{{ row.dial }}</div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>排序</template><template #default="{ record: row, index: index }"><div class=" .5">
+<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class=" .5">
                     <a-input type="number" step="1" class="w-full max-w-[6.5rem] text-right tabular-nums" :value="config.dialSortOrder?.[row.dial] ?? 0" @input="onDialSortInput(row.dial, $event.target.value)" />
                   </div></template></a-table-column>
 <a-table-column key="column-4" align="center"><template #title>启用</template><template #default="{ record: row, index: index }"><div class=" .5 text-center">
@@ -754,7 +754,7 @@ onMounted(() => {
                   </div></template></a-table-column>
 </a-table>
           </div>
-          <p class="text-xs text-slate-500">「排序」填整数，数字越小在区号下拉中越靠前；保存后前台登录与绑定手机等处的区号顺序与此一致。</p>
+          <p class="text-xs text-slate-500">「排序权重」填整数，数值越大在区号下拉中越靠前；保存后前台登录与绑定手机等处的区号顺序与此一致。</p>
         </section>
       </div>
 

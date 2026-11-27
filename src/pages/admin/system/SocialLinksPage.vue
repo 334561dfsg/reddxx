@@ -27,7 +27,7 @@ function resetForm() {
   formUrl.value = ''
   formIconUrl.value = ''
   formEnabled.value = true
-  formSort.value = rows.value.length * 10
+  formSort.value = Math.max(0, ...rows.value.map((row) => Number(row.sort) || 0)) + 10
   if (iconFileInput.value) iconFileInput.value.value = ''
 }
 
@@ -209,7 +209,7 @@ onMounted(() => {
                 </a>
                 <span v-else class="text-slate-400">—</span>
               </div></template></a-table-column>
-<a-table-column key="column-3" ><template #title>排序</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
+<a-table-column key="column-3" ><template #title>排序权重</template><template #default="{ record: row, index: index }"><div class="  tabular-nums text-slate-600">{{ row.sort }}</div></template></a-table-column>
 <a-table-column key="column-4" ><template #title>状态</template><template #default="{ record: row, index: index }"><div class=" ">
                 <span
                   :class="
@@ -275,8 +275,9 @@ onMounted(() => {
             </div>
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
-                <label class="mb-1.5 block text-sm font-medium text-slate-700">排序</label>
+                <label class="mb-1.5 block text-sm font-medium text-slate-700">排序权重</label>
                 <a-input type="number" class="w-full" :value="formSort" @update:value="formSort = $event === '' ? '' : Number($event)" />
+                <p class="mt-1 text-xs text-slate-500">数值越大越靠前</p>
               </div>
               <label class="flex cursor-pointer items-center gap-2 pt-7 text-sm text-slate-700">
                 <a-checkbox v-model:checked="formEnabled" class="" />

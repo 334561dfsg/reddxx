@@ -100,9 +100,9 @@ export function useFrontSiteI18n() {
     const order = siteConfig.value.dialSortOrder || {}
     const catalog = dialCatalog(siteConfig.value)
     const sorted = [...codes].sort((a, b) => {
-      const da = Number.isFinite(order[a]) ? order[a] : 999999
-      const db = Number.isFinite(order[b]) ? order[b] : 999999
-      if (da !== db) return da - db
+      const da = Number.isFinite(order[a]) ? order[a] : -Infinity
+      const db = Number.isFinite(order[b]) ? order[b] : -Infinity
+      if (da !== db) return db - da
       return catalog.findIndex((x) => x.dial === a) - catalog.findIndex((x) => x.dial === b)
     })
     return sorted.map((dial) => resolveDialMeta(siteConfig.value, dial))
@@ -117,9 +117,9 @@ export function useFrontSiteI18n() {
     const order = siteConfig.value.i18n?.localeSortOrder || {}
     const catalog = localeCatalog(siteConfig.value)
     return [...base].sort((a, b) => {
-      const da = Number.isFinite(order[a]) ? order[a] : 999999
-      const db = Number.isFinite(order[b]) ? order[b] : 999999
-      if (da !== db) return da - db
+      const da = Number.isFinite(order[a]) ? order[a] : -Infinity
+      const db = Number.isFinite(order[b]) ? order[b] : -Infinity
+      if (da !== db) return db - da
       return catalog.findIndex((x) => x.code === a) - catalog.findIndex((x) => x.code === b)
     })
   })

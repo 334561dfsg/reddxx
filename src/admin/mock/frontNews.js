@@ -86,7 +86,7 @@ export const DEFAULT_FRONT_NEWS = Object.entries(NEWS_MOCK_LOCALES).flatMap(([lo
     date: index === 0 ? '2026.08.24' : '2026.08.21',
     publishedAt: index === 0 ? '2026-08-24 10:00' : '2026-08-21 12:00',
     enabled: true,
-    sort: index * 10
+    sort: (items.length - index) * 10
   }))
 )
 
@@ -168,7 +168,7 @@ function normalizeNewsRow(row, index, defaultLocale, forcedLocale, forcedPayload
     date,
     publishedAt,
     enabled: row.enabled !== false,
-    sort: Number.isFinite(Number(row.sort)) ? Math.round(Number(row.sort)) : index * 10,
+    sort: Number.isFinite(Number(row.sort)) ? Math.round(Number(row.sort)) : 0,
     title: payload.title,
     summary: payload.summary,
     imageUrl,
@@ -213,7 +213,7 @@ export function normalizeFrontNews(raw = DEFAULT_FRONT_NEWS, defaultLocale = 'zh
   return rows.sort((a, b) => {
     const sa = Number(a.sort) || 0
     const sb = Number(b.sort) || 0
-    if (sa !== sb) return sa - sb
+    if (sa !== sb) return sb - sa
     return toDateValue(b) - toDateValue(a)
   })
 }

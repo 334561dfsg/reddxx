@@ -11,7 +11,7 @@ import {strategyState, strategyError, strategyBusy, refreshStrategy, strategyCom
 const route = useRoute(), router = useRouter()
 const form = ref(null), expectedVersion = ref(null), original = ref(''), loading = ref(true), found = ref(true)
 const blank = () => ({
-  name: '', market: 'crypto', style: 'balanced', risk: 2, sortOrder: strategyState.value.templates.length, symbols: [], description: '',
+  name: '', market: 'crypto', style: 'balanced', risk: 2, sortOrder: 0, symbols: [], description: '',
   sharpe: 1, winRate: 55, tradesPerDay: 2, minCapital: 500, maxCapital: 50000, minDays: 7, maxDays: 60,
   takeProfit: {min: 1, max: 100, default: 10}, stopLoss: {min: 1, max: 50, default: 5}, feeRate: 0.1, maxOpenTrades: 3, capacity: 0,
   dailyReturn: {min: -0.6, max: 1}, tradeDayRatio: 0.75, minVerificationLevel: 'none', minVipLevel: 0,
@@ -83,7 +83,7 @@ async function save() {
      <Col :xs="24" :lg="8"><FormItem name="risk" label="风险等级" required><Select v-model:value="form.risk" :options="riskOptions"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="market" label="市场" required><Select v-model:value="form.market" :options="options(marketLabels)"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="style" label="风格" required><Select v-model:value="form.style" :options="options(styleLabels)"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="sortOrder" label="排序" help="数值越小越靠前"><InputNumber v-model:value="form.sortOrder" :min="0" :precision="0"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="sortOrder" label="排序权重" help="数值越大越靠前"><InputNumber v-model:value="form.sortOrder" :min="0" :precision="0"/></FormItem></Col>
      <Col :xs="24"><FormItem name="symbols" label="交易品种" required help="输入后回车添加，例如 BTCUSDT、SPX500"><Select v-model:value="form.symbols" mode="tags" :token-separators="[',', ' ']" placeholder="添加交易品种" :open="false"/></FormItem></Col>
      <Col :xs="24"><FormItem name="description" label="策略描述"><Textarea v-model:value="form.description" :auto-size="{minRows: 2, maxRows: 5}" :maxlength="300" show-count/></FormItem></Col>
     </Row></Card>

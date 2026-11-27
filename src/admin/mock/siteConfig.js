@@ -532,11 +532,11 @@ export function normalizeSocialLinksList(raw) {
       url,
       iconUrl: typeof row.iconUrl === 'string' ? row.iconUrl.trim() : '',
       enabled: typeof row.enabled === 'boolean' ? row.enabled : true,
-      sort: Number.isFinite(sortNum) ? Math.round(sortNum) : out.length * 10
+      sort: Number.isFinite(sortNum) ? Math.round(sortNum) : (raw.length - out.length) * 10
     })
   }
   return out.sort((a, b) => {
-    if (a.sort !== b.sort) return a.sort - b.sort
+    if (a.sort !== b.sort) return b.sort - a.sort
     return a.name.localeCompare(b.name)
   })
 }
@@ -549,7 +549,7 @@ const DEFAULT_SOCIAL_LINKS_DEMO = normalizeSocialLinksList([
     iconUrl:
       'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23000%22/%3E%3Cpath fill=%22%23fff%22 d=%22M18.5 14.2 27 4h-2.1l-7.4 8.8L11.6 4H4.8l8.9 13.1L4.8 28h2.1l7.7-9.2 6.2 9.2h6.8l-9.1-13.8Zm-2.7 3.2-.9-1.3L7.7 5.6h2.9l5.8 8.5.9 1.3L24.6 26h-2.9l-5.9-8.6Z%22/%3E%3C/svg%3E',
     enabled: true,
-    sort: 0
+    sort: 40
   },
   {
     id: 'demo-social-telegram',
@@ -558,7 +558,7 @@ const DEFAULT_SOCIAL_LINKS_DEMO = normalizeSocialLinksList([
     iconUrl:
       'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%2326a5e4%22/%3E%3Cpath fill=%22%23fff%22 d=%22M25.8 7.5 21.9 25c-.3 1.2-1 1.5-2.1.9l-5.8-4.3-2.8 2.7c-.3.3-.6.6-1.2.6l.4-5.9L21.1 9.4c.5-.4-.1-.7-.7-.3L7.2 17.4l-5.7-1.8c-1.2-.4-1.2-1.2.3-1.8L24.1 5.2c1-.4 1.9.2 1.7 2.3Z%22/%3E%3C/svg%3E',
     enabled: true,
-    sort: 10
+    sort: 30
   },
   {
     id: 'demo-social-wechat',
@@ -576,7 +576,7 @@ const DEFAULT_SOCIAL_LINKS_DEMO = normalizeSocialLinksList([
     iconUrl:
       'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%235865f2%22/%3E%3Cpath fill=%22%23fff%22 d=%22M23.6 9.4A18 18 0 0 0 19.2 8l-.2.4c1.6.4 2.4 1 2.4 1s-2.1-1.1-5.4-1.1-5.4 1.1-5.4 1.1.8-.6 2.4-1l-.2-.4c-1.5.3-3 .8-4.4 1.4-2.8 4.2-3.6 8.2-3.2 12.1 1.9 1.4 3.8 2.2 5.6 2.7l1.2-1.9c-.7-.3-1.4-.6-2-1 0 0 .2.1.5.2 3.8 1.8 8 1.8 11.7 0 .3-.1.5-.2.5-.2-.6.4-1.3.8-2 1l1.2 1.9c1.8-.5 3.7-1.3 5.6-2.7.5-4.5-.8-8.4-3.2-12.1ZM12.7 19.1c-1.1 0-2-1-2-2.2s.9-2.2 2-2.2 2 1 2 2.2-.9 2.2-2 2.2Zm6.6 0c-1.1 0-2-1-2-2.2s.9-2.2 2-2.2 2 1 2 2.2-.9 2.2-2 2.2Z%22/%3E%3C/svg%3E',
     enabled: false,
-    sort: 30
+    sort: 10
   }
 ])
 
@@ -595,10 +595,10 @@ function normalizeContentSections(raw) {
       title: typeof row?.title === 'string' ? row.title.trim() : '',
       body: typeof row?.body === 'string' ? row.body.trim() : '',
       imageUrl: typeof row?.imageUrl === 'string' ? row.imageUrl.trim() : '',
-      sort: Number.isFinite(Number(row?.sort)) ? Math.round(Number(row.sort)) : index * 10
+      sort: Number.isFinite(Number(row?.sort)) ? Math.round(Number(row.sort)) : (raw.length - index) * 10
     }))
     .filter((row) => row.title || row.body || row.imageUrl)
-    .sort((a, b) => a.sort - b.sort)
+    .sort((a, b) => b.sort - a.sort)
 }
 
 function normalizeQualificationRows(raw) {
@@ -614,10 +614,10 @@ function normalizeQualificationRows(raw) {
       validFrom: typeof row?.validFrom === 'string' ? row.validFrom.trim() : '',
       validTo: typeof row?.validTo === 'string' ? row.validTo.trim() : '',
       enabled: typeof row?.enabled === 'boolean' ? row.enabled : true,
-      sort: Number.isFinite(Number(row?.sort)) ? Math.round(Number(row.sort)) : index * 10
+      sort: Number.isFinite(Number(row?.sort)) ? Math.round(Number(row.sort)) : (raw.length - index) * 10
     }))
     .filter((row) => row.name || row.fileUrl)
-    .sort((a, b) => a.sort - b.sort)
+    .sort((a, b) => b.sort - a.sort)
 }
 
 function normalizeWhitepaperRows(raw) {
@@ -631,10 +631,10 @@ function normalizeWhitepaperRows(raw) {
       fileUrl: typeof row?.fileUrl === 'string' ? row.fileUrl.trim() : '',
       updatedAt: typeof row?.updatedAt === 'string' ? row.updatedAt.trim() : '',
       enabled: typeof row?.enabled === 'boolean' ? row.enabled : true,
-      sort: Number.isFinite(Number(row?.sort)) ? Math.round(Number(row.sort)) : index * 10
+      sort: Number.isFinite(Number(row?.sort)) ? Math.round(Number(row.sort)) : (raw.length - index) * 10
     }))
     .filter((row) => row.title || row.fileUrl)
-    .sort((a, b) => a.sort - b.sort)
+    .sort((a, b) => b.sort - a.sort)
 }
 
 const DEFAULT_RICH_CONTENT_PAGES = [
@@ -649,7 +649,7 @@ const DEFAULT_RICH_CONTENT_PAGES = [
     html:
       '<h2>平台定位</h2><p>CryptoX Pro 面向全球用户提供数字资产交易、金融增值与账户安全服务。</p><h2>安全与风控</h2><p>平台持续建设账户安全、风控审核、资金出入金策略与操作审计能力，降低异常风险。</p>',
     enabled: true,
-    sort: 0
+    sort: 30
   },
   {
     id: 'page-company-qualifications',
@@ -662,7 +662,7 @@ const DEFAULT_RICH_CONTENT_PAGES = [
     html:
       '<h2>资质展示</h2><p>后台可在此维护资质说明、图片、PDF 链接或合规登记信息。当前为演示内容。</p>',
     enabled: true,
-    sort: 10
+    sort: 20
   },
   {
     id: 'page-member-register',
@@ -674,7 +674,7 @@ const DEFAULT_RICH_CONTENT_PAGES = [
     summary: '会员登记资料与平台主体信息展示。',
     html: '<h2>Member Register</h2><p>这里可维护会员登记文件、图片或 PDF 链接。当前为演示内容。</p>',
     enabled: true,
-    sort: 0
+    sort: 50
   },
   {
     id: 'page-articles-of-association',
@@ -686,7 +686,7 @@ const DEFAULT_RICH_CONTENT_PAGES = [
     summary: '公司章程文件展示。',
     html: '<h2>Articles of Association</h2><p>这里可维护公司章程正文、扫描件或下载链接。</p>',
     enabled: true,
-    sort: 10
+    sort: 40
   },
   {
     id: 'page-meeting-minutes',
@@ -698,7 +698,7 @@ const DEFAULT_RICH_CONTENT_PAGES = [
     summary: '会议纪要与授权资料展示。',
     html: '<h2>Meeting Minutes</h2><p>这里可维护会议纪要、授权证明与相关附件。</p>',
     enabled: true,
-    sort: 20
+    sort: 30
   },
   {
     id: 'page-tax-id-document',
@@ -710,7 +710,7 @@ const DEFAULT_RICH_CONTENT_PAGES = [
     summary: '税号文件与登记证明展示。',
     html: '<h2>Tax ID Document (EIN)</h2><p>这里可维护税号证明文件、图片或 PDF。</p>',
     enabled: true,
-    sort: 30
+    sort: 20
   },
   {
     id: 'page-employment-certificate',
@@ -722,7 +722,7 @@ const DEFAULT_RICH_CONTENT_PAGES = [
     summary: '雇佣证明与相关说明展示。',
     html: '<h2>Employment Certificate</h2><p>这里可维护雇佣证明、人员授权证明或相关附件。</p>',
     enabled: true,
-    sort: 40
+    sort: 10
   },
   {
     id: 'page-whitepaper',
@@ -735,7 +735,7 @@ const DEFAULT_RICH_CONTENT_PAGES = [
     html:
       '<h2>CryptoX Pro 白皮书</h2><p>后台可上传或粘贴白皮书下载链接，也可以直接维护白皮书摘要、版本记录与多语言说明。</p>',
     enabled: true,
-    sort: 20
+    sort: 10
   }
 ]
 
@@ -814,7 +814,7 @@ function normalizeRichContentPages(raw, defaultLocale = 'zh-CN') {
       html: display.html,
       locales,
       enabled: typeof row.enabled === 'boolean' ? row.enabled : true,
-      sort: Number.isFinite(Number(row.sort)) ? Math.round(Number(row.sort)) : index * 10
+      sort: Number.isFinite(Number(row.sort)) ? Math.round(Number(row.sort)) : (source.length - index) * 10
     })
   })
   const validIds = new Set(stage.map((row) => row.id))
@@ -824,7 +824,7 @@ function normalizeRichContentPages(raw, defaultLocale = 'zh-CN') {
   }))
   return out.sort((a, b) => {
     if (a.parentId !== b.parentId) return a.parentId.localeCompare(b.parentId)
-    if (a.sort !== b.sort) return a.sort - b.sort
+    if (a.sort !== b.sort) return b.sort - a.sort
     return a.slug.localeCompare(b.slug)
   })
 }
@@ -911,7 +911,7 @@ const DEFAULT_SITE_ANNOUNCEMENTS = FRONT_LOCALE_CATALOG.flatMap((localeMeta, loc
       ...copy.maintenance,
       enabled: true,
       publishedAt: '2026-08-24 10:00',
-      sort: localeIndex
+      sort: 200 - localeIndex
     },
     {
       id: `ann-fee-demo-${localeMeta.code}`,
@@ -919,7 +919,7 @@ const DEFAULT_SITE_ANNOUNCEMENTS = FRONT_LOCALE_CATALOG.flatMap((localeMeta, loc
       ...copy.fee,
       enabled: true,
       publishedAt: '2026-08-20 18:30',
-      sort: 100 + localeIndex
+      sort: 100 - localeIndex
     }
   ]
 })
@@ -1005,7 +1005,7 @@ function normalizeAnnouncementRow(row, index, defaultLocale, forcedLocale, force
       typeof row.publishedAt === 'string' && row.publishedAt.trim()
         ? row.publishedAt.trim()
         : '2026-08-24 00:00',
-    sort: Number.isFinite(Number(row.sort)) ? Math.round(Number(row.sort)) : index * 10
+    sort: Number.isFinite(Number(row.sort)) ? Math.round(Number(row.sort)) : 0
   }
 }
 
@@ -1052,7 +1052,7 @@ export function normalizeSiteAnnouncements(raw, defaultLocale = 'zh-CN') {
     }
   })
   return rows.sort((a, b) => {
-    if (a.sort !== b.sort) return a.sort - b.sort
+    if (a.sort !== b.sort) return b.sort - a.sort
     return String(b.publishedAt).localeCompare(String(a.publishedAt))
   })
 }
@@ -1069,7 +1069,7 @@ export function normalizeContentPages(raw, defaultLocale = 'zh-CN') {
           title: '平台定位',
           body: '我们围绕现货、合约、流动性、信用借贷等场景，提供一体化的交易与资产管理体验。',
           imageUrl: '',
-          sort: 0
+          sort: 20
         },
         {
           id: 'about-security',
@@ -1187,12 +1187,12 @@ export const DEFAULT_SITE_CONFIG = {
     }
   },
   /**
-   * 区号在下拉中的排序权重，数字越小越靠前；未配置的区号按内置预设顺序默认 0、10、20…
+   * 区号在下拉中的排序权重，数字越大越靠前；未配置的区号按内置预设顺序从大到小给默认值
    * @type {Record<string, number>}
    */
   dialSortOrder: {
-    '+86': 0,
-    '+84': 10
+    '+86': 1000,
+    '+84': 990
   },
   /** 启用后，以下多语言配置才会应用到前台；关闭则固定简体中文并隐藏语言切换 */
   languageSettingsEnabled: true,
@@ -1205,9 +1205,9 @@ export const DEFAULT_SITE_CONFIG = {
     ...DEFAULT_I18N_BLOCK,
     enabledLocales: ['zh-CN', 'en', 'vi'],
     localeSortOrder: {
-      'zh-CN': 0,
-      en: 10,
-      vi: 20
+      'zh-CN': 1000,
+      en: 990,
+      vi: 980
     },
     localeMetaOverrides: {
       vi: {
@@ -1244,12 +1244,41 @@ export const DEFAULT_SITE_CONFIG = {
   frontNews: normalizeFrontNews(DEFAULT_FRONT_NEWS, DEFAULT_I18N_BLOCK.defaultLocale)
 }
 
+/** Sort values are weights: larger appears first (user decision, 2026-11-27). Stored configs saved before carry no marker. */
+const SORT_WEIGHT_MARKER = 'sortWeightOrder'
+
+/** Mirror every sort value of a legacy (smaller-first) config so the saved order is kept under larger-first sorting. */
+export function migrateLegacySortWeights(node) {
+  if (Array.isArray(node)) {
+    const values = node.map((row) => Number(row?.sort)).filter(Number.isFinite)
+    if (values.length) {
+      const top = Math.max(...values) + Math.min(...values)
+      for (const row of node) if (row && typeof row === 'object' && Number.isFinite(Number(row.sort))) row.sort = top - Number(row.sort)
+    }
+    node.forEach(migrateLegacySortWeights)
+    return
+  }
+  if (!node || typeof node !== 'object') return
+  for (const [key, value] of Object.entries(node)) {
+    if ((key === 'dialSortOrder' || key === 'localeSortOrder') && value && typeof value === 'object' && !Array.isArray(value)) {
+      const numbers = Object.values(value).map(Number).filter(Number.isFinite)
+      if (!numbers.length) continue
+      const top = Math.max(...numbers) + Math.min(...numbers)
+      for (const code of Object.keys(value)) if (Number.isFinite(Number(value[code]))) value[code] = top - Number(value[code])
+      continue
+    }
+    migrateLegacySortWeights(value)
+  }
+}
+
 function readStored() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    return typeof parsed === 'object' && parsed ? parsed : null
+    if (!parsed || typeof parsed !== 'object') return null
+    if (parsed[SORT_WEIGHT_MARKER] !== 'desc') migrateLegacySortWeights(parsed)
+    return parsed
   } catch {
     return null
   }
@@ -1260,7 +1289,7 @@ function normalizeDialSortOrder(raw, customDialCodes = []) {
   const out = {}
   const catalog = dialCatalog(customDialCodes)
   catalog.forEach((p, i) => {
-    out[p.dial] = i * 10
+    out[p.dial] = (catalog.length - i) * 10
   })
   if (raw && typeof raw === 'object') {
     for (const dial of knownDialSet(customDialCodes)) {
@@ -1279,9 +1308,9 @@ function normalizeAllowedDialCodes(raw, dialSortOrder, customDialCodes = []) {
   const codes = d.length ? d : ['+86']
   const order = dialSortOrder && typeof dialSortOrder === 'object' ? dialSortOrder : normalizeDialSortOrder(null, customDialCodes)
   return [...codes].sort((a, b) => {
-    const da = order[a] ?? 999999
-    const db = order[b] ?? 999999
-    if (da !== db) return da - db
+    const da = order[a] ?? -Infinity
+    const db = order[b] ?? -Infinity
+    if (da !== db) return db - da
     const catalog = dialCatalog(customDialCodes)
     return catalog.findIndex((x) => x.dial === a) - catalog.findIndex((x) => x.dial === b)
   })
@@ -1292,7 +1321,7 @@ function normalizeLocaleSortOrder(raw, customLocales = []) {
   const out = {}
   const catalog = localeCatalog(customLocales)
   catalog.forEach((l, i) => {
-    out[l.code] = i * 10
+    out[l.code] = (catalog.length - i) * 10
   })
   if (raw && typeof raw === 'object') {
     for (const code of knownLocaleSet(customLocales)) {
@@ -1317,9 +1346,9 @@ function normalizeI18n(raw, customLocales = []) {
       translationBase: null,
       translationFiles: {},
       enabledLocales: [...d.enabledLocales].sort((a, b) => {
-        const da = localeSortOrder[a] ?? 999999
-        const db = localeSortOrder[b] ?? 999999
-        if (da !== db) return da - db
+        const da = localeSortOrder[a] ?? -Infinity
+        const db = localeSortOrder[b] ?? -Infinity
+        if (da !== db) return db - da
         return catalog.findIndex((x) => x.code === a) - catalog.findIndex((x) => x.code === b)
       })
     }
@@ -1336,9 +1365,9 @@ function normalizeI18n(raw, customLocales = []) {
 
   const localeSortOrder = normalizeLocaleSortOrder(base.localeSortOrder, customLocales)
   enabled = [...enabled].sort((a, b) => {
-    const da = localeSortOrder[a] ?? 999999
-    const db = localeSortOrder[b] ?? 999999
-    if (da !== db) return da - db
+    const da = localeSortOrder[a] ?? -Infinity
+    const db = localeSortOrder[b] ?? -Infinity
+    if (da !== db) return db - da
     return catalog.findIndex((x) => x.code === a) - catalog.findIndex((x) => x.code === b)
   })
 
@@ -1544,7 +1573,7 @@ export const siteConfigApi = {
           frontNews: frontNewsPayload
         })
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(memory))
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...memory, [SORT_WEIGHT_MARKER]: 'desc' }))
         } catch {
           /* ignore quota */
         }

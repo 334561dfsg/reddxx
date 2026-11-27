@@ -22,7 +22,7 @@ const socialLinks = computed(() =>
     .sort((a, b) => {
       const sa = Number(a.sort) || 0
       const sb = Number(b.sort) || 0
-      if (sa !== sb) return sa - sb
+      if (sa !== sb) return sb - sa
       return a.name.localeCompare(b.name)
     })
 )
