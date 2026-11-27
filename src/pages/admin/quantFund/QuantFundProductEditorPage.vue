@@ -3,13 +3,13 @@
 // right-side return, unsaved-change guard. Switching 活期/定期 keeps the other type's draft values.
 import {computed, onBeforeUnmount, ref, watch} from 'vue'
 import {onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter} from 'vue-router'
-import {message, Button, Card, Col, Empty, Form, FormItem, Input, InputNumber, RadioButton, RadioGroup, Row, Select, Space, Spin, Tag, Textarea, TypographyText} from 'ant-design-vue'
+import {message, Button, Card, Col, Empty, Form, FormItem, Input, InputNumber, RadioButton, RadioGroup, Row, Select, Space, Spin, Textarea, TypographyText} from 'ant-design-vue'
 import {ArrowLeftOutlined} from '@ant-design/icons-vue'
 import PageShell from '../earn/EarnPageShell.vue'
 import AdminModal from '../earn/EarnAdminModal.vue'
 import {verificationOptions, vipOptions} from '../../../shared/lending/eligibility.js'
 import {ASSETS} from '../../../shared/quantFund/domain.js'
-import {quantFundState, quantFundError, quantFundBusy, refreshQuantFund, quantFundCommand, errorText, riskLabels, riskColors} from '../../../shared/quantFund/client.js'
+import {quantFundState, quantFundError, quantFundBusy, refreshQuantFund, quantFundCommand, errorText, riskLabels} from '../../../shared/quantFund/client.js'
 
 const route = useRoute(), router = useRouter()
 const form = ref(null), expectedVersion = ref(null), original = ref(''), loading = ref(true), found = ref(true)
@@ -102,13 +102,6 @@ async function save() {
      <Col :xs="24" :lg="8"><FormItem name="riskLevel" label="风险等级" required><Select v-model:value="form.riskLevel" :options="riskOptions"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="sortOrder" label="排序权重" help="数值越大越靠前"><InputNumber v-model:value="form.sortOrder" :min="0" :precision="0"/></FormItem></Col>
      <Col :xs="24"><FormItem name="tags" label="策略标签" help="输入后回车添加，例如 AI Strategy、US Equity"><Select v-model:value="form.tags" mode="tags" :token-separators="[',']" placeholder="添加策略标签" :open="false"/></FormItem></Col>
-     <Col :xs="24"><FormItem label="前台标签预览" help="颜色由类型决定：风险等级按等级着色，活期产品自动带高亮标签，策略标签统一灰色">
-      <Space :size="[6, 6]" wrap class="qf-tag-preview" aria-live="polite">
-       <Tag :color="riskColors[form.riskLevel]">{{ riskLabels[form.riskLevel] }}</Tag>
-       <template v-if="form.kind === 'flexible'"><Tag color="cyan">活期</Tag><Tag color="cyan">随时赎回</Tag></template>
-       <Tag v-for="tag in form.tags" :key="tag">{{ tag }}</Tag>
-      </Space>
-     </FormItem></Col>
      <Col :xs="24"><FormItem name="description" label="产品描述"><Textarea v-model:value="form.description" :auto-size="{minRows: 2, maxRows: 5}" :maxlength="300" show-count/></FormItem></Col>
     </Row></Card>
     <Card title="申购条件" :bordered="false"><Row :gutter="24" class="qf-editor-fields">

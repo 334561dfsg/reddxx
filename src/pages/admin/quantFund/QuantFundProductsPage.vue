@@ -10,7 +10,7 @@ import PageShell from '../earn/EarnPageShell.vue'
 import SearchForm from '../earn/EarnSearchForm.vue'
 import AdminTable from '../earn/EarnAdminTable.vue'
 import AdminModal from '../earn/EarnAdminModal.vue'
-import {useQuantFundFeed, quantFundCommand, errorText, productStatusLabels, riskLabels, termLabel} from '../../../shared/quantFund/client.js'
+import {useQuantFundFeed, quantFundCommand, errorText, productStatusLabels, riskLabels, riskColors, termLabel} from '../../../shared/quantFund/client.js'
 import {ASSETS, FUNDED, displayRate, raisedAmount} from '../../../shared/quantFund/domain.js'
 
 const whole = value => Number(value || 0).toLocaleString('zh-CN', {maximumFractionDigits: 2})
@@ -78,7 +78,15 @@ async function toggleStatus() {
   <AdminTable title="量化基金产品" v-model:page="page" :rows="rows" :columns="columns" row-key="productId" :loading="!loaded && !error" desktop-only>
    <template #toolbar><Space :size="8"><Button @click="refresh">刷新</Button><Button type="primary" @click="edit()"><template #icon><PlusOutlined/></template>新增产品</Button></Space></template>
    <template #cell="{column, record}">
-    <Space v-if="column.key === 'name'" direction="vertical" :size="0"><TypographyText strong>{{ record.name }}</TypographyText><TypographyText type="secondary">{{ record.code }} · {{ record.asset }} · v{{ record.version }} · {{ riskLabels[record.riskLevel] }}</TypographyText></Space>
+    <Space v-if="column.key === 'name'" direction="vertical" :size="4">
+     <span><TypographyText strong>{{ record.name }}</TypographyText><br/><TypographyText type="secondary">{{ record.code }} · {{ record.asset }} · v{{ record.version }}</TypographyText></span>
+     <!-- The same tags the public card shows: risk by level, automatic 活期/随时赎回 for flexible products, grey strategy tags. -->
+     <Space :size="[4, 4]" wrap class="qf-list-tags">
+      <Tag :color="riskColors[record.riskLevel]">{{ riskLabels[record.riskLevel] }}</Tag>
+      <template v-if="record.termDays === null"><Tag color="cyan">活期</Tag><Tag color="cyan">随时赎回</Tag></template>
+      <Tag v-for="tag in record.tags" :key="tag">{{ tag }}</Tag>
+     </Space>
+    </Space>
     <template v-else-if="column.key === 'term'">{{ termLabel(record.termDays) }}</template>
     <Space v-else-if="column.key === 'rate'" direction="vertical" :size="0" align="end"><span>{{ record.dailyRate.min }}% ~ {{ record.dailyRate.max }}%</span><TypographyText type="secondary">前台展示 {{ displayRate(record) }}%</TypographyText></Space>
     <template v-else-if="column.key === 'amount'">{{ whole(record.minAmount) }} ~ {{ whole(record.maxAmount) }}</template>
@@ -97,4 +105,5 @@ async function toggleStatus() {
 
 <style scoped>
 .qf-row-actions :deep(.ant-btn-link){padding-inline:4px}
+.qf-list-tags :deep(.ant-tag){margin-inline-end:0}
 </style>
