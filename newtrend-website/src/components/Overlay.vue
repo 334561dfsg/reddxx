@@ -19,6 +19,7 @@ import EarnRedemption from './earn/EarnRedemption.vue'
 import EarnHoldingDetails from './earn/EarnHoldingDetails.vue'
 import MenuDrawer from './overlay/MenuDrawer.vue'
 import MarketPicker from './overlay/MarketPicker.vue'
+import OptionSheet from './overlay/OptionSheet.vue'
 import {openClearCache} from '../utils/clearCache.js'
 import LanguageList from './overlay/LanguageList.vue'
 import SupportChannels from './overlay/SupportChannels.vue'
@@ -44,6 +45,8 @@ const supportView=shallowRef('channels')
 const isDrawer=computed(()=>current.value?.type==='menu')
 // Mobile trading pair picker: a left drawer; the choice is applied after the close animation.
 const isMarketPicker=computed(()=>current.value?.type==='market-picker')
+// Single-choice bottom sheet (e.g. the mobile trading product switch): apply the choice after the close animation.
+function pickOption(value){const onSelect=current.value?.data.onSelect;close(()=>onSelect?.(value))}
 function pickMarket(id){const onSelect=current.value?.data.onSelect;close(()=>onSelect?.(id))}
 // Generic amount form (overlay/AmountForm): only donate (charity) opens it.
 const formType=computed(()=>current.value?.type==='donate')
@@ -82,8 +85,9 @@ function keydown(e){if(e.key!=='Tab')return;const els=[...dialog.value.querySele
 watch(()=>route.fullPath,()=>{if(current.value)close()})
 onUnmounted(()=>{dialog.value?.close();cleanup()})
 </script>
-<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'market-drawer':isMarketPicker,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem','transfer','language','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current?.type),'language-sheet':current?.type==='language','transfer-dialog':['transfer','language','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current?.type)}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button></header><div class="overlay-body">
-<MarketPicker v-if="isMarketPicker" :current="current.data.current" @select="pickMarket"/>
+<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'market-drawer':isMarketPicker,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem','transfer','language','option-sheet','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current?.type),'language-sheet':['language','option-sheet'].includes(current?.type),'transfer-dialog':['transfer','language','option-sheet','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current?.type)}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button></header><div class="overlay-body">
+<OptionSheet v-if="current.type==='option-sheet'" :options="current.data.options" :current="current.data.current" @select="pickOption"/>
+<MarketPicker v-else-if="isMarketPicker" :current="current.data.current" @select="pickMarket"/>
 <MenuDrawer v-else-if="isDrawer" @close="close" @navigate="navigate" @switch-mode="switchFromMenu" @open-language="close(openLanguage)" @clear-cache="close(openClearCache)"/>
 
 <LanguageList v-else-if="current.type==='language'" @select="changeLanguage"/>
@@ -115,7 +119,7 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 <AmountForm v-else-if="formType" :kind="current.type" :data="current.data" @state="onFlowState"/>
 <template v-else><p class="muted">{{ $t(current.data.description||"overlay.ui.localInterfaceDemoNotConnectedToTheOriginalAccount") }}</p></template>
 <FeedbackToast v-if="error" id="action-error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
-</div><footer v-if="!isDrawer&&!isMarketPicker&&!isSupport&&!['quant-fund-order','transfer','language','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current.type)" class="overlay-footer"><button v-if="current.type!=='strategy-detail'" class="secondary-button" data-cancel :aria-disabled="busy||undefined" @click="!busy&&close()">{{ $t(cancelLabel) }}</button><button v-if="current.type==='strategy-detail'" class="strategy-cta" :disabled="closing" @click="openStrategySubscription">{{ $t('aiQuant.spotlight.subscribeNow') }}</button><button v-if="primary" :class="[primary.danger?'danger-button':'primary-button',{'is-busy':busy}]" :form="primary.form" type="submit" :disabled="primary.disabled&&!busy" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(primary.label) }}</button></footer></template></dialog></template>
+</div><footer v-if="!isDrawer&&!isMarketPicker&&!isSupport&&!['quant-fund-order','transfer','language','option-sheet','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current.type)" class="overlay-footer"><button v-if="current.type!=='strategy-detail'" class="secondary-button" data-cancel :aria-disabled="busy||undefined" @click="!busy&&close()">{{ $t(cancelLabel) }}</button><button v-if="current.type==='strategy-detail'" class="strategy-cta" :disabled="closing" @click="openStrategySubscription">{{ $t('aiQuant.spotlight.subscribeNow') }}</button><button v-if="primary" :class="[primary.danger?'danger-button':'primary-button',{'is-busy':busy}]" :form="primary.form" type="submit" :disabled="primary.disabled&&!busy" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(primary.label) }}</button></footer></template></dialog></template>
 <style scoped>
 .c2c-agreement-copy{white-space:pre-line;line-height:1.7;color:#b2b5bb;margin-top:16px}
 

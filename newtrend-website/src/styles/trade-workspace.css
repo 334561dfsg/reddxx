@@ -229,8 +229,9 @@
  .product-terminal.compact .account-badge.demo{background:color-mix(in srgb,#f5a524 16%,transparent);color:#f5a524}
  .product-terminal.compact .account-badge:focus-visible{outline:none;text-decoration:underline}
  .product-terminal.compact .instrument-tools{order:2;margin-left:auto;display:flex;align-items:center;gap:4px;flex:none}
- .product-terminal.compact .instrument-tools .record-filter{min-height:34px;padding:0 8px 0 10px;border-radius:999px;background:var(--terminal-input);font-size:13px;line-height:18px;color:#fff;gap:4px}
- .product-terminal.compact .instrument-tools .filter-caption{display:none}
+ .product-terminal.compact .instrument-tools .product-switch{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;min-height:34px;padding:0 8px 0 10px;border-radius:999px;background:var(--terminal-input);font-size:13px;line-height:18px;color:#fff;gap:4px}
+ .product-terminal.compact .product-switch svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6}
+ .product-terminal.compact .product-switch:focus-visible{outline:none;text-decoration:underline}
  .product-terminal.compact .chart-toggle{display:grid;place-items:center;width:36px;height:40px;border-radius:var(--nt-radius-control);color:var(--terminal-muted)}
  .product-terminal.compact .chart-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
  .product-terminal.compact .instrument-price{order:3;flex:1 0 calc(100% - 56px);min-width:0;display:flex;align-items:baseline;gap:8px;min-height:28px;font-size:22px;line-height:28px}
