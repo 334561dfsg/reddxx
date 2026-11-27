@@ -3,6 +3,7 @@ import {computed,shallowRef} from 'vue'
 import {message} from 'ant-design-vue'
 import LineIcon from '../ui/LineIcon.vue'
 import {navGroups,path} from '../../data'
+import {availableInMode} from '../../utils/demoAccess.js'
 import {session,logout} from '../../session'
 import {account,DEMO_UID} from '../../account'
 import {languages,locale,t} from '../../i18n'
@@ -49,7 +50,7 @@ function signout(){logout();emit('close')}
   <template v-for="g in navGroups" :key="g.label">
    <button type="button" class="drawer-row" :aria-expanded="expanded===g.label" :aria-controls="'drawer-'+g.label" @click="toggle(g.label)"><LineIcon :name="groupIcons[g.label]||'chevron-right'"/><span>{{ $t(g.label) }}</span><LineIcon name="chevron-down" class="drawer-caret"/></button>
    <div v-if="expanded===g.label" :id="'drawer-'+g.label" class="drawer-sub">
-    <RouterLink v-for="item in g.items" :key="item[0]" :to="path(item[2])" @click="$emit('close')">{{ $t(item[0]) }}</RouterLink>
+    <RouterLink v-for="item in g.items.filter(i=>availableInMode(i[2]))" :key="item[0]" :to="path(item[2])" @click="$emit('close')">{{ $t(item[0]) }}</RouterLink>
    </div>
   </template>
   <RouterLink v-if="session.loggedIn" class="drawer-row" :to="path('/assets')" @click="$emit('close')"><LineIcon name="wallet"/><span>{{ $t('assets.pageTitle') }}</span></RouterLink>
