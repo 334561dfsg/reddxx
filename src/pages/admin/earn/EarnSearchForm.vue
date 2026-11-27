@@ -1,9 +1,10 @@
 <script setup>
 import { reactive, watch } from 'vue'
-import { Button, Card, Col, Form, FormItem, Input, Row, Select, Space } from 'ant-design-vue'
+import { Button, Card, Col, Form, FormItem, Input, RangePicker, Row, Select, Space } from 'ant-design-vue'
 
 // Vue adapter for the ProTable query-card pattern; keeps draft input separate
 // from applied list filters and uses the application's Ant Design theme.
+// Field kinds: text (default), `options` → Select, `range: true` → date RangePicker with 'YYYY-MM-DD' strings (null when empty).
 const props = defineProps({
   model: { type: Object, required: true },
   fields: { type: Array, required: true },
@@ -13,7 +14,7 @@ const emit = defineEmits(['search', 'reset'])
 const draft = reactive({ ...props.model })
 watch(() => props.model, value => Object.assign(draft, value))
 function reset() {
-  for (const field of props.fields) draft[field.key] = field.options ? 'all' : ''
+  for (const field of props.fields) draft[field.key] = field.options ? 'all' : field.range ? null : ''
   emit('reset')
 }
 </script>
@@ -24,7 +25,8 @@ function reset() {
       <Row :gutter="24">
         <Col v-for="field in fields" :key="field.key" :xs="24" :md="12" :xl="8">
           <FormItem :name="field.key" :label="field.label">
-            <Select v-if="field.options" v-model:value="draft[field.key]" :options="field.options" :aria-label="field.label" />
+            <RangePicker v-if="field.range" v-model:value="draft[field.key]" value-format="YYYY-MM-DD" :placeholder="['开始日期', '结束日期']" :aria-label="field.label" allow-clear class="earn-query-range" />
+            <Select v-else-if="field.options" v-model:value="draft[field.key]" :options="field.options" :aria-label="field.label" />
             <Input v-else v-model:value="draft[field.key]" :placeholder="'请输入'+field.label" :aria-label="field.label" allow-clear />
           </FormItem>
         </Col>
@@ -42,4 +44,5 @@ function reset() {
 </template>
 <style scoped>
 .earn-query-actions{margin-left:auto;text-align:right}
+.earn-query-range{width:100%}
 </style>

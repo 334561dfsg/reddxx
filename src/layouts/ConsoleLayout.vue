@@ -4,7 +4,12 @@ import { useRoute } from 'vue-router'
 import AppSidebar from '../admin/components/AppSidebar.vue'
 import AppHeader from '../admin/components/AppHeader.vue'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
+import dayjs from 'dayjs'
+import 'dayjs/locale/zh-cn'
 import CrossPlatformFloatNav from '../components/CrossPlatformFloatNav.vue'
+
+// Date pickers format through dayjs; match the zh_CN ConfigProvider locale (month/weekday names).
+dayjs.locale('zh-cn')
 
 const route = useRoute()
 const mobileMenuOpen = ref(false)

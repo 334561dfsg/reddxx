@@ -13,6 +13,7 @@ import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vu
 import {getUserById} from '../../../admin/mock/user.js'
 import {USER_KYC_STATUS, USER_ROLE, USER_STATUS} from '../../../admin/constants/user.js'
 import {useStrategyFeed, strategyCommand, errorText, statusLabels, statusColors, endReasonLabels, actionLabels} from '../../../shared/strategy/client.js'
+import {money} from '../../../shared/strategy/domain.js'
 import {amount, signed, dateTime, percent} from './strategyFormat.js'
 
 // One page for the strategy ledgers, chosen by route: user strategies, daily P&L, settlements, operation log.
@@ -20,52 +21,67 @@ const route = useRoute(), {state, error, busy, loaded, refresh} = useStrategyFee
 const mode = computed(() => route.meta.strategySection)
 const titles = {subscriptions: '用户策略', 'daily-pnl': '收益记录', settlements: '结算记录', logs: '操作日志'}
 // One input per field (user decision, 2026-11-27): no combined keyword search.
-const blankFilters = () => ({subscriptionId: '', userId: '', template: '', refId: '', operator: '', status: 'all', reason: 'all', action: 'all'})
+const blankFilters = () => ({subscriptionId: '', userId: '', template: '', refId: '', operator: '', status: 'all', reason: 'all', action: 'all', period: null})
 const filters = ref(blankFilters())
 const page = ref(1)
 watch(mode, () => { filters.value = blankFilters(); page.value = 1; closeDialog() })
 
 const fields = computed(() => ({
-  subscriptions: [orderField, userField, {key: 'template', label: '策略模板'}, {key: 'status', label: '状态', options: [{value: 'all', label: '全部状态'}, ...Object.entries(statusLabels).map(([value, label]) => ({value, label}))]}],
-  'daily-pnl': [orderField, userField],
-  settlements: [orderField, userField, {key: 'reason', label: '结束原因', options: [{value: 'all', label: '全部原因'}, ...Object.entries(endReasonLabels).map(([value, label]) => ({value, label}))]}],
+  subscriptions: [orderField, userField, {key: 'template', label: '策略模板'}, {key: 'period', label: '提交时间', range: true}, {key: 'status', label: '状态', options: [{value: 'all', label: '全部状态'}, ...Object.entries(statusLabels).map(([value, label]) => ({value, label}))]}],
+  'daily-pnl': [orderField, userField, {key: 'period', label: '日期', range: true}],
+  settlements: [orderField, userField, {key: 'period', label: '结算时间', range: true}, {key: 'reason', label: '结束原因', options: [{value: 'all', label: '全部原因'}, ...Object.entries(endReasonLabels).map(([value, label]) => ({value, label}))]}],
   logs: [{key: 'refId', label: '关联记录'}, {key: 'action', label: '操作', options: [{value: 'all', label: '全部操作'}, ...Object.entries(actionLabels).map(([value, label]) => ({value, label}))]}, {key: 'operator', label: '操作人'}],
 })[mode.value])
 const orderField = {key: 'subscriptionId', label: '订单号'}, userField = {key: 'userId', label: '用户 ID'}
 // Each filled text field must match its own column (case-insensitive contains).
 const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
 const match = (row, f) => has(row.subscriptionId, f.subscriptionId) && has(row.userId, f.userId)
+// Date range (inclusive, by the calendar day the table shows): timestamps use the browser's local day, P&L rows their own date.
+const pad = n => String(n).padStart(2, '0')
+const localDay = ts => { const d = new Date(ts); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` }
+const inPeriod = (day, period) => !period?.length || (day >= period[0] && day <= period[1])
 const subById = computed(() => Object.fromEntries(state.value.subscriptions.map(s => [s.subscriptionId, s])))
 const rows = computed(() => {
   const f = filters.value, s = state.value
-  if (mode.value === 'subscriptions') return s.subscriptions.filter(r => match(r, f) && has(r.templateSnapshot.name, f.template) && (f.status === 'all' || r.status === f.status))
-  if (mode.value === 'daily-pnl') return s.dailyPnl.filter(r => match(r, f))
-  if (mode.value === 'settlements') return s.settlements.filter(r => match(r, f) && (f.reason === 'all' || r.reason === f.reason))
+  if (mode.value === 'subscriptions') return s.subscriptions.filter(r => match(r, f) && inPeriod(localDay(r.createdAt), f.period) && has(r.templateSnapshot.name, f.template) && (f.status === 'all' || r.status === f.status))
+  if (mode.value === 'daily-pnl') return s.dailyPnl.filter(r => match(r, f) && inPeriod(r.date, f.period))
+  if (mode.value === 'settlements') return s.settlements.filter(r => match(r, f) && inPeriod(localDay(r.settledAt), f.period) && (f.reason === 'all' || r.reason === f.reason))
   return s.logs.filter(r => has(r.refId, f.refId) && has(r.operator, f.operator) && (f.action === 'all' || r.action === f.action))
 })
 watch(() => rows.value.length, total => { page.value = Math.min(page.value, Math.max(1, Math.ceil(total / 10))) })
 const rowKey = r => r.subscriptionId && !r.settlementId && !r.date ? r.subscriptionId : r.settlementId || r.id
+// One fact per column, single-line cells (no stacked order/template or name/id pairs).
+const col = (key, title, width, extra = {}) => ({key, title, width, ...extra})
+const right = {align: 'right'}
+const orderCols = [col('subscriptionId', '订单号', 200), col('templateName', '策略模板', 210), col('userId', '用户 ID', 120)]
 const columns = computed(() => ({
   subscriptions: [
-    {key: 'subscriptionId', title: '订单 / 模板', width: 250, fixed: 'left'}, {key: 'user', title: '用户', width: 160},
-    {key: 'capital', title: '本金（USDT）', width: 130, align: 'right'}, {key: 'pnl', title: '累计盈亏（USDT）', width: 170, align: 'right'},
-    {key: 'terms', title: '周期 / 止盈 / 止损', width: 150}, {key: 'status', title: '状态', width: 150},
-    {key: 'createdAt', title: '提交时间', width: 170}, {key: 'reviewer', title: '审核人', width: 140}, {key: 'actions', title: '操作', width: 200, fixed: 'right'},
+    {...orderCols[0], fixed: 'left'}, ...orderCols.slice(1),
+    col('capital', '本金（USDT）', 130, right), col('pnl', '累计盈亏（USDT）', 150, right), col('pnlRate', '收益率', 100, right),
+    col('days', '运行周期', 100, right), col('status', '状态', 100), col('createdAt', '提交时间', 170), col('reviewer', '审核人', 140),
+    col('actions', '操作', 220, {fixed: 'right'}),
   ],
   'daily-pnl': [
-    {key: 'date', title: '日期', width: 120, fixed: 'left'}, {key: 'subscriptionId', title: '订单 / 模板', width: 250}, {key: 'userId', title: '用户', width: 120},
-    {key: 'tradeCount', title: '成交笔数', width: 100, align: 'right'}, {key: 'pnl', title: '盈亏（USDT）', width: 140, align: 'right'},
+    col('date', '日期', 120, {fixed: 'left'}), ...orderCols, col('capital', '本金（USDT）', 130, right), col('tradeCount', '成交笔数', 100, right),
+    col('pnl', '当日盈亏（USDT）', 150, right), col('pnlRate', '当日收益率', 110, right), col('cumulative', '累计盈亏（USDT）', 150, right),
   ],
   settlements: [
-    {key: 'settledAt', title: '结算时间', width: 170, fixed: 'left'}, {key: 'subscriptionId', title: '订单 / 模板', width: 250}, {key: 'user', title: '用户', width: 160},
-    {key: 'reason', title: '结束原因', width: 130}, {key: 'capital', title: '本金（USDT）', width: 130, align: 'right'}, {key: 'pnl', title: '盈亏（USDT）', width: 140, align: 'right'},
-    {key: 'returned', title: '返还（USDT）', width: 140, align: 'right'}, {key: 'operator', title: '处理人', width: 150},
+    col('settledAt', '结算时间', 170, {fixed: 'left'}), ...orderCols, col('reason', '结束原因', 120),
+    col('capital', '本金（USDT）', 130, right), col('pnl', '盈亏（USDT）', 140, right), col('returned', '返还（USDT）', 140, right), col('operator', '处理人', 150),
   ],
   logs: [
-    {key: 'createdAt', title: '时间', width: 170, fixed: 'left'}, {key: 'action', title: '操作', width: 140}, {key: 'refId', title: '关联记录', width: 230},
-    {key: 'summary', title: '说明', width: 280}, {key: 'operator', title: '操作人', width: 150},
+    col('createdAt', '时间', 170, {fixed: 'left'}), col('action', '操作', 130), col('targetLabel', '对象', 210),
+    col('refId', '关联记录', 220), col('summary', '说明', 420), col('operator', '操作人', 150),
   ],
 })[mode.value])
+// The subscription a ledger row belongs to (template, terms, user name live there).
+const subOf = row => (mode.value === 'subscriptions' ? row : subById.value[row.subscriptionId]) || {}
+// Cumulative P&L of each daily row: the order's running total up to and including that date.
+const cumulative = computed(() => {
+  const total = {}, out = {}
+  for (const r of [...state.value.dailyPnl].sort((a, b) => a.date.localeCompare(b.date))) out[r.id] = total[r.subscriptionId] = money((total[r.subscriptionId] || 0) + r.pnl)
+  return out
+})
 function search(values) { filters.value = {...blankFilters(), ...values}; page.value = 1 }
 function reset() { filters.value = blankFilters(); page.value = 1 }
 const tone = value => (value > 0 ? 'success' : value < 0 ? 'danger' : undefined)
@@ -113,12 +129,15 @@ async function run(action, args, success) {
   <AdminTable :title="titles[mode]" v-model:page="page" :rows="rows" :columns="columns" :row-key="rowKey" :loading="!loaded && !error" desktop-only>
    <template #toolbar><Button @click="refresh">刷新</Button></template>
    <template #cell="{column, record}">
-    <Space v-if="column.key === 'subscriptionId'" direction="vertical" :size="0"><TypographyText copyable>{{ record.subscriptionId }}</TypographyText><TypographyText type="secondary">{{ record.templateSnapshot?.name || record.templateName || subById[record.subscriptionId]?.templateSnapshot.name }}</TypographyText></Space>
-    <Space v-else-if="column.key === 'user'" direction="vertical" :size="0"><span>{{ record.userName }}</span><Button type="link" class="strategy-user-link" :aria-label="'查看用户 ' + record.userId" @click.stop="showUser(record, $event)">{{ record.userId }}</Button></Space>
+    <TypographyText v-if="['subscriptionId', 'refId'].includes(column.key) && record[column.key]" copyable>{{ record[column.key] }}</TypographyText>
+    <template v-else-if="column.key === 'templateName'">{{ subOf(record).templateSnapshot?.name || record.templateName || '—' }}</template>
     <Button v-else-if="column.key === 'userId'" type="link" class="strategy-user-link" :aria-label="'查看用户 ' + record.userId" @click.stop="showUser(record, $event)">{{ record.userId }}</Button>
-    <template v-else-if="['capital', 'returned'].includes(column.key)">{{ amount(record[column.key]) }}</template>
-    <Space v-else-if="column.key === 'pnl'" direction="vertical" :size="0" align="end"><TypographyText :type="tone(record.pnl)">{{ signed(record.pnl) }}</TypographyText><TypographyText v-if="mode === 'subscriptions'" type="secondary">{{ percent(record.pnl, record.capital) }}</TypographyText></Space>
-    <template v-else-if="column.key === 'terms'">{{ record.days }} 天 / {{ record.takeProfit }}% / {{ record.stopLoss }}%</template>
+    <template v-else-if="['capital', 'returned'].includes(column.key)">{{ amount(record[column.key] ?? subOf(record).capital) }}</template>
+    <TypographyText v-else-if="column.key === 'pnl'" :type="tone(record.pnl)">{{ signed(record.pnl) }}</TypographyText>
+    <TypographyText v-else-if="column.key === 'pnlRate'" :type="tone(record.pnl)">{{ percent(record.pnl, record.capital ?? subOf(record).capital) }}</TypographyText>
+    <TypographyText v-else-if="column.key === 'cumulative'" :type="tone(cumulative[record.id])">{{ signed(cumulative[record.id]) }}</TypographyText>
+    <template v-else-if="column.key === 'tradeCount'">{{ record.tradeCount ?? 0 }}</template>
+    <template v-else-if="column.key === 'days'">{{ subOf(record).days }} 天</template>
     <Tag v-else-if="column.key === 'status'" :color="statusColors[record.status]">{{ statusLabels[record.status] }}</Tag>
     <template v-else-if="column.key === 'reason'">{{ endReasonLabels[record.reason] }}</template>
     <template v-else-if="column.key === 'action'">{{ actionLabels[record.action] || record.action }}</template>
@@ -156,6 +175,8 @@ async function run(action, args, success) {
 <style scoped>
 /* Two-character link actions: trim the library's 15px link padding so four actions fit without wide gaps. */
 .strategy-row-actions :deep(.ant-btn-link){padding-inline:4px}
-/* User id as an inline link under the name: no button box so the two-line cell keeps its rhythm. */
+/* User id as an inline text link: no button box inside the table row. */
 .strategy-user-link{height:auto;padding:0}
+/* Ledger cells hold one fact each and stay on one line; the table scrolls horizontally instead. */
+:deep(.ant-table-cell){white-space:nowrap}
 </style>
