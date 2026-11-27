@@ -92,7 +92,7 @@ watch(mode,()=>{reset();action.value='';selected.value=null})
   </template>
   <template #actions><template v-if="current?.status==='pending'"><template v-if="action==='reject'"><Button :disabled="busy" @click="action='detail'">返回审核</Button><Button danger type="primary" :loading="busy" @click="run('reject')">确认拒绝</Button></template><template v-else><Button danger :disabled="busy" @click="action='reject'">拒绝</Button><Button type="primary" :loading="busy" @click="run('approve')">批准并放款</Button></template></template></template>
  </LedgerModal>
- <LedgerModal :open="action==='productStatus'" :title="statusProduct?.status==='active'?'下架借贷产品':'上架借贷产品'" :busy="busy" :confirm-text="statusProduct?.status==='active'?'确认下架':'确认上架'" :danger="statusProduct?.status==='active'" @close="action=''" @confirm="saveStatus">
+ <LedgerModal :width="520" :open="action==='productStatus'" :title="statusProduct?.status==='active'?'下架借贷产品':'上架借贷产品'" :busy="busy" :confirm-text="statusProduct?.status==='active'?'确认下架':'确认上架'" :danger="statusProduct?.status==='active'" @close="action=''" @confirm="saveStatus">
   <FeedbackToast v-if="failure" type="error" :source="() => (failure) ? ((failure)) : ''"></FeedbackToast>
   <div v-if="statusProduct"><strong>{{statusProduct.productName}}</strong><p>{{statusProduct.status==='active'?'确认下架该产品？下架后停止新申请及待审核订单放款，已放款订单的计息与还款不受影响。':'确认上架该产品？上架后将开放新的借款申请。'}}</p></div>
  </LedgerModal>

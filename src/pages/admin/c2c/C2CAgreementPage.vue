@@ -85,8 +85,8 @@ async function save() {
     <Button type="primary" :loading="c2cBusy" @click="save">保存协议</Button>
    </Space></div></Card>
   </template>
-  <AdminModal :open="discardOpen" title="撤销未保存的修改？" confirm-text="撤销修改" danger @close="discardOpen = false" @confirm="fromState(); discardOpen = false"><TypographyText>所有语言的修改都会恢复为当前版本 {{ agreement?.versionLabel }}。</TypographyText></AdminModal>
-  <AdminModal :open="leaveOpen" title="放弃未保存的修改？" confirm-text="放弃修改并离开" danger @close="closeLeave(false)" @confirm="closeLeave(true)" @closed="finishLeave"><TypographyText>当前修改尚未保存，离开后将丢失这些修改。</TypographyText></AdminModal>
+  <AdminModal :width="520" :open="discardOpen" title="撤销未保存的修改？" confirm-text="撤销修改" danger @close="discardOpen = false" @confirm="fromState(); discardOpen = false"><TypographyText>所有语言的修改都会恢复为当前版本 {{ agreement?.versionLabel }}。</TypographyText></AdminModal>
+  <AdminModal :width="520" :open="leaveOpen" title="放弃未保存的修改？" confirm-text="放弃修改并离开" danger @close="closeLeave(false)" @confirm="closeLeave(true)" @closed="finishLeave"><TypographyText>当前修改尚未保存，离开后将丢失这些修改。</TypographyText></AdminModal>
  </PageShell>
 </template>
 

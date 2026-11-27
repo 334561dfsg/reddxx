@@ -99,7 +99,7 @@ async function confirmTarget() {
     <template v-else>{{ record[column.key] ?? '—' }}</template>
    </template>
   </AdminTable>
-  <AdminModal :open="!!target" :title="confirmCopy.title" :busy="busy" :confirm-text="confirmCopy.confirm" :danger="confirmCopy.danger" @close="target = null" @confirm="confirmTarget">
+  <AdminModal :width="520" :open="!!target" :title="confirmCopy.title" :busy="busy" :confirm-text="confirmCopy.confirm" :danger="confirmCopy.danger" @close="target = null" @confirm="confirmTarget">
    <div v-if="target"><TypographyText strong>{{ enTitle(target.article) }}</TypographyText><p>{{ confirmCopy.text }}</p></div>
   </AdminModal>
  </PageShell>

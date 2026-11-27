@@ -90,7 +90,7 @@ async function toggleStatus() {
     <template v-else>{{ record[column.key] ?? '—' }}</template>
    </template>
   </AdminTable>
-  <AdminModal :open="!!target" :title="target?.status === 'listed' ? '下架策略模板' : '上架策略模板'" :busy="busy" :confirm-text="target?.status === 'listed' ? '确认下架' : '确认上架'" :danger="target?.status === 'listed'" @close="target = null" @confirm="toggleStatus">
+  <AdminModal :width="520" :open="!!target" :title="target?.status === 'listed' ? '下架策略模板' : '上架策略模板'" :busy="busy" :confirm-text="target?.status === 'listed' ? '确认下架' : '确认上架'" :danger="target?.status === 'listed'" @close="target = null" @confirm="toggleStatus">
    <div v-if="target"><TypographyText strong>{{ target.name }}</TypographyText><p>{{ target.status === 'listed' ? '下架后前台不再展示该模板，也不能新订阅；进行中的订阅按原条款继续运行，待审核订阅不能再通过。' : '上架后前台策略列表展示该模板，用户可按当前条款订阅。' }}</p></div>
   </AdminModal>
  </PageShell>

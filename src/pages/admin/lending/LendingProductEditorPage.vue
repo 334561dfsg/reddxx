@@ -96,7 +96,7 @@ async function save(){
    </Form>
    <Card class="lending-editor-footer" :body-style="{padding:'12px 24px'}" :bordered="false"><div class="lending-editor-actions"><Space :size="8" wrap><Button :disabled="lendingBusy" @click="back">取消</Button><Button type="primary" :loading="lendingBusy" @click="save">保存产品</Button></Space></div></Card>
   </template>
-  <AdminModal :open="leaveOpen" title="放弃未保存的修改？" confirm-text="放弃修改并离开" danger @close="cancelLeave" @confirm="confirmLeave" @closed="finishLeave"><TypographyText>当前修改尚未保存。离开后将丢失这些修改。</TypographyText></AdminModal>
+  <AdminModal :width="520" :open="leaveOpen" title="放弃未保存的修改？" confirm-text="放弃修改并离开" danger @close="cancelLeave" @confirm="confirmLeave" @closed="finishLeave"><TypographyText>当前修改尚未保存。离开后将丢失这些修改。</TypographyText></AdminModal>
  </PageShell>
 </template>
 <style scoped>

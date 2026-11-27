@@ -31,6 +31,6 @@ onBeforeUnmount(()=>{window.removeEventListener('beforeunload',beforeUnload);res
     <Space :size="8"><Button type="primary" html-type="submit" :loading="lendingBusy">保存设置</Button><Button :disabled="lendingBusy" @click="form=JSON.parse(original);error=''">重置</Button></Space>
    </Form>
   </Card>
-  <AdminModal :open="leaveOpen" title="放弃未保存的修改？" confirm-text="放弃修改并离开" danger @close="closeLeave(false)" @confirm="closeLeave(true)" @closed="finishLeave">当前风控设置尚未保存，离开后将丢失修改。</AdminModal>
+  <AdminModal :width="520" :open="leaveOpen" title="放弃未保存的修改？" confirm-text="放弃修改并离开" danger @close="closeLeave(false)" @confirm="closeLeave(true)" @closed="finishLeave">当前风控设置尚未保存，离开后将丢失修改。</AdminModal>
  </PageShell>
 </template>

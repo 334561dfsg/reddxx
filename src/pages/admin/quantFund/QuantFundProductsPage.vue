@@ -97,7 +97,7 @@ async function toggleStatus() {
     <template v-else>{{ record[column.key] ?? '—' }}</template>
    </template>
   </AdminTable>
-  <AdminModal :open="!!target" :title="target?.status === 'listed' ? '下架量化基金产品' : '上架量化基金产品'" :busy="busy" :confirm-text="target?.status === 'listed' ? '确认下架' : '确认上架'" :danger="target?.status === 'listed'" @close="target = null" @confirm="toggleStatus">
+  <AdminModal :width="520" :open="!!target" :title="target?.status === 'listed' ? '下架量化基金产品' : '上架量化基金产品'" :busy="busy" :confirm-text="target?.status === 'listed' ? '确认下架' : '确认上架'" :danger="target?.status === 'listed'" @close="target = null" @confirm="toggleStatus">
    <div v-if="target"><TypographyText strong>{{ target.name }}</TypographyText><p>{{ target.status === 'listed' ? '下架后不能新申购，待审核的申购也不能再通过；持有中的订单按原条款继续计息和赎回。' : '上架后用户可按当前条款申购。' }}</p></div>
   </AdminModal>
  </PageShell>

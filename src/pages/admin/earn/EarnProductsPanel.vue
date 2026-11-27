@@ -70,7 +70,7 @@ async function save(){ if(busy.value)return;busy.value=true;error.value='';try{a
    <Tag v-else-if="column.key==='status'" :color="statusMeta[record.status][1]">{{ statusMeta[record.status][0] }}</Tag>
    <Space v-else-if="column.key==='actions'" :size="0"><Button type="link" @click="edit(record)">编辑</Button><Button type="link" :danger="record.status==='enabled'" @click="show(record)">{{ record.status==='enabled'?'下架':'上架' }}</Button></Space>
   </template></EarnAdminTable>
- <EarnAdminModal :open="open" :title="form.status==='enabled'?'下架理财产品':'上架理财产品'" :busy="busy" :confirm-text="'确认'+(form.status==='enabled'?'下架':'上架')" :danger="form.status==='enabled'" @close="open=false" @confirm="save">
+ <EarnAdminModal :width="520" :open="open" :title="form.status==='enabled'?'下架理财产品':'上架理财产品'" :busy="busy" :confirm-text="'确认'+(form.status==='enabled'?'下架':'上架')" :danger="form.status==='enabled'" @close="open=false" @confirm="save">
   <div v-if="error" ref="errorRef" tabindex="-1"><FeedbackToast  type="error" :source="() => (error)"></FeedbackToast></div>
   <div><TypographyText strong>{{ form.name }}</TypographyText><p>{{ form.status==='enabled'?'确认下架该产品？现有持仓和赎回不受影响。':'确认上架该产品？' }}</p></div>
  </EarnAdminModal>

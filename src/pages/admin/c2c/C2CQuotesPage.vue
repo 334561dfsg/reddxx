@@ -82,7 +82,7 @@ async function toggle() {
     <template v-else>{{ record[column.key] ?? '—' }}</template>
    </template>
   </AdminTable>
-  <AdminModal :open="!!target" :title="target?.enabled ? '停用 C2C 报价' : '启用 C2C 报价'" :busy="busy" :confirm-text="target?.enabled ? '确认停用' : '确认启用'" :danger="target?.enabled" @close="target = null" @confirm="toggle">
+  <AdminModal :width="520" :open="!!target" :title="target?.enabled ? '停用 C2C 报价' : '启用 C2C 报价'" :busy="busy" :confirm-text="target?.enabled ? '确认停用' : '确认启用'" :danger="target?.enabled" @close="target = null" @confirm="toggle">
    <div v-if="target"><TypographyText strong>{{ quoteLabel(target) }}</TypographyText><p>{{ target.enabled ? '停用后用户不能再按此报价下单；已提交的待审核订单不受影响，仍按下单时的价格审核。' : '启用后用户可按当前价格和限额下单。' }}</p></div>
   </AdminModal>
  </PageShell>

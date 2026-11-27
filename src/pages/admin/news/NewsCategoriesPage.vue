@@ -54,7 +54,7 @@ async function remove() {
     <template v-else>{{ record[column.key] ?? '—' }}</template>
    </template>
   </AdminTable>
-  <AdminModal :open="!!target" title="删除分类" :busy="busy" confirm-text="确认删除" danger @close="target = null" @confirm="remove">
+  <AdminModal :width="520" :open="!!target" title="删除分类" :busy="busy" confirm-text="确认删除" danger @close="target = null" @confirm="remove">
    <div v-if="target"><TypographyText strong>{{ target.names[FALLBACK_LOCALE] }}</TypographyText><p>删除后前台筛选不再显示该分类。此操作不能撤销。</p></div>
   </AdminModal>
  </PageShell>

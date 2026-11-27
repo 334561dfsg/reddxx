@@ -162,7 +162,7 @@ async function run(action, args, success) {
    </template></template>
   </AdminModal>
 
-  <AdminModal :open="dialog === 'forceStop'" :title="dialogTitle" :busy="busy" confirm-text="确认停止" danger @close="closeDialog" @confirm="run('forceStop', {}, '策略已停止并完成结算')">
+  <AdminModal :width="520" :open="dialog === 'forceStop'" :title="dialogTitle" :busy="busy" confirm-text="确认停止" danger @close="closeDialog" @confirm="run('forceStop', {}, '策略已停止并完成结算')">
    <div v-if="current"><TypographyText strong>{{ current.templateSnapshot.name }} · {{ current.userName }}</TypographyText>
     <p>将立即结束该策略，按 本金 {{ amount(current.capital) }} + 累计盈亏 {{ signed(current.pnl) }} = {{ amount(Math.max(0, current.capital + current.pnl)) }} USDT 返还给用户，结束原因记为「后台强制停止」。此操作不能撤销。</p></div>
   </AdminModal>

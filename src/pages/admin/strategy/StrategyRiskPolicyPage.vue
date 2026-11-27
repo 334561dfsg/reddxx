@@ -48,7 +48,7 @@ onBeforeUnmount(() => { window.removeEventListener('beforeunload', beforeUnload)
    </Card>
    <Card :bordered="false" :body-style="{padding: '12px 24px'}"><Space :size="8"><Button type="primary" html-type="submit" :loading="strategyBusy">保存设置</Button><Button :disabled="strategyBusy || !dirty" @click="form = JSON.parse(original)">重置</Button><TypographyText type="secondary">设置只对之后提交的订阅生效，已有订阅保留提交时的规则。</TypographyText></Space></Card>
   </Form>
-  <AdminModal :open="leaveOpen" title="放弃未保存的修改？" confirm-text="放弃修改并离开" danger @close="closeLeave(false)" @confirm="closeLeave(true)" @closed="finishLeave">当前风控设置尚未保存，离开后将丢失修改。</AdminModal>
+  <AdminModal :width="520" :open="leaveOpen" title="放弃未保存的修改？" confirm-text="放弃修改并离开" danger @close="closeLeave(false)" @confirm="closeLeave(true)" @closed="finishLeave">当前风控设置尚未保存，离开后将丢失修改。</AdminModal>
  </PageShell>
 </template>
 

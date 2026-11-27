@@ -281,3 +281,6 @@ html body :is(.earn-modal-title, .earn-rewards-title, .qf-records-title, .strate
 @media (pointer: coarse) {
   html body :is(.earn-modal-title, .earn-rewards-title, .qf-records-title, .strategy-records-title) .ant-btn.ant-btn { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
 }
+/* A link button that is the whole value of a Descriptions cell lines up with the other values (no Ant button padding). */
+html body .ant-descriptions .ant-descriptions-item-content > .ant-btn-link,
+html body .ant-descriptions .ant-descriptions-item-content .ant-btn-link:only-child { height: auto; padding: 0; }
