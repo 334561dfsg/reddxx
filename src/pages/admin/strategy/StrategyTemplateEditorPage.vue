@@ -44,7 +44,7 @@ async function load() {
 }
 watch(() => route.params.id, load, {immediate: true})
 
-const listQuery = () => Object.fromEntries(['q', 'market', 'style', 'status', 'page'].filter(k => route.query[k] != null).map(k => [k, route.query[k]]))
+const listQuery = () => Object.fromEntries(['name', 'templateId', 'market', 'style', 'status', 'page'].filter(k => route.query[k] != null).map(k => [k, route.query[k]]))
 function back() { router.push({path: '/admin/strategy/templates', query: listQuery()}) }
 
 const leaveOpen = ref(false)
@@ -94,7 +94,7 @@ async function save() {
     <Card title="额度与周期" :bordered="false"><Row :gutter="24" class="strategy-editor-fields">
      <Col :xs="24" :lg="8"><FormItem name="minCapital" label="起投资金" required><InputNumber v-model:value="form.minCapital" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="maxCapital" label="单笔上限" required><InputNumber v-model:value="form.maxCapital" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem name="capacity" label="策略总额度" help="进行中订阅的本金合计上限，0 表示不限"><InputNumber v-model:value="form.capacity" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem name="capacity" label="策略总额度" help="该策略所有用户进行中订阅的本金合计上限，不是单用户限额；0 表示不限"><InputNumber v-model:value="form.capacity" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="minDays" label="最短周期" required><InputNumber v-model:value="form.minDays" :min="1" :precision="0" addon-after="天"/></FormItem></Col>
      <Col :xs="24" :lg="8"><FormItem name="maxDays" label="最长周期" required><InputNumber v-model:value="form.maxDays" :min="1" :precision="0" addon-after="天"/></FormItem></Col>
     </Row></Card>

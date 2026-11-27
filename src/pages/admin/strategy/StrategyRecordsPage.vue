@@ -9,6 +9,9 @@ import AdminTable from '../earn/EarnAdminTable.vue'
 import AdminModal from '../earn/EarnAdminModal.vue'
 import StrategySubscriptionDetails from './StrategySubscriptionDetails.vue'
 import StrategyRecordsDrawer from './StrategyRecordsDrawer.vue'
+import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
+import {getUserById} from '../../../admin/mock/user.js'
+import {USER_KYC_STATUS, USER_ROLE, USER_STATUS} from '../../../admin/constants/user.js'
 import {useStrategyFeed, strategyCommand, errorText, statusLabels, statusColors, endReasonLabels, actionLabels} from '../../../shared/strategy/client.js'
 import {amount, signed, dateTime, percent} from './strategyFormat.js'
 
@@ -16,25 +19,29 @@ import {amount, signed, dateTime, percent} from './strategyFormat.js'
 const route = useRoute(), {state, error, busy, loaded, refresh} = useStrategyFeed()
 const mode = computed(() => route.meta.strategySection)
 const titles = {subscriptions: '用户策略', 'daily-pnl': '收益记录', settlements: '结算记录', logs: '操作日志'}
-const blankFilters = () => ({q: '', status: 'all', reason: 'all'})
-const filters = ref({...blankFilters(), q: String(route.query.q || '')})
+// One input per field (user decision, 2026-11-27): no combined keyword search.
+const blankFilters = () => ({subscriptionId: '', userId: '', template: '', refId: '', operator: '', status: 'all', reason: 'all', action: 'all'})
+const filters = ref(blankFilters())
 const page = ref(1)
 watch(mode, () => { filters.value = blankFilters(); page.value = 1; closeDialog() })
 
 const fields = computed(() => ({
-  subscriptions: [{key: 'q', label: '订单 / 用户'}, {key: 'status', label: '状态', options: [{value: 'all', label: '全部状态'}, ...Object.entries(statusLabels).map(([value, label]) => ({value, label}))]}],
-  'daily-pnl': [{key: 'q', label: '订单 / 用户'}],
-  settlements: [{key: 'q', label: '订单 / 用户'}, {key: 'reason', label: '结束原因', options: [{value: 'all', label: '全部原因'}, ...Object.entries(endReasonLabels).map(([value, label]) => ({value, label}))]}],
-  logs: [{key: 'q', label: '关键词'}],
+  subscriptions: [orderField, userField, {key: 'template', label: '策略模板'}, {key: 'status', label: '状态', options: [{value: 'all', label: '全部状态'}, ...Object.entries(statusLabels).map(([value, label]) => ({value, label}))]}],
+  'daily-pnl': [orderField, userField],
+  settlements: [orderField, userField, {key: 'reason', label: '结束原因', options: [{value: 'all', label: '全部原因'}, ...Object.entries(endReasonLabels).map(([value, label]) => ({value, label}))]}],
+  logs: [{key: 'refId', label: '关联记录'}, {key: 'action', label: '操作', options: [{value: 'all', label: '全部操作'}, ...Object.entries(actionLabels).map(([value, label]) => ({value, label}))]}, {key: 'operator', label: '操作人'}],
 })[mode.value])
-const match = (row, keys) => !filters.value.q || keys.some(k => String(row[k] ?? '').toLowerCase().includes(filters.value.q.toLowerCase()))
+const orderField = {key: 'subscriptionId', label: '订单号'}, userField = {key: 'userId', label: '用户 ID'}
+// Each filled text field must match its own column (case-insensitive contains).
+const has = (value, query) => !query || String(value ?? '').toLowerCase().includes(query.trim().toLowerCase())
+const match = (row, f) => has(row.subscriptionId, f.subscriptionId) && has(row.userId, f.userId)
 const subById = computed(() => Object.fromEntries(state.value.subscriptions.map(s => [s.subscriptionId, s])))
 const rows = computed(() => {
   const f = filters.value, s = state.value
-  if (mode.value === 'subscriptions') return s.subscriptions.filter(r => match({...r, name: r.templateSnapshot.name}, ['subscriptionId', 'userId', 'userName', 'name']) && (f.status === 'all' || r.status === f.status))
-  if (mode.value === 'daily-pnl') return s.dailyPnl.filter(r => match({...r, name: subById.value[r.subscriptionId]?.templateSnapshot.name}, ['subscriptionId', 'userId', 'name']))
-  if (mode.value === 'settlements') return s.settlements.filter(r => match(r, ['subscriptionId', 'userId', 'userName', 'templateName']) && (f.reason === 'all' || r.reason === f.reason))
-  return s.logs.filter(r => match(r, ['refId', 'targetLabel', 'summary', 'operator', 'action']))
+  if (mode.value === 'subscriptions') return s.subscriptions.filter(r => match(r, f) && has(r.templateSnapshot.name, f.template) && (f.status === 'all' || r.status === f.status))
+  if (mode.value === 'daily-pnl') return s.dailyPnl.filter(r => match(r, f))
+  if (mode.value === 'settlements') return s.settlements.filter(r => match(r, f) && (f.reason === 'all' || r.reason === f.reason))
+  return s.logs.filter(r => has(r.refId, f.refId) && has(r.operator, f.operator) && (f.action === 'all' || r.action === f.action))
 })
 watch(() => rows.value.length, total => { page.value = Math.min(page.value, Math.max(1, Math.ceil(total / 10))) })
 const rowKey = r => r.subscriptionId && !r.settlementId && !r.date ? r.subscriptionId : r.settlementId || r.id
@@ -59,7 +66,7 @@ const columns = computed(() => ({
     {key: 'summary', title: '说明', width: 280}, {key: 'operator', title: '操作人', width: 150},
   ],
 })[mode.value])
-function search(values) { filters.value = {...blankFilters(), ...values, q: (values.q || '').trim()}; page.value = 1 }
+function search(values) { filters.value = {...blankFilters(), ...values}; page.value = 1 }
 function reset() { filters.value = blankFilters(); page.value = 1 }
 const tone = value => (value > 0 ? 'success' : value < 0 ? 'danger' : undefined)
 
@@ -74,6 +81,23 @@ const drawerOpen = ref(false), drawerId = ref(''), drawerKind = ref('daily'), dr
 const drawerSub = computed(() => subById.value[drawerId.value] || null)
 const drawerDaily = computed(() => state.value.dailyPnl.filter(r => r.subscriptionId === drawerId.value))
 const drawerLogs = computed(() => state.value.logs.filter(r => r.refId === drawerId.value))
+// User drawer, as in Earn/Lending: platform users open their own record; strategy mock users (USR-DEMO, USR-1002…)
+// have no platform account, so their drawer is filled from the strategy profile and balance, marked as simulated.
+const KYC = {none: USER_KYC_STATUS.NOT_VERIFIED, basic: USER_KYC_STATUS.PENDING, advanced: USER_KYC_STATUS.VERIFIED}
+const userOpen = ref(false), detailUser = shallowRef(null), userReturnFocus = shallowRef(null)
+function strategyUser(userId, userName) {
+  const profile = state.value.profiles?.[userId] || {}
+  return {id: userId, username: userName || profile.name || userId, email: '—', role: USER_ROLE.USER, status: USER_STATUS.ACTIVE,
+    kycStatus: KYC[profile.verificationLevel] || USER_KYC_STATUS.NOT_VERIFIED, vipLevel: profile.vipLevel ?? 0, isVip: (profile.vipLevel ?? 0) > 0,
+    balance: state.value.balances?.[userId]?.USDT ?? 0, frozenBalance: 0, remark: '策略模拟用户（非平台账户）'}
+}
+function showUser(row, event) {
+  if (userOpen.value) return
+  const name = row.userName || subById.value[row.subscriptionId]?.userName
+  detailUser.value = getUserById(row.userId) || strategyUser(row.userId, name)
+  userReturnFocus.value = event.currentTarget
+  userOpen.value = true
+}
 function openRecords(row, kind, event) { if (drawerOpen.value) return; drawerId.value = row.subscriptionId; drawerKind.value = kind; drawerReturnFocus.value = event.currentTarget; drawerOpen.value = true }
 const dialogTitle = computed(() => ({detail: current.value?.status === 'pending_review' ? '审核策略订阅' : '策略详情', forceStop: '强制停止策略'})[dialog.value] || '')
 async function run(action, args, success) {
@@ -90,7 +114,8 @@ async function run(action, args, success) {
    <template #toolbar><Button @click="refresh">刷新</Button></template>
    <template #cell="{column, record}">
     <Space v-if="column.key === 'subscriptionId'" direction="vertical" :size="0"><TypographyText copyable>{{ record.subscriptionId }}</TypographyText><TypographyText type="secondary">{{ record.templateSnapshot?.name || record.templateName || subById[record.subscriptionId]?.templateSnapshot.name }}</TypographyText></Space>
-    <Space v-else-if="column.key === 'user'" direction="vertical" :size="0"><span>{{ record.userName }}</span><TypographyText type="secondary">{{ record.userId }}</TypographyText></Space>
+    <Space v-else-if="column.key === 'user'" direction="vertical" :size="0"><span>{{ record.userName }}</span><Button type="link" class="strategy-user-link" :aria-label="'查看用户 ' + record.userId" @click.stop="showUser(record, $event)">{{ record.userId }}</Button></Space>
+    <Button v-else-if="column.key === 'userId'" type="link" class="strategy-user-link" :aria-label="'查看用户 ' + record.userId" @click.stop="showUser(record, $event)">{{ record.userId }}</Button>
     <template v-else-if="['capital', 'returned'].includes(column.key)">{{ amount(record[column.key]) }}</template>
     <Space v-else-if="column.key === 'pnl'" direction="vertical" :size="0" align="end"><TypographyText :type="tone(record.pnl)">{{ signed(record.pnl) }}</TypographyText><TypographyText v-if="mode === 'subscriptions'" type="secondary">{{ percent(record.pnl, record.capital) }}</TypographyText></Space>
     <template v-else-if="column.key === 'terms'">{{ record.days }} 天 / {{ record.takeProfit }}% / {{ record.stopLoss }}%</template>
@@ -124,10 +149,13 @@ async function run(action, args, success) {
   </AdminModal>
 
   <StrategyRecordsDrawer :open="drawerOpen" :kind="drawerKind" :sub="drawerSub" :daily="drawerDaily" :logs="drawerLogs" :return-focus="drawerReturnFocus" @close="drawerOpen = false" @closed="drawerId = ''; drawerReturnFocus = null"/>
+  <UserDetailDrawer :visible="userOpen" :user="detailUser" :return-focus="userReturnFocus" @close="userOpen = false" @closed="detailUser = null; userReturnFocus = null"/>
  </PageShell>
 </template>
 
 <style scoped>
 /* Two-character link actions: trim the library's 15px link padding so four actions fit without wide gaps. */
 .strategy-row-actions :deep(.ant-btn-link){padding-inline:4px}
+/* User id as an inline link under the name: no button box so the two-line cell keeps its rhythm. */
+.strategy-user-link{height:auto;padding:0}
 </style>

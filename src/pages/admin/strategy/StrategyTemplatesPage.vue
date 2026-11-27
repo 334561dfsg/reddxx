@@ -16,10 +16,11 @@ const whole = value => Number(value || 0).toLocaleString('zh-CN', {maximumFracti
 const riskColor = risk => (risk >= 4 ? 'red' : risk === 3 ? 'orange' : 'blue')
 
 const route = useRoute(), router = useRouter(), {state, error, busy, loaded, refresh} = useStrategyFeed()
-const filters = ref({q: String(route.query.q || ''), market: String(route.query.market || 'all'), style: String(route.query.style || 'all'), status: String(route.query.status || 'all')})
+const filters = ref({name: String(route.query.name || ''), templateId: String(route.query.templateId || ''), market: String(route.query.market || 'all'), style: String(route.query.style || 'all'), status: String(route.query.status || 'all')})
 const page = ref(Math.max(1, Number(route.query.page) || 1))
 const fields = [
-  {key: 'q', label: '名称/ID'},
+  {key: 'name', label: '模板名称'},
+  {key: 'templateId', label: '模板 ID'},
   {key: 'market', label: '市场', options: [{value: 'all', label: '全部市场'}, ...Object.entries(marketLabels).map(([value, label]) => ({value, label}))]},
   {key: 'style', label: '风格', options: [{value: 'all', label: '全部风格'}, ...Object.entries(styleLabels).map(([value, label]) => ({value, label}))]},
   {key: 'status', label: '状态', options: [{value: 'all', label: '全部状态'}, ...Object.entries(templateStatusLabels).map(([value, label]) => ({value, label}))]},
@@ -35,7 +36,8 @@ const usage = computed(() => {
   return map
 })
 const rows = computed(() => [...state.value.templates].sort((a, b) => b.sortOrder - a.sortOrder).filter(t =>
-  (!filters.value.q || t.name.toLowerCase().includes(filters.value.q.toLowerCase()) || t.templateId.toLowerCase().includes(filters.value.q.toLowerCase())) &&
+  (!filters.value.name || t.name.toLowerCase().includes(filters.value.name.toLowerCase())) &&
+  (!filters.value.templateId || t.templateId.toLowerCase().includes(filters.value.templateId.toLowerCase())) &&
   (filters.value.market === 'all' || t.market === filters.value.market) &&
   (filters.value.style === 'all' || t.style === filters.value.style) &&
   (filters.value.status === 'all' || t.status === filters.value.status)))
@@ -51,8 +53,8 @@ const columns = [
   {key: 'sortOrder', title: '排序权重', width: 80, align: 'right'},
   {key: 'actions', title: '操作', width: 150, fixed: 'right'},
 ]
-function search(values) { filters.value = {q: values.q.trim(), market: values.market || 'all', style: values.style || 'all', status: values.status || 'all'}; page.value = 1 }
-function reset() { filters.value = {q: '', market: 'all', style: 'all', status: 'all'}; page.value = 1 }
+function search(values) { filters.value = {name: values.name.trim(), templateId: values.templateId.trim(), market: values.market || 'all', style: values.style || 'all', status: values.status || 'all'}; page.value = 1 }
+function reset() { filters.value = {name: '', templateId: '', market: 'all', style: 'all', status: 'all'}; page.value = 1 }
 const listQuery = () => ({...filters.value, page: page.value})
 function edit(template) { router.push({path: template ? `/admin/strategy/templates/${encodeURIComponent(template.templateId)}/edit` : '/admin/strategy/templates/new', query: listQuery()}) }
 

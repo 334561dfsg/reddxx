@@ -56,4 +56,4 @@ onBeforeUnmount(() => { window.removeEventListener('beforeunload', beforeUnload)
  </PageShell>
 </template>
 
-<style scoped>.strategy-policy{display:grid;gap:24px;max-width:960px}</style>
+<style scoped>.strategy-policy{display:grid;gap:24px}</style>
