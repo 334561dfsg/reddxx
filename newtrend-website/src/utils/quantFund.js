@@ -160,7 +160,18 @@ export function accruedInterestEstimate(order, now = Date.now()) {
 export const canRedeemFund = order => order.status === 'active' && order.termDaysSnapshot == null
 
 /**
- * Settles a flexible redemption locally in one step: interest for whole held days (none below the minimum
+ * Redemption needs an admin review (user decision, 2026-11-27): the request only moves a running flexible order to
+ * redeem_pending_review; interest keeps accruing until the review. A repeated call is a conflict, not a second request.
+ */
+export function requestRedeemFund(order, now = Date.now()) {
+  if (!order || !canRedeemFund(order)) return {error: 'conflict'}
+  order.status = 'redeem_pending_review'
+  order.redeemRequestedAt = now
+  return {order}
+}
+
+/**
+ * Settlement applied once a redemption is approved (the admin's 赎回审核 owns approval; the public mock never reaches it): interest for whole held days (none below the minimum
  * hold), minus interest already paid, credited with principal to the order's own account mode.
  * The status guard makes a repeated call a no-op conflict instead of a second payout.
  */

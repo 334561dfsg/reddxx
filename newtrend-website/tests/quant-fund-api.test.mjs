@@ -35,11 +35,11 @@ test('subscribe validates server-side, reserves funds once per request id', asyn
   assert.equal((await getQuantFundBalance(mode)).balance, balance - 5000)
 })
 
-test('redeem settles an active flexible order once; a repeat is a conflict', async () => {
+test('redeem submits an active flexible order for review once; balance waits for approval; a repeat is a conflict', async () => {
   const before = quantFundAccount.balances.real
   const result = await redeemQuantFund('QFO-seed-real-1')
-  assert.equal(result.order.status, 'redeemed')
-  assert.equal(quantFundAccount.balances.real, Math.round((before + result.principal + result.interest) * 100) / 100)
+  assert.equal(result.order.status, 'redeem_pending_review')
+  assert.equal(quantFundAccount.balances.real, before, 'nothing is credited until the admin approves')
   await assert.rejects(redeemQuantFund('QFO-seed-real-1'), {code: 'conflict'})
   await assert.rejects(redeemQuantFund('QFO-seed-real-2'), {code: 'conflict'}, 'fixed-term orders are not redeemable')
 })

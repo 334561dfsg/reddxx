@@ -39,9 +39,10 @@ const summary=computed(()=>positions.data.value?.summary)
 
 const openOrder=order=>openModal('quant-fund-order','aiQuant.quantFund.positions.detail.title',order)
 const router=useRouter()
-const hasPayouts=order=>['active','settled','redeemed'].includes(order.status)
+const hasPayouts=order=>['active','redeem_pending_review','settled','redeemed'].includes(order.status)
 const openPayouts=order=>router.push(path(`/ai-quant/quant-fund/positions/${encodeURIComponent(order.id)}/interest-records`))
-// Reference redeem dialog: title, principal, interest-settlement notice, cancel / confirm. Settlement is local and immediate.
+// Reference redeem dialog: title, principal, review notice, cancel / confirm. The request waits for the admin's review
+// (赎回审核, user decision 2026-11-27); interest keeps accruing until it is approved.
 // A redeemed row loses its 贖回 button when the refreshed list arrives, possibly after the dialog has already
 // returned focus to it: focus then moves to the same row's remaining action (or its product button).
 let refocusOrder=null
@@ -53,11 +54,10 @@ watch(()=>positions.data.value,async()=>{
  if(!active||active===document.body||!active.isConnected)focusRow(id)
 })
 function confirmRedeem(order){
- const min=order.minHoldDaysSnapshot
  openModal('account-confirm','aiQuant.quantFund.redeem.title',{
   returnFocus:()=>focusRow(order.id),
   subtitle:`${fmt(order.principal)} ${order.asset}`,
-  description:min?{key:'aiQuant.quantFund.redeem.confirmNotice',params:{minHoldDays:min}}:'aiQuant.quantFund.redeem.confirmNoticeNoMin',
+  description:'aiQuant.quantFund.redeem.reviewNotice',
   cancelLabel:'aiQuant.quantFund.redeem.cancel',confirmLabel:'aiQuant.quantFund.redeem.confirm',
   // Async confirm: the dialog shows a busy confirm action and keeps every close path held until this settles.
   async onConfirm(){
@@ -65,7 +65,7 @@ function confirmRedeem(order){
    catch(cause){invalidate('quantFund');throw new Error(cause.code==='conflict'?'c2c.error.generic':'common.requestFailed')}
    refocusOrder=order.id
    invalidate('quantFund')
-   message.success({content:h('span',{class:'qf-redeem-toast'},[h('strong',t('aiQuant.quantFund.redeem.resultTitle')),' ',t('aiQuant.quantFund.redeem.fundsReturned')])})
+   message.success({content:h('span',{class:'qf-redeem-toast'},[h('strong',t('aiQuant.quantFund.redeem.pendingTitle')),' ',t('aiQuant.quantFund.redeem.pendingDescription')])})
   },
  })
 }

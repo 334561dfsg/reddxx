@@ -1,7 +1,7 @@
 // Quant Fund service. Pages call only these async functions; quantFundPortfolio.js stands in for the server.
 // Product names are plain catalogue strings, so this module needs no locale binding and is Node-testable as is.
 import {quantFunds, quantFundAccount, fundMode, findQuantFund, refreshQuantFunds} from '../quantFundPortfolio.js'
-import {fundSummary, redeemFund, subscribeFund} from '../utils/quantFund.js'
+import {fundSummary, requestRedeemFund, subscribeFund} from '../utils/quantFund.js'
 import {ApiError, mockCall, snapshot} from './transport.js'
 
 const SERVICE = 'quantFund'
@@ -50,13 +50,14 @@ export const subscribeQuantFund = ({productId, amount, mode, requestId}) => mock
 })
 
 /**
- * POST /quant-fund/orders/:id/redeem — settles an active flexible order immediately: {order, principal, interest, days}.
- * ApiError('conflict') when the order is not redeemable (already redeemed, fixed term, not active).
+ * POST /quant-fund/orders/:id/redeem — submits a redemption for admin review: the order moves to redeem_pending_review
+ * and keeps earning until approved. ApiError('conflict') when the order is not redeemable (already requested,
+ * fixed term, not active).
  */
 export const redeemQuantFund = orderId => mockCall(SERVICE, () => {
   const order = quantFundAccount.orders.find(item => item.id === orderId)
   if (!order) throw new ApiError('notFound')
-  const result = redeemFund(quantFundAccount, order, findQuantFund(order.productId))
+  const result = requestRedeemFund(order)
   if (result.error) throw new ApiError(result.error)
   return snapshot(result)
 })
