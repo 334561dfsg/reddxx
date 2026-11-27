@@ -39,7 +39,6 @@ const tone = value => (value > 0 ? 'success' : value < 0 ? 'danger' : undefined)
    <DescriptionsItem label="手续费率 / 最大持仓">{{ t.feeRate }}% / {{ t.maxOpenTrades }}</DescriptionsItem>
    <DescriptionsItem label="日收益率区间">{{ t.dailyReturn.min }}% – {{ t.dailyReturn.max }}%</DescriptionsItem>
    <DescriptionsItem label="交易日比例">{{ Math.round(t.tradeDayRatio * 100) }}%</DescriptionsItem>
-   <DescriptionsItem label="风控快照">{{ sub.policySnapshot.autoTakeProfitStopLoss ? '自动止盈止损' : '不自动止盈止损' }} · {{ sub.policySnapshot.autoSettleOnExpiry ? '到期自动结算' : '到期人工结算' }}</DescriptionsItem>
   </Descriptions>
   <Descriptions v-if="settlement" bordered size="small" :column="2" title="结算">
    <DescriptionsItem label="结束原因">{{ endReasonLabels[settlement.reason] }}</DescriptionsItem>

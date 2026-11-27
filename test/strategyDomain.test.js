@@ -93,19 +93,12 @@ test('take-profit and stop-loss settle automatically with principal plus P&L', (
   assert.ok(sub(s).pnl <= -100)
 })
 
-test('expiry settles at the end date; disabled auto-settlement leaves it for the admin', () => {
+test('expiry always settles at the end date', () => {
   let s = withTemplate({min: 0.1, max: 0.2})
   advance(s, T0 + 30 * DAY)
   assert.equal(sub(s).endReason, 'expired')
   assert.equal(sub(s).stoppedAt, sub(s).endAt)
   assert.equal(s.dailyPnl.filter(r => r.subscriptionId === sub(s).subscriptionId).length, 9, 'no rows after the end date')
-
-  s = fresh({reviewRequired: false, autoSettleOnExpiry: false})
-  s = run(s, 'subscribe', order)
-  advance(s, T0 + 30 * DAY)
-  assert.equal(sub(s).status, 'running')
-  s = run(s, 'forceStop', {subscriptionId: sub(s).subscriptionId}, T0 + 30 * DAY)
-  assert.equal(sub(s).endReason, 'admin_stop')
 })
 
 test('pause stops generation, resume continues, stop settles; users act only on their own strategies', () => {

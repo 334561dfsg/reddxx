@@ -16,8 +16,6 @@ export const DEFAULT_POLICY = {
   reviewRequired: true,
   maxRunningPerUser: 5,
   maxCapitalPerUser: 1000000,
-  autoSettleOnExpiry: true,
-  autoTakeProfitStopLoss: true,
 }
 export const ADMIN = '管理员（模拟）'
 export const SYSTEM = '系统'
@@ -102,7 +100,6 @@ function settle(s, sub, reason, at, operator) {
 }
 
 function hitLimit(sub) {
-  if (!sub.policySnapshot.autoTakeProfitStopLoss) return null
   if (sub.pnl >= money(sub.capital * sub.takeProfit / 100)) return 'take_profit'
   if (sub.pnl <= -money(sub.capital * sub.stopLoss / 100)) return 'stop_loss'
   return null
@@ -130,7 +127,7 @@ export function advance(s, now = Date.now()) {
         if (reason) settle(s, sub, reason, closedAt, SYSTEM)
       }
     }
-    if (['running', 'paused', 'initializing'].includes(sub.status) && sub.endAt && now >= sub.endAt && sub.policySnapshot.autoSettleOnExpiry)
+    if (['running', 'paused', 'initializing'].includes(sub.status) && sub.endAt && now >= sub.endAt)
       settle(s, sub, 'expired', sub.endAt, SYSTEM)
   }
   return s
@@ -232,9 +229,9 @@ export function transact(source, action, args = {}, now = Date.now()) {
   } else if (action === 'savePolicy') {
     const p = args.policy, before = structuredClone(s.policy)
     fail(JSON.stringify(args.expectedPolicy) === JSON.stringify(before), 'stale')
-    fail(p && ['reviewRequired', 'autoSettleOnExpiry', 'autoTakeProfitStopLoss'].every(k => typeof p[k] === 'boolean'), 'policy')
+    fail(p && typeof p.reviewRequired === 'boolean', 'policy')
     fail(Number.isInteger(p.maxRunningPerUser) && p.maxRunningPerUser >= 1 && finite(p.maxCapitalPerUser) && p.maxCapitalPerUser > 0, 'policy')
-    s.policy = {reviewRequired: p.reviewRequired, maxRunningPerUser: p.maxRunningPerUser, maxCapitalPerUser: p.maxCapitalPerUser, autoSettleOnExpiry: p.autoSettleOnExpiry, autoTakeProfitStopLoss: p.autoTakeProfitStopLoss}
+    s.policy = {reviewRequired: p.reviewRequired, maxRunningPerUser: p.maxRunningPerUser, maxCapitalPerUser: p.maxCapitalPerUser}
     log(s, {module: 'policy', action, summary: '保存风控设置', before, after: structuredClone(s.policy), operator: actor}, now)
   } else throw new Error('action')
   s.requests.push(args.requestId)
