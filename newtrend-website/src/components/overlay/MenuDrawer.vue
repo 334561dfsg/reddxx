@@ -14,7 +14,7 @@ import {languages,locale,t} from '../../i18n'
 const emit=defineEmits(['close','navigate','switch-mode','open-language','clear-cache'])
 const expanded=shallowRef('')
 const toggle=key=>{expanded.value=expanded.value===key?'':key}
-const groupIcons={'common.trade':'candlestick','common.finance':'landmark','aiQuant.landing.eyebrow':'bot'}
+const groupIcons={'common.trade':'candlestick','common.finance':'landmark','aiQuant.landing.eyebrow':'ai-chip'}
 const verified=computed(()=>['approved','verified'].includes(account.kyc))
 const currentLanguage=computed(()=>languages.find(([code])=>code===locale.value)?.[1]||locale.value)
 async function copyUid(){

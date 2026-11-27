@@ -8,9 +8,9 @@ import {path} from '../../data'
 const route=useRoute()
 const tabs=[
  {key:'home',label:'common.home',icon:'home',to:'/',match:p=>p==='/'},
- {key:'markets',label:'common.tabbar.markets',icon:'trend-up',to:'/markets',match:p=>p==='/markets'},
  {key:'trade',label:'common.trade',icon:'swap-vertical',to:'/trade/futures/BTCUSDT',match:p=>p.startsWith('/trade')},
- {key:'finance',label:'common.finance',icon:'landmark',to:'/earn',match:p=>p.startsWith('/earn')||p.startsWith('/c2c')||p.startsWith('/ai-quant')},
+ {key:'finance',label:'common.finance',icon:'landmark',to:'/earn',match:p=>p.startsWith('/earn')||p.startsWith('/c2c')},
+ {key:'quant',label:'common.tabbar.quant',icon:'ai-chip',to:'/ai-quant',match:p=>p.startsWith('/ai-quant')},
  {key:'assets',label:'assets.pageTitle',icon:'wallet',to:'/assets',match:p=>p.startsWith('/assets')},
 ]
 const active=computed(()=>tabs.find(t=>t.match(route.path))?.key)

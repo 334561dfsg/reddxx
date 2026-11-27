@@ -10,7 +10,7 @@ import {computed} from 'vue'
 document.documentElement.dataset.fontScale='standard'
 const route=useRoute()
 // Bottom tab bar on the five top-level sections only (GMXX behaviour); detail pages keep their own sticky actions.
-const tabRoots=[/^\/$/,/^\/markets$/,/^\/trade\//,/^\/earn(\/(simple|loan))?$/,/^\/c2c\/(buy|sell)$/,/^\/ai-quant(\/(strategy|quant-fund))?$/,/^\/assets(\/overview)?$/]
+const tabRoots=[/^\/$/,/^\/trade\//,/^\/earn(\/(simple|loan))?$/,/^\/c2c\/(buy|sell)$/,/^\/ai-quant(\/(strategy|quant-fund))?$/,/^\/assets(\/overview)?$/]
 const showTabbar=computed(()=>tabRoots.some(r=>r.test(route.path)))
 </script>
 <template><div id="site-shell" :class="{'has-tabbar':showTabbar}"><Header/><main id="main-content"><RouterView/></main><Footer v-if="!route.path.includes('/trade/')"/></div><MobileTabBar v-if="showTabbar"/><Overlay/></template>

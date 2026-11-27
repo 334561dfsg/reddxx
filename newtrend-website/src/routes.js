@@ -1,7 +1,6 @@
 // Route table for the public site (base /NewQuantCapital/). Kept free of DOM/app setup so Node tests can
 // resolve it with a memory history (tests/routing.test.mjs). Every page route has a stable name.
 const Home=()=>import('./pages/Home.vue')
-const MarketsPage=()=>import('./pages/Markets.vue')
 const FuturesTrade=()=>import('./pages/trading/FuturesTrade.vue')
 const OptionsTrade=()=>import('./pages/trading/OptionsTrade.vue')
 const SpotTrade=()=>import('./pages/trading/SpotTrade.vue')
@@ -20,7 +19,6 @@ const Account=()=>import('./pages/Account.vue')
 
 export const routes=[
  {name:'home',path:'/',component:Home},
- {name:'markets',path:'/markets',component:MarketsPage},
  {path:'/:legacyLocale(en-US|zh-TW|fr-FR|de-DE|ja-JP|ko-KR)/:legacyPath(.*)*',redirect:to=>({path:'/'+(Array.isArray(to.params.legacyPath)?to.params.legacyPath.join('/'):to.params.legacyPath||''),query:to.query,hash:to.hash})},
  {path:'/trade',redirect:'/trade/futures/BTCUSDT'},
  {name:'trade-futures',path:'/trade/futures/:symbol?',component:FuturesTrade},

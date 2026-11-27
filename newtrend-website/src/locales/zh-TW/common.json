@@ -267,6 +267,6 @@
   },
   "tabbar": {
     "label": "底部導覽",
-    "markets": "行情"
+    "quant": "量化"
   }
 }

@@ -267,6 +267,6 @@
   },
   "tabbar": {
     "label": "하단 탐색",
-    "markets": "시세"
+    "quant": "퀀트"
   }
 }

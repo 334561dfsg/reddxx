@@ -416,4 +416,4 @@ The mobile drawer (`components/overlay/MenuDrawer.vue`) is full screen and follo
 
 ## Mobile bottom tab bar (user reference, 2026-11-27)
 
-Below 900px a fixed bottom tab bar (`components/layout/MobileTabBar.vue`, GMXX layout in the NewQuantCapital style) links 首頁 / 行情 / 交易 / 金融 / 資產. It shows only on top-level sections (home, `/markets`, trading, finance and AI Quant lists, assets overview — see `tabRoots` in `App.vue`); detail pages keep their own sticky actions. `#site-shell.has-tabbar` reserves `--nt-tabbar-h` plus the bottom safe area. `/markets` is the full market list (shared `Markets` table with search). Desktop is unchanged.
+Below 900px a fixed bottom tab bar (`components/layout/MobileTabBar.vue`, GMXX layout in the NewQuantCapital style) links 首頁 / 交易 / 金融 / 量化 / 資產 (行情 was replaced by 量化, user decision). It shows only on top-level sections (home, trading, finance and AI Quant lists, assets overview — see `tabRoots` in `App.vue`); detail pages keep their own sticky actions. `#site-shell.has-tabbar` reserves `--nt-tabbar-h` plus the bottom safe area. Desktop is unchanged.

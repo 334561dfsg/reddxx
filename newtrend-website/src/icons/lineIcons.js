@@ -37,6 +37,7 @@ export const iconSets = {
   "download": "<path d=\"M12 4v11M7 10l5 5 5-5M5 20h14\"/>",
   "candlestick": "<path d=\"M8 3v4M8 15v6M16 3v8M16 17v4\"/><rect x=\"6\" y=\"7\" width=\"4\" height=\"8\" rx=\"1\"/><rect x=\"14\" y=\"11\" width=\"4\" height=\"6\" rx=\"1\"/>",
   "landmark": "<path d=\"M3 21h18M5 21V10M9 21V10M15 21V10M19 21V10M12 3 3 8h18z\"/>",
+  "ai-chip": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\"/><path d=\"M9 1.5V4M15 1.5V4M9 20v2.5M15 20v2.5M1.5 9H4M1.5 15H4M20 9h2.5M20 15h2.5\"/><path d=\"m8 14.5 2.5-2.5 2 2 3.5-4\"/>",
   "bot": "<rect x=\"4\" y=\"8\" width=\"16\" height=\"12\" rx=\"2\"/><path d=\"M12 4v4M9 13h.01M15 13h.01M9 17h6\"/>",
   "newspaper": "<path d=\"M4 5h13v14H6a2 2 0 0 1-2-2zM17 9h3v8a2 2 0 0 1-2 2\"/><path d=\"M8 9h5M8 13h5M8 17h3\"/>",
   "heart": "<path d=\"M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z\"/>",
