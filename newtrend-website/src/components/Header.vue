@@ -1,4 +1,6 @@
 <script setup>
+import {kycStatus} from '../utils/accountBadge.js'
+import {useCopyFeedback} from '../composables/useCopyFeedback.js'
 import {isDemo,MODES} from '../utils/accountMode.js'
 import {useAmountMask} from '../composables/useAmountMask.js'
 import {money} from '../utils/format.js'
@@ -52,7 +54,7 @@ async function selectLanguage(code){
 // Header asset/profile menus mirror the reference: hover or keyboard focus reveals them, a pointer click follows the link.
 // Bell badge: unread count from the profile API; the notifications page refreshes it via the 'notifications' tag.
 const unread=useRequest(()=>session.loggedIn?getUnreadCount():Promise.resolve(0),{key:()=>session.loggedIn,tags:['notifications']})
-const {hidden:balanceHidden,toggle:toggleBalance,masked:maskBalance}=useAmountMask(),feedback=shallowRef(null)
+const {hidden:balanceHidden,toggle:toggleBalance,masked:maskBalance}=useAmountMask()
 // Same total as the Assets page (mock ledger + holdings for the current mode).
 // Asset menu total: loaded each time the menu opens (and on mode change while open); a skeleton until then.
 const assetsMenuOpen=computed(()=>expanded.value==='assets'&&session.loggedIn)
@@ -63,10 +65,10 @@ const ACCOUNT_KEYS=['assets.tabs.funding','assets.tabs.trading','assets.distribu
 const menuAccounts=useRequest(()=>profileMenuOpen.value?getAssetsOverview(session.mode).then(o=>o.accounts):Promise.resolve(null),{key:()=>profileMenuOpen.value+'|'+session.mode,tags:['wallet']})
 const menuTotal=useRequest(()=>assetsMenuOpen.value?getAssetsOverview(session.mode).then(o=>o.total):Promise.resolve(null),{key:()=>assetsMenuOpen.value+'|'+session.mode})
 const formatBalance=money
-const kycBadge=()=>account.kyc==='approved'||account.kyc==='verified'?(account.advanced==='pending'?['common.kycAdvancedPending','secondary']:['common.kycVerified','success']):account.kyc==='pending'?['common.kycPending','secondary']:['common.kycUnverified','danger']
+const kycBadge=()=>{const k=kycStatus(account);return [k.key,k.tone]}
 function openOnKeyboardFocus(event,label){if(event.target.matches?.(':focus-visible')&&event.target===event.currentTarget.firstElementChild){cancelHoverClose();expanded.value=label}}
-function notify(type,key){feedback.value=null;nextTick(()=>{feedback.value={type,key}})}
-async function copyUid(){try{await navigator.clipboard.writeText(DEMO_UID);notify('success','common.copied')}catch{notify('error','common.copyFailed')}}
+const {feedback,copy}=useCopyFeedback()
+const copyUid=()=>copy(DEMO_UID)
 function signout(){logout();expanded.value='';router.push(path('/'))}
 function clearCache(){expanded.value='';openClearCache()}
 // 劃轉 opens the transfer dialog in place (user decision, 2026-11-26) instead of navigating to the assets page.

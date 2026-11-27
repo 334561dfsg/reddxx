@@ -1,0 +1,37 @@
+/* Order form styles for TradeOrderForm and the trading/order components, loaded once by TradeOrderForm and namespaced
+   under .trade-order-form (review 2026-11-27: previously a scoped copy per component, five times in the bundle). */
+.trade-order-form .compact-selects{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
+.trade-order-form .spot-amount-field{position:relative;display:block}
+.trade-order-form .spot-amount-field input{padding-right:65px}
+.trade-order-form .spot-amount-field>span{position:absolute;right:12px;top:50%;transform:translateY(-50%)}
+.trade-order-form{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;font-size:12px;line-height:16px;color:var(--terminal-secondary)}
+.trade-order-form .form-body{display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:8px 16px;scroll-padding:12px}
+.trade-order-form .form-body>*{flex-shrink:0}
+.trade-order-form .account-line{display:flex;justify-content:space-between;align-items:center;color:var(--terminal-muted)}
+.trade-order-form .account-tag{border:1px solid var(--terminal-divider);border-radius:var(--nt-radius-panel);padding:2px 8px}
+.trade-order-form .type-tabs,.trade-order-form .percentages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+.trade-order-form .type-tabs button{padding:8px 12px;border-radius:var(--nt-radius-sm);background:#0c1017;font-size:14px;line-height:20px;min-height:36px;color:var(--terminal-muted)}
+.trade-order-form .type-tabs button.active{color:#fff;background:var(--nt-green)}
+.trade-order-form .direction-tabs button.active.sell{background:var(--nt-red)}
+.trade-order-form label{display:grid;gap:4px;font-size:12px;line-height:16px;color:var(--terminal-secondary)}
+.trade-order-form .percentages{grid-template-columns:repeat(4,minmax(0,1fr))}
+.trade-order-form .percentages button{background:#0c1017;border:1px solid var(--terminal-divider);border-radius:var(--nt-radius-sm);min-height:28px;padding:4px;font-size:12px;line-height:16px}
+.trade-order-form .percentages button:hover{background:var(--terminal-input)}
+.trade-order-form .form-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 12px;margin:0;font-size:12px;line-height:16px}
+.trade-order-form .form-summary dt{color:var(--terminal-muted)}
+.trade-order-form .form-summary dd{text-align:right;margin:0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.trade-order-form .form-summary .positive{color:var(--nt-green)}
+.trade-order-form .check-label{display:flex;align-items:center;gap:8px;min-height:28px}
+.trade-order-form .check-label input{width:14px;height:14px;padding:0;min-height:0;margin:0;accent-color:var(--nt-accent)}
+.trade-order-form .spot-side{display:flex;flex-direction:column;gap:12px}
+.trade-order-form .spot-side+.spot-side{border-top:1px solid var(--terminal-divider);padding-top:12px}
+.trade-order-form .spot-side h3{font-family:inherit;font-weight:500;font-size:14px;line-height:20px;margin:0}
+.trade-order-form .form-actions{flex:none;padding:8px 16px max(12px,env(safe-area-inset-bottom));background:var(--nt-bg)}
+.trade-order-form .form-actions>p{font-size:12px;margin:0 0 8px}
+.trade-order-form .action-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.trade-order-form .form-actions button{width:100%;min-height:40px;padding:10px 12px;border-radius:999px;font-size:14px;line-height:20px;color:#fff}
+.trade-order-form .buy{background:var(--nt-green)}
+.trade-order-form .sell{background:var(--nt-red)}
+.trade-order-form .form-error{font-size:12px;line-height:18px;color:var(--nt-red)}
+.trade-order-form button:focus-visible,.trade-order-form a:focus-visible,.trade-order-form .form-body:focus-visible{outline:none}
+@media(pointer:coarse){.trade-order-form .percentages button,.trade-order-form .type-tabs button,.trade-order-form .form-actions button{min-height:44px}}

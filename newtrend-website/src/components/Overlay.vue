@@ -33,6 +33,7 @@ import FundPasswordForm from './overlay/FundPasswordForm.vue'
 import FlashExchange from './overlay/FlashExchange.vue'
 import FundPasswordPrompt from './overlay/FundPasswordPrompt.vue'
 import Spinner from './ui/Spinner.vue'
+import {overlayConfig} from './overlay/overlayRegistry.js'
 // State reported by the open flow's body component ({dirty, valid, done, confirmLabel}); drives the unsaved-work guard and footer.
 const flow=shallowRef({})
 const onFlowState=state=>{flow.value={...state,dirty:state.dirty??Boolean(state.draft)}}
@@ -50,12 +51,12 @@ function pickOption(value){const onSelect=current.value?.data.onSelect;close(()=
 // Pure pickers (product sheet, pair drawer, language sheet) close when the backdrop is tapped: nothing can be lost there
 // (user decision, 2026-11-27, an exception to the no-backdrop-close rule). A native <dialog> reports backdrop taps as
 // clicks on the dialog element itself; forms, confirmations and every other overlay keep ignoring them.
-const PICKERS=['option-sheet','market-picker','language']
-function backdrop(e){if(e.target===dialog.value&&PICKERS.includes(current.value?.type)&&!closing.value)close()}
+const config=computed(()=>overlayConfig(current.value?.type))
+function backdrop(e){if(e.target===dialog.value&&config.value.backdropClose&&!closing.value)close()}
 function pickMarket(id){const onSelect=current.value?.data.onSelect;close(()=>onSelect?.(id))}
 // Generic amount form (overlay/AmountForm): only donate (charity) opens it.
-const formType=computed(()=>current.value?.type==='donate')
-watch(modal,async(value)=>{if(!value)return;current.value=value;flow.value={};error.value='';done.value=false;closing.value=false;supportView.value=value.type==='support'&&value.data.supportView==='chat'?'chat':'channels';message.value=value.data.value||'';trigger=document.activeElement;returnFocus=value.data.returnFocus;previousOverflow=document.body.style.overflow;await nextTick();dialog.value.showModal();document.body.style.overflow='hidden';await nextTick();dialog.value.querySelector(value.type==='quant-fund-subscribe'?'[data-fund-initial-focus]':value.type==='strategy-subscribe'?'[data-strategy-initial-focus]':value.type==='earn-subscribe'?'[data-earn-initial-focus]':value.type==='fund-password-verify'?'[data-prompt-initial-focus]':(value.data.modeSwitch||value.data.focusCancel)?'[data-cancel]':'[data-initial-focus]')?.focus()})
+const formType=computed(()=>Boolean(config.value.primary?.amountForm))
+watch(modal,async(value)=>{if(!value)return;current.value=value;flow.value={};error.value='';done.value=false;closing.value=false;supportView.value=value.type==='support'&&value.data.supportView==='chat'?'chat':'channels';message.value=value.data.value||'';trigger=document.activeElement;returnFocus=value.data.returnFocus;previousOverflow=document.body.style.overflow;await nextTick();dialog.value.showModal();document.body.style.overflow='hidden';await nextTick();dialog.value.querySelector(overlayConfig(value.type).initialFocus||((value.data.modeSwitch||value.data.focusCancel)?'[data-cancel]':'[data-initial-focus]'))?.focus()})
 function openStrategySubscription(){const product=current.value.data;const from=route.fullPath;close(()=>{if(route.fullPath===from)openModal('strategy-subscribe',{key:'aiQuant.create.title',params:{name:product.name}},product)})}
 function cleanup(){document.body.style.overflow=previousOverflow??'';if(trigger?.isConnected)trigger.focus();if(document.activeElement!==trigger)returnFocus?.();clearTimeout(closeTimer)}
 function close(afterClose){if(closing.value||!current.value)return;closing.value=true;closeTimer=setTimeout(()=>{dialog.value?.close();current.value=null;closeModal();closing.value=false;cleanup();if(typeof afterClose==='function')afterClose()},matchMedia('(prefers-reduced-motion: reduce)').matches?50:150)}
@@ -78,20 +79,33 @@ const openLanguage=()=>openModal('language','profile.center.preferences.selectLa
 function openSupportChat(){supportView.value='chat';error.value='';nextTick(()=>dialog.value?.querySelector('textarea')?.focus())}
 // Footer primary action per flow type; null when the type has none.
 const primary=computed(()=>{
- const c=current.value,f=flow.value;if(!c)return null
- const confirmable=['account-confirm','c2c-agreement']
- if(confirmable.includes(c.type))return {form:'account-action',label:c.data.confirmLabel||'earn.redeem.success.done',danger:c.data.destructive,disabled:done.value||closing.value}
- if(formType.value)return {form:'action-form',label:f.done?'assets.statusCompleted':'earn.redeem.success.done',disabled:f.done||!f.valid}
- const flows={'strategy-subscribe':['strategy-subscribe-form','aiQuant.create.submit',false],'quant-fund-subscribe':['quant-fund-subscribe-form','aiQuant.quantFund.subscribe.submit',false],'earn-subscribe':['earn-subscribe-form','earn.subscribe.submit',true],'earn-redeem':['earn-redeem-form',f.confirmLabel||'earn.redeem.submit',true]}
- const entry=flows[c.type];if(!entry||f.done)return null
- return {form:entry[0],label:entry[1],disabled:closing.value||!!f.busy||(entry[2]&&!f.valid)}
+ const c=current.value,f=flow.value,p=config.value.primary
+ if(!c||!p)return null
+ if(p.confirm)return {form:p.form,label:c.data.confirmLabel||'earn.redeem.success.done',danger:c.data.destructive,disabled:done.value||closing.value}
+ if(p.amountForm)return {form:p.form,label:f.done?'assets.statusCompleted':'earn.redeem.success.done',disabled:f.done||!f.valid}
+ if(f.done)return null
+ return {form:p.form,label:(p.labelFromFlow&&f.confirmLabel)||p.label,disabled:closing.value||!!f.busy||(p.requiresValid&&!f.valid)}
 })
+// <dialog> classes: the type's shape from the registry plus live state.
+const dialogClasses=computed(()=>[...(config.value.classes||[]),{closing:closing.value,'mode-confirm':current.value?.data.modeSwitch,'support-chat-open':isSupport.value&&supportView.value==='chat'}])
+const showFooter=computed(()=>config.value.footer!==false)
 const cancelLabel=computed(()=>{const c=current.value;if(c?.type==='account-confirm'&&c.data.cancelLabel&&!done.value)return c.data.cancelLabel;return done.value||flow.value.done||c?.type==='c2c-detail'?'aiQuant.detail.close':'aiQuant.create.cancel'})
 function keydown(e){if(e.key!=='Tab')return;const els=[...dialog.value.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select,textarea,[tabindex="0"]')].filter(x=>x.getClientRects().length);if(!els.length){e.preventDefault();return}const first=els[0],last=els[els.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}
 watch(()=>route.fullPath,()=>{if(current.value)close()})
 onUnmounted(()=>{dialog.value?.close();cleanup()})
 </script>
-<template><dialog ref="dialog" class="nt-dialog" :class="{drawer:isDrawer,'market-drawer':isMarketPicker,'support-drawer':isSupport,'strategy-detail-drawer':['strategy-detail','quant-fund-order'].includes(current?.type),'strategy-subscribe-dialog':current?.type==='strategy-subscribe','support-chat-open':isSupport&&supportView==='chat',closing,'mode-confirm':current?.data.modeSwitch,'earn-subscribe-dialog':['quant-fund-subscribe','earn-subscribe','earn-redeem','transfer','language','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current?.type),'language-sheet':['language','option-sheet'].includes(current?.type),'option-sheet-dialog':current?.type==='option-sheet','delivery-order-dialog':current?.type==='delivery-order','transfer-dialog':['transfer','language','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current?.type)}" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown" @click="backdrop"><template v-if="current"><header class="overlay-header"><div class="overlay-heading"><h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2><p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p></div><button class="overlay-close" :aria-label="$t(&quot;aiQuant.detail.close&quot;)" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button></header><div class="overlay-body">
+<template>
+<dialog ref="dialog" class="nt-dialog" :class="dialogClasses" aria-labelledby="overlay-title" @cancel="cancel" @keydown="keydown" @click="backdrop">
+<template v-if="current">
+<header class="overlay-header">
+ <div class="overlay-heading">
+  <h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2>
+  <p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p>
+ </div>
+ <button class="overlay-close" :aria-label="$t('aiQuant.detail.close')" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button>
+</header>
+<!-- Body: one branch per overlay type (its settings live in overlay/overlayRegistry.js). -->
+<div class="overlay-body">
 <OptionSheet v-if="current.type==='option-sheet'" :options="current.data.options" :current="current.data.current" @select="pickOption"/>
 <DeliveryOrderStatus v-else-if="current.type==='delivery-order'" :mode="current.data.mode" :order="current.data.order"/>
 <MarketPicker v-else-if="isMarketPicker" :current="current.data.current" @select="pickMarket"/>
@@ -125,7 +139,15 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 <AmountForm v-else-if="formType" :kind="current.type" :data="current.data" @state="onFlowState"/>
 <template v-else><p class="muted">{{ $t(current.data.description||"overlay.ui.localInterfaceDemoNotConnectedToTheOriginalAccount") }}</p></template>
 <FeedbackToast v-if="error" id="action-error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
-</div><footer v-if="!isDrawer&&!isMarketPicker&&!isSupport&&!['quant-fund-order','transfer','language','option-sheet','delivery-order','change-password','devices','authenticator','fund-password','fund-password-verify','flash-exchange'].includes(current.type)" class="overlay-footer"><button v-if="current.type!=='strategy-detail'" class="secondary-button" data-cancel :aria-disabled="busy||undefined" @click="!busy&&close()">{{ $t(cancelLabel) }}</button><button v-if="current.type==='strategy-detail'" class="strategy-cta" :disabled="closing" @click="openStrategySubscription">{{ $t('aiQuant.spotlight.subscribeNow') }}</button><button v-if="primary" :class="[primary.danger?'danger-button':'primary-button',{'is-busy':busy}]" :form="primary.form" type="submit" :disabled="primary.disabled&&!busy" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(primary.label) }}</button></footer></template></dialog></template>
+</div>
+<footer v-if="showFooter" class="overlay-footer">
+ <button v-if="current.type!=='strategy-detail'" class="secondary-button" data-cancel :aria-disabled="busy||undefined" @click="!busy&&close()">{{ $t(cancelLabel) }}</button>
+ <button v-if="current.type==='strategy-detail'" class="strategy-cta" :disabled="closing" @click="openStrategySubscription">{{ $t('aiQuant.spotlight.subscribeNow') }}</button>
+ <button v-if="primary" :class="[primary.danger?'danger-button':'primary-button',{'is-busy':busy}]" :form="primary.form" type="submit" :disabled="primary.disabled&&!busy" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(primary.label) }}</button>
+</footer>
+</template>
+</dialog>
+</template>
 <style scoped>
 .c2c-agreement-copy{white-space:pre-line;line-height:1.7;color:#b2b5bb;margin-top:16px}
 

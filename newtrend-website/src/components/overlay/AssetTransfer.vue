@@ -1,4 +1,5 @@
 <script setup>
+import '../../styles/asset-transfer.css'
 import {computed,h,shallowRef,watch} from 'vue'
 import {message} from 'ant-design-vue'
 import Coin from '../Coin.vue'
@@ -99,37 +100,11 @@ async function submit(){
 </style>
 <style scoped>
 .asset-transfer{display:grid;gap:20px;padding-top:4px;padding-bottom:4px}
-.at-field{display:grid;gap:8px}
-.at-label{font-size:14px;line-height:20px;color:#e6e7e9}
-.at-select{width:100%}
 /* From/To rail. Geometry: label 20 + gap 8 + select 48 → a select's centre is 52px below its field's top, and the
    fields are 96px apart (76 + 20 gap). Dots sit on the two select centres (52, 148); the swap button is centred
    on the rail halfway between them (100). Labels stay on one line so this holds in every language. */
 .at-route{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:12px}
-.at-route-fields{grid-column:2;grid-row:1;display:grid;gap:20px}
-.at-route-fields .at-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.at-rail{position:relative;grid-column:1;grid-row:1}
-.at-dot{position:absolute;left:8px;width:12px;height:12px;border-radius:50%;border:2px solid;box-sizing:border-box}
-.at-dot.from{top:46px;border-color:#2bc287}.at-dot.to{top:142px;border-color:#f46}
-.at-line{position:absolute;left:13.5px;top:58px;height:84px;width:1px;background:#ffffff24}
-.at-swap{position:absolute;left:0;top:86px;z-index:1;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#1d2733;color:#a5ff4a}
-.at-swap:hover:not(:disabled){background:#253242}
-.at-swap:disabled{color:#87888a;cursor:not-allowed}
-.at-swap:focus-visible{outline:none;background:#2c3b4d}
-.at-divider{margin:0;border:0;border-top:1px solid #ffffff0f}
 .at-amount{display:flex;align-items:center;min-height:48px;padding-right:14px;border:1px solid #ffffff1f;border-radius:12px;background:#0c0e10}
-.at-amount:focus-within{background:#11151a}
-.at-amount input{flex:1;min-width:0;min-height:46px;padding:0 12px;border:0;background:transparent;color:#fff;outline:none;font-size:14px}
-.at-amount input::placeholder{color:#8a8c90}
-.at-amount input[aria-invalid=true]{color:#ff6b84}
-.at-all{padding:0;font-size:14px;color:#a5ff4a}
-.at-all:disabled{color:#87888a;cursor:not-allowed}
-.at-all:focus-visible{outline:none;text-decoration:underline}
-.at-available{display:flex;justify-content:space-between;margin:0;font-size:13px;line-height:18px;color:#87888a}
-.at-available b{color:#fff;font-weight:500;font-variant-numeric:tabular-nums}
 .at-submit{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin-top:12px;border-radius:12px;background:#a5ff4a;color:#0a0d12;font-weight:600;font-size:15px}
-.at-submit:hover{background:#b6ff6a}
-.at-submit.is-busy{opacity:.8;cursor:progress}
-.at-submit:focus-visible{outline:none;text-decoration:underline}
 @media(pointer:coarse){.at-amount input,.at-submit{min-height:48px}}
 </style>

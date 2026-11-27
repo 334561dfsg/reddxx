@@ -1,4 +1,6 @@
 <script setup>
+import {kycStatus} from '../../utils/accountBadge.js'
+import {openClearCache} from '../../utils/clearCache.js'
 // 個人中心 overview, laid out after newtrendcapital.com/zh-TW/profile (measured 2026-11-26): a header card (avatar,
 // name, UID copy) over metric tiles (實名認證 / VIP / 信用分 — 安全等級 stays removed), then two columns:
 // 個人設定 (帳戶 / 安全 / 偏好 rows) and 我的業務 + 支援, with a small 登出 pill. Every current feature is a row here:
@@ -12,7 +14,7 @@ import {account,DEMO_UID} from '../../account'
 import {openModal,logout} from '../../session'
 import {path} from '../../data'
 import {locale,languages,t} from '../../i18n'
-import {invalidateAll,useMutation,useRequest} from '../../composables/useRequest.js'
+import {useMutation,useRequest} from '../../composables/useRequest.js'
 import {getAuthenticator,getFundPassword,getPreferences,getUnreadCount,profileErrorKey,updatePreferences} from '../../api/profile.js'
 import {copyText as copy} from './accountForm.js'
 
@@ -24,7 +26,7 @@ const prefs = useRequest(getPreferences, {tags: ['preferences']})
 const unread = useRequest(getUnreadCount, {tags: ['notifications']})
 const saving = useMutation(updatePreferences)
 
-const kycLabel = () => account.kyc === 'approved' ? 'common.kycVerified' : account.kyc === 'pending' ? 'aiQuant.status.pending_review' : 'common.kycUnverified'
+const kycLabel = () => kycStatus(account).key
 const currentLanguage = computed(() => languages.find(([code]) => code === locale.value)?.[1] || locale.value)
 
 const openPassword = () => openModal('change-password', 'profile.changePassword.title')
@@ -37,9 +39,7 @@ async function toggleAlert() {
   try { prefs.data.value = await saving.run({messageAlert: !prefs.data.value.messageAlert}); message.success(t('profile.center.preferences.saved')) }
   catch (cause) { message.error(t(profileErrorKey(cause) === 'profile.center.loadFailed' ? 'profile.center.preferences.saveFailed' : profileErrorKey(cause))) }
 }
-function clearCache() {
-  openModal('account-confirm', 'profile.center.clearCache.title', {description: 'profile.center.clearCache.description', confirmLabel: 'profile.center.clearCache.confirm', onConfirm: () => { invalidateAll(); message.success(t('profile.center.clearCache.done')) }})
-}
+const clearCache = openClearCache
 function signOut() {
   openModal('account-confirm', 'profile.logoutConfirmTitle', {description: 'profile.logoutConfirmDescription', onConfirm: () => { logout(); router.push(path('/login')) }})
 }
@@ -53,7 +53,7 @@ function signOut() {
   <div class="pf-identity-text"><h2>{{ account.name || $t('common.unnamed') }}</h2><p class="pf-uid">UID {{ DEMO_UID }}<button type="button" :aria-label="$t('profile.center.overview.copyUid')" :title="$t('profile.center.overview.copyUid')" @click="copy(DEMO_UID)"><LineIcon name="copy"/></button></p></div>
  </div>
  <div class="pf-tiles">
-  <RouterLink class="pf-tile" :to="path('/kyc')"><span class="pf-tile-label">{{ $t('common.kyc') }}<LineIcon name="chevron-right"/></span><strong class="pf-tile-value"><span class="pf-dot" :class="account.kyc==='approved'?'ok':'warn'" aria-hidden="true"></span>{{ $t(kycLabel()) }}</strong><span v-if="account.kyc!=='approved'" class="pf-tile-cta">{{ $t('margin.borrow.gate.advancedCta') }}</span></RouterLink>
+  <RouterLink class="pf-tile" :to="path('/kyc')"><span class="pf-tile-label">{{ $t('common.kyc') }}<LineIcon name="chevron-right"/></span><strong class="pf-tile-value"><span class="pf-dot" :class="kycStatus(account).verified?'ok':'warn'" aria-hidden="true"></span>{{ $t(kycLabel()) }}</strong><span v-if="account.kyc!=='approved'" class="pf-tile-cta">{{ $t('margin.borrow.gate.advancedCta') }}</span></RouterLink>
   <button type="button" class="pf-tile" @click="openModal('vip','profile.vipLevel')"><span class="pf-tile-label">{{ $t('profile.vipLevel') }}<LineIcon name="chevron-right"/></span><strong class="pf-tile-value">{{ $t('profile.center.overview.vip', {tier: 0}) }}</strong><span class="pf-bar"><span style="width:0"></span></span><span class="pf-tile-sub">{{ t('profile.vip.amountToNext', {tier: 1, amount: '100,000'}) }}</span></button>
   <div class="pf-tile"><span class="pf-tile-label">{{ $t('profile.creditScore') }}</span><strong class="pf-tile-value">{{ CREDIT }} <span class="pf-good">{{ $t('profile.creditScoreLabel.good') }}</span></strong><span class="pf-bar ok"><span style="width:100%"></span></span><span class="pf-tile-sub">{{ t('profile.creditScoreHint', {max: 100}) }}</span></div>
  </div>
@@ -64,7 +64,7 @@ function signOut() {
   <header class="pf-box-head"><h2 id="pf-settings">{{ $t('profile.personalSettings') }}</h2><small>{{ $t('profile.personalSettingsHint') }}</small></header>
   <div class="pf-group">
    <h3>{{ $t('profile.groupAccount') }}</h3>
-   <RouterLink class="pf-row" :to="path('/kyc')"><LineIcon name="shield"/><span class="pf-row-label">{{ $t('common.kyc') }}</span><span class="pf-row-value"><span class="pf-dot" :class="account.kyc==='approved'?'ok':'warn'" aria-hidden="true"></span>{{ $t(kycLabel()) }}</span><LineIcon name="chevron-right" class="pf-chev"/></RouterLink>
+   <RouterLink class="pf-row" :to="path('/kyc')"><LineIcon name="shield"/><span class="pf-row-label">{{ $t('common.kyc') }}</span><span class="pf-row-value"><span class="pf-dot" :class="kycStatus(account).verified?'ok':'warn'" aria-hidden="true"></span>{{ $t(kycLabel()) }}</span><LineIcon name="chevron-right" class="pf-chev"/></RouterLink>
    <RouterLink class="pf-row" :to="path('/bind-email')"><LineIcon name="mail"/><span class="pf-row-label">{{ $t('auth.email') }}</span><span class="pf-row-value">{{ account.email || $t('profile.notBound') }}</span><LineIcon name="chevron-right" class="pf-chev"/></RouterLink>
    <RouterLink class="pf-row" :to="path('/bind-phone')"><LineIcon name="smartphone"/><span class="pf-row-label">{{ $t('auth.phone') }}</span><span class="pf-row-value">{{ account.phone || $t('profile.notBound') }}</span><LineIcon name="chevron-right" class="pf-chev"/></RouterLink>
   </div>

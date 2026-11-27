@@ -1,7 +1,9 @@
 <script setup>
+import {kycStatus} from '../../utils/accountBadge.js'
+import {useCopyFeedback} from '../../composables/useCopyFeedback.js'
+import FeedbackToast from '../../platform/FeedbackToast.js'
 import {isDemo,MODES} from '../../utils/accountMode.js'
 import {computed,shallowRef} from 'vue'
-import {message} from 'ant-design-vue'
 import LineIcon from '../ui/LineIcon.vue'
 import {navGroups,path} from '../../data'
 import {availableInMode} from '../../utils/demoAccess.js'
@@ -17,11 +19,11 @@ const emit=defineEmits(['close','navigate','switch-mode','open-language','clear-
 const expanded=shallowRef('')
 const toggle=key=>{expanded.value=expanded.value===key?'':key}
 const groupIcons={'common.trade':'candlestick','common.finance':'landmark','aiQuant.landing.eyebrow':'ai-chip'}
-const verified=computed(()=>['approved','verified'].includes(account.kyc))
+const verified=computed(()=>kycStatus(account).verified)
 const currentLanguage=computed(()=>languages.find(([code])=>code===locale.value)?.[1]||locale.value)
-async function copyUid(){
- try{await navigator.clipboard.writeText(DEMO_UID);message.success(t('common.copied'))}catch{message.error(t('common.copyFailed'))}
-}
+// The drawer is a dialog: the copy toast renders in its layer (useCopyFeedback), not under it.
+const {feedback,copy}=useCopyFeedback()
+const copyUid=()=>copy(DEMO_UID)
 function signout(){logout();emit('close')}
 </script>
 <template>
@@ -31,7 +33,7 @@ function signout(){logout();emit('close')}
    <span class="drawer-avatar" aria-hidden="true"><LineIcon name="user"/></span>
    <div class="drawer-user-text">
     <div class="drawer-user-top"><strong>{{ account.name||$t('common.unnamed') }}</strong><span class="drawer-credit">{{ $t('profile.center.overview.credit',{score:100}) }}</span></div>
-    <span class="drawer-uid">UID: {{ DEMO_UID }}<button type="button" :aria-label="$t('common.copy')" @click="copyUid"><LineIcon name="copy"/></button></span>
+    <span class="drawer-uid">UID: {{ DEMO_UID }}<button type="button" :aria-label="$t('common.copy')" @click="copyUid"><LineIcon name="copy"/></button><FeedbackToast v-if="feedback" :type="feedback.type" :source="() => feedback ? $t(feedback.key) : ''"/></span>
    </div>
   </div>
   <div v-if="!verified" class="drawer-verify"><span>{{ $t('common.drawer.verifyReminder') }}</span><button type="button" @click="$emit('navigate','/kyc')">{{ $t('common.drawer.verifyAction') }}</button></div>
