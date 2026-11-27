@@ -43,7 +43,9 @@ const {favorites,favorite}=useMarketFavorites('nt-trade-favorites')
 // Live data from the market stream: the selected pair's ticker and every market for the pair picker. Until the
 // first snapshot the price is null and the figures render as skeletons; order actions are held (see TradeOrderForm).
 const ticker=useTicker(()=>pair.value.id),tickers=useTickers()
-const live=computed(()=>ticker.data.value)
+// Switching pairs resubscribes the single-market ticker; until its snapshot arrives, use the same market's entry
+// from the all-markets stream so the header keeps real figures instead of skeletons (no layout jump).
+const live=computed(()=>ticker.data.value??tickers.data.value?.[pair.value.id]??null)
 const livePair=computed(()=>({...pair.value,price:live.value?.price??null,change:live.value?Number(live.value.change.toFixed(2)):pair.value.change,high:live.value?.high,low:live.value?.low}))
 // Pair picker rows use the latest pushed price when available.
 const pairs=computed(()=>markets.map(m=>{const q=tickers.data.value?.[m.id];return {value:m.id,label:m.name,category:marketCategory(m),price:fmt(q?.price??m.price),change:q?Number(q.change.toFixed(2)):m.change}}))

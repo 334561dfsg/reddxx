@@ -7,7 +7,9 @@ import {useDepth} from '../../composables/useMarket.js'
 // their price so the order form can use it as the limit price.
 const props=defineProps({pair:Object,compact:Boolean,pickable:Boolean})
 const emit=defineEmits(['pick-price'])
-const display=ref('both')
+const chosen=ref('both')
+// The phone layout has no view switch (user decision, 2026-11-27) and always shows both sides.
+const display=computed(()=>props.compact?'both':chosen.value)
 // Pushed book for the pair (full book per push). Rows keep their count while loading so the panel never jumps.
 const depth=useDepth(()=>props.pair.id)
 const count=computed(()=>display.value==='both'?7:14)
@@ -28,7 +30,7 @@ const sideRows=side=>{
 </script>
 <template>
 <section class="terminal-panel orderbook" :aria-label="$t('trade.orderBook')">
-  <div class="book-controls"><button v-for="view in ['both','bid','ask']" :key="view" :aria-pressed="display===view" :aria-label="$t('trade.pages.'+view)" :title="$t('trade.pages.'+view)" @click="display=view"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><rect x="1" y="1" width="22" height="22" rx="1" fill="none" stroke="currentColor"/><rect v-for="row in 3" :key="'left-'+row" x="3" :y="3+(row-1)*6" width="5" height="5" :fill="view==='bid'?'var(--nt-green)':view==='ask'?'var(--nt-red)':row===1?'var(--nt-red)':'var(--nt-green)'"/><rect v-for="row in 3" :key="'right-'+row" x="10" :y="3+(row-1)*6" width="11" height="5" fill="currentColor" opacity=".65"/></svg></button></div>
+  <div v-if="!compact" class="book-controls"><button v-for="view in ['both','bid','ask']" :key="view" :aria-pressed="display===view" :aria-label="$t('trade.pages.'+view)" :title="$t('trade.pages.'+view)" @click="chosen=view"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><rect x="1" y="1" width="22" height="22" rx="1" fill="none" stroke="currentColor"/><rect v-for="row in 3" :key="'left-'+row" x="3" :y="3+(row-1)*6" width="5" height="5" :fill="view==='bid'?'var(--nt-green)':view==='ask'?'var(--nt-red)':row===1?'var(--nt-red)':'var(--nt-green)'"/><rect v-for="row in 3" :key="'right-'+row" x="10" :y="3+(row-1)*6" width="11" height="5" fill="currentColor" opacity=".65"/></svg></button></div>
   <div class="book-head"><span>{{ $t('trade.ui.priceUsd') }}</span><span>{{ $t('trade.quantity') }}<small>{{ pair.symbol }}</small></span><span v-if="!compact">{{ $t('trade.total') }}<small>USDT</small></span></div>
   <div class="book-body" :aria-busy="!depth.ready.value||undefined">
     <div v-for="side in (display==='both'?['ask','bid']:[display])" :key="side" class="book-side">

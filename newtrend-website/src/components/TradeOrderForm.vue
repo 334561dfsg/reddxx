@@ -24,6 +24,8 @@ const balances=useRequest(()=>getTradeBalances(session.mode,['USDT',base.value])
 const balancesReady=computed(()=>balances.status.value==='ready')
 const cash=computed(()=>balances.data.value?.USDT??0),holdings=computed(()=>balances.data.value?.[base.value]??0)
 const leverageItems=leverageOptions.map(value=>({value,label:`${value}x`}))
+// Phone layout: order type is a select beside leverage (GMXX mobile form) instead of the tab row.
+const typeItems=computed(()=>['market','limit'].map(value=>({value,label:t('trade.'+value)})))
 const periodItems=computed(()=>deliveryPeriods.map(([value,payout])=>({value,label:`${period(value)} · ${payout}%`})))
 const rate=computed(()=>deliveryPeriods.find(p=>p[0]===options.duration)[1])
 const futurePrice=computed(()=>futures.type==='market'?props.pair.price:Number(futures.price))
@@ -82,10 +84,11 @@ function submit(side){
 <div class="form-body" tabindex="0" role="region" :aria-label="$t(mode==='futures'?'trade.futuresOrder':mode==='options'?'trade.optionsOrder':'common.spot')">
 <template v-if="mode==='futures'">
 <div v-if="compact" class="direction-tabs"><button v-for="side in ['buy','sell']" :key="side" :class="[side,{active:(futures.side||'buy')===side}]" :aria-pressed="(futures.side||'buy')===side" @click="futures.side=side;errors.futures='';notice=''">{{ $t(side==='buy'?'trade.buyLong':'trade.sellShort') }}</button></div>
-<div class="type-tabs price-tabs"><button v-for="type in ['market','limit']" :key="type" :class="{active:futures.type===type}" :aria-pressed="futures.type===type" @click="futures.type=type">{{ $t('trade.'+type) }}</button></div>
+<div v-if="compact" class="compact-selects"><RecordFilter id="order-type" v-model="futures.type" variant="field" :label="$t('trade.orderType')" :options="typeItems"/><RecordFilter id="order-leverage" v-model="futures.leverage" variant="field" :label="$t('trade.leverage')" :options="leverageItems"/></div>
+<div v-else class="type-tabs price-tabs"><button v-for="type in ['market','limit']" :key="type" :class="{active:futures.type===type}" :aria-pressed="futures.type===type" @click="futures.type=type">{{ $t('trade.'+type) }}</button></div>
 <dl class="form-summary"><dt>{{ $t('trade.form.availableQuantity') }}</dt><dd><template v-if="balancesReady">{{ fmt(cash) }}</template><Skeleton v-else inline width="72px"/> USDT</dd></dl>
 <label v-if="futures.type==='limit'">{{ $t('trade.price') }} (USDT)<input class="trade-field" v-model="futures.price" inputmode="decimal" :placeholder="$t('trade.enterPrice')"/></label>
-<label>{{ $t('trade.leverage') }}<RecordFilter id="order-leverage" v-model="futures.leverage" variant="field" :label="$t('trade.leverage')" :options="leverageItems"/></label>
+<label v-if="!compact">{{ $t('trade.leverage') }}<RecordFilter id="order-leverage" v-model="futures.leverage" variant="field" :label="$t('trade.leverage')" :options="leverageItems"/></label>
 <label>{{ $t('trade.quantity') }} (USDT)<input class="trade-field" v-model="futures.amount" inputmode="decimal" :placeholder="$t('trade.enterQuantity')" :aria-invalid="!!errors.futures" :aria-describedby="errors.futures?'futures-form-error':undefined" @input="errors.futures=''"/></label>
 <div class="percentages"><button v-for="n in [25,50,75,100]" :key="n" @click="percentage('futures',n)">{{ n }}%</button></div>
 <dl class="form-summary"><dt class="positive">{{ $t('trade.form.maxOpen') }}</dt><dd class="positive"><template v-if="balancesReady&&pair.price!==null">{{ fmt(maxOpen) }}</template><Skeleton v-else inline width="72px"/> USDT</dd><dt>{{ $t('trade.form.initialMargin') }}</dt><dd>{{ fmt(futureEstimate.margin) }} USDT</dd><dt>{{ $t('trade.fee') }}</dt><dd>{{ fmt(futureEstimate.fee) }} USDT</dd></dl>
@@ -104,7 +107,8 @@ function submit(side){
 </template>
 <template v-else>
 <div class="direction-tabs"><button v-for="side in ['buy','sell']" :key="side" :class="[side,{active:(spot.side||'buy')===side}]" :aria-pressed="(spot.side||'buy')===side" @click="spot.side=side;notice=''">{{ $t('trade.'+side) }}</button></div>
-<div class="type-tabs price-tabs"><button v-for="type in ['market','limit']" :key="type" :class="{active:spot.type===type}" :aria-pressed="spot.type===type" @click="spot.type=type">{{ $t('trade.'+type) }}</button></div>
+<RecordFilter v-if="compact" id="spot-order-type" v-model="spot.type" variant="field" :label="$t('trade.orderType')" :options="typeItems"/>
+<div v-else class="type-tabs price-tabs"><button v-for="type in ['market','limit']" :key="type" :class="{active:spot.type===type}" :aria-pressed="spot.type===type" @click="spot.type=type">{{ $t('trade.'+type) }}</button></div>
 <section v-for="side in [spot.side||'buy']" :key="side" class="spot-side" :aria-label="$t('trade.'+side)">
 <label v-if="spot.type==='limit'">{{ $t(side==='buy'?'trade.form.buyPrice':'trade.form.sellPrice') }} (USDT)<input class="trade-field" v-model="spot[side].price" inputmode="decimal" :placeholder="$t('trade.enterPrice')"/></label>
 <label>{{ $t(side==='buy'?'trade.form.buyAmount':'trade.form.sellQuantity') }} ({{ side==='buy'?'USDT':base }})<span class="spot-amount-field"><input class="trade-field" v-model="spot[side].amount" inputmode="decimal" :placeholder="$t('trade.enterQuantity')" :aria-invalid="!!errors[side]" :aria-describedby="errors[side]?'spot-'+side+'-error':undefined" @input="errors[side]=''"/><span aria-hidden="true">{{ side==='buy'?'USDT':base }}</span></span></label>
@@ -119,6 +123,7 @@ function submit(side){
 <footer class="form-actions"><FeedbackToast v-if="notice" type="success" :source="() => (notice) ? (notice) : ''"/><div :class="{'action-pair':mode==='futures'&&!compact}"><button v-if="mode==='futures'&&compact" :class="futures.side==='sell'?'sell':'buy'" @click="submit(futures.side||'buy')">{{ $t(futures.side==='sell'?'trade.sellShort':'trade.buyLong') }}</button><button v-else-if="mode==='options'" :class="options.side==='buy'?'buy':'sell'" @click="submit(options.side)">{{ $t(options.side==='buy'?'trade.buyLong':'trade.sellShort') }}</button><button v-else-if="mode==='spot'" :class="spot.side==='sell'?'sell':'buy'" @click="submit(spot.side||'buy')">{{ $t(spot.side==='sell'?'trade.sell':'trade.buy') }}</button><template v-else><button class="buy" @click="submit('buy')">{{ $t(mode==='spot'?'trade.buy':'trade.buyLong') }}</button><button class="sell" @click="submit('sell')">{{ $t(mode==='spot'?'trade.sell':'trade.sellShort') }}</button></template></div></footer>
 </div></template>
 <style scoped>
+.compact-selects{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
 .spot-amount-field{position:relative;display:block}.spot-amount-field input{padding-right:65px}.spot-amount-field>span{position:absolute;right:12px;top:50%;transform:translateY(-50%)}
 .trade-order-form{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;font-size:12px;line-height:16px;color:var(--terminal-secondary)}
 .form-body{display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:8px 16px;scroll-padding:12px}

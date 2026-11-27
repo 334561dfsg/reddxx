@@ -453,5 +453,13 @@
     "connecting": "Connecting to market data…",
     "reconnecting": "Market data disconnected, reconnecting…",
     "unavailable": "Market data is not connected yet. Please try again shortly."
+  },
+  "recordTabs": {
+    "positions": "Positions",
+    "openOrders": "Open orders",
+    "orderHistory": "Order history",
+    "positionHistory": "Position history",
+    "current": "Current orders",
+    "history": "History"
   }
 }

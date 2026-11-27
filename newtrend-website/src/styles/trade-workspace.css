@@ -231,11 +231,14 @@
  .product-terminal.compact .chart-toggle{display:grid;place-items:center;width:40px;height:40px;border-radius:var(--nt-radius-control);color:var(--terminal-muted)}
  .product-terminal.compact .chart-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
  .product-terminal.compact .chart-toggle[aria-expanded=true]{color:var(--nt-accent);background:var(--terminal-input)}
- .product-terminal.compact .instrument-price{order:3;width:100%;display:flex;align-items:baseline;gap:8px;font-size:22px;line-height:28px}
+ .product-terminal.compact .instrument-price{order:3;width:100%;display:flex;align-items:baseline;gap:8px;min-height:28px;font-size:22px;line-height:28px}
+ .product-terminal.compact .instrument-price>.nt-skeleton{align-self:center}
  .product-terminal.compact .instrument-change{font-size:13px;line-height:18px;font-weight:500}
  .product-terminal.compact .instrument-stats{order:4;width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px;padding-top:4px}
- .product-terminal.compact .stream-status{order:5;margin-left:0}
- .product-terminal.compact .workspace-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:none;grid-template-areas:"form book" "records records";gap:4px;align-items:stretch}
+ /* Connection status floats over the price row's empty right side instead of adding a line (no layout jump). */
+ .product-terminal.compact .instrument-bar{position:relative}
+ .product-terminal.compact .stream-status{position:absolute;right:12px;top:54px;max-width:42%;margin:0;padding:3px 8px;border-radius:12px;white-space:normal;text-align:right;font-size:11px;line-height:14px;background:color-mix(in srgb,#f5a524 14%,var(--nt-bg));pointer-events:none}
+ .product-terminal.compact .workspace-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:none;grid-template-areas:"form book" "records records";gap:4px;align-items:start}
  .product-terminal.compact.chart-open .workspace-grid{grid-template-areas:"chart chart" "form book" "records records"}
  .product-terminal.compact .chart-panel{grid-area:chart;height:320px;order:0}
  .product-terminal.compact .order-panel{grid-area:form;height:auto;max-height:none;min-height:0;overflow:visible;order:0}
@@ -252,7 +255,13 @@
  .product-terminal.compact .book-controls{padding:8px 8px 0}
  .product-terminal.compact .book-head,.product-terminal.compact .book-row{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
  .product-terminal.compact .book-head{padding:8px 10px 4px}
- .product-terminal.compact .book-body{overflow:hidden;padding:0 10px 8px}
+ .product-terminal.compact .book-head>span{white-space:nowrap}
+ .product-terminal.compact .book-head small{display:inline;margin-left:2px}
+ .product-terminal.compact .book-head small:before{content:'('}.product-terminal.compact .book-head small:after{content:')'}
+ /* Columns keep their own heights (user decision): the book is a fixed 7 levels per side and never stretches with
+    the form (e.g. when TP/SL opens); each panel ends at its own content. */
+ .product-terminal.compact .book-body{overflow:visible;padding:0 10px 10px;flex:none}
+ .product-terminal.compact .book-side>.book-row{min-height:24px;align-items:center}
  .product-terminal.compact .book-row{width:100%;padding:2px 0;font-size:11px;line-height:16px;font-family:inherit;color:inherit;text-align:right}
  .product-terminal.compact button.book-row{cursor:pointer}
  .product-terminal.compact button.book-row:hover>span:first-child,.product-terminal.compact button.book-row:focus-visible>span:first-child{text-decoration:underline}
@@ -261,4 +270,18 @@
  .product-terminal.compact .record-tabs{padding:0 12px;gap:4px 16px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
  .product-terminal.compact .record-tabs button{flex:none;white-space:nowrap}
 }
-@media(max-width:760px) and (pointer:coarse){.product-terminal.compact .book-row{min-height:24px}}
+/* GMXX mobile composition (user reference, 2026-11-27): form and book share one surface without separate cards, so
+   their independent heights read as one area; records start below a divider. */
+@media(max-width:760px){
+ .product-terminal.compact{background:var(--nt-bg);padding-top:0}
+ .product-terminal.compact .workspace-grid{gap:0 8px}
+ .product-terminal.compact .instrument-bar,.product-terminal.compact .order-panel,.product-terminal.compact .orderbook,.product-terminal.compact .chart-panel,.product-terminal.compact .records-panel{border-radius:0;background:transparent}
+ .product-terminal.compact .instrument-bar{margin-bottom:0}
+ .product-terminal.compact .chart-panel{border-bottom:1px solid var(--terminal-divider)}
+ .product-terminal.compact .records-panel{margin-top:12px;border-top:6px solid #101216}
+ .product-terminal.compact .order-panel .trade-order-form .form-body{padding:8px 0 4px 8px}
+ .product-terminal.compact .order-panel .trade-order-form .form-actions{padding:4px 0 12px 8px}
+ .product-terminal.compact .book-head{padding:8px 4px 4px 0}
+ .product-terminal.compact .book-body{padding:0 4px 8px 0}
+ .product-terminal.compact .trade-order-form .compact-selects .record-filter,.product-terminal.compact .spot-order-form>.form-body>.record-filter{min-width:0}
+}

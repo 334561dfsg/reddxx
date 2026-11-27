@@ -1,17 +1,18 @@
+// Record tab labels omit the product name (user decision, 2026-11-27): each page already shows only its own product.
 export const tradeProducts = {
   futures: {title:'trade.pages.perpetual',tabs:[
-    {id:'positions',label:'trade.futuresPositions',bucket:'positions'},
-    {id:'orders',label:'trade.futuresOrders',bucket:'openOrders'},
-    {id:'orderHistory',label:'trade.futuresOrdersHistory',bucket:'orderHistory'},
-    {id:'history',label:'trade.futuresHistory',bucket:'positionHistory'},
+    {id:'positions',label:'trade.recordTabs.positions',bucket:'positions'},
+    {id:'orders',label:'trade.recordTabs.openOrders',bucket:'openOrders'},
+    {id:'orderHistory',label:'trade.recordTabs.orderHistory',bucket:'orderHistory'},
+    {id:'history',label:'trade.recordTabs.positionHistory',bucket:'positionHistory'},
   ]},
   options: {title:'trade.pages.delivery',tabs:[
-    {id:'current',label:'trade.pages.deliveryCurrent',bucket:'optionsOrders',settled:false},
-    {id:'history',label:'trade.pages.deliveryHistory',bucket:'optionsOrders',settled:true},
+    {id:'current',label:'trade.recordTabs.current',bucket:'optionsOrders',settled:false},
+    {id:'history',label:'trade.recordTabs.history',bucket:'optionsOrders',settled:true},
   ]},
   spot: {title:'common.spotTrading',tabs:[
-    {id:'orders',label:'trade.spotOrders',bucket:'spotOpenOrders'},
-    {id:'history',label:'trade.spotOrdersHistory',bucket:'spotOrdersHistory'},
+    {id:'orders',label:'trade.recordTabs.openOrders',bucket:'spotOpenOrders'},
+    {id:'history',label:'trade.recordTabs.orderHistory',bucket:'spotOrdersHistory'},
   ]},
 }
 

@@ -453,5 +453,13 @@
     "connecting": "相場データに接続中…",
     "reconnecting": "相場データが切断されました。再接続中…",
     "unavailable": "相場データ未接続のため注文できません。しばらくしてからお試しください。"
+  },
+  "recordTabs": {
+    "positions": "ポジション",
+    "openOrders": "未約定注文",
+    "orderHistory": "注文履歴",
+    "positionHistory": "ポジション履歴",
+    "current": "進行中の注文",
+    "history": "履歴"
   }
 }

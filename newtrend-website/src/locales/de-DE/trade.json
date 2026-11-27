@@ -453,5 +453,13 @@
     "connecting": "Verbindung zu Marktdaten wird hergestellt…",
     "reconnecting": "Marktdaten getrennt, Verbindung wird wiederhergestellt…",
     "unavailable": "Marktdaten sind noch nicht verbunden. Bitte versuche es gleich erneut."
+  },
+  "recordTabs": {
+    "positions": "Positionen",
+    "openOrders": "Offene Orders",
+    "orderHistory": "Orderhistorie",
+    "positionHistory": "Positionshistorie",
+    "current": "Aktuelle Orders",
+    "history": "Historie"
   }
 }

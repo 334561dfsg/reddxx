@@ -453,5 +453,13 @@
     "connecting": "行情連線中…",
     "reconnecting": "行情連線中斷，正在重新連線…",
     "unavailable": "行情尚未連線，暫時無法下單，請稍後再試。"
+  },
+  "recordTabs": {
+    "positions": "倉位",
+    "openOrders": "當前委託",
+    "orderHistory": "歷史委託",
+    "positionHistory": "歷史倉位",
+    "current": "當前訂單",
+    "history": "歷史訂單"
   }
 }
