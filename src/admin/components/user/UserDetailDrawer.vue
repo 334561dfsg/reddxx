@@ -75,8 +75,8 @@ const vipLabel = computed(() => {
 
 const uidNumber = computed(() => {
   const raw = props.user?.id || ''
-  const n = String(raw).match(/\d+/)?.[0] || ''
-  return n
+  // Numeric UIDs show their digits; ids without digits (strategy/C2C mock users such as USR-DEMO) show as-is.
+  return String(raw).match(/\d+/)?.[0] || String(raw)
 })
 
 const formatMoney = (value, opts = {}) => {

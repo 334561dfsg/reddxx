@@ -284,3 +284,5 @@ html body :is(.earn-modal-title, .earn-rewards-title, .qf-records-title, .strate
 /* A link button that is the whole value of a Descriptions cell lines up with the other values (no Ant button padding). */
 html body .ant-descriptions .ant-descriptions-item-content > .ant-btn-link,
 html body .ant-descriptions .ant-descriptions-item-content .ant-btn-link:only-child { height: auto; padding: 0; }
+/* Newer-module record drawers: footer bar on the same 24px gutter as the body, buttons right-aligned. */
+html body :is(.earn-holding-rewards, .qf-records-drawer, .strategy-records-drawer) .ant-drawer-footer { padding: 10px 24px; }
