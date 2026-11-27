@@ -6,7 +6,7 @@ import LineIcon from './LineIcon.vue'
 // header is hidden while the page is shown (html.nt-has-page-bar). Extra attrs (classes, aria-disabled, click guards)
 // apply to both links, so a busy page blocks back navigation in either form.
 defineOptions({inheritAttrs:false})
-const props=defineProps({to:{type:[String,Object],required:true},title:{type:String,default:''}})
+defineProps({to:{type:[String,Object],required:true},title:{type:String,default:''}})
 onMounted(()=>document.documentElement.classList.add('nt-has-page-bar'))
 onBeforeUnmount(()=>document.documentElement.classList.remove('nt-has-page-bar'))
 </script>

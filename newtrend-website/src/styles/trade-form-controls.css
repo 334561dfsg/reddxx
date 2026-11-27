@@ -5,13 +5,14 @@
  font-family:inherit;font-size:14px;font-weight:400;line-height:20px;
  color:#fff;background:var(--terminal-input,#1e2024);
  border:1px solid transparent;border-radius:var(--nt-radius-control);box-shadow:none;
- outline:none;outline-offset:0;transition:border-color 150ms ease-out,box-shadow 150ms ease-out;
+ outline:none;outline-offset:0;transition:border-color 150ms ease-out,background-color 150ms ease-out;
 }
 .trading-terminal .order-panel input.trade-field::placeholder{color:#ffffff45;opacity:1}
 .trading-terminal .order-panel :is(input,button).trade-field:hover{color:#fff;border-color:var(--nt-border-strong)}
+/* Focus and an open list brighten the surface; the border stays as it is (no highlighted borders, AGENTS.md). */
 .trading-terminal .order-panel :is(input,button).trade-field:focus,
 .trading-terminal .order-panel :is(input,button).trade-field:focus-visible,
-.trading-terminal .order-panel button.trade-field[aria-expanded=true]{border-color:#ffffff3d;box-shadow:none;outline:none}
+.trading-terminal .order-panel button.trade-field[aria-expanded=true]{background:#25282d;box-shadow:none;outline:none}
 .trading-terminal .order-panel input.trade-field[aria-invalid=true]{border-color:var(--nt-red,var(--nt-down))}
 .trading-terminal .order-panel input.trade-field[aria-invalid=true]:focus{box-shadow:none}
 .trading-terminal .order-panel :is(input,button).trade-field:disabled{cursor:not-allowed;color:#ffffff45;background:#ffffff05}

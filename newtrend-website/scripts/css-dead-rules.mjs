@@ -13,6 +13,7 @@ import selectorParser from 'postcss-selector-parser'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const write = process.argv.includes('--write')
 const verbose = process.argv.includes('--verbose')
+const check = process.argv.includes('--check') // exit 1 when anything is dead (used by `npm run check`)
 
 function walk(dir, exts, out = []) {
   for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
@@ -79,3 +80,4 @@ for (const file of files) {
   if (write && out !== css) fs.writeFileSync(file, out)
 }
 console.log(`total ${totalBefore} → ${totalAfter} bytes${write ? ' (written)' : ' (dry run; pass --write to apply)'}`)
+if (check && totalAfter !== totalBefore && !write) process.exitCode = 1

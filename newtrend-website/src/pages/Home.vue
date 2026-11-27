@@ -1,7 +1,7 @@
 <script setup>
 import {shallowRef,onMounted,onUnmounted} from 'vue'
 import {computed} from 'vue'
-import {features,members,asset,path,fmt,hotStocks} from '../data'
+import {features,members,asset,path,hotStocks} from '../data'
 import Skeleton from '../components/ui/Skeleton.vue'
 import RequestState from '../components/ui/RequestState.vue'
 import {streamMarkets} from '../api/market.js'

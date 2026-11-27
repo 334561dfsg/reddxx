@@ -477,6 +477,13 @@ The 模擬 account does not offer C2C or lending. `utils/demoAccess.js` (`availa
 - `!important` only for: reduced motion, the Ant message position/animation, visually hidden text, Ant Select overrides, and three phone table cells that beat inline-grid rules (earn table alignment, loan table padding, deposit input padding). Layout rules win by specificity instead. Focus rules no longer restate unchanged borders.
 - Verified with a computed-style snapshot diff of 23 routes at 1440 and 393 (only live-price/animation noise remained).
 
+## Refactor phase 5 — tooling and tests (review 2026-11-27)
+
+- `npm run check` is the gate before committing site changes: `eslint .` (`eslint.config.js`, correctness rules only, not formatting), `check:locales`, `css:dead --check` (fails on unreferenced selectors) and `npm test`. Tooling is installed at the repository root like vite; `package.json` declares everything the site imports (ant-design-vue, postcss, postcss-selector-parser, eslint).
+- Tests stay on `node --test` (no vitest). `tests/conventions.test.mjs` asserts AGENTS.md rules: `--nt-*` defined only in tokens.css (plus the documented remaps), doubled id only in the two channel sheets, no outline/ring/border highlight on focus or expanded states, shared breakpoints, no `<style src>`, browser storage only via `utils/storage.js`, overlay types opened ⇔ configured, every locale namespace referenced. Extend it when adding a rule of that kind.
+- Lint fixes: unused imports removed, missing `v-for` keys added, `TradeRecordsPanel` reports tab/page changes by events (`v-model:record`, `page`) instead of mutating the workspace state prop. Found by the new tests: the order form's focus/expanded border highlight (now a surface cue) and RecordFilter's `<style src>` (now a script import).
+- Removed unreferenced locale namespaces copytrade, seo, referral, withdraw and app (272 keys × 6). Unused keys inside used namespaces were not removed: many are built dynamically and a key-level sweep could not be verified safely.
+
 ## Finance & AI Quant channel conventions (user decision, 2026-11-27)
 
 The binding standard for every page of the 金融 (`/earn`, `/c2c`, lending) and AI 量化 (`/ai-quant`) channels, and for new pages added to them. Follow it instead of page-specific fidelity tweaks; when a page needs something new, extend the shared files named here.

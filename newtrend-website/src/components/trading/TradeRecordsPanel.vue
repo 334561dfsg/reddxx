@@ -14,14 +14,16 @@ import CurrentTrades from '../CurrentTrades.vue'
 import TradeHistory from '../TradeHistory.vue'
 // prices: live price by market name (from the workspace's ticker stream) for open positions' P&L.
 // compact: phone layout, records render as cards instead of table rows.
-const props=defineProps({mode:String,state:Object,prices:{type:Object,default:()=>({})},compact:Boolean})
+// The workspace owns the selected tab and per-tab page (kept across layout changes); this panel reports changes.
+const props=defineProps({mode:String,record:String,pages:{type:Object,default:()=>({})},prices:{type:Object,default:()=>({})},compact:Boolean})
+const emit=defineEmits(['update:record','page'])
 const tabs=computed(()=>tradeProducts[props.mode].tabs)
-const selected=computed(()=>tabs.value.find(tab=>tab.id===props.state.record)||tabs.value[0])
+const selected=computed(()=>tabs.value.find(tab=>tab.id===props.record)||tabs.value[0])
 // One request per tab and mode; a new order, close or cancel invalidates 'trade' and refreshes it in place.
 const records=useRequest(()=>listTradeRecords(session.mode,props.mode,selected.value.id),{key:()=>session.mode+'|'+props.mode+'|'+selected.value.id,tags:['trade']})
 const rows=computed(()=>records.data.value||[])
 const loading=computed(()=>records.status.value==='loading')
-const page=computed({get:()=>props.state.pages[selected.value.id]||1,set:value=>props.state.pages[selected.value.id]=value})
+const page=computed({get:()=>props.pages[selected.value.id]||1,set:value=>emit('page',selected.value.id,value)})
 // Delivery orders settle when their period ends: refresh the list just after the earliest open one expires.
 let expiryTimer=null
 watch(rows,list=>{
@@ -37,7 +39,7 @@ const announce=text=>message.success(text)
 </script>
 <template>
 <section class="terminal-panel records-panel" :aria-label="$t('trade.pages.records')">
-  <div class="record-tabs"><button v-for="tab in tabs" :key="tab.id" :class="{active:selected.id===tab.id}" :aria-pressed="selected.id===tab.id" @click="state.record=tab.id">{{ $t(tab.label) }}</button></div>
+  <div class="record-tabs"><button v-for="tab in tabs" :key="tab.id" :class="{active:selected.id===tab.id}" :aria-pressed="selected.id===tab.id" @click="emit('update:record',tab.id)">{{ $t(tab.label) }}</button></div>
   <RequestState v-if="records.status.value==='error'" :status="records.status.value" :error="records.error.value" @retry="records.refresh"/>
   <!-- Phone layout: card-shaped placeholders matching the record cards (no table header). -->
   <ul v-else-if="loading&&compact" class="record-cards records-skeleton" aria-busy="true"><li class="sr-only" role="status">{{ $t('common.loading') }}</li><li v-for="n in 3" :key="n" class="record-card" aria-hidden="true"><div class="record-card-head"><Skeleton inline width="96px"/><Skeleton inline width="48px"/></div><dl><div v-for="f in 6" :key="f"><dt><Skeleton inline width="56px"/></dt><dd><Skeleton inline width="72px"/></dd></div></dl></li></ul>

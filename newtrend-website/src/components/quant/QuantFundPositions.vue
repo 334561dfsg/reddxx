@@ -19,7 +19,6 @@ import RecordFilter from '../RecordFilter.vue'
 import PortfolioSummaryCard from '../PortfolioSummaryCard.vue'
 import FinancePagination from '../FinancePagination.vue'
 import {useFinancePagination} from '../../composables/useFinancePagination'
-import Icon from '../Icon.vue'
 // Reference positions page: tab groups, summary, order table. Orders belong to the current real/demo mode.
 const groups=['all','pending','active','history']
 // History status filter uses the shared select-only RecordFilter (no native select popup).

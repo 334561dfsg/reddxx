@@ -9,7 +9,7 @@ import {navGroups,path} from '../../data'
 import {availableInMode} from '../../utils/demoAccess.js'
 import {session,logout} from '../../session'
 import {account,DEMO_UID} from '../../account'
-import {languages,locale,t} from '../../i18n'
+import {languages,locale} from '../../i18n'
 // Mobile navigation drawer body, laid out after the GMXX mobile sidebar (user reference, 2026-11-27) in the
 // NewQuantCapital style: user card (name, UID copy, credit score), a verification reminder, icon rows for pages and
 // expandable groups (trading, finance, AI Quant: only their pages, no subtitles or overview entry); language opens the language picker sheet like GMXX; then account rows (mode, security, clear cache, log out).

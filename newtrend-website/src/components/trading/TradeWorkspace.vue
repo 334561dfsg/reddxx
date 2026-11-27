@@ -80,7 +80,7 @@ const hasVolume=computed(()=>Number.isFinite(Number(pair.value.volume))&&Number(
     <TradeChartPanel v-if="showChart" :id="mode+'-chart'" v-model="state.interval" :pair="livePair"/>
     <TradeOrderBook :pair="livePair" :compact="compact" :pickable="compact&&mode!=='options'" @pick-price="usePrice"/>
     <section class="terminal-panel order-panel" :aria-label="$t(product.title)"><h2 class="panel-heading" :class="{'sr-only':compact}">{{ $t(mode==='futures'?'trade.futuresOrder':mode==='options'?'trade.optionsOrder':'common.spotTrading') }}</h2><TradeOrderForm :mode="mode" :pair="livePair" :compact="compact"/></section>
-    <TradeRecordsPanel :mode="mode" :state="state" :prices="livePrices" :compact="compact"/>
+    <TradeRecordsPanel v-model:record="state.record" :mode="mode" :pages="state.pages" :prices="livePrices" :compact="compact" @page="(id,value)=>state.pages[id]=value"/>
   </div>
 </div>
 </template>

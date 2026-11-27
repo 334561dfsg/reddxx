@@ -1,4 +1,5 @@
 <script setup>
+import '../styles/trade-form-controls.css'
 import LineIcon from './ui/LineIcon.vue'
 import { computed, ref, nextTick, watch, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
@@ -58,4 +59,3 @@ onBeforeUnmount(()=>{listen(false);clearTimeout(closeTimer);clearTimeout(typeTim
 @media(prefers-reduced-motion:reduce){.field-select>svg{transition:none}}
 </style>
 
-<style src="../styles/trade-form-controls.css"></style>

@@ -6,7 +6,6 @@ import Coin from '../Coin.vue'
 import {formatQuote,quoteAmount} from '../../utils/c2cQuotes'
 import {openModal,session} from '../../session'
 import {t} from '../../i18n'
-import NtSelect from '../ui/NtSelect.vue'
 import {c2cErrorKey,createC2COrder} from '../../api/c2c.js'
 import {invalidate} from '../../composables/useRequest.js'
 const props=defineProps({quote:{type:Object,required:true},side:{type:String,default:'buy'}})

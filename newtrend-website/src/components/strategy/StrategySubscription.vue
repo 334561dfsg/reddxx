@@ -1,5 +1,4 @@
 <script setup>
-import {isDemo} from '../../utils/accountMode.js'
 import {computed,reactive,ref,watch} from 'vue'
 import {message} from 'ant-design-vue'
 import FeedbackToast from '../../platform/FeedbackToast.js'
@@ -18,7 +17,6 @@ const requestId=crypto.randomUUID()
 // Balance comes from the API; submission waits until it has loaded (validation needs it).
 const wallet=useRequest(()=>getMyStrategies(session.mode),{key:()=>session.mode})
 const ready=computed(()=>wallet.status.value==='ready')
-const demo=computed(()=>isDemo(session.mode))
 const balance=computed(()=>wallet.data.value?.balance??0)
 watch([()=>JSON.stringify(draft),done,submitting],()=>emit('state',{busy:submitting.value,dirty:!!draft.capital||draft.days!==props.product.minDays||draft.takeProfit!==defaults.takeProfit||draft.stopLoss!==defaults.stopLoss,done:done.value}),{immediate:true})
 // Server (真實) error codes → existing form messages; anything else is a generic failure.

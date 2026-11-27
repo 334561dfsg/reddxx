@@ -1,5 +1,6 @@
 // Mirrors the reference login redirect guard: only same-site absolute paths are allowed.
 import {readStorage,writeStorage,removeStorage} from './storage.js'
+// eslint-disable-next-line no-control-regex -- rejecting control characters is the point of this check
 const CONTROL = /[\u0000-\u001f\u007f]/
 
 export function safeRedirect(value) {

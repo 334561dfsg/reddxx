@@ -10,7 +10,7 @@ import LineIcon from '../ui/LineIcon.vue'
 // trading header: search, favourites / all / category tabs, sortable 交易對·成交額 / 價格·漲跌幅 header and one row per
 // pair (star, icon, name, turnover, live price, change). Choosing a row reports its id; the overlay closes first and
 // the trading page then routes to it. Stars share the trading favourites list.
-const props=defineProps({current:String})
+defineProps({current:String})
 const emit=defineEmits(['select'])
 const {favorites,favorite}=useMarketFavorites('nt-trade-favorites')
 const tickers=useTickers()
