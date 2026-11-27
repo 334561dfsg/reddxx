@@ -93,5 +93,6 @@
   "schedule": "Zeitplan",
   "appliedAt": "Beantragt am",
   "afterApproval": "Beginn nach Genehmigung",
-  "penaltyRate": "Täglicher Verzugszins"
+  "penaltyRate": "Täglicher Verzugszins",
+  "repayPlaceholder": "Rückzahlungsbetrag eingeben"
 }

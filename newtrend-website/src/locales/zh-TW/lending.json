@@ -93,5 +93,6 @@
   "schedule": "借款時間",
   "appliedAt": "申請時間",
   "afterApproval": "審核通過後起息",
-  "penaltyRate": "逾期日費率"
+  "penaltyRate": "逾期日費率",
+  "repayPlaceholder": "請輸入還款金額"
 }

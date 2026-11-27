@@ -93,5 +93,6 @@
   "schedule": "Calendrier",
   "appliedAt": "Date de demande",
   "afterApproval": "Début après validation",
-  "penaltyRate": "Taux journalier de retard"
+  "penaltyRate": "Taux journalier de retard",
+  "repayPlaceholder": "Saisissez le montant à rembourser"
 }

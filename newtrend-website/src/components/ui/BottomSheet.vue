@@ -7,8 +7,10 @@ import {nextTick,onBeforeUnmount,onDeactivated,ref,useId,watch} from 'vue'
 // 200ms slide-up / 150ms slide-down (≤50ms fade with reduced motion); focus moves to the title, Tab stays inside,
 // focus returns to the trigger; page scroll is locked while open. The dialog stays in the DOM while closed so callers
 // can teleport content into `bodyId` and keep one instance across layout changes.
-const props=defineProps({open:Boolean,title:{type:String,default:''},bodyId:{type:String,default:undefined}})
-const emit=defineEmits(['update:open'])
+// busy: a request is running, so ×, Escape and programmatic closes wait. Wide screens (≥768px) show the same dialog
+// centred with a fade/scale, for flows that use it on every width (e.g. 還款).
+const props=defineProps({open:Boolean,title:{type:String,default:''},bodyId:{type:String,default:undefined},busy:Boolean})
+const emit=defineEmits(['update:open','closed'])
 const dialog=ref(null),closing=ref(false)
 const titleId=useId()
 let trigger=null,previousOverflow=null,timer=null
@@ -18,17 +20,20 @@ async function show(){
  if(!dialog.value||dialog.value.open)return
  trigger=document.activeElement;previousOverflow=document.body.style.overflow
  dialog.value.showModal();document.body.style.overflow='hidden'
- await nextTick();dialog.value.querySelector('[data-initial-focus]')?.focus()
+ // Focus the content's first field when it marks one (ordinary forms), else the title.
+ await nextTick();(dialog.value.querySelector('.nt-bottom-sheet-body [data-initial-focus]')||dialog.value.querySelector('[data-initial-focus]'))?.focus()
 }
 function finish(restoreFocus=true){
  clearTimeout(timer);closing.value=false
  if(!dialog.value?.open)return
  dialog.value.close();document.body.style.overflow=previousOverflow??''
  if(restoreFocus&&trigger?.isConnected)trigger.focus()
+ // After the close animation; a caller whose trigger is gone (e.g. the order was settled) moves focus on.
+ emit('closed',{triggerGone:!trigger?.isConnected})
 }
 function hide(){if(!dialog.value?.open||closing.value)return;closing.value=true;timer=setTimeout(finish,reduced()?50:150)}
 watch(()=>props.open,value=>value?show():hide())
-function requestClose(){if(!closing.value)emit('update:open',false)}
+function requestClose(){if(!closing.value&&!props.busy)emit('update:open',false)}
 function cancel(event){event.preventDefault();requestClose()}
 function keydown(event){
  if(event.key!=='Tab')return
@@ -44,7 +49,7 @@ onBeforeUnmount(()=>finish(false))
 </script>
 <template>
 <dialog ref="dialog" class="nt-bottom-sheet" :class="{closing}" :aria-labelledby="titleId" @cancel="cancel" @keydown="keydown">
- <header class="nt-bottom-sheet-header"><h2 :id="titleId" tabindex="-1" data-initial-focus>{{ title }}</h2><button type="button" class="nt-bottom-sheet-close" :aria-label="$t('aiQuant.detail.close')" @click="requestClose">×</button></header>
+ <header class="nt-bottom-sheet-header"><h2 :id="titleId" tabindex="-1" data-initial-focus>{{ title }}</h2><button type="button" class="nt-bottom-sheet-close" :aria-label="$t('aiQuant.detail.close')" :aria-disabled="busy||undefined" @click="requestClose">×</button></header>
  <div :id="bodyId" class="nt-bottom-sheet-body"><slot/></div>
 </dialog>
 </template>
@@ -63,6 +68,14 @@ onBeforeUnmount(()=>finish(false))
 @keyframes nt-sheet-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes nt-sheet-down{to{transform:translateY(100%)}}
 @keyframes nt-sheet-fade{from{opacity:0}to{opacity:1}}
+@media(min-width:768px){
+ .nt-bottom-sheet{inset:0;margin:auto;width:min(480px,calc(100vw - 48px));height:fit-content;max-height:min(720px,85vh);border:1px solid #ffffff14;border-radius:16px}
+ .nt-bottom-sheet[open]{animation:nt-sheet-pop 200ms ease-out}
+ .nt-bottom-sheet.closing{animation:nt-sheet-unpop 150ms ease-in forwards}
+}
+.nt-bottom-sheet-close[aria-disabled=true]{opacity:.45;cursor:not-allowed}
+@keyframes nt-sheet-pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+@keyframes nt-sheet-unpop{to{opacity:0;transform:scale(.96)}}
 @media(prefers-reduced-motion:reduce){
  .nt-bottom-sheet[open]{animation:nt-sheet-fade 50ms linear}
  .nt-bottom-sheet.closing{animation:nt-sheet-fade 50ms linear reverse forwards}

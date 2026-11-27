@@ -93,5 +93,6 @@
   "schedule": "대출 일정",
   "appliedAt": "신청 일시",
   "afterApproval": "승인 후 시작",
-  "penaltyRate": "연체 일일 금리"
+  "penaltyRate": "연체 일일 금리",
+  "repayPlaceholder": "상환 금액 입력"
 }

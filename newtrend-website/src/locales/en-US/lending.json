@@ -93,5 +93,6 @@
   "schedule": "Loan timeline",
   "appliedAt": "Applied at",
   "afterApproval": "Starts after approval",
-  "penaltyRate": "Daily overdue rate"
+  "penaltyRate": "Daily overdue rate",
+  "repayPlaceholder": "Enter repayment amount"
 }

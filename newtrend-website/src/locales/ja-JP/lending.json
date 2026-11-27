@@ -93,5 +93,6 @@
   "schedule": "借入日程",
   "appliedAt": "申請日時",
   "afterApproval": "承認後に開始",
-  "penaltyRate": "延滞日利"
+  "penaltyRate": "延滞日利",
+  "repayPlaceholder": "返済額を入力"
 }
