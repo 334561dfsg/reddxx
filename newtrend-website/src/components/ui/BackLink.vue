@@ -27,7 +27,7 @@ onBeforeUnmount(()=>document.documentElement.classList.remove('nt-has-page-bar')
 .nt-back-link[aria-disabled=true],.nt-page-bar-back[aria-disabled=true]{opacity:.5;pointer-events:none}
 .nt-page-bar{display:none}
 @media(max-width:767px){
- html.nt-has-page-bar #site-shell>.site-header{display:none}
+ html.nt-has-page-bar #site-shell>:is(.site-header,.site-footer){display:none}
  html.nt-has-page-bar #site-shell{padding-top:calc(48px + env(safe-area-inset-top))}
  /* Beats page-specific back-link layouts (.qf-back, .earn-back …): the bar replaces the in-page link on phones. */
  html.nt-has-page-bar body #site-shell a.nt-back-link.nt-back-link{display:none}

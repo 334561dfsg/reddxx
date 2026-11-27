@@ -13,7 +13,7 @@ const route=useRoute()
 const tabRoots=[/^\/$/,/^\/trade\/(futures|options|spot)(\/[^/]+)?$/,/^\/earn(\/(simple|loan))?$/,/^\/c2c\/(buy|sell)$/,/^\/ai-quant(\/(strategy|quant-fund))?$/,/^\/assets(\/overview)?$/]
 const showTabbar=computed(()=>tabRoots.some(r=>r.test(route.path)))
 </script>
-<template><div id="site-shell" :class="{'has-tabbar':showTabbar,'trade-route':route.path.includes('/trade/')}"><Header/><main id="main-content"><RouterView/></main><Footer v-if="!route.path.includes('/trade/')"/></div><MobileTabBar v-if="showTabbar"/><Overlay/></template>
+<template><div id="site-shell" :class="{'has-tabbar':showTabbar,'trade-route':route.path.includes('/trade/'),'home-route':route.path==='/'}"><Header/><main id="main-content"><RouterView/></main><Footer v-if="!route.path.includes('/trade/')"/></div><MobileTabBar v-if="showTabbar"/><Overlay/></template>
 <style>
 /* Room for the fixed mobile tab bar so it never covers the end of a page (only where it is shown). */
 :root{--nt-tabbar-h:56px}
@@ -26,5 +26,8 @@ const showTabbar=computed(()=>tabRoots.some(r=>r.test(route.path)))
    by touch overscroll (rubber-band) at the top of the page (user report, 2026-11-27). The shell reserves its height. */
 @media(max-width:900px){#site-shell>.site-header{position:fixed;top:0;left:0;right:0}#site-shell{padding-top:calc(56px + env(safe-area-inset-top))}}
 @media(max-width:760px){#site-shell.trade-route{padding-top:0}}
+/* Phones: every page except home ends at its content like an app (user decision, 2026-11-27); the footer links stay on
+   the home page. */
+@media(max-width:767px){#site-shell:not(.home-route)>.site-footer{display:none}}
 @media(max-width:900px){#site-shell.has-tabbar{padding-bottom:calc(var(--nt-tabbar-h) + env(safe-area-inset-bottom))}}
 </style>

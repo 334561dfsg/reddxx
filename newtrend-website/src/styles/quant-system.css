@@ -216,3 +216,24 @@
  #main-content#main-content .strategy-page .strategy-stats-page{padding-top:0}
  #main-content#main-content .strategy-page .strategy-stats-head{margin-top:0}
 }
+
+/* Strategy stats on phones (user feedback: "not app-like"): no card around the whole page — the summary is the one
+   card, the daily records are a plain divided list under a small header, and the style/market line sits under the bar. */
+@media(max-width:767px){
+ #main-content#main-content .strategy-page .strategy-stats-head{margin:0 0 12px}
+ #main-content#main-content .strategy-page .strategy-stats-head p{margin:0;font-size:12px;line-height:18px;color:#8c8f96}
+ #main-content#main-content .strategy-page .strategy-stats-card{background:transparent;border:0;padding:0;box-shadow:none}
+ #main-content#main-content .strategy-page .strategy-stats-card>.ds{padding:0}
+ #main-content#main-content .strategy-page .ds-summary{margin:0 0 16px;padding:16px;border-radius:16px}
+ #main-content#main-content .strategy-page .ds-head{padding:0 0 8px;border-bottom:1px solid #ffffff0d}
+ #main-content#main-content .strategy-page .ds-row{padding:12px 0}
+}
+
+/* Strategy stats on phones, compact top (user feedback): style line and summary sit tight under the bar; the summary
+   is one row (net P&L left, counts right). Infinite list status lines. */
+@media(max-width:767px){
+ #main-content#main-content .strategy-page .strategy-stats-page{padding-top:8px}
+ #main-content#main-content .strategy-page .strategy-stats-head{margin:0 0 8px}
+ #main-content#main-content .strategy-page .ds-summary{margin:0 0 12px;padding:12px 14px}
+ #main-content#main-content .strategy-page :is(.ds-more-sentinel,.ds-no-more){margin:0;padding:16px 0;text-align:center;font-size:12px;line-height:18px;color:#8c8f96}
+}

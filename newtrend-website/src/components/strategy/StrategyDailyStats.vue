@@ -3,7 +3,8 @@ import LineIcon from '../ui/LineIcon.vue'
 import EmptyState from '../ui/EmptyState.vue'
 import Skeleton from '../ui/Skeleton.vue'
 import {signedMoney} from '../../utils/format.js'
-import {computed,onMounted,ref,watch} from 'vue'
+import {computed,onBeforeUnmount,onMounted,ref,watch} from 'vue'
+import {useMediaQuery} from '../../composables/useMediaQuery.js'
 import {locale} from '../../i18n'
 import {summarizeDailyStats} from '../../utils/strategyTemplates'
 import FinancePagination from '../FinancePagination.vue'
@@ -15,6 +16,15 @@ import {useFinancePagination} from '../../composables/useFinancePagination'
 const props=defineProps({items:{type:Array,default:()=>[]},loading:Boolean})
 // Shared list pager (10 days per page) instead of the reference's latest-N truncation (user request).
 const {page,total,shown}=useFinancePagination(()=>props.items,10)
+// Phones (user request 2026-11-27): no pager — the list grows by 10 days as the end scrolls into view.
+const phone=useMediaQuery('(max-width: 767px)')
+const loaded=ref(10),sentinel=ref(null)
+const rows=computed(()=>phone.value?props.items.slice(0,loaded.value):shown.value)
+const more=computed(()=>phone.value&&loaded.value<props.items.length)
+let observer=null
+watch(sentinel,el=>{observer?.disconnect();observer=null;if(!el||typeof IntersectionObserver!=='function')return;observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))loaded.value+=10},{rootMargin:'200px 0px'});observer.observe(el)})
+watch(()=>props.items,()=>{loaded.value=10})
+onBeforeUnmount(()=>observer?.disconnect())
 const summary=computed(()=>summarizeDailyStats(props.items))
 // Scale and range span every day, so bars and the caption stay stable across pages.
 const maxAbs=computed(()=>props.items.reduce((m,i)=>Math.max(m,Math.abs(i.pnl)),0))
@@ -42,14 +52,14 @@ watch(()=>props.loading,(now,before)=>{if(before&&!now)grow()})
  <div class="ds-grid ds-head" aria-hidden="true"><span>{{ $t('aiQuant.dailyStats.date') }}</span><span class="r">{{ $t('aiQuant.dailyStats.tradesLabel') }}</span><span class="ds-head-bar"><span>{{ $t('aiQuant.dailyStats.loss') }}</span><span>{{ $t('aiQuant.dailyStats.profit') }}</span></span><span class="r">{{ $t('aiQuant.dailyStats.pnl') }}</span></div>
  <ul class="ds-list">
   <template v-if="loading"><li v-for="n in 6" :key="n" class="ds-grid ds-row" aria-hidden="true"><span class="ds-date"><Skeleton width="48px" height="14px"/><Skeleton width="28px" height="12px"/></span><span class="ds-trades r"><Skeleton width="24px" class="ds-skeleton-end"/></span><span class="ds-bar"><span class="ds-axis"></span></span><span class="ds-pnl r"><Skeleton width="80px" class="ds-skeleton-end"/></span></li></template>
-  <li v-else v-for="(item,index) in shown" :key="item.date" class="ds-grid ds-row">
+  <li v-else v-for="(item,index) in rows" :key="item.date" class="ds-grid ds-row">
    <span class="ds-date"><span>{{ parts(item.date).day }}</span><small>{{ parts(item.date).weekday }}</small></span>
    <span class="ds-trades r"><span class="sr-only">{{ $t('aiQuant.dailyStats.tradesLabel') }} </span>{{ item.tradeCount }}</span>
    <span class="ds-bar" aria-hidden="true"><span class="ds-axis"></span><span v-if="sign(item.pnl)!=='flat'" :class="['ds-fill',sign(item.pnl)]" :style="{width:width(item),transitionDelay:Math.min(index*25,250)+'ms'}"></span><span v-else class="ds-dot"></span></span>
    <span class="ds-pnl r" :class="sign(item.pnl)">{{ signed(item.pnl) }}</span>
   </li>
  </ul>
- <FinancePagination v-if="!loading" v-model:page="page" :total="total" :page-size="10"/>
+ <FinancePagination v-if="!loading&&!phone" v-model:page="page" :total="total" :page-size="10"/><div v-if="!loading&&more" ref="sentinel" class="ds-more-sentinel" role="status">{{ $t('common.loading') }}</div><p v-else-if="!loading&&phone&&items.length>10" class="ds-no-more">{{ $t('common.noMore') }}</p>
 </div>
 </template>
 <style>
