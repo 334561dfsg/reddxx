@@ -160,3 +160,12 @@
  #main-content#main-content .c2c-page article.c2c-order-row>span:nth-child(5){grid-column:1/-1;grid-row:3;padding:12px 88px 0 0;border-top:1px solid #ffffff0d}
  #main-content#main-content .c2c-page article.c2c-order-row>button{grid-column:2;grid-row:3;align-self:end;justify-self:end;min-height:32px}
 }
+
+/* C2C on phones: the order form opens in a bottom sheet (C2CTradePanel + ui/BottomSheet.vue), so the side column is
+   desktop-only. */
+@media(max-width:767px){
+ #main-content#main-content .c2c-page .c2c-order-panel{display:none}
+}
+/* In the sheet the title bar names the order, so the form's own heading is dropped. */
+.c2c-order-sheet .c2c-order-form>h2{display:none}
+.c2c-order-sheet .c2c-order-form>.c2c-unit-price{margin-top:0}
