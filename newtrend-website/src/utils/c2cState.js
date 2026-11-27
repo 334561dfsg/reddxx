@@ -7,8 +7,8 @@ export const OPEN_STATUSES=['pending_review']
 const EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]+$/
 /** Payer details are required on every order: ISO country code, remitter name (≤ 64) and a valid email. */
 export function validPayer(payer){
- const country=String(payer?.country||''),name=String(payer?.name||'').trim(),email=String(payer?.email||'').trim()
- return /^[A-Z]{2}$/.test(country)&&name.length>0&&name.length<=64&&EMAIL.test(email)?{country,name,email}:null
+ const country=String(payer?.country||'').trim(),name=String(payer?.name||'').trim(),email=String(payer?.email||'').trim()
+ return country.trim().length>0&&country.trim().length<=64&&name.length>0&&name.length<=64&&EMAIL.test(email)?{country,name,email}:null
 }
 export function createC2COrder(state,{side,quote,quantity,requestId,payer}){
  if(state.orders.some(o=>o.requestId===requestId))throw new Error('c2c.error.OTC_ORDER_NOT_OPERABLE')
@@ -17,7 +17,7 @@ export function createC2COrder(state,{side,quote,quantity,requestId,payer}){
  if(!details)throw new Error('c2c.error.payerInvalid')
  if(side==='sell'&&quantity>(state.balances[quote.symbol]||0))throw new Error('c2c.error.OTC_INSUFFICIENT_FUNDING_BALANCE')
  const now=Date.now()
- const order={id:crypto.randomUUID(),requestId,side,symbol:quote.symbol,fiat:quote.fiat,quoteId:quote.id,payer:details,paymentMethod:'bank_transfer',quantity,amount:Number((quantity*quote.price).toFixed(2)),price:quote.price,status:'pending_review',createdAt:now,updatedAt:now,locked:side==='sell'?quantity:0,agreementVersion:'v1-draft'}
+ const order={id:crypto.randomUUID(),requestId,side,symbol:quote.symbol,fiat:quote.fiat,quoteId:quote.id,payer:details,quantity,amount:Number((quantity*quote.price).toFixed(2)),price:quote.price,status:'pending_review',createdAt:now,updatedAt:now,locked:side==='sell'?quantity:0,agreementVersion:'v1-draft'}
  if(side==='sell')state.balances[quote.symbol]-=quantity
  state.orders.unshift(order);return order
 }

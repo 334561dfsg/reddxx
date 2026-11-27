@@ -41,10 +41,6 @@ export const sideLabels = {buy: '用户买入', sell: '用户卖出'}
 export const sideColors = {buy: 'green', sell: 'red'}
 export const orderStatusLabels = {pending_review: '待审核', completed: '已完成', rejected: '已拒绝', cancelled: '已取消'}
 export const orderStatusColors = {pending_review: 'blue', completed: 'green', rejected: 'red', cancelled: 'default'}
-export const paymentMethodLabels = {bank_transfer: '银行转账'}
-// Payer country is stored as an ISO code; show its Chinese name with the code, e.g. 中国香港特别行政区（HK）.
-const regionNames = typeof Intl.DisplayNames === 'function' ? new Intl.DisplayNames(['zh-CN'], {type: 'region'}) : null
-export const countryLabel = code => !code ? '—' : `${regionNames?.of(code) || code}（${code}）`
 export const actionLabels = {
   submit: '提交订单', approve: '审核通过', reject: '审核拒绝', cancel: '用户取消',
   saveQuote: '保存报价', enableQuote: '启用报价', disableQuote: '停用报价', saveAgreement: '保存协议',
@@ -56,7 +52,7 @@ export const errorLabels = {
   order: '订单不存在', owner: '不能操作其他用户的订单', quote: '报价不存在', quoteOff: '该报价未启用', amount: '数量不在报价限额内',
   balance: '可用余额不足', quoteSide: '请选择方向', quoteSymbol: '请选择币种', quotePrice: '价格须大于 0',
   quoteLimits: '单笔最小须大于 0，单笔最大不小于单笔最小', quoteTtl: '报价有效期须为 10–86400 秒的整数', quoteNote: '备注不超过 255 字',
-  quoteSort: '排序权重须为整数', quoteTaken: '该币种、法币和方向的报价已存在', quoteFiat: '请选择法币', payerCountry: '请填写国家 / 地区', payerName: '请填写汇款人姓名（不超过 64 字）', payerEmail: '请填写有效的邮箱', paymentMethod: '不支持的支付方式', quoteIdentity: '币种、法币和方向创建后不能修改', action: '不支持的操作',
+  quoteSort: '排序权重须为整数', quoteTaken: '该币种、法币和方向的报价已存在', quoteFiat: '请选择法币', payerCountry: '请填写国家 / 地区（不超过 64 字）', payerName: '请填写汇款人姓名（不超过 64 字）', payerEmail: '请填写有效的邮箱', quoteIdentity: '币种、法币和方向创建后不能修改', action: '不支持的操作',
   agreement: '协议不存在', agreementDefault: '英文版本的标题和正文为必填', agreementPartial: '每种语言须同时填写标题和正文，或全部留空', agreementLength: '标题不超过 120 字，正文不超过 20000 字',
 }
 export const errorText = error => errorLabels[error?.message || error] || String(error?.message || error || '操作失败')

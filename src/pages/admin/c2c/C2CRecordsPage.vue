@@ -13,7 +13,7 @@ import AdminModal from '../earn/EarnAdminModal.vue'
 import UserDetailDrawer from '../../../admin/components/user/UserDetailDrawer.vue'
 import {getUserById} from '../../../admin/mock/user.js'
 import {USER_KYC_STATUS, USER_ROLE, USER_STATUS} from '../../../admin/constants/user.js'
-import {useC2CFeed, c2cCommand, errorText, countryLabel, paymentMethodLabels, sideLabels, sideColors, orderStatusLabels, orderStatusColors, actionLabels, moduleLabels} from '../../../shared/c2c/client.js'
+import {useC2CFeed, c2cCommand, errorText, sideLabels, sideColors, orderStatusLabels, orderStatusColors, actionLabels, moduleLabels} from '../../../shared/c2c/client.js'
 import {ASSETS, FIATS} from '../../../shared/c2c/domain.js'
 import {dateTime} from '../strategy/strategyFormat.js'
 
@@ -46,7 +46,7 @@ const col = (key, title, width, extra = {}) => ({key, title, width, ...extra})
 const right = {align: 'right'}
 const columns = computed(() => ({
   orders: [
-    col('orderId', '订单号', 210, {fixed: 'left'}), col('userName', '用户名', 120), col('userId', '用户 ID', 120), col('payerName', '汇款人', 140), col('payerCountry', '国家 / 地区', 170), col('side', '方向', 96),
+    col('orderId', '订单号', 210, {fixed: 'left'}), col('userName', '用户名', 120), col('userId', '用户 ID', 120), col('payerName', '汇款人', 140), col('payerCountry', '国家 / 地区', 140), col('side', '方向', 96),
     col('symbol', '币种', 80), col('fiat', '法币', 70), col('quantity', '数量', 140, right), col('price', '单价', 150, right), col('amount', '金额', 170, right),
     col('status', '状态', 90), col('createdAt', '提交时间', 170), col('reviewer', '审核人', 120), col('reviewedAt', '审核时间', 170),
     col('actions', '操作', 90, {fixed: 'right'}),
@@ -103,7 +103,7 @@ function showUser(row, event) {
     <Button v-else-if="column.key === 'userId'" type="link" class="c2c-user-link" :aria-label="'查看用户 ' + record.userId" @click.stop="showUser(record, $event)">{{ record.userId }}</Button>
     <Tag v-else-if="column.key === 'side'" :color="sideColors[record.side]">{{ sideLabels[record.side] }}</Tag>
     <template v-else-if="column.key === 'payerName'">{{ record.payer?.name || '—' }}</template>
-    <template v-else-if="column.key === 'payerCountry'">{{ countryLabel(record.payer?.country) }}</template>
+    <template v-else-if="column.key === 'payerCountry'">{{ record.payer?.country || '—' }}</template>
     <template v-else-if="column.key === 'quantity'">{{ number(record.quantity) }}</template>
     <template v-else-if="['price', 'amount'].includes(column.key)">{{ number(record[column.key]) }} {{ record.fiat }}</template>
     <Tag v-else-if="column.key === 'status'" :color="orderStatusColors[record.status]">{{ orderStatusLabels[record.status] }}</Tag>
@@ -122,9 +122,8 @@ function showUser(row, event) {
     <DescriptionsItem label="状态"><Tag :color="orderStatusColors[current.status]">{{ orderStatusLabels[current.status] }}</Tag></DescriptionsItem>
     <DescriptionsItem label="用户">{{ current.userName }}（{{ current.userId }}）</DescriptionsItem>
     <DescriptionsItem label="汇款人姓名">{{ current.payer?.name || '—' }}</DescriptionsItem>
-    <DescriptionsItem label="国家 / 地区">{{ countryLabel(current.payer?.country) }}</DescriptionsItem>
+    <DescriptionsItem label="国家 / 地区">{{ current.payer?.country || '—' }}</DescriptionsItem>
     <DescriptionsItem label="邮箱"><TypographyText v-if="current.payer?.email" copyable>{{ current.payer.email }}</TypographyText><template v-else>—</template></DescriptionsItem>
-    <DescriptionsItem label="支付方式">{{ paymentMethodLabels[current.paymentMethod] || '—' }}</DescriptionsItem>
     <DescriptionsItem label="方向"><Tag :color="sideColors[current.side]">{{ sideLabels[current.side] }}</Tag></DescriptionsItem>
     <DescriptionsItem label="数量">{{ number(current.quantity) }} {{ current.symbol }}</DescriptionsItem>
     <DescriptionsItem label="单价（下单时报价）">{{ number(current.price) }} {{ current.fiat }}</DescriptionsItem>

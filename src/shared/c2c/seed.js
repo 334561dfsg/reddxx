@@ -58,10 +58,10 @@ const history = [
 
 // Payer details as entered on the public order form (country, remitter name, email).
 const payers = {
-  'USR-DEMO': {country: 'SG', name: 'Demo User', email: 'demo.user@example.com'},
-  'USR-1002': {country: 'US', name: 'Alex Morgan', email: 'alex.morgan@example.com'},
-  'USR-1003': {country: 'DE', name: 'Lena Fischer', email: 'lena.fischer@example.com'},
-  'USR-1004': {country: 'HK', name: 'Chan Tai Man', email: 'tm.chan@example.com'},
+  'USR-DEMO': {country: 'Singapore', name: 'Demo User', email: 'demo.user@example.com'},
+  'USR-1002': {country: 'United States', name: 'Alex Morgan', email: 'alex.morgan@example.com'},
+  'USR-1003': {country: 'Germany', name: 'Lena Fischer', email: 'lena.fischer@example.com'},
+  'USR-1004': {country: 'Hong Kong', name: 'Chan Tai Man', email: 'tm.chan@example.com'},
 }
 
 export function seedC2C(now = Date.now()) {

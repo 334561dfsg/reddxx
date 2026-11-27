@@ -9,8 +9,8 @@
 // - Buy: approval credits the bought coin to the user's balance; rejection changes nothing on the balance.
 // - Sell: submitting locks the coin (available → locked); approval deducts the locked coin (the platform pays the
 //   user off-platform); rejection or the user's cancellation unlocks it.
-// - Every order carries the payer's country, remitter name and email (entered on the public order form) and the
-//   payment method, bank transfer, so the back office can match the off-platform payment.
+// - Every order carries the payer's country (free text), remitter name and email from the public order form, so the
+//   back office can match the off-platform payment.
 // - Users may cancel their own pending orders. Approve / reject / cancel are state-guarded and logged; no reason input.
 // - Quotes (per coin, fiat and side): price in that fiat, single-order limits, quote validity, note, enabled switch and sort weight
 //   (larger first). Orders snapshot the quote; later quote edits never change existing orders.
@@ -81,12 +81,10 @@ function saveQuote(s, {quote, expectedVersion}, actor, now) {
   log(s, {module: 'quote', action: 'saveQuote', refId: created.quoteId, targetLabel: quoteLabel(created), summary: '新增报价（未启用）', after: draft, operator: actor}, now)
   return created
 }
-export const PAYMENT_METHODS = ['bank_transfer']
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 function validatePayer(payer) {
   const country = String(payer?.country || '').trim(), name = String(payer?.name || '').trim(), email = String(payer?.email || '').trim()
-  // ISO 3166-1 alpha-2 code, as the public form stores it (names are shown via Intl.DisplayNames).
-  fail(/^[A-Z]{2}$/.test(country), 'payerCountry')
+  fail(country && country.length <= 64, 'payerCountry')
   fail(name && name.length <= 64, 'payerName')
   fail(EMAIL.test(email) && email.length <= 254, 'payerEmail')
   return {country, name, email}
@@ -123,9 +121,8 @@ function saveAgreement(s, {contents, expectedVersion}, actor, now) {
 
 // ---------- orders ----------
 
-function submit(s, {userId, userName, side, symbol, fiat, quantity, payer, paymentMethod = 'bank_transfer'}, now) {
+function submit(s, {userId, userName, side, symbol, fiat, quantity, payer}, now) {
   const payerInfo = validatePayer(payer)
-  fail(PAYMENT_METHODS.includes(paymentMethod), 'paymentMethod')
   const quote = s.quotes.find(q => q.side === side && q.symbol === symbol && q.fiat === fiat)
   fail(quote?.enabled, 'quoteOff')
   fail(finite(quantity) && quantity >= quote.min && quantity <= quote.max, 'amount')
@@ -136,7 +133,7 @@ function submit(s, {userId, userName, side, symbol, fiat, quantity, payer, payme
   const order = {orderId: `C2C-${now}-${s.orders.length + 1}`, userId, userName: userName || s.profiles[userId]?.name || userId, side, symbol, fiat,
     quantity: round8(quantity), price: quote.price, amount: round8(quantity * quote.price),
     quoteSnapshot: {quoteId: quote.quoteId, version: quote.version, price: quote.price, min: quote.min, max: quote.max},
-    payer: payerInfo, paymentMethod,
+    payer: payerInfo,
     status: 'pending_review', createdAt: now, reviewer: '', reviewedAt: null, cancelledAt: null}
   s.orders.unshift(order)
   log(s, {module: 'order', action: 'submit', refId: order.orderId, targetLabel: orderLabel(order), summary: `${side === 'buy' ? '提交买单' : '提交卖单，冻结 ' + order.quantity + ' ' + symbol}，待审核`, operator: USER}, now)

@@ -5,7 +5,7 @@ import {seedC2C, seedQuotes} from '../src/shared/c2c/seed.js'
 
 const NOW = Date.UTC(2026, 10, 27, 4)
 const fresh = () => createC2CState({quotes: seedQuotes(NOW), balances: {U1: {USDT: 10000}}, profiles: {U1: {name: 'U1'}}})
-const PAYER = {country: 'SG', name: 'Test Payer', email: 'payer@example.com'}
+const PAYER = {country: 'Singapore', name: 'Test Payer', email: 'payer@example.com'}
 const submit = (s, args) => transact(s, 'submit', {userId: 'U1', fiat: 'USD', payer: PAYER, ...args}, NOW)
 
 test('a buy waits for review and approval credits the coin once', () => {
@@ -106,12 +106,11 @@ test('the agreement keeps six languages with English required, versions each sav
   assert.throws(() => transact(s, 'saveAgreement', {contents: {...edited, 'ja-JP': {title: 'T', body: ''}}, expectedVersion: s.agreement.version}, NOW + 2), /agreementPartial/)
 })
 
-test('orders need the payer country, name and a valid email, and record bank transfer', () => {
+test('orders need the payer country, name and a valid email', () => {
   const s = submit(fresh(), {side: 'buy', symbol: 'ETH', quantity: 1})
   assert.deepEqual(s.orders[0].payer, PAYER)
-  assert.equal(s.orders[0].paymentMethod, 'bank_transfer')
   assert.throws(() => submit(fresh(), {side: 'buy', symbol: 'ETH', quantity: 1, payer: {...PAYER, country: ' '}}), /payerCountry/)
   assert.throws(() => submit(fresh(), {side: 'buy', symbol: 'ETH', quantity: 1, payer: {...PAYER, name: ''}}), /payerName/)
   assert.throws(() => submit(fresh(), {side: 'buy', symbol: 'ETH', quantity: 1, payer: {...PAYER, email: 'not-an-email'}}), /payerEmail/)
-  assert.ok(seedC2C(NOW).orders.every(o => o.payer?.email && o.paymentMethod === 'bank_transfer'))
+  assert.ok(seedC2C(NOW).orders.every(o => o.payer?.country && o.payer.email))
 })

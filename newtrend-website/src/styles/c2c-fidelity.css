@@ -121,6 +121,4 @@
 #site-shell .c2c-payer .c2c-text-field:focus{background:#272a2f;border-color:transparent}
 #site-shell .c2c-payer .c2c-text-field[aria-invalid=true]{background:color-mix(in srgb,#ff4466 12%,#202226)}
 .c2c-payer .ant-select{width:100%}
-.c2c-payment-method{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:10px 12px;border-radius:12px;background:#ffffff08;font-size:14px;line-height:20px}
-.c2c-payment-method span{color:#85888d}
 @media(pointer:coarse){#site-shell .c2c-payer .c2c-text-field{min-height:44px}}

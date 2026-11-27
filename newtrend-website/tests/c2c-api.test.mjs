@@ -6,7 +6,7 @@ import {balanceOf} from '../src/mock/ledger.js'
 
 const DEMO = 'common.demo.demo', REAL = 'common.demo.real'
 
-const payer = {country: 'HK', name: 'Chan Tai Man', email: 'chan@example.com'}
+const payer = {country: 'Hong Kong', name: 'Chan Tai Man', email: 'chan@example.com'}
 
 test('quotes per side are snapshots', async () => {
   const buy = await listC2CQuotes('buy'), sell = await listC2CQuotes('sell')
@@ -23,7 +23,6 @@ test('sell locks balance in its mode, prices from the server quote, cancel refun
   assert.equal(order.price, 0.9965)
   assert.equal(order.fiat, 'USD')
   assert.deepEqual(order.payer, payer)
-  assert.equal(order.paymentMethod, 'bank_transfer')
   assert.equal(order.amount, 2989.5)
   assert.equal(balanceOf('demo', 'USDT'), before - 3000)
   await assert.rejects(createC2COrder({mode: DEMO, side: 'sell', quoteId: 'USDT-USD', quantity: 3000, requestId: 'c2c-api-1', payer}), {code: 'c2c.error.OTC_ORDER_NOT_OPERABLE'})
@@ -53,13 +52,13 @@ test('quotes are per coin and fiat with unique ids, matching the admin seed', as
   assert.ok([...buy, ...sell].every(q => q.fiat !== 'USDT'))
 })
 
-test('every order needs payer details: country code, name up to 64 characters and a valid email', async () => {
+test('every order needs payer details: country (free text), name up to 64 characters and a valid email', async () => {
   const base = {mode: DEMO, side: 'buy', quoteId: 'ETH-USD', quantity: 1}
-  for (const [i, bad] of [{}, {...payer, country: 'Hong Kong'}, {...payer, name: ' '}, {...payer, name: 'x'.repeat(65)}, {...payer, email: 'nope'}].entries())
+  for (const [i, bad] of [{}, {...payer, country: '  '}, {...payer, name: ' '}, {...payer, name: 'x'.repeat(65)}, {...payer, email: 'nope'}].entries())
     await assert.rejects(createC2COrder({...base, requestId: 'c2c-payer-' + i, payer: bad}), {code: 'c2c.error.payerInvalid'})
-  const order = await createC2COrder({...base, requestId: 'c2c-payer-ok', payer: {country: 'SG', name: '  Tan Wei Ming ', email: 'tan@example.com '}})
-  assert.deepEqual(order.payer, {country: 'SG', name: 'Tan Wei Ming', email: 'tan@example.com'})
-  assert.ok((await listC2COrders(REAL)).every(o => o.payer?.country && o.payer.name && o.payer.email && o.paymentMethod === 'bank_transfer'))
+  const order = await createC2COrder({...base, requestId: 'c2c-payer-ok', payer: {country: ' Singapore ', name: '  Tan Wei Ming ', email: 'tan@example.com '}})
+  assert.deepEqual(order.payer, {country: 'Singapore', name: 'Tan Wei Ming', email: 'tan@example.com'})
+  assert.ok((await listC2COrders(REAL)).every(o => o.payer?.country && o.payer.name && o.payer.email))
 })
 
 test('error keys and injected outage', async () => {
