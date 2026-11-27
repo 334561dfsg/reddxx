@@ -1,17 +1,15 @@
 <script setup>
-import {computed, ref} from 'vue'
-import {Descriptions, DescriptionsItem, Table, Tag, TypographyText, TypographyTitle} from 'ant-design-vue'
-import {statusLabels, statusColors, endReasonLabels, marketLabels, styleLabels, actionLabels} from '../../../shared/strategy/client.js'
+import {computed} from 'vue'
+import {Descriptions, DescriptionsItem, Tag, TypographyText} from 'ant-design-vue'
+import {statusLabels, statusColors, endReasonLabels, marketLabels, styleLabels} from '../../../shared/strategy/client.js'
 import {amount, signed, dateTime, percent} from './strategyFormat.js'
 import {verificationOptions} from '../../../shared/lending/eligibility.js'
 const levelLabel = value => verificationOptions.find(o => o.value === value)?.label || value || '—'
 
-// Read-only subscription detail: terms frozen at subscription, review, lifecycle, daily P&L, settlement and logs.
-const props = defineProps({sub: {type: Object, required: true}, daily: {type: Array, default: () => []}, settlement: {type: Object, default: null}, logs: {type: Array, default: () => []}, balance: {type: Number, default: null}})
-const page = ref(1)
+// Read-only subscription detail: order, review, lifecycle, terms frozen at subscription and settlement.
+// Daily P&L and operation logs live in StrategyRecordsDrawer, opened from the list.
+const props = defineProps({sub: {type: Object, required: true}, settlement: {type: Object, default: null}, balance: {type: Number, default: null}})
 const t = computed(() => props.sub.templateSnapshot)
-const dailyColumns = [{key: 'date', title: '日期', width: 120}, {key: 'tradeCount', title: '成交笔数', width: 100, align: 'right'}, {key: 'pnl', title: '盈亏（USDT）', width: 140, align: 'right'}]
-const logColumns = [{key: 'createdAt', title: '时间', width: 180}, {key: 'action', title: '操作', width: 140}, {key: 'summary', title: '说明'}, {key: 'operator', title: '操作人', width: 150}]
 const tone = value => (value > 0 ? 'success' : value < 0 ? 'danger' : undefined)
 </script>
 
@@ -49,23 +47,6 @@ const tone = value => (value > 0 ? 'success' : value < 0 ? 'danger' : undefined)
    <DescriptionsItem label="返还金额">{{ amount(settlement.returned) }} USDT（本金 {{ amount(settlement.capital) }}，盈亏 {{ signed(settlement.pnl) }}）</DescriptionsItem>
    <DescriptionsItem label="结算时间">{{ dateTime(settlement.settledAt) }}</DescriptionsItem>
   </Descriptions>
-  <section><TypographyTitle :level="5">每日收益（{{ daily.length }} 条）</TypographyTitle>
-   <Table size="small" :columns="dailyColumns" :data-source="daily" row-key="id" :pagination="{current: page, pageSize: 10, total: daily.length, showSizeChanger: false, onChange: v => page = v, hideOnSinglePage: true}" :locale="{emptyText: '暂无收益记录'}">
-    <template #bodyCell="{column, record}">
-     <TypographyText v-if="column.key === 'pnl'" :type="tone(record.pnl)">{{ signed(record.pnl) }}</TypographyText>
-     <template v-else>{{ record[column.key] }}</template>
-    </template>
-   </Table>
-  </section>
-  <section><TypographyTitle :level="5">操作记录</TypographyTitle>
-   <Table size="small" :columns="logColumns" :data-source="logs" row-key="id" :pagination="false" :locale="{emptyText: '暂无记录'}">
-    <template #bodyCell="{column, record}">
-     <template v-if="column.key === 'createdAt'">{{ dateTime(record.createdAt) }}</template>
-     <template v-else-if="column.key === 'action'">{{ actionLabels[record.action] || record.action }}</template>
-     <template v-else>{{ record[column.key] }}</template>
-    </template>
-   </Table>
-  </section>
  </div>
 </template>
 
