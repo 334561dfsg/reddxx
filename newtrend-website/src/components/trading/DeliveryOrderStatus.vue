@@ -61,9 +61,9 @@ onMounted(()=>requestAnimationFrame(()=>{announce.value=true}))
  </div>
  <div v-if="!order.settled" class="delivery-ring" role="timer" aria-live="off" :aria-label="$t('trade.deliveryRemaining',{time:countdown(remaining)})">
   <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" :r="R" class="track"/><circle cx="60" cy="60" :r="R" class="bar" :stroke-dasharray="C" :stroke-dashoffset="C*(1-progress)"/></svg>
-  <strong>{{ countdown(remaining) }}</strong>
+  <strong v-if="remaining">{{ countdown(remaining) }}</strong>
+  <strong v-else class="settling" role="status">{{ $t('trade.deliverySettling') }}</strong>
  </div>
- <p v-if="!order.settled&&remaining===0" class="delivery-settling" role="status">{{ $t('trade.deliverySettling') }}</p>
  <dl class="delivery-fields">
   <div v-for="[label,value,tone] in rows" :key="label"><dt>{{ $t(label) }}</dt><dd :class="tone">{{ value }}</dd></div>
   <div><dt>{{ $t('trade.orderId') }}</dt><dd class="delivery-id"><span :title="String(order.id)">{{ shortId }}</span><button type="button" :aria-label="$t('common.copy')+' '+$t('trade.orderId')" @click="copyId"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button></dd></div>
@@ -88,7 +88,8 @@ onMounted(()=>requestAnimationFrame(()=>{announce.value=true}))
 .delivery-ring .track{stroke:#ffffff14}
 .delivery-ring .bar{stroke:var(--nt-accent,#b3ff60);stroke-linecap:round;transition:stroke-dashoffset 250ms linear}
 .delivery-ring strong{position:absolute;inset:0;display:grid;place-items:center;font-size:22px;line-height:28px;font-weight:700;font-variant-numeric:tabular-nums;color:#fff}
-.delivery-settling{margin:-8px 0 0;text-align:center;font-size:12px;line-height:18px;color:#8c8f96}
+/* At the end of the period the ring shows 結算中… in its centre, so the dialog keeps its height. */
+.delivery-ring strong.settling{padding:0 14px;font-size:13px;line-height:18px;font-weight:600;text-align:center;color:#c5c7cb}
 .delivery-fields{display:grid;gap:10px;margin:0}
 .delivery-fields>div{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:20px}
 .delivery-fields dt{font-size:13px;line-height:20px;color:#8c8f96}
