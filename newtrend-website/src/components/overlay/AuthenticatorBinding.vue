@@ -63,28 +63,28 @@ async function submit(){
 <style scoped>
 .mfa,.mfa-form{display:grid;gap:16px}
 .mfa-lead{margin:0;color:var(--nt-accent);font-size:13px;line-height:20px}
-.mfa-panel{display:grid;justify-items:center;gap:14px;padding:16px;border:1px solid #ffffff14;border-radius:12px;background:#0c0e10}
+.mfa-panel{display:grid;justify-items:center;gap:14px;padding:16px;border:1px solid var(--nt-border-strong);border-radius:var(--nt-radius-panel);background:#0c0e10}
 .mfa-panel :deep(.nt-request-loading){display:grid;justify-items:center;gap:14px;width:100%}
 .mfa-caption{margin:0;color:#c4c6c9;font-size:13px}
 .mfa-qr{display:block;width:168px;height:168px;border-radius:8px;background:#fff}
 .mfa-qr-skeleton{border-radius:8px}
-.mfa-key{display:grid;gap:4px;width:100%;padding:12px;border-radius:10px;background:#ffffff08}
-.mfa-key small{color:#87888a;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.mfa-key{display:grid;gap:4px;width:100%;padding:12px;border-radius:10px;background:var(--nt-border-subtle)}
+.mfa-key small{color:var(--nt-text-dim);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 .mfa-key code{color:var(--nt-accent);font-size:13px;line-height:20px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
 .mfa-copy{display:inline-flex;align-items:center;gap:4px;justify-self:start;min-height:28px;padding:0;color:var(--nt-accent);font-size:13px;font-weight:500}
 .mfa-copy svg,.mfa-back svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .mfa-copy:focus-visible,.mfa-back:focus-visible{outline:none;text-decoration:underline}
-.mfa-back{display:inline-flex;align-items:center;gap:6px;justify-self:start;min-height:28px;margin-top:-8px;padding:0;color:#a0a1a2;font-size:13px}
+.mfa-back{display:inline-flex;align-items:center;gap:6px;justify-self:start;min-height:28px;margin-top:-8px;padding:0;color:var(--nt-text-soft);font-size:13px}
 .mfa-back:hover{color:#fff}
 .mfa-field{display:grid;gap:8px;font-size:14px;color:#e6e7e9}
-.mfa-code{min-height:52px;padding:0 14px;border:1px solid #ffffff1f;border-radius:12px;background:#0c0e10;color:#fff;font-size:22px;letter-spacing:.5em;text-align:center;font-variant-numeric:tabular-nums}
+.mfa-code{min-height:52px;padding:0 14px;border:1px solid #ffffff1f;border-radius:var(--nt-radius-panel);background:#0c0e10;color:#fff;font-size:22px;letter-spacing:.5em;text-align:center;font-variant-numeric:tabular-nums}
 .mfa-code::placeholder{color:#4a4d52}
 .mfa-code:focus-visible{outline:none;background:#11151a}
 .mfa-code[aria-invalid=true]{color:#ff6b84}
-.mfa-demo{margin:-8px 0 0;color:#87888a;font-size:12px;line-height:18px}
-.mfa-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:12px;background:var(--nt-accent);color:var(--nt-bg);font-size:15px;font-weight:600}
+.mfa-demo{margin:-8px 0 0;color:var(--nt-text-dim);font-size:12px;line-height:18px}
+.mfa-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:var(--nt-radius-panel);background:var(--nt-accent);color:var(--nt-bg);font-size:15px;font-weight:600}
 .mfa-primary:hover:not(:disabled){background:#b6ff6a}
-.mfa-primary.danger{background:#ff4466;color:#fff}
+.mfa-primary.danger{background:var(--nt-down);color:#fff}
 .mfa-primary.danger:hover{background:#ff5c79}
 .mfa-primary:disabled{opacity:.5;cursor:not-allowed}
 .mfa-primary.is-busy{opacity:.8;cursor:progress}

@@ -21,7 +21,7 @@ onBeforeUnmount(()=>document.documentElement.classList.remove('nt-has-page-bar')
 </Teleport>
 </template>
 <style>
-.nt-back-link{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;font-size:14px;line-height:20px;color:#87888a;text-decoration:none}
+.nt-back-link{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;font-size:14px;line-height:20px;color:var(--nt-text-dim);text-decoration:none}
 .nt-back-link svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .nt-back-link:hover,.nt-back-link:focus-visible{outline:none;color:#fff;text-decoration:underline;text-underline-offset:3px}
 .nt-back-link[aria-disabled=true],.nt-page-bar-back[aria-disabled=true]{opacity:.5;pointer-events:none}
@@ -33,8 +33,8 @@ onBeforeUnmount(()=>document.documentElement.classList.remove('nt-has-page-bar')
  html.nt-has-page-bar body #site-shell a.nt-back-link.nt-back-link{display:none}
  /* Section tabs (e.g. 量化基金 / 我的倉位) belong to the list pages, not to a secondary page. */
  html.nt-has-page-bar body #site-shell #main-content .quant-page .subnav{display:none}
- .nt-page-bar{position:fixed;top:0;left:0;right:0;z-index:30;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;height:calc(48px + env(safe-area-inset-top));padding:env(safe-area-inset-top) max(4px,env(safe-area-inset-right)) 0 max(4px,env(safe-area-inset-left));background:var(--nt-bg,#05070b);border-bottom:1px solid #ffffff0d}
- .nt-page-bar-back{display:grid;place-items:center;width:44px;height:44px;color:#fff;border-radius:12px}
+ .nt-page-bar{position:fixed;top:0;left:0;right:0;z-index:30;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;height:calc(48px + env(safe-area-inset-top));padding:env(safe-area-inset-top) max(4px,env(safe-area-inset-right)) 0 max(4px,env(safe-area-inset-left));background:var(--nt-bg,var(--nt-bg));border-bottom:1px solid var(--nt-border)}
+ .nt-page-bar-back{display:grid;place-items:center;width:44px;height:44px;color:#fff;border-radius:var(--nt-radius-panel)}
  .nt-page-bar-back svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
  .nt-page-bar-back:focus-visible{outline:none;background:#ffffff10}
  .nt-page-bar-title{overflow:hidden;text-align:center;white-space:nowrap;text-overflow:ellipsis;font-size:16px;line-height:24px;font-weight:600;color:#fff}

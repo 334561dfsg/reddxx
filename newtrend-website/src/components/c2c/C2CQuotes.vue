@@ -42,4 +42,4 @@ function countdown(q){const seconds=remaining(q);return `${String(Math.floor(sec
  </div>
 </section>
 </template>
-<style>.c2c-skeleton-pill{border-radius:999px}.c2c-skeleton-lines{display:grid;gap:6px;min-width:0}.c2c-skeleton-quote{pointer-events:none}.c2c-skeleton-top{height:54.5px;box-sizing:border-box}.c2c-skeleton-limits{height:31.5px;box-sizing:border-box;align-items:center}</style>
+<style>.c2c-skeleton-pill{border-radius:var(--nt-radius-pill)}.c2c-skeleton-lines{display:grid;gap:6px;min-width:0}.c2c-skeleton-quote{pointer-events:none}.c2c-skeleton-top{height:54.5px;box-sizing:border-box}.c2c-skeleton-limits{height:31.5px;box-sizing:border-box;align-items:center}</style>

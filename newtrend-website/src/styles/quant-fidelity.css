@@ -68,7 +68,7 @@
 }
 #main-content .quant-page .quant-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 #main-content .quant-page .tag-chip {
-  border-radius: 999px;
+  border-radius: var(--nt-radius-pill);
   padding: 4px 12px;
   font-size: 12px;
   line-height: 16px;
@@ -127,7 +127,7 @@
   --qf-muted: color-mix(in srgb, #fff 52%, var(--nt-bg));
   --qf-secondary: color-mix(in srgb, #fff 70%, var(--nt-bg));
   --qf-elevated: color-mix(in srgb, #fff 10%, var(--nt-bg));
-  --qf-success: #2bc287;
+  --qf-success: var(--nt-up);
   position: relative; display: flex; flex-direction: column; gap: 20px; overflow: hidden;
   padding: 20px; border: 1px solid color-mix(in srgb, #fff 8%, var(--nt-bg)); border-radius: 32px;
   background: color-mix(in srgb, #fff 6%, var(--nt-bg)); transition: border-color 150ms, box-shadow 150ms;
@@ -151,10 +151,10 @@
 #main-content .quant-page .qf-card-title h3 { margin: 0; font-family:var(--nt-font-display); font-size: 16px; line-height: 1.25; font-weight: 700; letter-spacing: 0; color: #fff; }
 #main-content .quant-page .qf-card-title span { font-size: 12px; line-height: 18px; color: var(--qf-muted); text-transform: uppercase; letter-spacing: .05em; }
 #main-content .quant-page .qf-risk {
-  display: inline-flex; align-items: center; flex-shrink: 0; padding: 2px 8px; border: 1px solid; border-radius: 999px;
+  display: inline-flex; align-items: center; flex-shrink: 0; padding: 2px 8px; border: 1px solid; border-radius: var(--nt-radius-pill);
   font-size: 12px; line-height: 1; font-weight: 600; text-transform: uppercase; white-space: nowrap;
 }
-#main-content .quant-page .qf-risk.low { border-color: color-mix(in srgb, #2bc287 30%, transparent); background: color-mix(in srgb, #2bc287 10%, transparent); color: #2bc287; }
+#main-content .quant-page .qf-risk.low { border-color: color-mix(in srgb, var(--nt-up) 30%, transparent); background: color-mix(in srgb, var(--nt-up) 10%, transparent); color: var(--nt-up); }
 #main-content .quant-page .qf-risk.medium { border-color: color-mix(in srgb, var(--nt-accent) 30%, transparent); background: color-mix(in srgb, var(--nt-accent) 10%, transparent); color: var(--nt-accent); }
 /* High and extreme tiers were configurable in the admin but had no badge colour (2026-11-27). */
 #main-content .quant-page .qf-risk.high { border-color: color-mix(in srgb, #f5a524 30%, transparent); background: color-mix(in srgb, #f5a524 10%, transparent); color: #f5a524; }
@@ -167,19 +167,19 @@
 #main-content .quant-page :is(.qf-term, .qf-limit) p { margin: 0; font-family:var(--nt-font-mono); font-size: 14px; line-height: 20px; font-weight: 600; font-variant-numeric: tabular-nums; color: #fff; }
 #main-content .quant-page .qf-limit { display: flex; flex-direction: column; gap: 4px; }
 #main-content .quant-page .qf-progress { display: flex; flex-direction: column; gap: 8px; }
-#main-content .quant-page .qf-progress-track { height: 6px; overflow: hidden; border-radius: 999px; background: var(--qf-elevated); }
+#main-content .quant-page .qf-progress-track { height: 6px; overflow: hidden; border-radius: var(--nt-radius-pill); background: var(--qf-elevated); }
 #main-content .quant-page .qf-progress-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(to right, #5eead4, #4ade80); }
 #main-content .quant-page .qf-progress-meta { display: flex; justify-content: space-between; font-size: 12px; line-height: 18px; color: var(--qf-muted); }
 #main-content .quant-page .qf-progress-meta strong { font-family:var(--nt-font-mono); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--qf-secondary); }
 #main-content .quant-page .qf-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 #main-content .quant-page .qf-tags span {
-  display: inline-flex; align-items: center; padding: 2px 8px; border: 1px solid color-mix(in srgb, #fff 14%, var(--nt-bg)); border-radius: 999px;
+  display: inline-flex; align-items: center; padding: 2px 8px; border: 1px solid color-mix(in srgb, #fff 14%, var(--nt-bg)); border-radius: var(--nt-radius-pill);
   background: var(--qf-elevated); font-size: 12px; line-height: 18px; font-weight: 500; color: var(--qf-secondary);
 }
 #main-content .quant-page .qf-tags span.accent { border-color: color-mix(in srgb, var(--nt-accent) 40%, transparent); background: color-mix(in srgb, var(--nt-accent) 10%, transparent); color: var(--nt-accent); }
 #main-content .quant-page .qf-cta {
   display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 44px; margin-top: auto;
-  border-radius: 999px; background: linear-gradient(to right, #5eead4, #4ade80); color: var(--nt-bg);
+  border-radius: var(--nt-radius-pill); background: linear-gradient(to right, #5eead4, #4ade80); color: var(--nt-bg);
   font-size: 14px; line-height: 20px; font-weight: 600; transition: filter 150ms;
 }
 #main-content .quant-page .qf-cta:hover { color: var(--nt-bg); filter: brightness(1.1); }
@@ -204,7 +204,7 @@
 }
 
 /* Quant fund detail, subscription and positions, matched to the reference product flow. */
-#main-content .quant-page,.nt-dialog .qf-subscribe,.nt-dialog .qf-success{--qf-muted:color-mix(in srgb,#fff 52%,var(--nt-bg));--qf-secondary:color-mix(in srgb,#fff 70%,var(--nt-bg));--qf-faint:#6e6f71;--qf-elevated:color-mix(in srgb,#fff 10%,var(--nt-bg));--qf-card:color-mix(in srgb,#fff 6%,var(--nt-bg));--qf-divider:color-mix(in srgb,#fff 8%,var(--nt-bg));--qf-subtle:color-mix(in srgb,#fff 14%,var(--nt-bg));--qf-success:#2bc287}
+#main-content .quant-page,.nt-dialog .qf-subscribe,.nt-dialog .qf-success{--qf-muted:color-mix(in srgb,#fff 52%,var(--nt-bg));--qf-secondary:color-mix(in srgb,#fff 70%,var(--nt-bg));--qf-faint:#6e6f71;--qf-elevated:color-mix(in srgb,#fff 10%,var(--nt-bg));--qf-card:color-mix(in srgb,#fff 6%,var(--nt-bg));--qf-divider:color-mix(in srgb,#fff 8%,var(--nt-bg));--qf-subtle:color-mix(in srgb,#fff 14%,var(--nt-bg));--qf-success:var(--nt-up)}
 #main-content .quant-page .qf-card-link{display:inline;padding:0;font:inherit;letter-spacing:inherit;color:inherit;text-align:left}
 #main-content .quant-page .qf-card-link:hover{color:#fff}
 #main-content .quant-page .qf-card-link:focus-visible{outline:none;text-decoration:underline;text-underline-offset:4px}
@@ -231,10 +231,10 @@
 .qf-field label,.qf-days-head span{font-size:14px;line-height:20px;font-weight:500;color:var(--qf-secondary)}
 .qf-days-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:20px}
 .qf-days-head strong{font-family:var(--nt-font-mono);font-size:14px;line-height:20px;font-weight:600;color:#fff}
-.qf-input{display:flex;align-items:center;gap:8px;min-height:40px;padding-right:12px;border:1px solid transparent;border-radius:12px;background:#202226}
+.qf-input{display:flex;align-items:center;gap:8px;min-height:40px;padding-right:12px;border:1px solid transparent;border-radius:var(--nt-radius-panel);background:#202226}
 .qf-input:focus-within{background:#292c30}
 .qf-input input{flex:1;min-width:0;min-height:38px;padding:8px 12px;border:0;outline:none;background:transparent;font-family:var(--nt-font-mono)}
-.qf-input input[aria-invalid=true]{color:#f46}
+.qf-input input[aria-invalid=true]{color:var(--nt-down)}
 .qf-input>span{font-size:12px;line-height:18px;font-weight:500;color:var(--qf-muted)}
 .qf-input .qf-input-divider{width:1px;height:12px;background:var(--qf-subtle)}
 .qf-field small,.qf-faint{margin:0;font-size:12px;line-height:18px;color:var(--qf-faint)}
@@ -287,14 +287,14 @@
 .qf-inline-link:hover,.qf-inline-link:focus-visible{text-decoration:underline;outline:none}
 .nt-dialog .qf-ack{display:flex;flex-direction:row;align-items:flex-start;gap:8px;font-size:12px;line-height:1.6;color:var(--qf-secondary);cursor:pointer}
 .nt-dialog .qf-ack input{flex-shrink:0;width:16px;height:16px;margin:2px 0 0}
-.nt-dialog .qf-ack input[aria-invalid=true]+span{color:#f46}
+.nt-dialog .qf-ack input[aria-invalid=true]+span{color:var(--nt-down)}
 .nt-dialog .qf-success{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 0 8px;text-align:center}
-.nt-dialog .qf-success-icon{display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin-bottom:8px;border-radius:50%;background:color-mix(in srgb,#2bc287 10%,transparent)}
+.nt-dialog .qf-success-icon{display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin-bottom:8px;border-radius:50%;background:color-mix(in srgb,var(--nt-up) 10%,transparent)}
 .nt-dialog .qf-success-icon .nt-icon{width:24px;height:24px}
 .nt-dialog .qf-success h3{margin:0;font-size:18px;line-height:28px}
 .nt-dialog .qf-success p{margin:0;font-size:14px;line-height:20px;color:var(--qf-muted)}
 .nt-dialog .qf-success .qf-success-status{font-size:12px}
-.nt-dialog .qf-success-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin-top:12px;padding:0 24px;border-radius:999px;background:var(--nt-accent);color:var(--nt-bg);font-size:14px;font-weight:600}
+.nt-dialog .qf-success-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin-top:12px;padding:0 24px;border-radius:var(--nt-radius-pill);background:var(--nt-accent);color:var(--nt-bg);font-size:14px;font-weight:600}
 .nt-dialog .qf-success-link:hover{background:#b8ff6e;color:var(--nt-bg)}
 .nt-dialog .qf-success-link:focus-visible{outline:none;text-decoration:underline}
 /* Positions */
@@ -309,12 +309,12 @@
 #main-content .quant-page .qf-success-text{color:var(--qf-success)}
 #main-content .quant-page .qf-summary-stats{padding-top:16px;border-top:1px solid var(--qf-divider)}
 #main-content .quant-page .qf-positions-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
-#main-content .quant-page .qf-tabs{display:inline-flex;max-width:100%;overflow-x:auto;gap:4px;padding:4px;border:1px solid var(--qf-divider);border-radius:999px;background:var(--qf-card)}
-#main-content .quant-page .qf-tabs button{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;font-size:14px;line-height:20px;font-weight:500;color:var(--qf-muted);white-space:nowrap}
+#main-content .quant-page .qf-tabs{display:inline-flex;max-width:100%;overflow-x:auto;gap:4px;padding:4px;border:1px solid var(--qf-divider);border-radius:var(--nt-radius-pill);background:var(--qf-card)}
+#main-content .quant-page .qf-tabs button{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--nt-radius-pill);font-size:14px;line-height:20px;font-weight:500;color:var(--qf-muted);white-space:nowrap}
 #main-content .quant-page .qf-tabs button.active{background:var(--qf-elevated);color:#fff}
 #main-content .quant-page .qf-tabs button:focus-visible{outline:none;text-decoration:underline;text-underline-offset:4px}
-#main-content .quant-page .qf-tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:16px;padding:0 4px;border-radius:999px;background:color-mix(in srgb,var(--nt-accent) 20%,transparent);font-size:12px;line-height:16px;font-weight:600;color:var(--nt-accent)}
-#main-content .quant-page .qf-history-filter select{min-width:144px;min-height:32px;padding:4px 12px;border-radius:12px}
+#main-content .quant-page .qf-tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:16px;padding:0 4px;border-radius:var(--nt-radius-pill);background:color-mix(in srgb,var(--nt-accent) 20%,transparent);font-size:12px;line-height:16px;font-weight:600;color:var(--nt-accent)}
+#main-content .quant-page .qf-history-filter select{min-width:144px;min-height:32px;padding:4px 12px;border-radius:var(--nt-radius-panel)}
 #main-content .quant-page .qf-positions-empty{align-items:center;padding:56px 24px;text-align:center;border-style:dashed}
 #main-content .quant-page .qf-positions-empty .nt-icon{width:32px;height:32px;opacity:.35}
 #main-content .quant-page .qf-positions-empty p{margin:0;font-size:14px;color:var(--qf-muted)}
@@ -331,11 +331,11 @@
 #main-content .quant-page .qf-table td small{display:block;margin-top:2px;font-size:12px;color:var(--qf-muted);white-space:nowrap}
 #main-content .quant-page .qf-table-product{display:flex;align-items:center;gap:10px;min-width:220px;color:#fff;font-weight:500}
 #main-content .quant-page .qf-table-product .coin{width:28px;height:28px}
-#main-content .quant-page .qf-status{display:inline-flex;padding:2px 8px;border:1px solid;border-radius:999px;font-size:12px;line-height:16px;font-weight:600;white-space:nowrap}
+#main-content .quant-page .qf-status{display:inline-flex;padding:2px 8px;border:1px solid;border-radius:var(--nt-radius-pill);font-size:12px;line-height:16px;font-weight:600;white-space:nowrap}
 #main-content .quant-page .qf-status.pending_review,#main-content .quant-page .qf-status.redeem_pending_review{border-color:color-mix(in srgb,#fcd34d 35%,transparent);background:color-mix(in srgb,#fcd34d 10%,transparent);color:#fcd34d}
-#main-content .quant-page .qf-status.active{border-color:color-mix(in srgb,#2bc287 30%,transparent);background:color-mix(in srgb,#2bc287 10%,transparent);color:#2bc287}
+#main-content .quant-page .qf-status.active{border-color:color-mix(in srgb,var(--nt-up) 30%,transparent);background:color-mix(in srgb,var(--nt-up) 10%,transparent);color:var(--nt-up)}
 #main-content .quant-page .qf-status:is(.settled,.redeemed){border-color:var(--qf-subtle);background:var(--qf-elevated);color:var(--qf-secondary)}
-#main-content .quant-page .qf-status.rejected{border-color:color-mix(in srgb,#f46 30%,transparent);background:color-mix(in srgb,#f46 10%,transparent);color:#f46}
+#main-content .quant-page .qf-status.rejected{border-color:color-mix(in srgb,var(--nt-down) 30%,transparent);background:color-mix(in srgb,var(--nt-down) 10%,transparent);color:var(--nt-down)}
 @media(max-width:1023px){#main-content .quant-page .qf-detail-grid{grid-template-columns:1fr}#main-content .quant-page .qf-detail-aside{position:static}#main-content .quant-page .qf-quota{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:767px){#main-content .quant-page .qf-calc-grid,#main-content .quant-page .qf-flow{grid-template-columns:1fr}#main-content .quant-page .qf-flow::before{display:none}#main-content .quant-page .qf-flow li{flex-direction:row;align-items:flex-start;text-align:left}#main-content .quant-page .qf-detail-hero h1{font-size:30px;line-height:36px}}
 #main-content .quant-page .qf-table td:nth-child(5){white-space:nowrap}
@@ -364,7 +364,7 @@
 @keyframes qf-spin{to{transform:rotate(360deg)}}
 #main-content .quant-page .qf-catalog{display:flex;flex-direction:column;gap:20px}
 #main-content .quant-page .qf-filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-#main-content .quant-page .qf-filters button{min-height:0;padding:4px 12px;border:1px solid var(--qf-subtle);border-radius:999px;background:transparent;font-size:12px;line-height:16px;font-weight:500;color:var(--qf-secondary)}
+#main-content .quant-page .qf-filters button{min-height:0;padding:4px 12px;border:1px solid var(--qf-subtle);border-radius:var(--nt-radius-pill);background:transparent;font-size:12px;line-height:16px;font-weight:500;color:var(--qf-secondary)}
 #main-content .quant-page .qf-filters button:hover{border-color:color-mix(in srgb,#fff 24%,var(--nt-bg));color:#fff}
 #main-content .quant-page .qf-filters button.active{border-color:var(--nt-accent);background:var(--nt-accent);color:var(--nt-bg)}
 #main-content .quant-page .qf-filters button:focus-visible{outline:none;text-decoration:underline;text-underline-offset:3px}
@@ -372,7 +372,7 @@
 #main-content .quant-page .qf-disclaimer .nt-icon{width:14px;height:14px;opacity:.42}
 @media(prefers-reduced-motion:reduce){#main-content .quant-page .qf-hero-ring.dashed{animation:none}}
 @media(max-width:1023px){#main-content .quant-page .qf-hero{padding:40px 28px}#main-content .quant-page .qf-hero h1{font-size:30px;line-height:36px}#main-content .quant-page .qf-hero-mark{width:112px;height:112px}#main-content .quant-page .qf-hero-core{width:64px;height:64px}#main-content .quant-page .qf-hero-core .nt-icon{width:32px;height:32px}}
-@media(max-width:639px){#main-content .quant-page .qf-hero{padding:32px 20px}#main-content .quant-page .qf-hero-mark{display:none}}
+@media(max-width:640px){#main-content .quant-page .qf-hero{padding:32px 20px}#main-content .quant-page .qf-hero-mark{display:none}}
 
 /* Positions: summary progress + trend, clickable rows, order drawer. */
 #main-content .quant-page .qf-summary-main{align-items:flex-start}
@@ -398,7 +398,7 @@
 .nt-dialog .qf-order-link:hover{color:var(--nt-accent)}
 .nt-dialog .qf-order-link:focus-visible{outline:none;text-decoration:underline}
 .nt-dialog .qf-order-product small{font-size:12px;line-height:18px;letter-spacing:.05em;text-transform:uppercase;color:var(--qf-muted)}
-.nt-dialog .qf-order .qf-status{align-self:flex-start;display:inline-flex;padding:2px 8px;border:1px solid;border-radius:999px;font-size:12px;line-height:16px;font-weight:600}
+.nt-dialog .qf-order .qf-status{align-self:flex-start;display:inline-flex;padding:2px 8px;border:1px solid;border-radius:var(--nt-radius-pill);font-size:12px;line-height:16px;font-weight:600}
 .nt-dialog .qf-order .qf-status.pending_review{border-color:color-mix(in srgb,#fcd34d 35%,transparent);background:color-mix(in srgb,#fcd34d 10%,transparent);color:#fcd34d}
 .nt-dialog .qf-order-amounts{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
 .nt-dialog .qf-order-amounts>div{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -406,7 +406,7 @@
 .nt-dialog .qf-order-amounts strong{font-family:var(--nt-font-mono);font-size:24px;line-height:32px;font-weight:600;overflow-wrap:anywhere}
 .nt-dialog .qf-order-amounts strong span{margin-left:6px;font-family:inherit;font-size:15px;font-weight:400;color:var(--qf-muted)}
 .nt-dialog .qf-order-rate{align-items:flex-end}
-.nt-dialog .qf-order-rate strong{font-size:18px;line-height:28px;color:#2bc287}
+.nt-dialog .qf-order-rate strong{font-size:18px;line-height:28px;color:var(--nt-up)}
 .nt-dialog .qf-order-section{display:flex;flex-direction:column;gap:12px}
 .nt-dialog .qf-order-section h3{margin:0;font-size:12px;line-height:16px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--qf-secondary)}
 .nt-dialog .qf-order-section dl{display:flex;flex-direction:column;gap:12px;margin:0}
@@ -416,8 +416,8 @@
 
 /* Positions row actions and payout records (reference measured, 2026-11-26). */
 .qf-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;white-space:nowrap}
-.qf-row-action{display:inline-flex;align-items:center;height:32px;padding:0 12px;border:1px solid #191b1f;border-radius:999px;font-size:12px;line-height:16px;font-weight:600;color:#b4b5b6;background:transparent}
-.qf-row-action:hover,.qf-row-action:focus-visible{outline:none;background:#ffffff0d;color:#fff}
+.qf-row-action{display:inline-flex;align-items:center;height:32px;padding:0 12px;border:1px solid var(--nt-surface-2);border-radius:var(--nt-radius-pill);font-size:12px;line-height:16px;font-weight:600;color:#b4b5b6;background:transparent}
+.qf-row-action:hover,.qf-row-action:focus-visible{outline:none;background:var(--nt-border);color:#fff}
 .qf-row-action.primary{border-color:rgba(165,255,74,.4);color:var(--nt-accent)}
 .qf-row-action.primary:hover,.qf-row-action.primary:focus-visible{background:rgba(165,255,74,.1);color:var(--nt-accent)}
 .qf-row-action:focus-visible{text-decoration:underline;text-underline-offset:3px}
@@ -431,7 +431,7 @@
 .qf-interest-head p{margin:0;font-size:14px;line-height:20px;color:var(--qf-muted)}
 .qf-interest-empty{align-items:center;gap:12px;padding:40px 24px;text-align:center}
 .qf-interest-empty p{margin:0;font-size:14px;color:var(--qf-muted)}
-.qf-interest-empty-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#ffffff0d;color:var(--qf-muted)}
+.qf-interest-empty-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--nt-border);color:var(--qf-muted)}
 .qf-interest-empty-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media(pointer:coarse){.qf-row-action{height:44px}}
 
@@ -444,11 +444,11 @@
 #main-content .quant-page .qf-summary-eye{display:inline-grid;place-items:center;width:16px;height:16px;min-width:0;min-height:0;padding:0;color:var(--qf-muted)}
 #main-content .quant-page .qf-summary-eye .nt-icon{width:16px;height:16px;opacity:.6}
 #main-content .quant-page .qf-summary-eye:hover .nt-icon,#main-content .quant-page .qf-summary-eye:focus-visible .nt-icon{opacity:1}
-#main-content .quant-page .qf-summary-eye:focus-visible{outline:none;background:#ffffff14;border-radius:4px}
+#main-content .quant-page .qf-summary-eye:focus-visible{outline:none;background:var(--nt-border-strong);border-radius:4px}
 #main-content .quant-page .qf-summary-display{font-family:var(--nt-font-mono);font-size:36px;line-height:40px;font-weight:600;letter-spacing:-.025em;color:#fff;white-space:nowrap}
 #main-content .quant-page .qf-summary-display>span{margin-left:8px;font-size:18px;line-height:28px;font-weight:400;letter-spacing:0;color:var(--qf-muted)}
 #main-content .quant-page .qf-summary-accent{display:flex;align-items:baseline;gap:8px;font-size:15px;line-height:22px}
-#main-content .quant-page .qf-summary-accent strong{font-family:var(--nt-font-mono);font-weight:600;color:#2bc287}
+#main-content .quant-page .qf-summary-accent strong{font-family:var(--nt-font-mono);font-weight:600;color:var(--nt-up)}
 #main-content .quant-page .qf-summary-accent small{display:inline;font-size:12px;color:var(--qf-muted)}
 #main-content .quant-page .qf-summary-progress{display:flex;align-items:center;gap:8px;margin-top:4px}
 #main-content .quant-page .qf-summary-progress small{display:inline;white-space:nowrap}
@@ -460,18 +460,18 @@
 #main-content .quant-page .qf-summary-stats dt{font-size:12px;line-height:18px;color:var(--qf-muted)}
 #main-content .quant-page .qf-summary-stats dd{margin:0;font-family:var(--nt-font-mono);font-size:18px;line-height:28px;font-weight:600;white-space:nowrap}
 #main-content .quant-page .qf-summary-stats dd span{margin-left:4px;font-size:12px;line-height:18px;font-weight:400;color:var(--qf-muted)}
-#main-content .quant-page .qf-breakdown{display:flex;flex-direction:column;gap:12px;padding-top:12px;border-top:1px solid #191b1f}
+#main-content .quant-page .qf-breakdown{display:flex;flex-direction:column;gap:12px;padding-top:12px;border-top:1px solid var(--nt-surface-2)}
 #main-content .quant-page .qf-breakdown-toggle{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;padding:0;font-size:12px;line-height:18px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--qf-muted)}
 #main-content .quant-page .qf-breakdown-toggle:hover,#main-content .quant-page .qf-breakdown-toggle:focus-visible{outline:none;color:#fff}
 #main-content .quant-page .qf-breakdown-toggle:focus-visible{text-decoration:underline}
 #main-content .quant-page .qf-breakdown-toggle .nt-icon{width:14px;height:14px;opacity:.6;transition:transform 150ms ease-out}
 #main-content .quant-page .qf-breakdown-toggle .nt-icon.open{transform:rotate(180deg)}
 #main-content .quant-page .qf-breakdown-list{display:flex;flex-direction:column;gap:8px}
-#main-content .quant-page .qf-breakdown-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:center;gap:12px;padding:12px;border:1px solid #191b1f;border-radius:12px;background:rgb(5 7 11/.4)}
+#main-content .quant-page .qf-breakdown-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:center;gap:12px;padding:12px;border:1px solid var(--nt-surface-2);border-radius:var(--nt-radius-panel);background:rgb(5 7 11/.4)}
 #main-content .quant-page .qf-breakdown-row>div{display:flex;flex-direction:column;gap:2px;min-width:0}
 #main-content .quant-page .qf-breakdown-row small{font-size:12px;line-height:18px;color:var(--qf-muted)}
 #main-content .quant-page .qf-breakdown-row span{font-family:var(--nt-font-mono);font-size:14px;line-height:20px;font-variant-numeric:tabular-nums}
-#main-content .quant-page .qf-breakdown-asset{flex-direction:row!important;align-items:center;gap:8px!important}
+#main-content .quant-page .qf-breakdown-asset{flex-direction:row;align-items:center;gap:8px}
 #main-content .quant-page .qf-breakdown-asset .coin{width:28px;height:28px}
 #main-content .quant-page .qf-breakdown-asset strong{font-size:14px;font-weight:600}
 @media(max-width:1023px){#main-content .quant-page .qf-summary-row{flex-direction:column;align-items:stretch;gap:24px}#main-content .quant-page .qf-summary-stats{grid-template-columns:1fr}#main-content .quant-page .qf-summary-stats>div{flex-direction:row;justify-content:space-between;align-items:baseline}}
@@ -481,8 +481,8 @@
 
 /* Reference AiQuantSectionNav spacing (user: no divider line under the pill bar) + positions table (measured 1917px, 2026-11-26). */
 #main-content .quant-sub:has(.qf-positions)>.subnav{margin-bottom:77px}
-#main-content .quant-page .qf-positions-toolbar .qf-tabs{padding:4px;border-radius:16px;background:#141619}
-#main-content .quant-page .qf-positions-toolbar .qf-tabs button{min-height:0;padding:4px 12px;border-radius:12px;font-size:14px;line-height:20px;font-weight:500}
+#main-content .quant-page .qf-positions-toolbar .qf-tabs{padding:4px;border-radius:16px;background:var(--nt-card)}
+#main-content .quant-page .qf-positions-toolbar .qf-tabs button{min-height:0;padding:4px 12px;border-radius:var(--nt-radius-panel);font-size:14px;line-height:20px;font-weight:500}
 #main-content .quant-page .qf-positions .qf-table{font-size:12px;line-height:18px}
 #main-content .quant-page .qf-positions .qf-table th{font-size:12px;line-height:16px;font-weight:500}
 #main-content .quant-page .qf-positions .qf-table :is(th,td){padding:16px 8px}
@@ -498,11 +498,11 @@
 #main-content .quant-page .qf-positions .qf-status{padding:2px 8px;font-size:12px;line-height:18px;font-weight:600}
 #main-content .quant-page .qf-positions .qf-row-link{font-size:14px;line-height:20px;font-weight:500}
 #main-content .quant-page .qf-positions .qf-num{font-family:var(--nt-font-mono);font-size:14px;font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap}
-#main-content .quant-page .qf-positions .qf-unit{margin-left:4px;font-family:var(--nt-font-mono);font-size:12px;color:#87888a}
-#main-content .quant-page .qf-positions .qf-accrued-estimate{font-family:var(--nt-font-mono);color:#87888a}
+#main-content .quant-page .qf-positions .qf-unit{margin-left:4px;font-family:var(--nt-font-mono);font-size:12px;color:var(--nt-text-dim)}
+#main-content .quant-page .qf-positions .qf-accrued-estimate{font-family:var(--nt-font-mono);color:var(--nt-text-dim)}
 #main-content .quant-page .qf-positions .qf-table td:nth-child(5){font-size:14px}
 #main-content .quant-page .qf-positions .qf-table td:nth-child(7)>div{font-size:12px;color:#b4b5b6}
-#main-content .quant-page .qf-positions .qf-table td:nth-child(7) small{color:#87888a}
+#main-content .quant-page .qf-positions .qf-table td:nth-child(7) small{color:var(--nt-text-dim)}
 #main-content .quant-page .qf-positions .qf-table th{padding-top:12px;padding-bottom:12px}
 #main-content .quant-page .qf-positions .qf-table td small.qf-accrued-estimate{margin-top:0}
 /* Tab switching must not move anything: fixed table layout keeps the reference column proportions (1374px basis)
@@ -512,7 +512,7 @@
 #main-content .quant-page .qf-positions-toolbar{min-height:38px}
 /* History status: shared RecordFilter field trigger, 38px like the tab bar, dark rounded surface. */
 #main-content .quant-page .qf-history-filter{display:block}
-#main-content .quant-page .qf-history-filter .record-filter{width:144px;height:38px!important;min-height:38px!important;padding:0 12px!important;border-radius:12px;background:#141619;font-size:14px;line-height:20px}
+#main-content .quant-page .qf-history-filter .record-filter{width:144px;height:38px;min-height:38px;padding:0 12px;border-radius:var(--nt-radius-panel);background:var(--nt-card);font-size:14px;line-height:20px}
 
 /* AI Quant landing: one type and spacing scale (user feedback, 2026-11-27). Hero kicker 12/18, title 36/44 (28/36 on
    phones), lead 15/24; cards share 24px padding (20px on phones) and a 16px rhythm between head, copy, chips, action
@@ -522,17 +522,17 @@
 #main-content .quant-landing h1.page-title{font-size:36px;line-height:44px;letter-spacing:-.02em}
 #main-content .quant-landing .page-desc{margin:12px 0 0;font-size:15px;line-height:24px}
 #main-content .quant-landing .quant-intro{gap:16px}
-#main-content .quant-landing .quant-intro .card{display:flex;flex-direction:column;gap:16px;min-height:0;padding:24px;border-radius:20px}
+#main-content .quant-landing .quant-intro .card{display:flex;flex-direction:column;gap:16px;min-height:0;padding:24px;border-radius:var(--nt-radius-card)}
 #main-content .quant-landing .quant-intro .coin-label{display:flex;align-items:center;gap:12px;margin:0}
-#main-content .quant-landing .quant-intro .coin-label>.nt-icon{width:44px;height:44px;padding:11px;border-radius:12px;flex:none}
+#main-content .quant-landing .quant-intro .coin-label>.nt-icon{width:44px;height:44px;padding:11px;border-radius:var(--nt-radius-panel);flex:none}
 #main-content .quant-landing .quant-intro .coin-label .page-kicker{margin:0 0 2px;font-size:12px;line-height:16px;letter-spacing:.08em}
 #main-content .quant-landing .quant-intro h2{font-size:18px;line-height:26px;letter-spacing:0}
 #main-content .quant-landing .quant-intro .card>p{max-width:none;min-height:44px;font-size:14px;line-height:22px}
 #main-content .quant-landing .quant-chips{gap:8px;margin:0}
 #main-content .quant-landing .quant-intro .tag-chip{padding:3px 10px;font-size:12px;line-height:18px;letter-spacing:0}
-#main-content .quant-landing .quant-intro .pill.primary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin:0;padding:0 20px;border-radius:999px;font-size:14px;line-height:20px}
+#main-content .quant-landing .quant-intro .pill.primary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin:0;padding:0 20px;border-radius:var(--nt-radius-pill);font-size:14px;line-height:20px}
 #main-content .quant-landing .quant-intro .card-footer{display:flex;justify-content:space-between;gap:12px;margin:0 -24px -8px;padding:14px 24px 0;border-top:1px solid #ffffff0f;font-size:14px;line-height:20px}
-#main-content .quant-landing .quant-intro .card-footer small{font-size:12px;line-height:18px;color:var(--nt-text-secondary,#8c8f96);text-align:right}
+#main-content .quant-landing .quant-intro .card-footer small{font-size:12px;line-height:18px;color:var(--nt-text-secondary,var(--nt-text-quiet));text-align:right}
 @media (max-width:767px){
  /* Phones skip the hero (user decision): it stays as a visually hidden page heading for assistive technology. */
  #main-content .quant-landing .page-hero{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}

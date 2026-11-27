@@ -43,19 +43,19 @@ async function submit(){
 </template>
 <style scoped>
 .fund-prompt{display:grid;gap:16px}
-.fund-summary{display:grid;gap:8px;margin:0;padding:14px 16px;border:1px solid #ffffff14;border-radius:12px;background:#0c0e10}
+.fund-summary{display:grid;gap:8px;margin:0;padding:14px 16px;border:1px solid var(--nt-border-strong);border-radius:var(--nt-radius-panel);background:#0c0e10}
 .fund-summary>div{display:flex;justify-content:space-between;gap:12px;font-size:13px;line-height:20px}
-.fund-summary dt{color:#87888a;flex-shrink:0}
+.fund-summary dt{color:var(--nt-text-dim);flex-shrink:0}
 .fund-summary dd{margin:0;color:#fff;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.fund-summary .total{padding-top:8px;border-top:1px solid #ffffff14}
-.fund-summary .total dd{color:#2bc287;font-weight:600}
+.fund-summary .total{padding-top:8px;border-top:1px solid var(--nt-border-strong)}
+.fund-summary .total dd{color:var(--nt-up);font-weight:600}
 .fund-summary .address dd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
 .fund-field{display:grid;gap:8px;font-size:14px;color:#e6e7e9}
-.fund-field input{min-height:52px;padding:0 14px;border:1px solid #ffffff1f;border-radius:12px;background:#0c0e10;color:#fff;font-size:20px;letter-spacing:.5em;text-align:center}
+.fund-field input{min-height:52px;padding:0 14px;border:1px solid #ffffff1f;border-radius:var(--nt-radius-panel);background:#0c0e10;color:#fff;font-size:20px;letter-spacing:.5em;text-align:center}
 .fund-field input::placeholder{letter-spacing:0;font-size:14px;color:#6b6d70}
 .fund-field input:focus-visible{outline:none;background:#11151a}
 .fund-field input[aria-invalid=true]{color:#ff6b84}
-.fund-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:12px;background:var(--nt-accent);color:var(--nt-bg);font-size:15px;font-weight:600}
+.fund-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:var(--nt-radius-panel);background:var(--nt-accent);color:var(--nt-bg);font-size:15px;font-weight:600}
 .fund-primary:hover{background:#b6ff6a}
 .fund-primary.is-busy{opacity:.8;cursor:progress}
 .fund-primary:focus-visible{outline:none;text-decoration:underline}

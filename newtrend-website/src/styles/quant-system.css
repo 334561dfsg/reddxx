@@ -1,6 +1,6 @@
 /* AI Quant sub-pages: one visual system (user request 2026-11-27, phase 1 of the sub-page cleanup).
    Applies to the strategy pages (.strategy-page) and the quant-fund pages (.quant-page.quant-sub); the landing keeps
-   its own block in quant-fidelity.css. The doubled id outranks the older per-page fidelity rules without !important,
+   its own block in quant-fidelity.css. The doubled id outranks the older per-page fidelity rules without,
    so this file is the single place to tune titles, labels, fonts, card shape and buttons for these pages.
    Scale: page title 30/38 (24/32 on phones), section title 20/28, card title 16/24, kicker 12/18, body 14/22,
    numbers in the mono face, no letter-spacing (it scatters Chinese), cards 20px radius, primary actions 40px solid
@@ -20,11 +20,11 @@
 #main-content#main-content .quant-page.quant-sub :is(.qf-rate,.qf-estimate-total strong){font-family:var(--nt-font-mono)}
 
 /* Card shape */
-#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card,.strategy-guide,.psc,.my-strategies-table,.strategy-stats-card,.qf-hero,.qf-card,.qf-panel,.strategy-stats>div){border-radius:20px}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card,.strategy-guide,.psc,.my-strategies-table,.strategy-stats-card,.qf-hero,.qf-card,.qf-panel,.strategy-stats>div){border-radius:var(--nt-radius-card)}
 #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card h3,.qf-card-title h3){font-size:16px;line-height:24px;font-weight:600}
 
 /* Actions: primary 40px solid accent, row actions 32px */
-#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.strategy-cta,.sc-button-lg,.qf-cta,.qf-cta-lg){min-height:40px;height:auto;padding:0 20px;border-radius:999px;background:var(--nt-accent);background-image:none;color:#081000;font-size:14px;line-height:20px;font-weight:600}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.strategy-cta,.sc-button-lg,.qf-cta,.qf-cta-lg){min-height:40px;height:auto;padding:0 20px;border-radius:var(--nt-radius-pill);background:var(--nt-accent);background-image:none;color:#081000;font-size:14px;line-height:20px;font-weight:600}
 #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-button-sm,.ms-button,.qf-row-action){min-height:32px;height:auto;font-size:13px;line-height:18px}
 
 @media(max-width:767px){
@@ -54,18 +54,18 @@
  #main-content#main-content .qf-positions .qf-table-wrap{overflow:visible;background:transparent;border:0;padding:0}
  #main-content#main-content .qf-positions .qf-table,#main-content#main-content .qf-positions .qf-table tbody{display:block}
  #main-content#main-content .qf-positions .qf-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
- #main-content#main-content .qf-positions .qf-table tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0 0 12px;padding:16px;border-radius:20px;background:var(--qf-card,#15181c);border:1px solid #ffffff0a}
- #main-content#main-content .qf-positions .qf-table td{display:block;padding:0!important;border:0;text-align:left;white-space:normal;width:auto;min-width:0}
+ #main-content#main-content .qf-positions .qf-table tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0 0 12px;padding:16px;border-radius:var(--nt-radius-card);background:var(--qf-card,var(--nt-surface-raised));border:1px solid #ffffff0a}
+ #main-content#main-content .qf-positions .qf-table td{display:block;padding:0;border:0;text-align:left;white-space:normal;width:auto;min-width:0}
  #main-content#main-content .qf-positions .qf-table td:nth-child(1){grid-column:2;grid-row:1;justify-self:end;align-self:start}
  #main-content#main-content .qf-positions .qf-table td:nth-child(2){grid-column:1;grid-row:1}
  #main-content#main-content .qf-positions .qf-table .qf-table-product{min-width:0;align-items:flex-start}
  #main-content#main-content .qf-positions .qf-table .qf-row-link{text-align:left;font-size:14px;line-height:20px;font-weight:600;color:#fff}
- #main-content#main-content .qf-positions .qf-table td[data-label]:before{content:attr(data-label);display:block;margin-bottom:2px;font-size:12px;line-height:18px;color:var(--qf-muted,#8c8f96)}
+ #main-content#main-content .qf-positions .qf-table td[data-label]:before{content:attr(data-label);display:block;margin-bottom:2px;font-size:12px;line-height:18px;color:var(--qf-muted,var(--nt-text-quiet))}
  #main-content#main-content .qf-positions .qf-table td[data-label]{font-size:14px;line-height:20px}
  #main-content#main-content .qf-positions .qf-table td .qf-unit{margin-left:4px}
  #main-content#main-content .qf-positions .qf-table td small{white-space:normal}
  #main-content#main-content .qf-positions .qf-table .qf-cell-dates{grid-column:1/-1}
- #main-content#main-content .qf-positions .qf-table .qf-cell-actions{grid-column:1/-1;padding-top:12px!important;border-top:1px solid #ffffff0d}
+ #main-content#main-content .qf-positions .qf-table .qf-cell-actions{grid-column:1/-1;padding-top:12px;border-top:1px solid var(--nt-border)}
  #main-content#main-content .qf-positions .qf-table .qf-cell-actions:empty,#main-content#main-content .qf-positions .qf-table .qf-cell-actions:has(.qf-row-actions:empty){display:none}
  #main-content#main-content .qf-positions .qf-table .qf-row-actions{display:flex;justify-content:flex-end;gap:8px}
  #main-content#main-content .qf-positions .qf-table .qf-skeleton-row-loading td:first-child{grid-column:auto;grid-row:auto}
@@ -75,13 +75,13 @@
    actions as one row at the foot (label hidden) — values no longer split from their units. */
 @media(max-width:767px){
  #main-content#main-content .my-strategies-table{background:transparent;border:0;padding:0}
- #main-content#main-content .my-strategies-table tbody>tr:not(.ms-skeleton-row){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0 0 12px;padding:16px;border-radius:20px;background:#15181c;border:1px solid #ffffff0a}
- #main-content#main-content .my-strategies-table tbody>tr>td{display:block;padding:0!important;text-align:left;min-width:0}
+ #main-content#main-content .my-strategies-table tbody>tr:not(.ms-skeleton-row){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0 0 12px;padding:16px;border-radius:var(--nt-radius-card);background:var(--nt-surface-raised);border:1px solid #ffffff0a}
+ #main-content#main-content .my-strategies-table tbody>tr>td{display:block;padding:0;text-align:left;min-width:0}
  #main-content#main-content .my-strategies-table td[data-label]::before{display:block;margin-bottom:2px;font-size:12px;line-height:18px}
  #main-content#main-content .my-strategies-table td:first-child{grid-column:1/-1}
  #main-content#main-content .my-strategies-table td:first-child::before{display:none}
  #main-content#main-content .my-strategies-table .ms-pnl{align-items:flex-start}
- #main-content#main-content .my-strategies-table td:last-child{grid-column:1/-1;padding-top:12px!important;border-top:1px solid #ffffff0d}
+ #main-content#main-content .my-strategies-table td:last-child{grid-column:1/-1;padding-top:12px;border-top:1px solid var(--nt-border)}
  #main-content#main-content .my-strategies-table td:last-child::before{display:none}
  #main-content#main-content .my-strategies-table .ms-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px}
  /* Today's picks scroll sideways (user request), like the finance featured row. */
@@ -109,7 +109,7 @@
 #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card .sc-title,.qf-card .qf-card-link){display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal;text-overflow:clip;font-size:16px;line-height:24px;font-weight:600;text-align:left}
 #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-sharpe strong,.sc-metrics strong,.qf-card .qf-rate){font-family:var(--nt-font-mono);font-size:28px;line-height:32px;font-weight:600}
 #main-content#main-content .quant-page.quant-sub .qf-card .qf-rate span{font-size:14px}
-#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card dt,.sc-card .sc-label,.sc-sharpe small,.sc-metrics small,.qf-card small,.qf-progress-meta span){font-size:12px;line-height:18px;font-weight:400;color:#8c8f96}
+#main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-card dt,.sc-card .sc-label,.sc-sharpe small,.sc-metrics small,.qf-card small,.qf-progress-meta span){font-size:12px;line-height:18px;font-weight:400;color:var(--nt-text-quiet)}
 #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-facts dd,.qf-limit p,.qf-term p){font-size:14px;line-height:20px}
 #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.sc-chip,.qf-tags>span){padding:2px 8px;border-radius:6px;font-size:12px;line-height:18px}
 #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) .sc-description{font-size:13px;line-height:20px}
@@ -193,7 +193,7 @@
 .nt-dialog.nt-dialog:is(.strategy-detail-drawer,.strategy-subscribe-dialog) *,.nt-dialog.nt-dialog:has(.qf-subscribe,.qf-order) *{letter-spacing:0}
 .nt-dialog.nt-dialog:is(.strategy-detail-drawer,.strategy-subscribe-dialog) :is(h2,h3,h4),.nt-dialog.nt-dialog:has(.qf-subscribe,.qf-order) :is(h2,h3,h4){font-family:var(--nt-font-body)}
 .nt-dialog.nt-dialog .strategy-details h3{font-size:20px;line-height:28px;font-weight:600}
-.nt-dialog.nt-dialog .strategy-details h4{font-size:12px;line-height:18px;font-weight:500;text-transform:none;color:#8c8f96}
+.nt-dialog.nt-dialog .strategy-details h4{font-size:12px;line-height:18px;font-weight:500;text-transform:none;color:var(--nt-text-quiet)}
 .nt-dialog.nt-dialog .strategy-details :is(p,dd,dt){font-size:14px;line-height:22px}
 .nt-dialog.nt-dialog .strategy-details dd{font-family:var(--nt-font-body)}
 .nt-dialog.nt-dialog .qf-order .qf-order-link{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal;text-overflow:clip}
@@ -225,7 +225,7 @@
  #main-content#main-content .quant-page.quant-sub .qf-positions .qf-panel.qf-table-wrap{padding:0;background:transparent;border:0;box-shadow:none}
 }
 @media(max-width:767px){
- #main-content#main-content .qf-positions .qf-table tr.qf-row>td:nth-child(2){grid-column:1/-1;grid-row:1;padding-right:76px!important}
+ #main-content#main-content .qf-positions .qf-table tr.qf-row>td:nth-child(2){grid-column:1/-1;grid-row:1;padding-right:76px}
  #main-content#main-content .qf-positions .qf-table tr.qf-row>td:nth-child(1){grid-column:2;grid-row:1;position:relative;z-index:1}
 }
 
@@ -241,11 +241,11 @@
    card, the daily records are a plain divided list under a small header, and the style/market line sits under the bar. */
 @media(max-width:767px){
  #main-content#main-content .strategy-page .strategy-stats-head{margin:0 0 12px}
- #main-content#main-content .strategy-page .strategy-stats-head p{margin:0;font-size:12px;line-height:18px;color:#8c8f96}
+ #main-content#main-content .strategy-page .strategy-stats-head p{margin:0;font-size:12px;line-height:18px;color:var(--nt-text-quiet)}
  #main-content#main-content .strategy-page .strategy-stats-card{background:transparent;border:0;padding:0;box-shadow:none}
  #main-content#main-content .strategy-page .strategy-stats-card>.ds{padding:0}
  #main-content#main-content .strategy-page .ds-summary{margin:0 0 16px;padding:16px;border-radius:16px}
- #main-content#main-content .strategy-page .ds-head{padding:0 0 8px;border-bottom:1px solid #ffffff0d}
+ #main-content#main-content .strategy-page .ds-head{padding:0 0 8px;border-bottom:1px solid var(--nt-border)}
  #main-content#main-content .strategy-page .ds-row{padding:12px 0}
 }
 
@@ -284,7 +284,7 @@
  #main-content#main-content .qf-interest-records .qf-interest-scroll{scrollbar-width:none}
  #main-content#main-content .qf-interest-records .qf-interest-scroll::-webkit-scrollbar{display:none}
  /* Header row outside the scroller; the table's own header is kept for assistive technology only. */
- #main-content#main-content .qf-interest-records .qf-ir-head{display:grid;grid-template-columns:minmax(0,1fr) 9rem 6.5rem;gap:0;flex:none;padding:0 0 8px;border-bottom:1px solid #ffffff0d;font-size:12px;line-height:18px;color:#8c8f96}
+ #main-content#main-content .qf-interest-records .qf-ir-head{display:grid;grid-template-columns:minmax(0,1fr) 9rem 6.5rem;gap:0;flex:none;padding:0 0 8px;border-bottom:1px solid var(--nt-border);font-size:12px;line-height:18px;color:var(--nt-text-quiet)}
  #main-content#main-content .qf-interest-records .qf-ir-head span:nth-child(2){text-align:right;padding-right:10px}
  #main-content#main-content .qf-interest-records .qf-ir-head span:nth-child(3){padding-left:10px}
  #main-content#main-content .qf-interest-records .qf-table .qf-ir-col-amount{width:9rem}
@@ -319,21 +319,21 @@
    across the head with the status pill on the right, then label/value pairs in two columns (a label bar drawn by
    ::before), dates across and the action at the foot. Bars align left like the loaded values. */
 @media(max-width:767px){
- #main-content#main-content .qf-positions .qf-table tr.qf-skeleton-row-loading>td:nth-child(2){grid-column:1/-1;grid-row:1;padding-right:76px!important}
+ #main-content#main-content .qf-positions .qf-table tr.qf-skeleton-row-loading>td:nth-child(2){grid-column:1/-1;grid-row:1;padding-right:76px}
  #main-content#main-content .qf-positions .qf-table tr.qf-skeleton-row-loading>td:nth-child(1){grid-column:2;grid-row:1;justify-self:end;position:relative;z-index:1}
  #main-content#main-content .qf-positions .qf-skeleton-row-loading .qf-table-product{gap:10px;align-items:center}
- #main-content#main-content .qf-positions .qf-skeleton-row-loading .qf-table-product .nt-skeleton:first-child{flex:none;width:28px!important;height:28px!important}
- #main-content#main-content .qf-positions .qf-skeleton-row-loading .qf-table-product .nt-skeleton:last-child{width:60%!important}
+ #main-content#main-content .qf-positions .qf-skeleton-row-loading .qf-table-product .nt-skeleton:first-child{flex:none;width:28px;height:28px}
+ #main-content#main-content .qf-positions .qf-skeleton-row-loading .qf-table-product .nt-skeleton:last-child{width:60%}
  #main-content#main-content .qf-positions .qf-skeleton-row-loading td:nth-child(n+3):nth-child(-n+7)::before{content:'';display:block;width:48px;height:10px;margin:2px 0 8px;border-radius:6px;background:#ffffff0a}
- #main-content#main-content .qf-positions .qf-skeleton-row-loading td .nt-skeleton{margin-left:0!important}
+ #main-content#main-content .qf-positions .qf-skeleton-row-loading td .nt-skeleton{margin-left:0}
  #main-content#main-content .qf-positions .qf-skeleton-row-loading td:nth-child(7){grid-column:1/-1}
- #main-content#main-content .qf-positions .qf-skeleton-row-loading td:nth-child(8){grid-column:1/-1;display:flex!important;justify-content:flex-end;padding-top:12px!important;border-top:1px solid #ffffff0d}
+ #main-content#main-content .qf-positions .qf-skeleton-row-loading td:nth-child(8){grid-column:1/-1;display:flex;justify-content:flex-end;padding-top:12px;border-top:1px solid var(--nt-border)}
 }
 
 /* Floating section switch (user feedback: the solid band looked like a black frame): the pill itself floats with a
    translucent blurred surface and a soft shadow; content scrolls visibly but softly behind it. */
 @media(max-width:767px){
- #main-content#main-content :is(.strategy-page .strategy-nav,.quant-page.quant-sub>.subnav){background:color-mix(in srgb,#15181c 82%,transparent);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
+ #main-content#main-content :is(.strategy-page .strategy-nav,.quant-page.quant-sub>.subnav){background:color-mix(in srgb,var(--nt-surface-raised) 82%,transparent);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
 }
 
 /* Quant Fund list/positions on phones: no aurora light beams behind the switch and filters (user request 2026-11-27). */

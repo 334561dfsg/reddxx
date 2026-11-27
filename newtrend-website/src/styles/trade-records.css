@@ -1,49 +1,52 @@
+/* Loaded once by TradeRecordsPanel.vue (refactor phase 4, 2026-11-27), instead of a scoped copy in each of the three
+   record components. Every rule ends in :is(.records-panel *), which keeps the scoped specificity (0,1,0) and limits the
+   generic names (.direction, .num, .win…) to the records panel. */
 /* Trade records as one line per record (user decision, 2026-11-26; replaces the GMXX-style cards): a table with a
    sticky header row, the pair + direction + tag in the first column, the same fields as before in the following
    columns, and the close/cancel action last. Same data as the cards; the panel scrolls vertically and, when the
    columns do not fit, horizontally. */
-.trade-history,.current-trades{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;overflow:hidden}
-.history-list{overflow:auto;min-height:0;flex:1;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#303236 transparent;overflow-anchor:none}
-.record-table{width:100%;min-width:880px;border-collapse:collapse;font-size:12px;line-height:18px}
-.record-table thead th{position:sticky;top:0;z-index:1;height:36px;padding:0 12px;background:var(--nt-bg);border-bottom:1px solid var(--terminal-divider,#ffffff14);color:#8c8f96;font-weight:400;text-align:left;white-space:nowrap}
-.record-table td,.record-table tbody th{height:44px;padding:6px 12px;border:0;border-bottom:1px solid var(--terminal-divider,#ffffff14);color:#d2d3d5;font-weight:400;text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
-.record-table tbody tr:hover td,.record-table tbody tr:hover th{background:#ffffff05}
-.record-table .num{text-align:right}
-.record-table td small{font-size:11px;color:#8c8f96}
-.record-table td.positive{color:#2bc287}.record-table td.negative{color:#ff4466}
-.record-pair{display:table-cell}
-.record-pair strong{margin-right:8px;color:#fff;font-size:13px;font-weight:600}
-.record-pair .direction,.record-pair .history-tag{margin-right:6px}
-.direction,.history-tag{display:inline-block;font-size:11px;line-height:16px;padding:1px 6px;border-radius:var(--nt-radius-sm);vertical-align:1px}
-.direction.positive{background:#2bc2871a;color:#2bc287}.direction.negative{background:#ff44661a;color:#ff4466}
-.history-tag{background:#ffffff0d;color:#a0a1a2}
-.record-action-cell{text-align:right!important;width:1%}
-.record-action{border:1px solid #ffffff24;border-radius:var(--nt-radius-sm);padding:2px 12px;min-height:26px;font-size:12px;line-height:20px;color:var(--nt-accent);white-space:nowrap}
-.record-action:hover{background:#ffffff0d}
-.history-pagination,.history-footer{display:flex;justify-content:center;align-items:center;gap:8px;padding:8px 16px;height:44px;flex:none;background:var(--nt-bg)}
-.history-pagination button{height:28px;min-width:28px;border-radius:var(--nt-radius-sm);font-size:12px;color:#a0a1a2;transform:none;transition:color 150ms,background-color 150ms}
-.history-pagination button[aria-current=page]{color:var(--nt-accent);background:#a5ff4a12}
-.history-pagination button:disabled{opacity:.3}
-.history-pagination button:focus-visible,.record-action:focus-visible{outline:none;text-decoration:underline}
-@media(pointer:coarse){.record-action{min-height:36px}.history-pagination button{min-width:36px;height:36px}}
-@media(prefers-reduced-motion:reduce){.history-pagination button{transition:none}}
+.trade-history:is(.records-panel *),.current-trades:is(.records-panel *){display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;overflow:hidden}
+.history-list:is(.records-panel *){overflow:auto;min-height:0;flex:1;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#303236 transparent;overflow-anchor:none}
+.record-table:is(.records-panel *){width:100%;min-width:880px;border-collapse:collapse;font-size:12px;line-height:18px}
+.record-table thead th:is(.records-panel *){position:sticky;top:0;z-index:1;height:36px;padding:0 12px;background:var(--nt-bg);border-bottom:1px solid var(--terminal-divider,var(--nt-border-strong));color:var(--nt-text-quiet);font-weight:400;text-align:left;white-space:nowrap}
+.record-table td:is(.records-panel *),.record-table tbody th:is(.records-panel *){height:44px;padding:6px 12px;border:0;border-bottom:1px solid var(--terminal-divider,var(--nt-border-strong));color:#d2d3d5;font-weight:400;text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
+.record-table tbody tr:hover td:is(.records-panel *),.record-table tbody tr:hover th:is(.records-panel *){background:#ffffff05}
+.record-table .num:is(.records-panel *){text-align:right}
+.record-table td small:is(.records-panel *){font-size:11px;color:var(--nt-text-quiet)}
+.record-table td.positive:is(.records-panel *){color:var(--nt-up)}.record-table td.negative:is(.records-panel *){color:var(--nt-down)}
+.record-pair:is(.records-panel *){display:table-cell}
+.record-pair strong:is(.records-panel *){margin-right:8px;color:#fff;font-size:13px;font-weight:600}
+.record-pair .direction:is(.records-panel *),.record-pair .history-tag:is(.records-panel *){margin-right:6px}
+.direction:is(.records-panel *),.history-tag:is(.records-panel *){display:inline-block;font-size:11px;line-height:16px;padding:1px 6px;border-radius:var(--nt-radius-sm);vertical-align:1px}
+.direction.positive:is(.records-panel *){background:#2bc2871a;color:var(--nt-up)}.direction.negative:is(.records-panel *){background:#ff44661a;color:var(--nt-down)}
+.history-tag:is(.records-panel *){background:var(--nt-border);color:var(--nt-text-soft)}
+.record-table .record-action-cell:is(.records-panel *){text-align:right;width:1%}
+.record-action:is(.records-panel *){border:1px solid #ffffff24;border-radius:var(--nt-radius-sm);padding:2px 12px;min-height:26px;font-size:12px;line-height:20px;color:var(--nt-accent);white-space:nowrap}
+.record-action:hover:is(.records-panel *){background:var(--nt-border)}
+.history-pagination:is(.records-panel *),.history-footer:is(.records-panel *){display:flex;justify-content:center;align-items:center;gap:8px;padding:8px 16px;height:44px;flex:none;background:var(--nt-bg)}
+.history-pagination button:is(.records-panel *){height:28px;min-width:28px;border-radius:var(--nt-radius-sm);font-size:12px;color:var(--nt-text-soft);transform:none;transition:color 150ms,background-color 150ms}
+.history-pagination button[aria-current=page]:is(.records-panel *){color:var(--nt-accent);background:#a5ff4a12}
+.history-pagination button:disabled:is(.records-panel *){opacity:.3}
+.history-pagination button:focus-visible:is(.records-panel *),.record-action:focus-visible:is(.records-panel *){outline:none;text-decoration:underline}
+@media(pointer:coarse){.record-action:is(.records-panel *){min-height:36px}.history-pagination button:is(.records-panel *){min-width:36px;height:36px}}
+@media(prefers-reduced-motion:reduce){.history-pagination button:is(.records-panel *){transition:none}}
 /* Phone layout (user reference GMXX mobile, 2026-11-27): one card per record with the same fields in two columns;
    dates span the row. The panel grows with the page instead of scrolling inside itself. */
-.record-cards{list-style:none;margin:0;padding:0}
-.record-card{padding:12px;border-bottom:1px solid var(--terminal-divider,#ffffff14)}
-.record-card-head{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.record-card-head strong{color:#fff;font-size:14px;line-height:20px;font-weight:600}
-.record-card-head .record-action{margin-left:auto}
-.record-card dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;margin:0;font-size:12px;line-height:16px}
-.record-card dl>div{display:grid;gap:2px;min-width:0}
-.record-card dl>div.wide{grid-column:1/-1}
-.record-card dt{color:#8c8f96}
-.record-card dd{margin:0;color:#d2d3d5;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.record-card dd small{font-size:11px;color:#8c8f96}
-.record-card dd.positive{color:#2bc287}.record-card dd.negative{color:#ff4466}
+.record-cards:is(.records-panel *){list-style:none;margin:0;padding:0}
+.record-card:is(.records-panel *){padding:12px;border-bottom:1px solid var(--terminal-divider,var(--nt-border-strong))}
+.record-card-head:is(.records-panel *){display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.record-card-head strong:is(.records-panel *){color:#fff;font-size:14px;line-height:20px;font-weight:600}
+.record-card-head .record-action:is(.records-panel *){margin-left:auto}
+.record-card dl:is(.records-panel *){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;margin:0;font-size:12px;line-height:16px}
+.record-card dl>div:is(.records-panel *){display:grid;gap:2px;min-width:0}
+.record-card dl>div.wide:is(.records-panel *){grid-column:1/-1}
+.record-card dt:is(.records-panel *){color:var(--nt-text-quiet)}
+.record-card dd:is(.records-panel *){margin:0;color:#d2d3d5;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.record-card dd small:is(.records-panel *){font-size:11px;color:var(--nt-text-quiet)}
+.record-card dd.positive:is(.records-panel *){color:var(--nt-up)}.record-card dd.negative:is(.records-panel *){color:var(--nt-down)}
 
 /* Delivery 結果 (GMXX): 贏 / 輸 / 平 tag once settled, a yellow countdown while the period runs. */
-.result-tag{display:inline-block;min-width:36px;padding:1px 8px;border-radius:6px;font-size:12px;line-height:20px;font-weight:600;text-align:center}
-.result-tag.win{background:#2bc2871f;color:#2bc287}.result-tag.lose{background:#ff44661f;color:#ff4466}.result-tag.draw{background:#ffffff14;color:#c5c7cb}
-.result-countdown{font-size:13px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums;color:#f5b72b}
-.record-card-result{margin-left:auto}
+.result-tag:is(.records-panel *){display:inline-block;min-width:36px;padding:1px 8px;border-radius:6px;font-size:12px;line-height:20px;font-weight:600;text-align:center}
+.result-tag.win:is(.records-panel *){background:#2bc2871f;color:var(--nt-up)}.result-tag.lose:is(.records-panel *){background:#ff44661f;color:var(--nt-down)}.result-tag.draw:is(.records-panel *){background:var(--nt-border-strong);color:#c5c7cb}
+.result-countdown:is(.records-panel *){font-size:13px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums;color:#f5b72b}
+.record-card-result:is(.records-panel *){margin-left:auto}

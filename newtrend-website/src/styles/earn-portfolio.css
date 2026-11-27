@@ -2,50 +2,50 @@
 #main-content .earn-portfolio-page .subnav { margin-bottom:32px; }
 .portfolio-heading { display:grid;gap:8px;margin-bottom:32px; }
 #main-content .earn-portfolio-page .portfolio-heading h1 { font-size:36px;line-height:40px;margin:0; }
-.portfolio-summary { padding:28px;background:radial-gradient(circle at 96% 15%,#a5ff4a24,transparent 22%),#141619; }
+.portfolio-summary { padding:28px;background:radial-gradient(circle at 96% 15%,#a5ff4a24,transparent 22%),var(--nt-card); }
 .portfolio-summary-body { display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-top:20px; }
 .portfolio-total { display:grid;gap:6px;min-width:0; }
-.portfolio-total-label { display:flex;align-items:center;gap:8px;color:#fff6;font-size:12px; }
+.portfolio-total-label { display:flex;align-items:center;gap:8px;color:var(--nt-text-muted);font-size:12px; }
 .portfolio-total-label button { display:inline-flex;align-items:center;justify-content:center;padding:0;min-width:24px;min-height:24px; }
 .portfolio-total-value { font-size:36px;line-height:44px;letter-spacing:-.025em;overflow-wrap:anywhere; }
 .portfolio-daily { display:flex;align-items:baseline;gap:8px;flex-wrap:wrap; }
 .portfolio-daily strong { color:var(--nt-green);font-size:14px; }
-.portfolio-daily span { color:#fff6;font-size:12px; }
+.portfolio-daily span { color:var(--nt-text-muted);font-size:12px; }
 .portfolio-metrics { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;margin:0; }
-.portfolio-metrics dt { color:#fff6;font-size:12px;margin-bottom:4px; }
+.portfolio-metrics dt { color:var(--nt-text-muted);font-size:12px;margin-bottom:4px; }
 .portfolio-metrics dd { margin:0;font-size:18px;line-height:28px;overflow-wrap:anywhere; }
 .portfolio-tab-area { margin-top:32px; }
-.portfolio-tabs { display:inline-flex;flex-wrap:wrap;gap:0;max-width:100%;padding:4px;border-radius:18px;background:#141619; }
-.portfolio-tabs button { padding:4px 12px;min-height:28px;font-size:14px;line-height:20px;color:#fff6;border-radius:14px; }
+.portfolio-tabs { display:inline-flex;flex-wrap:wrap;gap:0;max-width:100%;padding:4px;border-radius:18px;background:var(--nt-card); }
+.portfolio-tabs button { padding:4px 12px;min-height:28px;font-size:14px;line-height:20px;color:var(--nt-text-muted);border-radius:14px; }
 .portfolio-tabs button[aria-selected=true] { color:#fff;background:var(--nt-bg);box-shadow:0 1px 2px #0003; }
 .portfolio-tab-panel { margin-top:24px; }
 .portfolio-tab-panel:focus-visible { outline:none; }
-.portfolio-status { display:inline-flex;align-items:center;max-width:100%;border:1px solid #ffffff0d;border-radius:6px;padding:2px 8px;color:#fff8;background:#ffffff05;font-size:12px;line-height:18px;white-space:nowrap; }
+.portfolio-status { display:inline-flex;align-items:center;max-width:100%;border:1px solid var(--nt-border);border-radius:6px;padding:2px 8px;color:#fff8;background:#ffffff05;font-size:12px;line-height:18px;white-space:nowrap; }
 .portfolio-status.active,.portfolio-status.completed,.portfolio-status.paid { color:#7ad8b0;background:#5bbb9110;border-color:#5bbb9124; }
 .portfolio-status.pending,.portfolio-status.pending_review,.portfolio-status.redeeming { color:#e9c977;background:#e9c9770d;border-color:#e9c97724; }
 .portfolio-status.matured { color:var(--nt-accent);background:#a5ff4a0d;border-color:#a5ff4a24; }
 .portfolio-status.failed,.portfolio-status.rejected { color:#ff8299;background:#e34a680d;border-color:#e34a6824; }
-.portfolio-info { display:grid;place-content:center;min-width:32px;min-height:32px;color:#fff6;border-radius:50%; }
+.portfolio-info { display:grid;place-content:center;min-width:32px;min-height:32px;color:var(--nt-text-muted);border-radius:50%; }
 .portfolio-info:hover { color:var(--nt-accent);background:#ffffff05; }
 .portfolio-disabled-hint { margin-top:8px; }
 .portfolio-record-table { padding:0;overflow:hidden; }
 .portfolio-record-table table { width:100%;border-collapse:collapse; }
-#main-content .earn-portfolio-page .portfolio-record-table th { text-align:left;font-size:12px;line-height:18px;font-weight:400;color:#fff6;padding:16px 20px;white-space:nowrap; }
-#main-content .earn-portfolio-page .portfolio-record-table td { font-size:14px;line-height:22px;padding:20px;border-top:1px solid #ffffff08;vertical-align:middle; }
+#main-content .earn-portfolio-page .portfolio-record-table th { text-align:left;font-size:12px;line-height:18px;font-weight:400;color:var(--nt-text-muted);padding:16px 20px;white-space:nowrap; }
+#main-content .earn-portfolio-page .portfolio-record-table td { font-size:14px;line-height:22px;padding:20px;border-top:1px solid var(--nt-border-subtle);vertical-align:middle; }
 .portfolio-record-table td:first-child { min-width:220px; }
 .portfolio-record-table time { font-size:12px;line-height:18px;color:#fff8; }
 .portfolio-record-table .earn-mono {font-weight:500;white-space:nowrap; }
 .portfolio-record-table .earn-caption { margin-top:4px; }
-.portfolio-empty { display:flex;align-items:center;flex-direction:column;gap:12px;text-align:center;padding:48px 24px;color:#fff6; }
+.portfolio-empty { display:flex;align-items:center;flex-direction:column;gap:12px;text-align:center;padding:48px 24px;color:var(--nt-text-muted); }
 .portfolio-empty>.earn-icon { width:32px;height:32px; }
 .portfolio-empty .earn-buy { font-size:14px;min-height:36px;margin-top:4px;padding:8px 16px; }
 @media(max-width:1100px) {
  .portfolio-record-table table,.portfolio-record-table tbody { display:block; }
  .portfolio-record-table thead { display:none; }
- .portfolio-record-table tr { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:20px;border-bottom:1px solid #ffffff08; }
+ .portfolio-record-table tr { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:20px;border-bottom:1px solid var(--nt-border-subtle); }
  #main-content .earn-portfolio-page .portfolio-record-table td { display:block;padding:0;border:0;min-width:0; }
  .portfolio-record-table td:first-child { grid-column:1/-1; }
- .portfolio-record-table td[data-label]:before { content:attr(data-label);display:block;font-size:12px;line-height:18px;color:#fff6;margin-bottom:6px; }
+ .portfolio-record-table td[data-label]:before { content:attr(data-label);display:block;font-size:12px;line-height:18px;color:var(--nt-text-muted);margin-bottom:6px; }
  .portfolio-record-table .earn-mono { white-space:normal;overflow-wrap:anywhere; }
 }
 @media(max-width:1023px) {
@@ -69,7 +69,7 @@
 .portfolio-term { display:flex;align-items:center;gap:4px; }
 .portfolio-row-action .earn-buy {min-width:64px; }
 .portfolio-disabled-hint { max-width:180px; }
-@media(max-width:1100px) { .portfolio-row-action { grid-column:1/-1;display:flex!important;align-items:center;gap:12px;justify-content:flex-end; }.portfolio-row-action .portfolio-disabled-hint { margin:0;max-width:none; } }
+@media(max-width:1100px) { .portfolio-row-action { grid-column:1/-1;display:flex;align-items:center;gap:12px;justify-content:flex-end; }.portfolio-row-action .portfolio-disabled-hint { margin:0;max-width:none; } }
 
 /* Re-measured 2026-11-26: record tables share the Earn catalog table scale. */
 .portfolio-record-table .earn-mono { font-size:14px; }

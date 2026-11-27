@@ -36,13 +36,13 @@ onBeforeUnmount(()=>observer?.disconnect())
 </nav>
 </template>
 <style scoped>
-.finance-pagination{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:16px;color:#ffffff80;font-size:12px}
+.finance-pagination{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:16px;color:var(--nt-muted);font-size:12px}
 .finance-pagination-controls{display:flex;align-items:center;gap:4px;max-width:100%;flex-wrap:wrap}
-.finance-pagination button{display:inline-flex;align-items:center;justify-content:center;min-width:36px;min-height:36px;border:0;border-radius:10px;padding:6px;background:#141619;color:#ffffffa6}
+.finance-pagination button{display:inline-flex;align-items:center;justify-content:center;min-width:36px;min-height:36px;border:0;border-radius:10px;padding:6px;background:var(--nt-card);color:#ffffffa6}
 .finance-pagination button[aria-current=page]{background:var(--nt-accent);color:#101800}
 .finance-pagination button:hover:not(:disabled),.finance-pagination button:focus-visible{background:#ffffff20;color:#fff;outline:none;box-shadow:none}
 .finance-pagination button:disabled{opacity:.35;cursor:not-allowed}
-.finance-load-more{margin:0;padding:16px 0;text-align:center;font-size:12px;line-height:18px;color:#8c8f96}
+.finance-load-more{margin:0;padding:16px 0;text-align:center;font-size:12px;line-height:18px;color:var(--nt-text-quiet)}
 /* Phones (user feedback 2026-11-27, app-like): one compact row — ‹ info › — without numbered pages, and nothing at all
    for a single page (the list already shows every row). */
 @media(max-width:640px){

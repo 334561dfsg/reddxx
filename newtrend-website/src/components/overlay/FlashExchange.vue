@@ -94,12 +94,12 @@ async function submit(){
    value/arrow alignment comes from AssetTransfer's unscoped .asset-transfer rules, which this form also carries. */
 .asset-transfer{display:grid;gap:20px;padding-top:4px;padding-bottom:4px}
 .at-route{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:12px}
-.at-amount{display:flex;align-items:center;gap:12px;min-height:48px;padding-right:14px;border:1px solid #ffffff1f;border-radius:12px;background:#0c0e10}
-.fx-unit{color:#87888a;font-size:13px}
-.fx-quote{display:grid;gap:8px;margin:0;padding:12px 14px;border-radius:12px;background:#ffffff06}
+.at-amount{display:flex;align-items:center;gap:12px;min-height:48px;padding-right:14px;border:1px solid #ffffff1f;border-radius:var(--nt-radius-panel);background:#0c0e10}
+.fx-unit{color:var(--nt-text-dim);font-size:13px}
+.fx-quote{display:grid;gap:8px;margin:0;padding:12px 14px;border-radius:var(--nt-radius-panel);background:#ffffff06}
 .fx-quote>div{display:flex;justify-content:space-between;gap:12px;font-size:13px;line-height:18px}
-.fx-quote dt{color:#87888a}
+.fx-quote dt{color:var(--nt-text-dim)}
 .fx-quote dd{margin:0;color:#fff;text-align:right;font-variant-numeric:tabular-nums}
-.fx-quote .receive dd{color:#2bc287;font-weight:600}
-.at-submit{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;margin-top:4px;border-radius:12px;background:#a5ff4a;color:#0a0d12;font-weight:600;font-size:15px}
+.fx-quote .receive dd{color:var(--nt-up);font-weight:600}
+.at-submit{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;margin-top:4px;border-radius:var(--nt-radius-panel);background:var(--nt-accent);color:#0a0d12;font-weight:600;font-size:15px}
 </style>

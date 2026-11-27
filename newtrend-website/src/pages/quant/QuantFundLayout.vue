@@ -31,7 +31,7 @@ const sections=computed(()=>[
 .qf-skeleton-limit{height:42px;align-content:center}
 .qf-skeleton-progress{height:32px;align-content:space-between;gap:0}
 .qf-skeleton-tags{display:flex;gap:8px;height:24px}
-.qf-skeleton-cta{border-radius:999px}
+.qf-skeleton-cta{border-radius:var(--nt-radius-pill)}
 .qf-skeleton-hero,.qf-skeleton-calc,.qf-skeleton-flow,.qf-skeleton-quota,.qf-skeleton-aside{overflow:hidden;box-sizing:border-box}
 .qf-skeleton-hero{height:244px}
 .qf-skeleton-calc{height:341px}

@@ -99,7 +99,7 @@ const openPairs=()=>openModal('market-picker','trade.pair',{current:pair.value.i
 .chart-back svg,.chart-title svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .chart-title{font:inherit;font-weight:600}
 .chart-title svg{width:14px;height:14px}
-.chart-back:focus-visible,.chart-title:focus-visible{outline:none;background:#ffffff0d;border-radius:var(--nt-radius-control)}
+.chart-back:focus-visible,.chart-title:focus-visible{outline:none;background:var(--nt-border);border-radius:var(--nt-radius-control)}
 .chart-quote{display:flex;justify-content:space-between;gap:12px;padding:8px 16px 12px;border-bottom:1px solid var(--terminal-divider)}
 .chart-quote-main{display:grid;gap:4px;align-content:start}
 .chart-quote-main strong{font-size:24px;line-height:32px;font-weight:600;font-variant-numeric:tabular-nums}
@@ -125,7 +125,7 @@ const openPairs=()=>openModal('market-picker','trade.pair',{current:pair.value.i
 .chart-trades-head span:last-child,.chart-trades-row span:last-child{text-align:right}
 .chart-empty{margin:0;padding:24px 16px;text-align:center;color:var(--terminal-muted)}
 .chart-actions{position:fixed;left:0;right:0;bottom:0;z-index:5;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px max(16px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:var(--nt-bg);border-top:1px solid var(--terminal-divider)}
-.chart-actions button{min-height:44px;border-radius:999px;color:#fff;font-size:15px;font-weight:600}
+.chart-actions button{min-height:44px;border-radius:var(--nt-radius-pill);color:#fff;font-size:15px;font-weight:600}
 .chart-actions .buy{background:var(--nt-green)}.chart-actions .sell{background:var(--nt-red)}
 .chart-actions button:focus-visible{outline:none;text-decoration:underline}
 </style>

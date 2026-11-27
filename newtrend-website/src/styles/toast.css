@@ -10,7 +10,7 @@
 .ant-message .ant-message-custom-content>span:last-child{overflow-wrap:anywhere}
 .ant-message .ant-message-custom-content .anticon{flex:none;margin:2px 0 0;font-size:16px}
 .ant-message .ant-message-success .anticon{color:var(--nt-accent)}
-.ant-message .ant-message-error .anticon{color:#ff4466}
+.ant-message .ant-message-error .anticon{color:var(--nt-down)}
 .ant-message .ant-message-warning .anticon{color:#fcd34d}
 .ant-message .ant-message-info .anticon,.ant-message .ant-message-loading .anticon{color:#5fa3ff}
 @media(prefers-reduced-motion:reduce){.ant-message .ant-message-notice-wrapper{animation-duration:1ms!important;transition:none!important}}

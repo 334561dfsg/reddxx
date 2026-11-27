@@ -58,23 +58,23 @@ async function end(session){
 </template>
 <style scoped>
 .device-sessions{display:grid;gap:16px}
-.device-subtitle{margin:-8px 0 0;color:#87888a;font-size:13px;line-height:20px}
+.device-subtitle{margin:-8px 0 0;color:var(--nt-text-dim);font-size:13px;line-height:20px}
 .device-list{display:grid;gap:10px;margin:0;padding:0;list-style:none;max-height:min(360px,50vh);overflow-y:auto}
-.device-card{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #ffffff14;border-radius:12px;background:#0c0e10}
+.device-card{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--nt-border-strong);border-radius:var(--nt-radius-panel);background:#0c0e10}
 .device-card.current{background:#a5ff4a0a}
 .device-icon{display:grid;place-items:center;flex-shrink:0;width:40px;height:40px;border-radius:10px;background:#1d2733;color:var(--nt-accent)}
 .device-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .device-icon-skeleton{flex-shrink:0;border-radius:10px}
 .device-text{flex:1;display:grid;gap:2px;min-width:0}
 .device-text strong{display:flex;align-items:center;gap:8px;font-size:14px;line-height:20px;font-weight:600;overflow-wrap:anywhere}
-.device-text small{color:#87888a;font-size:12px;line-height:18px;overflow-wrap:anywhere}
+.device-text small{color:var(--nt-text-dim);font-size:12px;line-height:18px;overflow-wrap:anywhere}
 .device-time{font-variant-numeric:tabular-nums}
-.device-chip{flex-shrink:0;padding:1px 8px;border-radius:999px;background:#a5ff4a1f;color:var(--nt-accent);font-size:11px;line-height:16px;font-weight:500}
-.device-end{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;min-height:32px;padding:5px 14px;border-radius:999px;background:#ff44661a;color:#ff6b84;font-size:13px;font-weight:500}
+.device-chip{flex-shrink:0;padding:1px 8px;border-radius:var(--nt-radius-pill);background:#a5ff4a1f;color:var(--nt-accent);font-size:11px;line-height:16px;font-weight:500}
+.device-end{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;min-height:32px;padding:5px 14px;border-radius:var(--nt-radius-pill);background:#ff44661a;color:#ff6b84;font-size:13px;font-weight:500}
 .device-end:hover:not(:disabled){background:#ff446629}
 .device-end:focus-visible{outline:none;text-decoration:underline}
 .device-end:disabled{opacity:.45;cursor:not-allowed}
 .device-end[aria-busy=true]{opacity:.8;cursor:progress}
-.device-note{margin:0;text-align:center;color:#87888a;font-size:12px;line-height:18px}
+.device-note{margin:0;text-align:center;color:var(--nt-text-dim);font-size:12px;line-height:18px}
 .device-note.strong{color:#c4c6c9;font-size:13px}
 </style>

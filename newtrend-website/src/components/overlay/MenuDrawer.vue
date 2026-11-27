@@ -73,7 +73,7 @@ function signout(){logout();emit('close')}
 </template>
 <style scoped>
 .menu-drawer{display:grid;gap:8px}
-.drawer-user{display:grid;gap:12px;padding:8px 0 16px;border-bottom:1px solid #ffffff0d}
+.drawer-user{display:grid;gap:12px;padding:8px 0 16px;border-bottom:1px solid var(--nt-border)}
 .drawer-user-head{display:flex;align-items:center;gap:12px;min-width:0}
 .drawer-avatar{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#ffffff0f;flex-shrink:0}
 .drawer-avatar svg,.drawer-row svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
@@ -83,30 +83,30 @@ function signout(){logout();emit('close')}
 .drawer-uid{display:inline-flex;align-items:center;gap:4px;color:#fff8;font-size:12px;line-height:18px;white-space:nowrap}
 .drawer-uid button{display:grid;place-items:center;width:28px;height:28px;margin:-6px 0;border-radius:6px;color:#fff8}
 .drawer-uid svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6}
-.drawer-credit{flex-shrink:0;padding:2px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--nt-accent) 35%,transparent);background:color-mix(in srgb,var(--nt-accent) 10%,transparent);color:var(--nt-accent);font-size:12px;line-height:18px;white-space:nowrap}
+.drawer-credit{flex-shrink:0;padding:2px 8px;border-radius:var(--nt-radius-pill);border:1px solid color-mix(in srgb,var(--nt-accent) 35%,transparent);background:color-mix(in srgb,var(--nt-accent) 10%,transparent);color:var(--nt-accent);font-size:12px;line-height:18px;white-space:nowrap}
 .drawer-verify{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:var(--nt-radius-control);background:color-mix(in srgb,#f5a524 12%,transparent);color:#f5c06a;font-size:12px;line-height:18px}
 .drawer-verify button{flex-shrink:0;color:var(--nt-accent);font-weight:600;min-height:32px}
-.drawer-guest{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 0 16px;border-bottom:1px solid #ffffff0d}
+.drawer-guest{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 0 16px;border-bottom:1px solid var(--nt-border)}
 .drawer-guest button{padding:9px 12px}
 .drawer-nav,.drawer-account{display:grid}
-.drawer-account{margin-top:4px;padding-top:8px;border-top:1px solid #ffffff0d}
+.drawer-account{margin-top:4px;padding-top:8px;border-top:1px solid var(--nt-border)}
 .drawer-row{display:flex;align-items:center;gap:14px;width:100%;min-height:48px;padding:0 4px;text-align:left;color:#fffd;border-radius:var(--nt-radius-control)}
 .drawer-row>span{flex:1;min-width:0;overflow-wrap:anywhere}
 .drawer-row>em{font-style:normal;color:#fff8;font-size:13px}
-.drawer-row svg:first-child{color:#fff9}
-.drawer-row:hover,.drawer-row:focus-visible{outline:none;background:#ffffff08}
+.drawer-row svg:first-child{color:var(--nt-text-secondary)}
+.drawer-row:hover,.drawer-row:focus-visible{outline:none;background:var(--nt-border-subtle)}
 .drawer-row[aria-expanded="true"]{color:var(--nt-accent)}
 .drawer-row[aria-expanded="true"] svg:first-child{color:var(--nt-accent)}
-.drawer-caret{width:16px!important;height:16px!important;transition:transform 150ms ease-out}
+.drawer-caret{width:16px;height:16px;transition:transform 150ms ease-out}
 .drawer-row[aria-expanded="true"] .drawer-caret{transform:rotate(180deg)}
 .drawer-row.static:hover{background:none}
 .drawer-row.logout{color:#ff6b81}
 .drawer-row.logout svg:first-child{color:#ff6b81}
 .drawer-sub{display:grid;padding:0 0 8px 38px}
 .drawer-sub>a{display:block;padding:10px 8px;border-radius:var(--nt-radius-control);color:#fffd}
-.drawer-sub>a:hover,.drawer-sub>a:focus-visible{outline:none;background:#ffffff08}
-.drawer-mode{display:flex;padding:3px;border-radius:999px;background:#ffffff0d;flex-shrink:0}
-.drawer-mode button{min-height:30px;padding:0 12px;border-radius:999px;color:#fff9;font-size:13px}
-.drawer-mode button.active{background:var(--nt-accent);color:#05070b;font-weight:600}
+.drawer-sub>a:hover,.drawer-sub>a:focus-visible{outline:none;background:var(--nt-border-subtle)}
+.drawer-mode{display:flex;padding:3px;border-radius:var(--nt-radius-pill);background:var(--nt-border);flex-shrink:0}
+.drawer-mode button{min-height:30px;padding:0 12px;border-radius:var(--nt-radius-pill);color:var(--nt-text-secondary);font-size:13px}
+.drawer-mode button.active{background:var(--nt-accent);color:var(--nt-bg);font-weight:600}
 @media(prefers-reduced-motion:reduce){.drawer-caret{transition:none}}
 </style>

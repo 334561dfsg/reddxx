@@ -100,8 +100,8 @@ watch(()=>props.loading,(now,before)=>{if(before&&!now)grow()})
 </template>
 <style>
 .ds-skeleton-end{margin-left:auto}.ds-row[aria-hidden=true]{height:44px;box-sizing:border-box;align-items:center}.ds-net-value:has(>.nt-skeleton){min-height:24px;align-items:center}
-.ds{display:flex;flex-direction:column;gap:16px;padding:20px;border-top:1px solid #191b1f}
-.ds-summary{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding:14px 16px;border:1px solid #191b1f;border-radius:12px;background:#1b1e22}
+.ds{display:flex;flex-direction:column;gap:16px;padding:20px;border-top:1px solid var(--nt-surface-2)}
+.ds-summary{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding:14px 16px;border:1px solid var(--nt-surface-2);border-radius:var(--nt-radius-panel);background:#1b1e22}
 .ds-net,.ds-counts>div{display:flex;flex-direction:column;gap:4px}
 .ds-counts{display:flex;align-items:center;gap:24px}
 .ds-label{font-size:12px;line-height:16px;letter-spacing:.04em;text-transform:uppercase;color:#6e6f71}
@@ -114,20 +114,20 @@ watch(()=>props.loading,(now,before)=>{if(before&&!now)grow()})
 .ds-head-bar{display:flex;justify-content:space-between}
 .ds .r{text-align:right}
 .ds-list{margin:0;padding:0;list-style:none}
-.ds-row{padding:10px 0;border-top:1px solid #191b1f}
+.ds-row{padding:10px 0;border-top:1px solid var(--nt-surface-2)}
 .ds-row:first-child{border-top:0}
 .ds-row:hover{background:#ffffff05}
 .ds-date{display:flex;align-items:baseline;gap:6px;font-size:15px;line-height:22px;color:#b4b5b6}
 .ds-date small{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#6e6f71}
-.ds-trades{font-family:var(--nt-font-mono);font-size:12px;color:#87888a;font-variant-numeric:tabular-nums}
+.ds-trades{font-family:var(--nt-font-mono);font-size:12px;color:var(--nt-text-dim);font-variant-numeric:tabular-nums}
 .ds-bar{position:relative;height:20px;width:100%}
-.ds-axis{position:absolute;top:0;bottom:0;left:50%;width:1px;background:#191b1f;transform:translateX(-50%)}
+.ds-axis{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--nt-surface-2);transform:translateX(-50%)}
 .ds-fill{position:absolute;top:6px;bottom:6px;transition:width 500ms ease-out}
-.ds-fill.up{left:50%;border-radius:0 999px 999px 0;background:#2bc287}
-.ds-fill.down{right:50%;border-radius:999px 0 0 999px;background:#ff4466}
+.ds-fill.up{left:50%;border-radius:0 999px 999px 0;background:var(--nt-up)}
+.ds-fill.down{right:50%;border-radius:999px 0 0 999px;background:var(--nt-down)}
 .ds-dot{position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;background:#6e6f71;transform:translate(-50%,-50%)}
-.ds-pnl{font-family:var(--nt-font-mono);font-size:15px;font-weight:600;color:#87888a}
-.ds .up{color:#2bc287}.ds .down{color:#ff4466}
+.ds-pnl{font-family:var(--nt-font-mono);font-size:15px;font-weight:600;color:var(--nt-text-dim)}
+.ds .up{color:var(--nt-up)}.ds .down{color:var(--nt-down)}
 .ds-fill.up,.ds-fill.down{color:inherit}
 .ds .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media(prefers-reduced-motion:reduce){.ds-fill{transition:none}}

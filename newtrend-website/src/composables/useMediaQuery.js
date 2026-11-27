@@ -9,5 +9,5 @@ export function useMediaQuery(query){
  onBeforeUnmount(()=>list?.removeEventListener('change',update))
  return matches
 }
-/** The trading page's compact (phone) layout, matching the 760px breakpoint in trade-workspace.css. */
-export const COMPACT_TRADE_QUERY='(max-width: 760px)'
+/** The trading page's compact (phone) layout, matching the 767px breakpoint in trade-workspace.css. */
+export const COMPACT_TRADE_QUERY='(max-width: 767px)'

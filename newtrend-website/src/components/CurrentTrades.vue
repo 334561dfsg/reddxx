@@ -59,4 +59,3 @@ function act(o){
 </tr></tbody>
 </table></div></div></template>
 
-<style scoped src="../styles/trade-records.css"></style>

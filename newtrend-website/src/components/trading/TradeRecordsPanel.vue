@@ -9,6 +9,7 @@ import Skeleton from '../ui/Skeleton.vue'
 import RequestState from '../ui/RequestState.vue'
 import {listTradeRecords} from '../../api/trade.js'
 import {useRequest} from '../../composables/useRequest.js'
+import '../../styles/trade-records.css'
 import CurrentTrades from '../CurrentTrades.vue'
 import TradeHistory from '../TradeHistory.vue'
 // prices: live price by market name (from the workspace's ticker stream) for open positions' P&L.
@@ -46,4 +47,3 @@ const announce=text=>message.success(text)
   <CurrentTrades v-else :key="selected.id" :rows="rows" :bucket="selected.bucket" :prices="prices" :compact="compact" @complete="announce"/>
 </section>
 </template>
-<style scoped src="../../styles/trade-records.css"></style>

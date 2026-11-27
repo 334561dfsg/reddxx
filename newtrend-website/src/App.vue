@@ -21,11 +21,11 @@ const showTabbar=computed(()=>tabRoots.some(r=>r.test(route.path)))
    transiently wide child must not let the whole page be dragged (user report, 2026-11-27). clip keeps sticky intact. */
 #site-shell{overflow-x:clip}
 /* Mobile trading pages drop the site header (user decision, 2026-11-27); the bottom tab bar and other pages keep the menu. */
-@media(max-width:760px){#site-shell.trade-route>.site-header{display:none}}
+@media(max-width:767px){#site-shell.trade-route>.site-header{display:none}}
 /* On phones/tablets the header is fixed like the tab bar: a sticky header belongs to the document and is dragged along
    by touch overscroll (rubber-band) at the top of the page (user report, 2026-11-27). The shell reserves its height. */
 @media(max-width:900px){#site-shell>.site-header{position:fixed;top:0;left:0;right:0}#site-shell{padding-top:calc(56px + env(safe-area-inset-top))}}
-@media(max-width:760px){#site-shell.trade-route{padding-top:0}}
+@media(max-width:767px){#site-shell.trade-route{padding-top:0}}
 /* Phones: every page except home ends at its content like an app (user decision, 2026-11-27); the footer links stay on
    the home page. */
 @media(max-width:767px){#site-shell:not(.home-route)>.site-footer{display:none}}

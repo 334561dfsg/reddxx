@@ -58,7 +58,7 @@
   #main-content .finance-page.finance-overview {
     padding: 20px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left));
   }
-  #main-content .finance-page.finance-overview .subnav { margin-bottom: 24px; border-radius: 999px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; user-select: none; }
+  #main-content .finance-page.finance-overview .subnav { margin-bottom: 24px; border-radius: var(--nt-radius-pill); flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; cursor: grab; user-select: none; }
   #main-content .finance-page.finance-overview .subnav::-webkit-scrollbar { display: none; }
   #main-content .finance-page.finance-overview .subnav:active { cursor: grabbing; }
   #main-content .finance-page.finance-overview .subnav > a { flex: 0 0 auto; white-space: nowrap; padding: 10px 16px; }

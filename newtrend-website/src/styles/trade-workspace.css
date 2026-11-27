@@ -1,6 +1,6 @@
 /* Product-specific page structure, with the existing NewQuantCapital terminal palette. */
 .product-terminal{
- --nt-green:#2bc287;--nt-red:#ff4466;
+ --nt-green:var(--nt-up);--nt-red:var(--nt-down);
  --terminal-divider:color-mix(in srgb,#fff 8%,var(--nt-bg));
  --terminal-muted:color-mix(in srgb,#fff 62%,var(--nt-bg));
  --terminal-secondary:color-mix(in srgb,#fff 70%,var(--nt-bg));
@@ -73,7 +73,7 @@
  .spot-workspace .market-panel{grid-column:1/-1;grid-row:4}
  .spot-workspace .market-panel .pair-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px}
 }
-@media(max-width:760px){.product-terminal .instrument-stats{width:100%;display:grid}
+@media(max-width:767px){.product-terminal .instrument-stats{width:100%;display:grid}
  .product-terminal .workspace-grid{display:flex;flex-direction:column;gap:4px}
  .product-terminal .chart-panel{order:1;flex:none}
  .product-terminal .order-panel{order:2;flex:none}
@@ -84,7 +84,7 @@
  .product-terminal .record-tabs{padding:0 12px}
  @supports(height:100dvh){.product-terminal .order-panel{max-height:calc(100dvh - 24px)}}
 }
-@media(max-height:600px) and (min-width:761px){.product-terminal .order-panel{max-height:540px}}
+@media(max-height:600px) and (min-width:768px){.product-terminal .order-panel{max-height:540px}}
 @media(max-height:600px) and (min-width:1200px){.product-terminal .workspace-grid{grid-template-rows:540px 340px}.spot-workspace .workspace-grid{grid-template-rows:440px 440px 340px}}
 @media(pointer:coarse){.product-terminal .timeframes button,.product-terminal .instrument-favorite{min-height:44px}}
 @media(forced-colors:active){.product-terminal .terminal-panel,.product-terminal .instrument-bar{border:1px solid CanvasText}.product-terminal button,.product-terminal a{forced-color-adjust:auto}}
@@ -96,12 +96,12 @@
 .spot-workspace .spot-market-head{display:grid;grid-template-columns:1.1fr 1fr .8fr;padding:4px 6px 4px 34px;font-size:12px;gap:4px;color:var(--terminal-muted)}
 .spot-market-head button{min-height:36px;text-align:right}.spot-market-head button:first-child{text-align:left}
 .prints-list{overflow-y:auto;min-height:0;flex:1}
-@media(min-width:761px) and (max-width:1199px){.spot-workspace .market-panel{display:grid;grid-template-columns:1fr 1fr}.spot-workspace .market-panel>.panel-heading{grid-column:1}.spot-workspace .market-panel .spot-market-list{display:block}}
+@media(min-width:768px) and (max-width:1199px){.spot-workspace .market-panel{display:grid;grid-template-columns:1fr 1fr}.spot-workspace .market-panel>.panel-heading{grid-column:1}.spot-workspace .market-panel .spot-market-list{display:block}}
 .spot-workspace .spot-order-form .type-tabs button.active{background:transparent;color:var(--nt-accent);border-radius:0;border-bottom:2px solid var(--nt-accent)}
 .spot-workspace .spot-quote-browser .spot-market-head{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,.8fr);padding:0 0 8px;gap:12px}
 .spot-workspace .spot-quote-browser .spot-market-head button{min-height:52px;overflow-wrap:normal}
 @media(min-width:1200px){.spot-workspace .workspace-grid{grid-template-columns:minmax(220px,17%) minmax(0,1fr) minmax(320px,22%)}}
-@media(min-width:761px) and (max-width:1199px){.spot-workspace .market-panel{grid-template-rows:minmax(0,1fr)}}
+@media(min-width:768px) and (max-width:1199px){.spot-workspace .market-panel{grid-template-rows:minmax(0,1fr)}}
 .product-terminal .book-controls{gap:4px}
 .product-terminal .book-controls button{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-height:34px;padding:5px;border:0;border-radius:var(--nt-radius-sm);color:var(--terminal-muted)}
 .product-terminal .book-controls button[aria-pressed=true]{color:#fff;background:var(--terminal-input)}
@@ -128,11 +128,11 @@
  .spot-workspace .workspace-grid{grid-template-rows:clamp(280px,calc(100vh - 650px),440px) 300px 200px;grid-template-rows:clamp(280px,calc(100dvh - 650px),440px) 300px 200px}
  .product-terminal .order-panel{max-height:none}
 }
-@media(min-width:761px) and (max-width:1199px){
+@media(min-width:768px) and (max-width:1199px){
  .product-terminal .workspace-grid{grid-template-rows:340px 220px 230px}
  .product-terminal .order-panel{max-height:none}
 }
-@media(max-width:760px){
+@media(max-width:767px){
  .product-terminal .instrument-bar{gap:8px 12px}
  .product-terminal .instrument-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
  .product-terminal .chart-panel{height:300px}
@@ -180,7 +180,7 @@
 .spot-workspace .spot-quote-browser{padding:4px 16px 0}
 .spot-workspace .spot-quote-browser .spot-market-head{font-size:12px;line-height:16px;text-transform:none}
 .product-terminal button:focus-visible,.product-terminal a:focus-visible{outline:none}
-@media(max-width:760px){
+@media(max-width:767px){
  .product-terminal .instrument-stats{gap:8px 12px;font-size:12px;line-height:16px}
  .product-terminal .instrument-bar{padding:8px 12px}
  .product-terminal .record-tabs{gap:8px 16px;flex-wrap:wrap}
@@ -191,12 +191,12 @@
 @media(min-width:1200px){
  .spot-workspace .workspace-grid{grid-template-rows:clamp(280px,calc(100vh - 690px),400px) 360px 200px;grid-template-rows:clamp(280px,calc(100dvh - 690px),400px) 360px 200px}
 }
-@media(min-width:761px) and (max-width:1199px){.spot-workspace .workspace-grid{grid-template-rows:320px 360px 230px 280px}}
+@media(min-width:768px) and (max-width:1199px){.spot-workspace .workspace-grid{grid-template-rows:320px 360px 230px 280px}}
 
 /* Shared order controls across perpetual, delivery and spot. */
 .product-terminal .order-panel .trade-order-form .form-body{display:flex;flex-direction:column;gap:12px;align-items:stretch}
 .product-terminal .order-panel .trade-order-form .spot-side{width:100%;gap:12px}
-.product-terminal .order-panel .trade-order-form .direction-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#0c1017;border-radius:var(--nt-radius-control);flex:none;width:100%;box-sizing:border-box}
+.product-terminal .order-panel .trade-order-form .direction-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--nt-surface-0);border-radius:var(--nt-radius-control);flex:none;width:100%;box-sizing:border-box}
 .product-terminal .order-panel .trade-order-form .direction-tabs button{min-height:36px;padding:8px 12px;border:0;border-radius:var(--nt-radius-control);background:transparent;color:var(--terminal-muted);font-size:14px;line-height:20px;font-weight:500}
 .product-terminal .order-panel .trade-order-form .direction-tabs .buy.active{background:#2bc28720;color:var(--nt-green)}
 .product-terminal .order-panel .trade-order-form .direction-tabs .sell.active{background:#ff446620;color:var(--nt-red)}
@@ -204,19 +204,19 @@
 .product-terminal .order-panel .trade-order-form .price-tabs button{position:relative;background:transparent;padding:8px 0;min-height:36px;color:var(--terminal-muted);border:0;border-radius:0;font-size:14px;line-height:20px;font-weight:500}
 .product-terminal .order-panel .trade-order-form .price-tabs button.active{background:transparent;color:#fff}
 .product-terminal .price-tabs button.active:after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:#fff}
-.product-terminal .order-panel .trade-order-form .percentages button{min-height:28px;border-radius:var(--nt-radius-sm);font-size:12px;line-height:16px;background:#0c1017;border:1px solid var(--terminal-divider)}
+.product-terminal .order-panel .trade-order-form .percentages button{min-height:28px;border-radius:var(--nt-radius-sm);font-size:12px;line-height:16px;background:var(--nt-surface-0);border:1px solid var(--terminal-divider)}
 .product-terminal .order-panel .trade-order-form .percentages button:hover{background:var(--terminal-input);color:#fff}
-.product-terminal .order-panel .trade-order-form .form-actions button{min-height:40px;border-radius:999px;font-size:14px;line-height:20px;font-weight:500;box-shadow:none}
+.product-terminal .order-panel .trade-order-form .form-actions button{min-height:40px;border-radius:var(--nt-radius-pill);font-size:14px;line-height:20px;font-weight:500;box-shadow:none}
 .product-terminal .order-panel .trade-order-form .form-actions button.buy{background:var(--nt-green)}
 .product-terminal .order-panel .trade-order-form .form-actions button.sell{background:var(--nt-red)}
 .product-terminal .order-panel .trade-order-form button:focus-visible{outline:none}
 @media(pointer:coarse){.product-terminal .order-panel .trade-order-form .direction-tabs button,.product-terminal .order-panel .trade-order-form .price-tabs button,.product-terminal .order-panel .trade-order-form .percentages button,.product-terminal .order-panel .trade-order-form .form-actions button{min-height:44px}}
 
 /* Phone layout (GMXX mobile trade pages, user reference 2026-11-27; NewQuantCapital visual language). The workspace
-   adds `.compact` from the same 760px query: header on one line with product switch and chart toggle, chart + 24h
+   adds `.compact` from the same 767px query: header on one line with product switch and chart toggle, chart + 24h
    stats collapsed by default, order form (left) beside a price/quantity book (right), records as cards below.
    Panels grow with the page; nothing scrolls inside itself except the chart canvas. */
-@media(max-width:760px){
+@media(max-width:767px){
  .product-terminal.compact .instrument-bar{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-height:0;padding:max(6px,env(safe-area-inset-top)) 8px 8px 12px}
  .product-terminal.compact .instrument-identity{order:1;flex:1 1 auto;min-width:0;gap:6px;flex-wrap:nowrap}
  .product-terminal.compact .instrument-identity .record-filter{font-size:16px;min-height:40px;min-width:0;padding-right:6px}
@@ -229,7 +229,7 @@
  .product-terminal.compact .account-badge.demo{background:color-mix(in srgb,#f5a524 16%,transparent);color:#f5a524}
  .product-terminal.compact .account-badge:focus-visible{outline:none;text-decoration:underline}
  .product-terminal.compact .instrument-tools{order:2;margin-left:auto;display:flex;align-items:center;gap:4px;flex:none}
- .product-terminal.compact .instrument-tools .product-switch{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;min-height:34px;padding:0 8px 0 10px;border-radius:999px;background:var(--terminal-input);font-size:13px;line-height:18px;color:#fff;gap:4px}
+ .product-terminal.compact .instrument-tools .product-switch{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;min-height:34px;padding:0 8px 0 10px;border-radius:var(--nt-radius-pill);background:var(--terminal-input);font-size:13px;line-height:18px;color:#fff;gap:4px}
  .product-terminal.compact .product-switch svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6}
  .product-terminal.compact .product-switch:focus-visible{outline:none;text-decoration:underline}
  .product-terminal.compact .chart-toggle{display:grid;place-items:center;width:36px;height:40px;border-radius:var(--nt-radius-control);color:var(--terminal-muted)}
@@ -242,7 +242,7 @@
  .product-terminal.compact .instrument-stats{order:4;width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px;padding-top:4px}
  /* Connection status floats over the price row's empty right side instead of adding a line (no layout jump). */
  .product-terminal.compact .instrument-bar{position:relative}
- .product-terminal.compact .stream-status{position:absolute;right:52px;top:54px;max-width:38%;margin:0;padding:3px 8px;border-radius:12px;white-space:normal;text-align:right;font-size:11px;line-height:14px;background:color-mix(in srgb,#f5a524 14%,var(--nt-bg));pointer-events:none}
+ .product-terminal.compact .stream-status{position:absolute;right:52px;top:54px;max-width:38%;margin:0;padding:3px 8px;border-radius:var(--nt-radius-panel);white-space:normal;text-align:right;font-size:11px;line-height:14px;background:color-mix(in srgb,#f5a524 14%,var(--nt-bg));pointer-events:none}
  .product-terminal.compact .workspace-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:none;grid-template-areas:"form book" "records records";gap:4px;align-items:start}
  .product-terminal.compact .chart-panel{height:340px}
  .product-terminal.compact .order-panel{grid-area:form;height:auto;max-height:none;min-height:0;overflow:visible;order:0}
@@ -276,7 +276,7 @@
 }
 /* GMXX mobile composition (user reference, 2026-11-27): form and book share one surface without separate cards, so
    their independent heights read as one area; records start below a divider. */
-@media(max-width:760px){
+@media(max-width:767px){
  .product-terminal.compact{background:var(--nt-bg);padding-top:0}
  .product-terminal.compact .workspace-grid{gap:0 8px}
  .product-terminal.compact .instrument-bar,.product-terminal.compact .order-panel,.product-terminal.compact .orderbook,.product-terminal.compact .chart-panel,.product-terminal.compact .records-panel{border-radius:0;background:transparent}
@@ -290,14 +290,14 @@
  .product-terminal.compact .trade-order-form .compact-selects .record-filter,.product-terminal.compact .spot-order-form>.form-body>.record-filter{min-width:0}
 }
 /* Compact phone form controls (user feedback, 2026-11-27): lower side tabs and percentage chips, like GMXX. */
-@media(max-width:760px){
+@media(max-width:767px){
  .product-terminal.compact .order-panel .trade-order-form .direction-tabs{padding:3px}
  .product-terminal.compact .order-panel .trade-order-form .direction-tabs button{min-height:32px;padding:6px 4px;line-height:20px}
  .product-terminal.compact .order-panel .trade-order-form .percentages button{min-height:28px;padding:4px 0;line-height:18px}
 }
 /* Phone header grid: pair + account badge shrink (ellipsis) before the product switch and chart button wrap; the price
    row carries the favourite star at its end. */
-@media(max-width:760px){
+@media(max-width:767px){
  .product-terminal.compact .instrument-bar{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"id tools" "price fav";align-items:center;column-gap:8px}
  .product-terminal.compact .instrument-identity{grid-area:id}
  .product-terminal.compact .instrument-tools{grid-area:tools;margin-left:0}

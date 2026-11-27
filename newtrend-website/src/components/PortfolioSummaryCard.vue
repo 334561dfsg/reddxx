@@ -29,27 +29,27 @@ const {hidden,toggle,masked:mask}=useAmountMask()
 </section>
 </template>
 <style>
-#site-shell #main-content .psc{position:relative;display:flex;flex-direction:column;gap:20px;padding:28px;border:1px solid #191b1f;border-radius:32px;background:#14161a;overflow:hidden;isolation:isolate}
+#site-shell #main-content .psc{position:relative;display:flex;flex-direction:column;gap:20px;padding:28px;border:1px solid var(--nt-surface-2);border-radius:32px;background:#14161a;overflow:hidden;isolation:isolate}
 #site-shell #main-content .psc>.nt-glow{position:absolute}
 #site-shell #main-content .psc-row{display:flex;align-items:flex-end;justify-content:space-between;gap:40px}
 #site-shell #main-content .psc-primary{display:flex;flex-direction:column;gap:6px;min-width:0}
-#site-shell #main-content .psc-label{display:flex;align-items:center;gap:8px;font-size:12px;line-height:16px;letter-spacing:.04em;color:#87888a}
-#site-shell #main-content .psc-eye{display:inline-grid;place-items:center;width:32px;height:32px;margin:-8px;min-width:0;min-height:0;padding:0;border:0;background:none;color:#87888a}
+#site-shell #main-content .psc-label{display:flex;align-items:center;gap:8px;font-size:12px;line-height:16px;letter-spacing:.04em;color:var(--nt-text-dim)}
+#site-shell #main-content .psc-eye{display:inline-grid;place-items:center;width:32px;height:32px;margin:-8px;min-width:0;min-height:0;padding:0;border:0;background:none;color:var(--nt-text-dim)}
 #site-shell #main-content .psc-eye .nt-icon{width:16px;height:16px;opacity:.6}
 #site-shell #main-content .psc-eye:hover .nt-icon,#site-shell #main-content .psc-eye:focus-visible .nt-icon{opacity:1}
-#site-shell #main-content .psc-eye:focus-visible{outline:none;background:#ffffff14;border-radius:4px}
+#site-shell #main-content .psc-eye:focus-visible{outline:none;background:var(--nt-border-strong);border-radius:4px}
 #site-shell #main-content .psc-display{margin:0;font-family:var(--nt-font-mono);font-size:36px;line-height:40px;font-weight:600;letter-spacing:-.025em;color:#fff;white-space:nowrap}
-#site-shell #main-content .psc-display>span{margin-left:8px;font-size:18px;line-height:28px;font-weight:400;letter-spacing:0;color:#87888a}
+#site-shell #main-content .psc-display>span{margin-left:8px;font-size:18px;line-height:28px;font-weight:400;letter-spacing:0;color:var(--nt-text-dim)}
 #site-shell #main-content .psc-accent{display:flex;align-items:baseline;gap:8px;font-size:15px;line-height:22.5px}
 #site-shell #main-content .psc-accent strong{font-family:var(--nt-font-mono);font-weight:600}
-#site-shell #main-content .psc-accent small{display:inline;margin:0;font-size:12px;line-height:18px;color:#87888a}
+#site-shell #main-content .psc-accent small{display:inline;margin:0;font-size:12px;line-height:18px;color:var(--nt-text-dim)}
 #site-shell #main-content .psc-stats{display:grid;grid-template-columns:repeat(var(--psc-cols,3),minmax(0,1fr));gap:12px 40px;flex-shrink:0;margin:0;padding:0;border:0}
 #site-shell #main-content .psc-stats>div{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
-#site-shell #main-content .psc-stats dt{margin:0;font-size:12px;line-height:18px;color:#87888a}
+#site-shell #main-content .psc-stats dt{margin:0;font-size:12px;line-height:18px;color:var(--nt-text-dim)}
 #site-shell #main-content .psc-stats dd{margin:0;font-family:var(--nt-font-mono);font-size:18px;line-height:28px;font-weight:600;white-space:nowrap}
-#site-shell #main-content .psc-stats dd span{margin-left:4px;font-size:12px;line-height:18px;font-weight:400;color:#87888a}
+#site-shell #main-content .psc-stats dd span{margin-left:4px;font-size:12px;line-height:18px;font-weight:400;color:var(--nt-text-dim)}
 #site-shell #main-content .psc .tone-neutral{color:#fff}
-#site-shell #main-content .psc .tone-success,#site-shell #main-content .psc .tone-profit{color:#2bc287}
-#site-shell #main-content .psc .tone-loss{color:#f46}
+#site-shell #main-content .psc .tone-success,#site-shell #main-content .psc .tone-profit{color:var(--nt-up)}
+#site-shell #main-content .psc .tone-loss{color:var(--nt-down)}
 @media(max-width:1023px){#site-shell #main-content .psc-row{flex-direction:column;align-items:stretch;gap:24px}#site-shell #main-content .psc-stats{grid-template-columns:1fr}#site-shell #main-content .psc-stats>div{flex-direction:row;justify-content:space-between;align-items:baseline}}
 </style>

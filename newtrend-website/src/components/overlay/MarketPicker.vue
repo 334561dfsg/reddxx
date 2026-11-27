@@ -57,22 +57,22 @@ const emptyText=computed(()=>query.value.trim()?'trade.pages.noMarketMatch':tab.
 </template>
 <style scoped>
 .market-picker{display:flex;flex-direction:column;min-height:0;flex:1}
-.picker-search{display:flex;align-items:center;gap:8px;flex:none;height:40px;padding:0 12px;margin:0 16px;border-radius:var(--nt-radius-control);background:#ffffff0d;color:#fff8}
+.picker-search{display:flex;align-items:center;gap:8px;flex:none;height:40px;padding:0 12px;margin:0 16px;border-radius:var(--nt-radius-control);background:var(--nt-border);color:#fff8}
 .picker-search svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;flex:none}
 .picker-search input{flex:1;min-width:0;height:100%;border:0;background:transparent;color:#fff;font-size:14px;outline:none}
 .picker-tabs{display:flex;align-items:center;gap:4px 16px;flex:none;padding:10px 16px 6px;overflow-x:auto;scrollbar-width:none}
-.picker-tabs button{flex:none;min-height:32px;color:#fff9;font-size:13px;white-space:nowrap}
+.picker-tabs button{flex:none;min-height:32px;color:var(--nt-text-secondary);font-size:13px;white-space:nowrap}
 .picker-tabs button[aria-pressed=true]{color:#fff;font-weight:600}
-.picker-fav-tab{font-size:16px!important;min-width:24px}
-.picker-fav-tab[aria-pressed=true]{color:var(--nt-accent)!important}
-.picker-head{display:flex;justify-content:space-between;flex:none;padding:4px 16px 6px 48px;border-bottom:1px solid #ffffff0d}
+.picker-fav-tab{font-size:16px;min-width:24px}
+.picker-fav-tab[aria-pressed=true]{color:var(--nt-accent)}
+.picker-head{display:flex;justify-content:space-between;flex:none;padding:4px 16px 6px 48px;border-bottom:1px solid var(--nt-border)}
 .picker-head-group{display:flex;gap:12px}
 .picker-head button{display:inline-flex;align-items:center;gap:2px;min-height:28px;color:#fff8;font-size:12px}
 .picker-head button[aria-sort=ascending],.picker-head button[aria-sort=descending]{color:#fff}
 .sort-mark{font-size:10px}
 .picker-list{list-style:none;margin:0;padding:0 0 max(12px,env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain;flex:1;min-height:0}
 .picker-list li{display:flex;align-items:center}
-.picker-list li.current{background:#ffffff08}
+.picker-list li.current{background:var(--nt-border-subtle)}
 .picker-star{flex:none;display:grid;place-items:center;width:44px;height:52px;padding-left:8px;color:#fff8;font-size:16px}
 .picker-star[aria-pressed=true]{color:var(--nt-accent)}
 .picker-row{flex:1;min-width:0;display:flex;align-items:center;gap:10px;min-height:52px;padding:6px 16px 6px 0;text-align:left;color:#fff}
@@ -83,7 +83,7 @@ const emptyText=computed(()=>query.value.trim()?'trade.pages.noMarketMatch':tab.
 .picker-quote{text-align:right;flex:none}
 .picker-name strong,.picker-quote strong{font-size:14px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .picker-name small,.picker-quote small{font-size:12px;line-height:16px;color:#fff8;font-variant-numeric:tabular-nums}
-.picker-quote .positive{color:var(--nt-green,#2bc287)}.picker-quote .negative{color:var(--nt-red,#ff4466)}
+.picker-quote .positive{color:var(--nt-green,var(--nt-up))}.picker-quote .negative{color:var(--nt-red,var(--nt-down))}
 .picker-empty{margin:0;padding:32px 16px;text-align:center;color:#fff8}
 .picker-star:focus-visible,.picker-tabs button:focus-visible,.picker-head button:focus-visible{outline:none;text-decoration:underline}
 </style>

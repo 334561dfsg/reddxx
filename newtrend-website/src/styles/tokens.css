@@ -12,6 +12,18 @@
  --nt-text-primary:#ffffff;
  --nt-text-secondary:#ffffff99;
  --nt-text-muted:#ffffff66;
+ /* surfaces, borders and greys used across the domain sheets (review 2026-11-27: were literals) */
+ --nt-surface-0:#0c1017;
+ --nt-surface-2:#191b1f;
+ --nt-surface-raised:#15181c;
+ --nt-border-subtle:#ffffff08;
+ --nt-border-strong:#ffffff14;
+ --nt-text-soft:#a0a1a2;
+ --nt-text-dim:#87888a;
+ --nt-text-quiet:#8c8f96;
+ /* market up / down (trading terminal palette; --nt-green / --nt-red stay the brand pair elsewhere) */
+ --nt-up:#2bc287;
+ --nt-down:#ff4466;
  /* type */
  --nt-font-body:'Exo 2','PingFang SC',Arial,sans-serif;
  --nt-font-display:Syne,'PingFang SC',sans-serif;
@@ -44,6 +56,8 @@
  --nt-radius-sm:4px;
  --nt-radius-control:8px;
  --nt-radius-panel:12px;
+ --nt-radius-card:20px;
+ --nt-radius-pill:999px;
  --radius-xs:var(--nt-radius-sm);
  --radius-sm:var(--nt-radius-control);
  --radius-md:var(--nt-radius-panel);

@@ -18,14 +18,14 @@ defineProps({record:{type:Object,default:null}})
 </template>
 <style>
 .strategy-stats-page{display:flex;flex-direction:column;gap:16px;padding-top:17px;padding-bottom:56px}
-.strategy-stats-back{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;font-size:14px;line-height:20px;color:#87888a}
+.strategy-stats-back{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;font-size:14px;line-height:20px;color:var(--nt-text-dim)}
 .strategy-stats-back svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .strategy-stats-back:hover,.strategy-stats-back:focus-visible{outline:none;color:#fff;text-decoration:underline}
 .strategy-stats-head{display:flex;flex-direction:column;gap:8px;margin:16px 0 8px}
 .strategy-stats-head span{font-size:12px;line-height:16px;letter-spacing:.22em;text-transform:uppercase;color:color-mix(in srgb,#fff 62%,var(--nt-bg))}
 .strategy-stats-head h1{margin:0;font-family:var(--nt-font-display);font-size:36px;line-height:40px;font-weight:600;letter-spacing:-.025em}
-.strategy-stats-head p{margin:0;font-size:14px;line-height:20px;color:#87888a}
-.strategy-stats-card{overflow:hidden;border:1px solid #191b1f;border-radius:32px;background:#14161a}
+.strategy-stats-head p{margin:0;font-size:14px;line-height:20px;color:var(--nt-text-dim)}
+.strategy-stats-card{overflow:hidden;border:1px solid var(--nt-surface-2);border-radius:32px;background:#14161a}
 .strategy-stats-card>.ds{border-top:0}
-.strategy-stats-card>.ms-stats-empty{margin:0;padding:40px 20px;text-align:center;font-size:14px;color:#87888a}
+.strategy-stats-card>.ms-stats-empty{margin:0;padding:40px 20px;text-align:center;font-size:14px;color:var(--nt-text-dim)}
 </style>

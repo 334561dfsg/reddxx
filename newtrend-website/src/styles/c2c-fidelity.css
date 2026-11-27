@@ -1,8 +1,8 @@
 /* Scoped source fidelity: C2C buy is intentionally independent of generic cards. */
 #main-content .c2c-page{max-width:1440px;margin:auto;padding:20px max(32px,env(safe-area-inset-right)) 20px max(32px,env(safe-area-inset-left));font-size:14px;line-height:1.6}
 .c2c-page button,.c2c-page a{touch-action:manipulation}
-.c2c-nav{display:flex;gap:8px;padding:4px;background:#141619;border:1px solid #ffffff05;border-radius:999px;margin-bottom:24px}
-.c2c-nav a{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 24px;color:#85888d;border-radius:999px;min-height:40px;white-space:nowrap}
+.c2c-nav{display:flex;gap:8px;padding:4px;background:var(--nt-card);border:1px solid #ffffff05;border-radius:var(--nt-radius-pill);margin-bottom:24px}
+.c2c-nav a{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 24px;color:#85888d;border-radius:var(--nt-radius-pill);min-height:40px;white-space:nowrap}
 .c2c-nav a.router-link-exact-active{background:#b3ff60;color:#0a1006}
 .c2c-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
 #main-content .c2c-heading h1{font-size:24px;font-weight:600;line-height:32px;margin:0 0 4px;letter-spacing:-.02em}
@@ -14,11 +14,11 @@
 .c2c-filter{display:flex;align-items:center;gap:8px;min-width:0}
 .c2c-filter>span{font-size:12px;color:#85888d;flex-shrink:0}
 .c2c-pills{display:flex;align-items:center;flex-wrap:wrap;padding:4px;gap:4px;border:1px solid #ffffff05;border-radius:24px;background:#0c0f15;width:fit-content}
-.c2c-pills button{display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 12px;min-height:32px;border-radius:999px;line-height:20px;color:#92959b}
+.c2c-pills button{display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 12px;min-height:32px;border-radius:var(--nt-radius-pill);line-height:20px;color:#92959b}
 .c2c-pills button.active{background:#202326;color:#f5f6f7;box-shadow:0 1px 4px #0003}
 .c2c-pills .coin{width:16px;height:16px}
 .c2c-quote-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.c2c-quote{min-width:0;text-align:left;padding:16px;border:1px solid #ffffff08;border-radius:24px;background:#0c0f15;transition:background 150ms ease-out,border-color 150ms ease-out}
+.c2c-quote{min-width:0;text-align:left;padding:16px;border:1px solid var(--nt-border-subtle);border-radius:24px;background:#0c0f15;transition:background 150ms ease-out,border-color 150ms ease-out}
 .c2c-quote:hover{border-color:#ffffff20}
 .c2c-quote.selected{background:#0f160f;border-color:#b3ff6033;box-shadow:0 1px 3px #0002}
 .c2c-quote-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -36,7 +36,7 @@
 .c2c-limits{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid #ffffff06;padding-top:12px;margin-top:12px;color:#85888d;font-size:12px}
 .c2c-limits span:last-child{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right;color:#b2b5bb;overflow-wrap:anywhere}
 .c2c-quote-note{margin:8px 0 0;font-size:12px;color:#85888d}
-.c2c-order-panel{background:#0c0f15;border:1px solid #ffffff08;border-radius:24px;padding:20px;min-width:0}
+.c2c-order-panel{background:#0c0f15;border:1px solid var(--nt-border-subtle);border-radius:24px;padding:20px;min-width:0}
 .c2c-order-panel.is-empty{align-self:stretch;display:grid;place-items:center;min-height:360px}
 .c2c-select-prompt{text-align:center;color:#85888d;font-size:14px}
 .c2c-select-prompt>.c2c-icon{width:32px;height:32px;margin:0 auto 12px}
@@ -50,8 +50,8 @@
 .c2c-mode{margin-bottom:20px}
 .c2c-mode button{font-size:12px;min-height:24px;padding:3px 12px}
 .c2c-order-form>label{display:block;font-weight:500;margin-bottom:6px}
-.c2c-amount-field{display:flex;align-items:center;border:1px solid transparent;border-radius:12px;background:#202226;min-width:0}
-.c2c-amount-field:focus-within{background:#272a2f;border-color:transparent}
+.c2c-amount-field{display:flex;align-items:center;border:1px solid transparent;border-radius:var(--nt-radius-panel);background:#202226;min-width:0}
+.c2c-amount-field:focus-within{background:#272a2f}
 #site-shell .c2c-amount-field input{width:100%;min-width:0;height:36px;min-height:36px;border:0;outline:0;background:transparent;padding:8px 12px;font-size:16px;box-shadow:none;color:#f5f6f7;appearance:textfield}
 .c2c-amount-field input::-webkit-inner-spin-button{appearance:none}
 .c2c-amount-field>span{display:flex;align-items:center;gap:6px;color:#92959b;padding-right:12px;flex-shrink:0}
@@ -60,7 +60,7 @@
 .c2c-agreement label{display:flex;align-items:center;gap:8px;cursor:pointer}
 #site-shell .c2c-agreement input{appearance:auto;width:16px;height:16px;min-height:16px;margin:0;accent-color:#b3ff60;cursor:pointer}
 .c2c-agreement button{color:#b3ff60}
-.c2c-submit{width:100%;min-height:48px;padding:12px 20px;border-radius:999px;background:#b3ff60;color:#0b1306;font-weight:600;font-size:16px}
+.c2c-submit{width:100%;min-height:48px;padding:12px 20px;border-radius:var(--nt-radius-pill);background:#b3ff60;color:#0b1306;font-weight:600;font-size:16px}
 .c2c-submit:disabled{opacity:.5;cursor:not-allowed}
 .c2c-error{color:#f87171;font-size:12px;margin:8px 0;overflow-wrap:anywhere}
 .c2c-estimate{display:flex;justify-content:space-between;gap:12px;font-size:12px;margin-top:12px;color:#92959b}
@@ -84,14 +84,14 @@
 .c2c-order-form .c2c-agreement{line-height:20px}
 .c2c-order-form .c2c-submit:hover{color:#0b1306;background:#c4ff87}
 
-.c2c-empty{background:#0c0f15;border:1px solid #ffffff08;border-radius:24px;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;color:#a0a4aa}
+.c2c-empty{background:#0c0f15;border:1px solid var(--nt-border-subtle);border-radius:24px;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;color:#a0a4aa}
 .c2c-empty small{display:block;color:#73777d;font-size:12px;margin-top:4px}
 .c2c-orders-filters{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:8px}
 .c2c-orders-filters .c2c-pills,.c2c-status-filter .c2c-pills{padding:3px;gap:0}
 .c2c-orders-filters .c2c-pills button,.c2c-status-filter .c2c-pills button{font-size:12px;line-height:18px;min-height:24px;padding:3px 12px}
 .c2c-status-filter{margin-bottom:16px;align-items:flex-start}
 .c2c-status-filter>span{padding-top:6px}
-.c2c-orders-list{background:#0c0f15;border:1px solid #ffffff08;border-radius:24px;overflow:hidden}
+.c2c-orders-list{background:#0c0f15;border:1px solid var(--nt-border-subtle);border-radius:24px;overflow:hidden}
 .c2c-detail dl{display:grid;gap:12px;margin:20px 0}
 .c2c-detail dl>div{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
 .c2c-detail dt{color:#85888d;flex-shrink:0}
@@ -99,7 +99,7 @@
 .c2c-status{font-size:12px;color:#b3ff60}
 .c2c-danger{color:#e34a68}
 .c2c-text-button{color:#b3ff60;min-height:32px;display:inline-flex;align-items:center}
-.c2c-order-row{display:grid;grid-template-columns:.5fr 1fr 1fr 1.2fr 1.2fr 112px;gap:16px;padding:20px;border-bottom:1px solid #ffffff08;align-items:center;font-size:14px}
+.c2c-order-row{display:grid;grid-template-columns:.5fr 1fr 1fr 1.2fr 1.2fr 112px;gap:16px;padding:20px;border-bottom:1px solid var(--nt-border-subtle);align-items:center;font-size:14px}
 .c2c-order-columns{color:#85888d;font-size:12px;padding-top:14px;padding-bottom:14px}
 .c2c-order-row>span{min-width:0;overflow-wrap:anywhere}
 .c2c-order-row>span small{display:none}
@@ -111,14 +111,14 @@
 .c2c-order-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;white-space:nowrap}
 
 /* Real fiat (2026-11-27): a neutral code chip (USD, EUR …) where the USDT coin icon used to sit; no flags or logos. */
-.c2c-fiat-code{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:20px;padding:0 6px;border-radius:6px;background:#ffffff14;color:#e6e7e9;font-size:12px;line-height:16px;font-weight:600;letter-spacing:0;vertical-align:middle}
+.c2c-fiat-code{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:20px;padding:0 6px;border-radius:6px;background:var(--nt-border-strong);color:#e6e7e9;font-size:12px;line-height:16px;font-weight:600;letter-spacing:0;vertical-align:middle}
 /* Payer details (2026-11-27): country (searchable), remitter name, email; payment method is fixed to bank transfer.
    Same surface as the amount field; focus lightens the background (no highlighted border). */
 .c2c-payer{display:grid;gap:6px;margin-top:16px}
 .c2c-payer>label{display:block;font-weight:500;line-height:20px;margin-top:6px}
 .c2c-payer>label:first-child{margin-top:0}
-#site-shell .c2c-payer .c2c-text-field{width:100%;min-width:0;height:40px;border:1px solid transparent;border-radius:12px;background:#202226;padding:8px 12px;font-size:16px;color:#f5f6f7;outline:0;box-shadow:none}
-#site-shell .c2c-payer .c2c-text-field:focus{background:#272a2f;border-color:transparent}
-#site-shell .c2c-payer .c2c-text-field[aria-invalid=true]{background:color-mix(in srgb,#ff4466 12%,#202226)}
+#site-shell .c2c-payer .c2c-text-field{width:100%;min-width:0;height:40px;border:1px solid transparent;border-radius:var(--nt-radius-panel);background:#202226;padding:8px 12px;font-size:16px;color:#f5f6f7;outline:0;box-shadow:none}
+#site-shell .c2c-payer .c2c-text-field:focus{background:#272a2f}
+#site-shell .c2c-payer .c2c-text-field[aria-invalid=true]{background:color-mix(in srgb,var(--nt-down) 12%,#202226)}
 .c2c-payer .ant-select{width:100%}
 @media(pointer:coarse){#site-shell .c2c-payer .c2c-text-field{min-height:44px}}

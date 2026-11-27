@@ -104,7 +104,7 @@ async function submit(){
    fields are 96px apart (76 + 20 gap). Dots sit on the two select centres (52, 148); the swap button is centred
    on the rail halfway between them (100). Labels stay on one line so this holds in every language. */
 .at-route{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:12px}
-.at-amount{display:flex;align-items:center;min-height:48px;padding-right:14px;border:1px solid #ffffff1f;border-radius:12px;background:#0c0e10}
-.at-submit{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin-top:12px;border-radius:12px;background:#a5ff4a;color:#0a0d12;font-weight:600;font-size:15px}
+.at-amount{display:flex;align-items:center;min-height:48px;padding-right:14px;border:1px solid #ffffff1f;border-radius:var(--nt-radius-panel);background:#0c0e10}
+.at-submit{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin-top:12px;border-radius:var(--nt-radius-panel);background:var(--nt-accent);color:#0a0d12;font-weight:600;font-size:15px}
 @media(pointer:coarse){.at-amount input,.at-submit{min-height:48px}}
 </style>

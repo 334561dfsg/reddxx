@@ -41,15 +41,15 @@ async function submit(){
 .fund-form{display:grid;gap:16px}
 .fund-lead{margin:0;color:var(--nt-accent);font-size:13px;line-height:20px}
 .fund-field{display:grid;gap:8px;font-size:14px;line-height:20px;color:#e6e7e9}
-.fund-field input{min-height:48px;padding:0 14px;border:1px solid #ffffff1f;border-radius:12px;background:#0c0e10;color:#fff;font-size:16px;letter-spacing:.3em;font-variant-numeric:tabular-nums}
+.fund-field input{min-height:48px;padding:0 14px;border:1px solid #ffffff1f;border-radius:var(--nt-radius-panel);background:#0c0e10;color:#fff;font-size:16px;letter-spacing:.3em;font-variant-numeric:tabular-nums}
 .fund-field input::placeholder{letter-spacing:0;font-size:14px;color:#6b6d70}
 .fund-field input:focus-visible{outline:none;background:#11151a}
 .fund-field input[aria-invalid=true]{color:#ff6b84}
-.fund-rule{margin:-8px 0 0;color:#87888a;font-size:12px;line-height:18px}
+.fund-rule{margin:-8px 0 0;color:var(--nt-text-dim);font-size:12px;line-height:18px}
 .fund-rule::before{content:'○';margin-right:8px}
-.fund-rule.ok{color:#2bc287}
+.fund-rule.ok{color:var(--nt-up)}
 .fund-rule.ok::before{content:'●'}
-.fund-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;margin-top:4px;border-radius:12px;background:var(--nt-accent);color:var(--nt-bg);font-size:15px;font-weight:600}
+.fund-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;margin-top:4px;border-radius:var(--nt-radius-panel);background:var(--nt-accent);color:var(--nt-bg);font-size:15px;font-weight:600}
 .fund-primary:hover{background:#b6ff6a}
 .fund-primary.is-busy{opacity:.8;cursor:progress}
 .fund-primary:focus-visible{outline:none;text-decoration:underline}

@@ -26,11 +26,11 @@ function passwordSubmit(){
 /* Dialog variant: the overlay body is the frame, so no card chrome; fields and rules follow the transfer dialog. */
 .account-form.password-dialog-form{display:grid;gap:16px;padding:0;border:0;background:none;max-width:none}
 .password-dialog-form label{display:grid;gap:8px;font-size:14px;line-height:20px;color:#e6e7e9}
-.password-dialog-form input{min-height:48px;padding:0 14px;border:1px solid #ffffff1f;border-radius:12px;background:#0c0e10;color:#fff;font-size:14px}
+.password-dialog-form input{min-height:48px;padding:0 14px;border:1px solid #ffffff1f;border-radius:var(--nt-radius-panel);background:#0c0e10;color:#fff;font-size:14px}
 .password-dialog-form input:focus-visible{outline:none;background:#11151a}
 .password-dialog-form .password-notice{margin:0;color:var(--nt-accent);font-size:13px;line-height:20px}
-.password-dialog-form .password-rules{margin:-6px 0 0;padding:0;list-style:none;color:#87888a;font-size:12px;line-height:1.8}
+.password-dialog-form .password-rules{margin:-6px 0 0;padding:0;list-style:none;color:var(--nt-text-dim);font-size:12px;line-height:1.8}
 .password-dialog-form .password-rules li:before{content:'○';margin-right:8px}
-.password-dialog-form .password-rules .positive{color:#2bc287}
-.password-dialog-form .primary-button{min-height:48px;margin-top:8px;border-radius:12px;font-weight:600}
+.password-dialog-form .password-rules .positive{color:var(--nt-up)}
+.password-dialog-form .primary-button{min-height:48px;margin-top:8px;border-radius:var(--nt-radius-panel);font-weight:600}
 </style>

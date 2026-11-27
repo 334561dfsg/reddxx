@@ -59,17 +59,17 @@ onBeforeUnmount(()=>finish(false))
 .nt-bottom-sheet.closing{animation:nt-sheet-down 150ms ease-in forwards}
 .nt-bottom-sheet::backdrop{background:#000000b3;animation:nt-sheet-fade 200ms ease-out}
 .nt-bottom-sheet.closing::backdrop{animation:nt-sheet-fade 150ms ease-in reverse forwards}
-.nt-bottom-sheet-header{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:6px max(8px,env(safe-area-inset-right)) 6px max(20px,env(safe-area-inset-left));border-bottom:1px solid #ffffff0d}
+.nt-bottom-sheet-header{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:6px max(8px,env(safe-area-inset-right)) 6px max(20px,env(safe-area-inset-left));border-bottom:1px solid var(--nt-border)}
 .nt-bottom-sheet-header h2{margin:0;min-width:0;font-family:inherit;font-size:16px;line-height:24px;font-weight:600;overflow-wrap:anywhere}
 .nt-bottom-sheet-header h2:focus{outline:none}
-.nt-bottom-sheet-close{flex:none;display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:10px;background:#ffffff0d;font-size:20px;line-height:1;color:#fffc}
+.nt-bottom-sheet-close{flex:none;display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:10px;background:var(--nt-border);font-size:20px;line-height:1;color:#fffc}
 .nt-bottom-sheet-close:hover,.nt-bottom-sheet-close:focus-visible{outline:none;background:#ffffff1f;color:#fff}
 .nt-bottom-sheet-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:16px max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left))}
 @keyframes nt-sheet-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes nt-sheet-down{to{transform:translateY(100%)}}
 @keyframes nt-sheet-fade{from{opacity:0}to{opacity:1}}
 @media(min-width:768px){
- .nt-bottom-sheet{inset:0;margin:auto;width:min(480px,calc(100vw - 48px));height:fit-content;max-height:min(720px,85vh);border:1px solid #ffffff14;border-radius:16px}
+ .nt-bottom-sheet{inset:0;margin:auto;width:min(480px,calc(100vw - 48px));height:fit-content;max-height:min(720px,85vh);border:1px solid var(--nt-border-strong);border-radius:16px}
  .nt-bottom-sheet[open]{animation:nt-sheet-pop 200ms ease-out}
  .nt-bottom-sheet.closing{animation:nt-sheet-unpop 150ms ease-in forwards}
 }

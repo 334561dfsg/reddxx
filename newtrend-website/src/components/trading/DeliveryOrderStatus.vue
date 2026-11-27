@@ -78,26 +78,26 @@ onMounted(()=>requestAnimationFrame(()=>{announce.value=true}))
 .delivery-order{display:grid;gap:16px}
 .delivery-order-tags{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:24px}
 .delivery-tag{display:inline-flex;align-items:center;padding:2px 10px;border-radius:6px;font-size:12px;line-height:20px;font-weight:600}
-.delivery-tag.up,.delivery-tag.win{background:color-mix(in srgb,var(--nt-green,#2bc287) 16%,transparent);color:var(--nt-green,#2bc287)}
+.delivery-tag.up,.delivery-tag.win{background:color-mix(in srgb,var(--nt-green,var(--nt-up)) 16%,transparent);color:var(--nt-green,var(--nt-up))}
 .delivery-tag.down,.delivery-tag.lose{background:color-mix(in srgb,var(--nt-red,#e34a68) 16%,transparent);color:var(--nt-red,#e34a68)}
-.delivery-tag.draw{background:#ffffff14;color:#c5c7cb}
+.delivery-tag.draw{background:var(--nt-border-strong);color:#c5c7cb}
 .delivery-tag.win,.delivery-tag.lose,.delivery-tag.draw{margin-left:auto}
 .delivery-ring{position:relative;justify-self:center;width:112px;height:112px}
 .delivery-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .delivery-ring circle{fill:none;stroke-width:8}
-.delivery-ring .track{stroke:#ffffff14}
+.delivery-ring .track{stroke:var(--nt-border-strong)}
 .delivery-ring .bar{stroke:var(--nt-accent,#b3ff60);stroke-linecap:round;transition:stroke-dashoffset 250ms linear}
 .delivery-ring strong{position:absolute;inset:0;display:grid;place-items:center;font-size:22px;line-height:28px;font-weight:700;font-variant-numeric:tabular-nums;color:#fff}
 /* At the end of the period the ring shows 結算中… in its centre, so the dialog keeps its height. */
 .delivery-ring strong.settling{padding:0 14px;font-size:13px;line-height:18px;font-weight:600;text-align:center;color:#c5c7cb}
 .delivery-fields{display:grid;gap:10px;margin:0}
 .delivery-fields>div{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:20px}
-.delivery-fields dt{font-size:13px;line-height:20px;color:#8c8f96}
+.delivery-fields dt{font-size:13px;line-height:20px;color:var(--nt-text-quiet)}
 .delivery-fields dd{margin:0;font-size:13px;line-height:20px;color:#fff;font-variant-numeric:tabular-nums;text-align:right}
-.delivery-fields dd.positive{color:var(--nt-green,#2bc287)}.delivery-fields dd.negative{color:var(--nt-red,#e34a68)}
+.delivery-fields dd.positive{color:var(--nt-green,var(--nt-up))}.delivery-fields dd.negative{color:var(--nt-red,#e34a68)}
 .delivery-id{display:inline-flex;align-items:center;gap:4px}
 .delivery-id button{display:grid;place-items:center;width:32px;height:32px;margin:-6px -8px -6px 0;padding:0;border:0;border-radius:8px;background:none;color:#c5c7cb}
-.delivery-id button:hover,.delivery-id button:focus-visible{outline:none;background:#ffffff14;color:#fff}
+.delivery-id button:hover,.delivery-id button:focus-visible{outline:none;background:var(--nt-border-strong);color:#fff}
 .delivery-id svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 @media(prefers-reduced-motion:reduce){.delivery-ring .bar{transition:none}}
 </style>

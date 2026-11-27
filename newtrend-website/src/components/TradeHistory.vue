@@ -58,4 +58,3 @@ function direction(o){return o.kind==='spot'?(o.direction==='buy'?'trade.buy':'t
 </table></div>
 <nav v-if="pages>1" class="history-pagination" :aria-label="$t('trade.history.pagination')"><button :disabled="page===1" :aria-label="$t('trade.history.previousPage')" @click="go(page-1)">‹</button><button v-for="n in pages" :key="n" :aria-current="n===page?'page':undefined" :aria-label="$t('trade.history.page',{value:n})" @click="go(n)">{{ n }}</button><button :disabled="page===pages" :aria-label="$t('trade.history.nextPage')" @click="go(page+1)">›</button></nav>
 </div></template>
-<style scoped src="../styles/trade-records.css"></style>
