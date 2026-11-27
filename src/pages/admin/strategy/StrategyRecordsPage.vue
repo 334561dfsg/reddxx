@@ -103,7 +103,7 @@ async function run(action, args, success) {
      <Button v-if="record.status === 'pending_review'" type="link" @click="open(record, 'detail')">审核</Button>
      <Button v-else type="link" @click="open(record, 'detail')">详情</Button>
      <Button v-if="record.runningAt" type="link" @click="openRecords(record, 'daily', $event)">收益</Button>
-     <Button type="link" @click="openRecords(record, 'logs', $event)">记录</Button>
+     <Button v-if="record.status !== 'pending_review'" type="link" @click="openRecords(record, 'logs', $event)">记录</Button>
      <Button v-if="['initializing', 'running', 'paused'].includes(record.status)" type="link" danger @click="open(record, 'forceStop')">停止</Button>
     </Space>
     <template v-else>{{ record[column.key] ?? '—' }}</template>
