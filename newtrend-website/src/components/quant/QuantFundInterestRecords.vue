@@ -26,7 +26,7 @@ const {page,total,shown}=useFinancePagination(records,10)
  <EmptyState v-if="!loading&&!records.length" class="qf-panel qf-interest-empty" :text="$t('aiQuant.quantFund.interestRecords.empty')"/>
  <div v-else class="qf-panel qf-table-wrap"><table class="qf-table">
   <thead><tr><th scope="col">{{ $t('aiQuant.quantFund.interestRecords.table.interestDate') }}</th><th scope="col" class="num">{{ $t('aiQuant.quantFund.interestRecords.table.amount') }}</th><th scope="col">{{ $t('aiQuant.quantFund.interestRecords.table.creditedAt') }}</th></tr></thead>
-  <tbody><template v-if="loading"><tr v-for="n in 5" :key="n" class="qf-skeleton-row-loading" aria-hidden="true"><td><Skeleton width="96px"/></td><td class="num"><Skeleton width="120px"/></td><td><Skeleton width="140px"/></td></tr></template><tr v-else v-for="record in shown" :key="record.interestDate"><td>{{ fundDate(record.interestDate) }}</td><td class="num mono qf-success-text">+{{ money(record.amount) }} {{ order.asset }}</td><td>{{ fundDate(record.creditedAt,true) }}</td></tr></tbody>
+  <tbody><template v-if="loading"><tr v-for="n in 5" :key="n" class="qf-skeleton-row-loading" aria-hidden="true"><td><Skeleton width="96px"/></td><td class="num"><Skeleton width="120px"/></td><td><Skeleton width="140px"/></td></tr></template><tr v-else v-for="record in shown" :key="record.interestDate"><td>{{ fundDate(record.interestDate) }}</td><td class="num mono qf-success-text">+{{ money(record.amount) }} {{ order.asset }}</td><td class="qf-credited"><span v-for="(part,i) in fundDate(record.creditedAt,true).split(' ')" :key="i">{{ part }}</span></td></tr></tbody>
  </table></div>
  <FinancePagination v-if="!loading&&records.length" v-model:page="page" :total="total" :page-size="10"/>
 </div>

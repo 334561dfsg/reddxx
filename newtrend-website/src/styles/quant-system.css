@@ -147,3 +147,50 @@
  #main-content#main-content .quant-page.quant-sub .qf-positions-head{margin-top:0}
  #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) .psc{gap:14px}
 }
+
+/* Phase 4 — fund detail on phones: the summary aside (range, term, daily rate, progress, subscribe) follows the
+   product intro instead of sitting below every section; panels use 16px padding and the 12px rhythm; quota figures
+   keep their unit on the same line. */
+@media(max-width:767px){
+ #main-content#main-content .quant-page.quant-sub .qf-detail-grid{gap:12px}
+ #main-content#main-content .quant-page.quant-sub .qf-detail-main{display:contents}
+ #main-content#main-content .quant-page.quant-sub .qf-detail-main>*{order:2}
+ #main-content#main-content .quant-page.quant-sub .qf-detail-main>.qf-detail-hero{order:0}
+ #main-content#main-content .quant-page.quant-sub .qf-detail-aside{order:1}
+ #main-content#main-content .quant-page.quant-sub .qf-panel{padding:16px;gap:12px}
+ #main-content#main-content .quant-page.quant-sub .qf-detail-hero h1{font-size:20px;line-height:28px}
+ #main-content#main-content .quant-page.quant-sub .qf-quota>div{display:block}
+ #main-content#main-content .quant-page.quant-sub .qf-quota dt{display:block;margin-bottom:2px;font-size:12px;line-height:18px}
+ #main-content#main-content .quant-page.quant-sub .qf-quota dd{display:inline;margin:0 4px 0 0;font-size:14px;line-height:20px}
+ #main-content#main-content .quant-page.quant-sub .qf-more{margin-top:12px}
+ #main-content#main-content .quant-page.quant-sub .qf-back{margin-bottom:12px}
+}
+
+/* Phase 4 — AI Quant overlays (strategy detail drawer, strategy and fund subscription, fund order drawer) use the same
+   system: body font instead of Syne, no letter-spacing, title 20/28, section labels 12/18, body 14/22, values 14/20;
+   product names may wrap to two lines; on phones the footer actions share the width at 44px. */
+.nt-dialog.nt-dialog:is(.strategy-detail-drawer,.strategy-subscribe-dialog),.nt-dialog.nt-dialog:has(.qf-subscribe,.qf-order){--nt-font-display:var(--nt-font-body)}
+.nt-dialog.nt-dialog:is(.strategy-detail-drawer,.strategy-subscribe-dialog) *,.nt-dialog.nt-dialog:has(.qf-subscribe,.qf-order) *{letter-spacing:0}
+.nt-dialog.nt-dialog:is(.strategy-detail-drawer,.strategy-subscribe-dialog) :is(h2,h3,h4),.nt-dialog.nt-dialog:has(.qf-subscribe,.qf-order) :is(h2,h3,h4){font-family:var(--nt-font-body)}
+.nt-dialog.nt-dialog .strategy-details h3{font-size:20px;line-height:28px;font-weight:600}
+.nt-dialog.nt-dialog .strategy-details h4{font-size:12px;line-height:18px;font-weight:500;text-transform:none;color:#8c8f96}
+.nt-dialog.nt-dialog .strategy-details :is(p,dd,dt){font-size:14px;line-height:22px}
+.nt-dialog.nt-dialog .strategy-details dd{font-family:var(--nt-font-body)}
+.nt-dialog.nt-dialog .qf-order .qf-order-link{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal;text-overflow:clip}
+@media(max-width:767px){
+ .nt-dialog.nt-dialog:is(.strategy-subscribe-dialog,.strategy-detail-drawer) .overlay-footer,.nt-dialog.nt-dialog:has(.qf-subscribe) .overlay-footer{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:12px}
+ .nt-dialog.nt-dialog:is(.strategy-subscribe-dialog,.strategy-detail-drawer) .overlay-footer>*,.nt-dialog.nt-dialog:has(.qf-subscribe) .overlay-footer>*{width:100%;min-height:44px;justify-content:center}
+}
+
+/* Phase 4 — interest records on phones: dates and amounts stay on one line in a compact three-column table. */
+@media(max-width:767px){
+ #main-content#main-content .quant-page.quant-sub .qf-interest-records .qf-table :is(th,td){padding:12px 10px;white-space:nowrap;font-size:13px;line-height:18px}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-records .qf-table :is(th,td):first-child{padding-left:14px}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-records .qf-table :is(th,td):last-child{padding-right:14px}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-records .qf-table td.qf-credited span{display:block;margin:0}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-records .qf-table-wrap{overflow:hidden}
+ #main-content#main-content .quant-page.quant-sub .qf-interest-head{margin-top:0}
+}
+
+/* Credited time: date and time as two pieces (one line on desktop, stacked on phones). */
+#main-content#main-content .qf-interest-records .qf-credited span+span{margin-left:6px}
