@@ -194,3 +194,25 @@
 
 /* Credited time: date and time as two pieces (one line on desktop, stacked on phones). */
 #main-content#main-content .qf-interest-records .qf-credited span+span{margin-left:6px}
+
+/* Phones: the "mine" pages drop their page heading (the tab above already names the page); it stays as a visually
+   hidden heading. Pages without such a tab (stats, interest records) keep theirs. */
+@media(max-width:767px){
+ #main-content#main-content :is(.strategy-page,.quant-page.quant-sub) :is(.my-strategies-head,.qf-positions-head){position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+}
+@media(max-width:767px){
+ /* The positions table wrapper is a panel but holds cards on phones: no inner padding so the cards align with the summary. */
+ #main-content#main-content .quant-page.quant-sub .qf-positions .qf-panel.qf-table-wrap{padding:0;background:transparent;border:0;box-shadow:none}
+}
+@media(max-width:767px){
+ #main-content#main-content .qf-positions .qf-table tr.qf-row>td:nth-child(2){grid-column:1/-1;grid-row:1;padding-right:76px!important}
+ #main-content#main-content .qf-positions .qf-table tr.qf-row>td:nth-child(1){grid-column:2;grid-row:1;position:relative;z-index:1}
+}
+
+/* Phones: secondary pages use the app-style top bar from BackLink (title in the bar), so the in-page heading that
+   repeats it is visually hidden: strategy stats (eyebrow + name) and interest records. */
+@media(max-width:767px){
+ #main-content#main-content .strategy-page .strategy-stats-head>span,#main-content#main-content .strategy-page .strategy-stats-head h1,#main-content#main-content .quant-page.quant-sub .qf-interest-head h1{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ #main-content#main-content .strategy-page .strategy-stats-page{padding-top:0}
+ #main-content#main-content .strategy-page .strategy-stats-head{margin-top:0}
+}

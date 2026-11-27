@@ -40,7 +40,7 @@ function subscribe(){
 </script>
 <template>
 <div class="qf-detail-page">
- <BackLink :to="path('/ai-quant/quant-fund')" class="qf-back">{{ $t('aiQuant.quantFund.title') }}</BackLink>
+ <BackLink :to="path('/ai-quant/quant-fund')" :title="product.name" class="qf-back">{{ $t('aiQuant.quantFund.title') }}</BackLink>
  <div class="qf-detail">
   <div class="qf-detail-grid">
    <div class="qf-detail-main">

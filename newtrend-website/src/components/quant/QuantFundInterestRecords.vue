@@ -20,7 +20,7 @@ const {page,total,shown}=useFinancePagination(records,10)
 </script>
 <template>
 <div class="qf-interest-records">
- <BackLink :to="path('/ai-quant/quant-fund/positions')" class="qf-back">{{ $t('aiQuant.quantFund.interestRecords.back') }}</BackLink>
+ <BackLink :to="path('/ai-quant/quant-fund/positions')" :title="$t('aiQuant.quantFund.interestRecords.title')" class="qf-back">{{ $t('aiQuant.quantFund.interestRecords.back') }}</BackLink>
  <header class="qf-interest-head"><h1>{{ $t('aiQuant.quantFund.interestRecords.title') }}</h1><p>{{ $t('aiQuant.quantFund.interestRecords.subtitle') }}</p></header>
  <span v-if="loading" role="status" class="sr-only">{{ $t('common.loading') }}</span>
  <EmptyState v-if="!loading&&!records.length" class="qf-panel qf-interest-empty" :text="$t('aiQuant.quantFund.interestRecords.empty')"/>

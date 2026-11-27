@@ -22,7 +22,7 @@ const {data:product,error,status,refresh}=useRequest(()=>getEarnProduct(props.pr
 const notFound=computed(()=>status.value==='error'&&error.value?.code==='notFound')
 </script>
 <template><NotFound v-if="notFound"/><article v-else class="earn-detail">
-<BackLink class="earn-back" :to="path('/earn/simple')">{{ $t('earn.productDetail.back') }}</BackLink>
+<BackLink class="earn-back" :to="path('/earn/simple')" :title="product?.name||$t('earn.productDetail.back')">{{ $t('earn.productDetail.back') }}</BackLink>
 <RequestState :status="status" :error="error" class="earn-panel" @retry="refresh">
 <template #loading>
  <!-- Mirrors the loaded panels (same classes, static titles, measured content heights) so nothing shifts on arrival. -->

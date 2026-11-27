@@ -269,5 +269,6 @@
   "tabbar": {
     "label": "Untere Navigation",
     "quant": "Quant"
-  }
+  },
+  "back": "Zurück"
 }

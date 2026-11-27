@@ -48,7 +48,7 @@ watch(()=>route.params.id,()=>{failure.value=''})
 <template>
  <section class="loan-module">
 
-  <template v-if="borrowing"><BackLink :to="path('/earn/loan')" class="loan-borrow-back">{{$t('margin.borrow.back')}}</BackLink><h1 v-if="!product" class="loan-borrow-title"><Coin v-if="product" :symbol="product.loanCurrency"/>{{$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})}}</h1></template>
+  <template v-if="borrowing"><BackLink :to="path('/earn/loan')" :title="$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})" class="loan-borrow-back">{{$t('margin.borrow.back')}}</BackLink><h1 v-if="!product" class="loan-borrow-title"><Coin v-if="product" :symbol="product.loanCurrency"/>{{$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})}}</h1></template>
   <LendingCatalog v-if="!mine&&!borrowing" :products="products" @borrow="choose"/>
   <FeedbackToast v-if="error" type="error" :source="() => (error) ? (([String(($t('lending.errors.unavailable')) ?? ''),&quot; &quot;,''].join(''))) : ''"><button class="green-link" @click="refresh">{{$t('lending.refresh')}}</button></FeedbackToast>
   <p v-if="!session.loggedIn"><RouterLink :to="path('/login')">{{$t('lending.login')}}</RouterLink></p>

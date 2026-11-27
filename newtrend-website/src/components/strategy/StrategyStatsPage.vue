@@ -10,7 +10,7 @@ defineProps({record:{type:Object,default:null}})
 </script>
 <template>
 <div class="strategy-container strategy-stats-page">
- <BackLink :to="path('/ai-quant/strategy/mine')" class="strategy-stats-back">{{ $t('aiQuant.quantFund.interestRecords.back') }}</BackLink>
+ <BackLink :to="path('/ai-quant/strategy/mine')" :title="record?.template.name||$t('aiQuant.actions.viewStats')" class="strategy-stats-back">{{ $t('aiQuant.quantFund.interestRecords.back') }}</BackLink>
  <span v-if="!record" role="status" class="sr-only">{{ $t('common.loading') }}</span>
  <header class="strategy-stats-head"><span>{{ $t('aiQuant.actions.viewStats') }}</span><h1><template v-if="record">{{ record.template.name }}</template><Skeleton v-else inline width="320px"/></h1><p><template v-if="record">{{ $t(record.template.style) }} · {{ $t(record.template.market) }}</template><Skeleton v-else inline width="140px"/></p></header>
  <section class="strategy-stats-card"><StrategyDailyStats :items="record?.dailyStats||[]" :loading="!record"/></section>
