@@ -11,7 +11,9 @@ import {t} from '../i18n'
 import RecordFilter from './RecordFilter.vue'
 import {useOrderDrafts} from '../composables/tradePageState'
 import {deliveryPeriods,leverageOptions,orderEstimate,validStops,tradeFeeRate} from '../utils/orderFormModel'
-const props=defineProps({mode:String,pair:Object})
+// compact: phone layout. Futures then picks a side first (买入开多 / 卖出开空) and shows one action for it, like
+// spot and options; the desktop form keeps both futures actions side by side.
+const props=defineProps({mode:String,pair:Object,compact:Boolean})
 const {futures,options,spot}=useOrderDrafts()
 const errors=reactive({futures:'',options:'',buy:'',sell:''}),notice=ref('')
 // Balances come from the trade API for the current mode and pair (skeletons until loaded). `pair.price` is the
@@ -76,9 +78,10 @@ function submit(side){
  })
 }
 </script>
-<template><div class="trade-order-form" :class="{'spot-order-form':mode==='spot'}">
+<template><div class="trade-order-form" :class="{'spot-order-form':mode==='spot',compact}">
 <div class="form-body" tabindex="0" role="region" :aria-label="$t(mode==='futures'?'trade.futuresOrder':mode==='options'?'trade.optionsOrder':'common.spot')">
 <template v-if="mode==='futures'">
+<div v-if="compact" class="direction-tabs"><button v-for="side in ['buy','sell']" :key="side" :class="[side,{active:(futures.side||'buy')===side}]" :aria-pressed="(futures.side||'buy')===side" @click="futures.side=side;errors.futures='';notice=''">{{ $t(side==='buy'?'trade.buyLong':'trade.sellShort') }}</button></div>
 <div class="type-tabs price-tabs"><button v-for="type in ['market','limit']" :key="type" :class="{active:futures.type===type}" :aria-pressed="futures.type===type" @click="futures.type=type">{{ $t('trade.'+type) }}</button></div>
 <dl class="form-summary"><dt>{{ $t('trade.form.availableQuantity') }}</dt><dd><template v-if="balancesReady">{{ fmt(cash) }}</template><Skeleton v-else inline width="72px"/> USDT</dd></dl>
 <label v-if="futures.type==='limit'">{{ $t('trade.price') }} (USDT)<input class="trade-field" v-model="futures.price" inputmode="decimal" :placeholder="$t('trade.enterPrice')"/></label>
@@ -113,7 +116,7 @@ function submit(side){
 </template>
 
 </div>
-<footer class="form-actions"><FeedbackToast v-if="notice" type="success" :source="() => (notice) ? (notice) : ''"/><div :class="{'action-pair':mode==='futures'}"><button v-if="mode==='options'" :class="options.side==='buy'?'buy':'sell'" @click="submit(options.side)">{{ $t(options.side==='buy'?'trade.buyLong':'trade.sellShort') }}</button><button v-else-if="mode==='spot'" :class="spot.side==='sell'?'sell':'buy'" @click="submit(spot.side||'buy')">{{ $t(spot.side==='sell'?'trade.sell':'trade.buy') }}</button><template v-else><button class="buy" @click="submit('buy')">{{ $t(mode==='spot'?'trade.buy':'trade.buyLong') }}</button><button class="sell" @click="submit('sell')">{{ $t(mode==='spot'?'trade.sell':'trade.sellShort') }}</button></template></div></footer>
+<footer class="form-actions"><FeedbackToast v-if="notice" type="success" :source="() => (notice) ? (notice) : ''"/><div :class="{'action-pair':mode==='futures'&&!compact}"><button v-if="mode==='futures'&&compact" :class="futures.side==='sell'?'sell':'buy'" @click="submit(futures.side||'buy')">{{ $t(futures.side==='sell'?'trade.sellShort':'trade.buyLong') }}</button><button v-else-if="mode==='options'" :class="options.side==='buy'?'buy':'sell'" @click="submit(options.side)">{{ $t(options.side==='buy'?'trade.buyLong':'trade.sellShort') }}</button><button v-else-if="mode==='spot'" :class="spot.side==='sell'?'sell':'buy'" @click="submit(spot.side||'buy')">{{ $t(spot.side==='sell'?'trade.sell':'trade.buy') }}</button><template v-else><button class="buy" @click="submit('buy')">{{ $t(mode==='spot'?'trade.buy':'trade.buyLong') }}</button><button class="sell" @click="submit('sell')">{{ $t(mode==='spot'?'trade.sell':'trade.sellShort') }}</button></template></div></footer>
 </div></template>
 <style scoped>
 .spot-amount-field{position:relative;display:block}.spot-amount-field input{padding-right:65px}.spot-amount-field>span{position:absolute;right:12px;top:50%;transform:translateY(-50%)}

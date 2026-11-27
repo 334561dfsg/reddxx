@@ -442,7 +442,11 @@
     "latestPrice": "최근 가격",
     "metals": "귀금속",
     "availablePairs": "거래 가능한 거래쌍",
-    "energy": "에너지"
+    "energy": "에너지",
+    "product": "거래 상품",
+    "showChart": "차트 보기",
+    "hideChart": "차트 닫기",
+    "usePrice": "가격 {{price}} 입력"
   },
   "stream": {
     "connecting": "시세 연결 중…",

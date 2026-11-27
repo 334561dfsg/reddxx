@@ -442,7 +442,11 @@
     "latestPrice": "最新價",
     "metals": "貴金屬",
     "availablePairs": "當前市場可交易對",
-    "energy": "能源"
+    "energy": "能源",
+    "product": "交易產品",
+    "showChart": "展開K線",
+    "hideChart": "收起K線",
+    "usePrice": "帶入價格 {{price}}"
   },
   "stream": {
     "connecting": "行情連線中…",

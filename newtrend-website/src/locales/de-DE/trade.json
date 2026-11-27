@@ -442,7 +442,11 @@
     "latestPrice": "Letzter Preis",
     "metals": "Edelmetalle",
     "availablePairs": "Verfügbare Handelspaare",
-    "energy": "Energie"
+    "energy": "Energie",
+    "product": "Produkt",
+    "showChart": "Chart anzeigen",
+    "hideChart": "Chart ausblenden",
+    "usePrice": "Preis {{price}} übernehmen"
   },
   "stream": {
     "connecting": "Verbindung zu Marktdaten wird hergestellt…",

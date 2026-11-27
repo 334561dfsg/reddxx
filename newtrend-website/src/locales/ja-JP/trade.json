@@ -442,7 +442,11 @@
     "latestPrice": "最終価格",
     "metals": "貴金属",
     "availablePairs": "取引可能なペア",
-    "energy": "エネルギー"
+    "energy": "エネルギー",
+    "product": "取引商品",
+    "showChart": "チャートを表示",
+    "hideChart": "チャートを閉じる",
+    "usePrice": "価格 {{price}} を入力"
   },
   "stream": {
     "connecting": "相場データに接続中…",

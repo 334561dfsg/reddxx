@@ -12,7 +12,8 @@ import {useRequest} from '../../composables/useRequest.js'
 import CurrentTrades from '../CurrentTrades.vue'
 import TradeHistory from '../TradeHistory.vue'
 // prices: live price by market name (from the workspace's ticker stream) for open positions' P&L.
-const props=defineProps({mode:String,state:Object,prices:{type:Object,default:()=>({})}})
+// compact: phone layout, records render as cards instead of table rows.
+const props=defineProps({mode:String,state:Object,prices:{type:Object,default:()=>({})},compact:Boolean})
 const tabs=computed(()=>tradeProducts[props.mode].tabs)
 const selected=computed(()=>tabs.value.find(tab=>tab.id===props.state.record)||tabs.value[0])
 // One request per tab and mode; a new order, close or cancel invalidates 'trade' and refreshes it in place.
@@ -29,8 +30,8 @@ const announce=text=>message.success(text)
   <RequestState v-if="records.status.value==='error'" :status="records.status.value" :error="records.error.value" @retry="records.refresh"/>
   <div v-else-if="loading" class="current-trades records-skeleton"><span role="status" class="sr-only">{{ $t('common.loading') }}</span><div class="history-list"><table class="record-table" aria-hidden="true"><thead><tr><th>{{ $t('trade.pair') }}</th><th v-for="f in 6" :key="f"><Skeleton inline width="56px"/></th></tr></thead><tbody><tr v-for="n in 6" :key="n"><th class="record-pair"><Skeleton inline width="120px"/></th><td v-for="f in 6" :key="f"><Skeleton inline width="72px"/></td></tr></tbody></table></div></div>
   <EmptyState v-else-if="!rows.length" class="empty" :text="$t('trade.pages.emptyRecords')"/>
-  <TradeHistory v-else-if="historyBuckets.includes(selected.bucket)" :key="selected.id" v-model="page" :rows="rows" :bucket="selected.bucket"/>
-  <CurrentTrades v-else :key="selected.id" :rows="rows" :bucket="selected.bucket" :prices="prices" @complete="announce"/>
+  <TradeHistory v-else-if="historyBuckets.includes(selected.bucket)" :key="selected.id" v-model="page" :rows="rows" :bucket="selected.bucket" :compact="compact"/>
+  <CurrentTrades v-else :key="selected.id" :rows="rows" :bucket="selected.bucket" :prices="prices" :compact="compact" @complete="announce"/>
 </section>
 </template>
 <style scoped src="../../styles/trade-records.css"></style>

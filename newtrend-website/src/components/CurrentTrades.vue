@@ -8,7 +8,8 @@ import {positionPnl} from '../utils/mockCurrentTrades'
 import {finishTrade,tradeErrorKey} from '../api/trade.js'
 import {invalidate} from '../composables/useRequest.js'
 // prices: live price by market name; open positions mark to it so unrealised P&L moves with the stream.
-const props=defineProps({rows:{type:Array,required:true},bucket:String,prices:{type:Object,default:()=>({})}})
+// compact: phone layout, one card per record (same fields and action) instead of a wide table row.
+const props=defineProps({rows:{type:Array,required:true},bucket:String,prices:{type:Object,default:()=>({})},compact:Boolean})
 const marked=o=>o.bucket==='positions'&&props.prices[o.marketName]?{...o,markPrice:props.prices[o.marketName]}:o
 const liveRows=computed(()=>props.rows.map(marked))
 const emit=defineEmits(['complete'])
@@ -43,7 +44,13 @@ function act(o){
 }
 </script>
 <template><div class="current-trades"><div ref="list" class="history-list">
-<table class="record-table">
+<ul v-if="compact" class="record-cards">
+<li v-for="o in liveRows" :key="o.id" class="record-card">
+<div class="record-card-head"><strong>{{ o.marketName }}</strong><span class="direction" :class="o.direction==='buy'?'positive':'negative'">{{ $t(o.kind==='spot'?(o.direction==='buy'?'trade.buy':'trade.sell'):(o.direction==='buy'?'trade.buyLong':'trade.sellShort')) }}</span><span v-if="o.kind==='futures'" class="history-tag">{{ o.leverage }}x</span><button class="record-action" :aria-label="$t(o.bucket==='positions'?'trade.closePosition':'trade.cancelOrder')+' '+o.marketName" @click="act(o)">{{ $t(o.bucket==='positions'?'trade.closePosition':'trade.cancelOrder') }}</button></div>
+<dl><div v-for="f in fields(o)" :key="f.label" :class="{wide:f.type==='date'}"><dt>{{ $t(f.label) }}</dt><dd :class="f.type==='pnl'?(f.value>0?'positive':f.value<0?'negative':''):''">{{ value(f) }}<small v-if="f.unit"> {{ f.unit }}</small></dd></div></dl>
+</li>
+</ul>
+<table v-else class="record-table">
 <thead><tr><th scope="col">{{ $t('trade.pair') }}</th><th v-for="c in columns" :key="c.label" scope="col" :class="{num:c.type!=='date'&&c.type!=='key'}">{{ $t(c.label) }}</th><th scope="col" class="record-action-cell">{{ $t('trade.action') }}</th></tr></thead>
 <tbody><tr v-for="o in liveRows" :key="o.id">
 <th scope="row" class="record-pair"><strong>{{ o.marketName }}</strong><span class="direction" :class="o.direction==='buy'?'positive':'negative'">{{ $t(o.kind==='spot'?(o.direction==='buy'?'trade.buy':'trade.sell'):(o.direction==='buy'?'trade.buyLong':'trade.sellShort')) }}</span><span v-if="o.kind==='futures'" class="history-tag">{{ o.leverage }}x</span></th>

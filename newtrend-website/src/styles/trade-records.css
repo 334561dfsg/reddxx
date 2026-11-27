@@ -27,3 +27,17 @@
 .history-pagination button:focus-visible,.record-action:focus-visible{outline:none;text-decoration:underline}
 @media(pointer:coarse){.record-action{min-height:36px}.history-pagination button{min-width:36px;height:36px}}
 @media(prefers-reduced-motion:reduce){.history-pagination button{transition:none}}
+/* Phone layout (user reference GMXX mobile, 2026-11-27): one card per record with the same fields in two columns;
+   dates span the row. The panel grows with the page instead of scrolling inside itself. */
+.record-cards{list-style:none;margin:0;padding:0}
+.record-card{padding:12px;border-bottom:1px solid var(--terminal-divider,#ffffff14)}
+.record-card-head{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.record-card-head strong{color:#fff;font-size:14px;line-height:20px;font-weight:600}
+.record-card-head .record-action{margin-left:auto}
+.record-card dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;margin:0;font-size:12px;line-height:16px}
+.record-card dl>div{display:grid;gap:2px;min-width:0}
+.record-card dl>div.wide{grid-column:1/-1}
+.record-card dt{color:#8c8f96}
+.record-card dd{margin:0;color:#d2d3d5;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.record-card dd small{font-size:11px;color:#8c8f96}
+.record-card dd.positive{color:#2bc287}.record-card dd.negative{color:#ff4466}

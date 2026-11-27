@@ -442,7 +442,11 @@
     "latestPrice": "Dernier prix",
     "metals": "Métaux précieux",
     "availablePairs": "Paires disponibles",
-    "energy": "Énergie"
+    "energy": "Énergie",
+    "product": "Produit",
+    "showChart": "Afficher le graphique",
+    "hideChart": "Masquer le graphique",
+    "usePrice": "Utiliser le prix {{price}}"
   },
   "stream": {
     "connecting": "Connexion aux cotations…",

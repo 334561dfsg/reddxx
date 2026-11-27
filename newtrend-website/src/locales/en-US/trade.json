@@ -442,7 +442,11 @@
     "latestPrice": "Latest price",
     "metals": "Precious metals",
     "availablePairs": "Available trading pairs",
-    "energy": "Energy"
+    "energy": "Energy",
+    "product": "Product",
+    "showChart": "Show chart",
+    "hideChart": "Hide chart",
+    "usePrice": "Use price {{price}}"
   },
   "stream": {
     "connecting": "Connecting to market data…",

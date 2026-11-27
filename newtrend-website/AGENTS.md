@@ -417,3 +417,7 @@ The mobile drawer (`components/overlay/MenuDrawer.vue`) is full screen and follo
 ## Mobile bottom tab bar (user reference, 2026-11-27)
 
 Below 900px a fixed bottom tab bar (`components/layout/MobileTabBar.vue`, GMXX layout in the NewQuantCapital style) links 首頁 / 交易 / 金融 / 量化 / 資產 (行情 was replaced by 量化, user decision). It shows only on top-level sections (home, trading, finance and AI Quant lists, assets overview — see `tabRoots` in `App.vue`); detail pages keep their own sticky actions. `#site-shell.has-tabbar` reserves `--nt-tabbar-h` plus the bottom safe area. Desktop is unchanged.
+
+## Mobile trading layout (user reference GMXX, 2026-11-27)
+
+At ≤760px the futures, delivery and spot pages follow the GMXX mobile trade layout in the NewQuantCapital style (`TradeWorkspace` adds `.compact` via `useMediaQuery`): a one-line header (pair picker, favourite, product switch, K-line toggle) with price and change; the chart and 24h stats are collapsed by default and the toggle state is kept in page state; the order form sits left beside a price/quantity book (no cumulative column) on the right; records render as cards below and the page scrolls instead of the panels. On this layout futures picks 买入开多/卖出开空 first and shows one action for that side; tapping a book price fills the futures/spot limit price (switching to limit). Desktop and tablet keep the grid layout, dual futures actions and table records. Draft values, safeguards and confirmations are unchanged.

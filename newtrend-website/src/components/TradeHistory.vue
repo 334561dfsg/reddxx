@@ -3,7 +3,8 @@ import {isoDateTime} from '../utils/format.js'
 import {computed,ref,watch} from 'vue'
 import {fmt} from '../data'
 import {historyFields} from '../utils/mockTradeHistory'
-const props=defineProps({rows:{type:Array,required:true},bucket:String,modelValue:{type:Number,default:1}})
+// compact: phone layout, one card per record with the same fields.
+const props=defineProps({rows:{type:Array,required:true},bucket:String,modelValue:{type:Number,default:1},compact:Boolean})
 const emit=defineEmits(['update:modelValue'])
 const page=computed({get:()=>props.modelValue,set:value=>emit('update:modelValue',value)}),scroller=ref(null),size=10
 const pages=computed(()=>Math.max(1,Math.ceil(props.rows.length/size)))
@@ -19,7 +20,13 @@ const cell=(o,label)=>historyFields(o).find(f=>f.label===label)
 function direction(o){return o.kind==='spot'?(o.direction==='buy'?'trade.buy':'trade.sell'):(o.direction==='buy'?'trade.buyLong':'trade.sellShort')}
 </script>
 <template><div class="trade-history"><div ref="scroller" class="history-list">
-<table class="record-table">
+<ul v-if="compact" class="record-cards">
+<li v-for="o in visible" :key="o.id||o.createdAt" class="record-card">
+<div class="record-card-head"><strong>{{ o.marketName }}</strong><span class="direction" :class="o.direction==='buy'?'positive':'negative'">{{ $t(o.bucket==='positionHistory'&&o.event?o.event:direction(o)) }}</span><span v-if="o.kind==='options'" class="history-tag">{{ o.duration ? $t('trade.durationSeconds',{value:o.duration}) : $t('trade.inProgress') }}</span><span v-else-if="o.kind==='futures'&&o.leverage" class="history-tag">{{ o.leverage }}x</span><span v-else-if="o.kind==='spot'" class="history-tag">{{ $t(o.recordStatus||'trade.orderPlaced') }}</span></div>
+<dl><div v-for="f in historyFields(o)" :key="f.label" :class="{wide:f.type==='date'}"><dt>{{ $t(f.label) }}</dt><dd :class="f.type==='pnl'&&f.value!=null?(f.value>0?'positive':f.value<0?'negative':''):''">{{ f.value==null?'—':f.type==='date'?date(f.value):f.type==='key'?$t(f.value):(f.type==='pnl'&&f.value>0?'+':'')+fmt(f.value) }}<small v-if="f.unit&&f.value!=null"> {{ f.unit }}</small></dd></div></dl>
+</li>
+</ul>
+<table v-else class="record-table">
 <thead><tr><th scope="col">{{ $t('trade.pair') }}</th><th v-for="c in columns" :key="c.label" scope="col" :class="{num:c.type!=='date'&&c.type!=='key'}">{{ $t(c.label) }}</th></tr></thead>
 <tbody><tr v-for="o in visible" :key="o.id||o.createdAt">
 <th scope="row" class="record-pair"><strong>{{ o.marketName }}</strong><span class="direction" :class="o.direction==='buy'?'positive':'negative'">{{ $t(o.bucket==='positionHistory'&&o.event?o.event:direction(o)) }}</span><span v-if="o.kind==='options'" class="history-tag">{{ o.duration ? $t('trade.durationSeconds',{value:o.duration}) : $t('trade.inProgress') }}</span><span v-else-if="o.kind==='futures'&&o.leverage" class="history-tag">{{ o.leverage }}x</span><span v-else-if="o.kind==='spot'" class="history-tag">{{ $t(o.recordStatus||'trade.orderPlaced') }}</span></th>

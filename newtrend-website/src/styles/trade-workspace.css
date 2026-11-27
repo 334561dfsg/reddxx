@@ -211,3 +211,50 @@
 .product-terminal .order-panel .trade-order-form .form-actions button.sell{background:var(--nt-red)}
 .product-terminal .order-panel .trade-order-form button:focus-visible{outline:none}
 @media(pointer:coarse){.product-terminal .order-panel .trade-order-form .direction-tabs button,.product-terminal .order-panel .trade-order-form .price-tabs button,.product-terminal .order-panel .trade-order-form .percentages button,.product-terminal .order-panel .trade-order-form .form-actions button{min-height:44px}}
+
+/* Phone layout (GMXX mobile trade pages, user reference 2026-11-27; NewQuantCapital visual language). The workspace
+   adds `.compact` from the same 760px query: header on one line with product switch and chart toggle, chart + 24h
+   stats collapsed by default, order form (left) beside a price/quantity book (right), records as cards below.
+   Panels grow with the page; nothing scrolls inside itself except the chart canvas. */
+@media(max-width:760px){
+ .product-terminal.compact .instrument-bar{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-height:0;padding:6px 8px 8px 12px}
+ .product-terminal.compact .instrument-identity{order:1;flex:0 1 auto;min-width:0;gap:4px}
+ .product-terminal.compact .instrument-identity .record-filter{font-size:16px;min-height:40px;min-width:0;padding-right:6px}
+ .product-terminal.compact .instrument-identity .coin{width:24px;height:24px}
+ .product-terminal.compact .instrument-tools{order:2;margin-left:auto;display:flex;align-items:center;gap:4px;flex:none}
+ .product-terminal.compact .instrument-tools .record-filter{min-height:36px;padding:0 10px;border-radius:999px;background:var(--terminal-input);font-size:13px;line-height:18px;color:#fff;gap:4px}
+ .product-terminal.compact .instrument-tools .filter-caption{display:none}
+ .product-terminal.compact .chart-toggle{display:grid;place-items:center;width:40px;height:40px;border-radius:var(--nt-radius-control);color:var(--terminal-muted)}
+ .product-terminal.compact .chart-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+ .product-terminal.compact .chart-toggle[aria-expanded=true]{color:var(--nt-accent);background:var(--terminal-input)}
+ .product-terminal.compact .instrument-price{order:3;width:100%;display:flex;align-items:baseline;gap:8px;font-size:22px;line-height:28px}
+ .product-terminal.compact .instrument-change{font-size:13px;line-height:18px;font-weight:500}
+ .product-terminal.compact .instrument-stats{order:4;width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px;padding-top:4px}
+ .product-terminal.compact .stream-status{order:5;margin-left:0}
+ .product-terminal.compact .workspace-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:none;grid-template-areas:"form book" "records records";gap:4px;align-items:stretch}
+ .product-terminal.compact.chart-open .workspace-grid{grid-template-areas:"chart chart" "form book" "records records"}
+ .product-terminal.compact .chart-panel{grid-area:chart;height:320px;order:0}
+ .product-terminal.compact .order-panel{grid-area:form;height:auto;max-height:none;min-height:0;overflow:visible;order:0}
+ .product-terminal.compact .orderbook{grid-area:book;height:auto;min-height:0;order:0}
+ .product-terminal.compact .records-panel{grid-area:records;height:auto;min-height:240px;overflow:visible;order:0}
+ .product-terminal.compact .order-panel .trade-order-form{overflow:visible;flex:none}
+ .product-terminal.compact .order-panel .trade-order-form .form-body{overflow:visible;padding:10px 4px 4px 10px;gap:10px}
+ .product-terminal.compact .order-panel .trade-order-form .form-actions{padding:4px 4px 12px 10px;background:transparent}
+ .product-terminal.compact .order-panel .trade-order-form .direction-tabs button{padding:8px 4px;font-size:13px}
+ .product-terminal.compact .order-panel .trade-order-form .price-tabs{gap:16px}
+ .product-terminal.compact .order-panel .trade-order-form .form-summary{gap:6px 8px}
+ .product-terminal.compact .order-panel .trade-order-form .percentages{gap:4px}
+ .product-terminal.compact .order-panel .trade-order-form .percentages button{padding:4px 0;font-size:11px}
+ .product-terminal.compact .book-controls{padding:8px 8px 0}
+ .product-terminal.compact .book-head,.product-terminal.compact .book-row{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+ .product-terminal.compact .book-head{padding:8px 10px 4px}
+ .product-terminal.compact .book-body{overflow:hidden;padding:0 10px 8px}
+ .product-terminal.compact .book-row{width:100%;padding:2px 0;font-size:11px;line-height:16px;font-family:inherit;color:inherit;text-align:right}
+ .product-terminal.compact button.book-row{cursor:pointer}
+ .product-terminal.compact button.book-row:hover>span:first-child,.product-terminal.compact button.book-row:focus-visible>span:first-child{text-decoration:underline}
+ .product-terminal.compact .book-price{font-size:16px;line-height:24px;padding:6px 0}
+ .product-terminal.compact .records-panel .history-list{overflow:visible}
+ .product-terminal.compact .record-tabs{padding:0 12px;gap:4px 16px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+ .product-terminal.compact .record-tabs button{flex:none;white-space:nowrap}
+}
+@media(max-width:760px) and (pointer:coarse){.product-terminal.compact .book-row{min-height:24px}}
