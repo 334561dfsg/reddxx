@@ -138,3 +138,25 @@
 #site-shell .profile-accounts dt{font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,var(--nt-bg))}
 #site-shell .profile-accounts dd{margin:2px 0 0;font-size:14px;line-height:20px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 @media(prefers-reduced-motion:reduce){#site-shell .header-dropdown{animation:none}}
+/* Phone header for visitors (user request, 2026-11-28): compact 登入 text link + 註冊 button instead of one oversized pill. */
+#site-shell .mobile-guest{align-items:center;gap:4px}
+#site-shell .mobile-guest a{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 12px;border-radius:var(--nt-radius-pill);font-size:14px;line-height:20px;font-weight:600;white-space:nowrap}
+#site-shell .mobile-guest .guest-login{color:color-mix(in srgb,#fff 86%,var(--nt-bg))}
+#site-shell .mobile-guest .guest-login:hover{color:#fff;background:#ffffff0f}
+#site-shell .mobile-guest .guest-register{padding:0 14px;background:var(--nt-accent);color:#081000}
+#site-shell .mobile-guest .guest-register:hover{background:#b8ff6e}
+#site-shell .mobile-guest a:focus-visible{outline:none;text-decoration:underline;text-underline-offset:3px}
+@media(forced-colors:active){#site-shell .mobile-guest .guest-register{border:1px solid ButtonText}}
+/* Home headline: Chinese breaks only at punctuation/spaces so words like 能源 stay whole; long runs still wrap. */
+#site-shell .hero-title:lang(zh){word-break:keep-all;overflow-wrap:anywhere}
+/* Login/register (user request, 2026-11-28): the form comes first in the DOM. Wide screens place the intro on the
+   left as before; single-column screens show the form first and the intro below a divider, more compact. */
+@media(min-width:901px){#main-content .auth-layout>.auth-intro{grid-column:1;grid-row:1}#main-content .auth-layout>.auth-form{grid-column:2;grid-row:1}}
+@media(max-width:900px){
+ #main-content .auth-layout{gap:40px;padding-top:24px;min-height:0}
+ #main-content .auth-form h2{font-size:24px;line-height:32px}
+ #main-content .auth-intro{padding-top:32px;border-top:1px solid #ffffff12}
+ #main-content .auth-intro h1{font-size:22px;line-height:32px}
+ #main-content .auth-intro .page-desc{margin-top:8px}
+ #main-content .auth-intro .auth-features{gap:20px 16px;margin:24px 0}
+}
