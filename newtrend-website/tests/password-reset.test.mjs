@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {DEMO_RESET_CODE, MAX_CODE_ATTEMPTS, RESEND_COOLDOWN, RESET_CODE_TTL, createPasswordResetApi, maskEmail} from '../src/api/passwordResetService.js'
+import {DEMO_RESET_CODE, MAX_CODE_ATTEMPTS, RESEND_COOLDOWN, RESET_CODE_TTL, createPasswordResetApi, decoyMaskedEmail, maskEmail} from '../src/api/passwordResetService.js'
 
 const setup = () => { let time = 1e12; const api = createPasswordResetApi({now: () => time}); return {api, advance: ms => { time += ms }} }
 const reset = (api, ticket, code = DEMO_RESET_CODE) => api.resetPassword({ticket, code, password: 'secret1', confirm: 'secret1'})
@@ -24,7 +24,8 @@ test('validation, missing bound email, unknown accounts and the resend cooldown'
   await assert.rejects(api.requestResetCode({method: 'username', identifier: 'nomail'}), {code: 'auth.reset.noBoundEmail'})
   await assert.rejects(api.requestResetCode({method: 'phone', dial: '+852', identifier: '61234567'}), {code: 'auth.reset.noBoundEmail'})
   const unknown = await api.requestResetCode({method: 'username', identifier: 'ghost'})
-  assert.equal(unknown.maskedEmail, null, 'unknown accounts get the generic answer')
+  assert.match(unknown.maskedEmail, /^[a-z]{2}\*\*\*@[a-z]+\.com$/, 'unknown accounts get a decoy masked address')
+  assert.equal(unknown.maskedEmail, decoyMaskedEmail('username:ghost'), 'the decoy is stable for the same input')
   await assert.rejects(reset(api, unknown.ticket), {code: 'auth.reset.invalidCode'}, 'no code works for an unknown account')
   await api.requestResetCode({method: 'username', identifier: 'alice'})
   advance(20000)

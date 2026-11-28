@@ -1,6 +1,6 @@
 // Password-reset mock (user decision, 2026-11-28): the account is found by email, phone (dial code + number) or
 // username, and the code always goes to the account's bound email, shown masked. An unknown account gets the same
-// "sent" answer without a masked address, so the page cannot be used to test which accounts exist; an account
+// "sent" answer with a decoy masked address, so the page cannot be used to test which accounts exist; an account
 // without a bound email is told to contact support. Nothing is emailed: the demo code is DEMO_RESET_CODE.
 // State is in memory only and resets on reload.
 import {ApiError, mockCall} from './transport.js'
@@ -28,6 +28,16 @@ export function maskEmail(email) {
   return `${local.slice(0, local.length > 2 ? 2 : 1)}***@${domain}`
 }
 
+// Unknown accounts get a stable, plausible masked address (same input → same answer), so the reply looks like a
+// real account's and the page cannot tell registered accounts apart.
+const DECOY_DOMAINS = ['gmail.com', 'outlook.com', 'yahoo.com', 'icloud.com', 'hotmail.com']
+const LETTERS = 'abcdefghijklmnopqrstuvwxyz'
+export function decoyMaskedEmail(seed) {
+  let hash = 2166136261
+  for (const char of seed) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619) >>> 0
+  return `${LETTERS[hash % 26]}${LETTERS[(hash >>> 5) % 26]}***@${DECOY_DOMAINS[(hash >>> 10) % DECOY_DOMAINS.length]}`
+}
+
 export function createPasswordResetApi({accounts = SEED_ACCOUNTS, now = () => clock.now()} = {}) {
   const store = accounts.map(account => ({...account, password: ''}))
   const tickets = new Map(), lastSent = new Map()
@@ -53,7 +63,7 @@ export function createPasswordResetApi({accounts = SEED_ACCOUNTS, now = () => cl
     throw new ApiError('auth.reset.unsupported')
   }
 
-  /** Sends (simulates) a code to the bound email. Returns {ticket, maskedEmail|null, resendIn} or a coded error. */
+  /** Sends (simulates) a code to the bound email. Returns {ticket, maskedEmail, resendIn} or a coded error. */
   const requestResetCode = request => mockCall(SERVICE, () => {
     const {key, account} = find(request || {})
     if (account && !account.email) throw new ApiError('auth.reset.noBoundEmail')
@@ -63,7 +73,7 @@ export function createPasswordResetApi({accounts = SEED_ACCOUNTS, now = () => cl
     for (const [id, ticket] of tickets) if (ticket.key === key) tickets.delete(id)
     const ticket = `RT${++sequence}`
     tickets.set(ticket, {key, accountId: account?.id || null, expiresAt: now() + RESET_CODE_TTL, attempts: 0})
-    return {ticket, maskedEmail: account ? maskEmail(account.email) : null, resendIn: RESEND_COOLDOWN / 1000}
+    return {ticket, maskedEmail: account ? maskEmail(account.email) : decoyMaskedEmail(key), resendIn: RESEND_COOLDOWN / 1000}
   })
 
   /** Checks the password pair, then the code; a wrong code counts against the ticket. */
