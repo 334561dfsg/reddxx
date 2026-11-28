@@ -257,6 +257,22 @@
  .product-terminal.with-pairs .records-panel{grid-column:1/-1;grid-row:3;contain:size}
 }
 @media(min-width:1200px) and (max-width:1599px){.product-terminal.with-pairs .instrument-stats{gap:16px}}
+/* Landscape tablet (1024–1199px, user request 2026-11-28 "横屏平板用三列"): the desktop arrangement without the pair
+   panel. Instrument bar full width (its pair button still opens the pair drawer), then chart | order book (230px) |
+   order form (≥300px), records full width below. Mirrors the ≥1200px rows: records get at least 260px (≈280px at
+   768px tall) and fill the viewport below the 64px site header; the chart row is viewport − 420px (320–560px).
+   Portrait tablets (768–1023px) keep the stacked grid. */
+@media(min-width:1024px) and (max-width:1199px){
+ .product-terminal:not(.compact){display:grid;grid-template-columns:minmax(0,1fr) 230px minmax(300px,30%);grid-template-rows:auto clamp(320px,calc(100vh - 420px),560px) minmax(260px,1fr);grid-template-rows:auto clamp(320px,calc(100dvh - 420px),560px) minmax(260px,1fr);min-height:calc(100vh - 64px);min-height:calc(100dvh - 64px);gap:4px;align-content:stretch}
+ .product-terminal:not(.compact) .workspace-grid{display:contents}
+ .product-terminal:not(.compact) .instrument-bar{grid-column:1/-1;grid-row:1;margin-bottom:0}
+ .product-terminal:not(.compact) .chart-panel{grid-column:1;grid-row:2}
+ /* contain:size: panels fill their row but never size it (same as the desktop grid). */
+ .product-terminal:not(.compact) .orderbook{grid-column:2;grid-row:2;contain:size}
+ .product-terminal:not(.compact) .order-panel{grid-column:3;grid-row:2;contain:size}
+ .product-terminal:not(.compact) .records-panel{grid-column:1/-1;grid-row:3;contain:size}
+}
+
 /* Desktop/tablet book cells stay on one line (user report 2026-11-28): numbers never break mid-value; the full value
    is still in the DOM if a very long one is clipped. */
 @media(min-width:768px){.product-terminal:not(.compact) .book-row>span{overflow-wrap:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.product-terminal:not(.compact) .book-head,.product-terminal:not(.compact) .book-row{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr)}}
