@@ -311,5 +311,12 @@
       "completed": "완료"
     },
     "accounts": "계정"
+  },
+  "demoClaim": {
+    "action": "자산 받기",
+    "success": "모의 자산 {{amount}} {{symbol}}을(를) 받았습니다",
+    "recordLabel": "모의 자산 지급",
+    "demoOnly": "모의 자산은 모의 계정에서만 받을 수 있습니다",
+    "capReached": "모의 {{symbol}} 잔액이 한도 {{cap}}에 도달했습니다"
   }
 }

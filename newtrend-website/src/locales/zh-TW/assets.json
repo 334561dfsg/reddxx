@@ -311,5 +311,12 @@
       "completed": "已完成"
     },
     "accounts": "帳戶"
+  },
+  "demoClaim": {
+    "action": "獲得資產",
+    "success": "已獲得 {{amount}} {{symbol}} 模擬資產",
+    "recordLabel": "模擬資產發放",
+    "demoOnly": "僅模擬帳戶可獲得模擬資產",
+    "capReached": "模擬帳戶 {{symbol}} 餘額已達上限 {{cap}}，無法再獲得"
   }
 }

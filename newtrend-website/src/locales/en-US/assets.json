@@ -311,5 +311,12 @@
       "completed": "Completed"
     },
     "accounts": "Accounts"
+  },
+  "demoClaim": {
+    "action": "Get funds",
+    "success": "Received {{amount}} {{symbol}} in demo funds",
+    "recordLabel": "Demo funds received",
+    "demoOnly": "Only the demo account can get demo funds",
+    "capReached": "Your demo {{symbol}} balance has reached the {{cap}} limit"
   }
 }

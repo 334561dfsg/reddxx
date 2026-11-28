@@ -13,6 +13,8 @@ const SERVICE = 'wallet'
 const DEMO = MODE_DEMO
 const insufficient = mode => mode === DEMO ? 'assets.withdraw.error.insufficientBalance' : 'assets.ui.insufficientBalanceSwitchToTheDemoAccount'
 const positive = value => Number.isFinite(Number(value)) && Number(value) > 0
+// 獲得資產 (user request, 2026-11-28): the demo account has no deposit or withdrawal; it claims simulated USDT instead.
+export const DEMO_CLAIM = Object.freeze({symbol: 'USDT', amount: 10000, cap: 1000000})
 
 export function createWalletApi({accountValues, priceOf, fundPassword = null}) {
   /** GET /assets/overview?mode= — {accounts: {accountKey: USDT value}, total, balances, prices: {symbol: USDT price}}. */
@@ -89,6 +91,16 @@ export function createWalletApi({accountValues, priceOf, fundPassword = null}) {
     return {voucherId: 'DV' + clock.now().toString(36).toUpperCase(), record: snapshot(record)}
   })
 
+  /** POST /assets/demo-claim {mode} — demo only: credits DEMO_CLAIM.amount USDT, refused once the balance reaches the cap. */
+  const claimDemoFunds = ({mode}) => mockCall(SERVICE, () => {
+    if (mode !== DEMO) throw new ApiError('assets.demoClaim.demoOnly')
+    const {symbol, amount, cap} = DEMO_CLAIM
+    if ((balancesOf(mode)[symbol] || 0) + amount > cap) throw new ApiError('assets.demoClaim.capReached', {cap: cap.toLocaleString('en-US'), symbol})
+    credit(mode, symbol, amount)
+    const record = addWalletRecord(mode, 'deposit', {label: 'assets.demoClaim.recordLabel', amount, symbol})
+    return {amount, symbol, record: snapshot(record)}
+  })
+
   /**
    * POST /assets/spend {mode, kind: 'donate', symbol, amount, min, max} — debits the ledger once;
    * Rejects with the amount-form locale keys (params for the minimum). (閃兌 is flashExchange below.)
@@ -138,5 +150,5 @@ export function createWalletApi({accountValues, priceOf, fundPassword = null}) {
     return {from, to, amount: value, receive, rate}
   })
 
-  return {getAssetsOverview, listWalletRecords, transferFunds, checkWithdrawal, requestWithdrawal, submitDepositVoucher, spendFunds, listFlashAssets, quoteFlashExchange, flashExchange}
+  return {getAssetsOverview, listWalletRecords, transferFunds, checkWithdrawal, requestWithdrawal, submitDepositVoucher, claimDemoFunds, spendFunds, listFlashAssets, quoteFlashExchange, flashExchange}
 }

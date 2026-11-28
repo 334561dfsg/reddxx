@@ -8,8 +8,11 @@ import {session,openModal} from '../session'
 import Skeleton from '../components/ui/Skeleton.vue'
 import RequestState from '../components/ui/RequestState.vue'
 import AssetRecords from '../components/assets/AssetRecords.vue'
-import {getAssetsOverview} from '../api/wallet.js'
-import {useRequest} from '../composables/useRequest.js'
+import {getAssetsOverview,claimDemoFunds,walletErrorKey} from '../api/wallet.js'
+import {useRequest,useMutation,invalidate} from '../composables/useRequest.js'
+import {isDemo} from '../utils/accountMode.js'
+import {message} from 'ant-design-vue'
+import {t} from '../i18n'
 import Coin from '../components/Coin.vue'
 import Icon from '../components/Icon.vue'
 const route=useRoute(),router=useRouter(),account=ref("assets.tabs.funding")
@@ -30,6 +33,12 @@ const total=computed(()=>overview.data.value?.total||0)
 const priceOf=symbol=>overview.data.value?.prices[symbol]||0
 const coinAmount=symbol=>account.value==='assets.tabs.funding'?(wallet.value[symbol]||0):symbol==='USDT'?accountValues.value[account.value]:0
 const {hidden,toggle,masked}=useAmountMask('••••')
+// Demo account: no deposit or withdrawal; 獲得資產 credits simulated USDT (one claim at a time, toast per attempt).
+const claim=useMutation(claimDemoFunds)
+async function claimFunds(){
+ try{const result=await claim.run({mode:session.mode});if(!result)return;invalidate('wallet');message.success(t('assets.demoClaim.success',{amount:money(result.amount),symbol:result.symbol}))}
+ catch(cause){message.error(t(walletErrorKey(cause),cause?.params||{}))}
+}
 </script>
 
 <template>
@@ -46,8 +55,11 @@ const {hidden,toggle,masked}=useAmountMask('••••')
    <div class="asset-total"><template v-if="ready">{{ masked(money(total),'••••••') }}</template><Skeleton v-else inline width="220px"/><small> USDT</small></div>
    <div class="asset-today"><span class="muted">{{ $t("assets.todayProfit") }}</span><span class="positive">0.00 (0.00%)</span></div>
    <div class="asset-actions">
-    <RouterLink :to="path('/deposit')"><Icon name="wallet" green/>{{ $t("assets.deposit") }}</RouterLink>
-    <RouterLink :to="path('/withdraw')"><Icon name="arrow-right"/>{{ $t("assets.typeWithdraw") }}</RouterLink>
+    <template v-if="!isDemo(session.mode)">
+     <RouterLink :to="path('/deposit')"><Icon name="wallet" green/>{{ $t("assets.deposit") }}</RouterLink>
+     <RouterLink :to="path('/withdraw')"><Icon name="arrow-right"/>{{ $t("assets.typeWithdraw") }}</RouterLink>
+    </template>
+    <button v-else type="button" :disabled="claim.pending.value" :aria-busy="claim.pending.value" @click="claimFunds"><Icon name="wallet" green/>{{ $t("assets.demoClaim.action") }}</button>
     <button type="button" aria-haspopup="dialog" @click="openModal('flash-exchange','assets.convert.title')"><Icon name="coins"/>{{ $t("assets.convert.title") }}</button>
     <button type="button" aria-haspopup="dialog" @click="openTransfer"><Icon name="trending-up-down"/>{{ $t("assets.transfer") }}</button>
     <RouterLink :to="path('/assets/records')"><Icon name="layers"/>{{ $t("assets.history") }}</RouterLink>

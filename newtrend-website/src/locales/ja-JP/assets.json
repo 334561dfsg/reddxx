@@ -311,5 +311,12 @@
       "completed": "完了"
     },
     "accounts": "アカウント"
+  },
+  "demoClaim": {
+    "action": "資産を受け取る",
+    "success": "デモ資産 {{amount}} {{symbol}} を受け取りました",
+    "recordLabel": "デモ資産の付与",
+    "demoOnly": "デモ資産はデモアカウントでのみ受け取れます",
+    "capReached": "デモの {{symbol}} 残高が上限 {{cap}} に達しています"
   }
 }

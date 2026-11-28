@@ -311,5 +311,12 @@
       "completed": "Terminé"
     },
     "accounts": "Comptes"
+  },
+  "demoClaim": {
+    "action": "Obtenir des fonds",
+    "success": "{{amount}} {{symbol}} de fonds démo reçus",
+    "recordLabel": "Fonds démo reçus",
+    "demoOnly": "Seul le compte démo peut obtenir des fonds démo",
+    "capReached": "Votre solde démo en {{symbol}} a atteint la limite de {{cap}}"
   }
 }

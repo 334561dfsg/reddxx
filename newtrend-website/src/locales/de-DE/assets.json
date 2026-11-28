@@ -311,5 +311,12 @@
       "completed": "Abgeschlossen"
     },
     "accounts": "Konten"
+  },
+  "demoClaim": {
+    "action": "Guthaben erhalten",
+    "success": "{{amount}} {{symbol}} Demo-Guthaben erhalten",
+    "recordLabel": "Demo-Guthaben erhalten",
+    "demoOnly": "Demo-Guthaben gibt es nur im Demokonto",
+    "capReached": "Ihr Demo-{{symbol}}-Guthaben hat das Limit von {{cap}} erreicht"
   }
 }
