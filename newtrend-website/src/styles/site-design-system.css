@@ -160,3 +160,9 @@
  #main-content .auth-intro .page-desc{margin-top:8px}
  #main-content .auth-intro .auth-features{gap:20px 16px;margin:24px 0}
 }
+/* Phone login: country dial-code picker beside the number (user request, 2026-11-28). */
+#main-content .auth-form .phone-field{display:grid;gap:8px;font-size:var(--nt-text-body);line-height:20px}
+#main-content .auth-form .phone-row{display:flex;gap:8px;position:relative}
+#main-content .auth-form .phone-row>.dial-picker{position:static}
+#main-content .auth-form .phone-row .dial-panel{width:100%;max-width:360px}
+#main-content .auth-form .phone-row>input{flex:1;min-width:0}
