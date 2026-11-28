@@ -1,5 +1,5 @@
 <script setup>
-import {computed, nextTick, onBeforeUnmount, ref} from 'vue'
+import {computed, nextTick, onBeforeUnmount, ref, watch} from 'vue'
 import {useRouter} from 'vue-router'
 import {message} from 'ant-design-vue'
 import {t} from '../../i18n'
@@ -69,15 +69,20 @@ function changeAccount() {
   ticket.value = ''
   maskedEmail.value = null
   code.value = password.value = confirm.value = ''
+  clearInterval(timer)
+  countdown.value = 0
 }
+// Email: the code goes to the address just typed, so there is no 已發送至 / 更換帳戶 notice (user decision,
+// 2026-11-28); the field stays editable and changing it after sending starts over.
+watch(identifier, () => { if (ticket.value && method.value === 'email') changeAccount() })
 onBeforeUnmount(() => clearInterval(timer))
 </script>
 <template><form class="form-stack reset-form" novalidate @submit.prevent="ticket ? submit() : send()">
  <div v-if="method === 'phone'" class="phone-field"><label for="reset-phone">{{ $t(tab) }}</label><div class="phone-row"><DialCodePicker v-model="dialIso" :label="$t('auth.countryCode')" :disabled="!!ticket"/><input id="reset-phone" v-model="identifier" :placeholder="prompt" inputmode="tel" autocomplete="tel-national" :disabled="!!ticket"/></div></div>
- <label v-else>{{ $t(tab) }}<input v-model="identifier" :placeholder="prompt" :type="method === 'email' ? 'email' : 'text'" :autocomplete="method === 'email' ? 'email' : 'username'" :disabled="!!ticket"/></label>
+ <label v-else>{{ $t(tab) }}<input v-model="identifier" :placeholder="prompt" :type="method === 'email' ? 'email' : 'text'" :autocomplete="method === 'email' ? 'email' : 'username'" :disabled="!!ticket && method !== 'email'"/></label>
  <p v-if="!ticket" class="muted reset-hint">{{ $t('auth.reset.codeGoesToEmail') }}</p>
  <template v-else>
-  <p class="reset-sent"><span>{{ maskedEmail ? $t('auth.reset.sentTo', {email: maskedEmail}) : $t('auth.reset.sentIfExists') }}</span><button type="button" class="green-link" @click="changeAccount">{{ $t('auth.reset.changeAccount') }}</button></p>
+  <p v-if="method !== 'email'" class="reset-sent"><span>{{ maskedEmail ? $t('auth.reset.sentTo', {email: maskedEmail}) : $t('auth.reset.sentIfExists') }}</span><button type="button" class="green-link" @click="changeAccount">{{ $t('auth.reset.changeAccount') }}</button></p>
   <label>{{ $t('auth.reset.code') }}<div class="code-field"><input ref="codeInput" v-model="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" :placeholder="$t('auth.reset.codePlaceholder')"/><button type="button" :disabled="countdown > 0 || sending" @click="send">{{ countdown > 0 ? $t('auth.reset.resendIn', {count: countdown}) : $t('auth.reset.resend') }}</button></div></label>
   <label>{{ $t('auth.reset.newPassword') }}<div class="password-field"><input v-model="password" :type="show ? 'text' : 'password'" :placeholder="$t('auth.reset.newPasswordPlaceholder')" autocomplete="new-password"/><button type="button" :aria-label="$t(show ? 'auth.ui.hidePassword' : 'auth.ui.showPassword')" @click="show = !show">{{ $t(show ? 'assets.hide' : 'assets.show') }}</button></div></label>
   <label>{{ $t('auth.reset.confirmPassword') }}<input v-model="confirm" :type="show ? 'text' : 'password'" :placeholder="$t('auth.reset.confirmPlaceholder')" autocomplete="new-password"/></label>
