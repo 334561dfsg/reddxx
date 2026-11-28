@@ -492,6 +492,17 @@ export const consoleRoutes = [
   { path: 'news/categories/new', name: 'news-category-create', component: () => import('../../pages/admin/news/NewsCategoryEditorPage.vue'), meta: { title: '内容管理 / 新增分类' } },
   { path: 'news/categories/:id/edit', name: 'news-category-edit', component: () => import('../../pages/admin/news/NewsCategoryEditorPage.vue'), meta: { title: '内容管理 / 编辑分类' } },
   { path: 'news/:id/edit', name: 'news-article-edit', component: () => import('../../pages/admin/news/NewsArticleEditorPage.vue'), meta: { title: '内容管理 / 编辑文章' } },
+  { path: 'charity', redirect: '/admin/charity/projects' },
+  { path: 'charity/projects', name: 'charity-projects', component: () => import('../../pages/admin/charity/CharityProjectsPage.vue'), meta: { title: '公益 / 公益项目' } },
+  { path: 'charity/projects/new', name: 'charity-project-create', component: () => import('../../pages/admin/charity/CharityProjectEditorPage.vue'), meta: { title: '公益 / 新增项目' } },
+  { path: 'charity/projects/:id/edit', name: 'charity-project-edit', component: () => import('../../pages/admin/charity/CharityProjectEditorPage.vue'), meta: { title: '公益 / 编辑项目' } },
+  { path: 'charity/stats', name: 'charity-stats', component: () => import('../../pages/admin/charity/CharityStatsPage.vue'), meta: { title: '公益 / 频道统计' } },
+  ...['donations', 'logs'].map((section) => ({
+    path: `charity/${section}`,
+    name: `charity-${section}`,
+    component: () => import('../../pages/admin/charity/CharityRecordsPage.vue'),
+    meta: { title: `公益 / ${{ donations: '捐赠记录', logs: '操作日志' }[section]}`, charitySection: section }
+  })),
   { path: 'c2c', redirect: '/admin/c2c/orders' },
   { path: 'c2c/quotes', name: 'c2c-quotes', component: () => import('../../pages/admin/c2c/C2CQuotesPage.vue'), meta: { title: 'C2C 交易 / 报价管理' } },
   { path: 'c2c/quotes/new', name: 'c2c-quote-create', component: () => import('../../pages/admin/c2c/C2CQuoteEditorPage.vue'), meta: { title: 'C2C 交易 / 新增报价' } },

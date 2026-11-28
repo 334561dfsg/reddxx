@@ -186,6 +186,16 @@ export const navTree = [
   },
 
   {
+    title: '公益',
+    icon: 'heart',
+    children: [
+      { title: '公益项目', path: '/admin/charity/projects' },
+      { title: '捐赠记录', path: '/admin/charity/donations' },
+      { title: '频道统计', path: '/admin/charity/stats' },
+      { title: '操作日志', path: '/admin/charity/logs' },
+    ]
+  },
+  {
     title: '内容管理',
     icon: 'contract',
     children: [
