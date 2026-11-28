@@ -1,11 +1,10 @@
 <script setup>
-import GuestPrompt from '../components/ui/GuestPrompt.vue'
 import QuantAmbient from '../components/quant/QuantAmbient.vue'
 import StrategyStatsPage from '../components/strategy/StrategyStatsPage.vue'
 import {computed} from 'vue'
 import {useRoute} from 'vue-router'
 import {path} from '../data'
-import {openModal,requireLogin,session} from '../session'
+import {openModal,session} from '../session'
 import {strategyFilters as filters} from '../server/strategyPortfolio'
 import {getMyStrategies,listStrategyTemplates} from '../api/strategy.js'
 import {useRequest} from '../composables/useRequest.js'
@@ -48,8 +47,6 @@ const sections=computed(()=>[
  {to:path('/ai-quant/strategy/mine'),label:t('aiQuant.nav.myStrategies'),icon:'chart-candlestick',active:mine.value},
 ])
 function subscribe(product){
- // Signed out: the login dialog opens and the subscription continues after it (user decision 2026-11-29).
- if(!requireLogin(()=>subscribe(product)))return
  openModal('strategy-subscribe',{key:'aiQuant.create.title',params:{name:product.name}},product)
 }
 function detail(product){openModal('strategy-detail','aiQuant.detail.title',product)}
@@ -66,7 +63,6 @@ function detail(product){openModal('strategy-detail','aiQuant.detail.title',prod
  <section id="templates" class="strategy-catalog-section"><div class="strategy-container"><h2>{{ $t('aiQuant.templates.title') }}</h2><p class="strategy-section-description">{{ $t('aiQuant.templates.subtitle') }}</p><div class="strategy-filters"><div class="strategy-filter-group"><span>{{ $t('aiQuant.templates.filterByStyle') }}</span><button v-for="value in ['', 'conservative','balanced','aggressive']" :key="value" :aria-pressed="filters.style===(value?'aiQuant.style.'+value:'')" @click="filters.style=value?'aiQuant.style.'+value:''">{{ $t(value?'aiQuant.style.'+value:'aiQuant.templates.filterAll') }}</button></div><div class="strategy-filter-group"><span>{{ $t('aiQuant.templates.filterByMarket') }}</span><button v-for="value in ['', 'crypto','stock','forex','indices']" :key="value" :aria-pressed="filters.market===(value?'aiQuant.market.'+value:'')" @click="filters.market=value?'aiQuant.market.'+value:''">{{ $t(value?'aiQuant.market.'+value:'aiQuant.templates.filterAll') }}</button></div><div class="strategy-sort"><span>{{ $t('aiQuant.templates.sortBy.label') }}</span><RecordFilter id="strategy-sort" v-model="filters.sort" variant="field" :label="$t('aiQuant.templates.sortBy.label')" :options="sortOptions"/></div></div><div v-if="catalog.status.value!=='error'" class="strategy-grid"><template v-if="!catalogReady"><div v-for="n in 9" :key="n" class="sc-card sc-catalog sc-skeleton-catalog" aria-hidden="true"><Skeleton width="60%" height="20px"/><div class="sc-skeleton-row"><Skeleton width="64px" height="22px"/><Skeleton width="64px" height="22px"/><Skeleton width="56px" height="22px"/></div><div class="sc-skeleton-row"><Skeleton width="72px" height="40px"/><Skeleton width="72px" height="40px"/></div><Skeleton width="85%"/><Skeleton height="48px"/><Skeleton height="40px"/><Skeleton height="32px"/></div></template><StrategyCard v-else v-for="product in visible" :key="product.id" :product="product" @detail="detail" @subscribe="subscribe"/><div v-if="visible.length||!catalogReady" class="strategy-guide"><span class="strategy-guide-icon" aria-hidden="true"><Icon name="shield"/></span><div><h3>{{ $t('aiQuant.templates.guideCard.title') }}</h3><p>{{ $t('aiQuant.templates.guideCard.description') }}</p></div><RouterLink class="strategy-outline" :to="path('/ai-quant/quant-fund')">{{ $t('aiQuant.templates.guideCard.cta') }}<Icon name="arrow-right"/></RouterLink></div></div><p v-if="catalogReady&&!visible.length" class="strategy-empty">{{ $t('aiQuant.templates.empty') }}</p></div></section>
  <aside class="strategy-container strategy-risk"><Icon name="shield"/><div><strong>{{ $t('aiQuant.risk.title') }}</strong><p>{{ $t('aiQuant.risk.body') }}</p></div></aside>
  </template>
- <GuestPrompt v-else-if="!session.loggedIn" page/>
  <div v-else class="strategy-container strategy-mine"><MyStrategies :account="account" :status="mineRequest.status.value" :error="mineRequest.error.value" @retry="mineRequest.refresh"/></div>
 </template>
 </div>

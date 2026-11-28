@@ -8,14 +8,13 @@ import {t} from '../../i18n'
 import {useRoute} from 'vue-router'
 import {useLendingFeed,lendingCommand} from '../../platform/lendingClient.js'
 import {eligibilityFailures} from '../../platform/lendingRules.js'
-import {requireLogin,session} from '../../session'
+import {session} from '../../session'
 import {path} from '../../data'
 import Coin from '../Coin.vue'
 import LendingBorrowForm from './LendingBorrowForm.vue'
 import '../../styles/earn-fidelity.css'
 import LendingPortfolio from './LendingPortfolio.vue'
 import LendingCatalog from './LendingCatalog.vue'
-import GuestPrompt from '../ui/GuestPrompt.vue'
 import '../../styles/lending-fidelity.css'
 const route=useRoute(),{state,error,busy,refresh}=useLendingFeed(),uid='USR-DEMO'
 const productId=ref(''),amount=ref(''),days=ref(30),collateral=ref('USDT'),failure=ref('')
@@ -27,8 +26,6 @@ const selectedTerm=computed(()=>product.value?.loanTerms.find(t=>t.days===Number
 const estimated=computed(()=>Number(amount.value||0)*(selectedTerm.value?.dailyRate||0)/100*Number(days.value))
 async function submitApplication(){
  if(busy.value)return
- // Signed out, 提交申請 opens the login dialog and the application continues after it (user decision 2026-11-29).
- if(!requireLogin(submitApplication))return
  failure.value=''
  const p=product.value,n=Number(amount.value)
  const code=p?.status!=='active'?'product':eligibility.value[0]||(!Number.isFinite(n)||n<p.minLoanAmount||n>p.maxLoanAmount?'amount':!selectedTerm.value?'term':p.collateralEnabled&&!p.collateralCurrencies.includes(collateral.value)?'collateral':p.collateralEnabled&&required.value>Number(wallet.value[collateral.value]||0)?'balance':null)
@@ -53,9 +50,7 @@ watch(()=>route.params.id,()=>{failure.value=''})
   <template v-if="borrowing"><BackLink :to="path('/earn/loan')" :title="$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})" class="loan-borrow-back">{{$t('margin.borrow.back')}}</BackLink><h1 v-if="!product" class="loan-borrow-title"><Coin v-if="product" :symbol="product.loanCurrency"/>{{$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})}}</h1></template>
   <LendingCatalog v-if="!mine&&!borrowing" :products="products" @borrow="choose"/>
   <FeedbackToast v-if="error" type="error" :source="() => (error) ? (([String(($t('lending.errors.unavailable')) ?? ''),&quot; &quot;,''].join(''))) : ''"><button class="green-link" @click="refresh">{{$t('lending.refresh')}}</button></FeedbackToast>
-  <!-- Signed out: the catalogue and borrow form stay usable (submit asks to log in); 我的借貸 shows the guest prompt. -->
-  <GuestPrompt v-if="!session.loggedIn&&mine" class="loan-guest"/>
-  <template v-else>
+  <template v-if="session.loggedIn">
    <template v-if="!mine">
     <p v-if="!products.length&&!error">{{$t('margin.market.empty')}}</p>
     <p v-if="borrowing&&!product&&!error">{{$t('margin.borrow.notAvailable')}}</p>

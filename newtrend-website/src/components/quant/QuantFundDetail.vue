@@ -5,7 +5,7 @@ import Skeleton from '../ui/Skeleton.vue'
 import {computed,shallowRef,watch} from 'vue'
 import {useRouter} from 'vue-router'
 import {fmt,path} from '../../data'
-import {openModal,requireLogin} from '../../session'
+import {openModal} from '../../session'
 import {availableQuota,fundProgress,fundEstimate,isAmountDraft} from '../../utils/quantFund'
 import {getQuantFund,listQuantFunds} from '../../api/quantFund.js'
 import {useRequest} from '../../composables/useRequest.js'
@@ -43,7 +43,6 @@ function onCalcInput(event){if(isAmountDraft(event.target.value))calcAmount.valu
 function openProduct(p){router.push(path(`/ai-quant/quant-fund/products/${p.id}`))}
 function subscribe(){
  if(soldOut.value)return
- if(!requireLogin(subscribe))return
  openModal('quant-fund-subscribe',{key:'aiQuant.quantFund.subscribe.title',params:{name:product.value.name}},product.value)
 }
 </script>

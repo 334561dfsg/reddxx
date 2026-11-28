@@ -6,7 +6,7 @@ const COIN_GLOW={USDT:'#26a17b',USDC:'#2775ca',BTC:'#f7931a',ETH:'#627eea',SOL:'
 const coinGlow=symbol=>(COIN_GLOW[symbol]||'#a5ff4a')+'55'
 import EarnConditions from './EarnConditions.vue'
 import {path,fmt} from '../../data'
-import {openModal,requireLogin} from '../../session'
+import {openModal} from '../../session'
 import {quotaPercent} from '../../utils/earnProducts'
 import Coin from '../Coin.vue'
 import Icon from '../Icon.vue'
@@ -19,8 +19,7 @@ import {getEarnProduct} from '../../api/earn.js'
 import {useRequest} from '../../composables/useRequest.js'
 const props=defineProps({productId:{type:String,required:true}})
 const {data:product,error,status,refresh}=useRequest(()=>getEarnProduct(props.productId),{tags:['earn']})
-// 申購 needs a signed-in account (user decision 2026-11-29): signed out, the login dialog opens and 申購 continues after it.
-function subscribe(){if(!requireLogin(subscribe))return;openModal('earn-subscribe','earn.subscribe.title',product.value)}
+function subscribe(){openModal('earn-subscribe','earn.subscribe.title',product.value)}
 const notFound=computed(()=>status.value==='error'&&error.value?.code==='notFound')
 </script>
 <template><NotFound v-if="notFound"/><article v-else class="earn-detail">

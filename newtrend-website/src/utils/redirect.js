@@ -7,3 +7,6 @@ export function safeRedirect(value) {
   if (typeof target !== 'string' || !target.startsWith('/') || target.startsWith('//') || target.includes('\\') || CONTROL.test(target)) return null
   return target
 }
+
+/** Login page that returns to `target` (a router path) after login or registration. */
+export const loginPath = target => ({path: '/login', query: {redirect: target}})

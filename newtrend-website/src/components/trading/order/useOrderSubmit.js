@@ -3,7 +3,7 @@
 // action while the request runs so a double click cannot place two orders.
 // The server builds and prices the order (review 2026-11-27); the form only sends the parameters.
 import {computed,reactive,ref,watch} from 'vue'
-import {session,openModal,requireLogin} from '../../../session'
+import {session,openModal} from '../../../session'
 import {isDemo} from '../../../utils/accountMode.js'
 import {getTradeBalances,placeTradeOrder,tradeErrorKey} from '../../../api/trade.js'
 import {invalidate,useRequest} from '../../../composables/useRequest.js'
@@ -83,20 +83,8 @@ export function useOrderSubmit({mode,pair,balances,focusAmount}){
   else notice.value=t('trade.orderSuccess')
  }
 
- // After logging in the account's balances load first; the order is retried once they are ready (or given up after
- // 10s, when the panel shows its usual state and the user can click again).
- function afterLogin(side){
-  let done=false
-  const finish=()=>{if(done)return;done=true;stop();clearTimeout(timer)}
-  const stop=watch(()=>balances.ready,ready=>{if(ready){finish();submit(side)}},{flush:'post'})
-  const timer=setTimeout(finish,10000)
-  if(balances.ready){finish();submit(side)}
- }
-
  function submit(side){
   if(busy.value)return
-  // Signed out: the embedded login dialog opens; after login the same order is checked and placed (user decision 2026-11-29).
-  if(!requireLogin(()=>afterLogin(side)))return
   const kind=mode(),key=kind==='spot'?side:kind
   clearError(key);clearNotice()
   const order=check(kind,side)

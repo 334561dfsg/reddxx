@@ -32,7 +32,6 @@ import FlashExchange from './overlay/FlashExchange.vue'
 import FundPasswordPrompt from './overlay/FundPasswordPrompt.vue'
 import Spinner from './ui/Spinner.vue'
 import WalletConnect from './overlay/WalletConnect.vue'
-import LoginDialog from './overlay/LoginDialog.vue'
 import {overlayConfig} from './overlay/overlayRegistry.js'
 // State reported by the open flow's body component ({dirty, valid, done, confirmLabel}); drives the unsaved-work guard and footer.
 const flow=shallowRef({})
@@ -57,10 +56,6 @@ function pickMarket(id){const onSelect=current.value?.data.onSelect;close(()=>on
 const formType=computed(()=>Boolean(config.value.primary?.amountForm))
 watch(modal,async(value)=>{if(!value)return;current.value=value;flow.value={};error.value='';done.value=false;closing.value=false;message.value=value.data.value||'';trigger=document.activeElement;returnFocus=value.data.returnFocus;previousOverflow=document.body.style.overflow;await nextTick();dialog.value.showModal();document.body.style.overflow='hidden';await nextTick();dialog.value.querySelector(overlayConfig(value.type).initialFocus||((value.data.modeSwitch||value.data.focusCancel)?'[data-cancel]':'[data-initial-focus]'))?.focus()})
 function openStrategySubscription(){const product=current.value.data;const from=route.fullPath;close(()=>{if(route.fullPath===from)openModal('strategy-subscribe',{key:'aiQuant.create.title',params:{name:product.name}},product)})}
-// Embedded login: after signing in (password here, or the wallet dialog it hands over to) the dialog closes and the
-// gated action (`then`) runs again; it only runs while still signed in and on the same page.
-function continueAfterLogin(afterClose){const then=current.value?.data.then,from=route.fullPath;close(()=>{afterClose?.();if(session.loggedIn&&route.fullPath===from)then?.()})}
-const walletFromLogin=()=>{const then=current.value?.data.then;close(()=>openModal('wallet','common.connectWallet',{then}))}
 function cleanup(){document.body.style.overflow=previousOverflow??'';if(trigger?.isConnected)trigger.focus();if(document.activeElement!==trigger)returnFocus?.();clearTimeout(closeTimer)}
 function close(afterClose){if(closing.value||!current.value)return;closing.value=true;closeTimer=setTimeout(()=>{dialog.value?.close();current.value=null;closeModal();closing.value=false;cleanup();if(typeof afterClose==='function')afterClose()},matchMedia('(prefers-reduced-motion: reduce)').matches?50:150)}
 function cancel(e){e.preventDefault();if(busy.value)return;if(((flow.value.dirty&&!flow.value.done)||(isSupport.value&&message.value.trim()))&&!done.value){
@@ -119,8 +114,7 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 <SupportChat @draft-change="message=$event"/>
 
 </template>
-<WalletConnect v-else-if="current.type==='wallet'" @close="continueAfterLogin"/>
-<LoginDialog v-else-if="current.type==='login'" @state="onFlowState" @success="continueAfterLogin()" @wallet="walletFromLogin"/>
+<WalletConnect v-else-if="current.type==='wallet'" @close="close"/>
 <C2COrderDetail v-else-if="current.type==='c2c-detail'" :id="current.data.id"/>
 <template v-else-if="current.type==='c2c-agreement'"><p class="muted">{{ $t('c2c.agreement.version',{version:'v1-draft'}) }}</p><p class="c2c-agreement-copy">{{ $t('c2c.agreement.body') }}</p><form id="account-action" @submit.prevent="accountAction"></form></template>
 <template v-else-if="current.type==='account-confirm'"><p v-if="current.data.subtitle" class="muted confirm-subtitle">{{ current.data.subtitle }}</p><p v-if="current.data.danger" class="confirm-danger">{{ $t(current.data.danger) }}</p><p v-if="current.data.description" class="muted">{{ $t(current.data.description) }}</p><form id="account-action" @submit.prevent="accountAction"></form></template>

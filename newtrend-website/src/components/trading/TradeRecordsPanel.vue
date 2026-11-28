@@ -3,7 +3,6 @@ import EmptyState from '../ui/EmptyState.vue'
 import {message} from 'ant-design-vue'
 import {computed,onBeforeUnmount,watch} from 'vue'
 import {session} from '../../session'
-import GuestPrompt from '../ui/GuestPrompt.vue'
 import {tradeProducts} from '../../utils/tradeProducts'
 import {historyBuckets} from '../../utils/mockTradeHistory'
 import Skeleton from '../ui/Skeleton.vue'
@@ -42,9 +41,7 @@ const announce=text=>message.success(text)
 <template>
 <section class="terminal-panel records-panel" :aria-label="$t('trade.pages.records')">
   <div class="record-tabs"><button v-for="tab in tabs" :key="tab.id" :class="{active:selected.id===tab.id}" :aria-pressed="selected.id===tab.id" @click="emit('update:record',tab.id)">{{ $t(tab.label) }}</button></div>
-  <!-- Signed out (user reference 2026-11-29): 「登入 或 立即註冊 去交易」, centred in the panel. -->
-  <GuestPrompt v-if="!session.loggedIn" suffix="trade.toTrade"/>
-  <RequestState v-else-if="records.status.value==='error'" :status="records.status.value" :error="records.error.value" @retry="records.refresh"/>
+  <RequestState v-if="records.status.value==='error'" :status="records.status.value" :error="records.error.value" @retry="records.refresh"/>
   <!-- Phone layout: card-shaped placeholders matching the record cards (no table header). -->
   <ul v-else-if="loading&&compact" class="record-cards records-skeleton" aria-busy="true"><li class="sr-only" role="status">{{ $t('common.loading') }}</li><li v-for="n in 3" :key="n" class="record-card" aria-hidden="true"><div class="record-card-head"><Skeleton inline width="96px"/><Skeleton inline width="48px"/></div><dl><div v-for="f in 6" :key="f"><dt><Skeleton inline width="56px"/></dt><dd><Skeleton inline width="72px"/></dd></div></dl></li></ul>
   <div v-else-if="loading" class="current-trades records-skeleton"><span role="status" class="sr-only">{{ $t('common.loading') }}</span><div class="history-list"><table class="record-table" aria-hidden="true"><thead><tr><th>{{ $t('trade.pair') }}</th><th v-for="f in 6" :key="f"><Skeleton inline width="56px"/></th></tr></thead><tbody><tr v-for="n in 6" :key="n"><th class="record-pair"><Skeleton inline width="120px"/></th><td v-for="f in 6" :key="f"><Skeleton inline width="72px"/></td></tr></tbody></table></div></div>

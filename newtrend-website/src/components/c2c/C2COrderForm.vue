@@ -4,7 +4,7 @@ import FeedbackToast from '../../platform/FeedbackToast.js'
 import {computed,ref,watch} from 'vue'
 import Coin from '../Coin.vue'
 import {formatQuote,quoteAmount} from '../../utils/c2cQuotes'
-import {openModal,requireLogin,session} from '../../session'
+import {openModal,session} from '../../session'
 import {t} from '../../i18n'
 import {c2cErrorKey,createC2COrder} from '../../api/c2c.js'
 import {invalidate} from '../../composables/useRequest.js'
@@ -28,10 +28,7 @@ watch(()=>props.quote.id,()=>{amount.value='';completed.value=false;error.value=
 function changeMode(next){if(completed.value||mode.value===next)return;const old=result.value;mode.value=next;if(Number(amount.value)>0)amount.value=String(Number((next==='fiat'?old.total:old.quantity).toFixed(8)));error.value=''}
 function resetOrder(){invalid.value={};amount.value='';completed.value=false;agreed.value=false;orderId.value='';error.value='';requestId=crypto.randomUUID()}
 function agreement(){openModal('c2c-agreement','c2c.agreement.title',{confirmLabel:'c2c.agreement.agree',onConfirm:()=>{agreed.value=true}})}
-// Signed out, the submit button stays enabled and opens the login dialog; the order continues after login, with the
-// form as filled in (user decision 2026-11-29).
 function submit(){
- if(!requireLogin(submit))return
  if(result.value.error||!agreed.value||completed.value)return
  const payerKey=payerError()
  if(payerKey){error.value=payerKey;return}
@@ -68,7 +65,7 @@ function submit(){
  <div class="c2c-agreement"><label><input v-model="agreed" type="checkbox" :disabled="completed"/>{{ $t('c2c.order.agreementCheckbox') }}</label><button type="button" @click="agreement">{{ $t('c2c.order.agreementLink') }}</button></div>
  <FeedbackToast v-if="error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
  <FeedbackToast v-if="completed" type="success" :source="() => (completed) ? ($t('c2c.order.submitted')) : ''"/>
- <button class="c2c-submit" :class="{sell:side==='sell'}" :disabled="session.loggedIn&&(!agreed||Boolean(result.error)||completed)">{{ $t(completed?'assets.statusCompleted':submitLabel) }}</button>
+ <button class="c2c-submit" :class="{sell:side==='sell'}" :disabled="!agreed||Boolean(result.error)||completed">{{ $t(completed?'assets.statusCompleted':submitLabel) }}</button>
 <button v-if="completed" type="button" class="c2c-text-button" @click="resetOrder">{{ $t('c2c.order.newOrder') }}</button>
 <button v-if="orderId" class="c2c-text-button" type="button" @click="openModal('c2c-detail','c2c.detail.title',{id:orderId})">{{ $t('c2c.order.viewOrder') }}</button>
 </form>

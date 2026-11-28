@@ -14,8 +14,6 @@ export const overlayTypes = {
   language: {classes: [...SHEET, 'language-sheet'], backdropClose: true, footer: false},
   menu: {classes: ['drawer'], footer: false},
   wallet: {initialFocus: '[data-wallet-initial-focus]', footer: false},
-  // Embedded login (LoginDialog): its own submit, register / forgot-password links and the wallet hand-over.
-  login: {initialFocus: '[data-login-initial-focus]', footer: false},
   support: {classes: ['support-drawer'], footer: false},
   'delivery-order': {classes: ['delivery-order-dialog'], footer: false},
   'strategy-detail': {classes: ['strategy-detail-drawer']},

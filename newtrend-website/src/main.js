@@ -19,7 +19,7 @@ router.beforeEach((to,from)=>{
     return {path:to.path,query:to.query,hash:'',replace:true}
   // The demo account has no C2C or lending: their pages fall back to the Finance home.
   if(!availableInMode(to.path))return {path:'/earn',replace:true}
-  // Login-only channels (量化基金): signed out, go straight to the login page and come back after it.
+  // Login-only pages (meta.loginRedirect, routes.js): signed out, go straight to the login page and come back after it.
   if(to.meta.loginRedirect&&!session.loggedIn)return {path:'/login',query:{redirect:to.fullPath}}
 })
 // Logging out on a login-only page leaves it the same way.
