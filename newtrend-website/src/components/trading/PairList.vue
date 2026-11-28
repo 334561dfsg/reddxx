@@ -96,6 +96,14 @@ const tabsScroll=useScrollOverflow(tabsEl)
 .picker-name strong,.picker-quote strong{font-size:14px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .picker-name small,.picker-quote small{font-size:12px;line-height:16px;color:#fff8;font-variant-numeric:tabular-nums}
 .picker-quote .positive{color:var(--nt-green,var(--nt-up))}.picker-quote .negative{color:var(--nt-red,var(--nt-down))}
+/* 3px trading scrollbar for the list in both the drawer and the desktop panel. Chrome ignores ::-webkit-scrollbar
+   once scrollbar-width or scrollbar-color is set (the trading page sets both on every element), so both are reset here and
+   scrollbar-width: thin is kept only for browsers without the WebKit pseudo-elements (Firefox). */
+.picker-list{scrollbar-width:auto;scrollbar-color:auto}
+.picker-list::-webkit-scrollbar{width:3px;height:3px}
+.picker-list::-webkit-scrollbar-track{background:transparent}
+.picker-list::-webkit-scrollbar-thumb{background:var(--nt-border);border-radius:3px}
+@supports not selector(::-webkit-scrollbar){.picker-list{scrollbar-width:thin;scrollbar-color:var(--nt-border) transparent}}
 .picker-empty{margin:0;padding:32px 16px;text-align:center;color:#fff8}
 /* Desktop panel (trading tokens: list 14/20, secondary 12/16, 52px rows, 3px scrollbars). */
 .pair-list-panel .picker-search{height:32px;margin:12px 12px 0;padding:0 10px}
@@ -108,9 +116,7 @@ const tabsScroll=useScrollOverflow(tabsEl)
 .pair-list-panel .picker-head{padding:2px 10px 4px 36px;gap:6px}
 .pair-list-panel .picker-head-group{gap:6px}
 .pair-list-panel .picker-head button{white-space:nowrap}
-.pair-list-panel .picker-list{padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--nt-border) transparent}
-.pair-list-panel .picker-list::-webkit-scrollbar{width:3px;height:3px}
-.pair-list-panel .picker-list::-webkit-scrollbar-thumb{background:var(--nt-border);border-radius:3px}
+.pair-list-panel .picker-list{padding-bottom:4px}
 .pair-list-panel .picker-star{width:36px;padding-left:6px}
 .pair-list-panel .picker-row{padding-right:12px;gap:8px}
 .pair-list-panel .picker-row .coin{width:24px;height:24px}

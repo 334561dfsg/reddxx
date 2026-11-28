@@ -257,6 +257,15 @@
  .product-terminal.with-pairs .records-panel{grid-column:1/-1;grid-row:3;contain:size}
 }
 @media(min-width:1200px) and (max-width:1599px){.product-terminal.with-pairs .instrument-stats{gap:16px}}
+/* Tablet (768–1199px): the 24h stats sit at the right end of the instrument bar like the desktop bar, so switching to
+   a pair with a longer or shorter name does not move them (user report 2026-11-28). When they wrap below the pair on
+   narrow tablets they stay right-aligned on their own line. The stream status follows them instead of competing for
+   the free space. */
+@media(min-width:768px) and (max-width:1199px){
+ .product-terminal:not(.compact) .instrument-stats{margin-left:auto}
+ .product-terminal:not(.compact) .instrument-stats>div{text-align:right}
+ .product-terminal:not(.compact) .stream-status{margin-left:0}
+}
 /* Landscape tablet (1024–1199px, user request 2026-11-28 "横屏平板用三列"): the desktop arrangement without the pair
    panel. Instrument bar full width (its pair button still opens the pair drawer), then chart | order book (230px) |
    order form (≥300px), records full width below. Mirrors the ≥1200px rows: records get at least 260px (≈280px at
@@ -303,6 +312,8 @@
  .product-terminal:not(.compact) .instrument-stats dd{white-space:nowrap}
  .product-terminal:not(.compact) .instrument-stats>div:nth-child(1) dd{min-width:8ch}
  .product-terminal:not(.compact) .instrument-stats>div:nth-child(2) dd,.product-terminal:not(.compact) .instrument-stats>div:nth-child(3) dd{min-width:11ch}
+ /* 24h volume / turnover change length per pair ("2.64萬", "16.05億", "—"; no unit): reserve room so switching pairs keeps every column in place. */
+ .product-terminal:not(.compact) .instrument-stats>div:nth-child(4) dd,.product-terminal:not(.compact) .instrument-stats>div:nth-child(5) dd{min-width:10ch}
 }
 /* Market stream status in the instrument bar (TradeInstrumentBar). */
 .stream-status{display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;line-height:16px;color:#f5a524;white-space:nowrap}.stream-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:stream-pulse 1.2s ease-in-out infinite}@keyframes stream-pulse{50%{opacity:.3}}@media(prefers-reduced-motion:reduce){.stream-dot{animation:none}}

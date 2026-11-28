@@ -13,7 +13,8 @@ import Skeleton from '../ui/Skeleton.vue'
 // layout: 'wide' (≥1200px, beside the pair panel: the pair is plain text, the stats sit right-aligned on one line and
 // scroll sideways if they do not fit), 'tablet' (the pair opens the left pair drawer) or 'compact' (phone: pair drawer,
 // account badge, product switch and chart page button; no stats). The parent owns routing: it handles the
-// open-pairs / open-products / open-chart events. pair is the catalogue market, livePair the same with live figures,
+// open-pairs / open-products / open-chart events. 24h volume / turnover show the figure only, without the coin or
+// USDT unit, like the reference (user decision 2026-11-28). pair is the catalogue market, livePair the same with live figures,
 // live the raw ticker (null while loading: skeletons); productLabel names the current product for the phone switch.
 const props=defineProps({
  pair:{type:Object,required:true},livePair:{type:Object,required:true},live:Object,hasVolume:Boolean,
@@ -45,8 +46,8 @@ const stats=useScrollOverflow(statsEl,{enabled:()=>props.layout==='wide'})
     <div><dt>{{ $t('home.markets.colChange') }}</dt><dd :class="direction"><template v-if="live">{{ livePair.change }}%</template><Skeleton v-else inline width="48px"/></dd></div>
     <div><dt>{{ $t('trade.24hHigh') }}</dt><dd><template v-if="live">{{ fmt(livePair.high) }}</template><Skeleton v-else inline width="72px"/></dd></div>
     <div><dt>{{ $t('trade.24hLow') }}</dt><dd><template v-if="live">{{ fmt(livePair.low) }}</template><Skeleton v-else inline width="72px"/></dd></div>
-    <div><dt>{{ $t('home.markets.colVolume') }}</dt><dd>{{ hasVolume?`${$compact(pair.volume/pair.price)} ${pair.symbol}`:'—' }}</dd></div>
-    <div><dt>{{ $t('trade.turnover') }}</dt><dd>{{ hasVolume?`${$compact(pair.volume)} USDT`:'—' }}</dd></div>
+    <div><dt>{{ $t('home.markets.colVolume') }}</dt><dd>{{ hasVolume?$compact(pair.volume/pair.price):'—' }}</dd></div>
+    <div><dt>{{ $t('trade.turnover') }}</dt><dd>{{ hasVolume?$compact(pair.volume):'—' }}</dd></div>
   </dl>
   <span v-if="streamStatus!=='open'" class="stream-status" role="status"><span class="stream-dot" aria-hidden="true"></span>{{ $t(streamStatus==='reconnecting'?'trade.stream.reconnecting':'trade.stream.connecting') }}</span>
 </section>
