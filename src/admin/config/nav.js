@@ -201,6 +201,7 @@ export const navTree = [
     children: [
       { title: '新闻文章', path: '/admin/news' },
       { title: '新闻分类', path: '/admin/news/categories' },
+      { title: '监管资讯', path: '/admin/regulatory' },
       { title: '新闻资讯（旧前台）', path: '/admin/system/news' },
     ]
   },

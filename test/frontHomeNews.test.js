@@ -135,7 +135,10 @@ test('front news admin route sits under the 内容管理 menu with the new-site 
 
   const contentNav = navTree.find((entry) => entry.title === '内容管理')
   assert.ok(contentNav)
-  assert.deepEqual(contentNav.children.map((entry) => entry.path), ['/admin/news', '/admin/news/categories', '/admin/system/news'])
+  assert.deepEqual(contentNav.children.map((entry) => entry.path), ['/admin/news', '/admin/news/categories', '/admin/regulatory', '/admin/system/news'])
+  for (const [name, path] of [['regulatory-entries', 'regulatory'], ['regulatory-entry-create', 'regulatory/new'], ['regulatory-entry-edit', 'regulatory/:id/edit']]) {
+    assert.equal(consoleRoutes.find((entry) => entry.name === name)?.path, path)
+  }
   assert.ok(!navTree.find((entry) => entry.title === '平台配置').children.some((entry) => entry.path === '/admin/system/news'))
 })
 
