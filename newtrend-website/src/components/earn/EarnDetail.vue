@@ -6,7 +6,9 @@ const COIN_GLOW={USDT:'#26a17b',USDC:'#2775ca',BTC:'#f7931a',ETH:'#627eea',SOL:'
 const coinGlow=symbol=>(COIN_GLOW[symbol]||'#a5ff4a')+'55'
 import EarnConditions from './EarnConditions.vue'
 import {path,fmt} from '../../data'
-import {openModal} from '../../session'
+import {openModal,session} from '../../session'
+import {useRoute,useRouter} from 'vue-router'
+import {loginPath} from '../../utils/redirect.js'
 import {quotaPercent} from '../../utils/earnProducts'
 import Coin from '../Coin.vue'
 import Icon from '../Icon.vue'
@@ -19,6 +21,9 @@ import {getEarnProduct} from '../../api/earn.js'
 import {useRequest} from '../../composables/useRequest.js'
 const props=defineProps({productId:{type:String,required:true}})
 const {data:product,error,status,refresh}=useRequest(()=>getEarnProduct(props.productId),{tags:['earn']})
+// 申購 needs a signed-in account (user decision 2026-11-29): signed out, it opens login and returns here.
+const route=useRoute(),router=useRouter()
+function subscribe(){if(!session.loggedIn){router.push(loginPath(route.fullPath));return}openModal('earn-subscribe','earn.subscribe.title',product.value)}
 const notFound=computed(()=>status.value==='error'&&error.value?.code==='notFound')
 </script>
 <template><NotFound v-if="notFound"/><article v-else class="earn-detail">
@@ -41,7 +46,7 @@ const notFound=computed(()=>status.value==='error'&&error.value?.code==='notFoun
 <section class="earn-panel"><h2><Icon name="layers"/>{{ $t('earn.productDetail.groups.quota') }}</h2><div class="earn-quota" role="progressbar" :aria-label="$t('earn.productDetail.quotaFilled',{percent:quotaPercent(product)})" :aria-valuenow="quotaPercent(product)" aria-valuemin="0" aria-valuemax="100"><span :style="{width:quotaPercent(product)+'%'}"></span></div><p class="earn-caption">{{ $t('earn.productDetail.quotaFilled',{percent:quotaPercent(product)}) }}</p><dl><dt>{{ $t('earn.productDetail.keyFacts.availableQuota') }}</dt><dd>{{ product.remaining }} {{ product.symbol }}</dd><dt>{{ $t('earn.productDetail.keyFacts.totalSubscribed') }}</dt><dd>{{ fmt(product.subscribed) }} {{ product.symbol }}</dd></dl></section></div>
 <section class="earn-panel earn-risk"><h2>{{ $t('earn.productDetail.risk.title') }}</h2><ul><li>{{ product.risk }}</li><li>{{ $t('earn.productDetail.risk.notGuaranteed') }}</li><li v-if="product.days">{{ $t('earn.productDetail.risk.earlyRedemption') }}</li></ul></section>
 <EarnConditions :product="product"/>
-<div class="earn-detail-action nt-float-bar"><div><strong class="earn-accent earn-mono">{{ product.rate.toFixed(4) }}%</strong><small>{{ $t('earn.dailyRate.suffix') }} · {{ product.days?$t('common.durationDays',{count:product.days}):$t('earn.tabs.flexible') }} · {{ $t('earn.products.min',{amount:fmt(product.min)+' '+product.symbol}) }}</small></div><button class="earn-buy" @click="openModal('earn-subscribe','earn.subscribe.title',product)">{{ $t('earn.actions.subscribe') }}</button></div>
+<div class="earn-detail-action nt-float-bar"><div><strong class="earn-accent earn-mono">{{ product.rate.toFixed(4) }}%</strong><small>{{ $t('earn.dailyRate.suffix') }} · {{ product.days?$t('common.durationDays',{count:product.days}):$t('earn.tabs.flexible') }} · {{ $t('earn.products.min',{amount:fmt(product.min)+' '+product.symbol}) }}</small></div><button class="earn-buy" @click="subscribe">{{ $t('earn.actions.subscribe') }}</button></div>
 </RequestState>
 </article></template>
 <style>

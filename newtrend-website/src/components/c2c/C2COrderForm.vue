@@ -8,6 +8,8 @@ import {openModal,session} from '../../session'
 import {t} from '../../i18n'
 import {c2cErrorKey,createC2COrder} from '../../api/c2c.js'
 import {invalidate} from '../../composables/useRequest.js'
+import {useRoute,useRouter} from 'vue-router'
+import {loginPath} from '../../utils/redirect.js'
 const props=defineProps({quote:{type:Object,required:true},side:{type:String,default:'buy'}})
 const orderId=ref('')
 let requestId=crypto.randomUUID()
@@ -28,11 +30,13 @@ watch(()=>props.quote.id,()=>{amount.value='';completed.value=false;error.value=
 function changeMode(next){if(completed.value||mode.value===next)return;const old=result.value;mode.value=next;if(Number(amount.value)>0)amount.value=String(Number((next==='fiat'?old.total:old.quantity).toFixed(8)));error.value=''}
 function resetOrder(){invalid.value={};amount.value='';completed.value=false;agreed.value=false;orderId.value='';error.value='';requestId=crypto.randomUUID()}
 function agreement(){openModal('c2c-agreement','c2c.agreement.title',{confirmLabel:'c2c.agreement.agree',onConfirm:()=>{agreed.value=true}})}
+// Signed out, the submit button stays enabled and opens login, returning to this page (user decision 2026-11-29).
+const route=useRoute(),router=useRouter()
 function submit(){
+ if(!session.loggedIn){router.push(loginPath(route.fullPath));return}
  if(result.value.error||!agreed.value||completed.value)return
  const payerKey=payerError()
  if(payerKey){error.value=payerKey;return}
- if(!session.loggedIn){error.value='auth.login';return}
  if(!isDemo(session.mode)){error.value='overlay.ui.insufficientBalanceDeposit';return}
  error.value=''
  const snapshot={...result.value,symbol:props.quote.symbol,fiat:props.quote.fiat,price:props.quote.price}
@@ -66,7 +70,7 @@ function submit(){
  <div class="c2c-agreement"><label><input v-model="agreed" type="checkbox" :disabled="completed"/>{{ $t('c2c.order.agreementCheckbox') }}</label><button type="button" @click="agreement">{{ $t('c2c.order.agreementLink') }}</button></div>
  <FeedbackToast v-if="error" type="error" :source="() => (error) ? ($t(error)) : ''"></FeedbackToast>
  <FeedbackToast v-if="completed" type="success" :source="() => (completed) ? ($t('c2c.order.submitted')) : ''"/>
- <button class="c2c-submit" :class="{sell:side==='sell'}" :disabled="!agreed||Boolean(result.error)||completed">{{ $t(completed?'assets.statusCompleted':submitLabel) }}</button>
+ <button class="c2c-submit" :class="{sell:side==='sell'}" :disabled="session.loggedIn&&(!agreed||Boolean(result.error)||completed)">{{ $t(completed?'assets.statusCompleted':submitLabel) }}</button>
 <button v-if="completed" type="button" class="c2c-text-button" @click="resetOrder">{{ $t('c2c.order.newOrder') }}</button>
 <button v-if="orderId" class="c2c-text-button" type="button" @click="openModal('c2c-detail','c2c.detail.title',{id:orderId})">{{ $t('c2c.order.viewOrder') }}</button>
 </form>
