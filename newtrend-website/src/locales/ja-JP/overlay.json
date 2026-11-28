@@ -1,7 +1,7 @@
 {
   "ui": {
     "unsavedContentUseCloseOrCancelToLeave": "未送信の内容があります。閉じるかキャンセルで終了してください。",
-    "insufficientBalanceSwitchToDemoToTryThisLocally": "残高不足です。デモに切り替えてお試しください。",
+    "insufficientBalanceDeposit": "利用可能残高が不足しています。先に入金してください。",
     "createdDemo": "作成済み（デモ）",
     "videoFailedToLoadTryAgainLater": "動画を読み込めません。後でもう一度お試しください。",
     "welcomeToNewquantcapitalSupport": "NewQuantCapitalサポートへようこそ",

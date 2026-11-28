@@ -35,3 +35,5 @@
 .trade-order-form .form-error{font-size:12px;line-height:18px;color:var(--nt-red)}
 .trade-order-form button:focus-visible,.trade-order-form a:focus-visible,.trade-order-form .form-body:focus-visible{outline:none}
 @media(pointer:coarse){.trade-order-form .percentages button,.trade-order-form .type-tabs button,.trade-order-form .form-actions button{min-height:44px}}
+/* While an order is being placed (no confirmation dialog): the actions stay focusable but read as busy. */
+.trade-order-form .form-actions button[aria-busy=true]{opacity:.6;cursor:progress}

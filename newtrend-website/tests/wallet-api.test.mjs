@@ -53,7 +53,7 @@ test('donate debits once; limits use locale codes', async () => {
   assert.equal(balanceOf(DEMO, 'USDT'), usdt - 50)
   assert.equal(balanceOf(DEMO, 'USDC'), usdc, 'donate credits nothing')
   await assert.rejects(api.spendFunds({mode: DEMO, kind: 'donate', amount: 0.5, min: 1}), {code: 'overlay.amountMinimum'})
-  await assert.rejects(api.spendFunds({mode: REAL, kind: 'donate', amount: 5}), {code: 'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally'})
+  await assert.rejects(api.spendFunds({mode: REAL, kind: 'donate', amount: 5}), {code: 'overlay.ui.insufficientBalanceDeposit'})
 })
 
 test('flash exchange converts at the price ratio, records once and validates', async () => {

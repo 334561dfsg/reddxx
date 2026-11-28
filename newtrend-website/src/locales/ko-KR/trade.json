@@ -358,7 +358,7 @@
     }
   },
   "ui": {
-    "signInToTheLocalDemoFirst": "먼저 로컬 데모에 로그인하세요",
+    "signInFirst": "주문하려면 먼저 로그인해 주세요.",
     "enterAValidOrderAmount": "유효한 주문 금액을 입력하세요",
     "seconds": " 초",
     "removeFromFavorites": "즐겨찾기 해제",
@@ -369,7 +369,6 @@
     "percentageOfFundsToUse": "사용 자금 비율",
     "transfer": "＋ 이체",
     "simulatedPricesAndOrdersNoTradingServiceConnected": "모의 시세와 주문입니다. 거래 서비스에 연결되지 않습니다.",
-    "connectedLocalDemo": "● 연결됨 · 로컬 데모",
     "marketSnapshot": "시장 스냅샷 ·"
   },
   "calendar": {

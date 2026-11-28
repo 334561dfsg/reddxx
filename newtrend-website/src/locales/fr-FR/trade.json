@@ -358,7 +358,7 @@
     }
   },
   "ui": {
-    "signInToTheLocalDemoFirst": "Connectez-vous à la démo locale",
+    "signInFirst": "Veuillez vous connecter pour passer un ordre.",
     "enterAValidOrderAmount": "Saisissez un montant valide",
     "seconds": " secondes",
     "removeFromFavorites": "Retirer des favoris",
@@ -369,7 +369,6 @@
     "percentageOfFundsToUse": "Pourcentage des fonds à utiliser",
     "transfer": "＋ Transférer",
     "simulatedPricesAndOrdersNoTradingServiceConnected": "Cours et ordres simulés. Aucun service de trading connecté.",
-    "connectedLocalDemo": "● Connecté · Démo locale",
     "marketSnapshot": "Instantané du marché ·"
   },
   "calendar": {

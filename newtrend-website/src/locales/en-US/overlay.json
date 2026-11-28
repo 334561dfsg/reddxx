@@ -1,7 +1,7 @@
 {
   "ui": {
     "unsavedContentUseCloseOrCancelToLeave": "Unsaved content. Use Close or Cancel to leave.",
-    "insufficientBalanceSwitchToDemoToTryThisLocally": "Insufficient balance. Switch to Demo to try this locally.",
+    "insufficientBalanceDeposit": "Insufficient balance. Please deposit first.",
     "createdDemo": "Created (demo)",
     "videoFailedToLoadTryAgainLater": "Video failed to load. Try again later.",
     "welcomeToNewquantcapitalSupport": "Welcome to NewQuantCapital Support",

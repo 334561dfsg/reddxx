@@ -127,7 +127,7 @@ test('trade service fills market orders and closes positions at the live price',
   assert.equal(balanceOf(mode, 'USDT'), cash - 4 - 0.05)
   assert.equal((await api.placeTradeOrder({mode, ...params})).id, placed.id, 'a retried request returns the same order')
   assert.equal(balanceOf(mode, 'USDT'), cash - 4.05)
-  await assert.rejects(api.placeTradeOrder({mode: 'common.demo.real', ...params, amount: 1e12, requestId: 'live-2'}), {code: 'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally'})
+  await assert.rejects(api.placeTradeOrder({mode: 'common.demo.real', ...params, amount: 1e12, requestId: 'live-2'}), {code: 'overlay.ui.insufficientBalanceDeposit'})
   await assert.rejects(api.placeTradeOrder({mode, ...params, leverage: 7, requestId: 'live-3'}), {code: 'trade.spotErrorInvalidSizingInput'})
   await assert.rejects(api.placeTradeOrder({mode, ...params, takeProfit: 60000, requestId: 'live-4'}), {code: 'trade.form.invalidStops'})
   await assert.rejects(api.placeTradeOrder({mode, kind: 'options', side: 'buy', marketName: 'BTC/USDT', amount: 50, duration: 30, requestId: 'live-5'}), {code: 'trade.amountBelowMinimum'})

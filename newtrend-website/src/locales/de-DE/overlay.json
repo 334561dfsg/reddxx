@@ -1,7 +1,7 @@
 {
   "ui": {
     "unsavedContentUseCloseOrCancelToLeave": "Nicht gespeicherter Inhalt. Mit Schließen oder Abbrechen verlassen.",
-    "insufficientBalanceSwitchToDemoToTryThisLocally": "Unzureichendes Guthaben. Zum Testen auf Demo wechseln.",
+    "insufficientBalanceDeposit": "Unzureichendes verfügbares Guthaben. Bitte zahlen Sie zuerst ein.",
     "createdDemo": "Erstellt (Demo)",
     "videoFailedToLoadTryAgainLater": "Video konnte nicht geladen werden. Später erneut versuchen.",
     "welcomeToNewquantcapitalSupport": "Willkommen beim NewQuantCapital Support",

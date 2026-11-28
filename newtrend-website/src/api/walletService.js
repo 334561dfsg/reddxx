@@ -110,7 +110,7 @@ export function createWalletApi({accountValues, priceOf, fundPassword = null}) {
     if (!Number.isFinite(value) || value < min) throw new ApiError('overlay.amountMinimum', {amount: min})
     if (value > max) throw new ApiError('trade.spotErrorAboveMaxNotional')
     if (value > (balancesOf(mode)[symbol] || 0) || !debit(mode, symbol, value)) {
-      throw new ApiError(mode === DEMO ? 'assets.withdraw.error.insufficientBalance' : 'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally')
+      throw new ApiError(mode === DEMO ? 'assets.withdraw.error.insufficientBalance' : 'overlay.ui.insufficientBalanceDeposit')
     }
     return {amount: value}
   })

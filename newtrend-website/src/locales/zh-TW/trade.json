@@ -358,7 +358,7 @@
     }
   },
   "ui": {
-    "signInToTheLocalDemoFirst": "請先登入本地演示帳戶",
+    "signInFirst": "請先登入後再下單",
     "enterAValidOrderAmount": "請輸入有效的下單金額",
     "seconds": " 秒",
     "removeFromFavorites": "取消自選 ",
@@ -369,7 +369,6 @@
     "percentageOfFundsToUse": "使用資金百分比",
     "transfer": "＋ 劃轉",
     "simulatedPricesAndOrdersNoTradingServiceConnected": "本地模擬行情與委託，不連接交易服務。",
-    "connectedLocalDemo": "● 連線穩定 · 本地演示",
     "marketSnapshot": "市場快照 · "
   },
   "calendar": {

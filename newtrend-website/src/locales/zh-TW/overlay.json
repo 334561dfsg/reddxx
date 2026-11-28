@@ -1,7 +1,7 @@
 {
   "ui": {
     "unsavedContentUseCloseOrCancelToLeave": "尚有未提交內容，請使用右上角關閉或取消退出。",
-    "insufficientBalanceSwitchToDemoToTryThisLocally": "可用餘額不足。這是本地演示，切換至「模擬」可體驗操作。",
+    "insufficientBalanceDeposit": "可用餘額不足，請先充值。",
     "createdDemo": "已建立（模擬）",
     "videoFailedToLoadTryAgainLater": "影片載入失敗，請稍後再試。",
     "welcomeToNewquantcapitalSupport": "歡迎聯絡 NewQuantCapital 客服",

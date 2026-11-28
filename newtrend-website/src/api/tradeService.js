@@ -63,7 +63,7 @@ export function createTradeApi({lastPrice}) {
       createdAt: now, openedAt: now,
     }
     if (!placeOrder(mode, record, orderFunding({kind, side, pending, estimate, amount: value, base: marketName.split('/')[0]}))) {
-      throw new ApiError(isDemo(mode) ? 'assets.withdraw.error.insufficientBalance' : 'overlay.ui.insufficientBalanceSwitchToDemoToTryThisLocally')
+      throw new ApiError(isDemo(mode) ? 'assets.withdraw.error.insufficientBalance' : 'overlay.ui.insufficientBalanceDeposit')
     }
     return snapshot(record)
   })

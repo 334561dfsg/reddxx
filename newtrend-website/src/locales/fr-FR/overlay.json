@@ -1,7 +1,7 @@
 {
   "ui": {
     "unsavedContentUseCloseOrCancelToLeave": "Contenu non envoyé. Utilisez Fermer ou Annuler pour quitter.",
-    "insufficientBalanceSwitchToDemoToTryThisLocally": "Solde insuffisant. Passez en mode Démo pour essayer.",
+    "insufficientBalanceDeposit": "Solde disponible insuffisant. Veuillez d'abord effectuer un dépôt.",
     "createdDemo": "Créé (démo)",
     "videoFailedToLoadTryAgainLater": "Chargement vidéo impossible. Réessayez plus tard.",
     "welcomeToNewquantcapitalSupport": "Bienvenue chez l’assistance NewQuantCapital",

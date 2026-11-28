@@ -358,7 +358,7 @@
     }
   },
   "ui": {
-    "signInToTheLocalDemoFirst": "Zuerst bei der lokalen Demo anmelden",
+    "signInFirst": "Bitte melden Sie sich an, um eine Order aufzugeben.",
     "enterAValidOrderAmount": "Gültigen Auftragsbetrag eingeben",
     "seconds": " Sekunden",
     "removeFromFavorites": "Aus Favoriten entfernen",
@@ -369,7 +369,6 @@
     "percentageOfFundsToUse": "Anteil des einzusetzenden Guthabens",
     "transfer": "＋ Transfer",
     "simulatedPricesAndOrdersNoTradingServiceConnected": "Simulierte Kurse und Aufträge. Kein Handelsdienst verbunden.",
-    "connectedLocalDemo": "● Verbunden · Lokale Demo",
     "marketSnapshot": "Markt-Snapshot ·"
   },
   "calendar": {

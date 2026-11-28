@@ -358,7 +358,7 @@
     }
   },
   "ui": {
-    "signInToTheLocalDemoFirst": "先にローカルデモにログインしてください",
+    "signInFirst": "注文するにはログインしてください。",
     "enterAValidOrderAmount": "有効な注文金額を入力",
     "seconds": " 秒",
     "removeFromFavorites": "お気に入りから削除",
@@ -369,7 +369,6 @@
     "percentageOfFundsToUse": "使用資金の割合",
     "transfer": "＋ 振替",
     "simulatedPricesAndOrdersNoTradingServiceConnected": "模擬相場と注文です。取引サービスには接続しません。",
-    "connectedLocalDemo": "● 接続済み · ローカルデモ",
     "marketSnapshot": "市場スナップショット ·"
   },
   "calendar": {

@@ -100,11 +100,8 @@
 
 **下单流程：**
 
-1. 点下单按钮，弹出确认框，显示数量、价格、周期和收益率。
-
-   ![下单确认](trading-panel/dialog-order-confirm.jpg)
-
-2. 确认后弹出订单窗口，显示「下單成功」和倒计时圆环，以及数量、开仓价格、周期、收益率、订单 ID（可复制）、开仓时间。
+1. 点下单按钮，校验通过后直接下单（不弹确认框）。
+2. 下单成功后弹出订单窗口，显示「下單成功」和倒计时圆环，以及数量、开仓价格、周期、收益率、订单 ID（可复制）、开仓时间。
 
    ![订单进行中](trading-panel/dialog-options-running.jpg)
 
@@ -129,10 +126,11 @@
 
 ### 3.4 下单校验与提示
 
-- 未登录：提示「請先登入本地演示帳戶」。
+- 未登录：提示「請先登入後再下單」。
 - 行情未连接或已过期：暂停下单，提示「行情尚未連線，暫時無法下單，請稍後再試。」，信息栏显示连接状态，恢复后自动重连。
-- 余额不足、数量低于最低值、限价未填等：toast 提示，表单内容保留。
-- 每次下单都有确认框；提交过程中按钮不可重复点击。
+- 余额不足（真實帳戶提示「可用餘額不足，請先充值。」，模擬帳戶提示「可用餘額不足」）、数量低于最低值、限价未填等：toast 提示，表单内容保留。
+- 下单不弹确认框，校验通过即提交（2026-11-28 决定，三种产品相同）；提交过程中按钮显示为处理中，重复点击不会重复下单。
+- 合約、現貨下单成功提示「下單成功」并清空数量；二元期權打开订单窗口，「下單成功」显示在窗口内；失败时 toast 提示原因，数量保留。
 
 ---
 
@@ -164,14 +162,21 @@
 
 ## 5. 手机端
 
+截图为 375×812（2 倍清晰度），2026-11-28 按当前代码截取。
+
 <table>
 <tr>
-<td><img src="trading-panel/phone-futures.jpg" alt="合約交易 手机" width="240"></td>
-<td><img src="trading-panel/phone-options.jpg" alt="二元期權 手机" width="240"></td>
-<td><img src="trading-panel/phone-pair-drawer.jpg" alt="交易对抽屉" width="240"></td>
-<td><img src="trading-panel/phone-chart.jpg" alt="K 线页" width="240"></td>
+<td><img src="trading-panel/phone-set-2026-11-28/phone-futures.jpg" alt="合約交易 手机" width="240"></td>
+<td><img src="trading-panel/phone-set-2026-11-28/phone-options.jpg" alt="二元期權 手机" width="240"></td>
+<td><img src="trading-panel/phone-set-2026-11-28/phone-spot.jpg" alt="現貨交易 手机" width="240"></td>
 </tr>
-<tr><td>合約交易</td><td>二元期權</td><td>交易对抽屉</td><td>K 线页</td></tr>
+<tr><td>合約交易（BTC/USDT）</td><td>二元期權（EUR/USD）</td><td>現貨交易（BTC/USDT）</td></tr>
+<tr>
+<td><img src="trading-panel/phone-set-2026-11-28/phone-chart-eurusd.jpg" alt="K 线页" width="240"></td>
+<td><img src="trading-panel/phone-set-2026-11-28/phone-pair-drawer.jpg" alt="交易对抽屉" width="240"></td>
+<td><img src="trading-panel/phone-set-2026-11-28/phone-product-sheet.jpg" alt="产品切换弹层" width="240"></td>
+</tr>
+<tr><td>K 线页（EUR/USD）</td><td>交易对抽屉</td><td>产品切换弹层</td></tr>
 </table>
 
 | 区域 | 说明 |

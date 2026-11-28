@@ -358,7 +358,7 @@
     }
   },
   "ui": {
-    "signInToTheLocalDemoFirst": "Sign in to the local demo first",
+    "signInFirst": "Please sign in to place an order.",
     "enterAValidOrderAmount": "Enter a valid order amount",
     "seconds": " seconds",
     "removeFromFavorites": "Remove from favorites",
@@ -369,7 +369,6 @@
     "percentageOfFundsToUse": "Percentage of funds to use",
     "transfer": "＋ Transfer",
     "simulatedPricesAndOrdersNoTradingServiceConnected": "Simulated prices and orders. No trading service connected.",
-    "connectedLocalDemo": "● Connected · Local demo",
     "marketSnapshot": "Market snapshot ·"
   },
   "calendar": {

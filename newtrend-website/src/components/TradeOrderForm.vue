@@ -3,7 +3,8 @@
 // plugin mixes up a src block shared by two SFCs at different block indexes in production builds.
 import '../styles/trade-form-controls.css'
 import './trading/order/orderForm.css'
-// Order form shell: picks the product panel by `mode` and owns the submit footer. Fields live in
+// Order form shell: picks the product panel by `mode` and owns the submit footer. Orders are placed directly on click
+// (no confirmation dialog, user decision 2026-11-28); while one is in flight the actions show busy and ignore clicks. Fields live in
 // trading/order/*OrderPanel.vue; validation, confirmation and feedback in trading/order/useOrderSubmit.js.
 // compact: phone layout. Futures then picks a side first (买入开多 / 卖出开空) and shows one action for it, like
 // spot and options; the desktop form keeps both futures actions side by side.
@@ -19,7 +20,7 @@ const props=defineProps({mode:String,pair:Object,compact:Boolean})
 const {futures,options,spot}=useOrderDrafts()
 const formRoot=ref(null)
 const balances=useOrderBalances(()=>props.pair)
-const {errors,notice,clearError,clearNotice,submit}=useOrderSubmit({
+const {errors,notice,busy,clearError,clearNotice,submit}=useOrderSubmit({
  mode:()=>props.mode,
  pair:()=>props.pair,
  balances,
@@ -60,18 +61,18 @@ const regionLabel={futures:'trade.futuresOrder',options:'trade.optionsOrder'}
     <footer class="form-actions">
       <FeedbackToast v-if="notice" type="success" :source="() => notice || ''"/>
       <div :class="{'action-pair':mode==='futures'&&!compact}">
-        <button v-if="mode==='futures'&&compact" :class="futures.side==='sell'?'sell':'buy'" @click="submit(futures.side||'buy')">
+        <button v-if="mode==='futures'&&compact" :aria-busy="busy||undefined" :aria-disabled="busy||undefined" :class="futures.side==='sell'?'sell':'buy'" @click="submit(futures.side||'buy')">
           {{ $t(futures.side==='sell'?'trade.sellShort':'trade.buyLong') }}
         </button>
-        <button v-else-if="mode==='options'" :class="options.side==='buy'?'buy':'sell'" @click="submit(options.side)">
+        <button v-else-if="mode==='options'" :aria-busy="busy||undefined" :aria-disabled="busy||undefined" :class="options.side==='buy'?'buy':'sell'" @click="submit(options.side)">
           {{ $t(options.side==='buy'?'trade.buyLong':'trade.sellShort') }}
         </button>
-        <button v-else-if="mode==='spot'" :class="spot.side==='sell'?'sell':'buy'" @click="submit(spot.side||'buy')">
+        <button v-else-if="mode==='spot'" :aria-busy="busy||undefined" :aria-disabled="busy||undefined" :class="spot.side==='sell'?'sell':'buy'" @click="submit(spot.side||'buy')">
           {{ $t(spot.side==='sell'?'trade.sell':'trade.buy') }}
         </button>
         <template v-else>
-          <button class="buy" @click="submit('buy')">{{ $t('trade.buyLong') }}</button>
-          <button class="sell" @click="submit('sell')">{{ $t('trade.sellShort') }}</button>
+          <button class="buy" :aria-busy="busy||undefined" :aria-disabled="busy||undefined" @click="submit('buy')">{{ $t('trade.buyLong') }}</button>
+          <button class="sell" :aria-busy="busy||undefined" :aria-disabled="busy||undefined" @click="submit('sell')">{{ $t('trade.sellShort') }}</button>
         </template>
       </div>
     </footer>
