@@ -24,9 +24,7 @@
       "valueProp": "Ungenutzte Assets verzinsen sich täglich. Flexibel jederzeit verfügbar, feste Laufzeiten mit höherem Zins.",
       "chipA": "Tägliche Zinsen",
       "chipB": "Flexibel & fest",
-      "browse": "Earn ansehen",
-      "mine": "Mein Earn",
-      "mineHint": "Privat · Positionen und Ertrag"
+      "browse": "Earn ansehen"
     },
     "c2c": {
       "kicker": "Peer-to-Peer · Fiat ein und aus",
@@ -34,9 +32,7 @@
       "valueProp": "USDT direkt mit verifizierten Händlern kaufen und verkaufen, jeder Handel mit Treuhand.",
       "chipA": "Verifizierte Händler",
       "chipB": "Treuhand",
-      "browse": "Zu C2C",
-      "mine": "Meine Orders",
-      "mineHint": "Privat · Kauf- und Verkaufsorders"
+      "browse": "Zu C2C"
     },
     "loan": {
       "kicker": "Besicherte Kredite · Tägliche Zinsen",
@@ -44,9 +40,7 @@
       "valueProp": "Leihen Sie gegen Ihre Kryptowerte – Liquidität, ohne zu verkaufen.",
       "chipA": "Besichert",
       "chipB": "Jederzeit tilgbar",
-      "browse": "Kredite ansehen",
-      "mine": "Meine Kredite",
-      "mineHint": "Privat · Kredite und Sicherheiten"
+      "browse": "Kredite ansehen"
     },
     "subtitleDemo": "Das Demokonto bietet Earn-Produkte, um flexible und feste Renditen auszuprobieren."
   }

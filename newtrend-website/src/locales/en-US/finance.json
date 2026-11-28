@@ -24,9 +24,7 @@
       "valueProp": "Idle assets earn interest daily. Flexible for instant access, fixed terms for higher rates.",
       "chipA": "Daily interest",
       "chipB": "Flexible & fixed",
-      "browse": "Browse Earn",
-      "mine": "My Earn",
-      "mineHint": "Private · holdings and yield"
+      "browse": "Browse Earn"
     },
     "c2c": {
       "kicker": "Peer to peer · Fiat on/off-ramp",
@@ -34,9 +32,7 @@
       "valueProp": "Buy and sell USDT directly with verified merchants, with escrow on every trade.",
       "chipA": "Verified merchants",
       "chipB": "Escrow",
-      "browse": "Go to C2C",
-      "mine": "My orders",
-      "mineHint": "Private · buy and sell orders"
+      "browse": "Go to C2C"
     },
     "loan": {
       "kicker": "Collateral loans · Daily interest",
@@ -44,9 +40,7 @@
       "valueProp": "Borrow against the crypto you hold — get liquidity without selling.",
       "chipA": "Collateralised",
       "chipB": "Repay anytime",
-      "browse": "Browse Loans",
-      "mine": "My loans",
-      "mineHint": "Private · loans and collateral"
+      "browse": "Browse Loans"
     },
     "subtitleDemo": "The demo account offers Earn products to try flexible and fixed-term yield."
   }

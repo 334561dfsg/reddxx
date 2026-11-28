@@ -86,14 +86,6 @@
   font-weight: 600;
 }
 #main-content .quant-page .quant-intro .pill.primary .nt-icon { width: 16px; height: 16px; filter: brightness(0); }
-#main-content .quant-page .quant-intro .card-footer {
-  align-items: center;
-  margin: 12px -8px 0;
-  padding: 16px 8px 4px;
-  font-size: 15px;
-  line-height: 22.5px;
-}
-#main-content .quant-page .quant-intro .card-footer small { font-size: 12px; line-height: 18px; }
 
 /* Sub-navigation shared with Finance / Strategy */
 #main-content .quant-page .subnav {
@@ -531,8 +523,6 @@
 #main-content .quant-landing .quant-chips{gap:8px;margin:0}
 #main-content .quant-landing .quant-intro .tag-chip{padding:3px 10px;font-size:12px;line-height:18px;letter-spacing:0}
 #main-content .quant-landing .quant-intro .pill.primary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin:0;padding:0 20px;border-radius:var(--nt-radius-pill);font-size:14px;line-height:20px}
-#main-content .quant-landing .quant-intro .card-footer{display:flex;justify-content:space-between;gap:12px;margin:0 -24px -8px;padding:14px 24px 0;border-top:1px solid #ffffff0f;font-size:14px;line-height:20px}
-#main-content .quant-landing .quant-intro .card-footer small{font-size:12px;line-height:18px;color:var(--nt-text-secondary,var(--nt-text-quiet));text-align:right}
 @media (max-width:767px){
  /* Phones skip the hero (user decision): it stays as a visually hidden page heading for assistive technology. */
  #main-content .quant-landing .page-hero{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -541,5 +531,4 @@
  #main-content .quant-landing .quant-intro .card{gap:14px;padding:20px}
  #main-content .quant-landing .quant-intro .card>p{min-height:0}
  #main-content .quant-landing .quant-intro .pill.primary{align-self:stretch}
- #main-content .quant-landing .quant-intro .card-footer{margin:0 -20px -6px;padding:12px 20px 0}
 }

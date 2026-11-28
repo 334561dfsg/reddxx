@@ -7,11 +7,12 @@ import {path} from '../../data'
 import {availableInMode} from '../../utils/demoAccess.js'
 // Finance home (/earn), user request 2026-11-27: the 金融 tab gets its own landing like AI Quant instead of opening
 // Earn directly. Same markup and scale as the AI Quant landing (.quant-landing): hero (hidden on phones) and one card
-// per product line — Earn, C2C, Loans — with kicker, name, value line, two chips, a browse action and a "mine" footer.
+// per product line — Earn, C2C, Loans — with kicker, name, value line, two chips and a browse action. No "mine" footer
+// (user decision 2026-11-28): 我的理財 / 我的訂單 / 我的借貸 are reached from each product's section switch.
 const allLines=[
- {key:'earn',icon:'piggy-bank',to:'/earn/simple',mine:'/earn/my-earnings'},
- {key:'c2c',icon:'users',to:'/c2c/buy',mine:'/c2c/orders'},
- {key:'loan',icon:'hand-coins',to:'/earn/loan',mine:'/earn/loan/my'},
+ {key:'earn',icon:'piggy-bank',to:'/earn/simple'},
+ {key:'c2c',icon:'users',to:'/c2c/buy'},
+ {key:'loan',icon:'hand-coins',to:'/earn/loan'},
 ]
 // The demo account shows Earn only (no C2C or lending).
 const lines=computed(()=>allLines.filter(line=>availableInMode(line.to)))
@@ -25,7 +26,6 @@ const lines=computed(()=>allLines.filter(line=>availableInMode(line.to)))
    <p>{{ $t('finance.landing.'+line.key+'.valueProp') }}</p>
    <div class="quant-chips"><span class="tag-chip">{{ $t('finance.landing.'+line.key+'.chipA') }}</span> <span class="tag-chip">{{ $t('finance.landing.'+line.key+'.chipB') }}</span></div>
    <RouterLink class="pill primary" :to="path(line.to)">{{ $t('finance.landing.'+line.key+'.browse') }} <Icon name="arrow-right"/></RouterLink>
-   <RouterLink class="card-footer" :to="path(line.mine)"><span>{{ $t('finance.landing.'+line.key+'.mine') }}</span><small>{{ $t('finance.landing.'+line.key+'.mineHint') }}</small></RouterLink>
   </div>
  </div>
 </div>

@@ -10,7 +10,6 @@
       "chipA": "Backtested",
       "chipB": "Risk-capped",
       "browse": "Browse strategies",
-      "mine": "My strategies",
       "mineHint": "Yours · running instances"
     },
     "quantFund": {

@@ -4,11 +4,12 @@ import Icon from '../../components/Icon.vue'
 import QuantAmbient from '../../components/quant/QuantAmbient.vue'
 import '../../styles/quant-fidelity.css'
 import '../../styles/quant-system.css'
-// AI 量化 channel home (/ai-quant): hero plus one card per product line (策略 and 量化基金), each with a browse action
-// and a "mine" footer. Markup and scale are shared with the Finance landing (.quant-landing in quant-fidelity.css).
+// AI 量化 channel home (/ai-quant): hero plus one card per product line (策略 and 量化基金), each with a browse action.
+// No "mine" footer (user decision 2026-11-28, like the Finance landing): 我的策略 / 我的倉位 are reached from each
+// product's section switch. Markup and scale are shared with the Finance landing (.quant-landing in quant-fidelity.css).
 const lines=[
- {key:'strategy',icon:'bot',to:'/ai-quant/strategy',mineTo:'/ai-quant/strategy/mine',mineHint:'quant.ui.runningInstances'},
- {key:'quantFund',icon:'shield',to:'/ai-quant/quant-fund',mineTo:'/ai-quant/quant-fund/positions',mineHint:'quant.ui.subscriptionsAndInterest',green:true},
+ {key:'strategy',icon:'bot',to:'/ai-quant/strategy'},
+ {key:'quantFund',icon:'shield',to:'/ai-quant/quant-fund',green:true},
 ]
 </script>
 <template>
@@ -34,10 +35,6 @@ const lines=[
     <span class="tag-chip">{{ $t(`aiQuant.landing.${line.key}.chipA`) }}</span> <span class="tag-chip">{{ $t(`aiQuant.landing.${line.key}.chipB`) }}</span>
    </div>
    <RouterLink class="pill primary" :to="path(line.to)">{{ $t(`aiQuant.landing.${line.key}.browse`) }} <Icon name="arrow-right"/></RouterLink>
-   <RouterLink class="card-footer" :to="path(line.mineTo)">
-    <span>{{ $t(`aiQuant.landing.${line.key}.mine`) }}</span>
-    <small>{{ $t('quant.ui.private') }}{{ $t(line.mineHint) }}</small>
-   </RouterLink>
   </div>
  </div>
 </div>
