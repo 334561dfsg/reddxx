@@ -71,11 +71,6 @@
     "high": "높음"
   },
   "creditScore": "신용 점수",
-  "creditScoreLabel": {
-    "good": "신용 점수 양호",
-    "fair": "신용 점수 보통",
-    "poor": "신용 점수 낮음"
-  },
   "pageTitle": "프로필",
   "personalSettings": "개인 설정",
   "personalSettingsHint": "내 계정에만 적용됩니다",
@@ -89,7 +84,6 @@
   "securityAction": "설정하기",
   "securityComplete": "모든 보안 항목이 설정되었습니다",
   "listSeparator": ", ",
-  "creditScoreHint": "{{max}}점 만점 · 퀀트 펀드 청약 시 참고됩니다",
   "loginPassword": "로그인 비밀번호",
   "phone": "전화",
   "notBound": "미연결",
@@ -219,7 +213,6 @@
     "totalDeposited": "누적 입금액",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "최고 등급 달성 (VIP {{tier}})",
-    "amountToNext": "VIP {{tier}}까지 {{amount}} USDT 남음",
     "currentTierLabel": "현재 등급",
     "baseTier": "기본",
     "tiersLabel": "등급 사다리"

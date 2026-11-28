@@ -71,11 +71,6 @@
     "high": "高"
   },
   "creditScore": "信用分",
-  "creditScoreLabel": {
-    "good": "信用良好",
-    "fair": "信用一般",
-    "poor": "信用較差"
-  },
   "pageTitle": "個人中心",
   "personalSettings": "個人設定",
   "personalSettingsHint": "只影響你自己的帳戶",
@@ -89,7 +84,6 @@
   "securityAction": "去設置",
   "securityComplete": "安全項已全部完成",
   "listSeparator": "、",
-  "creditScoreHint": "滿分 {{max}} · 量化基金申購會參考此分數",
   "loginPassword": "登入密碼",
   "phone": "手機號碼",
   "notBound": "未綁定",
@@ -219,7 +213,6 @@
     "totalDeposited": "累計入金",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "已達最高等級（VIP {{tier}}）",
-    "amountToNext": "距 VIP {{tier}} 還需 {{amount}} USDT",
     "currentTierLabel": "當前等級",
     "baseTier": "起步",
     "tiersLabel": "等級階梯"

@@ -71,11 +71,6 @@
     "high": "高"
   },
   "creditScore": "信用スコア",
-  "creditScoreLabel": {
-    "good": "信用スコア良好",
-    "fair": "信用スコア普通",
-    "poor": "信用スコア低め"
-  },
   "pageTitle": "プロフィール",
   "personalSettings": "個人設定",
   "personalSettingsHint": "ご自身のアカウントにのみ適用されます",
@@ -89,7 +84,6 @@
   "securityAction": "設定する",
   "securityComplete": "セキュリティ項目はすべて設定済みです",
   "listSeparator": "、",
-  "creditScoreHint": "{{max}} 点満点 · クオンツファンドの申込時に参照されます",
   "loginPassword": "ログインパスワード",
   "phone": "電話番号",
   "notBound": "未連携",
@@ -219,7 +213,6 @@
     "totalDeposited": "累計入金額",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "最高ランクに到達（VIP {{tier}}）",
-    "amountToNext": "VIP {{tier}} まであと {{amount}} USDT",
     "currentTierLabel": "現在のランク",
     "baseTier": "ベース",
     "tiersLabel": "ランク階段"

@@ -71,11 +71,6 @@
     "high": "Hoch"
   },
   "creditScore": "Kredit-Score",
-  "creditScoreLabel": {
-    "good": "Guter Kredit-Score",
-    "fair": "Mittlerer Kredit-Score",
-    "poor": "Niedriger Kredit-Score"
-  },
   "pageTitle": "Profil",
   "personalSettings": "Persönliche Einstellungen",
   "personalSettingsHint": "Betrifft nur Ihr eigenes Konto",
@@ -89,7 +84,6 @@
   "securityAction": "Einrichten",
   "securityComplete": "Alle Sicherheitsoptionen sind eingerichtet",
   "listSeparator": ", ",
-  "creditScoreHint": "Von {{max}} · Wird bei Zeichnungen von Quant-Fonds berücksichtigt",
   "loginPassword": "Anmeldepasswort",
   "phone": "Telefon",
   "notBound": "Nicht verknüpft",
@@ -219,7 +213,6 @@
     "totalDeposited": "Kumulierte Einzahlungen",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "Höchste Stufe erreicht (VIP {{tier}})",
-    "amountToNext": "Noch {{amount}} USDT bis VIP {{tier}}",
     "currentTierLabel": "Aktuelle Stufe",
     "baseTier": "Basis",
     "tiersLabel": "Stufenleiter"

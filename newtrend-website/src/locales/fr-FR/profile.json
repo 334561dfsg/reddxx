@@ -71,11 +71,6 @@
     "high": "Élevé"
   },
   "creditScore": "Score de crédit",
-  "creditScoreLabel": {
-    "good": "Bon score de crédit",
-    "fair": "Score de crédit moyen",
-    "poor": "Score de crédit faible"
-  },
   "pageTitle": "Profil",
   "personalSettings": "Paramètres personnels",
   "personalSettingsHint": "N'affecte que votre propre compte",
@@ -89,7 +84,6 @@
   "securityAction": "Configurer",
   "securityComplete": "Tous les éléments de sécurité sont configurés",
   "listSeparator": ", ",
-  "creditScoreHint": "Sur {{max}} · Pris en compte pour les souscriptions aux fonds quantitatifs",
   "loginPassword": "Mot de passe de connexion",
   "phone": "Téléphone",
   "notBound": "Non lié",
@@ -219,7 +213,6 @@
     "totalDeposited": "Dépôts cumulés",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "Niveau maximum atteint (VIP {{tier}})",
-    "amountToNext": "Encore {{amount}} USDT pour atteindre le niveau VIP {{tier}}",
     "currentTierLabel": "Niveau actuel",
     "baseTier": "Base",
     "tiersLabel": "Paliers VIP"

@@ -189,11 +189,6 @@
 .pc-overview .pf-tile-label svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pc-overview .pf-tile-value{display:flex;align-items:center;gap:8px;font-size:18px;line-height:28px;font-weight:600}
 .pc-overview .pf-tile-cta{color:var(--nt-accent);font-size:12px;line-height:18px;font-weight:500}
-.pc-overview .pf-tile-sub{color:#b4b5b6;font-size:12px;line-height:18px}
-.pc-overview .pf-good{color:#2bc287;font-size:14px;font-weight:500}
-.pc-overview .pf-bar{display:block;height:4px;border-radius:999px;background:#232528;overflow:hidden}
-.pc-overview .pf-bar span{display:block;height:100%;border-radius:inherit;background:var(--nt-accent)}
-.pc-overview .pf-bar.ok span{background:#2bc287}
 .pc-overview .pf-dot{display:inline-block;flex-shrink:0;width:8px;height:8px;border-radius:50%}
 .pc-overview .pf-dot.warn{background:#fcd34d}
 .pc-overview .pf-dot.ok{background:#2bc287}

@@ -71,11 +71,6 @@
     "high": "High"
   },
   "creditScore": "Credit Score",
-  "creditScoreLabel": {
-    "good": "Good Credit Score",
-    "fair": "Fair Credit Score",
-    "poor": "Poor Credit Score"
-  },
   "pageTitle": "Profile",
   "personalSettings": "Personal Settings",
   "personalSettingsHint": "Only affects your own account",
@@ -89,7 +84,6 @@
   "securityAction": "Set up",
   "securityComplete": "All security items are set",
   "listSeparator": ", ",
-  "creditScoreHint": "Out of {{max}} · Considered for quant fund subscriptions",
   "loginPassword": "Login Password",
   "phone": "Phone",
   "notBound": "Not Bound",
@@ -219,7 +213,6 @@
     "totalDeposited": "Cumulative deposits",
     "levelLabel": "VIP {{tier}}",
     "maxReached": "Top tier reached (VIP {{tier}})",
-    "amountToNext": "{{amount}} USDT more to reach VIP {{tier}}",
     "currentTierLabel": "Current tier",
     "baseTier": "Base",
     "tiersLabel": "Tier ladder"

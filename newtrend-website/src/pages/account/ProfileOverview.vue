@@ -54,8 +54,8 @@ function signOut() {
  </div>
  <div class="pf-tiles">
   <RouterLink class="pf-tile" :to="path('/kyc')"><span class="pf-tile-label">{{ $t('common.kyc') }}<LineIcon name="chevron-right"/></span><strong class="pf-tile-value"><span class="pf-dot" :class="kycStatus(account).verified?'ok':'warn'" aria-hidden="true"></span>{{ $t(kycLabel()) }}</strong><span v-if="account.kyc!=='approved'" class="pf-tile-cta">{{ $t('margin.borrow.gate.advancedCta') }}</span></RouterLink>
-  <button type="button" class="pf-tile" @click="openModal('vip','profile.vipLevel')"><span class="pf-tile-label">{{ $t('profile.vipLevel') }}<LineIcon name="chevron-right"/></span><strong class="pf-tile-value">{{ $t('profile.center.overview.vip', {tier: 0}) }}</strong><span class="pf-bar"><span style="width:0"></span></span><span class="pf-tile-sub">{{ t('profile.vip.amountToNext', {tier: 1, amount: '100,000'}) }}</span></button>
-  <div class="pf-tile"><span class="pf-tile-label">{{ $t('profile.creditScore') }}</span><strong class="pf-tile-value">{{ CREDIT }} <span class="pf-good">{{ $t('profile.creditScoreLabel.good') }}</span></strong><span class="pf-bar ok"><span style="width:100%"></span></span><span class="pf-tile-sub">{{ t('profile.creditScoreHint', {max: 100}) }}</span></div>
+  <button type="button" class="pf-tile" @click="openModal('vip','profile.vipLevel')"><span class="pf-tile-label">{{ $t('profile.vipLevel') }}<LineIcon name="chevron-right"/></span><strong class="pf-tile-value">{{ $t('profile.center.overview.vip', {tier: 0}) }}</strong></button>
+  <div class="pf-tile"><span class="pf-tile-label">{{ $t('profile.creditScore') }}</span><strong class="pf-tile-value">{{ CREDIT }}</strong></div>
  </div>
 </section>
 
