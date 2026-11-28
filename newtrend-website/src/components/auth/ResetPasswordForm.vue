@@ -6,7 +6,7 @@ import {t} from '../../i18n'
 import {path} from '../../data'
 import {openModal} from '../../session'
 import {errorKey} from '../../api/transport.js'
-import {DEMO_RESET_CODE, requestResetCode, resetPassword} from '../../api/passwordReset.js'
+import {requestResetCode, resetPassword} from '../../api/auth.js'
 import {DEFAULT_DIAL_ISO, DIAL_CODES} from '../../utils/dialCodes.js'
 import DialCodePicker from '../ui/DialCodePicker.vue'
 // 重設密碼 (user decision, 2026-11-28): find the account by email, phone or username; the code always goes to the
@@ -41,7 +41,7 @@ async function send() {
     ticket.value = result.ticket
     maskedEmail.value = result.maskedEmail
     tick(result.resendIn)
-    message.success(t('auth.reset.sentToast', {code: DEMO_RESET_CODE}))
+    message.success(t('auth.reset.sentToast'))
     await nextTick()
     codeInput.value?.focus()
   } catch (cause) {
