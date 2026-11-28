@@ -32,6 +32,7 @@
   "aiQuantOverview": "Overview",
   "aiQuantStrategy": "Strategy",
   "aiQuantStrategyDesc": "Automate trades with quant strategies",
+  "accountRole": "Account role",
   "aiQuantQuantFund": "AI Finance",
   "aiQuantQuantFundDesc": "Invest in professionally managed funds",
   "aiQuantQuantFundPositions": "My AI Finance positions",
