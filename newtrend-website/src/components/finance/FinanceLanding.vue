@@ -5,6 +5,8 @@ import QuantAmbient from '../quant/QuantAmbient.vue'
 import {computed} from 'vue'
 import {path} from '../../data'
 import {availableInMode} from '../../utils/demoAccess.js'
+import {loginPath} from '../../utils/redirect.js'
+import {session} from '../../session'
 // Finance home (/earn), user request 2026-11-27: the 金融 tab gets its own landing like AI Quant instead of opening
 // Earn directly. Same markup and scale as the AI Quant landing (.quant-landing): hero (hidden on phones) and one card
 // per product line — Earn, C2C, Loans — with kicker, name, value line, two chips and a browse action. No "mine" footer
@@ -14,6 +16,9 @@ const allLines=[
  {key:'c2c',icon:'users',to:'/c2c/buy'},
  {key:'loan',icon:'hand-coins',to:'/earn/loan'},
 ]
+// Entering a product needs a signed-in account (user decision 2026-11-29): signed out, the browse action opens the
+// login page, which returns to that product afterwards.
+const entry=to=>session.loggedIn?path(to):loginPath(path(to))
 // The demo account shows Earn only (no C2C or lending).
 const lines=computed(()=>allLines.filter(line=>availableInMode(line.to)))
 </script>
@@ -25,7 +30,7 @@ const lines=computed(()=>allLines.filter(line=>availableInMode(line.to)))
    <div class="coin-label"><Icon :name="line.icon" green/><div><small class="page-kicker">{{ $t('finance.landing.'+line.key+'.kicker') }}</small><h2>{{ $t('finance.landing.'+line.key+'.name') }}</h2></div></div>
    <p>{{ $t('finance.landing.'+line.key+'.valueProp') }}</p>
    <div class="quant-chips"><span class="tag-chip">{{ $t('finance.landing.'+line.key+'.chipA') }}</span> <span class="tag-chip">{{ $t('finance.landing.'+line.key+'.chipB') }}</span></div>
-   <RouterLink class="pill primary" :to="path(line.to)">{{ $t('finance.landing.'+line.key+'.browse') }} <Icon name="arrow-right"/></RouterLink>
+   <RouterLink class="pill primary" :to="entry(line.to)">{{ $t('finance.landing.'+line.key+'.browse') }} <Icon name="arrow-right"/></RouterLink>
   </div>
  </div>
 </div>

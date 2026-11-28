@@ -1,5 +1,7 @@
 <script setup>
 import {path} from '../../data'
+import {loginPath} from '../../utils/redirect.js'
+import {session} from '../../session'
 import Icon from '../../components/Icon.vue'
 import QuantAmbient from '../../components/quant/QuantAmbient.vue'
 import '../../styles/quant-fidelity.css'
@@ -11,6 +13,9 @@ const lines=[
  {key:'strategy',icon:'bot',to:'/ai-quant/strategy'},
  {key:'quantFund',icon:'shield',to:'/ai-quant/quant-fund',green:true},
 ]
+// Entering a product needs a signed-in account (user decision 2026-11-29): signed out, the browse action opens the
+// login page, which returns to that product afterwards.
+const entry=to=>session.loggedIn?path(to):loginPath(path(to))
 </script>
 <template>
 <div class="page-wrap quant-page quant-landing">
@@ -34,7 +39,7 @@ const lines=[
    <div class="quant-chips">
     <span class="tag-chip">{{ $t(`aiQuant.landing.${line.key}.chipA`) }}</span> <span class="tag-chip">{{ $t(`aiQuant.landing.${line.key}.chipB`) }}</span>
    </div>
-   <RouterLink class="pill primary" :to="path(line.to)">{{ $t(`aiQuant.landing.${line.key}.browse`) }} <Icon name="arrow-right"/></RouterLink>
+   <RouterLink class="pill primary" :to="entry(line.to)">{{ $t(`aiQuant.landing.${line.key}.browse`) }} <Icon name="arrow-right"/></RouterLink>
   </div>
  </div>
 </div>
