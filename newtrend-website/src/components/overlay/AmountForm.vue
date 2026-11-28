@@ -7,11 +7,13 @@ import {t} from '../../i18n'
 import {session} from '../../session'
 import Skeleton from '../ui/Skeleton.vue'
 import {getAssetsOverview,spendFunds,walletErrorKey} from '../../api/wallet.js'
+import {donate} from '../../api/charity.js'
 import {invalidate,useMutation,useRequest} from '../../composables/useRequest.js'
 import {money} from '../../utils/format.js'
 
 // Generic amount dialog body for donate (charity). 閃兌 has its own dialog (FlashExchange).
-// Spends from the shared ledger; the shell's footer submits it through form="action-form".
+// Spends from the shared ledger; the shell's footer submits it through form="action-form". A campaign donation
+// (data.projectId) goes through api/charity.js, which checks the campaign, debits the ledger and records the donation.
 const props=defineProps({kind:{type:String,required:true},data:{type:Object,required:true}})
 const emit=defineEmits(['state'])
 const amount=shallowRef(String(props.data.amount||'')),invalid=shallowRef(false),done=shallowRef(false)
@@ -20,14 +22,14 @@ const symbol=computed(()=>props.data.symbol||'USDT'),min=computed(()=>props.data
 const overview=useRequest(()=>getAssetsOverview(session.mode),{key:()=>session.mode})
 const ready=computed(()=>overview.status.value==='ready')
 const available=computed(()=>overview.data.value?.balances[symbol.value]||0)
-const spending=useMutation(spendFunds)
+const spending=useMutation(props.data.projectId?donate:spendFunds)
 watch([amount,done,ready,spending.pending],()=>emit('state',{dirty:Boolean(amount.value)&&!done.value,valid:Boolean(amount.value)&&ready.value,done:done.value,busy:spending.pending.value}),{immediate:true})
 
 function fail(key,params){invalid.value=true;message.error(t(key,params))}
 async function submit(){
  if(done.value||spending.pending.value||!ready.value)return
  const val=Number(amount.value)
- try{await spending.run({mode:session.mode,kind:props.kind,symbol:symbol.value,amount:val,min:min.value,max:props.data.max??500000})}
+ try{await spending.run({mode:session.mode,kind:props.kind,projectId:props.data.projectId,symbol:symbol.value,amount:val,min:min.value,max:props.data.max??500000})}
  catch(cause){const key=walletErrorKey(cause);return fail(key,key==='overlay.amountMinimum'?{amount:fmt(min.value)}:undefined)}
  invalidate('wallet')
  invalid.value=false;done.value=true;amount.value=''

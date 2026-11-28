@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {transact, raisedAmount, progressOf, channelTotals, projectsBySort, localized, LOCALES} from '../src/shared/charity/domain.js'
+import {transact, raisedAmount, progressOf, channelTotals, projectsBySort, localized, publicCharity, userDonations, LOCALES} from '../src/shared/charity/domain.js'
 import {seedCharity} from '../src/shared/charity/seed.js'
 
 const T0 = Date.UTC(2026, 10, 28, 0, 0, 0)
@@ -74,4 +74,23 @@ test('channel stats add base values to the project sums', () => {
   assert.throws(() => run(s, 'saveStats', {stats: {baseRaised: 0, basePeopleHelped: 0}, expectedVersion: 1}), /stale/)
   assert.throws(() => run(s, 'saveStats', {stats: {baseRaised: -1, basePeopleHelped: 0}, expectedVersion: 2}), /statsRaised/)
   assert.throws(() => run(s, 'saveStats', {stats: {baseRaised: 0, basePeopleHelped: 0.5}, expectedVersion: 2}), /statsPeople/)
+})
+
+test('public donations complete immediately, raise the project and respect listing and limits', () => {
+  let s = seedCharity(T0)
+  const [first] = publicCharity(s, 'ja-JP').projects
+  assert.equal(first.projectId, 'CP-001')
+  assert.equal(first.title, localized(s.projects[0], 'ja-JP').title)
+  const before = first.raised, count = s.donations.length
+  s = run(s, 'donate', {projectId: 'CP-001', amount: 25, userId: 'USR-DEMO'}, T0 + 5)
+  assert.equal(s.donations.length, count + 1)
+  assert.equal(s.donations[0].donationId, `CD-${String(count + 1).padStart(5, '0')}`)
+  assert.equal(s.donations[0].status, 'completed')
+  assert.equal(publicCharity(s, 'en-US').projects[0].raised, before + 25)
+  assert.equal(userDonations(s, 'USR-DEMO', 'en-US')[0].amount, 25)
+  assert.throws(() => run(s, 'donate', {projectId: 'CP-001', amount: 0.5, userId: 'USR-DEMO'}), /donationMin/)
+  assert.throws(() => run(s, 'donate', {projectId: 'CP-001', amount: 500001, userId: 'USR-DEMO'}), /donationMax/)
+  s = run(s, 'setProjectStatus', {projectId: 'CP-001', expectedStatus: 'listed'})
+  assert.ok(!publicCharity(s, 'en-US').projects.some(p => p.projectId === 'CP-001'))
+  assert.throws(() => run(s, 'donate', {projectId: 'CP-001', amount: 10, userId: 'USR-DEMO'}), /donationProject/)
 })

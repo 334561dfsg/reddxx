@@ -52,6 +52,33 @@ export function localized(p, locale) {
 }
 export const projectTitle = p => p?.locales?.[FALLBACK_LOCALE]?.title || p?.projectId || ''
 
+/** What the public 公益 page shows: listed projects by sort weight (larger first) in `locale`, plus the channel totals. */
+export function publicCharity(s, locale) {
+  const projects = projectsBySort(s.projects.filter(p => p.status === 'listed')).map(p => {
+    const {title, summary} = localized(p, locale)
+    return {projectId: p.projectId, title, summary, image: p.image, raised: raisedAmount(s, p), targetAmount: p.targetAmount,
+      progress: progressOf(s, p), peopleHelped: p.peopleHelped, minDonation: p.minDonation, maxDonation: p.maxDonation, asset: ASSET}
+  })
+  const {totalRaised, peopleHelped} = channelTotals(s)
+  return {projects, totals: {totalRaised, peopleHelped}}
+}
+/** One user's donations, newest first, with the project's current name in `locale` (or the name recorded at the time). */
+export function userDonations(s, userId, locale) {
+  const byId = Object.fromEntries(s.projects.map(p => [p.projectId, p]))
+  return s.donations.filter(d => d.userId === userId).sort((a, b) => b.createdAt - a.createdAt)
+    .map(d => ({donationId: d.donationId, projectId: d.projectId, title: byId[d.projectId] ? localized(byId[d.projectId], locale).title : d.projectTitle,
+      amount: d.amount, asset: d.asset, status: d.status, createdAt: d.createdAt}))
+}
+/** A public donation must target a listed project and stay inside its per-donation limits. */
+export function checkDonation(s, {projectId, amount}) {
+  const project = s.projects.find(p => p.projectId === projectId)
+  fail(project && project.status === 'listed', 'donationProject')
+  const value = Number(amount)
+  fail(finite(value) && value >= project.minDonation, 'donationMin')
+  fail(value <= project.maxDonation, 'donationMax')
+  return project
+}
+
 // ---------- validation ----------
 
 export function validateProject(p) {
@@ -124,6 +151,12 @@ export function transact(source, action, args = {}, now = Date.now()) {
     log(s, {module: 'stats', action, refId: 'channel-stats', targetLabel: '频道统计',
       summary: `历史募集基数 ${before.baseRaised} → ${s.stats.baseRaised} USDT；历史受助人数基数 ${before.basePeopleHelped} → ${s.stats.basePeopleHelped}`,
       before, after: structuredClone(s.stats), operator: actor}, now)
+  } else if (action === 'donate') {
+    // Public donation (user decision 2026-11-28): completes immediately, no review; the caller has already debited the ledger.
+    const project = checkDonation(s, args)
+    const next = Math.max(0, ...s.donations.map(d => Number(String(d.donationId).replace(/\D/g, '')) || 0)) + 1
+    s.donations.unshift({donationId: `CD-${String(next).padStart(5, '0')}`, userId: args.userId, userName: args.userName || s.profiles?.[args.userId]?.name || args.userId,
+      projectId: project.projectId, projectTitle: projectTitle(project), amount: money(Number(args.amount)), asset: ASSET, status: 'completed', createdAt: now})
   } else throw new Error('action')
   s.requests.push(args.requestId)
   return s

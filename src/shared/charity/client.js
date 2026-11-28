@@ -3,7 +3,7 @@ import {createCharityState} from './domain.js'
 import {charityService} from './service.js'
 
 // Admin client for the new public site's 公益 channel (/admin/charity/*). Static data (user decision, 2026-11-28): the
-// mock runs in this page's memory; nothing is persisted and the public site keeps its own bundled data (no live sync).
+// mock runs in this page's memory; nothing is persisted and the public site reads the same module through newtrend-website/src/api/charity.js, but each page has its own copy (no live sync).
 export const charityState = ref(createCharityState())
 export const charityError = ref(''), charityBusy = ref(false), charityLoaded = ref(false)
 
@@ -35,6 +35,7 @@ export const errorLabels = {
   projectLocales: '语言版本不合法', projectFallback: 'English 版本的项目名称必须填写（其他语言缺失时回退显示）', projectTitle: '已填写内容的语言版本必须有项目名称',
   projectImage: '请上传封面图片或填写图片地址', projectTarget: '目标金额须大于 0', projectInitial: '初始已募金额不能小于 0', projectPeople: '受助人数须为不小于 0 的整数',
   projectLimits: '单笔最低捐赠须大于 0，最高捐赠不小于最低捐赠', projectSort: '排序权重须为整数',
-  statsRaised: '历史募集基数不能小于 0', statsPeople: '历史受助人数基数须为不小于 0 的整数', action: '不支持的操作',
+  statsRaised: '历史募集基数不能小于 0', statsPeople: '历史受助人数基数须为不小于 0 的整数',
+  donationProject: '项目未上架或不存在', donationMin: '低于单笔最低捐赠', donationMax: '超过单笔最高捐赠', action: '不支持的操作',
 }
 export const errorText = error => errorLabels[error?.message || error] || String(error?.message || error || '操作失败')
