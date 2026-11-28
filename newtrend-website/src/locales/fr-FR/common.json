@@ -271,5 +271,6 @@
     "label": "Navigation inférieure",
     "quant": "Quant"
   },
-  "back": "Retour"
+  "back": "Retour",
+  "toView": "pour voir"
 }

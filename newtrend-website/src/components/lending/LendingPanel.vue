@@ -15,6 +15,7 @@ import LendingBorrowForm from './LendingBorrowForm.vue'
 import '../../styles/earn-fidelity.css'
 import LendingPortfolio from './LendingPortfolio.vue'
 import LendingCatalog from './LendingCatalog.vue'
+import GuestPrompt from '../ui/GuestPrompt.vue'
 import '../../styles/lending-fidelity.css'
 const route=useRoute(),{state,error,busy,refresh}=useLendingFeed(),uid='USR-DEMO'
 const productId=ref(''),amount=ref(''),days=ref(30),collateral=ref('USDT'),failure=ref('')
@@ -52,8 +53,8 @@ watch(()=>route.params.id,()=>{failure.value=''})
   <template v-if="borrowing"><BackLink :to="path('/earn/loan')" :title="$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})" class="loan-borrow-back">{{$t('margin.borrow.back')}}</BackLink><h1 v-if="!product" class="loan-borrow-title"><Coin v-if="product" :symbol="product.loanCurrency"/>{{$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})}}</h1></template>
   <LendingCatalog v-if="!mine&&!borrowing" :products="products" @borrow="choose"/>
   <FeedbackToast v-if="error" type="error" :source="() => (error) ? (([String(($t('lending.errors.unavailable')) ?? ''),&quot; &quot;,''].join(''))) : ''"><button class="green-link" @click="refresh">{{$t('lending.refresh')}}</button></FeedbackToast>
-  <!-- Signed out: the borrow form stays usable (its submit asks to log in); other views offer the login dialog. -->
-  <p v-if="!session.loggedIn&&!borrowing"><button type="button" class="green-link" @click="requireLogin()">{{$t('lending.login')}}</button></p>
+  <!-- Signed out: the catalogue and borrow form stay usable (submit asks to log in); 我的借貸 shows the guest prompt. -->
+  <GuestPrompt v-if="!session.loggedIn&&mine" class="loan-guest"/>
   <template v-else>
    <template v-if="!mine">
     <p v-if="!products.length&&!error">{{$t('margin.market.empty')}}</p>

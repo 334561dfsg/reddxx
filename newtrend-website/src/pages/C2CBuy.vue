@@ -1,9 +1,11 @@
 <script setup>
+import {session} from '../session'
 import LineIcon from '../components/ui/LineIcon.vue'
 import {computed} from 'vue'
 import {useRoute} from 'vue-router'
 import {path} from '../data'
 import C2COrders from '../components/c2c/C2COrders.vue'
+import GuestPrompt from '../components/ui/GuestPrompt.vue'
 import C2CTradePanel from '../components/c2c/C2CTradePanel.vue'
 import '../styles/c2c-fidelity.css'
 const route=useRoute()
@@ -14,7 +16,9 @@ const nav=[['buy','c2c.nav.buy','buy'],['sell','c2c.nav.sell','sell'],['orders',
 <template>
 <div class="c2c-page">
  <nav class="c2c-nav" :aria-label="$t('c2c.nav.ariaLabel')"><RouterLink v-for="[id,label,icon] in nav" :key="id" :to="path('/c2c/'+id)"><LineIcon set="c2c" :name="icon"/>{{ $t(label) }}</RouterLink></nav>
- <KeepAlive><component :is="content" :key="section" :side="section"/></KeepAlive>
+ <!-- 我的訂單 signed out: the guest prompt instead of the order list (nothing is requested). -->
+ <GuestPrompt v-if="section==='orders'&&!session.loggedIn" page/>
+ <KeepAlive v-else><component :is="content" :key="section" :side="section"/></KeepAlive>
 </div>
 </template>
 <style>.c2c-request-frame.nt-request-error{border:1px solid #ffffff12;border-radius:16px;background:#0d1014}</style>

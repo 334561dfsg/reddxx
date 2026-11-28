@@ -1,4 +1,5 @@
 <script setup>
+import {session} from '../session'
 import ChannelSectionSwitch from '../components/ui/ChannelSectionSwitch.vue'
 import NotFound from './NotFound.vue'
 import QuantAmbient from '../components/quant/QuantAmbient.vue'
@@ -9,6 +10,7 @@ import {path} from '../data'
 import {t} from '../i18n'
 import EarnCatalog from '../components/earn/EarnCatalog.vue'
 import EarnPortfolio from '../components/earn/EarnPortfolio.vue'
+import GuestPrompt from '../components/ui/GuestPrompt.vue'
 import EarnDetail from '../components/earn/EarnDetail.vue'
 import FinanceLanding from '../components/finance/FinanceLanding.vue'
 import '../styles/earn-fidelity.css'
@@ -48,6 +50,8 @@ const missing=computed(()=>{const id=route.params.id;if(!id)return false;if(sect
  />
  <QuantAmbient v-if="section==='loan'"/>
  <EarnCatalog v-if="section==='simple'"/>
+ <!-- 我的理財 signed out: the guest prompt instead of the portfolio (nothing is requested). -->
+ <GuestPrompt v-else-if="section==='my-earnings'&&!session.loggedIn" page/>
  <EarnPortfolio v-else-if="section==='my-earnings'"/>
  <LendingPanel v-else-if="section==='loan'"/>
 </div>

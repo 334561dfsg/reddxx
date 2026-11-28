@@ -2,9 +2,8 @@
 import EmptyState from '../ui/EmptyState.vue'
 import {message} from 'ant-design-vue'
 import {computed,onBeforeUnmount,watch} from 'vue'
-import {requireLogin,session} from '../../session'
-import {useRoute} from 'vue-router'
-import {path} from '../../data'
+import {session} from '../../session'
+import GuestPrompt from '../ui/GuestPrompt.vue'
 import {tradeProducts} from '../../utils/tradeProducts'
 import {historyBuckets} from '../../utils/mockTradeHistory'
 import Skeleton from '../ui/Skeleton.vue'
@@ -19,7 +18,6 @@ import TradeHistory from '../TradeHistory.vue'
 // The workspace owns the selected tab and per-tab page (kept across layout changes); this panel reports changes.
 const props=defineProps({mode:String,record:String,pages:{type:Object,default:()=>({})},prices:{type:Object,default:()=>({})},compact:Boolean})
 const emit=defineEmits(['update:record','page'])
-const route=useRoute()
 const tabs=computed(()=>tradeProducts[props.mode].tabs)
 const selected=computed(()=>tabs.value.find(tab=>tab.id===props.record)||tabs.value[0])
 // One request per tab and mode; a new order, close or cancel invalidates 'trade' and refreshes it in place.
@@ -44,8 +42,8 @@ const announce=text=>message.success(text)
 <template>
 <section class="terminal-panel records-panel" :aria-label="$t('trade.pages.records')">
   <div class="record-tabs"><button v-for="tab in tabs" :key="tab.id" :class="{active:selected.id===tab.id}" :aria-pressed="selected.id===tab.id" @click="emit('update:record',tab.id)">{{ $t(tab.label) }}</button></div>
-  <!-- Signed out (user reference 2026-11-29): one line, 登入 opens the login dialog, 立即註冊 goes to /register and back. -->
-  <p v-if="!session.loggedIn" class="records-guest"><button type="button" aria-haspopup="dialog" @click="requireLogin()">{{ $t('auth.login') }}</button> {{ $t('trade.or') }} <RouterLink :to="{path:path('/register'),query:{redirect:route.fullPath}}">{{ $t('auth.registerNow') }}</RouterLink> {{ $t('trade.toTrade') }}</p>
+  <!-- Signed out (user reference 2026-11-29): 「登入 或 立即註冊 去交易」, centred in the panel. -->
+  <GuestPrompt v-if="!session.loggedIn" suffix="trade.toTrade"/>
   <RequestState v-else-if="records.status.value==='error'" :status="records.status.value" :error="records.error.value" @retry="records.refresh"/>
   <!-- Phone layout: card-shaped placeholders matching the record cards (no table header). -->
   <ul v-else-if="loading&&compact" class="record-cards records-skeleton" aria-busy="true"><li class="sr-only" role="status">{{ $t('common.loading') }}</li><li v-for="n in 3" :key="n" class="record-card" aria-hidden="true"><div class="record-card-head"><Skeleton inline width="96px"/><Skeleton inline width="48px"/></div><dl><div v-for="f in 6" :key="f"><dt><Skeleton inline width="56px"/></dt><dd><Skeleton inline width="72px"/></dd></div></dl></li></ul>

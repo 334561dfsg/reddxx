@@ -271,5 +271,6 @@
     "label": "Bottom navigation",
     "quant": "Quant"
   },
-  "back": "Back"
+  "back": "Back",
+  "toView": "to view"
 }
