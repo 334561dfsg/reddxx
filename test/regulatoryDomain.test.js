@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {transact, publicList, publicEntry, localized, LOCALES, ADMIN, ATTACHMENT_MAX_BYTES} from '../src/shared/regulatory/domain.js'
+import {transact, publicList, publicEntry, localized, slugOf, entryIdOf, LOCALES, ADMIN, ATTACHMENT_MAX_BYTES} from '../src/shared/regulatory/domain.js'
 import {seedRegulatory} from '../src/shared/regulatory/seed.js'
 import {createRegulatoryService} from '../src/shared/regulatory/service.js'
 
@@ -84,4 +84,13 @@ test('duplicate requests are rejected and the service keeps state in memory only
   service.command('setStatus', {entryId: 'REG-FMSB', status: 'unpublished', expectedVersion: 1, requestId: 'svc-1'})
   assert.equal(publicList(service.read(), 'en-US').length, 4)
   assert.equal(createRegulatoryService(() => T0).read().entries.filter(x => x.status === 'published').length, 5, 'a new instance starts from the seed')
+})
+
+test('public slugs keep the old /content/regulation-<code> links and round-trip new ids', () => {
+  assert.equal(slugOf('REG-SEC'), 'regulation-sec')
+  assert.equal(entryIdOf('regulation-sec'), 'REG-SEC')
+  const id = 'REG-1795857493731-6'
+  assert.equal(entryIdOf(slugOf(id)), id)
+  assert.equal(entryIdOf('terms'), null)
+  assert.equal(entryIdOf('regulation-../x'), null)
 })

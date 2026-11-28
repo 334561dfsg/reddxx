@@ -130,3 +130,6 @@ export function publicEntry(s, entryId, locale) {
   const e = s.entries.find(x => x.status === 'published' && x.entryId === entryId)
   return e ? view(e, locale) : null
 }
+/** Public URL slug: REG-SEC ↔ regulation-sec, so the old /content/regulation-<code> links keep working. */
+export const slugOf = entryId => `regulation-${String(entryId).replace(/^REG-/, '').toLowerCase()}`
+export const entryIdOf = slug => /^regulation-[a-z0-9-]+$/i.test(String(slug)) ? `REG-${String(slug).slice('regulation-'.length).toUpperCase()}` : null
