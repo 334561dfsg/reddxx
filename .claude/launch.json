@@ -1,0 +1,27 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "newtrend-website",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "newtrend-website",
+        "run",
+        "dev"
+      ],
+      "port": 4173
+    },
+    {
+      "name": "admin-regulatory",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vite",
+        "--port",
+        "5291",
+        "--strictPort"
+      ],
+      "port": 5291
+    }
+  ]
+}

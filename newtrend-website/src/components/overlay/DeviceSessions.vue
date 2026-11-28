@@ -58,7 +58,7 @@ async function end(session){
 </template>
 <style scoped>
 .device-sessions{display:grid;gap:16px}
-.device-subtitle{margin:-8px 0 0;color:var(--nt-text-dim);font-size:13px;line-height:20px}
+.device-subtitle{margin:0;color:var(--nt-text-dim);font-size:13px;line-height:20px}
 .device-list{display:grid;gap:10px;margin:0;padding:0;list-style:none;max-height:min(360px,50vh);overflow-y:auto}
 .device-card{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--nt-border-strong);border-radius:var(--nt-radius-panel);background:#0c0e10}
 .device-card.current{background:#a5ff4a0a}

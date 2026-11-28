@@ -1175,6 +1175,8 @@ export const DEFAULT_SITE_CONFIG = {
   emailLoginEnabled: true,
   /** 是否在前台开放手机号登录与手机号注册；关闭后仅保留邮箱登录/注册，区号列表仍仅 +86 */
   phoneLoginEnabled: true,
+  /** 是否在前台开放用户名登录（用户名 + 密码） */
+  usernameLoginEnabled: true,
   /** 手机登录/安全绑定可选区号（phoneLoginEnabled 为 true 时生效）；顺序由 dialSortOrder 决定 */
   allowedDialCodes: ['+86', '+84'],
   /** 管理台新增的国际区号 */
@@ -1409,6 +1411,9 @@ export function normalizeSiteConfig(raw) {
   if (typeof merged.emailLoginEnabled !== 'boolean') {
     merged.emailLoginEnabled = DEFAULT_SITE_CONFIG.emailLoginEnabled
   }
+  if (typeof merged.usernameLoginEnabled !== 'boolean') {
+    merged.usernameLoginEnabled = DEFAULT_SITE_CONFIG.usernameLoginEnabled
+  }
   merged.languageSettingsEnabled =
     typeof merged.languageSettingsEnabled === 'boolean'
       ? merged.languageSettingsEnabled
@@ -1543,6 +1548,10 @@ export const siteConfigApi = {
             typeof config.phoneLoginEnabled === 'boolean'
               ? config.phoneLoginEnabled
               : DEFAULT_SITE_CONFIG.phoneLoginEnabled,
+          usernameLoginEnabled:
+            typeof config.usernameLoginEnabled === 'boolean'
+              ? config.usernameLoginEnabled
+              : DEFAULT_SITE_CONFIG.usernameLoginEnabled,
           languageSettingsEnabled:
             typeof config.languageSettingsEnabled === 'boolean'
               ? config.languageSettingsEnabled

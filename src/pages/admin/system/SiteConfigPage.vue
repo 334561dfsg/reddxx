@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { Switch } from 'ant-design-vue'
 import { DEFAULT_I18N_BLOCK } from '../../../admin/constants/i18nCatalog'
 import { DEFAULT_SITE_CONFIG, siteConfigApi } from '../../../admin/mock/siteConfig'
 import { FRONT_WALLET_LOGIN_PROVIDERS } from '../../../stores/frontAuth'
@@ -268,7 +269,7 @@ onMounted(() => {
         <!-- 登录设置 -->
         <div v-show="activeTab === 'login'" class="space-y-4">
           <p class="text-sm text-slate-500">
-            配置邮箱登录、手机号登录、钱包登录、图形验证码与邀请码等。
+            配置邮箱登录、手机号登录、用户名登录、钱包登录、图形验证码与邀请码等。
           </p>
 
           <div class="flex items-start justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">
@@ -309,6 +310,18 @@ onMounted(() => {
                 class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
               />
             </button>
+          </div>
+
+          <div class="flex items-start justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">
+            <div class="min-w-0 flex-1">
+              <p id="site-config-username-login" class="text-sm font-medium text-slate-900">用户名登录</p>
+              <p class="mt-1 text-xs text-slate-500">关闭后新前台隐藏用户名登录、用户名注册与用户名找回密码，仍可使用邮箱或手机号。</p>
+            </div>
+            <Switch
+              v-model:checked="config.usernameLoginEnabled"
+              class="mt-0.5 shrink-0"
+              aria-labelledby="site-config-username-login"
+            />
           </div>
 
           <div class="flex items-start justify-between gap-4 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-3">

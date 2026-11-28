@@ -259,3 +259,10 @@
  #main-content#main-content .withdraw-page .wd-balance{margin-bottom:16px}
  #main-content#main-content .withdraw-page :is(.wd-grid,.wd-main,.wd-side){gap:16px}
 }
+
+/* Confirmations (account-confirm: 登出, 清除快取, cancel/close confirmations across the channels) on phones: the footer
+   splits its actions into equal 44px buttons, like the subscription dialogs (user decision 2026-11-28). */
+@media(max-width:767px){
+ .nt-dialog.nt-dialog.confirm-dialog .overlay-footer{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:12px}
+ .nt-dialog.nt-dialog.confirm-dialog .overlay-footer>*{width:100%;min-height:44px;justify-content:center}
+}

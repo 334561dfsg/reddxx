@@ -28,8 +28,10 @@ export const overlayTypes = {
   devices: {classes: SHEET, footer: false},
   authenticator: {classes: SHEET, footer: false},
   'fund-password': {classes: SHEET, footer: false},
+  // VIP tiers are read-only: the shared dialog look, closed with × (no lone 取消 footer).
+  vip: {classes: SHEET, footer: false},
   'fund-password-verify': {classes: SHEET, initialFocus: '[data-prompt-initial-focus]', footer: false},
-  'account-confirm': {primary: {form: 'account-action', confirm: true}},
+  'account-confirm': {classes: ['confirm-dialog'], primary: {form: 'account-action', confirm: true}},
   'c2c-agreement': {primary: {form: 'account-action', confirm: true}},
   donate: {primary: {form: 'action-form', amountForm: true}},
 }
