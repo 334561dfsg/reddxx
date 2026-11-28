@@ -12,7 +12,7 @@
     "title": "Répartition des actifs",
     "assetsType": "Type d'actif",
     "earnAccount": "Compte Earn",
-    "quantFundAccount": "Compte Fonds Quant"
+    "quantFundAccount": "Compte Finance IA"
   },
   "assetKind": {
     "crypto": "Cryptomonnaies",
@@ -25,7 +25,7 @@
     "copyTrade": "Copy Trading",
     "aiQuant": "AI Quant",
     "binaryOptions": "Options binaires",
-    "quantFund": "Fonds Quant",
+    "quantFund": "Finance IA",
     "earn": "Earn"
   },
   "detail": {
@@ -49,7 +49,7 @@
   },
   "kindBreakdown": {
     "title": "Liquidités par type d'actif",
-    "note": "Liquidités uniquement — soldes disponibles et gelés, valorisés en USDT. La marge des positions, les gains et pertes latents, Earn et Quant Fund sont exclus ; la somme de ces quatre postes est donc inférieure à votre total d'actifs."
+    "note": "Liquidités uniquement — soldes disponibles et gelés, valorisés en USDT. La marge des positions, les gains et pertes latents, Earn et Finance IA sont exclus ; la somme de ces quatre postes est donc inférieure à votre total d'actifs."
   },
   "fundRecords": "Mouvements de fonds",
   "fundRecordsTime": "Heure",

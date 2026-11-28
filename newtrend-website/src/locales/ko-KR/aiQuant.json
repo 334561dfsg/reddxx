@@ -15,7 +15,7 @@
     },
     "quantFund": {
       "kicker": "AI 운용 · 신경 끄기",
-      "name": "퀀트 펀드",
+      "name": "AI 금융",
       "valueProp": "AI가 운용하는 정기형 펀드. 청약하면 만기에 자동으로 정산됩니다.",
       "chipA": "정기",
       "chipB": "자동 정산",
@@ -28,7 +28,7 @@
     "ariaLabel": "AI 퀀트 모듈 내비게이션",
     "strategy": "전략",
     "myStrategies": "내 전략",
-    "quantFund": "퀀트 펀드",
+    "quantFund": "AI 금융",
     "myPositions": "내 포지션"
   },
   "myStrategies": {
@@ -124,8 +124,8 @@
     "riskLevelValue": "Lv.{{level}}",
     "guideCard": {
       "title": "마음에 드는 전략을 찾지 못하셨나요?",
-      "description": "AI가 전 과정을 운용하는 퀀트 펀드를 살펴보세요. 청약 후 지켜볼 필요 없이 만기에 자동 정산됩니다.",
-      "cta": "퀀트 펀드 둘러보기"
+      "description": "AI가 전 과정을 운용하는 AI 금융을 살펴보세요. 청약 후 지켜볼 필요 없이 만기에 자동 정산됩니다.",
+      "cta": "AI 금융 둘러보기"
     },
     "loadFailed": "전략 목록을 불러오지 못했습니다."
   },
@@ -285,10 +285,10 @@
     "body": "과거의 성과가 미래의 결과를 보장하지 않습니다. AI 전략 및 신호는 참고 도구일 뿐 금융 자문이 아닙니다. 암호화폐 및 선물 거래는 전체 잔액을 잃을 수 있으므로 — 잃어도 감당할 수 있는 금액만 거래하세요."
   },
   "quantFund": {
-    "title": "퀀트 펀드",
+    "title": "AI 금융",
     "hero": {
-      "subtitle": "AI 운용 퀀트 펀드",
-      "title": "퀀트 펀드 — AI 운용 확정 기간 수익",
+      "subtitle": "AI 운용 금융 상품",
+      "title": "AI 금융 — AI 운용 확정 기간 수익",
       "description": "AI 퀀트 팀이 전 과정을 운용합니다. 승인 후 매일 수익이 주문 안에 누적되며 환매 시 원금과 함께 지급됩니다. 잠금 기간이 끝난 뒤에도 환매할 때까지 수익이 계속 발생합니다.",
       "disclaimer": "AI 운용 · 승인 후 이자 발생",
       "viewPositionsCta": "내 포지션"
@@ -355,7 +355,7 @@
       "maxButton": "최대",
       "estDailyEarnings": "예상 일일 수익",
       "riskAckPrefix": "다음 내용을 읽고 동의합니다: ",
-      "riskAckLink": "퀀트 펀드 리스크 공시",
+      "riskAckLink": "AI 금융 리스크 공시",
       "riskAckSuffix": " (이 상품에 대한).",
       "submit": "구독 확인",
       "submitting": "제출 중…",
@@ -380,8 +380,8 @@
       "earlyFeeNotice": "잠금 기간 중 조기 환매 시 남은 기간과 관계없이 원금의 {{rate}}%({{fee}} {{currency}}) 수수료가 부과되며, 누적 수익은 그대로 지급됩니다. 환매는 관리자 심사가 필요하며 승인 전까지 이자가 계속 발생합니다."
     },
     "positions": {
-      "title": "내 퀀트 펀드 포지션",
-      "subtitle": "계정의 모든 퀀트 펀드 주문 및 정산 상태.",
+      "title": "내 AI 금융 포지션",
+      "subtitle": "계정의 모든 AI 금융 주문 및 정산 상태.",
       "tabs": {
         "all": "전체",
         "active": "활성",

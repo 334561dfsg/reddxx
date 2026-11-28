@@ -91,7 +91,7 @@ async function save() {
 </script>
 
 <template>
- <PageShell :title="route.params.id ? '编辑量化基金产品' : '新增量化基金产品'">
+ <PageShell :title="route.params.id ? '编辑AI 金融产品' : '新增AI 金融产品'">
   <template #extra><Button :disabled="quantFundBusy" aria-label="返回产品列表" @click="back"><template #icon><ArrowLeftOutlined/></template>返回</Button></template>
   <template v-if="route.params.id" #description><TypographyText type="secondary">{{ route.params.id }}<template v-if="expectedVersion"> · v{{ expectedVersion }}</template></TypographyText></template>
   <Spin v-if="loading" tip="加载产品…"/>

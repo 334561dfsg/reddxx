@@ -12,7 +12,7 @@
     "title": "資産配分",
     "assetsType": "資産タイプ",
     "earnAccount": "Earnアカウント",
-    "quantFundAccount": "クオントファンドアカウント"
+    "quantFundAccount": "AI ファイナンスアカウント"
   },
   "assetKind": {
     "crypto": "暗号資産",
@@ -25,7 +25,7 @@
     "copyTrade": "コピートレード",
     "aiQuant": "AIクオント",
     "binaryOptions": "バイナリーオプション",
-    "quantFund": "クオントファンド",
+    "quantFund": "AI ファイナンス",
     "earn": "Earn"
   },
   "detail": {
@@ -49,7 +49,7 @@
   },
   "kindBreakdown": {
     "title": "資産種別ごとの現金",
-    "note": "現金のみを集計しています（利用可能残高と凍結残高、USDT 評価）。建玉証拠金・未実現損益・Earn・クオンツファンドは含まれないため、4 種類の合計は総資産より小さくなります。"
+    "note": "現金のみを集計しています（利用可能残高と凍結残高、USDT 評価）。建玉証拠金・未実現損益・Earn・AI ファイナンスは含まれないため、4 種類の合計は総資産より小さくなります。"
   },
   "fundRecords": "資金記録",
   "fundRecordsTime": "時刻",

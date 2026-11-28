@@ -15,7 +15,7 @@
     },
     "quantFund": {
       "kicker": "Géré par IA · Sans intervention",
-      "name": "Fonds Quant",
+      "name": "Finance IA",
       "valueProp": "Un fonds à terme géré par IA. Souscrivez et laissez le règlement s'exécuter automatiquement à l'échéance.",
       "chipA": "À terme fixe",
       "chipB": "Règlement auto",
@@ -28,7 +28,7 @@
     "ariaLabel": "Navigation du module AI Quant",
     "strategy": "Stratégies",
     "myStrategies": "Mes stratégies",
-    "quantFund": "Fonds Quant",
+    "quantFund": "Finance IA",
     "myPositions": "Mes positions"
   },
   "myStrategies": {
@@ -124,8 +124,8 @@
     "riskLevelValue": "Niv.{{level}}",
     "guideCard": {
       "title": "Pas trouvé la stratégie qu'il vous faut ?",
-      "description": "Découvrez les Fonds Quant gérés par l'IA : aucune surveillance requise, règlement automatique à l'échéance.",
-      "cta": "Parcourir les Fonds Quant"
+      "description": "Découvrez Finance IA, entièrement géré par l'IA : aucune surveillance requise, règlement automatique à l'échéance.",
+      "cta": "Parcourir Finance IA"
     },
     "loadFailed": "Échec du chargement des stratégies."
   },
@@ -285,10 +285,10 @@
     "body": "Les performances passées ne garantissent jamais les résultats futurs. Les stratégies et signaux IA sont des outils de référence, pas des conseils financiers. Le trading de cryptos et de contrats à terme peut entraîner la perte de la totalité de votre solde — ne tradez que ce que vous pouvez vous permettre de perdre."
   },
   "quantFund": {
-    "title": "Fonds Quant",
+    "title": "Finance IA",
     "hero": {
-      "subtitle": "Fonds Quant géré par IA",
-      "title": "Fonds Quant — rendement à terme géré par IA",
+      "subtitle": "Finance pilotée par IA",
+      "title": "Finance IA — rendement à terme géré par IA",
       "description": "Géré de bout en bout par notre équipe quant IA. Les intérêts s'accumulent chaque jour dans votre ordre dès l'approbation et sont versés avec le capital au rachat ; après la période de blocage, ils continuent de courir jusqu'à votre rachat.",
       "disclaimer": "Géré par IA · Intérêts après approbation",
       "viewPositionsCta": "Mes positions"
@@ -355,7 +355,7 @@
       "maxButton": "Max",
       "estDailyEarnings": "Gains quotidiens estimés",
       "riskAckPrefix": "J'ai lu et j'accepte l'",
-      "riskAckLink": "Information sur les risques du Fonds Quant",
+      "riskAckLink": "Information sur les risques de Finance IA",
       "riskAckSuffix": " pour ce produit.",
       "submit": "Confirmer la souscription",
       "submitting": "Envoi en cours…",
@@ -380,8 +380,8 @@
       "earlyFeeNotice": "Un rachat pendant la période de blocage entraîne des frais de {{rate}} % du capital ({{fee}} {{currency}}), quel que soit le nombre de jours restants ; les gains accumulés restent versés. Les rachats sont examinés par un administrateur et les intérêts continuent de courir jusqu'à l'approbation."
     },
     "positions": {
-      "title": "Mes positions Fonds Quant",
-      "subtitle": "Tous les ordres Fonds Quant et leur statut de règlement sous votre compte.",
+      "title": "Mes positions Finance IA",
+      "subtitle": "Tous les ordres Finance IA et leur statut de règlement sous votre compte.",
       "tabs": {
         "all": "Tous",
         "active": "Actifs",

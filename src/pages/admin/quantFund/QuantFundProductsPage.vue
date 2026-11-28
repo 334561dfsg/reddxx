@@ -75,7 +75,7 @@ async function toggleStatus() {
  <PageShell>
   <FeedbackToast v-if="error" type="error" :source="() => (error ? errorText(error) : '')"><Button @click="refresh">重试</Button></FeedbackToast>
   <SearchForm name="quant-fund-product-filters" :model="filters" :fields="fields" @search="search" @reset="reset"/>
-  <AdminTable title="量化基金产品" v-model:page="page" :rows="rows" :columns="columns" row-key="productId" :loading="!loaded && !error" desktop-only>
+  <AdminTable title="AI 金融产品" v-model:page="page" :rows="rows" :columns="columns" row-key="productId" :loading="!loaded && !error" desktop-only>
    <template #toolbar><Space :size="8"><Button @click="refresh">刷新</Button><Button type="primary" @click="edit()"><template #icon><PlusOutlined/></template>新增产品</Button></Space></template>
    <template #cell="{column, record}">
     <Space v-if="column.key === 'name'" direction="vertical" :size="4">
@@ -97,7 +97,7 @@ async function toggleStatus() {
     <template v-else>{{ record[column.key] ?? '—' }}</template>
    </template>
   </AdminTable>
-  <AdminModal :width="520" :open="!!target" :title="target?.status === 'listed' ? '下架量化基金产品' : '上架量化基金产品'" :busy="busy" :confirm-text="target?.status === 'listed' ? '确认下架' : '确认上架'" :danger="target?.status === 'listed'" @close="target = null" @confirm="toggleStatus">
+  <AdminModal :width="520" :open="!!target" :title="target?.status === 'listed' ? '下架AI 金融产品' : '上架AI 金融产品'" :busy="busy" :confirm-text="target?.status === 'listed' ? '确认下架' : '确认上架'" :danger="target?.status === 'listed'" @close="target = null" @confirm="toggleStatus">
    <div v-if="target"><TypographyText strong>{{ target.name }}</TypographyText><p>{{ target.status === 'listed' ? '下架后不能新申购，待审核的申购也不能再通过；持有中的订单按原条款继续计息和赎回。' : '上架后用户可按当前条款申购。' }}</p></div>
   </AdminModal>
  </PageShell>

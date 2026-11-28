@@ -15,7 +15,7 @@
     },
     "quantFund": {
       "kicker": "KI-verwaltet · Sorglos",
-      "name": "Quant-Fonds",
+      "name": "KI-Finanzen",
       "valueProp": "Ein KI-verwalteter Fonds mit fester Laufzeit. Zeichnen Sie und lassen Sie die Abrechnung bei Fälligkeit automatisch laufen.",
       "chipA": "Feste Laufzeit",
       "chipB": "Auto-Abrechnung",
@@ -28,7 +28,7 @@
     "ariaLabel": "Navigation des KI-Quant-Moduls",
     "strategy": "Strategien",
     "myStrategies": "Meine Strategien",
-    "quantFund": "Quant-Fonds",
+    "quantFund": "KI-Finanzen",
     "myPositions": "Meine Positionen"
   },
   "myStrategies": {
@@ -124,8 +124,8 @@
     "riskLevelValue": "Stufe {{level}}",
     "guideCard": {
       "title": "Keine passende Strategie gefunden?",
-      "description": "Entdecken Sie Quant-Fonds: vollständig KI-verwaltet, kein Beobachten nötig, automatische Abrechnung bei Fälligkeit.",
-      "cta": "Quant-Fonds ansehen"
+      "description": "Entdecken Sie KI-Finanzen: vollständig KI-verwaltet, kein Beobachten nötig, automatische Abrechnung bei Fälligkeit.",
+      "cta": "KI-Finanzen ansehen"
     },
     "loadFailed": "Strategien konnten nicht geladen werden."
   },
@@ -285,10 +285,10 @@
     "body": "Vergangene Wertentwicklung ist keine Garantie für zukünftige Ergebnisse. KI-Strategien und -Signale sind Referenzhilfen, keine Finanzberatung. Krypto- und Futures-Handel kann Ihr gesamtes Guthaben kosten – handeln Sie nur mit Mitteln, deren Verlust Sie sich leisten können."
   },
   "quantFund": {
-    "title": "Quant-Fonds",
+    "title": "KI-Finanzen",
     "hero": {
-      "subtitle": "KI-verwalteter Quant-Fonds",
-      "title": "Quant-Fonds – KI-verwaltete Festzinsrendite",
+      "subtitle": "KI-verwaltete Finanzprodukte",
+      "title": "KI-Finanzen – KI-verwaltete Festzinsrendite",
       "description": "Vollständig von unserem KI-Quant-Team verwaltet. Zinsen laufen ab der Freigabe täglich in Ihrer Order auf und werden bei der Rücknahme mit dem Kapital ausgezahlt; nach der Sperrfrist laufen sie weiter, bis Sie zurücknehmen.",
       "disclaimer": "KI-verwaltet · Zinsen nach Freigabe",
       "viewPositionsCta": "Meine Positionen"
@@ -355,7 +355,7 @@
       "maxButton": "Max",
       "estDailyEarnings": "Geschätzte tägliche Erträge",
       "riskAckPrefix": "Ich habe die ",
-      "riskAckLink": "Risikooffenlegung des Quant-Fonds",
+      "riskAckLink": "Risikooffenlegung von KI-Finanzen",
       "riskAckSuffix": " für dieses Produkt gelesen und akzeptiere sie.",
       "submit": "Zeichnung bestätigen",
       "submitting": "Wird gesendet …",
@@ -380,8 +380,8 @@
       "earlyFeeNotice": "Eine Rücknahme während der Sperrfrist kostet eine Gebühr von {{rate}} % des Kapitals ({{fee}} {{currency}}), unabhängig von den verbleibenden Tagen; aufgelaufene Erträge werden weiterhin ausgezahlt. Rücknahmen werden von einem Administrator geprüft; bis zur Freigabe laufen die Zinsen weiter."
     },
     "positions": {
-      "title": "Meine Quant-Fonds-Positionen",
-      "subtitle": "Alle Quant-Fonds-Orders und der Abrechnungsstatus Ihres Kontos.",
+      "title": "Meine KI-Finanzen-Positionen",
+      "subtitle": "Alle KI-Finanzen-Orders und der Abrechnungsstatus Ihres Kontos.",
       "tabs": {
         "all": "Alle",
         "active": "Aktiv",

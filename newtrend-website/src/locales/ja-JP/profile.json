@@ -340,8 +340,8 @@
         "collateralRelease": "担保解除",
         "strategySubscribe": "AI 戦略申込",
         "strategySettle": "AI 戦略決済",
-        "quantFundSubscribe": "クオンツファンド申込",
-        "quantFundRedeem": "クオンツファンド解約",
+        "quantFundSubscribe": "AI ファイナンス申込",
+        "quantFundRedeem": "AI ファイナンス解約",
         "inviteCommission": "招待コミッション"
       },
       "empty": "条件に一致する履歴はありません",

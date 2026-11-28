@@ -340,8 +340,8 @@
         "collateralRelease": "Libération de la garantie",
         "strategySubscribe": "Souscription stratégie IA",
         "strategySettle": "Règlement stratégie IA",
-        "quantFundSubscribe": "Souscription fonds quant",
-        "quantFundRedeem": "Rachat fonds quant",
+        "quantFundSubscribe": "Souscription Finance IA",
+        "quantFundRedeem": "Rachat Finance IA",
         "inviteCommission": "Commission de parrainage"
       },
       "empty": "Aucun mouvement ne correspond à ces filtres",

@@ -12,7 +12,7 @@
     "desc": "Un seul compte pour les cryptos, le forex, les indices, les actions américaines et les métaux — avec une liquidité profonde, des frais réduits, et la data et l'IA dont vous avez besoin pour rentabiliser chaque trade.",
     "startTrading": "Commencer à trader",
     "seeMarkets": "Voir les marchés",
-    "exploreQuantFund": "Explorer le Fonds Quant",
+    "exploreQuantFund": "Explorer Finance IA",
     "watchFilm": "Découvrir le fonctionnement d'AI Quant",
     "watchDemo": "Voir une démo de 90 secondes",
     "appMockupAlt": "Application mobile {{brand}} — portefeuille, AI quant, copy trading et marchés en direct",
@@ -444,7 +444,7 @@
         },
         "quant": {
           "title": "Quant IA et copy trading",
-          "desc": "Les stratégies IA et les fonds quantitatifs travaillent en continu ; suivez les meilleurs traders en un clic."
+          "desc": "Les stratégies IA et Finance IA travaillent en continu ; suivez les meilleurs traders en un clic."
         },
         "security": {
           "title": "Sécurité du compte",

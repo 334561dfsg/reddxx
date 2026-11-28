@@ -340,8 +340,8 @@
         "collateralRelease": "Collateral release",
         "strategySubscribe": "AI strategy subscription",
         "strategySettle": "AI strategy settlement",
-        "quantFundSubscribe": "Quant fund subscription",
-        "quantFundRedeem": "Quant fund redemption",
+        "quantFundSubscribe": "AI Finance subscription",
+        "quantFundRedeem": "AI Finance redemption",
         "inviteCommission": "Invite commission"
       },
       "empty": "No records match these filters",

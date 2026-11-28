@@ -340,8 +340,8 @@
         "collateralRelease": "Sicherheitenfreigabe",
         "strategySubscribe": "KI-Strategie-Zeichnung",
         "strategySettle": "KI-Strategie-Abrechnung",
-        "quantFundSubscribe": "Quant-Fonds-Zeichnung",
-        "quantFundRedeem": "Quant-Fonds-Rücknahme",
+        "quantFundSubscribe": "KI-Finanzen-Zeichnung",
+        "quantFundRedeem": "KI-Finanzen-Rücknahme",
         "inviteCommission": "Empfehlungsprovision"
       },
       "empty": "Keine Bewegungen für diese Filter",

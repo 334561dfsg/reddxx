@@ -12,7 +12,7 @@
     "title": "자산 분포",
     "assetsType": "자산 유형",
     "earnAccount": "어닝 계정",
-    "quantFundAccount": "퀀트 펀드 계정"
+    "quantFundAccount": "AI 금융 계정"
   },
   "assetKind": {
     "crypto": "가상자산",
@@ -25,7 +25,7 @@
     "copyTrade": "카피 트레이드",
     "aiQuant": "AI 퀀트",
     "binaryOptions": "바이너리 옵션",
-    "quantFund": "퀀트 펀드",
+    "quantFund": "AI 금융",
     "earn": "어닝"
   },
   "detail": {
@@ -49,7 +49,7 @@
   },
   "kindBreakdown": {
     "title": "자산 유형별 현금",
-    "note": "현금만 집계합니다(사용 가능 잔액과 동결 잔액, USDT 환산). 포지션 증거금, 미실현 손익, Earn, 퀀트 펀드는 포함되지 않으므로 네 항목의 합계는 총자산보다 작습니다."
+    "note": "현금만 집계합니다(사용 가능 잔액과 동결 잔액, USDT 환산). 포지션 증거금, 미실현 손익, Earn, AI 금융은 포함되지 않으므로 네 항목의 합계는 총자산보다 작습니다."
   },
   "fundRecords": "자금 기록",
   "fundRecordsTime": "시간",

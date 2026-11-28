@@ -340,8 +340,8 @@
         "collateralRelease": "質押解凍",
         "strategySubscribe": "AI 策略申購",
         "strategySettle": "AI 策略結算",
-        "quantFundSubscribe": "量化基金申購",
-        "quantFundRedeem": "量化基金贖回",
+        "quantFundSubscribe": "AI 金融申購",
+        "quantFundRedeem": "AI 金融贖回",
         "inviteCommission": "邀請佣金"
       },
       "empty": "沒有符合條件的記錄",

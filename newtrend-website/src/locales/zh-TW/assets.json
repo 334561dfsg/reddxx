@@ -25,7 +25,7 @@
     "copyTrade": "跟單",
     "aiQuant": "AI 量化",
     "binaryOptions": "二元期權",
-    "quantFund": "量化基金",
+    "quantFund": "AI 金融",
     "earn": "理財"
   },
   "detail": {
@@ -49,7 +49,7 @@
   },
   "kindBreakdown": {
     "title": "現金資產類別分佈",
-    "note": "僅統計現金（可用餘額與凍結餘額，以 USDT 估值）。不含合約持倉保證金、未實現盈虧、理財與量化基金，因此四項合計小於總資產。"
+    "note": "僅統計現金（可用餘額與凍結餘額，以 USDT 估值）。不含合約持倉保證金、未實現盈虧、理財與 AI 金融，因此四項合計小於總資產。"
   },
   "fundRecords": "資金記錄",
   "fundRecordsTime": "時間",

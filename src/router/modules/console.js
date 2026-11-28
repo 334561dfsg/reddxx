@@ -511,25 +511,25 @@ export const consoleRoutes = [
     path: 'quant-fund/products',
     name: 'quant-fund-products',
     component: () => import('../../pages/admin/quantFund/QuantFundProductsPage.vue'),
-    meta: { title: '量化基金 / 产品管理' }
+    meta: { title: 'AI 金融 / 产品管理' }
   },
   {
     path: 'quant-fund/products/new',
     name: 'quant-fund-product-create',
     component: () => import('../../pages/admin/quantFund/QuantFundProductEditorPage.vue'),
-    meta: { title: '量化基金 / 新增产品' }
+    meta: { title: 'AI 金融 / 新增产品' }
   },
   {
     path: 'quant-fund/products/:id/edit',
     name: 'quant-fund-product-edit',
     component: () => import('../../pages/admin/quantFund/QuantFundProductEditorPage.vue'),
-    meta: { title: '量化基金 / 编辑产品' }
+    meta: { title: 'AI 金融 / 编辑产品' }
   },
   ...['orders', 'redemptions', 'payouts', 'logs'].map((section) => ({
     path: `quant-fund/${section}`,
     name: `quant-fund-${section}`,
     component: () => import('../../pages/admin/quantFund/QuantFundRecordsPage.vue'),
-    meta: { title: `量化基金 / ${{ orders: '申购订单', redemptions: '赎回审核', payouts: '收益记录', logs: '操作日志' }[section]}`, quantFundSection: section }
+    meta: { title: `AI 金融 / ${{ orders: '申购订单', redemptions: '赎回审核', payouts: '收益记录', logs: '操作日志' }[section]}`, quantFundSection: section }
   })),
   {
     path: 'ai-quant',

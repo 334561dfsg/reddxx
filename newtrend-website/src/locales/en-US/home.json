@@ -12,7 +12,7 @@
     "desc": "One account for crypto, forex, indices, US stocks and metals — with deep liquidity, low fees, and the data and AI you need to make every trade count.",
     "startTrading": "Start Trading",
     "seeMarkets": "See the markets",
-    "exploreQuantFund": "Explore Quant Fund",
+    "exploreQuantFund": "Explore AI Finance",
     "watchFilm": "See how AI Quant works",
     "watchDemo": "Watch a 90-second demo",
     "appMockupAlt": "{{brand}} mobile app — portfolio, AI quant, copy trading and live markets",
@@ -444,7 +444,7 @@
         },
         "quant": {
           "title": "AI quant & copy trading",
-          "desc": "AI strategies and quant funds work around the clock, and one click lets you follow top traders."
+          "desc": "AI strategies and AI Finance work around the clock, and one click lets you follow top traders."
         },
         "security": {
           "title": "Account security",

@@ -150,7 +150,7 @@ export const navTree = [
     ]
   },
   {
-    title: '量化基金',
+    title: 'AI 金融',
     icon: 'wallet',
     children: [
       { title: '产品管理', path: '/admin/quant-fund/products' },

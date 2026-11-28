@@ -12,7 +12,7 @@
     "title": "Vermögensverteilung",
     "assetsType": "Asset-Typ",
     "earnAccount": "Earn-Konto",
-    "quantFundAccount": "Quant-Fonds-Konto"
+    "quantFundAccount": "KI-Finanzen-Konto"
   },
   "assetKind": {
     "crypto": "Krypto",
@@ -25,7 +25,7 @@
     "copyTrade": "Copy-Trade",
     "aiQuant": "KI-Quant",
     "binaryOptions": "Binäre Optionen",
-    "quantFund": "Quant-Fonds",
+    "quantFund": "KI-Finanzen",
     "earn": "Earn"
   },
   "detail": {
@@ -49,7 +49,7 @@
   },
   "kindBreakdown": {
     "title": "Barbestand nach Anlageart",
-    "note": "Nur Barbestand – verfügbares und eingefrorenes Guthaben, bewertet in USDT. Positionsmargin, nicht realisierte Gewinne und Verluste, Earn und Quant Fund sind nicht enthalten; die vier Werte ergeben daher weniger als Ihr Gesamtvermögen."
+    "note": "Nur Barbestand – verfügbares und eingefrorenes Guthaben, bewertet in USDT. Positionsmargin, nicht realisierte Gewinne und Verluste, Earn und KI-Finanzen sind nicht enthalten; die vier Werte ergeben daher weniger als Ihr Gesamtvermögen."
   },
   "fundRecords": "Kapitalbewegungen",
   "fundRecordsTime": "Zeit",

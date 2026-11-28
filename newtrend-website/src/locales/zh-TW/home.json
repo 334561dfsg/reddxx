@@ -12,7 +12,7 @@
     "desc": "一個帳戶，交易加密貨幣、外匯、指數、美股與貴金屬 —— 具備深度流動性、低手續費，以及讓每一筆交易都有依據的數據與 AI。",
     "startTrading": "開始交易",
     "seeMarkets": "查看行情",
-    "exploreQuantFund": "探索量化基金",
+    "exploreQuantFund": "探索 AI 金融",
     "watchFilm": "了解 AI Quant 運作機制",
     "watchDemo": "看 90 秒示範",
     "appMockupAlt": "{{brand}} 行動端 App 實拍 —— 資產總覽、AI 量化、跟單與即時行情",
@@ -444,7 +444,7 @@
         },
         "quant": {
           "title": "AI 量化與跟單交易",
-          "desc": "AI 策略與量化基金全天候運作，一鍵跟單頂尖交易者，讓數據為你決策。"
+          "desc": "AI 策略與 AI 金融全天候運作，一鍵跟單頂尖交易者，讓數據為你決策。"
         },
         "security": {
           "title": "帳戶安全",

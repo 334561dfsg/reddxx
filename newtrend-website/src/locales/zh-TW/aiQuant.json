@@ -1,7 +1,7 @@
 {
   "landing": {
     "eyebrow": "AI 量化",
-    "title": "讓 AI 替你交易，或交給量化基金託管",
+    "title": "讓 AI 替你交易，或交給 AI 金融託管",
     "subtitle": "兩條獨立產品線。挑一個開始，隨時可切換。",
     "strategy": {
       "kicker": "AI 引擎 · 自動執行",
@@ -15,7 +15,7 @@
     },
     "quantFund": {
       "kicker": "AI 託管 · 全程省心",
-      "name": "量化基金",
+      "name": "AI 金融",
       "valueProp": "由 AI 託管的定期理財產品。申購後無須盯盤，到期自動結算。",
       "chipA": "定期",
       "chipB": "自動結算",
@@ -28,7 +28,7 @@
     "ariaLabel": "AI 量化模組導覽",
     "strategy": "策略模板",
     "myStrategies": "我的策略",
-    "quantFund": "量化基金",
+    "quantFund": "AI 金融",
     "myPositions": "我的倉位"
   },
   "myStrategies": {
@@ -124,8 +124,8 @@
     "riskLevelValue": "Lv.{{level}}",
     "guideCard": {
       "title": "沒找到合適的策略？",
-      "description": "看看由 AI 全程託管的量化基金：申購後無須盯盤，到期自動結算。",
-      "cta": "瀏覽量化基金"
+      "description": "看看由 AI 全程託管的 AI 金融：申購後無須盯盤，到期自動結算。",
+      "cta": "瀏覽 AI 金融"
     },
     "loadFailed": "策略列表載入失敗。"
   },
@@ -285,10 +285,10 @@
     "body": "過往表現不代表未來收益。AI 策略和訊號僅供參考，不構成投資建議。加密貨幣與期貨交易可能讓你損失全部本金 —— 請只用閒錢交易。"
   },
   "quantFund": {
-    "title": "量化基金",
+    "title": "AI 金融",
     "hero": {
-      "subtitle": "AI 全託管量化基金",
-      "title": "量化基金 — AI 託管定期收益",
+      "subtitle": "AI 全託管金融產品",
+      "title": "AI 金融 — AI 託管定期收益",
       "description": "由 AI 量化團隊全程託管。審核通過後按日收益率計息，收益累計在訂單內，贖回時連同本金返還；鎖定期結束後持續計息，直到您贖回。",
       "disclaimer": "AI 全託管 · 審核後計息",
       "viewPositionsCta": "我的持倉"
@@ -355,7 +355,7 @@
       "maxButton": "最大",
       "estDailyEarnings": "預估每日收益",
       "riskAckPrefix": "我已閱讀並接受本產品的",
-      "riskAckLink": "量化基金風險提示",
+      "riskAckLink": "AI 金融風險提示",
       "riskAckSuffix": "。",
       "submit": "確認申購",
       "submitting": "提交中…",
@@ -380,8 +380,8 @@
       "earlyFeeNotice": "鎖定期內提前贖回，手續費為本金的 {{rate}}%（{{fee}} {{currency}}），與剩餘天數無關；累計收益照常返還。贖回需經後台審核，審核通過前繼續計息。"
     },
     "positions": {
-      "title": "我的量化基金持倉",
-      "subtitle": "你在量化基金上的所有訂單與結算狀態。",
+      "title": "我的 AI 金融持倉",
+      "subtitle": "你在 AI 金融上的所有訂單與結算狀態。",
       "tabs": {
         "all": "全部",
         "active": "運行中",

@@ -15,7 +15,7 @@
     },
     "quantFund": {
       "kicker": "AI-managed · Hands-off",
-      "name": "Quant Fund",
+      "name": "AI Finance",
       "valueProp": "An AI-managed fixed-term fund. Subscribe and let settlement run automatically at maturity.",
       "chipA": "Fixed-term",
       "chipB": "Auto-settle",
@@ -28,7 +28,7 @@
     "ariaLabel": "AI Quant module navigation",
     "strategy": "Strategies",
     "myStrategies": "My Strategies",
-    "quantFund": "Quant Fund",
+    "quantFund": "AI Finance",
     "myPositions": "My Positions"
   },
   "myStrategies": {
@@ -124,8 +124,8 @@
     "riskLevelValue": "Lv.{{level}}",
     "guideCard": {
       "title": "Haven't found the right strategy?",
-      "description": "Explore quant funds — fully AI-managed, no monitoring needed, auto-settled at maturity.",
-      "cta": "Browse quant funds"
+      "description": "Explore AI Finance — fully AI-managed, no monitoring needed, auto-settled at maturity.",
+      "cta": "Browse AI Finance"
     },
     "loadFailed": "Failed to load strategies."
   },
@@ -285,10 +285,10 @@
     "body": "Past performance never guarantees future results. AI strategies and signals are reference tools, not financial advice. Crypto and futures trading can lose your entire balance — only trade what you can afford to lose."
   },
   "quantFund": {
-    "title": "Quant Fund",
+    "title": "AI Finance",
     "hero": {
-      "subtitle": "AI-managed Quant Fund",
-      "title": "Quant Fund — AI-managed fixed-term yield",
+      "subtitle": "Fully AI-managed finance",
+      "title": "AI Finance — AI-managed fixed-term yield",
       "description": "Run end to end by our AI quant team. Interest accrues daily inside your order from approval and is paid out with the principal on redemption; after the lock period it keeps accruing until you redeem.",
       "disclaimer": "AI-managed · Interest after approval",
       "viewPositionsCta": "My positions"
@@ -355,7 +355,7 @@
       "maxButton": "Max",
       "estDailyEarnings": "Est. daily earnings",
       "riskAckPrefix": "I have read and accept the ",
-      "riskAckLink": "Quant Fund Risk Disclosure",
+      "riskAckLink": "AI Finance Risk Disclosure",
       "riskAckSuffix": " for this product.",
       "submit": "Confirm subscription",
       "submitting": "Submitting…",
@@ -380,8 +380,8 @@
       "earlyFeeNotice": "Redeeming inside the lock period costs a fee of {{rate}}% of principal ({{fee}} {{currency}}), whatever the days left; accrued earnings are still paid out. Redemptions are reviewed by an administrator, and interest keeps accruing until approval."
     },
     "positions": {
-      "title": "My Quant Fund positions",
-      "subtitle": "All Quant Fund orders and settlement status under your account.",
+      "title": "My AI Finance positions",
+      "subtitle": "All AI Finance orders and settlement status under your account.",
       "tabs": {
         "all": "All",
         "active": "Active",

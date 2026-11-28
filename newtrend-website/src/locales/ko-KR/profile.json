@@ -340,8 +340,8 @@
         "collateralRelease": "담보 해제",
         "strategySubscribe": "AI 전략 가입",
         "strategySettle": "AI 전략 정산",
-        "quantFundSubscribe": "퀀트 펀드 가입",
-        "quantFundRedeem": "퀀트 펀드 환매",
+        "quantFundSubscribe": "AI 금융 가입",
+        "quantFundRedeem": "AI 금융 환매",
         "inviteCommission": "초대 수수료"
       },
       "empty": "조건에 맞는 내역이 없습니다",

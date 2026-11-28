@@ -12,7 +12,7 @@
     "desc": "Ein Konto für Krypto, Devisen, Indizes, US-Aktien und Metalle – mit tiefer Liquidität, niedrigen Gebühren sowie den Daten und der KI, die Sie brauchen, damit jeder Trade zählt.",
     "startTrading": "Handel starten",
     "seeMarkets": "Märkte ansehen",
-    "exploreQuantFund": "Quant-Fonds erkunden",
+    "exploreQuantFund": "KI-Finanzen erkunden",
     "watchFilm": "Sehen, wie KI-Quant funktioniert",
     "watchDemo": "90-Sekunden-Demo ansehen",
     "appMockupAlt": "{{brand}} Mobile-App – Portfolio, KI-Quant, Copy-Trading und Live-Märkte",
@@ -444,7 +444,7 @@
         },
         "quant": {
           "title": "KI-Quant- und Copy-Trading",
-          "desc": "KI-Strategien und Quant-Fonds arbeiten rund um die Uhr; folgen Sie Top-Tradern mit einem Klick."
+          "desc": "KI-Strategien und KI-Finanzen arbeiten rund um die Uhr; folgen Sie Top-Tradern mit einem Klick."
         },
         "security": {
           "title": "Kontosicherheit",
