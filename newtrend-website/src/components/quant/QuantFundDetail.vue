@@ -3,10 +3,9 @@ import BackLink from '../ui/BackLink.vue'
 import RequestState from '../ui/RequestState.vue'
 import Skeleton from '../ui/Skeleton.vue'
 import {computed,shallowRef,watch} from 'vue'
-import {useRoute,useRouter} from 'vue-router'
-import {loginPath} from '../../utils/redirect'
+import {useRouter} from 'vue-router'
 import {fmt,path} from '../../data'
-import {openModal,session} from '../../session'
+import {openModal,requireLogin} from '../../session'
 import {availableQuota,fundProgress,fundEstimate,isAmountDraft} from '../../utils/quantFund'
 import {getQuantFund,listQuantFunds} from '../../api/quantFund.js'
 import {useRequest} from '../../composables/useRequest.js'
@@ -19,7 +18,7 @@ import QuantFundLayout from '../../pages/quant/QuantFundLayout.vue'
 // Loads its product (unknown ids render the not-found page, like EarnDetail) and the catalogue for "more products",
 // which may still be empty while it loads. While the product loads, skeleton panels mirror the loaded layout.
 const props=defineProps({productId:{type:String,required:true}})
-const router=useRouter(),route=useRoute()
+const router=useRouter()
 const request=useRequest(()=>getQuantFund(props.productId),{key:()=>props.productId,tags:['quantFund']})
 const catalog=useRequest(()=>listQuantFunds(),{tags:['quantFund']})
 const notFound=computed(()=>request.status.value==='error'&&request.error.value?.code==='notFound')
@@ -44,7 +43,7 @@ function onCalcInput(event){if(isAmountDraft(event.target.value))calcAmount.valu
 function openProduct(p){router.push(path(`/ai-quant/quant-fund/products/${p.id}`))}
 function subscribe(){
  if(soldOut.value)return
- if(!session.loggedIn){router.push(loginPath(route.fullPath));return}
+ if(!requireLogin(subscribe))return
  openModal('quant-fund-subscribe',{key:'aiQuant.quantFund.subscribe.title',params:{name:product.value.name}},product.value)
 }
 </script>

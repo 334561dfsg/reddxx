@@ -5,11 +5,10 @@ import FeedbackToast from '../../platform/FeedbackToast.js'
 import {computed,ref,watch} from 'vue'
 import {message} from 'ant-design-vue'
 import {t} from '../../i18n'
-import {useRoute,useRouter} from 'vue-router'
-import {loginPath} from '../../utils/redirect.js'
+import {useRoute} from 'vue-router'
 import {useLendingFeed,lendingCommand} from '../../platform/lendingClient.js'
 import {eligibilityFailures} from '../../platform/lendingRules.js'
-import {session} from '../../session'
+import {requireLogin,session} from '../../session'
 import {path} from '../../data'
 import Coin from '../Coin.vue'
 import LendingBorrowForm from './LendingBorrowForm.vue'
@@ -17,7 +16,7 @@ import '../../styles/earn-fidelity.css'
 import LendingPortfolio from './LendingPortfolio.vue'
 import LendingCatalog from './LendingCatalog.vue'
 import '../../styles/lending-fidelity.css'
-const router=useRouter(),route=useRoute(),{state,error,busy,refresh}=useLendingFeed(),uid='USR-DEMO'
+const route=useRoute(),{state,error,busy,refresh}=useLendingFeed(),uid='USR-DEMO'
 const productId=ref(''),amount=ref(''),days=ref(30),collateral=ref('USDT'),failure=ref('')
 const mine=computed(()=>route.params.id==='my')
 const borrowing=computed(()=>route.params.id==='borrow')
@@ -27,8 +26,8 @@ const selectedTerm=computed(()=>product.value?.loanTerms.find(t=>t.days===Number
 const estimated=computed(()=>Number(amount.value||0)*(selectedTerm.value?.dailyRate||0)/100*Number(days.value))
 async function submitApplication(){
  if(busy.value)return
- // Signed out, 提交申請 opens login and returns to this form (user decision 2026-11-29).
- if(!session.loggedIn){router.push(loginPath(route.fullPath));return}
+ // Signed out, 提交申請 opens the login dialog and the application continues after it (user decision 2026-11-29).
+ if(!requireLogin(submitApplication))return
  failure.value=''
  const p=product.value,n=Number(amount.value)
  const code=p?.status!=='active'?'product':eligibility.value[0]||(!Number.isFinite(n)||n<p.minLoanAmount||n>p.maxLoanAmount?'amount':!selectedTerm.value?'term':p.collateralEnabled&&!p.collateralCurrencies.includes(collateral.value)?'collateral':p.collateralEnabled&&required.value>Number(wallet.value[collateral.value]||0)?'balance':null)
@@ -39,8 +38,6 @@ const eligibility=computed(()=>eligibilityFailures(product.value,state.value.pro
 const wallet=computed(()=>state.value.balances[uid]||{})
 const required=computed(()=>product.value?.collateralEnabled?Number(amount.value||0)*product.value.collateralMultiplier/(state.value.prices[collateral.value]||1):0)
 function choose(p){if(productId.value!==p.productId){productId.value=p.productId;days.value=p.loanTerms[0].days;collateral.value=p.collateralCurrencies?.[0]||'';amount.value=''}failure.value=''}
-// The borrow form needs a signed-in account: signed out, opening it goes straight to login and back (user decision 2026-11-29).
-watch([borrowing,()=>session.loggedIn],([open,signedIn])=>{if(open&&!signedIn)router.replace(loginPath(route.fullPath))},{immediate:true})
 watch([borrowing,()=>route.query.product,()=>route.query.currency,products],()=>{
  if(!borrowing.value)return
  const p=products.value.find(p=>route.query.product?p.productId===route.query.product:p.loanCurrency===route.query.currency)
@@ -55,7 +52,8 @@ watch(()=>route.params.id,()=>{failure.value=''})
   <template v-if="borrowing"><BackLink :to="path('/earn/loan')" :title="$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})" class="loan-borrow-back">{{$t('margin.borrow.back')}}</BackLink><h1 v-if="!product" class="loan-borrow-title"><Coin v-if="product" :symbol="product.loanCurrency"/>{{$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})}}</h1></template>
   <LendingCatalog v-if="!mine&&!borrowing" :products="products" @borrow="choose"/>
   <FeedbackToast v-if="error" type="error" :source="() => (error) ? (([String(($t('lending.errors.unavailable')) ?? ''),&quot; &quot;,''].join(''))) : ''"><button class="green-link" @click="refresh">{{$t('lending.refresh')}}</button></FeedbackToast>
-  <p v-if="!session.loggedIn"><RouterLink :to="loginPath(route.fullPath)">{{$t('lending.login')}}</RouterLink></p>
+  <!-- Signed out: the borrow form stays usable (its submit asks to log in); other views offer the login dialog. -->
+  <p v-if="!session.loggedIn&&!borrowing"><button type="button" class="green-link" @click="requireLogin()">{{$t('lending.login')}}</button></p>
   <template v-else>
    <template v-if="!mine">
     <p v-if="!products.length&&!error">{{$t('margin.market.empty')}}</p>

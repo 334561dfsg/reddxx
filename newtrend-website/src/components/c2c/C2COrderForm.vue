@@ -4,12 +4,10 @@ import FeedbackToast from '../../platform/FeedbackToast.js'
 import {computed,ref,watch} from 'vue'
 import Coin from '../Coin.vue'
 import {formatQuote,quoteAmount} from '../../utils/c2cQuotes'
-import {openModal,session} from '../../session'
+import {openModal,requireLogin,session} from '../../session'
 import {t} from '../../i18n'
 import {c2cErrorKey,createC2COrder} from '../../api/c2c.js'
 import {invalidate} from '../../composables/useRequest.js'
-import {useRoute,useRouter} from 'vue-router'
-import {loginPath} from '../../utils/redirect.js'
 const props=defineProps({quote:{type:Object,required:true},side:{type:String,default:'buy'}})
 const orderId=ref('')
 let requestId=crypto.randomUUID()
@@ -30,10 +28,10 @@ watch(()=>props.quote.id,()=>{amount.value='';completed.value=false;error.value=
 function changeMode(next){if(completed.value||mode.value===next)return;const old=result.value;mode.value=next;if(Number(amount.value)>0)amount.value=String(Number((next==='fiat'?old.total:old.quantity).toFixed(8)));error.value=''}
 function resetOrder(){invalid.value={};amount.value='';completed.value=false;agreed.value=false;orderId.value='';error.value='';requestId=crypto.randomUUID()}
 function agreement(){openModal('c2c-agreement','c2c.agreement.title',{confirmLabel:'c2c.agreement.agree',onConfirm:()=>{agreed.value=true}})}
-// Signed out, the submit button stays enabled and opens login, returning to this page (user decision 2026-11-29).
-const route=useRoute(),router=useRouter()
+// Signed out, the submit button stays enabled and opens the login dialog; the order continues after login, with the
+// form as filled in (user decision 2026-11-29).
 function submit(){
- if(!session.loggedIn){router.push(loginPath(route.fullPath));return}
+ if(!requireLogin(submit))return
  if(result.value.error||!agreed.value||completed.value)return
  const payerKey=payerError()
  if(payerKey){error.value=payerKey;return}

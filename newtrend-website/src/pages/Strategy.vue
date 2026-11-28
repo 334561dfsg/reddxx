@@ -1,10 +1,10 @@
 <script setup>
 import QuantAmbient from '../components/quant/QuantAmbient.vue'
 import StrategyStatsPage from '../components/strategy/StrategyStatsPage.vue'
-import {computed,nextTick,onMounted,watch} from 'vue'
-import {useRoute,useRouter} from 'vue-router'
+import {computed} from 'vue'
+import {useRoute} from 'vue-router'
 import {path} from '../data'
-import {openModal,session} from '../session'
+import {openModal,requireLogin,session} from '../session'
 import {strategyFilters as filters} from '../server/strategyPortfolio'
 import {getMyStrategies,listStrategyTemplates} from '../api/strategy.js'
 import {useRequest} from '../composables/useRequest.js'
@@ -12,7 +12,6 @@ import RequestState from '../components/ui/RequestState.vue'
 import Skeleton from '../components/ui/Skeleton.vue'
 import NotFound from './NotFound.vue'
 import {filterStrategies,pickFeatured} from '../utils/strategyTemplates'
-import {loginPath,rememberPendingSubscribe,takePendingSubscribe} from '../utils/redirect'
 import MyStrategies from '../components/strategy/MyStrategies.vue'
 import {t} from '../i18n'
 import StrategyCard from '../components/strategy/StrategyCard.vue'
@@ -22,7 +21,7 @@ import ChannelSectionSwitch from '../components/ui/ChannelSectionSwitch.vue'
 import '../styles/quant-fidelity.css'
 import '../styles/strategy-fidelity.css'
 import '../styles/quant-system.css'
-const route=useRoute(),router=useRouter(),mine=computed(()=>route.params.id==='mine'),recordId=computed(()=>route.params.recordId||'')
+const route=useRoute(),mine=computed(()=>route.params.id==='mine'),recordId=computed(()=>route.params.recordId||'')
 // Catalogue (list view only) and the current mode's account (records, balance, daily stats). Both poll while shown so
 // admin changes (listing, review, force stop, generated P&L) appear without a reload.
 const wantsCatalog=computed(()=>!mine.value&&!recordId.value)
@@ -47,17 +46,11 @@ const sections=computed(()=>[
  {to:path('/ai-quant/strategy/mine'),label:t('aiQuant.nav.myStrategies'),icon:'chart-candlestick',active:mine.value},
 ])
 function subscribe(product){
- if(!session.loggedIn){rememberPendingSubscribe(product.id);router.push(loginPath(route.fullPath));return}
+ // Signed out: the login dialog opens and the subscription continues after it (user decision 2026-11-29).
+ if(!requireLogin(()=>subscribe(product)))return
  openModal('strategy-subscribe',{key:'aiQuant.create.title',params:{name:product.name}},product)
 }
 function detail(product){openModal('strategy-detail','aiQuant.detail.title',product)}
-// After returning from login, reopen the subscription the visitor started.
-onMounted(()=>{
- if(!session.loggedIn||mine.value)return
- const id=takePendingSubscribe();if(!id)return
- let opened=false
- watch(catalogReady,async ready=>{if(!ready||opened)return;opened=true;const product=strategyCatalog.value.find(s=>String(s.id)===id);if(product){await nextTick();subscribe(product)}},{immediate:true})
-})
 </script>
 <template>
 <div class="strategy-page"><QuantAmbient/>
