@@ -36,7 +36,7 @@ const stats=useScrollOverflow(statsEl,{enabled:()=>props.layout==='wide'})
   <div class="instrument-identity">
     <span v-if="layout==='wide'" class="pair-static"><Coin :symbol="pair.symbol"/><strong>{{ pair.name }}</strong></span>
     <button v-else type="button" class="pair-trigger" aria-haspopup="dialog" :aria-label="$t('trade.form.tradingAsset')+' '+pair.name" @click="emit('open-pairs')"><Coin :symbol="pair.symbol"/><strong>{{ pair.name }}</strong><LineIcon name="caret-down"/></button>
-    <button v-if="compact&&session.loggedIn" type="button" class="account-badge" :class="{demo:demoMode}" aria-haspopup="dialog" @click="switchMode">{{ $t(demoMode?'common.demo.account':'common.demo.realAccount') }}</button>
+    <button v-if="compact" type="button" class="account-badge" :class="{demo:demoMode}" aria-haspopup="dialog" @click="switchMode">{{ $t(demoMode?'common.demo.account':'common.demo.realAccount') }}</button>
     <button v-if="!compact" class="instrument-favorite" :aria-label="$t(starred?'common.unfavoriteMarket':'common.favoriteMarket',{symbol:pair.name})" :aria-pressed="starred" @click="favorite(pair.id)">{{ starred?'★':'☆' }}</button>
   </div>
   <div v-if="compact" class="instrument-tools"><button type="button" class="product-switch" aria-haspopup="dialog" :aria-label="$t('trade.pages.product')+' '+productLabel" @click="emit('open-products')">{{ productLabel }}<LineIcon name="caret-down"/></button><button type="button" class="chart-toggle" :aria-label="$t('trade.pages.showChart')" :title="$t('trade.pages.showChart')" @click="emit('open-chart')"><LineIcon name="candlestick"/></button></div>

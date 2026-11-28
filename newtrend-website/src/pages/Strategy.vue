@@ -26,8 +26,7 @@ const route=useRoute(),mine=computed(()=>route.params.id==='mine'),recordId=comp
 // admin changes (listing, review, force stop, generated P&L) appear without a reload.
 const wantsCatalog=computed(()=>!mine.value&&!recordId.value)
 const catalog=useRequest(()=>wantsCatalog.value?listStrategyTemplates():Promise.resolve([]),{key:wantsCatalog,tags:['strategy'],poll:5000})
-// Signed out there is no account: nothing is requested (我的策略 shows the guest prompt, the hero counts 0).
-const mineRequest=useRequest(()=>session.loggedIn?getMyStrategies(session.mode):Promise.resolve(null),{key:()=>session.loggedIn+'|'+session.mode,tags:['strategy'],poll:3000})
+const mineRequest=useRequest(()=>getMyStrategies(session.mode),{key:()=>session.mode,tags:['strategy'],poll:3000})
 const strategyCatalog=computed(()=>catalog.data.value||[])
 const catalogReady=computed(()=>catalog.status.value==='ready')
 const account=computed(()=>mineRequest.data.value)

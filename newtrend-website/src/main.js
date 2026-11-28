@@ -1,6 +1,7 @@
 import { createApp, watch } from 'vue'
 import {session} from './session.js'
 import {availableInMode} from './utils/demoAccess.js'
+import {loginPath} from './utils/redirect.js'
 import { createRouter, createWebHistory, START_LOCATION } from 'vue-router'
 import App from './App.vue'
 import {t,applyLocale,formatCompact,locale} from './i18n'
@@ -20,10 +21,10 @@ router.beforeEach((to,from)=>{
   // The demo account has no C2C or lending: their pages fall back to the Finance home.
   if(!availableInMode(to.path))return {path:'/earn',replace:true}
   // Login-only pages (meta.loginRedirect, routes.js): signed out, go straight to the login page and come back after it.
-  if(to.meta.loginRedirect&&!session.loggedIn)return {path:'/login',query:{redirect:to.fullPath}}
+  if(to.meta.loginRedirect&&!session.loggedIn)return loginPath(to.fullPath)
 })
 // Logging out on a login-only page leaves it the same way.
-watch(()=>session.loggedIn,loggedIn=>{const current=router.currentRoute.value;if(!loggedIn&&current.meta.loginRedirect)router.replace({path:'/login',query:{redirect:current.fullPath}})})
+watch(()=>session.loggedIn,loggedIn=>{const current=router.currentRoute.value;if(!loggedIn&&current.meta.loginRedirect)router.replace(loginPath(current.fullPath))})
 // Switching to demo while on a C2C or lending page leaves it the same way.
 watch(()=>session.mode,()=>{if(!availableInMode(router.currentRoute.value.path))router.replace('/earn')})
 async function start(){

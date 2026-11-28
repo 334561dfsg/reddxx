@@ -25,7 +25,6 @@ async function submit(){
  if(done.value||props.closing||submitting.value)return
  error.value=null
  if(!ready.value){if(wallet.status.value==='error')wallet.refresh();error.value={code:'unavailable'};return}
- if(!session.loggedIn){error.value={code:'unauthorized'};return}
  const validation=strategyValidation(props.product,draft,balance.value)
  if(validation){error.value=validation;return}
  submitting.value=true

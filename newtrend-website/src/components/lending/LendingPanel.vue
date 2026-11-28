@@ -8,7 +8,6 @@ import {t} from '../../i18n'
 import {useRoute} from 'vue-router'
 import {useLendingFeed,lendingCommand} from '../../platform/lendingClient.js'
 import {eligibilityFailures} from '../../platform/lendingRules.js'
-import {session} from '../../session'
 import {path} from '../../data'
 import Coin from '../Coin.vue'
 import LendingBorrowForm from './LendingBorrowForm.vue'
@@ -50,16 +49,12 @@ watch(()=>route.params.id,()=>{failure.value=''})
   <template v-if="borrowing"><BackLink :to="path('/earn/loan')" :title="$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})" class="loan-borrow-back">{{$t('margin.borrow.back')}}</BackLink><h1 v-if="!product" class="loan-borrow-title"><Coin v-if="product" :symbol="product.loanCurrency"/>{{$t('margin.borrow.titleWithCurrency',{currency:product?.loanCurrency||route.query.currency||''})}}</h1></template>
   <LendingCatalog v-if="!mine&&!borrowing" :products="products" @borrow="choose"/>
   <FeedbackToast v-if="error" type="error" :source="() => (error) ? (([String(($t('lending.errors.unavailable')) ?? ''),&quot; &quot;,''].join(''))) : ''"><button class="green-link" @click="refresh">{{$t('lending.refresh')}}</button></FeedbackToast>
-  <template v-if="session.loggedIn">
-   <template v-if="!mine">
-    <p v-if="!products.length&&!error">{{$t('margin.market.empty')}}</p>
-    <p v-if="borrowing&&!product&&!error">{{$t('margin.borrow.notAvailable')}}</p>
-    <LendingBorrowForm v-if="product&&borrowing" :product="product" v-model:amount="amount" v-model:days="days" v-model:collateral="collateral" :profile="state.profiles?.[uid]" :wallet="wallet" :required="required" :estimated="estimated" :eligibility="eligibility" :busy="busy" :failure="failure" @submit="submitApplication"/>
-
-   </template>
-   <LendingPortfolio v-else :orders="state.orders.filter(o=>o.userId===uid)"/>
-
+  <template v-if="!mine">
+   <p v-if="!products.length&&!error">{{$t('margin.market.empty')}}</p>
+   <p v-if="borrowing&&!product&&!error">{{$t('margin.borrow.notAvailable')}}</p>
+   <LendingBorrowForm v-if="product&&borrowing" :product="product" v-model:amount="amount" v-model:days="days" v-model:collateral="collateral" :profile="state.profiles?.[uid]" :wallet="wallet" :required="required" :estimated="estimated" :eligibility="eligibility" :busy="busy" :failure="failure" @submit="submitApplication"/>
   </template>
+  <LendingPortfolio v-else :orders="state.orders.filter(o=>o.userId===uid)"/>
  </section>
 </template>
 <style scoped>

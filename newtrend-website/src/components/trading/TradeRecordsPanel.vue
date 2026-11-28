@@ -20,8 +20,7 @@ const emit=defineEmits(['update:record','page'])
 const tabs=computed(()=>tradeProducts[props.mode].tabs)
 const selected=computed(()=>tabs.value.find(tab=>tab.id===props.record)||tabs.value[0])
 // One request per tab and mode; a new order, close or cancel invalidates 'trade' and refreshes it in place.
-// Signed out there are no account records: nothing is requested and the panel offers the login dialog instead.
-const records=useRequest(()=>session.loggedIn?listTradeRecords(session.mode,props.mode,selected.value.id):Promise.resolve([]),{key:()=>session.loggedIn+'|'+session.mode+'|'+props.mode+'|'+selected.value.id,tags:['trade']})
+const records=useRequest(()=>listTradeRecords(session.mode,props.mode,selected.value.id),{key:()=>session.mode+'|'+props.mode+'|'+selected.value.id,tags:['trade']})
 const rows=computed(()=>records.data.value||[])
 const loading=computed(()=>records.status.value==='loading')
 const page=computed({get:()=>props.pages[selected.value.id]||1,set:value=>emit('page',selected.value.id,value)})

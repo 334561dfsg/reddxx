@@ -14,12 +14,11 @@ import {orderEstimate,validStops} from '../../../utils/orderFormModel'
 import {deliveryRate,futuresPrice,spotPrice} from './orderPricing.js'
 
 // Balances come from the trade API for the current account mode and pair (panels show skeletons until ready).
-// Signed out there is no account: nothing is requested and the panels show 0. `pair` is a getter. Returns a reactive
-// {base, ready, cash, holdings}.
+// `pair` is a getter. Returns a reactive {base, ready, cash, holdings}.
 export function useOrderBalances(pair){
  const base=computed(()=>pair().name.split('/')[0])
- const request=useRequest(()=>session.loggedIn?getTradeBalances(session.mode,['USDT',base.value]):Promise.resolve({}),{
-  key:()=>session.loggedIn+'|'+session.mode+'|'+base.value,tags:['trade','wallet'],
+ const request=useRequest(()=>getTradeBalances(session.mode,['USDT',base.value]),{
+  key:()=>session.mode+'|'+base.value,tags:['trade','wallet'],
  })
  return reactive({
   base,

@@ -10,7 +10,6 @@ import {listEarnProducts} from '../../api/earn.js'
 import {useRequest} from '../../composables/useRequest.js'
 import Coin from '../Coin.vue'
 import Icon from '../Icon.vue'
-import {session} from '../../session'
 const {data,error,status,refresh}=useRequest(listEarnProducts,{tags:['earn']})
 const products=computed(()=>data.value||[]),ready=computed(()=>status.value==='ready')
 const filter=shallowRef('all'),sort=shallowRef({key:'rate',direction:-1})
@@ -26,7 +25,7 @@ const {page,total,shown}=useFinancePagination(visible)
 <template>
 <section class="earn-hero">
  <div class="earn-hero-copy"><div class="earn-eyebrow">{{ $t('earn.header.subtitle') }}</div><h1>{{ $t('earn.header.title') }}</h1><p class="earn-description">{{ $t('earn.header.heroDescription') }}</p><div class="earn-chips"><span><Icon name="sparkles" green/>{{ $t('earn.educational.chip.dailyRateUpTo',{value:'0.0273'}) }}</span><span>{{ $t('earn.educational.chip.types') }}</span></div></div>
- <div v-if="session.loggedIn" class="earn-panel earn-holdings nt-glow-host"><span class="nt-glow" aria-hidden="true"></span><div class="earn-holdings-grid"><div v-for="(label,index) in holdings" :key="label" :class="{'earn-holdings-total':!index}"><p class="earn-kicker"><LineIcon v-if="!index" set="earn" name="sprout"/>{{ $t('earn.holdings.'+label) }}</p><strong :class="{'earn-accent':index>1}">{{ index===4?'+':'' }}$<span>0<span class="decimal">.00</span></span></strong></div></div></div>
+ <div class="earn-panel earn-holdings nt-glow-host"><span class="nt-glow" aria-hidden="true"></span><div class="earn-holdings-grid"><div v-for="(label,index) in holdings" :key="label" :class="{'earn-holdings-total':!index}"><p class="earn-kicker"><LineIcon v-if="!index" set="earn" name="sprout"/>{{ $t('earn.holdings.'+label) }}</p><strong :class="{'earn-accent':index>1}">{{ index===4?'+':'' }}$<span>0<span class="decimal">.00</span></span></strong></div></div></div>
 </section>
 <!-- Static parts (headings, filters, sort, table header) always render; only data swaps between skeletons and rows,
      so the loading layout keeps the loaded spacing. A first-load failure replaces the data area with retry. -->
