@@ -232,3 +232,59 @@
 @media(prefers-reduced-motion:reduce){.pc-overview .pf-switch,.pc-overview .pf-switch span{transition:none}}
 @media(max-width:1023px){.pc-overview .pf-tiles{grid-auto-flow:row;grid-template-columns:repeat(2,minmax(0,1fr))}.pc-overview .pf-columns{grid-template-columns:1fr}}
 @media(max-width:640px){.pc-overview .pf-tiles{grid-template-columns:1fr}}
+
+/* Phones (user decision 2026-11-28): the personal centre's secondary pages follow the Finance channel phone conventions
+   — BackLink top bar names the page (heading and intro stay for assistive technology only), 12px rhythm, 16px card
+   padding and 20px corners, single-column forms with 48px fields, 帳變記錄 as one card per record with the filters in
+   one sideways row, and 身份認證's submit floating at the bottom (.nt-float-action, channel-system.css). */
+@media(max-width:767px){
+ #main-content .pc-shell:not(.pc-overview){padding-top:12px}
+ #main-content .pc-shell .pc-main{gap:12px}
+ #main-content .pc-shell:not(.pc-overview) :is(h1.pc-title,.pc-subtitle){position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ #main-content .pc-shell :is(.pc-card,.account-form){border-radius:20px}
+ #main-content .pc-shell .pc-input,#main-content .pc-shell .account-form :is(input,select){height:48px;min-height:48px}
+ #main-content .pc-shell .account-form{padding:16px;gap:16px}
+ /* 身份認證: current progress as a full-width card, two-column steps, one field per row. */
+ #main-content .pc-shell .pc-identity-head{display:block}
+ #main-content .pc-shell .pc-current{min-width:0;padding:12px 16px}
+ #main-content .pc-shell :is(.pc-steps-card,.pc-step-card){padding:16px}
+ #main-content .pc-shell .pc-steps-card h2{margin-bottom:12px}
+ #main-content .pc-shell .pc-steps{gap:12px}
+ #main-content .pc-shell .pc-step-card{gap:12px}
+ #main-content .pc-shell .pc-fields{grid-template-columns:1fr;gap:12px}
+ #main-content .pc-shell .pc-uploads{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #main-content .pc-shell .pc-upload-box{min-height:96px;padding:12px}
+ #main-content .pc-shell .pc-form-foot{display:block}
+ /* 邀請好友: QR under the fields, copy buttons sized to their label, stats as three compact tiles. */
+ #main-content .pc-shell .pc-invite{flex-direction:column;align-items:stretch;gap:16px;padding:16px}
+ #main-content .pc-shell .pc-copy-row .pc-button{min-width:0;padding:7px 14px}
+ #main-content .pc-shell .pc-stats{gap:8px;margin-top:12px}
+ #main-content .pc-shell .pc-stat{gap:4px;padding:12px}
+ #main-content .pc-shell .pc-stat strong{font-size:18px;line-height:26px;overflow-wrap:anywhere}
+ /* 消息通知: tabs scroll sideways in one row. */
+ #main-content .pc-shell .pc-tabs{flex-wrap:nowrap;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+ #main-content .pc-shell .pc-tabs::-webkit-scrollbar{display:none}
+ #main-content .pc-shell .pc-tabs button{flex:none}
+ #main-content .pc-shell .pc-notice{padding:16px}
+ #main-content .pc-shell .pc-notice-head{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ /* 帳變記錄: filters in one sideways row (labels stay as accessible names), records as cards. */
+ #main-content .pc-shell .pc-filters{flex-wrap:nowrap;align-items:center;gap:8px;margin:0 calc(-1 * max(16px,env(safe-area-inset-left)));padding:0 max(16px,env(safe-area-inset-left));overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+ #main-content .pc-shell .pc-filters::-webkit-scrollbar{display:none}
+ #main-content .pc-shell .pc-filters .pc-field{flex:none;width:auto}
+ #main-content .pc-shell .pc-filters .pc-field>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ #main-content .pc-shell .pc-filters .pc-select{width:136px}
+ #main-content .pc-shell .pc-filters .pc-button{flex:none}
+ #main-content .pc-shell .pc-table-card{overflow:visible;border:0;border-radius:0;background:transparent}
+ #main-content .pc-shell .pc-table-scroll{overflow:visible}
+ #main-content .pc-shell .pc-table{min-width:0}
+ #main-content .pc-shell .pc-table :is(tbody){display:block}
+ #main-content .pc-shell .pc-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ #main-content .pc-shell .pc-table tbody tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0 0 12px;padding:16px;border:1px solid #191b1f;border-radius:20px;background:#0c1017}
+ #main-content .pc-shell .pc-table tbody tr:hover td{background:transparent}
+ #main-content .pc-shell .pc-table td{display:block;height:auto;min-width:0;padding:0;border:0;text-align:left;white-space:normal;font-size:14px;line-height:20px}
+ #main-content .pc-shell .pc-table td.pc-record-type{grid-row:1;grid-column:1;font-weight:600}
+ #main-content .pc-shell .pc-table td.pc-record-amount{grid-row:1;grid-column:2;text-align:right;font-weight:600}
+ #main-content .pc-shell .pc-table td[data-label]:before{content:attr(data-label);display:block;margin:0 0 2px;font-size:12px;line-height:18px;color:#a0a1a2}
+ #main-content .pc-shell .pc-table td[colspan]{grid-column:1/-1}
+ #main-content .pc-shell .pc-table tbody:has(td[colspan]) tr{display:block}
+}

@@ -5,7 +5,7 @@
 // Sub-pages own their drafts and are remounted per route (key). Data is local in-memory mock (src/api/profile.js).
 import {computed} from 'vue'
 import {useRoute} from 'vue-router'
-import LineIcon from '../components/ui/LineIcon.vue'
+import BackLink from '../components/ui/BackLink.vue'
 import {account} from '../account'
 import {path} from '../data'
 import {t} from '../i18n'
@@ -36,12 +36,15 @@ const formTitle = computed(() => {
   if (p === 'bind-phone') return t('profile.bindPhonePage.' + (account.phone ? 'titleChange' : 'titleBind'))
   return ''
 })
+// Secondary pages get BackLink: the in-page link on desktop, an app top bar with the page title on phones.
+const PAGE_TITLES = {kyc: 'profile.center.identity.title', records: 'profile.center.records.title', referrals: 'profile.center.invite.title', notifications: 'profile.center.notifications.title'}
+const pageTitle = computed(() => formTitle.value || (PAGE_TITLES[page.value] ? t(PAGE_TITLES[page.value]) : ''))
 const narrow = computed(() => ['change-password', 'bind-email', 'bind-phone'].includes(page.value))
 </script>
 <template>
 <div class="pc-shell" :class="['account-'+page,{'pc-overview':page==='profile','pc-narrow':narrow}]">
  <div class="pc-main">
-  <RouterLink v-if="page!=='profile'" class="pc-back" :to="path('/profile')"><LineIcon name="arrow-left"/>{{ $t('profile.center.rows.backToProfile') }}</RouterLink>
+  <BackLink v-if="page!=='profile'" class="pc-back" :to="path('/profile')" :title="pageTitle">{{ $t('profile.center.rows.backToProfile') }}</BackLink>
   <h1 v-if="formTitle" class="pc-title">{{ formTitle }}</h1>
   <component :is="view.component" v-bind="view.props" :key="page+'|'+id"/>
  </div>

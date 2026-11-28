@@ -64,7 +64,7 @@ function approve() {
      <label v-for="[key, label] in uploads" :key="key" class="pc-upload" :class="{filled: files[key]}"><span>{{ $t(label) }}</span><span class="pc-upload-box"><LineIcon :name="files[key]?'check':'upload'"/><small>{{ files[key] || $t('kyc.clickToUpload') }}</small><input type="file" accept="image/png,image/jpeg,application/pdf" :aria-label="$t(label)" @change="selectFile(key,$event)"/></span></label>
     </div>
     <p class="pc-muted small">{{ $t('account.ui.useFictionalDetailsAndDemoImagesFilesStayOn') }}</p>
-    <div class="pc-form-foot"><span class="pc-muted">{{ $t('profile.center.identity.reviewHint') }}</span><button type="submit" class="pc-button primary">{{ $t('kyc.submit') }}</button></div>
+    <div class="pc-form-foot"><span class="pc-muted">{{ $t('profile.center.identity.reviewHint') }}</span><button type="submit" class="pc-button primary nt-float-action">{{ $t('kyc.submit') }}</button></div>
    </form>
   </template>
   <template v-else-if="current===1||current===3">

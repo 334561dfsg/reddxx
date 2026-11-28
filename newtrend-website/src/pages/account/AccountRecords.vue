@@ -41,12 +41,12 @@ const COLUMNS = ['type', 'account', 'currency', 'amount', 'balance', 'time'], NU
     <thead><tr><th v-for="column in COLUMNS" :key="column" scope="col" :class="{num: NUMERIC.includes(column)}">{{ $t('profile.center.records.columns.'+column) }}</th></tr></thead>
     <tbody v-if="records.data.value.items.length">
      <tr v-for="row in records.data.value.items" :key="row.id">
-      <td>{{ $t('profile.center.records.types.'+row.type) }}</td>
-      <td>{{ $t('profile.center.records.accounts.'+row.account) }}</td>
-      <td>{{ row.currency }}</td>
-      <td class="num" :class="row.amount>=0?'up':'down'">{{ amount(row.amount, row.currency, true) }}</td>
-      <td class="num">{{ amount(row.balance, row.currency) }}</td>
-      <td class="pc-time">{{ time(row.createdAt) }}</td>
+      <td class="pc-record-type">{{ $t('profile.center.records.types.'+row.type) }}</td>
+      <td :data-label="$t('profile.center.records.columns.account')">{{ $t('profile.center.records.accounts.'+row.account) }}</td>
+      <td :data-label="$t('profile.center.records.columns.currency')">{{ row.currency }}</td>
+      <td class="num pc-record-amount" :class="row.amount>=0?'up':'down'">{{ amount(row.amount, row.currency, true) }}</td>
+      <td class="num" :data-label="$t('profile.center.records.columns.balance')">{{ amount(row.balance, row.currency) }}</td>
+      <td class="pc-time" :data-label="$t('profile.center.records.columns.time')">{{ time(row.createdAt) }}</td>
      </tr>
     </tbody>
     <tbody v-else><tr><td :colspan="COLUMNS.length"><div class="pc-empty"><LineIcon name="inbox"/>{{ $t('profile.center.records.empty') }}</div></td></tr></tbody>
