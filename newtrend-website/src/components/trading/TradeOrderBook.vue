@@ -27,6 +27,9 @@ const sideRows=side=>{
  for(const row of out)row.share=Math.round(row.cumQty/total*10000)/100
  return side==='ask'?out.reverse():out
 }
+// 累計 is a USDT running total, not a price: 2 decimals from 1 up, at most 4 below (0.0026 instead of the price
+// formatter's 0.00255906) and "<0.0001" for smaller totals, so the column stays one line on narrow desktop books.
+const total=v=>v>=1?v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):v>0&&v<0.0001?'<0.0001':v.toLocaleString('en-US',{maximumFractionDigits:4})
 </script>
 <template>
 <section class="terminal-panel orderbook" :aria-label="$t('trade.orderBook')">
@@ -35,7 +38,7 @@ const sideRows=side=>{
   <div class="book-body" :aria-busy="!depth.ready.value||undefined">
     <div v-for="side in (display==='both'?['ask','bid']:[display])" :key="side" class="book-side">
       <div v-if="(side==='bid'||display==='ask')" class="book-price" :class="pair.change<0?'negative':'positive'"><template v-if="pair.price!==null">{{ fmt(pair.price) }} {{ pair.change<0?'↓':'↑' }}</template><Skeleton v-else inline width="96px"/></div>
-      <template v-if="rows(side)"><component :is="pickable?'button':'div'" v-for="(row,i) in sideRows(side)" :key="side+i" class="book-row" :class="{bid:side==='bid'}" :style="{'--depth':row.share+'%'}" :type="pickable?'button':undefined" :aria-label="pickable?$t('trade.pages.usePrice',{price:fmt(row.price)}):undefined" @click="pickable&&emit('pick-price',row.price)"><span :class="side==='bid'?'positive':'negative'">{{ fmt(row.price) }}</span><span>{{ row.qty.toFixed(4) }}</span><span v-if="!compact">{{ fmt(row.cumValue) }}</span></component></template>
+      <template v-if="rows(side)"><component :is="pickable?'button':'div'" v-for="(row,i) in sideRows(side)" :key="side+i" class="book-row" :class="{bid:side==='bid'}" :style="{'--depth':row.share+'%'}" :type="pickable?'button':undefined" :aria-label="pickable?$t('trade.pages.usePrice',{price:fmt(row.price)}):undefined" @click="pickable&&emit('pick-price',row.price)"><span :class="side==='bid'?'positive':'negative'">{{ fmt(row.price) }}</span><span>{{ row.qty.toFixed(4) }}</span><span v-if="!compact">{{ total(row.cumValue) }}</span></component></template>
       <template v-else><div v-for="n in count" :key="n" class="book-row book-skeleton-row" aria-hidden="true"><span><Skeleton inline width="64px"/></span><span><Skeleton inline width="44px"/></span><span v-if="!compact"><Skeleton inline width="56px"/></span></div></template>
     </div>
   </div>

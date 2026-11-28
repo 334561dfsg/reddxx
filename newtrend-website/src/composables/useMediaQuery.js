@@ -11,3 +11,5 @@ export function useMediaQuery(query){
 }
 /** The trading page's compact (phone) layout, matching the 767px breakpoint in trade-workspace.css. */
 export const COMPACT_TRADE_QUERY='(max-width: 767px)'
+/** Desktop trading pair panel left of the chart, matching `.with-pairs` in trade-workspace.css. */
+export const PAIR_PANEL_QUERY='(min-width: 1200px)'
