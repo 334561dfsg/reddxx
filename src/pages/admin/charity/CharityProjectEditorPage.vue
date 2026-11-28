@@ -3,8 +3,8 @@
 // English first and required, sticky actions, right-side return, unsaved-change guard. Saving never lists or unlists.
 import {computed, onBeforeUnmount, ref, watch} from 'vue'
 import {onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter} from 'vue-router'
-import {message, Button, Card, Col, Empty, Form, FormItem, Image, Input, InputNumber, Row, Space, Spin, TabPane, Tabs, Textarea, TypographyText} from 'ant-design-vue'
-import {ArrowLeftOutlined} from '@ant-design/icons-vue'
+import {message, Button, Card, Col, Empty, Form, FormItem, Image, Input, InputNumber, Row, Space, Spin, TabPane, Tabs, Textarea, TypographyText, Upload} from 'ant-design-vue'
+import {ArrowLeftOutlined, UploadOutlined} from '@ant-design/icons-vue'
 import PageShell from '../earn/EarnPageShell.vue'
 import AdminModal from '../earn/EarnAdminModal.vue'
 import {FALLBACK_LOCALE, LOCALES, donatedAmount, projectsBySort} from '../../../shared/charity/domain.js'
@@ -43,8 +43,27 @@ async function load() {
   form.value = toForm(project || blank())
   original.value = JSON.stringify(form.value)
   tab.value = FALLBACK_LOCALE
+  uploadedName.value = ''
 }
 watch(() => route.params.id, load, {immediate: true})
+
+// Cover upload: read into this page's memory as a data URL (static mock; nothing is sent to a server or persisted).
+// An address can still be typed instead; an uploaded image hides its long data URL behind the file name.
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'], MAX_IMAGE = 2 * 1024 * 1024
+const uploadedName = ref('')
+const uploaded = computed(() => !!form.value && form.value.image.startsWith('data:image/'))
+function pickImage(file) {
+  if (!IMAGE_TYPES.includes(file.type)) message.error('请上传 JPG、PNG 或 WebP 图片')
+  else if (file.size > MAX_IMAGE) message.error('图片不能超过 2MB')
+  else {
+    const reader = new FileReader()
+    reader.onload = () => { form.value.image = String(reader.result); uploadedName.value = `${file.name}（${(file.size / 1024).toFixed(0)} KB）` }
+    reader.onerror = () => message.error('图片读取失败，请重试')
+    reader.readAsDataURL(file)
+  }
+  return false
+}
+function useAddress() { form.value.image = ''; uploadedName.value = '' }
 
 const listQuery = () => Object.fromEntries(['title', 'projectId', 'status', 'page'].filter(k => route.query[k] != null).map(k => [k, route.query[k]]))
 function back() { router.push({path: '/admin/charity/projects', query: listQuery()}) }
@@ -94,8 +113,14 @@ async function save() {
      </Tabs>
     </Card>
     <Card title="封面图片" :bordered="false"><Row :gutter="24" class="charity-editor-fields">
-     <Col :xs="24" :lg="16"><FormItem name="image" label="图片地址" required help="站内资源如 /NewQuantCapital/assets/xxx.jpg，或 https:// 开头的图片链接；前台卡片按 1.6:1 裁切"><Input v-model:value="form.image" :maxlength="300" placeholder="/NewQuantCapital/assets/xxx.jpg"/></FormItem></Col>
-     <Col :xs="24" :lg="8"><FormItem label="预览"><Image v-if="form.image.trim()" :src="form.image.trim()" :width="192" :height="120" class="charity-preview" alt="封面预览" :preview="false"/><TypographyText v-else type="secondary">填写地址后显示预览</TypographyText></FormItem></Col>
+     <Col :xs="24" :lg="16"><FormItem name="image" label="封面图片" required help="支持 JPG、PNG、WebP，不超过 2MB；也可填写站内资源或 https:// 图片地址。前台卡片按 1.6:1 裁切">
+      <div class="charity-cover-field">
+       <Upload accept="image/jpeg,image/png,image/webp" :show-upload-list="false" :before-upload="pickImage"><Button><template #icon><UploadOutlined/></template>{{ form.image.trim() ? '重新上传' : '上传图片' }}</Button></Upload>
+       <template v-if="uploaded"><TypographyText class="charity-cover-name" :ellipsis="{tooltip: true}">已上传{{ uploadedName ? '：' + uploadedName : '本地图片' }}</TypographyText><Button type="link" class="charity-cover-switch" @click="useAddress">改填地址</Button></template>
+       <Input v-else v-model:value="form.image" class="charity-cover-url" :maxlength="300" placeholder="或填写图片地址，如 /NewQuantCapital/assets/xxx.jpg" aria-label="封面图片地址"/>
+      </div>
+     </FormItem></Col>
+     <Col :xs="24" :lg="8"><FormItem label="预览"><Image v-if="form.image.trim()" :src="form.image.trim()" :width="192" :height="120" class="charity-preview" alt="封面预览" :preview="false"/><TypographyText v-else type="secondary">上传或填写地址后显示预览</TypographyText></FormItem></Col>
     </Row></Card>
     <Card title="募集设置" :bordered="false"><Row :gutter="24" class="charity-editor-fields">
      <Col :xs="24" :lg="8"><FormItem name="targetAmount" label="目标金额" required><InputNumber v-model:value="form.targetAmount" :min="0" :precision="2" addon-after="USDT"/></FormItem></Col>
@@ -119,6 +144,10 @@ async function save() {
 .charity-editor-fields{max-width:1100px}
 .charity-editor-form :deep(:is(.ant-input-number,.ant-input-number-group-wrapper)){width:100%}
 .charity-preview :deep(img),:deep(.charity-preview){object-fit:cover;border-radius:4px}
+.charity-cover-field{display:flex;align-items:center;gap:8px;min-width:0}
+.charity-cover-url{flex:1;min-width:0}
+.charity-cover-name{min-width:0;max-width:420px}
+.charity-cover-switch{padding:0}
 .charity-editor-footer{position:sticky;bottom:0;z-index:10}
 .charity-editor-actions{display:flex;justify-content:flex-end}
 </style>
