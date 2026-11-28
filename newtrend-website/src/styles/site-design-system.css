@@ -150,15 +150,11 @@
 /* Home headline: Chinese breaks only at punctuation/spaces so words like 能源 stay whole; long runs still wrap. */
 #site-shell .hero-title:lang(zh){word-break:keep-all;overflow-wrap:anywhere}
 /* Login/register (user request, 2026-11-28): the form comes first in the DOM. Wide screens place the intro on the
-   left as before; single-column screens show the form first and the intro below a divider, more compact. */
+   left as before; single-column screens (≤900px) show only the form, no intro (user decision 2026-11-29, Auth.vue). */
 @media(min-width:901px){#main-content .auth-layout>.auth-intro{grid-column:1;grid-row:1}#main-content .auth-layout>.auth-form{grid-column:2;grid-row:1}}
 @media(max-width:900px){
  #main-content .auth-layout{gap:40px;padding-top:24px;min-height:0}
  #main-content .auth-form h2{font-size:24px;line-height:32px}
- #main-content .auth-intro{padding-top:32px;border-top:1px solid #ffffff12}
- #main-content .auth-intro h1{font-size:22px;line-height:32px}
- #main-content .auth-intro .page-desc{margin-top:8px}
- #main-content .auth-intro .auth-features{gap:20px 16px;margin:24px 0}
 }
 /* Phone login: country dial-code picker beside the number (user request, 2026-11-28). */
 #main-content .auth-form .phone-field{display:grid;gap:8px;font-size:var(--nt-text-body);line-height:20px}
