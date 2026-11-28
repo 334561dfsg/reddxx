@@ -526,5 +526,8 @@ The binding standard for every page of the 金融 (`/earn`, `/c2c`, lending) and
 - Pure pickers (bottom option sheet, pair drawer, language sheet) close on backdrop tap; forms, confirmations and detail drawers do not (see the picker rule above).
 - Product/option switches on phones open a bottom sheet (`option-sheet`), not a dropdown.
 
+### Asset centre (user decision 2026-11-28)
+- 資產總覽 (`/assets`), 資金記錄 (`/assets/records`, `components/assets/AssetRecords.vue`), 充值 and 提現 follow this standard; rules in the asset-centre block at the end of `channel-system.css`. Overview: summary card (total in mono 36/44, 28/34 on phones; 今日盈虧; five actions), accounts card and per-account coin list; phones drop the donut (it repeats the total). 資金記錄: equal kind segments (全部/充值/提現/劃轉/閃兌, sticky under the top bar on phones), a table on desktop, one card per record on phones, `useFinancePagination` + `<FinancePagination scroll>`; statuses use `StatusTag domain="wallet"`. Seeds: 24 records per mode in `server/walletRecords.js` (withdrawals seeded completed only, since pending ones count toward the total). 充值/提現 use BackLink with its `action` slot (歷史記錄 icon in the phone top bar) and float the submit with `.nt-float-action`; desktop keeps the measured reference layout.
+
 ### 7. Verification
 Check every change at 393px and 360px and at 1440px; confirm no horizontal overflow, sticky elements and fixed headers, load-more to 沒有更多了, and that desktop is unchanged. Record new channel decisions in this section.

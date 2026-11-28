@@ -290,5 +290,26 @@
     "swap": "Swap accounts",
     "accountsRequired": "Please select the source and destination accounts",
     "currencyRequired": "Please select a currency"
+  },
+  "walletLog": {
+    "back": "Back to assets",
+    "all": "All",
+    "filter": "Record type",
+    "time": "Time",
+    "type": "Type",
+    "detail": "Details",
+    "amount": "Amount",
+    "state": "Status",
+    "kinds": {
+      "deposit": "Deposit",
+      "withdraw": "Withdraw",
+      "transfer": "Transfer",
+      "exchange": "Convert"
+    },
+    "status": {
+      "pending": "Pending",
+      "completed": "Completed"
+    },
+    "accounts": "Accounts"
   }
 }

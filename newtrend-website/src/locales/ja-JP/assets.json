@@ -290,5 +290,26 @@
     "swap": "振替元と振替先を入れ替える",
     "accountsRequired": "振替元と振替先のアカウントを選択してください",
     "currencyRequired": "通貨を選択してください"
+  },
+  "walletLog": {
+    "back": "資産へ戻る",
+    "all": "すべて",
+    "filter": "記録の種類",
+    "time": "時刻",
+    "type": "タイプ",
+    "detail": "詳細",
+    "amount": "数量",
+    "state": "状態",
+    "kinds": {
+      "deposit": "入金",
+      "withdraw": "出金",
+      "transfer": "振替",
+      "exchange": "コンバート"
+    },
+    "status": {
+      "pending": "処理中",
+      "completed": "完了"
+    },
+    "accounts": "アカウント"
   }
 }

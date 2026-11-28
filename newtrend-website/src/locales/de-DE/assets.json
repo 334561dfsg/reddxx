@@ -290,5 +290,26 @@
     "swap": "Konten tauschen",
     "accountsRequired": "Bitte Quell- und Zielkonto auswählen",
     "currencyRequired": "Bitte eine Währung auswählen"
+  },
+  "walletLog": {
+    "back": "Zurück zu Vermögen",
+    "all": "Alle",
+    "filter": "Eintragstyp",
+    "time": "Zeit",
+    "type": "Typ",
+    "detail": "Details",
+    "amount": "Betrag",
+    "state": "Status",
+    "kinds": {
+      "deposit": "Einzahlung",
+      "withdraw": "Auszahlung",
+      "transfer": "Übertrag",
+      "exchange": "Umwandeln"
+    },
+    "status": {
+      "pending": "Ausstehend",
+      "completed": "Abgeschlossen"
+    },
+    "accounts": "Konten"
   }
 }

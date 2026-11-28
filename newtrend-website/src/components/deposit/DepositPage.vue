@@ -1,5 +1,6 @@
 <script setup>
 import LineIcon from '../ui/LineIcon.vue'
+import BackLink from '../ui/BackLink.vue'
 import {networksOf} from '../../mock/chains.js'
 import {coinOptions as coinOptionsFor,networkOptions as networkOptionsFor} from './chainOptions.js'
 import {computed,onBeforeUnmount,ref,watch} from 'vue'
@@ -63,8 +64,8 @@ onBeforeUnmount(clearPreview)
 <template>
 <div class="deposit-page">
  <div class="deposit-top">
-  <RouterLink :to="path('/assets')"><LineIcon name="arrow-left" aria-hidden="true"/>{{ $t('deposit.back') }}</RouterLink>
-  <RouterLink :to="path('/assets/records')"><LineIcon name="history" aria-hidden="true"/>{{ $t('deposit.history.entry') }}</RouterLink>
+  <BackLink :to="path('/assets')" :title="$t('deposit.pageTitle')">{{ $t('deposit.back') }}<template #action><RouterLink :to="path('/assets/records')" :aria-label="$t('deposit.history.entry')"><LineIcon name="history" aria-hidden="true"/></RouterLink></template></BackLink>
+  <RouterLink :to="path('/assets/records')" class="deposit-history-link"><LineIcon name="history" aria-hidden="true"/>{{ $t('deposit.history.entry') }}</RouterLink>
  </div>
  <h1>{{ $t('deposit.pageTitle') }}</h1>
  <p class="deposit-subtitle">{{ $t('deposit.subtitle') }}</p>
@@ -126,7 +127,7 @@ onBeforeUnmount(clearPreview)
    </div>
   </div>
 
-  <button type="submit" class="deposit-submit" :class="{incomplete:!ready}" :aria-busy="busy" :disabled="busy"><Spinner v-if="busy"/>{{ $t(busy?'deposit.voucher.submitting':'deposit.voucher.submit') }}</button>
+  <button type="submit" class="deposit-submit nt-float-action" :class="{incomplete:!ready}" :aria-busy="busy" :disabled="busy"><Spinner v-if="busy"/>{{ $t(busy?'deposit.voucher.submitting':'deposit.voucher.submit') }}</button>
  </form>
 </div>
 </template>

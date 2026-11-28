@@ -8,6 +8,7 @@ import {statusDomains, statusLabelKey} from '../src/utils/statusLabels.js'
 import {earnPortfolios} from '../src/server/earnPortfolio.js'
 import {quantFundAccount} from '../src/server/quantFundPortfolio.js'
 import {strategyAccounts} from '../src/server/strategyPortfolio.js'
+import {walletRecords} from '../src/server/walletRecords.js'
 import {seedStrategy} from '../../src/shared/strategy/seed.js'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -65,6 +66,7 @@ test('every status the mock data can show has a label in its domain', () => {
     'quant-fund': quantFundAccount.orders.map(order => order.status),
     strategy: [...seedStrategy().subscriptions, ...strategyAccounts.demo.records].map(record => record.status).concat('initializing'),
     lending: ['pending', 'active', 'repaying', 'overdue', 'completed', 'rejected', 'cancelled', 'liquidated'],
+    wallet: [...walletRecords.real, ...walletRecords.demo].map(record => record.status).concat('pending', 'completed'),
   }
   assert.deepEqual(Object.keys(statuses).sort(), Object.keys(statusDomains).sort())
   for (const [domain, list] of Object.entries(statuses)) for (const status of new Set(list))

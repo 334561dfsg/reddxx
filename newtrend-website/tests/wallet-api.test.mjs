@@ -26,7 +26,7 @@ test('transfer validates and records per mode without moving funds', async () =>
   await api.transferFunds({mode: DEMO, from: 'a', to: 'b', currency: 'USDT', amount: 5, labels: {from: 'A', to: 'B'}})
   assert.equal(balanceOf(DEMO, 'USDT'), before)
   assert.equal((await api.listWalletRecords(DEMO))[0].kind, 'transfer')
-  assert.equal((await api.listWalletRecords(REAL)).length, 0)
+  assert.ok((await api.listWalletRecords(REAL)).every(record => record.id.startsWith('WR-SEED-real-')), 'demo transfers never reach the real records')
 })
 
 test('withdrawal and deposit voucher stay pending and validate inputs', async () => {

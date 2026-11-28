@@ -5,6 +5,7 @@ import {fmt,path} from '../data'
 import {t} from '../i18n'
 import {openModal,session} from '../session'
 import LineIcon from '../components/ui/LineIcon.vue'
+import BackLink from '../components/ui/BackLink.vue'
 import NtSelect from '../components/ui/NtSelect.vue'
 import Skeleton from '../components/ui/Skeleton.vue'
 import Spinner from '../components/ui/Spinner.vue'
@@ -71,8 +72,8 @@ async function submit(){
 <template>
 <div class="deposit-page withdraw-page">
  <div class="deposit-top">
-  <RouterLink :to="path('/assets')"><LineIcon name="arrow-left" aria-hidden="true"/>{{ $t('assets.withdraw.back') }}</RouterLink>
-  <RouterLink :to="path('/assets/records')"><LineIcon name="history" aria-hidden="true"/>{{ $t('deposit.history.entry') }}</RouterLink>
+  <BackLink :to="path('/assets')" :title="$t('assets.withdraw.title')">{{ $t('assets.withdraw.back') }}<template #action><RouterLink :to="path('/assets/records')" :aria-label="$t('deposit.history.entry')"><LineIcon name="history" aria-hidden="true"/></RouterLink></template></BackLink>
+  <RouterLink :to="path('/assets/records')" class="deposit-history-link"><LineIcon name="history" aria-hidden="true"/>{{ $t('deposit.history.entry') }}</RouterLink>
  </div>
  <h1>{{ $t('assets.withdraw.title') }}</h1>
  <p class="deposit-subtitle withdraw-subtitle">{{ $t('assets.withdraw.subtitle') }}</p>
@@ -131,7 +132,7 @@ async function submit(){
    </aside>
   </div>
 
-  <button type="submit" class="wd-submit" :class="{'is-busy':busy}" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(busy?'assets.withdraw.submitting':'assets.withdraw.submit') }}</button>
+  <button type="submit" class="wd-submit nt-float-action" :class="{'is-busy':busy}" :aria-disabled="busy||undefined" :aria-busy="busy||undefined"><Spinner v-if="busy"/>{{ $t(busy?'assets.withdraw.submitting':'assets.withdraw.submit') }}</button>
  </form>
 </div>
 </template>

@@ -290,5 +290,26 @@
     "swap": "출금/입금 계정 바꾸기",
     "accountsRequired": "출금 계정과 입금 계정을 선택하세요",
     "currencyRequired": "통화를 선택하세요"
+  },
+  "walletLog": {
+    "back": "자산으로 돌아가기",
+    "all": "전체",
+    "filter": "기록 유형",
+    "time": "시간",
+    "type": "유형",
+    "detail": "상세",
+    "amount": "수량",
+    "state": "상태",
+    "kinds": {
+      "deposit": "입금",
+      "withdraw": "출금",
+      "transfer": "이체",
+      "exchange": "환전"
+    },
+    "status": {
+      "pending": "대기 중",
+      "completed": "완료"
+    },
+    "accounts": "계정"
   }
 }

@@ -290,5 +290,26 @@
     "swap": "交換轉出與轉入帳戶",
     "accountsRequired": "請選擇轉出與轉入帳戶",
     "currencyRequired": "請選擇幣種"
+  },
+  "walletLog": {
+    "back": "返回資產",
+    "all": "全部",
+    "filter": "記錄類型",
+    "time": "時間",
+    "type": "類型",
+    "detail": "明細",
+    "amount": "數量",
+    "state": "狀態",
+    "kinds": {
+      "deposit": "充值",
+      "withdraw": "提現",
+      "transfer": "劃轉",
+      "exchange": "閃兌"
+    },
+    "status": {
+      "pending": "處理中",
+      "completed": "已完成"
+    },
+    "accounts": "帳戶"
   }
 }

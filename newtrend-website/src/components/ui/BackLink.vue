@@ -4,7 +4,8 @@ import LineIcon from './LineIcon.vue'
 // Shared back navigation for secondary pages. Desktop: the "← back" link in the page. Phones (≤767px, user decision
 // 2026-11-27): an app-style top bar instead — back arrow left, page title centred, pinned to the top — and the site
 // header is hidden while the page is shown (html.nt-has-page-bar). Extra attrs (classes, aria-disabled, click guards)
-// apply to both links, so a busy page blocks back navigation in either form.
+// apply to both links, so a busy page blocks back navigation in either form. The optional `action` slot fills the bar's
+// right cell on phones (one 44px icon link, e.g. 充值/提現 → 歷史記錄); desktop pages keep their own in-page link.
 defineOptions({inheritAttrs:false})
 defineProps({to:{type:[String,Object],required:true},title:{type:String,default:''}})
 onMounted(()=>document.documentElement.classList.add('nt-has-page-bar'))
@@ -16,7 +17,8 @@ onBeforeUnmount(()=>document.documentElement.classList.remove('nt-has-page-bar')
  <header class="nt-page-bar">
   <RouterLink :to="to" class="nt-page-bar-back" v-bind="{...$attrs,class:undefined}" :aria-label="$t('common.back')"><LineIcon name="arrow-left" aria-hidden="true"/></RouterLink>
   <strong class="nt-page-bar-title">{{ title }}</strong>
-  <span class="nt-page-bar-end" aria-hidden="true"></span>
+  <span v-if="$slots.action" class="nt-page-bar-end"><slot name="action"/></span>
+  <span v-else class="nt-page-bar-end" aria-hidden="true"></span>
  </header>
 </Teleport>
 </template>
@@ -37,6 +39,9 @@ onBeforeUnmount(()=>document.documentElement.classList.remove('nt-has-page-bar')
  .nt-page-bar-back{display:grid;place-items:center;width:44px;height:44px;color:#fff;border-radius:var(--nt-radius-panel)}
  .nt-page-bar-back svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
  .nt-page-bar-back:focus-visible{outline:none;background:#ffffff10}
+ .nt-page-bar-end>a{display:grid;place-items:center;width:44px;height:44px;color:#fff;border-radius:var(--nt-radius-panel)}
+ .nt-page-bar-end>a svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+ .nt-page-bar-end>a:focus-visible{outline:none;background:#ffffff10}
  .nt-page-bar-title{overflow:hidden;text-align:center;white-space:nowrap;text-overflow:ellipsis;font-size:16px;line-height:24px;font-weight:600;color:#fff}
 }
 </style>

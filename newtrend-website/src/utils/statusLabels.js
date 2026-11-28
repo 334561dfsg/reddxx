@@ -4,6 +4,7 @@ export const statusDomains = {
   lending: {look: 'portfolio-status', labels: 'lending.statuses.'},
   'quant-fund': {look: 'qf-status', labels: 'aiQuant.quantFund.positions.tabs.'},
   strategy: {look: 'ms-status', labels: 'aiQuant.status.'},
+  wallet: {look: 'portfolio-status', labels: 'assets.walletLog.status.'},
 }
 /** Translation key for a domain status, e.g. statusLabelKey('lending', 'active') → 'lending.statuses.active'. */
 export const statusLabelKey = (domain, status) => statusDomains[domain].labels + status

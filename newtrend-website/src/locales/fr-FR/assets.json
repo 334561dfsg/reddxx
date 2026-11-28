@@ -290,5 +290,26 @@
     "swap": "Inverser les comptes",
     "accountsRequired": "Veuillez sélectionner les comptes source et destination",
     "currencyRequired": "Veuillez sélectionner une devise"
+  },
+  "walletLog": {
+    "back": "Retour aux actifs",
+    "all": "Tout",
+    "filter": "Type d’opération",
+    "time": "Heure",
+    "type": "Type",
+    "detail": "Détails",
+    "amount": "Montant",
+    "state": "Statut",
+    "kinds": {
+      "deposit": "Dépôt",
+      "withdraw": "Retrait",
+      "transfer": "Transfert",
+      "exchange": "Convertir"
+    },
+    "status": {
+      "pending": "En attente",
+      "completed": "Terminé"
+    },
+    "accounts": "Comptes"
   }
 }
