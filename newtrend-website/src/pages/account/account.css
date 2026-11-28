@@ -239,6 +239,9 @@
    one sideways row, and 身份認證's submit floating at the bottom (.nt-float-action, channel-system.css). */
 @media(max-width:767px){
  #main-content .pc-shell:not(.pc-overview){padding-top:12px}
+ /* /profile: the header card already names the page, so the 個人中心 title is for assistive technology only. */
+ #main-content .pc-overview .pf-title{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ #main-content .pc-shell.pc-overview{padding-top:12px}
  #main-content .pc-shell .pc-main{gap:12px}
  #main-content .pc-shell:not(.pc-overview) :is(h1.pc-title,.pc-subtitle){position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
  #main-content .pc-shell :is(.pc-card,.account-form){border-radius:20px}
