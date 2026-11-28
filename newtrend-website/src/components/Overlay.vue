@@ -2,7 +2,7 @@
 import FeedbackToast from '../platform/FeedbackToast.js'
 import {shallowRef,watch,nextTick,onUnmounted,computed} from 'vue'
 import {useRoute,useRouter} from 'vue-router'
-import {modal,openModal,closeModal,session,login,requestModeSwitch} from '../session'
+import {modal,openModal,closeModal,session,requestModeSwitch} from '../session'
 import {path} from '../data'
 import {useLocaleSwitch} from '../composables/useLocaleSwitch'
 import SupportChat from './SupportChat.vue'
@@ -31,6 +31,7 @@ import FundPasswordForm from './overlay/FundPasswordForm.vue'
 import FlashExchange from './overlay/FlashExchange.vue'
 import FundPasswordPrompt from './overlay/FundPasswordPrompt.vue'
 import Spinner from './ui/Spinner.vue'
+import WalletConnect from './overlay/WalletConnect.vue'
 import {overlayConfig} from './overlay/overlayRegistry.js'
 // State reported by the open flow's body component ({dirty, valid, done, confirmLabel}); drives the unsaved-work guard and footer.
 const flow=shallowRef({})
@@ -113,7 +114,7 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 <SupportChat @draft-change="message=$event"/>
 
 </template>
-<template v-else-if="current.type==='wallet'"><p class="notice">{{ $t("overlay.ui.thisLocalDemoDoesNotRequestWalletPermissionsOr") }}</p><button class="primary-button wide-button section-gap" @click="login();done=true" :disabled="done">{{ $t("overlay.ui.connectDemoWallet") }}</button><FeedbackToast v-if="done" type="success" :source="() => (done) ? ($t('overlay.ui.localDemoAccountConnected')) : ''"/></template>
+<WalletConnect v-else-if="current.type==='wallet'" @close="close"/>
 <C2COrderDetail v-else-if="current.type==='c2c-detail'" :id="current.data.id"/>
 <template v-else-if="current.type==='c2c-agreement'"><p class="muted">{{ $t('c2c.agreement.version',{version:'v1-draft'}) }}</p><p class="c2c-agreement-copy">{{ $t('c2c.agreement.body') }}</p><form id="account-action" @submit.prevent="accountAction"></form></template>
 <template v-else-if="current.type==='account-confirm'"><p v-if="current.data.subtitle" class="muted confirm-subtitle">{{ current.data.subtitle }}</p><p v-if="current.data.danger" class="confirm-danger">{{ $t(current.data.danger) }}</p><p v-if="current.data.description" class="muted">{{ $t(current.data.description) }}</p><form id="account-action" @submit.prevent="accountAction"></form></template>

@@ -23,5 +23,11 @@
     "localInterfaceDemoNotConnectedToTheOriginalAccount": "Local interface demo. Not connected to the original account service.",
     "confirmOrder": "Confirm order"
   },
-  "amountMinimum": "Enter a valid amount of at least {{amount}}."
+  "amountMinimum": "Enter a valid amount of at least {{amount}}.",
+  "wallet": {
+    "choose": "Choose a wallet",
+    "confirm": "Confirm",
+    "copy": "Copy link",
+    "linkCopied": "Site link copied. Open it in your wallet's DApp browser."
+  }
 }

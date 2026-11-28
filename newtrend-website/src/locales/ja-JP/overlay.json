@@ -23,5 +23,11 @@
     "localInterfaceDemoNotConnectedToTheOriginalAccount": "ローカルデモです。元サイトのアカウントサービスには接続しません。",
     "confirmOrder": "注文を確認"
   },
-  "amountMinimum": "{{amount}} 以上の有効な金額を入力してください。"
+  "amountMinimum": "{{amount}} 以上の有効な金額を入力してください。",
+  "wallet": {
+    "choose": "ウォレットを選択",
+    "confirm": "確認",
+    "copy": "リンクをコピー",
+    "linkCopied": "サイトのリンクをコピーしました。ウォレットの DApp ブラウザで開いてください"
+  }
 }

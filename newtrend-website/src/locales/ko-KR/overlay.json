@@ -23,5 +23,11 @@
     "localInterfaceDemoNotConnectedToTheOriginalAccount": "로컬 데모입니다. 원본 계정 서비스에 연결되지 않습니다.",
     "confirmOrder": "주문 확인"
   },
-  "amountMinimum": "{{amount}} 이상의 유효한 금액을 입력하세요."
+  "amountMinimum": "{{amount}} 이상의 유효한 금액을 입력하세요.",
+  "wallet": {
+    "choose": "지갑 선택",
+    "confirm": "확인",
+    "copy": "링크 복사",
+    "linkCopied": "사이트 링크를 복사했습니다. 지갑의 DApp 브라우저에서 열어 주세요"
+  }
 }

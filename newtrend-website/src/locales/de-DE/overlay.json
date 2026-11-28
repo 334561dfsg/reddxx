@@ -23,5 +23,11 @@
     "localInterfaceDemoNotConnectedToTheOriginalAccount": "Lokale Demo ohne Verbindung zum ursprünglichen Kontodienst.",
     "confirmOrder": "Auftrag bestätigen"
   },
-  "amountMinimum": "Geben Sie einen gültigen Betrag von mindestens {{amount}} ein."
+  "amountMinimum": "Geben Sie einen gültigen Betrag von mindestens {{amount}} ein.",
+  "wallet": {
+    "choose": "Wallet auswählen",
+    "confirm": "Bestätigen",
+    "copy": "Link kopieren",
+    "linkCopied": "Website-Link kopiert. Öffnen Sie ihn im DApp-Browser Ihrer Wallet."
+  }
 }

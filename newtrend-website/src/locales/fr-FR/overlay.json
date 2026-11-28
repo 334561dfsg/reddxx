@@ -23,5 +23,11 @@
     "localInterfaceDemoNotConnectedToTheOriginalAccount": "Démo locale sans connexion aux comptes du site original.",
     "confirmOrder": "Confirmer l’ordre"
   },
-  "amountMinimum": "Saisissez un montant valide d’au moins {{amount}}."
+  "amountMinimum": "Saisissez un montant valide d’au moins {{amount}}.",
+  "wallet": {
+    "choose": "Choisir un portefeuille",
+    "confirm": "Confirmer",
+    "copy": "Copier le lien",
+    "linkCopied": "Lien du site copié. Ouvrez-le dans le navigateur DApp de votre portefeuille."
+  }
 }

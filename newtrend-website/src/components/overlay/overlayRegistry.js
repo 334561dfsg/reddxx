@@ -13,6 +13,7 @@ export const overlayTypes = {
   'market-picker': {classes: ['market-drawer'], backdropClose: true, footer: false},
   language: {classes: [...SHEET, 'language-sheet'], backdropClose: true, footer: false},
   menu: {classes: ['drawer'], footer: false},
+  wallet: {initialFocus: '[data-wallet-initial-focus]', footer: false},
   support: {classes: ['support-drawer'], footer: false},
   'delivery-order': {classes: ['delivery-order-dialog'], footer: false},
   'strategy-detail': {classes: ['strategy-detail-drawer']},

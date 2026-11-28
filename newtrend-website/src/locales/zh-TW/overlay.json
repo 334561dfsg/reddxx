@@ -23,5 +23,11 @@
     "localInterfaceDemoNotConnectedToTheOriginalAccount": "這是本地介面演示，未連接原站帳戶服務。",
     "confirmOrder": "確認委託"
   },
-  "amountMinimum": "請輸入不低於 {{amount}} 的有效金額。"
+  "amountMinimum": "請輸入不低於 {{amount}} 的有效金額。",
+  "wallet": {
+    "choose": "選擇錢包",
+    "confirm": "確認",
+    "copy": "複製連結",
+    "linkCopied": "已複製網站連結，請在錢包的 DApp 瀏覽器中開啟"
+  }
 }
