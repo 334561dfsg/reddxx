@@ -2,8 +2,8 @@ import { reactive } from 'vue'
 import { tradeProducts } from '../utils/tradeProducts.js'
 
 export function createTradePageState(mode) {
-  return {symbol:'BTCUSD',query:'',category:'aiQuant.templates.filterAll',sort:mode==='spot'?'change':'',descending:true,
-    interval:'trade.interval_1h',record:tradeProducts[mode].tabs[0].id,pages:{},marketsExpanded:false}
+  // symbol: last pair shown on this product; interval: chart interval; record / pages: records tab and per-tab page.
+  return {symbol:'BTCUSD',interval:'trade.interval_1h',record:tradeProducts[mode].tabs[0].id,pages:{}}
 }
 export function createOrderDrafts() {
   return {
@@ -20,3 +20,11 @@ export function useTradePageState(mode) {
   return pageStates.get(mode)
 }
 export function useOrderDrafts(){return drafts}
+
+// A price picked from the order book (phone layout) becomes the limit price of the futures or spot form; delivery
+// orders trade at market, so they ignore it.
+export function fillLimitPrice(mode,price){
+  const value=String(price)
+  if(mode==='futures'){drafts.futures.type='limit';drafts.futures.price=value}
+  else if(mode==='spot'){drafts.spot.type='limit';drafts.spot[drafts.spot.side||'buy'].price=value}
+}

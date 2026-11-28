@@ -51,3 +51,22 @@ export const useKline = (id, interval) => useChannel('kline', () => id() && {id:
   }
   return next.length > 110 ? next.slice(-110) : next
 })
+
+/**
+ * The selected market with live figures, for trading pages. `pair` is a getter of a catalogue market. `livePair` is
+ * the market with the pushed price (null until the first ticker), change, 24h high and low; `live` is the raw ticker
+ * (null while loading). Switching pairs resubscribes the single-market ticker; until its snapshot arrives the same
+ * market's entry from the all-markets stream is used, so the header keeps real figures (no skeleton flash).
+ * `tickers` (every market) is returned for callers that also need other markets' prices.
+ */
+export function useLivePair(pair) {
+  const ticker = useTicker(() => pair().id), tickers = useTickers()
+  const live = computed(() => ticker.data.value ?? tickers.data.value?.[pair().id] ?? null)
+  const livePair = computed(() => {
+    const market = pair(), quote = live.value
+    return {...market, price: quote?.price ?? null, change: quote ? Number(quote.change.toFixed(2)) : market.change, high: quote?.high, low: quote?.low}
+  })
+  // Snapshot-only markets carry volume '—': show a dash instead of NaN volume / turnover.
+  const hasVolume = computed(() => { const {volume, price} = pair(); return Number(volume) > 0 && Number(price) > 0 })
+  return {live, livePair, tickers, hasVolume}
+}

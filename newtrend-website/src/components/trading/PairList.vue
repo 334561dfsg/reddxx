@@ -1,64 +1,62 @@
 <script setup>
-import {computed,nextTick,onBeforeUnmount,onMounted,shallowRef,useTemplateRef,watch} from 'vue'
+import {computed,nextTick,onMounted,shallowRef,useTemplateRef,watch} from 'vue'
 import {tradingMarkets,fmt} from '../../data'
-import {tradeMarketCategory,tradeMarketCategories} from '../../utils/tradeProducts'
+import {filterPairs,nextSort,pairRows,pairTabs} from '../../utils/pairList.js'
 import {useMarketFavorites} from '../../composables/useMarketFavorites'
 import {useTickers} from '../../composables/useMarket.js'
+import {useScrollOverflow} from '../../composables/useScrollOverflow.js'
 import Coin from '../Coin.vue'
 import LineIcon from '../ui/LineIcon.vue'
 // Shared trading pair list (user reference, 2026-11-27 / 2026-11-28): search, favourites / all / category tabs,
 // sortable 交易對·成交額 / 價格·漲跌幅 header and one row per pair (star, icon, name, turnover, live price, change).
-// Used by the phone pair drawer (overlay/MarketPicker, variant "drawer") and the desktop pair panel left of the chart
-// (TradeWorkspace, variant "panel"). Choosing a row reports its id; the caller routes to it. Stars share the trading
-// favourites list.
+// Used by the phone/tablet pair drawer (overlay/MarketPicker, variant "drawer") and the desktop pair panel left of the
+// chart (TradeWorkspace, variant "panel"). Choosing a row reports its id; the caller routes to it. Stars share the
+// trading favourites list. Filtering and sorting live in utils/pairList.js.
 const props=defineProps({current:String,variant:{type:String,default:'drawer'}})
 const emit=defineEmits(['select'])
 const {favorites,favorite}=useMarketFavorites('nt-trade-favorites')
+const isFavorite=id=>favorites.value.includes(id)
 const tickers=useTickers()
 const query=shallowRef(''),tab=shallowRef('all'),sort=shallowRef({key:'',desc:true})
-const rows=computed(()=>tradingMarkets.map(m=>{const q=tickers.data.value?.[m.id];return {id:m.id,name:m.name,symbol:m.symbol,category:tradeMarketCategory(m),
- volume:Number.isFinite(Number(m.volume))&&Number(m.volume)>0?Number(m.volume):null,price:q?.price??m.price,change:q?Number(q.change.toFixed(2)):m.change}}))
-const tabs=computed(()=>['all',...tradeMarketCategories.filter(c=>rows.value.some(r=>r.category===c))])
-const visible=computed(()=>{
- const text=query.value.trim().toLowerCase().replace('/','')
- let list=rows.value.filter(r=>(tab.value==='all'||(tab.value==='favorites'?favorites.value.includes(r.id):r.category===tab.value))&&(!text||r.name.toLowerCase().replace('/','').includes(text)))
- const {key,desc}=sort.value
- if(key){const dir=desc?-1:1;list=[...list].sort((a,b)=>key==='name'?dir*a.name.localeCompare(b.name):dir*((a[key]??-Infinity)-(b[key]??-Infinity))||a.name.localeCompare(b.name))}
- return list
-})
-// Each header toggles descending → ascending → original order.
-function toggleSort(key){const s=sort.value;sort.value=s.key!==key?{key,desc:true}:s.desc?{key,desc:false}:{key:'',desc:true}}
+const rows=computed(()=>pairRows(tradingMarkets,tickers.data.value))
+const tabs=computed(()=>pairTabs(rows.value))
+// A category that disappears from the catalogue falls back to 全部 instead of an empty list.
+const activeTab=computed(()=>tab.value==='favorites'||tabs.value.includes(tab.value)?tab.value:'all')
+const visible=computed(()=>filterPairs(rows.value,{tab:activeTab.value,query:query.value,favorites:favorites.value,sort:sort.value}))
+const toggleSort=key=>{sort.value=nextSort(sort.value,key)}
 const ariaSort=key=>sort.value.key===key?(sort.value.desc?'descending':'ascending'):'none'
+const sortMark=key=>sort.value.key===key?(sort.value.desc?'↓':'↑'):'⇅'
 const columns=[['name','trade.pair'],['volume','trade.turnover'],['price','trade.price'],['change','home.markets.colChange']]
-// Keep the current pair in view inside the list (never scrolls the page): on mount and when the pair changes.
+const emptyText=computed(()=>query.value.trim()?'trade.pages.noMarketMatch':activeTab.value==='favorites'?'trade.marketList.emptyFavorites.title':'trade.marketList.emptyCategory.title')
+// Keep the current pair in view inside the list (scrolls the list only, never the page): on mount and on pair change.
 const listEl=useTemplateRef('listEl')
-function revealCurrent(){const list=listEl.value,row=list?.querySelector('li.current');if(!row)return
- const top=row.offsetTop-list.offsetTop,bottom=top+row.offsetHeight
- if(top<list.scrollTop)list.scrollTop=top;else if(bottom>list.scrollTop+list.clientHeight)list.scrollTop=bottom-list.clientHeight}
-// Category tabs stay on one row; overflow scrolls sideways (vertical wheel → horizontal for mouse users) with a right
-// fade while more tabs are hidden. Keyboard focus scrolls a tab into view natively.
-const tabsEl=useTemplateRef('tabsEl'),tabsMore=shallowRef(false)
-function updateTabs(){const el=tabsEl.value;tabsMore.value=!!el&&el.scrollLeft+el.clientWidth<el.scrollWidth-1}
-function wheelTabs(event){const el=tabsEl.value;if(!el||el.scrollWidth<=el.clientWidth||Math.abs(event.deltaX)>=Math.abs(event.deltaY))return;event.preventDefault();el.scrollLeft+=event.deltaY;updateTabs()}
-onMounted(()=>{revealCurrent();updateTabs();addEventListener('resize',updateTabs)})
-onBeforeUnmount(()=>removeEventListener('resize',updateTabs))
-watch(tabs,()=>nextTick(updateTabs));watch(()=>props.current,()=>nextTick(revealCurrent))
-const emptyText=computed(()=>query.value.trim()?'trade.pages.noMarketMatch':tab.value==='favorites'?'trade.marketList.emptyFavorites.title':'trade.marketList.emptyCategory.title')
+function revealCurrent(){
+ const list=listEl.value,row=list?.querySelector('li.current')
+ if(!row)return
+ const box=list.getBoundingClientRect(),item=row.getBoundingClientRect()
+ if(item.top<box.top)list.scrollTop-=box.top-item.top
+ else if(item.bottom>box.bottom)list.scrollTop+=item.bottom-box.bottom
+}
+onMounted(revealCurrent)
+watch(()=>props.current,()=>nextTick(revealCurrent))
+// Category tabs stay on one row; extra categories scroll sideways with a right fade (useScrollOverflow).
+const tabsEl=useTemplateRef('tabsEl')
+const tabsScroll=useScrollOverflow(tabsEl)
 </script>
 <template>
 <div class="market-picker" :class="'pair-list-'+variant">
  <label class="picker-search"><LineIcon name="search" aria-hidden="true"/><input v-model="query" type="search" :placeholder="$t('trade.searchSymbol')" :aria-label="$t('trade.searchSymbol')" autocomplete="off"/></label>
- <div ref="tabsEl" class="picker-tabs" :class="{'has-more':tabsMore}" role="group" :aria-label="$t('trade.pages.marketCategories')" @scroll.passive="updateTabs" @wheel="wheelTabs">
-  <button type="button" class="picker-fav-tab" :aria-pressed="tab==='favorites'" :aria-label="$t('trade.marketList.favorites')" @click="tab='favorites'">{{ tab==='favorites'?'★':'☆' }}</button>
-  <button v-for="c in tabs" :key="c" type="button" :aria-pressed="tab===c" @click="tab=c">{{ $t(c==='all'?'aiQuant.templates.filterAll':c) }}</button>
+ <div ref="tabsEl" class="picker-tabs" :class="{'has-more':tabsScroll.more.value}" role="group" :aria-label="$t('trade.pages.marketCategories')" @scroll.passive="tabsScroll.update" @wheel="tabsScroll.onWheel">
+  <button type="button" class="picker-fav-tab" :aria-pressed="activeTab==='favorites'" :aria-label="$t('trade.marketList.favorites')" @click="tab='favorites'">{{ activeTab==='favorites'?'★':'☆' }}</button>
+  <button v-for="c in tabs" :key="c" type="button" :aria-pressed="activeTab===c" @click="tab=c">{{ $t(c==='all'?'aiQuant.templates.filterAll':c) }}</button>
  </div>
  <div class="picker-head">
-  <span class="picker-head-group"><button v-for="[key,label] in columns.slice(0,2)" :key="key" type="button" :aria-sort="ariaSort(key)" @click="toggleSort(key)">{{ $t(label) }}<span class="sort-mark" aria-hidden="true">{{ sort.key===key?(sort.desc?'↓':'↑'):'⇅' }}</span></button></span>
-  <span class="picker-head-group end"><button v-for="[key,label] in columns.slice(2)" :key="key" type="button" :aria-sort="ariaSort(key)" @click="toggleSort(key)">{{ $t(label) }}<span class="sort-mark" aria-hidden="true">{{ sort.key===key?(sort.desc?'↓':'↑'):'⇅' }}</span></button></span>
+  <span class="picker-head-group"><button v-for="[key,label] in columns.slice(0,2)" :key="key" type="button" :aria-sort="ariaSort(key)" @click="toggleSort(key)">{{ $t(label) }}<span class="sort-mark" aria-hidden="true">{{ sortMark(key) }}</span></button></span>
+  <span class="picker-head-group end"><button v-for="[key,label] in columns.slice(2)" :key="key" type="button" :aria-sort="ariaSort(key)" @click="toggleSort(key)">{{ $t(label) }}<span class="sort-mark" aria-hidden="true">{{ sortMark(key) }}</span></button></span>
  </div>
  <ul v-if="visible.length" ref="listEl" class="picker-list" :aria-label="$t('trade.pair')">
   <li v-for="r in visible" :key="r.id" :class="{current:r.id===current}">
-   <button type="button" class="picker-star" :aria-pressed="favorites.includes(r.id)" :aria-label="$t(favorites.includes(r.id)?'common.unfavoriteMarket':'common.favoriteMarket',{symbol:r.name})" @click="favorite(r.id)">{{ favorites.includes(r.id)?'★':'☆' }}</button>
+   <button type="button" class="picker-star" :aria-pressed="isFavorite(r.id)" :aria-label="$t(isFavorite(r.id)?'common.unfavoriteMarket':'common.favoriteMarket',{symbol:r.name})" @click="favorite(r.id)">{{ isFavorite(r.id)?'★':'☆' }}</button>
    <button type="button" class="picker-row" :aria-current="r.id===current?'true':undefined" @click="emit('select',r.id)">
     <Coin :symbol="r.symbol"/>
     <span class="picker-name"><strong>{{ r.name }}</strong><small>{{ r.volume===null?'—':$compact(r.volume) }}</small></span>

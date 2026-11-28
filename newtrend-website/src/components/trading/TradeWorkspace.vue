@@ -1,98 +1,66 @@
 <script setup>
-import {isDemo,MODE_REAL,MODE_DEMO} from '../../utils/accountMode.js'
 import '../../styles/trade-workspace.css'
-import {computed,nextTick,onBeforeUnmount,onMounted,shallowRef,useTemplateRef,watch} from 'vue'
+import {computed,watch} from 'vue'
 import {useRoute,useRouter} from 'vue-router'
-import {tradingMarkets as markets,path,fmt} from '../../data'
+import {tradingMarkets as markets,path} from '../../data'
 import {tradeProducts} from '../../utils/tradeProducts'
-import {useMarketFavorites} from '../../composables/useMarketFavorites'
-import {useTradePageState,useOrderDrafts} from '../../composables/tradePageState'
+import {findTradingMarket,tradePath} from '../../utils/tradeRoutes.js'
+import {fillLimitPrice,useTradePageState} from '../../composables/tradePageState'
 import {useMediaQuery,COMPACT_TRADE_QUERY,PAIR_PANEL_QUERY} from '../../composables/useMediaQuery.js'
+import {useLivePair} from '../../composables/useMarket.js'
 import {t} from '../../i18n'
-import {openModal,session,requestModeSwitch} from '../../session'
-import LineIcon from '../ui/LineIcon.vue'
-import Coin from '../Coin.vue'
+import {openModal} from '../../session'
 import TradeOrderForm from '../TradeOrderForm.vue'
+import PairList from './PairList.vue'
 import TradeChartPanel from './TradeChartPanel.vue'
+import TradeInstrumentBar from './TradeInstrumentBar.vue'
 import TradeOrderBook from './TradeOrderBook.vue'
 import TradeRecordsPanel from './TradeRecordsPanel.vue'
-import PairList from './PairList.vue'
-import Skeleton from '../ui/Skeleton.vue'
-import {streamStatus,useTicker,useTickers} from '../../composables/useMarket.js'
+// Page shell for the futures (合約交易), delivery (二元期權) and spot pages: resolves the pair from the route, picks the
+// layout and wires the panels together. Layouts (trade-workspace.css):
+// - wide (≥1200px, `.with-pairs`): pair panel left of the chart; the instrument bar spans the panel and chart while
+//   the order book and order form rise beside it; records fill the rest of the viewport (user reference, 2026-11-28).
+// - tablet (768–1199px): chart, book and form grid; the pair opens the left pair drawer.
+// - compact (≤767px, GMXX mobile reference 2026-11-27): one-line header with pair drawer, product sheet and chart page
+//   button; order form beside a compact book; records as cards. No inline chart.
 const props=defineProps({mode:{type:String,required:true}})
 const route=useRoute(),router=useRouter(),state=useTradePageState(props.mode)
 const product=tradeProducts[props.mode]
-// Phone layout after the GMXX mobile trade pages (user reference, 2026-11-27), in the NewQuantCapital style: one-line
-// header with a product switch and a chart toggle (chart and 24h stats collapsed by default, kept in page state), the
-// order form and a compact book side by side, records as cards below. Desktop and tablet keep the grid layout.
-const compact=useMediaQuery(COMPACT_TRADE_QUERY)
-// The phone layout has no inline chart: its chart button opens the chart page (TradeChart, GMXX reference).
-const showChart=computed(()=>!compact.value)
-// Desktop pair panel left of the chart (user reference, 2026-11-28): the shared PairList, from 1200px up only.
-// Narrower screens keep the pair dropdown in the instrument bar (tablet) or the left pair drawer (phone).
-const wide=useMediaQuery(PAIR_PANEL_QUERY)
-// With the pair panel the instrument bar stays one line; its 24h stats scroll sideways when they do not fit
-// (vertical wheel → horizontal) and fade at the right edge while more is hidden.
-const statsEl=useTemplateRef('statsEl'),statsMore=shallowRef(false)
-function updateStats(){const el=statsEl.value;statsMore.value=!!el&&el.scrollLeft+el.clientWidth<el.scrollWidth-1}
-function wheelStats(event){const el=statsEl.value;if(!wide.value||!el||el.scrollWidth<=el.clientWidth||Math.abs(event.deltaX)>=Math.abs(event.deltaY))return;event.preventDefault();el.scrollLeft+=event.deltaY;updateStats()}
-onMounted(()=>{updateStats();addEventListener('resize',updateStats)})
-onBeforeUnmount(()=>removeEventListener('resize',updateStats))
-const openChart=()=>router.push(path('/trade/'+props.mode+'/'+pair.value.name.replace('/','')+'/chart'))
-const productItems=computed(()=>[['futures','trade.pages.perpetual'],['options','trade.pages.delivery'],['spot','common.spotTrading']].map(([value,label])=>({value,label:t(label)})))
-function chooseProduct(next){if(next!==props.mode)router.push(path('/trade/'+next+'/'+pair.value.name.replace('/','')))}
-// Pair in the instrument bar (user reference, 2026-11-28): with the desktop pair panel (≥1200px) it is plain text, the
-// panel is the picker; on tablet and phone it is a button that opens the left pair drawer (MarketPicker).
-// Account badge (GMXX 真实账户): shows the current mode; tapping asks to switch to the other one (same confirmation as the header).
-const demoMode=computed(()=>isDemo(session.mode))
-const switchMode=()=>requestModeSwitch(demoMode.value?MODE_REAL:MODE_DEMO)
-// Product switch opens a bottom sheet (GMXX mobile reference) instead of a dropdown.
-const openProducts=()=>openModal('option-sheet','trade.pages.product',{options:productItems.value,current:props.mode,onSelect:chooseProduct})
-const openPairs=()=>openModal('market-picker','trade.pair',{current:pair.value.id,onSelect:choosePair})
-// Tapping a book price on the phone layout fills the limit price of the futures or spot form (options trade at market).
-const drafts=useOrderDrafts()
-function usePrice(price){
- const value=String(price)
- if(props.mode==='futures'){drafts.futures.type='limit';drafts.futures.price=value}
- else if(props.mode==='spot'){drafts.spot.type='limit';drafts.spot[drafts.spot.side||'buy'].price=value}
-}
-const pair=computed(()=>markets.find(m=>m.id===(route.params.symbol||state.symbol)||m.name.replace('/','')===route.params.symbol)||markets[0])
-watch(()=>pair.value.id,id=>state.symbol=id,{immediate:true})
-const {favorites,favorite}=useMarketFavorites('nt-trade-favorites')
-// Live data from the market stream: the selected pair's ticker and every market for the pair picker. Until the
-// first snapshot the price is null and the figures render as skeletons; order actions are held (see TradeOrderForm).
-const ticker=useTicker(()=>pair.value.id),tickers=useTickers()
-// Switching pairs resubscribes the single-market ticker; until its snapshot arrives, use the same market's entry
-// from the all-markets stream so the header keeps real figures instead of skeletons (no layout jump).
-const live=computed(()=>ticker.data.value??tickers.data.value?.[pair.value.id]??null)
-const livePair=computed(()=>({...pair.value,price:live.value?.price??null,change:live.value?Number(live.value.change.toFixed(2)):pair.value.change,high:live.value?.high,low:live.value?.low}))
-// Live prices by market name, for current positions' unrealised P&L.
+const compact=useMediaQuery(COMPACT_TRADE_QUERY),wide=useMediaQuery(PAIR_PANEL_QUERY)
+const layout=computed(()=>compact.value?'compact':wide.value?'wide':'tablet')
+
+// The route symbol (slug or legacy id), else the last pair of this product, else the first market.
+const pair=computed(()=>findTradingMarket(markets,route.params.symbol)||findTradingMarket(markets,state.symbol)||markets[0])
+watch(()=>pair.value.id,id=>{state.symbol=id},{immediate:true})
+// Every pair has one canonical URL: unknown symbols and legacy ids are replaced by the shown pair's slug.
+watch(()=>route.params.symbol,symbol=>{
+ const canonical=tradePath(props.mode,pair.value)
+ if(symbol&&route.path!==path(canonical))router.replace(path(canonical))
+},{immediate:true})
+const {live,livePair,tickers,hasVolume}=useLivePair(()=>pair.value)
+// Live prices by market name, for open positions' unrealised P&L.
 const livePrices=computed(()=>Object.fromEntries(Object.values(tickers.data.value||{}).map(q=>[q.name,q.price])))
-function choosePair(id){router.push(path('/trade/'+props.mode+'/'+id))}
-// Unknown symbols fall back to the default pair; make the URL say which pair is actually shown.
-watch(()=>route.params.symbol,symbol=>{if(symbol&&pair.value.id!==symbol&&pair.value.name.replace('/','')!==symbol)router.replace(path('/trade/'+props.mode+'/'+pair.value.name.replace('/','')))},{immediate:true})
-// Snapshot-only pairs carry volume '—'; show a dash instead of NaN volume/turnover.
-const hasVolume=computed(()=>Number.isFinite(Number(pair.value.volume))&&Number(pair.value.volume)>0&&Number(pair.value.price)>0)
-// Re-measure the stats overflow when their content or the layout changes.
-watch([()=>pair.value.id,()=>!!live.value,wide],()=>nextTick(updateStats))
+
+function choosePair(id){const market=findTradingMarket(markets,id);if(market)router.push(path(tradePath(props.mode,market)))}
+function chooseProduct(next){if(next!==props.mode)router.push(path(tradePath(next,pair.value)))}
+const openChart=()=>router.push(path(tradePath(props.mode,pair.value,{chart:true})))
+const openPairs=()=>openModal('market-picker','trade.pair',{current:pair.value.id,onSelect:choosePair})
+// Product switch (phone) opens a bottom sheet (GMXX mobile reference).
+const productItems=computed(()=>Object.entries(tradeProducts).map(([value,{title}])=>({value,label:t(title)})))
+const openProducts=()=>openModal('option-sheet','trade.pages.product',{options:productItems.value,current:props.mode,onSelect:chooseProduct})
+const orderHeading={futures:'trade.futuresOrder',options:'trade.optionsOrder',spot:'common.spotTrading'}
 </script>
 <template>
-<div class="trading-terminal product-terminal" :class="[mode==='spot'?'spot-three-column':mode+'-workspace',{compact,'with-pairs':wide}]">
+<div class="trading-terminal product-terminal" :class="{compact,'with-pairs':layout==='wide'}">
   <h1 class="terminal-accessible-title">{{ $t(product.title) }}</h1>
-  <section class="instrument-bar" :aria-label="$t('trade.pages.marketOverview')">
-    <div class="instrument-identity"><template v-if="compact"><button type="button" class="pair-trigger" aria-haspopup="dialog" :aria-label="$t('trade.form.tradingAsset')+' '+pair.name" @click="openPairs"><Coin :symbol="pair.symbol"/><strong>{{ pair.name }}</strong><LineIcon name="caret-down"/></button><button v-if="session.loggedIn" type="button" class="account-badge" :class="{demo:demoMode}" aria-haspopup="dialog" @click="switchMode">{{ $t(demoMode?'common.demo.account':'common.demo.realAccount') }}</button></template><span v-else-if="wide" class="pair-static"><Coin :symbol="pair.symbol"/><strong>{{ pair.name }}</strong></span><button v-else type="button" class="pair-trigger" aria-haspopup="dialog" :aria-label="$t('trade.form.tradingAsset')+' '+pair.name" @click="openPairs"><Coin :symbol="pair.symbol"/><strong>{{ pair.name }}</strong><LineIcon name="caret-down"/></button><button v-if="!compact" class="instrument-favorite" :aria-label="$t(favorites.includes(pair.id)?'common.unfavoriteMarket':'common.favoriteMarket',{symbol:pair.name})" :aria-pressed="favorites.includes(pair.id)" @click="favorite(pair.id)">{{ favorites.includes(pair.id)?'★':'☆' }}</button></div>
-    <div v-if="compact" class="instrument-tools"><button type="button" class="product-switch" aria-haspopup="dialog" :aria-label="$t('trade.pages.product')+' '+productItems.find(o=>o.value===mode)?.label" @click="openProducts">{{ productItems.find(o=>o.value===mode)?.label }}<LineIcon name="caret-down"/></button><button type="button" class="chart-toggle" :aria-label="$t('trade.pages.showChart')" :title="$t('trade.pages.showChart')" @click="openChart"><LineIcon name="candlestick"/></button></div>
-    <strong class="instrument-price" :class="livePair.change<0?'negative':'positive'"><template v-if="live">{{ fmt(livePair.price) }}<small v-if="compact" class="instrument-change">{{ livePair.change>0?'+':'' }}{{ livePair.change }}%</small></template><Skeleton v-else inline width="120px"/></strong><button v-if="compact" class="instrument-favorite compact-favorite" :aria-label="$t(favorites.includes(pair.id)?'common.unfavoriteMarket':'common.favoriteMarket',{symbol:pair.name})" :aria-pressed="favorites.includes(pair.id)" @click="favorite(pair.id)">{{ favorites.includes(pair.id)?'★':'☆' }}</button>
-    <dl v-if="showChart" ref="statsEl" class="instrument-stats" :class="{'has-more':wide&&statsMore}" @scroll.passive="updateStats" @wheel="wheelStats"><div><dt>{{ $t('home.markets.colChange') }}</dt><dd :class="livePair.change<0?'negative':'positive'"><template v-if="live">{{ livePair.change }}%</template><Skeleton v-else inline width="48px"/></dd></div><div><dt>{{ $t('trade.24hHigh') }}</dt><dd><template v-if="live">{{ fmt(livePair.high) }}</template><Skeleton v-else inline width="72px"/></dd></div><div><dt>{{ $t('trade.24hLow') }}</dt><dd><template v-if="live">{{ fmt(livePair.low) }}</template><Skeleton v-else inline width="72px"/></dd></div><div><dt>{{ $t('home.markets.colVolume') }}</dt><dd>{{ hasVolume?`${$compact(pair.volume/pair.price)} ${pair.symbol}`:'—' }}</dd></div><div><dt>{{ $t('trade.turnover') }}</dt><dd>{{ hasVolume?`${$compact(pair.volume)} USDT`:'—' }}</dd></div></dl>
-    <span v-if="streamStatus!=='open'" class="stream-status" role="status"><span class="stream-dot" aria-hidden="true"></span>{{ $t(streamStatus==='reconnecting'?'trade.stream.reconnecting':'trade.stream.connecting') }}</span>
-  </section>
+  <TradeInstrumentBar :pair="pair" :live-pair="livePair" :live="live" :has-volume="hasVolume" :layout="layout" :product-label="$t(product.title)" @open-pairs="openPairs" @open-products="openProducts" @open-chart="openChart"/>
   <div class="workspace-grid">
-    <section v-if="wide" class="terminal-panel pairs-panel" :aria-label="$t('trade.pair')"><PairList :current="pair.id" variant="panel" @select="choosePair"/></section>
-    <TradeChartPanel v-if="showChart" :id="mode+'-chart'" v-model="state.interval" :pair="livePair"/>
-    <TradeOrderBook :pair="livePair" :compact="compact" :pickable="compact&&mode!=='options'" @pick-price="usePrice"/>
-    <section class="terminal-panel order-panel" :aria-label="$t(product.title)"><h2 class="panel-heading" :class="{'sr-only':compact}">{{ $t(mode==='futures'?'trade.futuresOrder':mode==='options'?'trade.optionsOrder':'common.spotTrading') }}</h2><TradeOrderForm :mode="mode" :pair="livePair" :compact="compact"/></section>
+    <section v-if="layout==='wide'" class="terminal-panel pairs-panel" :aria-label="$t('trade.pair')"><PairList :current="pair.id" variant="panel" @select="choosePair"/></section>
+    <TradeChartPanel v-if="!compact" :id="mode+'-chart'" v-model="state.interval" :pair="livePair"/>
+    <!-- Phone: tapping a book price fills the futures/spot limit price (delivery trades at market). -->
+    <TradeOrderBook :pair="livePair" :compact="compact" :pickable="compact&&mode!=='options'" @pick-price="price=>fillLimitPrice(mode,price)"/>
+    <section class="terminal-panel order-panel" :aria-label="$t(product.title)"><h2 class="panel-heading" :class="{'sr-only':compact}">{{ $t(orderHeading[mode]) }}</h2><TradeOrderForm :mode="mode" :pair="livePair" :compact="compact"/></section>
     <TradeRecordsPanel v-model:record="state.record" :mode="mode" :pages="state.pages" :prices="livePrices" :compact="compact" @page="(id,value)=>state.pages[id]=value"/>
   </div>
 </div>
 </template>
-<style>.stream-status{display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;line-height:16px;color:#f5a524;white-space:nowrap}.stream-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:stream-pulse 1.2s ease-in-out infinite}@keyframes stream-pulse{50%{opacity:.3}}@media(prefers-reduced-motion:reduce){.stream-dot{animation:none}}</style>

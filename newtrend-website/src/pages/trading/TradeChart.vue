@@ -6,7 +6,8 @@ import {tradingMarkets as markets,path,fmt} from '../../data'
 import {openModal} from '../../session'
 import {useTradePageState,useOrderDrafts} from '../../composables/tradePageState'
 import {useMediaQuery,COMPACT_TRADE_QUERY} from '../../composables/useMediaQuery.js'
-import {useDepth,useTicker,useTickers,useTrades} from '../../composables/useMarket.js'
+import {useDepth,useLivePair,useTrades} from '../../composables/useMarket.js'
+import {findTradingMarket,tradePath as buildTradePath} from '../../utils/tradeRoutes.js'
 import TradeChartPanel from '../../components/trading/TradeChartPanel.vue'
 import Skeleton from '../../components/ui/Skeleton.vue'
 import LineIcon from '../../components/ui/LineIcon.vue'
@@ -16,17 +17,14 @@ import LineIcon from '../../components/ui/LineIcon.vue'
 // trade page with that side selected. Wider screens have the chart on the trade page, so they are sent back there.
 const route=useRoute(),router=useRouter()
 const mode=computed(()=>route.params.mode)
-const pair=computed(()=>markets.find(m=>m.id===route.params.symbol||m.name.replace('/','')===route.params.symbol)||markets[0])
+const pair=computed(()=>findTradingMarket(markets,route.params.symbol)||markets[0])
 const state=computed(()=>useTradePageState(mode.value))
 const drafts=useOrderDrafts()
-const tradePath=computed(()=>path('/trade/'+mode.value+'/'+pair.value.name.replace('/','')))
+const tradePath=computed(()=>path(buildTradePath(mode.value,pair.value)))
 const compact=useMediaQuery(COMPACT_TRADE_QUERY)
 watch(compact,value=>{if(!value)router.replace(tradePath.value)},{immediate:true})
 
-const ticker=useTicker(()=>pair.value.id),tickers=useTickers()
-const live=computed(()=>ticker.data.value??tickers.data.value?.[pair.value.id]??null)
-const livePair=computed(()=>({...pair.value,price:live.value?.price??null,change:live.value?Number(live.value.change.toFixed(2)):pair.value.change,high:live.value?.high,low:live.value?.low}))
-const hasVolume=computed(()=>Number.isFinite(Number(pair.value.volume))&&Number(pair.value.volume)>0)
+const {live,livePair,hasVolume}=useLivePair(()=>pair.value)
 
 const tab=shallowRef('book')
 const depth=useDepth(()=>pair.value.id),trades=useTrades(()=>pair.value.id)
@@ -49,7 +47,8 @@ function trade(side){
  router.push(tradePath.value)
 }
 const back=()=>router.push(tradePath.value)
-const openPairs=()=>openModal('market-picker','trade.pair',{current:pair.value.id,onSelect:id=>router.replace(path('/trade/'+mode.value+'/'+id+'/chart'))})
+function choosePair(id){const market=findTradingMarket(markets,id);if(market)router.replace(path(buildTradePath(mode.value,market,{chart:true})))}
+const openPairs=()=>openModal('market-picker','trade.pair',{current:pair.value.id,onSelect:choosePair})
 </script>
 <template>
 <div class="trading-terminal product-terminal compact chart-page">
