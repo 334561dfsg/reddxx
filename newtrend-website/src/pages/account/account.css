@@ -242,6 +242,10 @@
  /* /profile: the header card already names the page, so the 個人中心 title is for assistive technology only. */
  #main-content .pc-overview .pf-title{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
  #main-content .pc-shell.pc-overview{padding-top:12px}
+ /* 登出: a full-width 48px row like the cards above it, with the destructive tone in the text only. */
+ #main-content .pc-overview .pf-logout{display:flex;justify-content:center;width:100%;height:48px;margin-top:0;border-color:#191b1f;border-radius:20px;background:#0c1017;color:#ff6b84;font-size:14px;font-weight:500}
+ #main-content .pc-overview .pf-logout svg{width:16px;height:16px}
+ #main-content .pc-overview .pf-logout:hover{color:#ff8299}
  #main-content .pc-shell .pc-main{gap:12px}
  #main-content .pc-shell:not(.pc-overview) :is(h1.pc-title,.pc-subtitle){position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
  #main-content .pc-shell :is(.pc-card,.account-form){border-radius:20px}
