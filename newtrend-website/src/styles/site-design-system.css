@@ -57,7 +57,6 @@
 .nt-dialog.nt-dialog :is(.overlay-body,.overlay-footer,.language-list,.drawer-nav){font-size:var(--nt-text-body);line-height:22px}
 .nt-dialog.nt-dialog :is(.primary-button,.secondary-button,.drawer-subnav a){font-size:var(--nt-text-body);line-height:20px}
 .nt-dialog.nt-dialog :is(.drawer-subnav small,.support-subtitle,.support-copy small,.chat-queue,.chat-welcome,.chat-message small,.chat-attachments){font-size:var(--nt-text-caption);line-height:18px}
-.nt-dialog.nt-dialog .support-intro{font-size:var(--nt-text-card-title);line-height:24px}
 .nt-dialog.nt-dialog :is(.chat-composer textarea,.chat-message,.support-back){font-size:var(--nt-text-body);line-height:20px}
 @media(pointer:coarse){#site-shell .nav-popover>a,#site-shell .nav-popover>button{min-height:44px}}
 

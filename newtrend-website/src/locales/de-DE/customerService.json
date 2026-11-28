@@ -24,6 +24,7 @@
     "add": "Emoji einfügen"
   },
   "attachment": {
+    "image": "Bild senden",
     "add": "Anhang hinzufügen",
     "uploading": "Wird hochgeladen …",
     "confirming": "Wird verarbeitet …",
@@ -91,5 +92,11 @@
   "blocked": {
     "message": "Der Live-Chat ist derzeit nicht verfügbar."
   },
-  "channelsUnavailable": "Dieser Kanal ist derzeit nicht verfügbar. Bitte kontaktieren Sie uns per E-Mail."
+  "channelsUnavailable": "Dieser Kanal ist derzeit nicht verfügbar. Bitte kontaktieren Sie uns per E-Mail.",
+  "mock": {
+    "greeting": "Hallo, wie können wir Ihnen helfen?",
+    "question": "Wie lange dauert eine Auszahlung normalerweise?",
+    "answer": "In der Regel innerhalb von 30 Minuten; bei hoher Netzwerkauslastung kann es etwas länger dauern.",
+    "thanks": "Alles klar, danke!"
+  }
 }

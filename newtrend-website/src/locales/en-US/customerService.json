@@ -24,6 +24,7 @@
     "add": "Add emoji"
   },
   "attachment": {
+    "image": "Send image",
     "add": "Add attachment",
     "uploading": "Uploading…",
     "confirming": "Processing…",
@@ -91,5 +92,11 @@
   "blocked": {
     "message": "Live Chat is currently unavailable."
   },
-  "channelsUnavailable": "This channel is currently unavailable. Please contact us by email."
+  "channelsUnavailable": "This channel is currently unavailable. Please contact us by email.",
+  "mock": {
+    "greeting": "Hello, how can we help you today?",
+    "question": "How long do withdrawals usually take?",
+    "answer": "Usually within 30 minutes; it can take a little longer when the network is busy.",
+    "thanks": "Got it, thanks!"
+  }
 }

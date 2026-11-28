@@ -24,6 +24,7 @@
     "add": "插入表情"
   },
   "attachment": {
+    "image": "傳送圖片",
     "add": "添加附件",
     "uploading": "上傳中…",
     "confirming": "處理中…",
@@ -91,5 +92,11 @@
   "blocked": {
     "message": "目前暫時無法使用線上客服。"
   },
-  "channelsUnavailable": "此聯絡管道暫不可用，請使用電子郵件。"
+  "channelsUnavailable": "此聯絡管道暫不可用，請使用電子郵件。",
+  "mock": {
+    "greeting": "您好，請問有什麼需要幫助的嗎？",
+    "question": "請問提現一般多久到帳？",
+    "answer": "一般 30 分鐘內到帳，網路擁堵時可能稍有延遲。",
+    "thanks": "好的，謝謝！"
+  }
 }

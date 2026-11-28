@@ -21,7 +21,6 @@ import OptionSheet from './overlay/OptionSheet.vue'
 import DeliveryOrderStatus from './trading/DeliveryOrderStatus.vue'
 import {openClearCache} from '../utils/clearCache.js'
 import LanguageList from './overlay/LanguageList.vue'
-import SupportChannels from './overlay/SupportChannels.vue'
 import VipTiers from './overlay/VipTiers.vue'
 import AmountForm from './overlay/AmountForm.vue'
 import AssetTransfer from './overlay/AssetTransfer.vue'
@@ -41,7 +40,6 @@ const busy=computed(()=>Boolean(flow.value.busy))
 const dialog=shallowRef(null),current=shallowRef(null),closing=shallowRef(false),error=shallowRef(''),done=shallowRef(false),message=shallowRef('')
 const route=useRoute(),router=useRouter();let trigger,previousOverflow,closeTimer,returnFocus
 const isSupport=computed(()=>current.value?.type==='support')
-const supportView=shallowRef('channels')
 const isDrawer=computed(()=>current.value?.type==='menu')
 // Mobile trading pair picker: a left drawer; the choice is applied after the close animation.
 const isMarketPicker=computed(()=>current.value?.type==='market-picker')
@@ -55,7 +53,7 @@ function backdrop(e){if(e.target===dialog.value&&config.value.backdropClose&&!cl
 function pickMarket(id){const onSelect=current.value?.data.onSelect;close(()=>onSelect?.(id))}
 // Generic amount form (overlay/AmountForm): only donate (charity) opens it.
 const formType=computed(()=>Boolean(config.value.primary?.amountForm))
-watch(modal,async(value)=>{if(!value)return;current.value=value;flow.value={};error.value='';done.value=false;closing.value=false;supportView.value=value.type==='support'&&value.data.supportView==='chat'?'chat':'channels';message.value=value.data.value||'';trigger=document.activeElement;returnFocus=value.data.returnFocus;previousOverflow=document.body.style.overflow;await nextTick();dialog.value.showModal();document.body.style.overflow='hidden';await nextTick();dialog.value.querySelector(overlayConfig(value.type).initialFocus||((value.data.modeSwitch||value.data.focusCancel)?'[data-cancel]':'[data-initial-focus]'))?.focus()})
+watch(modal,async(value)=>{if(!value)return;current.value=value;flow.value={};error.value='';done.value=false;closing.value=false;message.value=value.data.value||'';trigger=document.activeElement;returnFocus=value.data.returnFocus;previousOverflow=document.body.style.overflow;await nextTick();dialog.value.showModal();document.body.style.overflow='hidden';await nextTick();dialog.value.querySelector(overlayConfig(value.type).initialFocus||((value.data.modeSwitch||value.data.focusCancel)?'[data-cancel]':'[data-initial-focus]'))?.focus()})
 function openStrategySubscription(){const product=current.value.data;const from=route.fullPath;close(()=>{if(route.fullPath===from)openModal('strategy-subscribe',{key:'aiQuant.create.title',params:{name:product.name}},product)})}
 function cleanup(){document.body.style.overflow=previousOverflow??'';if(trigger?.isConnected)trigger.focus();if(document.activeElement!==trigger)returnFocus?.();clearTimeout(closeTimer)}
 function close(afterClose){if(closing.value||!current.value)return;closing.value=true;closeTimer=setTimeout(()=>{dialog.value?.close();current.value=null;closeModal();closing.value=false;cleanup();if(typeof afterClose==='function')afterClose()},matchMedia('(prefers-reduced-motion: reduce)').matches?50:150)}
@@ -75,7 +73,6 @@ function switchFromMenu(mode){
 function navigate(to){close();router.push(path(to))}
 // From the mobile drawer: close it first, then open the language picker (a bottom sheet on narrow screens).
 const openLanguage=()=>openModal('language','profile.center.preferences.selectLanguage')
-function openSupportChat(){supportView.value='chat';error.value='';nextTick(()=>dialog.value?.querySelector('textarea')?.focus())}
 // Footer primary action per flow type; null when the type has none.
 const primary=computed(()=>{
  const c=current.value,f=flow.value,p=config.value.primary
@@ -86,7 +83,7 @@ const primary=computed(()=>{
  return {form:p.form,label:(p.labelFromFlow&&f.confirmLabel)||p.label,disabled:closing.value||!!f.busy||(p.requiresValid&&!f.valid)}
 })
 // <dialog> classes: the type's shape from the registry plus live state.
-const dialogClasses=computed(()=>[...(config.value.classes||[]),{closing:closing.value,'mode-confirm':current.value?.data.modeSwitch,'support-chat-open':isSupport.value&&supportView.value==='chat'}])
+const dialogClasses=computed(()=>[...(config.value.classes||[]),{closing:closing.value,'mode-confirm':current.value?.data.modeSwitch,'support-chat-open':isSupport.value}])
 const showFooter=computed(()=>config.value.footer!==false)
 const cancelLabel=computed(()=>{const c=current.value;if(c?.type==='account-confirm'&&c.data.cancelLabel&&!done.value)return c.data.cancelLabel;return done.value||flow.value.done||c?.type==='c2c-detail'?'aiQuant.detail.close':'aiQuant.create.cancel'})
 function keydown(e){if(e.key!=='Tab')return;const els=[...dialog.value.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select,textarea,[tabindex="0"]')].filter(x=>x.getClientRects().length);if(!els.length){e.preventDefault();return}const first=els[0],last=els[els.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}
@@ -99,7 +96,7 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 <header class="overlay-header">
  <div class="overlay-heading">
   <h2 id="overlay-title" tabindex="-1" data-initial-focus>{{ $t(isSupport?'customerService.title':current.title) }}</h2>
-  <p v-if="isSupport&&supportView==='chat'" class="chat-queue">{{ $t('customerService.status.pending') }}</p>
+  <p v-if="isSupport" class="chat-queue">{{ $t('customerService.status.pending') }}</p>
  </div>
  <button class="overlay-close" :aria-label="$t('aiQuant.detail.close')" :aria-disabled="busy||undefined" @click="!busy&&close()">×</button>
 </header>
@@ -112,8 +109,8 @@ onUnmounted(()=>{dialog.value?.close();cleanup()})
 
 <LanguageList v-else-if="current.type==='language'" @select="changeLanguage"/>
 <template v-else-if="isSupport">
-<SupportChannels v-if="supportView==='channels'" @chat="openSupportChat" @unavailable="error='customerService.channelsUnavailable'"/>
-<SupportChat v-else @draft-change="message=$event"/>
+<!-- 客服 (user request, 2026-11-28): the entry opens the live chat directly, without a channel picker. -->
+<SupportChat @draft-change="message=$event"/>
 
 </template>
 <template v-else-if="current.type==='wallet'"><p class="notice">{{ $t("overlay.ui.thisLocalDemoDoesNotRequestWalletPermissionsOr") }}</p><button class="primary-button wide-button section-gap" @click="login();done=true" :disabled="done">{{ $t("overlay.ui.connectDemoWallet") }}</button><FeedbackToast v-if="done" type="success" :source="() => (done) ? ($t('overlay.ui.localDemoAccountConnected')) : ''"/></template>

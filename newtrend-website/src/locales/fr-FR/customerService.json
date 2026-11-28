@@ -24,6 +24,7 @@
     "add": "Ajouter un emoji"
   },
   "attachment": {
+    "image": "Envoyer une image",
     "add": "Ajouter une pièce jointe",
     "uploading": "Téléversement…",
     "confirming": "Traitement…",
@@ -91,5 +92,11 @@
   "blocked": {
     "message": "Le chat en direct est actuellement indisponible."
   },
-  "channelsUnavailable": "Ce canal est indisponible. Veuillez nous contacter par e-mail."
+  "channelsUnavailable": "Ce canal est indisponible. Veuillez nous contacter par e-mail.",
+  "mock": {
+    "greeting": "Bonjour, comment pouvons-nous vous aider ?",
+    "question": "Combien de temps prend généralement un retrait ?",
+    "answer": "En général moins de 30 minutes ; cela peut prendre un peu plus longtemps si le réseau est encombré.",
+    "thanks": "Très bien, merci !"
+  }
 }
