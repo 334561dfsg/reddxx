@@ -166,3 +166,7 @@
 #main-content .auth-form .phone-row>.dial-picker{position:static}
 #main-content .auth-form .phone-row .dial-panel{width:100%;max-width:360px}
 #main-content .auth-form .phone-row>input{flex:1;min-width:0}
+/* Signed-out header actions share one 40px geometry (user request, 2026-11-28): 註冊 matches 連接錢包's height,
+   corners and padding instead of the taller marketing pill; 登入 gets the same hit area. */
+#site-shell .site-header .account-actions>.pill.primary{min-height:40px;padding:10px 16px;line-height:20px;border:0;border-radius:var(--nt-radius-panel)}
+#site-shell .site-header .account-actions>a:not(.pill){display:inline-flex;align-items:center;min-height:40px;padding:0 4px;line-height:20px}
