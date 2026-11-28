@@ -112,3 +112,14 @@ test('book totals stay short: 2 decimals from 1, at most 4 below, then <0.0001',
   assert.equal(formatBookTotal(0.00000051),'<0.0001')
   assert.equal(formatBookTotal(0),'0')
 })
+
+test('chart price-axis labels get enough decimals for the grid step', async () => {
+  const { axisDecimals } = await import('../src/utils/chartAxis.js')
+  assert.equal(axisDecimals(2200), 0, 'BTC: whole numbers')
+  assert.equal(axisDecimals(1), 0)
+  assert.equal(axisDecimals(0.5), 2, 'about 1 unit apart: 0.50, 1.00 …')
+  assert.equal(axisDecimals(0.017), 3, 'EUR/USD around 1.09')
+  assert.equal(axisDecimals(0.0005), 5)
+  assert.equal(axisDecimals(2e-7), 8, 'capped like the price formatter')
+  assert.equal(axisDecimals(0), 0);assert.equal(axisDecimals(NaN), 0)
+})

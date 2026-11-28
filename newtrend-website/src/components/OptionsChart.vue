@@ -1,6 +1,8 @@
 <script setup>
 import { shallowRef, onMounted, onUnmounted, watch } from 'vue'
 import { t, locale } from '../i18n'
+import { fmt } from '../data'
+import { axisDecimals } from '../utils/chartAxis.js'
 const props=defineProps({candles:Array,price:Number,interval:String})
 const canvas=shallowRef(null),active=shallowRef(null)
 let observer
@@ -19,12 +21,15 @@ function draw(){
   const min=low-padding,max=high+padding,y=p=>top+(max-p)/(max-min)*(bottom-top)
   const color=d=>d.close>=d.open?'#5bbb91':'#ef4e69'
   ctx.font='11px "Exo 2",sans-serif';ctx.strokeStyle='#ffffff10';ctx.lineWidth=1;ctx.setLineDash([2,3])
-  for(let i=0;i<=6;i++){const price=max-(max-min)*i/6,py=y(price);ctx.beginPath();ctx.moveTo(left,py);ctx.lineTo(right,py);ctx.stroke();ctx.fillStyle='#ffffff80';ctx.fillText(price.toLocaleString('en-US',{maximumFractionDigits:props.price<1?6:0}),right+8,py+4)}
+  // Axis labels carry as many decimals as the grid spacing needs, so neighbouring lines never read the same (EUR/USD
+  // at ~1.09 needs 3, BTC none); the current-price tag and hover readout use the site price format like the header.
+  const digits=axisDecimals((max-min)/6)
+  for(let i=0;i<=6;i++){const price=max-(max-min)*i/6,py=y(price);ctx.beginPath();ctx.moveTo(left,py);ctx.lineTo(right,py);ctx.stroke();ctx.fillStyle='#ffffff80';ctx.fillText(price.toLocaleString('en-US',{minimumFractionDigits:digits,maximumFractionDigits:digits}),right+8,py+4)}
   for(let i=0;i<5;i++){const x=left+span*i/4;ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,volumeBottom);ctx.stroke();if(i<4){ctx.fillStyle='#ffffff80';ctx.fillText(label(data,i),x+6,h-7)}}ctx.setLineDash([])
   data.forEach((d,i)=>{const x=left+(i+.5)*step;ctx.fillStyle=ctx.strokeStyle=color(d);ctx.beginPath();ctx.moveTo(x,y(d.high));ctx.lineTo(x,y(d.low));ctx.stroke();ctx.fillRect(x-step*.32,Math.min(y(d.open),y(d.close)),Math.max(1,step*.64),Math.max(1,Math.abs(y(d.open)-y(d.close))));ctx.fillRect(x-step*.32,volumeBottom,Math.max(1,step*.64),-d.volume/180*volumeHeight)})
-  const py=y(props.price);ctx.strokeStyle='#ef4e69';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(left,py);ctx.lineTo(right,py);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#ef4e69';ctx.fillRect(right,py-9,76,18);ctx.fillStyle='white';ctx.fillText(props.price.toLocaleString('en-US',{maximumFractionDigits:props.price<1?6:2}),right+4,py+4)
+  const py=y(props.price);ctx.strokeStyle='#ef4e69';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(left,py);ctx.lineTo(right,py);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#ef4e69';ctx.fillRect(right,py-9,76,18);ctx.fillStyle='white';ctx.fillText(fmt(props.price),right+4,py+4)
   ctx.fillStyle='#ef4e69';ctx.fillText('VOL '+data.at(-1).volume.toFixed(2),10,bottom+16)
-  if(active.value!==null&&data[active.value]){const i=active.value,d=data[i],x=left+(i+.5)*step;ctx.strokeStyle='#ffffff70';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,volumeBottom);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#111820';ctx.fillRect(8,20,Math.min(350,w-16),18);ctx.fillStyle='#d8dde4';ctx.fillText(`${t('trade.open')}: ${d.open.toFixed(2)}  ${t('trade.close')}: ${d.close.toFixed(2)}`,14,33)}
+  if(active.value!==null&&data[active.value]){const i=active.value,d=data[i],x=left+(i+.5)*step;ctx.strokeStyle='#ffffff70';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,volumeBottom);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#111820';ctx.fillRect(8,20,Math.min(350,w-16),18);ctx.fillStyle='#d8dde4';ctx.fillText(`${t('trade.open')}: ${fmt(d.open)}  ${t('trade.close')}: ${fmt(d.close)}`,14,33)}
 }
 // Axis dates at the quarter marks, from the candles' own times.
 function label(data,i){const d=data[Math.min(data.length-1,Math.floor(i*data.length/4))];if(!d)return '';const at=new Date(d.time);return `${String(at.getMonth()+1).padStart(2,'0')}-${String(at.getDate()).padStart(2,'0')}`}
