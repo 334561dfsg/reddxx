@@ -50,3 +50,7 @@
 .result-tag.win:is(.records-panel *){background:#2bc2871f;color:var(--nt-up)}.result-tag.lose:is(.records-panel *){background:#ff44661f;color:var(--nt-down)}.result-tag.draw:is(.records-panel *){background:var(--nt-border-strong);color:#c5c7cb}
 .result-countdown:is(.records-panel *){font-size:13px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums;color:#f5b72b}
 .record-card-result:is(.records-panel *){margin-left:auto}
+/* Signed-out records (user reference 2026-11-29): one line "登入 或 立即註冊 去交易", centred both ways (auto margins in the flex-column panel); the two actions in white. */
+.records-panel .records-guest{margin:auto 0;padding:24px 16px;text-align:center;font-size:14px;line-height:22px;color:var(--nt-text-dim)}
+.records-panel .records-guest :is(button,a){padding:0;background:none;color:#fff;font:inherit}
+.records-panel .records-guest :is(button,a):hover{color:var(--nt-accent)}

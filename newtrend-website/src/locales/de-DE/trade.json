@@ -358,7 +358,6 @@
     }
   },
   "ui": {
-    "signInFirst": "Bitte melden Sie sich an, um eine Order aufzugeben.",
     "enterAValidOrderAmount": "Gültigen Auftragsbetrag eingeben",
     "seconds": " Sekunden",
     "removeFromFavorites": "Aus Favoriten entfernen",

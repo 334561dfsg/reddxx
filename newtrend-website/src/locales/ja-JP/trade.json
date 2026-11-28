@@ -358,7 +358,6 @@
     }
   },
   "ui": {
-    "signInFirst": "注文するにはログインしてください。",
     "enterAValidOrderAmount": "有効な注文金額を入力",
     "seconds": " 秒",
     "removeFromFavorites": "お気に入りから削除",

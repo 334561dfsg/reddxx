@@ -358,7 +358,6 @@
     }
   },
   "ui": {
-    "signInFirst": "Please sign in to place an order.",
     "enterAValidOrderAmount": "Enter a valid order amount",
     "seconds": " seconds",
     "removeFromFavorites": "Remove from favorites",

@@ -358,7 +358,6 @@
     }
   },
   "ui": {
-    "signInFirst": "Veuillez vous connecter pour passer un ordre.",
     "enterAValidOrderAmount": "Saisissez un montant valide",
     "seconds": " secondes",
     "removeFromFavorites": "Retirer des favoris",

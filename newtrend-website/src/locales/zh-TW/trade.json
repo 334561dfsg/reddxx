@@ -358,7 +358,6 @@
     }
   },
   "ui": {
-    "signInFirst": "請先登入後再下單",
     "enterAValidOrderAmount": "請輸入有效的下單金額",
     "seconds": " 秒",
     "removeFromFavorites": "取消自選 ",

@@ -3,7 +3,7 @@
 // action while the request runs so a double click cannot place two orders.
 // The server builds and prices the order (review 2026-11-27); the form only sends the parameters.
 import {computed,reactive,ref,watch} from 'vue'
-import {session,openModal} from '../../../session'
+import {session,openModal,requireLogin} from '../../../session'
 import {isDemo} from '../../../utils/accountMode.js'
 import {getTradeBalances,placeTradeOrder,tradeErrorKey} from '../../../api/trade.js'
 import {invalidate,useRequest} from '../../../composables/useRequest.js'
@@ -14,11 +14,12 @@ import {orderEstimate,validStops} from '../../../utils/orderFormModel'
 import {deliveryRate,futuresPrice,spotPrice} from './orderPricing.js'
 
 // Balances come from the trade API for the current account mode and pair (panels show skeletons until ready).
-// `pair` is a getter. Returns a reactive {base, ready, cash, holdings}.
+// Signed out there is no account: nothing is requested and the panels show 0. `pair` is a getter. Returns a reactive
+// {base, ready, cash, holdings}.
 export function useOrderBalances(pair){
  const base=computed(()=>pair().name.split('/')[0])
- const request=useRequest(()=>getTradeBalances(session.mode,['USDT',base.value]),{
-  key:()=>session.mode+'|'+base.value,tags:['trade','wallet'],
+ const request=useRequest(()=>session.loggedIn?getTradeBalances(session.mode,['USDT',base.value]):Promise.resolve({}),{
+  key:()=>session.loggedIn+'|'+session.mode+'|'+base.value,tags:['trade','wallet'],
  })
  return reactive({
   base,
@@ -41,7 +42,6 @@ export function useOrderSubmit({mode,pair,balances,focusAmount}){
  // Returns an error key, or the checked order figures.
  function check(kind,side){
   const {futures,options,spot}=drafts,p=pair()
-  if(!session.loggedIn)return 'trade.ui.signInFirst'
   // No live price or a dropped market connection: hold the order (prices may be outdated).
   if(streamStale.value||p.price===null||!balances.ready)return 'trade.stream.unavailable'
   const draft=kind==='futures'?futures:kind==='options'?options:spot[side],amount=Number(draft.amount)
@@ -83,8 +83,20 @@ export function useOrderSubmit({mode,pair,balances,focusAmount}){
   else notice.value=t('trade.orderSuccess')
  }
 
+ // After logging in the account's balances load first; the order is retried once they are ready (or given up after
+ // 10s, when the panel shows its usual state and the user can click again).
+ function afterLogin(side){
+  let done=false
+  const finish=()=>{if(done)return;done=true;stop();clearTimeout(timer)}
+  const stop=watch(()=>balances.ready,ready=>{if(ready){finish();submit(side)}},{flush:'post'})
+  const timer=setTimeout(finish,10000)
+  if(balances.ready){finish();submit(side)}
+ }
+
  function submit(side){
   if(busy.value)return
+  // Signed out: the embedded login dialog opens; after login the same order is checked and placed (user decision 2026-11-29).
+  if(!requireLogin(()=>afterLogin(side)))return
   const kind=mode(),key=kind==='spot'?side:kind
   clearError(key);clearNotice()
   const order=check(kind,side)

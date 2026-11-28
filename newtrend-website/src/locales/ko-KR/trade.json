@@ -358,7 +358,6 @@
     }
   },
   "ui": {
-    "signInFirst": "주문하려면 먼저 로그인해 주세요.",
     "enterAValidOrderAmount": "유효한 주문 금액을 입력하세요",
     "seconds": " 초",
     "removeFromFavorites": "즐겨찾기 해제",
