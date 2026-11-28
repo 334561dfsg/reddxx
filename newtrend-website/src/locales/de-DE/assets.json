@@ -12,7 +12,7 @@
     "title": "Vermögensverteilung",
     "assetsType": "Asset-Typ",
     "earnAccount": "Earn",
-    "quantFundAccount": "Futures mit Laufzeit"
+    "quantFundAccount": "Binäre Optionen"
   },
   "assetKind": {
     "crypto": "Krypto",
@@ -79,10 +79,10 @@
   "tabs": {
     "overview": "Kontoübersicht",
     "funding": "Spot",
-    "trading": "Unbefristete Futures"
+    "trading": "Futures-Handel"
   },
   "accountFunding": "Spot",
-  "accountTrading": "Unbefristete Futures",
+  "accountTrading": "Futures-Handel",
   "accountFutures": "Futures",
   "accountOptions": "Optionen",
   "accountAiQuant": "KI-Quant",

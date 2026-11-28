@@ -12,7 +12,7 @@
     "title": "資産配分",
     "assetsType": "資産タイプ",
     "earnAccount": "Earn",
-    "quantFundAccount": "限月先物"
+    "quantFundAccount": "バイナリーオプション"
   },
   "assetKind": {
     "crypto": "暗号資産",
@@ -79,10 +79,10 @@
   "tabs": {
     "overview": "アカウント概要",
     "funding": "現物",
-    "trading": "無期限先物"
+    "trading": "先物取引"
   },
   "accountFunding": "現物",
-  "accountTrading": "無期限先物",
+  "accountTrading": "先物取引",
   "accountFutures": "先物",
   "accountOptions": "オプション",
   "accountAiQuant": "AIクオント",

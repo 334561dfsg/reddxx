@@ -26,12 +26,12 @@
   "products": {
     "label": "01 / Was Sie handeln können",
     "titleFrom": "Von",
-    "perpetual": "Perpetuals",
+    "perpetual": "Futures",
     "titleTo": "bis",
     "options": "Binäroptionen",
     "titleEnd": " —<br/>ein Konto, jeder Markt, der Ihnen wichtig ist.",
     "viewAll": "Alle Produkte ansehen →",
-    "perpLabel": "PERPETUALS",
+    "perpLabel": "FUTURES",
     "perpTitle1": "Tiefe Liquidität,",
     "perpTitle2": "jedes wichtige Asset.",
     "perpDesc": "Über 200 Futures-Paare für Krypto, Gold und Silber. Bis zu 125-fache Hebelwirkung, Ausführungen in unter 50 ms, transparente Funding-Raten – in USDT abgerechnet für Ein-Konto-Einfachheit.",
@@ -368,10 +368,10 @@
     },
     "advanced": {
       "title": "Jeder Markt, auf seine Weise gehandelt",
-      "tagline": "Krypto, Forex, Metalle und Indizes in einem Konto — jeder Markt bringt die passenden Handelsarten mit: Perpetual-Futures mit Hebel und Binäre Optionen mit fester Auszahlung.",
+      "tagline": "Krypto, Forex, Metalle und Indizes in einem Konto — jeder Markt bringt die passenden Handelsarten mit: Futures-Handel mit Hebel und Binäre Optionen mit fester Auszahlung.",
       "items": {
         "markets": "Ein Konto für Krypto, Forex, Metalle und Indizes",
-        "futures": "Perpetual-Futures mit Hebel — Market-, Limit- und Stop-Limit-Orders",
+        "futures": "Futures-Handel mit Hebel — Market-, Limit- und Stop-Limit-Orders",
         "options": "Binäre Optionen: Richtung vorhersagen, Auszahlung und maximales Risiko stehen vorab fest"
       },
       "cta": "Jetzt ausprobieren",

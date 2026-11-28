@@ -422,10 +422,10 @@
     "confirm": "{{quantity}} {{unit}} を {{price}} USDT で注文しますか？"
   },
   "pages": {
-    "perpetual": "無期限先物",
-    "delivery": "決済オプション",
-    "deliveryCurrent": "現在の決済注文",
-    "deliveryHistory": "決済注文履歴",
+    "perpetual": "先物取引",
+    "delivery": "バイナリーオプション",
+    "deliveryCurrent": "現在のオプション注文",
+    "deliveryHistory": "オプション注文履歴",
     "chart": "チャート",
     "markets": "マーケット・お気に入り",
     "marketCategories": "市場カテゴリ",

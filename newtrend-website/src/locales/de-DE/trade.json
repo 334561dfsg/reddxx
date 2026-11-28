@@ -422,8 +422,8 @@
     "confirm": "Auftrag über {{quantity}} {{unit}} zu {{price}} USDT bestätigen?"
   },
   "pages": {
-    "perpetual": "Unbefristete Futures",
-    "delivery": "Optionen mit Laufzeit",
+    "perpetual": "Futures-Handel",
+    "delivery": "Binäre Optionen",
     "deliveryCurrent": "Aktuelle Optionsaufträge",
     "deliveryHistory": "Optionshistorie",
     "chart": "Chart",

@@ -16,7 +16,7 @@
   "search": "검색",
   "contract": "선물",
   "futures": "선물 거래",
-  "futuresDesc": "레버리지로 무기한 선물 거래",
+  "futuresDesc": "레버리지로 선물 거래",
   "spotTrading": "현물 거래",
   "spotDesc": "시장 가격으로 실물 자산 매매",
   "finance": "금융",

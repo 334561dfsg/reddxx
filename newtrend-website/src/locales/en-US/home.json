@@ -26,12 +26,12 @@
   "products": {
     "label": "01 / What you can trade",
     "titleFrom": "From",
-    "perpetual": "Perpetuals",
+    "perpetual": "Futures",
     "titleTo": "to",
     "options": "Binary Options",
     "titleEnd": " —<br/>one account, every market you care about.",
     "viewAll": "See all products →",
-    "perpLabel": "PERPETUALS",
+    "perpLabel": "FUTURES",
     "perpTitle1": "Deep liquidity,",
     "perpTitle2": "every major asset.",
     "perpDesc": "200+ futures pairs covering crypto, gold, and silver. Up to 125x leverage, orders fill in under 50 ms, transparent funding rates — settled in USDT for one-account simplicity.",
@@ -368,10 +368,10 @@
     },
     "advanced": {
       "title": "Every market, traded its own way",
-      "tagline": "Crypto, forex, metals and indices in one account — each market comes with the trading modes built for it, from leveraged perpetual futures to fixed-payout binary options.",
+      "tagline": "Crypto, forex, metals and indices in one account — each market comes with the trading modes built for it, from leveraged futures trading to fixed-payout binary options.",
       "items": {
         "markets": "One account across crypto, forex, metals and indices",
-        "futures": "Perpetual futures with leverage — market, limit and stop-limit orders",
+        "futures": "Futures trading with leverage — market, limit and stop-limit orders",
         "options": "Binary options: call the direction, with payout and max risk fixed upfront"
       },
       "cta": "Try it now",

@@ -422,10 +422,10 @@
     "confirm": "{{quantity}} {{unit}}를 {{price}} USDT에 주문하시겠습니까?"
   },
   "pages": {
-    "perpetual": "무기한 선물",
-    "delivery": "만기 옵션",
-    "deliveryCurrent": "현재 만기 주문",
-    "deliveryHistory": "만기 주문 내역",
+    "perpetual": "선물 거래",
+    "delivery": "바이너리 옵션",
+    "deliveryCurrent": "현재 옵션 주문",
+    "deliveryHistory": "옵션 주문 내역",
     "chart": "차트",
     "markets": "시장 및 즐겨찾기",
     "marketCategories": "시장 분류",

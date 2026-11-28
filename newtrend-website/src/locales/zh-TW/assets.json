@@ -12,7 +12,7 @@
     "title": "資產分布",
     "assetsType": "資產類型",
     "earnAccount": "理財",
-    "quantFundAccount": "交割合約"
+    "quantFundAccount": "二元期權"
   },
   "assetKind": {
     "crypto": "數位貨幣",
@@ -79,10 +79,10 @@
   "tabs": {
     "overview": "帳戶總覽",
     "funding": "幣幣",
-    "trading": "永續合約"
+    "trading": "合約交易"
   },
   "accountFunding": "幣幣",
-  "accountTrading": "永續合約",
+  "accountTrading": "合約交易",
   "accountFutures": "合約帳戶",
   "accountOptions": "期權帳戶",
   "accountAiQuant": "量化帳戶",

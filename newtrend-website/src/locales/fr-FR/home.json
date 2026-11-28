@@ -26,12 +26,12 @@
   "products": {
     "label": "01 / Ce que vous pouvez trader",
     "titleFrom": "Des",
-    "perpetual": "Perpétuels",
+    "perpetual": "Futures",
     "titleTo": "aux",
     "options": "Options binaires",
     "titleEnd": " —<br/>un seul compte, tous les marchés qui comptent pour vous.",
     "viewAll": "Voir tous les produits →",
-    "perpLabel": "PERPÉTUELS",
+    "perpLabel": "FUTURES",
     "perpTitle1": "Liquidité profonde,",
     "perpTitle2": "tous les actifs majeurs.",
     "perpDesc": "Plus de 200 paires de futures couvrant cryptos, or et argent. Jusqu'à 125x de levier, exécutions en moins de 50 ms, taux de financement transparents — réglés en USDT pour la simplicité d'un seul compte.",
@@ -368,10 +368,10 @@
     },
     "advanced": {
       "title": "Chaque marché, sa façon de trader",
-      "tagline": "Crypto, forex, métaux et indices dans un seul compte — chaque marché dispose des modes de trading conçus pour lui : futures perpétuels avec effet de levier et options binaires à gain fixe.",
+      "tagline": "Crypto, forex, métaux et indices dans un seul compte — chaque marché dispose des modes de trading conçus pour lui : trading de futures avec effet de levier et options binaires à gain fixe.",
       "items": {
         "markets": "Un seul compte pour la crypto, le forex, les métaux et les indices",
-        "futures": "Futures perpétuels avec effet de levier — ordres au marché, à cours limité et stop-limite",
+        "futures": "Trading de futures avec effet de levier — ordres au marché, à cours limité et stop-limite",
         "options": "Options binaires : prédisez la direction, gain et risque maximal fixés à l'avance"
       },
       "cta": "Essayer maintenant",

@@ -16,7 +16,7 @@
   "search": "Search",
   "contract": "Futures",
   "futures": "Futures Trading",
-  "futuresDesc": "Trade perpetual contracts with leverage",
+  "futuresDesc": "Trade futures with leverage",
   "spotTrading": "Spot Trading",
   "spotDesc": "Buy and sell real assets at market price",
   "finance": "Finance",

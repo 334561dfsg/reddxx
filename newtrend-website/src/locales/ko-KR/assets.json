@@ -12,7 +12,7 @@
     "title": "자산 분포",
     "assetsType": "자산 유형",
     "earnAccount": "어닝",
-    "quantFundAccount": "만기 선물"
+    "quantFundAccount": "바이너리 옵션"
   },
   "assetKind": {
     "crypto": "가상자산",
@@ -79,10 +79,10 @@
   "tabs": {
     "overview": "계정 개요",
     "funding": "현물",
-    "trading": "무기한 선물"
+    "trading": "선물 거래"
   },
   "accountFunding": "현물",
-  "accountTrading": "무기한 선물",
+  "accountTrading": "선물 거래",
   "accountFutures": "선물",
   "accountOptions": "옵션",
   "accountAiQuant": "AI 퀀트",

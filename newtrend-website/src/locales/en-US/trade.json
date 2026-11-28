@@ -422,10 +422,10 @@
     "confirm": "Confirm an order for {{quantity}} {{unit}} at {{price}} USDT?"
   },
   "pages": {
-    "perpetual": "Perpetual futures",
-    "delivery": "Delivery options",
-    "deliveryCurrent": "Current delivery orders",
-    "deliveryHistory": "Delivery history",
+    "perpetual": "Futures Trading",
+    "delivery": "Binary Options",
+    "deliveryCurrent": "Current options orders",
+    "deliveryHistory": "Options order history",
     "chart": "Chart",
     "markets": "Markets & favorites",
     "marketCategories": "Market categories",

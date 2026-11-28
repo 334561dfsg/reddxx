@@ -12,7 +12,7 @@
     "title": "Répartition des actifs",
     "assetsType": "Type d'actif",
     "earnAccount": "Earn",
-    "quantFundAccount": "Contrats à échéance"
+    "quantFundAccount": "Options binaires"
   },
   "assetKind": {
     "crypto": "Cryptomonnaies",
@@ -79,10 +79,10 @@
   "tabs": {
     "overview": "Aperçu du compte",
     "funding": "Comptant",
-    "trading": "Contrats perpétuels"
+    "trading": "Trading de futures"
   },
   "accountFunding": "Comptant",
-  "accountTrading": "Contrats perpétuels",
+  "accountTrading": "Trading de futures",
   "accountFutures": "Futures",
   "accountOptions": "Options",
   "accountAiQuant": "AI Quant",

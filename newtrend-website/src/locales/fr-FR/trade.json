@@ -422,10 +422,10 @@
     "confirm": "Confirmer un ordre de {{quantity}} {{unit}} à {{price}} USDT ?"
   },
   "pages": {
-    "perpetual": "Contrats perpétuels",
-    "delivery": "Options à échéance",
-    "deliveryCurrent": "Ordres à échéance en cours",
-    "deliveryHistory": "Historique des échéances",
+    "perpetual": "Trading de futures",
+    "delivery": "Options binaires",
+    "deliveryCurrent": "Ordres d'options en cours",
+    "deliveryHistory": "Historique des ordres d'options",
     "chart": "Graphique",
     "markets": "Marchés et favoris",
     "marketCategories": "Catégories de marché",
