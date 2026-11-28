@@ -120,22 +120,21 @@
 #site-shell .assets-quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px}
 #site-shell .assets-quick-actions>:is(a,button){display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;border-radius:var(--nt-radius-panel);font-size:12px;line-height:16px;color:#fff;transition:background-color 150ms}
 #site-shell .assets-quick-actions .nt-icon{width:16px;height:16px}
-#site-shell .profile-summary{display:flex;align-items:center;gap:12px;padding:12px 16px}
+#site-shell .profile-summary{display:flex;align-items:center;gap:12px;padding:16px 16px 12px}
 #site-shell .profile-summary>div{min-width:0;flex:1}
-#site-shell .profile-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:18px;line-height:28px;font-weight:500;color:#fff}
-#site-shell .profile-badges{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
-#site-shell .menu-badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:var(--nt-radius-panel);font-size:12px;line-height:16px;font-weight:600}
+#site-shell .profile-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;line-height:24px;font-weight:600;color:#fff}
+#site-shell .profile-badges{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:0 16px 16px}
+#site-shell .menu-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--nt-radius-pill);font-size:12px;line-height:16px;font-weight:500}
 #site-shell .menu-badge.danger{background:color-mix(in srgb,var(--nt-down) 20%,transparent);color:var(--nt-down)}
 #site-shell .menu-badge.success{background:color-mix(in srgb,var(--nt-accent) 20%,transparent);color:var(--nt-accent)}
-#site-shell .menu-badge.secondary{background:color-mix(in srgb,#fff 12%,var(--nt-bg));color:#fff}
-#site-shell .menu-badge.vip{gap:2px;padding:0 6px;background:#fcd34d;color:var(--nt-bg);box-shadow:0 1px 3px #0000001a}
-#site-shell .menu-badge.vip .nt-icon{width:12px;height:12px;filter:brightness(0)}
+#site-shell .menu-badge.secondary{background:color-mix(in srgb,#fff 8%,var(--nt-bg));color:color-mix(in srgb,#fff 78%,var(--nt-bg))}
+#site-shell .menu-badge.vip{background:color-mix(in srgb,#fcd34d 16%,transparent);color:#fcd34d}
+#site-shell .menu-badge.vip .nt-icon{width:12px;height:12px}
 #site-shell .profile-uid{display:flex;align-items:center;gap:4px;font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,var(--nt-bg))}
 #site-shell .profile-uid button{display:inline-flex;padding:0;color:inherit;opacity:.62}
 #site-shell .profile-uid button:hover{opacity:1}
 #site-shell .profile-uid .nt-icon{width:12px;height:12px}
 /* Profile menu after the GMXX account menu (2026-11-26): credit-score pill and a 2×2 account-balance grid. */
-#site-shell .profile-credit{margin:0 16px 12px;padding:6px 12px;border:1px solid #ffffff1f;border-radius:var(--nt-radius-pill);text-align:center;font-size:12px;line-height:18px;font-weight:600;color:#fff}
 #site-shell .profile-accounts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:0;padding:12px 16px}
 #site-shell .profile-accounts dt{font-size:12px;line-height:16px;color:color-mix(in srgb,#fff 62%,var(--nt-bg))}
 #site-shell .profile-accounts dd{margin:2px 0 0;font-size:14px;line-height:20px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
