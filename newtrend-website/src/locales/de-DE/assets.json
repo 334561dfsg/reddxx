@@ -11,8 +11,8 @@
   "distribution": {
     "title": "Vermögensverteilung",
     "assetsType": "Asset-Typ",
-    "earnAccount": "Earn-Konto",
-    "quantFundAccount": "KI-Finanzen-Konto"
+    "earnAccount": "Earn",
+    "quantFundAccount": "Futures mit Laufzeit"
   },
   "assetKind": {
     "crypto": "Krypto",
@@ -78,11 +78,11 @@
   "accountOverview": "Kontoübersicht",
   "tabs": {
     "overview": "Kontoübersicht",
-    "funding": "Funding-Konto",
-    "trading": "Trading-Konten"
+    "funding": "Spot",
+    "trading": "Unbefristete Futures"
   },
-  "accountFunding": "Funding",
-  "accountTrading": "Trading",
+  "accountFunding": "Spot",
+  "accountTrading": "Unbefristete Futures",
   "accountFutures": "Futures",
   "accountOptions": "Optionen",
   "accountAiQuant": "KI-Quant",

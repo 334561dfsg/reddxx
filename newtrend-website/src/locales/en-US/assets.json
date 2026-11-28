@@ -11,8 +11,8 @@
   "distribution": {
     "title": "Assets Distribution",
     "assetsType": "Assets Type",
-    "earnAccount": "Earn Account",
-    "quantFundAccount": "AI Finance Account"
+    "earnAccount": "Earn",
+    "quantFundAccount": "Delivery Futures"
   },
   "assetKind": {
     "crypto": "Crypto",
@@ -78,11 +78,11 @@
   "accountOverview": "Account Overview",
   "tabs": {
     "overview": "Account Overview",
-    "funding": "Funding Account",
-    "trading": "Trading Accounts"
+    "funding": "Spot",
+    "trading": "Perpetual Futures"
   },
-  "accountFunding": "Funding",
-  "accountTrading": "Trading",
+  "accountFunding": "Spot",
+  "accountTrading": "Perpetual Futures",
   "accountFutures": "Futures",
   "accountOptions": "Options",
   "accountAiQuant": "AI Quant",

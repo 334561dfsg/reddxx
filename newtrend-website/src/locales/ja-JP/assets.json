@@ -11,8 +11,8 @@
   "distribution": {
     "title": "資産配分",
     "assetsType": "資産タイプ",
-    "earnAccount": "Earnアカウント",
-    "quantFundAccount": "AI ファイナンスアカウント"
+    "earnAccount": "Earn",
+    "quantFundAccount": "限月先物"
   },
   "assetKind": {
     "crypto": "暗号資産",
@@ -78,11 +78,11 @@
   "accountOverview": "アカウント概要",
   "tabs": {
     "overview": "アカウント概要",
-    "funding": "ファンディングアカウント",
-    "trading": "取引アカウント"
+    "funding": "現物",
+    "trading": "無期限先物"
   },
-  "accountFunding": "ファンディング",
-  "accountTrading": "取引",
+  "accountFunding": "現物",
+  "accountTrading": "無期限先物",
   "accountFutures": "先物",
   "accountOptions": "オプション",
   "accountAiQuant": "AIクオント",
